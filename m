@@ -1,250 +1,245 @@
-Return-Path: <linux-kernel+bounces-610614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20D9A936F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:23:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C88A936FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E50160450
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:23:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2E697AD722
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458462749E3;
-	Fri, 18 Apr 2025 12:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04FF2749E8;
+	Fri, 18 Apr 2025 12:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="GXiJnl4D"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ynsGbnFx"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DE41A3168;
-	Fri, 18 Apr 2025 12:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744979015; cv=none; b=VWZEvhnhyHXRC/mOojW2AQSrK1l0x78/ZnKPq3MIlpkgI/sm4K+j/Vq49Wyj3cI5g0IfVBqfMM52fPXf+WHyBOOnXTvk1UYfgbZ8uiKjM02aB7yVAZq17ENcz1sqg8O13y+h9jOMVaSzk5Z79jHakK0d8vwOWaloVNmezwrC+ts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744979015; c=relaxed/simple;
-	bh=/athQpagqGCJQydUSSRxJ6e7ydT+ucVxDrLxoePgYOU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LI/JDJTjhLJ2HiGL+bF+BJjP7+LA3LcAFk7+ChWSxVwbHCkD4bsUm/PcOsfP6z0sIS3MLvppNdn75tHQodkuQR9468xI3WQp3MOuOeZbfxIr3xdrBdnl+UxONRaHG0SOKYFSyXOOvIa+TKD4B8eUsiCMOqX2lDB4HiPA8UTO8gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=GXiJnl4D; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6N8phbfSv9V0CpUrr5t8I9tEoX+mLXZakuN/NJixNGw=; b=GXiJnl4D0z2eqznZsfm7Xsd/EU
-	+02d/HwTSj/ip/0N44Tlz/UButm0fDm0wXLu8eyDeqwAf1K9/zuJq0k4EHF80fFU0jneSL5mBTegg
-	cwbJigiNr9UvZppwKOTVhBwUFrtU2w1FYv7GFOUqplxcRCfPPLF6CoYDXOLEPKzNihvIUqWFspG7O
-	LA6Lo9TzzE72MtTcTcGQNoxM/euZGRqdWBEmbFU4d1hvSpqgZHSQXakzC7z0DfaozCtDfOMuBy3gq
-	eD2OUT6VqCv8Pyzxd6x+AMYolVobsOt8JdAsbQjLHsUdaZ0aaDktQP5H8B836UAZBIiznPze/pKSr
-	LyGftaZA==;
-Received: from [122.175.9.182] (port=16515 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1u5kkY-000000004ak-3tGs;
-	Fri, 18 Apr 2025 17:53:19 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 60FFA17823F4;
-	Fri, 18 Apr 2025 17:53:09 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 3B2471783F61;
-	Fri, 18 Apr 2025 17:53:09 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UmjO3TSNTQeh; Fri, 18 Apr 2025 17:53:09 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id E4DC917823F4;
-	Fri, 18 Apr 2025 17:53:08 +0530 (IST)
-Date: Fri, 18 Apr 2025 17:53:08 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: horms <horms@kernel.org>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
-	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
-	conor+dt <conor+dt@kernel.org>, nm <nm@ti.com>, 
-	ssantosh <ssantosh@kernel.org>, tony <tony@atomide.com>, 
-	richardcochran <richardcochran@gmail.com>, 
-	glaroque <glaroque@baylibre.com>, schnelle <schnelle@linux.ibm.com>, 
-	m-karicheri2 <m-karicheri2@ti.com>, s hauer <s.hauer@pengutronix.de>, 
-	rdunlap <rdunlap@infradead.org>, diogo ivo <diogo.ivo@siemens.com>, 
-	basharath <basharath@couthit.com>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	m-malladi <m-malladi@ti.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	afd <afd@ti.com>, s-anna <s-anna@ti.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <440344110.1093115.1744978988608.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250416091632.GM395307@horms.kernel.org>
-References: <20250414113458.1913823-1-parvathi@couthit.com> <20250414113458.1913823-3-parvathi@couthit.com> <20250416091632.GM395307@horms.kernel.org>
-Subject: Re: [PATCH net-next v5 02/11] net: ti: prueth: Adds ICSSM Ethernet
- driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8E16D4E6;
+	Fri, 18 Apr 2025 12:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744979083; cv=fail; b=CQS2vJ/xYh43fJ61O4zJHAo/H6lvc4OHcFOTEY+KuK9m6QWQZkvq8KYc3gJhOFZ9vgmo8hzbdiP8eUSBd07m5zJm788RqQbXxF/44YPZ7CMl7GRVUgG9K1Ry4zoqfxMKtb0UH5Ef/KD9TsfUUArSTT0PYEjb9Ev4/f2EoK3qg30=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744979083; c=relaxed/simple;
+	bh=vABfgwQ55up919HhZE69EPvtycoeTQF2FmCy7X9X1uc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b5syTFvrtv8zUlz02lSsFpNWUMPKZrrqB5FxPLuXDZYspFEuMouq71QoVWSAp3x07SgQUlRHCyE4vvb17h9jJnfzmgw7XHNO1EVATR15c/qKQbj29+oSgTk6f4zMTFsHKzfYxTMsctGVMVFQLgLy5hrdVYym0GdaXWYHK20fghg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ynsGbnFx; arc=fail smtp.client-ip=40.107.92.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BwaVWl+HiQALggJbnp+H0zNtRXBkszNEtKYV7QdsZU7dU4m/Oqk+InkfWW0/lXA1QhilHbUYasQ0A6wtAeJ4WavMu7ClmeMOhJ9z/nbNTGID5yRA9Ig173d/kM6baAuXjgeUKH8tiTX5DhfSW1HcgAoz+yWZCIPxsuLYaHskTe8DzUjCydwbRQB/vxUkPkGxJQ0dktZggOgvZVyK9QbSz2ghBYSpHBc7xsuVAvYEPLPXC+yTgMeQgsd6xUY0J8SZBlHgJeM3v2EpfhXCQcBT70qY+N7SIKFy8oOqU3hW/lZw+vqg9fmQgvo5Vr0UYMjE3is13aJ0kxKNl08NV8KCeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3nFhUJJxyOxUw0avO/mDWfucorif9gI3Ekrw9iKf8jw=;
+ b=gyquOCVou9JFPrG+cUaau4dsbOG7tVGfFAfyqadwMQ9tcxSx9rv/9xxAeYe2iNB2hjfaCYNcC/RSoPRjVOckkOIgNIHxuaKnJgn0QSylTNxbsZepE1obD2UAypaT4a9f/3BQ4ms25mYP1Opp3ACmTCFnJwsstt/74KK71BdkTFltmaZZHFUi3woa0s/wLNNJz4TJWjurVSScgRTvacFsthGwsRgf++mmpCeU90aXSDg14NIVt2WVzOJ3KPgnOjnxSU9DReHpz1uMtpesbkqJPhjr8MSW+kaaFjUWIUhmA5sw/6b+7DNdoM0IxJykorK65cOa+VxZ0v8PrG37j1rszA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3nFhUJJxyOxUw0avO/mDWfucorif9gI3Ekrw9iKf8jw=;
+ b=ynsGbnFxYBO9/5FvFsP1eqVVlXK1ODKoXw8sxRlH5uM4HU494aH2zS5WwWTJ1I6F4lBTU97fJJPFFB0E8Y8OlQsld2EwjbSwYMJZTRrzDxZ5vwU89Zje3rLYJzAdl7k0GeUnaytaaDampehmTS0VEB1/jivfcWtnWUeiYz7aPm8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ CH3PR12MB9170.namprd12.prod.outlook.com (2603:10b6:610:199::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Fri, 18 Apr
+ 2025 12:24:38 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8632.030; Fri, 18 Apr 2025
+ 12:24:38 +0000
+Message-ID: <d6161236-cba6-40ed-9e8a-010646f6974f@amd.com>
+Date: Fri, 18 Apr 2025 17:54:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/67] iommu/amd: KVM: SVM: Use pi_desc_addr to derive
+ ga_root_ptr
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>
+Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Maxim Levitsky <mlevitsk@redhat.com>,
+ Joao Martins <joao.m.martins@oracle.com>, David Matlack <dmatlack@google.com>
+References: <20250404193923.1413163-1-seanjc@google.com>
+ <20250404193923.1413163-26-seanjc@google.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20250404193923.1413163-26-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:99::19) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds ICSSM Ethernet driver
-Thread-Index: S0aUb2vCfdcMlVbjfjteCA2lYt5ujg==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|CH3PR12MB9170:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0c3c4a3-ff4b-498a-6f96-08dd7e73fc9e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NllKM3ZYa1ZyMVBVdFJrQmhKQVZKOHNBVW93ZlpkS2xvSFh5ZFF6SXNCU3E3?=
+ =?utf-8?B?cERpbUZDZXdDK21sVVI3T2VlWTZ5REpvZnRmcmZ5TjEzVjlxeE4yUHBhVVlT?=
+ =?utf-8?B?R3BhaUNKQ3phTCtUWmpQSUFRNk5uYjNQVlVHRFFYRTFvWFQydHBDc3Y2NlJr?=
+ =?utf-8?B?cEdabks1cWF0Z09qMDQ4SVh6NDFrMXVzajcxUzQvOUdoZm5qWEFiYkhDajVm?=
+ =?utf-8?B?NmxIQmh1bURKUEF0WlZ2a2JJL3doU0NKOTFJYkFSTGNzMldzOU9uVHFnNitF?=
+ =?utf-8?B?QVA5dDhMc0NGOExpdGtVa1lhUXdvOERTZjZsZTJhbkE1N0ZJTUxIMm5kSHZj?=
+ =?utf-8?B?MG1XUGhZUUNjdEhpYURZN0lnUU42eS9sVVkrQTNqNWE1TGdqVU5iQ0UwRDZa?=
+ =?utf-8?B?Zk82RlMrZ1J6OTlPNUVDRjFtVjRDek1hdTBTV3pUNkt4SnRlL0ZvYlM2VVlU?=
+ =?utf-8?B?WTFlUVpvN2xhOVhpbDVrNFdBYUFGYXpPNG1nbnEreFljQWFEeThlQU9RZC84?=
+ =?utf-8?B?dDJlSHlXdUlQZzUxZUptd1FacmVNL2hUeU1jSHhTTndnY2dBVy9sUkZlVTF4?=
+ =?utf-8?B?VDVzWjBRMDVyNnFaa3dUUDJRcWJrZ1k5WE1HajJLRUk2RWZGaW1VSUVlR2l3?=
+ =?utf-8?B?cmNjNDdSU0h6NzluaFdHRmpaQjBVd2Jrc2Y2T2VYU1BVQnU0Ky9OT1JxUW9r?=
+ =?utf-8?B?aEt0UXpOU3JGdzV4MWhuUStSU1R2Y1NYSEtwNGxwYjhIUFJ4dURVK0Z0ZndP?=
+ =?utf-8?B?LzBlZi8zeFhTcExYOHhwNDBCTDZoZ3BpZ0JTVHhiZ1FWcUpCWlNneC9LT2tR?=
+ =?utf-8?B?Z2hSUFdjK1dUZjFiVEh6VXlsbUg3NUN3b3lnUXNmK3c5TFUwcTYvdXdNKzcx?=
+ =?utf-8?B?aWdFK01lZjlEa0Q4YzJKZy9GT1FEaDB0M095b015SzFFUHg2TTJTblVranIx?=
+ =?utf-8?B?ci9KZzhaTzF4QThiTGorZUtPTG9YVWx6QkpYSUJwSi9WSFpvaVYra3RqS2lr?=
+ =?utf-8?B?UWZzbEhlbzQyQnZVTWRRUW1wYTA2VHp2VUJ5MHUxQnl2T3kvWitTU2I3bDlq?=
+ =?utf-8?B?VmFqRnJjaWZQN1RvalVtREdWOWI1VVZTOGUrNjZDcHhyTk9aTjNRbWc1Mlla?=
+ =?utf-8?B?SURZd2toM0lUczFENGNOcEt1bmtwUjlPQkZYUzZ5NlIyQnFuWWhMMjFZbllr?=
+ =?utf-8?B?ejRUbFJ0eEZOeGgySGZrQVc3S3RXdUcyaE8vVE9PSk0xMmVabm56NW1nS0dP?=
+ =?utf-8?B?dGF1M0hpYUFWdWw4S0VGRG9tYXZyamM3YlA5MTdXL1NRaWprK25KbjZjNnFJ?=
+ =?utf-8?B?eFVpV3hvRG4wY254ajRaZnNxd3k3c2U1Q01JbUVsQVAzSGtSK2NPYWNtYllI?=
+ =?utf-8?B?T3hFMFpkK2swUUJSVjZTRXc5NnZkb1lqQVVqNUVuQUxUZ28wc0VYWTRpakhB?=
+ =?utf-8?B?S0VIbmwrUEFVZW9OczhicHhIRkZtTW5vQXd3Y3EvYldOZElXUHZKNVhJdFJN?=
+ =?utf-8?B?K2gxVjFyUGFLSGVldE5sWkdtb1U3cCtKbXM0aUZRQnZ0UGlJcGFrdzc0dnNU?=
+ =?utf-8?B?L3UzcFZMaXRTT29SblcrY3R4NGpVTWR1UE9CNVA5YVN2SU1EeExCRkFuREk5?=
+ =?utf-8?B?UXoxNXBJNzl5dlZwL1kxS1kvaWs4MXJFOG9Fd1BmUXVKUzE1ckk4TFZhcy9E?=
+ =?utf-8?B?Y0lkdGVXV3RRMjNITDFidFd4NVJqMVZnODRaUWpUd1p4enliY0NHMU9ISDRI?=
+ =?utf-8?B?bHViRnNXVFhPN1h5Q2YxV1grRjZ3eUxhSXhFcUl0aVFlckNHUTNqRlpJZWlu?=
+ =?utf-8?B?WFdEY1hVYVd1eFM3MXNHSGk4YmtyMDJaV2xkT3VyV2NLMDhaZlBEeDI3Wlpj?=
+ =?utf-8?B?ZkZSYnJyU0YyMHFXMUJIVmRoblJ3a3ZlZW1peGV0WkdrOU9IUTdmamt6bVRC?=
+ =?utf-8?Q?R2jAq3pM/HA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjJGRDVQSXpiM2ZVZVR2TGFiYnRoUGxkR1VqSWNNTUxUbWM5UlRTU2FaZHNT?=
+ =?utf-8?B?TExlUmZOTmx2T1VVSzlkR0c2d3pzZE1zanphNmI2bXB0d0o1ZHlkcndNVXhG?=
+ =?utf-8?B?SS93dktBSkV6RUlNd1lVL05vcXFMeTR4SXI3Y2ExRkFXUVhBeHFnYmFtaEhM?=
+ =?utf-8?B?Wk1EY09KMVQ5eUZuZ0xzVHJIQU9YVzZCS1lCa3dTbXl3UCtGMnZ5eFE1Q0Jv?=
+ =?utf-8?B?TkhEMEpDOTdZc3B4SFRwdkRYUSt6MzBnWkdidTROTDFZMzhxU1FXemZLVVF4?=
+ =?utf-8?B?a1JQNS85aUlkL0FqZUI2Yy92WkJFK0VrOTNieWJ0aW1EMVVnTWFJWWhrMEt5?=
+ =?utf-8?B?NFVJUHkySkxsL1d5Uy9PZEk4TU5WM3pDWjZQUDFwZTAyYmdPTmxVTTFhTEs5?=
+ =?utf-8?B?YTl2Z3NCeTVIN2xON210RjMyMTlXKzJxU3ZvWWxIa1Q4aUVvTUVsMk5uaGNq?=
+ =?utf-8?B?QVhUaXFkM1drdGNsUk9zeUVHWWJWMGpSdnVZZWVEdm9OcWxRQmVJemprTkdh?=
+ =?utf-8?B?UEZ2eEtLcUZuQkREVk1oSWpUN1JmYWhZWFBiUDVNQnV3d1M1cVpOWStYYUc0?=
+ =?utf-8?B?NEx3d1ZGbmg1MGtsZURwUTF0UGZVVkZ4WDJQMFZOWFpqTWtpOHdsVmlFbnUy?=
+ =?utf-8?B?Q1dkaTVjalZLeFJGSmVranRyVzRFVVhRbytUK1RTd3ByUXRyT3RRRmtQNGxQ?=
+ =?utf-8?B?eWRYUUJGRzdWeWxaZFVVdExQYkhIOU1QOTkyYVZoVTJiYU9iUU9WaXNNMTBs?=
+ =?utf-8?B?Mjkra0Q0WjJ2dTZtSGZkQlZBa3I5Q0VWZnZjVVp0SldLd1luT3pmUmQ0UnZI?=
+ =?utf-8?B?NTNsd05Wall2RGRxdDZDUHVabFRNRmVDTnI1dGpOcjBOdjRFZWQyVHh5bjZa?=
+ =?utf-8?B?R1RMZlJnZUR6WVVrK0JPYWl4aitOQ2hhNkRPYUREL2drQWxKNWMxOFVJOG0v?=
+ =?utf-8?B?eWZkQTB5UlBrK1doMWIrZy80NXhOT0dlaThCSkF4ODE4eDNXeitWMWtFRG54?=
+ =?utf-8?B?Z1YrYlhLVnptLzZITmZUdDI2MGRzMC9MS2dITFFIcVEwbEdXSjhZR1Bzb21u?=
+ =?utf-8?B?M0VoNHdXMzlqVDJPazNSbTJHZ0VvNUFlWFlnYkZDUm5xV3JsREFFYUlBYVVq?=
+ =?utf-8?B?allHaHZQZHczWW4rUWg0Sk1CSG4rOGErb0xHQVJ4ZEFWYVZJYi94N2UrT2FZ?=
+ =?utf-8?B?bHowZUNuWWNtSmFkOEc5M1JmamxIYkQzTWV2bkgrb0dXdzltajM3Vkl3ZG1a?=
+ =?utf-8?B?VnA0RUFQRTZza3BGVUxlK1JsRmo1R1lXMlYrSXh4ZDN6cDIwVzQ0Yk9ERExP?=
+ =?utf-8?B?Q0IveVVvK1hhcVoyTm1jdklKcElmRHN4WHpVZitpQllDQ1V2c2dnZzRwYi9o?=
+ =?utf-8?B?cy81N2lnODhCYmZJRnRMa2dyS3NPNEJQdnJGRHJWQ1JhblhZNStYMHRYQkth?=
+ =?utf-8?B?M0xJTHdVUXVVMWllOWc1MlNNV0cwZ3J0OU5pNGtnZm04cVRmTUMvUHlrK3FG?=
+ =?utf-8?B?Zm1MQnc4dG5panJoQ1NCT2ZpZWExNjNqUFFWUm5sQWczZFUyY0xMSklnQUZN?=
+ =?utf-8?B?dUpidnpzV05Rd3BVbmwzdW5seFdjS0I2VzZSdm5QVDlKb29zcHJqUHlSNk9r?=
+ =?utf-8?B?S3RqTUVIeWMzc2psVGRYeER5TVVJNmh2cEZOU0RzUFZ2ZGNzcGhzbmxLeTBy?=
+ =?utf-8?B?YlM4UVE3MHFtQmpjUkV2MTZ2eHhxbzhtc2pQN1BIUTh5aTFabWsyMDVYVEhK?=
+ =?utf-8?B?WG9tWTI1TDlBRmhkT3NVWEEvMENYSVl6dk9zMmloSlpCc25WRUxJWUJDakV0?=
+ =?utf-8?B?Rk80cml6NnZIejFyaXhFY2RGT0VlNWw1K3NjWSt2Vi9EY2tjb09SWkUzUG9Q?=
+ =?utf-8?B?ZkFlYVBpVUdFZklLM1J4VEpvQ0pqUUNsTTNBdFVndCtiVUxMdzF1d21kbXBr?=
+ =?utf-8?B?bFJxR2pUaDIwVlpYVkpoSUVOblFTc2wwVWU1a2pHcHJUdjJpb3VXRjhObUdF?=
+ =?utf-8?B?Z08zVlVwY3N5ejF4aGpOcDlCc2o5RDJNb21GWGt0K3hnUVJPSjArR3FBV3N6?=
+ =?utf-8?B?VDZXZFArV3RjaUNIRUtySmI4cjFvekpycGw4M013K3dhN2JDYy84TjFwTGU1?=
+ =?utf-8?Q?fYgIYqZKvB6RHFEwlhDiT/Nlp?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0c3c4a3-ff4b-498a-6f96-08dd7e73fc9e
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 12:24:38.2549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Pvz0jHW17y1C9zjXmg1P5DE7ChEZ9JMKG4AaeZxNM0PwNefDeqC8ZYChd1Xg7e5pZNOm74iyCTOoBW5xAwTvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9170
 
-Hi,
+On 4/5/2025 1:08 AM, Sean Christopherson wrote:
+> Use vcpu_data.pi_desc_addr instead of amd_iommu_pi_data.base to get the
+> GA root pointer.  KVM is the only source of amd_iommu_pi_data.base, and
+> KVM's one and only path for writing amd_iommu_pi_data.base computes the
+> exact same value for vcpu_data.pi_desc_addr and amd_iommu_pi_data.base,
+> and fills amd_iommu_pi_data.base if and only if vcpu_data.pi_desc_addr is
+> valid, i.e. amd_iommu_pi_data.base is fully redundant.
+> 
+> Cc: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-> On Mon, Apr 14, 2025 at 05:04:49PM +0530, Parvathi Pudi wrote:
->> From: Roger Quadros <rogerq@ti.com>
->> 
->> Updates Kernel configuration to enable PRUETH driver and its dependencies
->> along with makefile changes to add the new PRUETH driver.
->> 
->> Changes includes init and deinit of ICSSM PRU Ethernet driver including
->> net dev registration and firmware loading for DUAL-MAC mode running on
->> PRU-ICSS2 instance.
->> 
->> Changes also includes link handling, PRU booting, default firmware loading
->> and PRU stopping using existing remoteproc driver APIs.
->> 
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
->> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
-> 
-> ...
-> 
->> diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
->> b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
-> 
-> ...
-> 
->> +static int icssm_prueth_probe(struct platform_device *pdev)
->> +{
->> +	struct device_node *eth0_node = NULL, *eth1_node = NULL;
->> +	struct device_node *eth_node, *eth_ports_node;
->> +	enum pruss_pru_id pruss_id0, pruss_id1;
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np;
->> +	struct prueth *prueth;
->> +	int i, ret;
->> +
->> +	np = dev->of_node;
->> +	if (!np)
->> +		return -ENODEV; /* we don't support non DT */
->> +
->> +	prueth = devm_kzalloc(dev, sizeof(*prueth), GFP_KERNEL);
->> +	if (!prueth)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, prueth);
->> +	prueth->dev = dev;
->> +	prueth->fw_data = device_get_match_data(dev);
->> +
->> +	eth_ports_node = of_get_child_by_name(np, "ethernet-ports");
->> +	if (!eth_ports_node)
->> +		return -ENOENT;
->> +
->> +	for_each_child_of_node(eth_ports_node, eth_node) {
->> +		u32 reg;
->> +
->> +		if (strcmp(eth_node->name, "ethernet-port"))
->> +			continue;
->> +		ret = of_property_read_u32(eth_node, "reg", &reg);
->> +		if (ret < 0) {
->> +			dev_err(dev, "%pOF error reading port_id %d\n",
->> +				eth_node, ret);
->> +		}
->> +
->> +		of_node_get(eth_node);
-> 
-> Hi Roger, Parvathi, all,
-> 
-> I feel that I'm missing something obvious here.
-> But I have some questions about the reference to eth_node
-> taken on the line above.
-> 
->> +
->> +		if (reg == 0) {
->> +			eth0_node = eth_node;
-> 
-> If, while iterating through the for loop above, we reach this point more
-> than once, then will the reference to the previously node assigned to
-> eth0_node be leaked?
-> 
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
 
-We will modify the condition as below to avoid leaks
-if ((reg == 0) && (eth0_node == NULL))
-
->> +			if (!of_device_is_available(eth0_node)) {
->> +				of_node_put(eth0_node);
->> +				eth0_node = NULL;
->> +			}
->> +		} else if (reg == 1) {
->> +			eth1_node = eth_node;
-> 
-> Likewise here for eth1_node.
-> 
-
-We will modify this also as below
-if ((reg == 1) && (eth1_node == NULL))
-
->> +			if (!of_device_is_available(eth1_node)) {
->> +				of_node_put(eth1_node);
->> +				eth1_node = NULL;
->> +			}
->> +		} else {
->> +			dev_err(dev, "port reg should be 0 or 1\n");
-> 
-> And, perhaps more to the point, is the reference to eth_node leaked if
-> we reach this line?
-> 
-
-We will check and add of_node_put(eth_node) at the end of the for loop.
-
->> +		}
->> +	}
->> +
->> +	of_node_put(eth_ports_node);
->> +
->> +	/* At least one node must be present and available else we fail */
->> +	if (!eth0_node && !eth1_node) {
->> +		dev_err(dev, "neither port0 nor port1 node available\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	if (eth0_node == eth1_node) {
-> 
-> Given the if / else if condition in the for loop above,
-> I'm not sure this can ever occur.
-> 
-
-We will remove this.
+-Vasant
 
 
-Thanks and Regards,
-Parvathi.
+> ---
+>  arch/x86/kvm/svm/avic.c   | 7 +++++--
+>  drivers/iommu/amd/iommu.c | 2 +-
+>  include/linux/amd-iommu.h | 1 -
+>  3 files changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> index 60e6e82fe41f..9024b9fbca53 100644
+> --- a/arch/x86/kvm/svm/avic.c
+> +++ b/arch/x86/kvm/svm/avic.c
+> @@ -902,8 +902,11 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>  
+>  			enable_remapped_mode = false;
+>  
+> -			/* Try to enable guest_mode in IRTE */
+> -			pi.base = avic_get_backing_page_address(svm);
+> +			/*
+> +			 * Try to enable guest_mode in IRTE.  Note, the address
+> +			 * of the vCPU's AVIC backing page is passed to the
+> +			 * IOMMU via vcpu_info->pi_desc_addr.
+> +			 */
+>  			pi.ga_tag = AVIC_GATAG(to_kvm_svm(kvm)->avic_vm_id,
+>  						     svm->vcpu.vcpu_id);
+>  			pi.is_guest_mode = true;
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index 4f69a37cf143..635774642b89 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -3860,7 +3860,7 @@ static int amd_ir_set_vcpu_affinity(struct irq_data *data, void *vcpu_info)
+>  
+>  	pi_data->prev_ga_tag = ir_data->cached_ga_tag;
+>  	if (pi_data->is_guest_mode) {
+> -		ir_data->ga_root_ptr = (pi_data->base >> 12);
+> +		ir_data->ga_root_ptr = (vcpu_pi_info->pi_desc_addr >> 12);
+>  		ir_data->ga_vector = vcpu_pi_info->vector;
+>  		ir_data->ga_tag = pi_data->ga_tag;
+>  		ret = amd_iommu_activate_guest_mode(ir_data);
+> diff --git a/include/linux/amd-iommu.h b/include/linux/amd-iommu.h
+> index 062fbd4c9b77..4f433ef39188 100644
+> --- a/include/linux/amd-iommu.h
+> +++ b/include/linux/amd-iommu.h
+> @@ -20,7 +20,6 @@ struct amd_iommu;
+>  struct amd_iommu_pi_data {
+>  	u32 ga_tag;
+>  	u32 prev_ga_tag;
+> -	u64 base;
+>  	bool is_guest_mode;
+>  	struct vcpu_data *vcpu_data;
+>  	void *ir_data;
+
 
