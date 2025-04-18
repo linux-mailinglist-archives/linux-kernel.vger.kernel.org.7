@@ -1,383 +1,113 @@
-Return-Path: <linux-kernel+bounces-610283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6037A93318
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:02:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5179DA93328
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD723ACDA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F31E188E541
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AD126E179;
-	Fri, 18 Apr 2025 06:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FF226AAB5;
+	Fri, 18 Apr 2025 07:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="RI29SC/N"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L9yBzUfi"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A651326A08F;
-	Fri, 18 Apr 2025 06:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCDD209F2A;
+	Fri, 18 Apr 2025 07:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744959219; cv=none; b=g/XdA7ayYT9CCT/mPsUsfmMzd1A2THqgQYVnfEV8XLmYqU23LAbWeb1eBpibjHoIlDthccb5XntsiUtfm8g3/+OL7xpdoVwWBupGYRX9jbMrXBa6QFKPDMRjndzxLNJrXEQDF4PelfY/QsLpi83IHD+KvwTp4xTGLWmdVsN+0hM=
+	t=1744959630; cv=none; b=VEtO+FLMPqXUIxhcfKu7Q4B+zkq9RVUbAI+LRn70S9Wd3u6cOelaQndDqv8Py1L8fWvYVozW0C2GYhfEzF9Mg23KjXU9rqzhyYjwiaX9eMDNJlnxdmRUchInKI8VP/piXNm9vJnpVU/SdLTlpNoij0jShfz/CKzp7oBqDhLnEz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744959219; c=relaxed/simple;
-	bh=YSTwngCXYUn3OMNWxwmpYdm65cPd3lDts5wsoY0FMuc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bOtD69q93DLb9sprIu1KiSElZo0VKsvlHTSz5ltRHdyEI+DRSv7rigmYRHC5ecm3KrXbqRiUgPtEj+h9DDSvhIAiVeuoJ4d4lmAnGrxDY2I1wq8b55afXvIyS0Wo9+RPNvcwRcubv78ItweGC1MsOMBh846A2sUDlYqWEe/BMxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=RI29SC/N; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d2ab9e541c2111f0aae1fd9735fae912-20250418
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=cxjQDLdx0UG7gRjGuFA0+lUdD8dcgO/jR8OOL1qmwZk=;
-	b=RI29SC/NHo58iR/64b2d8HqYZudnXkTinpMrNfri0k8p9uMUmuA5itqSQJ/T75EWSl0QanjhClN1MyFzP5b+JSgGk2NMuvaqO/5qAyrsvnMnffoj3MoBVMg/Hfh1Ag8t/GApAvravmjwsHgjszL02qgx6razUEuyyl19XBIRdZ4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:dcdfe057-a988-44f0-b48a-71aeabe2647f,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:8d44668b-0afe-4897-949e-8174746b1932,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d2ab9e541c2111f0aae1fd9735fae912-20250418
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <bincai.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1054836075; Fri, 18 Apr 2025 14:53:24 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 18 Apr 2025 14:53:23 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 18 Apr 2025 14:53:22 +0800
-From: Bincai Liu <bincai.liu@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Jitao shi <jitao.shi@mediatek.com>, CK Hu
-	<ck.hu@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-phy@lists.infradead.org>,
-	Bincai Liu <bincai.liu@mediatek.com>
-Subject: [PATCH 5/5] drm/mediatek: Add eDP phy driver for mt8196
-Date: Fri, 18 Apr 2025 14:52:32 +0800
-Message-ID: <20250418065313.8972-6-bincai.liu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250418065313.8972-1-bincai.liu@mediatek.com>
-References: <20250418065313.8972-1-bincai.liu@mediatek.com>
+	s=arc-20240116; t=1744959630; c=relaxed/simple;
+	bh=wiVXYijXoCx9e9/HPWVlzT93KtXbqNjBfqsDxz1Fesc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n9KYSDu7Q949Mmxr+q50NwbIXjT1cEuL+1fM7BF2j+wnwFYAiTL/ZQOmxfiElc3gT/3WFy6R1zNto+gyQRBUCc+q+kJe9xEf+86El6hmQXgXOahhCcYNtrJqhU72dzdPyFEe2qXTr01Pp5WXNZTdl2x0bf/9odUux6z69av2J7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L9yBzUfi; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D216F4435F;
+	Fri, 18 Apr 2025 07:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744959619;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FVm3s6Daurjg4AWD/fcVP0eHe4qdw9NBVQ3f6X7CoD8=;
+	b=L9yBzUfiLFVwSF++fBp2zlChVq6y9R1Cv2QxCZcDHteqWea1iWwck3uWioXm+9tXO3VTEw
+	BlnctNULf64DkF40MZlCbPnBlJCpCzrJuOKghJIXtQt+85cQG+lwtJG9jW5OTKyNAMthOS
+	cVtnOO5qLEV/bcDKRvw/nSUCpSao7Y/LBbUB5ptBQxaltjhIWSRofUUJ5Y6JnTehfcQufU
+	rWHOlPh4Ywz1bQbdhWJqmYvdzJ31FHddmluKpfaJIWB1IerF6TMxROUyPjbZB1Hxe0N9di
+	PIW8GeeZXwyJUX5lJIcicm0uJFOD2bzzelSwLQiK8ftOJ164Igw83l6Vnib7CQ==
+Date: Fri, 18 Apr 2025 09:00:16 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net-next v6 1/2] net: ethtool: Introduce per-PHY DUMP
+ operations
+Message-ID: <20250418090016.01900035@fedora.home>
+In-Reply-To: <564ca4ac-661e-4126-a65a-106d3c28a47e@redhat.com>
+References: <20250415085155.132963-1-maxime.chevallier@bootlin.com>
+	<20250415085155.132963-2-maxime.chevallier@bootlin.com>
+	<564ca4ac-661e-4126-a65a-106d3c28a47e@redhat.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvfedugeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheetveefiedvkeejfeekkefffefgtdduteejheekgeeileehkefgfefgveevfffhnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepk
+ hhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Add code to support eDP phy for mt8196.
+Hi Paolo,
 
-Signed-off-by: Bincai Liu <bincai.liu@mediatek.com>
----
- drivers/phy/mediatek/Makefile      |   1 +
- drivers/phy/mediatek/phy-mtk-edp.c | 262 +++++++++++++++++++++++++++++
- 2 files changed, 263 insertions(+)
- create mode 100644 drivers/phy/mediatek/phy-mtk-edp.c
+On Thu, 17 Apr 2025 12:03:43 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
 
-diff --git a/drivers/phy/mediatek/Makefile b/drivers/phy/mediatek/Makefile
-index 1b8088df71e8..49d9ea42497a 100644
---- a/drivers/phy/mediatek/Makefile
-+++ b/drivers/phy/mediatek/Makefile
-@@ -4,6 +4,7 @@
- #
- 
- obj-$(CONFIG_PHY_MTK_DP)		+= phy-mtk-dp.o
-+obj-$(CONFIG_PHY_MTK_DP)		+= phy-mtk-edp.o
- obj-$(CONFIG_PHY_MTK_PCIE)		+= phy-mtk-pcie.o
- obj-$(CONFIG_PHY_MTK_TPHY)		+= phy-mtk-tphy.o
- obj-$(CONFIG_PHY_MTK_UFS)		+= phy-mtk-ufs.o
-diff --git a/drivers/phy/mediatek/phy-mtk-edp.c b/drivers/phy/mediatek/phy-mtk-edp.c
-new file mode 100644
-index 000000000000..fadcbda55b70
---- /dev/null
-+++ b/drivers/phy/mediatek/phy-mtk-edp.c
-@@ -0,0 +1,262 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019-2022 MediaTek Inc.
-+ * Copyright (c) 2022 BayLibre
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define PHYD_OFFSET			0x0000
-+#define PHYD_DIG_LAN0_OFFSET		0x1000
-+#define PHYD_DIG_LAN1_OFFSET		0x1100
-+#define PHYD_DIG_LAN2_OFFSET		0x1200
-+#define PHYD_DIG_LAN3_OFFSET		0x1300
-+#define PHYD_DIG_GLB_OFFSET		0x1400
-+
-+#define DP_PHY_DIG_PLL_CTL_0		(PHYD_DIG_GLB_OFFSET + 0x10)
-+#define FORCE_PWORE_STATE_FLDMASK		GENMASK(2, 0)
-+#define FORCE_PWORE_STATE_VALUE			0x7
-+
-+#define IPMUX_CONTROL			(PHYD_DIG_GLB_OFFSET + 0x98)
-+#define EDPTX_DSI_PHYD_SEL_FLDMASK		0x1
-+#define EDPTX_DSI_PHYD_SEL_FLDMASK_POS		0
-+
-+#define DP_PHY_DIG_TX_CTL_0		(PHYD_DIG_GLB_OFFSET + 0x74)
-+#define TX_LN_EN_FLDMASK			0xf
-+
-+#define mtk_edp_PHY_DIG_PLL_CTL_1	(PHYD_DIG_GLB_OFFSET + 0x14)
-+#define TPLL_SSC_EN				BIT(8)
-+
-+#define mtk_edp_PHY_DIG_BIT_RATE		(PHYD_DIG_GLB_OFFSET + 0x3C)
-+#define BIT_RATE_RBR				0x1
-+#define BIT_RATE_HBR				0x4
-+#define BIT_RATE_HBR2				0x7
-+#define BIT_RATE_HBR3				0x9
-+
-+#define mtk_edp_PHY_DIG_SW_RST		(PHYD_DIG_GLB_OFFSET + 0x38)
-+#define DP_GLB_SW_RST_PHYD			BIT(0)
-+#define DP_GLB_SW_RST_PHYD_MASK			BIT(0)
-+
-+#define DRIVING_FORCE			0x30
-+#define EDP_TX_LN_VOLT_SWING_VAL_FLDMASK	0x6
-+#define EDP_TX_LN_VOLT_SWING_VAL_FLDMASK_POS	1
-+#define EDP_TX_LN_PRE_EMPH_VAL_FLDMASK		0x18
-+#define EDP_TX_LN_PRE_EMPH_VAL_FLDMASK_POS	3
-+
-+struct mtk_edp_phy {
-+	struct regmap *regs;
-+};
-+
-+enum DPTX_LANE_NUM {
-+	DPTX_LANE0 = 0x0,
-+	DPTX_LANE1 = 0x1,
-+	DPTX_LANE2 = 0x2,
-+	DPTX_LANE3 = 0x3,
-+	DPTX_LANE_MAX,
-+};
-+
-+enum DPTX_LANE_COUNT {
-+	DPTX_LANE_COUNT1 = 0x1,
-+	DPTX_LANE_COUNT2 = 0x2,
-+	DPTX_LANE_COUNT4 = 0x4,
-+};
-+
-+static void mtk_edptx_phyd_reset_swing_pre(struct mtk_edp_phy *edp_phy)
-+{
-+	regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN0_OFFSET + DRIVING_FORCE,
-+			   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+			   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK, 0x0);
-+	regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN1_OFFSET + DRIVING_FORCE,
-+			   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+			   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK, 0x0);
-+	regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN2_OFFSET + DRIVING_FORCE,
-+			   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+			   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK, 0x0);
-+	regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN3_OFFSET + DRIVING_FORCE,
-+			   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+			   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK, 0x0);
-+}
-+
-+static int mtk_edp_phy_init(struct phy *phy)
-+{
-+	struct mtk_edp_phy *edp_phy = phy_get_drvdata(phy);
-+
-+	regmap_update_bits(edp_phy->regs, IPMUX_CONTROL, 0,
-+			   EDPTX_DSI_PHYD_SEL_FLDMASK);
-+
-+	regmap_update_bits(edp_phy->regs, DP_PHY_DIG_PLL_CTL_0,
-+			   FORCE_PWORE_STATE_VALUE,
-+			   FORCE_PWORE_STATE_FLDMASK);
-+
-+	return 0;
-+}
-+
-+static int mtk_edp_phy_configure(struct phy *phy, union phy_configure_opts *opts)
-+{
-+	struct mtk_edp_phy *edp_phy = phy_get_drvdata(phy);
-+	u32 val;
-+
-+	if (opts->dp.set_rate) {
-+		switch (opts->dp.link_rate) {
-+		case 1620:
-+			val = BIT_RATE_RBR;
-+			break;
-+		case 2700:
-+			val = BIT_RATE_HBR;
-+			break;
-+		case 5400:
-+			val = BIT_RATE_HBR2;
-+			break;
-+		case 8100:
-+			val = BIT_RATE_HBR3;
-+			break;
-+		default:
-+			dev_err(&phy->dev,
-+				"Implementation error, unknown linkrate %x\n",
-+				opts->dp.link_rate);
-+			return -EINVAL;
-+		}
-+		regmap_write(edp_phy->regs, mtk_edp_PHY_DIG_BIT_RATE, val);
-+	}
-+
-+	if (opts->dp.set_lanes) {
-+		for (val = 0; val < 4; val++) {
-+			regmap_update_bits(edp_phy->regs, DP_PHY_DIG_TX_CTL_0,
-+					   ((1 << (val + 1)) - 1),
-+					   TX_LN_EN_FLDMASK);
-+		}
-+	}
-+
-+	if (opts->dp.set_voltages) {
-+		switch (opts->dp.lanes) {
-+		case DPTX_LANE_COUNT1:
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN0_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE0] << 1 |
-+					   opts->dp.pre[DPTX_LANE0] << 3);
-+		break;
-+		case DPTX_LANE_COUNT2:
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN0_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE0] << 1 |
-+					   opts->dp.pre[DPTX_LANE0] << 3);
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN1_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE1] << 1 |
-+					   opts->dp.pre[DPTX_LANE1] << 3);
-+		break;
-+		case DPTX_LANE_COUNT4:
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN0_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE0] << 1 |
-+					   opts->dp.pre[DPTX_LANE0] << 3);
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN1_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE1] << 1 |
-+					   opts->dp.pre[DPTX_LANE1] << 3);
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN2_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE2] << 1 |
-+					   opts->dp.pre[DPTX_LANE2] << 3);
-+			regmap_update_bits(edp_phy->regs, PHYD_DIG_LAN3_OFFSET +
-+					   DRIVING_FORCE,
-+					   EDP_TX_LN_VOLT_SWING_VAL_FLDMASK |
-+					   EDP_TX_LN_PRE_EMPH_VAL_FLDMASK,
-+					   opts->dp.voltage[DPTX_LANE3] << 1 |
-+					   opts->dp.pre[DPTX_LANE3] << 3);
-+		break;
-+		default:
-+			dev_err(&phy->dev, "Wrong lanes config: %x\n",
-+				opts->dp.lanes);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	regmap_update_bits(edp_phy->regs, mtk_edp_PHY_DIG_PLL_CTL_1,
-+			   TPLL_SSC_EN, opts->dp.ssc ? 0 : TPLL_SSC_EN);
-+
-+	return 0;
-+}
-+
-+static int mtk_edp_phy_reset(struct phy *phy)
-+{
-+	struct mtk_edp_phy *edp_phy = phy_get_drvdata(phy);
-+
-+	regmap_update_bits(edp_phy->regs, mtk_edp_PHY_DIG_SW_RST,
-+			   0, DP_GLB_SW_RST_PHYD_MASK);
-+	usleep_range(50, 200);
-+	regmap_update_bits(edp_phy->regs, mtk_edp_PHY_DIG_SW_RST,
-+			   DP_GLB_SW_RST_PHYD, DP_GLB_SW_RST_PHYD_MASK);
-+	regmap_update_bits(edp_phy->regs, DP_PHY_DIG_TX_CTL_0,
-+			   0x0, TX_LN_EN_FLDMASK);
-+	mtk_edptx_phyd_reset_swing_pre(edp_phy);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops mtk_edp_phy_dev_ops = {
-+	.init = mtk_edp_phy_init,
-+	.configure = mtk_edp_phy_configure,
-+	.reset = mtk_edp_phy_reset,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int mtk_edp_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mtk_edp_phy *edp_phy;
-+	struct phy *phy;
-+	struct regmap *regs;
-+
-+	regs = *(struct regmap **)dev->platform_data;
-+	if (!regs)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "No data passed, requires struct regmap**\n");
-+
-+	edp_phy = devm_kzalloc(dev, sizeof(*edp_phy), GFP_KERNEL);
-+	if (!edp_phy)
-+		return -ENOMEM;
-+
-+	edp_phy->regs = regs;
-+	phy = devm_phy_create(dev, NULL, &mtk_edp_phy_dev_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy),
-+				     "Failed to create DP PHY\n");
-+
-+	phy_set_drvdata(phy, edp_phy);
-+	if (!dev->of_node)
-+		phy_create_lookup(phy, "edp", dev_name(dev));
-+
-+	return 0;
-+}
-+
-+struct platform_driver mtk_edp_phy_driver = {
-+	.probe = mtk_edp_phy_probe,
-+	.driver = {
-+		.name = "mediatek-edp-phy",
-+	},
-+};
-+
-+module_platform_driver(mtk_edp_phy_driver);
-+
-+MODULE_AUTHOR("Markus Schneider-Pargmann <msp@baylibre.com>");
-+MODULE_DESCRIPTION("MediaTek DP PHY Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.45.2
+> On 4/15/25 10:51 AM, Maxime Chevallier wrote:
+> > +static int ethnl_perphy_dump_all_dev(struct sk_buff *skb,
+> > +				     struct ethnl_perphy_dump_ctx *ctx,
+> > +				     const struct genl_info *info)
+> > +{
+> > +	struct ethnl_dump_ctx *ethnl_ctx = &ctx->ethnl_ctx;
+> > +	struct net *net = sock_net(skb->sk);
+> > +	struct net_device *dev;
+> > +	int ret = 0;
+> > +
+> > +	rcu_read_lock();
+> > +	for_each_netdev_dump(net, dev, ethnl_ctx->pos_ifindex) {
+> > +		dev_hold(dev);  
+> 
+> Minor nit: please use netdev_hold() instead.
 
+Will do, I didn't see the notice about using netdev_hold instead in the
+doc, I merely used the current ethnl_default_dumpit() as a reference,
+and it uses dev_hold() as well.
+
+should I convert it to netdev_hold() along the way in v3 ?
+
+Maxime
 
