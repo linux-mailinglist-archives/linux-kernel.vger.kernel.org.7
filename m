@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-610740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08A7A93879
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:15:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A5AA9387D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA4465F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:15:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBF537A7109
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FDA1AB52D;
-	Fri, 18 Apr 2025 14:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7196415852F;
+	Fri, 18 Apr 2025 14:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XAtTnivV"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="oiT4VktU"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D49199FAC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 14:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406CE1D6AA;
+	Fri, 18 Apr 2025 14:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744985660; cv=none; b=hpzSr0vXX8OTl9xvt2bTi62xaMQ7EADGor/lFq1g2fJwwj99RuwLeVagN+Z/rcVjY1sbogKol+QcA/CvpMoLdoQucptuNXkb2fhdD7ERErRjQ1qIJdtz4/m1UCGDE9VZFuTXzKv0NALJ4bqD2X6qSaWogSK9MT+XTapfwzXd/qY=
+	t=1744985835; cv=none; b=U5SxbJpe5whzqDDKx0hRJOUQitBUvCVg0eoTJBHnTZQpzCxHx3l4uJWHprs5OHg/28Wp+pWVrU8P5AATGvhpDdnlPoBsmK1lph98+YKXmwEmqOmaWFSOr2YVP0NvTtYlCjRuRIzp3a5XZxRcTPoAiVxs25lnX9NrqdLagYaCEG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744985660; c=relaxed/simple;
-	bh=P8pu/9E1xefDMZZYc1QzgyDKcdk7pIPUuqOP8rxmA6g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LUpusZ10g016xPPASa12B9Sq4cygAUIWo1AAIiw1HNxb0V03U7I0xVe2kfwGGbwjO8D7G/0VmXFsuuPEwL0QcRXEXeOyqvCrDCrvRKBvvo3As0T3fKZ9Ypq3Dr27HWLwJEBb9y0QmIgKF05SXq8KG1GPIJ9GDL/MR717heAoyHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XAtTnivV; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf446681cso10194565e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 07:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744985657; x=1745590457; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fwq5+n4TNOnJLSHAnNrr28KvD6+ZPBpkE676KvwvyKw=;
-        b=XAtTnivVR5cDqWBOxE9AQxqO8CBsM3dMW8/eRljW/Y1wg8ulzlXbcyiEv6ktrPZSAF
-         zuaDWJ8FY6A7n7mMefZukmjALERpRUlHuJTSShDpa1kdY38eXxhiDPVYMLdSBRoXPP3Y
-         ZNHGWtFTkN1ex6my4CDoSR6W/KtmZsLV+JsMuNilmzucqubRCnV6N5/4inJxr73SIBx4
-         MT4aEtWs9i2H853NdX3vJjA9TtEgvDL9ZM8cBsTLeLQtZ4g+HwoFdHglvyoZU7Stldj9
-         D1r04n37wFrrHyPGTYPatLJCsHMgWajee/bECTPcIVnB5fQjI1W575j5Cb/W4dCJFSDY
-         uPfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744985657; x=1745590457;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fwq5+n4TNOnJLSHAnNrr28KvD6+ZPBpkE676KvwvyKw=;
-        b=j7sgH8xQCmlW+g28pQTpbdbY3dhNZ2CZpIAejPDWzmvqYjDwHa9ILWJJWWbjWw659E
-         ZHLSKtHrpNJFJEKte6I5Qp4qaTlmJv35t6+APDM9A9i331+jesms3dKDXClF4H/2gko6
-         jJkl3OElKqG9eCEbwt05q/tbBzBTDZ7rFiHsYb3VwMkP1s88f22D52fDzMtySw7nNrRo
-         8DjZj/7G2W7FA180AUM5NsDsDs3etcI+8I/8PZE16AlKsJsCX5KpLIz1qL05g2QlixrD
-         mn2rr+tLAuL/oD9JUIvMq4RXxNKVr4rIbINqVL5maZBq0z8a5N6S9NO48OOLn1exhVfY
-         eNyA==
-X-Gm-Message-State: AOJu0YwPKZQSGxIml6kRj4g8ZG51qGVFLDqbTgxWY96ClKntERT8YdFX
-	BhybO/+cBr9OdstwkKNG6zJTZ3Cct6NKsvnPtn82GY6kfTJ1K0XnsJghPy3w5ptSYFaW/l7hPhy
-	Pc0RYiSnXLRCchAEVP2/V33fam/RIazmQlMX/R4ZMqBaF+7QaKqXCmLPSWVIDsnHc37rPWmdpNq
-	crqOoXjcsamiyJNoq+1AFdSbCVREFbhw==
-X-Google-Smtp-Source: AGHT+IHQmR0+d0SQj+FIUVGlBmX/KKxhLHvpdzBymx/b4+HbD3xXpMpSHJ1AAbFfWRrXjjGskSBwIeNL
-X-Received: from wmbhc5.prod.google.com ([2002:a05:600c:8705:b0:440:595d:fba9])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:47cb:0:b0:391:4674:b136
- with SMTP id ffacd0b85a97d-39efba5c519mr2112808f8f.29.1744985657393; Fri, 18
- Apr 2025 07:14:17 -0700 (PDT)
-Date: Fri, 18 Apr 2025 16:13:00 +0200
-In-Reply-To: <20250418141253.2601348-8-ardb+git@google.com>
+	s=arc-20240116; t=1744985835; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaBrBjOQ8zHGgdzJwLOhLx5BEANLyyEIR3mJXuDsqzf9dAR20jOSNpjn+p8TRmkrO0Y60ktww4HASKm8uJB1BRKiU01/SKhQNzvq/EcKZy74W7S97VdkoL1aNWf+vYm4dT4WIC0G/aIizn5+rnpcakZ2hcgjB42VZv0Y0VPXcC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=oiT4VktU; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1744985804; x=1745590604; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oiT4VktUKC7oWyadd4ac/FNF+7MAuJWP4NNqmJUnbTz2kOvPE8k7tynNEL0qXwOT
+	 CgEznyp7bjVYYamz5h6FkKhwGV3+TTWErX4uxAGF59elPdksUSlcyZtRlEQNX0gHw
+	 9hcxrSj+4QoliFdP+ouM177mERJvBBExLenvB2NYoPySrP0GYBw+YPH23IULCBU1E
+	 tD9xVEdiSVWKCKfXZs4iA7Z1w+6PGAxP1EO8POQ/lGyj1Jvvri5LriXMuU7TMtNb+
+	 W03Ytmy9w7cRxeYOu5yNL1JxNKsm7He3RbNP+Mzy+9c5KxTBQ/9+ZyK3so+fOuToq
+	 ME0L63a0wXAjEV3FSA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.34.195]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzyuS-1v1ZXe143K-013Xbt; Fri, 18
+ Apr 2025 16:16:44 +0200
+Message-ID: <a8cd4c41-806f-4fff-ab7e-7a2c85c0c869@gmx.de>
+Date: Fri, 18 Apr 2025 16:16:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250418141253.2601348-8-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=717; i=ardb@kernel.org;
- h=from:subject; bh=QeUiQEC4SC9V7bn5Rj098gGbfj8IuyRML/M6fUHi+QM=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIYMp9t2rMxZpvq+mvHSYFMW+40lNl3Og3P+LTUyPGLIqY
- p+uP2zZUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACby9QPDT8Yr12/eyoya5nby
- pvoLjSkXVnAGPrpSbeWa6LVjcsGV5f0M/6z/9tlcaj0Tyt/6V2BFpdafBKVr7z1NnnmrCaTzPGj ZzgYA
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250418141253.2601348-14-ardb+git@google.com>
-Subject: [PATCH v5 6/6] x86/asm: Retire RIP_REL_REF()
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-efi@vger.kernel.org, x86@kernel.org, mingo@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/447] 6.14.3-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250418110423.925580973@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250418110423.925580973@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:lRHOK4iF1zcl57vCz3gBhjRXD159mwQJ8f5PMqsuRhFsmA8mu5e
+ eLLz4WNCBOXIbb4pAGI2pFr2xB5stL0yQaoFk2J0AgmjH/JZx7ROTr2ks7cumRPOgmyWoX1
+ lGMib0KqVvzO9yZsLZ/cT9APa4AlsWZdRAVxNtry9EeCvlMV08LXYMAoF8fryqiGeUBVKBl
+ nugYVG0jJk7Wowu41q8cg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KZ9Xx9UhwTE=;bx5Hy7GXgzzIQig/aUvmZoxMfJ+
+ 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
+ +4+wTb2PEA==
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Greg
 
-Now that all users have been moved into startup/ where PIC codegen is
-used, RIP_REL_REF() is no longer needed. Remove it.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/include/asm/asm.h | 5 -----
- 1 file changed, 5 deletions(-)
+Thanks
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index a9f07799e337..eef0771512de 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -120,11 +120,6 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- 
- 	return p;
- }
--#ifndef __pic__
--#define RIP_REL_REF(var)	(*(typeof(&(var)))rip_rel_ptr(&(var)))
--#else
--#define RIP_REL_REF(var)	(var)
--#endif
- #endif
- 
- /*
--- 
-2.49.0.805.g082f7c87e0-goog
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
 
