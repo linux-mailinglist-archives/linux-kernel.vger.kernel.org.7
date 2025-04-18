@@ -1,203 +1,349 @@
-Return-Path: <linux-kernel+bounces-610630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75B5A93729
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EF3A93733
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1629C3A97FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4653AFAC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C01D2749F9;
-	Fri, 18 Apr 2025 12:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6929E1DF246;
+	Fri, 18 Apr 2025 12:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjxKT2Lc"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iozACYlE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D61A3168;
-	Fri, 18 Apr 2025 12:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4475678F3B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744979680; cv=none; b=FGadbGmIR2zIscaYjQK3nnjHOPBx8HdVZS+Ov6PcABi6f4dDZWK2GAO+jLsEF+ewolGu3cbmWnU+nIREVhz0Z7lGnXUaz42DUEbiGBOl5cxiREYbDwA8RqLkLM1NXtSEf1x3gAk2t3YSY9WReZZqr+3fzt7vNCvx0LkrKSN8FnA=
+	t=1744979750; cv=none; b=DQyV32SAqWYcspSzLvxXRz6a9WwpVxnlTv4zMb14UmLTN4pCuX9Rb7pkb/7u4CIRrTTUk1Yd1w80lye6rh9k+FI4hznMum1t1g8RLN2XwbsmmucSop1GPszAr8eloqanF3nonz9rdIxxFOQHvcVSA1W2xAupuPbGMhpm1wXcRH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744979680; c=relaxed/simple;
-	bh=EBOCjqnzKDn5KNNhu52mFgi297d2hKgnU7sjROgDKus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sqODm7z1P6tL/wA4GtmYHuUN/aUreZPDJZvMaq0MIbTBO50EYwKxZ8cOJVk0dPM43KvWzlmY2KpYozOkbmCYrjXswItSVBYmbZJpwS7/dn0UgfQU6kgH1pH0GPM4ddkYtYem9GVG2R9KYqdyUcMYFbH4R4rQ7dWCUosfAqMlOHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjxKT2Lc; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22c33ac23edso19937975ad.0;
-        Fri, 18 Apr 2025 05:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744979678; x=1745584478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=h/gTtHkZm4DcyAga3QLAmHjWTATKPBz8czS/VERcj6o=;
-        b=LjxKT2Lcs7H1WtYfqXVF94PlGuuKiiwVlgc4f3CQSJgodlm3p3BqpWBRvJ6n7xMB6p
-         t+F+yOT8N1IxBqWhsO9ZL9cU4FlX6Tu73BLM1r9bz78vv2qluRkMvL7d5GWz28CNf3N5
-         AkFrOtB8Skw/VLjUlkfBwDTkTAjmq/w8sPH+87spWHLGJIsQ8PcDsEGDQ7D/QYqW6VwK
-         47HfSbJWKFybBlYwQWuvdpPuwbPyySnS7/GPTDl4x/LmjkfFmePKjIfwo3Su+KS/sh8N
-         /2JQ+o4ymIumpi1YaRGOZjWoheglvxj8/mXT0DrfA55KpBYhZRn1WU/B0Pm+cLkN3H6d
-         T7fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744979678; x=1745584478;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/gTtHkZm4DcyAga3QLAmHjWTATKPBz8czS/VERcj6o=;
-        b=XhoHXq3PR+HvJtAxcE0DlVwNPHElVhtPl8IM7GsiWcbYSjY4vb9uBlUKCE1OhZOe4T
-         LA2TrIz7bW00E/+n7Uez/SFVCt4Hl2TL3IVgVIVfoh8RvccYzlnyBu4jxclXMCbwYjyt
-         W7TctbdKPex2t8cVje9T8/rITIRECmzVwL0e6cnfTB6bxOUDmPs/NeFEYDh0N6e4XZbh
-         3BxQuYA+YgqlyaOccSxj7+cmnmPAo12br5NI6bNVCb76pRjbAIIvMbtRagQz7+4f+qtg
-         11f8Y4STjsyGn7LViG7wmla9LVC1/io+H1jpz51MquMmvoZIHAxCYQbg0Cau8f+XcDHr
-         RsTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW29L/PdYIf7sJMnYlm0npNVVk3jmV2WG3Y0YZd9F2d87+0raHynKm+YIyS4oipLdI6+vI91KOjF/S+ZK5EZ+c=@vger.kernel.org, AJvYcCXq3utq39GLzwcVhawVgc+oi39d81lWIIkhkYmp5h4D32pCMPqZgYIabEqPxXTgx0exvWdxX2QR7mwHpKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1QmkAGeTZiBbvw8qEY4uFHQnmAHSlomNai3IFFFVHeO47R3N
-	uDEriZEy2qxX6pWW59SqRCeN0Y0sJEAFEl0ZbvQlILX9JAaJ0QKuHNyJCA==
-X-Gm-Gg: ASbGnctqNaqQZb0+0MNo0+xZb7OKnnzHYGfxZU3CcOiQe/mbSfdAI0VtP4yjYcE+xdz
-	d2pK4xcM2zVO/zYl5DCu0BTj6trbztNbLzrrcKPdpWbeH5AFX5NiMmhWL6zXswN803fM97yB6oE
-	pq0QBYNsN79kT7SBY5p3JiI3U76XjhzBlHMpNXDOmPVZyK9vU/OkQspAjKvhPfkihaDYM1hGP1D
-	/EiBspUy+RuXOsKVo88MsBh0r7+ARkGU/q9qkyLxrEIsiOHRJFD8WiAw499Qd6DwdcR0sPM1ZZO
-	aL77SpLjY6n5n1KVvqfKRVBR3qM68uAyIRfNNHhWni9rYF5BNO33fli947BE91fSB/cVSaxixUz
-	eKs+qCh2i
-X-Google-Smtp-Source: AGHT+IGdTCi9sikzAO1ApDHXMnuSueMHJB9dcz8BsiC/DBVSKjqmER4SDsyP6PvNYbpt9ejFYk1M9A==
-X-Received: by 2002:a17:902:fc50:b0:224:23ab:b88b with SMTP id d9443c01a7336-22c535734c2mr31775145ad.8.1744979678113;
-        Fri, 18 Apr 2025 05:34:38 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1c45:45a3:affe:4635:b6b6:1a76? ([2401:4900:1c45:45a3:affe:4635:b6b6:1a76])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8e13e1sm1487974b3a.46.2025.04.18.05.34.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Apr 2025 05:34:37 -0700 (PDT)
-Message-ID: <64beb3b4-a8fa-4acd-a139-6c19de0e37f4@gmail.com>
-Date: Fri, 18 Apr 2025 18:04:29 +0530
+	s=arc-20240116; t=1744979750; c=relaxed/simple;
+	bh=Ri+MFqoimvVwoyn+O8wjRhQJH8YuG78xibiFhwSj/vo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sgLU/8qXLaLCKNy1S8bR4tcea3gdV1b5lMzvyFfdc0C9O9JQt6Ny651aaWoSPTzxS96yd4xT7d0zoqm9vwP4RtVwBK/J6RpHpj2WD6z8wJchyMj2GMrYzNe3+5gc4R1MHRTTBXkryt7hUH6XfssuZ2veiCuAMEUTPF5lW4O7CJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iozACYlE; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744979748; x=1776515748;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ri+MFqoimvVwoyn+O8wjRhQJH8YuG78xibiFhwSj/vo=;
+  b=iozACYlEqYJxDwZFhrx7CwGOLZaPs64OpoFhw4rGbeGyYFgHEmY/s1IO
+   AhFa/XkooZToaq3eIFShntsBLFsvtMjnmcWBdR3OmUbnIsuYGIhxGAjBm
+   kJ/p5QqLKc2oFAedOM7KbN9mfEbs6GtaGHpbAgaevTw9J1+0XIBAh1RRZ
+   Osx2Cy7xtSq/HqUDjWsY1mhnK7f33puR4qn1OXJpjgx/jm1+UPUJdqoR3
+   woLZCs3f5DmP+1SYwKl0aajNBddTrgpO/N/o+uZJICDqMZkC6sWxK0gp7
+   O+oadope4l0H1h5+SmDr2CVJ6V4A22D8JqD6NDrIkCdM+rtwNRDAa0535
+   g==;
+X-CSE-ConnectionGUID: uiw1kFcJR0i7XRJnQ5E8XQ==
+X-CSE-MsgGUID: rIRCa1cKQSi8YWw0rt9x8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="50406376"
+X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
+   d="scan'208";a="50406376"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 05:35:48 -0700
+X-CSE-ConnectionGUID: JQF4jjTlQP6QkeC0KWmr4w==
+X-CSE-MsgGUID: lu6XsW9ZQH+eTJ4dUx7CrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
+   d="scan'208";a="131123144"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by fmviesa007.fm.intel.com with ESMTP; 18 Apr 2025 05:35:44 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: gregkh@linuxfoundation.org,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	lee@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com,
+	heikki.krogerus@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v3] mfd: core: Support auxiliary device
+Date: Fri, 18 Apr 2025 18:04:33 +0530
+Message-Id: <20250418123433.2586383-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] openrisc: Fix build warning in cache.c
-To: Stafford Horne <shorne@gmail.com>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
- sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20250401200129.287769-1-sahilcdq@proton.me>
- <Z-6VyRhGdInVidsw@antec> <af85b465-13e5-44e5-a0af-c7c68af7d43e@gmail.com>
- <aAIDfcZ4XD5f6mA4@antec> <f6f4f410-4a0a-4ce3-bf41-413af39fd50e@gmail.com>
- <aAIivK7NDG-6_aIU@antec>
-Content-Language: en-US
-From: Sahil Siddiq <icegambit91@gmail.com>
-Autocrypt: addr=icegambit91@gmail.com; keydata=
- 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
- rPgMe6IIvn24UuW2f6fIt0AaqOWq
-In-Reply-To: <aAIivK7NDG-6_aIU@antec>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Extend MFD subsystem to support auxiliary child device. This is useful
+for MFD usecases where parent device is on a discoverable bus and doesn't
+fit into the platform device criteria. Purpose of this implementation is
+to provide discoverable MFDs just enough infrastructure to register
+independent child devices with their own memory and interrupt resources
+without abusing the platform device.
 
-On 4/18/25 3:30 PM, Stafford Horne wrote:
-> On Fri, Apr 18, 2025 at 02:42:20PM +0530, Sahil Siddiq wrote:
->> On 4/18/25 1:17 PM, Stafford Horne wrote:
->>> On Fri, Apr 04, 2025 at 10:39:22AM +0530, Sahil Siddiq wrote:
->>> [...]
->>> I was working on getting this patches ready for upstreaming and noticed one
->>> thing:
->>>
->>>       ---------------------------------------------------------------------------------------
->>>       ./patches/or1k-20250418/0001-openrisc-Refactor-struct-cpuinfo_or1k-to-reduce-dupl.patch
->>>       ---------------------------------------------------------------------------------------
->>>       WARNING: From:/Signed-off-by: email address mismatch: 'From: Sahil Siddiq <icegambit91@gmail.com>' != 'Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>'
->>>
->>>       total: 0 errors, 1 warnings, 102 lines checked
->>>
->>> As you can see above the scripts/checkpatch.pl is failing with the warning
->>> about your email and signed-off-by not matching.  You can see more about it
->>> in the FROM_SIGN_OFF_MISMATCH section of the checkpatch[0] docs.
->>
->> Ok, this makes sense. I configured git-send-email to use gmail because
->> protonmail does not work with git-send-email without a paid account.
->>
->>> How would you like to resolve this?
->>
->> Is this a warning that cannot be ignored? I can:
->>
->> 1. submit the patch series with another email address that won't have issues
->>     with git-send-email, or
->> 2. submit the patch series using protonmail's web client (which might not be
->>     the best option).
->>
->> I would prefer not to use "icegambit91" in the signed-off-by tag.
->>
->> What are your thoughts on this?
-> 
-> I could rewrite the from header to match sahilcdq@proton.me.
-> 
-> But if I do that you should find a way to get proton.me to work with
-> gi-send-email [0] for future commits.  It seems this can work using the
-> Protonmail Bridge[1], though this site also says proton.me is not so good for
-> using with git send email.
+Current support is limited to just PCI type MFDs, but this can be further
+extended to support other types like USB in the future.
 
-Right. Also, protonmail bridge requires a paid proton account.
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
 
-> Maybe using another email in signed-off-by would be better.  The current
-> patches are on linux-next[2] where we can see the From/Signed-off-by mismatch.
-> For example:
-> 
->      author	Sahil Siddiq <icegambit91@gmail.com>	2025-03-29 15:16:22 +0530
->      committer	Stafford Horne <shorne@gmail.com>	2025-03-29 10:22:21 +0000
->      commit	af83ece87a1ef5097434b7c3c1fc0e9e7b83b192 (patch)
-> 
->      ...
-> 
->      Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
->      Signed-off-by: Stafford Horne <shorne@gmail.com>
-> 
+v2: Introduce a shared struct mfd_aux_device
+    Introduce MFD_AUX_TYPE flag for auxiliary device opt-in
 
-I agree. I have another email id (sahilcdq0@gmail.com). I can configure git
-to use this and this can also be used in the signed-off-by tag. So, this id
-shouldn't cause an issue.
+v3: Fix device_type ABI breakage (Andy)
+    Aesthetic adjustments (Andy)
 
-Let me know if I should send the series using this email id.
+PS: I'm leaning towards leaving the ioremap or regmap complexity out of
+MFD core and think that we should enforce child devices to not overlap.
 
-Thanks,
-Sahil
+If there's a need to handle common register access by parent device, then
+I think it warrants its own driver which adds auxiliary devices along with
+a custom interface to communicate with them without involving MFD core.
+
+ drivers/mfd/Kconfig      |   1 +
+ drivers/mfd/mfd-core.c   | 123 ++++++++++++++++++++++++++++++++++++---
+ include/linux/mfd/aux.h  |  30 ++++++++++
+ include/linux/mfd/core.h |   3 +
+ 4 files changed, 149 insertions(+), 8 deletions(-)
+ create mode 100644 include/linux/mfd/aux.h
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 93773201a517..8c8e6797307c 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -8,6 +8,7 @@ menu "Multifunction device drivers"
+ 
+ config MFD_CORE
+ 	tristate
++	select AUXILIARY_BUS
+ 	select IRQ_DOMAIN
+ 	default n
+ 
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 76bd316a50af..fc6a34a045be 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -10,8 +10,11 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/acpi.h>
++#include <linux/auxiliary_bus.h>
++#include <linux/pci.h>
+ #include <linux/list.h>
+ #include <linux/property.h>
++#include <linux/mfd/aux.h>
+ #include <linux/mfd/core.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+@@ -136,10 +139,87 @@ static int mfd_match_of_node_to_dev(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-static int mfd_add_device(struct device *parent, int id,
+-			  const struct mfd_cell *cell,
+-			  struct resource *mem_base,
+-			  int irq_base, struct irq_domain *domain)
++static void mfd_release_auxiliary_device(struct device *dev)
++{
++	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
++	struct mfd_aux_device *mfd_aux = auxiliary_dev_to_mfd_aux_dev(auxdev);
++
++	kfree(mfd_aux);
++}
++
++static int mfd_add_auxiliary_device(struct device *parent, int id, const struct mfd_cell *cell,
++				    struct resource *mem_base, int irq_base,
++				    struct irq_domain *domain)
++{
++	struct mfd_aux_device *mfd_aux;
++	struct auxiliary_device *auxdev;
++	int r, ret;
++
++	mfd_aux = kzalloc(sizeof(*mfd_aux), GFP_KERNEL);
++	if (!mfd_aux)
++		return -ENOMEM;
++
++	for (r = 0; r < cell->num_resources; r++) {
++		/* Find out base to use */
++		if ((cell->resources[r].flags & IORESOURCE_MEM) && mem_base) {
++			mfd_aux->mem.name = cell->resources[r].name;
++			mfd_aux->mem.flags = cell->resources[r].flags;
++
++			mfd_aux->mem.parent = mem_base;
++			mfd_aux->mem.start = mem_base->start + cell->resources[r].start;
++			mfd_aux->mem.end = mem_base->start + cell->resources[r].end;
++		} else if (cell->resources[r].flags & IORESOURCE_IRQ) {
++			mfd_aux->irq.name = cell->resources[r].name;
++			mfd_aux->irq.flags = cell->resources[r].flags;
++
++			if (domain) {
++				/* Unable to create mappings for IRQ ranges */
++				WARN_ON(cell->resources[r].start != cell->resources[r].end);
++				mfd_aux->irq.start = mfd_aux->irq.end = irq_create_mapping(
++						domain, cell->resources[r].start);
++			} else {
++				mfd_aux->irq.start = irq_base + cell->resources[r].start;
++				mfd_aux->irq.end = irq_base + cell->resources[r].end;
++			}
++		} else {
++			mfd_aux->ext.name = cell->resources[r].name;
++			mfd_aux->ext.flags = cell->resources[r].flags;
++			mfd_aux->ext.parent = cell->resources[r].parent;
++			mfd_aux->ext.start = cell->resources[r].start;
++			mfd_aux->ext.end = cell->resources[r].end;
++		}
++	}
++
++	auxdev = &mfd_aux->auxdev;
++	auxdev->name = cell->name;
++	/* Use parent id for discoverable devices */
++	auxdev->id = dev_is_pci(parent) ? pci_dev_id(to_pci_dev(parent)) : cell->id;
++
++	auxdev->dev.parent = parent;
++	auxdev->dev.type = &mfd_dev_type;
++	auxdev->dev.release = mfd_release_auxiliary_device;
++
++	ret = auxiliary_device_init(auxdev);
++	if (ret)
++		goto fail_aux_init;
++
++	ret = __auxiliary_device_add(auxdev, parent->driver->name);
++	if (ret)
++		goto fail_aux_add;
++
++	return 0;
++
++fail_aux_add:
++	/* auxdev will be freed with the put_device() and .release sequence */
++	auxiliary_device_uninit(auxdev);
++fail_aux_init:
++	kfree(mfd_aux);
++	return ret;
++}
++
++static int mfd_add_platform_device(struct device *parent, int id, const struct mfd_cell *cell,
++				   struct resource *mem_base, int irq_base,
++				   struct irq_domain *domain)
+ {
+ 	struct resource *res;
+ 	struct platform_device *pdev;
+@@ -302,6 +382,16 @@ static int mfd_add_device(struct device *parent, int id,
+ 	return ret;
+ }
+ 
++static int mfd_add_device(struct device *parent, int id, const struct mfd_cell *cells,
++			  struct resource *mem_base, int irq_base, struct irq_domain *domain)
++{
++	/* TODO: Convert the platform device abusers and remove this flag */
++	if (dev_is_pci(parent) && id == MFD_AUX_TYPE)
++		return mfd_add_auxiliary_device(parent, id, cells, mem_base, irq_base, domain);
++
++	return mfd_add_platform_device(parent, id, cells, mem_base, irq_base, domain);
++}
++
+ /**
+  * mfd_add_devices - register child devices
+  *
+@@ -340,16 +430,22 @@ int mfd_add_devices(struct device *parent, int id,
+ }
+ EXPORT_SYMBOL(mfd_add_devices);
+ 
+-static int mfd_remove_devices_fn(struct device *dev, void *data)
++static int mfd_remove_auxiliary_device(struct device *dev, void *data)
++{
++	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
++
++	auxiliary_device_delete(auxdev);
++	auxiliary_device_uninit(auxdev);
++	return 0;
++}
++
++static int mfd_remove_platform_device(struct device *dev, void *data)
+ {
+ 	struct platform_device *pdev;
+ 	const struct mfd_cell *cell;
+ 	struct mfd_of_node_entry *of_entry, *tmp;
+ 	int *level = data;
+ 
+-	if (dev->type != &mfd_dev_type)
+-		return 0;
+-
+ 	pdev = to_platform_device(dev);
+ 	cell = mfd_get_cell(pdev);
+ 
+@@ -372,6 +468,17 @@ static int mfd_remove_devices_fn(struct device *dev, void *data)
+ 	return 0;
+ }
+ 
++static int mfd_remove_devices_fn(struct device *dev, void *data)
++{
++	if (dev->type != &mfd_dev_type)
++		return 0;
++
++	if (dev->bus == &platform_bus_type)
++		return mfd_remove_platform_device(dev, data);
++
++	return mfd_remove_auxiliary_device(dev, data);
++}
++
+ void mfd_remove_devices_late(struct device *parent)
+ {
+ 	int level = MFD_DEP_LEVEL_HIGH;
+diff --git a/include/linux/mfd/aux.h b/include/linux/mfd/aux.h
+new file mode 100644
+index 000000000000..826a0a05e9e9
+--- /dev/null
++++ b/include/linux/mfd/aux.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * MFD auxiliary device
++ *
++ * Copyright (c) 2025 Raag Jadav <raag.jadav@intel.com>
++ */
++
++#ifndef MFD_AUX_H
++#define MFD_AUX_H
++
++#include <linux/auxiliary_bus.h>
++#include <linux/container_of.h>
++#include <linux/ioport.h>
++
++/*
++ * Common structure between MFD parent and auxiliary child device.
++ * To be used by leaf drivers to access child device resources.
++ */
++struct mfd_aux_device {
++	struct auxiliary_device auxdev;
++	struct resource	mem;
++	struct resource	irq;
++	/* Place holder for other types */
++	struct resource	ext;
++};
++
++#define auxiliary_dev_to_mfd_aux_dev(auxiliary_dev) \
++	container_of(auxiliary_dev, struct mfd_aux_device, auxdev)
++
++#endif
+diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
+index faeea7abd688..96f6ff98a111 100644
+--- a/include/linux/mfd/core.h
++++ b/include/linux/mfd/core.h
+@@ -12,6 +12,9 @@
+ 
+ #include <linux/platform_device.h>
+ 
++/* TODO: Convert the platform device abusers and remove this flag */
++#define MFD_AUX_TYPE	BIT(31)
++
+ #define MFD_RES_SIZE(arr) (sizeof(arr) / sizeof(struct resource))
+ 
+ #define MFD_CELL_ALL(_name, _res, _pdata, _pdsize, _id, _compat, _of_reg, _use_of_reg, _match) \
+-- 
+2.34.1
 
 
