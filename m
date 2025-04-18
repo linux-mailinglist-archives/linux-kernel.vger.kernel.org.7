@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-611021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359BEA93BCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBAEA93BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDCC28E16D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75F041B64C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4D82236F3;
-	Fri, 18 Apr 2025 17:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01991224223;
+	Fri, 18 Apr 2025 17:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKFpz6vl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bM5g9CtS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E621ADD3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F1421ADD4
 	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 17:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744996443; cv=none; b=P+1G0+7loY7hsHSXy6Hc1fxc8MkpdbGO8l8RESSqEPsAbXptIf9J30EvsDE2f5pGvHy40N2MTiUq3Xac5PczL0dWfSQ1ae5DugF5u7QugtreIRUkolblGKLiWm75TKRVycqapBi+Q1ZwYX96Uu5u4ECJapgKOKuC++0+dcbvSBI=
+	t=1744996443; cv=none; b=kBwsFZ0KPGymbt1OmcNr5xfsyNX+HPITGmhPFpxFqWBm2slfEUQSSnEuNjyUHI9XHyHan2lhgRb7hoBAegeQQhLXN0AXREFaqMSEU3E08OuqoDRyZL/Lg2Od3uGDNTeJyO7GFncCxDG/e1uQ1oA4JOPKVv8j4J3tB78O+p1HZsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744996443; c=relaxed/simple;
-	bh=IQ7shti0hALgVdiAlZdiEITXvNKwzygSDDaW2FuJunA=;
+	bh=QpNmSHZ6zOV2xliYb2s0bcKUdg+nsbgy4+hhnPQCF5Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P/UIQKIaa3DbL3XmBfcFrArr0fjNykgYP4DRJemjJEhk0j4APdkirfIKbk76PHSZsO/Oovwc+zl+EzGh6x57PxITtLW8Uyq4w83bI9Nz2tJOPaFh3FroS+yWNkhUUX8IgfeAeU1SSd1lD8YR4AnVliTbgMz3DB9mFx3wY3YKU5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKFpz6vl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF197C4CEF4;
+	 MIME-Version; b=f2PnzeIdYtVD8on9IQ9Ea+DlzkmB7UR3xbf0kbD6RK8fUcan1mN50XEgxOC3QrnY9TZ8+0KkIv+nqfilFm95ksZwbFNO5iPQMsg7ImF7Xk0VyHxsylzZlp+XzPUTQyS7FqGN8RBIePC37dMcRDO2+fOci/zOH2ysacX1efj10U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bM5g9CtS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB8ABC4CEFD;
 	Fri, 18 Apr 2025 17:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744996442;
-	bh=IQ7shti0hALgVdiAlZdiEITXvNKwzygSDDaW2FuJunA=;
+	bh=QpNmSHZ6zOV2xliYb2s0bcKUdg+nsbgy4+hhnPQCF5Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SKFpz6vlWHDadYnaxK+Re7dm7YlPStPBrxJkYb/3/VBdq7712tMSpE96LyXXt54DM
-	 pwCbVaERoM9pyLigW4iRZnpgR0ZhJ/OVM9nqkOTKtoDCNuBys/OpNZaail6r5PMkr3
-	 VXtuvYY4g5syeb87+EVibjpLcFX2CD7OIFNwqrPbJdOID/v+lRQ8ussz9x9hapBIlU
-	 GbUJzpy7Nmj55xWcxn1hJcLngZtRbj35xoAx0L3vOzqGQnWvyJ9876VqweZI0FHqIY
-	 qXqFhmBj/58J9bDOHgUaes4JOJPL8SXHv7x7ymvNveNegaUrx+hiywZ4XIjRAqZ+qu
-	 tZbihHINFTLtA==
+	b=bM5g9CtSMSqgD81sUPdDjdO705u+XTFj1OkxT3RUClOqWXP+siP7znER3q8ZXaUMp
+	 KQjmEkNmaV8JSUoY9TJ1Q4XDx87pHxSJzBVk83v4V8256JFv9qXjRHwUKQiTSa3/km
+	 wSbpRZCn1PuR3mrBekR0Z94+MTTnf6jF563iplJHpV9IuGZWnVpOxLovduDmNnPS75
+	 BcGCp1BDUHzMA39JbmVD2BqHgWKPLwMtX+19GoeZ2vrKdZ9qlr4z0XBpRaV8ynyxDm
+	 Z8OmivOTIxTg3k9FOoKAy+ij0DUdcUUQvy78RzAeTbhCZKl8MjWd0LVbdyke6ieGAE
+	 4a49K/4tZ8T/g==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 02D5ECE17BC; Fri, 18 Apr 2025 10:14:02 -0700 (PDT)
+	id 05A94CE18B1; Fri, 18 Apr 2025 10:14:02 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -56,9 +56,9 @@ Cc: kernel-team@meta.com,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 ratelimit 12/14] ratelimit: Don't flush misses counter if RATELIMIT_MSG_ON_RELEASE
-Date: Fri, 18 Apr 2025 10:13:57 -0700
-Message-Id: <20250418171359.1187719-12-paulmck@kernel.org>
+Subject: [PATCH v2 ratelimit 13/14] ratelimit: Avoid atomic decrement if already rate-limited
+Date: Fri, 18 Apr 2025 10:13:58 -0700
+Message-Id: <20250418171359.1187719-13-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
 References: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
@@ -70,8 +70,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Restore the previous semantics where the misses counter is unchanged if
-the RATELIMIT_MSG_ON_RELEASE flag is set.
+Currently, if the lock could not be acquired, the code unconditionally
+does an atomic decrement on ->rs_n_left, even if that atomic operation
+is guaranteed to return a limit-rate verdict.  This incurs needless
+overhead and also raises the spectre of counter wrap.
+
+Therefore, do the atomic decrement only if there is some chance that
+rates won't be limited.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -82,26 +87,25 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- lib/ratelimit.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ lib/ratelimit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 6c639ab6489d5..b306e230c56bb 100644
+index b306e230c56bb..2048f20561f31 100644
 --- a/lib/ratelimit.c
 +++ b/lib/ratelimit.c
-@@ -87,9 +87,9 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 		atomic_set(&rs->rs_n_left, rs->burst);
- 		rs->begin = jiffies;
+@@ -60,8 +60,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 		unsigned int rs_flags = READ_ONCE(rs->flags);
  
--		m = ratelimit_state_reset_miss(rs);
--		if (m) {
--			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
-+		if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
-+			m = ratelimit_state_reset_miss(rs);
-+			if (m) {
- 				printk_deferred(KERN_WARNING
- 						"%s: %d callbacks suppressed\n", func, m);
- 			}
+ 		if (rs_flags & RATELIMIT_INITIALIZED && burst) {
+-			int n_left;
++			int n_left = atomic_read(&rs->rs_n_left);
+ 
++			if (n_left <= 0)
++				return 0;
+ 			n_left = atomic_dec_return(&rs->rs_n_left);
+ 			if (n_left >= 0)
+ 				return 1;
 -- 
 2.40.1
 
