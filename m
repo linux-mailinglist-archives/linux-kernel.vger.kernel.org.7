@@ -1,179 +1,146 @@
-Return-Path: <linux-kernel+bounces-611081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1E8A93CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:16:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851F1A93CB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3157A3E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E001B61F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6DD222568;
-	Fri, 18 Apr 2025 18:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D437222592;
+	Fri, 18 Apr 2025 18:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wqoPHnvg"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNf3NsIB"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E20F8821
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E08613B2A4;
+	Fri, 18 Apr 2025 18:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745000189; cv=none; b=X/3J0nMLZhATTu+9Z1hFRyThud13SOTeVWn/xNYalxydTgvV19dfzWTrgstO+y/CQPbAh4ATwPtye01oJ/kV0v3ipdo5cCXZg88kPXZUE8AgFQOt8D5pYfFDN07ZG7MEcXEk4X627XRLDQs378Xo88NnoUMyAE7jKnCLqCKptcE=
+	t=1745000377; cv=none; b=aJrfcl1TyQw79qLIp9/cmdt7PeE0S15hqyMuvQWtacUrHLCyKx0mQw2yQiYi/QNaTFOl+nby4h2ZAj8rtBKVPCnTkustjM5vxyqt6hXjZ8yHGS5WzZAo1xcTjGbcxsEtbx/UT/72i6vb5nE2wFlv7U/es2jbBUR67A1tzX18T64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745000189; c=relaxed/simple;
-	bh=Hrwf1aoUO2fKyKpeHM/6WfWnH0OQTd0CdQrP2NqF3dA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ngpCNBR9218MQkvUlWRy6Sx9Unc/ub958eYE5RPbzU5dOpw/6WLKgKFTrLqRKukCLIFWJJiB+rvf3ejw9L8PKESTp8CxB2xfhBtlM70bge6aHyPXj4+HB3yskMoH2zxAgJZDiqqp7g9BHqycd4CaIXn1WnaHhBzB08paiELCHaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wqoPHnvg; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-604ad0347f5so505466eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:16:26 -0700 (PDT)
+	s=arc-20240116; t=1745000377; c=relaxed/simple;
+	bh=SLwvrl0gbz7th4Q1VFcfpLjOLB8MNndL48XA8sfo608=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pIZI9Ea4OYKgH6DqWNPDO0dZPoq/M6mt8swDWRjfuLfOBBPZ0NbtlP+RaiZw17ZalCuWanZjvE6iAW5AL7tuoHdzxaWhi2nVGrERGYBYq5DCYU3AW/9mPAvP7Arj5D+0PbzvKQxURaoHVqVYT7b4BKJhpcsk0P+2P+tmk0cjIK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNf3NsIB; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso2461225b3a.0;
+        Fri, 18 Apr 2025 11:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745000185; x=1745604985; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQglEEV086U9T/4BDha3drx4fl6TCsy6FTdFNCiQyhY=;
-        b=wqoPHnvgrgXKV8XiHE/XIY69OiEqMXeUDDDrPw+YYbleKXiiJrSXLYUSEZRB6SYLDo
-         xOeSRXp1WYMuGucppLYRwohdGLOtQ0l+S8CC7zARGq/SvVyMqRNThcIsGWUPgr9ykb4l
-         LL45uAp11CLzT7k+BVGH6JLQAE8Qg8MsyFbHgrTLGiyrqeV4cL5eqrrJt6M+SSrqeyKP
-         2KHJVIqwt4aFoKyUky3J1oBfdYuS/3NhcftTYiK/CHmqkD00FbMZtH4Mq48rkFXcLrK6
-         /2jRcQcpQh7D7fB/y7pb8Svaanx+Gj8t46Nn0J8izZBtNmISTLu1C6dH9H5AVa7w71bw
-         lXEA==
+        d=gmail.com; s=20230601; t=1745000375; x=1745605175; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kS9LLNgYY9RzFfrzH68SeW5jhMvExMO5jq7yXv/Swg=;
+        b=jNf3NsIBTfA5ilXLOvZ6vRgl/FkI8sEWO5B3alRQmNx2MakNP8yNYy/v8f7eTPJkte
+         oAGN0UGLwO3e3UzfeNkm/5dUc9qMcwoE/jMRsIWtUSOndwHrIaFGtdWd/Mpg/Xc7fjGL
+         UW1EAdrPyoqoBM/Kif7bwJp7xTehar8JocsuldDY4X4mkUB9k5Fxhwq1AZPnDyPY1bwF
+         gSgyoMc9wxJAQmT52I8h7MadUP8GJgEyz0Tkrr4kcUBQ5Ijpd7CgjwBUm1ZVHHsy8pA0
+         F5S+Nke6jpeGXANs5WZUBhfKdaZfLjOYxVOK3GtfeGb7chQ8uw+1UHmxYPvFWft4ZCek
+         o/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745000185; x=1745604985;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQglEEV086U9T/4BDha3drx4fl6TCsy6FTdFNCiQyhY=;
-        b=eKrMU/5hJJ07gvtLLpd1Dd2kex62aSYdUf2rL9n08+qBtMranE/v1cC+kilWQGrE68
-         wYM/8pEo4k78rQm8WcqyuG43oTXjZyVRnSPTvC6QgWquiUvd/XZSsQlt6pnBU9Pfw7kH
-         H+YflEjUkPgvM+IAPyPEUB3UEglhHyulZ3LyuSScis9GEw0Oqqy0x5gvod/x+zYVJvFo
-         GSKyryqj/3oFvbtq5PIBy8ZXwxs+u5q96TDKR2QyWupijhjfXuV89rz2l0slcCS/oma9
-         HkVc3H93qmYusZe3r+S5BnwgdpUjLH5a8wjkIyAtHHYe/ZIXcXTz9SjW9Q0Yc0TDMXs7
-         B2FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs0qCPRA8KHuCGFiymR7x3irB0N7XKpfr9aAE65UtoCECRebm+B20vJTaFpXaztQBLriVkNcOrPW16v58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqDwm6MQ2iukigBdZC+ARCZxtVJcXixlZpaicFns3yEGDdF8hD
-	RzQRVbPy8g5oMzXu31xjBiC0cvYAi2kZSNOG0z+SkeGX52gb0DAujRB8xJW8RSQahg3gVtcaZ7B
-	tQEM=
-X-Gm-Gg: ASbGncvyTvV6ssNHxL2hdx/ESHwVVyrECuqTNLvPCKnevCXcdC7kvZCDU6U1sXtOlQU
-	6dwur4LmRPWB6CfMTKTkir0NTbwiIAuHFhOrupUovU9slnjaX7hjrwudQySs4XAnhl/EpsTQGGm
-	FoqW2uqf3qfoLdF5Zl+aj26FKTTC/erlM8D8eHYZvTXyVAF6+35FFcozHVp+bGIylYF/ww5V/uj
-	FOHn4ItbM3/nZNx0gI84krHOwsZBiRSfy7owKmSBc+RqBxs+XfccUYHNh1KPjUbbL8IMd1S6rnG
-	onRHcN5ohIWEUm/mzXuYtwlVHPD5SEEhwfIMsClGK7upXsg=
-X-Google-Smtp-Source: AGHT+IGe/oEO2FDNEKJyCLo/N4egBJ8nsACv4TcQtDgohfoTf4RgTfAbniyGVr1QXaHxO1TEdosMtA==
-X-Received: by 2002:a05:6820:2288:b0:603:f973:1b1 with SMTP id 006d021491bc7-606003e8080mr2035983eaf.0.1745000185505;
-        Fri, 18 Apr 2025 11:16:25 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:dcdf:46e0:18e5:c279])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-605ff5f7a1dsm436659eaf.20.2025.04.18.11.16.22
+        d=1e100.net; s=20230601; t=1745000375; x=1745605175;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kS9LLNgYY9RzFfrzH68SeW5jhMvExMO5jq7yXv/Swg=;
+        b=qT7SSJWkEYbXWSRwIiJsoO0jF78O/JOJvpWuACt/8GpBUpZCRo/gbkycG06bSswTv7
+         T/g42lLFOZ7Hif9U1qVdGps/1w7T3xaSNCYx6YKenAcnLcg7+tEPNdHigb6QTPBE9DC5
+         5bwFB0iYC9yJ3OM0Ab1nNlkTqMazT0ncWpcop1OamlSSubmMs/4uJ1R9qcJhbi8eQMco
+         7XZvjWkE/aFJE0G5V/VFEhhsgA/OUHjW7y339N9Zj94u6TrtCrfyEsGzFsgfAKRptNcw
+         h3wT5QeLkYZ6W9uB7ImZXwPKJULxdVmChKxhyavdeqxQZ/GWsFiBxfU3gf2xK4ouHj6o
+         Gc1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ/qcnd+0QdEXASb7dm3palLZLbFtTcs7NAH2Bs5wocvMFR85wudBdTs47wb6K/N1k2qg/lEWkoQKh@vger.kernel.org, AJvYcCUXhQ55e+HtlUJ+dPmaS+UszQ5xYEDUi24Mo2UkT+tYGGFvDokAv5TWLlElkvW5Ulm0Z7xVBM1zbzGsiQ+u@vger.kernel.org, AJvYcCUi5N07kzrnbjUPFlwuBcD1VzEX8AiKwgTQIl9VxDX/OjAAyGL7GNyUm0d7xlZfBxbEca74pz+393GyQA==@vger.kernel.org, AJvYcCUi7Yxl+rgdwDATgzJiWEiiZgFgrFxP1i2S11oei+6fyidyR8G6JcwhyXokMxFfJS7dcBaGdCSFq4Nhkpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztX0Y3dkGHHfqyAgsK3SiGs3Ok7jqVrQ9hQwporCvjzpx7FQVj
+	j/WiHmExnbKX5UDoCHJeVKY+zgbuOv6Qwyt63UQr1AYqo+6ubk84
+X-Gm-Gg: ASbGncsFV2ulonL2haL/a1ZSQK+uH5A8GIhQ5FaJH4WFBtygohLefCclBBH0SeSaYw6
+	hQ81oLXkcsb79nj5n3Z5coYHMkR3kZPfxDgVA8HDCad9y+uVPiIDz1FAtx/RPNZcxeURgp/xxCP
+	rzDd319tQF75ff8nRVdYaOBqu4zlQgItaAk+7lSTMcyFP2L9e3HLwBS80kr+dNWyfBg2sIqJ9IU
+	WUeYOKqW27MdRoK/vpo7kKOGjUR96ccOaB6Xif+rMKxzJIf/TrUK6262RmdyLtxZvK1+GLUB89H
+	u+0e4am34kzN9ln8PTm3EnfVWjc1BWDwBH4dkHs=
+X-Google-Smtp-Source: AGHT+IEjqGe6VSPq7PwLD+gzJ3hWDVXQTREJby4Lm4NevX09+gzhJFn1k3fAtNK4eeMvdM3YN6xsuQ==
+X-Received: by 2002:a05:6a00:6c85:b0:736:4e02:c543 with SMTP id d2e1a72fcca58-73dc1497eb0mr4082141b3a.9.1745000375225;
+        Fri, 18 Apr 2025 11:19:35 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf90d7easm1892085b3a.84.2025.04.18.11.19.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 11:16:24 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 18 Apr 2025 13:16:13 -0500
-Subject: [PATCH] iio: amplifiers: ada4250: use DMA-safe memory for
- regmap_bulk_read()
+        Fri, 18 Apr 2025 11:19:34 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: krzk@kernel.org
+Cc: conor+dt@kernel.org,
+	danielt@kernel.org,
+	deller@gmx.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	jingoohan1@gmail.com,
+	krzk+dt@kernel.org,
+	lee@kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	lujianhua000@gmail.com,
+	mitltlatltl@gmail.com,
+	pavel@kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH 2/4] backlight: ktz8866: add slave handler
+Date: Sat, 19 Apr 2025 02:17:16 +0800
+Message-ID: <20250418181723.207795-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <eb23737f-5b6c-47fd-8b39-637e059bd5f1@kernel.org>
+References: <eb23737f-5b6c-47fd-8b39-637e059bd5f1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v1-1-7e7bd6dad423@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAOyWAmgC/x2NwQqDMBBEf0X23AUTI9T+SulhYzbtQBsl0VIR/
- 71BmMubBzM7Fc3QQrdmp6xfFEypgrk0NL4kPZURKpNtbd86c2VgYvnMb0RoLixBXDVccHYbB1m
- E/RqjZkaqwcJDp96bzjk79FSX56wRv/P1/jiOP0wZRluFAAAA
-X-Change-ID: 20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-93ebb1344295
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2247; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=Hrwf1aoUO2fKyKpeHM/6WfWnH0OQTd0CdQrP2NqF3dA=;
- b=owGbwMvMwMV46IwC43/G/gOMp9WSGDKYpr1PVGb7ZHrjghtDqMjJf+ne12wTNuhe/vtX762Iw
- RMpS3/mTkZjFgZGLgZZMUWWNxI35yXxNV+bcyNjBswgViaQKQxcnAIwkcBaDobW22+9P20tOHRp
- N2vLXJ290cvuZsZarfYqmtESv2haYrNolaSmvz9HMMc7YRPV4ltJ5+5rvercp37udSt3QrHOnIN
- qmn4ftIU4+K4sck8yueE8i3/fI8+CMO5rm+39Ivc5FBbbCyQ9EHBrsE35xxzJlFv2O+e98i+uqr
- 8bUtmsI/gss9iW+oqYRcwKlfE8Irbkh0as4zP7QwxyL+XdhfQ/xl+4IrXLvtyybetMqb4rKWU7F
- xjfe9DU1byybxlzjPeCyiKZ3NdMWRdiHm381SPvtc4750LdIf/IsOX8fC/M7gRot2z428ok4LTE
- S9D2c/ime2trazPyw6MWCsj0TXyedTs5WUrpzF+LAAsA
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Use DMA-safe memory instead of stack-allocated memory for the call to
-regmap_bulk_read() in the ada4250_init() function as this could be used
-directly by a SPI controller.
+On Tue, Apr 8, 2025 at 12:27 AM Daniel Thompson <daniel@riscstar.com> wrote:
+> On Mon, Apr 07, 2025 at 05:51:17PM +0800, Pengyu Luo wrote:
+> > Kinetic ktz8866, found in many android devices, nowadays, some oem use
+> > dual ktz8866 to support a larger panel and  higher brightness, original
+> > driver would only handle half backlight region on these devices,
+> > registering it twice is unreasonable, so adding the slave handler to
+> > support it.
+> 
+> Is there anything unique about KTZ8866 that allows it to be used like
+> this? I think it would be better to add support for secondary backlight
+> controllers into the backlight framework, rather than having to
+> implement driver specific hacks for every backlight controller that
+> appears in a primary/secondary configuration.
+> 
 
-Also remove unnecessary use of get_unaligned_le16() and explicitly
-include linux/types.h e.g. for __le16 while we are fixing this up.
+According to my understanding, if I add the new api to backlight framework,
+with a minimal modification, then I either do A or do B(I doubt it is my
+fixed mindset)
 
-Fixes: 28b4c30bfa5f ("iio: amplifiers: ada4250: add support for ADA4250")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/amplifiers/ada4250.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+A:
+Tied two devices, registering the primary and the secondary device during
+one probe, to do that, I access another KTZ8866 when probing. Those hack
+is still here, that doesn't seem to help.
 
-diff --git a/drivers/iio/amplifiers/ada4250.c b/drivers/iio/amplifiers/ada4250.c
-index 74f8429d652b17b4d1f38366e23ce6a2b3e9b218..f81438460aa51ce30f8f605c60ee5be5c8c251d3 100644
---- a/drivers/iio/amplifiers/ada4250.c
-+++ b/drivers/iio/amplifiers/ada4250.c
-@@ -13,8 +13,7 @@
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/spi/spi.h>
--
--#include <linux/unaligned.h>
-+#include <linux/types.h>
- 
- /* ADA4250 Register Map */
- #define ADA4250_REG_GAIN_MUX        0x00
-@@ -63,6 +62,7 @@ struct ada4250_state {
- 	u8			gain;
- 	int			offset_uv;
- 	bool			refbuf_en;
-+	__le16			reg_val_16 __aligned(IIO_DMA_MINALIGN);
- };
- 
- /* ADA4250 Current Bias Source Settings: Disabled, Bandgap Reference, AVDD */
-@@ -301,7 +301,6 @@ static int ada4250_init(struct ada4250_state *st)
- {
- 	int ret;
- 	u16 chip_id;
--	u8 data[2] __aligned(8) = {};
- 	struct spi_device *spi = st->spi;
- 
- 	st->refbuf_en = device_property_read_bool(&spi->dev, "adi,refbuf-enable");
-@@ -326,11 +325,12 @@ static int ada4250_init(struct ada4250_state *st)
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_bulk_read(st->regmap, ADA4250_REG_CHIP_ID, data, 2);
-+	ret = regmap_bulk_read(st->regmap, ADA4250_REG_CHIP_ID, &st->reg_val_16,
-+			       sizeof(st->reg_val_16));
- 	if (ret)
- 		return ret;
- 
--	chip_id = get_unaligned_le16(data);
-+	chip_id = le16_to_cpu(st->reg_val_16);
- 
- 	if (chip_id != ADA4250_CHIP_ID) {
- 		dev_err(&spi->dev, "Invalid chip ID.\n");
+B:
+Uncoupled, probing separately, the later one is registered as the
+secondary one. Brightness control is a little uncoupled, there are two
+sysfs, I doubt if userspace programs will write brightness to two
+devices. Then we need synchronization, write primary => write primary
+and write secondary, viceversa.
 
----
-base-commit: aff301f37e220970c2f301b5c65a8bfedf52058e
-change-id: 20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-93ebb1344295
+> Also, the kernel seeks to avoid adding new instances of master/slave
+> terminology. See the coding style doc for suggested alternatives:
+> https://www.kernel.org/doc/html/latest/process/coding-style.html#naming
+> 
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+Agree.
 
+Best wishes,
+Pengyu
 
