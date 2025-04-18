@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-610990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92341A93B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D8AA93B87
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2431744115C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640601B632C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD66215047;
-	Fri, 18 Apr 2025 17:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C520F217734;
+	Fri, 18 Apr 2025 16:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="PVpSCnLC"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CYHTS770"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733CE2144D6;
-	Fri, 18 Apr 2025 17:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995633; cv=pass; b=btAxbycRqp47k+8QecoMh+tbAvm219Wu56HHs3StwHgz+QGIh+s+9CK577hVxM1v7omqFup+pWc/YiFUowZg9frESuSGbmTrAj37YJoIveA2BAo+Mxv0xTesYVDay/2Qw1H5K4YyQkbC2UARXxEZQlx3WS1aWI41x8JgI5DjXGc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995633; c=relaxed/simple;
-	bh=xktUs2v9KD5eUgHu2Ln2vol8RxOCZC31KIr4DrmFaxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZnS5mKnd5cTv6xm7BYBoJl/FPbBHDOyi59zdfBC3lOaczkJVbrhCKozCjFGwa5QiG6faEPgNg80uI6u55v9yZsyivFBu2AKvlXBNxyIyyf4ba7yGZGkqbem/gfpdgEPHrAVNtHMIK4avwngm/hlVvyIURw8p0TBhnRED3I/kzlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=PVpSCnLC; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744995597; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TABNMTXczUmypmLF5NI67Ehx4FufK3RoCt4eVfLNWK8KWcTIN3pUIbjMpZlhwi8Q+TZaJJXC6l6GbOW+BV5HNaFRclRV5xPCD6+/2TwTFU+k6MaJeVjddWtN3rItcPn2S7Fq1rb0kUtbeyYz7TjeRIBs0aVols0CSnStSROTlI8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744995597; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nBJdsehFovjFuaNlwazdQn8NDRTSTC5soMPWxmppM74=; 
-	b=ZrFeDomAugSxCyeOh3buIy9rELiYe2//jiRWwXVCRIkFcLJeHvSNuVXVCiA6Yv3lsL7vTqLEtKuXYgMB+trgAtzpz9JhQjf82UIi8qezkK7edVrwHCFN6keMExVhfilbjjAWvTSts2NO4AhNzeD3Uq7n4vTDkQZmNsrQUYB2BfY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744995597;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nBJdsehFovjFuaNlwazdQn8NDRTSTC5soMPWxmppM74=;
-	b=PVpSCnLCpGAYmE0cUUbclP9VIF8Hb+JwYQa6yoz+zaTho4g9WorRVqNUXCfiJJwu
-	0pYr0ObS+qMGwBXWW8GdZeh03O228fXcyI+nWS1JNkUr4q/Prj+uQ1LSPfWMgwxFKfD
-	OkQW6UFOQ508BCfdTop5Sn2aGYZZYNCCffrNL24w=
-Received: by mx.zohomail.com with SMTPS id 1744995594398563.499854046974;
-	Fri, 18 Apr 2025 09:59:54 -0700 (PDT)
-Message-ID: <941334a9-a438-4b0f-a439-bd8cc1e847b3@collabora.com>
-Date: Fri, 18 Apr 2025 21:59:46 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C7F217654;
+	Fri, 18 Apr 2025 16:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744995593; cv=none; b=QB84Go9dkhw8LGySWNUXX8zW02UUzEYBcn/J3QxI3w86HnDpEd/xT/JP2aREjgIcvkOjkkPTw40kKD9BINf+wtCs/TdkQFOwry2LS0Fxg0vCBEW7xhqvifR+wjKkPh/ZO6IASYMU/9bzf570VYnZ65Jox+qHWarY6UdeihN7BnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744995593; c=relaxed/simple;
+	bh=f9LCf5XY0NmuotjWlwn9SlS2ogqMZOVMR/R19eR6DwU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sug7WHn8UISAj5iFjOcBhyHzdgVIDsf7wR0cMI65mo9FIHVvjmFlF2i2BmKxPAVmUhkBWiyerO0CXnwDfM6t1awe3eaoJmt4anB/wl/6s1HRuec6s8NyFa0MRMRgTYtjhptN9bBP/pkpaUDQhK902dFF5T7U/zzi0XhE2eM4VdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CYHTS770; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=DP97MXZ7PzDPbpV50opJyj9CQ8OLjgOoekVd8uypiAA=; b=CYHTS770FIXqtMeZ
+	yJ6AgMzHGZSgRVRNDOI07jAxIBTQfCQ7sw/E6hZo+dRiCsOwyhqY+6onjoaKDYcO8UuDYWdL82Ggq
+	Ur261AmI/PY+4F/az0oODG7bwpdbWfM8ocrDPABo5U1voiAT33pjHn0QIct8yFg+LdmxYTTGsfcBd
+	92Zg1NlLvtB6T3PfrfB1/qYeq/nzwPcJdJMPIeYSaJvTlplDGLHHMaYGkcNSGx2qHLVYqrOTbZqsU
+	e7jcHfmX7MSS+jV+iKue6xR6fsOuSxY8kAd/cxsHet2Mtu40vlyzoHpHSCSJyje75tJFCg3qJr6K6
+	nViR4jRzDyqjIv7O2w==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1u5p48-00CYEY-2b;
+	Fri, 18 Apr 2025 16:59:48 +0000
+From: linux@treblig.org
+To: zyjzyj2000@gmail.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] RDMA/rxe: Remove unused rxe_run_task
+Date: Fri, 18 Apr 2025 17:59:48 +0100
+Message-ID: <20250418165948.241433-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/32] selftests: harness: Mark functions without
- prototypes static
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
- <20250411-nolibc-kselftest-harness-v3-4-4d9c0295893f@linutronix.de>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20250411-nolibc-kselftest-harness-v3-4-4d9c0295893f@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-On 4/11/25 2:00 PM, Thomas Weißschuh wrote:
-> With -Wmissing-prototypes the compiler will warn about non-static
-> functions which don't have a prototype defined.
-> As they are not used from a different compilation unit they don't need to
-> be defined globally.
-> 
-> Avoid the issue by marking the functions static.
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> ---
->  tools/testing/selftests/kselftest_harness.h | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index 2b350ed60b2bf1cbede8e3a9b4ac5fe716900144..5822bc0b86a3c623fd34830fb8b541b27672a00b 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -258,7 +258,7 @@
->   * A bare "return;" statement may be used to return early.
->   */
->  #define FIXTURE_SETUP(fixture_name) \
-> -	void fixture_name##_setup( \
-> +	static void fixture_name##_setup( \
->  		struct __test_metadata __attribute__((unused)) *_metadata, \
->  		FIXTURE_DATA(fixture_name) __attribute__((unused)) *self, \
->  		const FIXTURE_VARIANT(fixture_name) \
-> @@ -307,7 +307,7 @@
->  	__FIXTURE_TEARDOWN(fixture_name)
->  
->  #define __FIXTURE_TEARDOWN(fixture_name) \
-> -	void fixture_name##_teardown( \
-> +	static void fixture_name##_teardown( \
->  		struct __test_metadata __attribute__((unused)) *_metadata, \
->  		FIXTURE_DATA(fixture_name) __attribute__((unused)) *self, \
->  		const FIXTURE_VARIANT(fixture_name) \
-> @@ -987,7 +987,7 @@ static void __timeout_handler(int sig, siginfo_t *info, void *ucontext)
->  	kill(-(t->pid), SIGKILL);
->  }
->  
-> -void __wait_for_test(struct __test_metadata *t)
-> +static void __wait_for_test(struct __test_metadata *t)
->  {
->  	struct sigaction action = {
->  		.sa_sigaction = __timeout_handler,
-> @@ -1205,9 +1205,9 @@ static bool test_enabled(int argc, char **argv,
->  	return !has_positive;
->  }
->  
-> -void __run_test(struct __fixture_metadata *f,
-> -		struct __fixture_variant_metadata *variant,
-> -		struct __test_metadata *t)
-> +static void __run_test(struct __fixture_metadata *f,
-> +		       struct __fixture_variant_metadata *variant,
-> +		       struct __test_metadata *t)
->  {
->  	struct __test_xfail *xfail;
->  	char test_name[1024];
-> 
+rxe_run_task() has been unused since 2024's
+commit 23bc06af547f ("RDMA/rxe: Don't call direct between tasks")
 
+Remove it.
 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/infiniband/sw/rxe/rxe_task.c | 18 ------------------
+ drivers/infiniband/sw/rxe/rxe_task.h |  2 --
+ 2 files changed, 20 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_task.c b/drivers/infiniband/sw/rxe/rxe_task.c
+index 80332638d9e3..9d02d847fd78 100644
+--- a/drivers/infiniband/sw/rxe/rxe_task.c
++++ b/drivers/infiniband/sw/rxe/rxe_task.c
+@@ -234,24 +234,6 @@ void rxe_cleanup_task(struct rxe_task *task)
+ 	spin_unlock_irqrestore(&task->lock, flags);
+ }
+ 
+-/* run the task inline if it is currently idle
+- * cannot call do_task holding the lock
+- */
+-void rxe_run_task(struct rxe_task *task)
+-{
+-	unsigned long flags;
+-	bool run;
+-
+-	WARN_ON(rxe_read(task->qp) <= 0);
+-
+-	spin_lock_irqsave(&task->lock, flags);
+-	run = __reserve_if_idle(task);
+-	spin_unlock_irqrestore(&task->lock, flags);
+-
+-	if (run)
+-		do_task(task);
+-}
+-
+ /* schedule the task to run later as a work queue entry.
+  * the queue_work call can be called holding
+  * the lock.
+diff --git a/drivers/infiniband/sw/rxe/rxe_task.h b/drivers/infiniband/sw/rxe/rxe_task.h
+index a63e258b3d66..a8c9a77b6027 100644
+--- a/drivers/infiniband/sw/rxe/rxe_task.h
++++ b/drivers/infiniband/sw/rxe/rxe_task.h
+@@ -47,8 +47,6 @@ int rxe_init_task(struct rxe_task *task, struct rxe_qp *qp,
+ /* cleanup task */
+ void rxe_cleanup_task(struct rxe_task *task);
+ 
+-void rxe_run_task(struct rxe_task *task);
+-
+ void rxe_sched_task(struct rxe_task *task);
+ 
+ /* keep a task from scheduling */
 -- 
-Regards,
-Usama
+2.49.0
+
 
