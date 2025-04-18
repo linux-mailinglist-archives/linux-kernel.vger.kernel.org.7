@@ -1,69 +1,106 @@
-Return-Path: <linux-kernel+bounces-610161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1F0A9314F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:52:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DF7A93172
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36DBE7B2122
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 04:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C913519E4638
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A69254B0E;
-	Fri, 18 Apr 2025 04:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B1F2686A5;
+	Fri, 18 Apr 2025 05:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jI712KEq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="GyfOtVQn"
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9141DA21;
-	Fri, 18 Apr 2025 04:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFC9209663;
+	Fri, 18 Apr 2025 05:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744951912; cv=none; b=Npj7Ml2KIbYEWb0U4c/CrkHRcCrJN37MzYuhyk+E2OR49aub2ok4RD05ewvqyd6clo+6p3arFlrWLSBVirBuGTHaIKMC7NyYmlkm5py/a+js5hEl/dbEUUPbqUUdXqPERisHQwCHagHJUJseKpo05RXXGIML5BYG4Yw9LLb4gaY=
+	t=1744954114; cv=none; b=pehsnWgHXYN5a7UhKcrJXFEZZ6YuwoZesIVPBuVzKxnyVnWM7XJnCAxMkjAeD0qzYA+yr5kDkQC9PbtJ0EffKc2wWKJNgMqVeo6AN50Gz6g4Qn7ZDxp5zwNffnk8QrDwJUcqH/SRCZv5BKcAHx+Vm0thlGpP3tvNZeutyiHBrQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744951912; c=relaxed/simple;
-	bh=jFIKQ9+KNiMcHYPkLli2j7YAuS94viby6REo7p3dVGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vu2lY3Z1bq1Be9O/p/3HolCwXABd8UCkbGbePdvMtNZBNRT0RRsL+eSX52y73U3D/tJg//EbZ9KbC2WtCoazNQobbvnJ9PmoQVE0kVWNKirZIC5GIIugimglzJ+ui9/oWHYm0340sSP7yGSiTruifVwm9xcP7oETF5bVNjyQIGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jI712KEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A45C4CEE2;
-	Fri, 18 Apr 2025 04:51:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744951911;
-	bh=jFIKQ9+KNiMcHYPkLli2j7YAuS94viby6REo7p3dVGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jI712KEqX7VHagPSJSEjU6gsULJZnI08kNF2QFTz+86dz/V1XYE6Wwl0DrZ1GVLou
-	 I/yDH9OTJLLBkKw8smg8WbDBVLjiWr4UBLwkFm3LhchmKIpXOY05JO4Eavr2iGLaf6
-	 VTVJWHyyfauRbxxYnpvlhZ0dHvzrvfpGceMvoZnI=
-Date: Fri, 18 Apr 2025 06:50:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] USB-serial device ids for 6.15-rc3
-Message-ID: <2025041800-ecosystem-chunk-1220@gregkh>
-References: <aAEmtBNxgCFqA5op@hovoldconsulting.com>
+	s=arc-20240116; t=1744954114; c=relaxed/simple;
+	bh=MNZ25Q/4fQMmVJuKM1fLKIKZprsLyPpb9M59DqD34S8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ffilGfLiROvLDU2d+SBZTdxOUmj2q0KvS4FdR+1WZ6sTmr0ecInsgkorq1bQsMNpCo195tgV25xhiVnb1mU4ONAn4HMuWg82e2RdxBIeAi9PMwx+h6zjWZFldUihpSPeUaUyOOS0YtrIl+2d6ZUlo2jVWRf/VAVkbFAoFd2Y2EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=GyfOtVQn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from localhost.localdomain (unknown [202.119.23.198])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 124f66a39;
+	Fri, 18 Apr 2025 12:52:52 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: john.johansen@canonical.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [RFC PATCH] security/apparmor: use kfree_sensitive() in unpack_secmark()
+Date: Fri, 18 Apr 2025 04:52:50 +0000
+Message-Id: <20250418045250.1262935-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAEmtBNxgCFqA5op@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCS0xJVhoYHxoYTE5KSR4ZQ1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJS0lVSkpCVUlIVUpCQ1lXWRYaDxIVHRRZQVlPS0hVSktISk9ITFVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a96473e140f03a1kunm124f66a39
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NTo6SRw*ODJPChQSCCIsHywQ
+	GDoaCyxVSlVKTE9PQk5KQkxIQ0pPVTMWGhIXVQESFxIVOwgeDlUeHw5VGBVFWVdZEgtZQVlJS0lV
+	SkpCVUlIVUpCQ1lXWQgBWUFKQk5JNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=GyfOtVQne3DUUeU18T3d7HQCJHsDd5tHjwB5aOStAB/XPwVbYtWfkPeQX6C34FzznNp2iY5bgWDjzbD+NKlokhLWFax7zGtgaPRaGZzTXLGJ6C2mankeIABkvQS6awqPeT/bQHCP5XqIulHapNoc0qeFks/0Uq0BjxbrrBLQdYk=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
+	bh=Ox0qlUxWZtfCEfUosiIdxscw6OFJSR3qu90o9wjTNPQ=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Apr 17, 2025 at 06:05:08PM +0200, Johan Hovold wrote:
-> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
-> 
->   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.15-rc3
+The unpack_secmark() function currently uses kfree() to release memory
+allocated for secmark structures and their labels. However, if a failure
+occurs after partially parsing secmark, sensitive data may remain in
+memory, posing a security risk.
 
-Pulled and pushed out, thanks.
+To mitigate this, replace kfree() with kfree_sensitive() for freeing
+secmark structures and their labels, aligning with the approach used
+in free_ruleset().
 
-greg k-h
+I am submitting this as an RFC to seek freedback on whether this change
+is appropriate and aligns with the subsystem's expectations. If
+confirmed to be helpful, I will send a formal patch.
+
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ security/apparmor/policy_unpack.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 992b74c50..610e09c76 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -598,8 +598,8 @@ static bool unpack_secmark(struct aa_ext *e, struct aa_ruleset *rules)
+ fail:
+ 	if (rules->secmark) {
+ 		for (i = 0; i < size; i++)
+-			kfree(rules->secmark[i].label);
+-		kfree(rules->secmark);
++			kfree_sensitive(rules->secmark[i].label);
++		kfree_sensitive(rules->secmark);
+ 		rules->secmark_count = 0;
+ 		rules->secmark = NULL;
+ 	}
+-- 
+2.34.1
+
 
