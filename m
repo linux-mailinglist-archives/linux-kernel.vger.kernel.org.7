@@ -1,96 +1,127 @@
-Return-Path: <linux-kernel+bounces-610193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3575A931B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:05:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA786A931AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2D6462D4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1334650A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B896426868F;
-	Fri, 18 Apr 2025 06:04:53 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63972561AF;
+	Fri, 18 Apr 2025 05:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QWdxi/HI"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E89186E2E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0C1A0730
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 05:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744956293; cv=none; b=ZGMkBckHHpZzbI1xs83eLjPNCcwOxTGR0/kOFnPkgVBzuxiS3c76K4N3PlUDTk1U6MLC/DudmoAQveGgsfFGilUgcC4XRjm4mIzZjuum6uR03dCqnGbIyXszvZGxe2pegFUEvdirRo5bYtXWceY114EbAEEyu2Ii6BdkxJw2Wlk=
+	t=1744955938; cv=none; b=Gjmwhl4rK8LvC61ZmBOJeB/MhcNe6pP0ubWgc16gR65xgYgEk3rjjyW1350+BluYz5y8p8Zvfru9s8rUgxty1IWRQnqhwIwMOeOXUFq7PKgSGGbrIVE4BMn6D0acNarMtPPL5bfruoFQixhLZBELYQmrSTL+pg67oWYj2YofXYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744956293; c=relaxed/simple;
-	bh=X4W0Iie5K8cmhGs8qziExYsbElUrP7FX1asRsw0XfCs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PXwyXwL4CqH1VPK5VOEZu370JhGJZRpwrTEtt/oEXCdaniEQ+FJhyiQh7xk5OLevufA7Cp3SnPLBxmXMLmLlN4pzsNQaUDp7ooeVJoAKS0KSQu5kydbRN7skkRgYU/Tyq4uFBSA6iCi4dVNEdy/xb6zAyLOY1QIADHVv+pB8FkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zf43N1ZN5z2TS2b;
-	Fri, 18 Apr 2025 14:04:32 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B5A318001B;
-	Fri, 18 Apr 2025 14:04:42 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Apr 2025 14:04:41 +0800
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Apr 2025 14:04:41 +0800
-From: Junhao He <hejunhao3@huawei.com>
-To: <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>, <mike.leach@linaro.org>, <leo.yan@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<hejunhao3@huawei.com>
-Subject: [PATCH 1/4] coresight: tmc: Add missing doc of tmc_drvdata::reading
-Date: Fri, 18 Apr 2025 13:58:17 +0800
-Message-ID: <20250418055820.3689408-2-hejunhao3@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250418055820.3689408-1-hejunhao3@huawei.com>
-References: <20250418055820.3689408-1-hejunhao3@huawei.com>
+	s=arc-20240116; t=1744955938; c=relaxed/simple;
+	bh=9vzQM3t5vp/0pOozAYzw8sT/kUPRS92tdRYnfzsM3ts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MxsP5pgp46mj5GUbABVir8ISfUI5Ovd1UcRjno+aSCCdrBwu3RUIqfsn5jOcW2rF1xlMfKQBOHFCj+55GkKw0gR3KiD9mf5MI2agcbehEZyvMb6vsux65nvJRKFaPMEcAlKx6PvoaEGvdCJWoHMjDJEo9FTLTlnP/8Rtq9V4LM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QWdxi/HI; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so2646642a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 22:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744955933; x=1745560733; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rFhmOeXgIAlpgdzXmkuAFZPhvLmDKS09kQhKDPs7SSw=;
+        b=QWdxi/HISx2YFfJGrAMKYH2CIctgux9CvDakPaZRtqMYIvIC+haank58pLqduZPA8D
+         bbQZnDbNnJFEav/GmeMgvoTbVF81KIOD6dIYIYvwIv6vsAzBHqjfKwLc3k9p4qZTiuCZ
+         /3n/q1NGU4duTRAJ40RII2D6TIdwaDSK9qXLFE7f2mf7lfgG2iLNoU8BKwieQE7j+dLV
+         wlsbkixrRwvPos1/BwslU15lx/x2MgsCtVZgz1inUGHbo76G3RbLWsr6jzMwINElxtZp
+         Q3npsuK4QR/wZyHNWG1XiWePPWUtJnxyVHGmuiUEEzCmw4dtdcV08g4nKWqcXhQskx0Y
+         Xuqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744955933; x=1745560733;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rFhmOeXgIAlpgdzXmkuAFZPhvLmDKS09kQhKDPs7SSw=;
+        b=RiGY4N/xGw/o6JHVHqvRhtRsCCm3LoeULStr3MBU6ofUBc7ZMDJSxlL/Gj5dnvH+Lk
+         EWmBtfGmkJtnM2+o4fyrze7o7GdxDiPHjIYUydnJnmKqF2AIHhlHPtefBCoPw+DSnYwA
+         TPfKOil5gFpg8C66dl1p0WH0OBClgUKUkTHt0keC8fCRBc9dIvAL4AHDs9bVFuR14oZM
+         JCMKbKqO/EI1o0Rmyw0PqwnCt6hB9SigcXLUd+YeEPsijQYCgvgC8u9yR5Ot0ztiD9aL
+         iIglt99d9keACZOKdQbv+NAJhojFCZgvdCOx6Ygz5FboXabjafVMP1FT/1WpJ/dGM/mR
+         hxlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUnO5rOIqaw7OVIuXphjOAX/j+aJNmce1W0RNExIN2rgcWtWdr6NFSBhn0DdJ2NFo0VAWcJ0+8z4AdxII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP0GbydMlBdAh/C3zvDleE4y+rF6jigeoVNnGXFYJdHry+Vwd9
+	Klgr3UgsOct2I+p3uYhKh+4zhX+WMXu1fPxW54Y1FFOpBECbzZS+X1ZvfdO8ZAk6CAzJs0woIfE
+	RSmvczFa39OEtjWtE0FDLvyh8rYG+Jf7S/tTrcQ==
+X-Gm-Gg: ASbGncuxw5g1jPU8xpv657xKNxeWj8RShlOtSPEjBtT6T+0Dg9herUoCb3laUGHKbNf
+	SQclNZOWALd3Wr9PecRIbHqfsPNQAtVxBU02xOyHAtzLbkOzB1hgCKEfriQgCxu1fyPup1N0aPT
+	xqupktqxhxhwQkNbXoo2fvMkdvFPWemjui
+X-Google-Smtp-Source: AGHT+IHh85joDb2VeapV3maVEqgQe9L9tm8FqA2mZKy01E0HnbaGNJfQUJ+nqSYGMzINt6uLO0DslAKNblccoGq618A=
+X-Received: by 2002:a17:907:9712:b0:ac7:16ef:e994 with SMTP id
+ a640c23a62f3a-acb74e19569mr100020766b.56.1744955933480; Thu, 17 Apr 2025
+ 22:58:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemn500004.china.huawei.com (7.202.194.145)
+References: <2c788c2ca0cab09a8ef4e384f272af928a880b0e.1744781329.git.viresh.kumar@linaro.org>
+ <20250417015424.36487-1-nic.c3.14@gmail.com> <20250417050226.c6kdp2s5du3y3a3j@vireshk-i7>
+ <20250417050911.xycjkalehqsg3i6x@vireshk-i7> <CAJZ5v0iO4=nHcATzPyiKiWumdETFRR32C97K_RH=yhD--Tai=g@mail.gmail.com>
+ <CAJZ5v0gcf07YykOS9VsQgHwM0DnphBX4yc9dt5cKjNR8G_4mAQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gcf07YykOS9VsQgHwM0DnphBX4yc9dt5cKjNR8G_4mAQ@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 18 Apr 2025 11:28:49 +0530
+X-Gm-Features: ATxdqUEgPyyaV3xmQOk0XfmWdfy0ew_P7jRJpbFnpMXANh3GgdaCIR7Xj1vkn-o
+Message-ID: <CAKohpomN1PYn1NPSsxCxqpMfg-9nYgCRQD6dFGQ30B+76vneQw@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: acpi: Don't enable boost on policy exit
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Nicholas Chin <nic.c3.14@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, 
+	vincent.guittot@linaro.org, zhenglifeng1@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+On Thu, 17 Apr 2025 at 21:23, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> But the changelog isn't because the patch really doesn't address the
+> issue at hand, which is most likely related to the platform firmware
+> clearing the "boost disable" bit.
 
-tmc_drvdata::reading is used to indicate whether a reading process
-is performed through /dev/xyz.tmc. Document it.
+I think the patch and changelog were still correct as the driver was also
+enabling the boost at exit(). So it fixes the problem, but not fully.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
----
- drivers/hwtracing/coresight/coresight-tmc.h | 1 +
- 1 file changed, 1 insertion(+)
+> Frankly, I'd rather get back to the state from before commit
+> 2b16c631832d ("cpufreq: ACPI: Remove set_boost in
+> acpi_cpufreq_cpu_init()") and start over with the knowledge that the
+> platform firmware may scribble on the MSR before the kernel gets
+> control back.
+>
+> On a way back from system suspend the MSR needs to be put back in sync
+> with the boost settings in the kernel.
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 2671926be62a..fdf7955e7350 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -174,6 +174,7 @@ struct etr_buf {
-  * @pid:	Process ID of the process that owns the session that is using
-  *		this component. For example this would be the pid of the Perf
-  *		process.
-+ * @reading:	buffer's in the reading through "/dev/xyz.tmc" entry
-  * @buf:	Snapshot of the trace data for ETF/ETB.
-  * @etr_buf:	details of buffer used in TMC-ETR
-  * @len:	size of the available trace for ETF/ETB.
--- 
-2.33.0
+What about something like this instead ? Nicholas, can you give this a try
+along with the $Subject patch (both patches should be applied) ?
 
+diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
+index 924314cdeebc..71557f2ac22a 100644
+--- a/drivers/cpufreq/acpi-cpufreq.c
++++ b/drivers/cpufreq/acpi-cpufreq.c
+@@ -909,8 +909,10 @@ static int acpi_cpufreq_cpu_init(struct
+cpufreq_policy *policy)
+        if (perf->states[0].core_frequency * 1000 != freq_table[0].frequency)
+                pr_warn(FW_WARN "P-state 0 is not max freq\n");
+
+-       if (acpi_cpufreq_driver.set_boost)
++       if (acpi_cpufreq_driver.set_boost) {
+                policy->boost_supported = true;
++               policy->boost_enabled = boost_state(cpu);
++       }
+
+        return result;
 
