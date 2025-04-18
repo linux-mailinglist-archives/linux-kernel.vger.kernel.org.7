@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-610024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8B4A92F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15286A92F5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DD537B0E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F3E4A18C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EE01DF26F;
-	Fri, 18 Apr 2025 01:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BF91D79BE;
+	Fri, 18 Apr 2025 01:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="j7x+faJB"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="opMN1Kwh"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D2D1D86F2
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C181E0DE3
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744940265; cv=none; b=V7oCe66AP2U1W4PlYN93wCTaCLE57RoduOL9sKvuS/LOUHA4TAt6ywMYHpgYUmbsXlrONOXl6vRWzlR+LTgsKgjYeIQxUtOXpgkWgPmOXvHehJy9KAqtNX+k9ekBJpueH4BB/f6rk+IgXxDmWjyQFFuyiS3K0eiw6j7HS61z85k=
+	t=1744940269; cv=none; b=AFf3/OBytvVr7sNj1sk6xdVOadB/BXTuPYiqbJr+eXU0Io7gEg83PpQ6oOH6RWGPmId8rEGcXuywaKoSbnq4xFc8rDiNzPgeWppy7Jo7fP/DakuuD5GLD7FH741tbZGFZNfkYg1/dSrBaK2/8AYrrsOeQB7bEbAxkdx2+CTGy34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744940265; c=relaxed/simple;
-	bh=peXZjv91qcnXAES8N8mnCKfga6OZjhML/WpesH4NfKc=;
+	s=arc-20240116; t=1744940269; c=relaxed/simple;
+	bh=iC38gdoHa0iB1zJg2rOXQF/27QGDkW0uzWiTqqa4j3U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u8JeH9U9lY2BEmdgaKTDveYxQnlJT39Pjq8fju/PhMRM2rAjzRUoXrDUxXjZcPvPOwaD0v39+KwXEd8KaBr/RCCtieXwaKxzIaVfthKdTZq+wxo5HBByyp7gj5K7W8tVVxx6t96SSXShjC2OW1jiRF3sEr67EgjlDECq3DTQgtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=j7x+faJB; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=Dr+eB85eS3P00T7KgVvDp57SK/2kxWItibMxknIvdb0gApvNcYbtnCaGkxduRpY4GriaIuyj/btvy/chvYwIl4wFLBDxcP3M9UArufuE32ZSJJK0LpiWjRmMR22U+7Dg7/ddcarJHzJnGOpRSjnPqwjCl4MdcK8WKuMzHxrqObk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=opMN1Kwh; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb3so1411430a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:37:44 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30549dacd53so1182322a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1744940263; x=1745545063; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1744940267; x=1745545067; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h6JaAma8wr++LnPs79mPGowXaCOiBb9Nd8NFNngwV7o=;
-        b=j7x+faJB7PauCqeDJBAGYtCJleYyaGfhxRPU7+OzMNTqmnda2g3lGLmqMcM2YdEcbE
-         iFcrG/0bDBa/SKptriRXV+hFA3ahBTkywmMfTTFvpBhUvy6jUEBzKZNLqU1mBkar53tD
-         4gDS/cVjfyFKEnxY3UgTX0c0PqaxTN04/WPnc=
+        bh=qZCFxUxzlk1WaRej7yGOb8bWsdrrxKB0c/PerPrAolw=;
+        b=opMN1KwhIaWU1GzcTYmUXxoJC8rurkK8X1R8q6eooMpfwoLVFyw03dFeMNtCsXcYi9
+         8r7yryOtdkhKYWSjkPz5cpO7g2btCfruXOouGJ7whu62zbyfN4+slOyUoupLxPDRBFOx
+         kQp7N5QdK5g8M4KatnHgsRxMqqNNrM6Mgcoyg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744940263; x=1745545063;
+        d=1e100.net; s=20230601; t=1744940267; x=1745545067;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h6JaAma8wr++LnPs79mPGowXaCOiBb9Nd8NFNngwV7o=;
-        b=MuRiSvSplsUDMQzrku6vg7DZF0jNbj0gd5DMwBAfMb3LVQlTi7gWbFPRz8TArhKETh
-         SIStvFMJ6XPjZ3mvu4WdEQXrHJlO+3o4v2XAXpFEA+GTFviDo/X/AmO0n3ex6A9VRxBK
-         AdiacvyKOxvludkSnsYKiJHrH6KrG6aLrC4MzsadXLP8lDlOU9wXCQxwXXPqtyr/TgBK
-         tLoznyB3tcieOH9NBgpQjsz1toc6swDzASYQXYomtHQ6eO8PRbQ/QX/Oq9E1Cb2AftvD
-         LD8TmGeNcSlAhcYpJDVI0B+h26L46aq0DplIJB4k3zO1XCbbO8UnFaMeI114oHoc+fa8
-         g3fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiVsEk172zqw6UMcb3aJ1/rTA/aVyvaD3QqtVIW+yoxtlQ2IhpeLbKNrMB7PgJb5eT5MHXYAPQWS8bz20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXc+ui4qlToLEPJYN1E14MVOoqTmX8jDSKNpBvw33web7oz7Vp
-	9TskjnA0JouWNXa7oU9ne8Jzff9sSpV5KRwncah7TZbfdamk2cURMYsQZ16hoxI=
-X-Gm-Gg: ASbGnctJfnUgoxil3Psre93j3jFtFbxGY8qeiWnSet/OwvLoue/bkDH4mH0VPtXzB00
-	y1HtYJn9yjJvYy5g1rVa02KP686gsdXpfJKM+ov7s8p7opGYyks7GHtbsTnAteYs7Od8R/iA3i8
-	gMFMMBdbxrpKnPPhL9Z4NLnvH6GwUt3SeTZOisk0IHEjpk4vlmA7GFCXCjpmaDXjEvrDwuNiwP5
-	3D1PeUA+ZcFMU86U8twcCuT13Ut3RpFNopJioLEr7LX4A+78pT96fYAU/wTi2Sj8rOUEXse6wsN
-	zXeVMhv4oMxNk2J7EhnAwx/bcGT0sFkD6P1dDSatAyyEoEY7
-X-Google-Smtp-Source: AGHT+IGoyjXwixKtaT9nwokLFm7CjWprehonQ2SRJ8/gfnreftjHTIyWeFkj8zCAWIIkh7aMFJzOlg==
-X-Received: by 2002:a17:90b:2744:b0:2ff:53a4:74f0 with SMTP id 98e67ed59e1d1-3087bbc925dmr1451743a91.29.1744940263562;
-        Thu, 17 Apr 2025 18:37:43 -0700 (PDT)
+        bh=qZCFxUxzlk1WaRej7yGOb8bWsdrrxKB0c/PerPrAolw=;
+        b=XQa8t3vDZkws3EHEZwMovD4nTg4FliJdtYZ0Pvt1KtLTIAvMv/ISnPD1lTvTy2n6Ex
+         zbyrduFduvOVj8bBC4yDJC+yTZspl+emGr8Shpa6XGpI+TrQ/0iCnz2jDni0e8+8qENT
+         u+A3ie7kvgB9xDEHwAtbHBGS3atbMfhxB1qWPNWfmIxtLsp4r9+WQ4jGfDZfj2QMQSwO
+         S5e5TKyEONjvQRR6iMrpCaDmAQ/UbH73Fqchww/oEjNw0o5Vs4WeMZ6nBwEd+EulpUl1
+         VESwQsd1Nlp6rf/HbOl+XL+7duQmqdp4XYnKzX/eM8YkN3kWJ/454bV3o+Ryiv0uQ9/9
+         pEgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4xEOFlCuchVVXJLPoSHi8JRzDKZM0T4G/A8xKogaHkF4QwyvAmuO4lQoVbR/Ocqmrnp/1GGaLG6BCo2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLf4QJwB9SfYK9Ia6nyhX/B5vhrqqyuH3hNUoE98PuKin06GtE
+	UduCVjaP+uGAo82S4ufZguwEWyg6ZLLlLD6fi+qxnF4K7H7H6cSwbTZ6/wBQvAo=
+X-Gm-Gg: ASbGnctJ5Oy8BxHvr7IE4uofms7zWmcNqO8PzA4hpFTCtvdAia1fhY685ZESLY4W0Eg
+	D1PDLsrNWO3uaQHZb9UcsCwDRWUD+RVi5lZvw0I3kqTtY3WnLzovMKxzEFP7aFCbDq8RQLhbrG0
+	WwCCq0/dr0pK95T9T5qZr6veDZzeFcstyF2YtvdzfUMpEolPuNTxYgtBAqm6gM1VhC989fOBdia
+	wDInnJF9ZRT3QJ9lR6AT5OVF7sTBFiCbY0l37MPVVsYo1SPXa3vYFecp+hPfdbDSlVwcDluw+0f
+	CexvvjRfqEyLdJx2F6+UebRNwa3ACu6XIifIA2SnunH9m+e3kqUCB7NqUVI=
+X-Google-Smtp-Source: AGHT+IHIkIzzR3zj4vrpbAECLpfActXjD6z6qbXH+bYM/RSwRzcQMcmuncyRDhW0LSmFSuyKKHckLA==
+X-Received: by 2002:a17:90b:58c8:b0:2fa:21d3:4332 with SMTP id 98e67ed59e1d1-30879c02c19mr2566560a91.12.1744940266767;
+        Thu, 17 Apr 2025 18:37:46 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df21278sm131772a91.29.2025.04.17.18.37.42
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df21278sm131772a91.29.2025.04.17.18.37.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 18:37:42 -0700 (PDT)
+        Thu, 17 Apr 2025 18:37:46 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: kuba@kernel.org,
@@ -77,10 +77,17 @@ Cc: kuba@kernel.org,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v3 1/3] netdevsim: Mark NAPI ID on skb in nsim_rcv
-Date: Fri, 18 Apr 2025 01:37:03 +0000
-Message-ID: <20250418013719.12094-2-jdamato@fastly.com>
+	Shuah Khan <shuah@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
+Subject: [PATCH net-next v3 2/3] selftests: drv-net: Factor out ksft C helpers
+Date: Fri, 18 Apr 2025 01:37:04 +0000
+Message-ID: <20250418013719.12094-3-jdamato@fastly.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250418013719.12094-1-jdamato@fastly.com>
 References: <20250418013719.12094-1-jdamato@fastly.com>
@@ -92,38 +99,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously, nsim_rcv was not marking the NAPI ID on the skb, leading to
-applications seeing a napi ID of 0 when using SO_INCOMING_NAPI_ID.
-
-To add to the userland confusion, netlink appears to correctly report
-the NAPI IDs for netdevsim queues but the resulting file descriptor from
-a call to accept() was reporting a NAPI ID of 0.
+Factor ksft C helpers to a header so they can be used by other C-based
+tests.
 
 Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- drivers/net/netdevsim/netdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/testing/selftests/drivers/net/ksft.h    | 56 +++++++++++++++++++
+ .../selftests/drivers/net/xdp_helper.c        | 49 +---------------
+ 2 files changed, 58 insertions(+), 47 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/ksft.h
 
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 0e0321a7ddd7..2aa999345fe1 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -29,6 +29,7 @@
- #include <net/pkt_cls.h>
- #include <net/rtnetlink.h>
- #include <net/udp_tunnel.h>
-+#include <net/busy_poll.h>
+diff --git a/tools/testing/selftests/drivers/net/ksft.h b/tools/testing/selftests/drivers/net/ksft.h
+new file mode 100644
+index 000000000000..3fd084006a16
+--- /dev/null
++++ b/tools/testing/selftests/drivers/net/ksft.h
+@@ -0,0 +1,56 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#if !defined(__KSFT_H__)
++#define __KSFT_H__
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++static void ksft_ready(void)
++{
++	const char msg[7] = "ready\n";
++	char *env_str;
++	int fd;
++
++	env_str = getenv("KSFT_READY_FD");
++	if (env_str) {
++		fd = atoi(env_str);
++		if (!fd) {
++			fprintf(stderr, "invalid KSFT_READY_FD = '%s'\n",
++				env_str);
++			return;
++		}
++	} else {
++		fd = STDOUT_FILENO;
++	}
++
++	write(fd, msg, sizeof(msg));
++	if (fd != STDOUT_FILENO)
++		close(fd);
++}
++
++static void ksft_wait(void)
++{
++	char *env_str;
++	char byte;
++	int fd;
++
++	env_str = getenv("KSFT_WAIT_FD");
++	if (env_str) {
++		fd = atoi(env_str);
++		if (!fd) {
++			fprintf(stderr, "invalid KSFT_WAIT_FD = '%s'\n",
++				env_str);
++			return;
++		}
++	} else {
++		/* Not running in KSFT env, wait for input from STDIN instead */
++		fd = STDIN_FILENO;
++	}
++
++	read(fd, &byte, sizeof(byte));
++	if (fd != STDIN_FILENO)
++		close(fd);
++}
++
++#endif
+diff --git a/tools/testing/selftests/drivers/net/xdp_helper.c b/tools/testing/selftests/drivers/net/xdp_helper.c
+index aeed25914104..d5bb8ac33efa 100644
+--- a/tools/testing/selftests/drivers/net/xdp_helper.c
++++ b/tools/testing/selftests/drivers/net/xdp_helper.c
+@@ -11,56 +11,11 @@
+ #include <net/if.h>
+ #include <inttypes.h>
  
- #include "netdevsim.h"
++#include "ksft.h"
++
+ #define UMEM_SZ (1U << 16)
+ #define NUM_DESC (UMEM_SZ / 2048)
  
-@@ -357,6 +358,7 @@ static int nsim_rcv(struct nsim_rq *rq, int budget)
- 			break;
+-/* Move this to a common header when reused! */
+-static void ksft_ready(void)
+-{
+-	const char msg[7] = "ready\n";
+-	char *env_str;
+-	int fd;
+-
+-	env_str = getenv("KSFT_READY_FD");
+-	if (env_str) {
+-		fd = atoi(env_str);
+-		if (!fd) {
+-			fprintf(stderr, "invalid KSFT_READY_FD = '%s'\n",
+-				env_str);
+-			return;
+-		}
+-	} else {
+-		fd = STDOUT_FILENO;
+-	}
+-
+-	write(fd, msg, sizeof(msg));
+-	if (fd != STDOUT_FILENO)
+-		close(fd);
+-}
+-
+-static void ksft_wait(void)
+-{
+-	char *env_str;
+-	char byte;
+-	int fd;
+-
+-	env_str = getenv("KSFT_WAIT_FD");
+-	if (env_str) {
+-		fd = atoi(env_str);
+-		if (!fd) {
+-			fprintf(stderr, "invalid KSFT_WAIT_FD = '%s'\n",
+-				env_str);
+-			return;
+-		}
+-	} else {
+-		/* Not running in KSFT env, wait for input from STDIN instead */
+-		fd = STDIN_FILENO;
+-	}
+-
+-	read(fd, &byte, sizeof(byte));
+-	if (fd != STDIN_FILENO)
+-		close(fd);
+-}
  
- 		skb = skb_dequeue(&rq->skb_queue);
-+		skb_mark_napi_id(skb, &rq->napi);
- 		netif_receive_skb(skb);
- 	}
- 
+ /* this is a simple helper program that creates an XDP socket and does the
+  * minimum necessary to get bind() to succeed.
 -- 
 2.43.0
 
