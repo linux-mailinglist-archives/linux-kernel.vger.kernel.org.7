@@ -1,117 +1,169 @@
-Return-Path: <linux-kernel+bounces-611266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C975A93F7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B27A93F86
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1F08E5279
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C790189D37B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0DE24337D;
-	Fri, 18 Apr 2025 21:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822D1243958;
+	Fri, 18 Apr 2025 21:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8VvVNqj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2WCddnk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DA6224B13;
-	Fri, 18 Apr 2025 21:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D3141760;
+	Fri, 18 Apr 2025 21:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745011777; cv=none; b=L04P1qC58OrIKiHe01RMPCZotnYahbxyFrtNUuZJLvCWuWpwB7hMwRzBc1aUk9GKA9szlQMULz4pLaJv9jqPmGWDUr7o4ThDeEUnA+GgDlp4y6S6O1BIMKq7rWk7tEqjF6NzKF1BPEMZOg9rbp1B+NL5tb6ZtQeOKLh/fLOFD04=
+	t=1745012364; cv=none; b=pphn8enxvvdTTYQhYeIeQ3S88jcVayEVGsvB7OjmY0nVpX4ZM4SUVgZqcVIIEhcrusJiIWAkhXRzuhCZweH5gw4upF2FC1tkbFN3XCgRJOc+5Po6qkE1fTh6d2S24gjAYwHOHxNHclB3/TlbKHS6MwQijuxwDg3irVkeLXJVPGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745011777; c=relaxed/simple;
-	bh=aNvVE4xobOPS1x9QLfzVQTej6ekYYNlRct7l/vLeYyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxB9E+xg7r9kAiO+5GdSsIf5V09vS4XU6XY6Vw+hOy0hlZvGgKa4F+rX53+PlibWJwd8xrKnY5Q23QPK+6qs4siWndxTJBN7DbC6EKMHeRyGt9WL4okolKiSoacFn9eDXqc4de8VXN+d57Gpj36IdPhkrV7+1f8lQ/Ek0URtt0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8VvVNqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630B9C4CEE2;
-	Fri, 18 Apr 2025 21:29:36 +0000 (UTC)
+	s=arc-20240116; t=1745012364; c=relaxed/simple;
+	bh=Dxddxm0RejabRVjCTL14ao3nM8RrH3k/YV8zdVVdCso=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BgPN8fECWa+fK2V4c1S6Gt4K1PPghNA8RAH8ChoThdUvREQUKfZ7p5InceAF2GIKL6G53XvXg4NTQQ7rUUoHX1n8TdBdvl46nI0Hgpou+e0TJMtpEsSqwqq44KQcoC+JFf+3M6yWGunOs/skZNcWJ4ZXYP/HV8ao6BsrLtQ4PI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2WCddnk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B194C4CEE2;
+	Fri, 18 Apr 2025 21:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745011776;
-	bh=aNvVE4xobOPS1x9QLfzVQTej6ekYYNlRct7l/vLeYyA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=s8VvVNqjrPcmwur3BUFAD/DarQSH+es47t86ZbHJGNum0q1/TLyhMXMlHiQ37v87C
-	 dB2rPY13XwwvLZEfqw/VVPjQ3MFfyAjoYqEQPytnXMjgWih1/TMIiEhrC45LhUJV+3
-	 +xwS1/EIiNOdKEhUg+3EOCQEqPJbuSBx976nJUIbtWC6AcTTbUm5xKHCwBGUslStpT
-	 UmPxOhCJK2DENq48V4Rr1WgagUKEGPWZRZyMwrdMG90G9M98t8MxsB1W9JnS9Ft7Hp
-	 rT0U7fv6I07Kl/R6pIhCesSzYRgq3hhFAkLTapQa/Xg1tS47y5+QM2riEvkia83qBN
-	 KpwA6D1AgCrnw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id F1C2CCE095D; Fri, 18 Apr 2025 14:29:35 -0700 (PDT)
-Date: Fri, 18 Apr 2025 14:29:35 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 0/6] tools/nolibc: fix some undefined behaviour and
- enable UBSAN
-Message-ID: <0527399b-acff-4452-a982-10f49144e099@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250416-nolibc-ubsan-v1-0-c4704bb23da7@weissschuh.net>
- <acffaf72-aca5-4301-ade4-ea12571e4392@paulmck-laptop>
- <44ef9e15-d7dd-4079-93c1-5f9cf79d675b@t-8ch.de>
+	s=k20201202; t=1745012364;
+	bh=Dxddxm0RejabRVjCTL14ao3nM8RrH3k/YV8zdVVdCso=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G2WCddnkCUd9nuX4LNZaI9Bc6KvI6JUPHUd7atC1tG4qG8yCRUmD3UBZewEiLJ+cS
+	 tp/eU62QRFVpv+UR2Y5SadYgnWE4h9m2J04MizlxXOFzq098DtDK7MBA+aK2mc96+H
+	 tfbawR1cbyMP7vu6WBeQ2hZNQJOYTIscf3PkJsQJY77JGJuctcfP5fKPWe5A/U39jM
+	 qA8yu+v7E5GksMxIGucwygtHLtyy/+yfVU/7UvBi+eg3Tbbf4//3PEbpKy6NRtCRyR
+	 264rLnzRFaknCTjvmRXOk0mNw7P564ZdWP0NSGSTjhCBrlpEt1jm97yP9Kn2STR45Y
+	 MFgOU73WviJbg==
+From: Kees Cook <kees@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Kees Cook <kees@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] kbuild: Switch from -Wvla to -Wvla-larger-than=0
+Date: Fri, 18 Apr 2025 14:32:39 -0700
+Message-Id: <20250418213235.work.532-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3972; i=kees@kernel.org; h=from:subject:message-id; bh=Dxddxm0RejabRVjCTL14ao3nM8RrH3k/YV8zdVVdCso=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlMR75tUNcXehp4aNuTF9IufZcazwSYsVpMuhT1SYfV7 DZjXfTDjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIlU6zD8sxcrPZD7z3HyfV5/ l5P7Zidtu6JR9j1/s8OLWSp8sROaOxkZ7tvemrNQJZAjpFqnUJfJSVdjfeDhLfxyf09LOTKE/fv OCwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <44ef9e15-d7dd-4079-93c1-5f9cf79d675b@t-8ch.de>
 
-On Fri, Apr 18, 2025 at 11:20:29PM +0200, Thomas Weiﬂschuh wrote:
-> Hi Paul,
-> 
-> On 2025-04-18 10:32:27-0700, Paul E. McKenney wrote:
-> > On Wed, Apr 16, 2025 at 08:40:15PM +0200, Thomas Weiﬂschuh wrote:
-> > > Fix some issues uncovered by UBSAN and enable UBSAN for nolibc-test to
-> > > avoid regressions.
-> > > 
-> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > 
-> > Thank you, Thomas!  Are these intended to go into the current v6.15
-> > release, or are you instead thinking in terms of the v6.16 merge window?
-> > Either works for me, but left to myself, I would assume the v6.16
-> > merge window.  ;-)
-> 
-> They are intended for v6.16 through the normal process.
+Variable Length Arrays (VLAs) on the stack must not be used in the kernel.
+Function parameter VLAs[1] should be usable, but -Wvla will warn for
+those. For example, this will produce a warning but it is not using a
+stack VLA:
 
-Sounds good, and thank you for the clarification.  Plus good show on
-getting them out early.  ;-)
+    int something(size_t n, int array[n]) { ...
 
-							Thanx, Paul
+Clang has no way yet to distinguish between the VLA types[2], so
+depend on GCC for now to keep stack VLAs out of the tree by using GCC's
+-Wvla-larger-than=0 option (though GCC may split -Wvla[3] similarly to
+how Clang is planning to).
 
-> Thomas
-> 
-> > 
-> > > ---
-> > > Thomas Weiﬂschuh (6):
-> > >       tools/nolibc: add __nolibc_has_feature()
-> > >       tools/nolibc: disable function sanitizer for _start_c()
-> > >       tools/nolibc: properly align dirent buffer
-> > >       tools/nolibc: fix integer overflow in i{64,}toa_r() and
-> > >       selftests/nolibc: disable ubsan for smash_stack()
-> > >       selftests/nolibc: enable UBSAN if available
-> > > 
-> > >  tools/include/nolibc/compiler.h              |  6 ++++++
-> > >  tools/include/nolibc/crt.h                   |  5 +++++
-> > >  tools/include/nolibc/dirent.h                |  1 +
-> > >  tools/include/nolibc/stdlib.h                | 24 ++++++++----------------
-> > >  tools/testing/selftests/nolibc/Makefile      |  3 ++-
-> > >  tools/testing/selftests/nolibc/nolibc-test.c |  1 +
-> > >  6 files changed, 23 insertions(+), 17 deletions(-)
-> > > ---
-> > > base-commit: 7c73c10b906778384843b9d3ac6c2224727bbf5c
-> > > change-id: 20250416-nolibc-ubsan-028401698654
-> > > 
-> > > Best regards,
-> > > -- 
-> > > Thomas Weiﬂschuh <linux@weissschuh.net>
-> > > 
+Switch to -Wvla-larger-than=0 and adjust the two VLA-checking selftests
+to disable the updated option name.
+
+Link: https://en.cppreference.com/w/c/language/array [1]
+Link: https://github.com/llvm/llvm-project/issues/57098 [2]
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98217 [3]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: <kasan-dev@googlegroups.com>
+Cc: <linux-mm@kvack.org>
+Cc: <linux-kbuild@vger.kernel.org>
+Cc: <llvm@lists.linux.dev>
+---
+ lib/Makefile               | 2 +-
+ mm/kasan/Makefile          | 2 +-
+ scripts/Makefile.extrawarn | 9 +++++++--
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/lib/Makefile b/lib/Makefile
+index f07b24ce1b3f..37b6e5782ecb 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -71,7 +71,7 @@ CFLAGS_test_bitops.o += -Werror
+ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_IDA) += test_ida.o
+ obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
+-CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
++CFLAGS_test_ubsan.o += $(call cc-option, -Wno-vla-larger-than)
+ CFLAGS_test_ubsan.o += $(call cc-disable-warning, unused-but-set-variable)
+ UBSAN_SANITIZE_test_ubsan.o := y
+ obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
+diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+index 1a958e7c8a46..0e326116a70b 100644
+--- a/mm/kasan/Makefile
++++ b/mm/kasan/Makefile
+@@ -35,7 +35,7 @@ CFLAGS_shadow.o := $(CC_FLAGS_KASAN_RUNTIME)
+ CFLAGS_hw_tags.o := $(CC_FLAGS_KASAN_RUNTIME)
+ CFLAGS_sw_tags.o := $(CC_FLAGS_KASAN_RUNTIME)
+ 
+-CFLAGS_KASAN_TEST := $(CFLAGS_KASAN) $(call cc-disable-warning, vla)
++CFLAGS_KASAN_TEST := $(CFLAGS_KASAN) $(call cc-option, -Wno-vla-larger-than)
+ ifndef CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX
+ # If compiler instruments memintrinsics by prefixing them with __asan/__hwasan,
+ # we need to treat them normally (as builtins), otherwise the compiler won't
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index d75897559d18..0229b10c5d81 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -45,8 +45,13 @@ endif
+ # These result in bogus false positives
+ KBUILD_CFLAGS += $(call cc-disable-warning, dangling-pointer)
+ 
+-# Variable Length Arrays (VLAs) should not be used anywhere in the kernel
+-KBUILD_CFLAGS += -Wvla
++# Stack Variable Length Arrays (VLAs) must not be used in the kernel.
++# Function array parameters should, however, be usable, but -Wvla will
++# warn for those. Clang has no way yet to distinguish between the VLA
++# types, so depend on GCC for now to keep stack VLAs out of the tree.
++# https://github.com/llvm/llvm-project/issues/57098
++# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98217
++KBUILD_CFLAGS += $(call cc-option,-Wvla-larger-than=0)
+ 
+ # disable pointer signed / unsigned warnings in gcc 4.0
+ KBUILD_CFLAGS += -Wno-pointer-sign
+-- 
+2.34.1
+
 
