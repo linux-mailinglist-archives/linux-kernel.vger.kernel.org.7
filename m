@@ -1,98 +1,118 @@
-Return-Path: <linux-kernel+bounces-610401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796FAA934A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:30:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86FFA93498
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3D51B65459
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E1A4660F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0526AABC;
-	Fri, 18 Apr 2025 08:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4B026B945;
+	Fri, 18 Apr 2025 08:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="QH7S/KAY"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jeu8QH+M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9231526B2D6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1884B268C55;
+	Fri, 18 Apr 2025 08:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744965009; cv=none; b=aqeiBNHSCgys6XTkIxR8e4SMDY3KahdghB08iNu8BlWmr8WT3xHJj/fIqeBbrsKIcQzrsDRKGN8rolXoX/w4KVErAMdPtLTiqcInmU3Ko9fwbb5TG3fYHSfdf8uIM2/Bhh1oRfU9FFVT/6tFeJadnte6u9cMdddmpcN7pE62aWQ=
+	t=1744964678; cv=none; b=oJAulFQb3ibNg1lC26mea1Pbt2mBmN+LBDb8DFasBzGJbPICrZ0RdDFjyh3o6rx2yb85Yerbsf7Ye+iBQmxWhyGb7mXykatamUG58+z+Vk4r80SV8ua1i33wclb/9itZpp8bMrsrk7n7mr5BIAuy1iM9ewiGuCmExCXjkDZ2uRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744965009; c=relaxed/simple;
-	bh=dGPAZCJAO9LH9k9+kARVr8e1BoPkjZVxOA21Pk3pjJY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=iwnCBXvvP62HeJB4sH5gXQFbPTTVbuvy3/vjiVD9IVDgtceVQeCrY/ydbWyFqWM0b8KBT2U/l2BGgL95m9uXKnoHdMOoSynIgEQEzysZXRhmTbrx35MxPdKB5ibWjIPt9hzPTBI25q3omydE2fTNmi7JwI0xDG59UNb3MSoUbA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=QH7S/KAY; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1744964696;
-	bh=Shfyo13CoJP0LZK8BYiEvTiymcxKJVPkg/SIqQkMIZo=;
-	h=From:To:Cc:Subject:Date;
-	b=QH7S/KAY7jDyYdGIYukfEL8qjtIxICc+QsdFAM6Av0aWHB0qWWQBYPcxauOFHxHJt
-	 AM0lNXs/Vx+GdJnVNKT9ygaVfUIu3FK7gYrG/W/ECKjtqoE/fK0rl3ypGuRXQh4a/C
-	 50dpbQZKgcpQRTcMdTwa/hclRRgy6Gf0f5TVk5LY=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 636900F3; Fri, 18 Apr 2025 16:24:54 +0800
-X-QQ-mid: xmsmtpt1744964694t3ala3z5g
-Message-ID: <tencent_A28A97D009EF5CA26B43840EF71F5510A406@qq.com>
-X-QQ-XMAILINFO: NT7uTz3cNku2sWPs5V+dNzzKrE23V7eDqXqj3ELcsMd/GU8I1Q2KdACXxwkISs
-	 N1xPVnJi09o+dTDSlbayJCKwFztYsZOEaGebeHXDjSFscLwce/8W5JOsg2jVXXfG/NzJ0QrtBjWx
-	 30WYer+BBiuEj986G1d4cznhLo05ENPuBfIDWq0JYs9GYerkSwjvlk3jOSifYuey4ob5AV2WPfDk
-	 XsLH48H2jDERzjaYVtBGwW/sUkq4s0TiHhXNLqZrojmvlN/Z1aUsVYpYzBlsFWxkJu+pfL8jqjmE
-	 qpC/978LYhWedDdFtCC9utgoLuuj3mE4VlUTM5E3unMkfMKY59JeywJkJt78Axl7GIZiH55NoiDW
-	 9OClejMgWPDvqYmPfNypVlKoIBl99d0Cg6nPtwCpfxEB0XLmSM47in2lloESfua9CcfJv487IM0d
-	 vww0eJTR8v/g6xzBj2lePRdthD3Sm+hwIVRZtm/LV32qRF6QUvSJmjn+1PgO2jXA+aBLcDLHZ/oX
-	 cS5BUyUhKXzQoKMSlbeYlrhU3uxj6vc6VYJiBY1tYlaV65nJz1lvJwyUwuJ+CyEKCrN5PU/fdSVc
-	 hMT+25ZjQrouCKvb0jpkPyru1ZnLPHG6TsAil7kzXbRIbGHafFIm6qqWu0Fpu7W2D0onqq1EBdV3
-	 wMvROj9R0aDoNm6P/zA2OdbGInWkWdN+5ALaabrnYFGcBvt5US2nDmNLnWPxlQOuOe1kdDPA50V2
-	 gZ5KCaiPSczTQgI9RoxKVLMSXDFUAqqvMnpAO6T34h2DoKAav++ubXnnAUqnaIKKra3eaghriR2t
-	 a9IGNzKgo4RGV4gRN4qYl9BbYKYThYjbqvnWU9aVZKNW2/Yw87LsU9q8KxzwqjW4gdVwJHZSK7QF
-	 tF2rVtpbPNhSkmFlHoxSzgGGAXenHihiJ4KhpUdSFAO/kZ1siwqk4a7nL4Xc56KRNoMqDCMJkaBU
-	 5QfLv38tBdpDQtPDloRQu/sq+Bgz2oVr3VOdIL++RuMT2jEWFDUA==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: xiaopeitux@foxmail.com
-To: linux-kernel@vger.kernel.org,
-	f.fangjian@huawei.com,
-	robh@kernel.org,
-	john.g.garry@oracle.com,
-	andriy.shevchenko@linux.intel.com,
-	xuwei5@hisilicon.com
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH 0/2] logic_pio: clean hisi_lpc and logic_pio
-Date: Fri, 18 Apr 2025 16:24:31 +0800
-X-OQ-MSGID: <cover.1744964101.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744964678; c=relaxed/simple;
+	bh=/9OfrWnCUxMfe0bzWWpOCEaGqaGAQjbwJjWfCuAqTJo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=JOGb3BJogmtqYrBHoh67YdEvVEdMcTE7K94IuFjQe93wRVHl0ZsuGIiKPT7jFaZWBjsc8Vc+GjjKjtX8gTU4uwyzvj3H/ddI62p20HHPz8ID9X0OdVg0tksrJzP6v6aUxCU/8k89/lo6P7smGxTCpaPU+eYkpF02aSKuxasz6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jeu8QH+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E8CC4CEE2;
+	Fri, 18 Apr 2025 08:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744964677;
+	bh=/9OfrWnCUxMfe0bzWWpOCEaGqaGAQjbwJjWfCuAqTJo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Jeu8QH+M1Br42zGYHGcZhAAXWDmCsjRzAlZ5hrEVlRdeHLRNgShMGYULuWj2jXTUu
+	 Gz7qZ/eC1LrK3mZRFcZPWAT+IQyGAZenZFtPYjcTwJ1eHyVOd433z8hLR083M13UnG
+	 Yz/+BNG057GgyY5KPqpOgSbRjjTVgnHLeq1Ud0qZ2tGps68D/qD0WQ7yukthbeyyXl
+	 Paw/QUmFQnR9Kbj1T+Hv5MbVp9AdYXzzTInkm93qqgjZdJGkWNWWB3uLc4zoT3AMWE
+	 N6c8o0QTJOlGOc0MMWELCLcwB8D4a+uh/yHZFCLHNgGQafGvhfq5bL0WPin3TZ3DYa
+	 lL5fCH47k7yLw==
+Date: Fri, 18 Apr 2025 03:24:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: nm@ti.com, baocheng.su@siemens.com, linux-pci@vger.kernel.org, 
+ diogo.ivo@siemens.com, krzk+dt@kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, kw@linux.com, 
+ robin.murphy@arm.com, jan.kiszka@siemens.com, kristo@kernel.org, 
+ s-vadapalli@ti.com, linux-arm-kernel@lists.infradead.org, 
+ lpieralisi@kernel.org, vigneshr@ti.com, iommu@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, bhelgaas@google.com, helgaas@kernel.org, 
+ m.szyprowski@samsung.com, devicetree@vger.kernel.org, conor+dt@kernel.org, 
+ ssantosh@kernel.org
+To: huaqian.li@siemens.com
+In-Reply-To: <20250418073026.2418728-3-huaqian.li@siemens.com>
+References: <20241030205703.GA1219329@bhelgaas>
+ <20250418073026.2418728-1-huaqian.li@siemens.com>
+ <20250418073026.2418728-3-huaqian.li@siemens.com>
+Message-Id: <174496467399.2597920.14844354232532512833.robh@kernel.org>
+Subject: Re: [PATCH v7 2/8] dt-bindings: PCI: ti,am65: Extend for use with
+ PVU
 
-From: Pei Xiao <xiaopei01@kylinos.cn>
 
-This two patches for hisi_lpc and logic pio.
+On Fri, 18 Apr 2025 15:30:20 +0800, huaqian.li@siemens.com wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+> to specific regions of host memory. Add the optional property
+> "memory-regions" to point to such regions of memory when PVU is used.
+> 
+> Since the PVU deals with system physical addresses, utilizing the PVU
+> with PCIe devices also requires setting up the VMAP registers to map the
+> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+> mapped to the system physical address. Hence, describe the VMAP
+> registers which are optional unless the PVU shall be used for PCIe.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
+> ---
+>  .../bindings/pci/ti,am65-pci-host.yaml        | 34 +++++++++++++++++--
+>  1 file changed, 31 insertions(+), 3 deletions(-)
+> 
 
-1.remove unused head file.
-2.add comments for logic_pio.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Pei Xiao (2):
-  bus: hisi_lpc: remove unused head file in hisi_lpc.c
-  logic_pio: Add detailed comments for find_io_range() and
-    logic_pio_trans_cpuaddr()
+yamllint warnings/errors:
 
- drivers/bus/hisi_lpc.c |  4 ----
- lib/logic_pio.c        | 16 +++++++++++++++-
- 2 files changed, 15 insertions(+), 5 deletions(-)
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/ti,am65-pci-host.example.dtb: pcie@5500000 (ti,am654-pcie-rc): 'memory-region' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/ti,am65-pci-host.yaml#
 
--- 
-2.25.1
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250418073026.2418728-3-huaqian.li@siemens.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
