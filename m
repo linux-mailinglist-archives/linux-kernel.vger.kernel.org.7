@@ -1,106 +1,123 @@
-Return-Path: <linux-kernel+bounces-610523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07665A935E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:15:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E9AA935DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70AFB7B10DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D873AF199
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B9270ECD;
-	Fri, 18 Apr 2025 10:15:13 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18522741CF;
+	Fri, 18 Apr 2025 10:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afCMAfsx"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4382741AE;
-	Fri, 18 Apr 2025 10:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7B52741BA;
+	Fri, 18 Apr 2025 10:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744971313; cv=none; b=uSSB2/OR/UY+wfnOOKo6tWg1M4kA+AQ8tZOeqjaJt09nOB/l9EiE8hgNMyhFhbd79jJewESSpc72lOEqYkgxSjOJLk5gmg7C4tXO/g+SGCOVKB4+RicQKCP+aCrs3NKK2x5HIMtewxPNAmnDtcxSbSPneAhTpgNJhyEmmVvFjTg=
+	t=1744971063; cv=none; b=moPEjlCVh1aDrHhigOtonlVCxxV2J6yRLxUnNvEb0GMuRCObo7Om5aACfkidyLg2Ojx1YuFXV+3Q1zULNND9/nKxITry4NkQc9uasmRfxMd/UG104oqtI1UyHTb1Wq45ss6e8esbDaUThcboBJTyqV0ZkQhVEo9wbcZpQG5N+FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744971313; c=relaxed/simple;
-	bh=qWN0NjjRcW9BA2sX0INR3SpjPZCsWlki9/tPSA1YspY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kq7xmJP46gR4bLZRbiclIRGNMhbZFl3OlP6T9tiollfJil4TVeaXLHqsR/mJFUtUlWuD+aP/5IHzlZM89/eKQHcyzrA8iR8okkohWmp+VwQ/N2nSfZfWo0gbgqz7Np+XGRY3eQzFvQlpHoLBBEKnWzDCLccXXwe2nqmMx6Oh93o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a01:e0a:3e8:c0d0:6288:2946:7ed8:5612])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 07D882CAC61;
-	Fri, 18 Apr 2025 10:09:49 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:6288:2946:7ed8:5612) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: syzbot+5405d1265a66aa313343@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: syz test
-Date: Fri, 18 Apr 2025 12:09:43 +0200
-Message-ID: <20250418100943.108533-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <680205df.050a0220.297747.0004.GAE@google.com>
-References: <680205df.050a0220.297747.0004.GAE@google.com>
+	s=arc-20240116; t=1744971063; c=relaxed/simple;
+	bh=n17hHD71fjfeCryWjsaHFoLT9UFwBym7iAQ/KR8Xlv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gh22JZ5e16/Xs76ilFKuz4o1mqwCPJ2EPc467e0Oj/LxEB1Om5JftERtnSeSMHmMrh2R6RdRbeTEH3CW+Ng3fQwpdtgxJxF1W2C4hC8d4TbC9W6knLf2bOfiTJWM6Pgy8/IXbbwA/0elCXGFihpy5B+KZH6QkZAxW+m77ODCWaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afCMAfsx; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso344381866b.0;
+        Fri, 18 Apr 2025 03:11:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744971060; x=1745575860; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMDDZSKx+HwZEHjuUq4iy5QAOO2sg5Fgy5qC6TXwyqw=;
+        b=afCMAfsxkfM2/OCwqBwYDzsm6txlge2JSTavkwsV7EscSPRtYZDxdvMsB+JoCV17Fm
+         LT3GHc64xjSoH1l8tmHb1Q+ypPe5fTEg/92D1boT9pFhkTRUUjcBT3LNV8Li3p4bQUde
+         1piOWa8hcrI8TTbDBoOkojQGUjLuUU0WCtZ67Q3fx38IO1HgevCVKowNrlNIlLD/CsSQ
+         HswDG/IhRC9wWKZwFSIjCY3G8Nh+aNl4zUX9uHG6ZikvT9DcmCbt+4bjTD6wGdqwnQqL
+         I8Y+uMN+liZk8eapaIF7Wkeii68TgvRq+uymAUsdFHH/fKNG0nAjbULKp3m/FGlYhFqI
+         1c3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744971060; x=1745575860;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QMDDZSKx+HwZEHjuUq4iy5QAOO2sg5Fgy5qC6TXwyqw=;
+        b=PfZWuJBEEdyLPCDI8LSGIGlds1opgae2Jte3oMmNAyf65dh4Z0aAjgW3+qaaM2qFSO
+         XyvvmGpAHxUO0NHdJaMm+RlN7jZRcuhT7ikYEPNIRBoHpCEgc5PHH6O2MQNrQXAxG7QB
+         dGnyDLNyJqpBaIT/rKIBW7B6YqS64YSwJMMrA/q+xLSL+TbQdZ5nUXxu3RwqBwsTM+rp
+         wrONbtxRYIMpmDIUm2cvKnRFXB0PMaDToWbnYbyJmLvnK6oWCxdBFc5hJebWGz3FeL9L
+         9fiwWer5c/eJtIqt64knEpKExROCF6cZmQqVdogMg9vGBN0//dzXZiK+kjETM2Tne6Jb
+         uaOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2kJEIUW+khTkl2O0YM7zGRet4itP3Vg9AZDeIeZcXIwFAbayb05IsghY8avFuvMJqFPjR9b0MFe4/oRE=@vger.kernel.org, AJvYcCXx7I3JkaXaJOR7kPG1Bw4HoZXH3Xjw44r2ie7ynCs7IkoDmoH6ww7J/CCMBmVHFtgWRQB/SND8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDj62g3pY2VssnMdD5P9UCYg3HuZdom4iOjYMoMBAaU5m0IXeH
+	Tav/lj+TJSaO8Oeq5HVcXv2G7bCaOqbp5tBxwQsqAkt0jy/+FTntsguV7XE2Ms3PtdQlQS/FkKO
+	zdGZWtHbRzbl/y5jZEI8yMf5ZjOw=
+X-Gm-Gg: ASbGncvKz1jMO3tEHIiLbrKLCnGMwE7OOPtTJKutxIP8tmvC3SAHGJyXw6BHdWIGu/b
+	OB1JbDEycA0R9GgLmXys+CK4w4mlde9xxSeVgMktnUWSWpa5/3jzkghWWQztHgyHuuQAG+sOOrA
+	WmW69TZMNJm/ohqbxcTta2GxtqnlBsvD/H
+X-Google-Smtp-Source: AGHT+IF3BRJBFKZjrvyGuLznFO6Arg9RBKnUGBXM/JtZX+cpufwbmsR98eLJ59m6j06coIrrVpxtGH6iPeV3EHJAtis=
+X-Received: by 2002:a17:907:9488:b0:ac2:baab:681c with SMTP id
+ a640c23a62f3a-acb74b7faedmr223636366b.28.1744971059552; Fri, 18 Apr 2025
+ 03:10:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <174497098935.10837.3585531367737464735@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+References: <20250325121745.8061-1-danny@orbstack.dev>
+In-Reply-To: <20250325121745.8061-1-danny@orbstack.dev>
+From: Matteo Croce <technoboy85@gmail.com>
+Date: Fri, 18 Apr 2025 12:10:23 +0200
+X-Gm-Features: ATxdqUGvaUeq8HzGS8oLadD-F1TQFMu7yoW5hnxkRkO8pw_-UJwEquanfAYYgfk
+Message-ID: <CAFnufp14ap0UfJcn2uwU4-3cstr313J86HvRCcKULZLRU=nZ6Q@mail.gmail.com>
+Subject: Re: [PATCH v4] net: fully namespace net.core.{r,w}mem_{default,max} sysctls
+To: Danny Lin <danny@orbstack.dev>, netdev@vger.kernel.org
+Cc: Matteo Croce <teknoraver@meta.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org, 
+	Shakeel Butt <shakeel.butt@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index 6add6ebfef89..e8d7431ce178 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -15,7 +15,7 @@
- 
- #include "btree.h"
- 
--void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
-+int hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
- {
- 	struct page *page;
- 	int pagenum;
-@@ -37,13 +37,16 @@ void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
- 		pagenum++;
- 		off = 0; /* page offset only applies to the first page */
- 	}
-+
-+	return bytes_to_read;
- }
- 
- u16 hfs_bnode_read_u16(struct hfs_bnode *node, int off)
- {
--	__be16 data;
-+	__be16 data = 0;
- 	// optimize later...
--	hfs_bnode_read(node, &data, off, 2);
-+	if(hfs_bnode_read(node, &data, off, 2) < sizeof(u16))
-+		return 0;
- 	return be16_to_cpu(data);
- }
- 
-diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-index 0e6baee93245..54f310c52643 100644
---- a/fs/hfs/btree.h
-+++ b/fs/hfs/btree.h
-@@ -94,7 +94,7 @@ extern struct hfs_bnode * hfs_bmap_alloc(struct hfs_btree *);
- extern void hfs_bmap_free(struct hfs_bnode *node);
- 
- /* bnode.c */
--extern void hfs_bnode_read(struct hfs_bnode *, void *, int, int);
-+extern int hfs_bnode_read(struct hfs_bnode *, void *, int, int);
- extern u16 hfs_bnode_read_u16(struct hfs_bnode *, int);
- extern u8 hfs_bnode_read_u8(struct hfs_bnode *, int);
- extern void hfs_bnode_read_key(struct hfs_bnode *, void *, int);
+Il giorno ven 18 apr 2025 alle ore 12:06 Danny Lin
+<danny@orbstack.dev> ha scritto:
+>
+> This builds on commit 19249c0724f2 ("net: make net.core.{r,w}mem_{default,max} namespaced")
+> by adding support for writing the sysctls from within net namespaces,
+> rather than only reading the values that were set in init_net. These are
+> relatively commonly-used sysctls, so programs may try to set them without
+> knowing that they're in a container. It can be surprising for such attempts
+> to fail with EACCES.
+>
+> Unlike other net sysctls that were converted to namespaced ones, many
+> systems have a sysctl.conf (or other configs) that globally write to
+> net.core.rmem_default on boot and expect the value to propagate to
+> containers, and programs running in containers may depend on the increased
+> buffer sizes in order to work properly. This means that namespacing the
+> sysctls and using the kernel default values in each new netns would break
+> existing workloads.
+>
+> As a compromise, inherit the initial net.core.*mem_* values from the
+> current process' netns when creating a new netns. This is not standard
+> behavior for most netns sysctls, but it avoids breaking existing workloads.
+>
+> Signed-off-by: Danny Lin <danny@orbstack.dev>
+
+Hi,
+
+does this allow to set, in a namespace, a larger buffer than the one
+in the init namespace?
+
+Regards,
 -- 
+Matteo Croce
 
+perl -e 'for($t=0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
 
