@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-611406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2423FA9417D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 05:53:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F0EA94181
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 06:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C82D445EE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 03:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD4D19E7C8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 04:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3E854654;
-	Sat, 19 Apr 2025 03:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497954D599;
+	Sat, 19 Apr 2025 04:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+8RvHYB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="oJhOnwfe"
+Received: from mail83.out.titan.email (mail83.out.titan.email [3.216.99.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926EC4C85
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 03:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB627442C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 04:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745034814; cv=none; b=tQNN+W4er/PD8ZD8b081WhGn5gYULpWgP03L22oK5kq7kBPenonETaAASHoRL5PTq6Nl8YEKwx5DkMjnHcF4W1e9JgAVQFezFirvqJw9i6Mr2xNLb0uw2hMK3TXo5+cI81ufGTLy4PqLNSXFvTg87GnpN/o+YuZLvovUdUX9yug=
+	t=1745035276; cv=none; b=ZSVc5tB+78CoAstcYKf+vaoQw+Yu41ZbIGOdrVzRhw4nG5auEkaMiolKURR5Leqzm2NZJd+4f5E0dPB4aYNpRYN7LM6eUgPcQJ1RtlmCfiM8gmvjBuglP8mww4NPCYBbTjKgsvgE+6nv74Kz+W9IrN2qNj97sJKsvuXwghZ9YmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745034814; c=relaxed/simple;
-	bh=m8/Y+RAsAwHCoUFV/ZSWZGe/vaNjtvZvo9KlkoCyLkc=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OLNi/71OQWhBwjrY1OeFZ7zZkupV/lZzdpvXhMZEpFw+d96mnB6bGm+cPzjSBWPiyVh8hGNHGFGskkexlUt/8XpObA/RaVLZdKAds8qKUHfgWnLfO1abke1tPD/xR4S8rnI5R0XnYj1LUfPitXqM9Cmkt1CVJFDO13qmb2L5ggs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+8RvHYB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745034811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKj6D7ydUvkkkHiFxc83MdzWfmUREj8+ls6NLjJlCpY=;
-	b=a+8RvHYBwIIwcGKqtVCSAM5s7mVYgcneYfgq95hh/CDet/BEJTWEQxDwA+Fur319YqRqSV
-	zXZ7R9cknA3p406iQg/L9sAmk1sDax2LDBd7wEHVeKZkweAVA3P/HF0KKomDu+J+h9l5qb
-	leicxcqkykoAqiqEo+WsR/Q23a0Gd6A=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-fr9oHE5QN4uJJpZe_MVyqQ-1; Fri, 18 Apr 2025 23:53:29 -0400
-X-MC-Unique: fr9oHE5QN4uJJpZe_MVyqQ-1
-X-Mimecast-MFC-AGG-ID: fr9oHE5QN4uJJpZe_MVyqQ_1745034809
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5f3b8b1a1so316322385a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 20:53:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745034809; x=1745639609;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LKj6D7ydUvkkkHiFxc83MdzWfmUREj8+ls6NLjJlCpY=;
-        b=xFFID7Lbt5vCYcKf/+f/HmedBDwY+FDAM3bS4FKQ/RUKDrm1ZZY6AuweaLDnMheYRc
-         P6rVikvXj/8bRV9m1YXrhkiU4ZT+eO2E6XepXWB6KbrQUSX3AG12z2UvamqO2ikaDXjN
-         AA8vsCmKH75t5NUhlgusFd3PjsR7df84Ie4r3you4NZKpS19u58LU10pf37BWI8J9PPL
-         bGXZlubW8rGvjt4vEjpG6BhJm/XjUxYjEDFgPRNdXAEaLtVmVAsjyD/MxU25b6sPanGH
-         OA8sw+IQJ5iL2ZH+jA83X0apsjBLjq0cW1m+B5AKDhSZRNWm46eXOONaw68UkveutLmJ
-         ZrCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhChqW4hb2uSccO3MW5XaQiSjcAr5c9vN/bgSj9j3TY03853T4kNN0XqShmL7GDJmGCuzaiGG7XtW6rtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweqql8uS3E+SifhqZt5RbZdj92axC8CwCO11U3U4pkKOA2dT0F
-	KEI7CV4Krg7mko9kF5fPre6ocR7Ys8fc2FB5OIjjlVOUBHNNPp3hPauhhFipegWIwecxtIprHWw
-	Lzl5qx7AjJwJspbMLquBtMuqYy35AvFaWGdDhBohtOOsnnA+h+hC/uHJK+O6qVA==
-X-Gm-Gg: ASbGncuVNW2G776BDrvLalKM613CBZL9JpFmFXGEiiZMYTb/ouayiY54ZBLnPbWbV6h
-	qDFx5Kw7zD4b3qFKC7LWUm36iUx35ymjRpV0cu73E9Yl7GxXz3UddO07QhLYoOpzblT3r4XInIx
-	/qGuPtcC3r9AVGRj7s4YMpe0jAfHKf8F8Jtnr7Rb7Tl0ddBpFzdo+asO1+825Qv+dEggBnQbiO6
-	lVZwuTASLoeRHKAEIlVwHmyhtfEi4QqDdSXjQLE9mihOaHyRtOCcwC4rJMCpFxV3WhptGYHMiaZ
-	BIdqNAFXY8Iog3PBGXN8lzo34yUu3V/+TNBnUyUMPBrZ0nM11g==
-X-Received: by 2002:a05:620a:288b:b0:7c7:5b32:1af9 with SMTP id af79cd13be357-7c927fa1549mr783892785a.25.1745034809118;
-        Fri, 18 Apr 2025 20:53:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHbCaMtgw22RLcM0DduEGN4e9PzjuMCuEVDKnXDXyih6j+UdLAwqczdezz9lgVSPMVUBfIGg==
-X-Received: by 2002:a05:620a:288b:b0:7c7:5b32:1af9 with SMTP id af79cd13be357-7c927fa1549mr783891085a.25.1745034808813;
-        Fri, 18 Apr 2025 20:53:28 -0700 (PDT)
-Received: from [192.168.130.170] (67-212-218-66.static.pfnllc.net. [67.212.218.66])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b778c0sm176223185a.112.2025.04.18.20.53.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Apr 2025 20:53:28 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <19e268b0-b6d5-4aab-a4d0-cd1102027f3d@redhat.com>
-Date: Fri, 18 Apr 2025 23:53:26 -0400
+	s=arc-20240116; t=1745035276; c=relaxed/simple;
+	bh=8vsWUbNInXOmJ6LkU6uCbJfr9BGsN9vSttRt6BzaTnU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Hpyjmn1aYIyIG6c5lWZDkziQd4SayVWHj3uolworMWxOFQ3AcBoV/zQtsEFEj1Gf7mKUpCA/YHnFa2VryrAR/5gb83PWWh3Dm8CN2z1VywOPNZXupYWnTAiQvGxAa5A9WZ3KV3BYTFH6Y57ATBJbzMVHb2osrjaPfThZGl/nk0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=oJhOnwfe; arc=none smtp.client-ip=3.216.99.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id D13B760059;
+	Sat, 19 Apr 2025 03:55:26 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=bAvYi5ImaoxjDMe4vzylBlBmlqcUZYzHCYPKwoB87qI=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=from:in-reply-to:cc:to:mime-version:subject:references:date:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1745034926; v=1;
+	b=oJhOnwfeVOG8XG2+ePu+rd/hidWNokUuygMfqtb86FuyRwQz7ETjQwhTBXb7BCwtnAY3iYwH
+	Yh1+xXALoOaA+3snTLim7K46mUvpB+x3mwVCC6wrPZiKcHLJZgeMtxiTfm/uHx9NomZibAM/Ar/
+	VJgUsYz0lAVs9qpKOELp5Qy4=
+Received: from smtpclient.apple (unknown [43.161.241.230])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id C447160038;
+	Sat, 19 Apr 2025 03:55:23 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] vmscan,cgroup: apply mems_effective to reclaim
-To: Gregory Price <gourry@gourry.net>, Waiman Long <llong@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com, mhocko@kernel.org,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- akpm@linux-foundation.org
-References: <20250418031352.1277966-1-gourry@gourry.net>
- <20250418031352.1277966-2-gourry@gourry.net>
- <162f1ae4-2adf-4133-8de4-20f240e5469e@redhat.com>
- <aAMc0ux6_jEhEskd@gourry-fedora-PF4VCD3F>
-Content-Language: en-US
-In-Reply-To: <aAMc0ux6_jEhEskd@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+In-Reply-To: <20250418202130.it.887-kees@kernel.org>
+Date: Sat, 19 Apr 2025 11:55:10 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ linux-bcache@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
+References: <20250418202130.it.887-kees@kernel.org>
+To: Kees Cook <kees@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1745034926648469019.5242.7544881322108761200@prod-use1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=RvE/LDmK c=1 sm=1 tr=0 ts=68031eae
+	a=sdR4fqZNG57T/J2FY8bnUA==:117 a=sdR4fqZNG57T/J2FY8bnUA==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8
+	a=BDcCamcCxTd4Ojxa7JYA:9 a=QEXdDO2ut3YA:10 a=FvX_cx3yyqDC_9C4kSCW:22
 
 
-On 4/18/25 11:47 PM, Gregory Price wrote:
-> On Fri, Apr 18, 2025 at 10:06:40PM -0400, Waiman Long wrote:
->>> +bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
->>> +{
->>> +	struct cgroup_subsys_state *css;
->>> +	unsigned long flags;
->>> +	struct cpuset *cs;
->>> +	bool allowed;
->>> +
->>> +	css = cgroup_get_e_css(cgroup, &cpuset_cgrp_subsys);
->>> +	if (!css)
->>> +		return true;
->>> +
->>> +	cs = container_of(css, struct cpuset, css);
->>> +	spin_lock_irqsave(&callback_lock, flags);
->>> +	/* At least one parent must have a valid node list */
->>> +	while (nodes_empty(cs->effective_mems))
->>> +		cs = parent_cs(cs);
->> For cgroup v2, effective_mems should always be set and walking up the tree
->> isn't necessary. For v1, it can be empty, but memory cgroup and cpuset are
->> unlikely in the same hierarchy.
->>
-> Hm, do i need different paths here for v1 vs v2 then?  Or is it
-> sufficient to simply return true if effective_mems is empty (which
-> implies v1)?
 
-Yes, you can return true if it happens to be empty, but it is 
-"unlikely". In v1,cpuset and memory cgroup are in separate hierarchies 
-AFAIU. So the cgroup you pass into cpuset_node_allowed() won't have a 
-matching cpuset.
+> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 04:21=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> GCC 15's new -Wunterminated-string-initialization notices that the 16
+> character lookup table "zero_uuid" (which is not used as a C-String)
+> needs to be marked as "nonstring":
+>=20
+> drivers/md/bcache/super.c: In function 'uuid_find_empty':
+> drivers/md/bcache/super.c:549:43: warning: initializer-string for =
+array of 'char' truncates NUL terminator but destination lacks =
+'nonstring' attribute (17 chars into 16 available) =
+[-Wunterminated-string-initialization]
+>  549 |         static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>      |                                           =
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> Add the annotation (since it is not used as a C-String), and switch =
+the
+> initializer to an array of bytes.
+>=20
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> v2: use byte array initializer (colyli)
+> v1: =
+https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
+> Cc: Coly Li <colyli@kernel.org>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: linux-bcache@vger.kernel.org
+> ---
+> drivers/md/bcache/super.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index e42f1400cea9..a76ce92502ed 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct =
+cache_set *c, const char *uuid)
+>=20
+> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
+> {
+> - static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+> + static const char zero_uuid[] __nonstring =3D
 
-Cheers,
-Longman
+I notice zero_uuid[16] changes to zero_uuid[], then the element number =
+information is removed.
 
-> Thanks,
-> ~Gregory
->
+Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
+
+Thanks.
+
+Coly Li=20
+
+
+> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+>=20
+> return uuid_find(c, zero_uuid);
+> }
+> --=20
+> 2.34.1
+>=20
+>=20
 
 
