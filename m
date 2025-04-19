@@ -1,142 +1,108 @@
-Return-Path: <linux-kernel+bounces-611554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F85A94355
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 484D4A9435D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F528A2269
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7428C8A2BB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA39F1D54E3;
-	Sat, 19 Apr 2025 12:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196F1DC9AA;
+	Sat, 19 Apr 2025 12:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b="RvoaSgHf"
-Received: from pku.edu.cn (mx17.pku.edu.cn [162.105.129.180])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFDDEACE
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 12:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.105.129.180
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y3UdCjWJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5322C190;
+	Sat, 19 Apr 2025 12:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745064518; cv=none; b=kd5snZb9jWGf3k0Me4smP8SOR/3lU9sGqD6dXo3WIxH/DIrCX4yRpy5tU+AUH9GXNonrIR21a8CuPSWIT1o21qIf6WdHkbd3UtyzYwy7l88GF5TAviC6U+IL2sac4nSlZleV+AgfMHjuQ8odQuAdIVfZT9MJRx44yKczBvYB6G4=
+	t=1745064856; cv=none; b=gJBFgdCc7InTUpMYMYh2bAe1TPY2kzXwO2lr/b+AJSS208pslOhJ/3XBANkGWRHGfRZzLNb2RKZLwNn4zAwNDnPDH2yY2RI0yMzQ2bSgtgn4KyNyr5knWfYolPcwR+5exb7ThB6hkVBZSzkYxeWbR/Lsmy6lPUS9m8BXiPVNnU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745064518; c=relaxed/simple;
-	bh=0vi9bSxOteNpYRBLQUKsaQ6T9Zp5ziaJXp50ZLSx+vI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYeZlPgWe+PgNsaUQfpim9kkZApQqvfOoAxCGZGTkqAxOxfMnRlUdWp8+jRnMjUCqq+Aj8TxXRzXjlyVSWESPJi30o9MdzKFYjM6AV5yap2eFPF7y6t4A7UMWaA7VN0Gf/L6o3YKEDgQNoG5aSh5yae9Z1nChHwEhSeRC2oImOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn; spf=pass smtp.mailfrom=pku.edu.cn; dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b=RvoaSgHf; arc=none smtp.client-ip=162.105.129.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pku.edu.cn
-Received: from pku.edu.cn (unknown [10.4.225.203])
-	by mtasvr (Coremail) with SMTP id _____7Dw5kc8kgNoKm9QAA--.8882S3;
-	Sat, 19 Apr 2025 20:08:29 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=pku.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-	Message-ID:References:MIME-Version:Content-Type:
-	Content-Disposition:In-Reply-To; bh=ShQJ6bdQ3naO3cGgvt+FpfUT7oKS
-	BjoS2qTqwnLQx1g=; b=RvoaSgHfnbW6HB90vYoyEhTwEA1HE2MGpr70p7MBRPb/
-	dW3y6NDSA1KBjHWq0L0IfMtz9vm77GXKd9tWw2sDZ3glZSfX6KAhaTwtMcSRHuC+
-	haFOrYFOTrtLET1jXglCz0Vd3NESf6LIJ6Mpt/IdNw36oH1TD9qFmBr8xgeqzuM=
-Received: from localhost (unknown [10.4.225.203])
-	by front02 (Coremail) with SMTP id 54FpogAXTIY2kgNoR68rAA--.15898S2;
-	Sat, 19 Apr 2025 20:08:28 +0800 (CST)
-Date: Sat, 19 Apr 2025 20:08:22 +0800
-From: Ruihan Li <lrh2000@pku.edu.cn>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Ruihan Li <lrh2000@pku.edu.cn>
-Subject: Re: [PATCH] mm/mm_init: Don't iterate pages below ARCH_PFN_OFFSET
-Message-ID: <6f2sjssx6f4lidlhucdio45s6p7d6xr4ibr3n3f73z53x5u62e@hvyh5socmfll>
-References: <20250418162727.1535335-1-lrh2000@pku.edu.cn>
- <aANN0rwxcajUtFXs@kernel.org>
+	s=arc-20240116; t=1745064856; c=relaxed/simple;
+	bh=nriaQ9Zzx+KJlvmVnMMvquNXemLAsvNiY/36A4ElpDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bMz+gJhsbwBlVMpAth7p6yFnzXB6ACLerIcwiyv7HeecRXJvqAoxcBlCKJQTedtjevQedDBu27W8X6IveY002eeIHu+zrrYqWvDRFhebL8HT4Sdc00uxAZUjl0oefSs1uQIOgsAvbwceodPT8OrFBM7oi818TnE1l30m/RGdYH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y3UdCjWJ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=teQTK
+	m+rcwhjm2Bk78ja69kS52/A0csVlkW7wMTfnQk=; b=Y3UdCjWJuUtFsvrK9Xzqt
+	3mC2KAPycB6Q6QJDc/4J/C+4sP48dQARc/BT5UEk9nfoc5s5K3OyKP9l2IaxuTQP
+	jKCQALgS8zWumbX+3Oo7UwoE/WUA8ERysK3mRmFBzmL0JzlOA3Ybwnh/OA0S2Jvx
+	6HlTwx8GfJbvW79qnCVZJg=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBn3XtnkwNoWWZ+BA--.31074S2;
+	Sat, 19 Apr 2025 20:13:31 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	inux-rockchip@lists.infradead.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH 1/3] arm64: dts: rockchip: Rename hdmi-con to hdmi0-con for Cool Pi CM5 EVB
+Date: Sat, 19 Apr 2025 20:13:16 +0800
+Message-ID: <20250419121326.388298-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aANN0rwxcajUtFXs@kernel.org>
-X-CM-TRANSID:54FpogAXTIY2kgNoR68rAA--.15898S2
-X-CM-SenderInfo: yssqiiarrvmko6sn3hxhgxhubq/1tbiAgEIBWf35XUDOwARsn
-X-CM-DELIVERINFO: =?B?aH/fJ6aAH6dYjNjDbLdWX9VB7ttaQFyXTaecYZzOeDisy/krtsX5TsLkpeAzENeCPc
-	0+BDdXjm5Mlm64oODP/CxX7Cd2WUS6gvCXweNJGg4wTqVPON5pxajDNeWruRnFGC+vzwRc
-	v3bsqmnf43BmGcHw7dEE9dfsVAMjqNIpZo88038huZM7cFNpXzyutorufK+aBg==
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBn3XtnkwNoWWZ+BA--.31074S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xryrur1fKF18KrW5KrWrGrg_yoWkGwcEya
+	4Ig3WrCF4fAFyDu3srJa15Gwn2g39I9F1xKFyYqF1xAF98A39rJF45tan2qwnrCF4a9F4f
+	AwsrAF1fAw1jkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_g4ftUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0h80XmgDkx0IOgAAsw
 
-Hi Mike,
+There are two hdmi connector on Cool Pi CM5 EVB, the current supported
+is hdmi0, assign corresponding index to it. It will be convenient for
+us to add support for another one.
 
-Thanks a lot for your review!
+Signed-off-by: Andy Yan <andyshrk@163.com>
+---
 
-On Sat, Apr 19, 2025 at 10:16:34AM +0300, Mike Rapoport wrote:
-> On Sat, Apr 19, 2025 at 12:27:27AM +0800, Ruihan Li wrote:
-> > Currently, memmap_init initializes pfn_hole with 0 instead of
-> > ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
-> > page from the page at address zero to the first available page, but it
-> > won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
-> > won't pass.
-> > 
-> > If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
-> > kernel is used as a library and loaded at a very high address), the
-> > pointless iteration for pages below ARCH_PFN_OFFSET will take a very
-> > long time, and the kernel will look stuck at boot time.
-> > 
-> > This commit sets the initial value of pfn_hole to ARCH_PFN_OFFSET, which
-> > avoids the problematic and useless iteration mentioned above.
-> > 
-> > Fixes: 907ec5fca3dc ("mm: zero remaining unavailable struct pages")
-> 
-> I don't think it should be backported, this does not fix a bug.
+ arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I thought the Fixes tag only indicated that the problem existed since
-the specific commit, not the need for a backport (since the backport
-should only happen when someone sends or CC's the patch to the
-linux-stable mailing list)?
-
-But anyway, I'm going to remove the Fixes tag when I send v2.
-
-> 
-> > Signed-off-by: Ruihan Li <lrh2000@pku.edu.cn>
-> > ---
-> >  mm/mm_init.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index 84f14fa12..b3ae9f797 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -966,7 +966,7 @@ static void __init memmap_init_zone_range(struct zone *zone,
-> >  static void __init memmap_init(void)
-> >  {
-> >  	unsigned long start_pfn, end_pfn;
-> > -	unsigned long hole_pfn = 0;
-> > +	unsigned long hole_pfn = ARCH_PFN_OFFSET;
-> 
-> ARCH_PFN_OFFSET is defined only for FLATMEM, this won't even build for
-> SPARSEMEM.
-
-Sorry for my ignorance. I'm not familiar with the code and I'm only
-testing the FLATMEM configuration. I'll send a v2 patch to fix this.
-Thanks for pointing out my stupid mistake.
-
-> 
-> >  	int i, j, zone_id = 0, nid;
-> >  
-> >  	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid) {
-> > -- 
-> > 2.49.0
-> > 
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-
-Thanks,
-Ruihan Li
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dts b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dts
+index 86744c53801f2..3beeb0616455e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dts
+@@ -23,12 +23,12 @@ backlight: backlight {
+ 		pwms = <&pwm2 0 25000 0>;
+ 	};
+ 
+-	hdmi-con {
++	hdmi0-con {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+ 
+ 		port {
+-			hdmi_con_in: endpoint {
++			hdmi0_con_in: endpoint {
+ 				remote-endpoint = <&hdmi0_out_con>;
+ 			};
+ 		};
+@@ -129,7 +129,7 @@ hdmi0_in_vp0: endpoint {
+ 
+ &hdmi0_out {
+ 	hdmi0_out_con: endpoint {
+-		remote-endpoint = <&hdmi_con_in>;
++		remote-endpoint = <&hdmi0_con_in>;
+ 	};
+ };
+ 
+-- 
+2.43.0
 
 
