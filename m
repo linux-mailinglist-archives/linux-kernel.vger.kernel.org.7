@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-611680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D282FA944D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 19:22:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED66EA944CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 19:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF06189256D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 17:22:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C18117899C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 17:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6465D1E1E14;
-	Sat, 19 Apr 2025 17:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9681DE8AB;
+	Sat, 19 Apr 2025 17:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAzLxzIL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJpNUOUo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54371E008B;
-	Sat, 19 Apr 2025 17:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CD1AA1FF
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 17:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745083306; cv=none; b=p85zeD+jjTDvOApYnLQbtOPbWJvgHuZRqoIfrlcseot35BihKe5Fx7siW3SF5FPfvKHcSFRfHGmRcwvtKIw4noRV/wTU0fho1bGMMmh3pBaT8KDxrxFuoHBSdVUuGdgGQ9B7OWfOdNXN3FCs7Hy6wmu5lCHyBHghuUB2eZKEUIk=
+	t=1745083301; cv=none; b=RUKnMZeztqJPJ51Mg7b1h4VKJmZZhljWO4FkASTFU87cQXLBQTp6+u5cYsb+rgur9lnVrP6U+aR8baCGf4gLQ/L4NGQSz/AjRQ6tPrIplWSePvAupY8qlAnGhtEbp3jUUI8CNODY3dLMIKkHF2Oj2Y8ABqP0VBa8TzxUZUJzkCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745083306; c=relaxed/simple;
-	bh=gubOaCJu4/S9c8n4ojxqS9QUB7mqxeUWCfhq6ikB6Ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZRCyYzsBq+niqnN2+6+I7YwGdzBIE5myxzzYqpbIBnVYG18OSVU3dqRp0YiTrAT/UhmncNk6rvxuT7Euh5u2ECPiIVQEbI/ix7ST+NZPwovyBfYwd6TfGJir4auN97XMaNyRHHaBOABehZxvOAZ41smPa1dYHyeyD0E6RsT7kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAzLxzIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8952BC4CEE7;
-	Sat, 19 Apr 2025 17:21:46 +0000 (UTC)
+	s=arc-20240116; t=1745083301; c=relaxed/simple;
+	bh=Z9b6C72ckExhwVX2kMbn8zXvqTNAJi3qKlqGjjuGK4c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bKp6cXG2tZNjsZvS7p+vrcSkuktvMDkyx0uKnl/DIiHoQMlzo026ipFfy4GFEHE2KTtjLhrQCCd/YQWjeYGM2WFQXkp0BlGG4uhPW0oFe87XTS7s+Efbq0jXzXXSFAYwHg8wXi1KKC3psZL6W7OeVIOsMMi/gdQGPg0Sabj6Nso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJpNUOUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35190C4CEE7;
+	Sat, 19 Apr 2025 17:21:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745083306;
-	bh=gubOaCJu4/S9c8n4ojxqS9QUB7mqxeUWCfhq6ikB6Ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FAzLxzIL0cN4CKUMGyC00dPYO8XLzx3KMT4LQBrZ1CcXJ5+AS0ek2N3/crkQGZvWO
-	 lKsWVFqbnEmRX1gvK4iaM4suPI4Uj7DNtnwiy0CSbm//UZ9TFLxRbfKgFVj0fgHvbd
-	 sevTIKYNz0wSBRlTXb6eJdt/qPthSAwqV5cb8A8u/akmTz+DLcYKWI1vUynkkxon65
-	 s3fyhiEbL7MwgMF61rviujP7hUlYt9aNYgwDvTMCvWjHv0Tne9B0Gl3iWEzAxsflG1
-	 LwldbvwEFEnY1V56swq/SfoKLxu5nU21BeMEyAjru4cvUhyDlIM4RTuI5qJlZQQX0O
-	 mag0OmhItlaWQ==
-Date: Sat, 19 Apr 2025 07:21:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	longman@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, mkoutny@suse.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/2] vmscan: enforce mems_effective during demotion
-Message-ID: <aAPbqbAzxsrGv0IR@slm.duckdns.org>
-References: <20250419053824.1601470-1-gourry@gourry.net>
+	s=k20201202; t=1745083301;
+	bh=Z9b6C72ckExhwVX2kMbn8zXvqTNAJi3qKlqGjjuGK4c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=EJpNUOUoH3/HZeL2YBGg4XZdvpHWbk+rt+fPLdlWBu4W6elmdVii/cJDIE+MQuLhh
+	 b22ACJb8aedco35HxIX8bQxG9qk13aJayIcv3eAoblsVAlQjCqO9P+8gxTITNwJ16F
+	 3v12Yh0rTWifTDvpo7QAYYBRbugp9ZvGFtg/nhE4sWeiQSbFdZE2dfuXvWtkv3tXph
+	 D/DNA607Ji5BICvxrJu8kKR/L95/firKYg1m9VXTykK0zrkVSDzaIxMJAP+8PgN96F
+	 XhqT0QPv/iMnAsxsg7XHMhEfGp8rctrF7VGhDdthLRgXuk2+YHpCy3kZsg2IMPu71k
+	 xZg3fEiBvRUJQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFC03806642;
+	Sat, 19 Apr 2025 17:22:20 +0000 (UTC)
+Subject: Re: [git pull] drm fixes for 6.15-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9tz_TQb0KRXAzverESVSPD1Ap5D=oZhab4tvYJ-XrwN0cQ@mail.gmail.com>
+References: <CAPM=9tz_TQb0KRXAzverESVSPD1Ap5D=oZhab4tvYJ-XrwN0cQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAPM=9tz_TQb0KRXAzverESVSPD1Ap5D=oZhab4tvYJ-XrwN0cQ@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-04-19
+X-PR-Tracked-Commit-Id: 0467145fab3b3a7a1efd221722310fe32329b3da
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 51c7960b87f465d01ea8d8ff174e81dd69f3b2b4
+Message-Id: <174508333921.507729.8223981949363052199.pr-tracker-bot@kernel.org>
+Date: Sat, 19 Apr 2025 17:22:19 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250419053824.1601470-1-gourry@gourry.net>
 
-On Sat, Apr 19, 2025 at 01:38:22AM -0400, Gregory Price wrote:
-> Change reclaim to respect cpuset.mems_effective during demotion when
-> possible. Presently, reclaim explicitly ignores cpuset.mems_effective
-> when demoting, which may cause the cpuset settings to violated.
-> 
-> Implement cpuset_node_allowed() to check the cpuset.mems_effective
-> associated wih the mem_cgroup of the lruvec being scanned.
-> 
-> This requires renaming the existing cpuset_node_allowed() to be
-> cpuset_current_now_allowed() - which is more descriptive anyway - to
-> implement the new cpuset_node_allowed() which takes a target cgroup.
-> 
-> v3:
-> - remove cgroup indirection, call cpuset directly from memcontrol
-> - put mem_cgroup_node_allowed in memcontrol.c to reduce cpuset.h
->   include scope
-> - return true if mems_effective is empty, and don't walk the parents
->   as recommended by Waiman Long.
-> 
-> Gregory Price (2):
->   cpuset: rename cpuset_node_allowed to cpuset_current_node_allowed
->   vmscan,cgroup: apply mems_effective to reclaim
+The pull request you sent on Sat, 19 Apr 2025 15:19:47 +1000:
 
-From cgroup POV:
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-04-19
 
- Acked-by: Tejun Heo <tj@kernel.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/51c7960b87f465d01ea8d8ff174e81dd69f3b2b4
 
-Given that the operative changes are mostly in mm, it'd probably be best to
-route through -mm, but please let me know if you wanna go through the cgroup
-tree.
-
-Thanks.
+Thank you!
 
 -- 
-tejun
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
