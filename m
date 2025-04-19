@@ -1,297 +1,403 @@
-Return-Path: <linux-kernel+bounces-611435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F148A941D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 07:44:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5970A941D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 07:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9865D8E1BF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 05:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0BA117213D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 05:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA061192B84;
-	Sat, 19 Apr 2025 05:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CBE155725;
+	Sat, 19 Apr 2025 05:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B3tfcXbF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qt5yGOk/"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8565619007D
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 05:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA34184F
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 05:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745041416; cv=none; b=KS1nfRqmXtyCbTRtmpK96y2Otkg5V2qcYZB/7cEPHbIwTsqtiDUifhNaVsY+U5PmwGYrb0UQ+hjtZDMO1L0/Vu02QxfFy54Edm9YPdmLvAq47LZJoLnyTOKxCdEES/ByaSY0KDZr4oXoDUPZ3kEeR8Hp1VL29ygJemlgFJVSc/o=
+	t=1745041681; cv=none; b=WAds8lJ+vo+XNHV5TQ0GOkw52VYGCPlYVRN8C3E3zxljU5ZfZ4+h96Df5pZmUq741zg4n4uQgifVZ3FYZs1xqT6p3eDdYcrZtxJXisjoHknL78RSE1W/+pThdzGRojOmBEsmwkERaRAxZdbDNhoRsiZ2S29rMguH8h93JALOFno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745041416; c=relaxed/simple;
-	bh=l+iLQRs3Sd9q7CUv85IAG9PJ5au9ED/F26dF58ymUtk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvr1BFXj4aHH4sI1KhUklh0o1OZDp6bmNc3JQf4wd69BdhfpO8vjmM5FAFbIDzbtVccsN4XbKisahM+jqhUdIz79TWZqgJwafh3HrcYLt8HE/P4vRq2aRGkQpUH5ssmlPZH28LV+gXKJSVDkRSamXrEUijdH3EpTESW8XpQRmnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B3tfcXbF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53J4TpgX007219
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 05:43:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HBnyWza8rS1v7HrmjjSzQ1pFiEcjxC/rJnoS7wzUeqY=; b=B3tfcXbF88TMtoNU
-	OyzIzxLDCHBGM/Kc9nQOwItkQ6M/XoT2DGsLx6TmsLZzevrG4LHEN7HDVJYiMi2+
-	Ld0jCnpyf3yLbfGVrpavWUCVs0QVxvf6XTyumJXgJ/SvyBcMT7GluJa9llc7qSuY
-	agvY65shLDtBkKM4s60FZg+NO1eQSqJLI1dcyv+NRNxZtjfeFVyRaH+WSljjH5Tq
-	1jn4gvtQA3XuL42w3Nqyzw+hJXrL03N/wDGdS0I8CDe4UwaDaaBChX01DHgKkWTz
-	fayzgJB6fsnkTfIBWhtFzLdH/2rgqImvwj4ASmP3ERi6rRhJwW2pwfTQl1YJMB1s
-	sht2bQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4642sv86gr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 05:43:32 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff58318acaso3234375a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:43:32 -0700 (PDT)
+	s=arc-20240116; t=1745041681; c=relaxed/simple;
+	bh=T36w7T6WsGB+nWqm2COg4Z23poGoMCRvgw0i8WcZNv4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gKKn1WmDMJG1J6NPV+bl/pj/rM3nR66TBi7OBDFzwrLzpYliU9b8K1rSynYPn7GG2IVKaPD0v3Ir07cIxwjnFwhbfl5ymV5IGJ4IC90t+ffEXvXPmxVuDow+I35OtPWMKFBnZgq/3uJQiZfR1KJh3ckpihB/uOIYXSKyIFNngGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qt5yGOk/; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c7df9b6cso2988949b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745041679; x=1745646479; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdJKpwbPcy6gRTD8c2n1oCcw85CayJPijKUia1p0ZF4=;
+        b=qt5yGOk/ncRE0Wf6iZEiK7YQCe/gS2nIeLUfA2longdQ+eQPjUvh3nfnOEMvniHmM8
+         wGB19qDtOKeQbKy234uL5da8nmdbNU2DfzDvrY8pomQLXrEK7W7yiisLol17vXcaEuQQ
+         yVhgbGa08hP9BVJc+rnEfeXCP1KwUcx0r9XJ7PfYh9ORiSHXARRsayFh5m29PwEk0dkb
+         OdZuhsu0mIL/a+ZpyN+I1Bv/2dvRKoEoIg86Ffes8TGkKtRVra98NUao35pq80S2w0Fg
+         YGR3HyG53VxCWfTet2E3KaEh4qiYJ8OFXPBiqA5btIKIPkIVOuYsXZCNfn19FaUOFuF7
+         TnPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745041412; x=1745646212;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HBnyWza8rS1v7HrmjjSzQ1pFiEcjxC/rJnoS7wzUeqY=;
-        b=hlYJkS0dOde7MYZQ8yJIH6lkDnqvuc4iSQ6P0cdxS+amVrESZgxa/ppjyFm+Mp2L+K
-         FK+cX6QQ4gTrtOUYMFV5Lu0uQ29NljaiXmMbaK4mCt0wGYN+x71+yhWxXMNZ6/VqtqLw
-         O/yLCPpAY3UvQ/t7tQ1VBEbCQi8nU/qlDBS6yY0NE062qtOO4ZeS5JL7pRVZj/YIcJzX
-         15wYVJrxdhCildg0sb9dzIR2P9TdOQp0ku7bEeO8hoO+khZUGpvDe/pkDH6wMhxcb05h
-         xxwD4lvNGQMd6pWFyyGvYtXtOgBM0bJxbZsKZzoqoRQlcv/pEpwph/vV63piXDRW6W0a
-         x6yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuG8PSldfMT/it5U8KNYTgHB//KbuGTCYLrD6VoCqLGoe2nnocueVEN54Kzo/epeVGlaGRBm+Y5UPD794=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxELVXkA2XQNKt6uKW2jOAmRbhpJoM2pJpJx39xQ1/5aIZqFLUG
-	1sgzzGNZKbIAZ9gIpsct9WA7cKxtw5cyWUTOxXcvvZoMh6dyeippTnFSQ6BHjhJvs6690SOKxVY
-	nDFUwh0UWYDhN0sullRcx80QHJr0SEHUtC+Ql2mocJJuBWPKwIX03TmB1YCr6W7U=
-X-Gm-Gg: ASbGncskc2niLpbIWrwlNXTwVVloDslMHNPwS/xGMFO6Nr5v+L056xOTEHFjP2U7QOE
-	Uxar6I5ajtU5Mm0Xpe+OdF4iZSkTdVOtNwkU2kdoJ343m85Y0BeKjObrGMSquOJHz62lGc3VPGg
-	mA0/wia7aaJRDlr/kmt8Devj2MA9l0AGreUvqX/gVYMFTWVTmxpjgwvaXziHt8Ry1enoUkUilNi
-	ENAstoHcs4Z5wMr6AyF417aKDsqSFgqTNmd6XAXqPS/lNjuIqYajPPwlU5lvPi1oOYPX13V+2um
-	zrFBtGZq9r/tnAKKTOJWJCjrYhrxNg+ekb/SUSZHa2ZB+OA=
-X-Received: by 2002:a17:903:32d1:b0:224:fa0:36da with SMTP id d9443c01a7336-22c5358321dmr58141475ad.18.1745041411766;
-        Fri, 18 Apr 2025 22:43:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzWEAMRvo6PUazfjfHTnWx8uUrubDqpzpgGItMl2BoJHPEaH7gA3csflj14Pu/DY/NJrWd/w==
-X-Received: by 2002:a17:903:32d1:b0:224:fa0:36da with SMTP id d9443c01a7336-22c5358321dmr58141215ad.18.1745041411390;
-        Fri, 18 Apr 2025 22:43:31 -0700 (PDT)
-Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eceb37sm26014945ad.179.2025.04.18.22.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 22:43:31 -0700 (PDT)
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Sat, 19 Apr 2025 11:13:04 +0530
-Subject: [PATCH v2 2/2] PCI: Add support for PCIe wake interrupt
+        d=1e100.net; s=20230601; t=1745041679; x=1745646479;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdJKpwbPcy6gRTD8c2n1oCcw85CayJPijKUia1p0ZF4=;
+        b=pTcSeZk23ndr4f4zSFkEfa2PUoPANy7GzDPZfq4wI/+ANudBssvhSlnE19MYuyjune
+         Rsbrzq2grrrwL3b1zVIpgYgw58IGa4XL02CSgZKqXXp5EhCedbmBBBd9/9AQ3KKVxaMq
+         0LC9+ePDsFPk0shI81SPjic084vRfUSVjlhL6wEp3AEOVCm4/lkr0Q/S0FcqQHGzo98O
+         ZNaGNGc1e49LrypGgWh2tNwzCtEAxjXoGp5LVBmfaCYhuIj7ufAgst5lFXiNqA/is6ic
+         wwoGxAD8Bpa5TTu1AGFp/2PQWTPIyymq2a+JkTB1bE+N+cIeNfVLoMHwhA76lHbx/Rg2
+         YpeA==
+X-Gm-Message-State: AOJu0Yxf7gY6tWjy8UX9H9oBoHZx3XN0K63YUd+7+cR/kCMzTP6KKN6Q
+	l77U5hQWx2FVos/u/TOmJBm0ZBHUMAh1ssM0ryROnlCaIIf1dLpTgV7fRZIeyRhwQehlpH6E8RI
+	xsgT7SgSGtcSSR2AzZ/aS+u/AHeo8b9ruZWeOwlLg/pzN0uWhDdJY3AeHAljgPQOfzpgzAjnM4v
+	v8K6X+p4w4l10PLngAHfl1woU6coN3mFFlN6IM3ChhZLdm
+X-Google-Smtp-Source: AGHT+IG1zUCrEEgDh4YEOCfxrp+PRvSy7bLVCAiyGydhxQAJdgGbPUV4CQEDGgo07a33wuJ5mEF+r/MZQKJQ
+X-Received: from pfbjc2.prod.google.com ([2002:a05:6a00:6c82:b0:73c:26eb:39b0])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1305:b0:736:42a8:a742
+ with SMTP id d2e1a72fcca58-73dc14ccd73mr6440107b3a.11.1745041678543; Fri, 18
+ Apr 2025 22:47:58 -0700 (PDT)
+Date: Fri, 18 Apr 2025 22:46:52 -0700
+In-Reply-To: <CANDhNCrNYuxP7xqNLKWGnhMOBEHGhD9-FceNAj7n=fQUsLwvMA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250419-wake_irq_support-v2-2-06baed9a87a1@oss.qualcomm.com>
-References: <20250419-wake_irq_support-v2-0-06baed9a87a1@oss.qualcomm.com>
-In-Reply-To: <20250419-wake_irq_support-v2-0-06baed9a87a1@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745041398; l=5149;
- i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=l+iLQRs3Sd9q7CUv85IAG9PJ5au9ED/F26dF58ymUtk=;
- b=Y3KF+GIIZYUGLI6u3qqIz8HUKIe4N/LUFLwc4f/nbvf/ewo8/wiGDrihcavfWs4SaYd9VSleO
- s+isiQTAOLfDcGjNQPpie72yhaQFIUqCPiiKgGS72yxjAIgT6hoHMeH
-X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
- pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-GUID: ZKLRz4xurMAJWnj7njX3yjkwPgNAd14x
-X-Proofpoint-ORIG-GUID: ZKLRz4xurMAJWnj7njX3yjkwPgNAd14x
-X-Authority-Analysis: v=2.4 cv=QLJoRhLL c=1 sm=1 tr=0 ts=68033804 cx=c_pps a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=iljMX2kAvVRlE-iODa4A:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-19_02,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 mlxlogscore=999 malwarescore=0
- adultscore=0 phishscore=0 suspectscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504190043
+Mime-Version: 1.0
+References: <CANDhNCrNYuxP7xqNLKWGnhMOBEHGhD9-FceNAj7n=fQUsLwvMA@mail.gmail.com>
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
+Message-ID: <20250419054706.2319105-1-jstultz@google.com>
+Subject: [PATCH v3] timekeeping: Prevent coarse clocks going backwards
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Miroslav Lichvar <mlichvar@redhat.com>, 
+	Lei Chen <lei.chen@smartx.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	John Stultz <jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-PCIe wake interrupt is needed for bringing back PCIe device state
-from D3cold to D0.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Implement new functions, of_pci_setup_wake_irq() and
-of_pci_teardown_wake_irq(), to manage wake interrupts for PCI devices
-using the Device Tree.
+Lei Chen raised an issue with CLOCK_MONOTONIC_COARSE seeing time
+inconsistencies. Lei tracked down that this was being caused by the
+adjustment
 
-From the port bus driver call these functions to enable wake support
-for bridges.
+    tk->tkr_mono.xtime_nsec -= offset;
 
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+which is made to compensate for the unaccumulated cycles in offset when the
+multiplicator is adjusted forward, so that the non-_COARSE clockids don't
+see inconsistencies.
+
+However, the _COARSE clockid getter functions use the adjusted xtime_nsec
+value directly and do not compensate the negative offset via the
+clocksource delta multiplied with the new multiplicator. In that case the
+caller can observe time going backwards in consecutive calls.
+
+By design, this negative adjustment should be fine, because the logic run
+from timekeeping_adjust() is done after it accumulated approximately
+
+     multiplicator * interval_cycles
+
+into xtime_nsec.  The accumulated value is always larger then the
+
+     mult_adj * offset
+
+value, which is subtracted from xtime_nsec. Both operations are done
+together under the tk_core.lock, so the net change to xtime_nsec is always
+always be positive.
+
+However, do_adjtimex() calls into timekeeping_advance() as well, to
+apply the NTP frequency adjustment immediately. In this case,
+timekeeping_advance() does not return early when the offset is smaller
+then interval_cycles. In that case there is no time accumulated into
+xtime_nsec. But the subsequent call into timekeeping_adjust(), which
+modifies the multiplicator, subtracts from xtime_nsec to correct for the
+new multiplicator.
+
+Here because there was no accumulation, xtime_nsec becomes smaller than
+before, which opens a window up to the next accumulation, where the
+_COARSE clockid getters, which don't compensate for the offset, can
+observe the inconsistency.
+
+This has been tried to be fixed by forwarding the timekeeper in the case
+that adjtimex() adjusts the multiplier, which resets the offset to zero:
+
+  757b000f7b93 ("timekeeping: Fix possible inconsistencies in _COARSE clockids")
+
+That works correctly, but unfortunately causes a regression on the
+adjtimex() side. There are two issues:
+
+   1) The forwarding of the base time moves the update out of the original
+      period and establishes a new one.
+
+   2) The clearing of the accumulated NTP error is changing the behaviour as
+      well.
+
+Userspace expects that multiplier/frequency updates are in effect, when the
+syscall returns, so delaying the update to the next tick is not solving the
+problem either.
+
+Commit 757b000f7b93 was reverted so that the established expectations of
+user space implementations (ntpd, chronyd) are restored, but that obviously
+brought the inconsistencies back.
+
+One of the initial approaches to fix this was to establish a separate
+storage for the coarse time getter nanoseconds part by calculating it from
+the offset. That was dropped on the floor because not having yet another
+state to maintain was simpler. But given the result of the above exercise,
+this solution turns out to be the right one. Bring it back in a slightly
+modified form.
+
+Thus introduce timekeeper::coarse_nsec and store that nanoseconds part in
+it, switch the time getter functions and the VDSO update to use that value.
+coarse_nsec is set on operations which forward or initialize the timekeeper
+or after we have accumulated time during a tick
+
+This leaves the adjtimex() behaviour unmodified and prevents coarse time
+from going backwards.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Lei Chen <lei.chen@smartx.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kernel-team@android.com
+Fixes: da15cfdae033 ("time: Introduce CLOCK_REALTIME_COARSE")
+Reported-by: Lei Chen <lei.chen@smartx.com>
+Closes: https://lore.kernel.org/lkml/20250310030004.3705801-1-lei.chen@smartx.com/
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[jstultz: Simplified the coarse_nsec calculation and kept behavior so
+coarse clockids aren't adjusted on each inter-tick adjtimex call,
+slightly reworking the comments and commit message]
+Signed-off-by: John Stultz <jstultz@google.com>
 ---
- drivers/pci/of.c           | 60 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h          |  6 +++++
- drivers/pci/pcie/portdrv.c | 12 +++++++++-
- 3 files changed, 77 insertions(+), 1 deletion(-)
+v3:
+* John's Rework of Thomas' version here:
+  - https://lore.kernel.org/lkml/87r01qq7hp.ffs@tglx/
+---
+ include/linux/timekeeper_internal.h |  8 +++--
+ kernel/time/timekeeping.c           | 50 ++++++++++++++++++++++++-----
+ kernel/time/vsyscall.c              |  4 +--
+ 3 files changed, 49 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index ab7a8252bf4137a17971c3eb8ab70ce78ca70969..13623797c88a03dfb9d9079518d87a5e1e68df38 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -7,6 +7,7 @@
- #define pr_fmt(fmt)	"PCI: OF: " fmt
+diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
+index e39d4d563b197..785048a3b3e60 100644
+--- a/include/linux/timekeeper_internal.h
++++ b/include/linux/timekeeper_internal.h
+@@ -51,7 +51,7 @@ struct tk_read_base {
+  * @offs_real:			Offset clock monotonic -> clock realtime
+  * @offs_boot:			Offset clock monotonic -> clock boottime
+  * @offs_tai:			Offset clock monotonic -> clock tai
+- * @tai_offset:			The current UTC to TAI offset in seconds
++ * @coarse_nsec:		The nanoseconds part for coarse time getters
+  * @tkr_raw:			The readout base structure for CLOCK_MONOTONIC_RAW
+  * @raw_sec:			CLOCK_MONOTONIC_RAW  time in seconds
+  * @clock_was_set_seq:		The sequence number of clock was set events
+@@ -76,6 +76,7 @@ struct tk_read_base {
+  *				ntp shifted nano seconds.
+  * @ntp_err_mult:		Multiplication factor for scaled math conversion
+  * @skip_second_overflow:	Flag used to avoid updating NTP twice with same second
++ * @tai_offset:			The current UTC to TAI offset in seconds
+  *
+  * Note: For timespec(64) based interfaces wall_to_monotonic is what
+  * we need to add to xtime (or xtime corrected for sub jiffy times)
+@@ -100,7 +101,7 @@ struct tk_read_base {
+  * which results in the following cacheline layout:
+  *
+  * 0:	seqcount, tkr_mono
+- * 1:	xtime_sec ... tai_offset
++ * 1:	xtime_sec ... coarse_nsec
+  * 2:	tkr_raw, raw_sec
+  * 3,4: Internal variables
+  *
+@@ -121,7 +122,7 @@ struct timekeeper {
+ 	ktime_t			offs_real;
+ 	ktime_t			offs_boot;
+ 	ktime_t			offs_tai;
+-	s32			tai_offset;
++	u32			coarse_nsec;
  
- #include <linux/cleanup.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/irqdomain.h>
- #include <linux/kernel.h>
- #include <linux/pci.h>
-@@ -15,6 +16,7 @@
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_wakeirq.h>
- #include "pci.h"
+ 	/* Cacheline 2: */
+ 	struct tk_read_base	tkr_raw;
+@@ -144,6 +145,7 @@ struct timekeeper {
+ 	u32			ntp_error_shift;
+ 	u32			ntp_err_mult;
+ 	u32			skip_second_overflow;
++	s32			tai_offset;
+ };
  
- #ifdef CONFIG_PCI
-@@ -966,3 +968,61 @@ u32 of_pci_get_slot_power_limit(struct device_node *node,
- 	return slot_power_limit_mw;
- }
- EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
-+
-+/**
-+ * of_pci_setup_wake_irq - Set up wake interrupt for PCI device
-+ * @pdev: The PCI device structure
-+ *
-+ * This function sets up the wake interrupt for a PCI device by getting the
-+ * corresponding GPIO pin from the device tree, and configuring it as a
-+ * dedicated wake interrupt.
-+ *
-+ * Return: 0 if the wake gpio is not available or successfully parsed else
-+ * errno otherwise.
-+ */
-+int of_pci_setup_wake_irq(struct pci_dev *pdev)
-+{
-+	struct gpio_desc *wake;
-+	struct device_node *dn;
-+	int ret, wake_irq;
-+
-+	dn = pci_device_to_OF_node(pdev);
-+	if (!dn)
-+		return 0;
-+
-+	wake = devm_fwnode_gpiod_get(&pdev->dev, of_fwnode_handle(dn),
-+				     "wake", GPIOD_IN, NULL);
-+	if (IS_ERR(wake)) {
-+		dev_warn(&pdev->dev, "Cannot get wake GPIO\n");
-+		return 0;
-+	}
-+
-+	wake_irq = gpiod_to_irq(wake);
-+	device_init_wakeup(&pdev->dev, true);
-+
-+	ret = dev_pm_set_dedicated_wake_irq(&pdev->dev, wake_irq);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to set wake IRQ: %d\n", ret);
-+		device_init_wakeup(&pdev->dev, false);
-+		return ret;
-+	}
-+	irq_set_irq_type(wake_irq, IRQ_TYPE_EDGE_FALLING);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_pci_setup_wake_irq);
-+
-+/**
-+ * of_pci_teardown_wake_irq - Teardown wake interrupt setup for PCI device
-+ *
-+ * @pdev: The PCI device structure
-+ *
-+ * This function tears down the wake interrupt setup for a PCI device,
-+ * clearing the dedicated wake interrupt and disabling device wake-up.
-+ */
-+void of_pci_teardown_wake_irq(struct pci_dev *pdev)
-+{
-+	dev_pm_clear_wake_irq(&pdev->dev);
-+	device_init_wakeup(&pdev->dev, false);
-+}
-+EXPORT_SYMBOL_GPL(of_pci_teardown_wake_irq);
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index b81e99cd4b62a3022c8b07a09f212f6888674487..b2f65289f4156fa1851c2d2f20c4ca948f36258f 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -888,6 +888,9 @@ void pci_release_of_node(struct pci_dev *dev);
- void pci_set_bus_of_node(struct pci_bus *bus);
- void pci_release_bus_of_node(struct pci_bus *bus);
- 
-+int of_pci_setup_wake_irq(struct pci_dev *pdev);
-+void of_pci_teardown_wake_irq(struct pci_dev *pdev);
-+
- int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge);
- bool of_pci_supply_present(struct device_node *np);
- 
-@@ -931,6 +934,9 @@ static inline int devm_of_pci_bridge_init(struct device *dev, struct pci_host_br
- 	return 0;
+ #ifdef CONFIG_GENERIC_TIME_VSYSCALL
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 1e67d076f1955..a009c91f7b05f 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -164,10 +164,34 @@ static inline struct timespec64 tk_xtime(const struct timekeeper *tk)
+ 	return ts;
  }
  
-+static int of_pci_setup_wake_irq(struct pci_dev *pdev) { return 0; }
-+static void of_pci_teardown_wake_irq(struct pci_dev *pdev) { }
++static inline struct timespec64 tk_xtime_coarse(const struct timekeeper *tk)
++{
++	struct timespec64 ts;
 +
- static inline bool of_pci_supply_present(struct device_node *np)
++	ts.tv_sec = tk->xtime_sec;
++	ts.tv_nsec = tk->coarse_nsec;
++	return ts;
++}
++
++/*
++ * Update the nanoseconds part for the coarse time keepers. They can't rely
++ * on xtime_nsec because xtime_nsec could be adjusted by a small negative
++ * amount when the multiplication factor of the clock is adjusted, which
++ * could cause the coarse clocks to go slightly backwards. See
++ * timekeeping_apply_adjustment(). Thus we keep a separate copy for the coarse
++ * clockids which only is updated when the clock has been set or  we have
++ * accumulated time.
++ */
++static inline void tk_update_coarse_nsecs(struct timekeeper *tk)
++{
++	tk->coarse_nsec = tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
++}
++
+ static void tk_set_xtime(struct timekeeper *tk, const struct timespec64 *ts)
  {
- 	return false;
-diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-index e8318fd5f6ed537a1b236a3a0f054161d5710abd..33220ecf821c348d49782855eb5aa3f2fe5c335e 100644
---- a/drivers/pci/pcie/portdrv.c
-+++ b/drivers/pci/pcie/portdrv.c
-@@ -694,12 +694,18 @@ static int pcie_portdrv_probe(struct pci_dev *dev,
- 	     (type != PCI_EXP_TYPE_RC_EC)))
- 		return -ENODEV;
- 
-+	status = of_pci_setup_wake_irq(dev);
-+	if (status)
-+		return status;
-+
- 	if (type == PCI_EXP_TYPE_RC_EC)
- 		pcie_link_rcec(dev);
- 
- 	status = pcie_port_device_register(dev);
--	if (status)
-+	if (status) {
-+		of_pci_teardown_wake_irq(dev);
- 		return status;
-+	}
- 
- 	pci_save_state(dev);
- 
-@@ -732,6 +738,8 @@ static void pcie_portdrv_remove(struct pci_dev *dev)
- 
- 	pcie_port_device_remove(dev);
- 
-+	of_pci_teardown_wake_irq(dev);
-+
- 	pci_disable_device(dev);
+ 	tk->xtime_sec = ts->tv_sec;
+ 	tk->tkr_mono.xtime_nsec = (u64)ts->tv_nsec << tk->tkr_mono.shift;
++	tk_update_coarse_nsecs(tk);
  }
  
-@@ -744,6 +752,8 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
+ static void tk_xtime_add(struct timekeeper *tk, const struct timespec64 *ts)
+@@ -175,6 +199,7 @@ static void tk_xtime_add(struct timekeeper *tk, const struct timespec64 *ts)
+ 	tk->xtime_sec += ts->tv_sec;
+ 	tk->tkr_mono.xtime_nsec += (u64)ts->tv_nsec << tk->tkr_mono.shift;
+ 	tk_normalize_xtime(tk);
++	tk_update_coarse_nsecs(tk);
+ }
+ 
+ static void tk_set_wall_to_mono(struct timekeeper *tk, struct timespec64 wtm)
+@@ -708,6 +733,7 @@ static void timekeeping_forward_now(struct timekeeper *tk)
+ 		tk_normalize_xtime(tk);
+ 		delta -= incr;
  	}
- 
- 	pcie_port_device_remove(dev);
-+
-+	of_pci_teardown_wake_irq(dev);
++	tk_update_coarse_nsecs(tk);
  }
  
- static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
-
+ /**
+@@ -804,8 +830,8 @@ EXPORT_SYMBOL_GPL(ktime_get_with_offset);
+ ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+-	unsigned int seq;
+ 	ktime_t base, *offset = offsets[offs];
++	unsigned int seq;
+ 	u64 nsecs;
+ 
+ 	WARN_ON(timekeeping_suspended);
+@@ -813,7 +839,7 @@ ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+ 		base = ktime_add(tk->tkr_mono.base, *offset);
+-		nsecs = tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
++		nsecs = tk->coarse_nsec;
+ 
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+ 
+@@ -2161,7 +2187,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	struct timekeeper *real_tk = &tk_core.timekeeper;
+ 	unsigned int clock_set = 0;
+ 	int shift = 0, maxshift;
+-	u64 offset;
++	u64 offset, orig_offset;
+ 
+ 	guard(raw_spinlock_irqsave)(&tk_core.lock);
+ 
+@@ -2172,7 +2198,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
+ 				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
+ 				   tk->tkr_mono.clock->max_raw_delta);
+-
++	orig_offset = offset;
+ 	/* Check if there's really nothing to do */
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+ 		return false;
+@@ -2205,6 +2231,14 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	 */
+ 	clock_set |= accumulate_nsecs_to_secs(tk);
+ 
++	/*
++	 * To avoid inconsistencies caused adjtimex TK_ADV_FREQ calls
++	 * making small negative adjustments to the base xtime_nsec
++	 * value, only update the coarse clocks if we accumulated time
++	 */
++	if (orig_offset != offset)
++		tk_update_coarse_nsecs(tk);
++
+ 	timekeeping_update_from_shadow(&tk_core, clock_set);
+ 
+ 	return !!clock_set;
+@@ -2248,7 +2282,7 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+ 
+-		*ts = tk_xtime(tk);
++		*ts = tk_xtime_coarse(tk);
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+ }
+ EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
+@@ -2271,7 +2305,7 @@ void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
+ 
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+-		*ts = tk_xtime(tk);
++		*ts = tk_xtime_coarse(tk);
+ 		offset = tk_core.timekeeper.offs_real;
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+ 
+@@ -2350,12 +2384,12 @@ void ktime_get_coarse_ts64(struct timespec64 *ts)
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+ 
+-		now = tk_xtime(tk);
++		now = tk_xtime_coarse(tk);
+ 		mono = tk->wall_to_monotonic;
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+ 
+ 	set_normalized_timespec64(ts, now.tv_sec + mono.tv_sec,
+-				now.tv_nsec + mono.tv_nsec);
++				  now.tv_nsec + mono.tv_nsec);
+ }
+ EXPORT_SYMBOL(ktime_get_coarse_ts64);
+ 
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index 01c2ab1e89719..32ef27c71b57a 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -98,12 +98,12 @@ void update_vsyscall(struct timekeeper *tk)
+ 	/* CLOCK_REALTIME_COARSE */
+ 	vdso_ts		= &vc[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
+ 	vdso_ts->sec	= tk->xtime_sec;
+-	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
++	vdso_ts->nsec	= tk->coarse_nsec;
+ 
+ 	/* CLOCK_MONOTONIC_COARSE */
+ 	vdso_ts		= &vc[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC_COARSE];
+ 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+-	nsec		= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
++	nsec		= tk->coarse_nsec;
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
 -- 
-2.34.1
+2.49.0.805.g082f7c87e0-goog
 
 
