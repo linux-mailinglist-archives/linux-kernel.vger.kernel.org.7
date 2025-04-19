@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-611387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8049FA9412B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 04:55:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73515A9411F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 04:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66438E1891
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 02:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B4A1461921
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 02:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54943AB7;
-	Sat, 19 Apr 2025 02:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8786338;
+	Sat, 19 Apr 2025 02:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dQcVhoNN"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDdzYByi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C747136E
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 02:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEBD288CC;
+	Sat, 19 Apr 2025 02:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745031311; cv=none; b=YgRAGsK+dFV8EqaDkNigMtHKZ2SOWJyKdewXzMEuYoUekptCHPQIuezYvmRS2cisgE6HayjpReh2qrSfRL337vaMCVvddyvCCidXI6HMawfo2ausAz4Nz4Zrp3R4DQsSNZoW0tiGL6ZkD/15P16OmxOhonjZFyaleE6HOrLbHVY=
+	t=1745030990; cv=none; b=guCnfZBNZuN74pBeUYqg660LWkq8ae/Gyld6oTRkZod6x2Tze6CaXXlUe0Ph/N8H/6yIw7vs07IR1RFE3zQ7++ZlIM1TgQa9kzFiIUG8AftleV31ElpFEIInL/B1uS7likklJZg1cQki2XHVcS+F4rwea3LkhQCmfNwEIV6fs6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745031311; c=relaxed/simple;
-	bh=K9LT1D/0tD04Hyl41reZpd68EkxgVEYYcMwMlkrApPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FfZDeaz7oAV/Nslp05miaWL1/ZDCz4j23loOQMz4kRlyy7Gpt+9DNH/S9xNTBq7So1e0siDc3PxPmYb8FGOqQdNcYFip0XThX2yBYAdj0vhfLDf54UViORkqkdoZzbw/k7/xj8wCF/YXWBkkA0rxNui1Wred9LVzzDYtxCiYQVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dQcVhoNN; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745031305;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=509KQPGQIr3wARpO0voQQWEHesmQ91+o+xtJTGAi9GM=;
-	b=dQcVhoNNESuBOAZ++LX43Y1EWUIxYlO3e26/l2k/JMP8/JOpNALyIBtwdopsC0F7h8Zd2X
-	1kvyqk70Zb7QZKPoSKCieESNsPOdbEMBRe4SxfruTiFFBUVUP0wPnJi2UMrPRwPdT3yYRJ
-	LStkwjFk/rKFjWZBQA+fJIqWJPO5coo=
-From: sunliming@linux.dev
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	chui-hao.chiu@mediatek.com,
-	Bo.Jiao@mediatek.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: sunliming <sunliming@kylinos.cn>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <error27@gmail.com>
-Subject: [PATCH] wifi: mt76: mt7996: fix variable dereferenced before check warning
-Date: Sat, 19 Apr 2025 10:54:17 +0800
-Message-Id: <20250419025417.2066787-1-sunliming@linux.dev>
+	s=arc-20240116; t=1745030990; c=relaxed/simple;
+	bh=BKjdCpQP5HRZ/1EEUnIej+ttFx/pSeE93kbclBz3y+I=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uRiIRukMo5iBSRcWd50YpY6l7rbDLvlOppQbGMK4nwjY4zdWhV6CJLXDYKg/FNbzjD3AdpRK3VWNJiXfcMmwwtT1XJlYaY7rsKBXP9v+PM+3Sd8wyytk2i00VvHEUGgTQMbtPc6w61Qtp8CvoHZRM4SRZtQd2h8ERO8x8cCcqzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDdzYByi; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745030989; x=1776566989;
+  h=from:to:cc:subject:date:message-id;
+  bh=BKjdCpQP5HRZ/1EEUnIej+ttFx/pSeE93kbclBz3y+I=;
+  b=DDdzYByiqWr6D7t+x/Ao+gMl8nwh12A6rkdTBZKhI1auguIOoh4JXN17
+   M9p9WD0Y5gilQimljwrPZ82k58SSZVm9ONTm+/RL+VKgZtuSTrXirtKou
+   jmUCd801R5EnkORIy+PwxGset+Rxy8cVK+MabogQgJNDrafZ9IIk+uCO9
+   odYck+gAwunCEPrAupPKGmh4bp2IJM1EaZoydG11dZI/a7FHHmaAstKkM
+   JAzNos50UzfBCPYP7eqaVEY91+OSKwi9BSdj/u2CKKwFzy6sYqvFMjOUx
+   L7BBwCePgXpZ1P6jLUR/7J/b3BJeeR0hcLJOE/KRvtqvYSj+usYEDqlFN
+   g==;
+X-CSE-ConnectionGUID: NfFdU4niQyilVdxeDcv2vw==
+X-CSE-MsgGUID: pziXTcM8RniinK7+g0Zu/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="50490433"
+X-IronPort-AV: E=Sophos;i="6.15,223,1739865600"; 
+   d="scan'208";a="50490433"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 19:49:48 -0700
+X-CSE-ConnectionGUID: xrpVH6pcSJqmYAymina/wg==
+X-CSE-MsgGUID: +jdrZeeoSmuMyqBlqSqFaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,223,1739865600"; 
+   d="scan'208";a="162308318"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Apr 2025 19:49:47 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Len Brown <len.brown@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject: [PATCH 0/2] topology/sysfs, cpufreq/intel_pstate: Populate cpu_capacity
+Date: Fri, 18 Apr 2025 19:55:02 -0700
+Message-Id: <20250419025504.9760-1-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: sunliming <sunliming@kylinos.cn>
+Hi,
 
-Fix below smatch warnings:
-drivers/net/wireless/mediatek/mt76/mt7996/main.c:73 mt7996_stop_phy() warn:
-variable dereferenced before check 'phy' (see line 71)
-drivers/net/wireless/mediatek/mt76/mt7996/main.c:360 mt7996_set_monitor() warn:
-variable dereferenced before check 'phy' (see line 358)
+Capacity-aware scheduling is now supported on Intel hybrid processors. It
+makes sense now to populate the interface /sys/devices/system/cpu/cpuN/
+cpu_capacity. User space entities can use this information to implement
+policy such as utilization clamps.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Closes: https://lore.kernel.org/r/202504101051.1ya4Z4va-lkp@intel.com/
-Signed-off-by: sunliming <sunliming@kylinos.cn>
----
- drivers/net/wireless/mediatek/mt76/mt7996/main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+This interface currently lives in arch_topology.c. Rather than implementing
+the interface again for x86, we can move it to a common location in
+topology.c from which other architectures can also benefit and populate
+using their own mechanisms.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-index 91c64e3a0860..cc6bb4544c2a 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-@@ -68,11 +68,13 @@ static int mt7996_start(struct ieee80211_hw *hw)
- 
- static void mt7996_stop_phy(struct mt7996_phy *phy)
- {
--	struct mt7996_dev *dev = phy->dev;
-+	struct mt7996_dev *dev;
- 
- 	if (!phy || !test_bit(MT76_STATE_RUNNING, &phy->mt76->state))
- 		return;
- 
-+	dev = phy->dev;
-+
- 	cancel_delayed_work_sync(&phy->mt76->mac_work);
- 
- 	mutex_lock(&dev->mt76.mutex);
-@@ -414,11 +416,13 @@ static void mt7996_phy_set_rxfilter(struct mt7996_phy *phy)
- 
- static void mt7996_set_monitor(struct mt7996_phy *phy, bool enabled)
- {
--	struct mt7996_dev *dev = phy->dev;
-+	struct mt7996_dev *dev;
- 
- 	if (!phy)
- 		return;
- 
-+	dev = phy->dev;
-+
- 	if (enabled == !(phy->rxfilter & MT_WF_RFCR_DROP_OTHER_UC))
- 		return;
- 
+I tested this patchset on Intel Alder Lake and DragonBoard 845c. The
+interfaces are populated correctly.
+
+I'd appreciate any feedback!
+
+Thanks and BR,
+Ricardo
+Ricardo Neri (2):
+  arch_topology: Relocate cpu_scale to topology.[h|c]
+  cpufreq: intel_pstate: Populate the cpu_capacity sysfs entries
+
+ drivers/base/arch_topology.c   | 52 ----------------------------------
+ drivers/base/topology.c        | 52 ++++++++++++++++++++++++++++++++++
+ drivers/cpufreq/intel_pstate.c |  2 ++
+ include/linux/arch_topology.h  |  8 ------
+ include/linux/topology.h       |  9 ++++++
+ 5 files changed, 63 insertions(+), 60 deletions(-)
+
 -- 
-2.25.1
+2.43.0
 
 
