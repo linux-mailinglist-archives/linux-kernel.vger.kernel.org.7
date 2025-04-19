@@ -1,66 +1,58 @@
-Return-Path: <linux-kernel+bounces-611391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3174A94158
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 05:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92815A9415D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 05:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86508A0DAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 03:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC168A7517
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 03:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0153881ACA;
-	Sat, 19 Apr 2025 03:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35488633A;
+	Sat, 19 Apr 2025 03:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty61VKBm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ngx6uI8k"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4B44C85;
-	Sat, 19 Apr 2025 03:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A153AC;
+	Sat, 19 Apr 2025 03:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745032540; cv=none; b=HYWFy4s35wx1KYRB06wkSCYhVNS0Ka+XjL26qKlwf2gb+yuxhLrYF9CozkFbG+yTA8f2CJKt5kSjFfBUR/tpypN90g+FbEbc2/3Ppg5bBH5wQW8JNosO+RqAMihtIeFmW9djRZ5cbUubb2T7XCkGengHKxY4XqiCPut2JdvhBdQ=
+	t=1745032917; cv=none; b=mKCVAOciK9wBw6AI+VMGTxtLwsotERgApW45oDvJnMS7u8cpChi3KZljr2ovDG+AE8voMLKItMQIFFxQizgHqTX8MqLZ9BBFzLwh5nRZQU+d3RUje16lG85bvzg9Xje3ejH9mT5rjSrj2IPWuaPxCcpeZN5dof8DljPeVEsd/yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745032540; c=relaxed/simple;
-	bh=eazRX1W/kRkdNzPO2tsVgLONNIGKabIR0gdt1JL1p6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HbemCvplJpkhW26cSD9qCFH2uiQmt4LEylyzgnyjFxuJRibrfX/DV45+jB6EY0ubgRn2cK1IAFfM7JZKjbkwwH17pWPXOFVzzUGrMmv5eWAKic6sf1tnVJ7S/b5GlfSzTZRpD+AT/HzDcEeTxAjChoj2y18NuYspAaBxenLiuMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ty61VKBm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97861C4CEE2;
-	Sat, 19 Apr 2025 03:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745032539;
-	bh=eazRX1W/kRkdNzPO2tsVgLONNIGKabIR0gdt1JL1p6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ty61VKBmUY0hOYKN4hirm07bCE6Z0Sed5eQBBqaG5lqJCjNdNRgftunrH+Hatl5uK
-	 MT+CHN2FSYMUd0BlmOy8U1f3ou5e8Fr+YE1Fc9mzWJt/58fluixn9LjnKR9FoYv9Pe
-	 9EcK3OytLDUUWoJu/5NWlZmqACE+FQ82UHOyqY0TR9XerLs13Bl49a2/X4Qk6oy1Bn
-	 d9Kmv35DAlltqZQUN0QTL/UHC4VsBZqQ+ImVp5p0L07z8OWzdhFasXWXNZt3/keST9
-	 up3Im0LoTkIrYm7H8nYCW/QjuaHezjHrInuFmn5ITRUqyuH6/GhlsuF8bME45GehZG
-	 L0w42LApcgciw==
-Date: Fri, 18 Apr 2025 17:15:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Greg Thelen <gthelen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: introduce non-blocking limit setting interfaces
-Message-ID: <aAMVWsFbht3MdMEk@slm.duckdns.org>
-References: <20250418195956.64824-1-shakeel.butt@linux.dev>
- <CAHH2K0as=b+EhxG=8yS9T9oP40U2dEtU0NA=wCJSb6ii9_DGaw@mail.gmail.com>
- <ohrgrdyy36us7q3ytjm3pewsnkh3xwrtz4xdixxxa6hbzsj2ki@sn275kch6zkh>
- <aALNIVa3zxl9HFK5@google.com>
- <nmdwfhfdboccgtymfhhcavjqe4pcvkxb3b2p2wfxbfqzybfpue@kgvwkjjagqho>
+	s=arc-20240116; t=1745032917; c=relaxed/simple;
+	bh=RobllJVSVcEPvpw3eHIb2maEo3haaCJEdvx0z+gWyR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=p7/34zDaKjZo4RAT6libh8A5t+i8A6XCrVy1oXTr9FpAJ9S/0l3mr/I7wa4GxZBquNPpvikSEkgvKOx3vclFJ6eno+wCk9JbhqXsLRSTtECbMVyTXeaaLZW/cxUibnJoxKI4zJwazVJjFOpd37roEyuEY7wmFyZVd6ea9gJ7TxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ngx6uI8k; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wZ1lnHF/CzliUb7GzPY1eCrDK3d2yWHsU5Q/0caeY1I=; b=ngx6uI8k81i+9Jjvuvjhkm/vhT
+	lanFVL7UAJTS+gMPgMTqJTCZvFmwX1fyE8IoIGwprlAC1kLEfmbX6JanhIi4zc6EjKCl/22NeqyD8
+	nqL81zARYUJidkH8deibJXgYoytOb5mfelVAIwe9UDx0PHMlJy0aa+pOoGkmWZWmbgfHZ8/E/iRfe
+	g9hfi3OqlQ5jvCqvyePv3XpLQV72W5okWzNAm76APNIAhnp4ibe3R7jpWLli14hKgclyxsbN3mzOu
+	4Bh9G5rYxtcR1bjKasPSJceq0uNuN8OZ9BaehZaOklJpHnPJOgqUGzOSEenYMp/ziEF39xfMbDQYk
+	blK5t15w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u5ym0-00GuPu-33;
+	Sat, 19 Apr 2025 11:21:46 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Apr 2025 11:21:44 +0800
+Date: Sat, 19 Apr 2025 11:21:44 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: lib/chacha - restore ability to remove modules
+Message-ID: <aAMWyCjoFZJf9tOQ@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,18 +61,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nmdwfhfdboccgtymfhhcavjqe4pcvkxb3b2p2wfxbfqzybfpue@kgvwkjjagqho>
+In-Reply-To: <20250418035909.64902-1-ebiggers@kernel.org>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
 
-On Fri, Apr 18, 2025 at 04:08:42PM -0700, Shakeel Butt wrote:
-> Any reasons to prefer one over the other? To me having separate
-> files/interfaces seem more clean and are more script friendly. Also
-> let's see what others have to say or prefer.
+Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Though the module_exit functions are now no-ops, they should still be
+> defined, since otherwise the modules become unremovable.
+> 
+> Fixes: 08820553f33a ("crypto: arm/chacha - remove the redundant skcipher algorithms")
+> Fixes: 8c28abede16c ("crypto: arm64/chacha - remove the skcipher algorithms")
+> Fixes: f7915484c020 ("crypto: powerpc/chacha - remove the skcipher algorithms")
+> Fixes: ceba0eda8313 ("crypto: riscv/chacha - implement library instead of skcipher")
+> Fixes: 632ab0978f08 ("crypto: x86/chacha - remove the skcipher algorithms")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> arch/arm/crypto/chacha-glue.c           | 5 +++++
+> arch/arm64/crypto/chacha-neon-glue.c    | 5 +++++
+> arch/powerpc/crypto/chacha-p10-glue.c   | 5 +++++
+> arch/riscv/crypto/chacha-riscv64-glue.c | 5 +++++
+> arch/x86/crypto/chacha_glue.c           | 5 +++++
+> 5 files changed, 25 insertions(+)
 
-I kinda like O_NONBLOCK. The subtlety level of the interface seems to match
-that of the implemented behavior.
-
-Thanks.
-
+Patch applied.  Thanks.
 -- 
-tejun
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
