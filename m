@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-611382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510A7A94123
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 04:50:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A35A9412E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 04:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA718E07D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 02:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C89B4478E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 02:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B111547F5;
-	Sat, 19 Apr 2025 02:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2845A5464E;
+	Sat, 19 Apr 2025 02:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKXh/Ejx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdUrag4f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C2513C914;
-	Sat, 19 Apr 2025 02:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4BD136E;
+	Sat, 19 Apr 2025 02:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745030992; cv=none; b=qujSauoReaLvhRyE6+CYghw9U4inhpBJgXV6hgFkhH0S1a5xeKarx/Dn1BfKryZEhaOjHLbTtRJNcWpzRyBm08r27EVjDlNcIF3ksB+iJXoX59w01iefjkfVfbDVxKTiJusH1HGvNVioLYZAoIl6VOWPdpa/hMC9bN+6iGU2g24=
+	t=1745031422; cv=none; b=LzhbrdOWZ9f4Gva7rDuZ+TIcNo9bLzK84ewvQe/7ILtkvEtluv8NNLXOYI5eiqaxOhdk59DOEsKtk+pvoT61CRNm+W8Rt2sN7mPJoa1+rbu0+9Ut/6CEk328lqzU3QJhfmKKxa694ms07Ojwj81PadoQH2s7aF4tH0DX8u/N5cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745030992; c=relaxed/simple;
-	bh=DWr1M3/1WFJWYL+2i47OY+FQX2kpR5SCGJNTqk1oR3k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=vD9ai4XQ9eizj53c42+piXGYS9IBZ0e4z4HVw8St1Qvr/1weBo1uK5Vg3SZmroSkQOGUsIYGnrUfWda8cr6XRrD1peAjMwFFo2M6pZIoAjnMCsqOo0q2sraMKxuZaZafo4jUCgpbdqXPd+eHDg4MulHcvU9GLpknO8Ipbh1QMVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKXh/Ejx; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745030991; x=1776566991;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=DWr1M3/1WFJWYL+2i47OY+FQX2kpR5SCGJNTqk1oR3k=;
-  b=nKXh/EjxEcpS43dcdZVNJLZRUh+dRS4PJzuw5/mUaC4IqOTh3dPgWF8i
-   H7RfBSzM2KLCBKbSxPV/cViFqwb1ypQ/ugv+FZPbq0S7PKnrVQGgJCLmH
-   NToemBaf5WGTuV/Bwzkynh+dHznel2cseeMrlgk4xAJfUIEdzzduCzhCP
-   Ln6mBDnvMAdFbie9WHuNkLdkoHhjYZRimSD/98qIcCZ7RGZR9j8GMwXKS
-   GZ4KDSBYDqWbGglXd7sejGLeF7v5OPWlqn1Ufc4wWM9P4kWyGb1s+MWaX
-   reJ7VeGBG2c3E0O481mZyt7bWqN2nUL838PBDnygn8BwnY8A/Rp/wEK/T
-   Q==;
-X-CSE-ConnectionGUID: bV3Y6dpxR764AwOta1tQEQ==
-X-CSE-MsgGUID: KTonbXOFQ0CzLMOsltbfJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="50490439"
-X-IronPort-AV: E=Sophos;i="6.15,223,1739865600"; 
-   d="scan'208";a="50490439"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 19:49:48 -0700
-X-CSE-ConnectionGUID: +P+se+pHR2mdjGxD+q3xQw==
-X-CSE-MsgGUID: ZDB6M73jSYS2ozYNqlusuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,223,1739865600"; 
-   d="scan'208";a="162308324"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa001.fm.intel.com with ESMTP; 18 Apr 2025 19:49:48 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <len.brown@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject: [PATCH 2/2] cpufreq: intel_pstate: Populate the cpu_capacity sysfs entries
-Date: Fri, 18 Apr 2025 19:55:04 -0700
-Message-Id: <20250419025504.9760-3-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250419025504.9760-1-ricardo.neri-calderon@linux.intel.com>
-References: <20250419025504.9760-1-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1745031422; c=relaxed/simple;
+	bh=9LvENVGoNKnJj1A2Fi3gOOQ054fliCzHJnQI2PP2B58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gOe97mo+eHIZX+1FpCEwlf9A3Oo/MDnRnb9GRwKRLrd0G47YG4cY0tAEVuyUAsyFG8XMT/s+SdIcvrIZj9tQhneLV1SY8oDiKwpDm0wrtfhaOsDB4yult+JaesMhHB2tfcy453qDwNKnbOysHeMIOQXhe33Z0wrek2gX1K/t7U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdUrag4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEFDC4CEEA;
+	Sat, 19 Apr 2025 02:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745031421;
+	bh=9LvENVGoNKnJj1A2Fi3gOOQ054fliCzHJnQI2PP2B58=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pdUrag4fcCPCUevWWssqQ3oNXC2BUxv6/cda5J9AKxzr+AdhdS0zAGZ/DT2QZY+qf
+	 aLBrZjfDSZL3ZyoX/2t8KEBIFN5xGeF5CQS/JWxFz5nfVPO3JI3an1eEdHosvcB0i2
+	 BnZgWQHrlQ51ol1kNkcdn/gwzYIxqLS26n+NEXddE+eJQYd6LxGvi01DQRa0vr7I8h
+	 kGYDWAJd0EIYEty77ChyR7vS84yeMRdjtUa7PaXrN9MtJfL9ceWNAS3/rO9iNtA+CM
+	 VrQIn0ioN1Ro7Pm3Tur7vD7W5nH1uuAtLcmUNgTsAigN+J7k6F8XuuFkN9RemtudPR
+	 +dvctez4PUP0w==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso3824557a12.0;
+        Fri, 18 Apr 2025 19:57:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVJIGmr3edA3EPPEb5GM6CAnCfzMuyp+W96vF1MVQ060FsZz/LepzfYMyUbtromXk0YJavJJffqq3fyWxY=@vger.kernel.org, AJvYcCX5Clp8pgw/qX8rFeDSdl7q0DMB4CNyF+ODKzU9WZi5oe7R3Xu3Vm2+KpC40FHqieFpdpTVdFxtic0Tqg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwArdl4sxUKtGNrjqQc65jzD0/EKnrF3jufuL+dXf16rL8nCmhX
+	iKOU77uhyMGTsRwhClI615rIx/QuBSni3tooi0ke1aeAbTgkZSySQEaNDJTDZh5kRaEEj19i+58
+	WiQJyyJ4kAcN3h0b7dDggZxqG6j4=
+X-Google-Smtp-Source: AGHT+IGhmmy0M1FNCzQnSD4N/IVQ4o9mFSDKT+1+P5O1DB7cmFmnnqYTSvE9wO1v4U1sDB5wtYVxF8bO8IKd1iE/fL8=
+X-Received: by 2002:a17:907:9622:b0:ac2:d6d1:fe65 with SMTP id
+ a640c23a62f3a-acb74d9aeb6mr466223366b.41.1745031420495; Fri, 18 Apr 2025
+ 19:57:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250417174712.69292-2-thorsten.blum@linux.dev>
+ <aAIF_kEFlOOVNDaE@alpha.franken.de> <DAD22E95-6D33-43D5-B5E5-3A7B45A63944@linux.dev>
+ <alpine.DEB.2.21.2504181108170.18253@angie.orcam.me.uk> <EC98BAE8-8269-4169-B3A2-5F426E77C223@linux.dev>
+ <alpine.DEB.2.21.2504181337350.18253@angie.orcam.me.uk> <B71034AC-B0FC-4C5F-8562-661D6AD11056@linux.dev>
+ <alpine.DEB.2.21.2504181608420.18253@angie.orcam.me.uk> <9F6CA7CB-B36A-4F79-B78C-7ED63E39260D@linux.dev>
+ <A08BC566-5F6D-4FA5-B315-34D2FCA55A6E@linux.dev>
+In-Reply-To: <A08BC566-5F6D-4FA5-B315-34D2FCA55A6E@linux.dev>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 19 Apr 2025 10:56:50 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4x4oQEtvk4Ah0WNBWtaQysj00k_Pybs=+r37oriJxVPA@mail.gmail.com>
+X-Gm-Features: ATxdqUGFZLLWAMZCWJu3dCZDa5XXtflEeZmWRMtc1ZY2sVDTcBrlSLM2u8DRWMQ
+Message-ID: <CAAhV-H4x4oQEtvk4Ah0WNBWtaQysj00k_Pybs=+r37oriJxVPA@mail.gmail.com>
+Subject: Re: [PATCH v2] MIPS: Fix MAX_REG_OFFSET and remove zero-length struct member
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Oleg Nesterov <oleg@redhat.com>, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Intel hybrid processors have CPUs of different capacity. Populate the
-interface /sys/devices/system/cpu/cpuN/cpu_capacity.
+On Sat, Apr 19, 2025 at 4:22=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
+>
+> On 18. Apr 2025, at 22:18, Thorsten Blum wrote:
+> > On 18. Apr 2025, at 17:14, Maciej W. Rozycki wrote:
+> >> On Fri, 18 Apr 2025, Thorsten Blum wrote:
+> >>>>> Does regs_get_register() even work for CPU_CAVIUM_OCTEON when acces=
+sing
+> >>>>> the last two registers because they're both ULL, not UL? (independe=
+nt of
+> >>>>> my patch)
+> >>>>
+> >>>> Or rather two arrays of registers.  With 32-bit configurations their
+> >>>> contents have to be retrieved by pieces.  I don't know if it's handl=
+ed by
+> >>>> the caller(s) though as I'm not familiar with this interface.
+> >>>
+> >>> Ah, CPU_CAVIUM_OCTEON seems to be 64-bit only, so there's no differen=
+ce
+> >>> between UL and ULL. Then both my patch and your suggestion:
+> >>
+> >> So it seems odd to use `long long int' here, but I can't be bothered t=
+o
+> >> check history.  There could be a valid reason or it could be just slop=
+py
+> >> coding.
+> >>
+> >>> I still prefer my approach without '__last[0]' because it also silenc=
+es
+> >>> the following false-positive Coccinelle warning, which is how I stumb=
+led
+> >>> upon this in the first place:
+> >>>
+> >>> ./ptrace.h:51:15-21: WARNING use flexible-array member instead
+> >>
+> >> So make `__last' a flexible array instead?  With a separate patch.
+> >
+> > No, '__last[0]' is a fake flexible array and the Coccinelle warning is
+> > wrong. We should either ignore the warning or silence it by removing th=
+e
+> > marker, but turning it into a real flexible array doesn't make sense.
+> > I'd prefer to just remove it from the struct.
+> >
+> > Stefan or Oleg, do you have any preference?
+>
+> Sorry, I meant Thomas, not Stefan.
+In my opinion just changing __last[0] to __last[] is OK, no other
+actions needed.
 
-This interface uses the per-CPU variable `cpu_scale`. On x86 this variable
-has no other use besides feeding the sysfs entries. Initialize it when
-setting CPU capacity for the scheduler and scale-invariant code. Feed it
-with arch_scale_cpu_capacity() as it gives capacity normalized to the
-interval [0, SCHED_CAPACITY_SCALE].
-
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 4aad79d26c64..c32312843f19 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -952,6 +952,8 @@ static void hybrid_set_cpu_capacity(struct cpudata *cpu)
- 			      cpu->capacity_perf,
- 			      cpu->pstate.max_pstate_physical);
- 
-+	topology_set_cpu_scale(cpu->cpu, arch_scale_cpu_capacity(cpu->cpu));
-+
- 	pr_debug("CPU%d: perf = %u, max. perf = %u, base perf = %d\n", cpu->cpu,
- 		 cpu->capacity_perf, hybrid_max_perf_cpu->capacity_perf,
- 		 cpu->pstate.max_pstate_physical);
--- 
-2.43.0
-
+Huacai
+>
+>
 
