@@ -1,189 +1,143 @@
-Return-Path: <linux-kernel+bounces-611465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35629A94245
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8874BA9424F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E68F7A614F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 08:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8B19E2E49
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 08:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C9F1ADC90;
-	Sat, 19 Apr 2025 08:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvql5noU"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7E61B0F19;
+	Sat, 19 Apr 2025 08:36:23 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FD4194080
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2728A145A03
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 08:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745051616; cv=none; b=joKXIUXlBPnhgWRoioirpsfypip8U+H+9zmJJp+taL/oEDEUbb+8ItuKmRON0IpdtuLMEbxAlcr0VuEkoRhsijXrOzrxk6a7Q/RgkglF3YbiB+Uys+HIQdkBlFHHxDW5bCtgE6AyRaZMWD9bHh8KYJSHCs3r+ravcow2Ypwozsw=
+	t=1745051782; cv=none; b=bVsfhijntmuVvYlfa+l8SeelJ76iR8mU5IctBZFIuplO4CZQnswBzr4oB4jupyFvkj5+xYoEQC0v8r4MAr8+fsH5XzW0UzIfcgsgcXfJzYjkNj9hAri1zqrPbWpVUzMCU1DBVdrrsdc15O2r46wZYPVkeQniSai3zPPQdO9Miyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745051616; c=relaxed/simple;
-	bh=tnZpf7E4jUTvl0WeReZ1fpPOpf5sY8X3PMWxEUc/hMQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzd6NLNS9OA/WNvwVpypm6/JC99R5S0Cmlb8/aY1smSNKvZLxZ8wNPgCqJWkKzurXocaOjRcLK2VNJ7GbffbMo+JQFnAQ4FfzTXeK00urYuDUZYWoB2CUjhHTgn0OQfpRf33bjgFvb4QruiU+wb1Hrb8qZ+vWzZTtxTtRHIKyWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hvql5noU; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-227b828de00so26690505ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 01:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745051614; x=1745656414; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YaJakh9xM66cZD5S9FiPEP38vFx8wsqvS4Jg/X0PNME=;
-        b=hvql5noUBWhduRELCjYuWxqsXM62h38FUzeIfIza036HvLEHXf8e+4mgayEQjr2H61
-         PrhhzSEyoFzB0lLAepUKf+0QuF8ZqK/QkJgaD+cSvgybT/pla/RFn7N5subfYCpHRS0t
-         yCXlW6gIZ6v+6hEIcIHNmTvFZeflIXRlsHr2lZPtr4A40ZME5IZXeLpIrWSKWLUen6y8
-         fIHIMHOTiMBdITYQUDwu6D/uOkQ/RzX3SXsOEwB0VxrPeIqrrJMdbJMEQPdEIHziljBX
-         XsNpyg7DUJqJg8YYShxm0bVy3SH1g5/83u3oOFPUuRwiZfjJsO4fYYbwytDRKouIdLbY
-         5luA==
+	s=arc-20240116; t=1745051782; c=relaxed/simple;
+	bh=2muuX7Ih62Wo7gja35Okue8CWnhgSewdoNusaP2V7P0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eICr1LZ8qZRdApH+eTu6/Bsrj0exf5ZpY4N0+pwsf5pAhO1NVTMMYtBFT8A0eNeXZJvD7arE9JKgwQfAfP7S+iJ54W1V5VAwrGx7b/3sDgFkcxLwhE/qCM5KxRFrqcsS7TvNHOZ3cp17d9UAia9RvsPQ3IvyvmOSXXMUWZg6Rf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d817cf6e72so23007765ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 01:36:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745051614; x=1745656414;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YaJakh9xM66cZD5S9FiPEP38vFx8wsqvS4Jg/X0PNME=;
-        b=ZqrEIMrspr0EgMogC9Jc5Xe+SWBiB+yYGraMN+kaGyDE1IZ60Z9GO3qRd6DDghhLGQ
-         +t2HlYCPKm8T5KiSBGQsp0rvdvu+7yYG5/82g04ZxNvhDjg2aaO8ZEKr0h6haH6EMeBT
-         v3kGZcwN8ahMA3367t+ezhU+U0V0QlPnqAnv9uOnJsH2Tgh6637+Ew/yy/vGBgzIWrpR
-         VEjDFmbpTZrovCBj40WGmPg/NAXf3DdIpXkYy5kLEuURDTPAuv167BX1Fv8VG7G5NAdk
-         Njl+NIPGTXoYdj8zyTODJK1PRKyhBx/JH5mP0bN4vKP4WiPnunTmi6jRsacmxNWuy9fm
-         4IiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpnTCUbQlyWZd4vy4jH70YXivIIMUPpWQFkpds9bWnjuYjY9GdsaMiwoZpObdmDOKHuJqKk6Z8zWI087Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0pX9whKua6CmUV8nEHKStid0YeXTs9yu3CVk84nTebyn3LIQ2
-	48N8cmbXpwg/E13XDiLg4a3vTaFd+x8Y/t3QPKqP2xF1HwB9mL5W8/vUj3GJQg==
-X-Gm-Gg: ASbGnct7K5THxdPRX10lQKdEcLak+WIC03xPs+IESCeA6Pz1QOPtXYPhjoijNAeB7k0
-	hMEPs5u3l7mKtk02rTu0fkxxUPVTOIkKUrQgms8lBkF5OFDz1hXHtN842fUbVkEcunJiRvA1kr3
-	qGwpExZ/oJWKN9b+m0/neYKKXeo0NI/0G78yIcNv5CeT5LvsUYKpjS84RY6kfUqhJfTjrnNH7FS
-	HCnAyyoVG/teiAcrM9XfhbYFljhqJF4eLfhClY/vqE0wTl+qf7uQ0WSR9ZGmMhXtruGn8R6OuKI
-	dC2VDZyhHAQLRTGqrjOxCk7rQ+7+bABwZZwxUGpNFy3vbxoIjXI=
-X-Google-Smtp-Source: AGHT+IETJzORaZc9rUcQZjfqRJ8DIbC4gX4Kf2XDO9y1bvddXq8XcEhC0o1p38D01fW61AQYlWaodA==
-X-Received: by 2002:a17:903:2441:b0:220:ea90:191e with SMTP id d9443c01a7336-22c535679abmr74340825ad.4.1745051614002;
-        Sat, 19 Apr 2025 01:33:34 -0700 (PDT)
-Received: from thinkpad ([36.255.17.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf5425sm29195875ad.98.2025.04.19.01.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Apr 2025 01:33:33 -0700 (PDT)
-Date: Sat, 19 Apr 2025 14:03:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/23] arm64: dts: qcom: Add 'global' IRQ to supported
- SoCs
-Message-ID: <zm75vxwx7pgcu6sok4g5ujrg2drc2jst3gscrl46jr7votygoo@5qsdre2fxtre>
-References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
+        d=1e100.net; s=20230601; t=1745051780; x=1745656580;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=viXqPNMRsD79f0RGNVXeE0kyOUVbU86j7clKbfA/SQM=;
+        b=ddH7LZWMWKvrZTivtcFEpRCe++WM56/rw1qgvnFVhkvCJupjHfwB8I5EUTTQCwr8Zk
+         OarsCWXFMU8qSUeBtlqAcPU2DuUptFJuYb3MmbGixsFbwVJSg3qnoapDTVxslzDq7lWk
+         jEFGo/Aq4qYMST0+SaBWwL8tBhqqO7Qjhq/3hgvt/xyzz/+UjoZFptYMWPeySCkmyaM3
+         3+L1cuhfu3rs/EZSXHHoIp+ZLfsGkUTMrYgDeG0TktXrX8eAiDAnStL5xmGfv8PirtWd
+         5x/wmKqThTs1mkD6E2DkS159GEEIBtf31iFL/02APcdokyvjZB2yBYaE3tbDR0PBloId
+         yuWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBE3TYA0H73tbcu8LMJj/xoUVC4Y9guXtVrV2jOHrJdGVymqLmNx8Cqq5nNJX9Pf4V2uWauA+WrM7Rvyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu42K3yuUXplpsyMjk9lYxz4smhOZH6/JYqeTgKvtp69KGiAT6
+	v0LSu4Avaoz73Iy8+g+pS58Ij/SxQXA+9FgwMLN4FPIVIOTN1aU95c/W8x4HjFr+a9egYefNghI
+	hAM1qeYMqbxRYIm9A4vud5x2u1iuAejXQDfidyp93zEYJQQB8SH4HxUo=
+X-Google-Smtp-Source: AGHT+IHkH/wwUf5d8lEEpuJxnz3SCVRu5KO/+QNvaticspBogfzuSTTlnBcBEi4bqi+Aeol4UGA5h8ZFt1vmaZ6fdEINgQ1UFwDV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
+X-Received: by 2002:a05:6e02:b41:b0:3d5:890b:d9e1 with SMTP id
+ e9e14a558f8ab-3d8b694907emr40125955ab.1.1745051780294; Sat, 19 Apr 2025
+ 01:36:20 -0700 (PDT)
+Date: Sat, 19 Apr 2025 01:36:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68036084.050a0220.297747.0018.GAE@google.com>
+Subject: [syzbot] [block?] [bcachefs?] kernel panic: KASAN: panic_on_warn set ...
+From: syzbot <syzbot+4eb503ec2b8156835f24@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 27, 2025 at 07:10:42PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
-> 
-> This series adds the Qualcomm specific 'global' IRQ to the supported SoCs.
-> This IRQ is used to receive the PCIe controller and link specific events
-> such as Link Up/Down, MSI, PTM etc... in the driver. Support for this IRQ
-> was already added to the pcie-qcom driver. So enabling this IRQ would allow
-> the driver to enumerate the endpoint device and also retrain the link when
-> the device is removed [1] without user intervention.
-> 
-> This series also adds missing MSI SPI IRQ to some of the SoCs.
-> 
-> Testing
-> =======
-> 
-> This series was tested on Qualcomm RB5 board based on SM8250 SoC and
-> Qualcomm Ride MX board based on SA8775p SoC.
-> 
-> NOTE
-> ====
-> 
-> I've left a few SoCs in the tree like QCS404, SC8280XP due to lack of
-> documentation. Those will be added later.
-> 
-> [1] https://lore.kernel.org/linux-pci/20250221172309.120009-1-manivannan.sadhasivam@linaro.org/
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hello,
 
-Applied the bindings patches to pci/dt-bindings!
+syzbot found the following issue on:
 
-- Mani
+HEAD commit:    3088d26962e8 Merge tag 'x86-urgent-2025-04-18' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17aed470580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2a31f7155996562
+dashboard link: https://syzkaller.appspot.com/bug?extid=4eb503ec2b8156835f24
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
 
-> ---
-> Manivannan Sadhasivam (23):
->       dt-bindings: PCI: qcom,pcie-sm8150: Add 'global' interrupt
->       arm64: dts: qcom: sm8150: Add 'global' PCIe interrupt
->       dt-bindings: PCI: qcom,pcie-sm8250: Add 'global' interrupt
->       arm64: dts: qcom: sm8250: Add 'global' PCIe interrupt
->       dt-bindings: PCI: qcom,pcie-sm8350: Add 'global' interrupt
->       arm64: dts: qcom: sm8350: Add 'global' PCIe interrupt
->       dt-bindings: PCI: qcom,pcie-sa8775p: Add 'global' interrupt
->       arm64: dts: qcom: sa8775p: Add 'global' PCIe interrupt
->       dt-bindings: PCI: qcom,pcie-sc7280: Add 'global' interrupt
->       arm64: dts: qcom: sc7280: Add 'global' PCIe interrupt
->       dt-bindings: PCI: qcom: Add 'global' interrupt for SDM845 SoC
->       arm64: dts: qcom: sdm845: Add missing MSI and 'global' IRQs
->       arm64: dts: qcom: msm8996: Add missing MSI SPI interrupts
->       dt-bindings: PCI: qcom: Allow MSM8998 to use 8 MSI and one 'global' interrupt
->       arm64: dts: qcom: msm8998: Add missing MSI and 'global' IRQs
->       dt-bindings: PCI: qcom: Allow IPQ8074 to use 8 MSI and one 'global' interrupt
->       arm64: dts: qcom: ipq8074: Add missing MSI and 'global' IRQs
->       dt-bindings: PCI: qcom: Allow IPQ6018 to use 8 MSI and one 'global' interrupt
->       arm64: dts: qcom: ipq6018: Add missing MSI and 'global' IRQs
->       dt-bindings: PCI: qcom,pcie-sc8180x: Add 'global' interrupt
->       arm64: dts: qcom: sc8180x: Add 'global' PCIe interrupt
->       arm64: dts: qcom: sar2130p: Add 'global' PCIe interrupt
->       arm64: dts: qcom: x1e80100: Add missing 'global' PCIe interrupt
-> 
->  .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml | 10 ++--
->  .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |  9 ++--
->  .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml | 10 ++--
->  .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  |  9 ++--
->  .../devicetree/bindings/pci/qcom,pcie-sm8250.yaml  |  9 ++--
->  .../devicetree/bindings/pci/qcom,pcie-sm8350.yaml  |  9 ++--
->  .../devicetree/bindings/pci/qcom,pcie.yaml         | 14 ++++--
->  arch/arm64/boot/dts/qcom/ipq6018.dtsi              | 20 +++++++-
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 40 ++++++++++++++--
->  arch/arm64/boot/dts/qcom/msm8996.dtsi              | 54 +++++++++++++++++++---
->  arch/arm64/boot/dts/qcom/msm8998.dtsi              | 20 +++++++-
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 28 ++++++++---
->  arch/arm64/boot/dts/qcom/sar2130p.dtsi             | 12 +++--
->  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 14 ++++--
->  arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 24 ++++++----
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               | 40 ++++++++++++++--
->  arch/arm64/boot/dts/qcom/sm8150.dtsi               | 12 +++--
->  arch/arm64/boot/dts/qcom/sm8250.dtsi               | 18 +++++---
->  arch/arm64/boot/dts/qcom/sm8350.dtsi               | 12 +++--
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 18 +++++---
->  20 files changed, 300 insertions(+), 82 deletions(-)
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250227-pcie-global-irq-dd1cd5688d71
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3088d269.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5ec84510bfc9/vmlinux-3088d269.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/af58d0bee0a4/bzImage-3088d269.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4eb503ec2b8156835f24@syzkaller.appspotmail.com
+
+Kernel panic - not syncing: KASAN: panic_on_warn set ...
+CPU: 0 UID: 0 PID: 47 Comm: kworker/u4:3 Not tainted 6.15.0-rc2-syzkaller-00400-g3088d26962e8 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: loop0 loop_workfn
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ panic+0x349/0x880 kernel/panic.c:354
+ check_panic_on_warn+0x86/0xb0 kernel/panic.c:243
+ end_report+0x77/0x160 mm/kasan/report.c:227
+ kasan_report+0x154/0x180 mm/kasan/report.c:636
+ check_region_inline mm/kasan/generic.c:-1 [inline]
+ kasan_check_range+0x28f/0x2a0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
+ put_bh include/linux/buffer_head.h:301 [inline]
+ end_buffer_read_sync+0xc1/0xd0 fs/buffer.c:161
+ end_bio_bh_io_sync+0xbf/0x120 fs/buffer.c:2748
+ blk_update_request+0x5e5/0x1160 block/blk-mq.c:983
+ blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1145
+ lo_rw_aio_do_completion drivers/block/loop.c:317 [inline]
+ lo_rw_aio_complete drivers/block/loop.c:325 [inline]
+ lo_rw_aio+0xdfd/0xf80 drivers/block/loop.c:398
+ do_req_filebacked drivers/block/loop.c:-1 [inline]
+ loop_handle_cmd drivers/block/loop.c:1866 [inline]
+ loop_process_work+0x8e3/0x11f0 drivers/block/loop.c:1901
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+ worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+ kthread+0x7b7/0x940 kernel/kthread.c:464
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
