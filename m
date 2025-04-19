@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-611521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986D6A942D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934F4A942DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB78440496
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDBB3BC4CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD471CCB4B;
-	Sat, 19 Apr 2025 10:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB59A1CDFCE;
+	Sat, 19 Apr 2025 10:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jqaxrAi0"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hg89vis/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076821465B4
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 10:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDB140BF5;
+	Sat, 19 Apr 2025 10:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745058730; cv=none; b=TH4nGxV+xfjfGwF1lqJtV/MLLPXHNeZXcEbJjkoXZjez1Ipnt/ZhSHoUrld+2433DfBykT7lzxAXpzjzs6yL921xu0wgSZsW+YXZEr1rH70Ky/04O3VyD642vG/jE07QZpqYPBuhKsUo8DO9m0xy0JMzjWa0MF6Rwzibcw2vYQo=
+	t=1745059028; cv=none; b=szj8xwuwBbRrHVTLhR/+5py4GuJmFXEkYHWj7tRgEjMp+NHnva0uMB+MqcFHJyRJUr9QaHPjOWPNUmzYhWvUkHElyRSBtmgv2iVM3/ZBPjTX4V3kDEZQQ7qf1l6GyPVyaHiopeHK3HMOt9n20GGQxmp5U6BHstwI8Kgq790nehY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745058730; c=relaxed/simple;
-	bh=swRKLfJWKD2mlW0keXQmekByo0tOmThkSgTyIeveh58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jnqo37WyLxPxGeusejALJOeQPc6QGBzshPMtNPjyft4ICHrgYfIP7Wh0a54IvNxySVJ26H/UJmEDx/RKTLu3V3UKL1NUuNtEe8tsIpm1WKsmRX05o91avYXaCB2CnQLnDbnonTn38wMltCWOjyWq4WZuOuAClvqaj5jfqV4eXXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jqaxrAi0; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224100e9a5cso30912295ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 03:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745058728; x=1745663528; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5Il2rU8Ei7/bRHYklnBb9fRrbnoPixb2FIIvOyMizU8=;
-        b=jqaxrAi0voXqiOjYRZYcvWRQAAU4BEPuR1F+h4PA5cFc4+oh+L95zLUzkLu6WvJuID
-         hXleUD8Lu7VuaKCB9FFw3GRk0EfC8mv0q1tGZsUGgZesiR3pCG+t4Rttr3PaRMRatZur
-         NVegfF9NH6vZsBK4sURioUUIIy6we0nNVrlKJNrGm0pd8F7UP63MpM9o3OjYnd1QPqaS
-         vpmWShnkHK9C+n+3Y9zSrApuIHzTJq6ZXDMPBBuiWgJb2pFSGe33nqphfsXc/K1M6syF
-         GvY4U5EHo4twtWxAb/zsVaoAQVAsjWu4D8mvZANfPKy6wFIlLjaqntEHAn0rWJfYiwQG
-         JjuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745058728; x=1745663528;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Il2rU8Ei7/bRHYklnBb9fRrbnoPixb2FIIvOyMizU8=;
-        b=arNZT6/6vNpG9cSNShmVuWyFPrytl+8nytlHU6u6T079u5Rf33qnSLmJUoLS1kELSJ
-         JwFxXk+KbVXDtf3pDmb3RZ1DQ9fw9VOqV3V2s8fQwEFWNptDZNJCZbSW02r9pIk3HZXh
-         svBpK4FcW/mmBQjZFXgZLlc5MUUxcmriLuA30aCQR76zDbWN8aHSkllX/5F38/RkIfMk
-         Zo9bQEt49avmiIZGUakKjX0FN2f3pJXhFQs/uhc5RlFvxSmL4ZBTtlSTZM62BFytSJbr
-         vxfuKjl0weeSal6Vplt5JAMrKxqbhHvFQgkSfIr8SS4rifknIVbe2HnLwzCwC811GKH8
-         8JZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWA0CFWm7B0SzQkqB9bYYerB1cmWm9d/oS18kvXeuJvzL7XzF+eeGOw9cLGARUHY9iRU03T5n8JkJVyg1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Ix+yTyQsouja/QQum9FgjlgJTOmaGRxEhFrObicFa3b3YLmq
-	2OFJNYCtP2z0Q+wb2fFGiyZRSeiMA8V+yNr8TGppEDuQv5AvlAU4aLECVmAgbw==
-X-Gm-Gg: ASbGncuU6VGlXEbv+sSIqt2x2gCRVL5Ba64dhxyiq933arpHSdzycc2L8PhH7qATPKU
-	epKy+LGRPygIaZJDgtjU6BJxeoH1oTvWCdrBGX2jE/2svtsKwPNNQxrzidpPRMLPkGMZcVGHlOE
-	PlskCTIUBpG2Xoyhe7Jh66lKDycJnyOzjakVrYws1Pu3o6Ibx7XHM1oeusJVG5XZ6gbSbGEq34K
-	8jJ+8vXdPjdHYeWckPFMeNRrACSNXB0fil/PSOhkPg7nFu6sht8a1kFVQqP8DqgwZy5mzz/RzGi
-	NfdvQEADnB+xVNH4rfRb9KL/DIkc0oDXnWe2AvaU96syb7+3uvQ=
-X-Google-Smtp-Source: AGHT+IFIs3URHzShG2kPpjK29B1REbfnUIRhTOlT5ei3CMFMXuj72gvndCjXDA59PyRefPuYycxkCg==
-X-Received: by 2002:a17:903:244a:b0:21f:988d:5758 with SMTP id d9443c01a7336-22c536011bemr96555915ad.35.1745058728233;
-        Sat, 19 Apr 2025 03:32:08 -0700 (PDT)
-Received: from thinkpad ([36.255.17.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb6807sm30636225ad.112.2025.04.19.03.32.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Apr 2025 03:32:07 -0700 (PDT)
-Date: Sat, 19 Apr 2025 16:02:02 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Daire McNamara <daire.mcnamara@microchip.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Kevin Xie <kevin.xie@starfivetech.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Minda Chen <minda.chen@starfivetech.com>, Mason Huo <mason.huo@starfivetech.com>, 
-	"open list:PCI DRIVER FOR PLDA PCIE IP" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] PCI: starfive: Simplify event doorbell bitmap
- initialization in pcie-starfive
-Message-ID: <ck6a66u3cn4uzwnz7z3xjoz5rorli7eww4lfzbjxmntbpbnzgt@dg2sfkhw4x4z>
-References: <20250316171250.5901-1-linux.amoon@gmail.com>
- <20250316171250.5901-2-linux.amoon@gmail.com>
+	s=arc-20240116; t=1745059028; c=relaxed/simple;
+	bh=JD+/ymt53uTkEVpXnVszNqoGaMRYWSjRvBxfKU4YHcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OzqozAf7Pw8ATsTNjMqi8+tZ3dQ5QJOaxY4+9dGBOLv8uBHm/VcZ0Svn5OOXfo2YQDygtsR3325y//WcaKj+tIcSvHGfmvRaqKB30MVhokHSc8IO7KzKuYb+D1fLg6OYENlkc3Ds0T2FoMNPi5tpczLKbGGQJM0j13xpPDpGvkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hg89vis/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F11C4CEE7;
+	Sat, 19 Apr 2025 10:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745059027;
+	bh=JD+/ymt53uTkEVpXnVszNqoGaMRYWSjRvBxfKU4YHcI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Hg89vis/xPwjzvJ4PdM+y6CTAwELcguXxHvwsdYmjVNWoTRdMDxHNpCGNRZDDd0K4
+	 508cLumOtoG+k3MXhZG3G1HbhZDPreGQhs8aw2XWoD/HIXaD2aMoSbkVsvwSAM1/RH
+	 MnMbb6bZqy06yq6jdublpW+ugmzqZ93DufIv+HxEOupYIyi6JUr3CN5k3MWNR/55tH
+	 UnvAMw2DY0BV2DMMslmEdHIOeOhLmQOtz6cUc0m5klfJotoT8rVr9Wau7hmVbFri9R
+	 iwZUsRr95umRJGzYWnG5LH4Mq19//SLTD/2cH5Ar2ZWp+vfFF5fC6TnArOVErRbIy+
+	 tocXtdUydQZng==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust fixes for 6.15
+Date: Sat, 19 Apr 2025 12:34:43 +0200
+Message-ID: <20250419103443.3004008-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250316171250.5901-2-linux.amoon@gmail.com>
 
-On Sun, Mar 16, 2025 at 10:42:46PM +0530, Anand Moon wrote:
-> The events_bitmap initialization in starfive_pcie_probe() previously
-> masked out the PLDA_AXI_DOORBELL and PLDA_PCIE_DOORBELL events.
-> 
-> These masking has been removed, allowing these events to be included
-> in the bitmap. With this change ensures that all interrupt events are
-> properly accounted for and may be necessary for handling doorbell
-> events in certain use cases.
-> 
-> PCIe Doorbell Events: These are typically used to notify a device about
-> an event or to trigger an action. For example, a host system can write
-> to a doorbell register on a PCIe device to signal that new data is
-> available or that an operation should start12.
-> 
-> AXI-PCIe Bridge: This bridge acts as a protocol converter between AXI
-> (Advanced eXtensible Interface) and PCIe (Peripheral Component Interconnect
-> Express) domains. It allows transactions to be converted and communicated
-> between these two different protocols3.
-> 
+Hi Linus,
 
-Are these events used in the driver for any purpose? Others have mentioned a
-potential irq storm issue with these interrupts also. So unless you want to
-enable these events for a specific purpose/usecase, it is better to keep them
-masked out.
+Please pull these fixes for Rust.
 
-- Mani
+They have all been in linux-next for at least a couple rounds.
 
--- 
-மணிவண்ணன் சதாசிவம்
+No conflicts expected.
+
+Thanks!
+
+Cheers,
+Miguel
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.15
+
+for you to fetch changes up to c1b4071ec3a6a594df6c49bf8f04a60a88072525:
+
+  rust: helpers: Add dma_alloc_attrs() and dma_free_attrs() (2025-04-15 23:06:03 +0200)
+
+----------------------------------------------------------------
+Rust fixes for v6.15
+
+Toolchain and infrastructure:
+
+ - Fix missing KASAN LLVM flags on first build (and fix spurious
+   rebuilds) by skipping '--target'.
+
+ - Fix Make < 4.3 build error by using '$(pound)'.
+
+ - Fix UML build error by removing 'volatile' qualifier from io helpers.
+
+ - Fix UML build error by adding 'dma_{alloc,free}_attrs()'  helpers.
+
+ - Clean gendwarfksyms warnings by avoiding to export '__pfx' symbols.
+
+ - Clean objtool warning by adding a new 'noreturn' function for 1.86.0.
+
+ - Disable 'needless_continue' Clippy lint due to new 1.86.0 warnings.
+
+ - Add missing 'ffi' crate to 'generate_rust_analyzer.py'.
+
+'pin-init' crate:
+
+ - Import a couple fixes from upstream.
+
+----------------------------------------------------------------
+FUJITA Tomonori (2):
+      rust: helpers: Remove volatile qualifier from io helpers
+      rust: helpers: Add dma_alloc_attrs() and dma_free_attrs()
+
+Lukas Fischer (1):
+      scripts: generate_rust_analyzer: Add ffi crate
+
+Miguel Ojeda (6):
+      rust: pin-init: alloc: restrict `impl ZeroableOption` for `Box` to `T: Sized`
+      rust: pin-init: use Markdown autolinks in Rust comments
+      rust: disable `clippy::needless_continue`
+      rust: kasan/kbuild: fix missing flags on first build
+      objtool/rust: add one more `noreturn` Rust function for Rust 1.86.0
+      rust: kbuild: use `pound` to support GNU Make < 4.3
+
+Sami Tolvanen (1):
+      rust: kbuild: Don't export __pfx symbols
+
+ MAINTAINERS                             |  1 +
+ Makefile                                |  1 -
+ rust/Makefile                           |  2 +-
+ rust/helpers/dma.c                      | 16 ++++++++++++++++
+ rust/helpers/helpers.c                  |  1 +
+ rust/helpers/io.c                       | 34 ++++++++++++++++-----------------
+ rust/pin-init/examples/pthread_mutex.rs |  2 +-
+ rust/pin-init/src/alloc.rs              |  8 +++-----
+ rust/pin-init/src/lib.rs                |  2 +-
+ scripts/Makefile.compiler               |  4 ++--
+ scripts/generate_rust_analyzer.py       | 12 +++++++++---
+ tools/objtool/check.c                   |  1 +
+ 12 files changed, 53 insertions(+), 31 deletions(-)
+ create mode 100644 rust/helpers/dma.c
 
