@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-611666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488F6A944AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 18:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C3BA944B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 18:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1022F18996CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 16:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD8F16E984
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 16:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A2F1DF977;
-	Sat, 19 Apr 2025 16:35:46 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179D11DD866;
+	Sat, 19 Apr 2025 16:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JpKvX9rV"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6607326AF3;
-	Sat, 19 Apr 2025 16:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF5026AF3
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 16:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745080545; cv=none; b=EL5XCnTbU0fJNmwRwi3lxkVtcQdhf047dWE8Xcf4aJvNNLNvVoxVy+r3FTi34x1kPaF4V55NnkjZ6ueNoQLiBknE/Dx7EXYArt0As1y71/O2Bx6eFXMLpquqmz7sKLr0NcdwAyz0Z2fnvn+LoWCieHX6RkHb2yW56jzuL71PUec=
+	t=1745080630; cv=none; b=LItkozWf0QlYcaUtpvq9vXRlw20bB7J5s/NGJpPAP98NgIU05t8l+vgRsgVyzrmIiwdZB7UahOXGfx+NjVeX0SQfmSnqnvbqOug0VQ+Hr5WM5zJ6rNtcDubHphsLz6gSw4d/tE3/aqd0gbDnMiUriuDIvfYVvG8vOkqoc9AzZMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745080545; c=relaxed/simple;
-	bh=Ji9N54pQjsMdN4HZHYNj5wDSn8SF8Ls75uvLcHEA7wM=;
+	s=arc-20240116; t=1745080630; c=relaxed/simple;
+	bh=RNrAWejdpwpx31ojS2nsE1RAqW/UeizR6207ITFqL2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FayOhJr9ZN6pvmxWcyr8aACc3IG0HOQ4LMkURSHKg7jVtBjgcFFgcx1wz6QWheQMlq37GTy50z+OVxM4Ju27txm3p5Fsa+qinek8Y7O/5MAhwKFCTex/rfrHaqP6DqwjoPxav+i/IOEpf3lgXMpw1baH0MM8UmcYv8II9NgCHig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 7VFk9OR+Q72hDO8aH0Mwyg==
-X-CSE-MsgGUID: k9VDNzSsSGGKKKw0/xcePg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11408"; a="45914286"
-X-IronPort-AV: E=Sophos;i="6.15,224,1739865600"; 
-   d="scan'208";a="45914286"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2025 09:35:43 -0700
-X-CSE-ConnectionGUID: LkCvwzblRz6uqFMUfRmyPA==
-X-CSE-MsgGUID: CrGG22WKQSKZ3BohCzdlBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,224,1739865600"; 
-   d="scan'208";a="136517067"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2025 09:35:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1u6BAH-0000000DrnG-3yTJ;
-	Sat, 19 Apr 2025 19:35:37 +0300
-Date: Sat, 19 Apr 2025 19:35:37 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
-Message-ID: <aAPQ2b5E9S1gMddP@smile.fi.intel.com>
-References: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com>
- <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-1-ee0c62a33a0f@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hQRXrEM5pBPRWf+FTfdpqj8faYtVyv67ynVjeFku/LIjT6LVtlUmGPHNLW/kLCHS8GUUWQlIhfpswJLa6FnL7wp/ijmOqXE5svGjGk6oOwrYSg+hzvqJ90MycsUxcdcnedtHo9qBbm2fJxKTKL/JK+nCYqcSwmNqbeMbfH1q6z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JpKvX9rV; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 19 Apr 2025 09:36:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745080621;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3gAqc7ZMsVtcf6IciKTKwKTL0on26u+L0x1CBV9xTls=;
+	b=JpKvX9rVoPn321DOwtQil6lH+d2atYqiTTUjWcI+jNgRMLMNOmWuVi1nYJ83M3syXsYt3l
+	i/kS7Mi095iKRFj0AqYdtVPzHO7KH7DVrOuyyVoRSGJIvyvCnopOnxc7QJdMARZtXV6fOn
+	DbpM4l652S0lNHal3Uvcq2QIK6S6738=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+	Greg Thelen <gthelen@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Muchun Song <muchun.song@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: introduce non-blocking limit setting interfaces
+Message-ID: <rgze2xgrslssxoe7k3vcfg6fy2ywe4jowvwlbdsxrcrvhmklzv@jhyomycycs4n>
+References: <20250418195956.64824-1-shakeel.butt@linux.dev>
+ <CAHH2K0as=b+EhxG=8yS9T9oP40U2dEtU0NA=wCJSb6ii9_DGaw@mail.gmail.com>
+ <ohrgrdyy36us7q3ytjm3pewsnkh3xwrtz4xdixxxa6hbzsj2ki@sn275kch6zkh>
+ <aALNIVa3zxl9HFK5@google.com>
+ <nmdwfhfdboccgtymfhhcavjqe4pcvkxb3b2p2wfxbfqzybfpue@kgvwkjjagqho>
+ <aAMVWsFbht3MdMEk@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,28 +65,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-1-ee0c62a33a0f@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <aAMVWsFbht3MdMEk@slm.duckdns.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Apr 18, 2025 at 05:58:32PM -0500, David Lechner wrote:
-> Add a new macro to help with the common case of declaring a buffer that
-> is safe to use with iio_push_to_buffers_with_ts(). This is not trivial
-> to do correctly because of the alignment requirements of the timestamp.
-> This will make it easier for both authors and reviewers.
+On Fri, Apr 18, 2025 at 05:15:38PM -1000, Tejun Heo wrote:
+> On Fri, Apr 18, 2025 at 04:08:42PM -0700, Shakeel Butt wrote:
+> > Any reasons to prefer one over the other? To me having separate
+> > files/interfaces seem more clean and are more script friendly. Also
+> > let's see what others have to say or prefer.
+> 
+> I kinda like O_NONBLOCK. The subtlety level of the interface seems to match
+> that of the implemented behavior.
+> 
 
-...
+Ok, it seems like more people prefer O_NONBLOCK, so be it. I will send
+v2 soon.
 
-> +#define IIO_DECLARE_BUFFER_WITH_TS(type, name, count) \
-> +	type name[ALIGN((count), sizeof(s64) / sizeof(type)) \
-> +		  + sizeof(s64)/ sizeof(type)] __aligned(sizeof(s64))
+Also I would request to backport to stable kernels. Let me know if
+anyone have concerns.
 
-We have two alignments in a row in most of the cases, I would think that the
-proper one is for DMA and this should not be used at all, it actually might be
-a bug in bmp280.
+I asked AI how to do the nonblock write in a script and got following:
 
--- 
-With Best Regards,
-Andy Shevchenko
+$ echo 10G | dd of=memory.max oflag=nonblock
 
-
+Shakeel
 
