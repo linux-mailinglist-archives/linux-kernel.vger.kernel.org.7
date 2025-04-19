@@ -1,158 +1,178 @@
-Return-Path: <linux-kernel+bounces-611616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6A0A94410
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 17:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B5BA94415
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 17:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DBA17A90B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 15:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C0EC17AF25
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 15:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F471DB366;
-	Sat, 19 Apr 2025 15:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDF81DB366;
+	Sat, 19 Apr 2025 15:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O3vDAGCn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jbg1EhHe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qoO/JRDB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEF0171A1
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 15:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281AA1E884;
+	Sat, 19 Apr 2025 15:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745074832; cv=none; b=t2sFh+elU2kj4hfL5mKsgJENwAiCqDG/QLiWk+d2Yd1PSd6DTpo/tjQtsqDRwQeuZB9z0Nep5L+q1s9g9oIqba3AZr+QYSMk1IKvmRAujHgQCNN4fuzuefPkCChDZfX+EynLQ3YQDHo7XNOMnA56TpO3ucThsAQjcbbgFeX7kQQ=
+	t=1745074882; cv=none; b=RKGkN5HHEdXPezbIEyv62sr0+2OI3keiHI2mNxB2v7zqtc6OZk/noj1YU9NjXiCpToHrF3sUEAO/TsaAQdwtr++qF4d8EbwX2326NDatWfGt8N4PmhSbpRSovDh90we5UTLORVYJaP7vEgl75pe+CdPdq9PD55UdgrDDwHsStpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745074832; c=relaxed/simple;
-	bh=9xCEYtpgb1hZuU8K9PxHjh3gENobahV+wGnuyFGzMvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bcW8TlM+kIejjUqqr5iI1JfyzOPK2njOwywmF69aHRr6LdEkFWx9gW1xzsVsmcbj0vodheILcd0LZQBVWeKUuiNIOLs2jjw41iPtpoYxNo2UQQXGAj5PfnwlGVOKMYH3nUu5v0OiqG2tZaReXz6STb99MC5CS1GxjoosgkWMVmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O3vDAGCn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745074828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1745074882; c=relaxed/simple;
+	bh=YgVYSHeKY/a1W/bRGfnFAmUq6gV1z1GAnooUQz1ZYic=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=pja+s3IGm994LAcbH40dTY26YNV/49XRDIUiavLz8R8BicafZkIIZ4mM1HvJqqkJzBsbxSZr+imatqB347y7EQSrND1QAQINn+J/Xz5EwzGmlJbDRb7jQ4CAVVxLD5zxajWEpUb9dV7NQ66W9xDr/2zX9eHVnj9XoyNDJzIgcrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jbg1EhHe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qoO/JRDB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 19 Apr 2025 15:00:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745074868;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C1YNXlZccJhw6+9V7X+8HuTNFp3YGR8roOQvHdNcuP4=;
-	b=O3vDAGCngOasCIMMbvV+dFiG1ykGdFvimF6KoDD+8D/2/UcnXiuRiRBr0KbiaHca7iUc7V
-	hi4LknekOjyVv/E8OGppnYopiuetW6d+nX94Cly3eHbPvvkdfNGFlp3ojtQDS3xjQrJdaq
-	oqtUq6FZaPg9VOJdQinIyyx4l/7FDbU=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-i9ymN__zNmKA55kZ1rWA8Q-1; Sat, 19 Apr 2025 11:00:27 -0400
-X-MC-Unique: i9ymN__zNmKA55kZ1rWA8Q-1
-X-Mimecast-MFC-AGG-ID: i9ymN__zNmKA55kZ1rWA8Q_1745074826
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac737973d03so227245266b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 08:00:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745074826; x=1745679626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C1YNXlZccJhw6+9V7X+8HuTNFp3YGR8roOQvHdNcuP4=;
-        b=BUVvu8L+4arpDS2ePkFWs+00IpCrIW3wyuOHujgfS/2ISftBa4PSL3yT+/bsHnqvYu
-         6qGHy1Z+tMkG/Dy4ORpLxKFzxbGPCXprQ6DaO6NGdXoj94uF182cZ6IG1po7eMNk6033
-         64TigTtEEa3jtQKXYOz+6UtXyJ0lrR+iqaAyOU9Be89HAf012VXDk7BEJaqKqGOIWjkM
-         mh6/kXOnAIiIYxK2ucXQ6OocM3c9yIMKY5FSlhK/u+i/2MIKT16xpZP9sPLaWxj8Nhgl
-         e9j7G4vVqi2thoLgElrwPBsU9OVBBeYA2Zo7zPXDqXMvjlYY0pxVIhmg79M6mN/fOWrQ
-         C2GA==
-X-Gm-Message-State: AOJu0YzHLdzMHxxg/NAMZD3CMsIktfsL6psVj1EkfiTyv92wDO4ezxdc
-	Izk3O2SVvioXcERlUj2LlC2rum4TL5oAz9P04mYcGU3a1t/VSMJs112N5q6JwT8wfbRIOiDiv1C
-	V8uBlErWpDEFgVxtWsy71vMT/D+g0U2+xdcAmC5BM/9Y89xaOdgnW7ndFfkFFe8suEa/jUlLrsl
-	l7LLF5vZQSGswJcSAl9Ttz7nPUJFpb6fwrNJ7N
-X-Gm-Gg: ASbGnctMcTYesUVRhtaIeRUbNbM+ZPyiaDxgLsVZcHj17SkwYN6ZXPJ7jMHs7ycqJCY
-	nRmizeJzEP7b35l8JAbHpGbQsiAAsTA8wLi6F4njUmuFpkBOHDMnIVpT/YVHm+GefGzfM1rpKcM
-	i0/pgLJ/3TC4KYEzqkU4m+1dnD
-X-Received: by 2002:a17:906:dc93:b0:ac1:ea29:4e63 with SMTP id a640c23a62f3a-acb74b4f63fmr622521966b.26.1745074825952;
-        Sat, 19 Apr 2025 08:00:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVoou/D+ClXF/XynayICc3mjD0RG49GmtZXJ0LTCB9jlDObtEBVd0lsNFjiw09qbEFOHSFPk2MOMwDafXKw+Q=
-X-Received: by 2002:a17:906:dc93:b0:ac1:ea29:4e63 with SMTP id
- a640c23a62f3a-acb74b4f63fmr622519466b.26.1745074825577; Sat, 19 Apr 2025
- 08:00:25 -0700 (PDT)
+	bh=Y1M1aCK5ESLtJp6YPPmUCNmlhTn4cy5InXXOaZ8RKfo=;
+	b=Jbg1EhHe0Mew6MM62uWjy8l3S/MSG6gxdeWU0cITOlS2rKBJgRj0FxtFvBJBhCW2kXwTYp
+	9bfHvDmfNYCffB6CqGcoJogB6u8bK3M6TBveSTheFFprEDFOGfahevPy+mIDlrbrYKwFj1
+	yjtXxdM1NcEn7j+JwdZmixleUwPTl+n4MpUvywOoLva2A032VFtwAfsR/vwXuSnt4BmS0Q
+	ABbWJEDAbjRr/uWRSDjYf+Rt2Eh4OJ7H4T5KSxhsSBUJby0wm92SIIG0qwaLcOz0fus8ec
+	bJQ9FOXSFtFQd0u2Bpryb/IxE2Tu1yx601sns5MPuYd0bv8FZjGSrS5MNATr/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745074868;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1M1aCK5ESLtJp6YPPmUCNmlhTn4cy5InXXOaZ8RKfo=;
+	b=qoO/JRDBqt/fRZuv3OiKh8fbSnNgnx80Yxlg83Dh8LWLLi3G5S5WMJOYhwRY3UIJgG+KdX
+	6dv+zG2NDjCEU/DQ==
+From: "tip-bot2 for Mike Rapoport (Microsoft)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/e820: Discard high memory that can't be
+ addressed by 32-bit systems
+Cc: Dave Hansen <dave.hansen@intel.com>, Arnd Bergmann <arnd@kernel.org>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Davide Ciminaghi <ciminaghi@gnudd.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20250413080858.743221-1-rppt@kernel.org # discussion and submission>
+References:
+ <20250413080858.743221-1-rppt@kernel.org # discussion and submission>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418152910.1121670-1-jsavitz@redhat.com> <8807bdad-f41b-43d6-bbe0-af515f88abad@infradead.org>
-In-Reply-To: <8807bdad-f41b-43d6-bbe0-af515f88abad@infradead.org>
-From: Joel Savitz <jsavitz@redhat.com>
-Date: Sat, 19 Apr 2025 11:00:09 -0400
-X-Gm-Features: ATxdqUGXo8KixQ1IktQQJejcJeFuhEFxN0EoFKxlQWnpcjFdGC0EBd0SbMHE_3I
-Message-ID: <CAL1p7m6C9v6z7-e4r+ro7EMvjy2yyOeLKU0UyMcVBHE9Ss1tMg@mail.gmail.com>
-Subject: Re: [PATCH] docs: namespace: Tweak and reword resource control doc
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <174507483228.31282.2105701735501523134.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 18, 2025 at 3:38=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
->
->
-> On 4/18/25 8:29 AM, Joel Savitz wrote:
-> > Fix the document title and reword the phrasing to active voice.
-> >
-> > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
-> > ---
-> >  .../namespaces/resource-control.rst           | 24 +++++++++----------
-> >  1 file changed, 12 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/namespaces/resource-control.rst =
-b/Documentation/admin-guide/namespaces/resource-control.rst
-> > index 369556e00f0c..624f4dceea46 100644
-> > --- a/Documentation/admin-guide/namespaces/resource-control.rst
-> > +++ b/Documentation/admin-guide/namespaces/resource-control.rst
-> > @@ -1,17 +1,17 @@
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> > -Namespaces research control
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +User namespaces and resoruce control
->
->                        resource
+The following commit has been merged into the x86/urgent branch of tip:
 
-Oh, oops!
+Commit-ID:     83b2d345e1786fdab96fc2b52942eebde125e7cd
+Gitweb:        https://git.kernel.org/tip/83b2d345e1786fdab96fc2b52942eebde125e7cd
+Author:        Mike Rapoport (Microsoft) <rppt@kernel.org>
+AuthorDate:    Sun, 13 Apr 2025 11:08:58 +03:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 19 Apr 2025 16:48:18 +02:00
 
->
->
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > -There are a lot of kinds of objects in the kernel that don't have
-> > -individual limits or that have limits that are ineffective when a set
-> > -of processes is allowed to switch user ids.  With user namespaces
-> > -enabled in a kernel for people who don't trust their users or their
-> > -users programs to play nice this problems becomes more acute.
-> > +The kernel contains many kinds of objects that either don't have
-> > +individual limits or that have limits which are ineffective when
-> > +a set of processes is allowed to switch their UID. On a system
-> > +where there admins don't trust their users or their users' programs,
-> > +user namespaces expose the system to potential misuse of resources.
-> >
-> > -Therefore it is recommended that memory control groups be enabled in
-> > -kernels that enable user namespaces, and it is further recommended
-> > -that userspace configure memory control groups to limit how much
-> > -memory user's they don't trust to play nice can use.
-> > +In order to mitigate this, we recommend that admins enable memory
-> > +control groups on any system that enables user namespaces.
-> > +Furthermore, we recommend that admins configure the memory control
-> > +groups to limit the maximum memory usable by any untrusted user.
-> >
-> >  Memory control groups can be configured by installing the libcgroup
-> >  package present on most distros editing /etc/cgrules.conf,
->
-> --
-> ~Randy
->
+x86/e820: Discard high memory that can't be addressed by 32-bit systems
 
+Dave Hansen reports the following crash on a 32-bit system with
+CONFIG_HIGHMEM=y and CONFIG_X86_PAE=y:
+
+  > 0xf75fe000 is the mem_map[] entry for the first page >4GB. It
+  > obviously wasn't allocated, thus the oops.
+
+  BUG: unable to handle page fault for address: f75fe000
+  #PF: supervisor write access in kernel mode
+  #PF: error_code(0x0002) - not-present page
+  *pdpt = 0000000002da2001 *pde = 000000000300c067 *pte = 0000000000000000
+  Oops: Oops: 0002 [#1] SMP NOPTI
+  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.15.0-rc1-00288-ge618ee89561b-dirty #311 PREEMPT(undef)
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+  EIP: __free_pages_core+0x3c/0x74
+  ...
+  Call Trace:
+   memblock_free_pages+0x11/0x2c
+   memblock_free_all+0x2ce/0x3a0
+   mm_core_init+0xf5/0x320
+   start_kernel+0x296/0x79c
+   i386_start_kernel+0xad/0xb0
+   startup_32_smp+0x151/0x154
+
+The mem_map[] is allocated up to the end of ZONE_HIGHMEM which is defined
+by max_pfn.
+
+The bug was introduced by this recent commit:
+
+  6faea3422e3b ("arch, mm: streamline HIGHMEM freeing")
+
+Previously, freeing of high memory was also clamped to the end of
+ZONE_HIGHMEM but after this change, memblock_free_all() tries to
+free memory above the of ZONE_HIGHMEM as well and that causes
+access to mem_map[] entries beyond the end of the memory map.
+
+To fix this, discard the memory after max_pfn from memblock on
+32-bit systems so that core MM would be aware only of actually
+usable memory.
+
+Fixes: 6faea3422e3b ("arch, mm: streamline HIGHMEM freeing")
+Reported-by: Dave Hansen <dave.hansen@intel.com>
+Tested-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Davide Ciminaghi <ciminaghi@gnudd.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org
+Link: https://lore.kernel.org/r/20250413080858.743221-1-rppt@kernel.org # discussion and submission
+---
+ arch/x86/kernel/e820.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 9d8dd8d..9920122 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1299,6 +1299,14 @@ void __init e820__memblock_setup(void)
+ 		memblock_add(entry->addr, entry->size);
+ 	}
+ 
++	/*
++	 * 32-bit systems are limited to 4BG of memory even with HIGHMEM and
++	 * to even less without it.
++	 * Discard memory after max_pfn - the actual limit detected at runtime.
++	 */
++	if (IS_ENABLED(CONFIG_X86_32))
++		memblock_remove(PFN_PHYS(max_pfn), -1);
++
+ 	/* Throw away partial pages: */
+ 	memblock_trim_memory(PAGE_SIZE);
+ 
 
