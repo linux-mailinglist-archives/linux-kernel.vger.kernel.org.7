@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-611595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70175A943BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 16:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7193DA943C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 16:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2B4189F429
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37455189F41A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB76B1DA31D;
-	Sat, 19 Apr 2025 14:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE7D1DC745;
+	Sat, 19 Apr 2025 14:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GmVx0L6A"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NixDSI+I"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8621E78F47;
-	Sat, 19 Apr 2025 14:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDAEB644;
+	Sat, 19 Apr 2025 14:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745073242; cv=none; b=W5GEkivgQmukJUU9a6P+wR62zIPRygS7FkzR5lE+Y6TQE0RFkg7x1HpCul0VOsdCYnMbWNFnpD6hpj6QwNb0YOpUlp716nnRIYWIX/OSTyEy/YmYVSHYMszQ2/bfHbIKeeEqo7vou7UVlhDls7s0EzuWOH+M94wspCXAW+uF1KA=
+	t=1745073321; cv=none; b=J7jioDNPfjkcxlahPhKES3PSGdONq08k05u1Pryb3FqCPXBqfsWUCioQ/07+Sx4cZlhPK+HFz7DxJKbORrlEYgMu8btL7vX+w11zlc6KF1x50jED+lb2Sozmy24qV+WRuS/BQeIQX3f1x5J7fGIpx6G5KvOXpJ8ZqRlKtnymngk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745073242; c=relaxed/simple;
-	bh=Ha4P1R9eT1HsEdVkTcuCB9B3AC12wmvj0FU1PqsZXek=;
+	s=arc-20240116; t=1745073321; c=relaxed/simple;
+	bh=y9XLP+Yl5+ScAX5m5mSWHiv5yZ6uUHlz1nh9iVtMtRc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PtBIoQ8qjsd9eGHhdTVQoIRWt5K29QzM88UyNiySR33uhTIth2+pk3AMdHaZ9NPMOQGaPZaMAXbrjjGSQ+gOzrfskWUZqOEJwi/nTcVxvbpgqpgR3tvNLjNfOHX2CxaR5ql6CI7yR2UBGlvRGfeBvyhoEPloAF9jomU8tk1v2ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GmVx0L6A; arc=none smtp.client-ip=198.47.23.234
+	 In-Reply-To:Content-Type; b=YL6SMSdmbidFEIKJgGdTJiokrMvlahShNBD85oP4smLeWvISTg7TgWjklEKBbAqi8J39DoDqdppZnnE7jwGIYxsS3kw/LLT/g8KhhDxUJ3PjcaJzC+6JuAwsdN93JdFMZKG4acD66OHlUKSVthXUf7mvW4qexl63fBL7/E4oD+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NixDSI+I; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53JEXsRE509844
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53JEZBZw1215283
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 19 Apr 2025 09:33:54 -0500
+	Sat, 19 Apr 2025 09:35:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745073234;
-	bh=Ha4P1R9eT1HsEdVkTcuCB9B3AC12wmvj0FU1PqsZXek=;
+	s=ti-com-17Q1; t=1745073311;
+	bh=lQ+pjMXC2Zmf+k3azV2wTZbnYLfzVS0FL+k8+g+kpUo=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=GmVx0L6A9wMPfMRLsHxEdrj4BsdwDis1J0+LSNf49rjXAtic9fR5A7CdRrZJaeVPg
-	 ZBK4/fq5381a/A2+xY7C4onoR7xYDUhkAQP79SAv/7T0cezlk0r0qwV2/ESiSdUej4
-	 d6uRBhgXP0sJU6E41U/HLVi0/vsWZLwijK2m52rU=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53JEXsOZ028388
+	b=NixDSI+I+2n56yXHoyjD8dWB6M4CpFTB37/qCm5o8pcAuSf3iAqlBug9dNYFAqLNl
+	 vXh4ZW135cr52A7o5049pjMgvfec7VEuhh0DhB7J1bX9b2FtLKxyQm3DK1G6ALgXCH
+	 JOf48wcyNtA9LXqdDCTS7mYwkGi5SRXzn3VEOD+I=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53JEZB4V006564
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 19 Apr 2025 09:33:54 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+	Sat, 19 Apr 2025 09:35:11 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 19
- Apr 2025 09:33:53 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 09:35:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 19 Apr 2025 09:33:54 -0500
+ Frontend Transport; Sat, 19 Apr 2025 09:35:11 -0500
 Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53JEXo1e115318;
-	Sat, 19 Apr 2025 09:33:50 -0500
-Message-ID: <a64ebeae-c05b-4228-9714-308d655ca383@ti.com>
-Date: Sat, 19 Apr 2025 20:03:49 +0530
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53JEZ6T4116797;
+	Sat, 19 Apr 2025 09:35:07 -0500
+Message-ID: <a6e16f44-884c-4b36-aa87-306a764829d5@ti.com>
+Date: Sat, 19 Apr 2025 20:05:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,50 +65,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] arm64: dts: ti: k3-j784s4-j742s2-main-common:
- Enable ACSPCIE output for PCIe1
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <u-kumar1@ti.com>
-References: <20250411121307.793646-1-s-vadapalli@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am67a-beagley-ai: Add bootph for
+ main_gpio1
+To: Nishanth Menon <nm@ti.com>, Jared McArthur <j-mcarthur@ti.com>,
+        Robert
+ Nelson <robertcnelson@gmail.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC: Roger Quadros <rogerq@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tero Kristo <kristo@kernel.org>, <u-kumar1@ti.com>
+References: <20250411203950.2859356-1-nm@ti.com>
 Content-Language: en-US
 From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20250411121307.793646-1-s-vadapalli@ti.com>
+In-Reply-To: <20250411203950.2859356-1-nm@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-On 4/11/2025 5:43 PM, Siddharth Vadapalli wrote:
-> The PCIe reference clock required by the PCIe Endpoints connected to the
-> PCIe connector corresponding to the PCIe1 instance of PCIe on J784S4-EVM
-> and J742S2-EVM is driven by the ACSPCIE module. Add the device-tree support
-> for enabling the same.
-
-Please check once if you want to enable PCIe ref clock on AM69 as well.
-
-unlike EVM, this clock is terminated on test point.
-
-Thanks
-
-Udit
-
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+On 4/12/2025 2:09 AM, Nishanth Menon wrote:
+> main_gpio1 controls the voltage for the SDcard from 3.3v to 1.8v.
+> This is required for proper operation of SDcard through various boot
+> stages.
+>
+> Fixes: c5e615963bbe ("arm64: dts: ti: Add k3-am67a-beagley-ai")
+> Signed-off-by: Nishanth Menon <nm@ti.com>
 > ---
+>   arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts | 1 +
+>   1 file changed, 1 insertion(+)
 >
-> Hello,
->
-> This patch is based on linux-next tagged next-20250411.
-> The v2 patch is at:
-> https://lore.kernel.org/r/20241209085157.1203168-1-s-vadapalli@ti.com/
-> No changes since v2. The dtbs_check warnings are no longer seen with
-> next-20250411 and no changes were required to the patch itself to fix
-> the warnings. Hence the patch has been marked with a RESEND tag.
->
-> Regards,
-> Siddharth.
-> [..]
+> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> index 9be6bba28c26..bf9b23df1da2 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> @@ -309,6 +309,7 @@ &cpsw_port1 {
+>   };
+>   
+>   &main_gpio1 {
+> +	bootph-all;
+>   	status = "okay";
+
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+
+
+>   };
+>   
 
