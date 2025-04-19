@@ -1,56 +1,76 @@
-Return-Path: <linux-kernel+bounces-611553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A50A94354
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:01:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D714A94357
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 14:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E9507B0325
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 11:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12518A222F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8C71C5D4E;
-	Sat, 19 Apr 2025 12:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A181D7999;
+	Sat, 19 Apr 2025 12:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="but2MW+d"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iq6W9Jgc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CF21537C8
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 12:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E0D259C;
+	Sat, 19 Apr 2025 12:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745064057; cv=none; b=Lhq47Tl/4DBYH34eWlf1AUD/pVtmXX/CKcckjEIjBoBvpKWA7bQLChzQ3ZGbt68QiEsmOYp/8uQe+pLcaQu1voin5KoSAxA7T4dQ0UXNnVqZ7SBBUK6b3pVYWVBxtyo1fv5301dZdHBhKdfN59+WFqfghgVyEO3tc+VsqoKy+Dk=
+	t=1745064645; cv=none; b=DMWoqelOGGw4BCF1+yAcSABPJ+1A7g27vzCFKwUz6gDppbRF5QrfHZBhT8fM4jUNEfbNQyFzkvmGmcslt0e8DeViuKH+bNPf6GaWe7+1aUGEo63Y0hFzMkByDKYtrwAV3tUvS5fdms/fH1VjnCsX5+3HQdaA5LsFWrWVnbldveU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745064057; c=relaxed/simple;
-	bh=S/JogNL0Z5r7fTN1TYZJwx0JV0BnRDzijgIYGg3OcAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ei5FEzU7f4bDMjmELEd8QwUJ51WHXMmGau6OKVyRejdjKz+6kshBXjrjmBt6Iathtszj57gcUcSzO+F9clc0sSN8VVDsg43246ByXLUfTVtra62ifrGk0UtEVT16c/lzVvYxDZXf3P73UFNnM/Lz34u8P0HL9DqA8ccgLAIlK8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=but2MW+d; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745064042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=AtQwAwd4D2QAaXwT+fjX/n4DbO60dxzK1kBHI70Rybc=;
-	b=but2MW+dKMSSeZZ8Nec+C/7lyAc4EvHBufP8jRjrk2y4ZGz8uJwkDiHEZfj3ygs0x/sOWg
-	CHVqw84fEzIV2HeGQ8PTfOMXonxh6XJ7T8kb3ZWpvrxaKZzN7Am2wWVg66Ri1GVk6e0jfn
-	h6rsU3XmFf5raFZyra5g5mjrL/xq7W0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] alpha: Replace strcpy() with strscpy() in setup_arch()
-Date: Sat, 19 Apr 2025 14:00:04 +0200
-Message-ID: <20250419120005.177136-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1745064645; c=relaxed/simple;
+	bh=gG/4R9vVgxIB+SpaZL4mesqyGcRxPvmepmQ5ibM9WKM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kx0gwcq0rfVx8AkiH7iNKXxs7pJ78OqCJlugIBqW/Od7JJzA7xPATNQQpOG8fNcH5ac6bOTQ5pn6LrA1Zcdf92q2suRiy8OgpwkNrlQgbvx1flLrrjExLq1Iz03y6S9EFrQ8iV5nX7smb4+sDwNQUyrvyaw3rKysdrOS1tLeaU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iq6W9Jgc; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745064643; x=1776600643;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gG/4R9vVgxIB+SpaZL4mesqyGcRxPvmepmQ5ibM9WKM=;
+  b=Iq6W9Jgc3FTpEfUg/kMJjCgWiA7B9QjCPTgkrcJHcFPdMTQZalmJQlZp
+   Yf2lD4QVovRwbw0ZpmFiHR/FdIPTSdUZNA0Nc01CmGrq4RX6C3WTdxnaW
+   m4sYqvUWnAt2Dn9wao1xhU3DXKQa3rGuHcWcaHh4ZmaztEtK4XisxohKz
+   1meHLhImHMrWgQrZRFuG8aRaO4tHdMS82VHgIsLb4kaU6NqRVdgzL2tRq
+   FWmGrVaqtCC9/pQVXTVeP48CRgG1EwJFwzPHGKdz6mFgJwnzvaA/7UewO
+   zkD/H+Qpyys/bHAk2lzt9J45reULoiJOtgLTlypRWj4Njw3JxWL3nN+hf
+   A==;
+X-CSE-ConnectionGUID: xjXX/yhLQciTWwODF/KhPA==
+X-CSE-MsgGUID: n2efEOEHTPSe4q5s86Zr3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="46563603"
+X-IronPort-AV: E=Sophos;i="6.15,224,1739865600"; 
+   d="scan'208";a="46563603"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2025 05:10:43 -0700
+X-CSE-ConnectionGUID: X0sworbNSn+KiMNBIcpTtg==
+X-CSE-MsgGUID: uSa4u75VS9OiCUPzVzqAYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,224,1739865600"; 
+   d="scan'208";a="131298979"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by orviesa006.jf.intel.com with ESMTP; 19 Apr 2025 05:10:41 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.chen.surf@foxmail.com>,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH 1/6] scsi: megaraid_sas: Fix invalid Node index
+Date: Sat, 19 Apr 2025 20:04:54 +0800
+Message-Id: <20250419120454.1840662-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,49 +78,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-strcpy() is deprecated; use strscpy() instead.
+On a system with DRAM interleave enabled, out-of-bound access
+is detected:
 
-Since the destination buffer 'command_line' has a fixed length,
-strscpy() automatically determines its size using sizeof() when the size
-argument is omitted. This makes the explicit size argument for the
-existing strscpy() call unnecessary - remove it.
+megaraid_sas 0000:3f:00.0: requested/available msix 128/128 poll_queue 0
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in ./arch/x86/include/asm/topology.h:72:28
+index -1 is out of range for type 'cpumask *[1024]'
+dump_stack_lvl+0x5d/0x80
+ubsan_epilogue+0x5/0x2b
+__ubsan_handle_out_of_bounds.cold+0x46/0x4b
+megasas_alloc_irq_vectors+0x149/0x190 [megaraid_sas]
+megasas_probe_one.cold+0xa4d/0x189c [megaraid_sas]
+local_pci_probe+0x42/0x90
+pci_device_probe+0xdc/0x290
+really_probe+0xdb/0x340
+__driver_probe_device+0x78/0x110
+driver_probe_device+0x1f/0xa0
+__driver_attach+0xba/0x1c0
+bus_for_each_dev+0x8b/0xe0
+bus_add_driver+0x142/0x220
+driver_register+0x72/0xd0
+megasas_init+0xdf/0xff0 [megaraid_sas]
+do_one_initcall+0x57/0x310
+do_init_module+0x90/0x250
+init_module_from_file+0x85/0xc0
+idempotent_init_module+0x114/0x310
+__x64_sys_finit_module+0x65/0xc0
+do_syscall_64+0x82/0x170
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-No functional changes intended.
+Fix it accordingly.
 
-Link: https://github.com/KSPP/linux/issues/88
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- arch/alpha/kernel/setup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index bebdffafaee8..8b51e6ca83d6 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -468,8 +468,8 @@ setup_arch(char **cmdline_p)
- 	/* 
- 	 * Locate the command line.
- 	 */
--	strscpy(command_line, COMMAND_LINE, sizeof(command_line));
--	strcpy(boot_command_line, command_line);
-+	strscpy(command_line, COMMAND_LINE);
-+	strscpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
- 	*cmdline_p = command_line;
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 28c75865967a..7a2e35a35193 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -5905,7 +5905,11 @@ megasas_set_high_iops_queue_affinity_and_hint(struct megasas_instance *instance)
+ 	const struct cpumask *mask;
  
- 	/* 
-@@ -511,7 +511,7 @@ setup_arch(char **cmdline_p)
- 	}
+ 	if (instance->perf_mode == MR_BALANCED_PERF_MODE) {
+-		mask = cpumask_of_node(dev_to_node(&instance->pdev->dev));
++		int nid = dev_to_node(&instance->pdev->dev);
++
++		if (nid == NUMA_NO_NODE)
++			nid = 0;
++		mask = cpumask_of_node(nid);
  
- 	/* Replace the command line, now that we've killed it with strsep.  */
--	strcpy(command_line, boot_command_line);
-+	strscpy(command_line, boot_command_line);
- 
- 	/* If we want SRM console printk echoing early, do it now. */
- 	if (alpha_using_srm && srmcons_output) {
+ 		for (i = 0; i < instance->low_latency_index_start; i++) {
+ 			irq = pci_irq_vector(instance->pdev, i);
 -- 
-2.49.0
+2.25.1
 
 
