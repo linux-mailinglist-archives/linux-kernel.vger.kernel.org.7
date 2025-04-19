@@ -1,170 +1,151 @@
-Return-Path: <linux-kernel+bounces-611711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7547CA94540
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 21:26:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17246A94552
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 21:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9204E17992D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 19:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CD23B5F7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 19:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2A91E25EF;
-	Sat, 19 Apr 2025 19:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229C71E47A3;
+	Sat, 19 Apr 2025 19:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShVq+JRF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCwfrPct"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220DE8F54;
-	Sat, 19 Apr 2025 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAE715CD74;
+	Sat, 19 Apr 2025 19:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745090761; cv=none; b=dqF0NB5ldD9GiVWFgTIvlE9tm1MKnufnTI+D5kcnMO8dbLiBqL09rW5Nwwgu59vBQ9WMxiRZW8+eSy4qeAtt2BYPaJaZk4e/uRbSpzMjorJRObj/UF6Bgv4kgst8h1kTpWF/L8nODpLakFS2CNKiERoDBR4xJk/3umDL3KO0a5k=
+	t=1745091988; cv=none; b=lLaQ3kNXU+GXEY/oMzNaEg/54MfYrvp1FQ3d1HZOPnUuo5J7IlyKxGnrqb4oU9CT6dfIm4VtGpO/YDT6fxplYOWagl4zjjXiPShZA611WxFQ3bmnKJS1T1b2u6a3qx1aEm5+fbCtrMAnu7RXTxis/ibXvZmrxCA2jaO10j+0rmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745090761; c=relaxed/simple;
-	bh=tOhwqVfySjcWHIL3neB7Q+6oiJ+utj9Oxn8O8KYI0Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUGKFt2c8jt8f9IlkoTHry6/PMj3HtvMLzNi/7CPPOcrDe9Tkx2hPQ2yWoCcbRlqGdFByc1DsyrVQdlUBEo/sQfhfz+XtF2igr/6+RJkrrkQ91P2rALRCs8QQRfFGDGzht+dsTF2Qjhnq9c5dAUiBEhB5v8C4tl0K/3Ysievefo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShVq+JRF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F0E0C4CEE7;
-	Sat, 19 Apr 2025 19:25:49 +0000 (UTC)
+	s=arc-20240116; t=1745091988; c=relaxed/simple;
+	bh=74mO15uFIckJUXnXnTZxaEJt7loiHy0xGNx6hkYoLZA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZyZYC28UjUw0VtHpSJWUlz7oOHs1LGHIpOnVIEFtZPJ0rE+qMyBp2YaF2SNX2vfGKA85d6xW4xg/CdfvQz1XVMxOQIHln0Yrnz1wegRRiZ0OhxJ5CmTSmPmF3J/lk0YcijzgcSncmUmGW/nnvZk5YsIqwuccJEBhv8Z2ZIPWD70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCwfrPct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B07C8C4CEE7;
+	Sat, 19 Apr 2025 19:46:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745090760;
-	bh=tOhwqVfySjcWHIL3neB7Q+6oiJ+utj9Oxn8O8KYI0Mg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShVq+JRFEXyx1IZCDO3usclodqiMqiChOPFBW83LMMiPxmNQp+IoAVibL4ZBOSj7g
-	 JRtB0Zw1l9h3CJLqH5nRrFGaiv5N2vv/jID1O1QokwnPfXKMH93KNgSsTFOVYrI+Uy
-	 C7Mh1Z6hc6Y/mLAcwffWjUF43nwxyJmH4okPqpApLt+/sWEwGMfTLU6AY55MlAmSKp
-	 uw8Lv3xVA//PVQXb21/wIQsBnEokpu5jt5KCRHOrPBmLMJKlR+QLCK0EUWLyFqvrNR
-	 GQrmgaJpYBBeFgc1Zw078ZTS/cXm+fn9nEvpE2fBxqVGFdt1NGqYUwpjRhKA00Zvg8
-	 lsar/JXJYU02Q==
-Date: Sat, 19 Apr 2025 21:25:46 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, aarcange@redhat.com
-Cc: linux-man@vger.kernel.org, akpm@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org, lokeshgidra@google.com, 
-	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
-	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v6 2/5] userfaultfd: UFFDIO_MOVE uABI
-Message-ID: <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
-References: <20231206103702.3873743-1-surenb@google.com>
- <20231206103702.3873743-3-surenb@google.com>
- <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local>
+	s=k20201202; t=1745091987;
+	bh=74mO15uFIckJUXnXnTZxaEJt7loiHy0xGNx6hkYoLZA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=HCwfrPctLCTsWA+uXc4CGeVYSg/Bjs6JeROHrYRKpfFcWnNHiZbh0A1PxSNiRc+Ci
+	 ralXOP6QbVoPf058iXXlg4R+nVPdAKD41w2ZzZ0xhHprbL8HAMNZUyLpq4yKoYRXnV
+	 +Y0rQhccLF1VKwVCdFaUN9M7wWgUQFT+mwggd9dhJNd1FbbKA7PGwbYMm84oSz+A/h
+	 Yg3AW3rSEfhjBmGEh4+rDjW20EH/uxSN+p+TFvHYKm+qeUtn+JGntE4YCvSuwO1Q33
+	 aThFwcmNRmC3v/L1gcc1D96Beb9c/SNdOkCWkPpn/WnG/yTLmktVbAQ5I13svlGwjr
+	 npG/dsST80VPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A503C369CF;
+	Sat, 19 Apr 2025 19:46:27 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v5 0/2] Add support for sound profile switching and
+ leverage for OnePlus 6 slider
+Date: Sat, 19 Apr 2025 21:46:23 +0200
+Message-Id: <20250419-op6-tri-state-v5-0-443127078517@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cps3uvezotjpoism"
-Content-Disposition: inline
-In-Reply-To: <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI/9A2gC/22MywrCMBBFf0VmbUISkz5c+R/iIrRjOyBNmcRgK
+ f130+4El+dyz1khIhNGuJ5WYMwUKUwF3PkE3einAQX1hcEo45TVrQhzJRKTiMknFNhrr5zXWhs
+ HxZkZn/Q5evdH4ZFiCrwc+Wz3FbqQkaWu6loZY7WVAyUZw4J8I37J8Q27mC+/56pxqtHtn/O2b
+ V9r8B5LxgAAAA==
+X-Change-ID: 20250419-op6-tri-state-ed1a05a11125
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
+ Benjamin Tissoires <bentiss@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, Gergo Koteles <soyer@irl.hu>, 
+ David Heidelberg <david@ixit.cz>, Casey Connolly <casey@connolly.tech>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1873; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=74mO15uFIckJUXnXnTZxaEJt7loiHy0xGNx6hkYoLZA=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoA/2SkOtINWWfOxhOqR6NZROxrKFHxdFskpbDu
+ FNfy0HVQp+JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaAP9kgAKCRBgAj/E00kg
+ ch7gD/429cSbsyDMFzlPEAsnkV+EoxRbi5H+Z04vttfsz+8YGmbLxZg5h3i99laliyXP1HJMBAT
+ 3zU/FYdRCH9O1xGML3n/I4Wb44Eno8gXsIcVdD5cZ5VQD+GBo7yEG2IWOoin+spVc9jjCr4oSmA
+ E0JoGJdlzKuGJ8K0Anf4XenzGfkzo7gOBms9e4qCWOoyrxzXIlBBpJJGP+cwkBYW/tSYEsRb3On
+ tcTElPPAIH98+2W35Q31o/3FKPZBejQfDGkR0g0H+fhC7zlpdwpVJ6FhXhAzr+O5scECjnA46nA
+ 3s/n0ZWsaI7CREY9BQnfqOrGXTbe4/rnQgFymttWICI5HIZmQp6dE1h4xxKX8Oo1hDPpSN/ofSf
+ jW0trUt4jp++VLAMdRn1sQp1gpidEwzfQR4u1WaUuImEh6UK4wPA+hwf1VPuAXBzlmDuPUBGgJU
+ w4YEv23EuurQkX0UEbj2GRT0DQakl+t9fdKjDRRm24Z80dBKuJ2rSJ0ve/kjJ1mbj8AhT3a9BkD
+ 0stv+1V3vmWx/EH31W7fojf6KWwfBsjcoPhjMmv6t+DBc3NQlILPBuknrDcYb9ulA33zdfYYV2A
+ 1yKnNX/IoI8NTaAvWG3VJivL9wIJXx7i4rlFAdVI9I9aaHwxxUkDGUO5+Xei7eW399gF9x8AnLV
+ bd6PX14Edlsf4jQ==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
+
+This code was tested for two years within the downstream Snapdragon 845 tree.
+It is now perfectly integrated with feedbackd in the Phosh environment.
+
+Changes in v5:
+- Dropped merged
+  "Input: gpio-keys - add support for linux,input-value DTS property"
+- Link to v4: https://lore.kernel.org/all/cover.1677022414.git.soyer@irl.hu/
+
+Changes in v4:
+- DTS: use default debounce-interval, order alphabetically
+- Link to v3: https://lore.kernel.org/lkml/cover.1676850819.git.soyer@irl.hu/
+
+Changes in v3:
+- rename tri-state-key to alert-slider, fix DTS warnings,
+
+Changes in v2:
+- rebase to qcom/for-next
+add SND_PROFILE_* identifiers to input-event-codes.h
+
+Gergo Koteles (3):
+  Input: gpio-keys - add support for linux,input-value DTS property
+  Input: add ABS_SND_PROFILE
+  arm64: dts: qcom: sdm845-oneplus: add alert-slider
+
+ Documentation/input/event-codes.rst           |  6 +++
+ .../boot/dts/qcom/sdm845-oneplus-common.dtsi  | 39 ++++++++++++++++++-
+ drivers/hid/hid-debug.c                       |  1 +
+ drivers/input/keyboard/gpio_keys.c            |  3 ++
+ include/uapi/linux/input-event-codes.h        |  9 +++++
+ 5 files changed, 56 insertions(+), 2 deletions(-)
+
+--
+2.39.2
+
+base-commit: 02ac8d2a011b630481d959298a1cc76ca0717f3e
+---
+Gergo Koteles (2):
+      Input: add ABS_SND_PROFILE
+      arm64: dts: qcom: sdm845-oneplus: Add alert-slider
+
+ Documentation/input/event-codes.rst                |  6 ++++
+ .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 39 ++++++++++++++++++++--
+ drivers/hid/hid-debug.c                            |  1 +
+ include/uapi/linux/input-event-codes.h             |  9 +++++
+ 4 files changed, 53 insertions(+), 2 deletions(-)
+---
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+change-id: 20250419-op6-tri-state-ed1a05a11125
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
 
 
---cps3uvezotjpoism
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, aarcange@redhat.com
-Cc: linux-man@vger.kernel.org, akpm@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org, lokeshgidra@google.com, 
-	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
-	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v6 2/5] userfaultfd: UFFDIO_MOVE uABI
-References: <20231206103702.3873743-1-surenb@google.com>
- <20231206103702.3873743-3-surenb@google.com>
- <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local>
-MIME-Version: 1.0
-In-Reply-To: <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local>
-
-Hi Lorenzo, Suren, Andrea,
-
-On Sat, Apr 19, 2025 at 07:57:36PM +0100, Lorenzo Stoakes wrote:
-> +cc Alejandro
-
-Thanks!
-
-> On Wed, Dec 06, 2023 at 02:36:56AM -0800, Suren Baghdasaryan wrote:
-> > From: Andrea Arcangeli <aarcange@redhat.com>
-> >
-> > Implement the uABI of UFFDIO_MOVE ioctl.
-
-[...]
-
-> >
-> > [1] https://lore.kernel.org/all/1425575884-2574-1-git-send-email-aarcan=
-ge@redhat.com/
-> > [2] https://lore.kernel.org/linux-mm/CA+EESO4uO84SSnBhArH4HvLNhaUQ5nZKN=
-KXqxRCyjniNVjp0Aw@mail.gmail.com/
-> >
-> > Update for the ioctl_userfaultfd(2)  manpage:
->=20
-> Sorry to resurrect an old thread but... I don't think this update was ever
-> propagated anywhere?
->=20
-> If you did send separately to man-pages list or whatnot maybe worth nudgi=
-ng
-> again?
->=20
-> I don't see anything at [0].
->=20
-> [0]: https://man7.org/linux/man-pages/man2/ioctl_userfaultfd.2.html
->=20
-> Thanks!
->=20
-> >
-> >    UFFDIO_MOVE
-> >        (Since Linux xxx)  Move a continuous memory chunk into the
-
-Nope, it seems this was never sent to linux-man@.
-<https://lore.kernel.org/linux-man/?q=3DUFFDIO_MOVE>:
-
-	[No results found]
-
-Please re-send including linux-man@ in CC, as specified in
-<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUT=
-ING>
-
-
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---cps3uvezotjpoism
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmgD+LIACgkQ64mZXMKQ
-wqnKzw//TF2X0nYP43skdra2n4YASVKPsOpD7qLs3rwbT9acdN64Lvu8ecfTfGxr
-H5F1Ju/JmRyXmC726dgzGO+1K6pHnz3ONQ+VKnj8nMYbyGN0rE3bd93i6Fxtfiyu
-Vb04Al1xzJ6hF8YDLF5mQvawYJzHhkTxrlZ02r5Kqrmdp3qHUuFK/lrLX/asY0h8
-4By12faaY59gYGuCajneNJC3ADCVzjtra76C5RbGxUK5qOgjEfxlz7jmrxyXpFkm
-PeR0h2QbimLRtBAvzuYrE5n5+c/999r/GY7Xm+1fmDoV37e7Un3SZRxdfMMKwzvx
-6iiTKfOjv2UmfVv7oQOknofyQNTDeckW/yHrgBS/TOvy8OF7qIkIcHI9A5Krpuz8
-PaJco2eqRqlgoMp0rAacT1xGoj07bLMMWbqFi6dEBz6snpkM3Hi/O1W8mt1YNSLz
-9IvMa2ipwCQa4Xddo2+E16qMDxG6QtWWz8eve8XgueL4U2ucAnrPOmdcMXX6TXFB
-ZM1QlLo6Wk9N+X+ZmxjLWDRbQF3F8rks97pR8W9xZGwGTytpaUqa5qH560YCh0oy
-wYKSSmMO2ZMYkpfMEZDihiOEvM+r6qOwzkwUouS56TSRIx7+B7HWyNI4PAo9y0DD
-2pJ1F1Bl67dSTdieL7iwt0o0kT+YOXLpKhAtGTgpXbXuSCbuEFc=
-=UOsZ
------END PGP SIGNATURE-----
-
---cps3uvezotjpoism--
 
