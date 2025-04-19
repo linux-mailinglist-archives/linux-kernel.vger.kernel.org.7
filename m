@@ -1,207 +1,341 @@
-Return-Path: <linux-kernel+bounces-611359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28A5A940D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 03:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A09A940D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 03:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F1B8A53A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 01:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D7C460D35
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 01:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA273A8C1;
-	Sat, 19 Apr 2025 01:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VG6j8+VH"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011026.outbound.protection.outlook.com [52.103.68.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0084A7DA93;
+	Sat, 19 Apr 2025 01:24:43 +0000 (UTC)
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E2378F3E;
-	Sat, 19 Apr 2025 01:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745025877; cv=fail; b=RjLuGqBb9d/elGC8Zrd1iRlyhllaxHqmu5M3BRL9uZxbT0M8YcrXdYpq1huVllDZGk+QlhWAqEmFHEWlPl6bOOHnrsINCE/bWHtKSnJ/SYCH2q/g6PK6kBVuTK5+kiFap7CKdrR+N/KaAPzZPbTMkjrQU/ZS28eDuOhWCjIKzHc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745025877; c=relaxed/simple;
-	bh=c/or11aib3pUyLa9WIBbhm7DhklXlyX7PCo8F3s/OsA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dLcCg/2SasvbdWDXr3QZQITZ+D3+XYQzoijX4DvYKCxVXhiz8dL3SEstoQl5mJyXdIv0OCdwbji0WV7AeLIWtAW8Wx5QZJ9FNjQzjaxtiK1zKw/fNw6qTRxlPtMTg9IcBI9vulx89JcgLgNFKwOQ2cb/L10e3ygQ+fMnmFO1Hhc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VG6j8+VH; arc=fail smtp.client-ip=52.103.68.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vWjlK4i0yksn6y/t8McHop8I28jGHXqnfoIMeALTdurbs+Yo9fcAzmCcXddj8nS81jJM45lPv8FwbRHd9ulGB0r4J8BEDrvjptnJivXELbrxCTJDnolnRoUZe96P0ymPUEcq/opY6hVJuReyaSRXZ97211yNiftP90pzlk6Axo54kPPPYnbcmc9e6Z5ge4BjwITKMXBYKrh20fkiV8+yNy3iktX7FhXKCjEFzSYn5G0IGNXhmE+1dsAIkOToK9qTYTfe/FIaRuCK5xrDZMX9zhFluHfNS7Z7evt3Q0vg+5Ok2wZGWlduFdziqa2X7bkYaFIEDpZQ/gxVKNgCLSVuFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L1nfxXLtIeG3VjYqwFfmPfVdCeUKTA3fRNoEFsGaapo=;
- b=mAJtRBkHe7HCYq1v4wU4ogf0FnGajw1ZQbPj4AWq8MzUPKgmrnzh3dK3JO4IOckR500yfakcwBF8VYXeasETj9pusBcQ+Hs4rE3/lbwbrlfOgFFiHmHpgzzAnOZVqSPrJHL8uHnFXCxAqMQcWY3W2QtnA2h7CIKAMEd+/8O4Zip6feVmyV0oFhTQxS1/UkDo0dkk48/Ku05XHqzvK+UNjGl5h15pyuCYT2NRSk5zdLQa3duZNeIdbxbVElfJ2jL2aczhrWUMsH9/35rKlcGFPGsEmMrnRmdE95n7pXtJ6HCrmL1UwjBn2IqDtm/jleb0uRkoHwtN55Z2WZjDHJlOXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L1nfxXLtIeG3VjYqwFfmPfVdCeUKTA3fRNoEFsGaapo=;
- b=VG6j8+VHLI0/DLSHSJjv3hceM3wsoQqweNk9YP0gHdkpgD3tFv3gT2ThGl2JljLiLdykoNN6e2dE/NiBjnzWKQOhHBp65pPHoXCVa0cK5/2xljry4D+/dfXDWoPyTTrwbpIvTOvnw/vvCkoR0iWP0Ym6zaswdS0P7o/RXtTe21YPT5s+bRGpS6UpVGky427fGrX/g2muqENjnxgim6UWh3cCHyzVgDWDoFT5QeKAsM20Q8Pv/guUTk7xJHTVZdlc5HLKajSdS8QGVSJYjE0gzIM8YbHIe9EiOCYJI54xQ3P5ImA6v2mf5p2jjMW1Qkhm77Y5ORM+WbjW9SfAiZE41A==
-Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:100::6)
- by PN1P287MB3646.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:24e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.27; Sat, 19 Apr
- 2025 01:24:28 +0000
-Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- ([fe80::ca81:3600:b1e4:fcf4]) by MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- ([fe80::ca81:3600:b1e4:fcf4%5]) with mapi id 15.20.8655.025; Sat, 19 Apr 2025
- 01:24:28 +0000
-Message-ID:
- <MA0P287MB2262E14F6F9758646320F7CBFEBE2@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-Date: Sat, 19 Apr 2025 09:24:23 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pwm: sophgo: add driver for SG2044
-To: Longbin Li <looong.bin@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20250418022948.22853-1-looong.bin@gmail.com>
- <20250418022948.22853-4-looong.bin@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250418022948.22853-4-looong.bin@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYWP286CA0015.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:178::13) To MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:100::6)
-X-Microsoft-Original-Message-ID:
- <410c31fe-1c13-49c7-b2ff-7ef03e59d0f9@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7E41448F2;
+	Sat, 19 Apr 2025 01:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745025882; cv=none; b=D3OggGmHx2o+EvpGaatJaROTNrvn/XLEYso54avbsgiKB696E1NnhMJQDC/T89A4SNzXNdDyp+6gZdJ/xRVUfKrmeJWeEFofwe47+akEf9bGU4J67H798h/D4YjJc11RQhTmfJAKIWlngUQeDm+QbWGgUXOLnFqfq/LATkQtPyo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745025882; c=relaxed/simple;
+	bh=v9SMrehymawYp0ubOq9iqBH0rzCv62uomeBcGhwrVQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VhfHtBHq//CSGRbz6Q3uPdBo/tfMSEXngpYd+IvAm1tFtvj3mInG7HbuUKZs/UywlcsG/9HkPSjaaRcq8vin0SCqtyMwUDBbf7ri44u5kMWW+U3NP0dDNWq9Z1zDwXYl8f3TvRrJHsLA3TPqT8Vz3jsw3SmbaBJQAfD6qM2D7DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 65687100767;
+	Sat, 19 Apr 2025 11:24:37 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id sEONb8hvuJih; Sat, 19 Apr 2025 11:24:37 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 60CEE10070C; Sat, 19 Apr 2025 11:24:35 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id B4B3B10070C;
+	Sat, 19 Apr 2025 11:24:32 +1000 (AEST)
+Message-ID: <834853f4-10ca-4585-84b2-425c4e9f7d2b@themaw.net>
+Date: Sat, 19 Apr 2025 09:24:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2262:EE_|PN1P287MB3646:EE_
-X-MS-Office365-Filtering-Correlation-Id: a63b2d83-315f-4450-aad0-08dd7ee0ed81
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799006|7092599003|19110799003|6090799003|5072599009|8060799006|3412199025|10035399004|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0ZEZ2lBY1RuSklvbFZhZUVodm5tc0wvMVZBVEtoYnBZRjFaNkF0TCtQWTJq?=
- =?utf-8?B?UUlqZTdvdm1oMjFqOWMzZDFta0F0RzV0eEhkWG9kODF0N1hSZ2JvbWt6OUN2?=
- =?utf-8?B?NVIyUStZQWVkQ2JzVWMrc215TEJGNWZnTnNzYTNnZ0tKOHNIY09STXhjeDZC?=
- =?utf-8?B?WWhmY05yNTVWaUtnNWNIejlHcGxuL3RZRlUwRTJJVWhTeUUvRm9wNy93Vi8z?=
- =?utf-8?B?T1B4WVNhSmxYdVRYYUNBMk5SSlQvNkdkTldpQ2xVU21wM25FZkNPTkV2SjZ0?=
- =?utf-8?B?WGpzRE51bktLU05rYzJKbkk0QUFPbXpnUy9HdFZPUFB4ekh0Vi9ISUg3V2Fn?=
- =?utf-8?B?bTBXeEMzMzVpY0VscXdoRzJ4Y3hhSGQ1V2RRdmtaOWNHTGpwTFp0QmVPNlpJ?=
- =?utf-8?B?Sm1laGswblBDYThUdExUVXUrN2ZPUTZzQ2xFSGJCOG1QRkYvRjZiNE41MFlT?=
- =?utf-8?B?VU5GQitpSWpBR2FZN1BvVGJhNWUzdkl6ejNoeW91cmZ2NkE0WUhVMWJnWGZZ?=
- =?utf-8?B?TncyNzErKzBESGo5cjlxdXY2dUpnbWRqTDFMdjZOT2ZZdlpCYis5T1I3UFEy?=
- =?utf-8?B?NC9KSzRERHhrNzBJUERkU1NadDl6K2ZaTVRwbHVmZERmYTk2T3JuWVhFWFFx?=
- =?utf-8?B?OWpEWitUL2RJeUhnZjZybWpkck42cmtoZzZRblZ4bmRlbE15aWNobk9NTTk3?=
- =?utf-8?B?TE5iZDAyUXUwUmtGYmlzMGV3R3BqSFVob3pUV3FpbUhaZ0ZDTmdSM2dwL1No?=
- =?utf-8?B?MmQzblk1NTMyZlNWeXdLZVIxeklDTXVaRkJ5cnJLZnRocjhmR3RZemlCYlJk?=
- =?utf-8?B?SWkxRE9tTGs4VjB3Z21YZHEwTjdwcjFCYTBPbzVTNDNoVGlEYnA3VTFHbS9a?=
- =?utf-8?B?Y0VOYzluMWZGZjlBbHF5NzBzdGwyVG0xQUxPSjhMUjhhQy9qVHNYM1ZCVzB0?=
- =?utf-8?B?d2RSWG11ZUZLWGRrR1JDa3hCQTg4K2F3TkcwS2xjRkxVNG1qT0RxRktjbDI5?=
- =?utf-8?B?U2pEUWc1enZFUithL2dsWW43YXM4ZXBZQWRQSnZvQnV3bno4U05uOXZxZFJP?=
- =?utf-8?B?NUZpd0lPaUtRWExoRjhuM1FvSjNYdHR0dCtjZ2JiWGxvdWNRNjRlcGVrRmI4?=
- =?utf-8?B?Z3VTUVJIc01BMXBzT0d3Qy9rY2sxRzVya0xHdTdoWmlKTnBMWVlCYW5KS3Rr?=
- =?utf-8?B?YUUzbUhxdDg0dUZib3d3SVBTNHFzRTVOT2hTdTNLV0JhZ1BNbTJUejBGWXN2?=
- =?utf-8?B?WUo2K3ExUCs5ZExtWmhrc2RXMzFWNHVPV3hzME51Q0VJckhlbEJ0bkJvQU0x?=
- =?utf-8?B?V1VVTEczSlFPcVBOSG5JbndVMWlEUURYZk55eWdLenRTTjc1N0pDOXExV05m?=
- =?utf-8?B?bWNTNitjcWJWUHJmZ09EOU5hd21hTC9VMDNEQnBVTk0xamZCR0pVQXpHMVo4?=
- =?utf-8?B?Ym4xb3Z6OGhtM20xaXEzdkpoSG5DZ1h5OTk5UTd0WmhHMkowOFg1WlVUNlVC?=
- =?utf-8?B?dVBEdFlpbTg3NWgwSlFtUXBhS0tsVFFYMEptVlZJQVdRSGpKK3cwV0tVRXVT?=
- =?utf-8?Q?cgM3hntdMt68T/HOHWWFFnmKg/otOah19eR9FN5Lhrv5Xj?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?alJwZG9GQWh3VitEL0RSVWJhOC9FWmdvcGxKajkyZGU1WmRjYURkdno2SUt3?=
- =?utf-8?B?VDhNa3lPdTFjamYwWnd1dTk3MWVzM01wS0RnTzNPNjQxQ1N6SlFLUHRPMmZm?=
- =?utf-8?B?cjNyRlJZUDd0QlhEWndaSVF1cVhqeFN4cFpYcWdyVG80NXB4UGZ6NUd6RXUw?=
- =?utf-8?B?QTk2b2wvSTRET3VpN2I0ZUdvdG1LZDdMNlZBL1A3d2Vnamt4eW0vZktsdmRZ?=
- =?utf-8?B?ZFB4enNZcVNoQ1hYc3lhZ2xRb0lrd09qcEpCdUJzRTNYS2NmcVFtOEFDTG9k?=
- =?utf-8?B?bGtkNU9DbFdocHhVdXVHbEQ1Ym9yTXRxOVhzZzNVSGdkcVltSnBFNGc5UmhO?=
- =?utf-8?B?TEdQSy92ZkIxZktWUUc1RmRtaVVZYlNSUXlaVWZMTXUrc2hHeENjLzFTSldj?=
- =?utf-8?B?VzVWWlN3L1pEMlkraTZ0Wkk1MTFjMm45ZEZnSzJiVy9FOTZNQzFIMVNHRTBl?=
- =?utf-8?B?MDBjRStzSnhka1VLWlQ4OWMrQTdOQndYaG5IdVdsSk1qNTFDaUE1SWxvekdQ?=
- =?utf-8?B?UUc2ZExLVmg1NXArdWVNcUFZcmEwY0JvMFkrR3Fhd2I1NnNnekZ1WFRnT1FK?=
- =?utf-8?B?YnVJTVNnMHdFbktveGsxUUlYUFl6dE1lcUJuQnV1bUw3SitaWG1NMFJYT2pt?=
- =?utf-8?B?VFZEVlFsdlZnbjJjZmxYYXRSampKTjFYdVh4V29QbnVxNU9UQm8rTlBYZkpl?=
- =?utf-8?B?ZUg1UFZLaHd1dkZ0S3AxV2JNNGN0NjYrQm56angvVE95T3RIV3BPN0Z6dHFs?=
- =?utf-8?B?d1g0RW5CQXdvdlRWNVpJMVJzYnlISDR4U21zRzFzcWNEcTVmb0N2UzVmWlNl?=
- =?utf-8?B?bkdzUnBFRHFVdmZNaEE5cGlkbWgvM0ZPSEtXaFE3cG9rY2p5UHM2eXdaQ0xR?=
- =?utf-8?B?NEViaTBmYU1ncXVhaGhOUis5SnBJV3FnZDlkMUNvbVByNW5zamd3dVVGY0wy?=
- =?utf-8?B?VkNVUzRoTDd2NmJKRzJ0b0JnM2s0SWdva2l6REVtaHd0YnZnU3RadFJEQ0lZ?=
- =?utf-8?B?bDNUN2g5ckluUHdkekFZKzhqWlh2dkdjdWkxSVI3RVdqVDB2VjFNOFdHd0k4?=
- =?utf-8?B?WU1wNm5SdG10aTJwZkVqZWNBc3RrYlV4QkhZS2dLTHBhZG0vZWhzRW9DU0hG?=
- =?utf-8?B?TnVWQXF1bHNDeEZsRU5md1dOOG5lRTgxUVJzSXRJNWNsRWh1Y1BsbSsvS1Z6?=
- =?utf-8?B?TWlaRmJuZGRZdUdQMDcxVmN1UEFWRmQ1YlY1ZGtVSmlaKzVBSktPeHVjLzI0?=
- =?utf-8?B?UURKdlN1U05BMWJsNnpRUERqNGxSdTFDMlZwbytiTG9lQk1zUlNnS0FBUDVz?=
- =?utf-8?B?eFBxb2NzNXFydG9Dc2Y4WFhFeEl1dWdPVkZPNHpXU1VtL1JJMEZVeFBoWkN1?=
- =?utf-8?B?ZVJqdEJRYk9NNzBsKzMxRDAxQmhNRTI3aEg5aEhoNzd2MEx0SFdsUXArVjdp?=
- =?utf-8?B?ejZzVnNnZnJNeXo4N2ZsdDJSdFVTMmNhMkNpSllEalhKTkdPVVpUS1ZBQkxG?=
- =?utf-8?B?VDVFVEJYLzRoT282dExZdGltcWdjMFZEdGUxQTdTOTlaSzhhd0xHbWxTeXox?=
- =?utf-8?B?aS9tY0Y1d1hFZ3U3Ny9EOTJPaHh3Z1llV1hGRTE3WTc5YjAwV1Qwb1FPRFRs?=
- =?utf-8?B?a2xSZHZQdG13bEhOU2YxT3pCS093bnFBZWZReklmMHlZNHZGdjZ6WTJxSGhi?=
- =?utf-8?B?YzMxdjRGajZQL3NFTXUvbGZoRysvUEk4czJsK0FPUDlkKzQ4Z1d4dk5iZnBK?=
- =?utf-8?Q?XSZvvGoih2+FMyTc65w52FaazZf8d2obqvcXZpv?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a63b2d83-315f-4450-aad0-08dd7ee0ed81
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2025 01:24:28.1879
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN1P287MB3646
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>,
+ Aishwarya.TCV@arm.com
+References: <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+ <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+ <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+ <20250417-abartig-abfuhr-40e558b85f97@brauner>
+ <20250417-outen-dreihundert-7a772f78f685@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
+ <20250417153126.QrVXSjt-@linutronix.de>
+ <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+ <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
+ <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
+ <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On 2025/4/18 10:29, Longbin Li wrote:
-> Add PWM controller for SG2044 on base of SG2042.
+On 18/4/25 16:47, Christian Brauner wrote:
+> On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
+>> On 18/4/25 09:13, Ian Kent wrote:
+>>> On 18/4/25 00:28, Christian Brauner wrote:
+>>>> On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
+>>>> wrote:
+>>>>> On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+>>>>>>>       So if there's some userspace process with a broken
+>>>>>>> NFS server and it
+>>>>>>>       does umount(MNT_DETACH) it will end up hanging every other
+>>>>>>>       umount(MNT_DETACH) on the system because the dealyed_mntput_work
+>>>>>>>       workqueue (to my understanding) cannot make progress.
+>>>>>> Ok, "to my understanding" has been updated after going back
+>>>>>> and reading
+>>>>>> the delayed work code. Luckily it's not as bad as I thought it is
+>>>>>> because it's queued on system_wq which is multi-threaded so it's at
+>>>>>> least not causing everyone with MNT_DETACH to get stuck. I'm still
+>>>>>> skeptical how safe this all is.
+>>>>> I would (again) throw system_unbound_wq into the game because
+>>>>> the former
+>>>>> will remain on the CPU on which has been enqueued (if speaking about
+>>>>> multi threading).
+>>>> Yes, good point.
+>>>>
+>>>> However, what about using polled grace periods?
+>>>>
+>>>> A first simple-minded thing to do would be to record the grace period
+>>>> after umount_tree() has finished and the check it in namespace_unlock():
+>>>>
+>>>> diff --git a/fs/namespace.c b/fs/namespace.c
+>>>> index d9ca80dcc544..1e7ebcdd1ebc 100644
+>>>> --- a/fs/namespace.c
+>>>> +++ b/fs/namespace.c
+>>>> @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
+>>>> __ro_after_init;
+>>>>    static struct hlist_head *mountpoint_hashtable __ro_after_init;
+>>>>    static struct kmem_cache *mnt_cache __ro_after_init;
+>>>>    static DECLARE_RWSEM(namespace_sem);
+>>>> +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
+>>>>    static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+>>>>    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>>>>    static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+>>>> @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
+>>>>           struct hlist_head head;
+>>>>           struct hlist_node *p;
+>>>>           struct mount *m;
+>>>> +       unsigned long unmount_seq = rcu_unmount_seq;
+>>>>           LIST_HEAD(list);
+>>>>
+>>>>           hlist_move_list(&unmounted, &head);
+>>>> @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
+>>>>           if (likely(hlist_empty(&head)))
+>>>>                   return;
+>>>>
+>>>> -       synchronize_rcu_expedited();
+>>>> +       cond_synchronize_rcu_expedited(unmount_seq);
+>>>>
+>>>>           hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>>>>                   hlist_del(&m->mnt_umount);
+>>>> @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
+>>>> enum umount_tree_flags how)
+>>>>                    */
+>>>>                   mnt_notify_add(p);
+>>>>           }
+>>>> +
+>>>> +       rcu_unmount_seq = get_state_synchronize_rcu();
+>>>>    }
+>>>>
+>>>>    static void shrink_submounts(struct mount *mnt);
+>>>>
+>>>>
+>>>> I'm not sure how much that would buy us. If it doesn't then it should be
+>>>> possible to play with the following possibly strange idea:
+>>>>
+>>>> diff --git a/fs/mount.h b/fs/mount.h
+>>>> index 7aecf2a60472..51b86300dc50 100644
+>>>> --- a/fs/mount.h
+>>>> +++ b/fs/mount.h
+>>>> @@ -61,6 +61,7 @@ struct mount {
+>>>>                   struct rb_node mnt_node; /* node in the ns->mounts
+>>>> rbtree */
+>>>>                   struct rcu_head mnt_rcu;
+>>>>                   struct llist_node mnt_llist;
+>>>> +               unsigned long mnt_rcu_unmount_seq;
+>>>>           };
+>>>>    #ifdef CONFIG_SMP
+>>>>           struct mnt_pcp __percpu *mnt_pcp;
+>>>> diff --git a/fs/namespace.c b/fs/namespace.c
+>>>> index d9ca80dcc544..aae9df75beed 100644
+>>>> --- a/fs/namespace.c
+>>>> +++ b/fs/namespace.c
+>>>> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>>>>           struct hlist_head head;
+>>>>           struct hlist_node *p;
+>>>>           struct mount *m;
+>>>> +       bool needs_synchronize_rcu = false;
+>>>>           LIST_HEAD(list);
+>>>>
+>>>>           hlist_move_list(&unmounted, &head);
+>>>> @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
+>>>>           if (likely(hlist_empty(&head)))
+>>>>                   return;
+>>>>
+>>>> -       synchronize_rcu_expedited();
+>>>> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>>>> +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+>>>> +                       continue;
+> This has a bug. This needs to be:
 >
-> Signed-off-by: Longbin Li <looong.bin@gmail.com>
-> ---
->   drivers/pwm/pwm-sophgo-sg2042.c | 89 ++++++++++++++++++++++++++++++++-
->   1 file changed, 87 insertions(+), 2 deletions(-)
+> 	/* A grace period has already elapsed. */
+> 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> 		continue;
 >
-> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
-> index 23a83843ba53..26147ec596c9 100644
-> --- a/drivers/pwm/pwm-sophgo-sg2042.c
-> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
-> @@ -13,6 +13,9 @@
->    *   the running period.
->    * - When PERIOD and HLPERIOD is set to 0, the PWM wave output will
->    *   be stopped and the output is pulled to high.
-> + * - SG2044 support polarity while SG2042 does not. When PWMSTART is
-> + *   false, POLARITY being NORMAL will make output being low,
-> + *   POLARITY being INVERSED will make output being high.
->    * See the datasheet [1] for more details.
->    * [1]:https://github.com/sophgo/sophgo-doc/tree/main/SG2042/TRM
->    */
-> @@ -26,6 +29,10 @@
->   #include <linux/pwm.h>
->   #include <linux/reset.h>
+> 	/* Oh oh, we have to pay up. */
+> 	needs_synchronize_rcu = true;
+> 	break;
 >
-> +#define SG2044_REG_POLARITY		0x40
-> +#define SG2044_REG_PWMSTART		0x44
-> +#define SG2044_REG_PWM_OE		0xD0
+> which I'm pretty sure will eradicate most of the performance gain you've
+> seen because fundamentally the two version shouldn't be different (Note,
+> I drafted this while on my way out the door. r.
+>
+> I would test the following version where we pay the cost of the
+> smb_mb() from poll_state_synchronize_rcu() exactly one time:
+>
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 7aecf2a60472..51b86300dc50 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -61,6 +61,7 @@ struct mount {
+>                  struct rb_node mnt_node; /* node in the ns->mounts rbtree */
+>                  struct rcu_head mnt_rcu;
+>                  struct llist_node mnt_llist;
+> +               unsigned long mnt_rcu_unmount_seq;
+>          };
+>   #ifdef CONFIG_SMP
+>          struct mnt_pcp __percpu *mnt_pcp;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d9ca80dcc544..dd367c54bc29 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>          struct hlist_head head;
+>          struct hlist_node *p;
+>          struct mount *m;
+> +       unsigned long mnt_rcu_unmount_seq = 0;
+>          LIST_HEAD(list);
+>
+>          hlist_move_list(&unmounted, &head);
+> @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
+>          if (likely(hlist_empty(&head)))
+>                  return;
+>
+> -       synchronize_rcu_expedited();
+> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
+> +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
+> +
+> +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
+>
+>          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>                  hlist_del(&m->mnt_umount);
+> @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>                          }
+>                  }
+>                  change_mnt_propagation(p, MS_PRIVATE);
+> -               if (disconnect)
+> +               if (disconnect) {
+> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
+>                          hlist_add_head(&p->mnt_umount, &unmounted);
+> +               }
+>
+>                  /*
+>                   * At this point p->mnt_ns is NULL, notification will be queued
+>
+> If this doesn't help I had considered recording the rcu sequence number
+> during __legitimize_mnt() in the mounts. But we likely can't do that
+> because get_state_synchronize_rcu() is expensive because it inserts a
+> smb_mb() and that would likely be noticable during path lookup. This
+> would also hinge on the notion that the last store of the rcu sequence
+> number is guaranteed to be seen when we check them in namespace_unlock().
+>
+> Another possibly insane idea (haven't fully thought it out but throwing
+> it out there to test): allocate a percpu counter for each mount and
+> increment it each time we enter __legitimize_mnt() and decrement it when
+> we leave __legitimize_mnt(). During umount_tree() check the percpu sum
+> for each mount after it's been added to the @unmounted list.
 
-SG2044_REG_xxx, the prefix looks inconsistent with 
-SG2042_PWM_HLPERIOD/SG2042_PWM_PERIOD. Can it be unified?
+I had been thinking that a completion in the mount with a counter (say
 
-The others look fine.
+walker_cnt) could be used. Because the mounts are unhashed there won't
 
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+be new walks so if/once the count is 0 the walker could call complete()
 
-[......]
+and wait_for_completion() replaces the rcu sync completely. The catch is
+
+managing walker_cnt correctly could be racy or expensive.
 
 
+I thought this would not be received to well dew to the additional fields
+
+and it could be a little messy but the suggestion above is a bit similar.
+
+
+Ian
+
+>
+> If we see any mount that has a non-zero count we set a global
+> @needs_synchronize_rcu to true and stop counting for the other mounts
+> (saving percpu summing cycles). Then call or elide
+> synchronize_rcu_expedited() based on the @needs_synchronize_rcu boolean
+> in namespace_unlock().
+>
+> The percpu might make this cheap enough for __legitimize_mnt() to be
+> workable (ignoring any other pitfalls I've currently not had time to
+> warp my head around).
 
