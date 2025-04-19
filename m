@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-611522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30754A942DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD74A942E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 12:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCEC91897A35
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7D9189CCA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 10:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9411C8637;
-	Sat, 19 Apr 2025 10:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE751D5166;
+	Sat, 19 Apr 2025 10:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DRwGSjmZ"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kio4HHdO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AAD40BF5
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Apr 2025 10:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94C517C224;
+	Sat, 19 Apr 2025 10:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745058957; cv=none; b=nEtXst0lYnTJjXGzxnasMgoboOXRuKbZ7uz9hkVlVLiGeIcXYRCFseKeo/KOB3WHr5zqnhN6o+o72B1j1lsjyrOYXcrKNWuLKesENFTq6CF3Ice5s0wOKt1YxVYIZVE+ePFsiiI0cXt42btDtkVkh13KrnrnCCwSkSDtCo44UfU=
+	t=1745059138; cv=none; b=SqIXcReqtJ9I9W+rgS2fp/4jgqGAM2aiUtT8QmMw9jbCCVnvaw/esQhrNlcXqVDTaY2AYJxN+fFFgiCoMoSMLE+MG/gdOpbzwohZb5MuHRgKnMvX3VVcO4R+eaK8zXhA2GQhaEeZONPcBi7CooarBT7m6ZELou5yzqFIAxGkU20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745058957; c=relaxed/simple;
-	bh=bVCR+fA30tF4GjVlZMJHRBKnbcj87eua+ehlMiAJLg0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=O1E6D1mp+BQxU+cC61vGX0wmoxStGuTJPP+kgzP8erF2DDLcnZoJwe+xV5nmqGCh2RPBozx1hsaSqUfbWNCt1IzqZibHrLkn6IuKufANlrTdqFiqMuZ7roDme9AaJD+pMB2c+kA0YgGudBrv/yulOZUZCKcBxtWlvPmn2Wyr1vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DRwGSjmZ; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745058953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E0cjA398QKtX5LZgMG38M1nQogQDA0zqD26aOnhTivM=;
-	b=DRwGSjmZk2oQXGeMn8E0tYGgzibZ/Vgc0lCTc7VGLaa8Ilv9RFP6NawIZGiKHGIHWWUqCK
-	efHZmMs3D9aWsPNEr9qsc1ua0ZFDYNFe1HRhdU0yrKcimQpLzn71kxtlxo23WlMJuoQmhg
-	8cV8dEIEy4U7yvGTexVh/BkgUXz7Q3A=
+	s=arc-20240116; t=1745059138; c=relaxed/simple;
+	bh=xY0aaUKiZ3nf6klLxrhBlG9cVhweGxQOTCb/Ekznwd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv5sQSVNMEz8AYJebST3BE5G+do1GG35G3Ir1WncWHYMUiqgSAROPBO6vJEZSoPhEx+KL+frRQgtMhAtA4FdTlH+TPSmP/F0FGFV496+QMQS5FQ4Nhg1uBe2mY6d/Lm4PtHYgiSlRlnM0SyU5jgcWeILk1VcOBTMHBdL1o1b2sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kio4HHdO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5053C4CEE7;
+	Sat, 19 Apr 2025 10:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745059137;
+	bh=xY0aaUKiZ3nf6klLxrhBlG9cVhweGxQOTCb/Ekznwd4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kio4HHdOutRt0lX2iSm8cL9uJdAUhJ+605V0kO6NHfszftpZB1SzbYW1Zb7rFcau4
+	 r/9DIAxMBLwzRRUT9e5NVgI0dmKFFewiROwZI6Eq1alhEhv4fL4GQmgY0yQ+Otk7ly
+	 M62eiTqiLW3tdSXi8iC8Lhkbvr0f6CYqrYbOfKAsCqhvIbJui4wNP61RMfR1KiE1Zf
+	 9nIufnoRKDrJyIWV4yFuP3RARs+ugw4NFriv59FhMTJyM8p9KNSHiu0K4iyEHAC588
+	 tRHoW13+hfHVSQhTZRCwy4dJ+wlVMTJPaLVYcKoNnV3FoDsH6QFw9MHAHvdtASQLgh
+	 tQf3vWUTqHPjw==
+Date: Sat, 19 Apr 2025 12:38:54 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Michael Walle <mwalle@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
+Message-ID: <innhzhoplngaorr3oqsxigccbzho7eptp42lmd4otux4xsuvhx@pdhzjy6jwrtf>
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-5-7a2535876e39@bootlin.com>
+ <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
-Subject: Re: [PATCH v2] MIPS: Fix MAX_REG_OFFSET and remove zero-length struct
- member
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <CAAhV-H4x4oQEtvk4Ah0WNBWtaQysj00k_Pybs=+r37oriJxVPA@mail.gmail.com>
-Date: Sat, 19 Apr 2025 12:35:38 +0200
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Oleg Nesterov <oleg@redhat.com>,
- linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i2qjelbfoeyv45bu"
+Content-Disposition: inline
+In-Reply-To: <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
+
+
+--i2qjelbfoeyv45bu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <505DF3CB-F7E2-4233-B39E-654FB5BEB811@linux.dev>
-References: <20250417174712.69292-2-thorsten.blum@linux.dev>
- <aAIF_kEFlOOVNDaE@alpha.franken.de>
- <DAD22E95-6D33-43D5-B5E5-3A7B45A63944@linux.dev>
- <alpine.DEB.2.21.2504181108170.18253@angie.orcam.me.uk>
- <EC98BAE8-8269-4169-B3A2-5F426E77C223@linux.dev>
- <alpine.DEB.2.21.2504181337350.18253@angie.orcam.me.uk>
- <B71034AC-B0FC-4C5F-8562-661D6AD11056@linux.dev>
- <alpine.DEB.2.21.2504181608420.18253@angie.orcam.me.uk>
- <9F6CA7CB-B36A-4F79-B78C-7ED63E39260D@linux.dev>
- <A08BC566-5F6D-4FA5-B315-34D2FCA55A6E@linux.dev>
- <CAAhV-H4x4oQEtvk4Ah0WNBWtaQysj00k_Pybs=+r37oriJxVPA@mail.gmail.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
+MIME-Version: 1.0
 
-Hi Huacai,
+On Wed, Apr 09, 2025 at 04:19:27PM +0100, Mark Brown wrote:
+> On Wed, Apr 09, 2025 at 04:55:52PM +0200, Mathieu Dubois-Briand wrote:
+> > BUG() never returns, so code after it is unreachable: remove it.
+>=20
+> BUG() can be compiled out, CONFIG_BUG.
 
-On 19. Apr 2025, at 04:56, Huacai Chen wrote:
-> On Sat, Apr 19, 2025 at 4:22=E2=80=AFAM Thorsten Blum wrote:
->> On 18. Apr 2025, at 22:18, Thorsten Blum wrote:
->>> On 18. Apr 2025, at 17:14, Maciej W. Rozycki wrote:
->>>> On Fri, 18 Apr 2025, Thorsten Blum wrote:
->>>>>>> Does regs_get_register() even work for CPU_CAVIUM_OCTEON when =
-accessing
->>>>>>> the last two registers because they're both ULL, not UL? =
-(independent of
->>>>>>> my patch)
->>>>>>=20
->>>>>> Or rather two arrays of registers.  With 32-bit configurations =
-their
->>>>>> contents have to be retrieved by pieces.  I don't know if it's =
-handled by
->>>>>> the caller(s) though as I'm not familiar with this interface.
->>>>>=20
->>>>> Ah, CPU_CAVIUM_OCTEON seems to be 64-bit only, so there's no =
-difference
->>>>> between UL and ULL. Then both my patch and your suggestion:
->>>>=20
->>>> So it seems odd to use `long long int' here, but I can't be =
-bothered to
->>>> check history.  There could be a valid reason or it could be just =
-sloppy
->>>> coding.
->>>>=20
->>>>> I still prefer my approach without '__last[0]' because it also =
-silences
->>>>> the following false-positive Coccinelle warning, which is how I =
-stumbled
->>>>> upon this in the first place:
->>>>>=20
->>>>> ./ptrace.h:51:15-21: WARNING use flexible-array member instead
->>>>=20
->>>> So make `__last' a flexible array instead?  With a separate patch.
->>>=20
->>> No, '__last[0]' is a fake flexible array and the Coccinelle warning =
-is
->>> wrong. We should either ignore the warning or silence it by removing =
-the
->>> marker, but turning it into a real flexible array doesn't make =
-sense.
->>> I'd prefer to just remove it from the struct.
->>>=20
->>> Stefan or Oleg, do you have any preference?
->>=20
->> Sorry, I meant Thomas, not Stefan.
-> In my opinion just changing __last[0] to __last[] is OK, no other
-> actions needed.
+In that case BUG is defined as:
 
-That doesn't fix the value of MAX_REG_OFFSET - you might be missing some
-of the context here.
+	#define BUG() do {              \
+		do {} while (1);        \
+		unreachable();          \
+	} while (0)
 
-Thanks,
-Thorsten
+so the return can be dropped as suggested in the patch.
 
+Best regards
+Uwe
+
+--i2qjelbfoeyv45bu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgDfTEACgkQj4D7WH0S
+/k7/vwf8ClL68F1xm5thX7WLNjkcCjj0pl/3M+1HJ25yTuZ6yblDFzo6mRfBwfM5
+X0JG3yzxvMGlWGNLLql8B1J5DundDprN2qp6YOpMl1f5JneoI0KIXTY3lNT+0y4N
+P0V5eGYy96j3JGZ9p60X05EFHvfxMLZPBnTkj31X0fux7eodlRHQCmx4rjyOct4G
+TYUeb/HE+qZ/TnZKSU2biAzWsegr7RgnT8/oMVE+GFp6UZT5n6MAC6ZtjRt3p2jE
+KCG83+YMP9Vul2ZDXphhp3Vk6N8rIJgIaM0/PY0UotrGSyGyXccPAU7YC/srM4yA
+5RSfNSBdYe055b1jwS4NM5wo2lYXnw==
+=g+OB
+-----END PGP SIGNATURE-----
+
+--i2qjelbfoeyv45bu--
 
