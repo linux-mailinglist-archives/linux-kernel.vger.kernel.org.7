@@ -1,254 +1,211 @@
-Return-Path: <linux-kernel+bounces-611876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4094BA94768
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 12:07:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DC5A9476E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 12:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D90171BBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 10:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304FE189506C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 10:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694D31E5B61;
-	Sun, 20 Apr 2025 10:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="We/ougYr"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6D31E51F4;
+	Sun, 20 Apr 2025 10:25:28 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9173B14D29B;
-	Sun, 20 Apr 2025 10:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745143617; cv=pass; b=BHghFIHuSjZPCNJ28+iQf8WlH9jX5G5jbUnB0ZGar2ySyuIb2Wxe2Mg3UwyPeVmIBPMETqr5nKjtjCdHxAuxwGaQh3Lfod+7Bv5sgEWrndL8sO5H7gXVrB7a/UxJPXLB/sQ8XZnG+2y54i0VpNQOZ6t0bOQnAAgAQcNK1ak+GY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745143617; c=relaxed/simple;
-	bh=KEZ8NbBI4R0rm+plo5T2i1pnOqzfp8/jirVQ2IBpD9E=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=cxgSmv1IsnU+bGYOjMyB57y92hhX3dPRaZT2vws2DzRO5y1jCpafx+g3pU79LH5wBmw3rsTwXOfeFAOTIkILxRzK4avalFaoYcgF+IX+tdtSeZmzxVk0Xp7hUD+KwYg9jOVq+bDYFg4irH6vmkUlMYenTQbaJ63tdsQrxhGrarc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=We/ougYr; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1745143591; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QBauzDLNVigVpXO6PhsJiTmwWipRP1oE4nzNOFy35xdg6wQAl+tplqVYc/oRE9hWTHkDnt5vfrUb7wGOLQqtHp3wr2Y7yY+tpimwOPYmjbLq7VWLbb4CmBpo2YkyeKwbDTA2t8CHrss6xe5D20wn/i6MzDj3xuJd6Fx8tnyyv4c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745143591; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xemWXU9zQclMEmhBNpJXAygrjZW6BOjxP7DM9G4DMmo=; 
-	b=M8b3Zham98XYbAZWSBMJwJIAXMk7KFxYXz02NMM6tJIvNJWEabPZp2fxLFobfDh2M3gAjvI1rXrXU9L6wGgmHbP82rxWvDzhKLwEWHHGErIlLlNwI30ADdUg3a/180fmszwcejUrJwKYubMsa411BzFQeQLic6Cc6P3PZu0WB/I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745143591;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=xemWXU9zQclMEmhBNpJXAygrjZW6BOjxP7DM9G4DMmo=;
-	b=We/ougYr3T20guamLRPUh/e6u3gJA41/mBRueGsjxQesCN9IxwTbm5f03FdkRjBw
-	qa1h49+fQ9bNBnbZS2yXuQ9M6gX/KRA5jcuS1v3IHlJ51HPe19KkDhLbQbXhuGQ3yi6
-	gDEMHW0ks02dwF3FZE38cPu08bR1sYHE7TwPIioU=
-Received: by mx.zohomail.com with SMTPS id 1745143589716357.5982257748544;
-	Sun, 20 Apr 2025 03:06:29 -0700 (PDT)
-Message-ID: <eff33a971679fb47f5c9da9fd39f433a8e997089.camel@rong.moe>
-Subject: Re: [RFC PATCH] ACPI: EC: Set ec_no_wakeup for MECHREVO Wujie 14XA
- (GX4HRXL)
-From: Rong Zhang <i@rong.moe>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Kexy Biscuit <kexybiscuit@aosc.io>, Mingcong Bai <jeffbai@aosc.io>,
- Yemu Lu	 <prcups@krgm.moe>, Xinhui Yang <cyan@cyano.uk>, "Rafael J.
- Wysocki"	 <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- linux-acpi@vger.kernel.org,  Runhua He <hua@aosc.io>,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250418112229.93075-1-hua@aosc.io>
-References: <20250418112229.93075-1-hua@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 20 Apr 2025 18:05:23 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559532F2E
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 10:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745144728; cv=none; b=RfOTBn2fM50m1AVQGz6jD8tFGxNJeOhKUWa9Q/laawcPXtvGlyzW5YFGmLpl9ZAybE1EMWzp6jzhtiEtm+67kxyNbSoF+yJiyBn/NxYhxQpdZOA0Acxq346yeYuMkQOMx13g10+NnWM5/PnEstpH3mPjzZGC5vJJ2y/OprYCiuk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745144728; c=relaxed/simple;
+	bh=+f2+g4d3ZHgLZ0mmGUmnqU2BDI7TLnAfFFnVb0wYgFI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E0kEMStAVdgshczXuLT97ypWYg4Y//7NR4wSG3wZxYppqoIxIt4WrqGIsiQs1MqaPQq8a/jbIxlegRRvJovT9CviexYEltVOzPfzJZ9yOLb4FMFTYox/v9zKcn5b6++Guj/5sD+fJgeAPhTF9Jb8e5pa6ak84CCknuhzG8NFojA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85dcaf42b61so664756339f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 03:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745144725; x=1745749525;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PlNwjKy925BoHyaIbLcXmXGo5M94WH+BOT+uMig3fU=;
+        b=i2aOVOp2tM5cOPqQ60SsbazEbbie37aakcDP+O6nOayUHKX73+4lSYRNJZTAN0+5De
+         pNOIztSYU+yocHpQTmsdHZOm05ygGtdDYo/YANfFB8/apLXzbWJNjXL9cs6q1rvyugu7
+         syMqqjKHPe+1W0sIsR1CY1kkWmCKT3H97TD0rxbUL4w05hkcNNEH552y9E9CDWwEHeXa
+         wFavlz5GPrjDvDqhCUTun9mEE/jYr/vx7+M9DKZ3K4FroGvkn2nMa8UtcjDcfYKHETeX
+         WrmSLcx4HSzhLHIdlAJmU7TPax2XLW4mKRPFTVf0O8F7VaOjRFF+QDjvf68xeY6RJLri
+         v0hA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIyRpj1uDcinGuMSdC8jrG7i6ONx5OxTrNoCSFDDY1OqWdad42q+LKi5A6XWfMASIf0Yjcmknh+IDvqQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNGbTvSkGcU8A0WEkskz2VnpB3Dk/Ecf1sGFKsrHkzRHV2PtGq
+	UqtJzbx9zWet+swghI8bSDsi78rXHNyN9FmgjBntmjlC27y8xwGDh5WIEb7W+/I5Oux4RLemkFM
+	iOCfM73iqh16isYTrT/8NWnnzY7p8kkJvDclFChuGrru2uD0twb2x7xM=
+X-Google-Smtp-Source: AGHT+IFvg5QiqnuA3hE8MN9wictd/sMo/3ub1E8bH1KIgEpC8pTUq5BGtrGUYId8BJSZHhLscMukK1iArWkobQZ7TGSpZY+dDu+b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.1-1 
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:4511:b0:3d8:1e6c:523 with SMTP id
+ e9e14a558f8ab-3d89428c912mr73216775ab.22.1745144725510; Sun, 20 Apr 2025
+ 03:25:25 -0700 (PDT)
+Date: Sun, 20 Apr 2025 03:25:25 -0700
+In-Reply-To: <6780316f.050a0220.25a300.01cd.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6804cb95.050a0220.243d89.0030.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_page_mkwrite (2)
+From: syzbot <syzbot+ecfa701c0b41415f36d4@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mario,
+syzbot has found a reproducer for the following issue on:
 
-I noticed a patch [1] of yours fixed an identical issue on old AMD
-platforms with outdated platform firmware while another recent patch
-[2] set ec_no_wakeup for Lenovo Go S, and you are the author of amd-
-debug-tools (hence also amd_s2idle.py). Could you kindly take a look at
-this?
+HEAD commit:    119009db2674 Merge tag 'vfs-6.15-rc3.fixes.2' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15eb7bac580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=68d9f79fc685cd4
+dashboard link: https://syzkaller.appspot.com/bug?extid=ecfa701c0b41415f36d4
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bd463f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136374cc580000
 
-I reached Runhua in private, asking him to try disabling
-/sys/kernel/irq/1/wakeup and
-/sys/bus/serio/devices/serio0/power/wakeup to reproduce the effect of
-patch [1]. Doing so also worked around the issue.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-119009db.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ab6d3b3b5de/vmlinux-119009db.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/648d06f0fb1a/bzImage-119009db.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/c4ac14e1235a/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=115f6ccc580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/2b07efcbe0ca/mount_4.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=13523fe4580000)
 
-[1]: 8e60615e8932 ("platform/x86/amd: pmc: Disable IRQ1 wakeup for
-RN/CZN")
-[2]: b988685388ef ("ACPI: EC: Set ec_no_wakeup for Lenovo Go S")
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ecfa701c0b41415f36d4@syzkaller.appspotmail.com
 
-Thanks,
-Rong
+(syz-executor297,5383,0):ocfs2_write_end_nolock:1942 ERROR: status = -30
+(syz-executor297,5383,0):ocfs2_commit_trans:382 ERROR: status = -5
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/mmap.c:107!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5383 Comm: syz-executor297 Not tainted 6.15.0-rc2-syzkaller-00471-g119009db2674 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xda1/0xdb0 fs/ocfs2/mmap.c:144
+Code: ff df 4d 89 fc e9 85 f3 ff ff 48 ff cb e8 c7 2e f9 fd 49 89 dc 49 be 00 00 00 00 00 fc ff df e9 6b f3 ff ff e8 b0 2e f9 fd 90 <0f> 0b cc cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000d3b6e00 EFLAGS: 00010293
+RAX: ffffffff83c98e70 RBX: 00000000ffffffe2 RCX: ffff8880006c4880
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000d3b6fc0 R08: ffffffff83c98c62 R09: 1ffffffff20bfc8e
+R10: dffffc0000000000 R11: fffffbfff20bfc8f R12: 0000000000001000
+R13: 0000000000008000 R14: ffffea000125c000 R15: 0000000000000000
+FS:  0000555580515380(0000) GS:ffff88808c59a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000008000 CR3: 000000004417a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_page_mkwrite+0x159/0x340 mm/memory.c:3287
+ do_shared_fault mm/memory.c:5594 [inline]
+ do_fault mm/memory.c:5656 [inline]
+ do_pte_missing mm/memory.c:4160 [inline]
+ handle_pte_fault+0x10c6/0x61c0 mm/memory.c:5997
+ __handle_mm_fault mm/memory.c:6140 [inline]
+ handle_mm_fault+0x1129/0x1bf0 mm/memory.c:6309
+ do_user_addr_fault arch/x86/mm/fault.c:1388 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x2bb/0x920 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x4a/0x90 arch/x86/lib/copy_user_64.S:74
+Code: cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 8b 06 48 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 db 83 f9 08 73 e8 eb c5 <f3> a4 c3 cc cc cc cc 48 8b 06 48 89 07 48 8d 47 08 48 83 e0 f8 48
+RSP: 0018:ffffc9000d3b76d8 EFLAGS: 00050206
+RAX: ffffffff85018101 RBX: 0000200000007400 RCX: 0000000000000400
+RDX: 0000000000000000 RSI: ffff888048e7fc00 RDI: 0000200000008000
+RBP: ffffc9000d3b7858 R08: ffff888048e7ffff R09: 1ffff110091cffff
+R10: dffffc0000000000 R11: ffffed10091d0000 R12: 1ffff92001a76fb3
+R13: ffffc9000d3b7d98 R14: 0000000000001000 R15: ffff888048e7f000
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:147 [inline]
+ copy_to_user_iter lib/iov_iter.c:25 [inline]
+ iterate_ubuf include/linux/iov_iter.h:30 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0x268/0x1c90 lib/iov_iter.c:185
+ copy_page_to_iter+0xb1/0x160 lib/iov_iter.c:362
+ copy_folio_to_iter include/linux/uio.h:198 [inline]
+ filemap_read+0x88f/0x1260 mm/filemap.c:2753
+ ocfs2_file_read_iter+0x42d/0xb80 fs/ocfs2/file.c:2589
+ new_sync_read fs/read_write.c:489 [inline]
+ vfs_read+0x9a0/0xb90 fs/read_write.c:570
+ ksys_read+0x19d/0x2d0 fs/read_write.c:713
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f554499e529
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff47d84cf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000200000000300 RCX: 00007f554499e529
+RDX: 000000000000fdef RSI: 0000200000000400 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 00007fff47d84d30 R09: 00007fff47d84d30
+R10: 0023706f6f6c2f76 R11: 0000000000000246 R12: 00007fff47d84d1c
+R13: 0000000000000018 R14: 431bde82d7b634db R15: 00007fff47d84d50
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xda1/0xdb0 fs/ocfs2/mmap.c:144
+Code: ff df 4d 89 fc e9 85 f3 ff ff 48 ff cb e8 c7 2e f9 fd 49 89 dc 49 be 00 00 00 00 00 fc ff df e9 6b f3 ff ff e8 b0 2e f9 fd 90 <0f> 0b cc cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000d3b6e00 EFLAGS: 00010293
+RAX: ffffffff83c98e70 RBX: 00000000ffffffe2 RCX: ffff8880006c4880
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000d3b6fc0 R08: ffffffff83c98c62 R09: 1ffffffff20bfc8e
+R10: dffffc0000000000 R11: fffffbfff20bfc8f R12: 0000000000001000
+R13: 0000000000008000 R14: ffffea000125c000 R15: 0000000000000000
+FS:  0000555580515380(0000) GS:ffff88808c59a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000008000 CR3: 000000004417a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	cc                   	int3
+   1:	cc                   	int3
+   2:	cc                   	int3
+   3:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   a:	00 00 00
+   d:	0f 1f 00             	nopl   (%rax)
+  10:	48 8b 06             	mov    (%rsi),%rax
+  13:	48 89 07             	mov    %rax,(%rdi)
+  16:	48 83 c6 08          	add    $0x8,%rsi
+  1a:	48 83 c7 08          	add    $0x8,%rdi
+  1e:	83 e9 08             	sub    $0x8,%ecx
+  21:	74 db                	je     0xfffffffe
+  23:	83 f9 08             	cmp    $0x8,%ecx
+  26:	73 e8                	jae    0x10
+  28:	eb c5                	jmp    0xffffffef
+* 2a:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi) <-- trapping instruction
+  2c:	c3                   	ret
+  2d:	cc                   	int3
+  2e:	cc                   	int3
+  2f:	cc                   	int3
+  30:	cc                   	int3
+  31:	48 8b 06             	mov    (%rsi),%rax
+  34:	48 89 07             	mov    %rax,(%rdi)
+  37:	48 8d 47 08          	lea    0x8(%rdi),%rax
+  3b:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  3f:	48                   	rex.W
 
-On Fri, 2025-04-18 at 19:22 +0800, Runhua He wrote:
-> MECHREVO Wujie 14XA (GX4HRXL) wakes up immediately after s2idle entry.
-> This happens regardless of whether the laptop is plugged into AC power, o=
-r
-> whether any peripheral is plugged into the laptop.
->=20
-> Using `amd_s2idle.py --debug-ec', we found that the laptop has a wakeup
-> event triggered by IRQ 1 (PS/2 Controller) and IRQ 9 (ACPI SCI), and was
-> eventually woken up by IRQ 9. Taking a look at `dmesg', we found that the
-> EC was quite chatty after s2idle entry:
->=20
-> [ 1842.317151] PM: suspend-to-idle
-> [ 1842.317178] ACPI: EC: ACPI EC GPE status set
-> [ 1842.317184] ACPI: EC: IRQ (5)
-> [ 1842.317190] ACPI: EC: EC_SC(R) =3D 0x28 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317196] ACPI: EC: Polling enabled
-> [ 1842.317198] ACPI: EC: Command(QR_EC) submitted/blocked
-> [ 1842.317202] ACPI: EC: ACPI EC GPE dispatched
-> [ 1842.317248] ACPI: EC: Event started
-> [ 1842.317259] ACPI: EC: 2: Increase command
-> [ 1842.317264] ACPI: EC: Command(QR_EC) started
-> [ 1842.317271] ACPI: EC: TASK (14)
-> [ 1842.317288] ACPI: EC: EC_SC(R) =3D 0x28 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317294] ACPI: EC: EC_SC(W) =3D 0x84
-> [ 1842.317303] ACPI: EC: TASK (14)
-> [ 1842.317324] ACPI: EC: EC_SC(R) =3D 0x2a SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D1 OBF=3D0
-> [ 1842.317329] ACPI: EC: TASK (14)
-> [ 1842.317336] ACPI: EC: EC_SC(R) =3D 0x2a SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D1 OBF=3D0
->=20
-> [...]
->=20
-> [ 1842.317399] ACPI: EC: EC_SC(R) =3D 0x28 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317405] ACPI: EC: TASK (14)
-> [ 1842.317412] ACPI: EC: EC_SC(R) =3D 0x28 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317418] ACPI: EC: TASK (14)
-> [ 1842.317425] ACPI: EC: EC_SC(R) =3D 0x29 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D1
-> [ 1842.317432] ACPI: EC: EC_DATA(R) =3D 0x7b
-> [ 1842.317436] ACPI: EC: Command(QR_EC) unblocked
-> [ 1842.317445] ACPI: EC: Polling quirk
-> [ 1842.317448] ACPI: EC: TASK (14)
-> [ 1842.317455] ACPI: EC: EC_SC(R) =3D 0x28 SCI_EVT=3D1 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317463] ACPI: EC: Polling enabled
-> [ 1842.317466] ACPI: EC: Command(QR_EC) submitted/blocked
-> [ 1842.317469] ACPI: EC: Polling disabled
-> [ 1842.317472] ACPI: EC: Command(QR_EC) completed by hardware
-> [ 1842.317476] ACPI: EC: Command(QR_EC) stopped
-> [ 1842.317480] ACPI: EC: 1: Decrease command
-> [ 1842.317484] ACPI: EC: Query(0x7b) scheduled
-> [ 1842.317495] ACPI: EC: 2: Increase command
-> [ 1842.317499] ACPI: EC: Command(QR_EC) started
-> [ 1842.317504] ACPI: EC: TASK (14)
-> [ 1842.317516] ACPI: EC: EC_SC(R) =3D 0x08 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317521] ACPI: EC: EC_SC(W) =3D 0x84
-> [ 1842.317529] ACPI: EC: TASK (14)
-> [ 1842.317537] ACPI: EC: EC_SC(R) =3D 0x0a SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D1 OBF=3D0
-> [ 1842.317543] ACPI: EC: TASK (14)
-> [ 1842.317550] ACPI: EC: EC_SC(R) =3D 0x0a SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D1 OBF=3D0
-> [ 1842.317555] ACPI: EC: TASK (14)
->=20
-> [...]
->=20
-> [ 1842.317638] ACPI: EC: EC_SC(R) =3D 0x08 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317643] ACPI: EC: TASK (14)
-> [ 1842.317650] ACPI: EC: EC_SC(R) =3D 0x08 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317656] ACPI: EC: TASK (14)
-> [ 1842.317663] ACPI: EC: EC_SC(R) =3D 0x09 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D1
-> [ 1842.317670] ACPI: EC: EC_DATA(R) =3D 0x00
-> [ 1842.317674] ACPI: EC: Command(QR_EC) unblocked
-> [ 1842.317682] ACPI: EC: Polling quirk
-> [ 1842.317685] ACPI: EC: TASK (14)
-> [ 1842.317692] ACPI: EC: EC_SC(R) =3D 0x08 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.317697] ACPI: EC: Polling disabled
-> [ 1842.317700] ACPI: EC: Command(QR_EC) completed by hardware
-> [ 1842.317704] ACPI: EC: Command(QR_EC) stopped
-> [ 1842.317707] ACPI: EC: 1: Decrease command
-> [ 1842.317711] ACPI: EC: Event stopped
-> [ 1842.317723] ACPI: EC: Query(0x7b) started
-> [ 1842.318142] ACPI: EC: Query(0x7b) stopped
-> [ 1842.318150] ACPI: EC: ACPI EC work flushed
-> [ 1842.318158] ACPI: PM: Rearming ACPI SCI for wakeup
-> [ 1842.318169] amd_pmc: SMU idlemask s0i3: 0x1ffb3ebd
-> [ 1842.318193] PM: Triggering wakeup from IRQ 9
-> [ 1842.318244] ACPI: EC: ACPI EC GPE status set
-> [ 1842.318249] ACPI: EC: IRQ (5)
-> [ 1842.318254] ACPI: EC: EC_SC(R) =3D 0x08 SCI_EVT=3D0 BURST=3D0 CMD=3D1 =
-IBF=3D0 OBF=3D0
-> [ 1842.318263] ACPI: PM: Rearming ACPI SCI for wakeup
->=20
-> I'm not quite sure what the EC was during this time. As
-> `acpi.ec_no_wakeup=3D1' works around this issue, I believe that the EC ha=
-d
-> for some reason caused the system to wake up.
->=20
-> Browsing the source code, I found that in `drivers/acpi/ec.c',
-> `struct dmi_system_id acpi_ec_no_wakeup[]' records a few machines with
-> incorrect suspend behaviors caused by EC wakeup.
->=20
-> As this struct corresponds to a series of machines that needs
-> `acpi.ec_no_wakeup' enabled by default, add GX4HRXL to this struct. Note
-> that I have only matched the motherboard model, as MECHREVO is a "white
-> label" manufacturer using commonly used chassis and motherboards - GX4HRX=
-L
-> may be found in a variety of laptops sold under different brands and mode=
-l
-> names.
->=20
-> Since the reason behind this EC wakeup is not yet clear to me, I'm sendin=
-g
-> this patch in hope of getting more comments and guidance on how to furthe=
-r
-> debug this issue.
->=20
-> Suggested-by: Mingcong Bai <jeffbai@aosc.io>
-> Link: https://zhuanlan.zhihu.com/p/730538041
-> Tested-by: Yemu Lu <prcups@krgm.moe>
-> Co-developed-by: Xinhui Yang <cyan@cyano.uk>
-> Signed-off-by: Xinhui Yang <cyan@cyano.uk>
-> Co-developed-by: Rong Zhang <i@rong.moe>
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> Signed-off-by: Runhua He <hua@aosc.io>
-> ---
->  drivers/acpi/ec.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-> index 3c5f34892..19f1d36a5 100644
-> --- a/drivers/acpi/ec.c
-> +++ b/drivers/acpi/ec.c
-> @@ -2329,6 +2329,12 @@ static const struct dmi_system_id acpi_ec_no_wakeu=
-p[] =3D {
->  			DMI_MATCH(DMI_PRODUCT_NAME, "83Q3"),
->  		}
->  	},
-> +	{
-> +		/* MECHREVO Wujie 14 Series (GX4HRXL) */
-> +		.matches =3D {
-> +			DMI_MATCH(DMI_BOARD_NAME, "GX4HRXL"),
-> +		}
-> +	},
->  	{ },
->  };
-> =20
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
