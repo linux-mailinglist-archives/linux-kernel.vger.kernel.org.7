@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-611921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C3EA94808
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 16:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2412CA9480F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 16:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFFE188DEAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 14:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13FF23AD7E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 14:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B870A1EA7FE;
-	Sun, 20 Apr 2025 14:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16F41EB1A2;
+	Sun, 20 Apr 2025 14:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHQKnEbY"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lnkZY/1s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781671D6194
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 14:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E31E5739;
+	Sun, 20 Apr 2025 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745158835; cv=none; b=CfCnUjykZO122h3wJ6lCsMuoYSdF7nXNaS1S2HxpZCR+LyX+jvHT+f9wqAW+O5/nSNSJSK3tiZW16rq7tXngdxDoRGEJDRpm/e3khAL5R5Qn5IkI1YLieftnkTyvHXPtTNYqfQYFkrR2w6CwDXFHptGp1BakISP0FKnt8quKCZg=
+	t=1745159773; cv=none; b=sxlSkJ0J73AGi5B9ammPLSa2QbhLnYaZk39RTgogVcKqmoXL6WJx3gUTUXyjvNLKhPDuTfCUFRZN1ERXsYYupKy2o6ZnuPBehSX5b2xypmKayVZRwCuL8R/dJtMVvT4/IdM+CnyQTJvOYxcqv2ScwNduNjj9dD9fbz0m+SYsaoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745158835; c=relaxed/simple;
-	bh=5Q5i7KC4tbs7p5pMGOP2kc91ew9TX1lZ59n9t6QhCis=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SzVjcBXgYI0CTUt8NMza1yuGWopkxy7tkHTz4Jhi9T+ac2NSkH2PMYhLxI8FFyTZ+LPGXHhik3nYaUd43liFyfh73hV5l88f3y9w1uRS4Hb2WzQXXOLhvm0qhJUYFjHhVshXx43mMhPrFnPI95iAa4kSsgjgfO2GutK501uEH5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHQKnEbY; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54addb5a139so3529345e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 07:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745158831; x=1745763631; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R6NewQPC+NPAN0p4UbtSvMkN5v6iYP/vCMH0ZciTUOM=;
-        b=nHQKnEbY3sueKunyUg9HmgHLPQge2lMv7EO1aidyIRGQFVHMZsKlvPHwul7XnIi4et
-         jeUddNtXt9nwcTHiTYgEo4UzFmPj71ZfAm4+IvWZMn6necrkOZ1QoyCqivatFQbND0em
-         ytzLHJFzD1/1U23/7tGxKQtuW9rlFkNAWougcO1UKUZltwft6r810zEoirE7vdXyDyMe
-         Das6s93qkySkgXst/cIWGcT19Ekbax5qGJEoYMETdbyVZ1qBfcwink0s9fdDc3kYTDKC
-         h9WkoEH9sKOWlT9FXjz2ykCQqerp0EWBMQBfCkROwuQC/XszYnd5EDvkhsNGvXra6QaG
-         v3Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745158831; x=1745763631;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R6NewQPC+NPAN0p4UbtSvMkN5v6iYP/vCMH0ZciTUOM=;
-        b=sRCjtGg4DBuk6vEIzEy1ZowMJTdiHZabbSDUg6aSDU/1DspH8PZ+0j2aleBcsjwxbb
-         UE2Vfe9piwrq4WLdZF4tiW0mAP0XniUlgvc0Ft3FigJw2tk4qRgsqVKyrv2C+QNzSO33
-         W6G3f6+M4/vOW3ALszOOZ5V1pCm8MBI7SlDhTblErIKRuvfUfQz7hH/daYnSv4Vwq+aG
-         ptGehuygtFihntmSFCbTbv0GBuCnpZVFulngh7q2qtyr/6PuU5uO3llONX+jAXYfGABn
-         Qi7BmZiov+Ttm4Q+/DJeI8i8yauAxKRL4Fgpf5NSFSUhItwADfb7WEOHhoBpd97HzFxI
-         QY2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5V+6lI9wOBwYu2QOnA57XIVg+5xjQdkM0rs9pqct9tatQvf8GHqO6FsvL6aZ7yNGMLzgb7AOAPtkL5SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmKE/ygnBJ5i2ZqTes/Ao76hwcuQG4/+PWS/lfDtHAbTLWnjrn
-	c0ypm/TBsEHm2EvjfSK83qJdSmoK71rJfHIiZX7xuHKa4bMkxvg7
-X-Gm-Gg: ASbGncvcDceV2E/ch0+WhXdOb7jBGkmazokrHoB6xEKGUye+mQhGMeOvMHpHZjF0gOI
-	SjM18a5/MQPFNftp2KUAd/MlzooVavLZ6Uuu4KOUWF5Spsf2+xjGAPTcJfw3P4E+5Ox+JcHSUNm
-	I7A5yrzeAJ8RZFP/VV2LCq/CojlFtnBCC+u2T28lCc+f4BAwhA/V2DH6HMkTj36ktA3t4Y8/G9K
-	BQ748S663wbk+DofaWzK/J4dkkBc3Umlqin7NSwQtaQqrGYI17r3ccTIe2Gitf56m0snGeS3iha
-	3iHz30GW3HrILQPOV5NVdj9BVhTl+FvIwKry
-X-Google-Smtp-Source: AGHT+IHE68XspiUjqpUHibkxiCU9kulIe4oZ0gY3J2Wa8Tfz6uswLV8842logMrkr836fRSPJUni7g==
-X-Received: by 2002:a05:6512:124e:b0:549:4a13:3a82 with SMTP id 2adb3069b0e04-54d6e627866mr2265440e87.21.1745158831198;
-        Sun, 20 Apr 2025 07:20:31 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5e548dsm708711e87.193.2025.04.20.07.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Apr 2025 07:20:30 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] lib/test_vmalloc.c: Fix compile error with CONFIG_TINY_RCU
-Date: Sun, 20 Apr 2025 16:20:29 +0200
-Message-Id: <20250420142029.103169-1-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1745159773; c=relaxed/simple;
+	bh=PU6qKLj87YBy5+uqg2F4+r2zilpcE3fFtFR5664YCnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKHiyQkjrWErxI0r22phYc7Y/RqoCoGoPTmD1fK42jsU5rSls7314dxKixraaBymHRWKnqMgUuwq4U8K1WgK88g8qK37yimamsPRJ3cy9DxeQVoNH0oxZJeOoqJHrLb9oBZqgNWwdq5DvbVO9kEavnqqoM3L6MHJj0Tt1Tit6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lnkZY/1s; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745159771; x=1776695771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PU6qKLj87YBy5+uqg2F4+r2zilpcE3fFtFR5664YCnQ=;
+  b=lnkZY/1syYiEdqhqZlN1hgr0ycGtf0Eks3qqR+EFX22UAP0t8rdQXvru
+   6UdErZNAn9MrcwnWyj/pS0jA+pa1xQyUwyhUgaPidUZ69G5WTsFNP9T4T
+   SQHmtW9eRGU5nVJ+ygF0159m5Uyc1aTgf3L3e+vm2f1V2MDI/jqi+AFwB
+   P+Dt6/uNcvYs6Q86oURdCnCUIq3kWw3yL7jr9cIK3NmcrqE6ADASAnro3
+   zvplRwiEGWB8YcBlf65N4DEewz+aJV0YypeQYgqF9nyc0ag4vA+PWKPU+
+   QjwyVDB9dwdiRJveIB3Z0s8tkrlEQIdMuwPa8XNQ6GGIBESz0MfDOICRs
+   g==;
+X-CSE-ConnectionGUID: iLURwQySSuuXO1Ue+UU8Jg==
+X-CSE-MsgGUID: ZoaXTbb2QEW7aljDkwQ+fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11409"; a="49376631"
+X-IronPort-AV: E=Sophos;i="6.15,225,1739865600"; 
+   d="scan'208";a="49376631"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2025 07:36:10 -0700
+X-CSE-ConnectionGUID: wCEr1jZLRoG8pVNL8XssTw==
+X-CSE-MsgGUID: vLmfO2M6RLOxlL2HegtMhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,225,1739865600"; 
+   d="scan'208";a="168714530"
+Received: from lkp-server01.sh.intel.com (HELO 61e10e65ea0f) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 20 Apr 2025 07:36:07 -0700
+Received: from kbuild by 61e10e65ea0f with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u6Vm8-0004hZ-2z;
+	Sun, 20 Apr 2025 14:36:04 +0000
+Date: Sun, 20 Apr 2025 22:35:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: Re: [PATCH v5] hwmon: (max77705) add initial support
+Message-ID: <202504202204.GCyy3bOc-lkp@intel.com>
+References: <20250419-initial-support-for-max77705-sensors-v5-1-4504a9b48ba1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250419-initial-support-for-max77705-sensors-v5-1-4504a9b48ba1@gmail.com>
 
-When the kernel is built with CONFIG_TINY_RCU, compiling the
-test_vmalloc.c fails, due to conflicting definitions like
-"struct srcu_usage", etc. between "srcutiny.h" and "srcutree.h".
+Hi Dzmitry,
 
-It happens because of direct including the "srcutree.h" bypassing
-the automatic selection mechanism. A correct approach is to include
-a generic <linux/srcu.h> which properly select SRCU implementation
-based on a kernel configuration.
+kernel test robot noticed the following build warnings:
 
-Fix it by replacing the "srcutree.h" include with "srcu.h".
+[auto build test WARNING on a4cda136f021ad44b8b52286aafd613030a6db5f]
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202504190717.tJHs381f-lkp@intel.com/
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- lib/test_vmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/hwmon-max77705-add-initial-support/20250420-030631
+base:   a4cda136f021ad44b8b52286aafd613030a6db5f
+patch link:    https://lore.kernel.org/r/20250419-initial-support-for-max77705-sensors-v5-1-4504a9b48ba1%40gmail.com
+patch subject: [PATCH v5] hwmon: (max77705) add initial support
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250420/202504202204.GCyy3bOc-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250420/202504202204.GCyy3bOc-lkp@intel.com/reproduce)
 
-diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
-index 6d65ef725d42c..1b0b59549aaf1 100644
---- a/lib/test_vmalloc.c
-+++ b/lib/test_vmalloc.c
-@@ -15,7 +15,7 @@
- #include <linux/delay.h>
- #include <linux/mm.h>
- #include <linux/rcupdate.h>
--#include <linux/srcutree.h>
-+#include <linux/srcu.h>
- #include <linux/slab.h>
- 
- #define __param(type, name, init, msg)		\
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504202204.GCyy3bOc-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hwmon/max77705-hwmon.c:51:34: warning: unused variable 'max77705_hwmon_readable_ranges' [-Wunused-const-variable]
+      51 | static const struct regmap_range max77705_hwmon_readable_ranges[] = {
+         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/max77705_hwmon_readable_ranges +51 drivers/hwmon/max77705-hwmon.c
+
+    50	
+  > 51	static const struct regmap_range max77705_hwmon_readable_ranges[] = {
+    52		regmap_reg_range(AVGISYS_REG,	AVGISYS_REG + 1),
+    53		regmap_reg_range(IIN_REG,	IIN_REG + 1),
+    54		regmap_reg_range(ISYS_REG,	ISYS_REG + 1),
+    55		regmap_reg_range(VBYP_REG,	VBYP_REG + 1),
+    56		regmap_reg_range(VSYS_REG,	VSYS_REG + 1),
+    57	};
+    58	
+
 -- 
-2.39.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
