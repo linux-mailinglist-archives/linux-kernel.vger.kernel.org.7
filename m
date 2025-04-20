@@ -1,283 +1,104 @@
-Return-Path: <linux-kernel+bounces-612028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770AEA9499B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 22:42:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0D0A949A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 22:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 563263B2A90
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 20:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1ED1891047
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 20:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136FE1D89F8;
-	Sun, 20 Apr 2025 20:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BAA1DB148;
+	Sun, 20 Apr 2025 20:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="pLX+Ns2N"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIr56xHm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8941D5ADE;
-	Sun, 20 Apr 2025 20:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DF41D79B8;
+	Sun, 20 Apr 2025 20:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745181722; cv=none; b=SH5ijCkj1QwcSQNU0OdW1MP/BGLPzKIoyYS+OWmWKmNemfPeFSigD9nS1STDxm0lPYzrlx//MGDmsUWGuQ3EGMWHpQNo/qRuqWx46kIyQJQnWYJWPhmkpEvIlJ/qYAuI+sUgPTr6vzkv7vFmH0TPp9bJRG24iIEyv6RVyCF48tc=
+	t=1745181743; cv=none; b=QGk8SJPGNMBhGUnulKoYbznNPxo8k+Hs96eeA9JueTQ+LqIHzYEXHpwL1SS+cgvSGvOjSTPeqp8UDMnHYDwF/hevXFKArqXfqyVTJ2Hh6eCG9WnfpKzcAWp/gVicles8r/g6axpLczfPZw23dCoLVRiXFInecZ5Rq3V3Kxxe+E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745181722; c=relaxed/simple;
-	bh=teQPYuDz9tTXi8mi2szKpSwzk5F4fW9V3LeXAakuhBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BlkKda0UJRKfiqJBUg2aSpPDrxJN9zs1H3RGhm/rLLwxtszqPfafv6hPIXdgk9A9biftV0zS4xSCbtIkrcTDjEmDxsfHTc58KqilTtM2eHddEL73naGuTAMFy+elwtbR4O50zAlkGifi5kPn2MZWFhezQ35wBj78nxkqBiI8Y1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=pLX+Ns2N; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=ddnYJVKGQ10tJFcHzN/bceP5e/6UXo4rMFvf/KYGMfI=; b=pLX+Ns2NbpfoEuE5
-	gp7T3CUbHxzcS9K/krAKZ2zOj+zWH3j/30Ev4ntqndF7WY1HXy/NEU83MlqTgMcMtGpJjiER8Q5xO
-	Qfur9+92fuNrwZ1YEsl1/w0eEJe3pJMIL2Tn0FukB/WzyDjMpKnbS4vtyuVP2axIhKXrCCCZRp6+2
-	xQeNXVecc9y5sMv7v05NBxG5N6vs0BSYlcKlGjNBtZG107y0aF1SwHnlExG6NCpPFCU7Sudg/3vfS
-	W6iIeVz5B5tvdyA/Kjk+3p5dvB38vi+QaqnU7Nt+KkDSnpMyPDagZ7OZgZHPuTGwHg9yyOoVWnWHD
-	oa8T++GNh5UhZrqEFA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1u6bU2-00Ck84-36;
-	Sun, 20 Apr 2025 20:41:46 +0000
-From: linux@treblig.org
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: corbet@lwn.net,
-	linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] rpmsg: core:  Remove deadcode
-Date: Sun, 20 Apr 2025 21:41:46 +0100
-Message-ID: <20250420204146.154807-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745181743; c=relaxed/simple;
+	bh=kKokJEjFYi8Ksm5QQ3qONIkFxJYvW00e94gaOUzw0KU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AUj2fvHyt63LnbBcNRdrlkA3nRwUoiC5lYFw5hohzJFznsmZouzHBjw28FvcUOwi2ae3beEiCXRaLwFsOCHcjdjsc59bMy/C5vJeVMgRgyalPnkPUxXASnok+/3k8oOYSrlEsWGhtrAwylvxtKx3gwqt+vih0SP+ThXPDp7IOW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIr56xHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DF81C4CEE2;
+	Sun, 20 Apr 2025 20:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745181743;
+	bh=kKokJEjFYi8Ksm5QQ3qONIkFxJYvW00e94gaOUzw0KU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gIr56xHmNvirBjarLbxoiuBYCfXcCEe3k69o2L50dx+shTPQRPB0wECCJbPC739IE
+	 eK61W4Me1DmEHksOJJ+HA13teXrwiFKBGjFlf4Y4fEJbj65om94W3Si9BbAhRWXHre
+	 vZXhKQXMKncxHUZyKAm70aEMcUXsQ6IjHOxQrVr2qCLT8zbJwXhq/phuiK2scr71gV
+	 fhx3EAdbiytsOfi5gaErJHUxyo443MwgoHUjS5MRbDmTQ68b7+3ngV78z8ukxov1li
+	 gX/TjPoZSDwZ8TTB5kkHJQtRbowTpOftvxWrkz94KQwzzVw/APTVywH6hGGuag6Sai
+	 PFjPDCi8MewSQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A910C369C2;
+	Sun, 20 Apr 2025 20:42:23 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] Support building tegra124-cpufreq as a module
+Date: Sun, 20 Apr 2025 15:41:59 -0500
+Message-Id: <20250420-tegra124-cpufreq-v1-0-0a47fe126091@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABdcBWgC/x3MQQqAIBBA0avErBNULKirRIvQ0WZjNlYE4t2Tl
+ m/xf4GMTJhh7gowPpTpiA2q78DuWwwoyDWDlnqQRipxYeBNaSNsuj3jKbybjPHO4qgttCwxenr
+ /5bLW+gFDC4nxYgAAAA==
+X-Change-ID: 20250401-tegra124-cpufreq-fd944fdce62c
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745181742; l=748;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=kKokJEjFYi8Ksm5QQ3qONIkFxJYvW00e94gaOUzw0KU=;
+ b=26xLAOIifCd1GbPdD4cj7WbTjM8dDmrB5R6GMNa+xPo4UL312EK7dD7DYkaLNRXaYp97iv/MR
+ pSFG6kKJE/+BCPHLlYpf/wD7I47/EmggR4tGnHKLzdWe5t1XmyL845j
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+This driver handles power management while offloading the primary
+cpufreq operations to cpufreq-dt. It fully disables cpufreq during
+resume if clocks fail, thus it needs access to a previously unexported
+cpufreq symbol.
 
-rpmsg_send_offchannel() and rpmsg_trysend_offchannel() have been
-unused since they were added in 2011's
-commit bcabbccabffe ("rpmsg: add virtio-based remote processor messaging
-bus")
-
-Remove them and associated docs.
-
-I suspect this means the trysend_offchannel and send_offchannel
-member function pointers and the virtio implementation of them can be
-removed as well, but haven't yet gone that far.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- Documentation/staging/rpmsg.rst | 46 ------------------------
- drivers/rpmsg/rpmsg_core.c      | 63 ---------------------------------
- include/linux/rpmsg.h           | 22 ------------
- 3 files changed, 131 deletions(-)
+Aaron Kling (2):
+      cpufreq: Export disable_cpufreq()
+      cpufreq: tegra124: Allow building as a module
 
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 3713adaa1608..40282cca86ca 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -110,31 +110,6 @@ or a timeout of 15 seconds elapses. When the latter happens,
- The function can only be called from a process context (for now).
- Returns 0 on success and an appropriate error value on failure.
- 
--::
--
--  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--							void *data, int len);
--
--
--sends a message across to the remote processor, using the src and dst
--addresses provided by the user.
--
--The caller should specify the endpoint, the data it wants to send,
--its length (in bytes), and explicit source and destination addresses.
--The message will then be sent to the remote processor to which the
--endpoint's channel belongs, but the endpoint's src and channel dst
--addresses will be ignored (and the user-provided addresses will
--be used instead).
--
--In case there are no TX buffers available, the function will block until
--one becomes available (i.e. until the remote processor consumes
--a tx buffer and puts it back on virtio's used descriptor ring),
--or a timeout of 15 seconds elapses. When the latter happens,
---ERESTARTSYS is returned.
--
--The function can only be called from a process context (for now).
--Returns 0 on success and an appropriate error value on failure.
--
- ::
- 
-   int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
-@@ -173,27 +148,6 @@ return -ENOMEM without waiting until one becomes available.
- The function can only be called from a process context (for now).
- Returns 0 on success and an appropriate error value on failure.
- 
--::
--
--  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--							void *data, int len);
--
--
--sends a message across to the remote processor, using source and
--destination addresses provided by the user.
--
--The user should specify the channel, the data it wants to send,
--its length (in bytes), and explicit source and destination addresses.
--The message will then be sent to the remote processor to which the
--channel belongs, but the channel's src and dst addresses will be
--ignored (and the user-provided addresses will be used instead).
--
--In case there are no TX buffers available, the function will immediately
--return -ENOMEM without waiting until one becomes available.
--
--The function can only be called from a process context (for now).
--Returns 0 on success and an appropriate error value on failure.
--
- ::
- 
-   struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 207b64c0a2fe..6ee36adcbdba 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -193,38 +193,6 @@ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- }
- EXPORT_SYMBOL(rpmsg_sendto);
- 
--/**
-- * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
-- * @ept: the rpmsg endpoint
-- * @src: source address
-- * @dst: destination address
-- * @data: payload of message
-- * @len: length of payload
-- *
-- * This function sends @data of length @len to the remote @dst address,
-- * and uses @src as the source address.
-- * The message will be sent to the remote processor which the @ept
-- * endpoint belongs to.
-- * In case there are no TX buffers available, the function will block until
-- * one becomes available, or a timeout of 15 seconds elapses. When the latter
-- * happens, -ERESTARTSYS is returned.
-- *
-- * Can only be called from process context (for now).
-- *
-- * Return: 0 on success and an appropriate error value on failure.
-- */
--int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--			  void *data, int len)
--{
--	if (WARN_ON(!ept))
--		return -EINVAL;
--	if (!ept->ops->send_offchannel)
--		return -ENXIO;
--
--	return ept->ops->send_offchannel(ept, src, dst, data, len);
--}
--EXPORT_SYMBOL(rpmsg_send_offchannel);
--
- /**
-  * rpmsg_trysend() - send a message across to the remote processor
-  * @ept: the rpmsg endpoint
-@@ -301,37 +269,6 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- }
- EXPORT_SYMBOL(rpmsg_poll);
- 
--/**
-- * rpmsg_trysend_offchannel() - send a message using explicit src/dst addresses
-- * @ept: the rpmsg endpoint
-- * @src: source address
-- * @dst: destination address
-- * @data: payload of message
-- * @len: length of payload
-- *
-- * This function sends @data of length @len to the remote @dst address,
-- * and uses @src as the source address.
-- * The message will be sent to the remote processor which the @ept
-- * endpoint belongs to.
-- * In case there are no TX buffers available, the function will immediately
-- * return -ENOMEM without waiting until one becomes available.
-- *
-- * Can only be called from process context (for now).
-- *
-- * Return: 0 on success and an appropriate error value on failure.
-- */
--int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--			     void *data, int len)
--{
--	if (WARN_ON(!ept))
--		return -EINVAL;
--	if (!ept->ops->trysend_offchannel)
--		return -ENXIO;
--
--	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
--}
--EXPORT_SYMBOL(rpmsg_trysend_offchannel);
--
- /**
-  * rpmsg_set_flow_control() - request remote to pause/resume transmission
-  * @ept:	the rpmsg endpoint
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 90d8e4475f80..fb7ab9165645 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -184,13 +184,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
- 
- int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
- int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
--int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--			  void *data, int len);
- 
- int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
- int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
--int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--			     void *data, int len);
- 
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
-@@ -271,15 +267,6 @@ static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
- 
- }
- 
--static inline int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					u32 dst, void *data, int len)
--{
--	/* This shouldn't be possible */
--	WARN_ON(1);
--
--	return -ENXIO;
--}
--
- static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
- 	/* This shouldn't be possible */
-@@ -297,15 +284,6 @@ static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 	return -ENXIO;
- }
- 
--static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					   u32 dst, void *data, int len)
--{
--	/* This shouldn't be possible */
--	WARN_ON(1);
--
--	return -ENXIO;
--}
--
- static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 				      struct file *filp, poll_table *wait)
- {
+ drivers/cpufreq/Kconfig.arm        | 2 +-
+ drivers/cpufreq/cpufreq.c          | 1 +
+ drivers/cpufreq/tegra124-cpufreq.c | 2 ++
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+---
+base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+change-id: 20250401-tegra124-cpufreq-fd944fdce62c
+
+Best regards,
 -- 
-2.49.0
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
