@@ -1,763 +1,424 @@
-Return-Path: <linux-kernel+bounces-612009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B708EA94966
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 21:38:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C91AA94968
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 21:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 705617A407E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 19:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E121891CE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 19:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0843E172767;
-	Sun, 20 Apr 2025 19:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7C71A00FE;
+	Sun, 20 Apr 2025 19:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CsOcTbmJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GjEGcV7n"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6jmHEzI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6453D801;
-	Sun, 20 Apr 2025 19:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745177905; cv=fail; b=rA6IN/Pxy11NXRIhUEFAR80i2W8+E9amJJ/n4J6JDqzt9Muy0/lz1gr+JcP4fqJno85GNQy/KaPegbvoAuewP4NE5JpmBqwkOINeWEy1F9uGPOo3sJVI07pNT1dogjR8hpK3Lg7TcdqXqjA0i2mAh0JTpIs7kQhDNa4xG8wEC6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745177905; c=relaxed/simple;
-	bh=nrw3TCUBrznDh47CJaR9DtUPgcrUK/bNOBLpyyyYfUc=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=h6XvIrYyLxVdMkRWiJ8dEfhl4IsJ82pnSU+pi62Gp8iXsFgJvOwNcKzlSCRl/h6EjZHGXm+mQezedJAZGBxuW+usCP9tOY3IUt8GaYcBZFszKQdc7AduQ6TM8mBU0gBitfsWdroGu27fbbL2IYcaOhKtTPtK/kkjrg5ttcSF3eI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CsOcTbmJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GjEGcV7n; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53KIP2hl015352;
-	Sun, 20 Apr 2025 19:37:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=pRnAzLKywpcvGou0pCFal1rZj/JbYBpIrjuRpvLBlFM=; b=
-	CsOcTbmJlQL4KQPsGNR/SfwphitgyI3xNBoI+f31AYPCB5RsGC44xo+6xZ520s9b
-	RjZSZgcciLX27AmIIBBXlzlYrYnzzWRMEJxY4i4wvTszwN6C6NCWj03G0uaJflz1
-	4cEbQ0xz0FmfqgdQ6hEicAoqW8qdd/wrZHOdJTNoeyjsYlO6iMd+I+FRia3e3ZSh
-	5PCN17mZDZr0sViDg/aFFJWTCVdqXfEyyC9BuRKi+M3GGGHJiXCgMmgbhF7GkEOt
-	1nSAdsRvatUYHO9xok/paHYMNGpcUUmrEyXCcMtcgXVhX9gvn3mwJE4nK8RzVt6y
-	3xItUqA4iYyDuI7RXA9qzw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4642m1shr2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Apr 2025 19:37:52 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53KJAplZ033565;
-	Sun, 20 Apr 2025 19:37:51 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2044.outbound.protection.outlook.com [104.47.73.44])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 464297b748-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Apr 2025 19:37:51 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a8D6lzJyZPcrjoubDEQTxtE13dgL7jibWGvGWGBAypGUz1E9IYiNFCxg1V0sgZ2oap11Cm4D5F5l0rtRVqoDLKtlLS5TtKUOZuI4mqvG46oBY1EIOQpeBE9a1AdLOayd9x3OpE2J4s0BwL7EBE27TN5YZx8iJbqTEjgqLyhkHzLcJjO9jqZqbHdgAgR2WFvH8yG4DGR/leF8TFIdACjlSqdmniOq5aENtaczlZ8BF7HerAz8Z7bPuzGrjiVQ3xQUXs3ud/ij4xIVFjNQ0I11d3alYUk9IyAYzc2Fj7Y5WegC0z0T3CtmiLMQQkcj/m3w/h5HM/rwzxsgibJ8jWInag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pRnAzLKywpcvGou0pCFal1rZj/JbYBpIrjuRpvLBlFM=;
- b=DdlUZmYb/hYph4oGo66HBkETf3Cli/FN3yCxQiulgUHSliFSrm0iIrYWlcpgUJVTbaQEdqF9KD70kzidEYysDCTMFy9M4i6FvW650gR9WaPwud1qkCVuV3UEJmP2Wyh2BQ6n2unLnWa4ZvEUvhUqWHtnfbJkGbaYf9PxzBqCMvAbwvHP9wssQG3NrwNKDRapYI4BrQy8SGqGUCglq8A51Vxbqy2OAuzQGsgpR015Tf5NOfPzJtX3pVkII7XV/czd/CsOqIkmLYE36LxjK+rPgNtOdm/kr/dAUkIDXw+e4HWeemSa604R3TQsRc+6R592/gVgqK1ZQg+sfLf1p0137A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pRnAzLKywpcvGou0pCFal1rZj/JbYBpIrjuRpvLBlFM=;
- b=GjEGcV7nnthqZb+l3EodvpOgBfY7GABSBhj7sKWcL9Gqtkx40aR74u0QgpLCaupgRGTU4CC3d+5HNqeq2GOvntG8gdCkLKSwtZK7rIEPVUhcZRmoR44PgtuYnAZGD2xb0lKgT236SnySWCKwT80pUpL9zN0umFT35YrmrFBST0o=
-Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
- by DS4PPF67D158296.namprd10.prod.outlook.com (2603:10b6:f:fc00::d23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Sun, 20 Apr
- 2025 19:37:49 +0000
-Received: from DS7PR10MB5328.namprd10.prod.outlook.com
- ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
- ([fe80::ea13:c6c1:9956:b29c%2]) with mapi id 15.20.8655.033; Sun, 20 Apr 2025
- 19:37:49 +0000
-Message-ID: <06a94366-cc81-4127-9edc-501e696301b0@oracle.com>
-Date: Mon, 21 Apr 2025 01:07:42 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : [PATCH v5 2/3] :i3c: master: Add Qualcomm I3C
- controller driver
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, jarkko.nikula@linux.intel.com,
-        linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org
-References: <20250420081530.2708238-1-quic_msavaliy@quicinc.com>
- <20250420081530.2708238-3-quic_msavaliy@quicinc.com>
-Content-Language: en-US
-From: ALOK TIWARI <alok.a.tiwari@oracle.com>
-In-Reply-To: <20250420081530.2708238-3-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0010.apcprd02.prod.outlook.com
- (2603:1096:4:194::15) To DS7PR10MB5328.namprd10.prod.outlook.com
- (2603:10b6:5:3a6::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BCE1C3308;
+	Sun, 20 Apr 2025 19:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745178037; cv=none; b=t5Ovv08u0XsevC5saMnwNXM1zMwD9+3gxo60bDaL2ajxe+iqDssjRdYUoAO4Jz6Y3xyhy7sxMIFHsCwHYWQlWZMqR/m0f6kX2lWIwtTmpKmXEyWwRrQ3h5VPckIlvve0kzO/S7rpAY8k0ucp25MZ1fkiGjZ/x+f3ODubiHzanE8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745178037; c=relaxed/simple;
+	bh=WER3yiCxSUNd35waDmXna/DAdssXo1TLxiXerC/7Nck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=indOLxMFzp8TZR+sjvSoMC1rRcLdWBx3R2qfghnos5suw1Fq60L47amXMwLI88hl4ZK1DZ2Z+dXHteG+H6AFOhBtXhHRQG+bl9ifrdHk1MwjHP4gIc73WPtmthE8RErIWxFGHEMto8yXNxfDeYpbrd7tX8Z5mA3Ma0esCUotpuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6jmHEzI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 567A5C4CEE2;
+	Sun, 20 Apr 2025 19:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745178036;
+	bh=WER3yiCxSUNd35waDmXna/DAdssXo1TLxiXerC/7Nck=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K6jmHEzIOiu3Gkb1+XUhXWZ6n7Ym7IK2GVGTrScD1whM3g2Pyto2dm76dl4sG0Brr
+	 7KlEDHEzWsQ9b3nOXiaAO0dWdeDF1C0WIk8ttOtez7m9OVujYqPIBPb4yxgK4k/ido
+	 CRsWO2EJa+5iZBgWf8tovo630V4Gh3HGhsigDNemlbsuepMUHKiogczSis8+1OPJWK
+	 k5yV2XDmrHaEZGAZI68eIwueRyE2q395NIyishiRshlqWxmIdTMCT4eCcGksk4CXxz
+	 9Z79alc6LaLiI3dmQuVGnqwuXXhtrr3FLudw4WRVa6kviLvAYS6e8TeSpk+dNHk3fa
+	 1T1S5ng/bqyag==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/7] mm/damon: auto-tune DAMOS for NUMA setups including tiered memory
+Date: Sun, 20 Apr 2025 12:40:23 -0700
+Message-Id: <20250420194030.75838-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|DS4PPF67D158296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2d8d2917-84d8-420e-4310-08dd8042d538
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dWRSZDhENnluZUI3b1BPN3RnY1hCenlEUnFySVBvbUt0NjNxa25ONGgybmZ4?=
- =?utf-8?B?UFZFcmhxK0t4YzBFcUIrQ2YxTjJ6NFZmZ0RDc3pubG1pOUVpbk15emtsN1dj?=
- =?utf-8?B?eGFDalM5REpPYjlxWE5lU0oyL2FoYkh1MUhjVm9nR2lXMU01eUhDMzZsMjhu?=
- =?utf-8?B?SDNoYm9NWU1YQVlLRS95MGdJVWwzd0FiZ25mbW8vTEZpZjZqTVRaamk2RHJk?=
- =?utf-8?B?RklXZXpBakUrMTZQU2pacmhJcTZzKzlhZ0N1d2thR2RIZkVXNWkvNHozVndo?=
- =?utf-8?B?YUg2TmtCNVZjSVNNbEg4ZXNrRGpsVUNiSko2N3lJeGtkd2VnUHp3OUdCOXlZ?=
- =?utf-8?B?YXRQTzJMT3JxeDlqNkdwbG8ycUxBamhwL1ptcEFsTmkyQ1FwZmszcXdQekQr?=
- =?utf-8?B?eW5wTXVTdzJJTFdJcFNCYkZpT09NYjVMaW9Gc0NWZW0yZXN1bTdZQWYyMHE3?=
- =?utf-8?B?Ukw5Y0o2NUVnd0IwRUt4TzVNaFJNcE9QTlR0bFRURUVjb1REZXZ3bHp4Z3Ba?=
- =?utf-8?B?RFV4N1FDUmxKdUIxbGNYdHJSOFZvZit1cXBIMFI1anlBaXMrUWJtd1BSQmRq?=
- =?utf-8?B?bk9ESzRzbzdwRkx0Q3BiL0RqV1pTTGVjWmUwZGs4WDBVSmJJN0x1bXBKOVYr?=
- =?utf-8?B?dTZsSWNGZzRKeGtPTCs2V1VyVDYxRWxscWFEalVadjlvMlVvVXIxN2lSelNN?=
- =?utf-8?B?dWlmQWVHcTIyNmluUEo1b3dvN0hTemhxb0d3Z09tZXZkcHVEMGJVMDJaNkU1?=
- =?utf-8?B?dkVxUFVNZWVyTDhCa3ZNaVBrMStobzRLQlY3WmppcG85OWxBS0xCbzRCYXk1?=
- =?utf-8?B?a0JCZjg1Y044NkRobHdWNmQ5M2RVWTRHck1OanhNdWhROGk4bE5JSVhwQ3E0?=
- =?utf-8?B?S05SMkpBNHYvaE43ajVnNVAydkNVVTdqVnUyZjRwRHZpRUxlWVdFcjd6Zkt0?=
- =?utf-8?B?QXk5WFFpMVkyVjJiMlNERUhqdUIzYzJuNW1nRExRYTJCSTNUZitJUDFrY3Rx?=
- =?utf-8?B?cjZsbEpKdW01SEZ0cDNXbDBhKzIvbXhMVTdOaWl6RVFQMExiUmFhanAwd2xx?=
- =?utf-8?B?MzgxYUxCZVkxb0hEb004WUwyS1c5U3Q3bDlVN1FnSW45TzZ2d1YzMTkwRFlX?=
- =?utf-8?B?WmVFOWRsU2FzRHErNkpqUnk5VDd1cTNra3lwdVFwS3hpamlFT0czMnlPYUpL?=
- =?utf-8?B?bEU4dUE3YUVHNXIySjk4V2J1WVYvUXE3a3VnRGsyRERjYy9ieUJCUGVaVzdx?=
- =?utf-8?B?TGNTeHRHQVo4UlBueFdGSk1ieUlQRXgxbjh4N1JkTzYrQTdSYkZ3MjV5SjlJ?=
- =?utf-8?B?bytxVWx5OS9oUGh1ZzMzRHN5eDVmeHlpRUt4ck1QVWtHL0pKNS9FRDNwT1Bh?=
- =?utf-8?B?QVFqWWZYUVVvRUV1UjJNVVRlMlJRRkttNm8wMGdYYnRRQlRZOHpTY3pMNDRi?=
- =?utf-8?B?TDg4SVhiYjh0R1MvVlN3WUcwcWxSRlcrQ1d4bXo5VTJ6S2FJQkw2M1VDY3Rq?=
- =?utf-8?B?eE03d3lnMytHTHZRbHV0RlFZT1hTVmQvd2tNT1laZllWZzU2QzZKNWQxMW94?=
- =?utf-8?B?RXYrRVZpNy9CcVpxQi9ia1Z2d1NYTGFOUWI3aDNLdGFOOHlPQnRUYUJheHBV?=
- =?utf-8?B?cTg2WXRLV01pNEI1K0c5QmxqT3ErcmNOWlNKSldMQStSV0RyZm1Ca2ZsZVNI?=
- =?utf-8?B?TjdEUE93QngyQms2Z2Z2RjZaWkI2RVM1M3U2QWF1c3dEWkJJRGExR0VKVnhH?=
- =?utf-8?B?anAwUHNuWnZIN1hHM1dETUVVTUo2aURMMmRpMzI1b1ZoNU41aXhGK2IrKzNp?=
- =?utf-8?B?TWdMYkxvMTVvRnUxNUMyZTlGNHIxTWZjTHdSOG5YcVdUVjdPdE1VSHpDZ0pX?=
- =?utf-8?B?TEpWUHgxT005YTZyRk50dG84TnpNb2haMUZ6ckdlTEY4MXEyZGFIWldvazhx?=
- =?utf-8?B?WjVhZGwwQW01UVpFUzhjWmJaMG0xV0RWbEFkOFRHc0ZmanVwMjV5Tm9NVnBp?=
- =?utf-8?B?NWRjZ2MyVVJRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RUc0VmtCOEw1MFRzZktIczVPYjJ1K25sam5sQ3gvQm96YjV2enNyYm5JRHA3?=
- =?utf-8?B?UDN0d2pqa2UwUjhpb0MxcmQwMkgzWVpzbmlEVCtVT1R4VzVXQVBIenVkS2dZ?=
- =?utf-8?B?RkNsZ1E2SVB1K3R1N1NEbmRydE1CWGRrMFhSaXQra1Q5Vjd5U1RZYmMrRDFY?=
- =?utf-8?B?U3hSYVFnd1JvbnFZREo5NjZ1WUtQNlJiZlNBbE5tOG1RMzhEaUlCUDdRWVVv?=
- =?utf-8?B?ajhnU2toNTgrZk0rRSs1bDFNUndFYXRpRXpQYjB6QVlxSk5OUXl2OTdwRElj?=
- =?utf-8?B?cFd6MGswaVZpSzVQV2hlYWwxUTJoT0E5c0ZCWWRleWFBcmFGb3J5U0YxWVls?=
- =?utf-8?B?VnRMeEsrOE5mUlZ6WHcrUFJ6ZGRkL213S2ZZQkp2NWk5RWc4Wm40VGd1ejZK?=
- =?utf-8?B?bThPYUxxbzU1WE9TSXBqTnpUQ2I1UmdWbnlvMnE1aFhqRWlhTko3TmF1dmUr?=
- =?utf-8?B?S05hcFA3TXZVYTVjSEZlZDY0dXBOc0lwZVNlRzBobjYzN3JKL3Y0N09mL3ZR?=
- =?utf-8?B?SmNHT2xPVDcxNTBLb2lDTkU4ZTcvWW1UdzFES2FoRUhmNjVZcGRvbTRJOEsw?=
- =?utf-8?B?V04ybGZrTTVtNE8wTktrbzlhc2M5SFRVbm5INXowN3ZlTE4rMUpocmRibE5S?=
- =?utf-8?B?aG1HMUY0WVlXdVJrS0RiMUtYRzltSG9sSUtCOUJKN1lpQlJtY1Y1STE3Zmly?=
- =?utf-8?B?bzdZOVUxWUZTeXBJWStGUjVQWnl3aWZsMjVKSGJ2R29XY2M1K3laczQzNmFh?=
- =?utf-8?B?dVI5dVdjTkJkUklLZXhCM3BYbENDaDkrODhVSTFMVWJjVUVlWlhQSm5yNmgy?=
- =?utf-8?B?WmxLM2VBZm5aOGh4bmpzNlozcUQrRVd2VnBsQmI3Tyt5ZHhEOXJRT3JGbG02?=
- =?utf-8?B?ZyttNEM0UitpSWhFUThqdk1tTUkyVGgrcmZnNlVhQ095Z25KbVZlU2VrRnhm?=
- =?utf-8?B?SDh1NDlnZjkvSHRMOFR2NkFpUlBhVU5ESjRRb3FRSXFCSnBYQUhyMUtVUStV?=
- =?utf-8?B?QmtjZjgvNEprY2hBemdtNC9ERTFTTFNIZ1ZNbGNHa3ZOVUhvNndxQmtBREdH?=
- =?utf-8?B?aWRLc1VLSjBhQW43cURGY1JRN3YwRVZsd1p3TlFia0tjcWo1cjJoYmxyS0ZZ?=
- =?utf-8?B?QmpGRW5FZ2dzMDVidi81K3dmWmJlVnZ0TkF6OW1XOC9mN2ZQMWEzeWFJZVJE?=
- =?utf-8?B?UjVMTVVrZVQ4dHAyb1dVY0UzS1dFMWY1alpFa1pRYlFqRkNDd0I2RHVZc3JZ?=
- =?utf-8?B?cG5lTDVobStyK2ZNNUttT01EdEx0S0dVdm9ZMXVKcFUrSzg0V3YvTlR5VFA0?=
- =?utf-8?B?cGdVd1dZUjBzSmJGeUMxaER6UmpEREhxakhtVWxLVkhIU2FUblZjS2JBMktm?=
- =?utf-8?B?bmhwQ0huRFphYlg5bFZCSjVhdzd2aVlMOWJDZUgvRDZPaWtGditLRVJhdkli?=
- =?utf-8?B?a0FNYXhLSDhmRHV2Z1dwWnVuckI4L0FBMGlVVWpwd1BjK1pockI4MFl6MDhO?=
- =?utf-8?B?elIxRXNlSllPZUpBOG50L2VlRnIyR0JwemYxQ1A2ckIwT3ZmTzhaUUdOZmRX?=
- =?utf-8?B?L3NISm5UUTRJREswWU1YVHVyNFZmbVhGTFUxL3RKVTMxNWRUT0llUnpHNUdi?=
- =?utf-8?B?OXJtSnVGWk1ReEc2Y3d3WUVSRDlkUmJ5S3NUSC9WcU92TUJrMnAzeEtaVUYx?=
- =?utf-8?B?NVAvUTVPbnFLT3hTdVJpMUluQ053VVJLLy9qdVNWdEs1VCt3cm9GaEQ4SFpW?=
- =?utf-8?B?VTVXUW00NkhmVE5TVWJuQWRrbDl1b2t6S3k4Wlh2N1luWWJ0d010cUo5Ymxt?=
- =?utf-8?B?bDNLT25zUFlLQ0QvZEFiTG1PZTRaK3VTK2VqcmRvbjFPN1pYSjRtckNVQzRV?=
- =?utf-8?B?MTZTSmh4VXhqcFVMOFcxRkRsZTNzWXNLeUxzRU1uOU5VS0dEbHFwUXRWbHRq?=
- =?utf-8?B?NXJRWmNKQVFScktvaWVyTGZTZlZtSFNwQTNsOTRLRmszUXhPY2E0bXdoa2VZ?=
- =?utf-8?B?SllxbzhDMmpYV2xsN21ZUXpHRXVGVDFweGVwUmxrY2FNQjBQWE1XWWpxVjQw?=
- =?utf-8?B?WXJBR2FUYVMzRkJtc1NVTzNsZXhDTmd6ZHlVeEM3bE9iUld4Z0NMdHZLOFVz?=
- =?utf-8?B?NEVjUVpoeUNjUEtxTGw4eFh6cjZVVE95R3NtOUordEFZOUxBbkZrTkM1M1l1?=
- =?utf-8?B?L1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	D/fl8Dyf4dWwbk38wM0io+Ks+7jtQbCoQIAwHRL2s0LQOzfDmmNfVzjjsWSyosRfbrlvg7gbJQyvhfssC61LAQsaNtvTjY2DzGpVevclrjXE2GpurbVgalI0LIYwgclr3GRnnL4wm5pOGiMjHHsZgvVxgM92ErWFZQpA7/BBdoeDKNc1setpT9itazYprtKTp5h+6ApJaYdf6g87U2n4HTV2TAYvoiGVDYTWypYBAIDZU+yX6QtgE4FzL+vsKZURzAF669xja4AVhIq3mlML6RMDvkcAV56cIAtTSBZLE5OK32NoJd5D7aMj+TIeB63fUR0M8CLa1aoemufisSzncjJvPYDVJKGKpfsFZBrK1VaHFLMviKwg0pUS5fmKvf7KHdGuxoF2MZBUjq6TNre1hkT2TghXrx1sMWXeCXKXD24WV609bHqhAhwwjJyRBbdQA7uJs1M+df6dmZrzQexHBBwMoBkqmgnuRqwVZrxfCCVc42zaxnF36kZO/u1spXeeyMnIhK+rB2x734Ofg7y76PDic7nZH+D45w71knR49uPQf1xw5kY3Pzr0ZYkHy1zCgZbVJKl2K29Xb9pmwra45XPe5cw2aBeEYegUhhKlfwY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d8d2917-84d8-420e-4310-08dd8042d538
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2025 19:37:49.2880
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I3A8yv+FqdNnoMyFQIPegn+BSAjFGTYFU1u9hY5ks8WvrUWmpRQqDVBkQNiIKhfcEjdf5fqpMPWRP8hlHdeYFnpkn4Vp1vVkeos8SHlcdvk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF67D158296
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-20_09,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2504200161
-X-Proofpoint-ORIG-GUID: y6uKOeBmz3r3MoifRYVshjf0RvjqMO-c
-X-Proofpoint-GUID: y6uKOeBmz3r3MoifRYVshjf0RvjqMO-c
+Content-Transfer-Encoding: 8bit
 
-Hi Mukesh,
+Utilizing DAMON for memory tiering usually requires manual tuning and/or
+tedious controls.  Let it self-tune hotness and coldness thresholds for
+promotion and demotion aiming high utilization of high memory tiers, by
+introducing new DAMOS quota goal metrics representing the used and the
+free memory ratios of specific NUMA nodes.  And introduce a sample DAMON
+module that demonstrates how the new feature can be used for memory
+tiering use cases.
 
-On 20-04-2025 13:45, Mukesh Kumar Savaliya wrote:
-> Add support for the Qualcomm I3C controller driver, which implements
-> I3C master functionality as defined in the MIPI Alliance Specification
-> for I3C, Version 1.0.
-> 
-> This driver supports master role in SDR mode.
-> 
-> Unlike some other I3C master controllers, this implementation
-> does not support In-Band Interrupts (IBI) and Hot-join requests.
-> 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> ---
-[clip]
-> +};
-> +
-> +/*
-> + * Hardware uses the underlying formula to calculate time periods of
-> + * SCL clock cycle. Firmware uses some additional cycles excluded from the
-> + * below formula and it is confirmed that the time periods are within
-> + * specification limits.
-> + *
-> + * time of high period of I2C SCL:
-> + *         i2c_t_high = (i2c_t_high_cnt * clk_div) / source_clock
-> + * time of low period of I2C SCL:
-> + *         i2c_t_low = (i2c_t_low_cnt * clk_div) / source_clock
-> + * time of full period of I2C SCL:
-> + *         i2c_t_cycle = (i2c_t_cycle_cnt * clk_div) / source_clock
-> + * time of high period of I3C SCL:
-> + *         i3c_t_high = (i3c_t_high_cnt * clk_div) / source_clock
-> + * time of full period of I3C SCL:
-> + *         i3c_t_cycle = (i3c_t_cycle_cnt * clk_div) / source_clock
-> + * clk_freq_out = t / t_cycle
-> + */
+Backgrounds
+===========
 
-Here is a polished version, if you'd like. Otherwise, feel free to ignore it
-/*
-  * The hardware uses the following formulas to calculate the time periods
-  * of the SCL clock cycle. The firmware adds a few extra cycles that 
-are not
-  * included in the formulas below. It has been verified that the resulting
-  * timings remain within the I2C/I3C specification limits.
-  *
-  * I2C SCL high period:
-  *     i2c_t_high = (i2c_t_high_cnt * clk_div) / source_clock
-  *
-  * I2C SCL low period:
-  *     i2c_t_low = (i2c_t_low_cnt * clk_div) / source_clock
-  *
-  * I2C SCL full cycle:
-  *     i2c_t_cycle = (i2c_t_cycle_cnt * clk_div) / source_clock
-  *
-  * I3C SCL high period:
-  *     i3c_t_high = (i3c_t_high_cnt * clk_div) / source_clock
-  *
-  * I3C SCL full cycle:
-  *     i3c_t_cycle = (i3c_t_cycle_cnt * clk_div) / source_clock
-  *
-  * Output clock frequency:
-  *     clk_freq_out = t / t_cycle
-  */
+A type of tiered memory system exposes the memory tiers as NUMA nodes.
+A straightforward pages placement strategy for such systems is placing
+access-hot and cold pages on upper and lower tiers, reespectively,
+pursuing higher utilization of upper tiers.  Since access temperature
+can be dynamic, periodically finding and migrating hot pages and cold
+pages to proper tiers (promoting and demoting) is also required.  Linux
+kernel provides several features for such dynamic and transparent pages
+placement.
 
-> +static const struct geni_i3c_clk_settings geni_i3c_clk_map[] = {
-> +	{
-> +		.clk_freq_out = 100 * HZ_PER_KHZ,
-> +		.clk_src_freq = 19200 * HZ_PER_KHZ,
-> +		.clk_div = 1,
-> +		.i2c_t_high_cnt = 76,
-> +		.i2c_t_low_cnt = 90,
-> +		.i3c_t_high_cnt = 7,
-> +		.i3c_t_cycle_cnt = 8,
-> +		.i2c_t_cycle_cnt = 192,
-> +	},
-[clip]
-> +
-> +static int i3c_geni_execute_read_command(struct geni_i3c_dev *gi3c,
-> +					 struct geni_i3c_xfer_params *xfer, u8 *buf, u32 len)
-> +{
-> +	gi3c->cur_is_write = false;
-> +	gi3c->cur_buf = buf;
-> +	gi3c->cur_len = len;
+Page Faults and LRU
+-------------------
 
-a '\n' before return
+One widely known way is using NUMA balancing in tiering mode (a.k.a
+NUMAB-2) and reclaim-based demotion features.  In the setup, NUMAB-2
+finds hot pages using access check-purpose page faults (a.k.a prot_none)
+and promote those inside each process' context, until there is no more
+pages to promote, or the upper tier is filled up and memory pressure
+happens.  In the latter case, LRU-based reclaim logic wakes up as a
+response to the memory pressure and demotes cold pages to lower tiers in
+asynchronous (kswapd) and/or synchronous ways (direct reclaim).
 
-> +	return _i3c_geni_execute_command(gi3c, xfer);
-> +}
-> +
-> +static int i3c_geni_execute_write_command(struct geni_i3c_dev *gi3c,
-> +					  struct geni_i3c_xfer_params *xfer, u8 *buf, u32 len)
-> +{
-> +	gi3c->cur_is_write = true;
-> +	gi3c->cur_buf = buf;
-> +	gi3c->cur_len = len;
+DAMON
+-----
 
-a '\n' before return
+Yet another available solution is using DAMOS with migrate_hot and
+migrate_cold DAMOS actions for promotions and demotions, respectively.
+To make it optimum, users need to specify aggressiveness and access
+temperature thresholds for promotions and demotions in a good balance
+that results in high utilization of upper tiers.  The number of
+parameters is not small, and optimum parameter values depend on
+characteristics of the underlying hardware and the workload.  As a
+result, it often requires manual, time consuming and repetitive tuning
+of the DAMOS schemes for given workloads and systems combinations.
 
-> +	return _i3c_geni_execute_command(gi3c, xfer);
-> +}
-> +
-> +static void geni_i3c_perform_daa(struct geni_i3c_dev *gi3c)
-> +{
-> +	u8 last_dyn_addr = 0;
-> +	int ret;
-> +
-> +	while (1) {
-> +		u8 rx_buf[8], tx_buf[8];
-> +		struct geni_i3c_xfer_params xfer = { GENI_SE_FIFO };
-> +		struct i3c_device_info info = { 0 };
-> +		struct i3c_dev_desc *i3cdev;
-> +		bool new_device = true;
-> +		u64 pid;
-> +		u8 bcr, dcr, addr;
-> +
-> +		xfer.m_cmd = I2C_READ;
-> +		xfer.m_param = STOP_STRETCH | CONTINUOUS_MODE_DAA | USE_7E;
-> +		ret = i3c_geni_execute_read_command(gi3c, &xfer, rx_buf, 8);
-> +		if (ret)
-> +			break;
-> +
-> +		dcr = FIELD_PREP(GENMASK(7, 0), rx_buf[7]);
-> +		bcr = FIELD_PREP(GENMASK(7, 0), rx_buf[6]);
-> +		pid = FIELD_PREP(GENMASK(47, 40), (u64)rx_buf[0]) |
-> +			FIELD_PREP(GENMASK(39, 32), (u64)rx_buf[1]) |
-> +			FIELD_PREP(GENMASK(31, 24), (u64)rx_buf[2]) |
-> +			FIELD_PREP(GENMASK(23, 16), (u64)rx_buf[3]) |
-> +			FIELD_PREP(GENMASK(15, 8), (u64)rx_buf[4]) |
-> +			FIELD_PREP(GENMASK(7, 0), (u64)rx_buf[5]);
-> +
-> +		i3c_bus_for_each_i3cdev(&gi3c->ctrlr.bus, i3cdev) {
-> +			i3c_device_get_info(i3cdev->dev, &info);
-> +			if (pid == info.pid && dcr == info.dcr && bcr == info.bcr) {
-> +				new_device = false;
-> +				addr = info.dyn_addr ? : info.static_addr;
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (new_device) {
-> +			ret = i3c_master_get_free_addr(&gi3c->ctrlr, last_dyn_addr + 1);
-> +			if (ret < 0)
-> +				break;
-> +			addr = (u8)ret;
-> +			last_dyn_addr = addr;
-> +			set_new_addr_slot(gi3c->newaddrslots, addr);
-> +		}
-> +
-> +		/* Set Parity bit at BIT(7) */
-> +		tx_buf[0] = (addr & I3C_ADDR_MASK) << 1;
-> +		tx_buf[0] |= parity8(addr & I3C_ADDR_MASK);
-> +
-> +		xfer.m_cmd = I2C_WRITE;
-> +		xfer.m_param = STOP_STRETCH | BYPASS_ADDR_PHASE | USE_7E;
-> +
-> +		ret = i3c_geni_execute_write_command(gi3c, &xfer, tx_buf, 1);
-> +		if (ret)
-> +			break;
-> +	}
-> +}
-> +
-> +static int geni_i3c_master_send_ccc_cmd(struct i3c_master_controller *m,
-> +					struct i3c_ccc_cmd *cmd)
-> +{
-> +	struct geni_i3c_dev *gi3c = to_geni_i3c_master(m);
-> +	int i, ret;
-> +
-> +	if (!(cmd->id & I3C_CCC_DIRECT) && cmd->ndests != 1)
-> +		return -EINVAL;
-> +
-> +	ret = i3c_geni_runtime_get_mutex_lock(gi3c);
-> +	if (ret)
-> +		return ret;
-> +
-> +	qcom_geni_i3c_conf(gi3c, OPEN_DRAIN_MODE);
-> +	for (i = 0; i < cmd->ndests; i++) {
-> +		int stall = (i < (cmd->ndests - 1)) ||
-> +			(cmd->id == I3C_CCC_ENTDAA);
-> +		struct geni_i3c_xfer_params xfer = { GENI_SE_FIFO };
-> +
-> +		xfer.m_param  = (stall ? STOP_STRETCH : 0);
+Self-tuned DAMON-based Memory Tiering
+=====================================
 
-remove extra ' ' before =
+To solve such manual tuning problems, DAMOS provides aim-oriented
+feedback-driven quotas self-tuning.  Using the feature, we design a
+self-tuned DAMON-based memory tiering for general multi-tier memory
+systems.
 
-> +		xfer.m_param |= FIELD_PREP(CCC_HDR_CMD_MSK, cmd->id);
-> +		xfer.m_param |= IBI_NACK_TBL_CTRL;
-> +		if (cmd->id & I3C_CCC_DIRECT) {
-> +			xfer.m_param |= FIELD_PREP(SLAVE_ADDR_MASK, cmd->dests[i].addr);
-> +			if (cmd->rnw) {
-> +				if (i == 0)
-> +					xfer.m_cmd = I3C_DIRECT_CCC_READ;
-> +				else
-> +					xfer.m_cmd = I3C_PRIVATE_READ;
-> +			} else {
-> +				if (i == 0)
-> +					xfer.m_cmd =
-> +					   (cmd->dests[i].payload.len > 0) ?
-> +						I3C_DIRECT_CCC_WRITE :
-> +						I3C_DIRECT_CCC_ADDR_ONLY;
-> +				else
-> +					xfer.m_cmd = I3C_PRIVATE_WRITE;
-> +			}
-> +		} else {
-> +			if (cmd->dests[i].payload.len > 0)
-> +				xfer.m_cmd = I3C_BCAST_CCC_WRITE;
-> +			else
-> +				xfer.m_cmd = I3C_BCAST_CCC_ADDR_ONLY;
-> +		}
-> +
-> +		if (i == 0)
-> +			xfer.m_param |= USE_7E;
-> +
-> +		if (cmd->rnw)
-> +			ret = i3c_geni_execute_read_command(gi3c, &xfer,
-> +							    cmd->dests[i].payload.data,
-> +							    cmd->dests[i].payload.len);
-> +		else
-> +			ret = i3c_geni_execute_write_command(gi3c, &xfer,
-> +							     cmd->dests[i].payload.data,
-> +							     cmd->dests[i].payload.len);
-> +		if (ret)
-> +			break;
-> +
-> +		if (cmd->id == I3C_CCC_ENTDAA)
-> +			geni_i3c_perform_daa(gi3c);
-> +	}
-> +
-> +	i3c_geni_runtime_put_mutex_unlock(gi3c);
+For each memory tier node, if it has a lower tier, run a DAMOS scheme
+that demotes cold pages of the node, auto-tuning the aggressiveness
+aiming an amount of free space of the node.  The free space is for
+keeping the headroom that avoids significant memory pressure during
+upper tier memory usage spike, and promoting hot pages from the lower
+tier.
 
-a '\n' before return
+For each memory tier node, if it has an upper tier, run a DAMOS scheme
+that promotes hot pages of the current node to the upper tier,
+auto-tuning the aggressiveness aiming a high utilization ratio of the
+upper tier.  The target ratio is to ensure higher tiers are utilized as
+much as possible.  It should match with the headroom for demotion
+scheme, but have slight overlap, to ensure promotion and demotion are
+not entirely stopped.
 
-> +	return ret;
-> +}
-> +
-> +static int geni_i3c_master_priv_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *xfers,
-> +				      int nxfers)
-> +{
-> +	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-> +	struct geni_i3c_dev *gi3c = to_geni_i3c_master(m);
-> +	bool use_7e = false;
-> +	int i, ret;
-> +
-> +	ret = i3c_geni_runtime_get_mutex_lock(gi3c);
-> +	if (ret)
-> +		return ret;
-> +
-> +	qcom_geni_i3c_conf(gi3c, PUSH_PULL_MODE);
-> +
-> +	for (i = 0; i < nxfers; i++) {
-> +		bool stall = (i < (nxfers - 1));
-> +		struct geni_i3c_xfer_params xfer = { GENI_SE_FIFO };
-> +
-> +		xfer.m_param  = (stall ? STOP_STRETCH : 0);
+The aim-oriented aggressiveness auto-tuning of DAMOS is already
+available.  Hence, to make such tiering solution implementation, only
+new quota goal metrics for utilization and free space ratio of specific
+NUMA node need to be developed.
 
-remove extra ' ' before =
+Discussions
+===========
 
-> +		xfer.m_param |= FIELD_PREP(SLAVE_ADDR_MASK, dev->info.dyn_addr);
-> +		xfer.m_param |= (use_7e) ? USE_7E : 0;
-> +
-> +		/* use_7e = true only for last transfer */
-> +		use_7e = (i == nxfers - 1);
-> +
-> +		if (xfers[i].rnw) {
-> +			xfer.m_cmd = I3C_PRIVATE_READ;
-> +			ret = i3c_geni_execute_read_command(gi3c, &xfer, (u8 *)xfers[i].data.in,
-> +							    xfers[i].len);
-> +		} else {
-> +			xfer.m_cmd = I3C_PRIVATE_WRITE;
-> +			ret = i3c_geni_execute_write_command(gi3c, &xfer, (u8 *)xfers[i].data.out,
-> +							     xfers[i].len);
-> +		}
-> +
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	dev_dbg(gi3c->se.dev, "i3c priv: txn ret:%d\n", ret);
-> +	i3c_geni_runtime_put_mutex_unlock(gi3c);
+The design imposes below discussion points.
 
-a '\n' before return
+Expected Behaviors
+------------------
 
-> +	return ret;
-> +}
-> +
-> +static int geni_i3c_master_i2c_xfers(struct i2c_dev_desc *dev, struct i2c_msg *msgs, int num)
-> +{
-> +	struct i3c_master_controller *m = i2c_dev_get_master(dev);
-> +	struct geni_i3c_dev *gi3c = to_geni_i3c_master(m);
-> +	int i, ret;
-> +
-> +	ret = i3c_geni_runtime_get_mutex_lock(gi3c);
-> +	if (ret)
-> +		return ret;
-> +
-> +	qcom_geni_i3c_conf(gi3c, PUSH_PULL_MODE);
-> +
-> +	for (i = 0; i < num; i++) {
-> +		struct geni_i3c_xfer_params xfer;
-> +
-> +		xfer.m_cmd    = (msgs[i].flags & I2C_M_RD) ? I2C_READ : I2C_WRITE;
-> +		xfer.m_param  = (i < (num - 1)) ? STOP_STRETCH : 0;
-> +		xfer.m_param |= FIELD_PREP(SLAVE_ADDR_MASK, msgs[i].addr);
-> +		xfer.mode     = msgs[i].len > 32 ? GENI_SE_DMA : GENI_SE_FIFO;
+The system will let upper tier memory node accommodates as many hot data
+as possible.  If total amount of the data is less than the top tier
+memory's promotion/demotion target utilization, entire data will be just
+placed on the top tier.  Promotion scheme will do nothing since there is
+no data to promote.  Demotion scheme will also do nothing since the free
+space ratio of the top tier is higher than the goal.
 
-remove extra ' ' before =
+Only if the amount of data is larger than the top tier's utilization
+ratio, demotion scheme will demote cold pages and ensure the headroom
+free space.  Since the promotion and demotion schemes for a single node
+has small overlap at their target utilization and free space goals,
+promotions and demotions will continue working with a moderate
+aggressiveness level.  It will keep all data is placed on access hotness
+under dynamic access pattern, while minimizing the migration overhead.
 
-> +		if (msgs[i].flags & I2C_M_RD)
-> +			ret = i3c_geni_execute_read_command(gi3c, &xfer, msgs[i].buf, msgs[i].len);
-> +		else
-> +			ret = i3c_geni_execute_write_command(gi3c, &xfer, msgs[i].buf, msgs[i].len);
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	dev_dbg(gi3c->se.dev, "i2c: txn ret:%d\n", ret);
-> +	i3c_geni_runtime_put_mutex_unlock(gi3c);
+In any case, each node will keep headroom free space and as many upper
+tiers are utilized as possible.
 
-a '\n' before return
+Ease of Use
+-----------
 
-> +	return ret;
-> +}
-> +
-> +static int geni_i3c_master_attach_i2c_dev(struct i2c_dev_desc *dev)
-> +{
-> +	struct geni_i3c_i2c_dev_data *data;
-> +
-> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	i2c_dev_set_master_data(dev, data);
+Users still need to set the target utilization and free space ratio, but
+it will be easier to set.  We argue 99.7 % utilization and 0.5 % free
+space ratios can be good default values.  It can be easily adjusted
+based on desired headroom size of given use case.  Users are also still
+required to answer the minimum coldness and hotness thresholds.
+Together with monitoring intervals auto-tuning[2], DAMON will always
+show meaningful amount of hot and cold memory.  And DAMOS quota's
+prioritization mechanism will make good decision as long as the source
+information is that colorful.  Hence, users can very naively set the
+minimum criterias.  We believe any access observation and no access
+observation within last one aggregation interval is enough for minimum
+hot and cold regions criterias.
 
-a '\n' before return
+General Tiered Memory Setup Applicability
+-----------------------------------------
 
-> +	return 0;
-> +}
-> +
-> +static void geni_i3c_master_detach_i2c_dev(struct i2c_dev_desc *dev)
-> +{
-> +	struct geni_i3c_i2c_dev_data *data = i2c_dev_get_master_data(dev);
-> +
-> +	i2c_dev_set_master_data(dev, NULL);
-> +	kfree(data);
-> +}
-> +
-> +static int geni_i3c_master_attach_i3c_dev(struct i3c_dev_desc *dev)
-> +{
-> +	struct geni_i3c_i2c_dev_data *data;
-> +
-> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	i3c_dev_set_master_data(dev, data);
+The design can be applied to any number of tiers having any performance
+characteristics, as long as they can be hierarchical.  Hence, applying
+the system to different tiered memory system will be straightforward.
+Note that this assumes only single CPU NUMA node case.  Because today's
+DAMON is not aware of which CPU made each access, applying this on
+systems having multiple CPU NUMA nodes can be complicated.  We are
+planning to extend DAMON for the use case, but that's out of the scope
+of this patch series.
 
-a '\n' before return
+How To Use
+----------
 
-> +	return 0;
-> +}
-> +
-> +static void geni_i3c_master_detach_i3c_dev(struct i3c_dev_desc *dev)
-> +{
-> +	struct geni_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
-> +
-> +	i3c_dev_set_master_data(dev, NULL);
-> +	kfree(data);
-> +}
-> +
-> +static int geni_i3c_master_do_daa(struct i3c_master_controller *m)
-> +{
-> +	struct geni_i3c_dev *gi3c = to_geni_i3c_master(m);
-> +	u8 addr;
-> +	int ret;
-> +
-> +	ret = i3c_master_entdaa_locked(m);
-> +	if (ret && ret != I3C_ERROR_M2)
-> +		return ret;
-> +
-> +	for (addr = 0; addr <= I3C_ADDR_MASK; addr++) {
-> +		if (is_new_addr_slot_set(gi3c->newaddrslots, addr)) {
-> +			clear_new_addr_slot(gi3c->newaddrslots, addr);
-> +			i3c_master_add_i3c_dev_locked(m, addr);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int geni_i3c_master_bus_init(struct i3c_master_controller *m)
-> +{
-> +	struct geni_i3c_dev *gi3c = to_geni_i3c_master(m);
-> +	struct i3c_bus *bus = i3c_master_get_bus(m);
-> +	struct i3c_device_info info = { };
-> +	int ret;
-> +
-> +	/* Get an address for the master. */
-> +	ret = i3c_master_get_free_addr(m, 0);
-> +	if (ret < 0)
-> +		dev_err(gi3c->se.dev, "%s: error No free addr:%d\n", __func__, ret);
-> +
-> +	info.dyn_addr = ret;
-> +	info.dcr = I3C_DCR_GENERIC_DEVICE;
-> +	info.bcr = I3C_BCR_I3C_MASTER | I3C_BCR_HDR_CAP;
-> +	info.pid = 0;
-> +
-> +	ret = geni_i3c_clk_map_idx(gi3c);
-> +	if (ret) {
-> +		dev_err(gi3c->se.dev,
-> +			"Invalid clk frequency %d Hz src for %ld Hz bus: %d\n",
-> +			gi3c->clk_src_freq, bus->scl_rate.i3c, ret);
-> +		return ret; //This was missed in upstream : TBD
-> +	}
-> +
-> +	ret = i3c_geni_runtime_get_mutex_lock(gi3c);
-> +	if (ret)
-> +		return ret;
-> +
-> +	qcom_geni_i3c_conf(gi3c, OPEN_DRAIN_MODE);
-> +
-> +	ret = i3c_master_set_info(&gi3c->ctrlr, &info);
-> +	i3c_geni_runtime_put_mutex_unlock(gi3c);
+Users can implement the auto-tuned DAMON-based memory tiering using
+DAMON sysfs interface.  It can be easily done using DAMON user-space
+tool like user-space tool.  Below evaluation results section shows an
+example DAMON user-space tool command for that.
 
-a '\n' before return
+For wider and simpler deployment, having a kernel module that sets up
+and run the DAMOS schemes via DAMON kernel API can be useful.  The
+module can enable the memory tiering at boot time via kernel command
+line parameter or at run time with single command.  This patch series
+implements a sample DAMON kernel module that shows how such module can
+be implemented.
 
-> +	return ret;
-> +}
-> +
-> +static bool geni_i3c_master_supports_ccc_cmd(struct i3c_master_controller *m,
-> +					     const struct i3c_ccc_cmd *cmd)
-> +{
-> +	switch (cmd->id) {
-> +	case I3C_CCC_ENEC(true):
-> +		fallthrough;
-> +	case I3C_CCC_ENEC(false):
-> +		fallthrough;
-> +	case I3C_CCC_DISEC(true):
-> +		fallthrough;
-> +	case I3C_CCC_DISEC(false):
-> +		fallthrough;
-> +	case I3C_CCC_ENTAS(0, true):
-> +		fallthrough;
-> +	case I3C_CCC_ENTAS(0, false):
-> +		fallthrough;
-> +	case I3C_CCC_RSTDAA(true):
-> +		fallthrough;
-> +	case I3C_CCC_RSTDAA(false):
-> +		fallthrough;
-> +	case I3C_CCC_ENTDAA:
-> +		fallthrough;
-> +	case I3C_CCC_SETMWL(true):
-> +		fallthrough;
-> +	case I3C_CCC_SETMWL(false):
-> +		fallthrough;
-> +	case I3C_CCC_SETMRL(true):
-> +		fallthrough;
-> +	case I3C_CCC_SETMRL(false):
-> +		fallthrough;
-> +	case I3C_CCC_DEFSLVS:
-> +		fallthrough;
-> +	case I3C_CCC_SETDASA:
-> +		fallthrough;
-> +	case I3C_CCC_SETNEWDA:
-> +		fallthrough;
-> +	case I3C_CCC_GETMWL:
-> +		fallthrough;
-> +	case I3C_CCC_GETMRL:
-> +		fallthrough;
-> +	case I3C_CCC_GETPID:
-> +		fallthrough;
-> +	case I3C_CCC_GETBCR:
-> +		fallthrough;
-> +	case I3C_CCC_GETDCR:
-> +		fallthrough;
-> +	case I3C_CCC_GETSTATUS:
-> +		fallthrough;
-> +	case I3C_CCC_GETACCMST:
-> +		fallthrough;
-> +	case I3C_CCC_GETMXDS:
-> +		fallthrough;
-> +	case I3C_CCC_GETHDRCAP:
-> +		return true;
-> +
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-[clip]
-> +
-> +static int geni_i3c_runtime_suspend(struct device *dev)
-> +{
-> +	struct geni_i3c_dev *gi3c = dev_get_drvdata(dev);
-> +
-> +	disable_irq(gi3c->irq);
-> +	geni_se_resources_off(&gi3c->se);
+Comparison To Page Faults and LRU-based Approaches
+--------------------------------------------------
 
-a '\n' before return
+The existing page faults based promotion (NUMAB-2) does hot pages
+detection and migration in the process context.  When there are many
+pages to promote, it can block the progress of the application's real
+works.  DAMOS works in asynchronous worker thread, so it doesn't block
+the real works.
 
-> +	return 0;
-> +}
-> +
-> +static int geni_i3c_runtime_resume(struct device *dev)
-> +{
-> +	int ret;
-> +	struct geni_i3c_dev *gi3c = dev_get_drvdata(dev);
-> +
-> +	ret = geni_se_resources_on(&gi3c->se);
-> +	if (ret)
-> +		return ret;
-> +	enable_irq(gi3c->irq);
+NUMAB-2 doesn't provide a way to control aggressiveness of promotion
+other than the maximum amount of pages to promote per given time widnow.
+If hot pages are found, promotions can happen in the upper-bound speed,
+regardless of upper tier's memory pressure.  If the maximum speed is not
+well set for the given workload, it can result in slow promotion or
+unnecessary memory pressure.  Self-tuned DAMON-based memory tiering
+alleviates the problem by adjusting the speed based on current
+utilization of the upper tier.
 
-a '\n' before return
+LRU-based demotion can be triggered in both asynchronous (kswapd) and
+synchronous (direct reclaim) ways.  Other than the way of finding cold
+pages, asynchronous LRU-based demotion and DAMON-based demotion has no
+big difference.  DAMON-based demotion can make a better balancing with
+DAMON-based promotion, though.  The LRU-based demotion can do better
+than DAMON-based demotion when the tier is having significant memory
+pressure.  It would be wise to use DAMON-based demotion as a proactive
+and primary one, but utilizing LRU-based demotions together as a fast
+backup solution.
 
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops geni_i3c_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(geni_i3c_runtime_suspend, geni_i3c_runtime_resume, NULL)
-> +};
-> +
-> +static const struct of_device_id geni_i3c_dt_match[] = {
-> +	{ .compatible = "qcom,geni-i3c" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, geni_i3c_dt_match);
-> +
-> +static struct platform_driver geni_i3c_master = {
-> +	.probe  = geni_i3c_probe,
+Evaluation
+==========
 
-remove extra ' ' before =
+In short, under a setup that requires fast and frequent promotions,
+self-tuned DAMON-based memory tiering's hot pages promotion improves
+performance about 4.42 %.  We believe this shows self-tuned DAMON-based
+promotion's effectiveness.  Meanwhile, NUMAB-2's hot pages promotion
+degrades the performance about 7.34 %.  We suspect the degradation is
+mostly due to NUMAB-2's synchronous nature that can block the
+application's progress, which highlights the advantage of DAMON-based
+solution's asynchronous nature.
 
-> +	.remove = geni_i3c_remove,
-> +	.driver = {
-> +		.name = "geni_i3c",
-> +		.pm = &geni_i3c_pm_ops,
-> +		.of_match_table = geni_i3c_dt_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(geni_i3c_master);
-> +
-> +MODULE_AUTHOR("Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>");
-> +MODULE_DESCRIPTION("Qualcomm I3C Controller Driver for GENI based QUP cores");
-> +MODULE_LICENSE("GPL");
+Note that the test was done with the RFC version of this patch series.
+We don't run it again since this patch series got no meaningful change
+after the RFC, while the test takes pretty long time.
+
+Setup
+-----
+
+Hardware.  Use a machine that equips 250 GiB DRAM memory tier and 50 GiB
+CXL memory tier.  The tiers are exposed as NUMA nodes 0 and 1,
+respectively.
+
+Kernel.  Use Linux kernel v6.13 that modified as following.  Add all
+DAMON patches that available on mm tree of 2025-03-15, and this patch
+series.  Also modify it to ignore mempolicy() system calls, to avoid bad
+effects from application's traditional NUMA systems assumed
+optimizations.
+
+Workload.  Use a modified version of Taobench benchmark[3] that
+available on DCPerf benchmark suite.  It represents an in-memory caching
+workload.  We set its 'memsize', 'warmup_time', and 'test_time'
+parameter as 340 GiB, 2,500 seconds and 1,440 seconds.  The parameters
+are chosen to ensure the workload uses more than DRAM memory tier.  Its
+RSS under the parameter grows to 270 GiB within the warmup time.
+
+It turned out the workload has a very static access pattrn.  Only about
+13 % of the RSS is frequently accessed from the beginning to end.  Hence
+promotion shows no meaningful performance difference regardless of
+different design and implementations.  We therefore modify the kernel to
+periodically demote up to 10 GiB hot pages and promote up to 10 GiB cold
+pages once per minute.  The intention is to simulate periodic access
+pattern changes.  The hotness and coldness threshold is very naively set
+so that it is more like random access pattern change rather than strict
+hot/cold pages exchange.  This is why we call the workload as
+"modified".  It is implemented as two DAMOS schemes each running on an
+asynchronous thread.  It can be reproduced with DAMON user-space tool
+like below.
+
+    # ./damo start \
+        --ops paddr --numa_node 0 --monitoring_intervals 10s 200s 200s \
+            --damos_action migrate_hot 1 \
+            --damos_quota_interval 60s --damos_quota_space 10G \
+        --ops paddr --numa_node 1 --monitoring_intervals 10s 200s 200s \
+            --damos_action migrate_cold 0 \
+            --damos_quota_interval 60s --damos_quota_space 10G \
+        --nr_schemes 1 1 --nr_targets 1 1 --nr_ctxs 1 1
+
+System configurations.  Use below variant system configurations.
+
+- Baseline.  No memory tiering features are turned on.
+- Numab_tiering.  On the baseline, enable NUMAB-2 and relcaim-based
+  demotion.  In detail, following command is executed:
+  echo 2 > /proc/sys/kernel/numa_balancing;
+  echo 1 > /sys/kernel/mm/numa/demotion_enabled;
+  echo 7 > /proc/sys/vm/zone_reclaim_mode
+- DAMON_tiering.  On the baseline, utilize self-tuned DAMON-based memory
+  tiering implementation via DAMON user-space tool.  It utilizes two
+  kernel threads, namely promotion thread and demotion thread.  Demotion
+  thread monitors access pattern of DRAM node using DAMON with
+  auto-tuned monitoring intervals aiming 4% DAMON-observed access ratio,
+  and demote coldest pages up to 200 MiB per second aiming 0.5% free
+  space of DRAM node.  Promotion thread monitors CXL node using same
+  intervals auto-tuning, and promote hot pages in same way but aiming
+  for 99.7% utilization of DRAM node.  Because DAMON provides only
+  best-effort accuracy, add young page DAMOS filters to allow only and
+  reject all young pages at promoting and demoting, respectively.  It
+  can be reproduced with DAMON user-space tool like below.
+
+    # ./damo start \
+        --numa_node 0 --monitoring_intervals_goal 4% 3 5ms 10s \
+            --damos_action migrate_cold 1 --damos_access_rate 0% 0% \
+            --damos_apply_interval 1s \
+            --damos_quota_interval 1s --damos_quota_space 200MB \
+            --damos_quota_goal node_mem_free_bp 0.5% 0 \
+            --damos_filter reject young \
+        --numa_node 1 --monitoring_intervals_goal 4% 3 5ms 10s \
+            --damos_action migrate_hot 0 --damos_access_rate 5% max \
+            --damos_apply_interval 1s \
+            --damos_quota_interval 1s --damos_quota_space 200MB \
+            --damos_quota_goal node_mem_used_bp 99.7% 0 \
+            --damos_filter allow young \
+            --damos_nr_quota_goals 1 1 --damos_nr_filters 1 1 \
+        --nr_targets 1 1 --nr_schemes 1 1 --nr_ctxs 1 1
+
+Measurment Results
+------------------
+
+On each system configuration, run the modified version of Taobench and
+collect 'score'.  'score' is a metric that calculated and provided by
+Taobench to represents the performance of the run on the  system.  To
+handle the measurement errors, repeat the measurement five times.  The
+results are as below.
+
+    Config         Score   Stdev   (%)     Normalized
+    Baseline       1.6165  0.0319  1.9764  1.0000
+    Numab_tiering  1.4976  0.0452  3.0209  0.9264
+    DAMON_tiering  1.6881  0.0249  1.4767  1.0443
+
+'Config' column shows the system config of the measurement.  'Score'
+column shows the 'score' measurement in average of the five runs on the
+system config.  'Stdev' column shows the standsard deviation of the five
+measurements of the scores.  '(%)' column shows the 'Stdev' to 'Score'
+ratio in percentage.  Finally, 'Normalized' column shows the averaged
+score values of the configs that normalized to that of 'Baseline'.
+
+The periodic hot pages demotion and cold pages promotion that was
+conducted to simulate dynamic access pattern was started from the
+beginning of the workload.  It resulted in the DRAM tier utilization
+always under the watermark, and hence no real demotion was happened for
+all test runs.  This means the above results show no difference between
+LRU-based and DAMON-based demotions.  Only difference between NUMAB-2
+and DAMON-based promotions are represented on the results.
+
+Numab_tiering config degraded the performance about 7.36 %.  We suspect
+this happened because NUMAB-2's synchronous promotion was blocking the
+Taobench's real work progress.
+
+DAMON_tiering config improved the performance about 4.43 %.  We believe
+this shows effectiveness of DAMON-based promotion that didn't block
+Taobench's real work progress due to its asynchronous nature.  Also this
+means DAMON's monitoring results are accurate enough to provide visible
+amount of improvement.
+
+Evaluation Limitations
+----------------------
+
+As mentioned above, this evaluation shows only comparison of promotion
+mechanisms.  DAMON-based tiering is recommended to be used together with
+reclaim-based demotion as a faster backup under significant memory
+pressure, though.
+
+From some perspective, the modified version of Taobench may seems making
+the picture distorted too much.  It would be better to evaluate with
+more realistic workload, or more finely tuned micro benchmarks.
+
+Patch Sequence
+==============
+
+The first patch (patch 1) implements two new quota goal metrics on core
+layer and expose it to DAMON core kernel API.  The second and third ones
+(patches 2 and 3) further link it to DAMON sysfs interface.  Three
+following patches (patches 4-6) document the new feature and sysfs file
+on design, usage, and ABI documents.  The final one (patch 7) implements
+a working version of a self-tuned DAMON-based memory tiering solution in
+an incomplete but easy to understand form as a kernel module under
+samples/damon/ directory.
+
+References
+==========
+
+[1] https://lore.kernel.org/20231112195602.61525-1-sj@kernel.org/
+[2] https://lore.kernel.org/20250303221726.484227-1-sj@kernel.org
+[3] https://github.com/facebookresearch/DCPerf/blob/main/packages/tao_bench/README.md
+
+SeongJae Park (7):
+  mm/damon/core: introduce damos quota goal metrics for memory node
+    utilization
+  mm/damon/sysfs-schemes: implement file for quota goal nid parameter
+  mm/damon/sysfs-schemes: connect damos_quota_goal nid with core layer
+  Docs/mm/damon/design: document node_mem_{used,free}_bp
+  Docs/admin-guide/mm/damon/usage: document 'nid' file
+  Docs/ABI/damon: document nid file
+  samples/damon: implement a DAMON module for memory tiering
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |   6 +
+ Documentation/admin-guide/mm/damon/usage.rst  |  12 +-
+ Documentation/mm/damon/design.rst             |  13 +-
+ include/linux/damon.h                         |   6 +
+ mm/damon/core.c                               |  27 +++
+ mm/damon/sysfs-schemes.c                      |  40 ++++-
+ samples/damon/Kconfig                         |  13 ++
+ samples/damon/Makefile                        |   1 +
+ samples/damon/mtier.c                         | 167 ++++++++++++++++++
+ 9 files changed, 274 insertions(+), 11 deletions(-)
+ create mode 100644 samples/damon/mtier.c
 
 
-Thanks,
-Alok
+base-commit: 449d17baba9648a901928d38eee56f914b39248e
+-- 
+2.39.5
 
