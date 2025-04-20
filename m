@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-611954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC17A9486C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 19:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54523A94888
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 19:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5223B1A45
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 17:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0179B1711F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 17:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED3C20C48A;
-	Sun, 20 Apr 2025 17:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BE220CCEB;
+	Sun, 20 Apr 2025 17:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="mQtqfyAM"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Xa49ZO7m";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tXXpbcOv"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D22617A302;
-	Sun, 20 Apr 2025 17:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD94517A302;
+	Sun, 20 Apr 2025 17:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745169261; cv=none; b=C4j7enAdTuQiYDZuRRByXpGZJlnv41IZmg8nwUPhQpGfwSFnUROWK732trKQWbkgq7U8MxHgcSOYPZf40v1/EOG6ThKiaifJbGFavNfqaddBlzRjQ3v0Q/FoOrGXRCqAWcv0S9Smb8VBP09/6IDaRpGFXr7fxR7J6y2d1ZIxun8=
+	t=1745170764; cv=none; b=m4KZDpkHSqZ7XcaayXoHeqVw8LoW9yUfyPgK9JNIUgzP17lSxiAgWldzRmkAQ0mlKuPdVM0eVmZaep8fNqjizwPgd7dNlD2TeoqE8jhPNEble8XE1dOHyhtn5IGvpCtZCSU6QxgDrh/5YJhnDPlI3s5HB3QJjj3R02lchef4kxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745169261; c=relaxed/simple;
-	bh=DR9RTXhjwQk+raJBaZzX7DBA8S0Sta84T2246rAqUCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqGkqUP2+MOIywh4KFRIOuS+U9KDkj4QLMVx/o6hA9F38Aa3/rYK6q/+QE3TwxbmSQD8o5U5RRkMVyaXPGVU7GLLPhq+wJmZCYMJnK0yQMvy85GYxNqTfO4dNTQ3QYVs6O75An4VLrxUBMZrjVMv2ULiCF6DK5tsUrLFjd2B0uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=mQtqfyAM; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1745169253; bh=DR9RTXhjwQk+raJBaZzX7DBA8S0Sta84T2246rAqUCU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=mQtqfyAMZ1vquFtvYte5peCKA43juMwEZ5JjD4lg8Jpk8fepWjOsLcDIqTVqkI/3d
-	 KdU92Pml8tC4HcfRjJKK5hjI9CYt/AGDPQCM7dipZnqV68grAjGVkxD5zm2LkRFAqH
-	 cv2CWYvih9Nb1BGiMgExi3IVXpWGSLb1x83dYJ5U=
-Message-ID: <ea7ac010-3b9d-4915-9a19-cb5ebb77c764@lucaweiss.eu>
-Date: Sun, 20 Apr 2025 19:14:12 +0200
+	s=arc-20240116; t=1745170764; c=relaxed/simple;
+	bh=jtek4/rg+Eurh88bBO1/Z4q8wbU0+obePN4diu3rLMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tp3iIbXdV/5CU5SfbK4jrjrDaof4X2jEtZOkLVTd94eoRm3K2n5pUHIv/Ry0R72toIYYT13VEwMxFIdreRICgBoTUBQTEu+U0yxBVEkQicG9LNixLtF+qug/ZJbDn642zwWhHCfnw0wMh3vDR3gvXAxezn/m1XHzamoX7BxTSiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Xa49ZO7m; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tXXpbcOv; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZgbN15VYCz9ssT;
+	Sun, 20 Apr 2025 19:39:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1745170753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fRJA/JYt7ejKUUo6YzXM95Gf2a+EjwbvNUzyDLCNMdQ=;
+	b=Xa49ZO7mLFnaTe4og3Wjip45lb9gpPEqjqU+DTi4eU1hbrugD41XnGQfaV3TD3ThxJeCJ3
+	bvD/n8LZZQgfLl/+Mk+OiY/VCbjLCeAw6yMDC7eRVRUNrvXMmZ5EtFyoqPPt2X3Gi/CBl/
+	RVrAitObJyly1p6p2P4kOXosQVL34vfcK1WIdc97iS5WaPT1aAZaVljD+7nCFRzxxAJLWc
+	dpKj5hwWInP8AU3n+3EtZC+AwXsvNZ/vVTMXw5d1KOGskNPdAGb0Tgm0HmhAb0GrFZcp5W
+	6sNfrr1pp41OxFk7P6Ts8TMuN9CBd3v6iOonmONu9STJRVi0qY46SKQKfoxyIA==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1745170751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fRJA/JYt7ejKUUo6YzXM95Gf2a+EjwbvNUzyDLCNMdQ=;
+	b=tXXpbcOvMA9UBrpEM0+wUG2Ddos8KaiaqN71bEwryCjvLYowjMJTRenu6SJ1ZQg00gZ872
+	IZGSn/cJtcrZbaeTR1FRWykO4+TXjw+I2BvOG1BBfeiJgpUEt0uGADxzEIQhea7APluhbf
+	FWtu7xUnSB/kFHJQuxiNx4bJ8gyt/eqACm6zPZklG7g2KaLnBeFHH5TqnfW7nkJmRC5xM6
+	HelEbohkPR/Srd3a0GyweuSrseTmw7Nj5zsa26ZNSlU1JtVP5XU1v22QrfgoHwSR6DNrHW
+	PzSvNFpFKOVzXioA7Jhq5/x73HBC1/ncnxMXfLuq1b3eVCcug7d9jNgrtQWCyg==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Junhao Xie <bigfoot@classfun.cn>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 0/3] arm64: dts: renesas: r8a779g3: Add Retronix R-Car V4H Sparrow Hawk board support
+Date: Sun, 20 Apr 2025 19:36:26 +0200
+Message-ID: <20250420173829.200553-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] ARM: dts: qcom: msm8974-oneplus-bacon: Add alias for
- mmc0
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250419-msm8974-mmc-alias-v1-0-82aa131224b6@lucaweiss.eu>
- <20250419-msm8974-mmc-alias-v1-1-82aa131224b6@lucaweiss.eu>
- <k7dm2tpw3mg34fydyug3rjnkwgfu2lwwzddd4edmano6jsgoiv@6klzba5rjpdy>
-Content-Language: en-US
-From: Luca Weiss <luca@lucaweiss.eu>
-In-Reply-To: <k7dm2tpw3mg34fydyug3rjnkwgfu2lwwzddd4edmano6jsgoiv@6klzba5rjpdy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: up3uixkic6qyqabapkakkpbj9ge1zsse
+X-MBO-RS-ID: 1bd87a255bce825d983
 
-Hi Bjorn,
+Add Retronix R-Car V4H Sparrow Hawk board based on Renesas R-Car V4H ES3.0
+(R8A779G3) SoC. This is a single-board computer with single gigabit ethernet,
+DSI-to-eDP bridge, DSI and two CSI2 interfaces, audio codec, two CANFD ports,
+micro SD card slot, USB PD supply, USB 3.0 ports, M.2 Key-M slot for NVMe SSD,
+debug UART and JTAG.
 
-On 20-04-2025 7:05 p.m., Bjorn Andersson wrote:
-> On Sat, Apr 19, 2025 at 11:03:57AM +0200, Luca Weiss wrote:
->> Add an alias for the internal storage so it always becomes mmcblk0.
->>
-> 
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> calls for a problem description to start your commit message. Sometimes
-> the problem is obvious, but here &sdhc_2 is disable on this board, so
-> when does this not become mmcblk0? What is the problem you're solving?
+Marek Vasut (3):
+  dt-bindings: vendor-prefixes: Add Retronix Technology Inc.
+  dt-bindings: soc: renesas: Document Retronix R-Car V4H Sparrow Hawk
+    board support
+  arm64: dts: renesas: r8a779g3: Add Retronix R-Car V4H Sparrow Hawk
+    board support
 
-I have really seen internal storage become mmcblk1 on one of these 
-devices with no SD card. I can't recall which one anymore, but this was 
-the main idea why I wrote these patches. Maybe it's something to do with 
-the mmc wifi on some of the boards?
+ .../bindings/soc/renesas/renesas.yaml         |   7 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/renesas/Makefile          |   4 +
+ .../r8a779g3-sparrow-hawk-fan-pwm.dtso        |  43 ++
+ .../dts/renesas/r8a779g3-sparrow-hawk.dts     | 666 ++++++++++++++++++
+ 5 files changed, 722 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-fan-pwm.dtso
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
 
-But I think it's not a bad idea to make this explicit for all, and align 
-the boards with each other.
+---
+Cc: "Krzysztof Wilczyński" <kw@linux.com>
+Cc: "Rafał Miłecki" <rafal@milecki.pl>
+Cc: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Junhao Xie <bigfoot@classfun.cn>
+Cc: Kever Yang <kever.yang@rock-chips.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 
-Regards
-Luca
-
-> 
-> Regards,
-> Bjorn
-> 
->> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
->> ---
->>   arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
->> index 4c8edadea0ac63db668dbd666fbb8d92e23232b7..88ff6535477bffefe475cc5fe927b3cc5d223084 100644
->> --- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
->> +++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
->> @@ -13,6 +13,7 @@ / {
->>   	qcom,board-id = <8 0>;
->>   
->>   	aliases {
->> +		mmc0 = &sdhc_1;
->>   		serial0 = &blsp1_uart2;
->>   	};
->>   
->>
->> -- 
->> 2.49.0
->>
+-- 
+2.47.2
 
 
