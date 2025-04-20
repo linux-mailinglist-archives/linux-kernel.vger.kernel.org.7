@@ -1,412 +1,368 @@
-Return-Path: <linux-kernel+bounces-611899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE31A947CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 14:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D368A947CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 14:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589A0188797A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 12:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB473B55FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Apr 2025 12:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B70204C0B;
-	Sun, 20 Apr 2025 12:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD704205AAC;
+	Sun, 20 Apr 2025 12:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q9SsWIon"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2086.outbound.protection.outlook.com [40.107.236.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7lBaLOL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136961E9B2D;
-	Sun, 20 Apr 2025 12:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745151629; cv=fail; b=HXwjRcF2/utkg/LQkQLf6PPxFg2PZdQcmh0BVJF7O4vydKIdHgZt74kudQs/izXcytDbzScJ9EnIyCX39XhMjq9DHvayNQt5YEP35xKo/c0pTKlK0PPW0Xj4obZLht8FguVISlMS8YFUm13irGjKDKRTF1DLbZbd0wmPYMbIlrI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745151629; c=relaxed/simple;
-	bh=PpZxn1415/MMlSAs5XkbdpNEWolrQmM/TSaZY7N1YJY=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=b5WujoReLpXy6/rWfCa9lGnWiu4nWu4MylsIv8GY0oqEslwy6Y/5qjCW/iXNJDIJvW2AcbcYg3ui+WDEmVgQ5TNexqryMZcb+5yPoK3d/nO6OIzsYrhvXLX3tKJ3RgBZTi3ZrB9IBESEAk39U8Zd22yO1UVXpUHtfdlaGNbLWFA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q9SsWIon; arc=fail smtp.client-ip=40.107.236.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D2S3EnevqhyZjXs+5IDghwrrBIAzWw6b0VtHX6vdv2xk590X5O7X7zUSmfNtUx6FJHMvWGIxDtb+Hv2m8ybbhHvIhKRpeqIhii+eDMLhfq95zl1n7LyEk9EzIQ9V6tmuJltDUqbDwBdn1GpwYPOXJZk9x7AduM073CeshrcJ984/3qKRGcQujH9iLkCm9Q8UsKN/LogiYDaoMZHFdTAuigJ2YelVtSmnU0yzLX3IMkBncE4xKUydNgxB4GhYFH/zaxDe3v8qo0VqJG/s3VQBx27GhO+sjLH7W0cxsD0h7FdSF+voTqCH+rAGwg7CwXhMmzlDgFrRrBVgyf+r8XUtsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pXypyvq/81TokM/x8hQlINagJBU7Jy1oy8dIFtqX0ZY=;
- b=enANoc5WRilVyyDE17rahq1pm4zQUg5fD1kB/oH5UCitMAW0jr5y8wDm922FOD881nLY95ZxxKHy6UWo2Gh2IFFZJas42AS96pbBK2IyP+TzcuEZySp4L4knuKPMzoImWzNTixZ6rpiw3kQK8I3gnjRhrxy+ud6jwJwMoDSpH58h0mQNbbEOIzFF56gNyOwuu4U27a9A0LTHNJZOZO/FEgVwv0Xq5QjFuu/5NYT8FJh1OF5EPCkxIa1UuU8A8fcuk0TRPeH4i8K5/+bccdkwKMQQz9yoM+1sSw2IJh6++n4aNsxwWjOfuq1Ia2u+oyjv1XuAYEtI2guWXZVzWqP5Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pXypyvq/81TokM/x8hQlINagJBU7Jy1oy8dIFtqX0ZY=;
- b=q9SsWIonCkX0HGnAI9+B4f8FhgC3hhxISJYIr7h9XK5mQeWzzc8ypsCNV0nQjQp7T7N5Sq29xeQQCuiEiN9m3IFF4oyBTEOnoMSwtshUHcQ7fdolQJv7uXfpWvxuap3XBHN+JlPHh4u7Oo7WsjXUgmuv5Vt+ssmHgwMeWs5N7sIcOJVA93WodNrseCxqpmlHtS5Jgkt5VyRneDFQptrO+mBniwYCfoYOm74BZd0EWMsfKkKbvoExvLvKl8UQ/L6f7dWZxNEH/g9jXSflOprs94pwCtHtusmv3ZdXHl8xYQTtsZveRtqtbY2ZrkAFrH6tFSH+IB0IFW3EgDPHaDqRqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by PH7PR12MB9175.namprd12.prod.outlook.com (2603:10b6:510:2e6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Sun, 20 Apr
- 2025 12:20:24 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8655.025; Sun, 20 Apr 2025
- 12:20:24 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Sun, 20 Apr 2025 21:19:42 +0900
-Subject: [PATCH 10/16] gpu: nova-core: add basic timer device
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250420-nova-frts-v1-10-ecd1cca23963@nvidia.com>
-References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
-In-Reply-To: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
- Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYAPR01CA0124.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::16) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2C9204F79
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 12:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745151642; cv=none; b=WB+eVPBzU/HoBOmr8IUAc0fbW2rSaGG9GaEd8BHHqJrvNcHfaWljY1Y7soY1DQ5kppwRlrrq3LGtlZMFsckre1NmskPKOLi70sd2m6gLc5q2NCaVoyAO3cyFK5yiRI/Re6Q7dVwXBvRiW6FnOll04XlkRhRZXnwKOvHhTCmUCGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745151642; c=relaxed/simple;
+	bh=NTzNeMUzrtOBlM8W2SdqzoSPHpuoqpGFKiJlAFUw5t4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uogOpKZty8P5i5VE9QKy1uZnl+Qpq/37d6W49kyCu1PKTMl2nIFxtUe58nz+cUle1W2SwYUGWIFSd9vlk/YiStwtzBeWIrzfvAVU6OOJ4LlCOl3OV6mafzfj3pABCBPvHTzz8pdVpcCGd13qeg+EhnJaW7RKywU7psX0L+d51IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7lBaLOL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745151638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PVA+hnFYhm0mZbXMkfXZGu1NJd1kB7+txfbwzU2JSfM=;
+	b=W7lBaLOLUMLfysektXc58xVk1Y/vl20AHsUIDMmtF0kOWaXSDAaID68ICLFYkQvicc++79
+	s/v5El5IFQz0eBsgoucE+Sb0adgW6sSFqcvku/i4o4dJKgmFA1Gattz6WqnLLN8sCSUrHR
+	ec6448mbSEik4Z+XWVdnXfmkwGWAmn0=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-DJ_vOvzWNPGaa3d0QiPGrw-1; Sun, 20 Apr 2025 08:20:37 -0400
+X-MC-Unique: DJ_vOvzWNPGaa3d0QiPGrw-1
+X-Mimecast-MFC-AGG-ID: DJ_vOvzWNPGaa3d0QiPGrw_1745151636
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2242f3fd213so28046915ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 05:20:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745151635; x=1745756435;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PVA+hnFYhm0mZbXMkfXZGu1NJd1kB7+txfbwzU2JSfM=;
+        b=SkJMvYwap1GNa0OcVvX3XRfIr6EuHv5yP6B5YwbZGqbUeltaoBb2Sda1OJ7yrNgInj
+         f9Sv9YmN8O2VSL01eXV4mLNqrvJWpy6qerX8I41FTkW4gzwNfP97/Wy/r8sGsK7cgjB0
+         3LtC5ttHM/6CMOfnrwOaFA4BbTu07AQn3mLzHPSom0cjkHmhfRqabWiDFqW+RWzzvbQz
+         5oH+mJ2OxZQ36EWuwWogJn2Mq9lJ6609gfZkiLpLN3Cv1W0JGIUK79S5ezwjtXZ6dpZa
+         5JV1PsQF31Zr6mLpAc3Xm1Gw/4Ybhg7KynE+EwB4ULjdM/kSZv/JSuQLEoB+v8RW1jzH
+         9Bzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbsBl998+PlX6sD/WADUlSZMNQWPrWuWLJJP/wvtAU2n4pDfN12HnUDpczoKgahSa0JvIkemPcjT8RfsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzElfi4goAjmmbr0HX/kn5KFL6gamY7Arp364+SiSKeLiNI33Uu
+	8RIpUJhdt+S5wgv//WtWIQogpmwj7nYQwUY2S6FBBybcrm89kqIEs5PhH20zoXr44vDQFwOeHCx
+	QzQWhdz87cIsZlMLa7mYdAacnCF+Huw1ggyDlB/7wMRoaGpop4Y4V/B+XyZhNbZrmDEwLzKqT
+X-Gm-Gg: ASbGncsqQX0qwEFQ1On2gOQWZKrvGfesctlN+5WiGZVQ4CaI6ENphie7xhOx1MqsiZZ
+	mW+qKwrHx5C+nc97laQnf7yMUoQS7+AHHHlqCjGZKDMbDLwSpUf+b7rq8fiIbSG5QAzHfjfprdZ
+	cu3bJMJsTEH4xUjAcCQPkjyAO3DqCxAk1300xtIeFHy7oX+ZS7OON0JpaWQb9DIlZ/ATDq/Mhd4
+	gSk9/O4ef0O5eE9fbh0hMxeqkvmUYPx17yVWp9gLmGjChksZ82iEp/c0dWxXfOQxFSvlJfpGqa2
+	epj4Rp12FoWa
+X-Received: by 2002:a17:902:f643:b0:21f:7880:8472 with SMTP id d9443c01a7336-22c53607720mr150489305ad.35.1745151635575;
+        Sun, 20 Apr 2025 05:20:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH59HygyrR1b3g9oQn9ho711+vyY8u+CP/T6vo/KmS10uhru55tsapleIueUiYDlFrxaRTpVA==
+X-Received: by 2002:a17:902:f643:b0:21f:7880:8472 with SMTP id d9443c01a7336-22c53607720mr150488965ad.35.1745151635187;
+        Sun, 20 Apr 2025 05:20:35 -0700 (PDT)
+Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50ecdc9csm46929035ad.165.2025.04.20.05.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Apr 2025 05:20:34 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: drawat.floss@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jfalempe@redhat.com
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH drm-next] drm/hyperv: Replace simple-KMS with regular atomic helpers
+Date: Sun, 20 Apr 2025 21:19:43 +0900
+Message-ID: <20250420121945.573915-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB9175:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2eb29bb-3f66-4bcf-dc8b-08dd8005b9e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M2dtZER1THhueTNzSW9KRUlidjhqaDYrbmlzc2ZZK3JvN3NJOFNRNjRFVmtw?=
- =?utf-8?B?WXRybkxPbFZrMHRoYjhhWlZxUUJHbkVSYTBMQ0RTQXpscHp4Yk5ZMFoxVm1o?=
- =?utf-8?B?SkovT1c3UTRpTVFIcjYrY21DRWc3ZHorb1ZVcGYwSldPbWNpUHllQTU0b0dW?=
- =?utf-8?B?VmcyM2I4eDVYSitpM3VoOGNhM2Roa21TOTMwUm12anNJKzBCQWM3RDBKajFt?=
- =?utf-8?B?aEt4R09ncG1qZ3ZkV2daZk1zQk9SYUpSS2w3S2FVV2VXdGhJTmhwc2NBcmNO?=
- =?utf-8?B?QkpwVUFqSTQ2TUJOUlljTld4ZGFubzBRNm9yQVNLSHU2TUljczdjUjgrZUhJ?=
- =?utf-8?B?TDZsZzIyNFVSOHVVTnJZcXpJKzBYdTlUU0NWRDVKTHJFYXYvZzl2VkxCMkk0?=
- =?utf-8?B?S3diR3ZtWnJRWWpNVzdldmJBZ2pIN0VTSXhod25JTDFDQXZOTldaazZQaFhO?=
- =?utf-8?B?SFlRUDdTVHdJc28xZCtKc3NTOHVWQ250UTJEaW5VUG5Hc3hzSXJpTHlNU0I1?=
- =?utf-8?B?WEFDampiTkZrVkRoTFQzeHRUVzMvdlA0dVQ5cFNYcDBJaFlZRlNJMFRWZE1S?=
- =?utf-8?B?ZW5VQ3Uzd21aUmd6Q2dZMTFvR29mVUxJL3M1R2c4TzU0ZklQMHpwVzVQdGNK?=
- =?utf-8?B?cm5VcGNXMkdGL2xaQWpibVNKaGhiRktnQnBMV21xb1dTOVJkZVFTRVpjKzV0?=
- =?utf-8?B?enhzcCtVRmZwQWJsQjdsVVJJeERrTXNJckwwMU9nR2ZmL0ZqemdkWjBGbXJ6?=
- =?utf-8?B?WWpDN0hMR1kzSGNvNjNYdTVhODd5ZlFrK2hXNGlNeldLeXAyalJKZGd0MkJ3?=
- =?utf-8?B?cTIwVFQ1RTMrR21NaDd5Z25xc25IQWZqRmVXSkdYcFM5ZFJ5TWtrOUZoRXNq?=
- =?utf-8?B?cmlUNldwSThxckVUSnMyL2lMQXNDcWx6cjI0Y0h6cThsOGV6MDhCTHU3UzB0?=
- =?utf-8?B?QXo3QUdMcnAyQzVPNG9ReG9Wc2dhYzdhb0JKUGpIOUpoK2pzNWNCQjBYd1B6?=
- =?utf-8?B?cXJObXp6bElJN0krOXJrajJPa2JxZnJSWXBxeURsTGh6L1RPSUZzejA5c3I0?=
- =?utf-8?B?T1NvSGpnaGlGbXF4ZG9JVUVDNG1VeVZGR0pTRjBrMGE5dkJGQnB1dUVRVXF2?=
- =?utf-8?B?bDQvOFpSQmNvTmovekVGZDFWd3FvU3RkeTBWQnpONU1GOUxUTFJybVNCVVVx?=
- =?utf-8?B?VDNkaDBndHlmQVdITEluQmJBb2EvN1VnS1ZlU3d3bWdORnVHMnhyekZaeXlR?=
- =?utf-8?B?U1dkb0M5TFpLa3djenNHVTJHTWNhdHg1azZWQzUxR2lrTzdIcU92aUUzcndK?=
- =?utf-8?B?ci85cVRlSHZ4QitrTFhyQXkxVW1MUUl3K3BlTDlhWWlQaSs3NVNJSW9KWnRF?=
- =?utf-8?B?UGpIN1hFbVA1Q003UDhaYjRpVU91UHdvTHZUNGhDUWIwWUpUdVlyVlFudnBP?=
- =?utf-8?B?VGY4ZVZ4amUvODVFN2RCK1pOazJEb0tBdk5KTTl5MUxYdGdJRnFKblJEUjNj?=
- =?utf-8?B?dUNIZlYrbEJSSXU3Qnc5UE53c3NhUnJSRW1ubVR4RHBvd2pVYTRhbDI0dGtp?=
- =?utf-8?B?U1JpOWdxMTNndjBZL3g0SlJsUW13bEtvN0JwUFNtUkQyMElwSVFDeDBydzZn?=
- =?utf-8?B?K1ZCNjBETkNSa2E1YVlVS0pleVZ2a2tKV3VsVDdyTWE4cHJRa2I4VFg2a2gw?=
- =?utf-8?B?MG9UMXIwa29qOWxZT2JVclhJaHhaVmt5Q2JjSXJyM0t0RmJYT3JnQ3NsQzVS?=
- =?utf-8?B?Z2ppR215bHZWbHRqY1VkbnYwZzIyNG5PUm8xcmd4eUZDbG41NDJleGtZb0hw?=
- =?utf-8?B?NW90SHN2SnpxeW5waUxtc2s3dk5sSTkyazVmMXdTcnphbG10TUFEanhWVlRl?=
- =?utf-8?B?bUxyc1k1Tm5vT3ZsaUNQdXNLTFJSRUtFZ2lIbU5xM1ZDSnpGaVZMTVc4QW82?=
- =?utf-8?B?OVYvcHk3RGUwalBYcWdqV3hTZytVbERLMCswSm93TnVLbGl2NlU3cWJxTi9a?=
- =?utf-8?B?TTE1ZG1MWTdRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VWdqTzBiTWlUTllhWDJJZkhlVjVDQ0VQcXg1cXpsazEvdGhUYlNvKzBiUm9q?=
- =?utf-8?B?cVZhQjQ2LzFraW54RXFtbE5oc3FSZVAyTlhtQU1JbWx1UTFTcDljclhRMTdl?=
- =?utf-8?B?WjdpV3llQ3lhRUEzbHVjWEh1ZzFHZGlIcE0zVmZsbWwzNjcwU0FJVUt6bDBY?=
- =?utf-8?B?MjlLNFc0YWhuNDZoZnN4MEUrUWtudEdqUkpobjBadHl6S2EwTkhsVzRVUTln?=
- =?utf-8?B?UWdmMGc0ZnQxbldPV1llWFM5ZkVlQUFYWkl4SUFXMnVWRlNMclN3THA1c3Zu?=
- =?utf-8?B?a1YzWW9DWFNmc2NTM0ZVYVpuZk9HNzZtWUIyaElEZlpiWTdkSCtIcTAzYVI1?=
- =?utf-8?B?dmpXeHFXdTNJQUhJbnc2aTNZd08wODVNblhiZG14LzFZYWhwMDFRNEJuRURx?=
- =?utf-8?B?NEQ5OTdLWXRLcHU3aGJBUTZVUTJFbGZibWd2VU82cHBxWkhxaUZrMlAzcW9G?=
- =?utf-8?B?Q1h4K0JzSk9pVzFmMkd3YUlTWS9HdzQvZFpHUEVhY3dzU2RJV1BRK25YRU40?=
- =?utf-8?B?UTIwa2FZWU0zcjdrMlBlcXg1Rk5uQXlWYTByRmxvVjFHd044dmpZMitqeXJS?=
- =?utf-8?B?Z1l0WThOL1hVTVppMTRoTkROby9jdjVBZ2ZBNjVmNUNwZ2ZpNzBkb1BOMExa?=
- =?utf-8?B?eDZ1bHg2Yi9FRXRHaWduRW02a0dzejVvK3lKNlhjYVU2RHhSTzhEa2Y0cE5v?=
- =?utf-8?B?T1pKNDhUdjJhM01JeDVoWUlqV1pjMU5oTXVrRTVZb3BNUXdjSGVTUG9INUlL?=
- =?utf-8?B?cjNmV2FNZG5XS2Fwa1g4SnZGTklRTzZ3bjVqMGZaOXhXT013b0hCdGdOYjVx?=
- =?utf-8?B?L05GUkIxb1liRXZLbS85VW81dnlDc0dJVHhrWXQ2OGs5bDRCYVlkK1dMLzZD?=
- =?utf-8?B?NE9uV2VFL2FpRkRpR250Um5ZMXZPcEZNWHo0TlZhbS9RM2tCL2ZPTjVsdllq?=
- =?utf-8?B?N2JiU2lvRDRXZU43M25wNjZVODNRc0pLRUpCSktwbTM5OGtTQjhXNnh6SnQx?=
- =?utf-8?B?dHp6eTNIS25ES0ZKdzhIU3lxb1RsajNJYVVWQVdITWlTNzZyd0hwNHVjSmRy?=
- =?utf-8?B?VE0wdTBJcVN6ZFZmZlZkT1pXMlhINFR1MldHTGsyMHYwbDBhdjZRZTRtUCtI?=
- =?utf-8?B?VE1scjhGc2VtbzFsYVpqYU9WYUg0R1dURXhhQnIwci9rNVBjZ3JzaWF5Nkow?=
- =?utf-8?B?c1J4bkxOOUVudVBzM3g5dEErNEU1WlhpWEZwUktST0xqTHB6T25ldnNESHRo?=
- =?utf-8?B?Q1NJc05lbi91aURTenFZLzFXWXdTYmVCLzhFa25VZGtFdjZ2VHJwcUVJaU1R?=
- =?utf-8?B?VmRiaVJaRG9XWDR6RmFhS2ZBYnVCajhMTWh6MnYvWHJuUUdRSzVZRHJYelZn?=
- =?utf-8?B?US8wSE9INlZFcVR3R21KZXM5V1FRQ0VadGlvWCtWWVFsbjdKd1g5dW9DTG9O?=
- =?utf-8?B?OE4yUWYyYW0xMkt1OXZ3MHUzditnbGdXRm1jZUN5WFNzZ0hMeUtGeDFWUDNa?=
- =?utf-8?B?L1laWnZPdkdEd1k2NmoyamY3c1V3ZVRlckpIai90WVNKMWRwSXBteW52Ui9o?=
- =?utf-8?B?NmRIcjhDa0JEdkNWY3JnZWplZkVWeVpWU2pwdFA4cUxQRFpiWW83MTNXaUk1?=
- =?utf-8?B?ejQyclZDb0tkV2JLUFh2bk02M1Z4K3A0U0lvUjdhNkdVOEtjNTl1azhtem4z?=
- =?utf-8?B?M2RXQVFweXRXaDl0aDNCUUpNZ3lGRXdUb20vRnYwc1FlNkhETVlHaWlXWmRY?=
- =?utf-8?B?Njk4YTdOdDdzSWRsZlZWWDhjemRqOEl3Y0RXVXVsVlBvY0FhcWx6UU9ERkxn?=
- =?utf-8?B?Y1JucWliWGE3SE1JTjExV21hSG91bVB4MmVMcVRtclNJMFh3VXRsdThQUXNU?=
- =?utf-8?B?WW81YWgwSkZVWkVaZFdYaHJqNU9HMTlHMmZrOCtiZGpReXROak1YaDdlcUJE?=
- =?utf-8?B?SjRJTWlobWNTZThzMjY0d0NyaHpySm50QjFaTEZ5ZXc2TXk3OE5nSjJzU0Rk?=
- =?utf-8?B?cWtTbm9KUmtSVW0xSkhOOGk5WmxWdVVWSkttZkJWZHhKZjdQamhyUFFDOWpy?=
- =?utf-8?B?eGMwTDVyL2JHOVMyRGE4dGJNcFhneFpneWVQb3RLbVRtMlk1VitGV21MeE9G?=
- =?utf-8?B?dlI2aFArVTF1bFl1VmpLd0tGM3ZxczNpdVZXZERqVGVhZUcrM0NkekxWUDA4?=
- =?utf-8?Q?vMcM/AA/fKtXb+pCLf+vFQ+3pEsemerWhvuWcoqbrlnG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2eb29bb-3f66-4bcf-dc8b-08dd8005b9e5
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2025 12:20:23.9648
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /VMxJ77jturibU7y++ipi68ujmmCw5lKp91eeQUfJb561Rk43EvXduxTDeyjpvDVgh8KWGRdRJDy6uTlwrRgHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9175
+Content-Transfer-Encoding: 8bit
 
-Add a timer that works with GPU time and provides the ability to wait on
-a condition with a specific timeout.
+Drop simple-KMS in favor of regular atomic helpers to make the code more
+modular. The simple-KMS helper mix up plane and CRTC state, so it is
+obsolete and should go away [1]. Since it just split the simple-pipe
+funtions into per-plane and per-CRTC, no functional changes is expected.
 
-The `Duration` Rust type is used to keep track is differences between
-timestamps ; this will be replaced by the equivalent kernel type once it
-lands.
+[1] https://lore.kernel.org/lkml/dae5089d-e214-4518-b927-5c4149babad8@suse.de/
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
 ---
- drivers/gpu/nova-core/gpu.rs       |   5 ++
- drivers/gpu/nova-core/nova_core.rs |   1 +
- drivers/gpu/nova-core/regs.rs      |  10 +++
- drivers/gpu/nova-core/timer.rs     | 133 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 149 insertions(+)
+ drivers/gpu/drm/hyperv/hyperv_drm.h         |   4 +-
+ drivers/gpu/drm/hyperv/hyperv_drm_modeset.c | 168 ++++++++++++++++----
+ 2 files changed, 139 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index d43e710cc983d51f053dacbd77cbbfb79fa882c3..1b3e43e0412e2a2ea178c7404ea647c9e38d4e04 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -7,6 +7,7 @@
- use crate::driver::Bar0;
- use crate::firmware::Firmware;
- use crate::regs;
-+use crate::timer::Timer;
- use crate::util;
- use core::fmt;
+diff --git a/drivers/gpu/drm/hyperv/hyperv_drm.h b/drivers/gpu/drm/hyperv/hyperv_drm.h
+index d2d8582b36df..9e776112c03e 100644
+--- a/drivers/gpu/drm/hyperv/hyperv_drm.h
++++ b/drivers/gpu/drm/hyperv/hyperv_drm.h
+@@ -11,7 +11,9 @@
+ struct hyperv_drm_device {
+ 	/* drm */
+ 	struct drm_device dev;
+-	struct drm_simple_display_pipe pipe;
++	struct drm_plane plane;
++	struct drm_crtc crtc;
++	struct drm_encoder encoder;
+ 	struct drm_connector connector;
  
-@@ -153,6 +154,7 @@ pub(crate) struct Gpu {
-     bar: Devres<Bar0>,
-     fw: Firmware,
-     sysmem_flush: DmaObject,
-+    timer: Timer,
+ 	/* mode */
+diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
+index 6c6b57298797..c273c093b491 100644
+--- a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
++++ b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/hyperv.h>
+ 
++#include <drm/drm_atomic.h>
+ #include <drm/drm_damage_helper.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_edid.h>
+@@ -15,7 +16,7 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_probe_helper.h>
+-#include <drm/drm_simple_kms_helper.h>
++#include <drm/drm_plane.h>
+ 
+ #include "hyperv_drm.h"
+ 
+@@ -98,12 +99,47 @@ static int hyperv_check_size(struct hyperv_drm_device *hv, int w, int h,
+ 	return 0;
  }
  
- #[pinned_drop]
-@@ -217,11 +219,14 @@ pub(crate) fn new(
-             page
-         };
- 
-+        let timer = Timer::new();
+-static void hyperv_pipe_enable(struct drm_simple_display_pipe *pipe,
+-			       struct drm_crtc_state *crtc_state,
+-			       struct drm_plane_state *plane_state)
++static const uint32_t hyperv_formats[] = {
++	DRM_FORMAT_XRGB8888,
++};
 +
-         Ok(pin_init!(Self {
-             spec,
-             bar,
-             fw,
-             sysmem_flush,
-+            timer,
-         }))
-     }
++static const uint64_t hyperv_modifiers[] = {
++	DRM_FORMAT_MOD_LINEAR,
++	DRM_FORMAT_MOD_INVALID
++};
++
++static enum drm_mode_status
++hyperv_crtc_helper_mode_valid(struct drm_crtc *crtc,
++			      const struct drm_display_mode *mode)
++{
++	return MODE_OK;
++}
++
++static int hyperv_crtc_helper_atomic_check(struct drm_crtc *crtc,
++					   struct drm_atomic_state *state)
+ {
+-	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
++	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
++	int ret;
++
++	if (!crtc_state->enable)
++		goto out;
++
++	ret = drm_atomic_helper_check_crtc_primary_plane(crtc_state);
++	if (ret)
++		return ret;
++
++out:
++	return drm_atomic_add_affected_planes(state, crtc);
++}
++
++static void hyperv_crtc_helper_atomic_enable(struct drm_crtc *crtc,
++					     struct drm_atomic_state *state)
++{
++	struct hyperv_drm_device *hv = to_hv(crtc->dev);
++	struct drm_plane *plane = &hv->plane;
++	struct drm_plane_state *plane_state = plane->state;
+ 	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
++	struct drm_crtc_state *crtc_state = crtc->state;
+ 
+ 	hyperv_hide_hw_ptr(hv->hdev);
+ 	hyperv_update_situation(hv->hdev, 1,  hv->screen_depth,
+@@ -113,12 +149,48 @@ static void hyperv_pipe_enable(struct drm_simple_display_pipe *pipe,
+ 	hyperv_blit_to_vram_fullscreen(plane_state->fb, &shadow_plane_state->data[0]);
  }
-diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-index 37c7eb0ea7a926bee4e3c661028847291bf07fa2..df3468c92c6081b3e2db218d92fbe1c40a0a75c3 100644
---- a/drivers/gpu/nova-core/nova_core.rs
-+++ b/drivers/gpu/nova-core/nova_core.rs
-@@ -26,6 +26,7 @@ macro_rules! with_bar {
- mod firmware;
- mod gpu;
- mod regs;
-+mod timer;
- mod util;
  
- kernel::module_pci_driver! {
-diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-index 1e24787c4b5f432ac25fe399c8cb38b7350e44ae..f191cf4eb44c2b950e5cfcc6d04f95c122ce29d3 100644
---- a/drivers/gpu/nova-core/regs.rs
-+++ b/drivers/gpu/nova-core/regs.rs
-@@ -14,6 +14,16 @@
-     28:20   chipset => try_into Chipset, "chipset model"
- );
+-static int hyperv_pipe_check(struct drm_simple_display_pipe *pipe,
+-			     struct drm_plane_state *plane_state,
+-			     struct drm_crtc_state *crtc_state)
++static void hyperv_crtc_helper_atomic_disable(struct drm_crtc *crtc,
++					      struct drm_atomic_state *state)
++{ }
++
++static const struct drm_crtc_helper_funcs hyperv_crtc_helper_funcs = {
++	.mode_valid = hyperv_crtc_helper_mode_valid,
++	.atomic_check = hyperv_crtc_helper_atomic_check,
++	.atomic_enable = hyperv_crtc_helper_atomic_enable,
++	.atomic_disable = hyperv_crtc_helper_atomic_disable,
++};
++
++static const struct drm_crtc_funcs hyperv_crtc_funcs = {
++	.reset = drm_atomic_helper_crtc_reset,
++	.destroy = drm_crtc_cleanup,
++	.set_config = drm_atomic_helper_set_config,
++	.page_flip = drm_atomic_helper_page_flip,
++	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
++};
++
++static int hyperv_plane_atomic_check(struct drm_plane *plane,
++				     struct drm_atomic_state *state)
+ {
+-	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
++	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(state, plane);
++	struct hyperv_drm_device *hv = to_hv(plane->dev);
+ 	struct drm_framebuffer *fb = plane_state->fb;
++	struct drm_crtc *crtc = plane_state->crtc;
++	struct drm_crtc_state *crtc_state = NULL;
++	int ret;
++
++	if (crtc)
++		crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
++
++	ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
++						  DRM_PLANE_NO_SCALING,
++						  DRM_PLANE_NO_SCALING,
++						  false, false);
++	if (ret)
++		return ret;
++
++	if (!plane_state->visible)
++		return 0;
  
-+/* PTIMER */
-+
-+register!(PtimerTime0@0x00009400;
-+    31:0    lo => as u32, "low 32-bits of the timer"
-+);
-+
-+register!(PtimerTime1@0x00009410;
-+    31:0    hi => as u32, "high 32 bits of the timer"
-+);
-+
- /* PFB */
+ 	if (fb->format->format != DRM_FORMAT_XRGB8888)
+ 		return -EINVAL;
+@@ -132,51 +204,83 @@ static int hyperv_pipe_check(struct drm_simple_display_pipe *pipe,
+ 	return 0;
+ }
  
- register!(PfbNisoFlushSysmemAddr@0x00100c10;
-diff --git a/drivers/gpu/nova-core/timer.rs b/drivers/gpu/nova-core/timer.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..8987352f4192bc9b4b2fc0fb5f2e8e62ff27be68
---- /dev/null
-+++ b/drivers/gpu/nova-core/timer.rs
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Nova Core Timer subdevice
-+
-+// To be removed when all code is used.
-+#![allow(dead_code)]
-+
-+use core::fmt::Display;
-+use core::ops::{Add, Sub};
-+use core::time::Duration;
-+
-+use kernel::devres::Devres;
-+use kernel::num::U64Ext;
-+use kernel::prelude::*;
-+
-+use crate::driver::Bar0;
-+use crate::regs;
-+
-+/// A timestamp with nanosecond granularity obtained from the GPU timer.
-+///
-+/// A timestamp can also be substracted to another in order to obtain a [`Duration`].
-+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-+pub(crate) struct Timestamp(u64);
-+
-+impl Display for Timestamp {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        write!(f, "{}", self.0)
-+    }
+-static void hyperv_pipe_update(struct drm_simple_display_pipe *pipe,
+-			       struct drm_plane_state *old_state)
++static void hyperv_plane_atomic_update(struct drm_plane *plane,
++						      struct drm_atomic_state *old_state)
+ {
+-	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
+-	struct drm_plane_state *state = pipe->plane.state;
++	struct drm_plane_state *old_pstate = drm_atomic_get_old_plane_state(old_state, plane);
++	struct hyperv_drm_device *hv = to_hv(plane->dev);
++	struct drm_plane_state *state = plane->state;
+ 	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(state);
+ 	struct drm_rect rect;
+ 
+-	if (drm_atomic_helper_damage_merged(old_state, state, &rect)) {
++	if (drm_atomic_helper_damage_merged(old_pstate, state, &rect)) {
+ 		hyperv_blit_to_vram_rect(state->fb, &shadow_plane_state->data[0], &rect);
+ 		hyperv_update_dirt(hv->hdev, &rect);
+ 	}
+ }
+ 
+-static const struct drm_simple_display_pipe_funcs hyperv_pipe_funcs = {
+-	.enable	= hyperv_pipe_enable,
+-	.check = hyperv_pipe_check,
+-	.update	= hyperv_pipe_update,
+-	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS,
++static bool hyperv_format_mod_supported(struct drm_plane *plane,
++					uint32_t format, uint64_t modifier)
++{
++	return modifier == DRM_FORMAT_MOD_LINEAR;
 +}
 +
-+impl Add<Duration> for Timestamp {
-+    type Output = Self;
++static const struct drm_plane_helper_funcs hyperv_plane_helper_funcs = {
++	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
++	.atomic_check = hyperv_plane_atomic_check,
++	.atomic_update = hyperv_plane_atomic_update,
+ };
+ 
+-static const uint32_t hyperv_formats[] = {
+-	DRM_FORMAT_XRGB8888,
++static const struct drm_plane_funcs hyperv_plane_funcs = {
++	.update_plane		= drm_atomic_helper_update_plane,
++	.disable_plane		= drm_atomic_helper_disable_plane,
++	.destroy		= drm_plane_cleanup,
++	.format_mod_supported   = hyperv_format_mod_supported,
++	DRM_GEM_SHADOW_PLANE_FUNCS,
+ };
+ 
+-static const uint64_t hyperv_modifiers[] = {
+-	DRM_FORMAT_MOD_LINEAR,
+-	DRM_FORMAT_MOD_INVALID
++static const struct drm_encoder_funcs hyperv_drm_simple_encoder_funcs_cleanup = {
++	.destroy = drm_encoder_cleanup,
+ };
+ 
+ static inline int hyperv_pipe_init(struct hyperv_drm_device *hv)
+ {
++	struct drm_device *dev = &hv->dev;
++	struct drm_encoder *encoder = &hv->encoder;
++	struct drm_plane *plane = &hv->plane;
++	struct drm_crtc *crtc = &hv->crtc;
++	struct drm_connector *connector = &hv->connector;
+ 	int ret;
+ 
+-	ret = drm_simple_display_pipe_init(&hv->dev,
+-					   &hv->pipe,
+-					   &hyperv_pipe_funcs,
+-					   hyperv_formats,
+-					   ARRAY_SIZE(hyperv_formats),
+-					   hyperv_modifiers,
+-					   &hv->connector);
++	drm_plane_helper_add(plane, &hyperv_plane_helper_funcs);
++	ret = drm_universal_plane_init(dev, plane, 0,
++				       &hyperv_plane_funcs,
++				       hyperv_formats, ARRAY_SIZE(hyperv_formats),
++				       hyperv_modifiers,
++				       DRM_PLANE_TYPE_PRIMARY, NULL);
++	if (ret)
++		return ret;
 +
-+    fn add(mut self, rhs: Duration) -> Self::Output {
-+        let mut nanos = rhs.as_nanos();
-+        while nanos > u64::MAX as u128 {
-+            self.0 = self.0.wrapping_add(nanos as u64);
-+            nanos -= u64::MAX as u128;
-+        }
++	drm_crtc_helper_add(crtc, &hyperv_crtc_helper_funcs);
++	ret = drm_crtc_init_with_planes(dev, crtc, plane, NULL,
++					&hyperv_crtc_funcs, NULL);
++	if (ret)
++		return ret;
 +
-+        Timestamp(self.0.wrapping_add(nanos as u64))
-+    }
-+}
++	encoder->possible_crtcs = drm_crtc_mask(crtc);
++	ret = drm_encoder_init(dev, encoder,
++			       &hyperv_drm_simple_encoder_funcs_cleanup,
++			       DRM_MODE_ENCODER_NONE, NULL);
 +
-+impl Sub for Timestamp {
-+    type Output = Duration;
++	if (ret || !connector)
++		return ret;
 +
-+    fn sub(self, rhs: Self) -> Self::Output {
-+        Duration::from_nanos(self.0.wrapping_sub(rhs.0))
-+    }
-+}
++	ret = drm_connector_attach_encoder(connector, encoder);
 +
-+pub(crate) struct Timer {}
-+
-+impl Timer {
-+    pub(crate) fn new() -> Self {
-+        Self {}
-+    }
-+
-+    /// Read the current timer timestamp.
-+    pub(crate) fn read(&self, bar: &Bar0) -> Timestamp {
-+        loop {
-+            let hi = regs::PtimerTime1::read(bar);
-+            let lo = regs::PtimerTime0::read(bar);
-+
-+            if hi.hi() == regs::PtimerTime1::read(bar).hi() {
-+                return Timestamp(u64::from_u32s(hi.hi(), lo.lo()));
-+            }
-+        }
-+    }
-+
-+    #[allow(dead_code)]
-+    pub(crate) fn time(bar: &Bar0, time: u64) {
-+        regs::PtimerTime1::default()
-+            .set_hi(time.upper_32_bits())
-+            .write(bar);
-+        regs::PtimerTime0::default()
-+            .set_lo(time.lower_32_bits())
-+            .write(bar);
-+    }
-+
-+    /// Wait until `cond` is true or `timeout` elapsed, based on GPU time.
-+    ///
-+    /// When `cond` evaluates to `Some`, its return value is returned.
-+    ///
-+    /// `Err(ETIMEDOUT)` is returned if `timeout` has been reached without `cond` evaluating to
-+    /// `Some`, or if the timer device is stuck for some reason.
-+    pub(crate) fn wait_on<R, F: Fn() -> Option<R>>(
-+        &self,
-+        bar: &Devres<Bar0>,
-+        timeout: Duration,
-+        cond: F,
-+    ) -> Result<R> {
-+        // Number of consecutive time reads after which we consider the timer frozen if it hasn't
-+        // moved forward.
-+        const MAX_STALLED_READS: usize = 16;
-+
-+        let (mut cur_time, mut prev_time, deadline) = {
-+            let cur_time = with_bar!(bar, |b| self.read(b))?;
-+            let deadline = cur_time + timeout;
-+
-+            (cur_time, cur_time, deadline)
-+        };
-+        let mut num_reads = 0;
-+
-+        loop {
-+            if let Some(ret) = cond() {
-+                return Ok(ret);
-+            }
-+
-+            (|| {
-+                cur_time = with_bar!(bar, |b| self.read(b))?;
-+
-+                /* Check if the timer is frozen for some reason. */
-+                if cur_time == prev_time {
-+                    if num_reads >= MAX_STALLED_READS {
-+                        return Err(ETIMEDOUT);
-+                    }
-+                    num_reads += 1;
-+                } else {
-+                    if cur_time >= deadline {
-+                        return Err(ETIMEDOUT);
-+                    }
-+
-+                    num_reads = 0;
-+                    prev_time = cur_time;
-+                }
-+
-+                Ok(())
-+            })()?;
-+        }
-+    }
-+}
+ 	if (ret)
+ 		return ret;
+ 
+-	drm_plane_enable_fb_damage_clips(&hv->pipe.plane);
++	drm_plane_enable_fb_damage_clips(&hv->plane);
+ 
+ 	return 0;
+ }
 
+base-commit: b60301774a8fe6c30b14a95104ec099290a2e904
 -- 
 2.49.0
 
