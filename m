@@ -1,133 +1,83 @@
-Return-Path: <linux-kernel+bounces-612547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C687A9506D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07409A95074
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC633B07C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36743B0885
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3483120C485;
-	Mon, 21 Apr 2025 11:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ge8Fb/E/"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24C3264A9E;
+	Mon, 21 Apr 2025 11:51:05 +0000 (UTC)
+Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A82F261575;
-	Mon, 21 Apr 2025 11:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2321263C9B;
+	Mon, 21 Apr 2025 11:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745236255; cv=none; b=D7wm3uuhJ6pUd7fSWL77NFD49k/Hh9PXBeocv0IKwX0eVHoEslCudBRmxfxbZR8c4Ux2NqB0SD6p4Mho5Do9L5FwQSd2FWIQ3Cpor/XKu+DtlXUTQ/nCUKUAdnYonicMAa4kl0nY7Mo3OOpx2EJkRwa8SD6WAEPyYFtwqv73yEw=
+	t=1745236265; cv=none; b=LTnEe5S3H1OohT98SGfKliIQlA4GViJp/TUi/rin7X/FdKgeHRKuEjc1B4aLYTNtN8HYnP+aga9AYIzSGua2FXAz9Sz0UdtP6SBRcMjGbVcD/OfiKjfB/ePG3zOFy+158pqlwXsyyvCbc4pUnp7mRAuqfLMOsCWKKQHy4AZKgas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745236255; c=relaxed/simple;
-	bh=7V0PSME1nWcALYz7UGYE7Ja9J4GO+tNxHAvxb4tYhaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ThGgPv+35u9YX4EDkItJZlCJ0S6/evB5RfYGq67OO1BhlnU5ltXtYA+Fuuq3iBTSAOTdPaQpzZjdMvzUZZaGCOtHzJRkF5q9l7ZXqiTtMKTLwgkbM7n/6gh2tdqk1vZt1fuUOjmS4lvY7oMol+kRJ3kybCDBHBg3/ri57AJfRAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ge8Fb/E/; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22401f4d35aso42198605ad.2;
-        Mon, 21 Apr 2025 04:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745236253; x=1745841053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rc0DKkPWrE0e6Vsc/ZtQk+JXgRiTqIJBdziEE9MWJQg=;
-        b=Ge8Fb/E/21V3O7tfK/o0YWBK9dSyEKrynL3DQFCh7bYSL9ldxw6PS98kJGP3iG58S1
-         JQyozdanUeZ7F/U4mca1eUXX9IsQNxKvKYNVzvzH7QBTIoDiExZke0V4EJv6lE13PdQm
-         OL5rICVU+p+XgWEgpeRo9ZeOVIQtbfkCtiQ2LRAex8DHpQbqiiRCByHnrBLzvnbuXlCi
-         oVoP2D+7nqBN77A1qpdnF3QuXq4EAWr7ADicXE2N+DDLWmvhEI21uGJNP6QtA1LM0eeo
-         M/6+G2ayK2PTFONeYuUY8lQA5Hclj6Ab2u1b5628REQ0Z9UQg04u9ObCgHJBJzUdVRvi
-         7Zig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745236253; x=1745841053;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rc0DKkPWrE0e6Vsc/ZtQk+JXgRiTqIJBdziEE9MWJQg=;
-        b=D+nPlY1YfTaRMo7HfohclGVwgANUXxdvNZClT/ypRqp3iq32DiVhGxQqRS105UWeV8
-         F1w4qGWbFyU6Ogpfbw7h2G6Tog66NwMUjitVDzFOV3ATNopBpNA+/KmpymG/Ho3g7LK7
-         RJ5Suf4IIYm+SDr5rM8+FQBJfgqv5C+cXPr4PpaNHFCSs+Pn41UK8QJGRmBU03WvlKO8
-         LNDt0rmGyyDsiN616BS0Weopr1d67JDKHwpDgA6nrc3oCmKUmWShTs9lmLuzpcn3uBlm
-         KP0kieHJ98oWQM3smc/LAKka9KQshXM4U8pEgkZ4yNwge/e+tpXO+7M5oyXKRXnTdlFd
-         xuXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd4jWG+b5qYa8kSR98MhQiRueqkugl7TeMZwi6SsskNnjRfLsAZ18CWYRo6L6ycEi9x/bEGwwl5HWn2eQ=@vger.kernel.org, AJvYcCXOHjwfGLulkTFYpXgVVoblUZEP6LQoVQ2ryjSiRM1sVoJWmW8rBnar+8R97Pq2GL0CSbTH1FpyUKh1uys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCKmc1fzkQc8Cg4+Wfo23j/USaFKxioY0NxkORdZoDWnu78xbH
-	NfScVkTjYDfRrJxokvYtXpcNLP1TnvVw82NcVplyg5cw61Ph4UXh
-X-Gm-Gg: ASbGnct/R1G6tj54EdccAsCHvmpt4t+Yu7ziuKPJ2fuPa9Nu0iQcy+6swxcF7kqWHPs
-	reYf/+JCZfZVs9Fkp9HemChriG4AlCovBJurMcVYpMj8mxO4Sp3dYDreQVjubuttCnfoUSRCQ2J
-	HzVC0ZjkCkRRz1C10nAzK6BDStv5EiNQoSvmOghK20gUTJkdV+9dJIFwNEhRiIqJuC7Gy7/lBxI
-	eFuEJk+gFAwmqRmwv8coGY0DLy6TiIIu6d6B2pRMfez730K0F5hcjXwfNCGMg/ACq3hy3qUaylB
-	7ofz/IOGR57va3ZwWhHlPj9vTgf3mW47AzFgATSgJjwNBYRecqZDMAgIoejeL+/S+GDgMA==
-X-Google-Smtp-Source: AGHT+IHweDS0NqpxlU+xKC7cxp7EuYdOBxBK9+ucLyGMecrMQWr9pEmPSyqRsD8ncvvX+wWS8I7/9g==
-X-Received: by 2002:a17:903:2cb:b0:223:5e76:637a with SMTP id d9443c01a7336-22c535a9c65mr150484045ad.23.1745236253382;
-        Mon, 21 Apr 2025 04:50:53 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf2548sm64007015ad.64.2025.04.21.04.50.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 04:50:53 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: mchehab@kernel.org
-Cc: christophe.jaillet@wanadoo.fr,
-	hverkuil@xs4all.nl,
-	harperchen1110@gmail.com,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] media: dvb-usb: az6027: fix out-of-bounds in az6027_i2c_xfer()
-Date: Mon, 21 Apr 2025 20:50:45 +0900
-Message-ID: <20250421115045.81394-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745236265; c=relaxed/simple;
+	bh=xLSeYSn0wxwfBOXloKBUUIaklM5Lf3N9jYHxYSNill4=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ExoaqWIgKPGmeTXXm+MffvwG8lQRQmqYF/0E5bZoLgPd+0cWAvQ+peRVnoy3jInZsbyNihQ5bgne06Sf7y/7PQK5eZpV6eI4F8EiLp98F/Cozrjm+tnj9cULvzsCL/mszel8x1vF4yGAwwoS4ZdjcvxKPyJATZ+Glxju0/2Q/eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
+Received: from tux.applied-asynchrony.com (p5b07e9b7.dip0.t-ipconnect.de [91.7.233.183])
+	by mail.itouring.de (Postfix) with ESMTPSA id 670791255FA;
+	Mon, 21 Apr 2025 13:50:53 +0200 (CEST)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+	by tux.applied-asynchrony.com (Postfix) with ESMTP id 32042601893B6;
+	Mon, 21 Apr 2025 13:50:52 +0200 (CEST)
+Subject: Re: [REGRESSION] 6.14.3 panic - kernel NULL pointer dereference in
+ htb_dequeue
+To: "Alan J. Wylie" <alan@wylie.me.uk>, Jamal Hadi Salim <jhs@mojatatu.com>,
+ regressions@lists.linux.dev, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Octavian Purdila <tavip@google.com>,
+ =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>,
+ stable@vger.kernel.org
+References: <20250421104019.7880108d@frodo.int.wylie.me.uk>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <6fa68b02-cf82-aeca-56e6-e3b8565b22f4@applied-asynchrony.com>
+Date: Mon, 21 Apr 2025 13:50:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250421104019.7880108d@frodo.int.wylie.me.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Missing maximum size check on msg[i].len causes out-of-bounds vuln for u8 *data.
-Therefore, we need to add proper range checking to prevent this vuln.
+On 2025-04-21 11:40, Alan J. Wylie wrote:
+> #regzbot introduced: 6.14.2..6.14.3
+> 
+> Since 6.14.3 I have been seeing random panics, all in htb_dequeue.
+> 6.14.2 was fine.
 
-Fixes: 858e97d7956d ("media: dvb-usb: az6027: fix three null-ptr-deref in az6027_i2c_xfer()")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/media/usb/dvb-usb/az6027.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+6.14.3 contains:
+"codel: remove sch->q.qlen check before qdisc_tree_reduce_backlog()" aka
+https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/net/sched?h=linux-6.14.y&id=a57fe60ef4cf96bfbb6b58397ec28bdb5a5c6b31
 
-diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
-index 056935d3cbd6..f9bd8a4c1577 100644
---- a/drivers/media/usb/dvb-usb/az6027.c
-+++ b/drivers/media/usb/dvb-usb/az6027.c
-@@ -988,7 +988,7 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
- 			/* write/read request */
- 			if (i + 1 < num && (msg[i + 1].flags & I2C_M_RD)) {
- 				req = 0xB9;
--				if (msg[i].len < 1) {
-+				if (msg[i].len < 1 || msg[i + 1].len + 5 > sizeof(data)) {
- 					i = -EOPNOTSUPP;
- 					break;
- 				}
-@@ -1005,7 +1005,7 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
- 
- 				/* demod 16bit addr */
- 				req = 0xBD;
--				if (msg[i].len < 1) {
-+				if (msg[i].len < 1 || msg[i].len - 2 > sizeof(data)) {
- 					i = -EOPNOTSUPP;
- 					break;
- 				}
-@@ -1034,7 +1034,7 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
- 			} else {
- 
- 				req = 0xBD;
--				if (msg[i].len < 1) {
-+				if (msg[i].len < 1 || msg[i].len - 1 > sizeof(data)) {
- 					i = -EOPNOTSUPP;
- 					break;
- 				}
---
+Is your HTB backed by fq_codel by any chance? If so, try either
+reverting the above or adding:
+"sch_htb: make htb_qlen_notify() idempotent" aka
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5ba8b837b522d7051ef81bacf3d95383ff8edce5
+
+which was successfully not added to 6.14.3, along with the rest of the series:
+https://lore.kernel.org/all/20250403211033.166059-2-xiyou.wangcong@gmail.com/
+
+Hope this helps. I am running fq_codel without issue but not behind htb.
+
+cheers
+Holger
 
