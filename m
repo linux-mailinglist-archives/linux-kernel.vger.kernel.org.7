@@ -1,353 +1,167 @@
-Return-Path: <linux-kernel+bounces-612866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36851A95526
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 367C8A95514
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39163B10EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73AB3AEA58
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6B91E2823;
-	Mon, 21 Apr 2025 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9770B1E5207;
+	Mon, 21 Apr 2025 17:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="pb6oPNTA"
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="25UioA/J"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F641171CD;
-	Mon, 21 Apr 2025 17:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED01C2F3E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 17:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255986; cv=none; b=fosG0nqqpd+651gkEEMcX+qE2omQZZEcRH/tB5qbO/6BrmP8JvmIgOB0KzHvmW4cXRyykXtS56EvWSJABTnP13d3TQhlHD7u3F8yxdX03k+MPORnuHhbXxSRK5TqXIysctofTRW6zM9guYm1QzEOcGNnc20wSs91eKPJzh7Qic0=
+	t=1745255802; cv=none; b=GuczcWpMqd2Y1/MyuUJsMFXsjvx04dkouShY9jdLc59Jc6Zr+nl1bzQXhRIGD03JF73AXohZ1lXn0gMkuf895gkYfaDxaniSA0E62pra/7WxXg+uIk8I8zxOaHvLlQ4jG+/UfACllnrR1VF73e4mXPrD7B6RcM1yHZd+JFKONMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255986; c=relaxed/simple;
-	bh=3LurhjwMUmuNoKtt7NXtW+M+MP06+41+2d+QeUwRrwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYKgyHj+eu2ASuTx9GBawztr0dn8wx+niqjcPBkSn3jl3FoXhuHG39UWSVaRgRH6Ue0RzTFHk9aKZNbzGlY8s58UFK5eR4bwZIBtKSWSXucD6Q5NLQgM4MjJdeASKa+xItv2sLJklYQJsR2x+nVMDka0a50lDU8pLvLMw3Fm9ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=pb6oPNTA; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CADBF754A0;
-	Mon, 21 Apr 2025 19:10:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1745255449; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=8bR4w4w+rvs6ov0KHOAszI5SgWh2IY/Tx10eFtuUhFY=;
-	b=pb6oPNTAHpmYwpWBxw/xka0wMMt+qA153aFarogn5dcQRC9sjFlsZMNifDU3mhXStj+BbG
-	I7TZ2leGa622+vjq2di4gTf2yqDiHFXK5/MEuD6yOa2VdWd581QsCNU2f1zQwmz4Tykh4q
-	mcmyBrw1gmW2/UDYMllnN4/tbAxXKKhkFZddOAn0AA/JUXO1wh++hZQHogoyXl7TytBsEa
-	yIrm33kXppUPwGajaVzHX5+iu8qs/8XGX8ghr2nEjgdWez20EQ53p/obg6bEgx3pkGIXBH
-	OlVXryFAc/MNKEy5S9Dsgu6lSNoiHhaYWU3FwR2hdz1NCBqdvcOykTJSdoO21w==
-Message-ID: <0758a293-abf6-4b98-86c5-2f11fad8c9ca@cjdns.fr>
-Date: Mon, 21 Apr 2025 19:10:45 +0200
+	s=arc-20240116; t=1745255802; c=relaxed/simple;
+	bh=ZFCSLHiDysg927Y/Nr3V/lVaKcJ7uAxp7qwb1bHSUZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nRmmHnJftOcQ2YzT6+t7dI//VNesmcd/L3JBAIiMLzq4650lpi76H2VwGtwQDJwUTDVd+vl0u9vDOWFPuLX1m5NvTsix237QI6T9OLNHD2xeMIbozZWSZIXboKa3/wolgYqGTFlUVeYFuh0PTq9Jhsw3VfS/GA3CmWbglXEQ7Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=25UioA/J; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769e30af66so1294311cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 10:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745255798; x=1745860598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuURjUDWNXAz9lMXw8+fH47R9FvQohgPWajg37i/laE=;
+        b=25UioA/JF//XcrrCf2YEFIbTMNAOw2KZwYl2luCH5vkxjKxcHR5Jm/9gdcE4nI1p68
+         0+E3WoCZf7BH8kbW+AaFM2kdfiF6+vlxDVi69voKguVa4TVs9CVLcjadXmZSx2MvaHt5
+         weLVhD9tV7SQ7LHKthoscEIAZC4a/6iR54PHmiMaexmhRJXOki5FgjcIsVamA65czAbT
+         J/yV/Xpj4m2CckscQU2ExVE4OPfC7jH+oMGEPDRDY7Ov0p/QMVtHC1bLvFwCIuLbcrya
+         2V71Sy3P5bBgUKTpZeCIV8FdfYAkZX64BHhUH9gaGkWXUqvHqV9GXywArBtOU68YWCno
+         whgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745255798; x=1745860598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RuURjUDWNXAz9lMXw8+fH47R9FvQohgPWajg37i/laE=;
+        b=CsVoU95p8U/IVKb0WU55ral0rGUN7B4tY3KOj7sXmT76TeTbFfnXb2Cw90wZRPUvqa
+         SYHtkC2qeMHowsIsvrii5aZAVIpuzPmUvE9oN4kGrptl7OvksBUjlEm9iv1W+nSiiove
+         0jKW0zFGdwZ3yR8SpaZBMIjpNqB0CvExpiy0GvO3ac+4u/6M2c5Um78VNrbJWAFephFo
+         pcdcvpgJovkPb+ryf8n000z675+9rXtzYbxDBhMlmYRwp50SGS0WpAtm94ld3wSNUZyT
+         eNwRutGg5VbWgaB3rYJn4pv6G4UOsi3PPTHmOIuOnHFVo5pxZ/pgARVy951jkUFYPLVd
+         t4Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhu0w6mGYTlfLjDDDWn2gtMK4TlrPpXZEmCRWVHoiYmCTc9cSqZByQPBcVcr7svnJqmDKX74XecJ+xVOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7o988PnTZBv0XCVczJ9HQQMrmxtVZKShoEaIQ0VwoxTncOcLI
+	GRnCTCjIB0KEH6U6jxqSm5440iyLeWTjeS6bFTLk2w3S1C/Y1HvCjRItaJxeOvTTuvZ+JEfkOAQ
+	nQ63S+gGkvbxJla28EsTrBEgabNy2wDXKhOOe
+X-Gm-Gg: ASbGnctylONkD5LfFFcolix+gCebHAMU8qYTSc7uKwdvuqO9Ek4weFAcrTG/7EJIhuV
+	KGI7MiAlxBiPO5ox5Llf7Yag+Rw+poTgdvARu9F86iVnjOKrwZRc0XrVWCRaqBPzEK1x5/nQ4W3
+	MKwKyfI/136sCJxKkEWHzy
+X-Google-Smtp-Source: AGHT+IEe07pf382BuG5t+h0cxkhNonB9S2hb+4NBUwiHHOIgvisi/X1Rvk0m70CnMe3Yxh9IFdbEwfSfBL+DkDE8WEU=
+X-Received: by 2002:ac8:5901:0:b0:467:84a1:df08 with SMTP id
+ d75a77b69052e-47aecc928f3mr9502881cf.23.1745255797522; Mon, 21 Apr 2025
+ 10:16:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v3 05/10] clocksource/drivers: Add EcoNet Timer HPT driver
-To: linux-mips@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu,
- linux-mediatek@lists.infradead.org
-References: <20250330170306.2584136-1-cjd@cjdns.fr>
- <20250330170306.2584136-6-cjd@cjdns.fr>
-Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <20250330170306.2584136-6-cjd@cjdns.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-3-surenb@google.com>
+ <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local> <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
+In-Reply-To: <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 21 Apr 2025 10:16:26 -0700
+X-Gm-Features: ATxdqUH-V1xozHecneL38ihhUBup30dXmnQSZc7psqoLu7St8-YIj64ka4pAWwg
+Message-ID: <CAJuCfpFjx2NB8X8zVSGyrcaOfwMApZRfGfuia3ERBKj0XaPgaw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/5] userfaultfd: UFFDIO_MOVE uABI
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, aarcange@redhat.com, 
+	linux-man@vger.kernel.org, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, shuah@kernel.org, lokeshgidra@google.com, 
+	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
+	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 30/03/2025 19:03, Caleb James DeLisle wrote:
-> Introduce a clocksource driver for the so-called high-precision timer (HPT)
-> in the EcoNet EN751221 MIPS SoC.
+On Sat, Apr 19, 2025 at 12:26=E2=80=AFPM Alejandro Colomar <alx@kernel.org>=
+ wrote:
 >
-> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> Hi Lorenzo, Suren, Andrea,
+>
+> On Sat, Apr 19, 2025 at 07:57:36PM +0100, Lorenzo Stoakes wrote:
+> > +cc Alejandro
+>
+> Thanks!
+>
+> > On Wed, Dec 06, 2023 at 02:36:56AM -0800, Suren Baghdasaryan wrote:
+> > > From: Andrea Arcangeli <aarcange@redhat.com>
+> > >
+> > > Implement the uABI of UFFDIO_MOVE ioctl.
+>
+> [...]
+>
+> > >
+> > > [1] https://lore.kernel.org/all/1425575884-2574-1-git-send-email-aarc=
+ange@redhat.com/
+> > > [2] https://lore.kernel.org/linux-mm/CA+EESO4uO84SSnBhArH4HvLNhaUQ5nZ=
+KNKXqxRCyjniNVjp0Aw@mail.gmail.com/
+> > >
+> > > Update for the ioctl_userfaultfd(2)  manpage:
+> >
+> > Sorry to resurrect an old thread but... I don't think this update was e=
+ver
+> > propagated anywhere?
+> >
+> > If you did send separately to man-pages list or whatnot maybe worth nud=
+ging
+> > again?
+> >
+> > I don't see anything at [0].
 
+Thanks for bringing it up! This must have slipped from my attention.
 
-Hello all,
+> >
+> > [0]: https://man7.org/linux/man-pages/man2/ioctl_userfaultfd.2.html
+> >
+> > Thanks!
+> >
+> > >
+> > >    UFFDIO_MOVE
+> > >        (Since Linux xxx)  Move a continuous memory chunk into the
+>
+> Nope, it seems this was never sent to linux-man@.
+> <https://lore.kernel.org/linux-man/?q=3DUFFDIO_MOVE>:
 
-It's been a couple of weeks and I wanted to check if this is good and/or
-if there's anything I can do to help make the process easier.
+Sorry for missing that part.
 
-Thanks to Tglx, Rob, Krzysztof, and Sergey for your time reviewing my code.
-In v3 I updated this patch in accordance with feedback I received on the
-interrupt controller. Unless there's advice to do otherwise, I can resend
-the remaining patches later on this week.
+>
+>         [No results found]
+>
+> Please re-send including linux-man@ in CC, as specified in
+> <https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIB=
+UTING>
 
+Thanks for the reference. Will post the documentation update later today.
 Thanks,
+Suren.
 
-Caleb
-
-
-> ---
->   drivers/clocksource/Kconfig                 |   8 +
->   drivers/clocksource/Makefile                |   1 +
->   drivers/clocksource/timer-econet-en751221.c | 216 ++++++++++++++++++++
->   3 files changed, 225 insertions(+)
->   create mode 100644 drivers/clocksource/timer-econet-en751221.c
 >
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 487c85259967..976afb0b2312 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -73,6 +73,14 @@ config DW_APB_TIMER_OF
->   	select DW_APB_TIMER
->   	select TIMER_OF
->   
-> +config ECONET_EN751221_TIMER
-> +	bool "EcoNet EN751221 High Precision Timer" if COMPILE_TEST
-> +	depends on HAS_IOMEM
-> +	select CLKSRC_MMIO
-> +	select TIMER_OF
-> +	help
-> +	  Support for CPU timer found on EcoNet MIPS based SoCs.
-> +
->   config FTTMR010_TIMER
->   	bool "Faraday Technology timer driver" if COMPILE_TEST
->   	depends on HAS_IOMEM
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-> index 43ef16a4efa6..d2998601eda5 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_CLKBLD_I8253)	+= i8253.o
->   obj-$(CONFIG_CLKSRC_MMIO)	+= mmio.o
->   obj-$(CONFIG_DAVINCI_TIMER)	+= timer-davinci.o
->   obj-$(CONFIG_DIGICOLOR_TIMER)	+= timer-digicolor.o
-> +obj-$(CONFIG_ECONET_EN751221_TIMER)	+= timer-econet-en751221.o
->   obj-$(CONFIG_OMAP_DM_TIMER)	+= timer-ti-dm.o
->   obj-$(CONFIG_OMAP_DM_SYSTIMER)	+= timer-ti-dm-systimer.o
->   obj-$(CONFIG_DW_APB_TIMER)	+= dw_apb_timer.o
-> diff --git a/drivers/clocksource/timer-econet-en751221.c b/drivers/clocksource/timer-econet-en751221.c
-> new file mode 100644
-> index 000000000000..9cfeead09377
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-econet-en751221.c
-> @@ -0,0 +1,216 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Timer present on EcoNet EN75xx MIPS based SoCs.
-> + *
-> + * Copyright (C) 2025 by Caleb James DeLisle <cjd@cjdns.fr>
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/sched_clock.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> +#include <linux/cpuhotplug.h>
-> +#include <linux/clk.h>
-> +
-> +#define ECONET_BITS			32
-> +#define ECONET_MIN_DELTA		0x00001000
-> +#define ECONET_MAX_DELTA		GENMASK(ECONET_BITS - 2, 0)
-> +/* 34Kc hardware has 1 block and 1004Kc has 2. */
-> +#define ECONET_NUM_BLOCKS		DIV_ROUND_UP(NR_CPUS, 2)
-> +
-> +static struct {
-> +	void __iomem	*membase[ECONET_NUM_BLOCKS];
-> +	u32		freq_hz;
-> +} econet_timer __ro_after_init;
-> +
-> +static DEFINE_PER_CPU(struct clock_event_device, econet_timer_pcpu);
-> +
-> +/* Each memory block has 2 timers, the order of registers is:
-> + * CTL, CMR0, CNT0, CMR1, CNT1
-> + */
-> +static inline void __iomem *reg_ctl(u32 timer_n)
-> +{
-> +	return econet_timer.membase[timer_n >> 1];
-> +}
-> +
-> +static inline void __iomem *reg_compare(u32 timer_n)
-> +{
-> +	return econet_timer.membase[timer_n >> 1] + (timer_n & 1) * 0x08 + 0x04;
-> +}
-> +
-> +static inline void __iomem *reg_count(u32 timer_n)
-> +{
-> +	return econet_timer.membase[timer_n >> 1] + (timer_n & 1) * 0x08 + 0x08;
-> +}
-> +
-> +static inline u32 ctl_bit_enabled(u32 timer_n)
-> +{
-> +	return 1U << (timer_n & 1);
-> +}
-> +
-> +static inline u32 ctl_bit_pending(u32 timer_n)
-> +{
-> +	return 1U << ((timer_n & 1) + 16);
-> +}
-> +
-> +static bool cevt_is_pending(int cpu_id)
-> +{
-> +	return ioread32(reg_ctl(cpu_id)) & ctl_bit_pending(cpu_id);
-> +}
-> +
-> +static irqreturn_t cevt_interrupt(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *dev = this_cpu_ptr(&econet_timer_pcpu);
-> +	int cpu = cpumask_first(dev->cpumask);
-> +
-> +	if (!cevt_is_pending(cpu)) {
-> +		pr_debug("%s IRQ %d on CPU %d is not pending\n", __func__, irq, cpu);
-> +		return IRQ_NONE;
-> +	}
-> +
-> +	iowrite32(ioread32(reg_count(cpu)), reg_compare(cpu));
-> +	dev->event_handler(dev);
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int cevt_set_next_event(ulong delta, struct clock_event_device *dev)
-> +{
-> +	u32 next;
-> +	int cpu;
-> +
-> +	cpu = cpumask_first(dev->cpumask);
-> +	next = ioread32(reg_count(cpu)) + delta;
-> +	iowrite32(next, reg_compare(cpu));
-> +
-> +	if ((s32)(next - ioread32(reg_count(cpu))) < ECONET_MIN_DELTA / 2)
-> +		return -ETIME;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cevt_init_cpu(uint cpu)
-> +{
-> +	struct clock_event_device *cd = &per_cpu(econet_timer_pcpu, cpu);
-> +	u32 reg;
-> +
-> +	pr_info("%s: Setting up clockevent for CPU %d\n", cd->name, cpu);
-> +
-> +	reg = ioread32(reg_ctl(cpu)) | ctl_bit_enabled(cpu);
-> +	iowrite32(reg, reg_ctl(cpu));
-> +
-> +	enable_percpu_irq(cd->irq, IRQ_TYPE_NONE);
-> +
-> +	/* Do this last because it synchronously configures the timer */
-> +	clockevents_config_and_register(
-> +		cd, econet_timer.freq_hz,
-> +		ECONET_MIN_DELTA, ECONET_MAX_DELTA);
-> +
-> +	return 0;
-> +}
-> +
-> +static u64 notrace sched_clock_read(void)
-> +{
-> +	/* Always read from clock zero no matter the CPU */
-> +	return (u64)ioread32(reg_count(0));
-> +}
-> +
-> +/* Init */
-> +
-> +static void __init cevt_dev_init(uint cpu)
-> +{
-> +	iowrite32(0, reg_count(cpu));
-> +	iowrite32(U32_MAX, reg_compare(cpu));
-> +}
-> +
-> +static int __init cevt_init(struct device_node *np)
-> +{
-> +	int i, irq, ret;
-> +
-> +	irq = irq_of_parse_and_map(np, 0);
-> +	if (irq <= 0) {
-> +		pr_err("%pOFn: irq_of_parse_and_map failed", np);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = request_percpu_irq(irq, cevt_interrupt, np->name, &econet_timer_pcpu);
-> +
-> +	if (ret < 0) {
-> +		pr_err("%pOFn: IRQ %d setup failed (%d)\n", np, irq, ret);
-> +		goto err_unmap_irq;
-> +	}
-> +
-> +	for_each_possible_cpu(i) {
-> +		struct clock_event_device *cd = &per_cpu(econet_timer_pcpu, i);
-> +
-> +		cd->rating		= 310,
-> +		cd->features		= CLOCK_EVT_FEAT_ONESHOT |
-> +					  CLOCK_EVT_FEAT_C3STOP |
-> +					  CLOCK_EVT_FEAT_PERCPU;
-> +		cd->set_next_event	= cevt_set_next_event;
-> +		cd->irq			= irq;
-> +		cd->cpumask		= cpumask_of(i);
-> +		cd->name		= np->name;
-> +
-> +		cevt_dev_init(i);
-> +	}
-> +
-> +	cpuhp_setup_state(CPUHP_AP_MIPS_GIC_TIMER_STARTING,
-> +			  "clockevents/en75/timer:starting",
-> +			  cevt_init_cpu, NULL);
-> +	return 0;
-> +
-> +err_unmap_irq:
-> +	irq_dispose_mapping(irq);
-> +	return ret;
-> +}
-> +
-> +static int __init timer_init(struct device_node *np)
-> +{
-> +	int num_blocks = DIV_ROUND_UP(num_possible_cpus(), 2);
-> +	struct clk *clk;
-> +	int ret;
-> +
-> +	clk = of_clk_get(np, 0);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%pOFn: Failed to get CPU clock from DT %ld\n", np, PTR_ERR(clk));
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	econet_timer.freq_hz = clk_get_rate(clk);
-> +
-> +	for (int i = 0; i < num_blocks; i++) {
-> +		econet_timer.membase[i] = of_iomap(np, i);
-> +		if (!econet_timer.membase[i]) {
-> +			pr_err("%pOFn: failed to map register [%d]\n", np, i);
-> +			return -ENXIO;
-> +		}
-> +	}
-> +
-> +	/* For clocksource purposes always read clock zero, whatever the CPU */
-> +	ret = clocksource_mmio_init(reg_count(0), np->name,
-> +				    econet_timer.freq_hz, 301, ECONET_BITS,
-> +				    clocksource_mmio_readl_up);
-> +	if (ret) {
-> +		pr_err("%pOFn: clocksource_mmio_init failed: %d", np, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = cevt_init(np);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	sched_clock_register(sched_clock_read, ECONET_BITS,
-> +			     econet_timer.freq_hz);
-> +
-> +	pr_info("%pOFn: using %u.%03u MHz high precision timer\n", np,
-> +		econet_timer.freq_hz / 1000000,
-> +		(econet_timer.freq_hz / 1000) % 1000);
-> +
-> +	return 0;
-> +}
-> +
-> +TIMER_OF_DECLARE(econet_timer_hpt, "econet,en751221-timer", timer_init);
+>
+> Have a lovely night!
+> Alex
+>
+> --
+> <https://www.alejandro-colomar.es/>
 
