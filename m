@@ -1,306 +1,153 @@
-Return-Path: <linux-kernel+bounces-612287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8B5A94D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:27:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F87CA94D23
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86AF816C1EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE5B47A6016
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0084B25D52F;
-	Mon, 21 Apr 2025 07:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AAE20E33A;
+	Mon, 21 Apr 2025 07:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F3KhK8OJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZtF+J8Yn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F3KhK8OJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZtF+J8Yn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGdkgXa2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCC425D527
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 07:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6918042AAF;
+	Mon, 21 Apr 2025 07:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745220231; cv=none; b=Fj/MURbtgjp2sk+/YD366VOfXt/efNDMaYWU9CpkA1+AyZ0NGfo8anLGzO8zk5nBUfXOoWVH83APnqrbhdFJVYmcO/9RXXALJ0ybqdVXCkaxXnb+xl65v76y57As9/BeE7kGHEFfm5gvoyIH33nZKFq+oL6SOnZWPb98x64j7m0=
+	t=1745220569; cv=none; b=FICCt+6sCOg2HwoQ0Gk1jtYxVdA7N981wWoR4fUBO5xb7dbPuXAr1QHPC7YV+YqIlXhHqEh0+mSQT/ROsycZubSk26fVH+iQItjkoFlKoKMTg7UaZA6v9IHIu/N/3N2R47P54QLMzlahiXkxWdf5agQ7gCrxYrQ2rPpMGK1Fnfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745220231; c=relaxed/simple;
-	bh=hKfiXiMkcnNP3ujnT2PpRO3iO/+R8b6X+oKXm7a/sn0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dAUwsuP6OrAXZvgw/mh7wtEeIKSzlB6NDcuAo6az3APKc3o7xMSLQD0XBQvozgdn9MFkjPXGHCKxWuNLBVocT54gYlmYLvHLNj4T/NhcGsM8NpoN3ZUHzfte37a0Hg+EgEdD7Pr8YOycDFeHeHNHjFCrOp376aHq+QQdqjzcryM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F3KhK8OJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZtF+J8Yn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F3KhK8OJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZtF+J8Yn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F8B12118D;
-	Mon, 21 Apr 2025 07:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745220226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FuXKNlqdQSD96rxTLybgPKyiLPyyIG35lPtCJ/nud7g=;
-	b=F3KhK8OJegArLmDBQDXCHb0hC781fqpAynHIX7glP7FLMSrd1QBKkx8usKfw9zX1a1QO5Y
-	jesOOu/8BPukrGmcvPtzXCkymwTcYPxEkSDwdwFxF+J3haMNfcEVmtYP/twoW25Pd83MLa
-	v9e+4NTV3A9v7T22xcZUIKzaXOlqU7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745220226;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FuXKNlqdQSD96rxTLybgPKyiLPyyIG35lPtCJ/nud7g=;
-	b=ZtF+J8YnWl4CYCPtNOHr9ySsJjES4h/G73y3r0wdWadLzBpPEXsNIBYzRbvodolpW8fjs5
-	lgSgNTGlAzuOpICw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745220226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FuXKNlqdQSD96rxTLybgPKyiLPyyIG35lPtCJ/nud7g=;
-	b=F3KhK8OJegArLmDBQDXCHb0hC781fqpAynHIX7glP7FLMSrd1QBKkx8usKfw9zX1a1QO5Y
-	jesOOu/8BPukrGmcvPtzXCkymwTcYPxEkSDwdwFxF+J3haMNfcEVmtYP/twoW25Pd83MLa
-	v9e+4NTV3A9v7T22xcZUIKzaXOlqU7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745220226;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FuXKNlqdQSD96rxTLybgPKyiLPyyIG35lPtCJ/nud7g=;
-	b=ZtF+J8YnWl4CYCPtNOHr9ySsJjES4h/G73y3r0wdWadLzBpPEXsNIBYzRbvodolpW8fjs5
-	lgSgNTGlAzuOpICw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 09F0E139D0;
-	Mon, 21 Apr 2025 07:23:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tScZAYLyBWgcVwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 21 Apr 2025 07:23:46 +0000
-Date: Mon, 21 Apr 2025 09:23:45 +0200
-Message-ID: <87mscat1tq.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: alsa-devel@alsa-project.org,
-	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/9] ALSA: usb-audio: Fix possible race at sync of urb completions
-In-Reply-To: <20250421051832.4179-1-hdanton@sina.com>
-References: <20210929080844.11583-1-tiwai@suse.de>
-	<20210929080844.11583-3-tiwai@suse.de>
-	<20250418103533.4078-1-hdanton@sina.com>
-	<87a58dvia7.wl-tiwai@suse.de>
-	<20250418144518.4097-1-hdanton@sina.com>
-	<875xj0ve49.wl-tiwai@suse.de>
-	<20250419080410.4148-1-hdanton@sina.com>
-	<871ptnuvad.wl-tiwai@suse.de>
-	<20250421051832.4179-1-hdanton@sina.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1745220569; c=relaxed/simple;
+	bh=01/f1NraBtWpGWUC221XvSWIgnjPGGgSGxblojkWilk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kflCrJN4Rms6fg1MsqUfDDpmILNuFRfUQBXxl31/zUYlznsPKhb72gGzMgkxP3WSdZaBDbvRwXKDaKqYKhVClBNMtHKgJFVqRdHvIaMgNJOlazHlLYqNhe1euQJu/QtKgKYfBhHBg0P7dkNc2f/0rEufAAMGCwL8o9QXjzN0TAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGdkgXa2; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745220567; x=1776756567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=01/f1NraBtWpGWUC221XvSWIgnjPGGgSGxblojkWilk=;
+  b=eGdkgXa2CcCBvmecogxY9gWhQsHrxq2zDSk4ussKEwip471crnxAYxP/
+   kl7ZKzuYRk1ikRGHN3/CYFQtPCTgNSsuzxKHKurBDZQxx2aWzMB+g0A42
+   o0+dnkgfIwM2MhU3RCY8FoCPwY/Aq/L2V9tE9dZmnfmNTnBs8FlMNrlJd
+   MRWZ023ZcIeHHCnWpBn9WrkD4zJmYlD6KKYE6vAWJJj/jWG1YxeuEtbMM
+   5iGWbE7Paic2MBDtsU1P2Eiw9/upA8bfXZPXIdgFO0E1D8BPxNIwXHZkB
+   TApHYNmNWueANjOtDh/qIzJfSTJx05bT6SGVXT1FexwMn8CJYwrMvC5eT
+   g==;
+X-CSE-ConnectionGUID: 7nOz2+XGT42BqQoCWLxa0Q==
+X-CSE-MsgGUID: c/C2M+pmTRiR3GOo5jpd7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11409"; a="46458366"
+X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; 
+   d="scan'208";a="46458366"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 00:29:26 -0700
+X-CSE-ConnectionGUID: oPu2/drdQy2zzZf0R09YaA==
+X-CSE-MsgGUID: jIHOrVRJS62KkkGTBy1ktQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; 
+   d="scan'208";a="131950489"
+Received: from lkp-server01.sh.intel.com (HELO 9c2f37e2d822) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Apr 2025 00:29:23 -0700
+Received: from kbuild by 9c2f37e2d822 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u6lai-0000Ep-1f;
+	Mon, 21 Apr 2025 07:29:20 +0000
+Date: Mon, 21 Apr 2025 15:28:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Troy Mitchell <troymitchell988@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	Yongchao Jia <jyc0019@gmail.com>
+Subject: Re: [PATCH 1/2] i2c: imx: use guard to take spinlock
+Message-ID: <202504211501.MNwGdl5F-lkp@intel.com>
+References: <20250421-i2c-imx-update-v1-1-1137f1f353d5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[sina.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[alsa-project.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421-i2c-imx-update-v1-1-1137f1f353d5@gmail.com>
 
-On Mon, 21 Apr 2025 07:18:31 +0200,
-Hillf Danton wrote:
-> 
-> On Sun, 20 Apr 2025 09:49:46 +0200 Takashi Iwai wrote:
-> >On Sat, 19 Apr 2025 10:04:08 +0200, Hillf Danton wrote:
-> >> On Sat, 19 Apr 2025 08:50:46 +0200 Takashi Iwai wrote:
-> >> >On Fri, 18 Apr 2025 16:45:17 +0200, Hillf Danton wrote:
-> >> >> On Fri, 18 Apr 2025 13:08:32 +0200 Takashi Iwai wrote:
-> >> >> > On Fri, 18 Apr 2025 12:35:32 +0200 Hillf Danton wrote:
-> >> >> > > On Wed, 29 Sep 2021 10:08:37 +0200 Takashi Iwai wrote:
-> >> >> > > > USB-audio driver tries to sync with the clear of all pending URBs in
-> >> >> > > > wait_clear_urbs(), and it waits for all bits in active_mask getting
-> >> >> > > > cleared.  This works fine for the normal operations, but when a stream
-> >> >> > > > is managed in the implicit feedback mode, there is still a very thin
-> >> >> > > > race window: namely, in snd_complete_usb(), the active_mask bit for
-> >> >> > > > the current URB is once cleared before re-submitted in
-> >> >> > > > queue_pending_output_urbs().  If wait_clear_urbs() is called during
-> >> >> > > > that period, it may pass the test and go forward even though there may
-> >> >> > > > be a still pending URB.
-> >> >> > > > 
-> >> >> > > > For covering it, this patch adds a new counter to each endpoint to
-> >> >> > > > keep the number of in-flight URBs, and changes wait_clear_urbs()
-> >> >> > > > checking this number instead.  The counter is decremented at the end
-> >> >> > > > of URB complete, hence the reference is kept as long as the URB
-> >> >> > > > complete is in process.
-> >> >> > > > 
-> >> >> > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> >> >> > > > ---
-> >> >> > > >  sound/usb/card.h     | 1 +
-> >> >> > > >  sound/usb/endpoint.c | 7 ++++++-
-> >> >> > > >  2 files changed, 7 insertions(+), 1 deletion(-)
-> >> >> > > > 
-> >> >> > > > diff --git a/sound/usb/card.h b/sound/usb/card.h
-> >> >> > > > index 3329ce710cb9..746a765b2437 100644
-> >> >> > > > --- a/sound/usb/card.h
-> >> >> > > > +++ b/sound/usb/card.h
-> >> >> > > > @@ -97,6 +97,7 @@ struct snd_usb_endpoint {
-> >> >> > > >  	unsigned int nominal_queue_size; /* total buffer sizes in URBs */
-> >> >> > > >  	unsigned long active_mask;	/* bitmask of active urbs */
-> >> >> > > >  	unsigned long unlink_mask;	/* bitmask of unlinked urbs */
-> >> >> > > > +	atomic_t submitted_urbs;	/* currently submitted urbs */
-> >> >> > > >  	char *syncbuf;			/* sync buffer for all sync URBs */
-> >> >> > > >  	dma_addr_t sync_dma;		/* DMA address of syncbuf */
-> >> >> > > >  
-> >> >> > > > diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-> >> >> > > > index 29c4865966f5..06241568abf7 100644
-> >> >> > > > --- a/sound/usb/endpoint.c
-> >> >> > > > +++ b/sound/usb/endpoint.c
-> >> >> > > > @@ -451,6 +451,7 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
-> >> >> > > >  		}
-> >> >> > > >  
-> >> >> > > >  		set_bit(ctx->index, &ep->active_mask);
-> >> >> > > > +		atomic_inc(&ep->submitted_urbs);
-> >> >> > > >  	}
-> >> >> > > >  }
-> >> >> > > >  
-> >> >> > > > @@ -488,6 +489,7 @@ static void snd_complete_urb(struct urb *urb)
-> >> >> > > >  			clear_bit(ctx->index, &ep->active_mask);
-> >> >> > > >  			spin_unlock_irqrestore(&ep->lock, flags);
-> >> >> > > >  			queue_pending_output_urbs(ep);
-> >> >> > > 
-> >> >> > > 			smp_mb();
-> >> >> > > 
-> >> >> > > > +			atomic_dec(&ep->submitted_urbs); /* decrement at last */
-> >> >> > > 
-> >> >> > > Does it match the comment to add a mb?
-> >> >> > 
-> >> >> > How...?  I don't understand your intention.
-> >> >> > 
-> >> >> In addition to the UAF report [1], I saw a customer report of list
-> >> >> corruption of linux-6.1.99 on arm64 this week without reproducer.
-> >> >> 
-> >> >> 	list corruption
-> >> >> 	list_add_tail();
-> >> >> 	push_back_to_ready_list();
-> >> >> 	snd_complete_urb();
-> >> >> 
-> >> >> And after another look at this patch I wonder if the race can not be
-> >> >> erased without the certainty that ep will be no longer used after the
-> >> >> atomic decrement.
-> >> >
-> >> > But why adding more barrier if you perform the atomic op...?
-> >> >
-> >> Because atomic op != ordering, see 26fbe9772b8c ("USB: core: Fix hang 
-> >> in usb_kill_urb by adding memory barriers") for detail for example.
-> >> And c5b2cbdbdac5 ("ipc/mqueue.c: update/document memory barriers") as well.
-> >
-> > Still don't get it.  Which reads and writes are you trying to solve?
-> >
-> See a simpler UAF case IIUIC.
-> 
-> 	cpu1		cpu2
-> 			atomic_dec(&ep->submitted_urbs);
-> 
-> 	if (!atomic_read(&ep->submitted_urbs))
-> 		kfree(ep);
-> 
-> 			a = ep->xxx; // UAF
+Hi Troy,
 
-That's what I don't get it.  Which place does this UAF happen, more
-specifically?  In the whole conversations, the context is missing, and
-you provided only a snippet of the patch.
+kernel test robot noticed the following build warnings:
 
-> > And more importantly, does it actually help at all?  If yes, I'd
-> 
-> Yes and No. Yes because of the fix mentioned in ipc wrt mb.
-> 
-> > happily take the patch, of course.
-> >
-> Provided a repro, a fix like the following diff should have been posted.
+[auto build test WARNING on 9d7a0577c9db35c4cc52db90bc415ea248446472]
 
-No idea about repro and the report itself, so hard to judge.
+url:    https://github.com/intel-lab-lkp/linux/commits/Troy-Mitchell/i2c-imx-use-guard-to-take-spinlock/20250421-133753
+base:   9d7a0577c9db35c4cc52db90bc415ea248446472
+patch link:    https://lore.kernel.org/r/20250421-i2c-imx-update-v1-1-1137f1f353d5%40gmail.com
+patch subject: [PATCH 1/2] i2c: imx: use guard to take spinlock
+config: hexagon-randconfig-001-20250421 (https://download.01.org/0day-ci/archive/20250421/202504211501.MNwGdl5F-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250421/202504211501.MNwGdl5F-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504211501.MNwGdl5F-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-imx.c:1140:17: warning: unused variable 'ret' [-Wunused-variable]
+                                   irqreturn_t ret;
+                                               ^
+   1 warning generated.
 
 
-Takashi
+vim +/ret +1140 drivers/i2c/busses/i2c-imx.c
 
-> 
-> 	Hillf
-> 
-> --- x/sound/usb/endpoint.c
-> +++ y/sound/usb/endpoint.c
-> @@ -569,8 +569,11 @@ static void snd_complete_urb(struct urb
->  			snd_usb_queue_pending_output_urbs(ep, false);
->  			/* decrement at last, and check xrun */
->  			if (atomic_dec_and_test(&ep->submitted_urbs) &&
-> -			    !snd_usb_endpoint_implicit_feedback_sink(ep))
-> +			    !snd_usb_endpoint_implicit_feedback_sink(ep)) {
->  				notify_xrun(ep);
-> +				smp_mb();
-> +				atomic_dec(&ep->submitted_urbs);
-> +			}
->  			return;
->  		}
->  
-> @@ -602,7 +605,8 @@ static void snd_complete_urb(struct urb
->  
->  exit_clear:
->  	clear_bit(ctx->index, &ep->active_mask);
-> -	atomic_dec(&ep->submitted_urbs);
-> +	if (atomic_dec_and_test(&ep->submitted_urbs))
-> +		atomic_dec(&ep->submitted_urbs);
->  }
->  
->  /*
-> @@ -1004,17 +1008,17 @@ static int wait_clear_urbs(struct snd_us
->  
->  	do {
->  		alive = atomic_read(&ep->submitted_urbs);
-> -		if (!alive)
-> -			break;
-> +		if (alive < 0)
-> +			goto update;
->  
->  		schedule_timeout_uninterruptible(1);
->  	} while (time_before(jiffies, end_time));
->  
-> -	if (alive)
-> -		usb_audio_err(ep->chip,
-> +	usb_audio_err(ep->chip,
->  			"timeout: still %d active urbs on EP #%x\n",
->  			alive, ep->ep_num);
->  
-> +update:
->  	if (ep_state_update(ep, EP_STATE_STOPPING, EP_STATE_STOPPED)) {
->  		ep->sync_sink = NULL;
->  		snd_usb_endpoint_set_callback(ep, NULL, NULL, NULL);
+aa11e38ce6fe88 Darius Augulis     2009-01-30  1124  
+f7414cd6923fd7 Biwen Li           2020-11-11  1125  static irqreturn_t i2c_imx_isr(int irq, void *dev_id)
+f7414cd6923fd7 Biwen Li           2020-11-11  1126  {
+f7414cd6923fd7 Biwen Li           2020-11-11  1127  	struct imx_i2c_struct *i2c_imx = dev_id;
+f7414cd6923fd7 Biwen Li           2020-11-11  1128  	unsigned int ctl, status;
+f7414cd6923fd7 Biwen Li           2020-11-11  1129  
+d3973a577b8e10 Troy Mitchell      2025-04-21  1130  	guard(spinlock_irqsave)(&i2c_imx->slave_lock);
+d3973a577b8e10 Troy Mitchell      2025-04-21  1131  
+f7414cd6923fd7 Biwen Li           2020-11-11  1132  	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
+f7414cd6923fd7 Biwen Li           2020-11-11  1133  	ctl = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
+05ae60bc24f765 Kevin Paul Herbert 2020-12-22  1134  
+f7414cd6923fd7 Biwen Li           2020-11-11  1135  	if (status & I2SR_IIF) {
+f7414cd6923fd7 Biwen Li           2020-11-11  1136  		i2c_imx_clear_irq(i2c_imx, I2SR_IIF);
+d3973a577b8e10 Troy Mitchell      2025-04-21  1137  
+05ae60bc24f765 Kevin Paul Herbert 2020-12-22  1138  		if (i2c_imx->slave) {
+05ae60bc24f765 Kevin Paul Herbert 2020-12-22  1139  			if (!(ctl & I2CR_MSTA)) {
+f89bf95632b416 Corey Minyard      2021-11-12 @1140  				irqreturn_t ret;
+f89bf95632b416 Corey Minyard      2021-11-12  1141  
+d3973a577b8e10 Troy Mitchell      2025-04-21  1142  				return i2c_imx_slave_handle(i2c_imx,
+f89bf95632b416 Corey Minyard      2021-11-12  1143  							    status, ctl);
+05ae60bc24f765 Kevin Paul Herbert 2020-12-22  1144  			}
+f89bf95632b416 Corey Minyard      2021-11-12  1145  			i2c_imx_slave_finish_op(i2c_imx);
+05ae60bc24f765 Kevin Paul Herbert 2020-12-22  1146  		}
+d3973a577b8e10 Troy Mitchell      2025-04-21  1147  
+f7414cd6923fd7 Biwen Li           2020-11-11  1148  		return i2c_imx_master_isr(i2c_imx, status);
+f7414cd6923fd7 Biwen Li           2020-11-11  1149  	}
+f7414cd6923fd7 Biwen Li           2020-11-11  1150  
+aa11e38ce6fe88 Darius Augulis     2009-01-30  1151  	return IRQ_NONE;
+aa11e38ce6fe88 Darius Augulis     2009-01-30  1152  }
+aa11e38ce6fe88 Darius Augulis     2009-01-30  1153  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
