@@ -1,190 +1,131 @@
-Return-Path: <linux-kernel+bounces-613047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22F9A9575B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 22:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA0DA95758
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 22:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D227A4CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 20:27:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DE316EF6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 20:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C671F09A3;
-	Mon, 21 Apr 2025 20:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9152C1A83FB;
+	Mon, 21 Apr 2025 20:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X+fCYdEA"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KeFUviDn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0E61F0E37
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 20:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B471EF38C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 20:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745267322; cv=none; b=umyXvhkejnLplrjkU/M6SrTNbKIUQJUNiUwvKMJD+7HXFtrSX5BBeRC0lfhbq+mc3g7q5UqWW/G0SgqSe/oOlzpLJXMEXSuCDIYe1yE/J0u9WvytxU2xXWSMqbVA4VEW4cpAZiFgn8T63L6lJpb2/FVby0at07wlXT7S3yHL5xk=
+	t=1745267315; cv=none; b=K7l5eE4fp01cxMdz+Hu7dYy2dTQODlMuW1bXzGtk6bKuuMcr1gUFb68LAWbvZDWclFQzgRjFp/yBwZFc1FBGUQQLxMKTF2/Hl4X8/Uyd5lTLUP18Fdd+fSDkGmgM4cekuFAHY9365f+erQzzIm2UXuNvXVo2+fb0qc/LupHeKqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745267322; c=relaxed/simple;
-	bh=PLTr1Ulpsr9k+KHFPxW2Lu0AMysDGEixWNOVjNAyozg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/A5enoGNR8pqdfIId/4TG3y6HB00jwUMWIr4EJRqgvKSfGTYuzGBre61596bDn2Lx2UN9EjZhGCTQeY5z+qzS6HRa+2nzLOmG3nXeexcDC6OzkK6LU51oTOmqleWGjzQuXOCyl+AunPWWsLrViA6U5q/RNJTcEOpl/dO//N4UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X+fCYdEA; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4769e30af66so1377271cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745267319; x=1745872119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vAh5KnPVbnTCxFdYE9r8rfJKB6a6HWJ1fuiZEddcuQU=;
-        b=X+fCYdEAHsmiWvKXTyetk8LKhZQYvF7grh7AyqguAQzWarKP7Xq7V9u3jRPP8OCB7P
-         Yjf459TsZ906h1qFB9w6Jf1QmNQV/Vividzp1ZxCatXMmbfN3DErpxOU/Xv5VoTQ/59h
-         a7oz0FKEmJimHCFfxF8kz4LJG2Ud5IfitQj9Ks0pf7L0XilVZhNrH/1mlZGfzJY2vnTc
-         u0NX6fW0g6GrwjV5dbkmdA9HNMOg+qu8JBBKveBwXVH9d7ANwl3ADYQM2qUMIqyVi5UH
-         afBIGeGg1LYTjPwS3PU5Fcg8KdH1d6GWkWyvVM0PT28C5yYE7glOl6sh57kDNcrTnfpd
-         RXzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745267319; x=1745872119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vAh5KnPVbnTCxFdYE9r8rfJKB6a6HWJ1fuiZEddcuQU=;
-        b=nMl9jQv8/RM8WHWYxs6cLWN1fyOB5cJP+u4W2t6zhURKLOJcwNnakdRtJfhMElJYQs
-         qV3iPOm5VthdNe551+GGsKNzQdPshQMJNSsf5A6CX06Qlw7H/DrmI8/fTYsGYOxj+GDS
-         2YCeATMKAmmZ+NKy/ghqqTqKyZMkPqaBObQlav7IC2FQpC9VNMuQ/Nl4ZwZ7kMbuQlah
-         SWQAlERorPBiKir6iwkjQtP6/8+F+lV47iLt4F2dNhefjtkeylUfJTNKbd8dZtm7GLEn
-         3I3UIyelpvaflQr22+bDGdVPgizG3CgzVVtVNh5wuzduIVCjqCIQ9mNu1U0ASxPTPl3z
-         HzZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4TKYV0KmO7lW0U39hNUFADi4PtmsN0FJFYjhppG9DVS6ZSjwHdmkdEtFvmYBQppUwDzniMDKwrjcuKJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNBOtlstthn4R00/2FMTbgfCbTxPe0ySEnEMSE64MRAGBWb88e
-	TXcLpVLhvTYrZ12WW3FRLbQkFhfC/jEKq8gpceuqvfi0mGBkHyPpOqM8GPkmrnL/B4GOwQKVNQH
-	Izh2on03js414DhIURwPulFniCXDDApU2QzL8
-X-Gm-Gg: ASbGnctDUmX8faV+a6Z4hJHQTDdoibhUbtRxTWRvU+RF+9yc14CNLB3mksUForn39gp
-	xxKZU39/mpgNobX7qcvqYf+kPnKtl3cvBBNZOUdOeN5F0OULEbhpFjr2J43O2U5zoquhx/Gv6t0
-	SMnWhMZLUrr+k2mybOLWYT
-X-Google-Smtp-Source: AGHT+IGKnE2CIBvT+fJdgDDbnrOGCsN9elt+h8uaJ3CxRx8HwLHVmG+as9HEI4lJpad7auuLPovlZ4a8MNRr3oL9OoY=
-X-Received: by 2002:ac8:1304:0:b0:47b:4be:8572 with SMTP id
- d75a77b69052e-47b04be86dbmr5883011cf.18.1745267319186; Mon, 21 Apr 2025
- 13:28:39 -0700 (PDT)
+	s=arc-20240116; t=1745267315; c=relaxed/simple;
+	bh=w7134AAQPCrqzf6IBUYVMpfbVS3VMXdxg95NM1vHUoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkEsrxas2B2sBPB/8IXbGbvZr+3Aa3AQYAJ2cAAL4k2SofC7LpilpR9EYyEuVsOlfZh3JAqn0mfmNfHOzdmSLMSsveDemxTr6TRAMdTGHkHBQ2YMaIvzT6HELZmXCiTw1ZusANzYdnoAI8mhZc4b/d8EC/aHNgPPJ8VFgYfS1B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KeFUviDn; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745267311; x=1776803311;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w7134AAQPCrqzf6IBUYVMpfbVS3VMXdxg95NM1vHUoQ=;
+  b=KeFUviDnQ9rH2KKpvfFB035MopCeMVz1+0TPj9+7YXgsGbh93HG0juAN
+   JSFTtqF8tJCoA0Eod5TDLAMWnhpN1U8QVyLYliN/vPozkyjqQ2XAOhQhO
+   QDttMYn2zPBaPOIvpaWyCtypAZJtDw0+xk8GaHj+E9Yrj0IXyrpYprVwv
+   /aSvNjiJug116NvC+7f8DuE9qKv6PGwMpY7N8mk1pDR9/Z4mS2SP2P/PO
+   QWtfxJvwTd66oJ9zCEMLH4/H61KIu2hua/7+CBkVDRyAuwA0nUFckldRN
+   DM+Fd3PIvuVuFoIicbE7hPTEQFzric6s06Sy7Q5SlxKZiDodGG7Z4MTEl
+   A==;
+X-CSE-ConnectionGUID: YuZzq7tGQZWE6BhBwWPcng==
+X-CSE-MsgGUID: khmWkhIrQvOAlSs5m/gN7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="64339541"
+X-IronPort-AV: E=Sophos;i="6.15,229,1739865600"; 
+   d="scan'208";a="64339541"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 13:28:31 -0700
+X-CSE-ConnectionGUID: Vee3AjaRRdiOn2LSyNLJOA==
+X-CSE-MsgGUID: c+OURRjJTYijqPckGjZDhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,229,1739865600"; 
+   d="scan'208";a="131724376"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 13:28:31 -0700
+Date: Mon, 21 Apr 2025 13:28:29 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v3 10/26] fs/resctrl: Improve handling for events that
+ can be read from any CPU
+Message-ID: <aAaqbUk3gZbCan13@agluck-desk3>
+References: <20250407234032.241215-1-tony.luck@intel.com>
+ <20250407234032.241215-11-tony.luck@intel.com>
+ <da51ba61-4ff0-4db4-a55f-743f6a3ea7da@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416082405.20988-1-zhangtianyang@loongson.cn> <aAYXP4f417_bx6Is@harry>
-In-Reply-To: <aAYXP4f417_bx6Is@harry>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 21 Apr 2025 13:28:28 -0700
-X-Gm-Features: ATxdqUFZ0mfZx8F5w1Q3I-1gslA_ZYU57nOssRIGO90YafrqVQ_j_evO36xBIiI
-Message-ID: <CAJuCfpGEm04Eebt7FK=keu3ZF_34GTTmxMWVCiA1q3RQAVwAOA@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc.c: Avoid infinite retries caused by cpuset race
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Tianyang Zhang <zhangtianyang@loongson.cn>, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da51ba61-4ff0-4db4-a55f-743f6a3ea7da@intel.com>
 
-On Mon, Apr 21, 2025 at 3:00=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
->
-> On Wed, Apr 16, 2025 at 04:24:05PM +0800, Tianyang Zhang wrote:
-> > __alloc_pages_slowpath has no change detection for ac->nodemask
-> > in the part of retry path, while cpuset can modify it in parallel.
-> > For some processes that set mempolicy as MPOL_BIND, this results
-> > ac->nodemask changes, and then the should_reclaim_retry will
-> > judge based on the latest nodemask and jump to retry, while the
-> > get_page_from_freelist only traverses the zonelist from
-> > ac->preferred_zoneref, which selected by a expired nodemask
-> > and may cause infinite retries in some cases
-> >
-> > cpu 64:
-> > __alloc_pages_slowpath {
-> >         /* ..... */
-> > retry:
-> >         /* ac->nodemask =3D 0x1, ac->preferred->zone->nid =3D 1 */
-> >         if (alloc_flags & ALLOC_KSWAPD)
-> >                 wake_all_kswapds(order, gfp_mask, ac);
-> >         /* cpu 1:
-> >         cpuset_write_resmask
-> >             update_nodemask
-> >                 update_nodemasks_hier
-> >                     update_tasks_nodemask
-> >                         mpol_rebind_task
-> >                          mpol_rebind_policy
-> >                           mpol_rebind_nodemask
-> >               // mempolicy->nodes has been modified,
-> >               // which ac->nodemask point to
-> >
-> >         */
-> >         /* ac->nodemask =3D 0x3, ac->preferred->zone->nid =3D 1 */
-> >         if (should_reclaim_retry(gfp_mask, order, ac, alloc_flags,
-> >                                  did_some_progress > 0, &no_progress_lo=
-ops))
-> >                 goto retry;
-> > }
-> >
-> > Simultaneously starting multiple cpuset01 from LTP can quickly
-> > reproduce this issue on a multi node server when the maximum
-> > memory pressure is reached and the swap is enabled
-> >
-> > Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> > ---
->
-> What commit does it fix and should it be backported to -stable?
+On Fri, Apr 18, 2025 at 03:54:02PM -0700, Reinette Chatre wrote:
+> > @@ -619,7 +622,8 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+> >  			goto out;
+> >  		}
+> >  		d = container_of(hdr, struct rdt_mon_domain, hdr);
+> > -		mon_event_read(&rr, r, d, rdtgrp, &d->hdr.cpu_mask, evtid, false);
+> > +		mask = md->any_cpu ? cpu_online_mask : &d->hdr.cpu_mask;
+> > +		mon_event_read(&rr, r, d, rdtgrp, mask, evtid, false);
+> 
+> I do not think this accomplishes the goal of this patch. Looking at mon_event_read() it calls
+> cpumask_any_housekeeping(cpumask, RESCTRL_PICK_ANY_CPU) before any of the smp_*() calls.
+> 
+> 	cpumask_any_housekeeping()
+> 	{
+> 		...
+> 		if (exclude_cpu == RESCTRL_PICK_ANY_CPU)
+> 			cpu = cpumask_any(mask);
+> 		...
+> 	}
+> 
+> cpumask_any() is just cpumask_first() so it will pick the first CPU in the
+> online mask that may not be the current CPU.
+> 
+> fwiw ... there are some optimizations planned in this area that I have not yet studied:
+> https://lore.kernel.org/lkml/20250407153856.133093-1-yury.norov@gmail.com/
 
-I think it fixes 902b62810a57 ("mm, page_alloc: fix more premature OOM
-due to race with cpuset update").
+I remember Peter complaining[1] about extra context switches when
+cpumask_any_housekeeping() was introduced, but it seems that the
+discussion died with no fix applied.
 
->
-> There's a new 'MEMORY MANAGEMENT - PAGE ALLOCATOR' entry (only in
-> Andrew's mm.git repository now).
->
-> Let's Cc the page allocator folks here!
->
-> --
-> Cheers,
-> Harry / Hyeonggon
->
-> >  mm/page_alloc.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index fd6b865cb1ab..1e82f5214a42 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -4530,6 +4530,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned =
-int order,
-> >       }
-> >
-> >  retry:
-> > +     /*
-> > +      * Deal with possible cpuset update races or zonelist updates to =
-avoid
-> > +      * infinite retries.
-> > +      */
-> > +     if (check_retry_cpuset(cpuset_mems_cookie, ac) ||
-> > +         check_retry_zonelist(zonelist_iter_cookie))
-> > +             goto restart;
-> > +
+The blocking problem is that ARM may not be able to read a counter
+on a tick_nohz CPU because it may need to sleep.
 
-We have this check later in this block:
-https://elixir.bootlin.com/linux/v6.15-rc3/source/mm/page_alloc.c#L4652,
-so IIUC you effectively are moving it to be called before
-should_reclaim_retry(). If so, I think you should remove the old one
-(the one I linked earlier) as it seems to be unnecessary duplication
-at this point.
+Do we need more options for events:
 
+1) Must be read on a CPU in the right domain	// Legacy
+2) Can be read from any CPU			// My addtion
+3) Must be read on a "housekeeping" CPU		// James' code in upstream
+4) Cannot be read on a tick_nohz CPU		// Could be combined with 1 or 2?
 
-> >       /* Ensure kswapd doesn't accidentally go to sleep as long as we l=
-oop */
-> >       if (alloc_flags & ALLOC_KSWAPD)
-> >               wake_all_kswapds(order, gfp_mask, ac);
-> > --
-> > 2.20.1
-> >
-> >
+> Reinette
+
+[1] https://lore.kernel.org/all/20241031142553.3963058-2-peternewman@google.com/
+> 
 
