@@ -1,200 +1,215 @@
-Return-Path: <linux-kernel+bounces-612653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71109A951F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:51:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC335A951FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10AB23B0BA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C4816BA7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA716266B65;
-	Mon, 21 Apr 2025 13:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3740526659A;
+	Mon, 21 Apr 2025 13:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kat/51Tu"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KnG8UUBO"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011026.outbound.protection.outlook.com [52.101.129.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E479266588
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243419; cv=none; b=higVhx9PaznQwfTC/gNSkszbtO+JIaweGcSDm5C7zsrWuKNvR1q5DqjTg2Aj11BHdEUQNVK2aMNC7xPT4Ra3fTyv0GDY9BFL0RmVXTNR80mCzWQDWKp3+DwhlVcqGoJ7TBX6N7lvu9MWo5SOm+FF7/3sKZE+rMBBiIZNxube+tg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243419; c=relaxed/simple;
-	bh=c6sh4ezT4TDV2xAhu4/v/ArKEm6H26SJ4UdWkW4UGck=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8xlk+5hwAjFmTTbmKpS+0f4yH24jQIriI5NukuqWoIH+SukPowGN8mevcYDUX0oUQgnsPJF53NmVpplaqY/Rv4C8HWLyHP790MrpiGak2uJG9UwIMJiCYDfy7i9XUmArnnukrlX10H60eT8s1hc/iBWwXFZrW5WajNcSgwj2VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kat/51Tu; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1745243408; x=1745502608;
-	bh=CM3QQtWXQAA1jGNPFfjR0jWA67cFy7MIqL2uQdyCaLo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=kat/51Tut7GRaMjN89cW4THVIp9AtWaS2pCY2ZPdAWA5ptKFNRuC8iJXu6ccsrf3O
-	 vzaVRWS9JdCZJdRQjBuj7hbaXmjqvUoLWDRg1C6OFxL+RqFY/oq3Q4DOYWd96GMkIx
-	 YDSOUcv6gGrNHqU3PcxJ7RvM8OGkE5qwV8s5SkeHQLsfSB8DqeA/RHS/hm3GwAV07y
-	 EkLD8QxrOniG8XJCtGTSf6vOO0zQHgIvbUBYOsTpy17dHmoccEE7u/gt8eFzUXTzGY
-	 umu/sCKt09RxHZYX04FHoZ9hNld7J5LH4hefsgVlviI7iShMtMrmSvxzDbFa6hjdB7
-	 CJiTQvUrIl/GQ==
-Date: Mon, 21 Apr 2025 13:50:01 +0000
-To: Simona Vetter <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] rust: iov: use untrusted data API
-Message-ID: <20250421134909.464405-5-benno.lossin@proton.me>
-In-Reply-To: <20250421134909.464405-1-benno.lossin@proton.me>
-References: <20250421134909.464405-1-benno.lossin@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: c9daac3b236de754d6820c10f767570fd6b31729
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16807320F;
+	Mon, 21 Apr 2025 13:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745243502; cv=fail; b=d/pYUgCo+SflgSKcnCjlZW/jFQp+oqa0QsrAgnNPc1vTR8+P5z6ggzwhrXo3b0yy2p2VbSv+vSGc62VMzNjcQsl9Tm+J9cVnbfBVyXp6iD7MjGpLTEsYaFiDy2VpChQt3cFpfPQ8kod/Hr20ygk+JNUnboebNTXVt+K8qwMIe8E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745243502; c=relaxed/simple;
+	bh=yc0d3WGqg0qbEvkcxxYh9HZHf/jD3IpLdlfnqx7MuJM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hJsHqMuUQHC57//NQa5+NcN5o0uHSq2KkPvVfJnVANNjWOb+P7P8NUXQrTQUPM0WXGol2yLHi57CIKSCpB9dGtQuKaPhjeBNgWOqcxg44oYQpuDm/qUshjYRM2VSEdxe8YF9IE4UzDcwZ6UeFDDRxV3ZNKEUZF/tVM1Czgfk0/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KnG8UUBO; arc=fail smtp.client-ip=52.101.129.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u6ytPSX3g9bTnQOwAcUShY8P2Vimx0PK2xDCUn7STEnJjRQjsSvhFGieiSDIjYlPsrfTmqhJwG7B0dDn+TPQo1yWBoqePgkWnRVTNGtVXsxxcfPfTftydoVQ+BuXkZo+5/ZhDI3a0IAjZGQkMN21CS1mIP8/WvOfK9iH/sZK2rs+hhqNxZ5ISYB/OCqITBjYljJYNILHU1wW1ns0Nk4yqeu7GwZ9aybwHuI/LYtU6422KmWGYVrisfnMJoLJQTV7eRWKW8V96AQFJel6tc7xMzTMZIWuEGgQ8kUYn9lTYIOMYiBSCrodD5odDEurhyXgQY0slun9om6M6Y7l6bmopA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2aXRnt9BpycCt6wdV2bdWn31ZgHIG0s+2FJYkBj7haE=;
+ b=gLMFTnGRIy2omhCWqgKIZSog8SuzesgS5l7NzRTJcfnrBe2zZiizcmNcJr57PblrqbTb6eKQaUPrymewr+Z6uAbn6UYqpoOWpk4r3NH/Yrf3QXl5NsOCLOBkSHQ2RpT0EcLQxuxMHERZeBngyk9gkbqk/gKdn2SDgted8EWshZZBDq2Ki6x2h9vA0pAvFItg1YgWXCsjpn76byI93WztAuF3smzDQLOUwqjX9yaZfYhoaJMNthtZG/23M+vQluvuH0LYMuVRyJlBvWuYNQzc2oe+OGCELpNF3rHuWCGzd9yLcuiClZ7KqtmTomF6QsEqfiO3MOuQDPWJ4aPmkp9nWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2aXRnt9BpycCt6wdV2bdWn31ZgHIG0s+2FJYkBj7haE=;
+ b=KnG8UUBOidBEbRyB52AFZuuEg0im/HfZZWZqJSorKLbYDQlh2SRAlhedaV0TB7WmDwWD2neUUBriVkVqxt9p1yrzYCIOyo1lOfm4Ml6/EPVb9t4zZ/ifLhWkklObCCFV1wWCPxs+NsGXnNB/Y/+9zMxKMp2Xi+RPHshs0nQv92vRPu//GrrpO8xtI7nv6mUmrqHv5k1o2dCSNHRkok8+E7oAK02dccEBxKA+MuX50gxxbaR5ErriWC6UACavSs2XUolWGB0lIdwkMsqBoVZVSsq1i/IFkYuU6SUrZpRJEjQow6du3poeyrB9mNUHCOB8S/VapgJSYKEhXMpXM2D85Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
+ by SEYPR06MB5349.apcprd06.prod.outlook.com (2603:1096:101:6b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Mon, 21 Apr
+ 2025 13:51:32 +0000
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09]) by KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09%3]) with mapi id 15.20.8632.030; Mon, 21 Apr 2025
+ 13:51:32 +0000
+From: Huan Tang <tanghuan@vivo.com>
+To: alim.akhtar@samsung.com,
+	avri.altman@wdc.com,
+	bvanassche@acm.org,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	peter.wang@mediatek.com,
+	manivannan.sadhasivam@linaro.org,
+	quic_nguyenb@quicinc.com,
+	ebiggers@google.com,
+	minwoo.im@samsung.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Huan Tang <tanghuan@vivo.com>
+Subject: [PATCH] ufs: core: add caps UFSHCD_CAP_MCQ_EN
+Date: Mon, 21 Apr 2025 21:51:23 +0800
+Message-Id: <20250421135123.594-1-tanghuan@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0048.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::17)
+ To KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6273:EE_|SEYPR06MB5349:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff29f7f5-5c18-471f-fafb-08dd80db9fdf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|7416014|366016|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?35vbo2FZ8r1Ml+BGl7Jpqs3EdvtZVLqqy8kcPvVLH73JP4UHdFFy2iL55FHP?=
+ =?us-ascii?Q?NwMETDaOx8yMeckvU+Iim346sVxI7THHtS38N/MzH0vkGwJBOkCcJZafAXYc?=
+ =?us-ascii?Q?rfw3KCDw/cUaR8RpcPV6LgFVBYN0Ysm/avdqDr7BkolXR1mZmA0IAq7fEHSr?=
+ =?us-ascii?Q?JuzgqfQKNZOD34AHtfypnO/dlExdzLyAMSOAqLX+zaRL53tnM3+ZiLlUOQd9?=
+ =?us-ascii?Q?jmlmiaqkaJtNbbBwXn6YXVw7DteUr/FLV2DQNRfvQS1yoTFlXlBsHF+Ba2MM?=
+ =?us-ascii?Q?szXtSnIpRz7pSZSWTTupA3XfVTWflftceGF7M7hTZwV5SdpRUmLOopS64Ywc?=
+ =?us-ascii?Q?kIo5P8zi66t8BmYbrwcgjR6edZ191ZsxB1t53pJEL+J2q0ybAeA9rZBpxN+L?=
+ =?us-ascii?Q?OEkepFCNQ6CqIKXNHpU/3GsaPnF8M0b0LqriLNgtkRY7WMXn1HgwgXs10SG6?=
+ =?us-ascii?Q?/jn4yd0P7PY+j5oyVr8EFjYZoaZZDWpxCTmaU6ZK2io7A2Ax1bmywmpf/8Y8?=
+ =?us-ascii?Q?xYvXy70IqAZoxH2FmbY3NSlkCLbqTwzj1gxdC+wlb3m29FbnPw1EP2auOrJn?=
+ =?us-ascii?Q?JkU1O8ElzaFPK9iL5U/DSQcxEXupp1oApv44hS38STLXN9so8sGybDB5cyqn?=
+ =?us-ascii?Q?8PJnrTKUGo/pFpZz2xvVtkYFpOuiUO2AcHERAXDkXgIG45Fa8tPIR79HjCdB?=
+ =?us-ascii?Q?MMno+q2/rT4p1vO7FIaQgOvIk8QraI0YVM97GVtb52lzjS8KifFXa0HpdmuW?=
+ =?us-ascii?Q?4/rsPvV8f6HfeGGXo0GSNHghsyUZDPUdXyDNXqw1uOYtH1/rWezYlvdWubvf?=
+ =?us-ascii?Q?7W1R+Zx0xYVE+gutd3FgUQWbfaNcCX6gAg+eo+/c6RlOdqZyEkc2rT1xgWKC?=
+ =?us-ascii?Q?SiqGm5VIc3dUIXU4Kn0mt9Tz7HholmPw7QdcY8tQFKoqcnQHo5+Q75d6cuCQ?=
+ =?us-ascii?Q?5ZDZ3160//MqZzJcPNq5KBhNLSyNkflI0jYEMtFHP+tjZAwYBIncCg/uus1F?=
+ =?us-ascii?Q?19oCnOlT0wXo3YOC9MK0hYazHyZWL4i2vursRs8i2LvHbWBoXHokwRI9DTTU?=
+ =?us-ascii?Q?CEYg8PJfq+AwSRsNxyTYqoD6XfnOu+bHSA0zAkJtmtKXLM8MECPrBGl1Se6g?=
+ =?us-ascii?Q?N6J1CJzPC7esqrSXql0x4dcsbzsiYQjdBWleQHzDKem7W1yB1CDLWu+ZJbhv?=
+ =?us-ascii?Q?2ScOTrZjqCpuwThw3GYYQ6i3O59FjajNXDJblFrv9MEgSfRmlPJv8MpjZt1j?=
+ =?us-ascii?Q?3eG+D4Fe0TLwwAAQmMVr8fH+or/TXrRUSgaDqu3wDRH/Jk95h9KnHqFq+SD3?=
+ =?us-ascii?Q?6MSHfP7/a4D52sX6re1uQnBGsHabKuESKDwSJBa9zZsgoeBZdk687ajA6Ah8?=
+ =?us-ascii?Q?HYuKLUoycmPBvNrC3grPCGQROu/cldspvTvTzAHtutRkUPZ2V89k838x/7cn?=
+ =?us-ascii?Q?tPozt1yobA/sa+PU6rDpG7EiVkHr+dtjy5wnawet8wa6xU3A4EhzuRf6lzBV?=
+ =?us-ascii?Q?TL04hSRDO/2h/HY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6273.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NQufYw6K2RI9CYrnqGDM6N8AKkpYx5YXXLSh1lJti0PkZqcHbHh0mPCR7pKa?=
+ =?us-ascii?Q?47W1nWm5N30GlWNRibIqLTwPp3U9PTU0nPrNOBvwHZFLPlcsd5CneJ2ufnvL?=
+ =?us-ascii?Q?uZa3uD0k7UjMgeAscXyw+BJ1Wtrj7KN21KWk1Wb+05PzkhqT9KtU3RG8Ou9I?=
+ =?us-ascii?Q?4kK1gv34TqgoJgxwj565rUmnQbh/QuTwyee8TB9OGZc/VJzIK4bpSPnnWIDa?=
+ =?us-ascii?Q?4R4OLBNtzbZurOs85Mb+yZMqB1kdHgjVVdcDP2SGCbvcymldKdvo/hBleVrm?=
+ =?us-ascii?Q?ABlG9IlRKusxYksiTRV3SUiXiFSDqgi9hIPvdOZKFIYKpW768IH3e+qIz9Xs?=
+ =?us-ascii?Q?mKp03eC+vkaAlWDZFCdSokY5wkQFQ+LoQcmpUMuSz2cQumfZnJaJEiHSjXRD?=
+ =?us-ascii?Q?QVpAUD4NkBjB4O9ODHry3qSvZZ1+z2pMQUWneU3Y18LJdWoy84x/HsuzMRm3?=
+ =?us-ascii?Q?lygP/XaVPmyLOzFetOzt64b9rU4SPsHDsRHgcsQKMJuoDtoUDRNDWc2pDv5q?=
+ =?us-ascii?Q?o0ablaY4nD262QbGS7kE8c5XPGJYRnU5GoBF5BzY6r7GIedfZZWdPwNkBDRi?=
+ =?us-ascii?Q?V3oSSJ9//mqeO/d1OOnj7qyN1iezg3rdMPSSxiFop8lOIB4pSOE8HevbYn3V?=
+ =?us-ascii?Q?H/N/GRbT1zPMtPef9RG/4mRl1BEqPoHeUOEo2+R1Zw93RTyY5UgdpHEd0LCz?=
+ =?us-ascii?Q?Wbx+KCC/NKFhZKzWaAA9yjjoF0+7w14akggHZOYlZUBoI3qA5ydeLxG63vvA?=
+ =?us-ascii?Q?4GVre7qa2Wr+ZNwkiD+YszyLWdt0LW9iXHV4EyRzGqbaUqDoLrrsXK4jaPkS?=
+ =?us-ascii?Q?kGz9NcQ0wf5hkGiBp2PYkgV1F1nxWkxVIya4H/Ydi5pf0q59hT0pMLrJRiSx?=
+ =?us-ascii?Q?AARxm8fkeabHS4xrTZhFwhJbWMBtAsa/rj/tI6nGClwfs6+5ZsL7UTUAbm5w?=
+ =?us-ascii?Q?PGNS8yarnttcz6BnSELArINdfMO9AoDNsojR3oy8L090s2z7uzQBQ09HD6e2?=
+ =?us-ascii?Q?Fo8q+kNcLV5SU4wUps5yV+k0GeHQOtUB5xjFx+c6rHBVC/OEdIZp5FFbEiZ8?=
+ =?us-ascii?Q?Es6laeB1/3Wy1DVyY6tP7MZAEfzmGv5WuzMg6dguyNJWKz1OQI41nbT4jtTL?=
+ =?us-ascii?Q?rNnhpW1q647REsCQzkohUdFUIqz45urY17RC01h2CmxmdQ4FeYJmFV6o0e7V?=
+ =?us-ascii?Q?UrOeWfm+FHiSuVHMckskRydtwIh0eOVlGOX0RKTK/BFg/dakLLy4oIJsOBzA?=
+ =?us-ascii?Q?XjnVP3I4CBbrk+CnHBn8VQ3TYTUVzhxO3s+XdhiTKLk8xDVxMrmLRtTtne1I?=
+ =?us-ascii?Q?FTgamJYry7lTY4p5+zRKjptyKACxV6UYhNZU/+qRyattgTbpGUrpccYtwJKp?=
+ =?us-ascii?Q?PTNFfGI94eX/3GR32MN8cir26AEy9UcDlvedLOslsYzkBtlgvU7Qp1a0xdOx?=
+ =?us-ascii?Q?zoS2lBJWAShTnfybvw6cpwpGY2B/wiRuaqnOL4mx0QgAZXtBl+ywuMs/DGGq?=
+ =?us-ascii?Q?i256b09aSWWbY2lbPp2u8p3J+gNDLdi1R2usB8OLDNSepKD9FduVC9KcDQ1k?=
+ =?us-ascii?Q?mNygykHcGKi9I0IPxCsVo2nztF6bv+koascyQINP?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff29f7f5-5c18-471f-fafb-08dd80db9fdf
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6273.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 13:51:32.6449
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YAJ+NJVxutUEROAVSFCJpUrwZiUNaad/dfu2ZtqDlZdPRO+BC7wCfMdQ73m2fpaSe9SlUH//LqOfQdhAFUVI/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5349
 
-Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+Add caps UFSHCD_CAP_MCQ_EN(default enable), then host driver to
+control the on/off of MCQ; Sometimes, we don't want to enable
+MCQ and want to disable it through the host driver, for example,
+ufs-qcom.c .
+
+Signed-off-by: Huan Tang <tanghuan@vivo.com>
 ---
+ drivers/ufs/core/ufshcd.c | 3 ++-
+ include/ufs/ufshcd.h      | 6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-This patch depends on Alice's `struct iov_iter` patch series:
-
-    https://lore.kernel.org/all/20250311-iov-iter-v1-0-f6c9134ea824@google.=
-com
-
----
- rust/kernel/iov.rs               | 25 +++++++++++++++++--------
- samples/rust/rust_misc_device.rs |  5 +++--
- 2 files changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
-index dc32c27c5c76..840c2aa82e41 100644
---- a/rust/kernel/iov.rs
-+++ b/rust/kernel/iov.rs
-@@ -11,7 +11,9 @@
-     alloc::{Allocator, Flags},
-     bindings,
-     prelude::*,
-+    transmute::cast_slice_mut,
-     types::Opaque,
-+    validate::Untrusted,
- };
- use core::{marker::PhantomData, mem::MaybeUninit, slice};
-=20
-@@ -124,10 +126,10 @@ pub unsafe fn revert(&mut self, bytes: usize) {
-     ///
-     /// Returns the number of bytes that have been copied.
-     #[inline]
--    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
--        // SAFETY: We will not write uninitialized bytes to `out`.
--        let out =3D unsafe { &mut *(out as *mut [u8] as *mut [MaybeUninit<=
-u8>]) };
--
-+    pub fn copy_from_iter(&mut self, out: &mut [Untrusted<u8>]) -> usize {
-+        // CAST: The call to `copy_from_iter_raw` below only writes initia=
-lized values.
-+        // SAFETY: `Untrusted<T>` and `MaybeUninit<T>` transparently wrap =
-a `T`.
-+        let out: &mut [MaybeUninit<Untrusted<u8>>] =3D unsafe { cast_slice=
-_mut(out) };
-         self.copy_from_iter_raw(out).len()
-     }
-=20
-@@ -137,7 +139,7 @@ pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usi=
-ze {
-     #[inline]
-     pub fn copy_from_iter_vec<A: Allocator>(
-         &mut self,
--        out: &mut Vec<u8, A>,
-+        out: &mut Vec<Untrusted<u8>, A>,
-         flags: Flags,
-     ) -> Result<usize> {
-         out.reserve(self.len(), flags)?;
-@@ -152,7 +154,10 @@ pub fn copy_from_iter_vec<A: Allocator>(
-     /// Returns the sub-slice of the output that has been initialized. If =
-the returned slice is
-     /// shorter than the input buffer, then the entire IO vector has been =
-read.
-     #[inline]
--    pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &=
-mut [u8] {
-+    pub fn copy_from_iter_raw(
-+        &mut self,
-+        out: &mut [MaybeUninit<Untrusted<u8>>],
-+    ) -> &mut [Untrusted<u8>] {
-         // SAFETY: `out` is valid for `out.len()` bytes.
-         let len =3D
-             unsafe { bindings::_copy_from_iter(out.as_mut_ptr().cast(), ou=
-t.len(), self.as_raw()) };
-@@ -274,7 +279,7 @@ pub unsafe fn revert(&mut self, bytes: usize) {
-     /// Returns the number of bytes that were written. If this is shorter =
-than the provided slice,
-     /// then no more bytes can be written.
-     #[inline]
--    pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
-+    pub fn copy_to_iter(&mut self, input: &[Untrusted<u8>]) -> usize {
-         // SAFETY: `input` is valid for `input.len()` bytes.
-         unsafe { bindings::_copy_to_iter(input.as_ptr().cast(), input.len(=
-), self.as_raw()) }
-     }
-@@ -286,7 +291,11 @@ pub fn copy_to_iter(&mut self, input: &[u8]) -> usize =
-{
-     /// that the file will appear to contain `contents` even if takes mult=
-iple reads to read the
-     /// entire file.
-     #[inline]
--    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents: &[=
-u8]) -> Result<usize> {
-+    pub fn simple_read_from_buffer(
-+        &mut self,
-+        ppos: &mut i64,
-+        contents: &[Untrusted<u8>],
-+    ) -> Result<usize> {
-         if *ppos < 0 {
-             return Err(EINVAL);
-         }
-diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_devi=
-ce.rs
-index 6405713fc8ff..bd2ac2e8f13d 100644
---- a/samples/rust/rust_misc_device.rs
-+++ b/samples/rust/rust_misc_device.rs
-@@ -109,6 +109,7 @@
-     sync::Mutex,
-     types::ARef,
-     uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
-+    validate::Untrusted,
- };
-=20
- const RUST_MISC_DEV_HELLO: u32 =3D _IO('|' as u32, 0x80);
-@@ -145,7 +146,7 @@ fn init(_module: &'static ThisModule) -> impl PinInit<S=
-elf, Error> {
-=20
- struct Inner {
-     value: i32,
--    buffer: KVec<u8>,
-+    buffer: Untrusted<KVec<u8>>,
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 44156041d88f..b8937f85d81a 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -112,7 +112,7 @@ static bool use_mcq_mode = true;
+ 
+ static bool is_mcq_supported(struct ufs_hba *hba)
+ {
+-	return hba->mcq_sup && use_mcq_mode;
++	return hba->mcq_sup && use_mcq_mode && (hba->caps & UFSHCD_CAP_MCQ_EN);
  }
-=20
- #[pin_data(PinnedDrop)]
-@@ -169,7 +170,7 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Sel=
-f>) -> Result<Pin<KBox<Se
-                 RustMiscDevice {
-                     inner <- new_mutex!(Inner {
-                         value: 0_i32,
--                        buffer: kvec![],
-+                        buffer: Untrusted::new(kvec![]),
-                     }),
-                     dev: dev,
-                 }
---=20
-2.48.1
-
+ 
+ module_param(use_mcq_mode, bool, 0644);
+@@ -10389,6 +10389,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	hba->dev = dev;
+ 	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+ 	hba->nop_out_timeout = NOP_OUT_TIMEOUT;
++	hba->caps |= UFSHCD_CAP_MCQ_EN;
+ 	ufshcd_set_sg_entry_size(hba, sizeof(struct ufshcd_sg_entry));
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 	spin_lock_init(&hba->outstanding_lock);
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index e928ed0265ff..d8547bc6bf79 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -771,6 +771,12 @@ enum ufshcd_caps {
+ 	 * WriteBooster when scaling the clock down.
+ 	 */
+ 	UFSHCD_CAP_WB_WITH_CLK_SCALING			= 1 << 12,
++
++	/*
++	 * This capability allows the host controller driver to use the
++	 * multi-circular queue, if it is present
++	 */
++	UFSHCD_CAP_MCQ_EN				= 1 << 13,
+ };
+ 
+ struct ufs_hba_variant_params {
+-- 
+2.39.0
 
 
