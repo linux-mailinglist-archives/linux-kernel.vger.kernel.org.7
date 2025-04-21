@@ -1,257 +1,155 @@
-Return-Path: <linux-kernel+bounces-612937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486DBA9561B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 20:44:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660DEA95620
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 20:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C4BE3A916C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 519081895E20
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3D1EA7C9;
-	Mon, 21 Apr 2025 18:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE821E9B14;
+	Mon, 21 Apr 2025 18:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cDPXetdf"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2077.outbound.protection.outlook.com [40.107.22.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HlS5z7LM"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBAB1E990E;
-	Mon, 21 Apr 2025 18:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745261070; cv=fail; b=fUDjy4AI6qm0xENcXP8LAqSX/AgBAkm8Vrb1ce9/zKL375f1oHK9usIpQA7Eh4w+6SUbidj67hzLwI5kcoQi1xVY76ZgQtahxRwACbo5VvASeJeKri/fiWJt+gWzJE7M3+pgW0HYf+105yu4G+9elGjKzZNDgmwaobRegwMouI4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745261070; c=relaxed/simple;
-	bh=GbI/N6IyTVLdaYy7nHl3JnX8AgEKHR+skEBPxGUmKJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bEgqQIe1bjG7EoMONhaPoSVhpOnkUAnt9UfUlJofLMB2uSt7yXO73N1KWonK03LGePcVAIbXhFy2AnkfVP3jCLOS5DcjDi5l0NvZAALw1TRDHJz+t9DKPXgnpyTpmBJmVzo/6Y4Qx3FoRPr8FWYm957xRTjas0YEkze+JMsjJZw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cDPXetdf; arc=fail smtp.client-ip=40.107.22.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EZyyx2a19RM90GaoHlsZh0WoAWCW6u3o308mBOmdY3VHAIqF9tAqL9GuXHJPYVbiFA5dNeDTXqCjyPE0ySxEy0xiP0o4l5W8Xaz/wQeTbvrm6LEekwDlqC3INQ1Iv+8zL5Mz1dhQPYDflsIExVnq5VaOVtXwxeQCWQIG/ZCu51DrkFXNfdMoc/dpf36DP39oHs9anVULZdZTFNPwdJ9qXh6MB6OsPBw1XZZMRakIcGkSE3bL2EWLk3+rxWrkjo4o0xeD9DVVzH1dWvqqKZI4//HBytwPS9XvD0RCuseUIUaCHy6/DZHVh0yJDTVhRB9nx4oMB0wljAMF4Mu3xypzVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7FT/0jGjH7AlyHi96WOAFut3BHEdpLzQKPmz/Wr5dtc=;
- b=mbrEIrdL9/TFmpQTw1h8WNzC8BX/Mt/XcWDhJxZlCU5UYjf35ytpgzPMBnm7LIerV6KVOjboR9syruwJ/X+aYBNLrT/YTyWrPrAvzmUO+iHbwb/eLFtf4hxQC7Mado57z7ZILyHhz9ngxsJfMzmrDKwmBRZGGm1Qu+1iKsIsnWnAgK2rjDE0M+6sT8p6jWjTnMVLQRpF68poSz3K1YLZ2wi2lKxJOBB/3ald4ndhDIK0ifn7eElmhzGtJdD6E+/iRpb5lBwQIk2bMkanTNpY+EGd2fCocvvrauEsniqCvtPw2ut5W58dMM2Wx6AIDzh/udcGA+9fTJ1UA6gJMFzsgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7FT/0jGjH7AlyHi96WOAFut3BHEdpLzQKPmz/Wr5dtc=;
- b=cDPXetdfpktVbZPeLQ/RPFpHyovQfca7wxDBQ580oLy0ZYEo8n/YxwkmbgQ3i/la1QvOw/G7XpL0xqrsgzlLvtsjKo5Y5llIEfrePIc3WOqcNbKFpBAQvGRkt1NqVAS3IrxZu1lZ7TWzGtQRi7EP+v8v1vHDNY/3pREjWLPKQvvpUgbuUoarDaWmp3ZWi5fedz7rvLqonVYpGP9I/DX8idkHjkKjL4Ax/DOw1ULP0XBDG3CpZUwebUhFI+dPnTCZ0E1ZY4mGtnR0qn1AEkG8w39FG/D7idF9Pj/K64uZOhlzbwb0gzsHSBJ7A5xOu6Z8dfkMQcHAfdnhfVBFqMg2JQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8213.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
- 2025 18:44:25 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8655.025; Mon, 21 Apr 2025
- 18:44:25 +0000
-Date: Mon, 21 Apr 2025 14:44:19 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Robert Chiras <robert.chiras@nxp.com>,
-	"Guoniu.zhou" <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH v4 00/13] media: imx8: add camera support
-Message-ID: <aAaSAxMio+8A94P1@lizhi-Precision-Tower-5810>
-References: <20250408-8qxp_camera-v4-0-ef695f1b47c4@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408-8qxp_camera-v4-0-ef695f1b47c4@nxp.com>
-X-ClientProxiedBy: AM0PR04CA0111.eurprd04.prod.outlook.com
- (2603:10a6:208:55::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3501E0E0B;
+	Mon, 21 Apr 2025 18:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745261154; cv=none; b=CBvL3FnaW1FabUgaiQjSweh4e41dBUj5RGTfxQkEqw0Z3H0j7+4O9CcUArRuelL1Pu2DuGa2D3em1iXMgUB/jxJYhyCrtCssjzawPGGbFyMQ7fusbJ6HiKVco0mkuxT+cg7DnZn43V8DozHtT1sBs6kuws20tGJo/RQQJaPruNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745261154; c=relaxed/simple;
+	bh=GdhxNSslAWbZve6BQuhMyCtNZV9UQf1F5okxGwMVpDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bs+yT+4rxJRrB+7JBcO47+YGZKTCo+k89m9vbsojYqBqpNn4AZvjSUHe5MOtHNRnCidnyMLqximuDLPGX9DI+aSrha9vpPo0XdXigZOurWoOXDRvy5o56/QpsRJ8ioWBmRElLymJU8kqDM4XxNG7p0nDY1GhvL/dV3yfsS0gs74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HlS5z7LM; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7376e311086so5860980b3a.3;
+        Mon, 21 Apr 2025 11:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745261152; x=1745865952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F3h1HyEnps9Et/hOgMbvgkw2q8Ek4tCtDu6hGMHWzbw=;
+        b=HlS5z7LM7s3zc0mDaS65g1mlc8cIWwBgmDUA/Wi7QzbOafshHrNJ/8yzCueszJKKoq
+         QEsT4m1oKBBprX6X6C7ttJ3TLscT6EMKxIq0WbIhZeg7OQT3KCJuuN247wimI06bWF0X
+         iaBaw3OAltBi/qELAOuR+JYsv0A7d20TqU4eIT/uQc4dCEGy7XXaokycTUzyOeHug3Za
+         THFzuD95OHXC17j/oUW4KDQgcfgqs/5/PlYY59w31ALFoITXAanGqjh8CqF+shFoL51F
+         ltrB7Y2vIellM3NYk6FfA0/4W9keYFyTr+hcwdOYM7r4Usvm3TU2fnOB4uP2f71v1Q6z
+         at8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745261152; x=1745865952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F3h1HyEnps9Et/hOgMbvgkw2q8Ek4tCtDu6hGMHWzbw=;
+        b=mxOUa5+3GrY7NVsROdi0MsgxeWV9sXw7WRNxhAdDNbcJhVrhVZJ784Qkpmo4GNDeTa
+         NQnZBNu3oNVXdtVRhSt+l3y04dDIC1LCNRDPRAD8gIwXFtWoRVXim12o88qn/MmOE+Ze
+         qSqvpfmXipCT8D6NQpY+US5b8D8pqxoxf2OTCcuU2Abe4pXopNDBj0cTPpd5kji067iW
+         JIfdyiuCzbdm9jlgr7tUQXAYEreZGclSoV+9lT609TEiydy6B0RnM7xA4BU0H1PG0rx/
+         jfHm2sQ+nXiEOkx8f1EArRyg/OwK6pHTeNxsvnP4/25+2SIexvoOrVUtC8moUG74JVzP
+         XOyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5A5uwfwFNeLIqAiwquv3sRl+ZdLrzjCxYyfAhibPobpni2QewakdfOEtKBOVpRiDbKzxQsXqGtV6vvWP2@vger.kernel.org, AJvYcCW0gwrcyHMpgyAcwdJF/yysM3y2X6J3Hbau1IhpJ45p+1W41NhXi85PJB3hM4d+gGjfYk5FVgPH2eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx77hd0mi9J9ekBWe2t1Gq4P8e5SK+guByJXv9dVMWeJbujX8ZE
+	sQX2hf9X5SF/2M9JqZ6CbYnSa59bWjE/y7DyTy69OCjBLpnWMmIz
+X-Gm-Gg: ASbGncs+OzaUBAiBMU6/QKiPvEs6oe4YJl5E55WmZxgVqa3gmBZyu5ndJ+yhVT+gjpn
+	7dLdxQv360x4VSozTG1qfr7XnBlgjYvfsD4hnKyXQ9jpiJyBBbLFmBV+of+16zldC+S62sSwgLh
+	haPEI857f2auL+V1JHc8FQJvByUErx9LRMB/EaYepsxvIPAw984PqMlDsUg3d7i2EaM4NqQEvE6
+	7D+9D/xxHnhka8r4CjOD0V8Mr0q+7AbGFnfRvukVkxEZEQLVzKgcrVga61Oih97gzveCWc4sspj
+	0gLRLGAnFlcXtM4ZOwpuVGNqNlbNZZkXAKadj4jqY0kNj720QTwH0Lw9TQ==
+X-Google-Smtp-Source: AGHT+IESLA+LfVU0NI/zaGGaTQL5mIYThUhrhCPlnIQSDEpy56AcHp2m/FdK1x4VcUfJ7r4SjCqtpA==
+X-Received: by 2002:a05:6a21:c8d:b0:1f3:486c:8509 with SMTP id adf61e73a8af0-203cbc76934mr19232992637.25.1745261152537;
+        Mon, 21 Apr 2025 11:45:52 -0700 (PDT)
+Received: from acer-Nitro-ANV15-41.. ([61.83.230.5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db13c5f8bsm5937487a12.35.2025.04.21.11.45.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Apr 2025 11:45:52 -0700 (PDT)
+From: "shaikh.kamal" <shaikhkamal2012@gmail.com>
+To: dan.j.williams@intel.com
+Cc: "shaikh.kamal" <shaikhkamal2012@gmail.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [PATCH] cxl: trace: Fix macro safety in CXL_EVT_TP_fast_assign
+Date: Tue, 22 Apr 2025 00:15:17 +0530
+Message-ID: <20250421184520.154714-1-shaikhkamal2012@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8213:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14084380-c075-4061-49be-08dd81048a1c
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?8as5KHHlBYspJk4xLLjYkZfp+lE6OuHmjiDdAaCkFNzpOF7sHCExip4coInj?=
- =?us-ascii?Q?NyYYOMkOL5k6x42bUDkwEgmMhvbLOSmdW63GoUNz/wrZlqoccrlzjfAy9DUv?=
- =?us-ascii?Q?ME+KWOaIM8zVlZNTKJQEceLFluU22KTW7nI5J4bup+uniBk9uqKma2gEv/Gf?=
- =?us-ascii?Q?lYbiRxoLum4UFWWCDI/6OIjqSF8N+GBbXKXcyxZb0VPJyVJM5OM+l8xyU8nn?=
- =?us-ascii?Q?4dO9ljJr6XysVz371Hodiea9aGhEI4QuoLHTkPBkLJN/OiO31DHDB5VDKVft?=
- =?us-ascii?Q?30pRAMyYYdgVkU4YFd3TyZ+C2yFjOpjr9H9EE90qyfw2VFOF1jROxmIufp2a?=
- =?us-ascii?Q?A4r2QtLZCooxYPnlOyFLEBrRP1un5K2fQj7IvSfaYBWXldDAB5qv+lT81oEB?=
- =?us-ascii?Q?kcRhsrjehPkGpNkl9q9eF2UsO5Q7iISE5vsbCJTmPftFsdRSFxOFpaXEpt2i?=
- =?us-ascii?Q?c1TRuO3gbFG76JMJJhUTe0kBN5sp0gAaFLfbVIN83nPuGbOjlJujzSCMAXEC?=
- =?us-ascii?Q?0rQOY6EwxlSi6PTMWTQyp/SEqRYQG/TbL9CD+ZsudZGfdm9svj4jSia9XY40?=
- =?us-ascii?Q?8HEabPoiJm9dWIilM6a+/dYxcQ8Lw8hb91VIkl+saYtTH3UaXmMyU9yybzPf?=
- =?us-ascii?Q?VScrHexHwe4YiYHZCA3iAAwOLaX6QqeeByEGJxq7QVukj8MflDxr4g78OWhN?=
- =?us-ascii?Q?P6twPaCuS+f7a6AI1t8Hc3uS+t69lRoHiIuekUkuUPk+UQzvl6hCyvyv3fYc?=
- =?us-ascii?Q?Z/lKXX756Vl9bMfzcuiD1LKuqhB0Xoawua8ZTERTv3bglcEgPQU+frakhlW3?=
- =?us-ascii?Q?UMCj20aKUPg92sb5O2pCB2sQIBkq5eoACiEL2oR4GDFFO9vlUhhSBYwYVdFu?=
- =?us-ascii?Q?11hMtg1YlrU1t1YP9PHXILY7ZQ863UqkGoDCXYAdv1RS+d1C7SRNfkG6z0pa?=
- =?us-ascii?Q?YvG4qb9qKPG4UXRxGkO7zuz1vcg7sQR0LWaSQTMAg+mm4Xo+X+8CY85rjDMq?=
- =?us-ascii?Q?2Dgcj+tjA7//Na+gGMlTDkD4iwDUqTvv5cVnSPQkD4tLjwumdzCHsJPK2kkG?=
- =?us-ascii?Q?srWXVxIJgg7VoJ7EbTP1OtbLgDQPRqE/oeFM0tmPqnz/6XgYgppwPPfCXJ/K?=
- =?us-ascii?Q?9cJ/EHJLBfp8XLUYrerfv2IOHfGVmGc8aIBH6UYTC346umRHBqXgLdDC0JH4?=
- =?us-ascii?Q?jWTHWlRvjgBWqXN0dFcR79wlJZr1yAqOXaruMz6InRNiiWVXfN6azZKYxPY8?=
- =?us-ascii?Q?9UBbI8tyuI4GhYrmM8sqRYmK1ilxY3yUjy5h3ub6Xs4Eem2xDflY73P4g7W8?=
- =?us-ascii?Q?l23qp7cbVNzfwzJQnwzPPvwLBdLEKRjHLtltWrJ6d4kjpYDZPk6pXEoSomko?=
- =?us-ascii?Q?1bPQnoUtMPPX5ZX1v9JLUntyDpSyk8CbZqvGWBQkGpcAtrjCknA0NJ514Gzj?=
- =?us-ascii?Q?TP5CQSJZvENJQNlkvPw6mkUS1e5oRQ1ucMIlod8t+yXulS3QRcvSuAvgr+Bq?=
- =?us-ascii?Q?Qo61f2QcFwMQ68oUVMrzsXwqqTwa+Cnu6X9H?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?0z0BeU9qRn08td5fDNZ/m4RD3jw2+GxRzitMEgu77s6Nl7Cezasnl2X042YT?=
- =?us-ascii?Q?tae/CJ5WeA0q8cS+Aw3f+Gq9i7goX2q/hc3ZcWbixKHNC0p7y9wqfHqAfpTa?=
- =?us-ascii?Q?hFDUvHKLSzUAd//NDYVkQnZkauhl17GLcx+DzumKCgolsdRFzqn/e/Cy/eNr?=
- =?us-ascii?Q?2hNqejmxI8+ee9E14r3nJmyzAVhTBINRFnhoSwn77HAAosBCj/9cZ9GBl8H9?=
- =?us-ascii?Q?9Vtv3+x5DZuZObCBuRpSfEC7Guy4CMxP5/CzqD4gf4UZRbwIQCQ8xjHKexHP?=
- =?us-ascii?Q?0jA6+YnmxtYKU5vs5lvXWZD85Tp6btepUFO8AvvR7GcJ97T4chL2mewWST2L?=
- =?us-ascii?Q?xnyn/jWpXiIgDW7NB5+oaePuvkYpvzThB3KaRN1+/VhFVoBZbEOdu+PR85xO?=
- =?us-ascii?Q?/joRAjYqTCXnz3Uv35qHn+Oc3Swniu6+U+uMXLJKRLvntWESmaptNykeSgng?=
- =?us-ascii?Q?s/EvviU9MC913GuuJZoGfXpX8PrU0g08DUN2kW6UzQ3STmmls727Wr4jXU19?=
- =?us-ascii?Q?274x9y2PuhjyqlhOgoA0o5jRsdkL4UNQnmj+snyNOnaaOJWgIvHDs5YauHVg?=
- =?us-ascii?Q?aXKB8eS/efmG9ni1eBisuHqI3gnW69wjdUiypThaTkBD/VJvebuVDTaa9MWP?=
- =?us-ascii?Q?ujG6sq1ds2R04KZQqRLWdGzKX3d0qc5E+3wlGkpVT5q1eqX7pQva5B8MWV4p?=
- =?us-ascii?Q?XOrZOXZbFkkNAXypOpSNIBgXbxqjfXr01tIA2Mkx8CZ5zVV+pEUXvj0a7FjC?=
- =?us-ascii?Q?8BDGqa/XY3vuhUJzbvy9rfu/yqUnqQ0kSZwJRrc1QYgwB88502p4AQwgiAjZ?=
- =?us-ascii?Q?Dh0jQ6Qdi1B40YHwTE6sJCIkibkrh7ygI5TPDs3SYz8EHE/z+N2j9BEfMmFD?=
- =?us-ascii?Q?mVO5qYeCQINT7tXpMGzrkdVwJc09q4XR87xgJlcr3oCkg65O6uWvS3SoyQYR?=
- =?us-ascii?Q?x5T5EVw4VRxDQmldqyEXa06JlKWFHwlmUFvQ/U1RlDgikVWydSy0VHsZ5WrB?=
- =?us-ascii?Q?dE3gm8kpehQGbD3MQZiytpdfQEqPiRiRtZnQUQonab2CdecYqe9txFWx7e4R?=
- =?us-ascii?Q?qUw8Qp3514yUJL6Cf10F0w4lVRNYgeaoxtHvC0aQzX8q5gaz7yiXsynBTZrH?=
- =?us-ascii?Q?8Ok5scl7M4Etf6WaOVPV6O0yNdVXFoOAQvluKHajxE2JEc2BfsWuXICUI0Tq?=
- =?us-ascii?Q?15UhSjJnEiEhN95ALWW4Z9i3DTGd5Oq5FfdwXWYtihgOw4Ap3JQt7y4uSinK?=
- =?us-ascii?Q?f7hRGreJBGPUVeov64Dwu9fePXJ/RRWNnZvrbVmR8d81sSQ54+Tm68GKc2WP?=
- =?us-ascii?Q?Ar0WX2ngrF2SnecNvcb0CTZK7SyYyMyitbUh7kxXl7g9COOjRY5SifkzIQSq?=
- =?us-ascii?Q?MgLaG7INTW8wKdxj/BHwFk/CByoJnlqDM5oOZWXoX3F1gv05ZzwBGoQYeGtJ?=
- =?us-ascii?Q?Q6so9eWNiWpSgVrwWoxl2xUSf2AzW9AiNnqRv+SRhIBpNys6nzRyA87QIni3?=
- =?us-ascii?Q?x5LpIO6RKJP2eHxxiCvHGgIx5rxL/OxLdSkeuMkPZN2uKthe06ZK262fTCZb?=
- =?us-ascii?Q?dwRRQrvGoiPFg+1tylJOC9HWFJgGCkD0onBR2xAj?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14084380-c075-4061-49be-08dd81048a1c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 18:44:25.5578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JE8b4LsuvYsZbFE3uNKX3T9mM7LqZGLFLBXqelLa2T5cmhDNzu11IDxvX8hz5KN33UZnazq3cISm+k2sjI6/+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8213
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 05:52:58PM -0400, Frank Li wrote:
-> Add SCU reset driver for i.MX8QM/i.MX8QXP.
-> Update binding doc.
-> Update driver for imx8qxp and imx8qm.
-> Add dts files for it.
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Fix checkpatch.pl detected error
+The CXL_EVT_TP_fast_assign macro assigns multiple fields, but does not
+wrap the body in a `do { ... } while (0)` block. This can lead to
+unexpected behavior when used in conditional branches.
 
-Laurent Pinchart:
+Add checks to ensure cxlmd is valid before accessing its fields.
 
-	Do you have chance to check this version?
+Signed-off-by: shaikh.kamal <shaikhkamal2012@gmail.com>
+---
+ drivers/cxl/core/trace.h | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-Frank Li
+diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+index 25ebfbc1616c..a1a1014ee1fe 100644
+--- a/drivers/cxl/core/trace.h
++++ b/drivers/cxl/core/trace.h
+@@ -249,18 +249,24 @@ TRACE_EVENT(cxl_overflow,
+ 	__field(u8, hdr_maint_op_class)				\
+ 	__field(u8, hdr_maint_op_sub_class)
+ 
+-#define CXL_EVT_TP_fast_assign(cxlmd, l, hdr)					\
+-	__assign_str(memdev);				\
+-	__assign_str(host);			\
+-	__entry->log = (l);							\
+-	__entry->serial = (cxlmd)->cxlds->serial;				\
+-	__entry->hdr_length = (hdr).length;					\
+-	__entry->hdr_flags = get_unaligned_le24((hdr).flags);			\
+-	__entry->hdr_handle = le16_to_cpu((hdr).handle);			\
+-	__entry->hdr_related_handle = le16_to_cpu((hdr).related_handle);	\
+-	__entry->hdr_timestamp = le64_to_cpu((hdr).timestamp);			\
+-	__entry->hdr_maint_op_class = (hdr).maint_op_class;			\
+-	__entry->hdr_maint_op_sub_class = (hdr).maint_op_sub_class
++#define CXL_EVT_TP_fast_assign(cxlmd, l, hdr) \
++	do { \
++		if (!(cxlmd)) { \
++			pr_err("Invalid arguments to CXL_EVT_TP_fast_assign\n"); \
++			break; \
++		} \
++		__assign_str(memdev); \
++		__assign_str(host); \
++		__entry->log = (l); \
++		__entry->serial = (cxlmd)->cxlds->serial; \
++		__entry->hdr_length = (hdr).length; \
++		__entry->hdr_flags = get_unaligned_le24((hdr).flags); \
++		__entry->hdr_handle = le16_to_cpu((hdr).handle); \
++		__entry->hdr_related_handle = le16_to_cpu((hdr).related_handle); \
++		__entry->hdr_timestamp = le64_to_cpu((hdr).timestamp); \
++		__entry->hdr_maint_op_class = (hdr).maint_op_class; \
++		__entry->hdr_maint_op_sub_class = (hdr).maint_op_sub_class; \
++	} while (0)
+ 
+ #define CXL_EVT_TP_printk(fmt, ...) \
+ 	TP_printk("memdev=%s host=%s serial=%lld log=%s : time=%llu uuid=%pUb "	\
+-- 
+2.43.0
 
->
-> Changes in v4:
-> - Add 4 clean up patches
-> 	media: nxp: imx8-isi: Remove unused offset in mxc_isi_reg and use BIT() macro for mask
-> 	media: nxp: imx8-isi: Use dev_err_probe() simplify code
-> 	media: nxp: imx8-isi: Remove redundant check for dma_set_mask_and_coherent()
-> 	media: nxp: imx8-isi: Use devm_clk_bulk_get_all() to fetch clocks
-> - rebase to v6.15-rc1.
-> - Remove scu reset patches, which already in linux-next
-> - Remove patch
-> 	 Add fixed clock node clock-xtal24m to prepare to add camera support.
-> - other detail change log see each patch's change log
-> - Link to v3: https://lore.kernel.org/r/20250210-8qxp_camera-v3-0-324f5105accc@nxp.com
->
-> Changes in v3:
-> - Remove phy driver parts.
-> - csr is dedicate for mipi csi2, so add it as second register space. csr is
-> mixed with PHY and link control with csi2.
-> - Link to v2: https://lore.kernel.org/r/20250205-8qxp_camera-v2-0-731a3edf2744@nxp.com
->
-> Changes in v2:
-> - move scu reset binding doc to top scu doc.
-> - isi use seperate binding doc for imx8qxp and imx8qm.
-> - phy and csi2, compatible string 8qm fallback to qxp
-> - remove internal review tags
-> - Link to v1: https://lore.kernel.org/r/20250131-8qxp_camera-v1-0-319402ab606a@nxp.com
->
-> ---
-> Frank Li (10):
->       media: dt-bindings: Add binding doc for i.MX8QXP and i.MX8QM ISI
->       media: nxp: imx8-isi: Allow num_sources to be greater than num_sink
->       media: nxp: imx8-isi: Remove unused offset in mxc_isi_reg and use BIT() macro for mask
->       media: nxp: imx8-isi: Use devm_clk_bulk_get_all() to fetch clocks
->       media: nxp: imx8-isi: Remove redundant check for dma_set_mask_and_coherent()
->       media: nxp: imx8-isi: Use dev_err_probe() simplify code
->       media: imx8mq-mipi-csi2: Add support for i.MX8QXP
->       arm64: dts: imx8: add capture controller for i.MX8's img subsystem
->       arm64: dts: imx8q: add linux,cma node for imx8qm-mek and imx8qxp-mek
->       arm64: dts: imx8q: add camera ov5640 support for imx8qm-mek and imx8qxp-mek
->
-> Guoniu.zhou (1):
->       media: imx8mq-mipi-csi2: Add imx8mq_plat_data for different compatible strings
->
-> Robert Chiras (2):
->       media: imx8-isi: Add support for i.MX8QM and i.MX8QXP
->       media: dt-bindings: nxp,imx8mq-mipi-csi2: Add i.MX8QM(QXP) compatible strings
->
->  .../devicetree/bindings/media/fsl,imx8qm-isi.yaml  | 117 +++++++
->  .../devicetree/bindings/media/fsl,imx8qxp-isi.yaml | 106 ++++++
->  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       |  38 ++-
->  MAINTAINERS                                        |   1 +
->  arch/arm64/boot/dts/freescale/Makefile             |  11 +
->  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     | 362 +++++++++++++++++++++
->  .../boot/dts/freescale/imx8qm-mek-ov5640-csi0.dtso |  60 ++++
->  .../boot/dts/freescale/imx8qm-mek-ov5640-csi1.dtso |  60 ++++
->  arch/arm64/boot/dts/freescale/imx8qm-mek.dts       |  67 ++++
->  arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi   |  85 +++++
->  arch/arm64/boot/dts/freescale/imx8qm.dtsi          |   5 +
->  .../boot/dts/freescale/imx8qxp-mek-ov5640-csi.dtso |  59 ++++
->  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts      |  44 +++
->  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  86 +++++
->  arch/arm64/boot/dts/freescale/imx8qxp.dtsi         |   5 +
->  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 133 ++++----
->  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |   6 +-
->  .../platform/nxp/imx8-isi/imx8-isi-crossbar.c      |   8 +-
->  drivers/media/platform/nxp/imx8mq-mipi-csi2.c      | 169 +++++++++-
->  19 files changed, 1328 insertions(+), 94 deletions(-)
-> ---
-> base-commit: 1f665976a7c4e8779566e153b8854d7829ce33ac
-> change-id: 20250114-8qxp_camera-c1af5749d304
->
-> Best regards,
-> ---
-> Frank Li <Frank.Li@nxp.com>
->
 
