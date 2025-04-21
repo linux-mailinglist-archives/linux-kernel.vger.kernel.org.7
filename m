@@ -1,171 +1,68 @@
-Return-Path: <linux-kernel+bounces-612309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB215A94D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:41:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D10BA94D53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E042417044A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FCD1705F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5820E306;
-	Mon, 21 Apr 2025 07:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="c+JZuHZG"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2746620E702;
+	Mon, 21 Apr 2025 07:39:36 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678842A82;
-	Mon, 21 Apr 2025 07:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BACB67F;
+	Mon, 21 Apr 2025 07:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745221274; cv=none; b=KvL9i6MXGPIJUnYrmR+hpaGWW+tLdTurtPaK78H2ZrvzhJ95hSc/MrKfoW3XqcJPx6Fv51+u9TbHzzv5/4j+/jrnq5n9bCXw7d3l7coUh+cUHSh1DB/l6mdreA5/hE0tyh0+JBxbZDRSxqjsoyeznnhbPwXLY1XRf1lgQtg3RoQ=
+	t=1745221175; cv=none; b=WQmh3XuJyVmbFWZuCmk9a2z5iNgb01BJAU5qo6F3wNWAeOUZ9LcYCyin5ixwj2ncc6emWFWvqGM/fxhL6rvnFqL/dUzucZIcl+JI9AxGMJ+DPEp7pwdeQd14OA1HluWaZDlxV5Ucey8O64lzN/VltzE6SD1QdjZoKCPEDndsQus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745221274; c=relaxed/simple;
-	bh=7A4KIJxhzQOnGJuAMSwNnQDreE7Acs/kCJswmbM0wFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mFqUhIFUdy+xVADpjfX/up7EaJoKgghLxOjxQIl9Z0s+hx+XQYlgS4o/DmrOivOaKw1t21IsK/nC0GMpZTGRGpMc7tqxMEdJ5muiw0Zz8IzWRkn4ieeBsJ4t6oYEjV+rtp9HeaoFgmSoXREiabT+yKA05lG8ntKh1oUADXhMY2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=c+JZuHZG; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1745221237;
-	bh=Fxs9NxWDxUFieX7yGlVwvGNZOmO3A4Li11xcTkfRoqY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=c+JZuHZGDLyKwHTWf2IUYHfzaucLKIrB4o/xUzz9vMttHACdw7wY2NzotuvJrlNt6
-	 rmjuUut7YhwPBBT1GlZmtxPT5ZIqKRblCh+OwLBqi4F5fEQsYFY+vWtQZOcic0TGw5
-	 v+HcuuS2HzLH5zJ8i1sa97ZiEnIbbpmiSqK6+ruI=
-X-QQ-mid: zesmtpip4t1745221226t7d1c116b
-X-QQ-Originating-IP: jqo7yqqOLdTjgbTqbuM2nYummntLNnOIXlBWdBK0Yoc=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 21 Apr 2025 15:40:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10529845600704120540
-EX-QQ-RecipientCnt: 22
-From: WangYuli <wangyuli@uniontech.com>
-To: hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	obitton@habana.ai,
-	akpm@linux-foundation.org
-Cc: gerald.schaefer@linux.ibm.com,
-	viro@zeniv.linux.org.uk,
-	wangyuli@uniontech.com,
-	meted@linux.ibm.com,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	yujiaoliang@vivo.com,
-	shenlichuan@vivo.com,
-	cvam0000@gmail.com,
-	jesse.brandeburg@intel.com,
-	colin.i.king@gmail.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] treewide: Fix typo "previlege"
-Date: Mon, 21 Apr 2025 15:38:37 +0800
-Message-ID: <F3FFD123DE5F85F3+20250421073837.64732-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745221175; c=relaxed/simple;
+	bh=boRLROJn4ucEtnjOb76u7xegVX7n55u48HuLH2Zc5uQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNws1mHA59ZprQlsfZDmWi7umNTjQjHYZrBH0Mz3pd7bc3K16bgmZWfrMcL6SMMUr40AwrG8Czx1Q7nTzUu459X8515eR+OW3rUoFg4DdKz+zSuZ6gzIN8jGubJUhQAeLByiFrG0gpwbJP74pfjEkBS4Qg2DS4gDu2fmgmlMNI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C2CA067373; Mon, 21 Apr 2025 09:39:22 +0200 (CEST)
+Date: Mon, 21 Apr 2025 09:39:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, xni@redhat.com, colyli@kernel.org,
+	axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+	mpatocka@redhat.com, song@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, kbusch@kernel.org,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH RFC v2 00/14] md: introduce a new lockless bitmap
+Message-ID: <20250421073922.GA19465@lst.de>
+References: <20250328060853.4124527-1-yukuai1@huaweicloud.com> <Z-aCzTWXzFWe4oxU@infradead.org> <c6c608e2-23e7-486f-100a-d1fb6cfff4f2@huaweicloud.com> <20250409083208.GA2326@lst.de> <115c3b08-aff1-dd97-fe6a-7901452ce62c@huaweicloud.com> <20250409094019.GA3890@lst.de> <28bb1c35-5f75-4e1c-4b5d-32bcb87050ce@huaweicloud.com> <54ab4291-9152-44d1-bf6c-675b58cfcea8@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MxdW4jxL6NvXiQrhiHczdKneicZuKJXFOt13NcIfsjbX2xahoTwFtYB/
-	Dcrzh8kDp2x7xmH26D7a+5DTTav3rnlyK2Te2hYXvE7FHy49LaUSr/KRshYuLCnJ5sYCSfe
-	qypehXgU5mA7FHRPR9DJZCPMjoCL88kUR2kF52PUXfwLxp3xabnnz6K1Mb9I45pgv/CniM3
-	qnXyKeD/mtlb6rePQuVyK6WQdrpQ3nG9d6O0r8UXgF5AaalyS9wD5X5GrI/TfMLpO5zaYzp
-	xjo+ja3Ns4++6I0c9AoUyyf5iFR9Ask8vsV0qUEGKyFeWvUWPHzStxwZRrY42y56q96ZwQC
-	U9kBmo5HQXKBIABNrtm9QMh55Jq9SykpBzDefyh5n/8Ck02u1ZfvOEpyZQ4bM4UIMduKoOT
-	+TDK4407AaNQae/7K4Ok7xbwD079zdxZYjnY0Zhn3dwZHRPgEULmOzrtTEQ9HspSaUYdLeP
-	fdb7QeG9khVFvZRHKLaofv6qIQeQr86mxLkaqu629UVzGppXpiGTVHGrx9TY7gGRo8zyx4Q
-	MnWNLWoJw6FylYSJpr6kkbNqrUvi5WiKshu+g/gBJQ2YeUEbv2QR4gNk5+bgz2YZBnYTUBT
-	AzhfWTgb2NQ+dow55QPVXMkgbEtBAffZmsdeAzVsvwdlEAGFEBNO4paN2NvtDvN9ZfKkvU3
-	YTEW+F5il3ZkBmWo9pPu2itQg8UZawIFBIkWGUcpc6sN4oM5nmNLLS92WD0QIWnxm9o4R5h
-	QOBncOXfUevJ65p2GkNRn8H4q2JRM7NXtuqrkHqtymjrH9arA+0Ev5OLWADfalUAAXQIiPV
-	zvu3nyW2t+wOP+sNFi4GNCICQ4+vDWKvIOLJDbc+fsV6FqlBv1UUinnV5G9S0hXBioVDz66
-	vWoZJrVLDttkbiwbvpY/6jmo1sUH3HPxM2sNBaDNgDENO9tMYT0rLApU1Kre2kb7axPDkFX
-	Kt2pYAzxR/Dtl3afFNo/ZGeA0ztvgPV8SsAspHloJjLxJTBtezjnPZdl9o4lU18Fmr3Oob0
-	B6NZuP57ArAFUuCpUkvFtCBnmOYBo=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54ab4291-9152-44d1-bf6c-675b58cfcea8@huaweicloud.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-There are some spelling mistakes of 'previlege' in comments which
-should be 'previlege'.
+On Sat, Apr 19, 2025 at 04:46:03PM +0800, Yu Kuai wrote:
+> So, today I implement a version, and I do admit this way is much
+> simpler, turns out total 200 less code lines.
 
-Fix them and add it to scripts/spelling.txt.
+That's what I thought :)
 
-The typo in arch/loongarch/kvm/main.c was corrected by a different
-patch [1] and is therefore not included in this submission.
+> And can you check the
+> following untested code if you agree with the implementation? I'll
+> start to work a new version if you agree.
 
-[1]. https://lore.kernel.org/all/20250420142208.2252280-1-wheatfox17@icloud.com/
-
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/s390/char/vmlogrdr.c          | 4 ++--
- include/linux/habanalabs/hl_boot_if.h | 2 +-
- scripts/spelling.txt                  | 2 ++
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/s390/char/vmlogrdr.c b/drivers/s390/char/vmlogrdr.c
-index dac85294d2f5..e284eea331d7 100644
---- a/drivers/s390/char/vmlogrdr.c
-+++ b/drivers/s390/char/vmlogrdr.c
-@@ -255,7 +255,7 @@ static int vmlogrdr_recording(struct vmlogrdr_priv_t * logptr,
- 
- 	/*
- 	 * The recording commands needs to be called with option QID
--	 * for guests that have previlege classes A or B.
-+	 * for guests that have privilege classes A or B.
- 	 * Purging has to be done as separate step, because recording
- 	 * can't be switched on as long as records are on the queue.
- 	 * Doing both at the same time doesn't work.
-@@ -557,7 +557,7 @@ static ssize_t vmlogrdr_purge_store(struct device * dev,
- 
-         /*
- 	 * The recording command needs to be called with option QID
--	 * for guests that have previlege classes A or B.
-+	 * for guests that have privilege classes A or B.
- 	 * Other guests will not recognize the command and we have to
- 	 * issue the same command without the QID parameter.
- 	 */
-diff --git a/include/linux/habanalabs/hl_boot_if.h b/include/linux/habanalabs/hl_boot_if.h
-index d2a9fc96424b..af5fb4ad77eb 100644
---- a/include/linux/habanalabs/hl_boot_if.h
-+++ b/include/linux/habanalabs/hl_boot_if.h
-@@ -295,7 +295,7 @@ enum cpu_boot_dev_sts {
-  *					Initialized in: linux
-  *
-  * CPU_BOOT_DEV_STS0_GIC_PRIVILEGED_EN	GIC access permission only from
-- *					previleged entity. FW sets this status
-+ *					privileged entity. FW sets this status
-  *					bit for host. If this bit is set then
-  *					GIC can not be accessed from host.
-  *					Initialized in: linux
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index a290db720b0f..ac94fa1c2415 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1240,6 +1240,8 @@ prefered||preferred
- prefferably||preferably
- prefitler||prefilter
- preform||perform
-+previleged||privileged
-+previlege||privilege
- premption||preemption
- prepaired||prepared
- prepate||prepare
--- 
-2.49.0
-
+From a very quick look this looks great.
 
