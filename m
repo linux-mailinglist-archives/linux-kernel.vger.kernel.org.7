@@ -1,227 +1,98 @@
-Return-Path: <linux-kernel+bounces-612108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972A5A94AA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B71BA94AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A296116EF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02581188F8A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32193253B76;
-	Mon, 21 Apr 2025 02:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525BA2561D9;
+	Mon, 21 Apr 2025 02:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q/uveT18"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mIQHQaN7"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6781494CC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 02:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4639FD9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 02:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745201371; cv=none; b=N0cOINLsgxF6g2biNGj5BHB0Jc6IKADFINXxE5z2/zxuDHaVRNh1lcqye0mXFtHN+/QH9JfX1VgGOjZcekQ3swZVXCg0ycsaEMJ612wWEHfsDCiyZ/Xf0/IkKTjC0ENS4Cm0Bzn7FZ1TXR4D+JKylt+CRLoJ6ODxBCrxPNiGDJ8=
+	t=1745201723; cv=none; b=u3SUqZvw8DAyQM6YMZQQR2XzB86Vb75hr9zVMF0fpjgbyLqJh9INkqScDQ5DKxW3UCvh3n80lPXw7FJ94MNf0x+20mxAUmQ8CFhZbbGaL5ikvqT8pjS+DeHBot3RyxPaZjrlI83Me7E9TEn6ZjCILsRc0KI61enshqU+NnfuODQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745201371; c=relaxed/simple;
-	bh=8665lUcagk6SBaoe799Wqq8bT+Js0KNMGAIWgtHXrB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqJIOZGRVdi07UAVzM84zy3pLuuuVPAdDBk/QOM+jF/5OeZkrcg1NM2de7Iz6CmC5CZiTgqDJ79Qpjx+hUuHCHliQgc6oF8KXrqJ/SSOVJj9IrwNQTxfK03VT5Y0XT6N0Z20GSN6gSumZ+exrspohBfRJujLGE/CB0RAtYzItH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q/uveT18; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745201367;
+	s=arc-20240116; t=1745201723; c=relaxed/simple;
+	bh=SSzYHzvdWPiC1S20Z/FQZqw5w+ZdGaHQ8jeVsGP8h8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ycv+JN+/NcsvQRz2bKd0JVEg+M6v4hBPeZbA3fzKRmZjb0g4Pk0EEUYWG1ofelNurJqWJUHodsgruzaEKnPhlQOoA1ruWb6kPUJgvdnM+iAA9oapeyOWDFn/4EkGGmAyfoLX0v5YahfDi62hFvJ1eFg2wWqhAv1qPWMrLC9+jwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mIQHQaN7; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4068852f-db8c-4780-a1df-dbbd69f7e526@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745201717;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=656yZBycWTbOcI/QDkiraTK+o6zkkKhUlNx/4jNdMZQ=;
-	b=Q/uveT18ob0kT/xdNkWH4eSfrARBjiIncIQvZ75y7URBlFC2AI3J6wb5BkA4VDegU42UOT
-	vIcQToBMkcbb4ygjpT/UsWH6WjoVTSwjUTl6hn7HchS5haoYemCdSyIgH7myVcMQxWoJT4
-	47NP3e9goICVA9SSoTLosWDvviO60kA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-pYxh_6rgOYKb0DbUIMnJ8w-1; Sun,
- 20 Apr 2025 22:09:22 -0400
-X-MC-Unique: pYxh_6rgOYKb0DbUIMnJ8w-1
-X-Mimecast-MFC-AGG-ID: pYxh_6rgOYKb0DbUIMnJ8w_1745201360
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 373B31800446;
-	Mon, 21 Apr 2025 02:09:20 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.5])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4A2B19560A3;
-	Mon, 21 Apr 2025 02:09:16 +0000 (UTC)
-Date: Mon, 21 Apr 2025 10:09:12 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap segments
-Message-ID: <aAWoyExy0UMyxaoI@fedora>
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
- <20250416021028.1403-4-chenste@linux.microsoft.com>
- <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
- <95d249ef-bfb3-431f-b633-8b3de383e067@linux.microsoft.com>
+	bh=RBMq7xgDK0mfdUWx1cjYpvG3AKniIYiwC4eZ90x1nng=;
+	b=mIQHQaN7+2XxyNUF1re4VpBr2wH993eXv3H54uuE/QTuL2amLZb4VWgXtjRTUX6wy/ZfsN
+	0UAjBbjhdrNcwdh4WQx4lTXQkYKd9Y+8f3Pqh1gmnuSJz0gRhG9gbbpDoqhXHw9Aebun4a
+	9/qd3/pwWLopyqpV8kvN02UIW3CcFtI=
+Date: Mon, 21 Apr 2025 10:14:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95d249ef-bfb3-431f-b633-8b3de383e067@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Subject: Re: [PATCH net-next V2 0/3] net: stmmac: dwmac-loongson: Add
+ Loongson-2K3000 support
+To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Feiyang Chen <chris.chenfeiyang@gmail.com>, loongarch@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Biao Dong <dongbiao@loongson.cn>, Baoqi Zhang <zhangbaoqi@loongson.cn>
+References: <20250416144132.3857990-1-chenhuacai@loongson.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250416144132.3857990-1-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 04/20/25 at 05:30am, steven chen wrote:
-> On 4/17/2025 9:36 PM, Baoquan He wrote:
-> > On 04/15/25 at 07:10pm, steven chen wrote:
-> > > From: Steven Chen <chenste@linux.microsoft.com>
-> >   ^^^^^^
-> > > Implement kimage_map_segment() to enable IMA to map the measurement log
-> > > list to the kimage structure during the kexec 'load' stage. This function
-> > > gathers the source pages within the specified address range, and maps them
-> > > to a contiguous virtual address range.
-> > > 
-> > > This is a preparation for later usage.
-> > > 
-> > > Implement kimage_unmap_segment() for unmapping segments using vunmap().
-> > > 
-> > > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> >    ^^^^^^
-> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> >    ^^^^^^^
-> > > Cc: Eric Biederman <ebiederm@xmission.com>
-> > > Cc: Baoquan He <bhe@redhat.com>
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> >    ^^^^^
-> > 
-> > The signing on this patch is a little confusing. I can't see who is the
-> > real author, who is the co-author, between you and Tushar. You may need
-> > to refer to Documentation/process/5.Posting.rst to make that clear.
-> 
-> Hi Baoquan,
-> 
-> From my understanding, if there is no change from the original author patch,
-> need to add
-> From tag and Signed-off-by tag; otherwise, if there are changes,
-> Signed-off-by can be used.
 
-If you don't change a patch, you can add your Signed-off-by when
-posting. However, the From decides who is the real author. There's no
-way to have two From on one patch. My personal understanding.
+在 4/16/25 10:41 PM, Huacai Chen 写道:
+> This series add stmmac driver support for Loongson-2K3000/Loongson-3B6000M,
+> which introduces a new CORE ID (0x12) and a new PCI device ID (0x7a23). The
+> new core reduces channel numbers from 8 to 4, but checksum is supported for
+> all channels.
+>
+> V1 -> V2:
+> 1. Use correct coding style.
+> 2. Add Tested-by and Reviewed-by.
+>
+> Huacai Chen (3):
+>    net: stmmac: dwmac-loongson: Move queue number init to common function
+>    net: stmmac: dwmac-loongson: Add new multi-chan IP core support
+>    net: stmmac: dwmac-loongson: Add new GMAC's PCI device ID support
 
-> 
-> Steven
-> 
-> > > Acked-by: Baoquan He <bhe@redhat.com>
-> > > ---
-> > >   include/linux/kexec.h |  6 +++++
-> > >   kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
-> > >   2 files changed, 60 insertions(+)
-> > > 
-> > > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> > > index f0e9f8eda7a3..7d6b12f8b8d0 100644
-> > > --- a/include/linux/kexec.h
-> > > +++ b/include/linux/kexec.h
-> > > @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
-> > >   #define kexec_dprintk(fmt, arg...) \
-> > >           do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
-> > > +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
-> > > +extern void kimage_unmap_segment(void *buffer);
-> > >   #else /* !CONFIG_KEXEC_CORE */
-> > >   struct pt_regs;
-> > >   struct task_struct;
-> > > +struct kimage;
-> > >   static inline void __crash_kexec(struct pt_regs *regs) { }
-> > >   static inline void crash_kexec(struct pt_regs *regs) { }
-> > >   static inline int kexec_should_crash(struct task_struct *p) { return 0; }
-> > >   static inline int kexec_crash_loaded(void) { return 0; }
-> > > +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
-> > > +{ return NULL; }
-> > > +static inline void kimage_unmap_segment(void *buffer) { }
-> > >   #define kexec_in_progress false
-> > >   #endif /* CONFIG_KEXEC_CORE */
-> > > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> > > index c0bdc1686154..a5e378e1dc7f 100644
-> > > --- a/kernel/kexec_core.c
-> > > +++ b/kernel/kexec_core.c
-> > > @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
-> > >   	return result;
-> > >   }
-> > > +void *kimage_map_segment(struct kimage *image,
-> > > +			 unsigned long addr, unsigned long size)
-> > > +{
-> > > +	unsigned long src_page_addr, dest_page_addr = 0;
-> > > +	unsigned long eaddr = addr + size;
-> > > +	kimage_entry_t *ptr, entry;
-> > > +	struct page **src_pages;
-> > > +	unsigned int npages;
-> > > +	void *vaddr = NULL;
-> > > +	int i;
-> > > +
-> > > +	/*
-> > > +	 * Collect the source pages and map them in a contiguous VA range.
-> > > +	 */
-> > > +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
-> > > +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
-> > > +	if (!src_pages) {
-> > > +		pr_err("Could not allocate ima pages array.\n");
-> > > +		return NULL;
-> > > +	}
-> > > +
-> > > +	i = 0;
-> > > +	for_each_kimage_entry(image, ptr, entry) {
-> > > +		if (entry & IND_DESTINATION) {
-> > > +			dest_page_addr = entry & PAGE_MASK;
-> > > +		} else if (entry & IND_SOURCE) {
-> > > +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
-> > > +				src_page_addr = entry & PAGE_MASK;
-> > > +				src_pages[i++] =
-> > > +					virt_to_page(__va(src_page_addr));
-> > > +				if (i == npages)
-> > > +					break;
-> > > +				dest_page_addr += PAGE_SIZE;
-> > > +			}
-> > > +		}
-> > > +	}
-> > > +
-> > > +	/* Sanity check. */
-> > > +	WARN_ON(i < npages);
-> > > +
-> > > +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
-> > > +	kfree(src_pages);
-> > > +
-> > > +	if (!vaddr)
-> > > +		pr_err("Could not map ima buffer.\n");
-> > > +
-> > > +	return vaddr;
-> > > +}
-> > > +
-> > > +void kimage_unmap_segment(void *segment_buffer)
-> > > +{
-> > > +	vunmap(segment_buffer);
-> > > +}
-> > > +
-> > >   struct kexec_load_limit {
-> > >   	/* Mutex protects the limit count. */
-> > >   	struct mutex mutex;
-> > > -- 
-> > > 2.43.0
-> > > 
-> 
+> Tested-by: Biao Dong <dongbiao@loongson.cn>
+
+I checked version 1, and no one has signed this tag. It seems to have
+
+been carried out internally by Loongson, and this is somewhat ......
+
+
+Thanks,
+
+Yanteng
+
 
 
