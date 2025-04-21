@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-613232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638ECA959DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 01:45:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE324A959E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 01:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C52B16F5AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4D01895487
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0010F22D798;
-	Mon, 21 Apr 2025 23:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA10A238C1D;
+	Mon, 21 Apr 2025 23:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="VZKCxIE1"
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="dmE+0fG8"
+Received: from mail-pg1-f230.google.com (mail-pg1-f230.google.com [209.85.215.230])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE35126BF1;
-	Mon, 21 Apr 2025 23:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931E22D798
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 23:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745279118; cv=none; b=ciEVIKNDgw5I2fIEF9FdJbXRPIowNLocXYmunw2ho4STq49Z0MFparfB1APbWHsvr8BnpYaZ5bIkmcgXJ0IRtqNQr4QoRvG0BBEZl5ys8njYv51LVYq6ySoSlFm9bbjPn88PxkXTNp9TbmFH+li9kyKNrc0r/LYddmkK/Kw4QG8=
+	t=1745279206; cv=none; b=ZMEeB0vSAyCHiQ5p1CBpPR3W0ezS4F/9TcOAd35ewgr2eRamz9/8j1a4ESkXMg+KIXFvZaBS4IDrx1ddBjNmMUjjXU6uxym5IbQ1qhZ3DoeQqUqIdqV+HSusU2bhTM+l3Jl6IR/2Pl7E4FcZHvDYC6Db6+pP6ZoBp2+lGtdxsZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745279118; c=relaxed/simple;
-	bh=dj+7ywLfjANsmePgmSvClDrZkt4qpwdzzeGNtOFPhn8=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=XNkT7B2WmDlP9CAF6OjXCZ7azJslZh+RAHi0nbg1MizfkgWYyhWyFfYc3SkLZq5Pq+2vBq7VJNo857P2Yym6WRCijEgl9h00XFFu5njzbIYdMdIAfC8AdNW3YFt9XbU0zF6jYlahub4IsV1rKzpPysb4AMTrzB2luip930uk37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=VZKCxIE1; arc=none smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <53697288e2891aea51061c54a2e42595@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1745279107;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9o5XLEyuOIwgGpG/sATH1xHXsQN9/52ZRpOOGo34RIw=;
-	b=VZKCxIE1ZNfdou1GVm8PI3ljYZk/A/QjSLSE3zHVyhL8+KBYNrGIumKFDzRzB8h0F+Os8U
-	FOEVGPDmKZrfYLSZjAqM+X/FSBWOuh50Zx4LMlE/AkfQksO7iqk9K0MZKyxIDtejCDckRa
-	RU+ZSx0cY6vuemq8cdUYQgTRhgd8UF6NCik0+28Ra3rfMS+MI3Pnr7eRfmPwgCRbS42DzT
-	ZqO+UOIoB81zUvdfvKUj6vMB5eAc1hnfv3akeUTFqxYW4DW5bEw7hnRwRrJ7ieQqbIqDIN
-	d7p37pZNhrODOt31nxZDuHUFyACOWmLBR2FLdRSTHC6bNo111HeHSsEkdsDvlQ==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
- <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when
- files are on CIFS share
-In-Reply-To: <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
- <48685a06c2608b182df3b7a767520c1d@3xo.fr>
- <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
- <5087f9cb3dc1487423de34725352f57c@3xo.fr>
- <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
- <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
-Date: Mon, 21 Apr 2025 20:45:04 -0300
+	s=arc-20240116; t=1745279206; c=relaxed/simple;
+	bh=MgZlolvtjiXQgwF7T8ugwhe+ecGe6HjkZ/Z4cLljf0U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LIN5k1oo3f4dbQv00+J5Gd6r7AT8ctdS4rG1zY1FwWNMrtZSkyWCQLGIcDJHxrTX0DWxkfZqAVBmVRrupvPlEPPHmOwWkUXuekpXieviYwtods4Es1s59fpIgvwekNK+FnfjQTX7rYxhyY+88s4EKNhvFNu7rmcrZ84DJOFaArc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=dmE+0fG8; arc=none smtp.client-ip=209.85.215.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f230.google.com with SMTP id 41be03b00d2f7-af52a624283so3787109a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 16:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1745279202; x=1745884002; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KTxwRN46KxmBWYrElcrYvw4CJWFiySXxgp0fC8wvHYQ=;
+        b=dmE+0fG8Umu7oOMaqaDc+fhyyrd6/CxYzo76k4ezgdrPx8HX4zniM6EFiSuZIOrUvM
+         kn7flimx8cV5i/QJEutxqh4nCTFxZy5erG5ffYqgi07XfmU6bob4/BWhIUrtd358KWhm
+         QpkCjC8Q+HxeveRqjq0KBGolcq8kwHi13OwcyXUXeVYrBh2ADOhfeDwDBQ96TphiqV2j
+         iqIgL5FhLIwubUqRCyJDpQSa7TJxhylOKEAzrmVEq5AozkJja3i3Xbu3Tjs8RZ77Q4P7
+         mvSwyHw43UfnbIzua9ibzLx5HFMEg40xpRQUmqlqqJe1k4xOeARgmgOEXXZNioOUXFI9
+         Qfbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745279202; x=1745884002;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KTxwRN46KxmBWYrElcrYvw4CJWFiySXxgp0fC8wvHYQ=;
+        b=Or4iH/DGdWG5bFfuTEm7wl79hYV6fOS9i7oUNixUjpRNdafTdiJR47PJPRF4QzMaSG
+         aoBZLK71CI0dvB7ahQHVa0PnMT81W1euOTCox2ZxQTin8oLk0k5P41+0gDIr7Q9FWZns
+         HYOyw2R/Ahj9zLUG4cGcPWRLUan9fyeKqaC9xNdyAwUxEPJu5VF2YxN0YBpeTJx108uG
+         Ur0gGe4cHscsWqTyIdDIiDSaA+4S6bup3Av2JB1zmriF3AXnrMFAQjUrTALYISSfeMMt
+         E2Mzh5iQnoQeBHlPinclUShMGU5ZAGeL8jfOQvDWD/dLyE0mLe19pWxsOXIwM0x3EidF
+         oq+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXeB7ZJCcBtBNWWwpKkKKzzFqwKFYjPHwSB4iuvWMsR8Dccv1CX3V5VF2oyWP2VXL5VYxJLFpiUMCfNx0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8XM1tzlCtyrwbsvWVUrEIXJ3p9Y7W797kL13sriPXZ/Djakq0
+	ghIyLlUb0U8mXi4xwkVpkb8OXaVr5rOJpBv0VRou/IINlGoxz7Hth1aR7yDv4DjNaIkILQlzsoN
+	eLOeekcDfuSB2g5SHtqLp7+5WClwaveL6PIrxGC2lSEJAX+Hn
+X-Gm-Gg: ASbGnctKgOToh5CxqBu/1xy0IM09d8VFqCi8PDDO5xXCXb+Ag+mMqILmh8YyQ6G0l1V
+	pWlgm5QlrKAcIx82BhPr5jJe+NL9aWsrPKd5rPpF8Hnryff5qaOgO+WaFiVrrb4hrX7uTEbQbfq
+	FKP9lWpnATd99peO5ARq7Ed6v04vWpwtvDhRbLuWBOlHOZzyVAIN1DaxFKd65nHdLnS0QPndCGN
+	OhYeZHVu43QnsRQH+4fGwbdJZOcFnEnY70P2cQX1P6yQrlRgRZ5af2YAh0oPeQr+t+OMsMv
+X-Google-Smtp-Source: AGHT+IG5VlJ1RIxmxTNJQSsKgUu08tRnQu4AxwH+uNxOrySYInQwR2aUQ0baLfIWdUvV8P/PJ+ZEdv6C/VZb
+X-Received: by 2002:a17:90b:2705:b0:2ee:8cbb:de28 with SMTP id 98e67ed59e1d1-3087c2ca65fmr21290540a91.8.1745279201745;
+        Mon, 21 Apr 2025 16:46:41 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-3087e05ee89sm512928a91.15.2025.04.21.16.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Apr 2025 16:46:41 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E2FEC3403C6;
+	Mon, 21 Apr 2025 17:46:40 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id D7462E4055F; Mon, 21 Apr 2025 17:46:40 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Subject: [PATCH 0/4] ublk: refactor __ublk_ch_uring_cmd
+Date: Mon, 21 Apr 2025 17:46:39 -0600
+Message-Id: <20250421-ublk_constify-v1-0-3371f9e9f73c@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN/YBmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyND3dKknOz45Py84pLMtEpdY+PUVMNEMxMLs8RkJaCegqLUtMwKsHn
+ RsbW1AA0uycxfAAAA
+X-Change-ID: 20250421-ublk_constify-33ee1a6486ac
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Uday Shankar <ushankar@purestorage.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+X-Mailer: b4 0.14.2
 
-Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
+Refactor __ublk_ch_uring_cmd to:
 
-> If you need more traces or details on (both?) issues :
->
-> - 1) infinite loop issue during 'cat' or 'copy' since Linux 6.14.0
->
-> - 2) (don't know if it's related) the very high number of several bytes 
-> TCP packets transmitted in SMB transaction (more than a hundred) for a 5 
-> bytes file transfert under Linux 6.13.8
+- Have one function per operation instead of handling operations
+  directly in the switch statement.
+- Mark most ublk_queue pointers as const. Given efforts to allow
+  concurrent operations on one ublk_queue [1], it is important that
+  ublk_queue be read-only (or accesses to it be properly synchronized)
+  to avoid data races.
 
-According to your mount options and network traces, cat(1) is attempting
-to read 16M from 'toto' file, in which case netfslib will create 256
-subrequests to handle 64K (rsize=65536) reads from 'toto' file.
+This series is split off from [1]. No functional changes are expected.
 
-The first 64K read at offset 0 succeeds and server returns 5 bytes, the
-client then sets NETFS_SREQ_HIT_EOF to indicate that this subrequest hit
-the EOF.  The next subrequests will still be processed by netfslib and
-sent to the server, but they all fail with STATUS_END_OF_FILE.
+[1] https://lore.kernel.org/linux-block/20250416-ublk_task_per_io-v5-0-9261ad7bff20@purestorage.com/
 
-So, the problem is with short DIO reads in netfslib that are not being
-handled correctly.  It is returning a fixed number of bytes read to
-every read(2) call in your cat command, 16711680 bytes which is the
-offset of last subrequest.  This will make cat(1) retry forever as
-netfslib is failing to return the correct number of bytes read,
-including EOF.
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+---
+Uday Shankar (4):
+      ublk: factor out ublk_commit_and_fetch
+      ublk: mark ublk_queue as const for ublk_register_io_buf
+      ublk: factor out ublk_get_data
+      ublk: factor out error handling in __ublk_ch_uring_cmd
 
-While testing a potential fix, I also found other problems with DIO in
-cifs.ko, so I'm working with Dave to get the proper fixes for both
-netfslib and cifs.ko.
+ drivers/block/ublk_drv.c | 133 +++++++++++++++++++++++------------------------
+ 1 file changed, 65 insertions(+), 68 deletions(-)
+---
+base-commit: edbaa72ba1bd21040df81f7c63851093264c7955
+change-id: 20250421-ublk_constify-33ee1a6486ac
 
-I've noticed that you disabled caching with 'cache=none', is there any
-particular reason for that?
+Best regards,
+-- 
+Uday Shankar <ushankar@purestorage.com>
 
-Have you also set rsize, wsize and bsize mount options?  If so, why?
-
-If you want to keep 'cache=none', then a possible workaround for you
-would be making rsize and wsize always greater than bsize.  The default
-values (rsize=4194304,wsize=4194304,bsize=1048576) would do it.
 
