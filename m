@@ -1,241 +1,377 @@
-Return-Path: <linux-kernel+bounces-612123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90AE1A94B00
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:30:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EA9A94AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884CE3B3857
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2388C16F839
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A2A25D91D;
-	Mon, 21 Apr 2025 02:25:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCD02566CF;
+	Mon, 21 Apr 2025 02:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlBcDT2s"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5217525D218;
-	Mon, 21 Apr 2025 02:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0959B36D;
+	Mon, 21 Apr 2025 02:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745202344; cv=none; b=hvkS8lvGv3oxryMVVvzwKFX4lD61EU1jMzrsvWub0gGjQ77hmm/CbzZEicizTNo/gYuKQ3ZwRtpvfkURBlAGijiOIWJPfYj0H942Gd0/Aep0v/XCmP1Cjl01NPdrR+vWva1HAbspZ43+DkomFoobN2EdxAIbfQoZxKfjfPsQAdA=
+	t=1745202119; cv=none; b=nWnpz5ksbpI7YQG/y5xRJTRI0Pqn/taHHHwO/uecOWAGE7T9pIOQ+uGn5Cfw6fk+krGerRp0Q82zvcFnAPCnakt9qCl5PcMyP+yyKSOobGOJA5H1SkON57RyiC92tYm9UEBdEvZ4bmRR/3+rhcogFXW5jVe3JSXItm52yzucCto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745202344; c=relaxed/simple;
-	bh=9f2Eq2hpn0twdx0WmSd0JnnIWSra7GGCc/Vkdu8g6Ds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oYYJt5YQ8r5aK4LzVFc8huCrRH8+VvvsymUTtjGIkXtCoWqor1w0hTZX0/qIIFaI2XsEw79LIxpM7RonDZ3pXDNEINsDk17hSBnr2Sc1SyxXNE9oG2fudbclKGxFqqLMJyzX6siAfioIBl3ELSFrRGJfJfpjF3IL5f0bbj6PJyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zgq2w3T4Yz4f3jY9;
-	Mon, 21 Apr 2025 10:25:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 51DB91A06D7;
-	Mon, 21 Apr 2025 10:25:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgA3m1+MrAVoFxZkKA--.3102S15;
-	Mon, 21 Apr 2025 10:25:35 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	john.g.garry@oracle.com,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [RFC PATCH v4 11/11] ext4: add FALLOC_FL_WRITE_ZEROES support
-Date: Mon, 21 Apr 2025 10:15:09 +0800
-Message-ID: <20250421021509.2366003-12-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
-References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1745202119; c=relaxed/simple;
+	bh=IWFblIe3/6OY5oH5EpUBxXEcBt3vfgN6Iyfy+xfVs7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbuomDRr6xR2kGySnbOU8i5XW7FnFg9rlsQDJoljTOoOsiX/c3NNzQ66CYcT03Je/fMvC3Ln5rzPvU6nTXvgJ907lIxuZUYryVzzHSIU9GjAh5N6H2UUWcsTL6ZhRkXeEki27jG6HBm+6VNtLChCoRSdlcMfZeJZ+lNTKf3Fol4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlBcDT2s; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3012a0c8496so2609101a91.2;
+        Sun, 20 Apr 2025 19:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745202117; x=1745806917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8q5pUeCMzG/ddfIfWNOb//UZiwCQX40QXzjzCXdrVU8=;
+        b=dlBcDT2shG8hT6bLIWshmJ4MOSeK1ZeliJ3pz6bN5RwzvbSKFgMGRBIxrFJt402Cuo
+         HwJzhvZt055H2OsjrwNqT+bZ6ybxTNw+X9RFekNTkRae8VqfTWnGd48f0db4hGuKJR5j
+         0hLwVv6OmR/UgUQAAPoVxSzVT/y7N06upzu0+S3FczhPDIvLHaOkr4Fhf16ACByX4DrC
+         qP9zRG+7UCg5WLqHmTlkbI5nAvJUs9RHe72hGZncWj2E+qy+D+9+ft6R2E+dE+U+ECU1
+         EaWDq2HNUgqLubR85+vzQw+TI+ctjNpt3tl9VXcvmWUvP76okFHBL4uyYxQN5K/YV+Ql
+         rrYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745202117; x=1745806917;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8q5pUeCMzG/ddfIfWNOb//UZiwCQX40QXzjzCXdrVU8=;
+        b=ONNCBVBRjt6pQpqAtXsUVzhWDZIiXf5RaDrLO5eV8hDZmZrvhAJArUK4M4LT4/DzCd
+         mNS02j7iwLX8G4gxzI7LLVRvbS807ekFaV1gkr5wUT4Jp4fcJDYLg6NX4vtcedvi4VZM
+         UQBwnQGgvsQq+niLIEpA9H1btEzm3sZ1Tl+TrLTem7sssuhHQXyDlGVPNzqB5AbfhJne
+         DcpywxcLsh1PMw1KsZtqTUGPuv70PuZecMhfBzQBIrorLUcIq/HnZsr5WBHTtL3tjx8W
+         E7aTG7W0VMTIsxgBvpxOfU9rsV84C6zqPjokEXJTRoDTKOKM4IJfLxExRmHYDlrfMoBv
+         9/Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHUdh6NBYnbxxTchMf8jzX2TynqeCYTv+poss2V7+s7eaoJW0yyviBs4nCXpznE3xEdbctcEDRZGO1@vger.kernel.org, AJvYcCWgXcy82zMYM9uwOisPkVXyT8Pv4YSQ4k+pc9XPW6TewIBddDARwIX3etNMb8wRWrxP/BtVdWHrXwQZQw==@vger.kernel.org, AJvYcCWh8eEoRdSnfQOTsSDOr0nT9ZzC6tbNxR7+oWCfRXCOY7NyUNh7kPTnTGXJfyMKP24K3acgMnAxPRW1YlPL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJPmcwaKs8m8pER6W5OIl3uEk4IvQzFjBcL0NULtaTFQuzFGIh
+	nfrLHU6VMZ3if8j8TSSCHk5m1xPyMmP0s5ShLpzRMP950jADNUJa
+X-Gm-Gg: ASbGnctdS2xm/H8l5br2Gr2+q9AhHsI5BdCFH6BKgGJz0tj+EFj7kCvzEHuTU08mSzp
+	Tc3fg/Iaq3XMDGr4S/O+JKewYCT87yGY/c0kHJ6+KrgeBkkOU4qYlOoFYWBs3W8AUtTcu+ptEn+
+	tCDeWK+q8VwHls85dHh3hKaH0KVW226RqYh1hLhgXf8eiFudWRmvI+e7q5Gs8IJ6tacaIp4hoyI
+	6FJwPecfJmEhYFonr+PcLmGzw1jfEY8H5UybucG4o1pebIPljRM9AeOJJBaniVw0eS9Hn9JZsUK
+	Al5CchSb5PI5IcHLiP7gzQWs41c/jn8f8/xBUUQHQxlKIEUYh1TGVQ==
+X-Google-Smtp-Source: AGHT+IFTnTM5WxBFhzMnREMYCdwCs+MgHzP/5L30V5OEOL1URJA+Hq2T7QAqMoH69V8CmzgH0KoTMA==
+X-Received: by 2002:a17:90b:3a4e:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-3087bbbd12cmr14056217a91.28.1745202117018;
+        Sun, 20 Apr 2025 19:21:57 -0700 (PDT)
+Received: from localhost.localdomain ([116.106.98.75])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087dee33b7sm5341946a91.8.2025.04.20.19.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Apr 2025 19:21:56 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: christophe.jaillet@wanadoo.fr
+Cc: pavel@kernel.org,
+	lee@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] leds: add TI/National Semiconductor LP5812 LED Driver
+Date: Mon, 21 Apr 2025 09:21:29 +0700
+Message-Id: <20250421022129.3384-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <688b74ce-3650-418f-82bd-63a5cee080d1@wanadoo.fr>
+References: <688b74ce-3650-418f-82bd-63a5cee080d1@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3m1+MrAVoFxZkKA--.3102S15
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xry7Ar13Xw13XFy8XFW3GFg_yoW7GF4UpF
-	Z8XF1rKFWIq3429r4fCw4kurn0q3WkKry5WrWSgry093yUJr1fKFn09Fy8uas0gFW8AF45
-	Xa1Y9ryDK3W7A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRQJ5wUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sun, 20 Apr 2025, Christophe JAILLET wrote:
 
-Add support for FALLOC_FL_WRITE_ZEROES. This first allocates blocks as
-unwritten, then issues a zero command outside of the running journal
-handle, and finally converts them to a written state.
+> Le 19/04/2025 à 20:43, Nam Tran a écrit :
+> > The LP5812 is a 4×3 matrix RGB LED driver
+> > with an autonomous animation engine
+> > and time-cross-multiplexing (TCM) support for up to 12 LEDs.
+> > Each LED can be configured through the related registers
+> > to realize vivid and fancy lighting effects.
+> 
+> ...
+> 
+> > +static int lp5812_init_dev_config(struct lp5812_chip *chip,
+> > +		const char *drive_mode, int rm_led_sysfs);
+> > +
+> > +static struct drive_mode_led_map chip_leds_map[] = {
+> 
+> I think this could be const.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/extents.c           | 59 ++++++++++++++++++++++++++++++-------
- include/trace/events/ext4.h |  3 +-
- 2 files changed, 50 insertions(+), 12 deletions(-)
+I’ll update chip_leds_map to be const.
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index c616a16a9f36..a147714403af 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4483,6 +4483,8 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	struct ext4_map_blocks map;
- 	unsigned int credits;
- 	loff_t epos, old_size = i_size_read(inode);
-+	unsigned int blkbits = inode->i_blkbits;
-+	bool alloc_zero = false;
- 
- 	BUG_ON(!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS));
- 	map.m_lblk = offset;
-@@ -4495,6 +4497,17 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	if (len <= EXT_UNWRITTEN_MAX_LEN)
- 		flags |= EXT4_GET_BLOCKS_NO_NORMALIZE;
- 
-+	/*
-+	 * Do the actual write zero during a running journal transaction
-+	 * costs a lot. First allocate an unwritten extent and then
-+	 * convert it to written after zeroing it out.
-+	 */
-+	if (flags & EXT4_GET_BLOCKS_ZERO) {
-+		flags &= ~EXT4_GET_BLOCKS_ZERO;
-+		flags |= EXT4_GET_BLOCKS_UNWRIT_EXT;
-+		alloc_zero = true;
-+	}
-+
- 	/*
- 	 * credits to insert 1 extent into extent tree
- 	 */
-@@ -4531,9 +4544,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		 * allow a full retry cycle for any remaining allocations
- 		 */
- 		retries = 0;
--		map.m_lblk += ret;
--		map.m_len = len = len - ret;
--		epos = (loff_t)map.m_lblk << inode->i_blkbits;
-+		epos = (loff_t)(map.m_lblk + ret) << blkbits;
- 		inode_set_ctime_current(inode);
- 		if (new_size) {
- 			if (epos > new_size)
-@@ -4553,6 +4564,21 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		ret2 = ret3 ? ret3 : ret2;
- 		if (unlikely(ret2))
- 			break;
-+
-+		if (alloc_zero &&
-+		    (map.m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN))) {
-+			ret2 = ext4_issue_zeroout(inode, map.m_lblk, map.m_pblk,
-+						  map.m_len);
-+			if (likely(!ret2))
-+				ret2 = ext4_convert_unwritten_extents(NULL,
-+					inode, (loff_t)map.m_lblk << blkbits,
-+					(loff_t)map.m_len << blkbits);
-+			if (ret2)
-+				break;
-+		}
-+
-+		map.m_lblk += ret;
-+		map.m_len = len = len - ret;
- 	}
- 	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
- 		goto retry;
-@@ -4618,7 +4644,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 	if (end_lblk > start_lblk) {
- 		ext4_lblk_t zero_blks = end_lblk - start_lblk;
- 
--		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
-+		if (mode & FALLOC_FL_WRITE_ZEROES)
-+			flags = EXT4_GET_BLOCKS_CREATE_ZERO | EXT4_EX_NOCACHE;
-+		else
-+			flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
-+				  EXT4_EX_NOCACHE);
- 		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
- 					     new_size, flags);
- 		if (ret)
-@@ -4730,8 +4760,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 
- 	/* Return error if mode is not supported */
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |
--		     FALLOC_FL_INSERT_RANGE))
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_COLLAPSE_RANGE |
-+		     FALLOC_FL_INSERT_RANGE | FALLOC_FL_WRITE_ZEROES))
- 		return -EOPNOTSUPP;
- 
- 	inode_lock(inode);
-@@ -4762,16 +4792,23 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (ret)
- 		goto out_invalidate_lock;
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE)
-+	switch (mode & FALLOC_FL_MODE_MASK) {
-+	case FALLOC_FL_PUNCH_HOLE:
- 		ret = ext4_punch_hole(file, offset, len);
--	else if (mode & FALLOC_FL_COLLAPSE_RANGE)
-+		break;
-+	case FALLOC_FL_COLLAPSE_RANGE:
- 		ret = ext4_collapse_range(file, offset, len);
--	else if (mode & FALLOC_FL_INSERT_RANGE)
-+		break;
-+	case FALLOC_FL_INSERT_RANGE:
- 		ret = ext4_insert_range(file, offset, len);
--	else if (mode & FALLOC_FL_ZERO_RANGE)
-+		break;
-+	case FALLOC_FL_ZERO_RANGE:
-+	case FALLOC_FL_WRITE_ZEROES:
- 		ret = ext4_zero_range(file, offset, len, mode);
--	else
-+		break;
-+	default:
- 		ret = -EOPNOTSUPP;
-+	}
- 
- out_invalidate_lock:
- 	filemap_invalidate_unlock(mapping);
-diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-index 156908641e68..6f9cf2811733 100644
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -92,7 +92,8 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
- 	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
- 	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
- 	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
--	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
-+	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"},		\
-+	{ FALLOC_FL_WRITE_ZEROES,	"WRITE_ZEROES"})
- 
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
--- 
-2.46.1
+> > +static int lp5812_get_phase_align(struct lp5812_chip *chip, int led_number,
+> > +		int *phase_align_val)
+> > +{
+> > +	int ret;
+> > +	int bit_pos;
+> > +	u16 reg;
+> > +	u8 reg_val;
+> > +
+> > +	reg = DEV_CONFIG7 + (led_number / 4);
+> > +	bit_pos = (led_number % 4) * 2;
+> > +
+> > +	ret = lp5812_read(chip, reg, &reg_val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*phase_align_val = (reg_val >> bit_pos) & 0x03;
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int lp5812_get_led_mode(struct lp5812_chip *chip,
+> > +		int led_number, enum control_mode *mode)
+> > +{
+> > +	int ret = 0;
+> 
+> In several function, sometimes ret is initialized, sometimes it is not.
+> See lp5812_get_led_mode() and lp5812_get_phase_align() just above.
 
+Agreed, I’ll go through and update these functions to follow a consistent pattern.
+
+> > +static void set_mix_sel_led(struct lp5812_chip *chip, int mix_sel_led)
+> > +{
+> 
+> Maybe init the 4 values at 0 first, then set to 1 only what is needed 
+> below? This would save a few lines of code.
+> 
+> > +	if (mix_sel_led == 0) {
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 1;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
+> > +	}
+> > +	if (mix_sel_led == 1) {
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 1;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
+> > +	}
+> > +	if (mix_sel_led == 2) {
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 1;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
+> > +	}
+> > +	if (mix_sel_led == 3) {
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
+> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 1;
+> > +	}
+> > +}
+
+Yep, that’s a cleaner approach. I’ll update it accordingly.
+
+> > +static ssize_t dev_config_show(struct device *dev,
+> > +		struct device_attribute *attr,
+> > +		char *buf)
+> > +{
+> 
+> The whole function could be simplified with sysfs_emit_at().
+> This avoids temp buffer, malloc/free and some copies.
+> 
+> See led_auto_animation_show() below.
+> 
+> > +	int i;
+> > +	int num_drive_mode;
+> > +	char *mode_info;
+> > +	char *total_str;
+> > +	size_t total_length;
+> > +	char *const_str = "\nPlease select below valid drive mode:\n";
+> > +	char *const_ex_str = "For Ex: echo tcmscan:1:0 > dev_config\n";
+> > +	int ret = 0;
+> > +	struct lp5812_chip *chip = i2c_get_clientdata(to_i2c_client(dev));
+> > +
+> > +	/* get drive mode and scan order */
+> > +	mutex_lock(&chip->lock);
+> > +	ret = lp5812_get_drive_mode_scan_order(chip);
+> > +	mutex_unlock(&chip->lock);
+> > +	if (ret)
+> > +		return -EIO;
+> > +
+> > +	mode_info = parse_dev_config_info(chip);
+> > +	if (!mode_info)
+> > +		return -ENOMEM;
+> > +
+> > +	num_drive_mode = ARRAY_SIZE(chip_leds_map);
+> > +	total_length = strlen(mode_info) + strlen(const_str) +
+> > +			strlen(const_ex_str) + 1;
+> > +	for (i = 0; i < num_drive_mode; ++i) {
+> > +		total_length += strlen(chip_leds_map[i].drive_mode) +
+> > +					strlen("\n");
+> > +	}
+> > +
+> > +	total_str = kmalloc(total_length, GFP_KERNEL);
+> > +	if (!total_str)
+> > +		return -ENOMEM;
+> > +
+> > +	sprintf(total_str, "%s%s%s", mode_info, const_str, const_ex_str);
+> > +	for (i = 0; i < num_drive_mode; ++i) {
+> > +		strcat(total_str, chip_leds_map[i].drive_mode);
+> > +		strcat(total_str, "\n");
+> > +	}
+> > +
+> > +	ret = sysfs_emit(buf, "%s", total_str);
+> > +	kfree(mode_info);
+> > +	kfree(total_str);
+> > +
+> > +	return ret;
+> > +}
+
+...
+
+> In order to have it more readable (IMHO), use less buffers, make less 
+> copies, reduce code duplication and reduce the locking section, maybe 
+> something like (un-tested):
+> 
+> static ssize_t led_auto_animation_show(struct kobject *kobj,
+> 		struct kobj_attribute *attr, char *buf)
+> {
+> 	int aeu_selection, playback_time, start_pause, stop_pause;
+> 	struct lp5812_led *led = to_lp5812_led(kobj);
+> 	struct lp5812_chip *chip = led->priv;
+> 	int pos = 0;
+> 	int ret;
+> 
+> 	mutex_lock(&chip->lock);
+> 	ret = led_get_autonomous_animation_config(led);
+> 	if (ret) {
+> 		ret = -EIO;
+> 		goto out;
+> 	}
+> 
+> 	/* parse config and feedback to userspace */
+> 	aeu_selection = led->led_playback.s_led_playback.aeu_selection;
+> 	playback_time = led->led_playback.s_led_playback.led_playback_time;
+> 	start_pause = led->start_stop_pause_time.s_time.second;
+> 	stop_pause = led->start_stop_pause_time.s_time.first;
+> 
+> 	mutex_unlock(&chip->lock);
+> 
+> 	pos += sysfs_emit_at(buf, pos, "AEU Select: ");
+> 	if (aeu_selection == ONLY_AEU1)
+> 		pos += sysfs_emit_at(buf, pos, "Only use AEU1");
+> 	else if (aeu_selection == AEU1_AEU2)
+> 		pos += sysfs_emit_at(buf, pos, "Use AEU1 and AEU2");
+> 	else
+> 		pos += sysfs_emit_at(buf, pos, "Use AEU1, AEU2 and AEU3");
+> 
+> 	pos += sysfs_emit_at(buf, pos, "; Start pause time: %s",
+> 			     time_name_array[start_pause]);
+> 	pos += sysfs_emit_at(buf, pos, "; Start pause time: %s",
+> 			     time_name_array[start_pause]);
+> 	pos += sysfs_emit_at(buf, pos, "; LED Playback time: %s",
+> 			     led_playback_time_arr[playback_time]);
+> 
+> 	pos += sysfs_emit_at(buf, pos, "\n");
+> 	pos += sysfs_emit_at(buf, pos, "Command usage: echo (aeu number):(start 
+> pause time):(stop pause time):(playback time) > autonomous_animation\n");
+> 
+> 	return pos;
+> 
+> out:
+> 	mutex_unlock(&chip->lock);
+> 	return ret;
+> }
+
+Great point! I'll refactor these functions as suggested.
+
+> > +static ssize_t aeu_playback_time_show(struct kobject *kobj,
+> > +		struct kobj_attribute *attr, char *buf)
+> > +{
+> > +	int ret = 0;
+> > +	u8 val = 0;
+> > +	struct anim_engine_unit *aeu = to_anim_engine_unit(kobj);
+> > +	struct lp5812_chip *chip = aeu->led->priv;
+> > +
+> > +	mutex_lock(&chip->lock);
+> > +	ret = led_aeu_playback_time_get_val(aeu, &val);
+> 
+> Maybe unlock here, to simplify code and be consistent with some other 
+> functions above? (led_pwm_dimming_scale_show(), ...)
+> 
+> Several other show/store function could be slightly simplified the same way.
+> 
+> > +	if (ret != 0) {
+> > +		mutex_unlock(&chip->lock);
+> > +		return -EIO;
+> > +	}
+> > +	mutex_unlock(&chip->lock);
+> > +
+> > +	return sysfs_emit(buf, "%d\n", val);
+> > +}
+
+Agreed, I’ll unlock earlier to simplify the code and maintain consistency with other functions.
+
+> > +struct lp5812_led {
+> > +	struct kobject                        kobj;
+> > +	struct lp5812_chip                    *priv;
+> > +	struct attribute_group                attr_group;
+> > +	int                                   enable;
+> > +	enum control_mode                     mode;
+> > +	enum dimming_type                     dimming_type;
+> > +	u8                                    lod_lsd;
+> > +	u8                                    auto_pwm;
+> > +	u8                                    aep_status;
+> > +	u16                                   anim_base_addr;
+> > +	int                                   led_number; /* start from 0 */
+> > +	int                                   is_sysfs_created;
+> > +	const char                            *led_name;
+> > +
+> > +	union led_playback                    led_playback;
+> > +	union time                            start_stop_pause_time;
+> > +
+> > +	int                                   total_aeu;
+> 
+> What is the need to keeping it here?
+> It is set to MAX_AEU. Why not just use it directly?
+> 
+> If needed for future use, maybe, 'aeu' below should be a flex array?
+> 
+> > +	struct anim_engine_unit               aeu[MAX_AEU];
+> > +};
+> > +
+> > +struct lp5812_chip {
+> > +	struct i2c_client                     *i2c_cl;
+> > +	struct mutex                          lock; /* Protects access to device registers */
+> > +	struct device                         *dev;
+> > +	struct attribute_group                attr_group;
+> > +	const struct lp5812_specific_regs     *regs;
+> > +	const struct drive_mode_led_map       *chip_leds_map;
+> > +	enum device_command                   command;
+> > +	int                                   total_leds;
+> 
+> What is the need to keeping it here?
+> It is set to MAX_LEDS. Why not just use it directly?
+> 
+> If needed for future use, maybe, 'leds' below should be a flex array?
+
+You're right — since total_aeu and total_leds are always set to MAX_AEU and MAX_LEDS, respectively,
+there's no need to store them separately. I'll remove those fields and use the constants directly.
+
+We'll keep the static arrays as-is, given the fixed hardware limits.
+
+Thanks for the helpful comments!
+
+Best regards,
+Nam Tran
 
