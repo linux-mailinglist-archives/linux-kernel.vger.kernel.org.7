@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-612698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70A2A952C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:27:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF62AA952C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900EC3B50AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99612189240B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1E19DF7A;
-	Mon, 21 Apr 2025 14:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB2E19EEBF;
+	Mon, 21 Apr 2025 14:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PawZ2fOf"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="FyJ4/9qW"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075D718E362
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A8A13E02D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745245651; cv=none; b=XS7ilp5ScZ7DxjF9XW6hBn+IyacPH9VqsNndI0Y1ONelwCphqxegStEjjXb5PM9fk0REMBrFlZWvr+WIOdfiIwLqzqD3BP71lSqQHO4t7Ch5BANjZV3DW0Jg51shgUhQ+rVsWH6lRyPZecgSXqFCl0E/DugiD4sVhwAfSKHS7ik=
+	t=1745245712; cv=none; b=BP7lSZVi/9FtMSMT8SSFKDqtZM8pMgkd2atxH0e30YrAjzPWRggd0v1rwog8kgfLEBYhJceGhOG/U3ecLEx0QPbxArQZtBWnTrZawqvPt8YpcdttHytHz44Esd2d5lRvHfJLPii5C0r+xMpSl5JOEQWAlV/YFzJl81oTQbCLBVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745245651; c=relaxed/simple;
-	bh=bkfvxlflX4M9GtG+8EbDbpAdx6dfIhOdaSWgrzBRUPg=;
+	s=arc-20240116; t=1745245712; c=relaxed/simple;
+	bh=UrUXHDgH8D7X0VsVKQ4vLuQBSFYiJsoAioszkD948cg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OxWO34Cuj4xLATIpHmUNfKTva1hsLnzlOA1UlDWuzXeJoZ5vWkU6W8u0Z8h33TY0ZcrL/ofyiX/Y8SZMfgKDUsm6MUReIrKHBtByubR3Ll2+6GOmbOMd4fX3UbomPkONTvWeJi2lJq9mvfPziBPcIlMEy796iSK/Vz96gCnEuPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PawZ2fOf; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=RJtXFwoPe0DVIy5ROtXMt4J+cvVrZWcD8MK2oUfEph7z0cx88bWFF1IOlMpEEZuR4bDAEPjmGBRH0BmqbeRH3p0jn4UQdTBkJ7uvzQ2qWx8SZHNJC/5UDq3VTNarjy6xv8Exi9/E4z4AZH63QKMfGV28lq0xAjLDD1lSjl8hoq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=FyJ4/9qW; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c266c1389so2945958f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 07:27:28 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso48655585e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 07:28:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745245647; x=1745850447; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745245709; x=1745850509; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zM2xTA3Ijm3UBkqygOS2aJTpcgU5eK9eWAc69Lekkw4=;
-        b=PawZ2fOfrLROIIGEAWj7+IGPUChanXZ9vb2oQabSmHK0OxNN5AIwCWLWitZKKA/4ab
-         UeTNR5haNCOW7JNVJ+SNuekvveZEpljd8AN/QTuhB0GDorPtyjEYljY9XhK+bCE1OhkF
-         wN4pB5UyRCp34ovSplxTyJc+LEGRRq2hqNKJ0fej9b6GPUVGLXkQxaUu/P1eKmfrbmMF
-         OnbwxUKdDRfxJsAL9gpAuON8PaJNKAc2yj5TVR+Wv6UFL/g+5Ggqz3ALgYOmnAU9jaXP
-         clt8PPi+97AueU1inZ1NCZZrU80UsyiZv4UFyuIPBo9x0f6OJUr0QlslCwVksZ77M1wR
-         B9xg==
+        bh=fgXsecntwfRSGjrcDXCs8qD6E3/9J+RIf148wqrIpWA=;
+        b=FyJ4/9qWnsl8Wgpu7VMF2QVKhEX5xTbbyHc7s7gpsZLzkKkTmxmrXhpEmsgUA+RE8e
+         FYt6T9K6ozohuAg7aUiFnstuytdhOXKGw5dwa9f+GTJMOEXwoxiscW2IPATO+TEGv8e9
+         jXE5Vh59G8DZTcQ0g4UjGa9erPN9nf2fv8riJTUPCr12TyGNMoz1pxNj1ahQwoaK2cVe
+         LeCMq3VR4uEV8BBtGIG07Z8BhVPxkkR3nOc/HvXkVreHCFM/N/BDOgTZhrL3iR0ZEFQB
+         LeonTGE13wMqkuBpmBjPkYjJt1KdB8ecpyEAZxS7E5FqCDpcXuJ5xefjLtfOe4qOQc2o
+         EYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745245647; x=1745850447;
+        d=1e100.net; s=20230601; t=1745245709; x=1745850509;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zM2xTA3Ijm3UBkqygOS2aJTpcgU5eK9eWAc69Lekkw4=;
-        b=xLGS178NfqBnN7q2ypM+q9ieDk4/evM0QkeTr6eu6t5ML0nXWNurSUiIqEp86FN2KV
-         /++xToOHO6YOerQG68eCoGVGz1UZlLIgobxDoigpkncf6l8+dG1hnb4w0y6zo4ZImcsZ
-         Bl2/0FWhIS97U/jtc3xUP8zErhxP7OZssFuwqV16zPG7OiivNLS2x+Hq+ddpVo/sjrUQ
-         mMy2/kmi2GDPply4drEgMkBOcNDcGwp9G8oXEHinLwiiulueElTLEqAD5SnBeZaqAAuE
-         P70ltCvL9yF2yctJ+qJdRjdbzBLzMzxuPuetRkGd5hJsC5731rT1eTWlZWSK1D3kIGY4
-         YJ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxzSZ3L8g8cf92S54bSEF8XfM8TafcuTc7dwrsvew2VtI3M9e+TKWo7HhxDwMFurORl4zvJv+eeJSwEak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl+cBoRmlMzDvwiUDfcF8QyhuviuW1xIFEPXcdwldLVKWm0U4Y
-	tWGDhIC2ZBXEtNK3T3N2EuImLsjV6dqjUqalHSOZsRPaSKVQe/fgFu51vn4bmWM=
-X-Gm-Gg: ASbGncsS6co+PVAp2Tg3Ia8PwUZS2QND2HKtxAo78t+4P9MBvWrGgZmnIOYaREMZdzG
-	GxkuzjzVADgqmb6FonEtEiijW0CXzcsyE1E3V7QEbdoMdleYy2Iqg5BOK3LeehJniD1F1UTxnag
-	ue7pwO0eYfYTuHkR10cf4pmacuiywWJQx1pdmhgWWNyuU4urySDaFmzr5XwP/83yuLAxeiszBb/
-	Vl1kM+3cj2S2NZo+He7LrGndrW3fx1zKYz+0urSrsomdJ2sHrKcakLrSRcGA1ljPBcfj+YJdbdF
-	j2csivEiDihUNQOc7GkdrafEYOgp6KW86Erg9h0Bk8Sso016vnagIEOpmB8=
-X-Google-Smtp-Source: AGHT+IFtp6uDvT40Wf+eeybtMtOJKhVDujKLqASqoA/CInEEp1l3aj2FR72x/bhE1vGyIsJOBUURFA==
-X-Received: by 2002:a05:6000:706:b0:39c:1257:dbab with SMTP id ffacd0b85a97d-39efbaf26f0mr7662645f8f.59.1745245647104;
-        Mon, 21 Apr 2025 07:27:27 -0700 (PDT)
+        bh=fgXsecntwfRSGjrcDXCs8qD6E3/9J+RIf148wqrIpWA=;
+        b=o8Q2UsC2k9TaGGVXnbjx7SLNA02PNBYhMqmCk6s/vVWGRQH0xzAG8sYOnWdLFwzphI
+         9uNf2jJxgv/Rb0LI4mekNanBvQTuuHg13G/he0XHj2nq2skP5+ZjL0lIzBPSZKtg9oWK
+         omsVWJUifqDEszHoaeSQIiOpwKUwueYC5gwWdsyeqF3muk0LeUxLTzWj2ka/Hv9eaLIM
+         50Z22gyCbKM6M21XSemBSJY0KIV7q36MUpt0Qyr6O8FsBuleyXCbAwD1/7aONftBaDnb
+         npti9b8IVVmGr28XYZweIp6GL6Vs1SIs6rfDBnbUTZUNDX1XiBX/Mvvzx1wS9p7RjZwE
+         JM9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVtv/jVa8LQQmVHDh1VlCd7rw4cnVLHFVUqfGQW+S0Gw6zHZNp1u8lM8IAL88ky8vYYa9w8mEHFdiYXShs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDfBs83xaQTMqGaRLNog1qTRMgouu77GigXKtFU8JA2nIvu1iT
+	/hORzqUsoeZrR1X5SDOhz30yiDYlAj3yzSEh2yWbka1erpjLV3tlIpZWVV2nUUU=
+X-Gm-Gg: ASbGncvLZkwlMDDpQrjEltgPfRESna8nE0YcA/ly69ssgdZ5+Hy22FcnEMQKHv5asVp
+	dDyAYzNv0Mm7Z7/+lRcta4u1AyKscOjf9AdhM8yxNPzKBRlNbtGNik3+nYhXLo8niJWZ/AoVCcC
+	jEHMtYX4pp02sQDjFHpz+z1/STadEGMQ2Hd2J/4uSwFPJkJOotA+ywPSpPe9V9k7eElBXe7gEbY
+	krspLFjLw6Lw991gvcfx1cx3amZX5/NCdCLYTVOErVt0aia1Np0ndcE6HahfJrJR6qpnDKhHpZv
+	AxQTRPfyY69lTvUWSGkmHJL0zRrJIe+XU/xho7mw76RavVRaVG6sJZYLu+Q=
+X-Google-Smtp-Source: AGHT+IF004bhFEXPI3CCJKmdwXsLTAbZYWv5EdIm3QZ5L16mdpCbU2yQOcrSdZib/PGDekiXc//UtA==
+X-Received: by 2002:a05:600c:8411:b0:43d:83a:417d with SMTP id 5b1f17b1804b1-4406ab944edmr112676395e9.12.1745245708719;
+        Mon, 21 Apr 2025 07:28:28 -0700 (PDT)
 Received: from localhost.localdomain ([2001:861:3382:ef90:cd58:9e76:e88c:5cd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa5a2300sm11840020f8f.101.2025.04.21.07.27.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5a9e1bsm141981795e9.8.2025.04.21.07.28.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 07:27:26 -0700 (PDT)
+        Mon, 21 Apr 2025 07:28:28 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Alexandre Ghiti <alex@ghiti.fr>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Guo Ren <guoren@kernel.org>
-Subject: [PATCH v3 2/4] riscv: Add support for Zicbop
-Date: Mon, 21 Apr 2025 16:24:39 +0200
-Message-Id: <20250421142441.395849-3-alexghiti@rivosinc.com>
+Cc: Guo Ren <guoren@linux.alibaba.com>,
+	Guo Ren <guoren@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: [PATCH v3 3/4] riscv: Add ARCH_HAS_PREFETCH[W] support with Zicbop
+Date: Mon, 21 Apr 2025 16:24:40 +0200
+Message-Id: <20250421142441.395849-4-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20250421142441.395849-1-alexghiti@rivosinc.com>
 References: <20250421142441.395849-1-alexghiti@rivosinc.com>
@@ -93,221 +94,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Zicbop introduces cache blocks prefetching instructions, add the
-necessary support for the kernel to use it in the coming commits.
+From: Guo Ren <guoren@linux.alibaba.com>
 
-Co-developed-by: Guo Ren <guoren@kernel.org>
+Enable Linux prefetch and prefetchw primitives using Zicbop.
+
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
 Signed-off-by: Guo Ren <guoren@kernel.org>
+Link: https://lore.kernel.org/r/20231231082955.16516-3-guoren@kernel.org
 Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/riscv/Kconfig                  | 15 +++++++++++++++
- arch/riscv/include/asm/barrier.h    |  5 -----
- arch/riscv/include/asm/cacheflush.h |  1 +
- arch/riscv/include/asm/hwcap.h      |  1 +
- arch/riscv/include/asm/insn-def.h   |  6 ++++++
- arch/riscv/include/asm/processor.h  |  1 -
- arch/riscv/kernel/cpufeature.c      | 21 +++++++++++++++++++++
- arch/riscv/mm/cacheflush.c          | 14 +++++++++++---
- 8 files changed, 55 insertions(+), 9 deletions(-)
+ arch/riscv/include/asm/processor.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index bbec87b79309..28765ce563de 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -842,6 +842,21 @@ config RISCV_ISA_ZICBOZ
- 
- 	   If you don't know what to do here, say Y.
- 
-+config RISCV_ISA_ZICBOP
-+	bool "Zicbop extension support for cache block prefetch"
-+	depends on MMU
-+	depends on RISCV_ALTERNATIVE
-+	default y
-+	help
-+	  Adds support to dynamically detect the presence of the ZICBOP
-+	  extension (Cache Block Prefetch Operations) and enable its
-+	  usage.
-+
-+	  The Zicbop extension can be used to prefetch cache blocks for
-+	  read/write fetch.
-+
-+	  If you don't know what to do here, say Y.
-+
- config TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI
- 	def_bool y
- 	# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=aed44286efa8ae8717a77d94b51ac3614e2ca6dc
-diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
-index e1d9bf1deca6..b8c5726d86ac 100644
---- a/arch/riscv/include/asm/barrier.h
-+++ b/arch/riscv/include/asm/barrier.h
-@@ -14,11 +14,6 @@
- #include <asm/cmpxchg.h>
- #include <asm/fence.h>
- 
--#define nop()		__asm__ __volatile__ ("nop")
--#define __nops(n)	".rept	" #n "\nnop\n.endr\n"
--#define nops(n)		__asm__ __volatile__ (__nops(n))
--
--
- /* These barriers need to enforce ordering on both devices or memory. */
- #define __mb()		RISCV_FENCE(iorw, iorw)
- #define __rmb()		RISCV_FENCE(ir, ir)
-diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
-index 8de73f91bfa3..effa02c2e682 100644
---- a/arch/riscv/include/asm/cacheflush.h
-+++ b/arch/riscv/include/asm/cacheflush.h
-@@ -80,6 +80,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
- 
- extern unsigned int riscv_cbom_block_size;
- extern unsigned int riscv_cboz_block_size;
-+extern unsigned int riscv_cbop_block_size;
- void riscv_init_cbo_blocksizes(void);
- 
- #ifdef CONFIG_RISCV_DMA_NONCOHERENT
-diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-index e3cbf203cdde..affd63e11b0a 100644
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@ -105,6 +105,7 @@
- #define RISCV_ISA_EXT_ZVFBFWMA		96
- #define RISCV_ISA_EXT_ZAAMO		97
- #define RISCV_ISA_EXT_ZALRSC		98
-+#define RISCV_ISA_EXT_ZICBOP		99
- 
- #define RISCV_ISA_EXT_XLINUXENVCFG	127
- 
-diff --git a/arch/riscv/include/asm/insn-def.h b/arch/riscv/include/asm/insn-def.h
-index 02c92c1657d2..d5adbaec1d01 100644
---- a/arch/riscv/include/asm/insn-def.h
-+++ b/arch/riscv/include/asm/insn-def.h
-@@ -263,4 +263,10 @@
- 
- #define RISCV_INSN_NOP4	_AC(0x00000013, U)
- 
-+#ifndef __ASSEMBLY__
-+#define nop()           __asm__ __volatile__ ("nop")
-+#define __nops(n)       ".rept  " #n "\nnop\n.endr\n"
-+#define nops(n)         __asm__ __volatile__ (__nops(n))
-+#endif
-+
- #endif /* __ASM_INSN_DEF_H */
 diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-index 5f56eb9d114a..09d4c963399a 100644
+index 09d4c963399a..39dfab495a4c 100644
 --- a/arch/riscv/include/asm/processor.h
 +++ b/arch/riscv/include/asm/processor.h
-@@ -52,7 +52,6 @@
- #endif
+@@ -13,6 +13,9 @@
+ #include <vdso/processor.h>
  
- #ifndef __ASSEMBLY__
--#include <linux/cpumask.h>
+ #include <asm/ptrace.h>
++#include <asm/insn-def.h>
++#include <asm/alternative-macros.h>
++#include <asm/hwcap.h>
  
- struct task_struct;
- struct pt_regs;
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 2054f6c4b0ae..743d53415572 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -32,6 +32,7 @@
- #define NUM_ALPHA_EXTS ('z' - 'a' + 1)
+ #define arch_get_mmap_end(addr, len, flags)			\
+ ({								\
+@@ -135,6 +138,27 @@ static inline void arch_thread_struct_whitelist(unsigned long *offset,
+ #define KSTK_EIP(tsk)		(task_pt_regs(tsk)->epc)
+ #define KSTK_ESP(tsk)		(task_pt_regs(tsk)->sp)
  
- static bool any_cpu_has_zicboz;
-+static bool any_cpu_has_zicbop;
- static bool any_cpu_has_zicbom;
- 
- unsigned long elf_hwcap __read_mostly;
-@@ -119,6 +120,21 @@ static int riscv_ext_zicboz_validate(const struct riscv_isa_ext_data *data,
- 	return 0;
- }
- 
-+static int riscv_ext_zicbop_validate(const struct riscv_isa_ext_data *data,
-+				     const unsigned long *isa_bitmap)
++#define PREFETCH_ASM(x)							\
++	ALTERNATIVE(__nops(1), PREFETCH_R(x, 0), 0,			\
++		    RISCV_ISA_EXT_ZICBOP, CONFIG_RISCV_ISA_ZICBOP)
++
++#define PREFETCHW_ASM(x)						\
++	ALTERNATIVE(__nops(1), PREFETCH_W(x, 0), 0,			\
++		    RISCV_ISA_EXT_ZICBOP, CONFIG_RISCV_ISA_ZICBOP)
++
++#ifdef CONFIG_RISCV_ISA_ZICBOP
++#define ARCH_HAS_PREFETCH
++static inline void prefetch(const void *x)
 +{
-+	if (!riscv_cbop_block_size) {
-+		pr_err("Zicbop detected in ISA string, disabling as no cbop-block-size found\n");
-+		return -EINVAL;
-+	}
-+	if (!is_power_of_2(riscv_cbop_block_size)) {
-+		pr_err("Zicbop disabled as cbop-block-size present, but is not a power-of-2\n");
-+		return -EINVAL;
-+	}
-+	any_cpu_has_zicbop = true;
-+	return 0;
++	__asm__ __volatile__(PREFETCH_ASM(%0) : : "r" (x) : "memory");
 +}
 +
- static int riscv_ext_f_validate(const struct riscv_isa_ext_data *data,
- 				const unsigned long *isa_bitmap)
- {
-@@ -442,6 +458,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
- 	__RISCV_ISA_EXT_SUPERSET_VALIDATE(v, RISCV_ISA_EXT_v, riscv_v_exts, riscv_ext_vector_float_validate),
- 	__RISCV_ISA_EXT_DATA(h, RISCV_ISA_EXT_h),
- 	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicbom, RISCV_ISA_EXT_ZICBOM, riscv_xlinuxenvcfg_exts, riscv_ext_zicbom_validate),
-+	__RISCV_ISA_EXT_DATA_VALIDATE(zicbop, RISCV_ISA_EXT_ZICBOP, riscv_ext_zicbop_validate),
- 	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts, riscv_ext_zicboz_validate),
- 	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
- 	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
-@@ -1112,6 +1129,10 @@ void __init riscv_user_isa_enable(void)
- 		current->thread.envcfg |= ENVCFG_CBCFE;
- 	else if (any_cpu_has_zicbom)
- 		pr_warn("Zicbom disabled as it is unavailable on some harts\n");
-+
-+	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOP) &&
-+	    any_cpu_has_zicbop)
-+		pr_warn("Zicbop disabled as it is unavailable on some harts\n");
- }
++#define ARCH_HAS_PREFETCHW
++static inline void prefetchw(const void *x)
++{
++	__asm__ __volatile__(PREFETCHW_ASM(%0) : : "r" (x) : "memory");
++}
++#endif /* CONFIG_RISCV_ISA_ZICBOP */
  
- #ifdef CONFIG_RISCV_ALTERNATIVE
-diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-index b81672729887..6265052ef8b6 100644
---- a/arch/riscv/mm/cacheflush.c
-+++ b/arch/riscv/mm/cacheflush.c
-@@ -101,6 +101,9 @@ EXPORT_SYMBOL_GPL(riscv_cbom_block_size);
- unsigned int riscv_cboz_block_size;
- EXPORT_SYMBOL_GPL(riscv_cboz_block_size);
- 
-+unsigned int riscv_cbop_block_size;
-+EXPORT_SYMBOL_GPL(riscv_cbop_block_size);
-+
- static void __init cbo_get_block_size(struct device_node *node,
- 				      const char *name, u32 *block_size,
- 				      unsigned long *first_hartid)
-@@ -125,8 +128,8 @@ static void __init cbo_get_block_size(struct device_node *node,
- 
- void __init riscv_init_cbo_blocksizes(void)
- {
--	unsigned long cbom_hartid, cboz_hartid;
--	u32 cbom_block_size = 0, cboz_block_size = 0;
-+	unsigned long cbom_hartid, cboz_hartid, cbop_hartid;
-+	u32 cbom_block_size = 0, cboz_block_size = 0, cbop_block_size = 0;
- 	struct device_node *node;
- 	struct acpi_table_header *rhct;
- 	acpi_status status;
-@@ -138,13 +141,15 @@ void __init riscv_init_cbo_blocksizes(void)
- 					   &cbom_block_size, &cbom_hartid);
- 			cbo_get_block_size(node, "riscv,cboz-block-size",
- 					   &cboz_block_size, &cboz_hartid);
-+			cbo_get_block_size(node, "riscv,cbop-block-size",
-+					   &cbop_block_size, &cbop_hartid);
- 		}
- 	} else {
- 		status = acpi_get_table(ACPI_SIG_RHCT, 0, &rhct);
- 		if (ACPI_FAILURE(status))
- 			return;
- 
--		acpi_get_cbo_block_size(rhct, &cbom_block_size, &cboz_block_size, NULL);
-+		acpi_get_cbo_block_size(rhct, &cbom_block_size, &cboz_block_size, &cbop_block_size);
- 		acpi_put_table((struct acpi_table_header *)rhct);
- 	}
- 
-@@ -153,6 +158,9 @@ void __init riscv_init_cbo_blocksizes(void)
- 
- 	if (cboz_block_size)
- 		riscv_cboz_block_size = cboz_block_size;
-+
-+	if (cbop_block_size)
-+		riscv_cbop_block_size = cbop_block_size;
- }
- 
- #ifdef CONFIG_SMP
+ /* Do necessary setup to start up a newly executed thread. */
+ extern void start_thread(struct pt_regs *regs,
 -- 
 2.39.2
 
