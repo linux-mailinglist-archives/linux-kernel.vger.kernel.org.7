@@ -1,259 +1,183 @@
-Return-Path: <linux-kernel+bounces-612714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEC4A952EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DAEA95300
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350B43AFB1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE013A9DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AC019F127;
-	Mon, 21 Apr 2025 14:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74981C32FF;
+	Mon, 21 Apr 2025 14:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KgLdpA27"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="QD0LdzOl"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011026.outbound.protection.outlook.com [52.103.67.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1302F1F5EA;
-	Mon, 21 Apr 2025 14:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745246557; cv=none; b=qR+GnRiq29/jxJNYTBC3e4U1DDrQ3mzuV+ijFRvagdSgsinotoNRnLosZw++5tQd11ldCAW9U8+BzkC/Z/EcBnnm1amQN4rYEmxxKpX0vIhocEDhHNQLbR/5Pd6hXbAL2GOX5x6VUCiVFB0ODRsJoaKql6bCPejKcEednLj0Okg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745246557; c=relaxed/simple;
-	bh=IEKwrGYy/VW9MQNFST4Y/K444WyRqQM3wMr2sN3ad7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C9hy2vvnV2IZjR5PCl9g0XXxTzNlpLfW+WZHInlBPzGSZZhTMUtrNM1V8hElKx5PF1RmVhV9tip02pV9l+SFjQSso7TNPJLq3y711LOvVc1E4MuD6iuJpZE5ZF0FEDO83OQ8YgP1iVFDEz66nZL0Naay3DaEly5lI4+p2Ma3m8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KgLdpA27; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LEgQAX938257
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 09:42:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745246546;
-	bh=Bd4d4NRrmQNS8O+/gOqiB+Q+N/Yiohv30BhbtPRCdM0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KgLdpA270J+detv6NlTL1hyXXvEizWxj20aEqCMN0PZ30FI4ZRP/UDg/tbSWKB2qG
-	 H6vAd7ZxPLC7OEulIgqig39WUnnyTTPGSiM8tJX26WGDTt1QThHvj75s0OoQe01MHc
-	 6wp8ZGNdTw8CkNTsEAF6d3IGInlcy2ySBI0r4VnQ=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LEgQQq001670
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Apr 2025 09:42:26 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 09:42:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 09:42:25 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LEgPXB089963;
-	Mon, 21 Apr 2025 09:42:25 -0500
-Message-ID: <00ba399d-7a26-4ced-8f77-334839bb54c6@ti.com>
-Date: Mon, 21 Apr 2025 09:42:25 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC461A5B91;
+	Mon, 21 Apr 2025 14:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745246871; cv=fail; b=fomdkNFiMKTI/bpzRIAE4muwdvOiXXjm7mkdXyhJe8pktBgJAvKU+SR5tYnz9Lz9/veQrEb44CTC4lJUgf4b/xyHekJpNsFo6VZnlgogp/Ko4l9+agHH6Ro6vipiAhIPjuTk0Hx9TvNFy7lSs5yFCflOvEkTRl9cZ64qlhy7AK0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745246871; c=relaxed/simple;
+	bh=fs6ud18NXyJZoAmw5cQmVLwTo/eO4PV2uIf5k22xpnM=;
+	h=Message-ID:From:Date:Subject:To:Cc:Content-Type:MIME-Version; b=sZvTkI1HCfaKE8xxcn3WMxIDQjyMV5f4xmecmIyPsbUL/EHxeWvgPnQ4NWuSggoXN2svDSHGc0mxAedrJbWV5rrCettQjOpgJVSST5y0s6btCX01WDEOqwX3IkNHj5Ty+S3dsSTp+Hc084UtkHJOIqCpuc4GJYfRxki8dRXHPoQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=QD0LdzOl; arc=fail smtp.client-ip=52.103.67.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FXw8l9w7ypzr6aJ4lg5ZuahbpNkND8aNm43+ycqhPJPjglOOb5hEkyvpDuVr/XCvploq5BzlQCUlVVU2e+hauTHBPE6dDJ2J7ql+vnjsSYkXK7MD5vPMe7P2gDz9q7Wwg0SjliyTeuuhRgiywteFEhPc0HUFwHJN41RVqD+8WID0ME3M2tz7LLEOUcgFUsMZ9EqoOfibEt+l9I9wmab11WdXl2e/+JCFYVgVVVjIwkwffKck1GYh6g0P64BBYKhMwp1hkLgC/bY+xL8Xakwb0r9YUzCdWhBr95ALgMNWTZ0blWuytVH1LjB/Wo0Ik9684Qh08lDr1JzPP6uWq0NPkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wbgcaoHN8+dOCVt+svcZSMJj3y9ipKCfaXD/54MImbE=;
+ b=MecaOd6+ivO7t6zJl5CSJZIpTefgEFJ/xnqx/uBKNZ+qvyAmrn3mi0PtsIyEhPGDLc/67fnAYbcAf05cCDvdZ3v1BhOPf8kOi8oYpMlFB1qWfxGe5Dv1GdbudtYR/tQUBf58vtN3g8L5owns0zzm/A/o/iRKCpNcfNQ5GrFmA4dmSImFugdZTxG9IcNyVDtZeXnThDpLng8SryYWhmIQ81T2cKmAlwKSEbmuwCsxZGMVctLH/UI3W/Rob4iGTi0XoqtWn1Kk3kSrYfq68naJVHILl12SEXjid4RBYrdY4FF1sJgkJa1I21Bgw39Z8Q5Med+qe2sMZjmckaYVfPO/mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wbgcaoHN8+dOCVt+svcZSMJj3y9ipKCfaXD/54MImbE=;
+ b=QD0LdzOlkb5Pft1geP4Nlh/k+WjRZpkOFveQf9ZlCyfJFu/1qJqsHTMO3RM+SGMWQuuwWOpaVWvKWf2VypryFjTg6o78idUlVpvwGgJNFASXJZBiTNtoNGiNDiBJtZokTC9RqulzBSR8/BHEx+ii6L7qiR2DYSx49FUwySSoAIZBMUFDlo8YYUHYdZ5lpBfzWotKa7I31O2Jt9Ojtslv2gHgiqNYin5zOoGLHcOf3RFZDfgJ3RjsjUV6H1Km/zy8Z7F0Nd8nJ3DLT5x5Bl42eMDrv9b60DShKuDf8e+zaDYMJwQ5CusSdDx35ay2WPkUvvO3naO5OafinuqG5DiTpQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MAZPR01MB5918.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:65::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
+ 2025 14:47:44 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8655.031; Mon, 21 Apr 2025
+ 14:47:44 +0000
+Message-ID:
+ <PN3PR01MB959796962F41CBC4B7B2BD90B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+From: Aditya Garg <gargaditya08@live.com>
+Date: Mon, 21 Apr 2025 14:46:47 +0000
+Subject: [PATCH RESEND v5 0/5] HID: apple: combine patch series for all patches recently sent upstream
+To: Jiri Kosina <jikos@kernel.org>,
+    Jiri Kosina <jkosina@suse.com>,
+    Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+    Benjamin Tissoires <bentiss@kernel.org>
+Cc: Grigorii Sokolik <g.sokol99@g-sokol.info>,
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+    linux-input@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: PN3PR01CA0049.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:98::12) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID: <cover.1745246807.git.gargaditya08@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 15/33] remoteproc: k3: Refactor rproc_reset()
- implementation into common driver
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250417182001.3903905-1-b-padhi@ti.com>
- <20250417182001.3903905-16-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250417182001.3903905-16-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MAZPR01MB5918:EE_
+X-MS-Office365-Filtering-Correlation-Id: f929d1c7-27f1-4909-ed91-08dd80e3793e
+X-MS-Exchange-SLBlob-MailProps:
+	AZnQBsB9XmpI8tRyoOXaSUmOkLVCBKasY3hvKgfccIJeDyj4Wnrza93EzJOCfCoxIL2q1oI8DIBmDdEiUQaUFzsuWw2INp9w0MlO2fNSKdvhNkaCdqIT2wkyI63S93tE8SA5SEBRT2rveJdShpi8WS7bJSdqeI1MNNWVnLN5lH8FvpomtXxPHuRY34fz7WoIyXgCtTvzur8YScS0f6kJm0IaITFvlbxQMXG81fFJvaPmaCLM/Oglv9rkX4A5FlHH5YZbvVbnPj1XgDvTwWRKAIad9rYcaB8ly+g5fQH4KBMzOKF2FLUrxCD02q4i2OFEfwN3iJ7qGVi4aW76CLfHKAVVdkWooiQKUvCJq9jT2LRdeAo39de4xgYryW6nf267/IAX0W8CAVCOgEmjwniTNf8MSquK17YyL51jBk4mJGKaz35QgAWUuVkRI8915SCf6QVzypr6gD7qyWNKZoe9S0fcB59D2ms38+2s4864R491/pbeLl22npJvFZQRYaY6RcMOnYkCZE8997qNIONuKrrNOgJI9jeUIzIwpsZOdsYpdSqknwfpDiKcAu1vxfCJVgyswVZ2hKbLF4oWrfqErpgiY+j71H6NfE7pkIEdj1J2eGd4xtKdoHkb1t8kkF2iA2p8vBeszhde2cgbRWXwlcwRmtJAHVUk3Ix9BfEERuX/ynDttl51s7qX2NZKfVjXBuni8VEFptD1EWkXxdCIkEwBCcCmcwEZ1cMel8ItT5wbBHUTaQ6mA23Z/9ZD3kDZTkAbw4NFYMQ=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|7092599003|15080799006|8060799006|5062599005|19110799003|5072599009|13041999003|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WH/UEjkw2TqPtFKV3RT0BrH8j4No8a9ZDT2RoKHd8Y0DYt3EPxtFf6cVoi9d?=
+ =?us-ascii?Q?V28Bm0zvFfBveTL//8y8E0umiVXRHKrj+g03yyleOtsOXZRckDVfHHKFC4ic?=
+ =?us-ascii?Q?V+VV6ZoZ594BX05YWLaa68OHcPqdA5ukhR0M4mEHCrJdZFhyr80j/m2NgNKZ?=
+ =?us-ascii?Q?yWDkXzwy7OP/TE6smlVecvlV2s+9wb3mWGliVsnJ+glf84NOdhs1c970JsR8?=
+ =?us-ascii?Q?MZwclmoFq3bB6XImTdwf2595dm/JQerS0KyB5TSsNuLG5eeaYCelHBmlWrjM?=
+ =?us-ascii?Q?Pw2udjLajuiqQuteFtsgIn6I1RsG8uak07rb3nZnBZ3tv+RfmFWxQD2eH/k8?=
+ =?us-ascii?Q?DIrWDjyrWPDokFwdD6JWTN/nZP371kTwIND3QUjSq+HOmqeoSJ+l99Gmcu7N?=
+ =?us-ascii?Q?KA66rmmOxIHY5Z/khM8T1TAhd9F6o2aK/TESVJ+rB2PfvOG0KLY/9CZEjR2f?=
+ =?us-ascii?Q?2cNzpHBMMkO9yVJ6nIyA+Xh+RV55hc3j2QebVtEjEqYg3EmHrD8ft3rZiYoz?=
+ =?us-ascii?Q?PbReIykzYC/iDGlEJZ5i8JcY3ihCNlNe0Xa6k2fLA2PmFprD4/Q1J4y0DAxU?=
+ =?us-ascii?Q?peaLF1CMYesITWGrMyl/JEekK7JP0qfsd+n79qW2+G0gKhswQVFFaJhbIsZy?=
+ =?us-ascii?Q?ZgN9IyoQcLXVm8hOb8Vpsywt8wQVPbUWNzXBnN/xBf8DUHrPIvVACOwKjWwR?=
+ =?us-ascii?Q?ZL2BZXEelEAZ0YdWanfiKv061qRvgHjEpPbrpiTWB1OXNk5LbKs0y5QAG8YD?=
+ =?us-ascii?Q?XeIROcjKci7ZpJpYkmx/ylMScc4edPxicFSqH9juN1MIuGXye3WCvCJ4fBzP?=
+ =?us-ascii?Q?+Ei6htPYTv/gmORCXSiXHy+fCkj7oDMlORa5bdqIFCtEV6hwRZ12QOLZeTxB?=
+ =?us-ascii?Q?3XFnk1iNP9+Gj2FsxzezC+q1XTVmyOeMIIuaZuox4RKdehDZBSGFfzbFkHJs?=
+ =?us-ascii?Q?I51c7ZpAXveWYoNfMlGzCuQkaHatRt18CcVCAIstsG5egj0fZnQKDvVceb12?=
+ =?us-ascii?Q?K59HMH85MEa7UENjcd3VoCDBZa9CmZ2IdUyTpvVeYhXdwhuuLie+0skLV4ne?=
+ =?us-ascii?Q?m0LrNlKA10IX0G10c6GEeeCpeWZbX2mZ7y/8BCtow1TTc6VHceRZYoOcpxKt?=
+ =?us-ascii?Q?UChHFLCS/vnD7wbjPvo1VKVHU8RxHf2+XtYu+zgYSVVCAqV+n2uZVrs=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?O+YEzipaUD2JYyTJiIig75RpCH5egS8rejXFJr7HkR7IxyBd0PXrN2kEi1kV?=
+ =?us-ascii?Q?CtslQhtXNc9CXUDOu+eO1w40KmsUIBasTkeQnbQUVkewgVA/Md7MMn/TZa12?=
+ =?us-ascii?Q?76RWalcN3G8KCU04shfb4q8dgH8ZgUi/jjHN3U8Gp7WneLsrXy4gPgOymbv3?=
+ =?us-ascii?Q?km0fqHglCcCfTEdl/tOWKstwAOreUoi/tEX7YDXyy7oo55+FyQqDRLhIDDl6?=
+ =?us-ascii?Q?u961uxenwO/8jBPOQsg4YtDatdHrpBGfntHJdK54rfyy2ivd7ia8Mkk3bIf5?=
+ =?us-ascii?Q?yj0FrU9KxErR4gLH7s6/8Tv1Zbfr8vxeHAbBESWO+ICWWpSNDwYJD+hQZRzW?=
+ =?us-ascii?Q?PvADfVMJSmgR1yl9RwR9/VwfYyiuJrcK+GXMDphPlCa4Z0eHKVJkp1gUH0nk?=
+ =?us-ascii?Q?jJQhUyDgDbP+djCHY5iup+2hkpVCzqvU8Rur4n4RyqKdtuCVug4sRh486x+/?=
+ =?us-ascii?Q?HOpWOHGT6robeWRxjBrQKHBrRGXCyG6vCUX+dseJgWgxPB69Lp80l/TkJRaT?=
+ =?us-ascii?Q?X04gSi4PhcBJSN438oOQFG5huWsjqfmWKsa504ZhiwOPOdU4LzEu1PmNIQab?=
+ =?us-ascii?Q?OKKJJ8qWzdV/mc1qNY0bNyrBCOcpC6YFqBFeczZ7Ot3LskG0vglxKtHqMcR4?=
+ =?us-ascii?Q?bvJu3SHxiHj7W2cKjIquqcMNdjjH49HUbK6tdT1xeGqk313daATwBL98aPl/?=
+ =?us-ascii?Q?8vzIr/XxjlRmh1Yh2iYl/8pAlcnL33oL4te1XfRdvDuV7O2hfIBVsD9K6Obf?=
+ =?us-ascii?Q?wrrPf5+94PrnE0ouRyhrpDlGgO01A/oEUy6a4ybTg2UNCBLC7fl1DtNPp1sn?=
+ =?us-ascii?Q?KljJ/873hjQwmOusjV8bHc7EU7Tjy7Npjj3orv057NoBm52W+A4wlEM5OAEZ?=
+ =?us-ascii?Q?BujHPdElewElFGX00Udl5c/Qu7O31+3abZlnjluy0MHf2PYzqcD2T2y8R+DI?=
+ =?us-ascii?Q?LG85jDYuwnGBHkjpsUNE9R8clTRuk/2BzFHT2VJccavdxu8YBXV4g3Mr51VP?=
+ =?us-ascii?Q?mBrbEYxvSHjOsyEM7E7RDAxEu/g+WwiLOTwBF6m2ineZnklpxNx85G6geKgd?=
+ =?us-ascii?Q?Fh7pm1mHdx2Gx92p7pqnoH6A0Cz4nr20RrTAx/VRTCmqEv6dWFYN+HTusTzf?=
+ =?us-ascii?Q?XIhrJsI4n9ub5itTIw+pDDglTl8PCoRao64WwoSveSw+0jm4REr7AbHIDx4k?=
+ =?us-ascii?Q?+lgjo2EkLBSbfhkw9joe2T9xUdf4ZOVPCTSPOLUS/2uNoUcw4+dVeHolk8c?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: f929d1c7-27f1-4909-ed91-08dd80e3793e
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 14:47:44.1102
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB5918
 
-On 4/17/25 1:19 PM, Beleswar Padhi wrote:
-> The rproc_reset() implementations in TI K3 DSP and M4 remoteproc drivers
-> assert reset in the same way. Refactor the above function into the
-> ti_k3_common.c driver as k3_rproc_reset() and use it throughout DSP and
-> M4 drivers for resetting the remote processor.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> v10: Changelog:
-> 1. Split [v9 12/26] into [v10 14/33] and [v10 15/33] patches.
-> 
-> Link to v9:
-> https://lore.kernel.org/all/20250317120622.1746415-13-b-padhi@ti.com/
-> 
->   drivers/remoteproc/ti_k3_common.c         | 25 ++++++++++++++++++++
->   drivers/remoteproc/ti_k3_common.h         |  1 +
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 ++---------------------
->   drivers/remoteproc/ti_k3_m4_remoteproc.c  | 16 +++----------
->   4 files changed, 31 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> index aace308b49b0e..19bb6c337af77 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -105,5 +105,30 @@ void k3_rproc_kick(struct rproc *rproc, int vqid)
->   }
->   EXPORT_SYMBOL_GPL(k3_rproc_kick);
->   
-> +/* Put the remote processor into reset */
-> +int k3_rproc_reset(struct k3_rproc *kproc)
-> +{
-> +	struct device *dev = kproc->dev;
-> +	int ret;
-> +
-> +	if (kproc->data->uses_lreset) {
-> +		ret = reset_control_assert(kproc->reset);
-> +		if (ret)
-> +			dev_err(dev, "local-reset assert failed (%pe)\n", ERR_PTR(ret));
-> +		return ret;
-> +	}
-> +
-> +	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
-> +						    kproc->ti_sci_id);
-> +	if (ret) {
-> +		dev_err(dev, "module-reset assert failed (%pe)\n", ERR_PTR(ret));
-> +		if (reset_control_deassert(kproc->reset))
-> +			dev_warn(dev, "local-reset deassert back failed\n");
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(k3_rproc_reset);
-> +
->   MODULE_LICENSE("GPL");
->   MODULE_DESCRIPTION("TI K3 common Remoteproc code");
-> diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-> index 6ae7ac4ec5696..f3400fc774766 100644
-> --- a/drivers/remoteproc/ti_k3_common.h
-> +++ b/drivers/remoteproc/ti_k3_common.h
-> @@ -90,4 +90,5 @@ struct k3_rproc {
->   
->   void k3_rproc_mbox_callback(struct mbox_client *client, void *data);
->   void k3_rproc_kick(struct rproc *rproc, int vqid);
-> +int k3_rproc_reset(struct k3_rproc *kproc);
->   #endif /* REMOTEPROC_TI_K3_COMMON_H */
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index 0a8c9e61393d2..f8a5282df5b71 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -24,30 +24,6 @@
->   
->   #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
->   
-> -/* Put the DSP processor into reset */
-> -static int k3_dsp_rproc_reset(struct k3_rproc *kproc)
-> -{
-> -	struct device *dev = kproc->dev;
-> -	int ret;
-> -
-> -	if (kproc->data->uses_lreset) {
-> -		ret = reset_control_assert(kproc->reset);
-> -		if (ret)
-> -			dev_err(dev, "local-reset assert failed (%pe)\n", ERR_PTR(ret));
-> -		return ret;
-> -	}
-> -
-> -	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
-> -						    kproc->ti_sci_id);
-> -	if (ret) {
-> -		dev_err(dev, "module-reset assert failed (%pe)\n", ERR_PTR(ret));
-> -		if (reset_control_deassert(kproc->reset))
-> -			dev_warn(dev, "local-reset deassert back failed\n");
-> -	}
-> -
-> -	return ret;
-> -}
-> -
->   /* Release the DSP processor from reset */
->   static int k3_dsp_rproc_release(struct k3_rproc *kproc)
->   {
-> @@ -201,7 +177,7 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
->   {
->   	struct k3_rproc *kproc = rproc->priv;
->   
-> -	k3_dsp_rproc_reset(kproc);
-> +	k3_rproc_reset(kproc);
->   
->   	return 0;
->   }
-> @@ -565,7 +541,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->   				return dev_err_probe(dev, ret, "failed to get reset status\n");
->   			} else if (ret == 0) {
->   				dev_warn(dev, "local reset is deasserted for device\n");
-> -				k3_dsp_rproc_reset(kproc);
-> +				k3_rproc_reset(kproc);
->   			}
->   		}
->   	}
-> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> index 8a6917259ce60..7d5b75be2e4f8 100644
-> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> @@ -65,11 +65,9 @@ static int k3_m4_rproc_prepare(struct rproc *rproc)
->   	 * Ensure the local reset is asserted so the core doesn't
->   	 * execute bogus code when the module reset is released.
->   	 */
-> -	ret = reset_control_assert(kproc->reset);
-> -	if (ret) {
-> -		dev_err(dev, "could not assert local reset\n");
-> +	ret = k3_rproc_reset(kproc);
-> +	if (ret)
->   		return ret;
-> -	}
->   
->   	ret = reset_control_status(kproc->reset);
->   	if (ret <= 0) {
-> @@ -374,16 +372,8 @@ static int k3_m4_rproc_start(struct rproc *rproc)
->   static int k3_m4_rproc_stop(struct rproc *rproc)
->   {
->   	struct k3_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -	int ret;
->   
-> -	ret = reset_control_assert(kproc->reset);
-> -	if (ret) {
-> -		dev_err(dev, "local-reset assert failed, ret = %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return k3_rproc_reset(kproc);
+From: Aditya Garg <gargaditya08@live.com>
 
-This doesn't feel right. The new common k3_rproc_reset() function
-matches what ti_k3_dsp_remoteproc.c did for reset, you made it that
-way in the previous patch [14/33]. But it doesn't match what this
-M4 version does (yes I know logically they are the same as `uses_lreset`
-will be always true for M4). Maybe you want to do the same as you
-did for DSP to the M4 driver first, before you make this change so
-it is 100% clear the code is the same (and so bisect lands on the
-right patch should someday this be an issue).
+Hi
 
-Also, the common k3_rproc_reset() calls put_device() unconditionally.
-Something that wasn't done at all here in the M4 prepare() and stop()
-functions.
+This small patch series contains various pending patches for hid-apple in
+a single series.
 
-These two changes make this patch not strictly a pure "refactor"
-patch, which IMHO should in no way change the calls being made nor
-the logical flow, only the code structure.
+The first patch moves the backlight report structs, that were incorrectly
+placed between the translation tables, to other related backlight structs.
 
-Andrew
+The second patch makes use of switch case statements for the ever
+increasing lengthy device table for fn translation.
 
->   }
->   
->   /*
+The third patch removes the unused APPLE_IGNORE_MOUSE quirk.
+
+The last 2 patches add Apple Magic Keyboard A3118 and A3119 USB-C support.
+
+v2: Add A3118 Keyboard
+v3: Add A3119 Keyboard
+v4: The "from" email in patches authored by me was different from the one
+I signed off using (thanks to outlook's weird oauth2 requirements).
+Anyways, I've managed to get a workaround to get outlook working
+finally, so sending them again properly.
+v5: The cover letter itself failed to send in v4. Sending again.
+
+Aditya Garg (4):
+  HID: apple: move backlight report structs to other backlight structs
+  HID: apple: use switch case to set fn translation table
+  HID: apple: remove unused APPLE_IGNORE_MOUSE quirk
+  HID: apple: Add Apple Magic Keyboard A3119 USB-C support
+
+Grigorii Sokolik (1):
+  HID: apple: Add Apple Magic Keyboard A3118 USB-C support
+
+ drivers/hid/hid-apple.c | 126 +++++++++++++++++++++++-----------------
+ drivers/hid/hid-ids.h   |  10 ++--
+ 2 files changed, 78 insertions(+), 58 deletions(-)
+
+-- 
+2.49.0
+
 
