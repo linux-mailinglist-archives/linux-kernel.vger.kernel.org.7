@@ -1,287 +1,316 @@
-Return-Path: <linux-kernel+bounces-612350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E76CFA94DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:15:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B69FA94DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0B2171858
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:15:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52DBC7A351D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEA219DF61;
-	Mon, 21 Apr 2025 08:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25AB214204;
+	Mon, 21 Apr 2025 08:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n5SV/fwI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Su0oi5U8"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1238020E310
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 08:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745223290; cv=none; b=PsLxhODhy2YvwjS5oWgZy/qvzythDnOm1sO5Hl0cu6WU53MRIsl5rUJ7LJjUXMyYjnFy8gbvD7nTLRThTneCgiZ5u7aT68oL5cIAY6eXqDBHpEi4ZW8XVS7fQBz/lSvCAmp2OvLLIgaDAjHDFYHQQwddEyP3DvyYhuYHvuTa+m4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745223290; c=relaxed/simple;
-	bh=N9DaZgYXK+0d/Nuiuh1IHz88k809DklA0+m3Vn2//40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Atu24Wfsg1Xe+fXnl2VZn/3EifNVWmwcZ33x8Yxpt2jalLnDC00kDEuo1CpRz5NO5Wqi+IoL6FYGQ3Wvad1UWsPjbX8EIpzy0y9ZwoEbms9yNBpZx94Ku0xuopA245H3EkOb5xni4R6NGYfCo+4qp4Va34ZWCMxoHCVHSEnrS1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n5SV/fwI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53KNus4N006614
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 08:14:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8oJBUh1wbVCHpxTY8vmU0g4yGRFNNfXgJ4JOTQRarZs=; b=n5SV/fwIMzTWSOJA
-	mHYvKZQlCemNMo7nYLA8BZynjKR1sDG8T7bJuxMBXyu8ezYCuemK+nfY7Go5HrhT
-	lQH/xy8qfoQv4R0OuION24Wi7YN6qJs5pp8sTmrePufVPYHSUmd8QG7DlGyQaMZW
-	tPXir/DrO+TbMrRseBGlEhY/50OibexnRGal6HnbIir2CFS92E19o9JTuj/1Bc9o
-	sd6tuf5D8tH6Arlas4eSz6efrRxJI73hS4FWFxZgl5aoJC41IKudHoW+nbgsdJpi
-	7Gwq5FymCQNcJSaV1e+pmXQ8/tKj0Dd1y1nu+3cxw7DBdQGWMn4X2AuSFBHtywpH
-	+OdoqA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46450pbc03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 08:14:46 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e917965e3eso54238216d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 01:14:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745223285; x=1745828085;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8oJBUh1wbVCHpxTY8vmU0g4yGRFNNfXgJ4JOTQRarZs=;
-        b=nqsqGTAkz5UQQefTTwE4Gnr8ism3CvYGMXEUoUFauhI1Q/kGM1u1NgWTWdL98UXryI
-         c7tHe0Er/OqmWfg9+Lt+QtrEbOyTbMtp962UxKUS2IIO1euDACHcOnVueZCaucR8S+bQ
-         OIEefTdf+5szPGoVUKkfHFjShBPkh0V382cYrCg3sNGKxQeBPYo+GzcxxrUasCPrl7rb
-         e09RmQG2cZVuBQRY16gjbpLYNdd12F8MVVv+TNYSKqBNytwHemcua/rMFdEAcmNJHnFI
-         apyi5Av1Ij0/AToHClv6vm3m0O0xKZIHouHOxXWNXAr2lVNmAKoX75+Yy9r6XFIhMdAT
-         Xmaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVph6rADSzl9B6vq0q1omhPsNl1PDuoqOitFqbV8vrsGo117+OBG41L1Dy6mVcGj8J7KETE0JY6Z6qj1us=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLMxF5b3GCihVZFG9p7GNXvuPnBwQyObcZW0vGjy59egsyKH99
-	EX23I2Clz6s44N2VeXT/lY2sVe+1Z5AX5/WWjwTRfqCN+nf+HT+JTQkk/r+svLksfdUHdel9cqI
-	+iwaCSdtk6Att5TyXrXzNLsbWC3TDMJ/SP0rIyVL6zVh3r9gkKsUAEha2e92znSw=
-X-Gm-Gg: ASbGncv5AGII1+f1qetTAoGrrILTGNvAgAMtl85RNRFAnfUyk17dErGs08HSOVGedXx
-	33803m9Udg0654o41+cu4v6n19uMrZBGwsl4B9rD6hoOrRpKBIUb2O0yPp4ZZSG6+C198grjapk
-	koE9LB20GkGzVSHhf7SrrQee83L/FNvogx1o8Plx+XwiX99T3oNWlWra7yXDxS4mCvzUZlpId4U
-	ZqHahLAe61smTfaP7y2Mygkw12ZA2eOB2jSHikCYjYhN+rJwzJe4MKEB6wI7q1Qvy2BvgsAjGwe
-	21/8hC64q14uZfEEnGUjl14Oy3ZWDyvOxvLCkcMrZazUOf1BqDHuECIK9LjUyTvaimrf+Vsgxek
-	=
-X-Received: by 2002:a05:6214:20a3:b0:6e4:4484:f354 with SMTP id 6a1803df08f44-6f2c4671b1cmr221132846d6.38.1745223285287;
-        Mon, 21 Apr 2025 01:14:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnRnpxjNkHm/HUpOalIjA+qNX95H0QB8/MMo2v2tSzcpgxrTX1ZwIeu+SYDh7cGkWGLZqgMQ==
-X-Received: by 2002:a05:6214:20a3:b0:6e4:4484:f354 with SMTP id 6a1803df08f44-6f2c4671b1cmr221132646d6.38.1745223284911;
-        Mon, 21 Apr 2025 01:14:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5e4f06sm869887e87.166.2025.04.21.01.14.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 01:14:42 -0700 (PDT)
-Date: Mon, 21 Apr 2025 11:14:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Deepika Singh <quic_dsi@quicinc.com>
-Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org,
-        linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com,
-        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-        dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
-Message-ID: <iedvsuzaltuxyjp6ug7yt7oprnhnthmi4dz5i3biyjteebuvqj@4zpcthyu5rpl>
-References: <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
- <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
- <365c4709-b421-4af8-b521-a195630242de@quicinc.com>
- <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
- <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
- <CAA8EJppbptPryu_O3G3YAapHT=Ai+MAdA38FtSU=YvWb+mqa1g@mail.gmail.com>
- <e1c23027-94c3-4fdf-b842-b154179aa2b8@oss.qualcomm.com>
- <a3addff2-1ee6-45aa-ac2c-693ffe804948@quicinc.com>
- <pczibldk4nzu2zvyca4ub4kxiyvismuy46a4rcxkqwy7ncaf4d@ktm2vpaejdmg>
- <57d58076-1d5c-41ee-b0ac-c2bc4658b96b@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB836213E85;
+	Mon, 21 Apr 2025 08:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745223340; cv=fail; b=az2Meuzf7NxIynkBBSSqpBfRcmzCM0F3OBMdqiEiVun3+EU5BrCiS14o4dFpNKTociH/h0AzGbCMMo1DBnuqlKz6Pt/P6O/4wxNhD/kWu2s51z4ayskkKElVzhbnCDLqglG6tgVAnxWQhdHJzQwqtWLw+eNXSdQRxb+JjdqRZZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745223340; c=relaxed/simple;
+	bh=ToBQCAe9DFsp4Y9Jqhj8yqI3FimXlhJo1UmRknX+RI0=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=fbl9NFt63I10+CLNi45rWWyHUIknGq7t06EBJvCX/SAdCCkLAverf7MIRSzLok5vWubu5WaJpdy6Ol9g8E9LxbAGLpHudkZ6fwj5fCJpDQqJhcs2MZuclIgO8zaRX/e9u9avzcZ/12BVJvdNF1GNPRvEosLtZwf6HonYBVaKVQQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Su0oi5U8; arc=fail smtp.client-ip=40.107.244.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qKUc6cp4oIpon++WMquCeQcFIhmpQF/lEF2GAhESHbb33+Tyl7hHHcDhD8OKbBR2whYLumJjv8ivEQ4Gj9EoXacBU95AqqZNNRMYE6zsDdC0P6kReHR04hWeqhxio0N6aQRAn5sFhoSg29D+Rjdp/LV+NVumg7Tx90Tvm9ZDg+9qPzeejC3rfuhBLs4vUOT6vQSUjgSolswufV1iDnwfDwetoW/cp1w8meElQQvyvYZokpu7VqLiaF44qJx+34E5PlcovWeq167nOzMjTYGXLAgQPxglMhQOVAB6H4ee6kWcFiK1sutiXBGXo2CWCNAnH/ez5A2oqwfLQ5Jkiyre2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T6QKmFF9tgWPwAFXTFoD7fa9hhagHnoDBcYSpd3iQ/M=;
+ b=WD6ppK1JHtZXIMOj/0vP0Lh3R2VDulXRyguqegT5TQR16jXTUFI29cBqXDs7qZuXHefEk5xqSDx/MLMjetAsW9n/vdQX6MdmgtxeR5TNUwonC+OLP/jXuZreVhsARbaME2JmuAgOqgTyBuVm+hRaB9gBDK7rsic0eFfqc3dGLvSmfmt/uEDX89N5tPpi/FtGEfx+iqEFydGW0CLrhDVIbDIVSIHSupXfKTelzl/3qzAOnvl/gAkjk9uhRMXaOJxddjENLBHZd8rxOm1+5GMh1w99jnfObpeVyI1Q4i1V5W06hss18GuaAHDn21DvntOMg7+TTDYabFN8KjPutZncAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T6QKmFF9tgWPwAFXTFoD7fa9hhagHnoDBcYSpd3iQ/M=;
+ b=Su0oi5U82axmYwLGgwIRPd/18JeFpOxi/F2NrIoJktfDFyS/eBqA40AKKpgvCSLxed/cHNR1AK5x5HYb6+slQz3NltNLAMupHYoVBSDwdqabJx3+CjanQ2xBV+OKNA8Ug0nL29jnhoIBvIDJxiqnS3ySUGc5WlDju2FKQHZrrnK7r+fypOAV9bBgMBNqf1SXo+6VaCLUlo/p8N6zeU3Ls5IYWkema6vsWs+tpxMtOfySm273VKgYJ6n+Z35neW8gjFaSSBpFkTQ2DE5mkRQV2K+gCm2sfVDGtzi3qstIrDCB5YU/2f/vG6H8ZahZFjAdIDpNAx3vSaFx+MZlScDkFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BL1PR12MB5754.namprd12.prod.outlook.com (2603:10b6:208:391::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.31; Mon, 21 Apr
+ 2025 08:15:34 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8655.033; Mon, 21 Apr 2025
+ 08:15:33 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 21 Apr 2025 17:15:29 +0900
+Message-Id: <D9C61DDI99JX.31T59XPQGYBB1@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>, "John Hubbard" <jhubbard@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] rust: alloc: implement `extend` for `Vec`
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250406-vec_extend-v3-1-ec5c5c0acf2a@nvidia.com>
+ <Z_OwmEKHgsZlt2cs@pollux> <D91AOKOTDXWC.7R5K5DI87QU4@nvidia.com>
+In-Reply-To: <D91AOKOTDXWC.7R5K5DI87QU4@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0020.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57d58076-1d5c-41ee-b0ac-c2bc4658b96b@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=Hd0UTjE8 c=1 sm=1 tr=0 ts=6805fe76 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KrD4l51AmWsE4oWeEdMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: rtpIniAdI8tnHMDapv4Q-6rJQjjMoaiz
-X-Proofpoint-ORIG-GUID: rtpIniAdI8tnHMDapv4Q-6rJQjjMoaiz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-21_03,2025-04-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 spamscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504210063
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL1PR12MB5754:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6bc818e-14e8-42e4-c851-08dd80acb013
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|10070799003|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RkpwdllXWlROeGhKTkpQNmdaU0I2Mlo0YTlLZW9VTENLazlZSm9UbnVqQ2N6?=
+ =?utf-8?B?S040cFJrcWxsa3orOVB6a1VDZStENFh5YldtZHNheWtXelI2U0c4L3EwclVO?=
+ =?utf-8?B?NzdBMmJrWU5YOWhqcldrNFpYS2xJODRmWitQc2taQVdGSHNON3pSS0hGcHVs?=
+ =?utf-8?B?UlQrZFhUZ21LZkQ4MTV0aWNYaXN3dGF0WlcrK00reG1wSUIzZ2hRZHpMRklv?=
+ =?utf-8?B?cXpGcUY1enVYb0tPTzVOcWdoNDNqRHJzWW5xWVg0ZVpidkppV3J2YWFGNnFx?=
+ =?utf-8?B?SGxqbUJtMG4raTRNMFpYMlVlcDdBYTFVOEk5L05jM1YyNno2VllKZ1VXV29N?=
+ =?utf-8?B?b1I0UWYrSEkxQlMzakgzNEkwUnZJaG0rc0RvWm40bTJiNTRVcTlweWJlVUpK?=
+ =?utf-8?B?VTVrZjQzajRTTXJJNElxdk4weEJCS2tJRVdaMjJsdFAvUnZYbHUxZENQYXF6?=
+ =?utf-8?B?WTdGMWVDZnBjYUJYU09pd1p5amgySlNhek1wY0ZjcW02OXRTdHZuc1JPbEo4?=
+ =?utf-8?B?dVpGV1ZUSCtRSm5wQ0FDa0NiZVZKeDl5OVdUcXBmc3dOVUdNa3RMRU1JTGtF?=
+ =?utf-8?B?cUN4c09FMDVYQjE4WHZ0QTFUY1FTSzVGeWxFQkVhK1VkcnpCYjUwNW1VQVRm?=
+ =?utf-8?B?aUlrTDlKZVNzWXo2b3hvV3ozc09TTHBES1dTQjVyOHlKZXk0ckpUMjNWUEUw?=
+ =?utf-8?B?aGFuYmJmR2NIc01Fc2tLdlFPMDVDc1dpOVVJVFI1N0Y4VnVRSGhOQ2pyUm1V?=
+ =?utf-8?B?YmJaZGJEaTIrb0IwSE5OQnRld01qQjcyb2JGTjFHclMwbkVOdisyd0RGb2NX?=
+ =?utf-8?B?aXNnSEMvQ28vbG9Na0NKVnRyNStUSTB6NmRqWkVmRGZsM0JrQVJ4L3V5TE9T?=
+ =?utf-8?B?RjBmVXl6VTY3NEJaaGhjZ0NXNUZpMXZYZ2JhTE9QeEhGK0JKbjdLK3RpYi9h?=
+ =?utf-8?B?T0RqYWJrdlNFNFZGbndJVVZOMWl1czh0cFBaZHdqR2ZkcWhZUUtsbnBwUHdS?=
+ =?utf-8?B?blNDdlBlS2o0ekRzWURrN1RvbDdHeDc3RnlDcnkvaThTMUpPTkdhcG1lUFgz?=
+ =?utf-8?B?SmMvR0t6QnQ3ZndZOXJ1UmNDNnQwTHYzN2h2QVhCdWt5bEVUUkVNSGI2YXI2?=
+ =?utf-8?B?RlZoNGRueDhHYVdrRXVoVnphQUNsUUhUSG9RUWVieWJLdmJmaElZUk5mc3d4?=
+ =?utf-8?B?Vys2TG1zUi9Bb3NEWitNeW80OHZwS0dRMjJKZjdvZmJSdFZMQjVuQ3dVelhB?=
+ =?utf-8?B?RUJ6WU9ZL3ZCb1lQM3AwQkNvL0wrS1RoR0FhWC9hMFVBeFJiWitjaisySnJD?=
+ =?utf-8?B?VVM2ZWYwZW9aSWlwYm9CTXh2SG93WHMxQlE5WmlwT1JXS1ZCWnUzS3ZsMmJN?=
+ =?utf-8?B?T0xuVmNBeFBqd25mRDgvdkxKZmhLenVvQ3Z0bGtnRGtkWHFJUlh4WmR5WGJN?=
+ =?utf-8?B?R01zQ0cvbWpxY0R1RTBPOEdhOExQNHF0c2h3RU5va2o5cndkdGd4WUs1MlZq?=
+ =?utf-8?B?QmtlQjQvQnkwaWtYc0NqYmVqQkZtbGk4czNzbWw3RWtOUHU3dUt5SkUyaEZH?=
+ =?utf-8?B?Vk5GRzRFRjlSR0FRTEw0VlBCTVRCU0Y1K04zT1FwQzFPVDk4S3lkNzRKZWFr?=
+ =?utf-8?B?MmN2MG9LLytwTENlUndGSlR0V3JTNEtzTVV1ZTA2S01DeG9MRVFzeEJDbEtL?=
+ =?utf-8?B?YkNVQ3o4ZVdMeVErcUNoYXIzeFNnMm4zMXJud25Qc296RGpib3ZCSDJaMkp6?=
+ =?utf-8?B?YmRnV3NGM3owaDFrUDJtQkZQYUZ5ZUhrTkFicFlQMVk4YitVQmluSytpbnAr?=
+ =?utf-8?B?MldtZVU5d1BvYTNiUTRsTHpIYlQ0VXdrMFhvVnVycmQzSkVxbnB2bzhXTnRL?=
+ =?utf-8?B?d201WFZRbjBtSzhxKzdOU0t6NTlIbFU2L1I1MFZzMmk2ckJoaW9OQXJITktG?=
+ =?utf-8?Q?8NTCFo7Th/M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YXg5UjhocThDOXVZQlJyVTR4MHVGenpqQTFQYmYvVUNuWStUWEEzUDhUSGlZ?=
+ =?utf-8?B?MWpFSWhwOVI3VTZtMitmOVd6SGYyaG0wbko3d0h2N3ExSCtsS1RDbTUvempo?=
+ =?utf-8?B?am14aWJ4aEtUdjF1Y2JyOTdxV1dsb21QZ1Bic0xqMWFvMlNJWUtKd2dVYk5V?=
+ =?utf-8?B?L29rZU1vdHZGSjRUdDgwWnlpMFh3SGdoNkNBREo0WTE5dGVRNytRbnp3UG1j?=
+ =?utf-8?B?dWRidzQ4NllzWE9oRGZuaWc5eVJpYlROTXhlMWVzTjdzVHY0YnRyUUNOeVNY?=
+ =?utf-8?B?akk0WWFmTGpTTXFSUjE0MHZzU1BUdzNWdmdHdmtjTFkxdmRUd1VBZWhpaGdI?=
+ =?utf-8?B?UUVJVXd3M1BuVFRCQmI4N3BnWDlCdlRnTFI2UFNoS1lxNmNVUXNvRWV5MjZR?=
+ =?utf-8?B?U21ISjlQU1ZzbkR2WmZKZmprTzNCSDBwZjJTalRxTHdWUEVNT0MyN0lRcjNR?=
+ =?utf-8?B?Z0FIRjZaR21iUHhTdzcxblJEQ1ZHUncwYXVwT0tnNitmTXl6cUllUUxvdWpE?=
+ =?utf-8?B?STZQT1RqTHNxZ0dFamhwc3d0SExaUFIwS0JMSlJ5ZFJCcUdqSG83a2duZnpX?=
+ =?utf-8?B?QkZNcW1pbTM2RU5nYlFVOXlUK1dTZ0txTUU5Wm5Ob3JSMEhCMSt1aHhOWER0?=
+ =?utf-8?B?Y0tSTlhXV2pkblBpZnB4K1paVjdTMi9tOG53NWt6ODlCcnZuRERuYjBlcjJh?=
+ =?utf-8?B?czJXenp5cXZKOUZQRXJNMUN5WFZYTHBxWVVPVTBZUmVUaGUvRm1NeFFWakVh?=
+ =?utf-8?B?MzM3eWhVbEViZFVuOU53azVQWnBzYnUxNmxVMjQrVzRDMnlHVy9XU1VuRmRB?=
+ =?utf-8?B?cEVyYW9nWnFYdEJFR2pEYWhyVXdlcXl2eERvSC90V0R0Wi81ZzB6Y2w3Nkh6?=
+ =?utf-8?B?UVJsQ0tkcWgreForSmJ3Z2NzWTRRNENiV1Q1WkZWT0ZMbytMZzV4T0FCZzE3?=
+ =?utf-8?B?dk95TEZBY0o4aWJmTkR3d25JVXNXNjYvODc4V2JxR1pFTGZYSUhHOTZHNWh5?=
+ =?utf-8?B?K1UxdTBhTFdmREZXUm5nMFc1dFoybFlLNDJiWVJDRUVuM0szLzBBUmZrTkxj?=
+ =?utf-8?B?Vkl1S0tnR2c3YzF2d3dVSjJrSGxzZ2FhVUJZcUkvVnNYS2lKRzBFVVV6aGlh?=
+ =?utf-8?B?ZWlCaVZKQmQ5SmQ1M3B6UkJ1RTBZalNDT0k1RkZCaC85aHhYeVUxZnJpdmhH?=
+ =?utf-8?B?RllVVUJtc3dGemFJTnBXYTZCZ0IydEhrUGZpWS8wUHFkb21TY2ZxWHZJcTJ2?=
+ =?utf-8?B?UEkrQ3Q4VllVcDBMcEVBV0l6L3p2RU1NMzJ0SElCY0d3N3VUd2wrSUlYMVFN?=
+ =?utf-8?B?R3Q3SHBnWERJbzJTeU5jRWRpampRZkx2MnRQV2xYbW8yVHB6Z2xvdGxTQUFy?=
+ =?utf-8?B?bDhNRDFtT0t3WXpxUU1WV1ExUmQyMjFXYldIV0djOW9OQmRCeEtGM2tFUEkz?=
+ =?utf-8?B?S2g0SHUxV0t2T1EzUXVTbENBWlhaWVdVcjUxcVVRVTVCRnVIRkg3OWdicDlm?=
+ =?utf-8?B?TytHTC9NeUoxc0dZaUZDb2JwR1NzdTl6NGQzR1lsTUZCd2F6WmhjUmxkR0VN?=
+ =?utf-8?B?M0trQWFhSHQ1Z0hjM1VCaHI3UEk4bG16SVlydnpJUUNST1ZCQnlhWDh1Zm5U?=
+ =?utf-8?B?WEZsM2xScjVtSGo4L25aV3Vya3YwS1R6TStPMVNNSW1QTWVkVE9LV09ySUdG?=
+ =?utf-8?B?OUEwM3BmamxadzJMczFiQXBScTBBb3FmM3J1T1EzeUZ2bk40VUxNK3lRMTBY?=
+ =?utf-8?B?Sm0rT2VUS1VtSU5BM0FqS2tzZ1BqeHhJN0ZWUDM1ZU1YTlMrMExFRkN4U2xM?=
+ =?utf-8?B?M3hlZlVOMm1oRENRZ01NMk1NczRxUUtoWDVpaWRZVVdDTE5hc1VpL2hEWTY1?=
+ =?utf-8?B?cWp3MlJhVDVhNHkzSWdkYUZ3cXllaXNUUXdmSkQwcEMvUEsxdHhhRG1DbE1N?=
+ =?utf-8?B?TlFadnY1UUdJZlRsdU9heVEzRHlqejRiRGNKVEl1RW1ISEFGS0JKZUYvTmtI?=
+ =?utf-8?B?c1M3aS84WVRWcnAxWlpJYkc1KzM4VHVlRURUOCs1ZDdFWFBuVmwrRERLb0JB?=
+ =?utf-8?B?RUxReTE4STVQMkxocU1WVzlLd0hpWkg3ZnZxMVRTYi92UTVjK3lVbmNsdU1u?=
+ =?utf-8?B?bDJXZnAxNHdBRzNkYzZmaDR6dEpQeUc1azBvSDJrVTJVTVdnWDE0VVJTU2Yx?=
+ =?utf-8?Q?rJMz56eUJ5IRVs35TN4/doGoZ6lddVlhcy+7Ua3V/1He?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6bc818e-14e8-42e4-c851-08dd80acb013
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 08:15:33.7837
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wIKCbn0gBHYr2lrZmckFS0Ozh6hbqAuhSEbUtLDWK9ejl2N7Gy7oD4L7GADrB4ga+h+J6u37Sc+st3aud2kNWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5754
 
-On Mon, Apr 21, 2025 at 11:41:15AM +0530, Deepika Singh wrote:
-> 
-> 
-> On 4/14/2025 1:18 PM, Dmitry Baryshkov wrote:
-> > On Mon, Apr 14, 2025 at 12:41:47PM +0530, Deepika Singh wrote:
-> > > 
-> > > 
-> > > On 4/11/2025 1:55 PM, Ekansh Gupta wrote:
-> > > > 
-> > > > 
-> > > > On 12/3/2024 5:27 PM, Dmitry Baryshkov wrote:
-> > > > > On Tue, 3 Dec 2024 at 07:22, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 12/2/2024 6:18 PM, Dmitry Baryshkov wrote:
-> > > > > > > On Mon, Dec 02, 2024 at 03:27:43PM +0530, Ekansh Gupta wrote:
-> > > > > > > > On 11/22/2024 12:23 AM, Dmitry Baryshkov wrote:
-> > > > > > > > > On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
-> > > > > > > > > > On 11/18/2024 7:32 PM, Greg KH wrote:
-> > > > > > > > > > > On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
-> > > > > > > > > > > > Add changes to support debugfs. The fastrpc directory will be
-> > > > > > > > > > > > created which will carry debugfs files for all fastrpc processes.
-> > > > > > > > > > > > The information of fastrpc user and channel contexts are getting
-> > > > > > > > > > > > captured as part of this change.
-> > > > > > > > > > > > 
-> > > > > > > > > > > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >    drivers/misc/fastrpc/Makefile        |   3 +-
-> > > > > > > > > > > >    drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
-> > > > > > > > > > > >    drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
-> > > > > > > > > > > >    drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
-> > > > > > > > > > > >    4 files changed, 205 insertions(+), 3 deletions(-)
-> > > > > > > > > > > >    create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
-> > > > > > > > > > > >    create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
-> > > > > > > > > > > > 
-> > > > > > > > > > > > diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
-> > > > > > > > > > > > index 020d30789a80..4ff6b64166ae 100644
-> > > > > > > > > > > > --- a/drivers/misc/fastrpc/Makefile
-> > > > > > > > > > > > +++ b/drivers/misc/fastrpc/Makefile
-> > > > > > > > > > > > @@ -1,3 +1,4 @@
-> > > > > > > > > > > >    # SPDX-License-Identifier: GPL-2.0
-> > > > > > > > > > > >    obj-$(CONFIG_QCOM_FASTRPC)      += fastrpc.o
-> > > > > > > > > > > > -fastrpc-objs    := fastrpc_main.o
-> > > > > > > > > > > > \ No newline at end of file
-> > > > > > > > > > > > +fastrpc-objs    := fastrpc_main.o \
-> > > > > > > > > > > > +                fastrpc_debug.o
-> > > > > > > > > > > Only build this file if debugfs is enabled.
-> > > > > > > > > > > 
-> > > > > > > > > > > And again, "debug.c"?
-> > > > > > > > > > I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
-> > > > > > > > > > few more debug specific changes, maybe then I'll need to change the build rules again.
-> > > > > > > > > > > > diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
-> > > > > > > > > > > > new file mode 100644
-> > > > > > > > > > > > index 000000000000..cdb4fc6845a8
-> > > > > > > > > > > > --- /dev/null
-> > > > > > > > > > > > +++ b/drivers/misc/fastrpc/fastrpc_debug.c
-> > > > > > > > > > > > @@ -0,0 +1,156 @@
-> > > > > > > > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > > > > > > > > +// Copyright (c) 2024 Qualcomm Innovation Center.
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +#include <linux/debugfs.h>
-> > > > > > > > > > > > +#include <linux/seq_file.h>
-> > > > > > > > > > > > +#include "fastrpc_shared.h"
-> > > > > > > > > > > > +#include "fastrpc_debug.h"
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +#ifdef CONFIG_DEBUG_FS
-> > > > > > > > > > > Please put the #ifdef in the .h file, not in the .c file.
-> > > > > > > > > > Ack
-> > > > > > > > > > > > +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
-> > > > > > > > > > > > +{
-> > > > > > > > > > > > +        char cur_comm[TASK_COMM_LEN];
-> > > > > > > > > > > > +        int domain_id, size;
-> > > > > > > > > > > > +        char *debugfs_buf;
-> > > > > > > > > > > > +        struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +        memcpy(cur_comm, current->comm, TASK_COMM_LEN);
-> > > > > > > > > > > > +        cur_comm[TASK_COMM_LEN-1] = '\0';
-> > > > > > > > > > > > +        if (debugfs_dir != NULL) {
-> > > > > > > > > > > > +                domain_id = fl->cctx->domain_id;
-> > > > > > > > > > > > +                size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
-> > > > > > > > > > > > +                                current->pid, fl->tgid, domain_id) + 1;
-> > > > > > > > > > > > +                debugfs_buf = kzalloc(size, GFP_KERNEL);
-> > > > > > > > > > > > +                if (debugfs_buf == NULL)
-> > > > > > > > > > > > +                        return;
-> > > > > > > > > > > > +                /*
-> > > > > > > > > > > > +                 * Use HLOS process name, HLOS PID, fastrpc user TGID,
-> > > > > > > > > > > > +                 * domain_id in debugfs filename to create unique file name
-> > > > > > > > > > > > +                 */
-> > > > > > > > > > > > +                snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
-> > > > > > > > > > > > +                        cur_comm, current->pid, fl->tgid, domain_id);
-> > > > > > > > > > > > +                fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
-> > > > > > > > > > > > +                                debugfs_dir, fl, &fastrpc_debugfs_fops);
-> > > > > > > > > > > Why are you saving the debugfs file?  What do you need to do with it
-> > > > > > > > > > > that you can't just delete the whole directory, or look up the name
-> > > > > > > > > > > again in the future when removing it?
-> > > > > > > > > > fl structure is specific to a process using fastrpc driver. The reason to save
-> > > > > > > > > > this debugfs file is to delete is when the process releases fastrpc device.
-> > > > > > > > > > If the file is not deleted, it might flood multiple files in debugfs directory.
-> > > > > > > > > > 
-> > > > > > > > > > As part of this change, only the file that is getting created by a process is
-> > > > > > > > > > getting removed when process is releasing device and I don't think we
-> > > > > > > > > > can clean up the whole directory at this point.
-> > > > > > > > > My 2c: it might be better to create a single file that conains
-> > > > > > > > > information for all the processes instead of that. Or use fdinfo data to
-> > > > > > > > > export process / FD information to userspace.
-> > > > > > > > Thanks for your review. The reason of not having single file for all processes is that
-> > > > > > > > I can run 100s of iteration for any process(say calculator) and every time the properties
-> > > > > > > > of the process can differ(like buffer, session etc.). For this reason, I'm creating and
-> > > > > > > > deleting the debugfs files for every process run.
-> > > > > > > > 
-> > > > > > > > Do you see any advantage of using fdinfo over debugfs? I'm not sure if we can add all
-> > > > > > > > the information(like in debugfs) here.
-> > > > > > > Which information is actually useful / interesting for application
-> > > > > > > developers? If not for the fdinfo, I might still vote for a single file
-> > > > > > > rather than a pile of per-process data.
-> > > Let’s say I am trying to do debugfs read when 10+ or more sessions are
-> > > active per channel, then for pushing data of nth process in a single file, I
-> > > would have to wait for n-1 processes, by that time process data might get
-> > > changed. How do you suggest handling this?
-> > 
-> > I'm yet to see the response to my question, what kind of information are
-> > you outputting? What is actually relevant? Could you please provide an
-> > example from the running system, so that we don't have to guess?
-> > 
-> Debugfs would include information like userspace maps, kernel allocated
-> buffers, information regarding memory donated to DSP for session creation
-> etc. Other relevant information can be added in debugfs on need basis.
+On Tue Apr 8, 2025 at 10:34 PM JST, Alexandre Courbot wrote:
+> On Mon Apr 7, 2025 at 8:01 PM JST, Danilo Krummrich wrote:
+>>> +    /// Extends the vector by the elements of `iter`.
+>>> +    ///
+>>> +    /// This uses [`Iterator::size_hint`] to optimize memory reallocat=
+ions, but will work even with
+>>> +    /// imprecise implementations - albeit in a non-optimal way.
+>>> +    ///
+>>> +    /// This method returns an error if a memory reallocation required=
+ to accommodate the new items
+>>> +    /// failed. In this case, callers must assume that some (but not a=
+ll) elements of `iter` might
+>>> +    /// have been added to the vector.
+>>> +    ///
+>>> +    /// # Note on optimal behavior and correctness
+>>> +    ///
+>>> +    /// The efficiency of this method depends on how reliable the [`It=
+erator::size_hint`]
+>>> +    /// implementation of the `iter` is.
+>>> +    ///
+>>> +    /// It performs optimally with at most a single memory reallocatio=
+n if the lower bound of
+>>> +    /// `size_hint` is the exact number of items actually yielded.
+>>> +    ///
+>>> +    /// If `size_hint` is more vague, there may be as many memory real=
+locations as necessary to
+>>> +    /// cover the whole iterator from the successive lower bounds retu=
+rned by `size_hint`.
+>>> +    ///
+>>> +    /// If `size_hint` signals more items than actually yielded by the=
+ iterator, some unused memory
+>>> +    /// might be reserved.
+>>> +    ///
+>>> +    /// Finally, whenever `size_hint` returns `(0, Some(0))`, the meth=
+od assumes that no more items
+>>> +    /// are yielded by the iterator and returns. This may result in so=
+me items not being added if
+>>> +    /// there were still some remaining.
+>>> +    ///
+>>> +    /// In the kernel most iterators are expected to have a precise an=
+d correct `size_hint`
+>>> +    /// implementation, so this should nicely optimize out for these c=
+ases.
+>>
+>> I agree, hence I think we should enforce to be provided with a guarantee=
+d
+>> correct size hint and simplify the code. I think we should extend the si=
+gnature.
+>>
+>>      pub fn extend<I>(&mut self, iter: I, flags: Flags) -> Result<(), Al=
+locError>
+>>      where
+>>          I: IntoIterator<Item =3D T>,
+>>          I::IntoIter: ExactSizeIterator,
+>>
+>> And implement ExactSizeIterator for IntoIter.
+>>
+>> The only thing that bothers me a bit is that the documentation [1] of
+>> ExactSizeIterator sounds a bit ambiguous.
+>>
+>> It says: "When implementing an ExactSizeIterator, you must also implemen=
+t
+>> Iterator. When doing so, the implementation of Iterator::size_hint *must=
+*
+>> return the exact size of the iterator."
+>>
+>> But it also says: "Note that this trait is a safe trait and as such does=
+ not and
+>> cannot guarantee that the returned length is correct. This means that un=
+safe
+>> code must not rely on the correctness of Iterator::size_hint. The unstab=
+le and
+>> unsafe TrustedLen trait gives this additional guarantee."
+>
+> Yeah ExactSizeIterator is not the solution to this, since it can be
+> implemented without an unsafe block and the implementer is perfectly
+> free to provide an incorrect value - so we cannot trust its result.
+>
+>>
+>> Acknowledging the latter, I think we should implement our own trait for =
+this
+>> instead. Our own version of TrustedLen seems reasonable to me.
+>
+> That sounds reasonable and would greatly simplify the code (and remove
+> most of my fears about its optimization). Let me explore that direction.
 
-Please look at debugfs/dri/0/gem, this file provides semantically more
-or less the same kind of information.
+Well, that turned out to be an interesting rabbit hole.
 
-Also, please be carefull with the "kernel allocated buffers". I'd be
-careful to not to overexpose kernel addresses to userspace.
+Leveraging the existing traits seems a bit difficult:
 
-> > > > > > I have tried to capture all the information that could be useful.
-> > > > > > 
-> > > > > > I can try changes to maintain single file for all active processes. Having this file specific
-> > > > > > to a channel should be fine, right? like fastrpc_adsp, fastrpc_cdsp, etc.? Each file will
-> > > > > > carry information of all processes using that remoteproc.
-> > > > > I think it's a better idea, yes.
-> > > > 
-> > > > Hi all,
-> > > > 
-> > > > I'm adding Deepika <quic_dsi@quicinc.com> to this thread who is reworking
-> > > > on this patch series.
-> > > > 
-> > > > //Ekansh
-> > > > 
-> > > > > > --ekansh
-> > > > > > > > --ekansh
-> > > > > 
-> > > > 
-> > > 
-> > 
-> 
+- `ExactSizeIterator` cannot be implemented for adapters that increase the
+  length of their iterators, because if one of them is already `usize::MAX`=
+ long
+  then the size wouldn't be exact anymore. [1]
 
--- 
-With best wishes
-Dmitry
+- And `TrustedLen` cannot be implemented for adapters that make an iterator
+  shorter, because if the iterator returns more than `usize::MAX` items (i.=
+e.
+  has an upper bound set to `None`) then the adapter can't predict the actu=
+al
+  length. [2]
+
+So in both cases, the model breaks at the limit. OTOH, in our case we want =
+to
+gather items into some collection, meaning that we are quite unlikely to ev=
+er
+reach that limit, as doing so would likely trigger an OOM anyway.
+
+Which means that we need to come with our own unsafe trait
+(`ExactSizeCollectible`?), which will have its own limits. It shall only be
+used to collect things (because we are unlikely to reach a size of `usize::=
+MAX`
+in that context), and will take the lower bound of `size_hint` at face valu=
+e,
+meaning it might collect less than the whole collection if the lower bound =
+of
+the iterator or one of its adapters ever reaches `usize::MAX`. Again in the
+context of a collection this should never happen, but it's still a limitati=
+on.
+
+If we can live with this, then with a bit of code (because the new trait wo=
+uld
+need to be implemented for every iterator and adapter we want to collect ou=
+t
+there) we should be able to provide an efficient, one-pass `collect()` meth=
+od.
+
+Thoughts?
+
+[1] https://doc.rust-lang.org/std/iter/trait.ExactSizeIterator.html#when-sh=
+ouldnt-an-adapter-be-exactsizeiterator
+[2] https://doc.rust-lang.org/core/iter/trait.TrustedLen.html#when-shouldnt=
+-an-adapter-be-trustedlen
+
 
