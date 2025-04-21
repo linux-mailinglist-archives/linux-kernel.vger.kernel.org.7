@@ -1,129 +1,203 @@
-Return-Path: <linux-kernel+bounces-612468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37FBA94F5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:23:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985C0A94F51
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D291891B74
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAC43B27CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A83F26139C;
-	Mon, 21 Apr 2025 10:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4126825D8FE;
+	Mon, 21 Apr 2025 10:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kmN2xSAm"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWJP9rWH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC324261393
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 10:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844F714658C;
+	Mon, 21 Apr 2025 10:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745231003; cv=none; b=WcOY0FW8hVWJsY5vi/xBZWm3x4sT0BkTfXi/+DgEXSF232oOmymljcu4U8iVk49QAMcspina6FoNMBD1vbOiDN0jKCbfCMEn+C4dYuaGxqcc07d7RZ2bnN7wNkdcaZ7VmRP45wQn4tl2/7r+WGOzLoYsdaPpbdTHHjfk+ggMN0A=
+	t=1745230608; cv=none; b=WKgV5x3KjjXXqx5xzHsGCz+qeLHuS/rDin9BgWXwJQhdxFlB9bvM1/8x82fSNn3hhzLLobT+zpEfkZgsszUeIrtqL1Sv5cRTZBDFr7vqU4VRu6FFlp6ZVrNFjbuzARgFI1ezfxRC6mOO+nZHJacoWNFiWVD7lkQl2S5XNqQaJ/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745231003; c=relaxed/simple;
-	bh=uMEDAIJKgdn3nU1kFSVUwatOowWRY5Q6GYnInvNYP5k=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=kCucG/pxe1WSPIPG1sKVozATOgmqUbvb9Um6U/2aU8qKiCy0F0BI2jJOFTWUjbWbUvuo80DcHvL94C3dzv0U+cUO+RWCfmKuzY6Zsfg8s2O7uPrBuE8UAHUNwut7oOISPUDBD1islvcfWPkQ16CKIGVY5DnJ0+2/07yJ8ITqG0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kmN2xSAm; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red54.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1745230984; bh=uMEDAIJKgdn3nU1kFSVUwatOowWRY5Q6GYnInvNYP5k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kmN2xSAmBpp8p/RNOlrcO9hnD08rV4zEz/dJXLxXzjBJPYWdOwUL3T36DeqdEbOqm
-	 cIU/CrXcVz+VNC5iQDchiFAumTYsCZTSQFjSoaGqyAGopss5jILyAwLQWujmV7bJj7
-	 ZM1dFJXmHQRGf2FsaoB1ERQCsMvAQwqMkZ3XFCbI=
-Received: from mail.red54.com ([139.99.8.57])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 41B23877; Mon, 21 Apr 2025 18:16:27 +0800
-X-QQ-mid: xmsmtpt1745230587tp74gul55
-Message-ID: <tencent_0E5DE0122D64CFAD35F51FC3B3433BE94F06@qq.com>
-X-QQ-XMAILINFO: NJYJgedmaB0kBtBBkNR9QDgomEawmQAcHUG5e+2Vo/YfAYcOpU9wgiTRHyWc/E
-	 TZh5Ka3dz61Qx5UHihaUJfFBowv/+j+fRuyLZz/jlfZci4WInTFEzUsAkzLuuY2tSamMO3ICKG1A
-	 xdRkvX7BfKc/QmpW+MYkSXMOgSm6hi+6nzN9hc3rrVA9xWCmYwPvR+JEdmkRvoxkfe7M98QRqhba
-	 Jz0kFZ/yQwICeRLRJeSiqefD6mw+oOUoaL/TN+Jfhlj2WoGaFuLBvWHi5uuvxevCl4XP7GSWz5kk
-	 eH+h12Xoa3Nd/PKxzPXFD1Jab3Y3vCqs4ju18pl0fMlUgb7Af5uD/9F+BXqoyO2DdbzfS8HHBOIc
-	 w6JrgWCNAR3KRxe8n1m1YWgDAAe+9O6J/WVchDcQd1C1nISFNy574+xJXSNl5WIfIWgA3Ovk890N
-	 MwTcXRB6qz+Rv+QBjgTLC0HPoOawO46f3SZKhBWa3EhllxgSv8tOkPLCrKdADIhMypkFRJzCme/c
-	 mIDBPk7mCQoFsbbFmIclPml7pefqzyl2PY6+jd28DPNqfm0KrrxYVsb6bh/IYFDi+jgkKmsnqt1U
-	 nqK2lwF2lHFZ7v4+CIemhIYlcNkzQYEfhdEDXPNVE8YICRDjnE3B3YIlJTt7B2QXja56pt2BsYJ8
-	 1iZAlwlBmJHrQA8XI54Rf2Zn/QP8Z+CwiCcs2kSbHe+TIM9kimhhh+uooiyX+gpEjH3h8yJxSu2F
-	 huH7/OpfcxXbLw/fAbBq55aWb5V0SQmXUiJtfwmhXo4yzAu3EyBc9a8a6NUl4+qnEXXzbMKu7im4
-	 3WzfsKiA6JxJdTTtzv2veovobj9DBJyoMHEQwCSeeTUuBeXGlQiDYOWkejJQSsiaagf+prRd79Vf
-	 zrwCnu5UySpp2G3NIVCjdw0D7DdEylH0AlMNCU43QjNU5YjIo7fCpXlTW5nmcPaQaIl3sb5jy68Z
-	 WGfhj1x8+KtXmWNLzblp/YsQFetTAmNkFCchwAEABrE4SHMurphmtuHyhjAaKC
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-Sender: yeking@red54.com
-From: Yeking@Red54.com
-To: alex@ghiti.fr
-Cc: Yeking@Red54.com,
-	aou@eecs.berkeley.edu,
-	dmaliotaki@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	mick@ics.forth.gr,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com
-Subject: Re: [PATCH] RISC-V: Kconfig: Fix help text of CMDLINE_EXTEND
-Date: Mon, 21 Apr 2025 10:16:24 +0000
-X-OQ-MSGID: <20250421101624.40970-1-Yeking@Red54.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <4b2a6bf1-3642-431b-bb74-3aeae79d17d3@ghiti.fr>
-References: <4b2a6bf1-3642-431b-bb74-3aeae79d17d3@ghiti.fr>
+	s=arc-20240116; t=1745230608; c=relaxed/simple;
+	bh=xhjnF2yWUOPLWpYB/sG9bvUoeOYj4o6fed/kiEyZNCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B6iaHo1FJhud+V4xRzTVeY22SbkvbYL8mRwRtpjxl+FMi0H5ZClhSxCEPBIChpw/uv7aO7CNVMDXGrtbNE8wDdEf1I0iLpUH8QUmhGLdY3EZ5KPF54XQnxyB3nrfAzqsi4YL9iHLovOSaM30lVWpTCvTLEkBpgoevIYlc0UaYp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWJP9rWH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1433DC4CEE4;
+	Mon, 21 Apr 2025 10:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745230608;
+	bh=xhjnF2yWUOPLWpYB/sG9bvUoeOYj4o6fed/kiEyZNCQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MWJP9rWH1s6igmdGH02bzkUY6qLI1SYiQW41EG8E4JgvCJx4AMv03UBoyDkhHTmKJ
+	 QOkrCN5Lu7wrIpc3WdOGktC/mTwoSUytQhL7rR/4CVtHgwGieCLNbziU/pL49gGvDl
+	 al0NJ+fVY5qwUEZbHM2YYJhP6Sl0kzREJ+Tur+PMTt9KtsYkF9Iz0n7jd9VdPO2d4H
+	 K3kbeXUiTa8Je7fQXZTqjjvjnuauWzFW87FmcEFA3qc19pkjrlto65TdFeZrzkdnWp
+	 vWYK9PYnrpoKko8dG4Y/AEWl75IHaveek5Al8GPNRggQyk1U1tguf6SW88UoMtQ00d
+	 KOyvb46aaxieA==
+Date: Mon, 21 Apr 2025 11:16:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v6 05/11] iio: accel: adxl345: add freefall feature
+Message-ID: <20250421111641.1cb83848@jic23-huawei>
+In-Reply-To: <CAFXKEHZNmUsUmheyDdh1bDDf97-7ZTpsm2xqqbwT+hq3K58F5A@mail.gmail.com>
+References: <20250414184245.100280-1-l.rubusch@gmail.com>
+	<20250414184245.100280-6-l.rubusch@gmail.com>
+	<20250418192254.0becd27d@jic23-huawei>
+	<CAFXKEHZNmUsUmheyDdh1bDDf97-7ZTpsm2xqqbwT+hq3K58F5A@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-LoongArch (merged):
-https://lore.kernel.org/all/tencent_7FAF68BF7A2EAD9BFE869ECFDB837F980309@qq.com/
+On Sun, 20 Apr 2025 23:26:47 +0200
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-RISC-V:
-https://lore.kernel.org/all/tencent_A93C7FB46BFD20054AD2FEF4645913FF550A@qq.com/
+> Happy Easter!
+>=20
+> On Fri, Apr 18, 2025 at 8:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
+g> wrote:
+> >
+> > On Mon, 14 Apr 2025 18:42:39 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > Add the freefall detection of the sensor together with a threshold and
+> > > time parameter. A freefall event is detected if the measuring signal
+> > > falls below the threshold.
+> > >
+> > > Introduce a freefall threshold stored in regmap cache, and a freefall
+> > > time, having the scaled time value stored as a member variable in the
+> > > state instance.
+> > > =20
+> > Reading this I wondered whether we had the event code consistent for
+> > freefall detectors... Or indeed inactivity ones (which are kind of simi=
+larish)
+> >
+> > :( We don't it seems.  The issue is that
+> > freefall is actually that all channels are simultaneously under the the=
+ magnitude
+> > threshold, not one of them.  So it should I think be
+> > X_AND_Y_AND_Z not X_OR_Y_OR_Z
+> > =20
+>=20
+> I change to X_AND_Y_AND_Z.
+>=20
+> > This is as opposed to activity detectors which tend to be any axis shows
+> > activity and X_OR_Y_OR_Z applies.
+> >
+> > Anyhow upshot is I think I lead you astray on this and we should make t=
+his
+> > one IIO_MOD_X_AND_Y_AND_Z
+> >
+> > A few other things inline.
+> >
+> > Unfortunately we don't deal with these events that often so I forget
+> > what we did before :(
+> > =20
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > ---
+> > >  drivers/iio/accel/adxl345_core.c | 125 +++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 125 insertions(+)
+> > >
+> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
+l345_core.c
+> > > index c464c87033fb..ae02826e552b 100644
+> > > --- a/drivers/iio/accel/adxl345_core.c
+> > > +++ b/drivers/iio/accel/adxl345_core.c
+> > > @@ -75,6 +75,7 @@ struct adxl345_state {
+> > >       u32 tap_duration_us;
+> > >       u32 tap_latent_us;
+> > >       u32 tap_window_us;
+> > > +     u32 ff_time_ms;
+> > >
+> > >       __le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned=
+(IIO_DMA_MINALIGN);
+> > >  };
+> > > @@ -96,6 +97,14 @@ static struct iio_event_spec adxl345_events[] =3D {
+> > >                       BIT(IIO_EV_INFO_RESET_TIMEOUT) |
+> > >                       BIT(IIO_EV_INFO_TAP2_MIN_DELAY),
+> > >       },
+> > > +     {
+> > > +             /* free fall */
+> > > +             .type =3D IIO_EV_TYPE_MAG,
+> > > +             .dir =3D IIO_EV_DIR_FALLING,
+> > > +             .mask_shared_by_type =3D BIT(IIO_EV_INFO_ENABLE) |
+> > > +                     BIT(IIO_EV_INFO_VALUE) |
+> > > +                     BIT(IIO_EV_INFO_PERIOD),
+> > > +     }, =20
+> > This is creating separate per axis enables, values and period. Does tha=
+t make
+> > sense?  If not you need to spin a kind of virtual channel (with mod X_A=
+ND_Y_AND_Z)
+> > and add the events to it.
+> >
+> > See how the sca3000 does it for example. =20
+>=20
+> Hum, I'm not sure if I understand you correctly. In my driver, I'm
+> using .mask_shared_by_type, and I verified there appears only one
+> enable, one value and one period handle.
+> # ls -l /sys/bus/iio/devices/iio:device0/events/
+> total 0
+> ...
+> -rw-r--r-- 1 root root 4096 Apr 20 21:59 in_accel_mag_falling_en
+> -rw-r--r-- 1 root root 4096 Apr 20 21:59 in_accel_mag_falling_period
+> -rw-r--r-- 1 root root 4096 Apr 20 21:59 in_accel_mag_falling_value
+> ...
+>=20
+> In the sources of sca3000.c I saw this setup with .mask_separate. So,
+> there I'd expect to see separate enables per axis, or am I wrong? In
+> the case of the ADXL345, there should only be one freefall enable (in
+> my driver) and not per axis. So, isn't this what is currently there?
+>=20
+> So far I only adjust the or'ing to and'ing the axis for freefall.
 
-PowerPC:
-https://lore.kernel.org/all/tencent_6E57A00F6D56CF8475CF9FD13370FBC1CF06@qq.com/
+So this is a messy corner of the ABI (because these are tricky to describe).
+Shared by type usually means there is one attribute applying to all the
+axis, but that they are reported separately, or potentially multiple events
+/ _OR_ form used if we can distinguish exactly what the event is.
 
-SH:
-https://lore.kernel.org/all/tencent_40B6A6E7C79AEEEFEC79A07DE00724909A05@qq.com/
+In this case there is no way for userspace to anticipate that the event
+that might be generate is X_AND_Y_AND_Z.  So for this
+the ABI solution we came up with is that virtual channel and separate.
 
-ARM (rejected):
-https://lore.kernel.org/all/tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com/
+So you get something along the lines of
+in_accel_x&y&z_mag_falling_en
+in_accel_x&y&z_mag_falling_period
+etc
 
-ARM64 (rejected):
-https://lore.kernel.org/all/tencent_1873443BEECF45E0336D4C4F8C35C19FEB06@qq.com/
+The tricky remaining corner is this only makes sense if we always enable
+all axis (which is typical for a freefall detector). If we get a device
+that oddly has per axis free fall enables, then it would be hard and I
+might argue nonsense to enable them separately anyway.  Not true
+here though I think.
 
-Russell King (Oracle) wrote:
-"
-ARM gained support for CMDLINE_EXTEND in commit 4394c1244249 ("ARM:
-6893/1: Allow for kernel command line concatenation") dated 4 May
-2011. In this commit, CONFIG_CMDLINE _prefixes_ the boot loader
-supplied arguments.
+Note that we may well have drivers using the ABI slightly differently for
+freefall events which will be at least partly because I'd forgotten how
+we resolved all this complexity long ago (that sca3000 driver is ancient!)
+ABI like this is tricky to fix up, but we might want to consider some dupli=
+cation
+in those drivers so we standardize on one form for freefall (even if we hav=
+e some
+stray ABI from other possible solutions).
 
-In commit 34b82026a507 ("fdt: fix extend of cmd line") dated 13
-April 2016, which _post_ _dates_ the introduction on ARM, and the
-commit even states that it's fixing the lack of appending compared
-to ARM, this adds code to drivers/of to _append_ CONFIG_CMDLINE
-to the FDT arguments which come from the boot loader.
+What we should definitely do is pull together some documentation on multi c=
+hannel
+event handling as the ABI docs are probably not enough.
 
-It is DT that implemented this wrongly.
-
-No, we are not going to change arch/arm to conform to something
-that was implemented in a broken way. drivers/of needs fixing
-to actually implement it as it was *originally* intended - and
-there is five years of arch/arm doing this *before* DT started
-to do it.
-
-If drivers/of maintainers also don't want to change, then I'm
-sorry, but you have to then put up with the fact that it got
-wrongly implemented by drivers/of and thus has a different
-behaviour there.
-"
+Jonathan
 
 
