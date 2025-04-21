@@ -1,93 +1,170 @@
-Return-Path: <linux-kernel+bounces-612684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6524A95296
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD25A9529F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0DC1887E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A873B46B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB9A13D279;
-	Mon, 21 Apr 2025 14:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5491714A1;
+	Mon, 21 Apr 2025 14:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3Jo7K93"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46A717BB6;
-	Mon, 21 Apr 2025 14:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFD213A418;
+	Mon, 21 Apr 2025 14:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745245045; cv=none; b=Rvki+kY9FJuzx2Jc60wzvgBFEziw3N6ZHsScyMjwXWSx945QQvY+VHvAinDGekhPZBiwCoyKuYP15YrVN+GM6n+6AkfCyS0wz9XVGwGXs87UMIT4Jwe6Mv1KKpp+9/SbCEhPcCgN45fKojZO+Qctkag5p+prkod0IIDE+R2r/2o=
+	t=1745245185; cv=none; b=jQDXtWcCUBdMY76WIOZuvn5SLLKJ1xzTUOGT9ULEUV3cQHzcficVR/ztqnkEBM3M0NSdzT+0JKSYUGwiJpIz8lakKa34LD7/NDpdFW7yLk2X0wuoMith1TVvTbsJYN7W7vap6eoMOwRBNUKBOM3fyfRnscDtDHjs+Bo1ic+NADs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745245045; c=relaxed/simple;
-	bh=KyfHBIohRNr6+NpQwz6UuNu7wEu5lGIl5uEUC8dbxV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+cXmh43WZYx5Crv0ej13YGFBbvbZZAswXrdYquz8oLMmx0HUzKPFWuqQNKooOWpm2PXsNHs49rfKMPUdYXQ2gGCYd1rEencPUF2aK51T6v6GaN3O8ldNnCx/UQ1nSSWpvz6BZSvds/A6A5+W1rrS2xcrt6/dBrGHBj9x3Cl+LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A01ADC4CEE4;
-	Mon, 21 Apr 2025 14:17:24 +0000 (UTC)
-Date: Mon, 21 Apr 2025 10:19:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com
-Subject: Re: [PATCH] tracing: fix oob write in trace_seq_to_buffer()
-Message-ID: <20250421101912.4fd7c11a@gandalf.local.home>
-In-Reply-To: <20250421134936.89104-1-aha310510@gmail.com>
-References: <20250421134936.89104-1-aha310510@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745245185; c=relaxed/simple;
+	bh=Tr9+pqiq4D1eXz6CFkFBVMqYsvom8aBnfD6QBxYvocg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhanomHGxtcgxml67b4VsGrQ5VBqwOgnIOAq0C6rMuvXQaBLPBqMxGzFu2CFSKAXTXBgTtyKcmIUgV8a6/Dua4pJQxrQbVytBXZp7VYALQtgj62Wjh0Amvs6+IAkM4iOk5RzNIrKI47/po2/7HCYtJI6sOXGju/HTQmxFi1uVgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3Jo7K93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51A95C4CEE4;
+	Mon, 21 Apr 2025 14:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745245185;
+	bh=Tr9+pqiq4D1eXz6CFkFBVMqYsvom8aBnfD6QBxYvocg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t3Jo7K93LVgH9rdJjTmiOPAouPdZfKVSSsI7tt0fE5/7NBNVaKUOx2TsqBgxaCnsx
+	 Z7XXaeoqdpcPl/j8zO29nasbGPGUeZReKOfPCG6Ag71sWYNoH69DrPvAqv6XHr5h4+
+	 c+8qagFwgMr0+CDx/i7qjqdHTkccn08kGgN1SR9suu+8LjldZMoLT4aNJ7bqJ5pfez
+	 XQFZ1fmQeeyR5vpQHfmuVM4+O+Tcys00pb6Xq31Y6QNAr4YSADBc0pEUsdetpE8Reo
+	 mWdp8kB+FdDO3RCPww9QmdbioUw8FXut2rQ1PvdJcPYRb7qQvxIZB0P1JAhK30yoyY
+	 nDS0mdRdLjsHw==
+Date: Mon, 21 Apr 2025 15:19:37 +0100
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Mustafa Ismail <mustafa.ismail@intel.com>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Lee Trager <lee@trager.us>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	Wenjun Wu <wenjun1.wu@intel.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Madhu Chittim <madhu.chittim@intel.com>,
+	Josh Hay <joshua.a.hay@intel.com>,
+	Milena Olech <milena.olech@intel.com>, pavan.kumar.linga@intel.com,
+	"Singhai, Anjali" <anjali.singhai@intel.com>,
+	Phani R Burra <phani.r.burra@intel.com>
+Subject: Re: [PATCH iwl-next 06/14] libeth: add bookkeeping support for
+ control queue messages
+Message-ID: <20250421141937.GI2789685@horms.kernel.org>
+References: <20250408124816.11584-1-larysa.zaremba@intel.com>
+ <20250408124816.11584-7-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408124816.11584-7-larysa.zaremba@intel.com>
 
-On Mon, 21 Apr 2025 22:49:36 +0900
-Jeongjun Park <aha310510@gmail.com> wrote:
+On Tue, Apr 08, 2025 at 02:47:52PM +0200, Larysa Zaremba wrote:
+> From: Phani R Burra <phani.r.burra@intel.com>
+> 
+> All send control queue messages are allocated/freed in libeth itself
+> and tracked with the unique transaction (Xn) ids until they receive
+> response or time out. Responses can be received out of order, therefore
+> transactions are stored in an array and tracked though a bitmap.
+> 
+> Pre-allocated DMA memory is used where possible. It reduces the driver
+> overhead in handling memory allocation/free and message timeouts.
+> 
+> Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+> Signed-off-by: Phani R Burra <phani.r.burra@intel.com>
+> Co-developed-by: Victor Raj <victor.raj@intel.com>
+> Signed-off-by: Victor Raj <victor.raj@intel.com>
+> Co-developed-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+> Signed-off-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+> Co-developed-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> ---
+>  drivers/net/ethernet/intel/libeth/controlq.c | 578 +++++++++++++++++++
+>  include/net/libeth/controlq.h                | 169 ++++++
+>  2 files changed, 747 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/intel/libeth/controlq.c b/drivers/net/ethernet/intel/libeth/controlq.c
 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 8ddf6b17215c..8ba6ea38411d 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -1827,6 +1827,8 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
->  	len = trace_seq_used(s) - s->readpos;
->  	if (cnt > len)
->  		cnt = len;
-> +	if (cnt > PAGE_SIZE)
-> +		return -EINVAL;
+...
 
-You fixed the wrong location. The caller should know how much size the
-buffer is, and that's passed in by cnt.
+> +/**
+> + * libeth_ctlq_xn_deinit - deallocate and free the transaction manager resources
+> + * @xnm: pointer to the transaction manager
+> + * @ctx: controlq context structure
+> + *
+> + * All Rx processing must be stopped beforehand.
+> + */
+> +void libeth_ctlq_xn_deinit(struct libeth_ctlq_xn_manager *xnm,
+> +			   struct libeth_ctlq_ctx *ctx)
+> +{
+> +	bool must_wait = false;
+> +	u32 i;
+> +
+> +	/* Should be no new clear bits after this */
+> +	spin_lock(&xnm->free_xns_bm_lock);
+> +		xnm->shutdown = true;
 
->  	memcpy(buf, s->buffer + s->readpos, cnt);
->  
->  	s->readpos += cnt;
+nit: The line above is not correctly indented.
 
-The correct fix would be:
+     Flagged by Smatch.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index b6e40e8791fa..c23b5ab27314 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6729,7 +6864,8 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
- 		/* Copy the data into the page, so we can start over. */
- 		ret = trace_seq_to_buffer(&iter->seq,
- 					  page_address(spd.pages[i]),
--					  trace_seq_used(&iter->seq));
-+					  min(trace_seq_used(&iter->seq),
-+					      PAGE_SIZE));
- 		if (ret < 0) {
- 			__free_page(spd.pages[i]);
- 			break;
+> +
+> +	for_each_clear_bit(i, xnm->free_xns_bm, LIBETH_CTLQ_MAX_XN_ENTRIES) {
+> +		struct libeth_ctlq_xn *xn = &xnm->ring[i];
+> +
+> +		spin_lock(&xn->xn_lock);
+> +
+> +		if (xn->state == LIBETH_CTLQ_XN_WAITING ||
+> +		    xn->state == LIBETH_CTLQ_XN_IDLE) {
+> +			complete(&xn->cmd_completion_event);
+> +			must_wait = true;
+> +		} else if (xn->state == LIBETH_CTLQ_XN_ASYNC) {
+> +			__libeth_ctlq_xn_push_free(xnm, xn);
+> +		}
+> +
+> +		spin_unlock(&xn->xn_lock);
+> +	}
+> +
+> +	spin_unlock(&xnm->free_xns_bm_lock);
+> +
+> +	if (must_wait)
+> +		wait_for_completion(&xnm->can_destroy);
+> +
+> +	libeth_ctlq_xn_deinit_dma(&ctx->mmio_info.pdev->dev, xnm,
+> +				  LIBETH_CTLQ_MAX_XN_ENTRIES);
+> +	kfree(xnm);
+> +	libeth_ctlq_deinit(ctx);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(libeth_ctlq_xn_deinit, "LIBETH_CP");
 
-Especially since the trace_seq_to_buffer() code should be moved out of this
-file and should have no idea how big the buffer passed in is.
-
--- Steve
+...
 
