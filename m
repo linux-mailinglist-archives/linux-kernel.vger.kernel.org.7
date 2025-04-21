@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-613015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C32A956C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B135A95668
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7533B135B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDAF3A90A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420A1EF0B0;
-	Mon, 21 Apr 2025 19:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B11E9B0D;
+	Mon, 21 Apr 2025 19:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=psihoexpert.ro header.i=@psihoexpert.ro header.b="YL3W8wIM"
-Received: from mx1.wiredblade.com (mx1.wiredblade.com [162.216.242.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFxyqAW2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815CBCA4B;
-	Mon, 21 Apr 2025 19:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.216.242.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7C2C2ED
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 19:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745264146; cv=none; b=ndN7WKlTQDiasBW/lo1EqVpVMZkxbEx239CDtzpefHzjrLhG2i+FRpKIYIoy9p3d4SNMpxytX96Fzcatbcyq37nh/4kQgDLD6mx6DTHpgvJFYpSNN4Y7q0D0YY28cpKiY04fU1v7/GbPF37jZQRCnQtnSInVBL0RuyeSQEozP6c=
+	t=1745262189; cv=none; b=T3LbMYtX+PKrfFKLQ3Les/aVuvzvK0UMQRMuebcw3K08YT0nZBpRudjG/NISavMq2q/EAGAVPjrKCZj1dYUyCPoYWYf25RnUp8KQ/xqSxnru8jSUURNMxaxhzzkmpxVhfMwkKtqSASzTwuMU1bcpq+bbgcHxYdqo3LDPktk0/Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745264146; c=relaxed/simple;
-	bh=aaLBMNZvy8fZ7qtxsrSTeduLpEzsO2UTknbaqwRyz0A=;
+	s=arc-20240116; t=1745262189; c=relaxed/simple;
+	bh=bmCgWfnoZUXZEf+W3FrWlYU9o2ER7cVzCqVmQJ6BiVE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tH6CPC8Bh3+IOc75zIAXCNAWnbBlkWh4mnoM614iI6FOhj/NeKYE1jq2fFVGFgTige/oRJOk0WlT0pqcjuKujvC3CpEts/kSW1oIpyJFyGFANuWw9EKLmrpyuqsr+qhIlr+6PssVtLTyKJEXGDkSQSqNQp48WcvxKwH8t+oe96g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=psihoexpert.ro; spf=pass smtp.mailfrom=psihoexpert.ro; dkim=pass (2048-bit key) header.d=psihoexpert.ro header.i=@psihoexpert.ro header.b=YL3W8wIM; arc=none smtp.client-ip=162.216.242.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=psihoexpert.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=psihoexpert.ro
-dkim-signature: v=1; a=rsa-sha256; d=psihoexpert.ro; s=dynu;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:In-Reply-To:References;
-	bh=GNwNTomk2L+xH30uYfzu2FmEUpjRULKpLyKzAyLVhg0=;
-	b=YL3W8wIMfPPohLo9wQMqFQwhdCH3ok766H+QsfkpxktZ/36AQVcVd6jOkLW4ADsDkE1ZdO9h6Cvj5HUPblaNQUYPYwZ41OUSHsqR9BQxp0wfOJ8d/dAtKMza1185XfUO+cO5pmo0VoCVFC30RBL1QZfoRUzQyV+2YsEJqps7YyRA066JZyh7YCUXxZ0EoUO9FPPOZLvhtjvA4BV5JTE2FHanhSWdzyPlehi8bXck8P0Zr5q+sT/SQuYBMS
-	4O1/lA3MPH4REv8xDuqM4LaSRK2B4sdBQSeWCTClcGDH4oqu9yOhRlg4zxDS7vMRKROKZnO7JS7V08Y72lJY7KB8tN2A==
-Received: from GRAPHRT (188-24-192-106.rdsnet.ro [188.24.192.106])
-	by mx1.wiredblade.com with ESMTPSA
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
-	; Mon, 21 Apr 2025 19:02:25 +0000
-Date: Mon, 21 Apr 2025 22:02:16 +0300
-From: Marius Dinu <marius@psihoexpert.ro>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Nhat Pham <nphamcs@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>, m95d@psihoexpert.ro
-Subject: Re: [PATCH] crypto: scomp - Fix off-by-one bug when calculating last
- page
-Message-ID: <aAaWODz21QmhPvpo@GRAPHRT>
-References: <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
- <Z9mB5IbNEdNdtmUp@google.com>
- <SA3PR11MB81206531E9B3C7F13F5740A2C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
- <Z9nECMZW67F8XYoV@google.com>
- <SA3PR11MB8120A474C20104FF22CCE396C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
- <Z9n-OnGPK7BOdGxR@google.com>
- <SA3PR11MB81202E35C1CAF0409711A1B0C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
- <20250420140116.b6db3aafcc2f99569190c97e@linux-foundation.org>
- <CAKEwX=P39kvB9Ei1xt+iOcDRMr32=ujGiKKa=e947k0MyJ7xZA@mail.gmail.com>
- <aAW8E9NrKWq1Xk2w@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8TQvIeEFEkZT+UJSgnohFSVEJ8NoMPgfiWz+RXg2kiRHnOoj+ThAuc5dxSR0LUcKAAcA+eRcrCbRu2HmuG9wJAjaH6gt9C69/UtmWN9hPXrT/g+NhlcRITS0oITneAQ4ldVd3/VcBTw3Hex+OX55QndpOzawmDdFnxE6LERsls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFxyqAW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B091C4CEE4;
+	Mon, 21 Apr 2025 19:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745262189;
+	bh=bmCgWfnoZUXZEf+W3FrWlYU9o2ER7cVzCqVmQJ6BiVE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BFxyqAW2k4aspOo+lhpNaTzfRAU4T+P4XmhefK5tB6Je5b38vkRuM+rVWuDddFyZL
+	 WlrzT71r5O+hDC5nHJg/II84+nNuGuplI9iT4MU9yownp/p+ax+05643WBqnTQT65v
+	 Ub3+nD9nUXChEOHy69AjHOldVgVDRqThtmDwC7FvwwEvWDd11ndDeeIOE2SdiKtnJk
+	 jmNC7DaWlVH2IRRWFxg+k9FyHbpoDQ+QYUyydUV1IbFgFi1JW6Qf2xNpMuKT+rFthm
+	 z17mF1Ll8P725Sou9eX7Crspw7cx2JE27lsI/m1QmUNCVxhhuX1n8MScPPRZ1ifZH0
+	 G6Z8NA47zHEZQ==
+Date: Mon, 21 Apr 2025 09:03:08 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched_ext: Track currently locked rq
+Message-ID: <aAaWbDu-WKEhQYq_@slm.duckdns.org>
+References: <20250420193106.42533-1-arighi@nvidia.com>
+ <20250420193106.42533-2-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,62 +57,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aAW8E9NrKWq1Xk2w@gondor.apana.org.au>
+In-Reply-To: <20250420193106.42533-2-arighi@nvidia.com>
 
-On Mon, 2025-04-21 11.31.31 ++0800, Herbert Xu wrote:
-> On Sun, Apr 20, 2025 at 04:35:44PM -0700, Nhat Pham wrote:
-> >
-> > Anyhow, this looks like a crypto/compression infra bug. Herbert, does
-> > this ring any bell for you?
-> 
-> Yes this looks like an off-by-one bug in the new scomp scratch
-> code.
-> 
-> ---8<---
-> Fix off-by-one bug in the last page calculation for src and dst.
-> 
-> Reported-by: Nhat Pham <nphamcs@gmail.com>
-> Fixes: 2d3553ecb4e3 ("crypto: scomp - Remove support for some non-trivial SG lists")
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> 
-> diff --git a/crypto/scompress.c b/crypto/scompress.c
-> index 5762fcc63b51..36934c78d127 100644
-> --- a/crypto/scompress.c
-> +++ b/crypto/scompress.c
-> @@ -215,8 +215,8 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
->  			spage = nth_page(spage, soff / PAGE_SIZE);
->  			soff = offset_in_page(soff);
+Hello,
+
+On Sun, Apr 20, 2025 at 09:30:21PM +0200, Andrea Righi wrote:
+...
+> +static inline struct rq *scx_locked_rq(void)
+> +{
+> +	return __this_cpu_read(locked_rq);
+> +}
+> +
+> +#define SCX_CALL_OP(mask, rq, op, args...)					\
+>  do {										\
+> +	update_locked_rq(rq);							\
+
+Minor but why not
+
+        if (rq)
+                update_locked_rq(rq);
+
+here too to be symmetric?
+
+>  	if (mask) {								\
+>  		scx_kf_allow(mask);						\
+>  		scx_ops.op(args);						\
+> @@ -1125,11 +1155,15 @@ do {										\
+>  	} else {								\
+>  		scx_ops.op(args);						\
+>  	}									\
+> +	if (rq)									\
+> +		update_locked_rq(NULL);						\
+
+Or alternatively, drop `if (rq)` from both places. That's simpler and given
+that all the hot paths are called with rq locked, that may be *minutely*
+faster.
+
+> @@ -2174,7 +2210,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+>  	WARN_ON_ONCE(*ddsp_taskp);
+>  	*ddsp_taskp = p;
 >  
-> -			n = slen / PAGE_SIZE;
-> -			n += (offset_in_page(slen) + soff - 1) / PAGE_SIZE;
-> +			n = (slen - 1) / PAGE_SIZE;
-> +			n += (offset_in_page(slen - 1) + soff) / PAGE_SIZE;
->  			if (PageHighMem(nth_page(spage, n)) &&
->  			    size_add(soff, slen) > PAGE_SIZE)
->  				break;
-> @@ -243,9 +243,9 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
->  			dpage = nth_page(dpage, doff / PAGE_SIZE);
->  			doff = offset_in_page(doff);
->  
-> -			n = dlen / PAGE_SIZE;
-> -			n += (offset_in_page(dlen) + doff - 1) / PAGE_SIZE;
-> -			if (PageHighMem(dpage + n) &&
-> +			n = (dlen - 1) / PAGE_SIZE;
-> +			n += (offset_in_page(dlen - 1) + doff) / PAGE_SIZE;
-> +			if (PageHighMem(nth_page(dpage, n)) &&
->  			    size_add(doff, dlen) > PAGE_SIZE)
->  				break;
->  			dst = kmap_local_page(dpage) + doff;
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> -	SCX_CALL_OP_TASK(SCX_KF_ENQUEUE, enqueue, p, enq_flags);
+> +	SCX_CALL_OP_TASK(SCX_KF_ENQUEUE, rq, enqueue, p, enq_flags);
 
-Tested the patch with git master branch on the same SBC as my bug report.
-It works. stress-ng --pageswap doesn't crash anymore.
+Let's do SCX_CALL_OP_TASK(SCX_FK_ENQUEUE, enqueue, rq, p, enq_flags) so that
+the static parts of the invocation are grouped together and we usually have
+@rq and @p next to each other when they're used as parameters.
 
-Thank you!
+Thanks.
 
-Marius Dinu
-
+-- 
+tejun
 
