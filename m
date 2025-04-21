@@ -1,259 +1,227 @@
-Return-Path: <linux-kernel+bounces-612165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFFEA94BAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 05:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAEAA94BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 05:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A81890FD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 03:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF4A1891B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 03:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366132561CE;
-	Mon, 21 Apr 2025 03:37:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555A125743B;
+	Mon, 21 Apr 2025 03:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EG7Ld6U4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBBFF507
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 03:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF223BA36;
+	Mon, 21 Apr 2025 03:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745206636; cv=none; b=O7huJsRwCBr3aiJibVftylK2sctBu3+LkWAqkLDdWZX7nxnMpj9uLHD/POrtlTAxtl9ddY3neydqd/b9FtXCMVwwwzXJawEbleTGjaRA//ag0F1wsuUx9FNwAeC8Xjl6Gj6QCaE6hH1L7BrxoKMImZRVcZPDhCFdxXx177cJYKE=
+	t=1745207535; cv=none; b=mn1Vpk7Uc6w3jyLSyzY00WNNG4KRBPVgF4lF/SNnzFGtTwSsKXMJndBOAsOE31KDPASaN2jYXAFccRwKictW5iswL/uLmNXNa7MvlFnJ5nN5mQDdP1GQfJRmPrhvmAvdOySxqlSkwDYpO0fDdckQrMHQ0EPH9psmbf2FmvF11eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745206636; c=relaxed/simple;
-	bh=9M6FCK0jC4l932kiPOdskCcpIjFKgQR/1Z9ai4Tre4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LkfO6HikvC47ct9+05KtdjbXsdAH5bEaHqzrwyNyAo8l1CsavG/pga+UrgAmENX1yEEjdUd3mCbIlibs8FhwetEAVLqJGFRhF1/6BQKEWY8xQaH9lZsgeoH3Lx8/Ak62bGuc9rLFpyRkCksugyviwWbN5+OfGuvp4uDQaipseWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zgrdb26KJz4f3jtJ
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 11:36:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CFE631A06DC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 11:37:09 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgB32l5jvQVo5SppKA--.54381S4;
-	Mon, 21 Apr 2025 11:37:08 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: akpm@linux-foundation.org
-Cc: song@kernel.org,
-	joel.granados@kernel.org,
-	tglx@linutronix.de,
-	dianders@chromium.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] watchdog: Fix watchdog may detect false positive of softlockup
-Date: Mon, 21 Apr 2025 03:50:21 +0000
-Message-Id: <20250421035021.3507649-1-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745207535; c=relaxed/simple;
+	bh=SKy360k2jX7Gti4B3tJCD993GCWcNTHmk1yoWFKrfh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QgO4LJdZ+cIdD2oYP0xHAoiJJyXOqpupfqxrxOUtG2dK5DmuO3H+3xYsz0Gvo4hnFb7GIgdshEe7y9LpxJvPv+ChA59YTV8DtMgEDxNOLADPsmjXY4eLA3dx1xRm6l32YrKBqOyhxm07oqoTUG+VsamdRb935D383vHM3+ei4xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EG7Ld6U4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=HPPSSA49F2GQFYt4Y3+jo5LCCyAfhAv7rGkUEFsAg2c=; b=EG7Ld6U4DAUbtxsn3tkr+eGn0v
+	kxXkR+MHBvDsceOcYb96/Ypg4Xa6x74Itezu5DqfP/dwzSraKK5DlytGlTIJyNilAyIkZbmiwBcFo
+	Hb21edNODFSLNmnDF0vQ13X5CSFfozaHGwSt6bTVs+BO/94px/OGwnzQNPeQ105jPJF2aD+ytX0NS
+	YwGXBLQycV44ptuCT9l0BdbRIP34dg02Dmt3QY4Tq1goySGanPRlspvFoYrisyUghzDrML4xDoJyp
+	mLs5CjgmNUuATiEC/D0CxhLLu2skBjFVKAFutNuEMzBA8nk+qUyWcofA4eYX/6fffIPDelsC79Hop
+	BhMvra/w==;
+Received: from [50.39.124.201] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u6iCK-0000000Azui-2RFo;
+	Mon, 21 Apr 2025 03:51:59 +0000
+Message-ID: <f0b218f4-7379-4fa5-93e4-a1c9dd4c411c@infradead.org>
+Date: Sun, 20 Apr 2025 20:51:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 17/19] famfs_fuse: Add famfs metadata documentation
+To: John Groves <John@Groves.net>, Dan Williams <dan.j.williams@intel.com>,
+ Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, "Darrick J . Wong"
+ <djwong@kernel.org>, Luis Henriques <luis@igalia.com>,
+ Jeff Layton <jlayton@kernel.org>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>,
+ Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
+ <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-18-john@groves.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250421013346.32530-18-john@groves.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB32l5jvQVo5SppKA--.54381S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF4Uur1DAF1fKw43Zr15twb_yoWxCrykpa
-	yayFy3tw4Utrs5XrW3J3ZrXF1kCa48XrWUXFnrGw1SkFnYkr1rJryIkF4FgayDArZxXF1Y
-	qa4FqrWfJayUtF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-When updating `watchdog_thresh`, there is a race condition between writing
-the new `watchdog_thresh` value and stopping the old watchdog timer. If the
-old timer triggers during this window, it may falsely detect a softlockup
-due to the old interval and the new `watchdog_thresh` value being used. The
-problem can be described as follow:
 
- # We asuume previous watchdog_thresh is 60, so the watchdog timer is
- # coming every 24s.
-echo 10 > /proc/sys/kernel/watchdog_thresh (User space)
-|
-+------>+ update watchdog_thresh (We are in kernel now)
-	|
-	|	  # using old interval and new `watchdog_thresh`
-	+------>+ watchdog hrtimer (irq context: detect softlockup)
-		|
-		|
-	+-------+
-	|
-	|
-	+ softlockup_stop_all
 
-To fix this problem, introduce a shadow variable for `watchdog_thresh`. The
-update to the actual `watchdog_thresh` is delayed until after the old timer
-is stopped, preventing false positives.
+On 4/20/25 6:33 PM, John Groves wrote:
+> From: John Groves <John@Groves.net>
+> 
+> This describes the fmap metadata - both simple and interleaved
+> 
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  fs/fuse/famfs_kfmap.h | 90 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 85 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/fuse/famfs_kfmap.h b/fs/fuse/famfs_kfmap.h
+> index 325adb8b99c5..7c8d57b52e64 100644
+> --- a/fs/fuse/famfs_kfmap.h
+> +++ b/fs/fuse/famfs_kfmap.h
+> @@ -7,10 +7,90 @@
+>  #ifndef FAMFS_KFMAP_H
+>  #define FAMFS_KFMAP_H
+>  
+> +
+> +/* KABI version 43 (aka v2) fmap structures
+> + *
+> + * The location of the memory backing for a famfs file is described by
+> + * the response to the GET_FMAP fuse message (devined in
 
-The following testcase may help to understand this problem.
+                                                 divined
 
----------------------------------------------
-echo RT_RUNTIME_SHARE > /sys/kernel/debug/sched/features
-echo -1 > /proc/sys/kernel/sched_rt_runtime_us
-echo 0 > /sys/kernel/debug/sched/fair_server/cpu3/runtime
-echo 60 > /proc/sys/kernel/watchdog_thresh
-taskset -c 3 chrt -r 99 /bin/bash -c "while true;do true; done" &
-echo 10 > /proc/sys/kernel/watchdog_thresh &
----------------------------------------------
+> + * include/uapi/linux/fuse.h
+> + *
+> + * There are currently two extent formats: Simple and Interleaved.
+> + *
+> + * Simple extents are just (devindex, offset, length) tuples, where devindex
+> + * references a devdax device that must retrievable via the GET_DAXDEV
 
-The test case above first removes the throttling restrictions for real-time
-tasks. It then sets watchdog_thresh to 60 and executes a real-time task
-,a simple while(1) loop, on cpu3. Consequently, the final command gets
-blocked because the presence of this real-time thread prevents kworker:3
-from being selected by the scheduler. This eventually triggers a softlockup
-detection on cpu3 due to watchdog_timer_fn operating with inconsistent
-variable - using both the old interval and the updated watchdog_thresh
-simultaneously.
+                                      must be
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
-Changes in v3:
-1. Replace watchdog_thresh_shadow with watchdog_thresh_next.
-2. Add comment to explain the role of watchdog_thresh_next.
+> + * message/response.
+> + *
+> + * The extent list size must be >= file_size.
+> + *
+> + * Interleaved extents merit some additional explanation. Interleaved
+> + * extents stripe data across a collection of strips. Each strip is a
+> + * contiguous allocation from a single devdax device - and is described by
+> + * a simple_extent structure.
+> + *
+> + * Interleaved_extent example:
+> + *   ie_nstrips = 4
+> + *   ie_chunk_size = 2MiB
+> + *   ie_nbytes = 24MiB
+> + *
+> + * ┌────────────┐────────────┐────────────┐────────────┐
+> + * │Chunk = 0   │Chunk = 1   │Chunk = 2   │Chunk = 3   │
+> + * │Strip = 0   │Strip = 1   │Strip = 2   │Strip = 3   │
+> + * │Stripe = 0  │Stripe = 0  │Stripe = 0  │Stripe = 0  │
+> + * │            │            │            │            │
+> + * └────────────┘────────────┘────────────┘────────────┘
+> + * │Chunk = 4   │Chunk = 5   │Chunk = 6   │Chunk = 7   │
+> + * │Strip = 0   │Strip = 1   │Strip = 2   │Strip = 3   │
+> + * │Stripe = 1  │Stripe = 1  │Stripe = 1  │Stripe = 1  │
+> + * │            │            │            │            │
+> + * └────────────┘────────────┘────────────┘────────────┘
+> + * │Chunk = 8   │Chunk = 9   │Chunk = 10  │Chunk = 11  │
+> + * │Strip = 0   │Strip = 1   │Strip = 2   │Strip = 3   │
+> + * │Stripe = 2  │Stripe = 2  │Stripe = 2  │Stripe = 2  │
+> + * │            │            │            │            │
+> + * └────────────┘────────────┘────────────┘────────────┘
+> + *
+> + * * Data is laid out across chunks in chunk # order
+> + * * Columns are strips
+> + * * Strips are contiguous devdax extents, normally each coming from a
+> + *   different
+> + *   memory device
 
-Link to v1: https://lore.kernel.org/all/20250416013922.2905051-1-luogengkun@huaweicloud.com/
----
- kernel/watchdog.c | 37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+Combine 2 lines above.
 
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 9fa2af9dbf2c..80d1a1dae276 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -47,6 +47,7 @@ int __read_mostly watchdog_user_enabled = 1;
- static int __read_mostly watchdog_hardlockup_user_enabled = WATCHDOG_HARDLOCKUP_DEFAULT;
- static int __read_mostly watchdog_softlockup_user_enabled = 1;
- int __read_mostly watchdog_thresh = 10;
-+static int __read_mostly watchdog_thresh_next;
- static int __read_mostly watchdog_hardlockup_available;
- 
- struct cpumask watchdog_cpumask __read_mostly;
-@@ -870,12 +871,20 @@ int lockup_detector_offline_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static void __lockup_detector_reconfigure(void)
-+static void __lockup_detector_reconfigure(bool thresh_changed)
- {
- 	cpus_read_lock();
- 	watchdog_hardlockup_stop();
- 
- 	softlockup_stop_all();
-+	/*
-+	 * To prevent watchdog_timer_fn from using the old interval and
-+	 * the new watchdog_thresh at the same time, which could lead to
-+	 * false softlockup reports, it is necessary to update the
-+	 * watchdog_thresh after the softlockup is completed.
-+	 */
-+	if (thresh_changed)
-+		watchdog_thresh = READ_ONCE(watchdog_thresh_next);
- 	set_sample_period();
- 	lockup_detector_update_enable();
- 	if (watchdog_enabled && watchdog_thresh)
-@@ -888,7 +897,7 @@ static void __lockup_detector_reconfigure(void)
- void lockup_detector_reconfigure(void)
- {
- 	mutex_lock(&watchdog_mutex);
--	__lockup_detector_reconfigure();
-+	__lockup_detector_reconfigure(false);
- 	mutex_unlock(&watchdog_mutex);
- }
- 
-@@ -908,7 +917,7 @@ static __init void lockup_detector_setup(void)
- 		return;
- 
- 	mutex_lock(&watchdog_mutex);
--	__lockup_detector_reconfigure();
-+	__lockup_detector_reconfigure(false);
- 	softlockup_initialized = true;
- 	mutex_unlock(&watchdog_mutex);
- }
-@@ -924,11 +933,11 @@ static void __lockup_detector_reconfigure(void)
- }
- void lockup_detector_reconfigure(void)
- {
--	__lockup_detector_reconfigure();
-+	__lockup_detector_reconfigure(false);
- }
- static inline void lockup_detector_setup(void)
- {
--	__lockup_detector_reconfigure();
-+	__lockup_detector_reconfigure(false);
- }
- #endif /* !CONFIG_SOFTLOCKUP_DETECTOR */
- 
-@@ -946,11 +955,11 @@ void lockup_detector_soft_poweroff(void)
- #ifdef CONFIG_SYSCTL
- 
- /* Propagate any changes to the watchdog infrastructure */
--static void proc_watchdog_update(void)
-+static void proc_watchdog_update(bool thresh_changed)
- {
- 	/* Remove impossible cpus to keep sysctl output clean. */
- 	cpumask_and(&watchdog_cpumask, &watchdog_cpumask, cpu_possible_mask);
--	__lockup_detector_reconfigure();
-+	__lockup_detector_reconfigure(thresh_changed);
- }
- 
- /*
-@@ -984,7 +993,7 @@ static int proc_watchdog_common(int which, const struct ctl_table *table, int wr
- 	} else {
- 		err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 		if (!err && old != READ_ONCE(*param))
--			proc_watchdog_update();
-+			proc_watchdog_update(false);
- 	}
- 	mutex_unlock(&watchdog_mutex);
- 	return err;
-@@ -1035,11 +1044,13 @@ static int proc_watchdog_thresh(const struct ctl_table *table, int write,
- 
- 	mutex_lock(&watchdog_mutex);
- 
--	old = READ_ONCE(watchdog_thresh);
-+	watchdog_thresh_next = READ_ONCE(watchdog_thresh);
-+
-+	old = watchdog_thresh_next;
- 	err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 
--	if (!err && write && old != READ_ONCE(watchdog_thresh))
--		proc_watchdog_update();
-+	if (!err && write && old != READ_ONCE(watchdog_thresh_next))
-+		proc_watchdog_update(true);
- 
- 	mutex_unlock(&watchdog_mutex);
- 	return err;
-@@ -1060,7 +1071,7 @@ static int proc_watchdog_cpumask(const struct ctl_table *table, int write,
- 
- 	err = proc_do_large_bitmap(table, write, buffer, lenp, ppos);
- 	if (!err && write)
--		proc_watchdog_update();
-+		proc_watchdog_update(false);
- 
- 	mutex_unlock(&watchdog_mutex);
- 	return err;
-@@ -1080,7 +1091,7 @@ static const struct ctl_table watchdog_sysctls[] = {
- 	},
- 	{
- 		.procname	= "watchdog_thresh",
--		.data		= &watchdog_thresh,
-+		.data		= &watchdog_thresh_next,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_watchdog_thresh,
+> + * * Rows are stripes
+> + * * The number of chunks is (int)((file_size + chunk_size - 1) / chunk_size)
+> + *   (and obviously the last chunk could be partial)
+> + * * The stripe_size = (nstrips * chunk_size)
+> + * * chunk_num(offset) = offset / chunk_size    //integer division
+> + * * strip_num(offset) = chunk_num(offset) % nchunks
+> + * * stripe_num(offset) = offset / stripe_size  //integer division
+> + * * ...You get the idea - see the code for more details...
+> + *
+> + * Some concrete examples from the layout above:
+> + * * Offset 0 in the file is offset 0 in chunk 0, which is offset 0 in
+> + *   strip 0
+> + * * Offset 4MiB in the file is offset 0 in chunk 2, which is offset 0 in
+> + *   strip 2
+> + * * Offset 15MiB in the file is offset 1MiB in chunk 7, which is offset
+> + *   3MiB in strip 3
+> + *
+> + * Notes about this metadata format:
+> + *
+> + * * For various reasons, chunk_size must be a multiple of the applicable
+> + *   PAGE_SIZE
+> + * * Since chunk_size and nstrips are constant within an interleaved_extent,
+> + *   resolving a file offset to a strip offset within a single
+> + *   interleaved_ext is order 1.
+> + * * If nstrips==1, a list of interleaved_ext structures degenerates to a
+> + *   regular extent list (albeit with some wasted struct space).
+> + */
+> +
+> +
+>  /*
+> - * These structures are the in-memory metadata format for famfs files. Metadata
+> - * retrieved via the GET_FMAP response is converted to this format for use in
+> - * resolving file mapping faults.
+> + * The structures below are the in-memory metadata format for famfs files.
+> + * Metadata retrieved via the GET_FMAP response is converted to this format
+> + * for use in  * resolving file mapping faults.
+
+                  ^drop
+
+> + *
+> + * The GET_FMAP response contains the same information, but in a more
+> + * message-and-versioning-friendly format. Those structs can be found in the
+> + * famfs section of include/uapi/linux/fuse.h (aka fuse_kernel.h in libfuse)
+>   */
+>  
+>  enum famfs_file_type {
+> @@ -19,7 +99,7 @@ enum famfs_file_type {
+>  	FAMFS_LOG,
+>  };
+>  
+> -/* We anticipate the possiblity of supporting additional types of extents */
+> +/* We anticipate the possibility of supporting additional types of extents */
+>  enum famfs_extent_type {
+>  	SIMPLE_DAX_EXTENT,
+>  	INTERLEAVED_EXTENT,
+> @@ -63,7 +143,7 @@ struct famfs_file_meta {
+>  /*
+>   * dax_devlist
+>   *
+> - * This is the in-memory daxdev metadata that is populated by
+> + * This is the in-memory daxdev metadata that is populated by parsing
+>   * the responses to GET_FMAP messages
+>   */
+>  struct famfs_daxdev {
+
 -- 
-2.34.1
+~Randy
 
 
