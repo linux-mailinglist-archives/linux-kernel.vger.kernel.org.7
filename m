@@ -1,127 +1,83 @@
-Return-Path: <linux-kernel+bounces-612863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A551A95510
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1673EA95504
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424E21635D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEEF1691EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2FC1E98FB;
-	Mon, 21 Apr 2025 17:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5251E51F2;
+	Mon, 21 Apr 2025 17:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw+kYY86"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1GPo0pA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F42F1E8358;
-	Mon, 21 Apr 2025 17:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC81319CD1D;
+	Mon, 21 Apr 2025 17:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255296; cv=none; b=g2jLDxNyaIHl7Vnn7kUAmkB1cBjsoj4K9kiXzCEzIUQrXeBlv1nfoJJGEQ/FCw3o/Bv1pwAee73Cia0OR0U7+7KzS9T7ZFbVrKFmZtQ1Y3sz60Jq1Sd2no/9DukbFi8uv7J2Y1EyxXUAbjFd6pUEKRMfuUYiXa0+KHEQKUnOfdA=
+	t=1745255241; cv=none; b=cqZ/weQcqTkjzdER+bPJVXpf22Vih/kOxB3hJhkrN65vgmKshVjldwNb0iewDey4tZbdsBs0MAbIK96o1SwIlyb3bwjy/j40JlgWfKBUmutSKj4oQTZUsc/Dwp/kHb9nZIFYPZHnhEon7DL5TnfKAFUCco7qVH9J/qoJ70zI6NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255296; c=relaxed/simple;
-	bh=7M9VEbNw/wxshPV8CHZ1wPPNOjwcbLcxoHMPDHW572c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EKlLUBUtDxYEZRUafRzhBQRhdBQyfSnbNn1/4ItlUsPPyROQ7mOidBypU5scqJyMNnxUSo5zAlJyOxquakMx0VabbvMoGklui+b5LU87iH5oL+DJ08HGAxpMLO0IhANgj/o7qbmYpOKJJtF7y1M6DLZmkZn3w0jCKNXvb5G73GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw+kYY86; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 219F8C4CEEC;
-	Mon, 21 Apr 2025 17:08:12 +0000 (UTC)
+	s=arc-20240116; t=1745255241; c=relaxed/simple;
+	bh=L2QeuNUgwI7Gd2iCx1Otutdq2RC3Pmna5zNKrB1copo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=urqgi9km/JzuvMLRniqNZe6wREJpoB8vE76nVkBPJhbKZ8IUVtO7XTVRSbnB8PUgTWdYpE6WG3IG6MOQObUIKWm7t/Hj1tsT03KEFncHIi+dHDQbk1KgJWORtX3yG491CRnnq46/TIcPSSyZjiQCxWwLP4iVUaTczfqvHamwwxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1GPo0pA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A7AC4CEE4;
+	Mon, 21 Apr 2025 17:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745255295;
-	bh=7M9VEbNw/wxshPV8CHZ1wPPNOjwcbLcxoHMPDHW572c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pw+kYY86U/fEJhD1CJycV+A1ZxHSyEYx2Z7m9Z+F2BO2KnJ65R+knO8VAk5df248g
-	 V111OQbe0+bTwBxxsoEaSW1LUP7cLcn60TNzHgaNOL+oN1qpfdlWFVqYG/OO1v/9QH
-	 z4JY2hvqfp2riUkpL7XbEaRAJir5LODbX2Mw5jnnkZeAyjTfJc6UszGVeMbtxe15+C
-	 dvrvY1pL5Q6qcbi4Fsy0UC7CdeSNneR1cuurpqJzshcWwywmYBmDdG/N60zLjZZ6Wz
-	 LpUXsEjCOXfv8UXkV6HEDeojsyACrWAEhEjHzVd70ElSxag5OrYq8Bz5df+hbxxIdN
-	 3Eem0+G2GHWZQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 21 Apr 2025 19:07:14 +0200
-Subject: [PATCH net 2/2] selftests: mptcp: diag: use
- mptcp_lib_get_info_value
+	s=k20201202; t=1745255240;
+	bh=L2QeuNUgwI7Gd2iCx1Otutdq2RC3Pmna5zNKrB1copo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H1GPo0pAwE4RzaCZPxkGujfg7uYcbl+nno+KUrwCSPpNttvW6eirsM2/8r1faktiO
+	 64P9L4H+sSRF83EMEFf9VxpVxsi/b/uzs/BwdH/lYoQ0apqzrrOr6xuwBJqV8WisOg
+	 rVdC3hijsDjZy6sIfxHlYcJ+AIKpCJ4zaKOfKvSePbEeskYSeiSAHDmdqDZad8hFw6
+	 9vWSTQL2YXMitUAky273DCqsLHOM0EWF5iXq3AFLMR0Xzvpsnzqte2N1/obK10aGjM
+	 +P85tk3MltrmKtWKYKQCu76qdWfXm4nenImb1/Z7yInWJWroY+ShO88dgdJBDQqBvG
+	 pdBNmG/TOxXZA==
+From: SeongJae Park <sj@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: using kmalloc_array() and size_add()
+Date: Mon, 21 Apr 2025 10:07:17 -0700
+Message-Id: <20250421170717.35698-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250421062423.740605-1-suhui@nfschina.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-net-mptcp-pm-defer-freeing-v1-2-e731dc6e86b9@kernel.org>
-References: <20250421-net-mptcp-pm-defer-freeing-v1-0-e731dc6e86b9@kernel.org>
-In-Reply-To: <20250421-net-mptcp-pm-defer-freeing-v1-0-e731dc6e86b9@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Shuah Khan <shuah@kernel.org>, Gang Yan <yangang@kylinos.cn>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1945; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=5uqavJtPDjFSLzxOBtTDk/jrKu7HjOYDEmUMS8zpsNA=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLYqsv+SbQJ5EoX8b19GpCwXKd91ZHuB7EHfs1WENfh2
- fpcoMW4o5SFQYyLQVZMkUW6LTJ/5vMq3hIvPwuYOaxMIEMYuDgFYCKtRxkZ3ul3Tek8ah2/NDbI
- watk8Y7qGU/3Mz6xYjHdXTv3wvdDTgy/WS89eu/3+u5Ts8k2ZxTP1KzT2HU/znb/xAU+Z2uaovk
- 4eQA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Transfer-Encoding: 8bit
 
-From: Geliang Tang <tanggeliang@kylinos.cn>
+On Mon, 21 Apr 2025 14:24:24 +0800 Su Hui <suhui@nfschina.com> wrote:
 
-When running diag.sh in a loop, chk_dump_one will report the following
-"grep: write error":
+> It's safer to using kmalloc_array() and size_add() because it can
+> prevent possible overflow problem.
 
- 13 ....chk 2 cestab                                  [ OK ]
- grep: write error
- 14 ....chk dump_one                                  [ OK ]
- 15 ....chk 2->0 msk in use after flush               [ OK ]
- 16 ....chk 2->0 cestab after flush                   [ OK ]
+Nice finding, thank you!
 
-This error is caused by a broken pipe. When the output of 'ss' is processed
-by grep, 'head -n 1' will exit immediately after getting the first line,
-causing the subsequent pipe to close. At this time, if 'grep' is still
-trying to write data to the closed pipe, it will trigger a SIGPIPE signal,
-causing a write error.
+> 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-One solution is not to use this problematic "head -n 1" command, but to use
-mptcp_lib_get_info_value() helper defined in mptcp_lib.sh to get the value
-of 'token'.
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
-Fixes: ba2400166570 ("selftests: mptcp: add a test for mptcp_diag_dump_one")
-Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Tested-by: Gang Yan <yangang@kylinos.cn>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/diag.sh | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/net/mptcp/diag.sh b/tools/testing/selftests/net/mptcp/diag.sh
-index 4f55477ffe087721ad13774e82a5e2b1e6cec7c4..e7a75341f0f32304ff4e58c9b2500d405124dc74 100755
---- a/tools/testing/selftests/net/mptcp/diag.sh
-+++ b/tools/testing/selftests/net/mptcp/diag.sh
-@@ -206,9 +206,8 @@ chk_dump_one()
- 	local token
- 	local msg
- 
--	ss_token="$(ss -inmHMN $ns | grep 'token:' |\
--		    head -n 1 |\
--		    sed 's/.*token:\([0-9a-f]*\).*/\1/')"
-+	ss_token="$(ss -inmHMN $ns |
-+		    mptcp_lib_get_info_value "token" "token")"
- 
- 	token="$(ip netns exec $ns ./mptcp_diag -t $ss_token |\
- 		 awk -F':[ \t]+' '/^token/ {print $2}')"
+Thanks,
+SJ
 
--- 
-2.48.1
-
+[...]
 
