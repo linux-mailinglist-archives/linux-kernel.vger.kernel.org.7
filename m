@@ -1,292 +1,195 @@
-Return-Path: <linux-kernel+bounces-612761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CD2A95397
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66DBA9539E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E587B16ED24
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BEF6171D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900BF1D89FD;
-	Mon, 21 Apr 2025 15:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E62F1DEFE7;
+	Mon, 21 Apr 2025 15:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvOZEEjm"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HRiawwqX"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021D584039;
-	Mon, 21 Apr 2025 15:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745249379; cv=none; b=hsRiROtfmD0vagLr4owyqoos/Xt8h0aPGIbLuB2oMADFcAyptn2to3UWj3y0vSh+MhfXzW8F2E2hG3KOgdDBF8FpXi8z5gfF6biGi1HOe3QAnTX1M/exe/iyR36h0V1EkBJE1WRGdltyURjcqwUhGg4Cbuo9MiFLyBRLtsRCOOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745249379; c=relaxed/simple;
-	bh=bRLShvjowgOOy//RuPIGSqjBET7Ge6MZ51PkkqL9DOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qTAvPCYbrXFbr3Kh0ZWS7vrUEyvFdcce2kk69JZ+drv5uMBE6+A4dsdUPilTDqp5TGmod0NVV+Pf0pqd//In9G3YPWUUDSZqaq4Cwm2vZMO0cqKFMvarFYOLUNQN0Yy0kqKgRQl0/ukjA1vs7xlbqg+8WYqypUPXNviagIKd6FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvOZEEjm; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54e6788d07eso1329284e87.1;
-        Mon, 21 Apr 2025 08:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745249376; x=1745854176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hm47Qc5tmb6NJsCaaNaJW9/9jIlAIIjJmwiENTdYKpQ=;
-        b=LvOZEEjmO3NG1OV1qpL7/hmnh7/9Za1pUYJA+PR+vFBZjAPKPKWj61rMbuOKoYTRDb
-         kXSHMXnaUyJoXvfWXLcdoiqpUrFKWsQQuJuy9gs04l1gu1K9p0bF3K/LJR2bcPcBc4V0
-         l2u2WsDsZWPq4TaDCWQqf4KyLmYTT43Lzt18DbLKOMCIWiaKX1B4hFJXzk62KdGRH5vz
-         CH5NSrhk8HF1GZtzfJNJOI84uZ8zO8I1D5qAiCeGp7Ik4m20FpXZGr7d/JPFRa0wdTWl
-         uvFJ4xJVI9EoffvtVeTW1rTcjNMHlRJobN+n8j+n7bpjNBfgXiLa/bGCKotXKA7nx86P
-         FDxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745249376; x=1745854176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hm47Qc5tmb6NJsCaaNaJW9/9jIlAIIjJmwiENTdYKpQ=;
-        b=n3BftIvFzfZDYlSLUXJji9Z6WqYT1EPkQr/OC5x4zZ9jQxKgSskXDkcK2/x+qMIS8M
-         YvdZGnhNXpmo7d2KLeSNnWGRs3oW781pWwVXC1BNS91Y28DuDNeRQYXe5jyltBsVcBLF
-         yoXxZrLpZLEF+86ySzCt5/E6mTY3f5T2RMeV8RtaVVOfNJahqGxznV0cRxqOainu2ypy
-         qdMktJ9uqdNYFszxCdO2ZDQy11UOkrR5sNvyXgLqEoYeX7MDdLoKCZ6894vLXqdG9O1V
-         JrTqPxCTLYepHA2SPgyLWmxeB/9MmDuWDIcm3KZFJCsX9Z6KMjPD2++iGcqk3CkT8tGS
-         gNZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+UlDKdTSh0lNmqcLwo5RU5olAfdmXLXeMReBCIMpzkzF3TwnKSJRSuF0SywlDbs+8WUSkhXz85aLdLtvmg8U=@vger.kernel.org, AJvYcCV4QrraqrEFKWjdHixvArEBcqewperYWS+bjQ5BUAXVJJZdkop28FbrAO8T3jp6tRpmp0Qx6n3RvElJDhpF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/MIJiq1adjap8IOpGElm/wAqfx7AEhCwGgyOwNhDHZatP56u9
-	fAcx53o4Z2UukbFUPGas2TVINHd9uEGS6C5bHEPv87MhxpW9wvoVUmEcAbiRhAp81LnBtd0ha3a
-	8p9hc8h82v/SP6RFrJqDT+VAMH6iHqOPs
-X-Gm-Gg: ASbGncuzIXfTFU/MgKCE7wHaIekuJJlSgQ+h9QThmb9Dwxmdygz3mcMQsGw7G+vhoQY
-	SUqKufawFX3zwlFboqN2KRk/84QB2oAUhd6OS7EMmp3YjSsgdbof5FU/NezxMmopa3p6CWxRqf6
-	yjpqPBgDOzXwwXDE4NGMcc
-X-Google-Smtp-Source: AGHT+IFYK9UQRC9T9E6sSm0bjJDKv0XdOqwUFIcj0VoIYAESeejUyZSw0qHGc9lVnJYfjVUe0N/XOX1Q6cc+GfyINrg=
-X-Received: by 2002:a05:6512:3356:b0:549:9643:68d0 with SMTP id
- 2adb3069b0e04-54d6dbf65d3mr3796209e87.17.1745249375754; Mon, 21 Apr 2025
- 08:29:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC6717BED0;
+	Mon, 21 Apr 2025 15:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745249748; cv=fail; b=homMO7lamVTXwMTFGm4JZmlbLKYCSwZCjr6uzhpOMfZYf+0PgZbMwqU2GWH9vFwyesFz02GghO8Uv5cEOXC2N+ZkjkJ1FJzZTh8q2JlQuC3l+8Oow06fDH7ZPnWYcb12PhojxD+zPHGicTBr4q1kj9vFlwm/kX8A4qbz4vfBIqc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745249748; c=relaxed/simple;
+	bh=3U7hTai5GTf1DjAVci1hN2rdLGzXDWVLtbFBLzm20v4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEAxzHgmog3uXBKWog3hz/bMuFlO0pmGm9tKeW6o7UtKXQJKJkZ8ppDIgwlHVY7rNv4KjrXtFYNEclFeqhKaEFMrf4KM5hc7XsINyjxew8Oxcrpjll7vooGcYi3KgdVBUh8+BQbvBp3fQc0CtLlorW9egZQrBauIendPzgHG4Jk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HRiawwqX; arc=fail smtp.client-ip=40.107.243.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dItxkxNKVmuHRQ1bBcV/Laj221VDBvABRNMxgjwRvu/ThE7ZesQ5egjEejbbF8fHvn3RBHK+hbTkAF3Kl0863NAd0d03Ex3XEsFjPyS4MCs73ij/njHxA1mrQEVDEb1Zjpi+IyopMApTwyQb+5jI+Z2ws8mzTlVTg/oDBw9Z+xiSHccsafZnOwijIHY+urX4ZoTDptY/MtMeEq1CLIcdqpQayusc3UUsK6BnwytbGjyIUMEWEyS5mAnFFlf3/SXcCGvwxJ4/5ODVKUq2u3nsZxQ0csjIC0mJMy/8/9gyQ7oailAFXDfrFYJ4RsfbSVRgQ7vxtNP+jmptIvz3ka0/0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=791sBgmIT+uduGOfqfpR1zr8F1ItDoJKK66A+LoQjUg=;
+ b=aRcrL92vZU3j9PGiOZdRw6mlpJEgZadcsVcBuBxMAe9ItdgjqhYnFAmaFMmvieRhvq3jihDAJquPsIaU4LQzQvGlCbhlDW6c8jdFaLYvBrDchqUdU9CqZwhTDhdXy//xSxgPC0qKpTZcXqxBTSS5Mbnnzmwfz1alCsytU0RXcwtC+dOXWFwPhDiUFS+KaExmYdckXgjnUOtZB8MVHcNdzJaty4VrSwWfLDanySW5UR1kvpH1n77o8Dve8qfrSsQWc2YuJl/f1j/AEr5yquEgS5l8P3ixQIQeNSdljtQ6avyaeclmUsVi0s4M60nDBoboBoga7eg0CUpRlLr1fLcDuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=791sBgmIT+uduGOfqfpR1zr8F1ItDoJKK66A+LoQjUg=;
+ b=HRiawwqXC/BqYKnttojPT54R46PGDQuk5z8i8bNrmj6OFObM3ylbRXhRyIUYplyFEdvB6cjv66Q6t/+PRaxRWOZdUoJEWzYvow2mud17dA17Z3csCRu8brdtjwp+XubxrHHHi0g1UDW/ALYKK3/Ey4k8b6oAibSeG4d6uZWYpbVZEGKP0RAGLf/0YjIQTfWrRezZIsD+0v5AwcDjqjjbwNJRf7+IAnXer+V5k2xnhtdJgYQxs5skNC7ZVm/bvRgI0XPKqyvG+Wy6iDzTs63z8MR+QaXlFitTt9MIdH2he8/KGl8RVRuJe/ztN8t/H3DJOmZDNM76svuh6OEq4oerNg==
+Received: from BN0PR04CA0043.namprd04.prod.outlook.com (2603:10b6:408:e8::18)
+ by BN7PPF9507C739C.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6da) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
+ 2025 15:35:42 +0000
+Received: from BL6PEPF00020E62.namprd04.prod.outlook.com
+ (2603:10b6:408:e8:cafe::1a) by BN0PR04CA0043.outlook.office365.com
+ (2603:10b6:408:e8::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Mon,
+ 21 Apr 2025 15:35:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00020E62.mail.protection.outlook.com (10.167.249.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 15:35:42 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Apr
+ 2025 08:35:26 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 21 Apr
+ 2025 08:35:25 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 21 Apr 2025 08:35:23 -0700
+Date: Mon, 21 Apr 2025 08:35:22 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "vdumpa@nvidia.com"
+	<vdumpa@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "praan@google.com" <praan@google.com>,
+	"nathan@kernel.org" <nathan@kernel.org>, "peterz@infradead.org"
+	<peterz@infradead.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"jsnitsel@redhat.com" <jsnitsel@redhat.com>, "mshavit@google.com"
+	<mshavit@google.com>, "zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v1 07/16] iommufd/viommu: Add driver-allocated vDEVICE
+ support
+Message-ID: <aAZlujUAJ6tWekEA@Asurada-Nvidia>
+References: <cover.1744353300.git.nicolinc@nvidia.com>
+ <349fa2c4c291488bb5bae6e4a8bc0dcbd0c51fd4.1744353300.git.nicolinc@nvidia.com>
+ <BN9PR11MB527601845E1E55D02F57F04E8CB82@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421130038.34998-1-en-wei.wu@canonical.com> <20250421130038.34998-3-en-wei.wu@canonical.com>
-In-Reply-To: <20250421130038.34998-3-en-wei.wu@canonical.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 21 Apr 2025 11:29:22 -0400
-X-Gm-Features: ATxdqUFMvQZeigKWA623h_DM9bCAMtg78BUdI0q0OqyB8wci3znKgNDP-EzK_Ek
-Message-ID: <CABBYNZJi857F45eDfwA0W83jt7gT5z501hc0r68hxOMXzrAy=A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] Bluetooth: btusb: use skb_pull to avoid unsafe
- access in QCA dump handling
-To: En-Wei Wu <en-wei.wu@canonical.com>
-Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, quic_tjiang@quicinc.com, 
-	chia-lin.kao@canonical.com, anthony.wong@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB527601845E1E55D02F57F04E8CB82@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E62:EE_|BN7PPF9507C739C:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68e2e686-c355-464b-16af-08dd80ea2d05
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MHI9K6smse2zuYgIVdnidc0HVxj7On1I+5OItlDU9/TqpcngQZUi8bTxlKGj?=
+ =?us-ascii?Q?XNI73ksDQS41OF3mYARjni/Av2u/RwSG2sHq/uih8duMB43fgL2c3+o6Lnp3?=
+ =?us-ascii?Q?5A5KCfNomwxkywWSv2iyX0U9d5Q8KuhaUapBJjm4mU4p7tfuOZB6yj55TyMG?=
+ =?us-ascii?Q?W2JSlRWk3KCAPMbkqppFLDKnK/fKTBw4Qzhj/orXRCn9pC5/G/C3zQz/fThO?=
+ =?us-ascii?Q?WiVeRt5SoxKjj/Tn+rLEmIZ3wWBXZh8Qnc+6BeYQjj+sMhiGrqKqoJmTPdQm?=
+ =?us-ascii?Q?j4bgDGjis85z2hR8buXYBecFGcP+Arvb/Uhv3nuFCu96gdfwP1diSwL8u234?=
+ =?us-ascii?Q?ItOq9+8lJiCHJ0XWNfEWXBZaJXTGDRwMqR8cDeR0/aug+J78WLJkvpIQnJmX?=
+ =?us-ascii?Q?2tFljYWNR9p8TNhif9SsY3TogvLX0JurIr7syzQEUqKPzCEr3A0z/NxYwvHR?=
+ =?us-ascii?Q?7hNefwpmgDMmuFQsjLcGuAvKsaDusIgeHLSal+3wWG890D3d9RKMV3TZKa5x?=
+ =?us-ascii?Q?6pBCzc+ERIG8wxi73o6DAgAB3atCW3W0DKaLFd6YIv+Qfw2n8wM/QGZnYnRJ?=
+ =?us-ascii?Q?oCNhEYhbwB969hqkxh8aWRzRyiZq9sDj8ANF4FKzUYWu4Dgs+Q3Q+DPsbXvS?=
+ =?us-ascii?Q?h7UQ72uODBfh6BaM8/4AOuN2qSXZ6701+oBvHiSUE7EAUfcZBTALhdg933Bd?=
+ =?us-ascii?Q?g0c0IjidmMRkZQE6UZPorX+dvigePbs2HKQDGGZTjRGYdPi33VpeaLv4y/5c?=
+ =?us-ascii?Q?EWP0T3wD/Zy5Tcm9/9haGS6lcMYJda0SRZNkpNDT3OUOxVR8sS5uxksryxeN?=
+ =?us-ascii?Q?KD+bLqUZ/z/p8Cyd/KuiHClx8PHb8Mq891Ru/z+sfCEho6tNoJo+4HXxoZQL?=
+ =?us-ascii?Q?A5gep6GmktXgam0pgKmJAZwQaVENlEl1+1X/1A5OgRHsnIpT+4yfuiSTQ8aI?=
+ =?us-ascii?Q?Big1y4pN8dJT+c2TcKVas2s8kLFvh1uqA6MZFIDsywbz/lEV62RZHTaOp/IY?=
+ =?us-ascii?Q?GEFdc0m2BM+rj67o0t01j6U6vIdWnKIWTxUh8bwV5rDFofevgtQkxH+gSRLs?=
+ =?us-ascii?Q?E6S+E7vR3IhDsSYj+3n1Smol/0jy7vLvWQwENa1UKIe75sqTYINTTwlX6Fbj?=
+ =?us-ascii?Q?zEyyFQtHjN1YbYOenT5/XhMR/6Q0mcV4GiAjenZcs4HfoCZcoUfk/Dq8wd+Q?=
+ =?us-ascii?Q?ED3S+GaXJrfrtqlqiZBeuYGAFnUp629e0fVoAoKtA01ZOfCRArhsebQFDkZf?=
+ =?us-ascii?Q?CQxXTIoV03H/Tn5jthi0J7OUoL2C4EnqG06iuX39NexH7K6TA53CF8q3L06Q?=
+ =?us-ascii?Q?2wAJbcEdF88ti2AnLnbDdkZniNYPmjlnWgZ47JZmIKY8dW45ihXWNuWM79bD?=
+ =?us-ascii?Q?IXDBePKoiFWt3YWoaMUDlCRRyB8MHrY/WFW7FpdegzAxyQCN0PAGJLyA5WpB?=
+ =?us-ascii?Q?WHSD3GELRQdnfoPBytA9OaOWY+LsmwfY/7ZjTP2ALKN6NxIVySzKyxwqzDpF?=
+ =?us-ascii?Q?tK8+78CMrEwl6hvqX0nYOlfT/uVsSMeZN/W3?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 15:35:42.0614
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68e2e686-c355-464b-16af-08dd80ea2d05
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E62.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF9507C739C
 
-Hi En-Wei,
+On Mon, Apr 21, 2025 at 08:00:37AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Friday, April 11, 2025 2:38 PM
+> > 
+> > @@ -128,6 +142,9 @@ struct iommufd_viommu_ops {
+> >  		const struct iommu_user_data *user_data);
+> >  	int (*cache_invalidate)(struct iommufd_viommu *viommu,
+> >  				struct iommu_user_data_array *array);
+> > +	struct iommufd_vdevice *(*vdevice_alloc)(struct iommufd_viommu
+> > *viommu,
+> > +						 struct device *dev, u64 id);
+> 
+> s/id/virt_id/ would be clearer.
 
-On Mon, Apr 21, 2025 at 9:00=E2=80=AFAM En-Wei Wu <en-wei.wu@canonical.com>=
- wrote:
->
-> Use skb_pull() and skb_pull_data() to safely parse QCA dump packets.
->
-> This avoids direct pointer math on skb->data, which could lead to
-> invalid access if the packet is shorter than expected.
->
-> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
-> ---
->  drivers/bluetooth/btusb.c | 98 ++++++++++++++++-----------------------
->  1 file changed, 41 insertions(+), 57 deletions(-)
->
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index f905780fcdea..031292ab766f 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -3017,8 +3017,6 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev=
-, struct sk_buff *skb)
->  {
->         int ret =3D 0;
->         u8 pkt_type;
-> -       u8 *sk_ptr;
-> -       unsigned int sk_len;
->         u16 seqno;
->         u32 dump_size;
->
-> @@ -3027,18 +3025,8 @@ static int handle_dump_pkt_qca(struct hci_dev *hde=
-v, struct sk_buff *skb)
->         struct usb_device *udev =3D btdata->udev;
->
->         pkt_type =3D hci_skb_pkt_type(skb);
-> -       sk_ptr =3D skb->data;
-> -       sk_len =3D skb->len;
-> +       dump_hdr =3D (struct qca_dump_hdr *)skb->data;
->
-> -       if (pkt_type =3D=3D HCI_ACLDATA_PKT) {
-> -               sk_ptr +=3D HCI_ACL_HDR_SIZE;
-> -               sk_len -=3D HCI_ACL_HDR_SIZE;
-> -       }
-> -
-> -       sk_ptr +=3D HCI_EVENT_HDR_SIZE;
-> -       sk_len -=3D HCI_EVENT_HDR_SIZE;
-> -
-> -       dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
->         seqno =3D le16_to_cpu(dump_hdr->seqno);
->         if (seqno =3D=3D 0) {
->                 set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
-> @@ -3058,16 +3046,15 @@ static int handle_dump_pkt_qca(struct hci_dev *hd=
-ev, struct sk_buff *skb)
->
->                 btdata->qca_dump.ram_dump_size =3D dump_size;
->                 btdata->qca_dump.ram_dump_seqno =3D 0;
-> -               sk_ptr +=3D offsetof(struct qca_dump_hdr, data0);
-> -               sk_len -=3D offsetof(struct qca_dump_hdr, data0);
-> +
-> +               skb_pull(skb, offsetof(struct qca_dump_hdr, data0));
->
->                 usb_disable_autosuspend(udev);
->                 bt_dev_info(hdev, "%s memdump size(%u)\n",
->                             (pkt_type =3D=3D HCI_ACLDATA_PKT) ? "ACL" : "=
-event",
->                             dump_size);
->         } else {
-> -               sk_ptr +=3D offsetof(struct qca_dump_hdr, data);
-> -               sk_len -=3D offsetof(struct qca_dump_hdr, data);
-> +               skb_pull(skb, offsetof(struct qca_dump_hdr, data));
->         }
->
->         if (!btdata->qca_dump.ram_dump_size) {
-> @@ -3087,7 +3074,6 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev=
-, struct sk_buff *skb)
->                 return ret;
->         }
->
-> -       skb_pull(skb, skb->len - sk_len);
->         hci_devcd_append(hdev, skb);
->         btdata->qca_dump.ram_dump_seqno++;
->         if (seqno =3D=3D QCA_LAST_SEQUENCE_NUM) {
-> @@ -3115,67 +3101,65 @@ static int handle_dump_pkt_qca(struct hci_dev *hd=
-ev, struct sk_buff *skb)
->  /* Return: true if the ACL packet is a dump packet, false otherwise. */
->  static bool acl_pkt_is_dump_qca(struct hci_dev *hdev, struct sk_buff *sk=
-b)
->  {
-> -       u8 *sk_ptr;
-> -       unsigned int sk_len;
-> -
->         struct hci_event_hdr *event_hdr;
->         struct hci_acl_hdr *acl_hdr;
->         struct qca_dump_hdr *dump_hdr;
-> +       void *orig_data;
-> +       unsigned int orig_len;
->
-> -       sk_ptr =3D skb->data;
-> -       sk_len =3D skb->len;
-> +       orig_data =3D skb->data;
-> +       orig_len =3D skb->len;
->
-> -       acl_hdr =3D hci_acl_hdr(skb);
-> -       if (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_ACL_HANDLE)
-> -               return false;
-> -       sk_ptr +=3D HCI_ACL_HDR_SIZE;
-> -       sk_len -=3D HCI_ACL_HDR_SIZE;
-> -       event_hdr =3D (struct hci_event_hdr *)sk_ptr;
-> +       acl_hdr =3D skb_pull_data(skb, sizeof(*acl_hdr));
-> +       if (!acl_hdr || (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_AC=
-L_HANDLE))
-> +               goto restore_return;
->
-> -       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
-> -               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE)))
-> -               return false;
-> +       event_hdr =3D skb_pull_data(skb, sizeof(*event_hdr));
-> +       if (!event_hdr || (event_hdr->evt !=3D HCI_VENDOR_PKT))
-> +               goto restore_return;
->
-> -       sk_ptr +=3D HCI_EVENT_HDR_SIZE;
-> -       sk_len -=3D HCI_EVENT_HDR_SIZE;
-> -
-> -       dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
-> -       if ((sk_len < offsetof(struct qca_dump_hdr, data))
-> -               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
-> -           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> -               return false;
-> +       dump_hdr =3D (struct qca_dump_hdr *)skb->data;
-> +       if ((skb->len < sizeof(*dump_hdr)) ||
-> +          (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS) ||
-> +          (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> +               goto restore_return;
->
->         return true;
-> +
-> +restore_return:
-> +       skb->data =3D orig_data;
-> +       skb->len =3D orig_len;
-> +       return false;
->  }
->
->  /* Return: true if the event packet is a dump packet, false otherwise. *=
-/
->  static bool evt_pkt_is_dump_qca(struct hci_dev *hdev, struct sk_buff *sk=
-b)
->  {
-> -       u8 *sk_ptr;
-> -       unsigned int sk_len;
-> -
->         struct hci_event_hdr *event_hdr;
->         struct qca_dump_hdr *dump_hdr;
-> +       void *orig_data;
-> +       unsigned int orig_len;
->
-> -       sk_ptr =3D skb->data;
-> -       sk_len =3D skb->len;
-> +       orig_data =3D skb->data;
-> +       orig_len =3D skb->len;
->
-> -       event_hdr =3D hci_event_hdr(skb);
-> +       event_hdr =3D skb_pull_data(skb, sizeof(*event_hdr));
-> +       if (!event_hdr || (event_hdr->evt !=3D HCI_VENDOR_PKT))
-> +               goto restore_return;
->
-> -       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
-> -               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE)))
-> -               return false;
-> +       dump_hdr =3D (struct qca_dump_hdr *)skb->data;
-> +       if ((skb->len < sizeof(*dump_hdr)) ||
-> +          (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS) ||
-> +          (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> +               goto restore_return;
->
-> -       sk_ptr +=3D HCI_EVENT_HDR_SIZE;
-> -       sk_len -=3D HCI_EVENT_HDR_SIZE;
-> +       return true;
->
-> -       dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
-> -       if ((sk_len < offsetof(struct qca_dump_hdr, data))
-> -               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
-> -           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> -               return false;
-> +restore_return:
-> +       skb->data =3D orig_data;
-> +       skb->len =3D orig_len;
-> +       return false;
->
-> -       return true;
->  }
->
->  static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *skb)
-> --
-> 2.43.0
+OK.
 
-While I agree using the likes of skb_pull is a much safer way to parse
-these packets Im not so sure it is safe to restore the skb->data and
-skb->len like that, perhaps we should be using skb_clone and
-skb_unclone for example.
+@@ -143,7 +143,8 @@ struct iommufd_viommu_ops {
+        int (*cache_invalidate)(struct iommufd_viommu *viommu,
+                                struct iommu_user_data_array *array);
+        struct iommufd_vdevice *(*vdevice_alloc)(struct iommufd_viommu *viommu,
+-                                                struct device *dev, u64 id);
++                                                struct device *dev,
++                                                u64 virt_id);
+        void (*vdevice_destroy)(struct iommufd_vdevice *vdev);
+ };
 
---=20
-Luiz Augusto von Dentz
+
+Thanks
+Nicolin
 
