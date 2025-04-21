@@ -1,377 +1,561 @@
-Return-Path: <linux-kernel+bounces-612112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0EA9A94AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B338A94B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2388C16F839
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11344188F826
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCD02566CF;
-	Mon, 21 Apr 2025 02:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF81C2905;
+	Mon, 21 Apr 2025 02:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlBcDT2s"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDKngCLw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0959B36D;
-	Mon, 21 Apr 2025 02:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757C92561D7;
+	Mon, 21 Apr 2025 02:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745202119; cv=none; b=nWnpz5ksbpI7YQG/y5xRJTRI0Pqn/taHHHwO/uecOWAGE7T9pIOQ+uGn5Cfw6fk+krGerRp0Q82zvcFnAPCnakt9qCl5PcMyP+yyKSOobGOJA5H1SkON57RyiC92tYm9UEBdEvZ4bmRR/3+rhcogFXW5jVe3JSXItm52yzucCto=
+	t=1745202956; cv=none; b=FtEiIXcVveABfhCBUpyQM0L9VZ9RYjej3q+jAcIaRcYUz3/450wKJOmUhCHxPxUaSab7L+HvXQdul1jC6oxPqfzePsJgaGs0QPRsLsVixzYMrwwW6mREOr9TDJxXmK6czesp7MVwaurw7YpMOJSLuYkpZa1ZZ9K4Xvj1jRJSvA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745202119; c=relaxed/simple;
-	bh=IWFblIe3/6OY5oH5EpUBxXEcBt3vfgN6Iyfy+xfVs7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZbuomDRr6xR2kGySnbOU8i5XW7FnFg9rlsQDJoljTOoOsiX/c3NNzQ66CYcT03Je/fMvC3Ln5rzPvU6nTXvgJ907lIxuZUYryVzzHSIU9GjAh5N6H2UUWcsTL6ZhRkXeEki27jG6HBm+6VNtLChCoRSdlcMfZeJZ+lNTKf3Fol4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlBcDT2s; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3012a0c8496so2609101a91.2;
-        Sun, 20 Apr 2025 19:21:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745202117; x=1745806917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8q5pUeCMzG/ddfIfWNOb//UZiwCQX40QXzjzCXdrVU8=;
-        b=dlBcDT2shG8hT6bLIWshmJ4MOSeK1ZeliJ3pz6bN5RwzvbSKFgMGRBIxrFJt402Cuo
-         HwJzhvZt055H2OsjrwNqT+bZ6ybxTNw+X9RFekNTkRae8VqfTWnGd48f0db4hGuKJR5j
-         0hLwVv6OmR/UgUQAAPoVxSzVT/y7N06upzu0+S3FczhPDIvLHaOkr4Fhf16ACByX4DrC
-         qP9zRG+7UCg5WLqHmTlkbI5nAvJUs9RHe72hGZncWj2E+qy+D+9+ft6R2E+dE+U+ECU1
-         EaWDq2HNUgqLubR85+vzQw+TI+ctjNpt3tl9VXcvmWUvP76okFHBL4uyYxQN5K/YV+Ql
-         rrYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745202117; x=1745806917;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8q5pUeCMzG/ddfIfWNOb//UZiwCQX40QXzjzCXdrVU8=;
-        b=ONNCBVBRjt6pQpqAtXsUVzhWDZIiXf5RaDrLO5eV8hDZmZrvhAJArUK4M4LT4/DzCd
-         mNS02j7iwLX8G4gxzI7LLVRvbS807ekFaV1gkr5wUT4Jp4fcJDYLg6NX4vtcedvi4VZM
-         UQBwnQGgvsQq+niLIEpA9H1btEzm3sZ1Tl+TrLTem7sssuhHQXyDlGVPNzqB5AbfhJne
-         DcpywxcLsh1PMw1KsZtqTUGPuv70PuZecMhfBzQBIrorLUcIq/HnZsr5WBHTtL3tjx8W
-         E7aTG7W0VMTIsxgBvpxOfU9rsV84C6zqPjokEXJTRoDTKOKM4IJfLxExRmHYDlrfMoBv
-         9/Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHUdh6NBYnbxxTchMf8jzX2TynqeCYTv+poss2V7+s7eaoJW0yyviBs4nCXpznE3xEdbctcEDRZGO1@vger.kernel.org, AJvYcCWgXcy82zMYM9uwOisPkVXyT8Pv4YSQ4k+pc9XPW6TewIBddDARwIX3etNMb8wRWrxP/BtVdWHrXwQZQw==@vger.kernel.org, AJvYcCWh8eEoRdSnfQOTsSDOr0nT9ZzC6tbNxR7+oWCfRXCOY7NyUNh7kPTnTGXJfyMKP24K3acgMnAxPRW1YlPL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJPmcwaKs8m8pER6W5OIl3uEk4IvQzFjBcL0NULtaTFQuzFGIh
-	nfrLHU6VMZ3if8j8TSSCHk5m1xPyMmP0s5ShLpzRMP950jADNUJa
-X-Gm-Gg: ASbGnctdS2xm/H8l5br2Gr2+q9AhHsI5BdCFH6BKgGJz0tj+EFj7kCvzEHuTU08mSzp
-	Tc3fg/Iaq3XMDGr4S/O+JKewYCT87yGY/c0kHJ6+KrgeBkkOU4qYlOoFYWBs3W8AUtTcu+ptEn+
-	tCDeWK+q8VwHls85dHh3hKaH0KVW226RqYh1hLhgXf8eiFudWRmvI+e7q5Gs8IJ6tacaIp4hoyI
-	6FJwPecfJmEhYFonr+PcLmGzw1jfEY8H5UybucG4o1pebIPljRM9AeOJJBaniVw0eS9Hn9JZsUK
-	Al5CchSb5PI5IcHLiP7gzQWs41c/jn8f8/xBUUQHQxlKIEUYh1TGVQ==
-X-Google-Smtp-Source: AGHT+IFTnTM5WxBFhzMnREMYCdwCs+MgHzP/5L30V5OEOL1URJA+Hq2T7QAqMoH69V8CmzgH0KoTMA==
-X-Received: by 2002:a17:90b:3a4e:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-3087bbbd12cmr14056217a91.28.1745202117018;
-        Sun, 20 Apr 2025 19:21:57 -0700 (PDT)
-Received: from localhost.localdomain ([116.106.98.75])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087dee33b7sm5341946a91.8.2025.04.20.19.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Apr 2025 19:21:56 -0700 (PDT)
-From: Nam Tran <trannamatk@gmail.com>
-To: christophe.jaillet@wanadoo.fr
-Cc: pavel@kernel.org,
-	lee@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	corbet@lwn.net,
-	devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] leds: add TI/National Semiconductor LP5812 LED Driver
-Date: Mon, 21 Apr 2025 09:21:29 +0700
-Message-Id: <20250421022129.3384-1-trannamatk@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <688b74ce-3650-418f-82bd-63a5cee080d1@wanadoo.fr>
-References: <688b74ce-3650-418f-82bd-63a5cee080d1@wanadoo.fr>
+	s=arc-20240116; t=1745202956; c=relaxed/simple;
+	bh=I7MKXNrfG2zqbTtsaLm3rf3loAJb0LPM7GdDSe9SxsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=brV7rFo/2sYavPB3qguD0F6sTCgRlCH9mQtOrNdIC/EkzAOWIGd8rtwccfh4hU6C3gyKDI1yw+kLEiCkIHBxj9J3Qhs8FhDhy5vG+Ra/ZMjbcxojaMxKShgrvhoyGwCN2V0LoZE9neU0GHrgWAgYs5XWfT27Wu+NMqMofCMfK48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDKngCLw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53L00i3J007848;
+	Mon, 21 Apr 2025 02:35:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rDhN8/o/jwW0pjOarVpaVBL+AtxtduMrkf0Ndv/LEN4=; b=dDKngCLwI3nCVJjU
+	+zH8tAhlUOiTi/Nvc9KBQRtIsiw5/lsdGjqmKay1KUH4vNOct2h1iqKw1WRVvojA
+	WJYfFnlOIVEzMtJ1qW2m7rqH88up9xWt6VVDefRVZqbLHXe+8pMUeC0gl/Ya8N45
+	x4tKR2vHM0epuYriA4t6YJbb5Td03eQtcQgGxbRbyqybVObjSEQDYxUAT6lD+2qj
+	0ed+hBRA//hqgS6v9gYEfYDfeG9R4do5H6faDXo3OJ/bEygOhz/W1h1K5wbwfo6X
+	gLhBTehsobqruM7P9vTZ52bbpaeSy0ISeUA85/KIQTp/sH64PAJ4aTxFBAAhcwYE
+	TRtwlw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46454bjpuw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Apr 2025 02:35:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53L2ZmrU008172
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Apr 2025 02:35:48 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 20 Apr
+ 2025 19:35:46 -0700
+Message-ID: <e4477f1b-6d87-4715-b768-717173fbda0d@quicinc.com>
+Date: Mon, 21 Apr 2025 10:35:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath10k: Constify structures in hw.c
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jeff Johnson
+	<jjohnson@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>
+References: <504b4d5276d13f5f9c3bffcfdaf244006312c22b.1745051315.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <504b4d5276d13f5f9c3bffcfdaf244006312c22b.1745051315.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=cdrSrmDM c=1 sm=1 tr=0 ts=6805af05 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=eY5I1qcjwe6lrjljmsoA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: NOxxnUuqgh4JZRF64RiqHaHhctHPefng
+X-Proofpoint-GUID: NOxxnUuqgh4JZRF64RiqHaHhctHPefng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-21_01,2025-04-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ phishscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504210018
 
-On Sun, 20 Apr 2025, Christophe JAILLET wrote:
 
-> Le 19/04/2025 à 20:43, Nam Tran a écrit :
-> > The LP5812 is a 4×3 matrix RGB LED driver
-> > with an autonomous animation engine
-> > and time-cross-multiplexing (TCM) support for up to 12 LEDs.
-> > Each LED can be configured through the related registers
-> > to realize vivid and fancy lighting effects.
-> 
-> ...
-> 
-> > +static int lp5812_init_dev_config(struct lp5812_chip *chip,
-> > +		const char *drive_mode, int rm_led_sysfs);
-> > +
-> > +static struct drive_mode_led_map chip_leds_map[] = {
-> 
-> I think this could be const.
 
-I’ll update chip_leds_map to be const.
+On 4/19/2025 4:29 PM, Christophe JAILLET wrote:
+> Structures defined in hw.c are not modified in this driver.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   10357	    951	      0	  11308	   2c2c	drivers/net/wireless/ath/ath10k/hw.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   11125	    203	      0	  11328	   2c40	drivers/net/wireless/ath/ath10k/hw.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> ---
+>  drivers/net/wireless/ath/ath10k/ce.c | 28 ++++++-------
+>  drivers/net/wireless/ath/ath10k/hw.c | 62 ++++++++++++++--------------
+>  drivers/net/wireless/ath/ath10k/hw.h | 34 ++++++++-------
+>  3 files changed, 64 insertions(+), 60 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/ath/ath10k/ce.c
+> index afae4a8027f8..c6ee0cbb58e2 100644
+> --- a/drivers/net/wireless/ath/ath10k/ce.c
+> +++ b/drivers/net/wireless/ath/ath10k/ce.c
+> @@ -80,7 +80,7 @@ static inline u32 shadow_sr_wr_ind_addr(struct ath10k *ar,
+>  
+>  static inline unsigned int
+>  ath10k_set_ring_byte(unsigned int offset,
+> -		     struct ath10k_hw_ce_regs_addr_map *addr_map)
+> +		     const struct ath10k_hw_ce_regs_addr_map *addr_map)
+>  {
+>  	return ((offset << addr_map->lsb) & addr_map->mask);
+>  }
+> @@ -203,7 +203,7 @@ static inline void ath10k_ce_src_ring_dmax_set(struct ath10k *ar,
+>  					       u32 ce_ctrl_addr,
+>  					       unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+> +	const struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+>  
+>  	u32 ctrl1_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					  ctrl_regs->addr);
+> @@ -217,7 +217,7 @@ static inline void ath10k_ce_src_ring_byte_swap_set(struct ath10k *ar,
+>  						    u32 ce_ctrl_addr,
+>  						    unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+> +	const struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+>  
+>  	u32 ctrl1_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					  ctrl_regs->addr);
+> @@ -231,7 +231,7 @@ static inline void ath10k_ce_dest_ring_byte_swap_set(struct ath10k *ar,
+>  						     u32 ce_ctrl_addr,
+>  						     unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+> +	const struct ath10k_hw_ce_ctrl1 *ctrl_regs = ar->hw_ce_regs->ctrl1_regs;
+>  
+>  	u32 ctrl1_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					  ctrl_regs->addr);
+> @@ -313,7 +313,7 @@ static inline void ath10k_ce_src_ring_highmark_set(struct ath10k *ar,
+>  						   u32 ce_ctrl_addr,
+>  						   unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_dst_src_wm_regs *srcr_wm = ar->hw_ce_regs->wm_srcr;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *srcr_wm = ar->hw_ce_regs->wm_srcr;
+>  	u32 addr = ath10k_ce_read32(ar, ce_ctrl_addr + srcr_wm->addr);
+>  
+>  	ath10k_ce_write32(ar, ce_ctrl_addr + srcr_wm->addr,
+> @@ -325,7 +325,7 @@ static inline void ath10k_ce_src_ring_lowmark_set(struct ath10k *ar,
+>  						  u32 ce_ctrl_addr,
+>  						  unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_dst_src_wm_regs *srcr_wm = ar->hw_ce_regs->wm_srcr;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *srcr_wm = ar->hw_ce_regs->wm_srcr;
+>  	u32 addr = ath10k_ce_read32(ar, ce_ctrl_addr + srcr_wm->addr);
+>  
+>  	ath10k_ce_write32(ar, ce_ctrl_addr + srcr_wm->addr,
+> @@ -337,7 +337,7 @@ static inline void ath10k_ce_dest_ring_highmark_set(struct ath10k *ar,
+>  						    u32 ce_ctrl_addr,
+>  						    unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_dst_src_wm_regs *dstr_wm = ar->hw_ce_regs->wm_dstr;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *dstr_wm = ar->hw_ce_regs->wm_dstr;
+>  	u32 addr = ath10k_ce_read32(ar, ce_ctrl_addr + dstr_wm->addr);
+>  
+>  	ath10k_ce_write32(ar, ce_ctrl_addr + dstr_wm->addr,
+> @@ -349,7 +349,7 @@ static inline void ath10k_ce_dest_ring_lowmark_set(struct ath10k *ar,
+>  						   u32 ce_ctrl_addr,
+>  						   unsigned int n)
+>  {
+> -	struct ath10k_hw_ce_dst_src_wm_regs *dstr_wm = ar->hw_ce_regs->wm_dstr;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *dstr_wm = ar->hw_ce_regs->wm_dstr;
+>  	u32 addr = ath10k_ce_read32(ar, ce_ctrl_addr + dstr_wm->addr);
+>  
+>  	ath10k_ce_write32(ar, ce_ctrl_addr + dstr_wm->addr,
+> @@ -360,7 +360,7 @@ static inline void ath10k_ce_dest_ring_lowmark_set(struct ath10k *ar,
+>  static inline void ath10k_ce_copy_complete_inter_enable(struct ath10k *ar,
+>  							u32 ce_ctrl_addr)
+>  {
+> -	struct ath10k_hw_ce_host_ie *host_ie = ar->hw_ce_regs->host_ie;
+> +	const struct ath10k_hw_ce_host_ie *host_ie = ar->hw_ce_regs->host_ie;
+>  
+>  	u32 host_ie_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					    ar->hw_ce_regs->host_ie_addr);
+> @@ -372,7 +372,7 @@ static inline void ath10k_ce_copy_complete_inter_enable(struct ath10k *ar,
+>  static inline void ath10k_ce_copy_complete_intr_disable(struct ath10k *ar,
+>  							u32 ce_ctrl_addr)
+>  {
+> -	struct ath10k_hw_ce_host_ie *host_ie = ar->hw_ce_regs->host_ie;
+> +	const struct ath10k_hw_ce_host_ie *host_ie = ar->hw_ce_regs->host_ie;
+>  
+>  	u32 host_ie_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					    ar->hw_ce_regs->host_ie_addr);
+> @@ -384,7 +384,7 @@ static inline void ath10k_ce_copy_complete_intr_disable(struct ath10k *ar,
+>  static inline void ath10k_ce_watermark_intr_disable(struct ath10k *ar,
+>  						    u32 ce_ctrl_addr)
+>  {
+> -	struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+> +	const struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+>  
+>  	u32 host_ie_addr = ath10k_ce_read32(ar, ce_ctrl_addr +
+>  					    ar->hw_ce_regs->host_ie_addr);
+> @@ -396,7 +396,7 @@ static inline void ath10k_ce_watermark_intr_disable(struct ath10k *ar,
+>  static inline void ath10k_ce_error_intr_disable(struct ath10k *ar,
+>  						u32 ce_ctrl_addr)
+>  {
+> -	struct ath10k_hw_ce_misc_regs *misc_regs = ar->hw_ce_regs->misc_regs;
+> +	const struct ath10k_hw_ce_misc_regs *misc_regs = ar->hw_ce_regs->misc_regs;
+>  
+>  	u32 misc_ie_addr = ath10k_ce_read32(ar,
+>  			ce_ctrl_addr + ar->hw_ce_regs->misc_ie_addr);
+> @@ -410,7 +410,7 @@ static inline void ath10k_ce_engine_int_status_clear(struct ath10k *ar,
+>  						     u32 ce_ctrl_addr,
+>  						     unsigned int mask)
+>  {
+> -	struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+> +	const struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+>  
+>  	ath10k_ce_write32(ar, ce_ctrl_addr + wm_regs->addr, mask);
+>  }
+> @@ -1230,7 +1230,7 @@ void ath10k_ce_per_engine_service(struct ath10k *ar, unsigned int ce_id)
+>  {
+>  	struct ath10k_ce *ce = ath10k_ce_priv(ar);
+>  	struct ath10k_ce_pipe *ce_state = &ce->ce_states[ce_id];
+> -	struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+> +	const struct ath10k_hw_ce_host_wm_regs *wm_regs = ar->hw_ce_regs->wm_regs;
+>  	u32 ctrl_addr = ce_state->ctrl_addr;
+>  
+>  	/*
+> diff --git a/drivers/net/wireless/ath/ath10k/hw.c b/drivers/net/wireless/ath/ath10k/hw.c
+> index 8fafe096adff..84b35a22fc23 100644
+> --- a/drivers/net/wireless/ath/ath10k/hw.c
+> +++ b/drivers/net/wireless/ath/ath10k/hw.c
+> @@ -212,40 +212,40 @@ const struct ath10k_hw_regs wcn3990_regs = {
+>  	.pcie_intr_fw_mask			= 0x00100000,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_src_ring = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_src_ring = {
+>  	.msb	= 0x00000010,
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(17, 17),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_dst_ring = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_dst_ring = {
+>  	.msb	= 0x00000012,
+>  	.lsb	= 0x00000012,
+>  	.mask	= GENMASK(18, 18),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_dmax = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_dmax = {
+>  	.msb	= 0x00000000,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_ctrl1 wcn3990_ctrl1 = {
+> +static const struct ath10k_hw_ce_ctrl1 wcn3990_ctrl1 = {
+>  	.addr		= 0x00000018,
+>  	.src_ring	= &wcn3990_src_ring,
+>  	.dst_ring	= &wcn3990_dst_ring,
+>  	.dmax		= &wcn3990_dmax,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_host_ie_cc = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_host_ie_cc = {
+>  	.mask	= GENMASK(0, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_host_ie wcn3990_host_ie = {
+> +static const struct ath10k_hw_ce_host_ie wcn3990_host_ie = {
+>  	.copy_complete	= &wcn3990_host_ie_cc,
+>  };
+>  
+> -static struct ath10k_hw_ce_host_wm_regs wcn3990_wm_reg = {
+> +static const struct ath10k_hw_ce_host_wm_regs wcn3990_wm_reg = {
+>  	.dstr_lmask	= 0x00000010,
+>  	.dstr_hmask	= 0x00000008,
+>  	.srcr_lmask	= 0x00000004,
+> @@ -255,7 +255,7 @@ static struct ath10k_hw_ce_host_wm_regs wcn3990_wm_reg = {
+>  	.addr		= 0x00000030,
+>  };
+>  
+> -static struct ath10k_hw_ce_misc_regs wcn3990_misc_reg = {
+> +static const struct ath10k_hw_ce_misc_regs wcn3990_misc_reg = {
+>  	.axi_err	= 0x00000100,
+>  	.dstr_add_err	= 0x00000200,
+>  	.srcr_len_err	= 0x00000100,
+> @@ -266,19 +266,19 @@ static struct ath10k_hw_ce_misc_regs wcn3990_misc_reg = {
+>  	.addr		= 0x00000038,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_src_wm_low = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_src_wm_low = {
+>  	.msb	= 0x00000000,
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(31, 16),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_src_wm_high = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_src_wm_high = {
+>  	.msb	= 0x0000000f,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_src_ring = {
+> +static const struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_src_ring = {
+>  	.addr		= 0x0000004c,
+>  	.low_rst	= 0x00000000,
+>  	.high_rst	= 0x00000000,
+> @@ -286,18 +286,18 @@ static struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_src_ring = {
+>  	.wm_high	= &wcn3990_src_wm_high,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_dst_wm_low = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_dst_wm_low = {
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(31, 16),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map wcn3990_dst_wm_high = {
+> +static const struct ath10k_hw_ce_regs_addr_map wcn3990_dst_wm_high = {
+>  	.msb	= 0x0000000f,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_dst_ring = {
+> +static const struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_dst_ring = {
+>  	.addr		= 0x00000050,
+>  	.low_rst	= 0x00000000,
+>  	.high_rst	= 0x00000000,
+> @@ -305,7 +305,7 @@ static struct ath10k_hw_ce_dst_src_wm_regs wcn3990_wm_dst_ring = {
+>  	.wm_high	= &wcn3990_dst_wm_high,
+>  };
+>  
+> -static struct ath10k_hw_ce_ctrl1_upd wcn3990_ctrl1_upd = {
+> +static const struct ath10k_hw_ce_ctrl1_upd wcn3990_ctrl1_upd = {
+>  	.shift = 19,
+>  	.mask = 0x00080000,
+>  	.enable = 0x00000000,
+> @@ -344,25 +344,25 @@ const struct ath10k_hw_values wcn3990_values = {
+>  	.ce_desc_meta_data_lsb		= 4,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_src_ring = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_src_ring = {
+>  	.msb	= 0x00000010,
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(16, 16),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_dst_ring = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_dst_ring = {
+>  	.msb	= 0x00000011,
+>  	.lsb	= 0x00000011,
+>  	.mask	= GENMASK(17, 17),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_dmax = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_dmax = {
+>  	.msb	= 0x0000000f,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_ctrl1 qcax_ctrl1 = {
+> +static const struct ath10k_hw_ce_ctrl1 qcax_ctrl1 = {
+>  	.addr		= 0x00000010,
+>  	.hw_mask	= 0x0007ffff,
+>  	.sw_mask	= 0x0007ffff,
+> @@ -375,31 +375,31 @@ static struct ath10k_hw_ce_ctrl1 qcax_ctrl1 = {
+>  	.dmax		= &qcax_dmax,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_cmd_halt_status = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_cmd_halt_status = {
+>  	.msb	= 0x00000003,
+>  	.lsb	= 0x00000003,
+>  	.mask	= GENMASK(3, 3),
+>  };
+>  
+> -static struct ath10k_hw_ce_cmd_halt qcax_cmd_halt = {
+> +static const struct ath10k_hw_ce_cmd_halt qcax_cmd_halt = {
+>  	.msb		= 0x00000000,
+>  	.mask		= GENMASK(0, 0),
+>  	.status_reset	= 0x00000000,
+>  	.status		= &qcax_cmd_halt_status,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_host_ie_cc = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_host_ie_cc = {
+>  	.msb	= 0x00000000,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(0, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_host_ie qcax_host_ie = {
+> +static const struct ath10k_hw_ce_host_ie qcax_host_ie = {
+>  	.copy_complete_reset	= 0x00000000,
+>  	.copy_complete		= &qcax_host_ie_cc,
+>  };
+>  
+> -static struct ath10k_hw_ce_host_wm_regs qcax_wm_reg = {
+> +static const struct ath10k_hw_ce_host_wm_regs qcax_wm_reg = {
+>  	.dstr_lmask	= 0x00000010,
+>  	.dstr_hmask	= 0x00000008,
+>  	.srcr_lmask	= 0x00000004,
+> @@ -409,7 +409,7 @@ static struct ath10k_hw_ce_host_wm_regs qcax_wm_reg = {
+>  	.addr		= 0x00000030,
+>  };
+>  
+> -static struct ath10k_hw_ce_misc_regs qcax_misc_reg = {
+> +static const struct ath10k_hw_ce_misc_regs qcax_misc_reg = {
+>  	.axi_err	= 0x00000400,
+>  	.dstr_add_err	= 0x00000200,
+>  	.srcr_len_err	= 0x00000100,
+> @@ -420,19 +420,19 @@ static struct ath10k_hw_ce_misc_regs qcax_misc_reg = {
+>  	.addr		= 0x00000038,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_src_wm_low = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_src_wm_low = {
+>  	.msb    = 0x0000001f,
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(31, 16),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_src_wm_high = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_src_wm_high = {
+>  	.msb	= 0x0000000f,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_dst_src_wm_regs qcax_wm_src_ring = {
+> +static const struct ath10k_hw_ce_dst_src_wm_regs qcax_wm_src_ring = {
+>  	.addr		= 0x0000004c,
+>  	.low_rst	= 0x00000000,
+>  	.high_rst	= 0x00000000,
+> @@ -440,18 +440,18 @@ static struct ath10k_hw_ce_dst_src_wm_regs qcax_wm_src_ring = {
+>  	.wm_high        = &qcax_src_wm_high,
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_dst_wm_low = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_dst_wm_low = {
+>  	.lsb	= 0x00000010,
+>  	.mask	= GENMASK(31, 16),
+>  };
+>  
+> -static struct ath10k_hw_ce_regs_addr_map qcax_dst_wm_high = {
+> +static const struct ath10k_hw_ce_regs_addr_map qcax_dst_wm_high = {
+>  	.msb	= 0x0000000f,
+>  	.lsb	= 0x00000000,
+>  	.mask	= GENMASK(15, 0),
+>  };
+>  
+> -static struct ath10k_hw_ce_dst_src_wm_regs qcax_wm_dst_ring = {
+> +static const struct ath10k_hw_ce_dst_src_wm_regs qcax_wm_dst_ring = {
+>  	.addr		= 0x00000050,
+>  	.low_rst	= 0x00000000,
+>  	.high_rst	= 0x00000000,
+> diff --git a/drivers/net/wireless/ath/ath10k/hw.h b/drivers/net/wireless/ath/ath10k/hw.h
+> index 442091c6dfd2..7ffa1fbe2874 100644
+> --- a/drivers/net/wireless/ath/ath10k/hw.h
+> +++ b/drivers/net/wireless/ath/ath10k/hw.h
+> @@ -289,19 +289,22 @@ struct ath10k_hw_ce_ctrl1 {
+>  	u32 sw_wr_mask;
+>  	u32 reset_mask;
+>  	u32 reset;
+> -	struct ath10k_hw_ce_regs_addr_map *src_ring;
+> -	struct ath10k_hw_ce_regs_addr_map *dst_ring;
+> -	struct ath10k_hw_ce_regs_addr_map *dmax; };
+> +	const struct ath10k_hw_ce_regs_addr_map *src_ring;
+> +	const struct ath10k_hw_ce_regs_addr_map *dst_ring;
+> +	const struct ath10k_hw_ce_regs_addr_map *dmax;
+> +};
+>  
+>  struct ath10k_hw_ce_cmd_halt {
+>  	u32 status_reset;
+>  	u32 msb;
+>  	u32 mask;
+> -	struct ath10k_hw_ce_regs_addr_map *status; };
+> +	const struct ath10k_hw_ce_regs_addr_map *status;
+> +};
+>  
+>  struct ath10k_hw_ce_host_ie {
+>  	u32 copy_complete_reset;
+> -	struct ath10k_hw_ce_regs_addr_map *copy_complete; };
+> +	const struct ath10k_hw_ce_regs_addr_map *copy_complete;
+> +};
+>  
+>  struct ath10k_hw_ce_host_wm_regs {
+>  	u32 dstr_lmask;
+> @@ -328,8 +331,9 @@ struct ath10k_hw_ce_dst_src_wm_regs {
+>  	u32 addr;
+>  	u32 low_rst;
+>  	u32 high_rst;
+> -	struct ath10k_hw_ce_regs_addr_map *wm_low;
+> -	struct ath10k_hw_ce_regs_addr_map *wm_high; };
+> +	const struct ath10k_hw_ce_regs_addr_map *wm_low;
+> +	const struct ath10k_hw_ce_regs_addr_map *wm_high;
+> +};
+>  
+>  struct ath10k_hw_ce_ctrl1_upd {
+>  	u32 shift;
+> @@ -355,14 +359,14 @@ struct ath10k_hw_ce_regs {
+>  	u32 ce_rri_low;
+>  	u32 ce_rri_high;
+>  	u32 host_ie_addr;
+> -	struct ath10k_hw_ce_host_wm_regs *wm_regs;
+> -	struct ath10k_hw_ce_misc_regs *misc_regs;
+> -	struct ath10k_hw_ce_ctrl1 *ctrl1_regs;
+> -	struct ath10k_hw_ce_cmd_halt *cmd_halt;
+> -	struct ath10k_hw_ce_host_ie *host_ie;
+> -	struct ath10k_hw_ce_dst_src_wm_regs *wm_srcr;
+> -	struct ath10k_hw_ce_dst_src_wm_regs *wm_dstr;
+> -	struct ath10k_hw_ce_ctrl1_upd *upd;
+> +	const struct ath10k_hw_ce_host_wm_regs *wm_regs;
+> +	const struct ath10k_hw_ce_misc_regs *misc_regs;
+> +	const struct ath10k_hw_ce_ctrl1 *ctrl1_regs;
+> +	const struct ath10k_hw_ce_cmd_halt *cmd_halt;
+> +	const struct ath10k_hw_ce_host_ie *host_ie;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *wm_srcr;
+> +	const struct ath10k_hw_ce_dst_src_wm_regs *wm_dstr;
+> +	const struct ath10k_hw_ce_ctrl1_upd *upd;
+>  };
+>  
+>  struct ath10k_hw_values {
 
-> > +static int lp5812_get_phase_align(struct lp5812_chip *chip, int led_number,
-> > +		int *phase_align_val)
-> > +{
-> > +	int ret;
-> > +	int bit_pos;
-> > +	u16 reg;
-> > +	u8 reg_val;
-> > +
-> > +	reg = DEV_CONFIG7 + (led_number / 4);
-> > +	bit_pos = (led_number % 4) * 2;
-> > +
-> > +	ret = lp5812_read(chip, reg, &reg_val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	*phase_align_val = (reg_val >> bit_pos) & 0x03;
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int lp5812_get_led_mode(struct lp5812_chip *chip,
-> > +		int led_number, enum control_mode *mode)
-> > +{
-> > +	int ret = 0;
-> 
-> In several function, sometimes ret is initialized, sometimes it is not.
-> See lp5812_get_led_mode() and lp5812_get_phase_align() just above.
+Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
-Agreed, I’ll go through and update these functions to follow a consistent pattern.
 
-> > +static void set_mix_sel_led(struct lp5812_chip *chip, int mix_sel_led)
-> > +{
-> 
-> Maybe init the 4 values at 0 first, then set to 1 only what is needed 
-> below? This would save a few lines of code.
-> 
-> > +	if (mix_sel_led == 0) {
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 1;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
-> > +	}
-> > +	if (mix_sel_led == 1) {
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 1;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
-> > +	}
-> > +	if (mix_sel_led == 2) {
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 1;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 0;
-> > +	}
-> > +	if (mix_sel_led == 3) {
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_0 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_1 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_2 = 0;
-> > +		chip->u_drive_mode.s_drive_mode.mix_sel_led_3 = 1;
-> > +	}
-> > +}
-
-Yep, that’s a cleaner approach. I’ll update it accordingly.
-
-> > +static ssize_t dev_config_show(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		char *buf)
-> > +{
-> 
-> The whole function could be simplified with sysfs_emit_at().
-> This avoids temp buffer, malloc/free and some copies.
-> 
-> See led_auto_animation_show() below.
-> 
-> > +	int i;
-> > +	int num_drive_mode;
-> > +	char *mode_info;
-> > +	char *total_str;
-> > +	size_t total_length;
-> > +	char *const_str = "\nPlease select below valid drive mode:\n";
-> > +	char *const_ex_str = "For Ex: echo tcmscan:1:0 > dev_config\n";
-> > +	int ret = 0;
-> > +	struct lp5812_chip *chip = i2c_get_clientdata(to_i2c_client(dev));
-> > +
-> > +	/* get drive mode and scan order */
-> > +	mutex_lock(&chip->lock);
-> > +	ret = lp5812_get_drive_mode_scan_order(chip);
-> > +	mutex_unlock(&chip->lock);
-> > +	if (ret)
-> > +		return -EIO;
-> > +
-> > +	mode_info = parse_dev_config_info(chip);
-> > +	if (!mode_info)
-> > +		return -ENOMEM;
-> > +
-> > +	num_drive_mode = ARRAY_SIZE(chip_leds_map);
-> > +	total_length = strlen(mode_info) + strlen(const_str) +
-> > +			strlen(const_ex_str) + 1;
-> > +	for (i = 0; i < num_drive_mode; ++i) {
-> > +		total_length += strlen(chip_leds_map[i].drive_mode) +
-> > +					strlen("\n");
-> > +	}
-> > +
-> > +	total_str = kmalloc(total_length, GFP_KERNEL);
-> > +	if (!total_str)
-> > +		return -ENOMEM;
-> > +
-> > +	sprintf(total_str, "%s%s%s", mode_info, const_str, const_ex_str);
-> > +	for (i = 0; i < num_drive_mode; ++i) {
-> > +		strcat(total_str, chip_leds_map[i].drive_mode);
-> > +		strcat(total_str, "\n");
-> > +	}
-> > +
-> > +	ret = sysfs_emit(buf, "%s", total_str);
-> > +	kfree(mode_info);
-> > +	kfree(total_str);
-> > +
-> > +	return ret;
-> > +}
-
-...
-
-> In order to have it more readable (IMHO), use less buffers, make less 
-> copies, reduce code duplication and reduce the locking section, maybe 
-> something like (un-tested):
-> 
-> static ssize_t led_auto_animation_show(struct kobject *kobj,
-> 		struct kobj_attribute *attr, char *buf)
-> {
-> 	int aeu_selection, playback_time, start_pause, stop_pause;
-> 	struct lp5812_led *led = to_lp5812_led(kobj);
-> 	struct lp5812_chip *chip = led->priv;
-> 	int pos = 0;
-> 	int ret;
-> 
-> 	mutex_lock(&chip->lock);
-> 	ret = led_get_autonomous_animation_config(led);
-> 	if (ret) {
-> 		ret = -EIO;
-> 		goto out;
-> 	}
-> 
-> 	/* parse config and feedback to userspace */
-> 	aeu_selection = led->led_playback.s_led_playback.aeu_selection;
-> 	playback_time = led->led_playback.s_led_playback.led_playback_time;
-> 	start_pause = led->start_stop_pause_time.s_time.second;
-> 	stop_pause = led->start_stop_pause_time.s_time.first;
-> 
-> 	mutex_unlock(&chip->lock);
-> 
-> 	pos += sysfs_emit_at(buf, pos, "AEU Select: ");
-> 	if (aeu_selection == ONLY_AEU1)
-> 		pos += sysfs_emit_at(buf, pos, "Only use AEU1");
-> 	else if (aeu_selection == AEU1_AEU2)
-> 		pos += sysfs_emit_at(buf, pos, "Use AEU1 and AEU2");
-> 	else
-> 		pos += sysfs_emit_at(buf, pos, "Use AEU1, AEU2 and AEU3");
-> 
-> 	pos += sysfs_emit_at(buf, pos, "; Start pause time: %s",
-> 			     time_name_array[start_pause]);
-> 	pos += sysfs_emit_at(buf, pos, "; Start pause time: %s",
-> 			     time_name_array[start_pause]);
-> 	pos += sysfs_emit_at(buf, pos, "; LED Playback time: %s",
-> 			     led_playback_time_arr[playback_time]);
-> 
-> 	pos += sysfs_emit_at(buf, pos, "\n");
-> 	pos += sysfs_emit_at(buf, pos, "Command usage: echo (aeu number):(start 
-> pause time):(stop pause time):(playback time) > autonomous_animation\n");
-> 
-> 	return pos;
-> 
-> out:
-> 	mutex_unlock(&chip->lock);
-> 	return ret;
-> }
-
-Great point! I'll refactor these functions as suggested.
-
-> > +static ssize_t aeu_playback_time_show(struct kobject *kobj,
-> > +		struct kobj_attribute *attr, char *buf)
-> > +{
-> > +	int ret = 0;
-> > +	u8 val = 0;
-> > +	struct anim_engine_unit *aeu = to_anim_engine_unit(kobj);
-> > +	struct lp5812_chip *chip = aeu->led->priv;
-> > +
-> > +	mutex_lock(&chip->lock);
-> > +	ret = led_aeu_playback_time_get_val(aeu, &val);
-> 
-> Maybe unlock here, to simplify code and be consistent with some other 
-> functions above? (led_pwm_dimming_scale_show(), ...)
-> 
-> Several other show/store function could be slightly simplified the same way.
-> 
-> > +	if (ret != 0) {
-> > +		mutex_unlock(&chip->lock);
-> > +		return -EIO;
-> > +	}
-> > +	mutex_unlock(&chip->lock);
-> > +
-> > +	return sysfs_emit(buf, "%d\n", val);
-> > +}
-
-Agreed, I’ll unlock earlier to simplify the code and maintain consistency with other functions.
-
-> > +struct lp5812_led {
-> > +	struct kobject                        kobj;
-> > +	struct lp5812_chip                    *priv;
-> > +	struct attribute_group                attr_group;
-> > +	int                                   enable;
-> > +	enum control_mode                     mode;
-> > +	enum dimming_type                     dimming_type;
-> > +	u8                                    lod_lsd;
-> > +	u8                                    auto_pwm;
-> > +	u8                                    aep_status;
-> > +	u16                                   anim_base_addr;
-> > +	int                                   led_number; /* start from 0 */
-> > +	int                                   is_sysfs_created;
-> > +	const char                            *led_name;
-> > +
-> > +	union led_playback                    led_playback;
-> > +	union time                            start_stop_pause_time;
-> > +
-> > +	int                                   total_aeu;
-> 
-> What is the need to keeping it here?
-> It is set to MAX_AEU. Why not just use it directly?
-> 
-> If needed for future use, maybe, 'aeu' below should be a flex array?
-> 
-> > +	struct anim_engine_unit               aeu[MAX_AEU];
-> > +};
-> > +
-> > +struct lp5812_chip {
-> > +	struct i2c_client                     *i2c_cl;
-> > +	struct mutex                          lock; /* Protects access to device registers */
-> > +	struct device                         *dev;
-> > +	struct attribute_group                attr_group;
-> > +	const struct lp5812_specific_regs     *regs;
-> > +	const struct drive_mode_led_map       *chip_leds_map;
-> > +	enum device_command                   command;
-> > +	int                                   total_leds;
-> 
-> What is the need to keeping it here?
-> It is set to MAX_LEDS. Why not just use it directly?
-> 
-> If needed for future use, maybe, 'leds' below should be a flex array?
-
-You're right — since total_aeu and total_leds are always set to MAX_AEU and MAX_LEDS, respectively,
-there's no need to store them separately. I'll remove those fields and use the constants directly.
-
-We'll keep the static arrays as-is, given the fixed hardware limits.
-
-Thanks for the helpful comments!
-
-Best regards,
-Nam Tran
 
