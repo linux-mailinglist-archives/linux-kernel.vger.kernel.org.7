@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-612587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1985A95140
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512B0A95141
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238031712A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C2E189371B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADC9265603;
-	Mon, 21 Apr 2025 12:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F31526561D;
+	Mon, 21 Apr 2025 12:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y412E5xs"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hOJYzMKp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529E820E022
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 12:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BE91DB546;
+	Mon, 21 Apr 2025 12:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745240247; cv=none; b=oveTL0wquD0o1DnLMudMOUu3qmW1ERNczjIdlRVwj4OhnTpGl8xt7O1iOA91VQncfLmWoi4ny2xYJY2yGBt34mEK4neDdmBVmGsffqZx7aUEM4lO96nVlodI7QMFSSMnbvWVO1WXABmSl7ZbfMA8BQGp1Lg0MCZpZ+cXoZ+mR+w=
+	t=1745240310; cv=none; b=XjAhF27D66yJ/0VRa34Lhwshxo3nzXAbguO73dc3TcKGuk5FVonwMVC9Jw2e9ydKc13IEaxpoDxZ0FF3WCkEjg36L89mckoYVvJTeCYqSSw4yc40Q9egMIpPKctiC/vk60n8SG+h1tv1mJVjgNPAZ7zJgNa3UJUewr8hkQ8QiiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745240247; c=relaxed/simple;
-	bh=mDp6BLyAeJCExTVh9NsSLAT5fZNGQzQhbWr0czeSLRQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ev9PpZCg87sS4JF9EJ26CeqyN1xzndyCczdZikEcoF7KztJZZTrDOUzvOZlKl549tKg1JjX5cI1q83yBZBqX7AGXf6aEICl/e3ZLerzHYQGfuazy6pEmvFtSP+z54lNBnpTzEdsZld71XuxUNM343fluzDZDGC7d+6SKgY+akLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y412E5xs; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCvIto907192
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 07:57:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745240238;
-	bh=W5WjLcJsxArMu5HCfyLW+XnlGaOpGtRqSi+EyQMT4dc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=y412E5xs7FjTMfsN3NMdDN26l9jNCxmOFuXv58BS7d2sieDBmEMem3m0JRy35Y2Vi
-	 LoiBij4MXT0hRNWfQoniTT/IdaDGGlMJ5PurtCIqGf2gB9grjha/1KRTreszWzB3P5
-	 0tmqTyGA2T+hlWPmxcZoyOQiOASDW0XZVsLA4gsU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCvIE3083231
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Apr 2025 07:57:18 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 07:57:18 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 07:57:18 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LCvIC2075145;
-	Mon, 21 Apr 2025 07:57:18 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <bb@ti.com>
-Subject: Re: [PATCH] soc: ti: k3-socinfo: Add JTAG ID for AM62LX
-Date: Mon, 21 Apr 2025 07:57:16 -0500
-Message-ID: <174524022451.1975791.7076192860299528764.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250417084904.2869369-1-vigneshr@ti.com>
-References: <20250417084904.2869369-1-vigneshr@ti.com>
+	s=arc-20240116; t=1745240310; c=relaxed/simple;
+	bh=scE+oan0V3netAVnAvlStP1ceftqTg7r+IH2oYiDtA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDNk5lHRWkXMAIvQXiH+o6vlVEm/03rLIUYjvDj2vdsG6b8+kwu6WleanbIEme6bjEuIN5HpvcdGvMNX97YLd5M/NULvUSRK8URgrFmBpjavsCdxrOPd+yxusqSioMgqxd7AufH5+zKPF1jclAE2g3dUN+uPPpU/eUlQEw0HmrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hOJYzMKp; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745240309; x=1776776309;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=scE+oan0V3netAVnAvlStP1ceftqTg7r+IH2oYiDtA0=;
+  b=hOJYzMKp0lhGZ7TSVyrm0sTHH/Gz47pSB02Y2xGQEuJIMQ+3HJxmLeGn
+   rzGMgLh+o41bPIu9gxBIAPDOgcfReLUfP2+dPs5RNy8UDNKzYNbix8kgP
+   iqWDITwV5b4anueUF2zqnWWl2WKaT98m5VzKGvKLRuoEoqgWqcpdi2cfW
+   nDS8QsgbUVhfotbXZzbZit0crQqD8Y5zHn4i35yyMfvBVoCM002l7RmgS
+   kVurj620U04SqCHhffS6g2brnL2uFdpBdzGbTlIsXgKrzIM+p8HGD1hno
+   KDv4buhM5MAxJv9JJU9wuRZ1565xhi5/ExNrdCE9PwzQ45TWunNLIXiVF
+   g==;
+X-CSE-ConnectionGUID: zpg5nw5aQY+D5iR2zeo+mA==
+X-CSE-MsgGUID: IfQvi4qgTLa7ZfMO9ox1EA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="46901430"
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
+   d="scan'208";a="46901430"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 05:58:28 -0700
+X-CSE-ConnectionGUID: xw4oGS9qTp6pCxf+CYcwUA==
+X-CSE-MsgGUID: 3qeUjkA+TPa1bVpKzRS+nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
+   d="scan'208";a="132229155"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 21 Apr 2025 05:58:25 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u6qj8-00007j-2d;
+	Mon, 21 Apr 2025 12:58:22 +0000
+Date: Mon, 21 Apr 2025 20:57:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Aaron Kling <webgeek1234@gmail.com>
+Subject: Re: [PATCH 2/2] PCI: tegra: Allow building as a module
+Message-ID: <202504212046.SmbccNZH-lkp@intel.com>
+References: <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250420-pci-tegra-module-v1-2-c0a1f831354a@gmail.com>
 
-Hi Vignesh Raghavendra,
+Hi Aaron,
 
-On Thu, 17 Apr 2025 14:19:03 +0530, Vignesh Raghavendra wrote:
-> Add JTAG ID information for AM62Lx SoC so as to enable SoC detection in
-> kernel.
-> 
-> 
+kernel test robot noticed the following build errors:
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+[auto build test ERROR on e3a854b577cb05ceb77c0eba54bfef98a03278fa]
 
-[1/1] soc: ti: k3-socinfo: Add JTAG ID for AM62LX
-      commit: c62bc66d53de9a61154224f99c1b4ca68ed57208
+url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/irqdomain-Export-irq_domain_free_irqs/20250421-110400
+base:   e3a854b577cb05ceb77c0eba54bfef98a03278fa
+patch link:    https://lore.kernel.org/r/20250420-pci-tegra-module-v1-2-c0a1f831354a%40gmail.com
+patch subject: [PATCH 2/2] PCI: tegra: Allow building as a module
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250421/202504212046.SmbccNZH-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250421/202504212046.SmbccNZH-lkp@intel.com/reproduce)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504212046.SmbccNZH-lkp@intel.com/
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+ERROR: modpost: "__aeabi_uldivmod" [fs/bcachefs/bcachefs.ko] undefined!
+>> ERROR: modpost: "tegra_cpuidle_pcie_irqs_in_use" [drivers/pci/controller/pci-tegra.ko] undefined!
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
