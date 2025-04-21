@@ -1,66 +1,110 @@
-Return-Path: <linux-kernel+bounces-612376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75220A94E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7F1A94E23
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4A33AEACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2D1917121E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3181D20E6E2;
-	Mon, 21 Apr 2025 08:31:36 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E422921324D;
+	Mon, 21 Apr 2025 08:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hHdtemre"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CF313C3F6;
-	Mon, 21 Apr 2025 08:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20461D5147;
+	Mon, 21 Apr 2025 08:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745224295; cv=none; b=KJKd+ynLNthOw8dwQEy+TcCbljoi/4fuFojLFHeN2Ht00cMSSGXf0oSjqN/B9btAg9DbiqzMWGmAr9k3mLt4a7nXUqS7xE6U/WvREipnCVdcUDEKZf8mYfTYJLEbwPTHOOrM+94FzceI4u/DWt2XU+Mh5r1v1ULdD0Rqy7cDOtQ=
+	t=1745224368; cv=none; b=Kodtiy2TcQv6syRpkq5dXOOmlh0eHlFPvCaQNk0itk97tYQ6a3vIOPpSvDVNLF+DEFMWYK7Oaa6xGhnuiIxq3BRfl4jHiudGNxANiUAmRXEFsKL8QB9OCPvjdKTje762XV1CGP87KsOlg4aQ3G2REkz8yLpScyW0zCTvc3MvZzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745224295; c=relaxed/simple;
-	bh=6ybWQaWr2K5J38QeIe8zkxMMliX39OX8WjNRSHji00Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BX875Ph7+UZHS3Urjhe5xJSZedNhk4stAlvHr151Sre4pb9OQO4Qyse2/CteXbz2lSThHkPXuiv9ieo5693Cz1RxwrNF1QCbmPhGmvAfpAUqqrrpLNFyS5BCAmc7dGxvJkTjQ3WlyDjmMOLDmR6fN7CudRWX9SqYDk7cqC2Uk6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8621867373; Mon, 21 Apr 2025 10:31:28 +0200 (CEST)
-Date: Mon, 21 Apr 2025 10:31:28 +0200
-From: hch <hch@lst.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Carlos Maiolino <cem@kernel.org>, Hans Holmberg <Hans.Holmberg@wdc.com>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: add tunable threshold parameter for triggering
- zone GC
-Message-ID: <20250421083128.GA20490@lst.de>
-References: <20250325091007.24070-1-hans.holmberg@wdc.com> <iB7R4jpT-AaCUfizQ4YDpmyoSwGWmjJCdGfIRdvTE76nG3sPcUxeHgwVOgS5vFYV0DCeR1L5EINLppSGbgC3gg==@protonmail.internalid> <476cf4b6-e3e6-4a64-a400-cc1f05ea44cc@roeck-us.net> <mt3tlttnxheypljdkyy6bpjfkb7n5pm2w35wuf7bsma3btwnua@a3zljdrqqaq7> <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net>
+	s=arc-20240116; t=1745224368; c=relaxed/simple;
+	bh=SRf/xT1V/XLzxNA+vzzNLq8nrTmSw0Pc4JJe9nocbNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g74iT8HEh2MQK1z85+M3voazGfWQvYjAcN/8t2Z8dv+NNj/wXteFwcpnfRL3Qsl9RAS2ejzJc7RTC0XC7b5L59JFFzwTF9Viw3/pSS8oSrdt/S81scGYOaZTI0Lip8BWMaQ7c/8TQdHcP5hbaB85UR4QCRtRup3wCdGz6qSajX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hHdtemre; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 6mZouxXhh2zsA6mZsuAMLP; Mon, 21 Apr 2025 10:32:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1745224357;
+	bh=p3Q7HKc453zyGbz3/3Er3c4MCg4AKkAZAozw5ZLwmEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=hHdtemre2G7puVHkN1Xh3nu+lFN8YLDxuFwQk/KcZXcRTjj8N4N0wExbWte700HiY
+	 VyI02mol2I4EvPZyFE1XqWhy+gK62dotvFFkA3xxmcdbh6jvDhVwGgwukWtyisKt51
+	 dZw7EYG6pyt9noUp/7x0u6tdP/DAaYad3A9VMAjLHLzbBqypSdqehwEslSJO/UCgap
+	 UYeAKQREUwkbPvzVDjddexpRPftEqP9nKBTyE0MtuSWciteLeFmGOSatHzcoz5F1z/
+	 ObCyRRaZx/eJYYxy5UWYw0RaXXujt1recUSU5Ckwu3pAkZQZAGpThtyPxMomt72LCr
+	 jyt7jzVovEQ3A==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 21 Apr 2025 10:32:37 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5f9b16a3-f3ba-4ccf-bf49-a84c5419d5d2@wanadoo.fr>
+Date: Mon, 21 Apr 2025 10:32:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: using size_add() for kmalloc()
+To: Su Hui <suhui@nfschina.com>, davem@davemloft.net,
+ herbert@gondor.apana.org.au
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <c86fcb5b-73d0-4d55-833f-26a16713e325@wanadoo.fr>
+ <bade4ad1-2be7-45a4-8232-0be5fe2e7ef7@nfschina.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bade4ad1-2be7-45a4-8232-0be5fe2e7ef7@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 20, 2025 at 10:42:56AM -0700, Guenter Roeck wrote:
-> A possible local solution is below. Note the variable type change from s64 to u64.
+Le 21/04/2025 à 09:43, Su Hui a écrit :
+> On 2025/4/21 15:10, Christophe JAILLET wrote:
+>> Le 21/04/2025 à 07:51, Su Hui a écrit :
+>>> It's safer to use size_add() to replace open-coded aithmetic in 
+>>> allocator
+>>> arguments, because size_add() can prevent possible overflow problem.
+>>>
+>>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>>> ---
+>>>   include/crypto/aead.h     | 3 ++-
+>>>   include/crypto/akcipher.h | 4 +++-
+>>>   include/crypto/kpp.h      | 3 ++-
+>>>   3 files changed, 7 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/crypto/aead.h b/include/crypto/aead.h
+>>> index 0e8a41638678..cf212d28fe18 100644
+>>> --- a/include/crypto/aead.h
+>>> +++ b/include/crypto/aead.h
+>>> @@ -10,6 +10,7 @@
+>>>     #include <linux/atomic.h>
+>>>   #include <linux/container_of.h>
+>>> +#include <linux/overflow.h>
+>>
+>> You could move this 1 line below, to keep alphabetical order.
+>> And why do you say that it is redundant in your follow-up mail?
+> Thanks for your suggestion, I didn't notice this alphabetical order at 
+> first :( .
+> Because I found that  <linux/crypto.h> includes <linux/slab.h>, and
+> <linux/slab.h> includes <linux/overflow.h>, so this overflow.h is 
+> redundant.
 
-I think that'll need a lower bound of 0 thrown in to be safe as these
-counters can occasionally underflow.
+It is usually considered best practice to include what is used, and not 
+relying on indirect includes.
 
-Otherwise this is probably the right thing to do for now until mult_frac
-gets fixed eventually.  Can you add a comment why this open codes
-mult_frac to the code and send a formal patch for it?
+Should these others includes change one day, then some apparently 
+unrelated files will fails to built.
 
+CJ
 
