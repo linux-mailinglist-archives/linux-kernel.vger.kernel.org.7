@@ -1,141 +1,184 @@
-Return-Path: <linux-kernel+bounces-612561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4930A950AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFEDA95127
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D5C1169F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D1E189303B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589FB263C74;
-	Mon, 21 Apr 2025 12:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BZKn1Icj"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72572264FAF;
+	Mon, 21 Apr 2025 12:42:43 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2082AD2D;
-	Mon, 21 Apr 2025 12:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEBD264F8F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 12:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745237937; cv=none; b=DLNxwwt43/R4ZmZnhMnjYhdNRIk8qweNlWI6yvzTfIgW/7WQiCcXT+suTyHEBwqhgXQ9U6z52rL2GOh+pXRmjLQUFt+xm+jRl8Kmg+FibC7mqTU2HjFKCvVpRtAp5IbYw20THvaG6RpejyQir6JmlneiKhR14lZift6FW8mcN9U=
+	t=1745239363; cv=none; b=nwA08IXSPKamc9VIxojXfM8P/1yO3jWTTJEj0y1UOY7bQnEGbSM0hIPDkXBfuGJlC1+QbZnMUeBkRR9p/I2NfOuethXWvjVyjzh/ugQ3iS/MdCUNF28wwEaT4Vwgcl1HbwYWF1f8j/hTusBNh1oCgqTzQJgn99Q/aRjdtBZxPco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745237937; c=relaxed/simple;
-	bh=um4fv7mKGdJpS30iPGTyzDWjtnZo/lnitFmcd8PY2cQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JdJVak3tA2C/mZNihu8VnJmcOdnbuDdPdeLlIeIt3Ih+DaHkJIzLploQ4wmX34S8LOFJw5cDmWMg707IgFP+F7FXtYK9Du0a17nwp6gw8M/OsTqG69XPlVFbFD4UzGvwX4eJrj8XMbQFDqnYzgWXzczBn/C/V1goEEFxVydlk4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BZKn1Icj; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCImUA1545741
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 07:18:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745237928;
-	bh=HRhwr6bsuUpHJokkn7OOYPwCV0G4EhNX1INeaCHd44E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BZKn1IcjY/qIX90o+ZurQTtKZqjPrgXf4wjt8S5Xx7qjZ5A8ejXuDw0A8qkoSAom3
-	 ENz+2z4Ak8AqrSSNbVO0nzfGcbStX1yWOGGClkkHz5FfQWb8GzwXK2jYIfn1xcv7v6
-	 bFrCTZKtFAuyIv28c1EtsMqvom3owEPl2ckMubHA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCImtg061686
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Apr 2025 07:18:48 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 07:18:47 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 07:18:47 -0500
-Received: from [10.24.72.182] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LCIiHl032378;
-	Mon, 21 Apr 2025 07:18:45 -0500
-Message-ID: <94e79e4b-ff72-49ba-bcd7-ba69e2296d3b@ti.com>
-Date: Mon, 21 Apr 2025 17:48:43 +0530
+	s=arc-20240116; t=1745239363; c=relaxed/simple;
+	bh=nRO5OSLtxXidrQVlQfeNk550Tzm4uT/LC9HCLrmY1fs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2dVFL3o0bauT6bGd1cuwwYJlb//sgXPfj+zgpnSngC7b9oguAFpFcUGXqm5/84cA9C8Xmw1YFj069OwSv3+/O9eVf4eYA3f1CDJZLWJN8u5HHTTvr/YdDEARMWsPXUjPuO8xVp+h/nUJBVXA6lVAIa3uVHGkyNSTWzOW4EpYMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 53LCKdH8046275
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 20:20:39 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 53LCJT2d045671
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Mon, 21 Apr 2025 20:19:29 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.11) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Apr
+ 2025 20:19:29 +0800
+Date: Mon, 21 Apr 2025 20:19:29 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: Rob Herring <robh@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <paul.walmsley@sifive.com>,
+        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <tglx@linutronix.de>,
+        <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <tim609@andestech.com>
+Subject: Re: [PATCH 4/9] dt-bindings: interrupt-controller: add Andes
+ machine-level software interrupt controller
+Message-ID: <aAY30QwzG6/7RWhE@atctrx.andestech.com>
+References: <20250407104937.315783-1-ben717@andestech.com>
+ <20250407104937.315783-5-ben717@andestech.com>
+ <20250407141708.GA2250717-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Add DSI display support for TI's Jacinto platforms
-To: "Kumar, Udit" <u-kumar1@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <devarsht@ti.com>, <linux-kernel@vger.kernel.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <kristo@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250411105155.303657-1-j-choudhary@ti.com>
- <02f1912f-0a05-4446-923a-7935ed305cb3@ti.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <02f1912f-0a05-4446-923a-7935ed305cb3@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250407141708.GA2250717-robh@kernel.org>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 53LCKdH8046275
 
-Hello Udit,
-
-On 19/04/25 14:23, Kumar, Udit wrote:
+On Mon, Apr 07, 2025 at 09:17:08AM -0500, Rob Herring wrote:
+> [EXTERNAL MAIL]
 > 
-> On 4/11/2025 4:21 PM, Jayesh Choudhary wrote:
->> Hello All,
->>
->> This series adds the dts support to enable DSI on 3 platforms for TI 
->> SoCs:
->> - J784S4-EVM
->> - J721S2-EVM
->> - AM68-SK
->>
->> [..]
->>
->> NOTE: For higher resolutions, we need bigger CMA region.
->> But for validation, the default value is enough.
+> On Mon, Apr 07, 2025 at 06:49:32PM +0800, Ben Zong-You Xie wrote:
+> > Add the DT binding documentation for Andes machine-level software
+> > interrupt controller.
+> >
+> > In the Andes platform such as QiLai SoC, the PLIC module is instantiated a
+> > second time with all interrupt sources tied to zero as the software
+> > interrupt controller (PLICSW). PLICSW can generate machine-level software
+> > interrupts through programming its registers.
+> >
+> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+> > ---
+> >  .../andestech,plicsw.yaml                     | 48 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 49 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml b/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
+> > new file mode 100644
+> > index 000000000000..5432fcfd95ed
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
+> > @@ -0,0 +1,48 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/interrupt-controller/andestech,plicsw.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Andes machine-level software interrupt controller
+> > +
+> > +description:
+> > +  In the Andes platform such as QiLai SoC, the PLIC module is instantiated a
+> > +  second time with all interrupt sources tied to zero as the software interrupt
+> > +  controller (PLIC_SW). PLIC_SW can generate machine-level software interrupts
+> > +  through programming its registers.
+> > +
+> > +maintainers:
+> > +  - Ben Zong-You Xie <ben717@andestech.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - andestech,qilai-plicsw
+> > +      - const: andestech,plicsw
 > 
-> I am not sure , how DSS uses CMA region
-> 
+> Drop the fallback. If you have another implementation that's compatible,
+> then andestech,qilai-plicsw will be the fallback.
+>
 
-The framebuffers for dss are allocated from cma-pool.
-By default the cma-region is of 32MiB that is shared by various peripherals.
+Hi Rob,
 
-1920x1080 requires ~16MiB of CMA but sometimes due to fragmentation,
-we cannot get even this much for framebuffer and memory is not allocated 
-resulting in display failures.
+Maybe this is a stupid question, but I don't understand the reason for
+dropping the fallback. I follow the same logic in commit 1267d9831171
+(dt-bindings: interrupt-controller: sifive,plic: Document Renesas RZ/Five
+SoC). Thus, I think if there is a new SoC also equipped with Andes
+PLIC-SW (NCEPLIC100-SW), the SoC vendor can simply add a new compatible
+string under the enum.
 
-And large resolutions like 4k@60fps require ~64MiB straight away.
-So it is better to reserve appropriate CMA region.
+Also, I will rename andestech,plisw to andestech,nceplic100-sw if the
+fallback string is not dropped.
 
-Thanks
-Jayesh
+Thanks,
+Ben
 
-> 
->> I am posting another series to add CMA region to Jacinto platforms
->> similar to Sitara family soon:
->> <https://lore.kernel.org/all/20240613150902.2173582-1-devarsht@ti.com/>
->>
->> Jayesh Choudhary (5):
->>    arm64: dts: ti: k3-j784s4-j742s2-main-common: add DSI & DSI PHY
->>    arm64: dts: ti: k3-j784s4-j742s2-evm-common: Enable DisplayPort-1
->>    arm64: dts: ti: k3-j721s2-common-proc-board: Add main_i2c4 instance
->>    arm64: dts: ti: k3-j721s2-common-proc-board: Enable DisplayPort-1
->>    arm64: dts: ti: k3-am68-sk: Enable DSI on DisplayPort-0
->>
->> Rahul T R (2):
->>    arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
->>    arm64: dts: ti: k3-j721s2-som-p0: add DSI to eDP
->>
->>   .../boot/dts/ti/k3-am68-sk-base-board.dts     |  96 ++++++++++++++
->>   .../dts/ti/k3-j721s2-common-proc-board.dts    | 116 +++++++++++++++++
->>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  37 ++++++
->>   arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi  |  52 ++++++++
->>   .../dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 117 +++++++++++++++++-
->>   .../dts/ti/k3-j784s4-j742s2-main-common.dtsi  |  37 ++++++
->>   6 files changed, 454 insertions(+), 1 deletion(-)
->>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts-extended:
+> > +    minItems: 1
+> > +    maxItems: 15872
+> > +
+> > +additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts-extended
+> > +
+> > +examples:
+> > +  - |
+> > +    interrupt-controller@400000 {
+> > +      compatible = "andestech,qilai-plicsw", "andestech,plicsw";
+> > +      reg = <0x400000 0x400000>;
+> > +      interrupts-extended = <&cpu0intc 3>,
+> > +                            <&cpu1intc 3>,
+> > +                            <&cpu2intc 3>,
+> > +                            <&cpu3intc 3>;
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index a0ccac1cca29..645d7137cb07 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -20728,6 +20728,7 @@ F:    include/linux/irqchip/riscv-imsic.h
+> >  RISC-V ANDES SoC Support
+> >  M:   Ben Zong-You Xie <ben717@andestech.com>
+> >  S:   Maintained
+> > +F:   Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
+> >  F:   Documentation/devicetree/bindings/riscv/andes.yaml
+> >
+> >  RISC-V ARCHITECTURE
+> > --
+> > 2.34.1
+> >
 
