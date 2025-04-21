@@ -1,184 +1,188 @@
-Return-Path: <linux-kernel+bounces-612582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFEDA95127
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6C6A950CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D1E189303B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80CB33B3A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72572264FAF;
-	Mon, 21 Apr 2025 12:42:43 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AFC264A6B;
+	Mon, 21 Apr 2025 12:21:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEBD264F8F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 12:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D33813212A;
+	Mon, 21 Apr 2025 12:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745239363; cv=none; b=nwA08IXSPKamc9VIxojXfM8P/1yO3jWTTJEj0y1UOY7bQnEGbSM0hIPDkXBfuGJlC1+QbZnMUeBkRR9p/I2NfOuethXWvjVyjzh/ugQ3iS/MdCUNF28wwEaT4Vwgcl1HbwYWF1f8j/hTusBNh1oCgqTzQJgn99Q/aRjdtBZxPco=
+	t=1745238082; cv=none; b=jjxU5JZLfhtHBtUWY4QdQpqGGPryFfR3+webMfe+T5T0OaMtBK7D/DXzhDDEdS6w4xZoQthyd/YUgMtGmQDT/Krz0wtfVSNzWeTcDJU6DA/ip3MZgN0CL9sooEFDLl5kv5saXkkiiRUXSuOWSdJQZqPeGe3b0P+50DCM4PzJQOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745239363; c=relaxed/simple;
-	bh=nRO5OSLtxXidrQVlQfeNk550Tzm4uT/LC9HCLrmY1fs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2dVFL3o0bauT6bGd1cuwwYJlb//sgXPfj+zgpnSngC7b9oguAFpFcUGXqm5/84cA9C8Xmw1YFj069OwSv3+/O9eVf4eYA3f1CDJZLWJN8u5HHTTvr/YdDEARMWsPXUjPuO8xVp+h/nUJBVXA6lVAIa3uVHGkyNSTWzOW4EpYMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 53LCKdH8046275
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 20:20:39 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 53LCJT2d045671
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Mon, 21 Apr 2025 20:19:29 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.11) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Apr
- 2025 20:19:29 +0800
-Date: Mon, 21 Apr 2025 20:19:29 +0800
-From: Ben Zong-You Xie <ben717@andestech.com>
-To: Rob Herring <robh@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <paul.walmsley@sifive.com>,
-        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <tglx@linutronix.de>,
-        <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <tim609@andestech.com>
-Subject: Re: [PATCH 4/9] dt-bindings: interrupt-controller: add Andes
- machine-level software interrupt controller
-Message-ID: <aAY30QwzG6/7RWhE@atctrx.andestech.com>
-References: <20250407104937.315783-1-ben717@andestech.com>
- <20250407104937.315783-5-ben717@andestech.com>
- <20250407141708.GA2250717-robh@kernel.org>
+	s=arc-20240116; t=1745238082; c=relaxed/simple;
+	bh=iMcOproauThzVJNK7jS09osn3yXkJVBW7zXDM1fWJWA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=uUncUaAIF3UshmE4tYs9TuBoEM13mIXOxdQNKTm9sipndnXOhRMZBPdKTTr3oQkPqV6phYfPyXmAtHArA+t/3qdM9qAdM+Eme3luqeJbKd6zFj4pt3VCk33WOdST3nO8s/JQf+OIq43qUPpmeX4aQVOq9jo0DVzq5X2rPd4cNhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zh4GC2hXhz4f3jJ8;
+	Mon, 21 Apr 2025 20:20:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 40C501A058E;
+	Mon, 21 Apr 2025 20:21:15 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl85OAZoQMWNKA--.64428S3;
+	Mon, 21 Apr 2025 20:21:15 +0800 (CST)
+Subject: Re: 10x I/O await times in 6.12
+To: Matt Fleming <mfleming@cloudflare.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team <kernel-team@cloudflare.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <CAGis_TVSAPjYwVjUyur0_NFsDi9jmJ_oWhBHrJ-bEknG-nJO9Q@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dd2db843-843f-db15-c54f-f2c44548dee3@huaweicloud.com>
+Date: Mon, 21 Apr 2025 20:21:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250407141708.GA2250717-robh@kernel.org>
-User-Agent: Mutt/2.1.4 (2021-12-11)
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 53LCKdH8046275
+In-Reply-To: <CAGis_TVSAPjYwVjUyur0_NFsDi9jmJ_oWhBHrJ-bEknG-nJO9Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHKl85OAZoQMWNKA--.64428S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1fur15uryxGF45Ary7KFg_yoW5WrWfpr
+	Z0q3ZIyr4rZFWIga1xAa12vFyrtr1qyrW7JFW5G3ySyw1kCryfKr1FvayY9ry3Zrn5CrW7
+	WFZYgas8ZanIkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
+	hLUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Apr 07, 2025 at 09:17:08AM -0500, Rob Herring wrote:
-> [EXTERNAL MAIL]
+Hi,
+
+在 2025/04/21 16:53, Matt Fleming 写道:
+> Hey there,
 > 
-> On Mon, Apr 07, 2025 at 06:49:32PM +0800, Ben Zong-You Xie wrote:
-> > Add the DT binding documentation for Andes machine-level software
-> > interrupt controller.
-> >
-> > In the Andes platform such as QiLai SoC, the PLIC module is instantiated a
-> > second time with all interrupt sources tied to zero as the software
-> > interrupt controller (PLICSW). PLICSW can generate machine-level software
-> > interrupts through programming its registers.
-> >
-> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-> > ---
-> >  .../andestech,plicsw.yaml                     | 48 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml b/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
-> > new file mode 100644
-> > index 000000000000..5432fcfd95ed
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
-> > @@ -0,0 +1,48 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/interrupt-controller/andestech,plicsw.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Andes machine-level software interrupt controller
-> > +
-> > +description:
-> > +  In the Andes platform such as QiLai SoC, the PLIC module is instantiated a
-> > +  second time with all interrupt sources tied to zero as the software interrupt
-> > +  controller (PLIC_SW). PLIC_SW can generate machine-level software interrupts
-> > +  through programming its registers.
-> > +
-> > +maintainers:
-> > +  - Ben Zong-You Xie <ben717@andestech.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - andestech,qilai-plicsw
-> > +      - const: andestech,plicsw
+> We're moving to 6.12 at Cloudflare and noticed that write await times
+> in iostat are 10x what they were in 6.6. After a bit of bpftracing
+> (script to find all plug times above 10ms below), it seems like this
+> is an accounting error caused by the plug->cur_ktime optimisation
+> rather than anything more material.
+
+What is the base value? If it's microseconds, IO performance should
+actually be better.
 > 
-> Drop the fallback. If you have another implementation that's compatible,
-> then andestech,qilai-plicsw will be the fallback.
->
+> It appears as though a task can enter __submit_bio() with ->plug set
+> and a very stale cur_ktime value on the order of milliseconds. Is this
+> expected behaviour? It looks like it leads to inaccurate I/O times.
+> 
 
-Hi Rob,
+For microseconds I think it's expected, however, I don't think
+milliseconds is acceptable.
+> Thanks,
+> Matt
+> 
+> ---->8----
+> $ sudo bpftrace -e 'k:__submit_bio { $p = curtask->plug; if ($p != 0)
+> { if (((nsecs - $p->cur_ktime) / 1000) > 10000) { @[kstack] =
+> count();}}}'
 
-Maybe this is a stupid question, but I don't understand the reason for
-dropping the fallback. I follow the same logic in commit 1267d9831171
-(dt-bindings: interrupt-controller: sifive,plic: Document Renesas RZ/Five
-SoC). Thus, I think if there is a new SoC also equipped with Andes
-PLIC-SW (NCEPLIC100-SW), the SoC vendor can simply add a new compatible
-string under the enum.
-
-Also, I will rename andestech,plisw to andestech,nceplic100-sw if the
-fallback string is not dropped.
+Can you drop this expensive bpftrace script which might affect IO
+performance, and replace __submit_bio directly to __blk_flush_plug? If
+nsecs - plug->cur_ktime is still milliseconds, can you check if the
+following patch can fix your problem?
 
 Thanks,
-Ben
+Kuai
 
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts-extended:
-> > +    minItems: 1
-> > +    maxItems: 15872
-> > +
-> > +additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts-extended
-> > +
-> > +examples:
-> > +  - |
-> > +    interrupt-controller@400000 {
-> > +      compatible = "andestech,qilai-plicsw", "andestech,plicsw";
-> > +      reg = <0x400000 0x400000>;
-> > +      interrupts-extended = <&cpu0intc 3>,
-> > +                            <&cpu1intc 3>,
-> > +                            <&cpu2intc 3>,
-> > +                            <&cpu3intc 3>;
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index a0ccac1cca29..645d7137cb07 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -20728,6 +20728,7 @@ F:    include/linux/irqchip/riscv-imsic.h
-> >  RISC-V ANDES SoC Support
-> >  M:   Ben Zong-You Xie <ben717@andestech.com>
-> >  S:   Maintained
-> > +F:   Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
-> >  F:   Documentation/devicetree/bindings/riscv/andes.yaml
-> >
-> >  RISC-V ARCHITECTURE
-> > --
-> > 2.34.1
-> >
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index ae8494d88897..37197502147e 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1095,7 +1095,9 @@ static inline void blk_account_io_start(struct 
+request *req)
+                 return;
+
+         req->rq_flags |= RQF_IO_STAT;
+-       req->start_time_ns = blk_time_get_ns();
++
++       if (!current->plug)
++               req->start_time_ns = blk_time_get_ns();
+
+         /*
+          * All non-passthrough requests are created from a bio with one
+@@ -2874,6 +2876,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, 
+bool from_schedule)
+  {
+         struct request *rq;
+         unsigned int depth;
++       u64 now;
+
+         /*
+          * We may have been called recursively midway through handling
+@@ -2887,6 +2890,10 @@ void blk_mq_flush_plug_list(struct blk_plug 
+*plug, bool from_schedule)
+         depth = plug->rq_count;
+         plug->rq_count = 0;
+
++       now = ktime_get_ns();
++       rq_list_for_each(&plug->mq_list, rq)
++               rq->start_time_ns = now;
++
+         if (!plug->multiple_queues && !plug->has_elevator && 
+!from_schedule) {
+                 struct request_queue *q;
+
+
+> Attaching 1 probe...
+> ^C
+> 
+> @[
+>      __submit_bio+1
+>      submit_bio_noacct_nocheck+390
+>      submit_bio_wait+92
+>      swap_writepage_bdev_sync+262
+>      swap_writepage+315
+>      pageout+291
+>      shrink_folio_list+1835
+>      shrink_lruvec+1683
+>      shrink_node+784
+>      balance_pgdat+877
+>      kswapd+496
+>      kthread+207
+>      ret_from_fork+49
+>      ret_from_fork_asm+26
+> ]: 184
+> @[
+>      __submit_bio+1
+>      submit_bio_noacct_nocheck+390
+>      _xfs_buf_ioapply+599
+>      __xfs_buf_submit+110
+>      xfs_buf_delwri_submit_buffers+399
+>      xfsaild+691
+>      kthread+207
+>      ret_from_fork+49
+>      ret_from_fork_asm+26
+> ]: 28123
+> 
+> .
+> 
+
 
