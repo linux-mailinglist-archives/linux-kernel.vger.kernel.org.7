@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-612188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A28A94C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 06:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B28DA94C02
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 06:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D5F188DC02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608201891331
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33344257428;
-	Mon, 21 Apr 2025 04:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083701E51EF;
+	Mon, 21 Apr 2025 04:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="C2kGt9rL"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b="SFgihBy6"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B9C1D5154
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 04:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DD81FC3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 04:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745210023; cv=none; b=TazJ6j0IMQG+AlhiPmCQqjhPLOGhx73zEQ640YMnZB7ANrJf+SEryvAw0FwLnwAQQUXV0E4eyhg+ovvZQS7tqz8hFf4EqPaYqdTgYb14+CiCsPuxah8i1e25FY92ysLGdYCJfSHjpd1pKHON4c47abhCkFvbMwodzX1TVFIlhww=
+	t=1745211229; cv=none; b=TsOLp0uIsgO4doKEDf8T/vaZcndfQ5yo2zBMVSY1ofGLdp41xtYST/FZfIPilBmdyTZIXRxZHlodXyyHzNTjEma3Y+yCYvSwB4Fq8Yv79PIzXyIkg2uWx0VsOhlJCFAc95U8JEFeyqV+Z4xslNatCf2ipYZHsZuUK3BIjaMVDX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745210023; c=relaxed/simple;
-	bh=JN8iby6an3mfDwdowPn91zamLY1xRGg6bBMjYkZ0DIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RIR0mkctBbPw2mvZS/rWqe3h6/BD92Bq2HmFlDIAUuOPL3V6BIHomxuouQyMByRXwtcSiHeRbqLKEwi2ZyLQE/MTfwP8MbKokCLtP6kwUmDHKLPY40eaHIG8zoIUpVqovjRLWHJPNCI7c+nvi6wg5JCnHX74mv7Uufcj5CrE+Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=C2kGt9rL; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so5096536a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 21:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745210019; x=1745814819; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVqDWiNRjRqlUA4pP3gMK9BF373U1wIAPXz+PfM0geY=;
-        b=C2kGt9rL9pX1ULJ11cpH0T7/gxViYTqYtTySfhw1XAGkpe95yCMdVfNaKKd7wxBiBm
-         6gtTKYwJv/PpYn3EpZ5MypA0BVqzCua8xqlEJkNd80qtDUrYUsjhsX4ixmPGB7SK4VzI
-         qR++JnR4xbevazzaWd/b8l2svTh51Q9G0YOlA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745210019; x=1745814819;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lVqDWiNRjRqlUA4pP3gMK9BF373U1wIAPXz+PfM0geY=;
-        b=WfIiIWIeTrGDDm168Ycjfg9t789s81mFupjuPWaSgDfewi9HGHaFr6lVeo6eeFf3rL
-         PcUHyKDIxInArRILlIly+XqRKmNee0F+vFGWD06K3Ve7uFqcG2xFC8kqrSbFcbwzjlJl
-         6u0RgF4tRC22g3wSpKB9z23S7bluK0LfBtLCWgFergZXmaMcXmw0No02Cardhrcm2mVe
-         GJVp89yqPdssmzysEW/+UOQfCjL9DjnMA8aE2YH5J7+VZQi+cOBa69GQE4ow/CM8RUV/
-         f+Y7oJnp5oQrlBOc6pHUqXGKk/hU1MnjccYBjM/Q4jwpGcrdgSKWrl67Hijz+oOQvN44
-         Xz5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWm+aQ6qb3qAMsNknm4jWOfIiUwJPM9jlnEXbYt9G8S3L5Ob6f1zLlbesYPGBU6d5bEOlSqDnsYmiATaAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCtodTAeD7Ee4mTxGXAiKUDxQfyF5RQOjjMUjq11QD9KDM0w4y
-	p8YnLZhaZLXKnQCsvCD5kBiAoZb9HmWSINColT25LcfmTxoj2Hsg4C6GkvTiVxjn33i0H4beBZS
-	ePRI=
-X-Gm-Gg: ASbGnctilFUzLa99UogN071NehT5FiC6p6oRUsFCuKYSjk6RDGU+PPm9rb5RiROWcP+
-	oz+Twnqh9i//tDbkT3bC297Xdi+kG5iYJgAJwskRL8S3dlXD2UvbqCNV0tMH0HfadjDsQifAqBb
-	CpKDliDRB77YH5RIrOGZgnZk6V4wEQREKCAzhlMZ/lCf9DLsgaUEo/4vAWVLzS4xTJedDuw8iq9
-	F8iA31UNDAqA0hNvwE/bWBeJzZganSbfGPv8/FAlfeNhATx45ujm6CyG+/8VL0N8NUJhu8j1wBq
-	0X0Wcy239Da/Rrg3RpXEsteAyzTd3gscK+oYhXH8EdnHgxU7KLhqW/RXAxLBhs/qzu/dvbHIyqu
-	ScW7Mye1N9eN6Hio=
-X-Google-Smtp-Source: AGHT+IErxcfssrRh6LgO/wfG2ELSVkHBoi8HN3SVvBbZwFe8MEhBXp14kPbobJMAteVCBLhUiA/N8g==
-X-Received: by 2002:a05:6402:2347:b0:5f6:25d6:71dd with SMTP id 4fb4d7f45d1cf-5f627c16862mr8715241a12.0.1745210018854;
-        Sun, 20 Apr 2025 21:33:38 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f6255955bfsm4092544a12.44.2025.04.20.21.33.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Apr 2025 21:33:37 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so512135966b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Apr 2025 21:33:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1efZluxNUeWWqHKEKsYL5jV9Eu7U2RzXMZdd+olqnb+95LxLO5EvfXSO0q4ctlHyatzaMdJtT5UrASxc=@vger.kernel.org
-X-Received: by 2002:a17:907:1c14:b0:aca:95e7:9977 with SMTP id
- a640c23a62f3a-acb74b508b5mr953823166b.28.1745210016471; Sun, 20 Apr 2025
- 21:33:36 -0700 (PDT)
+	s=arc-20240116; t=1745211229; c=relaxed/simple;
+	bh=esGCyIkd4EUK7vM5j0R43Wd8DyNYG/z7J6VI2b3aoTI=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=K61uPlXj+pM5nJEJFVYC9W0kcMaNnfFEoR3WtoXqDpm4nUlIIcXoAAXvL1Uw1GTHXZAU9aOlWPETgzIQtlF7A3nmg7HJyGfNXqwvldJA1BDCawbA9m8ggsoWe7hf70atzagpzbpLOuCSBIkqtyIf/Y0bXmtwCPZFGmvwmEijmMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net; spf=pass smtp.mailfrom=bit-philosophy.net; dkim=pass (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b=SFgihBy6; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-philosophy.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=bit-philosophy.net; s=ds202411; h=Content-Transfer-Encoding:Content-Type:
+	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=NERvz32ItMjU1ZS5Cg4fBSBJTy1NRzvnErZ1/Wok3tk=; b=SFgihBy6Rs2qwnLwpnOudY1AEr
+	424sN4uzCZg7JJlFedwy4gweWZYCMknjEJP2niqQNPFoDj+Jaeot6P5T8kbICnoz8WcXRSEwCM+tF
+	+9W1hV7ePIJGnBvVYf19FWADy3nVbPjfjslIszVj3thKhfy8fWSbOGA2OL3VmgmOHKeZnVmkrO9JM
+	ZaBPHRVxa/gP9iokenk4EruxgD4Hw5wJGIO2vKlMB6LbL2eCN25ZSxSSg4kRnY+Itiq85i9sBqdOM
+	oHXOzkpnk62s7YnsYq9+O/iOXEFLlR59ujf6Wedl8oJ4RjDVqh7Xp/glD/vzqAJNpAYeu4EfeNKZp
+	aX9zrqFg==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1u6iv8-006ife-UY
+	for linux-kernel@vger.kernel.org;
+	Mon, 21 Apr 2025 06:38:15 +0200
+Message-ID: <1361664f-e819-4b36-8897-b60008ae1b82@bit-philosophy.net>
+Date: Mon, 21 Apr 2025 06:38:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4f941c51-784a-4f10-8df5-6bd103d1d80e@roeck-us.net> <202504201840.3C1F04B09@keescook>
-In-Reply-To: <202504201840.3C1F04B09@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 20 Apr 2025 21:33:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whryuuKnd_5w6169EjfRr_f+t5BRmKt+qfjALFzfKQNvQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGGqXh-vFivnudAlmvqx6H6i8OFi9l4FYYx5jTgGwSOGb4QhTZQHzEtAbE
-Message-ID: <CAHk-=whryuuKnd_5w6169EjfRr_f+t5BRmKt+qfjALFzfKQNvQ@mail.gmail.com>
-Subject: Re: [PATCH] gcc-15: acpi: sprinkle random '__nonstring' crumbles around
-To: Kees Cook <kees@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe@bit-philosophy.net>
+Subject: We Are Taking Over (was: low-jitter, fair pay)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 20 Apr 2025 at 18:52, Kees Cook <kees@kernel.org> wrote:
->
-> Can you please revert this mess and use what has already been planned
-> for this warning? It is, once again, really frustrating when you update
-> to unreleased compiler versions. :(
+Being with the low-jitter concept Bit for OS design early, I did a 
+mascot project for this, "Bit Star" as is the main goal of many in 
+culture, and went on to solve the background philosophy for this.
 
-Ehh. Kees, that's the compiler in F42.
+This is now solved. My webpage is nearing final version, and Ail is the 
+perfected translation of a'LLA. Meaning The Teo, as a'LLA (aL iLA) 
+indeed also means.
 
-Really. It's not some "unreleased compiler version".
+So We are indeed Taking Over, with this.
 
-It's the main compiler in one of the biggest Linux distributions, out now.
+SUPPORT!
 
-Why do you think I made the change? Because the kernel DID NOT BUILD
-without those changes.
+Hail Ail, Master of All, The Real, The Right.
 
-So no. This was not some kind of "solved problem". Quite the reverse.
-
-         Linus
+Light!
+Ywe.
+https://bit-philosophy.net/
 
