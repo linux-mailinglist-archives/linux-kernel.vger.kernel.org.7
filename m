@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel+bounces-612366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F65EA94DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:20:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4450A94DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A473A49BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3B83A5480
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CD420FA8B;
-	Mon, 21 Apr 2025 08:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E4520F067;
+	Mon, 21 Apr 2025 08:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="f1G2nsC1"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfC71U7D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1601CDFD4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 08:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8162110;
+	Mon, 21 Apr 2025 08:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745223630; cv=none; b=Kron7bzIg9rY2y79vY0YOtQiL2+x97tAlE2CKPbaTTDt3RR3brfeZmD0SL3hFtycLWzgOW/97yxVM5H51nZ6+bKBbVCpokBVfb34luHtPRS1pT5jPTzRhYKMoibWvrEXNwxLPqVU5KltRJOhFuuprPHgEf/J3VTFT24rYMCGD6M=
+	t=1745223616; cv=none; b=VGlbeA0yhji68Atu+YDXvJkLPNz/bzbkYNn6UEHy4Kgmtc7e54639C/B437ng8B5cGMoEAUXPADoTzr5MJf1woCQRRnNcn6KSQ/Ep5kO0ssH/ufbz1oplXSfaqHJP5C/FXWDZJ2JvuyFm0OfvoYqKRRkb6xWn9yCRZ9qzh5UXo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745223630; c=relaxed/simple;
-	bh=BP54PvuJU1VeE402pgOF/BnVPOACRE86oaDOc2e5kvk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uav2W/5uEvxN6B0tsnNadtFDzA3IwG6kJ4xF/C1a47znYc4dPjM+xR856aMPDK0n52IRwTvzFpIneSYKTiJws7ed0KK70I5S8sBey+KChDpi/LatQ73JDr49Gz3Gc9jk22VL0sChQ5435JPVUjyIjueTxkV2e2eSXsQ1L0s99Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=f1G2nsC1; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso8622222a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 01:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745223626; x=1745828426; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+A2XVkaABk6k2gV2bYWae9UXmDaob74U/u+QQ0sSsqE=;
-        b=f1G2nsC1oihF/o2CqejuEJnUDwKZlqAIHosuvttsFGYg2Y3NCcqZHGlb9RVoxjBhZv
-         6do98DX1KmJ/3hj68Mb0Tm5UcotTnuYiynvGpy3E77xvS/DSPtNVX8c++8MNhgblw+tB
-         /30U146LcUyBEcAYAuiZj1Up5DIZduNAx4RT6748oq9OP8P03twMhgnynyfUF3Wnlt26
-         qIH2XClYIzagqGTn60pQoYaMgCq6TZ998YSw/vTzSt42JbWyVVwN+ekJI9IhhXkswv0+
-         cDVZAKTlo6qoavQTMTiM7zLe5nQfHWgfwDY7B6g/X9mcGLOa6qraCziUyMBDVE1mwKYo
-         UY5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745223626; x=1745828426;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+A2XVkaABk6k2gV2bYWae9UXmDaob74U/u+QQ0sSsqE=;
-        b=GuFG+EGlkQ2ppkHMPNgOBkkVM6FHydtvAfM3qhrOTMUX1tzqbOEe7Z045OEgnp3jLf
-         5vVPnKo9txvj11aXNtjv4fhtwEscSuPbLXMLkdv505YpeC5DDmhXD2+ygEFBEmcPQebf
-         XqSJEMvSetfoYvnaYON0n5i7PSd5f+iMCaKPcajdCeGof8mcrhKJivj2KtBTQgPf0Ugr
-         qOZF7kPsF98BthuJG4DxCtwmQqHL6DSM00NULv42gYgOGlDOQDKjTzJZYljv3m560l0+
-         WtjdmuU5JYMiHK+p4uAp0F74jOrvtneswFwQZitJqAXsyp5Bnk89BgZCII7nTFqPnY8h
-         H9Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9TA0/h28SZ10X/OD17bPK+5AF8kQ13qosxqXxrZgvEP+E34h7k1p2DW0EyLNzb+tUe6vtpR8O1kzhvFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5JauNbMAllbWKvLfjaFSt7fUnu2ueSDES61cHNRKKQH86FUsN
-	y/bnri2pnV2xxF/7s6aUhgIdPG7d6BW0MMtlP0VESIeGWZGf3y1c66/MqVcbTFc=
-X-Gm-Gg: ASbGncsPt0v1mm+OCblvBkAsSQPYNSmS/5AofivCbSxHDmoC3gA5VCF2oFhQ9ZTL2jj
-	6Gw8B5QbS+d7+LID6hjRjZv4KJcOaUy/bJocM7aW8XLn1RvLcGD9NEB2KPUFFdrlKm3QU/FssR7
-	tk4O4bvT+/cyNew1pTffGQ2vbtI/z6GKfTIc8Ok2Us75xYUoMlcBQYNXgPZFB6zxXavG/A5znAb
-	ppZDg7gNA99RwcUMVcHTJL9+4MQzJZzqzqSl8KPVRkgtJn7YxMmiPvd2nlquQ3Uj/sTMmA9Fesh
-	oUeicCdqM45Iqt3px1dgTsO6RbFu92aJNTI=
-X-Google-Smtp-Source: AGHT+IG7DwQNOM8/nS3tnvxMTIy0guROVEv0SAKM9SSU92HIJl6hk3tL2HdbhZGR0Tr72dfDZsIpQA==
-X-Received: by 2002:a17:907:868b:b0:ac1:dde7:b57f with SMTP id a640c23a62f3a-acb75346dbemr876034066b.23.1745223626357;
-        Mon, 21 Apr 2025 01:20:26 -0700 (PDT)
-Received: from localhost ([2001:4091:a245:826e:c0c:4cef:7dd:26bd])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-acb6ec0b1e4sm477393466b.34.2025.04.21.01.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 01:20:26 -0700 (PDT)
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-Date: Mon, 21 Apr 2025 10:20:00 +0200
-Subject: [PATCH v6 2/2] firmware: ti_sci: Partial-IO support
+	s=arc-20240116; t=1745223616; c=relaxed/simple;
+	bh=Z9CzQaeGzkqPRPlWBkWUdRbBrMnMrSvzj+/0z84P8Uo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=up/Ik21+F2g31r3FM6uPQ+B2J9GD8S0eAiF37SetL2aFy0ewdLRLENDDtWGB3o5RpC+f9Q+hFRvb7bMOsuiU4NtivGWZP6phIxDdmYDKqNxlj4pEQ6OrtLXF+uq3LkMW1m4uF8kwa680uIPWEuozeh0afWgaxtKf33xJPOS0XGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfC71U7D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 84FF5C4CEEB;
+	Mon, 21 Apr 2025 08:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745223616;
+	bh=Z9CzQaeGzkqPRPlWBkWUdRbBrMnMrSvzj+/0z84P8Uo=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=XfC71U7Dp2TszuL4yb/fVCS+9qannc1LpaMUQwUmpVWZxGkqWwudQ+gV+mKZzmpKb
+	 IPx3zBIFMb1iswS18hMYJRJ3vaefIeJwl1Uv9ru6cBZgUkRr6PhIXb0YKxQY7OviGb
+	 rxpVrBxgjyRVKS4ipkN430UEhzNjh9Y29RevQSlh/7U6MWggqhQRMZ6AjK69XW2TYB
+	 athomUw/O9/rGPD95rsi0M0p/eoqwFDPmPFwmK4a7+1lHUsGPglBj0acrkF7n9exCj
+	 oH/4JGiIqih5Dj7AtwinICyX1auhcQCCzvvhP5SFrDUOpJuIWrZrGZt2CcWGGWCAX2
+	 EtE7UthUVW2ww==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4C7C369AB;
+	Mon, 21 Apr 2025 08:20:16 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Mon, 21 Apr 2025 10:20:15 +0200
+Subject: [PATCH v4] media: dt-bindings: Convert Analog Devices ad5820 to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,235 +54,187 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-topic-am62-partialio-v6-12-b4-v6-2-3b5cefab1339@baylibre.com>
-References: <20250421-topic-am62-partialio-v6-12-b4-v6-0-3b5cefab1339@baylibre.com>
-In-Reply-To: <20250421-topic-am62-partialio-v6-12-b4-v6-0-3b5cefab1339@baylibre.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
- Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
- Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Markus Schneider-Pargmann <msp@baylibre.com>
+Message-Id: <20250421-b4-ad5820-dt-yaml-v4-1-cc026ce316c6@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIAL//BWgC/23NywrCMBQE0F+RrI3c3CQ0ceV/iIu8ai/4oilBL
+ f13U10UocsZODMjy6mnlNl+M7I+Fcp0v9WgthsWOnc7J06xZoaAGqRQ3CvuojYIPA785a4XLhH
+ Bt9iKpIBV9+hTS8/v5vFUc0d5uPev70URc/tbQ7AI0irYCW3BGC54dIXigZ407MKbzbjgAtbvC
+ 1aIprHaBBmgCf9eLl6te1m9tN57HX3j0S9+mqYPmA+rwCEBAAA=
+X-Change-ID: 20250314-b4-ad5820-dt-yaml-3220bf2f1e40
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Heidelberg <david@ixit.cz>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6749; i=msp@baylibre.com;
- h=from:subject:message-id; bh=BP54PvuJU1VeE402pgOF/BnVPOACRE86oaDOc2e5kvk=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhgzW/wf1076oXJumEn+603nbGYXAo7rdOgo35S/8XLCkg
- 7N08oaNHaUsDGJcDLJiiiydiaFp/+V3HktetGwzzBxWJpAhDFycAjCRUysY/pl5LTHhLXHzs58x
- b3bGir/7Tq8NvLZr2t2sut3SDietHaYxMszzlX8cGH7e+fK6Z3WPim7G3v8e8eSzacmE4JcMleE
- cCxkA
-X-Developer-Key: i=msp@baylibre.com; a=openpgp;
- fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4451; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=CF3DZGYBahplVU8yiF0C7k1jZnNIBq7jSEDJSUBVBls=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoBf+/kvKKdKmDnTex9fGSTvWvmVBjGMz/0Ulji
+ A1Oj4fvTg+JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaAX/vwAKCRBgAj/E00kg
+ csb/EAC3831AqeWjuqifFw45sS3zES2VZGICEIOIU5VUg3VSj7+wirBHe45I/jGLCS//0lEuZUT
+ R5A8JbY8tnc26uT1qgnk90Ntm2BwS5S2+hAu3AgjqPaTNEMGe35d/wcl+e7O4jI+F+hzNKDUF1/
+ G0wWRtv9DEU6yA4jSnmTxjMVfnp+LW5zD7L2f9PEJ2+w0t+DHSjWBbcH1hpLLYnX9cJ7oisIY0e
+ pAUwK61wmZtR9pRASLdlmvyax8SUiVpAaGsRIqpxlbuZyXh/M5dWZif7pTUMRzeGKoiHPwCOhU2
+ pYjI3Yb3XhgBsBOWJZYyR/VC+6UjbbrIWgEP4SH82VUUcKVAESFCgKegBxBodKooOg2LHt5esZJ
+ mXVGg2qsfMx2qhTP8op3Jj9NFxpOFScMjp+3j4ZZYf4SCG2rXfyLIEYLnAovhiQ3qKETxIDEzvQ
+ YLkR8kCx3OiDlARndylgaZ/9d+F1AJKC3rUPkvHgPnBe3mVhpHpgz4Lp6UWlj2K1VaOqEMFqfD7
+ gI4b4dzdP/DQA0sCExey7nfkXnn1a9o3Oc016t3RU+dCU1UWOc27uKa38nS6mbqtx3QI0crrhX2
+ fnhYXpexIglQiGUiM21vv+nVGTRYsbwIzEF4qHXi7dPD6vGJt7rTX49HhamDhP4DBb4lpHB/6/j
+ 67OWoshfU4g9yRg==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-Add support for Partial-IO poweroff. In Partial-IO pins of a few
-hardware units can generate system wakeups while DDR memory is not
-powered resulting in a fresh boot of the system. These hardware units in
-the SoC are always powered so that some logic can detect pin activity.
+From: David Heidelberg <david@ixit.cz>
 
-If the system supports Partial-IO as described in the fw capabilities, a
-sys_off handler is added. This sys_off handler decides if the poweroff
-is executed by entering normal poweroff or Partial-IO instead. The
-decision is made by checking if wakeup is enabled on all devices that
-may wake up the SoC from Partial-IO.
+Convert the Analog Devices ad5820 to DT schema format.
 
-The possible wakeup devices are found by checking which devices
-reference a "Partial-IO" system state in the list of wakeup-source
-system states. Only devices that are actually enabled by the user will
-be considered as an active wakeup source. If none of the wakeup sources
-is enabled the system will do a normal poweroff. If at least one wakeup
-source is enabled it will instead send a TI_SCI_MSG_PREPARE_SLEEP
-message from the sys_off handler. Sending this message will result in an
-immediate shutdown of the system. No execution is expected after this
-point. The code will wait for 5s and do an emergency_restart afterwards
-if Partial-IO wasn't entered at that point.
-
-A short documentation about Partial-IO can be found in section 6.2.4.5
-of the TRM at
-  https://www.ti.com/lit/pdf/spruiv7
-
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- drivers/firmware/ti_sci.c | 127 +++++++++++++++++++++++++++++++++++++++++++++-
- drivers/firmware/ti_sci.h |   5 ++
- 2 files changed, 131 insertions(+), 1 deletion(-)
+Changes in v4:
+- Drop remaining pieces of iio-channel-cells introduced in previous
+  revisions.
+- Link to v3: https://lore.kernel.org/r/20250414-b4-ad5820-dt-yaml-v3-1-39bbb5db7b2b@ixit.cz
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 09d11e75e14e6a6a82f6d99ab1852c142aeb7e5f..a4b7869134779c58f4ef381a940455dea1f86153 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -6,6 +6,7 @@
-  *	Nishanth Menon
-  */
- 
-+#include "linux/stddef.h"
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
- #include <linux/bitmap.h>
-@@ -3742,6 +3743,111 @@ static const struct dev_pm_ops ti_sci_pm_ops = {
- #endif
- };
- 
-+/*
-+ * Enter Partial-IO, which disables everything including DDR with only a small
-+ * logic being active for wakeup.
-+ */
-+static int ti_sci_enter_partial_io(struct ti_sci_info *info)
-+{
-+	struct ti_sci_msg_req_prepare_sleep *req;
-+	struct ti_sci_xfer *xfer;
-+	struct device *dev = info->dev;
-+	int ret = 0;
-+
-+	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_PREPARE_SLEEP,
-+				   TI_SCI_FLAG_REQ_GENERIC_NORESPONSE,
-+				   sizeof(*req), sizeof(struct ti_sci_msg_hdr));
-+	if (IS_ERR(xfer)) {
-+		ret = PTR_ERR(xfer);
-+		dev_err(dev, "Message alloc failed(%d)\n", ret);
-+		return ret;
-+	}
-+
-+	req = (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
-+	req->mode = TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO;
-+	req->ctx_lo = 0;
-+	req->ctx_hi = 0;
-+	req->debug_flags = 0;
-+
-+	dev_info(dev, "Entering Partial-IO because a powered wakeup-enabled device was found.\n");
-+
-+	ret = ti_sci_do_xfer(info, xfer);
-+	if (ret) {
-+		dev_err(dev, "Mbox send fail %d\n", ret);
-+		goto fail;
-+	}
-+
-+fail:
-+	ti_sci_put_one_xfer(&info->minfo, xfer);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Iterate all device nodes that have a wakeup-source property and check if one
-+ * of the possible phandles points to a Partial-IO system state. If it
-+ * does resolve the device node to an actual device and check if wakeup is
-+ * enabled.
-+ */
-+static bool ti_sci_partial_io_wakeup_enabled(struct ti_sci_info *info)
-+{
-+	struct device_node *wakeup_node = NULL;
-+
-+	for_each_node_with_property(wakeup_node, "wakeup-source") {
-+		struct of_phandle_iterator it;
-+		int err;
-+
-+		of_for_each_phandle(&it, err, wakeup_node, "wakeup-source", NULL, 0) {
-+			struct platform_device *pdev;
-+			bool may_wakeup;
-+
-+			if (of_property_match_string(it.node, "idle-state-name", "Partial-IO"))
-+				continue;
-+
-+			pdev = of_find_device_by_node(wakeup_node);
-+			if (!pdev)
-+				continue;
-+
-+			may_wakeup = device_may_wakeup(&pdev->dev);
-+			put_device(&pdev->dev);
-+
-+			if (may_wakeup) {
-+				dev_dbg(info->dev, "%pOF identified as wakeup source for Partial-IO\n",
-+					wakeup_node);
-+				of_node_put(it.node);
-+				of_node_put(wakeup_node);
-+				return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static int ti_sci_sys_off_handler(struct sys_off_data *data)
-+{
-+	struct ti_sci_info *info = data->cb_data;
-+	bool enter_partial_io = ti_sci_partial_io_wakeup_enabled(info);
-+	int ret;
-+
-+	if (!enter_partial_io)
-+		return NOTIFY_DONE;
-+
-+	ret = ti_sci_enter_partial_io(info);
-+
-+	if (ret) {
-+		dev_err(info->dev,
-+			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n",
-+			ERR_PTR(ret));
-+		emergency_restart();
-+	}
-+
-+	mdelay(5000);
-+	emergency_restart();
-+
-+	return NOTIFY_DONE;
-+}
-+
- /* Description for K2G */
- static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
- 	.default_host_id = 2,
-@@ -3885,6 +3991,19 @@ static int ti_sci_probe(struct platform_device *pdev)
- 		goto out;
- 	}
- 
-+	if (info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO) {
-+		ret = devm_register_sys_off_handler(dev,
-+						    SYS_OFF_MODE_POWER_OFF,
-+						    SYS_OFF_PRIO_FIRMWARE,
-+						    ti_sci_sys_off_handler,
-+						    info);
-+		if (ret) {
-+			dev_err(dev, "Failed to register sys_off_handler %pe\n",
-+				ERR_PTR(ret));
-+			goto out;
-+		}
-+	}
-+
- 	dev_info(dev, "ABI: %d.%d (firmware rev 0x%04x '%s')\n",
- 		 info->handle.version.abi_major, info->handle.version.abi_minor,
- 		 info->handle.version.firmware_revision,
-@@ -3894,7 +4013,13 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	list_add_tail(&info->node, &ti_sci_list);
- 	mutex_unlock(&ti_sci_list_mutex);
- 
--	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	if (ret) {
-+		dev_err(dev, "platform_populate failed %pe\n", ERR_PTR(ret));
-+		goto out;
-+	}
-+	return 0;
-+
- out:
- 	if (!IS_ERR(info->chan_tx))
- 		mbox_free_channel(info->chan_tx);
-diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-index 053387d7baa064498e6a208daa7f70040ef87281..dec9e20cbe5da8f6d9393d56bb9a1e73cb083a42 100644
---- a/drivers/firmware/ti_sci.h
-+++ b/drivers/firmware/ti_sci.h
-@@ -592,6 +592,11 @@ struct ti_sci_msg_resp_get_clock_freq {
- struct ti_sci_msg_req_prepare_sleep {
- 	struct ti_sci_msg_hdr	hdr;
- 
-+/*
-+ * When sending perpare_sleep with MODE_PARTIAL_IO no response will be sent,
-+ * no further steps are required.
-+ */
-+#define TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO				0x03
- #define TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED				0xfd
- 	u8			mode;
- 	u32			ctx_lo;
+Changes in v3:
+- Removed documentation of io-channel-cells property. Now it's 1:1 to
+  the original binding. The reference to it from the Nokia N900 dts
+  was removed in the -next.
+- Link to v2: https://lore.kernel.org/r/20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz
 
+Changes in v2:
+- added MAINTAINERS entry for the binding
+- documented why io-channel-cells got added into the binding.
+- dropped io-channel-cells in required properties.
+- adjusted example indentation to 4 spaces.
+- Link to v1: https://lore.kernel.org/r/20250209203940.159088-1-david@ixit.cz
+---
+ .../devicetree/bindings/media/i2c/ad5820.txt       | 28 -----------
+ .../devicetree/bindings/media/i2c/adi,ad5820.yaml  | 56 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 3 files changed, 57 insertions(+), 28 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+deleted file mode 100644
+index 5764cbedf9b73387ad1bfa9acf99c643f959b84a..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-* Analog Devices AD5820 autofocus coil
+-
+-Required Properties:
+-
+-  - compatible: Must contain one of:
+-		- "adi,ad5820"
+-		- "adi,ad5821"
+-		- "adi,ad5823"
+-
+-  - reg: I2C slave address
+-
+-  - VANA-supply: supply of voltage for VANA pin
+-
+-Optional properties:
+-
+-   - enable-gpios : GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is
+-active low, a high level on the pin enables the device.
+-
+-Example:
+-
+-       ad5820: coil@c {
+-               compatible = "adi,ad5820";
+-               reg = <0x0c>;
+-
+-               VANA-supply = <&vaux4>;
+-               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+-       };
+-
+diff --git a/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..0c8f24f692cac37fc565f3ec770acfc63eecbda4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/adi,ad5820.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD5820 autofocus coil
++
++maintainers:
++  - Pavel Machek <pavel@ucw.cz>
++
++description:
++  The AD5820 is a current sink driver designed for precise control of
++  voice coil motors (VCMs) in camera autofocus systems.
++
++properties:
++  compatible:
++    enum:
++      - adi,ad5820
++      - adi,ad5821
++      - adi,ad5823
++
++  reg:
++    maxItems: 1
++
++  enable-gpios:
++    maxItems: 1
++    description:
++      GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is active low,
++      a high level on the pin enables the device.
++
++  VANA-supply:
++    description: supply of voltage for VANA pin
++
++required:
++  - compatible
++  - reg
++  - VANA-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        coil@c {
++            compatible = "adi,ad5820";
++            reg = <0x0c>;
++
++            enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
++            VANA-supply = <&vaux4>;
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 17ed0b5ffdd203db658f9bedb990bd58a3ffcb91..c060a7ca103d2a9252fcb4b2bcd6e1a35d94f2d7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17295,6 +17295,7 @@ M:	Pavel Machek <pavel@kernel.org>
+ M:	Sakari Ailus <sakari.ailus@iki.fi>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
+ F:	drivers/media/i2c/ad5820.c
+ F:	drivers/media/i2c/et8ek8
+ 
+
+---
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+change-id: 20250314-b4-ad5820-dt-yaml-3220bf2f1e40
+
+Best regards,
 -- 
-2.49.0
+David Heidelberg <david@ixit.cz>
+
 
 
