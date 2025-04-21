@@ -1,215 +1,277 @@
-Return-Path: <linux-kernel+bounces-612657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC335A951FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0341A9522D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C4816BA7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49CA3B4784
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3740526659A;
-	Mon, 21 Apr 2025 13:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D858E266B48;
+	Mon, 21 Apr 2025 13:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KnG8UUBO"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011026.outbound.protection.outlook.com [52.101.129.26])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QTwNh/ZX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16807320F;
-	Mon, 21 Apr 2025 13:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243502; cv=fail; b=d/pYUgCo+SflgSKcnCjlZW/jFQp+oqa0QsrAgnNPc1vTR8+P5z6ggzwhrXo3b0yy2p2VbSv+vSGc62VMzNjcQsl9Tm+J9cVnbfBVyXp6iD7MjGpLTEsYaFiDy2VpChQt3cFpfPQ8kod/Hr20ygk+JNUnboebNTXVt+K8qwMIe8E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243502; c=relaxed/simple;
-	bh=yc0d3WGqg0qbEvkcxxYh9HZHf/jD3IpLdlfnqx7MuJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hJsHqMuUQHC57//NQa5+NcN5o0uHSq2KkPvVfJnVANNjWOb+P7P8NUXQrTQUPM0WXGol2yLHi57CIKSCpB9dGtQuKaPhjeBNgWOqcxg44oYQpuDm/qUshjYRM2VSEdxe8YF9IE4UzDcwZ6UeFDDRxV3ZNKEUZF/tVM1Czgfk0/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KnG8UUBO; arc=fail smtp.client-ip=52.101.129.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u6ytPSX3g9bTnQOwAcUShY8P2Vimx0PK2xDCUn7STEnJjRQjsSvhFGieiSDIjYlPsrfTmqhJwG7B0dDn+TPQo1yWBoqePgkWnRVTNGtVXsxxcfPfTftydoVQ+BuXkZo+5/ZhDI3a0IAjZGQkMN21CS1mIP8/WvOfK9iH/sZK2rs+hhqNxZ5ISYB/OCqITBjYljJYNILHU1wW1ns0Nk4yqeu7GwZ9aybwHuI/LYtU6422KmWGYVrisfnMJoLJQTV7eRWKW8V96AQFJel6tc7xMzTMZIWuEGgQ8kUYn9lTYIOMYiBSCrodD5odDEurhyXgQY0slun9om6M6Y7l6bmopA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2aXRnt9BpycCt6wdV2bdWn31ZgHIG0s+2FJYkBj7haE=;
- b=gLMFTnGRIy2omhCWqgKIZSog8SuzesgS5l7NzRTJcfnrBe2zZiizcmNcJr57PblrqbTb6eKQaUPrymewr+Z6uAbn6UYqpoOWpk4r3NH/Yrf3QXl5NsOCLOBkSHQ2RpT0EcLQxuxMHERZeBngyk9gkbqk/gKdn2SDgted8EWshZZBDq2Ki6x2h9vA0pAvFItg1YgWXCsjpn76byI93WztAuF3smzDQLOUwqjX9yaZfYhoaJMNthtZG/23M+vQluvuH0LYMuVRyJlBvWuYNQzc2oe+OGCELpNF3rHuWCGzd9yLcuiClZ7KqtmTomF6QsEqfiO3MOuQDPWJ4aPmkp9nWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2aXRnt9BpycCt6wdV2bdWn31ZgHIG0s+2FJYkBj7haE=;
- b=KnG8UUBOidBEbRyB52AFZuuEg0im/HfZZWZqJSorKLbYDQlh2SRAlhedaV0TB7WmDwWD2neUUBriVkVqxt9p1yrzYCIOyo1lOfm4Ml6/EPVb9t4zZ/ifLhWkklObCCFV1wWCPxs+NsGXnNB/Y/+9zMxKMp2Xi+RPHshs0nQv92vRPu//GrrpO8xtI7nv6mUmrqHv5k1o2dCSNHRkok8+E7oAK02dccEBxKA+MuX50gxxbaR5ErriWC6UACavSs2XUolWGB0lIdwkMsqBoVZVSsq1i/IFkYuU6SUrZpRJEjQow6du3poeyrB9mNUHCOB8S/VapgJSYKEhXMpXM2D85Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
- by SEYPR06MB5349.apcprd06.prod.outlook.com (2603:1096:101:6b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Mon, 21 Apr
- 2025 13:51:32 +0000
-Received: from KL1PR06MB6273.apcprd06.prod.outlook.com
- ([fe80::9d21:d819:94e4:d09]) by KL1PR06MB6273.apcprd06.prod.outlook.com
- ([fe80::9d21:d819:94e4:d09%3]) with mapi id 15.20.8632.030; Mon, 21 Apr 2025
- 13:51:32 +0000
-From: Huan Tang <tanghuan@vivo.com>
-To: alim.akhtar@samsung.com,
-	avri.altman@wdc.com,
-	bvanassche@acm.org,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	peter.wang@mediatek.com,
-	manivannan.sadhasivam@linaro.org,
-	quic_nguyenb@quicinc.com,
-	ebiggers@google.com,
-	minwoo.im@samsung.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Huan Tang <tanghuan@vivo.com>
-Subject: [PATCH] ufs: core: add caps UFSHCD_CAP_MCQ_EN
-Date: Mon, 21 Apr 2025 21:51:23 +0800
-Message-Id: <20250421135123.594-1-tanghuan@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0048.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::17)
- To KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A05126461D;
+	Mon, 21 Apr 2025 13:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745243849; cv=none; b=F8ho9/8zqjm3TWAo97/65gbuo4NA4veRMljc5tqc6yyqeXMN+OSynhlMiFc0MO4l5SHt3HhAPqoDnC8UXInNIQjNRLgfoFpXn6NwOkNdhUPdDAOi2hdW8hGwQnqDY62brgN8C5l+taMhTJBpzLraIQRB3FbTsEK/Spbzd0FHH0c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745243849; c=relaxed/simple;
+	bh=DpxM/W3KLOT0bOG1M5mF2m7TOzys32pjRdcAJGXvzAM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pFOd4A8ZuLBsTCnnh31i93gTHeyqI/ssSJqW49R1ZDYfM1uawaTBaQrRJuN4XYrsqa/BHBF5FuSuUrUXeYPeNEKx27Z2KRcEWoKn4eY0ZYcrk9LahAGaOhfmoslesneIEWP08+MvR+7g7VNl4reiVQBPx4CiInxi8IbOVgIHsx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QTwNh/ZX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LDE7gR022026;
+	Mon, 21 Apr 2025 13:51:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LDiMB+
+	IB9Epa4dk82xsNeI+gtOGLk4hDJ+02LRGwKvo=; b=QTwNh/ZXLAGNHoAyMQutNk
+	ar1WOjVOVejBnDHeShFphwHHmTZq2dMry4zuiEH94Xgz8vwASgyXMxAz/5eu7lgy
+	B3OAs7OF4esG1bYR7a8vC6UmaCuKYuwQAuUQ4bhCW/+VDQDPxw5a/vt3F/vJsH0j
+	xg1+0uectaFrJZB6nbrCDcAQulE9HcfMBUMroAYB5Pk00AF2gIGWlc7UuyXIw69h
+	eTgKoZWL0siS40KvW/LYkP560YSK8d3pfk+YYph5rBGhJiVbcyj7ofYy+HUjQRGs
+	gYMFRWb5DXNXod3ZfPJQRU1yOj0XPCYyWBe0Dw5Ok6oeVk8R/Us6FHVN9MhZDaOw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46592vb1ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Apr 2025 13:51:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53LCFC1Y015377;
+	Mon, 21 Apr 2025 13:51:52 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 464qnkeetj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Apr 2025 13:51:52 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53LDpprL23790238
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Apr 2025 13:51:51 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D0D858055;
+	Mon, 21 Apr 2025 13:51:51 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 887B658043;
+	Mon, 21 Apr 2025 13:51:50 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.21.104])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 21 Apr 2025 13:51:50 +0000 (GMT)
+Message-ID: <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
+Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap
+ segments
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>, steven chen <chenste@linux.microsoft.com>
+Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
+        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
+        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Mon, 21 Apr 2025 09:51:50 -0400
+In-Reply-To: <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
+References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+	 <20250416021028.1403-4-chenste@linux.microsoft.com>
+	 <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6273:EE_|SEYPR06MB5349:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff29f7f5-5c18-471f-fafb-08dd80db9fdf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|366016|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?35vbo2FZ8r1Ml+BGl7Jpqs3EdvtZVLqqy8kcPvVLH73JP4UHdFFy2iL55FHP?=
- =?us-ascii?Q?NwMETDaOx8yMeckvU+Iim346sVxI7THHtS38N/MzH0vkGwJBOkCcJZafAXYc?=
- =?us-ascii?Q?rfw3KCDw/cUaR8RpcPV6LgFVBYN0Ysm/avdqDr7BkolXR1mZmA0IAq7fEHSr?=
- =?us-ascii?Q?JuzgqfQKNZOD34AHtfypnO/dlExdzLyAMSOAqLX+zaRL53tnM3+ZiLlUOQd9?=
- =?us-ascii?Q?jmlmiaqkaJtNbbBwXn6YXVw7DteUr/FLV2DQNRfvQS1yoTFlXlBsHF+Ba2MM?=
- =?us-ascii?Q?szXtSnIpRz7pSZSWTTupA3XfVTWflftceGF7M7hTZwV5SdpRUmLOopS64Ywc?=
- =?us-ascii?Q?kIo5P8zi66t8BmYbrwcgjR6edZ191ZsxB1t53pJEL+J2q0ybAeA9rZBpxN+L?=
- =?us-ascii?Q?OEkepFCNQ6CqIKXNHpU/3GsaPnF8M0b0LqriLNgtkRY7WMXn1HgwgXs10SG6?=
- =?us-ascii?Q?/jn4yd0P7PY+j5oyVr8EFjYZoaZZDWpxCTmaU6ZK2io7A2Ax1bmywmpf/8Y8?=
- =?us-ascii?Q?xYvXy70IqAZoxH2FmbY3NSlkCLbqTwzj1gxdC+wlb3m29FbnPw1EP2auOrJn?=
- =?us-ascii?Q?JkU1O8ElzaFPK9iL5U/DSQcxEXupp1oApv44hS38STLXN9so8sGybDB5cyqn?=
- =?us-ascii?Q?8PJnrTKUGo/pFpZz2xvVtkYFpOuiUO2AcHERAXDkXgIG45Fa8tPIR79HjCdB?=
- =?us-ascii?Q?MMno+q2/rT4p1vO7FIaQgOvIk8QraI0YVM97GVtb52lzjS8KifFXa0HpdmuW?=
- =?us-ascii?Q?4/rsPvV8f6HfeGGXo0GSNHghsyUZDPUdXyDNXqw1uOYtH1/rWezYlvdWubvf?=
- =?us-ascii?Q?7W1R+Zx0xYVE+gutd3FgUQWbfaNcCX6gAg+eo+/c6RlOdqZyEkc2rT1xgWKC?=
- =?us-ascii?Q?SiqGm5VIc3dUIXU4Kn0mt9Tz7HholmPw7QdcY8tQFKoqcnQHo5+Q75d6cuCQ?=
- =?us-ascii?Q?5ZDZ3160//MqZzJcPNq5KBhNLSyNkflI0jYEMtFHP+tjZAwYBIncCg/uus1F?=
- =?us-ascii?Q?19oCnOlT0wXo3YOC9MK0hYazHyZWL4i2vursRs8i2LvHbWBoXHokwRI9DTTU?=
- =?us-ascii?Q?CEYg8PJfq+AwSRsNxyTYqoD6XfnOu+bHSA0zAkJtmtKXLM8MECPrBGl1Se6g?=
- =?us-ascii?Q?N6J1CJzPC7esqrSXql0x4dcsbzsiYQjdBWleQHzDKem7W1yB1CDLWu+ZJbhv?=
- =?us-ascii?Q?2ScOTrZjqCpuwThw3GYYQ6i3O59FjajNXDJblFrv9MEgSfRmlPJv8MpjZt1j?=
- =?us-ascii?Q?3eG+D4Fe0TLwwAAQmMVr8fH+or/TXrRUSgaDqu3wDRH/Jk95h9KnHqFq+SD3?=
- =?us-ascii?Q?6MSHfP7/a4D52sX6re1uQnBGsHabKuESKDwSJBa9zZsgoeBZdk687ajA6Ah8?=
- =?us-ascii?Q?HYuKLUoycmPBvNrC3grPCGQROu/cldspvTvTzAHtutRkUPZ2V89k838x/7cn?=
- =?us-ascii?Q?tPozt1yobA/sa+PU6rDpG7EiVkHr+dtjy5wnawet8wa6xU3A4EhzuRf6lzBV?=
- =?us-ascii?Q?TL04hSRDO/2h/HY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6273.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NQufYw6K2RI9CYrnqGDM6N8AKkpYx5YXXLSh1lJti0PkZqcHbHh0mPCR7pKa?=
- =?us-ascii?Q?47W1nWm5N30GlWNRibIqLTwPp3U9PTU0nPrNOBvwHZFLPlcsd5CneJ2ufnvL?=
- =?us-ascii?Q?uZa3uD0k7UjMgeAscXyw+BJ1Wtrj7KN21KWk1Wb+05PzkhqT9KtU3RG8Ou9I?=
- =?us-ascii?Q?4kK1gv34TqgoJgxwj565rUmnQbh/QuTwyee8TB9OGZc/VJzIK4bpSPnnWIDa?=
- =?us-ascii?Q?4R4OLBNtzbZurOs85Mb+yZMqB1kdHgjVVdcDP2SGCbvcymldKdvo/hBleVrm?=
- =?us-ascii?Q?ABlG9IlRKusxYksiTRV3SUiXiFSDqgi9hIPvdOZKFIYKpW768IH3e+qIz9Xs?=
- =?us-ascii?Q?mKp03eC+vkaAlWDZFCdSokY5wkQFQ+LoQcmpUMuSz2cQumfZnJaJEiHSjXRD?=
- =?us-ascii?Q?QVpAUD4NkBjB4O9ODHry3qSvZZ1+z2pMQUWneU3Y18LJdWoy84x/HsuzMRm3?=
- =?us-ascii?Q?lygP/XaVPmyLOzFetOzt64b9rU4SPsHDsRHgcsQKMJuoDtoUDRNDWc2pDv5q?=
- =?us-ascii?Q?o0ablaY4nD262QbGS7kE8c5XPGJYRnU5GoBF5BzY6r7GIedfZZWdPwNkBDRi?=
- =?us-ascii?Q?V3oSSJ9//mqeO/d1OOnj7qyN1iezg3rdMPSSxiFop8lOIB4pSOE8HevbYn3V?=
- =?us-ascii?Q?H/N/GRbT1zPMtPef9RG/4mRl1BEqPoHeUOEo2+R1Zw93RTyY5UgdpHEd0LCz?=
- =?us-ascii?Q?Wbx+KCC/NKFhZKzWaAA9yjjoF0+7w14akggHZOYlZUBoI3qA5ydeLxG63vvA?=
- =?us-ascii?Q?4GVre7qa2Wr+ZNwkiD+YszyLWdt0LW9iXHV4EyRzGqbaUqDoLrrsXK4jaPkS?=
- =?us-ascii?Q?kGz9NcQ0wf5hkGiBp2PYkgV1F1nxWkxVIya4H/Ydi5pf0q59hT0pMLrJRiSx?=
- =?us-ascii?Q?AARxm8fkeabHS4xrTZhFwhJbWMBtAsa/rj/tI6nGClwfs6+5ZsL7UTUAbm5w?=
- =?us-ascii?Q?PGNS8yarnttcz6BnSELArINdfMO9AoDNsojR3oy8L090s2z7uzQBQ09HD6e2?=
- =?us-ascii?Q?Fo8q+kNcLV5SU4wUps5yV+k0GeHQOtUB5xjFx+c6rHBVC/OEdIZp5FFbEiZ8?=
- =?us-ascii?Q?Es6laeB1/3Wy1DVyY6tP7MZAEfzmGv5WuzMg6dguyNJWKz1OQI41nbT4jtTL?=
- =?us-ascii?Q?rNnhpW1q647REsCQzkohUdFUIqz45urY17RC01h2CmxmdQ4FeYJmFV6o0e7V?=
- =?us-ascii?Q?UrOeWfm+FHiSuVHMckskRydtwIh0eOVlGOX0RKTK/BFg/dakLLy4oIJsOBzA?=
- =?us-ascii?Q?XjnVP3I4CBbrk+CnHBn8VQ3TYTUVzhxO3s+XdhiTKLk8xDVxMrmLRtTtne1I?=
- =?us-ascii?Q?FTgamJYry7lTY4p5+zRKjptyKACxV6UYhNZU/+qRyattgTbpGUrpccYtwJKp?=
- =?us-ascii?Q?PTNFfGI94eX/3GR32MN8cir26AEy9UcDlvedLOslsYzkBtlgvU7Qp1a0xdOx?=
- =?us-ascii?Q?zoS2lBJWAShTnfybvw6cpwpGY2B/wiRuaqnOL4mx0QgAZXtBl+ywuMs/DGGq?=
- =?us-ascii?Q?i256b09aSWWbY2lbPp2u8p3J+gNDLdi1R2usB8OLDNSepKD9FduVC9KcDQ1k?=
- =?us-ascii?Q?mNygykHcGKi9I0IPxCsVo2nztF6bv+koascyQINP?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff29f7f5-5c18-471f-fafb-08dd80db9fdf
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6273.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 13:51:32.6449
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YAJ+NJVxutUEROAVSFCJpUrwZiUNaad/dfu2ZtqDlZdPRO+BC7wCfMdQ73m2fpaSe9SlUH//LqOfQdhAFUVI/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5349
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PCNqx9-9ZgpGycN3Ym2BvbFni4szNvPA
+X-Authority-Analysis: v=2.4 cv=RorFLDmK c=1 sm=1 tr=0 ts=68064d79 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=bLk-5xynAAAA:8 a=yMhMjlubAAAA:8 a=PtDNVHqPAAAA:8 a=20KFwNOVAAAA:8
+ a=LftU4j_592J91X9VZ9UA:9 a=QEXdDO2ut3YA:10 a=zSyb8xVVt2t83sZkrLMb:22 a=BpimnaHY1jUKGyF_4-AF:22
+X-Proofpoint-GUID: PCNqx9-9ZgpGycN3Ym2BvbFni4szNvPA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-21_06,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504210105
 
-Add caps UFSHCD_CAP_MCQ_EN(default enable), then host driver to
-control the on/off of MCQ; Sometimes, we don't want to enable
-MCQ and want to disable it through the host driver, for example,
-ufs-qcom.c .
+On Fri, 2025-04-18 at 12:36 +0800, Baoquan He wrote:
+> On 04/15/25 at 07:10pm, steven chen wrote:
+> > From: Steven Chen <chenste@linux.microsoft.com>
+>  ^^^^^^
 
-Signed-off-by: Huan Tang <tanghuan@vivo.com>
----
- drivers/ufs/core/ufshcd.c | 3 ++-
- include/ufs/ufshcd.h      | 6 ++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+As James Bottomley previously explained[1], if you haven't made any changes=
+ to
+Tushar's patch, then the very first line of the patch description would be
+"From: Tushar Sugandhi <tusharsu@linux.microsoft.com>" followed by a blank =
+line.
+If there is a minor change, you would add "<your email address>: explanatio=
+n".
+For example:
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 44156041d88f..b8937f85d81a 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -112,7 +112,7 @@ static bool use_mcq_mode = true;
- 
- static bool is_mcq_supported(struct ufs_hba *hba)
- {
--	return hba->mcq_sup && use_mcq_mode;
-+	return hba->mcq_sup && use_mcq_mode && (hba->caps & UFSHCD_CAP_MCQ_EN);
- }
- 
- module_param(use_mcq_mode, bool, 0644);
-@@ -10389,6 +10389,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
- 	hba->dev = dev;
- 	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
- 	hba->nop_out_timeout = NOP_OUT_TIMEOUT;
-+	hba->caps |= UFSHCD_CAP_MCQ_EN;
- 	ufshcd_set_sg_entry_size(hba, sizeof(struct ufshcd_sg_entry));
- 	INIT_LIST_HEAD(&hba->clk_list_head);
- 	spin_lock_init(&hba->outstanding_lock);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index e928ed0265ff..d8547bc6bf79 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -771,6 +771,12 @@ enum ufshcd_caps {
- 	 * WriteBooster when scaling the clock down.
- 	 */
- 	UFSHCD_CAP_WB_WITH_CLK_SCALING			= 1 << 12,
-+
-+	/*
-+	 * This capability allows the host controller driver to use the
-+	 * multi-circular queue, if it is present
-+	 */
-+	UFSHCD_CAP_MCQ_EN				= 1 << 13,
- };
- 
- struct ufs_hba_variant_params {
--- 
-2.39.0
+Steven Chen <chenste@linux.microsoft.com>: modified patch description
+
+[1]
+https://lore.kernel.org/lkml/58e70121aaee33679ac295847197c1e5511b2a81.camel=
+@HansenPartnership.com/
+
+> >=20
+> > Implement kimage_map_segment() to enable IMA to map the measurement log=
+=20
+> > list to the kimage structure during the kexec 'load' stage. This functi=
+on
+> > gathers the source pages within the specified address range, and maps t=
+hem
+> > to a contiguous virtual address range.
+> >=20
+> > This is a preparation for later usage.
+> >=20
+> > Implement kimage_unmap_segment() for unmapping segments using vunmap().
+> >=20
+> > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>   ^^^^^^
+
+Neither "Author:" nor "From:" belong here.  Please remove.
+
+> > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>   ^^^^^^^
+
+Having Tushar's "Signed-off-by" tag and yours below indicate that you modif=
+ied
+the original author's patch.
+
+thanks,
+
+Mimi
+
+> > Cc: Eric Biederman <ebiederm@xmission.com>
+> > Cc: Baoquan He <bhe@redhat.com>=20
+> > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>   ^^^^^
+>=20
+> The signing on this patch is a little confusing. I can't see who is the
+> real author, who is the co-author, between you and Tushar. You may need
+> to refer to Documentation/process/5.Posting.rst to make that clear.
+>=20
+> > Acked-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  include/linux/kexec.h |  6 +++++
+> >  kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 60 insertions(+)
+> >=20
+> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> > index f0e9f8eda7a3..7d6b12f8b8d0 100644
+> > --- a/include/linux/kexec.h
+> > +++ b/include/linux/kexec.h
+> > @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+> >  #define kexec_dprintk(fmt, arg...) \
+> >          do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0=
+)
+> > =20
+> > +extern void *kimage_map_segment(struct kimage *image, unsigned long ad=
+dr, unsigned long size);
+> > +extern void kimage_unmap_segment(void *buffer);
+> >  #else /* !CONFIG_KEXEC_CORE */
+> >  struct pt_regs;
+> >  struct task_struct;
+> > +struct kimage;
+> >  static inline void __crash_kexec(struct pt_regs *regs) { }
+> >  static inline void crash_kexec(struct pt_regs *regs) { }
+> >  static inline int kexec_should_crash(struct task_struct *p) { return 0=
+; }
+> >  static inline int kexec_crash_loaded(void) { return 0; }
+> > +static inline void *kimage_map_segment(struct kimage *image, unsigned =
+long addr, unsigned long size)
+> > +{ return NULL; }
+> > +static inline void kimage_unmap_segment(void *buffer) { }
+> >  #define kexec_in_progress false
+> >  #endif /* CONFIG_KEXEC_CORE */
+> > =20
+> > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> > index c0bdc1686154..a5e378e1dc7f 100644
+> > --- a/kernel/kexec_core.c
+> > +++ b/kernel/kexec_core.c
+> > @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+> >  	return result;
+> >  }
+> > =20
+> > +void *kimage_map_segment(struct kimage *image,
+> > +			 unsigned long addr, unsigned long size)
+> > +{
+> > +	unsigned long src_page_addr, dest_page_addr =3D 0;
+> > +	unsigned long eaddr =3D addr + size;
+> > +	kimage_entry_t *ptr, entry;
+> > +	struct page **src_pages;
+> > +	unsigned int npages;
+> > +	void *vaddr =3D NULL;
+> > +	int i;
+> > +
+> > +	/*
+> > +	 * Collect the source pages and map them in a contiguous VA range.
+> > +	 */
+> > +	npages =3D PFN_UP(eaddr) - PFN_DOWN(addr);
+> > +	src_pages =3D kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+> > +	if (!src_pages) {
+> > +		pr_err("Could not allocate ima pages array.\n");
+> > +		return NULL;
+> > +	}
+> > +
+> > +	i =3D 0;
+> > +	for_each_kimage_entry(image, ptr, entry) {
+> > +		if (entry & IND_DESTINATION) {
+> > +			dest_page_addr =3D entry & PAGE_MASK;
+> > +		} else if (entry & IND_SOURCE) {
+> > +			if (dest_page_addr >=3D addr && dest_page_addr < eaddr) {
+> > +				src_page_addr =3D entry & PAGE_MASK;
+> > +				src_pages[i++] =3D
+> > +					virt_to_page(__va(src_page_addr));
+> > +				if (i =3D=3D npages)
+> > +					break;
+> > +				dest_page_addr +=3D PAGE_SIZE;
+> > +			}
+> > +		}
+> > +	}
+> > +
+> > +	/* Sanity check. */
+> > +	WARN_ON(i < npages);
+> > +
+> > +	vaddr =3D vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+> > +	kfree(src_pages);
+> > +
+> > +	if (!vaddr)
+> > +		pr_err("Could not map ima buffer.\n");
+> > +
+> > +	return vaddr;
+> > +}
+> > +
+> > +void kimage_unmap_segment(void *segment_buffer)
+> > +{
+> > +	vunmap(segment_buffer);
+> > +}
+> > +
+> >  struct kexec_load_limit {
+> >  	/* Mutex protects the limit count. */
+> >  	struct mutex mutex;
+> > --=20
+> > 2.43.0
+> >=20
+>=20
+>=20
 
 
