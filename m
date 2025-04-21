@@ -1,152 +1,154 @@
-Return-Path: <linux-kernel+bounces-613099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363EEA95827
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:44:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA774A95860
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BCBC16D8AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:44:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7F9B7A9614
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CFB219A91;
-	Mon, 21 Apr 2025 21:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6AF21B9D3;
+	Mon, 21 Apr 2025 21:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GbSjsjQD"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1F22F2E;
-	Mon, 21 Apr 2025 21:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlscQzeQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3421ADD3;
+	Mon, 21 Apr 2025 21:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745271867; cv=none; b=TM0EnkDBberlXOhGmU6PIgROVsdpH9tkOEnPPYtaPrbxVrdlADeQmE7kn3HRvFuxeAvC3eYCbItgbsH+hd/K5lWI9z7kVFLlXavC+sh/fOuxRSG5oEhw//fBcr+XSX2LHwd6w4Cxt4aDNcw50JlSvrEedFyZKdcxpPWhule0LYY=
+	t=1745272137; cv=none; b=KANixgSeK8sozZAaZBZKZwO17CEUxXlJ5WenSZENzIcVz0qQu7jz0tRt+carbRe5NUV42KvbVTM0VCHkM3JYAudvPNa0uUUNTBGIFvHyVtH8lCEcm7ZeKdKw2U7jRzCdwhM2b116JS0C0lSQNJYVWKvPLyfRzE1FxWO7XsbwvbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745271867; c=relaxed/simple;
-	bh=PT5gupkicFt2esXi8ztZd0p0piQA/lhlpgm4nsM6Gak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZcBBZ2i19nGtLZrikHGuGAo+TrU4tOiQ84qQP7jJQBC7kR1IDjIVuA6ROr5rcUCODYCzr6V5knjWadl/qmQ5k/ghSdr7VG/0PZH4ceD9aaonKp62cqKAUiUSGujTTcKNMk5FyYPsBNiHICwOI7ZA05MsVBr9wWtV3QAPY1gYJnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GbSjsjQD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.70.160.93] (unknown [172.172.34.12])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EC27F20BCAD1;
-	Mon, 21 Apr 2025 14:44:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC27F20BCAD1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745271865;
-	bh=aqS4FuLxGEljkPeVAmETGzCYTa7oTLpRxOsxhZi2z6I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GbSjsjQDyLZCMRTA1svAS4y/9qHUB+OZmR0RALHX7CiHBX0SfVDQF2KvSK/aRO5Eh
-	 iS4wa32R1E8AI+ZpHnNY6B7Yxbxk2a+kpdOHCMOyvB+YEfqMVPxAavxLO747qIkUzH
-	 PLMsOCr0PoA0zODXoafNJko3zm3p9RoVwF3oMBj4=
-Message-ID: <2434013a-72d2-450d-a043-fcea916ef22d@linux.microsoft.com>
-Date: Mon, 21 Apr 2025 14:44:21 -0700
+	s=arc-20240116; t=1745272137; c=relaxed/simple;
+	bh=Hm2/jQHfF1PjQvlOfp3fNR5vNrQhuRjESWnF+NZsiho=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OPcwfpY8SjOj0ITLJm569mPYY9/DrSZ+K6RemJTvp1rzTnApKZvmiHS7oj89zIpfNXLNZImXZbRHl5u3UTDCqk9KeP18b6rHb2hNRcjOnJSwgJ2ruzrXvbQ1sgNcsItEGv8zlvjO+Oi67+fFqs75t1o+UtwtEw1nNuY4q+EDpF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlscQzeQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A283BC4CEE4;
+	Mon, 21 Apr 2025 21:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745272137;
+	bh=Hm2/jQHfF1PjQvlOfp3fNR5vNrQhuRjESWnF+NZsiho=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KlscQzeQu3ySIJ/BL6x7+31hh4A6und8d8ZzIFN8cei/Nzqq60CsfOwoWnTwRsAWs
+	 nJbywcFIrNaoyAFAUJREk0gfMG4lblS2nO2LOezRkfXXkS9GXWkf/BSDs0RZ2CdwNK
+	 Xcnrv7ohxZ3CmPMIydNJLarzs76W3Z8CHO2vH/8x+GbyeICfe/YO43RrrhGcYBHTa8
+	 5DVOEiE2JgRPQGBU9TY3eLQ14pz3eNEeMpJaA2MtX5PtChMowDUeK2LL5FGuZuvPUH
+	 /EGC6jOhizi57k2BMCOXHVL5rJN1EBT/Cqs+VvCgBs31nevTfjR+lKaER61mMrmXLd
+	 1vawBDiKEWf9A==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 22/22] man2: Add uprobe syscall page
+Date: Mon, 21 Apr 2025 23:44:22 +0200
+Message-ID: <20250421214423.393661-23-jolsa@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250421214423.393661-1-jolsa@kernel.org>
+References: <20250421214423.393661-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap segments
-To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
- <20250416021028.1403-4-chenste@linux.microsoft.com>
- <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
- <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
- <ef18ae186cd17431b9ff6b8a443b63fd6fb78b98.camel@linux.ibm.com>
- <a9e3713f-4edf-479c-8be1-fe5b3dc22866@linux.microsoft.com>
- <6c3aca6815edf25828bad6f0b4587a040ada03c5.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <6c3aca6815edf25828bad6f0b4587a040ada03c5.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/21/2025 2:35 PM, Mimi Zohar wrote:
-> On Mon, 2025-04-21 at 13:40 -0700, steven chen wrote:
->> On 4/21/2025 7:18 AM, Mimi Zohar wrote:
->>> On Mon, 2025-04-21 at 09:51 -0400, Mimi Zohar wrote:
->>>> On Fri, 2025-04-18 at 12:36 +0800, Baoquan He wrote:
->>>>> On 04/15/25 at 07:10pm, steven chen wrote:
->>>>>> From: Steven Chen <chenste@linux.microsoft.com>
->>>>>    ^^^^^^
->>>> As James Bottomley previously explained[1], if you haven't made any changes to
->>>> Tushar's patch, then the very first line of the patch description would be
->>>> "From: Tushar Sugandhi <tusharsu@linux.microsoft.com>" followed by a blank line.
->>>> If there is a minor change, you would add "<your email address>: explanation".
->>>> For example:
->>>>
->>>> Steven Chen <chenste@linux.microsoft.com>: modified patch description
->>> To clarify: This line would be included below with your Signed-off-by tag.
->>>
->>>> [1]
->>>> https://lore.kernel.org/lkml/58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com/
->>>>
->>>>>> Implement kimage_map_segment() to enable IMA to map the measurement log
->>>>>> list to the kimage structure during the kexec 'load' stage. This function
->>>>>> gathers the source pages within the specified address range, and maps them
->>>>>> to a contiguous virtual address range.
->>>>>>
->>>>>> This is a preparation for later usage.
->>>>>>
->>>>>> Implement kimage_unmap_segment() for unmapping segments using vunmap().
->>>>>>
->>>>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>     ^^^^^^
->>>> Neither "Author:" nor "From:" belong here.  Please remove.
->>>>
->>>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>     ^^^^^^^
->>>> Having Tushar's "Signed-off-by" tag and yours below indicate that you modified
->>>> the original author's patch.
->>> To clarify: "Just" having Tushar's "Signed-off-by" tag and yours below indicate
->>> that you modified the original author's patch.
->> Hi Mimi,
->>
->> I will update it in next version.
-> Sigh, after reviewing your discussion with Baoquan, I'm not sure whether my
-> comment this morning added more confusion.
->
-> Option 1: Include a single "From:" line at the very top to change the author
-> from yourself to someone else.  The following from line would make Tushar the
-> patch author:  From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->
-> In addition, any minor changes you made should be added before your Signed-off-
-> by tag.  For example: Steven Chen <chenste@linux.microsoft.com>: modified patch
-> description
->
-> Option 2: As mentioned previously and now discussed with Baoquan, adding "Co-
-> developed-by:"
->
->> Just wandering are you done reviewing or still need more time?
-> Yes, I just finished reviewing/testing.  The patch descriptions are looking much
-> better.  As Baoquan reminded you, please remember to update the "ima: define and
-> call ima_alloc_kexec_file_buf()" patch description.
->
-> thanks,
->
-> Mimi
-Thanks a lot!
->>>>>> Cc: Eric Biederman <ebiederm@xmission.com>
->>>>>> Cc: Baoquan He <bhe@redhat.com>
->>>>>> Cc: Vivek Goyal <vgoyal@redhat.com>
->>>>>> Cc: Dave Young <dyoung@redhat.com>
->>>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>>>>     ^^^^^
->>>>>
->>>>> The signing on this patch is a little confusing. I can't see who is the
->>>>> real author, who is the co-author, between you and Tushar. You may need
->>>>> to refer to Documentation/process/5.Posting.rst to make that clear.
->>>>>
->>>>>> Acked-by: Baoquan He <bhe@redhat.com>
+Adding man page for new uprobe syscall.
 
+Cc: Alejandro Colomar <alx@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ man/man2/uprobe.2    | 49 ++++++++++++++++++++++++++++++++++++++++++++
+ man/man2/uretprobe.2 |  2 ++
+ 2 files changed, 51 insertions(+)
+ create mode 100644 man/man2/uprobe.2
+
+diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
+new file mode 100644
+index 000000000000..2b01a5ab5f3e
+--- /dev/null
++++ b/man/man2/uprobe.2
+@@ -0,0 +1,49 @@
++.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
++.\"
++.\" SPDX-License-Identifier: Linux-man-pages-copyleft
++.\"
++.TH uprobe 2 (date) "Linux man-pages (unreleased)"
++.SH NAME
++uprobe
++\-
++execute pending entry uprobes
++.SH SYNOPSIS
++.nf
++.B int uprobe(void);
++.fi
++.SH DESCRIPTION
++.BR uprobe ()
++is an alternative to breakpoint instructions
++for triggering entry uprobe consumers.
++.P
++Calls to
++.BR uprobe ()
++are only made from the user-space trampoline provided by the kernel.
++Calls from any other place result in a
++.BR SIGILL .
++.SH RETURN VALUE
++The return value is architecture-specific.
++.SH ERRORS
++.TP
++.B SIGILL
++.BR uprobe ()
++was called by a user-space program.
++.SH VERSIONS
++The behavior varies across systems.
++.SH STANDARDS
++None.
++.SH HISTORY
++TBD
++.P
++.BR uprobe ()
++was initially introduced for the x86_64 architecture
++where it was shown to be faster than breakpoint traps.
++It might be extended to other architectures.
++.SH CAVEATS
++.BR uprobe ()
++exists only to allow the invocation of entry uprobe consumers.
++It should
++.B never
++be called directly.
++.SH SEE ALSO
++.BR uretprobe (2)
+diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
+index bbbfb0c59335..bb8bf4e32e5d 100644
+--- a/man/man2/uretprobe.2
++++ b/man/man2/uretprobe.2
+@@ -45,3 +45,5 @@ exists only to allow the invocation of return uprobe consumers.
+ It should
+ .B never
+ be called directly.
++.SH SEE ALSO
++.BR uprobe (2)
+-- 
+2.49.0
 
 
