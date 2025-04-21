@@ -1,55 +1,70 @@
-Return-Path: <linux-kernel+bounces-612654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC97CA951F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946ADA951EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64701894935
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A6E169FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE3266B7F;
-	Mon, 21 Apr 2025 13:50:44 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCAC266567;
+	Mon, 21 Apr 2025 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="neiRsLBk"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4DD264A74;
-	Mon, 21 Apr 2025 13:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9584D264A74
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243443; cv=none; b=AZOJwprdr7l3OGkgh03OgWq/4qaDgq08ZTYujWzUfH3cu9Foei9DfC1YrbNJWiXRVzvOU7ZSrlphTnmXgp/ax/pRa2uLYSDH1v8MWTdqN5RgvBiaqhCC5da5JHQHdH8F0Pcxh52H6Sv1RnVqhkQPjQ/llWXoJr39dtwGGVULHNg=
+	t=1745243354; cv=none; b=NNQmgFJOijSP3cWmVy4dXHs+k1gnWf4klpBCYObv9Za5P2pAh0swI6kKxJt/9XjAHHURcBkMg1xR5iaat0P45XMe4UQ9wQJVKAGRmTlkaLfjF94zNYPH+Ycz7HakkqVQA0YuKITqmY8X6MPBZZIAocvHIKCc9i2oCKBqqbRrWUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243443; c=relaxed/simple;
-	bh=SEMtQfQ8NsSlHutbWhTDFmQl9QLQKGw1LL1AgG36Arg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZPZvPleVfrVF7G43zM+W/30sSkrU1kKNVTYoLtuf/3n5xxx1b7nAZWh550prS5iukccpdKDLnC9je84XcSZHFRsjxLCnW4tKkxfDwqwLHdGeyRSbtkqitwSJXVv5Ui2tOSVVETGe8WjAn0C6iTLGAna/A20zjy3vCm4eVmbvGPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Zh6FW401szsShh;
-	Mon, 21 Apr 2025 21:50:23 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6900D1400DD;
-	Mon, 21 Apr 2025 21:50:38 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 21 Apr 2025 21:50:37 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <gerhard@engleder-embedded.com>,
-	<shaojijie@huawei.com>
-Subject: [PATCH RFC net-next 0/2] net: hibmcge: add support for selftest
-Date: Mon, 21 Apr 2025 21:43:56 +0800
-Message-ID: <20250421134358.1241851-1-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1745243354; c=relaxed/simple;
+	bh=OXe058tiRU3pWUUJMDLxQBibS02iMMq22FZ8g4QjM2c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=fYVZzF81tV4d9Ql/Y7gT/7ZQ//zmJCLLSmDCx1NMlyWm3YPM8SLFoI9zuGCLnFOfWHYSeIgpdqtS0RzJ0a9AAEQGZuBYnz0RJWHSVuRn0XrMl/SnrgclxSYhT+3VwDpP0DjJ7OVmyYdo49BzzuPAVAsu1758Xo9bk0sVRD5igMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=neiRsLBk; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1745243040; bh=ngDVsHiq/ThQX2r6qcF1vITVscrftwsrrth5/bi0Ek0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=neiRsLBkAgC78NTiUgncJd1ZlvPPm9fDQqrZagEjIu8wYpYvDwdH3ZKJyloelhc1p
+	 ro+R0v46ZalJ8e73mpYD0iFmdm+cxxEQOSCuV14cpEOUIqgdavJyrCVvNZVrrnc558
+	 XTkK2X088or0CJhpR87Ul2xwhQX+kli+Z5B5aUrk=
+Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id AF89FA0A; Mon, 21 Apr 2025 21:43:56 +0800
+X-QQ-mid: xmsmtpt1745243036tawwn6k7r
+Message-ID: <tencent_D8747F769166163CDB36A697FE36984AB009@qq.com>
+X-QQ-XMAILINFO: MQjKimNqHmeyP1Fuw5aVMDMqlX7c2cjsO1qUBgUCxcOQB58kdLkuxMjpwBtZ3J
+	 mN+T/2a7lwItAW+GXsqw7V/QuS/6m62gv+KWdxqDzhTjjjf6eEQ+ktl/WTusT3m5z7tWFm7mQk9t
+	 fYL0k+rRpNAggHTiMhhfEbgv55ljtexJCCQGeyGL7nFC3nGzUUy9tdemyriVeXN+pWxBQ4MV4TxS
+	 rNh5F4cixBQjDvSErOU13nKiHr9qHRb3mf8uBVIOpEvIUueyFZaPQ6NxkQDWeh5/gYoUbMiPtB2c
+	 tzwO0eVuimsHyIz/hIWVBHzsqudEcPHao6etDHKbsR/hCZaHVgOxJXUjpJGpM3K/1WrYJgwoetmw
+	 KcQGbMp1VzbNy0mggYSVTsIOpYs2J5B/dMR/U/o1HPS/b3tcEBqItam5xUMbPb2bVZjI7r3ReKkp
+	 tNemL9DFXdpAF+aP4S9E0jYvb2Q7qcXWpB8CEKPGK+yR+nhn2nXZkys/323TR6GVxMjDFeJ1Xf4/
+	 UNMic9yXt/GdJql6pt6LHuccHjHnNUOouD61YrysGbkTkUwLUdmuOwbfYrvqlw9fwcYt9oYMpP0V
+	 xqKw4b+oZfW9b4C6VOZNT6JgKgGdq+V0jWwyFww4yC0ZoCxnA/17Vq8V+eO7fUqQP3raDXdZwC4H
+	 pVYNDhvhRRuioEO/lOguyqb9WTXdtD67oVhK9d/Jdp2Mlgi+MiFy96BbQFnqvgTtcXxjpRl4sbB+
+	 la48UmiKvbVbv5EtLSZajM2mAKar8YZ8YEiHI7pUq/XmQekQiI/qmkEYMHiM91jqcBtWi8wNoWTw
+	 OPppByvvi7szujtuuCgmS5Wy6Oe2AjUEtyyTWJfuXiJ401RQKnNkOlR1OLMDU4sPjhk9hhJPzEW+
+	 IQ3g7OMVwsh9MrRt5M0U4YuJrXdMfRKKu4qdPplfb/
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+Date: Mon, 21 Apr 2025 21:43:57 +0800
+X-OQ-MSGID: <20250421134356.970333-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,31 +72,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-patch1: the net_selftest_custom() interface is added
-to support driver customized loopback tests and
-common loopback tests.
+#syz test
 
-patch2: add selftest support for hibmcge
-
-Jijie Shao (2):
-  net: selftest: add net_selftest_custom() interface
-  net: hibmcge: add support for selftest
-
- .../ethernet/hisilicon/hibmcge/hbg_common.h   |   2 +
- .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  60 +++++-
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   |   6 +
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |   1 +
- .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  |   1 +
- .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c |   3 +-
- include/net/selftests.h                       |  61 ++++++
- net/core/selftests.c                          | 188 +++++++++++++++++-
- 8 files changed, 310 insertions(+), 12 deletions(-)
-
--- 
-2.33.0
+diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+index 65ef045b74ca..15d2fe477fcc 100644
+--- a/drivers/media/usb/dvb-usb-v2/az6007.c
++++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+@@ -806,7 +806,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			if (az6007_xfer_debug)
+ 				printk(KERN_DEBUG "az6007: I2C R addr=0x%x len=%d\n",
+ 				       addr, msgs[i].len);
+-			if (msgs[i].len < 1) {
++			if (msgs[i].len < 1 || msgs[i].len > 4091) {
+ 				ret = -EIO;
+ 				goto err;
+ 			}
 
 
