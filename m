@@ -1,131 +1,93 @@
-Return-Path: <linux-kernel+bounces-612665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5281CA9521F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF85A95229
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14631188C8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:57:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C125B188F8AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA32D26659C;
-	Mon, 21 Apr 2025 13:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1E0266B4F;
+	Mon, 21 Apr 2025 13:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYmnm7tC"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="IKnYMhIo"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B39261372;
-	Mon, 21 Apr 2025 13:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A44265633
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243814; cv=none; b=lqx4Qh8ew1L+Zmki//w6CiG1PzAc7uTxTBMaAAKjanrtWQUzebKdzCrrUS/K5BKoHSm9+uzaMKWhjp34cFRmRqEKQLu6rm5YFvW6njOjMjlp46C4JiLh5PZB7b4KAzUeH9vN+IxcRR32lKW+L3dpDqeR3L1lMy51xgMfuyLxKMk=
+	t=1745243840; cv=none; b=FrqYdYf1SLY018wxU61D35GyrMzSrMb5gwZZ5aXVur5WeFcuxzRHUeE4/KkgNY3l5UhWEwHEAbK51fca+NAm9D5KVJqPbFp4ZYtUs0CR6gur0OyTnP0TF4EGq2qbOA/IjXUkYmUaXxosEwSBhBCqyEX+kutW9Or78CCsrYCZdx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243814; c=relaxed/simple;
-	bh=7G952GCUAgQVq0vHrcyEXSe0jtpjyYe3cHfs5H9tRi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aCHcMweoohxK/RQVI6vg0jeHFmBPzec8Yra+z2f5KqkKFLapqs1IFxqTjPXd5HQeLSxPTKfSrGugusb1pb/zOW0XoeLXaO6kdEcvmlk1OWHQKo597UGl+tSu8iSSZiFVhyugKv3zVxN9NVOF3Mc9E+RcM1WEY5cPi+f9vw9jnXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYmnm7tC; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c5e39d1db2so198400985a.3;
-        Mon, 21 Apr 2025 06:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745243811; x=1745848611; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U50DhOW5tvqG4LqE1ZhO21eZnqHSraou5vt7RRanSeU=;
-        b=ZYmnm7tCWx/SinX5CEtwzSyxAZBhJpwuZ57D209lQB9+d2U+MPQ5abDEQ0fD5Ezyu3
-         j7uG0UC3zAZGNfdv4GY+KEA5WzxnThDh98maNXYek2eCpjOv/eu498dKhI47fFudAKmf
-         WjF83QkmjwBWvTWC6+eokIX7TVF+pctBq2ciwcz+QvnKa1ox6bDT9gsEOtlkrWSGf82p
-         C9GCksvVB2Mu6zhKvcXDlcbt+Zb343fRd95xPr+2luyNZ0ShSqxmPUuG32cO+J02gHwm
-         8jcDAmIIazKfelq9PVhxF1w2Bjc5Biov3OYGnnRuOPWrsC3Rswnj5i6V+afnMsRSPTUt
-         VPww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745243811; x=1745848611;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U50DhOW5tvqG4LqE1ZhO21eZnqHSraou5vt7RRanSeU=;
-        b=iU1/3g495IyOTtnoEBtosrt70jGXQQvPmADRM6BHoZazHVsUwnrrUsAPQxBvqFekVd
-         3s2LV4RCzMNHBNFoL69HCKQ9h0+SP5X71ksXYqqI19WoAuVFnM/t9XTrZZDnigMkbCOT
-         ISLSUBIS4IONrCGeYEkANQNMqNWKw8NtQ4lhGWaPibTozjtYuhY4mNpLDHK+aPSN2YyH
-         hmKhv7IPf9AxR8pW3o5jL2rIFIyXa3R/PuzCPtBCPQGMjg5JuuEm5Z0IIf9cRwNB3XZ/
-         QCS0QfJq1hCZA0KdKWmOp+VhB0OVj5G6ztWihBPjOrvsbhtmGUQPEbn0q0SdRUBRd8Sp
-         oEAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUywMiI8yOl2Vloq0ABXWNNnLZ5ndXAb/MdW1oq6Ypu61Kwpjycqejm02fqe8tSCTZUPCOA3qsO54k=@vger.kernel.org, AJvYcCV8SNfBZR8Zm0B6RdcpkCshssokovUsILs5gpcE3i/LNEURQgJr+KLT7fRIBVgJ+Cfr939z7C4hV9dTjoXr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzy+9/90ow2lfVtJprr5Jz1ku3hdtNzRVDC61EzhA3ABuV8Kzz
-	LB+7Vmy7rzpj9iNtfRt7Hf0TNE/BiwhX1AaBZteX8fusyvTKP4tk1A7FygNPGo8eaBmhk4rzbbK
-	w16ioe+8xu7dOjqlItINrVKtkR+M=
-X-Gm-Gg: ASbGncsRdIMkPWssr2zz1kc2CQKwXQeS1bhJUCViIaHfctXuRktdseFgSggwzVuV5I2
-	FlYoyQhk+h9mk0QuKMcWwGzCi1S7iAuy/5BRgLIeuF50Z3SywX3eGU8LAc03vMUyDBCbuPtjoHy
-	ccafdVE3EgFHgHm4XqGFmU8oplA814+bq2d8lPEuSZHDrCXpaZ/o5H9w==
-X-Google-Smtp-Source: AGHT+IFwPfdkoy6EEJ8mTuzbNgnOACCZf4/Uyv3+B3FbTRzHLK/2P/3awjMDcxErAWDSHIh3e4LjnEgs1WpxoLtiYfY=
-X-Received: by 2002:a05:620a:2409:b0:7c5:b909:fde1 with SMTP id
- af79cd13be357-7c927f9dd6fmr1930284085a.25.1745243811525; Mon, 21 Apr 2025
- 06:56:51 -0700 (PDT)
+	s=arc-20240116; t=1745243840; c=relaxed/simple;
+	bh=pJd8WsxtAYkHwS8ClpQ3xqwdhETlXCk5deE+sz8qGtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkvpVh/fWBHdbMg7O8L0uPXX8Uu2+qGAk3JvOCTJnlvxoIAAi59TLcruMDoyFcm3VevKlwTpLkYWv4eEf6s4Kjg5f+tdEyIiUcmm6jy+fuYU3utN4IJUtfnqqS2ZVr4hCeNv14RvA5kuuWfyZXbpNsOIPD56ecZ9OQYhc49Kwkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=IKnYMhIo; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Mon, 21 Apr 2025 09:56:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1745243826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pJd8WsxtAYkHwS8ClpQ3xqwdhETlXCk5deE+sz8qGtA=;
+	b=IKnYMhIo3I397WCqX+KqiNcubIvRK/YQxQCvQRIp7b2/5IU8k4Fc8nZBsAONLPIRZdezi6
+	Zjl+bUVpO1RbP1hEJvwg/kruiB3I342cu0emyGn+XeC9I8/wMrPR5Obrevpj2XoZQy42+X
+	GAaUWnyBOIPc7HbcGAovNUhbs+nZFCvMzSqp8t/CreBHxRLolMlT1KzMT8gjzJywUt9/OT
+	HQG8P7/RstCG5cHFe5MXFBTgU0knd2JYY3ksGYBhsyLZsRGdw+AUej+HcStXnPPBwY59Y0
+	9Iu4QFTerpHxwKY3my+gSB4x9zgPtCKEI5Husu7WnavpT+/iELXPkycMIqvHiw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com,
+	joe@perches.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	Kees Cook <kees@kernel.org>, tamird@gmail.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>
+Subject: Re: [PATCH v4 0/3] Use proper printk format in appletbdrm
+Message-ID: <aAZOpLeqBeeZ-4mG@blossom>
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597D506487C3133B0358CE5B8BC2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <aAY0hRvNCi0y6rlt@blossom>
+ <PN3PR01MB95978C5635B676286A9F0EB7B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <aAZDApE-Wm_NlbMx@blossom>
+ <PN3PR01MB95977FDD2F4DF6D9E198C516B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB95976BAC455F10F6D75B9C84B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <aAZM0svrO2MiNAdg@blossom>
+ <PN3PR01MB95973648BB4FECBB2E24C5C7B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250420175419.889544-1-gshahrouzi@gmail.com> <20250421123331.634076d5@jic23-huawei>
-In-Reply-To: <20250421123331.634076d5@jic23-huawei>
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Date: Mon, 21 Apr 2025 09:56:40 -0400
-X-Gm-Features: ATxdqUEiUsxoWmmaJ2xyXvjpRnVfAONnlaUDxmAq11sV0agws9ETpfjcyGC5AFA
-Message-ID: <CAKUZ0zJ9LkkeWsFQEvAdNw4qYOeX2p=J5PKEoc3Kh9LmCAa4Jg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Fix and refactor output disable logic
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: gregkh@linuxfoundation.org, lars@metafoo.de, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	Michael.Hennerich@analog.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN3PR01MB95973648BB4FECBB2E24C5C7B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 21, 2025 at 7:33=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sun, 20 Apr 2025 13:54:16 -0400
-> Gabriel Shahrouzi <gshahrouzi@gmail.com> wrote:
->
-> > Patch 1 includes the initial fix.
-> >
-> > Patch 2 refactors the code to use the out_altvoltage_powerdown ABI.
-> >
-> > Patch 3 adds small improvements by minimizing the size of types and
-> > doing a redundancy check.
-> >
-> > Not sure whether to include a read function for powerdown as well since
-> > all the other attributes only had write permissions. I can also do this
-> > for the other attributes to help modernize the driver.
-> >
-> > Changes in v3:
-> >       - Include version log in cover letter.
-> Just post it in reply to that v2!
-Got it.
->
-> Note though that this needs a rebase as I mentioned in the thread wrt to
-> the original fix. I'll take a quick look though to see if I can spot
-> anything else for v4.
-Got it.
->
-> > Changes in v2:
-> >       - Refactor and make small improvements ontop of the initial fix.
-> >
-> > Gabriel Shahrouzi (3):
-> >   iio: frequency: Use SLEEP bit instead of RESET to disable output
-> >   staging: iio: ad9832: Refactor powerdown control
-> >   staging: iio: ad9832: Add minor improvements to ad9832_write_powerdow=
-n
-> >
-> >  drivers/staging/iio/frequency/ad9832.c | 50 ++++++++++++++++++--------
-> >  1 file changed, 36 insertions(+), 14 deletions(-)
-> >
->
+> Any change needed or just because some other maintainer manages this? Although Tbh, I really don't care about backporting since T2 Mac users are still using patched kernels provided by us. I'd rather free my mind in getting this done.
+
+I'm just too new to kernel to do nontrivial merges. Either I can queue
+this series to drm-misc-next today (no backport no changes) or we can
+wait for someone more experienced. Let me know which one.
 
