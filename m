@@ -1,95 +1,81 @@
-Return-Path: <linux-kernel+bounces-612696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89862A952BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3C9A952C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C11F21739BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6033B508B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D34118FC74;
-	Mon, 21 Apr 2025 14:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CCD1A0BFE;
+	Mon, 21 Apr 2025 14:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1h9Q/V3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHuisIuL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51D21A83FF;
-	Mon, 21 Apr 2025 14:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5DD19F42C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745245536; cv=none; b=RoD5vYo6/s1C1sOdUWkAK+OkLduJ3s45oHLscxLfOdsRk7qm6UOOZO97sKqoUl3EhScenE7mU646cJ926//nQh9iRVJ8dEfNc92Uulo6VlIAHihnYcUwnQ2VnVHLWwFwVCnoGW+IJB05t6BLiJi6Yx+z6bfOzUtT3gy4Z/FKc14=
+	t=1745245654; cv=none; b=rqQXHvXQFlxNmLfvhQ4aFEN8hSqPiRj4Sg6Hc2rcVtWcNFExSoCjLxliaSvzqlUY5NSP0xNNm2UvSwPVydQHpE+t086bq9zDNebUMLZoGiX1cCver9K9jiBes/JofomuJTd69/CW2+Idjey1FBCtxUTQh65lv7+rRtjyx1qxWkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745245536; c=relaxed/simple;
-	bh=ZF7/d8zZAzECaycUfu1kBA8GvpttgAWVoDU+v0DIgEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AEX+1aeuJ0lpgB8+AfCjEl8DyoH+ShBW6oF5GsHEKROh/vx+jneGYIV6gNXIE1CMpNYPf8Q6r3IIEfHXTQVqM+xa7pG7jcvDypi2pL3jW+gZpS3cZSVLtS0EN/j45f9JmwfPF7vOd1pCkytEhRTRKCR+wvTRNgOJ23jw3EaKjow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1h9Q/V3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83F8C4CEEC;
-	Mon, 21 Apr 2025 14:25:35 +0000 (UTC)
+	s=arc-20240116; t=1745245654; c=relaxed/simple;
+	bh=cvWak/FtVDINlP3w9NFQgGGjoUQOizrqtoV6iLldsy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZoq0YOmR5g3CaGJa5M0JdibR07SIASLewPx1F6gb+arYObQyQEhWTtRxE9sn0lBUKkROlt0XcXMiGYo9u4VO9Dvb4NyF29eczUfHBKdikR9aWpuHaxfUwSaj9kA20CqkNOqwJjCOlXxMiGTyuvyEPgvUB7sosDwX7r2ldc35Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHuisIuL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E351C4CEE4;
+	Mon, 21 Apr 2025 14:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745245536;
-	bh=ZF7/d8zZAzECaycUfu1kBA8GvpttgAWVoDU+v0DIgEk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W1h9Q/V3/Rtv3sJcTTcOW8WDV85Cm22HBkUvtpaOI0m2zidMzXU66Yhv67WJOMCn8
-	 PBzmWLEVlqDvVqmT/FCbhwiFu3ktKCzlbqL0/R0RmMQ64TPhUmdDgGo2oXluBGERPA
-	 IGwGan1c7DpeYhMuut2JXw1Qg1+m0ZVDuw1r2WT932eCKHFLzEL6bMpF691/UnytDC
-	 5L3GMyM7YzMVMuq5F8mTEqCx3thBm/TglYlnuznffsm4GQVdE+gYGD4HzCBf9TKPWq
-	 i07b978JD0mct9bh69HuDcY9rUZzuVLN9E2S/7Puy6CiluUNVk0umWtAWetcJUnvMu
-	 E3z1g1uFrjLLw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=k20201202; t=1745245654;
+	bh=cvWak/FtVDINlP3w9NFQgGGjoUQOizrqtoV6iLldsy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vHuisIuLLblwEP7kaCgO4UtMmpqnbCSbl44+vPqLCDpXp0V4TbRjSrKR3whS2/UHf
+	 lZXpuHyFEHn+6Ec/OlyzgV9SnKK9zZRU023yobcA8SvS1duXCWsFaAnEFEt5iwBVLo
+	 wAWD/KQJhGpBVBDXTvyiG19QKbIG2K/TSmZ29iaHuF7rPao6L4phM++MI8rVlDrbmd
+	 ZEHiHYGScbdNEnKNFvY/OZvatrNcDhcwwiB8FoDsV3I/NoNFvDttrJfHEAJ7XImFq9
+	 pbuI9afbck6IgGjefBZh+Gk3HuMFyw7OxQfWJ6ThkZD2iTTElfnT+CuWBSQNpO4Nju
+	 OKfNnhC4gBCkA==
+Date: Mon, 21 Apr 2025 08:27:31 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] Add snps,dis_u3_susphy_quirk for some QC targets
-Date: Mon, 21 Apr 2025 09:25:31 -0500
-Message-ID: <174524552575.708487.5624208070172830014.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
-References: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
+Subject: Re: [PATCH] nvme/pci: make PRP list DMA pools per-NUMA-node
+Message-ID: <aAZV04hiWIz2UT2E@kbusch-mbp.dhcp.thefacebook.com>
+References: <CGME20250420164653epcas5p10dba2c638655fd4b16c6553d5125a3a0@epcas5p1.samsung.com>
+ <20250420164450.1144416-1-csander@purestorage.com>
+ <be873f40-d3c4-4f0e-8b36-dc6e4f5bcf48@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be873f40-d3c4-4f0e-8b36-dc6e4f5bcf48@samsung.com>
 
-
-On Tue, 25 Mar 2025 18:00:14 +0530, Prashanth K wrote:
-> During device mode initialization on certain QC targets, before the
-> runstop bit is set, sometimes it's observed that the GEVNTADR{LO/HI}
-> register write fails. As a result, GEVTADDR registers are still 0x0.
-> Upon setting runstop bit, DWC3 controller attempts to write the new
-> events to address 0x0, causing an SMMU fault and system crash. More
-> info about the crash at [1].
+On Mon, Apr 21, 2025 at 12:43:24PM +0530, Kanchan Joshi wrote:
+> On 4/20/2025 10:14 PM, Caleb Sander Mateos wrote:
+> > struct nvme_dev {
+> >   	struct nvme_queue *queues;
+> >   	struct blk_mq_tag_set tagset;
+> >   	struct blk_mq_tag_set admin_tagset;
+> >   	u32 __iomem *dbs;
+> >   	struct device *dev;
+> > -	struct dma_pool *prp_page_pool;
+> > -	struct dma_pool *prp_small_pool;
+> > +	struct nvme_prp_dma_pools prp_pools[MAX_NUMNODES];
 > 
-> [...]
+> I wonder if it is worth to make this dynamic using nr_node_ids?
 
-Applied, thanks!
-
-[1/5] arm64: dts: qcom: sm8150: Add snps,dis_u3_susphy_quirk
-      commit: 9bdbd5286ea597db6131c197ae9ee8614cce1890
-[2/5] arm64: dts: qcom: sm8350: Add snps,dis_u3_susphy_quirk
-      commit: a7dac91e56ae58e1479002e5b94fab73039f2e29
-[3/5] arm64: dts: qcom: sm8450: Add snps,dis_u3_susphy_quirk
-      commit: 9588f10adb5b67bea7eeebed2490c20dfbe82e77
-[4/5] arm64: dts: qcom: qcs615: Add snps,dis_u3_susphy_quirk
-      commit: ad2011e02dab5ccc9f38848a3d909855a4ae7c8f
-[5/5] arm64: dts: qcom: qdu1000: Add snps,dis_u3_susphy_quirk
-      commit: 25eee6c64376fcdc375b97c7e1f105e132654563
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Yeah, I think so. MAX_NUMNODES is derived from a config value that may
+be much larger than what the platform actually has.
 
