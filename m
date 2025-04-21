@@ -1,106 +1,200 @@
-Return-Path: <linux-kernel+bounces-612644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAC4A951EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:48:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71109A951F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850C618942BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10AB23B0BA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E177D33C9;
-	Mon, 21 Apr 2025 13:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA716266B65;
+	Mon, 21 Apr 2025 13:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acCxHGF5"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kat/51Tu"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072E4320F;
-	Mon, 21 Apr 2025 13:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E479266588
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243331; cv=none; b=faMkz+Pl/wG7eBEI9Yo96vjkf6FYMXVJqoVnxr5eBVypDSpzB1a3YuTNhc2MyLS3nfd1kpqLJZx4r8m2sNKr0txKSQBGH4LsxYznsVsRjMBoq3EtQWsW5rOcW6gmiPdhYyPCQmGKZdVSZNhL3IsJvgmA0dKt7brSAc8WrlKQ01Y=
+	t=1745243419; cv=none; b=higVhx9PaznQwfTC/gNSkszbtO+JIaweGcSDm5C7zsrWuKNvR1q5DqjTg2Aj11BHdEUQNVK2aMNC7xPT4Ra3fTyv0GDY9BFL0RmVXTNR80mCzWQDWKp3+DwhlVcqGoJ7TBX6N7lvu9MWo5SOm+FF7/3sKZE+rMBBiIZNxube+tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243331; c=relaxed/simple;
-	bh=7WfjRqak32dmDEcbYuCM3PkVd+8nEMKIrPGztxIZIfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Giw5urlTY1jDLun46LFyvSJCMsD5+FBe7UNad661A6NVUbrC/2KwD/oNR0eO7mXWTr674eegqI1F16RyH3OBm6fEdwE/ikDx2D+nX/bpwyH4BkRqU0/4YuyU7gcP9PRN6g0AB57lrmQ92DhvOs27Nr2mdJtPWNOAIaPXpxgogu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acCxHGF5; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22c33ac23edso38386515ad.0;
-        Mon, 21 Apr 2025 06:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745243329; x=1745848129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VILm46anXu51tGkwwdzpRRF6UX5t99Pkc+Jaul39Ijc=;
-        b=acCxHGF59aJfe8/xmpAj8zM/E1CzmJSKiVrCLLxTYseRan+T6GKhVzqGrED25eUkPI
-         SZOQqZucwSpLWI98miZ1PFq3KHeqO2VLYg8L8i++Pq3iRumDrVuZPmwqKuE9mgcalFjA
-         qoqpt+aezRrRG3Irig6jlg8DwIdHp599goRiWE0hhM53kWtIXnNMcHvveIIrZCi8Snee
-         dfResiKkTsWoNPjx5uO6zMP8XAVPLxWCoJmTxqmd07EqDeb9u0yTFvDwJkQAdUHHCt07
-         cuXlyIQ0f2eMFBIwSA7SEeppYBAd9vSjzPNq6BGSwj7hRdGWNdVEwGb7ww9xLSero7UB
-         m+fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745243329; x=1745848129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VILm46anXu51tGkwwdzpRRF6UX5t99Pkc+Jaul39Ijc=;
-        b=AyguLCPQJeQjbKZKiC0nIAgNbA7bU+GZsw9eDl//P80dFoC07zYDbANxCSla5GE82Q
-         GwRn148Lq0Zf0k6FS7ALE8wqZAd8TB+CsTrZ6Jf65NShUCDs3jDbrYL5QCZxWWttkxvr
-         pXM5f/ehkV4hKpUMQn7+9juHqTwoq63glkMw+Md1VRDk84lnDEbodJMKirYY2jzFQG88
-         JrR6p2+unVQ+e+7g4OLR7q5Uuv+sz8QrSqSk+fLNrUO69E/8ldIUsigxTlT+xhm6Wfhx
-         jNeaZcjPIiVADLkL4rXAT7LSuU2FN9e58Qo2IX3aMsrxLEHMPJ5jrkFYHQh1gw/mVmjV
-         SLPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWW8b8ubrbghJ8TIee/TKWbYRDBIKpNtnpTIUhk0HtyL8xBu6ycRIRl/HrfSVRK2SxG5GNkjjOdSI=@vger.kernel.org, AJvYcCVO1e3el+YAaz3DlOlu3Y54CHCBprHGBWetMpoN4FXk4bsnR3OvyYrrOj+PCxuNifIzwZBMMXtL@vger.kernel.org, AJvYcCVcpOe2lDeFSF+5RAb8MeQrlZ2PReZBys2yIiEsKAZH/dPllRPv7zoa0j8wRrs99N0JvJZUO/94axIrlYiG@vger.kernel.org
-X-Gm-Message-State: AOJu0YydmeRzafwfCxucNxMy9hCSo1WtX18PLLWum91gZ7gLZaDu3Tli
-	TFp9f+SrTo5mEOIw7xg2i11/4u3C3QZInw9Sc5ndpBe6qrYgx4dB
-X-Gm-Gg: ASbGnct54lYLFn8HhRG4s6++psM7ZOKHbMFNhJTTKWOUyIwQVFTFZd5xg6rtoUb0GN5
-	6gIWYo738Te50msZvKE8hBRg0Fv6GpXqSgOiuhlQSKlWCYqEIu2JaIxqyqKl6mLHZH89/TE4g+8
-	GGSdfnZ7SlH1rJOFLa2uL51s65IFJ20bh4n1bIJ4d6Fpw3nJBVlgXjoA/dbtkjOalb95tmWoDyM
-	EClOAazJeFEizNfJko90pb6k9sC1wpKtBS/YP39+thiwgjVWzG4N7X9wxau0XuLrlIfAZiilxQE
-	mcSm0w5RUHtRLvixX1OfqYO+tnkkoJDyM1QkMh5AMbDJT3M=
-X-Google-Smtp-Source: AGHT+IHWwCFSBtPYz/rqMUA+PmYcUjxPaIqEwBB5byOOqR1qNz8CJ2ovyvr/GGFQLmKtlFDzEUz79A==
-X-Received: by 2002:a17:903:1d0:b0:220:d257:cdbd with SMTP id d9443c01a7336-22c5363005emr177837095ad.48.1745243329119;
-        Mon, 21 Apr 2025 06:48:49 -0700 (PDT)
-Received: from localhost ([2804:30c:90e:1e00:5265:5254:2e32:7e5])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73dbfaab922sm6746978b3a.133.2025.04.21.06.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 06:48:48 -0700 (PDT)
-Date: Mon, 21 Apr 2025 10:50:00 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] iio: adis16201: Correct inclinometer channel resolution
-Message-ID: <aAZNCEUejrTgy_yZ@debian-BULLSEYE-live-builder-AMD64>
-References: <20250421124915.32a18d36@jic23-huawei>
- <20250421131539.912966-1-gshahrouzi@gmail.com>
+	s=arc-20240116; t=1745243419; c=relaxed/simple;
+	bh=c6sh4ezT4TDV2xAhu4/v/ArKEm6H26SJ4UdWkW4UGck=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S8xlk+5hwAjFmTTbmKpS+0f4yH24jQIriI5NukuqWoIH+SukPowGN8mevcYDUX0oUQgnsPJF53NmVpplaqY/Rv4C8HWLyHP790MrpiGak2uJG9UwIMJiCYDfy7i9XUmArnnukrlX10H60eT8s1hc/iBWwXFZrW5WajNcSgwj2VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kat/51Tu; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1745243408; x=1745502608;
+	bh=CM3QQtWXQAA1jGNPFfjR0jWA67cFy7MIqL2uQdyCaLo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=kat/51Tut7GRaMjN89cW4THVIp9AtWaS2pCY2ZPdAWA5ptKFNRuC8iJXu6ccsrf3O
+	 vzaVRWS9JdCZJdRQjBuj7hbaXmjqvUoLWDRg1C6OFxL+RqFY/oq3Q4DOYWd96GMkIx
+	 YDSOUcv6gGrNHqU3PcxJ7RvM8OGkE5qwV8s5SkeHQLsfSB8DqeA/RHS/hm3GwAV07y
+	 EkLD8QxrOniG8XJCtGTSf6vOO0zQHgIvbUBYOsTpy17dHmoccEE7u/gt8eFzUXTzGY
+	 umu/sCKt09RxHZYX04FHoZ9hNld7J5LH4hefsgVlviI7iShMtMrmSvxzDbFa6hjdB7
+	 CJiTQvUrIl/GQ==
+Date: Mon, 21 Apr 2025 13:50:01 +0000
+To: Simona Vetter <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/4] rust: iov: use untrusted data API
+Message-ID: <20250421134909.464405-5-benno.lossin@proton.me>
+In-Reply-To: <20250421134909.464405-1-benno.lossin@proton.me>
+References: <20250421134909.464405-1-benno.lossin@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c9daac3b236de754d6820c10f767570fd6b31729
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421131539.912966-1-gshahrouzi@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 04/21, Gabriel Shahrouzi wrote:
-> The inclinometer channels were previously defined with 14 realbits.
-> However, the ADIS16201 datasheet states the resolution for these output
-> channels is 12 bits (Page 14, text description; Page 15, table 7).
-> 
-> Correct the realbits value to 12 to accurately reflect the hardware.
-> 
-> Fixes: f7fe1d1dd5a5 ("staging: iio: new adis16201 driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+---
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+This patch depends on Alice's `struct iov_iter` patch series:
+
+    https://lore.kernel.org/all/20250311-iov-iter-v1-0-f6c9134ea824@google.=
+com
+
+---
+ rust/kernel/iov.rs               | 25 +++++++++++++++++--------
+ samples/rust/rust_misc_device.rs |  5 +++--
+ 2 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
+index dc32c27c5c76..840c2aa82e41 100644
+--- a/rust/kernel/iov.rs
++++ b/rust/kernel/iov.rs
+@@ -11,7 +11,9 @@
+     alloc::{Allocator, Flags},
+     bindings,
+     prelude::*,
++    transmute::cast_slice_mut,
+     types::Opaque,
++    validate::Untrusted,
+ };
+ use core::{marker::PhantomData, mem::MaybeUninit, slice};
+=20
+@@ -124,10 +126,10 @@ pub unsafe fn revert(&mut self, bytes: usize) {
+     ///
+     /// Returns the number of bytes that have been copied.
+     #[inline]
+-    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
+-        // SAFETY: We will not write uninitialized bytes to `out`.
+-        let out =3D unsafe { &mut *(out as *mut [u8] as *mut [MaybeUninit<=
+u8>]) };
+-
++    pub fn copy_from_iter(&mut self, out: &mut [Untrusted<u8>]) -> usize {
++        // CAST: The call to `copy_from_iter_raw` below only writes initia=
+lized values.
++        // SAFETY: `Untrusted<T>` and `MaybeUninit<T>` transparently wrap =
+a `T`.
++        let out: &mut [MaybeUninit<Untrusted<u8>>] =3D unsafe { cast_slice=
+_mut(out) };
+         self.copy_from_iter_raw(out).len()
+     }
+=20
+@@ -137,7 +139,7 @@ pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usi=
+ze {
+     #[inline]
+     pub fn copy_from_iter_vec<A: Allocator>(
+         &mut self,
+-        out: &mut Vec<u8, A>,
++        out: &mut Vec<Untrusted<u8>, A>,
+         flags: Flags,
+     ) -> Result<usize> {
+         out.reserve(self.len(), flags)?;
+@@ -152,7 +154,10 @@ pub fn copy_from_iter_vec<A: Allocator>(
+     /// Returns the sub-slice of the output that has been initialized. If =
+the returned slice is
+     /// shorter than the input buffer, then the entire IO vector has been =
+read.
+     #[inline]
+-    pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &=
+mut [u8] {
++    pub fn copy_from_iter_raw(
++        &mut self,
++        out: &mut [MaybeUninit<Untrusted<u8>>],
++    ) -> &mut [Untrusted<u8>] {
+         // SAFETY: `out` is valid for `out.len()` bytes.
+         let len =3D
+             unsafe { bindings::_copy_from_iter(out.as_mut_ptr().cast(), ou=
+t.len(), self.as_raw()) };
+@@ -274,7 +279,7 @@ pub unsafe fn revert(&mut self, bytes: usize) {
+     /// Returns the number of bytes that were written. If this is shorter =
+than the provided slice,
+     /// then no more bytes can be written.
+     #[inline]
+-    pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
++    pub fn copy_to_iter(&mut self, input: &[Untrusted<u8>]) -> usize {
+         // SAFETY: `input` is valid for `input.len()` bytes.
+         unsafe { bindings::_copy_to_iter(input.as_ptr().cast(), input.len(=
+), self.as_raw()) }
+     }
+@@ -286,7 +291,11 @@ pub fn copy_to_iter(&mut self, input: &[u8]) -> usize =
+{
+     /// that the file will appear to contain `contents` even if takes mult=
+iple reads to read the
+     /// entire file.
+     #[inline]
+-    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents: &[=
+u8]) -> Result<usize> {
++    pub fn simple_read_from_buffer(
++        &mut self,
++        ppos: &mut i64,
++        contents: &[Untrusted<u8>],
++    ) -> Result<usize> {
+         if *ppos < 0 {
+             return Err(EINVAL);
+         }
+diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_devi=
+ce.rs
+index 6405713fc8ff..bd2ac2e8f13d 100644
+--- a/samples/rust/rust_misc_device.rs
++++ b/samples/rust/rust_misc_device.rs
+@@ -109,6 +109,7 @@
+     sync::Mutex,
+     types::ARef,
+     uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
++    validate::Untrusted,
+ };
+=20
+ const RUST_MISC_DEV_HELLO: u32 =3D _IO('|' as u32, 0x80);
+@@ -145,7 +146,7 @@ fn init(_module: &'static ThisModule) -> impl PinInit<S=
+elf, Error> {
+=20
+ struct Inner {
+     value: i32,
+-    buffer: KVec<u8>,
++    buffer: Untrusted<KVec<u8>>,
+ }
+=20
+ #[pin_data(PinnedDrop)]
+@@ -169,7 +170,7 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Sel=
+f>) -> Result<Pin<KBox<Se
+                 RustMiscDevice {
+                     inner <- new_mutex!(Inner {
+                         value: 0_i32,
+-                        buffer: kvec![],
++                        buffer: Untrusted::new(kvec![]),
+                     }),
+                     dev: dev,
+                 }
+--=20
+2.48.1
+
+
 
