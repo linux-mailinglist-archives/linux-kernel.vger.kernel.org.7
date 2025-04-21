@@ -1,121 +1,164 @@
-Return-Path: <linux-kernel+bounces-612535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE86A9504C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8E9A9504F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5B03B2D12
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5048D17218F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B92E264F88;
-	Mon, 21 Apr 2025 11:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060626462E;
+	Mon, 21 Apr 2025 11:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZPjIKrl9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kP5EJVrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705B264637;
-	Mon, 21 Apr 2025 11:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F18D2641D5;
+	Mon, 21 Apr 2025 11:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745235420; cv=none; b=Z89rNbty+F3O9LkW3wdRurcEC/vzuA207TDOK0ne+Gxfh5IIMs0oQMw+g9VLTTzD0kbonHKVIESjo6mRuZqzqgGJGUNWbUd7phLDzxo/grdr3c+gLmQjH95UeR8IQGC4f9k6JAqXZsMf87l0JZdMdJraM41pGwW7YZ7hIDtgFKE=
+	t=1745235457; cv=none; b=uGm2ySiVFEcWZZo806q3msW/Y1ENcWzDQ1A6OCl9XY1zuo9NKOwy9fIiT9ZUPwoMFf1VIK2YJEeBmTvnhHDJYzMEcIe7V8zM18aQlS1BuCvRpzh9iJMWzUF8X8BaId17edOt1zrbte+F+RZM9++ZimODTAOjii55sYrxSHMKL+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745235420; c=relaxed/simple;
-	bh=xrakHmlA6LksyJuXF53HJRC6zIg8buvU/C8IzSupxbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgwhB/tLYZXCyNqFcDGY5P+jKpDgQbIUbrRtXo2Q1vShUs6C62odb9F3LOYAGBw5Hq13u2MR5DEhzDCjRPK2qbYGY37kbdeXMtVG55dk370JHB2Fu1h+XLIVS+A09idQjjZv8YFI5CpzcLPpJXaQSVe4FeyFvL66N8cEMqSsVyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZPjIKrl9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1ACC473E;
-	Mon, 21 Apr 2025 13:34:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745235289;
-	bh=xrakHmlA6LksyJuXF53HJRC6zIg8buvU/C8IzSupxbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZPjIKrl9qxvyCAnpgIEZGOFYXgcafFyE6FvCFlf6eg0vIIx1fU1pn17jd9DbtLmVe
-	 +x+2U5sB9m2J24W+yGy4/QsIJxwjEIyitpRIyH3XJa6+uDrX/frKb/Tz/1/eSWW4Z5
-	 NAGh5pi7F3B8QEJILP+GuXs59sYn6+eioM+gheg4=
-Date: Mon, 21 Apr 2025 14:36:54 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Rishikesh Donadkar <r-donadkar@ti.com>
-Cc: jai.luthra@linux.dev, mripard@kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	devarsht@ti.com, y-abhilashchandra@ti.com, mchehab@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	tomi.valkeinen@ideasonboard.com, jai.luthra@ideasonboard.com,
-	changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com
-Subject: Re: [PATCH v3 04/13] media: ti: j721e-csi2rx: allocate DMA channel
- based on context index
-Message-ID: <20250421113654.GD29483@pendragon.ideasonboard.com>
-References: <20250417065554.437541-1-r-donadkar@ti.com>
- <20250417065554.437541-5-r-donadkar@ti.com>
+	s=arc-20240116; t=1745235457; c=relaxed/simple;
+	bh=aJdgUbtTRV3TkqzcwM6X02hCl1vvO5pAYQeD66ZHgBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=avjHKWWqlnlVsDrp/00N0AgA8zE9/5bfTTSSqbtAE0d27LT37ct3FfDb89dneui9aNpNwpwmTn/Gm3RXuaGZ9Zo+5GQvt3jXBsGj7dKzbrcb7aHJUpwwidz1Sfv0Hsya06ihOWRVn5AJG0Z1HIHcsWQUzPM/198qlZ8MrljfjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kP5EJVrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFADBC4CEE4;
+	Mon, 21 Apr 2025 11:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745235456;
+	bh=aJdgUbtTRV3TkqzcwM6X02hCl1vvO5pAYQeD66ZHgBg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kP5EJVrKCaG8Z8ltV1+AGgKNfwzd7RBfBGr0wlANayMtdzbJ8pmzs732WNx0K/EQQ
+	 OWrsWHCMpwc+OMsQ9ybes7pLvMe73UshrrG8iDa25xZota0wNwjKX9oMHj1lhLWPEk
+	 SZ61f/1zUWIqdmucnPR6dMZbuK65p0dAW2efUXigV2Cl3o7qHR42HhYq+4sIyFCIG4
+	 9LMsBnotj6DmOCulxmGII7vWpqo9wDfsuzZORSaojEQBA+l1b+5ztM+WWiSMa6qgI5
+	 EFRNry4gzmc2hYjVg6vM3oNj9DNhUTwCjTZ3SVavEwey5EM/fChNFi72XRcrWh50/H
+	 eZ6g09Q785TAw==
+Date: Mon, 21 Apr 2025 12:37:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Cc: gregkh@linuxfoundation.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ Michael.Hennerich@analog.com, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v3 2/3] staging: iio: ad9832: Refactor powerdown control
+Message-ID: <20250421123728.1564039d@jic23-huawei>
+In-Reply-To: <20250420175419.889544-3-gshahrouzi@gmail.com>
+References: <20250420175419.889544-1-gshahrouzi@gmail.com>
+	<20250420175419.889544-3-gshahrouzi@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250417065554.437541-5-r-donadkar@ti.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rishikesh,
+On Sun, 20 Apr 2025 13:54:18 -0400
+Gabriel Shahrouzi <gshahrouzi@gmail.com> wrote:
 
-Thank you for the patch.
-
-On Thu, Apr 17, 2025 at 12:25:45PM +0530, Rishikesh Donadkar wrote:
-> From: Pratyush Yadav <p.yadav@ti.com>
+> Replace custom implementation with out_altvoltage_powerdown ABI. The
+> attribute's logic is inverted (1 now enables powerdown) to match the
+> standard. Modernize driver by using the standard IIO interface.
 > 
-> With multiple contexts, there needs to be a different DMA channel for
-> each context. Earlier, the DMA channel name was hard coded to "rx0" for
-> the sake of simplicity. Generate the DMA channel name based on its index
-> and get the channel corresponding to the context.
-> 
-> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
 > ---
->  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/staging/iio/frequency/ad9832.c | 44 ++++++++++++++++++--------
+>  1 file changed, 30 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index d03dc4e56d306..523c890139098 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -1015,6 +1015,7 @@ static int ti_csi2rx_init_dma(struct ti_csi2rx_ctx *ctx)
->  	struct dma_slave_config cfg = {
->  		.src_addr_width = DMA_SLAVE_BUSWIDTH_16_BYTES,
->  	};
-> +	char name[32];
-
-That seems a bit long. 5 characters should be enough.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  	int ret;
+> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> index 0872ff4ec4896..a8fc20379efed 100644
+> --- a/drivers/staging/iio/frequency/ad9832.c
+> +++ b/drivers/staging/iio/frequency/ad9832.c
+> @@ -167,6 +167,34 @@ static int ad9832_write_phase(struct ad9832_state *st,
+>  	return spi_sync(st->spi, &st->phase_msg);
+>  }
 >  
->  	INIT_LIST_HEAD(&ctx->dma.queue);
-> @@ -1023,7 +1024,8 @@ static int ti_csi2rx_init_dma(struct ti_csi2rx_ctx *ctx)
+> +static ssize_t ad9832_write_powerdown(struct device *dev, struct device_attribute *attr,
+> +				      const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct ad9832_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +	unsigned long val;
+> +
+> +	ret = kstrtoul(buf, 10, &val);
+> +	if (ret)
+> +		goto error_ret;
+> +
+> +	mutex_lock(&st->lock);
+
+Look at how guard(mutex)(&st->lock);
+can be used in this driver to simplify things considerably.
+May make sense to do that before introducing this new code.
+
+> +	if (val)
+> +		st->ctrl_src |= AD9832_SLEEP;
+> +	else
+> +		st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
+> +				 AD9832_CLR);
+> +
+> +	st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+> +				st->ctrl_src);
+> +	ret = spi_sync(st->spi, &st->msg);
+> +	mutex_unlock(&st->lock);
+> +
+> +error_ret:
+> +	return ret ? ret : len;
+> +}
+> +
+>  static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  			    const char *buf, size_t len)
+>  {
+> @@ -227,17 +255,6 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  					st->ctrl_fp);
+>  		ret = spi_sync(st->spi, &st->msg);
+>  		break;
+> -	case AD9832_OUTPUT_EN:
+> -		if (val)
+> -			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
+> -					AD9832_CLR);
+> -		else
+> -			st->ctrl_src |= AD9832_SLEEP;
+> -
+> -		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+> -					st->ctrl_src);
+> -		ret = spi_sync(st->spi, &st->msg);
+> -		break;
+>  	default:
+>  		ret = -ENODEV;
+>  	}
+> @@ -266,8 +283,7 @@ static IIO_CONST_ATTR_PHASE_SCALE(0, "0.0015339808"); /* 2PI/2^12 rad*/
 >  
->  	ctx->dma.state = TI_CSI2RX_DMA_STOPPED;
+>  static IIO_DEV_ATTR_PINCONTROL_EN(0, 0200, NULL,
+>  				ad9832_write, AD9832_PINCTRL_EN);
+> -static IIO_DEV_ATTR_OUT_ENABLE(0, 0200, NULL,
+> -				ad9832_write, AD9832_OUTPUT_EN);
+> +static IIO_DEVICE_ATTR(out_altvoltage_powerdown, 0200, NULL, ad9832_write_powerdown, 0);
+
+Take a look at the use of extended attributes used for this like we see
+in ad5064.c
+That will need an actual channel though so is a more significant rework.
+
 >  
-> -	ctx->dma.chan = dma_request_chan(ctx->csi->dev, "rx0");
-> +	snprintf(name, sizeof(name), "rx%u", ctx->idx);
-> +	ctx->dma.chan = dma_request_chan(ctx->csi->dev, name);
->  	if (IS_ERR(ctx->dma.chan))
->  		return PTR_ERR(ctx->dma.chan);
+>  static struct attribute *ad9832_attributes[] = {
+>  	&iio_dev_attr_out_altvoltage0_frequency0.dev_attr.attr,
+> @@ -281,7 +297,7 @@ static struct attribute *ad9832_attributes[] = {
+>  	&iio_dev_attr_out_altvoltage0_pincontrol_en.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_frequencysymbol.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_phasesymbol.dev_attr.attr,
+> -	&iio_dev_attr_out_altvoltage0_out_enable.dev_attr.attr,
+> +	&iio_dev_attr_out_altvoltage_powerdown.dev_attr.attr,
+>  	NULL,
+>  };
 >  
 
--- 
-Regards,
-
-Laurent Pinchart
 
