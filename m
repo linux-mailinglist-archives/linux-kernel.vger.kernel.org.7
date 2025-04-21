@@ -1,270 +1,139 @@
-Return-Path: <linux-kernel+bounces-612710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE76A952E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:36:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43A1A952E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53761893A4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4BF16949C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E8F1A5B91;
-	Mon, 21 Apr 2025 14:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B4C13959D;
+	Mon, 21 Apr 2025 14:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mB5pmiQc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qkOpN9im";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mB5pmiQc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qkOpN9im"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYsqqg1o"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E6113AD1C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BAA19F127;
+	Mon, 21 Apr 2025 14:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745246201; cv=none; b=LtVVkhdz4E/O6Un919Y+rJp7PjEKx7VEMTvvnHo1nsHUOB6TYzxTH7R5F34i7qxBnZ67XFJGzaKmNLZZRu11HrEBMiVhG4RLHRtTV/D66nvifIfn3pVO4GCV+4/if0hCh/87LkGNqcFSHshIN8mqlh9OmQiYIKIRKsQEgsfjahM=
+	t=1745246225; cv=none; b=mFDaB2tS3R3L4whOfAixSH3aa4cm1ls6mf2ZEj03cr3IiMqghOgxlobBo5huclCDz4TONexLTenmTKNt1FU68cDXExJUz8lxp8HqqdLJ7ZvMi3vax7yRj1x5IzdJyXSKdS6oB3Jf5vUQMwB6czlgtSqvt+J76lwagkbxG9t9gfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745246201; c=relaxed/simple;
-	bh=9NMCgPXMWqcwVbn9nvCNFGTuOp/p5VOnW2lVP6iy51U=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uwSQjTqXpqXyplqgYoETQP5iORvoLSJhNoJgD5G7Wj1XVQEd2h2gvIz+kpvXMrDANofaSw59jwKrsAhmcTs8z7bmTEvLxoXy5HfUsNYxs3U+Yv3vTFHaxAeAhYoe/732qKpCVIK7cHVlVCqcRCIjs0eq+2SMf30mcGzpmtdBtUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mB5pmiQc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qkOpN9im; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mB5pmiQc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qkOpN9im; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5FAB721200;
-	Mon, 21 Apr 2025 14:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745246191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PdgkOOhZ7i98IOUO6H+ogiBUcPrXO/Q5S/x1s1hKcW8=;
-	b=mB5pmiQcDf2Sj2MiJIjzSpa7q2+nqUl1FjbKtb0xrbhpw7iHf6Ba6b6MPAgVAW6CgTpIn+
-	Vt+w2KR/Jvfx7ZbfcdBIzutJGSqJprRGQgAvoD2MLbzylkMRa+y/2dKCwdRrT3qD9KsUhR
-	mwY346vsKJS6Myis+2MxlF/vpXn4ouE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745246191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PdgkOOhZ7i98IOUO6H+ogiBUcPrXO/Q5S/x1s1hKcW8=;
-	b=qkOpN9imYW/3WrDDKdaxk4OOjqWyoUxi4a3u1qFXJIwgIPUsIXIIMqB2pigL/Nnlb7HhaE
-	/lziII47NBQCFmAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745246191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PdgkOOhZ7i98IOUO6H+ogiBUcPrXO/Q5S/x1s1hKcW8=;
-	b=mB5pmiQcDf2Sj2MiJIjzSpa7q2+nqUl1FjbKtb0xrbhpw7iHf6Ba6b6MPAgVAW6CgTpIn+
-	Vt+w2KR/Jvfx7ZbfcdBIzutJGSqJprRGQgAvoD2MLbzylkMRa+y/2dKCwdRrT3qD9KsUhR
-	mwY346vsKJS6Myis+2MxlF/vpXn4ouE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745246191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PdgkOOhZ7i98IOUO6H+ogiBUcPrXO/Q5S/x1s1hKcW8=;
-	b=qkOpN9imYW/3WrDDKdaxk4OOjqWyoUxi4a3u1qFXJIwgIPUsIXIIMqB2pigL/Nnlb7HhaE
-	/lziII47NBQCFmAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3551213A3D;
-	Mon, 21 Apr 2025 14:36:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0dkMC+9XBmgvQgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 21 Apr 2025 14:36:31 +0000
-Date: Mon, 21 Apr 2025 16:36:30 +0200
-Message-ID: <878qnttwcx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: alsa-devel@alsa-project.org,
-	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/9] ALSA: usb-audio: Fix possible race at sync of urb completions
-In-Reply-To: <20250421104343.4197-1-hdanton@sina.com>
-References: <20210929080844.11583-1-tiwai@suse.de>
-	<20210929080844.11583-3-tiwai@suse.de>
-	<20250418103533.4078-1-hdanton@sina.com>
-	<87a58dvia7.wl-tiwai@suse.de>
-	<20250418144518.4097-1-hdanton@sina.com>
-	<875xj0ve49.wl-tiwai@suse.de>
-	<20250419080410.4148-1-hdanton@sina.com>
-	<871ptnuvad.wl-tiwai@suse.de>
-	<87mscat1tq.wl-tiwai@suse.de>
-	<20250421104343.4197-1-hdanton@sina.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1745246225; c=relaxed/simple;
+	bh=YLucKKjz3N7nuuybkDfWZS4sob5auATo+yS/1UqCiko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FPi8/NF74Whw4G4yaot4me1kevkB8sZAc9ZdnA8KUJEDw+3kk6rnUYjpw/9k2W+wZ1DaOQqhK0DgjTDnbQOfjyPo70zhDtr84yhZ4zdX1CRxcgrsBfRfIXYKh3saoT5rNwfROk0HR9lPf4j/6WjM5dSr4RXJYm5BhEg6qOqD164=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYsqqg1o; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-301302a328bso4270721a91.2;
+        Mon, 21 Apr 2025 07:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745246223; x=1745851023; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mPbTxt1xCSveA3U4yTGjdoeVzUE/l45rw6qCh0l4IAU=;
+        b=mYsqqg1olx1bOKqM04PnjfgDDEqztORpOksWsSQUtmIRgc1yeyQ7M5B1WtMRKa3Qbl
+         FIiMeXmu62iuLr6GIdaaMTA/H0ulno+D9vKqJEPCrwJHZotiWyyuodVEcYgvWpU77bvt
+         j6CYQefI35LIyJe3ZITELNIRnvJwFoye44HD2IjV6xCPbOgGw91yFdMqzrf0wu4EoRXJ
+         Pe045AVeqZnErEKQ3QQYZYPKJh9zlWTpGZ+pM7zmD4bIMlmVDLXJMr4uBt7yWKp5V/DN
+         y3egsQkGFNLvMZhxfOu9mqemdVmE9z5bqLSVkNEJFxo2+qBq6VzuijUvacxK1NNmX7lK
+         Oang==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745246223; x=1745851023;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mPbTxt1xCSveA3U4yTGjdoeVzUE/l45rw6qCh0l4IAU=;
+        b=ww18yCxZrNANyDG85XzWBa34fwXM5ZNa8yxlqzSX7gIdzUbI4MVUtmQdDgzdaK8tK8
+         0v4maWogtcdGS6yRGfY9LrscejbPACJxhT2mACOXQGGUEnha83JH8xeGo/JPbgNMaKSF
+         HUIh687ovSfs7x9+TxrAhIM1tMfPJ0qDKKh3OhxXuDHZ9qPuZ2hKfPVa1cA3PjRKBZoS
+         2c9oEOIrLkiOS20X5dear/iHL7LZEgT8BA6Nmz9DEu8/BI9OPEtS5qNh7rQltG5Ckmjf
+         ghG/4G1eCSWdjBz8lomqUPKhmOa12BPt7IF+cRKmnJEKOnMfmmUMVKhtRaedfQ2qBm3n
+         TQqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDXqB30aqp7TreEMPn9lToR0LWzy1vohWH5aHbZUXHxkVvUux9NDqbU1zkwNMHvc16F5o/nbjl6g1Cs27rXBUs+/p@vger.kernel.org, AJvYcCXRatfO62BaZlxN5GDXq96HHNykl+vtfHiZPTKo8N12ZYifgcxG7Ma/Jy3H0fHlDvuIYpRjgTAJ7qmCXB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgmlJCYiIic2XqOAFqbUjwaWrFyCse5lxRLKog9PSahDKy+hLQ
+	TZBO15/4BQ4hQuArHeHi2c0mBpNTXvNWL5udEmdI1+v0lJX2e3qo4z5+uZkIfZB3Ci8QQ+QRy8p
+	OQ9rpfEAPGj+NfPewCit2z64LTcE=
+X-Gm-Gg: ASbGncuR79A/OzepXD677qWWv1RtYlUi32XNyqZEFXlNn4NhIKzjx1820df923nqGNl
+	0xQb9YVTMBH2aiXqDrQKQH9lDmoUdy1OiZRyQMfPgMl6oDydUTsGWJiFd7VJfNsJP5hvdpa64Ky
+	/4HevNQy66JMA4SH5kU2eDOzyN
+X-Google-Smtp-Source: AGHT+IHJa46Co1E1kI6mn8bwL6OG+lX6z1DMWQ3+qezTjfJ1VVoNd1SMPT1rupbW/e25+/7xXvsNtsPVIpJHwCn3DMY=
+X-Received: by 2002:a17:90a:c887:b0:2ff:693a:7590 with SMTP id
+ 98e67ed59e1d1-3087bccaec2mr18875647a91.33.1745246222778; Mon, 21 Apr 2025
+ 07:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[sina.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[alsa-project.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20250421134936.89104-1-aha310510@gmail.com> <20250421101912.4fd7c11a@gandalf.local.home>
+In-Reply-To: <20250421101912.4fd7c11a@gandalf.local.home>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Mon, 21 Apr 2025 23:36:52 +0900
+X-Gm-Features: ATxdqUHPOHjHEz8SWCYSZwtkmcCXGtteCQAscKNShJqFD4GqX-Am-L7SyLx8lI4
+Message-ID: <CAO9qdTE4gXLorLXLovem1r7uVFSJ4FjpNHM9tH2C2geruQqG9Q@mail.gmail.com>
+Subject: Re: [PATCH] tracing: fix oob write in trace_seq_to_buffer()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, 
+	syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 21 Apr 2025 12:43:42 +0200,
-Hillf Danton wrote:
-> 
-> On Mon, 21 Apr 2025 09:23:45 +0200 Takashi Iwai wrote:
-> >On Mon, 21 Apr 2025 07:18:31 +0200, Hillf Danton wrote:
-> >> On Sun, 20 Apr 2025 09:49:46 +0200 Takashi Iwai wrote:
-> >> >On Sat, 19 Apr 2025 10:04:08 +0200, Hillf Danton wrote:
-> >> >> On Sat, 19 Apr 2025 08:50:46 +0200 Takashi Iwai wrote:
-> >> >> >On Fri, 18 Apr 2025 16:45:17 +0200, Hillf Danton wrote:
-> >> >> >> On Fri, 18 Apr 2025 13:08:32 +0200 Takashi Iwai wrote:
-> >> >> >> > On Fri, 18 Apr 2025 12:35:32 +0200 Hillf Danton wrote:
-> >> >> >> > > On Wed, 29 Sep 2021 10:08:37 +0200 Takashi Iwai wrote:
-> >> >> >> > > > USB-audio driver tries to sync with the clear of all pending URBs in
-> >> >> >> > > > wait_clear_urbs(), and it waits for all bits in active_mask getting
-> >> >> >> > > > cleared.  This works fine for the normal operations, but when a stream
-> >> >> >> > > > is managed in the implicit feedback mode, there is still a very thin
-> >> >> >> > > > race window: namely, in snd_complete_usb(), the active_mask bit for
-> >> >> >> > > > the current URB is once cleared before re-submitted in
-> >> >> >> > > > queue_pending_output_urbs().  If wait_clear_urbs() is called during
-> >> >> >> > > > that period, it may pass the test and go forward even though there may
-> >> >> >> > > > be a still pending URB.
-> >> >> >> > > > 
-> >> >> >> > > > For covering it, this patch adds a new counter to each endpoint to
-> >> >> >> > > > keep the number of in-flight URBs, and changes wait_clear_urbs()
-> >> >> >> > > > checking this number instead.  The counter is decremented at the end
-> >> >> >> > > > of URB complete, hence the reference is kept as long as the URB
-> >> >> >> > > > complete is in process.
-> >> >> >> > > > 
-> >> >> >> > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> >> >> >> > > > ---
-> >> >> >> > > >  sound/usb/card.h     | 1 +
-> >> >> >> > > >  sound/usb/endpoint.c | 7 ++++++-
-> >> >> >> > > >  2 files changed, 7 insertions(+), 1 deletion(-)
-> >> >> >> > > > 
-> >> >> >> > > > diff --git a/sound/usb/card.h b/sound/usb/card.h
-> >> >> >> > > > index 3329ce710cb9..746a765b2437 100644
-> >> >> >> > > > --- a/sound/usb/card.h
-> >> >> >> > > > +++ b/sound/usb/card.h
-> >> >> >> > > > @@ -97,6 +97,7 @@ struct snd_usb_endpoint {
-> >> >> >> > > >  	unsigned int nominal_queue_size; /* total buffer sizes in URBs */
-> >> >> >> > > >  	unsigned long active_mask;	/* bitmask of active urbs */
-> >> >> >> > > >  	unsigned long unlink_mask;	/* bitmask of unlinked urbs */
-> >> >> >> > > > +	atomic_t submitted_urbs;	/* currently submitted urbs */
-> >> >> >> > > >  	char *syncbuf;			/* sync buffer for all sync URBs */
-> >> >> >> > > >  	dma_addr_t sync_dma;		/* DMA address of syncbuf */
-> >> >> >> > > >  
-> >> >> >> > > > diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-> >> >> >> > > > index 29c4865966f5..06241568abf7 100644
-> >> >> >> > > > --- a/sound/usb/endpoint.c
-> >> >> >> > > > +++ b/sound/usb/endpoint.c
-> >> >> >> > > > @@ -451,6 +451,7 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
-> >> >> >> > > >  		}
-> >> >> >> > > >  
-> >> >> >> > > >  		set_bit(ctx->index, &ep->active_mask);
-> >> >> >> > > > +		atomic_inc(&ep->submitted_urbs);
-> >> >> >> > > >  	}
-> >> >> >> > > >  }
-> >> >> >> > > >  
-> >> >> >> > > > @@ -488,6 +489,7 @@ static void snd_complete_urb(struct urb *urb)
-> >> >> >> > > >  			clear_bit(ctx->index, &ep->active_mask);
-> >> >> >> > > >  			spin_unlock_irqrestore(&ep->lock, flags);
-> >> >> >> > > >  			queue_pending_output_urbs(ep);
-> >> >> >> > > 
-> >> >> >> > > 			smp_mb();
-> >> >> >> > > 
-> >> >> >> > > > +			atomic_dec(&ep->submitted_urbs); /* decrement at last */
-> >> >> >> > > 
-> >> >> >> > > Does it match the comment to add a mb?
-> >> >> >> > 
-> >> >> >> > How...?  I don't understand your intention.
-> >> >> >> > 
-> >> >> >> In addition to the UAF report [1], I saw a customer report of list
-> >> >> >> corruption of linux-6.1.99 on arm64 this week without reproducer.
-> >> >> >> 
-> >> >> >> 	list corruption
-> >> >> >> 	list_add_tail();
-> >> >> >> 	push_back_to_ready_list();
-> >> >> >> 	snd_complete_urb();
-> >> >> >> 
-> >> >> >> And after another look at this patch I wonder if the race can not be
-> >> >> >> erased without the certainty that ep will be no longer used after the
-> >> >> >> atomic decrement.
-> >> >> >
-> >> >> > But why adding more barrier if you perform the atomic op...?
-> >> >> >
-> >> >> Because atomic op != ordering, see 26fbe9772b8c ("USB: core: Fix hang 
-> >> >> in usb_kill_urb by adding memory barriers") for detail for example.
-> >> >> And c5b2cbdbdac5 ("ipc/mqueue.c: update/document memory barriers") as well.
-> >> >
-> >> > Still don't get it.  Which reads and writes are you trying to solve?
-> >> >
-> >> See a simpler UAF case IIUIC.
-> >> 
-> >> 	cpu1		cpu2
-> >> 			atomic_dec(&ep->submitted_urbs);
-> >> 
-> >> 	if (!atomic_read(&ep->submitted_urbs))
-> >> 		kfree(ep);
-> >> 
-> >> 			a = ep->xxx; // UAF
+Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Mon, 21 Apr 2025 22:49:36 +0900
+> Jeongjun Park <aha310510@gmail.com> wrote:
+>
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > index 8ddf6b17215c..8ba6ea38411d 100644
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
+> > @@ -1827,6 +1827,8 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
+> >       len = trace_seq_used(s) - s->readpos;
+> >       if (cnt > len)
+> >               cnt = len;
+> > +     if (cnt > PAGE_SIZE)
+> > +             return -EINVAL;
+>
+> You fixed the wrong location. The caller should know how much size the
+> buffer is, and that's passed in by cnt.
+>
+> >       memcpy(buf, s->buffer + s->readpos, cnt);
 > >
-> > That's what I don't get it.  Which place does this UAF happen, more
-> > specifically?  In the whole conversations, the context is missing, and
-> > you provided only a snippet of the patch.
-> >
-> I misread "Which reads and writes are you trying to solve?" though I
-> showed the read/write, but it is a bad case particulay with UAF.
-> 
-> Could you tell us what will happen if the race is not fixed? Could ep
-> be freed with in-flight urbs for example?
+> >       s->readpos += cnt;
+>
+> The correct fix would be:
+>
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index b6e40e8791fa..c23b5ab27314 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -6729,7 +6864,8 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
+>                 /* Copy the data into the page, so we can start over. */
+>                 ret = trace_seq_to_buffer(&iter->seq,
+>                                           page_address(spd.pages[i]),
+> -                                         trace_seq_used(&iter->seq));
+> +                                         min(trace_seq_used(&iter->seq),
+> +                                             PAGE_SIZE));
+>                 if (ret < 0) {
+>                         __free_page(spd.pages[i]);
+>                         break;
+>
+> Especially since the trace_seq_to_buffer() code should be moved out of this
+> file and should have no idea how big the buffer passed in is.
 
-Before the patch, wait_clear_urbs() might return earlier than actually
-all pending eps are finished, so it can be UAF.
+Thanks for your advice! I'll fix it right away and send you a v2 patch.
 
-> Is it still race if the wait loop in wait_clear_urbs() ends before the
-> urb complete callbace completes, given the last sentence in your commit
-> message? If nope, igore my noise please.
+Regards,
 
-Well, your concern about the missing barrier -- that would
-wait_clear_urbs() missing the refcount decrement, hence it would be
-rather to make the return delayed.  So it shouldn't lead to further
-UAF, but at most it might lead to an unnecessary delay.
+Jeongjun Park
 
-That said, I'm willing to take a fix even for a theoretical issue if
-it clarifies what it really fixes.  But scratching a random surface
-isn't what we want.
-
-
-Takashi
+>
+> -- Steve
 
