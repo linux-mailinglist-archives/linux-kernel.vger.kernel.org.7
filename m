@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-612827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81A4A954A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:41:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D21A954A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF11218942BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C8816C476
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B71DFDA1;
-	Mon, 21 Apr 2025 16:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732581E22FC;
+	Mon, 21 Apr 2025 16:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppmL1iJM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzLCtRo2"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562F41A238A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 16:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F411A238A;
+	Mon, 21 Apr 2025 16:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745253709; cv=none; b=LLyHuDbNxfbV2NfD40mNrkaGa4kSjmxrArJLL4fIFFEA/skoOg0VZryXGK8IngP9LBCjDxIkE1Qpkys3xTef08BmeYlR1mDK3KfSLPR9x4AF4ogmC0Bnw1Ki/HVj5xahVOiPXRFn7h1+ul8QPw+AVLk9luG6ebPGo8ERv+fb1C8=
+	t=1745253746; cv=none; b=erUNdJL6imQ1v0+1l6TxZ29sfhgxOmH64q0UZGhcfFflPeJSsYj5O0OAnGMS9Kki14BoU+R9icHz6pOWuHl1jCkRf84wddxHyRex1UEIOmeQ8pkesaUioH81tPwoJj1gTtldF/CSxdI+FBgajfPJW4211cmEQng+JFcHPRjtkw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745253709; c=relaxed/simple;
-	bh=jy6cMfB0NT9IYZb7KcMgcJtbrCslLbtDJ8MnDdG6GhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qILO9813DJexQ7T+kCZetODvYgsq7cyUGFnwd7wCR1OuU+iCUzxNbUURg+RR4L85eE2J/OHlLAvKWn1dkxd0YmKm77fZFVVi5hz5zCX/Ynb3uAOb/fBz4aj9xAZwCoEPxHCMX+Jt00bY3xk8Ib+z+8yNL9bRAkwgi8HzSEyFVTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppmL1iJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FEFC4CEE4;
-	Mon, 21 Apr 2025 16:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745253708;
-	bh=jy6cMfB0NT9IYZb7KcMgcJtbrCslLbtDJ8MnDdG6GhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppmL1iJMifKsQCp2oO73/Ce4Sw6SZZD2MdiNYPDPw6PNIDc3qzLJGr/FuPeBPpTwV
-	 hs2imL0rqpc2kGQN2C+GDwnVTrPfwiWudtnFuaM/+wqypSiL7PLP/VbHx9XPKE76eK
-	 Myh1OfhSU1CuS4LwApRfacpDNl2HOdVO6NKx0omyjYJU+mxkNxxD/CndkhdQ6rRfhX
-	 padtlRM/AP/fq5LH/j6A383Kb1asRqdftQmn5zMr6HzCm++ztdOrCCvKyeeWNFMCLJ
-	 vQ2Ka5Jr855tAX3zaRsNsOjzsCoDbW70tiP5frCNQML5cuf8W9m2UWw7zKDFRgHXIt
-	 B0Cr/xpY5gHoQ==
-Date: Mon, 21 Apr 2025 19:41:43 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Ruihan Li <lrh2000@pku.edu.cn>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/mm_init: Don't iterate pages below ARCH_PFN_OFFSET
-Message-ID: <aAZ1RzQdgllQYM04@kernel.org>
-References: <20250419122801.1752234-1-lrh2000@pku.edu.cn>
+	s=arc-20240116; t=1745253746; c=relaxed/simple;
+	bh=0fsyOStHwhC1v88XvZ4Ac0nuPUuFtHM5xo1t68kAtVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uFsit2Q5f/pF3ytvaJEqGGIiP3j3M+yVZ7l0T+4LbFyLS9X/vnWLSEEyfzuBwZpD08r1UED2KEKLjmzyssph8wOxopN7DNSzHL5YgXHj2pF/z4U5fpv1S0UPmNpTT2qefb/rZcdyqHIKdxyVnMeMlnjN98ogbsqaXcCBINgryhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzLCtRo2; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2963dc379so615488566b.2;
+        Mon, 21 Apr 2025 09:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745253743; x=1745858543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L1I3cbwltjOGElOuVsLVlgvPqjddyD9qAtM+fs2VWpA=;
+        b=RzLCtRo2dGtqt56ZLaZoVyWLpqxb1ZjzQBk3p2Amr9jUiFSzaBJF6ZET8P+XnmEzBw
+         RqxytAn/4V0qqExxsmIlMUZmCQHDtBU0gChsy9fAHY59x/QAxuK8NW8VWhrj7BX1hOWm
+         RYhcHrQa9vuAiJY5ragTG4+RLjQpWNhoKh6mfUlTkuSXg0deYdyyVW+SDVrTMWl83FYe
+         fGYIWe8O9qbECOpBiK1XR06WQ362VAKijwXtXIadEwJ+97mX1zTKnpzi5p9u5KkbnkzR
+         TuHOp3V1symBe5K5NtOExu4z2NhStAXD9dpVcuzAvQ8ExfagwAGW9tk4KIjoPpBZqbU3
+         N1NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745253743; x=1745858543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L1I3cbwltjOGElOuVsLVlgvPqjddyD9qAtM+fs2VWpA=;
+        b=unyuSKpTQ24s1AlBvKDhkK2J9+rponRV9shllgaNjxJe8/enP1cqR4C72Tm+HudEZs
+         vdltRFTJWgC/H1YXV5UVAvGS6ryIIIe3zJvbz7BZOzwvZig4venwEybMo0JK5jlUivcp
+         WtRu+h0WyVcU5cbc0X+Wlk/TbooSG6hEkJN3yUFDYcBlbaoLC8xbURWHSa+NeXh82WoM
+         HQAOxMeQwsnMTNtZKlhmU/v6j9xpUGgHNYwsXyo74ZAPFJU3TWD9EbheS9PtM1+My3Fe
+         axM12myY1Sopy6DPbFreN9XoYh4VGt33J9RySILtZZ2foeLEaPgXAqeqZrQoiysp7+PJ
+         1u0A==
+X-Forwarded-Encrypted: i=1; AJvYcCU63D7vOJoG1m1rz5YPgre51OTe1i3m/YUJ7XtP4hAqLzShQUpqwDH6OhrDMWZyAOEIKk0ZfP2QkTY=@vger.kernel.org, AJvYcCViAkxYpmB0+NyvbGCPr3QvL4RBCoK/4uf6KXhC+cN84OdKPOyxZ6mhrUZw3vtTx2eEzCvOCpiqYmHJfiVq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3EU4R4Dw6gJ5vqB7ZstVbA+8wAt8NOMJe74fmWOPfErFDfXn1
+	TGha8MaqK/rCM36lrpZR2KHjM18v7QAome1GvdD2jntyAZQr/dY5W1BcU1CKi5rCaFG7YqPKsd+
+	bYFBS3m3zQKCO964vvlr/4/4aaKI=
+X-Gm-Gg: ASbGncuz5pF5tu6Zj8wJOt9oK9iMcAjZsTk/PQajnTFZr524RMC+bBNJ6QPEfSAoqrr
+	1XZfOsDl6TT+d4RofinT0xoDU5oEG50FS+JcpbKU6T9RhMNdE1w6iVlN/ibgc49kLjZzNbDAOds
+	JogEVBX4SAKdbnZhQiKtnZuQ==
+X-Google-Smtp-Source: AGHT+IGOkY/7PisAD2oLp8QqIo0O9LumO+tYusSVEov8PZqxdtzgsegmull0yalfq2NuFZ5JO7zCd3FO9FZrDniI0y8=
+X-Received: by 2002:a17:907:1b1f:b0:ac1:f19a:c0a0 with SMTP id
+ a640c23a62f3a-acb74b1ca7cmr1191466066b.20.1745253743466; Mon, 21 Apr 2025
+ 09:42:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250419122801.1752234-1-lrh2000@pku.edu.cn>
+References: <20250418-iio-prefer-aligned_s64-timestamp-v1-0-4c6080710516@baylibre.com>
+ <20250418-iio-prefer-aligned_s64-timestamp-v1-4-4c6080710516@baylibre.com> <20250421121341.49e28ddf@jic23-huawei>
+In-Reply-To: <20250421121341.49e28ddf@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 21 Apr 2025 19:41:46 +0300
+X-Gm-Features: ATxdqUH5lMC16PsOqzsa5gclyWSAtg59GNIHcNrRLuTnmqVLHUh5EH6DsroQl_c
+Message-ID: <CAHp75VcAHZV4zGMvR-xVuVhhBJMCmo7A0w0fnwASw3iAWU5wdw@mail.gmail.com>
+Subject: Re: [PATCH 04/10] iio: adc: mxs-lradc-adc: use struct with
+ aligned_s64 timestamp
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Eugen Hristev <eugen.hristev@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Andreas Klinger <ak@it-klinger.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 19, 2025 at 08:28:01PM +0800, Ruihan Li wrote:
-> Currently, memmap_init initializes pfn_hole with 0 instead of
-> ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
-> page from the page at address zero to the first available page, but it
-> won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
-> won't pass.
-> 
-> If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
-> kernel is used as a library and loaded at a very high address), the
-> pointless iteration for pages below ARCH_PFN_OFFSET will take a very
-> long time, and the kernel will look stuck at boot time.
-> 
-> This commit sets the initial value of pfn_hole to ARCH_PFN_OFFSET, which
-> avoids the problematic and useless iteration mentioned above.
-> 
-> This problem has existed since commit 907ec5fca3dc ("mm: zero remaining
-> unavailable struct pages").
-> 
-> Signed-off-by: Ruihan Li <lrh2000@pku.edu.cn>
-> ---
-> Link to v1:
->  - https://lore.kernel.org/linux-mm/20250418162727.1535335-1-lrh2000@pku.edu.cn/
-> Changes since v1:
->  - Removed the unnecessary Fixes tag.
->  - Fixed the build issue for CONFIG_SPARSEMEM.
-> 
->  mm/mm_init.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 84f14fa12..a697a83ff 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -969,6 +969,15 @@ static void __init memmap_init(void)
->  	unsigned long hole_pfn = 0;
->  	int i, j, zone_id = 0, nid;
->  
-> +#ifdef CONFIG_FLATMEM
-> +	/*
-> +	 * Pages below ARCH_PFN_OFFSET are invalid as far as pfn_valid is
-> +	 * concerned, so don't waste time iterating on them when looking
-> +	 * for holes.
-> +	 */
-> +	hole_pfn = ARCH_PFN_OFFSET;
-> +#endif
-> +
+On Mon, Apr 21, 2025 at 2:13=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+> On Fri, 18 Apr 2025 14:58:23 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
 
-I'd prefer a solution for both FLATMEM and SPARSMEM. 
+...
 
-David Woodhouse proposed a for_each_valid_pfn() a while ago:
+> > +             aligned_u64 ts;
+> aligned_s64
+>
+> I've not idea why timestamps are signed, but they always have been!
 
-https://lore.kernel.org/all/20250404155959.3442111-1-dwmw2@infradead.org
+Because 0 (center point) was chosen as 1970-01-01?
 
-It can be used in init_unavailable_range() and will essentially skip the
-unpopulated memory map.
-
->  	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid) {
->  		struct pglist_data *node = NODE_DATA(nid);
->  
-> -- 
-> 2.49.0
-> 
-
--- 
-Sincerely yours,
-Mike.
+--=20
+With Best Regards,
+Andy Shevchenko
 
