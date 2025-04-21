@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-612694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B34DA952B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:25:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA37A952BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8270018952B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A50173A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B842019D090;
-	Mon, 21 Apr 2025 14:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CDE19E98C;
+	Mon, 21 Apr 2025 14:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="k/Od/A0Z"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hzrHaTIQ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BEA19AD86
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7419CD1D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 14:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745245530; cv=none; b=Eu9FUikl7JHay4r1Y+YxHgG22OiPfdxL0voilf+qd6WYo56hZQNa1hIuoOlsT2xwg/O78CkimsHtnp5FSNIyVSUoasVe1wLTE2hK1kGUJr9cZUFKDEL2vpRNsWcOvSm1AQdjt20K8OQEtEB2cNLCXgQBnV9iCBuizNQCQSROaag=
+	t=1745245589; cv=none; b=llyA/6VzKxky7KERMpw469/sbj98B3Nj+AOJ3Pths8TO0yeGiRekpBvlYXYKq6kYpIydh0TyrWaoTrSflOcKLvRt+m0pOq6v9GcAqXyD13z+ZzMrWa0i7j/2OVGpXeZcSvKL10brAz006aaeJWDqu31hXxTGpqKmF8bMB63jaZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745245530; c=relaxed/simple;
-	bh=pZ7q1/4/EyKZkDEf0rmyBdL02cWZxmNBLgqkgwyS7Xg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X4z0CZwxCbfiOIN+2dl5A6+zVBF8MbIjiAVswUP0Ob4Iv0IOp9UkwQXC9tVBMFdzAU4ODci+3X55Pot3dtVESqQ1ib472HBeMD4s6xRdxDy+vT9NXYwpEaH5s7MhJmiEU6Yt/mzPilzC3+KtyE5wxxN8r8GyxWzOuOb//1JnB9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=k/Od/A0Z; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1745245589; c=relaxed/simple;
+	bh=Utwokb7er4q5JknyfiZW2i0dXjwbYWTz3mwbW9uIn3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d1w3Uu3IXBb6ora9FHPflgeOgD/sgyZT3ds73wJ/94o4o7QaSYR98xpHkoiNG7zbACannX33/lfs7ze1+eu2BSXrLrLu0IyJep/vvE+1ErtQBOOku2Xx822SWM2sxrTaDOxI8NwWfCcUzWfRtNRfNfVJwzEx8dNUaKh6Su8ueB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hzrHaTIQ; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso48624115e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 07:25:25 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso33658835e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 07:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745245524; x=1745850324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=toKO1sbJD3mjCZojiPpBgF8TUiCeKbxXOR8aMRMuFBs=;
-        b=k/Od/A0ZohQ35gzr3NOwQ1Dy2rT9K17IsRdd33t1d149m/RqlDY47kc9D5YSdq1Wrt
-         Uirhq7KsVmfvXqWY4Jl08TReYKzgLpb2a4IyuAsCmzaTr5911bghSpnYvkxm63y6D5Qo
-         bA1hW4b7nZyrsCpv3Ps6EWt5PX1ABSyKjoDTwM5VCfyC0TsXt4TrzonY3tszETVHxihA
-         OnIMVhTS1DXb7yeN2lsZdpI6GE/kp8Tn1bc1o/6K3x1WxdIYWGwvYkFK3ym4U2osCJ1W
-         Z5+r7vgFeq7LIHKw/z6YuXkzGkTngauMP49WzT/zL/H/Lmr0r69wqkBrnbDUaFW36IDv
-         wJkg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745245585; x=1745850385; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r8EzXGFQbwSP2O8EyG3ctzvPoUfJEY6y+SbPIPc5xJE=;
+        b=hzrHaTIQvtTYKqt0N6zcmzNroJcC3zz0wH3fo/vYL9bxk8MVj/2NiMYwJhEzd4wIei
+         mfUV1xQ5MCpyvYssCRNZEu9G7BTL9+ksE2vDjZI+U7iLfTOMy0+25FqtAon0DbHCtmIK
+         pOiOfFfY76yYaHajyL4w71IGfs4QpWT3nhHlZAJNENl5qGm5piDtAATY3/48dEPolA/l
+         +CHxYTOc2C/WHwrxwqjO7zSlDxAmGBBaxTVU5wIIOQEdjiiTs3cpJo8xXQKV6MlJzA0p
+         RXm0VySbnY9kjzTOnpgbTV0iIORX1QmQJ9qRGexnhT7ue7lc3icH5I5AuKvJOGKyubwx
+         vwZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745245524; x=1745850324;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=toKO1sbJD3mjCZojiPpBgF8TUiCeKbxXOR8aMRMuFBs=;
-        b=MJm2gB8CCuedI6ucSpqwy1i63PiPZ1p2U820pBxfAQEBZcE1OOARkqFAQYMFFNFWSe
-         hHa/5F9Ulx5Ma31t0zG1I4JP/Lv3GEVaqNxMUo21bWFIV6pUjvmG1n6okHCOEJ80ovI7
-         M4km0Itk+M+9JZlEw6YpJByxK5l9xoD0WjD8qY40DTfA+Fdk+yxWHihZ9kAhf5l3LUGk
-         aqX1OckjJQsHzCgYdNxBSueBWmKBhdhvj+xO0dBicqaTr0zae7xO24oTJelBYYSg+KZt
-         YhL8dAhnKG7O88hCxx/Leeg0gKcuU6HY31tAPaxfQl6ZGgK9G6izVbxpIBRW/HZjXeZH
-         le7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXHCxIIujf4CfqpfkuZorCZ8OF6J3gpkuw3YZdMIwuJhe4GuSFTIbio2zM/3eIl3VEBDi9Xn2iAWstAYuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXTwJ8M/TmnUR9rU9Cor5NUpguqSjuimS6Qnhy1PoPUUYbBmdW
-	7yd916m+Hd7SKpSZ9L3dpMeDDaskdgCA8EgG/t8IhDCk4c8+WjL4xkqMoj9lC5Q=
-X-Gm-Gg: ASbGncvkRZeN4FD53YSa9Qy1Ie6SnWgHRWJhGZ7B7mhIpK8LpxCNom7H4RyZWhWYbiB
-	H/tumungLxZSh7k5lP2FTY0dCqf8W+bALL9XLrZsQrw/pVWbQR3TICkpnoiSuPIn+7pVAppbZ6n
-	tHau2qWy3nPcgvwiUCMZ+MznL4nDzjBKQgny137iKm1UTK6sHKSL8Zp2VBp7Hp47cxYHUsajBJ0
-	2iw+K0+7LPBunJSssDypJCQmQpKBHdh+fDt4y8YZLlWqjocUFGelPMZ6Asi6K+JBJ+c92OUoF0U
-	EG5u+0z8aDg+4BOP+XrbLOWCRkuSDVuAnRq8SyV0AbCCgt6GeDpsXMwL8u0=
-X-Google-Smtp-Source: AGHT+IEQLqqHojl3Rtaz5jkvsm1plxH9LhG+i0zNjFhjUyPMpSA/8M2QR3ivKWaD+zb2wwThWQLuwg==
-X-Received: by 2002:a05:600c:3d86:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-4406ac176dbmr116056225e9.31.1745245524159;
-        Mon, 21 Apr 2025 07:25:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745245585; x=1745850385;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r8EzXGFQbwSP2O8EyG3ctzvPoUfJEY6y+SbPIPc5xJE=;
+        b=b/iYpkLFTf7/fH6PsVWpxkxZBYTjAwzlmbcH3vzYBSv8Wbt0DITD1CvjNRnnrLfsu/
+         6Bw9M0Dfliiw5bzyWNc2fgLVTkvuFSsHAGWr1OAawKXE+1IZ3bdvvw5Avo+48cQ9KVUj
+         7kYhHYSNUmwtULwLL0qgMqVOLqVvUm0786t70G/wZNyBIeBHo+gbFldfavCHHr0k28uH
+         c1lngwnJeFrAhptNu5qEPsbTDc5BOsXnSzGUhaRDsdP1fCa4V0dO5xj3l/OoTtcAmJ2w
+         0u8xe+imfA6fdrIZi1yjXvd3ZUAkBCKFQjRV5lMkAEgK5AyfTbEGHkCNiX2o4v1h1ZrT
+         qadQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7B+DkUwBNTpy4P+mQcuHbWWhdlHyiZP0iQRAVwO9HpsJ35mTJyIMTKsFuw2OoHGWIV5gODP8na5AXk5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0HCSf+4UoHGCxNSGoQgp1EZyApU+cDBpkgplpqL+0l8S19bNH
+	8u4DzxGpGxWi/EGAebfIH8rm6y4vnksjtkQVsYktM+J3srCTuVR37EctcVAwDlg=
+X-Gm-Gg: ASbGncsKFbi6jnoGpyn1XUhnwMbBua1vb9j/KD6xCdZaCg8oEud1tuxXpQTB/vXdRWo
+	qFpjyar2AU9iHqlcsocooKF7XxRY72U22pTkLbZAqAmTEYoozYymxWsm6MRdH2N9lod2FoStCa9
+	nvzjayatcAeloLAbv2v6HgcBjmYiC3k9l0g8O/16WVyd88ma2ZLDnQ3cIay9Nu3QC5bt4eosdep
+	bruoKuYwqxLuit5fD8va34EqIUlS7tivhSD38ycm2agCBfCn0icsHrV+tUphTE7KazcvGXz7Fqk
+	DDqCbGlN1EGpA/PBsXh/UfZdA939U5OinPnRxYqr7e+8EoN9r8DIwNZ9MhE=
+X-Google-Smtp-Source: AGHT+IGbR8cH86R+FPRiB//fxh3ANX3cYxfoHYfa1pDXh1hmpUYRDkZBnNT8HxNX2o8g7qT41lDP+Q==
+X-Received: by 2002:a05:600c:1e14:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-4406aba617dmr115364515e9.18.1745245585543;
+        Mon, 21 Apr 2025 07:26:25 -0700 (PDT)
 Received: from localhost.localdomain ([2001:861:3382:ef90:cd58:9e76:e88c:5cd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6dfed6sm135615795e9.35.2025.04.21.07.25.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5a9ed9sm139610375e9.3.2025.04.21.07.26.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 07:25:23 -0700 (PDT)
+        Mon, 21 Apr 2025 07:26:25 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Alexandre Ghiti <alex@ghiti.fr>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH v3 0/4] riscv: Add Zicbop & prefetchw support
-Date: Mon, 21 Apr 2025 16:24:37 +0200
-Message-Id: <20250421142441.395849-1-alexghiti@rivosinc.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Guo Ren <guoren@kernel.org>
+Subject: [PATCH v3 1/4] riscv: Introduce Zicbop instructions
+Date: Mon, 21 Apr 2025 16:24:38 +0200
+Message-Id: <20250421142441.395849-2-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250421142441.395849-1-alexghiti@rivosinc.com>
+References: <20250421142441.395849-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,49 +93,153 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I found this lost series developed by Guo so here is a respin with the
-comments on v2 applied.
+The S-type instructions are first introduced and then used to define the
+encoding of the Zicbop prefetching instructions.
 
-This patch series adds Zicbop support and then enables the Linux
-prefetch features.
+Co-developed-by: Guo Ren <guoren@kernel.org>
+Signed-off-by: Guo Ren <guoren@kernel.org>
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+ arch/riscv/include/asm/insn-def.h | 60 +++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Changelog:
-V3:
- - Fix typo (Drew)
- - Split first patch (Drew)
- - Ensure that the bits [0:4] of the prefetch insns are zeroed
- - Move PREFETCHW_ASM out of ifdef (Guo)
- - Remove CBO_ prefix for prefetching insn
- - Add prefetch (Drew)
-
-V2: https://lore.kernel.org/linux-riscv/20231231082955.16516-1-guoren@kernel.org/
- - Separate from the qspinlock series
- - Optimize coding convention with last review advice
- - Add DEFINE_INSN_S type in insn-def.h
- - Add CBO_PREFETCH_I/R/W
-
-V1:
-https://lore.kernel.org/linux-riscv/20230910082911.3378782-4-guoren@kernel.org/
-
-Alexandre Ghiti (2):
-  riscv: Introduce Zicbop instructions
-  riscv: Add support for Zicbop
-
-Guo Ren (2):
-  riscv: Add ARCH_HAS_PREFETCH[W] support with Zicbop
-  riscv: xchg: Prefetch the destination word for sc.w
-
- arch/riscv/Kconfig                  | 15 +++++++
- arch/riscv/include/asm/barrier.h    |  5 ---
- arch/riscv/include/asm/cacheflush.h |  1 +
- arch/riscv/include/asm/cmpxchg.h    |  4 +-
- arch/riscv/include/asm/hwcap.h      |  1 +
- arch/riscv/include/asm/insn-def.h   | 66 +++++++++++++++++++++++++++++
- arch/riscv/include/asm/processor.h  | 25 ++++++++++-
- arch/riscv/kernel/cpufeature.c      | 21 +++++++++
- arch/riscv/mm/cacheflush.c          | 14 ++++--
- 9 files changed, 142 insertions(+), 10 deletions(-)
-
+diff --git a/arch/riscv/include/asm/insn-def.h b/arch/riscv/include/asm/insn-def.h
+index 71060a2f838e..02c92c1657d2 100644
+--- a/arch/riscv/include/asm/insn-def.h
++++ b/arch/riscv/include/asm/insn-def.h
+@@ -18,6 +18,13 @@
+ #define INSN_I_RD_SHIFT			 7
+ #define INSN_I_OPCODE_SHIFT		 0
+ 
++#define INSN_S_SIMM7_SHIFT		25
++#define INSN_S_RS2_SHIFT		20
++#define INSN_S_RS1_SHIFT		15
++#define INSN_S_FUNC3_SHIFT		12
++#define INSN_S_SIMM5_SHIFT		 7
++#define INSN_S_OPCODE_SHIFT		 0
++
+ #ifdef __ASSEMBLY__
+ 
+ #ifdef CONFIG_AS_HAS_INSN
+@@ -30,6 +37,10 @@
+ 	.insn	i \opcode, \func3, \rd, \rs1, \simm12
+ 	.endm
+ 
++	.macro insn_s, opcode, func3, rs2, simm12, rs1
++	.insn	s \opcode, \func3, \rs2, \simm12(\rs1)
++	.endm
++
+ #else
+ 
+ #include <asm/gpr-num.h>
+@@ -51,10 +62,20 @@
+ 		 (\simm12 << INSN_I_SIMM12_SHIFT))
+ 	.endm
+ 
++	.macro insn_s, opcode, func3, rs2, simm12, rs1
++	.4byte	((\opcode << INSN_S_OPCODE_SHIFT) |		\
++		 (\func3 << INSN_S_FUNC3_SHIFT) |		\
++		 (.L__gpr_num_\rs2 << INSN_S_RS2_SHIFT) |	\
++		 (.L__gpr_num_\rs1 << INSN_S_RS1_SHIFT) |	\
++		 ((\simm12 & 0x1f) << INSN_S_SIMM5_SHIFT) |	\
++		 (((\simm12 >> 5) & 0x7f) << INSN_S_SIMM7_SHIFT))
++	.endm
++
+ #endif
+ 
+ #define __INSN_R(...)	insn_r __VA_ARGS__
+ #define __INSN_I(...)	insn_i __VA_ARGS__
++#define __INSN_S(...)	insn_s __VA_ARGS__
+ 
+ #else /* ! __ASSEMBLY__ */
+ 
+@@ -66,6 +87,9 @@
+ #define __INSN_I(opcode, func3, rd, rs1, simm12)	\
+ 	".insn	i " opcode ", " func3 ", " rd ", " rs1 ", " simm12 "\n"
+ 
++#define __INSN_S(opcode, func3, rs2, simm12, rs1)	\
++	".insn	s " opcode ", " func3 ", " rs2 ", " simm12 "(" rs1 ")\n"
++
+ #else
+ 
+ #include <linux/stringify.h>
+@@ -92,12 +116,26 @@
+ "		 (\\simm12 << " __stringify(INSN_I_SIMM12_SHIFT) "))\n"	\
+ "	.endm\n"
+ 
++#define DEFINE_INSN_S							\
++	__DEFINE_ASM_GPR_NUMS						\
++"	.macro insn_s, opcode, func3, rs2, simm12, rs1\n"		\
++"	.4byte	((\\opcode << " __stringify(INSN_S_OPCODE_SHIFT) ") |"	\
++"		 (\\func3 << " __stringify(INSN_S_FUNC3_SHIFT) ") |"	\
++"		 (.L__gpr_num_\\rs2 << " __stringify(INSN_S_RS2_SHIFT) ") |" \
++"		 (.L__gpr_num_\\rs1 << " __stringify(INSN_S_RS1_SHIFT) ") |" \
++"		 ((\\simm12 & 0x1f) << " __stringify(INSN_S_SIMM5_SHIFT) ") |" \
++"		 (((\\simm12 >> 5) & 0x7f) << " __stringify(INSN_S_SIMM7_SHIFT) "))\n" \
++"	.endm\n"
++
+ #define UNDEFINE_INSN_R							\
+ "	.purgem insn_r\n"
+ 
+ #define UNDEFINE_INSN_I							\
+ "	.purgem insn_i\n"
+ 
++#define UNDEFINE_INSN_S							\
++"	.purgem insn_s\n"
++
+ #define __INSN_R(opcode, func3, func7, rd, rs1, rs2)			\
+ 	DEFINE_INSN_R							\
+ 	"insn_r " opcode ", " func3 ", " func7 ", " rd ", " rs1 ", " rs2 "\n" \
+@@ -108,6 +146,11 @@
+ 	"insn_i " opcode ", " func3 ", " rd ", " rs1 ", " simm12 "\n" \
+ 	UNDEFINE_INSN_I
+ 
++#define __INSN_S(opcode, func3, rs2, simm12, rs1)			\
++	DEFINE_INSN_S							\
++	"insn_s " opcode ", " func3 ", " rs2 ", " simm12 ", " rs1 "\n"	\
++	UNDEFINE_INSN_S
++
+ #endif
+ 
+ #endif /* ! __ASSEMBLY__ */
+@@ -120,6 +163,10 @@
+ 	__INSN_I(RV_##opcode, RV_##func3, RV_##rd,		\
+ 		 RV_##rs1, RV_##simm12)
+ 
++#define INSN_S(opcode, func3, rs2, simm12, rs1)			\
++	__INSN_S(RV_##opcode, RV_##func3, RV_##rs2,		\
++		 RV_##simm12, RV_##rs1)
++
+ #define RV_OPCODE(v)		__ASM_STR(v)
+ #define RV_FUNC3(v)		__ASM_STR(v)
+ #define RV_FUNC7(v)		__ASM_STR(v)
+@@ -133,6 +180,7 @@
+ #define RV___RS2(v)		__RV_REG(v)
+ 
+ #define RV_OPCODE_MISC_MEM	RV_OPCODE(15)
++#define RV_OPCODE_OP_IMM	RV_OPCODE(19)
+ #define RV_OPCODE_SYSTEM	RV_OPCODE(115)
+ 
+ #define HFENCE_VVMA(vaddr, asid)				\
+@@ -196,6 +244,18 @@
+ 	INSN_I(OPCODE_MISC_MEM, FUNC3(2), __RD(0),		\
+ 	       RS1(base), SIMM12(4))
+ 
++#define PREFETCH_I(base, offset)				\
++	INSN_S(OPCODE_OP_IMM, FUNC3(6), __RS2(0),		\
++	       SIMM12((offset) & 0xfe0), RS1(base))
++
++#define PREFETCH_R(base, offset)				\
++	INSN_S(OPCODE_OP_IMM, FUNC3(6), __RS2(1),		\
++	       SIMM12((offset) & 0xfe0), RS1(base))
++
++#define PREFETCH_W(base, offset)				\
++	INSN_S(OPCODE_OP_IMM, FUNC3(6), __RS2(3),		\
++	       SIMM12((offset) & 0xfe0), RS1(base))
++
+ #define RISCV_PAUSE	".4byte 0x100000f"
+ #define ZAWRS_WRS_NTO	".4byte 0x00d00073"
+ #define ZAWRS_WRS_STO	".4byte 0x01d00073"
 -- 
 2.39.2
 
