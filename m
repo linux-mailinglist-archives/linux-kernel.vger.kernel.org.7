@@ -1,103 +1,80 @@
-Return-Path: <linux-kernel+bounces-612548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B9AA95070
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:51:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E93A95079
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5AA1724A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2825C1888919
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD67264A73;
-	Mon, 21 Apr 2025 11:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7402641E2;
+	Mon, 21 Apr 2025 11:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jiMfBl+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6+QA/7B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5214B263F45;
-	Mon, 21 Apr 2025 11:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D554C212FAD;
+	Mon, 21 Apr 2025 11:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745236261; cv=none; b=VRVxVElRsTSqtvSfStUzBdP9+aqYWxb4+IHTw8kWKB2rrf10vhQr7CHfmamMp9GVe4xPS2TZvx2B6T3VktkeOXCNA7vEt7Ypz/dibuSHRJpqTKqER/XxmP5qKPVKkNqQNkjkW5R7+GaVqSV2k767SDivhA+UNPKj2aKA1aJT0vg=
+	t=1745236394; cv=none; b=SjTVwJGBAQcSEXXG43kv+aaRRux4pdnGL95ivWykOWvdqBP0M+WxxSa+Ml9hnerZVhb7g28340qke/MhYsGkLT+76wQpPzJf1WmLk4502VtId51HKl2RuCKnMCkFasD0X8kvHNUjhCHP2ltvOguFjXKSCqJTb6eAN/pzEa1cayw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745236261; c=relaxed/simple;
-	bh=iqzPLokdK52iTpABVBzXV5mawjNYeU3GNuEBmXtj0Sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDsbAK0Ox23FyFAGudS0IxjlF0GLDpzRbKYffkDSSiH4dCbC7LCgvoBBp6ymR2/buGA8KNOKH8JXVpIIgN0bjCeOTHzoSQXoiI4xq4rM5fsRkRmC4afEWJz1eLi3mB/pXR5tm4d0a733GnCv2aQNLtXSuiCsEBDWDyD+5i1PJXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jiMfBl+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC73CC4CEE4;
-	Mon, 21 Apr 2025 11:51:00 +0000 (UTC)
+	s=arc-20240116; t=1745236394; c=relaxed/simple;
+	bh=TylbfHQw9P8PyoJO5WNWZaHGlrwRpzkWbdxjNY7Acfk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IqtIDnHJ76/5FpwkHVs3ocbWGiVNzvF9yf7y0oM1mtVz77ZS3g9ePRQOE9b4OzbLs0d6+it6rgRJVQ5yZOQ4WK/QNTfxCiQIAZ4kbIZdVEm0bId5yLc/uV6owR5wHAv/i6iGdJlW4SjODovWDcB6rrVLNqAb2xxrUAMLzCR8HAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6+QA/7B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC3AFC4CEE4;
+	Mon, 21 Apr 2025 11:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745236261;
-	bh=iqzPLokdK52iTpABVBzXV5mawjNYeU3GNuEBmXtj0Sc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jiMfBl+WiGNzMNDskLdjxsWJ1xbphBDHUNEzCl6zgnu5E+6vHSqP8G2CoxpwDt0Kk
-	 JCFz16JEJdx3r4rESJM9MR0odx5QryDpXs4u3foDhLVrGf8DENFn9STrR5c0kagkUl
-	 m1l6u7L0dbcaE7iOC9H8p3VVrCq+nyymT6nwYl+3zodawnrLFirgk2dox+qDmkeGpm
-	 L1/pvNcH/KFj5gq8U7m3ghqVo4M2cXDSJKtXDEoFCb2sjIR0udC4CbZIqF38/SgwtH
-	 fawJN+jS/4G/TrVkjXRcCoxHk9/7uV50JbznoV7ajndhtJGQBANkRRJw7/X2OMuXaW
-	 xr19/OfSuLiTQ==
-Date: Mon, 21 Apr 2025 06:50:59 -0500
-From: Rob Herring <robh@kernel.org>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: media: qcom,sm8550-iris: document
- QCS8300 IRIS accelerator
-Message-ID: <20250421115059.GA1624060-robh@kernel.org>
-References: <20250418-qcs8300_iris-v2-0-1e01385b90e9@quicinc.com>
- <20250418-qcs8300_iris-v2-1-1e01385b90e9@quicinc.com>
+	s=k20201202; t=1745236394;
+	bh=TylbfHQw9P8PyoJO5WNWZaHGlrwRpzkWbdxjNY7Acfk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=I6+QA/7BlQzGTIqfZe4thO5ajqGx74CGGQvGTQt6DjvOPwKZh/taEw6ftEi5bnDo/
+	 2hqY/UnV9QLiwiXMKopdKQSG7E2OB1im4iRURN4zjCAbzlfYygj6Oixbl98RGDVGFI
+	 00zOgkfS9IObhd3kqt9v7U3ySxY15sRtQWwCbRx2UZKoOZoaYR3DUMNcu19N1MwXzA
+	 LuAf6A6hRVZmZfL6SEkZZHmH98t0sKKPEfteCjBwYjEdvR/KBVIzhvqiQiXsImVWSl
+	 /eN5apxreS051IxQQ3O03GTiQlJBJw/E9i5vL01Dvy6n4vDVB8HSLOkSRGMqZMupZK
+	 6LCs655cTO4cw==
+From: Leon Romanovsky <leon@kernel.org>
+To: linux-rdma@vger.kernel.org, jgg@ziepe.ca, 
+ Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250418051345.1022339-2-matsuda-daisuke@fujitsu.com>
+References: <20250418051345.1022339-1-matsuda-daisuke@fujitsu.com>
+ <20250418051345.1022339-2-matsuda-daisuke@fujitsu.com>
+Subject: Re: [PATCH for-next 1/1] RDMA/core: Move ODP capability
+ definitions to uapi
+Message-Id: <174523638985.74512.12582679682707303482.b4-ty@kernel.org>
+Date: Mon, 21 Apr 2025 07:53:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418-qcs8300_iris-v2-1-1e01385b90e9@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Fri, Apr 18, 2025 at 11:58:39AM +0530, Vikash Garodia wrote:
-> Document the IRIS video decoder and encoder accelerator found in the
-> QCS8300 platform. QCS8300 is a downscaled version of SM8550, thereby
-> have different(lower) capabilities when compared to SM8550.
-> 
-> This patch depends on patch 20250225-topic-sm8x50-iris-v10-a219b8a8b477
 
-An incomplete message-id is not useful. It also should go below the 
-'---' so it is not recorded in git forever.
+On Fri, 18 Apr 2025 14:13:45 +0900, Daisuke Matsuda wrote:
+> The bits are used from both kernel space and userland, so they should be
+> placed in UAPI.
+> 
+> 
 
-> 
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> index f567f84bd60d439b151bb1407855ba73582c3b83..3dee25e99204169c6c80f7db4bad62775aaa59b5 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> @@ -24,6 +24,7 @@ properties:
->        - enum:
->            - qcom,sm8550-iris
->            - qcom,sm8650-iris
-> +          - qcom,qcs8300-iris
->  
->    power-domains:
->      maxItems: 4
-> 
-> -- 
-> 2.34.1
-> 
+Applied, thanks!
+
+[1/1] RDMA/core: Move ODP capability definitions to uapi
+      https://git.kernel.org/rdma/rdma/c/685f9537a72877
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
+
 
