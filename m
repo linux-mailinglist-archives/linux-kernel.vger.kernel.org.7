@@ -1,239 +1,171 @@
-Return-Path: <linux-kernel+bounces-612303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D70A94D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB215A94D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B33F16FBD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E042417044A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 07:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5896120E336;
-	Mon, 21 Apr 2025 07:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5820E306;
+	Mon, 21 Apr 2025 07:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="roIeDMM7"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2045.outbound.protection.outlook.com [40.107.241.45])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="c+JZuHZG"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D054FC08;
-	Mon, 21 Apr 2025 07:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745221088; cv=fail; b=iFytYnalhOFib68tMYqS8+VtmvThu68eqe3NtjVWkr6sLpFBzoYCCVmFCVNlA6SCKMKTqxJpo8jDpqCsFu3LovaMDRH9Jp3TbAF25WUiNbcplkMg7ZcmfXh3uZklERHfZKQKkgp/Z7ekM5Q+ZeSm/r8Qr6RL0sIIgn8x9q36sHE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745221088; c=relaxed/simple;
-	bh=0LMHzc9LGezvIdXL7G+O0r6mH2yNQygsFiCcejsnoq4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UtjQAebc1TeSZgV4EhRv400MVFbxPXOEXArR5ixyF3Gb1fr/Qrj8Tn0wChGr2zUZItQDvEZuKPwTG0aO73cZ8gaQdKLcjXMYatxKkG7afQ0jO0OHNw/7rBhE+cUninLVgMTfsPaPy93B6hUijhY1/Zbm6wr9ofQW2zga34T2kOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=roIeDMM7; arc=fail smtp.client-ip=40.107.241.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ps74kksvYaP4qStTW4QI/3CLaDE5qZs9/QJKI8170ll0ZhsGr/m/IdayGZPmzrOPyX05hMtmUoCy6wQuYBxGfp8h/oOnyhD62WqHOVlh8P3rFCJmDKgVHlQczbhTYDiQsv6Kjxf+kLkP7zqKvO7NzkRu3y5hTmMgZn87J6dKypXxJBA6qJbegakxl4Rcn3nMEgzzJtp5cGItAY25SKHJjYPcDNlzN/Z7wilA4Tmanfi2xmH6ySVKfPSEk7rtF7l9Z+J3Mx/0ElnXYWwP4ubE95WvQ3Au36LomSwqeVmSO19Ps/kDl12QsLccDtOYVK5Ij5rGq9sWoUAjt+BjRXwsvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NMBt4XLIVHCGRvAOTGrpHUoaveQTgCIsp64Up1TXss0=;
- b=rOJOHOO1jUdOseBjO8O+jx6Jk3OOq4z5cmMEXzwHR+ecWnYHeW1kCGU5PE6pCsHbNWPdYPr6jHgs60e8HWOnLcCPhRXbz0Deew/M0wCPygPifUdET5Oi1lM7bPJ5M7rwAKJbR3AiJb0l5JiPkWP9vS4GgWWPNHK+xwPNVFOOzAEnGTGi/tKV5jEj++cmgbg0XrlaCYSAKpUVpy4D2FbSsDLo7v6aOwQnSu9HvTJeMLoQJ+cL4guqA0w0dJUeW7rE2JoL1ogGGOGZwv6lTBFGnPTbLudvYVvdc9PGzEDIuz5nW/DMH0uS5Htu/44UtBYUC0UUSbLiu7RGtwASqbfkzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NMBt4XLIVHCGRvAOTGrpHUoaveQTgCIsp64Up1TXss0=;
- b=roIeDMM7gwNn1SKyoEkDXMk0LZobzytic6dFZZOvGeRjhpziCPtuXPEX42yiyT34cAv8jJiG6L3kIR804HsfVhqjTgO/SMutzqjK7UebckxAEi8PiAtAcYy/2x/0Fb072+6c7NMSicES20SnMK41US+6egOZtY3IqVdwTQbTvX5r0oJw98XYLVFt2wArAXxnHp/H0Rj5N7gjq5Xn/L+7oha1RmTNw79+TPOOc52rfPj6TBom6jioZzzeZCjNGac00ArlebogNC967WBF5XtaBPEhM3297Sc54HYTcwdGKQrI4+hRxhsPvQOEF6lo/LoFdNbJ3MpVdtxRrMybptetcA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
- by PA4PR04MB7758.eurprd04.prod.outlook.com (2603:10a6:102:c4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.32; Mon, 21 Apr
- 2025 07:38:02 +0000
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87%4]) with mapi id 15.20.8655.033; Mon, 21 Apr 2025
- 07:38:01 +0000
-Message-ID: <db9c8bed-2e14-4abc-b3c1-0bf9a4a68930@oss.nxp.com>
-Date: Mon, 21 Apr 2025 15:37:52 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] media: imx-jpeg: Fix some motion-jpeg decoding
-To: Nicolas Dufresne <nicolas@ndufresne.ca>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, mirela.rabulea@oss.nxp.com
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
- linux-imx@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250418070826.141-1-ming.qian@oss.nxp.com>
- <e47bcf7715dc31144b5cb6d81957ab067fdccaa8.camel@ndufresne.ca>
-From: "Ming Qian(OSS)" <ming.qian@oss.nxp.com>
-In-Reply-To: <e47bcf7715dc31144b5cb6d81957ab067fdccaa8.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0062.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::20) To PAXPR04MB8254.eurprd04.prod.outlook.com
- (2603:10a6:102:1cd::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678842A82;
+	Mon, 21 Apr 2025 07:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745221274; cv=none; b=KvL9i6MXGPIJUnYrmR+hpaGWW+tLdTurtPaK78H2ZrvzhJ95hSc/MrKfoW3XqcJPx6Fv51+u9TbHzzv5/4j+/jrnq5n9bCXw7d3l7coUh+cUHSh1DB/l6mdreA5/hE0tyh0+JBxbZDRSxqjsoyeznnhbPwXLY1XRf1lgQtg3RoQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745221274; c=relaxed/simple;
+	bh=7A4KIJxhzQOnGJuAMSwNnQDreE7Acs/kCJswmbM0wFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mFqUhIFUdy+xVADpjfX/up7EaJoKgghLxOjxQIl9Z0s+hx+XQYlgS4o/DmrOivOaKw1t21IsK/nC0GMpZTGRGpMc7tqxMEdJ5muiw0Zz8IzWRkn4ieeBsJ4t6oYEjV+rtp9HeaoFgmSoXREiabT+yKA05lG8ntKh1oUADXhMY2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=c+JZuHZG; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745221237;
+	bh=Fxs9NxWDxUFieX7yGlVwvGNZOmO3A4Li11xcTkfRoqY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=c+JZuHZGDLyKwHTWf2IUYHfzaucLKIrB4o/xUzz9vMttHACdw7wY2NzotuvJrlNt6
+	 rmjuUut7YhwPBBT1GlZmtxPT5ZIqKRblCh+OwLBqi4F5fEQsYFY+vWtQZOcic0TGw5
+	 v+HcuuS2HzLH5zJ8i1sa97ZiEnIbbpmiSqK6+ruI=
+X-QQ-mid: zesmtpip4t1745221226t7d1c116b
+X-QQ-Originating-IP: jqo7yqqOLdTjgbTqbuM2nYummntLNnOIXlBWdBK0Yoc=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Apr 2025 15:40:23 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10529845600704120540
+EX-QQ-RecipientCnt: 22
+From: WangYuli <wangyuli@uniontech.com>
+To: hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	obitton@habana.ai,
+	akpm@linux-foundation.org
+Cc: gerald.schaefer@linux.ibm.com,
+	viro@zeniv.linux.org.uk,
+	wangyuli@uniontech.com,
+	meted@linux.ibm.com,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	yujiaoliang@vivo.com,
+	shenlichuan@vivo.com,
+	cvam0000@gmail.com,
+	jesse.brandeburg@intel.com,
+	colin.i.king@gmail.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] treewide: Fix typo "previlege"
+Date: Mon, 21 Apr 2025 15:38:37 +0800
+Message-ID: <F3FFD123DE5F85F3+20250421073837.64732-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8254:EE_|PA4PR04MB7758:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32cc8ed9-307c-44de-fb0a-08dd80a7717a
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VUQwWWZHOFhYeE00cW5NeW5HUm5mRG1VT3M2Z2U0K3BXMjRSbXByaEpCdG81?=
- =?utf-8?B?UU1PUW9WS1pTY2V0YWRqVFd4bGl1eHkvd2lJSnBrQnkvcHd3UGRuQjNYQjhO?=
- =?utf-8?B?UlZMTnFjaWpNbEF0ZGM0QW1iY3BURmllMjFndG1ScFNSR3FVTUd0S202MDlj?=
- =?utf-8?B?dVVZMWtoamNqMDhMeW0ybnVjVFpZS1hieWtmSFRwNWIrWVJkVWtxVlhweFI1?=
- =?utf-8?B?N1pNdnRDeW1XWG12bGFYU0FwYk9MV2kvVGZFMy9MRy9PWXlUd1Z3bUxzWktG?=
- =?utf-8?B?U0J4RldCVzIzTm9aaGFtUkZFRDRkOW9ZZG41L21uclJKOStzdDJRd21UY09F?=
- =?utf-8?B?ZWdwaVVzbXMyeXZ3Mi9yOVhEZ1FuQ0p0RmMxRC9qZFR2T2o3MG52WmE2cmpo?=
- =?utf-8?B?THhiVGkyWGpVejhKN0RuY2pqOW1VZERPaVdpMFc5M1pvTVl3MFRoNXlXT05h?=
- =?utf-8?B?VUxra0hCRGhjS3dCSDdHREdhb2d1SklZMGNsTTI1OUVSZ3pGNlZ5cWJBUEJR?=
- =?utf-8?B?clZqbnZNdzFueklnNlRSNEVjWU9ueUx2MExFdW5pTy9DRGozRWczL1RjOHlh?=
- =?utf-8?B?dklRNzh3VTVPR0pTbjVoSU5TZ1E1WGNLTFZqZmw0a1p3SnRBMGFYQ3BhdlZs?=
- =?utf-8?B?TmdOeUF2ZGcydWk2VjQzNHJ6bW5vTWJoYThxWFNPQlB3RWxvS3NyRkpYZGNS?=
- =?utf-8?B?QnpaMS9jS0tsellJY09yM0NvdXVXdTZvdGdnbDg4YlJjVUlYb0ZHaXVtYkpT?=
- =?utf-8?B?clBQbnZvaGlHRERuUURxMXA0Nk90WVdlajRuMjNaRkNObTNxelpZSGtOQ1Uz?=
- =?utf-8?B?bHcvUEpDa0drbWp3QWpsYUFhbld4dWQ3Z0FYeVVHSXg4c1Z6alorQk5kb1p0?=
- =?utf-8?B?OWdrNnNpM0NjeUE1bVNWN3QvcVdjNHJzTmRVT1VqdEg3eTBSdml3Z3A4NVNS?=
- =?utf-8?B?TWNMQllZVlBnN0ZSZVpDT1FGdUd4Mmw0M1pnNDJIWVIrWldoNG15a2hmbDFY?=
- =?utf-8?B?dHVENW5xNUlwb0NJNm5CaERwSmJXdzVoNGZPZTJlY1VHQTB5dWYvbk83M05J?=
- =?utf-8?B?L2VaOFc5MjQrZVpDZ2ZsckNiVmNFSUZqa0dua0NCWDI4SStUalpVRVV0SFRw?=
- =?utf-8?B?L05aeXZCNjFkWW5oWjBidFY3c2x1ZnNDdUM3Z1JiMm1IZDNQdEtrK08wMEt4?=
- =?utf-8?B?QWNpVTFoMHBSQ1g3M2dINXo1TXVuOGxPZTljdTNYTkJrMk12VmJHU2V3M3k4?=
- =?utf-8?B?MHR3bnFhdnNqMFRObWNHcExDWTRDODZpdDhlclZBeXhtNityVUxNWjRVdm5U?=
- =?utf-8?B?K1k4dFM5M0FDbi9ydnFWWGswaDNCNGdjOE5IbHd0a2Q4VWc4aXBXSGg0K3R3?=
- =?utf-8?B?UkZTY2ZDQXpFT0cwdzUrR25tc3g4cWhML3BiN2trSHdaUFY1NVgwaThmek1y?=
- =?utf-8?B?NVZaMm9oK2JMMmN2RGxPQkxQYU9GeUhSelRWeXN5dlJGTW5aTDQyZjQ1RFBz?=
- =?utf-8?B?VkdoVzZCWHlOUHpYOUQ0Z21mcWZhcG9Bb2JJaTEzK0o4L3cvSUNhMW9wanlv?=
- =?utf-8?B?a3dVMDA2U2E0am5qbGF5THpRTlBpY1R5ak9sSWpucE5NZW5GWWNuK2JqRkhN?=
- =?utf-8?B?UTY4WUR4UXRwZ1JmTGpKYy9INVhGTy85dDRYMG5STjJpaVBmUVVpRUs5TVRy?=
- =?utf-8?B?VWFHUVhoS1gzbnBycHVrTzNjelpwVGRUUm9TZnptQXkreDNtenFPK2lBYmtO?=
- =?utf-8?B?N01tbm9BSWN6eXNqcU14K3NiYVZpYWZvNEp5aGVYZ0tkZlJ2a0hJMUlBNDZi?=
- =?utf-8?B?aDB0RzdOUXBCOHc4REl0OTB1bkxTRGJzWmFzY00vdUFjdHhWS0xnRHJzMC81?=
- =?utf-8?Q?lAbG+WLy/8MTU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UWlwWW4wSW5OYnJYUXNKSkZBSEZkS0kwcURRN3NGRXJBNC9aZVVlSlRmQW8y?=
- =?utf-8?B?a2U3U3hrZ3VBTjB3NzFCalBEcFdjaHNVWjZBY0JMOFlVRCtCWHJLT04wOHRu?=
- =?utf-8?B?YldHcEdBRDlVUGdOWURvenEvaFV4cm1reU9HVW96OEZtVTFwZkdxV0tNZDJz?=
- =?utf-8?B?RDgzbzRERW0zWU4rTnU3b1pZdDJCRC8xRTJidjdTMGVKYXhDcEJ4aGNhZVZy?=
- =?utf-8?B?U0lMRXNTdUV5QkZZZ3MyektteUsrdmlBZUlmWWc1c1M4ZXZ1ZUgrdVg4MmRy?=
- =?utf-8?B?OUtLRTZQd3VZRVVDREtIdXl3UXBCeEsyV0FTZjhwVXB5aDgva0VnRFAvMnUv?=
- =?utf-8?B?cCtlUEkwZjdhcE5FUlZNMlRkRGZSUkNwM1J0aTE3SHFqL2x6SVd0S3RKOERm?=
- =?utf-8?B?OVZMQjB2dGlQeGp3c2pwcUNhaXNacVllNHluR1NOWHk5RFlUK1Y3bkYwZ2Q5?=
- =?utf-8?B?MVpDdjhPQ3l1VDczVVpscXFpZDQ2bkJ6S2QwTThrQlpINEdYczQzSGVhRjRK?=
- =?utf-8?B?Wmp4QXVkbEo3bTJVNjVvemNVSk95d0ZFZnJmeFZ5WFJ4ektkbTF4NnFsdXMy?=
- =?utf-8?B?b3AzNFc4ZnJ1STZQbExlU3hsNlFGby9HUndGdXdPNEliVDdDOE1GRzI4SVg3?=
- =?utf-8?B?MlNnMi85UVJpQllQTVI0WWZ1bTJDOTc1L1d3TVI5bTlFUXI3K0RWL2ErQlBC?=
- =?utf-8?B?TzB3TXFqYXRkWlJUQ0pvQktyNXZzQ01sY242amt5dmx2R1JiQnV6c1ljSUhK?=
- =?utf-8?B?UkJPeEtSekZSSGJFblc2UEUxZGk1ZVkyUktRVjl1UjAzNi9oV25PRlZ0SUJ2?=
- =?utf-8?B?ZE9oUmdJeUNLRWhzTXRjOXJyUStFYW5pamdiNGlRME5mbHlPamFuOWVaMUdO?=
- =?utf-8?B?d2d5aGtqallEcm9NRVUwalNyOHZGaVg5dHNWZGp4clN1U1BrVWFXdlA1N1pR?=
- =?utf-8?B?aHNxaFZIR0wwbnhjaStSMmErdk56TkhGaDk1UjRmNG14Q2ZVcEEzbUdyQUFy?=
- =?utf-8?B?S0Vhc1Ivc25OSDRBc2tlcU84a0ZTeUs2MUFCQlBMbFFFb3I4aFlsbXBoa09C?=
- =?utf-8?B?alY0RjNyenNvY2V3dlJMTjlEeERENlN4dTdER2xFUjQ5RVJFLzZzWUJDTld4?=
- =?utf-8?B?R2ZCZ0t0RWNUcEpZT3BIc3ZGVFRxQngxRStXUFNWbXZxUmE1aUNFV0xYWGdz?=
- =?utf-8?B?KzdiQ2FETWVhdmREYjYyZFNlaHorcC9UYnl5dmVUb0E0c08zMy9UUE9qY2px?=
- =?utf-8?B?QjloSWFFK0ZyTSt0aDBDWHpRWHI0aURYdDhDOHRVMDU4Qk1WWm92VjlPbXVw?=
- =?utf-8?B?NlBzMTVjQmtGU1pqb2xZY01kb0pHU202MzFqaGVzWnh1bDdlWXNnRmt6N2Nn?=
- =?utf-8?B?djhEWkx4M3RPTWlKVnhTMUszM2YrL0cvcWhxd0xROE5xTXlXU3ZtdVlzYTQr?=
- =?utf-8?B?SmtrdmdmVjF5eDZkWi91NXdDd1B1dEd5T3NYRkEvRzNVOFd6dVhVb3JDY2hC?=
- =?utf-8?B?V1NJVHFqOUliWW1LbXFCUU9CQk1IL0tzOVpuVTB3MzdjQXlaZ1h2V2RnWDZK?=
- =?utf-8?B?WlJLNmJPNHBiUjFVaGxzQlNWYk9LaDg3UVlzdEFFMVNsbHRQZlZjK3k1UmNs?=
- =?utf-8?B?Vk9rdjBpZnRKUk9DQWFlTjNIY1FnblVWeDNzMFFOTmsrVThSM1lmZ3BFT1FL?=
- =?utf-8?B?WE9tTnoycTJmVSs1RTcycmNoZnFtTkxsdUFwZFJYMVRnemRYMlp5SlllSGhi?=
- =?utf-8?B?Wi94R0tmNk9nOGRTNHRsenlUNUE3VTNKNVp2MjhYMFQ3Ny9zMXFPaWhpRHFj?=
- =?utf-8?B?ZFg3bUJXNVBVRU9RcUxDcmNyRFJuUVc2Qll1WEltWFpmSm9NNE1JVzF5V1By?=
- =?utf-8?B?SnFnamV2MkFycm5lYjZSbXVuaE1sTnk3WVgzZGpOMWozZHNCNnNWcjNlQm9w?=
- =?utf-8?B?a1ZmOEwremVpV3BMVDBpMHJKdDJaSzRXbDNBajhkSHdUVHpFLzJQSlhDejVa?=
- =?utf-8?B?dTZnMWh1aUh2TFdYTWh0dmJrdkQ5U2xhNHVZOWxOVG9wZUorNzVuWkpBWUhL?=
- =?utf-8?B?NXdwdERsWWFBSXNQVW1hRnVROTZHUFFCcVUzS3ZxK3pPaUMyeHd4YnV2MDlX?=
- =?utf-8?Q?3GIIrZHrnd54uIVGv0T7IQmUW?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32cc8ed9-307c-44de-fb0a-08dd80a7717a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 07:38:01.1423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rslh5HYeOIx88KisWWzF0T/FXxEOX44yE07upYCIceN4dhcADXFYpM/IuRPiac9KmYIeSBUIlpgRpQZIvzmL3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7758
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MxdW4jxL6NvXiQrhiHczdKneicZuKJXFOt13NcIfsjbX2xahoTwFtYB/
+	Dcrzh8kDp2x7xmH26D7a+5DTTav3rnlyK2Te2hYXvE7FHy49LaUSr/KRshYuLCnJ5sYCSfe
+	qypehXgU5mA7FHRPR9DJZCPMjoCL88kUR2kF52PUXfwLxp3xabnnz6K1Mb9I45pgv/CniM3
+	qnXyKeD/mtlb6rePQuVyK6WQdrpQ3nG9d6O0r8UXgF5AaalyS9wD5X5GrI/TfMLpO5zaYzp
+	xjo+ja3Ns4++6I0c9AoUyyf5iFR9Ask8vsV0qUEGKyFeWvUWPHzStxwZRrY42y56q96ZwQC
+	U9kBmo5HQXKBIABNrtm9QMh55Jq9SykpBzDefyh5n/8Ck02u1ZfvOEpyZQ4bM4UIMduKoOT
+	+TDK4407AaNQae/7K4Ok7xbwD079zdxZYjnY0Zhn3dwZHRPgEULmOzrtTEQ9HspSaUYdLeP
+	fdb7QeG9khVFvZRHKLaofv6qIQeQr86mxLkaqu629UVzGppXpiGTVHGrx9TY7gGRo8zyx4Q
+	MnWNLWoJw6FylYSJpr6kkbNqrUvi5WiKshu+g/gBJQ2YeUEbv2QR4gNk5+bgz2YZBnYTUBT
+	AzhfWTgb2NQ+dow55QPVXMkgbEtBAffZmsdeAzVsvwdlEAGFEBNO4paN2NvtDvN9ZfKkvU3
+	YTEW+F5il3ZkBmWo9pPu2itQg8UZawIFBIkWGUcpc6sN4oM5nmNLLS92WD0QIWnxm9o4R5h
+	QOBncOXfUevJ65p2GkNRn8H4q2JRM7NXtuqrkHqtymjrH9arA+0Ev5OLWADfalUAAXQIiPV
+	zvu3nyW2t+wOP+sNFi4GNCICQ4+vDWKvIOLJDbc+fsV6FqlBv1UUinnV5G9S0hXBioVDz66
+	vWoZJrVLDttkbiwbvpY/6jmo1sUH3HPxM2sNBaDNgDENO9tMYT0rLApU1Kre2kb7axPDkFX
+	Kt2pYAzxR/Dtl3afFNo/ZGeA0ztvgPV8SsAspHloJjLxJTBtezjnPZdl9o4lU18Fmr3Oob0
+	B6NZuP57ArAFUuCpUkvFtCBnmOYBo=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-Hi Nicolas,
+There are some spelling mistakes of 'previlege' in comments which
+should be 'previlege'.
 
-On 2025/4/18 20:01, Nicolas Dufresne wrote:
-> Hi Ming,
-> 
-> Le vendredi 18 avril 2025 à 15:08 +0800, ming.qian@oss.nxp.com a écrit :
->> From: Ming Qian <ming.qian@oss.nxp.com>
->>
->> To support decoding motion-jpeg without DHT, driver will try to decode a
->> pattern jpeg before actual jpeg frame by use of linked descriptors
->> (This is called "repeat mode"), then the DHT in the pattern jpeg can be
->> used for decoding the motion-jpeg.
->>
->> But there is some hardware limitation in the repeat mode, that may cause
->> corruption or decoding timeout.
->>
->> Try to make workaround for these limitation in this patchset.
-> 
-> You should maintain a changelog in your cover letter, this way we know
-> what has been fixed. You may be interested with "b4" tool, with "b4
-> prep" and "b4 send" the tool will assist you in doing the right thing.
-> 
-> More details on what is missing:
-> 
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#respond-to-review-comments
-> 
-> Meanwhile, just reply to this message with the missing information.
-> 
-> regards,
-> Nicolas
+Fix them and add it to scripts/spelling.txt.
 
-Thanks for the reminder, I'll try b4.
-And the missed change log is as below:
-v5
-- Split the reset pointers when freed to a separate patch
+The typo in arch/loongarch/kvm/main.c was corrected by a different
+patch [1] and is therefore not included in this submission.
 
-v4:
-- Improve commit message
+[1]. https://lore.kernel.org/all/20250420142208.2252280-1-wheatfox17@icloud.com/
 
-v3:
-- Read the slot_status register twice
-- Improve commit message
-- Split the moving of code into a separate patch
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/s390/char/vmlogrdr.c          | 4 ++--
+ include/linux/habanalabs/hl_boot_if.h | 2 +-
+ scripts/spelling.txt                  | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-v2:
-- Add the Fixes tag
+diff --git a/drivers/s390/char/vmlogrdr.c b/drivers/s390/char/vmlogrdr.c
+index dac85294d2f5..e284eea331d7 100644
+--- a/drivers/s390/char/vmlogrdr.c
++++ b/drivers/s390/char/vmlogrdr.c
+@@ -255,7 +255,7 @@ static int vmlogrdr_recording(struct vmlogrdr_priv_t * logptr,
+ 
+ 	/*
+ 	 * The recording commands needs to be called with option QID
+-	 * for guests that have previlege classes A or B.
++	 * for guests that have privilege classes A or B.
+ 	 * Purging has to be done as separate step, because recording
+ 	 * can't be switched on as long as records are on the queue.
+ 	 * Doing both at the same time doesn't work.
+@@ -557,7 +557,7 @@ static ssize_t vmlogrdr_purge_store(struct device * dev,
+ 
+         /*
+ 	 * The recording command needs to be called with option QID
+-	 * for guests that have previlege classes A or B.
++	 * for guests that have privilege classes A or B.
+ 	 * Other guests will not recognize the command and we have to
+ 	 * issue the same command without the QID parameter.
+ 	 */
+diff --git a/include/linux/habanalabs/hl_boot_if.h b/include/linux/habanalabs/hl_boot_if.h
+index d2a9fc96424b..af5fb4ad77eb 100644
+--- a/include/linux/habanalabs/hl_boot_if.h
++++ b/include/linux/habanalabs/hl_boot_if.h
+@@ -295,7 +295,7 @@ enum cpu_boot_dev_sts {
+  *					Initialized in: linux
+  *
+  * CPU_BOOT_DEV_STS0_GIC_PRIVILEGED_EN	GIC access permission only from
+- *					previleged entity. FW sets this status
++ *					privileged entity. FW sets this status
+  *					bit for host. If this bit is set then
+  *					GIC can not be accessed from host.
+  *					Initialized in: linux
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index a290db720b0f..ac94fa1c2415 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -1240,6 +1240,8 @@ prefered||preferred
+ prefferably||preferably
+ prefitler||prefilter
+ preform||perform
++previleged||privileged
++previlege||privilege
+ premption||preemption
+ prepaired||prepared
+ prepate||prepare
+-- 
+2.49.0
 
-Regards,
-Ming
-> 
->>
->> Ming Qian (5):
->>    media: imx-jpeg: Move mxc_jpeg_free_slot_data() ahead
->>    media: imx-jpeg: Reset slot data pointers when free data
->>    media: imx-jpeg: Cleanup after an allocation error
->>    media: imx-jpeg: Change the pattern size to 128x64
->>    media: imx-jpeg: Check decoding is ongoing for motion-jpeg
->>
->>   .../media/platform/nxp/imx-jpeg/mxc-jpeg-hw.h |   1 +
->>   .../media/platform/nxp/imx-jpeg/mxc-jpeg.c    | 120 +++++++++++++-----
->>   .../media/platform/nxp/imx-jpeg/mxc-jpeg.h    |   5 +
->>   3 files changed, 97 insertions(+), 29 deletions(-)
 
