@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-612989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B9AA95684
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419A9A95691
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6408E1888235
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F27D189179A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976F1EB193;
-	Mon, 21 Apr 2025 19:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D491D1EDA27;
+	Mon, 21 Apr 2025 19:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAx3N4f6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C831C84AB;
-	Mon, 21 Apr 2025 19:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353D84690;
+	Mon, 21 Apr 2025 19:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745262653; cv=none; b=n/ftPWsh1hJfiodH404/JZjGcs6NXOBr7bz3Vp+gr7D+VnpPKFzl6s1fVPi1W8/OX3Wf0BxKDcJqA2iQJU8GpfkXh6pYEQxAai30FJ6FrSZXEguKt7h8msnyYboYHwr/SlqOdHA/xaCgBN0lgO0fnfQg8Ysi3WW2uj1x4Dr/liE=
+	t=1745262763; cv=none; b=LTO1lPemeVkNxG3aiOaf+WcFsT2mXoZn76nnKTGLDf0R8t/XIjsurRCasQrp0Qinco29jPf/23jJXVaIxDgiO3Uf9gyNnXmCQ9itrQgBgh5rrTGMogmHEUs3bCGBix+yWmIEkUBDZ6hKZNkkPKjK50HX9spZqf+p8TobXF4/0ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745262653; c=relaxed/simple;
-	bh=lIko2PLVSmH39atI+9eygRcc6+YXTwEAH8wJ5UnclOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kufBGPzO7ix63wrFx97/FJZf61yoRjQUdjMI7XiCdwZVZ95apjs1gActAVgcOFQSLugywZoJ8UXy4wommriZY6M6CN5n/mneDPCyA8MIQkaB8UtB4sm+tMr+N3RgeJGan4oUJxEDxPOqIiC0jsnRBTnlhWbOwJdof+u4MvLFdWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1723FC4CEE4;
-	Mon, 21 Apr 2025 19:10:50 +0000 (UTC)
-Date: Mon, 21 Apr 2025 15:12:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "shaikh.kamal" <shaikhkamal2012@gmail.com>
-Cc: dan.j.williams@intel.com, Davidlohr Bueso <dave@stgolabs.net>, Jonathan
- Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>, Vishal Verma
- <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Fabio M. De Francesco"
- <fabio.m.de.francesco@linux.intel.com>, Smita Koralahalli
- <Smita.KoralahalliChannabasappa@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [PATCH] cxl: trace: Fix macro safety in
- CXL_EVT_TP_fast_assign
-Message-ID: <20250421151239.7981f1fa@gandalf.local.home>
-In-Reply-To: <20250421184520.154714-1-shaikhkamal2012@gmail.com>
-References: <20250421184520.154714-1-shaikhkamal2012@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745262763; c=relaxed/simple;
+	bh=Jp9/MbgyD+WYv3nurqRtjn3Bmfwk56xudmIrl7LsNdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbgR1jxlyuz7LMy8k7eQkOXi69Q0zFjeRqD5X3w9EiI83nQROjjgYf/TeYi55jp9mwQYSPWzbBZ+vsfnumn1QG3z9Im9PsPOnnH2yaM8UaLVnHp+89r9x7aRZyERKgm5+GiZqvf5mJnrmsbWv2+sLvBY8y5w7hMu6feT+YpNS/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAx3N4f6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F98BC4CEE4;
+	Mon, 21 Apr 2025 19:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745262761;
+	bh=Jp9/MbgyD+WYv3nurqRtjn3Bmfwk56xudmIrl7LsNdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qAx3N4f6hjmb5KHbvpXwlPx2LW5V04YL/hflyI3p8lF6I7NKDyvX06HzXS7nf5nvC
+	 6lHDsaiKwGkF043VC2nQGcQOPfqiIlWPcwhegqc3vKcSc92dvThPGQkU49QMJWh80W
+	 HmALNYnz89TLpzTtE5DR7FShcXD45oceo1xoieKPz5kbu9MgjC6D8fPRJFSAeeNn77
+	 8EUTtbH0ruGZxwCYjPjwJra29kZSJMuoGtdwoSvI1BBlBHbirUigkCUo8YyOYteBGd
+	 5SNQhy6gQldVc3btDxJsNyIuM+IeU8DvjgIzCv5Ww1Y5B7PvHCehOQ0phNDyumLqOp
+	 MyO9Sz7y+6MbQ==
+Date: Mon, 21 Apr 2025 14:12:40 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	linux-watchdog@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: sram: qcom,imem: Document IPQ5424
+ compatible
+Message-ID: <174526275947.2647870.14926534175640777767.robh@kernel.org>
+References: <20250416-wdt_reset_reason-v2-0-c65bba312914@oss.qualcomm.com>
+ <20250416-wdt_reset_reason-v2-1-c65bba312914@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416-wdt_reset_reason-v2-1-c65bba312914@oss.qualcomm.com>
 
-On Tue, 22 Apr 2025 00:15:17 +0530
-"shaikh.kamal" <shaikhkamal2012@gmail.com> wrote:
 
-> Fix checkpatch.pl detected error
-
-First, checkpatch.pl should never be used on existing code unless it's
-yours. As the name suggests, it's for checking patches. It's not to check
-what's already been accepted. Please do not submit patches against accepted
-code because of what checkpatch.pl reports.
-
-If you run it on code and it reports something that you find is a real bug,
-then sure, fix it. But don't submit patches on code you do not understand
-just because checkpatch.pl says there's an issue with it.
-
-> The CXL_EVT_TP_fast_assign macro assigns multiple fields, but does not
-> wrap the body in a `do { ... } while (0)` block. This can lead to
-> unexpected behavior when used in conditional branches.
-
-Next, this is not a normal macro. It's a trace event macro and
-checkpatch.pl fails miserably on pretty much all tracing macros.
-
+On Wed, 16 Apr 2025 13:59:18 +0530, Kathiravan Thirumoorthy wrote:
+> Add compatible for Qualcomm's IPQ5424 IMEM.
 > 
-> Add checks to ensure cxlmd is valid before accessing its fields.
+> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> 	- No changes
+> ---
+>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-If it is invalid, and we do what your patch suggests and just not write
-anything, the event it was writing into has already been created. If we
-exit out of this macro, then the event will simply contain garbage, but is
-already on its way to user space. That means the output to user space will
-be garbage. That's a bug. In other words, if cxlmd is NULL, it had better
-not be calling this macro in the fist place!
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
--- Steve
 
