@@ -1,149 +1,142 @@
-Return-Path: <linux-kernel+bounces-612157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E6EA94BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 05:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFB9A94BAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 05:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B7016F62E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 03:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E1B1702FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 03:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9AD2571D0;
-	Mon, 21 Apr 2025 03:29:34 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2134.outbound.protection.partner.outlook.cn [139.219.146.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ADA2566DF;
+	Mon, 21 Apr 2025 03:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="CyezWd7G"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEED1EB1BA;
-	Mon, 21 Apr 2025 03:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745206174; cv=fail; b=Ajbwrsc+u3oppUes8dT88euMAndQsCMGKgJ/OoaN2hrEGgizY5vwhyzZEnLz2zQuaNXg+Hzu11osGwNM6AzwfQw48xI30YUzJ02Py3fReMF3VZu9IySRGuOAFVsvWbJ6OuOuGFuz3kSa2Z4nUAPjsUZyYvkGSnpj3urHTpPtlYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745206174; c=relaxed/simple;
-	bh=m7zSr++p/K1LZKQjqPs9FXCJ0530VPsRkd/Q9Dvr3W0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SFqZdOzgwdO2QWC4UdcAb2dbJsWIbjoymFUcF3qCkB1WkmhhD63YdYyvQqy2Ww2+lqjHozmOuUXicFvVb3m7kDYhwNxDdkYmEvT0wV/a9Kdm3diDyIv3AJYbMqfGXmeTS/WyhMB1U+XPVefHvuvVp+qZNfKqgMHt3bzBLyCP2ZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JF7A50HK34pMdu1wYsH3HZR3LLnUwQ4MXjF4Z94N9A9SCk66xlsu11I0uzgNKos26Md5oroK0p+oe9BVYEn+93nHRdfUPE3RxdeLpCQj/mnGM4npGkQ9mAB/8FWed+P7tbMV2OLw5x1IAlx7DDXn7J8dShq6rESKTMCdXh9pwDPD1TrvJ3EGjokD/JnLiUmsQpSNbloWjBcOPkUZyw+zyTGRBkXlmItlukPPAlPy4OS/EZpiKnWIt7lh7HlDaOW/tE0rD6ZpuKjUkjO7tacGzxHHhNg4iiWNVolVt/QVeWonmQ0GOpSVkMVVsrqLP+knlTI5jcq6JIwfNvAURNmEKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sESeRFmd+/vde2FbmYt5/7JPn8mt5njyU7DiuJqm2GM=;
- b=epUQkXCGbjLyjmopK0A4vqWbDih+8kQA+NCnpYxQu4Kd2Ta1SVLmn9L+T2SJtz83J+7KQN/MM1raMfWXANyHrZeF6ORyiJ02I08oPvevwsDABMVwkHQ1PyOwhLTDWWspoxEBcuK3VbapyEMv1k7O6RdEgdPGQbIOWBAVwAfWzlBLw7DYd2cXu2CEVjYMJGhZ0zibP3fcZdwHskFN32QKYCkojErUFHgRjXEyeZy1Fpk9Cr35oS65rKqgCI2O8SjcXROdewL4NB4cC2x9OHm4E4thOKEDKhfQbCYmm5Aonkzki286eRZ48EBjMsqTQ8tqxwuGjver8BPV1keC1/lQ2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
- 2025 03:29:18 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%5])
- with mapi id 15.20.8655.033; Mon, 21 Apr 2025 03:29:18 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: y-abhilashchandra@ti.com
-Cc: conor+dt@kernel.org,
-	devarsht@ti.com,
-	devicetree@vger.kernel.org,
-	jai.luthra@linux.dev,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	mripard@kernel.org,
-	r-donadkar@ti.com,
-	robh@kernel.org,
-	u-kumar1@ti.com,
-	vaishnav.a@ti.com,
-	changhuang.liang@starfivetech.com
-Subject: [PATCH v6 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add support for VIDIOC_LOG_STATUS
-Date: Sun, 20 Apr 2025 20:29:10 -0700
-Message-Id: <20250421032910.41146-1-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250416121938.346435-3-y-abhilashchandra@ti.com>
-References: <20250416121938.346435-3-y-abhilashchandra@ti.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZQ0PR01CA0017.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:5::18) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B839CF507;
+	Mon, 21 Apr 2025 03:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745206323; cv=none; b=Cf/UjLils14bCcoPEYAzraKrZLXjTaVMQ9VwyeZjQRv35iQGEmyO8lDSdcBZ0oORd3Q0J9G6YligaXXvT2gyHQv4+uN7QU33UyUoPTixaxlBDpCORQtHM1/hcp3Hz+KiY/vLLjFhxrxbd2OLlK7LSQDRqxjG0AMNiENckbYSu0A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745206323; c=relaxed/simple;
+	bh=gJmcQzS9mQxoIny6Mfrlu2W63jA7fze9RaoVDjMxI7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewHZ1LXq3BcojJ6VbVm3f7Y69ywdO5lw6fhtWtKkE0W1WzGwC7ZA+1C3SKxD64KmVsLql96TNxx23B+tE28skA8nYrwir7hQ8GgM/+4xdTdpaT0/GzjJCk7Rpzqw7GA2C9Mo/c1aruYpRWmUhwv0fp/u2YjvEaY36DXl463Qk5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=CyezWd7G; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=XHQGWIF/Cf0LNQ2lU/EhN3J9AF8B1+/NLjxMdpt6BvY=; b=CyezWd7GqkBfuVUuu1PjynG9T+
+	We0CIr5a4UubcrNgmHmzUXpKvUfUAkUVR2al+UFnbA+nR/onZy9Hj4kxWkVlyLj6HqmPt3LP0q4KI
+	xpBAyuxg0Kc4Td9/R6HnJsjkrW6PTRUQvOE6cPF8nV9wA6qKsBOFFb+DIfQ0Yo/IA0QcER49VmJ6G
+	hjBQHcXCVRTRKCSI81aEj4RXUxsY1d+2eL8NjuWQDFmj90PxHGo6O3DRcCr3FCzVNRlfnbAaI7leE
+	NsWAlPjXm2MewowIpWHT5uB/6nV3MvUZRFc0dUKI7d5Cqwnr4AtoNUorlXJ3qmSa64656T4v7Zm2t
+	P8ZiPgAw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u6hsZ-00HF9Z-2B;
+	Mon, 21 Apr 2025 11:31:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 21 Apr 2025 11:31:31 +0800
+Date: Mon, 21 Apr 2025 11:31:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>, m95d@psihoexpert.ro
+Subject: [PATCH] crypto: scomp - Fix off-by-one bug when calculating last page
+Message-ID: <aAW8E9NrKWq1Xk2w@gondor.apana.org.au>
+References: <Z88h1mPkYNM6yOGE@google.com>
+ <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9mB5IbNEdNdtmUp@google.com>
+ <SA3PR11MB81206531E9B3C7F13F5740A2C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9nECMZW67F8XYoV@google.com>
+ <SA3PR11MB8120A474C20104FF22CCE396C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9n-OnGPK7BOdGxR@google.com>
+ <SA3PR11MB81202E35C1CAF0409711A1B0C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <20250420140116.b6db3aafcc2f99569190c97e@linux-foundation.org>
+ <CAKEwX=P39kvB9Ei1xt+iOcDRMr32=ujGiKKa=e947k0MyJ7xZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c035892-4cef-4e97-9864-08dd8084b2e3
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|41320700013|1800799024|7416014|52116014|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	qLS5jqp57gTvV2JIyWjwCwpgGPoKJQUKppYoTEyZdH5fiFKL/NJbowEd+xIkJE82PqaIXOHPX3mbHpRX6yOkWBpa8R2YF46kvxHmO2AV3v7GfzJbmjI6EQB11iWMCmRXxeV1bM1H4QxsMO7L2Yq4rPIz1kisn/ldWs2UUb2ASyqBA0u3zRZ9OyL3molf3Xmg0wNIbrAMRKlVe1oRhNT1GSdx7ca2hC17LvETlYqgUS/ticP2E59Z7rw8cRXyOB51/zHTqF9wR8U40yvoUlPep1s8AndENTHhz8Ak4CzJw+koQv/DDFNgKtTIUOmHOA+QRkVbI1FH7BM253+jtXAHQ/OkypSjy9pZWHdK7qfF9goW3XGJVH8ql/MNltjIMBQaxwxErJ0oX8ctHJTF9C27kcMmO3NW49MLNdGvWKjddf1I8+Ff5LJFRLWPcqfCGqiKsCyR284jNKmpEgbX28OhnryinXvFX6DJ2EBnvwwxN737F6UnFvUwWmUX02YsvQI8q/SZ3y0fGfrFQK4LG8hF4moNDfFyJ/fBsqRKo1/lEWwj5CTqKLnbFNMQYsT8y94kWHbyOn3BAUKtarUpyPxgB7Zkpyie2av+IZJWCFXhXYQ=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(41320700013)(1800799024)(7416014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KK9pI7VjYoZuFwOfbggsI4DGB4EAtriBCUTpex9bFtY88trYRd3T7ngExQAN?=
- =?us-ascii?Q?2GtTczwfu1gvWyfaCBGML8Db+oxSGWMUP7DVu4YcedJ5u16ZWzrJDeW/tcJO?=
- =?us-ascii?Q?1zC6n1w32wdwhihN9+UEiqfoMx/Pu7YrMW4WbapDlYbughI2UGWHcYPK5cyU?=
- =?us-ascii?Q?rA7uz042iXsbR/XGMO3eFHluvHffV6Ryal40TJaBsVPVFXlXw2ZUlYjDmd69?=
- =?us-ascii?Q?Bbo7+OR3eo+Y4dh68ENhqNCYMPmPbzKUMm3ZyWRrqKlbXk1v12pCNmpZp/r/?=
- =?us-ascii?Q?+T54ki3fYRza6oNyckVB6O2Gii7p7KNgcci4E+o5nuD0NbEf9SEsejaitqr/?=
- =?us-ascii?Q?bRGIMa8o+56rhu5IaJhgE/Achk3x8wp4CIh3/3wT0n8BxS7dahqsqMr4SlKV?=
- =?us-ascii?Q?FQqhAk+/2aZshXzSgc0krqQDhFWuq39KBSK2tGzz/bVjzub7TH3z1JFBP6nO?=
- =?us-ascii?Q?1xE49DWZragHSN2G/+3vhiS090/ZuETbTQ4EmBV1kerek6dvb+3FF0WWP+7a?=
- =?us-ascii?Q?wIEYt1kK39HeVGMda5i5GiSRkZvYX8UAM3mn8z56F74YygWEjKqt8Or0KNBE?=
- =?us-ascii?Q?QxusPDpqA+dIoTM/4Zey6eLLCKC1/Pqo0GoiPSQ70zMko6EmEA6ttQEVtULO?=
- =?us-ascii?Q?Y5PjDMZ/dI30n9j6GDaRfGcCcnmpdWLHf7agMNwHDBYoGHyziv63YBzCngFo?=
- =?us-ascii?Q?HQOWI7hBrzFQV9972FT3zHaw7xHCZSHGoSyacCiEagTBwTP+cu0aL1l8tCJO?=
- =?us-ascii?Q?zn/dqld8qgBqW+jcuJAYdmHFdrCYKz6jMv4kEUJFEk3iHZiP+gRiykfDb2ox?=
- =?us-ascii?Q?jKVGp0O7kSYkHBYvOm+kFHfscH81tS4UdTJyJY5GL5Rc63hyPyCM+3CAxnUV?=
- =?us-ascii?Q?o+5keRDsCB2F5tEi3KbN4Mk9PRerVXQqEbtM9pXvvYTJii1v+1nzIQ8jM0Hk?=
- =?us-ascii?Q?2evPxzclmEH19f5gTP8RaXfk0KpnEeZBj/3W9p3Lb3vjejvo1RVX9+ZHoc+C?=
- =?us-ascii?Q?SpJdibJr88ingcA46wvYsV+PCzOKW6EWgDodczaai3DSxVG/8OBPG5K9x72D?=
- =?us-ascii?Q?rWYahERukTjjZr6ZJy7m/wL9tvANQ0rpov0w02YvIYxW92V/BV0eSdaBhGiR?=
- =?us-ascii?Q?1MM4qSCK2I6Sm8AGmX7wX0G2VT0M5Yhk1cHmijcCkyOdlOJC8NQklMlVGOVf?=
- =?us-ascii?Q?AAQsUkzkBGFCbLb/rQRYvpG7MDciO6NMKnVsekUszPtrs5LK6osEEABEtSo/?=
- =?us-ascii?Q?7wTGZeAJ+sTYnpTv3VYS6wMGaNGey9sIFNaj3ZosJBzzwS5iDsIdwKc0CzEI?=
- =?us-ascii?Q?3DrPlX1hvlBXPY6u0rSyLXBSrerY9M3FiR/ihunMGLS5FMwIyG3XDoFc2SSo?=
- =?us-ascii?Q?ONIuJ29WUJ1qlfgkJum4rmlMoJqByLAFE5boFn7q1SQty4AhhY+UHL5eQlyD?=
- =?us-ascii?Q?ov0RA318CLY7Wchv4WC5Lk+K/6qz0RN85AFvrLAIJFyoccZj+aOq6V9tL3Wt?=
- =?us-ascii?Q?W2QtW0NjBSadUN4ZvZpnLfB9MDaN4Gqf+I0rMmwviqB8YX4hrPq3jiyM69+Q?=
- =?us-ascii?Q?ZjMnCJPkTC9X3B4fhEvJAz/2E/LETbFgZvWTnkxioT9IdNNLgW9fhzoUc20X?=
- =?us-ascii?Q?R09KgUd75TaEZoy436m03vc=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c035892-4cef-4e97-9864-08dd8084b2e3
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 03:29:18.3896
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WAZZ9kSRVZ8C7YZm8wyGaK6OlAR4crtAOVeL6ruxtfIchRjXpnKvFTBCl3eqbMZUuJHaI/cbvSLDZNJRKWlb9mdEWipASPqAlTvCSbJDUXCVro5tq35282iwNzxIoQBX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1302
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKEwX=P39kvB9Ei1xt+iOcDRMr32=ujGiKKa=e947k0MyJ7xZA@mail.gmail.com>
 
-> Enable the csi2rx_err_irq interrupt to record any errors during streaming
-> and also add support for VIDIOC_LOG_STATUS ioctl. This allows users to
-> retrieve detailed error information during streaming, including FIFO
-> overflow, packet errors, and ECC errors.
+On Sun, Apr 20, 2025 at 04:35:44PM -0700, Nhat Pham wrote:
 >
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Anyhow, this looks like a crypto/compression infra bug. Herbert, does
+> this ring any bell for you?
 
-Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Yes this looks like an off-by-one bug in the new scomp scratch
+code.
 
-> ---
->  drivers/media/platform/cadence/cdns-csi2rx.c | 131 +++++++++++++++++++
->  1 file changed, 131 insertions(+)
+---8<---
+Fix off-by-one bug in the last page calculation for src and dst.
+
+Reported-by: Nhat Pham <nphamcs@gmail.com>
+Fixes: 2d3553ecb4e3 ("crypto: scomp - Remove support for some non-trivial SG lists")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/crypto/scompress.c b/crypto/scompress.c
+index 5762fcc63b51..36934c78d127 100644
+--- a/crypto/scompress.c
++++ b/crypto/scompress.c
+@@ -215,8 +215,8 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
+ 			spage = nth_page(spage, soff / PAGE_SIZE);
+ 			soff = offset_in_page(soff);
+ 
+-			n = slen / PAGE_SIZE;
+-			n += (offset_in_page(slen) + soff - 1) / PAGE_SIZE;
++			n = (slen - 1) / PAGE_SIZE;
++			n += (offset_in_page(slen - 1) + soff) / PAGE_SIZE;
+ 			if (PageHighMem(nth_page(spage, n)) &&
+ 			    size_add(soff, slen) > PAGE_SIZE)
+ 				break;
+@@ -243,9 +243,9 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
+ 			dpage = nth_page(dpage, doff / PAGE_SIZE);
+ 			doff = offset_in_page(doff);
+ 
+-			n = dlen / PAGE_SIZE;
+-			n += (offset_in_page(dlen) + doff - 1) / PAGE_SIZE;
+-			if (PageHighMem(dpage + n) &&
++			n = (dlen - 1) / PAGE_SIZE;
++			n += (offset_in_page(dlen - 1) + doff) / PAGE_SIZE;
++			if (PageHighMem(nth_page(dpage, n)) &&
+ 			    size_add(doff, dlen) > PAGE_SIZE)
+ 				break;
+ 			dst = kmap_local_page(dpage) + doff;
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
