@@ -1,145 +1,200 @@
-Return-Path: <linux-kernel+bounces-612718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB06A952FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41546A9530C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFC318918C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AD8C169E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AC51DE3D1;
-	Mon, 21 Apr 2025 14:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D61CD1E1;
+	Mon, 21 Apr 2025 14:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EC2xXz9b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NvnrrWqB"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941901DB92C;
-	Mon, 21 Apr 2025 14:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7250126C1E;
+	Mon, 21 Apr 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745246856; cv=none; b=Pn9776XAFJfZmzjFpsXD8qk99j6EWoSc2jaUdQWDvG+pKTDbBmh2ppPBPI0XgA385D3UIGfB7Dal0zZ99dsguwv26rBAI/g0QMwUMWzXXissfaikQjWi1zqI1GeoFvROIX4zXY5VjVvlXSz98Q188mV+RCF+UDCva9ilA1kGAAE=
+	t=1745246909; cv=none; b=AHpcatf+/UHFEBD5/f7kJuL9Ls4x/eOXg3u0XPQowFUudlcV9GqzQaiLH8rOH5gca8GJZyBg4UE2w/wX392f7XXvkswv+d/bJDHe8+UpuFyKO6RMknfVynnc0uilGTG31N7cPwxn9VMU5xy8eZC2BxkBeeHjx7n5OuYTY6GUmyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745246856; c=relaxed/simple;
-	bh=QVHSXRSxgRAIyci3IMM5gY262f2WC5b5oC/fErjG73M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=cDNObEMJeQaVCismD3+PssfEdZGlSRveOw4D2RMCoNWXX9Nv6dcW/wpACTjnUG4RAxzeyHft7vfm34rOQ7tZynXCYNyY6o9i2NIgMZQvr+4DCH9X2kCgtvb9pFCA5OUApwFBJo1En8b/JlPMXtOij5wxvA31HLE++4aT4D4GNKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EC2xXz9b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LAOC7w002262;
-	Mon, 21 Apr 2025 14:47:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BbH4XjZwFxuODVOBvsGqeqOQCwo9CPYlufSn0drpqB8=; b=EC2xXz9b3xuq3aac
-	G7B9Q+W7CTXs0I4dGlQO/b5UoQxxR9+N7YFXTufrL+rSPrxIRui6sYhaRYB5wnJi
-	bG+tfF1VP/f+2r2vG00QP6W7Ebn3b7BmSgrbzKH7zxv3bjeeZBqKe9SdbFpO/fre
-	gOGGllwrCg9x1Ih9Zww7n63G3jjD7YqkvLRo+XG+5JfP+rvNXr1KkweyiB4TMJXA
-	OnAayv6WHcHUBXe3XlHVMZjDn4sbnoHLAniW76h8iyE8HcYUncX38xGe6j//7S76
-	6ENtT61NYdqWLxt8Aq9dotHDJ7gdRHYcm/QqqC4pvbh6g8VvsRDuXEjoN4IFzzt0
-	1Vr0dA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4642u9chme-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Apr 2025 14:47:30 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53LElUj9010855
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Apr 2025 14:47:30 GMT
-Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 21 Apr 2025 07:47:26 -0700
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-Date: Mon, 21 Apr 2025 20:16:57 +0530
-Subject: [PATCH v5 3/3] arm64: dts: qcom: sa8775p-ride: enable video
+	s=arc-20240116; t=1745246909; c=relaxed/simple;
+	bh=7aAMJZ+iym1p8+ko8GobuLt++Nib0/HQSbNLT3Cv0QE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HJlG+5HFnWA+GjMgeBn3UHEnxgGgXSEz6COZVjR8hl/7pu/p3StN3kjRJQjpwxx2v4vXbkx1EXHK4Z50iwhNUSm21y5dA710hD5gbU4vMqR59rBpj/B3wlu7tui4+vlqSDk01PHC4+mQzNSd1YL9C6l7Ayk56R38QqNsSGJY60A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NvnrrWqB; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kwVVw2CqIRRe0Myaq1Inek1FYVeiqCcyjpy3VoSZ7XY=; b=NvnrrWqB8J2UENYzRduUt5rh6M
+	HGubS1PYlulbA5D5rAiOfo5eEOVjSt0k0FezS2GHeKNRMQG+Q/qT36/9PFNAPYRGKgesNiduV+q8U
+	dHbX9zEbmfh3b76m2sOvd9WaroSythbTkir+oi8DcbJBSA+djJb/IwbjJ7ZdUMgdcs89+/g03spFO
+	op/X/nag1CXf9JVZYWjltWttrSKsRdhd6pukWfNDSrzTrzk8O+ukOtZwVOdJMfQX5wyCqZaUE5HLU
+	JCp3piW6Z0xrJ7XnJjol2mYYwBqcAK193GBTIWr0eF50Znfrhs2NIbD8rV2ESfB379bx0AA2JSpWa
+	N5u9F5PQ==;
+Received: from 114-44-233-154.dynamic-ip.hinet.net ([114.44.233.154] helo=[192.168.1.104])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u6sRA-0060Jw-Ve; Mon, 21 Apr 2025 16:47:57 +0200
+Message-ID: <f845502f-87b2-4eec-aa2f-1d62f21bf479@igalia.com>
+Date: Mon, 21 Apr 2025 22:47:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250421-dtbinding-v5-3-363c1c05bc80@quicinc.com>
-References: <20250421-dtbinding-v5-0-363c1c05bc80@quicinc.com>
-In-Reply-To: <20250421-dtbinding-v5-0-363c1c05bc80@quicinc.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745246832; l=814;
- i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
- bh=QVHSXRSxgRAIyci3IMM5gY262f2WC5b5oC/fErjG73M=;
- b=fUEucUNnszb48rtlhc2wGxuBEhrxAivZ6Dsg8WIS3vHam/+oHxzdllEaECrCqBXSf09j9PIA3
- WTRxWk3Z2rkB0S5vEQCUNTw0ONafNuBGNAS6iC89059PJsj+U8I49dd
-X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=TYaWtQQh c=1 sm=1 tr=0 ts=68065a82 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=bnThFhelgDCT6RDeMd8A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 0TJt6GjqqXU2z1A5-I89pJatIi0MtcnN
-X-Proofpoint-GUID: 0TJt6GjqqXU2z1A5-I89pJatIi0MtcnN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-21_07,2025-04-21_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 suspectscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=764 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504210115
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/huge_memory: fix dereferencing invalid pmd
+ migration entry
+To: Gavin Shan <gshan@redhat.com>, David Hildenbrand <david@redhat.com>,
+ linux-mm@kvack.org, akpm@linux-foundation.org
+Cc: willy@infradead.org, ziy@nvidia.com, linmiaohe@huawei.com,
+ hughd@google.com, revest@google.com, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250418085802.2973519-1-gavinguo@igalia.com>
+ <b1312600-1855-406c-9249-c7426f3a7324@redhat.com>
+ <e66af83a-f628-4c5b-8d48-aa6a5d4b4948@redhat.com>
+Content-Language: en-US
+From: Gavin Guo <gavinguo@igalia.com>
+In-Reply-To: <e66af83a-f628-4c5b-8d48-aa6a5d4b4948@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Enable video nodes on the sa8775p-ride board and point to the
-appropriate firmware files.
+On 4/19/25 07:53, Gavin Shan wrote:
+> Hi Gavin,
+> 
+> On 4/18/25 8:42 PM, David Hildenbrand wrote:
+>> On 18.04.25 10:58, Gavin Guo wrote:
+>>> When migrating a THP, concurrent access to the PMD migration entry
+>>> during a deferred split scan can lead to a invalid address access, as
+>>> illustrated below. To prevent this page fault, it is necessary to check
+>>> the PMD migration entry and return early. In this context, there is no
+>>> need to use pmd_to_swp_entry and pfn_swap_entry_to_page to verify the
+>>> equality of the target folio. Since the PMD migration entry is locked,
+>>> it cannot be served as the target.
+>>>
+>>> Mailing list discussion and explanation from Hugh Dickins:
+>>> "An anon_vma lookup points to a location which may contain the folio of
+>>> interest, but might instead contain another folio: and weeding out those
+>>> other folios is precisely what the "folio != pmd_folio((*pmd)" check
+>>> (and the "risk of replacing the wrong folio" comment a few lines above
+>>> it) is for."
+>>>
+>>> BUG: unable to handle page fault for address: ffffea60001db008
+>>> CPU: 0 UID: 0 PID: 2199114 Comm: tee Not tainted 6.14.0+ #4 NONE
+>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3- 
+>>> debian-1.16.3-2 04/01/2014
+>>> RIP: 0010:split_huge_pmd_locked+0x3b5/0x2b60
+>>> Call Trace:
+>>> <TASK>
+>>> try_to_migrate_one+0x28c/0x3730
+>>> rmap_walk_anon+0x4f6/0x770
+>>> unmap_folio+0x196/0x1f0
+>>> split_huge_page_to_list_to_order+0x9f6/0x1560
+>>> deferred_split_scan+0xac5/0x12a0
+>>> shrinker_debugfs_scan_write+0x376/0x470
+>>> full_proxy_write+0x15c/0x220
+>>> vfs_write+0x2fc/0xcb0
+>>> ksys_write+0x146/0x250
+>>> do_syscall_64+0x6a/0x120
+>>> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>
+>>> The bug is found by syzkaller on an internal kernel, then confirmed on
+>>> upstream.
+>>>
+>>> Fixes: 84c3fc4e9c56 ("mm: thp: check pmd migration entry in common 
+>>> path")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Gavin Guo <gavinguo@igalia.com>
+>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>> Acked-by: Hugh Dickins <hughd@google.com>
+>>> Acked-by: Zi Yan <ziy@nvidia.com>
+>>> Link: https://lore.kernel.org/all/20250414072737.1698513-1- 
+>>> gavinguo@igalia.com/
+>>> ---
+>>> V1 -> V2: Add explanation from Hugh and correct the wording from page
+>>> fault to invalid address access.
+>>>
+>>>   mm/huge_memory.c | 18 ++++++++++++++----
+>>>   1 file changed, 14 insertions(+), 4 deletions(-)
+>>>
+> 
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> 
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 2a47682d1ab7..0cb9547dcff2 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -3075,6 +3075,8 @@ static void __split_huge_pmd_locked(struct 
+>>> vm_area_struct *vma, pmd_t *pmd,
+>>>   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned 
+>>> long address,
+>>>                  pmd_t *pmd, bool freeze, struct folio *folio)
+>>>   {
+>>> +    bool pmd_migration = is_pmd_migration_entry(*pmd);
+>>> +
+>>>       VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
+>>>       VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
+>>>       VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
+>>> @@ -3085,10 +3087,18 @@ void split_huge_pmd_locked(struct 
+>>> vm_area_struct *vma, unsigned long address,
+>>>        * require a folio to check the PMD against. Otherwise, there
+>>>        * is a risk of replacing the wrong folio.
+>>>        */
+>>> -    if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
+>>> -        is_pmd_migration_entry(*pmd)) {
+>>> -        if (folio && folio != pmd_folio(*pmd))
+>>> -            return;
+>>> +    if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) || pmd_migration) {
+>>> +        if (folio) {
+>>> +            /*
+>>> +             * Do not apply pmd_folio() to a migration entry; and
+>>> +             * folio lock guarantees that it must be of the wrong
+>>> +             * folio anyway.
+>>> +             */
+>>> +            if (pmd_migration)
+>>> +                return;
+>>> +            if (folio != pmd_folio(*pmd))
+>>> +                return;
+>>
+>> Nit: just re-reading, I would have simply done
+>>
+>> if (pmd_migration || folio != pmd_folio(*pmd)
+>>      return;
+>>
+>> Anyway, this will hopefully get cleaned up soon either way, so I don't 
+>> particularly mind. :)
+>>
+> 
+> If v3 is needed to fix Zi's comments (commit log improvement), it can be 
+> improved
+> slightly based on David's suggestion, to avoid another nested if 
+> statement. Otherwise,
+> it's fine since it needs to be cleaned up soon.
+> 
+>      /*
+>       * Do not apply pmd_folio() to a migration entry, and folio lock
+>       * guarantees that it must be of the wrong folio anyway.
+>       */
+>      if (folio && (pmd_migration || folio != pmd_filio(*pmd))
+>          return;
+> 
+> Thanks,
+> Gavin
+> 
+> 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 175f8b1e3b2ded15fc3265ac8c26b14473b618f6..bad141cb15e2fe51bb80b10906d9c7ef84e6d52f 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -522,6 +522,12 @@ &i2c18 {
- 	status = "okay";
- };
- 
-+&iris {
-+	firmware-name = "qcom/vpu/vpu30_p4_s6.mbn";
-+
-+	status = "okay";
-+};
-+
- &mdss0 {
- 	status = "okay";
- };
-
--- 
-2.34.1
-
+Gavin, thank you for the review as well. I submitted v3 including your 
+suggestion with David's indentation idea and Zi's commit log fix.
 
