@@ -1,93 +1,81 @@
-Return-Path: <linux-kernel+bounces-612978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E61A95667
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:00:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C32A956C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEF93A5FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7533B135B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C641E9B3E;
-	Mon, 21 Apr 2025 19:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420A1EF0B0;
+	Mon, 21 Apr 2025 19:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zfsFMbWg"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=psihoexpert.ro header.i=@psihoexpert.ro header.b="YL3W8wIM"
+Received: from mx1.wiredblade.com (mx1.wiredblade.com [162.216.242.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A7E2F37;
-	Mon, 21 Apr 2025 19:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815CBCA4B;
+	Mon, 21 Apr 2025 19:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.216.242.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745262038; cv=none; b=esw0/SuPbyJGTtLyNPUVNDGFB8YBBW+PqB3mwLvv+cQwuv12b/IrkG2s4yYiLH+nu5Onpd1zVoUuTAq9hbe+rJQkUmjHhlmFZhKBuSlhsL2yLqnPU2dc2FsWndDgNb/e3EHsDpv0dXjLFAATK4xXOK/HnEJdnOtp+8meIyP5Ndc=
+	t=1745264146; cv=none; b=ndN7WKlTQDiasBW/lo1EqVpVMZkxbEx239CDtzpefHzjrLhG2i+FRpKIYIoy9p3d4SNMpxytX96Fzcatbcyq37nh/4kQgDLD6mx6DTHpgvJFYpSNN4Y7q0D0YY28cpKiY04fU1v7/GbPF37jZQRCnQtnSInVBL0RuyeSQEozP6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745262038; c=relaxed/simple;
-	bh=rK5+vJ6VPZzb/wi4IEEdQCcbOqq/b4nV0Lzil7+qcFw=;
+	s=arc-20240116; t=1745264146; c=relaxed/simple;
+	bh=aaLBMNZvy8fZ7qtxsrSTeduLpEzsO2UTknbaqwRyz0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=le4Y2xYNeEp85z6xJNyUm9eFxDaEOVnhbnU7+shyHIKGeuGL6lIicRNDHPBHOoiw8upItFYPZOaBvpr2LGqcQJsqQmFK0OyAGvvlOMqquQ9AhPUpFNcelgOLnYfZ6ZZlfKXxn6QrrMXJVxykZxCEcQPq3yFIg8kdMkHOFo3xVLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zfsFMbWg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IEN033baaB4ogGADBJMQL9poprZr/OOuFaTb+kBE3qw=; b=zfsFMbWg6CK6J4o+6YCkUph4VD
-	G8rRxLGFNmj1yc8SuXsCdmeBXLFsKmo+pQU/YmDEj6XuVLWOZBctb/wT3kZhd9jkwHP7nDLX7j/5S
-	cBWBX9FWMs4jPDwKAQR/ZY0NkKDBxSI7VpltWeIOoCafynDuzUQ8BsVTGMHO4nxq3AQZ990XL7OmZ
-	KI9dlW7Oa7niv5zhxM7BpQnNsx2RyizT3XdHdAfas9Qpz6L+UBfQCAeBZGXVzxjTDZ6QBCLv03l7G
-	wG2uSezrrzpzhsb+ULzwEsAOe1f5hzufGywh/IeMMcpc4kNcbIXvQheVPTZOzqV+xQomlb7Sx8I/j
-	DAhQts3A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59916)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u6wNB-0003FY-0i;
-	Mon, 21 Apr 2025 20:00:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u6wN3-0006g3-2g;
-	Mon, 21 Apr 2025 19:59:57 +0100
-Date: Mon, 21 Apr 2025 19:59:57 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=tH6CPC8Bh3+IOc75zIAXCNAWnbBlkWh4mnoM614iI6FOhj/NeKYE1jq2fFVGFgTige/oRJOk0WlT0pqcjuKujvC3CpEts/kSW1oIpyJFyGFANuWw9EKLmrpyuqsr+qhIlr+6PssVtLTyKJEXGDkSQSqNQp48WcvxKwH8t+oe96g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=psihoexpert.ro; spf=pass smtp.mailfrom=psihoexpert.ro; dkim=pass (2048-bit key) header.d=psihoexpert.ro header.i=@psihoexpert.ro header.b=YL3W8wIM; arc=none smtp.client-ip=162.216.242.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=psihoexpert.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=psihoexpert.ro
+dkim-signature: v=1; a=rsa-sha256; d=psihoexpert.ro; s=dynu;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:In-Reply-To:References;
+	bh=GNwNTomk2L+xH30uYfzu2FmEUpjRULKpLyKzAyLVhg0=;
+	b=YL3W8wIMfPPohLo9wQMqFQwhdCH3ok766H+QsfkpxktZ/36AQVcVd6jOkLW4ADsDkE1ZdO9h6Cvj5HUPblaNQUYPYwZ41OUSHsqR9BQxp0wfOJ8d/dAtKMza1185XfUO+cO5pmo0VoCVFC30RBL1QZfoRUzQyV+2YsEJqps7YyRA066JZyh7YCUXxZ0EoUO9FPPOZLvhtjvA4BV5JTE2FHanhSWdzyPlehi8bXck8P0Zr5q+sT/SQuYBMS
+	4O1/lA3MPH4REv8xDuqM4LaSRK2B4sdBQSeWCTClcGDH4oqu9yOhRlg4zxDS7vMRKROKZnO7JS7V08Y72lJY7KB8tN2A==
+Received: from GRAPHRT (188-24-192-106.rdsnet.ro [188.24.192.106])
+	by mx1.wiredblade.com with ESMTPSA
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
+	; Mon, 21 Apr 2025 19:02:25 +0000
+Date: Mon, 21 Apr 2025 22:02:16 +0300
+From: Marius Dinu <marius@psihoexpert.ro>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Nhat Pham <nphamcs@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add DWMAC glue layer for
- Renesas GBETH
-Message-ID: <aAaVrVFql3vSktrT@shell.armlinux.org.uk>
-References: <20250407120317.127056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250407120317.127056-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Z_0-iH91A4Sexlzj@shell.armlinux.org.uk>
- <CA+V-a8sS0TtS-TEdkQ8MB5F4JtzV9358Y9fmKe5MggGU+wP=4Q@mail.gmail.com>
- <CA+V-a8tbW2Zs6op20yRTcihSm1bcMC2dYnRXVCKRf=q4fymZyg@mail.gmail.com>
- <TY3PR01MB1134633A8CB82788BB98C6E6286B82@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>, m95d@psihoexpert.ro
+Subject: Re: [PATCH] crypto: scomp - Fix off-by-one bug when calculating last
+ page
+Message-ID: <aAaWODz21QmhPvpo@GRAPHRT>
+References: <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9mB5IbNEdNdtmUp@google.com>
+ <SA3PR11MB81206531E9B3C7F13F5740A2C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9nECMZW67F8XYoV@google.com>
+ <SA3PR11MB8120A474C20104FF22CCE396C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9n-OnGPK7BOdGxR@google.com>
+ <SA3PR11MB81202E35C1CAF0409711A1B0C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <20250420140116.b6db3aafcc2f99569190c97e@linux-foundation.org>
+ <CAKEwX=P39kvB9Ei1xt+iOcDRMr32=ujGiKKa=e947k0MyJ7xZA@mail.gmail.com>
+ <aAW8E9NrKWq1Xk2w@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,22 +84,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TY3PR01MB1134633A8CB82788BB98C6E6286B82@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <aAW8E9NrKWq1Xk2w@gondor.apana.org.au>
 
-On Mon, Apr 21, 2025 at 01:45:50PM +0000, Biju Das wrote:
-> Hi All,
-> FYI, On RZ/G3E, for STR to work with mainline, we need to reinitialize the PHY.
+On Mon, 2025-04-21 11.31.31 ++0800, Herbert Xu wrote:
+> On Sun, Apr 20, 2025 at 04:35:44PM -0700, Nhat Pham wrote:
+> >
+> > Anyhow, this looks like a crypto/compression infra bug. Herbert, does
+> > this ring any bell for you?
+> 
+> Yes this looks like an off-by-one bug in the new scomp scratch
+> code.
+> 
+> ---8<---
+> Fix off-by-one bug in the last page calculation for src and dst.
+> 
+> Reported-by: Nhat Pham <nphamcs@gmail.com>
+> Fixes: 2d3553ecb4e3 ("crypto: scomp - Remove support for some non-trivial SG lists")
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> diff --git a/crypto/scompress.c b/crypto/scompress.c
+> index 5762fcc63b51..36934c78d127 100644
+> --- a/crypto/scompress.c
+> +++ b/crypto/scompress.c
+> @@ -215,8 +215,8 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
+>  			spage = nth_page(spage, soff / PAGE_SIZE);
+>  			soff = offset_in_page(soff);
+>  
+> -			n = slen / PAGE_SIZE;
+> -			n += (offset_in_page(slen) + soff - 1) / PAGE_SIZE;
+> +			n = (slen - 1) / PAGE_SIZE;
+> +			n += (offset_in_page(slen - 1) + soff) / PAGE_SIZE;
+>  			if (PageHighMem(nth_page(spage, n)) &&
+>  			    size_add(soff, slen) > PAGE_SIZE)
+>  				break;
+> @@ -243,9 +243,9 @@ static int scomp_acomp_comp_decomp(struct acomp_req *req, int dir)
+>  			dpage = nth_page(dpage, doff / PAGE_SIZE);
+>  			doff = offset_in_page(doff);
+>  
+> -			n = dlen / PAGE_SIZE;
+> -			n += (offset_in_page(dlen) + doff - 1) / PAGE_SIZE;
+> -			if (PageHighMem(dpage + n) &&
+> +			n = (dlen - 1) / PAGE_SIZE;
+> +			n += (offset_in_page(dlen - 1) + doff) / PAGE_SIZE;
+> +			if (PageHighMem(nth_page(dpage, n)) &&
+>  			    size_add(doff, dlen) > PAGE_SIZE)
+>  				break;
+>  			dst = kmap_local_page(dpage) + doff;
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
-Which "mainline" are you using?
+Tested the patch with git master branch on the same SBC as my bug report.
+It works. stress-ng --pageswap doesn't crash anymore.
 
-Reading your emails, I suspect v6.14 rather than something post-dating
-v6.15-rc1, since your latest email suggests that the PHY driver's
-->resume method is not being called early in stmmac's resume. However,
-commits 367f1854d442 and ef43e5132895 made this happen, which were
-merged during the merge window, and are thus in v6.15-rc1.
+Thank you!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Marius Dinu
+
 
