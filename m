@@ -1,272 +1,180 @@
-Return-Path: <linux-kernel+bounces-612447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBCCA94F1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:01:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7160EA94F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E35A17011D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:01:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6BA17046C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128061FC3;
-	Mon, 21 Apr 2025 10:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912D125FA2A;
+	Mon, 21 Apr 2025 10:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RKhkVcac";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hyX+Dczq"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WTaeKwJZ"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2040.outbound.protection.outlook.com [40.107.212.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21C6A92E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 10:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D661B7F4;
+	Mon, 21 Apr 2025 10:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745229669; cv=fail; b=AZqyUTjEw+JGbT0oCQTQfkOoKu/LauAQu3zReJ6aks2qHe6X1nOWMRPxKpphMMl1KYyuA7DpQIR4YJBLmIiaZfmnI4lUA7rgxuiPPE+OQmXmV1hEG0hmoK4hHVeH7ZmRx0JWM5DnjqQxm+/X2ZwMi7nmXxXzmo3N621ospMWIuQ=
+	t=1745230134; cv=fail; b=RQ+1Z6XxrYSnmX6krA7IlxwcjmXE7m8qwJIJQ6rMfkBc1OV/+N7NwWIW6PL6dwCxERhcMBcB3hpeNfIAC+Mlidui8+4j00ASbK/bmblq3yNIyLlzUNsIafkpNONNL8pW8CI6MlB+Ff7KsOYUlj6eRPEOqfaaJH9z2ALJn6SoHEs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745229669; c=relaxed/simple;
-	bh=BtE+5gFSujJqykbK+kxSHc8ULLuW+Kby+Q6l7xSVeEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Q58zshFuuLhmFRCCFA8Uwgxv7V0C8iLVctovvd7nDcKwVyvwJNGVnE1D9aCWAbZKwhNIO0pWAMGgwyzj2gJkHHmtHQQUQ0xhNad29w1hvQWp9bwlvixJFKQSTS/960Pz5amDpl2XnYH/z2BwajZF1+5EYLaGX1860IvA2L1exPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RKhkVcac; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hyX+Dczq; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53L1EuGV012235;
-	Mon, 21 Apr 2025 10:00:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=Z9hDtWGy63JZwJdZL4
-	kLmZPv2uw+diVhFTrgHO1afew=; b=RKhkVcacF+ymCWb/87xFDcE9XC7QjXxtRh
-	t3MLKFnEW+HMC0zQIU1BG1Jl8KMWo6f742897fl+dt+Cy9ReyQHO4GUlf5WZtpmg
-	OZZh5I67GIkfY350kS+AMFGOSHGCnTMKyC6puEsZrc+mzZa2eMPbnp7gtGtqX9Ut
-	l5RVOeqWMX6VCJgRRAH5h1a0QPNAqFgbkuAXQGQquJq/7gWZ45D++V0B5XO4yL/d
-	UQk/DWLpnzAXEzhbgn1wVOc/TEzLR+WDZ+1JIXQuXsCjIQx/9jbGixLGSHXdAoiy
-	HG3tcUWmWZAOfCgHf6I1d31TwU+YuHCeKFjkgQ/p9G+qXpfSc82A==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4643esa72t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 10:00:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53L7YPZV005814;
-	Mon, 21 Apr 2025 10:00:40 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazlp17010003.outbound.protection.outlook.com [40.93.20.3])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 464298371u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 10:00:40 +0000
+	s=arc-20240116; t=1745230134; c=relaxed/simple;
+	bh=WsDsS+yGIyCZ5EHPbYYR0lQZYfrhAV9A/AXAwkt+hQE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t2p/CmbVB5PQBT2JezboRm701KTQKPRCnYxFOVVk4vAUwLj3ILEzWNVxweGaXgpcL6QDlnCbRthEJZZkQup3f1Lcl/ZoAZE8Ksd+iIJNt8ptqspKAkXvKzntmCXowHg04IuhlQwFx7k6ZrryuSGU0w8ih9mMXEmCSfcyNP9E04Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WTaeKwJZ; arc=fail smtp.client-ip=40.107.212.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fmp6qlTOKMRgTJQ7NJxXwUg2GTJtjBEkaybnPfhsDAR8m9NeZfjXPUhY85w/C60OLYvh+/Jy7awfSxtQReMY+KBpqZAXbwHuqIREbiiW7bxjzcjI6RCeC3i9hXI9jq/06OBtjkHV6QmCYcw8NTR161JtANKlBu5lya0+k94dbsFTv74NvZ1B+MsD1PGl6x2h09Uu4h1ad6r+Mybe5vrNOpwM8xXMzYkwCAuu2eH+0JxJpltT7U7XesyRMAV1XjgX2Rp7JfXrYP8AT3EAAlmwZGJHqzyP/01bgQ6k3fJjanovKQ94kJQrpiQF66H7EYetsCaZzmXLq0ndhdvv2ObxNQ==
+ b=K9QA3az6d9IzrVd/LWCinFdWoviifZoW32bZXM7apOc0Nch7Edo+wyDn/4Hr19OJg0wvHZYvC3YNAemX1m+X2aUETql6/Ma0K0G6ASjDxThNIjJx52mcGer+adMGm58xPwdNgg4bGYWzlVw00RGqbf94jmIvjZj8pWbCJ7zCg8/C+ulIvBNKFgB1ECKVD3ISB8RHTCA2F8e1b30DwW49MdY2yZpYqKvZOO8QUaDv83l+XaKpfFlBI+RnTP0locsV9YOybML4yIgIlJkYmCxerkudyeSxCZ0CBBybw3lW3sbLnb2kGO1TWcUxmsYY6GzdSdojBPHAVx1ZkvQZ8jRk6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z9hDtWGy63JZwJdZL4kLmZPv2uw+diVhFTrgHO1afew=;
- b=VayYGb+fyugVc/pjS8U/sjrpQfn3Qa0aMw0DUxS7ZVro7lK04zmmGYDVFIf6ResT86HyChCQPAveE1O01eJgUkDVENXGxGQUb/CRcX0qVZSTWxmDk8ca0v/QLcipzSD8MewTqM4yxPfApTN2S5ujfSBTX/Z68u/lnDW94OLXA2iE8TUHl834VACWfmuTHqM5pzGkOhyL422XxYeJcEW/iN9hSSqMFiKzdePwLj9OB6+WjLPpQle8Ro/McL9UMnSk5CqhvbhWlbaAZWtobqXbd6MaqIJ3nCthpXGKkH5bF8IxUU4A/6NSnlZPjD6GbrWdh+Fjq5vpT19oYINWn5bwqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=adSO2vPrnUJVZ+Hsc2Kg395t6RtV3qcTZkSwQ0s1CLQ=;
+ b=YmPt0FhHAr0eMM60zfStsTKPHzVI1MW+ZFaVxbWfkInWdYPJ/6q7cLPHd1b/1zeTOROPe7QMtrrlVQBdujtWVcAAAToiyR9iaL96aC3r7CZtIztMBIOkjCwR5AsNhseH3e7MHrKWlHGTv7MSLBEEQ7e09Q4rBtLG/TQIYJzSiVomCG+l+cEu6j+fcgeGb3rjWw4Yq+KBlMoP7beCJ2fs1xRtrp4j3BKCgKtyhV48LA4omAFzfZIrkaofFJ7622ggGjeeG82ZR/1HF/JHAXMKhljqS/cS3PRFRT3GBd5t2eebZeP/jyez//L8igErOVWBwOKH2erIKdRM3NejvaLoSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z9hDtWGy63JZwJdZL4kLmZPv2uw+diVhFTrgHO1afew=;
- b=hyX+DczqnB73GToiqokBADj5tMjLno2zNaVNfBQs06nAK9UL/qXMQMfo0AwMcrYYYP2N+Cl72KnxNNZEwnr8wGlTC8eTrz8ooywurVD3dMwPY+c4aq7J1vfKUpVOj8dYGz1YTu/0H5mFvgjI7kNyPVOxEd1Z1+GXQkHsA1oIjiU=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by SA1PR10MB6520.namprd10.prod.outlook.com (2603:10b6:806:2b2::17) with
+ bh=adSO2vPrnUJVZ+Hsc2Kg395t6RtV3qcTZkSwQ0s1CLQ=;
+ b=WTaeKwJZSnEwBFeAUyrngT+M/X8KroNgC04aWVEwPZWm8ylfScec8vShO3fUdzIaVfGm11lo18fVd35Cj6S/06PhILM5By9XE847Ttu5X4d977Ccf7rX7q0Nb9LrNqPdyvnf/o3QwPNOnj3pTPsL0TO33rVLJHna7upfM6fvVNND14mXDszbjRRd7Dh2sTmatR06J4iZI5SAtL3JdAd+PEvq2YABZj7OVNEPQFkVTKthoH0HAVlHjbsN+n6tcPXpNi+euSpqI21Vl+YzXyvHfeunHno+L6v/epVxA3qRocrzwF+Esudm65Pac2Dba23vtHNY6rODw3zIfARFEezutA==
+Received: from MW4PR03CA0058.namprd03.prod.outlook.com (2603:10b6:303:8e::33)
+ by IA0PR12MB7751.namprd12.prod.outlook.com (2603:10b6:208:430::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Mon, 21 Apr
- 2025 10:00:38 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.8655.033; Mon, 21 Apr 2025
- 10:00:37 +0000
-Date: Mon, 21 Apr 2025 19:00:31 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH] mm/page_alloc.c: Avoid infinite retries caused by cpuset
- race
-Message-ID: <aAYXP4f417_bx6Is@harry>
-References: <20250416082405.20988-1-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416082405.20988-1-zhangtianyang@loongson.cn>
-X-ClientProxiedBy: SE2P216CA0136.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2c8::8) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.34; Mon, 21 Apr
+ 2025 10:08:49 +0000
+Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
+ (2603:10b6:303:8e:cafe::49) by MW4PR03CA0058.outlook.office365.com
+ (2603:10b6:303:8e::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Mon,
+ 21 Apr 2025 10:08:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 10:08:49 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Apr
+ 2025 03:08:37 -0700
+Received: from robelin-Precision-3660.nvidia.com (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 21 Apr 2025 03:08:35 -0700
+From: Robert Lin <robelin@nvidia.com>
+To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
+	<jonathanh@nvidia.com>, <tglx@linutronix.de>, <pohsuns@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<sumitg@nvidia.com>, robelin <robelin@nvidia.com>
+Subject: [PATCH v5 0/3] clocksource: fix Tegra234 SoC Watchdog Timer.
+Date: Mon, 21 Apr 2025 18:08:18 +0800
+Message-ID: <20250421100821.2907217-1-robelin@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|SA1PR10MB6520:EE_
-X-MS-Office365-Filtering-Correlation-Id: 350014ca-ff22-48b3-265b-08dd80bb5dba
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|IA0PR12MB7751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 246d5194-a224-44cd-1c27-08dd80bc82b1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uuicCRMSNIryuOs6IyWnEvF+sKDFBquLTTqY2opBHafKgc+avfZI699r/QCX?=
- =?us-ascii?Q?FfgQixpzz9zinH3sj7VAHsovL7IwPAg1LVzLK4OI4whOlzOl8RwmsqM2YP2X?=
- =?us-ascii?Q?nezPTj1ki6qwzx+QbwWF8dWFb3WhYR/bUbw6GEkGRzqUdRC9JD2Nk6+GG7TT?=
- =?us-ascii?Q?NRCFg9SWaNLoFeMaC2b/lxtW1MT/Sg1zlrLSczH4MNIoX/d2NPunAEqa0V03?=
- =?us-ascii?Q?clvoWoPzzMZHfPOmdP2SHsxvq8SQcHe0YFNPTbK9lzrlsPfa9vG/9aDmQeXs?=
- =?us-ascii?Q?kSxR13tO87IB/XIVVlgLC5RVVtq7XZ3Q5HpJd7oW79CXVJozgPp8CCttPYxD?=
- =?us-ascii?Q?JY/G3aECnxU01BwE8izgidGaQFrHvUp12iWlSyA458X0+DHkO4/+rxjcRa1Q?=
- =?us-ascii?Q?ln+rCpKGlA8h2+tCPIOYPKEy9gIjEyOI67AmqcjFfB6Gw/JCrZBbGOJQ2hMW?=
- =?us-ascii?Q?AXwCwAxMkoUc7xdlGalITNtG6fTfzt9LT3Xnx3f0l0nleOAYQxU2MxUhMR+d?=
- =?us-ascii?Q?+Pby4D3uegshQ7UYp1H97hF3VqqIC1SjoW9t8ScYP55hXL0LdV14lw3cjnOB?=
- =?us-ascii?Q?xQ9+HojDR+HnH0CQgfjhD4RROaDxPe8GEVKCPAaX1xb9DbxykiIGi0QSjQvx?=
- =?us-ascii?Q?jA7KO27swv7p2Ir53q2WmJp3wc5ROwCz7sRRojdaIxiNT+ITz9pPLzLBozNS?=
- =?us-ascii?Q?sOcE9hn/yrR+ughmZN/voS5Az76ByKSejn7hM3DhAqDUImVzP4iSI11uX3KU?=
- =?us-ascii?Q?ArqAwzN13eiZk4slc8yK7Og6gHHHB0KnRt8Doa6aaqSHuMdG6RLo1NUMH3Oj?=
- =?us-ascii?Q?+xXkpNLE254X3fJwpEDmMGQQXeE23B1xPscbufn+QADCwpFk90MbmbF2Ut94?=
- =?us-ascii?Q?tcqMviaP7U8mHjGpwc9OUoI+RoLJUMLf0ic62tgevB5jkUO4QGhsgYzJVQcw?=
- =?us-ascii?Q?YgjPJw6BOp8nwSCKjYZd2oTRgXxR4/80eCe61l29AFDUyLG9pXWO7k67oDV3?=
- =?us-ascii?Q?c1P3sZ13jONwTmSzVXriyKPuh4N9lAx4H54HwYT4tkenK0bHxXJ24Vpf/xHj?=
- =?us-ascii?Q?MhoQ6uq9IVa3wsNJk2zjtlXslt8B38vKaphedwfBAwKA20dNRjrEtp6wSudS?=
- =?us-ascii?Q?VUkHQMQdJq5lAjTaam3MzvP3vA5znjebwkN+zsy5W73WMZdnluOT4zCWzEs9?=
- =?us-ascii?Q?h1yVzvvn+t6p4z1r6sdHgQmjh4ulGVtO8TYIN30z67kSfsq11GglI+bc6OSe?=
- =?us-ascii?Q?07XVNaZAYPz+tMWgM3vYZq0i1ZjXoC/sazf6rtiaVY5nYbG3x7Me+zJkXgMg?=
- =?us-ascii?Q?29Im/Q1mIaNRwJRbutPBQsA7Z1H561GmdGG5T1u4jbOOOAilxtOIhPJsG6y+?=
- =?us-ascii?Q?s5MbNMPfnZmGtNThf2of4qTfiVFHo3YHV0qYQqbNfH3zwDAixXj5YkNOuoIE?=
- =?us-ascii?Q?6/kyTcTUHZY=3D?=
+	=?us-ascii?Q?hvdShvDGDOtYZuew9J6zH0H6Z+7sM1bJ95Wo+KY978qEH1ZKFCYZ2uXEdQda?=
+ =?us-ascii?Q?SMlnZ8M6hFuHIZnYEfBPQN20+AG28cXR2Kw4EWRtK2F6VmycRddf58IotsNo?=
+ =?us-ascii?Q?kWcqsKVNkOOd/oxw2lzjnl9mezTQmm1a5zi/cZ9xPTKPXNazoCtwHWUm3xMg?=
+ =?us-ascii?Q?Us0iaix2i4LEbQo9pFSjB3kbl9Go+ViVpJOHH2C9Vi/pwqfLzjIfgSIYSFFp?=
+ =?us-ascii?Q?brS3dKKhZCPDnm4YyUewksqybSY8Lq3UBNETd6BXv5Ihpbi87xPyFVHRVp4W?=
+ =?us-ascii?Q?Cq26SvcfEvxkFGdUouitPeysOT8H7wkN+PNIyS3nozOivtez9OB6Li7vMcAw?=
+ =?us-ascii?Q?KNpgQUK296P5XD3GM9flNsd4MKzKGOz2klPcyBoiFRiuiHaUYyjjQrLu7q5T?=
+ =?us-ascii?Q?zFCLVDmj0Z6CX1yXbe6503dNtKlC1FJZ7tdIFbDpY1ypyCoZkaIALewF+vmm?=
+ =?us-ascii?Q?ydDm+GnsFb0hh+/IlKC5+UY0VBddF0WnFzFA0QcLIQQbNecYFIlcG9itvmqY?=
+ =?us-ascii?Q?xW0n8f5VdVUM3OUNB2bdv9Qh4ZslDIFoEambuUWlLnsw1Y4cu/KaDTJaXfQP?=
+ =?us-ascii?Q?6f0vyK8mt/mLUnrLDP/DaeCyIhA+aC+mqT2y1+BousbICZXSq9ypoXKGddth?=
+ =?us-ascii?Q?5XeTO40OSdikx2phQAnBMdAlMYt4oiJtNizmMKEYzUhrFgO4/gmfptEmVZQT?=
+ =?us-ascii?Q?sNE7ZofhcmcigrqH6m8sc0nLoVd5gh14HHpiUo6/iyyRnqCads4fVNxE7R1a?=
+ =?us-ascii?Q?N1TcyC+2+C7PTONtdaFevtoZSR8pP85NJBU45pX8FdRnzKaWWtT5SQfqWEmv?=
+ =?us-ascii?Q?XpnDo0iREZckvL+KeXKq8lkKQ//pVYLggLHd5kiTC+vHQM7J4/hHWZeKRJaq?=
+ =?us-ascii?Q?yWq5tOuzFbnDhBmdzbTV3+n09WBMRVPk7jbvq5sUyddvzLcL/iJAT5fOz2YW?=
+ =?us-ascii?Q?b9HEl2JlnNNtIhhJ9YTRY5KOYXJFm8aHliMN2iZ5XGp4CXxl6jekeHqh+D2a?=
+ =?us-ascii?Q?xI7ZdgOjj3OLY2rUyZ0FaKqeKmkpDt2Bqb8ZEXHiYTA56Qmr6+gueBP0mRd7?=
+ =?us-ascii?Q?BrrZ/wjINw9W+c+kAPpUrAV0OfL1TD5RcfEom2/mLQlAzC4sS0tsVlGryi2N?=
+ =?us-ascii?Q?Mn5Jbx/c7yoVKaNBUhMroJqUPTTj4Y5MmV+kkgk6rBZlIdsb7WFPaa2kRQaU?=
+ =?us-ascii?Q?l/t7Y++F957+syci30VoY6fjTlqcV4l46IGlDNqHwR45tKdVL1UYGjBMw77F?=
+ =?us-ascii?Q?Mp8Uw95khvfPJDIKugSPbzb3e9DNgocs5bdBDeHl3ZGtJQUc6FEjPlNJoLrT?=
+ =?us-ascii?Q?XPeRY6zkd4l0X+1GNdFXORBCj5ZgcJ7kRbcJZNB+2P8NOEQX9CP04XMJNxGf?=
+ =?us-ascii?Q?ayidAsAb3f6olOaYTNzEYTGAR/zKIV/VQbRB3FXjk7nKyXkt8VVNge2YZPkj?=
+ =?us-ascii?Q?kh0kL57n9gDc96+Env+ssqs58/JntWJp8ng2TLPepsOlOfFIpbhdOoysKDgS?=
+ =?us-ascii?Q?QEGQv8nxuU4aBYrgio7TBEILrjSeHdIBaITr?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9YeMmWJvGtoXVdtr++M9qBInin6fw4t/xYWvVKg4nn2RRaBUysYM2b/e7yTC?=
- =?us-ascii?Q?xlnz3zs7HVzc0yqJ5CbJmyrmCsz0QB1JstjuANl02O8E78q21+7qljxmEAnm?=
- =?us-ascii?Q?drZcrlSJWQ+XlSL7yjCxZUh9dDCW7FIaybWukCt3UmMT/wtrbc5GHvvgCkxD?=
- =?us-ascii?Q?H3KccXUXju9RFy9Bd3iCvKle9Bf2moZEOCC12NWAYJKnD7TQYvpY0wttE2uc?=
- =?us-ascii?Q?hf/Npl7wMeTkFGlOJfJNDlimwdBsB77unzXVNf97zoKjEXBoBYbMe3WYtSXG?=
- =?us-ascii?Q?MysvgTvDHeutJJq+puc1TTFdSNMVy8o5P8bVPC8Lwpcqehy4FmrzvufPu/R4?=
- =?us-ascii?Q?OJyDBhaj7A6yWTo6r14q9pnNKreGP8xyLGEN6pKle9/DaQi89K2brbx64/5R?=
- =?us-ascii?Q?5bXNtOHl0WqyNCRgzjPQ3gPA8AXTQhEx/0gJm72m4iERvA36dDc59UQSZC9/?=
- =?us-ascii?Q?NtZNGCysolEbfNU8Np6oqycsR4+FA0wfHmA8KKDeypgSrWJ6dJiAinEWXa13?=
- =?us-ascii?Q?NxqoHm+Z+eAHUG00QMX1HY63RpdzvNBwiOcyyYiobHP9c2VHoprs3uoHI7cs?=
- =?us-ascii?Q?m3hENKhHKmBi3xSWfZ5Ied5OIo4++ohy5OGe4LNQH84l9fZQdxXhC5dEme7/?=
- =?us-ascii?Q?nyjJn2D/OwtfRE7WdfGn458gd1VQwetvKe2QJjuH+UwzkRx8YLk7u4SXyy3h?=
- =?us-ascii?Q?9sNX8Rexv/WS3Q+Vg12v/xwt+E6laztfR8qHbyYHW4NHpmp8d9ujiaVLYe49?=
- =?us-ascii?Q?UTeYuaaHY1ctG+qXOlKGCtJr+Ny/KMIMOM6s68LQZiu/mDafuTrP2hrO77Sj?=
- =?us-ascii?Q?P8dasMhH5JNp6QYSvUDWdHFL/GeUnHp/n9frhyMSsxtv7nEQdyJkvYXHkQOm?=
- =?us-ascii?Q?WFGy0mkn2mBWkpr3H6hBdGm+6dD5uUKM94Uo7u5tuaPk1RkAyMIqxWJpnY8A?=
- =?us-ascii?Q?kbZ67tR/Tt6nC6zwwh6jnwPOuAWSzxTCMxGP4x2vyc0tkahHixVp7MRL2Ysd?=
- =?us-ascii?Q?xzhCnUNtLdfPnFdON4bVkx66sgygMsUeSG+AcY4/DDrlQrMdPI66NbCcf1M7?=
- =?us-ascii?Q?scS1An/6VFsl2qcSKwgFP54tR8L6PF4lwi+uAyiWFoZHxibtiWl35uEY1Rtp?=
- =?us-ascii?Q?b0EaPvBryf150WhhNfeZ5FwyH1UGejqD+v2IpEk0aP/Stf1LJamiioJknqpt?=
- =?us-ascii?Q?TXc8GzwMXPXG5IYo8cvWBLm32IUJvjLFz1syoIIydUxy/Y69i/9ImCvAMT4J?=
- =?us-ascii?Q?dm8u4UljmguMioWdZBLnVjDkQEcFib3eWNXN6N26WNw9/HxU2JXddioedCRF?=
- =?us-ascii?Q?4UCzpXaJ/12TgYTKUuMbD7ihLMsrY8LYLRARmfS3RZHQwpgXJatOBhFYS1RJ?=
- =?us-ascii?Q?wuTPxjIVHJmrGEvA6GRewD+db8OAW7sm2oeB4v+uWG4mVS291wR0PCfTpoHb?=
- =?us-ascii?Q?K97Hg5xEtH1Kl9sH7Px+2dFiPBPg+JgM4sc3Mm25z5OcLGnMFRu/kAs7hcjP?=
- =?us-ascii?Q?Mg0scdQrSC2tpp4arht/GXgEDI7bmqlVjI4sypz/8CJqwB/C8ePma/XnKJu6?=
- =?us-ascii?Q?ZxiX3OO1Tb5Padu9aOwWXRCeR2Tg2IsesoZ/q1ej?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Q8xuYT6t3S9tD+Rz9zJW4B+xdBsAT6LqCAh9VS4Hy21yp2PmflUM5OdZIurOxKM3H3gOYu16Pu9xSWMOfxuST2eZiJ/8d0myxiXCF+TCTk+McLh/Kkau/FCKb2J4nuvZ7/lEYi/OIvLOLEXCKgo/UZso/WkcokcxjkqHO4r2YmU6FIgtZ0QrZ9n2efpBgSdvRrdZ7bkA2TX2HNzTlL/zsiqaGAkeMUkO3X6yan3YVfTiejxy6IETPAHWekCGYN077OlcqH1qlJGkfNV7pWZ8QMNA8FWvXEAY6dql93fXe9Fq5GZ00+Vjgu0zZ+ygMdLxPoaoj8TT+Y3hCbMFmlXjZSfvpxyQoFNzBwXP0BEplnNhacd0qoBpo/WdHXd32rDAh5zRW01oQTmuwh00klKFWosUsmxUNfsOYtzK5VNJC1O0H7gGiRzEJJA98mmnRj70CvgJLWLjv/wffFEOqZvlSPA9DtutFYL9tFIWqB//c+wCzGh5JkY7VuLb0hQLxA/v/KITFvKNWKor3ar4n6pGBhQlQ0ExTjpIMmlEfuTchc7gXYRoC+6gJ6bPZVK6Sc21ZzA4ZNCg1dpYBn/5iKOA5cs9h48H8Jat2+4BjE0Seas=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 350014ca-ff22-48b3-265b-08dd80bb5dba
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 10:00:37.8305
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 10:08:49.0309
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h4GY0WbX1a0NDrJJx30VCdx6629Mw+wggXGsrYgAmjcPeOwuUnmodK+i3X6Cepz/NwIyaFJQWS1AzhFgdC6LRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6520
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-21_04,2025-04-21_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 spamscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2504210077
-X-Proofpoint-GUID: 7EMV0-oFhGiQ5rjkuSJeJyqLUuXXbaZC
-X-Proofpoint-ORIG-GUID: 7EMV0-oFhGiQ5rjkuSJeJyqLUuXXbaZC
+X-MS-Exchange-CrossTenant-Network-Message-Id: 246d5194-a224-44cd-1c27-08dd80bc82b1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7751
 
-On Wed, Apr 16, 2025 at 04:24:05PM +0800, Tianyang Zhang wrote:
-> __alloc_pages_slowpath has no change detection for ac->nodemask
-> in the part of retry path, while cpuset can modify it in parallel.
-> For some processes that set mempolicy as MPOL_BIND, this results
-> ac->nodemask changes, and then the should_reclaim_retry will
-> judge based on the latest nodemask and jump to retry, while the
-> get_page_from_freelist only traverses the zonelist from
-> ac->preferred_zoneref, which selected by a expired nodemask
-> and may cause infinite retries in some cases
-> 
-> cpu 64:
-> __alloc_pages_slowpath {
->         /* ..... */
-> retry:
->         /* ac->nodemask = 0x1, ac->preferred->zone->nid = 1 */
->         if (alloc_flags & ALLOC_KSWAPD)
->                 wake_all_kswapds(order, gfp_mask, ac);
->         /* cpu 1:
->         cpuset_write_resmask
->             update_nodemask
->                 update_nodemasks_hier
->                     update_tasks_nodemask
->                         mpol_rebind_task
->                          mpol_rebind_policy
->                           mpol_rebind_nodemask
-> 		// mempolicy->nodes has been modified,
-> 		// which ac->nodemask point to
-> 
->         */
->         /* ac->nodemask = 0x3, ac->preferred->zone->nid = 1 */
->         if (should_reclaim_retry(gfp_mask, order, ac, alloc_flags,
->                                  did_some_progress > 0, &no_progress_loops))
->                 goto retry;
-> }
-> 
-> Simultaneously starting multiple cpuset01 from LTP can quickly
-> reproduce this issue on a multi node server when the maximum
-> memory pressure is reached and the swap is enabled
-> 
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> ---
+From: robelin <robelin@nvidia.com>
 
-What commit does it fix and should it be backported to -stable?
+This set of patches includes a fix for watchdog for it may not bark
+due to self-pinging and adds WDIOC_GETTIMELEFT support.
 
-There's a new 'MEMORY MANAGEMENT - PAGE ALLOCATOR' entry (only in
-Andrew's mm.git repository now).
+--
+V5:
+- Print warning message if get unexpected value from the register
 
-Let's Cc the page allocator folks here!
+V4:
+- Improve the precision of timeleft value
+- Fix the unused variable warning
+
+V3:
+- Improve comment description
+- Refactor to fit codeline within 80 columns
+- Remove unused if(0) blocks
+
+
+V2:
+- Fix a compilation error, a warning and updates copyright
+--
+
+Pohsun Su (2):
+  clocksource/drivers/timer-tegra186: add WDIOC_GETTIMELEFT support
+  clocksource/drivers/timer-tegra186: fix watchdog self-pinging
+
+robelin (1):
+  clocksource/drivers/timer-tegra186: Remove unused bits
+
+ drivers/clocksource/timer-tegra186.c | 94 +++++++++++++++++-----------
+ 1 file changed, 57 insertions(+), 37 deletions(-)
 
 -- 
-Cheers,
-Harry / Hyeonggon
+2.34.1
 
->  mm/page_alloc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index fd6b865cb1ab..1e82f5214a42 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4530,6 +4530,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  	}
->  
->  retry:
-> +	/*
-> +	 * Deal with possible cpuset update races or zonelist updates to avoid
-> +	 * infinite retries.
-> +	 */
-> +	if (check_retry_cpuset(cpuset_mems_cookie, ac) ||
-> +	    check_retry_zonelist(zonelist_iter_cookie))
-> +		goto restart;
-> +
->  	/* Ensure kswapd doesn't accidentally go to sleep as long as we loop */
->  	if (alloc_flags & ALLOC_KSWAPD)
->  		wake_all_kswapds(order, gfp_mask, ac);
-> -- 
-> 2.20.1
-> 
-> 
 
