@@ -1,240 +1,87 @@
-Return-Path: <linux-kernel+bounces-612619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE6FA95199
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54644A9508B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17981711BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318D23B209F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CF5265622;
-	Mon, 21 Apr 2025 13:24:29 +0000 (UTC)
-Received: from mail-m49218.qiye.163.com (mail-m49218.qiye.163.com [45.254.49.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC990263F5D;
+	Mon, 21 Apr 2025 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="yY26akcF"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8E21362
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCD913C918
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 12:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745241869; cv=none; b=hHgSFESZGU9OBv2ZctmCEdc64yPW1+uCQPLda+T8caaYX0Vf4wCZTcD1xeyNMR1N/137dk4ZYQu2Dn232lPTp1E4TaeuW8tp6becJ2fNHY3SIr2jabwPigCco0gkPInY+lowan7s9R+ihAe7/EsNAC3tjrufBOD7JbMxFev8Oic=
+	t=1745237146; cv=none; b=ohmFQqa6RjmzllybCpyhUZIgnx+G5CXcSkCtQauWL2thDhDbx3QTc1ZeCZ2is3sAuuX/dUFIa8eUGpDc/b5ECCeVwUqa/4Ow9eNA+NRsXPass71tlWgPzYkzIcL8NNcK9C2k/ggUJElTomVKhYH4lBLYKSmJ2uYjt/yo/73Oonk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745241869; c=relaxed/simple;
-	bh=1bK5985yRDQUR1N8scw2SbZH+Pk7WIEn0Gr6a9x/kj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AlmLiIweMtv5Z3H/4uXnVLGtEc5EJhtSAoaQCHX706FuKtE6Yj2Pl3n3HJiCwUouv0mdgftJ5PIKfDTzcbqKTNCbKUKHYKot8D70I/5AutOhChmchApKLECY5JjTP324+Z6qEj0zet9aQDV0lmlwJBFtrTT7eK5StEGI9/jGIKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=45.254.49.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from [127.0.0.1] (unknown [122.224.241.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1295c5899;
-	Mon, 21 Apr 2025 17:54:29 +0800 (GMT+08:00)
-Message-ID: <e473bba6-a9ad-45fa-a9d0-3cabbc162966@hj-micro.com>
-Date: Mon, 21 Apr 2025 17:54:22 +0800
+	s=arc-20240116; t=1745237146; c=relaxed/simple;
+	bh=2PHBdSKyaQPqlbSM8yTXUcYGGEk2cPFa1bPGHgLQCq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXXLs+6eE8bziBnw96tc8Ne2sMwSTRDgD5eNS1bx/YwANycr8fXqqi4v6lv+Qsx6ab5dOLjD+CGdpeO/CQWyY3X11cTudQeqgbY4uKNcy53VCTwOXzReZTI2JgoYvIys2mG3fyS+ZPJo+X0i6T0AcwH5wzUF6HFrkjr8/PZzK/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=yY26akcF; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Mon, 21 Apr 2025 08:05:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1745237132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2PHBdSKyaQPqlbSM8yTXUcYGGEk2cPFa1bPGHgLQCq4=;
+	b=yY26akcF3YSEbswfNsM1neBZz9PdHg6FanKmv3WRpHj5kqVxQU/52gQm+0XFOpgHPlWl3j
+	55keSs8zD4EcgGpUIwE7T8pI3cumhjd6NDlEKluh3T6w72pxICvZHPuKMyF1kbORFC+lC6
+	aXGa8V1pJVPF2NXWhXbJAs5WMeGlKpbbR3kYvgO6p5u1ls9PFWTLxTfPNE/wo/gMVOkBuI
+	EgHrQNaY+ZZ+S8N0adh6tEikecCYBQo7webOJ9l+jqft2lxi1YzB27OUKb1ta/fpx4PiQX
+	QS6W+ZimsdM3EBpXZ/g5a53FXN1kB006Jb5Doz8tKY33vGppRjcEW6wjb8uHlw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com,
+	joe@perches.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	Kees Cook <kees@kernel.org>, tamird@gmail.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>
+Subject: Re: [PATCH v4 0/3] Use proper printk format in appletbdrm
+Message-ID: <aAY0hRvNCi0y6rlt@blossom>
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597D506487C3133B0358CE5B8BC2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] perf:arm-ni: support PMUs to share IRQs for different
- clock domains
-To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org
-Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, peter.du@hj-micro.com, andy.xu@hj-micro.com
-References: <20250410114214.1599777-1-allen.wang@hj-micro.com>
- <20250410114214.1599777-3-allen.wang@hj-micro.com>
- <4e25536e-459b-4376-9422-4a7d0156234d@arm.com>
-Content-Language: en-US
-From: Shouping Wang <allen.wang@hj-micro.com>
-In-Reply-To: <4e25536e-459b-4376-9422-4a7d0156234d@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDS0pCVk1OSUNNGU5IGkNMSFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUlPSlVIT1lXWRYaDxIVHRRZQVlPS0hVSktJT09PSFVKS0
-	tVSkJLS1kG
-X-HM-Tid: 0a9657c548a709d9kunm1295c5899
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PjI6Fzo4PDJNHgIINAghMD1C
-	PVYwCktVSlVKTE9OSUlCSUxLS09CVTMWGhIXVRoXFx4VVQwaFRw7ExFWFhIYCRRVGBQWRVlXWRIL
-	WUFZSklJVUlJT1VJT0pVSE9ZV1kIAVlBQ0lKTjcG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN3PR01MB9597D506487C3133B0358CE5B8BC2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+X-Migadu-Flow: FLOW_OUT
 
-For the same NI700 device, different CDs share a PMU interrupt. The
-cd->cpu is set to the first CPU in the NUMA node associated with the
-device, meaning all CDs share the same cd->cpu value. During event_init,
-event->cpu is assigned to cd->cpu, resulting in all CD PMUs sharing the
-interrupt being bound to the same CPU context. if the CPU goes offline,
-the PMU context on that CPU is migrated to a target CPU, and the
-interrupt is rebound to the target CPU. My understanding is that the CPU
-affinity and hotplug operations can remain synchronized. Could you
-confirm if there are any misunderstandings in this logic?
+> Can I have a feedback from some DRM maintainer on this? AFAIK merge window is over for some time now. It's been more than a week and last time when I submitted, it just stayed in the mailing list without any feedback.
 
-On 4/17/2025 10:41 PM, Robin Murphy wrote:
-> On 10/04/2025 12:42 pm, Shouping Wang wrote:
->> The ARM NI700 contains multiple clock domains, each with a PMU.
->> In some hardware implementations, these PMUs under the same device
->> share a common interrupt line. The current codes implementation
->> only supports requesting a separate IRQ for each clock domain's PMU.
->>
->> Here, a single interrupt handler is registered for shared interrupt.
->> Within this handler, the interrupt status of all PMUs sharing the
->> interrupt is checked.
-> 
-> Unfortunately this isn't sufficient for sharing an IRQ between multiple
-> PMUs - the CPU affinity and hotplug context migration must be kept in
-> sync as well.
-> 
-> I guess I really should get back to my old plan to factor out a common
-> helper library for all this stuff - that was the main reason I left
-> combined IRQ support out of the initial version here rather than do
-> another copy-paste of the arm_dmc620 design again...
-> 
-> Thanks,
-> Robin.
-> 
->> Signed-off-by: Shouping Wang <allen.wang@hj-micro.com>
->> ---
->>   drivers/perf/arm-ni.c | 77 +++++++++++++++++++++++++++++--------------
->>   1 file changed, 53 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
->> index 3f3d2e0f91fa..611085e89436 100644
->> --- a/drivers/perf/arm-ni.c
->> +++ b/drivers/perf/arm-ni.c
->> @@ -104,6 +104,7 @@ struct arm_ni_cd {
->>       u16 id;
->>       int num_units;
->>       int irq;
->> +    s8 irq_friend;
->>       int cpu;
->>       struct hlist_node cpuhp_node;
->>       struct pmu pmu;
->> @@ -446,26 +447,31 @@ static irqreturn_t arm_ni_handle_irq(int irq,
->> void *dev_id)
->>   {
->>       struct arm_ni_cd *cd = dev_id;
->>       irqreturn_t ret = IRQ_NONE;
->> -    u32 reg = readl_relaxed(cd->pmu_base + NI_PMOVSCLR);
->> +    u32 reg;
->>   -    if (reg & (1U << NI_CCNT_IDX)) {
->> -        ret = IRQ_HANDLED;
->> -        if (!(WARN_ON(!cd->ccnt))) {
->> -            arm_ni_event_read(cd->ccnt);
->> -            arm_ni_init_ccnt(cd);
->> +    for (;;) {
->> +        reg = readl_relaxed(cd->pmu_base + NI_PMOVSCLR);
->> +        if (reg & (1U << NI_CCNT_IDX)) {
->> +            ret = IRQ_HANDLED;
->> +            if (!(WARN_ON(!cd->ccnt))) {
->> +                arm_ni_event_read(cd->ccnt);
->> +                arm_ni_init_ccnt(cd);
->> +            }
->>           }
->> -    }
->> -    for (int i = 0; i < NI_NUM_COUNTERS; i++) {
->> -        if (!(reg & (1U << i)))
->> -            continue;
->> -        ret = IRQ_HANDLED;
->> -        if (!(WARN_ON(!cd->evcnt[i]))) {
->> -            arm_ni_event_read(cd->evcnt[i]);
->> -            arm_ni_init_evcnt(cd, i);
->> +        for (int i = 0; i < NI_NUM_COUNTERS; i++) {
->> +            if (!(reg & (1U << i)))
->> +                continue;
->> +            ret = IRQ_HANDLED;
->> +            if (!(WARN_ON(!cd->evcnt[i]))) {
->> +                arm_ni_event_read(cd->evcnt[i]);
->> +                arm_ni_init_evcnt(cd, i);
->> +            }
->>           }
->> +        writel_relaxed(reg, cd->pmu_base + NI_PMOVSCLR);
->> +        if (!cd->irq_friend)
->> +            return ret;
->> +        cd += cd->irq_friend;
->>       }
->> -    writel_relaxed(reg, cd->pmu_base + NI_PMOVSCLR);
->> -    return ret;
->>   }
->>     static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node
->> *node, u64 res_start)
->> @@ -538,12 +544,6 @@ static int arm_ni_init_cd(struct arm_ni *ni,
->> struct arm_ni_node *node, u64 res_s
->>       if (cd->irq < 0)
->>           return cd->irq;
->>   -    err = devm_request_irq(ni->dev, cd->irq, arm_ni_handle_irq,
->> -                   IRQF_NOBALANCING | IRQF_NO_THREAD,
->> -                   dev_name(ni->dev), cd);
->> -    if (err)
->> -        return err;
->> -
->>       cd->cpu = cpumask_local_spread(0, dev_to_node(ni->dev));
->>       cd->pmu = (struct pmu) {
->>           .module = THIS_MODULE,
->> @@ -603,6 +603,30 @@ static void arm_ni_probe_domain(void __iomem
->> *base, struct arm_ni_node *node)
->>       node->num_components = readl_relaxed(base + NI_CHILD_NODE_INFO);
->>   }
->>   +static int arm_ni_irq_init(struct arm_ni *ni)
->> +{
->> +    int irq;
->> +    int err = 0;
->> +
->> +    for (int i = 0; i < ni->num_cds; i++) {
->> +        irq = ni->cds[i].irq;
->> +        for (int j = i; j--; ) {
->> +            if (ni->cds[j].irq == irq) {
->> +                ni->cds[j].irq_friend = i-j;
->> +                goto next;
->> +            }
->> +        }
->> +        err =  devm_request_irq(ni->dev, irq, arm_ni_handle_irq,
->> +                    IRQF_NOBALANCING | IRQF_NO_THREAD,
->> +                     dev_name(ni->dev), &ni->cds[i]);
->> +        if (err)
->> +            return err;
->> +next:
->> +        ;
->> +    }
->> +    return 0;
->> +}
->> +
->>   static int arm_ni_probe(struct platform_device *pdev)
->>   {
->>       struct arm_ni_node cfg, vd, pd, cd;
->> @@ -611,6 +635,7 @@ static int arm_ni_probe(struct platform_device *pdev)
->>       void __iomem *base;
->>       static atomic_t id;
->>       int num_cds;
->> +    int ret;
->>       u32 reg, part;
->>         /*
->> @@ -669,8 +694,6 @@ static int arm_ni_probe(struct platform_device *pdev)
->>               reg = readl_relaxed(vd.base + NI_CHILD_PTR(p));
->>               arm_ni_probe_domain(base + reg, &pd);
->>               for (int c = 0; c < pd.num_components; c++) {
->> -                int ret;
->> -
->>                   reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
->>                   arm_ni_probe_domain(base + reg, &cd);
->>                   ret = arm_ni_init_cd(ni, &cd, res->start);
->> @@ -683,6 +706,12 @@ static int arm_ni_probe(struct platform_device
->> *pdev)
->>           }
->>       }
->>   +    ret = arm_ni_irq_init(ni);
->> +    if (ret) {
->> +        arm_ni_remove(pdev);
->> +        return ret;
->> +    }
->> +
->>       return 0;
->>   }
->>   
-> 
-> 
+DRM hides the merge window from committers so that's not super relevant.
 
+I am a DRM committer and can pick this up if necessary but it's not
+clear to me what's going thru with DRM vs elsewhere.
 
