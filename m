@@ -1,51 +1,79 @@
-Return-Path: <linux-kernel+bounces-612342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C853DA94DC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:13:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62248A94DD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 10:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36CB61685BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E3718935D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 08:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63112116F6;
-	Mon, 21 Apr 2025 08:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB27C212FAD;
+	Mon, 21 Apr 2025 08:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN12BBXh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EwXQDZvS"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB041C8620;
-	Mon, 21 Apr 2025 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047752AE7F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 08:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745223216; cv=none; b=XDDw/agVQc/oidJufTb7wmvfm0uEOHJTGBM5FNoyAA4+EWjXMAspT2JFaSWq6N7/HXpZ3UHd9/ofUWpZfRn6lGB1Hjz7c6XmB5T7pWMVJuauUln7c2ChoLMwWqDa68tJbe39FcS9UNjtZ9aiaGe0gOxkTUzDgLQTxGWJuJdqjN0=
+	t=1745223322; cv=none; b=N8mfSBfDNaU2G7hztRXzHcHcJ36m9s8LGQL1PY46p46rgN2BugBRhmybM5KRdBGOGQvH7gnVJzDvRmaWFPoZW5VXl98ZrXOohyRhcRm8K7eepTNN2ju0QtPabsaL/NHJWx5COVH0NTTaeKwpvw+J/M7Yy1sPRokccW0vJLtWOC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745223216; c=relaxed/simple;
-	bh=Khsa+9i9dRFR5gzrKgEgqqS4rrQzmjrJoestrYRTkHI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lfjAz2xEOHnz1tHR/drd4006zPUUyIgXLOWhSMOY87dVxL4YPrqICVvFtJdCFyVoR+rUNtYlUnrqYj2j3RJC7aL3Ah37ISXePRE1yc/9J22scXef9SxLwmkjdlll/CVfMHwCyte2wNcijPk7ouPZXK6bv1gBNWu8CEpXzu7a4wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rN12BBXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8EF5DC4CEEF;
-	Mon, 21 Apr 2025 08:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745223215;
-	bh=Khsa+9i9dRFR5gzrKgEgqqS4rrQzmjrJoestrYRTkHI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rN12BBXhVtUyI6hDpMajSFaskkKig5wIDW5FHobH+piS++gtMRAQtQaKLCq44ZuWs
-	 yiQkvuwU2/+2Ut9714dyLWR4Mb957znhxIFRY6fYVG3LQ+vSBJVxx0YeQWMJSOUK6Q
-	 b6Sk5CgMtcT3wvi1/E1FOX65FZWBhKecL5YsV9DHKqNS1ttBXvMLy3MhDZ37Sfucvc
-	 lyXfw9qCHK/TBfWEzx4UP5iEVP4w9z8K6AOxq9NCboj43fqEZl6+OAmoU1/Jei77PU
-	 vXbcazGNPCXKYJvqLwUZoqRBWHx9lqEy7ciM3qaKQafsB0j9U7JtftHUtTMS9kJLok
-	 Rc7hC8AbC/EeQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821DAC369D6;
-	Mon, 21 Apr 2025 08:13:35 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 21 Apr 2025 03:13:32 -0500
-Subject: [PATCH v2 2/2] cpufreq: tegra124: Allow building as a module
+	s=arc-20240116; t=1745223322; c=relaxed/simple;
+	bh=wh2ZvJ0MpzyvSvb/71rDMCsRepQ7ZRPMAExEDL7P2Y0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bujYASptOgK3ro4TYZ/f2diggCmRjp9vxa7RjakLuzVALTiaovKWbOMdNxj/6CruF2kv7bMP4gLKlqDFAH3lA0UfOlu8AluvfRZj/5pCcgnm3m+1l8OEGnbXDnfbF08BhF/1yePduL/8A0iJkTGVwq9RNSiX9UiJ3Hs12X8KCmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EwXQDZvS; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f4b7211badso5246327a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 01:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745223318; x=1745828118; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8qJ55ToF3jTe+9KsGyg1OHhc22gynF+LRW6Ku4tCvk=;
+        b=EwXQDZvSd2LVyQiMCPmhCOo4WP8btFTpnn8jQ61bsUX9mGQyS2Fm5F+HLnV83uDo1E
+         YyfNdBLExg5ZL/N0MX3a/QCVqNl0Uf9hj6dMnAARpoqGKD/rhnmLZwJGA7+MVlx3JlLP
+         am4WmBrzen4WtvU9sjY2fmWtYu17Ew0dOL1/MdNU+7s363ov0Vj92Nd1LQN3THN+fDqu
+         bxvaareQdH9bi0Pl3GT7ChdMPq4FC+dFG8J5W4Ue1nK7of3osmaqutXai/SMSjWkuoOl
+         InWHK1IwKQ7X9qenVS6LRg+26hAWJaJkmTbLkpc0g+v0knqP2gUyAzT1fk3wXanjlEzH
+         Xggg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745223318; x=1745828118;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j8qJ55ToF3jTe+9KsGyg1OHhc22gynF+LRW6Ku4tCvk=;
+        b=dTKUiyz0+wk7+oLprfWIPxuVx5MNhawrkS4cQL4PRW+m6yswFRyoZgDtRNJ+jnDncF
+         gY/HjX+f757lJxltCpNt+ewz3Paf5pdLIdbfFd6jba/+SOceYeuCW4QJ76MTXFOaGKpg
+         CIwHFOStwqzVZU3CWghrj1xAfChvwoFrAvLppHvyWeIaSochMhbqNUd8EfkKcyveBtXU
+         XdmnCqo/MvSGrTx02UcltxNshHLNBEnw/8kvqhALqB4Td1NKN9ydDlEldy5C7wUB6t/s
+         r/T3+YYlLYkhU8UBRL8h4lMLZaAuP75y5XPTlSGvUXSs6JQ70WmRIltUhfwy6bXOEugG
+         JKGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXx36q6/2hD6ZPkAko+0q1qkprw9MmvRUw6xNmcKh2TqTusMj8X60clo4+VVhFwldVUuDVYJxEnonOJH4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSYhNnxqO12zp76yCwG+lb/psWP5QHp8mtl2HUibTRyFgvXK3w
+	15QH7JGyIuK+9/FHz2jGRLxqzjBFdHxUKaAdn9m3GAunLTFRn88qc0ISs7EHcQQ=
+X-Gm-Gg: ASbGncuFZHrAvKc+GQfh2tB6k9w6PWCWKuI/k3MtL/78j+NaGBXDyiUPk3vbEvE7/EW
+	nlPrvIq8dMKsgIPJrvTmE1YeGqj9Dl8hKFXwVansLXqWIgR2vxRAdgv582KH3wSb30uCZUP+Teg
+	H7CckdeVeSV0gM+yxE35vqGSoc99k6QuxnNy2CTytqLnucmshkf74PMZen7yXGTcAscBcSKbvsh
+	FhxRisg4bCWBYV/i3mFaBWO51lAr7I0wrvZv93+JuGscwoRuEnJN447Af4BzVzy387MEQZ7iZcB
+	zyXuGfcNiwcie/7NWHMG/J17E80BM38c80HIkjkrU24O6g==
+X-Google-Smtp-Source: AGHT+IHl9ajmtuDkj5s00oPoVojYOBkZKIewBG+zW2Dai7berQhTSgtIulOKXTkdhuk7U3TNOYhilQ==
+X-Received: by 2002:a05:6402:50c8:b0:5e6:4ee9:f043 with SMTP id 4fb4d7f45d1cf-5f628603c66mr7983837a12.26.1745223318219;
+        Mon, 21 Apr 2025 01:15:18 -0700 (PDT)
+Received: from localhost ([2001:4091:a245:826e:c0c:4cef:7dd:26bd])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f625a3e4bbsm4216959a12.72.2025.04.21.01.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Apr 2025 01:15:17 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH 0/7] arm64: dts: ti: k3-am62: Add wakeup-sources for low
+ power modes
+Date: Mon, 21 Apr 2025 10:14:18 +0200
+Message-Id: <20250421-topic-am62-dt-partialio-v6-15-v1-0-6ced30aafddb@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,129 +82,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-tegra124-cpufreq-v2-2-2f148cefa418@gmail.com>
-References: <20250421-tegra124-cpufreq-v2-0-2f148cefa418@gmail.com>
-In-Reply-To: <20250421-tegra124-cpufreq-v2-0-2f148cefa418@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFr+BWgC/02Nyw6CMBBFf4XM2jG0vIRfMSxKO+hEodgWNCH8u
+ w24cHnuTc5ZwZNj8tAkKzha2LMdI4hTAvquxhshm8ggU1mkuSgw2Ik1qqGUaAJOygVWT7a4lBj
+ fTFbGiL4XlVEQHZOjnj+7/9oe7Og1x0w4RuiUJ9R2GDg0yVKeo8RpAf/9Jon1XKRp/asPWo34V
+ g+aJ/R2dpr2vMSLFqas60x05tIsFbTb9gUlg9dq4gAAAA==
+X-Change-ID: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Vishal Mahaveer <vishalm@ti.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+ Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, 
+ Akashdeep Kaur <a-kaur@ti.com>, 
+ Markus Schneider-Pargmann <msp@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745223214; l=3413;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=vRnmrx8VjMy/a3Ap0/hznM3tiqHp5F21n3zSs/FfWWw=;
- b=Xilx1II1g1/gQpjQeJrfGcr1RM4Pok+g+IjZLN1zHFbU72TalqpReLFhtNLGgcTjMAarsoCfU
- jPuPjFdQVLrBXfMgia0NpPGjZhH1zMrwyoi4GIXMv4jpbMmwoveMqyq
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4509; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=wh2ZvJ0MpzyvSvb/71rDMCsRepQ7ZRPMAExEDL7P2Y0=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhgzWf+mHHmf8eNTUFh8i8uPM59+GinUpOuw9eteZzoS/v
+ S34TbKio5SFQYyLQVZMkaUzMTTtv/zOY8mLlm2GmcPKBDKEgYtTACZi+47hn/G249KnvmYE1vk8
+ E1aadJbRY9re+3O+3rV+f0778CkrtqsM/6y/W3QIpuz9tlAg76ntCxUxh/a9ryuTuJc0iF2QVHJ
+ 4ywEA
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi,
 
-This requires three changes:
-* A soft dependency on cpufreq-dt as this driver only handles power
-  management and cpufreq-dt does the real operations
-* Adding a remove routine to remove the cpufreq-dt device
-* Adding a exit routine to handle cleaning up the driver
+This series adds devicetree changes needed for Partial-IO support
+on TI am62, am62a, and am62p SoCs. It defines system states for various
+low power modes and configures the wakeup-sources for devices in the CANUART
+group. Depending on the SoC and board details, some low power modes may not
+be available, so the wakeup-sources are described in the board files.
+The series also adds the necessary pinctrl settings required for proper
+wakeup functionality.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Partial-IO Overview
+------------------
+Partial-IO is a low power system state in which nearly everything is
+turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
+wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the system
+on pin activity. Note that this does not resume the system as the DDR is
+off as well. So this state can be considered a power-off state with wakeup
+capabilities.
+
+A documentation can also be found in section 6.2.4 in the TRM:
+  https://www.ti.com/lit/pdf/spruiv7
+
+Implementation Details
+----------------------
+The complete Partial-IO feature requires three coordinated series, each handling
+a different aspect of the implementation:
+
+1. m_can driver series: Implements device-specific wakeup functionality
+    for m_can devices, allowing them to be set as wakeup sources.
+    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-source/v6.15?ref_type=heads
+    https://lore.kernel.org/r/20250421-topic-mcan-wakeup-source-v6-12-v7-0-1b7b916c9832@baylibre.com
+
+2. This series (devicetree): Defines system states and wakeup sources in the
+    devicetree for am62, am62a and am62p.
+
+3. TI-SCI firmware series: Implements the firmware interface to enter Partial-IO
+    mode when appropriate wakeup sources are enabled.
+    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/tisci-partialio/v6.15?ref_type=heads
+
+Devicetree Bindings
+-------------------
+This series depends on the dt-schema pull request that adds bindings for
+system-idle-states and updates the binding for wakeup-source:
+  https://github.com/devicetree-org/dt-schema/pull/150
+
+These new bindings allow us to define the system states and reference them
+from device wakeup-source properties.
+
+Testing
+-------
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-partialio/v6.15?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Previous versions
+-----------------
+ - As part of the series "firmware: ti_sci: Partial-IO support"
+   https://lore.kernel.org/r/20250306-topic-am62-partialio-v6-12-b4-v5-0-f9323d3744a2@baylibre.com
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- drivers/cpufreq/Kconfig.arm        |  2 +-
- drivers/cpufreq/tegra124-cpufreq.c | 28 ++++++++++++++++++++++++----
- 2 files changed, 25 insertions(+), 5 deletions(-)
+Markus Schneider-Pargmann (7):
+      arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+      arm64: dts: ti: k3-am62: Define possible system states
+      arm64: dts: ti: k3-am62a: Define possible system states
+      arm64: dts: ti: k3-am62p: Define possible system states
+      arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62a7-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62p5-sk: Set wakeup-source system-states
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 4f9cb943d945c244eb2b29f543d14df6cac4e5d4..625f6fbdaaf5fd774e3b0bb996eb7ce980da41ee 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -238,7 +238,7 @@ config ARM_TEGRA20_CPUFREQ
- 	  This adds the CPUFreq driver support for Tegra20/30 SOCs.
- 
- config ARM_TEGRA124_CPUFREQ
--	bool "Tegra124 CPUFreq support"
-+	tristate "Tegra124 CPUFreq support"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on CPUFREQ_DT
- 	default y
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index dc83b1631b13ec428f3b6bbea89462448a62adb4..17f51592bf9fe75921ab4fc4125908e5d941e468 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -16,6 +16,8 @@
- #include <linux/pm_opp.h>
- #include <linux/types.h>
- 
-+static struct platform_device *platform_device;
-+
- struct tegra124_cpufreq_priv {
- 	struct clk *cpu_clk;
- 	struct clk *pllp_clk;
-@@ -174,6 +176,14 @@ static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
- 	return err;
- }
- 
-+static void tegra124_cpufreq_remove(struct platform_device *pdev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(&pdev->dev);
-+
-+	if (!IS_ERR(priv->cpufreq_dt_pdev))
-+		platform_device_unregister(priv->cpufreq_dt_pdev);
-+}
-+
- static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
- 				tegra124_cpufreq_resume)
-@@ -183,12 +193,12 @@ static struct platform_driver tegra124_cpufreq_platdrv = {
- 	.driver.name	= "cpufreq-tegra124",
- 	.driver.pm	= &tegra124_cpufreq_pm_ops,
- 	.probe		= tegra124_cpufreq_probe,
-+	.remove		= tegra124_cpufreq_remove,
- };
- 
- static int __init tegra_cpufreq_init(void)
- {
- 	int ret;
--	struct platform_device *pdev;
- 
- 	if (!(of_machine_is_compatible("nvidia,tegra124") ||
- 		of_machine_is_compatible("nvidia,tegra210")))
-@@ -202,15 +212,25 @@ static int __init tegra_cpufreq_init(void)
- 	if (ret)
- 		return ret;
- 
--	pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
--	if (IS_ERR(pdev)) {
-+	platform_device = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
-+	if (IS_ERR(platform_device)) {
- 		platform_driver_unregister(&tegra124_cpufreq_platdrv);
--		return PTR_ERR(pdev);
-+		return PTR_ERR(platform_device);
- 	}
- 
- 	return 0;
- }
- module_init(tegra_cpufreq_init);
- 
-+static void __exit tegra_cpufreq_module_exit(void)
-+{
-+	if (!IS_ERR(platform_device))
-+		platform_device_unregister(platform_device);
-+	platform_driver_unregister(&tegra124_cpufreq_platdrv);
-+}
-+module_exit(tegra_cpufreq_module_exit);
-+
-+MODULE_SOFTDEP("pre: cpufreq-dt");
- MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
- MODULE_DESCRIPTION("cpufreq driver for NVIDIA Tegra124");
-+MODULE_LICENSE("GPL");
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 60 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62.dtsi      | 22 +++++++++
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts  | 76 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts  | 76 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-pinctrl.h      |  2 +
+ 7 files changed, 290 insertions(+)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da
+prerequisite-change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8:v7
+prerequisite-patch-id: 02b7142f56c849c9a3faab2d2871805febd647aa
+prerequisite-patch-id: 830b339ea452edd750b04f719da91e721be630cb
+prerequisite-patch-id: 56fd0aae20e82eb2dfb48f1b7088d62311a11f05
+prerequisite-patch-id: 41f55b96c0428240d74d488e3c788c09842a1753
 
+Best regards,
 -- 
-2.48.1
-
+Markus Schneider-Pargmann <msp@baylibre.com>
 
 
