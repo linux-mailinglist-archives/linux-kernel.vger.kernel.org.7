@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-612797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A027A9541F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:33:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64151A95423
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558A63AEF73
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58EF41893D9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B571E5203;
-	Mon, 21 Apr 2025 16:33:13 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0AF1DF984;
+	Mon, 21 Apr 2025 16:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeJ/fptO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCA11C84AB;
-	Mon, 21 Apr 2025 16:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466E71B85FD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 16:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745253193; cv=none; b=DNo6fJpWyX6JvfXhKfYO7Q5BlE1WfLrR9eQXfj4VB4D3vEp1/YLFCfSU4ACD7+gmsb0PV6sDoxAKQPjC2/rdHHki16MxzEfjLbDqY5VvouoJdoudMgXjntgs+YJT1csy8KMEz97jL1TStTSrqXaFVrXNk3Urd9zmJ/YIQ3rEtH8=
+	t=1745253243; cv=none; b=hrvLOFB6mTrcxOgmEc5mo1YAmpZaTxOTWsiWoQbNhZI7B7o4gvAakYswmHW/k2gdaWMxBGELDMVzHysY6kjq0iNcWnlNDurZDSJbgZ88s/qQxAhKA5ob4lGJl6RYYB5gPH1AfdJLuSqrtREaXzKk823r6GCgDZKdJUkbc6Q1rds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745253193; c=relaxed/simple;
-	bh=ZdxUod+8vHsExl8vnmiNub9FeRAgmNE1AnMkKzlBxOk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eI3ajHbpxriD3ppPnxuyg1jNNbpZqDsZNu+Ssdt9Fyjd9K7/DLfKe35tAV/+E+jFjPn7iPkVOTKMGo0cqP+4UxesOjcNsBnS2bHy0QCV2sbL3bSIDYdHXntSUG+Zqa4GqOkFMxUHcqo8CrlEhlFZCpjEP31yJOm71cCZdFfvlRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [127.0.1.1] (unknown [IPv6:2a01:e0a:3e8:c0d0:8e8c:c49a:b330:a587])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 2EA4E40760F;
-	Mon, 21 Apr 2025 16:33:08 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:8e8c:c49a:b330:a587) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[127.0.1.1]
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-Date: Mon, 21 Apr 2025 18:33:02 +0200
-Subject: [PATCH 2/2] media: dvb-usbv2: ensure safe USB transfers on
- disconnect in i2c_xfer
+	s=arc-20240116; t=1745253243; c=relaxed/simple;
+	bh=ii11Zr+Updew/MOUDrq24J55rAYYFktZ0u9SMNEKDb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2ygwaHPS9qfORn2GrEdI7V8uDRxqDNmFSHUTiYEWcZb2uhBWnDZxcXJzn9J4Y5bdmPEMSN2mhEc6GLbeJ4itYIF7OScuduv3A6bf3eYvQ/nJqzBCZC29PJrRvW01bvQ8sIOJgduzqIRrX/KbkNrUufGOFtvWTjjJTfye8UIrIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeJ/fptO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27F71C4CEE4;
+	Mon, 21 Apr 2025 16:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745253242;
+	bh=ii11Zr+Updew/MOUDrq24J55rAYYFktZ0u9SMNEKDb8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TeJ/fptOWN3ZzdCtkjX88KJ3DRrra2qBbWUPxjrmqqFZ//JvENlW8AWYdHH4QRHNd
+	 ANiVXWqymXWcIjWXo1REZ7Re6F2t2cYNbMKPhM/Rq21x9K1MyMD9fJQiTXX9CSNg4M
+	 eWIhUWMZExrMytcHKiC/fF5IfJzInn/FgSQj/H6WLM8TD/Esh4F4lSlW5IBFSKxcJM
+	 4+AQcDh2sCtOtAveocLY9ljxg+w59z/yclzhVr8gARJD7/Ncrk2XjyA33ttHyp9y6Q
+	 zYVwQ5bFBxtA73MUgxwuH1qkvVR2vban7XC6xpRL2+O4FAG3VwagVc1UFRs0EmFMs+
+	 k5b+4SaaQjB9Q==
+Date: Mon, 21 Apr 2025 10:33:59 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] nvme/pci: make PRP list DMA pools per-NUMA-node
+Message-ID: <aAZzd-9YjBP4IyNK@kbusch-mbp.dhcp.thefacebook.com>
+References: <20250421161725.1610286-1-csander@purestorage.com>
+ <20250421161725.1610286-3-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-ubsan-out-of-sub-v1-2-d9239a5af007@arnaud-lcm.com>
-References: <20250421-ubsan-out-of-sub-v1-0-d9239a5af007@arnaud-lcm.com>
-In-Reply-To: <20250421-ubsan-out-of-sub-v1-0-d9239a5af007@arnaud-lcm.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+0192952caa411a3be209@syzkaller.appspotmail.com,
- contact@arnaud-lcm.com, skhan@linuxfoundation.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745253187; l=2330;
- i=contact@arnaud-lcm.com; s=20250405; h=from:subject:message-id;
- bh=ZdxUod+8vHsExl8vnmiNub9FeRAgmNE1AnMkKzlBxOk=;
- b=xKOrkUOVP0Q42pSVk2Z4omZafYqR/2FgmzCmItzJ0hX9Coq/kSs7eB9TtDEsQIy5zG04TYnkc
- IkP/iyzHXVZChe35ewMolBcR/jnlTQLkzvP4B4rlr8ntb2KVvLuf0Cm
-X-Developer-Key: i=contact@arnaud-lcm.com; a=ed25519;
- pk=Ct5pwYkf/5qSRyUpocKOdGc2XBlQoMYODwgtlFsDk7o=
-X-PPP-Message-ID: <174525318857.30884.11376688935051155226@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421161725.1610286-3-csander@purestorage.com>
 
-Previously, there was a potential race condition where a USB transfer could
-access inconsistent data if a disconnect occurred mid-transfer.
-When this scenario happens (i.e when there is an USB disconnect during
-the transfer), we would encounter an error related to the corruption of
-st:
-[   66.967387][T10787]  slab kmalloc-8k start ffff88804f5b4000 pointer offset 80 size 8192
-[   66.968252][T10787] list_del corruption. prev->next should be ffffc9000d18f7e0, but was ffff88804f5b4050. (prev=ffff88804f5b4050)
-[   66.969443][T10787] ------------[ cut here ]------------
-[   66.969973][T10787] kernel BUG at lib/list_debug.c:64!
-[   66.970491][T10787] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-[   66.971104][T10787] CPU: 0 UID: 0 PID: 10787 Comm: repro Not tainted 6.15.0-rc3-00004-gcd75cc176092-dirty #28 PREEMPT(full)
-[   66.972204][T10787] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   66.973236][T10787] RIP: 0010:__list_del_entry_valid_or_report+0x15c/0x190
-[   66.973896][T10787] Code: ca da fb fc 42 80 3c 2b 00 74 08 4c 89 e7 e8 fb 29 1f fd 49 8b 14 24 48 c7 c7 a0 09 a2 8c 4c 89 fe 4c 89 e1 e8 55 43 18 fc 90 <0f> 0b 4c 89 f7 e8 9a da fb fc 42 80 3c 2b 00 74 08 4c 89 e7 e8 cb
+On Mon, Apr 21, 2025 at 10:17:25AM -0600, Caleb Sander Mateos wrote:
+> +static void nvme_release_prp_pools(struct nvme_dev *dev)
+> +{
+> +	struct nvme_prp_dma_pools *pools_end = dev->prp_pools + nr_node_ids;
+> +	struct nvme_prp_dma_pools *prp_pools;
+> +
+> +	for (prp_pools = dev->prp_pools; prp_pools < pools_end; prp_pools++) {
+> +		if (!prp_pools->small)
+> +			continue;
+> +
+> +		dma_pool_destroy(prp_pools->large);
+> +		dma_pool_destroy(prp_pools->small);
+> +	}
+> +}
 
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
----
- drivers/media/usb/dvb-usb-v2/az6007.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+A minor difference in style, I think indexing looks cleaner than
+incrementing pointers: 
 
-diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-index e8ee18010346..f6b8e29d19de 100644
---- a/drivers/media/usb/dvb-usb-v2/az6007.c
-+++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-@@ -752,8 +752,13 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	int length;
- 	u8 req, addr;
- 
--	if (mutex_lock_interruptible(&st->mutex) < 0)
-+	if (!usb_trylock_device(d->udev))
-+		return -EBUSY;
-+
-+	if (mutex_lock_interruptible(&st->mutex) < 0) {
-+		usb_unlock_device(d->udev);
- 		return -EAGAIN;
-+	}
- 
- 	for (i = 0; i < num; i++) {
- 		addr = msgs[i].addr << 1;
-@@ -821,6 +826,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	}
- err:
- 	mutex_unlock(&st->mutex);
-+	usb_unlock_device(d->udev);
- 	if (ret < 0) {
- 		pr_info("%s ERROR: %i\n", __func__, ret);
- 		return ret;
+static void nvme_release_prp_pools(struct nvme_dev *dev)
+{
+	int i;
 
--- 
-2.43.0
+	for (i = 0; i < nr_node_ids; i++) {
+		dma_pool_destroy(dev->prp_pools[i].small);
+		dma_pool_destroy(dev->prp_pools[i].large);
+	}
+}
 
+Note, dma_pool_destroy() already checks for NULL, so no need to check
+before calling it.
 
