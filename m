@@ -1,186 +1,272 @@
-Return-Path: <linux-kernel+bounces-612521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0A3A9501F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAA3A95025
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15993B159C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC003B26C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44614263F3D;
-	Mon, 21 Apr 2025 11:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C0119ADA4;
+	Mon, 21 Apr 2025 11:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDcUXf9/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRnYRcml"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D74019ADA4;
-	Mon, 21 Apr 2025 11:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA85F263F3F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 11:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745234657; cv=none; b=TOj83FhOHafzwi6SgF1wxn0FAx677sCqs8BPVwuVkbRIg8X55eVTWSyxU67RxNJn+X5amPSo4RtDpZaa8KyaN/pHMW/jsfOejBjSDWL268avnaoouDEH5j+OAiouNEFYqqdV4is9Cb9yJobm2pr2m0Kr/NXAUGLQRJJnY0WIgdc=
+	t=1745234769; cv=none; b=bUqQvStZZ3q5uE2xQr1+FMc9GL7REbQXZNnkOcQwxsZTkFkLsjEHGAPNd7ilzcN/3Rc66cFcq5fsHyFJLY8QkaLMyk+qu+58cp+Z8GzdFN/m8jiOtatyOh6RFdi2pTE0yDZFif42BnlzherXGmxDf9TadxcOltKssjzr4E39W0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745234657; c=relaxed/simple;
-	bh=8Ga9bMa+6Cm+8fRUsswxDiXS5Us0FHpqBOW+oHvBo4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ruwncl54NGEANYChUBBYLmDn2iPOptDKWWIbZMayeKq67mofUB51B6drl5czrJ8YrAY3qugDalCS3w2CYa+Mryz4HtlrGadusa6HcV+vfKa5GZ5QHoT1woa/ql6HTx1G8EUuQ+b+Fy5rTye4Pse99/1QablZ2XmNkz7BXX5eyJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDcUXf9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A9C4CEE4;
-	Mon, 21 Apr 2025 11:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745234657;
-	bh=8Ga9bMa+6Cm+8fRUsswxDiXS5Us0FHpqBOW+oHvBo4o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tDcUXf9/v8ewocuCpUUaz6Y6o1bx9dmG325jybAa3uIFTwzhxgmIvJCj73w0YUe7K
-	 +nlGrkEZwWHh/sdobv1iDnIV4pdPKWyJqgizAI5JpkzsbfFaQEI8S12XkghrmVDTPh
-	 zBpFET+AGCHLfSSDxvfxbuvSVSWcw5e5gz1jRro6b0QRQB43nytgmb0yUoVPkKWwUz
-	 mcFEpv0sGbHzbVKyKWa9PC9QmkTTN/aPIR9Qm5ZXs0FcsUeZYuWhq2jxdGBqIgZBOZ
-	 teRQlQcM2ExQq7zCY0pdsSLkevchOtfofkavTeD+jb7zJF+UBsXboCHZqlhgewWeMk
-	 a6KIQcs6zZKZQ==
-Date: Mon, 21 Apr 2025 12:24:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: amplifiers: ada4250: clean up ada4250_init()
-Message-ID: <20250421122409.79f5580c@jic23-huawei>
-In-Reply-To: <20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v2-1-1bf9b033aaf5@baylibre.com>
-References: <20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v2-1-1bf9b033aaf5@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745234769; c=relaxed/simple;
+	bh=zHcWarPj9NjR3xEtkYaqxlJfwvkaDX9lLrQsKXg/rjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a1f8qGWlygAl/e/sv6Ui+M5duBbqHYfnfKDE15acHZTxYaklX0up679urlXTJPmEWvnS9CMVcATd0jarK+C9ymlJVNQQq7stvWjggnDP7raLMXdkewQWNMWgeFSA3PZ+j/jA9CJYHhx7MU0cbdLMAhEFDJtDL198IDjz67MlkaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KRnYRcml; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54d689c0741so16355e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 04:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745234766; x=1745839566; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=12ulIlL+bStUTIpncUPTjhwEK2bBCc519N9u/ukXq2U=;
+        b=KRnYRcmly1Y9j/ulMUHgMrSTuBzTDllSSObq7k7w7jMYsB9ADYIDjwirapXdfxFN3t
+         384x8YWRvINVqtKfmyYSnADLXNX01TQ/uxAvyrb4D4HLx7zS+brtkROKGFot55oAJxME
+         VlPsdSq3kjyVRRIEdw332PQvl8v3OcgVItRFAAFuXYQRH0bK0KHDN+BVqdNxUQwOrXh2
+         WNoHTRyP9nEruGcjcdBR10/0ypa+DUL37WO7BbKkER2umRiF0G1+/L9L1DoScuZfRqwZ
+         tSVvFOOFRKQiDU/8t4yjzHt8Qu4srvESQ8YZqga+LWOjFEABCS7fFqYcAQw3w4VImEGL
+         BZmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745234766; x=1745839566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=12ulIlL+bStUTIpncUPTjhwEK2bBCc519N9u/ukXq2U=;
+        b=jvvkTfUJHhHngAvJgys/zwWGpzUB2PLmKNexyf0YSauRoUnaNfdrYDbQAie06Wwpi8
+         RkrYkg1a94AC0x1xrrbFiG+HLg9HHKPTbYdrnePiMIJqe+yvpYVwyD7Cnhdyh5clNqMR
+         mRwRCa3EXmSnPah0wGGVTdBl+5/XRYDv4dLIiqfuhKj0VDkrCrvzfKUaQER+13BeApR4
+         7Huy0vrygtAGVEOBCnOoxGrHdWv+Xf7hdp9kpa9t60nIC0VWe+3X00uTPfFa30XNfrtF
+         9aIbbJCa+AU1/4lKiMIBd3ST0q6o1mjUW9TjJV9t+/7rndTfuWU1VjAaoMMs9q0UEAkq
+         s88w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTKJJakd8LhB9S0SSTsWHHfBiz/8vRINqolo9FI0DzMM5yi8LiaTVg2V0D3MbQVpQ99sCQvr6q33Gni3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc+wKKyO17nql4bLUs4G5bpyk3jPcBdzEXMmRhnydwD0yZdsWr
+	5n0CDa+wieJcoDso1/wnT7RtiZoNUlgkequrOggf+lfBUuA4SYNZq3kmr5cQuTH8CGr0ds5amal
+	Po70bFkrbRoEBcXLfhSxrDX8VFLwy6HCYfL0roDS362ZxthAGy1Hi
+X-Gm-Gg: ASbGnctjSWQAUXKqzMZ3Nb5z13aM+UVd5UvglJG1lHQHSRmEvwlPGV7Ijrga7+fPfvV
+	23vVb37qNkHY7EsbCCHaYmUF1d07VySQoq8MOk4q26GPe1Qeyf2AfZ6guoPvCJ1Zn1U4Az2rn3o
+	t4YpE3nUyJl7GOMASg4S0WfFhrh5D0K2kEQkAu1gkRSr4lEWlYjjY5Kv+lFI8=
+X-Google-Smtp-Source: AGHT+IFEdze/a99TFCtvLVk5Rmo1yzKGRrpY13nJyWYeXkfaum583hJP2CO4rOYArfuDXtsh6chVGi7ekLd/CoQxvFQ=
+X-Received: by 2002:a19:5f0f:0:b0:549:73a8:c258 with SMTP id
+ 2adb3069b0e04-54d6e168ca4mr515392e87.0.1745234765451; Mon, 21 Apr 2025
+ 04:26:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250416100515.2131853-1-khtsai@google.com> <20250419012408.x3zxum5db7iconil@synopsys.com>
+In-Reply-To: <20250419012408.x3zxum5db7iconil@synopsys.com>
+From: Kuen-Han Tsai <khtsai@google.com>
+Date: Mon, 21 Apr 2025 19:25:37 +0800
+X-Gm-Features: ATxdqUFlg1rMsWTAwoJOmoAmk_rGgxuPXSGtKm4qaRrSNgRpxrJoYCc9QRhljnU
+Message-ID: <CAKzKK0qCag3STZUqaX5Povu0Mzh5Ntfew5RW64dTtHVcVPELYQ@mail.gmail.com>
+Subject: Re: [PATCH v4] usb: dwc3: Abort suspend on soft disconnect failure
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Apr 2025 15:37:54 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sat, Apr 19, 2025 at 9:24=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys=
+.com> wrote:
+>
+> On Wed, Apr 16, 2025, Kuen-Han Tsai wrote:
+> > When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() keeps
+> > going with the suspend, resulting in a period where the power domain is
+> > off, but the gadget driver remains connected.  Within this time frame,
+> > invoking vbus_event_work() will cause an error as it attempts to access
+> > DWC3 registers for endpoint disabling after the power domain has been
+> > completely shut down.
+> >
+> > Abort the suspend sequence when dwc3_gadget_suspend() cannot halt the
+> > controller and proceeds with a soft connect.
+> >
+> > Fixes: 9f8a67b65a49 ("usb: dwc3: gadget: fix gadget suspend/resume")
+> > CC: stable@vger.kernel.org
+> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> > ---
+> >
+> > Kernel panic - not syncing: Asynchronous SError Interrupt
+> > Workqueue: events vbus_event_work
+> > Call trace:
+> >  dump_backtrace+0xf4/0x118
+> >  show_stack+0x18/0x24
+> >  dump_stack_lvl+0x60/0x7c
+> >  dump_stack+0x18/0x3c
+> >  panic+0x16c/0x390
+> >  nmi_panic+0xa4/0xa8
+> >  arm64_serror_panic+0x6c/0x94
+> >  do_serror+0xc4/0xd0
+> >  el1h_64_error_handler+0x34/0x48
+> >  el1h_64_error+0x68/0x6c
+> >  readl+0x4c/0x8c
+> >  __dwc3_gadget_ep_disable+0x48/0x230
+> >  dwc3_gadget_ep_disable+0x50/0xc0
+> >  usb_ep_disable+0x44/0xe4
+> >  ffs_func_eps_disable+0x64/0xc8
+> >  ffs_func_set_alt+0x74/0x368
+> >  ffs_func_disable+0x18/0x28
+> >  composite_disconnect+0x90/0xec
+> >  configfs_composite_disconnect+0x64/0x88
+> >  usb_gadget_disconnect_locked+0xc0/0x168
+> >  vbus_event_work+0x3c/0x58
+> >  process_one_work+0x1e4/0x43c
+> >  worker_thread+0x25c/0x430
+> >  kthread+0x104/0x1d4
+> >  ret_from_fork+0x10/0x20
+> >
+> > ---
+> > Changelog:
+> >
+> > v4:
+> > - correct the mistake where semicolon was forgotten
+> > - return -EAGAIN upon dwc3_gadget_suspend() failure
+> >
+> > v3:
+> > - change the Fixes tag
+> >
+> > v2:
+> > - move declarations in separate lines
+> > - add the Fixes tag
+> >
+> > ---
+> >  drivers/usb/dwc3/core.c   |  9 +++++++--
+> >  drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
+> >  2 files changed, 16 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > index 66a08b527165..f36bc933c55b 100644
+> > --- a/drivers/usb/dwc3/core.c
+> > +++ b/drivers/usb/dwc3/core.c
+> > @@ -2388,6 +2388,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
+pm_message_t msg)
+> >  {
+> >       u32 reg;
+> >       int i;
+> > +     int ret;
+> >
+> >       if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
+> >               dwc->susphy_state =3D (dwc3_readl(dwc->regs, DWC3_GUSB2PH=
+YCFG(0)) &
+> > @@ -2406,7 +2407,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
+pm_message_t msg)
+> >       case DWC3_GCTL_PRTCAP_DEVICE:
+> >               if (pm_runtime_suspended(dwc->dev))
+> >                       break;
+> > -             dwc3_gadget_suspend(dwc);
+> > +             ret =3D dwc3_gadget_suspend(dwc);
+> > +             if (ret)
+> > +                     return ret;
+> >               synchronize_irq(dwc->irq_gadget);
+> >               dwc3_core_exit(dwc);
+> >               break;
+> > @@ -2441,7 +2444,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
+pm_message_t msg)
+> >                       break;
+> >
+> >               if (dwc->current_otg_role =3D=3D DWC3_OTG_ROLE_DEVICE) {
+> > -                     dwc3_gadget_suspend(dwc);
+> > +                     ret =3D dwc3_gadget_suspend(dwc);
+> > +                     if (ret)
+> > +                             return ret;
+> >                       synchronize_irq(dwc->irq_gadget);
+> >               }
+> >
+> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> > index 89a4dc8ebf94..630fd5f0ce97 100644
+> > --- a/drivers/usb/dwc3/gadget.c
+> > +++ b/drivers/usb/dwc3/gadget.c
+> > @@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+> >       int ret;
+> >
+> >       ret =3D dwc3_gadget_soft_disconnect(dwc);
+> > -     if (ret)
+> > -             goto err;
+> > -
+> > -     spin_lock_irqsave(&dwc->lock, flags);
+> > -     if (dwc->gadget_driver)
+> > -             dwc3_disconnect_gadget(dwc);
+> > -     spin_unlock_irqrestore(&dwc->lock, flags);
+> > -
+> > -     return 0;
+> > -
+> > -err:
+> >       /*
+> >        * Attempt to reset the controller's state. Likely no
+> >        * communication can be established until the host
+> >        * performs a port reset.
+> >        */
+> > -     if (dwc->softconnect)
+> > +     if (ret && dwc->softconnect) {
+> >               dwc3_gadget_soft_connect(dwc);
+> > +             return -EAGAIN;
+>
+> This may make sense to have -EAGAIN for runtime suspend. I supposed this
+> should be fine for system suspend since it doesn't do anything special
+> for this error code.
+>
+> When you tested runtime suspend, did you observe that the device
+> successfully going into suspend on retry?
 
-> There are a few opportunities to simplify the code in ada4250_init():
-> * Replace local spi variable with dev since spi is not used directly.
-> * Drop the data variable and use chip_id directly with the regmap bulk
->   read (__aligned() and initialization of the data variable were
->   unnecessary).
-> * Don't use get_unaligned_le16() when not needed.
-> * Use dev_err_probe() instead of dev_err() and return.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> In v1, I though we had a bug, but Andy set me straight. Still, since we
-> were already looking at this, there is some room for improvement, so I
-> changed this to a cleanup patch instead.
-> 
-> Changes in v2:
-> - Totally new patch.
-> - Link to v1: https://lore.kernel.org/r/20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-v1-1-7e7bd6dad423@baylibre.com
-As Andy suggested this wants breaking up.
+Hi Thinh,
 
-One additional requested change inline.
+Yes, the dwc3 device can be suspended using either
+pm_runtime_suspend() or dwc3_gadget_pullup(), the latter of which
+ultimately invokes pm_runtime_put().
 
-> ---
->  drivers/iio/amplifiers/ada4250.c | 34 ++++++++++++++--------------------
->  1 file changed, 14 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/iio/amplifiers/ada4250.c b/drivers/iio/amplifiers/ada4250.c
-> index 74f8429d652b17b4d1f38366e23ce6a2b3e9b218..13906e4b4842095717566781ad00cd58f3934510 100644
-> --- a/drivers/iio/amplifiers/ada4250.c
-> +++ b/drivers/iio/amplifiers/ada4250.c
-> @@ -13,8 +13,7 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/spi/spi.h>
-> -
-> -#include <linux/unaligned.h>
-> +#include <linux/types.h>
->  
->  /* ADA4250 Register Map */
->  #define ADA4250_REG_GAIN_MUX        0x00
-> @@ -299,25 +298,23 @@ static void ada4250_reg_disable(void *data)
->  
->  static int ada4250_init(struct ada4250_state *st)
->  {
-> +	struct device *dev = &st->spi->dev;
->  	int ret;
-> -	u16 chip_id;
-> -	u8 data[2] __aligned(8) = {};
-> -	struct spi_device *spi = st->spi;
-> +	__le16 chip_id;
->  
-> -	st->refbuf_en = device_property_read_bool(&spi->dev, "adi,refbuf-enable");
-> +	st->refbuf_en = device_property_read_bool(dev, "adi,refbuf-enable");
->  
-> -	st->reg = devm_regulator_get(&spi->dev, "avdd");
-> +	st->reg = devm_regulator_get(dev, "avdd");
->  	if (IS_ERR(st->reg))
-> -		return dev_err_probe(&spi->dev, PTR_ERR(st->reg),
-> +		return dev_err_probe(dev, PTR_ERR(st->reg),
->  				     "failed to get the AVDD voltage\n");
->  
->  	ret = regulator_enable(st->reg);
-> -	if (ret) {
-> -		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to enable specified AVDD supply\n");
->  
-> -	ret = devm_add_action_or_reset(&spi->dev, ada4250_reg_disable, st->reg);
-> +	ret = devm_add_action_or_reset(dev, ada4250_reg_disable, st->reg);
->  	if (ret)
->  		return ret;
->  
-> @@ -326,16 +323,13 @@ static int ada4250_init(struct ada4250_state *st)
->  	if (ret)
->  		return ret;
->  
-> -	ret = regmap_bulk_read(st->regmap, ADA4250_REG_CHIP_ID, data, 2);
-> +	ret = regmap_bulk_read(st->regmap, ADA4250_REG_CHIP_ID, &chip_id,
-> +			       sizeof(chip_id));
->  	if (ret)
->  		return ret;
->  
-> -	chip_id = get_unaligned_le16(data);
-> -
-> -	if (chip_id != ADA4250_CHIP_ID) {
-> -		dev_err(&spi->dev, "Invalid chip ID.\n");
-> -		return -EINVAL;
-> -	}
-> +	if (le16_to_cpu(chip_id) != ADA4250_CHIP_ID)
+One question: Do you know how to naturally cause a run stop failure?
+Based on the spec, the controller cannot halt until the event buffer
+becomes empty. If the driver doesn't acknowledge the events, this
+should lead to the run stop failure. However, since I cannot naturally
+reproduce this problem, I am simulating this scenario by modifying
+dwc3_gadget_run_stop() to return a timeout error directly.
 
-Given you are working on this driver, these days we treat an ID match failure
-as informational only.  The reason being to allow fallback compatibles to
-be used in DT so that an old kernel can in theory support a new compatible
-chip that shows up sometime in the future (but has a different chip ID).
+Regards,
+Kuen-Han
 
-So please add a final patch to the series that relaxes this to a dev_info()
-print and carry on anyway.
 
-I've considered just changing all rejected chip IDs, but it seems too noisy
-unless people are touching the code for other reasons.  Hence I've not done it.
-There is also a non zero chance that someone has a broken firmware and
-odd error reports will ensue.
-
-Jonathan
-
-> +		return dev_err_probe(dev, -EINVAL, "Invalid chip ID.\n");
->  
->  	return regmap_write(st->regmap, ADA4250_REG_REFBUF_EN,
->  			    FIELD_PREP(ADA4250_REFBUF_MSK, st->refbuf_en));
-> 
-> ---
-> base-commit: aff301f37e220970c2f301b5c65a8bfedf52058e
-> change-id: 20250418-iio-amplifiers-ada4250-simplify-data-buffer-in-init-93ebb1344295
-> 
-> Best regards,
-
+>
+> In any case, I think this should be good. Thanks for the fix:
+>
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+>
+> Thanks,
+> Thinh
+>
+> > +     }
+> >
+> > -     return ret;
+> > +     spin_lock_irqsave(&dwc->lock, flags);
+> > +     if (dwc->gadget_driver)
+> > +             dwc3_disconnect_gadget(dwc);
+> > +     spin_unlock_irqrestore(&dwc->lock, flags);
+> > +
+> > +     return 0;
+> >  }
+> >
+> >  int dwc3_gadget_resume(struct dwc3 *dwc)
+> > --
+> > 2.49.0.604.gff1f9ca942-goog
+> >
 
