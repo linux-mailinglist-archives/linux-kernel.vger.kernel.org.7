@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-612104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B254A94A9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:04:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F245A94AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECEF16EA93
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E853A724F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36FE256C6E;
-	Mon, 21 Apr 2025 02:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C69D53365;
+	Mon, 21 Apr 2025 02:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qh9DH6Gu"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ofsXXSrt"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1AD255E32;
-	Mon, 21 Apr 2025 02:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337236D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 02:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745201079; cv=none; b=Y+Wod9rRhtQ5Yh3e9k7gIsmTvjYw1sLpWJJK3aEdnyxdWu63BQ4rghTkvXMZ0lt8dFdZNj+GEHfCP6uPUZeGjNPDSWMEDnouGt32ru9s0NJQfR/D3vKHV+2rQXthLDKcBCMT9Pp2huMlKKa7rrj8nPDfjC4hWmDB2pjEVrkqpW4=
+	t=1745201878; cv=none; b=pAgDr2jAGD81DnlVIIVWp26B8SOKs7YT7DsUABDm2gOsEXRCunkTzCIVeGI/1AYzun1XnZuEYiZf6nqK0T5Bkip81Cfn3ZKObqzgmgBi/plXIIEFFfHdVp5kgsrwSVvEW9Dw3imSjwE8OgfknQMrDX6VT2SP4CZHIV7/vQxVZ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745201079; c=relaxed/simple;
-	bh=U6I+PwKCmy7pG4WA1RVuzIfpWgFlxP9eCznMIyTUuro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gd7YAO9RBhcbEtFZDZtFwBXH6/JEKaVmC/q+VTiLPn2cm40CpufPPBa2clmGx3JDUt7ms+orliKAHnnIKQwUYBWAQCsPcsMR9J7fxkCaa7Jy52JXa5YQm05lMFKbItC3DdDBuOx5gt4219JGR6Z36YWXPG66BXf3BLD7Unw6SsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qh9DH6Gu; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.183.162] (254C255A.nat.pool.telekom.hu [37.76.37.90])
-	by mail.mainlining.org (Postfix) with ESMTPSA id A46CBBBB02;
-	Mon, 21 Apr 2025 02:04:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1745201070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l8aCnYJYVZSR3rbwBCwfDLTUp0VBv3iMT57/14xiRX4=;
-	b=qh9DH6Guik594JtJd8dZxFrFRRZe9h+IA9qQ46M4tl0pRd7yX9Y1OVjh9wRv7pLNmQhH+y
-	Ybn37xShMEz0T/N/fwvSi5JyKry1eRiMKSj3S7cA+Iy4i4iq12IQp4rPrah+Rxn5dESdfq
-	WuNIcZdvHdSjEcV/h1uzxUL5JhvHzEbzHwQLpDVULbGGl7U/KgvjqIqnzrkJ/uMg6V/UMJ
-	KYGTD6MvPtfouggH+QpjGIrPMG3rZI0SpnENuSmBuk3EjVo9Y/zEH8G7moVxCBNkf5z1sj
-	FPfqwCjwkbSdf8FabrDxPtjrKZj1hjYcQVRbgPkQ4Vjl18WeQwH8MkqgYpVGmw==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 21 Apr 2025 04:04:17 +0200
-Subject: [PATCH 2/2] soc: qcom: smp2p: Fix fallback to qcom,ipc parse
+	s=arc-20240116; t=1745201878; c=relaxed/simple;
+	bh=CoZwKZ16eshnypvQfvmW6w5fJrDHqlQB/5ICizMchyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iuO8dtCUmbXp2gPwH2FB1Ilc+edg/2zPit6SkvHPOrp/gQRKjtQC9CAUV74pJx9O7r7bWha/pdXi4Fw2VWLmd9cOHK45EPDGbzwojOD6K7GDc2SuNAU4oM9o4a9GKgTAXaSMOcGJnTF1zaIApKfnM7VSfoqhm0FyOopjhvkqBcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ofsXXSrt; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1745201562;
+	bh=CoZwKZ16eshnypvQfvmW6w5fJrDHqlQB/5ICizMchyg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ofsXXSrtpf3WQuAzaIM0QFhsQq76n8wof8fUZ/jn5y8yLKlm90OpQV71oYv8zrY6c
+	 7iIQBqEkgb1H8iN2PGgWg9kjmpX3PKbD94d3tDtO7XrEG4PuYc9ybV9cHI25W4R3IZ
+	 P/vVNY/Pk5s28+seE/jNMwuxZ2sEO+94dnBwvevQ=
+Received: from [10.42.13.56] ([116.128.244.169])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id 19E2D815; Mon, 21 Apr 2025 10:06:30 +0800
+X-QQ-mid: xmsmtpt1745201190t3j8q93uq
+Message-ID: <tencent_DB84706B5135401678FD9E84CC6DB8C2450A@qq.com>
+X-QQ-XMAILINFO: NBOcPERDMH3ARddM0gQ4sHKdGkLe/STVO4dj5bYP5pQUoIW1k6UkaOXESX6Tep
+	 bbp0+2QRySp7xOnD1rcHx0x6DgWKeRZZ+0CYqi+I0xfUz4nx7x0DqpYHFvNMJv7g2ycvfFs4kJmm
+	 ap4MJ/2RsBmKQQuzO2Q0C99ys2fopm93SzILhcWCJhV3fD/tu93sJ7daYQQa3szaSRVwD5aNXV5v
+	 TSHJd0uaM6TxZKu1kdPZMBdIKWxWU2YOqxoRaSwgn8nsNIkFmH4pqwBL5RkyvwMz00vJ5srXHL91
+	 2scNaoClTqX+tqYAkkvVtIxGY8rdDJjJ46nVDQPnnL6CiRCuaL4DFIj9BIioFo3q91sbHst8G4gB
+	 GEPziNqbw5nzePvjHAB5rxxkrjegB1zymF8yCHkw3/n4AU2mSVTydESmcvtd66oLNQ7CprWX5MnG
+	 GSfWNeEaLv6z0RlEtjlp//DBR1bgmsVvi/GpqWjBUItl2O7dPlokWhkr8sPAJJoKTBekcDSXFkuT
+	 F2SG8S8kd6XBT/XKSYHVjpCdevV/IUvDbMHtv7tFTVSP800TXFaq50DcvId8zRfmmy/+xKok43iy
+	 eQrHc1TDt8ifW2fCIscyCtvi/AVFrs2Mzjov0hwk9/UKxIrOtBlHVlZicEunaeFH+F20zbIr2qY6
+	 Bv0YtNBSEHR/cC28+7LefySmIhh5lrjD/C+pWp/mAQ97gd4K5RV2W/fjdGjsW7rw4D8rl2u/BpHo
+	 qApPjDs5FRNc6rFBQ3ly6h+Tz3k/nTq/qmRTvM1SGmdT45jjesm2sE7VLhEjedDNFHHQnF5rotwN
+	 Pq4LUt4Xg2s7V9txEvDNdZOAeeSa3V2Av2IMwzp2FPX1jHmtVjDUe6X9X8E9jha0jxm4gRMVgXkc
+	 sfD+Pu7X3VWdqaGB53twsr6w9Vg5FI0mmw0BEwfwr/YygbglXKtELxdLknRxeDj7UG2Cajt2dHLD
+	 oMh0tsTK7L9suO+cYvqBpb21lMV3UDWuDkBbP8f7U=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-OQ-MSGID: <1fc3e9e5-34bc-4130-b459-59b66ba0e339@foxmail.com>
+Date: Mon, 21 Apr 2025 10:06:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] bus: hisi_lpc: remove unused head file in hisi_lpc.c
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, f.fangjian@huawei.com, robh@kernel.org,
+ john.g.garry@oracle.com, xuwei5@hisilicon.com,
+ Pei Xiao <xiaopei01@kylinos.cn>
+References: <cover.1744964101.git.xiaopei01@kylinos.cn>
+ <tencent_8024B8D7E209E31C8E2B5AC411B70C551106@qq.com>
+ <aAO_mIY99CMH4o8d@smile.fi.intel.com>
+From: Pei Xiao <xiaopeitux@foxmail.com>
+In-Reply-To: <aAO_mIY99CMH4o8d@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250421-fix-qcom-smd-v1-2-574d071d3f27@mainlining.org>
-References: <20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org>
-In-Reply-To: <20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745201067; l=1084;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=U6I+PwKCmy7pG4WA1RVuzIfpWgFlxP9eCznMIyTUuro=;
- b=apfZxy3ONleNAqMDaQFSwnqwAN7RD3hcXNbyGo6P53JWqnqFQbdEKCXzexHp3+ru/JkDvxtcJ
- EjbVyV2LALrAv9XJ2GlEOgXsIKsU0UakD5GyPdr9b5OcNU8K2pxapod
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-mbox_request_channel() returning value was changed in case of error.
-It uses returning value of of_parse_phandle_with_args().
-It is returning with -ENOENT instead of -ENODEV when no mboxes property
-exists.
 
-Fixes: 24fdd5074b20 ("mailbox: use error ret code of of_parse_phandle_with_args()")
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/soc/qcom/smp2p.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 2025/4/19 23:22, Andy Shevchenko 写道:
+> On Fri, Apr 18, 2025 at 04:51:23PM +0800, xiaopeitux@foxmail.com wrote:
+>> From: Pei Xiao <xiaopei01@kylinos.cn>
+>>
+>> linux/console.h,linux/io.h,linux/pci.h,linux/slab.h
+>> are not used, this patch removes it.
+> Definitely you haven't tested this...
 
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index a3e88ced328a91f1eb9dbaaaeb12fc901838bdaa..c9199d6fbe26ecc5ce941cfd608ebf1381be0935 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -575,7 +575,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 	smp2p->mbox_client.knows_txdone = true;
- 	smp2p->mbox_chan = mbox_request_channel(&smp2p->mbox_client, 0);
- 	if (IS_ERR(smp2p->mbox_chan)) {
--		if (PTR_ERR(smp2p->mbox_chan) != -ENODEV)
-+		if (PTR_ERR(smp2p->mbox_chan) != -ENOENT)
- 			return PTR_ERR(smp2p->mbox_chan);
- 
- 		smp2p->mbox_chan = NULL;
+Sorry for that,I have tested in ARM64 platform, have no build problem,sorry for that!
 
--- 
-2.49.0
+Pei ,
+
+thanks!
 
 
