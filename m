@@ -1,91 +1,104 @@
-Return-Path: <linux-kernel+bounces-612809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE8DA9545B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:37:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4CEA9545D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 18:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896961886AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:36:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 832FC7A3E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9071E5B89;
-	Mon, 21 Apr 2025 16:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E81E7C0A;
+	Mon, 21 Apr 2025 16:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMMOicHW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="aSwWbdmJ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5701E1E5B7E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 16:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009C1EB19B;
+	Mon, 21 Apr 2025 16:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745253331; cv=none; b=cHJpCsNMtfOgC1gMe6AYwB5xELl95A1rueyZP8T9WPzF8a4sDpPv5LreVz5wfZIaqZ+o3PQA7/g/JA2Kr3dtkEVQNzYYSK5a450zl311Adl0Jgm0Sy7tHbMuLvXyZAwbH6fADSls9RpjZw5A/Z0U5eXa6pNW5ri6ntLkgF5XuBY=
+	t=1745253340; cv=none; b=Y50Pftm1J0X1sIi5/4VFKvkJrvLdTCbyGKexQHuqGZ5Ld7vHDBYSK3yf3VIcXmxNjY8ptAom4U6UWZOtrT+T5PG058QerNsH2cWH8mOzcorDjkUJ6oKf2rEImc1KSY96HUZzv+gAbvib/IjWwvffXkfHX2PplwNSr/n+ntBk0w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745253331; c=relaxed/simple;
-	bh=3mFuU2DUGI7GC/f6E3ePt0mrV93b5VvBdvwSVwqYDa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJQDuGDWraI4Rwoz8bGKVlTm5isAiBZp5YsqSQctqzZpuzCYLY3IW3ZnO3T8m1BWkyaYTZx82w+5z56YO+gtlpnvn0fY/zpy173uI4FDKgBORrnG6zMEycNms4P+Q7DLCYtdEpgjpFOZSuzKQ1s2UD+PBWOU2fCL73RPUNrrOIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMMOicHW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D454C4CEEB;
-	Mon, 21 Apr 2025 16:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745253330;
-	bh=3mFuU2DUGI7GC/f6E3ePt0mrV93b5VvBdvwSVwqYDa4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JMMOicHWTRtMFJd3ibw5uTk5PRTQKMxdj34sO+hKbQTUywjRYCVPA3H3jjPtGFWgO
-	 NPrPJY9vvWd4FSsKYLsVE+XBd+NRdEGUVOIkXPuOeS/Ud2mB5CG7Y4t0yL9qJajp/k
-	 6z1KBciH+0nIs1VGfiz5cW+3HSNHCmbqNFFY2gYCk8voVTM0m+t5bhZaLRIUpcc91N
-	 iLfaMJeD1bsgT/EbcRF0xXgpzcCkUjXjtWF+Fr1OTdDeBxtPy12PVzh6X+R80ZNVXM
-	 Dlu7QcFhfQhl7QnzT5Z0Kb8opnwDwerWbiCIg/PnpByBM07PusB1/dlsNUvekysMfp
-	 JDy8ambtHveiQ==
-Date: Mon, 21 Apr 2025 19:35:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ruihan Li <lrh2000@pku.edu.cn>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/mm_init: Don't iterate pages below ARCH_PFN_OFFSET
-Message-ID: <aAZzzVDsmtqP3uAg@kernel.org>
-References: <20250419122801.1752234-1-lrh2000@pku.edu.cn>
- <20250420135709.732883ee775ad8b41fb668ca@linux-foundation.org>
+	s=arc-20240116; t=1745253340; c=relaxed/simple;
+	bh=cVuVFgejEbyTS0iQROEmWdR2zVlqJcSF1BQuDGnHbi8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Fs7NpiS9mYNeeXnpY5prtbOlhSI7qSoARQq59Ap5H0JVxb56mZEsrwrHpLuAZ5i5dQRM6t43LE0PFGFAapGaLipSEY8ocpdae5q9f6jKPOYZo4YpwW0FmArbuTapSm6qInqz6LbH7Z8/Y18A6dtxQO1aAi8yHW90Ua9v0ux2R9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=aSwWbdmJ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1DBF741060
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1745253330; bh=gxGq9sDQzTilFhNI+sgogQzrTLgAysNYCMUBWj3Hgkk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=aSwWbdmJJYHlULeQRqmIZiBkTXpcuPN9ZRV82SfV4CHb3MYZCZjYv+zeQz79Sr2GS
+	 9KknI8nxQs92hOToWkh4alhfHM9NZdOcXHTrfqxSnxe1M0+elhQktvbrW3mwuCmB24
+	 cO28qpPPqc0wEZM8RUenc5GRruiIiiTUXLTHUW7hjkOBHZwTtx/qVdXMY82k+kzvBr
+	 p33+deEZilo2NWQF9jXjz3aEoCdtZfho6XG//atJ+fWewga0vH3dFzkIKwXpmVSFCL
+	 oCeEzKDxbZ5vSChkApWLnHdkxmx5ad8KZZLLhVHLCoB+3z/k/MXsaHIZlXKxGWB/y6
+	 pFG8rChiQj9AQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 1DBF741060;
+	Mon, 21 Apr 2025 16:35:30 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Mauro Carvalho
+ Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@intel.com>, David Airlie <airlied@gmail.com>, Jani
+ Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, Maxime Ripard <mripard@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Don't create Python bytecode when building the
+ kernel
+In-Reply-To: <4k2arpghozy5fjrjove6nrh24qth3yp4educuso4y47gk7gycd@ol27dzrba55d>
+References: <cover.1744789777.git.mchehab+huawei@kernel.org>
+ <4k2arpghozy5fjrjove6nrh24qth3yp4educuso4y47gk7gycd@ol27dzrba55d>
+Date: Mon, 21 Apr 2025 10:35:29 -0600
+Message-ID: <87bjspzd4e.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250420135709.732883ee775ad8b41fb668ca@linux-foundation.org>
+Content-Type: text/plain
 
-On Sun, Apr 20, 2025 at 01:57:09PM -0700, Andrew Morton wrote:
-> On Sat, 19 Apr 2025 20:28:01 +0800 Ruihan Li <lrh2000@pku.edu.cn> wrote:
-> 
-> > If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
-> > kernel is used as a library and loaded at a very high address), the
-> > pointless iteration for pages below ARCH_PFN_OFFSET will take a very
-> > long time, and the kernel will look stuck at boot time.
-> > 
-> > This commit sets the initial value of pfn_hole to ARCH_PFN_OFFSET, which
-> > avoids the problematic and useless iteration mentioned above.
-> > 
-> > This problem has existed since commit 907ec5fca3dc ("mm: zero remaining
-> > unavailable struct pages").
-> > 
-> > Signed-off-by: Ruihan Li <lrh2000@pku.edu.cn>
-> > ---
-> > Link to v1:
-> >  - https://lore.kernel.org/linux-mm/20250418162727.1535335-1-lrh2000@pku.edu.cn/
-> > Changes since v1:
-> >  - Removed the unnecessary Fixes tag.
-> 
-> Why was the Fixes: considered unnecessary?  It seems to be useful
-> information?
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> writes:
 
-I didn't think it was important enough for AUTOSEL to pick it. 
+> On Wed, Apr 16, 2025 at 03:51:03PM +0800, Mauro Carvalho Chehab wrote:
+>> 
+>> As reported by Andy, the Kernel build system runs kernel-doc script for DRM,
+>> when W=1. Due to Python's normal behavior, its JIT compiler will create
+>> a bytecode and store it under scripts/lib/*/__pycache__. 
+>> 
+>> As one may be using O= and even having the sources on a read-only mount
+>> point, disable its creation during build time.
+>
+> Would it be possible to properly support O= and create pyc / pycache
+> inside the object/output dir?
 
--- 
-Sincerely yours,
-Mike.
+I have to confess, I've been wondering if we should be treating the .pyc
+files like we treat .o files or other intermediate products.  Rather
+than trying to avoid their creation entirely, perhaps we should just be
+sure they end up in the right place and are properly cleaned up...?
+
+To answer Dmitry's question, it seems that setting PYTHONPYCACHEPREFIX
+should do the trick?
+
+Thanks,
+
+jon
 
