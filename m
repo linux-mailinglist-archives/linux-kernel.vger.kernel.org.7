@@ -1,190 +1,102 @@
-Return-Path: <linux-kernel+bounces-612652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF15EA951F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF663A951F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88ED61894544
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88FA18946E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30980266B55;
-	Mon, 21 Apr 2025 13:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9B266F10;
+	Mon, 21 Apr 2025 13:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZqyzoUEb"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRgRIBaf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456C726658C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 13:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7EC266EE6;
+	Mon, 21 Apr 2025 13:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243407; cv=none; b=UEZh6ieI68zC3XvhAyxxl9ZDA2jou78tqRqDJ1624f0jcTleFYhYD9pcbPj5Hv0NHe7W6AZuQT16+Q+9qSiFTXOfMmtwRXKUkjEg/mxkjx1O2GIKNjRyjylGzIfen631u0NwMHpqgCUX90npRAwbQWb3f/ygaKx4tWVJ/m2UK6M=
+	t=1745243395; cv=none; b=OKYFSntwwsixHqzdSx7WXp8uJC0oCtluDyeWcxxTwhpUrjrp+hwDLtZXT+oiiSr+eGIu16DsWxwtMK1Ho3o69R3p7np3rPQ3wZ6Ms8Cf5mM4ira0VlHcf4I1AkbC2cMZa1vpO6CguXLg9M0rYXIuxrx249+Lhc+hcKmILg28nhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243407; c=relaxed/simple;
-	bh=Q9Fxr7G0Jn/628DA/iVnd27cKQDwagJyYw/wLDOxC0M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ibX6u2N0TBWEEjV4+ir6zoqqexWkzBZrcwFKtskxmNqtQjKhBLKPnIPGUS/2hgMqScjWngvgXO5XCfHFYeHVjDm99oZWmJjFucI9YnE2yUVqPOVvdHyLOxkgBcHf154IiexIqL3p+E/JtsXGD0Dm2ewf99kVqst3tpSdgl+Zqv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZqyzoUEb; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=3iy34xvm5jch7hkvrzbifwkwbi.protonmail; t=1745243395; x=1745502595;
-	bh=nZEpbSXmi2/SJJk1zOcLaNc18i7a6p+iLWp8MjXWdjk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=ZqyzoUEb0g5dCZZRVaXSwrAMTULGsUWs+7Z2wlIHXsgED1LnvlAaU7uZBAzhEhAku
-	 BPhDTrTcZNOWnI0wqKvJn0zsBJi0WDNyfGiqa10RS3MU5TEw97AarUPHR4irs3/3vg
-	 XzDAx6PvhoQKlEo5IxpDjmauwz4VSs6oYuo0ThgvnyypQ+sOspABUu49gLW7wSG+wu
-	 ZCMW7taHOWjJXBiUpGc5PBbxciEQbbYX4HCxtBmzK6KsRC7+R2Ixxi+sZVce8hjXR+
-	 9A+rux0Ed4jfcBYiHP9tQjujEXd3ZHFq3FCZXQAH+B6B/3lNxWVc02RYkwrLXvO/BA
-	 lAmXte04ywUTQ==
-Date: Mon, 21 Apr 2025 13:49:49 +0000
-To: Simona Vetter <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/4] rust: validate: add `Validate` trait
-Message-ID: <20250421134909.464405-4-benno.lossin@proton.me>
-In-Reply-To: <20250421134909.464405-1-benno.lossin@proton.me>
-References: <20250421134909.464405-1-benno.lossin@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 30c2311e2ef1108c5dbe1fe6d908c628fbddafc8
+	s=arc-20240116; t=1745243395; c=relaxed/simple;
+	bh=cubivyFb3a2dV2acrHyigzWPBje2uqMIe3Okd1jxvWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXhru8na4LyqsbYTpOE5KHf45dYY5MzDrZA2UhvCXT7yoQwqpC0EdUJzLulojJubQNqXe2HXswZA32pAFUpsXtNXL0Kv7jQE3Xfu9U4NXCGpp5dqa17+JORweNlq7MaCJ3d5l7kvahoPSgOHPMlhDiXGZ49m86UnrnDQnzmY8tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRgRIBaf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60A6C4CEF1;
+	Mon, 21 Apr 2025 13:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745243395;
+	bh=cubivyFb3a2dV2acrHyigzWPBje2uqMIe3Okd1jxvWM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=jRgRIBafaGpO7KBbN/+6ZxGfnjB9f1doUkB9wT2yvvm8y/phAhRpVOSrF+WUGfFJt
+	 lEkAWsIzdyk8Qw0aqp5JYu/duO0RL/DBEPj4R7us/KJ3ZonNctF0mt1jmqBwEtREts
+	 +plaBoq8U4Yx5kmAGCZbPZAanxmJBqH+/z2GT5itDLVwIxLzRuyqLFAji59uDssnAQ
+	 eLjriP9MyeOjghyp4j/WPk9bKkIdF7F3N/tgEcjga77uDikq7/MTpnIC6SzOkkPBCT
+	 pRxUXvLdvjOsV6vTxdA2oCYKG/MsGyFU7FV5uqoa1aNhxD4WfJZN6YmJI2+32wO8E0
+	 pdX+MfrG8I3sA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 902FCCE0855; Mon, 21 Apr 2025 06:49:54 -0700 (PDT)
+Date: Mon, 21 Apr 2025 06:49:54 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: dave@stgolabs.net, josh@joshtriplett.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] rcuscale: using kmalloc_array() to relpace kmalloc()
+Message-ID: <7743ff8a-1492-4191-95ec-abcb53001b83@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250421061508.718752-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421061508.718752-1-suhui@nfschina.com>
 
-Introduce the `Validate<Input>` trait and functions to validate
-`Untrusted<T>` using said trait. This allows one to access the inner
-value of `Untrusted<T>` via `validate{,_ref,_mut}` functions which
-subsequently delegate the validation to user-implemented `Validate`
-trait.
+On Mon, Apr 21, 2025 at 02:15:09PM +0800, Su Hui wrote:
+> It's safer to using kmalloc_array() because it can prevent overflow
+> problem.
+> 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-The `Validate` trait is the only entry point for validation code, making
-it easy to spot where data is being validated.
+Thank you!
 
-The reason for restricting the types that can be inputs to
-`Validate::validate` is to be able to have the `validate...` functions
-on `Untrusted`. This is also the reason for the suggestions in the
-`Usage in API Design` section in the commit that introduced
-`Untrusted<T>`.
+But isn't kcalloc just a wrapper around kmalloc_array() anyway?
 
-Signed-off-by: Benno Lossin <benno.lossin@proton.me>
----
- rust/kernel/validate.rs | 61 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 60 insertions(+), 1 deletion(-)
+							Thanx, Paul
 
-diff --git a/rust/kernel/validate.rs b/rust/kernel/validate.rs
-index 8b33716be0c7..eecac39365db 100644
---- a/rust/kernel/validate.rs
-+++ b/rust/kernel/validate.rs
-@@ -11,6 +11,9 @@
- //! APIs that write back into userspace usually allow writing untrusted by=
-tes directly, allowing
- //! direct copying of untrusted user data back into userspace without vali=
-dation.
- //!
-+//! The only way to access untrusted data is to [`Validate::validate`] it.=
- This is facilitated by
-+//! the [`Validate`] trait.
-+//!
- //! # Rationale
- //!
- //! When reading data from an untrusted source, it must be validated befor=
-e it can be used for
-@@ -46,7 +49,7 @@
- /// untrusted, as it would otherwise violate normal Rust rules. For this r=
-eason, one can easily
- /// convert that reference to `&[Untrusted<u8>]`. Another such example is =
-`Untrusted<KVec<T>>`, it
- /// derefs to `KVec<Untrusted<T>>`. Raw bytes however do not behave in thi=
-s way, `Untrusted<u8>` is
--/// totally opaque.
-+/// totally opaque and one can only access its value by calling [`Untruste=
-d::validate()`].
- ///
- /// # Usage in API Design
- ///
-@@ -101,6 +104,30 @@ pub fn new(value: T) -> Self
-     {
-         Self(value)
-     }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate<V: Validate<Self>>(self) -> Result<V, V::Err>
-+    where
-+        T: Sized,
-+    {
-+        V::validate(self.0)
-+    }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate_ref<'a, V: Validate<&'a Self>>(&'a self) -> Result<V, =
-V::Err> {
-+        V::validate(&self.0)
-+    }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate_mut<'a, V: Validate<&'a mut Self>>(&'a mut self) -> Re=
-sult<V, V::Err> {
-+        V::validate(&mut self.0)
-+    }
- }
-=20
- impl<T> Deref for Untrusted<[T]> {
-@@ -140,3 +167,35 @@ fn deref_mut(&mut self) -> &mut Self::Target {
-         unsafe { &mut *ptr }
-     }
- }
-+
-+/// Marks valid input for the [`Validate`] trait.
-+pub trait ValidateInput: private::Sealed {}
-+
-+impl<T: ?Sized> ValidateInput for Untrusted<T> {}
-+
-+impl<'a, T: ?Sized> ValidateInput for &'a Untrusted<T> {}
-+
-+impl<'a, T: ?Sized> ValidateInput for &'a mut Untrusted<T> {}
-+
-+mod private {
-+    use super::Untrusted;
-+
-+    pub trait Sealed {}
-+
-+    impl<T: ?Sized> Sealed for Untrusted<T> {}
-+    impl<'a, T: ?Sized> Sealed for &'a Untrusted<T> {}
-+    impl<'a, T: ?Sized> Sealed for &'a mut Untrusted<T> {}
-+}
-+
-+/// Validate [`Untrusted`] data.
-+///
-+/// Care must be taken when implementing this trait, as unprotected access=
- to unvalidated data is
-+/// given to the [`Validate::validate`] function. The implementer must ens=
-ure that the data is only
-+/// used for logic after successful validation.
-+pub trait Validate<Input: ValidateInput>: Sized {
-+    /// Validation error.
-+    type Err;
-+
-+    /// Validate the raw input.
-+    fn validate(raw: Input) -> Result<Self, Self::Err>;
-+}
---=20
-2.48.1
-
-
+> ---
+>  kernel/rcu/rcuscale.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
+> index 0f3059b1b80d..cbe2195f08d6 100644
+> --- a/kernel/rcu/rcuscale.c
+> +++ b/kernel/rcu/rcuscale.c
+> @@ -762,7 +762,7 @@ kfree_scale_thread(void *arg)
+>  		}
+>  
+>  		for (i = 0; i < kfree_alloc_num; i++) {
+> -			alloc_ptr = kmalloc(kfree_mult * sizeof(struct kfree_obj), GFP_KERNEL);
+> +			alloc_ptr = kmalloc_array(kfree_mult, sizeof(struct kfree_obj), GFP_KERNEL);
+>  			if (!alloc_ptr)
+>  				return -ENOMEM;
+>  
+> -- 
+> 2.30.2
+> 
+> 
 
