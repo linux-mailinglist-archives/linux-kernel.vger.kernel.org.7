@@ -1,197 +1,297 @@
-Return-Path: <linux-kernel+bounces-612724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B70A9530A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA5FA95270
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 16:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954823A9D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C5D3A8226
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5994E1E2602;
-	Mon, 21 Apr 2025 14:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E853912E1CD;
+	Mon, 21 Apr 2025 14:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Q9hXmq7f"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011026.outbound.protection.outlook.com [52.103.67.26])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="J3/F5zOA"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57721E104E;
-	Mon, 21 Apr 2025 14:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4659A800;
+	Mon, 21 Apr 2025 14:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745246881; cv=fail; b=Ij6BDW0NfN8RFE9AYzf6umDv8EIN/rJdjcnQK/fFJ0/PJp+z7wraB8u8AIMQORT4V2U7lUra2phSC01Q8Jyf1kpLciv3xbvK9XHEXoMU1t7ZSE6GuALjTCNMxRletT+ajAl7/Ym0Do2hNjUpIpI2YuHhF8ZYF5ygXcN+FOUGvPY=
+	t=1745244324; cv=fail; b=pBhSA6iXU2zwZC0L0Q4ELrZlObrSkMCKaElIdbIzrSPXtZZ+4QC4W1ujreM3bJUjQtAzL4bYpN3almXda47y5Ou4Y1+ksPviCdeYl5x6fWvbXh1ccaSKP6N4FkY+62UN2mG18Gve+bvSDqKFP2Muh6bV5nl+3amxoLPF08TnBlo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745246881; c=relaxed/simple;
-	bh=Dae3IBbeqHqy2zk+EVFF1NLDBUcuuFjhagiZWrKyOYw=;
-	h=Message-ID:In-Reply-To:References:From:Date:Subject:To:Cc:
-	 Content-Type:MIME-Version; b=fKOWCWy8pjSlv6+JQIbZA1wqkeu5SR47HshX8kQ2ja8P78rx3LZSqb5UU2vdImEw22k2aczGhaanf8BWd0fo+h1W5iD2Zssh25NbxtACgq7lv4Z6vVH+mKqbojDXik8986HBgU0LewBDSn7ZSdeKUMF5SItl0ibHIgGWzv1+Wug=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Q9hXmq7f; arc=fail smtp.client-ip=52.103.67.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1745244324; c=relaxed/simple;
+	bh=131oWNqP/6BERAsIG0Px/y32dWwqC3tgzPxf1i8Lmpc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rwiRJhA0n5HqNVQv1ViaN7CRnIUqyK3T3/xOf22jmuFFVo06hvlv3lVREOlhqC3hrMhldxqTfy60EUxVoUEJkg+a1DOXr/yqH5rS8jDqS0zC9KjWfx2PRKFGhi9FH0t+88iXFaR6Lq1ZV9yb63txmNvqHoMsR1DvfBHbZ1zNu+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=J3/F5zOA; arc=fail smtp.client-ip=40.107.243.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z0xmDYA44dfhcLa9A6yqEQ2vflBGCJ803sFGO6y3tB0do3Z3rxuzdUVOgLd2KjPACvDk/xlCZN8V67vcKS76I0CtQXOuSnqqIrzUesZ4FzLc4fcunkBDdvKZg0VpwO87EnWPE6vz7wAyumPZhbHrJBC7vp5a1YR5XTo8TPO5zkFK6m0C26OgPyYTsYKzs8MiDxW75tR5/QIGG785ZJVqA8k8JXaJ/xQy9cEZRN3zAu9vf3p1j14+RHUqmPI6vsOIJPiPH4W7SjBP3hqkO2Efn2wMEB7YEgbinOhP5X/SxrI10kMXGW5QWh7LY4a6EwIW4NuZfYYHRSWMrIBcJOlxWA==
+ b=iNLKEnjLC+HPlNFv+ulG6w2qM+8duinqlWeHb/kxTbOJRGoJNDYa7rrCTvUhcQEh/cflNjcraDR/Y0NOJWbtqgYseyLuO7cya1JqVipOUUjQVY5+5Bcu32CO8mqFtzrJfXyeu90wm+zxbwE5q9OnmkZHZP/KHhh9yuaQBZeXFGRhL/7cgOKxcLEiSID+5NDGhIf2mmkG5F1BQdFHZ5wkdtqfJFwXAzSkPGV7/EKLOANG1/AD283MENdNehf4u5sngMJWVYVyQJzBe5YJkOQrGePIuaoKA24SINg+azvBn0ihc8FnAviLVaJSpYAPipiI6vSwvHvjNESvoiVNEEmYaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9zQoJjd6VAXGyfhy2dULdfQPxOOXkj7MbUqSgEACHio=;
- b=QYtldgtAyNBiWdbhouZCEVHEyey23fsaUi7w4NV+aAwBjsH/zLrgXK/PPriXYFyIJYTAWq46u4HJ05MPHuJLlRSrfl6IzCsYLEvAzrXQ25FZpcQT9eCmT2JwLZQ1YkDhreQi5RpO+HexfFQ94sArdW8Q72ij24NWJ2A7v14olqxElMMMm7WAVnaJCGgGJI8kpBg62TMXAWFYoIcFGyM+6gRmMldoN9o+tnqaD0SMPOr2AC6yBbCK6CSd2TTqRRSXbKtZ9OMrw/74HkPLNee9blsULF+sM1Vu1/m4PUSnQQi/mKavcDey9VUL+0KfDiEZOKshAZ9SY6yiqZvOOddVGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=RYGrHX8PRgiqcNOdoCT8xeROUlKlwYqcNmo7kgeR3IA=;
+ b=b5i2eXHZfma4ZsPO94uAw0XO9V+81Xh0ZdX+Mb+YVPrGhE0x/1b2CUWiGNql5DW6BNKGMc1FNczfsw7PhdubbKYrJ0wE8vXFWMzrUtYf+mKbAOPpslMeE4C5gttqGE1nmNRjDecTpCaxdRTwP3OZ+ddlLyLxw27moxLXV5v3iZhaRRlTGRwBrjYVHDzthzGkDI5nejvrzYKotUKG7FLe7MZgC9ng2A7/tS2NKezZikOZc85ng2LQoonKhXanHWSLHrvkiE5/qubiweuLRf7vnn5mZrW68DiwT2/ifcaWtEw8Wqw8raAewpJSFN7/yS7eChwgAs6UN4qZG9y8Por69w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9zQoJjd6VAXGyfhy2dULdfQPxOOXkj7MbUqSgEACHio=;
- b=Q9hXmq7fbP6ZC4lpvhiwN38egQ0w4siEhCAodpu8TvBWDZmmgjifI7j4Pc4ml5sg6Jb4GSC8xcN3Qya27F2LV/znvS1MdZrc0cCx6kSNRlm6djIJYoisDiuk5KkESgtjzDMfy6NyyH1XLRg5y5FnSBmMoW+bVH86nNplmbus9CNiH0eFtQ64FG5eituEcANvPI/4K/+q9UI0f2WdeazknVdM/zaIB8r0j4DhAhLQbJq0zPi05kD5OXdoD+YzbrY+/INq6QtgbVf7P/h8t3MBW3mCkMQtwiP5MxZHf5d1MTglJwzHRkGAajbj/H9PHloGBC8ElGleXdMfiwvX3zq7zQ==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MAZPR01MB5918.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:65::14) with
+ bh=RYGrHX8PRgiqcNOdoCT8xeROUlKlwYqcNmo7kgeR3IA=;
+ b=J3/F5zOAlysPYCvGU9o9akeul8RcCKiFBB+CnSjnGVjC0sE0dvjPAcin0jqFX5UraNF0oL22ctcvXoFEd1EENe+9g44AIo3mqnwb4AF2zA3FgKXtnEQ8n83VaNEDw2c7fBrZ3nD1UgQxALFvtOBY0NI1A2Sg4ddWsweXcrwohqc=
+Received: from PH8PR22CA0018.namprd22.prod.outlook.com (2603:10b6:510:2d1::24)
+ by CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Mon, 21 Apr
- 2025 14:47:54 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8655.031; Mon, 21 Apr 2025
- 14:47:54 +0000
-Message-ID:
- <PN3PR01MB9597468F38C8188B8583D14FB8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-In-Reply-To: <PN3PR01MB959796962F41CBC4B7B2BD90B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <PN3PR01MB959796962F41CBC4B7B2BD90B8B82@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-From: Aditya Garg <gargaditya08@live.com>
-Date: Tue, 15 Apr 2025 21:43:52 +0530
-Subject: [PATCH RESEND v5 5/5] HID: apple: Add Apple Magic Keyboard A3119
- USB-C support
-To: Jiri Kosina <jikos@kernel.org>,
-    Jiri Kosina <jkosina@suse.com>,
-    Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-    Benjamin Tissoires <bentiss@kernel.org>
-Cc: Grigorii Sokolik <g.sokol99@g-sokol.info>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    linux-input@vger.kernel.org
-Content-Type: text/plain
-X-ClientProxiedBy: PN4PR01CA0084.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:26d::14) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <afd4e709bdf3086a53020dba01374070730a45a4.1745246807.git.gargaditya08@live.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Mon, 21 Apr
+ 2025 14:05:16 +0000
+Received: from SN1PEPF000397B2.namprd05.prod.outlook.com
+ (2603:10b6:510:2d1:cafe::1c) by PH8PR22CA0018.outlook.office365.com
+ (2603:10b6:510:2d1::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Mon,
+ 21 Apr 2025 14:05:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF000397B2.mail.protection.outlook.com (10.167.248.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Mon, 21 Apr 2025 14:05:15 +0000
+Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Apr
+ 2025 09:05:10 -0500
+From: Vishal Badole <Vishal.Badole@amd.com>
+To: <Shyam-sundar.S-k@amd.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <Thomas.Lendacky@amd.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <vishal.badole@amd.com>, Vishal Badole <Vishal.Badole@amd.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH net V2] amd-xgbe: Fix to ensure dependent features are toggled with RX checksum offload
+Date: Mon, 21 Apr 2025 19:34:38 +0530
+Message-ID: <20250421140438.2751080-1-Vishal.Badole@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MAZPR01MB5918:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb16a2c5-e474-4a90-a634-08dd80e37fb8
-X-MS-Exchange-SLBlob-MailProps:
-	AZnQBsB9XmpI8tRyoOXaSUmOkLVCBKasPy+ePdN4VnX/cGym85LG6RSUyFbVr0E9OJJ5Z+HYQcHUO/qbb/jr0omYyG+i2wtDfTP7C+WCapd6VtvOMdUL1P5hLp2iC+rylXDar/XX4gRuJYhNQYJXu4rRulOPBymsYwO4IvEjiHgxWrM0aNP2f2DbaaKdYkRqDiH/FATSHDeIqRt7PFEqDS3qSIZbUoJec+CIRgCcHMmNHyzho+qiDRA+AcK/MqTY5qQJGa/w/oh6pctWrLU/rBuIIXuRuF7P4ZFt4X+V7k88Jzih/xRKO7iHcX3na03It+JcGQxNvlM6rZsJd102c49mKtdLGBlDp0ZCKHc83CuYFbVUZw6OkCavr0KnL306/BZdFFI2DoXlI8NFhD/UjjiSb61wh0EHNxZfeWjtJbToyq75ta75Yt6UidQIkC2ZXlIaZt3Z3NXeQKk9PVN3q8UQEzAYNWO5RUvOETqnST/2IpcLzLZ+8165pXd4W3CTxydevtvm+mY5YN5dtX5LZ39NRlK7Kpr6ReEUDGnAUGzvzNcWWc27RJ3b//Ss8bCccnggfGv6csu3N8r/NsKSWIyUO/lIqxznwlk2bOzZVHyqe7dHklZxdfylo9sTfgetjA2hPZTyDJp+BdJ/s9ZjdBk/H2OPehqLEgbNRHmk9sW7b2c+v4wwnpacVFUMA68UaxRB+2VTLVsIoqjx04OCHdgED/BuIu+pUv5uDtINOj3aPfCrKhsJWIZmfGhaA4QgMzTTaWAMa5E=
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B2:EE_|CYYPR12MB8655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e4222eb-169d-4bf7-0d67-08dd80dd8a58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|7092599003|15080799006|8060799006|19110799003|5072599009|440099028|3412199025;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3AEpjJbLER8h0m9lIUXEN8F4LWDD09V5/ztn55wdW7RUfWCHwx+OZcNH0yrq?=
- =?us-ascii?Q?EVF6U7dgKYvU3/PRuqmpEz9aTMLYBVFVJVuIHv4nnk/SadjgWm++P3aauoxC?=
- =?us-ascii?Q?mJwa/UWbyh0g2jyNcs7aYmL1eTDvuzDIN3NhEOaxlWdolQ8auxUecJkiP2oS?=
- =?us-ascii?Q?mZxCA2ymwYZ8C00yDCwxxEdGjU9cnoci+qTGPapYf50uB255YYlc5g0j6vMX?=
- =?us-ascii?Q?90ZUjVKObVp6b2+IwtbYU076KGgL/c2RA2N74nF1cW8l49FWyaWrVy8IaqbP?=
- =?us-ascii?Q?d1TYsI6fyEa666qxbIxbsaHKWzbyYJqFKjAWABf+UNqEdu296d3zG5vy0VWO?=
- =?us-ascii?Q?WYMBfvw29gQU3Jq5XKWmZOSr0Yh68OEmEtH2zEBIM2vo4NjxIh3t/Uq0x2w8?=
- =?us-ascii?Q?x9yGfIZqqxpKEvmyKURFS+Tc2f/WKQS2DENzkrQLCKJpi7Al7J108yhEhM66?=
- =?us-ascii?Q?+YestkYsV6+53c+cLmEXdOVSm57tlb8M+y7IuZLUf9V8eNMPASAZJ9l8w0lm?=
- =?us-ascii?Q?Wn1ogV1vA3bwjkDyCN7NRq7XfjLvT6R4j6rgonEKMSKY7GFcHElPMigqqKWm?=
- =?us-ascii?Q?SI3r0AbWnID4N9DIEIlA1zv7VV8YNwfjekLEKAGv1/T3Y9LmQspkq0cR65/+?=
- =?us-ascii?Q?JrStrAWfZcKhYUNMlcT3ajBJq67fRI8tJt145z8WakW5yDYEmM9HKWfsGt8H?=
- =?us-ascii?Q?Ly0ovJJgvZ+acpxwQ6zi4Bd49SjztxXOrQPf7RnFxu8FyMXe2BfeIzZa3PZa?=
- =?us-ascii?Q?sMrF1XdUv7bjjpR7WZTIKYEJdIk5hNgSS30WnldW2f3a8i7mGfevMJAEUO81?=
- =?us-ascii?Q?jTho04JvmsdULpIZ9OJvwiQvJx+g4F356aVNImx/UW55kKNs4MbaeuhfFVp0?=
- =?us-ascii?Q?EyL1Avly4COriLvLtZ0LiCBziHnpiRwdskS+3c/JbvDKtDx8v53w2QnvLhBJ?=
- =?us-ascii?Q?fpqtccO/o4x93wwQMX8+liLOaX6wFM1+Cr5oW8QGMcC1ZK7LHUcwrvhaJgeL?=
- =?us-ascii?Q?AtNChk+8LDfCo3TMfTyAX3vOWR+JG+4P4XUILNJfLmC0bGC7QcuxiT4Rv0tG?=
- =?us-ascii?Q?Tenly/LGbvidD1wlZGyQehFihl7PEZJBi7rWs47SZTWaBGPdaaQ=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sDHRakbgsG6QoF/42xAFBstLJvMtwGDKCA34E2XufDXb4DLhX83RT+WGHF2e?=
- =?us-ascii?Q?o/kxDyU//Zvui4vnJJHEXtyQECoScdKk1qJ/S0KJVyZRxToWRCcnB7Fn36uk?=
- =?us-ascii?Q?N9Z9D5e3McQLeNyUxQAX5TS/u7Lfkb2bVyJ5l1HV0zqNdE02YmNpC4Nl4Q/f?=
- =?us-ascii?Q?gviCOfxBTC67aHyEsJd4lUbZdnttca4Mewm+MI1V1gmaOwAaUAqvD4iR1IBU?=
- =?us-ascii?Q?1aqjRW47mjeX7Tq+0GIEFN4MWOJrIa+f04jVwVZdJsPMnzDW2gLmz1w7XEMv?=
- =?us-ascii?Q?KVFYkeRsyr8WAkiqsdPYUymg4NBhkghbbJ/1XG7TkvGBvFe5/U9j87YXs0j5?=
- =?us-ascii?Q?56BWcVON72/00Kn1HOFiY9FKAXWQphFs39nqdT71BEnuuzVAAcITe6mTvtKH?=
- =?us-ascii?Q?HX2ZnG2fskPUx5mFpTTLArOT0QhYxUnpHfiHaxHGQrMbxrAAnGUxWoNWa3hc?=
- =?us-ascii?Q?wTNF71ZVL+xlIJ24wI6XRcsw+xGzYGmrbZzhYVSkYCSD0kgSL02IDnzh2rZR?=
- =?us-ascii?Q?p/lUeJrRqpJ88UtbL1hCXibyyVH1AEcIaYKrx2r47CnZHXXcj1P6WhcIUhe/?=
- =?us-ascii?Q?wvNr/HlqrPMnoQU3CASLcohblNS+WNkihHO3VDQQR1RXnttyC5DJTbtZPncG?=
- =?us-ascii?Q?czjkYMjZvUxPJSo8l64gEiqAoUMyndTjZUvWKe8RnKMA60a5ppn635bgiEPc?=
- =?us-ascii?Q?GCw6EE/utq9uN+18C4TSGA90+u/31t/23+rvsL5Y01prmcKuOrPt6t4Cki1X?=
- =?us-ascii?Q?M3gOWaQm3pLIMLFWmLJ2mEHhRNN85vj/rtcPuiJbFtu+JqqtJuYSGORsCrHZ?=
- =?us-ascii?Q?UoW/tcXROhBWFtWYJ25VwFjFqG+LVcGJzn0SipFulqzSQBZhAU9Mt2QVlMCu?=
- =?us-ascii?Q?Oz/oZrDC9e47xJdUkGEMWEmMgZ/uOYpLoG1BRI+wZTyUcvC6ivlpqPnaCHtj?=
- =?us-ascii?Q?BODm0VoHO/oUSTK0RUKYZZODZnfQtwjYdBoaMQhwWW64KA/yCzZR7adrLxcs?=
- =?us-ascii?Q?rwQJ0D+2a4y7h0uCwXavaX8rIV9yLS37Z/SJmKTEdr3J/JSrpNTlGU8VnXT4?=
- =?us-ascii?Q?ZBYPYtOdGgUKwa6m+PiDo3YL6AWpVjXyn+KDS04ZJMOqnr/6XCpjXq9L87wQ?=
- =?us-ascii?Q?PUhD0n8yrpVK3Yg+fPLxKV76uuTw2uM5jO1tILIAlte80A2Nt3tc6688lw7q?=
- =?us-ascii?Q?fVK1BlQarI1lpKvnKbyeoO4ujp08ridNDXsWxXZ5w62mjp3srSSe1tKdeE0?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb16a2c5-e474-4a90-a634-08dd80e37fb8
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 14:47:54.7199
+	=?us-ascii?Q?ywFPLsxCuU4yjh6H9auh3tBLC+On5CQrBAR5f/PE8Sywmd5OlB8VVta1U/6r?=
+ =?us-ascii?Q?WX0069z44JSkiekhPboI4hDVRIuFGIhgPwV3v4x7wr3d+qG1+DQpff7zJrF9?=
+ =?us-ascii?Q?UguPEh1xDiq6S5wTxgTd8yuy/ZMvJ3v8HH1FHl9t+sQRemaliAN2dt5XBBhD?=
+ =?us-ascii?Q?EGkSctCN3jfGmGln3il01ZZSRYRjpwcpzUdGrN3KQNvrA32dbTpeCrD3UPed?=
+ =?us-ascii?Q?IirkOIUAqplE5Y7mNuVeYJ+O/Rtw2pxJP+tFzU7GFmri9xxs44R6REkYvow7?=
+ =?us-ascii?Q?yTbM5KhrqG5p6xbLlSC0wUGiZuyCNLbpC6jDBJxPi1SnYo7iO1FfVfB9KjyL?=
+ =?us-ascii?Q?Wt/SdikOGroFPECYu7gp+z0gz0dujCVfuZIhFWHHZlz/M3IPZHm/vq4e04tz?=
+ =?us-ascii?Q?6CCobd7o97AehsbLybCjZ1MRBvOF02Wqnr81BqexU2z1jq426yMliNVwkvBH?=
+ =?us-ascii?Q?BAj2T7lk3dx0a05AzDTv6ZYP/BVkgOvpkxYYI+HFukHYDaGib3VBP/K/8TH6?=
+ =?us-ascii?Q?W5obRwxs5C+184aiNJRWI8snxtI/puqCBfT9HU/b/G6yI2ig7r7mc8p/299t?=
+ =?us-ascii?Q?ovwxPs4a58pgw2EneL7vat0ojpxTtDvDgSjZlaNky/7ZEZ/oyfWFh5PuP/8P?=
+ =?us-ascii?Q?kAsQr/EPfSkVaF4N5I5pjQm96pVpZ5d3K1uIbnf/EL4wFyBTfyuO6JTlNO/9?=
+ =?us-ascii?Q?Q1kyGVJKi+mxEWItSa4zmFqJRVrs6uY6B7eFfBoTegZmCuZYTt/ThNE9yDW5?=
+ =?us-ascii?Q?9VyQvIFj02LxXDY9VRY70PrT9PYxbQLDFEJ18xlwzLjhe5D99qARjnxu1o5R?=
+ =?us-ascii?Q?Upi7/ulYG7whZjMsr9HzJIU9G6bwJdUp9JPqQMHPLLQzoPozaWbR6GQs6rs7?=
+ =?us-ascii?Q?yFf5Mx+U2gitJXPPtC7cgEYp4CKDN8l9cZeMqqbH2Io+tOZxtJwujTiLEmaa?=
+ =?us-ascii?Q?mNopO1pR+wNMHyB7EvlDmHx1qDXQVsOG5okJabts4sm5M9NW6Hrg/EIZTucF?=
+ =?us-ascii?Q?SrBGsyWqPjxsyP710Af8cFK1PdVupqCbpBLCf12VtGqg2JWYadqo2EnMLKyb?=
+ =?us-ascii?Q?RQwK3PXcIbfKwFowigahCXBKKYHX6so3OuLUMIycKEk+tCk6u1dAHu68WLCU?=
+ =?us-ascii?Q?ph2G80EJ06cAvpubAXVqPvnJfboneOCaQPxozLtGeQF/WVbqorIToi0OzJ0H?=
+ =?us-ascii?Q?3toSAinKgBU1SIY9IjWt6T2L37Pfc1wiJ1tVlMGCZJZB4+eq0G0G44M6CpM4?=
+ =?us-ascii?Q?/xQ1ZJxt2V135z5bfTE9bWjXLMF8zQLvJ4BltWCVS5Z+cHBydf38/grYYakO?=
+ =?us-ascii?Q?G8W6wwjHJD9q0Q7dcvG8VgHAbd59LSPGIwfduogtrUwxLVPgAiHJdc3Xp+Gz?=
+ =?us-ascii?Q?+5wxznpKDJnox/SZXdMwZO5wk22ZAKD4kUVdpnurvmI9I5r7f6UmAx3HO8vr?=
+ =?us-ascii?Q?/qi6NYdnT/c+i+M0hJb4VzJOOcRWpralgU1VGquL5DpzXGzNrdg5qcjftrRv?=
+ =?us-ascii?Q?UV9EA8ll4kO2XA/EueLXG0Rqe1aaXPVcL6e6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2025 14:05:15.3163
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB5918
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e4222eb-169d-4bf7-0d67-08dd80dd8a58
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8655
 
-From: Aditya Garg <gargaditya08@live.com>
+According to the XGMAC specification, enabling features such as Layer 3
+and Layer 4 Packet Filtering, Split Header, Receive Side Scaling (RSS),
+and Virtualized Network support automatically selects the IPC Full
+Checksum Offload Engine on the receive side.
 
-Add Apple Magic Keyboard 2024 with Touch ID and Numeric Keypad device ID
-(05ac:0322) to those recognized by the hid-apple driver. Keyboard is
-otherwise compatible with the existing implementation for its earlier
-2021 model.
+When RX checksum offload is disabled, these dependent features must also
+be disabled to prevent abnormal behavior caused by mismatched feature
+dependencies.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
+Ensure that toggling RX checksum offload (disabling or enabling) properly
+disables or enables all dependent features, maintaining consistent and
+expected behavior in the network device.
+
+v1->v2:
+-------
+- Combine 2 patches into a single patch
+- Update the "Fix: tag"
+- Add necessary changes to support earlier versions of the hardware as well
+
+Cc: stable@vger.kernel.org
+Fixes: 1a510ccf5869 ("amd-xgbe: Add support for VXLAN offload capabilities")
+Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
 ---
- drivers/hid/hid-apple.c | 5 +++++
- drivers/hid/hid-ids.h   | 1 +
- 2 files changed, 6 insertions(+)
+ drivers/net/ethernet/amd/xgbe/xgbe-desc.c |  9 +++++++--
+ drivers/net/ethernet/amd/xgbe/xgbe-dev.c  | 24 +++++++++++++++++++++--
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c  | 21 ++++++++++++++++++--
+ drivers/net/ethernet/amd/xgbe/xgbe.h      |  4 ++++
+ 4 files changed, 52 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index e95a54113..0524893f7 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -486,6 +486,7 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021:
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024:
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024:
- 			table = magic_keyboard_2021_and_2024_fn_keys;
- 			break;
- 		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J132:
-@@ -1182,6 +1183,10 @@ static const struct hid_device_id apple_devices[] = {
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024),
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLIGHT),
- 		.driver_data = APPLE_MAGIC_BACKLIGHT },
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+index 230726d7b74f..d41b58fad37b 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+@@ -373,8 +373,13 @@ static int xgbe_map_rx_buffer(struct xgbe_prv_data *pdata,
+ 	}
  
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 8682e1b11..4925bfd08 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -167,6 +167,7 @@
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021   0x029f
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024   0x0320
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024   0x0321
-+#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024   0x0322
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI	0x0290
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO	0x0291
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS	0x0292
+ 	/* Set up the header page info */
+-	xgbe_set_buffer_data(&rdata->rx.hdr, &ring->rx_hdr_pa,
+-			     XGBE_SKB_ALLOC_SIZE);
++	if (pdata->netdev->features & NETIF_F_RXCSUM) {
++		xgbe_set_buffer_data(&rdata->rx.hdr, &ring->rx_hdr_pa,
++				     XGBE_SKB_ALLOC_SIZE);
++	} else {
++		xgbe_set_buffer_data(&rdata->rx.hdr, &ring->rx_hdr_pa,
++				     pdata->rx_buf_size);
++	}
+ 
+ 	/* Set up the buffer page info */
+ 	xgbe_set_buffer_data(&rdata->rx.buf, &ring->rx_buf_pa,
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+index 7a923b6e83df..d0a35aab7355 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -321,6 +321,18 @@ static void xgbe_config_sph_mode(struct xgbe_prv_data *pdata)
+ 	XGMAC_IOWRITE_BITS(pdata, MAC_RCR, HDSMS, XGBE_SPH_HDSMS_SIZE);
+ }
+ 
++static void xgbe_disable_sph_mode(struct xgbe_prv_data *pdata)
++{
++	unsigned int i;
++
++	for (i = 0; i < pdata->channel_count; i++) {
++		if (!pdata->channel[i]->rx_ring)
++			break;
++
++		XGMAC_DMA_IOWRITE_BITS(pdata->channel[i], DMA_CH_CR, SPH, 0);
++	}
++}
++
+ static int xgbe_write_rss_reg(struct xgbe_prv_data *pdata, unsigned int type,
+ 			      unsigned int index, unsigned int val)
+ {
+@@ -3750,8 +3762,12 @@ static int xgbe_init(struct xgbe_prv_data *pdata)
+ 	xgbe_config_tx_coalesce(pdata);
+ 	xgbe_config_rx_buffer_size(pdata);
+ 	xgbe_config_tso_mode(pdata);
+-	xgbe_config_sph_mode(pdata);
+-	xgbe_config_rss(pdata);
++
++	if (pdata->netdev->features & NETIF_F_RXCSUM) {
++		xgbe_config_sph_mode(pdata);
++		xgbe_config_rss(pdata);
++	}
++
+ 	desc_if->wrapper_tx_desc_init(pdata);
+ 	desc_if->wrapper_rx_desc_init(pdata);
+ 	xgbe_enable_dma_interrupts(pdata);
+@@ -3910,5 +3926,9 @@ void xgbe_init_function_ptrs_dev(struct xgbe_hw_if *hw_if)
+ 	hw_if->disable_vxlan = xgbe_disable_vxlan;
+ 	hw_if->set_vxlan_id = xgbe_set_vxlan_id;
+ 
++	/* For Split Header*/
++	hw_if->enable_sph = xgbe_config_sph_mode;
++	hw_if->disable_sph = xgbe_disable_sph_mode;
++
+ 	DBGPR("<--xgbe_init_function_ptrs\n");
+ }
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+index f249f89fec38..4d290ec934a8 100755
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+@@ -2267,6 +2267,16 @@ static netdev_features_t xgbe_fix_features(struct net_device *netdev,
+ 		}
+ 	}
+ 
++	if (features & NETIF_F_RXCSUM) {
++		netdev_notice(netdev,
++			      "forcing receive hashing on\n");
++		features |= NETIF_F_RXHASH;
++	} else {
++		netdev_notice(netdev,
++			      "forcing receive hashing off\n");
++		features &= ~NETIF_F_RXHASH;
++	}
++
+ 	return features;
+ }
+ 
+@@ -2290,10 +2300,17 @@ static int xgbe_set_features(struct net_device *netdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if ((features & NETIF_F_RXCSUM) && !rxcsum)
++	if ((features & NETIF_F_RXCSUM) && !rxcsum) {
++		hw_if->enable_sph(pdata);
++		hw_if->enable_vxlan(pdata);
+ 		hw_if->enable_rx_csum(pdata);
+-	else if (!(features & NETIF_F_RXCSUM) && rxcsum)
++		schedule_work(&pdata->restart_work);
++	} else if (!(features & NETIF_F_RXCSUM) && rxcsum) {
++		hw_if->disable_sph(pdata);
++		hw_if->disable_vxlan(pdata);
+ 		hw_if->disable_rx_csum(pdata);
++		schedule_work(&pdata->restart_work);
++	}
+ 
+ 	if ((features & NETIF_F_HW_VLAN_CTAG_RX) && !rxvlan)
+ 		hw_if->enable_rx_vlan_stripping(pdata);
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
+index db73c8f8b139..92b61a318f66 100755
+--- a/drivers/net/ethernet/amd/xgbe/xgbe.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+@@ -902,6 +902,10 @@ struct xgbe_hw_if {
+ 	void (*enable_vxlan)(struct xgbe_prv_data *);
+ 	void (*disable_vxlan)(struct xgbe_prv_data *);
+ 	void (*set_vxlan_id)(struct xgbe_prv_data *);
++
++	/* For Split Header */
++	void (*enable_sph)(struct xgbe_prv_data *pdata);
++	void (*disable_sph)(struct xgbe_prv_data *pdata);
+ };
+ 
+ /* This structure represents implementation specific routines for an
 -- 
-2.49.0
+2.34.1
 
 
