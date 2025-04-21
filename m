@@ -1,97 +1,58 @@
-Return-Path: <linux-kernel+bounces-612881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03AF0A9555F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910A9A95562
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D79416EF17
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6774F188FB3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E81E5B6A;
-	Mon, 21 Apr 2025 17:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A141E7C02;
+	Mon, 21 Apr 2025 17:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bDulU4eR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6G2lmqLi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bDulU4eR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6G2lmqLi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nhMeyPXf"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153241C8611
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 17:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A751E573F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 17:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745257199; cv=none; b=Bz0HVmmHdbKLn6hRBLdO9/XaWXX0F+USj8/xFo056EM7hQfJb2+/bjoQFcarGZro9B8TnrhcV5jrut2VpfxPIsK7vznGZtDeQYE/Fi7BoU7wC1NTLXtpRB22P30WLn3vFkzdePqgjd0wTlyd/fVu5eFxooiK4iKhgV1wMLYWp4g=
+	t=1745257218; cv=none; b=uY41cF76bIJT2yaIID9RyRSd1hlTD9LvHj1OntjX3IWkDSAdguqF7uL4b7UTb2UEW/3Ij+rwt9mHPOCRU8rtN2pjJgj90M2Q4k0CP2AVCeiFzPRFEFG2+IpRZjcbrDcaFNrQi25xHaIqYlZUXn4B5vxj8hJ4uKpfwP6UObI01Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745257199; c=relaxed/simple;
-	bh=p++XsV65zd8Ml/Td96dJzQsEUULUlD/KcxLSQDGYqxc=;
+	s=arc-20240116; t=1745257218; c=relaxed/simple;
+	bh=useqJap+ezRoHVTkg1sAXR5EWKTh9ETeAM945golY8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgtEsjq8NxDM9jb4kVE47hK0eDesCXTFcv+Jr+LCrWKWmWF7ekyH+KKYMyG6PwxYBx0GqukHL7kwhXPwM3xnd+3gn4aQFqiS9pCx7I0ZpHwJulAv6SIt+NFhbeX5UEvHBXE/syrKE/cqgD/GztEj1famj1/oL/n1v/dueIIhu30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bDulU4eR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6G2lmqLi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bDulU4eR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6G2lmqLi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 11BB921202;
-	Mon, 21 Apr 2025 17:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745257196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sK+aD4UhcGZI/jU6DhzLmZSaZs0Fc8MqPDNkHYbcWQ9IiUeCTZQQO21OnHtNVNe6GROH+tDkAUfC+E9INp1pU5/ypNAiwpdR1226Xa8BRXGPSpSfXi9Bh7CWK3eOkrsSQxDaBLVqUHWSi6cVQXXXe5BuykylCPjPsho+gbl+GEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nhMeyPXf; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Apr 2025 10:39:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745257203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EXmDV2NTlrhzoeaQPnEZB931iPAN+blDYH7pEAZJ4qM=;
-	b=bDulU4eRMZWRZ9FcBsmv/7u47mSjQiDFv1phx8iEHruCl1mdCet1hdpg2xQFDGVUuxOFWp
-	UOsgK0YGOcNtbxlg+DvwmM+GFb0TSBLE/KPcla4GW8CumoGtPWQGu5lbM9M6bFDwPLjkSl
-	vzbFtppuXpODQ4bNzISQ4h4Tk1QZoaY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745257196;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EXmDV2NTlrhzoeaQPnEZB931iPAN+blDYH7pEAZJ4qM=;
-	b=6G2lmqLiOh8+3mNdzuzsKL7IN7V5BmFZgVSNKipyjFrgOb4vC+O5o48LzKBDv98GZ7CnF4
-	6A8+lEqaSTcMBuBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bDulU4eR;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6G2lmqLi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745257196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EXmDV2NTlrhzoeaQPnEZB931iPAN+blDYH7pEAZJ4qM=;
-	b=bDulU4eRMZWRZ9FcBsmv/7u47mSjQiDFv1phx8iEHruCl1mdCet1hdpg2xQFDGVUuxOFWp
-	UOsgK0YGOcNtbxlg+DvwmM+GFb0TSBLE/KPcla4GW8CumoGtPWQGu5lbM9M6bFDwPLjkSl
-	vzbFtppuXpODQ4bNzISQ4h4Tk1QZoaY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745257196;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EXmDV2NTlrhzoeaQPnEZB931iPAN+blDYH7pEAZJ4qM=;
-	b=6G2lmqLiOh8+3mNdzuzsKL7IN7V5BmFZgVSNKipyjFrgOb4vC+O5o48LzKBDv98GZ7CnF4
-	6A8+lEqaSTcMBuBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 981A9139D0;
-	Mon, 21 Apr 2025 17:39:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Q4FkH+uCBmgwbwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Mon, 21 Apr 2025 17:39:55 +0000
-Date: Mon, 21 Apr 2025 18:39:53 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] mm: workingset: Simplify lockdep check in update_node
-Message-ID: <bmzzod73cuumphqg6nyhegogc6wciyw7oewydljexni7tgdcni@32hathqdj7qo>
-References: <20250421-workingset-simplify-v1-1-de5c40051e0e@suse.de>
+	bh=ic0U5IhV6YzKvNqJCWbnzKQPn3EXM2vY2FdYHIFi4Do=;
+	b=nhMeyPXfb/xhlGRDoRZa/FULAGL/+tgPjy7ix20MhqCwjvxqpwRtbHeugUorGOKVbJZH+v
+	JMSDGVHWrMHtvM6rRnEcqj/8QmZVRqo09RbMoynz/TcmZMjTZ8vUatAPqFG6d5xJ/DJ/P2
+	j6oY4ngT20gFuZsRBQEvNYigZLeoGQs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Waiman Long <llong@redhat.com>
+Cc: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, tj@kernel.org, mkoutny@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v3 2/2] vmscan,cgroup: apply mems_effective to reclaim
+Message-ID: <7dtp6v5evpz5sdevwrexhwcdtl5enczssvuepkib2oiaexk3oo@ranij7pskrhe>
+References: <20250419053824.1601470-1-gourry@gourry.net>
+ <20250419053824.1601470-3-gourry@gourry.net>
+ <ro3uqeyri65voutamqttzipfk7yiya4zv5kdiudcmhacrm6tej@br7ebk2kanf4>
+ <babdca88-1461-4d47-989a-c7a011ddc2bd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,78 +61,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250421-workingset-simplify-v1-1-de5c40051e0e@suse.de>
-X-Rspamd-Queue-Id: 11BB921202
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+In-Reply-To: <babdca88-1461-4d47-989a-c7a011ddc2bd@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 21, 2025 at 06:16:28PM +0100, Pedro Falcato wrote:
-> container_of(node->array, ..., i_pages) just to access i_pages again
-> is an incredibly roundabout way of accessing node->array itself.
-> Simplify it.
+On Sat, Apr 19, 2025 at 08:14:29PM -0400, Waiman Long wrote:
 > 
-> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
-> ---
->  mm/workingset.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> On 4/19/25 2:48 PM, Shakeel Butt wrote:
+> > On Sat, Apr 19, 2025 at 01:38:24AM -0400, Gregory Price wrote:
+> > > +bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
+> > > +{
+> > > +	struct cgroup_subsys_state *css;
+> > > +	unsigned long flags;
+> > > +	struct cpuset *cs;
+> > > +	bool allowed;
+> > > +
+> > > +	css = cgroup_get_e_css(cgroup, &cpuset_cgrp_subsys);
+> > > +	if (!css)
+> > > +		return true;
+> > > +
+> > > +	cs = container_of(css, struct cpuset, css);
+> > > +	spin_lock_irqsave(&callback_lock, flags);
+> > Do we really need callback_lock here? We are not modifying and I am
+> > wondering if simple rcu read lock is enough here (similar to
+> > update_nodemasks_hier() where parent's effective_mems is accessed within
+> > rcu read lock).
 > 
-> diff --git a/mm/workingset.c b/mm/workingset.c
-> index 4841ae8af41113797378846f08336cd7c5757bd5..6e7f4cb1b9a7807e9288955f180a5b6cffab1a40 100644
-> --- a/mm/workingset.c
-> +++ b/mm/workingset.c
-> @@ -612,7 +612,6 @@ struct list_lru shadow_nodes;
->  
->  void workingset_update_node(struct xa_node *node)
->  {
-> -	struct address_space *mapping;
->  	struct page *page = virt_to_page(node);
->  
->  	/*
-> @@ -623,8 +622,7 @@ void workingset_update_node(struct xa_node *node)
->  	 * already where they should be. The list_empty() test is safe
->  	 * as node->private_list is protected by the i_pages lock.
->  	 */
-> -	mapping = container_of(node->array, struct address_space, i_pages);
-> -	lockdep_assert_held(&mapping->i_pages.xa_lock);
-> +	lockdep_assert_held(&node->array->xa_lock);
->  
->  	if (node->count && node->count == node->nr_values) {
->  		if (list_empty(&node->private_list)) {
-> 
+> The callback_lock is required to ensure the stability of the effective_mems
+> which may be in the process of being changed if not taken.
 
-Actually, not sure if this is wanted given the original code is a little more
-explicit on what the lock is. +CC the original author
+Stability in what sense? effective_mems will not get freed under us
+here or is there a chance for corrupted read here? node_isset() and
+nodes_empty() seems atomic. What's the worst that can happen without
+callback_lock?
 
-If people think this is worse, just drop the patch, I don't really care - was just
-checking out the function for other purposes and found this bit a little confusing.
-
--- 
-Pedro
 
