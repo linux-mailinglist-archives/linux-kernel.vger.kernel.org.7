@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-612588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9B5A95145
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FA0A95147
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 14:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0F13ADAB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA5D171274
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 12:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF27265619;
-	Mon, 21 Apr 2025 12:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C03A26563B;
+	Mon, 21 Apr 2025 12:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="F0+d1xv5"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LtaP1hoB"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F94D1C5489;
-	Mon, 21 Apr 2025 12:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13432265632;
+	Mon, 21 Apr 2025 12:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745240297; cv=none; b=bWrRFEqFSmSgzaIJosYyZcQRxUm4pCL6JzJtIyq9tazMuVjw28Z++0rgPkfFX35y2crCFp72MiNECk8R4jWlxIq/Nm+UwP1P7HQ54p4qDZ1f9iSuudrmCgR1IQc55o/Ed2uliPTWEiRFm73yqr2cWJFcykWSl775QFfT8+ZAXf0=
+	t=1745240314; cv=none; b=BeIX4cpYPJUDys595RZPKlUquSLYDL3H3STOvFDU9zB4rLvY1UyWkjtU8TqqG1Qb8OZUxcwZT/UP7Nk9zgumnqoogHRUDB/mR2CswFkQwG/hwBkbkPgzbbX6BZ5vtUSGLM/8I3kGPViUcw3y94H3VIccLFX56doZy8975pGXO9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745240297; c=relaxed/simple;
-	bh=0Q6C7OIuloJnN8yMRGcP4R9BixqDIyAOo76AKxjy0bg=;
+	s=arc-20240116; t=1745240314; c=relaxed/simple;
+	bh=U8osS/ZwILtRdxwv8pIN0bvkq8X3m1lW4VHYc/4+T18=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ilfIUR3JR0YtyNs/ZQ8tT73WIevenau6ILRQv21MY8dpn+EuA2id8C5RFCgp77DH4bJgdEmeVGUcbeMYh8V+vSW8HXxgOxCV4NsLN0Fd/5DmZr4+NwnVBZ5ux/O25XJKX5/7jMNeAMUfa+oTvXrQsYR5J8tzM4uE68sefs6y74Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=F0+d1xv5; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=LYFzJXVLhtF5ikd0zOMF+c7zEOIDfXGEwMuXo9Qn1NGLMirOy55RuNz7d3PIH1qfiLs/U/dGHFNhqrKOmzPhVT2PqGEFFcxeMYE6vdHxXPYNnC74A4QB4mKQ6D5m/QHLebI4uejZVeIdTR/VQhnMsjqR+xvssJN0/rL/zzVVUh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LtaP1hoB; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCw9RD919322
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCwR8A1558209
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 07:58:09 -0500
+	Mon, 21 Apr 2025 07:58:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745240289;
-	bh=MGl6wj1twMafrqAJ2Ap7n/PE7X+QSY313AzQP/HONtY=;
+	s=ti-com-17Q1; t=1745240307;
+	bh=pRIvYDrbBIMegIb2a73iF08b9k9S3I/O0j1QXWOEqPI=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=F0+d1xv58ycA9lNCvOmeLd8kmTng4Jk9EMYvwDXZGiq1Y6+dRa/CaR7IGCmiS7GFB
-	 qS60ZHPAo6VLRX9nByzeT9H9vfJ5BEqF7vqPhro2PHQzhXfsua59XisHBupH45i6PA
-	 AgPMdoifeiDSn3VgpSRLdc/AYFJ7C5rJ81sDUWWM=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCw9XL083520
+	b=LtaP1hoB9HnBZUb0lyBSuVOGggjgu8N/9WbQ9WGfCl8Cnt3P6haTfguAjkIDTph7L
+	 74uBDPH/w/kKZUcD3CtVhzHEhgK3rv55Sp1+qqMiqdXuGePKfGfPauxZ6ge06VfP/W
+	 nFYvIxcYSMK5oQXod1mc/XUpPEQL8CuUoWgTk8mg=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LCwRxO022708
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Apr 2025 07:58:09 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 21 Apr 2025 07:58:27 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 07:58:09 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 07:58:27 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 07:58:09 -0500
+ Frontend Transport; Mon, 21 Apr 2025 07:58:27 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LCw9bV083581;
-	Mon, 21 Apr 2025 07:58:09 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LCwRrv076149;
+	Mon, 21 Apr 2025 07:58:27 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Jared McArthur <j-mcarthur@ti.com>,
-        Robert Nelson
-	<robertcnelson@gmail.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Nishanth Menon
-	<nm@ti.com>
-CC: Roger Quadros <rogerq@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tero Kristo <kristo@kernel.org>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am67a-beagley-ai: Add bootph for main_gpio1
-Date: Mon, 21 Apr 2025 07:58:07 -0500
-Message-ID: <174524025290.1975926.6373479464630602638.b4-ty@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH v3] arm64: dts: ti: k3-j784s4-j742s2-evm: Add overlay to enable USB0 Type-A
+Date: Mon, 21 Apr 2025 07:58:25 -0500
+Message-ID: <174524029452.1976053.2871896353066358083.b4-ty@ti.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250411203950.2859356-1-nm@ti.com>
-References: <20250411203950.2859356-1-nm@ti.com>
+In-Reply-To: <20250409100853.4179934-1-s-vadapalli@ti.com>
+References: <20250409100853.4179934-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,22 +80,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Nishanth Menon,
+Hi Siddharth Vadapalli,
 
-On Fri, 11 Apr 2025 15:39:50 -0500, Nishanth Menon wrote:
-> main_gpio1 controls the voltage for the SDcard from 3.3v to 1.8v.
-> This is required for proper operation of SDcard through various boot
-> stages.
+On Wed, 09 Apr 2025 15:38:53 +0530, Siddharth Vadapalli wrote:
+> The USB0 instance of the USB controller on both the J742S2 EVM and the
+> J784S4 EVM supports a single USB interface at a time among the following:
+> 1. USB3.1 Gen1 Type C interface
+> 2. Two USB2.0 Type A interfaces via an on-board USB Hub.
 > 
+> By default, the USB3.1 Gen1 Type C interface is supported on both of the
+> EVMs. Enable the USB2.0 Type A interface by configuring the USB2.0_MUX_SEL
+> mux. Additionally, set the Dual-Role Mode to Host since a Type-A interface
+> is only associated with the Host Mode of operation.
 > 
+> [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
-I have dropped the Fixes tag as it is not impacting the linux kernel.
-
 Thank you!
 
-[1/1] arm64: dts: ti: k3-am67a-beagley-ai: Add bootph for main_gpio1
-      commit: 6a7023118fd7901d8b7967388923604d5d646cca
+[1/1] arm64: dts: ti: k3-j784s4-j742s2-evm: Add overlay to enable USB0 Type-A
+      commit: bcbc3d40dc62dd616e409b8b18c13d5b55fca6af
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
