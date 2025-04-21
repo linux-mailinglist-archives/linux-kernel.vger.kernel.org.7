@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-613114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592AEA95846
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD5DA95843
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E67174E7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8909C1887F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC6121E0B7;
-	Mon, 21 Apr 2025 21:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1904321D3CD;
+	Mon, 21 Apr 2025 21:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aWJRR4Y7"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kG6yoPN+"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C721B9F2;
-	Mon, 21 Apr 2025 21:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9374A219A9B;
+	Mon, 21 Apr 2025 21:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745271996; cv=none; b=MgZDrVp4BhVShtFXl2HReDejZ+9k6tHUmLaPxx3oJVF3223z6qaexg8e9OBIsIA3mJEO5XUZSIJMT8xVn6g7PD4LAnXb439WKeZ6ybc0jT+hGDR4jgdPK3R0o/VtOJJ82OtLaORdLEPaMN68SLNq4wdqZQSgluXHoDb7BxdJqx8=
+	t=1745271994; cv=none; b=bWGUDDQkak87sSw2R2W/CNi4YrHsVpdaP4+VfGoJAcdYSqW8UPrJHvJLetC1rD8XgAAABC8BV9FPGMITSQnJwatzwarC5rhKL4bmSmlhBv3TLO/RIKm8L7H008w3sAp9NhpOWLRYK6FTeUVn3JiZZmVkc7/1/jOdQ/2iDUaVIGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745271996; c=relaxed/simple;
-	bh=e0ZqC6Nn3HeIDnozdGIzF+RsmezvmFpIsQvxOpkiJu4=;
+	s=arc-20240116; t=1745271994; c=relaxed/simple;
+	bh=2G3nmEb6Y+3C3RvvsrKJUyxQELjev/QTzJk/Lsg0RbM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FzrRI53Q2DIOGi8QJLK3MevAR2AkYVx5DRFffNFeN2tlS1a21k5IbE4quS6XfhBEBz/ckGwpNq+qUH0Nr719wYHyvVqcxexOqWPokBj2SJlPm9ZyEMQ/nkaUZbjSHI0H6xBUwUgTs9U9whaj7OjFrXYeGyOp4+lJr1ORjtQzo+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aWJRR4Y7; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=bVDWYAb1XGkutmLVu+xjCfbwfSawOTmUAAF6KgYFjELByd3Fml5ZZhuuMqV1KBGwAd2VIID5HpJaNso1Dr3PUmujDeCYpE8ygnkq0OGo2/xxdK6bgoMmnUTa1P04LdN5hyPhkdPKzTwk6Y0KIG5yGnyaM9b+xXGKvY8jn1HzLhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kG6yoPN+; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkN3H1015468
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkNRr1033932
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Mon, 21 Apr 2025 16:46:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1745271983;
-	bh=lGttv+NBrT9eqq/71c1noEG3ZN3neG1td+1SdEjXLm0=;
+	bh=M38xF51b1ggw3drmG6MuoYV6Zybl+JKQwAP6cHLbmCk=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=aWJRR4Y7YhjWDfCvYM4HA1PzHuj9NOxiKvIhPP4Fb5NS/5Lu6g/tF/KzZT/c5Mvs9
-	 qU1OBcQ10TwrAYqf+sO/DIW7FSk2mQu0OdJUrcv8lq9rgVMo6yT4LHR0//MnD4Iraw
-	 K+ywypdNQyjX4ay8/+DThEF2Le+IFkFLlfFn5bwI=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkNVD118850
+	b=kG6yoPN+Nc/Zj/MCmq5rlJQ5L/l7818Sz+RuFt9FF6JSEs3s9RMtSeitKAYCGzkhQ
+	 TJcvUfsCXl1IcWml/y30yPQ6N221yPmvor5/mrVYiG4V2vuSFrWrgHnJCKhspbSgB9
+	 MICwxwU2TFzLWL1eD4McI5+/WOj6F9E9VPmwFJHU=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkNRU130992
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Mon, 21 Apr 2025 16:46:23 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 16:46:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 16:46:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 16:46:22 -0500
+ Frontend Transport; Mon, 21 Apr 2025 16:46:23 -0500
 Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LLkLqM038764;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LLkLqN038764;
 	Mon, 21 Apr 2025 16:46:22 -0500
 From: Andrew Davis <afd@ti.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -65,9 +65,9 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	<jan.kiszka@siemens.com>
 CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 2/3] arm64: dts: ti: k3-am65-main: add system controller compatible
-Date: Mon, 21 Apr 2025 16:46:19 -0500
-Message-ID: <20250421214620.3770172-3-afd@ti.com>
+Subject: [PATCH 3/3] arm64: dts: ti: am65x: Add missing power-supply for Rocktech-rk101 panel
+Date: Mon, 21 Apr 2025 16:46:20 -0500
+Message-ID: <20250421214620.3770172-4-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20250421214620.3770172-1-afd@ti.com>
 References: <20250421214620.3770172-1-afd@ti.com>
@@ -81,32 +81,42 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Add the 5v0 supply that is provided over the display panel cable and
+used by the LCD. This is required by "simple panels" or we get the
+following warning from DTBS_CHECK:
 
-Now that the TI K3 AM654 system controller bindings also cover the usage
-in the main domain, add its compatible to address dtbs_check complaints:
+k3-am654-gp-evm.dtb: display0: 'power-supply' is a required property
 
-  k3-am654-base-board.dtb: scm-conf@100000: compatible: ['syscon', 'simple-mfd'] is too short
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../ti/k3-am654-base-board-rocktech-rk101-panel.dtso | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 94a812a1355ba..6d3c467d7038c 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -479,7 +479,7 @@ sdhci1: mmc@4fa0000 {
- 	};
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board-rocktech-rk101-panel.dtso b/arch/arm64/boot/dts/ti/k3-am654-base-board-rocktech-rk101-panel.dtso
+index 364c57b3b3a06..7a3953d64fd84 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board-rocktech-rk101-panel.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board-rocktech-rk101-panel.dtso
+@@ -15,8 +15,20 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
  
- 	scm_conf: scm-conf@100000 {
--		compatible = "syscon", "simple-mfd";
-+		compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
- 		reg = <0 0x00100000 0 0x1c000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+ &{/} {
++	vcc_5v0: lcd-regulator {
++		/* Output of LM5140 */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_5v0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&evm_12v0>;
++	};
++
+ 	display0 {
+ 		compatible = "rocktech,rk101ii01d-ct";
++		power-supply = <&vcc_5v0>;
+ 		backlight = <&lcd_bl>;
+ 		enable-gpios = <&pca9555 8 GPIO_ACTIVE_HIGH>;
+ 		port {
 -- 
 2.39.2
 
