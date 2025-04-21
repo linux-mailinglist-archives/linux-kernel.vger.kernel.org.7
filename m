@@ -1,221 +1,156 @@
-Return-Path: <linux-kernel+bounces-612538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924EAA95051
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F95AA95056
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA646172209
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:38:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C629A1717AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6126C2571D7;
-	Mon, 21 Apr 2025 11:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA83264611;
+	Mon, 21 Apr 2025 11:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="le9XKH/I"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mRUydRqy"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0952641F3
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 11:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3FC126BFF;
+	Mon, 21 Apr 2025 11:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745235478; cv=none; b=Y6jRGZzYbt94Qp94+n7O/j50n2Li29ITt+5Rrn5c2dA4DxdMviSyifjbwOFy2s4OGdChl8ii6Awfh52qKG8CTXAOlbdvyvGoyx1C+JPMztMTmOGG/SyaYwh+iuHwTGk8JxGCqXIy7P0lG3eJ8DDfiAVp65EQksUnuLNZUPWgaWA=
+	t=1745235653; cv=none; b=EQmPIt90yz4cK5gkCUCBM4vOzfUIMpbthpkFpstVBn1hkKgv7ZoH2u1yUwJCiG5kVaOOH9VB5TGbXGRbb/CNrPoGGf9UrfjZa8fO66ZrQX7C5cArXOdqf0m3JpgGw3ocXMD1wY2X0ZPrKXaRzRpACu/K8do0QxFEP4pDvKLvVls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745235478; c=relaxed/simple;
-	bh=s3frcA3z8CU9QoLViSopNt7NDFbwWp2nvh7sL5twsvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0EhfwWognlnqEWAgF9B2S+yQxQTkpUxmabpsbovqnz3z+vlT+9ZN/xdoTsX5kHILZqGgxIp7gdVTpwu4MIofK92OMqiCRkF46xwFz0DM43iaHUcaX/gpBRv5JUqVygyClAup62okkm/+iUphNZu+ToZ5JcONlChbN0EZfX6TQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=le9XKH/I; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3014678689aso2988061a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 04:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745235476; x=1745840276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=43VGHzqPuUUky7P+XVbisg9LKWNE+KONN6bM0cOxWLk=;
-        b=le9XKH/ILqSYCgvMidOJkI6uWNAkkDOMLfrea0mxcj03KL9zwTENCDWmooAEef0h7w
-         AjFq0LYPC5cOxUQCgBSC/NDP32a9lAkhYzEgplSqqFIJI4TBqtuabho+oFy6WC/5E2Kq
-         eraqHSiV+cAMUBBfk11elXRot8gYfZo0M6sTdnndlises0tRN8HqhLIxFVWsOaV1R9Lh
-         qRnltynHsz0CucirKB8mN/NRmkY27EicNsYlf7GAyZFr6wX5tfOjhjEQ7SsbEUa0c4Rb
-         PoIij4gIt3Te6N8/wCigLLdiECF4i0BxaTBmPKzKlP7JYUvYRyf7s/1RMbCANb5Mj9Ha
-         kj0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745235476; x=1745840276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43VGHzqPuUUky7P+XVbisg9LKWNE+KONN6bM0cOxWLk=;
-        b=DHQSAyVjXPvr5v1tZ8IoZKMqbnnvIKoV8APlNd/YMyi9FjML2rWZf/7V1G6YyETwHp
-         TyzuYX9uaYMQ6xIS6O2TQuapOdJ5A+mAeLV9cvDH7sjjbsIh7UtbAH4FRENoN7LGNLG7
-         sHZxkWaprnRJol9tC/87jxmN8f7lgyPZfVclPIpfXsTjmtfUhW06Bo2A8PtCeoy794eD
-         RTGSFpgPGeePR0qK49V/wxNAb6VGp7EiiVGDSNPB+4W7T5d1Uu1tu1gas6huJQs/Zchq
-         UJh7wocL/qT0qaPH//2S6hp4Owtp91otZEq/L7iQgHG68rp1NYEZvb16CaVOr4wrzrdc
-         on1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNlEh/1Ctv4qwaECbSVuCT880Eb5ZsX1pfM/v29R26m/zuK7lBRWR5kgIApfh+EeFt7jirIb6U95PMNwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxoie1R8yZJZA8Nkqru/Vx7El9XCRLCtP4tPJNPJM2r10s1rAEE
-	8ZRHhxCwxiMsf4J5Oy4FrC60rd7P1qERn05kOvifIZL0P0NpvjY0LtNMbQ7Epeo=
-X-Gm-Gg: ASbGnctcJL14zBuZYVFH91u8LuFlLIvyhWalcSUE23biE/ZYNWdgu/4B+vYO+pRYcft
-	454P2XB5Hp8LY1sori8ndhTYyWcqmNH57D8ymXznPX5Hi1Yk9XG5jb+krqjkPNoiEU0LOLPz7dU
-	w4SnB85vsbvXxcgcQD28mshIK5J6yHYIIM3kmYrsHA5cf0r7DUA1gRZw2+4U5lbKDYNKxAa3Tmk
-	GibWVaIyCYgV5iDdyKFQXRSj6dXYiDoTjxKoelisURR+GrQeesO51OnGHU4zDCBfQZh0XZs5WSp
-	rCy50RKwPjMo+9C60VT9dabzUL+5oic9NFpWRlrRIg==
-X-Google-Smtp-Source: AGHT+IFaOdeoa+0VB3w8t8nak86cJD6PiC30jYw32fp5hlcubY8z8edZqqzW2n5AsXdt/BtdeOUuzg==
-X-Received: by 2002:a17:90b:5486:b0:301:c5cb:7b13 with SMTP id 98e67ed59e1d1-3087bb3beadmr14241658a91.3.1745235476099;
-        Mon, 21 Apr 2025 04:37:56 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df1e9adsm6370181a91.27.2025.04.21.04.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 04:37:55 -0700 (PDT)
-Date: Mon, 21 Apr 2025 17:07:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Nicholas Chin <nic.c3.14@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
-	vincent.guittot@linaro.org
-Subject: Re: [PATCH] cpufreq: acpi: Don't enable boost on policy exit
-Message-ID: <20250421113753.lwukxhi45bnmqbpq@vireshk-i7>
-References: <20250417015424.36487-1-nic.c3.14@gmail.com>
- <20250417050226.c6kdp2s5du3y3a3j@vireshk-i7>
- <20250417050911.xycjkalehqsg3i6x@vireshk-i7>
- <CAJZ5v0iO4=nHcATzPyiKiWumdETFRR32C97K_RH=yhD--Tai=g@mail.gmail.com>
- <CAJZ5v0gcf07YykOS9VsQgHwM0DnphBX4yc9dt5cKjNR8G_4mAQ@mail.gmail.com>
- <CAKohpomN1PYn1NPSsxCxqpMfg-9nYgCRQD6dFGQ30B+76vneQw@mail.gmail.com>
- <978bc0b7-4dfe-4ca1-9dd5-6c4a9c892be6@gmail.com>
- <CAJZ5v0iwAsVnvYKjKskLXuu5bDV_SMpgnTTy0zD=7fgnGzHQnA@mail.gmail.com>
- <CAKohponCr6pwgmK+J0WnvY_VZdDhA738JF18L518A2MKJVQLmw@mail.gmail.com>
- <c704850d-1fdd-4f25-8251-5bab03f055bb@huawei.com>
+	s=arc-20240116; t=1745235653; c=relaxed/simple;
+	bh=VXSlM78gVVSfw+WCIpCDUFRnxSD9qH9eab8KDWthqfU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYtoy7fAcGJjIwaO4ZWJhtTugmPgrU/4UVSY4FMR2ip9FURgOXz5ZLEOESKKyLINlNticKNtMxJwMKxUOdlMUSg2ZTQRl79bIfYEqEHqNF+dyFrUPrxC9u6Xrog39j0mUvisHPz+waDKCbsosKJoBAU24PaKJKua9EUWjpCSj+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mRUydRqy; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LBehE7908920
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Apr 2025 06:40:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745235643;
+	bh=fMXw+PmwxrAjfO8VUjrovK3MKKuJexE2bKrL5R7FNS0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=mRUydRqyyHUgvdbVoUJg2XDFi0wiujx68Zz+Zf4uZtfVW8PHWHvBzhAyeE9GptwEs
+	 RuhuSb8td0xm9NxguHXLUdJYfp6nQ7TZFR1Noqk2mS+Bai7iFd1zsqBibA6g8XGv17
+	 eP74CrNen3NsaAvOQ9aidzkC5TeqrOtHm9GdT4YU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LBehK9011764
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 21 Apr 2025 06:40:43 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
+ Apr 2025 06:40:43 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 21 Apr 2025 06:40:43 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LBegd8110641;
+	Mon, 21 Apr 2025 06:40:42 -0500
+Date: Mon, 21 Apr 2025 06:40:42 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Judith Mendez <jm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+        Beleswar
+ Prasad <b-padhi@ti.com>, Andrew Davis <afd@ti.com>,
+        Markus Schneider-Pargmann
+	<msp@baylibre.com>,
+        Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
+Subject: Re: [PATCH v7 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
+ remote processors
+Message-ID: <20250421114042.riw2kw472murjzcc@surfer>
+References: <20250415153147.1844076-1-jm@ti.com>
+ <20250415153147.1844076-7-jm@ti.com>
+ <20250419150451.v3jgtgp4yisou65u@bryanbrattlof.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <c704850d-1fdd-4f25-8251-5bab03f055bb@huawei.com>
+In-Reply-To: <20250419150451.v3jgtgp4yisou65u@bryanbrattlof.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Coming back to this response again:
-
-On 19-04-25, 17:35, zhenglifeng (A) wrote:
-> Yes, the policy boost will be forcibly set to mirror the global boost. This
-> indicates that the global boost value is the default value of policy boost
-> each time the CPU goes online. Otherwise, we'll meet things like:
+On 10:04-20250419, Bryan Brattlof wrote:
+> On April 15, 2025 thus sayeth Judith Mendez:
+> > From: Devarsh Thakkar <devarsht@ti.com>
+> > 
+> > For each remote proc, reserve memory for IPC and bind the mailbox
+> > assignments. Two memory regions are reserved for each remote processor.
+> > The first region of 1MB of memory is used for Vring shared buffers
+> > and the second region is used as external memory to the remote processor
+> > for the resource table and for tracebuffer allocations.
+> > 
+> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> > Signed-off-by: Judith Mendez <jm@ti.com>
+> > Acked-by: Andrew Davis <afd@ti.com>
+> > Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+> > Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > ---
+> >  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 +++++++++++++++++++++++--
+> >  1 file changed, 90 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> > index 1c9d95696c839..7d817b447c1d0 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> > +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> > @@ -52,6 +52,42 @@ linux,cma {
+> >  			linux,cma-default;
+> >  		};
+> >  
+> > +		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
+> > +			compatible = "shared-dma-pool";
+> > +			reg = <0x00 0x99800000 0x00 0x100000>;
+> > +			no-map;
+> > +		};
+> > +
+> > +		c7x_0_memory_region: c7x-memory@99900000 {
+> > +			compatible = "shared-dma-pool";
+> > +			reg = <0x00 0x99900000 0x00 0xf00000>;
+> > +			no-map;
+> > +		};
+> > +
 > 
-> 1. The global boost is set to disabled after a CPU going offline but the
-> policy boost is still be enabled after the CPU going online again.
+> I know this has been a push for our IPC and MCU+ teams for a couple 
+> windows now, though I do want to point out that some AM62A devices 
+> (AM62A12AQMSIAMBRQ1) will not even have a C7x. 
+> 
+> It's relatively easy to cut nodes out that describe the hardware in the 
+> bootloaders, but once we start configuring them to demo something it 
+> becomes impossible to unwind that during boot.
+> 
+> We can clam we only support the superset devices but I just wanted to 
+> make this email so I could point people to it when they inevitably ask 
+> why their parts do not work out of the box with Linux.
+> 
+> Naked-by: Bryan Brattlof <bb@ti.com>
 
-This is surely a valid case, we must not enable policy boost when
-global boost is disabled.
 
-> 2. The global boost is set to enabled after a CPU going offline and the
-> rest of the online CPUs are all boost enabled. However, the offline CPU
-> remains in the boost disabled state after it going online again. Users
-> have to set its boost state separately.
-
-I now this this is the right behavior. The policy wasn't present when
-the global boost was enabled and so the action doesn't necessarily
-apply to it.
-
-This is how I think this should be fixed, we may still need to fix
-acpi driver's bug separately though:
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 3841c9da6cac..7ac8b4c28658 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -620,6 +620,20 @@ static ssize_t show_local_boost(struct cpufreq_policy *policy, char *buf)
-        return sysfs_emit(buf, "%d\n", policy->boost_enabled);
- }
-
-+static int policy_set_boost(struct cpufreq_policy *policy, bool enable, bool forced)
-+{
-+       if (!forced && (policy->boost_enabled == enable))
-+               return 0;
-+
-+       policy->boost_enabled = enable;
-+
-+       ret = cpufreq_driver->set_boost(policy, enable);
-+       if (ret)
-+               policy->boost_enabled = !policy->boost_enabled;
-+
-+       return ret;
-+}
-+
- static ssize_t store_local_boost(struct cpufreq_policy *policy,
-                                 const char *buf, size_t count)
- {
-@@ -635,21 +649,14 @@ static ssize_t store_local_boost(struct cpufreq_policy *policy,
-        if (!policy->boost_supported)
-                return -EINVAL;
-
--       if (policy->boost_enabled == enable)
--               return count;
--
--       policy->boost_enabled = enable;
--
-        cpus_read_lock();
--       ret = cpufreq_driver->set_boost(policy, enable);
-+       ret = policy_set_boost(policy, enable, false);
-        cpus_read_unlock();
-
--       if (ret) {
--               policy->boost_enabled = !policy->boost_enabled;
--               return ret;
--       }
-+       if (!ret)
-+               return count;
-
--       return count;
-+       return ret;
- }
-
- static struct freq_attr local_boost = __ATTR(boost, 0644, show_local_boost, store_local_boost);
-@@ -1617,16 +1624,17 @@ static int cpufreq_online(unsigned int cpu)
-        if (new_policy && cpufreq_thermal_control_enabled(cpufreq_driver))
-                policy->cdev = of_cpufreq_cooling_register(policy);
-
--       /* Let the per-policy boost flag mirror the cpufreq_driver boost during init */
-+       /*
-+        * Let the per-policy boost flag mirror the cpufreq_driver boost during
-+        * initialization for a new policy. For an existing policy, maintain the
-+        * previous boost value unless global boost is disabled now.
-+        */
-        if (cpufreq_driver->set_boost && policy->boost_supported &&
--           policy->boost_enabled != cpufreq_boost_enabled()) {
--               policy->boost_enabled = cpufreq_boost_enabled();
--               ret = cpufreq_driver->set_boost(policy, policy->boost_enabled);
-+           (new_policy || !cpufreq_boost_enabled())) {
-+               ret = policy_set_boost(policy, cpufreq_boost_enabled(), false);
-                if (ret) {
--                       /* If the set_boost fails, the online operation is not affected */
--                       pr_info("%s: CPU%d: Cannot %s BOOST\n", __func__, policy->cpu,
--                               str_enable_disable(policy->boost_enabled));
--                       policy->boost_enabled = !policy->boost_enabled;
-+                       pr_info("%s: CPU%d: Cannot %s BOOST\n", __func__,
-+                               policy->cpu, str_enable_disable(cpufreq_boost_enabled()));
-                }
-        }
-
-@@ -2864,12 +2872,9 @@ static int cpufreq_boost_trigger_state(int state)
-                if (!policy->boost_supported)
-                        continue;
-
--               policy->boost_enabled = state;
--               ret = cpufreq_driver->set_boost(policy, state);
--               if (ret) {
--                       policy->boost_enabled = !policy->boost_enabled;
-+               ret = policy_set_boost(policy, state, true);
-+               if (ret)
-                        goto err_reset_state;
--               }
-        }
-        cpus_read_unlock();
+I am confused. I do not see support for AM62A1 in upstream. We have
+AM62A7-SK in upstream. I am not sure what direction you are suggesting
+here.
 
 -- 
-viresh
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
