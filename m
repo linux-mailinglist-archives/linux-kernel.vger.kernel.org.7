@@ -1,221 +1,234 @@
-Return-Path: <linux-kernel+bounces-613070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C03EA957CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:12:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2033A957D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C6517A938F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6F9173260
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392FA215056;
-	Mon, 21 Apr 2025 21:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED201211499;
+	Mon, 21 Apr 2025 21:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WPTt+w6R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V1o2CZ9m"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688F21420B;
-	Mon, 21 Apr 2025 21:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72021F4CA0;
+	Mon, 21 Apr 2025 21:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745269872; cv=none; b=etmb4bxVh2o22ITdHMjxUxHv+XkcyHdpDGpPkjglCsClraLWe9m0sQ6VE5C+eNfrzo+e4A6nYUVSk7F6Nr2ZOgHOqMXHSxpIBrY0J0Goj/jfAMLxOTr+f2Ul1quamLP4zBHq1GM29O4Wzah4ms56K3c+JaZ3lC3ACfErQS+sN4A=
+	t=1745270085; cv=none; b=M92E7uJFnZKEcy+TzorU7wNR64VrRhCV0PKYlX8+tBlmMyJbU6raMeLBPY16sv2g0EylcGWMQ85WMi6ZAA4K0koX5+zTREKdXS/7nXBZXslJ/5swC7zZGFkiT+tV6kRPqG3+8XnzDb32SxPz+bmj3otoRuIc21ApVy5Qdkka/Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745269872; c=relaxed/simple;
-	bh=dQTo2auo7YYe6bQD+dMhfbjfL+qqQOgNTyTqgNyA/K8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O4UpTLD27ExEUTsgZFyoNdU1JYA3ky2qOc2Hm/xdy9Vct0jTGH+JYUGplRjChz+FGjhpIEf6rPAGM59EZ48IbUN+Z64iKbloVEH4adLmbCbLVZF01b/wl4udU+h/W1Ozj2dijnltW3UbED9G/k3KzYPsFB+LO9V3sM4WUGoh+TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WPTt+w6R; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745269871; x=1776805871;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=dQTo2auo7YYe6bQD+dMhfbjfL+qqQOgNTyTqgNyA/K8=;
-  b=WPTt+w6RDkERifuPrKOE4LR0Dcit7LjWAgZm6QGDdR3D1m8KfzEKuQy8
-   eZPdwe15IrHtLcr7zCBY3EA8feshY9IxVyppwDvo1e0GUBJNLeW4gqnNc
-   QXKzmNpjsQPXY8LskQjoSMl462MVnxWIHRBzo8dQWpOAwgk84fvyYdDIW
-   SKwfb0ieUCtbdfehEzqIhrrfdWhe565z/8IMEoefe7QZtlW1MiZ8uQ6PT
-   NBD0nH+4FzyuYnjR/HZ7goxFf1h/9ZjcBFu3y9ZUsYrM9ov38BjBM4x8t
-   PfULMlVfdxkjwDMVyFSuKHe+fc7vHevxTzwHy5q1tZ3zbwlBUJisi8uGi
-   w==;
-X-CSE-ConnectionGUID: f44SpKKpSnOhC6nkVC8VPg==
-X-CSE-MsgGUID: U9pOP4DKQ/G+9O9Aw3K3wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="58189458"
-X-IronPort-AV: E=Sophos;i="6.15,229,1739865600"; 
-   d="scan'208";a="58189458"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 14:11:06 -0700
-X-CSE-ConnectionGUID: JcWcA1vhQp2pcmb1nrbeDw==
-X-CSE-MsgGUID: ZI4WE/ckS4aAGDRDxoniVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,229,1739865600"; 
-   d="scan'208";a="136912174"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.124.220.165])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 14:11:04 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v4 4/4] platform/x86:intel/pmc: Improve pmc_core_get_lpm_req()
-Date: Mon, 21 Apr 2025 14:10:57 -0700
-Message-ID: <20250421211100.687250-5-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250421211100.687250-1-xi.pardee@linux.intel.com>
-References: <20250421211100.687250-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1745270085; c=relaxed/simple;
+	bh=zz8bnrYW317jVYwnD3Dwd6axblk7yX1s98Vg/IVDv0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMrB18XoEjUPDCPxJ1ObnuFrTGGEJZkqnNRMVKSXwEd2EiEso+bkBaRgk0z8S0PctkqjegACTZ6ZGbcTKq3R7SdNOZPQw0CjWAUtBLja8ONVG2hYaZKgW8gMHnGtaIZ8BRaTj7topZCEa6ZaKb1E2BCeeCicICOepEMQ/IYgTA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V1o2CZ9m; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B9C56D6;
+	Mon, 21 Apr 2025 23:12:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745269954;
+	bh=zz8bnrYW317jVYwnD3Dwd6axblk7yX1s98Vg/IVDv0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V1o2CZ9mzw8drMcVLHPSZ1B6ofena7FDlA2srwP8AS/GUXF5cO9eiegzLjoqBzCRi
+	 sMC45IJQMEnPljsQW7D4DYmrelvvGbzIbPoMR5hfo2QR+8uu1Jtr3JQ0BdbPsKvNxe
+	 62ps/z5QU4TE+fLAFAP87D4PVFSE/7TTJhzGNyP8=
+Date: Tue, 22 Apr 2025 00:14:38 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Robert Chiras <robert.chiras@nxp.com>,
+	"Guoniu.zhou" <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v4 04/13] media: nxp: imx8-isi: Use
+ devm_clk_bulk_get_all() to fetch clocks
+Message-ID: <20250421211438.GN17813@pendragon.ideasonboard.com>
+References: <20250408-8qxp_camera-v4-0-ef695f1b47c4@nxp.com>
+ <20250408-8qxp_camera-v4-4-ef695f1b47c4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250408-8qxp_camera-v4-4-ef695f1b47c4@nxp.com>
 
-Minor improvements on pmc_core_get_lpm_req().
-1. Move the long comment to be above the function
-2. Use %pe to print error pointer
-3. Remove unneeded devm_kfree call
+Hi Frank,
 
-These changes improves the code maintainability.
+Thank you for the patch.
 
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
----
- drivers/platform/x86/intel/pmc/core.c | 91 +++++++++++++--------------
- 1 file changed, 45 insertions(+), 46 deletions(-)
+On Tue, Apr 08, 2025 at 05:53:02PM -0400, Frank Li wrote:
+> Use devm_clk_bulk_get_all() helper to simplify clock handle code.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 46 +++-------------------
+>  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  3 +-
+>  2 files changed, 6 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> index ecfc95882f903..015350c6f2784 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> @@ -275,11 +275,6 @@ static const struct mxc_isi_set_thd mxc_imx8_isi_thd_v1 = {
+>  	.panic_set_thd_v = { .mask = 0xf0000, .offset = 16, .threshold = 0x7 },
+>  };
+>  
+> -static const struct clk_bulk_data mxc_imx8mn_clks[] = {
+> -	{ .id = "axi" },
+> -	{ .id = "apb" },
+> -};
+> -
+>  static const struct mxc_isi_plat_data mxc_imx8mn_data = {
+>  	.model			= MXC_ISI_IMX8MN,
+>  	.num_ports		= 1,
+> @@ -287,8 +282,6 @@ static const struct mxc_isi_plat_data mxc_imx8mn_data = {
+>  	.reg_offset		= 0,
+>  	.ier_reg		= &mxc_imx8_isi_ier_v1,
+>  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> -	.clks			= mxc_imx8mn_clks,
+> -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+>  	.buf_active_reverse	= false,
+>  	.gasket_ops		= &mxc_imx8_gasket_ops,
+>  	.has_36bit_dma		= false,
+> @@ -301,8 +294,6 @@ static const struct mxc_isi_plat_data mxc_imx8mp_data = {
+>  	.reg_offset		= 0x2000,
+>  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+>  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> -	.clks			= mxc_imx8mn_clks,
+> -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+>  	.buf_active_reverse	= true,
+>  	.gasket_ops		= &mxc_imx8_gasket_ops,
+>  	.has_36bit_dma		= true,
+> @@ -315,8 +306,6 @@ static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
+>  	.reg_offset		= 0x0,
+>  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+>  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> -	.clks			= mxc_imx8mn_clks,
+> -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+>  	.buf_active_reverse	= true,
+>  	.has_36bit_dma		= false,
+>  };
+> @@ -328,8 +317,6 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
+>  	.reg_offset		= 0,
+>  	.ier_reg		= &mxc_imx8_isi_ier_v2,
+>  	.set_thd		= &mxc_imx8_isi_thd_v1,
+> -	.clks			= mxc_imx8mn_clks,
+> -	.num_clks		= ARRAY_SIZE(mxc_imx8mn_clks),
+>  	.buf_active_reverse	= true,
+>  	.gasket_ops		= &mxc_imx93_gasket_ops,
+>  	.has_36bit_dma		= false,
+> @@ -386,7 +373,7 @@ static int mxc_isi_runtime_suspend(struct device *dev)
+>  {
+>  	struct mxc_isi_dev *isi = dev_get_drvdata(dev);
+>  
+> -	clk_bulk_disable_unprepare(isi->pdata->num_clks, isi->clks);
+> +	clk_bulk_disable_unprepare(isi->num_clks, isi->clks);
+>  
+>  	return 0;
+>  }
+> @@ -396,7 +383,7 @@ static int mxc_isi_runtime_resume(struct device *dev)
+>  	struct mxc_isi_dev *isi = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> -	ret = clk_bulk_prepare_enable(isi->pdata->num_clks, isi->clks);
+> +	ret = clk_bulk_prepare_enable(isi->num_clks, isi->clks);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to enable clocks (%d)\n", ret);
+>  		return ret;
+> @@ -414,27 +401,6 @@ static const struct dev_pm_ops mxc_isi_pm_ops = {
+>   * Probe, remove & driver
+>   */
+>  
+> -static int mxc_isi_clk_get(struct mxc_isi_dev *isi)
+> -{
+> -	unsigned int size = isi->pdata->num_clks
+> -			  * sizeof(*isi->clks);
+> -	int ret;
+> -
+> -	isi->clks = devm_kmemdup(isi->dev, isi->pdata->clks, size, GFP_KERNEL);
+> -	if (!isi->clks)
+> -		return -ENOMEM;
+> -
+> -	ret = devm_clk_bulk_get(isi->dev, isi->pdata->num_clks,
+> -				isi->clks);
+> -	if (ret < 0) {
+> -		dev_err(isi->dev, "Failed to acquire clocks: %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int mxc_isi_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -457,11 +423,9 @@ static int mxc_isi_probe(struct platform_device *pdev)
+>  	if (!isi->pipes)
+>  		return -ENOMEM;
+>  
+> -	ret = mxc_isi_clk_get(isi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to get clocks\n");
+> -		return ret;
+> -	}
+> +	isi->num_clks = devm_clk_bulk_get_all(dev, &isi->clks);
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index e09a97564398..6f092b00b030 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -1355,6 +1355,50 @@ static u32 pmc_core_find_guid(struct pmc_info *list, const struct pmc_reg_map *m
- 	return 0;
- }
- 
-+/*
-+ * This function retrieves low power mode requirement data from PMC Low
-+ * Power Mode (LPM) table.
-+ *
-+ * In telemetry space, the LPM table contains a 4 byte header followed
-+ * by 8 consecutive mode blocks (one for each LPM mode). Each block
-+ * has a 4 byte header followed by a set of registers that describe the
-+ * IP state requirements for the given mode. The IP mapping is platform
-+ * specific but the same for each block, making for easy analysis.
-+ * Platforms only use a subset of the space to track the requirements
-+ * for their IPs. Callers provide the requirement registers they use as
-+ * a list of indices. Each requirement register is associated with an
-+ * IP map that's maintained by the caller.
-+ *
-+ * Header
-+ * +----+----------------------------+----------------------------+
-+ * |  0 |      REVISION              |      ENABLED MODES         |
-+ * +----+--------------+-------------+-------------+--------------+
-+ *
-+ * Low Power Mode 0 Block
-+ * +----+--------------+-------------+-------------+--------------+
-+ * |  1 |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-+ * +----+--------------+-------------+-------------+--------------+
-+ * |  2 |           LPM0 Requirements 0                           |
-+ * +----+---------------------------------------------------------+
-+ * |    |                  ...                                    |
-+ * +----+---------------------------------------------------------+
-+ * | 29 |           LPM0 Requirements 27                          |
-+ * +----+---------------------------------------------------------+
-+ *
-+ * ...
-+ *
-+ * Low Power Mode 7 Block
-+ * +----+--------------+-------------+-------------+--------------+
-+ * |    |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-+ * +----+--------------+-------------+-------------+--------------+
-+ * | 60 |           LPM7 Requirements 0                           |
-+ * +----+---------------------------------------------------------+
-+ * |    |                  ...                                    |
-+ * +----+---------------------------------------------------------+
-+ * | 87 |           LPM7 Requirements 27                          |
-+ * +----+---------------------------------------------------------+
-+ *
-+ */
- static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct pci_dev *pcidev)
- {
- 	struct telem_endpoint *ep;
-@@ -1374,8 +1418,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct
- 
- 	ep = pmt_telem_find_and_register_endpoint(pcidev, guid, 0);
- 	if (IS_ERR(ep)) {
--		dev_dbg(&pmcdev->pdev->dev, "couldn't get telem endpoint %ld",
--			PTR_ERR(ep));
-+		dev_dbg(&pmcdev->pdev->dev, "couldn't get telem endpoint %pe", ep);
- 		return -EPROBE_DEFER;
- 	}
- 
-@@ -1387,49 +1430,6 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct
- 		goto unregister_ep;
- 	}
- 
--	/*
--	 * PMC Low Power Mode (LPM) table
--	 *
--	 * In telemetry space, the LPM table contains a 4 byte header followed
--	 * by 8 consecutive mode blocks (one for each LPM mode). Each block
--	 * has a 4 byte header followed by a set of registers that describe the
--	 * IP state requirements for the given mode. The IP mapping is platform
--	 * specific but the same for each block, making for easy analysis.
--	 * Platforms only use a subset of the space to track the requirements
--	 * for their IPs. Callers provide the requirement registers they use as
--	 * a list of indices. Each requirement register is associated with an
--	 * IP map that's maintained by the caller.
--	 *
--	 * Header
--	 * +----+----------------------------+----------------------------+
--	 * |  0 |      REVISION              |      ENABLED MODES         |
--	 * +----+--------------+-------------+-------------+--------------+
--	 *
--	 * Low Power Mode 0 Block
--	 * +----+--------------+-------------+-------------+--------------+
--	 * |  1 |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
--	 * +----+--------------+-------------+-------------+--------------+
--	 * |  2 |           LPM0 Requirements 0                           |
--	 * +----+---------------------------------------------------------+
--	 * |    |                  ...                                    |
--	 * +----+---------------------------------------------------------+
--	 * | 29 |           LPM0 Requirements 27                          |
--	 * +----+---------------------------------------------------------+
--	 *
--	 * ...
--	 *
--	 * Low Power Mode 7 Block
--	 * +----+--------------+-------------+-------------+--------------+
--	 * |    |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
--	 * +----+--------------+-------------+-------------+--------------+
--	 * | 60 |           LPM7 Requirements 0                           |
--	 * +----+---------------------------------------------------------+
--	 * |    |                  ...                                    |
--	 * +----+---------------------------------------------------------+
--	 * | 87 |           LPM7 Requirements 27                          |
--	 * +----+---------------------------------------------------------+
--	 *
--	 */
- 	mode_offset = LPM_HEADER_OFFSET + LPM_MODE_OFFSET;
- 	pmc_for_each_mode(mode, pmcdev) {
- 		u32 *req_offset = pmc->lpm_req_regs + (mode * num_maps);
-@@ -1442,7 +1442,6 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct
- 			if (ret) {
- 				dev_err(&pmcdev->pdev->dev,
- 					"couldn't read Low Power Mode requirements: %d\n", ret);
--				devm_kfree(&pmcdev->pdev->dev, pmc->lpm_req_regs);
- 				goto unregister_ep;
- 			}
- 			++req_offset;
+This prevents validating that the DT contains the expected clocks, which
+could cause hard to debug issues. Isn't it a problem ?
+
+> +	if (isi->num_clks < 0)
+> +		return dev_err_probe(dev, isi->num_clks, "Failed to get clocks\n");
+>  
+>  	isi->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(isi->regs)) {
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> index e7534a80af7b4..bd3cfe5fbe063 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> @@ -169,8 +169,6 @@ struct mxc_isi_plat_data {
+>  	const struct mxc_isi_ier_reg  *ier_reg;
+>  	const struct mxc_isi_set_thd *set_thd;
+>  	const struct mxc_gasket_ops *gasket_ops;
+> -	const struct clk_bulk_data *clks;
+> -	unsigned int num_clks;
+>  	bool buf_active_reverse;
+>  	bool has_36bit_dma;
+>  };
+> @@ -282,6 +280,7 @@ struct mxc_isi_dev {
+>  
+>  	void __iomem			*regs;
+>  	struct clk_bulk_data		*clks;
+> +	int				num_clks;
+>  	struct regmap			*gasket;
+>  
+>  	struct mxc_isi_crossbar		crossbar;
+> 
+
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
