@@ -1,82 +1,72 @@
-Return-Path: <linux-kernel+bounces-612175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50D2A94BD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 06:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5277BA94BC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 05:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C099C1890FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F11D1890FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 03:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5022571B0;
-	Mon, 21 Apr 2025 04:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85E2571B9;
+	Mon, 21 Apr 2025 03:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNuhcXkh"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NIk0dLVA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77E47462;
-	Mon, 21 Apr 2025 04:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4741C1C6FE5;
+	Mon, 21 Apr 2025 03:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745208050; cv=none; b=Vi2HE8z6LWQ1d639J3DPJQvYoWcyPcyBnVUQikSsfnHoajfeFwga1whQV2EGNOqQ3THPzjfdndhH9oW93kZrXLQOKRjigD2q5LrGmcu04i2BqopOILB7/WgBjJeb0qOhdUr94utWnnpyWZO3N4T7jKAm7Zbj0FDYSz2bciaOREA=
+	t=1745207914; cv=none; b=I3C2sOoRI1tyA1Pfh/VXbcCfYmGRma+9J82OadWA5qZOiYjq6iYPv19k8ibfDvZNa1fL6zTJaQ0t0/1Ka8veoApSI6DPSL+Su4cNEaD1lHNeCIUQd7Ht86gWgxKmui+yhrfX/8fodBtEku7oDH7ZVa0ReeNwsmUbN3iOxPK4iYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745208050; c=relaxed/simple;
-	bh=7VNkzd2YDzUNUlp+7tBooUqklU7YkhOJGODvN2Qxe6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JSJ9aP0pvjEDUNhatxo/lBl1A1h+P1iVXhL+5KwoGQLIRKJ0VtvpbRyoJJlvzTqB69MeAXtgj0PlP7ge9Mz0jxRkHBS1swhsoiK5asXe7QXnec5pQ1YRtshl0l5XAzo7fHHiwocCWkt9PCTN1NI6U1nsKq7FV5/Irlf/sMcoY5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNuhcXkh; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c54f67db99so456401785a.1;
-        Sun, 20 Apr 2025 21:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745208047; x=1745812847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX/10vkx/hdhwiym0foBnWUfHy9pxSwgILnrTpQDOqM=;
-        b=jNuhcXkhH97ipY0UPB5seKag8qlKmgLTFnBvfeizJOhKdkOgGyIqyd5z3hcgvPrgvn
-         ki21SknK0SBz/yoFNL+jB5VTMgOrwXNoGTjr07Dn5DO1z+cvRDVTH9pQX49WG9gAC+Yn
-         Xh/eNtDtIPQLiuCV5c7s304/8jmWpp8ikDSlFmYgxVr1Qg7IzUyV2MD/qeX/UdWfoldZ
-         6Lhk9ARPAVx+J26D3HofsYY70F25rozq6mQQNu0HWksWow08+kSw78nkOpHlUUNPeDj8
-         gvjaojSDgu4EdJagm10mSeYRmu/A7DFsjKmsge4YGrajlhpaZHl+Mu5HT4suCxM2Wsdh
-         xNqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745208047; x=1745812847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CX/10vkx/hdhwiym0foBnWUfHy9pxSwgILnrTpQDOqM=;
-        b=FYgIBVO1FbpUwKY4j6zs71MGDbwYk45lQencXNyOvSBiqxF5dX9jul08KTCbWiB7Z/
-         cxMxNwfUucW7mj2zI77F5X/1kATqgSrB+RLZhUv0am+y/Cdo6+AKVMAIlwbfdKhX5jvF
-         +UrKGHvF2KlWrEM4tY+rnVL9HdLQU4G2SkaFQkKpxrbtH2LFVbUNyuvc56VAIzfbh9EC
-         TLChXHSFnCyfUHCt6woBrJtn9IheNzUY65ls2CsZLO0XGqOA3D1DObcwcRoGIf0AFYey
-         fDRcDaZhs6iizQZmS+Ks9Pm8cUNWjOHtVKdS62kMcVIxQIDiNz0q8kBdFcrXbAPRv05Y
-         nNCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxdBpT+N3zbvwMZvWSsJV0XhvxRhjyIr1NJxzDRJXGl2+BqLWNlwO3AvB/q75V6SRAIQcQelIe4bcpsds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXJ5tuo9RRcdbAR7nFpMsZG7PRcWREiDWUTfHbLX9gqlRT2AQp
-	8nL35TDx6amTsatpl+mQSx7N1B7RuIn45dY3qN1C4S5HJkEa8WtUandnpg==
-X-Gm-Gg: ASbGncsxnIT40cPCwDGdaZrkhUM1NwTrYgg9nosD1vOAOTob188Ol4yJinR5ETtRfT6
-	vlgXmIH3QCINLqph3zYHI7Myvh13UNshbd0CttWYh6H5qJxiMiU26PwQguGrTmYnRO89BFkK1nW
-	iFolbpdaBeoa8SVDO+UKg0ieGpsHxyy/tftYcKJZYgH+wmP/ymwDcFFSAo11A50v/0LqPFtHGEI
-	Pg6xiVjdvOT9NnDQ8sE55/92tfjOMM8C2mXRJhaKO6AYQKHVnJRtJPRco9y3r/m+5xleB4z+qp7
-	AJ8Dq6C47YRukks8ijGcp45dx38=
-X-Google-Smtp-Source: AGHT+IF1eaVaae3F64952TllyruDbPzcrWhEmWG5BmgwcJDsDXZ3/SzMHM+U6g2uLDmpJr9+pAIJAQ==
-X-Received: by 2002:a05:620a:4445:b0:7c3:c9e5:e4ba with SMTP id af79cd13be357-7c925821affmr1859711285a.29.1745208047220;
-        Sun, 20 Apr 2025 21:00:47 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b775c1sm374568085a.97.2025.04.20.21.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Apr 2025 21:00:46 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
-Date: Sun, 20 Apr 2025 21:00:44 -0700
-Message-ID: <20250421040044.44887-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745207914; c=relaxed/simple;
+	bh=NkaxfKqaA0p8lcKslxsH+Igb9BpefV+P8KTPsvttPZc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mhUvrCNt6txwV/aT3p3oEzAy4nkxHyTT7jS8ETrWKgtPkWdRDJj7OnV210dyiL0jvgQKtsrmMq6MQFHiiyBKqDShN6wdm9zg4YsuRSshwRLtsA41/yAUZhS6e4vYnX3dvsE+Qn1pjKRpWb3OjlS5wsRwAUokBOOHB9uEa1gTZ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NIk0dLVA; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745207912; x=1776743912;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NkaxfKqaA0p8lcKslxsH+Igb9BpefV+P8KTPsvttPZc=;
+  b=NIk0dLVAHqFYM4QY5mPbTo3/L1lG2nk6bbGKK/eomEeVY8JSKAc+D5K1
+   MzAm2igVLy0ok28IxWhNFdw6b9jMsFovE6QMiUHT3ijfXB+vfAzAAKEg8
+   wrQrUurUb96zbs70C+AMIQCkkTOHY7425o/xUzssfjsxeXrGlyr3AyZnq
+   2klTeWx14E4BJIZ9LkJ9P/rzZvHwtHwvLep4pz8YQCJZCATYqlZluEJJX
+   hVTLCirBUrsBRqV7h2KmrzD4Ole49A9z+Gmr7NFlsl5ClpbMny+FWXlT7
+   DsV5grEEBLP0e8Ykf02mh+ywvssk4eUUVSoycDF5A0cH7ksY0b4mXYkCr
+   g==;
+X-CSE-ConnectionGUID: h2I2z6bxQNmQ06ABD44KzQ==
+X-CSE-MsgGUID: WlA7HVmaToK+2LhganCB8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11409"; a="64145380"
+X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; 
+   d="scan'208";a="64145380"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2025 20:58:25 -0700
+X-CSE-ConnectionGUID: FpNN5sNZTUyIW96QErOquw==
+X-CSE-MsgGUID: IcM8LLWyTYWZGHq71HhCxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,227,1739865600"; 
+   d="scan'208";a="136471875"
+Received: from senthil-nuc10i7fnh.iind.intel.com ([10.223.163.83])
+  by orviesa003.jf.intel.com with ESMTP; 20 Apr 2025 20:58:22 -0700
+From: Saranya Gopal <saranya.gopal@intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Saranya Gopal <saranya.gopal@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] platform/x86/intel: hid: Add Pantherlake support
+Date: Mon, 21 Apr 2025 09:43:32 +0530
+Message-Id: <20250421041332.830136-1-saranya.gopal@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,55 +75,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simplifies probe slightly and adds extra error codes.
+Add Pantherlake ACPI device ID to the Intel HID driver.
+While there, clean up the device ID table to remove the ", 0" parts.
 
-Switching from devm_ioremap to the platform variant ends up calling
-devm_request_mem_region, which reserves the memory region for the
-various wmacs. Per board, there is only one wmac and after some fairly
-thorough analysis, there are no overlapping memory regions between wmacs
-and other devices on the ahb.
-
-Tested on a TP-Link Archer C7v2.
-
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Saranya Gopal <saranya.gopal@intel.com>
 ---
- v2: remove wrong devm irq conversion.
- drivers/net/wireless/ath/ath9k/ahb.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/platform/x86/intel/hid.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/ahb.c b/drivers/net/wireless/ath/ath9k/ahb.c
-index d4805e02b927..49b7ab26c477 100644
---- a/drivers/net/wireless/ath/ath9k/ahb.c
-+++ b/drivers/net/wireless/ath/ath9k/ahb.c
-@@ -74,7 +74,6 @@ static int ath_ahb_probe(struct platform_device *pdev)
- 	void __iomem *mem;
- 	struct ath_softc *sc;
- 	struct ieee80211_hw *hw;
--	struct resource *res;
- 	const struct platform_device_id *id = platform_get_device_id(pdev);
- 	int irq;
- 	int ret = 0;
-@@ -86,16 +85,10 @@ static int ath_ahb_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/platform/x86/intel/hid.c b/drivers/platform/x86/intel/hid.c
+index 88a1a9ff2f34..0b5e43444ed6 100644
+--- a/drivers/platform/x86/intel/hid.c
++++ b/drivers/platform/x86/intel/hid.c
+@@ -44,16 +44,17 @@ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Alex Hung");
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res == NULL) {
--		dev_err(&pdev->dev, "no memory resource found\n");
--		return -ENXIO;
--	}
--
--	mem = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (mem == NULL) {
-+	mem = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(mem)) {
- 		dev_err(&pdev->dev, "ioremap failed\n");
--		return -ENOMEM;
-+		return PTR_ERR(mem);
- 	}
+ static const struct acpi_device_id intel_hid_ids[] = {
+-	{"INT33D5", 0},
+-	{"INTC1051", 0},
+-	{"INTC1054", 0},
+-	{"INTC1070", 0},
+-	{"INTC1076", 0},
+-	{"INTC1077", 0},
+-	{"INTC1078", 0},
+-	{"INTC107B", 0},
+-	{"INTC10CB", 0},
+-	{"", 0},
++	{ "INT33D5" },
++	{ "INTC1051" },
++	{ "INTC1054" },
++	{ "INTC1070" },
++	{ "INTC1076" },
++	{ "INTC1077" },
++	{ "INTC1078" },
++	{ "INTC107B" },
++	{ "INTC10CB" },
++	{ "INTC10CC" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, intel_hid_ids);
  
- 	irq = platform_get_irq(pdev, 0);
 -- 
-2.49.0
+2.34.1
 
 
