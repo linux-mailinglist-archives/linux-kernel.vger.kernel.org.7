@@ -1,175 +1,119 @@
-Return-Path: <linux-kernel+bounces-612865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5971A95516
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:17:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42F2A95527
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF071188D8E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE521894B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DCC1E5B78;
-	Mon, 21 Apr 2025 17:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AFD1E376C;
+	Mon, 21 Apr 2025 17:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GFK4C4dO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FgxNaedK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mgVAcMlP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A9iTiMQo"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="XPGRiCaD"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E88D19F41C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 17:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB495171CD;
+	Mon, 21 Apr 2025 17:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255804; cv=none; b=RraO673YiuD+ot1LyJlwFxeYIIIcrYKPlCHEGvDOzq8MXz55oZ6kVriAj5fqu5sq6ZyZhj9sq44+Nxq7j/o/HDyGzussNmmTrIkUvQADRMSNtAOjwj1OaOuC/wQjNITbA3LXT2t3aiAE4Ol2XvzVDRf2YNUOW8MB/o+cZMzYq/E=
+	t=1745256105; cv=none; b=ONlB/t3pk4nHl6Wd2OOBcntWWBr+w2ph8sjYudHE2EODEuQNzfOp1AbZmoay52l4StHjRppkSLx1QZosV9kq3Una9yzLrTlq2rgw6zW/Z0m7buNX7y8AQ2rPZ/ZAnj663RiZalfSkvjFD9zlb9CnHnqRFmGjXe++9+hDbjsa6wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255804; c=relaxed/simple;
-	bh=snlAzbl9cvQfLvpS33+wBGM9L/8iWNZMhpY4UQwnYQ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cHbytxpFtaoy3HzuoFd8ndEzPI2sH0Jy+ECdv+GIGYBrGE3nKnWZ13zSETNeC16j/KqGLQ8dLJ6f6/deMimyMrW7yXQm/UXfr71hGwDpteL8egL5Ps+H7J2xYYf9LU43aepaA+Z1rnCkb3tuwrrOvU32jJkVAFl5R7E+j4c47+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GFK4C4dO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FgxNaedK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mgVAcMlP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A9iTiMQo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ED8D921232;
-	Mon, 21 Apr 2025 17:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745255800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y23NAR76LYdmaA7SwNGEZzg9KK15eLbfbFxx8zGRNmo=;
-	b=GFK4C4dO0aL+raQatk+zsfEujqBoza3pxSL0Af3zc/7ts3tF3TV/afguA1MTZqGhntdkEo
-	gX+fPEuxiQUznULW1jsV1tOST8C0NgVkxMvg3DiFDR5gw9JPNPx6Ciy28VwGH6HCxJcbXD
-	arlEfp+DKyM2iOozSGhctaylXiE7qng=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745255800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y23NAR76LYdmaA7SwNGEZzg9KK15eLbfbFxx8zGRNmo=;
-	b=FgxNaedKf6NbmlJnYpDMRkylzmwi/6JbTVbwoI/ZBXo7Kh0LAMUtj1yX6t3Qu9zlJ536Ss
-	JeYOOXSIyWxuwjCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745255799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y23NAR76LYdmaA7SwNGEZzg9KK15eLbfbFxx8zGRNmo=;
-	b=mgVAcMlP36P3lI++IEo4b52pbydOswHZXp9ORuywOACYKeFaJhYKOHeYqnLyomrd/Dk7yy
-	oqRCwQmZ2AsaowG/R6sS7eRw5aLM8t1gKWyFR71rysZCCT+PaK0clRNs4tedv9U4XrTQv3
-	mY+8Dv2J3Nhh3f1kaMsXH9/EtUSdV+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745255799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y23NAR76LYdmaA7SwNGEZzg9KK15eLbfbFxx8zGRNmo=;
-	b=A9iTiMQom1Ug0IJXRuK30sCrMk++OKKAEyHcsP+ciez9WRFJno5v2A75d11d98GA2sZjBx
-	VqGVlm3tHknHN7CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E4F9139D0;
-	Mon, 21 Apr 2025 17:16:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ev3EH3d9BmiQaQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Mon, 21 Apr 2025 17:16:39 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-Date: Mon, 21 Apr 2025 18:16:28 +0100
-Subject: [PATCH] mm: workingset: Simplify lockdep check in update_node
+	s=arc-20240116; t=1745256105; c=relaxed/simple;
+	bh=bfQyol8cLyttAU5Ty1K6oyHALmD81FC1qiTdhSyDwUw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=VCr3lw+IgMYI6ob4ZcDSu64uIu6aZaAB34IYG44mzWcf8VI2VY073hFaIY39WYKqB/awkatH/zMs+lkkouhCO/HKl9+HTV86Dfi6fC4BfeWVFEETorj4M2vGFxsJ29gZZf8lg7jEbMzlCDFE2JCvynEDojf1IHTTyg24ydg2Caw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=XPGRiCaD; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53LHLViV1525934
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 21 Apr 2025 10:21:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53LHLViV1525934
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1745256092;
+	bh=bihgKEf5VZZHwR8VrjuaZrl8CU1ha0I7XvD1WncGFoc=;
+	h=Date:To:Cc:From:Subject:From;
+	b=XPGRiCaDcOGHTUansBjrerVmAQUCueUSnEpoiFgDc+6v41/jDz983OqH96EYbt8JJ
+	 6hOHsdDUFiEFqPPrvHqz5yiY1E5xY/tL/XXsMTo2xzqY+FIgFRO3hseGnfvoD2tAdB
+	 Q9dHijVH5an8M7t4zujxVZgg2pwH4Kvo1z5FCifefazAFeMzMnfUv9O/LQ7GPmBvrq
+	 sLkaX4g3pEG9N357NaLVlXl6shgwFy7YH8rna04F/sRFMUiRISlA38m7PilZ9utCT1
+	 bo6Xzhxxf+r4DpkIqNFXzsPa0wFyReRyDtDNWnoXAT+qvdCVLogN3BoblldO9KrE23
+	 WJZwIXEMXV6PA==
+Message-ID: <a82f4722-478f-4972-a072-80cd13666137@zytor.com>
+Date: Mon, 21 Apr 2025 10:21:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "H. Peter Anvin"
+ <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
+From: Xin Li <xin@zytor.com>
+Subject: MSR access API uses in KVM x86
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250421-workingset-simplify-v1-1-de5c40051e0e@suse.de>
-X-B4-Tracking: v=1; b=H4sIAGt9BmgC/x3MywqAIBBA0V+JWSeoFT1+JVpEjTVUFk70QPz3p
- OVZ3OuB0REyNIkHhxcx7TZCpQkMc28nFDRGg5a6kLlW4t7dQnZiPAXTdqxkXoFoskqqui+rAWJ
- 5ODT0/Ne2C+EDAnJG+2UAAAA=
-X-Change-ID: 20250421-workingset-simplify-eef38019a78c
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Pedro Falcato <pfalcato@suse.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745255799; l=1320;
- i=pfalcato@suse.de; s=20250421; h=from:subject:message-id;
- bh=snlAzbl9cvQfLvpS33+wBGM9L/8iWNZMhpY4UQwnYQ0=;
- b=UFCMiUg0z5tHElB/Ysb1zx+nz9K8T4URWlRbkxu4cqfbVclGZQhEUIVc1JcVxWowadG8Y6YM+
- Z5eBOn2AY1/Dc0Xa6HQivAXD221A21savKH5LZnN5AQDPYFlN6PHU7E
-X-Developer-Key: i=pfalcato@suse.de; a=ed25519;
- pk=0R7Lzd6olZ38hoDAKHJC9ZdDsvtBo/kjCOfHfihr/FM=
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
 
-container_of(node->array, ..., i_pages) just to access i_pages again
-is an incredibly roundabout way of accessing node->array itself.
-Simplify it.
+It looks to me that MSR access API uses in KVM x86 are NOT consistent;
+sometimes {wr,rd}msrl() are used and sometimes native_{wr,rd}msrl() are
+used.
 
-Signed-off-by: Pedro Falcato <pfalcato@suse.de>
----
- mm/workingset.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Was there a reason that how a generic or native MSR API was chosen?
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 4841ae8af41113797378846f08336cd7c5757bd5..6e7f4cb1b9a7807e9288955f180a5b6cffab1a40 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -612,7 +612,6 @@ struct list_lru shadow_nodes;
- 
- void workingset_update_node(struct xa_node *node)
- {
--	struct address_space *mapping;
- 	struct page *page = virt_to_page(node);
- 
- 	/*
-@@ -623,8 +622,7 @@ void workingset_update_node(struct xa_node *node)
- 	 * already where they should be. The list_empty() test is safe
- 	 * as node->private_list is protected by the i_pages lock.
- 	 */
--	mapping = container_of(node->array, struct address_space, i_pages);
--	lockdep_assert_held(&mapping->i_pages.xa_lock);
-+	lockdep_assert_held(&node->array->xa_lock);
- 
- 	if (node->count && node->count == node->nr_values) {
- 		if (list_empty(&node->private_list)) {
+In my opinion KVM should use the native MSR APIs, which can streamline
+operations and potentially improve performance by avoiding the overhead
+associated with generic MSR API indirect calls when CONFIG_XEN_PV=y.
 
----
-base-commit: 856ddd6c69a1a1935f32de8411550d997bcbe6f5
-change-id: 20250421-workingset-simplify-eef38019a78c
+No?
 
-Best regards,
--- 
-Pedro Falcato <pfalcato@suse.de>
+Thanks!
+     Xin
+
 
 
