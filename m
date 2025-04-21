@@ -1,190 +1,152 @@
-Return-Path: <linux-kernel+bounces-612132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E960AA94B32
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C143A94B34
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 04:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06283B17C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB4516F10B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 02:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83559255E3E;
-	Mon, 21 Apr 2025 02:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="KhwhsAf0"
-Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97766184;
-	Mon, 21 Apr 2025 02:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.61.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242BC256C96;
+	Mon, 21 Apr 2025 02:53:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD97256C7B;
+	Mon, 21 Apr 2025 02:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745203945; cv=none; b=lf2Qpbj7N6gM9tUfwR2iJ/EQSso9mZrwnAnv6n44qYp3t6vzCKff1CmbaaLUe8VhLo8w3CwGXnSHH9ZG9npPdfbSKMvH34WKkkmqj4dCoM2XT7p8YxKLiC8c5PoSat9f2d95c68Jzxk8arqNbXK5P8koY/Z+wJ5PPtIgJbD6shE=
+	t=1745204005; cv=none; b=dXvQ70Gys248267kr+xknBu9KxpN7MatGu8nOQO9GBavWDKgvaxDJStHFIXrSvbG2XJLJhfYGmtxvhN80svg4bv2hc6fEm6zUU+Pq3dM9sKvF2Hnohi2UhUvcvoxXuFoa9CubpnFPIj6SwHpZNef4WiGAzQG7UCARr6qXjpN3Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745203945; c=relaxed/simple;
-	bh=YBgTtw3/lIlfbTQBHcf3qYAkL4cxTN7AoK8utuCRMdQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cfuKMiniqF1q4cIrI1PxzaYBqI50T5Z9gXSoprfYnU5U3UjUYTIOKIZX3FfXAmjcRohRniQ9ujcFmYd38gaTtiRhl4xFWZIVpCBFMr/00W2+ojas7IAK3XWyI7Cwv+oVXg4FYfPzFmiDoWC8QtvB3hYnc107ZQjlZb7CcCvub/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=KhwhsAf0; arc=none smtp.client-ip=139.138.61.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1745203943; x=1776739943;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YBgTtw3/lIlfbTQBHcf3qYAkL4cxTN7AoK8utuCRMdQ=;
-  b=KhwhsAf0Iicx9iA6BeQ+eb3kyA3MV3TyeKiH8MBQvjMoscPcIcNOjgov
-   IcPpWggc/YwmwZl1Y/lPL8u9BPBzLLwZ2AYWaeoH3ziuEm2MYLPw2u/Y0
-   mO+5/wkioelUM31mcZJ+PFSBQvZ6oMkRkixtNZMGx1ND2+IPQuHNKQ4ke
-   uibExKt120oSTdHBlzj+At+TgmWVmG6f4f/XikNLayMFtRd2o4FuS/P1F
-   0vRK1xjqRbs6ob9WUcTfTjiYiN14M/LiZ4QKHlmFq+Yfw+A+yYlfMp0jz
-   ba8Sg5ac6rPQRqu5sVUBGP09SxtKf4gOGVbFUJ6Tj1BoxGwtE9r3+37OH
-   Q==;
-X-CSE-ConnectionGUID: wzGIF3pLRiS5YbKV61wv5w==
-X-CSE-MsgGUID: XFr7jYBLSoWvcvm9BbBuxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11409"; a="185091490"
-X-IronPort-AV: E=Sophos;i="6.15,227,1739804400"; 
-   d="scan'208";a="185091490"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 11:51:11 +0900
-Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
-	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 51D46D4C4A;
-	Mon, 21 Apr 2025 11:51:09 +0900 (JST)
-Received: from m3002.s.css.fujitsu.com (msm3.b.css.fujitsu.com [10.128.233.104])
-	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 160FDD7480;
-	Mon, 21 Apr 2025 11:51:09 +0900 (JST)
-Received: from sm-x86-stp01.ssoft.mng.com (unknown [10.124.178.20])
-	by m3002.s.css.fujitsu.com (Postfix) with ESMTP id ADA172025C18;
-	Mon, 21 Apr 2025 11:51:08 +0900 (JST)
-From: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
-To: linux-rdma@vger.kernel.org,
-	leon@kernel.org,
-	jgg@ziepe.ca,
-	zyjzyj2000@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
-Subject: [PATCH for-next] RDMA/rxe: Remove 32-bit architecture support
-Date: Mon, 21 Apr 2025 11:51:01 +0900
-Message-Id: <20250421025101.3588139-1-matsuda-daisuke@fujitsu.com>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1745204005; c=relaxed/simple;
+	bh=ohoYy81jPOBHi3Kl/yJ0GpN9kR2CeXImpedVkpQqUl8=;
+	h=To:From:Cc:Subject:Message-ID:Date:MIME-Version:Content-Type; b=RQN7Gcc9PEhOteCZXWnDmTdCmhIiPMAzLezINQ1tcA6GPf/YHnnNWOpwMA8aB9n+KLVbI5jVxVfjDqceqHZqgBEUC9n9F+STQyi7+xdT65cxID4De/s446JQpek7aYF+8Au7JYm1gtEew3mWI8jhH7p1LG8TB71pygfAgyXgq2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxieAaswVoDy_DAA--.16802S3;
+	Mon, 21 Apr 2025 10:53:15 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMDx_MQUswVoS6yNAA--.21709S3;
+	Mon, 21 Apr 2025 10:53:13 +0800 (CST)
+To: yangtiezhu <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>
+From: bibo mao <maobibo@loongson.cn>
+Cc: bpf@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Subject: BUG: bpf test case fails to run on LoongArch
+Message-ID: <32989acf-93ef-b90f-c3ba-2a3c07dee4a3@loongson.cn>
+Date: Mon, 21 Apr 2025 10:52:04 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMDx_MQUswVoS6yNAA--.21709S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxAFyrKFyUJry3tFW8KF1fXwc_yoW5tr4xpr
+	y3Jr1UGr4kJr17Ar1UJr1UJr15J3ZrAF18Jr1UJryUCr15Gr1UJr1UtrW7JryUJr4UJr17
+	Jw1Dtr1Utr1DGwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j8
+	sqAUUUUU=
 
-Major linux distibutions have phased out support for 32-bit machines. Since
-rxe is primarily used for development and testing, the benefit of
-maintaining 32-bit support is minimal. This change simplifies ATOMIC WRITE
-implementations and improves maintainability of the driver.
+Hi,
 
-Signed-off-by: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
----
- drivers/infiniband/sw/rxe/Kconfig     | 2 +-
- drivers/infiniband/sw/rxe/rxe_loc.h   | 6 +-----
- drivers/infiniband/sw/rxe/rxe_mr.c    | 8 --------
- drivers/infiniband/sw/rxe/rxe_odp.c   | 1 -
- drivers/infiniband/sw/rxe/rxe_param.h | 5 +----
- 5 files changed, 3 insertions(+), 19 deletions(-)
+When I run built-in bpf test case with lib/test_bpf.c,
+it reports such error, I do not know whether it is a problem.
 
-diff --git a/drivers/infiniband/sw/rxe/Kconfig b/drivers/infiniband/sw/rxe/Kconfig
-index c180e7ebcfc5..1ed5b63f8afc 100644
---- a/drivers/infiniband/sw/rxe/Kconfig
-+++ b/drivers/infiniband/sw/rxe/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config RDMA_RXE
- 	tristate "Software RDMA over Ethernet (RoCE) driver"
--	depends on INET && PCI && INFINIBAND
-+	depends on INET && PCI && INFINIBAND && 64BIT
- 	depends on INFINIBAND_VIRT_DMA
- 	select NET_UDP_TUNNEL
- 	select CRC32
-diff --git a/drivers/infiniband/sw/rxe/rxe_loc.h b/drivers/infiniband/sw/rxe/rxe_loc.h
-index 30fa83c9c846..f7dbb9cddd12 100644
---- a/drivers/infiniband/sw/rxe/rxe_loc.h
-+++ b/drivers/infiniband/sw/rxe/rxe_loc.h
-@@ -196,6 +196,7 @@ enum resp_states rxe_odp_atomic_op(struct rxe_mr *mr, u64 iova, int opcode,
- 				   u64 compare, u64 swap_add, u64 *orig_val);
- int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
- 			    unsigned int length);
-+enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value);
- #else /* CONFIG_INFINIBAND_ON_DEMAND_PAGING */
- static inline int
- rxe_odp_mr_init_user(struct rxe_dev *rxe, u64 start, u64 length, u64 iova,
-@@ -219,11 +220,6 @@ static inline int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
- {
- 	return -EOPNOTSUPP;
- }
--#endif /* CONFIG_INFINIBAND_ON_DEMAND_PAGING */
--
--#ifdef CONFIG_INFINIBAND_ON_DEMAND_PAGING
--enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value);
--#else
- static inline enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr,
- 						       u64 iova, u64 value)
- {
-diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
-index 1a74013a14ab..c4936d63e26a 100644
---- a/drivers/infiniband/sw/rxe/rxe_mr.c
-+++ b/drivers/infiniband/sw/rxe/rxe_mr.c
-@@ -539,8 +539,6 @@ enum resp_states rxe_mr_do_atomic_op(struct rxe_mr *mr, u64 iova, int opcode,
- 	return RESPST_NONE;
- }
- 
--#if defined CONFIG_64BIT
--/* only implemented or called for 64 bit architectures */
- enum resp_states rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
- {
- 	unsigned int page_offset;
-@@ -580,12 +578,6 @@ enum resp_states rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
- 
- 	return RESPST_NONE;
- }
--#else
--enum resp_states rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
--{
--	return RESPST_ERR_UNSUPPORTED_OPCODE;
--}
--#endif
- 
- int advance_dma_data(struct rxe_dma_info *dma, unsigned int length)
- {
-diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-index fa5e8f5017cc..6149d9ffe7f7 100644
---- a/drivers/infiniband/sw/rxe/rxe_odp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-@@ -380,7 +380,6 @@ int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
- 	return 0;
- }
- 
--/* CONFIG_64BIT=y */
- enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
- {
- 	struct ib_umem_odp *umem_odp = to_ib_umem_odp(mr->umem);
-diff --git a/drivers/infiniband/sw/rxe/rxe_param.h b/drivers/infiniband/sw/rxe/rxe_param.h
-index 003f681e5dc0..767870568372 100644
---- a/drivers/infiniband/sw/rxe/rxe_param.h
-+++ b/drivers/infiniband/sw/rxe/rxe_param.h
-@@ -53,12 +53,9 @@ enum rxe_device_param {
- 					| IB_DEVICE_MEM_WINDOW
- 					| IB_DEVICE_FLUSH_GLOBAL
- 					| IB_DEVICE_FLUSH_PERSISTENT
--#ifdef CONFIG_64BIT
- 					| IB_DEVICE_MEM_WINDOW_TYPE_2B
- 					| IB_DEVICE_ATOMIC_WRITE,
--#else
--					| IB_DEVICE_MEM_WINDOW_TYPE_2B,
--#endif /* CONFIG_64BIT */
-+
- 	RXE_MAX_SGE			= 32,
- 	RXE_MAX_WQE_SIZE		= sizeof(struct rxe_send_wqe) +
- 					  sizeof(struct ib_sge) * RXE_MAX_SGE,
--- 
-2.43.0
+  test_bpf: #843 ALU32_RSH_X: all shift values jited:1 239 PASS
+  test_bpf: #844 ALU32_ARSH_X: all shift values jited:1 237 PASS
+  test_bpf: #845 ALU64_LSH_X: all shift values with the same register
+  ------------[ cut here ]------------
+  kernel BUG at lib/test_bpf.c:794!
+  Oops - BUG[#1]:
+  CPU: 15 UID: 0 PID: 2323 Comm: insmod Not tainted 6.15.0-rc2+ #297 
+PREEMPT(full)
+  Hardware name: QEMU QEMU Virtual Machine, BIOS unknown 2/2/2022
+  pc ffff80000272c0e0 ra ffff80000272bf90 tp 900000013defc000 sp 
+900000013deffb40
+  a0 0000000000000000 a1 900000013deffb80 a2 900000010aa4fbf8 a3 
+900000013deffb88
+  a4 900000013deffb80 a5 900000010aa4fbf0 a6 0000000000000218 a7 
+8000000000000000
+  t0 00000000000000c0 t1 0000000000000c10 t2 00000000000000c0 t3 
+0000000000000000
+  t4 0000000000000095 t5 0000000000000c08 t6 00000000000000c0 t7 
+00000001000000b7
+  t8 0000000000000183 u0 0000000000010000 s9 0000000000000040 s0 
+0000000000000c00
+  s1 0000000000000181 s2 0000000000000000 s3 0000000000000040 s4 
+000000000001211d
+  s5 0000000000000218 s6 0000000000000011 s7 00000000000001b7 s8 
+900000010aa4f000
+    ra: ffff80000272bf90 __bpf_fill_alu_shift_same_reg+0x118/0x298 
+[test_bpf]
+    ERA: ffff80000272c0e0 __bpf_fill_alu_shift_same_reg+0x268/0x298 
+[test_bpf]
+   CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+   PRMD: 00000004 (PPLV0 +PIE -PWE)
+   EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+   ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+  ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
+   PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+  Modules linked in: test_bpf(+) snd_seq_dummy snd_seq snd_seq_device 
+rfkill vfat fat virtio_net virtio_gpu net_failover virtio_balloon 
+failover virtio_dma_buf efi_pstore virtio_scsi pstore dm_multipath fuse 
+nfnetlink efivarfs
+  Process insmod (pid: 2323, threadinfo=000000006d91be37, 
+task=00000000064df522)
+  Stack : 9000000002018bc0 0000000000000060 000000000000006f 
+000000000000006c
+          0000000000000183 ffff800002ba1c40 8000000000000000 
+0000000000000218
+          8000000000000000 545a35de324f71ab 900000013deffbb8 
+ffff800002808080
+          9000000002018bc0 0000000000000000 0000000000000000 
+000000000000034d
+          0000000000000000 ffff80001d438000 ffff800002ba0b08 
+ffff800002ba2c40
+          000000000000034d ffff8000027807e8 0000000000000001 
+0000000000000341
+          ffff800002808100 0000000000000341 00000000000003e8 
+0000000000000001
+          ffff800002ba1b09 ffff800002ba1bb4 9000000002c30140 
+9000000002b240b8
+          0000000000000000 0000000000000000 ffff80001d438000 
+0000000000000000
+          0000000000000000 545a35de324f71ab 0000000000000000 
+000000000000002f
+          ...
+  Call Trace:
+  [<ffff80000272c0e0>] __bpf_fill_alu_shift_same_reg+0x268/0x298 [test_bpf]
+  [<ffff8000027807e4>] test_bpf_init+0x39c/0x3bb8 [test_bpf]
+  [<9000000000240154>] do_one_initcall+0x74/0x200
+  [<9000000000327764>] do_init_module+0x54/0x2a0
+  [<9000000000329ccc>] __do_sys_init_module+0x204/0x2a8
+  [<90000000015b17a0>] do_syscall+0xa0/0x188
+  [<90000000002413b8>] handle_syscall+0xb8/0x158
+
+  Code: 03400000  03400000  03400000 <002a0001> 29c28076  29c26077 
+29c24078  29c1e07b  29c1c07c
+
+  ---[ end trace 0000000000000000 ]---
 
 
