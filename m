@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-612424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C150A94EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:35:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62ADBA94EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 11:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7015C3AE376
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27243AC20E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 09:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4788F213236;
-	Mon, 21 Apr 2025 09:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC15213236;
+	Mon, 21 Apr 2025 09:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lidvml90"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ebx/Enr6"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF6FC08
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 09:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B592561D9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 09:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745228132; cv=none; b=CAd2xJpRp7qmMGLMUUSJoZ0GQiu6dqL5k0+kwbZAz658Rm+4ezqelMtD6tPHI1tGPM+xTgpLifU52dtoxz4oIYHdypOEZczfNOBhkLdMlzl74Uvr3ilNf3Puz8ZeG9SGoSX9lQCFNedfRnkJT+zi2ZmWx9x7/ekxQgaijF27SCQ=
+	t=1745228173; cv=none; b=Li7Zq/jp/jTwGnhIb8YVZJSwM80VHkUuRVlzasCKCrzWLMHEOU/1ZyTtLUPuxEMa0n81+aY+gxSbgEmJcvu//ynmaHmGzDr6AVZzC03FkR92Ee0E9Uvc9f0fh0nDZJThZfgNN0YRRUfJhE7SHkarOkkPcRXWduVWLi0XUmOsoXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745228132; c=relaxed/simple;
-	bh=bUKfKjum813rPN4vzZFzmrYZkvGsU7gI7x8EL6azOkQ=;
+	s=arc-20240116; t=1745228173; c=relaxed/simple;
+	bh=Zp4gMDaMWzDGtZtkeLt9/VO3JXhhhixZvyc+ayvdSbs=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lcTvDlpPi+k++8HyYOrlPFSKfAcirhVgdipectvrnjSWzLLFR6gfFSy6ehVTnl3+uJxQuZbVnmtDRlVU/JQuT8e/dT8uUloT8IDO+RK3UdxrXzKSBuoh5cG3U9rKHoqtYdwVJZFjZkXMaPqHLWKPSy19YGzak+/VDmZ4FTEDbmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lidvml90; arc=none smtp.client-ip=95.215.58.183
+	 Message-Id:References:To; b=ZhGNFnTTQH1IKV2ZKWRODsTv7+sAbtecCIVkCK0IbhoV7rWVRiLRi47MsgkrSRYwT6PU9YHWz+5bLc5EyG1xSQRyP/KLQCljfSiY+EFXWyuTh/bids/ZW3vi0LOYWVVq529Gna8y4QA6XwlC/SkaCcbKUxa0AJgWtLdPn9kSsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ebx/Enr6; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Content-Type: text/plain;
 	charset=us-ascii
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745228127;
+	t=1745228167;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bUKfKjum813rPN4vzZFzmrYZkvGsU7gI7x8EL6azOkQ=;
-	b=lidvml900hH8Avhw1iFfdjq39Gjf+wb19CFUBfv3KviezRu9fhjsJ975KCje+KSIvdmBJh
-	nVt7FmEC+mI8n7yQwiESEUpeuRFoEvkUYQnD6GmOiQW/OxzItmTtypgX6Q6ivNRUc84Sts
-	pqgP9AF0UjsUwNAS32eetj7ladT+V9k=
+	bh=Zp4gMDaMWzDGtZtkeLt9/VO3JXhhhixZvyc+ayvdSbs=;
+	b=Ebx/Enr6Glgte+qKW8JP7+dVaT7FFMEILixGvIJHzrr3rHGOrhs1FOdOUbfnJNoHLNOIiQ
+	udHRDCCDUmqpGtJZgajGcw8XPLmrtaVsTpOaP0XFxnAItcplSnKHgQ9ZbsnhajFDNhU7i+
+	gWIAieKS/BRcs9/xMBM+/KcMtYADj5k=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH V4 1/4] mm: add swappiness=max arg to memory.reclaim for
- only anon reclaim
+Subject: Re: [PATCH V4 3/4] mm: add max swappiness arg to lru_gen for
+ anonymous memory only
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <519e12b9b1f8c31a01e228c8b4b91a2419684f77.1745225696.git.hezhongkun.hzk@bytedance.com>
-Date: Mon, 21 Apr 2025 17:34:50 +0800
+In-Reply-To: <65181f7745d657d664d833c26d8a94cae40538b9.1745225696.git.hezhongkun.hzk@bytedance.com>
+Date: Mon, 21 Apr 2025 17:35:34 +0800
 Cc: akpm@linux-foundation.org,
  hannes@cmpxchg.org,
  mhocko@suse.com,
@@ -62,9 +62,9 @@ Cc: akpm@linux-foundation.org,
  linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <972CD38C-9084-4CC0-8AD7-127745CACCDF@linux.dev>
+Message-Id: <DB64B965-2E54-401E-86F9-8F79C50B21C9@linux.dev>
 References: <cover.1745225696.git.hezhongkun.hzk@bytedance.com>
- <519e12b9b1f8c31a01e228c8b4b91a2419684f77.1745225696.git.hezhongkun.hzk@bytedance.com>
+ <65181f7745d657d664d833c26d8a94cae40538b9.1745225696.git.hezhongkun.hzk@bytedance.com>
 To: Zhongkun He <hezhongkun.hzk@bytedance.com>
 X-Migadu-Flow: FLOW_OUT
 
@@ -73,64 +73,16 @@ X-Migadu-Flow: FLOW_OUT
 > On Apr 21, 2025, at 17:13, Zhongkun He <hezhongkun.hzk@bytedance.com> =
 wrote:
 >=20
-> With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
-> memory.reclaim")', we can submit an additional swappiness=3D<val> =
-argument
-> to memory.reclaim. It is very useful because we can dynamically adjust
-> the reclamation ratio based on the anonymous folios and file folios of
-> each cgroup. For example,when swappiness is set to 0, we only reclaim
-> from file folios.
+> The MGLRU already supports reclaiming only from anonymous memory
+> via the /sys/kernel/debug/lru_gen interface. Now, memory.reclaim
+> also supports the swappiness=3Dmax parameter to enable reclaiming
+> solely from anonymous memory. To unify the semantics of proactive
+> reclaiming from anonymous folios, the max parameter is introduced.
 >=20
-> However,we have also encountered a new issue: when swappiness is set =
-to
-> the MAX_SWAPPINESS, it may still only reclaim file folios.
->=20
-> So, we hope to add a new arg 'swappiness=3Dmax' in memory.reclaim =
-where
-> proactive memory reclaim only reclaims from anonymous folios when
-> swappiness is set to max. The swappiness semantics from a user
-> perspective remain unchanged.
->=20
-> For example, something like this:
->=20
-> echo "2M swappiness=3Dmax" > /sys/fs/cgroup/memory.reclaim
-
-We already have this kind of style (mixing numbers and strings) within
-io.max under cgroup v2. As a result, I'm okay with this change.=20
-
->=20
-> will perform reclaim on the rootcg with a swappiness setting of 'max' =
-(a
-> new mode) regardless of the file folios. Users have a more =
-comprehensive
-> view of the application's memory distribution because there are many
-> metrics available. For example, if we find that a certain cgroup has a
-> large number of inactive anon folios, we can reclaim only those and =
-skip
-> file folios, because with the zram/zswap, the IO tradeoff that
-> cache_trim_mode or other file first logic is making doesn't hold -
-> file refaults will cause IO, whereas anon decompression will not.
->=20
-> With this patch, the swappiness argument of memory.reclaim has a new
-> mode 'max', means reclaiming just from anonymous folios both in =
-traditional
-> LRU and MGLRU.
->=20
-> Here is the previous discussion:
-> =
-https://lore.kernel.org/all/20250314033350.1156370-1-hezhongkun.hzk@byteda=
-nce.com/
-> =
-https://lore.kernel.org/all/20250312094337.2296278-1-hezhongkun.hzk@byteda=
-nce.com/
-> =
-https://lore.kernel.org/all/20250318135330.3358345-1-hezhongkun.hzk@byteda=
-nce.com/
->=20
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 > Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
 
 Acked-by: Muchun Song <muchun.song@linux.dev>
 
-Thanks.=
+Thanks.
+
 
