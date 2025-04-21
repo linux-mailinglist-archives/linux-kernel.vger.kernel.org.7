@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-613116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFC8A9584B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:48:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43127A95848
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 23:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAB33A78D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:47:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A92B7A4DCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 21:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EAF1F0999;
-	Mon, 21 Apr 2025 21:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2872922068F;
+	Mon, 21 Apr 2025 21:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c+4Hg52A"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sHJ4i/ae"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC1E2206AC;
-	Mon, 21 Apr 2025 21:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1C321D3C5;
+	Mon, 21 Apr 2025 21:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745271999; cv=none; b=udntW0jJrQLwDFVVl2FfD+oZAjsavUKxzrj5/5jZykTgl4JUM2SG/HSxnJBdIGzt4eCcYc3nk2Gg7aDD90jTvjASHVTicL3xt/F/Zp5gXBX3GOFg1v8ikY7fWjG8a/Z0HMFvprcuWAzT8XxF8ocoDsRVxQZiXArojJNGc7m+kr0=
+	t=1745271996; cv=none; b=qbpjU7PMkmCnQlNuWiIOtYQuNoFqOimNg2CeOQiiT/Yy0jc6bjDCZ2pMb7JQNFknynbO2+w8NNlzeUuXZt+RkYysNWfJ9tzj3vBlXriC0snDILYKl2LXHqxTw0575eazdJeBqKcG1iuJyTOYmLXpmv+nF/jKM4m2lCJ6sNyDUDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745271999; c=relaxed/simple;
-	bh=O8TJ5KvjETiGgr+rZOltXInFSKUgF+kGYNt46UN+12M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PG9lt05lZmEtyg7P1pATocf9k1Cf/IQns5elYe0Xgbcm5wdowyTNRgCaYKPm5rDcS18dnu7fZ3dcAHFI5GPzSQE15gtZlg190k/IF3LidzNpr3p4S6UBybXGE1BEcPY20+mEejuOIzYFJCFlklT+6Sb9f1sR/7FGxxLC11fd+dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c+4Hg52A; arc=none smtp.client-ip=198.47.23.235
+	s=arc-20240116; t=1745271996; c=relaxed/simple;
+	bh=GE9+w7lgQ+BD4S5m0aE2b4g3LKBlmZ8RBF7mc5nUT2U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kCn4z5v1nWZ+Xu3e6t+7VWCNHjev/ukgonKpNJW4IaWDW0aecZALbnCzPeGKcbsC5KKhqDCDGRlgFVQNNjlpsoX3cLy24zhrc3kxEdstEvjgmhM++9eX0G/lHVzQFrLPxXs1fQDdTvPoj2zRxWUrZNXJ570Dsx8fdG1KKWSn4sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sHJ4i/ae; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkMxC1749650
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkMYc1033928
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 16:46:22 -0500
+	Mon, 21 Apr 2025 16:46:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745271982;
-	bh=8XIxO7QqZCfXEMacDLpemlFTOjp51ap9NkRRGgC2z+0=;
-	h=From:To:CC:Subject:Date;
-	b=c+4Hg52AMs7/eJ//ndrQq0M5JdYHCshUhQsT3Fo649frsLnc5R56wZ7YzBI4PiW7l
-	 WX7u+grHeaVGufROD6xGQq+CKH0lM1m8Vm1uUALw/8bS16ETXVbtqLsWmdDGFgEMnq
-	 b70T8PeLvI97mJ2ff77OpGQjp6/I7IofHT34Xt58=
+	s=ti-com-17Q1; t=1745271983;
+	bh=Vjypw+5SWKXj3fJsQevbLbIsP5kna9ij086B85mf7mc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=sHJ4i/aerLXl4mgaf97v2QF7266prQFMmObmPFUNFsxEsVfPjm+Dvt/EmA1D1l9aC
+	 qtlmaM4QCJfdklcFPQeteix5MVu5btNxwxTA9jxmM3pinR7AIeUV6p6l0tdxxdkDRx
+	 y+gQslRsuJ+G2lkV7DA/raanKt4wKCWnBOF15OOo=
 Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkMsP020838
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53LLkMdB118843
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Mon, 21 Apr 2025 16:46:22 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
  (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 16:46:21 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 16:46:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 16:46:21 -0500
+ Frontend Transport; Mon, 21 Apr 2025 16:46:22 -0500
 Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LLkLqK038764;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53LLkLqL038764;
 	Mon, 21 Apr 2025 16:46:21 -0500
 From: Andrew Davis <afd@ti.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -64,10 +65,12 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	<jan.kiszka@siemens.com>
 CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 0/3] Fix remaining TI K3 CHECK_DTBS warnings
-Date: Mon, 21 Apr 2025 16:46:17 -0500
-Message-ID: <20250421214620.3770172-1-afd@ti.com>
+Subject: [PATCH 1/3] dt-bindings: mfd: ti,j721e-system-controller: Add compatible string for AM654
+Date: Mon, 21 Apr 2025 16:46:18 -0500
+Message-ID: <20250421214620.3770172-2-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250421214620.3770172-1-afd@ti.com>
+References: <20250421214620.3770172-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,39 +81,46 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello all,
+Add the child nodes that can be found under this node. Then as done for
+other similar devices (J7200 and J721s2) add support for the AM654 system
+controller to this binding.
 
-Until we resolve this thread[0] we do not have a set direction for
-modeling our device's controller devices. For now as the AM654 MAIN
-domain controller region is already one of the messy combination
-syscon + child device containing nodes, no harm in silencing this last
-DT check warning in the meantime.
-
-Depending on the outcome of [0], this series can be safely unwound in
-a couple ways without any backwards nor forwards compatibility breaks.
-So no need to wait on the outcome there to take this series.
-
-The last patch should take care of the last CHECK_DTBS warning for K3.
-
-Thanks,
-Andrew
-
-[0] https://lore.kernel.org/lkml/6241ff00-27e6-45ab-808e-f04e39854753@ti.com/
-
-Andrew Davis (2):
-  dt-bindings: mfd: ti,j721e-system-controller: Add compatible string
-    for AM654
-  arm64: dts: ti: am65x: Add missing power-supply for Rocktech-rk101
-    panel
-
-Jan Kiszka (1):
-  arm64: dts: ti: k3-am65-main: add system controller compatible
-
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
  .../bindings/soc/ti/ti,j721e-system-controller.yaml | 13 +++++++++++++
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi            |  2 +-
- .../k3-am654-base-board-rocktech-rk101-panel.dtso   | 12 ++++++++++++
- 3 files changed, 26 insertions(+), 1 deletion(-)
+ 1 file changed, 13 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+index 13b6b6fa5dee7..f3bd0be3b279f 100644
+--- a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+@@ -26,6 +26,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - ti,am654-system-controller
+           - ti,j7200-system-controller
+           - ti,j721e-system-controller
+           - ti,j721s2-system-controller
+@@ -73,6 +74,18 @@ patternProperties:
+     description:
+       The node corresponding to PCIe control register.
+ 
++  "^clock@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/soc/ti/ti,am654-serdes-ctrl.yaml#
++    description:
++      This is the Serdes Control region.
++
++  "^dss-oldi-io-ctrl@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/mfd/syscon.yaml#
++    description:
++      This is the DSS OLDI CTRL region.
++
+ required:
+   - compatible
+   - reg
 -- 
 2.39.2
 
