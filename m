@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-612859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78ACA95502
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658F3A95508
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 19:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D043AADA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6306216AD69
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 17:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D5719CD1D;
-	Mon, 21 Apr 2025 17:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDD1E5209;
+	Mon, 21 Apr 2025 17:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0SnUsAOd"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJumR7wQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BD19DFA2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 17:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE219CD1D;
+	Mon, 21 Apr 2025 17:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255178; cv=none; b=EdIjjZCDTUIzgMpug30v6+FOrMM1Q3q2zaTUGFEpjJZF0we+K3oTdKIb6ss3F40HJxSHTSVzVvFlmKz8VZURDZyvmluP4L4q9WdKvRoRpfKCDawHxhtxQy4QLUMroSxWoYKwcXyghTxJdFL3c4ulp0eaLEEsZY/1FGN4IUewm/k=
+	t=1745255290; cv=none; b=e5kiIQq71bxTZ1YKO6e6WY3w7vKomaYD6+R7rfb3b2skjAzImIwczqhYDKYhnGZVkDRAzw6iIZENqUEv8oRW0zt1Z757rYPLB3d7XVJ0XHcLpDxOFwZWzkVNyCktX3zo1+dbXYynTWkH4jaCmMxDoVPDFExQBRbvKZejU99zN1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255178; c=relaxed/simple;
-	bh=yfkSwOMgh7jwOhoRL7xNX8B9gRCyDko2LfQ/jk2ZI6k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=apGr6D3T7pZDBmWDiyLovZ0YV4yRm0Kez+pALMSh7o79bH/q93TtcKshwPdvr2o5CqWCOD2mGvuBMYPpkgg7qhYDDlbO6uaz5lPznCu5OM8/DKcATC/0gZkaCOwgb+A7z8LUXCWChKr5yilry/uEyO63+VXLWvawg5cFOIOxA+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0SnUsAOd; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af972dd0cd6so2496530a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 10:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745255176; x=1745859976; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGVm6Iz284Y0SobVO77Gr/vtAHZx6PoDVFWOgbVwgEA=;
-        b=0SnUsAOdubshSd/bQOuL05TzErYZjZutaYksR9/xgbAMVpqJX22B5nDXIUdt1ub6nb
-         yY/mJLtWmsVEZVK3n9mwB3w4cYggDfMewot1s2Mkam7a7+0gPAKsi2lepmlxaJ3xO2pt
-         GHTrg0b7f4yE5qILc96tzar+bylVtVji24SQWya7wONFFeVSAZqc7mko3uySJ1Xdj7DD
-         zsffW7itH0E45RXZOVulhxQ+QWKbIRnsJ9+ZrpY7EVZBCcp6mM3+V+yk3/qAsOtl+2ez
-         +vtdIUHfc2m+SaJAFodf5uOF3sdLXalZAASrLyEUbD+9B55ewJDN0LcUlPTnhZuthOlO
-         sTXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745255176; x=1745859976;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGVm6Iz284Y0SobVO77Gr/vtAHZx6PoDVFWOgbVwgEA=;
-        b=DanNxVC7Wtn0QC49XoW71T0GQGaroTDwOsyh3YCeynePSl5Mj+OopY0pQfcTFzFZ8H
-         3bYtM5WovvbcA2XYSvlSdUWCKCcaQ7U4/N522cmhqbFfzok0vo8PoR2XmONAYCdlmcGm
-         TSxr3I/HeJY8/CiYPVkIjkp01QouO986FN/A3g8InAh5BFW3b/HlAB8jjpp2YxUT+fqn
-         JqEBp5mYqTo0WFW+Q63ZgpGxpikSRyx5M/oXOFA1zh2c/qqiVBJotzMdSCvaOzyRCrOT
-         pgfmRJtluTB4bmHGUtF7QhRNLOrS6QPIu8344vz5Ma+CfCZUMtxGkXXX5fF+XLz4L7Mm
-         cRBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvjIv30qcIOwXqYaSMrzZrJMBCtrMuVnNF7hUFfihKh7hakuZVEV00FBYbT4opSwSPn95x0zVraxYggG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1uCY1cWz6d+yX763mrdEj5soCmgLw00RI03uU0JzsC68xz+KO
-	avS4OoP3QWy3dttv2LcAk//cDvQ/0C9pZau7kseW/2P3ZKssU7cGff4L5jJXkA+jROlu5WwQkXO
-	fCql0mQ==
-X-Google-Smtp-Source: AGHT+IGJnoJr8pRxSRD/hhwYoroUkE+lGUx4/nXUcE18/FUK3RmYB2FZoc725vebNXgkeUgU5nmSHFss5Hw7
-X-Received: from pfij16.prod.google.com ([2002:aa7:8010:0:b0:73d:65cb:b18b])
- (user=gthelen job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2704:b0:2ee:94d1:7a89
- with SMTP id 98e67ed59e1d1-3087bb36bb4mr16771781a91.1.1745255175978; Mon, 21
- Apr 2025 10:06:15 -0700 (PDT)
-Date: Mon, 21 Apr 2025 10:06:13 -0700
-In-Reply-To: <rgze2xgrslssxoe7k3vcfg6fy2ywe4jowvwlbdsxrcrvhmklzv@jhyomycycs4n>
+	s=arc-20240116; t=1745255290; c=relaxed/simple;
+	bh=J14MkTd+JCXpakqM03SaDXb7lljFMGaebEw96oEYtv0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CdWhYV6OXLt/s6iLUasAcWpv8Br4Si3GgwBgDb3T2fn0MqGWOLCJIpJ/M51cfpst1Hzb+E7PQLMYpn4YM7PgeMq7LUnqwX/yQTPMNE75+T+Srgq7kkmTaqQhA5q0LReUrVwx/Gup3JjtpAU6CVElr0Nw7HOqHQgILle45v8IshE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJumR7wQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC17C4CEE4;
+	Mon, 21 Apr 2025 17:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745255289;
+	bh=J14MkTd+JCXpakqM03SaDXb7lljFMGaebEw96oEYtv0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SJumR7wQOpw+4UwBkNc60AHPKTl6mqeKvuvHCGaFwKry8ltbVCxkB+VRA96KsEH9t
+	 q9wyCaV8JFf/Wtt3LDSWiuHsxFOpBj01PdyBU2smzYATo4QZYfXECPSM29wQxSzOSo
+	 iLawDFDHoYMyokqFMfCZEj5zeSSICQIHrc0K50wyYlmhatwWU8ofUdDjDmlFcVSOCd
+	 0+lylRs65uu9IIs6yVMw/iGxlDZOJp99KlNRdksSTzLO57vA0vVirwwT+HgOP0KawP
+	 fgk2Pw8KJ4wtBYZrQH3gdMzV5uRsOrfJfTdJ2iye992gu07cyvKLD5rluVi3cspi20
+	 2myPAdbhnyW9Q==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/2] mptcp: pm: Defer freeing userspace pm entries
+Date: Mon, 21 Apr 2025 19:07:12 +0200
+Message-Id: <20250421-net-mptcp-pm-defer-freeing-v1-0-e731dc6e86b9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250418195956.64824-1-shakeel.butt@linux.dev>
- <CAHH2K0as=b+EhxG=8yS9T9oP40U2dEtU0NA=wCJSb6ii9_DGaw@mail.gmail.com>
- <ohrgrdyy36us7q3ytjm3pewsnkh3xwrtz4xdixxxa6hbzsj2ki@sn275kch6zkh>
- <aALNIVa3zxl9HFK5@google.com> <nmdwfhfdboccgtymfhhcavjqe4pcvkxb3b2p2wfxbfqzybfpue@kgvwkjjagqho>
- <aAMVWsFbht3MdMEk@slm.duckdns.org> <rgze2xgrslssxoe7k3vcfg6fy2ywe4jowvwlbdsxrcrvhmklzv@jhyomycycs4n>
-Message-ID: <xr93ecxlsauy.fsf@gthelen-cloudtop.c.googlers.com>
-Subject: Re: [PATCH] memcg: introduce non-blocking limit setting interfaces
-From: Greg Thelen <gthelen@google.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	"Michal =?utf-8?Q?Koutn=C3=BD?=" <mkoutny@suse.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEB7BmgC/x3MQQqDMBBG4avIrDswiZZir1K60OSPnYUxTKQUx
+ LsbuvwW7x1UYYpKz+4gw1erbrnB3ToKnykvYI3N5MXfZfCOM3Zeyx4Kl5UjEoyTAZoXTmOI4ua
+ HyNBTGxRD0t9//qLW0fs8L6QXdENxAAAA
+X-Change-ID: 20250421-net-mptcp-pm-defer-freeing-f9cd01b70043
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>, Gang Yan <yangang@kylinos.cn>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=789; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=J14MkTd+JCXpakqM03SaDXb7lljFMGaebEw96oEYtv0=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLYqkukJQt+aaxsard9y772Z2bNV2GzteaOkxavPDPD9
+ GFfcuKtjlIWBjEuBlkxRRbptsj8mc+reEu8/Cxg5rAygQxh4OIUgIkcO8vwT9Vzx6OQpTzdl3Kf
+ aadUThYKzhaLPfxReqGAimzv34zjvQz/1LyOzvOeHbf7fWb0WYsrfinxV/Zpc4dLeHp5Pt4wJeQ
+ 4GwA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Shakeel Butt <shakeel.butt@linux.dev> wrote:
+Here are two unrelated fixes for MPTCP:
 
-> On Fri, Apr 18, 2025 at 05:15:38PM -1000, Tejun Heo wrote:
->> On Fri, Apr 18, 2025 at 04:08:42PM -0700, Shakeel Butt wrote:
->> > Any reasons to prefer one over the other? To me having separate
->> > files/interfaces seem more clean and are more script friendly. Also
->> > let's see what others have to say or prefer.
+- Patch 1: free userspace PM entry with RCU helpers. A fix for v6.14.
 
->> I kinda like O_NONBLOCK. The subtlety level of the interface seems to  
->> match
->> that of the implemented behavior.
+- Patch 2: avoid a warning when running diag.sh selftest. A fix for
+  v6.15-rc1.
 
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Geliang Tang (1):
+      selftests: mptcp: diag: use mptcp_lib_get_info_value
 
-> Ok, it seems like more people prefer O_NONBLOCK, so be it. I will send
-> v2 soon.
+Mat Martineau (1):
+      mptcp: pm: Defer freeing of MPTCP userspace path manager entries
 
-> Also I would request to backport to stable kernels. Let me know if
-> anyone have concerns.
+ net/mptcp/pm_userspace.c                  | 6 +++++-
+ tools/testing/selftests/net/mptcp/diag.sh | 5 ++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+---
+base-commit: 750d0ac001e85b754404178ee8ce01cbc76a03be
+change-id: 20250421-net-mptcp-pm-defer-freeing-f9cd01b70043
 
-I don't feel strongly, but I thought LTS was generally intended for bug
-fixes. So I assume that this new O_NONBLOCK support would not be LTS
-worthy.
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-> I asked AI how to do the nonblock write in a script and got following:
-
-> $ echo 10G | dd of=memory.max oflag=nonblock
-
-> Shakeel
 
