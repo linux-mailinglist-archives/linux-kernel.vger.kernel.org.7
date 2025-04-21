@@ -1,139 +1,272 @@
-Return-Path: <linux-kernel+bounces-612649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-612650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FB1A951F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5BFA951F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 15:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8FC818945FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E2D189466E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Apr 2025 13:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE90C266B66;
-	Mon, 21 Apr 2025 13:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB46266EE3;
+	Mon, 21 Apr 2025 13:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HamHH60D"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="TBmHWivq"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA235265607;
-	Mon, 21 Apr 2025 13:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F5E265607;
+	Mon, 21 Apr 2025 13:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745243388; cv=none; b=Fb0qgegglrWdQnnI4X0+Q+RdmcYP6ZEklggXpPpFtV5V5HE4k6JJx0KGRbWjfRUfFYi/vYDjNgQHXn8vFIn1oP9OFevugFDiuLbOxmHJ2MvuDwwk0m5CePTBH3rgrgKwX6nwTPZrYY7qZt1WT1ts4dznMmoK8qRorvYfgkt0RU0=
+	t=1745243394; cv=none; b=DlsppDKBuVY0LWgFkv8fplgKdNrW3ZXHyi8Mk9NeV6JBto2e46G8NmIL1wdtRaz+cIzQxyaUk4ETsc9JbPMgO60ImARJY337h9L6c+AB8w64QatqGvP1F13l1L3X7WkeDfao92ehX13HUxadu0USWYn0NhI/e2SVpN37ASfrt9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745243388; c=relaxed/simple;
-	bh=wjc8F+3pdcHxUxhxVgoyshc0LQdeJgnbkUnMzjDe+kA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G0REsRE9bAjJPzY+tSk+CfAf6A/pgAMAIkWoOdARweEN5n6MamofHGKjLGcrd/xn32mEuLf5YuuxuH2BqZNcCZjMZDDqSEUUWNMpYfLEH1SKEEGvXD5ZfTOM3oomjRbrwzCdPQn60LhSAFMedexxywP4JV6yrdWONb67TNKh+KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HamHH60D; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223fd89d036so48155305ad.1;
-        Mon, 21 Apr 2025 06:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745243386; x=1745848186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgfjM2Tk8XqGcx4yK8b4EOF7qCsq/4Wj/LeFu0QB/AA=;
-        b=HamHH60DACPqM2Z+iuFIIX7Z4DyGkDSbW9/kmvSpYnLEdxuKleOEJNaRGaDmVbhSpm
-         peahWj3Y9AjmKjRQjD0q7aeblTfW4shou5ifBUQ7lteyxHppT/1XD4GY+HsXV5aBeHFM
-         AMWvxvLDuDUS/2oJLcw9PcjjT6B0F1fAHlRIjC4509VC4lvTp31E9Tlg8KM1BWH9Um/u
-         FkMk4jM27fZwuYGONM58sNTXyF9jhkTqAFvEAY0pI8LeDJeAod/5nE/1lDPgE+23c32s
-         pDh7YDdfmIyMhcFE/KH5Q5IzsJpr5RiLYEMS/HhVTMWJBizE2HcpnJcSTcoy9yCkx5kE
-         LYpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745243386; x=1745848186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LgfjM2Tk8XqGcx4yK8b4EOF7qCsq/4Wj/LeFu0QB/AA=;
-        b=gdohpEPdLL9pQVBotwXQ1lTpKNSyEpklH21z/PKViLdT/zoHx37bLPkAq976pwLS5i
-         AF6b+tWDQZaHZIstwoIE7pJ3DCjAyeH3Jc/ikSYIDvaMn+43AzYH6up03710WGcWltjv
-         J0U6K7MjVPKdFqQSHYSNRBuDrslR7yWzZ/HRnJtPQyweeBhAB36B669VHf8wP/1H06Xt
-         +8QNZ3M32aZSx+tLpt5zCK5lLtyCNsrsXL8sSfGqCJTyZjVw3rFiyA/d2oImaKKQelUO
-         9ptn/powR3rxmQ+ciP0RhWINqXN/VnYR5/Trh2NkqA//Vdjhf9a9epNmNVr3Ej7qj8wK
-         eVAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDzmvYKNmBBHit4Ggw3qb9wYpo/CGaAeABr5VVFKuAqywExx9ooDYArCMwyy1IR20b/I3i80x27kr3sWU0is44arU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfLLYqmdCFe+1fJITCOf4mbmVn/FVOjtSUIPSWaDIzchjcowNF
-	csdzHCvxZHNC/tCuF/zLHp6iQtisLrAYveVhTTM1Vx7Af09I/z2K
-X-Gm-Gg: ASbGncteMzQ42toWD4tcwP3nqY5rjkOhYdTfbRij9Ffy4tjTbrmjb83LVOYrNO/g4z7
-	mypPKoKa3lMsuReDOmG3tCbAkriO3+nW7J3ll21NFa+NVm8boNiKVomKqIgd8AxJmBwuR/9hZy2
-	8zF9Lo4yOqwQwidc16QbPlwOgXFCc9Ai5AD6C+kzs0PkbVFAk37QtgMn1qlIdKi8ltm3+3QZZIt
-	PQPkVVax8VwwqI2DvLEWXarPOrcj5IZRw/JZgNp9du4ZFe+EeEVAkRBVJG8pOBvDtuxZiZ4CCln
-	XJuXxO3xUfo9Aacs2Q6rsIrS3oNknoUtHCO1L/P2J9eiI4y4mYqABcZ5YSE9OfctB688XQ==
-X-Google-Smtp-Source: AGHT+IGnuxsdn5+TU30KTH6bFF/bEUzFQd2IdJ0Q9WVtMP7AtRTHi2TEW0+CaCmUdavSq4i6Kr2JXw==
-X-Received: by 2002:a17:903:1b25:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22c5357f266mr171450775ad.14.1745243385890;
-        Mon, 21 Apr 2025 06:49:45 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdae5dsm65563115ad.35.2025.04.21.06.49.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 06:49:45 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] tracing: fix oob write in trace_seq_to_buffer()
-Date: Mon, 21 Apr 2025 22:49:36 +0900
-Message-ID: <20250421134936.89104-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745243394; c=relaxed/simple;
+	bh=BUbl0Hso8+VvNoN3zVfpKWS+jOtyoM0JFJCCM5jfl9k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rn8AEKTN1iiegu8Gy5Qro3m36qg1mKDkXaBES93vhOqhRUybihgctXvynj4YqssK0ckBYoS7XtAd0n3R/5vQ2yCxMXYcXtoJV/YQmIOIppIcnjg04nmHxDD4B8b4QivnPFRf8NFwbXqWExlab117RqAQgOfjMqKYH4hbN52GNC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=TBmHWivq; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1745243384; x=1745502584;
+	bh=64g4C6aut2iGTL5A6yDHBX2R2hNml2bmojv2EBq3Bmw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=TBmHWivq/frKLReEFixToJ+LK7QJjtgjTibzRV9rPiK9lRaWRGZiX4ZBJGX0BnHI2
+	 2h3BesdQXIsh5w/jDW6pn9lPBfcUCPxnxn6OQU5J/3ehKDH7pIjqXhSqM/7juibtgD
+	 Xpfhzb52O6BLil2UpvW96wT2mnxt0q72TrlMXFPIyu9OJ9O3xTjcerAxMtuxMDdm+f
+	 N/iRIZYk1h3fiqKWe5fIJJioncix61moQJulLH0yIQYjLCcvd+67yG4BLBwrOAjhdJ
+	 oDDM2FOsRKwDKriO5aEDLqhnrZSMJsOWR1aW/V585DrdPMfTkvk/nsWelHJWyRcQA/
+	 h/fgMkEHyZ2YQ==
+Date: Mon, 21 Apr 2025 13:49:41 +0000
+To: Simona Vetter <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, Xiangfei Ding <dingxiangfei2009@gmail.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: [PATCH v3 2/4] rust: create basic untrusted data API
+Message-ID: <20250421134909.464405-3-benno.lossin@proton.me>
+In-Reply-To: <20250421134909.464405-1-benno.lossin@proton.me>
+References: <20250421134909.464405-1-benno.lossin@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6dc438543a5ab2a0361c5bd07c1e950f71d473c8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-syzbot reported this bug:
-==================================================================
-BUG: KASAN: slab-out-of-bounds in trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
-BUG: KASAN: slab-out-of-bounds in tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
-Write of size 4507 at addr ffff888032b6b000 by task syz.2.320/7260
+When the kernel receives external data (e.g. from userspace), it usually
+is a very bad idea to directly use the data for logic decision in the
+kernel. For this reason, such data should be explicitly marked and
+validated before making decision based on its value.
 
-CPU: 1 UID: 0 PID: 7260 Comm: syz.2.320 Not tainted 6.15.0-rc1-syzkaller-00301-g3bde70a2c827 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xe0/0x110 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- __asan_memcpy+0x3c/0x60 mm/kasan/shadow.c:106
- trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
- tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
- ....
-==================================================================
+The `Untrusted<T>` wrapper type marks a value of type `T` as untrusted.
+The particular meaning of "untrusted" highly depends on the type `T`.
+For example `T =3D u8` ensures that the value of the byte cannot be
+retrieved. However, `T =3D [u8]` still allows to access the length of the
+slice. Similarly, `T =3D KVec<U>` allows modifications.
 
-It has been reported that trace_seq_to_buffer() attempts to copy more than
-PAGE_SIZE data into buf, so we need to add code to check the size of the 
-cnt value to prevent this.
-
-Reported-by: syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com
-Fixes: 3c56819b14b0 ("tracing: splice support for tracing_pipe")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 ---
- kernel/trace/trace.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8ddf6b17215c..8ba6ea38411d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1827,6 +1827,8 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
- 	len = trace_seq_used(s) - s->readpos;
- 	if (cnt > len)
- 		cnt = len;
-+	if (cnt > PAGE_SIZE)
-+		return -EINVAL;
- 	memcpy(buf, s->buffer + s->readpos, cnt);
- 
- 	s->readpos += cnt;
---
+Thanks a lot to Gary who suggested to add the `Deref for
+Untrusted<[T]>`, it allows implicit conversions at the right places and
+hopefully makes the whole API have a lot less friction.
+
+---
+ rust/kernel/lib.rs      |   1 +
+ rust/kernel/validate.rs | 142 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 143 insertions(+)
+ create mode 100644 rust/kernel/validate.rs
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index de9d6e797953..b2da57bd2c02 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -85,6 +85,7 @@
+ pub mod transmute;
+ pub mod types;
+ pub mod uaccess;
++pub mod validate;
+ pub mod workqueue;
+=20
+ #[doc(hidden)]
+diff --git a/rust/kernel/validate.rs b/rust/kernel/validate.rs
+new file mode 100644
+index 000000000000..8b33716be0c7
+--- /dev/null
++++ b/rust/kernel/validate.rs
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Untrusted data API.
++//!
++//! # Overview
++//!
++//! Untrusted data is marked using the [`Untrusted<T>`] type. See [Rationa=
+le](#rationale) for the
++//! reasons to mark untrusted data throughout the kernel. It is a totally =
+opaque wrapper, it is not
++//! possible to read the data inside.
++//!
++//! APIs that write back into userspace usually allow writing untrusted by=
+tes directly, allowing
++//! direct copying of untrusted user data back into userspace without vali=
+dation.
++//!
++//! # Rationale
++//!
++//! When reading data from an untrusted source, it must be validated befor=
+e it can be used for
++//! **logic**. For example, this is a very bad idea:
++//!
++//! ```
++//! # fn read_bytes_from_network() -> Box<[u8]> {
++//! #     Box::new([1, 0], kernel::alloc::flags::GFP_KERNEL).unwrap()
++//! # }
++//! let bytes: Box<[u8]> =3D read_bytes_from_network();
++//! let data_index =3D bytes[0];
++//! let data =3D bytes[usize::from(data_index)];
++//! ```
++//!
++//! While this will not lead to a memory violation (because the array inde=
+x checks the bounds), it
++//! might result in a kernel panic. For this reason, all untrusted data mu=
+st be wrapped in
++//! [`Untrusted<T>`]. This type only allows validating the data or passing=
+ it along, since copying
++//! data from userspace back into userspace is allowed for untrusted data.
++
++use core::ops::{Deref, DerefMut};
++
++use crate::{
++    alloc::{Allocator, Vec},
++    transmute::{cast_slice, cast_slice_mut},
++};
++
++/// Untrusted data of type `T`.
++///
++/// Data coming from userspace is considered untrusted and should be marke=
+d by this type.
++///
++/// The particular meaning of [`Untrusted<T>`] depends heavily on the type=
+ `T`. For example,
++/// `&Untrusted<[u8]>` is a reference to an untrusted slice. But the lengt=
+h is not considered
++/// untrusted, as it would otherwise violate normal Rust rules. For this r=
+eason, one can easily
++/// convert that reference to `&[Untrusted<u8>]`. Another such example is =
+`Untrusted<KVec<T>>`, it
++/// derefs to `KVec<Untrusted<T>>`. Raw bytes however do not behave in thi=
+s way, `Untrusted<u8>` is
++/// totally opaque.
++///
++/// # Usage in API Design
++///
++/// The exact location where to put [`Untrusted`] depends on the kind of A=
+PI. When asking for an
++/// untrusted input value, or buffer to write to, always move the [`Untrus=
+ted`] wrapper as far
++/// inwards as possible:
++///
++/// ```
++/// // use this
++/// pub fn read_from_userspace(buf: &mut [Untrusted<u8>]) { todo!() }
++///
++/// // and not this
++/// pub fn read_from_userspace(buf: &mut Untrusted<[u8]>) { todo!() }
++/// ```
++///
++/// The reason for this is that `&mut Untrusted<[u8]>` can beconverted int=
+o `&mut [Untrusted<u8>]`
++/// very easily, but the converse is not possible.
++///
++/// For the same reason, when returning untrusted data by-value, one shoul=
+d move the [`Untrusted`]
++/// wrapper as far outward as possible:
++///
++/// ```
++/// // use this
++/// pub fn read_all_from_userspace() -> Untrusted<KVec<u8>> { todo!() }
++///
++/// // and not this
++/// pub fn read_all_from_userspace() -> KVec<Untrusted<u8>> { todo!() }
++/// ```
++///
++/// Here too the reason is that `KVec<Untrusted<u8>>` is more restrictive =
+compared to
++/// `Untrusted<KVec<u8>>`.
++#[repr(transparent)]
++pub struct Untrusted<T: ?Sized>(T);
++
++impl<T: ?Sized> Untrusted<T> {
++    /// Marks the given value as untrusted.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use kernel::validate::Untrusted;
++    ///
++    /// # mod bindings { pub(crate) unsafe fn read_foo_info() -> [u8; 4] {=
+ todo!() } };
++    /// fn read_foo_info() -> Untrusted<[u8; 4]> {
++    ///     // SAFETY: just an FFI call without preconditions.
++    ///     Untrusted::new(unsafe { bindings::read_foo_info() })
++    /// }
++    /// ```
++    pub fn new(value: T) -> Self
++    where
++        T: Sized,
++    {
++        Self(value)
++    }
++}
++
++impl<T> Deref for Untrusted<[T]> {
++    type Target =3D [Untrusted<T>];
++
++    fn deref(&self) -> &Self::Target {
++        // SAFETY: `Untrusted<T>` transparently wraps `T`.
++        unsafe { cast_slice(&self.0) }
++    }
++}
++
++impl<T> DerefMut for Untrusted<[T]> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        // SAFETY: `Untrusted<T>` transparently wraps `T`.
++        unsafe { cast_slice_mut(&mut self.0) }
++    }
++}
++
++impl<T, A: Allocator> Deref for Untrusted<Vec<T, A>> {
++    type Target =3D Vec<Untrusted<T>, A>;
++
++    fn deref(&self) -> &Self::Target {
++        let ptr: *const Untrusted<Vec<T, A>> =3D self;
++        // CAST: `Untrusted<T>` transparently wraps `T`.
++        let ptr: *const Vec<Untrusted<T>, A> =3D ptr.cast();
++        // SAFETY: `ptr` is derived from the reference `self`.
++        unsafe { &*ptr }
++    }
++}
++
++impl<T, A: Allocator> DerefMut for Untrusted<Vec<T, A>> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        let ptr: *mut Untrusted<Vec<T, A>> =3D self;
++        // CAST: `Untrusted<T>` transparently wraps `T`.
++        let ptr: *mut Vec<Untrusted<T>, A> =3D ptr.cast();
++        // SAFETY: `ptr` is derived from the reference `self`.
++        unsafe { &mut *ptr }
++    }
++}
+--=20
+2.48.1
+
+
 
