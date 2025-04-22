@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-614623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F0DA96F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674F7A96F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170661B63F50
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC6F3BF11D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964C9201270;
-	Tue, 22 Apr 2025 14:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191C528EA64;
+	Tue, 22 Apr 2025 14:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mTTw081d"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdO2A0wN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D198B35949;
-	Tue, 22 Apr 2025 14:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D5A28E5EF;
+	Tue, 22 Apr 2025 14:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745333138; cv=none; b=sG68+fBInTQoJIFBWaSE0uhsG//CX8h6KCfNti7Epxhk4EALHuvlwqxHyxEPWUneb89h9a4vl2F7D3yeZqWUnbxPMTT/HrJ183P53Km+jKmNIIpfT+6NaQon6FLY/rMTqUjJXNJSSjmfrtcCX31S7HzhqFoH+taWCyFW0D3AsD0=
+	t=1745333194; cv=none; b=Np8iaMhsnZ+v1PFE6nuv4QJ2FnkyYhyzA/jLQgiMkMiNxjqmHgcVgvAKozStoTVwRNxnRK1r4BL2lXYkfccNwFoXkcfv1nwKmKrHuc41MzmB9N1l7zdhvzCxlxJoys+iqhOIMIcTbXET2XoALY/69l5subcC7GdoINpvZ8inkD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745333138; c=relaxed/simple;
-	bh=e5aaGUW94gZf/MvlvamwTsdv9AsIgZTWXlPzKCWsV8Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+y2j3TNV0F7pIUCrnofEdf9FVrAaRQ1A7BinoisYR+oaaq7SzbDvhgyWllgv2g8PS8R2MZbJI3OGJel4nlL8O5cmBHR8BV9tSXxrWuRUIkzBuxK5CXbTSjz3yJDBPBsxibO8mAE/pEdnC1nMRb6b/cRppezDF8ilj+yI+foNUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mTTw081d; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=3medxrlvbbf3tlyrx5raelhcne.protonmail; t=1745333128; x=1745592328;
-	bh=UXuSV1f79NbyF709WCuFqcBmWk4CD4WFGjva72joqI4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=mTTw081dyg1w9LR98H0jk4MgJMtsOphPYc8ai5ITKuB9ggpV34zwwpE3aWr641Zui
-	 DUdqFXT8CO/GMnHZBKFzGPRR6LvcS9DlcVq9Ufjvph1Ff0sfx7Uv9Inp/y73ICI4Bz
-	 ORJ5CuI0vqH+/U6giyDRu0tXlbEKx9JYQRgugxWvZ1RvrDyDYXsIiffHlUPm02B+70
-	 heR9o9tja4AVZl25pxmgmAavNw1+bZTseSKoVeYhW64WKJsjzeqJl0TClyv4M7EsFj
-	 CjgopylXUWdsOAt6JNmtVolayiMS+g9y5KM7s5caReo2+edI1Ee/SBB0wFPaKk+oRS
-	 POHAdxKa8YM+Q==
-Date: Tue, 22 Apr 2025 14:45:22 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, Alban Kurti <kurti@invicto.ai>, Michael Vetter <jubalh@iodoru.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] rust: pin-init: allow `pub` fields in `derive(Zeroable)`
-Message-ID: <D9D8YDFLD98E.D8DZEIIW4EN5@proton.me>
-In-Reply-To: <aAekPSsKnQWJSBhQ@Mac.home>
-References: <20250421221728.528089-1-benno.lossin@proton.me> <20250421221728.528089-7-benno.lossin@proton.me> <aAchUjDJsukcCgKM@Mac.home> <D9D0ZHG5ZKGL.30GLJKI6X8TG7@proton.me> <aAekPSsKnQWJSBhQ@Mac.home>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 676289a5fcab86467fda80dfda41cd2e61706b7b
+	s=arc-20240116; t=1745333194; c=relaxed/simple;
+	bh=JgGqmEvB2i0l21vTcFZrdqY+M7OFwFjriQNygbR07Vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TAtBghVuAhTi9MEChERbhQbtI4sdqroUB7QsNhFWIpYW7n58K+9koW7NUtvksEYUr+FG3Wle2mlY+91LMrZOeY92iCYxZNLgr0pz3h8zyK99YnzRH2FOHKqIEtLwFQ9AuSOn+8GNEMK7Qjw/5AZ7lh9pFv13a/BboFjOrMQl5Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdO2A0wN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32060C4CEE9;
+	Tue, 22 Apr 2025 14:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745333193;
+	bh=JgGqmEvB2i0l21vTcFZrdqY+M7OFwFjriQNygbR07Vo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pdO2A0wN1ZV8jA9qx0DrlTiJxaOVS4zcZW4dGeGCosQ19JsMt7rtnaEjwiKCgeS7i
+	 vZ2eW3ddFv0JWSH+RZahh3K6EFnlEpQbzI8FJFrAXoLM9Bb86WuUUBGi2w+EpA6zkY
+	 QhVcXfdEz6r7kuzVWIqxmA6ECVrjGpWs7PpkS1tblZRgd2BMjM9IkfeJFcZS/ZyFd+
+	 n8TlTi4qGz8cuGZWZpIh204QCPbKlf91YWxvaNixQcDjQs6ytwI24ic/qhJFLvmHBm
+	 RxVgBc1efGnlG8ZFaM43Ad+E9ITsOcws6ErqccMuctgqdh/vUqvZqUb3ULL04347mM
+	 FCaZiVsM+Ex7w==
+Date: Tue, 22 Apr 2025 16:46:26 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 12/16] gpu: nova-core: firmware: add ucode descriptor
+ used by FWSEC-FRTS
+Message-ID: <aAerwsnx5VRQr_bM@cassiopeiae>
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-12-ecd1cca23963@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250420-nova-frts-v1-12-ecd1cca23963@nvidia.com>
 
-On Tue Apr 22, 2025 at 4:14 PM CEST, Boqun Feng wrote:
-> On Tue, Apr 22, 2025 at 08:30:40AM +0000, Benno Lossin wrote:
->> On Tue Apr 22, 2025 at 6:55 AM CEST, Boqun Feng wrote:
->> > On Mon, Apr 21, 2025 at 10:18:33PM +0000, Benno Lossin wrote:
->> >> Add support for parsing `pub`, `pub(crate)` and `pub(super)` to the
->> >> derive macro `Zeroable`.
->> >>=20
->> >> Link: https://github.com/Rust-for-Linux/pin-init/pull/42/commits/e831=
-1e52ca57273e7ed6d099144384971677a0ba
->> >> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->> >
->> > Kindly request tests/examples for this patch and the following one
->> > (patch #7) ;-)
->>=20
->> If you send a patch, I'll take it :)
->>=20
->
-> First, I'm happy to help improve pin-init, *if* I fully understand the
-> changes and have the cycle ;-)
->
-> However, here we are at the review process, so I need these examples to
-> close the gaps between the implementation and the usage to provide any
-> meaningful review. There's no example/test in the commit log, the kernel
-> code and (I've checked) the GitHub repo. Although I fully trust you, but
-> there is no second source that could help me verify the changes easily.
+On Sun, Apr 20, 2025 at 09:19:44PM +0900, Alexandre Courbot wrote:
+> FWSEC-FRTS is the first firmware we need to run on the GSP falcon in
+> order to initiate the GSP boot process. Introduce the structure that
+> describes it.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/firmware.rs | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
+> index 9bad7a86382af7917b3dce7bf3087d0002bd5971..4ef5ba934b9d255635aa9a902e1d3a732d6e5568 100644
+> --- a/drivers/gpu/nova-core/firmware.rs
+> +++ b/drivers/gpu/nova-core/firmware.rs
+> @@ -43,6 +43,34 @@ pub(crate) fn new(
+>      }
+>  }
+>  
+> +/// Structure used to describe some firmwares, notable fwsec-frts.
+> +#[allow(dead_code)]
 
-Maybe this is just a case of me being too familiar with the code, but
-the change in this commit and #7 are very trivial. I'm not too sure what
-I should use as an example because of this. I could do something like:
+Please use 'expect'.
 
-    #[derive(Zeroable)]
-    pub struct Foo {
-        pub a: usize,
-        b: u64,
-    }
+> +#[repr(C)]
+> +#[derive(Debug, Clone)]
+> +pub(crate) struct FalconUCodeDescV3 {
 
-    #[derive(Zeroable)]
-    pub union Bar {
-        pub a: u64,
-        pub b: i64,
-    }
+Can we get some more documentation on the fields please? :)
 
-But I don't see a lot of value in adding those either as doc-tests or as
-examples. Rust users normally expect that derive macros can handle any
-kind of visibility for fields (there are exceptions of course, but they
-don't apply to `Zeroable`).
+> +    pub(crate) hdr: u32,
+> +    pub(crate) stored_size: u32,
+> +    pub(crate) pkc_data_offset: u32,
+> +    pub(crate) interface_offset: u32,
+> +    pub(crate) imem_phys_base: u32,
+> +    pub(crate) imem_load_size: u32,
+> +    pub(crate) imem_virt_base: u32,
+> +    pub(crate) dmem_phys_base: u32,
+> +    pub(crate) dmem_load_size: u32,
+> +    pub(crate) engine_id_mask: u16,
+> +    pub(crate) ucode_id: u8,
+> +    pub(crate) signature_count: u8,
+> +    pub(crate) signature_versions: u16,
+> +    _reserved: u16,
+> +}
+> +
+> +#[allow(dead_code)]
+> +impl FalconUCodeDescV3 {
+> +    pub(crate) fn size(&self) -> usize {
+> +        ((self.hdr & 0xffff0000) >> 16) as usize
 
-The union case is a bit different in that not all derive macros support
-them, so I agree that the docs should reflect that better. I can add a
-patch when I find the time, as I'm stretched pretty thin (hence I
-suggested you submit a patch :)
+What's this magic number?
 
-> In this case, it may be special, because you're in fact syncing an
-> external repo with the kernel part, i.e. the development is done, so if
-> we trust the external repo and of course, if no obvious error is
-> founded during review (from the people who can review), we should merge
-> it in. If that's the case, this patchset is more of an "FYI" instead of
-> a development process IMO. Is this the case here?
-
-I'm not 100% sure on the workflow for pin-init. Ideally all changes made
-to the pin-init repo can be ported 1:1 into the kernel. There are of
-course smaller things such as commit references in commit messages that
-need to be adjusted. But aside from such smaller administrative things,
-the idea with the sync was to only have one singular version. If you
-want to spend the time looking at the pin-init PRs then feel free to do
-so :)
-
-Since I port the history from the repo and not do one single commit with
-"sync with version v... of pin-init", I do think that kernel review can
-indeed change things in the upstream repository, but I'm not sure by
-which means it should do so. I want to avoid to rewrite history
-upstream, so there it has to be a new patch.
-
----
-Cheers,
-Benno
-
+> +    }
+> +}
+> +
+>  pub(crate) struct ModInfoBuilder<const N: usize>(firmware::ModInfoBuilder<N>);
+>  
+>  impl<const N: usize> ModInfoBuilder<N> {
+> 
+> -- 
+> 2.49.0
+> 
 
