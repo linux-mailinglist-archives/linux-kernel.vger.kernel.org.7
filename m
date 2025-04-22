@@ -1,102 +1,120 @@
-Return-Path: <linux-kernel+bounces-614447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96506A96CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8EEA96CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803D019E1CF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5933A3BDF31
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8002853EA;
-	Tue, 22 Apr 2025 13:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA70283CAC;
+	Tue, 22 Apr 2025 13:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRoPxL1r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hjc3CEnV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237DD280CC8;
-	Tue, 22 Apr 2025 13:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B18283684;
+	Tue, 22 Apr 2025 13:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328367; cv=none; b=rgO0eyZguj92MMg//AKLp7X/bDiICq0sZfQfpq3FBvLfu0odUwjt3fzVtmDJwzS5iC4rbb0E2gsWbfF+5MeYP3SuTtRfRMNJbAB4o9SgbVWOQ3lPeKxlCbKdNLaEn/DOUk6SANiB4SlnqNXqaIT9495hQwWZL7j1uRYrQsxMtsQ=
+	t=1745328414; cv=none; b=eV3osiF/TLCdEDUGKQR/tlN7CeWJzQIhZKQumZEvRRiU0ABwgoSG58nDBN4j81EOuq+6DcE9ClH/C8N35kaBOwfL/g7tUqdMMsgrGHLOJP452mvnzmIHuJgMyV0j/Ei0afOOVdbmVEDCrbtOq1gbQ43tB9aD+K77P7Zcxa7Elkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328367; c=relaxed/simple;
-	bh=k1Y/qetGti0rkyMy0rwXscAFL19+dI0z8OoONtOmPwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HhoEx+4xsf2X7QtckH4gHodObtTLe5cY+wO0yyh0qgxWH70xIdIiy6oDtlQbbxC1ufmhhcP7WsWU+Lj54RkwkPSje3OSGVhewg5etMvTMsTcYpg4aI1+zhNYjYcz6LWxilQwO3Pa9OhRO6a0xP5v60v+2T0qWX/bLLeSci+S81k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRoPxL1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63221C4CEEA;
-	Tue, 22 Apr 2025 13:26:04 +0000 (UTC)
+	s=arc-20240116; t=1745328414; c=relaxed/simple;
+	bh=OrnCZxS+iHOuq2RV9EN8sUBJCDi/vIe+MYux5FGlJrY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RIdYGtCfyjkzEdJFncVrlh1UdP6GbE0Mtub3uLiOJBi0prrvz2NT95T8ltRNArF4Bi5F2iAMv1zYqtP7MhgdLTLnA+VjPBARkKnkyjnDSNf2e/Yp3HNZjpoWDQCBNz12zmOMRJZV0UubuEEVXROUpblJfCPkCaLylUlzOrHubV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hjc3CEnV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC01C4CEE9;
+	Tue, 22 Apr 2025 13:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745328364;
-	bh=k1Y/qetGti0rkyMy0rwXscAFL19+dI0z8OoONtOmPwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BRoPxL1rZNp2I0cNOt/WXMF79Sfz9fXXdLZ9+SIi30qVR0DLZ5ZszYg1b8G1KcA9M
-	 0zeA8piZi3WIBK8q/qtbWj1FMIj8mEN9OEkkqhRQpxER0kJxiJk47jj6iWqxvqEPsj
-	 FcNSMQPS0b2VK+al6eCYjzR2dQXdTw5gTfk83dE2EU+8MMl6F642BK5Px/F84/bnxy
-	 Dun2NDDqpvx4ZzLeVw7blWt0GTw55ZKCqO5L9M4MnDHgr3NBQP0rIQ2bNIZlicEauS
-	 qkWyA6E4nfDErN4wcoZCyFEX8LWuryzVlWFjH78IqG5/B/Hwt4T2IRj1I4bJFEUfLg
-	 a6zoqSNQZ2w0A==
-Date: Tue, 22 Apr 2025 08:26:02 -0500
-From: Rob Herring <robh@kernel.org>
-To: Peter Korsgaard <peter@korsgaard.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,tmp102: document optional V+
- supply property
-Message-ID: <20250422132602.GA1092156-robh@kernel.org>
-References: <20250417180426.3872314-1-peter@korsgaard.com>
+	s=k20201202; t=1745328412;
+	bh=OrnCZxS+iHOuq2RV9EN8sUBJCDi/vIe+MYux5FGlJrY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Hjc3CEnVZg+dYilU/nvEXtKsO+isKJLPex10Vb/7vTTnYWaK2L0pLk2dGaFgYimU3
+	 0Fzz58OyStxgeBbh/LtQVaghBK0UtL2iwvndv1RvRsZ9yFLPZJEG4MjfBf/R8l7Bu2
+	 YaE0goFFGPiu78PmfATyk5pgqhtD5BLfbMNr48S6IhIkKqC939xDhTxf76pPT74aF+
+	 ORTd+4WFrEbpGzDwwk7Nx2Lz7jitPgGk5vVZlWOGO5W5UoKnhXqwtRXRrcHT6zMToK
+	 y+Cp5qB7jzzhBvG4RNQ8qksjnO+mA293UsfPowL2p7VWm1svQa2hcwePQgPWFL5Cij
+	 oqMpzq/h2XLCw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+In-Reply-To: <871pu5vdu8.fsf@kernel.org> (Andreas Hindborg's message of "Sun,
+	06 Apr 2025 11:28:15 +0200")
+References: <bHDR61l3TdaMVptxe5z4Q_3_EsRteMfNoygbiFYZ8AzNolk9DPRCG2YDD3_kKYP6kAYel9tPGsq9J8x7gpb-ww==@protonmail.internalid>
+	<Z-aDV4ae3p8_C6k7@infradead.org> <87frix5dk3.fsf@kernel.org>
+	<20250403-sauer-himmel-df90d0e9047c@brauner>
+	<Z--Ae5-C8xlUeX8t@infradead.org>
+	<20250404-komodowaran-erspielen-cc2dcbcda3e3@brauner>
+	<SA4Crt0QV7AKViqF1UCGYRtpvL-BX9dKVY0rAB0VrZuyA6IY2KBUfS8JJ3sNGn46Fb9SoqIQUPA-p2h1HfvvUQ==@protonmail.internalid>
+	<Z_GSpcn3bMRStzf4@google.com> <871pu5vdu8.fsf@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Tue, 22 Apr 2025 15:26:39 +0200
+Message-ID: <878qns9vjk.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417180426.3872314-1-peter@korsgaard.com>
+Content-Type: text/plain
 
-On Thu, Apr 17, 2025 at 08:04:25PM +0200, Peter Korsgaard wrote:
-> TMP102 is powered by its V+ supply, document it. The property is called
-> "vcc-supply" since the plus sign (+) is not a valid property character.
+Hi All,
 
-Wouldn't "vplus-supply" or "vp-supply" work?
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-> 
-> Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> index 7e5b62a0215dd..4c89448eba0dc 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> @@ -23,6 +23,9 @@ properties:
->    "#thermal-sensor-cells":
->      const: 1
->  
-> +  vcc-supply:
-> +    description: Power supply for tmp102
-> +
->  required:
->    - compatible
->    - reg
-> @@ -42,6 +45,7 @@ examples:
->              reg = <0x48>;
->              interrupt-parent = <&gpio7>;
->              interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-> +            vcc-supply = <&supply>;
->              #thermal-sensor-cells = <1>;
->          };
->      };
-> -- 
-> 2.39.5
-> 
+> Hi Joel,
+>
+> "Joel Becker" <jlbec@evilplan.org> writes:
+>
+>> On Fri, Apr 04, 2025 at 10:42:29AM +0200, Christian Brauner wrote:
+>>> On Thu, Apr 03, 2025 at 11:47:23PM -0700, Christoph Hellwig wrote:
+>>> > On Thu, Apr 03, 2025 at 01:27:27PM +0200, Christian Brauner wrote:
+>>> > > There's no need to get upset. Several people pointed out that Joel
+>>> > > Becker retired and since he hasn't responded this felt like the right
+>>> > > thing to do. Just send a patch to add him back. I see no reason to not
+>>> > > have Andreas step up to maintain it.
+>>> >
+>>> > Removing someone just because they have retired feels odd, but hey who
+>>> > am I to complain.  I did reach out to him when giving maintainership
+>>> > and he replied although it did indeed take a while.
+>>>
+>>> I mean, we can surely put Joel back in. My take would be to remove
+>>> that person from the maintainer entry because people will get confused
+>>> when they don't receive a reply. But I'm totally fine if we should leave
+>>> Joel in.
+>>
+>> Howdy folks,
+>>
+>> I do apologize for my delayed responses.  I try to review patches as I
+>> find them, but I haven't yet set up a dedicated tree -- a bit out of
+>> practice.
+>
+> How would you like the maintainer entry to look:
+>
+>  - Are you OK with me taking up maintenance of configfs?
+>    - If yes,
+>      - would you like to be added as a reviewer?
+>      - would you prefer to be listed as co-maintainer?
+>    - If no,
+>      - would you have me as a co-maintainer?
+>      - or would you have me as a reviewer?
+>
+> I set up a tree according to the patch I submitted. I did not switch out
+> linux-next yet, but I was about to send a request to do that. I will
+> stall that pending your response on the above.
+
+Since I got no response on the above, I am going to continue setting up.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
