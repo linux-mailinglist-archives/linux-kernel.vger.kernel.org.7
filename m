@@ -1,162 +1,311 @@
-Return-Path: <linux-kernel+bounces-613780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A9CA960ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:23:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB1DA9620B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFC81892095
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1A7189FCB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590C22ACE7;
-	Tue, 22 Apr 2025 08:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C22255E31;
+	Tue, 22 Apr 2025 08:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBP/svYt"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ugv71S/j"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B41F03C5;
-	Tue, 22 Apr 2025 08:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310189; cv=none; b=FoL9FDuaKzFBTaJ180NdsX4wO42d1C+Op58La3z656EJNdgF7z4FR5UyjhmikZPrDvjkm6JaupqsOJ16Qyw41LQgQB2sVc56IsTSY8aQmVMhWEHLwhSBeHxd0XWMTCs8OMgSF8yGTRT2otThehbyoWjrVtS0P0hgSP35DnT856I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310189; c=relaxed/simple;
-	bh=2uP34/FeIpIk/Wcl1gOmNK8ZKfSeIZaiwifRRNPt/Ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WqoLAH4Q9qu0uWb7fVl8AO4w1O5J0Stp48qXb4SNXmNuIG2ppuXevCti1Z5bxGd9sjsP044hEaYBndlL7Xy+6MTCXSermkm4jQX5uzJPjDPbqlVNIEFmurirndpDr+ZHNxKwq8b9kSV0zy9Q+kBuZVxpE+eNPBrJRoULkmPg3nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBP/svYt; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-604f0d27c24so2216160eaf.2;
-        Tue, 22 Apr 2025 01:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745310186; x=1745914986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
-        b=lBP/svYtkb1z0ZLBuCJdxxpt8ndFmN6x0+Cm4nBos1hHoRw+EiNKFLsyR9VTvhjY7C
-         RCCte8Z6ycudUM4YV4+nPipC46V3ppWwBuZGLdZzy+4M8M06UQVMgObMulSNxiKA+9TY
-         bfm9lLbVqy0NiEw2AG0kGm/DdrEt/2apjOmrOVFgYr4GOkstawGbb2NYIypCH6nY020n
-         DVAc9zsfwUmz3egTJb4jMsUUWySuBnHC33vofYE/7GhU2b0ed8zAd+39v7hnrPpghYHG
-         +DmrSr1RynWr+/ANNuhDepSmctTBnhmBa72HSZgd8kme8iQKoOhwDBq5UpDZHCIzPppi
-         etHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745310186; x=1745914986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
-        b=YcHzqbWq6hoAjfwVx2GeD2JDpQF6GW8JZnbpcYAbrPMf8tRnx1uze2NbCeEfIU0DPU
-         W3ctGlTSSwIbFcKhAHYh2g9GpKOsRX5ekBwli2mWbR0VKkKGfq15Dq4Eral3L0USGNsX
-         FHfNDWCTMhNGjFk9Gm2fPPsJ4/b8oQ7t6/t6ocE/jz5njg5KZjwhjh/cOPQxMQC//6lR
-         qoceBwvWg2RyWregzxfdJ32qbD1gIGr7eqnWrnFMq7vQWGHHGvFTUms+aIBR8cdJwFA+
-         XUe3sj99CPBSCYNwtk4ApmkgEtRLs116m7Gvz76Yl1cpMvWyJwiZZUkyOEpJ7WlXsT2T
-         tTSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5h5a38pC79u3Uz7FUkS74T6iU+kgYOC+hEhwv0L8D8IAaQZ/n2xW+7hQPc1ioZFb7QH8y/SVipE1u79bw@vger.kernel.org, AJvYcCXeOJKwLU+Q25in9laTb4CyKcXFYKVIBkttSSjK6SqREQ9O4IXb292TEYI5rl2YfwUhnk3PrHVIeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrUDDdGrlVnNYHgp77lLUp+fYhXmLXIhhiCm+rzfslF3fowH6U
-	k0I/KAPmTDot+8TjQ3xtB792nLxPomt60SAr8RncYz/lR7RiXO9XxCPVWXbkYrvEanvcwwti2y+
-	QjrdD6ITYL0LrtW0MUVzdIQ0z6uU=
-X-Gm-Gg: ASbGncu6wUbTiA9UTllz7iKz2qqxXUH7FAeOH6VCrxWzUqHxcvZDQkBtvIKy4Xrg5P2
-	5aEXvKnUOgLdoOzcCzLhUxia9Zc0YSF0GtC5X+NdQc+Uhr4GCJMtJXtd7S+p1wgaUbSwxbPFXjL
-	BKc3Kas4IJpREnPyVs7189R1M=
-X-Google-Smtp-Source: AGHT+IH73aeMXL7YPr7VbOhaDc7lZ6qCE8e7MFFs2JuKTrk1QSoj0Tr2ke5rvX4Jp7KqXTYvwKrnshZuvZZ1Nh9uScs=
-X-Received: by 2002:a05:6871:2109:b0:29e:74a0:e03f with SMTP id
- 586e51a60fabf-2d526d4efbcmr8286598fac.24.1745310186574; Tue, 22 Apr 2025
- 01:23:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40128254862;
+	Tue, 22 Apr 2025 08:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745310298; cv=fail; b=ugroSiumwhr7QR7ag3eGIm475cBjYTcihgWU1SJjgb22X22l/kbDMT/tMgQGsXtDZ8LKDPXY+LYNetKDke8OEutZB3RgAkUrFqjVlEz5fKNxw7/11IkKXe6BswZHQXOrjQDdqHf6mmOm2DzLCnPPFZOoTAyWORPh6D6uMGKGfYI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745310298; c=relaxed/simple;
+	bh=Z/hy10v0SwSfWs7ORgtlhEWa9Fh9QmPfa9GwoNatexE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ETYycjKuFHGLQww2jWNFXfbmxKVEAaJ/WoI18rVDKPkoU63FJ9baSujTbZmIp/qJcNYCn2dFUU4SgTHOwFBEFBW9Hls4cTcFzu3dzPd2tK4UQvMjIu84MDPbZ6ePoJhodqJu8Bb6AXK4GYUebDmAU33Jst2tKPtH3oIRGRuFD2w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ugv71S/j; arc=fail smtp.client-ip=40.107.223.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VnjJ+YT/Ey1XbDPiQLNSvtihikkZAy5OUiARVpsOWm0R6LYM77JuBgUzc8MuzuZCYqne957HBsRyUYp20DBqX8vOVSKEcE9+Qh1ZtWdfYSae879GpD5qTz/ZY1tOCNwaE1oMwZwE/OjEHPr1Mx34QcVMiDuTyO95h+9ZKDAz0a9qXMD+AyLqGbr4dqY4cXhpeQ3fgF83QOGec7mAunJ1E/k2GIhCpfSLe4p3tOyLM+SdZNJwJv6S3/0WkdIkotY7gUGofgK9z+4X1aOuGC9WJr+T8SFiVayp9U0iAHqbqNGENBPbD9dspOQJb3kyZJf4v8gOFpSCr5M0Z826hkjBZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nGIfBsoBmTE35RvPCoxDuaKU5iOM51w+3iI61XMIWjY=;
+ b=QBxwpg+NeOLYXDnBisnc4tAICSsG6lKgsliqaFVuwlLnKshHVQ60ZH1Ae9paqCuPog6JNU8mo4TGnFfjcD1d+f6LfQ/5eLN1XAJOWZ+Vw/INCZNUfO96sKR4qSitpcqLtu5BBEuDMEV6frh7LZm/CHp0Z2fXASWU8juSI2ysMnNAa3YIF6bF9BPmIuRd6godWTU5EOp6TPpHs53HCYrJMH1I+z0Z3lfGU5tRGM6encvNJKR4GQ6fVlwO+rj8ToN9iHNiBb8wORA5KDNKtrzg5qIFsVKWtvSZ+0W4lfB0Bkxj7m6xT1LBuE84e5uQRaJ9rZTPCkKne3w3FoVygvgHmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nGIfBsoBmTE35RvPCoxDuaKU5iOM51w+3iI61XMIWjY=;
+ b=ugv71S/jzqV6/s7jj5fxbX14kL5ly0pMu9ItosfhatpFI7JViWShL23C7b+2n9IUH/5AsP5v3nGhqFKBQ+XQer+43cINKJCs2Kass9qgirUmAPixfn7JoWJTSvQbbZcUj3iswETmGNfMkYvmdAxoiKUQDM+SkSe5TlGztEIw5W0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY5PR12MB6576.namprd12.prod.outlook.com (2603:10b6:930:40::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Tue, 22 Apr
+ 2025 08:24:53 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%6]) with mapi id 15.20.8655.025; Tue, 22 Apr 2025
+ 08:24:53 +0000
+Message-ID: <a4f72149-70a0-4bbe-bdcc-70384c152f83@amd.com>
+Date: Tue, 22 Apr 2025 10:24:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-buf: system_heap: No separate allocation for
+ attachment sg_tables
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+References: <20250417180943.1559755-1-tjmercier@google.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250417180943.1559755-1-tjmercier@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0206.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ad::15) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422030153.1166445-1-qq282012236@gmail.com> <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
-In-Reply-To: <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
-From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Date: Tue, 22 Apr 2025 16:22:52 +0800
-X-Gm-Features: ATxdqUHsW549CjADjQkeF24dIy0oIJ_3wSQeFdmFn0yYeM8PaYZjnYbeZYtkTzQ
-Message-ID: <CANHzP_tebha40yy=8rqeu9DMqfrS-veF3=rp76H8udDvs69rfA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: Add new functions to handle user fault scenarios
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY5PR12MB6576:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cbdf9a4-ea69-48b9-d909-08dd81772845
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WUhCb3pMd3BNTXFKMDV0eUg2OXhVZzFHbmRNSHJuWkkxdEc5dnlKQ0liWmE4?=
+ =?utf-8?B?R1VXWTNCVTd1SnY0UUVZYUoxVVBCMnZXaDljWkw2enJ3b3dqRVo3QlZMRVlj?=
+ =?utf-8?B?L1pLZEVrbHBFV0FUVGxSL1JleUROV25KdDFpOThZbDlYbEozNzQweU5XemNs?=
+ =?utf-8?B?eitzNWNCUnJ5aWxwQk5TVUQ2UkhhRHpKWGRkSk1zbmZMcVQ0ZDlLSGxOZ2dq?=
+ =?utf-8?B?b2F3MUVBTDJXYjRHbDlNRmYzVUdhYWFEbk5jNzVlYTROdnFNNmxzK1ptSE5s?=
+ =?utf-8?B?cktNRzlnei9xSTdDNW9nWUhkL3ZVSStYZ0lKSTZHZERpdTA3OE5wclZZakZR?=
+ =?utf-8?B?Tld0blhPMHVUVFlwOEljSmpXUGRTc3Zkc2NUS2xsVTF2OVdGU3BsWG8yc3pZ?=
+ =?utf-8?B?aVYzMEFOQUNOVmlEeWhSZmpPQUZET0lMRHVoclAva3E3YzZqd3IvR3hxNytH?=
+ =?utf-8?B?YjQ4bElJWEtXT3o0MmJUYXVoblYwbkVGNFZVR3BkTTRnaHF3aXJlNTNMalFh?=
+ =?utf-8?B?NmlFKzk4WUVYazNMMXlTWTNvYm9EQi9GUjRzTE03bUZKR1V0WGR6d29EaEQ1?=
+ =?utf-8?B?ZnpmRGYrWjZsbWZZODNoR3RzZVpMUW1BbW84WTRnUGt6QUkzc0NvZmtBMks2?=
+ =?utf-8?B?VlJWb2VCYkErTFd1N3Uycm0zZ0VVU0ZmRzVtWVFyRElOeEZtYjBxemg2Z3M4?=
+ =?utf-8?B?Vm4vRndPT3pDZ3l2WEkwdExMcU1jR1BjSkhTNU5BcDdjT1hYTUZCVmZxVTB4?=
+ =?utf-8?B?dDlNanRya3NtL2RyRHhYT3pNcU9tTld6K2QxVjZWYk0wU1djS3Q0YndpZXFk?=
+ =?utf-8?B?T3gvTHNnQmNkaVZ5VEIwZGd6eHFlc2wyanhuaHBtK1J1RkVObXZJMks0S2Jv?=
+ =?utf-8?B?eWdRN2plcTNWeEFTR0tSS1VoQXVXVTZNb1ZXZkZjN3BtM2VzRUdFMDhIOGRO?=
+ =?utf-8?B?UVpsQmNLeDBzbGRqcXlET3pUOUFLTmgvU1BYT083dlF2WDg1ZHBwU1RZVUJD?=
+ =?utf-8?B?N2YyRGp0TkhZaWlTeWNpNlJyZlRQQ1ZiWmRaTnhjZmdBY0w1dzdiYnNOQWJu?=
+ =?utf-8?B?czRKVmdEdmwzQWdGQTRKTWp1VFZRUjlwR1JtK0hncWJzT3Y4dWJkbTNNeUh6?=
+ =?utf-8?B?Z0I5bVJLUS91czFTTU9zY2owZXh0NVJxZjJyYmVGZGpGSXQrZ3UyR1pMMmts?=
+ =?utf-8?B?QVNtTHpJM0xGMTlTNDU4bFdHRUMyNEhBTDByNkdvaGlyZUp3cW95MUZaeVRZ?=
+ =?utf-8?B?U0d3UTZDREp5Y1o3YkVaRTdDOVQ0aE9pbGwySmdIako0M1EvYTFMbnZCTjgz?=
+ =?utf-8?B?VnAzU01LajdjR1Z2QngwOG1TSEU5NmJHRUVpdSs2cFFSUHI5T2dISTNOd3dr?=
+ =?utf-8?B?Y2FtU1FHQWlTVlNuM2Y3WHl5WmFmdEo2U1B1YkhySnFVQVVPZFl5MWg3Zk41?=
+ =?utf-8?B?TldvUU9vUXZqZG4xUndXQ2ZsVjZuYmQ3Q0tPRFhOZjBYMTlpcldkc1hxeXZH?=
+ =?utf-8?B?RngzTEErWnd6YVFYU2FIS3pmK3lmRTdSdlNYYkhUY3hLRm1lNkU5M1VPVUFa?=
+ =?utf-8?B?bkR6Nm42TmdMZVFOZ0x0TVFIbC9wTjRaQTVickFDWTVEWDh6Q1ptbkdMTmM1?=
+ =?utf-8?B?WWo2SzBTdFRHSkNqMmtCbmZMeEU4VFVyUVN4QzRTYXVWeldJb1M0SVQvZzlG?=
+ =?utf-8?B?Q2h6OW9UdmZzbTJzbU9CdDNZcUtTRHBsN29ScWpkNEpQOEs3V0ZJci9xdlFY?=
+ =?utf-8?B?eExLNXBma2tUYmVwb3Z0MXh6ajdocENidzUyS0xrcWFNenZSem5SdWpCYTRC?=
+ =?utf-8?B?SS8xdjczdytTTmFOY0RvOEI0dlFMRDBzMWpPR1RUalplellDZEJYaC96U2lW?=
+ =?utf-8?B?d2NZd0ZJL1dPMzcwMXo1L01xRThRV2VKV2NBWVRXdjRqWEtwU29yc1ZTZ2w2?=
+ =?utf-8?Q?2TAdnz/rqC8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cmFjeE1oSjdEOHBHNkNPQTRNcUUwNW9yRW12VCtsVU9Scmp6TFAxcEtJdWZn?=
+ =?utf-8?B?ck5sZGJ4SFNOdHphMUFsNW9hRUllUjFMcUp2d3dDb0ROcEJURDBWMG11ak16?=
+ =?utf-8?B?TC9jeUZnWnRlaXBFb1EwUGlWSlpMeHg5ZXIyMGFhQjZnMzZlclVUYTA4cVF6?=
+ =?utf-8?B?V0VzZ3gzZ2JaVEk5S2c0S0h6bHcxdUI5OGxPMTdlQUxsR3lJN2FDRkZHQ0c3?=
+ =?utf-8?B?cGNRdzh0Wnoxdi9XOStlblg4QlltaStGbHVFR0RldERsZDFNL2c3R095NXpP?=
+ =?utf-8?B?VFVhNXd1YjRMb25TYUdHUWJCQnZ0elgwNVdYalVQbFlDc3cyU3ovSlhJaVdl?=
+ =?utf-8?B?SUs4OFNnWUpaYmZQVi95UnFPMVFsdlRGM3I0bjdSUFVvV2JDQXB4VTFTb3cw?=
+ =?utf-8?B?cTgySlhuMWZ5MjVCRnlaa2VneUd1WmxZQk9ad1Q5bGpaa08vS3BxeldxLzB0?=
+ =?utf-8?B?bWlXdk9ROE53UjcyU3laZ2xlMU14YnR5Yld0V1AxQzFRVlpGZWRnMWJsOUI0?=
+ =?utf-8?B?T2ZwWGJubFVidm1scDhDcU9zNDVxa054MzlHbm9hQjhRRlBBSDlHdXA1UHZP?=
+ =?utf-8?B?ZHgyQU9FaERIcnp1L3VodUE4dlMyN09zbldCRnFxc2xpR0J1QXhUbDE5Z1Yr?=
+ =?utf-8?B?MGNVcndFVHFGMFBFMHhtMWZmL0Y5QisrK1d5U0xNSDE3Z1BsN1ZGc1cxMm1F?=
+ =?utf-8?B?R3JzRUJINk1EcWp1Yk8ycWFXS2d0U0VIM2pmYTM0bDJZamUvYUMvWTExUC9Q?=
+ =?utf-8?B?dlFGNnFpaW5FaTZOMHBPQ3l3SzRtQXFIc2RFNEhnamxBSkVoVW1XT0srTFQz?=
+ =?utf-8?B?V0pDamZnUVUxQ2JWVlY5cnFZOGh2TW03NThHdk53cG5UQjhMNUVqaWJjVmd3?=
+ =?utf-8?B?cXczNDlhUDR1eFJWek12Nmw1bEY1ZmpmdG5ZcVNsTDI4SDVjQml4Z2JrTzlu?=
+ =?utf-8?B?OGZxRlJEaVpFYytFSmpPaERJaEU4bGRoc3haSmtPOG82dW5ra3BiOVEzNzZy?=
+ =?utf-8?B?SWp5S25CR2I2RC9FN3c0MHl0QWZDdFBoUVUrVDc5U2NNK3RuRkxNT3JwWlp3?=
+ =?utf-8?B?WWorVFlxR2V5cERxd3VibzBFeFpXdkRrSWRmY1Z0TjJ4WWRrT0JWTndnclFm?=
+ =?utf-8?B?ZU9QTWxCZXp0YVVkK1JOUk9CakduZGtRQWhZZmIzOFA1bkpLZXJzVGpGVGE2?=
+ =?utf-8?B?S3pubVRYUzNDVUFTR0o5bmpuL2pheUpWN1FQa2dIWk5GeU93a09jZFNjaXhG?=
+ =?utf-8?B?RjBhOG56alVPZEtvMkNEdzlYdUdaVm8zSXV6UWVRTThKMHZTRVpVSVVaMGdG?=
+ =?utf-8?B?TkM4UWUycERRSXl2TkwxbWhBWUNFaXZESTJzV3dkY1hMQW1GMVpMZFFSa2R6?=
+ =?utf-8?B?d3pHV3ViK0dlc2ZPaStPc3BjeVlaOGkweElQZkpFNW54eFZ2NGhjTjNma1dF?=
+ =?utf-8?B?Z1RXL3ZRTmdwbVdHVE1uNWplYk9mWVdnb2JSUnc5dkxRd3IzdE40OUt2SE5k?=
+ =?utf-8?B?TzJvSU9RZVlGL2xjRnJUUW9VSnArcDM1TGJkbStYYmpHVUFhNVRxazdFclJ3?=
+ =?utf-8?B?YUcxUzJNbk5wak11T2VxeWNJSVZFSXpsNkdnWVVQY3Q0YzBSb3huc0ZiZU1B?=
+ =?utf-8?B?czRLRWdjZERrV1RZOXhBN3NkZEdlOXk4MSt3SHdJK0pDL0hnekluZkxldjVR?=
+ =?utf-8?B?QlQ0aE1uTjJtSmlTcWxObU1nQ0IrZlNKVUtXTjF6Y28vNHVLcnhHeVZRcG9E?=
+ =?utf-8?B?cXBjU1g1TnVXT2FoVlJ3bXBTRURpeUluTmdxRXZBRnluZEVkYXYzcldWMnZD?=
+ =?utf-8?B?UDBMNjRMMW0yWXZTU1pDcncwbmN0c05LOXBBTVpmV1dKY2drVE5idkhDTmxE?=
+ =?utf-8?B?UDJlcGJNbWVsTEo4aHJIV0h4R2haSjFMcFJpakxGbFJrRmlJUUFRMGxYM3RW?=
+ =?utf-8?B?RmhtT0pmTzE3bFNScSs0UjRSTHlqanZhRjEwUCtsRnRxUDAzWjVoeTBWMHBo?=
+ =?utf-8?B?UExTak54YjdhRHRET3E1anpGcEtUbVZYek1ldGx1ZFk0T3JNR2J0ZC9oTW9n?=
+ =?utf-8?B?ZDFraUtqS3pFYjJWUFJkUnpyVFVaYnVCdkRydTlKS1lwcnFOOVBrNGU3bFhG?=
+ =?utf-8?Q?9RCtbJaQdPoEzPPF5W1xNSkqh?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cbdf9a4-ea69-48b9-d909-08dd81772845
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 08:24:53.6090
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q5Rn4J4rMn0/brI9iDZKRvpriH3gBgBnclQUnHC4WvFMtIALAnb0yCJlIdisL713
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6576
 
-On Tue, Apr 22, 2025 at 3:59=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+Am 17.04.25 um 20:09 schrieb T.J. Mercier:
+> struct dma_heap_attachment is a separate allocation from the struct
+> sg_table it contains, but there is no reason for this. Let's use the
+> slab allocator just once instead of twice for dma_heap_attachment.
 >
-> On 4/22/25 04:01, Zhiwei Jiang wrote:
-> ...
-> > I tracked the address that triggered the fault and the related function
-> > graph, as well as the wake-up side of the user fault, and discovered th=
-is
-> > : In the IOU worker, when fault in a user space page, this space is
-> > associated with a userfault but does not sleep. This is because during
-> > scheduling, the judgment in the IOU worker context leads to early retur=
-n.
-> > Meanwhile, the listener on the userfaultfd user side never performs a C=
-OPY
-> > to respond, causing the page table entry to remain empty. However, due =
-to
-> > the early return, it does not sleep and wait to be awakened as in a nor=
-mal
-> > user fault, thus continuously faulting at the same address,so CPU loop.
-> >
-> > Therefore, I believe it is necessary to specifically handle user faults=
- by
-> > setting a new flag to allow schedule function to continue in such cases=
-,
-> > make sure the thread to sleep.Export the relevant functions and struct =
-for
-> > user fault.
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+
+I'm not *that* expert for this code, but looks totally reasonable to me.
+
+Reviewed-by: Christian König <christian.koenig@amd.com>
+
+Let me know if I should push that to drm-misc-next.
+
+Regards,
+Christian.
+
+> ---
+>  drivers/dma-buf/heaps/system_heap.c | 43 ++++++++++++-----------------
+>  1 file changed, 17 insertions(+), 26 deletions(-)
 >
-> That's an interesting scenario. Not looking deeper into it, I don't see
-> any callers to set_userfault_flag_for_ioworker(), and so there is no one
-> to set IO_WORKER_F_FAULT. Is there a second patch patch I lost?
+> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> index 26d5dc89ea16..bee10c400cf0 100644
+> --- a/drivers/dma-buf/heaps/system_heap.c
+> +++ b/drivers/dma-buf/heaps/system_heap.c
+> @@ -35,7 +35,7 @@ struct system_heap_buffer {
+>  
+>  struct dma_heap_attachment {
+>  	struct device *dev;
+> -	struct sg_table *table;
+> +	struct sg_table table;
+>  	struct list_head list;
+>  	bool mapped;
+>  };
+> @@ -54,29 +54,22 @@ static gfp_t order_flags[] = {HIGH_ORDER_GFP, HIGH_ORDER_GFP, LOW_ORDER_GFP};
+>  static const unsigned int orders[] = {8, 4, 0};
+>  #define NUM_ORDERS ARRAY_SIZE(orders)
+>  
+> -static struct sg_table *dup_sg_table(struct sg_table *table)
+> +static int dup_sg_table(struct sg_table *from, struct sg_table *to)
+>  {
+> -	struct sg_table *new_table;
+> -	int ret, i;
+>  	struct scatterlist *sg, *new_sg;
+> +	int ret, i;
+>  
+> -	new_table = kzalloc(sizeof(*new_table), GFP_KERNEL);
+> -	if (!new_table)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	ret = sg_alloc_table(new_table, table->orig_nents, GFP_KERNEL);
+> -	if (ret) {
+> -		kfree(new_table);
+> -		return ERR_PTR(-ENOMEM);
+> -	}
+> +	ret = sg_alloc_table(to, from->orig_nents, GFP_KERNEL);
+> +	if (ret)
+> +		return ret;
+>  
+> -	new_sg = new_table->sgl;
+> -	for_each_sgtable_sg(table, sg, i) {
+> +	new_sg = to->sgl;
+> +	for_each_sgtable_sg(from, sg, i) {
+>  		sg_set_page(new_sg, sg_page(sg), sg->length, sg->offset);
+>  		new_sg = sg_next(new_sg);
+>  	}
+>  
+> -	return new_table;
+> +	return 0;
+>  }
+>  
+>  static int system_heap_attach(struct dma_buf *dmabuf,
+> @@ -84,19 +77,18 @@ static int system_heap_attach(struct dma_buf *dmabuf,
+>  {
+>  	struct system_heap_buffer *buffer = dmabuf->priv;
+>  	struct dma_heap_attachment *a;
+> -	struct sg_table *table;
+> +	int ret;
+>  
+>  	a = kzalloc(sizeof(*a), GFP_KERNEL);
+>  	if (!a)
+>  		return -ENOMEM;
+>  
+> -	table = dup_sg_table(&buffer->sg_table);
+> -	if (IS_ERR(table)) {
+> +	ret = dup_sg_table(&buffer->sg_table, &a->table);
+> +	if (ret) {
+>  		kfree(a);
+> -		return -ENOMEM;
+> +		return ret;
+>  	}
+>  
+> -	a->table = table;
+>  	a->dev = attachment->dev;
+>  	INIT_LIST_HEAD(&a->list);
+>  	a->mapped = false;
+> @@ -120,8 +112,7 @@ static void system_heap_detach(struct dma_buf *dmabuf,
+>  	list_del(&a->list);
+>  	mutex_unlock(&buffer->lock);
+>  
+> -	sg_free_table(a->table);
+> -	kfree(a->table);
+> +	sg_free_table(&a->table);
+>  	kfree(a);
+>  }
+>  
+> @@ -129,7 +120,7 @@ static struct sg_table *system_heap_map_dma_buf(struct dma_buf_attachment *attac
+>  						enum dma_data_direction direction)
+>  {
+>  	struct dma_heap_attachment *a = attachment->priv;
+> -	struct sg_table *table = a->table;
+> +	struct sg_table *table = &a->table;
+>  	int ret;
+>  
+>  	ret = dma_map_sgtable(attachment->dev, table, direction, 0);
+> @@ -164,7 +155,7 @@ static int system_heap_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+>  	list_for_each_entry(a, &buffer->attachments, list) {
+>  		if (!a->mapped)
+>  			continue;
+> -		dma_sync_sgtable_for_cpu(a->dev, a->table, direction);
+> +		dma_sync_sgtable_for_cpu(a->dev, &a->table, direction);
+>  	}
+>  	mutex_unlock(&buffer->lock);
+>  
+> @@ -185,7 +176,7 @@ static int system_heap_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+>  	list_for_each_entry(a, &buffer->attachments, list) {
+>  		if (!a->mapped)
+>  			continue;
+> -		dma_sync_sgtable_for_device(a->dev, a->table, direction);
+> +		dma_sync_sgtable_for_device(a->dev, &a->table, direction);
+>  	}
+>  	mutex_unlock(&buffer->lock);
+>  
 >
-> --
-> Pavel Begunkov
->
-Sorry, the following changes haven't been submitted yet. I was planning
-to submit them separately, thinking they belong to two different subsystems=
-.
-The other changes that haven't been submitted are as follows:
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index d80f94346199..74bead069e85 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -32,6 +32,7 @@
- #include <linux/swapops.h>
- #include <linux/miscdevice.h>
- #include <linux/uio.h>
-+#include "../io_uring/io-wq.h"
+> base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
 
- static int sysctl_unprivileged_userfaultfd __read_mostly;
-
-@@ -369,7 +370,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
-unsigned long reason)
-        vm_fault_t ret =3D VM_FAULT_SIGBUS;
-        bool must_wait;
-        unsigned int blocking_state;
-+       struct io_worker *worker =3D current->worker_private;
-
-+       if (worker)
-+               set_userfault_flag_for_ioworker(worker);
-        /*
-         * We don't do userfault handling for the final child pid update
-         * and when coredumping (faults triggered by get_dump_page()).
-@@ -506,6 +510,9 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
-unsigned long reason)
-
-        __set_current_state(TASK_RUNNING);
-
-+       if (worker)
-+               clear_userfault_flag_for_ioworker(worker);
-+
-        /*
-         * Here we race with the list_del; list_add in
-         * userfaultfd_ctx_read(), however because we don't ever run
 
