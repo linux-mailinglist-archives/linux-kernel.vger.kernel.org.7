@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-614853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C5DA972F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 795E7A972EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994E83AA459
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9DE3B4610
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2332951C1;
-	Tue, 22 Apr 2025 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="VTBBoQ9G"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C93293B7C;
+	Tue, 22 Apr 2025 16:42:03 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E0A293B7B;
-	Tue, 22 Apr 2025 16:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745340180; cv=pass; b=JVLReknN3ek+3tCgySkGbTxMR+5GiNjqoGZg4fTgW9njceRb+B4UCHwYN4mvbeGEdKFaT7KZ2sNxwz/czxqVTOgWSgUXMKd0fsfFDAXUljejrHQ42iLQ+ikO+aqQdd6d9QFc3g304i/z288IQ5xLP9b+qDOgiTGZk7MOTj2BAI0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745340180; c=relaxed/simple;
-	bh=Z7Am1yDYfUzL3ZfyCajTW6fBOh32/rmPSahYYyR/Ce0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XNr3727zzzU0/vjpcpwh7L+2x4meOMXYviU7VfLcHhtcZ0Bs8oVVsTvbqOeGVKtw0CkfJx5hAWe2/gVfibGa2S3cpDQhub9nXDUJuFTAiHwqp82mssH8VHAGEAYplfbqqa9mRkNtfB+rXJm+KjGIXXWBFji1fTQtpj0w357GpMM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=VTBBoQ9G; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745340128; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Bm82wHIqbWnYrRr2kF+Hi3swGjDFYuETY6gga/hOtaWSIADLTkLoiPk9CCYXkfQOZdtb4+2aenYh7IGIyig+idvauz5ts5rClJIH9GcCqU7iRYrie4L7XUD9wZfekMYH+SjgCYALfwkVjZSNs/e35GKIOFiBrbczxHEBXuMQ4gs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745340128; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Y4wO66+sO97sT2LRC9C5NYfxV9lsmuh8SUnfA698g+w=; 
-	b=C9+zcX/aCHot2tsiLEmOjI3x157cJwxmVbcA1Wbz6phDxvxUdsSoXGkMxHWUxwv7hDFZRgTcBKaxanQ0wF3jFfLg7e1WlL3db3A79YBPF4QohMjY+aqzfG7A7xct2ErOC74GhI69dlnrGkZcXDxI0goavMOV2Vm/7FcMS5Coy38=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745340128;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=Y4wO66+sO97sT2LRC9C5NYfxV9lsmuh8SUnfA698g+w=;
-	b=VTBBoQ9Gf/wEY3aNBlKlhzSo4ItRUdYzZTrIVWHTEFrIuMeHVALiLJy6TJqBJrey
-	q9rydHIgcwOtjCgjeISzSK1jOJVNsQC0D2kl9IJQYKrP01T6BvGbZc/KU5I/kWlRLsA
-	ET4RnSBV7nqbeu8fYquTi7YpmXLgaFNBKiEmcuNI=
-Received: by mx.zohomail.com with SMTPS id 1745340127609419.1907590665734;
-	Tue, 22 Apr 2025 09:42:07 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Tue, 22 Apr 2025 13:41:52 -0300
-Subject: [PATCH v2 1/2] rust: helpers: Add bindings/wrappers for dma_resv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35134293B70
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745340122; cv=none; b=eyoFZLU25T6T/57mmpKys9xkIqFOR4Ptu8ziafFj2W+Vjxy3w3aTpDkq051J9CBSEMpOmRD6W8SXV505MFzZE0H7hMoejyllCMe3EHvXtzzbZGKnMprP+CKc8w4EJIR6BAfrV4nEjyQYAnVrcN/yQnwx8he/RC1/SGYffM9taGY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745340122; c=relaxed/simple;
+	bh=e39cG3iCozvRfooGUgvY+i9PZWy2Mcw16xJrdjz4B6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzP77M5n+x2VkWOI5LQ/09UKr8H5iq6XhIY/3u1NMVy6gjSzdGjJlXoNg8FGHEM/XfCr5Z167yIngsFYeuZZEBoTOi9juW1CiFxsxGNIKpy6hAsDzRdEKFJ4DqJanAm9udUn16jItjWIv/V7NCDV441L9dN6Rfd61x1wtjAjzhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: lfG6Pzo7R3CVXuYMJnaadQ==
+X-CSE-MsgGUID: FeESvbp4TdS0yHiH0AQFcA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50738569"
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="50738569"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 09:42:00 -0700
+X-CSE-ConnectionGUID: +vpR6mhLStOiHLhN+vPLTw==
+X-CSE-MsgGUID: ee9XAGb/RfKzzan751w3aQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="133014895"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 09:41:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u7Gh0-0000000EmVr-0ZPU;
+	Tue, 22 Apr 2025 19:41:54 +0300
+Date: Tue, 22 Apr 2025 19:41:53 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH 27/29] x86/boot/e820: Simplify the e820__range_remove()
+ API
+Message-ID: <aAfG0fSVFVNciAqi@smile.fi.intel.com>
+References: <20250421185210.3372306-1-mingo@kernel.org>
+ <20250421185210.3372306-28-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-gpuvm-v2-1-44d4fc25e411@collabora.com>
-References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
-In-Reply-To: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Lyude Paul <lyude@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421185210.3372306-28-mingo@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Asahi Lina <lina@asahilina.net>
+On Mon, Apr 21, 2025 at 08:52:07PM +0200, Ingo Molnar wrote:
+> Right now e820__range_remove() has two parameters to control the
+> E820 type of the range removed:
+> 
+> 	extern void e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type);
+> 
+> Since E820 types start at 1, zero has a natural meaning of 'no type.
+> 
+> Consolidate the (old_type,check_type) parameters into a single (filter_type)
+> parameter:
+> 
+> 	extern void e820__range_remove(u64 start, u64 size, enum e820_type filter_type);
+> 
+> Note that both e820__mapped_raw_any() and e820__mapped_any()
+> already have such semantics for their 'type' parameter, although
+> it's currently not used with '0' by in-kernel code.
+> 
+> Also, the __e820__mapped_all() internal helper already has such
+> semantics implemented as well, and the e820__get_entry_type() API
+> uses the '0' type to such effect.
+> 
+> This simplifies not just e820__range_remove(), and synchronizes its
+> use of type filters with other E820 API functions, but simplifies
+> usage sites as well, such as parse_memmap_one(), beyond the reduction
+> of the number of parameters:
+> 
+>   -               else if (from)
+>   -                       e820__range_remove(start_at, mem_size, from, 1);
+>                   else
+>   -                       e820__range_remove(start_at, mem_size, 0, 0);
+>   +                       e820__range_remove(start_at, mem_size, from);
+> 
+> The generated code gets smaller as well:
+> 
+> 	add/remove: 0/0 grow/shrink: 0/5 up/down: 0/-66 (-66)
+> 
+> 	Function                                     old     new   delta
+> 	parse_memopt                                 112     107      -5
+> 	efi_init                                    1048    1039      -9
+> 	setup_arch                                  2719    2709     -10
+> 	e820__range_remove                           283     273     -10
+> 	parse_memmap_opt                             559     527     -32
+> 
+> 	Total: Before=22,675,600, After=22,675,534, chg -0.00%
 
-This is just for basic usage in the DRM shmem abstractions for implied
-locking, not intended as a full DMA Reservation abstraction yet.
+>  extern void e820__range_add   (u64 start, u64 size, enum e820_type type);
+>  extern u64  e820__range_update(u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
+> -extern void e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type);
+> +extern void e820__range_remove(u64 start, u64 size, enum e820_type filter_type);
+>  extern u64  e820__range_update_table(struct e820_table *t, u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
+>  
+>  extern int  e820__update_table(struct e820_table *table);
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers/dma-resv.c         | 13 +++++++++++++
- rust/helpers/helpers.c          |  1 +
- 3 files changed, 15 insertions(+)
-
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index e6020ba5b00237a08402fbd609c7fba27b970dd9..68d7be498a6d523797e54212d6c23ff4d8f2e92d 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -18,6 +18,7 @@
- #include <linux/blkdev.h>
- #include <linux/cred.h>
- #include <linux/device/faux.h>
-+#include <linux/dma-resv.h>
- #include <linux/errname.h>
- #include <linux/ethtool.h>
- #include <linux/file.h>
-diff --git a/rust/helpers/dma-resv.c b/rust/helpers/dma-resv.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..05501cb814513b483afd0b7f220230d867863c2f
---- /dev/null
-+++ b/rust/helpers/dma-resv.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/dma-resv.h>
-+
-+int rust_helper_dma_resv_lock(struct dma_resv *obj, struct ww_acquire_ctx *ctx)
-+{
-+	return dma_resv_lock(obj, ctx);
-+}
-+
-+void rust_helper_dma_resv_unlock(struct dma_resv *obj)
-+{
-+	dma_resv_unlock(obj);
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 7a06d6bc48537248c8a3ec4243b37d8fb2b1cb26..c5e536d688bc35c7b348daa61e868c91a7bdbd23 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -14,6 +14,7 @@
- #include "build_bug.c"
- #include "cred.c"
- #include "device.c"
-+#include "dma-resv.c"
- #include "drm.c"
- #include "err.c"
- #include "fs.c"
+Wondering if are going to get rid of 'extern' for the functions...
 
 -- 
-2.49.0
+With Best Regards,
+Andy Shevchenko
+
 
 
