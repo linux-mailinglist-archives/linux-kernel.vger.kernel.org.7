@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-613680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC21A95FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5DBA95FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68090188E230
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB978169949
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F1C1EB5DC;
-	Tue, 22 Apr 2025 07:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F201EE7B9;
+	Tue, 22 Apr 2025 07:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b="BSqItFQJ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ml0e1kVp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637861EB1AB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A578F10A1F;
+	Tue, 22 Apr 2025 07:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745307786; cv=none; b=G4UdQy7SqJo3G/++9Hpgq9XdjIdoCmlNJ4GqV9wrhhd7KZA4jg2tdrxrVt24m9i194Km3vJ5ukitEWkXJgLAhLw3xq6XBPQI5B0CItl0URHDZySx/DU2bkkKzaZ9fYn58NldVkAolVP7ohbHcCYKyjHmIXn7W1CEieQ7vtINgbg=
+	t=1745307866; cv=none; b=aV24Yo1ugQSq3rx0WbkW02P44xZRBJr0iIi2Hf6/Ma127V8zjks8HmLktKz0cCX0Qeyim622Vs/H3PYeCP3LxwApuCQYqZlVQTQDKwuDa1H1IcShHR9GBa5Z1ZEI7ccFn7njVNJ19fPffh2bNyT7MX+A4dJmYAUnODDbnOT/vKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745307786; c=relaxed/simple;
-	bh=O9JdbRWaeCBz+RHOzJxD4pGeS7rOOvKN9vc4OCnEDKw=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:Content-Type; b=ccc342veQ4kUEwWTtLUfpeeSRdYOe7ozn06QXIdvjJnG9uXUZJfPEiZw8lNkBbYUcZaTVXxjWdJowJdxcmeLrEOf/qARZUozsk5x+63T7kO8MMWSPjSq25vKifzXcYriaeW/+dzO+UNJTsXNewtM7gPul8TXmYNg6+jXdXnlNhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info; spf=pass smtp.mailfrom=jacekk.info; dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b=BSqItFQJ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jacekk.info
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-acb5ec407b1so648985466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 00:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jacekk.info; s=g2024; t=1745307782; x=1745912582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:content-language:subject:user-agent
-         :mime-version:date:message-id:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HvtvMwkTmpPueoBszMdXY/zEz71N9wRSKLK+XNFELU0=;
-        b=BSqItFQJaahgrs+pggrd9qENAnwBj7LLeiDUS605X2c9JWiExb/MEQlC8faHbLdvzJ
-         qyAROUx66zaTF/ri4S8ffYx9qQPUwWbSnRl+IEbbQ191+bquLYUvC9QA4g8GnLdxw2sP
-         i4zREDxEcxhxlh9KoGIlZRNmmFqo8Ok9cY4A0HeSV00NTd4AKCIKIBY0dR+4YtVxDXm7
-         EQE16fZ1fZiMd71Uk1kUpm0fi1d4B7NA4GsN9lqv+g5xwkfwaHmtlU74hklxbZU4vIjj
-         +mZzE2+eY9iQIE2ajOah7CYz84b2M5uQSQPcuGot2kZ3+pc7Om+T+he5wxXK1zXeYtGu
-         9oFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745307782; x=1745912582;
-        h=content-transfer-encoding:cc:to:content-language:subject:user-agent
-         :mime-version:date:message-id:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HvtvMwkTmpPueoBszMdXY/zEz71N9wRSKLK+XNFELU0=;
-        b=jU04FPWut+Zgt/3r7hoaC27ndg2DXQAYzmGvZe7DTPykX2s3C9uT9unDzzQl+hwypO
-         Mjo4oj5mdSnoyUsbZcQFCxXRv5jWbAYEcJ5gq4jCxCeIty67MX66QZoVmbnLKyBRl+V7
-         gUgPuGmSb6yJndykxYb8Znr57gaWfsRoJBbGWRaWYPd/+UZszoML8h4r3N5CRJ5ikU8h
-         zMFM8R9IMhYIT9vRPK5JYkJmZBuwjQo4BW59T8z21F3nNftX2d/CLWIsHsjkCR24iFby
-         IyzbLKl+gQoEWG7nBiIKdjGzAoiryqCFgj1Dh6sfCpIWRQfdUz1NeyYxVhg5xaJ7e9sH
-         UiRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC1Tq7fULe/XXpRp02E7eh/g1zu7iJf7g7Ol4ETOq+9h/PbsxY58tGweF/FSwI0Y5CNG92R1cLRWZZg5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFn4a1pH6Reh7KIyYtxsifFR55WNoheAboMBbOB50mU2iCz1jn
-	1iooLjF3DlEdNRbd2c20XIogrHtOrsuFGUq4ydPML2y5SsbkOTwfdDYVL+xdrw==
-X-Gm-Gg: ASbGnctTTBPL7QC3CDK5Wrt6EK9Rc7xGODMuJWJjM1N4++gXdJvh6JQw45LnEoJDdbG
-	h4mfUe2lam/PHpXQRfgCib56ke+tP16/hGRc/c6umRkRdU18agr1OQFOcqC8uSLTCxnbnDmViTW
-	0j7Zr50Aa0UOFAEayQcRUFjfvawmhDIsgS3PXK6fkE3rv6MTOOJYvULT2ZUDDgY1cko7ZWGx8UP
-	HJU14qhJRaQmbOjXWavPiP32CXloEKvHvaEYjmbt9IFZAb6R0/b8/fAgK5oXwlBp32rrpJnzJxl
-	fIpjcCZCrXYRvB87lZ4kUXsQMErd2kvndYdApJ0=
-X-Google-Smtp-Source: AGHT+IGeWOF7rvAQVW49ssEllGvauDTfczcnSBjqrSKrwBLr+txCO9/Ai5Axu/MLfDHRRPf7+rlXcg==
-X-Received: by 2002:a17:907:d7cb:b0:ac8:17a1:e42 with SMTP id a640c23a62f3a-acb74b1ddbamr1344361966b.22.1745307782452;
-        Tue, 22 Apr 2025 00:43:02 -0700 (PDT)
-Received: from [10.2.1.132] ([194.53.194.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec4235asm615437066b.39.2025.04.22.00.43.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 00:43:02 -0700 (PDT)
-From: Jacek Kowalski <jacek@jacekk.info>
-X-Google-Original-From: Jacek Kowalski <Jacek@jacekk.info>
-Message-ID: <5555d3bd-44f6-45c1-9413-c29fe28e79eb@jacekk.info>
-Date: Tue, 22 Apr 2025 09:43:01 +0200
+	s=arc-20240116; t=1745307866; c=relaxed/simple;
+	bh=9vnSOSCDjiR7R75CeBz4NTj+CZMsCQdvv0AiGtRRiW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/2IuGNb5HzDIuYp5jQZCu9R3cHVZ961hhs6RIpiUNj0l822wxOTEiDUDti8yucKAVSUHFUH8hWysWyM4gNxrB1bQPxan2WpLUfzfycKq4hTCMrfzK3Ca6Y4JJ0c9mbSTAaa5qIoFYcS7FjYuKjjHvUoyrNyly44Q5MYlT8mvcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ml0e1kVp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745307865; x=1776843865;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9vnSOSCDjiR7R75CeBz4NTj+CZMsCQdvv0AiGtRRiW0=;
+  b=ml0e1kVpqK5eY3hw119+dNUO8DiYGBD8TDa2BLB8gjhgeuC3J4xBkCVU
+   YzhfxgskLhURZWr3mYsq0rN1RH58V4yA3BaHlA59KGYGdxu3A5HX/jej8
+   acRLmVD+Q9OBpRC+KIIw5zTR2ziqdHFZvUr0foNyBwnlK6K2c6LKucw5E
+   28cIYsxL66/PxvG2CWM7Y0TaeQZp+8C1xQYb9v71XabpF1pBINGyN8wNi
+   NE3cSeVQm78M21jwH6u22v05McmB85N5pYnfJR17PkHxXW5WYWvMPV/0Q
+   OpGb6+F4GlVqKJIMPLZsH6b721vFB4cLs6XU3vT6Gnbn2tKkq7YvrHbeg
+   w==;
+X-CSE-ConnectionGUID: 4cLu8V2lSEaTvvHmnGMW7Q==
+X-CSE-MsgGUID: Iab9LOGtQwmWk+DmdC3wPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="58218028"
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="58218028"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:44:24 -0700
+X-CSE-ConnectionGUID: YloV0KSCQc2d6vZ0nKdBfA==
+X-CSE-MsgGUID: YUBnzR1EQV6p3XGtBmjdlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="162991230"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:44:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u78Ij-0000000EfBX-2dMa;
+	Tue, 22 Apr 2025 10:44:17 +0300
+Date: Tue, 22 Apr 2025 10:44:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: ilpo.jarvinen@linux.intel.com, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, john.ogness@linutronix.de, pmladek@suse.com,
+	arnd@arndb.de, namcao@linutronix.de, benjamin.larsson@genexis.eu,
+	schnelle@linux.ibm.com, heikki.krogerus@linux.intel.com,
+	markus.mayer@linaro.org, tim.kryger@linaro.org,
+	matt.porter@linaro.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [External] Re: [PATCH v3] serial: 8250: fix panic due to PSLVERR
+Message-ID: <aAdI0SH-mz1Uf4d-@smile.fi.intel.com>
+References: <20250414031450.42237-1-cuiyunhui@bytedance.com>
+ <Z_zLqH1Moavhi52x@smile.fi.intel.com>
+ <CAEEQ3wnEu2o+h2RY4rTGYR0yMX2EcX+7SdciqfzV3VLGWFyG3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] e1000e: disregard NVM checksum on tgp when valid checksum
- mask is not set
-Content-Language: en-US
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEEQ3wnEu2o+h2RY4rTGYR0yMX2EcX+7SdciqfzV3VLGWFyG3A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Some Dell Tiger Lake systems have incorrect NVM checksum. These also
-have a bitmask that indicates correct checksum set to "invalid".
+On Mon, Apr 21, 2025 at 10:55:05AM +0800, yunhui cui wrote:
+> On Mon, Apr 14, 2025 at 4:47 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Apr 14, 2025 at 11:14:50AM +0800, Yunhui Cui wrote:
 
-Because it is impossible to determine whether the NVM write would finish
-correctly or hang (see https://bugzilla.kernel.org/show_bug.cgi?id=213667)
-it makes sense to skip the validation completely under these conditions.
+...
 
-Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
-Fixes: 4051f68318ca9 ("e1000e: Do not take care about recovery NVM checksum")
-Cc: stable@vger.kernel.org
----
-  drivers/net/ethernet/intel/e1000e/ich8lan.c | 2 ++
-  1 file changed, 2 insertions(+)
+> > This patch seems need split to three. See below.
 
-diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-index 364378133526..df4e7d781cb1 100644
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -4274,6 +4274,8 @@ static s32 e1000_validate_nvm_checksum_ich8lan(struct e1000_hw *hw)
-  			ret_val = e1000e_update_nvm_checksum(hw);
-  			if (ret_val)
-  				return ret_val;
-+		} else if (hw->mac.type == e1000_pch_tgp) {
-+			return 0;
-  		}
-  	}
-  
+...
+
+> > > --- a/drivers/tty/serial/8250/8250_dw.c
+> > > +++ b/drivers/tty/serial/8250/8250_dw.c
+> >
+> > Changes here deserve the separate patch (patch 1).
+> 
+> Splitting into a patchset is fine. What does "patch 1" refer to here?
+
+A new series out of three patches, the above change looks good to be placed in
+patch 1/3 in that _new_ series. Same for patch 2/3 and 3/3 below.
+
+...
+
+> > > +     /*
+> > > +      * Serial_in(p, UART_RX) should be under port->lock, but we can't add
+> >
+> > serial_in()
+> 
+> Okay.
+> 
+> > > +      * it to avoid AA deadlock as we're unsure if serial_out*(...UART_LCR)
+> > > +      * is under port->lock.
+> > > +      */
+> > > +     lockdep_assert_held_once(&p->lock);
+
+...
+
+> > > +     uart_port_lock_irqsave(port, &flags);
+> >
+> > And one patch (patch 3) about locking.
+> 
+> Okay.
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
+
 
