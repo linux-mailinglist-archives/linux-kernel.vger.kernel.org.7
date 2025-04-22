@@ -1,281 +1,136 @@
-Return-Path: <linux-kernel+bounces-614797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA948A97238
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:14:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B68A9721E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F4A16DD23
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0236E17B068
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC172951D9;
-	Tue, 22 Apr 2025 16:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004A528FFD0;
+	Tue, 22 Apr 2025 16:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FBeqZkH5"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aAcPHZ6g"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BECD293B68
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24F4281352
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745338411; cv=none; b=RY1GH22pPZXNlCWk1JnlJtdBHcXV4+nHNvlM78EeJ6VXdFqY/kF/rlJybheQhznm3m9UQA5A7qIPjiKThb+0+JyV+0f+hqhVvXJBz4Q5ncsGGWwbbidxgT7W8ZMBb+AEeYH2PbeXLW6PXCtXLbR/omP/vBRl83BqO0GVwl2M1pc=
+	t=1745338372; cv=none; b=qXNlZB65RHLEHEdsvjMLND1k3UAGnCeU9UZJ7iV1unydhXLZv6Wp61OoXEIyDIhFbk5sPDCNilZ2DBxqTzzLtezUvakdD4MpDVJmlI9MnxprLydva9q1knY69WC+QWh48gZEHLlhKzAPEhEru44w2UxIJ1e7jtDfXm65zlcwI8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745338411; c=relaxed/simple;
-	bh=hdXOQCwoKTHHfPfG+e4+NzmtyorjjOf+cT947lM8l+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mN53b54kPH5PDb+e556UiwEtZKI9z3AsN8nGyzO8LL+uypXmvkWGBLy/eY0ykKle3s4UYnobeePsyQh6TMG8JzPppvQB0HJz+eGhX/5dZ3nwuctpAwYkjgprEDmNb39y/B9MJxM+usES2S4+hSKszyhhFZkCfwB1knqWB+wy/hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FBeqZkH5; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2255003f4c6so60628365ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:13:29 -0700 (PDT)
+	s=arc-20240116; t=1745338372; c=relaxed/simple;
+	bh=RGhyPnsDqiY2S40qn37e871t5HmcKxZxCc+fO56toGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s6PO2lKM8n8vjsGsOfEBuBu48isD1LB+vspKMjunbAGcXIgSgLpYhHuS4VYhzheQDJAe8Nwj+/uhHCag4eUa+3gQPllq4txv+sSuA8AtFmPA1YeGkrvGegWMMemetxSMh+5G7jmA+K1TjWnX0SXAwBQtliP3n6v+J44nJm3KQoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aAcPHZ6g; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-605f7d3216bso862969eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:12:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1745338408; x=1745943208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BzcWP7HN4V69BqsvByJTA3za0cdW55UiPl0fqxkwA5Q=;
-        b=FBeqZkH5WdxZKUEZ+MZJsV79S2Tmnrd6xQ9sFDNCnP1Cuh95tdp762hHseY8t+lrcF
-         aUeesZZDmsE686Fs1wTf3Euua6LdE2Glxf5S4VnlDYeRd6OU8o8AC8C+gt8JOUztWv2V
-         JQNyR4aXwnY2wlSQL9vFl1kLEMGj3aQlhPAlw=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745338369; x=1745943169; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H8E7zBmmWLg3ht/ivGt6wNiB8HhGYbCrWpBk3ARRpsY=;
+        b=aAcPHZ6gRHg7/BYYGLMbWQYAJTrkE2oPPh6bQDAb+xVwqmsxFbgldtFgEWm4i0KvlG
+         K5R2DZEGn1CA1v2fniOcB2OKJvCT3ZGvE3RKvhSwCFv8TNY+33j2rWRvbpRYrJJjGjuR
+         YIxMgnKS6dA8ISUOr0mc5yrRnDJGdcnyhi06dkHX9pxD6lvMn8jrDuVWL7fENNuK3fxl
+         jbSMGx+bBpajNuU4SSE7emQ1k/4xU95D6QMab0i5uW1sv4cityWbmbnMNdHxb0XkQg9z
+         E7jql7aTdDVmkYcfu28z4Wj12J9+eNJuV8TnfG/dWgHb8faIysjFlTCmL25Zo1GCUt2I
+         tHgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745338408; x=1745943208;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BzcWP7HN4V69BqsvByJTA3za0cdW55UiPl0fqxkwA5Q=;
-        b=of1TAILQnw8JClsI3MfS5hbvWVtWmbzKKYFCYPxn8szt9rfSutWgD+o96T9bUsGnEY
-         zsQTunXzbOs8wmJeBKqcNTs/Qm2YRuy6pTL37T1Yoc/u7VZLkeL/iQ/TaGEe/oyrNO4B
-         KVPpbrOwIY4lDfz/4heV0xR4OVC6XknT7mF3AQvBZVV7dyvic5iBIMDoEVMun0X7pLtj
-         FhKhfUKGBVoIPcmNuALqJxwVpotLh6yGaueEkqTkE0o6iWpnIAHGJhg1NL4/fnaoPSOr
-         G4v39UNBQYIZUcmU4V/RLI0w7axNEux+LYR5tZ9LqPvZ5TCaPc2ErZP/a1WVos6yhLqr
-         mrgA==
-X-Gm-Message-State: AOJu0YxVseAkxmgFXU4Oqp1HJc7RllkUtbsW92umZAfkFrLBAi7id7u3
-	jAq2HoX/seceVUvmMBBHdJrMncKd25TYJid6kIPgAb8SRBrkqArGVKdBERfikg+MEA1lD9Hf4up
-	YJzpRy0WVRFTXZ9q6emiFwv3WbDX9WKLQL7xxf+dgGr7T2wUbeZS8yFv4pUccSnxqoehJ/G8mFI
-	7TwaKf/89x+Yu7HKDetYGQR6j85nwu6S9F4ppsxhNxMpAAxw==
-X-Gm-Gg: ASbGncs7roQrgocAD4Bcmmsd1/+RkPk1vHNb/ad3svRpQT1pKCJFVqbQa/4XHBOeFrx
-	plV48968LCyHG0/Gd5fNukmYUik3IsZNOA/4Xf2i/cCtAXT/4CXhibd627cOmaojbwaTP7241iM
-	lz1hqdL/517H5EYMokXAfQKQY6XoLYdY1Vq55WaUsYGBD0LNWAxAaDcQPMpkkqJaKN4C8ng48Ev
-	9nK33FZuF2iLl3bc/4hEZSnfDIE9OZsZL3z1kVvgaYEBXvtLuN7Hh8CgOJXnETis11pcLIyyFuE
-	2jaztF8kbDa0sy8/QOlL1ft8S7qruB43VCNYvu0Aor8xARO/6MmwrGG7Dhf6WEqHqQ2/MdZCxcv
-	5rQ2zQXdIiv8HvGXpSnj+Ils90Vah6Vze
-X-Google-Smtp-Source: AGHT+IFXPfVNyaIaH5PkNkJJ4dOx7Q32vB/OT615RZ2uxxOhlp0AcB0WNZrcWG6lGBQwvBg4b2r2Vw==
-X-Received: by 2002:a17:903:41ce:b0:224:fa0:36d2 with SMTP id d9443c01a7336-22c535b4960mr208029485ad.26.1745338408384;
-        Tue, 22 Apr 2025 09:13:28 -0700 (PDT)
-Received: from localhost.localdomain (pool-173-49-113-140.phlapa.fios.verizon.net. [173.49.113.140])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb03d2sm87462375ad.142.2025.04.22.09.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 09:13:28 -0700 (PDT)
-From: Zack Rusin <zack.rusin@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Zack Rusin <zack.rusin@broadcom.com>,
-	Doug Covelli <doug.covelli@broadcom.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 5/5] KVM: selftests: x86: Add a test for KVM_CAP_X86_VMWARE_HYPERCALL
-Date: Tue, 22 Apr 2025 12:12:24 -0400
-Message-ID: <20250422161304.579394-6-zack.rusin@broadcom.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250422161304.579394-1-zack.rusin@broadcom.com>
-References: <20250422161304.579394-1-zack.rusin@broadcom.com>
+        d=1e100.net; s=20230601; t=1745338369; x=1745943169;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H8E7zBmmWLg3ht/ivGt6wNiB8HhGYbCrWpBk3ARRpsY=;
+        b=kx6PvwD/U7NOLvjY5KNcn0OgdGNltn4+ZRDuL0HqLy0BycPQYmsuz+Ncx+7Equ4KDS
+         ROtrG+5JjbSJlPdLQEJDNpS2zrMmTm068fgfJmJ0tKxEjVuUSvebCMSqjB/gujPRI+ZM
+         Qvtb4rbhufIYvePB+0Q4FHRgjAS8BO/Sfv8xLflD1Qb5BKiMEVIVA3RyiRpJe9AtLW55
+         dWrOoAjztWM8RTV6hdmAfnYJ34jTsAQKN6e0qcKyfxmQxSr9PCOWWHysXzTgjvb6QRib
+         9qRNfxMZQLSD3lx4U7W5G6slf/fBZAnEL58721em/j8u2Vdxu7a50I9If4gfwyUBbppw
+         E6yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTIFmbKFi5AVk+z42kzpocC+qT/D6QmQD9d8cwXH4udZsNMi/rMOITxAKgHVNDVfNpbJRplwIjNkH3J90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyoSugxZj8E+O4VQAKPbugSmz0t1M9m7ZPUykTdewr1dEc3oe3
+	MJjvqKpKqLJsR1Nz3fI2clHfCkHr+/k35x6c4+9jII1nFJF5qlUOU9OrFGKRnR4=
+X-Gm-Gg: ASbGncvBLSVThhAfKG7vrTVhi8CbjxUx9+Q0HSyy2zrAjJBrfvHBQAJPb/JL/Nz6UBO
+	OSEXGHiRAIdqJUTWs6VbRDWtbYK66lXtDCCvmYEVelsKPBZutLDnKmjbdhZIsNqiiRuMfW3dZlz
+	SKD2N7c2fdE98Kv4bKILdXq1Cett5KcKwKgsdxQsVPirU86ZDodD8vgomrINq3jUBbCIZerEq4a
+	WjATFhX/f4vXqcysr4hX0MdsQnxkm3WI1YTdIOmpkT10BvxM+eudkgjHaQ/E+DKehFh5PuTGvHq
+	mWNqPR8tyn9qg8r2ee8T1M8B2qzngYfN91bmAVSIfk4fdPs7+uM1Yi1TLCrr++c3kpYzrL91kNV
+	lhsw7wEDxgS95pRxuVw==
+X-Google-Smtp-Source: AGHT+IF9Z3gSX8kmSbSuKPRtpakMkJO137BJhDQaCwgNlo/KRdfZOcLBygIlEokup5a5MePwFQ8OtQ==
+X-Received: by 2002:a05:6820:618:b0:603:f973:1b3 with SMTP id 006d021491bc7-606003ec9f0mr7716312eaf.0.1745338369622;
+        Tue, 22 Apr 2025 09:12:49 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3? ([2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-605ff69c258sm2150287eaf.25.2025.04.22.09.12.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 09:12:48 -0700 (PDT)
+Message-ID: <8fe546e7-4fbc-4c63-ad0f-576ffb117508@baylibre.com>
+Date: Tue, 22 Apr 2025 11:12:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: mfd: syscon: Add ti,am62-ddr-pmctrl
+To: Andrew Davis <afd@ti.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250122-topic-am62-dt-syscon-v6-13-v1-0-515d56edc35e@baylibre.com>
+ <20250122-topic-am62-dt-syscon-v6-13-v1-2-515d56edc35e@baylibre.com>
+ <20250124-heavy-jaybird-of-vitality-4cbe24@krzk-bin>
+ <20250124-able-beagle-of-prowess-f5eb7a@krzk-bin>
+ <mocfnpebc67xegcis6tx3ekhsjcsqnvhwtipufycrtq2be4nbh@pmxhir5gmkos>
+ <639b4e3a-3f68-4fba-aa33-c46dcb6fc88f@linaro.org>
+ <d6252b73-0bcc-4724-8144-d6a98c8980f8@ti.com>
+ <74ee6d9b-fd78-4d8a-a94f-b2c4dc794b60@linaro.org>
+ <ebsbaaxyatrcikoem75t2blkhhceuidq3wnj3r2hbezfcmtc3u@ptffexrigbff>
+ <f9a2247e-e0eb-4e22-8626-80e87afa9386@linaro.org>
+ <qjwlppsq4eorzepvjsgjjyyaddouo5w2rjguu5c2mqesd6luwp@f426xeghy2ht>
+ <2130b439-74d0-475d-8429-1a1b4d9738aa@linaro.org>
+ <b7f6570f-3b80-4fc1-8201-d44f5692867f@ti.com>
+ <07bf9f93-deb8-48a1-aae9-a8a053680cc9@linaro.org>
+ <6241ff00-27e6-45ab-808e-f04e39854753@ti.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <6241ff00-27e6-45ab-808e-f04e39854753@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Add a testcase to exercise KVM_CAP_X86_VMWARE_HYPERCALL and validate
-that KVM exits to userspace on hypercalls and registers are correctly
-preserved.
+On 4/21/25 12:03 PM, Andrew Davis wrote:
 
-Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
-Cc: Doug Covelli <doug.covelli@broadcom.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Zack Rusin <zack.rusin@broadcom.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
----
- tools/include/uapi/linux/kvm.h                |   3 +
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../selftests/kvm/x86/vmware_hypercall_test.c | 121 ++++++++++++++++++
- 3 files changed, 125 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/vmware_hypercall_test.c
+...
 
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index 502ea63b5d2e..3b3ad1827245 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -933,6 +933,9 @@ struct kvm_enable_cap {
- #define KVM_CAP_PRE_FAULT_MEMORY 236
- #define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
- #define KVM_CAP_X86_GUEST_MODE 238
-+#define KVM_CAP_X86_VMWARE_BACKDOOR 239
-+#define KVM_CAP_X86_VMWARE_HYPERCALL 240
-+#define KVM_CAP_X86_VMWARE_NESTED_BACKDOOR_L0 241
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 4277b983cace..9eea93b330e4 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -90,6 +90,7 @@ TEST_GEN_PROGS_x86 += x86/sync_regs_test
- TEST_GEN_PROGS_x86 += x86/ucna_injection_test
- TEST_GEN_PROGS_x86 += x86/userspace_io_test
- TEST_GEN_PROGS_x86 += x86/userspace_msr_exit_test
-+TEST_GEN_PROGS_x86 += x86/vmware_hypercall_test
- TEST_GEN_PROGS_x86 += x86/vmx_apic_access_test
- TEST_GEN_PROGS_x86 += x86/vmx_close_while_nested_test
- TEST_GEN_PROGS_x86 += x86/vmx_dirty_log_test
-diff --git a/tools/testing/selftests/kvm/x86/vmware_hypercall_test.c b/tools/testing/selftests/kvm/x86/vmware_hypercall_test.c
-new file mode 100644
-index 000000000000..8daca272933c
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/vmware_hypercall_test.c
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * vmware_hypercall_test
-+ *
-+ * Copyright (c) 2025 Broadcom. All Rights Reserved. The term
-+ * “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
-+ *
-+ * Based on:
-+ *    xen_vmcall_test.c
-+ *
-+ *    Copyright © 2020 Amazon.com, Inc. or its affiliates.
-+ *
-+ * VMware hypercall testing
-+ */
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+
-+#define ARGVALUE(x) (0xdeadbeef5a5a0000UL + (x))
-+#define RETVALUE(x) (0xcafef00dfbfbffffUL + (x))
-+
-+static void guest_code(void)
-+{
-+	uint64_t error_code;
-+	uint8_t vector;
-+
-+	unsigned long rax = ARGVALUE(1);
-+	unsigned long rbx = ARGVALUE(2);
-+	unsigned long rcx = ARGVALUE(3);
-+	unsigned long rdx = ARGVALUE(4);
-+	unsigned long rsi = ARGVALUE(5);
-+	unsigned long rdi = ARGVALUE(6);
-+	register unsigned long rbp __asm__("rbp") = ARGVALUE(7);
-+
-+	asm volatile(KVM_ASM_SAFE("vmcall")
-+		     : "=a"(rax),  "=b"(rbx), "=c"(rcx), "=d"(rdx),
-+		       "=S"(rsi), "=D"(rdi),
-+		       KVM_ASM_SAFE_OUTPUTS(vector, error_code)
-+		     : "a"(rax), "b"(rbx), "c"(rcx), "d"(rdx),
-+		       "S"(rsi), "D"(rdi), "r"(rbp)
-+		     : KVM_ASM_SAFE_CLOBBERS);
-+	GUEST_ASSERT_EQ(rax, RETVALUE(11));
-+	GUEST_ASSERT_EQ(rbx, RETVALUE(12));
-+	GUEST_ASSERT_EQ(rcx, RETVALUE(13));
-+	GUEST_ASSERT_EQ(rdx, RETVALUE(14));
-+	GUEST_ASSERT_EQ(rsi, RETVALUE(15));
-+	GUEST_ASSERT_EQ(rdi, RETVALUE(16));
-+	GUEST_ASSERT_EQ(vector, 12);
-+	GUEST_ASSERT_EQ(error_code, 14);
-+	GUEST_DONE();
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+
-+	if (!kvm_check_cap(KVM_CAP_X86_VMWARE_HYPERCALL)) {
-+		print_skip("KVM_CAP_X86_VMWARE_HYPERCALL not available");
-+		exit(KSFT_SKIP);
-+	}
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
-+
-+	vm_enable_cap(vm, KVM_CAP_X86_VMWARE_HYPERCALL, 1);
-+
-+	for (;;) {
-+		struct kvm_run *run = vcpu->run;
-+		struct ucall uc;
-+
-+		vcpu_run(vcpu);
-+
-+		if (run->exit_reason == KVM_EXIT_VMWARE) {
-+			struct kvm_regs regs;
-+
-+			TEST_ASSERT_EQ(run->vmware.type, KVM_EXIT_VMWARE_HCALL);
-+			TEST_ASSERT_EQ(run->vmware.hcall.longmode, 1);
-+			TEST_ASSERT_EQ(run->vmware.hcall.cpl, 0);
-+			TEST_ASSERT_EQ(run->vmware.hcall.rax, ARGVALUE(1));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rbx, ARGVALUE(2));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rcx, ARGVALUE(3));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rdx, ARGVALUE(4));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rsi, ARGVALUE(5));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rdi, ARGVALUE(6));
-+			TEST_ASSERT_EQ(run->vmware.hcall.rbp, ARGVALUE(7));
-+
-+			run->vmware.hcall.exception.inject = 1;
-+			run->vmware.hcall.exception.vector = 12;
-+			run->vmware.hcall.exception.error_code = 14;
-+			run->vmware.hcall.exception.address = 0;
-+
-+			run->vmware.hcall.result = RETVALUE(11);
-+			vcpu_regs_get(vcpu, &regs);
-+			regs.rbx = RETVALUE(12);
-+			regs.rcx = RETVALUE(13);
-+			regs.rdx = RETVALUE(14);
-+			regs.rsi = RETVALUE(15);
-+			regs.rdi = RETVALUE(16);
-+			vcpu_regs_set(vcpu, &regs);
-+			continue;
-+		}
-+
-+		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			/* NOT REACHED */
-+		case UCALL_SYNC:
-+			break;
-+		case UCALL_DONE:
-+			goto done;
-+		default:
-+			TEST_FAIL("Unknown ucall 0x%lx.", uc.cmd);
-+		}
-+	}
-+done:
-+	kvm_vm_free(vm);
-+	return 0;
-+}
--- 
-2.48.1
+> Which parent device? That is my point, if the top level node for the
+> whole CTRL_MMR region is made into one big syscon, then a big regmap
+> is made that covers the whole region. All the child devices also make
+> regmaps covering their device range. Now these registers under the child
+> device belong to two different regmaps. No synchronization is done as
+> these are not the same regmap, regmap only handles this for multiple
+> access to registers within the same regmap.
+> 
 
+Why does the child device have to create a new/separate regmap? Can it not use
+something like syscon_regmap_lookup_by_phandle_args() to get the regmap from
+the "syscon" node along with 1 or more args specifying the one or few registers
+out of the full range that are assigned to that specific child node? This way,
+all child nodes would be using the same shared regmap.
+
+(And yes, I know technically they don't need to be child nodes - just using that
+terminology to be consistent with the previous discussion.)
 
