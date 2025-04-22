@@ -1,265 +1,87 @@
-Return-Path: <linux-kernel+bounces-614307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0931CA968F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA42A968FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1925189C9ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8138D3B8E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7874C27CB07;
-	Tue, 22 Apr 2025 12:19:45 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01927CCFE;
+	Tue, 22 Apr 2025 12:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NSkzP5ny"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0827C848
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD2A27CCD9;
+	Tue, 22 Apr 2025 12:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745324385; cv=none; b=dCuryTS8DQ1280XsLoFKL5LwWfxWBOiGYYsa6xV87BkKMuVAIFuJTrh+RHMlg0JQiX5tnVg6qvtKP+A7qX7us6p86PD3LK9bSlGKgHqSnS0L9RSm2LXPMA8uzLMQ0bM2Zn2szhu/F/9hPmmpfFahKx96I7ACahPNJqSrjFppqfo=
+	t=1745324461; cv=none; b=Mxmqvw/oNqHwhlr0OEESZQUqzPtm5uLB+jBDlLfKhnhryc0DXHtT6Rf/LT6OAFsnNHCOleG36MvE01fVrG2JmKpMUhKRSH4LVW3zuyYwYJ2j63mL7FLoyqMuDNgQYGwqTjrLll0itmPjHkdkSYCJL11e4qST4D6lxwSxBkr00R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745324385; c=relaxed/simple;
-	bh=UYc1eGDm674rDlkQnD76LWHSlX1JK2USIpGs3cMnGLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ObsQLszVw3aO0qd1Exb4pY5ZB763AJLPKUSIhMOxRXSKmwNZtm5k2IR2agNPW0oKbmhbnY6Q3IVFwsRE0ynXyHv8NYaKUS/c1JM7ufOKUYEhgBrCzEX7eXDJo5sgIrMd3eHyG6CEICXYFQBcxiV87/mvDg06lpvcw31LOOSvLZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D5CDA43B53;
-	Tue, 22 Apr 2025 12:19:37 +0000 (UTC)
-Message-ID: <8c6e4773-796b-47a2-97c4-e4504801ba48@ghiti.fr>
-Date: Tue, 22 Apr 2025 14:19:37 +0200
+	s=arc-20240116; t=1745324461; c=relaxed/simple;
+	bh=7lH35Md+Fot7UL9DGAXTqi++xW7U60PpYcKhID8f2Z0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEAW/vOFGWFs4uIi5EIX2/dJq73BpIw2WjUJiTNhGUNT8m3WS3AiBab2wi//LV3Msj/9Wc3t6QAFs3rLfm6qubERGflXR/sQmbJgXyBRYVfk1+ttXxupFDt0xknwYwBM7t551qYHdV36psgUQyFckbp0KFqqDOZQV3YE59LejJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NSkzP5ny; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from Monstersaurus.hippo-penny.ts.net (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 39CC1250;
+	Tue, 22 Apr 2025 14:18:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745324331;
+	bh=7lH35Md+Fot7UL9DGAXTqi++xW7U60PpYcKhID8f2Z0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NSkzP5nyuh9z8/qXuJHwrGJuKVBt2WVxKqRWv4WFx1LylcW0WSAOW0MpneoCAlJ5U
+	 6UExbpMuFOeaoajKGQJ53SKbnKbUjVkJvyz7dD8eq+LMmtJ3vv3D8s8+apn8Z3b6YO
+	 QWRitnCECGPnsMSxNrEHJNQkG9CJaJxDzahfCgqk=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: sakari.ailus@iki.fi,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] media: imx335: Use correct register width for HNUM
+Date: Tue, 22 Apr 2025 13:20:52 +0100
+Message-ID: <20250422122052.12601-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] riscv: uaccess: use 'asm_goto_output' for
- get_user()
-Content-Language: en-US
-To: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
- jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org
-References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
- <20250410070526.3160847-6-cyrilbur@tenstorrent.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250410070526.3160847-6-cyrilbur@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeetvdffkedvjeefkeegfefgteffleeltefggfdvheekfffhfeeghfeffffhtdelvdenucffohhmrghinhepghhnuhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegthihrihhlsghurhesthgvnhhsthhorhhrvghnthdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhus
- egvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepjhhrthgtvdejsehjrhhttgdvjedrtghomhdprhgtphhtthhopegsvghnrdguohhokhhssegtohguvghthhhinhhkrdgtohdruhhkpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-On 10/04/2025 09:05, Cyril Bur wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
->
-> With 'asm goto' we don't need to test the error etc, the exception just
-> jumps to the error handling directly.
->
-> Unlike put_user(), get_user() must work around GCC bugs [1] when using
-> output clobbers in an asm goto statement.
->
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921 # 1
->
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> [Cyril Bur: Rewritten commit message]
-> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
-> ---
->   arch/riscv/include/asm/uaccess.h | 95 +++++++++++++++++++++++---------
->   1 file changed, 68 insertions(+), 27 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index 719c9179a751..87d01168f80a 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -96,27 +96,58 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm, unsigne
->    * call.
->    */
->   
-> -#define __get_user_asm(insn, x, ptr, err)			\
-> +#ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-> +#define __get_user_asm(insn, x, ptr, label)			\
-> +	asm_goto_output(					\
-> +		"1:\n"						\
-> +		"	" insn " %0, %1\n"			\
-> +		_ASM_EXTABLE_UACCESS_ERR(1b, %l2, %0)		\
-> +		: "=&r" (x)					\
-> +		: "m" (*(ptr)) : : label)
-> +#else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-> +#define __get_user_asm(insn, x, ptr, label)			\
->   do {								\
-> -	__typeof__(x) __x;					\
-> +	long __gua_err = 0;					\
->   	__asm__ __volatile__ (					\
->   		"1:\n"						\
->   		"	" insn " %1, %2\n"			\
->   		"2:\n"						\
->   		_ASM_EXTABLE_UACCESS_ERR_ZERO(1b, 2b, %0, %1)	\
-> -		: "+r" (err), "=&r" (__x)			\
-> +		: "+r" (__gua_err), "=&r" (x)			\
->   		: "m" (*(ptr)));				\
-> -	(x) = __x;						\
-> +	if (__gua_err)						\
-> +		goto label;					\
->   } while (0)
-> +#endif /* CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
->   
->   #ifdef CONFIG_64BIT
-> -#define __get_user_8(x, ptr, err) \
-> -	__get_user_asm("ld", x, ptr, err)
-> +#define __get_user_8(x, ptr, label) \
-> +	__get_user_asm("ld", x, ptr, label)
->   #else /* !CONFIG_64BIT */
-> -#define __get_user_8(x, ptr, err)				\
-> +
-> +#ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-> +#define __get_user_8(x, ptr, label)				\
-> +	u32 __user *__ptr = (u32 __user *)(ptr);		\
-> +	u32 __lo, __hi;						\
-> +	asm_goto_output(					\
-> +		"1:\n"						\
-> +		"	lw %0, %2\n"				\
-> +		"2:\n"						\
-> +		"	lw %1, %3\n"				\
-> +		_ASM_EXTABLE_UACCESS_ERR(1b, %l4, %0)		\
-> +		_ASM_EXTABLE_UACCESS_ERR(2b, %l4, %0)		\
-> +		: "=&r" (__lo), "=r" (__hi)			\
-> +		: "m" (__ptr[__LSW]), "m" (__ptr[__MSW])	\
-> +		: : label);                                     \
-> +	(x) = (__typeof__(x))((__typeof__((x) - (x)))(		\
-> +		(((u64)__hi << 32) | __lo)));			\
-> +
-> +#else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-> +#define __get_user_8(x, ptr, label)				\
->   do {								\
->   	u32 __user *__ptr = (u32 __user *)(ptr);		\
->   	u32 __lo, __hi;						\
-> +	long __gu8_err = 0;					\
->   	__asm__ __volatile__ (					\
->   		"1:\n"						\
->   		"	lw %1, %3\n"				\
-> @@ -125,35 +156,51 @@ do {								\
->   		"3:\n"						\
->   		_ASM_EXTABLE_UACCESS_ERR_ZERO(1b, 3b, %0, %1)	\
->   		_ASM_EXTABLE_UACCESS_ERR_ZERO(2b, 3b, %0, %1)	\
-> -		: "+r" (err), "=&r" (__lo), "=r" (__hi)		\
-> +		: "+r" (__gu8_err), "=&r" (__lo), "=r" (__hi)	\
->   		: "m" (__ptr[__LSW]), "m" (__ptr[__MSW]));	\
-> -	if (err)						\
-> +	if (__gu8_err) {					\
->   		__hi = 0;					\
-> -	(x) = (__typeof__(x))((__typeof__((x)-(x)))(		\
-> +		goto label;					\
-> +	}							\
-> +	(x) = (__typeof__(x))((__typeof__((x) - (x)))(		\
->   		(((u64)__hi << 32) | __lo)));			\
->   } while (0)
-> +#endif /* CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-> +
->   #endif /* CONFIG_64BIT */
->   
-> -#define __get_user_nocheck(x, __gu_ptr, __gu_err)		\
-> +#define __get_user_nocheck(x, __gu_ptr, label)			\
->   do {								\
->   	switch (sizeof(*__gu_ptr)) {				\
->   	case 1:							\
-> -		__get_user_asm("lb", (x), __gu_ptr, __gu_err);	\
-> +		__get_user_asm("lb", (x), __gu_ptr, label);	\
->   		break;						\
->   	case 2:							\
-> -		__get_user_asm("lh", (x), __gu_ptr, __gu_err);	\
-> +		__get_user_asm("lh", (x), __gu_ptr, label);	\
->   		break;						\
->   	case 4:							\
-> -		__get_user_asm("lw", (x), __gu_ptr, __gu_err);	\
-> +		__get_user_asm("lw", (x), __gu_ptr, label);	\
->   		break;						\
->   	case 8:							\
-> -		__get_user_8((x), __gu_ptr, __gu_err);	\
-> +		__get_user_8((x), __gu_ptr, label);		\
->   		break;						\
->   	default:						\
->   		BUILD_BUG();					\
->   	}							\
->   } while (0)
->   
-> +#define __get_user_error(x, ptr, err)					\
-> +do {									\
-> +	__label__ __gu_failed;						\
-> +									\
-> +	__get_user_nocheck(x, ptr, __gu_failed);			\
-> +		err = 0;						\
-> +		break;							\
-> +__gu_failed:								\
-> +		x = 0;							\
-> +		err = -EFAULT;						\
-> +} while (0)
-> +
->   /**
->    * __get_user: - Get a simple variable from user space, with less checking.
->    * @x:   Variable to store result.
-> @@ -178,13 +225,16 @@ do {								\
->   ({								\
->   	const __typeof__(*(ptr)) __user *__gu_ptr = untagged_addr(ptr); \
->   	long __gu_err = 0;					\
-> +	__typeof__(x) __gu_val;					\
->   								\
->   	__chk_user_ptr(__gu_ptr);				\
->   								\
->   	__enable_user_access();					\
-> -	__get_user_nocheck(x, __gu_ptr, __gu_err);		\
-> +	__get_user_error(__gu_val, __gu_ptr, __gu_err);		\
->   	__disable_user_access();				\
->   								\
-> +	(x) = __gu_val;						\
-> +								\
->   	__gu_err;						\
->   })
->   
-> @@ -369,13 +419,7 @@ unsigned long __must_check clear_user(void __user *to, unsigned long n)
->   }
->   
->   #define __get_kernel_nofault(dst, src, type, err_label)			\
-> -do {									\
-> -	long __kr_err = 0;						\
-> -									\
-> -	__get_user_nocheck(*((type *)(dst)), (type *)(src), __kr_err);	\
-> -	if (unlikely(__kr_err))						\
-> -		goto err_label;						\
-> -} while (0)
-> +	__get_user_nocheck(*((type *)(dst)), (type *)(src), err_label)
->   
->   #define __put_kernel_nofault(dst, src, type, err_label)			\
->   	__put_user_nocheck(*((type *)(src)), (type *)(dst), err_label)
-> @@ -401,12 +445,9 @@ static inline void user_access_restore(unsigned long enabled) { }
->   	__put_user_nocheck(x, (ptr), label)
->   
->   #define unsafe_get_user(x, ptr, label)	do {				\
-> -	long __err = 0;							\
->   	__inttype(*(ptr)) __gu_val;					\
-> -	__get_user_nocheck(__gu_val, (ptr), __err);			\
-> +	__get_user_nocheck(__gu_val, (ptr), label);			\
->   	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-> -	if (__err)							\
-> -		goto label;						\
->   } while (0)
->   
->   #define unsafe_copy_loop(dst, src, len, type, op, label)		\
+From: Umang Jain <umang.jain@ideasonboard.com>
 
+CCI_REG_HNUM should be using CCI_REG16_LE() instead of CCI_REG8()
+as HNUM spans from 0x302e[0:7] to 0x302f[0:3].
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ drivers/media/i2c/imx335.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Alex
+diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+index db424b178e98..0418875e996c 100644
+--- a/drivers/media/i2c/imx335.c
++++ b/drivers/media/i2c/imx335.c
+@@ -31,7 +31,7 @@
+ #define IMX335_REG_CPWAIT_TIME		CCI_REG8(0x300d)
+ #define IMX335_REG_WINMODE		CCI_REG8(0x3018)
+ #define IMX335_REG_HTRIMMING_START	CCI_REG16_LE(0x302c)
+-#define IMX335_REG_HNUM			CCI_REG8(0x302e)
++#define IMX335_REG_HNUM			CCI_REG16_LE(0x302e)
+ 
+ /* Lines per frame */
+ #define IMX335_REG_VMAX			CCI_REG24_LE(0x3030)
+-- 
+2.48.1
 
 
