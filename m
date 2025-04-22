@@ -1,234 +1,102 @@
-Return-Path: <linux-kernel+bounces-613984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1E9A964F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93E3A964FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C97189ABD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 574B81791D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58E51F1818;
-	Tue, 22 Apr 2025 09:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64337202990;
+	Tue, 22 Apr 2025 09:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2KVMWvE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NCv/7+1a"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1462A1F098A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9111B1EB1A8;
+	Tue, 22 Apr 2025 09:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745315199; cv=none; b=azvqpmc9pv5FxhuGu4CbxVadCT2+NaKtsLoj7uBhEp4ap2VFIY+f1z1Nf1EQQ009X68jmEhL+b+BISUNEqDRo1FHPq9CKBeaiMQUmndBtHgOyGgdLgTSvjop8kPyGgLNhxtCFGl0w5HXi/Bsu+lRvZ5MtDB4GJ2ivjOjUeuNuHU=
+	t=1745315243; cv=none; b=R3cHQQultgggH///Tq5Dv8dCGRX4rdCySGn1skE+0MjNHoTfyYXL0hCbn9ckgxTJNqp6gcRAaGHJKQ3mRGumHJAmJol2MUTTCK0d16Ds9ieY8gy605s+G8WJxK1d84H9tZ08zrNDBxuS9PTsIBoj+ZrTiYRbDJ8BO3mCosOoVaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745315199; c=relaxed/simple;
-	bh=i6+35yRKfL6Lxl7buLXu60bziYBpsB445n1R9LO+zEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tt7KJPMEDPLNfEhlQtkQkUuXlAL1VuJi1gssybVaLU7gVIvO+AtlQphuTQHC7DUVrED1upnVlqO29DcW1H6A9gUjanXlcXO/CYvHkpqxD8BTVLLs0+eL0+BhW9qQFHp6n4A6UrclnRGVot0tD/erDhd3Oll+9HLh7n0nBK+TC/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2KVMWvE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F7BC4CEEA;
-	Tue, 22 Apr 2025 09:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745315198;
-	bh=i6+35yRKfL6Lxl7buLXu60bziYBpsB445n1R9LO+zEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2KVMWvEY9vOTX6LTAg0NhJZZtDpVd+9mk+dUmcC1aQD2Ogt8hVKGP46nMdviKl/d
-	 1dJcKsyLBhKGovJbn5n7UcAE/G4XdQ+YlhgV6fQDTU7mv4hAgNwOQG/6OtWudWKg+T
-	 3x2b9tiQSJ4cy356MRLlhtgcGH/A1o+GHNft4wYsVIKZjNqql/fAh/GMKHTwFyhB+7
-	 HjSdlOb4Yuf+ISvTdHlhQ0AIn/vw0xumoljrEbZY2yXOW9Da6MaivO/KfHGW7u6g0B
-	 SKz52HxP7gkyfvuvILzUeJqrVoG1wnqGS1mMdvrH90zaN8qc1TjhrdvER0I70exsLM
-	 wLhczsdLaK9Ow==
-Date: Tue, 22 Apr 2025 11:46:33 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/16] Attack vector controls (part 1)
-Message-ID: <aAdlefbyU_oqOVIg@gmail.com>
-References: <20250418161721.1855190-1-david.kaplan@amd.com>
- <aAKwHvLTDfyM2UfS@gmail.com>
- <20250418213336.GIaALFMKSwKKGw7tTd@fat_crate.local>
+	s=arc-20240116; t=1745315243; c=relaxed/simple;
+	bh=LETj/ihRbceFgO7zekmM9Jci+dyLy0wKV2esC4XRAq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=azUbpWd8JdhdAsvpUwpVZmhGx7UQ6rOJ41oFSqmdxOlO3n0HjmJA3H3w7XdUnHgiNdOYzDvRl7+KEW3N7lmOsELjQ+9hwd/U+nq0ytYFb6lFk71EZIrzmw0q2xWNi3MTJNXxZSuPC+8Au5szNWtVSbYlpgrnutkzE7L0JqebggI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NCv/7+1a; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4501C432F9;
+	Tue, 22 Apr 2025 09:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745315232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Uicg+PWgEa62Lbm/5RBrHSig7QCgYW+uliLkHIFRzEI=;
+	b=NCv/7+1an2DDckptxZ2tZfimTLdTIe5C1SVkaKXpFzLs2L0w/yyE33wUg25y/K4qfLWuFo
+	rbWjjF7YOSMfr0X6VNK+W0WoKeqVJGC/bY5TMZ+w9JT6IznjlfacTSh4Z1aMe6mZXbDaD/
+	tfbvBvtqrGq+RO40gRXl/cLouHeM07k+tzHUJVTgAGKFQ4lKc/KKccHuU354FPXbjR1qTF
+	uUCS0uBhPOJqvaOT4WBysbBVvLAiuBtvh0P7M1c6tiIl4efDIL/LKkQN7Wc6fr0JzVJgLI
+	D8UfyBU8cTgApKL72SZCJusxXgSf9KRBRsb8/CkI9hm2/TZ+S7ekor4n2UOi1A==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Russell King <linux@armlinux.org.uk>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Simon Horman <horms@kernel.org>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: [PATCH net 0/3] net: stmmac: socfpga: 1000BaseX support and cleanups
+Date: Tue, 22 Apr 2025 11:46:54 +0200
+Message-ID: <20250422094701.49798-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418213336.GIaALFMKSwKKGw7tTd@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefgedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephedtheeufeeutdekudelfedvfefgieduveetveeuhffgffekkeehueffueehhfeunecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmegtkedufeemgeejtgeimeejudelrgemlegusghfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemtgekudefmeegjegtieemjedulegrmeeluggsfhdphhgvlhhopeguvghvihgtvgdqgedtrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtt
+ hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hello everyone,
 
-* Borislav Petkov <bp@alien8.de> wrote:
+This small series sorts-out 1000BaseX support and does a bit of cleanup
+for the Lynx conversion.
 
-> On Fri, Apr 18, 2025 at 10:03:42PM +0200, Ingo Molnar wrote:
-> > 	/* Select the proper CPU mitigations before patching alternatives: */
-> > 	mitigation_select_spectre_v1();
-> > 	mitigation_select_spectre_v2();
-> > 	mitigation_select_retbleed();
-> > 	mitigation_select_spectre_v2_user();
-> > 	mitigation_select_ssb();
-> > 	mitigation_select_l1tf();
-> > 	mitigation_select_mds();
-> > 	mitigation_update_taa();
-> > 	mitigation_select_taa();
-> > 	mitigation_select_mmio();
-> > 	mitigation_select_rfds();
-> > 	mitigation_select_srbds();
-> > 	mitigation_select_l1d_flush();
-> > 	mitigation_select_srso();
-> > 	mitigation_select_gds();
-> > 	mitigation_select_bhi();
-> 
-> The bad side of that is that you have a whole set of letters
-> - "mitigation_select" - before the *actual* name which is the only thing one
-> is interested in. With the vectors, one is now interested in the operation too
-> - select, update or apply.
+Patch 1 makes sure that we set the right phy_mode when working in
+1000BaseX mode, so that the internal GMII is configured correctly.
 
-I have three counter-arguments:
+Patch 2 removes a check for phy_device upon calling fix_mac_speed(). As
+the SGMII adapter may be chained to a Lynx PCS, checking for a
+phy_device to be attached to the netdev before enabling the SGMII
+adapter doesn't make sense, as we won't have a downstream PHY when using
+1000BaseX.
 
-1)
+Patch 3 cleans an unused field from the PCS conversion.
 
-The above pattern is not a big problem really, as the human brain has 
-no trouble ignoring well-structured syntactic repetitions on the left 
-side and will focus on the right side column.
+Maxime Chevallier (3):
+  net: stmmac: socfpga: Enable internal GMII when using 1000BaseX
+  net: stmmac: socfpga: Don't check for phy to enable the SGMII adapter
+  net: stmmac: socfpga: Remove unused pcs-mdiodev field
 
-Unlike the current status quo, which your reply didn't quote, so I'll 
-quote it again:
+ drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
- static void __init spectre_v1_select_mitigation(void);
- static void __init spectre_v2_select_mitigation(void);
- static void __init retbleed_select_mitigation(void);
- static void __init spectre_v2_user_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- static void __init mds_select_mitigation(void);
- static void __init md_clear_update_mitigation(void);
- static void __init md_clear_select_mitigation(void);
- static void __init taa_select_mitigation(void);
- static void __init mmio_select_mitigation(void);
- static void __init srbds_select_mitigation(void);
- static void __init l1d_flush_select_mitigation(void);
- static void __init srso_select_mitigation(void);
- static void __init gds_select_mitigation(void);
+-- 
+2.49.0
 
-Which is far more visually messy.
-
-2)
-
-As to shortening the function names to reduce (but not eliminate ...) 
-the mess:
-
-That extra mitigation_ prefix or _mitigation postfix might sound like 
-repetitious when used in mass-calls like above - but it's really useful 
-when reading the actual definitions:
-
-> Short, sweet,
-
-... there's such a thing as too short, too sweet, too ambiguous, which 
-is why we ended up with the current name of gds_select_mitigation() et 
-al to begin with.
-
-But let's see an example. Consider:
-
-	static void __init gds_select(void)
-	{
-		u64 mcu_ctrl;
-
-What do I select? Some GDS detail? Or the main mitigation itself? 
-Nothing really tells me.
-
-While with:
-
-	static void __init mitigation_select_gds(void)
-	{
-		u64 mcu_ctrl;
-
-It's immediately clear that this is the main function that selects the 
-GDS mitigation.
-
-3)
-
-A proper namespace also makes it *much* easier to grep for specific 
-primitives.
-
-With your suggested 'gds_select()' naming, if I want to search for all 
-gds_ primitives, I get:
-
-	starship:~/tip> git grep gds_ arch/x86/kernel/cpu/bugs.c
-
-	arch/x86/kernel/cpu/bugs.c:static void __init gds_select_mitigation(void);
-	arch/x86/kernel/cpu/bugs.c:	gds_select_mitigation();
-	arch/x86/kernel/cpu/bugs.c:enum gds_mitigations {
-	arch/x86/kernel/cpu/bugs.c:static enum gds_mitigations gds_mitigation __ro_after_init =
-	arch/x86/kernel/cpu/bugs.c:static const char * const gds_strings[] = {
-	arch/x86/kernel/cpu/bugs.c:bool gds_ucode_mitigated(void)
-	arch/x86/kernel/cpu/bugs.c:	return (gds_mitigation == GDS_MITIGATION_FULL ||
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation == GDS_MITIGATION_FULL_LOCKED);
-	arch/x86/kernel/cpu/bugs.c:EXPORT_SYMBOL_GPL(gds_ucode_mitigated);
-	arch/x86/kernel/cpu/bugs.c:void update_gds_msr(void)
-	arch/x86/kernel/cpu/bugs.c:	switch (gds_mitigation) {
-	arch/x86/kernel/cpu/bugs.c:static void __init gds_select_mitigation(void)
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_HYPERVISOR;
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_OFF;
-	arch/x86/kernel/cpu/bugs.c:		if (gds_mitigation == GDS_MITIGATION_FORCE) {
-	arch/x86/kernel/cpu/bugs.c:			 * here rather than in update_gds_msr()
-	arch/x86/kernel/cpu/bugs.c:			gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
-	arch/x86/kernel/cpu/bugs.c:	if (gds_mitigation == GDS_MITIGATION_FORCE)
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_FULL;
-	arch/x86/kernel/cpu/bugs.c:		if (gds_mitigation == GDS_MITIGATION_OFF)
-	arch/x86/kernel/cpu/bugs.c:		 * but others are then update_gds_msr() will WARN() of the state
-	arch/x86/kernel/cpu/bugs.c:		 * mismatch. If the boot CPU is locked update_gds_msr() will
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_FULL_LOCKED;
-	arch/x86/kernel/cpu/bugs.c:	update_gds_msr();
-	arch/x86/kernel/cpu/bugs.c:	pr_info("%s\n", gds_strings[gds_mitigation]);
-	arch/x86/kernel/cpu/bugs.c:static int __init gds_parse_cmdline(char *str)
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_OFF;
-	arch/x86/kernel/cpu/bugs.c:		gds_mitigation = GDS_MITIGATION_FORCE;
-	arch/x86/kernel/cpu/bugs.c:early_param("gather_data_sampling", gds_parse_cmdline);
-	arch/x86/kernel/cpu/bugs.c:static ssize_t gds_show_state(char *buf)
-	arch/x86/kernel/cpu/bugs.c:	return sysfs_emit(buf, "%s\n", gds_strings[gds_mitigation]);
-	arch/x86/kernel/cpu/bugs.c:		return gds_show_state(buf);
-
-Or, if I limit this to function calls only:
-
-	arch/x86/kernel/cpu/bugs.c:static void __init gds_select_mitigation(void);
-	arch/x86/kernel/cpu/bugs.c:	gds_select_mitigation();
-	arch/x86/kernel/cpu/bugs.c:bool gds_ucode_mitigated(void)
-	arch/x86/kernel/cpu/bugs.c:void update_gds_msr(void)
-	arch/x86/kernel/cpu/bugs.c:static void __init gds_select_mitigation(void)
-	arch/x86/kernel/cpu/bugs.c:			 * here rather than in update_gds_msr()
-	arch/x86/kernel/cpu/bugs.c:		 * but others are then update_gds_msr() will WARN() of the state
-	arch/x86/kernel/cpu/bugs.c:		 * mismatch. If the boot CPU is locked update_gds_msr() will
-	arch/x86/kernel/cpu/bugs.c:	update_gds_msr();
-	arch/x86/kernel/cpu/bugs.c:static int __init gds_parse_cmdline(char *str)
-	arch/x86/kernel/cpu/bugs.c:static ssize_t gds_show_state(char *buf)
-	arch/x86/kernel/cpu/bugs.c:		return gds_show_state(buf);
-
-Versus a targeted, obvious, untuitive search for all mitigation_ 
-functions related to GDS:
-
-	starship:~/tip> git grep -E 'mitigation_.*_gds' arch/x86/kernel/cpu/bugs.c 
-
-	arch/x86/kernel/cpu/bugs.c:static void __init mitigation_select_gds(void);
-	arch/x86/kernel/cpu/bugs.c:     mitigation_select_gds();
-	arch/x86/kernel/cpu/bugs.c:static void __init mitigation_select_gds(void)
-
-Because a proper namespace is a far more easier to search.
-
-Hierarchical lexicographic organization of function names is basically 
-a code organization 101 concept, and I didn't think it would be 
-particularly controversial. :-)
-
-Thanks,
-
-	Ingo
 
