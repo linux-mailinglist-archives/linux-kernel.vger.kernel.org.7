@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-614226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E184A967C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8E5A967E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C325A173BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D40162EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BB327C179;
-	Tue, 22 Apr 2025 11:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C305D27BF73;
+	Tue, 22 Apr 2025 11:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amsbijQi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="VFFsBcyU"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7448327BF8A;
-	Tue, 22 Apr 2025 11:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E9F28F5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321756; cv=none; b=pi8KzbbS8Az2J1E5ybsOQv6L9ubTVo/f/vv+fkzQx7AsRIwlAaagVa4UyVzUBRcnhbLxwBrWrQVGbBGWVfKvhgPYLi6H4qUOfEUIM+7Se4eoyM5jVpE4H3LXjem14N78uBiFTItGxd/xkHXPz4oJSi1SuFd7AYSWSfjLcBFoHoE=
+	t=1745322066; cv=none; b=o9Q+TC2CPANs/nAiX5Xr9QCOF+MazUTqh0brK83a9LuVsn9H+5lCkxzf4d7WPVKhFMpLKoSBTlZDXhX5kKnfy9KbwF+XH0vB3YDHfwvcVeJOxxgU+KC5VZKxasqKcF+HbellDFkbOrLpNM18Z7EINv7FILzrB90yvxTPfp9qNMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321756; c=relaxed/simple;
-	bh=G8k1yESAkAoC2QiiUqKx2xBykLNl2jvAEMR/XX9MlZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnaVGKzABBnIMmVKw5LxAxSIszGmhsdVSDQ8KkdQrbfziPAhgj6gACwlJ1PhwyzsWwLXKB4m0UzeK2WLBpHAolEK2RPZNokaFMOU0ogjxQuPwkl3kts2qshei9x8YTK8LeOy9n0kR0znh3ocBzwEe+YEIGz/ten9G7pw7mgFknI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amsbijQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68025C4CEE9;
-	Tue, 22 Apr 2025 11:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745321755;
-	bh=G8k1yESAkAoC2QiiUqKx2xBykLNl2jvAEMR/XX9MlZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=amsbijQi5FkfMwBmTqZPiKls6kIoI2HsDOXFFmiGBsXTj1a76q6E+akpUOlIFc9ap
-	 42enWZHkH54MltECbR3/SsXKxa1Y3FBhkGE/eyTY5Q8VA/m+CRstiPD0XSEM4cBjWv
-	 t/EKOoEaUKKflSsJ+/hx4kfN/WHbonw7rs4SkPlpRYoRev9MkgNUDciApX5BiAmC7e
-	 zd4Ma6xmusV9ejKOM70Bt+GVk1MvvyNs3nTQf7pNAOW8IdxZT06+aV6TMh0kYvEiiX
-	 cUt4Ni+NeLFVbCa6Qgh52U033cy2Zog7gHbYZPjAgvQ5P2ZTUSD7HD9I2h03jzc5pO
-	 gpaGE98vrLEiA==
-Date: Tue, 22 Apr 2025 13:35:50 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, shawn.lin@rock-chips.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/3] PCI: dw-rockchip: Remove unused
- PCIE_CLIENT_GENERAL_DEBUG
-Message-ID: <aAd_FiWy5F-tK_2i@ryzen>
-References: <20250422112830.204374-1-18255117159@163.com>
- <20250422112830.204374-2-18255117159@163.com>
+	s=arc-20240116; t=1745322066; c=relaxed/simple;
+	bh=sErKUu8XaQGTuZYPaxa47iJFKeitfE1I7A8JZ8iHBI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hiA0cKPK1EfKDmpIaZy6z2BD2eDJcaC8rWDXX9Ep1lru/HsSZsdoS0BJS+pZpNGoes/aKL9i2e8m1q2zt0wXV/UZFf6n0izS6PgB3ZeZwSpI2y9IU2WbpBe3FfDi/LatBoWavSJpnHA8eIKY7cAxIUxdGMPW4SRWc0Xx/6Zu3BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=VFFsBcyU; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1745321752;
+	bh=sErKUu8XaQGTuZYPaxa47iJFKeitfE1I7A8JZ8iHBI8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=VFFsBcyU63fPkCCrr1II0Ugnbp1n/w9AVI/GwUvUlStpjbpxlw1y8ujRlzVu+dXlT
+	 iK2FmnVzOWLvkXTLI3hq4f6ttp/wNefD/iacJTRvMYymGDc+0c6efSUL7sTYnojW00
+	 tJq8Zqu4zarY9eOlr5sapTnB/MoKtbs2vUzsw+VM=
+Received: from [10.42.13.56] ([116.128.244.169])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 8F232494; Tue, 22 Apr 2025 19:35:50 +0800
+X-QQ-mid: xmsmtpt1745321750tbwfjzkn9
+Message-ID: <tencent_99252291FB8F0A1F32CF2BFFE46BCEC33505@qq.com>
+X-QQ-XMAILINFO: MFdGPHhuqhNochkLj6pIz0hNRT4T/zP+3wO9C3a7eKaUKVMcwxP0PnAnkZRJAo
+	 6UikYtOjlYJXzR317zFk7xFJjK50wefaHA/HwQ1i1FQUO1SbebI5fqzKz9P8BwcyvIfVGIm5Ym8I
+	 KUlEiaOA6feKaNc4zFkBI7+dIbitCHH5lntWbuurtdCtBf0q5pmjeDgsw8an8PSzKEOxSmyVK0tH
+	 px7F6y37JgWR53PNcN5jIhaCRZyqxxOxFi88zbR6I8K4G0Or22l6obUzPCa/WF+i2rSSSLnozWKT
+	 IOU3hnqFjNIMYP5IRAxWbRcfG4nNidTRx+a+oPiAh6SHSPxNnDymzp6oJmScpYTUTaaBmXRHyaP2
+	 d1KrjXz927m+zdzSttu2BLCqdJG/1dXXofpplD3ZuwdefZaJrdtpQaIQ895zg6fAh8ZG7ErbJc+G
+	 D3G0h4o+hq1Kykr9VHKFfIC4EFEaBHyc8jmD2Dp4iC86zVha9PjAEoZF/cXZNyDSmXbetFD7TIzD
+	 2zleWKPvB3j4bu3swLKBlFIBloi+IQMqesb/oDdwpSNL8m8aweBQTsBnYNLAf1W8xIraiOsgNHAH
+	 Zh4WWBOmJIoNnGh8PCVACoWn0JNaljKykzLs/CI50vUneNvvOrgRmxrtqMv+KdfnAr4SF8V2WF19
+	 wUV5agm3BU7MgaAtLqqXnm9QkIL0VZGaxupQ3pZLlId394mSaOkNbkeywupFkgQQJyghDu1iLBbN
+	 aSB0M+2WOwlRxX1fDCYCKbXzGPoOZB+h7QAdIgou5veZKyO0Z9zZtIbVvNdqnHvyubuOj5OGUcFA
+	 AymIgACb3A33Cu5AzsOl7/GhwOOaOgWjdw5qGFVx49gsDNcM6ghMsjoo0leNnh+rezVouGG6csGp
+	 W8CvejB/ADd4ndos80y71icLShL/wC20c83cdjELk6GSXZ17Hz85sywKvCv7osfM4ARscn/4iUWz
+	 MAdhKH5/nlGtxSRfv4mCrGndSUtP+OBiC3yFdSj/6VHgG6pFrH9e3jO+ue0VqEhCmEXz0o6rU=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-OQ-MSGID: <5b365ebe-0581-4aca-b8e9-cd26ba76aa2b@foxmail.com>
+Date: Tue, 22 Apr 2025 19:35:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422112830.204374-2-18255117159@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] bus: hisi_lpc: remove unused head file in hisi_lpc.c
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, f.fangjian@huawei.com, robh@kernel.org,
+ john.g.garry@oracle.com, xuwei5@hisilicon.com,
+ Pei Xiao <xiaopei01@kylinos.cn>
+References: <cover.1744964101.git.xiaopei01@kylinos.cn>
+ <tencent_8024B8D7E209E31C8E2B5AC411B70C551106@qq.com>
+ <aAO_mIY99CMH4o8d@smile.fi.intel.com>
+ <tencent_DB84706B5135401678FD9E84CC6DB8C2450A@qq.com>
+ <aAdMNb8n_wr5PwyQ@smile.fi.intel.com>
+From: Pei Xiao <xiaopeitux@foxmail.com>
+In-Reply-To: <aAdMNb8n_wr5PwyQ@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 22, 2025 at 07:28:28PM +0800, Hans Zhang wrote:
-> The PCIE_CLIENT_GENERAL_DEBUG register offset is defined but never
-> used in the driver. Its presence adds noise to the register map and
-> may mislead future developers.
-> 
-> Remove this redundant definition to keep the register list minimal
-> and aligned with actual hardware usage.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index 0e0c09bafd63..fd5827bbfae3 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -54,7 +54,6 @@
->  #define PCIE_CLIENT_GENERAL_CONTROL	0x0
->  #define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
->  #define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
-> -#define PCIE_CLIENT_GENERAL_DEBUG	0x104
->  #define PCIE_CLIENT_HOT_RESET_CTRL	0x180
->  #define PCIE_CLIENT_LTSSM_STATUS	0x300
->  #define PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
-> -- 
-> 2.25.1
-> 
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+在 2025/4/22 15:58, Andy Shevchenko 写道:
+> On Mon, Apr 21, 2025 at 10:06:28AM +0800, Pei Xiao wrote:
+>> 在 2025/4/19 23:22, Andy Shevchenko 写道:
+>>> On Fri, Apr 18, 2025 at 04:51:23PM +0800, xiaopeitux@foxmail.com wrote:
+> ...
+>
+>>>> linux/console.h,linux/io.h,linux/pci.h,linux/slab.h
+>>>> are not used, this patch removes it.
+>>> Definitely you haven't tested this...
+>> Sorry for that,I have tested in ARM64 platform, have no build problem,sorry for that!
+> Okay, but you need to follow IWYU principle. io.h is definitely used in this
+> file.
+
+I send v2 patch in:
+https://lore.kernel.org/lkml/tencent_AB44A8723B522941A2792D9C58CDD9B8B60A@qq.com/
+
+but I don't that comment patch whether have problem.
+
+thanks !
+
+Pei.
+
 
