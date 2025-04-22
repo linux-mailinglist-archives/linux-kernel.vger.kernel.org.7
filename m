@@ -1,136 +1,284 @@
-Return-Path: <linux-kernel+bounces-614790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B68A9721E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:12:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAE6A97244
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0236E17B068
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4D816692A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004A528FFD0;
-	Tue, 22 Apr 2025 16:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5F829346C;
+	Tue, 22 Apr 2025 16:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aAcPHZ6g"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mXdxlBxS"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24F4281352
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745338372; cv=none; b=qXNlZB65RHLEHEdsvjMLND1k3UAGnCeU9UZJ7iV1unydhXLZv6Wp61OoXEIyDIhFbk5sPDCNilZ2DBxqTzzLtezUvakdD4MpDVJmlI9MnxprLydva9q1knY69WC+QWh48gZEHLlhKzAPEhEru44w2UxIJ1e7jtDfXm65zlcwI8k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745338372; c=relaxed/simple;
-	bh=RGhyPnsDqiY2S40qn37e871t5HmcKxZxCc+fO56toGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s6PO2lKM8n8vjsGsOfEBuBu48isD1LB+vspKMjunbAGcXIgSgLpYhHuS4VYhzheQDJAe8Nwj+/uhHCag4eUa+3gQPllq4txv+sSuA8AtFmPA1YeGkrvGegWMMemetxSMh+5G7jmA+K1TjWnX0SXAwBQtliP3n6v+J44nJm3KQoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aAcPHZ6g; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-605f7d3216bso862969eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745338369; x=1745943169; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H8E7zBmmWLg3ht/ivGt6wNiB8HhGYbCrWpBk3ARRpsY=;
-        b=aAcPHZ6gRHg7/BYYGLMbWQYAJTrkE2oPPh6bQDAb+xVwqmsxFbgldtFgEWm4i0KvlG
-         K5R2DZEGn1CA1v2fniOcB2OKJvCT3ZGvE3RKvhSwCFv8TNY+33j2rWRvbpRYrJJjGjuR
-         YIxMgnKS6dA8ISUOr0mc5yrRnDJGdcnyhi06dkHX9pxD6lvMn8jrDuVWL7fENNuK3fxl
-         jbSMGx+bBpajNuU4SSE7emQ1k/4xU95D6QMab0i5uW1sv4cityWbmbnMNdHxb0XkQg9z
-         E7jql7aTdDVmkYcfu28z4Wj12J9+eNJuV8TnfG/dWgHb8faIysjFlTCmL25Zo1GCUt2I
-         tHgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745338369; x=1745943169;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H8E7zBmmWLg3ht/ivGt6wNiB8HhGYbCrWpBk3ARRpsY=;
-        b=kx6PvwD/U7NOLvjY5KNcn0OgdGNltn4+ZRDuL0HqLy0BycPQYmsuz+Ncx+7Equ4KDS
-         ROtrG+5JjbSJlPdLQEJDNpS2zrMmTm068fgfJmJ0tKxEjVuUSvebCMSqjB/gujPRI+ZM
-         Qvtb4rbhufIYvePB+0Q4FHRgjAS8BO/Sfv8xLflD1Qb5BKiMEVIVA3RyiRpJe9AtLW55
-         dWrOoAjztWM8RTV6hdmAfnYJ34jTsAQKN6e0qcKyfxmQxSr9PCOWWHysXzTgjvb6QRib
-         9qRNfxMZQLSD3lx4U7W5G6slf/fBZAnEL58721em/j8u2Vdxu7a50I9If4gfwyUBbppw
-         E6yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTIFmbKFi5AVk+z42kzpocC+qT/D6QmQD9d8cwXH4udZsNMi/rMOITxAKgHVNDVfNpbJRplwIjNkH3J90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyoSugxZj8E+O4VQAKPbugSmz0t1M9m7ZPUykTdewr1dEc3oe3
-	MJjvqKpKqLJsR1Nz3fI2clHfCkHr+/k35x6c4+9jII1nFJF5qlUOU9OrFGKRnR4=
-X-Gm-Gg: ASbGncvBLSVThhAfKG7vrTVhi8CbjxUx9+Q0HSyy2zrAjJBrfvHBQAJPb/JL/Nz6UBO
-	OSEXGHiRAIdqJUTWs6VbRDWtbYK66lXtDCCvmYEVelsKPBZutLDnKmjbdhZIsNqiiRuMfW3dZlz
-	SKD2N7c2fdE98Kv4bKILdXq1Cett5KcKwKgsdxQsVPirU86ZDodD8vgomrINq3jUBbCIZerEq4a
-	WjATFhX/f4vXqcysr4hX0MdsQnxkm3WI1YTdIOmpkT10BvxM+eudkgjHaQ/E+DKehFh5PuTGvHq
-	mWNqPR8tyn9qg8r2ee8T1M8B2qzngYfN91bmAVSIfk4fdPs7+uM1Yi1TLCrr++c3kpYzrL91kNV
-	lhsw7wEDxgS95pRxuVw==
-X-Google-Smtp-Source: AGHT+IF9Z3gSX8kmSbSuKPRtpakMkJO137BJhDQaCwgNlo/KRdfZOcLBygIlEokup5a5MePwFQ8OtQ==
-X-Received: by 2002:a05:6820:618:b0:603:f973:1b3 with SMTP id 006d021491bc7-606003ec9f0mr7716312eaf.0.1745338369622;
-        Tue, 22 Apr 2025 09:12:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3? ([2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-605ff69c258sm2150287eaf.25.2025.04.22.09.12.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 09:12:48 -0700 (PDT)
-Message-ID: <8fe546e7-4fbc-4c63-ad0f-576ffb117508@baylibre.com>
-Date: Tue, 22 Apr 2025 11:12:47 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37766293456;
+	Tue, 22 Apr 2025 16:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745338447; cv=fail; b=kuHHFDku1aT28eNtYbFF/PHiuoxT2FILUTzFN97z/hILIrBJwyRL7DfS4Ynj2hDijdlObwIGp+WXvVQxdyPe1iCIYUSNs1OBNSj5pX2M1ZD6KM2tLIbqSHANgtDysGMtKoJFimBOMNmzPkpwE+/ciWiKTO3KX+QSA8aUqnCaJLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745338447; c=relaxed/simple;
+	bh=Mzj6I8rZ47bNWHvhsdhWypUPmirjz19CrN2GY8D9E4U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ttLZRk0I4vnSAAi4mjCJ57igjbzOyJXzLky4jP+nGD4/+r12HxFGksj9wN+whm8gvFWpJQuLujM7HJTengOWR9DRFlHlsBKexm7e9hswvVY+qpOYOeUXwmoXZGQ5FIQy4i/MfmGRJOrOlP5fyHfmM78BwgBhzpeP17PnWnxgqkc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mXdxlBxS; arc=fail smtp.client-ip=40.107.243.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qTdV+Y5oJ+f0s+ucButDJomtu8JQXbsUaBU8ah+MkHr1BW3JyPRIifCWqa0nJbPjdkY2wyDzE9XS/WEG49VxigQyc9SrYhxdrfXSMiV9aS7IMjjTe5QDwZWbRLD5oxWrt7qUN5g8e3gn9RQayEE4LxKEs0O12baWfRESFxfYY9mtPGiPfRZVRyeWnvsq3037YoVaN/o3nRd36KBJAFRZq6j3q41iqhXlGX61KxfWsrbBg+ybVttMQLmwkSIjI5H7Ghnp2+TnpXWThSpKgoJ2Q8+ndGryjB7IRT8mRbnw1h2S+3DreFZws5dyHNwwi/gFkYF30xWmd3EoW3W2WVKvdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e2d2pWO2BHQ6rkorjw4pY7xY+MOzDh081pkTVcuwlh0=;
+ b=x/0He2T2LCropbR5Ctmb4uYzPGp3Ll6CPDWZjZcK3V/t9eBfTn/YDMALO5G+QW5GrMvkNu2WkD82Iig2HFOnIbnlx8Mr5zizcZWSNEg6jmgTmsixFgcaUD5w+iV1MTppUdqOJpAxhzYXyd4Qb6ytDyw2zZBPY3WBVFaUwh37edRTT9ssUzXbRvK5JCVNCKO4+4JHsogjNFlKSnwaCFIq2Rt71h9EJyV3BxXSqhBDvoz8XmcKcUiOuI1iqp5RBwlEVOR2BVJTFM1h9eTDLuGQknDmUE6VB+bABqxQHDcPejjyvqQM29JvcM1piYbmXqh1ZVXhbplIK0ZT/APjvvZmDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e2d2pWO2BHQ6rkorjw4pY7xY+MOzDh081pkTVcuwlh0=;
+ b=mXdxlBxSs6qfQMok/XSuRvKrwMVmOkjizsxcmhmWeI1B31dnSvx35Ii48I5VuFtJZQYud+p2jrOROp2dfVimdY4Wr/I4L0bE5m+bda4zQfbtQ2DSVhTwSAgqwrbDP9QI9YywA6/0Q1/3Ds7pt39SewgW5W7aVNGMN2tgf8cd1k8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6429.namprd12.prod.outlook.com (2603:10b6:930:3b::16)
+ by MW6PR12MB8868.namprd12.prod.outlook.com (2603:10b6:303:242::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Tue, 22 Apr
+ 2025 16:14:02 +0000
+Received: from CY5PR12MB6429.namprd12.prod.outlook.com
+ ([fe80::1b40:2f7f:a826:3fa0]) by CY5PR12MB6429.namprd12.prod.outlook.com
+ ([fe80::1b40:2f7f:a826:3fa0%6]) with mapi id 15.20.8655.031; Tue, 22 Apr 2025
+ 16:14:02 +0000
+Message-ID: <9262332f-ab4e-4d43-a01b-c5aa5fd60310@amd.com>
+Date: Tue, 22 Apr 2025 12:14:00 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
+Content-Language: en-GB
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
+ king.li@amd.com, dominic.antony@amd.com
+References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+ <d5666c26-164b-4b20-ad9e-0e1e5b0d4ebe@kernel.org>
+From: "Nirujogi, Pratap" <pnirujog@amd.com>
+In-Reply-To: <d5666c26-164b-4b20-ad9e-0e1e5b0d4ebe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0328.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6c::20) To CY5PR12MB6429.namprd12.prod.outlook.com
+ (2603:10b6:930:3b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: mfd: syscon: Add ti,am62-ddr-pmctrl
-To: Andrew Davis <afd@ti.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250122-topic-am62-dt-syscon-v6-13-v1-0-515d56edc35e@baylibre.com>
- <20250122-topic-am62-dt-syscon-v6-13-v1-2-515d56edc35e@baylibre.com>
- <20250124-heavy-jaybird-of-vitality-4cbe24@krzk-bin>
- <20250124-able-beagle-of-prowess-f5eb7a@krzk-bin>
- <mocfnpebc67xegcis6tx3ekhsjcsqnvhwtipufycrtq2be4nbh@pmxhir5gmkos>
- <639b4e3a-3f68-4fba-aa33-c46dcb6fc88f@linaro.org>
- <d6252b73-0bcc-4724-8144-d6a98c8980f8@ti.com>
- <74ee6d9b-fd78-4d8a-a94f-b2c4dc794b60@linaro.org>
- <ebsbaaxyatrcikoem75t2blkhhceuidq3wnj3r2hbezfcmtc3u@ptffexrigbff>
- <f9a2247e-e0eb-4e22-8626-80e87afa9386@linaro.org>
- <qjwlppsq4eorzepvjsgjjyyaddouo5w2rjguu5c2mqesd6luwp@f426xeghy2ht>
- <2130b439-74d0-475d-8429-1a1b4d9738aa@linaro.org>
- <b7f6570f-3b80-4fc1-8201-d44f5692867f@ti.com>
- <07bf9f93-deb8-48a1-aae9-a8a053680cc9@linaro.org>
- <6241ff00-27e6-45ab-808e-f04e39854753@ti.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <6241ff00-27e6-45ab-808e-f04e39854753@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6429:EE_|MW6PR12MB8868:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8d96db2-997f-4cbb-9f71-08dd81b8b270
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YlJ1emtmWlNoQlhmTlhlR1JHRTJudnp0aGo2ZjY4UjFMcW0xcWpZR0h5ZU5K?=
+ =?utf-8?B?MzFxVExXeGU3enVlaU1kVTYvcFNvUURNa1praCtCeHFMZGtEdHZacTJqVkll?=
+ =?utf-8?B?S1VZeTgzQjdqMFpyb0hZU3A3eHJVQ1hLQ0p3QVlvVmV5UDVhZ1pYMzExUW5N?=
+ =?utf-8?B?WnNlMWUwV0NoK0x4bEFZMk1oWW5BVXFBeW9nZHdZaTVDWE9xalpyVmUwM05P?=
+ =?utf-8?B?cEVUR0pZdms1RGdCcUhKNDFqbXZ1NEFIYTVWZGFCV25Bb2ozRStrdUtLVXBR?=
+ =?utf-8?B?TmNSWHEzcllBdk04eTk0S0JWbDFoTWdoZHlUR0Z4UUtycFIvNVhRTmFOVm4y?=
+ =?utf-8?B?Y2IvWXVPeG5FNzVubitzUmF0UVFFQ2g0dTF5UjZEaFhtM2taY2RVMnVEUE53?=
+ =?utf-8?B?YXNvRGsxb0N0QW9QQ3dZbTlMMm44czVBanU0d1BVSHdqRjQrUlNIKzMzQ0RC?=
+ =?utf-8?B?QUlCT2dJTmN3VzBTc2RFMFp2Q0ZLRG9CZXlseFZYck9sSVNiTHhCcFNFeEFx?=
+ =?utf-8?B?MGpLdzBqYkZPdytNdVZTcERWSUJVU3ByZlpubXovNWZ2dUN5TFVtNDY0TUF3?=
+ =?utf-8?B?MTBLUDVjc3FRWHVwUGNuOFloMElYTlNPUzl4YmJWUjEyeis1eDU1WVNkL0ts?=
+ =?utf-8?B?NUxTZFNYa2VLQXowTGRBcUFYR2xXQm1PQUVhSjlNdlBMamJDNXI4RjN2UDg1?=
+ =?utf-8?B?YmZrMUpLb05JUzFzcEFLbjNJRy8rM2dCQStQcG1tajJONnFuQ0lDTmg2cWds?=
+ =?utf-8?B?RTUwYzU1Q0R3ZkZiWU1jNWNMS3lFV3lwYUNrQjBLWUlKUkovUDdXYnVOTUJS?=
+ =?utf-8?B?TjNlQ2F2c1J0eUtDMmVHNU9hWlY2Zkxxa2V2aGJtL3RHT2VNcHZRN29tZ21R?=
+ =?utf-8?B?ZmxxWmpSMCs1UTdtWXRaWFpuQ0ZETTFOb2JRbTczeWN1cytuRGUxZTFBWm1J?=
+ =?utf-8?B?SFpSZzRydk1wbjF3bkE5N3B1TVpod0NKQldvZTcvNDFaQy8yMG1kWW5FYW1X?=
+ =?utf-8?B?TzhTbExRZWEwQTkvNHVkYnlQbGU1bTdpVmN3c3dkT2VnMWE2RmpGcXM1RUFz?=
+ =?utf-8?B?WHdVeW5Rc2xzYjBUWVpBRCs1eFhUTFhpTy9SNGZOc01JN3VYY2t4Y2ZSOG8v?=
+ =?utf-8?B?clJyMStQOXdBWUpQN3g3eE5yRktIUCtobllGcUpoZG1XTmpEMk9kZGlieEtN?=
+ =?utf-8?B?Z1hsT29Na1FSZ3BhYkxtdyt3TGtLdHBqY2hjZXdjM2dpMGVjODhOTGZ3SStm?=
+ =?utf-8?B?cWdYU3d4ZWdRWmp3QzZRY05JQXA0RnljcEd0K0VhUUpNUVNHZkY2U1E5Z1Bn?=
+ =?utf-8?B?ZWJKcWxnaVdUcGtOVXg2ZjUyMXRWSzloSFhQMGRqbEtncnUyTnlCZ1RqYWVh?=
+ =?utf-8?B?Y3dSZTU0cEV0ZGxwd2RUZWQ4dmNabERMK2hBWFpxelE3dmVLcHd2S3B4ck9N?=
+ =?utf-8?B?Y1JvS3o2TzRjOFZENUJ1Skp2VW1QbTVVVUk3YjVxZmQxMjU4QjkweFpFYzkz?=
+ =?utf-8?B?SlBPL1EvdGcvb0x5cHdhMnFCdU1MZzJBN0gxUXBtdGFlKzR6d2syUEV0S252?=
+ =?utf-8?B?dWc5ZmptMXh6d0hsUWtLU3l2ZmkvcGdKbkZXOUs2dy9DTERrTFB4OVZFbmto?=
+ =?utf-8?B?dndMYllVZFJ5bGRpTVkrTXFCaTFtWEdlUnMyQUFKUjh2bHA0QlZHWDZWU1Vj?=
+ =?utf-8?B?eERaeWtDanpmU2xIazZ5UlJ1WHlnd0t3MC9kVVl5a2FFcnpCelliY3hWalZQ?=
+ =?utf-8?B?L3ltdksxODFSbUlGYWlRWGoxRC94VjRGZHpkcGlpbWVQU2dHWHBsRjQwUStk?=
+ =?utf-8?B?azcvamVPR2MyZUR5cEpZUzRvekhsQm9HdFZvNG4xekRDVkw5Z2pFaDBUK3Zl?=
+ =?utf-8?B?eTRuRElyS3VISUZ2N3poVFJyNTk2WjYrWEswS0c2S3Q5S1h1OXVXTHNkRnds?=
+ =?utf-8?Q?wUNjff1x9mA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6429.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGhGc1VsT2xsQzBiVW43Z3RBOC9nQkRoVGJ6WFp4dzVIODI5SFFaZ1RmbFdP?=
+ =?utf-8?B?bmVLeDlIbjdVYXZYeG1oTU1mcUU3VWhwVUo2VkhSdDFReUM1NUY1MHNLZUZN?=
+ =?utf-8?B?TE9CTDZla0ZQemJ3b1Vwa0pGWko5L0xBakFmbXNDaExxdEpqTGlMYS92Ri9F?=
+ =?utf-8?B?QkhFWFMyQi8yVGtFV0szSk94MGdVSWl4SEd2a05oWkVoaW96RzM4Yk4yamNT?=
+ =?utf-8?B?eHkrYU5aYWtXenVINllacjRGQjhHTGtxZVhIZ1RvTlZjSDB5RjdSRUdOUzkr?=
+ =?utf-8?B?TjZsT3IwQWlMaXd4Mi9oMVVPTE5hdVM5amw3VlJzdS92eDJDMjRCV2swcTJB?=
+ =?utf-8?B?ZkVQbGkzaDdOTlh6eEh5dm9ZTHY1QURHSlVKMnQxR3dMQ3RJNkpTTVdzYW4w?=
+ =?utf-8?B?b2JVcVZJV0lwZDlZUEcxZTZNcmlTdlVsQkgrMXFmU1M5K054aGJSb2tITUdk?=
+ =?utf-8?B?VHk5ZitVTjhQKzdiMnpja3BqQ285MmJXbzR6VVBMRUY1em5CTllIWHdWVFEx?=
+ =?utf-8?B?TVo2bmg5dnp3eDJuY01FOXVLcHZUem5nbHVzWlg1Sk5RSE1yNE5WNmJIRmwz?=
+ =?utf-8?B?UTB4Z3QwYlFKb2Z4R25WZEZ6eDR4WnVQV1ZXNVhlYmFFSU9UbmpNL2cvTXYw?=
+ =?utf-8?B?VjQzSm5FZEJtdmZlVmtXT0l3YkdwZU11ZTVFOFJlRHNXSkdhcUl3WTFoZE5x?=
+ =?utf-8?B?U3pMc0RsVzl1dDBZbnJwM212MkRnRWlrVlcrZTczNVlFT0ZHNDlNTnVMdFBE?=
+ =?utf-8?B?RWxsUjN4ckVVN2hzQmwrQ05acFQ0aXhQM3gvT2g3Vi9Db3pqSldVQllXMXdD?=
+ =?utf-8?B?Mkh4Z2ZrSkdyY0FuT0pSWmtvT1d4ZWhvbW9SSVhuNk1HdHFGbFZlY3VWR0pS?=
+ =?utf-8?B?TDVTT3o2L2syQXBQd0xkdTFIcU8xQis3bnp1N1FZTkdyNlRhY1FHSlRqYW1x?=
+ =?utf-8?B?c0ZhbUYyTDFDTzlrR3FZS0kyekJXbi82U3JJbnNHZGVuSXlJKy9aby9wTERU?=
+ =?utf-8?B?REdPRThKM3J4YVV0Z0IrRkJ2dE01blAvTUxpN0Z2QW15L0pkSC9KQk94QktZ?=
+ =?utf-8?B?Z3M3L1V0VjFQT3EvZUcwZUw0RUdOT0NxY2FxZmlTTk1hQ0daaXE4Qkd2QTBZ?=
+ =?utf-8?B?Tzg0NWcxcTc3c3IzZnhCS2t0VS9iRm4rLzhsczlQMkU0R3V3WXNmS1JuZmVu?=
+ =?utf-8?B?NFc3elJjQVBFbGptcXdXTEJNQ242dU0wWVBhUDBINU55OTFXWWFNZFhaVFJL?=
+ =?utf-8?B?Z2ptUnY2QUFYdThRQWRvSUZVSmNjYi8yNlAvMjd6RWRsVW5qZ1B0UGFHQnRp?=
+ =?utf-8?B?b21acTYxMnROZUd0aHArWjQ2MC9KQWlGbi9xWTUrSHVxc1FpQTgzeDVBcjg5?=
+ =?utf-8?B?NGdxZGM5bEorWURZSFU0b004WnR3a2U2V0pQNlIrVHpFalZpS1U2VFB5dTYv?=
+ =?utf-8?B?Zm1UUVIwc0lONmdHYklKU0N6V3E3Q2VLS252SWw1MlEvKzhvQTFzNklGOXZH?=
+ =?utf-8?B?SFpJQWpwaGVpaWxyNEJRVXhhY0p1VlMyeEh1QTMrVGNjMWdVTHdjVkxEdFZz?=
+ =?utf-8?B?N2UvWUFUUW95Qm1LM2VHYUQzbFF6KzljRDFLM3JvUkRaSTNkMlB4cXd5bGpH?=
+ =?utf-8?B?YXRleUNyZDZtVG5EYi9rT3JDWEhMMHNQaHRMQk1BUWRHUURZOU5KaHlxSi9F?=
+ =?utf-8?B?RitHenlKSnZSRHFzZnh3R3hzQXdxNHFGdnh2QVcrOWpUOFFwbUkzTXp4eGFM?=
+ =?utf-8?B?eDd2dXRHSnBSK2k3SW9CVWlzVk11YUtScnNvWjJTbmJTcnkwWWc5bytBWDcz?=
+ =?utf-8?B?UjJqcEN6NE1yeE1naEFmWlRYNVB6YU1pU0psYTdWMFoyYWVRV2RvZVkzOExF?=
+ =?utf-8?B?UkNQRnNpTjVWWk5IMTlPK2hpQXlaMVNmVDhVZjdHbTFQWHZRUFFxUFJKOUFV?=
+ =?utf-8?B?UUVyUURpZlV4R3Exa1BBNkJwL1owUlZCQWloQmNQSDlLTjBQbmR2bWQyN2Vl?=
+ =?utf-8?B?SE4rU0FyQWZ5MVBXQkVqdWlTM2NCY2FBQStUWFJZTHFSNXlTODk5UENWakI3?=
+ =?utf-8?B?ZU9uN2NtaFpsYXFzaXlCSFZRS3pFQVFYeENaYlZiNUIyQ2pGSXEzcG43L3B2?=
+ =?utf-8?Q?O7bxDj5cVaECzK0qlyCSZzmQF?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8d96db2-997f-4cbb-9f71-08dd81b8b270
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6429.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 16:14:02.5865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nm2OYpT/J3/jbTVsg0DhtL80YlOkZimfobn4rJEucMIF5xdZF5s+aPEAyvdJwJgd8A2OPGjqURETRC6YpVOIgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8868
 
-On 4/21/25 12:03 PM, Andrew Davis wrote:
 
-...
 
-> Which parent device? That is my point, if the top level node for the
-> whole CTRL_MMR region is made into one big syscon, then a big regmap
-> is made that covers the whole region. All the child devices also make
-> regmaps covering their device range. Now these registers under the child
-> device belong to two different regmaps. No synchronization is done as
-> these are not the same regmap, regmap only handles this for multiple
-> access to registers within the same regmap.
+On 3/1/2025 8:33 AM, Krzysztof Kozlowski wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
 > 
+> 
+> On 28/02/2025 17:45, Pratap Nirujogi wrote:
+>> The camera sensor is connected via ISP I2C bus in AMD SOC
+>> architectures. Add new I2C designware driver to support
+>> new camera sensors on AMD HW.
+>>
+>> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>> ---
+>>   drivers/i2c/busses/Kconfig                 |  10 +
+>>   drivers/i2c/busses/Makefile                |   1 +
+>>   drivers/i2c/busses/i2c-designware-amdisp.c | 266 +++++++++++++++++++++
+>>   drivers/i2c/busses/i2c-designware-amdisp.h |  24 ++
+>>   4 files changed, 301 insertions(+)
+>>   create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
+>>   create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.h
+>>
+>> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+>> index fc438f445771..79448211baae 100644
+>> --- a/drivers/i2c/busses/Kconfig
+>> +++ b/drivers/i2c/busses/Kconfig
+>> @@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
+>>          This driver can also be built as a module.  If so, the module
+>>          will be called i2c-designware-platform.
+>>
+>> +config I2C_DESIGNWARE_AMDISP
+>> +     tristate "Synopsys DesignWare Platform for AMDISP"
+>> +     depends on I2C_DESIGNWARE_CORE
+>> +     help
+>> +       If you say yes to this option, support will be included for the
+>> +       AMDISP Synopsys DesignWare I2C adapter.
+>> +
+>> +       This driver can also be built as a module.  If so, the module
+>> +       will be called amd_isp_i2c_designware.
+>> +
+>>   config I2C_DESIGNWARE_AMDPSP
+>>        bool "AMD PSP I2C semaphore support"
+>>        depends on ACPI
+>> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+>> index 1c2a4510abe4..cfe53038df69 100644
+>> --- a/drivers/i2c/busses/Makefile
+>> +++ b/drivers/i2c/busses/Makefile
+>> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)                       += i2c-designware-platform.o
+>>   i2c-designware-platform-y                            := i2c-designware-platdrv.o
+>>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)      += i2c-designware-amdpsp.o
+>>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
+>> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
+>>   obj-$(CONFIG_I2C_DESIGNWARE_PCI)                     += i2c-designware-pci.o
+>>   i2c-designware-pci-y                                 := i2c-designware-pcidrv.o
+>>   obj-$(CONFIG_I2C_DIGICOLOR)  += i2c-digicolor.o
+>> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+>> new file mode 100644
+>> index 000000000000..dc90510a440b
+>> --- /dev/null
+>> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+>> @@ -0,0 +1,266 @@
+>> +/* SPDX-License-Identifier: MIT */
+>> +/*
+>> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
+>> + *
+>> + * Permission is hereby granted, free of charge, to any person obtaining a
+>> + * copy of this software and associated documentation files (the "Software"),
+>> + * to deal in the Software without restriction, including without limitation
+>> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+>> + * and/or sell copies of the Software, and to permit persons to whom the
+>> + * Software is furnished to do so, subject to the following conditions:
+>> + *
+>> + * The above copyright notice and this permission notice shall be included in
+>> + * all copies or substantial portions of the Software.
+>> + *
+>> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+>> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+>> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+>> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+>> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+>> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>> + * OTHER DEALINGS IN THE SOFTWARE.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/dmi.h>
+>> +#include <linux/err.h>
+>> +#include <linux/errno.h>
+> 
+> Hm?
+> 
+>> +#include <linux/i2c.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+> 
+> Drop... or you miss bindings.
+> 
+> Many more headers look not used or even wrong.
+> 
+Thanks. Will clean-up header files in V2.
 
-Why does the child device have to create a new/separate regmap? Can it not use
-something like syscon_regmap_lookup_by_phandle_args() to get the regmap from
-the "syscon" node along with 1 or more args specifying the one or few registers
-out of the full range that are assigned to that specific child node? This way,
-all child nodes would be using the same shared regmap.
+> Best regards,
+> Krzysztof
 
-(And yes, I know technically they don't need to be child nodes - just using that
-terminology to be consistent with the previous discussion.)
 
