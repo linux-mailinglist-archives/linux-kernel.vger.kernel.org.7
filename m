@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-613967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0165A96498
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C131AA964A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020203B1446
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2893B4DE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93DD20126C;
-	Tue, 22 Apr 2025 09:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417EE20F07D;
+	Tue, 22 Apr 2025 09:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q2bOGfAE"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WWkIDtlT"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B7202F7B;
-	Tue, 22 Apr 2025 09:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F4920B7EC;
+	Tue, 22 Apr 2025 09:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745314719; cv=fail; b=k732EvgknMq6XbTL9omxDSGbPjI7UhgDoBGZfHstk97ICEtgFIIOer1hVDkem3893SnFzpbTyKXVCCvSlil2LPeTUeAvqwwCyTerftg+A5riELrOSr+kTsa4h3w1wVdjNpkfPROxQNZJkzpOJJZ/7dLHGP5dporvBSMQ17dtUUI=
+	t=1745314724; cv=fail; b=AVnTTGHAjsg99464l0OOrKynw5hzfuSI8vpFbjTNltC1vRMVxO8yHHj2X312xb99fbUSt569b7cKxGs285H5jJIts1c0ml+ZJau6Al3wTcGWTrdvcEZcfmpXhMGr0WFCmx4hq4UErHT1A6/3L2Cz/SM6bDveTrh29cTfG8OdD6I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745314719; c=relaxed/simple;
-	bh=tmu+k33oFKInuGsaHZziim4+xQaxxYbvv9C86Fpx0wk=;
+	s=arc-20240116; t=1745314724; c=relaxed/simple;
+	bh=TlYMJ4pTpJdP3SxoPQEIaXfUmt80+YZdh8Ay/mkwdRw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSK7hD0vv6vzjqlebTmdJeymYUMqtm1jXZL/6hwhrp1F7Ji103YwUxL4eSR0KJ6wFRO9NpwhxGPWQh/oDAbtuHhcNSLxGhmpfcGZX1l6fY1vaANtg4VcnRwJ5oOqNJ4mmv5UeDf8jOzp2rFDoS6gucdxk5NwuPL9eSC0b0Pz12A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q2bOGfAE; arc=fail smtp.client-ip=40.107.94.60
+	 MIME-Version:Content-Type; b=J31lU3QjxKdVMBn1v2HhwG14o35fqeERuZQm/70Hs/2tZ1ZrwPRbQORjXIcbnZiNTUSnH/dI3N6CAKsT71WXc87r2i7X1TBVvAMxvURkhTEemVrJ7rOHD7jOAt1EMMfD8paG789lLzqa6u+A13a0eVAKaeR9p7Vod3b8fviAJtA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WWkIDtlT; arc=fail smtp.client-ip=40.107.223.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cSbJZl2rit6X8AZBY+ogg9O6T8OlCDB9rW4X2rSHQuGuL2D0PDiYn8l+ibJFFOXN51wCY1BdPaGWUcbz1uMv7nM/ZWqDbFxW+cgn1W1iI8LVs6tRLgJ+aSJ8D/GCcmJ9FnJ7vvmSMZvMfum01Q5vZ8bM1jnoZu+UYabtJDbv8Pg4N3BGdw+4CVnfgMafk9NqhA5jVUTZzma+Es1GVRhuvgpPE/zSyjaZOe4+8osEFYIL4KzAWZlJnr/o8vN89D5aVCeDM/BZ4/pbEFTYNGFk9Eew8u4FsJ5A7g7yOTtVLKnhHDHWkRUADkVsusxs3ZePF/hnjcFAzI+Jo4QVeAhIVw==
+ b=BeAH8VhR+0GL6NxBruB3umpbtF+LShRrVk5+EBjSuktQQqCXVdB6u98cXzz5Gox5LzsAQac69bFQa3AF6HfeY0F3GqJKSmiJGv/fkLaUWV0B0Gt+PytY1FWWqHP9qlFS2FnBZYnZ0mJg33OnByhKW6VXOH0mtz4J83o9X4m8jU94ppkpPe0X5fA9JItonYgFfuyd7bBz7RjngbssFr2qzNRXpT6Dk/pY8oaT8DHE3sY3r2H+DL8TXqunxt1iRdfBNDjvi+gZRwJVtp59mmpbMfy+zvdDtWBioi39YyoXEcu5w4e44EO7wOq6mNNkmvWFPKelUKKDgFLp6U8BfMrHeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Ci+5wLBV09gVfBKk810+Ic7d3tWJdU179mt/KAB8hA=;
- b=XxT1wt3nX2HRQANiWehaTAoZW/YwaNL/qqXE1icPr9Cbf5YE3pT/XZnVn1uDCZZSxy01iwjJl27rcnUhbYVg5cpNw3+G2VWSNohAWwtDfuixwFKxWDrA/DNDKLnlIiMevFD8VmIVc9bSfcFWWumjSeWY6/0uT49PQXnf0fQZ8Vl4UkNpP1EDB/imyW+bebP36Eg4iew3TEEszbEXrbr29V5YbQC8CpRMvpsQ6WUKEgmmc2iibBQstns3jQCqZZ8ke/OejiyoJF0hlmq1NveG7tJCoLegtFTgADZqCIqk2Or2bdQdcuKmBitsrDo1lbUm/W3pllq4lOWe+GiuS44tXA==
+ bh=RnlkzjZy0ROvLGnOytKgILJe2WhWONMOCUWcbDn+c5k=;
+ b=ltHBuCwBQBX6pitjwoW3+AakO+8JTnuck4+NGLX/oosM6rr+vYzJPTJRAcdh/yNt+bpeAtmt7tYuoWX19xvdOz4/O7kYRqnn/0VxrXqL7Lo0SWFcGU4huaYDn96MCEZPPjppZuyohzeF4F/H839/i7ZapiZv+Z2DdIZTaAoUQqy9tnVgz2FA0NqHlJSlMZOVGm9KjV3mHEo+R+bDvBEBsmDvqvFeEH6ql+sTI1wG7S6oS6OPytNv3LjzGA5AfcuDPzYSJZmUh9ry8qSzFCQ1udxZgJUVCZGnR0zdjo56kL2SpKPr4GWJmVqsJ6CPkwF3lMDsR2MRVkK4DxPfY/L6Og==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Ci+5wLBV09gVfBKk810+Ic7d3tWJdU179mt/KAB8hA=;
- b=q2bOGfAEM8T23C5yYcssiVnRRpsXi18+TTVFxB89ilnmZ4ysLGLqki7doOi7ct/lc5DNL3uAlT6MZ3ip3Y4hLNh3OjXDs3U6GS+DTF/CsRfXncxLv99CfD2bHJYVdzGJldX4EGdKCi20kHDuyuoy3I1QEy98M81zXh2qaVzFJrW8gGLIo+YtvuV3/wIZ95qXa88cnJ9RMIItvQ3WkHxMMcH6OYoPw/0DD/nDNxcGsB3NMLNFeyOvcUpWAj4sAfWTyP8K3ug47u+Ky0rYcDPXaxs6DjkXZTeoW/XdYf+zZLHh4y1KgPoqJi+t7jx6+Woy5eeKkZLlzTZccJ72fmt1Fg==
-Received: from BL1PR13CA0346.namprd13.prod.outlook.com (2603:10b6:208:2c6::21)
- by MW4PR12MB7030.namprd12.prod.outlook.com (2603:10b6:303:20a::8) with
+ bh=RnlkzjZy0ROvLGnOytKgILJe2WhWONMOCUWcbDn+c5k=;
+ b=WWkIDtlTJjBlv39u/K2+cHP0GV5RdHfVzrKgHtahf/gJY7CB4aZeHTQc2y3IKk+J/GqWZBFEbvjqLPaqVzOCfFOk0+diqbVG2i+nWdoNXurIC/O9Awp7QNL71yB8d1mfLa25PEZ5p7kENW0NESEAgXZHL62ycW6AbQVybvs4VNmzv1mLtQKSA26b9fy87IoLS4U04u6NvgJ/j2zvW8rYkPbSGtL16upoPzDCxcxCjijSCXDGBluoIWf6kzwJ2ToI20Hz8xqVcXzwzLxNEJXg3/5yHwxLNUOXrd8ANK5USahqbK1gTXW3tFIR1pwPkr1iHc9ec7ujFFJzxdljA8DwTg==
+Received: from BL1PR13CA0356.namprd13.prod.outlook.com (2603:10b6:208:2c6::31)
+ by IA0PPF7646FEBB5.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd3) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Tue, 22 Apr
- 2025 09:38:33 +0000
+ 2025 09:38:34 +0000
 Received: from BN2PEPF0000449F.namprd02.prod.outlook.com
- (2603:10b6:208:2c6:cafe::c9) by BL1PR13CA0346.outlook.office365.com
- (2603:10b6:208:2c6::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
- 22 Apr 2025 09:38:33 +0000
+ (2603:10b6:208:2c6:cafe::b2) by BL1PR13CA0356.outlook.office365.com
+ (2603:10b6:208:2c6::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.36 via Frontend Transport; Tue,
+ 22 Apr 2025 09:38:34 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -65,7 +65,7 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.117.161) by
  BN2PEPF0000449F.mail.protection.outlook.com (10.167.243.150) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 09:38:32 +0000
+ 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 09:38:34 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Apr
@@ -73,7 +73,7 @@ Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
 Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Apr
- 2025 02:38:20 -0700
+ 2025 02:38:21 -0700
 Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
  mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via
  Frontend Transport; Tue, 22 Apr 2025 02:38:20 -0700
@@ -84,9 +84,9 @@ CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
 	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>, <mkumard@nvidia.com>,
 	<spujar@nvidia.com>, Sheetal <sheetal@nvidia.com>
-Subject: [RESEND PATCH 05/10] ASoC: tegra: Update PLL rate for Tegra264
-Date: Tue, 22 Apr 2025 09:38:10 +0000
-Message-ID: <20250422093815.506810-6-sheetal@nvidia.com>
+Subject: [RESEND PATCH 06/10] ASoC: tegra: I2S: Add Tegra264 support
+Date: Tue, 22 Apr 2025 09:38:11 +0000
+Message-ID: <20250422093815.506810-7-sheetal@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250422093815.506810-1-sheetal@nvidia.com>
 References: <20250422093815.506810-1-sheetal@nvidia.com>
@@ -96,118 +96,580 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|MW4PR12MB7030:EE_
-X-MS-Office365-Filtering-Correlation-Id: d76b461f-d65f-4b8c-6fd5-08dd818172b3
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|IA0PPF7646FEBB5:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4d1475f-f20a-4335-7495-08dd81817387
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WDhldUFYSm9RaWtRYU5BaFVqQkx4N25DSVQ0aThhaGI5bmZjSzhNYThzdjZX?=
- =?utf-8?B?ejMwRTM1QStYYURXK0VzWks5TE55ZU5BUk9mSmVhK01WVi9BTG4vRzFSK3Bw?=
- =?utf-8?B?dks5YnUzeTU0cWpSVmovRlhqVWRYQzlCSVNUN3J3eSs5ZU5kWkZkbDF3N0JS?=
- =?utf-8?B?aklnY3RFNVFyWXJIaDhYckpyZGZkODRscjJIVG43ZUVGdHAyZ1A1bXU1TDV3?=
- =?utf-8?B?eXYzMjJsNU1aeElaOXYzYjhkQ0xnZE5ianFsV0FoTGd6WVN3bEhtaCtydk9v?=
- =?utf-8?B?d3h2eFpKVmlPaU9nVFpsNlR5d09LTEloWDBRRVRJQ2dCY3lqMlZtY1hrc09j?=
- =?utf-8?B?N3NXU2JMenp5aU5NdHR2aDlOZmlwWFA1ODEyb2FPWGxUVWVTQjFXTTMzM1dH?=
- =?utf-8?B?U05VeUI3NEg2L1g0TFVua2djTFY1NDRMRVNiRkIyMVpOUGdjZUZlQXArTTNB?=
- =?utf-8?B?TzN2MWM0YXNJL0NtTkxnZ2VmSkdBU0hkSG92aFBMQWY5TlREanV1eXhyeFVm?=
- =?utf-8?B?eUdOSThXVVEyV05GZ094cDRQT2ZWdUo4WE5hS0VRKzBOaXk5Nk5xL2NNUVdM?=
- =?utf-8?B?UEQ5elJsMTVqVWJaZUFPV2hLNWpIVStPL2ppRldUUHFZa1d3V0hNQmZBcitl?=
- =?utf-8?B?aExSZ25LYnBZZlllc0QvV2ZTRGhFMElCeTkrU1J0QVJSQVhjaWpuUnVqWVRI?=
- =?utf-8?B?RkZBM1p6VitubjdLY3JPaTJsR2JMT3p3QnllVWdacTZ5NVVIT290ck5TMkhT?=
- =?utf-8?B?Z01NMFVJd1lJMFZYL3VSTUZ2d09CTm5nK1ZwcngzUzFVajkvZUlyVXM5bnFC?=
- =?utf-8?B?MXdwbGJkQlpPaStkdTg1VTVRMTVkMEZ2WTcwOUtPNGhKQUZ5VDBBeVNmeldY?=
- =?utf-8?B?QXh1YStzYlNaMVp4WWV4aWw2UTZPOWNWQlkrUVVMZVFORlA0SS92V0gwcGRX?=
- =?utf-8?B?Zk8zN1IrSjFlMmU4Zk56SGF4SlRSOVNPZitCam5jRlJ3Wmk2Mzc4Z3dXNkwr?=
- =?utf-8?B?SVdoT1JSSTU1TTQ0RTJvbWhLTHlSMFBZKzNXRlVUeWwxL0huRGNTQUpEMnJs?=
- =?utf-8?B?c2ErYzNPT1dyOGs2WkxxMXZNbks0VndJUGVtZVdiZ204YmVNNmlWYUExV1lO?=
- =?utf-8?B?cjZtdk05R0J1Q013SUR4TU1mTFdVN09PZmtCb01sVnZWNzJkWW52ZkI3TVp1?=
- =?utf-8?B?Uzkyakl3UXdyQ0xjYnZ1b1BBZGF2OVFoQ1ErbXJmWERWby9RTkgyMm1VUVNj?=
- =?utf-8?B?Zzl1Sy9IRy9XemMzd1BsMWtzOWdPWjBQMC90QXJJMXpsT0d3TEExMkxQendS?=
- =?utf-8?B?TTg3S2tDa29LZ2dEdXFOMzFNNmFqY0JMQkY3N3Y1VUhvSWRvS0F3OEl2cDZh?=
- =?utf-8?B?Z3FoLzZiRlBDNE4rV2N4ajkyeHFQNTdpOUI3T0ZCQ2pWK0ZTcXdWOUp4SmxE?=
- =?utf-8?B?YmxrUDVIM0NOWks2T0F1U1hyTytJb0s3Y1hCOHduZzZoalB6RnR5QkFnZmVs?=
- =?utf-8?B?MGFqQjlDbWU0ZU9tVjBhVFVEcE43RWtEWS9kWDJuOWtEd3pzV3VIYWM4R2hB?=
- =?utf-8?B?dlFuaFdXQlhXVHlHY2ttZVVKRDV0SU55dlR3RDBTVWR4MVVuNzdyZzRRNjdQ?=
- =?utf-8?B?UDdSM1hQcVdleEdTTmMwU1RFSVFYeTlwcHVzY3BEYjAyTDNvRXpEOGVZTWtJ?=
- =?utf-8?B?UUpTSjBEM000RXhOd0JiRmxYYnVUSG41eE5OVFZlMzMrajV2cFo2Zk1RQ0lZ?=
- =?utf-8?B?MnJnT2pkaXVKeld6YkorWlZPMUdBb05uSVhsekcwQmRRcVVEc1Q0bjRCbXU5?=
- =?utf-8?B?L0VSRFh3OGN5TjlselU0RElteWd0U2xOVm4zWDJtcE5lVVVieTd1djJ0SXF6?=
- =?utf-8?B?L25uOFJQUUpUMGtoUjhONkJ5dEFQZElDZVN2bmwyYkgybnd6VnFiV2dDUmlH?=
- =?utf-8?B?UWRBMHBIYkc2UUhkbkFaNWY3S3VtR2h4RXp6dDJiWkFkbks1MW5kaGg3TzBX?=
- =?utf-8?B?aTBrTW1OOEFNeGJ0TjlKU0x3YmI5ZzYzeFN3TnFXQ0NJZlBVZVBzZ0hBc3B5?=
- =?utf-8?Q?yzTev2?=
+	=?us-ascii?Q?z843uUbkzoiD2faKwLx9KcSVI+mLadaXiwRi9hDd44sqgpbofl+O3EdkXKfF?=
+ =?us-ascii?Q?3q4zVfDxkI0q0RTHyXYUB537vejNLGYTnuCuWUDOWiRhjlxLJzQaRTM0DM8/?=
+ =?us-ascii?Q?zWoXXfuBAkrS8YgVYC+z/kTaL+q8+syI/2DSDdjIJ2V3lEJzVPtNxKD0uGeo?=
+ =?us-ascii?Q?tC0CNhcM2FC815nknrOgylWPTT1QJUPs23Rp1Jjv3EiR5glpD+YEPZ3itfhA?=
+ =?us-ascii?Q?iQjYeY2pMnC3DzUi5chLwyXCNT0W4vuEwSFeV3zM7ARGec03mMIgN+AObGV0?=
+ =?us-ascii?Q?giI+eAtl0UUriQkbV2e6BezgxXfkCQyTh16PE65721zUePpocERk6mlEPBKj?=
+ =?us-ascii?Q?lg0828XRNek0Jn12XH9w4p1/HSk3/Eluaj7K9uM6jIe/ER0r9h4jCLaQCiti?=
+ =?us-ascii?Q?k7iNYXl9XzGWJxZmNV0V6X3jkPpZeYQsFWUkcd1xpQnJFJUtgreq7b3SyLVc?=
+ =?us-ascii?Q?p4Q1pcaMGh5Gp223/MdREiQB7jdfQfZyvdhKain74pb+Lk945sMPzDkG98Vh?=
+ =?us-ascii?Q?bCaqiHbY1LOPv/gv5duORlWBgNof4uLtTsVmIQXmUS37bMZmKCMod4PDmuyO?=
+ =?us-ascii?Q?GZcETvP1fkGaqYCB4W3IuEzDJ9RKFVTfIUh/Hbjdp9cdPZY3gTAATlROdMv+?=
+ =?us-ascii?Q?KFmU2JGrORXz8EQ9vHqEud6TAeApDe8LXyx+G5sLBDnqCTgSlQmgUgzbllD6?=
+ =?us-ascii?Q?damY2yiaViqWABtMLlDX2KjzITBabOHFyo6r/LjAwBSZ1UU8ITG4sU1D+2aw?=
+ =?us-ascii?Q?2YeOa6TdOgNss3V7+GNxaNRmohc76OqIJq3d2M8bv+ttg1Sv7KHkPbV974UM?=
+ =?us-ascii?Q?duQcVK5xLhXGiEd73SdfLXo/z7L5tLWnRXy0Oi2fDrkuwihqo/fEAviWXrsz?=
+ =?us-ascii?Q?Vlg//pFy2RRzL1HonNYrmamFT/S4mPkaqGhgZLO1n9zq1g/kYcIeoKrgNQhG?=
+ =?us-ascii?Q?NugPlQ5KTHO+3kJ/oe4nAodn/G97UkXW5qNgtOiiiBZqEE+Rnc7b2nkqQh00?=
+ =?us-ascii?Q?7c1ubDP1ja5/AtaAQGqFzOmVIqLF3ppq9hRH6CIS4R5P43sP0SDxwQSGI2lM?=
+ =?us-ascii?Q?+NbJa1yl48LgtrNZyR6BgppyZdugbdCa7By8DsRtpd+Hm4YtffbtXcMrdZAP?=
+ =?us-ascii?Q?mbYPrNxgsDBLI0mtjvaGQRp1l/LoAzQ2WYvsmUAfu0+MQ3xhqW5TG6Xvp/oJ?=
+ =?us-ascii?Q?Ik8MTVnop0M/yjoSSf9QqIu9Y6sOKUbur8OIZsChdbBS7VaAswYKdchZ+R+1?=
+ =?us-ascii?Q?h4Oq5csiEI3gfxUqC47Ax12jYOEfKr0bF59XSt1HibL6dAgEkbha6xErWPRG?=
+ =?us-ascii?Q?qzv6qdRVLt+Q1k071pTVChiQa5w3KKIN5Zf13NNeLYezig/Tt38A5cbz/Cys?=
+ =?us-ascii?Q?+tlvkcqQ8CPSL+0a31NJCYxSQXYg8IS9g9whYL5g4L9GRLOco1mRW6C4nkn+?=
+ =?us-ascii?Q?k1YWa7JnXyPSL+NzOf3EJUjf9NlYfHTxQDfEmJrsBXnSIftYeNb+nDv6Fxc4?=
+ =?us-ascii?Q?Hytlr4yQ+D0TqSrT82H9xYe6V5KVGpUbfBx/?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 09:38:32.9573
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 09:38:34.3479
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d76b461f-d65f-4b8c-6fd5-08dd818172b3
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4d1475f-f20a-4335-7495-08dd81817387
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BN2PEPF0000449F.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7030
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF7646FEBB5
 
 From: Sheetal <sheetal@nvidia.com>
 
-The PLLs should be set with a VCO frequency in the 900MHz – 1GHz range
-to minimize jitter and ppm error for Tegra264. Add the PLLA rate
-accordingly.
-
-Therefore, use 983040000 frequency is for multiple of 8K frequencies
-and 993484800 frequency is for multiple of 11.025K frequencies.
+Add Tegra264 I2S support with following changes:
+- Add soc_data for Tegra264-specific variations
+- Tegra264 I2S supports 32 audio channels, hence update the TDM config,
+  CIF configuration API and DAI channel_max parameter.
+- Register offsets and default values are updated to align with Tegra264.
 
 Signed-off-by: Sheetal <sheetal@nvidia.com>
 ---
- sound/soc/tegra/tegra_audio_graph_card.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ sound/soc/tegra/tegra210_i2s.c | 231 ++++++++++++++++++++++++++-------
+ sound/soc/tegra/tegra210_i2s.h |  51 +++++++-
+ 2 files changed, 233 insertions(+), 49 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
-index 8b48813c2c59..94b5ab77649b 100644
---- a/sound/soc/tegra/tegra_audio_graph_card.c
-+++ b/sound/soc/tegra/tegra_audio_graph_card.c
-@@ -1,8 +1,7 @@
+diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2s.c
+index 766cddebd5f6..100277c39001 100644
+--- a/sound/soc/tegra/tegra210_i2s.c
++++ b/sound/soc/tegra/tegra210_i2s.c
+@@ -1,5 +1,5 @@
  // SPDX-License-Identifier: GPL-2.0-only
-+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION. All rights reserved.
+-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
+ // All rights reserved.
  //
- // tegra_audio_graph_card.c - Audio Graph based Tegra Machine Driver
--//
--// Copyright (c) 2020-2021 NVIDIA CORPORATION.  All rights reserved.
- 
- #include <linux/math64.h>
- #include <linux/module.h>
-@@ -232,11 +231,22 @@ static const struct tegra_audio_cdata tegra186_data = {
- 	.plla_out0_rates[x11_RATE] = 45158400,
+ // tegra210_i2s.c - Tegra210 I2S driver
+@@ -36,14 +36,28 @@ static const struct reg_default tegra210_i2s_reg_defaults[] = {
+ 	{ TEGRA210_I2S_CYA, 0x1 },
  };
  
-+static const struct tegra_audio_cdata tegra264_data = {
-+	/* PLLA1 */
-+	.plla_rates[x8_RATE] = 983040000,
-+	.plla_rates[x11_RATE] = 993484800,
-+	/* PLLA1_OUT1 */
-+	.plla_out0_rates[x8_RATE] = 49152000,
-+	.plla_out0_rates[x11_RATE] = 45158400,
+-static void tegra210_i2s_set_slot_ctrl(struct regmap *regmap,
++static const struct reg_default tegra264_i2s_reg_defaults[] = {
++	{ TEGRA210_I2S_RX_INT_MASK, 0x00000003 },
++	{ TEGRA210_I2S_RX_CIF_CTRL, 0x00003f00 },
++	{ TEGRA264_I2S_TX_INT_MASK, 0x00000003 },
++	{ TEGRA264_I2S_TX_CIF_CTRL, 0x00003f00 },
++	{ TEGRA264_I2S_CG, 0x1 },
++	{ TEGRA264_I2S_TIMING, 0x0000001f },
++	{ TEGRA264_I2S_ENABLE, 0x1 },
++	{ TEGRA264_I2S_RX_FIFO_WR_ACCESS_MODE, 0x1 },
++	{ TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE, 0x1 },
 +};
 +
- static const struct of_device_id graph_of_tegra_match[] = {
- 	{ .compatible = "nvidia,tegra210-audio-graph-card",
- 	  .data = &tegra210_data },
- 	{ .compatible = "nvidia,tegra186-audio-graph-card",
- 	  .data = &tegra186_data },
-+	{ .compatible = "nvidia,tegra264-audio-graph-card",
-+	  .data = &tegra264_data },
++static void tegra210_i2s_set_slot_ctrl(struct tegra210_i2s *i2s,
+ 				       unsigned int total_slots,
+ 				       unsigned int tx_slot_mask,
+ 				       unsigned int rx_slot_mask)
+ {
+-	regmap_write(regmap, TEGRA210_I2S_SLOT_CTRL, total_slots - 1);
+-	regmap_write(regmap, TEGRA210_I2S_TX_SLOT_CTRL, tx_slot_mask);
+-	regmap_write(regmap, TEGRA210_I2S_RX_SLOT_CTRL, rx_slot_mask);
++	regmap_write(i2s->regmap, TEGRA210_I2S_SLOT_CTRL + i2s->soc_data->i2s_ctrl_offset,
++		     total_slots - 1);
++	regmap_write(i2s->regmap, TEGRA210_I2S_TX_SLOT_CTRL + i2s->soc_data->tx_offset,
++		     tx_slot_mask);
++	regmap_write(i2s->regmap, TEGRA210_I2S_RX_SLOT_CTRL, rx_slot_mask);
+ }
+ 
+ static int tegra210_i2s_set_clock_rate(struct device *dev,
+@@ -53,7 +67,7 @@ static int tegra210_i2s_set_clock_rate(struct device *dev,
+ 	unsigned int val;
+ 	int err;
+ 
+-	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &val);
++	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &val);
+ 
+ 	/* No need to set rates if I2S is being operated in slave */
+ 	if (!(val & I2S_CTRL_MASTER_EN))
+@@ -100,15 +114,15 @@ static int tegra210_i2s_sw_reset(struct snd_soc_component *compnt,
+ 		cif_reg = TEGRA210_I2S_RX_CIF_CTRL;
+ 		stream_reg = TEGRA210_I2S_RX_CTRL;
+ 	} else {
+-		reset_reg = TEGRA210_I2S_TX_SOFT_RESET;
+-		cif_reg = TEGRA210_I2S_TX_CIF_CTRL;
+-		stream_reg = TEGRA210_I2S_TX_CTRL;
++		reset_reg = TEGRA210_I2S_TX_SOFT_RESET + i2s->soc_data->tx_offset;
++		cif_reg = TEGRA210_I2S_TX_CIF_CTRL + i2s->soc_data->tx_offset;
++		stream_reg = TEGRA210_I2S_TX_CTRL + i2s->soc_data->tx_offset;
+ 	}
+ 
+ 	/* Store CIF and I2S control values */
+ 	regmap_read(i2s->regmap, cif_reg, &cif_ctrl);
+ 	regmap_read(i2s->regmap, stream_reg, &stream_ctrl);
+-	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &i2s_ctrl);
++	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &i2s_ctrl);
+ 
+ 	/* Reset to make sure the previous transactions are clean */
+ 	regmap_update_bits(i2s->regmap, reset_reg, reset_mask, reset_en);
+@@ -125,7 +139,7 @@ static int tegra210_i2s_sw_reset(struct snd_soc_component *compnt,
+ 	/* Restore CIF and I2S control values */
+ 	regmap_write(i2s->regmap, cif_reg, cif_ctrl);
+ 	regmap_write(i2s->regmap, stream_reg, stream_ctrl);
+-	regmap_write(i2s->regmap, TEGRA210_I2S_CTRL, i2s_ctrl);
++	regmap_write(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, i2s_ctrl);
+ 
+ 	return 0;
+ }
+@@ -140,16 +154,13 @@ static int tegra210_i2s_init(struct snd_soc_dapm_widget *w,
+ 	int stream;
+ 	int err;
+ 
+-	switch (w->reg) {
+-	case TEGRA210_I2S_RX_ENABLE:
++	if (w->reg == TEGRA210_I2S_RX_ENABLE) {
+ 		stream = SNDRV_PCM_STREAM_PLAYBACK;
+ 		status_reg = TEGRA210_I2S_RX_STATUS;
+-		break;
+-	case TEGRA210_I2S_TX_ENABLE:
++	} else if (w->reg == (TEGRA210_I2S_TX_ENABLE + i2s->soc_data->tx_offset)) {
+ 		stream = SNDRV_PCM_STREAM_CAPTURE;
+-		status_reg = TEGRA210_I2S_TX_STATUS;
+-		break;
+-	default:
++		status_reg = TEGRA210_I2S_TX_STATUS + i2s->soc_data->tx_offset;
++	} else {
+ 		return -EINVAL;
+ 	}
+ 
+@@ -199,7 +210,7 @@ static void tegra210_i2s_set_data_offset(struct tegra210_i2s *i2s,
+ 					 unsigned int data_offset)
+ {
+ 	/* Capture path */
+-	regmap_update_bits(i2s->regmap, TEGRA210_I2S_TX_CTRL,
++	regmap_update_bits(i2s->regmap, TEGRA210_I2S_TX_CTRL + i2s->soc_data->tx_offset,
+ 			   I2S_CTRL_DATA_OFFSET_MASK,
+ 			   data_offset << I2S_DATA_SHIFT);
+ 
+@@ -282,7 +293,8 @@ static int tegra210_i2s_set_fmt(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL, mask, val);
++	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
++			   mask, val);
+ 
+ 	i2s->dai_fmt = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+ 
+@@ -296,10 +308,10 @@ static int tegra210_i2s_set_tdm_slot(struct snd_soc_dai *dai,
+ 	struct tegra210_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 
+ 	/* Copy the required tx and rx mask */
+-	i2s->tx_mask = (tx_mask > DEFAULT_I2S_SLOT_MASK) ?
+-		       DEFAULT_I2S_SLOT_MASK : tx_mask;
+-	i2s->rx_mask = (rx_mask > DEFAULT_I2S_SLOT_MASK) ?
+-		       DEFAULT_I2S_SLOT_MASK : rx_mask;
++	i2s->tx_mask = (tx_mask > i2s->soc_data->slot_mask) ?
++		       i2s->soc_data->slot_mask : tx_mask;
++	i2s->rx_mask = (rx_mask > i2s->soc_data->slot_mask) ?
++		       i2s->soc_data->slot_mask : rx_mask;
+ 
+ 	return 0;
+ }
+@@ -327,8 +339,8 @@ static int tegra210_i2s_put_loopback(struct snd_kcontrol *kcontrol,
+ 
+ 	i2s->loopback = value;
+ 
+-	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL, I2S_CTRL_LPBK_MASK,
+-			   i2s->loopback << I2S_CTRL_LPBK_SHIFT);
++	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
++			   I2S_CTRL_LPBK_MASK, i2s->loopback << I2S_CTRL_LPBK_SHIFT);
+ 
+ 	return 1;
+ }
+@@ -364,9 +376,9 @@ static int tegra210_i2s_put_fsync_width(struct snd_kcontrol *kcontrol,
+ 	 * cases mixer control is used to update custom values. A value
+ 	 * of "N" here means, width is "N + 1" bit clock wide.
+ 	 */
+-	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL,
+-			   I2S_CTRL_FSYNC_WIDTH_MASK,
+-			   i2s->fsync_width << I2S_FSYNC_WIDTH_SHIFT);
++	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
++			   i2s->soc_data->fsync_width_mask,
++			   i2s->fsync_width << i2s->soc_data->fsync_width_shift);
+ 
+ 	return 1;
+ }
+@@ -562,7 +574,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
+ 		return err;
+ 	}
+ 
+-	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL, &val);
++	regmap_read(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset, &val);
+ 
+ 	/*
+ 	 * For LRCK mode, channel bit count depends on number of bit clocks
+@@ -578,7 +590,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
+ 	case I2S_CTRL_FRAME_FMT_FSYNC_MODE:
+ 		bit_count = (bclk_rate / srate) - 1;
+ 
+-		tegra210_i2s_set_slot_ctrl(i2s->regmap, channels,
++		tegra210_i2s_set_slot_ctrl(i2s, channels,
+ 					   i2s->tx_mask, i2s->rx_mask);
+ 		break;
+ 	default:
+@@ -591,7 +603,7 @@ static int tegra210_i2s_set_timing_params(struct device *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	regmap_write(i2s->regmap, TEGRA210_I2S_TIMING,
++	regmap_write(i2s->regmap, TEGRA210_I2S_TIMING + i2s->soc_data->i2s_ctrl_offset,
+ 		     bit_count << I2S_TIMING_CH_BIT_CNT_SHIFT);
+ 
+ 	return 0;
+@@ -673,7 +685,7 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	/* Program sample size */
+-	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL,
++	regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL + i2s->soc_data->i2s_ctrl_offset,
+ 			   I2S_CTRL_BIT_SIZE_MASK, val);
+ 
+ 	srate = params_rate(params);
+@@ -697,13 +709,16 @@ static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		reg = TEGRA210_I2S_RX_CIF_CTRL;
+ 	} else {
+-		reg = TEGRA210_I2S_TX_CIF_CTRL;
++		reg = TEGRA210_I2S_TX_CIF_CTRL + i2s->soc_data->tx_offset;
+ 	}
+ 
+ 	cif_conf.mono_conv = i2s->mono_to_stereo[path];
+ 	cif_conf.stereo_conv = i2s->stereo_to_mono[path];
+ 
+-	tegra_set_cif(i2s->regmap, reg, &cif_conf);
++	if (i2s->soc_data->max_ch == TEGRA264_I2S_MAX_CHANNEL)
++		tegra264_set_cif(i2s->regmap, reg, &cif_conf);
++	else
++		tegra_set_cif(i2s->regmap, reg, &cif_conf);
+ 
+ 	return tegra210_i2s_set_timing_params(dev, sample_size, srate,
+ 					      cif_conf.client_ch);
+@@ -808,13 +823,20 @@ static const struct snd_kcontrol_new tegra210_i2s_controls[] = {
+ 		       tegra210_i2s_put_bclk_ratio),
+ };
+ 
+-static const struct snd_soc_dapm_widget tegra210_i2s_widgets[] = {
+-	SND_SOC_DAPM_AIF_IN_E("RX", NULL, 0, TEGRA210_I2S_RX_ENABLE,
+-			      0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU),
+-	SND_SOC_DAPM_AIF_OUT_E("TX", NULL, 0, TEGRA210_I2S_TX_ENABLE,
+-			       0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU),
+-	SND_SOC_DAPM_MIC("MIC", NULL),
++#define TEGRA_I2S_WIDGETS(tx_enable_reg) \
++	SND_SOC_DAPM_AIF_IN_E("RX", NULL, 0, TEGRA210_I2S_RX_ENABLE, \
++			      0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU), \
++	SND_SOC_DAPM_AIF_OUT_E("TX", NULL, 0, tx_enable_reg, \
++			       0, 0, tegra210_i2s_init, SND_SOC_DAPM_PRE_PMU), \
++	SND_SOC_DAPM_MIC("MIC", NULL), \
+ 	SND_SOC_DAPM_SPK("SPK", NULL),
++
++static const struct snd_soc_dapm_widget tegra210_i2s_widgets[] = {
++	TEGRA_I2S_WIDGETS(TEGRA210_I2S_TX_ENABLE)
++};
++
++static const struct snd_soc_dapm_widget tegra264_i2s_widgets[] = {
++	TEGRA_I2S_WIDGETS(TEGRA264_I2S_TX_ENABLE)
+ };
+ 
+ static const struct snd_soc_dapm_route tegra210_i2s_routes[] = {
+@@ -841,6 +863,15 @@ static const struct snd_soc_component_driver tegra210_i2s_cmpnt = {
+ 	.num_controls		= ARRAY_SIZE(tegra210_i2s_controls),
+ };
+ 
++static const struct snd_soc_component_driver tegra264_i2s_cmpnt = {
++	.dapm_widgets		= tegra264_i2s_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(tegra264_i2s_widgets),
++	.dapm_routes		= tegra210_i2s_routes,
++	.num_dapm_routes	= ARRAY_SIZE(tegra210_i2s_routes),
++	.controls		= tegra210_i2s_controls,
++	.num_controls		= ARRAY_SIZE(tegra210_i2s_controls),
++};
++
+ static bool tegra210_i2s_wr_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+@@ -895,7 +926,68 @@ static bool tegra210_i2s_volatile_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-static const struct regmap_config tegra210_i2s_regmap_config = {
++static bool tegra264_i2s_wr_reg(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case TEGRA210_I2S_RX_ENABLE ... TEGRA210_I2S_RX_SOFT_RESET:
++	case TEGRA210_I2S_RX_INT_MASK ... TEGRA264_I2S_RX_CYA:
++	case TEGRA264_I2S_TX_ENABLE ... TEGRA264_I2S_TX_SOFT_RESET:
++	case TEGRA264_I2S_TX_INT_MASK ... TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE:
++	case TEGRA264_I2S_TX_FIFO_THRESHOLD ... TEGRA264_I2S_TX_CYA:
++	case TEGRA264_I2S_ENABLE ... TEGRA264_I2S_CG:
++	case TEGRA264_I2S_INT_SET ... TEGRA264_I2S_INT_MASK:
++	case TEGRA264_I2S_CTRL ... TEGRA264_I2S_CYA:
++		return true;
++	default:
++		return false;
++	};
++}
++
++static bool tegra264_i2s_rd_reg(struct device *dev, unsigned int reg)
++{
++	if (tegra264_i2s_wr_reg(dev, reg))
++		return true;
++
++	switch (reg) {
++	case TEGRA210_I2S_RX_STATUS:
++	case TEGRA210_I2S_RX_INT_STATUS:
++	case TEGRA264_I2S_RX_CIF_FIFO_STATUS:
++	case TEGRA264_I2S_TX_STATUS:
++	case TEGRA264_I2S_TX_INT_STATUS:
++	case TEGRA264_I2S_TX_FIFO_RD_DATA:
++	case TEGRA264_I2S_TX_CIF_FIFO_STATUS:
++	case TEGRA264_I2S_STATUS:
++	case TEGRA264_I2S_INT_STATUS:
++	case TEGRA264_I2S_PIO_MODE_ENABLE:
++	case TEGRA264_I2S_PAD_MACRO_STATUS:
++		return true;
++	default:
++		return false;
++	};
++}
++
++static bool tegra264_i2s_volatile_reg(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case TEGRA210_I2S_RX_SOFT_RESET:
++	case TEGRA210_I2S_RX_STATUS:
++	case TEGRA210_I2S_RX_INT_STATUS:
++	case TEGRA264_I2S_RX_CIF_FIFO_STATUS:
++	case TEGRA264_I2S_TX_STATUS:
++	case TEGRA264_I2S_TX_INT_STATUS:
++	case TEGRA264_I2S_TX_FIFO_RD_DATA:
++	case TEGRA264_I2S_TX_CIF_FIFO_STATUS:
++	case TEGRA264_I2S_STATUS:
++	case TEGRA264_I2S_INT_STATUS:
++	case TEGRA264_I2S_TX_SOFT_RESET:
++	case TEGRA264_I2S_PAD_MACRO_STATUS:
++		return true;
++	default:
++		return false;
++	};
++}
++
++static const struct regmap_config tegra210_regmap_conf = {
+ 	.reg_bits		= 32,
+ 	.reg_stride		= 4,
+ 	.val_bits		= 32,
+@@ -942,20 +1034,34 @@ static void tegra210_parse_client_convert(struct device *dev)
+ 		i2s->client_sample_format = simple_util_get_sample_fmt(&data);
+ }
+ 
++static const struct regmap_config tegra264_regmap_conf = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= TEGRA264_I2S_PAD_MACRO_STATUS,
++	.writeable_reg		= tegra264_i2s_wr_reg,
++	.readable_reg		= tegra264_i2s_rd_reg,
++	.volatile_reg		= tegra264_i2s_volatile_reg,
++	.reg_defaults		= tegra264_i2s_reg_defaults,
++	.num_reg_defaults	= ARRAY_SIZE(tegra264_i2s_reg_defaults),
++	.cache_type		= REGCACHE_FLAT,
++};
++
+ static int tegra210_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra210_i2s *i2s;
+ 	void __iomem *regs;
+-	int err;
++	int err, id;
+ 
+ 	i2s = devm_kzalloc(dev, sizeof(*i2s), GFP_KERNEL);
+ 	if (!i2s)
+ 		return -ENOMEM;
+ 
++	i2s->soc_data = of_device_get_match_data(&pdev->dev);
+ 	i2s->rx_fifo_th = DEFAULT_I2S_RX_FIFO_THRESHOLD;
+-	i2s->tx_mask = DEFAULT_I2S_SLOT_MASK;
+-	i2s->rx_mask = DEFAULT_I2S_SLOT_MASK;
++	i2s->tx_mask = i2s->soc_data->slot_mask;
++	i2s->rx_mask = i2s->soc_data->slot_mask;
+ 	i2s->loopback = false;
+ 	i2s->client_sample_format = -EINVAL;
+ 
+@@ -981,7 +1087,7 @@ static int tegra210_i2s_probe(struct platform_device *pdev)
+ 		return PTR_ERR(regs);
+ 
+ 	i2s->regmap = devm_regmap_init_mmio(dev, regs,
+-					    &tegra210_i2s_regmap_config);
++					    i2s->soc_data->regmap_conf);
+ 	if (IS_ERR(i2s->regmap)) {
+ 		dev_err(dev, "regmap init failed\n");
+ 		return PTR_ERR(i2s->regmap);
+@@ -991,7 +1097,13 @@ static int tegra210_i2s_probe(struct platform_device *pdev)
+ 
+ 	regcache_cache_only(i2s->regmap, true);
+ 
+-	err = devm_snd_soc_register_component(dev, &tegra210_i2s_cmpnt,
++	/* Update the dais max channel as per soc */
++	for (id = 0; id < ARRAY_SIZE(tegra210_i2s_dais); id++) {
++		tegra210_i2s_dais[id].playback.channels_max = i2s->soc_data->max_ch;
++		tegra210_i2s_dais[id].capture.channels_max = i2s->soc_data->max_ch;
++	}
++
++	err = devm_snd_soc_register_component(dev, i2s->soc_data->i2s_cmpnt,
+ 					      tegra210_i2s_dais,
+ 					      ARRAY_SIZE(tegra210_i2s_dais));
+ 	if (err) {
+@@ -1015,8 +1127,31 @@ static const struct dev_pm_ops tegra210_i2s_pm_ops = {
+ 	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
+ 
++static const struct tegra_i2s_soc_data soc_data_tegra210 = {
++	.regmap_conf		= &tegra210_regmap_conf,
++	.i2s_cmpnt		= &tegra210_i2s_cmpnt,
++	.max_ch			= TEGRA210_I2S_MAX_CHANNEL,
++	.tx_offset		= TEGRA210_I2S_TX_OFFSET,
++	.i2s_ctrl_offset	= TEGRA210_I2S_CTRL_OFFSET,
++	.fsync_width_mask	= I2S_CTRL_FSYNC_WIDTH_MASK,
++	.fsync_width_shift	= I2S_FSYNC_WIDTH_SHIFT,
++	.slot_mask		= DEFAULT_I2S_SLOT_MASK,
++};
++
++static const struct tegra_i2s_soc_data soc_data_tegra264 = {
++	.regmap_conf		= &tegra264_regmap_conf,
++	.i2s_cmpnt		= &tegra264_i2s_cmpnt,
++	.max_ch			= TEGRA264_I2S_MAX_CHANNEL,
++	.tx_offset		= TEGRA264_I2S_TX_OFFSET,
++	.i2s_ctrl_offset	= TEGRA264_I2S_CTRL_OFFSET,
++	.fsync_width_mask	= TEGRA264_I2S_CTRL_FSYNC_WIDTH_MASK,
++	.fsync_width_shift	= TEGRA264_I2S_FSYNC_WIDTH_SHIFT,
++	.slot_mask		= TEGRA264_DEFAULT_I2S_SLOT_MASK,
++};
++
+ static const struct of_device_id tegra210_i2s_of_match[] = {
+-	{ .compatible = "nvidia,tegra210-i2s" },
++	{ .compatible = "nvidia,tegra210-i2s", .data = &soc_data_tegra210 },
++	{ .compatible = "nvidia,tegra264-i2s", .data = &soc_data_tegra264 },
  	{},
  };
- MODULE_DEVICE_TABLE(of, graph_of_tegra_match);
+ MODULE_DEVICE_TABLE(of, tegra210_i2s_of_match);
+diff --git a/sound/soc/tegra/tegra210_i2s.h b/sound/soc/tegra/tegra210_i2s.h
+index 543332de7405..42be2137342c 100644
+--- a/sound/soc/tegra/tegra210_i2s.h
++++ b/sound/soc/tegra/tegra210_i2s.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0-only
+- * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++ * SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
+  * All rights reserved.
+  *
+  * tegra210_i2s.h - Definitions for Tegra210 I2S driver
+@@ -47,9 +47,38 @@
+ #define TEGRA210_I2S_CLK_TRIM			0xac
+ #define TEGRA210_I2S_CYA			0xb0
+ 
++/* T264 specific registers */
++#define TEGRA264_I2S_RX_FIFO_WR_ACCESS_MODE	0x30
++#define TEGRA264_I2S_RX_CYA			0x3c
++#define TEGRA264_I2S_RX_CIF_FIFO_STATUS		0x40
++#define TEGRA264_I2S_TX_ENABLE			0x80
++#define TEGRA264_I2S_TX_SOFT_RESET		0x84
++#define TEGRA264_I2S_TX_STATUS			0x8c
++#define TEGRA264_I2S_TX_INT_STATUS		0x90
++#define TEGRA264_I2S_TX_INT_MASK		0x94
++#define TEGRA264_I2S_TX_CIF_CTRL		0xa0
++#define TEGRA264_I2S_TX_FIFO_RD_ACCESS_MODE	0xb0
++#define TEGRA264_I2S_TX_FIFO_RD_DATA		0xb4
++#define TEGRA264_I2S_TX_FIFO_THRESHOLD		0xb8
++#define TEGRA264_I2S_TX_CYA			0xbc
++#define TEGRA264_I2S_TX_CIF_FIFO_STATUS		0xc0
++#define TEGRA264_I2S_ENABLE			0x100
++#define TEGRA264_I2S_CG				0x108
++#define TEGRA264_I2S_STATUS			0x10c
++#define TEGRA264_I2S_INT_STATUS			0x110
++#define TEGRA264_I2S_INT_SET			0x114
++#define TEGRA264_I2S_INT_MASK			0x11c
++#define TEGRA264_I2S_CTRL			0x12c
++#define TEGRA264_I2S_TIMING			0x130
++#define TEGRA264_I2S_CYA			0x13c
++#define TEGRA264_I2S_PIO_MODE_ENABLE		0x140
++#define TEGRA264_I2S_PAD_MACRO_STATUS		0x144
++
+ /* Bit fields, shifts and masks */
+ #define I2S_DATA_SHIFT				8
+ #define I2S_CTRL_DATA_OFFSET_MASK		(0x7ff << I2S_DATA_SHIFT)
++#define TEGRA264_I2S_FSYNC_WIDTH_SHIFT		23
++#define TEGRA264_I2S_CTRL_FSYNC_WIDTH_MASK	(0x1ff << TEGRA264_I2S_FSYNC_WIDTH_SHIFT)
+ 
+ #define I2S_EN_SHIFT				0
+ #define I2S_EN_MASK				BIT(I2S_EN_SHIFT)
+@@ -102,6 +131,14 @@
+ #define DEFAULT_I2S_RX_FIFO_THRESHOLD		3
+ 
+ #define DEFAULT_I2S_SLOT_MASK			0xffff
++#define TEGRA210_I2S_TX_OFFSET			0
++#define TEGRA210_I2S_CTRL_OFFSET		0
++#define TEGRA210_I2S_MAX_CHANNEL		16
++
++#define TEGRA264_DEFAULT_I2S_SLOT_MASK		0xffffffff
++#define TEGRA264_I2S_TX_OFFSET			0x40
++#define TEGRA264_I2S_CTRL_OFFSET		0x8c
++#define TEGRA264_I2S_MAX_CHANNEL		32
+ 
+ enum tegra210_i2s_path {
+ 	I2S_RX_PATH,
+@@ -109,7 +146,19 @@ enum tegra210_i2s_path {
+ 	I2S_PATHS,
+ };
+ 
++struct tegra_i2s_soc_data {
++	const struct regmap_config *regmap_conf;
++	const struct snd_soc_component_driver *i2s_cmpnt;
++	unsigned int max_ch;
++	unsigned int tx_offset;
++	unsigned int i2s_ctrl_offset;
++	unsigned int fsync_width_mask;
++	unsigned int fsync_width_shift;
++	unsigned int slot_mask;
++};
++
+ struct tegra210_i2s {
++	const struct tegra_i2s_soc_data *soc_data;
+ 	struct clk *clk_i2s;
+ 	struct clk *clk_sync_input;
+ 	struct regmap *regmap;
 -- 
 2.17.1
 
