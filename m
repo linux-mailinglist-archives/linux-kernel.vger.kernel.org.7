@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-613485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5863A95D25
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:56:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FB1A95D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1185176BB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:56:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C0DC7A9EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 05:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1786B1A76DE;
-	Tue, 22 Apr 2025 04:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC061A0BC9;
+	Tue, 22 Apr 2025 05:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="V+9bxjNY"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MfieWodQ"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C8D1494C2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFEBEAFA;
+	Tue, 22 Apr 2025 05:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745297766; cv=none; b=k2OGx1JIz9P6eM+yHLS1GYMf+20PqGs8hjXSZyVMh9Z9s2QUcszqktQPf9xnQg3ocmU+TEq3Dy07FK73YJMA0P1m2HFr2Olm0DhrkS4qWnWSpsKre2AcF06NVLLRCLSlCn3SD3Iu67TiZ1uDwtXtlvWGle4mBP3uSFBb8eoAnTA=
+	t=1745298069; cv=none; b=TEuXJOJHMUxPhPrr9TOgujnBUYuVi9+lXEl4iuPqlbM2lTRmaydZTl3sgqdmaAvPHR5t2Do7HXUfHZzkdmGOB6dwNEmNCz1PHFJSdrScsc+1lhCJ1j/HoyLtwCpee+ylZKkPolII2c69TnToRvAddSjTfHrKocp7/uUuNrqtXWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745297766; c=relaxed/simple;
-	bh=1n6VFvcqcUzVl1/IbVIv/Pa/793Z9OAZn+Q6I6OUYBk=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=l30y23gSSsqIfIYJtF0Gd94b5ZshAB3SVY6EBCpbfA6wZlNHm7PuN4IGHbfYKD/lbz3pk6RsRv8YM1kJpqlQmQ2CES/cNI5C/Rqx3MkIv7XS9aO5V86KW+RjgcP+5+HIWreiQ32ZjGem8FOEnLPmU8GR6sdIpbD/GdYdobdqxIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=V+9bxjNY; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5f6214f189bso7304396a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 21:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1745297762; x=1745902562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wrp+glrqMEFQIOcbV8OH0y2t9hGyNvM/0gI9W80il2Q=;
-        b=V+9bxjNYLaI+t9XZNnmBD5QZcHBo+JB9RlsajG5N+hvGKM+6zvULXg/VfhKPIlkcnx
-         jIrm/sBnN4HU46kQfm5RPrqI3o8K7FkF/jigrI6UiaT+DG02zbBpQxBeVGm3+FnjGkPx
-         L1go9+9Tj6gLPuU6SianNac05Jx11dbcnq7Qk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745297762; x=1745902562;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wrp+glrqMEFQIOcbV8OH0y2t9hGyNvM/0gI9W80il2Q=;
-        b=g3bvIQA+0n/V9zDLlMCV4tCYmua/41Glm7rU531d14DNzV2og2fE6eLb5ch1FA3XeI
-         zvT+y2i4cSm4xV2LS69xYOEVpLmqPRIe6Qn0M0vM0lkSsRmWRaL6H2I+L68eTPy2qJxP
-         cO38tLD1GjYM+5N7aVD4YgMSuXeP7Q6TPljqn+surYepgUqcAGo4zspPuJ5mBfFW0sFw
-         e4HeRXJXXxaL2RpzBKcAweZ5i+EOPFmgszMl7zrIM1HzER7lE54azI1JXEeufyZDIpF1
-         OdoA4I1Oas/Eq3nL5hICD3GYTZkLB7KuPN0RQgB3FwweG+Usq8KLMeYmTwaCLANy+tpS
-         gtvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtpydl383rE71WQYf18X0AWYpslG8nAD/ayk/5wpwJWzxfaXce/ic1nkYL+EYjBbcRG+HoaFsAtY/cyuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1R+CFQIydfpPtuis4jBbfWW7EOFTZqScVyLWOjgLmaWBY9KhD
-	e1Cccp9fyS2p/1QQ4MND+B6oXlcxZG/pvvEryH0DJWHcotinBGMTSVNiNHSj2A==
-X-Gm-Gg: ASbGnct2+5Rs+7EBEwrtoqZuhIY1hRI/kqyrvYxUW6TiPg8k37y+EoBb4e5p5Q4hV4N
-	eqNdCL2CPt+JCeq7Qa3njv7YTYgwWPp2dyJTCT/zOG7CnWCdIcF+nek8dE+2YVF0DI650/VOM7f
-	EVrdqgWLvTVMWfiWKltzsXNlkUjGoLwS2vTrPSJ/cKq5D1newBmp2H/K962M+yaRk0SkNl2vdW4
-	b5iCDj6Ca0ftBRei8If4B5rzmNPsKQwqSFnRY/sm58Aa19J4B+0jArfXXS1N10k7JKiYFRiR8b0
-	kEuCIFdLLBywxAtkQX4QlRakn1fUyPrjERJU2yWgKFHwC8aj7+tAsqTSjl7tdZnad2jnpaN2Oj3
-	k5b8=
-X-Google-Smtp-Source: AGHT+IHSU6S5KXFU9LqzhGRG+vKu9XggFzpPIOcZPwBxuMXIbI8vYSXr2SAHZ4O5/Fg7JR4/K6GtBQ==
-X-Received: by 2002:a05:6402:13cd:b0:5e7:2871:c137 with SMTP id 4fb4d7f45d1cf-5f628548a18mr12182351a12.14.1745297761855;
-        Mon, 21 Apr 2025 21:56:01 -0700 (PDT)
-Received: from [192.168.178.39] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f6258340c8sm5392034a12.58.2025.04.21.21.56.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Apr 2025 21:56:01 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, <kvalo@kernel.org>
-CC: <jacobe.zang@wesion.com>, <sebastian.reichel@collabora.com>, <christophe.jaillet@wanadoo.fr>, <erick.archer@outlook.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Date: Tue, 22 Apr 2025 06:55:59 +0200
-Message-ID: <1965bda5b18.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <20250422042203.2259-1-vulab@iscas.ac.cn>
-References: <20250422042203.2259-1-vulab@iscas.ac.cn>
-User-Agent: AquaMail/1.54.1 (build: 105401536)
-Subject: Re: [PATCH v2 RESEND] brcm80211: fmac: Add error handling for brcmf_usb_dl_writeimage()
+	s=arc-20240116; t=1745298069; c=relaxed/simple;
+	bh=WCouwR7uTqaHThXCXrNZQl8pWxx4Gkb+qwPRJNiDbJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XBKx2at9+jffBGF/sKPdjXv5HaHaU6RT/0sm2dxkGbKCezavKVtBTbUdgd4wuGu6Fe7AJksNnbPML1Oin0UYxSbGydyAM1fVmJpe4byxAcyXBfm0a7UMcKbmzmKOjVqpcAd1JTQR/gkpviZKGyxwWMNv56sIUsotrZqAuDkj2qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MfieWodQ; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M50rVn1116663
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 00:00:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745298053;
+	bh=S+rfxkhJ2uRVgkvDr5SGLSGdiYjFntxQGRjvdTnKR/M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=MfieWodQynoJ9H638e1BShbI4G//i+9dDNYJBn1Cm4N5O58nSnlOssnB1QMcyuhcF
+	 onJkVD8iIlRJLTjFAEO4Ee+/77iOF4+a0KPKaFIAevAJYZ03TZJl2stT22d0SMkQCs
+	 RYysu3xCK7oVREKNQi9A02eZPGCEvr/MUnHTlxD4=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M50rEG019135
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 22 Apr 2025 00:00:53 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
+ Apr 2025 00:00:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 22 Apr 2025 00:00:52 -0500
+Received: from [172.24.227.136] (moteen-ubuntu-desk.dhcp.ti.com [172.24.227.136])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M50nMg123169;
+	Tue, 22 Apr 2025 00:00:50 -0500
+Message-ID: <bd73d05a-6859-42aa-b1d9-91d8e122a677@ti.com>
+Date: Tue, 22 Apr 2025 10:30:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] arm64: dts: ti: k3-am65-main: Add missing taps to
+ sdhci0
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250417233040.3658761-1-jm@ti.com>
+ <20250417233040.3658761-4-jm@ti.com>
+Content-Language: en-US
+From: Moteen Shah <m-shah@ti.com>
+In-Reply-To: <20250417233040.3658761-4-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On April 22, 2025 6:22:48 AM Wentao Liang <vulab@iscas.ac.cn> wrote:
 
-> The function brcmf_usb_dl_writeimage() calls the function
-> brcmf_usb_dl_cmd() but dose not check its return value. The
-> 'state.state' and the 'state.bytes' are uninitialized if the
-> function brcmf_usb_dl_cmd() fails. It is dangerous to use
-> uninitialized variables in the conditions.
+On 18/04/25 05:00, Judith Mendez wrote:
+> For am65x, add missing ITAPDLYSEL values for Default Speed and High
+> Speed SDR modes to sdhci0 node according to the device datasheet [0].
 >
-> Add error handling for brcmf_usb_dl_cmd() to jump to error
-> handling path if the brcmf_usb_dl_cmd() fails and the
-> 'state.state' and the 'state.bytes' are uninitialized.
->
-> Improve the error message to report more detailed error
-> information.
->
-> Fixes: 71bb244ba2fd ("brcm80211: fmac: add USB support for bcm43235/6/8 
-> chipsets")
-> Cc: stable@vger.kernel.org # v3.4+
-
-Thanks for this patch.
-
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> Fixes: eac99d38f861 ("arm64: dts: ti: k3-am654-main: Update otap-del-sel values")
+> [0] https://www.ti.com/lit/gpn/am6548
+> Signed-off-by: Judith Mendez <jm@ti.com>
 > ---
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 6 ++++--
-> 1 file changed, 4 insertions(+), 2 deletions(-)
+>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 2 ++
+>   1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c 
-> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-> index 2821c27f317e..d06c724f63d9 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-> @@ -896,14 +896,16 @@ brcmf_usb_dl_writeimage(struct brcmf_usbdev_info 
-> *devinfo, u8 *fw, int fwlen)
->  }
->
->  /* 1) Prepare USB boot loader for runtime image */
-> - brcmf_usb_dl_cmd(devinfo, DL_START, &state, sizeof(state));
-> + err = brcmf_usb_dl_cmd(devinfo, DL_START, &state, sizeof(state));
-> + if (err)
-> + goto fail;
->
->  rdlstate = le32_to_cpu(state.state);
->  rdlbytes = le32_to_cpu(state.bytes);
->
->  /* 2) Check we are in the Waiting state */
->  if (rdlstate != DL_WAITING) {
-> - brcmf_err("Failed to DL_START\n");
-> + brcmf_err("Invalid DL state: %u\n", rdlstate);
->  err = -EINVAL;
->  goto fail;
->  }
-> --
-> 2.42.0.windows.2
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> index 94a812a1355ba..5ebf7ada6e485 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> @@ -449,6 +449,8 @@ sdhci0: mmc@4f80000 {
+>   		ti,otap-del-sel-mmc-hs = <0x0>;
+>   		ti,otap-del-sel-ddr52 = <0x5>;
+>   		ti,otap-del-sel-hs200 = <0x5>;
+> +		ti,itap-del-sel-legacy = <0xa>;
+> +		ti,itap-del-sel-mmc-hs = <0x1>;
 
+Reviewed-by: Moteen Shah <m-shah@ti.com>
 
-
+>   		ti,itap-del-sel-ddr52 = <0x0>;
+>   		dma-coherent;
+>   		status = "disabled";
 
