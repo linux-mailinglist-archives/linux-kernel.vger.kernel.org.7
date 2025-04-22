@@ -1,214 +1,162 @@
-Return-Path: <linux-kernel+bounces-613803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A0EA961BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:33:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A9CA960ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB5FD7ACCB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFC81892095
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9697526A0F5;
-	Tue, 22 Apr 2025 08:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590C22ACE7;
+	Tue, 22 Apr 2025 08:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Uc1b2MMH"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBP/svYt"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665012566EA;
-	Tue, 22 Apr 2025 08:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B41F03C5;
+	Tue, 22 Apr 2025 08:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310240; cv=none; b=QM9LH1kdkhSBBFaWoZ//tYwSzBKnr43C8dSFLxfX21UjKzSL6EGyAv+ncpHaa6E9x/VDJaOvkxE7UPkbiepgMIgPVoSxVylpGHzaiKCbjs6N3JpH5lRmU4XEP+aNX+SM5Sv7QGsKvuu9gmLL/1HDmsf/SbPWfneIg9byuLr8IF4=
+	t=1745310189; cv=none; b=FoL9FDuaKzFBTaJ180NdsX4wO42d1C+Op58La3z656EJNdgF7z4FR5UyjhmikZPrDvjkm6JaupqsOJ16Qyw41LQgQB2sVc56IsTSY8aQmVMhWEHLwhSBeHxd0XWMTCs8OMgSF8yGTRT2otThehbyoWjrVtS0P0hgSP35DnT856I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310240; c=relaxed/simple;
-	bh=HFXlOSrmXh0pQzmh70nzr8a0e2j82SKgXVMAzu1LuBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NQHRjB1YD30boZm2fWhh1xsvRn8k/ZwXBz812IoK++P1KiI/BJmNzOC0Ky07AkTe/LbXaMy02Bhz9KFmvX4lEfopg0+Lgugq6Ws8mB4KwIw8MlIAXM9fzLAveXiDm5QNSJ1VXbRagAkJ8A1VbfQtLvbg0VrOw2dKwbf6Ak/1ebU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Uc1b2MMH; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53M8MG9m1954391
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 22 Apr 2025 01:23:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53M8MG9m1954391
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745310212;
-	bh=qnYCpm2Cl6ZIZ5hId3xkbPkJqqrZQFZfyOkhGDhffqY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uc1b2MMHUkmSSWkI2MOrRUT6ZGc7p2OK1RO57VTRGzrFk3nJp7mExF9yRLqhXwrcN
-	 BEEh5kJRgcNa0ORqLGKos3bgYft/LGNyer5Hj/VmrWBwEfN4bo5k4h7fYDJnj7l0iH
-	 x3KPzP8Y8/4VNpO8JH9Yfwzhho87jdCmeXcBpjzy/qaN1+VLUT/st/KMk2S7jIMbTL
-	 ErV/dz7vQ+VWICcFlhVd+X7D1ljAh8bI0Ed7Om76UDvHltu1oSI+3z4c9vWm1fO4pm
-	 4dTYUhuIvfW4g6DD8/vRKD69Q3YVmGv0OG8qFORLYD4AB4LVkHungT3s69bi00Wvfu
-	 KweyIKTZ9esZQ==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
-        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
-        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
-        haiyangz@microsoft.com, decui@microsoft.com
-Subject: [RFC PATCH v2 34/34] x86/msr: Convert native_rdmsr_no_trace() uses to native_rdmsrq_no_trace() uses
-Date: Tue, 22 Apr 2025 01:22:15 -0700
-Message-ID: <20250422082216.1954310-35-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250422082216.1954310-1-xin@zytor.com>
-References: <20250422082216.1954310-1-xin@zytor.com>
+	s=arc-20240116; t=1745310189; c=relaxed/simple;
+	bh=2uP34/FeIpIk/Wcl1gOmNK8ZKfSeIZaiwifRRNPt/Ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WqoLAH4Q9qu0uWb7fVl8AO4w1O5J0Stp48qXb4SNXmNuIG2ppuXevCti1Z5bxGd9sjsP044hEaYBndlL7Xy+6MTCXSermkm4jQX5uzJPjDPbqlVNIEFmurirndpDr+ZHNxKwq8b9kSV0zy9Q+kBuZVxpE+eNPBrJRoULkmPg3nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBP/svYt; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-604f0d27c24so2216160eaf.2;
+        Tue, 22 Apr 2025 01:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745310186; x=1745914986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
+        b=lBP/svYtkb1z0ZLBuCJdxxpt8ndFmN6x0+Cm4nBos1hHoRw+EiNKFLsyR9VTvhjY7C
+         RCCte8Z6ycudUM4YV4+nPipC46V3ppWwBuZGLdZzy+4M8M06UQVMgObMulSNxiKA+9TY
+         bfm9lLbVqy0NiEw2AG0kGm/DdrEt/2apjOmrOVFgYr4GOkstawGbb2NYIypCH6nY020n
+         DVAc9zsfwUmz3egTJb4jMsUUWySuBnHC33vofYE/7GhU2b0ed8zAd+39v7hnrPpghYHG
+         +DmrSr1RynWr+/ANNuhDepSmctTBnhmBa72HSZgd8kme8iQKoOhwDBq5UpDZHCIzPppi
+         etHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745310186; x=1745914986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
+        b=YcHzqbWq6hoAjfwVx2GeD2JDpQF6GW8JZnbpcYAbrPMf8tRnx1uze2NbCeEfIU0DPU
+         W3ctGlTSSwIbFcKhAHYh2g9GpKOsRX5ekBwli2mWbR0VKkKGfq15Dq4Eral3L0USGNsX
+         FHfNDWCTMhNGjFk9Gm2fPPsJ4/b8oQ7t6/t6ocE/jz5njg5KZjwhjh/cOPQxMQC//6lR
+         qoceBwvWg2RyWregzxfdJ32qbD1gIGr7eqnWrnFMq7vQWGHHGvFTUms+aIBR8cdJwFA+
+         XUe3sj99CPBSCYNwtk4ApmkgEtRLs116m7Gvz76Yl1cpMvWyJwiZZUkyOEpJ7WlXsT2T
+         tTSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5h5a38pC79u3Uz7FUkS74T6iU+kgYOC+hEhwv0L8D8IAaQZ/n2xW+7hQPc1ioZFb7QH8y/SVipE1u79bw@vger.kernel.org, AJvYcCXeOJKwLU+Q25in9laTb4CyKcXFYKVIBkttSSjK6SqREQ9O4IXb292TEYI5rl2YfwUhnk3PrHVIeg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrUDDdGrlVnNYHgp77lLUp+fYhXmLXIhhiCm+rzfslF3fowH6U
+	k0I/KAPmTDot+8TjQ3xtB792nLxPomt60SAr8RncYz/lR7RiXO9XxCPVWXbkYrvEanvcwwti2y+
+	QjrdD6ITYL0LrtW0MUVzdIQ0z6uU=
+X-Gm-Gg: ASbGncu6wUbTiA9UTllz7iKz2qqxXUH7FAeOH6VCrxWzUqHxcvZDQkBtvIKy4Xrg5P2
+	5aEXvKnUOgLdoOzcCzLhUxia9Zc0YSF0GtC5X+NdQc+Uhr4GCJMtJXtd7S+p1wgaUbSwxbPFXjL
+	BKc3Kas4IJpREnPyVs7189R1M=
+X-Google-Smtp-Source: AGHT+IH73aeMXL7YPr7VbOhaDc7lZ6qCE8e7MFFs2JuKTrk1QSoj0Tr2ke5rvX4Jp7KqXTYvwKrnshZuvZZ1Nh9uScs=
+X-Received: by 2002:a05:6871:2109:b0:29e:74a0:e03f with SMTP id
+ 586e51a60fabf-2d526d4efbcmr8286598fac.24.1745310186574; Tue, 22 Apr 2025
+ 01:23:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250422030153.1166445-1-qq282012236@gmail.com> <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
+In-Reply-To: <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
+From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Date: Tue, 22 Apr 2025 16:22:52 +0800
+X-Gm-Features: ATxdqUHsW549CjADjQkeF24dIy0oIJ_3wSQeFdmFn0yYeM8PaYZjnYbeZYtkTzQ
+Message-ID: <CANHzP_tebha40yy=8rqeu9DMqfrS-veF3=rp76H8udDvs69rfA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: Add new functions to handle user fault scenarios
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert native_rdmsr_no_trace() uses to native_rdmsrq_no_trace() uses
-cleanly with the use of struct msr, and remove native_rdmsr_no_trace().
+On Tue, Apr 22, 2025 at 3:59=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 4/22/25 04:01, Zhiwei Jiang wrote:
+> ...
+> > I tracked the address that triggered the fault and the related function
+> > graph, as well as the wake-up side of the user fault, and discovered th=
+is
+> > : In the IOU worker, when fault in a user space page, this space is
+> > associated with a userfault but does not sleep. This is because during
+> > scheduling, the judgment in the IOU worker context leads to early retur=
+n.
+> > Meanwhile, the listener on the userfaultfd user side never performs a C=
+OPY
+> > to respond, causing the page table entry to remain empty. However, due =
+to
+> > the early return, it does not sleep and wait to be awakened as in a nor=
+mal
+> > user fault, thus continuously faulting at the same address,so CPU loop.
+> >
+> > Therefore, I believe it is necessary to specifically handle user faults=
+ by
+> > setting a new flag to allow schedule function to continue in such cases=
+,
+> > make sure the thread to sleep.Export the relevant functions and struct =
+for
+> > user fault.
+>
+> That's an interesting scenario. Not looking deeper into it, I don't see
+> any callers to set_userfault_flag_for_ioworker(), and so there is no one
+> to set IO_WORKER_F_FAULT. Is there a second patch patch I lost?
+>
+> --
+> Pavel Begunkov
+>
+Sorry, the following changes haven't been submitted yet. I was planning
+to submit them separately, thinking they belong to two different subsystems=
+.
+The other changes that haven't been submitted are as follows:
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index d80f94346199..74bead069e85 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -32,6 +32,7 @@
+ #include <linux/swapops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/uio.h>
++#include "../io_uring/io-wq.h"
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/include/asm/microcode.h      |  6 +++---
- arch/x86/include/asm/msr.h            | 13 +++----------
- arch/x86/kernel/cpu/microcode/amd.c   |  8 ++------
- arch/x86/kernel/cpu/microcode/core.c  |  4 ++--
- arch/x86/kernel/cpu/microcode/intel.c |  6 +++---
- 5 files changed, 13 insertions(+), 24 deletions(-)
+ static int sysctl_unprivileged_userfaultfd __read_mostly;
 
-diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
-index d581fdaf1f36..1d9641349744 100644
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -61,7 +61,7 @@ static inline int intel_microcode_get_datasize(struct microcode_header_intel *hd
- 
- static inline u32 intel_get_microcode_revision(void)
- {
--	u32 rev, dummy;
-+	struct msr val;
- 
- 	native_wrmsrq_no_trace(MSR_IA32_UCODE_REV, 0);
- 
-@@ -69,9 +69,9 @@ static inline u32 intel_get_microcode_revision(void)
- 	native_cpuid_eax(1);
- 
- 	/* get the current revision from MSR 0x8B */
--	native_rdmsr_no_trace(MSR_IA32_UCODE_REV, dummy, rev);
-+	val.q = native_rdmsrq_no_trace(MSR_IA32_UCODE_REV);
- 
--	return rev;
-+	return val.h;
- }
- #endif /* !CONFIG_CPU_SUP_INTEL */
- 
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index be593a15a838..aebcd846af3e 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -141,9 +141,9 @@ static __always_inline bool is_msr_imm_insn(void *ip)
-  *                            /     \                                |
-  *                           /       \                               |
-  *        native_rdmsrq_no_trace()    native_rdmsrq_safe()           |
-- *                   /      \                                        |
-- *                  /        \                                       |
-- * native_rdmsr_no_trace()    native_rdmsrq()                        |
-+ *               /                                                   |
-+ *              /                                                    |
-+ *      native_rdmsrq()                                              |
-  *                                                                   |
-  *                                                                   |
-  *                                                                   |
-@@ -239,13 +239,6 @@ static __always_inline u64 native_rdmsrq_no_trace(u32 msr)
- 	return val;
- }
- 
--#define native_rdmsr_no_trace(msr, low, high)		\
--do {							\
--	u64 __val = native_rdmsrq_no_trace(msr);	\
--	(void)((low) = (u32)__val);			\
--	(void)((high) = (u32)(__val >> 32));		\
--} while (0)
--
- static inline u64 native_rdmsrq(u32 msr)
- {
- 	u64 val = native_rdmsrq_no_trace(msr);
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index f1f275ddab57..b4d66e79089c 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -254,11 +254,7 @@ static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, unsi
- 
- static u32 get_patch_level(void)
- {
--	u32 rev, dummy __always_unused;
--
--	native_rdmsr_no_trace(MSR_AMD64_PATCH_LEVEL, rev, dummy);
--
--	return rev;
-+	return native_rdmsrq_no_trace(MSR_AMD64_PATCH_LEVEL);
- }
- 
- static union cpuid_1_eax ucode_rev_to_cpuid(unsigned int val)
-@@ -835,7 +831,7 @@ static struct ucode_patch *find_patch(unsigned int cpu)
- 
- void reload_ucode_amd(unsigned int cpu)
- {
--	u32 rev, dummy __always_unused;
-+	u32 rev;
- 	struct microcode_amd *mc;
- 	struct ucode_patch *p;
- 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 9bda8fd987ab..81b264373d3e 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -81,10 +81,10 @@ struct early_load_data early_data;
-  */
- static bool amd_check_current_patch_level(void)
- {
--	u32 lvl, dummy, i;
-+	u32 lvl, i;
- 	u32 *levels;
- 
--	native_rdmsr_no_trace(MSR_AMD64_PATCH_LEVEL, lvl, dummy);
-+	lvl = native_rdmsrq_no_trace(MSR_AMD64_PATCH_LEVEL);
- 
- 	levels = final_levels;
- 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index c0307b1ad63d..1b484214f3ee 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -75,11 +75,11 @@ void intel_collect_cpu_info(struct cpu_signature *sig)
- 	sig->rev = intel_get_microcode_revision();
- 
- 	if (IFM(x86_family(sig->sig), x86_model(sig->sig)) >= INTEL_PENTIUM_III_DESCHUTES) {
--		unsigned int val[2];
-+		struct msr val;
- 
- 		/* get processor flags from MSR 0x17 */
--		native_rdmsr_no_trace(MSR_IA32_PLATFORM_ID, val[0], val[1]);
--		sig->pf = 1 << ((val[1] >> 18) & 7);
-+		val.q = native_rdmsrq_no_trace(MSR_IA32_PLATFORM_ID);
-+		sig->pf = 1 << ((val.h >> 18) & 7);
- 	}
- }
- EXPORT_SYMBOL_GPL(intel_collect_cpu_info);
--- 
-2.49.0
+@@ -369,7 +370,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
+unsigned long reason)
+        vm_fault_t ret =3D VM_FAULT_SIGBUS;
+        bool must_wait;
+        unsigned int blocking_state;
++       struct io_worker *worker =3D current->worker_private;
 
++       if (worker)
++               set_userfault_flag_for_ioworker(worker);
+        /*
+         * We don't do userfault handling for the final child pid update
+         * and when coredumping (faults triggered by get_dump_page()).
+@@ -506,6 +510,9 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
+unsigned long reason)
+
+        __set_current_state(TASK_RUNNING);
+
++       if (worker)
++               clear_userfault_flag_for_ioworker(worker);
++
+        /*
+         * Here we race with the list_del; list_add in
+         * userfaultfd_ctx_read(), however because we don't ever run
 
