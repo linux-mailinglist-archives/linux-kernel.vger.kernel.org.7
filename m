@@ -1,241 +1,157 @@
-Return-Path: <linux-kernel+bounces-613454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA370A95CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F052A95CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874881898D08
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C8F3B96D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B471E1DE0;
-	Tue, 22 Apr 2025 04:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F8619CC28;
+	Tue, 22 Apr 2025 04:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnUbKq9p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BnM8LZde"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AA01A704B;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000871946BC;
+	Tue, 22 Apr 2025 04:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745294838; cv=none; b=bgSoCb4l+0NUvPTU7e2YUKSFGZ6aihLjXHpbH0gwQ8zaBpLEMKR0PUWZUM4alF31rKbk04wKZeEMn1X0jdwd5R+j4GCPqINkOIjrcKMM+EazpuglS8QxDbsbfbXmN7OEVnT/SCfUy02bJdOoVh3PEJmZ6mpW+E9+AHfeTLlwj3M=
+	t=1745294951; cv=none; b=Z9Y5dTJARkdHEytl6NHC0VkHv7/VJJnRop/am/hO5AqF+arpkf8Kk3U05vTF9K2ds4unWEqrrKisP4NIgMDn3IufTAc5Z9AJIu5aigLo7E++a4JWtCs9Ql1gT8HHwV5cWG4fMdgm+X1WmX0TkdGXxAfdxGl0b4DiW+YfFfCfYXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745294838; c=relaxed/simple;
-	bh=3+mgovEH2U7GbbwYUPvC67milPze1pciOWU6d6iilto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NGv7yQ6LjwJhqn0LapnDT2r28smjTUHZXTj7b4zRMJy117R3vji/DAy0l6/yy7lz9Kn7xQrtOYPqIGNJNTEcUCm5dD7vYnnrSc9sfwJZhntKvIawy3TCLEOcEAQ/v2vwD1yda65uZprjvNkmfp6uHKP9FIFO+MQXz3RFFUUkUJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnUbKq9p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C441C4CEF8;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745294837;
-	bh=3+mgovEH2U7GbbwYUPvC67milPze1pciOWU6d6iilto=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JnUbKq9pUnsJLaE/e3tEpKukETlcgI45GJZBMvahy54G3kSzfhRRrEgFT5zsn0afb
-	 gvmktD3MjdZY+EQ9IXnz18W1sx20e2F0phnr/Scs34rsg8s90J4HS9Ipd3T3K22Khz
-	 6xgQTaKbKMrEB3CCcnvZ6bzIAhy+4YgpEj5+HErIKh4d0ZE1tJ1e3CRyxNDGc66IUQ
-	 SBJHg5L380SwxkMEBtLVNDNbPQDeqkBjV3/l2RvpP6tXoVB8NQuz3GiqodSIBUA3NP
-	 rawL+DyDZAJq8Y7awMgxZBH2mXEi3/1sdJt/rzueCkdT8ylcuN4pR6WkFP2rdvyodo
-	 Ued1lGC69iGgA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92133C369D3;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Tue, 22 Apr 2025 12:07:14 +0800
-Subject: [PATCH 7/7] firmware: stratix10-svc: Add support for HWMON
- temperature and voltage read command.
+	s=arc-20240116; t=1745294951; c=relaxed/simple;
+	bh=oGXyR1DBKZUps0EBd6i0V1Gw2kgYtzNBYJVMJvOvhkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K9HTGrYqkAw3S++oJkykT2A7uOW+CZjaEtSBWHN4y7LtyEIQ70XuPQumYRMvOmjgDNdR2X5H+4oUUD5eUvc0CXeIta773lZqgmqvNRUz9/vuoxZpDKMZs0ZRwIndmYgS1TelO5Q9oSFQMjUozqL4dljLfWedNvF47VCggb8KlTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BnM8LZde; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M490q01109644
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Apr 2025 23:09:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745294940;
+	bh=TCR9027wx+fa73a2CKan1hN/qQLJy2DiiVy5PdCfoiA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=BnM8LZdeBhUvDtAJfzRmKJQzxmgTosYauVK1tXkeBXgkmLgDJ+IcgNZv9NgPYJcuv
+	 VF73WhOTjixI19/obkdmQ0C8UbErGX3CuMEz1VE70CogcA/WDkr3hl5dJZgsERA4Tx
+	 k7svP7MPvz2hM9Mle51oD7gTH2q7/iFfn4W4fkd4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M490lB006551
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 21 Apr 2025 23:09:00 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
+ Apr 2025 23:09:00 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 21 Apr 2025 23:09:00 -0500
+Received: from [172.24.18.98] (lt5cd2489kgj.dhcp.ti.com [172.24.18.98])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M48udu066347;
+	Mon, 21 Apr 2025 23:08:57 -0500
+Message-ID: <6ae233c8-6401-4aba-b0f2-55468d375721@ti.com>
+Date: Tue, 22 Apr 2025 09:38:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-sip_svc_upstream-v1-7-088059190f31@altera.com>
-References: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
-In-Reply-To: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745294834; l=5773;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=JivcqKDOJIt5kDrV3wGuv8X3Vtjgv7lk5n3TnWoduZM=;
- b=qtRBVpFz7s4QX6NFMV1XgsXMYwNPcQomlnGHbFnssWIPvWjFOrSzb+of4eHR6moP5te8vR5xn
- Tv0tOOwiDWrBAvQ79Msyak1LZt9v/ZUyh0/rAJPk8RWDIQSZPlfeBmz
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am6*: Set eMMC clock parents to
+ default
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>,
+        <u-kumar1@ti.com>
+References: <20250417233040.3658761-1-jm@ti.com>
+ <20250417233040.3658761-2-jm@ti.com>
+ <8f9aad2c-8e51-409e-be90-21230a53a4cf@ti.com>
+ <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+Thanks Judith
 
-Add support for HWMON commands in stratix10
-Asynchronous communication
-
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/firmware/stratix10-svc.c                   | 20 +++++++++++-
- include/linux/firmware/intel/stratix10-smc.h       | 38 ++++++++++++++++++++++
- .../linux/firmware/intel/stratix10-svc-client.h    | 11 +++++++
- 3 files changed, 68 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index d60808cc077da6d88ca6cc1043f6da46df31ebad..4ee89980319dcde5198d7112d08708b543881f73 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -40,7 +40,7 @@
-  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
-  */
- #define SVC_NUM_DATA_IN_FIFO			32
--#define SVC_NUM_CHANNEL				3
-+#define SVC_NUM_CHANNEL				4
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
- #define BYTE_TO_WORD_SIZE              4
-@@ -1429,6 +1429,14 @@ int stratix10_svc_async_send(struct stratix10_svc_chan *chan, void *msg, void **
- 		STRATIX10_SIP_SMC_SET_TRANSACTIONID_X1(handle->transaction_id);
- 
- 	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READTEMP;
-+		args.a2 = p_msg->arg[0];
-+		break;
-+	case COMMAND_HWMON_READVOLT:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READVOLT;
-+		args.a2 = p_msg->arg[0];
-+		break;
- 	default:
- 		dev_err(ctrl->dev, "Invalid command ,%d\n", p_msg->command);
- 		ret = -EINVAL;
-@@ -1508,6 +1516,11 @@ static int stratix10_svc_async_prepare_response(struct stratix10_svc_chan *chan,
- 	data->status = STRATIX10_GET_SDM_STATUS_CODE(handle->res.a1);
- 
- 	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+	case COMMAND_HWMON_READVOLT:
-+		data->kaddr1 = (void *)&handle->res.a2;
-+		break;
-+
- 	default:
- 		dev_alert(ctrl->dev, "Invalid command\n ,%d", p_msg->command);
- 		return -ENOENT;
-@@ -2136,6 +2149,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	chans[2].name = SVC_CLIENT_FCS;
- 	spin_lock_init(&chans[2].lock);
- 
-+	chans[3].scl = NULL;
-+	chans[3].ctrl = controller;
-+	chans[3].name = SVC_CLIENT_HWMON;
-+	spin_lock_init(&chans[3].lock);
-+
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index ee00f17ea9f6c7a1114fb617d4d6393f2c27e2a9..78055b0234cee990515f01a509a75e1c8142c68b 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -625,6 +625,44 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
- 
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READTEMP
-+ * Async call to request temperature
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP
-+ * a1 transaction job id
-+ * a2 Temperature Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-a17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP (0xE8)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READTEMP \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP)
-+
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * Async call to request voltage
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * a1 transaction job id
-+ * a2 Voltage Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT (0xE9)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READVOLT \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT)
-+
- /**
-  * Request INTEL_SIP_SMC_ASYNC_POLL
-  * Async call used by service driver at EL1 to query mailbox response from SDM.
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index bda837815bae35fbf4df6280dba5bc02d747426e..032e780c7b545e2e238f9dea712779d979e491d6 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -16,6 +16,7 @@
- #define SVC_CLIENT_FPGA			"fpga"
- #define SVC_CLIENT_RSU			"rsu"
- #define SVC_CLIENT_FCS			"fcs"
-+#define SVC_CLIENT_HWMON		"hwmon"
- 
- /*
-  * Status of the sent command, in bit number
-@@ -71,6 +72,7 @@
- #define SVC_RSU_REQUEST_TIMEOUT_MS              300
- #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
- #define SVC_COMPLETED_TIMEOUT_MS		30000
-+#define SVC_HWMON_REQUEST_TIMEOUT_MS		2000
- 
- struct stratix10_svc_chan;
- 
-@@ -142,6 +144,12 @@ struct stratix10_svc_chan;
-  *
-  * @COMMAND_FCS_RANDOM_NUMBER_GEN: generate a random number, return status
-  * is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READTEMP: read temperature from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READVOLT: read voltage from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-  */
- enum stratix10_svc_command_code {
- 	/* for FPGA */
-@@ -172,6 +180,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_MBOX_SEND_CMD = 100,
- 	/* Non-mailbox SMC Call */
- 	COMMAND_SMC_SVC_VERSION = 200,
-+	/* for HWMON */
-+	COMMAND_HWMON_READTEMP,
-+	COMMAND_HWMON_READVOLT
- };
- 
- /**
-
--- 
-2.35.3
-
-
+On 4/21/2025 8:06 PM, Judith Mendez wrote:
+> Hi Udit,
+>
+> On 4/19/25 10:00 AM, Kumar, Udit wrote:
+>>
+>> On 4/18/2025 5:00 AM, Judith Mendez wrote:
+>>> Set eMMC clock parents to the defaults which is MAIN_PLL0_HSDIV5_CLKOUT
+>>> for eMMC. This change is necessary since DM is not implementing the
+>>> correct procedure to switch PLL clock source for eMMC and we have a
+>>> non-glich-free mux. To remove any potential issues, lets switch back to
+>>> the defaults.
+>>
+>> IMO, we need to fix DM  if not then documentation [0] .
+>
+> DM cannot be fixed for only one IP and documentation says what clock
+> parents are supported, it does not have to say what are the issues
+> that come with using a specific clock parent.
+>
+>>
+>> Then only this patch is ok because as per document [0]
+>>
+>> removed clock by this patch is valid parent for eMMC.
+>
+> The clock parent currently set is a valid parent, but we have non-
+> glitch-free muxes and to avoid any potential issues with these, we
+> should switch back to the defaults. It seems like we randomly switched
+> from the default for no good reason and it has been copy paste per
+> platforms since then, so we are switching back to the defaults now.
+>
+So, if you are saying parent 
+3(DEV_MMCSD0_EMMCSS_XIN_CLK_PARENT_POSTDIV4_16FF_MAIN_0_HSDIVOUT5_CLK)
+and 
+4(DEV_MMCSD0_EMMCSS_XIN_CLK_PARENT_HSDIV4_16FFT_MAIN_2_HSDIVOUT2_CLK) 
+can produce a glitch while
+clock selection then we should document that in clocking section,
+and with note, what care to be taken when above are selected as parent.
+Thanks
+Udit
+> ~ Judith
+>
+>>
+>> [0] 
+>> https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j722s/clocks.html
+>>
+>> Thanks
+>>
+>> Udit
+>>
+>>>
+>>> Fixes: c37c58fdeb8a ("arm64: dts: ti: k3-am62: Add more peripheral 
+>>> nodes")
+>>> Fixes: d3ae4e8d8b6a ("arm64: dts: ti: k3-am62a-main: Add sdhci0 
+>>> instance")
+>>> Fixes: b5080c7c1f7e ("arm64: dts: ti: k3-am62p: Add nodes for more 
+>>> IPs")
+>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>> ---
+>>>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 --
+>>>   arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 2 --
+>>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
+>>>   3 files changed, 6 deletions(-)
+>>>
+>>> [..]
+>
 
