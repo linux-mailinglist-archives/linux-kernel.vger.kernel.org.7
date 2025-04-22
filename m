@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel+bounces-614371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012A5A96AA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:45:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE7EA96AB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6F66165808
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508833B8EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9E512F5A5;
-	Tue, 22 Apr 2025 12:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="b5WtlO1o"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF027CB3E;
+	Tue, 22 Apr 2025 12:45:24 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCA225FA0B;
-	Tue, 22 Apr 2025 12:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D970D1F2B83
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325872; cv=none; b=Dr32mhujuVKZs0vmTapiW3xB6xyMTmuZ/jNsai7sh2mxJbWsPC4qw6kYNIlpdn+GC8JkzsyF+FPUGiun361ZhgwUoTS31ewElvZMQXHE6PfMR9uSKmFGtzFIbiKS8tCSQ4nU3zSkk0SYq2kPCOiTq8ee8/LKYUs0x7LlKKV2vCw=
+	t=1745325923; cv=none; b=AJK1AoxqhNXeRL6awhGK0t6TBqASTKJm8gJmSQlz270asX4GiBK2B51awh+4BBqfIWNP/axwGhslgXykDPtRyzG53h3trURaLIWBPlnZxAsJ1TY/D6u/Uq4aM8hIhg6+jyV4Wa1FoTF2riSuzwj1SVmNQ3yYt/NgbzszvnHTa1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325872; c=relaxed/simple;
-	bh=fwjn2eAipGj8txUYSDvtnaSj4kpK0g4kALgLoZJzw2E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u18lCbz1zOLux6y0dNYboQjKc6coLXR+D7NjPn62bBCDdiUnLuMBrMr3phkMr4pUo27fRzA0E/oPX/yR6lJ3fsyH+Bs8807qR7uw76aRHRJPOhdmF1R46ucM45xMPyneQEkoAEO0m1VMus44LF45XHAS+SUnRTxI8EHmhqORGmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=b5WtlO1o; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1745325338; bh=fwjn2eAipGj8txUYSDvtnaSj4kpK0g4kALgLoZJzw2E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=b5WtlO1oBw5UJXJaw02uReybBdy2NpssNOTcIVlk2S6IlIxrjbJ1KkNnhNkubM1PN
-	 RuiVU35hdXr+V1ZbtonPAY0NE5zCH/y9PtCu12kBbuMBC0wDD5T9zknXQK8x+4WVKf
-	 OdE6AXTM6SO9bDYeQcn3fLfZ+YEi8RuWp6rbw21ZLOVFVQEibMPwwOIWngveRlq42v
-	 +UudPgMZmh8G7ar+HkG0dHXuBN8C65IZLvuJ27BZHeCwlrtrdb9XUnCGo6YCyWWyu1
-	 f6hp7fpXyy3KVw4pkgVLSKH1HUJ4ivU2LqZ2VpUOxv5W3fRLFyat7Ib4qYBiPJlpvy
-	 h6+FqjY4xDpIA==
-To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
-In-Reply-To: <20250421040044.44887-1-rosenp@gmail.com>
-References: <20250421040044.44887-1-rosenp@gmail.com>
-Date: Tue, 22 Apr 2025 14:35:38 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87ldrsjrvp.fsf@toke.dk>
+	s=arc-20240116; t=1745325923; c=relaxed/simple;
+	bh=wWEDt570HygBwpRK15+thk9Cpqh2/1oMStxh91ZqZTY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fq0CbVkGogCpDxi0jh8WaXVLe3h2YFWsDXZ3OF7uaOIiSEdEDxryPU0+lCE8oD5t0N9/nX/KCT52tONGJCYyvDpujTtBzRw3pTaslkmJVeiPyMuajiOrXzXzBXhTdZxs3esXtM3VaGKcog66kPh8nAoRKIKW3iifcwN182W4cG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Zhhlg3S2Tz1j5wk;
+	Tue, 22 Apr 2025 20:45:03 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id 69CA11402CE;
+	Tue, 22 Apr 2025 20:45:18 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
+ (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Apr
+ 2025 20:45:17 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <xiang@kernel.org>, <chao@kernel.org>, <huyue2@coolpad.com>,
+	<jefflexu@linux.alibaba.com>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<lihongbo22@huawei.com>
+Subject: [PATCH RFC 0/4] erofs-utils: Add --meta_fix and --meta_only format options
+Date: Tue, 22 Apr 2025 12:36:08 +0000
+Message-ID: <20250422123612.261764-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-Rosen Penev <rosenp@gmail.com> writes:
+In this patchset, we have added two formatting options --meta_fix and
+--meta_only to extend the ability of EROFS. In the case of using OBS,
+we can convert the directory tree structure from OBS into the erofs
+image and implement on-demand loading logic based on this. Since OBS
+objects are often large, we need to separate the metadata area from
+the data area, which is the reason we introduce the --meta_fix option.
+To accelerate the formatting process, we can skip the formatting of
+the raw data by adding --meta_only option.
 
-> Simplifies probe slightly and adds extra error codes.
->
-> Switching from devm_ioremap to the platform variant ends up calling
-> devm_request_mem_region, which reserves the memory region for the
-> various wmacs. Per board, there is only one wmac and after some fairly
-> thorough analysis, there are no overlapping memory regions between wmacs
-> and other devices on the ahb.
->
-> Tested on a TP-Link Archer C7v2.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  v2: remove wrong devm irq conversion.
->  drivers/net/wireless/ath/ath9k/ahb.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
+A simple usage example is as follows:
+  1. Build one xattr with OBS key in s3fs.
+  2. mkfs.erofs --meta_fix --meta_only data.img /mnt/s3fs to format
+  3. Implement the loading logic in kernel or userspace.
 
-Is there any benefit from this other than code simplification? Because,
-TBH, I'm not sure saving 7 lines of code is worth the risk of changing
-something we know works already...
+Based on the above logic, we can easily expose the directory tree
+from OBS to users in the form of the EROFS file system and implement
+on-demand data loading for large OBS objects.
 
--Toke
+Hongbo Li (4):
+  erofs-utils: lib: introduce --meta_fix format option
+  erofs-utils: lib: Implement the main logic for --meta_fix option
+  erofs-utils: lib: add --meta_only format option
+  erofs-utils: lib: remove the compile warning
+
+ include/erofs/blobraw.h |  29 +++++++++
+ include/erofs/config.h  |   2 +
+ lib/Makefile.am         |   3 +-
+ lib/blobraw.c           | 129 ++++++++++++++++++++++++++++++++++++++++
+ lib/decompress.c        |   3 +
+ lib/inode.c             |   6 ++
+ mkfs/main.c             |  49 +++++++++++++++
+ 7 files changed, 220 insertions(+), 1 deletion(-)
+ create mode 100755 include/erofs/blobraw.h
+ create mode 100755 lib/blobraw.c
+
+-- 
+2.22.0
+
 
