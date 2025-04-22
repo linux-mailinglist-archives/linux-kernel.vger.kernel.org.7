@@ -1,224 +1,243 @@
-Return-Path: <linux-kernel+bounces-614822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68431A9728B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:24:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4A0A9729F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B379A7A6932
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B40A16B4C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AF8293B6A;
-	Tue, 22 Apr 2025 16:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA42949E3;
+	Tue, 22 Apr 2025 16:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kZhlkwbU"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BvlEaxhl"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678B82918CD;
-	Tue, 22 Apr 2025 16:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339015; cv=fail; b=O81LP3Fj2NDqJsevy8P99+jIxp8yp7JgQ3rierhOulS7tRMlRFX00LTP3WC5/9w1avvvCPwFy1+6GnZ6feCv8NjAZPpapkE7DdYGxQGNO3Fogv56GsbgiXEPZCp8wUECouw/bkWVXZeDBjYDTaQay2CBWIVYugt/lGw+K8ne87c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339015; c=relaxed/simple;
-	bh=40TVBh2sJKjcHMG7kgkRfk2MCs6zsULOTMMzqXzfGcQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u/vlK6QiSPD88n/5Rf2kwDeZq0/NRok+P9VXGKuREHTBrmWcf+SKmxC+a2V+NzJO/0XThh0smpO7dRnQpyto0oLuBwVHVBd3G/Ualo4pkBvByA+7Reirsy396pZiWlnoMxe0mq8ghSPI+ZMkB/3wNS3rouDeecdgii8ZTY4coGo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kZhlkwbU; arc=fail smtp.client-ip=40.107.92.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N6A5AMslAraCq8LVOrBeeUrrzc9D6/Y1fKlhwL82OtSgQrPpMFPFbf4/hhqfKSLmvStZKj1Ls2lgbca51vNUwI6ICWgR7yjSHMSH3f+CPnWQVD7og17qYOW3qddRghpPq0oyf3QfAua15h1WAukO79mfRr8WYzfaiypTQjARaqvoMuyYXsWo/eV1gVbFtjXfa3CFs62BRKNlIrDLKaSSqNB/micn8xl9Rew5g6QuxM8QMVruIC1Y71Pvc6IDwNBRahEgyvkoAtw1y7yuhmtT2XAEO4xWU3NjWTYjspfP8wxWyNytC+ak2m6qIrWx9b/FzifXwaFaEz9AzGNNzj8PqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A9eVgf9fKPOdIc3ibdPT9ro1rTFDaulxOaHnSny9x6c=;
- b=MriWVjoRoNuo721tUeuSyRm14Z+NMS8tKFOXqHrKWGhUV2gSEjxUMjby0Q7eCm3y1GkMez/nrgdFjMggBVp/7KcOSrms0DCPJY8IfkdytfvgFWGgmnnv0ad9xa4z67YNB/ejPNS+kNeTAfYfadFacH5XMis5p9pzzope6qNu2t1wDUCh5iNrQ0zTq3vfPwTgFVf3mHRGxSTeKJTNSEfsg6qGxD2HZmFIi+7x7eu0XSsUdVDjWf9hqvEWpCGepfuRegnmVhgfhvGtEL48hcYosMOULwBnBLdg7RkTar1uhbSUD7WOlzR68p0eyiL7l7C/lDpRCuMZUX5Em59iiLKbnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A9eVgf9fKPOdIc3ibdPT9ro1rTFDaulxOaHnSny9x6c=;
- b=kZhlkwbU9iRpLvMwsRP7Suv9VGdyseeBQ4bIhab+7ZW3+ls8FiG1DCWv0DCDCfZN7xpHzxw7NZi3b7JTeChHgc3c56XhchALUK8cTh/in4uaywk/p5/gVm+2CBbSGzCMsK6GBbqJWYEeYF63i6xA1VNf9yEjRMjpvs2T51Qr0ZIQMUb4x6H1fchG5+PvEiEvRC/fdK+Sx959bFIZzd3l5IqXmggy9Wf6/mi9NsvsTI8+VG+j/MnAkNZJInhySWRjwnWCwHlUzkQO3GHJp4hH/remMfS1QRk4z10Bg7qRYRvXxuR08gZAVjn1wh49Uu/6YX03JIvVlqRL3ThohfvhIg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS7PR12MB8371.namprd12.prod.outlook.com (2603:10b6:8:e9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Tue, 22 Apr
- 2025 16:23:28 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%6]) with mapi id 15.20.8655.033; Tue, 22 Apr 2025
- 16:23:28 +0000
-Message-ID: <0d5e7a8a-c272-4652-ad03-229384bbbc95@nvidia.com>
-Date: Tue, 22 Apr 2025 12:23:26 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/16] gpu: nova-core: derive useful traits for Chipset
-To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
- <20250420-nova-frts-v1-3-ecd1cca23963@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20250420-nova-frts-v1-3-ecd1cca23963@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN1PR12CA0014.namprd12.prod.outlook.com
- (2603:10b6:408:e1::19) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D540293B6F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745339061; cv=none; b=mT48ioASHf5FBAQRpjhYVYrbb1cBlwHIQz4g9Q3fTvDU6VZU2DIgT0HMQDEttMuXVSlxGSp/WXwRd5t/4aaPMmCEyLgbvQLy/ULTBK3i2OW3X+z+3J3l06db+MZpvecglqOLo2RqNu9xH4einFVn6Diw4RTtIEDEklPTInV0msg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745339061; c=relaxed/simple;
+	bh=tTPyvvktfcqDPnRBx86/RWSrX9I6vskownhbBGOPXww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NYDP+iwYkI4fB6kzGQ71aNkW7Zda101JWRk7IieajQ40YZFOU5CBxBqogHk49tP9viSMgA8dIEX/WTxzFpsKeboYcBzD4kWFgRxhHTYmJxJt+R/+71RM8B7SeNdkSnBxnJa2hNNE+4qKGMKB7ZY+YgYZAkkwmN8aBavWE1X7Bdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BvlEaxhl; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85b3f92c8dfso162167139f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745339056; x=1745943856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j3O/04KOewEqYkmyH962BGKGCen1FWcqj/+4ibHpaNw=;
+        b=BvlEaxhlQwMx4A2Gt0wqcpzMRbPARqjN8ny5hYgapd5ZlVVv2dt/PgTr1iRlQrd0uI
+         H7cq7ITTo/v/ktrK/MKx7e33MpvUkx4uCk4heiMCVEY53L6N7H/3z9n/tgSiISjnk3kz
+         waTsZ/Cpk36xHwHtChFpkd6FrllgTuEfLoRoHYmXvk51o42rfZz4OfJvTDjr3gctyrpw
+         PhitvvHstStda4i/FTIxvcR7XEMWTF+gzve168eK5Uc+6oj9z2B5KEFzgyIVdAKxMXfh
+         VpoFJ6BjcUy/b3ZbShZM9/C0x2YYQTlNDkB9qpMkrbT9WLVwu1/CRPC1j7ZfiM7cATwL
+         ObJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745339056; x=1745943856;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j3O/04KOewEqYkmyH962BGKGCen1FWcqj/+4ibHpaNw=;
+        b=cBevhkgaq2k8UYxsbKeQu/f4rxaIEe/X4+tGAe0mUaZkmUbnDqjb0Oruh9fcvqZqrJ
+         zYBDGr+LprGZZxEAcItnCzBkiBRUGP6ITUaOWqsf/uk+L52BSYRP/Ssyl157gufzcbP6
+         iXa7mIkINigKttpucbTqpm5Oa7/GKeevqYVgW90yptiJQvXjtyKK5QkZTX6IGOl6nYxh
+         gawe1P9cKqwM/EIWwLnq4C1cE1nGAM/jd5rMA6Nl0PzYFe66V97pGs/FQnH2lC0Y+Npq
+         2CzhcYgABWSE/qRtK7fn2uaIJuFtsW65OGi9+Bk09FURip94ElNyEOCIH4gxVNHG7ppR
+         2Qdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU443DkyAYqRDtIglQYNR5oRGEpoTmmv+Ak8RfZVQTxOKvCtNCVV4wSkJ0CR7nb+vNYsAWUgGuSxzqSc+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwKcyN0J4ZFOxd/vEpr+4s/qwcc4t6CmMEmAGKzkWSa5gQT+wF
+	nm3TEcVAt8jUFp70QOkyeqZpzzGgfsmxZFVLnGjd3utJbPFT4R5SJPjcE5dfxPk=
+X-Gm-Gg: ASbGncsZC6MO4kvUjAhDRPvkyv/cI0tQ5JOEALkZHhm+nE6lCAMjc7MkRSuNn60qCv5
+	aWU9Ujt3gW/ZiC33rtrjO/cvjO4GDTL0kO4GeXbRG9Dp2D9TRu6VdvellJzFB/b9bgBfDLnB7iW
+	oGGFt6ZxDCJUtpL6q1/FZZ1T6uQzHD9LZ/SimZ834n7L/0zDjd6H9Wyb2DjfkIibmo478uxaNg8
+	QA5889i1JciZ0GQpiLSS1KGMmbzYusuldDNRST7JdBELC6EtVuh0fYXKi3z7h7ShwY8FgR1H5tI
+	9a3QsE876yqsK6/mbqFa0DcpE5ADosGRcb8bRA==
+X-Google-Smtp-Source: AGHT+IF+oA4Oa5RZl9BtxMoy39ZTJG2xZrFT/oMGu2VwciXmQf2r8GThv4QUlCvkUQXjdhpIKpVdcw==
+X-Received: by 2002:a05:6602:7284:b0:85b:46b5:6fb5 with SMTP id ca18e2360f4ac-861dbeab8fcmr1637684939f.11.1745339056189;
+        Tue, 22 Apr 2025 09:24:16 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3933d59sm2410172173.94.2025.04.22.09.24.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 09:24:15 -0700 (PDT)
+Message-ID: <0a9dfa29-62c9-4e47-aa4a-db36b61df3d1@kernel.dk>
+Date: Tue, 22 Apr 2025 10:24:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS7PR12MB8371:EE_
-X-MS-Office365-Filtering-Correlation-Id: aafb7433-3662-4973-2ad6-08dd81ba03cb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cDgwMXYwcGJRU0taNWw5eGgzdHpjYS9kTDliV21sV09ORTNCek1MZ0wrVXZy?=
- =?utf-8?B?WlJwbkZZbWdaazBIY2NXNnpyTjBIeEFOdHFEOFNacThybXNDbi94Ylg2UVZ2?=
- =?utf-8?B?Skh1SDlZc3M2UEZ4Nmg2cFgrYVhreGxaV2gxSGtvMFRJU1N2N0JlL2l2N0xu?=
- =?utf-8?B?cEJjQ05HQUh1aFByekdaYXRjRWpINFBML0h0RVNtbW9lVTFPby9DbUFNWjhY?=
- =?utf-8?B?bDdxdjBSNm1ObUx4OEJpUFV1WWZlMUxpcUcvaDNzazcyTDdXWmdVVGl6bUxV?=
- =?utf-8?B?ejRCQTlkMVNOUmlEQXJpUzFYQllVYTkyYVQwZjBodlJRT3d2bThLRGU0WFpa?=
- =?utf-8?B?OHZGNE9kZmRSK2pnWHhGM0phNlkvcCsxeUlTQTlkbi9sV0JTQUx3Tkh1MzVi?=
- =?utf-8?B?Zis4NnRiVkFFRVJDSGgzM2RkVnpCRFFPc1B0OEd4WkF3TkNPN21BZ3BlcTZx?=
- =?utf-8?B?c3VXNFhlckVWQnFhTDZTK1hPazRxQTRYTU52RzBURmFQa0hvcFR3THZNRHVB?=
- =?utf-8?B?dEhnNEFNbm1LblhmK29MemtnWHVRaUcraFYwWmxwYXdJL0R0ckM3WVBvV0FB?=
- =?utf-8?B?ejUrbzVuZlNNN3NmbHhiMjl1UldxNTVtaGhFZDZGZ1pMWW5OM3pLVXBkUU5a?=
- =?utf-8?B?SWl2eXU1VUswbHdJRS9WWXY3NlkzbTUvYTVwRnFHNWZSa2x0ZjZBYTB5M2xH?=
- =?utf-8?B?b0trd0RkVzJTZllXTW9DK3JUQVlDWkFseThlSGM1STdZMi8wbzFaUWEwRXQ0?=
- =?utf-8?B?OHhBc2hBUkxqT1Brbk1UOEMzRTROM1JyclJ4MGZwbFQ1Wmo2SHlSZ3NzYWVL?=
- =?utf-8?B?WDMwclJHVHhod1l2eHNuZEJkUWRSdVV5MGkrQThQaTAvQ2VSWE1DY0V4QjZ5?=
- =?utf-8?B?UURGSjRmNTZES29FcGJDWDdvaFRkdVZkaHljN2hZQTlYcVZGV0dsZENQMldP?=
- =?utf-8?B?NysyNUxUYlo1b3I2YmVFYXNhcnhJcUxxbHE4OEVGVmlPWjN1N2J1Smx1MURo?=
- =?utf-8?B?Z1d1QXJwZXducFA2OXNIaWVRQzdOMndmdnJoSWNCUmFSc1pBbnZ3Ny9tSmlN?=
- =?utf-8?B?a2t4QlQreVVoN2JEUXdWVjZFTnZlMk15ZlY3dlB3Z21WTDNkTmw5ZGFib3dO?=
- =?utf-8?B?N1IxK25YdXhPRU95ZW9VTHBRWCtqOTd0ODNXd0IxWFlYRUNnTUpwREwwcHcv?=
- =?utf-8?B?WE1kWkFtRHNqdHhVVnA4dDdicFI1ZHZvNDkzdXZDQ2hoVGliNWdVYmNkM2xU?=
- =?utf-8?B?RnRsZEhwZ3ZpS0tGYU5oTHpBbHAwWGtIb1NzZStuZnJ6MFZMV0VMTHpod3d5?=
- =?utf-8?B?cnlHUFl1QjBXZEt3UXlyTFRpN2pMTXUrdFNHbGF6dXJSV2hWMkpSVDlxaS9E?=
- =?utf-8?B?VkY4SEZQS3RXVW5pNGlrZHBJWDNhbFhMc09aZXNaUURaS0orV2pjZlVlaWpj?=
- =?utf-8?B?NWk5MzNwdEpKN28zMGZGRVVDYVNTd0lGd2ovcCtjcmhkcC91dFVya3NrdVJ2?=
- =?utf-8?B?SkVMa3REM2xJOW51bUVwSHp0aWdCT2wxeUsxRWhsODE5am9VK1NSdFVCczNi?=
- =?utf-8?B?V2pIN1RTblNJRnlCZFl1aDVEUUhXRmFZRzdvc2ZybnY2cWZMUDhvN05yWWNs?=
- =?utf-8?B?NWlMOW5scGxiS1p6VENFaklkNUpaRGhDOUh4bmtiV0ZhSld4NWh3Mkt3aGRn?=
- =?utf-8?B?RWhMZUxDM0dCMkFydmNnenJsVjBSZlRGZW8vbEhBaGhmT0R4cmRUSVFYOFkz?=
- =?utf-8?B?WlRSQU5IdU5DaEdiazZmcjFsdmJjNkJ1dk5seGVXSU5RMGhqbkxmSWNLcyth?=
- =?utf-8?B?dDlieWdqc3I0T2N6emZjRDhzUEwwaHFuQXcvcTR6OXR3WFdRMDE0MUY1WnNt?=
- =?utf-8?B?MVpIejhQMFpzSWZyZVk1czFpdDVTaUVpNzhRcU53QVJHMElIbUFXcXRCR05x?=
- =?utf-8?B?cVFrZFdHN3FUMFVNQjZIK21uZUl4K3ZkWU1vcVFGeG1VemQ4THA0SE56cG0w?=
- =?utf-8?B?RTJOZkRPVEJRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YVJzTko5OTNDdFFvRG5aeHJwUnNMckQ4ZE5oUEg2WlVrMGhrTFNPeDArQkpn?=
- =?utf-8?B?WDBwcVV4MmFsQ0hnU2ZBd0hSV3JsS01lVUZEMUNJemhQWjNkOElWZDhFck95?=
- =?utf-8?B?MTRma1BhMjRTb3BhNEpUU1dJWUpVT0IvYUFWQ0hyMzhQaDVBZnplZFRzM1cw?=
- =?utf-8?B?NjRkY1k3Rkp1TllRLzdQNEJoUHFYK0g1ZWtaZ2tiK1FWS0RIS0hrWEsvWWJq?=
- =?utf-8?B?cDVmRS9LLzRvRjUzUnFKWFN3cWkyNTkyTUZ0dngySXNZN3FCK1o5T3lhM2NX?=
- =?utf-8?B?cXNUNVFFZnVQRnlIcGVxRzZYV296Z2FFcGM0TjMwUkVSOXN6NzUxZ2huQ0Fj?=
- =?utf-8?B?dlFkck9BaVZhVWlwWjZZU3M5dGVXVFdGSXFQUEdES0VsTDViMzBkY3M4QnVs?=
- =?utf-8?B?TGtKWTV1OXJTTHFDbjR0Y1FiVlVjbXBrWEg0U1B5VDczTHF0MS9vajNGT0NY?=
- =?utf-8?B?ekJGUjBDQjVsa0lrNEtNenQxYmp0ZVh2eThTLzFLdXFnYmVjM1JuVzJZZ3hk?=
- =?utf-8?B?NGtVYVdJWE1pNExFT3lUK1NEeFU3NFI5MjlZR0RKVE0wWUl3SkdOM3N2Z0VD?=
- =?utf-8?B?aFdtV1ZSU2xoblNtajVCSUs0bWZ6VUxhdTExZmxSUE9EUHJBV0lWbjAzYmUz?=
- =?utf-8?B?ZmRwM0djR2UvTVplcG9qdmJvVGVlNEJlZEFKWmpmMVNqUHhlK3BWY0dnQnlJ?=
- =?utf-8?B?ay9LZTI1MUtnSG9FZnhNeWtIZTFYdml3cXBOUldsSThWMzRZSDF2UE1ac1pk?=
- =?utf-8?B?b2FpbXlHbzdCTVIvYUhMSlh5bzZRZnliVTBWK3dYNW92WnFSRU54OEViVUFx?=
- =?utf-8?B?cTZmMTlnMUxDd1EzUGFlbjcxc0g5c1N2ek05MnpxQmRPY3hsV2c4TXRNdUpa?=
- =?utf-8?B?U0hmRVJlbjY1ZGxuVVVUbDdadVMxYzNGK1BFODJOZ1lacmw1RFBWYVlYUDJV?=
- =?utf-8?B?eGtaYjQzMjNPZXBIWkZZV0NIQnFCWi9OeWd2RnlKVzZFTWZ3R0pxUzBBZDBh?=
- =?utf-8?B?ZnBRM1k4UGZTcldMVklSdTdSU0dPMnFwYlF5VkRmQktDeUJiaDFkbzZsaEpH?=
- =?utf-8?B?M3Y4Q2NEVEVBYllNNDlCYzBpck9rNDNXdU5XK1N6L3NwUEtTK2tzV2ZCa0ps?=
- =?utf-8?B?SjA1dUdkcGlsWlJqeVV3UmxOQTlBZnlYWmZ3YmE4WUxTbFpYRzZVQmFQTE4r?=
- =?utf-8?B?eTNyRi8rcGU1ZzA5K2s2c3FCUFgwUUNwb0M5aDE4WkF6Y2NISGVCL2FoeGt2?=
- =?utf-8?B?UHRpSElpLzZ4cjZVOHE3RWtCSkZIU3o1T2s2SHVibzgxb1dFZ1BpUlA1QVlH?=
- =?utf-8?B?eVgza2lIdWtYVjAzNUw0YXk5RkYxM0QvUzI5YXBGT2x2SkxxWWsrblZuWXJa?=
- =?utf-8?B?VnBZQzFpWVBKM1VrQVhYUFNLN09tdjIrWGYzeUhmVjNxRy91QUdrMUl5VEox?=
- =?utf-8?B?RytENWxoYXJhQTNWYWQ1VHM3Z2lzRHpkSzlIYjhsZTNPaUk1T21HV3JDSGZB?=
- =?utf-8?B?M2VEMWxvS2huVXBtS1JwbjR5Tm93MmV6TGJiTUhReXE5cGJCb0x3dDBxL2JR?=
- =?utf-8?B?aGRMc0x0dWovMm5USWxWbjVXcytTM1BZVGRUbGxnMDlUT3VPamxiekNWdC9o?=
- =?utf-8?B?QzNseDh5a1NjMitHVTRyYUZ0NUNtZTNlQjFWS0VUSTNwV0hHdmpVQm5aV0VO?=
- =?utf-8?B?RWpwTUFSajNrK3I0MjFSWThwVkNIV2R3d3pMeDlOQnZQRlhmZ2RIckpSZ21T?=
- =?utf-8?B?cG9sbnNFVUdiNSttREpOQWFHK2VYZi9VbVQzSTVybXNaN2M1SmhnNXYyNmFz?=
- =?utf-8?B?VEU5VmNmR2puUUdEVm9MRzFnbUdmWjZqRm1ZclVHaTd1NWRrWDJCTTkxY3hx?=
- =?utf-8?B?TG5vOGNxSGtpRkFuY2VPYWoreksyelNhVnRMbjdWUTRuS0dXaUpkQVhpVDN2?=
- =?utf-8?B?UUJud2ZwMUFmN0NsQjA0dGsweVhpbjFpYjRJWDdUZEVRd1NMVFZlZ1o2RHdq?=
- =?utf-8?B?cllNbVQ0TUhTYlZQWnVpWmJEQWhvYUJDR0I5K2tvWHR1M2o1c05HTjF1am1q?=
- =?utf-8?B?MFhIVGJRUVpqeVpaVHRWd0hmbEREV20rWCs1RWVZQXd4VUk4TEoxYmptcWRE?=
- =?utf-8?Q?Xxgf8TGbtXgjXmFgBLR4gmXSh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aafb7433-3662-4973-2ad6-08dd81ba03cb
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 16:23:28.5961
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rh/BKvv4h3SWvecGEjVa687O+fQUPQJ7AVzdbU7Eq4U2yL88pRPGbPUD7WQnGKRxS9vnXlJyqvqXxpL7FCLELA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8371
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Fix 100% CPU usage issue in IOU worker threads
+To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250422104545.1199433-1-qq282012236@gmail.com>
+ <bc68ea08-4add-4304-b66b-376ec488da63@kernel.dk>
+ <CANHzP_tpNwcL45wQTb6yFwsTU7jUEnrERv8LSc677hm7RQkPuw@mail.gmail.com>
+ <028b4791-b6fc-47e3-9220-907180967d3a@kernel.dk>
+ <CANHzP_vD2a8O1TqTuVNVBOofnQs6ot+tDJCWQkeSifVF9pYxGg@mail.gmail.com>
+ <da279d0f-d450-49ef-a64e-e3b551127ef5@kernel.dk>
+ <b5a8dbda-8555-4b43-9a46-190d4f1c7519@kernel.dk>
+ <CANHzP_u=a1U4pXtFoQ8Aw_OCUkxgfV9ZGaBr8kiuOReTGTY3=g@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CANHzP_u=a1U4pXtFoQ8Aw_OCUkxgfV9ZGaBr8kiuOReTGTY3=g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 4/22/25 10:14 AM, ??? wrote:
+> On Tue, Apr 22, 2025 at 11:50?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 4/22/25 8:29 AM, Jens Axboe wrote:
+>>> On 4/22/25 8:18 AM, ??? wrote:
+>>>> On Tue, Apr 22, 2025 at 10:13?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>
+>>>>> On 4/22/25 8:10 AM, ??? wrote:
+>>>>>> On Tue, Apr 22, 2025 at 9:35?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>>>
+>>>>>>> On 4/22/25 4:45 AM, Zhiwei Jiang wrote:
+>>>>>>>> In the Firecracker VM scenario, sporadically encountered threads with
+>>>>>>>> the UN state in the following call stack:
+>>>>>>>> [<0>] io_wq_put_and_exit+0xa1/0x210
+>>>>>>>> [<0>] io_uring_clean_tctx+0x8e/0xd0
+>>>>>>>> [<0>] io_uring_cancel_generic+0x19f/0x370
+>>>>>>>> [<0>] __io_uring_cancel+0x14/0x20
+>>>>>>>> [<0>] do_exit+0x17f/0x510
+>>>>>>>> [<0>] do_group_exit+0x35/0x90
+>>>>>>>> [<0>] get_signal+0x963/0x970
+>>>>>>>> [<0>] arch_do_signal_or_restart+0x39/0x120
+>>>>>>>> [<0>] syscall_exit_to_user_mode+0x206/0x260
+>>>>>>>> [<0>] do_syscall_64+0x8d/0x170
+>>>>>>>> [<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+>>>>>>>> The cause is a large number of IOU kernel threads saturating the CPU
+>>>>>>>> and not exiting. When the issue occurs, CPU usage 100% and can only
+>>>>>>>> be resolved by rebooting. Each thread's appears as follows:
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] ret_from_fork_asm
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] ret_from_fork
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_worker
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_worker_handle_work
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_submit_work
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_issue_sqe
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_write
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] blkdev_write_iter
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] iomap_file_buffered_write
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] iomap_write_iter
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_iov_iter_readable
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_readable
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] asm_exc_page_fault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] exc_page_fault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] do_user_addr_fault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] handle_mm_fault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_fault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_no_page
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_handle_userfault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] handle_userfault
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] schedule
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] __schedule
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] __raw_spin_unlock_irq
+>>>>>>>> iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_worker_sleeping
+>>>>>>>>
+>>>>>>>> I tracked the address that triggered the fault and the related function
+>>>>>>>> graph, as well as the wake-up side of the user fault, and discovered this
+>>>>>>>> : In the IOU worker, when fault in a user space page, this space is
+>>>>>>>> associated with a userfault but does not sleep. This is because during
+>>>>>>>> scheduling, the judgment in the IOU worker context leads to early return.
+>>>>>>>> Meanwhile, the listener on the userfaultfd user side never performs a COPY
+>>>>>>>> to respond, causing the page table entry to remain empty. However, due to
+>>>>>>>> the early return, it does not sleep and wait to be awakened as in a normal
+>>>>>>>> user fault, thus continuously faulting at the same address,so CPU loop.
+>>>>>>>> Therefore, I believe it is necessary to specifically handle user faults by
+>>>>>>>> setting a new flag to allow schedule function to continue in such cases,
+>>>>>>>> make sure the thread to sleep.
+>>>>>>>>
+>>>>>>>> Patch 1  io_uring: Add new functions to handle user fault scenarios
+>>>>>>>> Patch 2  userfaultfd: Set the corresponding flag in IOU worker context
+>>>>>>>>
+>>>>>>>>  fs/userfaultfd.c |  7 ++++++
+>>>>>>>>  io_uring/io-wq.c | 57 +++++++++++++++---------------------------------
+>>>>>>>>  io_uring/io-wq.h | 45 ++++++++++++++++++++++++++++++++++++--
+>>>>>>>>  3 files changed, 68 insertions(+), 41 deletions(-)
+>>>>>>>
+>>>>>>> Do you have a test case for this? I don't think the proposed solution is
+>>>>>>> very elegant, userfaultfd should not need to know about thread workers.
+>>>>>>> I'll ponder this a bit...
+>>>>>>>
+>>>>>>> --
+>>>>>>> Jens Axboe
+>>>>>> Sorry,The issue occurs very infrequently, and I can't manually
+>>>>>> reproduce it. It's not very elegant, but for corner cases, it seems
+>>>>>> necessary to make some compromises.
+>>>>>
+>>>>> I'm going to see if I can create one. Not sure I fully understand the
+>>>>> issue yet, but I'd be surprised if there isn't a more appropriate and
+>>>>> elegant solution rather than exposing the io-wq guts and having
+>>>>> userfaultfd manipulate them. That really should not be necessary.
+>>>>>
+>>>>> --
+>>>>> Jens Axboe
+>>>> Thanks.I'm looking forward to your good news.
+>>>
+>>> Well, let's hope there is! In any case, your patches could be
+>>> considerably improved if you did:
+>>>
+>>> void set_userfault_flag_for_ioworker(void)
+>>> {
+>>>       struct io_worker *worker;
+>>>       if (!(current->flags & PF_IO_WORKER))
+>>>               return;
+>>>       worker = current->worker_private;
+>>>       set_bit(IO_WORKER_F_FAULT, &worker->flags);
+>>> }
+>>>
+>>> void clear_userfault_flag_for_ioworker(void)
+>>> {
+>>>       struct io_worker *worker;
+>>>       if (!(current->flags & PF_IO_WORKER))
+>>>               return;
+>>>       worker = current->worker_private;
+>>>       clear_bit(IO_WORKER_F_FAULT, &worker->flags);
+>>> }
+>>>
+>>> and then userfaultfd would not need any odd checking, or needing io-wq
+>>> related structures public. That'd drastically cut down on the size of
+>>> them, and make it a bit more palatable.
+>>
+>> Forgot to ask, what kernel are you running on?
+>>
+>> --
+>> Jens Axboe
+> Thanks Jens It is linux-image-6.8.0-1026-gcp
 
+OK, that's ancient and unsupported in that no stable release is
+happening for that kernel. Does it happen on newer kernels too?
 
-On 4/20/2025 8:19 AM, Alexandre Courbot wrote:
-> We will commonly need to compare chipset versions, so derive the
-> ordering traits to make that possible. Also derive Copy and Clone since
-> passing Chipset by value will be more efficient than by reference.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/nova-core/gpu.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-> index 17c9660da45034762edaa78e372d8821144cdeb7..4de67a2dc16302c00530026156d7264cbc7e5b32 100644
-> --- a/drivers/gpu/nova-core/gpu.rs
-> +++ b/drivers/gpu/nova-core/gpu.rs
-> @@ -13,7 +13,7 @@ macro_rules! define_chipset {
->      ({ $($variant:ident = $value:expr),* $(,)* }) =>
->      {
->          /// Enum representation of the GPU chipset.
-> -        #[derive(fmt::Debug)]
-> +        #[derive(fmt::Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
+FWIW, I haven't been able to reproduce anything odd so far. The io_uring
+writes going via io-wq and hitting the userfaultfd path end up sleeping
+in the schedule() in handle_userfault() - which is what I'd expect.
 
-Since Ord implies PartialOrd, do you need both? Same for Eq.
+Do you know how many pending writes there are? I have a hard time
+understanding your description of the problem, but it sounds like a ton
+of workers are being created. But it's still not clear to me why that
+would be, workers would only get created if there's more work to do, and
+the current worker is going to sleep.
 
-Also under which scenario does Chipset require PartialOrd?
+Puzzled...
 
-thanks,
-
- - Joel
-
-
->          pub(crate) enum Chipset {
->              $($variant = $value),*,
->          }
-> 
-
+-- 
+Jens Axboe
 
