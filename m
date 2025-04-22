@@ -1,90 +1,99 @@
-Return-Path: <linux-kernel+bounces-614357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C94A96A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748DAA96A3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F477A5CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD85189F6AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8338127CCEF;
-	Tue, 22 Apr 2025 12:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dU+NAc9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AFB27F4F7;
+	Tue, 22 Apr 2025 12:39:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF2981720;
-	Tue, 22 Apr 2025 12:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E97F27D782
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325524; cv=none; b=IWSn+0yHOmB8f3TotSb8UQnSxGJ1sSkCjvQtCleW8nJNVM3VhYKRjmBEaSAVQDPLQOI8ZWIKQSsI1K/iY0rjlVMA4d+XDT6YuLZNxJSDk8EN6nJ3zvXfJGWYlO8yAdiCF/zNfIfsBX1nEznwE1/XFUo/xSNAVf6MKLyRb/3Vjgs=
+	t=1745325559; cv=none; b=g4EfW5Y0qOPerWnRYDA/yFrhy8PKv1m7jG6HqbpCDnpiGwWgLY6XxrbdGjlxI5UMmLYbLrod3XrBHfIJaUBYdITP2i9+3ysZiha+GpnDQ04iGLOa4eyV6lIqJGwCEOSHMd7bAeOjIG3fS84UjER4vDHO4vu9t6GyG0J3vPoiKHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325524; c=relaxed/simple;
-	bh=8jZdifvOtur3vwJnFuo3KO9Vc5YckEa1p+SN/buOwcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tf0Wph9bMkW2AVMMeC7zlQJWKclucBAgMAvcJ38AK5eCwjGjPPoEO7HLRLTV2jDyV5+fPUIuGfneNX85/3Gd9kT02jvK3Otp8i5ShPq9HyyH9UurtDBqRDnZ09Y4Kt3yrg2HjMSmTtYjxCKmWPsKBMwjvLOoAvJBVPpAIX3cwHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dU+NAc9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B173C4CEE9;
-	Tue, 22 Apr 2025 12:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745325524;
-	bh=8jZdifvOtur3vwJnFuo3KO9Vc5YckEa1p+SN/buOwcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dU+NAc9vzaSsBFwi9oFbiQWujxHuH3VoiMgMHBhUvuO5heiDwtApXHeBaaPdS2tr5
-	 qYtAIIZhRrnzQoOUuTkvP69wS6Tas82QhGtSHh56HBdAYLwEOBzWR8z8YYKFaqBSmQ
-	 9sjSG4xgXVQPdUMx8qfCxP0/ybaAmAjrwZAWP9tMIDJtYqMZqcy3R/vNqILmLw+FWf
-	 2JGiRMLxgjzEVt/TSoqC7eYfWqI85Vp4Nxx8u0/LF78bSZRdW8ynKwy3jk4ckm7zQ+
-	 VYbTWbwMcLoK/XE+ifkdIil3DQb7t2CA+xkzHSTDeEmCROv4n2YhUnOPSAL0iBNzJj
-	 T9sssQaObA8bw==
-Date: Tue, 22 Apr 2025 07:38:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, krzk+dt@kernel.org,
-	mani@kernel.org, conor+dt@kernel.org,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	beanhuo@micron.com, peter.wang@mediatek.com,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V1 2/3] scsi: ufs: pltfrm: Add parsing support for
- disable LPM property
-Message-ID: <20250422123842.GA896279-robh@kernel.org>
-References: <20250417124645.24456-1-quic_nitirawa@quicinc.com>
- <20250417124645.24456-3-quic_nitirawa@quicinc.com>
- <0a121c0f-edcb-4d5d-8427-f1eddddcb9bc@quicinc.com>
+	s=arc-20240116; t=1745325559; c=relaxed/simple;
+	bh=BhEtMKzjeaskERsSKy6HSFs0ItPLGjxwUZ01f4eTLIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AE4U6AqZ+e3ym3ERdRpnwTe7hcFfoap1FfzRiiYwtZxrK3vsNX3IcNn5EpcIL8MwSU2t7Gk5hOYbTdAZpg48fBwK4ousaBpcCmHnzx4ryb2VL8EsSLJyYw9KUokTOaJpF5RPth/XcxBjvwilCyTn12BtsF8qlKSv93dj61aKPZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u7Cu0-0001wH-Kp; Tue, 22 Apr 2025 14:39:04 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u7Ctz-001YQi-1F;
+	Tue, 22 Apr 2025 14:39:03 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u7Ctz-008TQ0-10;
+	Tue, 22 Apr 2025 14:39:03 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v2 0/4] net: selftest: improve test string formatting and checksum handling
+Date: Tue, 22 Apr 2025 14:38:58 +0200
+Message-Id: <20250422123902.2019685-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a121c0f-edcb-4d5d-8427-f1eddddcb9bc@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Apr 18, 2025 at 10:13:46AM +0530, Mukesh Kumar Savaliya wrote:
-> 
-> 
-> On 4/17/2025 6:16 PM, Nitin Rawat wrote:
-> [...]
-> > +/**
-> > + * ufshcd_parse_lpm_support - read from DT whether LPM modes should be disabled.
-> > + * @hba: host controller instance
-> > + */
-> > +static void ufshcd_parse_lpm_support(struct ufs_hba *hba)
-> > +{
-> > +	struct device *dev = hba->dev;
-> > +
-> > +	hba->disable_lpm = of_property_read_bool(dev->of_node, "disable-lpm");
-> > +	if (hba->disable_lpm)
-> > +		dev_info(hba->dev, "UFS LPM is disabled\n");
-> How about keeping as debug ?
+This patchset addresses two issues in the current net selftest
+framework:
 
-Why print it at all. You can just read the DT from userspace.
+- Truncated test names: Existing test names are prefixed with an index,
+  reducing the available space within the ETH_GSTRING_LEN limit.  This
+  patch removes the index to allow more descriptive names.
 
-Rob
+- Inconsistent checksum behavior: On DSA setups and similar
+  environments, checksum offloading is not always available or
+  appropriate. The previous selftests did not distinguish between software
+  and hardware checksum modes, leading to unreliable results. This
+  patchset introduces explicit csum_mode handling and adds separate tests
+  for both software and hardware checksum validation.
+
+Oleksij Rempel (4):
+  net: selftests: drop test index from net_selftest_get_strings()
+  net: selftests: prepare for detailed error handling in
+    net_test_get_skb()
+  net: selftests: add checksum mode support and SW checksum handling
+  net: selftests: add PHY loopback tests with HW checksum offload
+
+ net/core/selftests.c | 308 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 291 insertions(+), 17 deletions(-)
+
+--
+2.39.5
+
 
