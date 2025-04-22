@@ -1,223 +1,246 @@
-Return-Path: <linux-kernel+bounces-614777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A513A971E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:05:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AED7A97242
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4521A3B7885
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:04:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A177AD53C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE95328FFE2;
-	Tue, 22 Apr 2025 16:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94672296156;
+	Tue, 22 Apr 2025 16:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y62cNb7h"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E1188580;
-	Tue, 22 Apr 2025 16:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745337892; cv=none; b=sL3T7yPNZ/FD9v4il7Mq2dYzebaEXjhUlveZeLr/z6Tp1SCedYKP+2awkUgM9k6aE2lcGhTUQ+LClDww8+p+X9/Uejennn3io75VyX1qmXG6nD3cy2vECPFN8getOVX7u4pnEvS6QFWMeXR61w7fnL0KtBuAZurJHCq+b2wJDns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745337892; c=relaxed/simple;
-	bh=9HbhIWQP91wR77BNQftG9Q0h3zb/aQNho4ixkkWOukw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7GHlhT4s/fbmfVxF9naDekimNjOyLisgfTtCXBdOTXRv1KcgTF/Fi5mdld+hIyroVOFO0sz/ccjudVz5gSfqUq09c+UnFsX+INOW2Pch4T0UtxZo3bZJ4ZlKBPuEofj0gzBrCkl2HmLG2qoJhw+kZD73/U/py5ynxACa2ImgPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y62cNb7h; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=+kc1HcyFadApejOKhHPMGEBRAlKE59o9rLPd0PpuBik=;
-	b=Y62cNb7hI8toORNjyNf+5+ifAGKiGWZC+DxV44iarNTU+P3wmYCOdcSMUqJ4TJ
-	qheM/rW/DIXq1jeFHqp4vW2HGUYcKRjBRq6X9hHkwkawmJ8x+OwDqDnrSJiOioEh
-	Ctl5CvYG/a0BM/M3ZlvjmbyWy+9IQbd0qX0grkK//nAtc=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCH5SrSvQdo6ojTBg--.18334S2;
-	Wed, 23 Apr 2025 00:03:31 +0800 (CST)
-Message-ID: <6c962047-c258-40f5-966b-ec1e985e6cb7@163.com>
-Date: Wed, 23 Apr 2025 00:03:30 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H6YcDuaK"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDD8296153
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745338437; cv=fail; b=t46KrdaErIya1S1I2Rh/6M+K1Tqpui3au6Q6dlhjNhAG02pbne8fhpOpiI7A8eYKTXlyOA4kMGp285mavXPtPHDjyFFAMyye9oh/Qmgjvn+LVD6qiIlDT8s1FpZ4RhFb4WzOXWkYB63DXe6Fn9eFmh2gtM1fjUqqnBbRwTo5NME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745338437; c=relaxed/simple;
+	bh=4m/9a/tkppTA7NXlt5DTFwmZGM7wTgmwFWZADKLbwvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TJxQBpz48vPILXkRf98ZVGNHejxLY8nw8gfYwZOYFM+pbb1dVD4VzSlVNxRqAMkV7cfLYIloAwwogOVM2kxbQ3ApT8K2lZjntyi13mKx79qdYsn9rqjYeUVvSz+r/71tqaMKzVddZmn6jUSPLTtPAsjTL9JZPSdhLD4Y9/uyJQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H6YcDuaK; arc=fail smtp.client-ip=40.107.92.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QssGmpUT4bhMi9CDiUrtHDttplMLLIjaNOgGFvVji3QStthfsNnW+R72z8OB8XlfESKGfaNC0FBtp+8ubZdD3i8StQpSbxoS+q95q0GRJjr48L52M33uIbEKn0kVQqtPNJkpqou+lWbN8sFseKtKidImOzUH98TWSieeEGtykIcZLQX4nfY0K/uxF7GetsWy35BkqdVExnt99aTSjVj3tv0keAgZbTcoca8Nq4tqowmLb7wPlKYpEHOGK973f8TZ0hqGHhbOhIqSgrIPxqLzqU5PgCwIj2XoPubAp3U43mLjrmaV6Wlhhrvt1WU+8jzQoxvwIIEm1AN6cKPWHg21cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=la7FTdPfh+IT1f5g9jTPhDumlG/7bS8IC83+A6TxD+E=;
+ b=sEcvnaJ93RZ5zvDWbOGEx0nEuJrlianeqmvISDfJo1IdzD8TimrxXcU0I4Wby1C4QirYJpvTHTgj3eHPwkCg+9GwFXe5kWyRV5KV/3qVsvSWRJ6BLlVN6tYVQcmO2bvN3M9OcglMcPw4ajniL5fboy1JHZwx4Ha0pe4Fs+NqIiqAbxocEVdrxUtAB86NKWZ794ma0eYJbjjzM90EnWiu4GBfg5k1i8MIh5VSJdCIYtRbFZuIXiek29CyXwxEr2n2MQ8M1A5pvMyr79iRFypXImwfU8b/XPIH3FPIB1mBwrKEaSOYYv+KKhpjsXwHbBhllNPAuFAUqNynDHF18e9f5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=la7FTdPfh+IT1f5g9jTPhDumlG/7bS8IC83+A6TxD+E=;
+ b=H6YcDuaKY4SHHqzTkyPQdDo1whPg6KNHimizPmWZZGsmD65naWi3fTIGwcq816AzKbzpGmbM9iNfePoF4PwvUmxw6UWLB7uQvyLoKoqy9kB1tdIvBF9fFNBd99l09AzdQDeoc38amNDtluWnF7knr/d8mwrJEgB6Uv73WIMr85O03aZKNQGHjPOPtasrp7OZHGQujqc1gu90nDfldkufAM02z5FIMepdSII4LiVSBrbzglRCjoH3t+qtX7gC5A5fyxraVwhfUi2OY5dNN0s1D6XSFiNCtnSKf3cfml4bTjuAWLAV55TovliqCREXALD/vGlajnMCGJEsefecwX22qg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SN7PR12MB7130.namprd12.prod.outlook.com (2603:10b6:806:2a2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Tue, 22 Apr
+ 2025 16:13:51 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8632.030; Tue, 22 Apr 2025
+ 16:13:51 +0000
+Date: Tue, 22 Apr 2025 10:54:52 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Ankit Agrawal <ankita@nvidia.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <20250422135452.GL823903@nvidia.com>
+References: <86y0wrlrxt.wl-maz@kernel.org>
+ <Z-QnBcE1TKPChQay@google.com>
+ <86wmcbllg2.wl-maz@kernel.org>
+ <Z-RGYO3QVj5JNjRB@google.com>
+ <20250331145643.GF10839@nvidia.com>
+ <Z_PtKWnMPzwPb4sp@google.com>
+ <20250407161540.GG1557073@nvidia.com>
+ <Z_QAxiEWEyMpfLgL@google.com>
+ <SA1PR12MB719976799AD7F9FC4407A5A9B0BD2@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <aAdKCGCuwlUeUXKY@linux.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAdKCGCuwlUeUXKY@linux.dev>
+X-ClientProxiedBy: BLAPR05CA0047.namprd05.prod.outlook.com
+ (2603:10b6:208:335::28) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] PCI: dw-rockchip: Reorganize register and bitfield
- definitions
-To: Niklas Cassel <cassel@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
- jingoohan1@gmail.com, shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20250422112830.204374-1-18255117159@163.com>
- <20250422112830.204374-3-18255117159@163.com> <aAeL_Wr42ETm7S96@ryzen>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <aAeL_Wr42ETm7S96@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wCH5SrSvQdo6ojTBg--.18334S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Wr13ZFy5Xr43Gr47Aw4rAFb_yoW7CrykpF
-	WUJa4Skrs8t3yUC3sYg3Z8AFyIqr4fKFWYgr4SgrWUC3Z5A3W8Gr10qFW5WFy7Xr4kurWf
-	uwn8Ww17WF90krJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3Oz3UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwg3o2gHuI61MQAAsa
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB7130:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa14d737-988d-49f1-4e00-08dd81b8abe5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n0FpgyfRV1s9SiK0Dx0zN8D9bNWBkId2Iqa5F8wiK/32oDaTeG97+Zrp1LfG?=
+ =?us-ascii?Q?r6dRAnFOL/NGAwkTLM1mPCz5kQtF+g7d2dcEtFQI5cwLQgWC+4ZgF0GHmii6?=
+ =?us-ascii?Q?32GymXgs76TtBUvQGxWGpQ75/35Q37GkLqhAf4n/CpdEajiRMkWREUAKUQOK?=
+ =?us-ascii?Q?nURS2CanAFZ3PHpOQ+NsxEedgM5SlskRwsVCouaGbMBQ0b4Sshh5h8jTFC2m?=
+ =?us-ascii?Q?+QUaxsJh2SJd2P61Idm2YKSVRd6NCM+svNWlcZ+m4dJy3XnbWzaJvlludYhh?=
+ =?us-ascii?Q?hkSZ0LP60EB0ZsPIoq2WAlO4DRseavAa2xNOV3S04dToBKnqJCMLxS4ETNCF?=
+ =?us-ascii?Q?TmA9mC2tyi+1XrGdo30aFOp2WYypbkarYqbh5bpw/zorUQ3ih5+KOUBJY/qU?=
+ =?us-ascii?Q?sPKl/Op8NCIEYCnvJfk4f9rG3WWGDNIaaxqvwn3D+4zQJMCPAicb7s+UtNE+?=
+ =?us-ascii?Q?iQ2+fPha1/8jRHTxvLn6KEDOlPI1XxoqDq6tCD/ha/04/uhsAyBaLWsG6X7N?=
+ =?us-ascii?Q?FBdtJTYtxM/SC5N2ytmiC6KVGxS5k+1rUcVMB/0pfcA8+Zv0aL2lDEDR/fZA?=
+ =?us-ascii?Q?nusmoYCxz2+biMfTP3UMr7PaaQV95hX8EkfHcz25vkQehqIGGO/vm3t5kwPN?=
+ =?us-ascii?Q?iY6iIFnq32xMeBt+1zfaDTeEeTrW0YoavyZkR0rG7fupZysNIgu/nef+QlFd?=
+ =?us-ascii?Q?QBQhHUX5k166PcotR6CkWQAf5SdBxPM1kdlEC6DTOYhUKKtMIi9otHVob4is?=
+ =?us-ascii?Q?1idRdTR5+Dg30uMhaKL4K61C+iXgO3Bw01TX8EIgUTxi4i3KFmuXPtT2fSx3?=
+ =?us-ascii?Q?+HVQ3Hqz5+Mnv4bcs3GgBB1M9Qzkor5pwgr+764tpUxs9nGbS4oco1fEq/zS?=
+ =?us-ascii?Q?mybv1FJ2zfpINp1VW3IX7P6yRS4spoZMi009Wqjq08shd/q5nBevkkxksDsn?=
+ =?us-ascii?Q?bwLZaJ7O8wr0itELijtlc2t8FwvpL/GqDVPzFxRXgvjmr61u45uYZq8cD4V+?=
+ =?us-ascii?Q?8+F5Zs9MXgAXKEvB3ZaBVALi5smfrziRNodS+b45Xxr0e0wn+QJ5YNDBOlj+?=
+ =?us-ascii?Q?PARA6j8yrh3OG2GCurCkC/aI70PpqT0lHQTeodh4ZrpNo+peJQEl7TQhndyF?=
+ =?us-ascii?Q?4VcpdtupCIpOI15lVbGHDSiduJF7aC+rAKfjna4MV6XSt7DwXhTWFaWHhT4P?=
+ =?us-ascii?Q?CHcmGzO7txqLJJgzLFc1v8MD0fSp0HElTTlDPwqP9xmtgn6tFnlMGjEb128h?=
+ =?us-ascii?Q?aloCI3L2GYfSSVyJFikYfderJgOdrS7Yvr3MwRtrvln3h9UmfOoaOcvwuUd2?=
+ =?us-ascii?Q?AfASLfkI0TTcD+PMK1YYeQvPKTGz0Ti9iL0F6GCQ28oKMiPC6IVJinZxqTmX?=
+ =?us-ascii?Q?JOsg4v88PRqmFlKc3Z5dTmssbtqawrgtXDlTDe4arh6pqx3/YbvdL18+qeE0?=
+ =?us-ascii?Q?NMye7mWlu9E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iQrOjMla4YZae+SNy5uzl0fIg74MBgrzwADyOtToBCIhMWDf0UdXIMJgkX5t?=
+ =?us-ascii?Q?/fym5u5F1yc6XpTO1xpw/UHvwUjrNuhdca1odJxKuWg52RbhNQmSSRonRoZ8?=
+ =?us-ascii?Q?OGGIdClSlueTZl/bMGvYr1uzagA/jr6BmFSecbq5euvqCNBiXUqiZ296Ywei?=
+ =?us-ascii?Q?6oCpxM/De9+VmGh/EutplScF8KRfsQgbWDaonpmlENgvYPrQodjME6iPof1/?=
+ =?us-ascii?Q?THlSmodpTcTJzvcR6LhtSxchOM6EyjCqwyXR+LDwt1BmqTG7Uw3BO+TpSkPz?=
+ =?us-ascii?Q?8s7O1g1P7uNxYsHthe3DfU6MCXW0zljM2Jy92RJG0j6iTDygoQTBRnZI8heS?=
+ =?us-ascii?Q?JbBK+6p7wWbufG+bqGJ+s8HUvcoYDicE9suP+wmosuA1DLD/IdeBb4NzulGY?=
+ =?us-ascii?Q?gR0H+FU866wbfoesb3PijmuTrnMGol77LRz6+g11zy0m9usJ3McJ0gcuxuvs?=
+ =?us-ascii?Q?wn6s6AOX71eSCP1rQegaz+3+UjmgweMv8lJSTqrRyYYJcmuxUZ43Hwxi5PQ2?=
+ =?us-ascii?Q?WgBP3/hixxRZZvgHf+iOfJMlTSHCnt/Jn3n8L9NO8EA5aUKVLxBXzAmazJ9X?=
+ =?us-ascii?Q?UteuwN5vCgQPu77p9RjjneCKJd8unw/ZMWnremRqGqHhJ0xiv4PR5bOZRX6+?=
+ =?us-ascii?Q?3phCz+JAvCQVEF63ZwaDAMJjMeUWxup6JaLnH4tdLclyKpb/5qRTRi0ONa6v?=
+ =?us-ascii?Q?AhaulwBlK+vX2Ho/ARmRUjYOJGqwVtCkAlyQraqSbdZ/YLPM56h2yPQ1pnqx?=
+ =?us-ascii?Q?e//W05ay7ZbLzkuhMOC/YQASe9IqCWp2sxmNEoUgoJzZkfgs8p2pHQ3W3zqV?=
+ =?us-ascii?Q?92dgxq2t+Xoxedg9/IMmlBLBZJpJ4oLCyD+6VMHZqTfMHZG6J8ku3jEehO67?=
+ =?us-ascii?Q?SPvc24/8E35oC8aoNmwUcbZLsiUuHanD/Zr8LrpA9SP1evuW9I35BhJVz2xb?=
+ =?us-ascii?Q?vNcCJqhctA1ZcF7RqG9Jj9bqaoc/WXTl4aT/enfkEBlEUHxkVntfnFv3Wwp0?=
+ =?us-ascii?Q?AlAGV0tl7rFbe467C7jZsdLEhQFtvQ/zztOZ7ijmzaeBjAFc3XVXhnP8Ep/2?=
+ =?us-ascii?Q?tlaC0Og+LzM3bBJLckHRABrlHy+StQ+0XNwYrHFmEeAJMuZ7HC2gmBxXV6lr?=
+ =?us-ascii?Q?tXz6BP6cvIE3gPwHOY7T3QGw3qzC/hp2rhL/KmaiYXe3IhcbDnhZ/LXJvm/M?=
+ =?us-ascii?Q?3wzjKHvVgEvckjlBXgUbn5gRVfDY7ouBQT8Ob3hkjrRbGKzBVZKJ4Rkfp1lB?=
+ =?us-ascii?Q?/+bcwsK5szBb/DiF3q71IiixuyvrSdIEarKQNgNHhyKYoUw/RsLvP6O972ob?=
+ =?us-ascii?Q?b5NnXPn+B26XO4X/IcshQdwQVzmYmovZbwtnupf/xVxQrWFDYSFA5gNj9ycg?=
+ =?us-ascii?Q?YtF87WotZP8HU8qvbA+VBRP1r3crgj0+03M4+Wuo3PkV1U4gbMCZcnguG82p?=
+ =?us-ascii?Q?R/SliiTCEMWDJgjPiRKrfa0BXBiST33QO5kYJhuDFgXumU2dk8acXRx2bE04?=
+ =?us-ascii?Q?L25f3MtjUq1PJzALxYiqsrVYvV7CXLrIFSzVkgDf1Rr6dKA1Mhl7x3dWor89?=
+ =?us-ascii?Q?1Y/AVHvtRpwqPYtPM97HAEw9pY35qZyDvE/YaVdU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa14d737-988d-49f1-4e00-08dd81b8abe5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 16:13:51.6818
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MxuHdK4R98Ole5KV+eQIHhnBFU9sQAxCCSW44bhJrkbkbs0aSXRW3hB9nii37Npm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7130
 
+On Tue, Apr 22, 2025 at 12:49:28AM -0700, Oliver Upton wrote:
+> The reality is that userspace is an equal participant in remaining coherent with
+> the guest. Whether or not FWB is employed for a particular region of IPA
+> space is useful information for userspace deciding what it needs to do to access guest
+> memory. Ignoring the Nvidia widget for a second, userspace also needs to know this for
+> 'normal', kernel-managed memory so it understands what CMOs may be necessary when (for
+> example) doing live migration of the VM.
 
+Really? How does it work today then? Is this another existing problem?
+Userspace is doing CMOs during live migration that are not necessary?
 
-On 2025/4/22 20:30, Niklas Cassel wrote:
-> On Tue, Apr 22, 2025 at 07:28:29PM +0800, Hans Zhang wrote:
->> Register definitions were scattered with ambiguous names (e.g.,
->> PCIE_RDLH_LINK_UP_CHGED in PCIE_CLIENT_INTR_STATUS_MISC) and lacked
->> hierarchical grouping. Magic values for bit operations reduced code
->> clarity.
->>
->> Group registers and their associated bitfields logically. This improves
->> maintainability and aligns the code with hardware documentation.
->>
->> Signed-off-by: Hans Zhang <18255117159@163.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 42 +++++++++++--------
->>   1 file changed, 24 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
->> index fd5827bbfae3..cdc8afc6cfc1 100644
->> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
->> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
->> @@ -8,6 +8,7 @@
->>    * Author: Simon Xue <xxm@rock-chips.com>
->>    */
->>   
->> +#include <linux/bitfield.h>
->>   #include <linux/clk.h>
->>   #include <linux/gpio/consumer.h>
->>   #include <linux/irqchip/chained_irq.h>
->> @@ -34,30 +35,35 @@
->>   
->>   #define to_rockchip_pcie(x) dev_get_drvdata((x)->dev)
->>   
->> -#define PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
->> -#define PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
->> -#define PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
->> -#define PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
->> -#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x04
->> +#define PCIE_CLIENT_GENERAL_CONTROL	0x0
->> +#define  PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
->> +#define  PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
->> +#define  PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
->> +#define  PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
->> +
->> +#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x4
->> +#define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
->> +
->>   #define PCIE_CLIENT_INTR_STATUS_MISC	0x10
->> +#define  PCIE_RDLH_LINK_UP_CHGED	BIT(1)
->> +#define  PCIE_LINK_REQ_RST_NOT_INT	BIT(2)
->> +
->> +#define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
->>   #define PCIE_CLIENT_INTR_MASK_MISC	0x24
->> +
->>   #define PCIE_CLIENT_POWER		0x2c
->> +#define  PME_READY_ENTER_L23		BIT(3)
->> +
->>   #define PCIE_CLIENT_MSG_GEN		0x34
->> -#define PME_READY_ENTER_L23		BIT(3)
->> -#define PME_TURN_OFF			(BIT(4) | BIT(20))
->> -#define PME_TO_ACK			(BIT(9) | BIT(25))
->> -#define PCIE_SMLH_LINKUP		BIT(16)
->> -#define PCIE_RDLH_LINKUP		BIT(17)
->> -#define PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
+> So this KVM CAP needs to be paired with a memslot flag.
 > 
-> This patch removes PCIE_LINKUP, without adding it somewhere else
-> so I don't think this patch will compile.
-> 
-> I think the removal of this line has to be in patch 3/3.
-> 
-> 
-> 
-> Also, I think that Bjorn's primary concern:
-> """
-> The #defines for register offsets and bits are kind of a mess,
-> e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
-> PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
-> PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
-> names, and they're not even defined together.
-> """"
-> 
-> is that the fields are not prefixed with the register name.
+>  - The capability says KVM is able to enforce Write-Back at stage-2
 
-Hi Niklas,
+Sure
 
-As per rk3588 TRM, section "11.4.2.1 PCIE_CLIENT Registers Summary 
-Detail Registers Description"
+>  - The memslot flag says userspace expects a particular GFN range to guarantee
+>    Write-Back semantics. This can be applied to 'normal', kernel-managed memory
+>    and PFNMAP thingies that have cacheable attributes at host stage-1.
 
-The register names are as follows. I plan to add comments for each 
-register in the next version, and the comments come from the register 
-description of TRM.
+Userspace doesn't actaully know if it has a cachable mapping from VFIO
+though :(
 
-/* General Control Register */
-#define PCIE_CLIENT_GENERAL_CON		0x0
-#define  PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
-#define  PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
-#define  PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
-#define  PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
+I don't really see a point in this. If the KVM has the cap then
+userspace should assume the S2FWB behavior for all cachable memslots.
 
-/* Interrupt Status Register Related to Message Reception */
-#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x4
+What should happen if you have S2FWB but don't pass the flag? For
+normal kernel memory it should still use S2FWB. Thus for cachable
+PFNMAP it makes sense that it should also still use S2FWB without the
+flag?
 
-/* Interrupt Status Register Related to Legacy Interrupt */
-#define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
+So, if you set the flag and don't have S2FWB it will fail the memslot,
+but then why not just rely on userspace to read the CAP and not create
+the memslot in the first place?
 
-/*  Interrupt Status Register Related to Miscellaneous Operation */
-#define PCIE_CLIENT_INTR_STATUS_MISC	0x10
-#define  PCIE_RDLH_LINK_UP_CHGED	BIT(1)
-#define  PCIE_LINK_REQ_RST_NOT_INT	BIT(2)
+If you don't set the flag then it should go ahead and use S2FWB anyhow
+and not fail anyhow..
 
-/* Interrupt Mask Register Related to Legacy Interrupt */
-#define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
+It doesn't make alot of sense to me and brings more complexity to
+force userspace to discover the cachability of the VFIO side.
 
-/* Interrupt Mask Register Related to Miscellaneous Operation */
-#define PCIE_CLIENT_INTR_MASK_MISC	0x24
+>  - Under no situation do we allow userspace to create non-cacheable mapping at
+>    stage-2 for something PFNMAP cacheable at stage-1.
 
-/* Power Management Control Register */
-#define PCIE_CLIENT_POWER_CON		0x2c
-#define  PME_READY_ENTER_L23		BIT(3)
+Yes. memslot creation should fail, and page fault should fail.
 
-/*  Message Generation Control Register */
-#define PCIE_CLIENT_MSG_GEN_CON		0x34
-#define  PME_TURN_OFF			HIWORD_UPDATE_BIT(BIT(4))
-#define  PME_TO_ACK			HIWORD_UPDATE_BIT(BIT(9))
-
-/* Hot Reset Control Register */
-#define PCIE_CLIENT_HOT_RESET_CTRL	0x180
-#define  PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
-
-/* LTSSM Status Register */
-#define PCIE_CLIENT_LTSSM_STATUS	0x300
-#define  PCIE_SMLH_LINKUP		BIT(16)
-#define  PCIE_RDLH_LINKUP		BIT(17)
-#define  PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
-#define  PCIE_LTSSM_STATUS_MASK		GENMASK(5, 0)
-
-Best regards,
-Hans
-
-> 
-> the secondary concern is that they are not grouped together.
-> 
-> This patch is just solving the secondary concern.
-> 
-> Since you are fixing his secondary concern, should you perhaps also
-> address his primary concern?
-> 
-> 
-> 
-> Kind regards,
-> Niklas
-
+Jason
 
