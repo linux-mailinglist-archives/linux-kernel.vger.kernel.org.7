@@ -1,132 +1,108 @@
-Return-Path: <linux-kernel+bounces-615011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3D1A9751E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:03:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF47A97517
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD023B8136
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA18A17965E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349AF298CD3;
-	Tue, 22 Apr 2025 19:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2422989B3;
+	Tue, 22 Apr 2025 19:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfkXcjdF"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b="HCsFCcCM"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A77329898E;
-	Tue, 22 Apr 2025 19:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839BF2989A4;
+	Tue, 22 Apr 2025 19:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745348576; cv=none; b=ZabQWD/lNMEQ6mfBorGKbq1LZYrWPWyJ/s72m9ifo8INJes1Xp/Tj9qhqotVjZrJajsIo3H6x8fzgTrT0GEXTDT7Qk0bceRoG0owX4NWQPFpZYAhZTaj1qq+kFDDjgPX8IIqP68lWI/uJd9T/ACdkCkk9GZJ8Mp7FLvRE0bAdP8=
+	t=1745348565; cv=none; b=VbpVqU0H5fEyM6ch4V0t0MINmd4q8Ad6Lz+BP48g6uvaG6FytDuQzeMFW5uWIIf2ZHeYGZkhcCjyUkYoDLFjonDfK5+gGhL58B/l4Hndyn9U+RQA3L4AoT5YDAHmzMMYovJH+TP6K3G/z1qQSRX5Bh3jJJpo00EGx5iCgLTW7qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745348576; c=relaxed/simple;
-	bh=n/s2ADo+b0i7nG5dHcMjYTx2QEqnguzqYqE4wCSoiL8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B10GYe3ftnqro24gbj5SIu0eppegQ29AhFY4kPGBh6Lalrtswbu0TwCk0AiayHak5/nW5hte4797tliYwziW0m0hc+fchUFXT3gAbLAsYRbbHH5RVvmwM6uy7zzYsf2miDIq3UWNQy9egoRTqaHI+y9gpSbpzeNUtVq+hay6Gbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfkXcjdF; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736b0c68092so4762088b3a.0;
-        Tue, 22 Apr 2025 12:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745348572; x=1745953372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tfx8AHr/yIS8tp/7G1Y7pM5wDQkLVkrc9vIVDSWIJkA=;
-        b=cfkXcjdFT3IN8zs1pGZaYc0aGBck5ioxSr9phkg/M7a2ufT2Wd5GWGtoJ0QwHrAgak
-         OE1R3t2p1Dz0lAOEH2QSb5wD+HGb9ko6DyUs90x3wepkCzQ3kR3Tf1jNtB2KF8sxQ/6v
-         39FEG5MbW2z2F85YmqD5Sfb+hB2LmvIwTRr5eRsl18n4H15aTIf+cRaqLTDXXyKYhCVQ
-         2zYZU3O8Xm4gnbwCVqH+tOpbaKY+Ihj7zf90dkPtGHlZNqQkMIXK94GzPWQ5+1QeAO8q
-         +vaeLTmh+yQeNI+dEQU2c8AiQkhJ43hnDlTwhZ6tYTo1Crvs30pdS6v0Al2gp5pmQUWP
-         RiCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745348572; x=1745953372;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tfx8AHr/yIS8tp/7G1Y7pM5wDQkLVkrc9vIVDSWIJkA=;
-        b=ciEwjmNbdVKQ+3HghdSClpg+11GdHos3UJ1D+cs157TH3rrIFqWWpXFBLYLOsZyR++
-         VUd9HjF36dJmnO2t9d0z2QGAFgE1aazbz1ozaEuE8D0KnhMRTYQyvxK/Swh0kWpaVESC
-         EQ3PaBDVK3H6/GpClhVJMM37jcr+fY4Gp12n6yLe17YG+PjYfe1JCA7yyKcsmk54cEnj
-         2mgZfknRXbEQ/x8iKrMMrLY3m+j9E5MekQdXEpDQrCGq/NT/ixSxu6qzwSXZ5QluhUeT
-         m8T9RJv7xy8lFB7o8sxQLXpGDfpf6s7u++oHI/3WKATiwmI4MXaLON5tA3dBGCtdMDkM
-         3YyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrvgLYHH/VIxUX7zgKkQoNV4BmTgSPJqJjfo222ZgsV80RZoTvqEG8QIIEOq2Ss5hiH1Ss2p3f0zx2Dy0=@vger.kernel.org, AJvYcCWzEkQNgL2pI6XobwlCZlqc3/JO9vyNKlt1ENkQe5LubKomKmm6sc755p3mxJa+NjP/HtMxLITt8iv0uQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1RkSluuToV9RdJTON4nqgFHuzWya3Lm4YNFWn9+nqBhihhIvC
-	0+o3r4LMKVGFYOwGy8rSbqRoLaNXhJMpUwAXxYQSLXm3n7iS0wXlCCKYgw==
-X-Gm-Gg: ASbGncuTplevdlXU0bxoAdsBvRR8gQjsTRPMbsB5A7FLmRWFRaJl5kyXTo2pYZ5Db2M
-	xkb6RJOtt+Sqb8PP4H9xZQKZ9Bqk1bn615p3Fccylt9t0hKLeKrlOqPNf/wtXRyndWdKSkU17pz
-	aJ6IYACkQX3XcqRwKcT7m2ANN3qsz4aLLZ5GFkEQFX1/B1WiQ2vsv1CKMKz3SanE/eOJ/gjZNOr
-	GnkB2Sav+xvthCPQlvwN0SbM/6fTZzJ7GltpHbcj6whoyMrfUoHr0uCrkYYrcR8BWjCwfL5eBNq
-	nQR7VDWOFn9hs9TeOmZ/G+qEyFjR25wKtM1E3FEjB1NzqLiVR4MVZw==
-X-Google-Smtp-Source: AGHT+IHN1Bo0thOfHM2JpWu2Mf+hd7oomg6z+ZUAFUVmLBhPYkTeNejDOnTEt/hRXU8GquVDzedsRQ==
-X-Received: by 2002:a05:6a00:414d:b0:736:a6e0:e66d with SMTP id d2e1a72fcca58-73dc14a32b9mr22718502b3a.6.1745348572384;
-        Tue, 22 Apr 2025 12:02:52 -0700 (PDT)
-Received: from localhost.localdomain ([123.16.133.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfa574fasm9287684b3a.99.2025.04.22.12.02.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 12:02:52 -0700 (PDT)
-From: Nam Tran <trannamatk@gmail.com>
-To: pavel@kernel.org,
-	lee@kernel.org,
-	christophe.jaillet@wanadoo.fr,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	corbet@lwn.net
-Cc: devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nam Tran <trannamatk@gmail.com>
-Subject: [PATCH v7 5/5] arm64: dts: Add LP5812 LED node for Raspberry Pi 4 Model B
-Date: Wed, 23 Apr 2025 02:01:21 +0700
-Message-Id: <20250422190121.46839-6-trannamatk@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250422190121.46839-1-trannamatk@gmail.com>
-References: <20250422190121.46839-1-trannamatk@gmail.com>
+	s=arc-20240116; t=1745348565; c=relaxed/simple;
+	bh=0+rggnwaWmlNWpjJmv1c2bbt4PZ1XHqtGeq99yflNHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oN+mS2GlbGvHhNYXhJWcxLxFbfNclwbDXXa54IoY4pYxRh5IWmqE0NDH2LPFuH0+UuGj5O5Rs7FlYjpcc1EB13g4X7YRaNPtpPFjLPR173EHINtdL/mwrKjFAZnKKE+qe8xd6wQfExDyYTozTbjq9gZiwQSMgFq43fSrc5akQNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com; spf=pass smtp.mailfrom=joelselvaraj.com; dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b=HCsFCcCM; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelselvaraj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=joelselvaraj.com;
+	s=protonmail2; t=1745348550; x=1745607750;
+	bh=0+rggnwaWmlNWpjJmv1c2bbt4PZ1XHqtGeq99yflNHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=HCsFCcCMj3OjtsbUaFDP5z+ktC928HKV1kVwp77HCG5ui1hrGLqNl8WwsJCHEVqYG
+	 yNJYK8PEIKZ/4I/27DGrn376GDDNeyvVFnyXlytDIadjvVo7yWcMkEKY/TDe1YnkAl
+	 U+BlhWAAJzjvo/G2kxNsgNWSy31Uf5WdeTdfnIKVEfiW+3OYqDupb5PBA3zJk/u3Ix
+	 u3u58jjQkQeuHZlG68rYMmy+Qk4R7/q4UODdphwIm49IMSeVlXnhG9rkt9BOY7vxOW
+	 OMaVN5jgaCet1+QAZG3NDFs1eFxA77dcfPrFICcdwZsWKR/9rgE+75JHFhDNNzqxSO
+	 6kzt7TQIJzoEg==
+Date: Tue, 22 Apr 2025 19:02:26 +0000
+To: Bjorn Andersson <andersson@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Joel Selvaraj <foss@joelselvaraj.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: input: touchscreen: edt-ft5x06: use unevaluatedProperties
+Message-ID: <220cbe91-07d1-4512-bc7e-a5af8c03eb5b@joelselvaraj.com>
+In-Reply-To: <lrgjgfupvtceac54tag7rn2hgglgaogic2n33q6vshbvv5exgq@eqefsbvvdkdz>
+References: <20250303-pocof1-touchscreen-support-v4-0-cdc3bebc3942@joelselvaraj.com> <20250303-pocof1-touchscreen-support-v4-1-cdc3bebc3942@joelselvaraj.com> <Z8fzD-aF-hN0PeyD@google.com> <lrgjgfupvtceac54tag7rn2hgglgaogic2n33q6vshbvv5exgq@eqefsbvvdkdz>
+Feedback-ID: 113812696:user:proton
+X-Pm-Message-ID: 1b3f7eb186d3e0b6746a3446f07aff7f74ffd266
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add the LP5812 LED driver node to the Device Tree for Raspberry Pi 4 B.
-This enables the LED connected to the LP5812 to be controlled via I2C.
+Hi Bjorn Andersson and Dmitry Torokhov,
 
-Signed-off-by: Nam Tran <trannamatk@gmail.com>
----
- arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 3/13/25 17:18, Bjorn Andersson wrote:
+> On Tue, Mar 04, 2025 at 10:45:35PM -0800, Dmitry Torokhov wrote:
+>> On Mon, Mar 03, 2025 at 04:36:55PM -0600, Joel Selvaraj via B4 Relay wro=
+te:
+>>> From: Joel Selvaraj <foss@joelselvaraj.com>
+>>>
+>>> In Xiaomi Poco F1 (qcom/sdm845-xiaomi-beryllium-ebbg.dts), the FocalTec=
+h
+>>> FT8719 touchscreen is integrally connected to the display panel
+>>> (EBBG FT8719) and thus should be power sequenced together with display
+>>> panel using the panel property. Since the edt-ft5x06 touchscreen bindin=
+g
+>>> uses almost all the properties present in touchscreen.yaml, let's remov=
+e
+>>> additionalProperties: false and use unevaluatedProperties to include al=
+l
+>>> the properties, including the needed panel property.
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+>>
+>> I believe this is better be merged through the arch tree together with
+>> the dts changes.
+>>
+>=20
+> Then I will have to come up with a motivation to why it needed to go
+> together with the dts change ;)
+>=20
+> Please pick the binding change through the input tree and I'll pick the
+> dts changes once the binding has landed in linux-next.
+>=20
+>> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts
-index 353bb50ce542..2f058cf5d76e 100644
---- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts
-@@ -152,6 +152,16 @@ &hdmi1 {
- 	status = "okay";
- };
- 
-+&i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	led-controller@1b {
-+		compatible = "ti,lp5812";
-+		reg = <0x1b>;
-+	};
-+};
-+
- &led_act {
- 	gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
- };
--- 
-2.25.1
+A gently ping on this patch. It seems there was a confusion on which=20
+tree the patch should go, but ended up not landing yet. Kindly let me=20
+know if any further fixes are needed from my end. Would be nice to get=20
+this landed. Thank you both.
+
+Regards,
+Joel Selvaraj
 
 
