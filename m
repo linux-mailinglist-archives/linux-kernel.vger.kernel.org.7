@@ -1,104 +1,151 @@
-Return-Path: <linux-kernel+bounces-613837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79752A96284
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02F1A962F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E563AE388
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47B919E2189
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8BF281350;
-	Tue, 22 Apr 2025 08:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C52233D72;
+	Tue, 22 Apr 2025 08:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGHE5gk1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="aC/BBYhR"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5691EB9FA;
-	Tue, 22 Apr 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3953365;
+	Tue, 22 Apr 2025 08:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310951; cv=none; b=Bgbr5WlkdJud9sHX3QFzsSGnyXWlT0l42pyidHxuegle9WdKTUEXt9gw++BMHxS72Iz0nWdywp/XniSBTvNjGU3MjXC9tHZvxJdwAo0IjqLBzk58KlFf+xyB/CL14PX3CbqMju90C5t3OhWyZJ/ntiofUbZbH+4OD1TKUIYCcHE=
+	t=1745311172; cv=none; b=srjfX9UCADBkk44KM1Pv1TfMEOYEve75tbPDqifVxMp7lhpuzuaN8YZOEM4zxp2kwjHv3agTW3rZZ8jV8Y75eskZ6fQ9sgbOeGkU/gJKImE3+XvN7sUXWRFGB/ba6ynzSKAsij3cyyDaR8cO9+gIexHiU77AgMJqvQdMSnT0O/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310951; c=relaxed/simple;
-	bh=hKd3sovezTE4oI9gLuxz2U+vzWmyXW67MNxppVUKeTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWpdso2Vw+ffqZrRsH62vqJblXhRom8r2RCPE06bQqt6oVzGOSBkVG9R0HfnOGVyK7j2FJgutK0mYUST3+m8fKMHdMCRRKJ5sPXLUG3XrhUfMzcdIVqqtNIP1peYaBvJVF5Kk7XPpcfq2vemjTC6/k2Hy1nb6aXAdZ/NCl4EPaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGHE5gk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F3F0C4CEE9;
-	Tue, 22 Apr 2025 08:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745310950;
-	bh=hKd3sovezTE4oI9gLuxz2U+vzWmyXW67MNxppVUKeTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jGHE5gk19LSSenv+CK3/g90CC/FxG+lXLLqmuUeXoKymLlBKHH20LJXWpitIpXxnv
-	 S6bbslIxGT4Clf128FO4v1VXePcu2SWPBcrBzRge5/yih5HjeWYUFWGieuQcHiz/cM
-	 H+odr75lTSBDEpqRusyl01Kteu66O7zpzAbqcCfC3m2DLkzTWquq4qY2gTolVPhE6r
-	 F528iBFdnvQNkNwRqI1jWyLmi6OLj/9pRpD5XF2g5ub9ltfH9md1m4c0exnJdz1Nz9
-	 Gx1L8IJx2UoVXBwGAZBIe8CrARh3szphl4Pf8IICqI1sFFD2SMXri+pagoVBMwj3la
-	 5OrZAGuOe7egA==
-Date: Tue, 22 Apr 2025 10:35:46 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: pavel@kernel.org, lee@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, corbet@lwn.net, devicetree@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] dt-bindings: leds: add TI/National Semiconductor
- LP5812 LED Driver
-Message-ID: <20250422-winged-naughty-porpoise-645d0b@kuoka>
-References: <20250419184333.56617-1-trannamatk@gmail.com>
- <20250419184333.56617-2-trannamatk@gmail.com>
+	s=arc-20240116; t=1745311172; c=relaxed/simple;
+	bh=oJIN19zQgzez3l06SIhTIk1FH+znpSFgnJG9QeeBL/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z6ffDgyWL/JzBJmPaOph+tS5e7KyfJl1AQrmPTy+SX0S5yPZC43h+aVJLOcmC8fZ7AO77DsZvXvs2Te17kYj/4ANk/bU4CiEhvigVcbbv4DyndAxjoUDw6IhumQ6owJNtIUueC1223NXJrS7/9ZMdiDlfrOG/tqU9A0V4m1Rh4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=aC/BBYhR; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M7dHvO023461;
+	Tue, 22 Apr 2025 10:39:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	p1HgdGedqFLflmSyTqaih9yVCR93DL2hpGbz6kInKgQ=; b=aC/BBYhR30IsKwaq
+	tyXav00NKeBxVSsNoWFNtYcD6H9WlT1jyliHwkZlkjlzTA/WZMWKKmL1deiqVbVt
+	htwGqnGex+KHq+8vJt+g2M2eKMEjYxkefrVasUGA+dllSKegRZD+nrgwCVl5xrqO
+	28E+zfrbHA4tUUPmN/WDR7Yy7kGKVi1imh1Eb8ZRj9AR4uDs4Z3Zppptoz2grf2E
+	KVt0F1ClLRjN/9OxEVWjHE4QFDnJWRS64EP72K59/tWbg483bcB33G2JXE+cKOVq
+	JKVfhOSs/rDH8J7y2lEvP5MD4D3mupygVYw9iv1EkuSD2Z7Cydpze78W8zX9iFiN
+	rQdc2g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 464nd3y1w8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 10:39:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B88C340059;
+	Tue, 22 Apr 2025 10:37:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E93E99D6100;
+	Tue, 22 Apr 2025 10:37:04 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
+ 2025 10:37:04 +0200
+Message-ID: <2bdbee00-07d2-4f6d-830a-1e5e6982d5a6@foss.st.com>
+Date: Tue, 22 Apr 2025 10:37:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250419184333.56617-2-trannamatk@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/3] memory: Add STM32 Octo Memory Manager driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250410-upstream_ospi_v6-v9-0-cf119508848a@foss.st.com>
+ <20250410-upstream_ospi_v6-v9-2-cf119508848a@foss.st.com>
+ <3dd741ef-4589-49cd-967f-8a2d72e75cf4@kernel.org>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <3dd741ef-4589-49cd-967f-8a2d72e75cf4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_04,2025-04-21_02,2024-11-22_01
 
-On Sun, Apr 20, 2025 at 01:43:29AM GMT, Nam Tran wrote:
-> The LP5812 is a 4=C3=973 RGB LED driver with an autonomous animation engi=
-ne
-> and time-cross-multiplexing (TCM) support for up to 12 LEDs.
-> It supports both analog (256 levels) and PWM (8-bit) dimming,
-> including exponential PWM for smooth brightness control.
->=20
-> Signed-off-by: Nam Tran <trannamatk@gmail.com>
-> ---
->  .../devicetree/bindings/leds/ti,lp5812.yaml   | 46 +++++++++++++++++++
->  MAINTAINERS                                   |  6 +++
->  2 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
+On 4/15/25 08:00, Krzysztof Kozlowski wrote:
+> On 10/04/2025 11:27, Patrice Chotard wrote:
+>> +	for (i = 0; i < omm->nb_child; i++) {
+>> +		idx = of_property_match_string(dev->of_node,
+>> +					       "memory-region-names",
+>> +					       mm_name[i]);
+>> +		if (idx < 0)
+>> +			continue;
+>> +
+>> +		/* res1 only used on second loop iteration */
+>> +		res1.start = res.start;
+>> +		res1.end = res.end;
+>> +
+>> +		node = of_parse_phandle(dev->of_node, "memory-region", idx);
+>> +		if (!node)
+>> +			continue;
+>> +
+>> +		ret = of_address_to_resource(node, 0, &res);
+>> +		if (ret) {
+>> +			of_node_put(node);
+>> +			dev_err(dev, "unable to resolve memory region\n");
+>> +			return ret;
+>> +		}
+>> +
+>> +		/* check that memory region fits inside OMM memory map area */
+>> +		if (!resource_contains(omm->mm_res, &res)) {
+>> +			dev_err(dev, "%s doesn't fit inside OMM memory map area\n",
+>> +				mm_name[i]);
+>> +			dev_err(dev, "%pR doesn't fit inside %pR\n", &res, omm->mm_res);
+>> +
+> 
+> I don't understand. I already pointed out that you leak OF reference.
+> You fixed it in one place, ignoring all the rest. You must fix it
+> everywhere.
+> 
 
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
+Hi Krzysztof
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
+My bad, i will add all missing of_node_put().
 
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/sub=
-mitting-patches.rst#L577
-</form letter>
+Thanks
+Patrice
 
-Best regards,
-Krzysztof
-
+>> +			return -EFAULT;
+>> +		}
+>> +
+> 
+> 
+> Best regards,
+> Krzysztof
 
