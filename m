@@ -1,164 +1,117 @@
-Return-Path: <linux-kernel+bounces-614243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BC9A967F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECA7A967F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DA9188378B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4FA165602
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8C27C158;
-	Tue, 22 Apr 2025 11:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E8619CC28;
+	Tue, 22 Apr 2025 11:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9xli2O7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2xrWOo/"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24461F130B;
-	Tue, 22 Apr 2025 11:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383181F09B3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322106; cv=none; b=tbH5/Ph2CH/LW5OMpSTUDC3lRHCTOnBm330AiSoj6ZARjrmY/ejzqm6GutpR3BEgGEElWLNimZaB0LdRW3cjJQY87nspkGI354k124C2A4JcfUoHSnjMxjVuy62znc741XPcdo0/78N98ydSyybPFUbka7OXSs4jN2AEsm7LkVo=
+	t=1745322143; cv=none; b=dJoRVD/ERKnJ5dHFVxZ9GwjNfqv3H9wP0BVmHqwVb9H8Xx5PSHM1xy81iy0RO6q/0FA8jol32W+/jS3sXaP16rHge56ayW1T2uZ4AgYcobBZv7PTIcj5aCQHXXr2BX6kT3jHXwFSTRZkjDhFBVOBU1yh3COsBg+gC1nVEm8aY1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322106; c=relaxed/simple;
-	bh=6IOm0GI+w2cJIUM3Q4iTv/LtXZ6qVFV7EMQPid+JNLo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f8bnRJpEhyDK0aXmXmcmRTCqhCxJOay4rVtTZgRnkxU4oVfR0b0jF5VqpQYmk4epgeLu3GCLgjKPwcVu/ZWlSXgI8SqreEmvqI/YVYegQvgsb9WiKCF45odFtoMVuW57x90zWSQdTixDFoVmcSwdVBqLB/w3oUBF9k0M2geTij0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9xli2O7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so37110465e9.1;
-        Tue, 22 Apr 2025 04:41:43 -0700 (PDT)
+	s=arc-20240116; t=1745322143; c=relaxed/simple;
+	bh=JKE184lpOsbPrO/7aA0AY/dhX9Uo/v/klX5HLzOqM+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PM9yqxgTzmJB9P+J2/VVjzs38RAMhMSCUBe831tmB6tyrARfq/0gKBc5phr05Wy5B8f1SMDsy19z7P3TTZ6lax0z4GPnmagbIAR6DMJ/8YXZXS5+QCKEHWpNKZiCqgGPsjqoxJPKQJilO7JVxIATcaHtvy+oSZObC+wg5zbqFh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2xrWOo/; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso47840091fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:42:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745322102; x=1745926902; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1745322139; x=1745926939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZtZe5MkVjequJl/v4wkcEgW5OwyMOzW+8kGSPcfrHu0=;
-        b=c9xli2O7I0zAg5XpJAYJpLkkQEKu1nwX1wJOEDyc4lqhk3JDFgg1IEcuk7Wbd7p10C
-         JKSponzh4UDqp5vHQyZ2+EeGlw/FjLRogICJscynwjwJ9fTx+qTVJbjL66qCPHsnE46X
-         K0mUquQ6X+Iwn6qY8lZalRnw4Q1zgzqJ9wF9bZ00dIuRVtF5Jqz7kMNbQAxaMY3Hs/mF
-         u8DviiqH1Dr24lKu8ytYklUHIwElF6T/+fF0vp3CORNLhEqZVbC+S11uJd3wKYOcgYmR
-         i8ApzycOqobYB73xyZ6c+qs/QcNEYSdC+h00NYfHn7mxSrzHohurAS08EIG4LNCWZ8AK
-         JtCQ==
+        bh=JKE184lpOsbPrO/7aA0AY/dhX9Uo/v/klX5HLzOqM+8=;
+        b=c2xrWOo/pSPNDno9WPia3pw+yri4OVuu4Mmt2UISEaC+qgUKjrtmEtNPMiV3C388T3
+         vsMJ+46u+BQcnc+x/jxw73izecEyuqFdzYpijEaJJ2BZWR0n3/dVL3hRntJj8BM55n6w
+         frdfXVr9TnkoaCtmx8YZaqn97Rdak+bHbUzE6bOqSvIRe2gl/PeGAQjlmn82X8ANpH3W
+         ZB5JS+ZMvS8B0bJT9Q1nLc2ZcztoCmx2D3tGICINN6id4LbUkL3LmVFVvKVfUZNaSh+d
+         HGvHBkthtsW7GYqlO7LdAAgX7E3nfAL1IncfYjLy1j/2taiCMJAEh28vdOKN42ncWUkF
+         sxpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745322102; x=1745926902;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZtZe5MkVjequJl/v4wkcEgW5OwyMOzW+8kGSPcfrHu0=;
-        b=oceT97tMqWuQxK+fOCG10bhGDYVytL8hB6h2u36zRyg4WsaUx9qchwHQbO0VZyKkBA
-         9Dqd0MMAC/2wl1PheRKsB4BxgCo26Oi8vrvQWBQ+qze4qCnX25Td/kVH9CDNYXRt+JNQ
-         06VRUfdXo9PyefthykauoI+wfLIRM7KuASvLz7uECAEWAbRRT29mf0jBSRENQUFFwSwG
-         lkAnNFQLN3eWLuKhd/iLUAXyrl8knxAfnISd4jinqHPUhFSdHWvotuXFwx/NvXqBUZoH
-         s6PRZ2CEb3Z1fBCnCsNQozVq0JEywQwDsEsjwb1TBEMlFnwBxDsA8gCkaQOb+c+zuB2z
-         BP3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUfYgjyEPu4/Cb9FIoc+/rVTc61k1EW0YddocVTQkffogKnCGc5H7ZrijFJu4SPD0YpZt8+xhaVSatW@vger.kernel.org, AJvYcCUwID2/+IeGI3TQ+xnO3tWk01qB2vMLCMKMdI7DGggEMaf7HrDIZGanf+OZjznP5mhl9xwlxfX+7wb5@vger.kernel.org, AJvYcCUzs8fBQgbmQQqWHiPRNhSkp+/wLebVLhAw19weADnKqv0oVX67OOIXRWpdK8BFnTMqcEqNB961DUo8vn7H@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ3gNJJUDcebxq5G3BiSgPua+pfLaKdMn+zMGZsXM5vqNwMaOW
-	Yk8I7fKZwBV9gu6Faow6Fyb9nY9fTir3yUCKG2xh/J8zZ+J75k9Yob4bEBIj
-X-Gm-Gg: ASbGncsUiAYyNrEoGPZGS2X5IcDjpYxWNT3mwmkNyeK3lUE8qIdpby4tKUv9I+i1CEj
-	IK7MA7Kp38GaWyTOdqj/0Xw5/UdDfmxK93qubkZcWNSyrXCI/mdtWPcQDDIZE1Tr9Z3qk9RgcAd
-	Y+ILf6IzyOoFbEQ7tZ774Jv5qJ39Qr50eyV2Vl0isn9q+L0yydJFTNg7C/K3lgQjpCRROdTi0l6
-	e4d7rOPEZYHJtdUu7pIyF24n8xQMXguIcGh4ZB/6tvLqDXvVpWFZMW0MikomWj6knUmG1iq6Qz5
-	5yosH9zNNVGaW6mVHmoZXLhh0GANyrAm3TlwIt+ib325+2Rj/FlzR07itqnevJHCsATw68s9umx
-	OAMWJDGUW4ajTNqFKpW8Yi0g=
-X-Google-Smtp-Source: AGHT+IGPGWhYJLYhscw5CnJUTDwYkVxOBQadnF+fTJQ6W/mQbI7fGiZwUihxjmQMtGMJPEvXJYT8VA==
-X-Received: by 2002:a05:600c:3d19:b0:440:68db:a045 with SMTP id 5b1f17b1804b1-4406abff89emr124135945e9.26.1745322101709;
-        Tue, 22 Apr 2025 04:41:41 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5bbcaasm173681615e9.21.2025.04.22.04.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:41:41 -0700 (PDT)
-Message-ID: <d7e6660e0263f167e881bcb32d8d241450a21a66.camel@gmail.com>
-Subject: Re: [PATCH 2/2] iio: dac: ad7293: add adc reference configuration
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 Apr 2025 12:41:44 +0100
-In-Reply-To: <20250422085529.4407-2-antoniu.miclaus@analog.com>
-References: <20250422085529.4407-1-antoniu.miclaus@analog.com>
-	 <20250422085529.4407-2-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+        d=1e100.net; s=20230601; t=1745322139; x=1745926939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JKE184lpOsbPrO/7aA0AY/dhX9Uo/v/klX5HLzOqM+8=;
+        b=eg0NSS+/G3oiPKGgLmZeBuP6ILIeehgvRnZFw8axckcxIdzRfof+RGFvoUoY5X7viZ
+         Qj9XDHjd9e9f/4F7Op869goS2mPEZxZ/i03SWm6sIbPIPN16UMEegZjK4Ui6eEm08zzZ
+         ltCLzP0CLA3sorxOFiRlIjwdikqBn6DedrqxZdAGSUthpdPbQSNWZWfsa138H54dR6CT
+         fZBndZaMSHnFLQ5dzOWAwdUCznRO8nBna/DNbm2gdXuEHI+/mCT1U6T75fe5sXWCYITs
+         7VM7X89HuQIAwNVXyZ5wAsrluMQXbYtWsvXq5iB3aoR1VH70Lc0AQM1WqdeLN6jIwDBe
+         h4Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXVHmchV7rSs3pENl4LanWp9CEZ/LK3/ymMKEfYoUSQTQQfD1BmDCBL1ba5ozb0pjTi5pvT+I4W09awqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQ7BpHgKClKapWspZwe2AMgsE89oI1SpoQNPeduZOrc9IFp+y
+	lgTcDInL6ACPbX4PRTav7SEsKBBvY2J9j2pAfOw5BGcWgiew8dtyBtZTQkqDl8beX5yLCZ6OPQf
+	mwcq1HXy70tzTDnnEQ1alAMegTWj2ZiRkngRNjA==
+X-Gm-Gg: ASbGncsLJ/xVysF71wSgLSG3GHCCS7bSLmidFGnY9EKRzKufoWRlkxfJ3higO8Q7Lnb
+	MmMuxl5kTF7x8LY4aqvC8oVjUV9BH09GJ94AnoFoILe98fVF++2fcm3t/t42WA6a9Pyr1yEgW7U
+	JII3okK5YWqRqhVSyt5ix9Uw==
+X-Google-Smtp-Source: AGHT+IFm0QuF+MKzFVuJfeElIzDwo5DNp4RQe/j6WQIWdZRVRgiFC+4alaFtOW4po2uWD3T3nU+AwhkSj7DYWaP/Qtw=
+X-Received: by 2002:a2e:bc88:0:b0:30b:9813:b010 with SMTP id
+ 38308e7fff4ca-31090554278mr45541741fa.31.1745322139074; Tue, 22 Apr 2025
+ 04:42:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250422095718.17360-1-kabel@kernel.org>
+In-Reply-To: <20250422095718.17360-1-kabel@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 22 Apr 2025 13:42:07 +0200
+X-Gm-Features: ATxdqUFgffJrkHBIiGCKHha-7JyV-dOWeH_lR9YCYT2CA8Voz9ZgL4-ux_Xly6Y
+Message-ID: <CACRpkdZ5EBiyEwEY68_bufnO-qFFH-XKzv5RmRn6=K+rN_NFBQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: atmel-sha204a - Set hwrng quality to lowest possible
+To: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-04-22 at 11:55 +0300, Antoniu Miclaus wrote:
-> Add support for configurating the ADC reference (internal/external).
->=20
-> According to the datasheet, the external reference is enabled by
-> default.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
+On Tue, Apr 22, 2025 at 11:57=E2=80=AFAM Marek Beh=C3=BAn <kabel@kernel.org=
+> wrote:
 
-LGTM:
+> According to the review by Bill Cox [1], the Atmel SHA204A random number
+> generator produces random numbers with very low entropy.
+>
+> Set the lowest possible entropy for this chip just to be safe.
+>
+> [1] https://www.metzdowd.com/pipermail/cryptography/2014-December/023858.=
+html
+>
+> Fixes: da001fb651b00e1d ("crypto: atmel-i2c - add support for SHA204A ran=
+dom number generator")
+> Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Ugh
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> =C2=A0drivers/iio/dac/ad7293.c | 13 +++++++++++++
-> =C2=A01 file changed, 13 insertions(+)
->=20
-> diff --git a/drivers/iio/dac/ad7293.c b/drivers/iio/dac/ad7293.c
-> index 99fa2d1f8299..c3797e40cdd9 100644
-> --- a/drivers/iio/dac/ad7293.c
-> +++ b/drivers/iio/dac/ad7293.c
-> @@ -114,6 +114,7 @@
-> =C2=A0#define AD7293_REG_DATA_RAW_MSK			GENMASK(15, 4)
-> =C2=A0#define AD7293_REG_VINX_RANGE_GET_CH_MSK(x, ch)	(((x) >> (ch)) & 0x=
-1)
-> =C2=A0#define AD7293_REG_VINX_RANGE_SET_CH_MSK(x, ch)	(((x) & 0x1) << (ch=
-))
-> +#define AD7293_GENERAL_ADC_REF_MSK			BIT(7)
-> =C2=A0#define AD7293_CHIP_ID				0x18
-> =C2=A0
-> =C2=A0enum ad7293_ch_type {
-> @@ -141,6 +142,7 @@ struct ad7293_state {
-> =C2=A0	/* Protect against concurrent accesses to the device, page selecti=
-on
-> and data content */
-> =C2=A0	struct mutex lock;
-> =C2=A0	struct gpio_desc *gpio_reset;
-> +	bool vrefin_en;
-> =C2=A0	u8 page_select;
-> =C2=A0	u8 data[3] __aligned(IIO_DMA_MINALIGN);
-> =C2=A0};
-> @@ -785,6 +787,12 @@ static int ad7293_properties_parse(struct ad7293_sta=
-te
-> *st)
-> =C2=A0	if (ret)
-> =C2=A0		return dev_err_probe(&spi->dev, ret, "failed to enable
-> VDRIVE\n");
-> =C2=A0
-> +	ret =3D devm_regulator_get_enable_optional(&spi->dev, "vrefin");
-> +	if (ret < 0 && ret !=3D -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to enable
-> VREFIN\n");
-> +
-> +	st->vrefin_en =3D ret !=3D -ENODEV;
-> +
-> =C2=A0	st->gpio_reset =3D devm_gpiod_get_optional(&st->spi->dev, "reset",
-> =C2=A0						 GPIOD_OUT_HIGH);
-> =C2=A0	if (IS_ERR(st->gpio_reset))
-> @@ -818,6 +826,11 @@ static int ad7293_init(struct ad7293_state *st)
-> =C2=A0		return -EINVAL;
-> =C2=A0	}
-> =C2=A0
-> +	if (!st->vrefin_en)
-> +		return __ad7293_spi_update_bits(st, AD7293_REG_GENERAL,
-> +						AD7293_GENERAL_ADC_REF_MSK,
-> +						AD7293_GENERAL_ADC_REF_MSK);
-> +
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
+I would even tag:
+Cc: stable@vger.kernel.org
+
+on this, but it's up to Herbert.
+
+Yours,
+Linus Walleij
 
