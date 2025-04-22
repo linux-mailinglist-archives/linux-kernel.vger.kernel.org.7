@@ -1,63 +1,186 @@
-Return-Path: <linux-kernel+bounces-613743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECFFA9607F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB46A960B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4798A1880526
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C82188F95C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E6F20FAA8;
-	Tue, 22 Apr 2025 08:06:06 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE7123DEAD;
+	Tue, 22 Apr 2025 08:14:40 +0000 (UTC)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085361EF391;
-	Tue, 22 Apr 2025 08:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E232367D9;
+	Tue, 22 Apr 2025 08:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745309166; cv=none; b=Lq4Gb8tEJGkUV9NtcJ2jMiaAXCWxwzlKiFp9kUu6jgUkPG+9ecc3UEA0CaEKPrm99MzIg8w728YZxZ0ERcwGXwbYE+SkndFx3gPMNmNfD66D4Tw6nK2vEke0k8xid//AgLBGZilcfQoE8QCIQh+yWTHQCN8E/a7ofEzhuLQ1V30=
+	t=1745309679; cv=none; b=G3pLo+gZmWqTovU7vxl0O5prnyPsotwGqAr94PArG7ScKye+yzS6jOpKIWDS2x32Vr7xKwfBv/z7jxiIdD/YIj/uK+hUimUZOATZq/zKkUbWw5Q+/evgnHnK/5oAzaGTeqD63EHgcygDfSEJa3108pb9RC5GQtZ5If/IFgaMBg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745309166; c=relaxed/simple;
-	bh=uSzKucUqknnILhytCX/G092t1KIOajjeDR3YeKyX2rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoExjll6obKoHCRfrLT6qVUZMEmEIAuUQy9irbA6HSm+3kx/0oM1xatdSMGxZ/adupd5YoP318CS7v0ZcgvMBGjaT0zfRlvRANit+phDFgDYOKBttxFjggU+SQ2PmZPKGfP21Pc1oqhKCfaN3SIR9+ObnkwU46wN9DuE4El3rgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8246F68AA6; Tue, 22 Apr 2025 10:05:58 +0200 (CEST)
-Date: Tue, 22 Apr 2025 10:05:58 +0200
-From: hch <hch@lst.de>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: hch <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-	Hans Holmberg <Hans.Holmberg@wdc.com>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: add tunable threshold parameter for triggering
- zone GC
-Message-ID: <20250422080558.GA305@lst.de>
-References: <476cf4b6-e3e6-4a64-a400-cc1f05ea44cc@roeck-us.net> <mt3tlttnxheypljdkyy6bpjfkb7n5pm2w35wuf7bsma3btwnua@a3zljdrqqaq7> <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net> <20250421083128.GA20490@lst.de> <c432be87-827e-4ed7-87e9-3b56d4dbcf26@roeck-us.net> <20250422054851.GA29297@lst.de> <c575ab39-f118-4459-aaea-6d3c213819cb@roeck-us.net> <6Vk6jXI2DGWoxaC5fwn8iLCw5Bdelm4TDO1z8FiRamhu_v1yAbbQ-TB6I1p9OQZDcydN5LSY9Kgzb7vhsAaPkg==@protonmail.internalid> <20250422060137.GA29668@lst.de> <vtbzasrb6cx4ysofaeyjus75ptnqrydm24xw7btzeiokqueey3@qamjjgwyubml>
+	s=arc-20240116; t=1745309679; c=relaxed/simple;
+	bh=583NgnkZC2ZT7AwTWERouOxzfLOJBfqNK35QOwK3mdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J/mHjXjAoiTsHj19/O/ZgsL4+J2mXoqhIoKRNzkZ4mOwi2JaqCAVBvsBfX837SfZWeqSfmKuGaJyAM2Vjmow3EOAu8DWGwGWQt1HYOZrXegl34pIGSj8T/D5QmNbUzLI8zi/49z8XqpjAjZkfJp8lY+srVEFKUHVkItHXTvY8Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7302a769534so938026a34.1;
+        Tue, 22 Apr 2025 01:14:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745309676; x=1745914476;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i8c8ma1h4TTKBEevU7DpgPt28PGW8UxGjza0Ib9e0KQ=;
+        b=ZzjvGHF5MbYq9CZXi9+tDaimNNmRrDh8ks7oRO7D/K5PYAviQXLf0VMqppXuyuyP2o
+         A/lDxLydO2TBimRxiTR2a51ij56wKc23d/8lybpdULphXvZNt4GIEFLsbJxiq4pvZCyp
+         4thZH0RgxzZxiY403TVWjO/8VB1dbMRr9RDRjj7K2asto2OUBU0w+q/N586y+SxENsy0
+         iLfh+7x1zzOyArQfxHx5f+r8nmw3Yp4ymgF5QzI0i+IapEkvdHo4QEYnT1nTVL42yqCN
+         yngN4iDqKzB1QbOc2eP53Wl3f5ZkdSdpMY79wsLc3F5AGErkzdk8cu3X3u+Hc3f4wbpS
+         MXcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnbWwsuwUheZmKccDlxp1JxjSkI1TjobsAJ8hotX+YVCrbEpdRirUjuLQOvyR8trAKZLmMszU9s4dloPil@vger.kernel.org, AJvYcCWKa5OJRISAQ0nUU24gtm2OHuXaUGdjqERXOELQ5mJRsSE8lCevIAovFdt63hI0kYq1P0D78nrHWe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrFiZGoSYlhwY8MuFJEuGVLXGUTPW/nCBIkDprMgzROg6yHYMC
+	ARjDiwoVUF0HYojmCkw5m9Nav4Pv6sspMCt48xbzgGfq4+jzh2j3vwKEaFFt
+X-Gm-Gg: ASbGncsLG+xUSsri2LhPJgCYgwmm9LdUH0NukcEo3MOy+fi6Ps9L6BUrL/dJqiVX2nS
+	OuwSSp9E2DLtTME/MSVZUR6SufR3LNRH72SY23tYpIjhqZC11pgn9HwodoF3li+YgzS0iTlv0/I
+	svrS465/ejZ6bd5wIWnF95AzCfB7T6XhreZwO6pRfHEWuCn1+NrkmSCluSIDyMi8h7fWYc9rLsq
+	wScQ2aW+OvVgLsVEhfUi8XPysTcFlBEgH+Bm3CVDkGDRhXbozxGAEOMiQQpk4QqZzD4oBEFlKyq
+	9Zb6Uj379nBTpXoF5kfVDdQH9DfmHMZpseLqP8GyEiZN1oi0aU4mrski/ZH9zVmBsJW21Z3819d
+	IOCI=
+X-Google-Smtp-Source: AGHT+IEvQAyr1Pd9r90vUvMHKjHLZOY6rOJktS7bSdwdJwvpzN6O861WyOOqxV+2HCqsWJzsgBii8g==
+X-Received: by 2002:a05:6830:2713:b0:72b:9506:8db1 with SMTP id 46e09a7af769-730061f15f1mr8821685a34.4.1745309676112;
+        Tue, 22 Apr 2025 01:14:36 -0700 (PDT)
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7300489de9esm1869598a34.63.2025.04.22.01.14.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 01:14:35 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-605fda00c30so1940027eaf.1;
+        Tue, 22 Apr 2025 01:14:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXnsj7URHDv+ba18nrG2OtS6C7Ynl+AAps+QmGffPzdLJpxYOy4VAEreq+CF2S1RzZZei9y9hzeT/o=@vger.kernel.org, AJvYcCXsD4TZkedWYQ9yNs12ihq/zZ932nsTzTrq4eFP/7tkpU6H9z7BpDduZ/0Slu3TdBQKWYEL7KXUmJc3RcCB@vger.kernel.org
+X-Received: by 2002:a05:6102:5f09:b0:4bb:c24b:b644 with SMTP id
+ ada2fe7eead31-4cb802080d4mr7323250137.20.1745309264946; Tue, 22 Apr 2025
+ 01:07:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vtbzasrb6cx4ysofaeyjus75ptnqrydm24xw7btzeiokqueey3@qamjjgwyubml>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+In-Reply-To: <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 Apr 2025 10:07:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
+X-Gm-Features: ATxdqUEkl9rVCtzV1tSRbSe8H75mXfNa-MVqCJWBKpRzjTvK50pHzHN-MSLc5t4
+Message-ID: <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+To: Aditya Garg <gargaditya08@live.com>, Hector Martin <marcan@marcan.st>
+Cc: alyssa@rosenzweig.io, Petr Mladek <pmladek@suse.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sven Peter <sven@svenpeter.dev>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Aun-Ali Zaidi <admin@kodeit.net>, 
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com, Simona Vetter <simona@ffwll.ch>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com, joe@perches.com, 
+	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, Kees Cook <kees@kernel.org>, 
+	tamird@gmail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	Asahi Linux Mailing List <asahi@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 22, 2025 at 09:59:52AM +0200, Carlos Maiolino wrote:
-> hch, do you want to write a patch for that or should I?
+Hi Aditya, Hector,
 
-If you have time today please do it.  Otherwise I'll try to get to it
-later today.
+On Tue, 8 Apr 2025 at 08:48, Aditya Garg <gargaditya08@live.com> wrote:
+> From: Hector Martin <marcan@marcan.st>
+>
+> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+> it's useful to be able to print generic 4-character codes formatted as
+> an integer. Extend it to add format specifiers for printing generic
+> 32-bit FourCCs with various endian semantics:
+>
+> %p4ch   Host byte order
+> %p4cn   Network byte order
+> %p4cl   Little-endian
+> %p4cb   Big-endian
+>
+> The endianness determines how bytes are interpreted as a u32, and the
+> FourCC is then always printed MSByte-first (this is the opposite of
+> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+> allow printing LSByte-first FourCCs stored in host endian order
+> (other than the hex form being in character order, not the integer
+> value).
+>
+> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Tested-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 
+Thanks for your patch, which is now commit 1938479b2720ebc0
+("lib/vsprintf: Add support for generic FourCCs by extending %p4cc")
+in drm-misc-next/
+
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -648,6 +648,38 @@ Examples::
+>         %p4cc   Y10  little-endian (0x20303159)
+>         %p4cc   NV12 big-endian (0xb231564e)
+>
+> +Generic FourCC code
+> +-------------------
+> +
+> +::
+> +       %p4c[hnlb]      gP00 (0x67503030)
+> +
+> +Print a generic FourCC code, as both ASCII characters and its numerical
+> +value as hexadecimal.
+> +
+> +The generic FourCC code is always printed in the big-endian format,
+> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
+> +
+> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
+> +endianness is used to load the stored bytes. The data might be interpreted
+> +using the host byte order, network byte order, little-endian, or big-endian.
+> +
+> +Passed by reference.
+> +
+> +Examples for a little-endian machine, given &(u32)0x67503030::
+> +
+> +       %p4ch   gP00 (0x67503030)
+> +       %p4cn   00Pg (0x30305067)
+> +       %p4cl   gP00 (0x67503030)
+> +       %p4cb   00Pg (0x30305067)
+> +
+> +Examples for a big-endian machine, given &(u32)0x67503030::
+> +
+> +       %p4ch   gP00 (0x67503030)
+> +       %p4cn   00Pg (0x30305067)
+
+This doesn't look right to me, as network byte order is big endian?
+Note that I didn't check the code.
+
+> +       %p4cl   00Pg (0x30305067)
+> +       %p4cb   gP00 (0x67503030)
+> +
+>  Rust
+>  ----
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
