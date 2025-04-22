@@ -1,185 +1,224 @@
-Return-Path: <linux-kernel+bounces-614601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E87FA96EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:34:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678C2A96EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F20189B909
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E717402B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB9328CF5E;
-	Tue, 22 Apr 2025 14:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B19E28CF45;
+	Tue, 22 Apr 2025 14:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgiE5/0z"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnKVP2qg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A1284B5B;
-	Tue, 22 Apr 2025 14:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976B35FB95;
+	Tue, 22 Apr 2025 14:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332212; cv=none; b=SccXn9ofAvOy2eJKUNy80kGGI6/Her3UF4tuIK583Ai6M0vFeZxNFML5RGQYD13i5Q+ijSum4G3G8arYX+W3UsEM4tZZAGA16ks8HoLljudi00ypOe57vnHGIh9Wl7uj3RYj0mh6Iw1uLL4Vmvt9CpRMCbphG9Eo5p4qcMn49qA=
+	t=1745332305; cv=none; b=C5GKsBdoudaRkL1mxOYa70B2qDFDKhDmeaorg8/TEkY+mymxtAAHyWnXeuB+I8VCSEnpYdiYsD/ryMtCYFrUPRDY1inb7YHgI3pkI4PHJqkJ1Y1zTNJMxtu/0kaoEEax3khtSxwJzFIIfVkN8rR9UtE7FERQ9+3kzebfIbViJw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332212; c=relaxed/simple;
-	bh=+y7IJ6oJ81inUlTVXWqiJFTsfRtk6YoOvQpBIitN+iE=;
+	s=arc-20240116; t=1745332305; c=relaxed/simple;
+	bh=7UtTHz1OzXRKk72/53w5IsO8pN7dEsKHXzdKjN8mTNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLpb3s7zUo7M3LRXlH2wRo/swvUJkGoX062wcji98QjY+57lPrYdFiNl7BfJAjCBVL7vNMVJYvi2UIIK/QnT2U6MkhBaZx96N8fdnGHIiOX9NTNbpkRmyIrAhIKMM5caM9fIW4XBrnEQcflUaoqFw7XVHk6u9b1+EeCwbmBK8M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgiE5/0z; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f05acc13so67850786d6.2;
-        Tue, 22 Apr 2025 07:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745332209; x=1745937009; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gkFPhMrpuv3o2hS9nuXgf57BGd6VBgXtGJLjxIp9TVM=;
-        b=YgiE5/0zYZL3aJr/YSkTUML1o6fP+8g0Hpm5YLmXSmSadWoNDzlrrn++3XP1JdvDsM
-         5qRh/c5ytHhLJQDixxeRCcG6BK2NjaO0HS9OCBhRwsWOhjNobSr4nY+3/T6SqgldhyYK
-         eIszFK7g9i6EQ67ySm+FbQadfoN3VB10vPiebKwcRah/rnSOktAigHR+vcD/JtuOBmg8
-         wDE1QtIXGztJkJztmTKcC7IvYutVJ1f+M/jgOd62I0lJOUFRmKHGRZJuyu2KdtRjvHXd
-         tKN36i0LXeQ6crB4wXNo/6g0cyJSxXp3v7qf5hwkimeGDw4w2KT/dxQIHjodIH1dAZuj
-         HUbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745332209; x=1745937009;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gkFPhMrpuv3o2hS9nuXgf57BGd6VBgXtGJLjxIp9TVM=;
-        b=dfzS7JbkAqGWlnFjtWSXbqxtRihiBaRgD9rQ8v7jgI3u9a5Ub9VWzYj45+KLVmUltV
-         huOLyuRwCJgrwH5WfwKpCBMDsoUedlJngOKQAHMLFVOs7hchP6ScNFCKy93Dgqvu7pRy
-         XGunDu2796YwiLSqwdhjw0/cehzxUmwJheTR6rwzZGiORLR9na+jlLPshsI1hurQI8eZ
-         k5eQW/EKtudKkUK64oVoSaYqYqlC0QLQ2oTL+Jtq+kMpSvd3A7BCUFuqmTn8ZayfotKO
-         kv8B6y9Gy8IjNP3swJ15GCZ9SzH74pPJ2AfbJA5hv48r8Or46pVsGSBs6WjqrAIRTXAm
-         Ns2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1bkfu5+kCmp273lAILsyO0cKDCcnHq1QPvpfNgEfzdiZzYIsvRcFYCKi5yqc1+S0zdt2bctoSW6zACHTAoA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNb04A+YOmAQW4dxmEn9lQAQMgvlSJzQIjqbBo7dJbbd4wEwOr
-	spSU99sTt/ESHeYHl0SA+0nOC09KH97t+KbD5kI0vbc/SvU/UECT
-X-Gm-Gg: ASbGncvdKVLGfyRqeWkcXnx2v2IMG3lM9LI6bOsQF6IU225rqWF/7VrJ6mJABxxyntH
-	chsZ0V53IGvifVA92gQWHjlPnRgUjyKj2FjZW4N4k779BCsz4OFbKEXm8la7fpMK7aD0/fvzcAB
-	IDNczj5Zxw7+BWFCUHLrIs93N2X7hFLfhMt3cT+4dTtLQaWbJZQYFZpruJOcWTx2O8j38uTsYxH
-	6FmgDYW/EeyVr2exIQjcFLWezU9vEHllM993iD7g4S0LTKIPIUHF1MASDDGl3vrXLOWZOw1tsAL
-	ZuG6BRE8zpTrlLr0ID1FbxJohj8FxnqCf/9Tp7xRQ/5oPYE3aalazjNtocyw9QMYo3jpQeqEtgr
-	HQXMFSytYMnuTKzy69yJwtELfbFeIrn7+6woi4StFqQ==
-X-Google-Smtp-Source: AGHT+IFeKuOCzqrVCylUiW+uyw+dYVv8u7uEQTSWqxoE9i0ERqh1jHT4cVXCN/moN4fKJWWK1NjTOw==
-X-Received: by 2002:a05:6214:daa:b0:6ea:d033:2855 with SMTP id 6a1803df08f44-6f2c4562e1bmr274050766d6.26.1745332208952;
-        Tue, 22 Apr 2025 07:30:08 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2c21c32sm58444886d6.110.2025.04.22.07.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 07:30:08 -0700 (PDT)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 041381200066;
-	Tue, 22 Apr 2025 10:30:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Tue, 22 Apr 2025 10:30:08 -0400
-X-ME-Sender: <xms:76cHaDMpA5sIxYf0RIXX2tjKia38zYdq-N6WyIlCtAj_TgPjISXhAQ>
-    <xme:76cHaN94VlQCsMniT-usLup25lr3p3b_8HEASMNkajZH6tzj2nFgwSl4eSAYzZJjW
-    xcSXydRphzv8oigog>
-X-ME-Received: <xmr:76cHaCQpXmCscN8_QY9wT6m7ElLkeJgIpnoN6wVb0Vyxlht9KCpbR9dw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefleejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeffleejleehveelteeltedugffhhedvkefg
-    vdehfeeiffeihfeigfdvtdeuhfdtteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpd
-    hgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
-    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
-    rdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdefpdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhl
-    rdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehg
-    rghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprh
-    hothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhr
-    ohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrghesshgrmhhsuhhnghdrtg
-    homh
-X-ME-Proxy: <xmx:76cHaHtIIQukvMG4Qvz-GiPrmxfThcF_PaC75IkrlySHx-zzQIrWOQ>
-    <xmx:76cHaLci8ls9VLcKQjXL_oR6CmXcjuwbYwUFBC0jArEkGLul_0fFdQ>
-    <xmx:76cHaD3O4-RPopVdGjVFe6D8_KDQPdeaSBdyuX1p1VH2jtmlghaeYQ>
-    <xmx:76cHaH8vI5mT-d1FLt0g2_gMp64Q2P_vMpSMeyDECgkeewxqpTbN0g>
-    <xmx:76cHaO8fbMTUZpaomcAOzodT3a4sxN6fUrke8IVOG-3O4RqUCJ-jSvWI>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Apr 2025 10:30:06 -0400 (EDT)
-Date: Tue, 22 Apr 2025 07:30:05 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, tmgross@umich.edu,
-	dakr@kernel.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, pmladek@suse.com
-Subject: Re: [PATCH v2 0/2] add Rust version of might_sleep()
-Message-ID: <aAen7fQYciq2azi9@Mac.home>
-References: <20250410225623.152616-1-fujita.tomonori@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pwtipN35DR31NbGXj4fyhV6twckoziX1cYV1lH4S4XGM4+7nu77KvmMIFmplPGGxjXXvdFW6lOk/baTNSRxC5nKsIDy3m06DhSD6e3syWuiub3NhUAcME4LUXyrWHxoO9iMmLG8YwaEUVjEbc3lD1ygVgR8KUkm+YqNMBtBlsBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnKVP2qg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90596C4CEE9;
+	Tue, 22 Apr 2025 14:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745332305;
+	bh=7UtTHz1OzXRKk72/53w5IsO8pN7dEsKHXzdKjN8mTNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qnKVP2qgtO1hUN9mVrGyWaGTEWIq8jqpIHr3uY8inZjbNWCGzdRo0J9uDNoKMTac4
+	 CvbGZZEvU2voGPjIOxRzKnGAQMMUdB8rkinceS5Q35tVPiweTvYOfb6F69Hp5kz9RK
+	 Lxej1524mrJGhqPR5hjuNZxX40hVhV4VStcN7qi/M9g3RTAnXioB6T31JWdzgU+cxl
+	 ZN20HhqG8eyKJyUJyJ0AVBKGkmtN4NO4E0W6r32ChQHQMVDyzsJScxz2LDwusrLjqq
+	 KiNG5ZeX16W68bez2U3lfR+MKOHY4fO/OC1L6rAgNnvcTL+TCBgn7RKVCuDlfxb4RJ
+	 B9aAONV7LjjUQ==
+Date: Tue, 22 Apr 2025 16:31:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
+ syscalls
+Message-ID: <20250422-suchen-filmpreis-3573a913457c@brauner>
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
+ <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
+ <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+ <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250410225623.152616-1-fujita.tomonori@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
 
-On Fri, Apr 11, 2025 at 07:56:21AM +0900, FUJITA Tomonori wrote:
-> This patchset adds Rust version of might_sleep().
+On Thu, Mar 27, 2025 at 12:39:28PM +0100, Amir Goldstein wrote:
+> On Thu, Mar 27, 2025 at 10:33 AM Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> >
+> > On 2025-03-23 09:56:25, Amir Goldstein wrote:
+> > > On Fri, Mar 21, 2025 at 8:49 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> > > >
+> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > >
+> > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > > extended attributes/flags. The syscalls take parent directory fd and
+> > > > path to the child together with struct fsxattr.
+> > > >
+> > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > > that file don't need to be open as we can reference it with a path
+> > > > instead of fd. By having this we can manipulated inode extended
+> > > > attributes not only on regular files but also on special ones. This
+> > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > > we can not call ioctl() directly on the filesystem inode using fd.
+> > > >
+> > > > This patch adds two new syscalls which allows userspace to get/set
+> > > > extended inode attributes on special files by using parent directory
+> > > > and a path - *at() like syscall.
+> > > >
+> > > > CC: linux-api@vger.kernel.org
+> > > > CC: linux-fsdevel@vger.kernel.org
+> > > > CC: linux-xfs@vger.kernel.org
+> > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > > ---
+> > > ...
+> > > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filename,
+> > > > +               struct fsxattr __user *, ufsx, size_t, usize,
+> > > > +               unsigned int, at_flags)
+> > > > +{
+> > > > +       struct fileattr fa;
+> > > > +       struct path filepath;
+> > > > +       int error;
+> > > > +       unsigned int lookup_flags = 0;
+> > > > +       struct filename *name;
+> > > > +       struct mnt_idmap *idmap;.
+> > >
+> > > > +       struct dentry *dentry;
+> > > > +       struct vfsmount *mnt;
+> > > > +       struct fsxattr fsx = {};
+> > > > +
+> > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
+> > > > +
+> > > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > > > +               return -EINVAL;
+> > > > +
+> > > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > > +               lookup_flags |= LOOKUP_FOLLOW;
+> > > > +
+> > > > +       if (at_flags & AT_EMPTY_PATH)
+> > > > +               lookup_flags |= LOOKUP_EMPTY;
+> > > > +
+> > > > +       if (usize > PAGE_SIZE)
+> > > > +               return -E2BIG;
+> > > > +
+> > > > +       if (usize < FSXATTR_SIZE_VER0)
+> > > > +               return -EINVAL;
+> > > > +
+> > > > +       error = copy_struct_from_user(&fsx, sizeof(struct fsxattr), ufsx, usize);
+> > > > +       if (error)
+> > > > +               return error;
+> > > > +
+> > > > +       fsxattr_to_fileattr(&fsx, &fa);
+> > > > +
+> > > > +       name = getname_maybe_null(filename, at_flags);
+> > > > +       if (!name) {
+> > > > +               CLASS(fd, f)(dfd);
+> > > > +
+> > > > +               if (fd_empty(f))
+> > > > +                       return -EBADF;
+> > > > +
+> > > > +               idmap = file_mnt_idmap(fd_file(f));
+> > > > +               dentry = file_dentry(fd_file(f));
+> > > > +               mnt = fd_file(f)->f_path.mnt;
+> > > > +       } else {
+> > > > +               error = filename_lookup(dfd, name, lookup_flags, &filepath,
+> > > > +                                       NULL);
+> > > > +               if (error)
+> > > > +                       return error;
+> > > > +
+> > > > +               idmap = mnt_idmap(filepath.mnt);
+> > > > +               dentry = filepath.dentry;
+> > > > +               mnt = filepath.mnt;
+> > > > +       }
+> > > > +
+> > > > +       error = mnt_want_write(mnt);
+> > > > +       if (!error) {
+> > > > +               error = vfs_fileattr_set(idmap, dentry, &fa);
+> > > > +               if (error == -ENOIOCTLCMD)
+> > > > +                       error = -EOPNOTSUPP;
+> > >
+> > > This is awkward.
+> > > vfs_fileattr_set() should return -EOPNOTSUPP.
+> > > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
+> > > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
+> > > ioctl returns -EOPNOTSUPP.
+> > >
+> > > I don't think it is necessarily a bad idea to start returning
+> > >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
+> > > because that really reflects the fact that the ioctl is now implemented
+> > > in vfs and not in the specific fs.
+> > >
+> > > and I think it would not be a bad idea at all to make that change
+> > > together with the merge of the syscalls as a sort of hint to userspace
+> > > that uses the ioctl, that the sycalls API exists.
+> > >
+> > > Thanks,
+> > > Amir.
+> > >
+> >
+> > Hmm, not sure what you're suggesting here. I see it as:
+> > - get/setfsxattrat should return EOPNOTSUPP as it make more sense
+> >   than ENOIOCTLCMD
+> > - ioctl_setflags returns ENOIOCTLCMD which also expected
+> >
+> > Don't really see a reason to change what vfs_fileattr_set() returns
+> > and then copying this if() to other places or start returning
+> > EOPNOTSUPP.
 > 
-> These patches were previously part of the IO polling patchset [1], but
-> they were split out to make upstreaming easier.
-> 
-> The first patch is for sched/core, which adds
-> __might_sleep_precision(), rust friendly version of __might_sleep(),
-> which takes a pointer to a string with the length instead of a
-> null-terminated string. Rust's core::panic::Location::file(), which
-> gives the file name of a caller, doesn't provide a null-terminated
-> string. __might_sleep_precision() uses a precision specifier in the
-> printk format, which specifies the length of a string; a string
-> doesn't need to be a null-terminated. Providing a null-terminated
-> string for better C interoperability is under discussion [2].
-> 
-> The second patch adds a Rust implementation of might_sleep(), on top
-> of the changes in the first patch.
-> 
-> [1]: https://lore.kernel.org/lkml/20250220070611.214262-1-fujita.tomonori@gmail.com/
-> [2]: https://github.com/rust-lang/libs-team/issues/466
-> 
-> v2:
-> - improve SAFETY comment
-> v1: https://lore.kernel.org/lkml/20250406110718.126146-1-fujita.tomonori@gmail.com/
-> 
+> ENOIOCTLCMD conceptually means that the ioctl command is unknown
+> This is not the case since ->fileattr_[gs]et() became a vfs API
 
-@scheduler, if there is no objection, I'm going to take these two into a
-pull request to tip soon. Thanks!
-
-Regards,
-Boqun
-
-> FUJITA Tomonori (2):
->   sched/core: Add __might_sleep_precision()
->   rust: task: add Rust version of might_sleep()
-> 
->  include/linux/kernel.h |  2 ++
->  kernel/sched/core.c    | 62 ++++++++++++++++++++++++++++--------------
->  rust/helpers/task.c    |  6 ++++
->  rust/kernel/task.rs    | 28 +++++++++++++++++++
->  4 files changed, 77 insertions(+), 21 deletions(-)
-> 
-> 
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> -- 
-> 2.43.0
-> 
-> 
+vfs_fileattr_{g,s}et() should not return ENOIOCTLCMD. Change the return
+code to EOPNOTSUPP and then make EOPNOTSUPP be translated to ENOTTY on
+on overlayfs and to ENOIOCTLCMD in ecryptfs and in fs/ioctl.c. This way
+we get a clean VFS api while retaining current behavior. Amir can do his
+cleanup based on that.
 
