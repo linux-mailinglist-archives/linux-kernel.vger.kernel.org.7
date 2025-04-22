@@ -1,366 +1,302 @@
-Return-Path: <linux-kernel+bounces-615168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A0FA97944
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E912A97965
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8EB5A3103
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D655A0C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9862D3A8C;
-	Tue, 22 Apr 2025 21:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C2B2D1F77;
+	Tue, 22 Apr 2025 21:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LwnNX2Qf"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwyU+EuR"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8465829E052;
-	Tue, 22 Apr 2025 21:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBD825CC57;
+	Tue, 22 Apr 2025 21:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745358037; cv=none; b=sF0keiw2M3ivhdgU3iIJUuInkPMeWw+gpc+yxaNNdJ4nXE/dwyfdxlq2T9d2FOJa7ukimHSu2fef8yYZPfOm/mLenHXyccTa7V+b9r1hOANHTpHE4WB6ba3baTJVuM/99XGB01kyumlqvLXN9W0wJZO8clljXiOJq0DkkfF3HFw=
+	t=1745358092; cv=none; b=ma5SXJZH4JLCQRa6tcP8kvZnulKcatwO3pePLgVqi9XbhOLjO2AhfUzbDQyfsv7APy7NQ7gL1WHYFqgGm84e8/BUYYDQtMEBA0sVWogvDuWtVOBfxl1uAL+VLAjLdJwg8S4kYO35BRKHgops8efVSKqqyqOSaBx2rrX2LQETWJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745358037; c=relaxed/simple;
-	bh=6/F4hc2QWsQwsZ+VM0E3XfgIOhd7VJb1+cKuwHZNy+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWp0xCYWZ77Bfxnlv4RBGs5FPGj6JdX+ouFU6UW601uHwghq+2I5grpbhOliR4GDC/q/4vVGwTVMzQbTxDgm1jyPAIgqgzqsMg6FZO3QrlF6F9YubjYUQPkn3Lh7k6eFp9vOo7HVNuLn72JwcrSHWg35qhSZXTTy0bM9EaqU0iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LwnNX2Qf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3BD122AC;
-	Tue, 22 Apr 2025 23:40:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745358032;
-	bh=6/F4hc2QWsQwsZ+VM0E3XfgIOhd7VJb1+cKuwHZNy+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LwnNX2QfGi9zl1FOBx5MgIULgjjthd0EcrcTKYkYBMbGpganpdwgNz/+oytXVByBf
-	 AweK9pc1QYu3DHW0ZrKiLX0mfHrVSs/kMyfBZiE4MWf4ITUDraI3bKi6aYhSwVqems
-	 Va5bEKziFDavV/dPU5opr9UOv8g5P3IQximGTXXc=
-Date: Wed, 23 Apr 2025 00:40:30 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 7/8] media: uvcvideo: Add support for
- V4L2_CID_CAMERA_ORIENTATION
-Message-ID: <20250422214030.GS17813@pendragon.ideasonboard.com>
-References: <20250403-uvc-orientation-v1-0-1a0cc595a62d@chromium.org>
- <20250403-uvc-orientation-v1-7-1a0cc595a62d@chromium.org>
- <20250422213236.GR17813@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1745358092; c=relaxed/simple;
+	bh=CdpsBpDWdxMBBvIM8tPsAm81m0X2FgTrOU07T3tJZx4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=U1PROr0t0m/utr+voi62RBrhxOBFOU5g2SnQYG0J4I0GcFWO33z1uURolzUGt4NOMBKPhBX13iAg8XI8/aC0UbNveyul8MsQQvcO7f/k7FpjS4lKKXa3vXR16fmAA/m1p9uveEVV81uEx4gqk7uUdyaHNx3mlqGZosZIrjQC6+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwyU+EuR; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so59213755e9.1;
+        Tue, 22 Apr 2025 14:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745358089; x=1745962889; darn=vger.kernel.org;
+        h=autocrypt:subject:from:cc:to:content-language:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CdpsBpDWdxMBBvIM8tPsAm81m0X2FgTrOU07T3tJZx4=;
+        b=iwyU+EuRCcCyYZSBc+GkQefH/C/U0kuP37t9JRj0E3zQUGZ5WoPjdq/RaqNcGMW9EV
+         E3M1/x/CATy6BkyP5FoUWEJHsFxUlRuUV4vgdGKOF41tOEL8luTHKoy+QtGiD2l30p6d
+         Q6DEoQYzcwwqsvXQx3qOmSiz5asl7bdXdCWA8XYfKKbvmdMq1Ml4s2mgXevWFKpcyd4P
+         srCKHnaSi1208S1XOmeWTjmzvzndEiqiMrUBtxim8L0cFP0Ym7FpeWw6nT+y0/iazU06
+         viUwV6t+74sTadNppvfkzahIQao5XjX6h7aL92polC00xnZXKENxbv4cQiEFMtA3uvsr
+         29Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745358089; x=1745962889;
+        h=autocrypt:subject:from:cc:to:content-language:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CdpsBpDWdxMBBvIM8tPsAm81m0X2FgTrOU07T3tJZx4=;
+        b=MNiNfGU7TuKqPDSnCc6ChDjsBiBoYJwd7YzoK1iPdcYkaJUfpw+jTYG6sLD209Use5
+         /Iiw1jPG4bHHsID02H4eDT05qjWtB52GF4C4DsTaHvRsuLzSFdPjsxhwZNbDc8HixwJB
+         Nte4cGapHlj5xN1Q1ViZ0gi3ehwz4REV8R+O1wwOeNDF2czdo4qDg2F9+nnosZfz3nyV
+         bFAN+T8Zfdsd5eFFwzq1E0jFruOguHn9lo82Xd9qf9vPoXMPxuzCc/nBMkC1AaIIDtVF
+         TXfbBoKHxanZ33k6b2uYlfhemeaQYhfHdW6AOSaLvzYGhKc9sKiqUnzUNZ6NnU5AjmfT
+         1etQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5AD8UJPRsz7sbH0azh7Zb8DMbwswF43wuFH5SHlvmSor/xedD5xTN4ThTtgWJWUI1+bijTBgy5dDs@vger.kernel.org, AJvYcCWu3JhLCJRpSRuyLil/haf5G4eluVaNZM61iha26mMoCvlIl+is5psu1z8DTKhBsbe9xto3of20vrCRLCps@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRneJUn9UDeY80i+K3Z+zbcaDKvAxHWiqpxr65X5R3P2RUSRYs
+	gxUvw2IoXTcJAwIK/uNdX7Xkl+rfyr/ABPOaQdI10biQkIiV8W4g
+X-Gm-Gg: ASbGncsiu11Mq1vYGBHG8pbvYS/sPqM/OxrQkf6lp/vC8YtH+T7h5gtV1MoidCvBCQn
+	/AfNMU4V6e5eQPcjvSd7mmbOM+CdJeiseAIwcxuzVPYxbMWvTtU6u2AksnH8UKbWoC8bsk7UBc6
+	GRDhRepCvw20uYz3gd0GbRLrYbnUVEe+gEy27e/RDGIEI0B6P9PGTW/Odz1Jiid2xVUPP04Bl8l
+	LsTlBEs/DQRLFMWfgsABOzbf0uAUct48PXqcEM+Ri16a/qkLGa/Nk13mCK3YIAvMieA9yrkPlBl
+	POsHFZ8Jj6CrDiH86xKIVZHWr6GZJ/jTYhwrpE34PnKiBKUJoA==
+X-Google-Smtp-Source: AGHT+IHQVD0tIfkPN74yp5c4f2oJLeNnumF3FWo3PgQxDk2Ugmmb39SXChQKZpo1gDy2JzECsRQb1Q==
+X-Received: by 2002:a05:600c:8508:b0:43c:fe15:41cb with SMTP id 5b1f17b1804b1-4406aba4af7mr178019315e9.15.1745358088581;
+        Tue, 22 Apr 2025 14:41:28 -0700 (PDT)
+Received: from [192.168.1.248] ([194.120.133.58])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-44092d369f1sm2256155e9.29.2025.04.22.14.41.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 14:41:27 -0700 (PDT)
+Message-ID: <5369c64b-ba14-481c-8156-62a2efa5f447@gmail.com>
+Date: Tue, 22 Apr 2025 22:41:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422213236.GR17813@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com,
+ "Richard_j_nixon@hotmail.com" <Richard_j_nixon@hotmail.com>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Subject: re: drm: panel: Add driver for Himax HX8279 DDIC panels
+Autocrypt: addr=colin.i.king@gmail.com; keydata=
+ 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
+ FVPMkxl2UyaayDvhrO9kNXvl1SKCpdzCMQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------HW6FEBicTQyXxGu8zSYeoTOq"
 
-On Wed, Apr 23, 2025 at 12:32:37AM +0300, Laurent Pinchart wrote:
-> Hi Ricardo,
-> 
-> Thank you for the patch.
-> 
-> On Thu, Apr 03, 2025 at 07:16:18PM +0000, Ricardo Ribalda wrote:
-> > Fetch the orientation from the fwnode and map it into a control.
-> > 
-> > The uvc driver does not use the media controller, so we need to create a
-> > virtual entity, like we previously did with the external gpio.
-> 
-> I don't want to create a new entity every time we need to expose a new
-> "software" control. If we keep handling GPIO as an entity, can we use it
-> to expose all non-UVC controls ? Otherwise, if we have to create a new
-> entity here, let's make sure we can reuse it in the future for more
-> controls, and name it appropriately.
-> 
-> This being said, functionally speaking, wouldn't the
-> V4L2_CID_CAMERA_ORIENTATION control make more sense on the camera input
-> terminal ? Have you considered adding it there ? Or would it be too
-> intrusive ?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------HW6FEBicTQyXxGu8zSYeoTOq
+Content-Type: multipart/mixed; boundary="------------N3ZcnUoSP2zg08nWWTSKJgQN";
+ protected-headers="v1"
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com,
+ "Richard_j_nixon@hotmail.com" <Richard_j_nixon@hotmail.com>
+Message-ID: <5369c64b-ba14-481c-8156-62a2efa5f447@gmail.com>
+Subject: re: drm: panel: Add driver for Himax HX8279 DDIC panels
 
-Scratch the last comment, I was thinking about exposing controls on
-subdevs, which we obviously don't do.
+--------------N3ZcnUoSP2zg08nWWTSKJgQN
+Content-Type: multipart/mixed; boundary="------------075VCYFG3sx02irjB7RB8IlG"
 
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/Makefile     |  2 +-
-> >  drivers/media/usb/uvc/uvc_ctrl.c   | 21 +++++++++++
-> >  drivers/media/usb/uvc/uvc_driver.c | 14 ++++++--
-> >  drivers/media/usb/uvc/uvc_entity.c |  1 +
-> >  drivers/media/usb/uvc/uvc_fwnode.c | 73 ++++++++++++++++++++++++++++++++++++++
-> >  drivers/media/usb/uvc/uvcvideo.h   | 15 ++++++++
-> >  include/linux/usb/uvc.h            |  3 ++
-> >  7 files changed, 125 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/media/usb/uvc/Makefile b/drivers/media/usb/uvc/Makefile
-> > index 85514b6e538fbb8284e574ca14700f2d749e1a2e..2a5b76aab756c21011d966f3ce0410ff6b8e5b19 100644
-> > --- a/drivers/media/usb/uvc/Makefile
-> > +++ b/drivers/media/usb/uvc/Makefile
-> > @@ -1,7 +1,7 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  uvcvideo-objs  := uvc_driver.o uvc_queue.o uvc_v4l2.o uvc_video.o uvc_ctrl.o \
-> >  		  uvc_status.o uvc_isight.o uvc_debugfs.o uvc_metadata.o \
-> > -		  uvc_gpio.o
-> > +		  uvc_gpio.o uvc_fwnode.o
-> >  ifeq ($(CONFIG_MEDIA_CONTROLLER),y)
-> >  uvcvideo-objs  += uvc_entity.o
-> >  endif
-> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > index cbf19aa1d82374a08cf79b6a6787fa348b83523a..df84bf292dcab6b833fbd3c70eccbe9e567ee567 100644
-> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > @@ -376,6 +376,13 @@ static const struct uvc_control_info uvc_ctrls[] = {
-> >  				| UVC_CTRL_FLAG_GET_DEF
-> >  				| UVC_CTRL_FLAG_AUTO_UPDATE,
-> >  	},
-> > +	{
-> > +		.entity		= UVC_GUID_FWNODE,
-> > +		.selector	= 0,
-> > +		.index		= 0,
-> > +		.size		= 1,
-> > +		.flags		= UVC_CTRL_FLAG_GET_CUR,
-> > +	},
-> >  };
-> >  
-> >  static const u32 uvc_control_classes[] = {
-> > @@ -975,6 +982,17 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
-> >  		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
-> >  		.name		= "Region of Interest Auto Ctrls",
-> >  	},
-> > +	{
-> > +		.id		= V4L2_CID_CAMERA_ORIENTATION,
-> > +		.entity		= UVC_GUID_FWNODE,
-> > +		.selector	= 0,
-> > +		.size		= 8,
-> > +		.offset		= 0,
-> > +		.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> > +		.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> > +		.menu_mask	= GENMASK(V4L2_CAMERA_ORIENTATION_EXTERNAL,
-> > +					  V4L2_CAMERA_ORIENTATION_FRONT),
-> > +	},
-> >  };
-> >  
-> >  /* ------------------------------------------------------------------------
-> > @@ -3170,6 +3188,9 @@ static int uvc_ctrl_init_chain(struct uvc_video_chain *chain)
-> >  		} else if (UVC_ENTITY_TYPE(entity) == UVC_EXT_GPIO_UNIT) {
-> >  			bmControls = entity->gpio.bmControls;
-> >  			bControlSize = entity->gpio.bControlSize;
-> > +		} else if (UVC_ENTITY_TYPE(entity) == UVC_FWNODE_UNIT) {
-> > +			bmControls = entity->fwnode.bmControls;
-> > +			bControlSize = entity->fwnode.bControlSize;
-> >  		}
-> >  
-> >  		/* Remove bogus/blacklisted controls */
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index b52e1ff401e24f69b867b5e975cda4260463e760..9a8e5d94b3eba09e1ee1be20bad5b016b6def915 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -1752,11 +1752,15 @@ static int uvc_scan_device(struct uvc_device *dev)
-> >  		return -1;
-> >  	}
-> >  
-> > -	/* Add GPIO entity to the first chain. */
-> > -	if (dev->gpio_unit) {
-> > +	/* Add virtual entities to the first chain. */
-> > +	if (dev->gpio_unit || dev->fwnode_unit) {
-> >  		chain = list_first_entry(&dev->chains,
-> >  					 struct uvc_video_chain, list);
-> > -		list_add_tail(&dev->gpio_unit->chain, &chain->entities);
-> > +		if (dev->gpio_unit)
-> > +			list_add_tail(&dev->gpio_unit->chain, &chain->entities);
-> > +		if (dev->fwnode_unit)
-> > +			list_add_tail(&dev->fwnode_unit->chain,
-> > +				      &chain->entities);
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -2132,6 +2136,10 @@ static int uvc_probe(struct usb_interface *intf,
-> >  	if (ret < 0)
-> >  		goto error;
-> >  
-> > +	ret = uvc_fwnode_parse(dev);
-> > +	if (ret < 0)
-> > +		goto error;
-> > +
-> >  	dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-> >  		 dev->uvc_version >> 8, dev->uvc_version & 0xff,
-> >  		 udev->product ? udev->product : "<unnamed>",
-> > diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-> > index cc68dd24eb42dce5b2846ca52a8dfa499c8aed96..01eeba2f049e9ebb25e091340a133656acbf28ca 100644
-> > --- a/drivers/media/usb/uvc/uvc_entity.c
-> > +++ b/drivers/media/usb/uvc/uvc_entity.c
-> > @@ -106,6 +106,7 @@ static int uvc_mc_init_entity(struct uvc_video_chain *chain,
-> >  		case UVC_OTT_MEDIA_TRANSPORT_OUTPUT:
-> >  		case UVC_EXTERNAL_VENDOR_SPECIFIC:
-> >  		case UVC_EXT_GPIO_UNIT:
-> > +		case UVC_FWNODE_UNIT:
-> >  		default:
-> >  			function = MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN;
-> >  			break;
-> > diff --git a/drivers/media/usb/uvc/uvc_fwnode.c b/drivers/media/usb/uvc/uvc_fwnode.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..20f7b8847551acfd44cbf09bcbf653d89985561f
-> > --- /dev/null
-> > +++ b/drivers/media/usb/uvc/uvc_fwnode.c
-> > @@ -0,0 +1,73 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + *      uvc_fwnode.c  --  USB Video Class driver
-> > + *
-> > + *      Copyright 2025 Google LLC
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/usb/uvc.h>
-> > +#include <media/v4l2-fwnode.h>
-> > +#include "uvcvideo.h"
-> > +
-> > +static int uvc_fwnode_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
-> > +			      u8 cs, void *data, u16 size)
-> > +{
-> > +	if (size < 1)
-> > +		return -EINVAL;
-> > +
-> > +	switch (entity->fwnode.props.orientation) {
-> > +	case V4L2_FWNODE_ORIENTATION_FRONT:
-> > +		*(u8 *)data = V4L2_CAMERA_ORIENTATION_FRONT;
-> > +		break;
-> > +	case V4L2_FWNODE_ORIENTATION_BACK:
-> > +		*(u8 *)data = V4L2_CAMERA_ORIENTATION_BACK;
-> > +		break;
-> > +	default:
-> > +		*(u8 *)data = V4L2_CAMERA_ORIENTATION_EXTERNAL;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int uvc_fwnode_get_info(struct uvc_device *dev,
-> > +			       struct uvc_entity *entity, u8 cs, u8 *caps)
-> > +{
-> > +	*caps = UVC_CONTROL_CAP_GET;
-> > +	return 0;
-> > +}
-> > +
-> > +int uvc_fwnode_parse(struct uvc_device *dev)
-> > +{
-> > +	static const u8 uvc_fwnode_guid[] = UVC_GUID_FWNODE;
-> > +	struct v4l2_fwnode_device_properties props;
-> > +	struct uvc_entity *unit;
-> > +	int ret;
-> > +
-> > +	ret = v4l2_fwnode_device_parse(&dev->udev->dev, &props);
-> > +	if (ret)
-> > +		return dev_err_probe(&dev->intf->dev, ret,
-> > +				     "Can't parse fwnode\n");
-> > +
-> > +	if (props.orientation == V4L2_FWNODE_PROPERTY_UNSET)
-> > +		return 0;
-> > +
-> > +	unit = uvc_alloc_entity(UVC_FWNODE_UNIT, UVC_FWNODE_UNIT_ID, 0, 1);
-> > +	if (!unit)
-> > +		return -ENOMEM;
-> > +
-> > +	memcpy(unit->guid, uvc_fwnode_guid, sizeof(unit->guid));
-> > +	unit->fwnode.props = props;
-> > +	unit->fwnode.bControlSize = 1;
-> > +	unit->fwnode.bmControls = (u8 *)unit + sizeof(*unit);
-> > +	unit->fwnode.bmControls[0] = 1;
-> > +	unit->get_cur = uvc_fwnode_get_cur;
-> > +	unit->get_info = uvc_fwnode_get_info;
-> > +	strscpy(unit->name, "FWNODE", sizeof(unit->name));
-> > +
-> > +	list_add_tail(&unit->list, &dev->entities);
-> > +
-> > +	dev->fwnode_unit = unit;
-> > +
-> > +	return 0;
-> > +}
-> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > index aef96b96499ce09ffa286c51793482afd9832097..c52ab99bf8d21ab37270d27ffc040fd115b3f5ba 100644
-> > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > @@ -19,6 +19,7 @@
-> >  #include <media/v4l2-event.h>
-> >  #include <media/v4l2-fh.h>
-> >  #include <media/videobuf2-v4l2.h>
-> > +#include <media/v4l2-fwnode.h>
-> >  
-> >  /* --------------------------------------------------------------------------
-> >   * UVC constants
-> > @@ -41,6 +42,9 @@
-> >  #define UVC_EXT_GPIO_UNIT		0x7ffe
-> >  #define UVC_EXT_GPIO_UNIT_ID		0x100
-> >  
-> > +#define UVC_FWNODE_UNIT			0x7ffd
-> > +#define UVC_FWNODE_UNIT_ID		0x101
-> > +
-> >  /* ------------------------------------------------------------------------
-> >   * Driver specific constants.
-> >   */
-> > @@ -242,6 +246,12 @@ struct uvc_entity {
-> >  			int irq;
-> >  			bool initialized;
-> >  		} gpio;
-> > +
-> > +		struct {
-> > +			u8  bControlSize;
-> > +			u8  *bmControls;
-> > +			struct v4l2_fwnode_device_properties props;
-> > +		} fwnode;
-> >  	};
-> >  
-> >  	u8 bNrInPins;
-> > @@ -617,6 +627,7 @@ struct uvc_device {
-> >  	} async_ctrl;
-> >  
-> >  	struct uvc_entity *gpio_unit;
-> > +	struct uvc_entity *fwnode_unit;
-> >  };
-> >  
-> >  enum uvc_handle_state {
-> > @@ -835,4 +846,8 @@ size_t uvc_video_stats_dump(struct uvc_streaming *stream, char *buf,
-> >  int uvc_gpio_parse(struct uvc_device *dev);
-> >  int uvc_gpio_init_irq(struct uvc_device *dev);
-> >  void uvc_gpio_deinit(struct uvc_device *dev);
-> > +
-> > +/* fwnode */
-> > +int uvc_fwnode_parse(struct uvc_device *dev);
-> > +
-> >  #endif
-> > diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
-> > index bce95153e5a65613a710d7316fc17cf5462b5bce..d818839b0442988d94ab44935e1ce855b0adf4a1 100644
-> > --- a/include/linux/usb/uvc.h
-> > +++ b/include/linux/usb/uvc.h
-> > @@ -29,6 +29,9 @@
-> >  #define UVC_GUID_EXT_GPIO_CONTROLLER \
-> >  	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
-> >  	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
-> > +#define UVC_GUID_FWNODE \
-> > +	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
-> > +	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x04}
-> >  
-> >  #define UVC_GUID_FORMAT_MJPEG \
-> >  	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
-> > 
+--------------075VCYFG3sx02irjB7RB8IlG
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
--- 
-Regards,
+SGksDQoNCnN0YXRpYyBhbmFseXNpcyBvbiB0b2RheSdzIGxpbnV4LW5leHQgaGFzIGZvdW5k
+IHR3byBpc3N1ZXMgd2l0aCB0aGUgDQpmb2xsb3dpbmcgY29tbWl0Og0KDQpjb21taXQgMzhk
+NDJjMjYxMzg5OTg1ZThkZDQ3MzlkYmQ5N2UyZGM4NTVlOGRkMA0KQXV0aG9yOiBBbmdlbG9H
+aW9hY2NoaW5vIERlbCBSZWdubyA8YW5nZWxvZ2lvYWNjaGluby5kZWxyZWdub0Bjb2xsYWJv
+cmEuY29tPg0KRGF0ZTogICBNb24gQXByIDE0IDEwOjI5OjE4IDIwMjUgKzAyMDANCg0KICAg
+ICBkcm06IHBhbmVsOiBBZGQgZHJpdmVyIGZvciBIaW1heCBIWDgyNzkgRERJQyBwYW5lbHMN
+Cg0KDQpJbiB0aGUgZm9sbG93aW5nIGNvZGUsIGJvb2xlYW4gdmFyaWFibGVzIGdvYV9vZGRf
+dmFsaWQgYW5kIA0KZ29hX2V2ZW5fdmFsaWQgYXJlIG5vdCBpbml0aWFsaXplZC4gVGhleSBh
+cmUgb25seSBiZWluZyBzZXQgKHRvIGZhbHNlKSANCm9uIHRoZSBudW1femVybyBpZiBzdGF0
+ZW1lbnRzOg0KDQpzdGF0aWMgaW50IGh4ODI3OV9jaGVja19nb2FfY29uZmlnKHN0cnVjdCBo
+eDgyNzkgKmh4LCBzdHJ1Y3QgZGV2aWNlICpkZXYpDQp7DQogICAgICAgICBjb25zdCBzdHJ1
+Y3QgaHg4Mjc5X3BhbmVsX2Rlc2MgKmRlc2MgPSBoeC0+ZGVzYzsNCiAgICAgICAgIGJvb2wg
+Z29hX29kZF92YWxpZCwgZ29hX2V2ZW5fdmFsaWQ7DQogICAgICAgICBpbnQgaSwgbnVtX3pl
+cm8sIG51bV9jbHIgPSAwOw0KDQogICAgICAgICAvKiBVcCB0byA0IHplcm8gdmFsdWVzIGlz
+IGEgdmFsaWQgY29uZmlndXJhdGlvbi4gQ2hlY2sgdGhlbSBhbGwuICovDQogICAgICAgICBu
+dW1femVybyA9IDE7DQogICAgICAgICBmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShkZXNj
+LT5nb2Ffb2RkX3RpbWluZyk7IGkrKykgew0KICAgICAgICAgICAgICAgICBpZiAoZGVzYy0+
+Z29hX29kZF90aW1pbmdbaV0pDQogICAgICAgICAgICAgICAgICAgICAgICAgbnVtX3plcm8r
+KzsNCiAgICAgICAgIH0NCg0KICAgICAgICAgaWYgKG51bV96ZXJvID09IEFSUkFZX1NJWkUo
+ZGVzYy0+Z29hX29kZF90aW1pbmcpKQ0KICAgICAgICAgICAgICAgICBnb2Ffb2RkX3ZhbGlk
+ID0gZmFsc2U7DQoNCiAgICAgICAgIC8qIFVwIHRvIDMgemVyb2VzIGlzIGEgdmFsaWQgY29u
+ZmlnLiBDaGVjayB0aGVtIGFsbC4gKi8NCiAgICAgICAgIG51bV96ZXJvID0gMTsNCiAgICAg
+ICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKGRlc2MtPmdvYV9ldmVuX3RpbWluZyk7
+IGkrKykgew0KICAgICAgICAgICAgICAgICBpZiAoZGVzYy0+Z29hX2V2ZW5fdGltaW5nW2ld
+KQ0KICAgICAgICAgICAgICAgICAgICAgICAgIG51bV96ZXJvKys7DQogICAgICAgICB9DQoN
+CiAgICAgICAgIGlmIChudW1femVybyA9PSBBUlJBWV9TSVpFKGRlc2MtPmdvYV9ldmVuX3Rp
+bWluZykpDQogICAgICAgICAgICAgICAgIGdvYV9ldmVuX3ZhbGlkID0gZmFsc2U7DQoNCg0K
+YW5kIHNvIHRoZSBmb2xsb3dpbmcgdHdvIGNoZWNrcyBvbiB0aGUgYm9vbGVhbiB2YXJpYWJs
+ZXMgaXMgb24gDQpwb3RlbnRpYWxseSB1bmluaXRpYWxpemVkIHZhbHVlczoNCg0KICAgICAg
+ICAgLyogUHJvZ3JhbW1pbmcgb25lIHdpdGhvdXQgdGhlIG90aGVyIHdvdWxkIG1ha2Ugbm8g
+c2Vuc2UhICovDQogICAgICAgICBpZiAoZ29hX29kZF92YWxpZCAhPSBnb2FfZXZlbl92YWxp
+ZCkNCiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQoNCiAgICAgICAgIC8qIFdl
+IGtub3cgdGhhdCBib3RoIGFyZSBlaXRoZXIgdHJ1ZSBvciBmYWxzZSBub3csIGNoZWNrIGp1
+c3QgDQpvbmUgKi8NCiAgICAgICAgIGlmICghZ29hX29kZF92YWxpZCkNCiAgICAgICAgICAg
+ICAgICAgaHgtPnNraXBfZ29hX3RpbWluZyA9IHRydWU7DQoNCg0KQ29saW4NCg==
+--------------075VCYFG3sx02irjB7RB8IlG
+Content-Type: application/pgp-keys; name="OpenPGP_0x68C287DFC6A80226.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x68C287DFC6A80226.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Laurent Pinchart
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazc
+ICSjX06efanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZO
+xbBCTvTitYOy3bjs+LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2N
+oaSEC8Ae8LSSyCMecd22d9PnLR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyB
+P9GP65oPev39SmfAx9R92SYJygCy0pPvBMWKvEZS/7bpetPNx6l2xu9UvwoeEbpz
+UvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3otydNTWkP6Wh3Q85m+AlifgKZud
+jZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2muj83IeFQ1FZ65QAi
+CdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08yLGPLTf5w
+yAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
+zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaBy
+VUv/NsyJFQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQAB
+zSdDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT7CwZEEEwEI
+ADsCGwMFCwkIBwMFFQoJCAsFFgIDAQACHgECF4AWIQRwYtqk8AG5xmFnAM9owoff
+xqgCJgUCY8GcawIZAQAKCRBowoffxqgCJtd/EACIWcaxfVt/MH4qqo5ELsjCFPVp
++RhVpQDWy8v9Np2YbTcZ4AY2Zj4Pq/HrZ3F/Bh02v85C6mNv8BDTKev6Qcq3BYw0
+iqw6/xLNvRcSFHM81mQI9xtnAWIWfI9k5hpX19QooPIIP3GOMdMc1uRUGTxTgTFA
+AsAswRY3kMzo6k7arQnUs9zbiZ9SmS43qWOIxzGnvneekHHDAcomc/oho7kgj6rK
+p/f9qRrhForkgVQwdj6iBlW934yRXzeFVF3wr7Lk5GQNIEkJiNQPZs54ojBS/Kx6
+3UTLT1HgOp6UY9RPEi9wubmUR+J6YjLRZMr5PCcA86EYmRoysnnJ8Q/SlBVD8npp
+GVEcuvrbH3MBfhmwOPDc3RyLkEtKfSTB92k1hsmRkx9zkyuUzhcSnqQnpWGJD+xt
+KHvcHRT7Uxaa+SDwUDM36BjkyVcZQy8c+Is2jA55uwNgPpiA7n82pTeT+FRGd+7i
+CLQHaryu6FO6DNDv09RbPBjIiC/q814aeKJaSILP1ld9/PEBrLPdm+6lG6OKOt9D
+DV6jPmfR96FydjxcmI1cgZVgPomSxv2JB1erOggB8rmX4hhWYsVQl1AXZs3LdEpJ
+6clmCPspn/ufZxHslgR9/WR1EvPMQc8XtssF55p8ehRIcVSXDRcMFr3ZuqMTXcL6
+8YbDmv5OGS95O1Gs4c0iQ29saW4gS2luZyA8Y29saW4ua2luZ0B1YnVudHUuY29t
+PsLBdwQTAQgAIQUCTwq47wIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBo
+woffxqgCJo1bD/4gPIQ0Muy5TGHqTQ/bSiQ9oWjS5rAQvsrsVwcm2Ka7Uo8LzG8e
+grZrYieJxn3Qc22b98TiT6/5+sMa3XxhxBZ9FvALve175NPOz+2pQsAV88tR5NWk
+5YSzhrpzi7+klkWEVAB71hKFZcT0qNlDSeg9NXfbXOyCVNPDJQJfrtOPEuutuRuU
+hrXziaRchqmlhmszKZGHWybmPWnDQEAJdRs2Twwsi68WgScqapqd1vq2+5vWqzUT
+JcoHrxVOnlBq0e0IlbrpkxnmxhfQ+tx/Sw9BP9RITgOEFh6tf7uwly6/aqNWMgFL
+WACArNMMkWyOsFj8ouSMjk4lglT96ksVeCUfKqvCYRhMMUuXxAe+q/lxsXC+6qok
+Jlcd25I5U+hZ52pz3A+0bDDgIDXKXn7VbKooJxTwN1x2g3nsOLffXn/sCsIoslO4
+6nbr0rfGpi1YqeXcTdU2Cqlj2riBy9xNgCiCrqrGfX7VCdzVwpQHyNxBzzGG6JOm
+9OJ2UlpgbbSh6/GJFReW+I62mzC5VaAoPgxmH38g0mA8MvRT7yVpLep331F3Inmq
+4nkpRxLd39dgj6ejjkfMhWVpSEmCnQ/Tw81z/ZCWExFp6+3Q933hGSvifTecKQlO
+x736wORwjjCYH/A3H7HK4/R9kKfL2xKzD+42ejmGqQjleTGUulue8JRtpM1AQ29s
+aW4gSWFuIEtpbmcgKEludGVsIENvbGluIElhbiBLaW5nIGtleSkgPGNvbGluLmtp
+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
+=3DQKm6
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------075VCYFG3sx02irjB7RB8IlG--
+
+--------------N3ZcnUoSP2zg08nWWTSKJgQN--
+
+--------------HW6FEBicTQyXxGu8zSYeoTOq
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEEcGLapPABucZhZwDPaMKH38aoAiYFAmgIDQEFAwAAAAAACgkQaMKH38aoAiaK
+bQ/+Lf3XZD7U7g7oSad8C4m0KFGC2osXPSdA4eTAOsnWXNvMJQIe/2juSzSz4Ius023wFWEOe4m0
+vOzvEInM6l2UQrUOhLH2XhP1C5LpJpIUuq4tjgt0QDSJNRMOgz/PfqAIUaFdRiMCEBtEKupS8Wyu
+0x21EKgek3jCWENpVmvC/fKPR8/+hN224ACxBfOFxaC5Woc9p700lHITEB8M+74Jccoqw3qMnjsW
+hAF0LV12XhX/Se9KIGnlfkCu992exi5qgBgClALKQok9gAecZ5x86fR2/WuVIX+p054skA/tEgdv
+t76Uk0x9gIHQnFiUKAQsP8+CXjQLBi0RURXmaU5VI6/UIqs49jSOdrsCUtLq7WW8//H0PJY2WbXy
+fBIUmhp4Z85IXOZO0jqyEDM+0CwioKd4n1kaYJ4LtTzObooBpwP/WzzGg9UPmU92Tak1/BIhGWp5
+CVIm2IOapKVKcDVYE8vpnm2EFwMP8bcN8bNxNMlJheaNOcbWpRaGbExeiPokSDcjNJ6FVVje9rs6
+44uGWyVdHBV1fQTlGItjWZYjoHNNpqVXvj0pvJjCoG0M/QlJpDJz3Fvy64zAQZmAjGQcsuUaXBbh
+e2Yae+Vpnnxt+4fRv3j7YuD5pNFSz4tiHIVKtQgzqRjJtot613kavQa64q/qtXWzRhXDqdVaKaCL
+9tM=
+=9cRm
+-----END PGP SIGNATURE-----
+
+--------------HW6FEBicTQyXxGu8zSYeoTOq--
 
