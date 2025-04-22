@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-614134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECEFA966A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94454A9669C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018AE189D68C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0EE3B89C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C72F21B9C4;
-	Tue, 22 Apr 2025 10:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602C12144A8;
+	Tue, 22 Apr 2025 10:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="OI81sUHG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="FTDJ0Hi4"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38753213224;
-	Tue, 22 Apr 2025 10:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF3A20D51F;
+	Tue, 22 Apr 2025 10:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319416; cv=none; b=i6Laovqsr/6dGQmzV1Ei3Yti2SYmaiwrAKaugQt/KAe7QgxGb9VqKMOza8Bm24MscZgiswiX73oYm+Dkaifr9tz0ERyyyAYFTkmrSVpfijl7tMWTgXXHhoc7ZmAE2ZCQZat2wbd2ZOWDruC5w7UxgSlr0QNxB/G92sNINr2hht0=
+	t=1745319414; cv=none; b=TES++eeu5qf0qRGnm29BpXK4wVCqbaFe5HecjKvAB055s3SENOJFSmjo6Pd7rzqtkxUB3yenp65izJWky7Eg7K+W9HSU8oxikt7qLoJOXyuj+dL6GxvX/24+5dRPq/vm9B0tH9kqdB36XwdDTKHCKOsjR0hzu2e6n5tGGsS1cAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319416; c=relaxed/simple;
-	bh=6d+U91CPqoFD93yIaALxCHx3nOlc0OBM6RD1ZRMXbRk=;
+	s=arc-20240116; t=1745319414; c=relaxed/simple;
+	bh=v6e6oS/nMhFLB7pHXxBcsuZHxq8PKqPIBKZP9xLGgjM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lu7f+tN6NVEJXJZRWjb4Bn6EtLE3YMhP+kUOnaSyyl6bD64TifwLldrVRWJH5k7IM3FvlSp+xVle9w8jLQ1Yz3xEO9hB9UxKQyipoa5s1fVh2c8ufrUX0h4d+2rwfZjGkhVXF2jEvDnBI7Af4mtQKIW5pVhJmN7uSeZOOvwHyZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=OI81sUHG; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=QBROfaIw7GkFOwd5ofUnBRlkW7F+gfIpNddL2PSPo/6dEZ1x68qtFeWXCCIEvRrl/zg+8BYxkGjv5y8OQk+8UaGwoRpHTQUUmhhZHdnoD9g5DTBYjaksh8TxHOojnUoIiOQX1mVJ/LP+Ksz1W0QV2AJWkJZeZ+kftWVA3wrJ+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=FTDJ0Hi4; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=rcC6sO/CO6NiYaevDv7ur1bv7w/Mg7MMOwZOt9Qajsc=; b=OI81sUHGM/1BwyYkAPJxbCK46v
-	//e/uMtr6QsC4WGnwQJjmjs2uDNjTcNRDXkrmPojEKdlEO+3jvViivfaCbWz+BVqOU9lH5UAzA6Yd
-	gaxVWA77lT+h7O1I0GSmTBvyJERCQj6cmdydCiyAZAiNpRrZQZSASLI8Ng5/yaRS1BMX0eE+J7WbC
-	Pz9PZ2pLWSvoKik5rBCDYHg6bcMcOzZ7VjzJkJKIYaxQ/89g/cHe0m/Vz6nca5HPrX+5vRtiGrjs+
-	Q1ZATpozvftYxLxnMgr9vX3zFUmb/VkQWaa5qhgzKDKfGX6a9/QW0ahvA2Y+fMNQewROPoh9po4U+
-	TH0XFmVg==;
+	bh=k/fyz2yaJz0xzEAmSoE0Y6ROcbmBH4Qm7psFQ48hLAY=; b=FTDJ0Hi4Xv9XLHxDnRjW05RDWB
+	+jy2cg1nOJfAAzQyzLEjjPZkEwmfq1wGVGFNoae5BI2O7bGZy2LoZ6V0hQ9xGea7f5GVukDPxO0nP
+	hQcPjWSDDQlGxza6aomUrZMtA9Qh37YLc2taEbPMLad3nmcwD+h1k3EfbTnBAE/ZzuwIq8F/0kg1/
+	0mXD5rIuqzK/EcRAfESV4Y9GHSwIOIF9D8CCpl/7/CUOsgJxSdlY37HU/W+Xc/5Yy55B0KWAIy8r5
+	P9lM72DfkHNPGD/Ne8Zi2Ir6aua1T9cVz14FfuUA15sQNN7Kq76QvY0klPm+fZBMDjLdBjtFto8q0
+	LzyWItzQ==;
 Received: from [89.212.21.243] (port=36562 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u7BIz-008kyr-2N;
+	id 1u7BIz-008kyr-2e;
 	Tue, 22 Apr 2025 12:56:45 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v4 02/15] arm64: dts: freescale: imx93-phycore-som: Add EEPROM support
-Date: Tue, 22 Apr 2025 12:56:31 +0200
-Message-Id: <20250422105644.2725168-3-primoz.fiser@norik.com>
+Subject: [PATCH v4 03/15] arm64: dts: freescale: imx93-phycore-som: Disable LED pull-up
+Date: Tue, 22 Apr 2025 12:56:32 +0200
+Message-Id: <20250422105644.2725168-4-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250422105644.2725168-1-primoz.fiser@norik.com>
 References: <20250422105644.2725168-1-primoz.fiser@norik.com>
@@ -85,37 +85,32 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Add support for the EEPROM chip available on I2C3 bus (address 0x50),
-used for the PHYTEC SOM detection.
+There is already an external pull-down resistor on the LED output line.
+It makes no sense to have both pull-down and pull-up resistors enabled
+at the same time. Thus disable the internal pull-up.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
 Changes in v4:
-- no changes
+- fix commit message (pull-up/pull-down)
 
- arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-index 507a71f9294b..0528e293c03d 100644
+index 0528e293c03d..06a9e674e338 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-@@ -154,6 +154,14 @@ ldo5: LDO5 {
- 			};
- 		};
- 	};
-+
-+	/* EEPROM */
-+	eeprom@50 {
-+		compatible = "atmel,24c32";
-+		reg = <0x50>;
-+		pagesize = <32>;
-+		vcc-supply = <&buck4>;
-+	};
- };
+@@ -196,7 +196,7 @@ MX93_PAD_ENET2_TD2__ENET1_TX_CLK		0x4000050e
  
- /* eMMC */
+ 	pinctrl_leds: ledsgrp {
+ 		fsl,pins = <
+-			MX93_PAD_I2C1_SDA__GPIO1_IO01		0x31e
++			MX93_PAD_I2C1_SDA__GPIO1_IO01		0x11e
+ 		>;
+ 	};
+ 
 -- 
 2.34.1
 
