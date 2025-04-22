@@ -1,184 +1,148 @@
-Return-Path: <linux-kernel+bounces-613602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EAEA95EC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D0CA95ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F48C16F143
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66281661E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2541C2367D1;
-	Tue, 22 Apr 2025 06:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWni3Z+X"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D26238C1A;
+	Tue, 22 Apr 2025 07:00:28 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4BF1A5B86
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 06:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B08F1F92A;
+	Tue, 22 Apr 2025 07:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745305139; cv=none; b=nf96qK26yfY2IK+WXBfYrfE1NTJ005D3lK1EwNYA2V6IsaU0GEPl8+xZBwmvNUF5iaEpJRvafzn540JReWpHs98qzKnaWMntWduYAhfWFhshxjgPEBjpw9ISL9jBJWuY/Mp3VDEsPPfc+tuurlrwKKGfxNpPSv/5O7NXfREKdSg=
+	t=1745305228; cv=none; b=t2c+CVrfq9eAF4qLZybl5KA2id2vSsrONGxZZws3ZS9BeC77fR4oSBQxP29luwz3q8uGPYIyH90hwrgMAsEb0DPfVOXF0lxzBR+P5xUBF8ldt4oe9ec8jrhPvWns8zifBHYjp9IPhFwtrsbyJLlQ1oXP8fhdLRVg/r5ODaxCCX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745305139; c=relaxed/simple;
-	bh=Zl/rHjQPYoFedXIJt6pPIlPvjvilC8CB38FGZiHgqGo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LaR4tWsrtyPFDRyamom5dX/ItdGWSqt29Clym10uWoi/QtaPtvqae6oXt1TvgHAQIlFHpn4nqjG4XsMW+0bjTHe2dTPwzr74A1YZONtcOVBuqDErDFPd4V+ZpooJs7nsW6gvGyGUOEFcEPOX3AlT1FilHEGbvTdu98DYY5Q7zpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jWni3Z+X; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso3721632f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 23:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745305135; x=1745909935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xd3/3q1AYSo/JYqDVTQPa8vVX/K5QL5ZbX5wE8VPDqY=;
-        b=jWni3Z+Xj38s1rJMTdQHy6G7c+W1Sr1JMcFZovRYgha5BXZYEy+p2bd2QYFQyxJjkm
-         z6duTEq3fHWNaOJAgvfX3AR9bAPYBiNc7Mt/WXaytW8GgBSBuFGyPJMQO1A9uQ+QdKAa
-         aoIKYodZjBJ24pr11UW49cCnsv1Eawo4xL85IGKaUD6uZtOkNBdluivGKmZBNjXN2I1q
-         lwPcwKihg5wcfmfK5VKNcWajv0gauRj0OZipbGHZHGwprOC3QArmHxm+T4y3pLGii/Sz
-         Ci2peTN7LARceUxmIYNaAUNtVUyNmZ0SpFB2JRGXYPDOGth71XmGJXji+aSZA4VeHAVY
-         lHFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745305135; x=1745909935;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Xd3/3q1AYSo/JYqDVTQPa8vVX/K5QL5ZbX5wE8VPDqY=;
-        b=D+p2WPnn94SNKetIPLCjdIp2kTQg39VyIxWJRTiZ/fGvyBNfrhdyG/99qBn6DeUFYA
-         ZoHLoheI6IJQ/vXubn42bsFfroJs7JRVF3OpVtYZ6pGYnFgmBSU/SOwZWlqWE+FuP/K/
-         hZukqWSX1RR7kk9hJOfe722ebikEeGKSSYDANsfwJf2o4LK47L5W49JDH/FjjOd+ewww
-         bskydbi/qJJdcyAfLxYaexP6+XmNuarWYbm8iVi3Ay8yQwUP8fbjCt4Fx+hnOLQJ6G9s
-         6WHrMxbfiQrM2PWpEEbx5zJIQcbGX3PwJe/ymfET5raBx3dfJvd+Whjzn3CTqCQfepSC
-         PMAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTrOd/Gx6qjMjdEdw8nhfe9uZ6z26jCOH9XltK2VQQJKtBuMRuvbn02Z1IG9l98BURfvwT44znfVpIBfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK02c4nyLpJbU/jPOoM0mO/IvfD8aX1XATX1Xwn06GTPvxt945
-	fT9CQcLUt+aKkztj/qfzVrwWVCMHkDaGzaHW+vUbI1D77YUVZjPkHja5l0wmD38=
-X-Gm-Gg: ASbGncuN84l9N9pGmVSn3gM6kLuF88hr4b9JpAhmhEnpMbcYRSpBgbkNBx/CPuugknS
-	6t8r2mgvfBM33s8QSMhhpN0dE00c5JW0/7txKxqBQ3hdi63c2KHQ03wk9cqX9+6O5ImDG71RJw5
-	82HPAWffU1MCx50BD4W3+56eFuH9LJ1NGmCkIY9mpiJHlBJoq+5LCJ8IHuqgH9MaaDVvQbq6IyO
-	DrHbe3lhkTvuWuwfUmtHTSaZFttG2bcx84Dx6RZtg89UhG/jzfH92B1ckc3vuucNBPXB0ibs+E5
-	Dt1EhwFGtPIUuDtqflwlgjnl1Lw0W42iR9EPBGGonP18Ym0fuKjjcdDGzeIc0Y6u1s6IjfQFM0i
-	JCZw9e+LvbuxEhzy8fA==
-X-Google-Smtp-Source: AGHT+IHbDFXF+5+LP6/HjCP1JYYnUemqwmt6GGZ6W0Gq5gWqraVlFDfoGiHhFNvQf1N0siWjoeAirw==
-X-Received: by 2002:a05:6000:184f:b0:39b:f44b:e176 with SMTP id ffacd0b85a97d-39ef9466f36mr12081694f8f.24.1745305135539;
-        Mon, 21 Apr 2025 23:58:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:b137:7670:8eb9:746f? ([2a01:e0a:3d9:2080:b137:7670:8eb9:746f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43d07csm14396780f8f.58.2025.04.21.23.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Apr 2025 23:58:55 -0700 (PDT)
-Message-ID: <5c0e86f4-b40b-4f43-a97d-a166f41737a4@linaro.org>
-Date: Tue, 22 Apr 2025 08:58:51 +0200
+	s=arc-20240116; t=1745305228; c=relaxed/simple;
+	bh=pMLtKo1GLVRJoMOK4cWV+nK9vCwPPRwTpuCuCCkS+ME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bSOEBwk1vr+5SBE/qr3A0+vbgtyZfbtb1yBBiZ3nErFlT4UEas6lhJEqt8/6Nnow74Zm5HGbAM/VTK56jlBQGa4IuEvcMZyPop52azQJJPOfQXuSO5q5ix72Fjpi/8yKMNCF1NQ1MP48whQPklDX9VqEgqnr16TmSxA7Zb/dPIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowABXBUJ3PgdoefoUCw--.50317S2;
+	Tue, 22 Apr 2025 15:00:09 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: arend.vanspriel@broadcom.com,
+	kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH v5] brcm80211: fmac: Add error log in brcmf_usb_dl_cmd()
+Date: Tue, 22 Apr 2025 14:59:38 +0800
+Message-ID: <20250422065938.2345-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 0/4] dts: amlogic: fix FCLK{3,4} clocks for new PWM
- controller binding
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org
-Cc: jbrunet@baylibre.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- christianshewitt@gmail.com
-References: <20250420164801.330505-1-martin.blumenstingl@googlemail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250420164801.330505-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXBUJ3PgdoefoUCw--.50317S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4kuFWkAw1UCFWrJryUGFg_yoW8uw4fpF
+	4xXayjyFW8Wr4Fgan3trsrJ3Wak3WkJayvkF47u3s7Xr48Cw1rWw1rKFyF9w4kCr4xC347
+	JFWDtFn8Wr17GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUejjgDU
+	UUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8AA2gHJ35aWQAAsw
 
-On 20/04/2025 18:47, Martin Blumenstingl wrote:
-> Christian has reported Bluetooth issues on some of his boards, for
-> example on a (GXBB) WeTek Play 2:
->    # dmesg | grep -i blue
->    Bluetooth: Core ver 2.22
->    NET: Registered PF_BLUETOOTH protocol family
->    Bluetooth: HCI device and connection manager initialized
->    Bluetooth: HCI socket layer initialized
->    Bluetooth: L2CAP socket layer initialized
->    Bluetooth: SCO socket layer initialized
->    Bluetooth: HCI UART driver ver 2.3
->    Bluetooth: HCI UART protocol H4 registered
->    Bluetooth: HCI UART protocol Three-wire (H5) registered
->    Bluetooth: HCI UART protocol Broadcom registered
->    Bluetooth: HCI UART protocol QCA registered
->    Bluetooth: HCI UART protocol AML registered
->    Bluetooth: null: hu 0000000023fa9791
->    Bluetooth: hci0: hu 0000000023fa9791
->    Bluetooth: hci0: hu 0000000023fa9791 skb 000000003f7acf2f
->    Bluetooth: hci0: command 0x0c03 tx timeout
->    Bluetooth: hci0: BCM: Reset failed (-110)
->    Bluetooth: hci0: hu 0000000023fa9791
->    Bluetooth: hci0: hu 0000000023fa9791
-> 
-> It turns out there's a typo in the references to the untested/unknown
-> clock input that made it into the already applied series
-> "dts: amlogic: switch to the new PWM controller binding" [0]
-> 
-> The original goal was to skip this input. This can be achieved by
-> specifying a clock input as <0> (which this series does). When using
-> <> (note the lack of 0) the clock is completely ignored when parsing
-> the .dtb, resulting in a shift in index of the FCLK DIV4 / DIV3 inputs.
-> This then results in the PWM controller driver calculating the
-> frequencies for a different clock compared to what the actual hardware
-> uses.
-> 
-> Neil, please apply this as a fix for the next 6.15-rc.
-> 
-> 
-> [0] https://lore.kernel.org/linux-amlogic/20241227212514.1376682-1-martin.blumenstingl@googlemail.com/
-> 
-> 
-> Martin Blumenstingl (4):
->    ARM: dts: amlogic: meson8: fix reference to unknown/untested PWM clock
->    ARM: dts: amlogic: meson8b: fix reference to unknown/untested PWM
->      clock
->    arm64: dts: amlogic: gx: fix reference to unknown/untested PWM clock
->    arm64: dts: amlogic: g12: fix reference to unknown/untested PWM clock
-> 
->   arch/arm/boot/dts/amlogic/meson8.dtsi             | 6 +++---
->   arch/arm/boot/dts/amlogic/meson8b.dtsi            | 6 +++---
->   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 6 +++---
->   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi       | 6 +++---
->   arch/arm64/boot/dts/amlogic/meson-gxl.dtsi        | 6 +++---
->   5 files changed, 15 insertions(+), 15 deletions(-)
-> 
+In brcmf_usb_dl_cmd(), the error logging is not enough to describe
+the error state. And some caller of the brcmf_usb_dl_cmd() does not
+handle its error. An error log in brcmf_usb_dl_cmd() is needed to
+prevent silent failure.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Add error handling in brcmf_usb_dl_cmd() to log the command id and
+error code in the brcmf_usb_dl_cmd() fails. In this way, every
+invocation of the function logs a message upon failure.
+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+v5: Remove finalize label.
+v4: Fix spelling problem.
+v3: Change patch name and comment. Move error log into brcmf_usb_dl_cmd().
+v2: Remove redundant bailing out code.
+
+ .../broadcom/brcm80211/brcmfmac/usb.c         | 23 +++++++++++++------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+index d06c724f63d9..b056336d5da6 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+@@ -741,15 +741,19 @@ static int brcmf_usb_dl_cmd(struct brcmf_usbdev_info *devinfo, u8 cmd,
+ 			    void *buffer, int buflen)
+ {
+ 	int ret;
+-	char *tmpbuf;
++	char *tmpbuf = NULL;
+ 	u16 size;
+ 
+-	if ((!devinfo) || (devinfo->ctl_urb == NULL))
+-		return -EINVAL;
++	if (!devinfo || !devinfo->ctl_urb) {
++		ret = -EINVAL;
++		goto err;
++	}
+ 
+ 	tmpbuf = kmalloc(buflen, GFP_ATOMIC);
+-	if (!tmpbuf)
+-		return -ENOMEM;
++	if (!tmpbuf) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+ 	size = buflen;
+ 	devinfo->ctl_urb->transfer_buffer_length = size;
+@@ -770,18 +774,23 @@ static int brcmf_usb_dl_cmd(struct brcmf_usbdev_info *devinfo, u8 cmd,
+ 	ret = usb_submit_urb(devinfo->ctl_urb, GFP_ATOMIC);
+ 	if (ret < 0) {
+ 		brcmf_err("usb_submit_urb failed %d\n", ret);
+-		goto finalize;
++		goto err;
+ 	}
+ 
+ 	if (!brcmf_usb_ioctl_resp_wait(devinfo)) {
+ 		usb_kill_urb(devinfo->ctl_urb);
+ 		ret = -ETIMEDOUT;
++		goto err;
+ 	} else {
+ 		memcpy(buffer, tmpbuf, buflen);
+ 	}
+ 
+-finalize:
+ 	kfree(tmpbuf);
++	return 0;
++
++err:
++	kfree(tmpbuf);
++	brcmf_err("dl cmd %u failed: err=%d\n", cmd, ret);
+ 	return ret;
+ }
+ 
+-- 
+2.42.0.windows.2
+
 
