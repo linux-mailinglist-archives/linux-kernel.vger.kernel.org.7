@@ -1,59 +1,97 @@
-Return-Path: <linux-kernel+bounces-614687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAFEA97052
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:18:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD1FA97050
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D93189E231
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15537173922
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3D28FFC7;
-	Tue, 22 Apr 2025 15:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0878A28F932;
+	Tue, 22 Apr 2025 15:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kuUyWOsx"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gUSoshsR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C1A2857C9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66FE28CF50;
+	Tue, 22 Apr 2025 15:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745335080; cv=none; b=mstOJ5AjxDZNxIixH5sHdwsBtZanIWixKfSaNE82crxFzRZx9KszSGbPi1i4ke8QZFidzlFr9HvGHzE3KD0Xn0jMF6MP1FXbBoJWzBLbYCQDmdKlqRfrg6Pc2RuZeYNC4EDefDX7Ogawn8MZHfpLh3xhljkgzWVGM7Z72zWrzF8=
+	t=1745335079; cv=none; b=t54ITts2Ti5o8+Xnt65kLYDPaVFgSe92acXK8tqZBi1td4HRcV5Kgzs24U11NlKeaOYprxhT25hH5+oQ//gsbr9XaQpe5O7pw9AZmSQAiBKk0+ldLBIRLUIvDxX5IcpSd1bqecYjR49dHyo0jfHDyVvYlPPDWHhLFqeS+mY/Cew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745335080; c=relaxed/simple;
-	bh=tZCRT3KRKbtaH5Y6xHCCiOdmQpzRItyz9G99gZqg9bA=;
+	s=arc-20240116; t=1745335079; c=relaxed/simple;
+	bh=Ok4CuGEN5avjbfT8yc/6etSUGAJCYt8kJpHiLOxLja0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChMBDEC3ORMY18ccAmTnwaGDukQ41xTzYnsioe9QqBbzk0t5X2p6G0u2VL93rcpLTTcEZ9tdpKYlR/adJ98wa1cGf3WIBF6SJBTCfZ4K82xAijIsCLJoB13t5Bf3pLLA3j2W5f+PX1todg4uVSc7TfIpOpQJbSzwjVLxE9W5/bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kuUyWOsx; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Apr 2025 08:17:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745335066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LchZarW2A6kUutnNIDJO9ma1ViD3dQsg63NWCnCpkd8=;
-	b=kuUyWOsxd9hRF8MHPY8MLslDN6+7hW2eUdsBAjNgySpPbSVsXoIbvMv3CGm7HxPtOjCB1v
-	l48IzD8TD4q98Ksu7wnkVSgHQ9x2I+hFRwSQfc6ywONjTIGNaaHScZlAlsqrYsu1F4UuL2
-	jyb3bWBH0kLn+H5xF3nkBH4ZmTOO/u4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: vmalloc: simplify MEMCG_VMALLOC updates
-Message-ID: <aAezFEm9FY3RZISI@Asmaa.>
-References: <20250403053326.26860-1-shakeel.butt@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIPCPylc+PNOQv7GySB6AOeMdZGAFQeb192obxLOzQG/C6UHWMvrc0lVC6ds27YYI/pdcPd8/RlrUy2kgoQZg3dIFBolHWNd4BOe4F84nHr1vg2eX83fazPc8MkqEYwWkTKDOQ1SeMDPdzd4zmcO77fnM8OeeRioGa6mHvm1Cug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gUSoshsR; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745335078; x=1776871078;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ok4CuGEN5avjbfT8yc/6etSUGAJCYt8kJpHiLOxLja0=;
+  b=gUSoshsRs1pnEotu1bjqlhSdsXraZ9YjDHrYYW61fOzGquAEbvkc5pH8
+   ARxmXsSP3lgknMfTYwjErIrQP/OVNMLEfx+E59lkab2LklVvbeUY9hRIv
+   OHqrYV0lpVNsLPLQKUbYVBnegGp1x3xrgTOhNBbRPQBSzp62ePBBhBOFc
+   t6vHbuo50sEusNiKSAo9LarBVHGMnMvYv151YqNq13m+Db7+eNU0qf8Qn
+   wSqJicb15Icjir3zvQbJMjaz2L5HPdKUD4HEgXBthX1qqbYDnKINSD/iV
+   Idkf3mM0oAf+qnzQC4WTFgU/bx2xUTV7IpNOIBladsSOANgW2Seyh7BcS
+   g==;
+X-CSE-ConnectionGUID: GeY049FTQb29e2u2liFiSg==
+X-CSE-MsgGUID: Rw6cssZfSpOMiLyG/qljxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="57551305"
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="57551305"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 08:17:57 -0700
+X-CSE-ConnectionGUID: BiulG9g2TcSzWSoEyERUoA==
+X-CSE-MsgGUID: QC0jAJQRSyiQHEULyn93yA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="137198029"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 08:17:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u7FNa-0000000ElLU-1GAZ;
+	Tue, 22 Apr 2025 18:17:46 +0300
+Date: Tue, 22 Apr 2025 18:17:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Aditya Garg <gargaditya08@live.com>, Hector Martin <marcan@marcan.st>,
+	alyssa@rosenzweig.io, Petr Mladek <pmladek@suse.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com,
+	joe@perches.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	Kees Cook <kees@kernel.org>, tamird@gmail.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>,
+	netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Message-ID: <aAezGqdN9weTxv8_@smile.fi.intel.com>
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
+ <PN3PR01MB9597B3AE75E009857AA12D4DB8BB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <CAMuHMdWpqHLest0oqiB+hG47t=G7OScLmHz5zr2u0ZgED_+Obg@mail.gmail.com>
+ <aAdsbgx53ZbdvB6p@smile.fi.intel.com>
+ <CAMuHMdXuM5wBoAeJXK+rTp5Ok8U87NguVGm+dng5WOWaP3O54w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,67 +100,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250403053326.26860-1-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAMuHMdXuM5wBoAeJXK+rTp5Ok8U87NguVGm+dng5WOWaP3O54w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Apr 02, 2025 at 10:33:26PM -0700, Shakeel Butt wrote:
-> The vmalloc region can either be charged to a single memcg or none. At
-> the moment kernel traverses all the pages backing the vmalloc region to
-> update the MEMCG_VMALLOC stat. However there is no need to look at all
-> the pages as all those pages will be charged to a single memcg or none.
-> Simplify the MEMCG_VMALLOC update by just looking at the first page of
-> the vmalloc region.
+On Tue, Apr 22, 2025 at 12:32:42PM +0200, Geert Uytterhoeven wrote:
+> On Tue, 22 Apr 2025 at 12:16, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Apr 22, 2025 at 10:43:59AM +0200, Geert Uytterhoeven wrote:
+> > > On Tue, 22 Apr 2025 at 10:30, Aditya Garg <gargaditya08@live.com> wrote:
+> > > > On 22-04-2025 01:37 pm, Geert Uytterhoeven wrote:
+> > > > > On Tue, 8 Apr 2025 at 08:48, Aditya Garg <gargaditya08@live.com> wrote:
+
+...
+
+> > > > Originally, it was %p4cr (reverse-endian), but on the request of the
+> > > > maintainers, it was changed to %p4cn.
+> > >
+> > > Ah, I found it[1]:
+> > >
+> > > | so, it needs more information that this mimics htonl() / ntohl() for
+> > > networking.
+> > >
+> > > IMHO this does not mimic htonl(), as htonl() is a no-op on big-endian.
+> > > while %p4ch and %p4cl yield different results on big-endian.
+> > >
+> > > > So here network means reverse of host, not strictly big-endian.
+> > >
+> > > Please don't call it "network byte order" if that does not have the same
+> > > meaning as in the network subsystem.
+> > >
+> > > Personally, I like "%p4r" (reverse) more...
+> > > (and "%p4ch" might mean human-readable ;-)
+> >
+> > It will confuse the reader. h/r is not very established pair. If you really
+> > wont see h/n, better to drop them completely for now then. Because I'm against
+> > h/r pair.
 > 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  mm/vmalloc.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
+> I am not against h/n in se, but I am against bad/confusing naming.
+> The big question is: should it print
+>   (A) the value in network byte order, or
+>   (B) the reverse of host byte order?
 > 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 3ed720a787ec..cdae76994488 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3370,12 +3370,12 @@ void vfree(const void *addr)
->  
->  	if (unlikely(vm->flags & VM_FLUSH_RESET_PERMS))
->  		vm_reset_perms(vm);
-> +	if (vm->nr_pages && !(vm->flags & VM_MAP_PUT_PAGES))
-> +		mod_memcg_page_state(vm->pages[0], MEMCG_VMALLOC, -vm->nr_pages);
->  	for (i = 0; i < vm->nr_pages; i++) {
->  		struct page *page = vm->pages[i];
->  
->  		BUG_ON(!page);
-> -		if (!(vm->flags & VM_MAP_PUT_PAGES))
-> -			mod_memcg_page_state(page, MEMCG_VMALLOC, -1);
-
-We can add a debug check here (and/or in the vmalloc path) to check that
-all pages are indeed charged to the same memcg.
-
-Regardless, this change makes sense:
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-
-
->  		/*
->  		 * High-order allocs for huge vmallocs are split, so
->  		 * can be freed as an array of order-0 allocations
-> @@ -3671,12 +3671,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  		node, page_order, nr_small_pages, area->pages);
->  
->  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
-> -	if (gfp_mask & __GFP_ACCOUNT) {
-> -		int i;
-> -
-> -		for (i = 0; i < area->nr_pages; i++)
-> -			mod_memcg_page_state(area->pages[i], MEMCG_VMALLOC, 1);
-> -	}
-> +	if (gfp_mask & __GFP_ACCOUNT && area->nr_pages)
-> +		mod_memcg_page_state(area->pages[0], MEMCG_VMALLOC,
-> +				     area->nr_pages);
->  
->  	/*
->  	 * If not enough pages were obtained to accomplish an
-> -- 
-> 2.47.1
+> If the answer is (A), I see no real reason to have %p4n, as %p4b prints
+> the exact same thing.  Moreover, it leaves us without a portable
+> way to print values in reverse without the caller doing an explicit
+> __swab32() (which is not compatible with the %p pass-by-pointer
+> calling convention).
 > 
-> 
+> If the answer is (B), "%p4n using network byte order" is bad/confusing
+> naming.
+
+Other %p extensions that have R/r for "reversed" do not have any H/h part for
+"host". That's why if we want reversed, than don't use the host, it should be
+default. As I said, I think the best is to remove these for now,
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
