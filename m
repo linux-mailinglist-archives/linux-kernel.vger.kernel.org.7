@@ -1,159 +1,103 @@
-Return-Path: <linux-kernel+bounces-614744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C72FA97130
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39DDA97168
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162F27A1A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080C9189926D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FCC28F95E;
-	Tue, 22 Apr 2025 15:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE1728F947;
+	Tue, 22 Apr 2025 15:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FmFlPWNH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G0+EygSy"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FAF28F92E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31CB2AD2D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745336277; cv=none; b=CBdhjh0MWMMmO9neUmRDykYmq6gm4qTdXR3aaeLYOT1LtHa+iwEifJQI2GzhYr006GtRIGCxw6DpUVODWm7tQDtIxt5kZLDITXE9UqKK5viryBFS09jY2Nv1d7Rc33DBPpEm+qI0mu6n+8KzVq+5tnYedoQvmCz6aJFyLMfj6wc=
+	t=1745336433; cv=none; b=q/d8jM3wWfzuJzpkF/tuwupEk/AsXOFTjkLHsrFcB/eBfS0HKscF2F+XxjIgMliABoKKYEgkQQPHo5kaJd741Y+o8xo+v4a174YivQIGJ6ReWSIzn49s9Br9Koo1fLabWpv1NDTanXq6/Qlac1UHWcxLD60P0hEqE48Rb/ZslYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745336277; c=relaxed/simple;
-	bh=jFZ1V84giT+YUQdEZUVPilmzVULgCGOUEFQfGNQ4RSk=;
+	s=arc-20240116; t=1745336433; c=relaxed/simple;
+	bh=PbDfsooWdFXkU7zHfiYQ+cHc963EyHKQ0wmg+QDHF6E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrTsmwPnXIBUFfiSmk6MdvpYV0duB12aZ7QVRfDzbr8lLZPCRG38fdLDE0VkUsFksRJsNMNdKhxRzUndh+X/fRcgil+dEHfiRwM56UDH1YtbhmggUoCCgpLQlTOKIIG0yPMzY4sXxC6dmHJRSW/Ms1W11fBLo6eqwM30kHlop1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FmFlPWNH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745336274;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WI/gMauLqCt02AboS6grwFvFrTLLoNtTKY1yK4IrYCJiLal5Ks6XxwnJqJr3P08wzvZBBbvxsaslww9ahabVWf0Y9J4EV/BNfoz0q7dhjEt2uxx6OTfdKL65sJRLvnTw0KSnTf/WA4jNognTijS+nm95Tfar7pulx4ogeE4Wco0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G0+EygSy; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Apr 2025 08:40:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745336419;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Kcu1mJHODKObLksxc4A59swiNVK6LroG71Dl9SlbtDA=;
-	b=FmFlPWNHWLDDPn+bdACWk8pKqo/u2NHHx2CwokoncvNHkdoV5nhaZlgq38srfOFtsPMEb2
-	btrgjbYAQaoDqnLcbrRfCpmP30rv5Fao8iqg99nT5jDSRubI6eSy/hBv7vOgoerjyQudkO
-	yLFnHsXwk/pznlL3ZrtgqAk7s7km+Ew=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-hp0aCYEXNbOBG2kQPca4kw-1; Tue,
- 22 Apr 2025 11:37:46 -0400
-X-MC-Unique: hp0aCYEXNbOBG2kQPca4kw-1
-X-Mimecast-MFC-AGG-ID: hp0aCYEXNbOBG2kQPca4kw_1745336265
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AD11A1955DCC;
-	Tue, 22 Apr 2025 15:37:44 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.74.8])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B458B19560AB;
-	Tue, 22 Apr 2025 15:37:41 +0000 (UTC)
-Date: Tue, 22 Apr 2025 11:37:38 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>, linux-modules@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
-	Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v2] audit,module: restore audit logging in load failure
- case
-Message-ID: <aAe3wrAzD/7jBtHy@madcap2.tricolour.ca>
-References: <b96c64d522cf1c46dce1b8987e83f2f41ff2e5ee.1742231027.git.rgb@redhat.com>
- <92e9622d6dd1bd3e59a36269275aa1fe@paul-moore.com>
+	bh=bsy5PJS41mGhoO54IOukmg7Bo8GKSd/BSVXvRDM5VnM=;
+	b=G0+EygSywRwQUvJGbgX4OaUmUPOV5m9AyREzpvvQmABa7jQmA7ybaYemI9lWJYsdSiq6vm
+	M6RsrgW+BeXi/rkjR9sarP/fQdFHgcj+rwDbKA2shRRPqB+y9QNibNa2RdQ3nGpiA0NjFw
+	MCLOonU8x4YaRJAck7T5pP/xExUiK7M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>, Tejun Heo <tj@kernel.org>, 
+	Greg Thelen <gthelen@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH v2] memcg: introduce non-blocking limit setting option
+Message-ID: <rha4tmnnrhncn2ryoml2hbu5hxt3qnbg2rurl6tkssnegrc5wn@isui3jn3cu4h>
+References: <20250419183545.1982187-1-shakeel.butt@linux.dev>
+ <20250422-daumen-ozonbelastung-93d90ca81dfa@brauner>
+ <jqlq7y3bco4r3jpth23ymf7ghrtxbvc2kthvbqjahlkzsl4mik@euvvqaygeafd>
+ <20250422-synergie-bauabschnitt-5f724f1d9866@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <92e9622d6dd1bd3e59a36269275aa1fe@paul-moore.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250422-synergie-bauabschnitt-5f724f1d9866@brauner>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-04-11 14:23, Paul Moore wrote:
-> On Mar 17, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
+On Tue, Apr 22, 2025 at 11:48:23AM +0200, Christian Brauner wrote:
+> On Tue, Apr 22, 2025 at 11:31:23AM +0200, Michal Koutný wrote:
+> > On Tue, Apr 22, 2025 at 11:23:17AM +0200, Christian Brauner <brauner@kernel.org> wrote:
+> > > As written this isn't restricted to admin processes though, no? So any
+> > > unprivileged container can open that file O_NONBLOCK and avoid
+> > > synchronous reclaim?
+> > > 
+> > > Which might be fine I have no idea but it's something to explicitly
+> > > point out 
 > > 
-> > The move of the module sanity check to earlier skipped the audit logging
-> > call in the case of failure and to a place where the previously used
-> > context is unavailable.
-> > 
-> > Add an audit logging call for the module loading failure case and get
-> > the module name when possible.
-> > 
-> > Link: https://issues.redhat.com/browse/RHEL-52839
-> > Fixes: 02da2cbab452 ("module: move check_modinfo() early to early_mod_check()")
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> > Changelog:
-> > v2
-> > - use info->name for both audit_log_kern_module() calls and add const
-> > ---
-> >  include/linux/audit.h | 9 ++++-----
-> >  kernel/audit.h        | 2 +-
-> >  kernel/auditsc.c      | 2 +-
-> >  kernel/module/main.c  | 6 ++++--
-> >  4 files changed, 10 insertions(+), 9 deletions(-)
+> > It occurred to me as well but I think this is fine -- changing the
+> > limits of a container is (should be) a privileged operation already
+> > (ensured by file permissions at opening).
+> > IOW, this doesn't allow bypassing the limits to anyone who couldn't have
+> > been able to change them already.
 > 
-> Agree with Petr's previous comment about the URL in the commit
-> description, if it isn't publicly accessible please don't include it in
-> the commit description; I'm going to remove it.
+> Hm, can you explain what you mean by a privileged operation here? If I
+> have nested containers with user namespaces with delegated cgroup tress,
+> i.e., chowned to them and then some PID 1 or privileged container
+> _within the user namespace_ lowers the limit and uses O_NONBLOCK then it
+> won't trigger synchronous reclaim. Again, this might all be fine I'm
+> just trying to understand.
 
-Sorry, I thought I had checked it more than once to make sure it was
-visible.  It should be now.  Please re-add the link.
+I think Michal's point is (which I agree with) that if a process has the
+privilege to change the limit of a cgroup then it is ok for that process
+to use O_NONBLOCK to avoid sync reclaim. This new functionality is not
+enabling anyone to bypass their limits.
 
-> > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > index 1fb9ad289a6f..efa62ace1b23 100644
-> > --- a/kernel/module/main.c
-> > +++ b/kernel/module/main.c
-> > @@ -3346,7 +3346,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
-> >  
-> >  	module_allocated = true;
-> >  
-> > -	audit_log_kern_module(mod->name);
-> > +	audit_log_kern_module(info->name);
-> >  
-> >  	/* Reserve our place in the list. */
-> >  	err = add_unformed_module(mod);
-> > @@ -3506,8 +3506,10 @@ static int load_module(struct load_info *info, const char __user *uargs,
-> >  	 * failures once the proper module was allocated and
-> >  	 * before that.
-> >  	 */
-> > -	if (!module_allocated)
-> > +	if (!module_allocated) {
-> > +		audit_log_kern_module(info->name ? info->name : "(unavailable)");
-> 
-> In keeping with audit tradition, wouldn't we want this to be "?" instead
-> of "(unavailable)"?
-> 
-> >  		mod_stat_bump_becoming(info, flags);
-> > +	}
-> >  	free_copy(info, flags);
-> >  	return err;
-> >  }
-> > -- 
-> > 2.43.5
-> 
-> --
-> paul-moore.com
-> _______________________________________________
-> Linux-audit mailing list -- linux-audit@lists.linux-audit.osci.io
-> To unsubscribe send an email to linux-audit-leave@lists.linux-audit.osci.io
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-Upstream IRC: SunRaycer
-Voice: +1.613.860 2354 SMS: +1.613.518.6570
-
+In your example of PID 1 or privileged container, yes with O_NONBLOCK
+the limit updater will not trigger sync reclaim but whoever is running
+in that cgroup will eventually hit the sync reclaim in their next charge
+request.
 
