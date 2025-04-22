@@ -1,130 +1,135 @@
-Return-Path: <linux-kernel+bounces-613886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6B3A96366
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:03:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93709A96311
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33873BDDA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:56:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC5C44160D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0525DAE9;
-	Tue, 22 Apr 2025 08:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E1625B66C;
+	Tue, 22 Apr 2025 08:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkmyb+vH"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="dEH6Y9vf"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA19E190472
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DA025D52B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311996; cv=none; b=Rx6ONz7Q3kE71KwStwmkqrr95k8CbpBvbhox54xIDhukGLXrOlT3dt8hPZx8pi+pySYzOF0299Dnllry+mrZa0KqwNRsrbmqWx1cRxmKasu2junAFrVD3tYnrtV89gOu6ioR2o+bgxq03w72PzbG7NRXxHedFMobrN0xSKWorn4=
+	t=1745311335; cv=none; b=hwSenM5V7Qe5xwfLBUvehnkJ5wvCyoLEfIBX3OFMHQ3qTtRa7oyyvg3U17QSky8R/vSKsoeDfENxo5a4Vhy6MXjB2au5jaXAOhde14ewGYoJKT9SLSMMvGoNKr/VhWQ9atOF/ZWfP0qT6zUOdd+HRALDdgpn4ahhlpuoVt5tkxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311996; c=relaxed/simple;
-	bh=zqMm+4LlaDew/KOtPb4bT84y9g6n6l7Zkb7k02+bQw0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEgAhzgyNsz+djzHTy0HdLOG1glck6/YxLkv2hphvr1h5rZ0pOgNe8vC3FVBtUUcy/5ZJltm/HyIlbzwQ7MN3w89Dp38Jqjq1eChifxgzF18+wZZX4wKiKeMoKNm9WGKiSL44GOSO8zG64e+cMrGKVL9bMhZfG0evqING2S+e6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkmyb+vH; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54c090fc7adso5234458e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:53:14 -0700 (PDT)
+	s=arc-20240116; t=1745311335; c=relaxed/simple;
+	bh=glrL9frKUynd0eooWslKXIli7Wwl1Of8mWNqeP69AkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=refbxzhvoXI0rlWpcQGzb/Rh5cJa9iIwB7l1NrTPEJJiSaiW8bCaWnnNHBdYG8QgnVCHysf/TSnXlQJqP/clSH1THa9e+e9IqDrLTnI0WSWXe1zCc30hctNnEYKUMdleieMEv1KizvaVlnxZnypWubajVRY6ChgJwOmLtG83kfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=dEH6Y9vf; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736e52948ebso5500023b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745311993; x=1745916793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B107IeEBYcdTeNa+0WuZ0QSN98QiHvhvMbSv+mGPRVo=;
-        b=gkmyb+vHLUT76ByPpuRqyqgJtfXgEXwK3apoSO5yleVLb3uKGpQ5voU3dQtQOCMk+V
-         JWJgqMlQxmPHQ7k8C1quY0eSiooaHVddFmFqCfS2fLgpbpg/+C+xV5vGaZf7XFlrA4l6
-         LXqzEk8bP5dJQnAI7N4JBSqjbeFu7tDZ88os/j55z2txDEp0VtjZAMJ1HKU56akSaqAu
-         6vWgG34RJ+2Tik3ntJ/A5PXXHQljFL5iVRCMu+zdKG52lcSDqCMQ2DPNtvX9l9BTNjWa
-         XFMXORj3alKZ4aoxk7IND/jWExcqGSDmr/6BDqDxQHPhuFirGCjJOhqvF4LjGE0u5MeH
-         WHpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745311993; x=1745916793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=sifive.com; s=google; t=1745311333; x=1745916133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B107IeEBYcdTeNa+0WuZ0QSN98QiHvhvMbSv+mGPRVo=;
-        b=n7HPQYmuuyhr2bgSET3H0eT0z9FDZoaphZQnJB7LVw7Cs0vGZ5dXzkBSq7hUrP5ea6
-         8rt/LXPkCGXHo7D/v6CbtMeIdbUcgFu+CI289+gLtyCwFshU9w1SfhOH+g0MR8BBFn14
-         gZxO8dgk0noU6L7dhotUDC/L5FWZb+OeDSlPZc9FRKUPOz6IWNiBqbK3XpWvlMA0oj3S
-         nRazRn2Ofk5ShrcToxULCeAQklL7BJxP0qEileutkWAPXvMYPy3PjhOjMt0As7r80aLH
-         aCLRzj8WnTsMkBywIM4LW8EXy4hSyxYMADIjBCQEc0PqWTyLHfpFyelX1kW4Nl6P+CMM
-         5CWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt4/lxNi0v9JSGmb2gGgtpuOjpylfS8rRy+/SyaI4ZPPffSByxkpfoMsRh4PTPCgS03GlTvAOhW9r4/XQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM3KDA3T0BChptMs0SSFHhj9Beg2L/feiFthPp6gzKofpqfzTI
-	KBuueQgZ0OPew6rmA2koDfjpBjoSUWrozAoRP/h4QcOxhX5lMzfq
-X-Gm-Gg: ASbGnct/+w9pZ1dwno7wOM0tDBSc8R+K+X1mKhDn4PheuBftGblvWU/44gQdGbXeO53
-	Uhu7cAiZjMqStMwd1UIvozGTRraOrmNskG0knDa/KrEE8o3VwODuLRlAH6OD/It4ZRY8wQIAyUb
-	eiTG4ev8Jw58/7w4QGDMHbsm3BqrVFyoAsyaM1Hn0o7ex8dLHyCb0ngXDBE+JZxprTLywFEJX7h
-	mpeDifuUGbi2icVfrtF8HQ5khcHOSKLWGvph+3Z6so/CMBWjg7KNbHEFgRLMgRBlNuJu05BxeK4
-	zSr9/MQVYne3vPb2SukSYpfJwL9q5SZpI4BLOBYDKCSl7Ls=
-X-Google-Smtp-Source: AGHT+IHAzgi8kGpVE7gevRvjayWFRsuXzx8hOLHXEi1ai4Wwn6M2n3mAJLfRBCBCN3H/dFgyt5Lr2Q==
-X-Received: by 2002:a05:6512:39c5:b0:54a:cbfb:b647 with SMTP id 2adb3069b0e04-54d6e6589fdmr3933538e87.37.1745311992492;
-        Tue, 22 Apr 2025 01:53:12 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-31090826cf5sm15574721fa.87.2025.04.22.01.53.11
+        bh=/Cqj4QIom4PNiBzVEbYX0WUBXZ7DUraiDzK4MrzGYzY=;
+        b=dEH6Y9vf6HnNx7Vxqb6i5y/DQP5YikqJpx0Zkc7VUzwlTEFvdtE09Gc+iHBGGVg4ws
+         5GMImkG0puJCtJN2dMqHKy9ZxY4O5OLrK6xGvSjuE9KZPi2dBLn6ZsGQ+gBL2Tj39/tv
+         nPdzUgcg9Ys5L7jOgEcGwTmY31X4aSSUGJI6wM6F937aulAxzYvViWzLESqeJSZoCm99
+         y7ybHNlvWFku/nqvPNhibz2ADYSXGFxyiNJfZq9QQFonaROYmcV+0t3PuPCC+M5M8Bkv
+         g9WaHL0DaUgO23TyCxG7R4s1QR2p+dD5TkgYggoRbfeDEaXzM/EVCuuFMp0ATKc8ragA
+         RxJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745311333; x=1745916133;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Cqj4QIom4PNiBzVEbYX0WUBXZ7DUraiDzK4MrzGYzY=;
+        b=kbF1MSv8m2jBe6KtNRRcF2I+L4Y9guo72RLMOEvDamuE6SciHwMZfeyNMbptjT+wet
+         dTHrCEjjyXS3aMG/i57E0vwhxoMoM7cW0gkfA00Ozp8HfRnqZocUm6o4+8opDvOEeVTM
+         z/wAeFDNbJ9IkHVAhPnv/lxIC8IPKMyTfeTJK1HTCUR59cbiVEg/XYUhM2lly1oMnIuQ
+         Rzdd52ywMzUvSkPYWxix2rSkljpuz+27BCgwJpztzivQkaJWWnhBpGAYu4pnXHge/V6A
+         +xPqzcnrRTXuxms6y6RJhcN3xUUWTVdGz/DgYJnb8kCUG8Flnx3rMhhvK5FdPepXswfY
+         /8yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnn8QsWzlzaFC6UO4Bfb/5cg9hNFRW82v9eZBhna4NSHDcIyRxvwhCNiXL3Jsu1BBtQvRAtA0NsEtJ3Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfinnH2Nn52YNPNzWeikpboVr49DC2+pxmA1/vhXLAXN7NYr6w
+	Zc9Kdv9saUB8cEYiFikAJZbQIQlmA72cDpXJXTA6RqJ4BBpC76sBN2G/Wnhfqb0=
+X-Gm-Gg: ASbGncu5YBdIfNbSi9LCGUSlB95AGNDcJSKxMo+fqs2cpWab0lwncuKWOfe5nxFmecu
+	eH4Qvk7yTgD1Wniv+IveEF1hiliNJ4B7WMCVIF6ajmtrewhktAlE1gL01MpOQNnTr2Sct58x+nB
+	sidmF2Xy0HkxqnETiCejb99atF/HC9li7iL23qVt4WLTkbmnoWnjRCIAeI4gBQjUFMUUryZKGnl
+	uEGe29gzEHIQaq1kUx+5gxQf79H+KwZwrqWIkJTnA5TNMN7Mz1s4yLmaEjEJFVQh/MutuV1S9gd
+	+jUm3TrUisq3XN15pgHuEPHqpwqX9VpFwAbICco8U/6w+aAt0lwr7rt4WCUVXPh3E8Kj5nQCBJM
+	oHA==
+X-Google-Smtp-Source: AGHT+IGh7II8uR39w+HecQJFOJfohPA9oxXMODo1KcS7MJ5fXvWrxBC4PwiVN5H5gCjQglmL+IpLdQ==
+X-Received: by 2002:a05:6a20:d48b:b0:1f5:931d:ca6d with SMTP id adf61e73a8af0-203cbc28a3emr23885458637.1.1745311333416;
+        Tue, 22 Apr 2025 01:42:13 -0700 (PDT)
+Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf90d7f7sm8038343b3a.82.2025.04.22.01.42.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 01:53:11 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Tue, 22 Apr 2025 10:53:10 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, urezki@gmail.com,
-	shivankg@amd.com, vishal.moola@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] mm/vmalloc.c: code cleanup and improvements
-Message-ID: <aAdY9o8TeNi8G8bN@pc638.lan>
-References: <20250418223653.243436-1-bhe@redhat.com>
+        Tue, 22 Apr 2025 01:42:13 -0700 (PDT)
+From: Nylon Chen <nylon.chen@sifive.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	Nylon Chen <nylon.chen@sifive.com>,
+	Zong Li <zong.li@sifive.com>
+Subject: [PATCH v12 3/5] pwm: sifive: Fix the error in the idempotent test within the pwm_apply_state_debug function
+Date: Tue, 22 Apr 2025 16:53:10 +0800
+Message-Id: <20250422085312.812877-4-nylon.chen@sifive.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250422085312.812877-1-nylon.chen@sifive.com>
+References: <20250422085312.812877-1-nylon.chen@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418223653.243436-1-bhe@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 19, 2025 at 06:36:48AM +0800, Baoquan He wrote:
-> These were made from code inspection in mm/vmalloc.c.
-> 
-> v1->v2:
-> =======
-> - In patch 3:
->   - made change to improve code according to Uladzislau's suggestion;
->   - use WRITE_ONCE() to assign the value to vn->pool[i].len finally,
->     according to Shivank's suggestion.
-> In patch 5:
->   - add back the WARN_ON_ONCE() on returned value from va_clip()
->     invocation, and also add back the code comment. These are pointed
->     out by Uladzislau. 
-> 
-> - Add reviewers' tag from Uladzislau, Shivank and Vishal. And I only add
->   Shivank's tag in patch 1, 2, 4 according to his comment because patch 3
->   and 5 are changed in v2.
-> 
-> Baoquan He (5):
->   mm/vmalloc.c: change purge_ndoes as local static variable
->   mm/vmalloc.c: find the vmap of vmap_nodes in reverse order
->   mm/vmalloc.c: optimize code in decay_va_pool_node() a little bit
->   mm/vmalloc: optimize function vm_unmap_aliases()
->   mm/vmalloc.c: return explicit error value in alloc_vmap_area()
-> 
->  mm/vmalloc.c | 61 ++++++++++++++++++++++++----------------------------
->  1 file changed, 28 insertions(+), 33 deletions(-)
-> 
-> -- 
-> 2.41.0
-> 
-LGTM for whole series:
+Round the result to the nearest whole number. This ensures that real_period
+is always a reasonable integer that is not lower than the actual value.
 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+e.g.
+$ echo 110 > /sys/devices/platform/led-controller-1/leds/d12/brightness
+$ .apply is not idempotent (ena=1 pol=0 1739692/4032985) -> (ena=1 pol=0
+1739630/4032985)
 
---
-Uladzislau Rezki
+Co-developed-by: Zong Li <zong.li@sifive.com>
+Signed-off-by: Zong Li <zong.li@sifive.com>
+Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
+---
+ drivers/pwm/pwm-sifive.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
+index bb9146267bc5..6259f8500f71 100644
+--- a/drivers/pwm/pwm-sifive.c
++++ b/drivers/pwm/pwm-sifive.c
+@@ -101,7 +101,7 @@ static void pwm_sifive_update_clock(struct pwm_sifive_ddata *ddata,
+ 
+ 	/* As scale <= 15 the shift operation cannot overflow. */
+ 	num = (unsigned long long)NSEC_PER_SEC << (PWM_SIFIVE_CMPWIDTH + scale);
+-	ddata->real_period = div64_ul(num, rate);
++	ddata->real_period = DIV_ROUND_UP_ULL(num, rate);
+ 	dev_dbg(ddata->parent,
+ 		"New real_period = %u ns\n", ddata->real_period);
+ }
+-- 
+2.34.1
+
 
