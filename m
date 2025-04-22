@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-613371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4DB8A95BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACCDA95BC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7B7176FC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A890174887
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7C8265CB5;
-	Tue, 22 Apr 2025 02:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F46C1F473C;
+	Tue, 22 Apr 2025 02:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnDU5pxG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9cqkBNW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A781F03D1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 02:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2BD2676DF;
+	Tue, 22 Apr 2025 02:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288297; cv=none; b=ZA7ayJ8avgMhkx4FyHUCR0l5yR8n2gGRW7AuNFaT6bjj5fOm008prRxAq/f/v//t2MSCqLOhPPWDGqExkYtTi77UPDUqpXUcTLqg3gYj0dfd5PAsVU0mLL/4ALCHitwOmE5DKfJuXjNds8uM4g+BtdZnYdGoIge5jbpVTVLOFaw=
+	t=1745288309; cv=none; b=ExHYMGOURX6SsekZrOi0ojpjWf631ihE3xk2UnxyEuqobNpIQ72qmxPHtCDIBlZtH405RDZ+dbxCxj7UqGE7rftsMDETyMATTOFh/h4V6S8lEQqn62u3S8WJGH2+9X6oX72uYJnyijfsKwFq7k4v3g9rqWb1ebWhI0NjdNDZa/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288297; c=relaxed/simple;
-	bh=zS84EJRGNrKADPfwFvwocethFfhlrJkXOo1x0ivuFUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAkDDxIy8PYVdBwOa9kiYZD4Sz2pQo5O53Z4xtRSEKGwfkem4aQN1ZGTl3lrGy+Q5WeN3fhCE516hrITbyNBzeAemerc6AAsqFAk+d6RtY7DeBQVxuDpSYMOcwikHwCLehKUyrFny4M584iNznSv1upgB3rBRswtf55bJSw/XXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnDU5pxG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745288294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wz86lwydqt7W3jRCxo4XE1dASLEkdIRMGCMkG2qnxnk=;
-	b=UnDU5pxGTO2bmRqxDzT3fa6BqgLIsq3qDjYyqCv7kmHH1j3st3hRnfu/2qqhwZUkaOZyWq
-	wxJmzow4U6Xgf9lf2qDuriuMtff0/vExK3hm3By8us6flyaC33CH8nIo87igG+UB4fc20k
-	maWfC1tFjwqQJcsbT+AvZuuIuz1RDsA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-KVo2JgokMLuFbxVWZ4rEkg-1; Mon,
- 21 Apr 2025 22:18:10 -0400
-X-MC-Unique: KVo2JgokMLuFbxVWZ4rEkg-1
-X-Mimecast-MFC-AGG-ID: KVo2JgokMLuFbxVWZ4rEkg_1745288289
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 880B01956094;
-	Tue, 22 Apr 2025 02:18:09 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.137])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B58701955F1B;
-	Tue, 22 Apr 2025 02:18:04 +0000 (UTC)
-Date: Tue, 22 Apr 2025 10:17:59 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] ublk: factor out error handling in
- __ublk_ch_uring_cmd
-Message-ID: <aAb8V8ApTc8qA0CD@fedora>
-References: <20250421-ublk_constify-v1-0-3371f9e9f73c@purestorage.com>
- <20250421-ublk_constify-v1-4-3371f9e9f73c@purestorage.com>
+	s=arc-20240116; t=1745288309; c=relaxed/simple;
+	bh=D2yxn4KR1gHoEPSTjHakNtiGLP2BJCK2pMbVvRcSjjo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d7qOxoetO7DMrwxhOZS2qUmEEZRGn76EgCiZFwmBc/drK9TAmxvPt/gXuVvn+IuAc2piYEUTQ6DWo5V9ZKMK2W0fjPK1yD7xPwJ0BtJHT9hpjCpw2VTuyuBKG/xT1FO6ArziU5rufYTvHxY+AWBBdVGi2x64xvmxKJngOFNBatg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9cqkBNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1781C4CEE4;
+	Tue, 22 Apr 2025 02:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745288308;
+	bh=D2yxn4KR1gHoEPSTjHakNtiGLP2BJCK2pMbVvRcSjjo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R9cqkBNW/OrGl17CN6asI+1ELEqaqdBe05UEIFVpkog99lxcWf48ZHyHDKfBJ5Upb
+	 5WEKlKyfQzhXZR2oKjCfRv8Z5dE3An7CUnJeYugD7/OsO/tBPY674NoPZBeoofu/j7
+	 jG4VFlT5d0ozWPMlqIyVVl8Dp5PKC5ky3EmpdmWyQKw7vzvyJtubUuGrJnJdCVpYRG
+	 fUI1t6krc/3GZ2uxEUmry21NK/GxEm9PpstvkQTSJl9fDOEcZgSwy/JYXpRS6EEGoy
+	 UZ8AZr991e0N/rYRPwn/2V7sksloShoSFTUMFE+JBtdn0FDwAeiurgG6+MluIBVbAn
+	 Rd2EQgfJrz6Gw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Xingui Yang <yangxingui@huawei.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	liyihang9@huawei.com,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/12] scsi: hisi_sas: Fix I/O errors caused by hardware port ID changes
+Date: Mon, 21 Apr 2025 22:18:15 -0400
+Message-Id: <20250422021826.1941778-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421-ublk_constify-v1-4-3371f9e9f73c@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.134
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 21, 2025 at 05:46:43PM -0600, Uday Shankar wrote:
-> There is a tiny bit of error handling code in __ublk_ch_uring_cmd which
-> is repeated thrice. Factor it out of the switch statement.
-> 
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+From: Xingui Yang <yangxingui@huawei.com>
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+[ Upstream commit daff37f00c7506ca322ccfce95d342022f06ec58 ]
 
+The hw port ID of phy may change when inserting disks in batches, causing
+the port ID in hisi_sas_port and itct to be inconsistent with the hardware,
+resulting in I/O errors. The solution is to set the device state to gone to
+intercept I/O sent to the device, and then execute linkreset to discard and
+find the disk to re-update its information.
 
-Thanks,
-Ming
+Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+Link: https://lore.kernel.org/r/20250312095135.3048379-3-yangxingui@huawei.com
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 2116f5ee36e20..02855164bf28d 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -865,8 +865,28 @@ static void hisi_sas_phyup_work_common(struct work_struct *work,
+ 		container_of(work, typeof(*phy), works[event]);
+ 	struct hisi_hba *hisi_hba = phy->hisi_hba;
+ 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
++	struct asd_sas_port *sas_port = sas_phy->port;
++	struct hisi_sas_port *port = phy->port;
++	struct device *dev = hisi_hba->dev;
++	struct domain_device *port_dev;
+ 	int phy_no = sas_phy->id;
+ 
++	if (!test_bit(HISI_SAS_RESETTING_BIT, &hisi_hba->flags) &&
++	    sas_port && port && (port->id != phy->port_id)) {
++		dev_info(dev, "phy%d's hw port id changed from %d to %llu\n",
++				phy_no, port->id, phy->port_id);
++		port_dev = sas_port->port_dev;
++		if (port_dev && !dev_is_expander(port_dev->dev_type)) {
++			/*
++			 * Set the device state to gone to block
++			 * sending IO to the device.
++			 */
++			set_bit(SAS_DEV_GONE, &port_dev->state);
++			hisi_sas_notify_phy_event(phy, HISI_PHYE_LINK_RESET);
++			return;
++		}
++	}
++
+ 	phy->wait_phyup_cnt = 0;
+ 	if (phy->identify.target_port_protocols == SAS_PROTOCOL_SSP)
+ 		hisi_hba->hw->sl_notify_ssp(hisi_hba, phy_no);
+-- 
+2.39.5
 
 
