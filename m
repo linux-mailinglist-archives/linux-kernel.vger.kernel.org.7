@@ -1,181 +1,159 @@
-Return-Path: <linux-kernel+bounces-614065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A914DA965BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F44A965F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E130E178900
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3C21885B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EAB2116FE;
-	Tue, 22 Apr 2025 10:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F272135B9;
+	Tue, 22 Apr 2025 10:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N5AgF1e6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="91hkOtyt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N5AgF1e6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="91hkOtyt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="QKymG9BT"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944D220D4F6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52921F0E49
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317247; cv=none; b=VlTp9wbhQYpxaiV7VtIWemHUd4bGrDFjFau8J+IzuolAMIV+6pkO4jcrJCKSZdY7lcbQgwL5PbyXI1DCCwqA3EoItwDzOlehpoUr8E0v4+NjTQsT1UFyxfiOwpG0iaR7TcwcwomSK37MHWZ38VULisXFKMefB6qkGrGx06Twq00=
+	t=1745317751; cv=none; b=T/psRJOwV15XrxpuibuYhQbu9k0xvTubrttIKvHyORwowLFQgN5Mp6yqZVvEd2NWA0ED8zJXgqvrWGwuWCAnm4HM9FYcxdq4g2Gx5lIeOjibt/Ew8/Y/IPf65h4QdZc0T46S9iF3yNiqpT33lPZEd6G0d30mDa5i2B94yz7wKiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317247; c=relaxed/simple;
-	bh=WA25M38AIR7ERueYwyzSBDmn05s7qtY/5PnKWB5/mWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IL685snXNgDNeWH2Jwsx4o0j0uaUpCFfhmTUU5oOxo9JEYKnOU7jxmI+ohoG3G9FD2i/z7yPLMgxnl1LYTssK30kj+oThlBZAN+UHDYB/M05yV2ROQT+pgk+clea3uDAARZ+iM9cpJ6CZ+QVUXgnfnuNHOGY1NIZb7XBHoMItQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N5AgF1e6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=91hkOtyt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N5AgF1e6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=91hkOtyt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CDFD9211B4;
-	Tue, 22 Apr 2025 10:20:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745317242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3D2poOov/3bFYZAbueXXC8mWTQq1cPjBbaHqWB5PKcc=;
-	b=N5AgF1e6ldYFh8sXthel/HoK/0Po6kGmLJrOaJJ+EAGLxiF8vWxU1purTfHnO3ouwDC7gq
-	6Mj0iefMkI+oRyEMXvxKu3euVEYFEIXCi5v1GGvaWGRXuiyo7aO9zmyDuhvwm5/dtJjNDc
-	Pklr7S8xWhAvChkT7P67xlTTzLw9tv0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745317242;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3D2poOov/3bFYZAbueXXC8mWTQq1cPjBbaHqWB5PKcc=;
-	b=91hkOtytm9qKMrfBYv+ryJG1RdH4MbBnBYifI/Q3l8TIL6qbykLxHma6bunJj5EyKYegQ3
-	U0+QWc9WOpN0yiDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745317242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3D2poOov/3bFYZAbueXXC8mWTQq1cPjBbaHqWB5PKcc=;
-	b=N5AgF1e6ldYFh8sXthel/HoK/0Po6kGmLJrOaJJ+EAGLxiF8vWxU1purTfHnO3ouwDC7gq
-	6Mj0iefMkI+oRyEMXvxKu3euVEYFEIXCi5v1GGvaWGRXuiyo7aO9zmyDuhvwm5/dtJjNDc
-	Pklr7S8xWhAvChkT7P67xlTTzLw9tv0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745317242;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3D2poOov/3bFYZAbueXXC8mWTQq1cPjBbaHqWB5PKcc=;
-	b=91hkOtytm9qKMrfBYv+ryJG1RdH4MbBnBYifI/Q3l8TIL6qbykLxHma6bunJj5EyKYegQ3
-	U0+QWc9WOpN0yiDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9715F137CF;
-	Tue, 22 Apr 2025 10:20:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g6qTJHptB2i4dQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 22 Apr 2025 10:20:42 +0000
-Message-ID: <397723b7-9f04-4cb1-b718-2396ea9d1b91@suse.cz>
-Date: Tue, 22 Apr 2025 12:20:42 +0200
+	s=arc-20240116; t=1745317751; c=relaxed/simple;
+	bh=OtKUFMsCCXQuyXdiECTB3D04cRKpceApukek+qlG2Xk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=l0Cy2ukTBjk9dE8auNMqkx+gnYu9a0UCyy8OVug7dK/xWGCmjgujdzYE6Ir8JtFGPG4F5TwE2EmvntiMB9c87MuZUXRneF9WpuQ83IRtN4nHQ51iE87N6Le+DhxC4/0LOtWavzXHAgHZhVIjZb7TexKKq7Pv8l6dRv2OymGWvoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=QKymG9BT; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736dd9c4b40so5171303b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1745317746; x=1745922546; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wtwwt/qGVMfOAJ61/DZj57iTfzywR/wMkolYpyXZwMg=;
+        b=QKymG9BTaQM/G9cl6fJZmX1DLUhOVviZlTuu7TEKn/JLEzF1C1oBOCeG7qYH7i9fmv
+         CX1ciJbvdYkLqUj2qDmGnQjr/NjYTseiG3TQs9jDGD1q75jhbpXyx+IVe9hLIyKAJuPN
+         2Wmrxxc+WlY4HnZnm3acXCvQpv+RaD8MA9EbNzCN0tDgwmdZa+b260/7OkQGncMoh8Jg
+         diTGNiXX/w5uoOpGcerSSWr49haDExVjHl4FRYMKUc6ZXU8WMHjnuGMPxFEUJCJcTPq5
+         N2tAJjHRQg1uuUoaPIapfIOu4YcmWjvHdyCZIFwGMwu68SfMqasogjvnZPE6J5s3Nh1E
+         yjIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745317746; x=1745922546;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wtwwt/qGVMfOAJ61/DZj57iTfzywR/wMkolYpyXZwMg=;
+        b=OJUq23ayoR6X4UU5o8QA8MkTnJ61WopiGav02m9a7VuJ2eXYIdgnixner6sjlcEj4/
+         3JMpL4eZ3fni5A60NJGvuzTd+p83HJvVCizgsnCQuTGvyqP2RoiH5PqcnvI/pgxtxfA2
+         pHDwnhZv95O6eKVs3bfIa57MNolR5O1NpiJTUJcZ6yliWWaFyqlEBIVrkjzzOMpqZgFZ
+         GxbeawX/MOV6tg/RyLgb0a1fJkgQgxokc4OjGqO5QzAIpSe0nTmpUNIF8k1AuXIE+wDx
+         AO6duZMrpj6IkxuhGTBGHb+JgaYfvK00K9TE1TUwwKjMM279FkhkUiz3cEC87pxnLvnX
+         ESLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg/WCWX1kf6DWbsWQ/yx7hB51mEXg8vYj0KrmYd0py2PR8fZcylv8rm5ZTJDtFYgRsF0eMfwjxYwEx4OQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+sK3zzEOBaT2mNi3FVt7N+j6nKV71lrKU90jypraOVKiYS8D3
+	IQBC4KupREoc9LvzuGY0quyn2ihgCOixtHaWaBnAWClxMweSu8/kSPaKK+De5fA=
+X-Gm-Gg: ASbGncsXTufrwumwQXfid+5MNmMGUN7Q2eyhlvjKPOMZKYBJab8m6NbfWt4ezTy69CQ
+	NPAa1rtpTd14WcMtyUH8e4VuzemV3xEG3u7UEfgKyyaZd7LwDKYUPcXjMzzHtvXHXJLmDMYfWqt
+	0fTI8V5jYysTYQRW0p2y51b5JMN0F+hakeeTSihpgSa2+zakZtMIIXb5wG4zo6za9utDTMyGrz7
+	0LYJjGL9fDHJqw+NoJZknOWIDFYIcY4nOeMAlXjZaVEbhRLxMHRC0sk22JwKzyH7kxCKcojtpRL
+	3qUoVHBk3SQYUcPLw2wxBmsS133nc0sTHQZBRGOM0jtOtcipT2Vn/btwAJkmfUTitD/DhP86qwX
+	+5HHmSMh1crWE4H4KY7AIa9dezWWlGrG335NCMAfv8mNqSO9f+t8LVKO5oog=
+X-Google-Smtp-Source: AGHT+IGWvQiFpLLb/JnK+vxMBI1uFfmAhPCio9warje9sSHRSfH/F8j7WFctbSygpqJcvFqmOTJrmg==
+X-Received: by 2002:a05:6a21:3a83:b0:1e1:9e9f:ae4 with SMTP id adf61e73a8af0-203cc6e03e3mr20985847637.13.1745317745940;
+        Tue, 22 Apr 2025 03:29:05 -0700 (PDT)
+Received: from localhost.localdomain (60-250-242-163.hinet-ip.hinet.net. [60.250.242.163])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db13c1c40sm5541763a12.33.2025.04.22.03.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 03:29:05 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+X-Google-Original-From: Chiang Brian <chiang.brian@inventec.corp-partner.google.com>
+To: linux@roeck-us.net
+Cc: chiang.brian@inventec.com,
+	gnoack@google.com,
+	gpiccoli@igalia.com,
+	jdelvare@suse.com,
+	kees@kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	mic@digikod.net,
+	tony.luck@intel.com
+Subject: Re: [PATCH v5] hwmon: (pmbus/tps53679) Add support for TPS53685
+Date: Tue, 22 Apr 2025 18:20:57 +0800
+Message-Id: <20250422102057.2846899-1-chiang.brian@inventec.corp-partner.google.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2628dd1f-1b8f-478a-aa89-4c0f78b27962@roeck-us.net>
+References: <2628dd1f-1b8f-478a-aa89-4c0f78b27962@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] serial: sifive: lock port in startup()/shutdown()
- callbacks
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>, Ryo Takakura <ryotkkr98@gmail.com>
-Cc: alex@ghiti.fr, aou@eecs.berkeley.edu, bigeasy@linutronix.de,
- conor.dooley@microchip.com, jirislaby@kernel.org, john.ogness@linutronix.de,
- palmer@dabbelt.com, paul.walmsley@sifive.com, pmladek@suse.com,
- samuel.holland@sifive.com, u.kleine-koenig@baylibre.com,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-serial@vger.kernel.org, stable@vger.kernel.org
-References: <20250405043833.397020-1-ryotkkr98@gmail.com>
- <20250405044338.397237-1-ryotkkr98@gmail.com>
- <2025040553-video-declared-7d54@gregkh>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <2025040553-video-declared-7d54@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[linuxfoundation.org,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On 4/5/25 09:35, Greg KH wrote:
-> On Sat, Apr 05, 2025 at 01:43:38PM +0900, Ryo Takakura wrote:
->> startup()/shutdown() callbacks access SIFIVE_SERIAL_IE_OFFS.
->> The register is also accessed from write() callback.
->> 
->> If console were printing and startup()/shutdown() callback
->> gets called, its access to the register could be overwritten.
->> 
->> Add port->lock to startup()/shutdown() callbacks to make sure
->> their access to SIFIVE_SERIAL_IE_OFFS is synchronized against
->> write() callback.
->> 
->> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
->> Cc: stable@vger.kernel.org
+On 3/14/25 10:44, Guenter Roeck wrote:
+> On 3/13/25 20:30, Chiang Brian wrote:
+> > The TPS53685 is a fully AMD SVI3 compliant step down
+> > controller with trans-inductor voltage regulator
+> > (TLVR) topology support, dual channels, built-in
+> > non-volatile memory (NVM), PMBus interface, and
+> > full compatible with TI NexFET smart power
+> > stages.
+> > Add support for it to the tps53679 driver.
+> > 
+> > Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
+> > ---
+> > v4 -> V5:
+> >      1. document the compatible of tps53685 into dt-bindings
+> > 	2. add the buffer length as argument for %*ph
+> > 	3. Add Changelog
+> > v3 -> V4:
+> >      1. Add length comparison into the comparison of "id",or it may be true when
+> > 	   the substring of "id" matches device id.
+> > 	2. Restore `return 0;` in `tps53679_identify_chip()`
+> > V2 -> V3:
+> >      1. Remove the length comparsion in the comparison of "id".
+> > V1 -> V2:
+> > 	1. Modify subject and description to meet requirements
+> > 	2. Add "tps53685" into enum chips with numeric order
+> > 	3. Modify the content of marco "TPS53681_DEVICE_ID" from 0x81 to "\x81"
+> > 	   Add marco "TPS53685_DEVICE_ID" with content "TIShP"
+> > 	4. Modify the type of "id" from u16 to char* in `tps53679_identify_chip()`
+> > 	5. Modify the comparison of "id". It will be true if the string "id" matches
+> > 	   device ID and compare with type char*,
+> > 	6. Add the length comparsion into the comparison of "id".
+> > 	7. Modify "len" as return code in `tps53679_identify_chip()`
+> > 	8. Output device error log with %*ph, instead of 0x%x\n"
+> >      9. Use existing tps53679_identify_multiphase() with argument
+> > 	   "TPS53685_DEVICE_ID" in tps53685_identify() rather than creating one
+> > 	   tps53685_identify_multiphase()
+> > 
+> > boot-log:
 > 
-> What commit id does this fix?
+> This is completely useless noise.
 
-> Why does patch 1/2 need to go to stable, but patch 2/2 does not?  Please
-> do not mix changes like this in the same series, otherwise we have to
-> split them up manually when we apply them to the different branches,
-> right?
+Sorry for the delay, I've got the approval for posting the boot-log from our 
+customer. I was afraid that there's any confidential information in the boot-log
+of our project. So, I decided to post a boot-log with my laptop then, and I'll 
+append a new one once new patch has been finished and uploaded. 
 
-I admit it's surprising to see such a request as AFAIK it's normally done to
-mix stable fixes and new features in the same series (especially when the
-patches depend on each other), and ordering the fixes first and marking only
-them as stable should be sufficient. We do that all the time in -mm. I
-thought that stable works with stable marked commits primarily, not series?
+And thanks for the suggestion of adding a buffer length for %*ph.
+The kernel crashes and keeps rebooting without adding that.
 
-Also since the patches are AFAIU dependent on each other, sending them
-separately makes the mainline development process more difficult, as
-evidenced by the later revisions having to add notes in the diffstat area
-etc. This would go against the goal that stable process does not add extra
-burden to the mainline process, no?
+In addition, should I in-reply-to the existing thread or create a new one 
+since the dt-bindings should be included in the same thread as well?
 
-Thanks,
-Vlastimil
+Thank you.
 
-> thanks,
-> 
-> greg k-h
+Best Regards,
+Brian Chiang
 
