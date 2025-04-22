@@ -1,371 +1,166 @@
-Return-Path: <linux-kernel+bounces-614348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F14EA96A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4F0A96A29
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE96B3BF340
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19E73BEDF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5B52857CA;
-	Tue, 22 Apr 2025 12:32:52 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C6C2857CE;
-	Tue, 22 Apr 2025 12:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABEF289344;
+	Tue, 22 Apr 2025 12:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="c8FZ1xew"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8793628540E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325172; cv=none; b=H5a5H+L46u2MGuHqpssAbPqmu87AmmB6gBR2+2DTjFV7fNyamML6BuTkyg08PtUkfWLBxIyjWyrFUncV/FoHcejYVPO2MW7Mpf/SOclxiMzbLwo4D2yCK0BH1KIjYXKPFsoPut6NawUlWGbujsZaE199Cxb36tKigW2Cz5z+k4Y=
+	t=1745325207; cv=none; b=SbNbdF/CggpC3kOspBHUHxtGOHloREfLCBaZlOYhElSw9ZiRfzrOy31g+hjouna4WH2D6jGW29vvF70PvLk6GEqSKE6ozf2dEL6Xmiu9XoGYf9+CyLeskhT5U+F6P40r404m7ILrpLI6GJ6ieP++iae3ypClpOfowAVFsXafTy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325172; c=relaxed/simple;
-	bh=sWUv3NDY/bj/kUvKrpfVyVGlyH5eNUPtkpmqJtcVEoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D6VEkl4R3qnNe2iN5HSyGCkmq3yUW0gMShkR9TK2pvydhgpy5doHuI1wOonwHqR912ZlcNaFQ/F/Ur0VrZGP5Zi9hZAYSXnLxgy2+vOMYKzK62h7s26hDU6augtu+bcZG9wTZDIqqUMmbVTV/AnOW2zKMsJ8umNDCrHp1f24wFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.238])
-	by gateway (Coremail) with SMTP id _____8AxmnFvjAdo+wbEAA--.62042S3;
-	Tue, 22 Apr 2025 20:32:47 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.238])
-	by front1 (Coremail) with SMTP id qMiowMAxTRszjAdoEPePAA--.4685S5;
-	Tue, 22 Apr 2025 20:32:46 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: Xuerui Wang <kernel@xen0n.name>,
-	stable@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Jan Stancek <jstancek@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	keyrings@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	R Nageswara Sastry <rnsastry@linux.ibm.com>,
-	Neal Gompa <neal@gompa.dev>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH 6.1&6.6 V4 3/3] sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >= 3
-Date: Tue, 22 Apr 2025 20:31:35 +0800
-Message-ID: <20250422123135.1784083-4-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250422123135.1784083-1-chenhuacai@loongson.cn>
-References: <20250422123135.1784083-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1745325207; c=relaxed/simple;
+	bh=d1mUj26NDnBUlb5yI5UeZMAIfra5gC1dir4I7AU69g8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uWdB8jS3/NtugGA58Vpy2bEAbSHcumJkNWzDk7tWmldRnL0LHxPCOejzLbCzBwdpUGl1ovZaz/OShohowYFowmtfkTA6ib3vdoeg1idscwFgzePs832hshDz5JwfkER5a2s3FqEFpcKBGKC/6K7Vy82fSMghMWGc2pPoHNfvzEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=c8FZ1xew; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301c4850194so3805519a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1745325205; x=1745930005; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6Yv8dy/LXRtnJqKWqNjItEnP+/tvKHfVuZI65RNG00=;
+        b=c8FZ1xewE1CP+hNruVeE3y7urT1QVQrMRr4shvKYTpGsCHwLnmuAUmave/fcYWPs3W
+         4/038M5XKiuIUvM2oKY3SJqeiqdZBqElHfA7dD9uLw0bvE/gOwEo/On221HsM7g4byAL
+         YmuZUnRvknwpH8b75/OcQedZAD9q7FlBymkWZDqpA46lr6oLoHroF5+Kxm3dGc4LHebA
+         N29okKMI7JQVdYiLHMP6tTAZaMnyCexVZgdA3MKW4WKfh/3OgAdIASpZ8hCuP5uwknB3
+         +yCx3FdlNOt4+nSYIyAlPw+AXdfXRn1jvQmb9UAm1U+kJnhWcEPcdHU7UKu6ahu0oGrl
+         A4zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745325205; x=1745930005;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E6Yv8dy/LXRtnJqKWqNjItEnP+/tvKHfVuZI65RNG00=;
+        b=qo0eRzGrwxHPQwREm9yZVnUdr4Ay57DrWRz+9s8TLmtWyweZ0Xhe5BFsxGWLIFUlae
+         QL1ZAzGER/K0L7wkqK58SAse7Nfg53/mmX7HjSPg6l9DcRWJg10+GSrz4taNuDhr5BrQ
+         7HdvrDIi5qDxoQfs20P8RHDXe5K2hNczyd4UsrJwIMbPDnePKDrljY0rqlgKy/uqOD8B
+         I3FZI41Zmt5PRAYybzK5+AyJ39r3i92GEny4OhBzIdxFniQPsie5Qn1mSwu0N4vnwsip
+         v3WLK71EX1YXnOXLM399OJQvDWT0FEmBrSAT+5y1FCiQhgEbiyUuVqCVmoqpS/dLEJz4
+         pOFg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Q5dqqJTbOkxQI9GQeq5g004vTwdaj3tV/ZVumPsXDhHzI7uVzI1c3kNf4FkqJX4yC0WNNwYPRfSJcQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjkbJoiv/HYWsbx6bSOKuE7emQzgfcP8bNXLjRZ01yipUUoE+e
+	XW41+diYTZTuFKcZpZZw6ewcaPzmEO0A8oG/w82hUa5GRyi/QdjE7ZHHS7cZxQ==
+X-Gm-Gg: ASbGnctoq4r10LJhD52oJohNWsUYB6JyTQpVxTbM9oQWT2y+YqAYsSNEVPTDkp2VJxM
+	awjwwbHZpdmu1MMRnDuQynvuIrziT/AuiIMNhhcjsss37IjARPjC6pj/SpReFDUA1WMeN+yHCLz
+	y331A1A27OMnWxOulvQDAswPqmJQ73RLRxQoJ/vSXPjHc15tOfgKe5MYAVKkrDl65rMYmd9gZu/
+	gxqoXfOVEd22lu/IgeoHZkO4lVhFluh+w6qtA/zGhz5H20NnbJGJtmP+3iKNitTLytD/1ZM3MBu
+	vrsbQ7Dnzf2utF2lxgGJtaZw5WXRb4Lbmo/INrCC8CKRmQA=
+X-Google-Smtp-Source: AGHT+IGhlup07gPArgxdYxxcGKBkNJ+E/sZ4154y9wVwSq0OQE+qQL+tXZJ7RlM9rOrwBQkGs03u+A==
+X-Received: by 2002:a17:90b:4c84:b0:2fe:ba7f:8032 with SMTP id 98e67ed59e1d1-3087bb5324cmr25543239a91.9.1745325204674;
+        Tue, 22 Apr 2025 05:33:24 -0700 (PDT)
+Received: from [172.16.116.85] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df05025sm8484220a91.13.2025.04.22.05.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 05:33:24 -0700 (PDT)
+From: Ayush Singh <ayush@beagleboard.org>
+Subject: [PATCH 0/2] rust: Add abstractions for applying devicetree
+ overlays
+Date: Tue, 22 Apr 2025 18:02:08 +0530
+Message-Id: <20250422-rust-overlay-abs-v1-0-85779c1b853d@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxTRszjAdoEPePAA--.4685S5
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtw15Kr17GF4UuF43Kr4rZwc_yoW3tF13pF
-	9xCFyjqry0qrnrGr13Ar1FgasrWr48Xw13ZanxC393Gr4kZa4UWF40gFWS93WxZrZ8J3Wa
-	v3yUXFW8Kr4kZFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfHUhUUUUU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEiMB2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0Nz3aLS4hLd/LLUopzESt3EpGJdY7PExGSLJEtzU6NEJaC2gqLUtMw
+ KsJHRsbW1AHvymKxiAAAA
+X-Change-ID: 20250417-rust-overlay-abs-36aac8b9752a
+To: Jason Kridner <jkridner@beagleboard.org>, 
+ Deepak Khatri <lorforlinux@beagleboard.org>, 
+ Robert Nelson <robertcnelson@beagleboard.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1499; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=d1mUj26NDnBUlb5yI5UeZMAIfra5gC1dir4I7AU69g8=;
+ b=owEBbQKS/ZANAwAKAQXO9ceJ5Vp0AcsmYgBoB4yHl/ushgkYiNpxhNoC50PR4lYX2Xou5FMS1
+ 4tjMfy7L9KJAjMEAAEKAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCaAeMhwAKCRAFzvXHieVa
+ dO25D/47ApqBDuJeGAsNb6/gotpiTJx6jBJDfYXmZYBpAyt3qwQMtfiWGEB1lXgoJHEWqPAYZvG
+ FzhURrhDesrI78JoWN+MyWOi8bvu92KnC7SwJ6B2dEl6fEjOdE5/mbtDoAomIWQjdrbe5YpWr9q
+ 0c29qm7WtNAeGEXYuskWnkQSACkd0+wnlwQwZcx0q0E2yWwCDijxLo54JGLns543qHrhflbQkSz
+ YSkLiQl8V4P8SIuGPx3hdHV1P5vm/2JnQl2Ik6K7JTRumPJahkJzZHv1FEyXCCF6I9QiMbiC5NB
+ tIfgKrKvLCitdddCp3tZV9JaPdXrNGZMTGJ17DI4PpD26XEI1nQKDv7AD2jrcVR8KndbaHCgeY6
+ bd21hbnemBGpvAQhM1ZBSbBvu+Izg1XQVxRiT8JoSNOLgqjM1R2HwxuYQDFcEUsyvFiHqPVzHcW
+ txbSkuhI4q4xvaw7PcZODVWPnXXttBPeTkLV+GnMVT6GpP6AUXs+PGq8rXEpxEytZopnKn71QJS
+ mdcw92fTD0HAforSIDWm3BxHdI0FJok9C/e77Z4kZ2L086UPKWmQHXXwW5+dzGbRX7Jse77EnDC
+ HL8YHOt6r9Ec7z6bOehzSZg6AKj4rM3ZZP5BViOXZ+jRh0dkYpE40SbBcZZdmQryHAGuW1HmjX1
+ 0jEWseGMunOyxVg==
+X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
+ fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-From: Jan Stancek <jstancek@redhat.com>
+The following patch series adds abstractions required to apply
+devicetree overlays from Rust code. To see how the bindings look in
+usage, see my working tree [0] for a connector driver  I am working on.
 
-commit 558bdc45dfb2669e1741384a0c80be9c82fa052c upstream.
+Open Questions
+***************
 
-ENGINE API has been deprecated since OpenSSL version 3.0 [1].
-Distros have started dropping support from headers and in future
-it will likely disappear also from library.
+1. Should `DeviceNode` be Opaque?
 
-It has been superseded by the PROVIDER API, so use it instead
-for OPENSSL MAJOR >= 3.
+Since this structure is never read/constructed from Rust side, maybe it's
+better off as Opaque.
 
-[1] https://github.com/openssl/openssl/blob/master/README-ENGINES.md
+2. Removing overlay on drop
 
-[jarkko: fixed up alignment issues reported by checkpatch.pl --strict]
+I my usecase (see [0]), I will only ever have 1 active overlay in the
+driver, which I will be removing dynamically. So removing overlay on
+drop works for it. But maybe there are some usecases I am missing.
 
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+3. Only enable bindings when CONFIG_OF_OVERLAY is set?
+
+The kernel header currently seems to provide blank implementations of
+these methods when `CONFIG_OF_OVERLAY` is not enabled. But I am not sure
+what is rust-for-linux policy here.
+
+[0]: https://github.com/Ayush1325/linux/commits/b4/beagle-cape/
+
+Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
- scripts/sign-file.c  |  95 +++++++++++++++++++++++++++------------
- 2 files changed, 139 insertions(+), 59 deletions(-)
+Ayush Singh (2):
+      rust: kernel: of: Add DeviceNode abstraction
+      rust: kernel: of: Add overlay id abstraction
 
-diff --git a/certs/extract-cert.c b/certs/extract-cert.c
-index 61bbe0085671..7d6d468ed612 100644
---- a/certs/extract-cert.c
-+++ b/certs/extract-cert.c
-@@ -21,17 +21,18 @@
- #include <openssl/bio.h>
- #include <openssl/pem.h>
- #include <openssl/err.h>
--#include <openssl/engine.h>
--
-+#if OPENSSL_VERSION_MAJOR >= 3
-+# define USE_PKCS11_PROVIDER
-+# include <openssl/provider.h>
-+# include <openssl/store.h>
-+#else
-+# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
-+#  define USE_PKCS11_ENGINE
-+#  include <openssl/engine.h>
-+# endif
-+#endif
- #include "ssl-common.h"
- 
--/*
-- * OpenSSL 3.0 deprecates the OpenSSL's ENGINE API.
-- *
-- * Remove this if/when that API is no longer used
-- */
--#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
--
- #define PKEY_ID_PKCS7 2
- 
- static __attribute__((noreturn))
-@@ -61,6 +62,66 @@ static void write_cert(X509 *x509)
- 		fprintf(stderr, "Extracted cert: %s\n", buf);
- }
- 
-+static X509 *load_cert_pkcs11(const char *cert_src)
-+{
-+	X509 *cert = NULL;
-+#ifdef USE_PKCS11_PROVIDER
-+	OSSL_STORE_CTX *store;
-+
-+	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
-+	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(default)");
-+
-+	store = OSSL_STORE_open(cert_src, NULL, NULL, NULL, NULL);
-+	ERR(!store, "OSSL_STORE_open");
-+
-+	while (!OSSL_STORE_eof(store)) {
-+		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
-+
-+		if (!info) {
-+			drain_openssl_errors(__LINE__, 0);
-+			continue;
-+		}
-+		if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_CERT) {
-+			cert = OSSL_STORE_INFO_get1_CERT(info);
-+			ERR(!cert, "OSSL_STORE_INFO_get1_CERT");
-+		}
-+		OSSL_STORE_INFO_free(info);
-+		if (cert)
-+			break;
-+	}
-+	OSSL_STORE_close(store);
-+#elif defined(USE_PKCS11_ENGINE)
-+		ENGINE *e;
-+		struct {
-+			const char *cert_id;
-+			X509 *cert;
-+		} parms;
-+
-+		parms.cert_id = cert_src;
-+		parms.cert = NULL;
-+
-+		ENGINE_load_builtin_engines();
-+		drain_openssl_errors(__LINE__, 1);
-+		e = ENGINE_by_id("pkcs11");
-+		ERR(!e, "Load PKCS#11 ENGINE");
-+		if (ENGINE_init(e))
-+			drain_openssl_errors(__LINE__, 1);
-+		else
-+			ERR(1, "ENGINE_init");
-+		if (key_pass)
-+			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
-+		ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
-+		ERR(!parms.cert, "Get X.509 from PKCS#11");
-+		cert = parms.cert;
-+#else
-+		fprintf(stderr, "no pkcs11 engine/provider available\n");
-+		exit(1);
-+#endif
-+	return cert;
-+}
-+
- int main(int argc, char **argv)
- {
- 	char *cert_src;
-@@ -89,28 +150,10 @@ int main(int argc, char **argv)
- 		fclose(f);
- 		exit(0);
- 	} else if (!strncmp(cert_src, "pkcs11:", 7)) {
--		ENGINE *e;
--		struct {
--			const char *cert_id;
--			X509 *cert;
--		} parms;
-+		X509 *cert = load_cert_pkcs11(cert_src);
- 
--		parms.cert_id = cert_src;
--		parms.cert = NULL;
--
--		ENGINE_load_builtin_engines();
--		drain_openssl_errors(__LINE__, 1);
--		e = ENGINE_by_id("pkcs11");
--		ERR(!e, "Load PKCS#11 ENGINE");
--		if (ENGINE_init(e))
--			drain_openssl_errors(__LINE__, 1);
--		else
--			ERR(1, "ENGINE_init");
--		if (key_pass)
--			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
--		ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
--		ERR(!parms.cert, "Get X.509 from PKCS#11");
--		write_cert(parms.cert);
-+		ERR(!cert, "load_cert_pkcs11 failed");
-+		write_cert(cert);
- 	} else {
- 		BIO *b;
- 		X509 *x509;
-diff --git a/scripts/sign-file.c b/scripts/sign-file.c
-index bb3fdf1a617c..7070245edfc1 100644
---- a/scripts/sign-file.c
-+++ b/scripts/sign-file.c
-@@ -27,17 +27,18 @@
- #include <openssl/evp.h>
- #include <openssl/pem.h>
- #include <openssl/err.h>
--#include <openssl/engine.h>
--
-+#if OPENSSL_VERSION_MAJOR >= 3
-+# define USE_PKCS11_PROVIDER
-+# include <openssl/provider.h>
-+# include <openssl/store.h>
-+#else
-+# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
-+#  define USE_PKCS11_ENGINE
-+#  include <openssl/engine.h>
-+# endif
-+#endif
- #include "ssl-common.h"
- 
--/*
-- * OpenSSL 3.0 deprecates the OpenSSL's ENGINE API.
-- *
-- * Remove this if/when that API is no longer used
-- */
--#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
--
- /*
-  * Use CMS if we have openssl-1.0.0 or newer available - otherwise we have to
-  * assume that it's not available and its header file is missing and that we
-@@ -106,28 +107,64 @@ static int pem_pw_cb(char *buf, int len, int w, void *v)
- 	return pwlen;
- }
- 
-+static EVP_PKEY *read_private_key_pkcs11(const char *private_key_name)
-+{
-+	EVP_PKEY *private_key = NULL;
-+#ifdef USE_PKCS11_PROVIDER
-+	OSSL_STORE_CTX *store;
-+
-+	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
-+	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(default)");
-+
-+	store = OSSL_STORE_open(private_key_name, NULL, NULL, NULL, NULL);
-+	ERR(!store, "OSSL_STORE_open");
-+
-+	while (!OSSL_STORE_eof(store)) {
-+		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
-+
-+		if (!info) {
-+			drain_openssl_errors(__LINE__, 0);
-+			continue;
-+		}
-+		if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_PKEY) {
-+			private_key = OSSL_STORE_INFO_get1_PKEY(info);
-+			ERR(!private_key, "OSSL_STORE_INFO_get1_PKEY");
-+		}
-+		OSSL_STORE_INFO_free(info);
-+		if (private_key)
-+			break;
-+	}
-+	OSSL_STORE_close(store);
-+#elif defined(USE_PKCS11_ENGINE)
-+	ENGINE *e;
-+
-+	ENGINE_load_builtin_engines();
-+	drain_openssl_errors(__LINE__, 1);
-+	e = ENGINE_by_id("pkcs11");
-+	ERR(!e, "Load PKCS#11 ENGINE");
-+	if (ENGINE_init(e))
-+		drain_openssl_errors(__LINE__, 1);
-+	else
-+		ERR(1, "ENGINE_init");
-+	if (key_pass)
-+		ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
-+	private_key = ENGINE_load_private_key(e, private_key_name, NULL, NULL);
-+	ERR(!private_key, "%s", private_key_name);
-+#else
-+	fprintf(stderr, "no pkcs11 engine/provider available\n");
-+	exit(1);
-+#endif
-+	return private_key;
-+}
-+
- static EVP_PKEY *read_private_key(const char *private_key_name)
- {
--	EVP_PKEY *private_key;
--
- 	if (!strncmp(private_key_name, "pkcs11:", 7)) {
--		ENGINE *e;
--
--		ENGINE_load_builtin_engines();
--		drain_openssl_errors(__LINE__, 1);
--		e = ENGINE_by_id("pkcs11");
--		ERR(!e, "Load PKCS#11 ENGINE");
--		if (ENGINE_init(e))
--			drain_openssl_errors(__LINE__, 1);
--		else
--			ERR(1, "ENGINE_init");
--		if (key_pass)
--			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0),
--			    "Set PKCS#11 PIN");
--		private_key = ENGINE_load_private_key(e, private_key_name,
--						      NULL, NULL);
--		ERR(!private_key, "%s", private_key_name);
-+		return read_private_key_pkcs11(private_key_name);
- 	} else {
-+		EVP_PKEY *private_key;
- 		BIO *b;
- 
- 		b = BIO_new_file(private_key_name, "rb");
-@@ -136,9 +173,9 @@ static EVP_PKEY *read_private_key(const char *private_key_name)
- 						      NULL);
- 		ERR(!private_key, "%s", private_key_name);
- 		BIO_free(b);
--	}
- 
--	return private_key;
-+		return private_key;
-+	}
- }
- 
- static X509 *read_x509(const char *x509_name)
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/device.rs           |  5 ++++
+ rust/kernel/of.rs               | 53 ++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 58 insertions(+), 1 deletion(-)
+---
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+change-id: 20250417-rust-overlay-abs-36aac8b9752a
+
+Best regards,
 -- 
-2.47.1
+Ayush Singh <ayush@beagleboard.org>
 
 
