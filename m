@@ -1,261 +1,136 @@
-Return-Path: <linux-kernel+bounces-615294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA3DA97B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:50:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184D5A97B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD26D7A1BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417193AB2C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BCF2236EB;
-	Tue, 22 Apr 2025 23:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EC91D61A3;
+	Tue, 22 Apr 2025 23:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZic6nSE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVyWpmh4"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6538C221FDD;
-	Tue, 22 Apr 2025 23:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD51C2153F1;
+	Tue, 22 Apr 2025 23:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745365727; cv=none; b=dWz9KO5To9/NiPOGhp3iTaAPLZVpFCmyQTLtLGG9Gdj9cnNymGBZf4Zsr1MhiQePgOg8AG2aQ3yJySQ49VeZTxsTpkBKqiwHZRyGpFcT4th3Zubk+SYzs/9scIBMZdjrXGvm1u7a/XC6vit0DaAR7lwQRNkrTYMCZLNYoAFOsbg=
+	t=1745365896; cv=none; b=NAA7ub8QFEKYpOoPgTlSxWUJWKMVWK3C5zY+84AgTi2tAH3qdXurPcMDGV1iSepAyW4joKhxo6C/FH9QcYiNkmywAHIM4djlEUY1zlRPgmcW+NTnXCBir7/BOZ1zBDjuVburS/ZM/1f3LDqKlNPahsg1bOnljlA0HK78/+BxLpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745365727; c=relaxed/simple;
-	bh=GlEDIWqSHKN6Kw0FMy1lNEhzim7LXeFFaFFtr35mml4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JjR/ETqFnVJpR1OXUfyJrcqud5nGQTewnAE3V1beBo4CU0x0oDHRgiSoF8bj20jaHNjw8JZL1JUhH93kZNRdSpmg81ZpFb9djBoq1L5LC/AbzhPOEGE/79f6POhKLd9vq8UGQpPtuCUfzU08W+0sPybr+YU7sxPmniM2cPy4YGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZic6nSE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3E3C4CEEE;
-	Tue, 22 Apr 2025 23:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745365726;
-	bh=GlEDIWqSHKN6Kw0FMy1lNEhzim7LXeFFaFFtr35mml4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dZic6nSEY3SoyBRY+kzAHDVPYIFUj0uH/na7KBTugCbwM2impl64jbjXWXT+P3TXs
-	 4tAO0ag6zwsWq2qRcwSKgs3wBMeh9hp86AvgJaswlt/BV+b0SUadLogo8k2++mWh62
-	 1Rb+hlhA6W9vwnCYlbIs8ekZ9HYORXjBy3mcMm2vFQxuMQnIwEGvTD1pNknU/ClIhJ
-	 cohmNhVdvgOEDeQxOHV56GZQMCtBEEwNOX39VMjB5z6NXcaTEHPfPC9Dwslw7yvh4M
-	 NwQ/mOc96CIEhn7RcaT9tsv+KHxoXeYIsK76mcX4JPN0KxS9+bEWtccGpBJQ7ORFsq
-	 w6zEJgHmMcJBA==
-From: Mario Limonciello <superm1@kernel.org>
-To: Borislav Petkov <bp@alien8.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	linux-i2c@vger.kernel.org (open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC),
-	platform-driver-x86@vger.kernel.org (open list:AMD PMC DRIVER)
-Subject: [PATCH v5 5/5] x86/CPU/AMD: Print the reason for the last reset
-Date: Tue, 22 Apr 2025 18:48:30 -0500
-Message-ID: <20250422234830.2840784-6-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250422234830.2840784-1-superm1@kernel.org>
-References: <20250422234830.2840784-1-superm1@kernel.org>
+	s=arc-20240116; t=1745365896; c=relaxed/simple;
+	bh=47mgIUPEmnqKXz/PLYEKltr862V6myQcvKqgl3Z+nec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8fab/4X7OeZz9e04VyBcon6iCe+3oPFgUt4F9mQKw2gYKTyjOtjnJxiElgdBMf3ATRmQ7D4UkQwv+ytD9IL59qedisbvfETEvZqp1w5lDIQP0V36tn+vr+uuoaTTZd8u4af5RUia9i+2lBAjDo79V7aWSQaQCF4cwLrG+lxX4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVyWpmh4; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so988465966b.2;
+        Tue, 22 Apr 2025 16:51:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745365893; x=1745970693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xg+s/Iw6X8yaE3B8JJTx72qYDKDFUZrmT+dSRqA4IeI=;
+        b=IVyWpmh4oY+omzLnN6uua68mpqe2ZUt07xsU/K8/Owj0p5/Hf6brhgpjUAZra5aZ5L
+         9iIQbCuRzYeEeNVmffb6sMZ5IEJBmIuI8YDlMU3hX61APcXYww4UD+ybBib8BPbsEKPr
+         g4/4kfbOoPuqppBYzvqiktIwh3C8uomDfdZpQjRTYLGzevJBH8/J3DGx/zaSqijXhR70
+         DQo2R4ycNqnYKwMYt6CjLtsfNMPta4JrxNK2LzjEIqP77XRHxvIYp/TRiScHSrXiZ1YW
+         YYjvnGeOasxX7yrkZKZ6tErN26fTazGeczchIQyHkiXEmRCV/T1FbWUyladWvG8EENho
+         JPXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745365893; x=1745970693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xg+s/Iw6X8yaE3B8JJTx72qYDKDFUZrmT+dSRqA4IeI=;
+        b=plIcFFwf8XRJFOcwNq+LcaqWGMsS7ICRK38wYETsYwgnRVJ6Y7abFys4Q3bK7Jm2m7
+         J6PDXq5DPsvWkQRGntofzXLlnfryfvDHLWYCQZcUmDYUIiJeg1ApwvNJyetKpi1snsPa
+         F4hUepBV/AIARHcEk9VWyT+vdRp615o/qokfq2rKz4QH7VEKoU1zA+XoHVmcRitFOd6o
+         i1KNt4L2Pp8RYBYKTMrZO2HAXIqvBuRZRPh1Jz9GFb0puyyP/wv1lSQxT/ao2RGDAGQF
+         ArfU2BxdqeMYufpAgLKIJ5zbvkiH0s8+J4sZaX6E4t8ytRbJ1r1o5CdZP96YOijy+0Io
+         ajYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQAqO7zzGelZ5IImywc+VouGNxnzvTgFLj6VX9MSkXQapPpPnRfSONHb2WqxEAr9T7s6k=@vger.kernel.org, AJvYcCXTT8bku5EVjyMW0jiSVKZrDLImQVuEUdgZTTso5HmC7xaLRpNQHYKYcVdDRIpcqUChp/TsFv140SDryLxQ@vger.kernel.org, AJvYcCXnS36W6trgEELN/Hk9C0cfwIHDtXzwQoOqIen+4p5LJBTtL7xyuYwNd80WvxzqwAC9iiK2wCjk0bUhlPLnkRlNLYk1@vger.kernel.org
+X-Gm-Message-State: AOJu0YywwnhLpQKNesefotGNPbeoX+8yrRT45/dBErYKRG2SVGMVdhKv
+	atAVC85ZnHg7qnpJw6/SmW4HmQj0M7RMhuB7twIrHkS5McAUHQHXkRi7JaxXSBztGExIYey9b9Y
+	kVlJQSQq0Sakw1g9Y40GeTMT9xjk=
+X-Gm-Gg: ASbGnctzqZ2oQRr1YZNnN+/nW0Pn5On+ucqR8EoyZ7ecz2OepgqzDNoCcj1vO4Tf3yA
+	rn82b24djxThHnk4lcPtxGoXm4INLerVtTr+9twcxXz7QWq4Cf3L1PiS9KSnH43c+Vevv0IHsRL
+	FNgcYTULtFCXozHU++HuoNe3RFIH77GYQJ+650ENrUgMAJDkMA
+X-Google-Smtp-Source: AGHT+IHyAxULzTdEALIdLh/47hFrO5HqVTo+nyAjApTOHGeMs7oYrbiYnzS/P2SIpTRme5S1tLtozFtUcAGPdo9/uqE=
+X-Received: by 2002:a17:907:da3:b0:ac7:cfcc:690d with SMTP id
+ a640c23a62f3a-acb74db7dd9mr1571295566b.40.1745365892975; Tue, 22 Apr 2025
+ 16:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250421214423.393661-1-jolsa@kernel.org> <20250421214423.393661-9-jolsa@kernel.org>
+In-Reply-To: <20250421214423.393661-9-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 22 Apr 2025 16:51:19 -0700
+X-Gm-Features: ATxdqUGZOr4xpWeNMWzNKVtyrAwgvT_FIS8Dc_B9jZszIO0y398gDWRx3eXT9Hk
+Message-ID: <CAEf4BzbBykRTQJxNLYN5zXzdK+xMMzNT9LCRp3+N7R2=+xbLZw@mail.gmail.com>
+Subject: Re: [PATCH perf/core 08/22] uprobes/x86: Add mapping for optimized
+ uprobe trampolines
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Mon, Apr 21, 2025 at 2:46=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding support to add special mapping for for user space trampoline
 
-The following register contains bits that indicate the cause for the
-previous reset.
+for for
 
-        PMx000000C0 (FCH::PM::S5_RESET_STATUS)
+> with following functions:
+>
+>   uprobe_trampoline_get - find or add uprobe_trampoline
+>   uprobe_trampoline_put - remove or destroy uprobe_trampoline
+>
+> The user space trampoline is exported as arch specific user space special
+> mapping through tramp_mapping, which is initialized in following changes
+> with new uprobe syscall.
+>
+> The uprobe trampoline needs to be callable/reachable from the probed addr=
+ess,
+> so while searching for available address we use is_reachable_by_call func=
+tion
+> to decide if the uprobe trampoline is callable from the probe address.
+>
+> All uprobe_trampoline objects are stored in uprobes_state object and are
+> cleaned up when the process mm_struct goes down. Adding new arch hooks
+> for that, because this change is x86_64 specific.
+>
+> Locking is provided by callers in following changes.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/kernel/uprobes.c | 131 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/uprobes.h   |   6 ++
+>  kernel/events/uprobes.c   |  10 +++
+>  kernel/fork.c             |   1 +
+>  4 files changed, 148 insertions(+)
+>
 
-This is useful for debug. The reasons for reset are broken into 6 high
-level categories. Decode it by category and print during boot.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-Specifics within a category are split off into debugging documentation.
-
-The register is accessed indirectly through a "PM" port in the FCH. Use
-MMIO access in order to avoid restrictions with legacy port access.
-
-Use a late_initcall() to ensure that MMIO has been set up before trying
-to access the register.
-
-This register was introduced with AMD Family 17h, so avoid access on
-older families. There is no CPUID feature bit for this register.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v4:
- * Use loop that can output multiple reasons
- * Drop "Unknown" condition and have dedicated message
-v3:
- * Align strings in the CSV and code.
- * Switch to an array of strings
- * Switch to looking up bit of first value
- * Re-order message to have number first (makes grepping easier)
- * Add x86/amd prefix to message
-v2:
- * Add string for each reason, but still include value in case multiple
-   values are set.
----
- Documentation/arch/x86/amd-debugging.rst | 41 +++++++++++++++
- arch/x86/include/asm/amd/fch.h           |  1 +
- arch/x86/kernel/cpu/amd.c                | 64 ++++++++++++++++++++++++
- 3 files changed, 106 insertions(+)
-
-diff --git a/Documentation/arch/x86/amd-debugging.rst b/Documentation/arch/x86/amd-debugging.rst
-index 01427cf97ee33..32a3f99409c7a 100644
---- a/Documentation/arch/x86/amd-debugging.rst
-+++ b/Documentation/arch/x86/amd-debugging.rst
-@@ -319,3 +319,44 @@ messages.  To help with this, a tool has been created at
- `amd-debug-tools <https://git.kernel.org/pub/scm/linux/kernel/git/superm1/amd-debug-tools.git/about/>`_
- to help parse the messages.
- 
-+Random reboot issues
-+====================
-+When a random reboot occurs, the high-level reason for the reboot is stored
-+in a register that will persist onto the next boot.
-+
-+There are 6 classes of reasons for the reboot:
-+ * Software induced
-+ * Power state transition
-+ * Pin induced
-+ * Hardware induced
-+ * Remote reset
-+ * Internal CPU event
-+
-+.. csv-table::
-+   :header: "Bit", "Type", "Reason"
-+   :align: left
-+
-+   "0",  "Pin",      "thermal pin BP_THERMTRIP_L was tripped"
-+   "1",  "Pin",      "power button was pressed for 4 seconds"
-+   "2",  "Pin",      "shutdown pin was shorted"
-+   "4",  "Remote",   "remote ASF power off command was received"
-+   "9",  "Internal", "internal CPU thermal limit was tripped"
-+   "16", "Pin",      "system reset pin BP_SYS_RST_L was tripped"
-+   "17", "Software", "software issued PCI reset"
-+   "18", "Software", "software wrote 0x4 to reset control register 0xCF9"
-+   "19", "Software", "software wrote 0x6 to reset control register 0xCF9"
-+   "20", "Software", "software wrote 0xE to reset control register 0xCF9"
-+   "21", "Sleep",    "ACPI power state transition occurred"
-+   "22", "Pin",      "keyboard reset pin KB_RST_L was asserted"
-+   "23", "Internal", "internal CPU shutdown event occurred"
-+   "24", "Hardware", "system failed to boot before failed boot timer expired"
-+   "25", "Hardware", "hardware watchdog timer expired"
-+   "26", "Remote",   "remote ASF reset command was received"
-+   "27", "Internal", "an uncorrected error caused a data fabric sync flood event"
-+   "29", "Internal", "FCH and MP1 failed warm reset handshake"
-+   "30", "Internal", "a parity error occurred"
-+   "31", "Internal", "a software sync flood event occurred"
-+
-+This information is read by the kernel at bootup and is saved into the
-+kernel ring buffer. When a random reboot occurs this message can be helpful
-+to determine the next component to debug such an issue.
-diff --git a/arch/x86/include/asm/amd/fch.h b/arch/x86/include/asm/amd/fch.h
-index 9b32e8a03193e..4a6e1e3b685a4 100644
---- a/arch/x86/include/asm/amd/fch.h
-+++ b/arch/x86/include/asm/amd/fch.h
-@@ -9,5 +9,6 @@
- #define FCH_PM_DECODEEN			0x00
- #define FCH_PM_DECODEEN_SMBUS0SEL	GENMASK(20, 19)
- #define FCH_PM_SCRATCH			0x80
-+#define FCH_PM_S5_RESET_STATUS		0xC0
- 
- #endif
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 1f7925e45b46d..aed82b9ccf8ce 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -9,6 +9,7 @@
- #include <linux/sched/clock.h>
- #include <linux/random.h>
- #include <linux/topology.h>
-+#include <asm/amd/fch.h>
- #include <asm/processor.h>
- #include <asm/apic.h>
- #include <asm/cacheinfo.h>
-@@ -1237,3 +1238,66 @@ void amd_check_microcode(void)
- 	if (cpu_feature_enabled(X86_FEATURE_ZEN2))
- 		on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
-+
-+static const char * const s5_reset_reason_txt[] = {
-+	[0] = "thermal pin BP_THERMTRIP_L was tripped",
-+	[1] = "power button was pressed for 4 seconds",
-+	[2] = "shutdown pin was shorted",
-+	[4] = "remote ASF power off command was received",
-+	[9] = "internal CPU thermal limit was tripped",
-+	[16] = "system reset pin BP_SYS_RST_L was tripped",
-+	[17] = "software issued PCI reset",
-+	[18] = "software wrote 0x4 to reset control register 0xCF9",
-+	[19] = "software wrote 0x6 to reset control register 0xCF9",
-+	[20] = "software wrote 0xE to reset control register 0xCF9",
-+	[21] = "ACPI power state transition occurred",
-+	[22] = "keyboard reset pin KB_RST_L was asserted",
-+	[23] = "internal CPU shutdown event occurred",
-+	[24] = "system failed to boot before failed boot timer expired",
-+	[25] = "hardware watchdog timer expired",
-+	[26] = "remote ASF reset command was received",
-+	[27] = "an uncorrected error caused a data fabric sync flood event",
-+	[29] = "FCH and MP1 failed warm reset handshake",
-+	[30] = "a parity error occurred",
-+	[31] = "a software sync flood event occurred",
-+};
-+
-+static __init int print_s5_reset_status_mmio(void)
-+{
-+	void __iomem *addr;
-+	unsigned long value;
-+	int nr_reasons = 0;
-+	int bit = -1;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-+		return 0;
-+
-+	addr = ioremap(FCH_PM_BASE + FCH_PM_S5_RESET_STATUS, sizeof(value));
-+	if (!addr)
-+		return 0;
-+
-+	value = ioread32(addr);
-+	iounmap(addr);
-+
-+	/* Iterate on each bit in the 'value' mask: */
-+	while (true) {
-+		bit = find_next_bit(&value, BITS_PER_LONG, bit + 1);
-+
-+		/* Reached the end of the word, no more bits: */
-+		if (bit >= BITS_PER_LONG) {
-+			if (!nr_reasons)
-+				pr_info("x86/amd: Previous system reset reason [0x%08lx]: Unknown\n", value);
-+			break;
-+		}
-+
-+		if (!s5_reset_reason_txt[bit])
-+			continue;
-+
-+		nr_reasons++;
-+		pr_info("x86/amd: Previous system reset reason [0x%08lx]: %s\n",
-+			value, s5_reset_reason_txt[bit]);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(print_s5_reset_status_mmio);
--- 
-2.43.0
-
+[...]
 
