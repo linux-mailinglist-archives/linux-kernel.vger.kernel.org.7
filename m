@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-614902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A194AA973A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0EFA973A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F988189B2DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 057EE1899EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B981B393C;
-	Tue, 22 Apr 2025 17:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102BD1D5ADE;
+	Tue, 22 Apr 2025 17:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KderWG1s"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="TKo/FiGH"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D021AF4C1;
-	Tue, 22 Apr 2025 17:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB31A841E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745343202; cv=none; b=HGubgrhgUpZjOdPVavlQorpgbc87tJUs9BfDfPR7o8EZ4UWHvHY/KgQknRUJ7gvM+GFcEBs01lkBB3pAmv7El60cFLNOhMjLaK3FAnouGXFmZ7iZG0C/46p1KPmvMok4qs4+isQ9cut8iTcDchkH2VpvdPUQAEfGn9W8MQaIkkg=
+	t=1745343425; cv=none; b=Udtsg5J/KRaYR/3QtWEUjz+Vx7dv/zFjEFDgKDDkaHolP0l6ygVFtDPz+Whl2IKT/QiJ2DwNiGdavO1/Gp/W4hp0JNjjIWkV3ByN1qOAqkFKVMXSBFGfXnKBwW/cm0P7lFPzSmsondlx6ZjIyzNZvbHWcSroL5ugAOFnCYEL9Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745343202; c=relaxed/simple;
-	bh=nDE0j/GNP/64EOh5+qPkXXTTWN1VYjvGYw+ExO+NfDw=;
+	s=arc-20240116; t=1745343425; c=relaxed/simple;
+	bh=L1NuLC3M9iOVcIS/tnSiORX9C+uzimIbziX78n+Rcqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6/NDNeXErfFFz/F+SQeyMiT5oUnmPJWMa3fTPcL8OHvtuITzpF1On2GmP2y9yuuqNoQNlDnW0JQIJv3eULrULFfUOzfTM9BISVCx136EepENLdRTJ7TDm/zilgYhzABDW/Kf6KJ3QRSQabSFv9xTjWdHi+rS8Y1TR6658Rz4io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KderWG1s; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 37A7D40E01ED;
-	Tue, 22 Apr 2025 17:33:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id a0C3SPjvifPl; Tue, 22 Apr 2025 17:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745343193; bh=X8pD1Z4HEovvmoASmtZVAgGiq/rZgl9YBNbnIFcjgCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KderWG1sfdcYIovI6tf/tkMBix2EoXrvOPrS66C+BB6tv104jiJ4EX8U53mT5/n2H
-	 RxkrsD3AQZvTZwjadXR7kc83f/oQdi64KlWBDqF1qqWas+LR3jAcsNa2Ky+SErm9ri
-	 8hg8qSl4G1p/P4iFsUVyTtymdDt1/wkkC9ssm6CuH9STwaOpguUTV1CreWt1bs9Qqf
-	 sa1f6o1KHCzCPh7yUIoyplSRuTb7nWtsBnI1fAd5PfnIO0f07CV6u/OMSSc25ERDt0
-	 OLczxgE4UHhx/R4IYgmcnIgP1YIny2z5DM3i4m6YrSuCv2qz6CrFMAwhq9m0FbdtV1
-	 yD4ho1hMI+rgeCYLyiE0mTJ9WmLlrq1NbYTNicdQa7C3925oRVDllnPpcJlPdBs210
-	 FlWMTTNWMbaaVFFJjxo4oY86JU08jFsEK6HPMWo1OWhT4DUa03G3xZCaem1a0MO+sO
-	 MkuA6nxlLqHsMonmtv4rOvTn4ZvzQc2S/+7xBZaphIi68x9g86F0sUuBR8YYQnIYmP
-	 AvGiAq2yZPUq2pJUShvLpEOUX+dHlDz3oj5jpAefj9xO1c9wmhaRXSvTJ2x+q8fCA5
-	 Gh9iMra3AGExLXn4hmYYlYmvq/yxwJ8YuD8OPo+qHdqspDLp4oiH4Hk7ilkqreBxa4
-	 0MhVqt2eofDLjUkMffGJBgm4=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C180640E01CF;
-	Tue, 22 Apr 2025 17:32:54 +0000 (UTC)
-Date: Tue, 22 Apr 2025 19:33:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Pavel Machek <pavel@denx.de>, Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, thomas.lendacky@amd.com, perry.yuan@amd.com,
-	mario.limonciello@amd.com, riel@surriel.com, mjguzik@gmail.com,
-	darwi@linutronix.de, Paolo Bonzini <pbonzini@redhat.com>
-Subject: CONFIG_X86_HYPERVISOR (was: Re: [PATCH AUTOSEL 5.10 2/6] x86/cpu:
- Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in
- a virtual machine)
-Message-ID: <20250422173355.GDaAfTA8GqnGBfDk7G@renoirsky.local>
-References: <20250331143710.1686600-1-sashal@kernel.org>
- <20250331143710.1686600-2-sashal@kernel.org>
- <aAKDyGpzNOCdGmN2@duo.ucw.cz>
- <aAKJkrQxp5on46nC@google.com>
- <20250418173643.GEaAKNq_1Nq9PAYf4_@fat_crate.local>
- <aAKaf1liTsIA81r_@google.com>
- <20250418191224.GFaAKkGBnb01tGUVhW@fat_crate.local>
- <aAfQbiqp_yIV3OOC@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQ13JaT2HsovBgQGbXHevhgneaSD/QlnfoohfwLbP5yUSUn9IQL5CwZcdEcvc/RB6I8nddmsoup8npZA3x6O/tQbiDIL67UFoEVM7lYLK30uxhZ7gdmDvNong82PjQ1UycfctQQtLK45GKasPaGhwiozEsagAOrx/qvh4G9GS9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=TKo/FiGH; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5e39d1e0eso534141885a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1745343422; x=1745948222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hGlejZf1M4uB6/02tIygWhA14axEik3yrFkQW21it0I=;
+        b=TKo/FiGHh+AksseN8OCSZ0UA8zarshdWvPi95x11HTMY32Bw9mvzswkQ+oGPbxKUdz
+         fTLOPhgO7MnufSTmSjfa9bnay4iUX93V6U6Z+jbBtIg4p4rIdH1ZMp6UyswJt4r695GL
+         1QzLtZFwkSK9Q1ahMb3z0P9tJc0n465X2VZk4qlPPo6xFunWFJPBYhG1WyvRXodp+As6
+         HisrQ0wyFoopRI1Zy22LRJsdwpx8JHzzz9u9xr2nJleZ+IUUr37S04sO3vF9Tlr7RiYw
+         A+fRAP8BH99x8DW8dWBTrHT8yLP7Yto8QpIRlAFJmWLyx95zNaDXlaETfDANTsSb50ok
+         c58A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745343422; x=1745948222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hGlejZf1M4uB6/02tIygWhA14axEik3yrFkQW21it0I=;
+        b=MKCWPmU+zyenk4AHE0/kyUIdCjdyGL3Ffaf+VVYX7gDT31MU7cX37vp1VTt6njDyXZ
+         zIPSaZD2mefc9VwQfL7ig4ETD6dFeRGqjCvk1AeDR17V+1YMZsrLOvdK3uWbgkahtxi5
+         IACKQ+tt1CL72m2iYCB69p3mMXpogojzGFldF4hV5w7I4geDG53kkznjcLmeIIiOeke7
+         DhMBJcGMao3eiXZ7wtMPCWhsQgbT243sQNSA8iFNQU0N/3zcfaGSp4hwQn0YZgOI67B4
+         Q6q6P8Y8Z39KkKMw32wOLxxXe9nqq2UdTT1DvQrNimJbxreQjRrz0xuorIUy1hInzdkh
+         JWBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ZVOxdtUwJriLpNF34DbGGmQ0wjlkApdIUZjFL/zoaoBOKznwQdogKK2D6b4fwuvXHA4vr3MKhPT0tLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJrj29lpgPqPJ5IhG9h4YKxkjraG+Pph9ZsD88utbqB8uhvgQG
+	nyEXqy5fGtSrwBvqR3zakk5k90cpqPO4U2KV+jA25eh36QLB1BJmHCVN5q5RiEo=
+X-Gm-Gg: ASbGncsY7KwemWtZ2mJcUpZq6s1mgmwskuggYt+btwcZr4j9EmkyiMC6n4TlwjNvY9E
+	tM41oB0sFCjTAYZHcqb2ga0i2yc7wx1PZ8BJ/OmO/HOU+rOYLom/sXyy2OP9moobzQUmDbfbYKz
+	ccduN4YeCTNOfS332X9eaJkNck6pTo7hn/CKD5BG36D9m0o9ynvkCRnziOHLi9DGKLMfFRoXEYk
+	SlYeJZX8uL4JXCwHpMllsO2eUL7SrRA9Tc7LMKgPWlY7rNCDS5KWPDKXth6GyVPQElLemux9/QI
+	4Ep7SnFRCGLIhAXt1qxy8ARc6I5FZpx2JYYiz+M=
+X-Google-Smtp-Source: AGHT+IELDUlKcoCTHzBX8I9XSIjxg7eaS3ClKXEBzXDWD4aDyg2hvTE+Wb1eoZHRb6LlviHxQ+FBOw==
+X-Received: by 2002:a05:620a:c42:b0:7c5:54d7:d744 with SMTP id af79cd13be357-7c927f99feemr2428682185a.23.1745343422011;
+        Tue, 22 Apr 2025 10:37:02 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c9280de4adsm556929785a.114.2025.04.22.10.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 10:37:01 -0700 (PDT)
+Date: Tue, 22 Apr 2025 13:37:00 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	longman@redhat.com, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org,
+	mkoutny@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 1/2] cpuset: rename cpuset_node_allowed to
+ cpuset_current_node_allowed
+Message-ID: <20250422173700.GB1853@cmpxchg.org>
+References: <20250422012616.1883287-1-gourry@gourry.net>
+ <20250422012616.1883287-2-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aAfQbiqp_yIV3OOC@google.com>
+In-Reply-To: <20250422012616.1883287-2-gourry@gourry.net>
 
-On Tue, Apr 22, 2025 at 10:22:54AM -0700, Sean Christopherson wrote:
-> > Because I really hate wagging the dog and "fixing" the kernel because something
-> > else can't be bothered. I didn't object stronger to that fix because it is
-> > meh, more of those "if I'm a guest" gunk which we sprinkle nowadays and that's
-> > apparently not that awful-ish...
+On Mon, Apr 21, 2025 at 09:26:14PM -0400, Gregory Price wrote:
+> Rename cpuset_node_allowed to reflect that the function checks the
+> current task's cpuset.mems.  This allows us to make a new
+> cpuset_node_allowed function that checks a target cgroup's cpuset.mems.
 > 
-> FWIW, I think splattering X86_FEATURE_HYPERVISOR everywhere is quite awful.  There
-> are definitely cases where the kernel needs to know if it's running as a guest,
-> because the behavior of "hardware" fundamentally changes in ways that can't be
-> enumerated otherwise.  E.g. that things like the HPET are fully emulated and thus
-> will be prone to significant jitter.
-> 
-> But when it comes to feature enumeration, IMO sprinkling HYPERVISOR everywhere is
-> unnecessary because it's the hypervisor/VMM's responsibility to present a sane
-> model.  And I also think it's outright dangerous, because everywhere the kernel
-> does X for bare metal and Y for guest results in reduced test coverage.
-> 
-> E.g. things like syzkaller and other bots will largely be testing the HYPERVISOR
-> code, while humans will largely be testing and using the bare metal code.
+> Acked-by: Waiman Long <longman@redhat.com>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
 
-All valid points...
-
-At least one case justifies the X86_FEATURE_HYPERVISOR check: microcode loading
-and we've chewed that topic back then with Xen ad nauseam.
-
-But I'd love to whack as many of such checks as possible.
-
-$ git grep X86_FEATURE_HYPERVISOR | wc -l
-60
-
-I think I should start whacking at those and CC you if I'm not sure.
-It'll be a long-term, low prio thing but it'll be a good cleanup.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
