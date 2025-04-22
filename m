@@ -1,106 +1,199 @@
-Return-Path: <linux-kernel+bounces-614060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CD6A965B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:18:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB873A965B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03B517D062
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7EB189E5C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2A91F4608;
-	Tue, 22 Apr 2025 10:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4042E20D4F6;
+	Tue, 22 Apr 2025 10:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VR/rn87z"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Rx9J7IKl"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7900320B80E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9348020B806;
+	Tue, 22 Apr 2025 10:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317079; cv=none; b=snvyWiZF4TvVLipz99I6B1KggekJF7elCF1RD/B39yJzpKrJOpg+lle5NvyfJ1y3mvSjDADEYDY2xYQOkz+RfPAHx7PTLAi5CuJMLugwIsW6mMIU/kAE5L37XhAXygeFDE6j8NDnhgiGlVSGEYLeizgApWMExom0Bajq/E5/wKI=
+	t=1745317211; cv=none; b=JBz+VC26HuZ0NFagbyA/c8T9RZnDz8EreUChETiU1dkRxM8M8Frt3gfUCVszp70WAEzhrlKbft5GXZms4B+1o6sYRyzj3YSi63DIHDaMdRFXu+kYkdrHJT+tBXWppmZH7tJDtzmAWN9tW7c2LoK7iyd8OfLoU9AbdsUNk7qQr5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317079; c=relaxed/simple;
-	bh=RgffgJUUxVeQDwmHjDJntCJjsu15wrEwIwy6V21yf9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f61dIHuunuWBWs1WdGVRvk4BEmTjamOhf1Vq3lyUrDtSt2s3ohlhsnek5MQEtiwCdoAqjjMjlkx4dMiG7BmpNSXwbsqyZWKZMzON3IRznLCQugigzX/+1nr6z5gQitSXTspEufpU7PgYSngDRJshAT9zvrBbw0jm/U8FdhR+9XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VR/rn87z; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so43523115e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745317076; x=1745921876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lz1K/C9/tfj1d+wAEb3dh4y94xlC+cBkVcwPFbmhyE8=;
-        b=VR/rn87zYZo5IGLS1z5u+4HGwQCKGwVMBZyOreJMB8tkENTG5XpmZG51srd5UQxTPZ
-         ibYgZ9ZgWt8jtkeDADVxaceAof2vrGPzXGVyQZrKchLe+eM30J8OIvtw+12qNP+++lVP
-         +87UCWEqEgLPcvQSJruaVYt5E78DHGXeSxhQVRyajIK7LJ7ODr+BUCsYB6+w+E9fqAxA
-         Rego665M6usZBl1QXFw6BWp4Dz5IVQ91+OdqsDIC4pm79nZixdOOKRJk+ryuBQdMVVE8
-         BCX3XAo7/e65NpMPdgg5U7ljAo3VfoNR5roW/G2yMWidoWqrmRaBgbUkw8PSqvGY9aC0
-         bFxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745317076; x=1745921876;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lz1K/C9/tfj1d+wAEb3dh4y94xlC+cBkVcwPFbmhyE8=;
-        b=EJHeI3heYVnNM+sf2lpuFGbGw0SkCuRx/GJ3Aa/ko9juOlbMSJ+RAEnwjs27/emJxC
-         jfnKCT/O/jVAWVQgy6DuDsUMQYmc9aAxvPX4Z4QXv65GuFwbTC9WbgYc1MwnJqt1WZkz
-         UK/eQbItekpFiQIW0FbTU0B1ks3WgVqckAqPfeaig4cJdGLszBh3ZpimWr4O5M0g0Bwo
-         AcLfEKvUCNx3iJnlE4utYQ9yXS1JjSh1XY0oZwDvKNRmWwOXFHeETKfWtL1Mfm0C/Mvy
-         3hkfRCRskgTZOFPaConR5X2EhB82lNJelWvKiaAgYM0APQYd/j253h7rF1qWIxEV5zid
-         A38Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwIdinl7WpqaehXP/ryWXEauqnnzbJR5depBrgGiCgluBu018jt8vFG0NKP33zkCFOI47S/lN1hrPlAI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGOSZ4iKDWkeIkNth0zv8K2Qjxag9QCuepuJc4gbv16YM5dB3D
-	iWT2XRRjmHodBCxUqtx2Dm/86+eu55MdltDeZaVI7XPXk9mM+Hth/R32/R7S9XQ=
-X-Gm-Gg: ASbGnctsgjmIPXdc7/kisykhnruVQ+PGMoIF8LlBi4PNIf6bp6rVX8PWZgtkGT4rTCf
-	T7z1NfdyliNOU0HHIErxVYeStQnzxWJHfIfYy9jxWXSoiHWjinhJX2KGXRzHPF65jKh48BnxxdL
-	QINU0/Jpv7ZST846YcmojrnUk8CXYBKwvTKOEanJ9Xy4IUt9X9/H3d0y0jAeBCCUWl9EJm694fA
-	EYFohLBBSw6sGD18JL4Y/rsifhfAq/ua5PG5wLQQDwUguVt0N9Xymc1i+RHG2cD0RU7DuOOQMrG
-	VvxDp4gascEK3sbQsyUL2c99mWLtxRSFu6nwQQjrtPJxN65BDP2+E+9MHx/Fs0rqKe7y8R+SRw/
-	PX1xdPfUO
-X-Google-Smtp-Source: AGHT+IFBAlljs9+KM+mNfqqACpkyKOlirA1L5I4KDTzp2FQs6a9A+hezcRHzCm7KfDTFO0bJvS1w+w==
-X-Received: by 2002:a5d:588a:0:b0:39c:30d8:32a4 with SMTP id ffacd0b85a97d-39ef9467254mr12012439f8f.26.1745317075690;
-        Tue, 22 Apr 2025 03:17:55 -0700 (PDT)
-Received: from [192.168.69.169] (88-187-86-199.subs.proxad.net. [88.187.86.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4408c7cfcabsm9310395e9.0.2025.04.22.03.17.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 03:17:55 -0700 (PDT)
-Message-ID: <0f8415f6-7e61-4036-95b8-31e702480c6f@linaro.org>
-Date: Tue, 22 Apr 2025 12:17:54 +0200
+	s=arc-20240116; t=1745317211; c=relaxed/simple;
+	bh=RVXbQFP/k6BTYPhBACJCbgHwwamun7Utb91ekU6Oprw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BkHw1Od9dDd8kpSalOSr5BLpHUrmjvu+2/s3lsKoqSg3nxJk9fRUX4/w5RE4Sen/GfRDnkTe38ibJjngymxKaxqskiqk3MTgLZoqQfCe59Cxg4XOcHd/NWsIuNOXCXS74GAcZ2x7bSY/8uKPeP8S2nLwSuoH8kSr2ufFlwTLRNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Rx9J7IKl; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745317187;
+	bh=c4z1sB6OeKlyJmA+PFzyJ68O5M5fppZkHmyXCAllGaY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Rx9J7IKlI6ysRhonm3BRa9dEI421V7qJGwpCmU+iMqyE/uaoxpM41hFBFnM6FymBZ
+	 dN/3zVOefKeU+AKomn+I94kga0L8Dh8Sc74/BLRs+qwXIJH14zyxi2j8qdgNpUh+iW
+	 6DbeV++J/cm+fzpChXIOcKczfu3tl2BCpPrmJhFI=
+X-QQ-mid: zesmtpip3t1745317146t25d683aa
+X-QQ-Originating-IP: cPdLxHsjcwUj+B/L9//t5P69bxfZ2goFPnBcw7Ee+XQ=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Apr 2025 18:19:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2928040559611630836
+EX-QQ-RecipientCnt: 8
+From: WangYuli <wangyuli@uniontech.com>
+To: tsbogend@alpha.franken.de,
+	macro@orcam.me.uk
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH v2 0/6] MIPS: Resolve build problems on decstation_64
+Date: Tue, 22 Apr 2025 18:18:55 +0800
+Message-ID: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mips: ptrace: Improve code formatting and indentation
-To: Thorsten Blum <thorsten.blum@linux.dev>, Oleg Nesterov <oleg@redhat.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250419102744.136697-1-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-In-Reply-To: <20250419102744.136697-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OFSY/93ODYnHRpIjh5XlspOd9KxnWNGQ811MH+Vbvl0dBs7q+jUkvmDM
+	7b8QXMURysVJibB230gIfg/uBwNezcMacKf7FdPk8ZoP/hXl2OzdppPPX4myB7ukRGMpWO2
+	A87HKc5aKN/IuL9+6+jP48p/jmFG5eVZAvsnj/CH5N61XhHpXBlIGtbxZi6Y5tz4jOmFeG3
+	MFeK55sSKu7kracjzQm9PKa6CcAm18U/el+wdND20AvcsdeCgHFxLxfWCYC0n3aCOejN4Hi
+	KELHtGvT7df2gOJWxgoHwlXtWDzp+q/++vZvdNoTR+mW1keBV7aCBuO9qqyN+1CV/F93a7r
+	J9e7xpBqVA2iscZG5p0331UUFfxNjhNgFnpYtjBC9OLNU/fCbL0ZxjsiDNdJ8/RyNr9MF85
+	6N0XG5jE9Q/q/iLelGTvGlJg9DeImU1BQ09U8nC/l93WKpXRTGfJA+FIioFE07ZRTiLasrJ
+	aZUhpK7oogr5XVWY54thbakOASL/+fLEVUuHu/P9gKmfwwGaWlgxFTQrOdv0qocJuxn535/
+	POJ+dKESuza/sUWy4RXTVGta9+UjiWk1mzaw8SAF0Xlvat0R8aLPiSW6piRloWco+KDAo71
+	1VD4xPfyvGMJpTgGeHbjMdAj2RmdboxoQFWTlp8E2BxeCnS4wrrvOZ3iaA7LvJiliTr5RC5
+	4tF2JxBHjoC8mLVjo1jhDMHTKaP/1tmkCsmHCMsPJE9DZ0uXc7SYQoN1+jcfdTMl3RW/z7G
+	C/I9AbdVN/HUIUmJ1mP+RpQaHG/XY7DPFzjDv+PIu3u6r1K2Yz8HGq2SCDXYZMfy03tstlE
+	p47mvHvyYaPPKSfoIH90X1CKDmPV90L+QwJD/1C4v0qzgLXp8ricUd47wdG9j0xxtOa2Bot
+	Ch9HwvAoSUuZf0MgIl0l/wyRBITY/T73g05s1r7hDkiO6+rqPJsnwt9fRIFnOIbh5aWs/pj
+	UOTo2bavHItbZ/O4X3R4YF2pf67YSmkf196sk753RFFtg0TIyJKan2m/nU7Ev0n+juBEJIn
+	him1PfpwIYcGsS/Zcr9xFVxJrxPggdcfmG7rK6Qck0xNbExcSd
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-On 19/4/25 12:27, Thorsten Blum wrote:
-> Use tabs instead of spaces in regs_query_register_offset() and
-> syscall_trace_leave(), and properly indent multiple getters.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   arch/mips/kernel/ptrace.c | 34 ++++++++++++++++++----------------
->   1 file changed, 18 insertions(+), 16 deletions(-)
+[ Part 1 ]: MIPS: dec: Only check -msym32 when need compiler
 
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+During 'make modules_install', the need-compiler variable becomes
+null, so Makefile.compiler isn't included.
+    
+This results in call cc-option-yn returning nothing.
+    
+For more technical details on why need-compiler is null during
+'make modules_install' and why no compiler invocation is actually
+needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
+Only fiddle with CHECKFLAGS if need-compiler") and commit
+805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
+is needed").
+    
+Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression") tried to fix the same issue but it
+caused a compile error on clang compiler because it doesn't support
+'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
+of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression.
+
+Wrapping this entire code block with #ifdef need-compiler to avoid
+all issues is the best solution for now.
+    
+To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+without -msym32" error.
+
+Moreover, I also identified an unnecessary check for KBUILD_SYM32
+in this Makefile section. Eliminate it for code simplification.
+
+NOTE:
+
+It is particularly important to note that this code fix does not
+imply that we have resolved the problem entirely.
+
+In fact, the entire application of cc-option and its auxiliary
+commands within the kernel codebase currently carries significant
+risk.
+
+When we execute make modules_install, the Makefile for the
+corresponding architecture under arch/subarches/Makefile is
+invariably included. Within these files, there are numerous
+usages of cc-option and its auxiliary commands, all of which will
+return empty strings. The reason other architectures can
+successfully complete compilation under these circumstances is
+purely because they do not, unlike MIPS, check the return values
+of cc-option and its auxiliary commands within their Makefiles
+and halt the compilation process when the expected results are
+not received.
+
+A feasible approach to remediation might be to encapsulate all
+usages of cc-option and its auxiliary commands within conditional
+statements across all architecture Makefiles, preventing their
+execution entirely during make modules_install.
+
+However, this would lead to a massive number of inelegant
+modifications, and these broader implications may require
+deliberation by Masahiro Yamada.
+
+Regardless, this does not preclude us from addressing the
+issue on MIPS first.
+
+Link: https://lore.kernel.org/all/41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com/
+
+
+[ Part 2 ]: MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
+
+Patch ("MIPS: dec: Only check -msym32 when need compiler") allows
+us to compile kernel image packages with decstation_64_defconfig.
+
+However, compilation warnings remain during the build.
+
+Address these warnings and enable CONFIG_WERROR for decstation_64_defconfig.
+
+Link: https://lore.kernel.org/all/487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/EA0AFB15DDCF65C1+20250227141949.1129536-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com/
+
+
+[ Changelog: ]
+
+ *v1->v2: Add Philippe Mathieu-Daudé's "Reviewed-by" tag in patch3.
+Link: https://lore.kernel.org/all/11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/8dcb5c6d-be4f-4891-a999-137d53edfc05@linaro.org/
+
+WangYuli (6):
+  MIPS: dec: Only check -msym32 when need compiler
+  MIPS: Eliminate Redundant KBUILD_SYM32 Checks
+  MIPS: dec: Create reset.h
+  MIPS: dec: Remove dec_irq_dispatch()
+  MIPS: decstation_64_defconfig: Update configs dependencies
+  MIPS: decstation_64_defconfig: Compile the kernel with warnings as
+    errors
+
+ arch/mips/Makefile                        |  6 ++--
+ arch/mips/configs/decstation_64_defconfig | 43 +++++++++--------------
+ arch/mips/dec/int-handler.S               |  2 +-
+ arch/mips/dec/prom/init.c                 |  3 +-
+ arch/mips/dec/reset.c                     |  2 ++
+ arch/mips/dec/setup.c                     | 15 ++------
+ arch/mips/include/asm/dec/reset.h         | 20 +++++++++++
+ 7 files changed, 47 insertions(+), 44 deletions(-)
+ create mode 100644 arch/mips/include/asm/dec/reset.h
+
+-- 
+2.49.0
 
 
