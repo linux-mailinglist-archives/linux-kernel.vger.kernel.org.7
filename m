@@ -1,157 +1,159 @@
-Return-Path: <linux-kernel+bounces-614899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395A8A9738F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:25:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D73A97397
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72FE1441CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E682F189EA1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBE2296D0A;
-	Tue, 22 Apr 2025 17:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF712980AB;
+	Tue, 22 Apr 2025 17:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bkqgBWMy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFIJLaqt"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AF927CCEB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D9E28C5A6;
+	Tue, 22 Apr 2025 17:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745342698; cv=none; b=K/x7tiZ2uXcSqZghUOvVimla7xLjk3qFkSauQcEI3YHnt/DphwOTbj7xLYmkMqaMfAJAXDkU9JSxHQ55oxQDqNpU13bVPbIVWZY+jhXvmmcQWDpdar1OCN6RfNAc52TpXQqYibUe2GcRXiDcmHd46mJD+AGr6EM8UCMFmc/6BAc=
+	t=1745342936; cv=none; b=NtWXFA4EfROrQIyxb/FB+BzP8wKKDskmEXp+NqnS/1KzKzbI7YHA43qwicj168r7fy3jl3eQclDYPbCjtMhlcHkG7jJS1tC+039h8rWWvkXVJJXqMV/V03lZyA22zJE/eWSxuj9SjDt+z1zS4nu8tu9JEzkILO2YXDD6niaSthE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745342698; c=relaxed/simple;
-	bh=G5zu0JSLIZnjygNaAbrN9TY+IzqeznYDI3lTQI9xByA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKTSTcC0Fp9OShLgUsBzWWkwGLtzLoK5L9V10rPbM07kkbzY/1rAJdUsoHfPJG8r97n9WeMzozjp9mwmencRTvIpwaFunUuKvFhmIFf2RVqS11AqL7yE2DDRMxoWyDFd9B3GlzjViCzhM6Y2EK6bp96YLzRAwsjE6gI1uDBmEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bkqgBWMy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7570240E01ED;
-	Tue, 22 Apr 2025 17:24:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lpktIz2xC9OV; Tue, 22 Apr 2025 17:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745342688; bh=fHUhRPQeLb6MEC9JiG1WS/e5XF0k0kr/nU/zoi8PWGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bkqgBWMyLJAzpDzQbOlz4ocgmddTEs49Ilbl2J4EtJWMbKS6M8L6/JuvkDQLnBXxI
-	 CuU6FOulP5wtOdbiRbI4z7MZu2CkKSDPfgiIX3b9/eAZNZAbc4xfnD7++vSoY+Kqwe
-	 0JhIJzupG/+yMyqcj6o/c0a5mgVUHW9xTdJe5QPESHAHTjo2zecWyFmJ3mn+j1Bo7d
-	 TWYhCLVnQyNqsERSgSlYO6Q1mCtxSpLqc3KIfyx1Maf7BFLztNz4aNgDlUq5G/8/DC
-	 zrukqaLrULhOTq22dtdye75l58EGAPVmlKs42WWxh9Bnl88DDTp0t4LkpH73PDcN5Q
-	 Pj7o7TyPYLmSrl4p1r0JVWL0DkKQPCT+I7YF46Zy39RZRWPW9VXS9CA7ZX5SNGrTxY
-	 KDmw6GgdRvVs48JXz5RpPkz/hB83htja80LhN+eQ6RXxHGmJ5nv5h2auzKSB9UBDTM
-	 h1h5B2SU7BwFnKUzZRol1vn/IonmVsd8sRqFPeAicQs9O/NrgPjsVG7h8267z+H2z2
-	 wwFpumpZYn5jSpNCbjdEKVPcBtX7w+Voqs/rHmJ2ugR/KoNxAIlwaReXb8rUqGZ2CU
-	 ySgWvSZB4JChzagYpq4bcP8sxDDlFLB6Ye8iweuzWGgdPhRvpBm675SRFsXuE7NfXE
-	 0Ro0fzoeg92Dfp11JmocslGM=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E0B3D40E01CF;
-	Tue, 22 Apr 2025 17:24:37 +0000 (UTC)
-Date: Tue, 22 Apr 2025 19:25:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/16] x86/bugs: Restructure MDS mitigation
-Message-ID: <20250422172537.GCaAfREUU_9RGUwtqK@renoirsky.local>
-References: <20250418161721.1855190-1-david.kaplan@amd.com>
- <20250418161721.1855190-2-david.kaplan@amd.com>
- <20250418204243.GQaAK5Q807BYWlABKV@fat_crate.local>
- <LV3PR12MB9265B16CFC9D3E02C1159DEA94B92@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250422081901.GAaAdQ9aB5KTI5INO7@renoirsky.local>
- <LV3PR12MB926519BA499E7648F97B569794BB2@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1745342936; c=relaxed/simple;
+	bh=eFcP2GiIfYlz5vX4x81qW5td0rrszSQH+tjWOMNxdFA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tPxnXV6XrSI3oZ2jwFjYCiX2NGmHH56AOB3No4kWhzkAdsVPAVFE6ovX8F34ma9BUzj5ZC9+hdR6POm+IWLykiLwr6J1WObu5tqu1+4wgH2q4nxd43+p7kttiD6szkz08JR6Z+wwAgDtrnGvHrOuVDUa6vD3if7OYdywrvoT1HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFIJLaqt; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso64287595e9.3;
+        Tue, 22 Apr 2025 10:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745342933; x=1745947733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3dwRtx2MWi5keXq5RhARdEN3lNKJTVMlJXLO8mAzi0I=;
+        b=fFIJLaqtjNGd1XCKem+bodEEo5anzRD/PqTg53eS+lTS7mmnEsi6MzH8oRhIlP9x4L
+         Tx7Z4YiD+4vfRFw8rFKmPkmqo5UsnsuXFimCUmGQasgmwYwz7uPeRpxGw+WzExkukGPd
+         KbkINsw/QSQvwTP5HWS8qTXJZK2+O7qFpTXSTeVeJtZUcoCvtm8aM0fN7PaTD0Dm2ODa
+         tPGIEjAggOynWHPqeNx95+q9IPDLuJ43w4Q+nCI+GEFTVWesHphN45RxHNhf2eh/DicQ
+         paiqSxb3sp0CkJ5kaYPnVlaKriFI8TxBHd+QDVFx2mF2Q5nglLaD0NlZ6+kmIgVcgEoQ
+         YKmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745342933; x=1745947733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3dwRtx2MWi5keXq5RhARdEN3lNKJTVMlJXLO8mAzi0I=;
+        b=H+iYnxupjh0yRGQq5GRp8qZ647nAuceUtUiUDKvHaffre/B7Ov/k5ORCu1qCqmpwEd
+         FBxdvr5saD1XS8TGcX+8ME3D0T7uRYAyGJyYv57wA/jLpsZKU3Ca0bTIohBILrhd3cfu
+         DQA6M3Q1EsbL1dxOfeomo8ccAK9mzbEY+tJO35XMcl1m5Bk/OQOPTW6+cWozM3RirEt+
+         JkwWD9+SAkJVfWOSVSUFWVs8QiKTYpFUMsANfQpow9ZqtpF0wr6UVyant6KeeTtHvl6A
+         JJanX3mWNmED7XOmNtw+6TuaHnj8kUoz44Cb/QpvSPATz1ZES5X7OrjpQM5vNxyE5Qel
+         hwAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBbnGNwaBgMhyVvflhLtgZBbt46m4j6mjVdHllrOrL45Ps/S5iCXtzd4eHN8jEIq52dm625cj5ai6ZRGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws6So01wl9ZUSfh20+8nE0xjZz3JevM6tKOSvoRqj8Vsc1wcck
+	zpOg/ybvMpOBFWp/6pkR/ZlGCPPWW/5ZDWKVfbLWwY5TgkTDjaysY9EVMtu31TQaxXVzRVHJYbl
+	3I8L02UgSW2O4NKtAXAYGyrzdBWs=
+X-Gm-Gg: ASbGncvZbv+gmIJoRWr16/knMjn4JtGbe/wNcJMgrINMofJJ/o1yst+2vqsWxePeLXT
+	afyjSwiNVFX9/i5ENGdVpwvySssh6FyZK1udG9bSG0hHbUlmkJJpj5I/wjKGWV5jEUk1QJd0LZZ
+	8Z2ky0LKmsFBdYGYL7zvCvWfourk1u+cOjc7O5DWkQ78yEXBP4
+X-Google-Smtp-Source: AGHT+IHX+RLtkAyFXfCCwJvsB7FXqs2T++5aqezs/ZM9C6DcovLr8jbPDrc0RmXaKbeQjrVGqP5+hsJV4ddEhccdJyc=
+X-Received: by 2002:a5d:47aa:0:b0:39c:cd5:4bc0 with SMTP id
+ ffacd0b85a97d-39efbaf70bfmr13250986f8f.52.1745342933260; Tue, 22 Apr 2025
+ 10:28:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB926519BA499E7648F97B569794BB2@LV3PR12MB9265.namprd12.prod.outlook.com>
+References: <cover.1745250534.git.iecedge@gmail.com> <73fdbbf9aafd3e24e12bb58f89c70959fb3a37f1.1745250534.git.iecedge@gmail.com>
+In-Reply-To: <73fdbbf9aafd3e24e12bb58f89c70959fb3a37f1.1745250534.git.iecedge@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 22 Apr 2025 10:28:42 -0700
+X-Gm-Features: ATxdqUFNF7npKiSkLt4UNdkUZRCVdnqqXcfQWuiSBdYWZe7QzjVRWlvmeYgHCog
+Message-ID: <CAADnVQ+m8F0BsJr_T1ePpB_zQ2vS+3OD2h+Wrfv1x+an9fSLkw@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next 1/2] Enhance BPF execution timing by
+ excluding IRQ time
+To: Jianlin Lv <iecedge@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, jianlv@ebay.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 02:32:07PM +0000, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> > -----Original Message-----
-> > From: Borislav Petkov <bp@alien8.de>
-> > Sent: Tuesday, April 22, 2025 3:19 AM
-> > To: Kaplan, David <David.Kaplan@amd.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>; Peter Zijlstra <peterz@infradead.org>;
-> > Josh Poimboeuf <jpoimboe@kernel.org>; Pawan Gupta
-> > <pawan.kumar.gupta@linux.intel.com>; Ingo Molnar <mingo@redhat.com>; Dave
-> > Hansen <dave.hansen@linux.intel.com>; x86@kernel.org; H . Peter Anvin
-> > <hpa@zytor.com>; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v5 01/16] x86/bugs: Restructure MDS mitigation
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Sun, Apr 20, 2025 at 09:00:56PM +0000, Kaplan, David wrote:
-> > > I'm not sure this is right, it certainly diverges from upstream where
-> > > mds is only marked as mitigated if the CPU is actually vulnerable to
-> > > mds.  I also think that imo it generally does not make sense to mark a
-> > > bug as mitigated if the CPU isn't vulnerable (seems to increase risk
-> > > of future bugs in the logic).
-> >
-> > Hmm, it still looks weird to me. So let's imagine the CPU is NOT affected by MDS.
-> > The select function will leave it to OFF.
-> >
-> > Then, some other select function will set verw_mitigation_selected.
-> >
-> > Now, the mds_update_mitigation() comes in, X86_BUG_MDS is still NOT set so
-> > we leave mds_mitigation to OFF even though it *technically* gets mitigated?
-> >
-> > I guess the reporting aspect does make sense - we don't want to start reporting
-> > MDS-unaffected CPUs as being MDS mitigated because they're not
-> > - not really. We just use their mitigation to mitigate other vulns.
-> >
-> > Then this comment which explains the logic of verw_mitigation_selected:
-> >
-> >         /* If TAA, MMIO, or RFDS are being mitigated, MDS gets mitigated too. */
-> >
-> > should probably say that if the CPU is affected by MDS *in any way*
-> > - the BUG bit is set - then it gets full mitigation.
-> >
-> > And this should be the case for all inter-related VERW mitigations: if the CPU is in
-> > any way affected, it gets mitigated too. If it is not, then it gets only *reported* that it
-> > is not affected but the mitigation technique can be used for others.
-> >
-> > Does that make sense?
-> >
-> 
-> I think that's correct, although I'd argue the code makes that rather obvious because mds_update_mitigation() immediately returns if the CPU is not affected by MDS.  So you only get an mds mitigation if you are affected by the BUG bit.
+On Tue, Apr 22, 2025 at 6:47=E2=80=AFAM Jianlin Lv <iecedge@gmail.com> wrot=
+e:
+>
+> From: Jianlin Lv <iecedge@gmail.com>
+>
+> This commit excludes IRQ time from the total execution duration of BPF
+> programs. When CONFIG_IRQ_TIME_ACCOUNTING is enabled, IRQ time is
+> accounted for separately, offering a more accurate assessment of CPU
+> usage for BPF programs.
+>
+> Signed-off-by: Jianlin Lv <iecedge@gmail.com>
+> ---
+>  include/linux/filter.h | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/filter.h b/include/linux/filter.h
+> index f5cf4d35d83e..3e0f975176a6 100644
+> --- a/include/linux/filter.h
+> +++ b/include/linux/filter.h
+> @@ -703,12 +703,32 @@ static __always_inline u32 __bpf_prog_run(const str=
+uct bpf_prog *prog,
+>         cant_migrate();
+>         if (static_branch_unlikely(&bpf_stats_enabled_key)) {
+>                 struct bpf_prog_stats *stats;
+> -               u64 duration, start =3D sched_clock();
+> +               u64 duration, start, start_time, end_time, irq_delta;
+>                 unsigned long flags;
+> +               unsigned int cpu;
+>
+> -               ret =3D dfunc(ctx, prog->insnsi, prog->bpf_func);
+> +               #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+> +               if (in_task()) {
+> +                       cpu =3D get_cpu();
+> +                       put_cpu();
+> +                       start_time =3D irq_time_read(cpu);
+> +               }
+> +               #endif
+>
+> +               start =3D sched_clock();
+> +               ret =3D dfunc(ctx, prog->insnsi, prog->bpf_func);
+>                 duration =3D sched_clock() - start;
+> +
+> +               #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+> +               if (in_task()) {
+> +                       end_time =3D irq_time_read(cpu);
+> +                       if (end_time > start_time) {
+> +                               irq_delta =3D end_time - start_time;
+> +                               duration -=3D irq_delta;
+> +                       }
+> +               }
+> +               #endif
+> +
 
-Right, ok.
-
-I'll add a link to this subthread when applying so that we have some
-reference to this.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+This is way too much overhead.
+This timing loop is optimized to measure bpf prog runtime.
+See commit ce09cbdd9888 ("bpf: Improve program stats run-time calculation")
+IRQ can happen and distort the numbers, but you shouldn't
+be running with bpf_stats_enabled for a long time.
+You need to sample it instead.
+Every couple minutes turn it on for a second, capture the stats
+and aggregate over time. Filter out outliers due to IRQ or whatever.
 
