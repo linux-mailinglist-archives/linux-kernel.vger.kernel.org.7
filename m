@@ -1,91 +1,98 @@
-Return-Path: <linux-kernel+bounces-613404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAB4A95C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB882A95C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC2B188BF2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3ED3ADD75
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F50922D4C5;
-	Tue, 22 Apr 2025 02:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB5122AE48;
+	Tue, 22 Apr 2025 02:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="hW/jlNO6"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FA61A238F;
-	Tue, 22 Apr 2025 02:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abx3sgTJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E40D277035;
+	Tue, 22 Apr 2025 02:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288381; cv=none; b=ZQ3puURM6SbUakCcoc2CPTGIEAnQ0Ia42Pi9aWcYfoo9AFfSwZ+MH/Eb6p3mO0Pvl+28a6JIs4jJi7M7W5ahqaTZaV4QFQVrzJ+jYQT415QWvtnQyw2BeHI5yK7pd7GdlHvLjP/C64bpv2TWTq2J/EyddqFOArQUTtd1Zy+uu/g=
+	t=1745288345; cv=none; b=WpmBtDg7WoDfdxwY25dlqxOcwBPe0Q5/wEpyZWFSm7N+UXpFdZdns+5IIEQtxl+sCyL87kWE1K/K9UhLKkYod11ZO+fQ9rnrt74bPEbOdgG96aapMzPbhJrRIePVLDxjJKuqtNjwSL9SSEl/ZU40RnxUzjWZJQdBLsbZIJligCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288381; c=relaxed/simple;
-	bh=iDOuuu4f0xgOSSnJHort7rH7kMsvAPBEkCfnsvXhdyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iq8upSVgXjfkCitbtUPyFSxLBSwgI9jvR4zJ3YwQx9L/wAvsfwfa0DkzSSd9F12d6RzwOVdBVVvBj3Dgz7lkr0WF6FvMZttF3eF/gB2AVy4l5TvQ84vRPShqI1E1y1uLCpdIQV6OP2QuqMUXpFVxiqroh2PMQWTMbPvKodl5nos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=hW/jlNO6; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=0lQKvbPMiWALaCoaAk+3P6t7pLtJ6dozAsI8r7sGWjA=;
-	b=hW/jlNO6wHxTEEgecGmNw5P9lLV307K4he+I5ZGHFKHBmp6tQk4GuqIjGF+OSK
-	9tVyVLzUWHxfpDwBwbttcj9I+4jOe66ci0GeNvk9vZ+tE8CxtHep9ENX+pf6rpEW
-	hi6Yz/qrJABdtTEejn170UUlX+/458HPBrTkEUDlEKYUw=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAXlduS_AZoEu+7Aw--.31707S3;
-	Tue, 22 Apr 2025 10:18:59 +0800 (CST)
-Date: Tue, 22 Apr 2025 10:18:57 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mp: configure GPU and NPU clocks in
- nominal DTSI
-Message-ID: <aAb8kaw+hmEMnbi0@dragon>
-References: <20250311-imx8m-clk-nominal-gpu-v1-1-78de5ea24c5d@pengutronix.de>
+	s=arc-20240116; t=1745288345; c=relaxed/simple;
+	bh=Qi7PabfiLaCYRd+It5pzaESZMIsKHvkjX21NhKvn4Yk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QFg1/7hbe5SPNHopZylNMbNxEwtZhxuGJ0I9xLFhnF8FZEeioVX28T2aQQ0AnCFuhf2oaqRu51ZIyuEYiny3uxV2saJ1im7q8SidSQLbwHo/nX1J79ZJQ8HT0FiqrV5Gi9TcQvU0b5hdac8cr/8NU78HG5TUufzWdjFIGzGbuZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abx3sgTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDCFC4CEE4;
+	Tue, 22 Apr 2025 02:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745288345;
+	bh=Qi7PabfiLaCYRd+It5pzaESZMIsKHvkjX21NhKvn4Yk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=abx3sgTJMkQllGVuo35/7bUNO6hIHh4vIK/wI5fzVdktqHasw6+RnWQzPsO5IIJmu
+	 idTrZ+c8tniapLPjrPduYr1FH5A1onYrZCRMaYPTV8Anr64r3Zh1F8NYw1IlaeelEO
+	 53taNKcEuPGGS2aYFyZ+Y0N+DeObNAV/BqPv+OmHJCJT7rRJ6zpqGcr7aVS+HRA07P
+	 ThoOuhG96TeToP6p+zobNI9/KkZhek6iWfAI4ojnz5SPx1H4uxM5scY9UlbZsNOQE4
+	 DU+oYzFimP8cL53IBtn4mjHZTPZzmzbry7Y1RIoHgI1Cc31DIst+zsv1gm3ymXPxXU
+	 6TeSUMniezUAQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Igor Pylypiv <ipylypiv@google.com>,
+	Salomon Dushimirimana <salomondush@google.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jinpu.wang@cloud.ionos.com,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 1/3] scsi: pm80xx: Set phy_attached to zero when device is gone
+Date: Mon, 21 Apr 2025 22:19:00 -0400
+Message-Id: <20250422021903.1942115-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-imx8m-clk-nominal-gpu-v1-1-78de5ea24c5d@pengutronix.de>
-X-CM-TRANSID:Ms8vCgAXlduS_AZoEu+7Aw--.31707S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFW3try7ArWUAr1xCFy5twb_yoWfGFc_uF
-	13W3WUCw43KrsrCwnrXws5ZFZFgw4DCF4kAF9Iqr4fKrySqFW8u34kKr9YgFy8GanIqwnI
-	934DXw48XryfujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8BBT5UUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAQk3ZWgG3QyIpQABsJ
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.292
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 08:41:12PM +0100, Ahmad Fatoum wrote:
-> Commit 255fbd9eabe7 ("arm64: dts: imx8mp: Add optional nominal drive
-> mode DTSI") added imx8mp-nominal.dtsi, which overrides all overdrive
-> clock rates in imx8mp.dtsi to the nominal rates.
-> 
-> At the same time, commit 9f7595b3e5ae ("arm64: dts: imx8mp: configure
-> GPU and NPU clocks to overdrive rate") went in, which changed some
-> clock rates away from the nominal values.
-> 
-> Resolve the discrepancy by effectively reverting the changes in the
-> latter commit inside imx8mp-nominal.dtsi. This is required for proper
-> operation of the imx8mp-skov boards, which are currently
-> imx8mp-nominal.dtsi's only users and lets all other boards that don't
-> include it benefit from the new higher frequencies.
-> 
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+From: Igor Pylypiv <ipylypiv@google.com>
 
-Applied, thanks!
+[ Upstream commit f7b705c238d1483f0a766e2b20010f176e5c0fb7 ]
+
+When a fatal error occurs, a phy down event may not be received to set
+phy->phy_attached to zero.
+
+Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+Link: https://lore.kernel.org/r/20250319230305.3172920-1-salomondush@google.com
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/pm8001/pm8001_sas.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index 36f5bab09f73e..1215fc36862da 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -893,6 +893,7 @@ static void pm8001_dev_gone_notify(struct domain_device *dev)
+ 			spin_lock_irqsave(&pm8001_ha->lock, flags);
+ 		}
+ 		PM8001_CHIP_DISP->dereg_dev_req(pm8001_ha, device_id);
++		pm8001_ha->phy[pm8001_dev->attached_phy].phy_attached = 0;
+ 		pm8001_free_dev(pm8001_dev);
+ 	} else {
+ 		PM8001_DISC_DBG(pm8001_ha,
+-- 
+2.39.5
 
 
