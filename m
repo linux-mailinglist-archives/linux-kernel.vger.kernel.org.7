@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-615183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96311A979F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839B6A97A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF703B1CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 840F43B6172
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1352829DB6A;
-	Tue, 22 Apr 2025 22:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149FC2D028D;
+	Tue, 22 Apr 2025 22:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="CITt3eBM"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wnL83BuH"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934431FECD4
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF7C262FD9;
+	Tue, 22 Apr 2025 22:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745359492; cv=none; b=C1Ga+7Uz00T2ahoaSlBbWti6n024lWZcIQmNMaXz+LDwDHcq3FsZS1SNJYnbuUqMq8VtB4JtFiT0L/UO3I/4PrqmwTpBbCoJKM3S0GdmqQh1xromFEw3wXHal4JKFVxSxqf7GxxiZ52xkxN/Jcoq0OrM1g2f12/TKuMaqTLhOc0=
+	t=1745359535; cv=none; b=INI1pXagoBHXlL8EPrewh2AvvVxmg8e98vuMnJ/0gMQ/N/Jhm+zbhJwk5164HRa9W30aEtGMOJquy+JNPv4b/oLZ0jbgLHi55tMuOd4Q+l9Z04DC0+KXu9xwBJ50EiqbpZSbLvC7CA7XEq0NgIF647PRbgJ3vTAVjUpz2RoQixU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745359492; c=relaxed/simple;
-	bh=DHq00Jy8ArlG0uUG8qvA+p71m24QNxsUjm+9An1VpRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QhJXnzQpOxasfU22GyirVi4NxYLjJzksHDjYcHQ8a5Q66eEundoo1B224+DKe58dziOcI8spES+9bHzSam+eDkJlOmHgQD3Z3y7M4VXVjc12HXolNNC1pRX776TlpxKhhvOo5VjRYhD6Awof73sOHA1gtEdG9FK2Nfoq9mn6FnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=CITt3eBM; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3032a9c7cfeso720001a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1745359490; x=1745964290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DHq00Jy8ArlG0uUG8qvA+p71m24QNxsUjm+9An1VpRY=;
-        b=CITt3eBMOLKWfqhaEqiIyHyPNBdkZdHu3w5zCyJ0Uak2M2tkAf7QQOaBUpYzW/qcub
-         SIYxqB1ebnQBhMeaodL8NoohqX4/BSNosNKMslsXhiazBez88abTVdhoJTV2nZ4zu3J4
-         oFCZx/f+9Chp1wbyGE8CkU2AhRL2bTMJumi/H23HIJ/O2m5PFEkXt16q4ymqEYLFWNqW
-         YX0d7ZQrhrzP2FckVy2WcmOwEv5Vj0NiP/iuM8k1r5i1axDroBwl5P2h0FlFe8P1dwN0
-         wRebk0bB2SxqjvDQjcqLwtchysvzha2QKEKA5KWx/nCgfPZvkYOZzd1BdeQMcyrVXqQH
-         1O2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745359490; x=1745964290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DHq00Jy8ArlG0uUG8qvA+p71m24QNxsUjm+9An1VpRY=;
-        b=cDqmWK30e24sf5HKPYo+Kex7OeWl9kIz+SPlNzlhppmUeHA99PCSrLgRNFG/nNRUqy
-         Xr8u+rZwh3OtRBTTrS4xIeF3sySOR8a7IoZLAssL+4BDj4ETR158m79YJfbVs2H++Hmo
-         B9wsdGpU/KLV6i4EPPCb+WbYuByKxHNv2e3/xkyvIxL/62wyQ63HgCNL9MBf8vASAVcU
-         rU2iEyWUrelSpdnkL8lOkWFheRoFm56tQh0j3UmlkkuM1VXAfWuO+N4qREjQt+DD02GQ
-         Mg17hKPKEENFJVdSbVrCG1K835mklthFSnO1pjirk6h7ycqTe7xIBQhNcB5P+GmwsQja
-         E+5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUi83ZL/FJ8ESp28NQdl/AGkfuFoUOf+EgN6tKohwv8it//0/30gDL+kM6Ml5FpF1yTPi22+0+Jq1oeLps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+QqawMkCRGoFBis1GHoyLEl1i9P75Vx9pXkoKr8HA4/sJz7vs
-	CU6Q0gSfwz0rOaj8kn8qNxl8iF3pStLd+h7T3AKi10Fo9hepC7GvBQqcO4it8UCbfNgqpG/kDcP
-	fryR3USXr3/4mj1XRlyNCDG/3/Zwc8pIW9axc1lO0HPvEwz+3HLYfQA==
-X-Gm-Gg: ASbGncuWYzSynCsu6plUg8pSMKfsbbxAPCJ4BIw34npY0yUjbjSuGQR+qDxb+uFGVvk
-	/LWY9V3UnLAYi9DtYAdzy0s2QWekQatV8BEpAQ66RsRDWKx1J1+XyNwucYukvTfSipK9L2nFb6B
-	pNxEzLTJ5O3aadWJnzcNZH
-X-Google-Smtp-Source: AGHT+IGxTPbKr9qKYKe1IBO2sOP3lYbwPMBHyRNRwoKnjkYWlMMKK1yxTaw37paLFCn3ldrutm1hXKT7IveI3tfJZGg=
-X-Received: by 2002:a17:90a:e7ce:b0:306:e6ec:dc82 with SMTP id
- 98e67ed59e1d1-3087bde2b2dmr8960212a91.6.1745359489559; Tue, 22 Apr 2025
- 15:04:49 -0700 (PDT)
+	s=arc-20240116; t=1745359535; c=relaxed/simple;
+	bh=mTWP0qmzfPQqu0NBVqtmffkFWXxD2gO2ig+9q3Jafa8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GgZZT9tpPPx3T2bZlstr8Ujjcz3+QLmGqA+gE+tYYrU+wuE2AscU8tHI2bmG/Nah6FYIBxb54oO4g9wUHsWzzsFxcmQ8Y6JtvxebO3DVKnp3flzE6+WIOYdU/PT18PNew5YtUnYw1XxzhtYy7pqHhHdahx8SRFB15Lb/6A7+2xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wnL83BuH; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53MM5C3q2117300
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 17:05:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745359513;
+	bh=Sj4pRdp+l765MK714CGTnwQXZFSOrjKSMrjTy5zwMY0=;
+	h=From:To:CC:Subject:Date;
+	b=wnL83BuH1fhwFoEpJ8Waoxg/SGGYKTFulWHqeZloPhVX5imghxXGolSAk+bkCjdir
+	 OE6dgZpmzh6QfGlARknjOv4pKZ8/tMH5UoOfbmKykkSzw1OhGt4UWlV8X5OUBEXYhK
+	 9mAeItU5DL/uCRjJ5SYtA2+h/ITooa+Y5zgiBa7M=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53MM5CHP117244
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 22 Apr 2025 17:05:12 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
+ Apr 2025 17:05:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 22 Apr 2025 17:05:12 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53MM5Crc012605;
+	Tue, 22 Apr 2025 17:05:12 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Nishanth
+ Menon <nm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Josua Mayer <josua@solid-run.com>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Francesco Dolcini <francesco@dolcini.it>,
+        Hiago De Franco
+	<hiagofranco@gmail.com>, Moteen Shah <m-shah@ti.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH RESEND v3 0/3] Add ti,suppress-v1p8-ena
+Date: Tue, 22 Apr 2025 17:05:09 -0500
+Message-ID: <20250422220512.297396-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422161959.1958205-1-csander@purestorage.com> <aAfWUGAMTpwsHf2b@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <aAfWUGAMTpwsHf2b@kbusch-mbp.dhcp.thefacebook.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 22 Apr 2025 15:04:37 -0700
-X-Gm-Features: ATxdqUGYBZdgRQ4qkjYHTy-PaoU7kaf1JKmQBOijRSNMhG9jko2qg-c3dICA2yk
-Message-ID: <CADUfDZr5nq9fAvxSZJwUmuZKry6pHqLrucLtJLmV8cAvZ6O6eg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] nvme/pci: PRP list DMA pool partitioning
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Apr 22, 2025 at 10:48=E2=80=AFAM Keith Busch <kbusch@kernel.org> wr=
-ote:
->
-> On Tue, Apr 22, 2025 at 10:19:57AM -0600, Caleb Sander Mateos wrote:
-> > This reduces the _raw_spin_lock_irqsave overhead by about half, to
-> > 1.2%.
->
-> Could you try this atop your series? I hope to see if we can squeeze a
-> little more out by keeping the spinlock and list links local to the node
-> using them.
+Resend patch series to fix cc list
 
-That does help save some CPU time in dma_pool_alloc too. It's down
-from 0.87% of CPU time to 0.52% while doing 5% more IOPS. I'll include
-your patch (with a few tweaks) in a v5 of this series. Hopefully
-you're okay if I include your Signed-off-by.
+There are MMC boot failures seen with V1P8_SIGNAL_ENA on Kingston eMMC
+and Microcenter/Patriot SD cards on Sitara K3 boards due to the HS200
+initialization sequence involving V1P8_SIGNAL_ENA. Since V1P8_SIGNAL_ENA
+is optional for eMMC, do not set V1P8_SIGNAL_ENA by default for eMMC.
+For SD cards we shall parse DT for ti,suppress-v1p8-ena property to
+determine whether to suppress V1P8_SIGNAL_ENA. Add new ti,suppress-v1p8-ena
+to am62x, am62ax, and am62px SoC dtsi files since there is no internal LDO
+tied to sdhci1 interface so V1P8_SIGNAL_ENA only affects timing.
 
-Thanks,
-Caleb
+This fix was previously merged in the kernel, but was reverted due
+to the "heuristics for enabling the quirk"[0]. This issue is adressed
+in this patch series by adding optional ti,suppress-v1p8-ena DT property
+which determines whether to apply the quirk for SD.
+
+Changes since v2:
+- Include patch 3/3
+- Reword cover letter
+- Reword binding patch description
+- Add fixes/cc tags to driver patch
+- Reorder patches according to binding patch first
+- Resend to fix cc list in original v3 series
+
+Link to v2:
+https://lore.kernel.org/linux-mmc/20250417182652.3521104-1-jm@ti.com/
+Link to v1:
+https://lore.kernel.org/linux-mmc/20250407222702.2199047-1-jm@ti.com/
+
+[0] https://lore.kernel.org/linux-mmc/20250127-am654-mmc-regression-v2-1-9bb39fb12810@solid-run.com/
+
+Judith Mendez (3):
+  dt-bindings: mmc: sdhci-am654: Add ti,suppress-v1p8-ena
+  mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
+  arm64: dts: ti: k3-am62*: add ti,suppress-v1p8-ena
+
+ .../devicetree/bindings/mmc/sdhci-am654.yaml  |  5 +++
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi      |  1 +
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     |  1 +
+ .../dts/ti/k3-am62p-j722s-common-main.dtsi    |  1 +
+ drivers/mmc/host/sdhci_am654.c                | 32 +++++++++++++++++++
+ 5 files changed, 40 insertions(+)
+
+
+base-commit: 1be38f81251f6d276713c259ecf4414f82f22c29
+-- 
+2.49.0
+
 
