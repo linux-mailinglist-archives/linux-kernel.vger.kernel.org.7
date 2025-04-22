@@ -1,96 +1,118 @@
-Return-Path: <linux-kernel+bounces-613727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797CCA9605C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:02:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14B0A96050
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 249A13BB1B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480C3179E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386502459CB;
-	Tue, 22 Apr 2025 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FD8240604;
+	Tue, 22 Apr 2025 07:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crcWqiFN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5Fu2Bye"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DA81EEA40;
-	Tue, 22 Apr 2025 07:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C21F1EEA40;
+	Tue, 22 Apr 2025 07:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308797; cv=none; b=Nxm4GE47K3MOC0wwjs9ul0E04qU/l8r8gQt4TczIEEHJKZkt0wVE+bGr2RwMj0A2DdTi7D2/f3CqnUTJTDMrp1X4eDqbnB5y1Oy3UePNLHsMnyn+RJAXOSeX5Aujvvuc98PpiuzF2vUuqTJt/M3n6wYG6k+m4+oTyL7eutycSYU=
+	t=1745308743; cv=none; b=LMKvbFkIjzkF3hz3s095Pc91OKxJZCcLz/qikZv8UqHxpx4r5hIoGwi6A3Q6j/U3rk8uJ7wep8sj6qqIWtgmQvPTRIWrfWtFxHC0A5324+sUhAqmeGr4BcxM7XccHzejx7k5XmbyWV4cKIZvCYxQlUv+U1RGZWtQhBtFmW4dAB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308797; c=relaxed/simple;
-	bh=6uYq948jP0plKCa8h8/BnAACDkw7xAC78wECv68M75g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BBYdu8MYxZdo225ItWMJDp3CxbHSmdkwSr/txX4g7Nb+1hzTZe0lPDLKx6KnJlJaKXBimIBg7mp1aB9G0+wMMPmt/K+nijvI7h8AeQ0ZKexjWA05mPyn3r04EJnDfavGNdqknyFktlNbDpr2Ea8In8s9MmuD/3oYUiuH1YVIg/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crcWqiFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3DFC4AF13;
-	Tue, 22 Apr 2025 07:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745308797;
-	bh=6uYq948jP0plKCa8h8/BnAACDkw7xAC78wECv68M75g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=crcWqiFNhFriHwgT3q0la5F5SFpEstBIwknznWZ4k7gv1tcdJHo+ffVE22PdWBhku
-	 mvHMEEx0qQcar1zYsgJ173fKFjpO1M9TrLUIFsAtDO8+PpRGH3ZGbQFrFKQ5ruQet2
-	 Dj+aOrvyQAPp+5F0dWMPSAwyonBRE/tCCUnX17tkmkMWipuTVPbkF5SWIvL5X8Wywt
-	 H1vH4KKPJjouSqnnwttTOUtUV3eQUmbxb9U35OEB0g7qckZIsqCougGxrI/AzEmVhD
-	 J61qp4Fp0JYSf5qo61NtQM/eDeRqY9MInmKrJvQ7y1Wu0KIrSWd4tVyVrd5ZCmBq9m
-	 k2XxvnoUg5OwA==
-Date: Tue, 22 Apr 2025 09:59:52 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: hch <hch@lst.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, 
-	Hans Holmberg <Hans.Holmberg@wdc.com>, Dave Chinner <david@fromorbit.com>, 
-	"Darrick J . Wong" <djwong@kernel.org>, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: add tunable threshold parameter for triggering zone
- GC
-Message-ID: <vtbzasrb6cx4ysofaeyjus75ptnqrydm24xw7btzeiokqueey3@qamjjgwyubml>
-References: <iB7R4jpT-AaCUfizQ4YDpmyoSwGWmjJCdGfIRdvTE76nG3sPcUxeHgwVOgS5vFYV0DCeR1L5EINLppSGbgC3gg==@protonmail.internalid>
- <476cf4b6-e3e6-4a64-a400-cc1f05ea44cc@roeck-us.net>
- <mt3tlttnxheypljdkyy6bpjfkb7n5pm2w35wuf7bsma3btwnua@a3zljdrqqaq7>
- <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net>
- <20250421083128.GA20490@lst.de>
- <c432be87-827e-4ed7-87e9-3b56d4dbcf26@roeck-us.net>
- <20250422054851.GA29297@lst.de>
- <c575ab39-f118-4459-aaea-6d3c213819cb@roeck-us.net>
- <6Vk6jXI2DGWoxaC5fwn8iLCw5Bdelm4TDO1z8FiRamhu_v1yAbbQ-TB6I1p9OQZDcydN5LSY9Kgzb7vhsAaPkg==@protonmail.internalid>
- <20250422060137.GA29668@lst.de>
+	s=arc-20240116; t=1745308743; c=relaxed/simple;
+	bh=U1NSlMKH2Q4QiOM+gX1bIuX+5W3KYfjTCa1ADvz2nCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dt7emZPvndCoe7lIhJ8IfO5MH8PmnWpU2PUJ7+75HgXMmAwNu+gpdAKcXtpLOEsGYG+3sUITlTgPrfCEMf05/1x4+xXbCnf9GLlq8XlukB3hmqJCnpQxW04sXCOI19OEJineZO0dLsp3fIsn6xJNsOrOcegkshz9ArLvAayvZ2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5Fu2Bye; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f5bef591d6so8252472a12.1;
+        Tue, 22 Apr 2025 00:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745308740; x=1745913540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L/lN4gz+2egV7k5JlUuUM2b1n/evNrqq8ZZ3C9Kek9Q=;
+        b=Y5Fu2Byec2xYXc55f/QvIaS2/oHBVmwM+gB4VYBbOOYCtjueeeek5h5mnYfw4Pj6di
+         fNhUTBpRarHLv5R1t+svNVfe/1xPKC5n46OxTK4Plje2tVAUr9Iws227MXsUnMoC99cE
+         mayi/8SXo0ehmO1uOkovZ2xsiEHQrogdvSrkX1D+SaxxpaxH4sZFnIqGZMUdCBeJ5kQB
+         e2DkNoe3fumfhbYbVppVfqtnI/ZVXmirr+C2HeO/Qk8jS6xIOc7lpB068XA/WEEkfPUv
+         a6h45VFpNsgOcxSXsVpf5W5wXLPxS6S9hMcuAjDWXlj4rSEQtqrbdCwhXo43NBHGDl1+
+         vzDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745308740; x=1745913540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/lN4gz+2egV7k5JlUuUM2b1n/evNrqq8ZZ3C9Kek9Q=;
+        b=TP5XIK8PlWh5EA6R+sapoArLao/W9Sf7HiOnZwYpNKLYZQXB/yPPjOvMcc7VdBK8Mj
+         RXjJEwOaQEXB/9NyrgPaKtjZwPjRfi8wbTqRXyfA1fLvoQtTmOYJidDZtLU3zCc0Csjy
+         zQQvpuS8AujHPdCPUSZEtIOOtH4sEe/gJ8gS066ppQnY2t9SORf8Ha8CLYgv611IDIRf
+         X3h60sz+ItXZKIroIbk335k7pHJHAW09V4/t+AGVVfPNIDHnmyjGk+r5X0T3E+TDwwNu
+         3ERInCBLImC4zcE8f8jzvylvGoRRgo7nzc8wy3MTJbGZ+s/M9EpElgD+b6y0ZeNcrPP6
+         Swaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJfwsDw2QasgKg2aH+MQvyoC1sqQCNXunzMPMxloWUeed42ZokuVyEc4h0kvFFkJn74rrSNagoQvauls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv8o4r+n+AQZE2SFgTCI97yQO/hIrl57sjnm9simeO21TceDxn
+	QT6klfkf5ZqmqpTjvtYKqWVIYrLQB7Jvvk7TYIaV3FKbB08umjQR
+X-Gm-Gg: ASbGncs32Ahck5KgUA2dubh7UYe7d0wrBroudbThgOqGa7oVQDfbUa2k11YYgSwq2C3
+	vQ9CXigGfohsjigvepYgJX4fCEJkJBUUhHSpHnJ6hvyPqSZwqKEda7uCtzyy+OYz8tIaoNu2wQM
+	B+oitN+f3fD1+l2ldU25uqq9VRJyCj1xSf46hd+CRwH53wQOB2jQwYixuhP4hhIkJJG8LRgeYWn
+	PXl9SfydcGhra84fu4z4gaEO5xKVaal3lMivOWnZF2FtPdY+DZeeo/BAEWL+KkgvcNiD5gf0W1P
+	t17IRxszV1E5DVNvFdXSaVxYCDj7D/Umf7dE1x9UbM695kjo65QjAw==
+X-Google-Smtp-Source: AGHT+IFvpIcLDY6F7tda9PqHwKLcSMUx565gU6GKa5rJkI682BO1i9+d+z+pfGEJYtvXfllstDVdxQ==
+X-Received: by 2002:a05:6402:27cf:b0:5e7:c782:ba94 with SMTP id 4fb4d7f45d1cf-5f628545bf1mr12637873a12.13.1745308740050;
+        Tue, 22 Apr 2025 00:59:00 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::158? ([2620:10d:c092:600::1:558d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f625833be4sm5818271a12.50.2025.04.22.00.58.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 00:58:59 -0700 (PDT)
+Message-ID: <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
+Date: Tue, 22 Apr 2025 09:00:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422060137.GA29668@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: Add new functions to handle user fault
+ scenarios
+To: Zhiwei Jiang <qq282012236@gmail.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250422030153.1166445-1-qq282012236@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250422030153.1166445-1-qq282012236@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 08:01:37AM +0200, hch wrote:
-> On Mon, Apr 21, 2025 at 10:57:31PM -0700, Guenter Roeck wrote:
-> >> free should be floored to zero, i.e.
-> >>
-> >> 	free = min(0, xfs_estimate_freecounter(mp, XC_FREE_RTEXTENTS));
-> >>
-> >
-> > Do you mean max, maybe ?
+On 4/22/25 04:01, Zhiwei Jiang wrote:
+...
+> I tracked the address that triggered the fault and the related function
+> graph, as well as the wake-up side of the user fault, and discovered this
+> : In the IOU worker, when fault in a user space page, this space is
+> associated with a userfault but does not sleep. This is because during
+> scheduling, the judgment in the IOU worker context leads to early return.
+> Meanwhile, the listener on the userfaultfd user side never performs a COPY
+> to respond, causing the page table entry to remain empty. However, due to
+> the early return, it does not sleep and wait to be awakened as in a normal
+> user fault, thus continuously faulting at the same address,so CPU loop.
 > 
-> Yes, sorry.
-> 
-> Also if you want the work taken off your hands I can prepare a patch
-> as well, I just don't want to do that without approval from the
-> original author.
+> Therefore, I believe it is necessary to specifically handle user faults by
+> setting a new flag to allow schedule function to continue in such cases,
+> make sure the thread to sleep.Export the relevant functions and struct for
+> user fault.
 
-Just noticed it, I shouldn't read emails backwards on time :)
-I had the same thoughts as hch though. But giving Guenter's last message...
+That's an interesting scenario. Not looking deeper into it, I don't see
+any callers to set_userfault_flag_for_ioworker(), and so there is no one
+to set IO_WORKER_F_FAULT. Is there a second patch patch I lost?
 
-hch, do you want to write a patch for that or should I?
+-- 
+Pavel Begunkov
 
-btw, Guenter, I still plan to work on a generic mult_frac() to properly fix
-this. Could you please share a reproducer for your case so I can test it on the
-same architectures you're doing so? Hopefully it can be cross compiled?
 
