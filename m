@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-614292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36718A9689F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:11:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DC2A968A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD1017A717
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C3717CE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3307E27CCEA;
-	Tue, 22 Apr 2025 12:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E95A27CB30;
+	Tue, 22 Apr 2025 12:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kw6uWJOm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KH1OViQG"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFD427B51D;
-	Tue, 22 Apr 2025 12:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A5D27CB1F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745323852; cv=none; b=dkxw+i2IoObxTj7PLQZWUsQzNcBIsN5B3wvyqsUjhewq6jDOztObiyq7E+eoYD854nU6K4PBMQnyTSpHLtP9db2RrRGiKAO7uY9lzdnar0ZjZrwWGz31Pyrq54iHNpquF3v7LeAgP+fxUaZEM+R25jZusoE71QJLZypFjA61k0w=
+	t=1745323897; cv=none; b=eWa2yx1ohOAmIGVlWEqg83gcq5u4ISO3OArtKC39qQNVaRsXNQ6dqLiAh7oajlKJU0gEYcGXD3da4bookXs5BMwgfjHTF4IR+B5OPQlZWcp5NfUsh/oWnv3KBEGqMeOGlMHPOCC3T3iIFSEf/zIBUHgP/FwQJxS8J4nW2FSm4gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745323852; c=relaxed/simple;
-	bh=94jXciuuUSY9QuhItKiQptIuzEJLDtkPg4FjL9VSNNo=;
+	s=arc-20240116; t=1745323897; c=relaxed/simple;
+	bh=Q/0eQ4z6xF/rZSS6yNW+QOVGiNYbzpf0j7hh9npWX94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvQEbuyquHYjUfD6JFbf7E8kZzV696B/sAHQU9Etembd1eVulEY4HyBt0Cy1Z0xevs9S+ThNWHoSxY/muYWJfKpj+NIoTr3WtBjfzoPCpH6+tLlAjzHVhE/EgwXEp+oXOLhmi1+vXa9b2vu2JkhYM3yKE1o6aizj/uTzfkWcf9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kw6uWJOm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA72DC4CEE9;
-	Tue, 22 Apr 2025 12:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745323852;
-	bh=94jXciuuUSY9QuhItKiQptIuzEJLDtkPg4FjL9VSNNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kw6uWJOm6W2vov0Xou0Q1nwXyRFOzbfmCDBgCrbyv43JYIKsL2tC2RGg5ytkQoiYp
-	 C90/VwxumVENrW54coSVlbVYF5xqbRDoIEAu8iyu7wGtjjGVTIbs7Py+6TsariZDrj
-	 AUuSi4sfKUpd/skZy6Ff+TCtL1OyBptDHN9DBpcevaDwznmwF6g8FNEHZH6bnSs0Dk
-	 Nl8ReR6ldekCvrsMN02J3OrH2YDFoJJ5oq7uCXhfaqjVgaa8Pr/piThWUdSBiIZGR/
-	 jScCVakKXMn9dLsUmUaXhwIm5RuHFmXKypDrXP5f/PMvlzMe8cfeszlLEK7VWW9drR
-	 7xiKBTQvHgRBg==
-Date: Tue, 22 Apr 2025 13:10:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib: PRIME_NUMBERS_KUNIT_TEST should not select
- PRIME_NUMBERS
-Message-ID: <f2a55a3f-6c56-43fa-bfda-25cc11fe5212@sirena.org.uk>
-References: <40f8a40eef4930d3ac9febd205bc171eb04e171c.1744641237.git.geert@linux-m68k.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XR1EcwCrmuAj1IrB+ytXCTcELggvP8LUoyIjCelE425qDSml2N5TQPwDJUvnsirzSkCThojpp2XgGVj8xW9zoNi/2wj450Qs11EB0fqkj5DeVfVMCUkzf4qP/irCrl6oVhPJMF9nnT96dCxdRwIcw+YKoqiKMwK8532vlAtd2mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KH1OViQG; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f435c9f2f9so7764424a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745323894; x=1745928694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KT1JxRWSPsmY8fesz3r5b2lILhpBpQyPhmAe3rmQpu8=;
+        b=KH1OViQGN/9Izj1jLQ6iOqU8f1rpU4HpLRSKlHxG+hpwZ0RTgkdnUlnydB/Je2YhMN
+         AUYbcyFbCMFK/aq6y+GMjpWunX/jJ+sYUpULEXUvbh9QIWZSJmXd9oN2AvmD+z45kJnm
+         KLOtqrODJ+Q6PBRgq34JwMSttRarvpTO41Bzjf/FnLJiGNSDhVGu0XEJ51gRi2F7X/kT
+         yvSg27sjlI8t0dT2ixjAgyQVPeloMRLtsqpU4PGzcVXl2f0yeWX+DohxBfLbTE/WMI0R
+         Y97tCfDVKys4eelK/2fCfefHNBjjxc25LN+fJ7WCXXfqSDYRMvkSqNXWWW41Lo9dzPGn
+         Yy1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745323894; x=1745928694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KT1JxRWSPsmY8fesz3r5b2lILhpBpQyPhmAe3rmQpu8=;
+        b=qV7Hng0cx+0/h0HW8hB+CMW1Wx50ox3z5McdtgmlKdhCZmtVdG+OIylBH/DX3xwIJM
+         DZTuJP690EVJFIwQjLIL4EEsW7FLG2SWQPf/lcm7DAbv3GB2wKi89rU10ZqPyuNY5h6g
+         ZCHWSsaxA0NjfvGjuNSDN/znzeoyHDAMXu8bVeZxYeN6dGSUYuxQ9yrxFpM7+6wCyLwB
+         7wp7rwQ/NNIVrgImBIii8oKL1B24mwCrPYHw1NH744AEg8GJqQhBT/5qD4siHAJP519r
+         atvPuo3fcnX2kPUfp7fJjeGtzsWNAYynO2UavkQWafF1CzK+U6+bWSaovSKuKZ9XkL6F
+         kMrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMHGaUm/WqesFUUDetqJc5yfSierzr5ilvjeLizcDeBSiNWxatjDDOIsvyawepy+hKcWQS/vKvYUb5wKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCzHWeR9x4serqAVTaKCPlIHr9DSgEazRo03uGAfyZMzFAcNyy
+	VdYrVTNiS2V4d4ZQUo6bFp9ePYRngjgVyyyhSB+/0fHL2q0KCi7jJeJQnOsk7yQ=
+X-Gm-Gg: ASbGncvNEMqdjyZeZvnDD1qpt0arqC+w1Ye2VxBZjE49uwD89E7b1fej3JOiVXRktm5
+	VJQOrs0B2MhPOUKlgq/OmDWVg+NKemVUuaj1pNVPFIwfL5bOH4zmo37tE+FzWFO3cG9rKF6+4pA
+	OjWex+ie1HAxFnawPqqGFV2Pn9DZcPO7cquybi/YViD1Lt0qZX8YuiZWZFpfQPskg6EHvyKI+0x
+	flDMUi+tHvubvGyymwEA4eu94kl9NvvccxqSmBvwJV4IvNR3DKL7TypsDlbG4W/OQVIIHDSzDH+
+	BH1gN3oeEtW6ue17+LskUicGXnlZ/jwXS+OPB2ufDNU=
+X-Google-Smtp-Source: AGHT+IFyYmcZlvcAITMghOEvilutpzLwoU5xPOnInSRoTQAJsg2jq3a94IEVeo4CoWvMA1NEnQNxKw==
+X-Received: by 2002:a17:907:96a4:b0:abf:19ac:771 with SMTP id a640c23a62f3a-acb74adabfdmr1382972966b.2.1745323893733;
+        Tue, 22 Apr 2025 05:11:33 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef4ac41sm644389366b.152.2025.04.22.05.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 05:11:33 -0700 (PDT)
+Date: Tue, 22 Apr 2025 14:11:16 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tejun Heo <tj@kernel.org>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] selftests: memcg: Allow low event with no
+ memory.low and memory_recursiveprot on
+Message-ID: <h64z4wl6mw3qxfwmqsvlddsie62ehkoag47lm2in3nda7dhloq@rjxpkggawqem>
+References: <20250415210415.13414-1-longman@redhat.com>
+ <20250415210415.13414-2-longman@redhat.com>
+ <psbduszek3llnvsykbm3qld22crppq4z24hyhsp66ax3r2jji5@xhklroqn2254>
+ <0033f39f-ff47-4645-9b1e-f19ff39233e7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,51 +92,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="peTE4oWe+GxHaYSy"
+	protocol="application/pgp-signature"; boundary="sq3j7fc2pogean7z"
 Content-Disposition: inline
-In-Reply-To: <40f8a40eef4930d3ac9febd205bc171eb04e171c.1744641237.git.geert@linux-m68k.org>
-X-Cookie: Laugh when you can
+In-Reply-To: <0033f39f-ff47-4645-9b1e-f19ff39233e7@redhat.com>
 
 
---peTE4oWe+GxHaYSy
-Content-Type: text/plain; charset=us-ascii
+--sq3j7fc2pogean7z
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 1/2] selftests: memcg: Allow low event with no
+ memory.low and memory_recursiveprot on
+MIME-Version: 1.0
 
-On Mon, Apr 14, 2025 at 04:35:00PM +0200, Geert Uytterhoeven wrote:
-> Enabling a (modular) test should not silently enable additional kernel
-> functionality, as that may increase the attack vector of a product.
->=20
-> Fix this by making PRIME_NUMBERS_KUNIT_TEST depend on PRIME_NUMBERS
-> instead of selecting it.
->=20
-> After this, one can safely enable CONFIG_KUNIT_ALL_TESTS=3Dm to build
-> modules for all appropriate tests for ones system, without pulling in
-> extra unwanted functionality, while still allowing a tester to manually
-> enable PRIME_NUMBERS and this test suite on a system where PRIME_NUMBERS
-> is not enabled by default.  Resurrect CONFIG_PRIME_NUMBERS=3Dm in
-> tools/testing/selftests/lib/config for the latter use case.
+On Sun, Apr 20, 2025 at 05:48:15PM -0400, Waiman Long <llong@redhat.com> wrote:
+> I was referring to the suggestion that the setting of memory_recursiveprot
+> mount option has a material impact of the child 2 test result. Roman
+> probably didn't have memory_recursiveprot set when developing this selftest.
 
-This commit, which is now in mainline, causes the prime numbers test to
-vanish from my CI which is a regression - the selftests config fragment
-is obviously not picked up by the kunit runner when it builds the
-kernel.  You should add any KUnit tests to one of the configs in
-tools/testing/kunit/configs/ - generally all_tests.config.
+The patch in its v7 form is effectively a revert of
+	1d09069f5313f ("selftests: memcg: expect no low events in unprotected sibling")
 
---peTE4oWe+GxHaYSy
+i.e. this would be going in circles (that commit is also a revert) hence
+I suggested to exempt looking at memory.events:low entirely with
+memory_recursiveprot (and check for 0 when !memory_recursiveprot) --
+which is something new (and hopefully universally better :-)
+
+Michal
+
+--sq3j7fc2pogean7z
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgHh0YACgkQJNaLcl1U
-h9BAbQf+MLaR8l9s2WvjLTYBFiZOVsUlKyZEcRQ7+JooNMQJU3Cu73gcjSLNPZta
-E71k2bqMfdc90BWdrR++BLYWTX6z7Sat/tzmbTUrBdDBi0jCOQo1AWbpgJjitMbT
-lCYZ3/yeDoCc2Mj9e68jsKLsFZkViuTJeBaY9666wMviHd/7DNh2DUZ59B3bNNyr
-+Dln8YH3J46agFmF5vooL9rZXmYoYWkIq5aC4fXUsl4vCIlCCI0S1LXiFsM2Op3t
-JZa9KRlgMz0PtjVfhPwTMIQl7w0EhDpwiBULg5nkzpnAyhlob9QZRpZlR1juLWPX
-UnDoRyQrZOQ6qnqIGjDr2uEnGcafoA==
-=FhrA
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaAeHYgAKCRAt3Wney77B
+STU8AQDtPchwdDd7GvYG9/lftHphnD62oj3o0m0hpo2aWJjY4gEAjv+IF2GZLFKQ
+73DPixoPDX77bf3ZdvlqpW53y0lI8wo=
+=3Mvf
 -----END PGP SIGNATURE-----
 
---peTE4oWe+GxHaYSy--
+--sq3j7fc2pogean7z--
 
