@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-614205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2957EA96779
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:33:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94489A9676D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF967189A945
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10CD16730E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B281927C165;
-	Tue, 22 Apr 2025 11:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229ED27CCD9;
+	Tue, 22 Apr 2025 11:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSfRPAG1"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YDqvVgVw"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1460527C87C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EEE27CB29
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321538; cv=none; b=NeVn9/OBo3s/OSBy2lZghz7X3bGOPcekiw6GTVXlmaQcI8l2WOkXDCvSZyfU+smUXJX/vd2PlqdYNCfWQ3xIi7xIukqkM/dgt2Xu0+b4RfD4OPHEmM7YZbLWqbtAZxU5LI/ItR/l3+OLBmMYqeyoFwkTp8NDS7PufRxHTJsRu3o=
+	t=1745321539; cv=none; b=jShqi/7vMFGFRKjK4YhA382OKfsKBnyH4zVEdtcwjrPOvVBM4ZSTSWx2j+ZiHaRfTo4Ay/pNNsUkNammsveXHsEzBDzIoxy+pAbphEb2h/TkQ0aksJ1hVhPN0SM5pYwfOM9Pw200BuDvj++l2jt5kA6eKhCj8vVw0Pp1KpJ84Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321538; c=relaxed/simple;
-	bh=8jKxWe5l8OVfIf1ihdLZzhT0WCdG5pJVK0j+lvnJR90=;
+	s=arc-20240116; t=1745321539; c=relaxed/simple;
+	bh=6Ex4TDV2zsYu1F8S7MzsO2fAsL/9qH/bHusCYK0VeV8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hQJYJCyf856oHlSrWWkbccfXsG4cddHPu+MyX8hxUEebyBL9o7iDtjDKRHcGxAdWQxK23COFugLZIVAPHtkIMexwf0+lbYmJW7gwVJdcK/VXlv5GtfnZIKZ7tlpzMMS0a5rEZb9Dw+aorg64sClN3aTKBzgVq0rpHoFOh2EZ1W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VSfRPAG1; arc=none smtp.client-ip=209.85.221.41
+	 MIME-Version; b=Dk8CZkxzFaczj0sbffE2Qp4tHrRpk6AReIPVDN7Q70SZ0s++NdsKwOkhgyX3RVvgQRTe+mgTX7+2DWUlIIzlw/VNoIk5ndFobtGJJyVfxNxAzS+jjceKrHEzNYQQin6CisIrFnqMkkngzDDTg/QzqiAdC06xzP1lIvBEhwTOnhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YDqvVgVw; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39ac9aea656so6341667f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:32:15 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ee651e419so2804780f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745321534; x=1745926334; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745321536; x=1745926336; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d6pSddhbiOlXQZYR80BvFSHp85nzfE1i19ocFXdQkwE=;
-        b=VSfRPAG1MhhqvLBB7FZy3A/t/dp7abKAZNfvn7r21JubkCuRS07ToGFYeT4DtoIm9J
-         ccNcrATmD0gVPCSQ8kdx4PTUzpEtVNgKa0JOkyzq0Th6//ipTxdLHgqbhRnnDvJY15ah
-         TVcYjGUPgWrzEY4VvbiuFB2y+UJF99gE3tqHr99Wk4b0VrcqVSTd0wNlu9NRBnUvOH3h
-         IkC88MK/l2K9TsIA7IjbrSo5sIAZw6Vc5qwzAY0psdwosa3LvzjOjiDA11GXtCvGplBT
-         H8TWSsOJMzBd94sf8QkcIhe9KpsPrn1RHkq25f07MvoaL5MBQDcVNDXsGMsDKZetQdyS
-         Dl8A==
+        bh=OdGiljQFkRF0Dbr2acCgX0s9x3K0UlpkYw5viR3VBTU=;
+        b=YDqvVgVw/Dleryy20k5uU6BSRNuUwsC+OcGiu/jiGzAVKqE4WS/veIsAN+xi23/DFG
+         J8Q6myPs9EmBgkabyi6bltBiU1jelBDnn2ORpENjgLm2iIxKD35igd9NWjbZhnjmY6UG
+         YX62IKZ58TWFfFdyvjSfLblKKtfPkYLg4i0LYuCkbpqAWKZ1vIqassupGBbEfnubamBC
+         PQzwn0Zi/dSyls3c/PZmwWInViKcadEp7uSDWbz0gc2sp+egC1K0qc5FXJjfRe7CPCwT
+         ksSFu7OrC8K5H2GaEOQpIWEGfU0A77u6icbZ8VPywf22dCvDv9RGAzm1Z/Daa0NU+0ZG
+         7uDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745321534; x=1745926334;
+        d=1e100.net; s=20230601; t=1745321536; x=1745926336;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d6pSddhbiOlXQZYR80BvFSHp85nzfE1i19ocFXdQkwE=;
-        b=O+Uf7u6STgX4MvtNL7d0qAX3JqKlOKiHFLt2cFHbsGlkwJjZ9uBBtjsH5bA6lZ73J9
-         b2LNLacbzpyeoghvR3RxxHGl0xbL+UFqW7v13inVR/+OgLOI6U0E8w8V5Ys+vGbm5xRQ
-         Lf/+0dSrGCZ0YaBaryNf8RLC89FczzklOqQq1kBcq4n2Gut6LtF8sMwCL51a0khv1W5G
-         pR78r22xI7n23dErtX55PSs0kGblHJmrw2TnahcpCulDPZw1la7lVp8G0ojUwnnn5EhL
-         3iNhJTVbASMRqH3+pFkbIYAtzl/orgEKerxm2F30kMpJQ1dPx6hLg3Hzuk1a6xoIQHiG
-         72HA==
-X-Gm-Message-State: AOJu0YxmZ9YJdWGHooE4gWvAGCivHtXcPFyF+7CvfgH5yFafoactGTNL
-	x7F897cNLlYlfDjOz9TEGu9XRIKOh/G5MkufATbPk6doPkjhM1HnextQGe3Smlk8Ood0cmgcurX
-	B
-X-Gm-Gg: ASbGncshaxNivQHyABy7oS2xAbse+VKLEcI4wzVvf5zzX/WY67LmHx5blUFjsKm7p9F
-	173GpLIOnc9DnmbKtL3cB084j/TD1uXg9UyjeK6qZdmewqPLxGHN3WU0SRuqRxq1SKOxgR7aGue
-	cEBvvCWL7zXBnWi1JU1Yqi4bEsoq3bEL/3K7/XTaiuKcEOae1mq1/7+TI5CSbs5qRGMaJ1QUPP/
-	LRCZDlUYAfnwaTxRCqVyeTtORTwZMFOuCbJpkxHX49nr935Q0s5fRHKXoGaAjaQy4i5S8QVGPOM
-	KrO+rJx0PpuuLfdRZzxNTpKah/41YuTI2meGCWZMGtZVx49Pw+cn
-X-Google-Smtp-Source: AGHT+IH8BH2AMctcLQnSIe88Oq6tqGkueAiadNbece/cNfBYdRbZoMYjxa1qtqbDc5QTg+2ZudqOeg==
-X-Received: by 2002:a5d:584e:0:b0:391:41c9:7a87 with SMTP id ffacd0b85a97d-39efbaf5562mr12324995f8f.51.1745321534238;
-        Tue, 22 Apr 2025 04:32:14 -0700 (PDT)
+        bh=OdGiljQFkRF0Dbr2acCgX0s9x3K0UlpkYw5viR3VBTU=;
+        b=DZJfoIh1kyZKVlBGIZKGcrlr3M2aoMeRPl736AkUCJLUI5OZx/jOyQw7BeTxhVioqb
+         2PpfcVxjME0aphHtoinuieoD9vDbpQ/ZCZ4JvIT4+WoNSLmairoetvQ3K4BbJdRyKTLk
+         00aKIRfvQgZboWQ4j+yNCaT8tVmDBMaTUu97qcdOLLN+XfwH1lrEQrHCo3lD4HZVt1IR
+         ivrV07+Y58ql0llO8UXuwXj5jHhw2eu6WfkSwqY6CJNwY4JF0GdOG8HEjPJboNDAQGym
+         XYao3LVOBymYn/iCTdbEnnr5VelasTseO8EKx9sV+Bzi33Sss3hAcgHXEk54ULK6JbIu
+         YaCw==
+X-Gm-Message-State: AOJu0Yx7dPBC9KEUDtoThBaF60D7m8PfZxArXdTCvox8m+rQmBAVYz3N
+	/P89/0z4C5D9FDBQ04fswy9u+9mfQGx7DEX671zY0z7P+3+znMHw65bbBTQDYUs48aqF4Uy1gkD
+	X
+X-Gm-Gg: ASbGnct4F9RebOLfSoV2JltK//CInNzGJVSKU7mIHgLVb+NcZpUPTIOFLlQIZ1dHqHe
+	ujgPgCxdm3siowq64WnB5wxSP955A+PBnkhx3PdC8VpPaSPTGa9QJGDveHxFMAKjO44QsPHr0V5
+	MMDW/zP+j/Yrm9gUHIAr8nRygsXPbtTPkubmA5UkAHWIPwmoDRXhPOzpyEszV0lbuKhqhX6WasI
+	ly3yHRji9OULFv6Mzn84668/iKyHnbraXjZPVgFoEDo0XFK17su4NDEjrMIPQjJDNmlwCteJ0GR
+	dQb2MNVTi2y2CCSGD1f0Q8rONoCHtHINeS45GOPc+FbZtKtum0mS
+X-Google-Smtp-Source: AGHT+IG0T8nDsUkbBz1LgLUHc4nOz1k/hW6xtvig54WUQh6HRN014aiXPO5h8JbbZcarpvLjXHIJ/g==
+X-Received: by 2002:a05:6000:4012:b0:390:f9d0:5e3 with SMTP id ffacd0b85a97d-39efba37dbfmr12326916f8f.1.1745321535721;
+        Tue, 22 Apr 2025 04:32:15 -0700 (PDT)
 Received: from eugen-station.. ([2a02:2f0a:131e:0:1820:da87:73b1:d80c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49312fsm14907887f8f.70.2025.04.22.04.32.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49312fsm14907887f8f.70.2025.04.22.04.32.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:32:13 -0700 (PDT)
+        Tue, 22 Apr 2025 04:32:15 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
@@ -90,11 +90,10 @@ Cc: linux-doc@vger.kernel.org,
 	konradybcio@kernel.org,
 	dietmar.eggemann@arm.com,
 	juri.lelli@redhat.com,
-	eugen.hristev@linaro.org,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [RFC][PATCH 03/14] kmemdump: introduce qcom-md backend driver
-Date: Tue, 22 Apr 2025 14:31:45 +0300
-Message-ID: <20250422113156.575971-4-eugen.hristev@linaro.org>
+	eugen.hristev@linaro.org
+Subject: [RFC][PATCH 04/14] soc: qcom: smem: add minidump device
+Date: Tue, 22 Apr 2025 14:31:46 +0300
+Message-ID: <20250422113156.575971-5-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250422113156.575971-1-eugen.hristev@linaro.org>
 References: <20250422113156.575971-1-eugen.hristev@linaro.org>
@@ -106,526 +105,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Qualcomm Minidump is a backend driver for kmemdump.
-Regions are being registered into the shared memory on Qualcomm platforms
-and into the table of contents.
-Further, the firmware can read the table of contents and dump the memory
-accordingly.
+Add a minidump platform device.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-Co-developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- drivers/debug/Kconfig   |  13 ++
- drivers/debug/Makefile  |   1 +
- drivers/debug/qcom_md.c | 467 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 481 insertions(+)
- create mode 100644 drivers/debug/qcom_md.c
+ drivers/soc/qcom/smem.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/debug/Kconfig b/drivers/debug/Kconfig
-index 22348608d187..72a906487e02 100644
---- a/drivers/debug/Kconfig
-+++ b/drivers/debug/Kconfig
-@@ -13,4 +13,17 @@ config DRIVER_KMEMDUMP
+diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+index 592819701809..985147b563f8 100644
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -270,6 +270,7 @@ struct smem_region {
+  * @partitions: list of partitions of current processor/host
+  * @item_count: max accepted item number
+  * @socinfo:	platform device pointer
++ * @mdinfo:	minidump device pointer
+  * @num_regions: number of @regions
+  * @regions:	list of the memory regions defining the shared memory
+  */
+@@ -280,6 +281,7 @@ struct qcom_smem {
  
- 	  Note that modules using this feature must be rebuilt if option
- 	  changes.
-+
-+config QCOM_MD_KMEMDUMP_BACKEND
-+	tristate "Qualcomm Minidump kmemdump backend driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on DRIVER_KMEMDUMP
-+	help
-+	  Say y here to enable the Qualcomm Minidump kmemdump backend
-+	  driver.
-+	  With this backend, the registered regions are being linked
-+	  into the minidump table of contents. Further on, the firmware
-+	  will be able to read the table of contents and extract the
-+	  memory regions on case-by-case basis.
-+
- endmenu
-diff --git a/drivers/debug/Makefile b/drivers/debug/Makefile
-index cc14dea250e3..d8a9db29cd15 100644
---- a/drivers/debug/Makefile
-+++ b/drivers/debug/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
+ 	u32 item_count;
+ 	struct platform_device *socinfo;
++	struct platform_device *mdinfo;
+ 	struct smem_ptable *ptable;
+ 	struct smem_partition global_partition;
+ 	struct smem_partition partitions[SMEM_HOST_COUNT];
+@@ -1236,12 +1238,20 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ 	if (IS_ERR(smem->socinfo))
+ 		dev_dbg(&pdev->dev, "failed to register socinfo device\n");
  
- obj-$(CONFIG_DRIVER_KMEMDUMP) += kmemdump.o
-+obj-$(CONFIG_QCOM_MD_KMEMDUMP_BACKEND) += qcom_md.o
-diff --git a/drivers/debug/qcom_md.c b/drivers/debug/qcom_md.c
-new file mode 100644
-index 000000000000..1aff28e18230
---- /dev/null
-+++ b/drivers/debug/qcom_md.c
-@@ -0,0 +1,467 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/soc/qcom/socinfo.h>
-+#include <linux/kmemdump.h>
-+
-+/*
-+ * In some of the Old Qualcomm devices, boot firmware statically allocates 300
-+ * as total number of supported region (including all co-processors) in
-+ * minidump table out of which linux was using 201. In future, this limitation
-+ * from boot firmware might get removed by allocating the region dynamically.
-+ * So, keep it compatible with older devices, we can keep the current limit for
-+ * Linux to 201.
-+ */
-+#define MAX_NUM_ENTRIES	  201
-+
-+#define MAX_NUM_OF_SS           10
-+#define MAX_REGION_NAME_LENGTH  16
-+#define SBL_MINIDUMP_SMEM_ID	602
-+#define MINIDUMP_REGION_VALID	   ('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-+#define MINIDUMP_SS_ENCR_DONE	   ('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-+#define MINIDUMP_SS_ENABLED	   ('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
-+
-+#define MINIDUMP_SS_ENCR_NOTREQ	   (0 << 24 | 0 << 16 | 'N' << 8 | 'R' << 0)
-+
-+#define MINIDUMP_APSS_DESC	   0
-+
-+/**
-+ * struct minidump - Minidump driver data information
-+ * @apss_data: APSS driver data
-+ * @md_lock: Lock to protect access to APSS minidump table
-+ */
-+struct minidump {
-+	struct device		*dev;
-+	struct minidump_ss_data	*apss_data;
-+	struct mutex		md_lock;
-+};
-+
-+/**
-+ * struct minidump_region - Minidump region
-+ * @name		: Name of the region to be dumped
-+ * @seq_num:		: Use to differentiate regions with same name.
-+ * @valid		: This entry to be dumped (if set to 1)
-+ * @address		: Physical address of region to be dumped
-+ * @size		: Size of the region
-+ */
-+struct minidump_region {
-+	char	name[MAX_REGION_NAME_LENGTH];
-+	__le32	seq_num;
-+	__le32	valid;
-+	__le64	address;
-+	__le64	size;
-+};
-+
-+/**
-+ * struct minidump_subsystem - Subsystem's SMEM Table of content
-+ * @status : Subsystem toc init status
-+ * @enabled : if set to 1, this region would be copied during coredump
-+ * @encryption_status: Encryption status for this subsystem
-+ * @encryption_required : Decides to encrypt the subsystem regions or not
-+ * @region_count : Number of regions added in this subsystem toc
-+ * @regions_baseptr : regions base pointer of the subsystem
-+ */
-+struct minidump_subsystem {
-+	__le32	status;
-+	__le32	enabled;
-+	__le32	encryption_status;
-+	__le32	encryption_required;
-+	__le32	region_count;
-+	__le64	regions_baseptr;
-+};
-+
-+/**
-+ * struct minidump_global_toc - Global Table of Content
-+ * @status : Global Minidump init status
-+ * @md_revision : Minidump revision
-+ * @enabled : Minidump enable status
-+ * @subsystems : Array of subsystems toc
-+ */
-+struct minidump_global_toc {
-+	__le32				status;
-+	__le32				md_revision;
-+	__le32				enabled;
-+	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
-+};
-+
-+/**
-+ * struct minidump_ss_data - Minidump subsystem private data
-+ * @md_ss_toc: Application Subsystem TOC pointer
-+ * @md_regions: Application Subsystem region base pointer
-+ */
-+struct minidump_ss_data {
-+	struct minidump_subsystem *md_ss_toc;
-+	struct minidump_region	  *md_regions;
-+};
-+
-+#define MINIDUMP_MAX_NAME_LENGTH	12
-+/**
-+ * struct qcom_minidump_region - Minidump region information
-+ *
-+ * @name:	Minidump region name
-+ * @virt_addr:  Virtual address of the entry.
-+ * @phys_addr:	Physical address of the entry to dump.
-+ * @size:	Number of bytes to dump from @address location,
-+ *		and it should be 4 byte aligned.
-+ */
-+struct qcom_minidump_region {
-+	char		name[MINIDUMP_MAX_NAME_LENGTH];
-+	void		*virt_addr;
-+	phys_addr_t	phys_addr;
-+	size_t		size;
-+	unsigned int	id;
-+};
-+
-+static LIST_HEAD(apss_md_rlist);
-+
-+/**
-+ * struct md_region_list - Minidump region list struct
-+ *
-+ * @md_region:	associated minidump region
-+ * @list:  list head entry
-+ */
-+struct md_region_list {
-+	struct qcom_minidump_region md_region;
-+	struct list_head list;
-+};
-+
-+static struct minidump *md;
-+
-+/**
-+ * qcom_md_add_region() - Register region in APSS Minidump table.
-+ * @region: minidump region.
-+ *
-+ * Return: None
-+ */
-+static void qcom_md_add_region(const struct qcom_minidump_region *region)
-+{
-+	struct minidump_subsystem *mdss_toc = md->apss_data->md_ss_toc;
-+	struct minidump_region *mdr;
-+	unsigned int region_cnt;
-+
-+	region_cnt = le32_to_cpu(mdss_toc->region_count);
-+	mdr = &md->apss_data->md_regions[region_cnt];
-+	strscpy(mdr->name, region->name, sizeof(mdr->name));
-+	mdr->address = cpu_to_le64(region->phys_addr);
-+	mdr->size = cpu_to_le64(region->size);
-+	mdr->valid = cpu_to_le32(MINIDUMP_REGION_VALID);
-+	region_cnt++;
-+	mdss_toc->region_count = cpu_to_le32(region_cnt);
-+}
-+
-+/**
-+ * qcom_md_get_region_index() - Lookup minidump region by name
-+ * @mdss_data: minidump subsystem data
-+ * @region: minidump region.
-+ *
-+ * Return: On success, it returns the region index, on failure, returns
-+ *	negative error value
-+ */
-+static int qcom_md_get_region_index(struct minidump_ss_data *mdss_data,
-+				    const struct qcom_minidump_region *region)
-+{
-+	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
-+	struct minidump_region *mdr;
-+	unsigned int i;
-+	unsigned int count;
-+
-+	count = le32_to_cpu(mdss_toc->region_count);
-+	for (i = 0; i < count; i++) {
-+		mdr = &mdss_data->md_regions[i];
-+		if (!strcmp(mdr->name, region->name))
-+			return i;
-+	}
-+
-+	return -ENOENT;
-+}
-+
-+/**
-+ * qcom_md_region_unregister() - Unregister region from APSS Minidump table.
-+ * @region: minidump region.
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int qcom_md_region_unregister(const struct qcom_minidump_region *region)
-+{
-+	struct minidump_ss_data *mdss_data = md->apss_data;
-+	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
-+	struct minidump_region *mdr;
-+	unsigned int region_cnt;
-+	unsigned int idx;
-+	int ret;
-+
-+	ret = qcom_md_get_region_index(mdss_data, region);
-+	if (ret < 0) {
-+		dev_err(md->dev, "%s region is not present\n", region->name);
-+		return ret;
-+	}
-+
-+	idx = ret;
-+	mdr = &mdss_data->md_regions[0];
-+	region_cnt = le32_to_cpu(mdss_toc->region_count);
-+	/*
-+	 * Left shift all the regions exist after this removed region
-+	 * index by 1 to fill the gap and zero out the last region
-+	 * present at the end.
-+	 */
-+	memmove(&mdr[idx], &mdr[idx + 1], (region_cnt - idx - 1) * sizeof(*mdr));
-+	memset(&mdr[region_cnt - 1], 0, sizeof(*mdr));
-+	region_cnt--;
-+	mdss_toc->region_count = cpu_to_le32(region_cnt);
-+
-+	return 0;
-+}
-+
-+/**
-+ * qcom_md_region_register() - Register region in APSS Minidump table.
-+ * @region: minidump region.
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int qcom_md_region_register(const struct qcom_minidump_region *region)
-+{
-+	struct minidump_ss_data *mdss_data = md->apss_data;
-+	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
-+	unsigned int num_region;
-+	int ret;
-+
-+	ret = qcom_md_get_region_index(mdss_data, region);
-+	if (ret >= 0) {
-+		dev_info(md->dev, "%s region is already registered\n", region->name);
-+		return -EEXIST;
-+	}
-+
-+	/* Check if there is a room for a new entry */
-+	num_region = le32_to_cpu(mdss_toc->region_count);
-+	if (num_region >= MAX_NUM_ENTRIES) {
-+		dev_err(md->dev, "maximum region limit %u reached\n", num_region);
-+		return -ENOSPC;
-+	}
-+
-+	qcom_md_add_region(region);
-+
-+	return 0;
-+}
-+
-+/**
-+ * qcom_minidump_valid_region() - Checks if region is valid
-+ * @region: minidump region.
-+ *
-+ * Return: true if region is valid, false otherwise.
-+ */
-+static bool qcom_minidump_valid_region(const struct qcom_minidump_region *region)
-+{
-+	return region &&
-+		strnlen(region->name, MINIDUMP_MAX_NAME_LENGTH) < MINIDUMP_MAX_NAME_LENGTH &&
-+			region->virt_addr &&
-+			region->size &&
-+			IS_ALIGNED(region->size, 4);
-+}
-+
-+/**
-+ * qcom_minidump_region_register() - Register region in APSS Minidump table.
-+ * @region: minidump region.
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int qcom_minidump_region_register(const struct qcom_minidump_region *region)
-+{
-+	int ret;
-+
-+	if (!qcom_minidump_valid_region(region))
-+		return -EINVAL;
-+
-+	mutex_lock(&md->md_lock);
-+	ret = qcom_md_region_register(region);
-+
-+	mutex_unlock(&md->md_lock);
-+	return ret;
-+}
-+
-+/**
-+ * qcom_minidump_region_unregister() - Unregister region from APSS Minidump table.
-+ * @region: minidump region.
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int qcom_minidump_region_unregister(const struct qcom_minidump_region *region)
-+{
-+	int ret;
-+
-+	if (!qcom_minidump_valid_region(region))
-+		return -EINVAL;
-+
-+	mutex_lock(&md->md_lock);
-+	ret = qcom_md_region_unregister(region);
-+
-+	mutex_unlock(&md->md_lock);
-+	return ret;
-+}
-+
-+/**
-+ * qcom_apss_md_table_init() - Initialize the minidump table
-+ * @mdss_toc: minidump subsystem table of contents
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int qcom_apss_md_table_init(struct minidump_subsystem *mdss_toc)
-+{
-+	struct minidump_ss_data *mdss_data;
-+
-+	mdss_data = devm_kzalloc(md->dev, sizeof(*mdss_data), GFP_KERNEL);
-+	if (!mdss_data)
-+		return -ENOMEM;
-+
-+	mdss_data->md_ss_toc = mdss_toc;
-+	mdss_data->md_regions = devm_kcalloc(md->dev, MAX_NUM_ENTRIES,
-+					     sizeof(*mdss_data->md_regions),
-+					     GFP_KERNEL);
-+	if (!mdss_data->md_regions)
-+		return -ENOMEM;
-+
-+	mdss_toc = mdss_data->md_ss_toc;
-+	mdss_toc->regions_baseptr = cpu_to_le64(virt_to_phys(mdss_data->md_regions));
-+	mdss_toc->enabled = cpu_to_le32(MINIDUMP_SS_ENABLED);
-+	mdss_toc->status = cpu_to_le32(1);
-+	mdss_toc->region_count = cpu_to_le32(0);
-+
-+	/* Tell bootloader not to encrypt the regions of this subsystem */
-+	mdss_toc->encryption_status = cpu_to_le32(MINIDUMP_SS_ENCR_DONE);
-+	mdss_toc->encryption_required = cpu_to_le32(MINIDUMP_SS_ENCR_NOTREQ);
-+
-+	md->apss_data = mdss_data;
-+
-+	return 0;
-+}
-+
-+/**
-+ * register_md_region() - Register a new minidump region
-+ * @id: unique id to identify the region
-+ * @name: name of the region
-+ * @vaddr: virtual memory address of the region start
-+ * @size: size of the region
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int register_md_region(unsigned int id, char *name, void *vaddr,
-+			      size_t size)
-+{
-+	struct qcom_minidump_region *md_region;
-+	int ret;
-+
-+	struct md_region_list *mdr_list =
-+		kzalloc(sizeof(*mdr_list), GFP_KERNEL);
-+	if (!mdr_list)
-+		return -ENOMEM;
-+	md_region = &mdr_list->md_region;
-+
-+	scnprintf(md_region->name, sizeof(md_region->name), "K%d%.8s", id, name);
-+	md_region->virt_addr = vaddr;
-+	md_region->phys_addr = virt_to_phys(vaddr);
-+	md_region->size = ALIGN(size, 4);
-+	md_region->id = id;
-+
-+	ret = qcom_minidump_region_register(md_region);
-+	if (ret < 0) {
-+		pr_err("failed to register region in minidump %d %s: err: %d\n",
-+		       id, name, ret);
-+		return ret;
-+	}
-+
-+	list_add(&mdr_list->list, &apss_md_rlist);
-+	return 0;
-+}
-+
-+/**
-+ * unregister_md_region() - Unregister a previously registered minidump region
-+ * @id: unique id to identify the region
-+ *
-+ * Return: On success, it returns 0 and negative error value on failure.
-+ */
-+static int unregister_md_region(unsigned int id)
-+{
-+	int ret = -ENOENT;
-+	struct md_region_list *mdr_list;
-+	struct md_region_list *tmp;
-+
-+	list_for_each_entry_safe(mdr_list, tmp, &apss_md_rlist, list) {
-+		struct qcom_minidump_region *region;
-+
-+		region = &mdr_list->md_region;
-+		if (region->id == id) {
-+			ret = qcom_minidump_region_unregister(region);
-+			list_del(&mdr_list->list);
-+			return ret;
-+		}
-+	}
-+
-+	pr_err("failed to unregister region from minidump %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static struct kmemdump_backend qcom_md_backend = {
-+	.name = "qcom_md",
-+	.register_region = register_md_region,
-+	.unregister_region = unregister_md_region,
-+};
-+
-+static int qcom_md_probe(struct platform_device *pdev)
-+{
-+	struct minidump_global_toc *mdgtoc;
-+	size_t size;
-+	int ret;
-+
-+	md = devm_kzalloc(&pdev->dev, sizeof(*md), GFP_KERNEL);
-+
-+	md->dev = &pdev->dev;
-+
-+	mdgtoc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, &size);
-+	if (IS_ERR(mdgtoc)) {
-+		ret = PTR_ERR(mdgtoc);
-+		dev_err(md->dev, "Couldn't find minidump smem item %d\n", ret);
-+	}
-+
-+	if (size < sizeof(*mdgtoc) || !mdgtoc->status) {
-+		dev_err(md->dev, "minidump table is not initialized %d\n", ret);
-+		return -ENAVAIL;
-+	}
-+
-+	mutex_init(&md->md_lock);
-+
-+	ret = qcom_apss_md_table_init(&mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
-+	if (ret) {
-+		dev_err(md->dev, "apss minidump initialization failed %d\n", ret);
-+		return ret;
-+	}
-+
-+	return kmemdump_register_backend(&qcom_md_backend);
-+}
-+
-+static void qcom_md_remove(struct platform_device *pdev)
-+{
-+	kmemdump_unregister_backend(&qcom_md_backend);
-+}
-+
-+static struct platform_driver qcom_md_driver = {
-+	.probe = qcom_md_probe,
-+	.remove = qcom_md_remove,
-+	.driver  = {
-+		.name = "qcom-md",
-+	},
-+};
-+
-+module_platform_driver(qcom_md_driver);
-+
-+MODULE_AUTHOR("Eugen Hristev <eugen.hristev@linaro.org>");
-+MODULE_AUTHOR("Mukesh Ojha <quic_mojha@quicinc.com>");
-+MODULE_DESCRIPTION("Qualcomm kmemdump minidump backend driver");
-+MODULE_LICENSE("GPL");
++	smem->mdinfo = platform_device_register_data(&pdev->dev, "qcom-md",
++						     PLATFORM_DEVID_AUTO, NULL,
++						     0);
++	if (IS_ERR(smem->mdinfo))
++		dev_err(&pdev->dev, "failed to register platform md device\n");
++
+ 	return 0;
+ }
+ 
+ static void qcom_smem_remove(struct platform_device *pdev)
+ {
+ 	platform_device_unregister(__smem->socinfo);
++	if (!IS_ERR(__smem->mdinfo))
++		platform_device_unregister(__smem->mdinfo);
+ 
+ 	hwspin_lock_free(__smem->hwlock);
+ 	__smem = NULL;
 -- 
 2.43.0
 
