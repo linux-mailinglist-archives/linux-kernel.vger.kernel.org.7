@@ -1,203 +1,98 @@
-Return-Path: <linux-kernel+bounces-614502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DA3A96D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:49:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A291AA96D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF1E3B9F10
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ABEE18833E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CB0284B48;
-	Tue, 22 Apr 2025 13:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5152836BD;
+	Tue, 22 Apr 2025 13:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajfS0Fan"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T/j40Mmi"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61544C85;
-	Tue, 22 Apr 2025 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5A91EE7BC;
+	Tue, 22 Apr 2025 13:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745329675; cv=none; b=eCwUD+HkIFFqL7SX94GDxAigNTlSDIioVqmIUYRI7sdOAt+VbINQ78hmdA6p6aLy6+6GXCaYsuR/fZAeLPgOM1KZAt9pnZHCLcu3hmRiyopJ3Gix0rm4vGdV/rHhdCmu7OwnVr8c5MKf/mTX8TjzCrwNdCfxgHA6nE3ciWFr8fQ=
+	t=1745329668; cv=none; b=ioE+kZ7U6x/l3dzhGyj/lBwmiqcZ6heHrpPI8oy5xEUuhnvY5Tv5R9qqgqre6dqzYtx9mlBX8v/QnEk4LoXjMq5ALeC44a6QQJ9rIRfl0iFlhB/GskQQqx+TOkUuqfZLY7aBDhGxru4a24rtmlVxpdWe2geU5cxcpBLyVAqFu5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745329675; c=relaxed/simple;
-	bh=FoNPp8gvjLy3QZyMyd34WJbEIvriF/TJs1PaU5tXNLI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vyg08Y5czSNXF4ku6npTXb5bQJZXiZ71xDW/sE3xiandARRDH5MsqKJVjFVsBgfO149BShxhXxB+MglaOWyY/suK5cDmj85g5Vw2ErNiS9XPk/UpBXRV4xX+V3IMn5BbubzIyvv9whnvtOkWhwWhC/Q2s++Rpd1e+GTM/oNekB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajfS0Fan; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-af9b16eca8eso318205a12.1;
-        Tue, 22 Apr 2025 06:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745329673; x=1745934473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+ByOwbXTp0uyTPHkOtuOVbDZK9B4SVuPq+zJXZT0mE=;
-        b=ajfS0FanXhaoNTgxopjlCzPB+D1KyfWBYmtmBYMO7BYMpuPITN602caBjzzb0aO2cc
-         ixG84DT+SK+2sexjOHz2GAzcdRGUAqwmXq+smx+Oc/nLhd84hHr+f57zKA8ywoQ6EGWm
-         ThpyV7LCdaaXx6ByZnXkIsWIG9HeRNRUavYS9ZYvFCPj9NXX+PXqMDKq33ZXBieFDzcB
-         0Od/hlWT4WZIEgpw4c5kvWSS/S/r0HkOxK9U07bZBSbLnxbE4Ero75GOiQHbjCaMNJbO
-         wxAySc6MAEKZwLkqlKmpbE/f9wHKMA5UMIJjPL47RtTEpiNbqonD+raLUoqFSFjrPigB
-         mvFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745329673; x=1745934473;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+ByOwbXTp0uyTPHkOtuOVbDZK9B4SVuPq+zJXZT0mE=;
-        b=pxS4+qpiYjzBXvK87jJploRibdA+ulLrkDhRoSaKi4ftkrQAO4AWqOWFK2junwlSxF
-         quH0AOYlVGcfcDtckC5d/y9djRuRs3OBGFMXn2S55XIY8IIStWRbuO8fRzfQKOZq5d7x
-         qO8EHh1ttbzF70Q81sWmVKTmuqo0uburgAyke+ljeqMBTpVfKPGBq+fQmtPymS9i74IZ
-         ViTo0EAJhDgD8SPbMK7LddO2kRklJEYtEEKd/K5FJSVaW7mXU5LbxIXYyudpHVlj4nUX
-         iP7s6RnLboZRiiTWKwBiOqX9y2sIPcz2GpSrIDqQeUgjJjfVAatHv98DTzuFS1vIolrc
-         A8UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYQFXWH4rBCZV2R2+43pDqCDm3asAK+5qCO1kU0BCm6kj2jm9Aa+xy9xKVSH2a2zNHP0bAVzdREn9SqBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrpsY8PQvFQQyn+YUU4kE6I7ZCH8d9pLtahZyw2TLeV1vzOS7v
-	xhNyQyqZqaklIseQcQc5jHNAPiaNMLbVnruAaOs2+IUWJIhsYFYyFnFQImdG+g4=
-X-Gm-Gg: ASbGnctCID57KAeAd+CS81ZsTLXR050ZbloYVjAiVap4Hyw7QskbgePRfJXHQKF7hR9
-	oS8+qYd3o1f1g6dfzgSZ35oEunJNLgdCzCOv93yaLcs8X7syWc6299Z/cbm8mwr1i6OGuwURjdj
-	tUUpepELLdSzu3P52/FtdoHLsiuacHJtcj/owAbrqsOQEFi5UXSlcHeJmjT3YF12DvarFds6UMe
-	A7oZkbCXjDx7f0XNUYOw+XVuk30fL1Zbj5bx2FX/DiOfjmLXRmtT12d4ehSMZyqQjcxGNZPWPf8
-	I7kVQ39l8vymgdhagR9Se65aOSrbnOwkjITuuoFXOV9tDqhr8dtkk7Fs+QHTpIE=
-X-Google-Smtp-Source: AGHT+IFqu8ojOTnhEF4HKyFdc0yN4q+/NQI7lPzrfCLv+6d557zDM0nA6BiAAW+1s5Fbihn5L1GVhw==
-X-Received: by 2002:a17:90b:1c91:b0:2ee:f59a:94d3 with SMTP id 98e67ed59e1d1-3087ba5ccbamr8020134a91.0.1745329672828;
-        Tue, 22 Apr 2025 06:47:52 -0700 (PDT)
-Received: from MGG23TF6W0.corp.ebay.com ([202.76.247.146])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3087e05b2bbsm8695214a91.42.2025.04.22.06.47.46
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Apr 2025 06:47:52 -0700 (PDT)
-From: Jianlin Lv <iecedge@gmail.com>
-X-Google-Original-From: Jianlin Lv <jianlv@ebay.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	iecedge@gmail.com,
-	jianlv@ebay.com
-Subject: [RFC PATCH  bpf-next 2/2] Export irq_time_read for BPF module usage
-Date: Tue, 22 Apr 2025 21:47:27 +0800
-Message-Id: <75aef5f2b9d9292ae919f2af9f82a8618f9b191e.1745250534.git.iecedge@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <cover.1745250534.git.iecedge@gmail.com>
-References: <cover.1745250534.git.iecedge@gmail.com>
+	s=arc-20240116; t=1745329668; c=relaxed/simple;
+	bh=r/2jQ92IbgEzNppnARIsVhMwo1Q4nrZsUcwAE/C6P9k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sEdmKrktxtz7nVravj9JZOs4efZwop0YMuO/5YtiBIqcZcUrN70FAWD1UWWcb0l1Yx+xQfzNFDlfs2zS1xmXhreKQjLYgBLkMavsEmCRrWBKsjRlYuRBq+aYwRFN4Ieq3remkyvDymZCsemfVvQy01afcKbzL2IEOu2I35q6SwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T/j40Mmi; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745329663;
+	bh=r/2jQ92IbgEzNppnARIsVhMwo1Q4nrZsUcwAE/C6P9k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=T/j40MmimszjMC5SdsG/9amraFDtsO0jL7pw4tU4CEzqr3yFaUPSBlvzAnwYF5A8t
+	 N7eXubSLtoif2uoNOqf74HjjMqsaPjBxox34EF3AqGW3Amip0AqVXaBusCC2bOP3ma
+	 2hiE9XOIQNRSrjEO7Etg2wfanBNPNtUCqq0fu7wYSDhvNuB7iMkXuG1ptuqrIHR46B
+	 d768fchLO93JZPWY4ug0gNvathrfDL+FEZW/TEfOu3wfcOn+hHPGKT2w04d3Jfagoc
+	 Ex0yntyehehm0VhJdjcTjmvW8dhVvRKG2nHOrCAhMMzXrNHbtq7oXjbEXu5bF22JMO
+	 ZUlKOlENt954A==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A98DA17E078A;
+	Tue, 22 Apr 2025 15:47:42 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Tinghan Shen <tinghan.shen@mediatek.com>, 
+ Olivia Wen <olivia.wen@mediatek.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>
+In-Reply-To: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
+References: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
+Subject: Re: (subset) [PATCH v2 0/5] Describe MT8188's SCP as dual-core
+Message-Id: <174532966260.97079.6264214242905276667.b4-ty@collabora.com>
+Date: Tue, 22 Apr 2025 15:47:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-From: Jianlin Lv <iecedge@gmail.com>
+On Mon, 21 Apr 2025 16:49:03 -0400, Nícolas F. R. A. Prado wrote:
+> This series updates the MT8188 SCP description to dual-core and prepares
+> its usage. Patch 4 updates the MT8188 DT to describe the SCP as a dual
+> core cluster and patch 5 adds the firmware-name property so the firmware
+> can be loaded. Patches 1 through 3 are dt-binding fixes for the SCP.
+> 
+> 
 
-Move irq_time_read function to kernel/sched/core.c and export for
-external use when CONFIG_IRQ_TIME_ACCOUNTING is enabled.
+Applied to v6.15-next/dts64, thanks!
 
-Signed-off-by: Jianlin Lv <iecedge@gmail.com>
----
- include/linux/sched.h |  4 ++++
- kernel/sched/core.c   | 22 ++++++++++++++++++++++
- kernel/sched/sched.h  | 19 -------------------
- 3 files changed, 26 insertions(+), 19 deletions(-)
+[4/5] arm64: dts: mediatek: mt8188: Describe SCP as a cluster with two cores
+      commit: b1e157c61db5e6f8d9c35e8ebc714ab6ce02ee41
+[5/5] arm64: dts: mediatek: mt8390-genio-common: Add firmware-name for scp0
+      commit: 2f0066dae66f30386ecd6408410e27a4d6818c15
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f96ac1982893..3b83ac99b533 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2281,4 +2281,8 @@ static __always_inline void alloc_tag_restore(struct alloc_tag *tag, struct allo
- #define alloc_tag_restore(_tag, _old)		do {} while (0)
- #endif
- 
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+extern inline u64 irq_time_read(int cpu);
-+#endif
-+
- #endif
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index cfaca3040b2f..c840d1ffdaca 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10747,3 +10747,25 @@ void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx)
- 		set_next_task(rq, ctx->p);
- }
- #endif	/* CONFIG_SCHED_CLASS_EXT */
-+
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+/*
-+ * Returns the irqtime minus the softirq time computed by ksoftirqd.
-+ * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
-+ * and never move forward.
-+ */
-+inline u64 irq_time_read(int cpu)
-+{
-+	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-+	unsigned int seq;
-+	u64 total;
-+
-+	do {
-+		seq = __u64_stats_fetch_begin(&irqtime->sync);
-+		total = irqtime->total;
-+	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
-+
-+	return total;
-+}
-+EXPORT_SYMBOL(irq_time_read);
-+#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 47972f34ea70..d2fd3772114e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3209,25 +3209,6 @@ static inline int irqtime_enabled(void)
- 	return sched_clock_irqtime;
- }
- 
--/*
-- * Returns the irqtime minus the softirq time computed by ksoftirqd.
-- * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
-- * and never move forward.
-- */
--static inline u64 irq_time_read(int cpu)
--{
--	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
--	unsigned int seq;
--	u64 total;
--
--	do {
--		seq = __u64_stats_fetch_begin(&irqtime->sync);
--		total = irqtime->total;
--	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
--
--	return total;
--}
--
- #else
- 
- static inline int irqtime_enabled(void)
--- 
-2.34.1
+Cheers,
+Angelo
+
 
 
