@@ -1,131 +1,208 @@
-Return-Path: <linux-kernel+bounces-613447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D371A95CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:07:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73583A95CBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1EC3B3016
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BB73B8C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3065B28382;
-	Tue, 22 Apr 2025 04:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7A51B0F19;
+	Tue, 22 Apr 2025 04:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="L7I5E0Uj"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZBZ4u7g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941B917A2ED
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C0E189905;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745294833; cv=none; b=RyBVE4/bnocvl04Mr1I33BsEIZ8CW1ped27Fq64IaGZ5xAw6F9gdWlCkVTKEFVPSZTYa6uEXrhj6Ivz3xoPOvYjXnTO/GYTmbWU8DoD+Ek23MvvdqLY99uL/6q0VfM3Nkl0blgAcLa3sS5t/1HwJsjQO3yRPznCQOLptjcB28Wc=
+	t=1745294837; cv=none; b=HkaTk2QnQKBcRo30AMGYFZF7HENI870IVx+EJc3CrAo1hqVzUPKOoDzffDHF6yberdMV9xFRcvFSFBDKw208QafAvwFTkDhkyWULaUWB9MTx0PBjUr+gX4VsoCTPiywJ5yoMDJWrpuARCVsje/v290T5ds23bYn7CSdeZZB+ovQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745294833; c=relaxed/simple;
-	bh=QAdDrtj1nuZWWw4f191Dtr6SFFTVJHIvpOTS7gaWUHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENVKZyq9c6jzViRylOxQ3aFflLeCqaNegZ4dqZwVAVRkpmGqCvvEl9s4icfnQoY/rqG0GecKTnH8/WwaEA7vUN96vKqgm6E6wkC3yWSnbCKeWf67CqvrAkTYT79jBdggUUVVQkHxteUBk00hX/smVjccJyC5Th5Pfn5kX3LI+B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=L7I5E0Uj; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c55b53a459so469264485a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 21:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1745294830; x=1745899630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pn51hFpFTFagOSHuF4DEwBg/7u0CH8uTd7Ja7DWosA0=;
-        b=L7I5E0UjDaJ9Kw43mBYcXRbUwwn0OwmdkoO2lTm+Ox3CRyvs51GKcrCGZPSPq9twdm
-         QKMWauOQbhMKMdjEWmUrWrbW1Ynp0vTKmMCLeFiVOU6M0u27qynPP1bPWDu3PlIYataQ
-         cO1T3nH15sVSTtg64oVF1lLavVBax9p0eGX12o4bMMZJ846ooTQ1xXcLuRnWBS0ooWdH
-         cQUCpPEb84PyJHqncUvvDP6qEu2DIRR9idO40Nm/dj32++eOn1LBnNbx99jpl1XZdPmv
-         LRED1mnJnG2nTcszS0DdfPH4B3mtnA3feZ5Nfj5I0+CNJj6hEy/pP7pqHYJOhODtktLV
-         LoKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745294830; x=1745899630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pn51hFpFTFagOSHuF4DEwBg/7u0CH8uTd7Ja7DWosA0=;
-        b=YRztP57Rvqdix2c+uez2I40E6loubLp/Ar2YD+aCCGhPKnKkzvV/YCVY2bVQMfLObE
-         thQRSjKyLXwzK7JDK49jr1o8oOHI9TEvkGme8UcEa4tG9to/SpB+Fqo+4qDdLBG5hCbn
-         9llY/fKrguDEwVTffvCsSSNgAYCpD+ogVQFDT7rHf2ziezXv/It/KtYVr3BIC9yiasHC
-         3QOZ2nZceNyenr1V8fCNAinRqkGifOxFMXos4MlFjAWXYMkk7dlDj0z2UOsvzXjm7/4D
-         EMJc7QZY46d9FLO6suJkSGHK1nR4v0VUKW1l9Ddmf2lQ8HkGkt0OyMsDJIvnnU3Yez/n
-         MkqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfx4npPexYVqWHdsLLBPvTK2LpsDGVxKI2w4Cygw1LGxSq0smOZcjVj1DBu5/OJPK8RI2cZ9vP2np6TVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiG6SZNj2Iiyrm/pxnjS5Og3GQuCL1MPKs5aDMWWAxSmik01p/
-	gzFxQ9nA5pO+LJ7glPXNuVu3CD6G7v780nSdCByfrtJYy5MUJFxcfTOCCwvhrfBWpIT2Epni9bD
-	h
-X-Gm-Gg: ASbGncsuTGE+CsE0SaAawKhh9RYuugPDsYJaZpXTe+l2vzXUyShC/RCAy8lcdbsLcHr
-	A/21Rz8Rhj1J7pMbhezY0RoqWvqWKQPl+Jtv033Wx6SdGlIyQgk5FIc9+LGJBoWNiMOIQ2RZIIX
-	xRq30l1BIqpOt0yvEhr99J907E8rZQ9AGSq+eZv9SQu20h89yCfiFQxM2SPkZbUOwuZsOCWWe++
-	6Ran1llR4akv8EhNJ4QxmiR/UUvsq9shF3y0BxnYaGLesbTdN5I6sSkpCseFLgBzuqksvRkyp8c
-	mYmdtX3tBBBERCODHq/rkXVeiuLtRJSykVcncc7/r3M9z5IieUYU/gQlPPcQj4YkIg0YdmP4mID
-	yZe03q1msutMv0N10Arc36tc=
-X-Google-Smtp-Source: AGHT+IEiqfCY4yW0u7a48f8L6A0kzRDy2F8MnJUbXRTzNqpzbAbE0B6Uy/hIslrtvzFwl6GwITBPpA==
-X-Received: by 2002:a05:620a:1929:b0:7c9:2537:be48 with SMTP id af79cd13be357-7c927f81067mr2156091385a.24.1745294830360;
-        Mon, 21 Apr 2025 21:07:10 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b6e198sm500347285a.103.2025.04.21.21.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 21:07:09 -0700 (PDT)
-Date: Tue, 22 Apr 2025 00:07:08 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org,
-	mkoutny@suse.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v4 2/2] vmscan,cgroup: apply mems_effective to reclaim
-Message-ID: <aAcV7GmTJGbC1R_s@gourry-fedora-PF4VCD3F>
-References: <20250422012616.1883287-1-gourry@gourry.net>
- <20250422012616.1883287-3-gourry@gourry.net>
- <d7568176-6199-488f-b45a-c494c8baec25@redhat.com>
+	s=arc-20240116; t=1745294837; c=relaxed/simple;
+	bh=/PqeRx1G8yWgH2bpaj+v9geJqih0EWc+M09T0J5VbYU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=npyMD+x7zml6DqqPhDBYL+KZtZWkaMrdQHmXr/8kios2o+JUJsccfTPzSPGFVR4lFT42veW/ZIYW97i5SpjbV+MbCtJ03FF+oMtwMQx20jn7rq7mNOOBVdO8A8twCgLKiji+bLmc22LIlW7mscKOtXaBlGV8Q5CYnoB1i6TGCCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZBZ4u7g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2337EC4CEEC;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745294837;
+	bh=/PqeRx1G8yWgH2bpaj+v9geJqih0EWc+M09T0J5VbYU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=jZBZ4u7gZuAi1u5qmwoGG9C598bWwTSnmBw65aP+deMVAIkCBJbqhJRUZDGj0aXO/
+	 6yMXmRmuQ5vc6ONh4SQiqvo4PFPJeA+HMkPh93Ba5yNw9VFjdTTKDyWD5z94pRPm6m
+	 giGdq85kt76YRJqRz23PXr/Afk4Z+NHeGDklzzabbhRhqXZe7YKqzs5BQN8hG9WkEn
+	 FissORvOsbw6MhXONjL4WsgBKyGk0p16PIbBNi7GfJxnBwNO5ffELFyJ2X5nZN+TKa
+	 2SwT9no0jvjxdpIHJDV/GDErj3AfYt4gN92KSPRTZjYkM0GJur936y0sMcoZeo0Kyo
+	 Gtdtwb09Kovig==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132EBC369D7;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
+Date: Tue, 22 Apr 2025 12:07:08 +0800
+Subject: [PATCH 1/7] firmware: stratix10-svc: Add mutex lock and unlock in
+ stratix10 memory allocation/free
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7568176-6199-488f-b45a-c494c8baec25@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250422-sip_svc_upstream-v1-1-088059190f31@altera.com>
+References: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
+In-Reply-To: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745294834; l=3909;
+ i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
+ bh=U7peSYw634W0vjNlQpTtWPEU2kILWkLlInRHSfUpC/A=;
+ b=RWyteFkITuDQuWcAqcfbj1XQfHwYPm6ZPAoyNIIlMCIVEkkGQor5+F1yFGbA2aWw51fMLEvgw
+ Y2b1YoyMiXCDKZKt58Pcg1rR2SWs36M3O/MQ0hOkfK6tihipaEGNWZI
+X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
+ pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
+X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
+ auth_id=337
+X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
+Reply-To: mahesh.rao@altera.com
 
-On Mon, Apr 21, 2025 at 10:02:22PM -0400, Waiman Long wrote:
-> > +bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
-> > +{
-> > +	struct cgroup_subsys_state *css;
-> > +	struct cpuset *cs;
-> > +	bool allowed;
-> > +
-> > +	/*
-> > +	 * In v1, mem_cgroup and cpuset are unlikely in the same hierarchy
-> > +	 * and mems_allowed is likely to be empty even if we could get to it,
-> > +	 * so return true to avoid taking a global lock on the empty check.
-> > +	 */
-> > +	if (!cpuset_v2())
-> > +		return true;
-> > +
-> > +	css = cgroup_get_e_css(cgroup, &cpuset_cgrp_subsys);
-> > +	if (!css)
-> > +		return true;
-> > +
-> > +	cs = container_of(css, struct cpuset, css);
-> > +	rcu_read_lock();
-> 
-> Sorry, I missed the fact that cgroup_get_e_css() will take a reference to
-> the css and so it won't go away. In that case, rcu_read_lock() isn't really
-> needed. However, I do want a comment to say that accessing effective_mems
-> should normally requrie taking either a cpuset_mutex or callback_lock, but
-> is skipped in this case to avoid taking a global lock in the reclaim path at
-> the expense that the result may be inaccurate in some rare cases.
-> 
+From: Mahesh Rao <mahesh.rao@altera.com>
 
-I'll add a differential patch here.
+This commit adds a mutex lock to stratix10_svc_allocate_memory
+and stratix10_svc_free_memory functions to ensure
+thread safety when allocating and freeing memory.
+This prevents potential race conditions and ensures
+synchronization.
 
-~Gregory
+Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ drivers/firmware/stratix10-svc.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index e3f990d888d71829f0ab22b8a59aa7af0316bea0..3d42d4b18b7299d0a9e5110159e06253dfeddf88 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2017-2018, Intel Corporation
++ * Copyright (C) 2025, Altera Corporation
+  */
+ 
+ #include <linux/completion.h>
+@@ -171,6 +172,7 @@ struct stratix10_svc_chan {
+ 
+ static LIST_HEAD(svc_ctrl);
+ static LIST_HEAD(svc_data_mem);
++static DEFINE_MUTEX(svc_mem_lock);
+ 
+ /**
+  * svc_pa_to_va() - translate physical address to virtual address
+@@ -182,14 +184,17 @@ static LIST_HEAD(svc_data_mem);
+ static void *svc_pa_to_va(unsigned long addr)
+ {
+ 	struct stratix10_svc_data_mem *pmem;
++	void *ret = NULL;
+ 
+ 	pr_debug("claim back P-addr=0x%016x\n", (unsigned int)addr);
++	mutex_lock(&svc_mem_lock);
+ 	list_for_each_entry(pmem, &svc_data_mem, node)
+-		if (pmem->paddr == addr)
+-			return pmem->vaddr;
+-
+-	/* physical address is not found */
+-	return NULL;
++		if (pmem->paddr == addr) {
++			/* physical address is found */
++			ret = pmem->vaddr;
++		}
++	mutex_unlock(&svc_mem_lock);
++	return ret;
+ }
+ 
+ /**
+@@ -990,13 +995,16 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
+ 			p_data->flag = ct->flags;
+ 		}
+ 	} else {
++		mutex_lock(&svc_mem_lock);
+ 		list_for_each_entry(p_mem, &svc_data_mem, node)
+ 			if (p_mem->vaddr == p_msg->payload) {
+ 				p_data->paddr = p_mem->paddr;
+ 				p_data->size = p_msg->payload_length;
+ 				break;
+ 			}
++		mutex_unlock(&svc_mem_lock);
+ 		if (p_msg->payload_output) {
++			mutex_lock(&svc_mem_lock);
+ 			list_for_each_entry(p_mem, &svc_data_mem, node)
+ 				if (p_mem->vaddr == p_msg->payload_output) {
+ 					p_data->paddr_output =
+@@ -1005,6 +1013,7 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
+ 						p_msg->payload_length_output;
+ 					break;
+ 				}
++			mutex_unlock(&svc_mem_lock);
+ 		}
+ 	}
+ 
+@@ -1072,9 +1081,12 @@ void *stratix10_svc_allocate_memory(struct stratix10_svc_chan *chan,
+ 	if (!pmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	mutex_lock(&svc_mem_lock);
+ 	va = gen_pool_alloc(genpool, s);
+-	if (!va)
++	if (!va) {
++		mutex_unlock(&svc_mem_lock);
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	memset((void *)va, 0, s);
+ 	pa = gen_pool_virt_to_phys(genpool, va);
+@@ -1086,6 +1098,7 @@ void *stratix10_svc_allocate_memory(struct stratix10_svc_chan *chan,
+ 	pr_debug("%s: va=%p, pa=0x%016x\n", __func__,
+ 		 pmem->vaddr, (unsigned int)pmem->paddr);
+ 
++	mutex_unlock(&svc_mem_lock);
+ 	return (void *)va;
+ }
+ EXPORT_SYMBOL_GPL(stratix10_svc_allocate_memory);
+@@ -1100,6 +1113,7 @@ EXPORT_SYMBOL_GPL(stratix10_svc_allocate_memory);
+ void stratix10_svc_free_memory(struct stratix10_svc_chan *chan, void *kaddr)
+ {
+ 	struct stratix10_svc_data_mem *pmem;
++	mutex_lock(&svc_mem_lock);
+ 
+ 	list_for_each_entry(pmem, &svc_data_mem, node)
+ 		if (pmem->vaddr == kaddr) {
+@@ -1107,9 +1121,10 @@ void stratix10_svc_free_memory(struct stratix10_svc_chan *chan, void *kaddr)
+ 				       (unsigned long)kaddr, pmem->size);
+ 			pmem->vaddr = NULL;
+ 			list_del(&pmem->node);
++			mutex_unlock(&svc_mem_lock);
+ 			return;
+ 		}
+-
++	mutex_unlock(&svc_mem_lock);
+ 	list_del(&svc_data_mem);
+ }
+ EXPORT_SYMBOL_GPL(stratix10_svc_free_memory);
+
+-- 
+2.35.3
+
+
 
