@@ -1,221 +1,126 @@
-Return-Path: <linux-kernel+bounces-615242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A13A97AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A48DA97AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B6B1B60E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396BE3A9308
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C602C256D;
-	Tue, 22 Apr 2025 22:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2602C2AB4;
+	Tue, 22 Apr 2025 22:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VkRbpU87"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2pZ9Ltg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA348634F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2D8634F;
+	Tue, 22 Apr 2025 22:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745362230; cv=none; b=kRKtM0vl4/fUHdoZ/rmQBzMXvrDH1kM1iM+oOHv54XFb67ko63AFjFfEmkllNfQGELEa4izXCyDBEQ0PB/DTxKcwtMsnE7/ROYXxsG8FUoJddgG//EA8s13fLnteertelpiSyRRtxVyMhNmuoKHOZtnimVLlmNYOfR1DNoj4JpY=
+	t=1745362267; cv=none; b=L9tptKNS414d1Z7DDFB3W7IjDzKS50VqxDcT9RKNkEOEWwLmMcCVaG8nqsY2SRTWhqA8ORasVUqwJW2i5jx0PJaJzHXGnz/NXijErF/tyCAIzy0JBldA8hm9E5psvxDJ637EWIhfz+94c3H7revRIVydXRvu+xoctS4atDc977Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745362230; c=relaxed/simple;
-	bh=a4EcOav03n+HBGzNSNuTxKZNDu09J/N3p9II0SkD8xQ=;
+	s=arc-20240116; t=1745362267; c=relaxed/simple;
+	bh=xKFeD+QaeLGzNUOYFH4M+KARAkjJY+Gn/GCxeecB5HA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DfazYyLWpEgRKI/cMjDi+cyo7eAVm1VFYP2EUSpi8JXnKBa12zlChNam1h2F4cn8BQQ+JZ+jcZxaL/I0Xkss5/zq6nhG9dbuZFl+UxWS+FP6nO8oV1UJYefAZ6dqNecyfD5bBO/7t9F+U573WtORXxSRIUuMa3HXvz8iz4Zf4yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VkRbpU87; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30effbfaf4aso56293831fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:50:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=GGTB4bCYKVM+mLx8O9Blf208mVQvMyjx36WMF6FlVNVzZ3CJxp4th9oIRGybnOWAoMzpK2Y8MAdhmSWoMTjqTHwXkGJ1wH1FAItym8O1jZcl98F03IOdO6PWi7pZmVOp2qSGKM2nzZM88+emn6geUcT/0DsiilXAsou4idaZRlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2pZ9Ltg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso876199166b.3;
+        Tue, 22 Apr 2025 15:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745362226; x=1745967026; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oZCFkPT9VQDSYU37yasnvmuyi6JQuptLSL8TbX1/xkM=;
-        b=VkRbpU87IB2WUGmVLF6WAabnc3Ak9eNMrbJuNyMMR+8nRfcAqx+YXAKMYN1cZZXzBo
-         W3HlkC02O9167AJjF4zLhr3Pq/Xpgd0heanHwuPh/HXhZvNN9zrXazgNFrkfPnnfk6A0
-         Cru87A0Y4r9vlXNb0iPercg1N+A/vsq85IFLk=
+        d=gmail.com; s=20230601; t=1745362263; x=1745967063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OtNg2abh49QsnTa1XSIwbO/eokylj5yxtKMHXP/aBRw=;
+        b=F2pZ9LtgqeukdZ34OTs7PuPZw7XxL8scdVNrOKNYJEYnBApVKAOrFwGuJljROCeRG2
+         I7DQpxnA3wEJavZFM1kYmNT9OTvf1rpWw1JQ1ygtxRPhajdFVrVIuvAKW/5yG5Fa9kNH
+         jFoW/ggSxsXxvbvxk+Mqcx2aiinTPTLAz7y8F/4gwcUZwrj59ECZ4SmAIx0/gE5sMckQ
+         zObcQbBSWr7s8ArDoVuOtkW0rGUIg0Gz8LQZx2wPN4mYs8E5uaMKQQfZrRieGtB4t+Qp
+         4hztktSz2wg6oYsdlHoG6OkEvomkdup2D0VX5vbBdL3/OKyA+F06b6HlsvD06+ucO2iI
+         ngPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745362226; x=1745967026;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oZCFkPT9VQDSYU37yasnvmuyi6JQuptLSL8TbX1/xkM=;
-        b=iUZNnr+digB/qEqYxf7VDA/6Rf6Xi5NYeVL4JpiwxggVlESZ0Ndi4O/sHR6eA9Fpe8
-         8wkFGNDeR/k9wn6nFpjscqAj3H4c0kgEPcSYBdooco82hCxjQuu5mkrB6LatlK3aFIZs
-         i9gGoBrUq7p98EVJbMPTXph+L1QiNUpnsgrrdvIP2cnDjCX29Y6U+6MqPgQAKKjnpAjT
-         P89Iq/yVnvAJ0DHjjupcdbATaERiMoY2snrEKERRZThTeJ5/AbaIVDIaCEC5FUDpXWoo
-         XWnQQsuhf9XlySP5k7oE47LNIStgrg8E6xCiiCN8vP0lf8Wzua9zwkyIIIgBhg03oNc0
-         k+Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWejszhHNSErzjEzC5AMjMVD58hRthfWUld08kHGNCOPxdTwtkn8bLiihCpxfuoLSdOaLuByuWWohwdx2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI4WActGTpFriB3jGpUjQ4A+u4J5IZysjljUCQEZXVFw5YgFtT
-	WaWKbAUhtWHnLm/BZRJPPosGeMIzTiCqRkC40xhc9nTiQoFLdXYseDpzeUeMKNCjvUCIPPZwTgC
-	quw==
-X-Gm-Gg: ASbGncvcRePHVYN7ZckTRQn7MjKPDIT/AIRxjrGSjSaYlr7UveJiZ+itDf9OeIydYdY
-	FFnanOfoA1jjX44t8lgvborm5vg9LYp0pFW8tppYvg4PbZUgafDS91jsLULeNUxUrWTitYtFRnN
-	Ep28KfE9u1fGXbiPGz3q8GsM4w6TyVHWKWqSMztwmw/2UePu5F7FjEaj4bHVGq55UlEJRFXmhr9
-	tUZ8wJD4LARLarRFCSwO7s51HC5fFfK2gkZkyFggTj0yLXy8/EN13RZFkmQNveqim2zLx7LjXu3
-	JPQtUB9VD5RYB6PKu7fZbNHn89KeUiaBA4RlOSVuSzJbB3vQW16fHDzhUvnB/g6R4D689JjOkpU
-	mGnhWDhs=
-X-Google-Smtp-Source: AGHT+IHXnN3J5wzvGOEHLLsyuXVgbaQ+0Nkg3SKsAVx+qGdI2ALjsuPABqlSZIEAx7imJP8nBAZ6yw==
-X-Received: by 2002:a05:651c:1511:b0:30b:bdb0:f09d with SMTP id 38308e7fff4ca-31090553ee1mr60553171fa.32.1745362225951;
-        Tue, 22 Apr 2025 15:50:25 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3109084d4aasm16312991fa.90.2025.04.22.15.50.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 15:50:25 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30effbfaf4aso56293571fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:50:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxwVcTEeLKDaj0KrGTX9JLSU1cgrALbnd9qd4KcneHpwZEkpC1JJOdgpMr8BKbUtaR885exiTJwmgd8J0=@vger.kernel.org
-X-Received: by 2002:a05:651c:220e:b0:30d:e104:b594 with SMTP id
- 38308e7fff4ca-31090579a68mr48817081fa.40.1745362224964; Tue, 22 Apr 2025
- 15:50:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745362263; x=1745967063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OtNg2abh49QsnTa1XSIwbO/eokylj5yxtKMHXP/aBRw=;
+        b=EKTAFGOBTa5788Ur14DD4sQbKG3DbEMbds/1ePFs37/q+l74aHCX0EVJt5KTGA4ijA
+         u45E9c48OR4K5Lwdw5EsEwAq8cBbkIhqh+1J4hnZA3IrNk46AbtzJzlhin88fTYHg+K8
+         H3ZOhjz+q332/jALz7PiiIJ7dZNeCFil7GBMGeK5hxcPlOG7vqPDY62IXntnrrpm1hHD
+         8ifQ9n+PDAq5/JthtG28PzvYTTuOKLtLJ5PyXr/+C+yc8i+H/Spava31DN4+FeT9+U/S
+         aMLA6D5nehqAscJIVV6gBDAvhgzWew8tuaQSOlmUmZbIVeacdqowr76oqL+cksWJvRa6
+         As3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUi0BelkG9Um4M13q4rzbfpWvJ4Eb+fTjFyN4FKw0/1k30+5bYCD3EsqlxWW61E/bjzMVux9vvGCWM=@vger.kernel.org, AJvYcCWunwSYC8TTAvViGGg+22xQaRg+jTnCQaNJ+J6Yr5FWP4QWuytXtrpRZL8md/BHjn11fLo83/yfPtci9fCv@vger.kernel.org
+X-Gm-Message-State: AOJu0YywCu8qtdGv7qsD4TiD+X7NaFfeVWq5dl9E2RFdBk7nXVnU1BLl
+	OZwSakz3fUOZEiJvKpD991DqOByhZL9cvkbozLQnVG3z4V87O7XGfd76AAu8gC47b9FOMNHz4gf
+	thvuMaOkz7qgAZI+RollVKduVkfU=
+X-Gm-Gg: ASbGncsR7ZGCMdFtwJcgmNFbzHgvFolOuICFB0yVsJTj4IDDR7S5Twhpv4gkr+ZAXCa
+	PnHyMDNi5kq6235wwz601JVsr3wbE6Ez5xbGsyDzaFTDV0bHURJLtUoVRoRK3eYxT1857jxdslB
+	z1q+kxHu569Ur8csywnXT8NQ==
+X-Google-Smtp-Source: AGHT+IE5r0MFZFYCu7PJn/lLZUKtD7zvLcloIWqKzgfm6B6oQoGOwioIpprZLoxLjQ81aU2yyIye6lqvTx9A4VFkpPo=
+X-Received: by 2002:a17:907:7b85:b0:ace:37d6:a5ce with SMTP id
+ a640c23a62f3a-ace37d6b029mr163304366b.19.1745362263600; Tue, 22 Apr 2025
+ 15:51:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313-uvc-eprobedefer-v3-0-a1d312708eef@chromium.org>
- <20250313-uvc-eprobedefer-v3-1-a1d312708eef@chromium.org> <20250422180630.GJ17813@pendragon.ideasonboard.com>
-In-Reply-To: <20250422180630.GJ17813@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 23 Apr 2025 06:50:10 +0800
-X-Gmail-Original-Message-ID: <CANiDSCuO+dHOBtW4yvy1n25QWEs-WdQ9H8Lh2rUtcPbUq3hBkQ@mail.gmail.com>
-X-Gm-Features: ATxdqUHelesrjtdLbpQ4wqs-_HLIDR_oOasDUe41GrOFPkA28vVRIy-nBpD1INE
-Message-ID: <CANiDSCuO+dHOBtW4yvy1n25QWEs-WdQ9H8Lh2rUtcPbUq3hBkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] media: uvcvideo: Fix deferred probing error
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>
+References: <20250422-iio-introduce-iio_declare_buffer_with_ts-v2-0-3fd36475c706@baylibre.com>
+ <20250422-iio-introduce-iio_declare_buffer_with_ts-v2-1-3fd36475c706@baylibre.com>
+ <CAHp75VeuNhfJrNAZZwY2tEHte=UPHLOPNUz7y_J20xv2+_Zdeg@mail.gmail.com> <f0948adc-8130-4417-8c59-f0b52a7a0e01@baylibre.com>
+In-Reply-To: <f0948adc-8130-4417-8c59-f0b52a7a0e01@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 23 Apr 2025 01:50:27 +0300
+X-Gm-Features: ATxdqUFWkS9PxNa71tt9rtag-1SYSUfDj-KjVRpIxd6xsGuKNSHNFIJoyiRJZ98
+Message-ID: <CAHp75Vde6BOmyc1UevU9EymVVzRD29w=KzkAdaAvsUb50UsrcA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Eugen Hristev <eugen.hristev@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Apr 2025 at 02:06, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Ricardo,
->
-> Thank you for the patch.
->
-> On Thu, Mar 13, 2025 at 12:20:39PM +0000, Ricardo Ribalda wrote:
-> > uvc_gpio_parse() can return -EPROBE_DEFER when the GPIOs it depends on
-> > have not yet been probed. This return code should be propagated to the
-> > caller of uvc_probe() to ensure that probing is retried when the required
-> > GPIOs become available.
-> >
-> > Currently, this error code is incorrectly converted to -ENODEV,
-> > causing some internal cameras to be ignored.
-> >
-> > This commit fixes this issue by propagating the -EPROBE_DEFER error.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 27 +++++++++++++++++++--------
-> >  1 file changed, 19 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index deadbcea5e227c832976fd176c7cdbfd7809c608..e966bdb9239f345fd157588ebdad2b3ebe45168d 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -2231,13 +2231,16 @@ static int uvc_probe(struct usb_interface *intf,
-> >  #endif
-> >
-> >       /* Parse the Video Class control descriptor. */
-> > -     if (uvc_parse_control(dev) < 0) {
-> > +     ret = uvc_parse_control(dev);
-> > +     if (ret < 0) {
-> > +             ret = -ENODEV;
->
-> Why do you set ret to -ENODEV here...
->
-> >               uvc_dbg(dev, PROBE, "Unable to parse UVC descriptors\n");
-> >               goto error;
-> >       }
-> >
-> >       /* Parse the associated GPIOs. */
-> > -     if (uvc_gpio_parse(dev) < 0) {
-> > +     ret = uvc_gpio_parse(dev);
-> > +     if (ret < 0) {
-> >               uvc_dbg(dev, PROBE, "Unable to parse UVC GPIOs\n");
-> >               goto error;
-> >       }
-> > @@ -2263,24 +2266,32 @@ static int uvc_probe(struct usb_interface *intf,
-> >       }
-> >
-> >       /* Register the V4L2 device. */
-> > -     if (v4l2_device_register(&intf->dev, &dev->vdev) < 0)
-> > +     ret = v4l2_device_register(&intf->dev, &dev->vdev);
-> > +     if (ret < 0)
->
-> ... but not here ? The code below is also not very consistant.
+On Wed, Apr 23, 2025 at 1:37=E2=80=AFAM David Lechner <dlechner@baylibre.co=
+m> wrote:
+> On 4/22/25 5:30 PM, Andy Shevchenko wrote:
+> > On Wed, Apr 23, 2025 at 1:08=E2=80=AFAM David Lechner <dlechner@baylibr=
+e.com> wrote:
 
-For all the "external" functions I was looking into populating their
-error code to probe(). Other drivers (check vivid for example) do
-exactly this.
+...
 
-There is more value in returning the real cause of the error (ENOMEM,
-EINVAL) that the plain ENODEV.
-
+> >> +_Static_assert(sizeof(IIO_DMA_MINALIGN) % sizeof(s64) =3D=3D 0,
+> >
+> > Why not static_assert() ? Because of the message? But static_assert()
+> > supports messages AFAICS.
+> >
+> >> +       "macros above assume that IIO_DMA_MINALIGN also ensures s64 ti=
+mestamp alignment");
 >
-> >               goto error;
-> >
-> >       /* Scan the device for video chains. */
-> > -     if (uvc_scan_device(dev) < 0)
-> > +     if (uvc_scan_device(dev) < 0) {
-> > +             ret = -ENODEV;
-> >               goto error;
-> > +     }
-> >
-> >       /* Initialize controls. */
-> > -     if (uvc_ctrl_init_device(dev) < 0)
-> > +     if (uvc_ctrl_init_device(dev) < 0) {
-> > +             ret = -ENODEV;
-> >               goto error;
-> > +     }
-> >
-> >       /* Register video device nodes. */
-> > -     if (uvc_register_chains(dev) < 0)
-> > +     if (uvc_register_chains(dev) < 0) {
-> > +             ret = -ENODEV;
-> >               goto error;
-> > +     }
-> >
-> >  #ifdef CONFIG_MEDIA_CONTROLLER
-> >       /* Register the media device node */
-> > -     if (media_device_register(&dev->mdev) < 0)
-> > +     ret = media_device_register(&dev->mdev);
-> > +     if (ret < 0)
-> >               goto error;
-> >  #endif
-> >       /* Save our data pointer in the interface data. */
-> > @@ -2314,7 +2325,7 @@ static int uvc_probe(struct usb_interface *intf,
-> >  error:
-> >       uvc_unregister_video(dev);
-> >       kref_put(&dev->ref, uvc_delete);
-> > -     return -ENODEV;
-> > +     return ret;
-> >  }
-> >
-> >  static void uvc_disconnect(struct usb_interface *intf)
->
-> --
-> Regards,
->
-> Laurent Pinchart
+> I just knew that was standard C. But I support BUILD_BUG_ON_MSG or static=
+_assert
+> would work just as well here.
 
+In the kernel we use u8, for example, however in the standard it's
+uint8_t :-) Same with many compiler attributes and wrappers on top of
+the compiler things.
+According to v6.14 codebase the only one driver uses _Static_assert()
+for that (there are many in tools/ and more in BPF, with a few headers
+where it's fine (esp. in UAPI where no static_assert() available).
 
-
--- 
-Ricardo Ribalda
+--=20
+With Best Regards,
+Andy Shevchenko
 
