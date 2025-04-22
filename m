@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-614652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C26CA96FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8351FA96FB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC691B65B61
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B975E1B65E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FF528F51F;
-	Tue, 22 Apr 2025 14:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718C928F92D;
+	Tue, 22 Apr 2025 14:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iDE4kK8G"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lK7j3NLX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E722949EF;
-	Tue, 22 Apr 2025 14:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D283728F500
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745333841; cv=none; b=fyNXUaN2h1Tu85n4GYx0Qqg7N3aWrXMeS9IawpGhTK4j0fWVRLCgXcLz+lMP9aCq1muO/a7L5aa/GGnkRsTYn0th5f7LZbecxQ/nNcQk1Onu88hKFzMJsreO/YVfD7zgJi4kkI5PpIT06/fbLuBbNCi+auzBy5tQqaae7tvADhw=
+	t=1745333852; cv=none; b=jGvMBHZxgV29j2jmAKufd0H+8Isjx1syEG7QXqxJ40kfx/sAxJI9M8aCJAh9DhGuaPTw4ErxEGzfbi4GrzpiFu6f1JjTq2ZVaODKJxXBhDlnaIP4iQPp8H7PMRvTgD5angJ3Tuzcc4eJtQ6ePYB4gaduZ9e5e9eppAyDnrAUsIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745333841; c=relaxed/simple;
-	bh=Jn41cw8nKB5Et/jTyOLpaMmZXmY/SDIsbul00xmf0hA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HaEkzeP26rd6Mwg9D9kNEj4Ty9gnBpsF59YzOPD/evxN8uw6W/JZ7gi6ascD6S2YcdYNvzQDIoGPAra4cYkHhHO/MYZmIbqTTnmwCvCc70zDpp1CoxYNJZ/OQvjYRtb7jCDnP04Blw4CthKAdMpGGXcI56/xXFKOrnel5I0j3Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iDE4kK8G; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 05FE243999;
-	Tue, 22 Apr 2025 14:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745333837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pMaIRlhquyjfKzC9Nfmvr79PGKRBrxgo0Q9ST42MxmE=;
-	b=iDE4kK8GPzmMpbAIfAaDbj8A9vdJCWjh/e8IzhTejPsKaKdmSzeFIfb6269A6MErV7xYNm
-	NnahxL5isEiS2qhSiHDHUKpYtQaMFafbGLn/gpn5b5jz0jFK8jZ2KXtm63XjbB7pkVuxPn
-	zTDYWEV7xYDSRydehwAFoQVFMBCmReGGpclkrZcjjrLVKxGtlLgESOT5caCyEk2O3953GX
-	e1/bNVKr+zJIK41dfmNnTx+FQecI2UXR/+QbIOgEuIpzRFrNM83JecxmOTdeFSBPv43EWo
-	VBEFiG1JbKmCtscU4foS1Lg3kJ1SI0DjY8gd9PgKlMfUoU3SNdcsrPp1JZFs/g==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 22 Apr 2025 16:56:46 +0200
-Subject: [PATCH net-next v9 13/13] dt-bindings: net: pse-pd: ti,tps23881:
- Add interrupt description
+	s=arc-20240116; t=1745333852; c=relaxed/simple;
+	bh=y7Jp5/pxY+67+dODxooZEyCxzMumc1PeIklfsRXFvyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoRt871P1eZohictaBb5ohFJLT4OwwW3m6P/GEcyuAGO+0VdU8YMyoAR1fQG4b78P8x9Im0an09QW6nceWo3xy6uXP+fiQRmXWVCPuxS6CoBmbbRsw8X6cqVEkUWCWLH7zOmLrE+wCV4uRl3IUcFyqsEFjtEN6TqsaBPVIplHvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lK7j3NLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFFFC4CEE9;
+	Tue, 22 Apr 2025 14:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745333852;
+	bh=y7Jp5/pxY+67+dODxooZEyCxzMumc1PeIklfsRXFvyU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=lK7j3NLXyOWQzqhgQJpH2bOupul+Y5PB4gxXHGGn5SEawCJhsXv0zKWxxFPPbdNTO
+	 Bx4rOWj3iIQUSZ7NV41VONA4mKZrB5UFy92kicXRSDc/He4eGoTu2TuDDeXHdiWyeY
+	 +AqnlZFLpr9oM1V0aqvWFGnIKhsS9f7Yed1M+IPVf45Y4KpOTXATZocv1KgypU+vzh
+	 Yo7teSch21zcTI4gV12p3JhHg/aBpkEJRd2c0E0MlpDS6Vh0iKj6itpuNP5AYRI/L0
+	 mzldcZJ5+30IPHrcRACN9Wesl/ruW/aarRAKNHgP5YHAPk+qxR7nPvu9fdMa8a7qyC
+	 O/6N2Ke8oZfCw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E0633CE0875; Tue, 22 Apr 2025 07:57:31 -0700 (PDT)
+Date: Tue, 22 Apr 2025 07:57:31 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>
+Subject: Re: [PATCH RFC 0/9] Reduce ratelimit's false-positive misses
+Message-ID: <a92eb62d-aab1-4c19-a842-4797df443cf5@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
+ <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
+ <aAesultdR77oRaSI@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-feature_poe_port_prio-v9-13-417fc007572d@bootlin.com>
-References: <20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com>
-In-Reply-To: <20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
- Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeegtdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgfdvgfektefgfefggeekudfggffhtdfffedtueetheejtddvledvvdelhedtveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpeelnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvnhhtp
- hhrohhjvggttheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAesultdR77oRaSI@pathway.suse.cz>
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Tue, Apr 22, 2025 at 04:50:34PM +0200, Petr Mladek wrote:
+> On Fri 2025-04-18 10:13:49, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > This v2 series replaces open-coded uses of the ratelimit_state structure
+> > with formal APIs, counts all rate-limit misses, replaces jiffies=0 special
+> > case with a flag, provides a ___ratelimit() trylock-failure fastpath
+> > to (almost) eliminate false-positive misses, and adds a simple test.
+> > 
+> > The key point of this series is the reduction of false-positive misses.
+> > 
+> > The individual patches are as follows:
+> > 
+> > 1.	Add trivial kunit test for ratelimit.
+> 
+> I have suggested few cosmetic changes for the above patch.
 
-Add an interrupt property to the device tree bindings for the TI TPS23881
-PSE controller. The interrupt is primarily used to detect classification
-and disconnection events, which are essential for managing the PSE
-controller in compliance with the PoE standard.
+Thank you for the KUNIT tutorial, and I will apply these.
 
-Interrupt support is essential for the proper functioning of the TPS23881
-controller. Without it, after a power-on (PWON), the controller will
-no longer perform detection and classification. This could lead to
-potential hazards, such as connecting a non-PoE device after a PoE device,
-which might result in magic smoke.
+> > 2.	Create functions to handle ratelimit_state internals.
+> > 
+> > 3.	Avoid open-coded use of ratelimit_state structure's ->missed
+> > 	field.
+> > 
+> > 4.	Avoid open-coded use of ratelimit_state structure's ->missed
+> > 	field.
+> > 
+> > 5.	Avoid open-coded use of ratelimit_state structure's internals.
+> > 
+> > 6.	Convert the ->missed field to atomic_t.
+> > 
+> > 7.	Count misses due to lock contention.
+> > 
+> > 8.	Avoid jiffies=0 special case.
+> > 
+> > 9.	Reduce ___ratelimit() false-positive rate limiting, courtesy of
+> > 	Petr Mladek.
+> > 
+> > 10.	Allow zero ->burst to disable ratelimiting.
+> > 
+> > 11.	Force re-initialization when rate-limiting re-enabled.
+> > 
+> > 12.	Don't flush misses counter if RATELIMIT_MSG_ON_RELEASE.
+> > 
+> > 13.	Avoid atomic decrement if already rate-limited.
+> > 
+> > 14.	Avoid atomic decrement under lock if already rate-limited.
+> 
+> The rest looks good. And I think that it is a great improvement.
+> Feel free to use for the entire patchset:
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+Again, thank you, and I will apply these to the series!
 
-Change in v5:
-- Use standard interrupt flag in the example.
-
-Change in v3:
-- New patch
----
- Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-index d08abcb01211..3a5f960d8489 100644
---- a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-+++ b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-@@ -20,6 +20,9 @@ properties:
-   reg:
-     maxItems: 1
- 
-+  interrupts:
-+    maxItems: 1
-+
-   '#pse-cells':
-     const: 1
- 
-@@ -62,9 +65,12 @@ unevaluatedProperties: false
- required:
-   - compatible
-   - reg
-+  - interrupts
- 
- examples:
-   - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-     i2c {
-       #address-cells = <1>;
-       #size-cells = <0>;
-@@ -72,6 +78,8 @@ examples:
-       ethernet-pse@20 {
-         compatible = "ti,tps23881";
-         reg = <0x20>;
-+        interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-parent = <&gpiog>;
- 
-         channels {
-           #address-cells = <1>;
-
--- 
-2.34.1
-
+							Thanx, Paul
 
