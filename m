@@ -1,103 +1,178 @@
-Return-Path: <linux-kernel+bounces-614936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E933A97411
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B22A9741A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 20:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCD83AA44B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E84F3A8CA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87A9296167;
-	Tue, 22 Apr 2025 17:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B5C29617F;
+	Tue, 22 Apr 2025 17:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUciZhoF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=conclusive.pl header.i=@conclusive.pl header.b="iiAapg8g"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D11B3935;
-	Tue, 22 Apr 2025 17:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2958E29617E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745344683; cv=none; b=heWWuEb2c1yqeQ1tl134IwR8DcxgSdubGnxJjlOfM/1iVHdSbJ5v/0kGwyhfxWGZQLavqAuwc+yf6RFQaxGy8IAxOXVnXvaUyB/5EfDOuujJzdFQqHBnsk4l8G+Q5zkL3fpfpBBmWZsomzNJZ7iWa7StaO+hzPGKv10etQkqrMk=
+	t=1745344784; cv=none; b=WEBy+Eckgil6R9KVXeO89HcuSZPU+E7+T5H9WZKho0QJ5gjaXBQ9689h929QOIYT2Zmzqe2hwpXYlX+dmMzLe3HrkgTZl2A53KDg8mTLKzvPbloIOx1a1FIbCQ8qRsl0bWMp73gpsIcdMJWEpdaouFemxScvSfvRv5/9LyFbWNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745344683; c=relaxed/simple;
-	bh=OPofQBC2ykw4T8o8gILKx8E4Ig86DZ8245++vqzdnt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fS/8Gz0+Jm4p/+vWB4CcASJxL6oFADvsNRayaUrdjMLo8vvHgRuFGm9KuL68SzuTo5fFYgh1A6x7Ao3KMfUVwfI9ddMwYv6IR4GuYSPkdN0me1TN5ThVJyqqLX/J/q3J7fXseMWkp8rA71IiaaQnij7L5VG4jRC3nurnHD0DM2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUciZhoF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E81C4CEE9;
-	Tue, 22 Apr 2025 17:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745344682;
-	bh=OPofQBC2ykw4T8o8gILKx8E4Ig86DZ8245++vqzdnt0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=KUciZhoFIfwmCnPB7nSYUs3S09AjVOrmlly4UvJug6fZjbNBF9jPmACPGQYkDRuE6
-	 Y2Myhbc8pz4GgTiEtaOJ0lM13ilmumfQ5RFebq1hJ5Mfx86xLQurdWleYwSdqG2Gnc
-	 t1db7tO1m7JBt0KLtSA4IYDbpYlGYiH979o1t8txqsv33/v2P1BayZtH0ZX7HHv54P
-	 xIMFScgLOM6wgS3Owxz/XewIz9SO9MIURDV4SzPDfPex0dGC1W4/vNWxVrmhB4OBMw
-	 K+01xoTI42iqGOcKLlLjv28gLJOLYBr0v6GicGRNPAkrjSYfKcG1PpTOxrNVJTsW9V
-	 jqZ0tcxleUyhQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2A713CE0875; Tue, 22 Apr 2025 10:58:02 -0700 (PDT)
-Date: Tue, 22 Apr 2025 10:58:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: dave@stgolabs.net, josh@joshtriplett.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] rcuscale: using kcalloc() to relpace kmalloc()
-Message-ID: <ae61d78a-e950-41e1-9a2c-afac2a385156@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250421061508.718752-1-suhui@nfschina.com>
- <20250422015144.2012708-1-suhui@nfschina.com>
+	s=arc-20240116; t=1745344784; c=relaxed/simple;
+	bh=NGXz1/C84LouGjqEw3CBsAoV1AGsU6iLIRZzXDV0zJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8Q+HV5GQfWfBdsOTLJse0uecVyzVm74lugZz4EupVypy2C9eSYDUixlzU49t0qyE9mTVkaNgMkNkRCnOAohFOL1PU0TNfKAODUnXkpULXecosTbiZNENidCtpXCj3pnxT6N/P+QejWP0bKUhXlVto/VIpg2FV9sZiF/eN9ZlaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=conclusive.pl; spf=pass smtp.mailfrom=conclusive.pl; dkim=pass (2048-bit key) header.d=conclusive.pl header.i=@conclusive.pl header.b=iiAapg8g; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=conclusive.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=conclusive.pl
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso938871266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=conclusive.pl; s=google; t=1745344779; x=1745949579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5vmDFRe336F7jeHxUtjEEM738t0/3jAPa2su7mI8vUM=;
+        b=iiAapg8gTmYaEpIXQTglf1KBocMYKn7RC83FIvH1jXCzMmsw+7ypb5bVE1FoGghlfK
+         QlOJICsdDNtqPtEeBr9WVW4NEbJxJ9sDiuEGgfcnd+5ycCLhLtqEbAsIKOl8b4PsKZUo
+         pfQGMJyoEtGzGumDkcyNLlxYQ77qsynSpoOAwZw3cWTe1oZDvEeFi3o4c0ud2UWUpJri
+         fPWf1quMCOYji66tOLRujhorvS8ypPNmCniA6j6WhVk0sOmw4sOf7cLVQkRE7gy28E1W
+         FaiMYW9DijHhBppbAC34SSEbkE0+g5H7LwDI45OOwEhTtgh3s9BVhrx5Fl4XG32wby5r
+         Fu9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745344779; x=1745949579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5vmDFRe336F7jeHxUtjEEM738t0/3jAPa2su7mI8vUM=;
+        b=q5qUv2aJBct7DPpXDk5vQGFZgo0goGoJEcKWudVlxuae91D8vBk5vfMaXh5hS7KIG0
+         3wxJzm/XAhClWgbldaGT2aEmKCbwzHIgEPRhzkQXlD8BYbgoxTCUigC550nDn8A02P1u
+         CWZ4BPkSJCuQr6xPF0pWC5UfrcCHPse8G2YxV0K1L3aDMgLcKls2EfQdzVaERF3j4pf9
+         MDkzdvIC+haR3q+rdK3OpzQI3EkGrLBoQAJiQB286V1SDTFcHe83+6fmPUJYIhe1F+6U
+         LHMpaKUruShjca4ooEyfAfN1E2umcb/8LTEdvvaV0gY38xLVU1eiBC5Wwm/nhIygxUrv
+         ywKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvjf7S+/j32YHGCvYqPT7sw361FI4jR2k4mDHZCKAqxgfBYae+qITA8J4QW+GFRKWp/u/S2vBsjS2KHSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKotUG0L2nn28acCuJm2ls2fxMGnXipLcT7GDJ6w5Aq+1y1Ilk
+	zsQzv9UqHv2i5csvyq7AQf3t+NX8zqrbxxQy7gOgJgoGah5dPLmuTIVsLTEwW5k=
+X-Gm-Gg: ASbGncvc8pf/RtLjppOnNffQMTKThUo7jk9yO6UF4KiKUL0huRFVcUtaDnkdPHcQjHt
+	SaIv+V4dDtX3DCFT4lDB3VGLPb61fWGM3XOIqwzsBinQakXTfpkBFzWDORg4IHP1lM4ofwgKtxK
+	5igNfIKoDSyOEFobhKB6UCpDpPe6yeuerG/BRTjoVqMswfjat+sQT6E7wRpMdWWsl/NAHQF0Fdk
+	WiR14KlHPr/5WOao7tOzHAGhM/PUZR7YsNz97TzR3Hhxr36nuxU+Rk47xg4mCBtLrLTZgS4QjVR
+	96ijV7mE7mfDv1djDoFQFf25353NYMEJm7Hhsaz0B0KKQ3Y/VfBJi6GX9hvY5ymETA7Lus3t7XW
+	j310u2sG8
+X-Google-Smtp-Source: AGHT+IFuB00QPLtb3gbpigfCavyTE7nKWB/3ILqnGrcipA/uEF7A5WS0H1m/Gfrg87ZGf4Wv+vqyVA==
+X-Received: by 2002:a17:907:1c0c:b0:ac2:4db0:1d22 with SMTP id a640c23a62f3a-acb74db7cffmr1265583466b.42.1745344779566;
+        Tue, 22 Apr 2025 10:59:39 -0700 (PDT)
+Received: from wiesia.conclusive.pl (host-89.25.128.123.static.3s.pl. [89.25.128.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef47733sm690208466b.144.2025.04.22.10.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 10:59:39 -0700 (PDT)
+From: Artur Rojek <artur@conclusive.pl>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-wireless@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jakub Klama <jakub@conclusive.pl>,
+	Wojciech Kloska <wojciech@conclusive.pl>,
+	Ulf Axelsson <ulf.axelsson@nordicsemi.no>,
+	Artur Rojek <artur@conclusive.pl>
+Subject: [RFC PATCH v2 0/2] wifi: Nordic nRF70 series
+Date: Tue, 22 Apr 2025 19:59:16 +0200
+Message-ID: <20250422175918.585022-1-artur@conclusive.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422015144.2012708-1-suhui@nfschina.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 22, 2025 at 09:51:45AM +0800, Su Hui wrote:
-> It's safer to using kcalloc() because it can prevent overflow
-> problem.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+Hi all,
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+this is v2 of the Nordic nRF70 series.
+The order of patches has been swapped to reflect the Device Tree
+submission rules (bindings before implementation). I also replaced
+the 'net: wireless:' prefix with 'wifi:' for the series, so hopefully
+this time it correctly shows up in Patchwork.
 
-> ---
-> v2: 
->  - using kcalloc rather than kmalloc_array().
-> v1:
->  - https://lore.kernel.org/all/20250421061508.718752-1-suhui@nfschina.com/
-> 
->  kernel/rcu/rcuscale.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-> index 0f3059b1b80d..b521d0455992 100644
-> --- a/kernel/rcu/rcuscale.c
-> +++ b/kernel/rcu/rcuscale.c
-> @@ -762,7 +762,7 @@ kfree_scale_thread(void *arg)
->  		}
->  
->  		for (i = 0; i < kfree_alloc_num; i++) {
-> -			alloc_ptr = kmalloc(kfree_mult * sizeof(struct kfree_obj), GFP_KERNEL);
-> +			alloc_ptr = kcalloc(kfree_mult, sizeof(struct kfree_obj), GFP_KERNEL);
->  			if (!alloc_ptr)
->  				return -ENOMEM;
->  
-> -- 
-> 2.30.2
-> 
+Patch [1/2] now resolves all issues uncovered by dt_binding_check.
+All gpio based properties have also been replaced with *-supply and
+interrupts properties, where appropriate, and their usage clarified in
+respective description fields.
+
+Patch [2/2] addresses the same gpio usage concerns, now utilizing
+the regulator API. Another major change is migration of
+nrf7002_qfn_rf_params from being an array into a struct, in order to
+better access its individual fields. All the remaining concerns from v1
+have been addressed as well. 
+
+As this is RFC, and none of my questions from v1 have been answered, I
+will feature them again, while also adding a new one:
+
+1) Nordic gave us permission to upstream the firmware blob [1] required
+   to use this driver. As that needs to go through separate
+   linux-firmware repository and is subject to different licensing,
+   should I try to upstream it in parallel with this series, or does it
+   need to wait until the kernel driver gets in? 
+
+2) In AP mode, for each connected peer I maintain a pending queue for TX
+   skbs that can't be transmitted while the peer is in power save mode.
+   I then use a wiphy_work (nrf70_pending_worker) to move the collected
+   skbs into a single hw queue once the peer is able to receive again.
+   This means there can be multiple workers putting skbs onto the hw
+   queue at any given time. As this scheme relies on the wiphy_work
+   workqueue, can I assume that multiple workers will be able to run in
+   parallel, even on a system with a single CPU? If not, what would be
+   a better solution to the above problem?
+
+3) nRF70 hardware communicates using byte packed, little-endian
+   payloads (documented in nrf70_cmds.h). As these can get very large
+   and complicated, I decided against writing some sort of endianness
+   conversion scheme, and simply dropped big endian support by this
+   driver. Is that acceptable?
+
+4) Please put particular attention to the wiphy configuration. I am not
+   100% confident I got all the flags/features/band caps right.
+
+5) Should I add myself to the MAINTAINERS file regarding this driver, or
+   is that not mandatory?
+
+Cheers,
+Artur
+
+[1] https://github.com/nrfconnect/sdk-nrfxlib/raw/refs/heads/main/nrf_wifi/bin/ncs/default/nrf70.bin
+
+Artur Rojek (2):
+  dt-bindings: wifi: Add support for Nordic nRF70
+  wifi: Add Nordic nRF70 series Wi-Fi driver
+
+ .../bindings/net/wireless/nordic,nrf70.yaml   |   71 +
+ drivers/net/wireless/Kconfig                  |    1 +
+ drivers/net/wireless/Makefile                 |    1 +
+ drivers/net/wireless/nordic/Kconfig           |   26 +
+ drivers/net/wireless/nordic/Makefile          |    3 +
+ drivers/net/wireless/nordic/nrf70.c           | 4703 +++++++++++++++++
+ drivers/net/wireless/nordic/nrf70_cmds.h      | 1137 ++++
+ drivers/net/wireless/nordic/nrf70_rf_params.h |   65 +
+ 8 files changed, 6007 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml
+ create mode 100644 drivers/net/wireless/nordic/Kconfig
+ create mode 100644 drivers/net/wireless/nordic/Makefile
+ create mode 100644 drivers/net/wireless/nordic/nrf70.c
+ create mode 100644 drivers/net/wireless/nordic/nrf70_cmds.h
+ create mode 100644 drivers/net/wireless/nordic/nrf70_rf_params.h
+
+-- 
+2.49.0
+
 
