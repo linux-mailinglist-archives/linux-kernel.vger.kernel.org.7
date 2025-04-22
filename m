@@ -1,153 +1,94 @@
-Return-Path: <linux-kernel+bounces-613695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C121A96009
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:53:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34989A9600D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B157C3AFCBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB5F3B853A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4EB1EEA40;
-	Tue, 22 Apr 2025 07:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E6621322E;
+	Tue, 22 Apr 2025 07:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IsbAgfN2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="alNfBm/j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC52D15B115;
-	Tue, 22 Apr 2025 07:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7351D1EE7A5;
+	Tue, 22 Apr 2025 07:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308410; cv=none; b=mQDKMdSpj+/ZCo2Cl055M295z2Lyu/XKanFAEQ0jrreCzLUoUJaz7KuVbKaB79/PcrxyZNBL5rGLg/HoB4jbmluHOiBvRbf4W48YoCG41UcO/kLC0Qlf22lpz6XbulGlFFZx8LEFCV2gSu9+rQSeEmIk5qX+h5r4BUUNcOMzF+8=
+	t=1745308434; cv=none; b=WSnNb+ikj9YD4atJ7mZAvZ5fyOSst97P6gSeQdRVZ/JABQGOi7EUVhXJW0vvW+qyxuGxlUhTkpWpTCpXgAHSEAiDuKycqo9jGU7NcAB4iqEEnb0sVc3mmIUHwPlXQYKj38zOZHrY+63hzBZCkQXgObJ/4TSRq2zMTu9mTluE9Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308410; c=relaxed/simple;
-	bh=kwB0a86wE2nShYbf16A4URlr365wNayqQZSZU/CPmQs=;
+	s=arc-20240116; t=1745308434; c=relaxed/simple;
+	bh=KCeJDEVanpGwD284gJqmiMG/ZwTIY9BSla3RMw56SeA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjdrQlLpC6yHH1yB1e1A6fq4Vayx20YPTThAoQBBzEndDfUJsK6NRf1O23aoVgxi2Sq/PS8FuGUeX8kogjFy0SwoOt9lPfrE4qx4tl7Ir9TpszsAvbi+Hb5+tptqJPbIy0H5m1jW9QVqTzP0pXQ61ZjbiN4S4Daj8StYpFSECBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IsbAgfN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95A2C4CEE9;
-	Tue, 22 Apr 2025 07:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745308409;
-	bh=kwB0a86wE2nShYbf16A4URlr365wNayqQZSZU/CPmQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IsbAgfN2P8M1IJl09b9TIBsWTYvYi5JK6s3EtlQbIJ66/YL/S6+CnrzO5NW2mJPfK
-	 RQDX/80InlSw904V57fGVCo0+fS/VkstWRjbOn/tVUi5u9c2sPV2gqM8NVWolF1QLG
-	 G1O5jRi67SEqJ7qjExqKsD8oZ2cfNipfepiXfSKk=
-Date: Tue, 22 Apr 2025 09:53:27 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jan Stancek <jstancek@redhat.com>, Huacai Chen <chenhuacai@loongson.cn>,
-	Sasha Levin <sashal@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
-	stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	R Nageswara Sastry <rnsastry@linux.ibm.com>,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH 6.1&6.6 V3 3/3] sign-file,extract-cert: use pkcs11
- provider for OPENSSL MAJOR >= 3
-Message-ID: <2025042213-throttle-destruct-004b@gregkh>
-References: <20250319064031.2971073-1-chenhuacai@loongson.cn>
- <20250319064031.2971073-4-chenhuacai@loongson.cn>
- <2025031943-disparity-dash-cfa3@gregkh>
- <Z9rYQy3l5V5cvW7W@t14s>
- <2025031942-portside-finite-34a9@gregkh>
- <CAASaF6zNsiwUOcSD177aORwfBu4kaq8EKh1XdZkO13kgedcOPA@mail.gmail.com>
- <CAAhV-H7ECQp4S8SNF8_fbK2CHHpgAsfAZk4QdJLYb4iXtjLYyA@mail.gmail.com>
- <CAASaF6zvEntqKZUzqRjw4Pp5edsRHdd0Dz7-RD=TTMc1n_HMPA@mail.gmail.com>
- <CAAhV-H7h5SW40jDyJs2naBQ3ZLH9S_PLNeq=19P5+75jwT5eYQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5mFsOkWJqDYwLjXvn24VDeB571kuneiRkO3BojLcAypMSuuQ80HQbILnAveRwqhnsBrNu6ohx8oYCaLfRevJvRxBTzsFeA+OZag4Xi8Fv+oFVMjd2RAitsQ6XaXfCy61jdXAfCi3mfvqEc0/xEVuQHR6pgU8yOxCpT+jjukFsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=alNfBm/j; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745308434; x=1776844434;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KCeJDEVanpGwD284gJqmiMG/ZwTIY9BSla3RMw56SeA=;
+  b=alNfBm/jSXwPOSusPxYIofGZUzbH5ZVJvtxnkL0e23pS1Bjp1S+M/eWL
+   4G2SlBZcTSuUpekNbWCHS94K4z8pq7T3fnZnlJrvbvRvycQukN4TJXl2D
+   SukAcUDUe1DObjM0Ca8rm69ntHO6O8zwCn0XIaasl+n5vkO4CBKsUe2Z/
+   Gi2qbDCr0D0tzSEfGu8RDx1oWFyz8YQMvBCQ/S682oUQ2wII0djZ6PYxX
+   h25CD9EgZkjsUO4/B7DbvpWxcljHAygsR/ggtPoy6sIM1WVZN69pUofre
+   27yUcB8mXDqB1qVYWY8w11i5LuJgvW9IGsZZO4qL3j6klm8G3EHGM+qlu
+   w==;
+X-CSE-ConnectionGUID: 4C3u8mQOTXCVLwKnRI0egQ==
+X-CSE-MsgGUID: Rlhd6RF8STa3XaQtbN3crg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="47037073"
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="47037073"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:53:53 -0700
+X-CSE-ConnectionGUID: xmEp82KeT0mwB1aXlnMs/g==
+X-CSE-MsgGUID: lO0CqNO5QCWZWn46D+Bs0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="155111165"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:53:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u78Rw-0000000EfKN-41dH;
+	Tue, 22 Apr 2025 10:53:48 +0300
+Date: Tue, 22 Apr 2025 10:53:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Saranya Gopal <saranya.gopal@intel.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/intel: hid: Add Pantherlake support
+Message-ID: <aAdLDBK6h0rrs6Ht@smile.fi.intel.com>
+References: <20250421041332.830136-1-saranya.gopal@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H7h5SW40jDyJs2naBQ3ZLH9S_PLNeq=19P5+75jwT5eYQ@mail.gmail.com>
+In-Reply-To: <20250421041332.830136-1-saranya.gopal@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Apr 14, 2025 at 09:52:35PM +0800, Huacai Chen wrote:
-> Hi, Greg and Sasha,
-> 
-> On Sun, Mar 30, 2025 at 9:40 PM Jan Stancek <jstancek@redhat.com> wrote:
-> >
-> > On Sun, Mar 30, 2025 at 3:08 PM Huacai Chen <chenhuacai@kernel.org> wrote:
-> > >
-> > > On Thu, Mar 20, 2025 at 12:53 AM Jan Stancek <jstancek@redhat.com> wrote:
-> > > >
-> > > > On Wed, Mar 19, 2025 at 5:26 PM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Wed, Mar 19, 2025 at 03:44:19PM +0100, Jan Stancek wrote:
-> > > > > > On Wed, Mar 19, 2025 at 07:13:13AM -0700, Greg Kroah-Hartman wrote:
-> > > > > > > On Wed, Mar 19, 2025 at 02:40:31PM +0800, Huacai Chen wrote:
-> > > > > > > > From: Jan Stancek <jstancek@redhat.com>
-> > > > > > > >
-> > > > > > > > commit 558bdc45dfb2669e1741384a0c80be9c82fa052c upstream.
-> > > > > > > >
-> > > > > > > > ENGINE API has been deprecated since OpenSSL version 3.0 [1].
-> > > > > > > > Distros have started dropping support from headers and in future
-> > > > > > > > it will likely disappear also from library.
-> > > > > > > >
-> > > > > > > > It has been superseded by the PROVIDER API, so use it instead
-> > > > > > > > for OPENSSL MAJOR >= 3.
-> > > > > > > >
-> > > > > > > > [1] https://github.com/openssl/openssl/blob/master/README-ENGINES.md
-> > > > > > > >
-> > > > > > > > [jarkko: fixed up alignment issues reported by checkpatch.pl --strict]
-> > > > > > > >
-> > > > > > > > Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> > > > > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > > > > > Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
-> > > > > > > > Reviewed-by: Neal Gompa <neal@gompa.dev>
-> > > > > > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > > > > > > ---
-> > > > > > > >  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
-> > > > > > > >  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++------------
-> > > > > > > >  2 files changed, 138 insertions(+), 58 deletions(-)
-> > > > > > >
-> > > > > > > This seems to differ from what is upstream by a lot, please document
-> > > > > > > what you changed from it and why when you resend this series again.
-> > > > > >
-> > > > > > Hunks are arranged differently, but code appears to be identical.
-> > > > > > When I apply the series to v6.6.83 and compare with upstream I get:
-> > > > >
-> > > > > If so, why is the diffstat different?  Also why are the hunks arranged
-> > > > > differently,
-> > > >
-> > > > He appears to be using "--diff-algorithm=minimal", while you probably
-> > > > patience or histogram.
-> > > Hi, Jan,
-> > >
-> > > I tried --diff-algorithm=minimal/patience/histogram from the upstream
-> > > commit, they all give the same result as this patch. But Sasha said
-> > > the upstream diffstat is different, so how does he generate the patch?
-> >
-> > Hi,
-> >
-> > I don't know how he generates the patch, but with git-2.43 I get noticable
-> > different patches and diff stats for minimal vs. histogram. "minimal" one
-> > matches your v3 patch. I don't know details of Greg's workflow, just offered
-> > one possible explanation that would allow this series to progress further.
-> >
-> > $ git format-patch -1 --stdout --diff-algorithm=minimal 558bdc45dfb2 |
-> > grep -A3 -m1 -- "---"
-> Could you please tell me how you generate patches? I always get the
-> same result from the upstream repo.a
+On Mon, Apr 21, 2025 at 09:43:32AM +0530, Saranya Gopal wrote:
+> Add Pantherlake ACPI device ID to the Intel HID driver.
+> While there, clean up the device ID table to remove the ", 0" parts.
 
-A simple 'git show' is all I use.  Try it again and submit what you have
-if you can't get anything different here.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Note, my algorithm is set to "algorithm = histogram" in my .gitconfig
-file.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-thanks,
 
-greg k-h
 
