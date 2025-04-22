@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-614463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1964A96CEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA400A96CF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9093AD6A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D5E189E95F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2072857DE;
-	Tue, 22 Apr 2025 13:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C2A28A3FA;
+	Tue, 22 Apr 2025 13:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lyTjGYiL"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oIoPM8AY"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F056284675;
-	Tue, 22 Apr 2025 13:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928982857DC;
+	Tue, 22 Apr 2025 13:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328692; cv=none; b=OTHKpg/17DOTtbZ48UaEvDi/2ikGxjbjXnpxhJJuRd5vrfdHhNKX8sgJziLyXQgSINb42bZeVUCDmq8iQitY/Nj2YBgbWYzaRdHIrXim5I0u4Y68yWe6Ec+/NFIxGrn1dvRrw97aYnA7ss8ETzd7IXnljeMyAclXg9OBm7fOFps=
+	t=1745328694; cv=none; b=GxMNPrUAo7RYrfFy51JDUHB6LWwfuVP9R4D5NP+qWLZpI13eZ4ydMg4pai93DTYR8yQDpQBnfGOuj0Hod46RjQaRD+2JZWpzvYDg3qUVaTcuEkoI8vunM7wQhIgHLKikr+RwrPjgBUEX6TMdWDkFiUbJOBwjN2Osh/BJWOifA9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328692; c=relaxed/simple;
-	bh=98ZMA9A7eTgc84XLiIx3MA/4NpSIvQu1Tg8uO3Qua7Q=;
+	s=arc-20240116; t=1745328694; c=relaxed/simple;
+	bh=zs2GEiCb2Fnzl5vqBIYKuQkKO6GU8T3Nv0uk80WaFIA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rF2f6O+qzuVmioKCWHHCI2ok0Ik95OLS2lE1xoH8Cj0h4V6bKFSotT7vEmXltRO+LRUzIUClo2Yd7BpfDbJCRsaQcxByYVloEFVOFeW/gVfCrZtOhxfD9CSwsEq66RvOqiK/F8MnXF49rNDECYRCDtmEZEMtICti+Xb1CemADig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lyTjGYiL; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=YUeXKFHJ+7QLnKFGSfCzY2N61pgROcP/uLf3wgX7WmuiZyD4UrLxB8UuoUMcBJbwpqDKtDoEySGctE5Gb1O4fzudfTvVTIxhGwc0kYaSP6dwj6R3w1V68X6kC6+rWD4LpphKLjU69KJwovCvT6jasJRyAoj/YUz43z8rSARvX78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oIoPM8AY; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745328688;
-	bh=98ZMA9A7eTgc84XLiIx3MA/4NpSIvQu1Tg8uO3Qua7Q=;
+	s=mail; t=1745328690;
+	bh=zs2GEiCb2Fnzl5vqBIYKuQkKO6GU8T3Nv0uk80WaFIA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lyTjGYiLZqCn7nM3j6vvENWZxiZADq/uKrn+nuZkOsU1VBTbYnj/6teDYwkf8Uc/N
-	 6zVI+WISUE14rtJaxr0o+JQV0gw8v1xXZ5fbl9XLUm2FsxyfjPy1ErpxjTrHXBG+3w
-	 bzDUg8Dka3OJSSMYTUkiAHhRyCX0SAeHHKj8trdkdfx/iRwlLSLUqoEelCZyYj8ZO0
-	 bDIv/ehtmTb412HJC6yEqdvF1w47mk3SFexJJ+Llv5iBU5bF0y3uWnQiLHpnog6okz
-	 XsEjDLm9uZW9suL/M+L2mCi6yykocg3ZUiF0oSuzjuI4+sIYExilPUkvipBCc9alFT
-	 U0e0Wtd4iZWhg==
+	b=oIoPM8AYd3Kgm35rvmA8nVpIiWZvgA++wJIp9kVJvR9m/G9PvWp3lEP/M75hoYSu9
+	 Jn2dGOydXQmq9oot3mrHTTxt5EfZ47SfSKwGwh2U3BKJV+qPk5YJpWFQWDIHWhKDEv
+	 Ol5nd1F0bAupMEPHeglavBRDSHWEUGllJDk1BgycASRsZS+3kf9e1eyvcZ2rMZBfX5
+	 ahf2syRpCk/uFFSL7Ue37GcCzhimOmeMYuSo4/a9biQ7Qe+AVxA5iWmtvmhRysEuVk
+	 29sEbmzEB6Daga7SZ/au3q/4XEWZMOeoPCpZ19Zus7CPTyBqsNO9LCcjDe+mrdPUfc
+	 eh+sIII3PyNhA==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E87B17E155C;
-	Tue, 22 Apr 2025 15:31:27 +0200 (CEST)
-Message-ID: <c9af209f-8cb0-4c98-af00-bf11a2451f19@collabora.com>
-Date: Tue, 22 Apr 2025 15:31:26 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EDD7417E35E8;
+	Tue, 22 Apr 2025 15:31:29 +0200 (CEST)
+Message-ID: <16d6740d-5a94-461c-941f-243fb1aefa92@collabora.com>
+Date: Tue, 22 Apr 2025 15:31:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] dt-bindings: phy: mtk-xs-phy: support type switch
- by pericfg
+Subject: Re: [PATCH v4 5/8] dt-bindings: mfd: syscon: Add mt7988-topmisc
 To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
@@ -71,20 +70,27 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  linux-phy@lists.infradead.org
 References: <20250422132438.15735-1-linux@fw-web.de>
- <20250422132438.15735-5-linux@fw-web.de>
+ <20250422132438.15735-6-linux@fw-web.de>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250422132438.15735-5-linux@fw-web.de>
+In-Reply-To: <20250422132438.15735-6-linux@fw-web.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 22/04/25 15:24, Frank Wunderlich ha scritto:
 > From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> Add support for type switch by pericfg register between USB3/PCIe.
+> Add compatible for Mediatek mt7988 topmisc syscon.
+> This hardware block contains 2 functional blocks
+> 
+> - a powercontroller which is not needed (switched by atf)
+> - a multiplexer for high-speed Combo-Phy
+> 
+> This compatible is only for the multiplexer part.
 > 
 > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
