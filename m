@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-613696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305B7A9600B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA4BA96018
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5F71887ADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65903AFEAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98E91EEA5A;
-	Tue, 22 Apr 2025 07:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95E41EEA5C;
+	Tue, 22 Apr 2025 07:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0V5t/33"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj1l5Hov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40B16F858;
-	Tue, 22 Apr 2025 07:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6E2126C13;
+	Tue, 22 Apr 2025 07:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308434; cv=none; b=CWbghNFIZQSWagVt2vWJiH2NEVRdKBWbhY9veR5B7FGTQ3/Q7rQwwUZVdpDp1vY3dPr/IM6MpLehwkPgGhMdUdekmSSCSdtRky98VrcDVgZxKjs3/oIJ3qNcbR7EiAQZimto5MrsUO7cQcdUY9wjYVER3SxNYxukXQK4pOPNLvg=
+	t=1745308502; cv=none; b=g7/FnKDAJO8bA3r2um5Alzelu1wlcyAOE4LOvBu8jMoxDRuXp5F2ZzsxOmVhDcFZCvTKjf6l7u6ohKFsXwG5XmQCBuMRRwWUbU0XAitsiM6ckw3Mj9nKYH2LbimvoK7vEXhl2OVuMQlTgYBhgc494fZ3jGqKr5U1OCGUjf0V1Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308434; c=relaxed/simple;
-	bh=bN11AdKFan4/zi4bzqZxPMPow5eSnJU3qwTnj0tn9Rw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXhvDO7aLajowa7x0B1YuilUqLtM4vaRaH/Rl4AQUmWFlyGOuB5cCaxeVlJhs5PzG+5u7ZC4NhmfTYAFbsH/CXBqDd/VYen/ZlmE7ScF6tOqj10mUc1QfeJleRlX/FiTCLZWTwoKelKpqYXt/o0M9cNrCyx2f2Ucrd4qwMJdOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0V5t/33; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745308433; x=1776844433;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bN11AdKFan4/zi4bzqZxPMPow5eSnJU3qwTnj0tn9Rw=;
-  b=h0V5t/339p6ZNfFpap0qOEPuq8e2eXwfEvO7fYRN2DiFub4ypq0H3TaB
-   iiVqsJ38nUrTW2Y1JC6WoMtkKMIPSO3N2cKNe3pXOFEKI2yk0srnWnoY4
-   LqetEFnSODk04gDu33O3p6HXu/VOfJyk2f8RPbCmcDlh+CQ+Y/oo/W+0l
-   ZLUTAFJfFGKd71AtXzOLOYJZmvBJFvri8PXvWrhIqgwqQkR30zLxpCnSG
-   eqMMwfBqZqhxkXs6v5jmyM32LKHOD4/bwyTZzJQ5mF3xUoTTnRFuUxV6+
-   80mUuT1WKg37ErNVNVOW293pANQPIPx3zPwF9rfZ2Xkp0lGJDD3qdmzUd
-   Q==;
-X-CSE-ConnectionGUID: OZ9NqcfvS+6a42YLFjD7Jg==
-X-CSE-MsgGUID: 6uWSPq5kQL+G17WQIUGeog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="46736241"
-X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
-   d="scan'208";a="46736241"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:53:52 -0700
-X-CSE-ConnectionGUID: ELbREccUShGmuQop5UDLng==
-X-CSE-MsgGUID: 7a9xTTQJRdGm62RFmFudLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
-   d="scan'208";a="131687764"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa009.jf.intel.com with ESMTP; 22 Apr 2025 00:53:49 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	shangsong2@lenovo.com,
-	Dave Jiang <dave.jiang@intel.com>
-Cc: iommu@lists.linux.dev,
+	s=arc-20240116; t=1745308502; c=relaxed/simple;
+	bh=chyqnlDWW0dRr2gowZEpFJkOEAZmSNAc2Ixe6na7bUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YrcbS2S9IhY9OXn0frF3I/Y3mn93jz/LYwy9ERt3pTCpmhyFtRD9aYB6nkYMzmP64q2x9eYzoR4wAyqwK+myhOl4DJfKCtdRNzr0IhazXQHwds3XBI9exmA/+2ypXqAjZwvXTnH1uoyxrXGsLRMfn5c0KxhFmgh30Ccj6yR6x2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj1l5Hov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC7CC4CEE9;
+	Tue, 22 Apr 2025 07:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745308501;
+	bh=chyqnlDWW0dRr2gowZEpFJkOEAZmSNAc2Ixe6na7bUw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Bj1l5HovBawMUnBvNIJLr3BB/t4xT+DZ0x0YqT693ddDK3XxtcKCI1HILzcL9hIYR
+	 yyfHE2fkqL1SBXxzE1kJmYHODf0P3XWXjeGLziJDTer+m8y4SV2oGPFV62WXDQKDNi
+	 keyowYxNpksk5IjjaFTKV1ecWPZK/FYKIDgWAWUvMabCHSqNvVmn0H6l7mKNKP936E
+	 Xa4ShGpk+jZptiPa4WZWJttbYci3VidAvKCG3J4P01s9mMNlgs/K2kq6Kd/mcI/+nk
+	 pojjeU9HOBKZE4KSdh57CQx0+E0uASU3+Y74LnozjVHpmsL3+FktUj7ismzFbyz8/J
+	 mdJHQVXwn7ShQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
 	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Assign owner to the static identity domain
-Date: Tue, 22 Apr 2025 15:54:22 +0800
-Message-ID: <20250422075422.2084548-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	linux-fsdevel@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2] fs: fall back to file_ref_put() for non-last reference
+Date: Tue, 22 Apr 2025 09:54:53 +0200
+Message-ID: <20250422-gaspedal-rabiat-d4ef5f41b2b1@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250418125756.59677-1-mjguzik@gmail.com>
+References: <20250418125756.59677-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=957; i=brauner@kernel.org; h=from:subject:message-id; bh=chyqnlDWW0dRr2gowZEpFJkOEAZmSNAc2Ixe6na7bUw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSwe/s7eKsvPTJfjetB4AWdiAntap13GzVdRSden/Jri 42uIoNQRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQKpRkZTh0NPh48Zbf58r1z JnZuvnv3Gm/bfYuXE5rEHWuZExm8bzAyfFAR0i87tvPQlFRnYR29HR9YNoUbWhtyaXUx/lD9dfI KOwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-The idxd driver attaches the default domain to a PASID of the device to
-perform kernel DMA using that PASID. The domain is attached to the
-device's PASID through iommu_attach_device_pasid(), which checks if the
-domain->owner matches the iommu_ops retrieved from the device. If they
-do not match, it returns a failure.
+On Fri, 18 Apr 2025 14:57:56 +0200, Mateusz Guzik wrote:
+> This reduces the slowdown in face of multiple callers issuing close on
+> what turns out to not be the last reference.
+> 
+> 
 
-        if (ops != domain->owner || pasid == IOMMU_NO_PASID)
-                return -EINVAL;
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-The static identity domain implemented by the intel iommu driver doesn't
-specify the domain owner. Therefore, kernel DMA with PASID doesn't work
-for the idxd driver if the device translation mode is set to passthrough.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Fix this by specifying the domain owner for the static identity domain.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Fixes: 2031c469f816 ("iommu/vt-d: Add support for static identity domain")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220031
-Cc: stable@vger.kernel.org
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c | 1 +
- 1 file changed, 1 insertion(+)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cb0b993bebb4..63c9c97ccf69 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4385,6 +4385,7 @@ static struct iommu_domain identity_domain = {
- 		.attach_dev	= identity_domain_attach_dev,
- 		.set_dev_pasid	= identity_domain_set_dev_pasid,
- 	},
-+	.owner = &intel_iommu_ops,
- };
- 
- const struct iommu_ops intel_iommu_ops = {
--- 
-2.43.0
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
+[1/1] fs: fall back to file_ref_put() for non-last reference
+      https://git.kernel.org/vfs/vfs/c/ca38ac96d96b
 
