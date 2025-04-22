@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-614139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D4DA966B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21820A966B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2408F189E56C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79D717DC6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3B22126D;
-	Tue, 22 Apr 2025 10:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D8C221FD6;
+	Tue, 22 Apr 2025 10:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="g2jAmG9S"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="H0DcErfm"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204721D3E3;
-	Tue, 22 Apr 2025 10:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37E21D00D;
+	Tue, 22 Apr 2025 10:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319422; cv=none; b=oF8IAy22Oir2u8MwCa5qrE/sFz3GaXB9DMDqTlU49fejmbUrswaWYjJnXOJGS3QCr/scff3La290rv5NYCx0iItvwBnox/RS1dlKXbQxYeV1SiIzSks88qFKNXGt4rAS1/6A3My8Z8VAU7Gxgn32Hkw5S3YupQ/YQqeZ598HuIc=
+	t=1745319427; cv=none; b=sTSNTR39vW7hq/Ibevc0nznDOm5iN9MElp0RAwHuFylQyhosOaxHHax55OGQrDwekashHC32wgzVAO+NIpDhJcgvnintHszQqmUef6eeVw5CP3qSLp2sVa4dL9SIw1oZuBURmn/JMv/OjuCOk2/AHFKWpzJfauyN9iBK+zqiCjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319422; c=relaxed/simple;
-	bh=a/ZgW4QpEOtS1B2tfVQt40HHtCxce7MftWwU5TLhgtY=;
+	s=arc-20240116; t=1745319427; c=relaxed/simple;
+	bh=wtiMc4Tm9dYz2cnN7DXp5buNVR+ck7DtpAKgUAa6iCY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NNX3F1O/UojXZybV0NAOU/Az4mQzZ3noXqg1fqzHDjg/PE8uEuisspNCvuGG/80vJ/0IJQuGjjbaNQN44sTZG6a4xQokglfr7ny0CtKJ/YT9rp0MwnZUouckRFZPvB03FYs2+CZa5qpJ63VV6KX5ECQpI2ZMNW//smkDMxx9yug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=g2jAmG9S; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=ZtCmvZii0XP44njMTIAOr6foTEC/0/sEe+XzsSmugcrFEaE5cH/iJIiYPuVy+JKZ6RMJ6R19eMdDI9iMo66U8PpcRcD2lVYDVNdHLhA0mJ+OG8WocR5D/q0ZZ+6KgeHuGuAjsS2gt6NCy+EIwXBN2tu3Ok/7bmOioN43I412qyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=H0DcErfm; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,18 +36,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=2xTVqVemxDewecGdpH2iuskO/GmpQJZDssconbd3otI=; b=g2jAmG9Sz1JXPOIAktA/QuV0i6
-	Cvg6GV94D001qqFX2C+7wag8tyxaUrIog5Q5Gqjgao+5aoTyUE/NnCR4cdJ841HWiBHj9HZaNlNDh
-	kB70WDqxR2Nc0d+0rEn2P1IJEBdJhQNesaHdIM8ixQGpsTgiQRkVQqBApNtyP2+BLLIWe81Ygq2A3
-	+V5cC0xcrj/4lWvDFcjxNEvm3bDHQHAikLdz5WUwh/A/ISyq8H6EDFdiZJMMVMCRosPyc52FqkfVm
-	76bWpe+r5U8CX2Lw+llGjSewJUG/9oAY5AQFdV4m5uNYO968E4ExtJOHwAYzD1BXYEBCbJdr7qA7M
-	BCJch4lw==;
+	bh=ydYFm/FUsFx5X9T7/U5z2I68LQJOkf4oPfk8ZkMTUdE=; b=H0DcErfmkzi63zHbzFn7LE1CrN
+	BqJzK0jntvcuh7f8NILx61Bthlyx68PiyKtSzzyB+U6nCwnlcHNPmq/hZZ2PB6tzIFQSj+SHfR4VD
+	mG83HTTht7Dgrtq1t9yiaG4KoHszMQJrTTaiB1x7GsjBm49v7Iv2oV+VSTSMnHr6OZIv3vSCD2j61
+	iWqjbTLqj81xMGbsQcCiyKKRR1gRZFxU/U2MgwIB6Z+p4vUNoryvyz1ZXtGRtzhFsIqlerhXdU6pG
+	aDLh7y/5qDJPyh3QMYaHGoVKm4XQyDY5d9szHTDTaLEGERpdzPecYscSytrjWzWStx2aqz2k0Zj3F
+	v/iZ8pnw==;
 Received: from [89.212.21.243] (port=36562 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u7BJC-008kyr-3A;
-	Tue, 22 Apr 2025 12:56:58 +0200
+	id 1u7BJD-008kyr-0E;
+	Tue, 22 Apr 2025 12:56:59 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v4 11/15] arm64: dts: freescale: imx93-phyboard-segin: Add CAN support
-Date: Tue, 22 Apr 2025 12:56:40 +0200
-Message-Id: <20250422105644.2725168-12-primoz.fiser@norik.com>
+Subject: [PATCH v4 12/15] arm64: dts: freescale: imx93-phyboard-segin: Add USB support
+Date: Tue, 22 Apr 2025 12:56:41 +0200
+Message-Id: <20250422105644.2725168-13-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250422105644.2725168-1-primoz.fiser@norik.com>
 References: <20250422105644.2725168-1-primoz.fiser@norik.com>
@@ -85,10 +85,9 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Add support for CAN networking on phyBOARD-Segin-i.MX93 via the flexcan1
-interface. The CAN PHY chip SN65HVD234D used on the board is compatible
-with the TCAN1043 driver using the generic "can-transceiver-phy" and is
-capable of up to 1Mbps data rate.
+Add support for both USB controllers. Set first controller in OTG mode
+(USB micro-AB connector X8) and the second one in host mode (USB type A
+connector X7) by default.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
@@ -96,64 +95,33 @@ Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Changes in v4:
 - no changes
 
- .../dts/freescale/imx93-phyboard-segin.dts    | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../boot/dts/freescale/imx93-phyboard-segin.dts     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-index 38b89398e646..be9c0a436734 100644
+index be9c0a436734..e4f959f665b2 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-@@ -26,6 +26,15 @@ chosen {
- 		stdout-path = &lpuart1;
- 	};
- 
-+	flexcan1_tc: can-phy0 {
-+		compatible = "ti,tcan1043";
-+		#phy-cells = <0>;
-+		max-bitrate = <1000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_flexcan1_tc>;
-+		enable-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	reg_usdhc2_vmmc: regulator-usdhc2 {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -38,6 +47,14 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
- 	};
+@@ -80,6 +80,19 @@ &lpuart1 {
+ 	status = "okay";
  };
  
-+/* CAN */
-+&flexcan1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	phys = <&flexcan1_tc>;
++/* USB  */
++&usbotg1 {
++	disable-over-current;
++	dr_mode = "otg";
 +	status = "okay";
 +};
 +
- /* I2C2 */
- &lpi2c2 {
- 	clock-frequency = <400000>;
-@@ -79,6 +96,19 @@ &usdhc2 {
- };
- 
- &iomuxc {
-+	pinctrl_flexcan1: flexcan1grp {
-+		fsl,pins = <
-+			MX93_PAD_PDM_BIT_STREAM0__CAN1_RX	0x139e
-+			MX93_PAD_PDM_CLK__CAN1_TX		0x139e
-+		>;
-+	};
++&usbotg2 {
++	disable-over-current;
++	dr_mode = "host";
++	status = "okay";
++};
 +
-+	pinctrl_flexcan1_tc: flexcan1tcgrp {
-+		fsl,pins = <
-+			MX93_PAD_ENET2_TD3__GPIO4_IO16		0x31e
-+		>;
-+	};
-+
- 	pinctrl_lpi2c2: lpi2c2grp {
- 		fsl,pins = <
- 			MX93_PAD_I2C2_SCL__LPI2C2_SCL		0x40000b9e
+ /* SD-Card */
+ &usdhc2 {
+ 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
 -- 
 2.34.1
 
