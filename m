@@ -1,96 +1,120 @@
-Return-Path: <linux-kernel+bounces-613871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62113A9634F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76765A96351
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F11189B4F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E3919E3612
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D197F25DB1E;
-	Tue, 22 Apr 2025 08:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209142459C4;
+	Tue, 22 Apr 2025 08:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmYN7D6/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="DpYwdLvr"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD452580E0;
-	Tue, 22 Apr 2025 08:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311588; cv=none; b=EOZb1HkVJL9M+wEms59b0HQxMLLYr8T3S2SMXH9kbKTKXok8ndCW+M1myS+RK5Z4NIUdX/r3ET3JaYpXILVS5IMlApfEXj0T6PdwjNCuU7glVtS8TCi8CWA2LaalWydJRWm9SVSVkgY5Qxgw9G67Ne4777IWDr6M/T1nfvBcFQM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311588; c=relaxed/simple;
-	bh=H44nKWfJpflFFXOrn5cncTRUymqZaUjYXbKXiW88Txw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B6JV5+oCgSKSEeDYrthd0hku+ZHi1+r3Ic3fSI4kBJlcDNoVp45gT/rauM+ksatTf1t1w566xNWWNnG3pOpMSEcIf7tR44k5enaW5YI3ayGRz0P3KP8GqhKZwQCVPXo1xAS5TBMR0fvPxaXyc9o5DwybSHMuGESsX2i82KW4VE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmYN7D6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A82C4CEE9;
-	Tue, 22 Apr 2025 08:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745311587;
-	bh=H44nKWfJpflFFXOrn5cncTRUymqZaUjYXbKXiW88Txw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QmYN7D6/vQ3fhyXfvF2TBLjn9Eh6HHivB2z2YJK9Q1otgITmYvXWco87nUQ/XQFej
-	 d24PAugK941acJt881sWsHAnIbR9eKNrky+nbiRiL4mup5twIh0m67xqu46jrSWmRD
-	 8EPJxxMkxH/Vj/arYSTCAmWqj9iHXT7hyxLH9R9ouO3DvdjiwDA57a1hsnfA2oh+l/
-	 e9VnSQ8AiR2H7lLMrYiS9GbwvK3nvogHF+tFOyZtAZ5JPdY+8Mv7Fqt+XS2A39TlML
-	 XwuNTkJURqd4th6YNyQVCEGs1aHB+mD21WwZyZKVOSEvInoYdj422SG6TzvMh2cnJp
-	 NpNyOEY6X8TCQ==
-Date: Tue, 22 Apr 2025 10:46:24 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephan Gerhold <stephan@gerhold.net>, Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Adam Skladowski <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>, 
-	Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-Subject: Re: [PATCH v5 1/5] dt-bindings: clock: qcom: Add MSM8937 Global
- Clock Controller
-Message-ID: <20250422-ermine-of-pastoral-courage-bb7bcd@kuoka>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
- <20250421-msm8937-v5-1-bf9879ef14d9@mainlining.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F961EB5FE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745311673; cv=pass; b=u/OA52Q8FhMNy9Yofsqh9amY/cZy6yrn3mWr8KuLLg90NM9/z972eyNOBZ26iJiWJEDZrW7pbLjDZGXpmYRrk8lmrsPoset76lDPYjONZKFzdufzgFETC/3Am5c6hXr1alZbSXP4TegczrzpwhbWv2OU00Yez8BpKTDJVvIiB+c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745311673; c=relaxed/simple;
+	bh=TDYVq1ODaBDbWAoxkQf1jrbhH3y6ZYNelJSnFjfJ9Mk=;
+	h=Date:From:To:Message-ID:In-Reply-To:Subject:MIME-Version:
+	 Content-Type; b=ddxB/thHvxmnj0UG8bI04ZqDshVXLOfcpJsrbtwmOzTvxIpFjHEvryRU3S046HVWuhuzpK+wjrHwolU9DETbPDA6Fp0pPJh6IJgM3o/zZBlqVgi91iOR5sLpjD2YWwG5PNBIEJ/a1ZkbiWQyOfVuhop3CuKkgcAwWlE9mg2AG84=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=DpYwdLvr; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1745311640; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MeU29dofExYbIkfV51XvcbsI+EAUMPX+puegC3pt2cIidGXgPRl/0IjG4kNpElnSa6Q2otZW11Xg04Xyn5gTUe6Gh/lO1HsJDrtVTcCpIOzIO7poRj8bUjD5aUOI5dSU+/lPtXwy4MUkdBrAN99XSsVHg1d5QXmEMs2yXya/8IU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745311640; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=KtG5ksvLYXVAqXRcI/dgQmZoqMGkRn/ix0CjfRa5Idk=; 
+	b=RnY+5PXSzXDbHVPO4h8UX6Ca/IBPGrIAI5hxlYogkW4CHELxfY47G3EldiTMEckMth0TcS8BGiSwGEB3Mfn4hcf1H4UKaNKxtdPn9Vf0dR1DuXyx96mTtHMNJqAyG3vni4QhU+Ug5K/AqENARFQZH7A1Lhm4BVRY0TExzhJ5zWQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745311640;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Message-ID:In-Reply-To:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=KtG5ksvLYXVAqXRcI/dgQmZoqMGkRn/ix0CjfRa5Idk=;
+	b=DpYwdLvrzBVaRka+G7EvH5x6EgRk2lG5xXQgiam/qzcVVv9r3RiK9DEskff4ejT2
+	kSuSgYZsrWM7Yuj6TNUsCgLA32ag6oz28i6izwflto1QAvqU0+QoO5vkUn5UQ0GkHzS
+	LGu+KdNrLOwauoeV/mT/G9PMrKOrGNJGoyX9W3hM=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1745311638259917.1867112371721; Tue, 22 Apr 2025 01:47:18 -0700 (PDT)
+Date: Tue, 22 Apr 2025 16:47:18 +0800
+From: Li Chen <me@linux.beauty>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>, "x86" <x86@kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1965cae22a0.12ab5a70c833868.7155412488566097801@linux.beauty>
+In-Reply-To: 
+Subject: [PATCH RESEND] x86/smpboot: avoid SMT domain attach/destroy if SMT
+ is not enabled
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250421-msm8937-v5-1-bf9879ef14d9@mainlining.org>
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Mon, Apr 21, 2025 at 10:18:23PM GMT, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrot=
-e:
-> Add device tree bindings for the global clock controller on Qualcomm
-> MSM8937 platform.
->=20
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-=2Eorg>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
->  include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++=
-++++++
->  2 files changed, 27 insertions(+), 3 deletions(-)
+From: Li Chen <chenl311@chinatelecom.cn>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Currently, the SMT domain is added into sched_domain_topology
+by default if CONFIG_SCHED_SMT is enabled.
 
-Best regards,
-Krzysztof
+If cpu_attach_domain finds that the CPU SMT domain=E2=80=99s cpumask_weight
+is just 1, it will destroy_sched_domain it.
+
+On a large machine, such as one with 512 cores, this results in
+512 redundant domain attach/destroy operations.
+
+We can avoid these unnecessary operations by simply checking
+cpu_smt_num_threads and not inserting SMT domain into x86_topology if SMT
+is not enabled.
+
+Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+---
+
+[RESEND] because I forgot to add any mailing list previously.
+
+arch/x86/kernel/smpboot.c | 8 +++++---
+1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index d6cf1e23c2a3..da6192e1af12 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -485,9 +485,11 @@ static void __init build_sched_topology(void)
+    int i =3D 0;
+
+#ifdef CONFIG_SCHED_SMT
+-    x86_topology[i++] =3D (struct sched_domain_topology_level){
+-        cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
+-    };
++    if (cpu_smt_num_threads > 1) {
++        x86_topology[i++] =3D (struct sched_domain_topology_level){
++            cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
++        };
++    }
+#endif
+#ifdef CONFIG_SCHED_CLUSTER
+    x86_topology[i++] =3D (struct sched_domain_topology_level){
+--
+2.48.1
 
 
