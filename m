@@ -1,107 +1,390 @@
-Return-Path: <linux-kernel+bounces-615027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35043A9755D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:22:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEE7A97562
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334931B616DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:23:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CB97A4E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332AA297A64;
-	Tue, 22 Apr 2025 19:22:43 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69511E0DDC;
+	Tue, 22 Apr 2025 19:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KJ8S+i7j"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59591B666
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 19:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1FD28FFC7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 19:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745349762; cv=none; b=Vc0e5akxO6EeWm75QMh2JR/VSCZDzyRRdtTeC1mWdBEm+BX7/sPAsD8EZMfUBN4BcKb+T8f0nfHAFvyir2eqBZQX7Hkl8k0uC4YgwnMkmes6Ou+ZpGq2ZnsP319W/mve+4JwoWHmDQrLDpena57lJNUOpI+WivzIr29omLJ59Mk=
+	t=1745350127; cv=none; b=e8Fwh4tHiusBcCcDl8zHmma2gocMk9coj/XE+3Xn93Cx+Ox7snRsQZ9H5rHhwNsIUo82YZ77zooijHacvJKsFM/lsVgfqW4ZXc8oP5FOsWTTNHMRyYRLb0SyqEXUTPiXVnOOHSeJbtrfTRJigUhrkVEtoxOMFJVeN9evHDj7oNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745349762; c=relaxed/simple;
-	bh=2J0MNewUqSAhfomdsZ5DsdmPc7oeHxIS8PRFrb3fLyc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bJu8VJGQ92XBg5EmQKZf1LVTb5czepewoF1Z5oE8a9JNo1cEZAfjnHT0erBXU+1eUfALPYpTfaI3cNrmjc/IxkXvySEvDeDl0uHjDVcje/SYe6cH39Twu4cdxJ9yTaNj38+rpZXKf3mmMI2eZmKhinUPNRWyW4XRuwEdkr8RnII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d8dd0c9143so79084855ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:22:41 -0700 (PDT)
+	s=arc-20240116; t=1745350127; c=relaxed/simple;
+	bh=Aoo24VDkLJ9Fvyx9uF18E+0I92xixFzfbVJacPGEagc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YJRHUkQnuIMV7dMWwo1ZnIX5BOJhvFEhpmC1Xu9AnnmZEC+P0HzqQh8+t4vgLFzaerIWx8zODReZKVNs5sorCk68J8CMWL2Dyfh0GNK9+0zDXZ9SFZVdfEBtF0xXrMd+yTGn/ZK3WBU7CStGtYo3CrAVSMfshNyaKN45mkamm6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KJ8S+i7j; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-72c09f8369cso1777566a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745350124; x=1745954924; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLi+B3MTVPFx0AsESTkz2z+6nVaBF7LP0N10jEwchIU=;
+        b=KJ8S+i7jH9AQv76qTVOW0h7hIkYfGoTnE/+aPiyE45BmiDCbGNz1ANT8Q6Z9y1Mxzt
+         P2ExpSWT4aClWnILEmD7yw+fpM7wj4BUbXuhPGREY2erAGlBRVVf826UkMm4+uUfZVH+
+         q3q+oJnRVx5yw2MoBPvDWzWZ9/KNSd/BLG6HVYqZMsqozh78vTeJYuvg64Zn5ShfLqRG
+         V/KNnH/4Q0XXVOXSfWzyS0rl+6wtf0WpuMUni5GO+JglujBmPsBSJ1BvcqMUfa0g8NdM
+         ytg7QpA1W6kHBgAujaS+X7mF0f8xHqNk5WNQKIgVdzu22xxVEdRkcihtwN0V3yIeCK+0
+         vquQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745349760; x=1745954560;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqJEB2/emiFpbOcTWiaq/1rDZxvEsI8ksc0W8YpKhyA=;
-        b=rnFTD4EvjfmU7mMciuNjWda7CxzaOZVXW36LRAWrT8mORWB7vMkYzGB2vDptIBDMzM
-         tOfYtSb06t6mMwBkBD5OgQJLzL8Q3439prNdZiTUT4tBRfH2nLSUMBGs5i02GImgrAsD
-         N7+TrVG4gwE7EyxUkNn1LXGCRPFpI5e3kL4L/Q9QAucwJLn9too/BtRl+bEczwjt08dk
-         0t9e4JuhJrfYFWNI9dWYycx3IiPvmmvqzgX3nUr+KqcNxfqLQKwmFDqzrjtOuSWf0B/N
-         yl+K+GJOZXEU8YJyksdFF3siQSNI1KfVp1on6v1tGJaZODGcZSYMxVp92rg33VpNv/ga
-         kgJQ==
-X-Gm-Message-State: AOJu0YybFjf/JRJPlYHRskrwUk/DC6MTcXRTy8754Jsl5/rHJDkMaUI2
-	RanOJICrfMY+ftkl01cN5IazU+HE6COHK8a7QHDQwgKLPY6HRZe35gwHyHf4X8nMHJ781RrfKMX
-	v1GEaQgZCyT0u0vbFWQIFkZc0OzDraUV41OV0p6wbDNmV9rv6HPTb6+I=
-X-Google-Smtp-Source: AGHT+IHCAco3dix4SeXXeBndwnRv6Pfh6h/t8TAQcLDEPfWPEM2mQrjmwcNGarXeRJEC4DFtnSWp6gazgUXuUrroCaJIo16Zcoq+
+        d=1e100.net; s=20230601; t=1745350124; x=1745954924;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iLi+B3MTVPFx0AsESTkz2z+6nVaBF7LP0N10jEwchIU=;
+        b=UI/iLYPh5pn7FmhUJITlFIYGcd2eAH6FgD3+q8tzIVEfGhH3E2YpUDEv41oCneBou9
+         yjt1iCJrxBz2PCZf2RTubBHGz79ckzsjeThXsGUNLbALdk5KFgO0fxf6sXgGAwxJ+Ct9
+         s173PuZgw5HFrmBKnvObITi6iwlqVNhmVzyHUrOLaseCt0YL1V/h8OVjIkH6jsaYZZSy
+         MTrHHL5kSn490EbcRMQBkzw2c61MkrWki+TtJm5NE679Jequ1Hvs/Un9c0G93PKplb1k
+         Qq37scApzgyanGAz/a3JoimZLBHFBavdnRDZpTZ3JMGqdH9f++k2XUYpAzfh//q4kBuj
+         wXBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCAg6TUdWur9BV87Zy0NogtBt5+Okcwc3jYeTmio6o5qPgP/k1qjMAMVUVhSOwS3A3QYwsMowJnR3jKUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHAOahze2GmKD2FAm+/ZoEhJfyjoTFtqwn69rd9fyKNPXCQm3G
+	3vWDzvZy1kNf4moS8o1Yp65nRv7W4Yr2/XSwDDf01o8xqzmfWojXuav3jDXb31M=
+X-Gm-Gg: ASbGncu8q3/Slj72Adv5bkroRiI6XSGu1yQb6Dwea/NTF7Ds08A7ensSkwbxlxk/huQ
+	Mf8Xxiv6MF9pTp3Mme3XG3V+dRj24to1Ea6W/UBS7ZBIyCxe5wU59zxPwbZSqBd2OYSRJs2VAVK
+	MhOa1wgld3Y4sqAwRd8KlKAXdFQrCoOknHOUC5YzFPiw7I9Md5mr1Shq4zeZn7e7uAWE4z0KDEs
+	G08gnv/r9ovfKPpXZHejNPbcyVIofPHZsfz54WYz53wd0POgQWu+4klRxGIOMQBJWNKmA6d+Ps0
+	uvKDPXxSEis1p8+ogsRAkppjP310vNsSvQcC02nkFKk+HBc=
+X-Google-Smtp-Source: AGHT+IEoiLlkG8CuDq3sxtWZySPM8V1hr1BrdzVkkZxxU8PgD1mHd8w2+yO6D2bCGRL6IKQMfgmgaA==
+X-Received: by 2002:a05:6871:547:b0:2c7:6150:fff7 with SMTP id 586e51a60fabf-2d526e24d2bmr10859675fac.35.1745350123696;
+        Tue, 22 Apr 2025 12:28:43 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2d5212c95ebsm2732646fac.5.2025.04.22.12.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 12:28:43 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Apr 2025 14:28:36 -0500
+Subject: [PATCH] iio: pressure: bmp280: drop sensor_data array
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c09:b0:3d4:700f:67e7 with SMTP id
- e9e14a558f8ab-3d88ee3d549mr163841275ab.17.1745349760467; Tue, 22 Apr 2025
- 12:22:40 -0700 (PDT)
-Date: Tue, 22 Apr 2025 12:22:40 -0700
-In-Reply-To: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6807ec80.050a0220.36a438.0001.GAE@google.com>
-Subject: Re: [syzbot] [PATCH] Re: [syzbot] [jfs?] KASAN: null-ptr-deref Read
- in drop_buffers (3)
-From: syzbot <syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250422-iio-pressure-bmp280-rework-push-to-buffers-v1-1-ee722f29aeca@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAOPtB2gC/x2NwQrCQAwFf6XkbGCNSlt/RTy09q0NYndJXBVK/
+ 93F4xxmZiWHKZzOzUqGt7qmpcJ+19BtHpY7WKfKJEFO4SjCqomzwb0YeHxm6QIbPskenIvP/Eo
+ 8lhhhzqHtpiGg79sDqAarFvX7n12u2/YDK2ONbHwAAAA=
+X-Change-ID: 20250422-iio-pressure-bmp280-rework-push-to-buffers-078da0e9973e
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9506; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=Aoo24VDkLJ9Fvyx9uF18E+0I92xixFzfbVJacPGEagc=;
+ b=owEBbAGT/pANAwAKAcLMIAH/AY/AAcsmYgBoB+3k4EQIfqFSijVG3Jw6BOowCU4UxQi0VZBOx
+ KaQmDM+JQKJATIEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaAft5AAKCRDCzCAB/wGP
+ wLV+B/YtbUFMSdQ3hQHgJ/gpIqZ8vguOPfP1ibSygeA14fM0bbzq9k1f3IJ2kjxSz7lg9xR21hN
+ OFl+a5WWATRi48yO/ob+jjXVK8KA4CepKct8yPYs9H3q2r32CEo1mNmjWPAVNX4VMtHKMANfLk0
+ K69HcJSx6okaU0KefmEtjB1n/T/P0UXSg/pL69e3ddl4pXBvAeOZy01qZUBXHLA0ssRpUsWfIpA
+ 6cmpJiNqQ0PpoX8iziip5AujmfusJGlUMT6ADqvkfc/BGYhMJBJ9Gv/ksCxWJMSb7JGhKpqZe9g
+ DrhaGQKSndqos463s+3YSVxKXkLFBntR1mSWYtAc7GL0DV8=
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Drop the sensor_data array from struct bmp280_data and replace it using
+local structs in each interrupt handler.
 
-***
+The sensor_data array in struct bmp280_data is not used to share data
+between functions and isn't used for DMA, so there isn't really a need
+to have it in the struct. Instead, we can use the struct pattern for
+scan data in each interrupt handler. This has the advantage of allowing
+us to see the actual layout of each scan buffer for each different type
+of supported sensor. It also avoid juggling values between local
+variables and the array which makes the code a bit simpler by avoiding
+some extra assignments.
 
-Subject: [PATCH] Re: [syzbot] [jfs?] KASAN: null-ptr-deref Read in drop_buffers (3)
-Author: richard120310@gmail.com
+We can also drop the BME280_NUM_MAX_CHANNELS macro as it is no longer
+used.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cb82ca153949
-
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+Link: https://lore.kernel.org/linux-iio/20250421135540.1a667221@jic23-huawei/
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- fs/buffer.c | 3 +++
- 1 file changed, 3 insertions(+)
+This is an alternative to [1] that takes a different approach to avoid
+the messy one-size-fits-all buffer used with iio_push_to_buffers_with_ts().
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index cc8452f60251..e65a754176c1 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2883,6 +2883,8 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
- 	struct buffer_head *head = folio_buffers(folio);
- 	struct buffer_head *bh;
+[1]: https://lore.kernel.org/linux-iio/20250418-iio-introduce-iio_declare_buffer_with_ts-v1-4-ee0c62a33a0f@baylibre.com/
+---
+ drivers/iio/pressure/bmp280-core.c | 102 +++++++++++++++++++------------------
+ drivers/iio/pressure/bmp280.h      |   8 ---
+ 2 files changed, 52 insertions(+), 58 deletions(-)
+
+diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+index c20cc4a98c9c494a9c8843518ba2f17b41be18a9..5728cc18cced223284a2c41dc6dec6f47169c797 100644
+--- a/drivers/iio/pressure/bmp280-core.c
++++ b/drivers/iio/pressure/bmp280-core.c
+@@ -46,6 +46,7 @@
+ #include <linux/random.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/types.h>
  
-+	if (!head)
-+		goto out;
- 	bh = head;
- 	do {
- 		if (buffer_busy(bh))
-@@ -2897,6 +2899,7 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
- 			__remove_assoc_queue(bh);
- 		bh = next;
- 	} while (bh != head);
-+out:
- 	*buffers_to_free = head;
- 	folio_detach_private(folio);
- 	return true;
+ #include <linux/iio/buffer.h>
+ #include <linux/iio/iio.h>
+@@ -1105,9 +1106,13 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bmp280_data *data = iio_priv(indio_dev);
+-	u32 adc_temp, adc_press, comp_press;
+-	s32 t_fine, comp_temp;
+-	s32 *chans = (s32 *)data->sensor_data;
++	u32 adc_temp, adc_press;
++	s32 t_fine;
++	struct {
++		u32 comp_press;
++		s32 comp_temp;
++		aligned_s64 timestamp;
++	} buffer;
+ 	int ret;
+ 
+ 	guard(mutex)(&data->lock);
+@@ -1127,7 +1132,7 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
+-	comp_temp = bmp280_compensate_temp(data, adc_temp);
++	buffer.comp_temp = bmp280_compensate_temp(data, adc_temp);
+ 
+ 	/* Pressure calculations */
+ 	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
+@@ -1137,13 +1142,9 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
+ 	}
+ 
+ 	t_fine = bmp280_calc_t_fine(data, adc_temp);
+-	comp_press = bmp280_compensate_press(data, adc_press, t_fine);
+-
+-	chans[0] = comp_press;
+-	chans[1] = comp_temp;
++	buffer.comp_press = bmp280_compensate_press(data, adc_press, t_fine);
+ 
+-	iio_push_to_buffers_with_ts(indio_dev, data->sensor_data,
+-				    sizeof(data->sensor_data),
++	iio_push_to_buffers_with_ts(indio_dev, &buffer, sizeof(buffer),
+ 				    iio_get_time_ns(indio_dev));
+ 
+ out:
+@@ -1226,9 +1227,14 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bmp280_data *data = iio_priv(indio_dev);
+-	u32 adc_temp, adc_press, adc_humidity, comp_press, comp_humidity;
+-	s32 t_fine, comp_temp;
+-	s32 *chans = (s32 *)data->sensor_data;
++	u32 adc_temp, adc_press, adc_humidity;
++	s32 t_fine;
++	struct {
++		u32 comp_press;
++		s32 comp_temp;
++		u32 comp_humidity;
++		aligned_s64 timestamp;
++	} buffer;
+ 	int ret;
+ 
+ 	guard(mutex)(&data->lock);
+@@ -1248,7 +1254,7 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
+-	comp_temp = bmp280_compensate_temp(data, adc_temp);
++	buffer.comp_temp = bmp280_compensate_temp(data, adc_temp);
+ 
+ 	/* Pressure calculations */
+ 	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
+@@ -1258,7 +1264,7 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+ 	}
+ 
+ 	t_fine = bmp280_calc_t_fine(data, adc_temp);
+-	comp_press = bmp280_compensate_press(data, adc_press, t_fine);
++	buffer.comp_press = bmp280_compensate_press(data, adc_press, t_fine);
+ 
+ 	/* Humidity calculations */
+ 	adc_humidity = get_unaligned_be16(&data->buf[6]);
+@@ -1268,14 +1274,10 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
+-	comp_humidity = bme280_compensate_humidity(data, adc_humidity, t_fine);
++	buffer.comp_humidity = bme280_compensate_humidity(data, adc_humidity,
++							  t_fine);
+ 
+-	chans[0] = comp_press;
+-	chans[1] = comp_temp;
+-	chans[2] = comp_humidity;
+-
+-	iio_push_to_buffers_with_ts(indio_dev, data->sensor_data,
+-				    sizeof(data->sensor_data),
++	iio_push_to_buffers_with_ts(indio_dev, &buffer, sizeof(buffer),
+ 				    iio_get_time_ns(indio_dev));
+ 
+ out:
+@@ -1901,9 +1903,13 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bmp280_data *data = iio_priv(indio_dev);
+-	u32 adc_temp, adc_press, comp_press;
+-	s32 t_fine, comp_temp;
+-	s32 *chans = (s32 *)data->sensor_data;
++	u32 adc_temp, adc_press;
++	s32 t_fine;
++	struct {
++		u32 comp_press;
++		s32 comp_temp;
++		aligned_s64 timestamp;
++	} buffer;
+ 	int ret;
+ 
+ 	guard(mutex)(&data->lock);
+@@ -1923,7 +1929,7 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
+-	comp_temp = bmp380_compensate_temp(data, adc_temp);
++	buffer.comp_temp = bmp380_compensate_temp(data, adc_temp);
+ 
+ 	/* Pressure calculations */
+ 	adc_press = get_unaligned_le24(&data->buf[0]);
+@@ -1933,13 +1939,9 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+ 	}
+ 
+ 	t_fine = bmp380_calc_t_fine(data, adc_temp);
+-	comp_press = bmp380_compensate_press(data, adc_press, t_fine);
+-
+-	chans[0] = comp_press;
+-	chans[1] = comp_temp;
++	buffer.comp_press = bmp380_compensate_press(data, adc_press, t_fine);
+ 
+-	iio_push_to_buffers_with_ts(indio_dev, data->sensor_data,
+-				    sizeof(data->sensor_data),
++	iio_push_to_buffers_with_ts(indio_dev, &buffer, sizeof(buffer),
+ 				    iio_get_time_ns(indio_dev));
+ 
+ out:
+@@ -2611,7 +2613,12 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bmp280_data *data = iio_priv(indio_dev);
+-	int ret, offset;
++	struct {
++		__le32 comp_temp;
++		__le32 comp_press;
++		aligned_s64 timestamp;
++	} buffer;
++	int ret;
+ 
+ 	guard(mutex)(&data->lock);
+ 
+@@ -2623,18 +2630,13 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
+-	offset = 0;
+-
+ 	/* Pressure calculations */
+-	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
+-
+-	offset += sizeof(s32);
++	memcpy(&buffer.comp_press, &data->buf[3], 3);
+ 
+ 	/* Temperature calculations */
+-	memcpy(&data->sensor_data[offset], &data->buf[0], 3);
++	memcpy(&buffer.comp_temp, &data->buf[0], 3);
+ 
+-	iio_push_to_buffers_with_ts(indio_dev, data->sensor_data,
+-				    sizeof(data->sensor_data),
++	iio_push_to_buffers_with_ts(indio_dev, &buffer, sizeof(buffer),
+ 				    iio_get_time_ns(indio_dev));
+ 
+ out:
+@@ -2956,25 +2958,25 @@ static irqreturn_t bmp180_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bmp280_data *data = iio_priv(indio_dev);
+-	int ret, comp_temp, comp_press;
+-	s32 *chans = (s32 *)data->sensor_data;
++	struct {
++		u32 comp_press;
++		s32 comp_temp;
++		aligned_s64 timestamp;
++	} buffer;
++	int ret;
+ 
+ 	guard(mutex)(&data->lock);
+ 
+-	ret = bmp180_read_temp(data, &comp_temp);
++	ret = bmp180_read_temp(data, &buffer.comp_temp);
+ 	if (ret)
+ 		goto out;
+ 
+ 
+-	ret = bmp180_read_press(data, &comp_press);
++	ret = bmp180_read_press(data, &buffer.comp_press);
+ 	if (ret)
+ 		goto out;
+ 
+-	chans[0] = comp_press;
+-	chans[1] = comp_temp;
+-
+-	iio_push_to_buffers_with_ts(indio_dev, data->sensor_data,
+-				    sizeof(data->sensor_data),
++	iio_push_to_buffers_with_ts(indio_dev, &buffer, sizeof(buffer),
+ 				    iio_get_time_ns(indio_dev));
+ 
+ out:
+diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+index 5b2ee1d0ee464797d1d9993a014d8f84c37d5596..25bb9c743a05a19c5d2396969f0f4e0fef6ddcd0 100644
+--- a/drivers/iio/pressure/bmp280.h
++++ b/drivers/iio/pressure/bmp280.h
+@@ -349,7 +349,6 @@
+ 					 BMP280_NUM_TEMP_BYTES + \
+ 					 BME280_NUM_HUMIDITY_BYTES)
+ 
+-#define BME280_NUM_MAX_CHANNELS		3
+ /* Core exported structs */
+ 
+ static const char *const bmp280_supply_names[] = {
+@@ -452,13 +451,6 @@ struct bmp280_data {
+ 	 */
+ 	int sampling_freq;
+ 
+-	/*
+-	 * Data to push to userspace triggered buffer. Up to 3 channels and
+-	 * s64 timestamp, aligned.
+-	 */
+-	u8 sensor_data[ALIGN(sizeof(s32) * BME280_NUM_MAX_CHANNELS, sizeof(s64))
+-		       + sizeof(s64)] __aligned(sizeof(s64));
+-
+ 	/* Value to hold the current operation mode of the device */
+ 	enum bmp280_op_mode op_mode;
+ 
+
+---
+base-commit: b475195fecc79a1a6e7fb0846aaaab0a1a4cb2e6
+change-id: 20250422-iio-pressure-bmp280-rework-push-to-buffers-078da0e9973e
+
+Best regards,
 -- 
-2.43.0
+David Lechner <dlechner@baylibre.com>
 
 
