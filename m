@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-614068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45907A965C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:22:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9939EA965CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E79E3A9F4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8110D175F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5893A2116EB;
-	Tue, 22 Apr 2025 10:22:27 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D1E20E030;
+	Tue, 22 Apr 2025 10:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dF6E9pqh"
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3141F510
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9319F510;
+	Tue, 22 Apr 2025 10:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317346; cv=none; b=XAXPWybXxhnkGBF3kko7PHK0UBMZHJUJtIZGER2tHyp5AIx27+jT4qiUWBCKDHHuuGG3uniEeq3ABFa7fdbzCeaZEpVXAUgc3G9FJtLdz/Noa7EvP0v6+d3SNbyNGKXOLyVqd4sMd7tBBDR+g6htDnv53lIYpXQ8qnuF9/U971w=
+	t=1745317446; cv=none; b=Qn+PO1I8tSCoc6LXTjukJiFsArBXq5A13fMt4IcZKgpyGcf0rvsyr4Q00OpaHCoa00YesYDBo757YEVQOQo362entLTl/or+ssO28ltmvhqQu8H5ySDJKAxaWqcAI5B2UYR4xcz9RCtFoRwLqbMdpGZ1np6Q39/E3xmLxMHfh5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317346; c=relaxed/simple;
-	bh=V2dyZhT4GbbI5U0kvHD4SrnjYLuMHj0ldYzjCSj2rTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U8uWQM2t56uDmShW4mib2rCM/1MmyzYFXwJ7cIVUlzu7ZfRtvM9mail1OlEScgXFQI4OsYdh2G2Fx0GTw2cQR+VUY50WHOYMtOvxewz0gj5A1gUc/MK5eW3bLqLfiqiI3HCjLOqZ1IldBWIxjn9hoR3Xl+D2GHSRlrLoqgWklOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3AE9C43ADE;
-	Tue, 22 Apr 2025 10:22:17 +0000 (UTC)
-Message-ID: <d09e80c2-024c-4fe0-b71e-6af88e239ea9@ghiti.fr>
-Date: Tue, 22 Apr 2025 12:22:17 +0200
+	s=arc-20240116; t=1745317446; c=relaxed/simple;
+	bh=QwylYaArHciXtrOfCdsCAGn0Ril2BBTKFUXlFhVuIeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tRoUwXUHJXzaReHLq0b3sP6aO+hDvOBJzgU19tQLdXkAyuU2rqiM5fxuqBCIaHAUWOfD4TGO05iqXXqfUwuYbqvU3h9NqLxUvjdgPFGoR+tUEdgzD9CfhLfMX98+Ll0N5CamDPLWetKrS+9PC6LJSV+3ofAEccYeOQXBWwxZXxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dF6E9pqh; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745317427;
+	bh=WlmB1lqRNxFbFMYPeJr4njtQ9mNImQJWs4aHfijngHw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dF6E9pqhaG9bHpdcJOM0lqVFCn5WstacrdMGBx5UtVbSG0mR3uxySrdxgzcuawbsg
+	 G/Jx9/RQyZH33e88TjmdkiLrZexRmDCMB/c0+apfYG7IZlgnkddnPvmHWrmmtH1bkk
+	 XJLidj+5g9mvpajBWxa0M400uL/sgC1uWH8LWUMc=
+X-QQ-mid: zesmtpip4t1745317380te5bc3dce
+X-QQ-Originating-IP: WcYi1NZqqtZuTN8yyNwmSTGUPHkECqFH8z/doLuEEKY=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Apr 2025 18:22:58 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8748779318587994258
+EX-QQ-RecipientCnt: 9
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com,
+	Chen Linxuan <chenlinxuan@uniontech.com>
+Subject: [PATCH v2 1/6] MIPS: dec: Only check -msym32 when need compiler
+Date: Tue, 22 Apr 2025 18:22:48 +0800
+Message-ID: <C7DB555D3895DE54+20250422102253.137944-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
+References: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] riscv: save the SR_SUM status over switches
-Content-Language: en-US
-To: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
- jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org, syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
-References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
- <20250410070526.3160847-2-cyrilbur@tenstorrent.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250410070526.3160847-2-cyrilbur@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhlefhffeggfeftddvtdeukeelgfehkeehhfeuheehleefkeelgffglefghfffueenucffohhmrghinhepvghnthhrhidrshgsnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemlehfsggvmedvtdgvfeemvdhftgefmeekugduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemlehfsggvmedvtdgvfeemvdhftgefmeekugduledphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemlehfsggvmedvtdgvfeemvdhftgefmeekugdulegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheptgihrhhilhgsuhhrsehtvghnshhtohhrrhgvnhhtrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghou
- hesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjrhhttgdvjeesjhhrthgtvdejrdgtohhmpdhrtghpthhtohepsggvnhdrughoohhkshestghouggvthhhihhnkhdrtghordhukhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MYha8DeKTomkKz7ip5AbqtPm+f55dSHKOIkcSp5YTMmmWUNKYykEQDSR
+	009n2svWpFISYgXSwVF12JPOOvgtRHQlN7R5YsRayrYImq6BfLTzXS3e1faehVAS+SQ6b9R
+	ZiLHigdEIa71eOj5NGCrh9Mxec9QLFjEOYFx12+gEhRYZi/wxZAOoCqh/xUey4ZtA0+rH3L
+	l7XVzOI5wIjUOq2fFhYp20bcUyedzQRcdLdRMi1mjPbTHufClT2qievbJhP4nNVXIZm+1QW
+	QC6fmIvHQosoE2KkVDB87TVdCpO0+6M5hR1oEtJAkxt1okXAK2tvsSvyanJEx7eO3yas8st
+	sRL3TE75U2zPbRgrfF5c0rRgwfoG+eFQILCmngt8lzmCOXYDFljaigQ8D1/hohhjHuPkJE+
+	tfUG78d4MZTFWdY5qqzCEcMziycEFpGbbqczvua0oXshYL9eSp8uDWQExDlhzVzz/pf2unD
+	9CpOkEDko9e4jsy3yjybcgb7ujRIVRIfqi2SjGNMA3IwuA07tb6jk4gNTm77uC1pdQbTJ3Q
+	F2UrTwtBML+ipzJpphJFZn08B35P0YscOJGauGCjFCeF01kutz4yxGTaBeQ0PTR9ZOIXLSt
+	tUhHryV91dfTR5Po2GDkL657xWcXKX1hnLC8aheVMO0aEVhhZaurtCSR/ns8qkow3qHfhO8
+	06sRWgXUdbF5pIALqx1kMOYux6t/w5eBkA9XEFCZ/N23Aeh/La/X/ZzzVHYsUMl4i4XoTqK
+	43LrDndHHGeJe5pMm0eDKwEnvakOEE7SinrA0F0qKCEWyOatV/zMHSC8ziUaYz0KpSYoKN9
+	2mI7WI6MGiHJG/RXW0jolAMDjPAuKHMLeZFZ+cv7tQONj11cPiBqOYwEcgkIqQbWhiXsCha
+	XAqeLMwufYXJjhkcFyA4uHPKbX9JLY7lPYZwkU/X8lwgcYCw76wkLAGkltuYqvckfQh9FI/
+	aXhA5bOOxxjVz7W4dO3lXouJu5h0QBDn/HiN3r27ETzi/5bYZRfnwzCvEboDZpR1hmt9W/o
+	pWYg1v8Ry/xPYfYTs8gDfaU45vfeV+Ox0hHaE5jY0LVGe41a4V156iQ5F/V0sCdVhMWtgns
+	IXKFGy7+t9lPTMPwF5BQlM=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-Hi Cyril,
+During 'make modules_install', the need-compiler variable becomes
+null, so Makefile.compiler isn't included.
 
-On 10/04/2025 09:05, Cyril Bur wrote:
-> From: Ben Dooks <ben.dooks@codethink.co.uk>
->
-> When threads/tasks are switched we need to ensure the old execution's
-> SR_SUM state is saved and the new thread has the old SR_SUM state
-> restored.
->
-> The issue was seen under heavy load especially with the syz-stress tool
-> running, with crashes as follows in schedule_tail:
->
-> Unable to handle kernel access to user memory without uaccess routines
-> at virtual address 000000002749f0d0
-> Oops [#1]
-> Modules linked in:
-> CPU: 1 PID: 4875 Comm: syz-executor.0 Not tainted
-> 5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
-> Hardware name: riscv-virtio,qemu (DT)
-> epc : schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
->   ra : task_pid_vnr include/linux/sched.h:1421 [inline]
->   ra : schedule_tail+0x70/0xb2 kernel/sched/core.c:4264
-> epc : ffffffe00008c8b0 ra : ffffffe00008c8ae sp : ffffffe025d17ec0
->   gp : ffffffe005d25378 tp : ffffffe00f0d0000 t0 : 0000000000000000
->   t1 : 0000000000000001 t2 : 00000000000f4240 s0 : ffffffe025d17ee0
->   s1 : 000000002749f0d0 a0 : 000000000000002a a1 : 0000000000000003
->   a2 : 1ffffffc0cfac500 a3 : ffffffe0000c80cc a4 : 5ae9db91c19bbe00
->   a5 : 0000000000000000 a6 : 0000000000f00000 a7 : ffffffe000082eba
->   s2 : 0000000000040000 s3 : ffffffe00eef96c0 s4 : ffffffe022c77fe0
->   s5 : 0000000000004000 s6 : ffffffe067d74e00 s7 : ffffffe067d74850
->   s8 : ffffffe067d73e18 s9 : ffffffe067d74e00 s10: ffffffe00eef96e8
->   s11: 000000ae6cdf8368 t3 : 5ae9db91c19bbe00 t4 : ffffffc4043cafb2
->   t5 : ffffffc4043cafba t6 : 0000000000040000
-> status: 0000000000000120 badaddr: 000000002749f0d0 cause:
-> 000000000000000f
-> Call Trace:
-> [<ffffffe00008c8b0>] schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
-> [<ffffffe000005570>] ret_from_exception+0x0/0x14
-> Dumping ftrace buffer:
->     (ftrace buffer empty)
-> ---[ end trace b5f8f9231dc87dda ]---
->
-> The issue comes from the put_user() in schedule_tail
-> (kernel/sched/core.c) doing the following:
->
-> asmlinkage __visible void schedule_tail(struct task_struct *prev)
-> {
-> ...
->          if (current->set_child_tid)
->                  put_user(task_pid_vnr(current), current->set_child_tid);
-> ...
-> }
->
-> the put_user() macro causes the code sequence to come out as follows:
->
-> 1:	__enable_user_access()
-> 2:	reg = task_pid_vnr(current);
-> 3:	*current->set_child_tid = reg;
-> 4:	__disable_user_access()
->
-> The problem is that we may have a sleeping function as argument which
-> could clear SR_SUM causing the panic above. This was fixed by
-> evaluating the argument of the put_user() macro outside the user-enabled
-> section in commit 285a76bb2cf5 ("riscv: evaluate put_user() arg before
-> enabling user access")"
->
-> In order for riscv to take advantage of unsafe_get/put_XXX() macros and
-> to avoid the same issue we had with put_user() and sleeping functions we
-> must ensure code flow can go through switch_to() from within a region of
-> code with SR_SUM enabled and come back with SR_SUM still enabled. This
-> patch addresses the problem allowing future work to enable full use of
-> unsafe_get/put_XXX() macros without needing to take a CSR bit flip cost
-> on every access. Make switch_to() save and restore SR_SUM.
->
-> Reported-by: syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
-> ---
->   arch/riscv/include/asm/processor.h | 1 +
->   arch/riscv/kernel/asm-offsets.c    | 5 +++++
->   arch/riscv/kernel/entry.S          | 8 ++++++++
->   3 files changed, 14 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-> index 5f56eb9d114a..58fd11c89fe9 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -103,6 +103,7 @@ struct thread_struct {
->   	struct __riscv_d_ext_state fstate;
->   	unsigned long bad_cause;
->   	unsigned long envcfg;
-> +	unsigned long status;
->   	u32 riscv_v_flags;
->   	u32 vstate_ctrl;
->   	struct __riscv_v_ext_state vstate;
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
-> index 16490755304e..969c65b1fe41 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -34,6 +34,7 @@ void asm_offsets(void)
->   	OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
->   	OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
->   	OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
-> +	OFFSET(TASK_THREAD_STATUS, task_struct, thread.status);
->   
->   	OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
->   	OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
-> @@ -346,6 +347,10 @@ void asm_offsets(void)
->   		  offsetof(struct task_struct, thread.s[11])
->   		- offsetof(struct task_struct, thread.ra)
->   	);
-> +	DEFINE(TASK_THREAD_STATUS_RA,
-> +		  offsetof(struct task_struct, thread.status)
-> +		- offsetof(struct task_struct, thread.ra)
-> +	);
->   
->   	DEFINE(TASK_THREAD_F0_F0,
->   		  offsetof(struct task_struct, thread.fstate.f[0])
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 33a5a9f2a0d4..00bd0de9faa2 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -397,9 +397,17 @@ SYM_FUNC_START(__switch_to)
->   	REG_S s9,  TASK_THREAD_S9_RA(a3)
->   	REG_S s10, TASK_THREAD_S10_RA(a3)
->   	REG_S s11, TASK_THREAD_S11_RA(a3)
-> +
-> +	/* save the user space access flag */
-> +	li    s0, SR_SUM
+This results in call cc-option-yn returning nothing.
 
+For more technical details on why need-compiler is null during
+‘make modules_install’ and why no compiler invocation is actually
+needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
+Only fiddle with CHECKFLAGS if need-compiler") and commit
+805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
+is needed").
 
-This is not needed anymore ^ but I'll remove it when merging your patchset.
+Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression") tried to fix the same issue but it
+caused a compile error on clang compiler because it doesn't support
+'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
+of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression.
 
+Wrapping this entire code block with #ifdef need-compiler to avoid
+all issues is the best solution for now.
 
-> +	csrr  s1, CSR_STATUS
-> +	REG_S s1, TASK_THREAD_STATUS_RA(a3)
-> +
->   	/* Save the kernel shadow call stack pointer */
->   	scs_save_current
->   	/* Restore context from next->thread */
-> +	REG_L s0,  TASK_THREAD_STATUS_RA(a4)
-> +	csrs  CSR_STATUS, s0
->   	REG_L ra,  TASK_THREAD_RA_RA(a4)
->   	REG_L sp,  TASK_THREAD_SP_RA(a4)
->   	REG_L s0,  TASK_THREAD_S0_RA(a4)
+To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+without -msym32" error.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk/
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2307180025120.62448@angie.orcam.me.uk/
+Fixes: a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS `modules_install' regression")
+Reported-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Closes: https://lore.kernel.org/all/alpine.DEB.2.21.2501030535080.49841@angie.orcam.me.uk/
+Co-developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks for the multiple revisions!
-
-Alex
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index d9057e29bc62..1fffc6cf8b52 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -284,6 +284,7 @@ entry-y				= $(shell $(objtree)/arch/mips/tools/elf-entry vmlinux)
+ cflags-y			+= -I$(srctree)/arch/mips/include/asm/mach-generic
+ drivers-$(CONFIG_PCI)		+= arch/mips/pci/
+ 
++ifdef need-compiler
+ #
+ # Automatically detect the build format. By default we choose
+ # the elf format according to the load address.
+@@ -304,7 +305,8 @@ ifdef CONFIG_64BIT
+       $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
+     endif
+   endif
+-endif
++endif # CONFIG_64BIT
++endif # need-compiler
+ 
+ # When linking a 32-bit executable the LLVM linker cannot cope with a
+ # 32-bit load address that has been sign-extended to 64 bits.  Simply
+-- 
+2.49.0
 
 
