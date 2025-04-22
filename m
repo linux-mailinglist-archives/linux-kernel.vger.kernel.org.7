@@ -1,85 +1,97 @@
-Return-Path: <linux-kernel+bounces-613471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FE9A95CFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1C6A95CF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FBE189643D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D916516A256
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368391C9DE5;
-	Tue, 22 Apr 2025 04:27:37 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D651ACED3;
+	Tue, 22 Apr 2025 04:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwxRVvv/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453B018A6AB;
-	Tue, 22 Apr 2025 04:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05BC1A0BC9;
+	Tue, 22 Apr 2025 04:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745296056; cv=none; b=NkSp2DNtkljacUuEQ5F/9CqLtLoG3o1I+5ifzwIjzL3R5mRYyNICSfMsscG0eaAo7nAC9yh7S8vUDzzs45+Q8fXCq7/LiOD8zYgV6GF3rbLQgr0Ss9/o0A6lTg9u4Wbi73M7jRSKTrj0VNa2iWMXlQPIEIw4dMRXNYPBTVboPHI=
+	t=1745296055; cv=none; b=AMwVGI1MYVwIXZZQNHEhgWo4o4JvP7v2brTH4oJDV+gd/fYaUzX8ZEdZ0wLWeCx+G0mWWaW3ZaQ7f+VoSst0F0ObSBSbbVjtxHo2od7oKh1jhLljckBCfWVlseu6/T58W1JQ4jq0FnS53foZseXUD9kbyHOeyvd3D9928y3jZ4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745296056; c=relaxed/simple;
-	bh=PLSm/GNxIQKdFcbfEfmuNrKOANZViQEJeLI7/wm2bbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odAZ6vvnoaqMVfJf2pP7VmfXat5tb9WCdjMFCM41gn1pQlIhClAQ8ib4CD3iadnheXobs1QHa2YlqEuxfG++4jTwnyfA95qvNyhqm7td28gSeMdamcbCj0nsjrpU7IVDdKNotvcsppPOwWqKyf5lq8kZEFv+P0DbFsFgsQwWJ1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 17A2568C4E; Tue, 22 Apr 2025 06:27:28 +0200 (CEST)
-Date: Tue, 22 Apr 2025 06:27:27 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH v8 20/24] blk-mq: add scatterlist-less DMA mapping
- helpers
-Message-ID: <20250422042727.GC27723@lst.de>
-References: <cover.1744825142.git.leon@kernel.org> <87b151a3791d71e58ec6f1b42bcf5fe06304cf80.1744825142.git.leon@kernel.org>
+	s=arc-20240116; t=1745296055; c=relaxed/simple;
+	bh=Fq2jiJWeXkpHf9bZrGaOYFjubx/HEzHAg8dgrWDcSb4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=u3AN9FTivbheVpWtDHbeXo2yWLWVkj+flLy/NVGn6DW49RAO39wcoXh9YqIdgb0HbNjrB9/saDAztIhoEcFsCxvy/tqJBfutfG6tadE3he0Pst0YXNbpABO5zYl1E5mDcPP7wVH/ypxy3ebxi9rK1ACSpumNDnrzaMIa3vGfY8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwxRVvv/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E6B8C4CEEC;
+	Tue, 22 Apr 2025 04:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745296055;
+	bh=Fq2jiJWeXkpHf9bZrGaOYFjubx/HEzHAg8dgrWDcSb4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=jwxRVvv/3VQV090c31ixZiiaa7zEqHQbOifOO8y+hb2Bba86pCI+NsdIa8xoiqGDQ
+	 Ke5/59FRVRdROWFiO0T7qSUU4G+Ile/ae8jZ4krO8an3g9Nmt7MkPnsUcUq9iytbSE
+	 Io+7HUKhDCIHORnpsYS86o/eP4dKqz50zTtlS3xLW9zJfzqsB/xSCOfcKrqCdSX0FG
+	 KVsJYdEPMvTJk9+qoE6A+LZScbr9Qc1zX3lCppVNggJG3eSFErKLiqZa1bm3fzoljf
+	 lFRRcA0kqQv3A4Z9HbUE/H/2vIcIMcbl8YNpPRtDxrxWYHtuo8U2nHVYVtLmL8KJuB
+	 8wWdj2d1dRqcQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A90C369D7;
+	Tue, 22 Apr 2025 04:27:35 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] power: bq24190: Add BQ24193 support
+Date: Mon, 21 Apr 2025 23:27:32 -0500
+Message-Id: <20250421-bq24193-v1-0-f125ef396d24@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87b151a3791d71e58ec6f1b42bcf5fe06304cf80.1744825142.git.leon@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALQaB2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyND3aRCIxNDS2PdZJOk1CQLy6SkJEszJaDqgqLUtMwKsEnRsbW1ABs
+ W7d9ZAAAA
+X-Change-ID: 20250421-bq24193-c4beb89bbb96
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745296054; l=533;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=Fq2jiJWeXkpHf9bZrGaOYFjubx/HEzHAg8dgrWDcSb4=;
+ b=GRCOGOgn3GfkllHsnZKOdlGAJrKKqIid2EUxM14fCUK0PTQ/+ZVq6zae/WIE7tjoVEC54LCsJ
+ ICpJ2zHv9GfCQeKtXF+HLOQ0G4WkcGQChFbaCWO3imAExhWNhMvCq9E
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Fri, Apr 18, 2025 at 09:47:50AM +0300, Leon Romanovsky wrote:
-> +#define blk_phys_to_page(_paddr) \
-> + 	(pfn_to_page(__phys_to_pfn(_paddr)))
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (2):
+      dt-bindings: power: supply: bq24190: Add BQ24193 compatible
+      power: bq24190: Add BQ24193 support
 
-The code can use phys_to_page now that that is provided kernel-wide
-instead this temporary helper.
+ .../devicetree/bindings/power/supply/bq24190.yaml          |  1 +
+ drivers/power/supply/bq24190_charger.c                     | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+---
+base-commit: a33b5a08cbbdd7aadff95f40cbb45ab86841679e
+change-id: 20250421-bq24193-c4beb89bbb96
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
