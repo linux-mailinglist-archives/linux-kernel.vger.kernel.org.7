@@ -1,184 +1,119 @@
-Return-Path: <linux-kernel+bounces-614191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEFFA9674F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02B1A9675B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3FE17C548
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 445F33BC3F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B378027BF74;
-	Tue, 22 Apr 2025 11:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C6527C86B;
+	Tue, 22 Apr 2025 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7uLd2yC"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390D20B80D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lp8bbt1A"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C96D27C860;
+	Tue, 22 Apr 2025 11:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321267; cv=none; b=DFOI8BMlfyn7KVyvRexV7NqWv05GvZXq8j+X77IH2YbrhsN4xN8+fweGLQp+cLbn9yfIqU9px9CEFvyP9VwgzLN35TGkmaxVxmqf9iz8VoFNggc4krjq9evH7WO3Nuj8KIAmRuXrB+hE0f2yB8rTkdtSkrbur+PoQLXXiQ5z4lU=
+	t=1745321370; cv=none; b=qSVOcbo3mFeNv9RYAxwkD7xj4Hue16XHe+1/bj/A4tF5kw7XaTXkrOHXIuhxox/mRTqsewtZkrU+Uv/BVE3TqYvx5dmqyMFZRAWeB4xMOVwqkbs/iWYzCzLtXWn2Y4KyvtJGj0GzjU1zk41II2Ci39D7kdRXmRrRCPmB6CsbH4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321267; c=relaxed/simple;
-	bh=HkvU5H5T+Vyi2pEdJQTZw0q2sFCXY/WSgVZ7OCFEvhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAXw9imf2TtkWo0OupoIZnn6zqzyVxE1VVAPwA+/+yzk+OlKB/YJMTQR3xK3PHKR/cRMLZjfz6adZjEijn7I+lQSfQDtRlbM5uVxZ0M7+gAHmLuje7yIwzsep35fO0JAHbvidY7eAC0y6OlMK+lBt60uWN+/iIvyOh8PnPL7QGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7uLd2yC; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Apr 2025 04:27:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745321261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SZSjzh21Er6zfYpYTz3VLBkYDxUNuBOsafE2+zPHwBA=;
-	b=E7uLd2yCclpmGAzh893lNm5cQKameJvnzPjKKJwvuaf8AXx89o9G9M1npI7pHn46ZNMlLn
-	CqYXdHpLMy5dmKVTckr84siM9y3hXO1cInmM9WNNEo5/x5ZVPVKhwjWHvX23lWuvz3xLNY
-	9oQw3PxF6TXoTd6aRabYweyEfx43PrQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org,
-	cerasuolodomenico@gmail.com, sjenning@redhat.com, ddstreet@ieee.org,
-	vitaly.wool@konsulko.com, hughd@google.com, corbet@lwn.net,
-	konrad.wilk@oracle.com, senozhatsky@chromium.org, rppt@kernel.org,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, david@ixit.cz
-Subject: Re: [PATCH 0/2] minimize swapping on zswap store failure
-Message-ID: <aAd9G_BYEcNwVuSd@Asmaa.>
-References: <CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=vMGhfF4iN2B4VKw@mail.gmail.com>
- <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1745321370; c=relaxed/simple;
+	bh=AmnegAGf3G44zAjt+HxnrgnyyFqitKP3Mq6tvhHo/R8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FpLoTd800tyXfBmqp1N8rs0+eMUcUvpexeWTED/JrLjbYAUbWDrjLFEd0uaiZlGuhDVFDkb7glm76lYPQrCJqeKmg4c36uTx5hwVkkIhalBAONwTrQcurhyblKsGHK8JZPJxkjOntU8tB4B4VUyfKtg+Lwjx+o5PajBrwyVLhY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lp8bbt1A; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=hk85i
+	Y4ymzyKE4GF/XJIv+VOxpEfbG0odDZoakglHzU=; b=lp8bbt1AYA98UYm7u9TfQ
+	ynqlrk6uZpn4Yt2QLQDYSlHVGrZWmWmzl4cQGOuoLtfKNfbQafTsg3ExvSVV1SUi
+	1qlhPQFeyhWntuZSTOZ23yUHa6DdhBtV67b8lZefbIkAMFxWaEgQZrjBC1Vb2nYz
+	USj6gNOPnihzMm/y2DqpjA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCXbK1gfQdoRW2NBg--.44191S2;
+	Tue, 22 Apr 2025 19:28:33 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de
+Cc: manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	shawn.lin@rock-chips.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 0/3] PCI: dw-rockchip: Reorganize register and bitfield definitions
+Date: Tue, 22 Apr 2025 19:28:27 +0800
+Message-Id: <20250422112830.204374-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:_____wCXbK1gfQdoRW2NBg--.44191S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFykKw4ruF18XrW7Xr4kCrg_yoW8Kryxp3
+	Z8JFWrur4fJw40vws7tw17ZFy8K3ZrCFyY9w4DKw10qa40qa48WFyftF1F9ry7Xr4xKF17
+	ZwsrX34I93Wav3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEJPEPUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDw83o2gHegpLtwADs0
 
-On Wed, Apr 02, 2025 at 01:06:49PM -0700, Joshua Hahn wrote:
-> On Mon, 16 Oct 2023 17:57:31 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
-> 
-> > On Mon, Oct 16, 2023 at 5:35 PM Nhat Pham <nphamcs@gmail.com> wrote:
-> 
-> > I thought before about having a special list_head that allows us to
-> > use the lower bits of the pointers as markers, similar to the xarray.
-> > The markers can be used to place different objects on the same list.
-> > We can have a list that is a mixture of struct page and struct
-> > zswap_entry. I never pursued this idea, and I am sure someone will
-> > scream at me for suggesting it. Maybe there is a less convoluted way
-> > to keep the LRU ordering intact without allocating memory on the
-> > reclaim path.
-> 
-> Hi Yosry,
-> 
-> Apologies for reviving an old thread, but I wasn't sure whether opening an
-> entirely new thread was a better choice : -)
+1. PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+2. PCI: dw-rockchip: Reorganize register and bitfield definitions
+3. PCI: dw-rockchip: Unify link status checks with FIELD_GET
 
-This seems like the right choice to me :)
+---
+https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
 
-> 
-> So I've implemented your idea, using the lower 2 bits of the list_head's prev
-> pointer (last bit indicates whether the list_head belongs to a page or a
-> zswap_entry, and the second to last bit was repurposed for the second chance
-> algorithm).
+Bjorn Helgaas:
+These would be material for a separate patch:
 
-Thanks a lot for spending time looking into this, and sorry for the
-delayed resposne (I am technically on leave right now).
+- The #defines for register offsets and bits are kind of a mess,
+  e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
+  PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
+  PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
+  names, and they're not even defined together.
 
-> 
-> For a very high level overview what I did in the patch:
-> - When a page fails to compress, I remove the page mapping and tag both the
->   xarray entry (tag == set lowest bit to 1) and the page's list_head prev ptr,
->   then store the page directly into the zswap LRU.
+- Same for PCIE_RDLH_LINK_UP_CHGED, PCIE_LINK_REQ_RST_NOT_INT,
+  PCIE_RDLH_LINK_UP_CHGED, which are in PCIE_CLIENT_INTR_STATUS_MISC.
 
-What do you mean by 'remove the page mapping'? Do you mean
-__remove_mapping()?
+- PCIE_LTSSM_ENABLE_ENHANCE is apparently in PCIE_CLIENT_HOT_RESET_CTRL?
+  Sure wouldn't guess that from the names or the order of #defines.
 
-This is already called by reclaim, so I assume vmscan code hands over
-ownership of the page to zswap and doesn't call __remove_mapping(), so
-you end up doing that in zswap instead.
+- PCIE_CLIENT_GENERAL_DEBUG isn't used at all.
 
-> - In zswap_load, we take the entry out of the xarray and check if it's tagged.
->   - If it is tagged, then instead of decompressing, we just copy the page's
->     contents to the newly allocated page. 
-> - (More details about how to teach vmscan / page_io / list iterators how to
->   handle this, but we can gloss over those details for now)
-> 
-> I have a working version, but have been holding off because I have only been
-> seeing regressions. I wasn't really sure where they were coming from, but
-> after going through some perf traces with Nhat, found out that the regressions
-> come from the associated page faults that come from initially unmapping the
-> page, and then re-allocating it for every load. This causes (1) more memcg
-> flushing, and (2) extra allocations ==> more pressure ==> more reclaim, even
-> though we only temporarily keep the extra page.
+- Submissions based on the following v5 patches:
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-1-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-2-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-3-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
+---
 
-Hmm how is this worse than the status quo though? IIUC currently
-incompressible pages will skip zswap and go to the backing swapfile.
-Surely reading them from disk is slower than copying them?
+Hans Zhang (3):
+  PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+  PCI: dw-rockchip: Reorganize register and bitfield definitions
+  PCI: dw-rockchip: Unify link status checks with FIELD_GET
 
-Unless of course, writeback is disabled, in which case these pages are
-not being reclaimed at all today. In this case, it makes sense that
-reclaiming them makes accessing them slower, even if we don't actually
-need to decompress them.
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 58 +++++++++----------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
-I have a few thoughts in mind:
 
-- As Nhat said, if we can keep the pages in the swapcache, we can avoid
-  making a new allocation and copying the page. We'd need to move it
-  back from zswap LRUs to the reclaim LRUs though.
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+prerequisite-patch-id: 5d9f110f238212cde763b841f1337d0045d93f5b
+prerequisite-patch-id: b63975b89227a41b9b6d701c9130ee342848c8b6
+prerequisite-patch-id: 46f02da0db4737b46cd06cd0d25ba69b8d789f90
+prerequisite-patch-id: d06e25de3658b73ad85d148728ed3948bfcec731
+-- 
+2.25.1
 
-- One advantage of keeping incompressible pages in zswap is preserving
-  LRU ordering. IOW, if some compressible pages go to zswap first (old),
-  then some incompressible pages (new), then the old compressible pages
-  should go to disk via writeback first. Otherwise, accessing the hotter
-  incompressible pages will be slower than accessing the colder
-  compressible pages. This happens today because incompressible pages go
-  straight to disk.
-
-  The above will only materialize for a workload that has writeback
-  enabled and a mixture of both incompressible and compressible
-  workingset.
-
-  The other advantage, as you mention below, is preventing repeatedly
-  sending incompressible pages to zswap when writeback is disabled, but
-  that could be offset by the extra cost of allocations/copying.
-
-- The above being said, we should not regress workloads that have
-  writeback disabled, so we either need to keep the pages in the
-  swapcache to avoid the extra allocations/copies -- or avoid storing
-  the pages in zswap completely if writeback is disabled. If writeback
-  is disabled and the page is incompressible, we could probably just put
-  it in the unevictable LRU because that's what it really is. We'd need
-  to make sure we remove it when it becomes compressible again. The
-  first approach is probably simpler.
-
-> 
-> Just wanted to put this here in case you were still thinking about this idea.
-> What do you think? Ideally, there would be a way to keep the page around in
-> the zswap LRU, but do not have to re-allocate a new page on a fault, but this
-> seems like a bigger task.
-> 
-> Ultimately the goal is to prevent an incompressible page from hoarding the
-> compression algorithm on multiple reclaim attempts, but if we are spending
-> more time by allocating new pages... maybe this isn't the correct approach :(
-> 
-> Please let me know if you have any thoughts on this : -)
-> Have a great day!
-> Joshua
-> 
-> Sent using hkml (https://github.com/sjp38/hackermail)
-> 
-> 
 
