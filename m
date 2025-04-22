@@ -1,145 +1,106 @@
-Return-Path: <linux-kernel+bounces-615295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CDBA97B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789EEA97B41
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B14257A18C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6C817B243
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C770621D3C5;
-	Tue, 22 Apr 2025 23:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC5821E08D;
+	Tue, 22 Apr 2025 23:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUkHJLgT"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThSsRDHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EDD21ADCC;
-	Tue, 22 Apr 2025 23:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8972C21C9EF;
+	Tue, 22 Apr 2025 23:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745365744; cv=none; b=ewU0Lp/vM0I50ndkPzx0YpGnxGi+pEyugBpA/tDTS4+65JkZbfWAPzRxeo9oeBQaIEeu1NPkElS3iip51zvBnXGBpS5l7kbxSgFgOYCbmzL2s1RMD53DAVJet7r8QqkEsuhZURfSXINBBPITjoXZnoR+QyYDh6VXZB3Yk+uUx2o=
+	t=1745365717; cv=none; b=PvP/PypnF1QkdVQ4YEhZB9pbldjfvWwDxyI7y58I6AEQYzFzlCfygCN3qGxpMSE7P7lMeepNqllM4vGkh+lVFRftKGKMki0zl1ghAi5aZ26HTrIHs72a+CtoC/jnzzVl2XC8GzwUSqiVTM0Ah1YDOMFvzhzZG2wzA/NbCNY215Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745365744; c=relaxed/simple;
-	bh=uCrFfvmY1BWeKTC4R7IzOKHCm6s+8c+i+P3vgFxqjbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RtyPv/aDY8Mlx2jS0GCTdj/otKQIUd3HSnCbdFAUz7hDpijDwKL8Jj6BcxTbBFM91okideuNFBm/9XC73CjooS/asKmt433KTea1DDR6TkccLLSrENa2SY3NJQR2kj/PsIg+jRl+eJ0KTIQKMs1KYvg1orG5n0NN665547u9X5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUkHJLgT; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aca99fc253bso823692166b.0;
-        Tue, 22 Apr 2025 16:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745365741; x=1745970541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GtAP/RpD8stbdGj2PAPKdLKPGruPCzPaX6EBxNabXGQ=;
-        b=NUkHJLgTgdmBjXTpk8reQq1XJYDPAKs/jcKf0LCzAKg/gxcN3Z0qvuwlWKntBo8v0/
-         Q3S/8t3Lv9Twd4yzSizGx8UI4UUsY4EA93hp9fH6L+ENQjgEQ7DlAhvjP5kW8sWvhfZ0
-         V9LWfn2M1c3HLE9R7EMItWkEbnWWrIffPhRbiK9RGok1ECqrjpq61MyiPfAk4FS/GojR
-         CsIo5T446IdVQjNMZEFseCK9yVdUcZT7Rw84ejMIP2KSq1KF5kOMqd+jP8j/YxXYJbh8
-         b55DN7hoCt++qlFzr8YqyBItKxD+DhuOZ6H2E77H/6p92MNN8mT/4KqlVcxXLn5SNjNd
-         euhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745365741; x=1745970541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GtAP/RpD8stbdGj2PAPKdLKPGruPCzPaX6EBxNabXGQ=;
-        b=XYEKLbC5hZeQ5fdXqbtF4vx1mbX/u1vWwqBUTkLLq2F2/zgCKPvJWBTdaIu3ixGg/l
-         eIJk2liwx9ZoKJ10mz94EvEMuV2CJzzLdbnQkJJDPXm6PdddneRowIFOb9vkvmPuk4bi
-         KWRIcKwIXlID2ZZ0OKuIFpsV5Dzuac8JXkKcAk3Kw/2PEklblQRQ9g4H6z4tGW4+eZgv
-         kASkXg7nOfnrI9pZhq3KFacuWLSClo5PU2j76DNzifdntC7tR7Mm2YK9jR10fEYvL5JL
-         KOkEockLRvd1JzaAfsI2MYKyrxMvrUYHdbD1JVHiMwLX9vcWVFbYDe5+XI3fviuzowfA
-         TuBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQgPcwv2/AOGTsTZVoaacQAeOcZinR+YZp8bn3/j2H+I4o63KJ2KgrS4WoN276vPfbzCSWs5S7ej5o4Ks@vger.kernel.org, AJvYcCXhlGu9B58IjIOLDChsW3nQhacCt2CPPO7he64SmSpEDk19HIVdAz65uViAEBFbsjFntxg=@vger.kernel.org, AJvYcCXs+EV2fqZNSy1Je4NL2WvxY4xhh64vTrI1+hIdp7C0Hd8n38WKN0jT1KrhQ88+3DyhKBWNOaPGTbsECE43u639ndaj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpJKcEHsxqJJVhGUs6hCtVvUIDO/J4p8gLRrl0lxs1wtPaaaLC
-	RlWR89yAd/qVQud0fanDVB3FmG0VZuy8nXb6/3cRdhfDpJiMSlT2K4jBO2IxBqWxpJ9xzxMZWIQ
-	7TU33jZaHcpob0dmTJCFNjZBHOXI=
-X-Gm-Gg: ASbGnctlQMbFyMyETLR3TxT+WzscPD5hRYsXRJo9qTjZjXiWSQpdMf4VI1CpXqR9JAc
-	sVOWUj1w7DLckdVm1nkzg8YAHEnpVFV21zPl8lKk47IL5pO/ddMb7QrQVsIS6B4a06orogk8iad
-	hh+uHU4jjB5JTlZFwFopGfUS6faxRd3eab63g4WA==
-X-Google-Smtp-Source: AGHT+IGNstO+C4N74G28rymkR+8fQJxcFUcHnCcmnL0LBDEAN+PiVtK/evW1vnuqN6yEh8T+DV/sbCOLnag7SG9RYuQ=
-X-Received: by 2002:a17:906:f58e:b0:ace:3c0b:1947 with SMTP id
- a640c23a62f3a-ace3c0b20f4mr109777866b.4.1745365740500; Tue, 22 Apr 2025
- 16:49:00 -0700 (PDT)
+	s=arc-20240116; t=1745365717; c=relaxed/simple;
+	bh=yhJoZqKamDM9YbH2t7wFeFCnHoO5y9lfY+ztHV+833k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joAQecw7M+pQ819lqnVCUt8pKdgsx7tNnt2rJSwgoc8ADFae9Jhfuycoeo/jOzRzsfmY8SWMLxwi3qqucrSsTbGsShlJxgiFWZDk4IoaEtKBCtz2+ud5ijkuJsEuePMS0REspw/iLPhWbDjAWcpI2v7g4kugral58m7vdMAbuJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThSsRDHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9C3C4CEEC;
+	Tue, 22 Apr 2025 23:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745365717;
+	bh=yhJoZqKamDM9YbH2t7wFeFCnHoO5y9lfY+ztHV+833k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ThSsRDHnXz49Mao1Xb444ViRY71NWAzHVsLHgSkMrh8YrjdXxJyaeE9lBZD22zvTB
+	 LTFL8VNQL/sJveyglWi3dQemCzXcu4Ahfsz6eGukk4y7efNg1iJXDry2YBWCvJPbnN
+	 c08aM29WW9F0zvFj+HQ2WEpGkQ3u1Wp7EPTyVhTGBZ4Q+2ekOe0pkcHvd//6GN++XX
+	 LMKBW4PI7jb24QR6iYx4faM7KErRjnK/DuQEkBnZm906iNtMf+0y83ZqQ7rI6cqe6R
+	 ymog9ZaiszM5t0sKqkuvQ7KH+nYRGDnAJE1i4xyAGIcKKnxmjqrwXg0EntUA/D7hBD
+	 HaN/iyyiF2YEQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: Borislav Petkov <bp@alien8.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list),
+	linux-i2c@vger.kernel.org (open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC),
+	platform-driver-x86@vger.kernel.org (open list:AMD PMC DRIVER)
+Subject: [PATCH v5 0/5] AMD Zen debugging documentation
+Date: Tue, 22 Apr 2025 18:48:25 -0500
+Message-ID: <20250422234830.2840784-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421214423.393661-1-jolsa@kernel.org> <20250421214423.393661-8-jolsa@kernel.org>
-In-Reply-To: <20250421214423.393661-8-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 22 Apr 2025 16:48:24 -0700
-X-Gm-Features: ATxdqUFWNCbaUTk_sukSB1n225IEm5eGMWbID4RHtc4FUhdzAtpifAa7AsJvsjE
-Message-ID: <CAEf4BzbtUMCCY8FPjRjc8i5newEoKkz7S-j-LOpD6TJzOogNtg@mail.gmail.com>
-Subject: Re: [PATCH perf/core 07/22] uprobes: Remove breakpoint in
- unapply_uprobe under mmap_write_lock
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 21, 2025 at 2:45=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Currently unapply_uprobe takes mmap_read_lock, but it might call
-> remove_breakpoint which eventually changes user pages.
->
-> Current code writes either breakpoint or original instruction, so
-> it can probably go away with that, but with the upcoming change that
-> writes multiple instructions on the probed address we need to ensure
-> that any update to mm's pages is exclusive.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  kernel/events/uprobes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-Makes sense.
+Introduce documentation for debugging some issues on AMD zen hardware.
+As one of the debugging techniques read and add information for
+S5_RESET_STATUS register.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Mario Limonciello (4):
+  Documentation: Add AMD Zen debugging document
+  i2c: piix4: Depends on X86
+  i2c: piix4: Move SB800_PIIX4_FCH_PM_ADDR definition to amd/fch.h
+  platform/x86/amd: pmc: use FCH_PM_BASE definition
 
+Yazen Ghannam (1):
+  x86/CPU/AMD: Print the reason for the last reset
 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index c8d88060dfbf..d256c695d7ff 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1483,7 +1483,7 @@ static int unapply_uprobe(struct uprobe *uprobe, st=
-ruct mm_struct *mm)
->         struct vm_area_struct *vma;
->         int err =3D 0;
->
-> -       mmap_read_lock(mm);
-> +       mmap_write_lock(mm);
->         for_each_vma(vmi, vma) {
->                 unsigned long vaddr;
->                 loff_t offset;
-> @@ -1500,7 +1500,7 @@ static int unapply_uprobe(struct uprobe *uprobe, st=
-ruct mm_struct *mm)
->                 vaddr =3D offset_to_vaddr(vma, uprobe->offset);
->                 err |=3D remove_breakpoint(uprobe, vma, vaddr);
->         }
-> -       mmap_read_unlock(mm);
-> +       mmap_write_unlock(mm);
->
->         return err;
->  }
-> --
-> 2.49.0
->
+ Documentation/arch/x86/amd-debugging.rst  | 362 ++++++++++++++++++++++
+ Documentation/arch/x86/index.rst          |   1 +
+ Documentation/arch/x86/resume.svg         |   4 +
+ Documentation/arch/x86/suspend.svg        |   4 +
+ arch/x86/include/asm/amd/fch.h            |  14 +
+ arch/x86/kernel/cpu/amd.c                 |  64 ++++
+ drivers/i2c/busses/Kconfig                |   2 +-
+ drivers/i2c/busses/i2c-piix4.c            |  18 +-
+ drivers/platform/x86/amd/pmc/pmc-quirks.c |   3 +-
+ 9 files changed, 461 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/arch/x86/amd-debugging.rst
+ create mode 100644 Documentation/arch/x86/resume.svg
+ create mode 100644 Documentation/arch/x86/suspend.svg
+ create mode 100644 arch/x86/include/asm/amd/fch.h
+
+-- 
+2.43.0
+
 
