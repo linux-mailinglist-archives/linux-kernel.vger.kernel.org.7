@@ -1,182 +1,130 @@
-Return-Path: <linux-kernel+bounces-613848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89607A96282
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6B3A96366
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79B67AA36A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33873BDDA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF4B25949A;
-	Tue, 22 Apr 2025 08:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0525DAE9;
+	Tue, 22 Apr 2025 08:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I+r9HcGV"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkmyb+vH"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE6C25C6FE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA19E190472
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311320; cv=none; b=Wc1SVLO95+5dr9VaHfZKNpind9Yhvh9IIfK1buNXEfgdpGJiN5/Xukn16cuPKyRnnowbj9H4a/8UzZfSap4S5X7WMYz9sNp7yem34niL2VayOWomf87J3nrWG+QRvEYPUZTYoki9IkwSRIY2Ib8zfds/7vRgWq6CwMycvLqz6qg=
+	t=1745311996; cv=none; b=Rx6ONz7Q3kE71KwStwmkqrr95k8CbpBvbhox54xIDhukGLXrOlT3dt8hPZx8pi+pySYzOF0299Dnllry+mrZa0KqwNRsrbmqWx1cRxmKasu2junAFrVD3tYnrtV89gOu6ioR2o+bgxq03w72PzbG7NRXxHedFMobrN0xSKWorn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311320; c=relaxed/simple;
-	bh=AhRbnxt00FmE/WhEN1u8zVz8q5gXEKLj1JYmMYck0AA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=X2n2BuPlIikC7Raf8E0m2miMdsl0yso//Gq/sTxNH75aVzW6tyW8lcctorpzoKLdkVmkGJ7SBJQxkuIETq8KVJDCjiMhe0euj9owGyDiySHeaf96CKp7JkZMb07h0cp3rRjQAalKFnjQZ0PbzCSZEGBDGhY0V8UYT5x+8+a3Yu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=I+r9HcGV; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736c1cf75e4so4311287b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:41:59 -0700 (PDT)
+	s=arc-20240116; t=1745311996; c=relaxed/simple;
+	bh=zqMm+4LlaDew/KOtPb4bT84y9g6n6l7Zkb7k02+bQw0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEgAhzgyNsz+djzHTy0HdLOG1glck6/YxLkv2hphvr1h5rZ0pOgNe8vC3FVBtUUcy/5ZJltm/HyIlbzwQ7MN3w89Dp38Jqjq1eChifxgzF18+wZZX4wKiKeMoKNm9WGKiSL44GOSO8zG64e+cMrGKVL9bMhZfG0evqING2S+e6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkmyb+vH; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54c090fc7adso5234458e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1745311318; x=1745916118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dTYlTOXj1U7VnsAmcUnx1eYdk5rL5ZGZ7LNT8Q6B11E=;
-        b=I+r9HcGV+iABKy4DaG0c045CG0YwQTWTa4bafq3dWTL3lYxp5PX6MkerrHE2icSFme
-         rcWWJLIhCk6qOz4yCqOF39nN/tcGIIRMP87r+mFEw9oVuT8VG5RPEMydKlsVcNgam7yK
-         baMQUSf2Bh6ZtrSToSuuRD/J4WSIywx+6jBwbw1wLYZNSR99A98rKDj0SBo07dkeASc2
-         9P9FWqg9TGKQ0hWkt6DRuH4EbynnoMGbR99FC0Pjxm0MWaozMEmsM9Hr5sprfSp1HHqC
-         BmaLSpl8nRv1LMqvPzqwVnF8FID813TxbMWeirNjX/Gp1eAM25iKVp1i84Kgi0S+ccV6
-         hrvA==
+        d=gmail.com; s=20230601; t=1745311993; x=1745916793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B107IeEBYcdTeNa+0WuZ0QSN98QiHvhvMbSv+mGPRVo=;
+        b=gkmyb+vHLUT76ByPpuRqyqgJtfXgEXwK3apoSO5yleVLb3uKGpQ5voU3dQtQOCMk+V
+         JWJgqMlQxmPHQ7k8C1quY0eSiooaHVddFmFqCfS2fLgpbpg/+C+xV5vGaZf7XFlrA4l6
+         LXqzEk8bP5dJQnAI7N4JBSqjbeFu7tDZ88os/j55z2txDEp0VtjZAMJ1HKU56akSaqAu
+         6vWgG34RJ+2Tik3ntJ/A5PXXHQljFL5iVRCMu+zdKG52lcSDqCMQ2DPNtvX9l9BTNjWa
+         XFMXORj3alKZ4aoxk7IND/jWExcqGSDmr/6BDqDxQHPhuFirGCjJOhqvF4LjGE0u5MeH
+         WHpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745311318; x=1745916118;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dTYlTOXj1U7VnsAmcUnx1eYdk5rL5ZGZ7LNT8Q6B11E=;
-        b=wR1q528iR7wLg6bSYmcJdsHPl+rwn6VhAu07HNQMXuwI0cPD7xNspk7UP/LNFeceky
-         xIc0/z8Hm6GhXGQKoNARCjKoKdALyJAWWN6o6JxThTEc7i1zNMBWhiA0+yOUkTqW7PB/
-         eUJSWsCCZsaGHp6YIa5nlH5FuBwuupiz3lhY2yio3ZEUA72O5TDZykHr1+r+tm4GIRJ3
-         8w7IJ2XJ4S2riNe/ci2L7PLAMjkqQcy6xsLBeYRObvr+xJFK9e0cm1GLk3WAIrtxPfNe
-         e9knmazCS53KoyVOJ/TceYTTgSfxHa2tZOB51VtumT13S7ByVRfmSLZ8Zwi/7N8TCwSb
-         BgUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPQhRJF06cNcUyr2onKFdCLpOSfa3XnPcnnUBJFw7+wTAop0dPsDCmprWylb41CiN6pL9htlc/SLWCV6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfw0TRbxG8KeYqW3oDitHxXW56SaoJvY+v0dUzR4zFInQH+iEG
-	7lLCCjSrugHxeUlZznNqdXGS9iFN2f65GC+Yr7pzfwjpRED2CjW/pnEku6j/fTw=
-X-Gm-Gg: ASbGncuGyKVru9wqj4XEHXmqKqqHPNIwt9PUNmS2s6OcGM1xEwudbUVvvdBAaMW7MJY
-	hEJTQkI7b7t5b1do5AtwIUHAfL/xc1iGLBC0Uduyj4WT/Lw5Su92l6QlLn8gur7xfJHWRwGX33b
-	ZiiwAIedeqR5qCOUo43uQFh7gsEl/U2CLRww2SMJuWCXXCql+9Fza0CJbtA+k335y9d6Wklocbb
-	mRT+voj0aAM743ShUIYOVLviMlA/DvebCED25VQ9UK8ptJ7EEM2oN/9OsuawjkkHPb00rw6+oKX
-	iANUTo5wODYQMOvGy3mMeebAOsL5lfQlsCi7NGy0iQIlmuJVLW5LCR2naK3GieWmoiyJoTHSUOF
-	Wvg==
-X-Google-Smtp-Source: AGHT+IGfbihuBEBc/pdNIJMJF4VwDXG6UwENQDwhbQ6dawvH9aE1MJPeh2yhFP9zSoJtskbZsJMTIQ==
-X-Received: by 2002:a05:6a00:21c5:b0:736:2a73:675b with SMTP id d2e1a72fcca58-73dc1568a74mr20805479b3a.19.1745311318480;
-        Tue, 22 Apr 2025 01:41:58 -0700 (PDT)
-Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf90d7f7sm8038343b3a.82.2025.04.22.01.41.55
+        d=1e100.net; s=20230601; t=1745311993; x=1745916793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B107IeEBYcdTeNa+0WuZ0QSN98QiHvhvMbSv+mGPRVo=;
+        b=n7HPQYmuuyhr2bgSET3H0eT0z9FDZoaphZQnJB7LVw7Cs0vGZ5dXzkBSq7hUrP5ea6
+         8rt/LXPkCGXHo7D/v6CbtMeIdbUcgFu+CI289+gLtyCwFshU9w1SfhOH+g0MR8BBFn14
+         gZxO8dgk0noU6L7dhotUDC/L5FWZb+OeDSlPZc9FRKUPOz6IWNiBqbK3XpWvlMA0oj3S
+         nRazRn2Ofk5ShrcToxULCeAQklL7BJxP0qEileutkWAPXvMYPy3PjhOjMt0As7r80aLH
+         aCLRzj8WnTsMkBywIM4LW8EXy4hSyxYMADIjBCQEc0PqWTyLHfpFyelX1kW4Nl6P+CMM
+         5CWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXt4/lxNi0v9JSGmb2gGgtpuOjpylfS8rRy+/SyaI4ZPPffSByxkpfoMsRh4PTPCgS03GlTvAOhW9r4/XQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM3KDA3T0BChptMs0SSFHhj9Beg2L/feiFthPp6gzKofpqfzTI
+	KBuueQgZ0OPew6rmA2koDfjpBjoSUWrozAoRP/h4QcOxhX5lMzfq
+X-Gm-Gg: ASbGnct/+w9pZ1dwno7wOM0tDBSc8R+K+X1mKhDn4PheuBftGblvWU/44gQdGbXeO53
+	Uhu7cAiZjMqStMwd1UIvozGTRraOrmNskG0knDa/KrEE8o3VwODuLRlAH6OD/It4ZRY8wQIAyUb
+	eiTG4ev8Jw58/7w4QGDMHbsm3BqrVFyoAsyaM1Hn0o7ex8dLHyCb0ngXDBE+JZxprTLywFEJX7h
+	mpeDifuUGbi2icVfrtF8HQ5khcHOSKLWGvph+3Z6so/CMBWjg7KNbHEFgRLMgRBlNuJu05BxeK4
+	zSr9/MQVYne3vPb2SukSYpfJwL9q5SZpI4BLOBYDKCSl7Ls=
+X-Google-Smtp-Source: AGHT+IHAzgi8kGpVE7gevRvjayWFRsuXzx8hOLHXEi1ai4Wwn6M2n3mAJLfRBCBCN3H/dFgyt5Lr2Q==
+X-Received: by 2002:a05:6512:39c5:b0:54a:cbfb:b647 with SMTP id 2adb3069b0e04-54d6e6589fdmr3933538e87.37.1745311992492;
+        Tue, 22 Apr 2025 01:53:12 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-31090826cf5sm15574721fa.87.2025.04.22.01.53.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 01:41:58 -0700 (PDT)
-From: Nylon Chen <nylon.chen@sifive.com>
-To: Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Nylon Chen <nylon.chen@sifive.com>,
-	Zong Li <zong.li@sifive.com>,
-	Vincent Chen <vincent.chen@sifive.com>
-Subject: [PATCH v12 2/5] pwm: sifive: change the PWM algorithm
-Date: Tue, 22 Apr 2025 16:53:09 +0800
-Message-Id: <20250422085312.812877-3-nylon.chen@sifive.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250422085312.812877-1-nylon.chen@sifive.com>
-References: <20250422085312.812877-1-nylon.chen@sifive.com>
+        Tue, 22 Apr 2025 01:53:11 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date: Tue, 22 Apr 2025 10:53:10 +0200
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, urezki@gmail.com,
+	shivankg@amd.com, vishal.moola@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] mm/vmalloc.c: code cleanup and improvements
+Message-ID: <aAdY9o8TeNi8G8bN@pc638.lan>
+References: <20250418223653.243436-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250418223653.243436-1-bhe@redhat.com>
 
-The `frac` variable represents the pulse inactive time, and the result
-of this algorithm is the pulse active time. Therefore, we must reverse the result.
+On Sat, Apr 19, 2025 at 06:36:48AM +0800, Baoquan He wrote:
+> These were made from code inspection in mm/vmalloc.c.
+> 
+> v1->v2:
+> =======
+> - In patch 3:
+>   - made change to improve code according to Uladzislau's suggestion;
+>   - use WRITE_ONCE() to assign the value to vn->pool[i].len finally,
+>     according to Shivank's suggestion.
+> In patch 5:
+>   - add back the WARN_ON_ONCE() on returned value from va_clip()
+>     invocation, and also add back the code comment. These are pointed
+>     out by Uladzislau. 
+> 
+> - Add reviewers' tag from Uladzislau, Shivank and Vishal. And I only add
+>   Shivank's tag in patch 1, 2, 4 according to his comment because patch 3
+>   and 5 are changed in v2.
+> 
+> Baoquan He (5):
+>   mm/vmalloc.c: change purge_ndoes as local static variable
+>   mm/vmalloc.c: find the vmap of vmap_nodes in reverse order
+>   mm/vmalloc.c: optimize code in decay_va_pool_node() a little bit
+>   mm/vmalloc: optimize function vm_unmap_aliases()
+>   mm/vmalloc.c: return explicit error value in alloc_vmap_area()
+> 
+>  mm/vmalloc.c | 61 ++++++++++++++++++++++++----------------------------
+>  1 file changed, 28 insertions(+), 33 deletions(-)
+> 
+> -- 
+> 2.41.0
+> 
+LGTM for whole series:
 
-The reference is SiFive FU740-C000 Manual[0]
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-Link: https://sifive.cdn.prismic.io/sifive/1a82e600-1f93-4f41-b2d8-86ed8b16acba_fu740-c000-manual-v1p6.pdf [0]
-
-Co-developed-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Zong Li <zong.li@sifive.com>
-Co-developed-by: Vincent Chen <vincent.chen@sifive.com>
-Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
-Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
----
- drivers/pwm/pwm-sifive.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-index d5b647e6be78..bb9146267bc5 100644
---- a/drivers/pwm/pwm-sifive.c
-+++ b/drivers/pwm/pwm-sifive.c
-@@ -110,9 +110,10 @@ static int pwm_sifive_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- 				struct pwm_state *state)
- {
- 	struct pwm_sifive_ddata *ddata = pwm_sifive_chip_to_ddata(chip);
--	u32 duty, val;
-+	u32 duty, val, inactive;
- 
--	duty = readl(ddata->regs + PWM_SIFIVE_PWMCMP(pwm->hwpwm));
-+	inactive = readl(ddata->regs + PWM_SIFIVE_PWMCMP(pwm->hwpwm));
-+	duty = (1U << PWM_SIFIVE_CMPWIDTH) - 1 - inactive;
- 
- 	state->enabled = duty > 0;
- 
-@@ -123,7 +124,7 @@ static int pwm_sifive_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- 	state->period = ddata->real_period;
- 	state->duty_cycle =
- 		(u64)duty * ddata->real_period >> PWM_SIFIVE_CMPWIDTH;
--	state->polarity = PWM_POLARITY_INVERSED;
-+	state->polarity = PWM_POLARITY_NORMAL;
- 
- 	return 0;
- }
-@@ -137,9 +138,9 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	unsigned long long num;
- 	bool enabled;
- 	int ret = 0;
--	u32 frac;
-+	u32 frac, inactive;
- 
--	if (state->polarity != PWM_POLARITY_INVERSED)
-+	if (state->polarity != PWM_POLARITY_NORMAL)
- 		return -EINVAL;
- 
- 	cur_state = pwm->state;
-@@ -157,8 +158,9 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 */
- 	num = (u64)duty_cycle * (1U << PWM_SIFIVE_CMPWIDTH);
- 	frac = DIV64_U64_ROUND_CLOSEST(num, state->period);
--	/* The hardware cannot generate a 100% duty cycle */
-+	/* The hardware cannot generate a 0% duty cycle */
- 	frac = min(frac, (1U << PWM_SIFIVE_CMPWIDTH) - 1);
-+	inactive = (1U << PWM_SIFIVE_CMPWIDTH) - 1 - frac;
- 
- 	mutex_lock(&ddata->lock);
- 	if (state->period != ddata->approx_period) {
-@@ -190,7 +192,7 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		}
- 	}
- 
--	writel(frac, ddata->regs + PWM_SIFIVE_PWMCMP(pwm->hwpwm));
-+	writel(inactive, ddata->regs + PWM_SIFIVE_PWMCMP(pwm->hwpwm));
- 
- 	if (!state->enabled)
- 		clk_disable(ddata->clk);
--- 
-2.34.1
-
+--
+Uladzislau Rezki
 
