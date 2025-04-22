@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-614906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7849EA973B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB0FA973CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D737A8CC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED24D1884B52
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE861DC985;
-	Tue, 22 Apr 2025 17:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516AB1B0416;
+	Tue, 22 Apr 2025 17:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCdDxSRJ"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="gGi1je5z"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C271A304A;
-	Tue, 22 Apr 2025 17:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144ED1D7995
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745343587; cv=none; b=CW9SvBGLz0lAHBoER+Cg5eNbWc/pSsMXY+FjjzBSYRPiuNMZuEfJbmjGKR8OXvnyRj1sFSDgIEHsvMiGQneyma6Nm9qN6lrbUHOqWKYUhMVRZodAcEoaTp16Dbat9CyBw+JUhchzeWXw03rnnqIamidn6ZYvGXuJJE/8WqX04gE=
+	t=1745343667; cv=none; b=m+xSs0hPZNzaupEkMismUU1GeggN/s5Dw24aR4TBslY5ZJoXthrqJ8/JWERsEzWyNCa04TBKlFghGndxp9VgvTQcb1480mfAobiRGeKrQK2YpOdmXfnymbtEnPg0MIzjxHwkeKsFFF/MlHRfeM4azDSpWg3cp1WvGZj9yCI4Yf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745343587; c=relaxed/simple;
-	bh=3YZFzxOuKJTu8Q1FGxg6Bi9g2E5JnxHXdcJm8VS/K0U=;
+	s=arc-20240116; t=1745343667; c=relaxed/simple;
+	bh=sx+1yReHO+W8k5rUqkhkwfBciKZlCEEc04tBXhlIWQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oL3vGEoXnFCQclDiEeZbiGgg01ULgua5kMAQHFOYM98Hr0dAEDDvOO8nCwhIZVhy1EYNoWxggz3Hd0yjRiFBZwk/vJrKma7IgqDvLRIiL9k9j1MKAF2cg2ItqYdExCZLOQNhcUCj3X0Sy74Y8uwI1Li6yzfYFkM+XieT9t8mr/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCdDxSRJ; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224019ad9edso77710115ad.1;
-        Tue, 22 Apr 2025 10:39:45 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHcUPiA7+Egt3hg3e8Vr/KCLry9dmq/uDuEXttmTLwXl75+QhQwT/mjcC4eP7AJ7hLpSeXrfVa1mR7bVh7VpwylCSgJpIp6ZvhnCCgGEhST9PAT6/LlKeg7IqX7tn+lLtssvxG1q4ss5RBREQ8vvTzHdfIIOFbXscCNfX719pxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=gGi1je5z; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c54f67db99so12406585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745343584; x=1745948384; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1745343664; x=1745948464; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=anhUaw1RW0p1uWHnHVQxnFlleHgiv10T6B9HOPoc5+k=;
-        b=RCdDxSRJSr9md71gMVp2kAFb/P4i1ikH0zRR3U7BHn3y9eID2w00J+Ic1jsRFOdseL
-         Fdodo/Jsf+Smgn4kWrBe1FfJSG0ZRydjMO6WrgxnEDrTb/eMdyUZ+1GjCfaDZ/1GBBVS
-         4emCTL8BqaY9heqak2B0teUurP4CGTNnEQ9GuNugK2yQoYNK+Y/LAD+Ri8Un+bpmQq0U
-         x8Ov/gtH9Npw8pOI01cPOh0IA7ik3aOo8nxQM/fwEjB7p9vqoYI29VkmH12C1iHQQWbv
-         hRR5cT+dTi6kAm+P9yNGs92SvlGIBlTznSkE0Wd9L9nIe8gX7tQnouBEeuY7qPmdh1Lz
-         aCjQ==
+        bh=Y86Jn/i/gOfC+tYxi13fILx4oUL1euxGqHwTbq1fZ+s=;
+        b=gGi1je5zuwUFkZ2oBYqu8RQpeXIYC3bs0CQsKHxgLv2ajeITLh3wuyS1t7HH5xdMbp
+         FZ8/QBgDrBuP3R8WnuXR6+4wNoHji9jZwQxZcKihCoFnkBwAlWHpQLnAAAVYhI4e7Ut3
+         h+qZZlkdNOViLbbevv9uYeusVydabeIO5jw/4LBgxd43FRt4Wt6fOLWRoy++MsK/AnTv
+         peiueoSFHw5plJvZgn7mfaqZ7ASCncdtldB5fZSt9I1DITDIHR24aSi0xZ0KvkhLTjIp
+         1Bm/DCVs6QtnFko9jdARufuSGtw/ZpzwZPCtWw7aR/6LTbE7yHYXVVMYrkUfnXsh2TaN
+         9vGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745343584; x=1745948384;
+        d=1e100.net; s=20230601; t=1745343664; x=1745948464;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=anhUaw1RW0p1uWHnHVQxnFlleHgiv10T6B9HOPoc5+k=;
-        b=e64JHEnTo8appmYeza7FIAbVhMNQ22ti+Rapj0Sg3PiRDtkEYr49AkjJR8MrEoCZYj
-         8CWrAx5iKUjP4NO9zKDhGfK5naoJi6YqC+BUfUrCI3hMUjtkYiANVDTOrr8inCw43kNO
-         djAGKcUYExQWzjhPhhuZR4yZxlJneBcuEwgSkTsa57+qJzpN/DI0ionrK5n+okrsYw+g
-         wBgscAA5LeODdwejdHcFb88S5+sPSANHln/pTWNdISbn8sL45mK0bktrV/DBNy7lHHdN
-         wgEMX7Qwa3VfX3ItZ1UQj/yAO8p3pFrg3C6fyoKgb8iZeUFwnFtwlGpOMsu9yK+F/WmL
-         iI/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6/DP5YLDvEgNUDzVkx/hdgCY6WhbG7pQipGQHvhjhZttR30x6524zP57pGeZjZVZa/UKnhlyiqOkTx7a+@vger.kernel.org, AJvYcCVlhh5ZZNC1X30554KXUGMASnwZHjIGd/LVX/YXwg0MDNgUX5gDRiUlr9i33Pi6hLEY2dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYUHEDuqdwVNzLtW3wNwRUd5KjYV8TDj8FLnGOizoOxDwxFUj6
-	ggbAy3woE5CghG8yElNeeTG/NUGiJeyf6JVDn7BELi0V0a1Jus4=
-X-Gm-Gg: ASbGncuwkYWaTTwa/wd3QFHXU4DG0P0fA+VgSOlMgx/XbjK09Iqf+0QaJ9NiKOGpb2U
-	Dda/z2mkYGIMiDaPyxC7Mm6rn91ZLiNVkh7TwGSjJ/uO3UNOZJZWWxldzVOT2l5+ZDZ+usme6qM
-	pSnZo66ch1Im7soZqO6Dx/wGK4NDF3krC0rz3tpzEB/sZIJsvFcdeQS4xTTc6m4f5nNUK06m72D
-	qNNssMTm0WN4cHOSJp0gdeorXaDPc44AelbrTZJ5uHddRlwaWNQnW7kaOZ8nZ/OzphoZaiEchY4
-	BDY2wKT5BJ9MugM3JE3VYL5WNe5bClJvW46FDi0N
-X-Google-Smtp-Source: AGHT+IHvr3CHGB3eDx2bTmct/OupIJFB9ySp0TkQI8A4cDHpuOWfg/rg1k0f3jpJcDBOwp937CEu/w==
-X-Received: by 2002:a17:902:d4cd:b0:21f:35fd:1b6c with SMTP id d9443c01a7336-22c5364235fmr207110085ad.45.1745343584621;
-        Tue, 22 Apr 2025 10:39:44 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22c50bdb34fsm88466805ad.31.2025.04.22.10.39.43
+        bh=Y86Jn/i/gOfC+tYxi13fILx4oUL1euxGqHwTbq1fZ+s=;
+        b=wuaNDKDeBwaH4dUPl1r8+hxz/VPmmwCxlCHQQN2aHwldZxNhWfY9n6cHHAbDQyckeI
+         58yVnhriMCovzxu9HL2BAaB7xdJvNbbBThreEqjQReQPkhB5KX+OVZfh1rg6BI7cUlnV
+         LrNyi3vrylaslauUmq60wyi2oKhU804NjiBdlon7jStvWV6b19h2LDus2Xymnlfp/Ybx
+         5afuOnB/SVYVnJ6Q5+6x+n3XXZLFY5MRZErysLWyW2U4GZJU0lOf4XXpFaGQJb5TmZF6
+         0JaT4KgcQzgIQbTLtmLABSXjID0s8N5g5wRovhyaGuCGMV4Tf3RMY2xFoAMwQBlHiUjB
+         dRiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiKNqkfn4/nCSc5aXHe95sMfl78ZtYm7za7+LfdslhxXeBA5POUAy+0vAG/Q1S58GefdPoAnTXaJurYmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNdPO57YCHJkbKmE64+0vaZOeN9lr4dkUzw46CnS/9DGUiKBRR
+	8ll7UitZPBXm8+W95HwVlc82ho9mwKnysIy2swbrW2232EgKROt+k6yBehhmCTc=
+X-Gm-Gg: ASbGncuLQN5XONNLYrgfjpYQxksmD3RPpMudniMvobTuHRt6bsY5nYKNAQZU4rL2I2y
+	NzTD8QikOle947bm20dg0nLL4Wq0UvsZm8RixFjtCdJMwvs1WwAtFca8iD4r19RdS7TufQ8SUlm
+	x9hO5BxjWmmDVcQAm4REKEOuUyD/wLipzfsEOfeXaNJclu1Q4HymXy9xIx2rPrTk9WTfwYDe1fq
+	Glapj6WUfCdHggb5V2TgxMIPZZObvEGjJkKUKovlxaLH44pZzhjwh0PzQrjsuF411YFWKr5T28K
+	NQEAXrDtU5cpZRXa+56K3b13WcMfxJ9ys37hOHI=
+X-Google-Smtp-Source: AGHT+IEN8+MrZpC1+kXZmyR3wN+NOc72lunYbPsIFQ9LMphGMyp510ZIpiR9wy3Isrz4BHUP8lx02w==
+X-Received: by 2002:a05:620a:4256:b0:7c4:c38a:ca24 with SMTP id af79cd13be357-7c92827487emr2492780485a.1.1745343663928;
+        Tue, 22 Apr 2025 10:41:03 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c925a8d484sm580566085a.31.2025.04.22.10.41.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 10:39:44 -0700 (PDT)
-Date: Tue, 22 Apr 2025 10:39:43 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Joshua Washington <joshwash@google.com>
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
-	Mina Almasry <almasrymina@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Joe Damato <jdamato@fastly.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] xdp: create locked/unlocked instances of xdp
- redirect target setters
-Message-ID: <aAfUX_jDZpe4Vx_M@mini-arch>
-References: <20250422011643.3509287-1-joshwash@google.com>
+        Tue, 22 Apr 2025 10:41:03 -0700 (PDT)
+Date: Tue, 22 Apr 2025 13:41:02 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	longman@redhat.com, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org,
+	mkoutny@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 2/2] vmscan,cgroup: apply mems_effective to reclaim
+Message-ID: <20250422174102.GC1853@cmpxchg.org>
+References: <20250422012616.1883287-1-gourry@gourry.net>
+ <20250422012616.1883287-3-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422011643.3509287-1-joshwash@google.com>
+In-Reply-To: <20250422012616.1883287-3-gourry@gourry.net>
 
-On 04/21, Joshua Washington wrote:
-> Commit 03df156dd3a6 ("xdp: double protect netdev->xdp_flags with
-> netdev->lock") introduces the netdev lock to xdp_set_features_flag().
-> The change includes a _locked version of the method, as it is possible
-> for a driver to have already acquired the netdev lock before calling
-> this helper. However, the same applies to
-> xdp_features_(set|clear)_redirect_flags(), which ends up calling the
-> unlocked version of xdp_set_features_flags() leading to deadlocks in
-> GVE, which grabs the netdev lock as part of its suspend, reset, and
-> shutdown processes:
+On Mon, Apr 21, 2025 at 09:26:15PM -0400, Gregory Price wrote:
+> It is possible for a reclaimer to cause demotions of an lruvec belonging
+> to a cgroup with cpuset.mems set to exclude some nodes. Attempt to apply
+> this limitation based on the lruvec's memcg and prevent demotion.
 > 
-> [  833.265543] WARNING: possible recursive locking detected
-> [  833.270949] 6.15.0-rc1 #6 Tainted: G            E
-> [  833.276271] --------------------------------------------
-> [  833.281681] systemd-shutdow/1 is trying to acquire lock:
-> [  833.287090] ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: xdp_set_features_flag+0x29/0x90
-> [  833.295470]
-> [  833.295470] but task is already holding lock:
-> [  833.301400] ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: gve_shutdown+0x44/0x90 [gve]
-> [  833.309508]
-> [  833.309508] other info that might help us debug this:
-> [  833.316130]  Possible unsafe locking scenario:
-> [  833.316130]
-> [  833.322142]        CPU0
-> [  833.324681]        ----
-> [  833.327220]   lock(&dev->lock);
-> [  833.330455]   lock(&dev->lock);
-> [  833.333689]
-> [  833.333689]  *** DEADLOCK ***
-> [  833.333689]
-> [  833.339701]  May be due to missing lock nesting notation
-> [  833.339701]
-> [  833.346582] 5 locks held by systemd-shutdow/1:
-> [  833.351205]  #0: ffffffffa9c89130 (system_transition_mutex){+.+.}-{4:4}, at: __se_sys_reboot+0xe6/0x210
-> [  833.360695]  #1: ffff93b399e5c1b8 (&dev->mutex){....}-{4:4}, at: device_shutdown+0xb4/0x1f0
-> [  833.369144]  #2: ffff949d19a471b8 (&dev->mutex){....}-{4:4}, at: device_shutdown+0xc2/0x1f0
-> [  833.377603]  #3: ffffffffa9eca050 (rtnl_mutex){+.+.}-{4:4}, at: gve_shutdown+0x33/0x90 [gve]
-> [  833.386138]  #4: ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: gve_shutdown+0x44/0x90 [gve]
+> Notably, this may still allow demotion of shared libraries or any memory
+> first instantiated in another cgroup. This means cpusets still cannot
+> cannot guarantee complete isolation when demotion is enabled, and the
+> docs have been updated to reflect this.
 > 
-> Introduce xdp_features_(set|clear)_redirect_target_locked() versions
-> which assume that the netdev lock has already been acquired before
-> setting the XDP feature flag and update GVE to use the locked version.
+> This is useful for isolating workloads on a multi-tenant system from
+> certain classes of memory more consistently - with the noted exceptions.
 > 
-> Cc: bpf@vger.kernel.org
-> Fixes: 03df156dd3a6 ("xdp: double protect netdev->xdp_flags with netdev->lock")
-> Tested-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> Signed-off-by: Joshua Washington <joshwash@google.com>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+With the rcu lock removal from the follow-up fixlet,
+
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
