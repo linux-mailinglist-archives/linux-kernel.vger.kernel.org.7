@@ -1,37 +1,79 @@
-Return-Path: <linux-kernel+bounces-614084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F068CA965E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:27:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F317A965EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01DD8189CDE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15DD47A61AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671832144C3;
-	Tue, 22 Apr 2025 10:26:53 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC90420E306;
+	Tue, 22 Apr 2025 10:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XM6R/h6k"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8831215783
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19331201269
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317613; cv=none; b=S3yiwKQvKYSKM2QyRwZrcHRfdbtd/5nnSBrY2KcIGta8OQB/oYare5RJuZu0ZTJ+6Zy3N1zjlZMsxzZNmXypsKB0rhImsV5H6JhIreSW3G1GtHKTPKg9gZPtmuQwXYMWH59atb1wERFHFyoeCgSYaB0QmFj/io8Yboh0o5HenHk=
+	t=1745317671; cv=none; b=iJj9a1052lcmqwKJoAp5rPRW+LBCkZJ5vyJg5AfDXy5/8/iR3SvVgYN4nRs2zXf0VuzK5SY6MYN9fY2CS2hdyrLfyxFQEup6LCOpZsFx/Po0//hlRbOchZImwm/XcQMHbfoqJgdnK19qt1FOLA4cznITuu916w9XUx8lZXKDJEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317613; c=relaxed/simple;
-	bh=XyET5h5hjYz++3+OG72+DRdzzXlIPOpG891VI92YSRQ=;
+	s=arc-20240116; t=1745317671; c=relaxed/simple;
+	bh=hDWDlFvFbbmsA5BCq/XHGsuE162uckJtLdIWqrzFSBE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbHLHLNsVYw2TCZrkTL4NyP+CFcarmWY0asisMeZGuiFeHB2y5AD4wSHCB+kBcEuKpYZVlNUzsoJEzw1WCWnQx/ufobmVABggevCXyAml/+BD3+d8GlS99IAWGp0EG8SRCuc9Xhc9OMoLMymnLbyZvzku6MjlGXsFPzscv0xGe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 859C2433EB;
-	Tue, 22 Apr 2025 10:26:47 +0000 (UTC)
-Message-ID: <48151446-1ffd-484a-ac21-511b14fa1511@ghiti.fr>
-Date: Tue, 22 Apr 2025 12:26:46 +0200
+	 In-Reply-To:Content-Type; b=GDfesqI34DXsIGUNAsw7dYioB53NeUclOMllT0dYRby6SY9TSRfYObXDWAJ9JZv+gcXGPYV9f/8iYcMRvHCpQq5UMPFbOhL6lspNU9ER49A7RhDKO+dxINbHEsZqgolKIxQOikjuxiX1bw9dNhIk+kQ69dlRcmH8IHa8BzUhK7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XM6R/h6k; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso43738595e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745317666; x=1745922466; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pYxOWxJLwzY0xVu+iAjYB5XwjaHAZDDl7p5bmvvzLHA=;
+        b=XM6R/h6kWMHBWyXpSe0lsl08NhGByYNknwcl+OsPwGVcuDwtsQgOg9Ah9IDaZMa0iN
+         TF7MjzaNkbdvHpyAWk8prXykzs7pppId2oON6quxgGL8xEYi3wkd4i9gjGDJPYs99aZQ
+         TdYbyV+qPEfBnDh7UqUQfvQlAtaeThX1M+NHecrjI+Pl+EIHZG+FL+MB63aDoU4t/E7E
+         DM3A7TgUlZz/Y8V7hljx542nqbIPwdnE9SUtHWFu5TLn5ATEp+dd0d3JIAtUwk1D/edm
+         tU9mc/XnC9LIKt2GTyk/1tBjGGI278exYzvNTiLqUrj6SdC1V8lDG1H9s07QI8M+KXq+
+         NTVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745317666; x=1745922466;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYxOWxJLwzY0xVu+iAjYB5XwjaHAZDDl7p5bmvvzLHA=;
+        b=mFPg55ZS0PULNTcHA/MozM/gdKuH85+Tu1L3KClahT6fjJ95wSAbMNkXeo/DRdNqdC
+         oHGZ6sPee2sLTYVpq4lOP3RhpuPqF+CPt/VR4sAj8O9A7mJfjI8PkQYEgf5iYMnqhAcd
+         /IDGw/g9iOIoWIlusb+S3PFt/6eorMMMUTI9N1t9DrR7mZG+LXDzCmzXmtP4qYnJBl7B
+         /wgFtT9lHSzhYYiZKlTD407W+OgNfMcU2o4EO4h+aMTiCaX/dxKFtpwvMhArjtXB/NLO
+         A4p1FLFxewMhEPeyQfATaf6xVIO4VRHTVPA/tFXf6YR4Z2BAxDZBpDo10T023BrDJh0W
+         xGJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwmoqZzTqc/fZHVUa2Qy8IQwAcGV0CVwFsGhkADG/oid8fOhr0qeEMF4WnCSEXfX1AyBLazj+6G5zeDoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7ZzM4ggJUnCWF/NXBFrg6tR2pj5WKbh928KQz3mgEwDNjhim
+	bDAxfJWzG2W7Bpyjm5vIzxk5YKyOREIdMv/2y7faJ8qPbOjzdTCJEaVaB6fxRK0=
+X-Gm-Gg: ASbGncs48hgsqaRzNWoKKc8A8hofXqNIMJvr/yCPxLZVN3U6/WVIPMzOqeV2A5GKzxR
+	d18x8XftI1rLJ0nUd+HOt6ATAo7Na5pbnymgh4pRW4dfERPhSD4QpEYOINnZ/N6RLrIPDefoapJ
+	3BwKDMtjB9xfqoyCnvHXBlu35377PETckkV5f8EkqGw23QVyjcvmSkGjuFE+2Q8FrDSXakJFOV5
+	BZYfJDlgJYW92If2vDLlyDiFMb2/86K0q8/PDBzOBfkqiNrBzy/GBl3Ry8MZw06oSznvufnEvNT
+	ol/FjPjg8AFE8fRYyNBVmdCCv4x7KLTOez+QiTB+CIEmARpzjnUyyp9oKb8Cj0k36T3Nx8qAKQ0
+	auKNr3q1y
+X-Google-Smtp-Source: AGHT+IFP40idWKQeu7V3uTVBRBpYiXyFIGvknmwTjg4oJeTykFVpaDYIgP8LFyx6kWPloNrS6i30HQ==
+X-Received: by 2002:a05:600c:1e10:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-4406ac62b75mr151933265e9.31.1745317666165;
+        Tue, 22 Apr 2025 03:27:46 -0700 (PDT)
+Received: from [192.168.69.169] (88-187-86-199.subs.proxad.net. [88.187.86.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4408c8b0ea0sm8525555e9.2.2025.04.22.03.27.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 03:27:45 -0700 (PDT)
+Message-ID: <d8504829-45fd-4df8-a98d-599d0c8c602d@linaro.org>
+Date: Tue, 22 Apr 2025 12:27:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,143 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] riscv: implement user_access_begin() and families
+Subject: Re: [PATCH v2 4/6] MIPS: dec: Remove dec_irq_dispatch()
+To: WangYuli <wangyuli@uniontech.com>, Wu Zhangjin <wuzhangjin@gmail.com>
+Cc: guanwentao@uniontech.com, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, macro@orcam.me.uk, niecheng1@uniontech.com,
+ tsbogend@alpha.franken.de, zhanjun@uniontech.com
+References: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
+ <093E43FBF9F4F005+20250422102253.137944-4-wangyuli@uniontech.com>
 Content-Language: en-US
-To: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
- jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org
-References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
- <20250410070526.3160847-3-cyrilbur@tenstorrent.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250410070526.3160847-3-cyrilbur@tenstorrent.com>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+In-Reply-To: <093E43FBF9F4F005+20250422102253.137944-4-wangyuli@uniontech.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegthihrihhlsghurhesthgvnhhsthhorhhrvghnthdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvu
- ghupdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepjhhrthgtvdejsehjrhhttgdvjedrtghomhdprhgtphhtthhopegsvghnrdguohhokhhssegtohguvghthhhinhhkrdgtohdruhhkpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-On 10/04/2025 09:05, Cyril Bur wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
->
-> Currently, when a function like strncpy_from_user() is called,
-> the userspace access protection is disabled and enabled
-> for every word read.
->
-> By implementing user_access_begin() and families, the protection
-> is disabled at the beginning of the copy and enabled at the end.
->
-> The __inttype macro is borrowed from x86 implementation.
->
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+On 22/4/25 12:22, WangYuli wrote:
+> Commit 187933f23679 ("[MIPS] do_IRQ cleanup") introduced dec_irq_dispatch()
+> function. But Subsequent to commit 8f99a1626535 ("MIPS: Tracing: Add
+> IRQENTRY_EXIT section for MIPS"), the dec_irq_dispatch() function is
+> rendered superfluous. Remove it to eradicate compilation warnings.
+> 
+> [ Quoting Maciej W. Rozycki: ]
+> 
+>      It always has been, since its inception, see commit 187933f23679
+>    ("[MIPS] do_IRQ cleanup").
+> 
+>      Up to commit 8f99a16265353 ("MIPS: Tracing: Add IRQENTRY_EXIT section
+>    for MIPS") `do_IRQ' used to be a macro, that's why.  At the time `do_IRQ'
+>    was converted to a macro `dec_irq_dispatch' was created and previously
+>    this place used to call `do_IRQ' too.
+> 
+>      This cleanup should have been made along with commit 8f99a16265353, so
+>    it's pretty old a technical debt being sorted here.
+> 
+> [ Fix follow error with gcc-14 when -Werror: ]
+> 
+> arch/mips/dec/setup.c:780:25: error: no previous prototype for ‘dec_irq_dispatch’ [-Werror=missing-prototypes]
+>    780 | asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+>        |                         ^~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+> make[7]: *** [scripts/Makefile.build:207: arch/mips/dec/setup.o] Error 1
+> make[6]: *** [scripts/Makefile.build:465: arch/mips/dec] Error 2
+> make[5]: *** [scripts/Makefile.build:465: arch/mips] Error 2
+> make[5]: *** Waiting for unfinished jobs....
+> make[4]: *** [Makefile:1992: .] Error 2
+> make[3]: *** [debian/rules:74: build-arch] Error 2
+> dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+> make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
+> make[1]: *** [/mnt/83364c87-f5ee-4ae8-b862-930f1bd74feb/Projects/CommitUpstream/LinuxKernel/Temp/linux/Makefile:1625: bindeb-pkg] Error 2
+> make: *** [Makefile:251: __sub-make] Error 2
+> 
+> Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=187933f23679c413706030aefad9e85e79164c44
+> Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8f99a162653531ef25a3dd0f92bfb6332cd2b295
+> Link: https://lore.kernel.org/all/alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk/
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 > ---
->   arch/riscv/include/asm/uaccess.h | 76 ++++++++++++++++++++++++++++++++
->   1 file changed, 76 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index fee56b0c8058..c9a461467bf4 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -61,6 +61,19 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm, unsigne
->   #define __disable_user_access()							\
->   	__asm__ __volatile__ ("csrc sstatus, %0" : : "r" (SR_SUM) : "memory")
+>   arch/mips/dec/int-handler.S | 2 +-
+>   arch/mips/dec/setup.c       | 6 ------
+>   2 files changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/arch/mips/dec/int-handler.S b/arch/mips/dec/int-handler.S
+> index 011d1d678840..a0b439c90488 100644
+> --- a/arch/mips/dec/int-handler.S
+> +++ b/arch/mips/dec/int-handler.S
+> @@ -277,7 +277,7 @@
+>   		 srlv	t3,t1,t2
 >   
-> +/*
-> + * This is the smallest unsigned integer type that can fit a value
-> + * (up to 'long long')
-> + */
-> +#define __inttype(x) __typeof__(		\
-> +	__typefits(x, char,			\
-> +	  __typefits(x, short,			\
-> +	    __typefits(x, int,			\
-> +	      __typefits(x, long, 0ULL)))))
-> +
-> +#define __typefits(x, type, not) \
-> +	__builtin_choose_expr(sizeof(x) <= sizeof(type), (unsigned type)0, not)
-> +
->   /*
->    * The exception table consists of pairs of addresses: the first is the
->    * address of an instruction that is allowed to fault, and the second is
-> @@ -368,6 +381,69 @@ do {									\
->   		goto err_label;						\
->   } while (0)
+>   handle_it:
+> -		j	dec_irq_dispatch
+> +		j	do_IRQ
+>   		 nop
 >   
-> +static __must_check __always_inline bool user_access_begin(const void __user *ptr, size_t len)
-> +{
-> +	if (unlikely(!access_ok(ptr, len)))
-> +		return 0;
-> +	__enable_user_access();
-> +	return 1;
-> +}
-> +#define user_access_begin user_access_begin
-> +#define user_access_end __disable_user_access
-> +
-> +static inline unsigned long user_access_save(void) { return 0UL; }
-> +static inline void user_access_restore(unsigned long enabled) { }
-> +
-> +/*
-> + * We want the unsafe accessors to always be inlined and use
-> + * the error labels - thus the macro games.
-> + */
-> +#define unsafe_put_user(x, ptr, label)	do {				\
-> +	long __err = 0;							\
-> +	__put_user_nocheck(x, (ptr), __err);				\
-> +	if (__err)							\
-> +		goto label;						\
-> +} while (0)
-> +
-> +#define unsafe_get_user(x, ptr, label)	do {				\
-> +	long __err = 0;							\
-> +	__inttype(*(ptr)) __gu_val;					\
-> +	__get_user_nocheck(__gu_val, (ptr), __err);			\
-> +	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-> +	if (__err)							\
-> +		goto label;						\
-> +} while (0)
-> +
-> +#define unsafe_copy_loop(dst, src, len, type, op, label)		\
-> +	while (len >= sizeof(type)) {					\
-> +		op(*(type *)(src), (type __user *)(dst), label);	\
-> +		dst += sizeof(type);					\
-> +		src += sizeof(type);					\
-> +		len -= sizeof(type);					\
-> +	}
-> +
-> +#define unsafe_copy_to_user(_dst, _src, _len, label)			\
-> +do {									\
-> +	char __user *__ucu_dst = (_dst);				\
-> +	const char *__ucu_src = (_src);					\
-> +	size_t __ucu_len = (_len);					\
-> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, unsafe_put_user, label);	\
-> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, unsafe_put_user, label);	\
-> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, unsafe_put_user, label);	\
-> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, unsafe_put_user, label);	\
-> +} while (0)
-> +
-> +#define unsafe_copy_from_user(_dst, _src, _len, label)			\
-> +do {									\
-> +	char *__ucu_dst = (_dst);					\
-> +	const char __user *__ucu_src = (_src);				\
-> +	size_t __ucu_len = (_len);					\
-> +	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u64, unsafe_get_user, label);	\
-> +	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u32, unsafe_get_user, label);	\
-> +	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u16, unsafe_get_user, label);	\
-> +	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u8, unsafe_get_user, label);	\
-> +} while (0)
-> +
->   #else /* CONFIG_MMU */
->   #include <asm-generic/uaccess.h>
->   #endif /* CONFIG_MMU */
+>   #if defined(CONFIG_32BIT) && defined(CONFIG_MIPS_FP_SUPPORT)
+> diff --git a/arch/mips/dec/setup.c b/arch/mips/dec/setup.c
+> index 6b100c7d0633..affae92f1918 100644
+> --- a/arch/mips/dec/setup.c
+> +++ b/arch/mips/dec/setup.c
+> @@ -771,9 +771,3 @@ void __init arch_init_irq(void)
+>   			pr_err("Failed to register halt interrupt\n");
+>   	}
+>   }
+> -
+> -asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+> -{
+> -	do_IRQ(irq);
+> -	return 0;
+> -}
 
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
 
 
