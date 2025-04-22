@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-614528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D427CA96DAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6D3A96DB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C0D1898CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E5F1B60D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA42128A3FC;
-	Tue, 22 Apr 2025 13:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8D2284B57;
+	Tue, 22 Apr 2025 13:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oe0CVLPR"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MjylqTvi"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743DF281530;
-	Tue, 22 Apr 2025 13:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8421A28BAA2;
+	Tue, 22 Apr 2025 13:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330241; cv=none; b=k0FLGO+bymSnxzRRchS6OeRQQwiyfbACTBDpFvx37xHlKyG6X/Ns+hzVq8RTupgV86zKPLhdqsbVRynyTmwEfpEtY/EPmN39mhrX8rin+RxCzG/Qn1VdgX7FCEqt7Y2VR89sp0Jm4alpyIrn/TfwpkCJcSytH5WUYEDq8Pfz7tc=
+	t=1745330243; cv=none; b=QYlR1DFxLIz0TWCMcJ2bKiIcO9qZZNLnBg8Zfl012qbLoLwPQPuuzIA1j85mTTkiSUHR/r2ffIgxbrxnTRN9Fx8AgMwu4c/RiG5TnUz5Q4i+31WzbGzhB0QlgR74/hiMiyq28LEhDD95yD7dIk3f/cgKZINvdOuTCoJRptrLjXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330241; c=relaxed/simple;
-	bh=BLr1Iiik2vEEXPZBT2XxibrJ3gHHLcnn4LfvqfMJQ5k=;
+	s=arc-20240116; t=1745330243; c=relaxed/simple;
+	bh=t7nOXqE4tlbUoj6BmNiVFgKSUV9qTZl5Ay/HW3Xp1K8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j7w4jCr897s2735wglpWBMX4+J//yU397rOEjmmhpZ6sS6YjpGDxEEBxosH6MBs+82MMxo0wVN33UCAgdI5rYkDUkd4LZkqqwppM9O85mLCrnVEFi3auWEQ2+A/zBnt/awKn2gByd0S6I5xxNm55gp4ipl5sWMEG4LsDmfryJN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oe0CVLPR; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=bBqg78RLgknDT1xvhomKSptcS+OVL+jDGPONW1aWwNI7WQKXWE2Fia4YRUu32VmuO7xqGr77YRUnDYQTuktiX0r1UbCKOa42Xj5kKwQEpW7MweGii32vt4fnKsuB/QojO5pJoMfWUZCI0VdR7JEtrmPm+osYoJke5f0NTFyvGRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MjylqTvi; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745330237;
-	bh=BLr1Iiik2vEEXPZBT2XxibrJ3gHHLcnn4LfvqfMJQ5k=;
+	s=mail; t=1745330240;
+	bh=t7nOXqE4tlbUoj6BmNiVFgKSUV9qTZl5Ay/HW3Xp1K8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oe0CVLPRxvOuXTqdrn5jptO2HwBGymkZb3BchyMPPsVVgo6HjlUP3kBCeya+9gkPk
-	 2211W/G/IGQFaxLMi5A7dXX5BbWB7/eoD0P6XBJRIKoSGbsPSiCzYeE/Rc0ZwbGObL
-	 e4F8cPmPCbtqp1wkFMAbJpp+XXPHRPNjJt3m82ZGs2Flu65zEwo/wC9vn/xvfrMuq2
-	 05FWeSS6dfh/nu3rFkGFT1OTouSHZxWBTCEnFrHLnsGs+osoyUgVeE7TG5fCau/mmi
-	 Qg/OIKdn+k+HEqqALzYmgqmd9rMI49wwV+qIWC0nUBeB0KlZ7WdDU/m1nTQMJ3+S9u
-	 qQbo9uPqrnStA==
+	b=MjylqTvi+L1qqKxxF0boEP8g/2kSCHawLIDiEo+gs7N+9IlOjUw9Lax4cjb1trsYY
+	 0u5DoItprRmDafebGTqMkqmkS6Mhj9wvT/BFVG4QlHMu31ZO8e1p0AcLGJDb4lmJni
+	 OlzVoRjIqjyHWHr988f3jUEDlYjPIXpMpsiEDJg0R21K6QmXoTWBMT+KWwOlVbS+Pl
+	 CfanzmJPqud3KnPcpc8KuLi3AYu5vCZ+V9dFhb7X/SY506vTK4SSxuLVxbahzZmlc1
+	 DSJIqfCNFJ9eychDUZcka2c1nv4Fiyd5h8ymY+axHjwkPuM8evtu1ANAXi3Pr73yNy
+	 2AXQq1vZDotsA==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C8C2817E157E;
-	Tue, 22 Apr 2025 15:57:16 +0200 (CEST)
-Message-ID: <e9d8c9e2-9d54-411f-85e5-ece70886bdcc@collabora.com>
-Date: Tue, 22 Apr 2025 15:57:16 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3FB9817E3626;
+	Tue, 22 Apr 2025 15:57:19 +0200 (CEST)
+Message-ID: <50124f4e-fcc5-45d0-9677-dd1327e0077c@collabora.com>
+Date: Tue, 22 Apr 2025 15:57:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] arm64: dts: mediatek: mt8186: Add Squirtle
- Chromebooks
+Subject: Re: [PATCH v2 4/8] arm64: dts: mediatek: mt8186-steelix: Mark second
+ source components for probing
 To: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
@@ -66,24 +66,30 @@ To: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  chrome-platform@lists.linux.dev, linux-input@vger.kernel.org,
- Douglas Anderson <dianders@chromium.org>
+ Douglas Anderson <dianders@chromium.org>, stable+noautosel@kernel.org
 References: <20250421101248.426929-1-wenst@chromium.org>
- <20250421101248.426929-7-wenst@chromium.org>
+ <20250421101248.426929-5-wenst@chromium.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250421101248.426929-7-wenst@chromium.org>
+In-Reply-To: <20250421101248.426929-5-wenst@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 21/04/25 12:12, Chen-Yu Tsai ha scritto:
-> Add a device tree for the MT8186 based Squirtle Chromebooks, also known
-> as the Acer Chromebook Spin 311 (R724T). The device is a 2-in-1
-> convertible.
+> Steelix design has two possible trackpad component sources. Currently
+> they are all marked as available, along with having workarounds for
+> shared pinctrl muxing and GPIOs.
 > 
+> Instead, mark them all as "fail-needs-probe" and have the implementation
+> try to probe which one is present.
+> 
+> Also remove the shared resource workaround by moving the pinctrl entry
+> for the trackpad interrupt line back into the individual trackpad nodes.
+> 
+> Cc: <stable+noautosel@kernel.org> # Needs accompanying new driver to work
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
 
 
 
