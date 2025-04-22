@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-614684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D60A9704A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAFEA97052
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4716F3B46A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D93189E231
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6528EA7D;
-	Tue, 22 Apr 2025 15:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3D28FFC7;
+	Tue, 22 Apr 2025 15:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZv0FcEm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kuUyWOsx"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F34EEBB;
-	Tue, 22 Apr 2025 15:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C1A2857C9
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745335053; cv=none; b=pADtOPQURBEvm7+5WSs3z7la4fTiCNY2Ubrf4B6DgLfBEgTKsOBgIa9Ysv/RYSSG3C/mjzXG1y7a+wBq1fkkXna+5RxiJRXnnNMhIP4osKsYJtGEse6ZbWj/HezEXVP8N/hiohTQfGr+p3k3Z5n5mq2vCycinRBW6Ikxsrve3QM=
+	t=1745335080; cv=none; b=mstOJ5AjxDZNxIixH5sHdwsBtZanIWixKfSaNE82crxFzRZx9KszSGbPi1i4ke8QZFidzlFr9HvGHzE3KD0Xn0jMF6MP1FXbBoJWzBLbYCQDmdKlqRfrg6Pc2RuZeYNC4EDefDX7Ogawn8MZHfpLh3xhljkgzWVGM7Z72zWrzF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745335053; c=relaxed/simple;
-	bh=gm2YtakWua6MgLU2MMARUhkStvU91vYswH2RlQrRvmM=;
+	s=arc-20240116; t=1745335080; c=relaxed/simple;
+	bh=tZCRT3KRKbtaH5Y6xHCCiOdmQpzRItyz9G99gZqg9bA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nC/Pg3wgQZm5eGE/4TdYehCUB/DXBjy0pS85TE55a+rO3LviSk8ZTBq9y6Xi0JAsnIzwblPwEGgVymwN7de7LFm35gmYNVszaKOpUuhF5kJSll9dB347S1e9GXrcUK9rnbc5Dh22ipnAj9YMIwK928crHX4TT2YKjB20j4jZkfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZv0FcEm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C978C4CEED;
-	Tue, 22 Apr 2025 15:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745335053;
-	bh=gm2YtakWua6MgLU2MMARUhkStvU91vYswH2RlQrRvmM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZv0FcEmXwnwBYh5A3BQhodZ654sV9WP0Ct/QcxXpV+HT6pCfoOJ42TAoSPxNzfF8
-	 UuOet1+RTGfAdp4gmB2LSt+gCcbsE+QMw1CVNr7jHCZLRmng+UypBhQ+62OUSWb22n
-	 tE5jV7Lm5dse3VXl9p5d1PWPlHPHDXJ7enNlYsx5JfVwZ/ZP4anpkTWKPkfNYAtgbz
-	 IL48GoxbMb/j2f0yjvyj06J3+zkh2sNHtBJdOrxDpYp23hQKsdiK4YPz20HDaBsMtz
-	 wC9+S6wfGq1eFixXrdeAtf6wYrdhU/ZX4u9tYtX98mACqcDWwyFla8BEulGp5DIsaQ
-	 Z9OB8yOaB4Rxg==
-Date: Tue, 22 Apr 2025 16:17:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib: PRIME_NUMBERS_KUNIT_TEST should not select
- PRIME_NUMBERS
-Message-ID: <7e03d4e6-5ae7-4fb9-b072-051d4e24f413@sirena.org.uk>
-References: <40f8a40eef4930d3ac9febd205bc171eb04e171c.1744641237.git.geert@linux-m68k.org>
- <f2a55a3f-6c56-43fa-bfda-25cc11fe5212@sirena.org.uk>
- <202504220759.67C0120FF@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChMBDEC3ORMY18ccAmTnwaGDukQ41xTzYnsioe9QqBbzk0t5X2p6G0u2VL93rcpLTTcEZ9tdpKYlR/adJ98wa1cGf3WIBF6SJBTCfZ4K82xAijIsCLJoB13t5Bf3pLLA3j2W5f+PX1todg4uVSc7TfIpOpQJbSzwjVLxE9W5/bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kuUyWOsx; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Apr 2025 08:17:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745335066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LchZarW2A6kUutnNIDJO9ma1ViD3dQsg63NWCnCpkd8=;
+	b=kuUyWOsxd9hRF8MHPY8MLslDN6+7hW2eUdsBAjNgySpPbSVsXoIbvMv3CGm7HxPtOjCB1v
+	l48IzD8TD4q98Ksu7wnkVSgHQ9x2I+hFRwSQfc6ywONjTIGNaaHScZlAlsqrYsu1F4UuL2
+	jyb3bWBH0kLn+H5xF3nkBH4ZmTOO/u4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: vmalloc: simplify MEMCG_VMALLOC updates
+Message-ID: <aAezFEm9FY3RZISI@Asmaa.>
+References: <20250403053326.26860-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AMxZP8oKYqpRSRxv"
-Content-Disposition: inline
-In-Reply-To: <202504220759.67C0120FF@keescook>
-X-Cookie: Why are you so hard to ignore?
-
-
---AMxZP8oKYqpRSRxv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250403053326.26860-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 22, 2025 at 08:03:09AM -0700, Kees Cook wrote:
-> On Tue, Apr 22, 2025 at 01:10:47PM +0100, Mark Brown wrote:
+On Wed, Apr 02, 2025 at 10:33:26PM -0700, Shakeel Butt wrote:
+> The vmalloc region can either be charged to a single memcg or none. At
+> the moment kernel traverses all the pages backing the vmalloc region to
+> update the MEMCG_VMALLOC stat. However there is no need to look at all
+> the pages as all those pages will be charged to a single memcg or none.
+> Simplify the MEMCG_VMALLOC update by just looking at the first page of
+> the vmalloc region.
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/vmalloc.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 3ed720a787ec..cdae76994488 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3370,12 +3370,12 @@ void vfree(const void *addr)
+>  
+>  	if (unlikely(vm->flags & VM_FLUSH_RESET_PERMS))
+>  		vm_reset_perms(vm);
+> +	if (vm->nr_pages && !(vm->flags & VM_MAP_PUT_PAGES))
+> +		mod_memcg_page_state(vm->pages[0], MEMCG_VMALLOC, -vm->nr_pages);
+>  	for (i = 0; i < vm->nr_pages; i++) {
+>  		struct page *page = vm->pages[i];
+>  
+>  		BUG_ON(!page);
+> -		if (!(vm->flags & VM_MAP_PUT_PAGES))
+> -			mod_memcg_page_state(page, MEMCG_VMALLOC, -1);
 
-> > This commit, which is now in mainline, causes the prime numbers test to
-> > vanish from my CI which is a regression - the selftests config fragment
-> > is obviously not picked up by the kunit runner when it builds the
-> > kernel.  You should add any KUnit tests to one of the configs in
-> > tools/testing/kunit/configs/ - generally all_tests.config.
+We can add a debug check here (and/or in the vmalloc path) to check that
+all pages are indeed charged to the same memcg.
 
-> Ah! Thanks -- I forgot about these (apparently my memory horizon is at
-> most 2 years, considering commit 4d9060981f88 ("kunit: tool: Enable
-> CONFIG_FORTIFY_SOURCE under UML").
+Regardless, this change makes sense:
+Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-> Does this look like you're expecting?
 
-Yes, in fact I actually have roughly that patch in my CI already.
-
---AMxZP8oKYqpRSRxv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgHswcACgkQJNaLcl1U
-h9D3YQf/dqeIXtguSHIZFGeY3YzYcyhDRFK4xiwAHqZzvXeKnBn6wSf64JY0Q3qS
-mx8IjfXuE17PuyVRzZrkOAtBWAdlvUW2swBstcnauc+ZVC5RzwEH89YiEHx2d/l0
-wvM3/GPzGkUhCexkvesbE4CFZCLmexwujiz33diFPRHitNFx01UQmGZRY7IPSfHC
-nV702kGVHOoIM3TT5pL7fSsuWpibFp9/Ckt8S7u60+0F2SbL8BqaE70aHwxe1ITv
-XXJItunnq7Lrwhj4SDC9FxT91c7eKJ6TuOgf3mqjZZRSxiSp5cpaQeIAiTsk6J7C
-QNK3XzaZ1Ditvw7C6zFn9YI8JkXizg==
-=chZ3
------END PGP SIGNATURE-----
-
---AMxZP8oKYqpRSRxv--
+>  		/*
+>  		 * High-order allocs for huge vmallocs are split, so
+>  		 * can be freed as an array of order-0 allocations
+> @@ -3671,12 +3671,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		node, page_order, nr_small_pages, area->pages);
+>  
+>  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+> -	if (gfp_mask & __GFP_ACCOUNT) {
+> -		int i;
+> -
+> -		for (i = 0; i < area->nr_pages; i++)
+> -			mod_memcg_page_state(area->pages[i], MEMCG_VMALLOC, 1);
+> -	}
+> +	if (gfp_mask & __GFP_ACCOUNT && area->nr_pages)
+> +		mod_memcg_page_state(area->pages[0], MEMCG_VMALLOC,
+> +				     area->nr_pages);
+>  
+>  	/*
+>  	 * If not enough pages were obtained to accomplish an
+> -- 
+> 2.47.1
+> 
+> 
 
