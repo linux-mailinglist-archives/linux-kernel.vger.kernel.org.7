@@ -1,112 +1,184 @@
-Return-Path: <linux-kernel+bounces-613890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F7AA9636F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21001A9637E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA643A9379
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335F9402A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE2F2561A8;
-	Tue, 22 Apr 2025 08:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jFsfhbpV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7DE25B66C;
+	Tue, 22 Apr 2025 08:57:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71BC253F35
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A95225A630
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745312170; cv=none; b=O8x/Q8OLECE2Lii4DPtqFdcce2zgw6pyNUY6D04tR2nGupdvPqyInuNntQA6EbEEgEwDUNHGev9grpzAUrhGg5WOpHfKQZnMtU4mJVqrrYujt9Jg3bLZKSZOglaGFHpSxtTljNMRA+vZ29suCWojCwGs6PvzNTTfnyXrzQ9XQa0=
+	t=1745312259; cv=none; b=eZl0GnLHW/1OH+jHoQZGUcXnIzTzgSPPcUM3F+OAJxHErusqGu824syoymgIBK0gtwa4VlGK7hjNCyTKFmq/mAGQB9Az3UbOtXPAzqZYhZLo5pLLC0rfOLHCf/5k4dm4nXsBhymGsqZbqJRn0AEKpjMTAwmd7rs4GO6jSjjFf/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745312170; c=relaxed/simple;
-	bh=qXI2HAsvQf2w1MSbA7K9uGxTvVYRPO2tahW3Jx9mG3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2KNTI+weemhKwb+LjzoV4w5rLC8se+MOKV+E8Yy31u+31SdDDRnb6H375/my5elIEpWkyn/xBu9uyefZlNDg01dBBrdQhVyrjlowa5FSrxBfU2mB/QWnU0zZe2B76xjTF/nsyiI6iiW91QTU1W/FCq6ZVZwu6/GATabStDlOAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jFsfhbpV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4537940E01FA;
-	Tue, 22 Apr 2025 08:56:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id juvRHB7T_svc; Tue, 22 Apr 2025 08:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745312156; bh=rFDFhcg8aeoqfceJP/IDVW6dcvhJCDAYgx/s5YA2aL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jFsfhbpVOsJZPJdNLautem6k/UOl3CTiXdmmoxM425+hhCF5PYO1tHyTfRL7KuTme
-	 HxV11eXLUrWPhRjPL8ENUzlEHaXGU6EnwC4/Yi9GyOZxDwnqPSG/tHSOyMWBksQpGI
-	 vKGS34Flc1RATmaGHwce4g5We9VHpy+Ri8vxXGJDa3IiNzSCElBme59E6qmhumkbfl
-	 MkuAJdRQFnbJf593p7LZsvVXx+M0LbCxVPr3rbTVc/NU3dKJ1xZKNPgWubyElMIxsw
-	 AWQXP/FFuQmZHzu8625AJ+fnI6Hr1ny9Ipkndmu7zAVQLF6rQqvJ0m1cdk1ReO2h0g
-	 nBjEMPn7Pqz81oCBv8cmlwGzf4Z4iCT3OFcFZIv/BywxY9c2gXr3RAbeW66FylN3fa
-	 6AaWjNpxVxiRnzrRQPAY1ga8Z33JNRAC8W9fzvcCm5BCBci1BPr9VRpO9A9fRrLQtr
-	 aGSdH1UUKiiieYDfqoAZzDzpWjjjJBrYYVIdBe/lU7fWNF5NIJl0OKf7mBXk0E8NIE
-	 MZF4rcxz1QR1VlknKo90l9+cGxPuGl25Gbmuy5Zlr621moN4I4a5qdL6ThUbEX9jUo
-	 Pmejh0v7ggSWAwZ2nw6Rci5toYkdkSiaWmMcOmXEj9kFp+sBOXzuiFu/O68kT/dc53
-	 893kZJCgr3PVvQL36CfKJgkE=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5E5D540E01F6;
-	Tue, 22 Apr 2025 08:55:45 +0000 (UTC)
-Date: Tue, 22 Apr 2025 10:56:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 02/16] x86/bugs: Restructure TAA mitigation
-Message-ID: <20250422085646.GBaAdZzlRuyJmo4Tct@renoirsky.local>
-References: <20250418161721.1855190-1-david.kaplan@amd.com>
- <20250418161721.1855190-3-david.kaplan@amd.com>
- <20250419123655.GRaAOY5yCyIz6TYcCC@fat_crate.local>
- <LV3PR12MB92651777DD5C8A010E010A8794B92@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1745312259; c=relaxed/simple;
+	bh=Rbyz2ftNDpvSEMKvn/ADDVhtF8Nex1a0YDAZd9TdBM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Q5ibmt10EfEeZEXgf+iWNJ/njnYTLaMHcPJakL11KvfxkxN/ckBdO3Q7ynwu2YLZcJ521JGlmo+pV67x8bKp5XvvlaXc1g8XxD5gi6tqwfZ2t+B9p93fRa66LvFxVsAsugalRpks7JiYc6C0wJGLgAQw8jZmdvHvyJrHYJyWu9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u79RQ-0007Tx-3n; Tue, 22 Apr 2025 10:57:20 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u79RO-001WRB-2g;
+	Tue, 22 Apr 2025 10:57:18 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u79RO-00Avp3-2P;
+	Tue, 22 Apr 2025 10:57:18 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: [PATCH v9 0/7] Introduction of PSCR Framework and Related Components
+Date: Tue, 22 Apr 2025 10:57:10 +0200
+Message-Id: <20250422085717.2605520-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB92651777DD5C8A010E010A8794B92@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun, Apr 20, 2025 at 09:03:25PM +0000, Kaplan, David wrote:
-> No, because taa_vulnerable() requires both X86_BUG_TAA and X86_FEATURE_RTM.
-> 
-> In taa_select_mitigation() there is a difference depending on which of these doesn't exist which sets the mitigation to either OFF (if unaffected) or TSX_DISABLED (if no RTM).
-> 
+changes v9:
+- Remove redundant pr_crit() messages before hw_protection_trigger()
+- Replace psc_reason_to_str() switch with static const string array
+- Mark psc_last_reason as static
 
-Yah, another mis-designed thing from back then. If RTM is disabled, then
-TAA is mitigated. Period.
+changes v8:
+- Use DEFINE_GUARD() and guard(g_pscrr) for scoped locking of the global
+  pscrr_core struct
+- Replace manual mutex_lock/unlock with automatic cleanup-based guard()
+  usage
+- Centralize backend and locking state in struct pscrr_core
+- Prepare for future multi-backend support with clean encapsulation
+- Improve sysfs documentation:
+  * Added full enum psc_reason value table
+  * Simplified example comments, removed redundant "may differ" phrasing
+  * Added note that not all values are supported on all systems
+  * Linked value definitions to include/linux/reboot.h
+  * Added clear read/write usage examples for sysfs entries
 
-And us making how a vuln is mitigated into a separate thing is
-unnecessary complication IMO. IOW, TAA_MITIGATION_TSX_DISABLED shouldn've
-been done, in hindsight.
+changes v7:
+- document expected values in sysfs documentation
+- make write support optional
 
-But whatever, another topic.
+changes v6:
+- add sysfs documentation
+- rebase against latest hw_protection_reboot changes:
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-nonmm-unstable&id=212dd3f6e57f6af8ed3caa23b93adc29334f9652
+- push core part of the reset reason the kernel/reboot.c
 
-Thx.
+changes v5:
+- fix compile with NVMEM=n and potential issues with NVMEM=m
 
--- 
-Regards/Gruss,
-    Boris.
+changes v4:
+- fix compile with CONFIG_PSCRR=n
 
-https://people.kernel.org/tglx/notes-about-netiquette
+changes v3
+- rework to remove devicetree dependencies
+- extend NVMEM to search devices and cells by names.
+
+changes v2:
+- rename the framework from PSCR to PSCRR (last R is for Recorder)
+- extend power on reason header and use it to show detected reason on
+  system start and in sysfs.
+- remove "unknow" reason
+- rebase on top of v6.8-rc1
+- yaml fixes
+- zero reason state on boot
+
+Hello all,
+
+This patch series introduces the Power State Change Reasons Recording
+(PSCRR) framework and its related components into the kernel. The PSCR
+framework is designed for systems where traditional methods of storing
+power state change reasons, like PMICs or watchdogs, are inadequate. It
+provides a structured way to store reasons for system shutdowns and
+reboots, such as under-voltage or software-triggered events, in
+non-volatile hardware storage.
+
+These changes are critical for systems requiring detailed postmortem
+analysis and where immediate power-down scenarios limit traditional
+storage options. The framework also assists bootloaders and early-stage
+system components in making informed recovery decisions.
+
+
+Oleksij Rempel (7):
+  power: Extend power_on_reason.h for upcoming PSCRR framework
+  reboot: hw_protection_trigger: use standardized numeric
+    shutdown/reboot reasons instead of strings
+  power: reset: Introduce PSCR Recording Framework for Non-Volatile
+    Storage
+  nvmem: provide consumer access to cell size metrics
+  nvmem: add support for device and sysfs-based cell lookups
+  power: reset: add PSCR NVMEM Driver for Recording Power State Change
+    Reasons
+  Documentation: Add sysfs documentation for PSCRR reboot reason
+    tracking
+
+ .../ABI/testing/sysfs-kernel-reboot-pscrr     |  74 ++++
+ drivers/nvmem/core.c                          | 134 ++++++
+ drivers/platform/chrome/cros_ec_lpc.c         |   2 +-
+ drivers/power/reset/Kconfig                   |  47 ++
+ drivers/power/reset/Makefile                  |   2 +
+ drivers/power/reset/pscrr-nvmem.c             | 254 +++++++++++
+ drivers/power/reset/pscrr.c                   | 403 ++++++++++++++++++
+ drivers/regulator/core.c                      |  13 +-
+ drivers/regulator/irq_helpers.c               |   9 +-
+ drivers/thermal/thermal_core.c                |   3 +-
+ include/linux/nvmem-consumer.h                |  25 ++
+ include/linux/power/power_on_reason.h         |   4 +
+ include/linux/pscrr.h                         |  58 +++
+ include/linux/reboot.h                        |  77 +++-
+ kernel/reboot.c                               |  85 +++-
+ 15 files changed, 1168 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+ create mode 100644 drivers/power/reset/pscrr-nvmem.c
+ create mode 100644 drivers/power/reset/pscrr.c
+ create mode 100644 include/linux/pscrr.h
+
+--
+2.39.5
+
 
