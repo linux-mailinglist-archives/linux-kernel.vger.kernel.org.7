@@ -1,157 +1,162 @@
-Return-Path: <linux-kernel+bounces-614356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF44DA96A3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DE1A96A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B0F164EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0012216D965
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F3827E1AE;
-	Tue, 22 Apr 2025 12:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198827F4EF;
+	Tue, 22 Apr 2025 12:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nzTvVaGa"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CsESrhHP"
 Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0639827CB21;
-	Tue, 22 Apr 2025 12:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FA727D762;
+	Tue, 22 Apr 2025 12:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325477; cv=none; b=UDGpkaUVoz/7FHINyhXD6TAJO5hZJcFp8p+QU/cuAMEpjYGua1p9APOPTllcWFABaUpsxYybh2kL98UyKL9WSmOtMUPz5o2VtDBwHJxooiNCNBQdApUzJ/BGq5KaslvPoZFyG6sLNREfxMzBnAKuc9K2PwIN9RMK6dNhLkRcHps=
+	t=1745325528; cv=none; b=s3DkbkhJZlTXHG6xoN8A9NBaBiPF74tM8nX5mUncrhvTUuEcBD7YppolSHlXtPt9w/gvo4r7xjBrQ4zsVhnKVYoAKsYmlmG9yuO6vhdjzNlTvTqU9yLMYK8M5agj5E+gweFJcYjndjsrN4G8J4ey7yCUzQdHAKtuL+7geY95J2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325477; c=relaxed/simple;
-	bh=9LWctCLAOk2V79wAkjedn9g538XpW9ER6OkbM2hGwVg=;
+	s=arc-20240116; t=1745325528; c=relaxed/simple;
+	bh=zZesQnhJCh0jvbuM8vT7IkVhJz3hiYg0Fy04+rCT1Vw=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMG+RCHMyywqWfTUJH1Vhu4jbSbHdFV4vOp4Q+ACeKejfaHGJ1p8mZDx6X/ofJWn55jLbSeUCbmAuNuTupMIdQ/4l0GPUnHYeQQMeehwjQH1zqcGBsJpxT7A6AfqATAqgolrZwhwNhGWz5CZ9ZzTOvJYyYIorhdAQzJB3D0A1TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nzTvVaGa; arc=none smtp.client-ip=198.47.23.235
+	 Content-Type:Content-Disposition:In-Reply-To; b=bA1CdzpNUL8FgZinEf/UoPsfb7WCbnwf6gKduuMUC9AkGZ+nrWiIOGlrITC8hjGIg7aSOuSs9VzlBQOhea93TN4pQFwk9DtkH651URZxHOzU3ETxdi3CsLEwTbQppapnFsMyHtHJ8SSRso1TeD//PJmESFJlDA0s448JM2ZKLd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CsESrhHP; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCbmQX1942937
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCcb2L1943131
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Apr 2025 07:37:48 -0500
+	Tue, 22 Apr 2025 07:38:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745325468;
-	bh=LBqzgSLKnZOtYJIVdn3cY8acSWUiPCLaVMtrkuGzAUI=;
+	s=ti-com-17Q1; t=1745325518;
+	bh=4hFUNmLBRh4VveH2rb85NwamzBJC3ETXpv4CzWL79j0=;
 	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=nzTvVaGaRA4JlcEZwe194GvVcw1nFB14VP1ecyYbblLDxmNKbwHf/tZIOOWjD/F1b
-	 DDZ5aeJSEklX+WuZHW4uk06SR8eRm2DjMGcc4S+2gu6/XFrbfeZk8gHilADXjtpo+/
-	 vwqR7UuB1j9Gv2PE/YB8Y5BpxQScvQA3Iq3kml2Q=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCbmi5017900
+	b=CsESrhHPI3hUH0Su+441aV/y7m9+oGDeKaOULp5JXFPf+PEtFplxyXjeuOkTWhvwl
+	 uzOaVMApu5uYbBEfde1K1i/KFSwWWGgiWybdrU4w39Vbx9H5skcgJigd6j8IIcr2hR
+	 y4FB1RgfKqjDdk5mZo/QI30yDdDqGD1lqQRkecGo=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCcbPZ021431
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 22 Apr 2025 07:37:48 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 22 Apr 2025 07:38:37 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
- Apr 2025 07:37:47 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 07:38:37 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 22 Apr 2025 07:37:48 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53MCbm6K005363;
-	Tue, 22 Apr 2025 07:37:48 -0500
-Date: Tue, 22 Apr 2025 07:37:48 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Judith Mendez <jm@ti.com>
-CC: "Kumar, Udit" <u-kumar1@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Frontend Transport; Tue, 22 Apr 2025 07:38:37 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53MCcaQI006395;
+	Tue, 22 Apr 2025 07:38:37 -0500
+Date: Tue, 22 Apr 2025 18:08:35 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: "Kumar, Udit" <u-kumar1@ti.com>, <parth105105@gmail.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof
  Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
+        Siddharth
+ Vadapalli <s-vadapalli@ti.com>,
+        Parth Pancholi <parth.pancholi@toradex.com>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>
-Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am6*: Set eMMC clock parents
- to default
-Message-ID: <20250422123748.ugkk2pzp54vzmyii@acorn>
-References: <20250417233040.3658761-1-jm@ti.com>
- <20250417233040.3658761-2-jm@ti.com>
- <8f9aad2c-8e51-409e-be90-21230a53a4cf@ti.com>
- <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-main: Enable ACSPCIE
+ outputs for PCIe interfaces
+Message-ID: <69155658-f138-4b10-a6fc-c036ebf65c0d@ti.com>
+References: <20250404101234.2671147-1-parth105105@gmail.com>
+ <7da470c6-5426-48bf-838a-bc7a5b5dc5db@ti.com>
+ <eff95b10-f20e-4abc-b519-36fd80843954@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
+In-Reply-To: <eff95b10-f20e-4abc-b519-36fd80843954@ti.com>
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 09:36-20250421, Judith Mendez wrote:
-> Hi Udit,
+On Sun, Apr 20, 2025 at 08:25:22AM +0530, Siddharth Vadapalli wrote:
+> On Sat, Apr 19, 2025 at 06:38:00PM +0530, Kumar, Udit wrote:
+> > Thanks for patch, Parth
+> > 
+> > On 4/4/2025 3:42 PM, Parth Pancholi wrote:
 > 
-> On 4/19/25 10:00 AM, Kumar, Udit wrote:
-> > 
-> > On 4/18/2025 5:00 AM, Judith Mendez wrote:
-> > > Set eMMC clock parents to the defaults which is MAIN_PLL0_HSDIV5_CLKOUT
-> > > for eMMC. This change is necessary since DM is not implementing the
-> > > correct procedure to switch PLL clock source for eMMC and we have a
-> > > non-glich-free mux. To remove any potential issues, lets switch back to
-> > > the defaults.
-> > 
-> > IMO, we need to fix DM  if not then documentation [0] .
+> Hello Parth,
 > 
-> DM cannot be fixed for only one IP and documentation says what clock
-> parents are supported, it does not have to say what are the issues
-> that come with using a specific clock parent.
-
-As I understand the arasan IP requirement is that the IP must be held in
-reset while the clock is switched, which is not reasonable to implement
-given decoupled systems like DM and Linux OS.
-
-> 
-> > 
-> > Then only this patch is ok because as per document [0]
-> > 
-> > removed clock by this patch is valid parent for eMMC.
-> 
-> The clock parent currently set is a valid parent, but we have non-
-> glitch-free muxes and to avoid any potential issues with these, we
-> should switch back to the defaults. It seems like we randomly switched
-> from the default for no good reason and it has been copy paste per
-> platforms since then, so we are switching back to the defaults now.
-> 
-> ~ Judith
-> 
-> > 
-> > [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j722s/clocks.html
-> > 
-> > Thanks
-> > 
-> > Udit
-> > 
+> > > From: Parth Pancholi <parth.pancholi@toradex.com>
 > > > 
-> > > Fixes: c37c58fdeb8a ("arm64: dts: ti: k3-am62: Add more peripheral
-> > > nodes")
-> > > Fixes: d3ae4e8d8b6a ("arm64: dts: ti: k3-am62a-main: Add sdhci0
-> > > instance")
-> > > Fixes: b5080c7c1f7e ("arm64: dts: ti: k3-am62p: Add nodes for more IPs")
-
-Please follow ./Documentation/process/stable-kernel-rules.rst - this is
-easier to backport if these were to be split into 3 different patches.
-Please do not forget to add Cc: stable@vger.kernel.org as per the rules
-as well.
-
-> > > Signed-off-by: Judith Mendez <jm@ti.com>
-> > > ---
-> > >   arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 --
-> > >   arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 2 --
-> > >   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
-> > >   3 files changed, 6 deletions(-)
+> > > TI J784S4-based devices, such as the AM69 SoC, provide PCIE_REFCLK outputs
+> > > from the SoC, which can be used to clock external PCIe endpoint devices.
+> > > Each PCIE_REFCLK output is enabled via the corresponding ACSPCIE clock
+> > > buffer, with each buffer supporting two PADs to provide reference clocks
+> > > for two associated PCIe instances. The mappings are as follows:
+> > >          - PCIe0 -> ACSPCIE1 PAD0
+> > >          - PCIe1 -> ACSPCIE0 PAD0
+> > >          - PCIe2 -> ACSPCIE1 PAD1
+> > >          - PCIe3 -> ACSPCIE0 PAD1
 > > > 
-> > > [..]
+> > > This patch enables each ACSPCIE module and its corresponding PADs to ensure
+> > > that all PCIE_REFCLK outputs are functional.
+> > > 
+> > > This change have been tested on an AM69-based custom hardware platform,
+> > > where all four PCIe instances (PCIe0, PCIe1, PCIe2, and PCIe3) with the
+> > > internal PCIE_REFCLK are utilized with various endpoint devices such as
+> > > a WiFi card, NVMe SSD, and PCIe-to-USB bridge.
+> > 
+> > You can enabling REFCLK to be out as default.
+> > 
+> > There are few boards, on which this clock is either terminated at test point
+> > or not connected at all
+> > 
+> > Example AM69 board
+> > 
+> > PCIE_REFCLK2_P_OUT is not connected and PCIE_REFCLK0_P_OUT is terminated at
+> > test points.
+> > 
+> > 
+> > IMO, this clock to be enabled where this can be connected to PCIe EP.
+> > 
+> > Let Siddharth also share his comment, where to enable these clocks board
+> > file or SOC file.
 > 
+> As Udit has pointed out, the reference clock outputs from ACSPCIE
+> buffers should be enabled in the board files. I will be updating the
+> patch that I had posted for enabling output of ACSPCIE0 PAD0 for PCIe1
+> by moving the changes to the board file
+> k3-j784s4-j742s2-evm-common.dtsi
+> 
+> Please update your patch accordingly. The overrides will no longer be
+> required as the property will be defined in the board file itself for
+> AM69.
 
--- 
+I have posted the v3 series [0] which does the following:
+1. Introduce the ACSPCIE0 node in the SoC file to allow reuse across:
+   J784S4, J742S2 and AM69
+2. Update 'pcie1_rc' node in the Board file specific to J784S4 and J742S2
+   to drive the reference clock from PAD0 of ACSPCIE0
+
+As a result, the current patch for AM69 can be converted to a series
+which does the following:
+1. Introduce the ACSPCIE1 node in the SoC file to allow reuse across:
+   J784S4, J742S2 and AM69
+2. Update 'pcie0_rc', 'pcie1_rc', 'pcie2_rc' and 'pcie3_rc' in the Board
+   files to drive the reference clock from PAD0 and PAD1 of both
+   ACSPCIE0 and ACSPCIE1
+
+[0]: https://lore.kernel.org/r/20250422123218.3788223-1-s-vadapalli@ti.com/
+
 Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Siddharth.
 
