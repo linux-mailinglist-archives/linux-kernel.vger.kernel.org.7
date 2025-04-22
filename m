@@ -1,313 +1,145 @@
-Return-Path: <linux-kernel+bounces-615137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3345BA9786F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF482A97873
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0501D189D547
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3861C178192
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53512262FF6;
-	Tue, 22 Apr 2025 21:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33D262FFB;
+	Tue, 22 Apr 2025 21:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CCemR4dS"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cgN0kn2/"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB72262FE5;
-	Tue, 22 Apr 2025 21:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550C7262FC5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 21:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745356862; cv=none; b=SXX38tZr72b+9ua4bmjd5taqDogzQIKHTeSiKhf3fBowDaKCecrEge9lGg8+7Oav0//AYbL3SNXMGxycAgZ0jVoSjCbATo3Q4N06aDsDSxQ/Q7BxR0/v54uiIEAyKSyiiAqbZ0mgME1XZ5cSb6fm0QO7FQNAUtDU6prpD3ksFlc=
+	t=1745356970; cv=none; b=LB8XQzn9Gs+rb0Nm+sKaVJTcloUgtOCxw2LLXKEVmfdS/7HRWRD3mdrwFSXXnTrMyLikrRczmuWDPlh+LfLugpUBZQ2CEZXirhc7RjBwyNlP0AKRP1cjUOw16vroscQMmt3rJHqm48NJUCiR1JueCYMa3A/q7sIyZtIogeGKsi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745356862; c=relaxed/simple;
-	bh=TaWy0LZEsPyXkQz2MkEjBCwUsMf7/Sbik/r/E/4wEg4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EY3QIiRAxPEPv64TMyaoWvDUszt8FQLXD4HmMqS/6eebF0KO/JKpdxi98ZGFvvqpJWFDIHlAnHriZctnL8pEO7OkvppU454dtxfQFfzHiJsXvuu7RWO2VFNXwVkJhW6/TDlj9uSp3tsFuJ8MMtg/5B2nxxlgH+qMNlOV/tl5Cls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CCemR4dS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745356858;
-	bh=TaWy0LZEsPyXkQz2MkEjBCwUsMf7/Sbik/r/E/4wEg4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=CCemR4dSTq7g7pSjZFKWGyEsbuX4JoyzuAmNN35253ZmrC5tmjnX7JUo55QPRejqj
-	 B1pI31LbUzGxY+aX5n6tYO91b0blGziZ6joAH0NHeGUzlum8qY7Gv8kMEPyvMXX//g
-	 RRcRfVnoRNxOTitaI7j5i9KYJLMKu+T7iA3ihC0r4Qdu2TjuI7A4yw5yEQLFbwF1Wf
-	 eV2vsCRXaL3siVTNWpl/F4Bg/CQJbldFDKZnxXerXOA5aZOF5zWhND4UZobWnUuL6Y
-	 EbRhvpPmE/p02oP3Pa+Nx3FViBc/598eZo1dR9C5Hfip+EuG8vKQ/PRsXOyPqmFjbp
-	 71pazM1zMdYZg==
-Received: from [IPv6:2606:6d00:15:9913::5ac] (unknown [IPv6:2606:6d00:15:9913::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B8E9917E0B56;
-	Tue, 22 Apr 2025 23:20:56 +0200 (CEST)
-Message-ID: <d94130427c249a8342190e13d0222a09a6128b12.camel@collabora.com>
-Subject: Re: [PATCH v9 4/4] media: rkvdec: h264: Support High 10 and 4:2:2
- profiles
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Hans Verkuil <hans@jjverkuil.nl>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Jonas Karlman	
- <jonas@kwiboo.se>, Christopher Obbard <christopher.obbard@linaro.org>, 
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Greg Kroah-Hartman	 <gregkh@linuxfoundation.org>
-Date: Tue, 22 Apr 2025 17:20:54 -0400
-In-Reply-To: <20250417-b4-rkvdec_h264_high10_and_422_support-v9-4-0e8738ccb46b@collabora.com>
-References: 
-	<20250417-b4-rkvdec_h264_high10_and_422_support-v9-0-0e8738ccb46b@collabora.com>
-	 <20250417-b4-rkvdec_h264_high10_and_422_support-v9-4-0e8738ccb46b@collabora.com>
-Organization: Collabora Canada
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
+	s=arc-20240116; t=1745356970; c=relaxed/simple;
+	bh=W841TAzS9Pgf+kaExtU6OALsXMJdOqew/TQJAigKTzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ElNXnWwXXjBPKBQ6SK2FMetUUZXxAi2MP8otbEvCCVhO3RZhDMbPXEDU/p8gqfGhxpkUuo2Rx6fwPiV8RizSA4u99cOtbmNveVqitpQdJ0zCiQ810mklm6wXd/5HgTjUoZ85zyf+2E7ii8BmroOHh0max1f4OE/sOs7sqt2XPaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cgN0kn2/; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3fa6c54cc1aso3384192b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745356966; x=1745961766; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y7TT6AktatuR9V4aotE2WsOxNczSAdd4gkXQfpRGYa4=;
+        b=cgN0kn2/Y0SlXLbBNCrK2u/+sE9ntT3AzzTeHW3Jx3qtbofInUNhU2hwTIYOp4YKwO
+         qdkeGiM8lTknRXoR3rHUzT5RYR9g23DiDLFg7tWEnAYq1r7Ilxyzi+guXa3LExyHQlq4
+         UWqbUXbp93PyHmdj9s02fQCIaAKm9pZc83R/rTmfp4aMSsYS5743nwudjt754E5YSSsQ
+         LdEbRvPZwToU4hjM2iN5cnu+uhlIk7ni0/tHjSzvsm0NADAsCAvlIvBNLdmCt7rdly9n
+         Sf15jJFCBnitwe1RF0wA1IK/b5LBSmDEk6PEqEn8W7d0UoRmzW7dODPIEdxMo/PY0TQD
+         3cFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745356966; x=1745961766;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y7TT6AktatuR9V4aotE2WsOxNczSAdd4gkXQfpRGYa4=;
+        b=DBx9rhAP1d0XaFh6VHbZCCNNGWmP0mQ+5ooNXCJiAkwjuuI+5LkU+EoX3KqRyUd9ht
+         B82NEOzzhKKXuAI6IuVxM+9z68iqMwF2zvMfP3J1LfTGPsBRM5CVcqBWRyBcFXJa2LRE
+         gwHj1edgpiKIjIF6IVf1vBVYnka111Hu3BZBJP44LPI2FwU5WaHcLcSdRPZ6Dfz8bz81
+         VzWXEJ10ubbgiEu/souOVjA4vfpU4zt/8O/gREVD9udWVxWRJkme6nAjEkYuP+yRr/h1
+         N3sWkhEcNUaEUm8TM3ZbsXX3zW08jKSK449cXhwe4uX5zyPSo0l6l1YzZI3WQslxMKGW
+         wpIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBr6lPoPsW/uzA0f/iKoSg0gsKUDB2tQCOCu+SjTSVP8CVdG7UuFfwX0WDr78ie4VurmZit/zFpjHru5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1eDQ2SOlcYPfFAjIg4g8iiyfZrIC+pOlvirvrltnGLlHYEkUu
+	BA0qG5nb9zFDPPTcjgVVQ9jHnX2jYsd2tEj/lWUHnf7aKV91GMAJJ5AS6PKiPjA=
+X-Gm-Gg: ASbGnctj223tDTsJwXVsXovEGo077bGp7Rx3JkVVGgrLlkfh+SQbdrqZNv8V031fH80
+	uM1w1iZTngaQ8g3N0WQcdvC9hDZqSD2Ch86jFQseKvEyN0Q4sGj8Hkri5VGd0iBDvqgKIHAxpxX
+	pqlLLFsrHQXEbrHoPRECy0UGbO5VGgkm7K8KPsTdlSYFpCnTMdLMxqt3bzPDlytXNAmWDNNbobO
+	XTejsDZYcjNOrW4FjMK5vGr2H8aYNWeYgFiDdGX9Aajffej3JXO8r6zBFDsDunKdF1M0sQmfEcE
+	XNDYoSqA8h7YHCPimJcxfkvBy+ItxvFiR40shezBtgH2NBeueO6aUWB4obl6K0Hg4MYcP4xDQDl
+	7ZNRXPKcWK47YGLYyx57vasyGYzcl
+X-Google-Smtp-Source: AGHT+IHhf/Du65w2gsf8LB0BSIGka1F4nn2MvgiOYXQWe8VfxLVecdKEmWU3SxNZhCRA5bkBDDkDrg==
+X-Received: by 2002:a05:6808:8214:b0:3fa:8bfd:773f with SMTP id 5614622812f47-401c0a5bf36mr9644378b6e.2.1745356966369;
+        Tue, 22 Apr 2025 14:22:46 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3? ([2600:8803:e7e4:1d00:c8d1:e0ed:ce8b:96a3])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-401beeaf8f2sm2265760b6e.10.2025.04.22.14.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 14:22:46 -0700 (PDT)
+Message-ID: <12dac98d-3e6b-4c2b-8ac0-d526bdb5efd4@baylibre.com>
+Date: Tue, 22 Apr 2025 16:22:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: pressure: bmp280: drop sensor_data array
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250422-iio-pressure-bmp280-rework-push-to-buffers-v1-1-ee722f29aeca@baylibre.com>
+ <CAHp75Ve_C6BXo75xy4+xZ5b1O9-TT5TGGQDgTR_F1s3TFK3p6Q@mail.gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <CAHp75Ve_C6BXo75xy4+xZ5b1O9-TT5TGGQDgTR_F1s3TFK3p6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Hans,
+On 4/22/25 3:57 PM, Andy Shevchenko wrote:
+> On Tue, Apr 22, 2025 at 10:28 PM David Lechner <dlechner@baylibre.com> wrote:
+>>
+>> Drop the sensor_data array from struct bmp280_data and replace it using
+>> local structs in each interrupt handler.
+>>
+>> The sensor_data array in struct bmp280_data is not used to share data
+>> between functions and isn't used for DMA, so there isn't really a need
+>> to have it in the struct. Instead, we can use the struct pattern for
+>> scan data in each interrupt handler. This has the advantage of allowing
+>> us to see the actual layout of each scan buffer for each different type
+>> of supported sensor. It also avoid juggling values between local
+> 
+> of the supported
 
-since you raised concern on this one when I tried to pull, looking
-forward your Ack or Rb.
+I think what I wrote is correct grammar. Same as if I would have written
+"each type of sensor". I would not write "each type of the sensor".
 
-regards,
-Nicolas
+> 
+>> variables and the array which makes the code a bit simpler by avoiding
+>> some extra assignments.
+>>
+>> We can also drop the BME280_NUM_MAX_CHANNELS macro as it is no longer
+>> used.
+> 
+> I like this change so much, thanks!
+> But one comment below.
+> 
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> 
+> ...
+> 
+>>         /* Pressure calculations */
+>> -       memcpy(&data->sensor_data[offset], &data->buf[3], 3);
+>> -
+>> -       offset += sizeof(s32);
+>> +       memcpy(&buffer.comp_press, &data->buf[3], 3);
+>>
+>>         /* Temperature calculations */
+>> -       memcpy(&data->sensor_data[offset], &data->buf[0], 3);
+>> +       memcpy(&buffer.comp_temp, &data->buf[0], 3);
+> 
+> Shouldn't these memcpy():s be get_unaligned_be24()/get_unaligned_le24()?
+> 
 
-Le jeudi 17 avril 2025 à 17:58 -0400, Nicolas Dufresne a écrit :
-> From: Jonas Karlman <jonas@kwiboo.se>
-> 
-> Add support and enable decoding of H264 High 10 and 4:2:2 profiles.
-> 
-> Decoded CAPTURE buffer width is aligned to 64 pixels to accommodate
-> HW
-> requirement of 10-bit format buffers, fixes decoding of all the 4:2:2
-> and 10bit 4:2:2 flusters tests except two stream that present some
-> visual artifacts.
-> 
-> - Hi422FREXT17_SONY_A
-> - Hi422FREXT19_SONY_A
-> 
-> The get_image_fmt() ops is implemented to select an image format
-> required for the provided SPS control, and returns RKVDEC_IMG_FMT_ANY
-> for other controls.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> ---
->  drivers/staging/media/rkvdec/rkvdec-h264.c | 37
-> ++++++++++++++++++++++-------
->  drivers/staging/media/rkvdec/rkvdec.c      | 38
-> +++++++++++++++++++++++-------
->  drivers/staging/media/rkvdec/rkvdec.h      |  3 +++
->  3 files changed, 60 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c
-> b/drivers/staging/media/rkvdec/rkvdec-h264.c
-> index
-> 8bce8902b8dda39bb2058c8504bd52ccae6b4204..d14b4d173448dbcce4ab978a838
-> 06064b100ca24 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec-h264.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec-h264.c
-> @@ -1027,24 +1027,42 @@ static int rkvdec_h264_adjust_fmt(struct
-> rkvdec_ctx *ctx,
->  	return 0;
->  }
->  
-> +static enum rkvdec_image_fmt rkvdec_h264_get_image_fmt(struct
-> rkvdec_ctx *ctx,
-> +						       struct
-> v4l2_ctrl *ctrl)
-> +{
-> +	const struct v4l2_ctrl_h264_sps *sps = ctrl-
-> >p_new.p_h264_sps;
-> +
-> +	if (ctrl->id != V4L2_CID_STATELESS_H264_SPS)
-> +		return RKVDEC_IMG_FMT_ANY;
-> +
-> +	if (sps->bit_depth_luma_minus8 == 0) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_8BIT;
-> +		else
-> +			return RKVDEC_IMG_FMT_420_8BIT;
-> +	} else if (sps->bit_depth_luma_minus8 == 2) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_10BIT;
-> +		else
-> +			return RKVDEC_IMG_FMT_420_10BIT;
-> +	}
-> +
-> +	return RKVDEC_IMG_FMT_ANY;
-> +}
-> +
->  static int rkvdec_h264_validate_sps(struct rkvdec_ctx *ctx,
->  				    const struct v4l2_ctrl_h264_sps
-> *sps)
->  {
->  	unsigned int width, height;
->  
-> -	/*
-> -	 * TODO: The hardware supports 10-bit and 4:2:2 profiles,
-> -	 * but it's currently broken in the driver.
-> -	 * Reject them for now, until it's fixed.
-> -	 */
-> -	if (sps->chroma_format_idc > 1)
-> -		/* Only 4:0:0 and 4:2:0 are supported */
-> +	if (sps->chroma_format_idc > 2)
-> +		/* Only 4:0:0, 4:2:0 and 4:2:2 are supported */
->  		return -EINVAL;
->  	if (sps->bit_depth_luma_minus8 != sps-
-> >bit_depth_chroma_minus8)
->  		/* Luma and chroma bit depth mismatch */
->  		return -EINVAL;
-> -	if (sps->bit_depth_luma_minus8 != 0)
-> -		/* Only 8-bit is supported */
-> +	if (sps->bit_depth_luma_minus8 != 0 && sps-
-> >bit_depth_luma_minus8 != 2)
-> +		/* Only 8-bit and 10-bit is supported */
->  		return -EINVAL;
->  
->  	width = (sps->pic_width_in_mbs_minus1 + 1) * 16;
-> @@ -1190,4 +1208,5 @@ const struct rkvdec_coded_fmt_ops
-> rkvdec_h264_fmt_ops = {
->  	.stop = rkvdec_h264_stop,
->  	.run = rkvdec_h264_run,
->  	.try_ctrl = rkvdec_h264_try_ctrl,
-> +	.get_image_fmt = rkvdec_h264_get_image_fmt,
->  };
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
-> b/drivers/staging/media/rkvdec/rkvdec.c
-> index
-> 6c6fe411f48772419e1810d869ab40d168848e65..26f8b8cfcf64f872de73b49b9da
-> 9df22ce22d98b 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec.c
-> @@ -186,9 +186,10 @@ static const struct rkvdec_ctrl_desc
-> rkvdec_h264_ctrl_descs[] = {
->  	{
->  		.cfg.id = V4L2_CID_MPEG_VIDEO_H264_PROFILE,
->  		.cfg.min =
-> V4L2_MPEG_VIDEO_H264_PROFILE_CONSTRAINED_BASELINE,
-> -		.cfg.max = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH,
-> +		.cfg.max =
-> V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_422_INTRA,
->  		.cfg.menu_skip_mask =
-> -			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED),
-> +			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED) |
-> +			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_444_PR
-> EDICTIVE),
->  		.cfg.def = V4L2_MPEG_VIDEO_H264_PROFILE_MAIN,
->  	},
->  	{
-> @@ -203,11 +204,23 @@ static const struct rkvdec_ctrls
-> rkvdec_h264_ctrls = {
->  	.num_ctrls = ARRAY_SIZE(rkvdec_h264_ctrl_descs),
->  };
->  
-> -static const struct rkvdec_decoded_fmt_desc
-> rkvdec_h264_vp9_decoded_fmts[] = {
-> +static const struct rkvdec_decoded_fmt_desc
-> rkvdec_h264_decoded_fmts[] = {
->  	{
->  		.fourcc = V4L2_PIX_FMT_NV12,
->  		.image_fmt = RKVDEC_IMG_FMT_420_8BIT,
->  	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV15,
-> +		.image_fmt = RKVDEC_IMG_FMT_420_10BIT,
-> +	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV16,
-> +		.image_fmt = RKVDEC_IMG_FMT_422_8BIT,
-> +	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV20,
-> +		.image_fmt = RKVDEC_IMG_FMT_422_10BIT,
-> +	},
->  };
->  
->  static const struct rkvdec_ctrl_desc rkvdec_vp9_ctrl_descs[] = {
-> @@ -230,21 +243,28 @@ static const struct rkvdec_ctrls
-> rkvdec_vp9_ctrls = {
->  	.num_ctrls = ARRAY_SIZE(rkvdec_vp9_ctrl_descs),
->  };
->  
-> +static const struct rkvdec_decoded_fmt_desc
-> rkvdec_vp9_decoded_fmts[] = {
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV12,
-> +		.image_fmt = RKVDEC_IMG_FMT_420_8BIT,
-> +	},
-> +};
-> +
->  static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->  	{
->  		.fourcc = V4L2_PIX_FMT_H264_SLICE,
->  		.frmsize = {
-> -			.min_width = 48,
-> +			.min_width = 64,
->  			.max_width = 4096,
-> -			.step_width = 16,
-> +			.step_width = 64,
->  			.min_height = 48,
->  			.max_height = 2560,
->  			.step_height = 16,
->  		},
->  		.ctrls = &rkvdec_h264_ctrls,
->  		.ops = &rkvdec_h264_fmt_ops,
-> -		.num_decoded_fmts =
-> ARRAY_SIZE(rkvdec_h264_vp9_decoded_fmts),
-> -		.decoded_fmts = rkvdec_h264_vp9_decoded_fmts,
-> +		.num_decoded_fmts =
-> ARRAY_SIZE(rkvdec_h264_decoded_fmts),
-> +		.decoded_fmts = rkvdec_h264_decoded_fmts,
->  		.subsystem_flags =
-> VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
->  	},
->  	{
-> @@ -259,8 +279,8 @@ static const struct rkvdec_coded_fmt_desc
-> rkvdec_coded_fmts[] = {
->  		},
->  		.ctrls = &rkvdec_vp9_ctrls,
->  		.ops = &rkvdec_vp9_fmt_ops,
-> -		.num_decoded_fmts =
-> ARRAY_SIZE(rkvdec_h264_vp9_decoded_fmts),
-> -		.decoded_fmts = rkvdec_h264_vp9_decoded_fmts,
-> +		.num_decoded_fmts =
-> ARRAY_SIZE(rkvdec_vp9_decoded_fmts),
-> +		.decoded_fmts = rkvdec_vp9_decoded_fmts,
->  	}
->  };
->  
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.h
-> b/drivers/staging/media/rkvdec/rkvdec.h
-> index
-> e466a2753ccfc13738e0a672bc578e521af2c3f2..9a9f4fced7a184b952d341d75c7
-> faedaa75163d6 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.h
-> +++ b/drivers/staging/media/rkvdec/rkvdec.h
-> @@ -80,6 +80,9 @@ struct rkvdec_coded_fmt_ops {
->  enum rkvdec_image_fmt {
->  	RKVDEC_IMG_FMT_ANY = 0,
->  	RKVDEC_IMG_FMT_420_8BIT,
-> +	RKVDEC_IMG_FMT_420_10BIT,
-> +	RKVDEC_IMG_FMT_422_8BIT,
-> +	RKVDEC_IMG_FMT_422_10BIT,
->  };
->  
->  struct rkvdec_decoded_fmt_desc {
+The scan_type.endianness is already defined as IIO_LE, so we must preserve the
+the little-endian order, even on big-endian systems.
 
--- 
-Nicolas Dufresne
-Principal Engineer at Collabora
 
