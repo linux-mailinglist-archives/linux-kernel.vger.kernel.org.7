@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-614446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A1AA96CC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:31:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA8EA96CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B8F19E19C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C44166E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83EF284B4A;
-	Tue, 22 Apr 2025 13:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7282285417;
+	Tue, 22 Apr 2025 13:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IKyCoDN/"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="K9vw1Xs7"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A295B281367;
-	Tue, 22 Apr 2025 13:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3CA280CC8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328340; cv=none; b=HoqvZuY4OlxGg7YCm3sOl3Z8lwm9zbwcsZRl+YGhrlf9qbUv9jRdLn4TbI7XZW3fIkYqPlBPueFPn3u9hbE8ZqmHDFV5cy94ap4WIpSWmgoC8UplUuKpTpq7js+lhHhYlOzQxN4S/PB2SB3s1EdqHdPMK4jYoRgGOpOp+pM4Qn8=
+	t=1745328375; cv=none; b=MhX3/ZqVxHIOMnJZW8mkgKdLBnXCmS4RWO9MKLK4eIJkr0CkO/WVA1152tQvybR1SSHi9Zw8RFCXQ1oyGciMu/NSjIqZo1M3U5FKs0+Jb2VewagsA81PX0eLbnAwMjoPceC68v6EJgfWPxeMznFMBkQrEZpR5OK/lx3WnH3HySw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328340; c=relaxed/simple;
-	bh=sIwen7WsPPQoT2R+raijeINXf73DVD6D+YM6rXvMk9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3PfQt9fj8tOFB8K/rZCOqSoTPX5kjD8sVn4rquLmMO5KYOneU+9YO5m/vmDGmasFPSN5dWUtnCiG9s/kFNDnPzxxMCDRUPzntDjFwvkSYbv3TBGUkVbrEm/VfB6i9N2Pub92Lx7k9iUN5dZVxPZUyXy3G7Wcvzf0mz+zb0//r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IKyCoDN/; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2241053582dso71492745ad.1;
-        Tue, 22 Apr 2025 06:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745328338; x=1745933138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qtV3DhJOKkxTU+wj+E4JlDxdRWyHpER3HDjZAA/FV7w=;
-        b=IKyCoDN/IeeTKiGFOjyDcTekwRltrjOKEBMNHYACg23hJAwHWXn33/qNmAvRnaYjFK
-         gpVk7OZDwu2M1PgV8G+UcSD3ITOUalTStVKaGg5cObjAB7Ih6d0QXqHTqNs0S1570td+
-         V6BGK3ZcRdB3UJFyCPn7iPsrTBH2ebVj5dF6hdUuzg0ByZEZj4ZTVmGJa3lH01m3FPg3
-         YtSjPX1KAfnBgTXAWl3feQK4RJRqmVE08qGxXgMUiJ+jMczbUEh6GlWmz8SgYfRlGQp6
-         xI7fhzR6QyOo441xQ+Xdj4PZCHa7I1N+9KF/LOWQnuF16k9dccXXihEIzQRp9CQ4lCpc
-         t2lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745328338; x=1745933138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qtV3DhJOKkxTU+wj+E4JlDxdRWyHpER3HDjZAA/FV7w=;
-        b=gq9lPkoa76OCfFaZmfAXW3fqp93d9khCRCHK0DOOyJc+mFIyZCH0qcjz4vzF9O3TMI
-         7AVXNtqRdYGFO4+fx3yC5MgUaVU+wnAidZBlsGhe4OIBw4qmWibKxhoCE/6JOJHIiSNR
-         9EIMoKd6jcoOhun8gFEnx1WNLf2c0CIK+uIYSva8XfRwOzIKS0XamihRpqKDyQoQp2Kk
-         dd5Ms/Jj1dwtvyeqgReNb12xQ9uUHWNp9AHcqojVuE7uqCQT79DssnJJP+jRSwMC20aR
-         Yzsr6pC4XamA+rD9JopA1h2+li5W2Rko8ivR3t60IFGv8p9Ku64YeJl/QjI4uXXDKYRV
-         mhvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMt+FKzO2EPVZq8DHmstkUSe//YpOpaOmMjMNWzlEWYOJORaDeT6gr8BSJNyDETVNMXDd8sbwZQA6P@vger.kernel.org, AJvYcCVmwZlZhW0RLNAt6wG69p3t937yNE8ryBbknDeJTjToT1srQvNiOpOjkeU82AdwSY5zaKIeqaoZnWDk@vger.kernel.org, AJvYcCWSynwR+ReBPuT/l5VdfwNjvR/9yQX+uQuNfrP7q9EULqurSZtTGTnqNnvvxw/zp7lUL5NfhFqJuChp@vger.kernel.org, AJvYcCXOKfj6NiwJCRMBlduskGYilkAjYr1XuUcogq/LugI0YtBdWS7LawcVEL7Cz74Ch5/a7dFx+z6EnfAe2gBE@vger.kernel.org, AJvYcCXv5+tIR9jSD5rtGFjwd2LOkvx5ABMq1OTHIzE/nmqyJyMIY2DXpmfYVodcrfIXLOrfpdZSaQSZ24OIoyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrI0QxXMH9hDDmIlijwK2WsjOh8G/mC+foXKOqOw7Puw/+qZ05
-	IZpPrt+nVc1Dg0jzoJ1TojEipImXOMZuk63yoPy0K0YDJqQUnSDZ
-X-Gm-Gg: ASbGncukDpFP9uukr+0Dd1cthoz/GgHmiRZ0C70lL715jQQPhWtcsa0L2CLSZGjhduL
-	oR5MXpNXwLX/wNmdlPcpu3zRRwLOzfM6nY+qC6gdu3sQLn1Uru0Lrr1xGCmzGb7UA94+letTPvq
-	YKNtt5VLxh5PQL+t801eRdzYCgARcFpRzYz9dD3r9566ik3ExPLY752+TZsVIghD4bdWqd4Jc8U
-	44TpNahBy7JXlJqFQRA+FX7q+MMC4CZlEHtRDD3pyQXNOFqUXjIrB6zBSVPJyr7hHJIWQganJWH
-	TO+F5B/WsMMBZ0WSRfJfPbxpM5MLeE2/OOIJciM2602qw0iCDC2kZ718173p+1En
-X-Google-Smtp-Source: AGHT+IF788IeKgjdtqU+/vaSukLZXfULJRHLvzd/tFEY8O9tspAjkjBGc1I1/V+TOAmDpvF1epaJaA==
-X-Received: by 2002:a17:902:d58b:b0:220:c86d:d7eb with SMTP id d9443c01a7336-22c5360454cmr242767575ad.36.1745328337792;
-        Tue, 22 Apr 2025 06:25:37 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf5929sm84380785ad.104.2025.04.22.06.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 06:25:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 22 Apr 2025 06:25:36 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] hwmon: (pmbus/lt3074): add support for lt3074
-Message-ID: <9ee5014d-7403-4eba-908f-8c1d10b102aa@roeck-us.net>
-References: <20250421-upstream-lt3074-v3-0-71636322f9fe@analog.com>
- <20250421-upstream-lt3074-v3-2-71636322f9fe@analog.com>
+	s=arc-20240116; t=1745328375; c=relaxed/simple;
+	bh=F2R3BFN3tJVseAjeffqmXtgWQxchPkXLPd425AO7/j4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VYekflVMGK3XzNLIcVnisWxcYV6vYrvX+Kv2GWisXOlbvDq2EoT5rynx96PL4S9W4FbeuFE0tr3zqTA6iL2AwCs5HY1y6ZJMDYs7XWhFaRlEaE+iCPkn/69KT5qdyr6UYqepy0TJ9SCrRzgRyrkeBGjVbou8PfyUifzP2Y4LP68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=K9vw1Xs7; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Qqc36waS2eM9KRFhP4odJMZbCYBITaK1zvGamxcN6gA=; b=K9vw1Xs7HVg4ZHOb6RnI7LDG93
+	pP93G64VQjUiQuhOz3hteOlbfaB6uaGynw8R4vSQiq6BrhuGJQoIWBh2gDC+lgy1hoJM2QXE9y8Mo
+	nzQO2N+pxG+mn91rbKZDlvDAVxRfjzpHYeHsp1SMvyUCnAYFEnCnK4BPrmBsvw17LCmPTycm6JO7a
+	e462UcrMIc1wRM7vSfhr0+YqAF78SFLDya21SzHeZsJ5nHRJms9iKFC6hFygqw4LF3Gz5tDrepG02
+	Q5qreWmoyuq0oiM/q3wG1q6QJAtV3IwVuI5e6BTjGGIzQn+V5/VnPolN5m0nsGIDS7OgKgTtI4+Cw
+	/2+HaCXg==;
+Received: from [81.79.92.254] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u7DdJ-006SEy-4Z; Tue, 22 Apr 2025 15:25:53 +0200
+Message-ID: <3afc0582-6e25-45f7-8f9d-90545ae68258@igalia.com>
+Date: Tue, 22 Apr 2025 14:25:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421-upstream-lt3074-v3-2-71636322f9fe@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] drm/sched: Warn if pending list is not empty
+To: phasta@kernel.org, Danilo Krummrich <dakr@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250407152239.34429-2-phasta@kernel.org>
+ <20250407152239.34429-5-phasta@kernel.org>
+ <9607e5a54b8c5041dc7fc134425cc36c0c70b5f3.camel@mailbox.org>
+ <3ac34c84-fd84-4598-96e1-239418b7109f@igalia.com> <aADv4ivXZoJpEA7k@pollux>
+ <83758ca7-8ece-433e-b904-3d21690ead23@igalia.com>
+ <aAEUwjzZ9w9xlKRY@cassiopeiae>
+ <0e8313dc-b1bb-4ce7-b5b7-b8b3e027adb7@igalia.com>
+ <0bfa746ca37de1813db22e518ffb259648d29e02.camel@mailbox.org>
+ <5a5d4a33-2f7b-46e4-8707-7445ac3de376@igalia.com>
+ <aAd54jUwBwgc-_g2@cassiopeiae>
+ <649c7fe3469c39496db89de6951d9f2b61c36576.camel@mailbox.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <649c7fe3469c39496db89de6951d9f2b61c36576.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 21, 2025 at 08:18:19PM +0800, Cedric Encarnacion wrote:
-> Add hardware monitoring and regulator support for LT3074. The LT3074 is an
-> ultrafast, ultralow noise 3A, 5.5V dropout linear regulator. The PMBus
-> serial interface allows telemetry for input/output voltage, bias voltage,
-> output current, and die temperature.
+
+On 22/04/2025 13:00, Philipp Stanner wrote:
+> On Tue, 2025-04-22 at 13:13 +0200, Danilo Krummrich wrote:
+>> On Tue, Apr 22, 2025 at 11:39:11AM +0100, Tvrtko Ursulin wrote:
+>>> Question I raised is if there are other drivers which manage to
+>>> clean up
+>>> everything correctly (like the mock scheduler does), but trigger
+>>> that
+>>> warning. Maybe there are not and maybe mock scheduler is the only
+>>> false
+>>> positive.
 > 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> For clarification:
+> 
+> I messed up the comment from the cover letter.
+> 
+> What I did was run the *old* unit tests (v5 IIRC) from Tvrtko that
+> still had the memory leaks. Those then trigger the warning print, as is
+> expected, since they don't provide fence_context_kill().
+> 
+> The current unit tests are fine memory-leak-wise.
+> 
+> IOW, both with Nouveau and the unit tests, everything behaves as
+> expected, without issues.
 
-Applied.
+Hmm how? Pending list can be non-empty so it should be possible to hit 
+that warn.
 
-Thanks,
-Guenter
+Regards,
+
+Tvrtko
+
+>> So far the scheduler simply does not give any guideline on how to
+>> address the
+>> problem, hence every driver simply does something (or nothing,
+>> effectively
+>> ignoring the problem). This is what we want to fix.
+>>
+>> The mock scheduler keeps it's own list of pending jobs and on tear
+>> down stops
+>> the scheduler's workqueues, traverses it's own list and eventually
+>> frees the
+>> pending jobs without updating the scheduler's internal pending list.
+>>
+>> So yes, it does avoid memory leaks, but it also leaves the schedulers
+>> internal
+>> structures with an invalid state, i.e. the pending list of the
+>> scheduler has
+>> pointers to already freed memory.
+>>
+>> What if the drm_sched_fini() starts touching the pending list? Then
+>> you'd end up
+>> with UAF bugs with this implementation. We cannot invalidate the
+>> schedulers
+>> internal structures and yet call scheduler functions - e.g.
+>> drm_sched_fini() -
+>> subsequently.
+>>
+>> Hence, the current implementation of the mock scheduler is
+>> fundamentally flawed.
+>> And so would be *every* driver that still has entries within the
+>> scheduler's
+>> pending list.
+>>
+>> This is not a false positive, it already caught a real bug -- in the
+>> mock
+>> scheduler.
+>>
+>> - Danilo
+> 
+
 
