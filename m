@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-614615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB19A96F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3396A96F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015D27AAAA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B52B17AD51
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3A528C5DF;
-	Tue, 22 Apr 2025 14:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9C828CF6F;
+	Tue, 22 Apr 2025 14:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xvXnzesv"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LNDMR9KG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A7C28C5C6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88B728C5C5;
+	Tue, 22 Apr 2025 14:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332810; cv=none; b=MrvsF29AqGe5eL+1zW/qMcNgMmzrJU/fpraYn4TgYcbE9oa8usMhJK05s+B4p3yzZF+GyWmYPJ4ZBe07xLUhI1VoHU1mLV+i9oY1WVeBclr9nGEdiNYF+FBoOJb0e0bJxbLfpHYl5ZhAnMRW34IfNxZIiF9s3e4P9mlFMXbRb28=
+	t=1745332846; cv=none; b=VmoetwgB6NtQHn7EH/9oG08jp+TFRE2NKLewYTyfa/Z1MO7+d4I+CpEQwH3nzebgHE3QJjl59mGWBvi+YBXcKS53iPP2ryLL2AbYDFJK1mAZ4lWW9gHAFkGFjrglk8dAId/o7GygeAfJ8bn+uft7dKCLKvNNG5wiEcjcb2I+mmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332810; c=relaxed/simple;
-	bh=H6SmG8zfZRpF/NNqVIU+UMtU8feZniQBwXGO2NIJxnI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qAoQtKq+GcaiPuqEiNcH9ilTY79SETbltj0eLcF4gSMLoRtAc3vr8hQHnKFTVc3J/CZlyVG+YdYTdFMBFmUNZdVmFXgVgMCkUhSyXzwPCxCcvE7ewisngsvJpBNWATCVzaNNhxEYSjRJOLQ+BUkgbBLd+6I3P2DqEeKIoKlobl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xvXnzesv; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-736d30d2570so4449999b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745332808; x=1745937608; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4kse3i/9a2wXrwb5fWBr/bq3/Gxj8YgN5EpIYvK3Crk=;
-        b=xvXnzesvHWT/qlP1TLbvjkE4GSmpWLvuTlXNUaJC/YuXFkpIW8mmmsIrXTYdUJhYep
-         Rvz1SJEJu+lJadVid+8bcN6eOiEooQhqRy3pWE3bdJsv/9ckXiToNza4vLVnVMlj8khC
-         XSG0vBB97OASdnelxP4pwe/k3p33sXRzRsDuG/FglT9Hm7sWqdLtrJzVoUgWgOjjhx7N
-         lUtu0HlhI1x6Nf3Ad1UPiEJ23HBI+mHlPpNl1MML6HXDH7gHShw+XOTN7pqrh/CthvQb
-         48gbAZnB0KfIUPjP3LNoyHDxa+CwIwMdlUzhv1pqDktGSqHqbVMJfs5zNWLL5pxg7o5X
-         l5ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745332808; x=1745937608;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4kse3i/9a2wXrwb5fWBr/bq3/Gxj8YgN5EpIYvK3Crk=;
-        b=JlmdXaElya8vIN3BF1EjdRaz6Xk24P4+wFWqfAlxoWqZ8pCopZpz/oYlcPH59LjVr0
-         +Y503+92MY/7JgUcJdUpl9/hza/g+xhPCkGnNgClnf3LENPF/U3ccATGIUYmbevN98cm
-         jULyGMxh32/Ae2zXfYMCy0eaOgevfVSoToWziCNhCyNFzvaQ/9kOdvbdpCa3Dbxatd7+
-         EVE6fgbDYR1LYNbScZolLBBeubasJy9JZ7ugymZnUNlZQEDe4VVjIzxJclOnrJHIoJEp
-         EbcLC6CvV9cTMVAfuROHC/Lo7TXX9N+Sm+Bk1Uyaaa0pSpTLugit8NdSIAqWOHz461dp
-         n2eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuMxKFlRq+r4pfL8FANjpCFqFg7PGQfxGdFjDprZg1VSYvVub6MPdkzRLcDPnm25ODY25OXVartanJkHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9SaLB0fIFxF0Sc3roI+Dz0/FXEHKw+S/UAF49FKKzX7mvCGSH
-	m1VjT9rKlfS2tOzNAoZxrseSo65EcqOFuGJppZTOMi22O+8Tv/uVEWOOs6VMsc1yCPyXQpHOZTr
-	NSA==
-X-Google-Smtp-Source: AGHT+IEqJub0IjABqAHfS37ByzLd7WwIavXyDFMuCxLJ5z8Czie0a5FeUJW/ZUjHDlbSCiXqb7H4nSjCbvU=
-X-Received: from pfbgq27.prod.google.com ([2002:a05:6a00:3bdb:b0:737:6b9f:8ab4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a62:f24e:0:b0:73d:ff02:8d83
- with SMTP id d2e1a72fcca58-73dff028da0mr4353385b3a.3.1745332808429; Tue, 22
- Apr 2025 07:40:08 -0700 (PDT)
-Date: Tue, 22 Apr 2025 07:40:06 -0700
-In-Reply-To: <a82f4722-478f-4972-a072-80cd13666137@zytor.com>
+	s=arc-20240116; t=1745332846; c=relaxed/simple;
+	bh=M9Zr7hxLPheS12ZSZNWK5qMbOtisljKEvNuI/iEukEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlIEiEMb9l14rdR/cwvLq9yosAgSfbmVz/9v8x4ekioyMGmh2ZznPzGPRYmybkBHrfBN9I2kPygN7ZANGjjGFz6EKJG1LbVjBzbfOIeSuEXgQh4rDJ2D3CGoQuWeo71FTLugIU0dy1VvgjdbaErz/HJEb8FoHy2yWQEP/BASIZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LNDMR9KG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=W0S8t/6FGxg47c0LEtOaE/CH+Zrp13P24zwNFo5jGGw=; b=LNDMR9KGZUOWw2nq8JndcvNeF/
+	UlrAChAS6n9brfhMKUvxfErkEiAKWZfUakTgo1Kkbz1sy/lTjGFy4FUuQ/j1f6howOfcfwKPT3E3w
+	xIqAYCKilAfznPhLUM091UBTLzpjpG4jgH+P8NwnhBhr/88g68aCbnmxfY71+QOETvkc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u7EnR-00ADBy-Ka; Tue, 22 Apr 2025 16:40:25 +0200
+Date: Tue, 22 Apr 2025 16:40:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: ethernet-controller:
+ update descriptions of RGMII modes
+Message-ID: <d79ed229-f0b7-441a-b075-31fd2b2f8fe6@lunn.ch>
+References: <cover.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <218a27ae2b2ef2db53fdb3573b58229659db65f9.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <6be3bdbe-e87e-4e83-9847-54e52984c645@ti.com>
+ <cd483b43465d6e50b75f0b11d0fae57251cdc3db.camel@ew.tq-group.com>
+ <5d74d4b2-f442-4cb8-910e-cb1cc7eb2b3d@ti.com>
+ <b53fba84c8435859a40288f3a12db40685b8863a.camel@ew.tq-group.com>
+ <aAdZoMge_CKtqokU@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <a82f4722-478f-4972-a072-80cd13666137@zytor.com>
-Message-ID: <aAeqRk8fk8mvutw2@google.com>
-Subject: Re: MSR access API uses in KVM x86
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAdZoMge_CKtqokU@shell.armlinux.org.uk>
 
-On Mon, Apr 21, 2025, Xin Li wrote:
-> It looks to me that MSR access API uses in KVM x86 are NOT consistent;
-> sometimes {wr,rd}msrl() are used and sometimes native_{wr,rd}msrl() are
-> used.
->=20
-> Was there a reason that how a generic or native MSR API was chosen?
+> I'm hoping that Andrew will read my email form yesterday and reconsider
+> because to me this is a backwards step
 
-I doubt anyone knows for sure; that'd likely require a time travelling devi=
-ce
-and/or telepathic abilities :-)
+I will get back to that in a minute.
 
-> In my opinion KVM should use the native MSR APIs, which can streamline
-> operations and potentially improve performance by avoiding the overhead
-> associated with generic MSR API indirect calls when CONFIG_XEN_PV=3Dy.
+> > On Linux, there currently isn't a way for the MAC driver to query from the PHY
+> > whether it could include the delays itself. My assumption is that most PHYs
+> > either don't have internal delays, or the delays are configurable.
+> 
+> motorcomm, dp83tg720, icplus, marvell, dp 838678, adin, micrel, tja11xx,
+> vitesse, dp83822, mscc, at803x, microchip_t1, broadcom, dp83869,
+> intel-xway, realtek all do handle internal delays. I haven't checked
+> whether there are PHYs that don't - that's harder because we don't know
+> whether PHYs that don't mention RGMII in the driver actually support
+> RGMII or not.
 
-As J=C3=BCrgen pointed out, they aren't indirect calls.  Though IIUC, there=
- is still
-a direct CALL and thus a RET when PARAVIRT_XXL=3DY.
+I did look through this once. There are no PHYs with Linux drivers
+which support any of the RGMII without supporting all 4 RGMII
+modes. So we should just assume all RGMII PHYs can add the delays.
 
-I agree that using PV APIs in KVM doesn't make much sense, as running KVM i=
-n a
-XEN PV guest doesn't seem like something we should optimize for, if it's ev=
-en
-supported.  So if we end up churning all of the rdmsr/wrmsr macros, I have =
-no
-objection to switching to native variants.
+If i remember the history correctly, Renesas built an RDK with a PHY
+which did not support RGMII delays. So they where forced to do the
+delays in the MAC. But it seems like mainline support for that PHY
+never happened.
 
-Though if we do that, it would be nice if there's a way to avoid the "nativ=
-e_"
-prefix everywhere, for the sake of readability.
+> 
+> > If this is
+> > the case, having the MAC add them in internal-delay modes and not adding them on
+> > the PHY side would be the best default (also for PHY-less/fixed-link setups,
+> > which should be handled like a PHY without internal delay capabilities.)
+> 
+> See my "advanced" use case above. We do have drivers doing that.
+
+I agree with Russell here, it is the worse default, not the best
+default. It makes it different to nearly every other MAC driver. It
+needs extra work in the MAC, which most MAC drivers get wrong. They
+also tend not to call out they have done it different to every other
+MAC driver in Linux, and so it does not get the needed extra review,
+and so is broken. I also think there is some 'vendor SDK' mentality
+here. Our MAC can do this, our SDK allows it, the Linux driver must
+have it and use it. Pretty much all hardware has features which never
+get used, but vendors sometimes have issues with just leaving it
+unused.
+
+	Andrew
 
