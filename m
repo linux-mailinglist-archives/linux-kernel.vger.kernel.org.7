@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-615034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F93FA9757F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A841A97589
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A84A1B62026
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D53A605E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F42729615E;
-	Tue, 22 Apr 2025 19:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1340529899D;
+	Tue, 22 Apr 2025 19:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcH4ItAP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4w3DPKE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1D1F5437
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 19:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FC82857C4;
+	Tue, 22 Apr 2025 19:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745350437; cv=none; b=Ljkg2vtt5lAMHz3MhoTRDa3Lzzv1+wxMmwp9zAkXkWoJnMNyab0Ve2vBJZzplDenYLJTuhSyqa2YHjpvKWmTVik+c0mC1bQoJ53UEqe533rKFultHFcSOEH0wwBR3tyQV8aBlfZLxDkBO6Z87ssXteFvuAkkoVXdXHETGOy3NLY=
+	t=1745350542; cv=none; b=FU68EiVgdCWNCGZVxqlhThyWBh+iEU3wuEhNTsA6XAvw0IHJl97vwPmcK3ankqndR367HnQwBBcTmgSd062e+Pg6/3aUdWCurhTMPb8QuY3x1KW450qHYCVpyVDhIcINCFvByp4BFMYtm4J63ahzd8OSdjHtDObtC/lpatO9emM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745350437; c=relaxed/simple;
-	bh=reqaiu5VT9JP9DV2RrFxaIIun39isr1WpyjP9HdCZE4=;
+	s=arc-20240116; t=1745350542; c=relaxed/simple;
+	bh=5uIMwI+fP0wgHXqFGRjDYffIXoIXt32yHEx2uTfvUsY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bi5OjjQ/ieqBfxASSTLp8+Dc+q5sVxYBK90mnrjNXSV7r7L8QUOHW6gkIp6zEV11Z8s9Z+ORtVh/M8o08pg4TQBugvlooVVo1ZbYcvQp2h2wwj0uFl0E5qZW/Rpdtyp+kJ0J21zOLvfji+a/RZioqdupwOdHIe7i8laYmxwr22c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcH4ItAP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C5CC4CEE9;
-	Tue, 22 Apr 2025 19:33:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h91RtKUBmDPm1vR8SsAl2NhbYNpJ26SV/KUqJEKiCdVJv5FO67JaUbhdwZE5eeN30DL/SNG2EFC8TpCMMZhSSKyi1AtbzbLeJmDFEMfVMfwrv9ryL8wDI+UM1/PQbyngWP7XW2VKFFGtWocDeHo1ihWBcP6wBpe2o+UVC0YgvZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4w3DPKE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C65CC4CEF1;
+	Tue, 22 Apr 2025 19:35:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745350437;
-	bh=reqaiu5VT9JP9DV2RrFxaIIun39isr1WpyjP9HdCZE4=;
+	s=k20201202; t=1745350540;
+	bh=5uIMwI+fP0wgHXqFGRjDYffIXoIXt32yHEx2uTfvUsY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bcH4ItAP3mVweRtR+Agiap85wkVvUfBEU+XH82mCOUvBRMS8pR1jb3Q3Y2hJSuvi8
-	 /ly1gAB2ALCCqVe9VMnQxPt3NmjMAKQ1DnADR9ySQxOhcTfJXSCKov/ZpBOS7HQkZu
-	 zEtpk0xDYabP/ep8gWdcDVLQF3pDPmhqCUSqrJgudG3h5f+/ZrhtW8WDbDzQsErIz7
-	 VzAbY0lKmfUJgAD9H6IiXmMtSlwNqJGzYJA+TB/993bCuIrPzGrtxkBzSHe2rwAISM
-	 8KaNaZmbzxdv4iu19UM1IP6zBAl5zzHi1GtWncRrMbugvMt8Fvew7VmExSsyv6K5gC
-	 fesTghJKcz74w==
-Date: Tue, 22 Apr 2025 09:33:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] sched_ext: Introduce rq lock tracking
-Message-ID: <aAfvIx1l95o-2FlB@slm.duckdns.org>
-References: <20250422082907.110167-1-arighi@nvidia.com>
+	b=c4w3DPKEoWXBnrG87IR4lytsdIdU7qGGetLH0ovcoMTky7pSwZlhEzbj5nf5av0GH
+	 Y5IMLxaLw2Nkdfqsn3LYAr0tQWA0F8n193z6CRzT/j0ia+HbebzwLoMhOIFwoLl6l3
+	 80i9JWaYZXYjeNOIVUd4HuyRWeYRajyqJhrI7CFnec+0sZt5gwBHa7yv5OSnZYCp3e
+	 rJN7dqSIeqBSv0fR3+wA1lu8YInQe4or2/mbaoHl7Sz9PnK1aLm0Oa0Ur8quSblGKh
+	 hLoOSJyMSPbruAqVj07SpPgOlPZAyOWh9bm01LZ13uuI41rhpG8fYRyrSIbmahOxMf
+	 7h2BP6meX5j9w==
+Date: Tue, 22 Apr 2025 21:35:06 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, andrew.cooper3@citrix.com,
+	Len Brown <len.brown@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] Handle Ice Lake MONITOR erratum
+Message-ID: <aAfvalru47h7Qffk@gmail.com>
+References: <20250421192205.7CC1A7D9@davehans-spike.ostc.intel.com>
+ <aAc7Y5x_frQUB2Gc@gmail.com>
+ <4ea35cc4-1720-494c-9d90-e4669c8cde08@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,28 +63,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422082907.110167-1-arighi@nvidia.com>
+In-Reply-To: <4ea35cc4-1720-494c-9d90-e4669c8cde08@intel.com>
 
-On Tue, Apr 22, 2025 at 10:26:31AM +0200, Andrea Righi wrote:
-> Add rq lock tracking to sched_ext ops callbacks to enable scx_bpf_*()
-> kfuncs to detect whether a specific rq is currently locked and safely
-> operate with it.
+
+* Dave Hansen <dave.hansen@intel.com> wrote:
+
+> On 4/21/25 23:46, Ingo Molnar wrote:
+> >>  /*
+> >> + * These CPUs have buggy MWAIT/MONITOR implementations that
+> >> + * usually manifest as hangs or stalls at boot.
+> >> + */
+> >> +#define MWAIT_VFM(_vfm)	\
+> >> +	X86_MATCH_VFM_FEATURE(_vfm, X86_FEATURE_MWAIT, 0)
+> >> +static const struct x86_cpu_id monitor_bug_list[] = {
+> >> +	MWAIT_VFM(INTEL_ATOM_GOLDMONT),
+> >> +	MWAIT_VFM(INTEL_LUNARLAKE_M),
+> >> +	MWAIT_VFM(INTEL_ICELAKE_X),	/* Erratum ICX143 */
+> >> +	{},
+> >> +};
+> > While it's just an internal helper, macro names should still be 
+> > intuitive:
+> > 
+> >   s/MWAIT_VFM
+> >    /VFM_MWAIT_BUG
 > 
-> If no rq is locked, the target rq lock can be acquired. If a different rq
-> is already locked, the operation can either fail (triggering an ops error),
-> deferred using IRQ work, or managed accordingly to avoid deadlocks.
+> The current convention is to end with the thing that's being matched,
+> like "_FEATURE" or "_VFM" in the X86_MATCH*() macros. That's why I
+> ordered it the way I did.
 > 
-> This patchset is also available in the following git branch:
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/arighi/linux.git scx-rq-lock-tracking
+> As for including "BUG", the _macro_ doesn't match CPUs with the bug.
+> It's just matching CPUs with the specified VFM that have MWAIT. It could
+> (theoretically) get used for non-bug things so I don't think it's
+> intuitive to put "BUG" in the name.
 
-Applied to sched_ext/for-6.15-fixes and merged into for-6.16. It had a
-couple minor conflictsapplying to for-6.15-fixes but the merged result on
-for-6.16 is identical to applying directly to for-6.16, so it should be
-okay.
+Oh, that makes sense - objection withdrawn.
 
-Thanks.
+Thanks,
 
--- 
-tejun
+	Ingo
 
