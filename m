@@ -1,123 +1,207 @@
-Return-Path: <linux-kernel+bounces-615142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51886A9787D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:26:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E571A97885
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31EB189E097
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D86016E1E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A62C1E03;
-	Tue, 22 Apr 2025 21:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFDC29E047;
+	Tue, 22 Apr 2025 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/D7yWRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gBem73Ec"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5900E27BF6C;
-	Tue, 22 Apr 2025 21:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27063262FF5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 21:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745357208; cv=none; b=AhnwQtnhlYIiIu0f+LDAmcOZP/c9z+jZh1kH3iXl0YQqiOAILkMmujo9LUdQhI4mDSzL46uwdIv2o0tP1cCRoYLS4gHvGumG+4+/DWV9XG+kgjXxAPZ+DYA2rZNXiVbZNfXb8gLU8eVmNay3MhbVLVHZ16hro1W3N0f0mT432+g=
+	t=1745357360; cv=none; b=HoKTQSkmeHy824O+v9D/giByQdJSxejHYJnQgjyYt8pM4WELQ+A1GMCjZbuFbusxDLtcDtaEcmygIVJAm55sCOZ2Gcbkrhq6EDR7Bdd0wHSxwRiHSmb2QcoCF8tSGceHhVCJ2qMtnrtNDEPFnmwb4y2HNqbtWEMzQ5UOCnhcDao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745357208; c=relaxed/simple;
-	bh=9Hc5x03Xt6Q8VLLhD3mCqz80+X90ssoJI+f+CleuBKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CWULsCDlsA6NjI6l15OKCCNWfvEzxZtYfwUcSg44X/hE+IDYSWO1u10Ug6UH07RR93Mje0vFqb7morL0SfBRrtAB6289RUVc2UH3TV0g42kDHlNORFdF/WQ5jbLIHvN+q3jq8VyDX1Bhcrx5zbSkxVsGYwN34rsl76JJXtxIFHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/D7yWRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B45C4CEEE;
-	Tue, 22 Apr 2025 21:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745357207;
-	bh=9Hc5x03Xt6Q8VLLhD3mCqz80+X90ssoJI+f+CleuBKQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h/D7yWRxhbT0Tokd9yCp1wg9xCgigqp3o/yVm8u9b06tDs17VYlkXgDU2aKW+tBEW
-	 yCFBWgaWcd9omhGXkDuPp7Lt9n5PqXhp+tTGMo9ams2ktewBPqhsq1gZcpvy0FHL19
-	 Kzfr1/T+J+vS0tqDyftCuRmUR5Qdukw/vc+WnDWc8OJCiw4ChzEg9UgCLeqUobbDHt
-	 fT9OYOrU03U/lBXrwh75XJJ+nGMz7uFFqrzPHi4ccGmIRSkGGIoHkpoDTdGy1jf0zq
-	 7UYuaRvxExEQ/uuuaiRPfMFtyeRRyXUuO5bVqNWk3tNUQfdJkgjjHHwRz4FIW7A464
-	 Gfm/LQFCLpQ5w==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30beedb99c9so50351021fa.3;
-        Tue, 22 Apr 2025 14:26:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDUcVVNRQnN2IT6VWNi4mXWG9DG3NwDWkL3fzCUiM8mxQZ9Y8ccXmqKio+OGwWcEr1pwdDRB3n5BFNEbboTY3E@vger.kernel.org, AJvYcCXfx3pDb2VjpVHaNRMIN73R3z9zeaAPpn731wi0CBpnVcijy1OcKQQFlzhvz1ofGjP1cFDl8WaGbeuh@vger.kernel.org, AJvYcCXguiuURkAiuUi5TsxwbleVbpC/BORoTWk8EZlPHxFqa3qN7+EgqbsIcgA64nN/15bC3/X1DgC7rYfT@vger.kernel.org, AJvYcCXr7xnIpX+TISLPgVyUcYwNxC2hLHgCRFp1vpOpoM6ISlYukdYGVcfvqRQLQ7Ok5R7cy7eum11+4JI2CV0=@vger.kernel.org, AJvYcCXtckLoJHtP0/8PhTSLP2vuLkvTE+HOqEftGH7eRZXJldmtA47l0eBGpOG7DzqsvAyQtHkAyxnsxlhvvPfQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyopMAqU9lSHwq2Egq0c8g65s3lnz9zXd2VF4SbTELY3tMLgycz
-	NKLv2oj0dWyPitlipHC1K3pEU2+dXUzgdUSQekLFbHnaILFO/aeougusmeJyRa3drg/lDv/w54w
-	8B1gN+MZ4KnL/mbULwGWMub1+vaw=
-X-Google-Smtp-Source: AGHT+IHNjwddJlnhR8ziXrRYCvaKzZHBeDFB7aTS+2S6/Juebmx60PYYbz8oxxdYeTQFH7iZZN2OhK0zcRmnc7XV21k=
-X-Received: by 2002:a2e:9586:0:b0:310:749c:f8da with SMTP id
- 38308e7fff4ca-310905bac8fmr43410821fa.22.1745357206245; Tue, 22 Apr 2025
- 14:26:46 -0700 (PDT)
+	s=arc-20240116; t=1745357360; c=relaxed/simple;
+	bh=MKbUvh/RyU2Ya4ObtWJFDMOgYe7VZeRqrszwjJFa2cM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=heCSJQ5i3DChf+5v8WwFLaK1t4Urn8KcgVuy6ZKHbGrxAFfiBAG/Fm62c6lMvJxfUDAkvhUx09OjZEW3jQ5ZRYdolhsYNtbfdM/amlKha2xkEUqsSTKiGHxt+slwvjvPl8srbr3XBZLwEKEqqNNGrbSrZW38B8oBXXnn5uTVlFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gBem73Ec; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Apr 2025 14:28:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745357355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mja1AZU1OxXrkjHbCIJIDiF0DQ5jyuf/4e39r203PXU=;
+	b=gBem73Ecuh0/unsaz3dOF7qOKgwwRL9mqWfxjWOT8enzBQcaVl3uy7KuCfLk8qeDISNsQc
+	aB0qRfO5QrDh+lJOy5fJlyiHF0EOzQLfbR/mdfZDcmXE2xnqtYJgQSuaXnGzBgyGBT5w1h
+	aTV0gtet7CvHeY6tzi2n7dH5Tc54Y/Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <aAgJ8g8Gbb06quSM@linux.dev>
+References: <Z-RGYO3QVj5JNjRB@google.com>
+ <20250331145643.GF10839@nvidia.com>
+ <Z_PtKWnMPzwPb4sp@google.com>
+ <20250407161540.GG1557073@nvidia.com>
+ <Z_QAxiEWEyMpfLgL@google.com>
+ <SA1PR12MB719976799AD7F9FC4407A5A9B0BD2@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <aAdKCGCuwlUeUXKY@linux.dev>
+ <20250422135452.GL823903@nvidia.com>
+ <aAfI2GR1__-1KQHn@arm.com>
+ <20250422170324.GB1645809@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421162712.77452-1-ross.philipson@oracle.com>
- <d96f9c5e-64ed-4c28-a8ad-e22daea19742@intel.com> <c05731ae-bcf1-4747-b64c-0f4b79f3587f@citrix.com>
-In-Reply-To: <c05731ae-bcf1-4747-b64c-0f4b79f3587f@citrix.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 22 Apr 2025 23:26:35 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHNpxTqm5hOcxdKRnE58WLmhJo0Rk5pvVGyAtkkki6bvg@mail.gmail.com>
-X-Gm-Features: ATxdqUE-wCQ698lYIM2xY-XaLjiHODMSR6r5gfRYGnF_Ynuwr3onsuyDzkvTRu8
-Message-ID: <CAMj1kXHNpxTqm5hOcxdKRnE58WLmhJo0Rk5pvVGyAtkkki6bvg@mail.gmail.com>
-Subject: Re: [PATCH v14 00/19] x86: Trenchboot secure dynamic launch Linux
- kernel support
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Ross Philipson <ross.philipson@oracle.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org, iommu@lists.linux.dev, 
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
-	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422170324.GB1645809@nvidia.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 22 Apr 2025 at 20:17, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->
-> On 21/04/2025 9:52 pm, Dave Hansen wrote:
-> > Purely from the amount of interest and review tags and the whole "v14"
-> > thing, it doesn't look like this is very important to anyone. Not to be
-> > to flippant about it, but if nobody else cares, why should I (or the
-> > other x86 maintainers)?
->
-> There are several downstreams already using this as a part of their
-> overall system security, one example being
-> https://www.qubes-os.org/doc/anti-evil-maid/
->
-> It's all giant out-of-tree patch series (in multiple projects; Grub,
-> Xen, iPXE too).
+On Tue, Apr 22, 2025 at 10:54:52AM -0300, Jason Gunthorpe wrote:
+> On Tue, Apr 22, 2025 at 12:49:28AM -0700, Oliver Upton wrote:
+> > The reality is that userspace is an equal participant in remaining coherent with
+> > the guest. Whether or not FWB is employed for a particular region of IPA
+> > space is useful information for userspace deciding what it needs to do to access guest
+> > memory. Ignoring the Nvidia widget for a second, userspace also needs to know this for
+> > 'normal', kernel-managed memory so it understands what CMOs may be necessary when (for
+> > example) doing live migration of the VM.
+> 
+> Really? How does it work today then? Is this another existing problem?
+> Userspace is doing CMOs during live migration that are not necessary?
 
-... and this is the main problem: All the existing protocols and
-layering go straight out the window, and are replaced with bespoke
-alternatives, for booting but also for secondary bringup, etc etc
+Yes, this is a pre-existing problem. I'm not aware of a live migration
+implementation that handles !S2FWB correctly, and assumes all guest
+accesses are done through a cacheable alias.
 
-Conceptually, the secure launch could be performed under the hood,
-e.g., during ExitBootServices() when doing EFI boot, and the OS would
-have to be none the wiser (or at least, not need 100s of additional
-lines of opaque assembly to be able to operate in this mode).
+So, if a VMM wants to do migration of VMs on !S2FWB correctly, it'd
+probably want to know it can elide CMOs on something that actually bears
+the feature.
 
-The fact that all these components need such intrusive changes in
-order to orchestrate this pivot to the reduced TCB constitutes a
-spectacular failure in design IMO, but AIUI, the software side is not
-really at fault here: the layering violations are intrinsic to the
-hardware support in the CPU. I'm sure Andy or others on cc can
-elaborate on this, as they have done many times already.
+> >  - The memslot flag says userspace expects a particular GFN range to guarantee
+> >    Write-Back semantics. This can be applied to 'normal', kernel-managed memory
+> >    and PFNMAP thingies that have cacheable attributes at host stage-1.
+> 
+> Userspace doesn't actaully know if it has a cachable mapping from VFIO
+> though :(
 
-So if that is true (I'm not a x86 uarch expert by any measure), then
-pushing back on this series on the basis that it is ugly and intrusive
-is not really reasonable. From security pov, I think D-RTM is an
-important feature and it deserves to be upstream if it is used widely
-in the field.
+That seems like a shortcoming on the VFIO side, not a KVM issue. What if
+userspace wants to do atomics on some VFIO mapping, doesn't it need to
+know that it has something with WB?
 
-OTOH, if the arm64 implementation (which is still on the drawing
-board) bears any resemblance at all to the x86 version, it can be
-considered NACKed already.
+> I don't really see a point in this. If the KVM has the cap then
+> userspace should assume the S2FWB behavior for all cachable memslots.
+
+Wait, so userspace simultaneously doesn't know the cacheability at host
+stage-1 but *does* for stage-2? This is why I contend that userspace
+needs a mechanism to discover the memory attributes on a given memslot.
+Without it there's no way of knowing what's a cacheable memslot.
+
+Along those lines, how is the VMM going to describe that cacheable
+PFNMAP region to the guest?
+
+> What should happen if you have S2FWB but don't pass the flag? For
+> normal kernel memory it should still use S2FWB. Thus for cachable
+> PFNMAP it makes sense that it should also still use S2FWB without the
+> flag?
+
+For kernel-managed memory, I agree. Accepting the flag for a memslot
+containing such memory would solely be for discoverability.
+
+OTOH, cacheable PFNMAP is a new feature and I see no issue compelling
+the use of a new bit with it.
+
+On Tue, Apr 22, 2025 at 02:03:24PM -0300, Jason Gunthorpe wrote:
+> On Tue, Apr 22, 2025 at 05:50:32PM +0100, Catalin Marinas wrote:
+> 
+> > So, for the above, the VMM needs to know that it somehow got into such
+> > situation. If it knows the device (VFIO) capabilities and that the user
+> > mapping is Cacheable, coupled with the new KVM CAP, it can infer that
+> > Stage 2 will be S2FWB, no need for a memory slot flag.
+> 
+> So long as the memslot creation fails for cachable PFNMAP without
+> S2FWB the VMM is fine. qemu will begin its first steps to startup the
+> migration destination and immediately fail. The migration will be
+> aborted before it even gets started on the source side.
+> 
+> As I said before, the present situation requires the site's
+> orchestration to manage compatibility for live migration of VFIO
+> devices. We only expect that the migration will abort early if the
+> site has made a configuration error.
+> 
+> > have such information, maybe a new memory slot flag can be used to probe
+> > what Stage 2 mapping is going to be: ask for KVM_MEM_PFNMAP_WB. If it
+> > fails, Stage 2 is Device/NC and can attempt again with the WB flag.
+> > It's a bit of a stretch for the KVM API but IIUC there's no option to
+> > query the properties of a memory slot.
+> 
+> I don't know of any use case for something like this. If VFIO gives
+> the VMM a cachable mapping there is no fallback to WB.
+> 
+> The operator could use a different VFIO device, one that doesn't need
+> cachable, but the VMM can't flip the VFIO device between modes on the
+> fly.
+
+I agree with you that in the context of a VFIO device userspace doesn't
+have any direct influence on the resulting memory attributes.
+
+The entire reason I'm dragging my feet about this is I'm concerned we've
+papered over the complexity of memory attributes (regardless of
+provenance) for way too long. KVM's done enough to make this dance 'work'
+in the context of kernel-managed memory, but adding more implicit KVM
+behavior for cacheable thingies makes the KVM UAPI even more
+unintelligible (as if it weren't already).
+
+So this flag isn't about giving userspace any degree of control over
+memory attributes. Just a way to know for things it _expects_ to be
+treated as cacheable can be guaranteed to use cacheable attributes in
+the VM.
+
+Thanks,
+Oliver
 
