@@ -1,117 +1,76 @@
-Return-Path: <linux-kernel+bounces-614521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B35FA96D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:57:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E68FA96D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A522916EAE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F893AAEB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957C127D780;
-	Tue, 22 Apr 2025 13:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9932857D5;
+	Tue, 22 Apr 2025 13:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M222v9/Y"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qrsh4W6+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A2F284B4E;
-	Tue, 22 Apr 2025 13:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A3284682;
+	Tue, 22 Apr 2025 13:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330121; cv=none; b=h/cAtnk2Up4EsKoEmHewNWym1f7QvC5o0hGnHbDtLo1jt8el86O8gopyLboecaJM4YnPHVsCq511xagbA9Kbxx0yRECAfVmFEZv5Z624he8opfXUZrvACcHyAE736rO9oID+yVjw8e3wjLMc61Qu6ii3hw1iJo8PU7sfAroLSf8=
+	t=1745330101; cv=none; b=o8dB2JLm5o8mkKNmYFPSgNEFJs1xKmFA/2dpqQcLYUPBNTuZWoHWOII9yC8tAv6plxfOHx0+pmV0pHO/fmxIESmGeRjkvtyF+nT3T3mZm2vzHQ7pzuILMsbWoFKJSZh2FgIG/x4sgy8gjOy9Mj0Z8dNEr9hic4/S6tTOqzmEmUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330121; c=relaxed/simple;
-	bh=4ZdUq2tzBznByojYCi0WA8cKaEHmxfVFiiY35QjqGeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tSb1Thu7wkzW4jsrgFDFrJ+jAdkYcpRdLyGXfafrRsJhLwQsLB5hxGCK99dWPqbffj5HlHrnD1LGJgd5k7frRGESMU9rsQrfMOwquDziCYs19GeYF0NvN7EiOt9fzhChU93IobLbZZoTMvIT37uMBVX9TRkLWtCy2p2rebq6sD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M222v9/Y; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736ab1c43c4so5353479b3a.1;
-        Tue, 22 Apr 2025 06:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745330119; x=1745934919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBIIB+/ZmIi8Tc2LcqXAgRSWZd60kP7sw7lnOaM4f9M=;
-        b=M222v9/YpypTSDx+YuemhRKLRo9D2AHuFFgZjpLUa1HrdzBkw4w+CvEFUlmSZr7pzT
-         ePKldol6KHxXZhAEQD17RrhIUlaqfvQ+pViITiUDodiB+zXz1UmE9HLu5OjxBixCwWDZ
-         oBOqx4xiZ3tesjTr1pPTpZt3QG8Lms8Lpdy6NepUPwz3zIXL+c+jNFg4FqErLokDv6XN
-         yIyC5qWGPUiWtnSXWqDm/nNiV32Heg/zNJqnIty3QMr6tDOShvhQswM0A94xVd7+iXky
-         s+pvz4LzWIHNl1F+qv1n22bmw5134/sMuDcnl/H11mwVcSeMJM5Mc2SXmzTQCX5qWA6b
-         33YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745330119; x=1745934919;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBIIB+/ZmIi8Tc2LcqXAgRSWZd60kP7sw7lnOaM4f9M=;
-        b=pXOKS9EmFaa9u9NX5+PNa8C/8PIUgG36fSftaQOdNJHgMQZOviA+iD+gXllX37iISh
-         k5rdLrm0oUq7QCpMwCLAzYqrnr0Te7Mo5262T020gKJ9/JUzzkiArHDytozOEvwtDc6B
-         4Q2Mmbs1m3f/I4BMsAEc/r7ld0IfAfj6W0VMB+CJquBzrV5O5ughpy9kdRKqeBo63Mv4
-         aN4Pkqma2BBZrdXi2DsId0PxX9AX1XFDK1tTuRzAw0KwFCMGtO07OjjE0NRUmSUakXCb
-         Z6Sh9ZBQv2ErEZqamsmWgS7Zi4HdvUFAEJy4M7/Z3dqtNguwiZ2ukypd6lP5vSh1aP/l
-         osZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyOSkC6ui/JizXwXiZ0Vh0cK6vgB9/dLq8lImAwqyxGk/wJCyHUFU4P5sxAC7Yd3hLPpzpFm5Iy/Vz/OA=@vger.kernel.org, AJvYcCX22kE82LHbewROMtwiebOOfJPVUUU2xwl4GJFHsLkxFvpswLCshHG2o89j8nBHx+C5o3jvBYTu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz32TsW0NxgI9Vh49AO2saZbS+bslOOo+02W1A+cOiv6L8E/zgV
-	cEGnRnQbXgqYtm2b6HjPzCxw0sgSLf1M+wgifeqJOOidQPQ+2XaQ0UgQksQ3
-X-Gm-Gg: ASbGncup8nqUVu2NpRgD2yIbIuZ/J8Fx8sYW49a7MTTKnK2phtEaeIe8v2PObSqj52H
-	t4E9Zd3JxP7lNZMF2jtA3tTQNvPfjxFzrkisyfasmJvVOBVKR7F6j/hQVHgc9Ndvz3hPmjq+m//
-	cRa7X78fJQYHp/YzWCG/leYkTo4XKK5lcAJAR/FRWWE/5i/OSLDPEzfUWSVhcf8uoWsJryxNIw3
-	5gPfyaHjKJguAjkR7nRukSgyI8PGk5hscJ4TJQU7X+3XxOZ549LKO8qHQXbOAJCPg1Ey/jor/t0
-	zXppzVSzbJWb/vHmq6aGtUnftsgwF8grIcP3WuJQ8l04rHYmtlY+w8TgOSjBSTM5bNt1mdFaTHZ
-	kjIGiDNUWBmbn/pt/h/Ex6t83eoeQ
-X-Google-Smtp-Source: AGHT+IFXRrARe8B8erEVjY0bsIsDRjykaQmH3G9PNmeJ+0cdtHJdHSfeGFZ8jml40/4gPtVqgjgFug==
-X-Received: by 2002:a05:6a00:1305:b0:736:42a8:a742 with SMTP id d2e1a72fcca58-73dc14ccd73mr20406967b3a.11.1745330119578;
-        Tue, 22 Apr 2025 06:55:19 -0700 (PDT)
-Received: from mew.. (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfaaba76sm8869650b3a.143.2025.04.22.06.55.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 06:55:19 -0700 (PDT)
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-To: rust-for-linux@vger.kernel.org
-Cc: John Stultz <jstultz@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
+	s=arc-20240116; t=1745330101; c=relaxed/simple;
+	bh=TWyVYWRdbaf00eKHwQrQSn9Z3lMxEd5ED3jW6Avvoy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K4BhedNqF+pXXmYEL51jF/mheCrQjXoKTYcqfwpd7adt6G7KAJw1GUIcEtjvixIJuJG10GDL1Mf/CaHbfLGSKYczYQcBsSKgoB+mEMn10ECQlNHNaVTcdnvKnLVbBjgvD/nJVu7ymkXy3phRUMblyOIcmeVfbn3RunNROsdFtPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qrsh4W6+; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745330101; x=1776866101;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TWyVYWRdbaf00eKHwQrQSn9Z3lMxEd5ED3jW6Avvoy4=;
+  b=Qrsh4W6+BtqoThwTZ0Jc3aVuTf8qD5MJyU0nT3vsDJByBoHTtcZMKv7a
+   FUOkEbcpsYDPWpiw+KbrZPQGIZ6FE/ZIKC/CzMxaD6Coe5x6Pgmg6Wl5v
+   Peyg3NLkf4XOGTP2XktUVT2EVMD6LxHXZ6J5aZLhgwgi/ockR3XBLFek5
+   bCnEMxMfDyM6RhtXTqbn2oh5u2P2qD9Am57zswaGurNWU+PYUwzJwC6Jn
+   ZdGDMLXPG/xesOF3mkJgQX01DptTgqUSBmSDe9/qnGwTnGmvDroqj5FJo
+   yo9KlqEfI8ADFhNbokxvHZeIsw0lbqbEUq962/LgFvZghpZnN0gcLyE//
+   g==;
+X-CSE-ConnectionGUID: gzjyOahrRZWGq3r56yZEgw==
+X-CSE-MsgGUID: A3+e24KIT0uXj+wnY8Xexg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50550440"
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="50550440"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 06:55:00 -0700
+X-CSE-ConnectionGUID: izvj1jXUQEmb6J2HK9B5+A==
+X-CSE-MsgGUID: 6Cx/xDUgTaSAiL7Ccp8hHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="136812225"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by fmviesa005.fm.intel.com with ESMTP; 22 Apr 2025 06:54:56 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: rafael@kernel.org,
+	mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	tmgross@umich.edu,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	anna-maria@linutronix.de,
-	frederic@kernel.org,
-	tglx@linutronix.de,
-	arnd@arndb.de,
-	sboyd@kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	tgunders@redhat.com,
-	me@kloenk.dev,
-	david.laight.linux@gmail.com
-Subject: [PATCH v14 6/6] MAINTAINERS: rust: Add a new section for all of the time stuff
-Date: Tue, 22 Apr 2025 22:53:35 +0900
-Message-ID: <20250422135336.194579-7-fujita.tomonori@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250422135336.194579-1-fujita.tomonori@gmail.com>
-References: <20250422135336.194579-1-fujita.tomonori@gmail.com>
+	ilpo.jarvinen@linux.intel.com,
+	lukas@wunner.de,
+	aravind.iddamsetty@linux.intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v2] PCI/PM: Avoid suspending the device with errors
+Date: Tue, 22 Apr 2025 19:23:41 +0530
+Message-Id: <20250422135341.2780925-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,50 +79,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new section for all of the time stuff to MAINTAINERS file, with
-the existing hrtimer entry fold.
+If an error is triggered before or during system suspend, any bus level
+power state transition will result in unpredictable behaviour by the
+device with failed recovery. Avoid suspending such a device and leave
+it in its existing power state.
 
-Acked-by: John Stultz <jstultz@google.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+This only covers the devices that rely on PCI core PM for their power
+state transition.
+
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 ---
- MAINTAINERS | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c59316109e3f..3072c0f8ec0e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10585,20 +10585,23 @@ F:	kernel/time/timer_list.c
- F:	kernel/time/timer_migration.*
- F:	tools/testing/selftests/timers/
+v2: Synchronize AER handling with PCI PM (Rafael)
+
+More discussion on [1].
+[1] https://lore.kernel.org/all/CAJZ5v0g-aJXfVH+Uc=9eRPuW08t-6PwzdyMXsC6FZRKYJtY03Q@mail.gmail.com/
+
+ drivers/pci/pci-driver.c |  3 ++-
+ drivers/pci/pcie/aer.c   | 11 +++++++++++
+ include/linux/aer.h      |  2 ++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index f57ea36d125d..289a1fa7cb2d 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -884,7 +884,8 @@ static int pci_pm_suspend_noirq(struct device *dev)
+ 		}
+ 	}
  
--HIGH-RESOLUTION TIMERS [RUST]
-+DELAY, SLEEP, TIMEKEEPING, TIMERS [RUST]
- M:	Andreas Hindborg <a.hindborg@kernel.org>
- R:	Boqun Feng <boqun.feng@gmail.com>
-+R:	FUJITA Tomonori <fujita.tomonori@gmail.com>
- R:	Frederic Weisbecker <frederic@kernel.org>
- R:	Lyude Paul <lyude@redhat.com>
- R:	Thomas Gleixner <tglx@linutronix.de>
- R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
-+R:	John Stultz <jstultz@google.com>
-+R:	Stephen Boyd <sboyd@kernel.org>
- L:	rust-for-linux@vger.kernel.org
- S:	Supported
- W:	https://rust-for-linux.com
- B:	https://github.com/Rust-for-Linux/linux/issues
--T:	git https://github.com/Rust-for-Linux/linux.git hrtimer-next
--F:	rust/kernel/time/hrtimer.rs
--F:	rust/kernel/time/hrtimer/
-+T:	git https://github.com/Rust-for-Linux/linux.git rust-timekeeping-next
-+F:	rust/kernel/time.rs
-+F:	rust/kernel/time/
+-	if (!pci_dev->state_saved) {
++	/* Avoid suspending the device with errors */
++	if (!pci_aer_in_progress(pci_dev) && !pci_dev->state_saved) {
+ 		pci_save_state(pci_dev);
  
- HIGH-SPEED SCC DRIVER FOR AX.25
- L:	linux-hams@vger.kernel.org
+ 		/*
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index 508474e17183..b70f5011d4f5 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -233,6 +233,17 @@ int pcie_aer_is_native(struct pci_dev *dev)
+ }
+ EXPORT_SYMBOL_NS_GPL(pcie_aer_is_native, "CXL");
+ 
++bool pci_aer_in_progress(struct pci_dev *dev)
++{
++	u16 reg16;
++
++	if (!pcie_aer_is_native(dev))
++		return false;
++
++	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &reg16);
++	return !!(reg16 & PCI_EXP_AER_FLAGS);
++}
++
+ static int pci_enable_pcie_error_reporting(struct pci_dev *dev)
+ {
+ 	int rc;
+diff --git a/include/linux/aer.h b/include/linux/aer.h
+index 947b63091902..68ae5378256e 100644
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@ -48,12 +48,14 @@ struct aer_capability_regs {
+ #if defined(CONFIG_PCIEAER)
+ int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
+ int pcie_aer_is_native(struct pci_dev *dev);
++bool pci_aer_in_progress(struct pci_dev *dev);
+ #else
+ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
+ {
+ 	return -EINVAL;
+ }
+ static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
++static inline bool pci_aer_in_progress(struct pci_dev *dev) { return false; }
+ #endif
+ 
+ void pci_print_aer(struct pci_dev *dev, int aer_severity,
 -- 
-2.43.0
+2.34.1
 
 
