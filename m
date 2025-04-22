@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-613378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFECA95BBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:31:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DB8A95BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3193E1898A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7B7176FC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C004F1F4734;
-	Tue, 22 Apr 2025 02:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7C8265CB5;
+	Tue, 22 Apr 2025 02:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2VqOKl9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnDU5pxG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036B2676DF;
-	Tue, 22 Apr 2025 02:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A781F03D1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 02:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288306; cv=none; b=nunyiROeWY3MgPyOQX7n99K1VQKXNswhrmVohqam850Hs1vtuH4nHnWKGnm/dv5moUdUaB+HMG0oNZDl0/69tQ/nK45tE0VBrWS2ZXw00cD5WpfJU1T5nLNMa5jlOwljIMjDPZpYRdceMHKV5CBacZt4hGSCzDYlBRNlj0BVMJA=
+	t=1745288297; cv=none; b=ZA7ayJ8avgMhkx4FyHUCR0l5yR8n2gGRW7AuNFaT6bjj5fOm008prRxAq/f/v//t2MSCqLOhPPWDGqExkYtTi77UPDUqpXUcTLqg3gYj0dfd5PAsVU0mLL/4ALCHitwOmE5DKfJuXjNds8uM4g+BtdZnYdGoIge5jbpVTVLOFaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288306; c=relaxed/simple;
-	bh=bEd4sUQUoqmZzswyiTFMd5iftM52xvaorbTZ3pRmocY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hQJWIkZBOPGbZoHpgw0heUt+QptwgXeMzRwPhqOzuLQF1k2hopoq7oqRuz8G4KQAA+dxi7hZZMVsgG2wxrHbg/TCCkurgKa8pBad8PbcwtbRfzDjz2CZl451zLa333P5P+efQDJJ7ADuezKz8d2Ecom4vLXnpN9jHVqqmbYw4tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2VqOKl9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF86C4CEED;
-	Tue, 22 Apr 2025 02:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288306;
-	bh=bEd4sUQUoqmZzswyiTFMd5iftM52xvaorbTZ3pRmocY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J2VqOKl9gkwoIIbhzA/TlekVSpcqvver+YXXlfkTe2L8yo7ntVL5Bk9p+xLORWDAZ
-	 rmoLsRbYg2+R0em23VCz+5Bii7NFfyuiqRX09wAAIhi3PLTx4a9/PqdbF2k04ucwst
-	 HVv2spHIQgZCQMacHOOf+KOcpo5tUZ5rDHXduyZoe5lgZw5OEea/F7z6KUU3MUuxgF
-	 GbVUlxvEv5eyGPghbBPmbU0oSAVG35Ryl/tJyJZyTOnSt/LRyJLifdirN9ynn8ou9H
-	 UheFh+9uh5YMgarPtX0lLBiYaM0qkReSl3f+yi/FrkfFvY2+1PJETgZvE56MOVZWtB
-	 RRPRUoO3K/rXw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Tamura Dai <kirinode0@gmail.com>,
-	Carlos Song <carlos.song@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	shawnguo@kernel.org,
-	linux-spi@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 15/15] spi: spi-imx: Add check for spi_imx_setupxfer()
-Date: Mon, 21 Apr 2025 22:17:59 -0400
-Message-Id: <20250422021759.1941570-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021759.1941570-1-sashal@kernel.org>
-References: <20250422021759.1941570-1-sashal@kernel.org>
+	s=arc-20240116; t=1745288297; c=relaxed/simple;
+	bh=zS84EJRGNrKADPfwFvwocethFfhlrJkXOo1x0ivuFUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aAkDDxIy8PYVdBwOa9kiYZD4Sz2pQo5O53Z4xtRSEKGwfkem4aQN1ZGTl3lrGy+Q5WeN3fhCE516hrITbyNBzeAemerc6AAsqFAk+d6RtY7DeBQVxuDpSYMOcwikHwCLehKUyrFny4M584iNznSv1upgB3rBRswtf55bJSw/XXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnDU5pxG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745288294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz86lwydqt7W3jRCxo4XE1dASLEkdIRMGCMkG2qnxnk=;
+	b=UnDU5pxGTO2bmRqxDzT3fa6BqgLIsq3qDjYyqCv7kmHH1j3st3hRnfu/2qqhwZUkaOZyWq
+	wxJmzow4U6Xgf9lf2qDuriuMtff0/vExK3hm3By8us6flyaC33CH8nIo87igG+UB4fc20k
+	maWfC1tFjwqQJcsbT+AvZuuIuz1RDsA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-KVo2JgokMLuFbxVWZ4rEkg-1; Mon,
+ 21 Apr 2025 22:18:10 -0400
+X-MC-Unique: KVo2JgokMLuFbxVWZ4rEkg-1
+X-Mimecast-MFC-AGG-ID: KVo2JgokMLuFbxVWZ4rEkg_1745288289
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 880B01956094;
+	Tue, 22 Apr 2025 02:18:09 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.137])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B58701955F1B;
+	Tue, 22 Apr 2025 02:18:04 +0000 (UTC)
+Date: Tue, 22 Apr 2025 10:17:59 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] ublk: factor out error handling in
+ __ublk_ch_uring_cmd
+Message-ID: <aAb8V8ApTc8qA0CD@fedora>
+References: <20250421-ublk_constify-v1-0-3371f9e9f73c@purestorage.com>
+ <20250421-ublk_constify-v1-4-3371f9e9f73c@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.87
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421-ublk_constify-v1-4-3371f9e9f73c@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Tamura Dai <kirinode0@gmail.com>
+On Mon, Apr 21, 2025 at 05:46:43PM -0600, Uday Shankar wrote:
+> There is a tiny bit of error handling code in __ublk_ch_uring_cmd which
+> is repeated thrice. Factor it out of the switch statement.
+> 
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 
-[ Upstream commit 951a04ab3a2db4029debfa48d380ef834b93207e ]
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Add check for the return value of spi_imx_setupxfer().
-spi_imx->rx and spi_imx->tx function pointer can be NULL when
-spi_imx_setupxfer() return error, and make NULL pointer dereference.
 
- Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
- Call trace:
-  0x0
-  spi_imx_pio_transfer+0x50/0xd8
-  spi_imx_transfer_one+0x18c/0x858
-  spi_transfer_one_message+0x43c/0x790
-  __spi_pump_transfer_message+0x238/0x5d4
-  __spi_sync+0x2b0/0x454
-  spi_write_then_read+0x11c/0x200
-
-Signed-off-by: Tamura Dai <kirinode0@gmail.com>
-Reviewed-by: Carlos Song <carlos.song@nxp.com>
-Link: https://patch.msgid.link/20250417011700.14436-1-kirinode0@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/spi/spi-imx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index daa32bde61556..da4442954375b 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1614,10 +1614,13 @@ static int spi_imx_transfer_one(struct spi_controller *controller,
- 				struct spi_device *spi,
- 				struct spi_transfer *transfer)
- {
-+	int ret;
- 	struct spi_imx_data *spi_imx = spi_controller_get_devdata(spi->controller);
- 	unsigned long hz_per_byte, byte_limit;
- 
--	spi_imx_setupxfer(spi, transfer);
-+	ret = spi_imx_setupxfer(spi, transfer);
-+	if (ret < 0)
-+		return ret;
- 	transfer->effective_speed_hz = spi_imx->spi_bus_clk;
- 
- 	/* flush rxfifo before transfer */
--- 
-2.39.5
+Thanks,
+Ming
 
 
