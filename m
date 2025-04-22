@@ -1,81 +1,133 @@
-Return-Path: <linux-kernel+bounces-613925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1024DA96400
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1516DA96407
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA1B1884D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86791887DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856211F1509;
-	Tue, 22 Apr 2025 09:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBED1F17E5;
+	Tue, 22 Apr 2025 09:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpGVb0kt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="aHdWa7rb"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79E1E5B89;
-	Tue, 22 Apr 2025 09:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3C018E3F;
+	Tue, 22 Apr 2025 09:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745313377; cv=none; b=aR6VqqoZpai+lVR3vnhkONQudockwZ9tJSVBNNDpxzQU5dy7W44Q2dPXeC9nMQuUQK9LcWAFtIBPDtGg4zExrDz9gP8nXNydaIaB0KgVm9MS9+D6kABPAnvrfbxSoG9taSxKhV16ABnyhIEev+xjO7bwWOEjmJJLyEEGrVwrg8k=
+	t=1745313501; cv=none; b=GY4WqioB5GH703ansIB9T73gdKUvBZmED1UBh0vTC+XGybU5smkjg/UmKDllAEekIjBVyxNI35adzN9pxxzQanrMnNDhfhdRGfXRfzZ3qVYowkTAzloxS/2xhyYyv3rEaGAiKHVsRePlPUR9VEZhZoRSqpUJga/kREMZPIH3VXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745313377; c=relaxed/simple;
-	bh=FNhxKZMiPJsSRSoVxUInTBZMwbEMCNxWVqfU2PiaY3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+frBAdua1HPKFXnzObCUeD7vd23ItWsAKI8wLfQz9IaoGEif/rO/veJI44A8B5B0u3giVaKf4AZt8tOVcRHL8qwfnORtN5mcuP0SdVl+mIl8MLBt4Lc6zdWmlZXJi/jLcwCYH/zr8CoJTUdEztkQzwkmyGQAMxjNCOFjPcIHHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpGVb0kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ECE4C4CEE9;
-	Tue, 22 Apr 2025 09:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745313376;
-	bh=FNhxKZMiPJsSRSoVxUInTBZMwbEMCNxWVqfU2PiaY3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jpGVb0ktKWIsgZFaHuqw5cM/044YdDlZxWsIEeZduBhaDYSziCNCN+t5WV3ok9RZi
-	 fhE1qMivQHu0rNli884RPNp748Q/RoFgFgRurnJSQTGuCY6cuoYOwvTCTFHrCkTnKG
-	 Zl4ryt+iXVcfUKV5VwDH0bUddM/ajVkNROXqxA2/k9btno0RHvERx3nAfwSepxuHzo
-	 giyDsQbzcNLLsP5H16SVK8U42bC8pxe5StHE3GGEnScNpOXB+M93dNQlj5+jaCnDRj
-	 9mKbzKwApDlQ58P29CXGSwFcm1gXBnoUJY7VgVQ4LMFUwJlj7Xkhu+PKLOZSDqgGd+
-	 Kc7SMj+YwjBqA==
-Date: Tue, 22 Apr 2025 11:16:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Jonathan Corbet <corbet@lwn.net>, Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: pmbus: add lt3074
-Message-ID: <20250422-coua-of-serious-inspiration-fbc9ad@kuoka>
-References: <20250421-upstream-lt3074-v3-0-71636322f9fe@analog.com>
- <20250421-upstream-lt3074-v3-1-71636322f9fe@analog.com>
+	s=arc-20240116; t=1745313501; c=relaxed/simple;
+	bh=ahUrLKUy5cKBw3CCcbzKd4Qd4em2A+c8Vv02kzDIBzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V6JtccoJjDfV61TQFGT/wlncylv8Ccq70lRsHXrhW/b1gmCpyZYWvIsazxjcmYtvACdSxJyIZaELHo6uIpqRIOTOTejbHvrY7PfAhnlBe2Y3udv06PWuCM36XeicDs9tG0dMq5Ng6JC7xBekAV5od4C7LeiXY8yR5z7lxvJfe5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=aHdWa7rb; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745313433;
+	bh=iGkIVWXFOyVsd4uMO+SSpTfRM67ip4m1rYsko5Qs5AA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=aHdWa7rby8JmH/g6tVdSKt2CgjT4BpgsVgk1sv/CFWUI2mM0G/vMY7e2nGVBuhayy
+	 XAcpW0kfFx7KH/1o6pajPBt1SWkF1q0xzFndEYmHHSq1vdcFqVLCV0/iQ9ZUdNMoH4
+	 W3tuhp9Udle+nAIUJfBYU2eJtN5tMspEuXtR96Wo=
+X-QQ-mid: zesmtpip3t1745313415t3daaa261
+X-QQ-Originating-IP: j1RNao9pu3ZOoDyXZrFlPdWn5P6r/D0upx564EzC170=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Apr 2025 17:16:54 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 4643946903979290159
+EX-QQ-RecipientCnt: 8
+From: WangYuli <wangyuli@uniontech.com>
+To: gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	stable@vger.kernel.org
+Cc: macro@orcam.me.uk,
+	tsbogend@alpha.franken.de,
+	wangyuli@uniontech.com,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5.4+] MIPS: cevt-ds1287: Add missing ds1287.h include
+Date: Tue, 22 Apr 2025 17:16:48 +0800
+Message-ID: <CB3E3A9CEA5227BE+20250422091648.116984-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250421-upstream-lt3074-v3-1-71636322f9fe@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N34HGxtl3nZNGOKxccmAw5hb6+nu/qSRzx28mLLa0xo0l3x4TJObnebb
+	uc5Dii4gWRaCibxuC02o3LhUFTqLj1M6wY6T2D8FR6DYtiaDnjSkiIWfvjXVq2bDHhKLZ2e
+	UA3wEk1qlAt26kqmHJpvDJQp6lKmF6wCAT716pzW+/bC5uWPaRVVqLw1ge4YCWCsqZvd+XX
+	LwXUmXnNENSfMVBCXwF8zns7vIwu8EXde6K7LI+daTu9PexaEusNL1fawFPuMs8XZfm2i/U
+	jqJzaB0A5uonemKYsKJNVL8emtvi02aLViGVu9xb4LO3GK4vKpLkj8uEzFGxxFpebn0M310
+	LNq9ggnB+8z0sXDzIqMDCpxqS4j9twi8kyZaApaWhbxNoFrh9H/L23vCT0ikSfMO05+Z927
+	xPxvcWqrxHlsahsY57x5j3ceJoVfPAkRr/9B2vIQOabJV265EGTmWdnksvi3tZTq7C91RAX
+	dPCbrUhWc9qs0cgmjWOHVD9ivluuRrCPD9wT/sbb1TBdsvTe6Mbk0dSmxzuNtruO/7vXMZz
+	Agk5pMY+6MazjxmOIZLQhhwqzdCEThqguUCivWavmiIveWnjW7TNLsUDcvDkULoDa0/UFrP
+	FyrKRy605rxajAt5yNSQjJv5o9Za/z+XXAh2Per2nddp0LhxDcpG4kqcwXlcnsqk6BeBedn
+	l5d1MMF/JHJ4oGye4Dc8DApl0/IaTKeC8+GJcmkTz/gRA4plOCoXJwTwzlJHJKagS5LF7FI
+	5CPrW4ScOPHkwMQOt+uXJ9tKvc5doLGzJIPw3cboMaeaoNKuvpavRgFcj/C3cwquwZAJnXq
+	IsvhSg7G/hGhx4aOfgoCiktWpL9PUyu1AIo9mY17gli3QsWtqKAQJNl+4tW5cuqkY+czMXl
+	nrISiU5oknnU9mILfQILANK+FsmnJYiHVBUdsxQ9QRxOpOjAmCrpDPgGesUBDs5yNzGfhY+
+	66eAa1YCXUFdW510yvO9ApXy0qC722wgyfIAFCePVgg5L/HBFaZuuPia8MK9PTln6ekZcpf
+	t5CV5p1KFaOXd+rSkO7UipK1SxF7k=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Apr 21, 2025 at 08:18:18PM GMT, Cedric Encarnacion wrote:
-> Add Analog Devices LT3074 Ultralow Noise, High PSRR Dropout Linear
-> Regulator.
-> 
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> ---
->  .../bindings/hwmon/pmbus/adi,lt3074.yaml           | 50 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 +++
->  2 files changed, 57 insertions(+)
+[ Upstream commit f3be225f338a578851a7b607a409f476354a8deb ]
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Address the issue of cevt-ds1287.c not including the ds1287.h header
+file.
 
-Best regards,
-Krzysztof
+Fix follow errors with gcc-14 when -Werror:
+
+arch/mips/kernel/cevt-ds1287.c:15:5: error: no previous prototype for ‘ds1287_timer_state’ [-Werror=missing-prototypes]
+   15 | int ds1287_timer_state(void)
+      |     ^~~~~~~~~~~~~~~~~~
+arch/mips/kernel/cevt-ds1287.c:20:5: error: no previous prototype for ‘ds1287_set_base_clock’ [-Werror=missing-prototypes]
+   20 | int ds1287_set_base_clock(unsigned int hz)
+      |     ^~~~~~~~~~~~~~~~~~~~~
+arch/mips/kernel/cevt-ds1287.c:103:12: error: no previous prototype for ‘ds1287_clockevent_init’ [-Werror=missing-prototypes]
+  103 | int __init ds1287_clockevent_init(int irq)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:207: arch/mips/kernel/cevt-ds1287.o] Error 1
+make[7]: *** Waiting for unfinished jobs....
+make[6]: *** [scripts/Makefile.build:465: arch/mips/kernel] Error 2
+make[6]: *** Waiting for unfinished jobs....
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+---
+ arch/mips/kernel/cevt-ds1287.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/mips/kernel/cevt-ds1287.c b/arch/mips/kernel/cevt-ds1287.c
+index 9a47fbcd4638..de64d6bb7ba3 100644
+--- a/arch/mips/kernel/cevt-ds1287.c
++++ b/arch/mips/kernel/cevt-ds1287.c
+@@ -10,6 +10,7 @@
+ #include <linux/mc146818rtc.h>
+ #include <linux/irq.h>
+ 
++#include <asm/ds1287.h>
+ #include <asm/time.h>
+ 
+ int ds1287_timer_state(void)
+-- 
+2.49.0
 
 
