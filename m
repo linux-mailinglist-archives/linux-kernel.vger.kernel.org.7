@@ -1,98 +1,130 @@
-Return-Path: <linux-kernel+bounces-614300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F14A968B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D03A968F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1664177335
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27FA3A7815
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9014F27C162;
-	Tue, 22 Apr 2025 12:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E6D27C146;
+	Tue, 22 Apr 2025 12:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ooVdr9cQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="YeERTYnr"
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072774A3C;
-	Tue, 22 Apr 2025 12:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF441FDA94
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745324188; cv=none; b=r0O1bz4x2n3cmgpobSXJnfh3OPfs988g2uxYX1u/qrk1OQ/LeARWtLYim6+CP9rXKrb6th744BviEu8OfCGgZ0JxLqGgjlsg62rDlwasRv0kmyMtmvD8e5Sg30MiIvPjgQrIL+IRRykYvrU4MsslhrEvyysxucdi1za6Lkrl/jM=
+	t=1745324444; cv=none; b=C2Gmh7wFVKR/Fh7JtGtT08AUY5D/BuFu2xEkTOzXBPmEL7EoTcIGv1QdVdFbW64KkAXMTPTMwTaTi4VHreGy89GuQ6h55+bPYYEjRp1dKdpndMfiPcfAEChaklqMzxlHkH60dyRh+U8TQmfNWFag5YhXW4MfcjJ28ZYHNFy1Mo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745324188; c=relaxed/simple;
-	bh=yU/rworGYWLUH02sbs7bbFRHcYRTKJEvHwwBIU0rynA=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=oznPxkBTVq4xdHCYaDYbh1nYBz12HyMeFfWz9uKlgd7EW6Auc9a0Day2ZiRArrCn6qms4IoIW8kxrdi4Hl9G0X7+oGR7pl5p6VaU8XuHVvI2zKUcvf4cGEn8Iu1C6q5LB8lD/zqCpqmo724TSOhRzxVYjv9O9LS0rSQnwnjpn2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ooVdr9cQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BB84D250;
-	Tue, 22 Apr 2025 14:14:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745324056;
-	bh=yU/rworGYWLUH02sbs7bbFRHcYRTKJEvHwwBIU0rynA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ooVdr9cQP0vk2KzZ0fRo5K+mVPfQm9T/E1ChFpwEoK1GHUKh7+HKtq34wAmESjW0z
-	 0a1FTKqbp28A53Afh2uir/xPCOTgq7/X3WTqjTim27Nvk45KNgPYk9RopoZKulHuYa
-	 ny62nEc3XtstlmB8IK2+MyEMcN454ViBAMODZMIk=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745324444; c=relaxed/simple;
+	bh=0agyOukoGRm94VWNyqLFSBxmZlyVUx0kX7jQMQPjlZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MNOn0rGQPaMYgsMPNm6LUCxiGSiG9IVu7u5y2Rf3aP1v992EafK2w0uA+f9XWJZoe4eGEicvRuaKEb708IkJNMD6mXjB+g+27sMoa6NUHMwpmNeyKOy5QZyguT5ht0o39h7glnBAI9pr1EakRuNp/wj4oQXby6gxGH8ONT1NI2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=YeERTYnr; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745324318;
+	bh=5SCNpT7fxknXxFl2jrf1TuKGByQegnZorIene7qFnoQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=YeERTYnr0iPBwxxu585clwjh6tne9u4UQOglhCHm7R0UmmJ/e2yRmV/kyLl0a+3/P
+	 pZ+pyWJvGsKBWJ5HykWHiiK18r+D20E3JiswMrxfcZmo+jHjyW3XO2p+aApJsfG5uI
+	 wJ1I6zDmaEUaaS8gFe1mCsyHRqoatyijJHKbnxXU=
+X-QQ-mid: zesmtpip4t1745324305t656bd8bb
+X-QQ-Originating-IP: hg4RPvjNFuLrioiProjFSc49eEpyxOtoEar038BepTs=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Apr 2025 20:18:23 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10097217200537655222
+EX-QQ-RecipientCnt: 10
+From: WangYuli <wangyuli@uniontech.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] drivers/nvme: Add quirks for device 126f:1001
+Date: Tue, 22 Apr 2025 20:17:25 +0800
+Message-ID: <5AE9DE3EEA7F8772+20250422121725.162229-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8411984d-2475-4d65-a66f-dc7076fa0ca0@ideasonboard.com>
-References: <20240830062639.72947-1-umang.jain@ideasonboard.com> <8411984d-2475-4d65-a66f-dc7076fa0ca0@ideasonboard.com>
-Subject: Re: [PATCH v2 0/2] media: imx335: Support vertical flip
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, open list <linux-kernel@vger.kernel.org>
-To: Umang Jain <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>,
-Date: Tue, 22 Apr 2025 13:16:20 +0100
-Message-ID: <174532418087.2882969.18298736657743021659@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NSFPwCZBl/JL32ntyGBy9Q3mW9UddCZTUV5t+1cCxs4qJ99NqCD2k8LO
+	tQADOJH/tTvmcQ9bi7Fi8Im9BJP4vYVLgoVYyZ20bgmm+Yqe+1zkD7+RxwpSQYReuzgkexZ
+	26ZUrue3/gyvmijbnakwcMlWVRPlNVY/KV4H3WF24oWLYkZDu5g+m1aOkRdbb5whsnYJE2C
+	Sp6zi3sfQTHtJ7TspJu3YuxsaeueLyuQNjyLWYykr/7CiKv2byJGW/3cFwEMyf5sSMQbS/X
+	KQBioXB3pSGRNQuXgXPas0wSg1a6cGwd77Zp0bWUDd5gxc62ppIBpkMUXx+KBenVK8cNK1R
+	4DvARuYhxvHbOBe34xV5v6U3E6fnSlfp68qT9J8kJDm+tgnkZ6x5CkjLBuO/M71G/aYVfmT
+	u8bz1DFh0ve6iSXv6lHAGnwpJlY/mQ3SgRAke9YIXOg4QJNvvdmBeYt6OeQlL2BzC10XZIO
+	9v7zpcdEjoB/F1O2duMgTDIugSLIDLSQgTpAWPyLN8nyAgB5VFLK7Y8cS7XPQzSmPX/PF5i
+	ecpSPC2yFJE+Hqf+qV4MGKVc+vlGtRkccwxt8EQMJLy+EEcrVIJo+qfkf3tr12BUjgK96DK
+	TNG5HYBM/JL2V6nhw+mqaKdkV0UHglQpMK2r3aBmG2nRv7L8aW70J36N0n41L8/kr5lX70u
+	WsP4bwef4Y2/Ni+symA0C5gQAFJPehsNkGuWgXAa8btFgoszNsQpXAp7wcdv+ZWEA8zDahl
+	DRZHq6jzaAt/Y65WiT+57Ocxu0slge342+m1oXAKisAQbY0y8Rj7dDYGFcqNhVigTCnujoW
+	W8B89CuiW7+IcUbQQUcyatOlwhIr5mmrEYDA90JbgcH5MPO3ldK6MSUH/sSgBhtq+Zm8EdT
+	RIKtkHTFSPjm2CZKRxKilmis3YMzQjYdjHiSX6jebxcfKvtu2oju5uPhfMoczJddT0nFVoV
+	1L6aI2h7akpCkKlGky492wk6WgyUUpkxBJ4qHq0UaWDmydIa1cyP++JbmHpK9lVB9gZX3x9
+	h0fC56/Jji/Ou/xocvch+8ZLZwwQqrOcmo0no+89vEnjrfGUQ28UyInYdgN98=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-Hi Sakari,
+From: Wentao Guan <guanwentao@uniontech.com>
 
-Quoting Umang Jain (2024-10-02 04:53:40)
-> Hello all,
->=20
-> Can this be collected ?
+This commit adds NVME_QUIRK_NO_DEEPEST_PS and NVME_QUIRK_BOGUS_NID for
+device [126f:1001].
 
-v2 was already just a resend.
+It is similar to commit e89086c43f05 ("drivers/nvme: Add quirks for
+device 126f:2262")
 
-Would you like this to be resent again? Is there anything blocking
-collecting these patches?
+Diff is according the dmesg, use NVME_QUIRK_IGNORE_DEV_SUBNQN.
 
---
-Kieran
+dmesg | grep -i nvme0:
+  nvme nvme0: pci function 0000:01:00.0
+  nvme nvme0: missing or invalid SUBNQN field.
+  nvme nvme0: 12/0/0 default/read/poll queues
 
+Link:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e89086c43f0500bc7c4ce225495b73b8ce234c1f
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/nvme/host/pci.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->=20
-> Thank you!
->=20
-> On 30/08/24 11:56 am, Umang Jain wrote:
-> > Hi all,
-> >
-> > This work intends to supprt vertical flipping for IMX335 driver.
-> > 1/2 contains a small drive by fix, to rename the mode struct name
-> > 2/2 introduces the support for vertical flip for the mode.
-> >
-> > changes in v2:
-> > - None, just a resend over latest media-stage
-> >
-> > Umang Jain (2):
-> >    media: imx335: Rectify name of mode struct
-> >    media: imx335: Support vertical flip
-> >
-> >   drivers/media/i2c/imx335.c | 77 +++++++++++++++++++++++++++++++++++---
-> >   1 file changed, 72 insertions(+), 5 deletions(-)
-> >
->
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index b178d52eac1b..de0ab1da99c8 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3623,6 +3623,9 @@ static const struct pci_device_id nvme_id_table[] = {
+ 		.driver_data = NVME_QUIRK_BOGUS_NID, },
+ 	{ PCI_DEVICE(0x1217, 0x8760), /* O2 Micro 64GB Steam Deck */
+ 		.driver_data = NVME_QUIRK_DMAPOOL_ALIGN_512, },
++	{ PCI_DEVICE(0x126f, 0x1001),	/* Silicon Motion generic */
++		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
++				NVME_QUIRK_IGNORE_DEV_SUBNQN, },
+ 	{ PCI_DEVICE(0x126f, 0x2262),	/* Silicon Motion generic */
+ 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
+ 				NVME_QUIRK_BOGUS_NID, },
+-- 
+2.49.0
+
 
