@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-614200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FFDA96760
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:31:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A910A967C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00305165FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE27D7AA1B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146A7278176;
-	Tue, 22 Apr 2025 11:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A7E27CB03;
+	Tue, 22 Apr 2025 11:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qx+vgboN"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="JdYcO4fz"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778914286;
-	Tue, 22 Apr 2025 11:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E628F5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321436; cv=none; b=AVvA05IA5HMjhOD+cw2KkCTRHtDMXSfMq5bBLCFVyMn5PgJA6Tp0N3Xr+we0/nQ2Z0t+TwYUhqO4D35NV/40uvB9I87lHsqG/ItGgKmbXxSqMqvR7Wb3Oeht/TngR/crTBu1iFD2lh6tOi0AztUPEoFycvNWjkLr9YouUFQAdW0=
+	t=1745321799; cv=none; b=bUzTeOxKNivQT8eoPlCl/osxA/YnUu3nrFgi/JdNYu9PIk1Yg/lSxvsqzQtkNTREeSyrdeZ6+OFblmwn14ZZQmrREHYYUsH1VD/sjsBRfCB+wJPi9QqEaw73GKxdvv2d5ie3E3sutCYlMl3+tL2hp755tQqVzcj4vZIHE9bdfIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321436; c=relaxed/simple;
-	bh=tHyGqFgFIRSmPIdYIXX9Tdm26dq4AIs524gvT44qx0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pu4xfbKR+ArDFf+X7sUPCKj8XLZi0VB4EwnVmqIAtHnrgtmne4jWKnRZS7XBEH5e8kGdwHzXC1DHv52hUbap2ELpoRdrOAHMVE+ZwfWhfZIVzv1VGcBFhFK1TC9sktXVdjENExpZ/r1yurxgAs3hN/i1k/gTw1nI/yKC3J0ZVQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qx+vgboN; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-aee773df955so4781603a12.1;
-        Tue, 22 Apr 2025 04:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745321433; x=1745926233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+L2qPkaVtKmg+5Sr07ERpwO0sC7ZPDgfr98i4bh2UU8=;
-        b=Qx+vgboNAcPYOChoqttavAkxPur+lDuwv4j0iKFhMI//AFXY15H97gcFQgTqQFGX3E
-         aubZAyvei2N0DnIVLAjcFklrmUVPznojb8npWOhSgr9rwokqM1am/sTB3fpYrQYP/0n1
-         uJRiu0enwdfQgErM/Pri8sRv+iE2BJNFA4rlS4ogVG4V1JeTuERf+CyHp5xL9jsnVHvu
-         sRloNlla4jt85D/PT7QoMvmB1YDmnlCgP8YjtcsuKEMxRi61wwIL6CkrCaMLpkukxKa1
-         aUdFNIxDoAjSjLb9IWlo31azYluxKbTsYs9fxAvLFc2QJ3l2g7grzA9P+2xURb3lQzBA
-         9NWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745321433; x=1745926233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+L2qPkaVtKmg+5Sr07ERpwO0sC7ZPDgfr98i4bh2UU8=;
-        b=SkrMMseHX3DHnt2hAdxJqD4ejErFcXrt3LSSLYhs3VWMKPrP7L0/6Tqor6WJAQRfpS
-         015gyaXJOSDHpV69vrUhEnWjNlPCNfFwbz3+HcWy1CP5+/0F5AJSgs9fsHWlLnGOXZff
-         n4Ds0lqZOk7Y0ac794LGF6GF+uMtfXKMQjGIVTA7B4iEUEjLDiL4Zf3Folm2C/9eSKky
-         WgkXRe0cxVIfU9hnrdZuOdx0vPqVTRPZ0p7j1LrZXjUD7RhUSRfknjr1OeeP2klw6h5j
-         8F1ztLwkXZu3vwh+xeAECPwSS6yGa/4dUpcITDbZ+ke2JBnYmIj3AVLLIYVN0b8Vaxju
-         taBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUF8CnVoMDXGAqLepoBwLR0kdawkL70Nz+zU/A99OGtuZvIjoR+vgtg/fE0X5KcQaWvmshRh2S08MwPfkuMP1H3U64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0BSptkbPg4qUFyWXYRTBW+XrwoSGvUeW0lBMTuSFnaQsSFF7R
-	hYGPsmpd3AeeECX2dHVLAbKqV8amEPKKSMod1fObPpUFx3GFgFk+5i4QHqHB
-X-Gm-Gg: ASbGncsKHf4KETkMKA30841Mhklej/2aFL3of+NS0KQGoCQVm4LOsVVXxsjz3FF2nT0
-	+f6oYRq5B6WrpyjNAiO9xQyWW4JvY0f0MCnbUvKxXsAO6HsXxqDuBqH6a7D7G4J4+5fq4DuRVwk
-	U+tpbNF2vURhPAZOfJ7M0NXOhgquryvcYFNMLd7nHWVR6XFu4k0ZK4Ktu9xPiAx6eOpv3C4rOTR
-	HUuIMS4lkV7XsYV+0ho/SQFF1/YbVkowgXF8b4l3MYQhbXQxOa6Tq1ikSE5kGDf+caJdnGvzDyT
-	WZJOwPmxktIfHR80VoBJ3kMX64YqdT0pUKgEM2XBAAqaS5cs98X+aNaDYFlf3BUkj1aZ8A==
-X-Google-Smtp-Source: AGHT+IGhW6YCQNNrILjH/FlTivBOfED1cUX+pwJTIME5x5vp4B6s23wwgnLKbICIDgnbOZxB3O2Xjw==
-X-Received: by 2002:a17:903:2a8f:b0:216:271d:e06c with SMTP id d9443c01a7336-22c53e19dcdmr192531395ad.4.1745321433177;
-        Tue, 22 Apr 2025 04:30:33 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdd0a8sm82506825ad.50.2025.04.22.04.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:30:32 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v3] tracing: fix oob write in trace_seq_to_buffer()
-Date: Tue, 22 Apr 2025 20:30:25 +0900
-Message-ID: <20250422113026.13308-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745321799; c=relaxed/simple;
+	bh=fh6Nszv1BvSWHtSmmPlNnETg8EzVK0+qzlbf/8KX71U=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=OQXw7MNHAXKcgCLDnE2wdoPX+BrhRN6c8MLpQ4hEsIkqAehMU52mz2k/3A1JDarau+9uA5afGugtPsaORtH3jaOjxOGdTATMfbpBU/sKFPZuIh2EP1/RU4AxS4F10hpA+qSiT75OWzQiIOazTb3TNxHmbYsT+PuYOo/i4zaNlhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=JdYcO4fz; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1745321485;
+	bh=e3ONj9DxlwmlOM6ClKZHrQDzeItquWjfJMyEdq14BHs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=JdYcO4fzMKDLDoHO0q+DzJYJ5nTz0ZHX0JabGqP/oaGLx1UBoQO6oiVAYx3AlEvXZ
+	 jIjoxLOzp4k1faJXx0adjsvyqoShF4cRiD6okwYR70TH3XcwzzTE1ADc8Oq35+U21E
+	 1kXkLeHrMcdbEniNT4urcclEk19tSPzKrMNFGW8g=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 7D785239; Tue, 22 Apr 2025 19:31:23 +0800
+X-QQ-mid: xmsmtpt1745321483toza199dr
+Message-ID: <tencent_29AE601199DC77543B902D5EA227CB730E08@qq.com>
+X-QQ-XMAILINFO: OEA2l6/AmyO4eOImuXSvsoYgfXsFpk+l/pUFkN+qnw/CMsIHGxmC9zo4ial4cv
+	 9emh0+iKTTz6OEbtDB9Lci/ZbcDaqIrDbAYspIo5qNhYBAbPN9eFlWe5nS1UDB3gvB6bmp4KgbQV
+	 DUgrez3KQ/uWVBcUzujNH3WyPcTTp+vzcG5T3uBXVkjetXp59uPSM9L8yz6xZS4kSWVsNpflawO9
+	 VcKuBvATmWbsVJUKBbZeBJ+PAQZvwwaBPvt5lk4z7vo/pd2u82KePItAqVGj0nUVyLwqYGAm1POE
+	 m/eq+5a89yNRs4yohl0l+KDMVlNSLCboQq8287S7+5VJed3j3hzrev0BUERaYB9HrZiF+hFFmVR1
+	 x8DvqPQjSpVCUPIRsVQ1bYXHKBxj4kKSVjtN/0J9P1oY/IGKFIbe8gDgefGGf9VSqNbey0lpxTnJ
+	 jSlxMbFiDL6+t24Xu2l+wL9TU5gkNCzXY+ymrjtSZ978tqjJzfPGvF9kCC1lK7WBkR0P1r4YTiur
+	 7uhQJoXUOMkDmSrP1aMZvWq2GnN2ajBrF2OIa81mPnr6AEF/UHodGucku+oRiRg8xn27eUJcfc+Q
+	 jRFE5tBU9udkxEjysAtTE/b7ZoFf5A+2Hk9j/byeTs28pCVSxZlpn+xINJS+yj9l+6JWUxLMPMrk
+	 LLT+GfjlHRR/Rd1YD3juFjAF1moXT4sCeW6+4bPWTQyF5vGc4lGyUdv+JgU1drT22xynD8X1E7Cv
+	 YRRhkHUFaDZ6wD8mxXPn44lNngKpyps22t8b7xMhK8gSXOx6APDtOf1q4+7R29ok+ksMxfLOKHL+
+	 /SKs7ZFiiJ62Zz3S/jIfbQKYXFKVdQCqZVkvEU5w4jkI/t7IDYLL0LBv8jr+yjDW+jCOt9CeJ446
+	 MOGFdjGsGU3gmJio8WFZ7QSx8ZV4/rWF2khZ/Mj2wihdIPftwRAZc9ky3783clwmTlfCOdTX6O/T
+	 TRAhFFbrdHW7lheA/4uO4mrzmfv6Q8WoaWN0Cw5uyCF1R+asvhcQKbmxMRzL7IF3ksP2a4rf5rik
+	 fpHEbeNeB4L5KdzpbXeth04v6HYAoFE5+BomNj3A==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: xiaopeitux@foxmail.com
+To: xiaopeitux@foxmail.com
+Cc: andriy.shevchenko@linux.intel.com,
+	john.g.garry@oracle.com,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	xiaopei01@kylinos.cn,
+	xuwei5@hisilicon.com
+Subject: [PATCH 1/3 V2] bus: hisi_lpc: remove unused head file in hisi_lpc.c
+Date: Tue, 22 Apr 2025 19:31:22 +0800
+X-OQ-MSGID: <8c954c6c1193e02342b92deb7a0865ce055bbe16.1745320689.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1745320689.git.xiaopei01@kylinos.cn>
+References: <cover.1745320689.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,64 +80,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-syzbot reported this bug:
-==================================================================
-BUG: KASAN: slab-out-of-bounds in trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
-BUG: KASAN: slab-out-of-bounds in tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
-Write of size 4507 at addr ffff888032b6b000 by task syz.2.320/7260
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-CPU: 1 UID: 0 PID: 7260 Comm: syz.2.320 Not tainted 6.15.0-rc1-syzkaller-00301-g3bde70a2c827 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xe0/0x110 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- __asan_memcpy+0x3c/0x60 mm/kasan/shadow.c:106
- trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
- tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
- ....
-==================================================================
+linux/console.h,linux/pci.h,linux/slab.h
+are not used, removes it.
 
-It has been reported that trace_seq_to_buffer() tries to copy more data
-than PAGE_SIZE to buf. Therefore, to prevent this, we should use the
-smaller of trace_seq_used(&iter->seq) and PAGE_SIZE as an argument.
-
-Reported-by: syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com
-Fixes: 3c56819b14b0 ("tracing: splice support for tracing_pipe")
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 ---
-v2: Corrected the correct location as suggested by the maintainer
-v3: Change coding style
+changes in v2: fix build error in i386
 ---
- kernel/trace/trace.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/bus/hisi_lpc.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8ddf6b17215c..6d52dc108f00 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6821,13 +6821,14 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
- 		/* Copy the data into the page, so we can start over. */
- 		ret = trace_seq_to_buffer(&iter->seq,
- 					  page_address(spd.pages[i]),
--					  trace_seq_used(&iter->seq));
-+					  min((size_t)trace_seq_used(&iter->seq),
-+						  PAGE_SIZE));
- 		if (ret < 0) {
- 			__free_page(spd.pages[i]);
- 			break;
- 		}
- 		spd.partial[i].offset = 0;
--		spd.partial[i].len = trace_seq_used(&iter->seq);
-+		spd.partial[i].len = ret;
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index 53dd1573e323..f0ef9680ad66 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -7,17 +7,14 @@
+  */
  
- 		trace_seq_init(&iter->seq);
- 	}
---
+ #include <linux/acpi.h>
+-#include <linux/console.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/logic_pio.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+-#include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/serial_8250.h>
+-#include <linux/slab.h>
+ 
+ #define DRV_NAME "hisi-lpc"
+ 
+-- 
+2.25.1
+
 
