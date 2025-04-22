@@ -1,108 +1,91 @@
-Return-Path: <linux-kernel+bounces-614559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0728DA96E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:11:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16001A96DFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7091717FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29527A8C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1052028469A;
-	Tue, 22 Apr 2025 14:10:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9D127466;
-	Tue, 22 Apr 2025 14:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7C6284B4C;
+	Tue, 22 Apr 2025 14:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeRGexPZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45D8202978;
+	Tue, 22 Apr 2025 14:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745331033; cv=none; b=Ha9RsK4/DQbHv43LmErLEnZ+NPYe6JFLMu3XbcUfVKD5fT9UYUBvBUuVDklzvIZT9eVPD1WgxO5OrxTPwS7/IAhrWfLXZd4yipmMHVlqzVFE33gPUxo3wXO1HefJIdyfdaZoWHL/gRKYZJOplBljIkkwVENB2LaEmsBVtF1r/EU=
+	t=1745330996; cv=none; b=bGQGNdVS4Oc33NAbJdnm+1K9pZrFPKfykTtmUanlyLt9FuzMIk91ktboplGUzuLhRrmOcoBJUEUPxoEz/nMAWxKtB/p2My8vJst/v5pVziSsWq0btr6whRRBUrZnTiA2u7rkcJdHGNdPPtxsW0xaugtISV1oUVKIHA2Cp1XjhX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745331033; c=relaxed/simple;
-	bh=yDwVPeSL5vw/XBQ/Mqxz+U25iJhOC81+UGwFUpORofs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INYzHonA9F2emRBWPk1v6GjjWncTwPE5H4AexmtYxIUBFheI04IU3ABx/81q6ZGQlu44e+R929n8VFIDyMa36XsvAhdoabMqI4pjdnUQkwQleSCSWJTqD/FxbiLI3L6pmskKkT9do6z4pTiP5IGQef6DUsDGX5V9mOm7hlFSg08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E38D6152B;
-	Tue, 22 Apr 2025 07:10:26 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1D853F66E;
-	Tue, 22 Apr 2025 07:10:30 -0700 (PDT)
-Date: Tue, 22 Apr 2025 15:10:26 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Yabin Cui <yabinc@google.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>
-Subject: Re: [PATCH 1/2] perf: Allow non-contiguous AUX buffer pages via PMU
- capability
-Message-ID: <20250422141026.GH28953@e132581.arm.com>
-References: <20250421215818.3800081-1-yabinc@google.com>
- <20250421215818.3800081-2-yabinc@google.com>
- <48640298-effa-42d4-9137-a18a51637f03@linaro.org>
- <aAeQcgmL-iqGbG_g@gmail.com>
+	s=arc-20240116; t=1745330996; c=relaxed/simple;
+	bh=mSUwu/opZKdtS524d8kRypNOEeM1L10Ayvr3oCTxx24=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NY6rf6oFNTnshFfQcXEsPbVTPHcvSx+5onF0dffMoUbQ1KfRGJFu6EYC+Jwwk1Bfws1quLbdA0rwnRd2WaWPkIs0HaLNvnQxEVaH2IdJ4SjQqMQ9JhWqEFOCggpZFicl63qN52k8/x9uGfF3uCgYc/suQAVXxHtr5Q7RmV8t+uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KeRGexPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7CCC4CEEA;
+	Tue, 22 Apr 2025 14:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745330995;
+	bh=mSUwu/opZKdtS524d8kRypNOEeM1L10Ayvr3oCTxx24=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=KeRGexPZeR50PhfqjDCYsZkK0QbOi0rGF/B4ilzsuVWoqfV3hpsp2kmp0GKCQrfaK
+	 +CBBRIAgavNaPALMcW5yDCCGUZR3gxQXGOukcRM5gbwQhv/F3tjnGEcPBSK35flAy1
+	 W7tQxE+cLqToCTP+5hNcn5wwn9fc01gzTxN9vJ1KP2xO/s97aWx13gxUsWG4BRnCl2
+	 CsS9L3CYu6nGYO1U7ka0ve7GmIU3nt2Iofui5gItyNDBcpBEsFWJG9BVQ8qBm9ONy0
+	 ioaeNJLaA1qmHLhhuZxhYXovTn4QVSFneTWdmlBVP+BYVExxDxZw55AhjsQWH1vEGj
+	 BrSYcZMf9jqIQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD12380CEF4;
+	Tue, 22 Apr 2025 14:10:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAeQcgmL-iqGbG_g@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: 802: Remove unused p8022 code
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174533103377.1921425.11325924081527949742.git-patchwork-notify@kernel.org>
+Date: Tue, 22 Apr 2025 14:10:33 +0000
+References: <20250418011519.145320-1-linux@treblig.org>
+In-Reply-To: <20250418011519.145320-1-linux@treblig.org>
+To: Dr. David Alan Gilbert <linux@treblig.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, Apr 22, 2025 at 02:49:54PM +0200, Ingo Molnar wrote:
+Hello:
 
-[...]
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> > Hi Yabin,
-> > 
-> > I was wondering if this is just the opposite of 
-> > PERF_PMU_CAP_AUX_NO_SG, and that order 0 should be used by default 
-> > for all devices to solve the issue you describe. Because we already 
-> > have PERF_PMU_CAP_AUX_NO_SG for devices that need contiguous pages. 
-> > Then I found commit 5768402fd9c6 ("perf/ring_buffer: Use high order 
-> > allocations for AUX buffers optimistically") that explains that the 
-> > current allocation strategy is an optimization.
-> > 
-> > Your change seems to decide that for certain devices we want to 
-> > optimize for fragmentation rather than performance. If these are 
-> > rarely used features specifically when looking at performance should 
-> > we not continue to optimize for performance? Or at least make it user 
-> > configurable?
+On Fri, 18 Apr 2025 02:15:19 +0100 you wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> So there seems to be 3 categories:
+> p8022.c defines two external functions, register_8022_client()
+> and unregister_8022_client(), the last use of which was removed in
+> 2018 by
+> commit 7a2e838d28cf ("staging: ipx: delete it from the tree")
 > 
->  - 1) Must have physically contiguous AUX buffers, it's a hardware ABI. 
->       (PERF_PMU_CAP_AUX_NO_SG for Intel BTS and PT.)
-> 
->  - 2) Would be nice to have continguous AUX buffers, for a bit more 
->       performance.
-> 
->  - 3) Doesn't really care.
-> 
-> So we do have #1, and it appears Yabin's usecase is #3?
+> [...]
 
-In Yabin's case, the AUX buffer work as a bounce buffer.  The hardware
-trace data is copied by a driver from low level's contiguous buffer to
-the AUX buffer.
+Here is the summary with links:
+  - [net-next] net: 802: Remove unused p8022 code
+    https://git.kernel.org/netdev/net-next/c/45bd443bfd86
 
-In this case we cannot benefit much from continguous AUX buffers.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks,
-Leo
+
 
