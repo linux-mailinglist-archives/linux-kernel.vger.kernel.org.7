@@ -1,210 +1,257 @@
-Return-Path: <linux-kernel+bounces-614238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B89AA967E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7DAA967F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AA11883FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0C0163324
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3091D27BF88;
-	Tue, 22 Apr 2025 11:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF1F27815B;
+	Tue, 22 Apr 2025 11:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="izL5No+a"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MecoZ7XJ"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911CC2AEE9;
-	Tue, 22 Apr 2025 11:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F11E3774
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322031; cv=fail; b=aw92U35RqtpiggQ70p/GOp5mzXRTT5gBj11RhjZkJRH1jb4K/7tkuK85RPPj3ETQvblDdxtSaBmxyiJi7Ic7bYItPMtteb2JKbGbHkflMFAj7/tWmw7SoK3V6PolVVVWtrqoBHTOtudjHempT5JhKm0Ft+W3CglpqvbO8+Kz1Yc=
+	t=1745322126; cv=fail; b=QV0Bfcz4W633YRIomPqO13uFPoym6nutLhph6Vk1fsRp82jZKHATpHHhmXc1sUyITN7VKQhFYY30XY2OieNDIsRF3DDSMWwqlZF8Om7whL1lnv5Px1j0ia4DaVYHvFviQUFZRDKb1O+bGYF0Cwlx49VBjaKLhfiWYS9j5py7jQE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322031; c=relaxed/simple;
-	bh=4ilMxYiLtTDS5alpIjGMmvaTG/rnjYZYOMAVnSJiIA0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RGRWeZ1Pepi6d87jiRWhjo3anP+H49s5LtvCoASTxjGk2chMpqrjAs04JQguFDAsW2DaQtXmOz1oJNCxvHPXRv8spO+CGfr5S3jarzLjlf6H6WJt53/Vw29pOPTBsTWRcbH31kAsBhvllhgavYvM+MuL060hLm5oW3my2wD03uw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=izL5No+a; arc=fail smtp.client-ip=40.107.92.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1745322126; c=relaxed/simple;
+	bh=DFYf5EBNdUZE5IJ0bZ4UotOB/VkxFeXnkzt+IMlPT3U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A03nK3RCL4G0gn+lg5HLBM71BqBLHQqg9XOQ/2kZWdV4ClrgQuXWadaCNSS8MbESfTnM2XRu4/ilzpHGNPO4Jl/L5vHHM8zdR2fKJ3dCzM//k4cawqvqzYATP/nLUDS9z0SkbBx82AaH9cpWtaLgpDEbxDRiUy3RfXzSQjRzPZ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MecoZ7XJ; arc=fail smtp.client-ip=40.107.244.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bOl3IZYn39DAPwe6v+HibLcMjHZ14a73PH9wH3o62gVooUqF1FB+TlbRDAvmBplRdSON6F4kA41xoWMxh3rb8ecz1iKQQZxCv0x98wnI8c7CIVG8D8ii2oYCQMIEDAjM9nERgKU/53LTzokdft0hXeUzzdmS0EecuFnmvii3IS/YlJgb3qryy5LdMEtPGKieFT+hAUrhjhkFseKCq8TtFSKOtxObgk/IOOh4/xsrCcgLyylhKzcZKmVtF+4NqMOy15pImBCkFilWjAdNEGHTIAbMyaozvyuJ+Q5nzkoeWxmHL4VHiBKBzrUpeN1Chk/QlQa8RrwlTCbCoh1ZJx2jOw==
+ b=ZCpP1NJKaUoOo3NKgu96Rj9vFZpaqXY+tuCdLzu+ZZmoK8Ia96Gm2aktdWkn0yke2WKpx/6DHO5VdPqf01P9NRHXrq6yGXT4p+e5W+rmZWmfD0ofIdNcmFn3hnsCp+8Ub0Q3WO2xPZHomACkh8MFOBaEEubLngx/Xby0vjhqgNvxhADCAXYRF2+VCFFDnSMP8O4NP5Eip04y0vokKKYGWZLK18DGHxLo8GrybypO9RdpZAs6r2TQ/9iGDPZQUETZUT24uluLjLlLvYbex2yZhdZ7uRXjY/ZK8p7B5bskQBzUbK09AfmDzFSnKJr4mABAYWIbOGx1AX8fkLblhJWrNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3moZLRMZJA/3c7zH0UWU6y/u1JINPZhz5StqFl50TYE=;
- b=QzmunKrltL4aVQWKZAhvljHjL6OwvkMhIxXaS3V8ah5YMaypmGcs5lEv1wtAZUQm7ZwRb0U1LgQghxhOaTdWPCh7XmE11uO48iq2DAU3w5oVEDjIJmY1zIaE8i1gesId+nEdGnbvn/WKQkS467QJ8AdTa4UHVVNnJfNEaSrCfOdHIx07KdBKQj6vQ0LgEm4jJlt/o1PPzzlt3jbizTKBN+KUjoQuAkqCIOS27Po+CW4xqxmKJyZTEJVmoqd/sOJD8CDlNCjI9U4G1KGeH1WmZ7+6gRHSd/JEVJ56wQ3z1rPOS2xmjYTsz9fHM736D3ZH6C/AJniG9Qbai+vmsbX6cA==
+ bh=HWzgdUvOUbxWo4OQPGsZvYzJ3arlF3NrDj2ScVqvOnM=;
+ b=KltJ64x5qnBwJsE8XSjgdFqnkTZ1IULzCSQdRu+oIdktMhzgctckGFFCsaDFaY2wsxmO8B2UgWm9GtZ7QiJrOyAa2XpenHeIINep18VvgzD3vES3wiP5yru7gIg8ACUaVv/mvOc/M0eP9KGQfcHJlTvvkep2GGgQ9vy/FfyVhINhE56apHHtkfRlDQC4yUQHOZ3wAkVjc5cW0xC7C2ikRNPyWNJrvexL1VBof+TJvtL55NvD4eO+o2I/u2p3qegFr5AkMnf5cwD1kg4DJZ9N6U/r61lX5eAXqt+3Oip8fd6v63wOO1HD8MhZIn2Y096OTvbRNxom/OGb5TxT95jJLA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3moZLRMZJA/3c7zH0UWU6y/u1JINPZhz5StqFl50TYE=;
- b=izL5No+azyq49H1D+uNT30T8Ye7v33qh7mJILbbBEXsjxyq281d7v53I/woZwMshfWXouAZnk/OAfFbiYaJBI8UhUwuAf23GQ6bV9cORf+jdoucPNvq4BIrw7a0t72NujW6g072cWECUOf7zzsZHXFfyU8GoaHz9jZ3E5P4Lc0tugPISJJtWfH4f2HkVG8nle986BdZveYRdfwEaiswwp9VlcRiKXdqQ0Az/A20SytTvr8mAhDbmxznLK7SnnO5owmUSaZ3V7rDCCTX/uLBDJGPIvlehP+9FQ0DxS15XU8EVAlm+DkEpH1ljL1O1ZnWOeBtw+dmCTLwfVJ4xjVEDZQ==
-Received: from DM6PR03CA0034.namprd03.prod.outlook.com (2603:10b6:5:40::47) by
- DS0PR12MB7656.namprd12.prod.outlook.com (2603:10b6:8:11f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.23; Tue, 22 Apr 2025 11:40:26 +0000
-Received: from CY4PEPF0000EE36.namprd05.prod.outlook.com
- (2603:10b6:5:40:cafe::12) by DM6PR03CA0034.outlook.office365.com
- (2603:10b6:5:40::47) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Tue,
- 22 Apr 2025 11:40:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE36.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:40:25 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Apr
- 2025 04:40:10 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Apr
- 2025 04:40:09 -0700
-Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
- mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via
- Frontend Transport; Tue, 22 Apr 2025 04:40:08 -0700
-From: Wayne Chang <waynec@nvidia.com>
-To: <waynec@nvidia.com>, <mathias.nyman@intel.com>,
-	<gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>
-CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jim Lin <jilin@nvidia.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH 1/1] usb: host: tegra: Prevent host controller crash when OTG port is used
-Date: Tue, 22 Apr 2025 19:40:01 +0800
-Message-ID: <20250422114001.126367-1-waynec@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+ bh=HWzgdUvOUbxWo4OQPGsZvYzJ3arlF3NrDj2ScVqvOnM=;
+ b=MecoZ7XJ895JIyybZsCDPUbNocaqPFsVJ3LaG5dAQaVILSMnVGAkPLSYMBoyT+2zmKH3So+WHacX6POoLU6CUaDgSPERYJin+2aTWcIhl7oX8YMRGa9PTu8desw3E6O3TWU1lQuZ8Bz5ysdfAfDOe3ft+1O8vdTldMqn7cctFbg=
+Received: from BY3PR03CA0029.namprd03.prod.outlook.com (2603:10b6:a03:39a::34)
+ by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Tue, 22 Apr
+ 2025 11:42:00 +0000
+Received: from SJ1PEPF00001CDC.namprd05.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::8d) by BY3PR03CA0029.outlook.office365.com
+ (2603:10b6:a03:39a::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
+ 22 Apr 2025 11:42:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CDC.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:42:00 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
+ 2025 06:41:55 -0500
+From: Shivank Garg <shivankg@amd.com>
+To: <shaggy@kernel.org>, <akpm@linux-foundation.org>
+CC: <willy@infradead.org>, <shivankg@amd.com>, <david@redhat.com>,
+	<wangkefeng.wang@huawei.com>, <jane.chu@oracle.com>, <ziy@nvidia.com>,
+	<donettom@linux.ibm.com>, <apopple@nvidia.com>,
+	<jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
+Subject: [PATCH V4 1/2] mm: add folio_migration_expected_refs() as inline function
+Date: Tue, 22 Apr 2025 11:40:03 +0000
+Message-ID: <20250422114000.15003-2-shivankg@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250422114000.15003-1-shivankg@amd.com>
+References: <20250422114000.15003-1-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE36:EE_|DS0PR12MB7656:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0fd7659-9ec2-482c-6feb-08dd81927988
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDC:EE_|LV3PR12MB9142:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57385a36-b3ea-4794-4676-08dd8192b1e0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t0QWlPUFiHfai0ckGzbHvjyCjwe7+LbamlATTWCJ3VaC5FUJMIA0iCqQG9RG?=
- =?us-ascii?Q?zshO+F6KiyjsFzDUbiAzo7/ApGfStps9+q3Dgf1+i/FLUrWLGdRbRbvvvzdo?=
- =?us-ascii?Q?k8CPqoG1Cyxm48aiVj0iQUpm16wkE2iyMVNBnSMYnqZyBemqzM3S1L3HkdLa?=
- =?us-ascii?Q?4sO/yhPK3kTiYsMHPjKgW++ahv/ZfMsPp59wlnCnNoJ2KpPcvDfYli1myPEK?=
- =?us-ascii?Q?LqXqLvYaCuGqMKlGFSRf8Id+cjBfwr3pqNbq6K2AifPLhyPuHNnSZ1wjbEsM?=
- =?us-ascii?Q?N4WzzlkO/nvbUvA6KpKJh5j22ze2BKy8gQPRU4k0Gb/VKZV7HsyZoP5qHBPp?=
- =?us-ascii?Q?/9fnvH7BAAu4pgpFZziRDBJPzfhYXTLiJQGQCmIOibddMsUNmG1T0/9maoyu?=
- =?us-ascii?Q?XMH459T93xTXeUV/YkJfnpAB0QJfgh9jR+v8VDuxr/3grymN3cL4ycdS1E3P?=
- =?us-ascii?Q?diKROP1Ugbd0HKZl62DoLKzPUA3pbeXLHMfdkESviYgiGAKp2ek8zt0/gt5E?=
- =?us-ascii?Q?wW2TheFtHDzmGtY16q+mPUEuo8Rz0TYm2cchePr3DFDg6EfxYc9tvVE0v1p3?=
- =?us-ascii?Q?I4MOcB6CHMbeGKI0o5uUV8TdMrB0NllXDhFdWpXe3aWBYgoh0gi2ruAJtRRS?=
- =?us-ascii?Q?GTM6tgiLMTe9W5XOVVgoxEdBN3ykorIGgZtOpEsZps8d9bvGErYCXfU9Sk44?=
- =?us-ascii?Q?vXn5Nj0vfJJZbFe2URrlBvZfBIXn3E8Jz4Y4Sch0dkC2nJ1FmB1WSshr049Z?=
- =?us-ascii?Q?UrNySJqjSLVIEWAuh+Wp9OftvyymIg06xbyOPf7KviS3crvqe/jQFxXMprym?=
- =?us-ascii?Q?Asi4FKDA5cBl4+ByUw0E2yKRBzq8aRsi1ym9uosnqUP4m0rg1q20Fto8f7rZ?=
- =?us-ascii?Q?/iUUnCbxXosBn+711Pqy27aRmvC5w39IlaD6Xeo31nMUYpP30cQVJY1yXOO6?=
- =?us-ascii?Q?s5q4xEN4fWD4Zxh9p3Fo4HuQqJFEth4zE+GM3BVgtSdFIu/gbbtdeoL9Etxz?=
- =?us-ascii?Q?cWjguDIh4k0UW1Rmhu2PN/xU3txegatEZW1qo0FYNmiRf0t+K8+xgTCT7gya?=
- =?us-ascii?Q?ulVKQC+KMKZSJDJhg2AZRDrs20j7uPn2kYKp1W3YdVWBgF2jGQuc1b+do8dt?=
- =?us-ascii?Q?opdLySdg3aCMCf1hn1MhHuaXdxqY0jM2jM3XpCQ6aQwAL6r7QS2588TRyZyx?=
- =?us-ascii?Q?b1q3Z2LluC9wtwy+FS3sYS8NEgeH6oQUSMXht3PqpbGvXMvFjw6mi2T3ffpJ?=
- =?us-ascii?Q?SDSEMjrrqTw6JReLO3EFPiq0yztZzJCBdWwrGIq5yXmqXvMVNuGXy9bMbYfw?=
- =?us-ascii?Q?saZTEW6zhOksiCPMsCcJNcwF1hBBQCbwlDWXxVsTxaBtzWgeUMYe/gGA/OUm?=
- =?us-ascii?Q?NNHRrc/5yvLGg/wXcw/bOYPRR9srRNMvP5nxsNQSpl97z8lGR7uexqIeptbt?=
- =?us-ascii?Q?wzOUm9H2lcCdZ64vxyfR0MY5/gXs95iJ4EVI11cH5plhNarVq28yVVnaS6+T?=
- =?us-ascii?Q?k2VuWY+rueKLblTGpaSVbcCAqIu+CPccNp6b?=
+	=?us-ascii?Q?NjIifRqHkFn6Lg2SqtPAatU1CXGC134tRSNeEhCuF3wDpYeRVaH2EoOXpxb0?=
+ =?us-ascii?Q?LBek2ScHpaAa4OfKC2/FwFwr7iFbGFVggtsrQqALNJjJdrSFheacoYxtX+zm?=
+ =?us-ascii?Q?h7bUDKRu0duosWXLzYX74tXRuBeKIuU1+5okFy7ZsGm4416NkaO6Ldk73ICz?=
+ =?us-ascii?Q?LYOTcFGci18anK8IiPTy0remPtDPLcDyUJbSiGwEoR8aVm6M/8v3P38pyw9l?=
+ =?us-ascii?Q?eDtszQQC8rwTM7IIzqTq+TbLA0qh+S16oBaAp4Yffn+559TEEyagAu7JGShR?=
+ =?us-ascii?Q?8FSpS+IexFz3aqgDaNs5AGItUbtDGl+g/6hye1PvWgX6DAY2EMmvhWwPKU9i?=
+ =?us-ascii?Q?qRF3BZrVzMIZZGsMuESRY8TcxxsNIO2hxauy/YrkbIesmAW5Lc4L9e5emsqt?=
+ =?us-ascii?Q?fDMbGIlqEOiCga1nqFpPfMcG2USoUV97ITPchpR0x+SbyjFZMcbfpXplwN+r?=
+ =?us-ascii?Q?6M0TarFWK9BmeBa0vTiqB0s+ZODmePB8qOqe7ZJkCOTpMA62HcN7uZntBXfB?=
+ =?us-ascii?Q?EFLycdEbVvn+bB5YJk4ad+qO7PJFeU9CFjoXeDjht5/Mwk8x/K33u4FoaLCQ?=
+ =?us-ascii?Q?5puMbFZ18mYvwY6YrDTCQLfxhsAwEeJGzmEWA2XyWj9M7mhbNO9+Wvqs2INZ?=
+ =?us-ascii?Q?DVvqYHXhprLVw+FHDm041s6nKf83QVkF3tSzHxliVJ93ucOAV6MkRRD1zf+P?=
+ =?us-ascii?Q?CwTGViTNSavR+Ppg/C8lWNHDjULAtxSPMHX/hWbdlmS0/lUfc8/bLOxTPOWo?=
+ =?us-ascii?Q?1prxd6ItvqcXGXLNh2Wy2K4JgtvmFRd1IlpA3o9OYkjKZ8kPJ/joEDjqOHbL?=
+ =?us-ascii?Q?bV/ij8/LWlNvMFSO+vBVdH+bBTvWluqqQ7Tx1s/G08BTmqqg76g3LngtG/nr?=
+ =?us-ascii?Q?knRKIeZ31oyD9ZNIDBAWinlGUsgCNFwhtXIvMli4z+rRgRopM5mMVJJw4rP6?=
+ =?us-ascii?Q?0KQqtgP0JR3WcgSdyNo11fKrXppHTgOdc18AK+nEMe8P7Eckdh7QeFoRmqZp?=
+ =?us-ascii?Q?npyK4tyqoVZbMLGkflsPVNTTUXNT9JKl3B5fYq0xEY57jo0N5nTlLIjhKw1A?=
+ =?us-ascii?Q?O/VlSig92P6+0HhD9nFRWZmPn6mzNqjH7SmU8vXJtLYaGsX3Noko7ls55MKV?=
+ =?us-ascii?Q?UF0cgOOBMCk2AcMC9oF7pJwlcPH+zeFYeis1NeirokBXslYWRvNlPu8q73hr?=
+ =?us-ascii?Q?3h02SbJ1j0t8MssNLQYnkFF3p20pmJsHFZtp1RR5Eu3j8kiBrMdvCfcEnnKq?=
+ =?us-ascii?Q?YqiO13qYht7dqKKwgAZa/hG4mHLJjDP+xIUMr4y7P12cZ7qLQ4h2LenJ8fJ8?=
+ =?us-ascii?Q?kPME4nx5yRqhm0ugOs45NyhOj/wd8pGXNYYT9yV2Lo0Awa6dxU0ebpM7Htnw?=
+ =?us-ascii?Q?4s4JUDTHSVBNjigm3PcIqeu1FLL+08U+hUACzKoyYakibaJQDXacywmG4TQv?=
+ =?us-ascii?Q?coDDF1NWaHGt0atuTZwTf0h7Yx+Y+zppyXKc+Jka1dWvKStO0fXsRJjJoeFq?=
+ =?us-ascii?Q?dMjd4spn6OWWsPe8eCeNL1YnPKpCs2QfuaLC?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:40:25.9577
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:42:00.4545
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0fd7659-9ec2-482c-6feb-08dd81927988
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57385a36-b3ea-4794-4676-08dd8192b1e0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE36.namprd05.prod.outlook.com
+	SJ1PEPF00001CDC.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7656
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
 
-From: Jim Lin <jilin@nvidia.com>
+Rename the previously static folio_expected_refs() to clarify its
+purpose and scope, making it an inline function
+folio_migration_expected_refs() to calculate expected folio references
+during migration. The function is only suitable for folios unmapped from
+page tables.
 
-When a USB device is connected to the OTG port, the tegra_xhci_id_work()
-routine transitions the PHY to host mode and calls xhci_hub_control()
-with the SetPortFeature command to enable port power.
-
-In certain cases, the XHCI controller may be in a low-power state
-when this operation occurs. If xhci_hub_control() is invoked while
-the controller is suspended, the PORTSC register may return 0xFFFFFFFF,
-indicating a read failure. This causes xhci_hc_died() to be triggered,
-leading to host controller shutdown.
-
-Example backtrace:
-[  105.445736] Workqueue: events tegra_xhci_id_work
-[  105.445747]  dump_backtrace+0x0/0x1e8
-[  105.445759]  xhci_hc_died.part.48+0x40/0x270
-[  105.445769]  tegra_xhci_set_port_power+0xc0/0x240
-[  105.445774]  tegra_xhci_id_work+0x130/0x240
-
-To prevent this, ensure the controller is fully resumed before
-interacting with hardware registers by calling pm_runtime_get_sync()
-prior to the host mode transition and xhci_hub_control().
-
-Fixes: f836e7843036 ("usb: xhci-tegra: Add OTG support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jim Lin <jilin@nvidia.com>
-Signed-off-by: Wayne Chang <waynec@nvidia.com>
+Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- drivers/usb/host/xhci-tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/migrate.h | 26 ++++++++++++++++++++++++++
+ mm/migrate.c            | 22 ++++------------------
+ 2 files changed, 30 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 22dc86fb5254..70ec36e4ff5f 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1364,6 +1364,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(tegra->padctl,
- 								    tegra->otg_usb2_port);
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index aaa2114498d6..083293a6d261 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -60,6 +60,32 @@ struct movable_operations {
+ /* Defined in mm/debug.c: */
+ extern const char *migrate_reason_names[MR_TYPES];
  
-+	pm_runtime_get_sync(tegra->dev);
- 	if (tegra->host_mode) {
- 		/* switch to host mode */
- 		if (tegra->otg_usb3_port >= 0) {
-@@ -1393,6 +1394,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 		}
++/**
++ * folio_migrate_expected_refs - Count expected references for an unmapped folio.
++ * @mapping: The address space the folio belongs to.
++ * @folio: The folio to check.
++ *
++ * Calculate the expected reference count for a folio during migration.
++ * This function is only suitable for folios that are unmapped from page tables
++ * (i.e., no references from page table mappings: !folio_mapped()).
++ *
++ * Return: The expected reference count
++ */
++static inline int folio_migration_expected_refs(struct address_space *mapping,
++		struct folio *folio)
++{
++	int refs = 1;
++
++	if (!mapping)
++		return refs;
++
++	refs += folio_nr_pages(folio);
++	if (folio_test_private(folio))
++		refs++;
++
++	return refs;
++}
++
+ #ifdef CONFIG_MIGRATION
  
- 		tegra_xhci_set_port_power(tegra, true, true);
-+		pm_runtime_mark_last_busy(tegra->dev);
- 
- 	} else {
- 		if (tegra->otg_usb3_port >= 0)
-@@ -1400,6 +1402,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 
- 		tegra_xhci_set_port_power(tegra, true, false);
- 	}
-+	pm_runtime_put_autosuspend(tegra->dev);
+ void putback_movable_pages(struct list_head *l);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 6e2488e5dbe4..6c785abce90e 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -445,20 +445,6 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
  }
+ #endif
  
- #if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_PM_SLEEP)
+-static int folio_expected_refs(struct address_space *mapping,
+-		struct folio *folio)
+-{
+-	int refs = 1;
+-	if (!mapping)
+-		return refs;
+-
+-	refs += folio_nr_pages(folio);
+-	if (folio_test_private(folio))
+-		refs++;
+-
+-	return refs;
+-}
+-
+ /*
+  * Replace the folio in the mapping.
+  *
+@@ -601,7 +587,7 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+ int folio_migrate_mapping(struct address_space *mapping,
+ 		struct folio *newfolio, struct folio *folio, int extra_count)
+ {
+-	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
++	int expected_count = folio_migration_expected_refs(mapping, folio) + extra_count;
+ 
+ 	if (folio_ref_count(folio) != expected_count)
+ 		return -EAGAIN;
+@@ -618,7 +604,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				   struct folio *dst, struct folio *src)
+ {
+ 	XA_STATE(xas, &mapping->i_pages, folio_index(src));
+-	int rc, expected_count = folio_expected_refs(mapping, src);
++	int rc, expected_count = folio_migration_expected_refs(mapping, src);
+ 
+ 	if (folio_ref_count(src) != expected_count)
+ 		return -EAGAIN;
+@@ -749,7 +735,7 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
+ 			   struct folio *src, void *src_private,
+ 			   enum migrate_mode mode)
+ {
+-	int rc, expected_count = folio_expected_refs(mapping, src);
++	int rc, expected_count = folio_migration_expected_refs(mapping, src);
+ 
+ 	/* Check whether src does not have extra refs before we do more work */
+ 	if (folio_ref_count(src) != expected_count)
+@@ -837,7 +823,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+ 		return migrate_folio(mapping, dst, src, mode);
+ 
+ 	/* Check whether page does not have extra refs before we do more work */
+-	expected_count = folio_expected_refs(mapping, src);
++	expected_count = folio_migration_expected_refs(mapping, src);
+ 	if (folio_ref_count(src) != expected_count)
+ 		return -EAGAIN;
+ 
 -- 
-2.25.1
+2.34.1
 
 
