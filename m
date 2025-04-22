@@ -1,561 +1,186 @@
-Return-Path: <linux-kernel+bounces-614789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996DBA97218
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB94A97226
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645A33BB626
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6821B61EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322E290BAA;
-	Tue, 22 Apr 2025 16:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FA22900B5;
+	Tue, 22 Apr 2025 16:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PRPnAUwv"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="astmXMRG"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1028F956;
-	Tue, 22 Apr 2025 16:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745338336; cv=fail; b=iDcDVK2Rb7qg9uFPFZmQb3bP6Ze8Z6efQAmXbYVrSYoR3qUrTZ0KUy+gmBgtX257DGsSsE0U0PC3d7tuPByqqnYcIrmO3z0k6RqHdzCay53qMVV7qITVevpuzAtM2nGR22L9pK+Z/P4L1rzJ54ZQw6MRVROESw8AFmVgpux73zk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745338336; c=relaxed/simple;
-	bh=/smjEqUq1qnf+gKnqHgXGhkiCazJQDVxL5O35kPHuSY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=t+FR/VnL9QravTkjn1fDAtRlTAA4W+wZGcWn0cvio9DXfF+xqwvb+CqlGkrpjavIiarqHHCm9uYYjArmBY2cVqYPClFS/MBZz7K8FeodXIgHgh+v6qmTz4ndXdeLbWg7pVgpRyS/0ah0240dvBILc+MKv+XYLmM592S0HYtlbCM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PRPnAUwv; arc=fail smtp.client-ip=40.107.243.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s3CZg+J/tW0la48jLmDq3aMYQuXe4EHZ4xaEy93f/rMWussDbjj4ai8TPOo90muN2Yc+eruNT5xE9npaEZgEYO7OQMdxBTEk1EfB2HnYxHVNyTJqJ5FDQFeKf6PcbHTWPcsLcd0NoQs+S3QFtyaG7+t8EBPZyzF0OxDv/UmZApPtXBM4I++SU/RYiV98rCb+axPDua9hdW4NVr8P6fqCZxi6Hu9DLY7otp2ALPCB1eJkDQMuFwCUjCu4KQ5pn+pyP8/2tCLhGkDb1dZvf2xxU8HnBYFlLi3dGT+KNFxoJTzoV58Xzm5jtiQ7Agaw6qkP/3/Bc3c4W1UrdAZqtUpbzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e3GQp4WIHI4eZGfD6ikJbfr7/Vix5UVYJxQ8F5qDjMg=;
- b=uezlHydSIEg3Gp7VhTsUo+DYErTy9Cog793MpfzwZJ+gkr0m3RETd93o/CQY6F2dPNx1ppeAi44SYB2JOUPCruwriWEYQtLIPSMpLyXb4xTBkQ4ZEVn3WoIR2T89VBv7uLg5Vfsi09a/KlksfFmVQ4bfJrfbQt045NF4auMZyHWbXz0lH/aVceMJrsxjVN5uoOG176TxoARFS25XXwFhpsamQTiw530ZIZcUXDYZWn2q44WgfMC/oUKZwXz13s1zw3vu0VTnha5HMUVNxBsTKH/1mepBP1SE/IeZAYkJg+J0azguEVuojteSuyojJ7dnOyCx9kDveZvf5F38QLLezg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e3GQp4WIHI4eZGfD6ikJbfr7/Vix5UVYJxQ8F5qDjMg=;
- b=PRPnAUwvhQIl+xoHmmpG4X1pcB4EJ/FZmJ+CFkXJ5a5CoCsHk9aU8eXebecHUzgpsUtugXy8QdhGQ1V9rU3XTu5szXSKh5bBv7iHmu3ygMXeVNgG6iJG8+AF8YeCsatO+6CfrBaVJ3xOm3jjThhMV67mm98bRPekbxgzErCv5fY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6429.namprd12.prod.outlook.com (2603:10b6:930:3b::16)
- by BL1PR12MB5777.namprd12.prod.outlook.com (2603:10b6:208:390::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Tue, 22 Apr
- 2025 16:12:11 +0000
-Received: from CY5PR12MB6429.namprd12.prod.outlook.com
- ([fe80::1b40:2f7f:a826:3fa0]) by CY5PR12MB6429.namprd12.prod.outlook.com
- ([fe80::1b40:2f7f:a826:3fa0%6]) with mapi id 15.20.8655.031; Tue, 22 Apr 2025
- 16:12:11 +0000
-Message-ID: <cacba7c5-9e06-4471-91ed-ee0fd6d73daa@amd.com>
-Date: Tue, 22 Apr 2025 12:12:08 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
-Content-Language: en-GB
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
- king.li@amd.com, dominic.antony@amd.com
-References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
- <3b2c9842-8910-4ab1-84af-01013289c3b8@kernel.org>
-From: "Nirujogi, Pratap" <pnirujog@amd.com>
-In-Reply-To: <3b2c9842-8910-4ab1-84af-01013289c3b8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0149.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:7e::13) To CY5PR12MB6429.namprd12.prod.outlook.com
- (2603:10b6:930:3b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD552900BB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745338400; cv=none; b=lLr62odFD1AkBpIinJfNRaX3vVYT4M97XM6S5Y84OZ9S4WQjF4DoLC1N/FzuuKob52o+Zq9zn6fInt/exzn4XbJIclX1xSoJs4jDnWRUyYY6NKwu3aeVCPtWrSYOIiWM7iGN1n9SqPydkY2bw+swthNBtz8EN4XGarvcVWb96H0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745338400; c=relaxed/simple;
+	bh=pbLKhbB4JL8XJ7YdSiOmPWI9WMEe67/YSYPH4sMBOo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mmjv+QXQX3IEF4W3JLeOY1qQMusCife8YIEu8Pz3Z1JfZiNBl4tOV2IE8Lpd0To8mRbtDj8VpZ5oD85GX09Cs1U0WnNwQ6x1BWY3SQqr5fgZT/joyNpbdH0dc/3TD+r+6mscWTDXlnMhPV0shwnX0B0BlipqQ47OBPIHylc1HWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=astmXMRG; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-226185948ffso61258395ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1745338397; x=1745943197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=600fD9G54NVOaVyktaguhJ2soOvTwp92HG4EGx1g2F4=;
+        b=astmXMRGSN7srM9usmq/Ds8srcQJJ3/04W8BYcEwPba3ePyqZOp146gVM/nLFP3I+W
+         vpRTKWynniIVBF5IrZqEp2VDczoajwyshDdGsldGB5zLOqGPNwOZ0AYCtzrT4OUR9ny2
+         /DpgxjMH54c/bE5PBNuiMDVXYARPJinSFeJzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745338397; x=1745943197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=600fD9G54NVOaVyktaguhJ2soOvTwp92HG4EGx1g2F4=;
+        b=AyII76UQOxUgBU8dm30o2PLYFMa91nWkmtqWXIkRtWWWzFued7jqSz/drWcB9pkUN0
+         L4vRXWAC9rq5g67uWn9Qph+Gf7thycHDkJDKv4W/O3i4G5DYu9p+xoMnvjohRJ39MXF+
+         PAkugWR6r7rUemS7xwhhZyhDdxhG8Tnmi847ldbmmHK1Xi5QM+a74tD42ZdciHdelg4B
+         2yfkUFqm7qn+8CU4+pf1ZKJp8SqvYd3TF3TY9aDrH2/g6LyfURqoMFpfcGfYEwmVkqTR
+         iXCg9eIaNtTVnNRe8G67pqHOf9VUKR49KpwtIYWFcDEQiTSFmTzF95ZRfmkFnjGE0WJd
+         4W+A==
+X-Gm-Message-State: AOJu0YzEZEGD3doOarZK+FPlXNvoLQRY8yVrvfv4GqVGWcCU5Y+OVW1H
+	QruYgNwUh8DVWSfHYV42NL2Nh46uKfMdoBVSAIW7TLON+9xnrsR1Cky96PST/PmZMtXIONYQ5W7
+	oxuPAvU8RtG6u3mCRXHK3H+61w4+ZGcBKzSRIl1LLRo7HVFamJi2F7hekFBhQuiJZ3Fg0/4yp/s
+	ne4IYgctW2d4pEtg+MDKD/ciunkWpkYg4C+/DEokCXIR2idapC
+X-Gm-Gg: ASbGncuGfKCNkgYAJXIi0eMElq3O6EKl8fYGA4Xae3YH3tEfD+HyD7cYw6136KFGGm9
+	Cgrjb0yWKuN3jK/ffWjn5AN3FN8SN1+3NZ/SwArlgmNHwq1CsUfXlatarfGt98MrtO+PvmbsUJX
+	RwtSgrhVrB/DJwIx7JqOlMKqEtfiNfCl0zbEgSDnZVzg4PFR+Ea9l3aaKt/barfgPiHg/qqMTZw
+	JgTLR6yJZ4rsZZV5cZt2yRmTQyqmO02UI4ozs37S+22Yio1fhEC5Hp76nJz3W39I1zAJ+YmDrMi
+	i35PXjHnISIhS5iQ/lE+mo+gr6Hx7Ge+MRQb3a3D2A/hVic/K/T5EGoQ60MuasgPxpxONJCZxHa
+	b+cy1HcEcoGNVF9fyNVqDh54QBm6P21xM
+X-Google-Smtp-Source: AGHT+IG4yc4cb3WLCu0YV3tQuWd6qB+0bI0V9npN8A4vdqCFBhKVqwsTx1FIXsxdSH/WoeELa5WdxQ==
+X-Received: by 2002:a17:903:19ed:b0:223:62f5:fd44 with SMTP id d9443c01a7336-22c53607f99mr272215925ad.40.1745338397363;
+        Tue, 22 Apr 2025 09:13:17 -0700 (PDT)
+Received: from localhost.localdomain (pool-173-49-113-140.phlapa.fios.verizon.net. [173.49.113.140])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb03d2sm87462375ad.142.2025.04.22.09.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 09:13:17 -0700 (PDT)
+From: Zack Rusin <zack.rusin@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Zack Rusin <zack.rusin@broadcom.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Doug Covelli <doug.covelli@broadcom.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 0/5] KVM: Improve VMware guest support
+Date: Tue, 22 Apr 2025 12:12:19 -0400
+Message-ID: <20250422161304.579394-1-zack.rusin@broadcom.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6429:EE_|BL1PR12MB5777:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d4e8a77-67c9-454e-2885-08dd81b86fee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WTRKaUk0QWIyMEVBUStmKzdhTy9xWXFCcnY4Qlc3d053T1VZeTZ0ZldITXBY?=
- =?utf-8?B?SThJYk5EOFRsb2M1S3hpNjIwcTJXL0NIQmtBQk53R1FrdXN4cjRzRFUzMkc0?=
- =?utf-8?B?N1dTQUNRNXJYNDBEVzFmM3p3Z0lSdVdVSEt2RmdJd1V5Tm5HUXB3alJEc3Ar?=
- =?utf-8?B?VWFMbjRtNGZTK01hZDZMTFlpc2lLeWduaUplSklLOHRrR2dPYWJIOTczOHF1?=
- =?utf-8?B?QTZBbEZhdmxxaUpIMmdqQmdvOEt4YS96QjR5aHNnSGFrdG02MHZ6SDUxZUtz?=
- =?utf-8?B?dEt5Tjc1YVZJUmR3QVdRUlVJVXdTaEdnZ3ZYWFZkV3RwOFBFR2lJaW9uS1ky?=
- =?utf-8?B?cThqdklPSFFEa0pwdkVwSGorVEJTRzgwMnZVcUpKcnNCMXdpSHY3d0xqVE1n?=
- =?utf-8?B?R3kyZFN0VzZnNHNIby8rRStPcjF6S3A3VXByWXpUVS9icSt5dnBPMHRVdmIw?=
- =?utf-8?B?RmlwSEZoL1NLWmNvOHlZYlVsTlJ2TTEzQ1RMdGoxKzBUQUkzdDNyNjRqeDBW?=
- =?utf-8?B?ZHhvbVV0bkd3QXRXV00xb3NwVmw2LzVaYjZtMFR4akVhaXZsL0VVc2ltSHlM?=
- =?utf-8?B?aGduZzhqRUY0Q0phT0ljLy9ZYkxkVC9kUGdtRHdRY1dsWXpubURuYmlnMVFC?=
- =?utf-8?B?RUZxMkx1SHFBN0hCL2tzZlJLQkZBSGFVNDRnN2Naamp4SnV0QnFiWEhiRUl0?=
- =?utf-8?B?ZExNYWQrWk54WFNtUXd6NHJFL09aSnViZkV3V1dDdXNmY1l3VjhHdWhZdFFt?=
- =?utf-8?B?SFdodnE1SmVVM1ZrbmdMaGFERFRSTmttTGx4QzE1aE9YSW5LRjY1Vy9rL2tV?=
- =?utf-8?B?ZElyNE9NMjh1dDZwVnNBZWJ1YW1DSVpFdkZmUlRnQW1zWGpwZUpVcnBsdEZa?=
- =?utf-8?B?VTJrRmloVEJTSmJRMkxoc05OY0dqTGNRTE1Va0JYSlc3RU85ek9VRlhkOGdN?=
- =?utf-8?B?ZnZnSnpZSWdESlU1aXY3TnB6NThFOE05dlMySFZGU1o2MU1DNzFQckFIZzNP?=
- =?utf-8?B?aXcxZzJPTE1VWXhPclNlVVNQREV0cHJLb0c3YndmWjh3S2wzNENyWUtrZ0ww?=
- =?utf-8?B?bXA0QTRsSWpKeXc3ZXkyVXBqZzM3ejUwSVdBMnlxM2ZjVFBTS0tKU3AwZkln?=
- =?utf-8?B?Ykd0VWtOMDlhS3ZnOHJKNGlwRzVpL2JzM3dxUGVmaUFQYXl4ekRTeEwzZEc2?=
- =?utf-8?B?aXNBaG1WQXM0MjZIbzlWN0dTeHdnSWpSZms3eVUvLzhETFpsR0pLMStQRzRV?=
- =?utf-8?B?MlNKeU42a3BmY0lpeXovbHprQk5XTEsvNmI1NjQ4dFpWcnlVOVFGQkJ6ZzNQ?=
- =?utf-8?B?a3BYeEdpUjk1bHcrUzMraTIvVU9OWDAxSm11c3hrK2dTQWhVNXAyU280NkI0?=
- =?utf-8?B?a0w2L3NJWW1LWVU2MkFTSUtJbEpoNU9KWEJSTWhQaW90NDhrREhHa09YVzRH?=
- =?utf-8?B?MzBmOVRSZFJNS0c0cGltMkRUZlVWMGdqcUFFZEpBc3o4Yi9qblNVeDZ1VWJr?=
- =?utf-8?B?NGdIdkdlQ1I2aWwvRnQxcmdTS3ZGazVTVHB0ZTJYMk85Zzljdm9rUWRINjM3?=
- =?utf-8?B?ZlR6RVVac1IzSjhMelBzSlFoblUxZSs5WjFiZkpVZ3EvMm0rZFVRcTJ1YmJY?=
- =?utf-8?B?dk1pTU9Jb3BQNzhvM3p3cFdvOTlYRWZvRnlreFdaeFBid3ZUNysvL1JiTmhK?=
- =?utf-8?B?K3h4bXc0THV2VzZzVVdRNnlDNnFXSUp6YnZoZmR2d1hrajl3WVNIYTdmeE9D?=
- =?utf-8?B?STcvaG0vNmRUL0NFellob1BDc2VibzNNR2tEWGs3NjViRG9tY2NaTVdMTHZV?=
- =?utf-8?B?cEtLOTA0TkZCTGxOQ3NSMXJwbHNRT3F1MmptT01SVWVwN3FwRUUzSkdJYW8x?=
- =?utf-8?B?K0NxVU5IN2p6WS80bTY3em5LMWNxVG50T3g2Q09Rb1lZdXlXVlZYQytUeERa?=
- =?utf-8?Q?LSigBVwlsNE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6429.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzV0QWFCZDFjUnFoSWtabnV0N3ZxTFBTUFRIZE1UaituaEdhNWNlbTlSMUV3?=
- =?utf-8?B?Rjd0ckZQU0d5eHVXWDNneGVNRjNVYkdURFkzYkoybzV0UkUrU0NkYkF3NndN?=
- =?utf-8?B?OUpFMEpSMU5Ic2xuTFVNdEU0VGpzcU1LMUVEa0ZTU2d2RVBBTGlndm9wTkZp?=
- =?utf-8?B?ZTQ2VHR2dWNEeW9tQXhYcEdrYmZ1ZDFzZExmSlp1djZaZEtwSkM0aUxXL1do?=
- =?utf-8?B?d3J0c2JLck1yVmhFbk90eERoWEdaU3llYmJPT3hyOTlPN1lUZ1RsVkxrSGp1?=
- =?utf-8?B?Yy9XTUhEU3FJSW05REM0WVA0K1FTa2JSdS8xUVVsUGhpNThyMyt1OEpPKytk?=
- =?utf-8?B?ZVVhTGUyd0xFdjU4QmYvbzNuZ2pQdFNzRndqOVJuMjZBRXpibjk1NVV4RUd2?=
- =?utf-8?B?ZStaM0lsMFhjL3VFbUY1N1J4ZlBwSXI2elJqYWovRWFWNGhNeldwYk9EQkZi?=
- =?utf-8?B?VW1GZGQvalZqTTlNcTdXcXJmbEx5M2FITXN2TzQrSEQ2ZXdodXY4ZDZWY3Zs?=
- =?utf-8?B?SGNEbEwyOGNONG5DQzBiMjVkM2RhdjZWWlJrNzVDTlNONUlzT0hGcGVubmlG?=
- =?utf-8?B?R1diMmlVMTh1eWtTQk0vaGhnSG1NekN4U1dMejJZSit0eGlQSG1RZnZwdHNm?=
- =?utf-8?B?UlhVTWdVbitSVklOcEJQcDliejBrTjc5ZXRQRkRqNU9yRXNvUlUwNGt5clB2?=
- =?utf-8?B?VFpMcEtZd1JQVzgyT3B2Nk5ScXVWWVhmTUlxdGlQNWRNcDQ2b1RUVnRaZytn?=
- =?utf-8?B?RXFRcG1LMEtneFRQTXVHeHBIeWVaTjVwTGN3NFhFWEdDWGowRFQwOW8wL1RF?=
- =?utf-8?B?L0VIWXpGSVI2ai9nYU0weDJnUUczK2JzVzhFaUpDREZ6WmN6aFI0ZUFDc2hG?=
- =?utf-8?B?dkw0SDJKZ1kyOXMyYk90SytvMHpJSkxoaWszRlVrcVdFQXhWcGtIbmFtTCtM?=
- =?utf-8?B?S3BRM2pwT2pyUzlsaFlDbXl3S1krUWFVR1FORXRzSWlEQldyRVZuWjA3alpZ?=
- =?utf-8?B?Tk1kL3p0czJERFBDZ0NtbmJMSDNwd0RJVmRyR3lGbVphcllvamFWVTdLbU5l?=
- =?utf-8?B?RTIxTUpSY0I1RFN5SnJYcVFibmowdmtzdnBLS1lTaXEzSG1yVDNuNmRvNkVP?=
- =?utf-8?B?ek5MblFPQjJhWXFnd1RyTjBHaGpnaG5zUGJFaFp2cmN1ZFZxRUhoOWFyNnBs?=
- =?utf-8?B?enY0RS9YVmhVelI0blpYdnBRWW5lNkdneGNZTEFxMzJPenJoaTNxVENldGZx?=
- =?utf-8?B?emtKNDZCeUhpM2o5VVRJSXpPUXQ2L2E3RWtYSXBFL1dUbW5zdzRaWndxdXVQ?=
- =?utf-8?B?a2dyQ3ZkQjUzNit2eXVBUlNHcGdGWEpkRUl0RG5OdEkzR1Z0Ukt0QVpqTjli?=
- =?utf-8?B?V0ZXd3drV1F0RTIxR1NQUkM2Y0h4cFo5TzVLempsQ0tzTW9EK25VSEJvY3RB?=
- =?utf-8?B?Y25qVlAvc2FpbytoVVRnS29jVmZUQzR2Tnh1QmE4K1plR3BnR0VueTh5TXda?=
- =?utf-8?B?aVpzSFRlUE5haFkxVVBLdHp6V1RwWURxTVd6eEtXaTZKMmhIblVNdVFrVnhT?=
- =?utf-8?B?TE1qd0kzVG1tbmZwcDRoanArN1pVOHhhNVJXcjRjVEwxbytlQjE4aVFRcWIx?=
- =?utf-8?B?ZHNMd3ZvRU5vVXZzMVdHb2JXd0pTclppV21ZY0xBSmxBa3BvenRMcXViR0xa?=
- =?utf-8?B?N2NGYUFaVlEyZEZ4L3kxalBQTjlmYjd2TWZ2cFlDOUp5V2Rqc0hGUjF1VXgv?=
- =?utf-8?B?WHE1Tmcvb1paVVdGbTZsbTBzYmJQa3lRaVB2QmkxMHRJT3h5QUNubVhvR05x?=
- =?utf-8?B?L0ltSjVVVFFoampaakJYY3EzeWJNREhRL2w5ZHQ3Uk8rd3BSajFCSlJJUytX?=
- =?utf-8?B?eTFpV0tNTDdPdjczcGlhcHZTdW05cGRsQnp5T2cwOEhpajlKZzVEaVJpdG5T?=
- =?utf-8?B?MC93WTFCNVBKM29vc0dEMXJiNDdQQzRKWStEOG9oSWtGZjF5cUQwWnpKZ0Y0?=
- =?utf-8?B?dWlhamZUY09NUlZtNy9aWUtLd3FLOU9pZ1hZVWxLYm1HRWVlNHJJUEhyc1d5?=
- =?utf-8?B?RXNFZlBpTVd5S3NCWE9Zdzk4VWpPYnJodkM4N3RRZ3NHSk1JV2JGN0MzM0ZU?=
- =?utf-8?Q?m/jppa7b5/3Cs65h3/9dYU2t6?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4e8a77-67c9-454e-2885-08dd81b86fee
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6429.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 16:12:11.2273
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/jm+FRghVIfrj80/wUtAwdqeFZYijiuBxz1esdnI3yKyweBTnmn0NIqJt1dg205PmR1qGpLACGhR6eJXLExsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5777
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+This is the second version of a series that lets us run VMware
+Workstation on Linux on top of KVM.
 
-Please accept my apologies for the delayed response to your review comments.
+The most significant change in this series is the introduction of
+CONFIG_KVM_VMWARE which is, in general, a nice cleanup for various
+bits of VMware compatibility code that have been scattered around KVM.
+(first patch)
 
-Thanks,
-Pratap
+The rest of the series builds upon the VMware platform to implement
+features that are needed to run VMware guests without any
+modifications on top of KVM:
+- ability to turn on the VMware backdoor at runtime on a per-vm basis
+(used to be a kernel boot argument only)
+- support for VMware hypercalls - VMware products have a huge
+collection of hypercalls, all of which are handled in userspace,
+- support for handling legacy VMware backdoor in L0 in nested configs
+- in cases where we have WS running a Windows VBS guest, the L0 would
+be KVM, L1 Hyper-V so by default VMware Tools backdoor calls endup in
+Hyper-V which can not handle them, so introduce a cap to let L0 handle
+those.
 
-On 3/1/2025 8:26 AM, Krzysztof Kozlowski wrote:
-> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
-> 
-> 
-> On 28/02/2025 17:45, Pratap Nirujogi wrote:
->>   config I2C_DESIGNWARE_AMDPSP
->>        bool "AMD PSP I2C semaphore support"
->>        depends on ACPI
->> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
->> index 1c2a4510abe4..cfe53038df69 100644
->> --- a/drivers/i2c/busses/Makefile
->> +++ b/drivers/i2c/busses/Makefile
->> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)                       += i2c-designware-platform.o
->>   i2c-designware-platform-y                            := i2c-designware-platdrv.o
->>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)      += i2c-designware-amdpsp.o
->>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
->> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
->>   obj-$(CONFIG_I2C_DESIGNWARE_PCI)                     += i2c-designware-pci.o
->>   i2c-designware-pci-y                                 := i2c-designware-pcidrv.o
->>   obj-$(CONFIG_I2C_DIGICOLOR)  += i2c-digicolor.o
->> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
->> new file mode 100644
->> index 000000000000..dc90510a440b
->> --- /dev/null
->> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
->> @@ -0,0 +1,266 @@
->> +/* SPDX-License-Identifier: MIT */
->> +/*
->> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
->> + *
->> + * Permission is hereby granted, free of charge, to any person obtaining a
->> + * copy of this software and associated documentation files (the "Software"),
->> + * to deal in the Software without restriction, including without limitation
->> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
->> + * and/or sell copies of the Software, and to permit persons to whom the
->> + * Software is furnished to do so, subject to the following conditions:
->> + *
->> + * The above copyright notice and this permission notice shall be included in
->> + * all copies or substantial portions of the Software.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
->> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
->> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
->> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + * OTHER DEALINGS IN THE SOFTWARE.
-> 
-> Don't add custom license boilerplate.
-> 
-Thanks. Will remove it in V2.
+The final change in the series is a kselftest of the VMware hypercall
+functionality.
 
-> 
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/dmi.h>
->> +#include <linux/err.h>
->> +#include <linux/errno.h>
->> +#include <linux/i2c.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/property.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset.h>
->> +#include <linux/sched.h>
->> +#include <linux/slab.h>
->> +#include <linux/suspend.h>
->> +#include <linux/units.h>
->> +
->> +#include "i2c-designware-core.h"
->> +#include "i2c-designware-amdisp.h"
->> +
->> +#define AMD_ISP_I2C_INPUT_CLK                        100 //100 Mhz
->> +
->> +#define to_amd_isp_i2c_dev(dev) \
->> +     ((struct amd_isp_i2c_dev *)container_of(dev, struct amd_isp_i2c_dev, dw_dev))
-> 
-> Why do you need to cast? To drop const? That's poor coding.
-> 
-Thanks. Will remove it in V2.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Doug Covelli <doug.covelli@broadcom.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
 
->> +
->> +struct amd_isp_i2c_dev {
->> +     struct dw_i2c_dev       dw_dev;
->> +};
->> +
->> +static void amd_isp_dw_i2c_plat_pm_cleanup(struct dw_i2c_dev *dev)
->> +{
->> +     pm_runtime_disable(dev->dev);
->> +
->> +     if (dev->shared_with_punit)
->> +             pm_runtime_put_noidle(dev->dev);
->> +}
->> +
->> +static u32 amd_isp_dw_i2c_get_clk_rate(struct dw_i2c_dev *dev)
->> +{
->> +     return AMD_ISP_I2C_INPUT_CLK * 1000;
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
->> +{
->> +     struct i2c_adapter *adap;
->> +     struct amd_isp_i2c_dev *isp_i2c_dev;
->> +     struct dw_i2c_dev *dev;
->> +     int ret;
->> +
->> +     isp_i2c_dev = devm_kzalloc(&pdev->dev, sizeof(struct amd_isp_i2c_dev),
-> 
-> sizeof(*)
-> 
->> +                                GFP_KERNEL);
->> +     if (!isp_i2c_dev)
->> +             return -ENOMEM;
->> +
->> +     dev = &isp_i2c_dev->dw_dev;
->> +     dev->dev = &pdev->dev;
->> +
->> +     /**
-> 
-> Not a kerneldoc.
-> 
-> Please run standard kernel tools for static analysis, like coccinelle,
-> smatch and sparse, and fix reported warnings. Also please check for
-> warnings when building with W=1. Most of these commands (checks or W=1
-> build) can build specific targets, like some directory, to narrow the
-> scope to only your code. The code here looks like it needs a fix. Feel
-> free to get in touch if the warning is not clear.
-> 
-Thanks. Will run the suggested tools and fix the warnings reported in V2.
+Zack Rusin (5):
+  KVM: x86: Centralize KVM's VMware code
+  KVM: x86: Allow enabling of the vmware backdoor via a cap
+  KVM: x86: Add support for VMware guest specific hypercalls
+  KVM: x86: Add support for legacy VMware backdoors in nested setups
+  KVM: selftests: x86: Add a test for KVM_CAP_X86_VMWARE_HYPERCALL
 
->> +      * Use the polling mode to send/receive the data, because
->> +      * no IRQ connection from ISP I2C
->> +      */
->> +     dev->flags |= ACCESS_POLLING;
->> +     platform_set_drvdata(pdev, dev);
->> +
->> +     dev->base = devm_platform_ioremap_resource(pdev, 0);
->> +     if (IS_ERR(dev->base))
->> +             return PTR_ERR(dev->base);
->> +
->> +     ret = isp_power_set(true);
->> +     if (ret) {
->> +             dev_err(dev->dev, "unable to turn on the amdisp i2c power:%d\n", ret);
-> 
-> Syntax is return dev_err_probe()
-> 
-Thanks. Will update in V2.
+ Documentation/virt/kvm/api.rst                |  86 +++++++-
+ MAINTAINERS                                   |   9 +
+ arch/x86/include/asm/kvm_host.h               |  13 ++
+ arch/x86/kvm/Kconfig                          |  16 ++
+ arch/x86/kvm/Makefile                         |   1 +
+ arch/x86/kvm/emulate.c                        |  11 +-
+ arch/x86/kvm/kvm_vmware.c                     |  85 ++++++++
+ arch/x86/kvm/kvm_vmware.h                     | 189 ++++++++++++++++++
+ arch/x86/kvm/pmu.c                            |  39 +---
+ arch/x86/kvm/pmu.h                            |   4 -
+ arch/x86/kvm/svm/nested.c                     |   6 +
+ arch/x86/kvm/svm/svm.c                        |  10 +-
+ arch/x86/kvm/vmx/nested.c                     |   6 +
+ arch/x86/kvm/vmx/vmx.c                        |   5 +-
+ arch/x86/kvm/x86.c                            |  74 +++----
+ arch/x86/kvm/x86.h                            |   2 -
+ include/uapi/linux/kvm.h                      |  27 +++
+ tools/include/uapi/linux/kvm.h                |   3 +
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../selftests/kvm/x86/vmware_hypercall_test.c | 121 +++++++++++
+ 20 files changed, 614 insertions(+), 94 deletions(-)
+ create mode 100644 arch/x86/kvm/kvm_vmware.c
+ create mode 100644 arch/x86/kvm/kvm_vmware.h
+ create mode 100644 tools/testing/selftests/kvm/x86/vmware_hypercall_test.c
 
->> +             return ret;
->> +     }
->> +
->> +     dev->get_clk_rate_khz = amd_isp_dw_i2c_get_clk_rate;
->> +     ret = i2c_dw_fw_parse_and_configure(dev);
->> +     if (ret)
->> +             goto exit;
->> +
->> +     i2c_dw_configure(dev);
->> +
->> +     adap = &dev->adapter;
->> +     adap->owner = THIS_MODULE;
->> +     ACPI_COMPANION_SET(&adap->dev, ACPI_COMPANION(&pdev->dev));
->> +     adap->dev.of_node = pdev->dev.of_node;
->> +     /* arbitrary large number to avoid any conflicts */
->> +     adap->nr = 99;
->> +
->> +     if (dev->flags & ACCESS_NO_IRQ_SUSPEND) {
->> +             dev_pm_set_driver_flags(&pdev->dev,
->> +                                     DPM_FLAG_SMART_PREPARE);
->> +     } else {
->> +             dev_pm_set_driver_flags(&pdev->dev,
->> +                                     DPM_FLAG_SMART_PREPARE |
->> +                                     DPM_FLAG_SMART_SUSPEND);
->> +     }
->> +
->> +     device_enable_async_suspend(&pdev->dev);
->> +
->> +     /* The code below assumes runtime PM to be disabled. */
->> +     WARN_ON(pm_runtime_enabled(&pdev->dev));
-> 
-> And how it could be enabled? Drop or fix your driver.
-> 
-Thanks. Will drop this in V2.
-
->> +
->> +     pm_runtime_dont_use_autosuspend(&pdev->dev);
->> +     pm_runtime_set_active(&pdev->dev);
->> +
->> +     if (dev->shared_with_punit)
->> +             pm_runtime_get_noresume(&pdev->dev);
->> +
->> +     pm_runtime_enable(&pdev->dev);
->> +
->> +     ret = i2c_dw_probe(dev);
->> +     if (ret) {
->> +             dev_err(dev->dev, "i2c_dw_probe failed %d\n", ret);
-> 
-> Use dev_err_probe()
-> 
-Thanks. Will update in V2.
-
->> +             goto exit_probe;
->> +     }
->> +
->> +     isp_power_set(false);
->> +     return ret;
->> +
->> +exit_probe:
->> +     amd_isp_dw_i2c_plat_pm_cleanup(dev);
->> +     isp_power_set(false);
->> +exit:
->> +     isp_power_set(false);
->> +     return ret;
->> +}
->> +
->> +static void amd_isp_dw_i2c_plat_remove(struct platform_device *pdev)
->> +{
->> +     struct dw_i2c_dev *dev = platform_get_drvdata(pdev);
->> +
->> +     pm_runtime_get_sync(&pdev->dev);
->> +
->> +     i2c_del_adapter(&dev->adapter);
->> +
->> +     i2c_dw_disable(dev);
->> +
->> +     pm_runtime_dont_use_autosuspend(&pdev->dev);
->> +     pm_runtime_put_sync(&pdev->dev);
->> +     amd_isp_dw_i2c_plat_pm_cleanup(dev);
->> +
->> +     reset_control_assert(dev->rst);
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_prepare(struct device *dev)
->> +{
->> +     /*
->> +      * If the ACPI companion device object is present for this device, it
->> +      * may be accessed during suspend and resume of other devices via I2C
->> +      * operation regions, so tell the PM core and middle layers to avoid
->> +      * skipping system suspend/resume callbacks for it in that case.
->> +      */
->> +     return !has_acpi_companion(dev);
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_runtime_suspend(struct device *dev)
->> +{
->> +     struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
->> +
->> +     if (i_dev->shared_with_punit)
->> +             return 0;
->> +
->> +     i2c_dw_disable(i_dev);
->> +     i2c_dw_prepare_clk(i_dev, false);
->> +
->> +     return 0;
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_suspend(struct device *dev)
->> +{
->> +     struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
->> +
->> +     i2c_mark_adapter_suspended(&i_dev->adapter);
->> +
->> +     return amd_isp_dw_i2c_plat_runtime_suspend(dev);
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_runtime_resume(struct device *dev)
->> +{
->> +     struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
->> +
->> +     if (!i_dev->shared_with_punit)
->> +             i2c_dw_prepare_clk(i_dev, true);
->> +
->> +     i_dev->init(i_dev);
->> +
->> +     return 0;
->> +}
->> +
->> +static int amd_isp_dw_i2c_plat_resume(struct device *dev)
->> +{
->> +     struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
->> +
->> +     amd_isp_dw_i2c_plat_runtime_resume(dev);
->> +     i2c_mark_adapter_resumed(&i_dev->adapter);
->> +
->> +     return 0;
->> +}
->> +
->> +static const struct dev_pm_ops amd_isp_dw_i2c_dev_pm_ops = {
->> +     .prepare = pm_sleep_ptr(amd_isp_dw_i2c_plat_prepare),
->> +     LATE_SYSTEM_SLEEP_PM_OPS(amd_isp_dw_i2c_plat_suspend, amd_isp_dw_i2c_plat_resume)
->> +     RUNTIME_PM_OPS(amd_isp_dw_i2c_plat_runtime_suspend, amd_isp_dw_i2c_plat_runtime_resume, NULL)
->> +};
->> +
->> +/* Work with hotplug and coldplug */
->> +MODULE_ALIAS("platform:amd_isp_i2c_designware");
->> +
->> +static struct platform_driver amd_isp_dw_i2c_driver = {
->> +     .probe = amd_isp_dw_i2c_plat_probe,
->> +     .remove = amd_isp_dw_i2c_plat_remove,
->> +     .driver         = {
->> +             .name   = "amd_isp_i2c_designware",
->> +             .pm     = pm_ptr(&amd_isp_dw_i2c_dev_pm_ops),
->> +     },
->> +};
->> +
->> +static int __init amd_isp_dw_i2c_init_driver(void)
->> +{
->> +     return platform_driver_register(&amd_isp_dw_i2c_driver);
->> +}
->> +subsys_initcall(amd_isp_dw_i2c_init_driver);
-> 
-> Why this cannot be standard module initcall? This is ISP, not a critical
-> boot component.
-> 
-Thanks. It need not be subsys_initcall. Will use module_init in V2.
-
->> +
->> +static void __exit amd_isp_dw_i2c_exit_driver(void)
->> +{
->> +     platform_driver_unregister(&amd_isp_dw_i2c_driver);
->> +}
->> +module_exit(amd_isp_dw_i2c_exit_driver);
->> +
->> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
->> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
->> +MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter in AMD ISP");
->> +MODULE_LICENSE("GPL");
->> +MODULE_IMPORT_NS("I2C_DW");
->> +MODULE_IMPORT_NS("I2C_DW_COMMON");
->> +MODULE_LICENSE("GPL and additional rights");
->> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.h b/drivers/i2c/busses/i2c-designware-amdisp.h
->> new file mode 100644
->> index 000000000000..f98661fdaedf
->> --- /dev/null
->> +++ b/drivers/i2c/busses/i2c-designware-amdisp.h
->> @@ -0,0 +1,24 @@
->> +/* SPDX-License-Identifier: MIT */
->> +/*
->> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
->> + *
->> + * Permission is hereby granted, free of charge, to any person obtaining a
->> + * copy of this software and associated documentation files (the "Software"),
->> + * to deal in the Software without restriction, including without limitation
->> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
->> + * and/or sell copies of the Software, and to permit persons to whom the
->> + * Software is furnished to do so, subject to the following conditions:
->> + *
->> + * The above copyright notice and this permission notice shall be included in
->> + * all copies or substantial portions of the Software.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
->> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
->> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
->> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + * OTHER DEALINGS IN THE SOFTWARE.
-> 
-> Don't add custom license boilerplate.
-> 
-Thanks. Will remove it in V2.
-
->> + */
->> +
->> +int isp_power_set(int on);
-> 
-> 
-> Best regards,
-> Krzysztof
+-- 
+2.48.1
 
 
