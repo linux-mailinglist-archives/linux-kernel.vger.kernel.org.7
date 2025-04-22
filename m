@@ -1,193 +1,171 @@
-Return-Path: <linux-kernel+bounces-614360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10877A96A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31943A96A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BCE1777E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D612189F775
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D60327E1BA;
-	Tue, 22 Apr 2025 12:39:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3670E25FA0B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7DE27D79B;
+	Tue, 22 Apr 2025 12:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YHAcsb4f"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E3A1F03C9;
+	Tue, 22 Apr 2025 12:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325558; cv=none; b=bs3UySvClV01N97ZGKM/urA1S2wPS8mfEYBAYdKZ596f1+9zUXV0lNsJcq1E+AkJte+v2BjLPSNz+HeZ/Jef2wstdh7MMV9JGHRF6xVXPYly7hRQXWOwkKADQdBJ6X8uogBvLjyrCaA5+eeNs//EJtZ72Ji7USQdY2vPG3WQ03k=
+	t=1745325620; cv=none; b=hfY1NbJaSw+zK6sKAW9b4VEBc+2PGzbzmLe0hDzjkMTvfAfnwdkEh9yiR/R1bNfwUgwrIuivxoaSZ1oIAv+t4HIWMdnYpjLakIgmT7Q674QKzt0phn6fARr4fCGa2EIPJ9LSZA/CPdhUEwHQ9Ww7yxFa5t7bzD9CF91mt4j4TAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325558; c=relaxed/simple;
-	bh=MBFWwb46UQQNdOkUo56hW2ui2l2iYYiZr5TxJR/PPC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MIY/AwZsGyohHQ7ISm0hjH9w/orpkmu9RMD/6JM0FTdoXbYGcgPDf0rklygtXw+0hjkVcNLPgEdh5arASiBn6D/oK52h69Z+7UEZjJuCg5wRCINYmEBaONGdYXQCxqFCu3SDoL8yHqi8VUiuXzMxuV8L2OR6WU39NZ8eUAyZMgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u7Cu0-0001wL-Kp; Tue, 22 Apr 2025 14:39:04 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u7Ctz-001YQm-1Y;
-	Tue, 22 Apr 2025 14:39:03 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u7Ctz-008TQe-1I;
-	Tue, 22 Apr 2025 14:39:03 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v2 4/4] net: selftests: add PHY loopback tests with HW checksum offload
-Date: Tue, 22 Apr 2025 14:39:02 +0200
-Message-Id: <20250422123902.2019685-5-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422123902.2019685-1-o.rempel@pengutronix.de>
-References: <20250422123902.2019685-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1745325620; c=relaxed/simple;
+	bh=NIuIlUy4k6u9NS6FjH6cZrJcUpIVYRy6mOi10nTfL40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u6W23t1fiJtNZyRixM+n0rmPuZ9pAYk4FA9KrEjVSChDeTWb7Zfak842wYzTCsWBybl8bV9HWO20dhC6gWVc5bnMs4Xapbiq4tFcFbhcr2FelGwNEBYjQGGg4IL8oyn42WpE5z/elbA39vfF+Iqt5KQVq2Ga2atTcYHGlwMwDXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YHAcsb4f; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=cTzRbkM6e3CdpYQF8r9G7TR3PmD/Whi+UBdMJ87yaKg=;
+	b=YHAcsb4fCK+mVs+1/RIOX/B33lTJigwJNK+2WBDz1r5I+AClbmRQdt8ZlhkDh+
+	ix5NqovTJVvcMtB0lpVnPFfzXQv4sGRMwQAxFP84cihao5McHAVGDyoW+cePu805
+	xoqmadSKC3tc/MfUt7C0Kzd+dxrXbqhDuLCy/zNivic4A=
+Received: from [192.168.142.52] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wC3NeXvjQdo93IeBw--.12901S2;
+	Tue, 22 Apr 2025 20:39:12 +0800 (CST)
+Message-ID: <047950c0-fcf0-428a-8ca1-dff0a6f944cd@163.com>
+Date: Tue, 22 Apr 2025 20:39:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] PCI: dw-rockchip: Reorganize register and bitfield
+ definitions
+To: Niklas Cassel <cassel@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250422112830.204374-1-18255117159@163.com>
+ <20250422112830.204374-3-18255117159@163.com> <aAeL_Wr42ETm7S96@ryzen>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aAeL_Wr42ETm7S96@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wC3NeXvjQdo93IeBw--.12901S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWFW7ArW8CF18Xr4kuF4UArb_yoWrJrW8pa
+	98JFySkrs8J3y5Cw1vg3Z8JFyxtF4fKFWjgrWSgrWUC3Z5A3W8Gr18KF15WFy2qr4kur1S
+	93s8W34agFZxCrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ul-erUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhQ3o2gHi1dc-QAAso
 
-Introduce two new PHY loopback tests that validate hardware checksum
-offload functionality using UDP and TCP packets. These tests set
-csum_mode = CHECKSUM_PARTIAL, allowing the NIC to compute transport
-checksums.
 
-Tests are only executed if the device advertises NETIF_F_HW_CSUM
-support. If not, they are skipped with -EOPNOTSUPP.
 
-Also register the tests under descriptive names in the test list.
+On 2025/4/22 20:30, Niklas Cassel wrote:
+> On Tue, Apr 22, 2025 at 07:28:29PM +0800, Hans Zhang wrote:
+>> Register definitions were scattered with ambiguous names (e.g.,
+>> PCIE_RDLH_LINK_UP_CHGED in PCIE_CLIENT_INTR_STATUS_MISC) and lacked
+>> hierarchical grouping. Magic values for bit operations reduced code
+>> clarity.
+>>
+>> Group registers and their associated bitfields logically. This improves
+>> maintainability and aligns the code with hardware documentation.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 42 +++++++++++--------
+>>   1 file changed, 24 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> index fd5827bbfae3..cdc8afc6cfc1 100644
+>> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> @@ -8,6 +8,7 @@
+>>    * Author: Simon Xue <xxm@rock-chips.com>
+>>    */
+>>   
+>> +#include <linux/bitfield.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/gpio/consumer.h>
+>>   #include <linux/irqchip/chained_irq.h>
+>> @@ -34,30 +35,35 @@
+>>   
+>>   #define to_rockchip_pcie(x) dev_get_drvdata((x)->dev)
+>>   
+>> -#define PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
+>> -#define PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
+>> -#define PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
+>> -#define PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
+>> -#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x04
+>> +#define PCIE_CLIENT_GENERAL_CONTROL	0x0
+>> +#define  PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
+>> +#define  PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
+>> +#define  PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
+>> +#define  PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
+>> +
+>> +#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x4
+>> +#define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
+>> +
+>>   #define PCIE_CLIENT_INTR_STATUS_MISC	0x10
+>> +#define  PCIE_RDLH_LINK_UP_CHGED	BIT(1)
+>> +#define  PCIE_LINK_REQ_RST_NOT_INT	BIT(2)
+>> +
+>> +#define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
+>>   #define PCIE_CLIENT_INTR_MASK_MISC	0x24
+>> +
+>>   #define PCIE_CLIENT_POWER		0x2c
+>> +#define  PME_READY_ENTER_L23		BIT(3)
+>> +
+>>   #define PCIE_CLIENT_MSG_GEN		0x34
+>> -#define PME_READY_ENTER_L23		BIT(3)
+>> -#define PME_TURN_OFF			(BIT(4) | BIT(20))
+>> -#define PME_TO_ACK			(BIT(9) | BIT(25))
+>> -#define PCIE_SMLH_LINKUP		BIT(16)
+>> -#define PCIE_RDLH_LINKUP		BIT(17)
+>> -#define PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
+> 
+> This patch removes PCIE_LINKUP, without adding it somewhere else
+> so I don't think this patch will compile.
+> 
+> I think the removal of this line has to be in patch 3/3.
+> 
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- net/core/selftests.c | 80 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+Hi Niklas,
 
-diff --git a/net/core/selftests.c b/net/core/selftests.c
-index 591686978dd7..e751dc677858 100644
---- a/net/core/selftests.c
-+++ b/net/core/selftests.c
-@@ -539,6 +539,79 @@ static int net_test_phy_loopback_tcp(struct net_device *ndev)
- 	return __net_test_loopback(ndev, &attr);
- }
- 
-+/**
-+ * net_test_phy_loopback_udp_hwcsum - PHY loopback test using UDP with HW
-+ *                                    checksum
-+ * @ndev: The network device to test
-+ *
-+ * Sends and receives a UDP packet through the device's internal PHY loopback
-+ * path. The packet is configured for hardware checksum offload
-+ * (CHECKSUM_PARTIAL), allowing the NIC to compute the transport checksum.
-+ *
-+ * Expected packet path:
-+ *   Test code → MAC driver → MAC HW → xMII → PHY →
-+ *   internal PHY loopback → xMII → MAC HW → MAC driver → test code
-+ *
-+ * The test frame includes Ethernet (14B), IPv4 (20B), UDP (8B), and a
-+ * small payload (13B), totaling 55 bytes before MAC padding/FCS. Most
-+ * MACs pad this to the minimum Ethernet payload (60 bytes before FCS).
-+ *
-+ * If the device does not support NETIF_F_HW_CSUM, the test is skipped
-+ * and -EOPNOTSUPP is returned.
-+ *
-+ * Returns 0 on success, or negative error code on failure.
-+ */
-+static int net_test_phy_loopback_udp_hwcsum(struct net_device *ndev)
-+{
-+	struct net_packet_attrs attr = { };
-+
-+	if (!(ndev->features & NETIF_F_HW_CSUM))
-+		return -EOPNOTSUPP;
-+
-+	attr.dst = ndev->dev_addr;
-+	attr.tcp = false;
-+	attr.csum_mode = NET_TEST_CHECKSUM_PARTIAL;
-+
-+	return __net_test_loopback(ndev, &attr);
-+}
-+
-+/**
-+ * net_test_phy_loopback_tcp_hwcsum - PHY loopback test using TCP with HW
-+ *                                    checksum
-+ * @ndev: The network device to test
-+ *
-+ * Sends and receives a TCP packet through the device's internal PHY loopback
-+ * path. The packet is configured for hardware checksum offload
-+ * (CHECKSUM_PARTIAL), allowing the NIC to compute the transport checksum.
-+ *
-+ * Expected packet path:
-+ *   Test code → MAC driver → MAC HW → xMII → PHY →
-+ *   internal PHY loopback → xMII → MAC HW → MAC driver → test code
-+ *   (via packet_type handler)
-+ *
-+ * The test frame includes Ethernet (14B), IPv4 (20B), TCP (20B),
-+ * and a small payload (13B), totaling 67 bytes before FCS.
-+ * No additional padding is required.
-+ *
-+ * If the device does not support NETIF_F_HW_CSUM, the test is skipped
-+ * and -EOPNOTSUPP is returned.
-+ *
-+ * Returns 0 on success, or negative error code on failure.
-+ */
-+static int net_test_phy_loopback_tcp_hwcsum(struct net_device *ndev)
-+{
-+	struct net_packet_attrs attr = { };
-+
-+	if (!(ndev->features & NETIF_F_HW_CSUM))
-+		return -EOPNOTSUPP;
-+
-+	attr.dst = ndev->dev_addr;
-+	attr.tcp = true;
-+	attr.csum_mode = NET_TEST_CHECKSUM_PARTIAL;
-+
-+	return __net_test_loopback(ndev, &attr);
-+}
-+
- static const struct net_test {
- 	char name[ETH_GSTRING_LEN];
- 	int (*fn)(struct net_device *ndev);
-@@ -562,6 +635,13 @@ static const struct net_test {
- 	}, {
- 		.name = "PHY loopback TCP (SW csum)    ",
- 		.fn = net_test_phy_loopback_tcp,
-+	}, {
-+		/* Conditional HW checksum tests */
-+		.name = "PHY loopback UDP (HW csum)    ",
-+		.fn = net_test_phy_loopback_udp_hwcsum,
-+	}, {
-+		.name = "PHY loopback TCP (HW csum)    ",
-+		.fn = net_test_phy_loopback_tcp_hwcsum,
- 	}, {
- 		/* This test should be done after all PHY loopback test */
- 		.name = "PHY internal loopback, disable",
--- 
-2.39.5
+Thank you very much for your reply.  Yes, I replied to you in patch 0003.
+
+> 
+> 
+> Also, I think that Bjorn's primary concern:
+> """
+> The #defines for register offsets and bits are kind of a mess,
+> e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
+> PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
+> PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
+> names, and they're not even defined together.
+> """"
+> 
+> is that the fields are not prefixed with the register name.
+> 
+> the secondary concern is that they are not grouped together.
+> 
+> This patch is just solving the secondary concern.
+> 
+> Since you are fixing his secondary concern, should you perhaps also
+> address his primary concern?
+
+Ok. I missed this problem and I will fix it in the next version.
+
+Best regards,
+Hans
 
 
