@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-614291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046BCA9689D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36718A9689F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F1B3B418B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD1017A717
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565EF27CB31;
-	Tue, 22 Apr 2025 12:10:48 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3307E27CCEA;
+	Tue, 22 Apr 2025 12:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kw6uWJOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6D727CB1F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFD427B51D;
+	Tue, 22 Apr 2025 12:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745323848; cv=none; b=rI7gtAMJuDT0rBFI56PtPAdmaCXcd1RhRk09m3Zzp4hp3jBs6I8ClWifhBZJ+bnZonnACgzEz6teP/+aPHJnzh6iG7ZzFPb7ZV2cPPZ7sG4Vt839SI15WQ1yB25DVlcBz41d9kff4IFL1pq5vueNihlz889hrhyPXcXyqv2jwho=
+	t=1745323852; cv=none; b=dkxw+i2IoObxTj7PLQZWUsQzNcBIsN5B3wvyqsUjhewq6jDOztObiyq7E+eoYD854nU6K4PBMQnyTSpHLtP9db2RrRGiKAO7uY9lzdnar0ZjZrwWGz31Pyrq54iHNpquF3v7LeAgP+fxUaZEM+R25jZusoE71QJLZypFjA61k0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745323848; c=relaxed/simple;
-	bh=7wGcjDU8PngIFhOxsrFzEFsCxKeIWbmcBClEWPF2xQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLNcp2mOgdl2cIlHEMn908yfKQZEYXdRsDmgpWh0S8niVNdj5XCx5x2zk3JzEZBrp0Ow5JDzQbxBtTONMKBbVLrZCE1Q9AUBlQLvTVmMCzhJvMkB1K6q8txMO4GcoIYcOV5D+8JuYKyi5JIALj2XuZgaBlh0RBxyOJKvld5eaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 43B7F43B4C;
-	Tue, 22 Apr 2025 12:10:41 +0000 (UTC)
-Message-ID: <6cefe9be-c103-4533-9f44-4666d3fba2f5@ghiti.fr>
-Date: Tue, 22 Apr 2025 14:10:39 +0200
+	s=arc-20240116; t=1745323852; c=relaxed/simple;
+	bh=94jXciuuUSY9QuhItKiQptIuzEJLDtkPg4FjL9VSNNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvQEbuyquHYjUfD6JFbf7E8kZzV696B/sAHQU9Etembd1eVulEY4HyBt0Cy1Z0xevs9S+ThNWHoSxY/muYWJfKpj+NIoTr3WtBjfzoPCpH6+tLlAjzHVhE/EgwXEp+oXOLhmi1+vXa9b2vu2JkhYM3yKE1o6aizj/uTzfkWcf9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kw6uWJOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA72DC4CEE9;
+	Tue, 22 Apr 2025 12:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745323852;
+	bh=94jXciuuUSY9QuhItKiQptIuzEJLDtkPg4FjL9VSNNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kw6uWJOm6W2vov0Xou0Q1nwXyRFOzbfmCDBgCrbyv43JYIKsL2tC2RGg5ytkQoiYp
+	 C90/VwxumVENrW54coSVlbVYF5xqbRDoIEAu8iyu7wGtjjGVTIbs7Py+6TsariZDrj
+	 AUuSi4sfKUpd/skZy6Ff+TCtL1OyBptDHN9DBpcevaDwznmwF6g8FNEHZH6bnSs0Dk
+	 Nl8ReR6ldekCvrsMN02J3OrH2YDFoJJ5oq7uCXhfaqjVgaa8Pr/piThWUdSBiIZGR/
+	 jScCVakKXMn9dLsUmUaXhwIm5RuHFmXKypDrXP5f/PMvlzMe8cfeszlLEK7VWW9drR
+	 7xiKBTQvHgRBg==
+Date: Tue, 22 Apr 2025 13:10:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib: PRIME_NUMBERS_KUNIT_TEST should not select
+ PRIME_NUMBERS
+Message-ID: <f2a55a3f-6c56-43fa-bfda-25cc11fe5212@sirena.org.uk>
+References: <40f8a40eef4930d3ac9febd205bc171eb04e171c.1744641237.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] riscv: uaccess: use input constraints for ptr of
- __put_user()
-Content-Language: en-US
-To: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
- jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org
-References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
- <20250410070526.3160847-4-cyrilbur@tenstorrent.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250410070526.3160847-4-cyrilbur@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefjedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeetvdffkedvjeefkeegfefgteffleeltefggfdvheekfffhfeeghfeffffhtdelvdenucffohhmrghinhepghhnuhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegthihrihhlsghurhesthgvnhhsthhorhhrvghnthdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhus
- egvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepjhhrthgtvdejsehjrhhttgdvjedrtghomhdprhgtphhtthhopegsvghnrdguohhokhhssegtohguvghthhhinhhkrdgtohdruhhkpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="peTE4oWe+GxHaYSy"
+Content-Disposition: inline
+In-Reply-To: <40f8a40eef4930d3ac9febd205bc171eb04e171c.1744641237.git.geert@linux-m68k.org>
+X-Cookie: Laugh when you can
 
 
-On 10/04/2025 09:05, Cyril Bur wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
->
-> Putting ptr in the inputs as opposed to output may seem incorrect but
-> this is done for a few reasons:
-> - Not having it in the output permits the use of asm goto in a
->    subsequent patch. There are bugs in gcc [1] which would otherwise
->    prevent it.
-> - Since the output memory is userspace there isn't any real benefit from
->    telling the compiler about the memory clobber.
-> - x86, arm and powerpc all use this technique.
->
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921 # 1
->
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> [Cyril Bur: Rewritten commit message]
-> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
-> ---
->   arch/riscv/include/asm/uaccess.h | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index c9a461467bf4..da36057847f0 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -219,11 +219,11 @@ do {								\
->   	__typeof__(*(ptr)) __x = x;				\
->   	__asm__ __volatile__ (					\
->   		"1:\n"						\
-> -		"	" insn " %z2, %1\n"			\
-> +		"	" insn " %z1, %2\n"			\
->   		"2:\n"						\
->   		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
-> -		: "+r" (err), "=m" (*(ptr))			\
-> -		: "rJ" (__x));					\
-> +		: "+r" (err)					\
-> +		: "rJ" (__x), "m"(*(ptr)));			\
->   } while (0)
->   
->   #ifdef CONFIG_64BIT
-> @@ -236,16 +236,16 @@ do {								\
->   	u64 __x = (__typeof__((x)-(x)))(x);			\
->   	__asm__ __volatile__ (					\
->   		"1:\n"						\
-> -		"	sw %z3, %1\n"				\
-> +		"	sw %z1, %3\n"				\
->   		"2:\n"						\
-> -		"	sw %z4, %2\n"				\
-> +		"	sw %z2, %4\n"				\
->   		"3:\n"						\
->   		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %0)		\
->   		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %0)		\
-> -		: "+r" (err),					\
-> -			"=m" (__ptr[__LSW]),			\
-> -			"=m" (__ptr[__MSW])			\
-> -		: "rJ" (__x), "rJ" (__x >> 32));		\
-> +		: "+r" (err)					\
-> +		: "rJ" (__x), "rJ" (__x >> 32),			\
-> +			"m" (__ptr[__LSW]),			\
-> +			"m" (__ptr[__MSW]));			\
->   } while (0)
->   #endif /* CONFIG_64BIT */
->   
+--peTE4oWe+GxHaYSy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 14, 2025 at 04:35:00PM +0200, Geert Uytterhoeven wrote:
+> Enabling a (modular) test should not silently enable additional kernel
+> functionality, as that may increase the attack vector of a product.
+>=20
+> Fix this by making PRIME_NUMBERS_KUNIT_TEST depend on PRIME_NUMBERS
+> instead of selecting it.
+>=20
+> After this, one can safely enable CONFIG_KUNIT_ALL_TESTS=3Dm to build
+> modules for all appropriate tests for ones system, without pulling in
+> extra unwanted functionality, while still allowing a tester to manually
+> enable PRIME_NUMBERS and this test suite on a system where PRIME_NUMBERS
+> is not enabled by default.  Resurrect CONFIG_PRIME_NUMBERS=3Dm in
+> tools/testing/selftests/lib/config for the latter use case.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+This commit, which is now in mainline, causes the prime numbers test to
+vanish from my CI which is a regression - the selftests config fragment
+is obviously not picked up by the kunit runner when it builds the
+kernel.  You should add any KUnit tests to one of the configs in
+tools/testing/kunit/configs/ - generally all_tests.config.
 
-Thanks,
+--peTE4oWe+GxHaYSy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Alex
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgHh0YACgkQJNaLcl1U
+h9BAbQf+MLaR8l9s2WvjLTYBFiZOVsUlKyZEcRQ7+JooNMQJU3Cu73gcjSLNPZta
+E71k2bqMfdc90BWdrR++BLYWTX6z7Sat/tzmbTUrBdDBi0jCOQo1AWbpgJjitMbT
+lCYZ3/yeDoCc2Mj9e68jsKLsFZkViuTJeBaY9666wMviHd/7DNh2DUZ59B3bNNyr
++Dln8YH3J46agFmF5vooL9rZXmYoYWkIq5aC4fXUsl4vCIlCCI0S1LXiFsM2Op3t
+JZa9KRlgMz0PtjVfhPwTMIQl7w0EhDpwiBULg5nkzpnAyhlob9QZRpZlR1juLWPX
+UnDoRyQrZOQ6qnqIGjDr2uEnGcafoA==
+=FhrA
+-----END PGP SIGNATURE-----
+
+--peTE4oWe+GxHaYSy--
 
