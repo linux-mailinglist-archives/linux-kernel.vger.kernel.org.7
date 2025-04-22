@@ -1,118 +1,82 @@
-Return-Path: <linux-kernel+bounces-614354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C783A96A2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:38:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012A5A96AA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5929D189CEB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6F66165808
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5638B280A4B;
-	Tue, 22 Apr 2025 12:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9E512F5A5;
+	Tue, 22 Apr 2025 12:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PiyXbNrG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="b5WtlO1o"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B242427F738;
-	Tue, 22 Apr 2025 12:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCA225FA0B;
+	Tue, 22 Apr 2025 12:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325324; cv=none; b=Ol3VuuDTpYMJPM5FQzrxU71QIDr00qRQZI42mI6AWuLqyp8JpGPAN36e2ptBLvli5MPuGFMxRdgj/UTGaax3iTbWZILQNU2n5IEi8CdNl5ut7AY6zW8m3TEviG/kXjURLas0Bd2PIpFpTmk2SyHs5D9Sfls9Y+lmr2teBrrc7t0=
+	t=1745325872; cv=none; b=Dr32mhujuVKZs0vmTapiW3xB6xyMTmuZ/jNsai7sh2mxJbWsPC4qw6kYNIlpdn+GC8JkzsyF+FPUGiun361ZhgwUoTS31ewElvZMQXHE6PfMR9uSKmFGtzFIbiKS8tCSQ4nU3zSkk0SYq2kPCOiTq8ee8/LKYUs0x7LlKKV2vCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325324; c=relaxed/simple;
-	bh=gZqKppOHtV7ov8iWqtSFUMe6Ys3fjEn+8Qllfx6sA8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciJUSdaqT0l8aUH+K5hhcrydo7d7Ti1Zq1K/efhIb4qR1z+vjjuxM492gwWPNjI6A4VgBpPyoNhH31dugmpbUgUXI9qJ29BIwi/6GWf02/XYRF4KpNKkCCxWS27nZs9IA9l1JfJu6mgS9HAyUvcHWLBV1SYHW/aDGBssl5gmXV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PiyXbNrG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A38E9C4CEEA;
-	Tue, 22 Apr 2025 12:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745325324;
-	bh=gZqKppOHtV7ov8iWqtSFUMe6Ys3fjEn+8Qllfx6sA8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PiyXbNrGpOkhaeB4wzJs5YFHh4npZ3x+8rNG7vkhSvso/TED2d+vrWCIvoR31otVg
-	 /JigCaRCRQDTtvN014Oj4kOnzSVmNW5AAPjzNEFA51Jz2jdajQET4gU/fREpv1rIgD
-	 5caBkihWmtIZNr5lDWe8JrCLU90wNK30ATjjS5r0=
-Date: Tue, 22 Apr 2025 14:35:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: tomasz.pakula.oficjalny@gmail.com
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, sashal@kernel.org,
-	oleg@makarenk.ooo
-Subject: Re: Request for backporting hid-pidff driver patches
-Message-ID: <2025042201-cinema-overpay-c3a3@gregkh>
-References: <a0f1dae5eee091781711d3b4ebe812b9a1f8c944.camel@gmail.com>
+	s=arc-20240116; t=1745325872; c=relaxed/simple;
+	bh=fwjn2eAipGj8txUYSDvtnaSj4kpK0g4kALgLoZJzw2E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u18lCbz1zOLux6y0dNYboQjKc6coLXR+D7NjPn62bBCDdiUnLuMBrMr3phkMr4pUo27fRzA0E/oPX/yR6lJ3fsyH+Bs8807qR7uw76aRHRJPOhdmF1R46ucM45xMPyneQEkoAEO0m1VMus44LF45XHAS+SUnRTxI8EHmhqORGmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=b5WtlO1o; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1745325338; bh=fwjn2eAipGj8txUYSDvtnaSj4kpK0g4kALgLoZJzw2E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=b5WtlO1oBw5UJXJaw02uReybBdy2NpssNOTcIVlk2S6IlIxrjbJ1KkNnhNkubM1PN
+	 RuiVU35hdXr+V1ZbtonPAY0NE5zCH/y9PtCu12kBbuMBC0wDD5T9zknXQK8x+4WVKf
+	 OdE6AXTM6SO9bDYeQcn3fLfZ+YEi8RuWp6rbw21ZLOVFVQEibMPwwOIWngveRlq42v
+	 +UudPgMZmh8G7ar+HkG0dHXuBN8C65IZLvuJ27BZHeCwlrtrdb9XUnCGo6YCyWWyu1
+	 f6hp7fpXyy3KVw4pkgVLSKH1HUJ4ivU2LqZ2VpUOxv5W3fRLFyat7Ib4qYBiPJlpvy
+	 h6+FqjY4xDpIA==
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
+In-Reply-To: <20250421040044.44887-1-rosenp@gmail.com>
+References: <20250421040044.44887-1-rosenp@gmail.com>
+Date: Tue, 22 Apr 2025 14:35:38 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87ldrsjrvp.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0f1dae5eee091781711d3b4ebe812b9a1f8c944.camel@gmail.com>
+Content-Type: text/plain
 
-On Wed, Apr 02, 2025 at 09:21:31PM +0200, tomasz.pakula.oficjalny@gmail.com wrote:
-> Hello
-> 
-> Recently AUTOSEL selected some of out patches to hid-pidff and
-> hid-universal-pidff. Though I looked over what was selected and
-> everything will be working, I'd like to keep the drivers up-to-date at
-> least going back to 6.12 as these kernels are widely used and leaving
-> said driers in an incomplete state, not up to upstream might lead to
-> some false positive bug reports to me and Oleg.
-> 
-> Here's the full list of the hid-pidff related patches from upstream. It
-> might look like a lot but some granular changes were recorded as the
-> driver was in need of an overhaul for at least 10 years. This mainly
-> touches just two files.
-> 
-> I tested it personally and all the patches apply cleanly on top of
-> current 6.12.y, 6.13.y and 6.14.y branches.
-> 
-> Thanks in advance!
-> 
-> e2fa0bdf08a7 HID: pidff: Fix set_device_control()
-> f98ecedbeca3 HID: pidff: Fix 90 degrees direction name North -> East
-> 1a575044d516 HID: pidff: Compute INFINITE value instead of using hardcoded 0xffff
-> 0c6673e3d17b HID: pidff: Clamp effect playback LOOP_COUNT value
-> bbeface10511 HID: pidff: Rename two functions to align them with naming convention
-> 1bd55e79cbc0 HID: pidff: Remove redundant call to pidff_find_special_keys
-> 9d4174dc4a23 HID: pidff: Support device error response from PID_BLOCK_LOAD
-> e19675c24774 HID: pidff: Comment and code style update
-> c385f61108d4 HID: hid-universal-pidff: Add Asetek wheelbases support
-> 1f650dcec32d HID: pidff: Make sure to fetch pool before checking SIMULTANEOUS_MAX
-> 2c2afb50b50f MAINTAINERS: Update hid-universal-pidff entry
-> 5d98079b2d01 HID: pidff: Factor out pool report fetch and remove excess declaration
-> 217551624569 HID: pidff: Use macros instead of hardcoded min/max values for shorts
-> 4eb9c2ee538b HID: pidff: Simplify pidff_rescale_signed
-> 0d24d4b1da96 HID: pidff: Move all hid-pidff definitions to a dedicated header
-> 22a05462c3d0 HID: pidff: Fix null pointer dereference in pidff_find_fields
-> f7ebf0b11b9e HID: pidff: Factor out code for setting gain
-> 8713107221a8 HID: pidff: Rescale time values to match field units
-> 1c12f136891c HID: pidff: Define values used in pidff_find_special_fields
-> e4bdc80ef142 HID: pidff: Simplify pidff_upload_effect function
-> cb3fd788e3fa HID: pidff: Completely rework and fix pidff_reset function
-> abdbf8764f49 HID: pidff: Add PERIODIC_SINE_ONLY quirk
-> 7d3adb9695ec MAINTAINERS: Add entry for hid-universal-pidff driver
-> f06bf8d94fff HID: Add hid-universal-pidff driver and supported device ids
-> ce52c0c939fc HID: pidff: Stop all effects before enabling actuators
-> 3051bf5ec773 HID: pidff: Add FIX_WHEEL_DIRECTION quirk
-> 36de0164bbaf HID: pidff: Add hid_pidff_init_with_quirks and export as GPL symbol
-> a4119108d253 HID: pidff: Add PERMISSIVE_CONTROL quirk
-> fc7c154e9bb3 HID: pidff: Add MISSING_PBO quirk and its detection
-> 2d5c7ce5bf4c HID: pidff: Add MISSING_DELAY quirk and its detection
-> f538183e997a HID: pidff: Clamp PERIODIC effect period to device's logical range
-> 8876fc1884f5 HID: pidff: Do not send effect envelope if it's empty
-> 37e0591fe44d HID: pidff: Convert infinite length from Linux API to PID standard
+Rosen Penev <rosenp@gmail.com> writes:
 
-I think Sasha already got all of these, right?  If not, what ones do you
-want applied specifically?
+> Simplifies probe slightly and adds extra error codes.
+>
+> Switching from devm_ioremap to the platform variant ends up calling
+> devm_request_mem_region, which reserves the memory region for the
+> various wmacs. Per board, there is only one wmac and after some fairly
+> thorough analysis, there are no overlapping memory regions between wmacs
+> and other devices on the ahb.
+>
+> Tested on a TP-Link Archer C7v2.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v2: remove wrong devm irq conversion.
+>  drivers/net/wireless/ath/ath9k/ahb.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
 
-thanks,
+Is there any benefit from this other than code simplification? Because,
+TBH, I'm not sure saving 7 lines of code is worth the risk of changing
+something we know works already...
 
-greg k-h
+-Toke
 
