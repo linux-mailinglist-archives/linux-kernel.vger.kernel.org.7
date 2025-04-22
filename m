@@ -1,201 +1,128 @@
-Return-Path: <linux-kernel+bounces-615136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41CDA9786C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9886CA97872
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F281781AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3850D17E41F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E40262FEF;
-	Tue, 22 Apr 2025 21:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9CD2C2ACC;
+	Tue, 22 Apr 2025 21:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OHiHfkOH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bKr+SlLA"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7FA262FDA;
-	Tue, 22 Apr 2025 21:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5AB262FE7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 21:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745356818; cv=none; b=LZnzGW58WrU4fEEXx4KeioZhmpTqhyLcnWpQgbJYP+mUO1Ua2gVWNgKS38qZSUNRLhd/3CgjHva0bQ0hNK7VCKCjO9w2vh1temMk9WhlSgIeY+Cl5vuGv9ch5HQTx67EqBQD11CcPNygQqC8gCpJqP85Vyg9x9BdI2T1Dz+n5jw=
+	t=1745356865; cv=none; b=c0/hS8aqj6VhJjsR9aeug426ihQmXP8T5PJATx5l65hpncQ82qcV4/w7QeFHKHxyBSNEOC3qT0Wnw3CyQ/oIa8J3GFyeSSIX2NFwbEg7PhCyXQYQQp+O/lu2OlJlHjrI5lwRz2wzZglqnN3MnCnEkdnQsWH72aHtfJ3pfzL2jRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745356818; c=relaxed/simple;
-	bh=QUx5dRFG7GpCS+cETcj2dmDnUuhNhvwVSRhpl9TOGUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FReWFKVzRpGnDgWLR+A2AievTZdPsLlkVxSpmIeQT4oCaMBnVN1IHx8wWA3DTdNsJiPSXW8p9stJZNMnqC3aq0CaL06Or5lHrwqZz4iOXchZjP2MVEvOHv88gRbIEBssEttpP7FfzQAI1fT7DfHx9Fg+vg0Dar5ORV7aOgj1cNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OHiHfkOH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EC7ED2AC;
-	Tue, 22 Apr 2025 23:20:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745356813;
-	bh=QUx5dRFG7GpCS+cETcj2dmDnUuhNhvwVSRhpl9TOGUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OHiHfkOHZh5uSWDcXdGsStftlZr2cPlX8CJcpZTz2X+d6FgYzcruYL+t0/klHHGHB
-	 X1Dj2kKnAPGWJj5nShRxtsRs6YmimCw19D84qryh5RTNU7Fd1j0xk0rDU/VwtB9YRk
-	 XwPirfNC4Fjo7GPWQTeNQDsDeq1cUwk1tWF2UQls=
-Date: Wed, 23 Apr 2025 00:20:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org
-Subject: Re: [PATCH v2 3/3] media: uvcvideo: Rollback non processed entities
- on error
-Message-ID: <20250422212011.GP17813@pendragon.ideasonboard.com>
-References: <20250224-uvc-data-backup-v2-0-de993ed9823b@chromium.org>
- <20250224-uvc-data-backup-v2-3-de993ed9823b@chromium.org>
- <c80da442-c35a-4336-9a49-5a6745e4ce6b@redhat.com>
- <CANiDSCsy1TfBCGu4A+pChTE2gzBugCAxZTS_DFNPF83dbTM3QQ@mail.gmail.com>
+	s=arc-20240116; t=1745356865; c=relaxed/simple;
+	bh=ZrEAQMqsyLbolKW0CLeMrZ8PbAE+CG5CNRdOoWpu9A4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXjbj0mpaRBXvolSlRvBIKhe9zKmF3n6lLAlgjafqPtVptISPtctaGGt4e3/WhNUxdrqD5v0oCC38gpbwBKNYgtgRN0djYD6ThdePuyZErrYIw9zmW+RisvoekpsYVdJPTtOUR/ZMrz1ZA9YapZEjcSMfh3kDLlYrPMKFoXp574=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bKr+SlLA; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e0973075-7040-4e59-80b2-7b4840a9b8e1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745356858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8it9af45rz3xPU6jGbGfSzUcfD4g1fZDiNmeUzhLF/4=;
+	b=bKr+SlLAN81+hFnwnO+/43ZnQibrHqfo5OCRbpM7aWSkrY/Y1gbjhgihe2JfKdc1f/LzOr
+	xEpdBeXJpPZs1K9UJlU0ID+PvCtchtwkGiAArv3DUok2F/muMD1YFmv7ixbAeivZDAF1rM
+	XqNk1pWsX4N4hBjEGVxqG0mqvl78fmw=
+Date: Tue, 22 Apr 2025 14:20:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCsy1TfBCGu4A+pChTE2gzBugCAxZTS_DFNPF83dbTM3QQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] xdp: create locked/unlocked instances of xdp
+ redirect target setters
+To: Joshua Washington <joshwash@google.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
+ Mina Almasry <almasrymina@google.com>, Willem de Bruijn
+ <willemb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Jeroen de Borst <jeroendb@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Stanislav Fomichev <sdf@fomichev.me>,
+ Martin KaFai Lau <martin.lau@kernel.org>, Joe Damato <jdamato@fastly.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250422011643.3509287-1-joshwash@google.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20250422011643.3509287-1-joshwash@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Apr 10, 2025 at 09:32:42AM +0200, Ricardo Ribalda wrote:
-> On Mon, 7 Apr 2025 at 15:02, Hans de Goede wrote:
-> > On 24-Feb-25 11:34, Ricardo Ribalda wrote:
-> > > If we wail to commit an entity, we need to restore the
-> >
-> > s/wail/fail/
-> >
-> > I've fixed this up while merging this series and
-> > I've pushed the entire series to:
-> > https://gitlab.freedesktop.org/linux-media/users/uvc/ next now.
-> >
-> > Note I had to manually fix some conflicts due to the granular power
-> > saving series being merged first. I'm pretty sure I got things correct
-> > but a double check would be appreciated.
+On 4/21/25 6:16 PM, Joshua Washington wrote:
+> Commit 03df156dd3a6 ("xdp: double protect netdev->xdp_flags with
+> netdev->lock") introduces the netdev lock to xdp_set_features_flag().
+> The change includes a _locked version of the method, as it is possible
+> for a driver to have already acquired the netdev lock before calling
+> this helper. However, the same applies to
+> xdp_features_(set|clear)_redirect_flags(), which ends up calling the
+> unlocked version of xdp_set_features_flags() leading to deadlocks in
+> GVE, which grabs the netdev lock as part of its suspend, reset, and
+> shutdown processes:
 > 
-> I reviewed the merge and I could not find any issue.
-> Thanks :)
+> [  833.265543] WARNING: possible recursive locking detected
+> [  833.270949] 6.15.0-rc1 #6 Tainted: G            E
+> [  833.276271] --------------------------------------------
+> [  833.281681] systemd-shutdow/1 is trying to acquire lock:
+> [  833.287090] ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: xdp_set_features_flag+0x29/0x90
+> [  833.295470]
+> [  833.295470] but task is already holding lock:
+> [  833.301400] ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: gve_shutdown+0x44/0x90 [gve]
+> [  833.309508]
+> [  833.309508] other info that might help us debug this:
+> [  833.316130]  Possible unsafe locking scenario:
+> [  833.316130]
+> [  833.322142]        CPU0
+> [  833.324681]        ----
+> [  833.327220]   lock(&dev->lock);
+> [  833.330455]   lock(&dev->lock);
+> [  833.333689]
+> [  833.333689]  *** DEADLOCK ***
+> [  833.333689]
+> [  833.339701]  May be due to missing lock nesting notation
+> [  833.339701]
+> [  833.346582] 5 locks held by systemd-shutdow/1:
+> [  833.351205]  #0: ffffffffa9c89130 (system_transition_mutex){+.+.}-{4:4}, at: __se_sys_reboot+0xe6/0x210
+> [  833.360695]  #1: ffff93b399e5c1b8 (&dev->mutex){....}-{4:4}, at: device_shutdown+0xb4/0x1f0
+> [  833.369144]  #2: ffff949d19a471b8 (&dev->mutex){....}-{4:4}, at: device_shutdown+0xc2/0x1f0
+> [  833.377603]  #3: ffffffffa9eca050 (rtnl_mutex){+.+.}-{4:4}, at: gve_shutdown+0x33/0x90 [gve]
+> [  833.386138]  #4: ffff949d2b148c68 (&dev->lock){+.+.}-{4:4}, at: gve_shutdown+0x44/0x90 [gve]
+> 
+> Introduce xdp_features_(set|clear)_redirect_target_locked() versions
+> which assume that the netdev lock has already been acquired before
+> setting the XDP feature flag and update GVE to use the locked version.
+> 
+> Cc: bpf@vger.kernel.org
+> Fixes: 03df156dd3a6 ("xdp: double protect netdev->xdp_flags with netdev->lock")
+> Tested-by: Mina Almasry <almasrymina@google.com>
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
+> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> Signed-off-by: Joshua Washington <joshwash@google.com>
 
-There's a set of small issues that may (or may not, pending discussions)
-need to be addressed in each of the three series present in uvc/next.
-Most review comments are small and don't require sending a new version,
-while others may require respining some of the patches. Let's first
-discuss the issues, and we can then check how to minimize the need to
-send new versions.
+Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
 
-I'll review other pendings series after finalizing these three, as
-conflicts are complex enough to handle as-is. In the future, when you
-send multiple series that depend on each other, please indicate in what
-order they should be merged.
-
-> > > UVC_CTRL_DATA_BACKUP for the other uncommitted entities. Otherwise the
-> > > control cache and the device would be out of sync.
-> > >
-> > > Cc: stable@kernel.org
-> > > Fixes: b4012002f3a3 ("[media] uvcvideo: Add support for control events")
-> > > Reported-by: Hans de Goede <hdegoede@redhat.com>
-> > > Closes: https://lore.kernel.org/linux-media/fe845e04-9fde-46ee-9763-a6f00867929a@redhat.com/
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++----------
-> > >  1 file changed, 22 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index 7d074686eef4..89b946151b16 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -1864,7 +1864,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> > >       unsigned int processed_ctrls = 0;
-> > >       struct uvc_control *ctrl;
-> > >       unsigned int i;
-> > > -     int ret;
-> > > +     int ret = 0;
-> > >
-> > >       if (entity == NULL)
-> > >               return 0;
-> > > @@ -1893,8 +1893,6 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> > >                               dev->intfnum, ctrl->info.selector,
-> > >                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
-> > >                               ctrl->info.size);
-> > > -             else
-> > > -                     ret = 0;
-> > >
-> > >               if (!ret)
-> > >                       processed_ctrls++;
-> > > @@ -1906,10 +1904,14 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> > >
-> > >               ctrl->dirty = 0;
-> > >
-> > > -             if (ret < 0) {
-> > > +             if (ret < 0 && !rollback) {
-> > >                       if (err_ctrl)
-> > >                               *err_ctrl = ctrl;
-> > > -                     return ret;
-> > > +                     /*
-> > > +                      * If we fail to set a control, we need to rollback
-> > > +                      * the next ones.
-> > > +                      */
-> > > +                     rollback = 1;
-> > >               }
-> > >
-> > >               if (!rollback && handle &&
-> > > @@ -1917,6 +1919,9 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> > >                       uvc_ctrl_set_handle(handle, ctrl, handle);
-> > >       }
-> > >
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > >       return processed_ctrls;
-> > >  }
-> > >
-> > > @@ -1947,7 +1952,8 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
-> > >       struct uvc_video_chain *chain = handle->chain;
-> > >       struct uvc_control *err_ctrl;
-> > >       struct uvc_entity *entity;
-> > > -     int ret = 0;
-> > > +     int ret_out = 0;
-> > > +     int ret;
-> > >
-> > >       /* Find the control. */
-> > >       list_for_each_entry(entity, &chain->entities, chain) {
-> > > @@ -1958,17 +1964,23 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
-> > >                               ctrls->error_idx =
-> > >                                       uvc_ctrl_find_ctrl_idx(entity, ctrls,
-> > >                                                              err_ctrl);
-> > > -                     goto done;
-> > > +                     /*
-> > > +                      * When we fail to commit an entity, we need to
-> > > +                      * restore the UVC_CTRL_DATA_BACKUP for all the
-> > > +                      * controls in the other entities, otherwise our cache
-> > > +                      * and the hardware will be out of sync.
-> > > +                      */
-> > > +                     rollback = 1;
-> > > +
-> > > +                     ret_out = ret;
-> > >               } else if (ret > 0 && !rollback) {
-> > >                       uvc_ctrl_send_events(handle, entity,
-> > >                                            ctrls->controls, ctrls->count);
-> > >               }
-> > >       }
-> > >
-> > > -     ret = 0;
-> > > -done:
-> > >       mutex_unlock(&chain->ctrl_mutex);
-> > > -     return ret;
-> > > +     return ret_out;
-> > >  }
-> > >
-> > >  int uvc_ctrl_get(struct uvc_video_chain *chain,
-
--- 
-Regards,
-
-Laurent Pinchart
 
