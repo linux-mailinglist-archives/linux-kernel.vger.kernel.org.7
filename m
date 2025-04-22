@@ -1,86 +1,135 @@
-Return-Path: <linux-kernel+bounces-613819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B53A96225
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCEBA96241
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B32717E093
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8206217FD1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C494B291153;
-	Tue, 22 Apr 2025 08:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EE3296147;
+	Tue, 22 Apr 2025 08:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="haFfUafN"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kGFAXBPf"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4312290BB3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB496296140
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310483; cv=none; b=nG2lfcEqnvu7s9ZswDv98w5bnxYprhyYOR9k3b0wfuuxKnVXbcu51G8vtHSCNR70Jro9atEg1wHjyBsmwz/CeBIxAxhId8TAMWwUG7yXb9K7ZqGNsGb2Y6iNoBbJ+4c8mQ/Rx/NvfLLQywUkZWuR5e0rYpxL+5Bm92DouzWtwik=
+	t=1745310612; cv=none; b=pI71FkMrEfw3ZXYdx+rbuMFdsLNjEioddYC/uVC3rBaUtOTHDvsQ1V4VkzyiZlpr4Dqep1mzNeELYb6cF+tcpKbxuiJovq8SlIDEv7ZWR29PZav3WGA+GnX6l7bf7AVQW82Zq/q22xFoJcsEhVEQfm2PnVEW43DcvSsqwMfyOFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310483; c=relaxed/simple;
-	bh=g7KAwgL/rpqtApo9wTdj7rOSNNxCdAiqVKAXiRg3rEI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YB6lF/w9D43LyUUIoGJegEPoJAxulbLo/sCNZ4Ah47/eqj375RODKNztoLH+nJlecRnu62L7CYQDUT2Zz7nm4T/slDsniePE7H7hf2e8GBiniBGz/7UZS5mf7Ntb1Xg/JeBETQgt7HaYhCacfAYw5x+jbOIJxRboKS2QA8Ji2Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=haFfUafN; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745310468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g7KAwgL/rpqtApo9wTdj7rOSNNxCdAiqVKAXiRg3rEI=;
-	b=haFfUafNn1BVvts0BQ/RQh+FwaYBNl7W+BWb+sA8S612uVHLCDiHJ8fsk4btLET4GWS6Og
-	6qgdXpc+oQzp5COgyYjuS7ChnOCIZK0CrN/b4Z9uuK9Nue9pQfDX/OfM9xoD6MBxQyNZPT
-	1MsLaLIBqclM8tfPCiz7rjuE0MqYjWg=
+	s=arc-20240116; t=1745310612; c=relaxed/simple;
+	bh=wpLvYJ8h+2gdD8KlovfRp/KEYqpjX5R39eBimYEADQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QEKTrVWTwlO6QlOPElUQjCqIA+az/1h7ReR0tWHM22RxTlict1uwOElnnUT8RJ2jqC6W7IkrkeQ4ERNrf+59CvNJMrpawUGW8qGUSyBFudsFWCkd95NfI0twh4oC7zsXaSOdeDkST3CpVAHEnF9d8jyCXAtrS1wB/gB5n0c1i/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kGFAXBPf; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7399838db7fso4596904b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1745310609; x=1745915409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=suVeEV15xn1TJzAA78ITbkuezXgamtF49ziPRPaA7d4=;
+        b=kGFAXBPfkCTyYBf4lAmBXiDYLKXdHMyuQGbr3NYT7kRjdMqCFpVt+3K+V4aq6r/lDb
+         V9zyb9ptPR5RVeBg6Gy63t7rnVLay1vAU6lE1Gcj6v6vI/T3uc6oSMpdMnmn6i/YxYQU
+         0Llf+EzBbXiG08xRrcbbkDpPhzSdnIlV0A0/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745310609; x=1745915409;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=suVeEV15xn1TJzAA78ITbkuezXgamtF49ziPRPaA7d4=;
+        b=tl8euT0tWFfEnq2VQwgpstxSiG9zGA4ycLQEvoo0F0hBQ1y4uYvv1dMTb40ItFW3kz
+         +sI4qmFgCXx5VlfLnPtGRfUK/T9OqCsnVJpeJcwZJlOgJmKlJNqrcFAKjO171YWPT5CK
+         BApKof36w8QcvsLS60ZCuedJkqMehfeO2/2XjZBwoaLUaqgcbPjYtNbRKX66UgUuADh5
+         CTA3mEtmAWhnn3B3dMCUOtWtseEOzMS+1qlON8IOEZpxrmBW3aIQ/PVuLPD8PNXxSsI3
+         VYbbPfPsxpB0Ucdy6R67Y91XhAx9g3f8nyMRH+l4EWUGMW69E7msXMXufa8SZ4BBeWoX
+         RrvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkYxR1oz+ujZKap+N8CALPiKpxuUk+LDcwj4+ESVbPgX+Ebfm1UnatQyiwfjGaZ2L/150cC1Vai6EUN7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPueub6eeOjkCdoYfOnOIHHh81CYzh2ptoYQ61LdBe6xxXoVNg
+	akiKEngZWR1qy8XXDHCbmOz00Qq4KM1Cyb5usulmzB96t26nBg8tUSTrJXCF3Q==
+X-Gm-Gg: ASbGncv50IFXHDefwiw14d414iqCjZbv4iFESTQK15s3P4tRQ9Qs8UGNUTJkE6plRB8
+	vOcfOBdsdAch4y+dOjJjglCuwHdGfVkx/jatb+ZSlzgIgS0cRNaX7k0Y0tvOvtnMOw4d11I8zji
+	NEwls4mgCVTjqa0CcgUsTO7zcCNKOABUfa6TqOjSlAtSmpcS89XE4BvcKYmWCo/XWCR76CbZi7h
+	QlaKKEm0A/BLMonzWrhK4rbPJ4Zpu6r/XCxGnkARg5ZR6djUZth+YOuwgGctTacryIeVP/lSkCo
+	JqfOwAcAcmHA3WJS+tXFtw/2BxpXAwiOH6FLvdRB1gZKwaxSQGm4TeoteCFVk3VZ
+X-Google-Smtp-Source: AGHT+IEU6I61PKdSk66ALyW1SMKYEj8C6WoYl+I3tAab8Ss6BHWGapI8IPOL/MGB4xnrLL3uRQKw6g==
+X-Received: by 2002:aa7:88d2:0:b0:73c:3f2e:5df5 with SMTP id d2e1a72fcca58-73dc1b5a716mr18751882b3a.9.1745310608966;
+        Tue, 22 Apr 2025 01:30:08 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:90d6:56e4:9d90:9df3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8e0be0sm7993576b3a.49.2025.04.22.01.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 01:30:08 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v3 0/4] Introduce usb-hub.yaml binding and add support for Parade PS5511
+Date: Tue, 22 Apr 2025 16:28:26 +0800
+Message-ID: <20250422082957.2058229-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
-Subject: Re: [PATCH] MIPS: BCM63XX: Replace strcpy() with strscpy() in
- board_prom_init()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <aAdNVAzu0rmIfGGC@smile.fi.intel.com>
-Date: Tue, 22 Apr 2025 10:27:33 +0200
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-hardening@vger.kernel.org,
- linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <86E5AC5D-11BC-4B4E-B08E-845F59AACF6C@linux.dev>
-References: <20250422074257.544016-2-thorsten.blum@linux.dev>
- <aAdNVAzu0rmIfGGC@smile.fi.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Andy,
 
-On 22. Apr 2025, at 10:03, Andy Shevchenko wrote:
+This series introduces usb-hub.yaml for on-board USB hubs, and use it for
+the newly-added Parade PS5511 binding and the existing Realtek RTS5411
+hub controller.
 
-> Can you use --cc OR put this line...
+Also add support for Parade PS5511 in onboard_usb_dev.c
 
-Yes, will do next time.
+Patch 1 introduces usb-hub.yaml as the bindings for on-board USB hubs
+Patch 2 adds the binding for Parade PS5511
+Patch 3 modifies realtek,rts5411.yaml to adapt usb-hub.yaml
+Patch 4 adds the support for Parade PS5511 in onboard_usb_dev.c
 
-> Have you compiled this with `make W=1` with recent GCCs?
+Link to v1: https://lore.kernel.org/all/20250328082950.1473406-1-treapking@chromium.org/
+Link to v2: https://lore.kernel.org/all/20250415094227.3629916-1-treapking@chromium.org/
 
-Yes, I compile-tested it with W=1 and mips64-linux-gnu-gcc 14.2.1.
 
-Thanks,
-Thorsten
+Changes in v3:
+- Remove redundant schemas
+- Update schemas for downstream ports and devices for ps5511 and rts5411
+
+Changes in v2:
+- Introduce usb-hub.yaml
+- Modify parade,ps5511 and realtek,rts5411 to use usb-hub.yaml
+- Minor fixes on parade,ps5511.yaml
+
+Pin-yen Lin (4):
+  dt-bindings: usb: Introduce usb-hub.yaml
+  dt-bindings: usb: Add binding for PS5511 hub controller
+  dt-bindings: usb: realtek,rts5411: Adapt usb-hub.yaml
+  usb: misc: onboard_usb_dev: Add Parade PS5511 hub support
+
+ .../bindings/usb/parade,ps5511.yaml           | 108 ++++++++++++++++++
+ .../bindings/usb/realtek,rts5411.yaml         |  52 +++------
+ .../devicetree/bindings/usb/usb-hub.yaml      |  84 ++++++++++++++
+ drivers/usb/misc/onboard_usb_dev.c            |   3 +
+ drivers/usb/misc/onboard_usb_dev.h            |   9 ++
+ 5 files changed, 217 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/parade,ps5511.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/usb-hub.yaml
+
+-- 
+2.49.0.805.g082f7c87e0-goog
 
 
