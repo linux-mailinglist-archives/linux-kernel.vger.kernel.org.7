@@ -1,199 +1,123 @@
-Return-Path: <linux-kernel+bounces-614923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89862A973E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:48:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE13A973EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6647173BF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D1E3A73A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2522A1E1C22;
-	Tue, 22 Apr 2025 17:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C9628EA5F;
+	Tue, 22 Apr 2025 17:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SotAurz+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDHtQWjS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B06985931
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC6D14C5B0;
+	Tue, 22 Apr 2025 17:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745344083; cv=none; b=mZvaMh3vYtYbjQrPwf5CPoCtXgtJpXVlV+xVQG05KyY/aeCN01s5fLWZmWCaUPilvpWtlPxHodLHllal31y350fopebmq6VobyXy1b53m0SyMwIpvJyfE1o7aNPrrTK/i0wswrI6r6bwr1+q/2dLoZkMlilTXXmTkdX6X6/Z+ms=
+	t=1745344170; cv=none; b=URdMR+nhWct4/ffNZjv7Sw2TVhSPByrNxtIDHt34un16LScpp6tHR+CmvXrlEvbPCPkS7R7vdmgXXG1q14FDiApcooJogErju3Ku2uzhyLXra1DrtVL7LfLlkrCnOX2049VvjMX8/PLFhTGVaaMzbCbVXQFZDSafaE0d0yxOiJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745344083; c=relaxed/simple;
-	bh=9R+Cf90mu3T0JORLd0H9EtQSXnYP+uLphYhUM+1N30g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RcJmeY1/zuRtVV7yi5MI2gLeD9jp8ec1LQAVCfUASRilObPLB32tGRzN6YaH9s5/Pv0ADx6DSF/0Pl71OleoOqq2+IsJo3uNZfFYpYgLwTfOPeiXO59TybAXAEOdrtSfmYxvFJnoHYESqIIEGoPKz/IgPbvcx9kNO+G1BV5mWsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SotAurz+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A223C4CEE9;
-	Tue, 22 Apr 2025 17:48:02 +0000 (UTC)
+	s=arc-20240116; t=1745344170; c=relaxed/simple;
+	bh=NMUrajeGaevk9etR13v+Zo0jMwWofA3IhBlD3NT/Bow=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eojbr9ZFiLmFpBEkxBKK8BYDPOxeSXy6EV5Ztu7re1VioYDFSftJ8u6/hGJaI1IHJlmTRncpsGZKAmHovSK6g8E2YbgnFWyVaDN5t8WIJIJCz3ppgVvqS3sl51dcVejGn1k5Zss8o61qeTiDK44P0lc73UD10hw600XhqiTgPbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDHtQWjS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A13EC4CEE9;
+	Tue, 22 Apr 2025 17:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745344082;
-	bh=9R+Cf90mu3T0JORLd0H9EtQSXnYP+uLphYhUM+1N30g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SotAurz+nkXj5Gf6vpop4SQSYFnlC3FI5agC0HNCqyf27ygMtyk1qtXJp+DIlrS8N
-	 zfJyAnwU/yhUlK0TogsF04JexILmPcpXslwlfyVcRM4QmTHt7gcZQKrhblaxqG1tE+
-	 zjHB9kjn/AHw0V2ecLgY/QtIi9C7z6fhE6yzaIDYlq6JYu3D4FKErm+NKysY2I/aXf
-	 pqkuao4WPADk792tpFDLVtSmS165joyX+E51PYIJYz+/DLP5HBX++KgcCE7A3Dqy5P
-	 qKQR7iZf4A812KMg4EcUE1s7Hn4awc3qccqEhSK/ERj6RZzTdobRzOiD7aaqmXRlUE
-	 qxTbJgtvN89lA==
-Date: Tue, 22 Apr 2025 11:48:00 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] nvme/pci: PRP list DMA pool partitioning
-Message-ID: <aAfWUGAMTpwsHf2b@kbusch-mbp.dhcp.thefacebook.com>
-References: <20250422161959.1958205-1-csander@purestorage.com>
+	s=k20201202; t=1745344170;
+	bh=NMUrajeGaevk9etR13v+Zo0jMwWofA3IhBlD3NT/Bow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DDHtQWjSQTxmMHgS3ri1MQSyvjg61Egx4BhiC1VwdoRitk5GEOHPa/2KkpYSWFYbW
+	 QoJuCcmAYrtToxX8CYvWKtjJJ9SE3lH08QQQdU0VURSnEjhJmLm+c4O3u5GndJbYle
+	 ZAsz+XFa2VqkPPVYyLyXt/LGQB5caYC2STVCUzECoRUWVsqMdHeYEfdECSEFWq8WDT
+	 b0zOYmlfaSSlsbW8wsw9SK3PEjv/3PpGqYT+nuo68MR1Kbp1a78qdWDCALzVWsUnI0
+	 cuCmGa3aqrg4y0zJ9P1DbmhOQ0FD7IcEIfIuwnyuTZuYlHuVxLAD/zWBzJZYzswu1k
+	 RG37+XA8DK1Dw==
+Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u7HkN-007ihb-Jq;
+	Tue, 22 Apr 2025 18:49:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422161959.1958205-1-csander@purestorage.com>
+Date: Tue, 22 Apr 2025 18:49:27 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne
+ Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>, Sven Peter
+ <sven@svenpeter.dev>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Mark Kettenis <mark.kettenis@xs4all.nl>
+Subject: Re: [PATCH v3 07/13] PCI: apple: Move away from INTMSK{SET,CLR} for
+ INTx and private interrupts
+In-Reply-To: <20250422174156.GA344533@bhelgaas>
+References: <20250422174156.GA344533@bhelgaas>
+User-Agent: Roundcube Webmail/1.4.15
+Message-ID: <739728922cbf097aa87dc41265478dfc@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 217.182.43.188
+X-SA-Exim-Rcpt-To: helgaas@kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, mark.kettenis@xs4all.nl
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Apr 22, 2025 at 10:19:57AM -0600, Caleb Sander Mateos wrote:
-> This reduces the _raw_spin_lock_irqsave overhead by about half, to
-> 1.2%.
+On 2025-04-22 18:41, Bjorn Helgaas wrote:
+> On Tue, Apr 01, 2025 at 10:17:07AM +0100, Marc Zyngier wrote:
+>> T602x seems to have dropped the rather useful SET/CLR accessors
+>> to the masking register.
+>> 
+>> Instead, let's use the mask register directly, and wrap it with
+>> a brand new spinlock. No, this isn't moving in the right direction.
+> 
+>> @@ -261,14 +262,16 @@ static void apple_port_irq_mask(struct irq_data 
+>> *data)
+>>  {
+>>  	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
+>> 
+>> -	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKSET);
+>> +	guard(raw_spinlock_irqsave)(&port->lock);
+>> +	rmw_set(BIT(data->hwirq), port->base + PORT_INTMSK);
+> 
+> sparse v0.6.4-39-gce1a6720 complains about this (and similar usage
+> elsewhere):
+> 
+>   $ make C=2 drivers/pci/
+>   drivers/pci/controller/pcie-apple.c:311:13: warning: context
+> imbalance in 'apple_port_irq_mask' - wrong count at exit
+>   drivers/pci/controller/pcie-apple.c:319:13: warning: context
+> imbalance in 'apple_port_irq_unmask' - wrong count at exit
+> 
+> But I guess we just have to live with this for now until somebody
+> makes sparse smarter:
+> 
+> https://lore.kernel.org/linux-sparse/CAHk-=wiVDZejo_1BhOaR33qb=pny7sWnYtP4JUbRTXkXCkW6jA@mail.gmail.com/
+> 
+> Nothing to do, just "huh".
 
-Could you try this atop your series? I hope to see if we can squeeze a
-little more out by keeping the spinlock and list links local to the node
-using them.
+Huh indeed. Pretty sad to see a useful piece of tooling being left
+on the curb.
 
----
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index cbd7734922f91..08a1488155084 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -412,9 +412,10 @@ nvme_setup_prp_pools(struct nvme_dev *dev, unsigned numa_node)
- 	if (prp_pools->small)
- 		return prp_pools; /* already initialized */
- 
--	prp_pools->large = dma_pool_create("prp list page", dev->dev,
-+	prp_pools->large = dma_pool_create_node("prp list page", dev->dev,
- 						NVME_CTRL_PAGE_SIZE,
--						NVME_CTRL_PAGE_SIZE, 0);
-+						NVME_CTRL_PAGE_SIZE, 0,
-+						numa_node);
- 	if (!prp_pools->large)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -422,8 +423,9 @@ nvme_setup_prp_pools(struct nvme_dev *dev, unsigned numa_node)
- 		small_align = 512;
- 
- 	/* Optimisation for I/Os between 4k and 128k */
--	prp_pools->small = dma_pool_create("prp list 256", dev->dev,
--						256, small_align, 0);
-+	prp_pools->small = dma_pool_create_node("prp list 256", dev->dev,
-+						256, small_align, 0,
-+						numa_node);
- 	if (!prp_pools->small) {
- 		dma_pool_destroy(prp_pools->large);
- 		prp_pools->large = NULL;
-diff --git a/include/linux/dmapool.h b/include/linux/dmapool.h
-index f632ecfb42384..36cb5f66111c6 100644
---- a/include/linux/dmapool.h
-+++ b/include/linux/dmapool.h
-@@ -18,8 +18,16 @@ struct device;
- 
- #ifdef CONFIG_HAS_DMA
- 
--struct dma_pool *dma_pool_create(const char *name, struct device *dev, 
--			size_t size, size_t align, size_t allocation);
-+struct dma_pool *dma_pool_create_node(const char *name, struct device *dev,
-+			size_t size, size_t align, size_t allocation, int node);
-+
-+static inline struct dma_pool *dma_pool_create(const char *name,
-+			struct device *dev, size_t size, size_t align,
-+			size_t allocation)
-+{
-+	return dma_pool_create_node(name, dev, size, align, allocation,
-+				    NUMA_NO_NODE);
-+}
- 
- void dma_pool_destroy(struct dma_pool *pool);
- 
-@@ -35,6 +43,10 @@ struct dma_pool *dmam_pool_create(const char *name, struct device *dev,
- void dmam_pool_destroy(struct dma_pool *pool);
- 
- #else /* !CONFIG_HAS_DMA */
-+static inline struct dma_pool *dma_pool_create_node(const char *name,
-+	struct device *dev, size_t size, size_t align, size_t allocation,
-+	int node);
-+{ return NULL; }
- static inline struct dma_pool *dma_pool_create(const char *name,
- 	struct device *dev, size_t size, size_t align, size_t allocation)
- { return NULL; }
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index f0bfc6c490f4e..e07242b18c576 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -56,6 +56,7 @@ struct dma_pool {		/* the pool */
- 	unsigned int size;
- 	unsigned int allocation;
- 	unsigned int boundary;
-+	int node;
- 	char name[32];
- 	struct list_head pools;
- };
-@@ -199,12 +200,13 @@ static void pool_block_push(struct dma_pool *pool, struct dma_block *block,
- 
- 
- /**
-- * dma_pool_create - Creates a pool of consistent memory blocks, for dma.
-+ * dma_pool_create_node - Creates a pool of consistent memory blocks, for dma.
-  * @name: name of pool, for diagnostics
-  * @dev: device that will be doing the DMA
-  * @size: size of the blocks in this pool.
-  * @align: alignment requirement for blocks; must be a power of two
-  * @boundary: returned blocks won't cross this power of two boundary
-+ * @node: NUMA node to use when allocating structs 'dma_pool' and 'dma_page'
-  * Context: not in_interrupt()
-  *
-  * Given one of these pools, dma_pool_alloc()
-@@ -221,8 +223,8 @@ static void pool_block_push(struct dma_pool *pool, struct dma_block *block,
-  * Return: a dma allocation pool with the requested characteristics, or
-  * %NULL if one can't be created.
-  */
--struct dma_pool *dma_pool_create(const char *name, struct device *dev,
--				 size_t size, size_t align, size_t boundary)
-+struct dma_pool *dma_pool_create_node(const char *name, struct device *dev,
-+			size_t size, size_t align, size_t boundary, int node)
- {
- 	struct dma_pool *retval;
- 	size_t allocation;
-@@ -251,13 +253,14 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
- 
- 	boundary = min(boundary, allocation);
- 
--	retval = kzalloc(sizeof(*retval), GFP_KERNEL);
-+	retval = kzalloc_node(sizeof(*retval), GFP_KERNEL, node);
- 	if (!retval)
- 		return retval;
- 
- 	strscpy(retval->name, name, sizeof(retval->name));
- 
- 	retval->dev = dev;
-+	retval->node = node;
- 
- 	INIT_LIST_HEAD(&retval->page_list);
- 	spin_lock_init(&retval->lock);
-@@ -335,7 +338,7 @@ static struct dma_page *pool_alloc_page(struct dma_pool *pool, gfp_t mem_flags)
- {
- 	struct dma_page *page;
- 
--	page = kmalloc(sizeof(*page), mem_flags);
-+	page = kmalloc_node(sizeof(*page), mem_flags, pool->node);
- 	if (!page)
- 		return NULL;
- 
---
+GSoC project?
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
 
