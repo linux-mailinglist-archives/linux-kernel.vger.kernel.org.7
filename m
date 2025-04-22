@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-614404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3594A96BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C793A96BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010FD188A01E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9432168465
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B0728135E;
-	Tue, 22 Apr 2025 13:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0B1386DA;
+	Tue, 22 Apr 2025 13:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="C4zXWLtl"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHrIVZuQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B087B27F4E7;
-	Tue, 22 Apr 2025 13:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07DD27E1BA;
+	Tue, 22 Apr 2025 13:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326897; cv=none; b=bK2fstjg2Aoti3SD9PiRNRD2Z+FqN7ONo6gvKz8Jd1KKbW6viKbgU7XZlJgydZsCq9UjZivVwb1bC/3AxzTmRq84/KnYh+MM9T+zeI+4a3zUZbSwIEhOW/yjO3dbqR8RDOmrk5DrlwGpVOArhyn5FSWZtRntevB2afljy+4PeLc=
+	t=1745326896; cv=none; b=FMYKvpp1SEBBRmJC/AATdiux269Zn0J2wZSQnWVSAOEoZHooiv/iRISmkVwSl07HuyXhPgJ9GCrqTsURflsaAC00JbSBu7XKwFNHI2K9drjl2C+Ncf9uIMMZqCmKvxm/4I9bw55Qrx9wysN0YMbTfkN1gB7SlV4cEyvzssajVcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326897; c=relaxed/simple;
-	bh=5LMGE4ZovaTauFyhzyyvbLqIw01XMG3sYlgkOB3VihQ=;
+	s=arc-20240116; t=1745326896; c=relaxed/simple;
+	bh=RRIWZyujwpn/9gYhBWQmbIspSVHn2nUMBWge3vwA/1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLUe3Dv17eE9FHMK2dJb8Vn/sZJG+2GglqVTTAwb+EmVso0YE0SyUtN8I9mbgQD6wKDcl4h0AH5JyZo/jgx21FgYvmh+TSDzInMSwZKhT/a+BSP5kP8PMJXl7xn82PkDsSxJgqC59mEXpxIjtKoOMJ9lYewwo+eiYVsY4BycoBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=C4zXWLtl; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 072081F99E;
-	Tue, 22 Apr 2025 15:01:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1745326891;
-	bh=vjca4SS0LDQaoBRT4ZcgCIXZFJwOWWihMEoq+jbhB/o=; h=From:To:Subject;
-	b=C4zXWLtlL3y67SU1zoapsx4icmhYWhMeUCN1+Dr/K5iofMbMRwqEtYbmtBr/diRVo
-	 WBE7GTpJmG2QiK0IiWCQR+sBO95Wu/XMZqT6cVREWWdTfiKoaOMx18iYPMhkBEHHJh
-	 j4EgkGVlI2GS962j1yky/mfJsEYSkOjKlwNp6MyiEGtnt5ZhHoJ2zRBSjvcWpbb9JG
-	 OYeoQ+x1QMIDpEt8MJb2319XF5JN675YzWIgbL19PiUSvUrMpLYcZo6bZPPhLBakhf
-	 NHWnuz9c5a50LpziXXGaZCwd8NrQzZRH8U6dodWuS92/Rqfvem54ZP788P3RdrB76K
-	 vbkzG8mEnNLhg==
-Date: Tue, 22 Apr 2025 15:01:27 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Philippe Schenker <philippe.schenker@impulsing.ch>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to
- usdhc2
-Message-ID: <20250422130127.GA238494@francesco-nb>
-References: <20250422124619.713235-1-Wojciech.Dubowik@mt.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oemi1AimAsYyj3wWkiyVKHX2jVZsshbAmb296gEOQZjJplXHjFtmAHQ6iPo2rHq/zdxt4hkyFhOqi6+Xr2bMAZ/RZaWpdiZI32lijer3xvp4z5Blzwqxp3zAuSXWvRe40gS47h3V+C5PmHxqY0HQHlMPaPjUxTsJbPI6/kpSz8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHrIVZuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBC8C4CEEA;
+	Tue, 22 Apr 2025 13:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745326895;
+	bh=RRIWZyujwpn/9gYhBWQmbIspSVHn2nUMBWge3vwA/1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHrIVZuQUvmzUNEIHzd7TOkPNb5sQP0KEfYQXjI1oACP5b8nJbnDTc3h4xJAK1+qh
+	 ExBKXTWe7MStmiI5yLWwJ41XFzBFB1MFEg67sFssIqSRr7fWd21oI1aVTI0BDgIh6u
+	 RLxX3jHSP7dcVrqZZmpW/FtPdYOCN/edhoqIRAINvvw1QYO6wwuGvv4ymjooI9BiDv
+	 EMyOZowTmY3tMxDGGDF7QSblHyr+Ohbil0D/vONFaVkJcfhe7atveyxC+eK4S8LcIE
+	 ADoZq823TzEBKta4M6GQLcMOXbx/rpHsXJCCco8PaFxYVpi2hlAjsZ6I1Sz6uBhDgs
+	 2X4dqibGldpwg==
+Date: Tue, 22 Apr 2025 08:01:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: fsl: convert fsl,vf610-mscm-ir.txt to
+ yaml format
+Message-ID: <20250422130133.GA964797-robh@kernel.org>
+References: <20250417151526.3570272-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,43 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422124619.713235-1-Wojciech.Dubowik@mt.com>
+In-Reply-To: <20250417151526.3570272-1-Frank.Li@nxp.com>
 
-Hello Wojciech,
-
-On Tue, Apr 22, 2025 at 02:46:15PM +0200, Wojciech Dubowik wrote:
-> Define vqmmc regulator-gpio for usdhc2 with vin-supply
-> coming from LDO5.
+On Thu, Apr 17, 2025 at 11:15:22AM -0400, Frank Li wrote:
+> Convert fsl,vf610-mscm-ir.txt to yaml format.
 > 
-> Without this definition LDO5 will be powered down, disabling
-> SD card after bootup. This has been introduced in commit
-> f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
+> Additional changes:
+> - remove label at example dts.
 > 
-> Fixes: f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5")
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> v1 -> v2: https://lore.kernel.org/all/20250417112012.785420-1-Wojciech.Dubowik@mt.com/
->  - define gpio regulator for LDO5 vin controlled by vselect signal
-> ---
->  .../boot/dts/freescale/imx8mm-verdin.dtsi     | 23 +++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> index 7251ad3a0017..9b56a36c5f77 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> @@ -1206,13 +1220,17 @@ pinctrl_usdhc2_pwr_en: usdhc2pwrengrp {
->  			<MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5		0x6>;	/* SODIMM 76 */
->  	};
->  
-> +	pinctrl_usdhc2_vsel: usdhc2vselgrp {
-> +		fsl,pins =
-> +			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT	0x10>; /* PMIC_USDHC_VSELECT */
+>  .../arm/freescale/fsl,vf610-mscm-ir.txt       | 30 ---------
+>  .../arm/freescale/fsl,vf610-mscm-ir.yaml      | 63 +++++++++++++++++++
+>  2 files changed, 63 insertions(+), 30 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-ir.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-ir.yaml
 
-This needs to be muxed as GPIO, MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4
-
-Francesco
-
+Move this to bindings/interrupt-controller/
 
