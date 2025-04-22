@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-614244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7DAA967F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEBEA96800
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0C0163324
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A11A3A59F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF1F27815B;
-	Tue, 22 Apr 2025 11:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FB225D52B;
+	Tue, 22 Apr 2025 11:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MecoZ7XJ"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bH528QY6"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F11E3774
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ECC28F5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322126; cv=fail; b=QV0Bfcz4W633YRIomPqO13uFPoym6nutLhph6Vk1fsRp82jZKHATpHHhmXc1sUyITN7VKQhFYY30XY2OieNDIsRF3DDSMWwqlZF8Om7whL1lnv5Px1j0ia4DaVYHvFviQUFZRDKb1O+bGYF0Cwlx49VBjaKLhfiWYS9j5py7jQE=
+	t=1745322153; cv=fail; b=fiILzxIi4ZsI81TdV1GIVv15IvKM6/DTzCyOXQPd2TtqkKSNd3QEiMQ37LiCclosTR4LCpbL9Sb1oJy/w//tfYznQML45ZaIz0jHPGfw+LfuU5shdnVFzTtStrCXCVY1r3HNMwtqv5h0N5eC0S2mQNYsnaje4hIHaSFFudlzGFs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322126; c=relaxed/simple;
-	bh=DFYf5EBNdUZE5IJ0bZ4UotOB/VkxFeXnkzt+IMlPT3U=;
+	s=arc-20240116; t=1745322153; c=relaxed/simple;
+	bh=H7xpZcXWzfT9yWC1nnDCz87WH3/B91pmOHLdpSsK27w=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A03nK3RCL4G0gn+lg5HLBM71BqBLHQqg9XOQ/2kZWdV4ClrgQuXWadaCNSS8MbESfTnM2XRu4/ilzpHGNPO4Jl/L5vHHM8zdR2fKJ3dCzM//k4cawqvqzYATP/nLUDS9z0SkbBx82AaH9cpWtaLgpDEbxDRiUy3RfXzSQjRzPZ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MecoZ7XJ; arc=fail smtp.client-ip=40.107.244.55
+	 MIME-Version:Content-Type; b=ob5X9MFYwizHmTKSQ/u9Rb+CrbwIAJzjs47tmypbaUJ5tIyBfb6XuARjWOTTFEpIfSzPdoJOEEr++wPnDTAhkCaROjvJCcQ7fmR+S9AKBHGXXkbftmHk6oeHibLzHsiizsSCw0WfB2a3RRVU2eFYEkoc/MkWHgTS5xzggEIlszY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bH528QY6; arc=fail smtp.client-ip=40.107.220.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZCpP1NJKaUoOo3NKgu96Rj9vFZpaqXY+tuCdLzu+ZZmoK8Ia96Gm2aktdWkn0yke2WKpx/6DHO5VdPqf01P9NRHXrq6yGXT4p+e5W+rmZWmfD0ofIdNcmFn3hnsCp+8Ub0Q3WO2xPZHomACkh8MFOBaEEubLngx/Xby0vjhqgNvxhADCAXYRF2+VCFFDnSMP8O4NP5Eip04y0vokKKYGWZLK18DGHxLo8GrybypO9RdpZAs6r2TQ/9iGDPZQUETZUT24uluLjLlLvYbex2yZhdZ7uRXjY/ZK8p7B5bskQBzUbK09AfmDzFSnKJr4mABAYWIbOGx1AX8fkLblhJWrNg==
+ b=FkoS9u8sxyIMWCA1yzX9WYKLt1P15D8QAXYxCA+P13rU7gbrWWUrjshIipvYcY1IihP+moOWhPiE1Wi+ablzqCe35+vsr7QxLQe6bFp5fJhol31owSNsUKJUZsX9AZJ7v6o00CYUGIbBBX+zTFEtzXjH1bx913GUkA6jHVidBsZquyPi7plAhaWUNWvKXOcavw0S9kBeC6PRqJNW3hmy9zGwyVsqr89CURyWcan5+wkvA6fxz9wbID9pYLGi3p9BH09gF34PlXduc0vfGVbaC9lER9IIeulK2zfQ3QwjYKL2ynwu+9zzWrLgkvMcpcRbsg5OE8aO2YNJcqwxoxUerg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HWzgdUvOUbxWo4OQPGsZvYzJ3arlF3NrDj2ScVqvOnM=;
- b=KltJ64x5qnBwJsE8XSjgdFqnkTZ1IULzCSQdRu+oIdktMhzgctckGFFCsaDFaY2wsxmO8B2UgWm9GtZ7QiJrOyAa2XpenHeIINep18VvgzD3vES3wiP5yru7gIg8ACUaVv/mvOc/M0eP9KGQfcHJlTvvkep2GGgQ9vy/FfyVhINhE56apHHtkfRlDQC4yUQHOZ3wAkVjc5cW0xC7C2ikRNPyWNJrvexL1VBof+TJvtL55NvD4eO+o2I/u2p3qegFr5AkMnf5cwD1kg4DJZ9N6U/r61lX5eAXqt+3Oip8fd6v63wOO1HD8MhZIn2Y096OTvbRNxom/OGb5TxT95jJLA==
+ bh=vjBMSX7mSni0Bs51ARYTQYn0pQLevaIJSAPztRsSPV4=;
+ b=eJV2zrP92YcEf+yHlGCIDv2Giy0cD6Fo28TdVTQ9PFMs+VUASRs7cHvoPkaWWlGqQZtLpy3jCyGf646yogmVj5odxH3deqGDWoxldeiLIk0YEcyOab6sFdb4vCY4L70aKQ+GJuKMZbxVtmlKHG97n8qQQCrI88LrjmT3m4voOQmCFV5bL2j8acBMnd3sBvxXMjUghstS/+dWIpF2VikhwVTVWdZOFf9iN9QtNpuotYudftj9EW2OOviloaaModvVPZvcw7iYZ6oAD7YEcD/ip5uWmLlORuxfMqVQHk0pvnyVtGQgRmvaSyOqb/DYrGS+roWUbgxQWxYHHtGKP/3UxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HWzgdUvOUbxWo4OQPGsZvYzJ3arlF3NrDj2ScVqvOnM=;
- b=MecoZ7XJ895JIyybZsCDPUbNocaqPFsVJ3LaG5dAQaVILSMnVGAkPLSYMBoyT+2zmKH3So+WHacX6POoLU6CUaDgSPERYJin+2aTWcIhl7oX8YMRGa9PTu8desw3E6O3TWU1lQuZ8Bz5ysdfAfDOe3ft+1O8vdTldMqn7cctFbg=
-Received: from BY3PR03CA0029.namprd03.prod.outlook.com (2603:10b6:a03:39a::34)
- by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Tue, 22 Apr
- 2025 11:42:00 +0000
-Received: from SJ1PEPF00001CDC.namprd05.prod.outlook.com
- (2603:10b6:a03:39a:cafe::8d) by BY3PR03CA0029.outlook.office365.com
- (2603:10b6:a03:39a::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
- 22 Apr 2025 11:42:00 +0000
+ bh=vjBMSX7mSni0Bs51ARYTQYn0pQLevaIJSAPztRsSPV4=;
+ b=bH528QY6w++9sryltLWGiBgp3/R2ky3HirwPmhf7TNabQZH5OAbg3XUY2FoI1hK0+zkp9mnt3CztUFuCEHwUxBxd5hDWP+RXHrZ1tdZG11ZFg7D+C20E3BGjZpV7i/bJV/tAwaSB5fALiRoc00/KDh4jBPo3eQlQsRe9tMgJ8ac=
+Received: from BYAPR01CA0046.prod.exchangelabs.com (2603:10b6:a03:94::23) by
+ CY1PR12MB9583.namprd12.prod.outlook.com (2603:10b6:930:fe::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.35; Tue, 22 Apr 2025 11:42:28 +0000
+Received: from SJ1PEPF00001CE0.namprd05.prod.outlook.com
+ (2603:10b6:a03:94:cafe::9f) by BYAPR01CA0046.outlook.office365.com
+ (2603:10b6:a03:94::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Tue,
+ 22 Apr 2025 11:42:25 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +61,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CDC.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SJ1PEPF00001CE0.mail.protection.outlook.com (10.167.242.8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:42:00 +0000
+ 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:42:28 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
- 2025 06:41:55 -0500
+ 2025 06:42:22 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <shaggy@kernel.org>, <akpm@linux-foundation.org>
 CC: <willy@infradead.org>, <shivankg@amd.com>, <david@redhat.com>,
@@ -76,9 +75,9 @@ CC: <willy@infradead.org>, <shivankg@amd.com>, <david@redhat.com>,
 	<donettom@linux.ibm.com>, <apopple@nvidia.com>,
 	<jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-Subject: [PATCH V4 1/2] mm: add folio_migration_expected_refs() as inline function
-Date: Tue, 22 Apr 2025 11:40:03 +0000
-Message-ID: <20250422114000.15003-2-shivankg@amd.com>
+Subject: [PATCH V4 2/2] jfs: implement migrate_folio for jfs_metapage_aops
+Date: Tue, 22 Apr 2025 11:40:05 +0000
+Message-ID: <20250422114000.15003-3-shivankg@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250422114000.15003-1-shivankg@amd.com>
 References: <20250422114000.15003-1-shivankg@amd.com>
@@ -94,163 +93,208 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDC:EE_|LV3PR12MB9142:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57385a36-b3ea-4794-4676-08dd8192b1e0
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE0:EE_|CY1PR12MB9583:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4af24489-d8c7-4a2f-3fea-08dd8192c257
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NjIifRqHkFn6Lg2SqtPAatU1CXGC134tRSNeEhCuF3wDpYeRVaH2EoOXpxb0?=
- =?us-ascii?Q?LBek2ScHpaAa4OfKC2/FwFwr7iFbGFVggtsrQqALNJjJdrSFheacoYxtX+zm?=
- =?us-ascii?Q?h7bUDKRu0duosWXLzYX74tXRuBeKIuU1+5okFy7ZsGm4416NkaO6Ldk73ICz?=
- =?us-ascii?Q?LYOTcFGci18anK8IiPTy0remPtDPLcDyUJbSiGwEoR8aVm6M/8v3P38pyw9l?=
- =?us-ascii?Q?eDtszQQC8rwTM7IIzqTq+TbLA0qh+S16oBaAp4Yffn+559TEEyagAu7JGShR?=
- =?us-ascii?Q?8FSpS+IexFz3aqgDaNs5AGItUbtDGl+g/6hye1PvWgX6DAY2EMmvhWwPKU9i?=
- =?us-ascii?Q?qRF3BZrVzMIZZGsMuESRY8TcxxsNIO2hxauy/YrkbIesmAW5Lc4L9e5emsqt?=
- =?us-ascii?Q?fDMbGIlqEOiCga1nqFpPfMcG2USoUV97ITPchpR0x+SbyjFZMcbfpXplwN+r?=
- =?us-ascii?Q?6M0TarFWK9BmeBa0vTiqB0s+ZODmePB8qOqe7ZJkCOTpMA62HcN7uZntBXfB?=
- =?us-ascii?Q?EFLycdEbVvn+bB5YJk4ad+qO7PJFeU9CFjoXeDjht5/Mwk8x/K33u4FoaLCQ?=
- =?us-ascii?Q?5puMbFZ18mYvwY6YrDTCQLfxhsAwEeJGzmEWA2XyWj9M7mhbNO9+Wvqs2INZ?=
- =?us-ascii?Q?DVvqYHXhprLVw+FHDm041s6nKf83QVkF3tSzHxliVJ93ucOAV6MkRRD1zf+P?=
- =?us-ascii?Q?CwTGViTNSavR+Ppg/C8lWNHDjULAtxSPMHX/hWbdlmS0/lUfc8/bLOxTPOWo?=
- =?us-ascii?Q?1prxd6ItvqcXGXLNh2Wy2K4JgtvmFRd1IlpA3o9OYkjKZ8kPJ/joEDjqOHbL?=
- =?us-ascii?Q?bV/ij8/LWlNvMFSO+vBVdH+bBTvWluqqQ7Tx1s/G08BTmqqg76g3LngtG/nr?=
- =?us-ascii?Q?knRKIeZ31oyD9ZNIDBAWinlGUsgCNFwhtXIvMli4z+rRgRopM5mMVJJw4rP6?=
- =?us-ascii?Q?0KQqtgP0JR3WcgSdyNo11fKrXppHTgOdc18AK+nEMe8P7Eckdh7QeFoRmqZp?=
- =?us-ascii?Q?npyK4tyqoVZbMLGkflsPVNTTUXNT9JKl3B5fYq0xEY57jo0N5nTlLIjhKw1A?=
- =?us-ascii?Q?O/VlSig92P6+0HhD9nFRWZmPn6mzNqjH7SmU8vXJtLYaGsX3Noko7ls55MKV?=
- =?us-ascii?Q?UF0cgOOBMCk2AcMC9oF7pJwlcPH+zeFYeis1NeirokBXslYWRvNlPu8q73hr?=
- =?us-ascii?Q?3h02SbJ1j0t8MssNLQYnkFF3p20pmJsHFZtp1RR5Eu3j8kiBrMdvCfcEnnKq?=
- =?us-ascii?Q?YqiO13qYht7dqKKwgAZa/hG4mHLJjDP+xIUMr4y7P12cZ7qLQ4h2LenJ8fJ8?=
- =?us-ascii?Q?kPME4nx5yRqhm0ugOs45NyhOj/wd8pGXNYYT9yV2Lo0Awa6dxU0ebpM7Htnw?=
- =?us-ascii?Q?4s4JUDTHSVBNjigm3PcIqeu1FLL+08U+hUACzKoyYakibaJQDXacywmG4TQv?=
- =?us-ascii?Q?coDDF1NWaHGt0atuTZwTf0h7Yx+Y+zppyXKc+Jka1dWvKStO0fXsRJjJoeFq?=
- =?us-ascii?Q?dMjd4spn6OWWsPe8eCeNL1YnPKpCs2QfuaLC?=
+	=?us-ascii?Q?HdR2h6a32pgv+vuoGFIdiBW5cZcvUqCaQ9G4F5oPvjPjhQmL8rjDFMwdQatX?=
+ =?us-ascii?Q?bXDHWzgYJCn+WvxbJJwb6au0gIuZkA/iMdfz0YUw8pNJv15SCOEaQfg4Dhqm?=
+ =?us-ascii?Q?EsGNQ35fAQQLbEx6rj3Ecfd18fW2FjwAdZnX3rTt8W76JoHNWkUz0uz2Q0yx?=
+ =?us-ascii?Q?5VPW5B1FI42xHV98fKpCAiFqOKUwadvQJi8Wjp/lNOdnar1n62ZAvn7eAaII?=
+ =?us-ascii?Q?pCVYOMiQrhTXcCuW6mXiC77XhBoNymfJmW5DH0hHeXPM4f2qCbeMfyReRh5+?=
+ =?us-ascii?Q?C8s5FIy4F74WXLENZJcvtuK9zI9Q7bWQP8/1eF4qLw7vItSKzTLAeEAdyg3E?=
+ =?us-ascii?Q?XbUzKZoWxNtHk+GewrkYdjQLS7ovfXabyYtZrg/duLzatWc6tn5fiVvPhR+7?=
+ =?us-ascii?Q?9ZTPTuE0NRCzlxh/cMbf3d+D5rtdAFs8dyVrBMWvtVu/bkRGurKLtIvjk1R/?=
+ =?us-ascii?Q?TmCv+/cyAl0C7LISkmC5diN19chyX2huFHrR7lrkmpvWbCjqy+6QE0MSWvnL?=
+ =?us-ascii?Q?ze4Y5eudEgw1ZWjgK5rFsUvwIQJGzBbgu1BZznF0QGNtVe0HjlEWkwWNH21Y?=
+ =?us-ascii?Q?ViOPUM0LwxOFq3RC8DXCJwyt9imawXoaiA8gS/0h6k0iSdaHajfL2MD8I/FL?=
+ =?us-ascii?Q?2YlMx1jDVDd+tDsIG7gZNiqmC8emhvHX/3j/SZa+IHGnP+xu7qZ95Y3SeyCo?=
+ =?us-ascii?Q?I6Er1PzjMx+IHBRT0YumN5vZCoeq1U65yl4kTEZQBmCu+u6JIlcnBwgrg9uG?=
+ =?us-ascii?Q?2uIVfd79I3XQ7krmv3LkziIb8qofsikCUEtDGxlv/TpfmqC9JI1aWNwnzrXm?=
+ =?us-ascii?Q?QRlqfUVgfaqyuEbktRGTguazDH4WHqFxenAxixIAY76Ss9bd0BVY0vhHJTpt?=
+ =?us-ascii?Q?SpCJgn+ahgES8+ZdndFdkah+8f8XSJ0UZYsaZ6Ku0E5otQ9yhguPtHlWCPSI?=
+ =?us-ascii?Q?25ykFN8JNuBJgKlo59cXFPu3FxJqYu09kvJdNmXjzaOO+7h54W0cn0Xn0GPq?=
+ =?us-ascii?Q?GT6pZtzuHXa445k77tZ2KbYaWrSFGoVJSHjU+4mmLDGG17lPzobv+QQLwVY7?=
+ =?us-ascii?Q?WrOrHPg189vHFHcuilk8tk5fAPrS/rEZaMWHgLAYeEcGAheeFXjSoo6aXnaT?=
+ =?us-ascii?Q?9cpzU0gHpS2mRUbAn9g5KasoNNYaKewwzoa9Vky8CqfXRHJmkPi1UlUKiVc9?=
+ =?us-ascii?Q?3iwwwccWByzyLmwjF0xQiyW0a7EuvNSHRI1g+FY68htwG5JW/o4CIPUv0fQw?=
+ =?us-ascii?Q?omJUr0vOpy4Xw6pnOtT+dK63KwQLsMRsZcVZkpg6awMlu2wu/WG1BtRnST59?=
+ =?us-ascii?Q?IMFQXzYjrKWC8FYb1TC6248KI7M5WeHQrSTwfWMZTaPjYnlpuvgpVqhPX/6R?=
+ =?us-ascii?Q?Wp1h8+Grw/eGF+7wmCTcmodvyUHCxRrwBPtYanZRC0LOonk0ch7zBp1h+uwx?=
+ =?us-ascii?Q?aU8aGbmlJa/lEkTq4kcsADtSaGVZeZuT6ytb3LihfqcYrT5NJX7BgBeFaFzB?=
+ =?us-ascii?Q?+cVdv/B6GKphmsw6gZbMVaKiXHeqhspd6zkxcqp7E5IrEhNVfArq+/M5ZA?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:42:00.4545
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:42:28.0778
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57385a36-b3ea-4794-4676-08dd8192b1e0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4af24489-d8c7-4a2f-3fea-08dd8192c257
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CDC.namprd05.prod.outlook.com
+	SJ1PEPF00001CE0.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9583
 
-Rename the previously static folio_expected_refs() to clarify its
-purpose and scope, making it an inline function
-folio_migration_expected_refs() to calculate expected folio references
-during migration. The function is only suitable for folios unmapped from
-page tables.
+Add the missing migrate_folio operation to jfs_metapage_aops to fix
+warnings during memory compaction. These warnings were introduced by
+commit 7ee3647243e5 ("migrate: Remove call to ->writepage") which
+added explicit warnings when filesystems don't implement migrate_folio.
 
+System reports following warnings:
+  jfs_metapage_aops does not implement migrate_folio
+  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 fallback_migrate_folio mm/migrate.c:953 [inline]
+  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 move_to_new_folio+0x70e/0x840 mm/migrate.c:1007
+
+Implement metapage_migrate_folio which handles both single and multiple
+metapages per page configurations.
+
+Fixes: 35474d52c605 ("jfs: Convert metapage_writepage to metapage_write_folio")
+Reported-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67faff52.050a0220.379d84.001b.GAE@google.com
 Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- include/linux/migrate.h | 26 ++++++++++++++++++++++++++
- mm/migrate.c            | 22 ++++------------------
- 2 files changed, 30 insertions(+), 18 deletions(-)
+ fs/jfs/jfs_metapage.c | 94 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index aaa2114498d6..083293a6d261 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -60,6 +60,32 @@ struct movable_operations {
- /* Defined in mm/debug.c: */
- extern const char *migrate_reason_names[MR_TYPES];
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index df575a873ec6..a12fbd92cc69 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -15,6 +15,7 @@
+ #include <linux/mempool.h>
+ #include <linux/seq_file.h>
+ #include <linux/writeback.h>
++#include <linux/migrate.h>
+ #include "jfs_incore.h"
+ #include "jfs_superblock.h"
+ #include "jfs_filsys.h"
+@@ -151,6 +152,54 @@ static inline void dec_io(struct folio *folio, blk_status_t status,
+ 		handler(folio, anchor->status);
+ }
  
-+/**
-+ * folio_migrate_expected_refs - Count expected references for an unmapped folio.
-+ * @mapping: The address space the folio belongs to.
-+ * @folio: The folio to check.
-+ *
-+ * Calculate the expected reference count for a folio during migration.
-+ * This function is only suitable for folios that are unmapped from page tables
-+ * (i.e., no references from page table mappings: !folio_mapped()).
-+ *
-+ * Return: The expected reference count
-+ */
-+static inline int folio_migration_expected_refs(struct address_space *mapping,
-+		struct folio *folio)
++static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				    struct folio *src, enum migrate_mode mode)
 +{
-+	int refs = 1;
++	struct meta_anchor *src_anchor = src->private;
++	struct metapage *mps[MPS_PER_PAGE] = {0};
++	struct metapage *mp;
++	int i, rc;
 +
-+	if (!mapping)
-+		return refs;
++	for (i = 0; i < MPS_PER_PAGE; i++) {
++		mp = src_anchor->mp[i];
++		if (mp && metapage_locked(mp))
++			return -EAGAIN;
++	}
 +
-+	refs += folio_nr_pages(folio);
-+	if (folio_test_private(folio))
-+		refs++;
++	rc = filemap_migrate_folio(mapping, dst, src, mode);
++	if (rc != MIGRATEPAGE_SUCCESS)
++		return rc;
 +
-+	return refs;
++	for (i = 0; i < MPS_PER_PAGE; i++) {
++		mp = src_anchor->mp[i];
++		if (!mp)
++			continue;
++		if (unlikely(insert_metapage(dst, mp))) {
++			/* If error, roll-back previosly inserted pages */
++			for (int j = 0 ; j < i; j++) {
++				if (mps[j])
++					remove_metapage(dst, mps[j]);
++			}
++			return -EAGAIN;
++		}
++		mps[i] = mp;
++	}
++
++	/* Update the metapage and remove it from src */
++	for (i = 0; i < MPS_PER_PAGE; i++) {
++		mp = mps[i];
++		if (mp) {
++			int page_offset = mp->data - folio_address(src);
++
++			mp->data = folio_address(dst) + page_offset;
++			mp->folio = dst;
++			remove_metapage(src, mp);
++		}
++	}
++
++	return MIGRATEPAGE_SUCCESS;
 +}
 +
- #ifdef CONFIG_MIGRATION
+ #else
+ static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
+ {
+@@ -175,6 +224,32 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
+ #define inc_io(folio) do {} while(0)
+ #define dec_io(folio, status, handler) handler(folio, status)
  
- void putback_movable_pages(struct list_head *l);
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 6e2488e5dbe4..6c785abce90e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -445,20 +445,6 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
- }
++static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				    struct folio *src, enum migrate_mode mode)
++{
++	struct metapage *mp;
++	int page_offset;
++	int rc;
++
++	mp = folio_to_mp(src, 0);
++	if (mp && metapage_locked(mp))
++		return -EAGAIN;
++
++	rc = filemap_migrate_folio(mapping, dst, src, mode);
++	if (rc != MIGRATEPAGE_SUCCESS)
++		return rc;
++
++	if (unlikely(insert_metapage(dst, mp)))
++		return -EAGAIN;
++
++	page_offset = mp->data - folio_address(src);
++	mp->data = folio_address(dst) + page_offset;
++	mp->folio = dst;
++	remove_metapage(src, mp);
++
++	return MIGRATEPAGE_SUCCESS;
++}
++
  #endif
  
--static int folio_expected_refs(struct address_space *mapping,
--		struct folio *folio)
--{
--	int refs = 1;
--	if (!mapping)
--		return refs;
--
--	refs += folio_nr_pages(folio);
--	if (folio_test_private(folio))
--		refs++;
--
--	return refs;
--}
--
- /*
-  * Replace the folio in the mapping.
-  *
-@@ -601,7 +587,7 @@ static int __folio_migrate_mapping(struct address_space *mapping,
- int folio_migrate_mapping(struct address_space *mapping,
- 		struct folio *newfolio, struct folio *folio, int extra_count)
- {
--	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
-+	int expected_count = folio_migration_expected_refs(mapping, folio) + extra_count;
+ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
+@@ -554,6 +629,24 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
+ 	return ret;
+ }
  
- 	if (folio_ref_count(folio) != expected_count)
- 		return -EAGAIN;
-@@ -618,7 +604,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				   struct folio *dst, struct folio *src)
- {
- 	XA_STATE(xas, &mapping->i_pages, folio_index(src));
--	int rc, expected_count = folio_expected_refs(mapping, src);
-+	int rc, expected_count = folio_migration_expected_refs(mapping, src);
- 
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
-@@ -749,7 +735,7 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 			   struct folio *src, void *src_private,
- 			   enum migrate_mode mode)
- {
--	int rc, expected_count = folio_expected_refs(mapping, src);
-+	int rc, expected_count = folio_migration_expected_refs(mapping, src);
- 
- 	/* Check whether src does not have extra refs before we do more work */
- 	if (folio_ref_count(src) != expected_count)
-@@ -837,7 +823,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- 		return migrate_folio(mapping, dst, src, mode);
- 
- 	/* Check whether page does not have extra refs before we do more work */
--	expected_count = folio_expected_refs(mapping, src);
++/**
++ * metapage_migrate_folio - Migration function for JFS metapages
++ */
++static int metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				  struct folio *src, enum migrate_mode mode)
++{
++	int expected_count;
++
++	if (!src->private)
++		return filemap_migrate_folio(mapping, dst, src, mode);
++
++	/* Check whether page does not have extra refs before we do more work */
 +	expected_count = folio_migration_expected_refs(mapping, src);
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
++	if (folio_ref_count(src) != expected_count)
++		return -EAGAIN;
++	return __metapage_migrate_folio(mapping, dst, src, mode);
++}
++
+ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
+ 				    size_t length)
+ {
+@@ -570,6 +663,7 @@ const struct address_space_operations jfs_metapage_aops = {
+ 	.release_folio	= metapage_release_folio,
+ 	.invalidate_folio = metapage_invalidate_folio,
+ 	.dirty_folio	= filemap_dirty_folio,
++	.migrate_folio	= metapage_migrate_folio,
+ };
  
+ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
 -- 
 2.34.1
 
