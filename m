@@ -1,158 +1,110 @@
-Return-Path: <linux-kernel+bounces-614180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13E5A9672E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DBBA96732
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC987A9CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CA33BD495
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD0E27BF7B;
-	Tue, 22 Apr 2025 11:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A8727C15A;
+	Tue, 22 Apr 2025 11:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3s4GwlH"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	dkim=pass (2048-bit key) header.d=o1oo11oo.de header.i=@o1oo11oo.de header.b="B1BxVoGc"
+Received: from dd44826.kasserver.com (dd44826.kasserver.com [85.13.151.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAD4278155;
-	Tue, 22 Apr 2025 11:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9F725F96F;
+	Tue, 22 Apr 2025 11:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.151.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745320917; cv=none; b=OsuptOec+JdqrvYO1zFa+rOiEnKTVAlGS6c3W5X4MWhC5dTsiRl/02ZPnxVlhF84TWeoITv0Kx/GJkDhFGNMtstfLVRt3WiQ/G038K8aHC99IAP1mgJuw1crut+HgEHLuFlfgUAj16cWuYA9jT6FnwdvSqaB2RcziYaM24o+BMk=
+	t=1745320942; cv=none; b=spi6TwDPehnTlp8EiZOsb2t2RCcyWydrV2VhQkmqDwxxgeC77x06evv5072iFMbMihXKOT/tlvATdOQNoD69uXzZ3Rrs9/yQQimAC83AD8TvBE7dEdeuW4qo7cpoTkxEirHoSo3uMNyEqji7j1lXUYcG4RqnLtP8qeE2gX0UXPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745320917; c=relaxed/simple;
-	bh=TNRSUrc5TE9XXI3xP8fPvpIyV+t/AfWY9OXp4kzcbJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UtegIhsn2QjoYQH8E8ChW06m8sP3u5q1JcnziRyJFH0La3rGQ0xEigQiY/hKB/7qAZ0E8Wh23l0vbLWnplQE/TQnzgcTxUh9uvgdlLjqpAVF2WIi+Ec7FP79tpg1kbzm3lkMx5Q9TNug0NNjVokSmrbl4oncsiiiqb5CQlEjWpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3s4GwlH; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7399838db7fso4735947b3a.0;
-        Tue, 22 Apr 2025 04:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745320915; x=1745925715; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ay6j05mfURnqC8saoeMr6ogRVsWqq76E2aDXfyh7ZmE=;
-        b=Y3s4GwlH4S3rl4+Vet1dT0ofu3r46W0/rhdxISXj1Myut9LxV0cdrKqmy3XtQZLH+m
-         un4NBVyvGkz4ffPdK0IkdHP1UozODMz1pmry5ziMesFHrKSlI6Kn3WyBKRaPskQFw3ti
-         w/AqdpRiuI1AVniI6ijkLZMclHz7gY6GnvxZrq8xjXTSThQ7iBXxcTASC5UXnn3fkW//
-         EHhEzXYPXu8GeHG8LSgUwL2YPVTKvL4FTlvEn7Th4Zgue5B/DlnYschcT3TRGxSjwJjS
-         0b3Qqxq3HlOHuhSVu7dixFzq8DVWm4TrKU5UinVv2pevqc3BbBv22wKIpZQ1cK53vSdH
-         oZvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745320915; x=1745925715;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ay6j05mfURnqC8saoeMr6ogRVsWqq76E2aDXfyh7ZmE=;
-        b=OEE8eDdBMVc32/RASuRG0ErL7B4q4N+4i95tB8YNA0hRbA0pANBgcKZgFWG7+mzuUi
-         9H+xGZHvPWw6V6t6nryWHZ63vsIkq3qdQrNfkaShabblR2gVUPDQHSJdm+JBq4gMqrQ8
-         FTelQpu5rO5c26MdCDfe5fqpaIAawCJDPHUSfta5Mo0yw0UEQvcdftsSpxbdwQoi0V95
-         lTTqEr9obkzsrv1ODlnEzzbR2h8zn6DlYiR8oisSCZw+w3OTAchN1VUsRVrA9cwYiWMQ
-         0zwkVDxPaOL3MnvwaEG+x6xNnQS4l8Sac+hQ/2yvnA5L/ktDMrQLTrOVkw3Y2qt3qXFT
-         NeiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV/oGORL56HULADHySaBmGlwanTky5QnK7t5UvHrDQ964vwKfcvoa+PxoMJLbBGiEweBvgJ4DVEWLo63jE@vger.kernel.org, AJvYcCWazQmigkX4Y9iQSY2O5c7X3zAfBW3YQwf8tu3uIx/a474v/KXPVWRL9wHsRjO+LD9F1Vv9tKARWnb8Skhc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJukqRR53UZ9BeMNXb7V8hrf2iWUe6miMd9QtVZyMQIkmi0Hzl
-	mKYIvU8kSy2SYPpQhk+SuNO1jl3XfvdF/wMxiCvpPwmmEG3yIcof
-X-Gm-Gg: ASbGncurn+zon+LGcOq1p5a5I5XS9wrUdkWReTm5hvVgZwEYaKZt5IAFRcftlhWdbWL
-	3D3y21+Bcrj60iejJNL/hxeVBK5y1bsVvwmyuYDaIqrcZVXb3s9ypnMWpKaubjkEs42Y8/1IdoK
-	a/SmlqAHrGiSr40xDej5eIdcFuHMtXxygvVvDTxxyYhQ2fJqOQvQurd8E9r+AFtEqwtC3W7xHcw
-	m3QR6TqlNA64/hsahq0M9+TXg5tgR2K8MjK4wC7yeboCNPCYh9zhC44CMXJTwtm9rAmDPUveqPJ
-	trsEDWXhuaj3P/zS7if7saKHdxBQAqvXxXu3lKo7BsPoIDo9arSF9A==
-X-Google-Smtp-Source: AGHT+IElSNYl0pqZodwt89usz0QznAvphdRaPmB4R7NXi4Ccq2spidwCw2TN/zF+md2MEsHlG+yqBA==
-X-Received: by 2002:a05:6a00:6c92:b0:732:56a7:a935 with SMTP id d2e1a72fcca58-73dbe638b2bmr25405958b3a.12.1745320914872;
-        Tue, 22 Apr 2025 04:21:54 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db145a6e5sm7117508a12.57.2025.04.22.04.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:21:54 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wang.yaxin@zte.com.cn,
-	yang.yang29@zte.com.cn
-Subject: [PATCH RESEND 4/6] memcontrol-v1: add ksm_zero_pages in cgroup/memory.ksm_stat
-Date: Tue, 22 Apr 2025 11:21:49 +0000
-Message-Id: <20250422112149.3231488-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
-References: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
+	s=arc-20240116; t=1745320942; c=relaxed/simple;
+	bh=GLcpMPy7md/nAw3qC1GMlS20q+b2Xd+N/J4eoHnOFFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qleeXDd4EFyYmKvcSTGrSDfxUn4FYKjcEflJnnarmV4NxQK+z9Zc96mWye2rFt8meWILIGLoDjV97+dLFBV2QhCfYoU+SYzA73mKDIeC6F5/aVWhqPlVz6yNyFe/Bj2QcKRZVMqDsY5MvGFbc2vPPsAxhR/GqLnhTSJLqcQL4eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=o1oo11oo.de; spf=pass smtp.mailfrom=o1oo11oo.de; dkim=pass (2048-bit key) header.d=o1oo11oo.de header.i=@o1oo11oo.de header.b=B1BxVoGc; arc=none smtp.client-ip=85.13.151.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=o1oo11oo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o1oo11oo.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o1oo11oo.de;
+	s=kas202503061048; t=1745320928;
+	bh=ycqs7QdKcMOuNbzmqf4ft41vq1eZBegNFxvwwMj7CAM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B1BxVoGc+hAHvsdJiIiv606xD3SyiQ1Df9bLXhuMMPwJ8jR6xJr7DWq3zlsX3WzJd
+	 fGXcVw9w2H9nFlClZfAtwRv1oEvsHWCu/Fywls8IS8geyiymDFhkYTCs4x5nup33HN
+	 nqULL0uOrpkrjEIy57P0+HF+aLE2LBWuCKn2S1xwZUbAfWXRc9iOpgolUGzjLZyrDG
+	 q2/+b72/7qTpkR14qkwlC4lZ4lJhbwB60h2uHQd6vw2Eemg27LMsIt4ZhMwd3rCrr1
+	 ZHQDIyJQf1nfc7uSh9CdsauuWQL5a11uH6M7LQ+3IJnfi6Ma5+koWuN4k+8+CMwKrh
+	 FDCaQfecImGEQ==
+Received: from [141.24.109.69] (wl-r6-69.rz.tu-ilmenau.de [141.24.109.69])
+	by dd44826.kasserver.com (Postfix) with ESMTPSA id CA877B6E01A9;
+	Tue, 22 Apr 2025 13:22:07 +0200 (CEST)
+Message-ID: <c1eb852b-f8aa-4ab0-9579-19eb0d383cb9@o1oo11oo.de>
+Date: Tue, 22 Apr 2025 13:22:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] lsm: Add Rust bindings with example LSM
+To: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20250416213206.26060-2-kernel@o1oo11oo.de>
+ <CAHC9VhS=jWEZqb3MqCtUAJhY9ci8d_N4H6CqWsYU0YmEG=8_yA@mail.gmail.com>
+From: Lukas Fischer <kernel@o1oo11oo.de>
+In-Reply-To: <CAHC9VhS=jWEZqb3MqCtUAJhY9ci8d_N4H6CqWsYU0YmEG=8_yA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Bar: /
 
-Users can obtain ksm_zero_pages of a cgroup just by:
+On 21.04.25 21:09, Paul Moore wrote:
+> Thanks for sharing this Lukas.  My Rust knowledge is still far too
+> basic to offer any constructive review of the Rust code, but I'm happy
+> to see some effort being put into looking at what would be required to
+> support a LSM written in Rust.
 
-/ # cat /sys/fs/cgroup/memory.ksm_stat
-ksm_rmap_items 76800
-ksm_zero_pages 0
+Hi Paul,
 
-Current implementation supports cgroup v1 temporarily; cgroup v2
-compatibility is planned for future versions.
+that's alright, I was mainly asking the Rust for Linux contributors for feedback
+on that, but I wanted to keep you in the loop as well.
 
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- mm/memcontrol-v1.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> It isn't clear to me if this is simply an exercise in seeing what
+> Rust/C interfaces would be needed to implement a Rust based LSM, or if
+> you ultimately have a LSM you would like to submit upstream and this
+> is the necessary groundwork so you can implement it in Rust.  Unless
+> it is the latter, I'm not sure this is something that is a candidate
+> for merging into the upstream Linux kernel as we don't merge "demo"
+> type LSMs.  If you are intending to develop a proper LSM, we do have
+> some guidelines that may help explain what is expected:
+> 
+> * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+thanks for the feedback, I guess I was missing some context in the initial mail.
+The LSM I'm using it for in my thesis is more of a research testbed (or "demo"),
+so I never intended to upstream that. Since I still needed to create bindings to
+implement that in Rust, I figured I would post them to the lists to get some
+feedback and to get things started in case someone wants to implement an actual
+upstreamed LSM in Rust in the future. This is why I marked this "RFC PATCH", it
+is not intended for upstreaming, only for feedback.
 
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index fa57a5deb28c..9680749f4eef 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -11,6 +11,7 @@
- #include <linux/sort.h>
- #include <linux/file.h>
- #include <linux/seq_buf.h>
-+#include <linux/ksm.h>
- 
- #include "internal.h"
- #include "swap.h"
-@@ -1824,6 +1825,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
- #ifdef CONFIG_KSM
- struct memcg_ksm_stat {
- 	unsigned long ksm_rmap_items;
-+	long ksm_zero_pages;
- };
- 
- static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
-@@ -1834,6 +1836,7 @@ static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
- 	mm = get_task_mm(task);
- 	if (mm) {
- 		ksm_stat->ksm_rmap_items += mm->ksm_rmap_items;
-+		ksm_stat->ksm_zero_pages += mm_ksm_zero_pages(mm);
- 		mmput(mm);
- 	}
- 
-@@ -1847,9 +1850,13 @@ static int memcg_ksm_stat_show(struct seq_file *m, void *v)
- 
- 	/* Initialization */
- 	ksm_stat.ksm_rmap_items = 0;
-+	ksm_stat.ksm_zero_pages = 0;
-+
- 	/* summing all processes'ksm statistic items of this cgroup hierarchy */
- 	mem_cgroup_scan_tasks(memcg, evaluate_memcg_ksm_stat, &ksm_stat);
-+
- 	seq_printf(m, "ksm_rmap_items %lu\n", ksm_stat.ksm_rmap_items);
-+	seq_printf(m, "ksm_zero_pages %ld\n", ksm_stat.ksm_zero_pages);
- 
- 	return 0;
- }
--- 
-2.39.3
+If there is interest in it, I might polish the bindings after the thesis, so
+that they can be properly used for an actual LSM. In the state they are
+currently in they do allow writing an LSM in Rust, but not in a way a safe Rust
+abstraction should.
 
-
+Thanks,
+Lukas
 
