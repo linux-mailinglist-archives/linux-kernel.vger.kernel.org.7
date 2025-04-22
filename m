@@ -1,193 +1,105 @@
-Return-Path: <linux-kernel+bounces-614535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAAEA96DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:02:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E7AA96DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03925188B52F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:00:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C9B47ACF0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48633281535;
-	Tue, 22 Apr 2025 13:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C06284675;
+	Tue, 22 Apr 2025 14:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DlIktlcg"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZZdKe/UB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4457C214236
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD2283C8D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330309; cv=none; b=DQW14pSg+crit6Xm01jK2Z3iMGVirXLamMOqK3TfK06jMI4oc62y07mwNCP4bE5ulWVARE6wAKNpPO/Hc8EnFybcwTMs/Au8QDcRCNS097lERhOFJXqs+CGi3CiyYafPF1TpVbs/QRFwWqVleBFd82XYuiCuYrHGBW8iPP0jYhU=
+	t=1745330423; cv=none; b=XpNRzt9nFNfnGV48lqtBd9RUSCjUSuTnIK3B70C+IOKTMoxxyYDbZzclutXKlsT/WHi+trA8s/VKI0LlrAvFhXTm8TIm1Cbaj7PFTUc42btxkn2mN9X94+lAabM/7lyqIEhBL26rzSD9juTRceEwfXXJ9oNI4hz6V6qPZ8hNJe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330309; c=relaxed/simple;
-	bh=T5X59jETNWOUTxfV3sgDLkOmhnNuqOXNaAFRFfzpqy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYqcijMqD55uRURfeJiEIzLhH5Pm7ruW2P4rXfWadtYX0J34JSPsPQFvudV2dpwGq0nGkx0qhZjE/sl0cZPPabCXaBRd6/R4lLxCPNzmSIMIyT61AgPQF9S+uX7Ctqlvy1tjSrSmconpaGqY6GC2tkrJSyPjU3HXbhWFjbWUtTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DlIktlcg; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D751C40E01FA;
-	Tue, 22 Apr 2025 13:58:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RR4citaDM2S3; Tue, 22 Apr 2025 13:58:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745330299; bh=t2dYJaGH3R6DDzNKlqeYVwFBXBscr6EUJOaos8RE7Mg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DlIktlcgrLLZzdOFF36c42LmTsDM7WnAmSIX/HBvRBLtdu+5r2u5V+DakV8AA890f
-	 R+H/buzVcgMUVTGbbUSRPF7MSSZLpBmcPuchKj/Brt9B8W/djOp3GWHiAiaEbHwDB3
-	 saAkFemgM/b7zCVIBXSdk+2WyAPC8a8HT3AJSmhwMAjM78vHaLHyPiFoIAWM7LUpNy
-	 GKcqBAymp/YSgf4DLZcKtSxoWWL+Xg6dG7+YdDuy4nt4GFiKBzFV4YJSyJllduNk82
-	 cCzwppvLVx2JEKrwdqs7QhxUxhjc5O3HkfA/pov9A/5w6D09+rOVirEvk0AZlghwHa
-	 Fg8vfgtp4wQhn9U2FRjqzhBJ7naUCqIcp2IE9oPlIFhOY3iXIN4Ok6s/Syl/v/qyuu
-	 texNSNuJoEGbTM4626ztlm0KUJxSlh3YdDSrcyIAT0xh6JdWRXl4a3zQF/3DxjFAxg
-	 r5dsTaspLhddZNGeru/GK13uSG/prHhmSZfLt7Du6iQYmgbE4U/MM4D3+oDsVieI/p
-	 HbOVIQIe790yWw4bEJmdQpQdlLKmSY69LozM7QsmGFjpXNszZBz6xlEa7VmflNZD5a
-	 OUQp2R31LmEWGGAB7trtXQuk6xL0gF/lDGDRICGzays31ZqiQ4Bpp1UAzgVYv6v2VD
-	 MT7qkgjE7q3gMMm7LG4ux6Po=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 30F8640E01CF;
-	Tue, 22 Apr 2025 13:58:07 +0000 (UTC)
-Date: Tue, 22 Apr 2025 15:59:07 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/16] Attack vector controls (part 1)
-Message-ID: <20250422135907.GAaAegq5YUl1qQhjWM@renoirsky.local>
-References: <20250418161721.1855190-1-david.kaplan@amd.com>
- <aAKwHvLTDfyM2UfS@gmail.com>
- <20250418213336.GIaALFMKSwKKGw7tTd@fat_crate.local>
- <aAdlefbyU_oqOVIg@gmail.com>
+	s=arc-20240116; t=1745330423; c=relaxed/simple;
+	bh=Qrd8E6rQGgaNid2lXMdhUjAEhxknwnHpoQgES77+eOY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Gojzd7bSyk2Vm7qsewsrgSMTGusCQk+sIQP9TDnVl2FviCJ9eAwNiesIocM58Gw+YUK1KycXT2+wdQJlOpn0ksqs5zulrO5w9sp/GLK1d65KWxtsd+rC33aeWx3AJ51C7lyfulUWwuSOdNcWxN2U0EUiH9Q8NFjJDZAmBQDKLKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZZdKe/UB; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff52e1c56fso7077790a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745330421; x=1745935221; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zeMUCrpneE0eM8QQGcgB52tCP0giwOPvb2pL9U/fAAc=;
+        b=ZZdKe/UBCoH4ovppiVV1vwp3kfK2Z8ZWFrNyzlKXMuF4irU1eerNrRpfXAXWpKbybD
+         TH3aMNrxKEI/wLpRXKQxMB+2EauBg31ePzFSKae8NGuMxZlbZ7w4yfHeGAWAGjdqlWyX
+         k+N3tyNhjmieEz3r/SSk72pseyj+eBZknl8q69VwkAkDH7euRD7XlVraQdxno8m3ExgO
+         I93Y7l5hmF6HiyNt06KpX5Pk/mFBTUikXKCC3hIBiy/jYLsdZEqJC03kJD105W0fzCsn
+         6yKcff66EsxNrRqsXvh0CBN/Tu0zv209mWHn883v/ie0+kvAAuOdQYWb4y7nKJJROpje
+         cJPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745330421; x=1745935221;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zeMUCrpneE0eM8QQGcgB52tCP0giwOPvb2pL9U/fAAc=;
+        b=Xm0ohQ0S46TLLw3bNGDJjHhSmr6+k4ajn7oVmIkx2OQz6K09qH+PyZhEUUkseg6rg4
+         sj+AavZMyZeOCkZi0Ys4mlH+7U2YFdNSK2h0bwktWE/y57/oGYcs1faqZZ+kBrrl30x6
+         UmTE93QTjV/bPVY2SWoqxExKxSfAbFSar9QlievFLjHaUl4YzwjcRBSccka8wRf6wuyz
+         j4pkMMRYlLX3a4TmW2VIESC2O/MjB25qKgsUUGhBlnf3ykeNujUg9WquNtOj2EFh9XxG
+         y1BCOlpowndThN1akpcDjXsCZcgJlHJQjCxCHqrRVUKVAj3Vm+k2GKw73g15cK1ES5ng
+         TVPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpcNws85rIgkXZx7z8/oBX+IKFLEMs61flSieIiqvWOOdKhB58zlh173mXmebLr5Th0JEEDHELEGX5pG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6gN3MeNw76OolfVyPXV4O5saDC1mI97c4AH2NHLt3Noni+5UO
+	ufcaFLqTZkCbBOGb/EST3iQvE7VuH7WGWSBfHIJ9CZ64rrxft0yQq4M9rRE4P+kjDO8HHW0nDLt
+	Izg==
+X-Google-Smtp-Source: AGHT+IEvTg4hIB6sZM1LfDB3TLcVZ/5zwTRjPR6Ejhn7pPEgGGtj2UYeC50jNHB+/sQa6F+bLVoU96ShxpU=
+X-Received: from pjbpv14.prod.google.com ([2002:a17:90b:3c8e:b0:2ea:aa56:49c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2751:b0:301:98fc:9b5a
+ with SMTP id 98e67ed59e1d1-3087bb4150cmr20535629a91.6.1745330418616; Tue, 22
+ Apr 2025 07:00:18 -0700 (PDT)
+Date: Tue, 22 Apr 2025 07:00:16 -0700
+In-Reply-To: <20250422173341.0901ebaf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aAdlefbyU_oqOVIg@gmail.com>
+Mime-Version: 1.0
+References: <20250422124310.2e9aee0d@canb.auug.org.au> <20250422173341.0901ebaf@canb.auug.org.au>
+Message-ID: <aAeg8A7DMvTAjqVO@google.com>
+Subject: Re: linux-next: build failure after merge of the kvm-fixes tree
+From: Sean Christopherson <seanjc@google.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Apr 22, 2025 at 11:46:33AM +0200, Ingo Molnar wrote:
-> The above pattern is not a big problem really, as the human brain has 
-> no trouble ignoring well-structured syntactic repetitions on the left 
-> side and will focus on the right side column.
+On Tue, Apr 22, 2025, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Unlike the current status quo, which your reply didn't quote, so I'll 
-> quote it again:
+> On Tue, 22 Apr 2025 12:43:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the kvm-fixes tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > ERROR: modpost: "kvm_arch_has_irq_bypass" [arch/x86/kvm/kvm-amd.ko] undefined!
+> > 
+> > Caused by commit
+> > 
+> >   73e0c567c24a ("KVM: SVM: Don't update IRTEs if APICv/AVIC is disabled")
+> > 
+> > I have used the kvm-fixes tree from next-20250417 for today.
 > 
->  static void __init spectre_v1_select_mitigation(void);
->  static void __init spectre_v2_select_mitigation(void);
->  static void __init retbleed_select_mitigation(void);
->  static void __init spectre_v2_user_select_mitigation(void);
->  static void __init ssb_select_mitigation(void);
->  static void __init l1tf_select_mitigation(void);
->  static void __init mds_select_mitigation(void);
->  static void __init md_clear_update_mitigation(void);
->  static void __init md_clear_select_mitigation(void);
->  static void __init taa_select_mitigation(void);
->  static void __init mmio_select_mitigation(void);
->  static void __init srbds_select_mitigation(void);
->  static void __init l1d_flush_select_mitigation(void);
->  static void __init srso_select_mitigation(void);
->  static void __init gds_select_mitigation(void);
-> 
-> Which is far more visually messy.
+> I also had to use the kvm tree from next-20250417.
 
-That's when those are written in a block together - there the human
-brain can selectively ignore.
+It's a known issue[*], just waiting on Paolo to resurface.  :-/
 
-I mean when the functions are called in succession. See
-cpu_select_mitigations(). All this function does is select mitigations.
-So there's no need to state the selection of every single mitigation.
-
-> What do I select? Some GDS detail? Or the main mitigation itself? 
-> Nothing really tells me.
-
-We're going to have _select(), _update() and apply() function per
-mitigation. And this will be documented at the top of bugs.c
-
-In the confines of this file, those functions are special and when you
-select, update or apply something in bugs.c, it should always refer to
-a mitigation.
-
-We can make that decision here, in that file, for the sanity of everyone
-who's looking at it.
-
-> While with:
-> 
-> 	static void __init mitigation_select_gds(void)
-> 	{
-> 		u64 mcu_ctrl;
-> 
-> It's immediately clear that this is the main function that selects the 
-> GDS mitigation.
-
-Sorry:
-
-$ git grep -o -i mitigation arch/x86/kernel/cpu/bugs.c | wc -l
-714
-
-That's just madness: this file has waaaaay too many "mitigation"s and it
-impairs the reading. *Especially* if this file is *all* *about*
-mitigations and only about that.
-
-The new scheme is going to tip those scales over 1K...
-
-> 3)
-> 
-> A proper namespace also makes it *much* easier to grep for specific 
-> primitives.
-> 
-> With your suggested 'gds_select()' naming, if I want to search for all 
-> gds_ primitives, I get:
-
-Sorry, this is a bad example: if you want to search for a static
-function's uses in the same file, you simply go in your favorite editor
-and search for "word-under-cursor".
-
-> Hierarchical lexicographic organization of function names is basically 
-> a code organization 101 concept, and I didn't think it would be 
-> particularly controversial. :-)
-
-And yet the current naming ain't optimal, IMO, due to the too often
-regurgitation of "mitigation". And that's particularly a problem if
-it impairs reading of the code - lexicographic organization then is
-secondary.
-
-And as said before, you don't need a "mitigation_" prefix for static
-functions.
-
-And reading that code properly is the most important thing. *Especially*
-*that* code.
-
-So the goal of the bikeshedding here should be optimal reading. I.e.,
-what function and variable naming allows for an optimal reading of the
-code.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+[*] https://lore.kernel.org/all/20250418171609.231588-1-pbonzini@redhat.com
 
