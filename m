@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-614372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34EBA96AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF23DA96ABD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10AF3B4095
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300BB17D51B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F7827CB30;
-	Tue, 22 Apr 2025 12:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DA127D796;
+	Tue, 22 Apr 2025 12:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fWmZqBKf"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiigICZv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4691527CCF3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D1D27C177;
+	Tue, 22 Apr 2025 12:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325904; cv=none; b=Gkv6Ynh4RedSCeuGYLpecvbYcBYRSSfr0I6s7yMa9pq7+Pg+Gki0SV7eFcHcoLk43NIamXHc2Z8WnASqjd4bw2Qp1F5WIoZUdnt7fN3nXTJ+bKReY61i9+31227fwU4LI8505uDYFO396yLYz5cEyOMwueiCqb8zOgvmcq2KRLM=
+	t=1745325948; cv=none; b=LY5E4i0JglTnuXQJ8nDHCQZFYp7WuhL+llV5Qws7TVKeG4WuY4lb2dxpXelywOOT6aujqZu41CfCoiyU/p7L2g0GQZ5Rgpl5yfcmNcJXNAHDPCcu8mqquxE2DvGkZ18N4iV9W55stQIAFvIib6DTSosx8UfSGOrYwSXOx9cuGEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325904; c=relaxed/simple;
-	bh=lvVUs2e8qcPQTdzhT6lkVZyLMX8afuB3KeEklSE+EdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjdZOBq3L5ZYeMgiVWTMY1wHJW6ZdX2Ux1HuDcboq9dbmtsVkN/UySyZQyhta5xwFldLZt+cIEj9M1b/1Sfkqw29JGV02UiFynJuRtO79WOHSZFvu52nScA3pEnfcprhsc1ZLVBsGjsGKZajjAXqCaSPe67dCvpCVSGN5GwG15U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fWmZqBKf; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af50f56b862so3593461a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745325902; x=1745930702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qmv/eppcSNS/FFA0D45HtnI0orFklOBEuu+IeQXnzag=;
-        b=fWmZqBKfcVm9Zp/MwvaHYhnjmMUouOb8b5QDbOFiozNH+mQhQ4y4BETQeLOhDm7r0E
-         8JtBR3nouN+YzHSlPTm8oieEOqQPmz4rlC9747rrPqviTxNHW3tU1sHepxysWshSxpef
-         h9oz+YKITS0SAxIKKAP+mfn3wckbMuYRZZDEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745325902; x=1745930702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qmv/eppcSNS/FFA0D45HtnI0orFklOBEuu+IeQXnzag=;
-        b=gIRYqGZoSpVzxwupN9lPlrf/bfPWBbBH0NO8NSTOzcBkLzBAkIKvROkcIjPZ7Hi45d
-         I+mAOz+mSzWWnwTKhtinNHg1J/PL4zTisXz+zVOHpVnDxWZaACK+AymUbeROmGqR1SBJ
-         9iQVtkrP7LFfCf4Pl+tvdLB0xdxQP4vb4LsxkGXuQ/gD6nil1tDSkqHYdswoXg2FTykJ
-         EnXd9XK7IdOUWBu3w9Jq8Vs3DcQb4ESiy7WI/tHVp5cMm9W4NXOaI5uf9AqiT2D/rxiV
-         qrA+xmWxZUhWoNKl1ofNTaLzulH6IWDxqWzMQXbtN20eFnYLCmoe8ruPdPuzZwj0yZNy
-         BJtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbhfdpd80pgPl8CqAhceYN32w50yn1/NCaAgGS2g3dDg4zUdYlkAet3K1IzZdO0Av23UPGwL0n+oZa2yI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQUenEDR7TAwqoWVg2gb3vlaL+p5fcB33LVWGjc3/euJuKJy+s
-	mEy0s/IpHodMpXVOpF6S1kuCgFJ7IW2vBnm3O+ofBu8H6nxVorsrU9Dqq/gJ0thrvuZmf9wvTvz
-	AOW+iQ55+OVOW5lFA4bGsv1fO/GpNxQ2H1RxF
-X-Gm-Gg: ASbGncuH1XR3wZHQUibkfMVlGr3r/w3P9374cii8ZHWTbnNxmqh/f2gcWwAHpt+lKNk
-	SE50vyYiqWijOQDwfa9X1JU9GNn7mWtlFajx93w8mBsfQGtxhUIYF6wlAJViQrSb7/wJk6XgE6y
-	/I1LsxrV552E+bmxY9fVumQ36PfFWHHcGAKQ4bC4N7kJgq2L88
-X-Google-Smtp-Source: AGHT+IHdTmSx9iS8EFu6hmVr5iQxagekadUQmWy2iPg8Fc4WAFCXivKqI/RbGAfgFTHhUvSFDjFlF3H8NSEt9mNdC88=
-X-Received: by 2002:a17:90b:57e6:b0:301:1bce:c252 with SMTP id
- 98e67ed59e1d1-3087bbbccb6mr20807109a91.27.1745325902515; Tue, 22 Apr 2025
- 05:45:02 -0700 (PDT)
+	s=arc-20240116; t=1745325948; c=relaxed/simple;
+	bh=3e73V+L5xW9ZTTLWy6FpC4egDQdkuqoSP1shJDGBlL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TnshC1+i6M0Z/OIJi2VdVvfeb/Bm+sY09TDThIzdETLRGkuky/YfD45tfl7BrKzVjBmUqLkH/v8JIeK3aYWLImiOsNIDAgYFEDWgWQNTgtj7lJOsSFAn6AIzmdCw+DdFX/fkkLKq7HN1n6VSdTjyn1Pgl1CtHgT4z0sLfPh0y70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiigICZv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48C5C4CEE9;
+	Tue, 22 Apr 2025 12:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745325948;
+	bh=3e73V+L5xW9ZTTLWy6FpC4egDQdkuqoSP1shJDGBlL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SiigICZvIWLipETco2mnMB5J0rxBz0MWK0QWa9VUw6ytL53t3gmtmuBo5gdfNTVbT
+	 YDZhRnGWD9v/oN+72ZFnCTuJPpVBfMCmXMjiGqxYZinrtPFRgjj6KZhktOlDbg4uYR
+	 qjPy3d45SsPim32ZZEfo7k9gBo85n7TvzfKYbj5XNT6gB04r/IoPHkdyLT4ewMdPHf
+	 mnfww5UhMo6Gbk6PMMNzMndoyorgdyQ2sytgGrfbU25nzbZlYKxZ42kM9qER6FvMz7
+	 hSF+KcVK3O936qpouUciG9tBGvXmzfqayIcnUPpb+6YC3adAUM4sRSfiKPel5yyNqT
+	 MPG9CvhwYCPLA==
+Date: Tue, 22 Apr 2025 07:45:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	krzk+dt@kernel.org, mani@kernel.org, conor+dt@kernel.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, peter.wang@mediatek.com,
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 3/3] scsi: ufs: qcom: Add support to disable UFS LPM
+ Feature
+Message-ID: <20250422124546.GB896279-robh@kernel.org>
+References: <20250417124645.24456-1-quic_nitirawa@quicinc.com>
+ <20250417124645.24456-4-quic_nitirawa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z_44tOtmml89wQcM@stanley.mountain>
-In-Reply-To: <Z_44tOtmml89wQcM@stanley.mountain>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Tue, 22 Apr 2025 14:44:51 +0200
-X-Gm-Features: ATxdqUHpL8I3vcFgpkU4A33HaV238Xv7lz1t0Ca9ja9K4i3LKe-c37qpW_-DVJY
-Message-ID: <CAMMMRMf0DtXaG4-qkUfAUNEB8sM-oV2Qg5E_3cPr=yjL3fLo4w@mail.gmail.com>
-Subject: Re: [PATCH next] usb: typec: class: Unlocked on error in typec_register_partner()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benson Leung <bleung@chromium.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417124645.24456-4-quic_nitirawa@quicinc.com>
 
-On Tue, Apr 15, 2025 at 12:45=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
-> We recently added some locking to this function but this error path
-> was accidentally missed.  Unlock before returning.
->
-> Fixes: ec27386de23a ("usb: typec: class: Fix NULL pointer access")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Andrei Kuchynski <akuchynski@chromium.org>
+On Thu, Apr 17, 2025 at 06:16:45PM +0530, Nitin Rawat wrote:
+> There are emulation FPGA platforms or other platforms where UFS low
+> power mode is either unsupported or power efficiency is not a critical
+> requirement.
+> 
+> Disable all low power mode UFS feature based on the "disable-lpm" device
+> tree property parsed in platform driver.
+> 
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 > ---
->  drivers/usb/typec/class.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 3df3e3736916..67a533e35150 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1056,6 +1056,7 @@ struct typec_partner *typec_register_partner(struct=
- typec_port *port,
->         ret =3D device_register(&partner->dev);
->         if (ret) {
->                 dev_err(&port->dev, "failed to register partner (%d)\n", =
-ret);
-> +               mutex_unlock(&port->partner_link_lock);
->                 put_device(&partner->dev);
->                 return ERR_PTR(ret);
->         }
-> --
-> 2.47.2
->
+>  drivers/ufs/host/ufs-qcom.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 1b37449fbffc..1024edf36b68 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1014,13 +1014,14 @@ static void ufs_qcom_set_host_caps(struct ufs_hba *hba)
+> 
+>  static void ufs_qcom_set_caps(struct ufs_hba *hba)
+>  {
+> -	hba->caps |= UFSHCD_CAP_CLK_GATING | UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
+> -	hba->caps |= UFSHCD_CAP_CLK_SCALING | UFSHCD_CAP_WB_WITH_CLK_SCALING;
+> -	hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
+> -	hba->caps |= UFSHCD_CAP_WB_EN;
+> -	hba->caps |= UFSHCD_CAP_AGGR_POWER_COLLAPSE;
+> -	hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
+> -
+> +	if (!hba->disable_lpm) {
+> +		hba->caps |= UFSHCD_CAP_CLK_GATING | UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
+> +		hba->caps |= UFSHCD_CAP_CLK_SCALING | UFSHCD_CAP_WB_WITH_CLK_SCALING;
+> +		hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
+> +		hba->caps |= UFSHCD_CAP_WB_EN;
+> +		hba->caps |= UFSHCD_CAP_AGGR_POWER_COLLAPSE;
+> +		hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
+> +	}
+
+Doesn't RuntimePM already have userspace controls? And that's a Linux 
+feature that shouldn't really be controlled by DT. I think this property 
+should still to things defined by the UFS spec.
+
+Rob
 
