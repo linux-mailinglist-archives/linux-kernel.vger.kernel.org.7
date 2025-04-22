@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-614605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FC5A96F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD32CA96EFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DAD1B65EAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56EB01B6142E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23A728D83F;
-	Tue, 22 Apr 2025 14:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58632857D7;
+	Tue, 22 Apr 2025 14:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIUrKvdl"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTHjseVn"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E720428D829;
-	Tue, 22 Apr 2025 14:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE75FB95;
+	Tue, 22 Apr 2025 14:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332313; cv=none; b=Xkl9bn1zby7IlXNAHll0WG4scVNswXuZCOSwp0BhLFJWUZCvzzjZdm/vWnGgd76UsRJVXhCksxU/KfymFuLb8GI6gnJHYMi+xOae47pnHk97A/RXg0Q9PUux0KLnM860UdiIvFAZHYtUp90gTI4wN1WRpCoHJ2HMBlTQTA6TjuQ=
+	t=1745332300; cv=none; b=rXM6Qgj5Wx/zk7u+L/ay21hGfAkHQcHvcxpn15N4W5KbMkVQi1kSC30Dwt7Lr7Nj97zya2FwR9+0aKoIkU99vP6biCtTnQ4Qsc/gWQSvYa0acdZp8HLlNqoYoRguVkjLJU+W3Zcn0ua0pyynvakRe9GlEKgrhlY1LgFoeABtrAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332313; c=relaxed/simple;
-	bh=I/3+wTmAf3FBNLCDu9mwvPy69eEH2veqCzLXfOX2FyM=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=u0SWDMDyUwaNfIxIoOLmTJN69ucjcGJpEXow45Tk2gL+Je+pNcpYK+Lx5BG56QVNGr+R19dQ3k1KUDVFZstw8K8Omhj2Wc0zi5EQQbEER5CtxBHBs/tke3xnbHWFSqJzExB0JRxalHg6/3nrubxCY0ei7Pu0AdkpmNmpCo0aHR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIUrKvdl; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1745332300; c=relaxed/simple;
+	bh=aPTEjEJvTaqK7QfdNneuXA5RGpq3RiNIyz1EOWySdY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Clr7+dMShkCExTQR3KVTbN6Z6svbkjPb4US0A1J42iUeWMljELxecinNB5jXbUXcUWxwtaiX2A+jQI7/NWdtihaUa01bvLnpyoQpJzpsow6zO0c5tpImD4FAdLGbf6jtUeD++N20yAIUSO0w/Zq1k++BXekfHsQ1ABdJMvaYiGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTHjseVn; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-224100e9a5cso61433995ad.2;
-        Tue, 22 Apr 2025 07:31:51 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1138338566b.1;
+        Tue, 22 Apr 2025 07:31:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745332311; x=1745937111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M7mFfhbdxHQKXHZiL5DhNfWu+e4LKYbHRFDcRBXeqUk=;
-        b=AIUrKvdlXKWnTG/KPFrs6hp8LvLp0PKzoacYDweecogwFrVDlkvcEQDJGrUnZQVggz
-         fnZJM1ogbC0ErRYPtAJRTGjx87fcLSCtGnemPKl4gHZdi53b91CtQDMvID2OYVL2UmZC
-         /jZ/+kYfsTj8XcS5EqmJuEOFtqYlluC5F9oz3sNNymTMEpnqj5IDGhU/NaLVsPc0//5c
-         cdYaZY8sLMSkhvZnG/7P4ZNc90d9Z9beA6YhkVHT3MW0hCakg2CA0PbxTdPyKNn68pgU
-         GUeSQVOZz6QVwFLq9/VUa+lGJUiOoAkkw+Zo4nccI2rS4/jQ1DcbMM0LMsEFji0NTCQT
-         gOlw==
+        d=gmail.com; s=20230601; t=1745332297; x=1745937097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9D2Ohj7BMKhRiIF2UiB0PW+jmy/zmiJ2pgDRvvl1DdQ=;
+        b=MTHjseVnwQQxG7mxXwyyOiioDZ6jgbLkRHuzZY5wwigbJbV9KFkdjmg+Mo93GzJNTm
+         ykpdMyEScaz9uP0ougUh2Sz2lWV9ZTeCDUlHxYl3t6eCB8f12x6cRm+dIMVxTgWT4LsY
+         1XvfS4mELBOPyCx9XVAHInqBL+oggjLWNPpD8Ig3s5+b0lE6RYXwoPIEL14vW9xK3Sha
+         wHe8gQ6A4MSrUtTlYt6o9x3O5DLKl9xII0KLuuaymKo0MQTwhjcUWL5gthZqXSxJ+6r9
+         YnNKL2DLomG2EGn6lLa2j26CR1g03atEbXds+EgsXyvdmnJoZAPMalY9Kun+1CEkDzUy
+         65cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745332311; x=1745937111;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M7mFfhbdxHQKXHZiL5DhNfWu+e4LKYbHRFDcRBXeqUk=;
-        b=bRYTuPF+tgUyKwcJNDxj7ns2KAhit7DNAigJxjIQB041pzhIOFoZfbXNCg60hvbGbn
-         /fK8TxE2SmRZwLVQkAEGOcBw4s+HpwvdKX4rk9SDWxKshBuPnMNTI3o8d+yFkieQFVVs
-         X3/29Re8VW9JsIKHELBfXi4XViPtfGlpOio3gCH598FWAU1hQ0x7fiY0qbAu465wkCMl
-         /RIU5HXaU7ktQ5GH1/wDcuDoAXNyrgSuShXpqbFEx5RoaOeb/E8Hw68u/wNWSchQBS50
-         BBkak7Wyr3GGNMwGfxaqzuc8UMQjmHwKr/k2LRvaDT7tW25hM8x/9oSegXJRyfl9z8rQ
-         KSsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYFRnEkjfu/G7DTsn6qq1itMhNSDUsN3uZJSQs96uQrYd/18ruCDj/QgtRvrcQf5FHD72EwUGCz1pEWhKQofs=@vger.kernel.org, AJvYcCWR7nrdEfVkFDKC9MBVt2vUfpw38ZVWlXMOhMR0TCk0p2PDuSsSluTzWcEPvyvljacfTGwW1iWPxUkDt5k=@vger.kernel.org, AJvYcCXVMXJxtEELTkZ6OMOVw/6kmlw5ynbLZD8kd5DAvQTVBddFL++1jB80kJOZ4MeTBQk/v6QPDXRA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxJa5IVRLWCU/DeJgBa6u3ZqnWt5IH8oUjg8qvf2f+F40CdMtl
-	D+ZfQi5YYBaXd7IAR0yz4CvJhj4U0Fk59ZPvQTv05enNCRz6KQMU
-X-Gm-Gg: ASbGnct9rEk9JNqYb6sDmBBFOSud3xufHOjb4yQtHJM7O4hz3ihlkWYXezKUcuf0ql6
-	MkxoJw0e39ye//AzEw3PSbBuvomL9OlvP1MNB+ORQec1sjMhnOrdGsjADSmLg4ol1+ulmXctEsP
-	Y0pzMiidCd2FI74jDRLnXvGu/urVyz7ZFB2SSqJKwjnsvPjRvDU8P+vL8RZH4UEMuIlEvn0unPW
-	F0fMfOk1nI5qDWsUuy01a4vOhMKbHo2XbuaBOSEYfDJZcR0xiP05jZDczKHu9dCmd9SzxxY64Sj
-	E/uteRPnPUx1fY7IBZrGVixpBOmEqunfJ6IqwRkLJwYcROaThww/uGzehJlqtqC9zb4EigWAj9r
-	9QFX+F4tQfqjr7c8vGyxhigyWsczrZhfAvQ==
-X-Google-Smtp-Source: AGHT+IHGLINwJNecuB+jZD/re/b6eY92fnTCBBDek8l8rDonYpDqTGoY0WP0YQIuxfMtCWhCDLyM2g==
-X-Received: by 2002:a17:902:f54f:b0:224:1781:a950 with SMTP id d9443c01a7336-22c5357eda2mr230766295ad.14.1745332311255;
-        Tue, 22 Apr 2025 07:31:51 -0700 (PDT)
-Received: from localhost (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb4edesm85427615ad.123.2025.04.22.07.31.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 07:31:50 -0700 (PDT)
-Date: Tue, 22 Apr 2025 23:31:32 +0900 (JST)
-Message-Id: <20250422.233132.892973714799206364.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com, a.hindborg@samsung.com
-Cc: fujita.tomonori@gmail.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
- hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
- david.laight.linux@gmail.com
-Subject: Re: [PATCH v14 1/6] rust: hrtimer: Add Ktime temporarily
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <aAelbeiWVZgL-kMh@Mac.home>
-References: <20250422135336.194579-1-fujita.tomonori@gmail.com>
-	<20250422135336.194579-2-fujita.tomonori@gmail.com>
-	<aAelbeiWVZgL-kMh@Mac.home>
+        d=1e100.net; s=20230601; t=1745332297; x=1745937097;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9D2Ohj7BMKhRiIF2UiB0PW+jmy/zmiJ2pgDRvvl1DdQ=;
+        b=l7Htr4mDNXvUnG6V9rBBoauJcujAY75Ng8m+YJ41nXzgu5rTKEy0S9jWzoOOugJZ2v
+         TIk1O89ZU1/hRLQbUS8+GCQRE2Z+/AyR4LcCgl8BeGaOhCDHnwZNWrpWJwJwkYDYXDnj
+         qABqvlXevDzuSoSAStLNU3zBL87xM/l/5M+tOMiybz/E+zrFty1WvenqDezQRYLsc/EV
+         JZGuvhzz6AiAvhAKVm4XHxCwbLt8r3BLbzQ+PRgg9QfU0K+5jb8Qi1aGZRt3Nqw/iJaT
+         sQLrEPlNqCU0c2wvvDWV7JUereo1ExvM2agBvpzgMNiHgkuUuhzONiNSvlINadW06Dhc
+         Uxxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4eVcvdGvfIkTbNHs0JCUxZQ0CQhWuPyU0f6/oaoHA9n5Rh0XjWZR1M6CFGtVpuUrhF/ixHylW9CnIINo=@vger.kernel.org, AJvYcCVRdM6sbIOxAhuv/MXddCA/5glFL5paxkbZLLT9hGBIxYNYTFcvPMGz+QeAimnR0LR+vb+tWuBPWlN7@vger.kernel.org, AJvYcCXJx0nd1USZYr/a4E6cFNXfTVzqQC1TtoMkM/CDheeb6zFFq2Vjmaps/V2wQcu774ZcE2JLEarlBNYSQp0g@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYz8dEMpc77RSSgUUPu568IiHydIOGb3GRwVX7aW389veAEeWS
+	dtSmaqenWA3n7gnXZAq8ZzqpL9aH2Ue/T0Pw0vQjOeJtCB6x5WhG
+X-Gm-Gg: ASbGncvRG5BHU8ptX5+dH5/5CyzxGgsst04PCxo8cbNrUaGWAOd+MU7DoQeQACEbXei
+	T5IU8U3h2Ck8ZD0PLJ1XaLNmPhkAVo9iqxEA1L55CtYpyMoeTsBEgauQFvUaY70cir8pop8UilI
+	O6aXY7ATMonJps0BLCutq6b9IvBhYsU90spQoWkNk4Xs1aZXZioFZBW+KDs8n+Ur3SdDjJplGyx
+	AsaO3lQL3g1K2lky+9FkjP44oRJRHDCn5ARbS6sQKeHLLjtaXw57LhCFzMfl9GwZkNf1SRWN11A
+	oxOZT5FHHUzKA12i0wzOoLTkevxm2OgHyqdDMPtZ+u4=
+X-Google-Smtp-Source: AGHT+IHxR50TFifkBPFb1XIbV7o2Uld6KWH6bgmxrkwABwpSwd3+oXjHqcT/SSW4faB3cyazbRU9pg==
+X-Received: by 2002:a17:907:3f91:b0:ac8:1bbe:1a5b with SMTP id a640c23a62f3a-acb6ec51617mr1298187766b.9.1745332296250;
+        Tue, 22 Apr 2025 07:31:36 -0700 (PDT)
+Received: from [192.168.1.101] ([212.106.161.104])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefc685sm672352866b.96.2025.04.22.07.31.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 07:31:35 -0700 (PDT)
+Message-ID: <de6aa1b0-3557-4b8b-86a3-919fd9e5dec6@gmail.com>
+Date: Tue, 22 Apr 2025 16:31:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: tegra: Add uartd serial alias for Jetson TX1
+ module
+To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
+Content-Language: en-US, pl-PL
+From: Tomasz Maciej Nowak <tmn505@gmail.com>
+In-Reply-To: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 22 Apr 2025 07:19:25 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
-
-> On Tue, Apr 22, 2025 at 10:53:30PM +0900, FUJITA Tomonori wrote:
->> Add Ktime temporarily until hrtimer is refactored to use Instant and
->> Duration types.
-
-s/Duration/Delta/
-
-It would also be better to fix the comment on Ktime in the same way.
-
-Andreas, can you fix them when merging the patch? Or would you prefer
-that I send v15?
-
->> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+W dniu 20.04.2025 o 16:35, Aaron Kling via B4 Relay pisze:
+> From: Aaron Kling <webgeek1234@gmail.com>
 > 
-> (Tomo: seems you didn't add me Cced in a few patches, could you add me
-> Cced for all the patches in the future, thanks!)
+> If a serial-tegra interface does not have an alias, the driver fails to
+> probe with an error:
+> serial-tegra 70006300.serial: failed to get alias id, errno -19
+> This prevents the bluetooth device from being accessible.
+> 
+> Fixes: 6eba6471bbb7 ("arm64: tegra: Wire up Bluetooth on Jetson TX1 module")
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-Oops, of course I will.
+Reviewed-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Thanks.
 
-Thanks!
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> index 9b9d1d15b0c7eafd3895f02db1bc747d7cc8923c..1bb1f9640a800af6c10fabf0ee3916f2566a6d4b 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> @@ -11,6 +11,7 @@ aliases {
+>  		rtc0 = "/i2c@7000d000/pmic@3c";
+>  		rtc1 = "/rtc@7000e000";
+>  		serial0 = &uarta;
+> +		serial3 = &uartd;
+>  	};
+>  
+>  	chosen {
+> 
+> ---
+> base-commit: 119009db267415049182774196e3cce9e13b52ef
+> change-id: 20250419-tx1-bt-5f202a7e4cac
+> 
+> Best regards,
+Regards
+
+-- 
+TMN
+
 
