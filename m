@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-613559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C76DA95E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:35:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902BEA95E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15F93AD59A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:35:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53C657A5F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F5522AE48;
-	Tue, 22 Apr 2025 06:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f/uiAfNC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295A7230987;
+	Tue, 22 Apr 2025 06:45:03 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5623C224241;
-	Tue, 22 Apr 2025 06:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC10199E8D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 06:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745303710; cv=none; b=uJld8PyHbgztiAf+IJPC75M3kwKGZ/LCci2chu5O+Yh5g4b5RmhgkI8KvHt/V2uyz2F94sft6qZAx9OCxEhLUr6s4z9C8ElknFIjyhjrpXJlHvp7JTfflKCDAr6mbZ0EXRLEg+psZqJxSj0Bgunbb//SevmfBTNIgrwXUC3YDyI=
+	t=1745304302; cv=none; b=GNf0o1JMmg3fJ1fafFMLzOD127TSdsaUpOd85l4w+XAIv6Q/MGvU4wv1x77bgVfl0ms8haq8tBtc/Ul0Z2OG1dbZiT/jfDcMJmxOprQS3Wwv4XjBKVljkLYwjH1fw1YvWvlPBGikt3UFECw02h0gUbwmDQCzBA7r/FWL7fkXZyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745303710; c=relaxed/simple;
-	bh=3e8kWJ+5dYcF4w1Vgg7AQq6013hm2DLzY2/AT72WOWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jOZS3zULNVBoM17Gdjy97X4PcznjdxJCJMZr3RgJLVH+n8UEZ7nzA9ybl0xetexU9kXfwivOZp5AChwg8PvpblqxK9CCFE1xVVxF8abo/bdXJ96viPv2IzbvWMy1NVnyk498p8MheX3FyM1IvuznTUcif867rtFN+zx/UkqUlak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f/uiAfNC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1745303704;
-	bh=XbJhvKh4vtpmZn6LpMbjWDDn495LKD+EyiM3PUe3xpA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f/uiAfNCQkn1gNEyse41DZegt4Ff0c5hei8xuYCCFUsV3Pw4xGxpKdD2x9TPkY3FE
-	 gWx9B1iPaFPCDF4Wh0T2O2uch6NfPNMyYe88wQhwUT/DubjRR0SidziMqR5LEnxUgC
-	 HCbpGZ9JuU8vopmtaN/J0qCERLPJhRsUXjKYY9svlVdbJI2GUcUFfsUm/Q8SIt+BL4
-	 LLrd3NcbGrS4xUJeC/XI3ESI24z9+cT+drIVPym3yUmXJVjqhf7lxRno16psh5U3Xy
-	 lLdQkrzJva0RPjH/M4VElQT99HK5yeDeYCq4tmyZJdVHXlr5AQHHURDNdDdXckThha
-	 rIjRsqptKFoeA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZhXXl4hq7z4wcj;
-	Tue, 22 Apr 2025 16:35:02 +1000 (AEST)
-Date: Tue, 22 Apr 2025 16:35:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20250422163502.02ceeb0d@canb.auug.org.au>
-In-Reply-To: <20250417134959.37204d48@canb.auug.org.au>
-References: <20250415133518.2c8d4325@canb.auug.org.au>
-	<20250417134959.37204d48@canb.auug.org.au>
+	s=arc-20240116; t=1745304302; c=relaxed/simple;
+	bh=tiD+q2iLPecaXdqBIUQA6kHgOTtsV3xRVQmtbqKQgbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pAmMqfjKlYxpjXZtVEZA81uAwgp0a7/97UN9EzU184KZtaBhsrla0Ll8oOLLn7j2zOcOql5lWyCAm/vgtktd3GVdid0CHLKa3t60IFuH6kXr/Avuk7LClvZFOeZW0Mm65+TXl6dmvCvwQwxfj529aICB2SyP+H/zWGKEIK0UUJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 195285F86B;
+	Tue, 22 Apr 2025 08:35:14 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>,
+ Lu Baolu <baolu.lu@linux.intel.com>, Jerry Snitselaar <jsnitsel@redhat.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Nick Kossifidis <mick@ics.forth.gr>,
+ Sebastien Boeuf <seb@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Robin Murphy <robin.murphy@arm.com>,
+ linux-arm-kernel@lists.infradead.org, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>
+Subject:
+ Re: [PATCHv2 0/6] make vendor specific subdirectory inclusion conditional
+Date: Tue, 22 Apr 2025 08:35:08 +0200
+Message-ID: <2779144.mvXUDI8C0e@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <aAERFUJj_6NuxAv3@8bytes.org>
+References:
+ <12652899.O9o76ZdvQC@devpool47.emlix.com> <aAERFUJj_6NuxAv3@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7A9xsA9gK5zCoW57Qija83n";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; boundary="nextPart12651545.O9o76ZdvQC";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
---Sig_/7A9xsA9gK5zCoW57Qija83n
-Content-Type: text/plain; charset=US-ASCII
+--nextPart12651545.O9o76ZdvQC
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>
+Date: Tue, 22 Apr 2025 08:35:08 +0200
+Message-ID: <2779144.mvXUDI8C0e@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <aAERFUJj_6NuxAv3@8bytes.org>
+MIME-Version: 1.0
 
-Hi all,
-
-On Thu, 17 Apr 2025 13:49:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 15 Apr 2025 13:35:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the tip tree, today's linux-next build (native perf)
-> > failed like this:
-> >=20
-> > diff: tools/arch/x86/include/asm/amd/ibs.h: No such file or directory
-> > In file included from util/amd-sample-raw.c:12:
-> > tools/include/../../arch/x86/include/asm/amd/ibs.h:10:10: fatal error: =
-asm/msr-index.h: No such file or directory
-> >    10 | #include <asm/msr-index.h>
-> >       |          ^~~~~~~~~~~~~~~~~
-> > compilation terminated.
-> >=20
-> > Maybe caused by commit
-> >=20
-> >   3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header to <=
-asm/amd/ibs.h>")
-> > or associated commits?
-> >=20
-> > This a native ppc build of perf.
-> >=20
-> > I have used the tip tree from next-20250414 for today. =20
+On Donnerstag, 17. April 2025 16:32:53 Mitteleurop=C3=A4ische Sommerzeit Jo=
+erg=20
+Roedel wrote:
+> On Thu, Mar 20, 2025 at 10:01:45AM +0100, Rolf Eike Beer wrote:
+> > Changes in v2:
+> > - clean up subdirectory Makefiles to use obj-y now
+> > - add arm/arm-smmu-v3 and iommufd patches
 >=20
-> I am still getting is failure.
+> This conflicts with the core branch, can you please rebase once I pushed
+> the updated tree?
 
-Anything happening with this?
+Sure.
+=2D-=20
+Rolf Eike Beer
 
-This is a ppc64el build of perf on a ppc64el host.
---=20
-Cheers,
-Stephen Rothwell
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
 
---Sig_/7A9xsA9gK5zCoW57Qija83n
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+emlix - your embedded Linux partner
+--nextPart12651545.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgHOJYACgkQAVBC80lX
-0GwSCAf8CA+g8bCYbGqEETq+zURtUdk8Gg1J19+lz6KBLpXbOwyorrV1cvoWdn36
-ipmU2g7kmyrnuOaEOVpyLrxH9gqlaCq8Sy+XeH9ShOXoon/KsXm54Hq82kFvhtag
-QC5YnTf+u9Wg6dUDAAxFOwTDai+dZQcfqCaA9xQ2mJvDgi0ErOtwcmBsK5ZK4Eqj
-8+Nd4O71zzNkOuJx7HMk90+JCSEyey3McTXgmDhS12lBFXFaIRZF/kOoR5yhQM0q
-10tdBefMVAQzSj9IEfh10fSOJU/Y2PlXeKHC0R98GVtHVuW1hz5VfMn22ajDJCfM
-PPbF7bDcYbzotdC+AMRn/DrToRasLA==
-=StO3
+iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCaAc4nAAKCRCr5FH7Xu2t
+/Ho+A/98h1tQPHZhbsX2KdIBKcFTRVlxRJvscAWNQs5Bko1+iniOMO2sfq6HClPQ
+7VC+G41TiMT5lg6jPBJqNlM8AXmA/dt85cmYSP0YuW+JRaE5aHfprhlJwjy7/o99
+Yy23Gp0kOkRaa2sm/N32llKyzxpn14YxBKPR3GZm1c5IQhbsng==
+=8mcp
 -----END PGP SIGNATURE-----
 
---Sig_/7A9xsA9gK5zCoW57Qija83n--
+--nextPart12651545.O9o76ZdvQC--
+
+
+
 
