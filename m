@@ -1,94 +1,97 @@
-Return-Path: <linux-kernel+bounces-614915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B086A973D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6259EA973DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219CD7ADA7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272763A9CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0BF1DE3CB;
-	Tue, 22 Apr 2025 17:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639921DF75D;
+	Tue, 22 Apr 2025 17:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmJgtTLv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6F01DA63D;
-	Tue, 22 Apr 2025 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55D028382;
+	Tue, 22 Apr 2025 17:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745343734; cv=none; b=O1ujKiJnm/u8Xy+XNVvlGtwyvNQGPyQoLMVXVIrhs5vUIz0CdEj5boN8LaooytkH/yW5PUKsJhVg5wwccF2rhG0K27ehv3hYXODuFk4yrBwRR3tsFwx+nUO8wAHQ+oPn+nSOOdbrbxhGuwL2K1zd0Q8vMp+NhoAHV0AOK2x3nIQ=
+	t=1745343898; cv=none; b=KHKasBPNHnJiMChqY9h8AHG+6QPQk0sXS2E/9401gyDEiYr+k1u52DUGDL1ftnWGzr+o6NT8d/Ahmhi2Ca9qMNLDAcw6VeG/EpdX0V1G1T/O7C5OMRdiQj1UFVhDkLjjO2k4/zEO/2mLIg3OeKfcFtcrTW+B2/oR6UeVxJw3uzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745343734; c=relaxed/simple;
-	bh=QaEXmCGSZOW0nPSYRQqYZLcN6XSKT+AUR8R/rRFsWb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TjOaooRCjnHo//LPBwnu/EeUsuQZPmDu1l4/o6C8p5C9yyupWUksLQ+Ouz07d845aoEpdN/SDt+zLyTN9mPBTSPWgtpuARSNjPW9GTdMu3I8I0XI8vZpHXF2SOAM+yVh8jEXFibdlqdhPQztZgXK9cwpofvXQx/WUQ6GyuCHkbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AC0C4CEE9;
-	Tue, 22 Apr 2025 17:42:11 +0000 (UTC)
-Date: Tue, 22 Apr 2025 13:44:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
- <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
- <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
- James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
- Lutomirski <luto@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Weinan Liu <wnliu@google.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v4 09/39] x86/vdso: Enable sframe generation in VDSO
-Message-ID: <20250422134401.55178c36@gandalf.local.home>
-In-Reply-To: <20250124164332.gqgzimfix3vk4bsw@jpoimboe>
-References: <cover.1737511963.git.jpoimboe@kernel.org>
-	<c93fbd53f01c2c86f747af27040ac11f16dee032.1737511963.git.jpoimboe@kernel.org>
-	<cde90a82-6bdd-4a12-872a-7b39edf3eac8@linux.ibm.com>
-	<20250124164332.gqgzimfix3vk4bsw@jpoimboe>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745343898; c=relaxed/simple;
+	bh=LZPhO1+IZ3hE+Yi8gImePBlBCXriAyy/WZRVCLdD2n0=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CF1MHe/4bkwJCrE5cyznbJVumyvsFX6J0vUXSHR0AnNhj9paK/WP6TEfQn7LWaPjq1hotlJmA4UovaYWwliZI58bgGfaHyQKud/i9zYZTs5isjKBXSxrP2yZWFbPhsHBbrfFpsjPBqWZh9iA3GjNvSTJMb9W7z4v5SG1fkn7UhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmJgtTLv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B1BC4CEE9;
+	Tue, 22 Apr 2025 17:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745343898;
+	bh=LZPhO1+IZ3hE+Yi8gImePBlBCXriAyy/WZRVCLdD2n0=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=gmJgtTLvIdg2do91CgMUvoi5JX4/nUcsov4skubbMBNF91z0g9Vthe//BXxKYGoEq
+	 jGJ3PIK5eMNmjza16Q3xHczIAMA27kDyRmF/ry63fWvexOuQPyGxFUogEPu3EHw1J4
+	 jESOS02xyeifbaL5QX4cFxQCKqXkErWRLkNb2XuWeGwUujfqk+2GnRp/m5z2wtwnl1
+	 mwSEAJj/Cu1oLAUVYHWj7/o6N20z8DL/bE5MxcUlMuzCDN1jfshLwUgo2/xmf10D+x
+	 mAXYNWHLxIGU5zVq5h7clZ2d2LHUUG/H/3RQseu/J8EJJA1ZZdxFkae0Gf9nCY8Vvg
+	 H2qq9X3sz0vOg==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <20250418053050.2755249-1-shengjiu.wang@nxp.com>
+References: <20250418053050.2755249-1-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,mqs: Document audio graph port
+Message-Id: <174534389630.233012.11103900998893012901.b4-ty@kernel.org>
+Date: Tue, 22 Apr 2025 18:44:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Fri, 24 Jan 2025 08:43:32 -0800
-Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-
-> On Fri, Jan 24, 2025 at 05:00:27PM +0100, Jens Remus wrote:
-> > On 22.01.2025 03:31, Josh Poimboeuf wrote:  
-> > > diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
-> > > index b195b3c8677e..1c354f648505 100644
-> > > --- a/arch/x86/include/asm/dwarf2.h
-> > > +++ b/arch/x86/include/asm/dwarf2.h
-> > > @@ -12,8 +12,11 @@
-> > >   	 * For the vDSO, emit both runtime unwind information and debug
-> > >   	 * symbols for the .dbg file.
-> > >   	 */
-> > > -  
-> > 
-> > Nit: Deleted blank line you introduced in "[PATCH v4 05/39] x86/asm:
-> > Avoid emitting DWARF CFI for non-VDSO".  
+On Fri, 18 Apr 2025 13:30:50 +0800, Shengjiu Wang wrote:
+> This device can be used in conjunction with audio-graph-card to provide
+> an endpoint for binding with the other side of the audio link.
 > 
-> Indeed.
+> 
 
-Note, I'm getting ready to send out an update of Josh's patches.
+Applied to
 
-This particular nit isn't really an issue, as #ifdef's do sometimes replace
-blank lines.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Just mentioning this so you don't think I'm ignoring it, when I post patches.
+Thanks!
 
--- Steve
+[1/1] ASoC: dt-bindings: fsl,mqs: Document audio graph port
+      commit: 0c9f82446123635cfbb8ceeca074f2dce6a0ccae
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
