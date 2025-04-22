@@ -1,85 +1,68 @@
-Return-Path: <linux-kernel+bounces-614039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB75A9657D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:10:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B69A96582
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F7C3BB5EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:10:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C043D17BBB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175731E231E;
-	Tue, 22 Apr 2025 10:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zmgkONSZ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD0C202F8E;
+	Tue, 22 Apr 2025 10:11:12 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A583420127B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DE11E231E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745316591; cv=none; b=Sbw7c6kjuznmtCci8iN2RkDxfv7DFsw3DlBo380rEbR0rSy+3HXfsQnoZJw35oVpcktVB2JNooL8PKHvhghNGGZvYuBl68gqukikjOPSPp/AVwarX7XTup8l13pydntbCWuLogKzr9rNTYsveGcZY/FbtfGSrmOL204s2kkZH8o=
+	t=1745316672; cv=none; b=rIBpu5r0wbfyNB2W6wZtx452KsabKJ/zCIZi6lUH25f+4BmdKWZzEbJKTD0EBoOvD9+sKvpYba8tdOrB5fGHWoOaxvqKBkI2GTO6vsDtQudzAJ1zpyaA/oEDd9hOOqNzA8iAw8dt2yl51E5/ubnPkOkTLfpeLT2nZpjUPTOCECU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745316591; c=relaxed/simple;
-	bh=gJ51U3OqINc8COkxIxukVEYOMtp81jpnzGm7X1OCfvo=;
+	s=arc-20240116; t=1745316672; c=relaxed/simple;
+	bh=Be9XKhXsNt8ArUOzCYISVtCd83N1sexbQRPCs5bJFts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDom+iWlETcn6XgU2ZO5z2H+5COh+XZmygGwHWE/WC7AXpgxes9MJY1IUxNeFROXj+Fm1vaCqmbNnvVmQfxvk9xNeNfiW/x1p/FL6/sGPD57Y6gTi0G26Wt5QdCJ+ZidecVQcNgwX8PGIXwDliHFjyVX8yWr6I29aAGsxjL+fr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zmgkONSZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39c1efc457bso2977696f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745316588; x=1745921388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dp1ZZcaQjMA4BnCcS6OmQTLRZmI/Eud1+9lMtliZJGM=;
-        b=zmgkONSZM1kY/CQ6n4fXRH2iMXVs98zqQcBa9XplNh0MDuSZStpWNZa56A1OapjMb3
-         9idb0Pk8xscrePdddUq4+5f5j/nK5mGr2UqUuAowGboPlgdmpzYNkZBlhPmObrXyF0x1
-         EFFzWxWwaNcvSHB5R3Fff6SBZLoOLkaP/+pRz5yPHjDlNBuC084OPd09P/6OGtc4H3Qp
-         jX99bsB83Cu5IxpaMvh3koFscSWROKNx5OOyhtAEG2lO/CpOI9MkFh4z9PDx+s79glBZ
-         ecdPiEKzKEAyRu5ngJ3Mdp0nFxTtj3+IaJ7ArsnIhsfMRDsU9anFr51GnLVrONwH4Bfz
-         YwEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745316588; x=1745921388;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dp1ZZcaQjMA4BnCcS6OmQTLRZmI/Eud1+9lMtliZJGM=;
-        b=ZlLrcZNcHLF9XWKHNPHZ1wYdUimJBU52z4foPSLzNpyFnKuwFaHqo1XK+DNC2cyy83
-         nlGK+WZvVoqmqe8gHV5EI1uRjsEEldwCMgJyPRV76J1wqCQVRuMz0lfnrGnA1xl47tTC
-         n+RcWa7JM9i6lJhnpi0vjl1AarjUdDRZ/hDBuf+DIyFrg5Or/k9uITyV5zmB1spnxfu6
-         49XBnkPLzPDMXLSw0A42NVPsqITvzliFqj6q0zA6ozxx88pXrsRiqxMaIb4u8ZRWqvKV
-         G6e2GytgpPLf8O5DbuSsaChzrB7l8hx2B8mwLQ7xjZunm4eEirRUu3vfdKb8jZ5R4IuY
-         3Mrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFSqx3XO+PELpG8nW04JW9P9xaFB7/dxtA6MwWsymfyFKj9BzWoWI63yjVNC5ksR/VoD5Z4gJkiygIoAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyevQHV2UKbH7S8PVOFJeNZWGGHsVfp+Cct45txt17p+jJ27oQ
-	O3fLhU9qpB53NN0lnGfT6b84QRnRHBLw3UHWZIEGmlsV/T8E7hgPIuVCJ2JvHjI=
-X-Gm-Gg: ASbGncsEvKwNGdHs66TFF8UILE96yrNR1rnRZHI0aACPu4/21XtFRGdCajZQ3SaDXok
-	eWY823cTqCQq01vGMKxcvnWHQbRyiS63YCMc40JwC9yItKaLj3caThGNefiRhwbeEC1pEq0nOh6
-	hXWDUnL7jnwsKw/8YTk/iFFj0fvRTMWzp6BaFD5xATCFt4OtBrd1obl6BurUOjGjtRvM/5yfYDY
-	4VaIWmL9lKma1RyseVIYsS2XgZVI+ZmXHHbTP1VgU8lhceR4fsU54lyGU2rUARanpwsZCiTiP0f
-	Nz6gwHV6iVf2pYC/tKLC9wb7MVbG1i0B08E6clPenakffGxRLB28Z6ef
-X-Google-Smtp-Source: AGHT+IEmHLJOQlOcSRcmVdEtr0KqjHjjJr7duO4pcXYqbZwwqR76CD1k4A3+rfbNuIehIKutY/tmZA==
-X-Received: by 2002:a5d:59ac:0:b0:39c:1404:312f with SMTP id ffacd0b85a97d-39efba2cb94mr11712313f8f.1.1745316587993;
-        Tue, 22 Apr 2025 03:09:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43ce2esm14951548f8f.57.2025.04.22.03.09.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 03:09:47 -0700 (PDT)
-Date: Tue, 22 Apr 2025 13:09:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Cc: gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, Michael.Hennerich@analog.com,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v3 0/3] Fix and refactor output disable logic
-Message-ID: <72fd8919-8413-45f4-94fe-277719192536@stanley.mountain>
-References: <20250420175419.889544-1-gshahrouzi@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCU1c8E5w4MhJNQwfqh4mbqXkmgWENa1jnLD5HvNmXU311FdiJSFdP0DNFvcwXzCUa77frUUPov+ddrSF8Op09PblU+nW4I5ftHLOh9zoyNfFb4qZInQkOqVNpy3rmUvyJkHWU9Xs1csxcEIrBxWXttuBpIuYbYBuT7Sy6JEGA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: EStD+ZeuSWSkbP3vIP1MXQ==
+X-CSE-MsgGUID: rtOJGC8zQ92WSpPTzB3N8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="57520537"
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="57520537"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 03:10:51 -0700
+X-CSE-ConnectionGUID: OyezLt9IR6+TB7EgkwTVVg==
+X-CSE-MsgGUID: vvYtacKFT1y+2Qv1X+oGmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="137125614"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 03:10:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u7AaS-0000000EhDz-1jPp;
+	Tue, 22 Apr 2025 13:10:44 +0300
+Date: Tue, 22 Apr 2025 13:10:44 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH 14/29] x86/boot/e820: Clean up __e820__range_add() a bit
+Message-ID: <aAdrJGBTiC75KPn-@smile.fi.intel.com>
+References: <20250421185210.3372306-1-mingo@kernel.org>
+ <20250421185210.3372306-15-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +71,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250420175419.889544-1-gshahrouzi@gmail.com>
+In-Reply-To: <20250421185210.3372306-15-mingo@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Apr 20, 2025 at 01:54:16PM -0400, Gabriel Shahrouzi wrote:
-> Patch 1 includes the initial fix.
-> 
-> Patch 2 refactors the code to use the out_altvoltage_powerdown ABI.
-> 
-> Patch 3 adds small improvements by minimizing the size of types and
-> doing a redundancy check.
-> 
-> Not sure whether to include a read function for powerdown as well since
-> all the other attributes only had write permissions. I can also do this
-> for the other attributes to help modernize the driver.
-> 
-> Changes in v3:
-> 	- Include version log in cover letter.
+On Mon, Apr 21, 2025 at 08:51:54PM +0200, Ingo Molnar wrote:
+>  - Use 'idx' index variable instead of a weird 'x'
+>  - Make the error message E820-specific
+>  - Group the code a bit better
 
-Please don't resend patches the same day.  Give us a chance to review
-it otherwise it gets split across multiple threads.
+...
 
-regards,
-dan carpenter
+> -	if (x >= ARRAY_SIZE(table->entries)) {
+> -		pr_err("too many entries; ignoring [mem %#010llx-%#010llx]\n",
+> -		       start, start + size - 1);
+> +	if (idx >= ARRAY_SIZE(table->entries)) {
+> +		pr_err("too many E820 table entries; ignoring [mem %#010llx-%#010llx]\n",
+> +		       start, start + size-1);
+
+size - 1 ?
+
+>  		return;
+>  	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
