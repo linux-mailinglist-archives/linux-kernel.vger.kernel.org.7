@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-615153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5BDA978B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DAEA978C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCA8460D2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940F246143B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023701F1508;
-	Tue, 22 Apr 2025 21:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5025CC5F;
+	Tue, 22 Apr 2025 21:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiIpQjcu"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/VB0O3E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186C72C375F;
-	Tue, 22 Apr 2025 21:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD6E25CC54;
+	Tue, 22 Apr 2025 21:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745357655; cv=none; b=Bqa6KIsPmr5AIwHlvzXOuv0OcEFCD4LzQlJ8AQkqTMfFvkWCZjgAWlM3qi9qoZkDepGFiZkb09s6CiayL94B1oR5ZvEeXPz55w6dEjdsQkmEqEsXn5ShuN9eJ5xg6lC+x5J1M3tG29Wjixu5GawYd+Anp4HbpjnrsBlG2WF+qZ8=
+	t=1745357686; cv=none; b=MqdFlD385FOBVysM8GxKjRzqyw1bJVilzZbndwdEObCrQBrONM2TP2ictymTwcXlXERaIWdHxhcJ6vVrhVi8rxmP2qZkkj5rXMHmZFgS2yl3VMT1PKSniRuXRjGAzzzEeG3yaiVNcaz2HZr/kc7uRWlzznnAY24aRI7XiYoFgeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745357655; c=relaxed/simple;
-	bh=jzoeHJ9FVvRsDMLGjGjuYfISbaEIiA0srGKxxKNCibU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FmCeebr/Fjmh32BxksgkEME0t6HUW09OBHDISpo0vLeNxhQR/6Zv5GuC1nIAy2xp8LUH08W8dOLzQAbfIfZ8DEholvlifwjLFwSZUG6kiIwX2MAjaP3pAehIhWAV2/q+csabcE2XdIL8acK704Y4g29Jq0aZdDytu1SqoBedPag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiIpQjcu; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e7270e0edf5so5221908276.2;
-        Tue, 22 Apr 2025 14:34:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745357652; x=1745962452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9HiyJagRpv7rkDBgAFearXvQuPs3vB2yHec2EHcgxLI=;
-        b=EiIpQjcuW7+u3NgKQk6gUo3l8CMOgP5EuK2sF/vf196do4P1nZ+tfGObJw83/cA35g
-         1rSYzqYP6m1/rpg4zOpgXZo75o+nnVBBBFMe2ydCU2raZQFWKMIUWrI8DkdTn5DATSYn
-         6hoxVmjtKn4iLucwkJ28Jd5JjBAnBNSNluRlHHj9uipHBUfUcLKsNaZwjbRpdOh36RG7
-         YFZ5/f10dW4La/eNzquQ5UkWOLcDo3nFLlSkJt0otKAUWdftfI7A6RLFma48AGY5hpiH
-         4ODraSLqXPhfEsz0HpMlCdY6Hz1DmKiJJFtmOCSMPXwleHJ26VEXsGltL4ShxmgewvF7
-         Aa6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745357652; x=1745962452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9HiyJagRpv7rkDBgAFearXvQuPs3vB2yHec2EHcgxLI=;
-        b=mdqKAlXmASJARL7mGu37U9V9D91sbFjg7ZGmtjtgJJy741NUlnQY07j3NDPMe4FJKL
-         fLKXOjeC9JKhnN61RZhxfSgS24dX+p3OREGFahkWnZQb+FAM7/y82803CvILLrqVRozn
-         ZCU1D9oEjkmUhs1cVXKu9rBhDPl25VfnORNxSmiM+TP8bHup1xS1ox7TS5PsKv0I7cP1
-         qxN2D5+YYMxPru1BaduVq6krLyiyExUuMs7qV6Z58ZE8EILPIm5Xe+gDni3Kho5Pu8oa
-         AQpSM9e7RUEIpCXCiQfmQpXv9/B4xsYVZ+p+tmz406GapjYCUN5sVNE0ZqKbT+ufrt62
-         W8qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxEJtRtqD4rnLbmpH+2PN2pHsNrTbIEGwcJYoeNKk7SBBQFGk4iF+dr6GN4j6e+7z8RQVkLAEMQe/VdIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz2sBTfRoH14jmGo/qlLnZYVkeJfuOUnyNAnAlMBy4vY8AliMm
-	ddS3bjUHm4ekRQtv4yGN25YSzqX3QIL7s5O8/XdSizU0OagX9eQo9v7Re7y3EsQ10PjIjntjy3q
-	pgKH8sX/0IhlLolzNpLwTv7dtzRq0gA==
-X-Gm-Gg: ASbGncsscsglc8D54nu9EOsABWF/FdI2aKsVYSOySqIFXnoanPnXeoxWQVi+pltCjMF
-	Fsng6cc8ZqclpDF4nf4h0u+4qYfMJmFDWhemqN+/oLCt5/ZCzbN0dabDuoXPHhHbi/QpX9YiqR2
-	SlxEEjbzZfXoLuQjd4/djoql5/3kObk90YpP8=
-X-Google-Smtp-Source: AGHT+IHU5Mn5USXaef0BijWjn6/jTRvhHUWpRdRSi8Cx7eocNGEyOf1eCE7Y0UIdEtHPUsU+8Q/SrGB9UAjT+NRm+wA=
-X-Received: by 2002:a05:6902:a87:b0:e6e:47:2f9a with SMTP id
- 3f1490d57ef6-e7297e9a8dfmr21941600276.37.1745357651893; Tue, 22 Apr 2025
- 14:34:11 -0700 (PDT)
+	s=arc-20240116; t=1745357686; c=relaxed/simple;
+	bh=jyjeQnJ0O2WuI0gKxcdb0KXCGDP/1YD/gsJSDhxXty4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YsvYbwcm4x+Zon4Bd9LZLNC2C2OkLsab5LiyUHDApQeKspn5y6dBdDtYRo+TIslUyzWa8aCMu/Or+DihTYWTbcDUElZ+COEZ+BcCyF7AtUNFNE7gh65TRefbQAPlHfyD46IQ0azYqjd8UHp1pFJLa+84ODf3ri1UWsVNI/DE9sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/VB0O3E; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745357684; x=1776893684;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jyjeQnJ0O2WuI0gKxcdb0KXCGDP/1YD/gsJSDhxXty4=;
+  b=W/VB0O3ETpjL8Jin0TITwXTpgN27DILXzh5XyAcZDgsdpRyqc6HQ7mix
+   D6/4ZSclQbs/MV6tCjI886kxr26tczsOT8lO6pQHm+XZLWZN6sIAFGNUt
+   M6lcfae132DXUngyCOYKF4HZH5K/sOlnL7x0WdvJl0hLTSGOKwjaczvX4
+   gzirhtczHnKgtzNcWLqjwDbhz9wE2j+CBt3AY22lGslFa52mRFT6BWXvx
+   ljgm5Er3hPc3gzq3x0IiUMmZIdJFCly6P69XC5C/6GFWHEWkBXeg/V9lZ
+   Iefaqas2YhOOknJffawaE4Fb53bEPxbQtLW7sKb0zgkLLS2HTd/RCNHw2
+   g==;
+X-CSE-ConnectionGUID: LMfKPAvTSH+MSS1sPHUXAA==
+X-CSE-MsgGUID: 6Rng6ICTSreyNWzNXD/4rQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="46053985"
+X-IronPort-AV: E=Sophos;i="6.15,232,1739865600"; 
+   d="scan'208";a="46053985"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 14:34:43 -0700
+X-CSE-ConnectionGUID: VQP00nAoTxmKAhcM4IWyxQ==
+X-CSE-MsgGUID: IILVZBlSQKq41sANahvCTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,232,1739865600"; 
+   d="scan'208";a="133070682"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by orviesa008.jf.intel.com with ESMTP; 22 Apr 2025 14:34:43 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 0/5] intel-uncore-freq: Add agent_types and die_id attributes
+Date: Tue, 22 Apr 2025 14:34:22 -0700
+Message-ID: <20250422213427.1943328-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421040044.44887-1-rosenp@gmail.com> <87ldrsjrvp.fsf@toke.dk>
-In-Reply-To: <87ldrsjrvp.fsf@toke.dk>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 22 Apr 2025 14:34:00 -0700
-X-Gm-Features: ATxdqUHZp1L6DWILXwtwVqezi_PEfSVOLbt9wTNg5-uagVKjF3xkQUXH-UQUdEg
-Message-ID: <CAKxU2N_3mcv7e2i8Z_b0+oQUXxMmpKH1eGvEZiwcRxx8HKYDwg@mail.gmail.com>
-Subject: Re: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
-To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>
-Cc: linux-wireless@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 22, 2025 at 5:35=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <t=
-oke@toke.dk> wrote:
->
-> Rosen Penev <rosenp@gmail.com> writes:
->
-> > Simplifies probe slightly and adds extra error codes.
-> >
-> > Switching from devm_ioremap to the platform variant ends up calling
-> > devm_request_mem_region, which reserves the memory region for the
-> > various wmacs. Per board, there is only one wmac and after some fairly
-> > thorough analysis, there are no overlapping memory regions between wmac=
-s
-> > and other devices on the ahb.
-> >
-> > Tested on a TP-Link Archer C7v2.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  v2: remove wrong devm irq conversion.
-> >  drivers/net/wireless/ath/ath9k/ahb.c | 13 +++----------
-> >  1 file changed, 3 insertions(+), 10 deletions(-)
->
-> Is there any benefit from this other than code simplification? Because,
-> TBH, I'm not sure saving 7 lines of code is worth the risk of changing
-> something we know works already...
-It's the same API calls fundamentally. This change has already been
-done treewide across various drivers.
->
-> -Toke
+Add two new attributes, so that orchestration software like Kubernetes can
+target specific dies and agents for uncore frequency control.
+
+Srinivas Pandruvada (5):
+  platform/x86/intel-uncore-freq: Add attributes to show agent types
+  Documentation: admin-guide: pm: Add documentation for agent_types
+  platform/x86/intel: power-domains: Add interface to get Linux die ID
+  platform/x86/intel-uncore-freq: Add attributes to show die_id
+  Documentation: admin-guide: pm: Add documentation for die_id
+
+ .../pm/intel_uncore_frequency_scaling.rst     | 10 ++++
+ .../platform/x86/intel/tpmi_power_domains.c   | 34 +++++++++--
+ .../platform/x86/intel/tpmi_power_domains.h   |  1 +
+ .../uncore-frequency-common.c                 | 31 ++++++++++
+ .../uncore-frequency-common.h                 | 19 ++++++-
+ .../uncore-frequency/uncore-frequency-tpmi.c  | 56 +++++++++++++++++++
+ 6 files changed, 146 insertions(+), 5 deletions(-)
+
+-- 
+2.48.1
+
 
