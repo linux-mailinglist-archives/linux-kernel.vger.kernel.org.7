@@ -1,153 +1,191 @@
-Return-Path: <linux-kernel+bounces-613327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC517A95B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:20:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3F1A95AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDD603A47F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:20:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6F627AA1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6F82405EC;
-	Tue, 22 Apr 2025 02:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986C1C5D77;
+	Tue, 22 Apr 2025 02:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST5r1nIy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hlrLD3gX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785FA23E344;
-	Tue, 22 Apr 2025 02:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140571A5B95;
+	Tue, 22 Apr 2025 02:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288187; cv=none; b=PBo2dcOoPCoZHhc9+KpJtklXrm1coLsL0PuPR7HvTDIer8mFied4l4vb72po+JSkzB0LX6spzoWabDotneCpybyA6txesmeT07QrZRoxGEIeIAZXQ9uE3l7gGmy6X6/lLBofojoLqvyxhp46MceDBIVVHy3/HldSuetJ7xJEu1I=
+	t=1745288159; cv=none; b=i7I0ZbmkY4DUXyCCtpDiuPNZaxUiKOwT22e2hHRs1iXoyopAZrzmuk+SaUUKFels6WDHJwCf+wec4bAy/67RgNcrmHAhCkkFJ9ujERog8bcP1WRn9eVaX96vjhV63Hfyx8jkzC9ngFiITYr978TITyfPqS4XBP41l/KjkJA9+88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288187; c=relaxed/simple;
-	bh=Bajci9RVViShoHebpmmjyMnZxE/rkvpjN1R1FfxX0Sw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ss15rv25Y6g8jwxV4xgg5m+bgCJRit0b9jGQ1dcPPx2bq2MBGq+xe6fWcMoe8jJ/Zhe0ilfnRU4Z1RAwyfeR6C9XLBFQsS6rpZw5aYhsWzyK9U6M+6s4f8G44UbHM1fMQU2oXn0buvZtywF0vkOk0aACyEyOPpLux+ghQ6j/G34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST5r1nIy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2379DC4CEE4;
-	Tue, 22 Apr 2025 02:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288186;
-	bh=Bajci9RVViShoHebpmmjyMnZxE/rkvpjN1R1FfxX0Sw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ST5r1nIyoA9oY/HJl0h/ujkUdTAqJQ5dxCmwQNcxmrbVNZseN0ifZKdoiVcM+neZe
-	 Ruq/P1vKenubpv4PNJnmVcqmwWjGj+LRqTwCj7huqBZS4mV45KhILo/WgHCuqPLA8A
-	 8/reejL/ccY6mkKvUyvjgusJBydne7YcoMvju2rz0g9PYEsJBBjDRn4wia3H8PajQP
-	 BlVoIoAmpFxyOBAm07Oqcre5HfEDyj1ay3XfMCu0ZsvkcwvCN8GV0ZIOGE1YbeEbY+
-	 AlnZzqbQ8GHuFHipU0HyzgBrtG4rVyLzJFmFj/kATM+CADpSlhuKy3aDuh+YFj7Nxo
-	 BwxRBARzxOIvw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Mostafa Saleh <smostafa@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 20/30] ubsan: Fix panic from test_ubsan_out_of_bounds
-Date: Mon, 21 Apr 2025 22:15:40 -0400
-Message-Id: <20250422021550.1940809-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
-References: <20250422021550.1940809-1-sashal@kernel.org>
+	s=arc-20240116; t=1745288159; c=relaxed/simple;
+	bh=eYvWklFUgj90fZadkV0JWrPdYQKzusVDeVBhCI0d52w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ITDqnrH37KhsVdrm7fPVrPA8jVBeULBBi+QMo4FItcy2KIDLQS9tX9P365XdzsoMnWrDQIY3oO/niubB2tN21ZX8t5nS7a7ghWO+aXhEmWoWcfbfHFxwoN31US662QgegWvqYWrgAhWoy5OQZ/PXhKAWpMAQ9SNgsqIH06WTtRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hlrLD3gX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LMV7N6015364;
+	Tue, 22 Apr 2025 02:15:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yPhpEfspJ3un5qULZi8Z94YjW5YiGEKufQi5Vd8r07Y=; b=hlrLD3gXBAN/rLZi
+	WC2ViOO1HlJWzgMxSICQegQdsui3p8SdpjM/5U/IP2LShDyZPY41toa7p5Na1Mz5
+	0Ky0+eb5+N6o5BlVPZZL2zXx1mWl6MGbqG+1g/s863+Pf3dDgGQFANAL4p1RfBwU
+	8HQgmVfmafiRAYr/ORCTIwP0GpC7xfbUugp/hBla357r9ipCze0fXPam6mjLbRot
+	gWquu4Z4SXILhGrJQK3oZei8cEp5xNmNc0O3HpRDrm/i+KxGW4qMwHiAY+aHASzS
+	I8xcIb4EryAOYmKDGL+4SmfmGaR1gSpGR9M4zpTK6N8Y9xnwW+QRhjOCRxkkKSb7
+	gRmywA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 464426nr1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 02:15:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53M2Fj2D020770
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 02:15:45 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Apr
+ 2025 19:15:43 -0700
+Message-ID: <5ae72a5c-798a-4c57-b344-02b231cb881c@quicinc.com>
+Date: Tue, 22 Apr 2025 10:15:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.3
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: Fix memory reuse logic
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Jeff Johnson
+	<jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Anilkumar Kolli
+	<quic_akolli@quicinc.com>
+CC: <kernel@collabora.com>, <linux-wireless@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250418120951.94021-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250418120951.94021-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sQThG3pSeN9kjsxfKHLL6mqGwENvfqQW
+X-Proofpoint-GUID: sQThG3pSeN9kjsxfKHLL6mqGwENvfqQW
+X-Authority-Analysis: v=2.4 cv=IP8CChvG c=1 sm=1 tr=0 ts=6806fbd2 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=QX4gbG5DAAAA:8 a=7xKvOyCpBhAOSqRoKRkA:9 a=QEXdDO2ut3YA:10
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_01,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 malwarescore=0 clxscore=1011 priorityscore=1501 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504220016
 
-From: Mostafa Saleh <smostafa@google.com>
 
-[ Upstream commit 9b044614be12d78d3a93767708b8d02fb7dfa9b0 ]
 
-Running lib_ubsan.ko on arm64 (without CONFIG_UBSAN_TRAP) panics the
-kernel:
+On 4/18/2025 8:09 PM, Muhammad Usama Anjum wrote:
+> Firmware requests 2 segments at first. 1st segment is of 6799360 whose
+> allocation fails and we return success to firmware. Then firmware asks
 
-[   31.616546] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: test_ubsan_out_of_bounds+0x158/0x158 [test_ubsan]
-[   31.646817] CPU: 3 UID: 0 PID: 179 Comm: insmod Not tainted 6.15.0-rc2 #1 PREEMPT
-[   31.648153] Hardware name: linux,dummy-virt (DT)
-[   31.648970] Call trace:
-[   31.649345]  show_stack+0x18/0x24 (C)
-[   31.650960]  dump_stack_lvl+0x40/0x84
-[   31.651559]  dump_stack+0x18/0x24
-[   31.652264]  panic+0x138/0x3b4
-[   31.652812]  __ktime_get_real_seconds+0x0/0x10
-[   31.653540]  test_ubsan_load_invalid_value+0x0/0xa8 [test_ubsan]
-[   31.654388]  init_module+0x24/0xff4 [test_ubsan]
-[   31.655077]  do_one_initcall+0xd4/0x280
-[   31.655680]  do_init_module+0x58/0x2b4
+Host won't fail in case DMA remapping is enabled. Better to rephrase to make it clear that
+the big segment allocation fails in case DMA remapping is not working, usually due to
+IOMMU not present or any necessary kernel config not enabled.
 
-That happens because the test corrupts other data in the stack:
-400:   d5384108        mrs     x8, sp_el0
-404:   f9426d08        ldr     x8, [x8, #1240]
-408:   f85f83a9        ldur    x9, [x29, #-8]
-40c:   eb09011f        cmp     x8, x9
-410:   54000301        b.ne    470 <test_ubsan_out_of_bounds+0x154>  // b.any
+> for 22 smaller segments. Those get allocated. At suspend/hibernation
+> time, these segments aren't freed as they are reused by firmware.
+> 
+> After resume the firmware asks for 2 segments again with first segment
+> of 6799360 and with same vaddr of the first smaller segment which we had
 
-As there is no guarantee the compiler will order the local variables
-as declared in the module:
-        volatile char above[4] = { }; /* Protect surrounding memory. */
-        volatile int arr[4];
-        volatile char below[4] = { }; /* Protect surrounding memory. */
+Not follow you here. What do you mean by 'same vaddr'? firmware does not care about vaddr
+at all.
 
-There is another problem where the out-of-bound index is 5 which is larger
-than the extra surrounding memory for protection.
+> allocated. Hence vaddr isn't NULL and we compare the type and size if it
+> can be reused. Unfornately, we detect that we cannot reuse it and this
 
-So, use a struct to enforce the ordering, and fix the index to be 4.
-Also, remove some of the volatiles and rely on OPTIMIZER_HIDE_VAR()
+s/Unfornately/Unfortunately/
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
-Link: https://lore.kernel.org/r/20250415203354.4109415-1-smostafa@google.com
-Signed-off-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- lib/test_ubsan.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+> first smaller segment is freed. Then we continue to allocate 6799360 size
+> memory from dma which fails and we call ath11k_qmi_free_target_mem_chunk()
+> which frees the second smaller segment as well. Later success is returned
+> to firmware which asks for 22 smaller segments again. But as we had freed
+> 2 segments already, we'll allocate the first 2 new segments again and
+> reuse the remaining 20.
+> 
+> This patch is correctiong the skip logic when vaddr is set, but size/type
 
-diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
-index 5d7b10e986107..63b7566e78639 100644
---- a/lib/test_ubsan.c
-+++ b/lib/test_ubsan.c
-@@ -68,18 +68,22 @@ static void test_ubsan_shift_out_of_bounds(void)
- 
- static void test_ubsan_out_of_bounds(void)
- {
--	volatile int i = 4, j = 5, k = -1;
--	volatile char above[4] = { }; /* Protect surrounding memory. */
--	volatile int arr[4];
--	volatile char below[4] = { }; /* Protect surrounding memory. */
-+	int i = 4, j = 4, k = -1;
-+	volatile struct {
-+		char above[4]; /* Protect surrounding memory. */
-+		int arr[4];
-+		char below[4]; /* Protect surrounding memory. */
-+	} data;
- 
--	above[0] = below[0];
-+	OPTIMIZER_HIDE_VAR(i);
-+	OPTIMIZER_HIDE_VAR(j);
-+	OPTIMIZER_HIDE_VAR(k);
- 
- 	UBSAN_TEST(CONFIG_UBSAN_BOUNDS, "above");
--	arr[j] = i;
-+	data.arr[j] = i;
- 
- 	UBSAN_TEST(CONFIG_UBSAN_BOUNDS, "below");
--	arr[k] = i;
-+	data.arr[k] = i;
- }
- 
- enum ubsan_test_enum {
--- 
-2.39.5
+s/correctiong/correcting/
+
+> don't match. In this case, we should use the same skip and success logic
+> as used when dma_alloc_coherent fails without freeing the memory area.
+> 
+> We had got reports that memory allocation in this function failed at
+
+any public link to the report?
+
+> resume which made us debug why the reuse logic is wrong. Those failures
+> weren't because of the bigger chunk allocation failure as they are
+> skipped. Rather these failures were because of smaller chunk allocation
+> failures. This patch fixes freeing and allocation of 2 smaller chunks.
+
+any you saying kernels fail to alloc a smaller chunk? why? is system memory exhausted or
+too fragmented?
+
+> 
+> Tested-on: QCNFA765 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+
+QCNFA765 is not an official chip name. please use WCN6855.
+
+> 
+> Fixes: 5962f370ce41 ("ath11k: Reuse the available memory after firmware reload")
+
+I don't think a Fixes tag apply here. As IMO this is not really an issue, it is just not
+doing well.
+
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/net/wireless/ath/ath11k/qmi.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+> index 47b9d4126d3a9..3c26f4dcf5d29 100644
+> --- a/drivers/net/wireless/ath/ath11k/qmi.c
+> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
+> @@ -1990,8 +1990,16 @@ static int ath11k_qmi_alloc_target_mem_chunk(struct ath11k_base *ab)
+>  		 */
+>  		if (chunk->vaddr) {
+>  			if (chunk->prev_type == chunk->type &&
+> -			    chunk->prev_size == chunk->size)
+> +			    chunk->prev_size == chunk->size) {
+>  				continue;
+> +			} else if (ab->qmi.mem_seg_count <= ATH11K_QMI_FW_MEM_REQ_SEGMENT_CNT) {
+> +				ath11k_dbg(ab, ATH11K_DBG_QMI,
+> +					   "size/type mismatch (current %d %u) (prev %d %u), try later with small size\n",
+> +					    chunk->size, chunk->type,
+> +					    chunk->prev_size, chunk->prev_type);
+> +				ab->qmi.target_mem_delayed = true;
+> +				return 0;
+> +			}
+>  
+>  			/* cannot reuse the existing chunk */
+>  			dma_free_coherent(ab->dev, chunk->prev_size,
+
+actual code change LGTM.
+
 
 
