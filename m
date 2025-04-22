@@ -1,99 +1,147 @@
-Return-Path: <linux-kernel+bounces-615217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DD2A97A62
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E918A97A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC78D1898CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB14D177C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2265829DB99;
-	Tue, 22 Apr 2025 22:22:39 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD0229CB28;
+	Tue, 22 Apr 2025 22:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OYw7mRRn"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2820A25CC4F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9582BEC5F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745360558; cv=none; b=Z039ZT1XXfD9dvcByROp9OqGJZrzWOx9oY5Wd4pXtArZf1qisYtHsbhERbU7iLxrkkQNz5mm6MmPZ+Xv8h3WdZnQVCU0mJ6/8pryVDvhbdQLUdeNneXRczy3K/fB4y+hIfPX/a7QRMbfx2EUe715X3JXinQwtok1v4as5k3xGxg=
+	t=1745360504; cv=none; b=QgHK5xDXB3qE0WKUZWVZHqjqVUp9y9caiA7BXNo9BuV/lX83GjrE/AnKijN7kFJjtmCZR13plinH+972/bhtTLsTmsjdkOMITrgHnz7DPsfXzVMm7th68nQHG/rOyxER8BHv8HDVRidZ957Icbz/armMHZjuTfgYZ9/BYd9KNBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745360558; c=relaxed/simple;
-	bh=8+W3ZgMU+QoYs4p0b2TU3n98HQ9zhovyAb7htKt2BxE=;
+	s=arc-20240116; t=1745360504; c=relaxed/simple;
+	bh=OMajJGOYOM80T8XOi8EmEsK5+/OYko020cjWF3DYVFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Seo1lsGTieVi2stv2hVe+UpgTW4Gx0e2nxaofgwTvNRPgrpuCp07loy4WxdZvxkSEHGpMwP3SBz/HxziXiiEeFzkR9sHqz82XTrSCSfQduwNWV5cqhGC+/9yi0z17p1ncbN/2H+85w6SQC3jkWxTaTE2cDxqV9QWSrzVfhOJEn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([204.26.30.8])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 53MMMFeS008792
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 18:22:16 -0400
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 28C693463B2; Tue, 22 Apr 2025 17:21:31 -0500 (CDT)
-Date: Tue, 22 Apr 2025 17:21:31 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-man@vger.kernel.org
-Subject: Re: newlines in filenames; POSIX.1-2024
-Message-ID: <20250422222131.GE569616@mit.edu>
-References: <iezzxq25mqdcapusb32euu3fgvz7djtrn5n66emb72jb3bqltx@lr2545vnc55k>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hU8aJl3AS7OF7WdUP5jeAjs0deIjpp6vPCpLxBmpq8upIQm+L7/1/QP67UQ+0pvO+3CIso63ZpIlmQFIj2/WFCb90Z8nSAoTSpGlF4WErpCdWGDLlKUJ3j6VA7ZUIy7+H3i7etqrLvDgJF6urDw0ICfq7C86bppOangbIPDJYeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OYw7mRRn; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Apr 2025 18:21:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745360498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kjDPiTvtrUS828kXClEO+meshTtGoc7Lw5B1i+KsT4=;
+	b=OYw7mRRnyhGu94Y30UFMbMR+XjM8+Q/9gIeWcdXGKDL63oxVaeWij5Tr1MoYhvxQb+2Eam
+	m/gGTcGPetWw67JTRjIHukoRM2dFhtS7WAMns0Brqy8FkKeN9BJRS6ZGG0wryHBzi7EL2a
+	usVjI0h7YYuGiv0FHu3O3VO0OKRKtlc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <ben.collins@linux.dev>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] fsl_pamu: Use 40-bits for addressing where appropriate
+Message-ID: <2025042218-beneficial-wildcat-77dd3e@boujee-and-buff>
+Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <2025042122-prudent-dogfish-eac6bf@boujee-and-buff>
+ <20250422190921.GB1213339@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="plgvsw3l3hufgtb4"
 Content-Disposition: inline
-In-Reply-To: <iezzxq25mqdcapusb32euu3fgvz7djtrn5n66emb72jb3bqltx@lr2545vnc55k>
+In-Reply-To: <20250422190921.GB1213339@ziepe.ca>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 16, 2025 at 06:50:00PM +0200, Alejandro Colomar wrote:
-> 
-> I'm updating the manual pages for POSIX.1-2024.  One of the changes
-> in this revision is that POSIX now encourages implementations to
-> disallow using new-line characters in file names.
-> 
-> Historically, Linux (and maybe all existing POSIX systems?) has
-> allowed new-line characters in file names.
 
-Do we have any information of which implementations (if any) might
-decide to disallow new-line characters?
+--plgvsw3l3hufgtb4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] fsl_pamu: Use 40-bits for addressing where appropriate
+MIME-Version: 1.0
 
-If the Austin Group is going to add these sorts of "encouragements"
-without engaging with us dirctly, it seems to be much like King Canute
-commanding that the tide not come in....
+On Tue, Apr 22, 2025 at 04:09:21PM -0500, Jason Gunthorpe wrote:
+> On Mon, Apr 21, 2025 at 10:46:19PM -0400, Ben Collins wrote:
+> > diff --git a/drivers/iommu/fsl_pamu_domain.c b/drivers/iommu/fsl_pamu_d=
+omain.c
+> > index 30be786bff11e..a4bc6482a00f7 100644
+> > --- a/drivers/iommu/fsl_pamu_domain.c
+> > +++ b/drivers/iommu/fsl_pamu_domain.c
+> > @@ -214,9 +214,10 @@ static struct iommu_domain *fsl_pamu_domain_alloc(=
+unsigned type)
+> >  	INIT_LIST_HEAD(&dma_domain->devices);
+> >  	spin_lock_init(&dma_domain->domain_lock);
+> > =20
+> > -	/* default geometry 64 GB i.e. maximum system address */
+> > +	/* Set default geometry based on physical address limit. */
+> >  	dma_domain->iommu_domain. geometry.aperture_start =3D 0;
+> > -	dma_domain->iommu_domain.geometry.aperture_end =3D (1ULL << 36) - 1;
+> > +	dma_domain->iommu_domain.geometry.aperture_end =3D
+> > +		(1ULL << PAMU_MAX_PHYS_BITS) - 1;
+> >  	dma_domain->iommu_domain.geometry.force_aperture =3D true;
+>=20
+> What on earth does this even do? There is no map_range() callback in
+> this driver, so nothing should be reading geometry..
 
-Personally, I'm not convinced a newline is any different from any
-number of weird-sh*t characters, such as zero-width space Unicode
-characters, ASCII ETX or EOF characters, etc.
+I dunno, but your "FIXME this is broken" comments are all over it from a
+year and a half ago:
 
-I suppose we could add a new mount option which disallows the
-weird-sh*t characters, but I bet it will break some userspace
-programs, and it also begs the question of *which* weird-sh*t
-characters should be disallowed by the kernel.
+Author: Jason Gunthorpe <jgg@ziepe.ca>
+Date:   Wed Sep 13 10:43:38 2023 -0300
 
-> I guess there's no intention to change that behavior.  But I should
-> ask.  I thought of adding this paragraph to all pages that create
-> file names:
-> 
-> 	+.SH CAVEATS
-> 	+POSIX.1-2024 encourages implementations to
-> 	+disallow creation of filenames containing new-line characters.
-> 	+Linux doesn't follow this,
-> 	+and allows using new-line characters.
-> 
-> Are there any comments?
+    iommu/fsl_pamu: Implement a PLATFORM domain
 
-I think this is giving the Austin Group way more attention/respect
-than they deserve, especially when it's an optional "encourage", but
-whatever...
+       /*
+        * FIXME: This isn't creating an unmanaged domain since the
+        * default_domain_ops do not have any map/unmap function it doesn't =
+meet
+        * the requirements for __IOMMU_DOMAIN_PAGING. The only purpose seem=
+s to
+        * allow drivers/soc/fsl/qbman/qman_portal.c to do
+        * fsl_pamu_configure_l1_stash()
+        */
 
-						- Ted
+The logic hasn't really been touched in 10 years.
+
+--=20
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
+
+--plgvsw3l3hufgtb4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmgIFmwACgkQXVpXxyQr
+Is+CzRAAq4Doy76vP/uvrf7LUhsshA5BRHPEh895UKM7rKUTz85JnB71LPZMOFvY
+tPQ5Eb+LCiFfLS4tz+0TvTxsNQkTIoD8nPslbzW7HYOphrvJsetEmK/MzFtJD03M
+JBRM4gGZzAxDZ1la8k7Jy2AUHhYbHGareuy84OU99Vb45rtMdXJ9maontA+kuPkT
+uqjyAN5R86A1rG5DQWkIHQ500AN3+OR0BnZJPlYY2ehp0c3HpCSNPC7/hntoOCrl
+MlMMF+WxsZ3PVnA9Ym4/fzzhQ+9fDkiqd7+wXqaLTGocfY7L3CAxQz4xphhuxBQd
+SOO9Fk0mKaRt/bTfl39Yq/xYewLLvRT1yVD2dWEhwV7PVqG4oHL3fQBjaoBVxrdY
+4sBjdevOxpwEujcSc10H4cNuFvUuHjpfN6QOnbwo9AOzEppQsxwbReXYpSiWCtgx
+uG8MWTUyLLEJqe1q+eIioE0BuVLigduyuBLZzOKkbA1N1QRb9IOoE8+dUbmDLdHS
+Ty0QMK1xQpdmhit6qUzR3wU4m+PGj7yVR6MR6eERzjt4WL418MdSg+H0YfjLiEFF
+ZzIuJrvKeP9hxfaZ65tyqecjcm7CoO0MD8npjO7D1zuj8CAcAezSrxgrawCXBX5P
+reBSfzP/zFm1Cy6Ps5GtW38eMzK/AOyE2T3K0u9Bm/cGFG3qqR4=
+=cpPe
+-----END PGP SIGNATURE-----
+
+--plgvsw3l3hufgtb4--
 
