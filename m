@@ -1,310 +1,155 @@
-Return-Path: <linux-kernel+bounces-614472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2905A96CF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECC7A96D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8D9D7AB83F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A0817D0EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EF02836A3;
-	Tue, 22 Apr 2025 13:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5D4283CB0;
+	Tue, 22 Apr 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QghqXr2M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Gp6ny44H"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B14C27CCCD
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A25827815F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328973; cv=none; b=gx/NvXXGxwzNOLemfL2zHJsYdciaPZRwANUyBX7QqIKy+thg7fHEOeqhQ9zNILbnCfGEmSwk1/ypDRIoGmpau8oFJyMU2BMPyVAa9EXVbmUF4MI2jExzoQ6DY7V6rCPvEMfZZOggiYorH56mid4p6w6HP6PzBmWWFCUhLaBd/9s=
+	t=1745328982; cv=none; b=VLGKkEp4NQQz23VC0HU4ZSsPjhun616bldvAh5L4mbykD3l008Dyj4Ox+LhjtEodnm4eI53zDBZPqvdf27rMbNVRKooKMY3AK/F1by0xCCwDPjjs2gZNAuSWmdQSYIg+yf+/+oxcGLo6SnKkhNovldM7bInaloCZmQsmwk35U4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328973; c=relaxed/simple;
-	bh=MhJ6N+6JZAFe/JvD8yyHGfBmPBcTg8eAd1GjxfpVjew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W60Z5khTHGzoismMGMHNLnHRenrcq1EmjL0Z6c4xEzYiZ9dbhm9qEWVUfki3Zin5tnMIgXkxCN9EGyqbgWj3FWXZC5GmcIQx9uZ/TpRzaXzifgvRvQvOeXN0TbqRWm9Fg2wfYxImY0Z6hQYJizbFcZAFjKABfMh/f6K0L0FYna8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QghqXr2M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745328970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y4IJdBYSNW9wdRnD2IO79uxHJEEzuWz9Azk+82pxLcg=;
-	b=QghqXr2MJ01TQ0IBMCc/4TnF+Yt4fBznU3XI2Jv1SXX8Gzz+nmtjC8piOzE7eKePfSixsi
-	HlpctzuJkbkuuX9tU9zxtCMIpeTzra+IaqdlmKFON5CZOLHC+Zzse+FgBU+Z/FJyH2JkJm
-	vy+DT4zmV6QYMgtxWdLyAy46/59tnds=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-OU849FLCPkSL5ILWt_IOAA-1; Tue, 22 Apr 2025 09:36:08 -0400
-X-MC-Unique: OU849FLCPkSL5ILWt_IOAA-1
-X-Mimecast-MFC-AGG-ID: OU849FLCPkSL5ILWt_IOAA_1745328967
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac2db121f95so389760566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 06:36:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745328967; x=1745933767;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4IJdBYSNW9wdRnD2IO79uxHJEEzuWz9Azk+82pxLcg=;
-        b=BAJ+Kl/YACNyXmo6JRCzUgcAEwQfC7GRBhMFP7eVZVJ/Y3BUTlnlliX1t+weo8iMY2
-         KtO/W8rudQGLAvcZwas1pCyJdaSWNCyfweGHzB0w3gO66CNP3f5Xe3C1YAsVp92RBVxT
-         D1j+JRZdZvAP2lkikHKwrZ/wgF87OqF8XEbLIgNfbdkaBX7x2dLAfa6Tqfobb1vsnaiP
-         aQxDE1g6EWEYZCmWmZUwvVs9zB7iFsHgy1HOW/pFq9b2Tk9CjqLpc80B1PBFrcx4P6+3
-         k1QzrTvq5U15pkBT9ei7T2d1QixnHkGeVIhyhOGEGsDvc4n6GpRtLnt+roLOVn7SjxjN
-         dnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPgRVwoeY2uqWbrqmdsXDMk/ilmXMdX8zmDqfPB2jyLJp5uguTqQdWR6gMGSKYS9ANoIZE9IlWkPgEoWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN/IhI1EQ13GRvNl5UqSNavn5ZnANif/JDjMvuvgatpYKnw4Nm
-	k1czwgZgbSPLGqAB+SP6YPcafnWU6rfLSq1KDQTYzqnxRcQt+bmIOg1T92BJl8rkyQt0eNVffIb
-	IghmXy+UkKJ3rZ46MN13d5rLcZW22DPKEzb6yLUgWFJomK2qDlI9dAza2XSBjvA==
-X-Gm-Gg: ASbGncvJjW9LEBks4w98MQrQAVc0+Z1T6M5a7BI2ZMOMIziQpbiWQ3SHq9OItvAMJVr
-	Ps7zakgNDR58USRhWgzy4qBd8QY+4gcY+4VDwizNb6pTCkGXn8PeGGBqhNUj9+f7voiNPO1BK/r
-	/ov9HwO6z/EysJbNlIJKHdaMhQPQ2Q3u30awhMSkd/YxkBJJddvwEZefBD2FAj7IEzLWLuT3YOA
-	E6FiORiuv+rKYd2CkPt5O/Lrb9OyjnWYcfGBYTqas5boqq4UBLByYSkYX4wN4mAyb4+kKayjEhX
-	AdjMQxuFCQ6XyZD6
-X-Received: by 2002:a17:906:794b:b0:acb:6401:1d78 with SMTP id a640c23a62f3a-acb74b3babbmr1327403966b.22.1745328967036;
-        Tue, 22 Apr 2025 06:36:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBkiqCdJcdh4nLSjqfuJ0gy11q1xiL79JrcHiQzXtTr8fDrs+JOgRZWCNY3kyY1iJGy5Dzng==
-X-Received: by 2002:a17:906:794b:b0:acb:6401:1d78 with SMTP id a640c23a62f3a-acb74b3babbmr1327397766b.22.1745328966303;
-        Tue, 22 Apr 2025 06:36:06 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.218.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec0b302sm654711166b.3.2025.04.22.06.36.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 06:36:05 -0700 (PDT)
-Date: Tue, 22 Apr 2025 15:35:57 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
-	Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller" <davem@davemloft.net>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] vsock: add namespace support to vhost-vsock
-Message-ID: <shj5e5sweuvhk4onjbnwb3h7m6mx22nnm6kivtchjgbscisrr2@mvuowcp7c33p>
-References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
- <r6a6ihjw3etlb5chqsb65u7uhcav6q6pjxu65iqpp76423w2wd@kmctvoaywmbu>
- <Z-w47H3qUXZe4seQ@redhat.com>
- <Z+yDCKt7GpubbTKJ@devvm6277.cco0.facebook.com>
- <CAGxU2F7=64HHaAD+mYKYLqQD8rHg1CiF1YMDUULgSFw0WSY-Aw@mail.gmail.com>
- <Z-0BoF4vkC2IS1W4@redhat.com>
- <Z+23pbK9t5ckSmLl@devvm6277.cco0.facebook.com>
- <Z-_ZHIqDsCtQ1zf6@redhat.com>
- <aAKSoHQuycz24J5l@devvm6277.cco0.facebook.com>
+	s=arc-20240116; t=1745328982; c=relaxed/simple;
+	bh=sdH+VjupayGjr8Si4qDTpbjAgN0JHVoh6DQWet9OPHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=BObmkDuInFpH06A4rGz/qa9hls8xeVG841SD/gJMSj7qhJF1t8FIZDgpNVeZRj9xK7CAZxTMJjA11jbWMnqDlHxLameTO1kerFQO1XlufAKgwHCE87onB5rOy41nGtpbvMzfxX/5Ir+kAkW6NPkGPNJTIdGi9af4Q1GPgWlmoaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Gp6ny44H; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250422133617euoutp0126aba444db9640109289fa6eb1480505~4p3VQzVNu2264122641euoutp01K
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:36:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250422133617euoutp0126aba444db9640109289fa6eb1480505~4p3VQzVNu2264122641euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745328977;
+	bh=ivUKiIe1ZDOjpJ6R1MorOBTNDfFmHbvlsgeXFk9j3g8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Gp6ny44HK+rkZ1x2Qilios5RuBJ0vWUtlD+J5AVsfuRWONcjc/65lXqvmxo4umIc5
+	 dGe+ee2xuCeO0Wn810ZNLNfMlqKESFhMSEBK55K9+yw5X3BQXMMK4i8rBGTRLeqlaV
+	 Ssany6nKJWVDry7Z/6ciwpnfrkoHPI/OYfs0yLeA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250422133617eucas1p291be38e1533ba29a276e0a084d1c30bd~4p3U-CCWW0946609466eucas1p2Q;
+	Tue, 22 Apr 2025 13:36:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 79.88.06072.15B97086; Tue, 22
+	Apr 2025 14:36:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250422133617eucas1p2c3b7b2e53d897ca7a89753ca02d32765~4p3UtwMhj2220922209eucas1p2l;
+	Tue, 22 Apr 2025 13:36:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250422133617eusmtrp15dd049b2a2a373c55bab70ae8977147d~4p3Us44So0566105661eusmtrp1A;
+	Tue, 22 Apr 2025 13:36:17 +0000 (GMT)
+X-AuditID: cbfec7f5-7f7fe700000017b8-73-68079b51e455
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 71.47.19920.15B97086; Tue, 22
+	Apr 2025 14:36:17 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250422133616eusmtip2d436fbc25661833076afb1a65aaeee73~4p3UBzTtR3067230672eusmtip2g;
+	Tue, 22 Apr 2025 13:36:16 +0000 (GMT)
+Message-ID: <fc2e30eb-2ec7-4795-a2a4-077b7fde7fd5@samsung.com>
+Date: Tue, 22 Apr 2025 15:36:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aAKSoHQuycz24J5l@devvm6277.cco0.facebook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] swiotlb: Make IO_TLB_SEGSIZE Configurable
+To: huaqian.li@siemens.com, robin.murphy@arm.com
+Cc: baocheng.su@siemens.com, jan.kiszka@siemens.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250422063719.121636-1-huaqian.li@siemens.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjlt3u9uy42btPwQ8tqofTSjMRmWVRYrEDoCdH7mtfNUmd79E5X
+	4CozsFlZcywn6SolyzTzUaFQPlYyLE3n0Gb2XJabvbSHNa+V/51zvvPxnfPjR2JCnZc/mZCs
+	YhTJdKKI4OG3Hw42h6zJ5crCvmmnil8a0glxj/YoIR76JBZ3dXRg4idVBkJc29/rtYSQFBuL
+	keTNrYtIUtGo40gGSgNX45t4UXFMYsJeRjFn8Q6e7F5TAzdlkNxvv9FMaJCJm4G8SaDCIbuz
+	EGUgHimkriDQ2XNHyScEZ+q0GEsGEJR+PEn8XXlkN48OzAgyi1q4LHEhGHbqcY+LTy2G6sEy
+	zINxKgg6y4e9WH08NF7sHfFMoCZDt+3CSBAfahlUdpb+uU2SvlQYvDBs8kCM2gWZxg0eB0b5
+	ga33EseDCWouZPRljOTxphZBpVvHZT2ToaLPMJINKCsJ1barOBs6GvKNJzEW+8C7+rLR/hPB
+	kp2JswvHEeR97+awJAuB5rUNsa6FYG8eIthEM6Ckag4rL4WiX+W4RwZKAO1949kQAtDdzsFY
+	mQ8ntELWHQz6+uv/ztZaW7AsJNKPeRT9mJr6MXX0/+/mIfwa8mPUyiQpo5yXzOwLVdJJSnWy
+	NHSnPKkU/fk2ll/1n++gK+9coXWIQ6I6BCQm8uUPreDKhPw4+sBBRiHfrlAnMso6FEDiIj9+
+	/v10qZCS0ipmN8OkMIq/Uw7p7a/hBF61u8ONz2XvU29ubjH1GIqav/T9CLb81GgcAdUC9XDb
+	E562yhkc+xVOC46UWQcum4NioipzP2yLLLw0eHaL7/rAn1nFPVxnnK9pnbVC0rV2aZz74VPl
+	Ni+ho2aB49Dyw6LN6S5TxKt4lcuV1pmWdDA/z+FYFbJbiJn3pC7vz5aljvNveuzXdiqk0ebe
+	FeUUyDnRAW8jVPebZmieWVonlXSkNe2c/nVjTeO5yHY3c+7xMmM057R1fkxB3qlpoQO8lfIV
+	W1PeOs/PdJr7zx4rLyyLl17rfSC3aRsqNKoGxSxavS4yJyFi9t3DtCX2dUtiQMnEjddN9/ZN
+	aX2ZU1sQQotwpYyeOxNTKOnfvEyxNaUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xe7qBs9kzDPatErB4OqeVzeJRWyOb
+	xa8vFhb3bt5ktri8aw6bxcEPT1gd2DzWzFvD6PFi80xGj+0nJzF5fN4kF8ASpWdTlF9akqqQ
+	kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJex79QJ9oKfHBV3Npxj
+	a2BcyN7FyMkhIWAicebOcuYuRi4OIYGljBKLdjcwQyRkJE5Oa2CFsIUl/lzrYoMoes8o8bp5
+	OVgRr4CdxO6fW8BsFgFVidtb/7NCxAUlTs58wgJiiwrIS9y/NQNsm7CAk8TO25sYuxg5OEQE
+	DCQez4kCCTMLZEm0fWsHaxUSmMAoMfNkBERcXOLWk/lMIDabgKFE11uQGzg5OAVsJXZ+msQO
+	UWMm0bW1ixHClpfY/nYO8wRGoVlIrpiFZNQsJC2zkLQsYGRZxSiSWlqcm55bbKhXnJhbXJqX
+	rpecn7uJERhd24793LyDcd6rj3qHGJk4GA8xSnAwK4nw/nJjzxDiTUmsrEotyo8vKs1JLT7E
+	aAoMionMUqLJ+cD4ziuJNzQzMDU0MbM0MLU0M1YS53W7fD5NSCA9sSQ1OzW1ILUIpo+Jg1Oq
+	gcn3wlvHW0f2/9YtfTqVb1+PlbrXh6qqN7MTT5Xx/n142zjvrH5pCzP37Y77EetTL1+X+JGk
+	1u102OJE5fQZEan2Lo07fmqsm1SaK6Zs/WLmvM41jt7acQfjPj1u++BwpWrSXKuJ4s9EffRE
+	+itWd9WXHpbWCUtdeKnuZPeKWZcPvLknG+lxVOd5mOjehQxHg0JDem+/ennu56aueU+t3gsJ
+	/e7fxRK2Ujdd97+ez6KnXGcv5WcUZ/1xuCbf9ZUh/vLRA5/bL2gyeZ5c2MExy2pKX2nvjPAD
+	+3g433tPfadur3DdsSPabKF0bZNCibMhR6b6O7vn+X7Kq00uLHvZGnn8aajehZXTFYq3NYdY
+	/lRiKc5INNRiLipOBACB7cwGNwMAAA==
+X-CMS-MailID: 20250422133617eucas1p2c3b7b2e53d897ca7a89753ca02d32765
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250422063734eucas1p2561ad6f847f6824c9c79a842fa458e41
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250422063734eucas1p2561ad6f847f6824c9c79a842fa458e41
+References: <CGME20250422063734eucas1p2561ad6f847f6824c9c79a842fa458e41@eucas1p2.samsung.com>
+	<20250422063719.121636-1-huaqian.li@siemens.com>
 
-On Fri, Apr 18, 2025 at 10:57:52AM -0700, Bobby Eshleman wrote:
->On Fri, Apr 04, 2025 at 02:05:32PM +0100, Daniel P. Berrangé wrote:
->> On Wed, Apr 02, 2025 at 03:18:13PM -0700, Bobby Eshleman wrote:
->> > On Wed, Apr 02, 2025 at 10:21:36AM +0100, Daniel P. Berrangé wrote:
->> > > It occured to me that the problem we face with the CID space usage is
->> > > somewhat similar to the UID/GID space usage for user namespaces.
->> > >
->> > > In the latter case, userns has exposed /proc/$PID/uid_map & gid_map, to
->> > > allow IDs in the namespace to be arbitrarily mapped onto IDs in the host.
->> > >
->> > > At the risk of being overkill, is it worth trying a similar kind of
->> > > approach for the vsock CID space ?
->> > >
->> > > A simple variant would be a /proc/net/vsock_cid_outside specifying a set
->> > > of CIDs which are exclusively referencing /dev/vhost-vsock associations
->> > > created outside the namespace. Anything not listed would be exclusively
->> > > referencing associations created inside the namespace.
->> > >
->> > > A more complex variant would be to allow a full remapping of CIDs as is
->> > > done with userns, via a /proc/net/vsock_cid_map, which the same three
->> > > parameters, so that CID=15 association outside the namespace could be
->> > > remapped to CID=9015 inside the namespace, allow the inside namespace
->> > > to define its out association for CID=15 without clashing.
->> > >
->> > > IOW, mapped CIDs would be exclusively referencing /dev/vhost-vsock
->> > > associations created outside namespace, while unmapped CIDs would be
->> > > exclusively referencing /dev/vhost-vsock associations inside the
->> > > namespace.
->> > >
->> > > A likely benefit of relying on a kernel defined mapping/partition of
->> > > the CID space is that apps like QEMU don't need changing, as there's
->> > > no need to invent a new /dev/vhost-vsock-netns device node.
->> > >
->> > > Both approaches give the desirable security protection whereby the
->> > > inside namespace can be prevented from accessing certain CIDs that
->> > > were associated outside the namespace.
->> > >
->> > > Some rule would need to be defined for updating the /proc/net/vsock_cid_map
->> > > file as it is the security control mechanism. If it is write-once then
->> > > if the container mgmt app initializes it, nothing later could change
->> > > it.
->> > >
->> > > A key question is do we need the "first come, first served" behaviour
->> > > for CIDs where a CID can be arbitrarily used by outside or inside namespace
->> > > according to whatever tries to associate a CID first ?
->> >
->> > I think with /proc/net/vsock_cid_outside, instead of disallowing the CID
->> > from being used, this could be solved by disallowing remapping the CID
->> > while in use?
->> >
->> > The thing I like about this is that users can check
->> > /proc/net/vsock_cid_outside to figure out what might be going on,
->> > instead of trying to check lsof or ps to figure out if the VMM processes
->> > have used /dev/vhost-vsock vs /dev/vhost-vsock-netns.
->> >
->> > Just to check I am following... I suppose we would have a few typical
->> > configurations for /proc/net/vsock_cid_outside. Following uid_map file
->> > format of:
->> > 	"<local cid start>		<global cid start>		<range size>"
->> >
->> > 	1. Identity mapping, current namespace CID is global CID (default
->> > 	setting for new namespaces):
->> >
->> > 		# empty file
->> >
->> > 				OR
->> >
->> > 		0    0    4294967295
->> >
->> > 	2. Complete isolation from global space (initialized, but no mappings):
->> >
->> > 		0    0    0
->> >
->> > 	3. Mapping in ranges of global CIDs
->> >
->> > 	For example, global CID space starts at 7000, up to 32-bit max:
->> >
->> > 		7000    0    4294960295
->> > 	
->> > 	Or for multiple mappings (0-100 map to 7000-7100, 1000-1100 map to
->> > 	8000-8100) :
->> >
->> > 		7000    0       100
->> > 		8000    1000    100
->> >
->> >
->> > One thing I don't love is that option 3 seems to not be addressing a
->> > known use case. It doesn't necessarily hurt to have, but it will add
->> > complexity to CID handling that might never get used?
->>
->> Yeah, I have the same feeling that full remapping of CIDs is probably
->> adding complexity without clear benefit, unless it somehow helps us
->> with the nested-virt scenario to disambiguate L0/L1/L2 CID ranges ?
->> I've not thought the latter through to any great level of detail
->> though
->>
->> > Since options 1/2 could also be represented by a boolean (yes/no
->> > "current ns shares CID with global"), I wonder if we could either A)
->> > only support the first two options at first, or B) add just
->> > /proc/net/vsock_ns_mode at first, which supports only "global" and
->> > "local", and later add a "mapped" mode plus /proc/net/vsock_cid_outside
->> > or the full mapping if the need arises?
->>
->> Two options is sufficient if you want to control AF_VSOCK usage
->> and /dev/vhost-vsock usage as a pair. If you want to separately
->> control them though, it would push for three options - global,
->> local, and mixed. By mixed I mean AF_VSOCK in the NS can access
->> the global CID from the NS, but the NS can't associate the global
->> CID with a guest.
->>
->> IOW, this breaks down like:
->>
->>  * CID=N local - aka fully private
->>
->>      Outside NS: Can associate outside CID=N with a guest.
->>                  AF_VSOCK permitted to access outside CID=N
->>
->>      Inside NS: Can NOT associate outside CID=N with a guest
->>                 Can associate inside CID=N with a guest
->>                 AF_VSOCK forbidden to access outside CID=N
->>                 AF_VSOCK permitted to access inside CID=N
->>
->>
->>  * CID=N mixed - aka partially shared
->>
->>      Outside NS: Can associate outside CID=N with a guest.
->>                  AF_VSOCK permitted to access outside CID=N
->>
->>      Inside NS: Can NOT associate outside CID=N with a guest
->>                 AF_VSOCK permitted to access outside CID=N
->>                 No inside CID=N concept
->>
->>
->>  * CID=N global - aka current historic behaviour
->>
->>      Outside NS: Can associate outside CID=N with a guest.
->>                  AF_VSOCK permitted to access outside CID=N
->>
->>      Inside NS: Can associate outside CID=N with a guest
->>                 AF_VSOCK permitted to access outside CID=N
->>                 No inside CID=N concept
->>
->>
->> I was thinking the 'mixed' mode might be useful if the outside NS wants
->> to retain control over setting up the association, but delegate to
->> processes in the inside NS for providing individual services to that
->> guest.  This means if the outside NS needs to restart the VM, there is
->> no race window in which the inside NS can grab the assocaition with the
->> CID
->>
->> As for whether we need to control this per-CID, or a single setting
->> applying to all CID.
->>
->> Consider that the host OS can be running one or more "service VMs" on
->> well known CIDs that can be leveraged from other NS, while those other
->> NS also run some  "end user VMs" that should be private to the NS.
->>
->> IOW, the CIDs for the service VMs would need to be using "mixed"
->> policy, while the CIDs for the end user VMs would be "local".
->>
+On 22.04.2025 08:37, huaqian.li@siemens.com wrote:
+> From: Li Hua Qian <huaqian.li@siemens.com>
 >
->I think this sounds pretty flexible, and IMO adding the third mode
->doesn't add much more additional complexity.
+> This patchset introduces a change to make the IO_TLB_SEGSIZE parameter
+> configurable via a new kernel configuration option (CONFIG_SWIOTLB_SEGSIZE).
 >
->Going this route, we have:
->- three modes: local, global, mixed
->- at first, no vsock_cid_map (local has no outside CIDs, global and mixed have no inside
->	CIDs, so no cross-mapping needed)
->- only later add a full mapped mode and vsock_cid_map if necessary.
+> In certain applications, the default value of IO_TLB_SEGSIZE (128) may
+> not be sufficient for memory allocation, leading to runtime errors. By
+> making this parameter configurable, users can adjust the segment size to
+> better suit their specific use cases, improving flexibility and system
+> stability.
+
+Could You elaborate a bit more what are those certain applications that 
+require increasing IO_TLB_SEGSIZE? I'm not against it, but such change 
+should be well justified and described, while the above cover-letter 
+doesn't provide anything more than is written in the patch description.
+
+
+> Li Hua Qian (1):
+>    swiotlb: Make IO_TLB_SEGSIZE configurable
 >
->Stefano, any preferences on this vs starting with the restricted
->vsock_cid_map (only supporting "0 0 0" and "0 0 <size>")?
-
-No preference, I also like this idea.
-
+>   include/linux/swiotlb.h | 2 +-
+>   kernel/dma/Kconfig      | 7 +++++++
+>   2 files changed, 8 insertions(+), 1 deletion(-)
 >
->I'm leaning towards the modes because it covers more use cases and seems
->like a clearer user interface?
-
-Sure, go head!
-
->
->To clarify another aspect... child namespaces must inherit the parent's
->local. So if namespace P sets the mode to local, and then creates a
->child process that then creates namespace C... then C's global and mixed
->modes are implicitly restricted to P's local space?
-
-I think so, but it's still not clear to me if the mode can be selected 
-per namespace or it's a setting for the entire system, but I think we 
-can discuss this better on a proposal with some code :-)
-
-Thanks,
-Stefano
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
