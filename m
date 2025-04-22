@@ -1,129 +1,90 @@
-Return-Path: <linux-kernel+bounces-614384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12365A96ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3C0A96ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC613B93BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EFB164518
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5878E20E703;
-	Tue, 22 Apr 2025 12:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB91F27CB38;
+	Tue, 22 Apr 2025 12:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSo7F/5F"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hR0AFZ7X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD3A201270
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43503201270;
+	Tue, 22 Apr 2025 12:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326135; cv=none; b=Bq4tDywXMIrOeWXt3TtYoIMzRLcNyg41v4D/jzKSK7DTWINhdzPEkm8DxHckRzXf0Rj9GjEvheO+6XLQ0vCyYy0diTQXiP8oSmx6aYRfbGXysmyH/lskTn8wXyXzij0/ZSvUC+XHaV/OLxNDqP4Dws4ZXaizIuX508gLtWGZxPg=
+	t=1745326130; cv=none; b=UgbwBVZzMz/VAQgO+jiJh9PWCVA5w7/QFIYIzqnjXl+/ukwdkevh1YazJpgKYTdUPwqUPUM8ZYE12oYeDe3f1GYyc+s7G4TPoPruIMovIhodK8flNRyN6anar/tigo5HFlX9P6jc58baTj7FK8DB9v6zeFTHYTqS3Sa0qKr3+XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326135; c=relaxed/simple;
-	bh=3Yt4rS+ibb/vaIW2ZU4wWv0x+LMH6StwqfP2MUgIfqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KsSJ5IhGRhQEb9H10R5NSq4ibe32CmH2HlnJogkZdZQfakUfDNQngOSNWN460jMkmAYOfqkAYEVPX/Lgz2Cf7GiiDLkqX/COYCXgv0tfLlm2+x0W5o7+uQIJu9gRtUPaY2jMfIXdbLfF1dsOzffee/LhfbCAfKVyYP6YdmBraRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSo7F/5F; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7369ce5d323so3837644b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745326133; x=1745930933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/8D/g9r6tfxT33CM0XU/LNeSLlAqiuTJZXlRjXFwX0=;
-        b=NSo7F/5FX1A2FR4CrKuAAsbNVxBuXVVDcVCZspe6P5BlqPBeegL1ej0ysjcG/oIgSR
-         fzXPC0+E4ZOmnjsLXocSp13r4i3HLXBqhvI+3Tr8mXMWk/j+pKSyTxILhjK5BOQYr2T/
-         c22Fqsm6s5i5jD+EytGlsHwL+zvljqrwz1yI21ZpilXn+uIx+FloDNqOPj85nV6JW4ZV
-         5k6o7/Kc1yjWgOTIySQlRb0yE8do2Ta4AwmtBk7rNV0cy38oB6vgWPdI2kJcbRersk+R
-         AQB/PTPEa3Hnzav4nCektjLgkJjfKOxk7xjns9SRuv8cWv3Ib30i8U6qwyMTY/+rdziN
-         qIbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745326133; x=1745930933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/8D/g9r6tfxT33CM0XU/LNeSLlAqiuTJZXlRjXFwX0=;
-        b=CL4yvKAlQwI5fkQD8v8+iaLwG8jdYCF40Pkxph1xttTfJ9Se/0RClKwMMwRQkCxz3y
-         7apWSzmp8QviwZsbaBx9IdilPC8XHY2u9sIeyBKMScV43uChpEWfcIf3cjjIE1Vf5kgw
-         yVs/prRNl4SkJlNGC6NftfKTHrRpf6MoOA1BKThJf5kypDaHMryRZr3pIWtlA48PwbPZ
-         tn3m88E90IRaG0HNq1MILNXve/ExjTzA+0bs3+l6kTooWDniAKJaadczb+V7oxogIYbp
-         riCj8Qy5EAO8J9PuqdvSEA7Oyhhu80+gtQ0PfMg9Mc1zvrldqpEVa2atZv81fBx0WWQb
-         gidg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoRfshPIxe/h9Q01DsHRTim8riVEGmpeXDQxmRIwC+3JU32pdgKqH5AF6orgJGnQ7QzFM2Fyiw/HjeAcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzeigox6vgPCJL1qt3flVDJthfYKaf+28glSrvSPK2jXxS/zpck
-	EGcRXPsz8YK06NQhfaahkHZwEWd8CF3pKlo8GoLC9nzOYAoaNMHK
-X-Gm-Gg: ASbGnctOJbYRrvuf3k4I5cHrabT1TiOcSqVIWL5XKmV/5RtOGbmjwer/1QoeWIGnxKo
-	981Pwu4w2Nws4b7dby3SctPL5eHUhleEOG+Z37cZ/TyGmU11FXrwOKb6h2QXcEHSBZ7Q26QTgTc
-	cIdE7BoVYnMAwvXv8YpgLT5YOo3ULcp6OJhSgawRnrJpDAdxvEEQncsGgAy7DZ95nP6AI/mnee8
-	9DG3EIsOZ6xGmLISfTTIng5XAkoqQ0gQjXGKIkccEQ6nt2/QmI1tIZQ+LHy1a7f8Vl7E3LH2mfT
-	DAP6Y29Mkq3Kd6Gy3rDvF8a6VBATx+Iecyol99bl+QAhTYRhmp1yG6a53/nfwuURqKqiyQ==
-X-Google-Smtp-Source: AGHT+IG2qQg8X7PIvQGnjsC3za+TsrbN36zuFYU6c7/f/+/BNCIkDkfcRbr1LCdZEm5wIFRYUK8ZPw==
-X-Received: by 2002:a05:6a20:2d0b:b0:1f5:5ed0:4d75 with SMTP id adf61e73a8af0-203cbd213c1mr24123742637.31.1745326133362;
-        Tue, 22 Apr 2025 05:48:53 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db13c8b1fsm7289856a12.37.2025.04.22.05.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 05:48:53 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: Liam.Howlett@Oracle.com,
-	akpm@linux-foundation.org
-Cc: lorenzo.stoakes@oracle.com,
-	willy@infradead.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2] ipc: fix to protect IPCS lookups using RCU
-Date: Tue, 22 Apr 2025 21:48:43 +0900
-Message-ID: <20250422124843.17188-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745326130; c=relaxed/simple;
+	bh=nSsbTeQ11E29J9U1O4ryQDc9jrH21JK1FMat4xVrpwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qLvDDeKbZvIZuO4WmWeonudb6Cjq8hwDGzcJmb6WaPZsDDylcCWxX1BT/4KNNNMHgWiiqtDGHU+7hUDERpSK7C9wOrmbXygr9/TuZV7BDOi8qxeoWFNGGyTfd61M9yDVzOb6J7eEHgLPCbOy7YewVswszIyvhOZzlht242s20xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hR0AFZ7X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F6EC4CEE9;
+	Tue, 22 Apr 2025 12:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745326129;
+	bh=nSsbTeQ11E29J9U1O4ryQDc9jrH21JK1FMat4xVrpwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hR0AFZ7XFiAEF1HIYzWylncFkRsshrqdEcOBA5rOyyLyISww13uG+7YTJS6xIrlCw
+	 aDnTqbhsZFQus2olgrPAe4JQaYHTskpTtyYPM61dcH+wIQ6hIaEo0m5UB0278apAKE
+	 SOdqM8R5+Wngow9aSLKkDNjbtok1hw9+yupJQMaydjn3ks/G9rxCSHr/5L8XH/zeya
+	 1f+Uv/EEuDPNAbMnjDQrDO4stYNZ84HMwBcpqw17Av+aJ77A7qVtuUpeeNTV1hVqRX
+	 dL9+TFAkZC+jKiZmUTIFm9Oay3BEnGd30I5HPWcPU98hzCj3DYboHCHxAGEeX/GejN
+	 kRV3qrBl+W58Q==
+Date: Tue, 22 Apr 2025 07:48:47 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Liya Huang <1425075683@qq.com>
+Cc: linux-kernel@vger.kernel.org, Saravana Kannan <saravanak@google.com>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] of: Build warn for missing fn() in _OF_DECLARE
+Message-ID: <174532612584.951202.6817146163427433712.robh@kernel.org>
+References: <tencent_BA80A2305727877DEE7BE20655D9CA825B09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_BA80A2305727877DEE7BE20655D9CA825B09@qq.com>
 
-idr_for_each() is protected by rwsem, but this is not enough. If it is not
-protected by the RCU read-critical region, when we call radix_tree_node_free()
-via call_rcu() to free the struct radix_tree_node, the node will be freed
-immediately, and when we read the next node in radix_tree_for_each_slot(),
-we can read the already freed memory.
 
-Therefore, we need to add code to make sure that idr_for_each() is protected
-within the RCU read-critical region when we call it in shm_destroy_orphaned().
+On Thu, 17 Apr 2025 21:23:38 +0800, Liya Huang wrote:
+> The function pointer fn() in _OF_DECLARE macro might be NULL. For example,
+> in __reserved_mem_init_node(), only non-NULL cases are handled, and NULL
+> function pointers are ignored.
+> 
+> This patch introduces a check to handle cases where fn() is NULL. If fn()
+> is found to be NULL, a warning is issued during compilation to notify
+> developers about the missing function pointer.
+> 
+> ---
+> The function pointer fn() in _OF_DECLARE macro might be NULL. For example,
+> in __reserved_mem_init_node(), only non-NULL cases are handled, and NULL
+> function pointers are ignored.
+> 
+> This patch introduces a check to handle cases where fn() is NULL. If fn()
+> is found to be NULL, a warning is issued during compilation to notify
+> developers about the missing function pointer.
+> 
+> Link: https://lore.kernel.org/all/CAL_JsqK733Q9bbxC0Wz5uxyZ9m7bs+bci5kUJF9GJMv73-dO4w@mail.gmail.com/
+> 
+> Signed-off-by: Liya Huang <1425075683@qq.com>
+> ---
+>  include/linux/of.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Reported-by: syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com
-Fixes: b34a6b1da371 ("ipc: introduce shm_rmid_forced sysctl")
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
-v2: Change description and coding style
----
- ipc/shm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 99564c870084..492fcc699985 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -431,8 +431,11 @@ static int shm_try_destroy_orphaned(int id, void *p, void *data)
- void shm_destroy_orphaned(struct ipc_namespace *ns)
- {
- 	down_write(&shm_ids(ns).rwsem);
--	if (shm_ids(ns).in_use)
-+	if (shm_ids(ns).in_use) {
-+		rcu_read_lock();
- 		idr_for_each(&shm_ids(ns).ipcs_idr, &shm_try_destroy_orphaned, ns);
-+		rcu_read_unlock();
-+	}
- 	up_write(&shm_ids(ns).rwsem);
- }
- 
---
 
