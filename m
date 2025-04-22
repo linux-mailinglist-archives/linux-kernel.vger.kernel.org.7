@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-613779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5B1A960EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F81A960E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17803BBE9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:21:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6DE17A97D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCB61F4CA4;
-	Tue, 22 Apr 2025 08:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="W/8gag7Z"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC521EF37A;
-	Tue, 22 Apr 2025 08:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147521EF375;
+	Tue, 22 Apr 2025 08:21:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693082F3E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310117; cv=none; b=lwBR1jXPPWiu3jOnrJ3hiVIHue/gKmi9pqoNelPFyzqTl8dFOTkPo3QmhvOba3iFScRuj6IWqAtpsNA4cU/y9tyDrxE6pBmDUiXqEUzPwTHTVcm+/7evfe+4Hbrn2pvwa0CJR0B/TgR7IkF08yiV8jz6afftA/Kv//YtBYeQGv8=
+	t=1745310075; cv=none; b=P2S724nmjZsxmPKQEz27lHkZBdigWxfKkbWeg3IuHtbnsaIPUGtzHJEL6wFVp0GHBJCiiMXZIlqcxAbZj8xWFOMHB7+tefbm3bwOSPfexUvmLVm1J/7JPrfPUSvG8o4HDVC0hWf+fCoXe+TxSy7zNtTgmhXY/oxVjJhA13vMGZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310117; c=relaxed/simple;
-	bh=7hcHPGUjHgIqJWh8JfloOCfacNCsHEB3EZKSoBFwgoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iw07yDGF9KhgOWCACIm4ooNU/6dTexPddo7mzO7sexegBAB5fNASTjl8jhIj50vJ86hL5CrRDQp4/CgupM59V33ada/NU60M69/++ow3rhdvssuNaLdCcMAoQlkKbdCdQFiGn0Kd/7I4ZhMLJL+3K6oMEH5i1hsZM1kWihVAEo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=W/8gag7Z; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1745310052;
-	bh=JdsM9Qm5wZLMP/iGrG0PmmBZq7+rJ6WyAgG/IfufPuA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=W/8gag7ZfpcG9PrbC0TExEa6hiLwOqegZlBlXkWFuUTuCtMojjcH60oYNu910IMEE
-	 FIY6/nl+peraUQc0sNSyUmjIGN953yk1vhU7NN7LPw5zhJSOObSihvQlDQyZy1V3z/
-	 +CQQrl9fR8Hu/w7S/YgtjbcEjgBT+6VizNzGUXW0=
-X-QQ-mid: zesmtpip2t1745310034t45cb9d0f
-X-QQ-Originating-IP: /StdUmGbCyVKdK8oWoJJaynvgvySgpQ6RdugyU4ivcI=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Apr 2025 16:20:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17761032627602379019
-EX-QQ-RecipientCnt: 10
-From: WangYuli <wangyuli@uniontech.com>
-To: gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	stable@vger.kernel.org
-Cc: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	wangyuli@uniontech.com,
-	maobibo@loongson.cn,
-	loongarch@lists.linux.dev,
+	s=arc-20240116; t=1745310075; c=relaxed/simple;
+	bh=gfz+be+miVnCkzKkhkuStkjo7+lozUUXvEUiMfXaEqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYA6TuvLU0ORl1CJXr4uLq/yqZ29//4TlarujIyWpTaSLz6Fgvmt/z2JUlNnIDrnFvO6YMrii/M95pQ5/lLfovQXs3a6mLqD8xKZREikzTW3UJSQKMSP5F6sXkmSwLL4ybMTcYOsoUnDDtuFVE9QDIkOIEDU8xHDrS3qKnB3RA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94764152B;
+	Tue, 22 Apr 2025 01:21:09 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6740C3F66E;
+	Tue, 22 Apr 2025 01:21:13 -0700 (PDT)
+Date: Tue, 22 Apr 2025 09:21:08 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH 6.1/6.6/6.12] LoongArch: Eliminate superfluous get_numa_distances_cnt()
-Date: Tue, 22 Apr 2025 16:20:06 +0800
-Message-ID: <BE39E39147C04E96+20250422082006.89643-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 1/9] coresight: tmc: Support atclk
+Message-ID: <20250422082108.GB28953@e132581.arm.com>
+References: <20250327113803.1452108-1-leo.yan@arm.com>
+ <20250327113803.1452108-2-leo.yan@arm.com>
+ <b409c701-f126-4e07-ba14-75280529689b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MyhNtuNETreeP8VLAhGlnYq1zn/+boQYvT84hWcM1khhfMesoKoJHeay
-	OoO08Sb1a/D4O9Cs7+mbXPr7C+34RT56ZGSONcryEpk5cegxBcVFzsm/IDGJ0q+zTOzuNgF
-	AKYtgj+2KYq1AKIsCTBKZqMryak2wmnZlIOtUpQ0P/iT3Cl1fa6EmGMnfCLMIYW+SlvOrjG
-	knxLiRI+0PDc92XtqheOhUldK3Uj5GJIwrL4wmx67rHI+abrSVdUPX0E9r2DEv9TfKHODzq
-	0x/YCbrAI1AHI02lztDRB3pMSFLwzjQhhC/CfDr9vJ4/zYQiC+VY0hw8Ab6iJqwiuKHYdyg
-	bAxamuoxxznYvJV5EOeKVfJOyKtoZdL7oIHOYQ3ZRaSiDLlYMw80NsWjrvMqypAZrjxBIj8
-	aX/bj5ATd44GPNIzFZLcc3+5huLj7hUIecPg6IDhr7faV7STBTz9C2oiTrqXlWJIgsF3NpY
-	BhFeH5zEK+eZ34QbuMF9dfo7qZFLhSTtflYEx4DfXSkM3HjgxCy0w36y7hJP++HovIvbdAM
-	qQoH6PtsdB8JK3DMhIE8Jr1dT57z3hRaIN8axYhNU7f/t8rThWifRFPCA3toSVqIHGGCKIf
-	2QTLjh8sjVio6yaeMvg8ZewVbc1hMN5hC7HuVUb/j+PesLqCphTNbOazEWLZxzIeprauUzk
-	DmyBdwpeIPXdAC1oUMh1C/5PAdTtij1ZJgaNl8Wt5WmDCvaxepcgEzUbixQaKWkwYKHYaMI
-	EyktMf8vjOLyEFugOVIUUTL8ZxAEWwN+vUx5h+TBD2vTtznO3VxBJAlT+eaMArAJrIn9kgp
-	GRG0/vtbO1fra6H5vHTBr1qwBJhMkEAaNMzTAsAF0rLOLfDbVQQfU+69BWQ5TXbyYs+eGhZ
-	v6sl7og5poAFNc46HK7JQzGeCD5Klpu+PNlyQt8Evq12Z+Z8KEkpTWKhbkiyf6cY4Nj//ZA
-	eo0NufC4zCzWJMLiXHix3AYUBTFj/WyFt43IuQLowhR30bvP/iunqakXPjEJb9jpKzxY=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b409c701-f126-4e07-ba14-75280529689b@arm.com>
 
-From: Yuli Wang <wangyuli@uniontech.com>
+On Thu, Apr 03, 2025 at 11:20:38AM +0530, Anshuman Khandual wrote:
+> On 3/27/25 17:07, Leo Yan wrote:
+> > The atclk is an optional clock for the CoreSight TMC, but the driver
+> > misses to initialize it.  In most cases, the TMC shares the same atclk
+> 
+> TMC shares the atclk or pclk clock with other coresight components ?
 
-[ Upstream commit a0d3c8bcb9206ac207c7ad3182027c6b0a1319bb ]
+I will refine the commit log for this.
 
-In LoongArch, get_numa_distances_cnt() isn't in use, resulting in a
-compiler warning.
+[...]
 
-Fix follow errors with clang-18 when W=1e:
+> > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > @@ -789,6 +789,10 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+> >  	struct coresight_desc desc = { 0 };
+> >  	struct coresight_dev_list *dev_list = NULL;
+> >  
+> > +	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
+> > +	if (IS_ERR(drvdata->atclk))
+> > +		return PTR_ERR(drvdata->atclk);
+> > +
+> 
+> Adding this check here in __tmc_probe() ensures that it gets called
+> both during AMBA and platform probe methods.
 
-arch/loongarch/kernel/acpi.c:259:28: error: unused function 'get_numa_distances_cnt' [-Werror,-Wunused-function]
-  259 | static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
-      |                            ^~~~~~~~~~~~~~~~~~~~~~
-1 error generated.
+Yes.
 
-Link: https://lore.kernel.org/all/Z7bHPVUH4lAezk0E@kernel.org/
-Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/acpi.c | 12 ------------
- 1 file changed, 12 deletions(-)
+> >  /**
+> >   * struct tmc_drvdata - specifics associated to an TMC component
+> > + * @atclk:	optional clock for the core parts of the TMC.
+> >   * @pclk:	APB clock if present, otherwise NULL
+> >   * @base:	memory mapped base address for this component.
+> >   * @csdev:	component vitals needed by the framework.
+> > @@ -244,6 +245,7 @@ struct tmc_resrv_buf {
+> >   *		 Used by ETR/ETF.
+> >   */
+> >  struct tmc_drvdata {
+> > +	struct clk		*atclk;
+> >  	struct clk		*pclk;
+> >  	void __iomem		*base;
+> >  	struct coresight_device	*csdev;
+> 
+> Otherwise, LGTM.
+> 
+> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
-index 382a09a7152c..1120ac2824f6 100644
---- a/arch/loongarch/kernel/acpi.c
-+++ b/arch/loongarch/kernel/acpi.c
-@@ -249,18 +249,6 @@ static __init int setup_node(int pxm)
- 	return acpi_map_pxm_to_node(pxm);
- }
- 
--/*
-- * Callback for SLIT parsing.  pxm_to_node() returns NUMA_NO_NODE for
-- * I/O localities since SRAT does not list them.  I/O localities are
-- * not supported at this point.
-- */
--unsigned int numa_distance_cnt;
--
--static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
--{
--	return slit->locality_count;
--}
--
- void __init numa_set_distance(int from, int to, int distance)
- {
- 	if ((u8)distance != distance || (from == to && distance != LOCAL_DISTANCE)) {
--- 
-2.49.0
+Thanks for reviewing!
 
+Leo
 
