@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-614210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9244AA9678D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:34:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0262A9678F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075AD3AEF1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EAB173C88
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E8927C841;
-	Tue, 22 Apr 2025 11:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197F027F4E7;
+	Tue, 22 Apr 2025 11:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IamtvFXD"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B1a7hL/R"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D805A27D79B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF0927C14C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321545; cv=none; b=tzEEOy9/trrVQHA8Qry6KE+zWoVHQ0+N1ygnaf3d1I1RceWFkZoiplknrGbY9euCu2pTvJhGYsoerzPNqbsbHEZ7pZKczuQw15Y1FtH2nmwxkbkNqXt8rwPZP+EUkGXB2onysigdwRJHt9/KECIW9xw/JZ0iNxnfzrOvRniyGiI=
+	t=1745321547; cv=none; b=aEfT7tPcZnyzRKTY+/EWVbUn2iPHubwfJACW1RuqqX+YOVRWYLjQI/u1r3EzslgAqa89QFIBNELiOA6Zkw4tNE3sVeuKYqPodwzQDxI/vBHH3iyDLMvKV/IPAkf5qA06RDbWNJW5of5hYQ4Z0brM86W6cKyS/Y4wpsr9sLUOHdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321545; c=relaxed/simple;
-	bh=wGYGREPgrxi6WuzAXr5LbOApUa1Ex4cOowBsxUMIXVk=;
+	s=arc-20240116; t=1745321547; c=relaxed/simple;
+	bh=4jPx8WFc9syd9FZTvpteAC1u4ZAz1jUbRb8VNBeqebI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EFUq8PfGRXnuzF2PBjqF6iIScpxpJmZUbFyVP2jP4ZGm9WC0UW1SpEbt4ugW3dpXsEtQ4FsZlFOQCme3Dvt33ZbwIdypYAwRczJt/uONrMzNO2/rO2kH2pVu5OOxzU2xo25sKGk2+tX7SfxMUrMNDD2Xnce1NkOaDbt8tzOLfTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IamtvFXD; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=ZvMnzPmQlCfboMZinS8mRN8lMWaMyls8rAOs2eoynk01C9r5mWivcwcwLv+3Vfbd0on8r1R0uj1Yz4KC5Xq5BprUwt3X8Pp1E6r51yE3+svvQLrj5/pjmIwzmrGD5ugvIzIgrn8hFq/5Cu4kkvSUMulolGbH/IXlLI72HAgo0Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B1a7hL/R; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso32448015e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:32:23 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so43437585e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745321542; x=1745926342; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745321544; x=1745926344; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0DfqYDfj9raOo/s9JE1ASnrO01HBkLknRT/HL1x4c2o=;
-        b=IamtvFXD+wdFthUWDRSiliOjHGYC9PqLspv1fhcZRRAKqJK0k8LBjTQFzAphR+ACBz
-         ghvZ/VMaWs860Quxp9rJ788LLoTyCZPufq1d8GnnTjt12rkB4IVKOTtxCZjObU3BBHM6
-         XsuW013G09Tcmtd+nLAEgApcDnr9QyYV0DvQKZhL5eSjS+g5iEwbwI3d9mqOPVgED3aj
-         o4BoGoilravyQDy4tE6TWWwXdOPgiks6LajKBypxz8kPxZAA+w7NMJd5lRwuYdsjShgS
-         4Ue+cf+8Ye3nrnBzfICjvxz1gdJ5u5Z7yU6xb5+tP952NzBlgWDihigpbaeVUjizQuWu
-         0KAw==
+        bh=05bSEWwjsFQoObkjxJQo+JCFAb3Ry4oW7GBGxZnV2N0=;
+        b=B1a7hL/RbR/mHHAwFin0SsqhT35t2zsp1Y10DdcQWhryPS3mHpR8CoHFA8mlw8WsCN
+         vKoGwMxR/qQuaLoxGXhUoUYhpkC9i4C1q7ElszkIvXaWHBYlukDORSeMYqIn8/5A7IXq
+         abmubrCtkWqJjwFtog7f9V2TPf43ijQnS1GlOn57q6gGK7nxMwVoJpAj01dQ8xGnVvoD
+         KNQ+BWNNMKEBt1R881SJ4NFO7NXIhd1u0RGlyG6KFCWp3PZFiMQvcd+NKrJaW/Gw46M6
+         g0g3Po+yUsAaDaH4fdA7NcjsMe6LIoCSynAELyecJnwuMuDqeL8GH7+QZVF24dofPRmP
+         DcCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745321542; x=1745926342;
+        d=1e100.net; s=20230601; t=1745321544; x=1745926344;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0DfqYDfj9raOo/s9JE1ASnrO01HBkLknRT/HL1x4c2o=;
-        b=qtWWUbyXvLWRxLITK5IWBQihk3CTkB8PZGjs1V5s0/Xf0+R4H7TgUqOC8EURgAxKv5
-         pSu1+KNzBPpJHNxtea1UUXG5N7HOC1C6/yENQ6z3+BxWDLb0NrNA07EMZmWUIN50V3rt
-         oo7+78Gk/djdFqnPosVbAhnfl4uv7dhzUN2wBhzcNQWfWNYCiTTJHnubxsJANHXZ0Fg4
-         cGWhU3gpCUBMvzq+aw3fIkJCgw2VKwj6AsvzmhUk4H0a6l5ww+3ZnMWzBzLJFPD2OngK
-         UOrmCbUNeE4lz7i3v5fmqe6fEziNyuypjamzE4PcbHsTsm6JfmwVVneUegXXo6HyOe9K
-         RUuA==
-X-Gm-Message-State: AOJu0Yydj9bruIcaR26Xgu2rF1wPIfu2B14MrRo6UqBcmWGsIr7+O2Db
-	o1FJEOIXFlhHz3SwYmQVcl9jvF/r4UnSFihGPdGQLlxvTSL2C/rcOkpSGJRC/AW3pUBTkl93PEc
-	r
-X-Gm-Gg: ASbGncuofTATtswFR7rQgeaM+egzDedyydzd4b2xFWELPEkWMfbA994mNAxiylw2xkq
-	qeHM3eivu2/iIFbwIpvHwWobSwjo/UN4EUViLpXig2bGNQknXnYu6t/7gtuE3vgaJU2LclLJjDG
-	bz2cA7G6VuOGiCTWtWd3Z1/DOSXJZIleXZJxW5VGIgjFuzQLfCsuYjEdBhXnhm5yLOf8VEjw3on
-	FVJXJn2snbkRc2/huDScj3exaTTYwkGgUz3o78V9V7H5k9jnNc5ta34hG9ZfZlD6x/BCUlEk6My
-	lhE7sbsPxbMwcu5pdG+vZX/ZeZPW1NF4qZi1lcMyqF/srVbyu8c+
-X-Google-Smtp-Source: AGHT+IHQ0JeqIGFr8hzfLBxr8juIP8XPWd5UgKDKwG2qIdIH6DudpvZkIFykrGXg9swWfTEAHGdAgw==
-X-Received: by 2002:a05:600c:1c8f:b0:43d:fa58:700e with SMTP id 5b1f17b1804b1-4406ac21897mr105942885e9.33.1745321542268;
-        Tue, 22 Apr 2025 04:32:22 -0700 (PDT)
+        bh=05bSEWwjsFQoObkjxJQo+JCFAb3Ry4oW7GBGxZnV2N0=;
+        b=E6zKtD9DPicjx1qRL6svvCbqpXCW7zdyo2VpZE0QGEnMx9jVeaw+Eg8X+c3V+qKwfF
+         zcaoSzVOipIa51KnyrUTK+Qi5vW1rguH6jv4FW0QnCuV0j8y0q3X4REUceFK1YS6yPg9
+         SYW5y21jRkV4sgdiKM4Jh+jD8ARXBEPKF/d2EOifIxg2UVA/kkmcIaVzSmv6QYdlr3FR
+         dRMaz/Fvx/QJF4aFWATOaMhVmH/WgOE8Jq4EZQ9il3bkXCv4QeLwsmIha1X8KmZ8RFk6
+         kVLUNtvlddTUGulSSJYi8Cus9vIfSs2GqaBgWZN0wAVXx2QflqIUhL498OUOmCD9diq8
+         VXXQ==
+X-Gm-Message-State: AOJu0Yz67lJy0TiVcujpTqEkPGHBkQ+NbFdZ9TeEcS7+yXXFnadIjtfn
+	hI91qBhGGdwiNPxWNFMvS4SucDsNLotZC9pGKJz+p/fLnoDo/u70HYI3+BXrxHc+r63Knh/xFqC
+	7
+X-Gm-Gg: ASbGncswc/qu/inTtUGhBwImQmqKxU24AtxcXTAJ7WoX6xns9o2pN6cJNRvk5ZK/gq+
+	3cV55sKhM0vvA5mEymTMP126nXfdCjM6dz+g6zlyCeWmtu/Z0mEwlu0EO17wYdePSfhwgrtPxdR
+	7anxnpy6mUvvKg5uE14FOCfeSECZIHHH2RmJYELHa0tDQE3dF/XZZpZPXWLc6106WcnuLPiOeBq
+	eJUgVmHjVN8y9elhQpuyIKxr0VwU5IFyNJgpMF8Rsg5cJ5NKmXfQnp7vGic5Z1V4OM5resLQZVC
+	Tg8zggGJdmIPVw/sQFUg2X7ujxb0QEOCWAIh+cyTASux17r7om0o
+X-Google-Smtp-Source: AGHT+IGsfI8qZKkHCIu00QTSDHfliRxo6YWhSw3Jfq+3jp8jtX+qjyzyKnnSEeessnTrVraohm79QQ==
+X-Received: by 2002:a05:600c:3d08:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-4406aba7ecdmr157805795e9.15.1745321543774;
+        Tue, 22 Apr 2025 04:32:23 -0700 (PDT)
 Received: from eugen-station.. ([2a02:2f0a:131e:0:1820:da87:73b1:d80c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49312fsm14907887f8f.70.2025.04.22.04.32.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49312fsm14907887f8f.70.2025.04.22.04.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:32:21 -0700 (PDT)
+        Tue, 22 Apr 2025 04:32:23 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
@@ -91,9 +91,9 @@ Cc: linux-doc@vger.kernel.org,
 	dietmar.eggemann@arm.com,
 	juri.lelli@redhat.com,
 	eugen.hristev@linaro.org
-Subject: [RFC][PATCH 08/14] kmemdump: coreimage: add kmsg registration
-Date: Tue, 22 Apr 2025 14:31:50 +0300
-Message-ID: <20250422113156.575971-9-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH 09/14] genirq: add irq_kmemdump_register
+Date: Tue, 22 Apr 2025 14:31:51 +0300
+Message-ID: <20250422113156.575971-10-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250422113156.575971-1-eugen.hristev@linaro.org>
 References: <20250422113156.575971-1-eugen.hristev@linaro.org>
@@ -105,34 +105,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Register log buffer into kmemdump coreimage
+Add function to register irq info into kmemdump.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- drivers/debug/kmemdump_coreimage.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/irqnr.h | 1 +
+ kernel/irq/irqdesc.c  | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/debug/kmemdump_coreimage.c b/drivers/debug/kmemdump_coreimage.c
-index 59630adf5dd2..077b65cae4cb 100644
---- a/drivers/debug/kmemdump_coreimage.c
-+++ b/drivers/debug/kmemdump_coreimage.c
-@@ -3,6 +3,7 @@
- #include <linux/init.h>
- #include <linux/elfcore.h>
- #include <linux/kmemdump.h>
-+#include <linux/kmsg_dump.h>
- #include <linux/utsname.h>
- #include <linux/sched/stat.h>
- #include <linux/vmcore_info.h>
-@@ -71,6 +72,8 @@ void register_coreinfo(void)
- 			  sizeof(cpumask_t));
- 	kmemdump_register("jiffies", (void *)&jiffies_64,
- 			  sizeof(jiffies_64));
-+
-+	kmsg_kmemdump_register();
- }
+diff --git a/include/linux/irqnr.h b/include/linux/irqnr.h
+index e97206c721a0..136f0572ad78 100644
+--- a/include/linux/irqnr.h
++++ b/include/linux/irqnr.h
+@@ -9,6 +9,7 @@ unsigned int irq_get_nr_irqs(void) __pure;
+ unsigned int irq_set_nr_irqs(unsigned int nr);
+ extern struct irq_desc *irq_to_desc(unsigned int irq);
+ unsigned int irq_get_next_irq(unsigned int offset);
++void irq_kmemdump_register(void);
  
- static struct elf_phdr *elf_phdr_entry_addr(struct elfhdr *ehdr, int idx)
+ #define for_each_irq_desc(irq, desc)                                      \
+ 	for (unsigned int __nr_irqs__ = irq_get_nr_irqs(); __nr_irqs__;   \
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 287830739783..ae29165b1f1f 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -12,6 +12,7 @@
+ #include <linux/export.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel_stat.h>
++#include <linux/kmemdump.h>
+ #include <linux/maple_tree.h>
+ #include <linux/irqdomain.h>
+ #include <linux/sysfs.h>
+@@ -164,6 +165,12 @@ unsigned int irq_set_nr_irqs(unsigned int nr)
+ }
+ EXPORT_SYMBOL_GPL(irq_set_nr_irqs);
+ 
++void irq_kmemdump_register(void)
++{
++	kmemdump_register("irq", (void *)&nr_irqs, sizeof(nr_irqs));
++}
++EXPORT_SYMBOL_GPL(irq_kmemdump_register);
++
+ static DEFINE_MUTEX(sparse_irq_lock);
+ static struct maple_tree sparse_irqs = MTREE_INIT_EXT(sparse_irqs,
+ 					MT_FLAGS_ALLOC_RANGE |
 -- 
 2.43.0
 
