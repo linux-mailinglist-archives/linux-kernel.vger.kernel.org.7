@@ -1,139 +1,108 @@
-Return-Path: <linux-kernel+bounces-614602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD32CA96EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:35:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB6CA96F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56EB01B6142E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F7F4440E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58632857D7;
-	Tue, 22 Apr 2025 14:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFB528D85C;
+	Tue, 22 Apr 2025 14:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTHjseVn"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="djk61YA3"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE75FB95;
-	Tue, 22 Apr 2025 14:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BA828A3EA;
+	Tue, 22 Apr 2025 14:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332300; cv=none; b=rXM6Qgj5Wx/zk7u+L/ay21hGfAkHQcHvcxpn15N4W5KbMkVQi1kSC30Dwt7Lr7Nj97zya2FwR9+0aKoIkU99vP6biCtTnQ4Qsc/gWQSvYa0acdZp8HLlNqoYoRguVkjLJU+W3Zcn0ua0pyynvakRe9GlEKgrhlY1LgFoeABtrAo=
+	t=1745332319; cv=none; b=WGq8REySCgpjaG9yAdu1wEEYbr7riRcqZ95C5C2vip4yBi94ZP5kKMxOo3rkH3hRW/7wDDXN9VdwMZeL7so5pBTKKcsK9mmjpi4NeQR/ZWP+67F0tHnj8PP+xeOc2sQvf44mJv7ncjMZHIBd499Vskpl5mmGNYPmm/LAQblkYUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332300; c=relaxed/simple;
-	bh=aPTEjEJvTaqK7QfdNneuXA5RGpq3RiNIyz1EOWySdY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Clr7+dMShkCExTQR3KVTbN6Z6svbkjPb4US0A1J42iUeWMljELxecinNB5jXbUXcUWxwtaiX2A+jQI7/NWdtihaUa01bvLnpyoQpJzpsow6zO0c5tpImD4FAdLGbf6jtUeD++N20yAIUSO0w/Zq1k++BXekfHsQ1ABdJMvaYiGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTHjseVn; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1138338566b.1;
-        Tue, 22 Apr 2025 07:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745332297; x=1745937097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9D2Ohj7BMKhRiIF2UiB0PW+jmy/zmiJ2pgDRvvl1DdQ=;
-        b=MTHjseVnwQQxG7mxXwyyOiioDZ6jgbLkRHuzZY5wwigbJbV9KFkdjmg+Mo93GzJNTm
-         ykpdMyEScaz9uP0ougUh2Sz2lWV9ZTeCDUlHxYl3t6eCB8f12x6cRm+dIMVxTgWT4LsY
-         1XvfS4mELBOPyCx9XVAHInqBL+oggjLWNPpD8Ig3s5+b0lE6RYXwoPIEL14vW9xK3Sha
-         wHe8gQ6A4MSrUtTlYt6o9x3O5DLKl9xII0KLuuaymKo0MQTwhjcUWL5gthZqXSxJ+6r9
-         YnNKL2DLomG2EGn6lLa2j26CR1g03atEbXds+EgsXyvdmnJoZAPMalY9Kun+1CEkDzUy
-         65cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745332297; x=1745937097;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9D2Ohj7BMKhRiIF2UiB0PW+jmy/zmiJ2pgDRvvl1DdQ=;
-        b=l7Htr4mDNXvUnG6V9rBBoauJcujAY75Ng8m+YJ41nXzgu5rTKEy0S9jWzoOOugJZ2v
-         TIk1O89ZU1/hRLQbUS8+GCQRE2Z+/AyR4LcCgl8BeGaOhCDHnwZNWrpWJwJwkYDYXDnj
-         qABqvlXevDzuSoSAStLNU3zBL87xM/l/5M+tOMiybz/E+zrFty1WvenqDezQRYLsc/EV
-         JZGuvhzz6AiAvhAKVm4XHxCwbLt8r3BLbzQ+PRgg9QfU0K+5jb8Qi1aGZRt3Nqw/iJaT
-         sQLrEPlNqCU0c2wvvDWV7JUereo1ExvM2agBvpzgMNiHgkuUuhzONiNSvlINadW06Dhc
-         Uxxw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4eVcvdGvfIkTbNHs0JCUxZQ0CQhWuPyU0f6/oaoHA9n5Rh0XjWZR1M6CFGtVpuUrhF/ixHylW9CnIINo=@vger.kernel.org, AJvYcCVRdM6sbIOxAhuv/MXddCA/5glFL5paxkbZLLT9hGBIxYNYTFcvPMGz+QeAimnR0LR+vb+tWuBPWlN7@vger.kernel.org, AJvYcCXJx0nd1USZYr/a4E6cFNXfTVzqQC1TtoMkM/CDheeb6zFFq2Vjmaps/V2wQcu774ZcE2JLEarlBNYSQp0g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYz8dEMpc77RSSgUUPu568IiHydIOGb3GRwVX7aW389veAEeWS
-	dtSmaqenWA3n7gnXZAq8ZzqpL9aH2Ue/T0Pw0vQjOeJtCB6x5WhG
-X-Gm-Gg: ASbGncvRG5BHU8ptX5+dH5/5CyzxGgsst04PCxo8cbNrUaGWAOd+MU7DoQeQACEbXei
-	T5IU8U3h2Ck8ZD0PLJ1XaLNmPhkAVo9iqxEA1L55CtYpyMoeTsBEgauQFvUaY70cir8pop8UilI
-	O6aXY7ATMonJps0BLCutq6b9IvBhYsU90spQoWkNk4Xs1aZXZioFZBW+KDs8n+Ur3SdDjJplGyx
-	AsaO3lQL3g1K2lky+9FkjP44oRJRHDCn5ARbS6sQKeHLLjtaXw57LhCFzMfl9GwZkNf1SRWN11A
-	oxOZT5FHHUzKA12i0wzOoLTkevxm2OgHyqdDMPtZ+u4=
-X-Google-Smtp-Source: AGHT+IHxR50TFifkBPFb1XIbV7o2Uld6KWH6bgmxrkwABwpSwd3+oXjHqcT/SSW4faB3cyazbRU9pg==
-X-Received: by 2002:a17:907:3f91:b0:ac8:1bbe:1a5b with SMTP id a640c23a62f3a-acb6ec51617mr1298187766b.9.1745332296250;
-        Tue, 22 Apr 2025 07:31:36 -0700 (PDT)
-Received: from [192.168.1.101] ([212.106.161.104])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefc685sm672352866b.96.2025.04.22.07.31.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 07:31:35 -0700 (PDT)
-Message-ID: <de6aa1b0-3557-4b8b-86a3-919fd9e5dec6@gmail.com>
-Date: Tue, 22 Apr 2025 16:31:33 +0200
+	s=arc-20240116; t=1745332319; c=relaxed/simple;
+	bh=cp9iCaG6IjleZ8rnxrFEXQOpQGvM5fPYLk4VgnpoCss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tM7VgD3LQJpOB+b3fEDbPs8hVvUpdT7YlR41YkrXQtpekTpZhaTYZKUPqpvTK6jhHJjcnsn+1XZ7ospTmfpkv3EXBaXjHfd8+jKB9U3/2axzlMTgyrUAEih90Xt772gp8zCJLlo54JIGgQofvV8oXZymWLUa7vduynME0NIMZbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=djk61YA3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i4gjMlBtZTrVVK5rL4/69M/87+0lVpEAYA66vnBwBVA=; b=djk61YA3uNxsIPYl4YCBuNs6Ve
+	dBTA48m1zawlQcz9ZZoQ4W4s9NkiUElMVURgvqobwIfD5A9uyLT69Fx7STvHps3JY3f3y90XmHnY5
+	Xwqc5cs7ATMyIwNFCdEVe2JpO8IWCHpAW8bhs32PixZINu9E77+6JytB6+tK/xZNIvSd9ha91PbZf
+	IPMxbo/6UMUxz6DRblcgoPhHDGMFcjphCFmZe5pgBgur0fD5YU0yN9W9HZcZQjhZz9VvQUwsNf3tS
+	r1sh6T5wayWnEHVRK4ne+vfm1be+Ok3jhvW3CVu2vz3FEFbSplh2o5g0a2G5gISknEL11UE9MsM/A
+	TSMbQUDg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u7Ef4-0000000BF5b-2N8w;
+	Tue, 22 Apr 2025 14:31:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 243C53003C4; Tue, 22 Apr 2025 16:31:46 +0200 (CEST)
+Date: Tue, 22 Apr 2025 16:31:45 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, tmgross@umich.edu,
+	dakr@kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, pmladek@suse.com
+Subject: Re: [PATCH v2 0/2] add Rust version of might_sleep()
+Message-ID: <20250422143145.GC15651@noisy.programming.kicks-ass.net>
+References: <20250410225623.152616-1-fujita.tomonori@gmail.com>
+ <aAen7fQYciq2azi9@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: tegra: Add uartd serial alias for Jetson TX1
- module
-To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
-Content-Language: en-US, pl-PL
-From: Tomasz Maciej Nowak <tmn505@gmail.com>
-In-Reply-To: <20250420-tx1-bt-v1-1-153cba105a4e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAen7fQYciq2azi9@Mac.home>
 
-W dniu 20.04.2025 o 16:35, Aaron Kling via B4 Relay pisze:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On Tue, Apr 22, 2025 at 07:30:05AM -0700, Boqun Feng wrote:
+> On Fri, Apr 11, 2025 at 07:56:21AM +0900, FUJITA Tomonori wrote:
+> > This patchset adds Rust version of might_sleep().
+> > 
+> > These patches were previously part of the IO polling patchset [1], but
+> > they were split out to make upstreaming easier.
+> > 
+> > The first patch is for sched/core, which adds
+> > __might_sleep_precision(), rust friendly version of __might_sleep(),
+> > which takes a pointer to a string with the length instead of a
+> > null-terminated string. Rust's core::panic::Location::file(), which
+> > gives the file name of a caller, doesn't provide a null-terminated
+> > string. __might_sleep_precision() uses a precision specifier in the
+> > printk format, which specifies the length of a string; a string
+> > doesn't need to be a null-terminated. Providing a null-terminated
+> > string for better C interoperability is under discussion [2].
+> > 
+> > The second patch adds a Rust implementation of might_sleep(), on top
+> > of the changes in the first patch.
+> > 
+> > [1]: https://lore.kernel.org/lkml/20250220070611.214262-1-fujita.tomonori@gmail.com/
+> > [2]: https://github.com/rust-lang/libs-team/issues/466
+> > 
+> > v2:
+> > - improve SAFETY comment
+> > v1: https://lore.kernel.org/lkml/20250406110718.126146-1-fujita.tomonori@gmail.com/
+> > 
 > 
-> If a serial-tegra interface does not have an alias, the driver fails to
-> probe with an error:
-> serial-tegra 70006300.serial: failed to get alias id, errno -19
-> This prevents the bluetooth device from being accessible.
-> 
-> Fixes: 6eba6471bbb7 ("arm64: tegra: Wire up Bluetooth on Jetson TX1 module")
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+> @scheduler, if there is no objection, I'm going to take these two into a
+> pull request to tip soon. Thanks!
 
-Reviewed-by: Tomasz Maciej Nowak <tmn505@gmail.com>
-
-Thanks.
-
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> index 9b9d1d15b0c7eafd3895f02db1bc747d7cc8923c..1bb1f9640a800af6c10fabf0ee3916f2566a6d4b 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> @@ -11,6 +11,7 @@ aliases {
->  		rtc0 = "/i2c@7000d000/pmic@3c";
->  		rtc1 = "/rtc@7000e000";
->  		serial0 = &uarta;
-> +		serial3 = &uartd;
->  	};
->  
->  	chosen {
-> 
-> ---
-> base-commit: 119009db267415049182774196e3cce9e13b52ef
-> change-id: 20250419-tx1-bt-5f202a7e4cac
-> 
-> Best regards,
-Regards
-
--- 
-TMN
-
+Yeah, go ahead. I still think Rust should be fixed, but sure, we can
+live with this until that time.
 
