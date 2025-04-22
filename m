@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-613838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF56A962C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:50:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B85A9627D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B748189EB2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0514D3AB49D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354B4281359;
-	Tue, 22 Apr 2025 08:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D96280CD3;
+	Tue, 22 Apr 2025 08:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ZXpC/fPc"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7+8ljZa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76E8280CE4;
-	Tue, 22 Apr 2025 08:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834FD22ACE3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311023; cv=none; b=TatJ2sLYSYxQ3xF7P7BUiulN3rF6zo7mR38LWp2bhMS+5s8iiVaCqvg76GQ/17kEm2dJWK4h9KZ8sosjM1cg8LsNIxWtbjBsGHHKVcCcFsxXYjhmlURBZnSqanhQOpW2zZY1y9Wf2xlsbPPOc8uDYcCeQvAmqA8gauYsSu8R1yA=
+	t=1745310924; cv=none; b=e0n1DjtHog5qElemHfYyYugJNxKrsX3cfeCeBTf3LFz2raJ3FFbFz4GGrM3d0x46OPW7jCOIqcDP9QUnNFX3AkFr/KTtxyGLLD5c3kf+Z/FsIC9wPcGscaCQWL1Yiq+M3jUTtUd1Vj4X85j9N2pOvZsA1/1zQFebHXZiD1L1SVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311023; c=relaxed/simple;
-	bh=9nVtJDWo1D6O2kwPTFwcqfZG5VNM50pQxF6ze3uZES0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pB0P/7E2gydQAU1LtFPA+j4AC/hNh0kfLyOkvHRwNJg1ktWYQ2Z+sneuR6GhMaU+nmmnlpUpANzJgt5wkP6Zm9T0NVSiBmAz22qolu5vh3VGDHWC8IB8s4M6lf3ABxqjqNpYrzJ5UESn6sRA1QSlcw12EYna51V0LX4Krh1HMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ZXpC/fPc; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1745310926;
-	bh=JU0RHM3LhfHpd/Z5hHY05Fgimq/QoxL5zXExBc+3S9E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ZXpC/fPctka+9qXUBdjclQbhACdJTYhapimN3OqCiTNs2F6lJDkRkxGLgdZBqVsbE
-	 0XOJQTSQM9Lrgx/TEx59K8DoxYUkLK5pFt8Cj/k5QfUhd2o+ModbkFkOuujd4oEIV5
-	 uy4HbmJI46RFo/Oeok3MrvdDA4WrG5ifrtwpnlVg=
-X-QQ-mid: zesmtpip3t1745310920t8b1bb162
-X-QQ-Originating-IP: xDaMskdxdpmttZVyDVx0vXx2WDh0zl++cOZsOP5r3rE=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Apr 2025 16:35:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7588482841693843882
-EX-QQ-RecipientCnt: 11
-From: WangYuli <wangyuli@uniontech.com>
-To: gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	stable@vger.kernel.org
-Cc: james.smart@broadcom.com,
-	hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>,
-	Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 6.12/6.14] nvmet-fc: Remove unused functions
-Date: Tue, 22 Apr 2025 16:34:31 +0800
-Message-ID: <56AA32057D5B8285+20250422083431.96652-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745310924; c=relaxed/simple;
+	bh=tkcz3fDoQtNMo4Zmg+sngA67GADtQkWp13qhVcacadk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iF/Ec9AhWwy457iwPSULnLlw+HvtfAKfGJrxJuHnuePToT1a7N2oOULKjfEHVMjX5AQSmWpow0lCuwCljmHuDhC293RvrblfLaYz96B+wYqoO+FYZMjR65QziT8uA2gB7NXLxAYQz7Y5xJH2BAEYMa+ovPa9TseNrsJgNhgm/0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7+8ljZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457E8C4CEEA;
+	Tue, 22 Apr 2025 08:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745310924;
+	bh=tkcz3fDoQtNMo4Zmg+sngA67GADtQkWp13qhVcacadk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7+8ljZag9MrMdygB/e5mTshdnVjmpMziL5L0xJEcDaZY8DYtpt7fNbFPgA/SVWxt
+	 2Yh0hgP7jPhR4y4DTAfUd7sG7e6+xC2ORhALpoGls/i+F1610naxJf2JBqPnsH0vRo
+	 3TI5FZu+7LSxVki7fAOtVyXq5W/yD/oiOLIoDrLDpIHtlv2u2BWt0N6DCLcXSWqZLf
+	 HFdXaNg1GpqjOxf3kjwOKadK3E2omKDA/UhFkZQPHIyvJUbuUdf1ddUoYVIB6g2X3x
+	 KtPOM60g96iMDCSmVxW/UHsImBJvRfb6qGIuTwccVssytmjoNmwxqxyfnb2ncw3Q+5
+	 pZXUfVZwnSGlA==
+Date: Tue, 22 Apr 2025 11:35:17 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>, x86-ml <x86@kernel.org>
+Subject: Re: Kernel 6.15-rc2 unable to boot on 32bit x86 with PAE
+Message-ID: <aAdUxY8i4TV3q9Lt@kernel.org>
+References: <4599013d-bc74-4f81-9db7-070806ea9162@gmx.com>
+ <20250418160515.GAaAJ4O2HnktVgmZ1v@fat_crate.local>
+ <aAc-h1TJV7do7JXa@gmail.com>
+ <ecca749e-9c84-40ef-ae2a-d630a249b764@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MtJoEQFRGvIzFftxGMkZ/AEm+5UDCmqNmKwWbuiBZy2fJTtEfcgljhf3
-	OKuNR89Oir+i1EI7OSwRiki0hOAN48+UEaFqwYk7wcC4CjbAAo8zCi2yNkvsNGpPS+ZDT+M
-	j0NYmn8p8htVLqN5h6lSCnYB/U8Z7GfJnOVHS/Df4wUXfo1b3NukB2YlhD3xlbfPJdA+joD
-	jLX0NAcQm4bqN/wbc+31Lf8JTb3plKQMqITgdrJQy+a51bcrFTY8nTEr2YDLwJRHxgUWNVO
-	/ADPLKSiQi6DdIliBYWCVVWr9VAv9kWuUdMbp3flBNsnbI0wIkCPuN6EkrrVICz2GVtYlE4
-	8OAYGTfwu9pmtmuyNUsDYi/RXdTxYH6Bttaid7NE6DvSaJuOfnJnIuv45sVDvhTDpLKSYZI
-	l75wmR4cmgjX35mqL5cpOAUPjXwgwnJR66h/eX37/e1Mk7TzdBzxFOJlr2JPV42UDmtW7yB
-	Q2ph7EQZJKsV7NwHzTBdiCPTKM7PIi8GdYZoZYnKKoCcbiAMK0iQ+zhnj05uWhmtUGSgmEl
-	kBT7d0kTbfcM6K8AT89DvVRhmanjCakhKyc+VFdZD751tRkUI5BouYpWbIBqkyLWv3Or5uQ
-	em2VDnV8LZkHw5vjUzrajp5VHTEawrGaZNkoahZ7I9lqcupqPTH8ydpFsRswHwesyWbUUft
-	uniwveDjxAIzmMWjxDsFO13RWq0+ksiTsuqECQjR/R6kPzXU0rD5ktX3wud1x/y5RPDV7d0
-	6oDdoWPPjsSK/8FeEyfBQ8zYYNdSfzBClSlkXDOHpTdZus8xy+kX+3+CQ15LtOuq8ZvlN8+
-	UrVKgklOjr+k60lVaDkgOrIIXmnwqJwH4cjpcTc6cKdsVa21r+mkKtiRZEGPElDo0yH9X8c
-	StUW/FfP2/IFGDE1IIvYOzqGG1ZXH4j3dIYqdCNnSafVuiCYmHXf6NJ1w0joLXIVfHo3RT0
-	bb8vGfPSTH3QkiIMJqXWOPyxZfXBJlNdQsJ/97KgZ7sWVpS04QknHjfv8YSCUOGO7BKnhRD
-	u6gOFKdg==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <ecca749e-9c84-40ef-ae2a-d630a249b764@gmx.com>
 
-[ Upstream commit 1b304c006b0fb4f0517a8c4ba8c46e88f48a069c ]
+On Tue, Apr 22, 2025 at 05:02:55PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/4/22 16:30, Ingo Molnar 写道:
+> > 
+> > * Borislav Petkov <bp@alien8.de> wrote:
+> > 
+> > > On Fri, Apr 18, 2025 at 08:31:23PM +0930, Qu Wenruo wrote:
+> > > > Hi,
+> > > > 
+> > > > Recently I'm testing a situation where highmem is involved, thus I'm
+> > > > building the latest 32bit x86 with HIGHMEM and PAE, and run it inside a qemu
+> > > > VM.
+> > > 
+> > > Does that fix it:
+> > > 
+> > > https://git.kernel.org/tip/1e07b9fad022e0e02215150ca1e20912e78e8ec1
+> > > 
+> > > ?
+> > 
+> > That commit caused other problems - the best fix we have right now is:
+> > 
+> > 	https://git.kernel.org/tip/83b2d345e1786fdab96fc2b52942eebde125e7cd
+> 
+> Thanks, I'll take a try again.
+> 
+> But considering how rare 32bit + highmem systems are nowadays, I still have
+> one questions/concern:
+> 
+> - How to make sure we really got highmems?
+>   The kernel docs only mention that highmems need temporary mapping,
+>   and proper kmap/kunmap() handling.
+> 
+>   But I still didn't have a straightforward idea of how to verify,
+>   without adding manual ftrace events when a highmem page is hit.
+> 
+>   E.g. free only shows 3GB memory even if I enabled highmem + PAE.
 
-The functions nvmet_fc_iodnum() and nvmet_fc_fodnum() are currently
-unutilized.
+Without HIGHMEM it would be less than 900M.
 
-Following commit c53432030d86 ("nvme-fabrics: Add target support for FC
-transport"), which introduced these two functions, they have not been
-used at all in practice.
-
-Remove them to resolve the compiler warnings.
-
-Fix follow errors with clang-19 when W=1e:
-  drivers/nvme/target/fc.c:177:1: error: unused function 'nvmet_fc_iodnum' [-Werror,-Wunused-function]
-    177 | nvmet_fc_iodnum(struct nvmet_fc_ls_iod *iodptr)
-        | ^~~~~~~~~~~~~~~
-  drivers/nvme/target/fc.c:183:1: error: unused function 'nvmet_fc_fodnum' [-Werror,-Wunused-function]
-    183 | nvmet_fc_fodnum(struct nvmet_fc_fcp_iod *fodptr)
-        | ^~~~~~~~~~~~~~~
-  2 errors generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/nvme/target/fc.o] Error 1
-  make[7]: *** [scripts/Makefile.build:465: drivers/nvme/target] Error 2
-  make[6]: *** [scripts/Makefile.build:465: drivers/nvme] Error 2
-  make[6]: *** Waiting for unfinished jobs....
-
-Fixes: c53432030d86 ("nvme-fabrics: Add target support for FC transport")
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- drivers/nvme/target/fc.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 3ef4beacde32..7318b736d414 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -172,20 +172,6 @@ struct nvmet_fc_tgt_assoc {
- 	struct work_struct		del_work;
- };
+You can look for "HIGHMEM available" and "Memory: n/m available" in the
+kernel log to see how much highmem is there. 
  
--
--static inline int
--nvmet_fc_iodnum(struct nvmet_fc_ls_iod *iodptr)
--{
--	return (iodptr - iodptr->tgtport->iod);
--}
--
--static inline int
--nvmet_fc_fodnum(struct nvmet_fc_fcp_iod *fodptr)
--{
--	return (fodptr - fodptr->queue->fod);
--}
--
--
- /*
-  * Association and Connection IDs:
-  *
--- 
-2.49.0
+>   Since HIGHMEM64G is removed, I'd expect to get some values more like
+>   4G instead?
 
+There are some gaps under 4G, so it's surely less that 4G of usable memory
+there.
+ 
+> Thanks,
+> Qu
+
+-- 
+Sincerely yours,
+Mike.
 
