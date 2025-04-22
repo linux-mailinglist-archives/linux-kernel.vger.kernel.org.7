@@ -1,171 +1,131 @@
-Return-Path: <linux-kernel+bounces-614352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1572A96A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:39:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4543AA96A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E303A7E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:37:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50487A674C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF9428A400;
-	Tue, 22 Apr 2025 12:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4352853E5;
+	Tue, 22 Apr 2025 12:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="XUDMePRR"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xtvuIKG1"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C832F27F4EE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7CC27E1CF;
+	Tue, 22 Apr 2025 12:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325223; cv=none; b=LAdbqtQfhfyYjHkyS9OiqfANqILiQmBQmKBlcCEkiQcI0vVtLyV08cgFNFVpr3qKBS8IPFySZPziEPo26hWgdpx3c4jQEaIggriYZFqdBfZq/DhhEdkkWIvpY7kaLRpmdGuyFqHsAQTZL8DdiOo4viG44IDSwmbLb4Ktas7xvvE=
+	t=1745325156; cv=none; b=Q6q4Amq/6vAyO+ce5ZO15GHD2xnH5ZM5+Sm/TRsgQ1okFdS9c/K2QwBgyTN1OjM5X1fdKDLn1PTXdrwZuJb/DsBy24poafDTwLdSFiBqSVNa+Esw2Tvna5hwNz1NbqzgYtgxBZTav2jHjwmxnMzcePHuHKf5EgnAZ7ujmevrKLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325223; c=relaxed/simple;
-	bh=/9yWr4VyyEEe4/M0GRL7z9tF1e9qb+Lnb8mwvJ2P5Pk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l6zUpd//SKFRpbzIRlydbm/rK3EfwmniyXk/97ee38Z/E/cDhoAsm+zPcVQA2P1LYMZwQGOEuNjatkBiU3Yj42alIErCCeY7wCvzEboC/0VLhD6G8DwHInDCmz6DUt4sU3I3VDER7fve1J/1trS/CkS5dxnYiV7DeKNieMFtieU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=XUDMePRR; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22c336fcdaaso54754795ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1745325221; x=1745930021; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u26R6OPpO9Ptto2bJTGXyxlaV262RvFifNUIYuW77gA=;
-        b=XUDMePRRwau6hbXp2DRrqU0H80nbAERLpL9U41YiV6qEHRBkoRybdeYEgx/Qe97W/5
-         kIFrkYY1znVsixHCClQDjbmHFScc6kQpNBiZQrpl4SvjvzUosXdaaLVkHkR+y6fBhMbN
-         NmsqF7pxqdyMt7ivV32Do8fiXMGbN6nW0B87yzfFU81W2kEljZ2M9eJRcaMZLAgM4oD4
-         Z9YmUL8oN6Q9+4fwL2BQsm94IcvoTsuPav1xYdc6m/Qhwc2ayUtoBj/7rxERNPB+d8XK
-         X7QiHgad+jA5yPPqn++8LjTUqmUKJRg/ZcZR8yS+JyHYRKT2Ddnt8f2G5OLdJIqje6+o
-         5pUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745325221; x=1745930021;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u26R6OPpO9Ptto2bJTGXyxlaV262RvFifNUIYuW77gA=;
-        b=OeDvHyNHOuh6jBujbq9vmG6nDZScEHAX9vTVfD/2wirzXxnotY/9Gm2ekYUOvMP1Xi
-         fhsQXrSIQf10L1zeHGjGIggPeL1zz3qPDrlFGMnx59yUmb0dXagvJZgZ52EuZ53FgWUS
-         RV9575iwl/LcnyJwSutsn7z4u3pIKVTHuGv2JceNJcnUmq9Id+aASONbUMyjIZCRQZsX
-         FTh5YAgpP+YOESWr4wzOH73af6diDpeXVsztuo2RPfNkRSzCROat9se1/gZtMg7c8+zF
-         B2sInsxMsy9SNVpQdq4R2OUUleSe0K8WAffOA1jumTi6ZJ8WAMW2+TbSE2ePlssEFfou
-         VWIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Bt9AfMYgnDVd1v32EZ98vmBxc8Ty0Fw94EFt5yh2YSfuCrkRr3LalLoHD7ZTyxbM79ozFgRSqHUptv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0w1gPRxBK9SDVwGvUgqIVxzepP6Y9Hfgsr71DugUtf4oAJns9
-	t9YCFzAuu+uem/z4PeNdQXHZxB+LcwhIE6a3wJ/SeX6Y7S74b1mBAHllOHz1yw==
-X-Gm-Gg: ASbGncuUti5eINQhbbwBKkwA3gZKqq2WJqUN46tx/VlEWNjebMfgi4ID9F7NDMt7rVW
-	wu3RcFaiqO3NcDHzRhyIBRjVp/UsPmF9HNmql6CTS1gtoPAiCr9xZbExulSVB3bQoYYRvjkv4J4
-	+JJmUQcoZCBbeti6YJMTIX/HOxQUbkeoYTlE2l5QhZkF0Ai19GVhPc8esTWfLmpLVpIH6R9INKC
-	zSPVmcTV9/AR0BU4h/nBSov6mhdmgls41CfH6Z5YjDK8srdAuNquiAwfg8CtIwG3U1yLR2OX4m0
-	yMvycqNTTVTfF3L5J8EAzrBGEn0VsncMPaoQQrh/g4dqjig=
-X-Google-Smtp-Source: AGHT+IFvDd9T69BUDT328lJpIDvCDubF8fDxhHEgU/5Y0HSLsI63u546lW0N0LUSJcs29JlcJhJ4yA==
-X-Received: by 2002:a17:90b:2b87:b0:2fa:228d:5b03 with SMTP id 98e67ed59e1d1-3087bb66561mr18646220a91.19.1745325221022;
-        Tue, 22 Apr 2025 05:33:41 -0700 (PDT)
-Received: from [172.16.116.85] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df05025sm8484220a91.13.2025.04.22.05.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 05:33:40 -0700 (PDT)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Tue, 22 Apr 2025 18:02:10 +0530
-Subject: [PATCH 2/2] rust: kernel: of: Add overlay id abstraction
+	s=arc-20240116; t=1745325156; c=relaxed/simple;
+	bh=9sgP1GLrd8xWh1MYaLlSOFnxK1fP+qoNG+q8Zb9gZSw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t8DNTrXnF7/+ByXpBw368YKaZ6YFGQMJ/g54W9jXi2XedTz18nNM90Xnlx8NxkT5hCYuxjLzoRRcchzBqY2DRdLEw4Pw+uIupgXaxafr1641SLdI7N6M71Z9Fc50S25hWDRoT4nWo5LdjhMYcFnHijjzA0mpUoSlWyU1Kjm2+hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xtvuIKG1; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCWNaD1209452
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 07:32:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745325144;
+	bh=VD3GYSIMc1uNyuCfaxWRQVAVN5cwNV7T99X8AnTXs+Y=;
+	h=From:To:CC:Subject:Date;
+	b=xtvuIKG1//K7fgM6BsFtji20vR+Auy99+my2CEufgqApdNrK7gksYNoJvJxR+cv3a
+	 N24i5Smyeg/JvqHvm4GQG0PEf5H+al8yqbOUCu3S3kN1WaFPsxn4HP3eIC5rILGui4
+	 /z+RKluueh2mv5X9fCtirOXl8cVYdt2YeyvseBDE=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53MCWN0T017932
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 22 Apr 2025 07:32:23 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
+ Apr 2025 07:32:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 22 Apr 2025 07:32:23 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53MCWIKt117965;
+	Tue, 22 Apr 2025 07:32:19 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <u-kumar1@ti.com>,
+        <parth105105@gmail.com>, <parth.pancholi@toradex.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v3 0/2] J784S4/J742S2: Enable ACSPCIE0 output for PCIe1
+Date: Tue, 22 Apr 2025 18:02:16 +0530
+Message-ID: <20250422123218.3788223-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-rust-overlay-abs-v1-2-85779c1b853d@beagleboard.org>
-References: <20250422-rust-overlay-abs-v1-0-85779c1b853d@beagleboard.org>
-In-Reply-To: <20250422-rust-overlay-abs-v1-0-85779c1b853d@beagleboard.org>
-To: Jason Kridner <jkridner@beagleboard.org>, 
- Deepak Khatri <lorforlinux@beagleboard.org>, 
- Robert Nelson <robertcnelson@beagleboard.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=/9yWr4VyyEEe4/M0GRL7z9tF1e9qb+Lnb8mwvJ2P5Pk=;
- b=owEBbQKS/ZANAwAKAQXO9ceJ5Vp0AcsmYgBoB4yIwAGNB+SDnon22g0SDNe6UGP4QO7zgqflx
- mIGzfE0+LyJAjMEAAEKAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCaAeMiAAKCRAFzvXHieVa
- dAtwEACrLPZNxfutVOjabHDh4MFYxyKWCDyQ+EKjWeTyzYHUoGw1isI9YJCjoPGDDL0aRw+rjah
- XWhzpQoVr1ttEYP/81Tma/JhowNJObfA/0JrTvL5Uj7A4709Nf3Fvrm9E8hSHe7n9EC2d8l4CYH
- YiP13Z1TPZ9LhkVnrr94BTcxLHDeLn0X25q0GqI0jbkZkkHJjYz1vZL9X8QUFRYNwBZkMPOnGYh
- mLv1ZLDNMjOfNAVWL1Fv75VsEHRnJV+l/+NPbT+3mK6ByKdfwOvusIIsUWq/WVWOBWC4INB4D7L
- jaG21kcGMdvjc1G8dovf11tEB+CNdNN5oZihDU3i6mwWHt4T4uVFTtnroZur2deBe75V/AAEvY1
- U0OL87i3J2HqWZcEoHBd72c5kdDFlwpfl/N75Q/tSKENWklpNt1DSzXahtUJgAiMsZ4BBuMmlpP
- ifSqdPIcDKuYG+Cat3CMA0fGxFzrA79GUAUh1T49fERjGZg1lcEDBtuycudwzwwvCnVEWpd8QiM
- WMD8jGIdAyeJ+NJDg4nDPNn7ClLcbIkQAE6+IJp2yv4RxfAadYczEVyugal90RmnemM99dq8D0/
- BJ6mssrg+sACgD9zjSnKeGWXapLrCx6Uz0e07yIJkHfm+geIad03YWMwlD0Plfqbgah6p3et+fQ
- xnKep5NwyFwMv8w==
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Allow applying devicetree overlays from Rust.
+Hello,
 
-The overlay is removed on Drop.
+This series enables the reference clock output from the ACSPCIE0 module
+to the PCIe Connector corresponding to the PCIe1 instance of PCIe on
+J784S4-EVM and J742S2-EVM.
 
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
- rust/kernel/of.rs | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Series is based on linux-next tagged next-20250417.
 
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index db4ec26ff7de024f5e513a2223cfd841f57b1434..76dbb118d2dc21d1174e0a1ca8f8610d1d176119 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -80,3 +80,32 @@ pub fn as_raw(&self) -> *mut bindings::device_node {
-         self.0.get()
-     }
- }
-+
-+/// Devicetree overlay present in livetree.
-+///
-+/// The overlay is removed on Drop
-+pub struct OvcsId(kernel::ffi::c_int);
-+
-+impl OvcsId {
-+    /// Create and apply an overlay changeset to the live tree.
-+    pub fn of_overlay_fdt_apply(overlay: &[u8], base: &DeviceNode) -> Result<Self> {
-+        let mut ovcs_id: kernel::ffi::c_int = 0;
-+
-+        crate::error::to_result(unsafe {
-+            bindings::of_overlay_fdt_apply(
-+                overlay.as_ptr().cast(),
-+                overlay.len().try_into().unwrap(),
-+                &mut ovcs_id,
-+                base.as_raw(),
-+            )
-+        })?;
-+
-+        Ok(Self(ovcs_id))
-+    }
-+}
-+
-+impl Drop for OvcsId {
-+    fn drop(&mut self) {
-+        unsafe { bindings::of_overlay_remove(&mut self.0) };
-+    }
-+}
+The previous versions of this series were a single patch. Based on the
+feedback received on previous versions, the SoC and Board support has
+been split in order to allow reuse for other Boards based on the same
+SoC.
+
+v2 patch:
+https://lore.kernel.org/r/20250411121307.793646-1-s-vadapalli@ti.com/
+Changes since v2 patch:
+- The SoC and board changes have been split across:
+  k3-j784s4-j742s2-main-common.dtsi and k3-j784s4-j742s2-evm-common.dtsi
+  respectively.
+
+v1 patch:
+https://lore.kernel.org/r/20240715123301.1184833-1-s-vadapalli@ti.com/
+Changes since v1 patch:
+- Rebased patch on linux-next tagged next-20241209.
+- Moved changes from "k3-j784s4-main.dtsi" to its equivalent now which
+  is "k3-j784s4-j742s2-main-common.dtsi" since PCIe1 is common to both
+  J742S2 and J784S4.
+- Renamed "acspcie0-proxy-ctrl" to "clock-controller" to follow generic
+  node naming convention.
+- Added "ti,syscon-acspcie-proxy-ctrl" property at the end of the node
+  since vendor specific properties should be placed at the end.
+
+Logs validating that an NVMe SSD connected to the PCIe Connector on
+J784S4-EVM receives the reference clock from the ACSPCIE0 module and is
+therefore enumerated successfully:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/905bceb2b6c0e1fc6b80cd2ddaf5bd0e
+
+Regards,
+Siddharth.
+
+Siddharth Vadapalli (2):
+  arm64: dts: ti: k3-j784s4-j742s2-main-common: add ACSPCIE0 node
+  arm64: dts: ti: k3-j784s4-j742s2-evm-common: enable ACSPCIE0 output
+    for PCIe1
+
+ arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi  | 6 ++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 5 +++++
+ 2 files changed, 11 insertions(+)
 
 -- 
-2.49.0
+2.34.1
 
 
