@@ -1,79 +1,124 @@
-Return-Path: <linux-kernel+bounces-614403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C793A96BBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A3AA96BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9432168465
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E015B189E73E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0B1386DA;
-	Tue, 22 Apr 2025 13:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHrIVZuQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A172B27EC98;
+	Tue, 22 Apr 2025 13:01:54 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07DD27E1BA;
-	Tue, 22 Apr 2025 13:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868162135DE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326896; cv=none; b=FMYKvpp1SEBBRmJC/AATdiux269Zn0J2wZSQnWVSAOEoZHooiv/iRISmkVwSl07HuyXhPgJ9GCrqTsURflsaAC00JbSBu7XKwFNHI2K9drjl2C+Ncf9uIMMZqCmKvxm/4I9bw55Qrx9wysN0YMbTfkN1gB7SlV4cEyvzssajVcA=
+	t=1745326914; cv=none; b=cEWCcI9biv7Cn5mtKgBIUJFJitWy2lzPcabnwwUgQPGYk7F/57VTKpSuKpKSASMpJr5bSd9Omqz1LPUUEMeNGtHc+pUuDbxSMySJFPS/w4y0+iqYx2FKPlyCHw+pKkUtnSu0IX4+DNIDMbi7gACvunGLLZDSwWydq96uHbdire4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326896; c=relaxed/simple;
-	bh=RRIWZyujwpn/9gYhBWQmbIspSVHn2nUMBWge3vwA/1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oemi1AimAsYyj3wWkiyVKHX2jVZsshbAmb296gEOQZjJplXHjFtmAHQ6iPo2rHq/zdxt4hkyFhOqi6+Xr2bMAZ/RZaWpdiZI32lijer3xvp4z5Blzwqxp3zAuSXWvRe40gS47h3V+C5PmHxqY0HQHlMPaPjUxTsJbPI6/kpSz8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHrIVZuQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBC8C4CEEA;
-	Tue, 22 Apr 2025 13:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745326895;
-	bh=RRIWZyujwpn/9gYhBWQmbIspSVHn2nUMBWge3vwA/1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZHrIVZuQUvmzUNEIHzd7TOkPNb5sQP0KEfYQXjI1oACP5b8nJbnDTc3h4xJAK1+qh
-	 ExBKXTWe7MStmiI5yLWwJ41XFzBFB1MFEg67sFssIqSRr7fWd21oI1aVTI0BDgIh6u
-	 RLxX3jHSP7dcVrqZZmpW/FtPdYOCN/edhoqIRAINvvw1QYO6wwuGvv4ymjooI9BiDv
-	 EMyOZowTmY3tMxDGGDF7QSblHyr+Ohbil0D/vONFaVkJcfhe7atveyxC+eK4S8LcIE
-	 ADoZq823TzEBKta4M6GQLcMOXbx/rpHsXJCCco8PaFxYVpi2hlAjsZ6I1Sz6uBhDgs
-	 2X4dqibGldpwg==
-Date: Tue, 22 Apr 2025 08:01:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: fsl: convert fsl,vf610-mscm-ir.txt to
- yaml format
-Message-ID: <20250422130133.GA964797-robh@kernel.org>
-References: <20250417151526.3570272-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1745326914; c=relaxed/simple;
+	bh=9RbKJiTqHj1K7Ly0QGY1qk4MpGVxJWCwdsvhyrRs0HY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iCvhzuSjBbHAl65XUOj8qLLAxIcvfQwIezp/5dhVdNpRkePesZMlhd2O1MjZZmMz6tz4IeNAi7fn5X5gEVfyigTVeWfAGg/rSV1FnYkI/UdA3zzsiXmNVH7g+arkj2iL6G6/Uv5+eRwdNVQRwRmnDnekUeJCG0V6c9nBor0ZsdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A3AA143AED;
+	Tue, 22 Apr 2025 13:01:48 +0000 (UTC)
+Message-ID: <9d4b7987-40e9-4bed-8869-a514e6c96697@ghiti.fr>
+Date: Tue, 22 Apr 2025 15:01:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417151526.3570272-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RISC-V: Kconfig: Fix help text of CMDLINE_EXTEND
+Content-Language: en-US
+To: Yeking@Red54.com
+Cc: aou@eecs.berkeley.edu, dmaliotaki@gmail.com,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ mick@ics.forth.gr, palmer@dabbelt.com, paul.walmsley@sifive.com
+References: <4b2a6bf1-3642-431b-bb74-3aeae79d17d3@ghiti.fr>
+ <tencent_0E5DE0122D64CFAD35F51FC3B3433BE94F06@qq.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <tencent_0E5DE0122D64CFAD35F51FC3B3433BE94F06@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepjeekuefgtdehhfevleffvdegteegleetieejkeehheefvedtuddvgfetvefgheffnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgsvgemvddtvgefmedvfhgtfeemkeguudelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepjggvkhhinhhgseftvgguheegrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegumhgrlhhiohhtrghkihesg
+ hhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhitghksehitghsrdhfohhrthhhrdhgrhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomh
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Apr 17, 2025 at 11:15:22AM -0400, Frank Li wrote:
-> Convert fsl,vf610-mscm-ir.txt to yaml format.
-> 
-> Additional changes:
-> - remove label at example dts.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../arm/freescale/fsl,vf610-mscm-ir.txt       | 30 ---------
->  .../arm/freescale/fsl,vf610-mscm-ir.yaml      | 63 +++++++++++++++++++
->  2 files changed, 63 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-ir.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-ir.yaml
+Hi,
 
-Move this to bindings/interrupt-controller/
+On 21/04/2025 12:16, Yeking@Red54.com wrote:
+> LoongArch (merged):
+> https://lore.kernel.org/all/tencent_7FAF68BF7A2EAD9BFE869ECFDB837F980309@qq.com/
+>
+> RISC-V:
+> https://lore.kernel.org/all/tencent_A93C7FB46BFD20054AD2FEF4645913FF550A@qq.com/
+>
+> PowerPC:
+> https://lore.kernel.org/all/tencent_6E57A00F6D56CF8475CF9FD13370FBC1CF06@qq.com/
+>
+> SH:
+> https://lore.kernel.org/all/tencent_40B6A6E7C79AEEEFEC79A07DE00724909A05@qq.com/
+>
+> ARM (rejected):
+> https://lore.kernel.org/all/tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com/
+>
+> ARM64 (rejected):
+> https://lore.kernel.org/all/tencent_1873443BEECF45E0336D4C4F8C35C19FEB06@qq.com/
+>
+> Russell King (Oracle) wrote:
+> "
+> ARM gained support for CMDLINE_EXTEND in commit 4394c1244249 ("ARM:
+> 6893/1: Allow for kernel command line concatenation") dated 4 May
+> 2011. In this commit, CONFIG_CMDLINE _prefixes_ the boot loader
+> supplied arguments.
+>
+> In commit 34b82026a507 ("fdt: fix extend of cmd line") dated 13
+> April 2016, which _post_ _dates_ the introduction on ARM, and the
+> commit even states that it's fixing the lack of appending compared
+> to ARM, this adds code to drivers/of to _append_ CONFIG_CMDLINE
+> to the FDT arguments which come from the boot loader.
+>
+> It is DT that implemented this wrongly.
+>
+> No, we are not going to change arch/arm to conform to something
+> that was implemented in a broken way. drivers/of needs fixing
+> to actually implement it as it was *originally* intended - and
+> there is five years of arch/arm doing this *before* DT started
+> to do it.
+>
+> If drivers/of maintainers also don't want to change, then I'm
+> sorry, but you have to then put up with the fact that it got
+> wrongly implemented by drivers/of and thus has a different
+> behaviour there.
+> "
+
+
+Thanks for the follow-up.
+
+Since riscv always had the behaviour you describe in your patch, I'll 
+take your patch.
+
+Thanks,
+
+Alex
+
+
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
