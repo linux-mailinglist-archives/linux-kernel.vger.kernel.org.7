@@ -1,154 +1,96 @@
-Return-Path: <linux-kernel+bounces-613874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C953A96342
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:59:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62113A9634F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673BC3B8B10
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F11189B4F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92036258CF1;
-	Tue, 22 Apr 2025 08:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D197F25DB1E;
+	Tue, 22 Apr 2025 08:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jA90xRtW"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmYN7D6/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A71EB5FE;
-	Tue, 22 Apr 2025 08:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD452580E0;
+	Tue, 22 Apr 2025 08:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311704; cv=none; b=TbznRYpaFurn997g+q5DRqAB/RRCMJP70Fd2PjbDmHxMX5cTKouEFGmeC4qp+hlRqGSjLUFVTL8foB2bNbtujLDfhlqV1aINWL2e9/xPiGnVnOcyvbmJPQTkgyUmu036V9fkZtPY67PplgB80jn+ECj7qrlGQ4NIAwO4IssaYH4=
+	t=1745311588; cv=none; b=EOZb1HkVJL9M+wEms59b0HQxMLLYr8T3S2SMXH9kbKTKXok8ndCW+M1myS+RK5Z4NIUdX/r3ET3JaYpXILVS5IMlApfEXj0T6PdwjNCuU7glVtS8TCi8CWA2LaalWydJRWm9SVSVkgY5Qxgw9G67Ne4777IWDr6M/T1nfvBcFQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311704; c=relaxed/simple;
-	bh=NODx8qfsyJ8m7uk0HyQ06uCxjDXpJQxJXYskeQoB00Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qCgzlj12JuGKuW5sXRiivLv9T4oYhpfkQLzE6zMkPo4mPZOtvAHxxfXmX8IdhjyF6ZrDmduB07t+GSVzYgES9HYz8eXe3Fq2DEAKEDmu5KJVB9y7nC44/TWEknF1uTSlfVAxLRuHeZTqIjAJrGYlDchaUFXO87YtC4aCDftPeTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jA90xRtW; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1745311614;
-	bh=Mn/KlAzNwHEUhyTCzKuyDP8x4usPzEJXQKKgGUzJ4zE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=jA90xRtWI6KmAt77gAVpMgb4LkBg93XT0EEAkxJDEg1MVlXEA5GYRIi+9anXY8SD5
-	 iDRhVTkln1ibySg2WHfV9n8n70ETnk/CbVh+ZDiNdjhoJYXMcdNMp0VFB+1r6zoW/0
-	 Kyf1GoQwEJqax3komuoWQfNM/q2VyZNFafZaR9AI=
-X-QQ-mid: zesmtpip4t1745311608t1f9ad96f
-X-QQ-Originating-IP: 5XEdCAWppwNKQdwP3OVG0Gd9FLc+JSOm9olJHjetOpY=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Apr 2025 16:46:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1164871164617083514
-EX-QQ-RecipientCnt: 11
-From: WangYuli <wangyuli@uniontech.com>
-To: gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	stable@vger.kernel.org
-Cc: james.smart@broadcom.com,
-	hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>,
-	Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 5.4/5.10] nvmet-fc: Remove unused functions
-Date: Tue, 22 Apr 2025 16:46:11 +0800
-Message-ID: <E2B130726D65F768+20250422084611.103321-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745311588; c=relaxed/simple;
+	bh=H44nKWfJpflFFXOrn5cncTRUymqZaUjYXbKXiW88Txw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6JV5+oCgSKSEeDYrthd0hku+ZHi1+r3Ic3fSI4kBJlcDNoVp45gT/rauM+ksatTf1t1w566xNWWNnG3pOpMSEcIf7tR44k5enaW5YI3ayGRz0P3KP8GqhKZwQCVPXo1xAS5TBMR0fvPxaXyc9o5DwybSHMuGESsX2i82KW4VE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmYN7D6/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A82C4CEE9;
+	Tue, 22 Apr 2025 08:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745311587;
+	bh=H44nKWfJpflFFXOrn5cncTRUymqZaUjYXbKXiW88Txw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QmYN7D6/vQ3fhyXfvF2TBLjn9Eh6HHivB2z2YJK9Q1otgITmYvXWco87nUQ/XQFej
+	 d24PAugK941acJt881sWsHAnIbR9eKNrky+nbiRiL4mup5twIh0m67xqu46jrSWmRD
+	 8EPJxxMkxH/Vj/arYSTCAmWqj9iHXT7hyxLH9R9ouO3DvdjiwDA57a1hsnfA2oh+l/
+	 e9VnSQ8AiR2H7lLMrYiS9GbwvK3nvogHF+tFOyZtAZ5JPdY+8Mv7Fqt+XS2A39TlML
+	 XwuNTkJURqd4th6YNyQVCEGs1aHB+mD21WwZyZKVOSEvInoYdj422SG6TzvMh2cnJp
+	 NpNyOEY6X8TCQ==
+Date: Tue, 22 Apr 2025 10:46:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephan Gerhold <stephan@gerhold.net>, Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Adam Skladowski <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>, 
+	Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
+Subject: Re: [PATCH v5 1/5] dt-bindings: clock: qcom: Add MSM8937 Global
+ Clock Controller
+Message-ID: <20250422-ermine-of-pastoral-courage-bb7bcd@kuoka>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+ <20250421-msm8937-v5-1-bf9879ef14d9@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OQDnMK6ucigbltoy6M3+6MJFsHv5JMUVIT5oBvRnFfiO79S5lu4bGpam
-	bBL6oG2AQSXW+FU/Qy0UJA/NALYASWagOXmGv4fbhpT+kfhDLfH0EFanKy+4vCoR4nsJlCW
-	8VhW/r13uBwVnsabLun5YGHT1gILtxeVOiL7jNKDpPpZRn8HAHq3KYx8g0fRPDbrJTYaUns
-	nJsbgv7XKmjkl4uxwQ9djGwe6UA5aEXv6exxhRNeFFpga69qqHv2Oz66qIPeoR2RnuwhfGf
-	rGpgcwKpVVPyoexCsTeDFk6HPgUrTlmr/zdbaGT5tn6ufLhFWoY5OyJxPKaL4FMYE8QqLFj
-	2lKng0lMdYko2wtAHjUl09gzbKKncbA7cecBHiI6DF3XqEam9VDtb1oMqm6ZKGtdI14IN/p
-	meRf0f2wTJ0UuP1pp36iPbuajXBAIEioROU7eWUsiL7Fye78eNda0zauQgk6+kxBjqWcfxS
-	66kPlKetWsasEZdRSFRpwa3W3/H4yKIXw7qpfKCu2GcATZAh+8xQcO6xHZGyLolAOye8UL8
-	g/y8lixJubhESSEh/++kEWjCrey7wNtWzu77MPquXBQpsc4py+3HtX1KolEOS0GAxoglGfx
-	jzGONCD4e0PHzZ1XgqPfZbLMWwr6QTne2esYdyPB93VBvXOBxPLSYgncrzEGN+YgWG9zW4U
-	96iuiLBiy4V1J5IxbTER8RkhKmILNt8mRsJWAvCnl+XhIx2/bqSBdK7zDH4zWmg4WO8XLVF
-	NVenYrufI8UoSDMp1l+b9i31Mif5Af1dtkZKGNuuZ6/RED5DZ5xDCFKbzvzj7cjKlws4Wbr
-	xhCr027xPbtK4wnMzPhIk5+2i4XNk7kfmM4TB9Dkqs+I/NWevA2ZYyF1xG6Dv6ZSzFJhuWO
-	fOARG9t7PTvsJ1GtfhaaiHfg0g0sSMsEpnquQBzZa3KLWXUsS+nIJScHs8qNVUucQXB6HYm
-	tl8oSwGIoaSw8/BbhlhjvdQTwirHCIUfuekwhJAwMvkBkNaOrLncGzpO3ZUonMvAUXyFbpD
-	WV7zdUyWlYpWKHl4F7iLxJx6xW5OliAcINs86c32R+bhqJ+XrxPpFhNRDmniOdrPWLZf53p
-	56DucQhxe7C
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250421-msm8937-v5-1-bf9879ef14d9@mainlining.org>
 
-[ Upstream commit 1b304c006b0fb4f0517a8c4ba8c46e88f48a069c ]
+On Mon, Apr 21, 2025 at 10:18:23PM GMT, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrot=
+e:
+> Add device tree bindings for the global clock controller on Qualcomm
+> MSM8937 platform.
+>=20
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+=2Eorg>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
+>  include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++=
+++++++
+>  2 files changed, 27 insertions(+), 3 deletions(-)
 
-The functions nvmet_fc_iodnum() and nvmet_fc_fodnum() are currently
-unutilized.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Following commit c53432030d86 ("nvme-fabrics: Add target support for FC
-transport"), which introduced these two functions, they have not been
-used at all in practice.
-
-Remove them to resolve the compiler warnings.
-
-Fix follow errors with clang-19 when W=1e:
-  drivers/nvme/target/fc.c:177:1: error: unused function 'nvmet_fc_iodnum' [-Werror,-Wunused-function]
-    177 | nvmet_fc_iodnum(struct nvmet_fc_ls_iod *iodptr)
-        | ^~~~~~~~~~~~~~~
-  drivers/nvme/target/fc.c:183:1: error: unused function 'nvmet_fc_fodnum' [-Werror,-Wunused-function]
-    183 | nvmet_fc_fodnum(struct nvmet_fc_fcp_iod *fodptr)
-        | ^~~~~~~~~~~~~~~
-  2 errors generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/nvme/target/fc.o] Error 1
-  make[7]: *** [scripts/Makefile.build:465: drivers/nvme/target] Error 2
-  make[6]: *** [scripts/Makefile.build:465: drivers/nvme] Error 2
-  make[6]: *** Waiting for unfinished jobs....
-
-Fixes: c53432030d86 ("nvme-fabrics: Add target support for FC transport")
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- drivers/nvme/target/fc.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 846fb41da643..321859753ae8 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -169,20 +169,6 @@ struct nvmet_fc_tgt_assoc {
- 	struct work_struct		del_work;
- };
- 
--
--static inline int
--nvmet_fc_iodnum(struct nvmet_fc_ls_iod *iodptr)
--{
--	return (iodptr - iodptr->tgtport->iod);
--}
--
--static inline int
--nvmet_fc_fodnum(struct nvmet_fc_fcp_iod *fodptr)
--{
--	return (fodptr - fodptr->queue->fod);
--}
--
--
- /*
-  * Association and Connection IDs:
-  *
--- 
-2.49.0
+Best regards,
+Krzysztof
 
 
