@@ -1,361 +1,192 @@
-Return-Path: <linux-kernel+bounces-613920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E20A963E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3159DA963ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977731886662
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:13:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D78C188932A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C3C2561D9;
-	Tue, 22 Apr 2025 09:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8F6253F3C;
+	Tue, 22 Apr 2025 09:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=haloniitty.fi header.i=@haloniitty.fi header.b="sVS9S10j"
-Received: from whm50.louhi.net (whm50.louhi.net [77.240.19.51])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzlQRCXY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF232571BF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.240.19.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA3A22ACE3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745313091; cv=none; b=TXST/RgBrRohYHx8ui7lQyr7HNcDkr957LNetyx9iFFr6B5uEq0YmDG5EJ5e4Ct/rxrkidzIauYbJlORrLV5Ewh+aLk4Uk5A57u03IlhpCHt3jTpGUpulw7A8J1AbsJhxHGsgzvhQuE2JBl1XyD45gzEjkB44EHmZiRLQMTGwt4=
+	t=1745313162; cv=none; b=FtzFU1CUTCekLF3PVcub6+308NOA3MtvtCdsd81sfpidT3G4zrRu8gTECEzaWGu/KMJrIBSXF2+oAp2Uk6OOyDOpzYmYO1Ko81s0UaFvGD+r994GIz4S+cT+NxNPsJhmdg7UNxAVwZBT/jWOv07mcK+idbLOMaYOxTiQ52/ddXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745313091; c=relaxed/simple;
-	bh=L77DZy28ToFMrE5BUINGfLwWumEaS9cPYmP0wlc/sEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uTQChuVXFqO8I9U2txxgIRaRQNwUUgtO0mbCBWcj4uTWnQZ2M+PvJTBaU365/67Z3K+NI/mOUszx9+fvAnBIDWiEvD0/tOMTHoacy0R5XhTvMEBHYpDPtoIBEh7+2vA6qAWIKCUaizq7ZFcsBuIuvgvaeOzi1NGld7xmK1p6rD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=haloniitty.fi; spf=pass smtp.mailfrom=haloniitty.fi; dkim=pass (2048-bit key) header.d=haloniitty.fi header.i=@haloniitty.fi header.b=sVS9S10j; arc=none smtp.client-ip=77.240.19.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=haloniitty.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haloniitty.fi
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=haloniitty.fi; s=default; h=Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yVVjU1q4Gvncr+x/yJzUJCGhn/FIQjGnskDSzOiBYcc=; b=sVS9S10j6owzl7LudS/CEBn7BO
-	NwY/Lm65AjheqUfV94KS0L2h4B75H2Y6ToAhmR63V3JsWUVxlaQkFeeSl6bL4UvH72yR3KzUCFrZT
-	yxgcbTbF7YjBskBwoHtw9nQbFqVFYLlQ0MacYmzDnugnk9B+K5V/oO31zwKT8j5noZGUuCQb0TdpE
-	CebIkNPvEQHCbkkwgg60lABzZPTkkFpWkFPogqWtQwVyGeLdcsC+uq/2n+F9bzadSeBbQ2C+2Cud8
-	uTWE0L9b9RGG/B9KVzhRozrMN5mecyukkrqmwwNlfY7LdiQUknCt00DRrjk/jy2NvIn4hchMuSyTn
-	2Pikki0Q==;
-Received: from [194.136.85.206] (port=42018 helo=eldfell)
-	by whm50.louhi.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <pekka.paalanen@haloniitty.fi>)
-	id 1u79ew-000000005oa-3Nn3;
-	Tue, 22 Apr 2025 12:11:18 +0300
-Date: Tue, 22 Apr 2025 12:11:07 +0300
-From: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Vishal Sagar <vishal.sagar@amd.com>, Anatoliy
- Klymenko <anatoliy.klymenko@amd.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Michal Simek <michal.simek@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
-Message-ID: <20250422121107.572cb7ad@eldfell>
-In-Reply-To: <20250421145039.GA19213@pendragon.ideasonboard.com>
-References: <20250327112009.6b4dc430@eldfell>
-	<b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com>
-	<20250327175842.130c0386@eldfell>
-	<CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
-	<20250331105446.098f0fbe@eldfell>
-	<20250331082135.GB13690@pendragon.ideasonboard.com>
-	<20250331135337.61934003@eldfell>
-	<20250401162732.731ef774@eldfell>
-	<73bd6628-374d-417f-a30f-88a4b1d157bb@ideasonboard.com>
-	<20250417111315.62a749e5@eldfell>
-	<20250421145039.GA19213@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745313162; c=relaxed/simple;
+	bh=zA34jL7vFyl2zOYsZFNfzulv4zQICPA6LcSEUuoLWGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G8y2y86CfjV3wP65/FwloYapiTUeTbLgs52H7UXoecxV8/4qZqg6xa0mV5xVNIT8lDX7wJqjiZkPSb+aAMZzVpeLH9wL041g0jkpti6baAger17KuyIU3XOxgRuEAp4Io/QMSxs4q4HbzsaNxcMAjRkJCpRA2ChqCPHqvAYAgFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PzlQRCXY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745313159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zA34jL7vFyl2zOYsZFNfzulv4zQICPA6LcSEUuoLWGU=;
+	b=PzlQRCXYqQHym/1PjZzBoKVQ9TZSLE2p4PyVBH1ItMAm0o885RyfC6BwV+65zApxfc9KyN
+	5/T7Rk4V7H9/pSTt5D+3nymvbrKdS3cSbHWLGFX1nGXH7fAejB0mdsBVkvjhOgiYjV5r9Y
+	svVmHNzLAyaOqRPgs8axasEbhxOQxQo=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-JRYnuFvgMma8kb6UeC7ceA-1; Tue, 22 Apr 2025 05:12:37 -0400
+X-MC-Unique: JRYnuFvgMma8kb6UeC7ceA-1
+X-Mimecast-MFC-AGG-ID: JRYnuFvgMma8kb6UeC7ceA_1745313157
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-309c6e43a9aso2300798a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 02:12:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745313156; x=1745917956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zA34jL7vFyl2zOYsZFNfzulv4zQICPA6LcSEUuoLWGU=;
+        b=ASkRP2s4pnsbHTj+RCY0YKm9C9OJhljil4qa5kxf2qJ6ePbbRABn6WDG7XHMRrX3aS
+         ZiQqqRQb0cnxvU7RUlSwBOSoqMA++dJRQV2WurZHI/WK/WRPQwEQkbYm2LhxzKIOhldJ
+         W7ssQAhrso5dbekYELrQh//f4TkuHhIAdCAwogKMnhVpUdvNZbeNkPn1nYseXlFHK7/g
+         Khyg3bto1DbxTnvkZkdMQxkQCz6yiN7ZzGWVQPPG8/paYL/uojkJ1ty9iG+xZava82Jh
+         hffpZ1ZlZLHUyO3M+WbAReyXyVIEOVsV1DQ2FLxb3KXWjiPRA8/V019/r/CAOrywjNSt
+         jsCQ==
+X-Gm-Message-State: AOJu0YxKKUVaspSlJTXvLwmteXDHXUV3LC5tq0NQ9NiNeN69iCR3MEbG
+	Kx6QsBsGSE9X+9Dx7Z/+Dxed/Xxesx7fWLuGDPJ/IpRM9aHHFt441W21qo9kv3DKXo9expk68e3
+	koRJJz7xiBrgCPnHa/nruE0FliWSdeyojh9TATe8vuG+CqYz7JNJIivu7RwYHCEmSE/L/7U19T7
+	jpWPmDJsP8mvawLIShixKMpZAM/LsNNoZLKfs0
+X-Gm-Gg: ASbGnctL3KVcX+27Mtj/DbeAG5W4o33R9KUjbliaDO7lJDWx7qXwLd4JaBTcdJja9Qu
+	75meYxREokrv/tMQdNrxgoa6zUAoXGkUrQJ7ePoLE00gZjnufe1zI+jUlvHnJqqlLKi4=
+X-Received: by 2002:a17:90a:c105:b0:2ee:9e06:7db0 with SMTP id 98e67ed59e1d1-3087bb5708bmr22803332a91.11.1745313156610;
+        Tue, 22 Apr 2025 02:12:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmFyXRnQz9RO/mHWbk7s2cKRhqANS/cQ1plzUnn9+JwuMYCJ9qXRmKH3V1BqKujIVZ//EDQm5UO/1jGkfHgVo=
+X-Received: by 2002:a17:90a:c105:b0:2ee:9e06:7db0 with SMTP id
+ 98e67ed59e1d1-3087bb5708bmr22803312a91.11.1745313156316; Tue, 22 Apr 2025
+ 02:12:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JG8Db_cv6M6tw/4neQoVwq6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - whm50.louhi.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - haloniitty.fi
-X-Get-Message-Sender-Via: whm50.louhi.net: authenticated_id: pekka.paalanen@haloniitty.fi
-X-Authenticated-Sender: whm50.louhi.net: pekka.paalanen@haloniitty.fi
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-
---Sig_/JG8Db_cv6M6tw/4neQoVwq6
-Content-Type: text/plain; charset=US-ASCII
+References: <CAJaqyWfcY0Hi=B9rPAqAfkJoXBgf0jYm_dUXrRX=sZ4XRCxjOw@mail.gmail.com>
+ <shmvjznci4e7m3oeqzqrhmvsljzatafwpnauyyrlpv4xcntljo@w4ip2b3m34w4>
+In-Reply-To: <shmvjznci4e7m3oeqzqrhmvsljzatafwpnauyyrlpv4xcntljo@w4ip2b3m34w4>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Tue, 22 Apr 2025 11:11:59 +0200
+X-Gm-Features: ATxdqUGbklM2ksjl-txrIV_R23OlQit5nT7PdK09WTmge7TcOQW_jox7abFi9s8
+Message-ID: <CAJaqyWciYsRk2kKc=A51yD49HRH_r3ruscDDVhwwUdAVZU71rA@mail.gmail.com>
+Subject: Re: Merging CVQ handling for vdpa drivers
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Michael Tsirkin <mst@redhat.com>, 
+	Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 21 Apr 2025 17:50:39 +0300
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+On Thu, Apr 17, 2025 at 2:36=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> Hi Eugenio,
+>
+> On Wed, Apr 16, 2025 at 12:58:01PM +0200, Eugenio Perez Martin wrote:
+> > Hi!
+> >
+> > At this moment mlx driver and vdpa_net_sim share some code that
+> > handles the CVQ and are not very backend specific. In particular, they
+> > share the vringh usage and the ASID code.
+> >
+> > Now VDUSE could benefit from implementing part of the CVQ in the
+> > kernel too. The most obvious example is to avoid the userspace device
+> > being able to block the virtio-net driver by not responding to CVQ
+> > commands, but all DRY principles apply here too.
+> >
+> > I propose to abstract it in two steps:
+> >
+> > 1) Introduce vringh-based CVQ core
+> >
+> > Let's call it "struct vringh_cvq". It manages CVQ, and sends to the
+> > vdpa backend driver just the CVQ commands. No more buffers,
+> > notifications, etc handling for the driver.
+> >
+> > The backend driver can interact with this in many ways, like a
+> > function to poll commands.
+> I would like to quickly explore this direction as well: how would
+> polling work actually here? The entrypoint would still need to be the
+> .kick_vq op, right?
+>
 
-> Hi Pekka,
->=20
-> On Thu, Apr 17, 2025 at 11:13:15AM +0300, Pekka Paalanen wrote:
-> > On Wed, 16 Apr 2025 11:59:43 +0300 Tomi Valkeinen wrote: =20
-> > > On 01/04/2025 16:27, Pekka Paalanen wrote: =20
-> > > > On Mon, 31 Mar 2025 13:53:37 +0300 Pekka Paalanen wrote: =20
-> > > >> On Mon, 31 Mar 2025 11:21:35 +0300 Laurent Pinchart wrote: =20
-> > > >>> On Mon, Mar 31, 2025 at 10:54:46AM +0300, Pekka Paalanen wrote: =
-=20
-> > > >>>> On Thu, 27 Mar 2025 17:35:39 +0100 Geert Uytterhoeven wrote: =20
-> > > >>>>> On Thu, 27 Mar 2025 at 16:59, Pekka Paalanen wrote: =20
-> > > >>>>>> On Thu, 27 Mar 2025 16:21:16 +0200 Tomi Valkeinen wrote: =20
-> > > >>>>>>> On 27/03/2025 11:20, Pekka Paalanen wrote: =20
-> > > >>>>>>>> On Wed, 26 Mar 2025 15:55:18 +0200 Tomi Valkeinen wrote: =20
-> > > >>>>>>>>> On 26/03/2025 15:52, Geert Uytterhoeven wrote: =20
-> > > >>>>>>>>>> On Wed, 26 Mar 2025 at 14:23, Tomi Valkeinen wrote: =20
-> > > >>>>>>>>>>> Add greyscale Y8 format.
-> > > >>>>>>>>>>>
-> > > >>>>>>>>>>> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > >>>>>>>>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboar=
-d.com>   =20
-> > > >>>>>>>>>>
-> > > >>>>>>>>>> Thanks for your patch!
-> > > >>>>>>>>>>          =20
-> > > >>>>>>>>>>> --- a/include/uapi/drm/drm_fourcc.h
-> > > >>>>>>>>>>> +++ b/include/uapi/drm/drm_fourcc.h
-> > > >>>>>>>>>>> @@ -405,6 +405,9 @@ extern "C" {
-> > > >>>>>>>>>>>     #define DRM_FORMAT_YUV444      fourcc_code('Y', 'U', =
-'2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
-> > > >>>>>>>>>>>     #define DRM_FORMAT_YVU444      fourcc_code('Y', 'V', =
-'2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
-> > > >>>>>>>>>>>
-> > > >>>>>>>>>>> +/* Greyscale formats */
-> > > >>>>>>>>>>> +
-> > > >>>>>>>>>>> +#define DRM_FORMAT_Y8          fourcc_code('G', 'R', 'E'=
-, 'Y')  /* 8-bit Y-only */   =20
-> > > >>>>>>>>>>
-> > > >>>>>>>>>> This format differs from e.g. DRM_FORMAT_R8, which encodes
-> > > >>>>>>>>>> the number of bits in the FOURCC format. What do you envis=
-ion
-> > > >>>>>>>>>> for e.g. DRM_FORMAT_Y16? fourcc_code('G', 'R', '1', '6')? =
-  =20
-> > > >>>>>>>>>
-> > > >>>>>>>>> I wanted to use the same fourcc as on V4L2 side. Strictly s=
-peaking it's
-> > > >>>>>>>>> not required, but different fourccs for the same formats do=
- confuse.
-> > > >>>>>>>>>
-> > > >>>>>>>>> So, generally speaking, I'd pick an existing fourcc from v4=
-l2 side if
-> > > >>>>>>>>> possible, and if not, invent a new one.   =20
-> > > >>>>>>>>
-> > > >>>>>>>> what's the actual difference between DRM_FORMAT_R8 and DRM_F=
-ORMAT_Y8?
-> > > >>>>>>>>
-> > > >>>>>>>> Is the difference that when R8 gets expanded to RGB, it beco=
-mes (R, 0,
-> > > >>>>>>>> 0), but Y8 gets expanded to (c1 * Y, c2 * Y, c3 * Y) where c=
-1..c3 are
-> > > >>>>>>>> defined by MatrixCoefficients (H.273 terminology)?
-> > > >>>>>>>>
-> > > >>>>>>>> That would be my intuitive assumption following how YCbCr is=
- handled.
-> > > >>>>>>>> Is it obvious enough, or should there be a comment to that e=
-ffect?   =20
-> > > >>>>>>>
-> > > >>>>>>> You raise an interesting point. Is it defined how a display d=
-river, that
-> > > >>>>>>> supports R8 as a format, shows R8 on screen? I came into this=
- in the
-> > > >>>>>>> context of grayscale formats, so I thought R8 would be handle=
-d as (R, R,
-> > > >>>>>>> R) in RGB. But you say (R, 0, 0), which... also makes sense. =
-  =20
-> > > >>>>>>
-> > > >>>>>> That is a good question too. I based my assumption on OpenGL b=
-ehavior
-> > > >>>>>> of R8.
-> > > >>>>>>
-> > > >>>>>> Single channel displays do exist I believe, but being single-c=
-hannel,
-> > > >>>>>> expansion on the other channels is likely meaningless. Hm, but=
- for the
-> > > >>>>>> KMS color pipeline, it would be meaningful, like with a CTM.
-> > > >>>>>> Interesting.
-> > > >>>>>>
-> > > >>>>>> I don't know. Maybe Geert does?   =20
-> > > >>>>>
-> > > >>>>> I did some digging, and was a bit surprised that it was you who=
- told
-> > > >>>>> me to use R8 instead of Y8?
-> > > >>>>> https://lore.kernel.org/all/20220202111954.6ee9a10c@eldfell   =
-=20
-> > > >>>>
-> > > >>>> Hi Geert,
-> > > >>>>
-> > > >>>> indeed I did. I never thought of the question of expansion to R,=
-G,B
-> > > >>>> before. Maybe that expansion is what spells R8 and Y8 apart?
-> > > >>>>
-> > > >>>> I do think that expansion needs to be specified, so that the KMS=
- color
-> > > >>>> pipeline computations are defined. There is a big difference bet=
-ween
-> > > >>>> multiplying these with an arbitrary 3x3 matrix (e.g. CTM):
-> > > >>>>
-> > > >>>> - (R, 0, 0)
-> > > >>>> - (R, R, R)
-> > > >>>> - (c1 * Y, c2 * Y, c3 * Y)   =20
-> > > >>>
-> > > >>> I'd be very surprised by an YUV to RGB conversion matrix where th=
-e first
-> > > >>> column would contain different values. What we need to take into =
-account
-> > > >>> though is quantization (full vs. limited range).   =20
-> > > >=20
-> > > > Quantization range is indeed good to note. R8 would be always full
-> > > > range, but Y8 would follow COLOR_RANGE property.
-> > > >    =20
-> > > >> That makes Y8 produce (Y, Y, Y), and we have our answer: R8 should=
- be
-> > > >> (R, 0, 0), so we have both variants.
-> > > >>
-> > > >> Can we specify Y, R, G and B be nominal values in the range 0.0 - =
-1.0
-> > > >> in the KMS color processing?   =20
-> > > >=20
-> > > > I think this 0.0 - 1.0 nominal range definition for the abstract KMS
-> > > > color processing is necessary.
-> > > >=20
-> > > > It also means that limited range Y8 data, when containing values 0-=
-15
-> > > > or 240-255, would produce negative and greater than 1.0 values,
-> > > > respectively. They might get immediately clamped to 0.0 - 1.0 with =
-the
-> > > > first color operation they face, though, but the concept seems
-> > > > important and carrying over to the new color pipelines UAPI which m=
-ight
-> > > > choose not to clamp.   =20
-> > >=20
-> > > Is the behavior of values outside the limited range something that ne=
-eds=20
-> > > to be defined? We can't know how each piece of HW behaves with=20
-> > > "undefined" input, so should we not just define the behavior as platf=
-orm=20
-> > > specific? =20
-> >=20
-> > Hi Tomi,
-> >=20
-> > it's not undefined nor illegal input in general. The so-called
-> > sub-black and super-white ranges exist for a reason, and they are
-> > intended to be used in video processing to avoid clipping in
-> > intermediate processing steps when a filter overshoots a bit. There are
-> > also practices that depend on them, like PLUGE calibration with
-> > traditional signals on a display: https://www.itu.int/rec/R-REC-BT.814
-> >=20
-> > I think it would be really good to have defined behaviour if at all
-> > possible.
-> >  =20
-> > > In any case: I can't say I fully understood all the discussions wrt.=
-=20
-> > > color spaces. But my immediate interest is, of course, this series =
-=3D).=20
-> > > So is there something that you think should be improved here? =20
-> >=20
-> > Right, the range discussion is a tangent and applies to all YUV
-> > formats, so it's not a new question.
-> >  =20
-> > > My understanding is that the Y-only pixel formats behave in a well=20
-> > > defined way (or, as well defined as the YUV formats), and there's=20
-> > > nothing more to add here. Is that right? =20
-> >=20
-> > There are two things:
-> >=20
-> > - Y8 follows COLOR_RANGE property, just like all other YUV formats.
-> > - Y8 implies that Cb and Cr are both neutral (0.0 in nominal values).
-> >=20
-> > I'd like these explicitly written down, so that they become obvious to
-> > everyone. I suspect either one might be easy to forget when writing
-> > code and taking shortcuts without thinking.
-> >=20
-> >=20
-> > Laurent,
-> >=20
-> > I did find a case where (Y', neutral, neutral) does *not* seem to expand
-> > to RGB=3D(Y, Y, Y): ICtCp. The conversion from ICtCp to L'M'S' does
-> > produce (Y', Y', Y'), but the LMS-to-RGB matrix scrambles it.
-> >=20
-> > I didn't dig through BT.2020 constant-luminance Y'C'bcC'rc, but I
-> > wouldn't be surprised if it scrambled too.
-> >=20
-> > Of course, both of the above are not just one matrix. They require two
-> > matrices and the transfer characteristic each to compute. KMS color
-> > operations cannot implement those today, but with the colorop pipelines
-> > they will if the hardware does it.
-> >=20
-> > That's why I think it's important to document the assumption of Cb and
-> > Cr when not part of the pixel format, and not write down a specific
-> > expansion to RGB like (Y, Y, Y). =20
->=20
-> Every time I discuss color spaces, the scopes of "RGB" and "YUV" seem to
-> expand more and more. This makes me wonder how we define those two
-> concepts. Taking the conversion from RGB to ICtCp as an example, would
-> you consider LMS and L'M'S' as "RGB" formats, and ICtCp as a "YUV"
-> format ?
+Right, at least in this first iteration.
 
-Hi Laurent,
+> > But I think the best way is for the driver
+> > to specify a struct of callbacks per command. This way vringh has its
+> > own thread able to run these callbacks, so the backend driver does not
+> > need to handle this thread too. If the driver does not specify a
+> > particular callback, vringh_cvq returns error to the driver.
+> >
+> So does this mean that the driver doesn't need to create its own work
+> queue anymore? It would only need to implement the handlers? This sounds
+> good.
+>
 
-sorry for the confusion. In this specific context, my use of RGB and
-YUV refers to the channels in DRM pixel formats. It might have been
-better if all channels in all pixel formats were "anonymous" and merely
-numbered because all formats can be used for any color model, but this
-is what we have.
+Yes, all the CVQ workqueue can be moved to this vringh_cvq.
 
-There is some disambiguation in
-https://gitlab.freedesktop.org/pq/color-and-hdr/-/blob/main/doc/pixels_colo=
-r.md
-The doc is some years old, so nowadays I might phrase things
-differently, but maybe it's easier to read for those new to things as I
-wrote it when I was just learning things.
+> How would the .kick_vq happen for the cvq? Would the backend call the
+> into this new CVQ mechanism which would read the commands and dispatch
+> them to the callbacks? Or is this also abstracted away from the backend?
+>
 
-I would classify ICtCp in the YUV pixel format category, because the
-CtCp plane can be sub-sampled (right?). I would classify LMS and L'M'S'
-in the RGB pixel format category because they are not sub-sampled AFAIK
-although they also do not actually appear as buffer contents, so the
-relation to pixel formats is... theoretical.
+I guess it would be hard to avoid the conditional if
+(is_ctrl_vq_idx(mvdev, idx)) in mlx5_vdpa_kick_vq for a first
+iteration. But my idea for a second stage is to move all of that to
+drivers/vdpa/vdpa.c, a new drivers/vdpa/vdpa_net.c, or similar.
 
-IOW, we have a completely artificial split of DRM pixel formats to RGB
-and YUV where the only essential difference is that YUV formats can have
-sub-sampled variants and RGB formats do not.
+> > Just implementing this first step already has all the intended benefits=
+.
+> >
+> Could you explain a bit more how ASID handling would happen?
 
+Maybe ASID handling needs to be delayed until the second stage.
 
-Thanks,
-pq
+All the current net devices handle ASID the same way: By having an
+array of iova trees, and checking how each vq group translates to each
+ASID. As long as the backend driver reports the number of vqs with
+.get_vq_num_max, the frontend knows what is the cvq, how to respond to
+.get_vq_group, etc etc.
 
---Sig_/JG8Db_cv6M6tw/4neQoVwq6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+For all the core vdpa new code, the backend device only has one ASID.
+But it would be easy to add devices with many ASID, just make the vdpa
+frontend code add one ASID extra and forward the request to the device
+if it does not belong to the last ASID / queue / vq group etc.
 
------BEGIN PGP SIGNATURE-----
+> It is easy
+> to imagine how the CVQ commands would be handled in the callback based
+> API.
+>
+> > 2) Driver-specific CVQ callbacks
+> >
+> > Move the vringh_cvq struct to the vdpa core (or to a new vdpa net
+> > core?), and let the backend driver just register the callback ops.
+> >
+> > This has less benefits compared with the first step, and it has more
+> > effort comparatively. But it helps to move shared logic out of the
+> > backend driver making it simpler.
+> >
+> > Is this plan interesting to you? Does anybody have the time to work on
+> > this? Comments are welcome :).
+> >
+> Interesting: yes. I could help with the callback implementation for mlx5.
+>
 
-iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAmgHXSsACgkQI1/ltBGq
-qqeJlxAAokwojvJjcjOM/KRqNmokHMAFa/tEdpsKjL14tZXsFrqFhMr+kR+HZTYa
-hgiwy+OOFkoxgJ/jHP0IzaBKDWFjed9SJim6MCGFWrp5I26nmfl4GrXp771gFuoh
-sdkYjhOwXIGZrIwMNd31Rsk+DCA+9ZFnLVuzsgh+AWOtpY0rl0PzfQ/nF9qRf58F
-GKTU5K4tJqZLTNmTul/wcoI3ZqctxObCpeFlSWNCbj5hzy/4Yzn+/YKFg7yfHKGO
-rvckl/+85JVlBBsQq8pJN9IpEvw8Vzx14+bETvspSTcy09u3IXvRo9eTOYlZRp6u
-yZUGxh8eObfCI9BYyehJh9BZSJjYqn76Mxio6pv2dBhFFkljJYz/q9XLl8KCareF
-7jyMBRwT+T4aM8d/SRFdB3qK+8+D5Yrnp+/26WQkxgRcT9cgostVAghucRDcb3Es
-j4l7ycYFFyl1pt1SecwDwkzau5FBzi+P49vXCMZ7qaUgPLrKOVjwtuD0m974o64V
-EripvbUOe/8yn1/jRkYMQOU+PPDmTrcxLghIMWKVzEdHQBwZPoCKxUWAt0yluuFq
-Y6MALJ3ak/HaXev7lOu675RKIXFkQW8kaw9TXYwSxOax/ODd1veOYEfzJzy1TPuk
-u4Y+Is3FdrTj5C4CEyrUCVpOSRlbb+PJPM91wtQP6aHNB0pNUqI=
-=WI+K
------END PGP SIGNATURE-----
+That would be great, thanks! :).
 
---Sig_/JG8Db_cv6M6tw/4neQoVwq6--
 
