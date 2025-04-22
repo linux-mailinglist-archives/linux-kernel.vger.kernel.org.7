@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-614130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C417EA9669E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:57:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECEFA966A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E593B86AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018AE189D68C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30132144CD;
-	Tue, 22 Apr 2025 10:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C72F21B9C4;
+	Tue, 22 Apr 2025 10:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="EiBjB8yy"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="OI81sUHG"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD933062;
-	Tue, 22 Apr 2025 10:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38753213224;
+	Tue, 22 Apr 2025 10:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319415; cv=none; b=gtUjawfG1m1M53CouXy6Q7SAyLzkf8h+ub5njNxxK3L4M4Nri9iG+pH9As4BZFoT1uXUcuQHkPJOD4rUGUNdeRQPS0e/RpAUIl6/BOfsOcNqTD+xoufqgyegUsP0k/7WHS5bdqLDqioJjE1p1fq85Tm2Wm78RRSw/ekONWF0pX8=
+	t=1745319416; cv=none; b=i6Laovqsr/6dGQmzV1Ei3Yti2SYmaiwrAKaugQt/KAe7QgxGb9VqKMOza8Bm24MscZgiswiX73oYm+Dkaifr9tz0ERyyyAYFTkmrSVpfijl7tMWTgXXHhoc7ZmAE2ZCQZat2wbd2ZOWDruC5w7UxgSlr0QNxB/G92sNINr2hht0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319415; c=relaxed/simple;
-	bh=juuwbAzhoDfMUjFcZxTM9xhk9k+m2ubHx6nqEeAYc4Q=;
+	s=arc-20240116; t=1745319416; c=relaxed/simple;
+	bh=6d+U91CPqoFD93yIaALxCHx3nOlc0OBM6RD1ZRMXbRk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aai080AXXdf480i09os3Zc6zpK/XlLY2C+7/NUdN+/wdOTElH/wxOFBj7vLzaukcYMKFyr85hERycX78/NJR7tqXHAyUyb0T3TB1DsbCrhB8bR+V+63bBolRzjTJsDKw0umrj3bs3xImz9zZ+SiXNlDicCozGZ1oz0PZI5SmuME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=EiBjB8yy; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=lu7f+tN6NVEJXJZRWjb4Bn6EtLE3YMhP+kUOnaSyyl6bD64TifwLldrVRWJH5k7IM3FvlSp+xVle9w8jLQ1Yz3xEO9hB9UxKQyipoa5s1fVh2c8ufrUX0h4d+2rwfZjGkhVXF2jEvDnBI7Af4mtQKIW5pVhJmN7uSeZOOvwHyZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=OI81sUHG; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=loNjfzD7XzJZlNyz06pFRAe4/by1nmcVqFTo0T/668M=; b=EiBjB8yyvkjbKlfy0T/WxsBpVH
-	P2fFIMONF6CER2gN2XsSPgmmsbSiEHzHA6/L2yH3Fzec93SSnctR0UKZxQEMXHKnbSv8jhHbgm3i/
-	khlUertmOOcxMSGWcUlsu+mqPhcwnLnl106BMSJqhn7FcdAReNRgss9qXclKZ2TQijQ13hy5QNR4c
-	/hUz1pOFslQFzkZ3DqWxRgQPZs/hqvuufI9i5SCT8jSp5WFrsJM/FYuzV+Nsp5Fa9AzAjutaPknbl
-	LinYcJgq2bOqtjiQiE0RWO1wg4Gdesg+dhSHokdKbjDPfX4nXB/Uur/kawBP07wCTidEe3nIfvPKZ
-	pFyWATOA==;
+	bh=rcC6sO/CO6NiYaevDv7ur1bv7w/Mg7MMOwZOt9Qajsc=; b=OI81sUHGM/1BwyYkAPJxbCK46v
+	//e/uMtr6QsC4WGnwQJjmjs2uDNjTcNRDXkrmPojEKdlEO+3jvViivfaCbWz+BVqOU9lH5UAzA6Yd
+	gaxVWA77lT+h7O1I0GSmTBvyJERCQj6cmdydCiyAZAiNpRrZQZSASLI8Ng5/yaRS1BMX0eE+J7WbC
+	Pz9PZ2pLWSvoKik5rBCDYHg6bcMcOzZ7VjzJkJKIYaxQ/89g/cHe0m/Vz6nca5HPrX+5vRtiGrjs+
+	Q1ZATpozvftYxLxnMgr9vX3zFUmb/VkQWaa5qhgzKDKfGX6a9/QW0ahvA2Y+fMNQewROPoh9po4U+
+	TH0XFmVg==;
 Received: from [89.212.21.243] (port=36562 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u7BIz-008kyr-25;
+	id 1u7BIz-008kyr-2N;
 	Tue, 22 Apr 2025 12:56:45 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v4 01/15] arm64: dts: freescale: imx93-phycore-som: Add PMIC support
-Date: Tue, 22 Apr 2025 12:56:30 +0200
-Message-Id: <20250422105644.2725168-2-primoz.fiser@norik.com>
+Subject: [PATCH v4 02/15] arm64: dts: freescale: imx93-phycore-som: Add EEPROM support
+Date: Tue, 22 Apr 2025 12:56:31 +0200
+Message-Id: <20250422105644.2725168-3-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250422105644.2725168-1-primoz.fiser@norik.com>
 References: <20250422105644.2725168-1-primoz.fiser@norik.com>
@@ -85,9 +85,8 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-PMIC driver for PCA9451A used on phyCORE-i.MX93 SOM is available since
-commit 5edeb7d31262 ("regulator: pca9450: add pca9451a support"). Add
-support for it in the SOM device-tree.
+Add support for the EEPROM chip available on I2C3 bus (address 0x50),
+used for the PHYTEC SOM detection.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
@@ -95,124 +94,28 @@ Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Changes in v4:
 - no changes
 
- .../boot/dts/freescale/imx93-phycore-som.dtsi | 97 +++++++++++++++++++
- 1 file changed, 97 insertions(+)
+ arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-index 88c2657b50e6..507a71f9294b 100644
+index 507a71f9294b..0528e293c03d 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-@@ -72,6 +72,90 @@ ethphy1: ethernet-phy@1 {
+@@ -154,6 +154,14 @@ ldo5: LDO5 {
+ 			};
+ 		};
  	};
++
++	/* EEPROM */
++	eeprom@50 {
++		compatible = "atmel,24c32";
++		reg = <0x50>;
++		pagesize = <32>;
++		vcc-supply = <&buck4>;
++	};
  };
  
-+/* I2C3 */
-+&lpi2c3 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpi2c3>;
-+	status = "okay";
-+
-+	pmic@25 {
-+		compatible = "nxp,pca9451a";
-+		reg = <0x25>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pmic>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "VDD_SOC";
-+				regulator-min-microvolt = <610000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			buck2: BUCK2 {
-+				regulator-name = "VDDQ_0V6";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <600000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck4: BUCK4 {
-+				regulator-name = "VDD_3V3_BUCK";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck5: BUCK5 {
-+				regulator-name = "VDD_1V8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck6: BUCK6 {
-+				regulator-name = "VDD_1V1";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo1: LDO1 {
-+				regulator-name = "PMIC_SNVS_1V8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo4: LDO4 {
-+				regulator-name = "VDD_0V8";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo5: LDO5 {
-+				regulator-name = "NVCC_SD2";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
  /* eMMC */
- &usdhc1 {
- 	pinctrl-names = "default";
-@@ -108,6 +192,19 @@ MX93_PAD_I2C1_SDA__GPIO1_IO01		0x31e
- 		>;
- 	};
- 
-+	pinctrl_lpi2c3: lpi2c3grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO28__LPI2C3_SDA		0x40000b9e
-+			MX93_PAD_GPIO_IO29__LPI2C3_SCL		0x40000b9e
-+		>;
-+	};
-+
-+	pinctrl_pmic: pmicgrp {
-+		fsl,pins = <
-+			MX93_PAD_ENET2_RD3__GPIO4_IO27		0x31e
-+		>;
-+	};
-+
- 	pinctrl_usdhc1: usdhc1grp {
- 		fsl,pins = <
- 			MX93_PAD_SD1_CLK__USDHC1_CLK		0x179e
 -- 
 2.34.1
 
