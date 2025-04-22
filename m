@@ -1,121 +1,206 @@
-Return-Path: <linux-kernel+bounces-613928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D5DA9640A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:21:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95644A96415
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925B0169376
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C82D3A24BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CE11F12F8;
-	Tue, 22 Apr 2025 09:21:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B319E56A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4F21F237A;
+	Tue, 22 Apr 2025 09:22:05 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27B02CCC9;
+	Tue, 22 Apr 2025 09:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745313676; cv=none; b=p0cmuVniPVswxNpK9M7kNTqsV57MbC7SlTzdLPTsPxEFRjmMU+5kiQzIx+92y2piyFpEeyjcxVaE/RByqkPDWtIs/93ScpSCJh10vwod9KHTmMlIQpFywaucG/G3MZL2fqNh/ItctYru8aatubHm2TVJ9lSjKmshsXpw6lKwJns=
+	t=1745313725; cv=none; b=f1EynvGcqaPtGr0ofoBuErpyObnYAvDnicfQiCr9vneU5zdwqXQO5j8eZKOc6N2vTGqFCge2hYpsBDzbkR4NxXgLs6ONLXfLP5aHOpykhQig6L0E1lr2l0sAUCCbo7A22CCSsDoAfdaqAJBoFWGVlB62+X1XbbHIPgb+qus+kOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745313676; c=relaxed/simple;
-	bh=CaPUPBto2TK7JH6QlfJ4aRRREIMXKvac2Kcpnoc280c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxwYD7vWvABNIORmycSXy4riyH7PHatD+znf+opXTfl18Nq0acR6tX9b3hPI4dQdNQFj0hNyYvl3q45erOZvv+S1EjtHUGpgsjRBIRnkC1EVJFwUXUeE8vqALkRvVAqj2f3qTTy3Lckqb1Va4J7rdXVEyIy08f7kCiJFhWkgZLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E99BC152B;
-	Tue, 22 Apr 2025 02:21:08 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C22443F5A1;
-	Tue, 22 Apr 2025 02:21:12 -0700 (PDT)
-Date: Tue, 22 Apr 2025 10:21:07 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v1 7/9] coresight: Make clock sequence consistent
-Message-ID: <20250422092107.GC28953@e132581.arm.com>
-References: <20250327113803.1452108-1-leo.yan@arm.com>
- <20250327113803.1452108-8-leo.yan@arm.com>
- <d94c6f97-4ca8-4a3a-ae8a-8e872eaa8d3b@arm.com>
+	s=arc-20240116; t=1745313725; c=relaxed/simple;
+	bh=h4t9k9MoPtCmhq7TWMfc+sz/zcEwKZGcekccOzuWkas=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q0o8ihOmP75Cqzz0yMDKxl2cKOJx5uTsPrrcYNRt0iYBEf3DG6LJOUVhfKDEB7bkn96a8/wzx1KxtYNuBSNLzu255Ah2eI8genpKjiOMAcXQURd0hLA+J0ZcMbv0HMw97iqcfkWO6knFuEIKukpy+ZWaBTbMIGORS+EzOwCR/9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M4eFSS023531;
+	Tue, 22 Apr 2025 02:21:29 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4647442kkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 22 Apr 2025 02:21:29 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 22 Apr 2025 02:21:28 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 22 Apr 2025 02:21:25 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <tom@talpey.com>, <jiyin@redhat.com>, <pc@manguebit.com>,
+        <stfrench@microsoft.com>, <sfrench@samba.org>,
+        <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <jianqi.ren.cn@windriver.com>
+Subject: [PATCH 5.10.y 2/2] smb: client: fix NULL ptr deref in crypto_aead_setkey()
+Date: Tue, 22 Apr 2025 17:21:25 +0800
+Message-ID: <20250422092125.3645917-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d94c6f97-4ca8-4a3a-ae8a-8e872eaa8d3b@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: e51QhKt27oMCDyplDEHLah-XBUi7vEG0
+X-Authority-Analysis: v=2.4 cv=UpNjN/wB c=1 sm=1 tr=0 ts=68075f99 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=Li1AiuEPAAAA:8 a=SEc3moZ4AAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8
+ a=riu9DmvwmDMTBw3IfOsA:9 a=qGKPP_lnpMOaqR3bcYHU:22 a=5oRCH6oROnRZc2VpWJZ3:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: e51QhKt27oMCDyplDEHLah-XBUi7vEG0
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_04,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504220070
 
-On Thu, Apr 03, 2025 at 12:40:39PM +0530, Anshuman Khandual wrote:
-> On 3/27/25 17:08, Leo Yan wrote:
-> > Since atclk is enabled after pclk during the probe phase, this commit
-> > maintains the same sequence for the runtime resume flow.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@arm.com>
-> > ---
-> >  drivers/hwtracing/coresight/coresight-funnel.c     | 6 +++---
-> >  drivers/hwtracing/coresight/coresight-replicator.c | 6 +++---
-> >  drivers/hwtracing/coresight/coresight-stm.c        | 6 +++---
-> >  drivers/hwtracing/coresight/coresight-tpiu.c       | 6 +++---
-> >  4 files changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> > index ec6d3e656548..e378c2fffca9 100644
-> > --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> > +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> > @@ -299,11 +299,11 @@ static int funnel_runtime_resume(struct device *dev)
-> >  {
-> >  	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
-> >  
-> > -	if (drvdata && !IS_ERR(drvdata->atclk))
-> > -		clk_prepare_enable(drvdata->atclk);
-> > -
-> >  	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
-> >  		clk_prepare_enable(drvdata->pclk);
-> > +
-> > +	if (drvdata && !IS_ERR(drvdata->atclk))
-> > +		clk_prepare_enable(drvdata->atclk);
-> >  	return 0;
-> >  }
-> 
-> funnel_probe() enables pclk after atclk though - which needs to be
-> reversed as well ?
+From: Paulo Alcantara <pc@manguebit.com>
 
-Good point!
+commit 4bdec0d1f658f7c98749bd2c5a486e6cfa8565d2 upstream.
 
-The key point is a dynamic probe enables pclk clock in AMBA bus driver,
-which is anyway prior to enable atclk.
+Neither SMB3.0 or SMB3.02 supports encryption negotiate context, so
+when SMB2_GLOBAL_CAP_ENCRYPTION flag is set in the negotiate response,
+the client uses AES-128-CCM as the default cipher.  See MS-SMB2
+3.3.5.4.
 
-We need to keep consistent flow for all flows (static probe, dynamic
-probe, runtime PM resume).  The patch 09 consolidates clock enabling for
-static and dynamic probe, and this patch is for runtime PM.
+Commit b0abcd65ec54 ("smb: client: fix UAF in async decryption") added
+a @server->cipher_type check to conditionally call
+smb3_crypto_aead_allocate(), but that check would always be false as
+@server->cipher_type is unset for SMB3.02.
 
-For a better organization, I will place this patch after the patch 09
-in the next spin.
+Fix the following KASAN splat by setting @server->cipher_type for
+SMB3.02 as well.
 
-[...]
+mount.cifs //srv/share /mnt -o vers=3.02,seal,...
 
-> I assume this patch is trying to have the same clock sequence enablement
-> during original probe and resume path and then just the reverse sequence
-> during suspend path.
+BUG: KASAN: null-ptr-deref in crypto_aead_setkey+0x2c/0x130
+Read of size 8 at addr 0000000000000020 by task mount.cifs/1095
+CPU: 1 UID: 0 PID: 1095 Comm: mount.cifs Not tainted 6.12.0 #1
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-3.fc41
+04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x5d/0x80
+ ? crypto_aead_setkey+0x2c/0x130
+ kasan_report+0xda/0x110
+ ? crypto_aead_setkey+0x2c/0x130
+ crypto_aead_setkey+0x2c/0x130
+ crypt_message+0x258/0xec0 [cifs]
+ ? __asan_memset+0x23/0x50
+ ? __pfx_crypt_message+0x10/0x10 [cifs]
+ ? mark_lock+0xb0/0x6a0
+ ? hlock_class+0x32/0xb0
+ ? mark_lock+0xb0/0x6a0
+ smb3_init_transform_rq+0x352/0x3f0 [cifs]
+ ? lock_acquire.part.0+0xf4/0x2a0
+ smb_send_rqst+0x144/0x230 [cifs]
+ ? __pfx_smb_send_rqst+0x10/0x10 [cifs]
+ ? hlock_class+0x32/0xb0
+ ? smb2_setup_request+0x225/0x3a0 [cifs]
+ ? __pfx_cifs_compound_last_callback+0x10/0x10 [cifs]
+ compound_send_recv+0x59b/0x1140 [cifs]
+ ? __pfx_compound_send_recv+0x10/0x10 [cifs]
+ ? __create_object+0x5e/0x90
+ ? hlock_class+0x32/0xb0
+ ? do_raw_spin_unlock+0x9a/0xf0
+ cifs_send_recv+0x23/0x30 [cifs]
+ SMB2_tcon+0x3ec/0xb30 [cifs]
+ ? __pfx_SMB2_tcon+0x10/0x10 [cifs]
+ ? lock_acquire.part.0+0xf4/0x2a0
+ ? __pfx_lock_release+0x10/0x10
+ ? do_raw_spin_trylock+0xc6/0x120
+ ? lock_acquire+0x3f/0x90
+ ? _get_xid+0x16/0xd0 [cifs]
+ ? __pfx_SMB2_tcon+0x10/0x10 [cifs]
+ ? cifs_get_smb_ses+0xcdd/0x10a0 [cifs]
+ cifs_get_smb_ses+0xcdd/0x10a0 [cifs]
+ ? __pfx_cifs_get_smb_ses+0x10/0x10 [cifs]
+ ? cifs_get_tcp_session+0xaa0/0xca0 [cifs]
+ cifs_mount_get_session+0x8a/0x210 [cifs]
+ dfs_mount_share+0x1b0/0x11d0 [cifs]
+ ? __pfx___lock_acquire+0x10/0x10
+ ? __pfx_dfs_mount_share+0x10/0x10 [cifs]
+ ? lock_acquire.part.0+0xf4/0x2a0
+ ? find_held_lock+0x8a/0xa0
+ ? hlock_class+0x32/0xb0
+ ? lock_release+0x203/0x5d0
+ cifs_mount+0xb3/0x3d0 [cifs]
+ ? do_raw_spin_trylock+0xc6/0x120
+ ? __pfx_cifs_mount+0x10/0x10 [cifs]
+ ? lock_acquire+0x3f/0x90
+ ? find_nls+0x16/0xa0
+ ? smb3_update_mnt_flags+0x372/0x3b0 [cifs]
+ cifs_smb3_do_mount+0x1e2/0xc80 [cifs]
+ ? __pfx_vfs_parse_fs_string+0x10/0x10
+ ? __pfx_cifs_smb3_do_mount+0x10/0x10 [cifs]
+ smb3_get_tree+0x1bf/0x330 [cifs]
+ vfs_get_tree+0x4a/0x160
+ path_mount+0x3c1/0xfb0
+ ? kasan_quarantine_put+0xc7/0x1d0
+ ? __pfx_path_mount+0x10/0x10
+ ? kmem_cache_free+0x118/0x3e0
+ ? user_path_at+0x74/0xa0
+ __x64_sys_mount+0x1a6/0x1e0
+ ? __pfx___x64_sys_mount+0x10/0x10
+ ? mark_held_locks+0x1a/0x90
+ do_syscall_64+0xbb/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Correct.  As said, the patch 09 is for clock enabling sequence in
-probe, and this patch is for the resume path.
+Cc: Tom Talpey <tom@talpey.com>
+Reported-by: Jianhong Yin <jiyin@redhat.com>
+Cc: stable@vger.kernel.org # v6.12
+Fixes: b0abcd65ec54 ("smb: client: fix UAF in async decryption")
+Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+[Commit b0abcd65ec54 ("smb: client: fix UAF in async decryption")
+fixes CVE-2024-50047 but brings NULL-pointer dereferebce. So
+commit 4bdec0d1f658 ("smb: client: fix NULL ptr deref in crypto_aead_setkey()")
+should be backported too.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ fs/cifs/smb2pdu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Leo
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 245e2dd5a194..4197096e7fdb 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -963,7 +963,9 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
+ 	 * SMB3.0 supports only 1 cipher and doesn't have a encryption neg context
+ 	 * Set the cipher type manually.
+ 	 */
+-	if (server->dialect == SMB30_PROT_ID && (server->capabilities & SMB2_GLOBAL_CAP_ENCRYPTION))
++	if ((server->dialect == SMB30_PROT_ID ||
++	     server->dialect == SMB302_PROT_ID) &&
++	    (server->capabilities & SMB2_GLOBAL_CAP_ENCRYPTION))
+ 		server->cipher_type = SMB2_ENCRYPTION_AES128_CCM;
+ 
+ 	security_blob = smb2_get_data_area_len(&blob_offset, &blob_length,
+-- 
+2.34.1
+
 
