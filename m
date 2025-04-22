@@ -1,162 +1,199 @@
-Return-Path: <linux-kernel+bounces-613831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01CCA96258
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB751A96222
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4C1189B06F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24AF17DD4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C84E2989B0;
-	Tue, 22 Apr 2025 08:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ECC293454;
+	Tue, 22 Apr 2025 08:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q0U0vOb3"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d8ZjzlUz"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE9B2980CE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310622; cv=none; b=O8n/QDSwUsvDRwmceruO1T73Bn31PKCKHNvdoYC6qQZ4eAB+2XlsPAcJ2/vIc1R8nUHIg7VMt79kJxOJG79r6tDfkknwA8/demP1wZ2r0t+DDYg3ZHsV0im+6KmzYwCMYoHLUNNCKB0FZTwid4rQtxhTry5Yyx3PpqX3YhodFK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310622; c=relaxed/simple;
-	bh=gBnvR1I1ZnFzb4vg65PBtlZBg4X6LVpbCReLzWaUhJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LfonCCBw5U5gWopqI0TW5bEI+XjnI19K0oPxlMyPGewGKA9PcIVd5ATsKIlrJStsHvLE4xipQ0r3pam18OiRch+K9rDzyEI/la34pu8C4frFw9zEDMOBNpZmq8IR0RPrTMHv0TWHJFLFjUa4GshAK1ZODhJyjUq2HqqMYNmXVMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q0U0vOb3; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso5622904a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 01:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745310619; x=1745915419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mhnP5fHmR2Q8bheAgrl4QJ3VtrLDUwvDbOgI8e/2CDY=;
-        b=Q0U0vOb32HFqTuyURLC878BQfNxM7IzgvSOIjD55i/oMdzYfGjga3m1eSUNcB5u2lO
-         hL5rBDkkuUAeUZaq6ciCdsZI1o2unSZFGms1rfJhAegNcQVyFcYsEYAT5BbESQszm77s
-         VSwIox65hVUfBDa46fAzqtcxOsRZnOfzF4q/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745310619; x=1745915419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mhnP5fHmR2Q8bheAgrl4QJ3VtrLDUwvDbOgI8e/2CDY=;
-        b=U5L2kKjyFVoeqpDZIAYLHQFLtGeCYL7EZ4dVwqWBhcFcixHKB9+Sl3fvJ5WqXmGb0a
-         22yZgplAPrjj68EZ5J3K5FuFIpk/VaO3GB9LkLppv7DK9xwUN6gAN8tQiOoDQ2azdhsE
-         j0qy0OLbqLMUUpgJXSNat3b+t0chUdTRdwiSoz+Gx/tIBzQREh44YSBtcbcTLeZi9lbx
-         y/ozcSGvuwLmICMaJ0LywUp8ddNQLs+bCiPr4RLYG4WBWwqo7mq+HCcQWRvR/IySCipT
-         ZfQrhlsv+aCTAmIW6mZfED/4NX4kFsXcj925MvtlrzLUDCnLcXv8oF3tDZjKYmPnpQEG
-         xYOA==
-X-Forwarded-Encrypted: i=1; AJvYcCX247BHhAt3FHgy9Fan/BpEM0ifGxPVcEYAVm59vsjQpggJof4l9e/2c5Ilf5jdlz7h+ytc8jlahIoeIoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHq72N4g6I6rc2blg2kLxJGq/HCJ1+MpjUKfGCCodd5AebWrXf
-	Q78g0AGprWRZaGl7SHaZpaEammFrsEkRRxMAtH86/T3Ikzlcj7COALwaE0F1WA==
-X-Gm-Gg: ASbGncs+saae/nLuYEeYR7QmLmtMcS9xjEhHu1it+6dsQ+i18VQoJqhy86nNMt+gFLb
-	UnYzKyhm5PRiInjrEokajYYd9Xl03bNQtKl74RBvRwyNJ7u4ZLbGpNkoDp9CGi8g+VEBLjGEjeQ
-	OUFEH/8HZ5F4C+FdK+0q68uRt3J6GzLZLO6qdlCTwlKXJj5E71qBkSoYVBkttuPyCxWjj1czqiX
-	wURFNsJdKStAeQ6/Oi5RaKLMKYeo1Ug7A5IJLC2mr7rBvlt0l0IZ2JWuB0hSlwBnIBJaxLDBc8p
-	l1LcAU81IbJ06dkqhvRjHUceOZX9KO6vBWXjVkHhYk549Z94tVv54cyKyLMOZTIA
-X-Google-Smtp-Source: AGHT+IHvMg/U3wawJMIjtv8NdwlNXjSugJsH0Z0eeETts37HBEVjcFftSg9+DA7CLUjYcHqi3e59Dg==
-X-Received: by 2002:a05:6300:42:b0:1f5:8a69:f41b with SMTP id adf61e73a8af0-203cbd41774mr23233480637.37.1745310618738;
-        Tue, 22 Apr 2025 01:30:18 -0700 (PDT)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:90d6:56e4:9d90:9df3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8e0be0sm7993576b3a.49.2025.04.22.01.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 01:30:18 -0700 (PDT)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Kaehlcke <mka@chromium.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pin-yen Lin <treapking@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v3 4/4] usb: misc: onboard_usb_dev: Add Parade PS5511 hub support
-Date: Tue, 22 Apr 2025 16:28:30 +0800
-Message-ID: <20250422082957.2058229-5-treapking@chromium.org>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-In-Reply-To: <20250422082957.2058229-1-treapking@chromium.org>
-References: <20250422082957.2058229-1-treapking@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E843D290BDD
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745310534; cv=fail; b=r2x6szz80GA2rYVzSyObJf2X+vP1BdhL14IBRiWMAA07jmzyjFcDM0IV6P31Ro2+oCSAboLM2uMPuEYGtu8K8gh4Cgs7JDUecbBWT+35YWZ1hcn4lHgalmOEOmjPJDlijWKaqMcClZr2QLWtUT5+IK732hFYAVW4ft3ijYXt+Lc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745310534; c=relaxed/simple;
+	bh=zD8/0MnZZS2HHdf3YXpoBj68/1NwAFZvZL1u/Pn0qeI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=L0IwGdQob9Qwxt7E/aO/DSGiN94B/e7BKjqYHotIDbWaOLukWMW6/I/okMdxrp8UEdok9uB9RU3I88F+MYQir8oGBq6GiokToJI96ThtuP0D2DNjt7d/wqTei+N6fdEhaFrlnhUIYHN1H/NrvdleHzq7KwIEjsJGjx6ACYs6i1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d8ZjzlUz; arc=fail smtp.client-ip=40.107.92.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j7GQO9J/xK9WMT+BXAuFnM6P9nEPHsfjJEDD75DykVYffhJ7Nanm9zp1Vi2HRLP9b7V1GqyAf28upAbxXFpRbhsBtfbfgSVLtBo8e08iqsMJVxd70VswCwArhPZ5Vw9MjywQ8Oh/N/qQVrHK3F5ML8hIEYn7ZDm5TgjwKDx0MApy+SVCSb42pei1j8JO+pbxu+/Hecl9qvg4TciS4x613G6CzCCAFwi/iVU9iMKjNVg8AntcCneomH3uyeCMnbTH3uhihQqZtVDAA0/04N0BgdpEQ4uKAyqzR6Q6wuaZQS47TRI4MoUAJtOxFOwAKL0wDg46SnBH/vB1L0j+JSBWTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9YWq0OWyHkzVk/vnrX9CXpmf9D722r5E829cZzrmge8=;
+ b=y27cfEwzuxSOl62+OIizBsVcZJJccEtFICvnhb1kTOciNM8M8s01cnLE53lfJaFIyheWZ9j0Q4iqawLRBVQHBk8luHD0iP2x+mt6mSKy/jrd1vsf1euyB2YI52kJezW2DoB0FbBkWVahjRuyw9n3zQDnKJNNEO7Bl8NnLodBq6jxblEDqkup1e+pN3zOFq3WoEYyMiAkixeE/T8lq3igFj1dzVw05rNkr5f+WcAtG/sHebnD+6dgVLr6hXD3VPTTTGzz31ajan1tc2FNyUUokoFE1PbpqaOTcK68kfgS++a3upGmuFpI/TcFBugAZgnjyUI57rJZK2IDhuILD3P5AQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9YWq0OWyHkzVk/vnrX9CXpmf9D722r5E829cZzrmge8=;
+ b=d8ZjzlUzw7O0RcRDabhbaT3cAGfqYf4wYq2nkIZyX+1+4OhY/7ZL0/Pj5rp42PH0HKMOTtbeEo2Izmqb7v+DCwIUjhL8KTVD9WP7AWE0vexD91ryuEcKEhNm3xj/vfmzPe5Ch94reYGWto0qrZXTQGuuRFQJjmUilWG6VU76+9E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
+ by PH7PR12MB5688.namprd12.prod.outlook.com (2603:10b6:510:130::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Tue, 22 Apr
+ 2025 08:28:46 +0000
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134%3]) with mapi id 15.20.8655.033; Tue, 22 Apr 2025
+ 08:28:45 +0000
+Message-ID: <37775bf2-d571-434c-8670-827631e2eb12@amd.com>
+Date: Tue, 22 Apr 2025 13:58:39 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: AMD GPU driver load hitting BUG_ON in sync_global_pgds_l5()
+To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, luto@kernel.org,
+ peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ x86@kernel.org, hpa@zytor.com, nikunj@amd.com, kees@kernel.org,
+ alexander.deucher@amd.com
+References: <bae920c0-a0ff-4d85-a37a-6b8518c0ac41@amd.com>
+ <ad725f4b-6e45-42e4-ba6d-919534bc99a4@nvidia.com>
+Content-Language: en-US
+From: Bharata B Rao <bharata@amd.com>
+In-Reply-To: <ad725f4b-6e45-42e4-ba6d-919534bc99a4@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0173.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::17) To IA1PR12MB6434.namprd12.prod.outlook.com
+ (2603:10b6:208:3ae::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|PH7PR12MB5688:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b1f4312-e3ac-467b-c9a7-08dd8177b2b2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkdWdHNqR0pmVUQ5TlNETDQ0SytPcWNqdlRNNmw1YVJxc1M1WnZua1JXd1Rh?=
+ =?utf-8?B?MnNiaXd1eFo5RUlHN3V0NVJBNFdBWHpCWlZaWEovZkFpa0YxWTRrN09ub0p1?=
+ =?utf-8?B?RGZzVkd5RWFXNzd4dy9XSHRCY2c3OUxUc1lQaUtWWEJ3amRwSkV4aWxlMkNj?=
+ =?utf-8?B?aUx2RUtIWVFEME0xaEsxbWk1S0hRUVlSY0NIRFRUTUUyb2ZwVG1RcTkzQ2o4?=
+ =?utf-8?B?SlZmTlJXY2VwMElqSDdwR2lNSjdBZlVHVDVKM0hMak1zMkpOcFRWSFF0Vk0w?=
+ =?utf-8?B?NGU4dkhkc0RXQ1Q4SnhqMndvSUJ3cEZQaEdtSmZnb2RLWDRCRjE3RCtENC9h?=
+ =?utf-8?B?dTBaanFDN0NGdmpIVjd1Vlh1TmduaitnNDlIOEFWMTh6SENTZ01adngyaFY0?=
+ =?utf-8?B?NDRqMUh1ZlcyNHk5R3J6NDlMdHk4NUNHbzkrdEVUVC9Rc2tjZmpza1NEMGtD?=
+ =?utf-8?B?YTNHZXdsOTV0ajdQbEpPTHFWZHhtUnJ2Q0dmSDZwVWJQMjU0NGZYdDlPdDNh?=
+ =?utf-8?B?Z3IzbXZBdXl1TFIzZm4vZmpmSDZtdWFMSi9hUWMrVHIzeEtYTjY2T3dvM1pF?=
+ =?utf-8?B?UDUvdmRnMEE0TEZSR25aSFVYN1ZBM1V2NlRCTW5wS054RkJSMloxN0phMHgy?=
+ =?utf-8?B?V3lUYUMyc0FyWi94Zmxtc05zVkcvRHhnRk5ORDNaaGtNbG1BUW9tQlRwSUJw?=
+ =?utf-8?B?b0lZbXJmdkxvN3VWTVBFcWREbmhmalNoOXlTZzlYNEh4RFpzYWdTWEVMcW1y?=
+ =?utf-8?B?NXdwSnI4dzBGVU1DblpXSXVNVGlleWRZM2dQMW5CWTA5YkhSSTczOFVTdmNN?=
+ =?utf-8?B?eWNxL3Y5NnZkV0ZoNzQ2Sy91cjg0d3AySG5veTFaYzhsTTEzdXhqb2poNmlx?=
+ =?utf-8?B?emdTWnczeVhUbndXenBvVmJGOUR2M2crM1IrbTl2SVdBY2lJOThiUi9selQ2?=
+ =?utf-8?B?eU5SM1JqRlZTVk9Rb2JVdjYvL2orZU1yY044bzIrcHNTVmRFT1B3YVlXbjR4?=
+ =?utf-8?B?Y2NkU3Y0TE0xNWM4aWJFM3BNTi9PcVJXeHZtMkttc25NY1dQOTJlSnZMU1E3?=
+ =?utf-8?B?YjY4a1J4Vmc5ZWNCTWoxQTlVSlV3eDhoek9zWDVocktoMEkybEZLb1YyUXVn?=
+ =?utf-8?B?ZDBwZW94TnVvUWRkaDJXWjhwL1duQnBJdEVybjZuTmlUd3VGVTJvNjdGQUd5?=
+ =?utf-8?B?VnlPVTJiQU0yQi9uS2pHVytIVmNEeVZsRmNjRjFxWVpjWmI5cElOa2czQXZa?=
+ =?utf-8?B?ek1zcnZRUCszQ0Nwc0h3WCs0cG1FbHVCdkQwZHhUNnkrbStmSkR2UktzNERP?=
+ =?utf-8?B?RDRaMmRpYUxNd2RLbHd4ekNTRnhCWko1SENYcmN6NHZrQlNrRlBnRkE3RE9T?=
+ =?utf-8?B?WmMrUVVYMVQwNjZSU1RLTytUTWtBZ2RaQkJYdENHV0FoMHdGYlpSc1hpa2pJ?=
+ =?utf-8?B?d21uUGFIVTJuVm5Hc2xjTjJaUFZoY216R0lYOGlVbFQ3TFI2YWUwb05OTG1V?=
+ =?utf-8?B?a1hMbDB4RkJRU25od1dBeUFBL1ZJLy96bWlCRWlCTDAxMXJGQWhGd3ZRS0NF?=
+ =?utf-8?B?bWFsRTR3cmVybGF0QXczWWY5STN1SXpNUU8zUVJFSWwwb0s4Zzg4bEh5alRR?=
+ =?utf-8?B?c2RzcU96c0R3ZHdiZnA4OVl2VFZYSnU4UDMra1VseUVLTGtrRUczN1doQ3VJ?=
+ =?utf-8?B?WjhEWVZkZkpnQnhIdmtwRlB2U2FYYnRqUkcyczR3SFBpN1J1V2NaUXgxVjVw?=
+ =?utf-8?B?dUw5UU1BcXlvVEZOcTUrVUJaRUQyTk94b1hwK0RvWVM0THkzTVVWdTJJZUZU?=
+ =?utf-8?Q?0SLWMT5C7oAZqeON7mBY1QhQ+Q1W0xf8SKGNo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VTl6SiswdXJ3cE12RktZM216Uk0rcFVkdFZDUVRpemt3U0VVY0FNWVFvWXF5?=
+ =?utf-8?B?Zkx5T2NoVGxXQkIvVmVtby9CMXZBMXA5UnRVdE5kaU1EVkhXVExTSHB2Ni9s?=
+ =?utf-8?B?Tys1WVp6SnVrWTF1WjZpTXhtaEhyTzExZzFoWng5Ni9ROGRlTTdKWUJ2cjhs?=
+ =?utf-8?B?YW5LRUp6RUlxSEdRRWNRa0p1UDBhdVlHdlpNR1FabTFrWWduQ1RubCs1cG53?=
+ =?utf-8?B?VVJRSUgrVjQzSTYrck1yYXJBNHZ0L3ozSnVqa1hnb3dzamlCY1dueGpPUTUz?=
+ =?utf-8?B?eUlWL2NTUXdwNHFBT29yUncwaWZpQmQ4MTNmcFVYWWtwR1Q3dkFuMDBuVCtV?=
+ =?utf-8?B?TXZOT3RNRENBdTBxclNVaWordllxb3VRcmlyL0I5L2QwTndNZkRXVWNnSk9w?=
+ =?utf-8?B?SzJKcExBcW1JWFBLZ1BaeU8zS2E1QnIvN1JoYm9mUmpFeTNFUDUzQWNrTXZn?=
+ =?utf-8?B?Qm14OVFLbVRBL2xrVUo3WU5LaVZseEJneFd6aGY1c2ZpaWZmZW81MDRtTWdy?=
+ =?utf-8?B?Y0dqWXRKcmZXVzlEaVByTkp5dEgxbHlXVytYZ3FJU1FPZlh4ZEhZYnNBaUlL?=
+ =?utf-8?B?cGpTekVmeHFDUitkSWpLN08wQlpRdHpUTkM3aG53UWlCRXBURXkvenlQM0ZD?=
+ =?utf-8?B?bVhNdEpQVGo1ak5jV2lxYWJsV2dueGxDSVRXY3Y0WTJXOVBPalRkQWNPZ0JO?=
+ =?utf-8?B?QVhWcDRWK1pjbUpGNEQ1YTZUM3EyajFhVjhPQmFXRTRDajFOa0k2RUREdHJq?=
+ =?utf-8?B?cWNsQkxQbmxXbVVsMHFGOFhGRFE0UGdaUEI4cWFTUE9rbmZhWFpPWStHMHA0?=
+ =?utf-8?B?ZmpVdFN3c05WNFV2VGtxbzB4dHlMNDAzbzFoRU1xVTN4SlF1amd1S1VJK3BN?=
+ =?utf-8?B?TFVhVDBYSkFKbmcwdVJacXhsMld1NGJxWHBDTXdYbGdOM28vd0hhWGRIODAx?=
+ =?utf-8?B?dERKd1d0S0tndjNidTF4QmlHN1pvSk82dFIxNGNoZkZmTUxEa2FLWGhIUUl0?=
+ =?utf-8?B?S1Q2OXRCQlI0K25QOFdTUmlZUkVRSDNrK0pkV3VtMkY0RktiVmU4UVJocitG?=
+ =?utf-8?B?UnlJWnRveWlDSlNpTy9HM0hUbis4bEdFOHVOY1RSNW9XVWhsL1N4eGYzYmY5?=
+ =?utf-8?B?YitBSHMvdHpWY2lmWUdHbWhqQ1JDQ1c1ZkVoYlYxYWN4QnM1TmJ1T015TEZQ?=
+ =?utf-8?B?M1JWZVB4UXV1cDhXWC9jQlNKTGUweFBPeW1BZHRhaHp0cjQ2Zm50NDZ5eG92?=
+ =?utf-8?B?S2Z6TFpjR3FxMjhaYlcySkVHekxqMXA3WGpHbEw5N0lReUlNbmpFRXBaRTRl?=
+ =?utf-8?B?Y0E1bHZ3Q0l2ZENSMitjekc3VGZmdGxPRkpVMW13NGtWYkcrTGdIMnVZaTdU?=
+ =?utf-8?B?VElrbHg5Y3BXL0huY0Zhc1BaRWJidGhIcS91RWJoOVF4MTBTUDJvc2loa1gx?=
+ =?utf-8?B?MlREZEV2TFBOcTNwa21jOENtT0ZmaFdkQm02K2NSMnBFZWlhNzYvampWZ05i?=
+ =?utf-8?B?a0NIbCt1T3N6cURkR3lmRThLamdhbUF3M2FVN010bDlDTkh6MlU3OEpVRXNJ?=
+ =?utf-8?B?N0tmSjNQOGtHQzJoUmV0cWNpcU1NY24rZkpTdEVmaldQQnQzaWUvd0VhV2lq?=
+ =?utf-8?B?eEFOZEhyS04wbHhsWlEwRWtHdzBYVklsSlJCVllEOTQ4VWpySlBIZ0RhY1ZV?=
+ =?utf-8?B?NHpkUjdyZlFSeURGRVA4aHBTaVIwVjZubVJpRTFoMG5JblJYdEpXNTRGOTBP?=
+ =?utf-8?B?dzZVOXk0WlR3Z1ppcWg4eXFDbThvelN1elpZTVFjY1ZiU1pDdGdHd2lEaGh1?=
+ =?utf-8?B?NFdTOU9tdmVKdnd3WmJ3OTZhbDNzQzFIQXh2SmZMVFdYcm0rZ1hNWHpYcWZS?=
+ =?utf-8?B?ZGg4YU9DblptYmViNkEzL3luS0NHSnNnVVVabWtsNTZ1THVqWE5haEcyTmpU?=
+ =?utf-8?B?ZFYzZTlnQ2pnM09iVm5WQTlPbHFYeXFjS216OFVJR0lIM2JzTVdjcVE5Wm9j?=
+ =?utf-8?B?d1lnUXFTMno0YnlyWWljVERmb2xCUWRWdUtpdmNQb1lub1Vva2hKMVZoekRk?=
+ =?utf-8?B?YVFPYUdRRGd4dDJQWXAzcjFGNFl5WjNoT0JRSFl4QTEzNDRIMUo0a2lzWjRP?=
+ =?utf-8?Q?JEdh1kOg1XYGJZe9QUGqcyj9E?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b1f4312-e3ac-467b-c9a7-08dd8177b2b2
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 08:28:45.8864
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tU/EWOZRhumlsJgp2fAfy+hVIMrAniX53PksooALf3G0u3kER/DHnrw8WUWW8NfrE1Qb7Xi9IaIsj7FPVnaNcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5688
 
-Parade PS5511 is 4+1 port USB 3.2 gen 1 hub with a reset pin and two power
-supplies (3V3 and 1V1).
 
-Add the support for this hub for the reset pin control and power supply.
+On 22-Apr-25 12:44 PM, Balbir Singh wrote:
+> On 4/22/25 16:34, Bharata B Rao wrote:
+> 
+> Could you please confirm if this is a new issue? Sounds like your hitting it on 6.8.12+?
+> I've never tested this on a system with 5 levels of page tables, but with 5 levels you get
+> 52 bits of VA and you'll need to look at the KASLR logic (max_pfn + padding) to see where
+> your ranges are getting assigned.
 
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+I haven't been able to test this on latest upstream. Will get back on 
+this as it can take considerable time to recreate.
 
----
+Same or similar-look bugs have been discussed earlier too:
 
-(no changes since v1)
+https://gitlab.freedesktop.org/drm/amd/-/issues/3244
 
- drivers/usb/misc/onboard_usb_dev.c | 3 +++
- drivers/usb/misc/onboard_usb_dev.h | 9 +++++++++
- 2 files changed, 12 insertions(+)
+Disabling 5 level tables seemed to have solved the issue though.
 
-diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-index 75ac3c6aa92d0d..91b49e58664d6b 100644
---- a/drivers/usb/misc/onboard_usb_dev.c
-+++ b/drivers/usb/misc/onboard_usb_dev.c
-@@ -490,6 +490,7 @@ static struct platform_driver onboard_dev_driver = {
- #define VENDOR_ID_CYPRESS	0x04b4
- #define VENDOR_ID_GENESYS	0x05e3
- #define VENDOR_ID_MICROCHIP	0x0424
-+#define VENDOR_ID_PARADE	0x1da0
- #define VENDOR_ID_REALTEK	0x0bda
- #define VENDOR_ID_TI		0x0451
- #define VENDOR_ID_VIA		0x2109
-@@ -580,6 +581,8 @@ static const struct usb_device_id onboard_dev_id_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_MICROCHIP, 0x2517) }, /* USB2517 USB 2.0 HUB */
- 	{ USB_DEVICE(VENDOR_ID_MICROCHIP, 0x2744) }, /* USB5744 USB 2.0 HUB */
- 	{ USB_DEVICE(VENDOR_ID_MICROCHIP, 0x5744) }, /* USB5744 USB 3.0 HUB */
-+	{ USB_DEVICE(VENDOR_ID_PARADE, 0x5511) }, /* PS5511 USB 3.2 */
-+	{ USB_DEVICE(VENDOR_ID_PARADE, 0x55a1) }, /* PS5511 USB 2.0 */
- 	{ USB_DEVICE(VENDOR_ID_REALTEK, 0x0411) }, /* RTS5411 USB 3.1 HUB */
- 	{ USB_DEVICE(VENDOR_ID_REALTEK, 0x5411) }, /* RTS5411 USB 2.1 HUB */
- 	{ USB_DEVICE(VENDOR_ID_REALTEK, 0x0414) }, /* RTS5414 USB 3.2 HUB */
-diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
-index 933797a7e0841c..2963689958fc2a 100644
---- a/drivers/usb/misc/onboard_usb_dev.h
-+++ b/drivers/usb/misc/onboard_usb_dev.h
-@@ -38,6 +38,13 @@ static const struct onboard_dev_pdata microchip_usb5744_data = {
- 	.is_hub = true,
- };
- 
-+static const struct onboard_dev_pdata parade_ps5511_data = {
-+	.reset_us = 500,
-+	.num_supplies = 2,
-+	.supply_names = { "vddd11", "vdd33"},
-+	.is_hub = true,
-+};
-+
- static const struct onboard_dev_pdata realtek_rts5411_data = {
- 	.reset_us = 0,
- 	.num_supplies = 1,
-@@ -122,6 +129,8 @@ static const struct of_device_id onboard_dev_match[] = {
- 	{ .compatible = "usbbda,5411", .data = &realtek_rts5411_data, },
- 	{ .compatible = "usbbda,414", .data = &realtek_rts5411_data, },
- 	{ .compatible = "usbbda,5414", .data = &realtek_rts5411_data, },
-+	{ .compatible = "usb1da0,5511", .data = &parade_ps5511_data, },
-+	{ .compatible = "usb1da0,55a1", .data = &parade_ps5511_data, },
- 	{ .compatible = "usb2109,817", .data = &vialab_vl817_data, },
- 	{ .compatible = "usb2109,2817", .data = &vialab_vl817_data, },
- 	{ .compatible = "usb20b1,0013", .data = &xmos_xvf3500_data, },
--- 
-2.49.0.805.g082f7c87e0-goog
+> 
+> I'd start by dumping the kaslr_regions array.
 
+Sure, Thanks.
+
+Regards,
+Bharata.
 
