@@ -1,258 +1,271 @@
-Return-Path: <linux-kernel+bounces-614616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45434A96F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03997A96DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C26C179E93
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449AE4008B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9C328C5CC;
-	Tue, 22 Apr 2025 14:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B9B28135E;
+	Tue, 22 Apr 2025 14:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbMqjMZ1"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="kaas8Tku"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2055.outbound.protection.outlook.com [40.107.21.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831628CF56
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332813; cv=none; b=pXuv3WeiY5RrPNWoL0Cvg8RoFydkL6DFthDEuoZI0GbUhmHR9EA8qYOILCVlk5NyxpWPmmQl/h5LkrsXcMJippP/gLHgNG+XmdTGw8Bq7sD4ljc3aJrBwPQS51FYm68fde0/oQ4fOzeBaSUhMDcoW7jWvFB3YcE4yys4As8Mux0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332813; c=relaxed/simple;
-	bh=yuLRPQMFA+GTdmMoSkE9Fopm0uOWFWq8xtDRFSpj/TM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJ2krP6RlBTjPJ20L7J+L7UG38C0ObDC6KbqOcQK8H/HQoAzvM5JVJkqaZtG1qiRgj4ZN3rzVLdFy+malq0j7x4GOgQWALr6bQphpHkNnUF0h7wz/ZDYL/H3aEgelfC55HQLuQbcd/3FbXo285Mzhy+HZUpTTFj/149voV8IQbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbMqjMZ1; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c1425fbfcso2581452a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745332811; x=1745937611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VgDRifXaNYB0VqxMUzJ5WtdqZNW94oWMiLpSuETPS1E=;
-        b=HbMqjMZ1EF7VPgNOvNxXKL0lA1rIt4C5M0sckAwzDHm/OY3wiZpDkThXS/9ZMQCy7b
-         7qGX65lCSsSAA3i1ybAOzr+zRFb32TNK9F77SIa2qMK7XS/mRkABn8uUeZoHcNwJoe+A
-         ud7QWc48HpWSZVDjpOje/1LKjymtD0o6DedUZOvz0h6tiemonDMPwFpw1c6aXy8evavF
-         a5C43ZkF+npg6bs+T7hsykhbgnJTik3qRQy1tAI/NAxhxWM+scoR2f7S7vyq9sOBXcAC
-         2+Tpml3tT1j+l9xJ5IYoT+axWn39HUcnJL5B0xxweKD9y/nk5a9qVkt4t4klK92FJk37
-         JMlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745332811; x=1745937611;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgDRifXaNYB0VqxMUzJ5WtdqZNW94oWMiLpSuETPS1E=;
-        b=PlPpzMSu/9fb2PjTMby8TQTN8RszitIUOeyhBided1hZFVatNPcpJyiOuuXCSEYpmD
-         /hvVwOnafrYpr/FQ5EujV24OkxWQEDYx04W6QMZ8FtXVUqe4N6ewe2PW5AmUjqO5OF2z
-         YoOE5uPZ5BbBwY0oE/DTn+1twprfgxQOedUeif+KWu1YSvb09ZYJoCd8fe/vVLh0OS7K
-         8fmScM7FnMU9aDLS5uEvxk+88fZuRBG6vGHvTmGxObvOy3UZfreEmebvyq+4gCT/X5gX
-         6gReSurIKe7TbXuN8OwuiMQODf+4LvS8HRzM0NcgLejBa8p+wQ8fLbVuYbLHkARFuv79
-         jkyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU1h841ZRJqozvPEx7ivVErhXaiCjOTc/081QLPREtkdkSFTy5i3TmbSMXH8TvJ+0aU5Fxipw8VshoZ/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZA+wgDj6deZidn3eBcyJKdcoDkZMGYUXfb1OF1aqkZitA2oEP
-	x1NMIGLskPkGMwo091t1W70K2tx9GC5R6fYhH8+JOQr0MXLt5jG2
-X-Gm-Gg: ASbGncuTw4L5+ZzOBpFvbDQpnkOY2gUcKo8B/qdEKV1c/Ib+5U9ZSVL3pEyfOa2m5j+
-	S+bFEyhu4ztdueY6Ho4qIAk4yDPKISajhzCDhccM4s777xV1eNJHfdO8xJ5kUlh/kMPAl/H9cv2
-	ShQUFQFAEN8oBZ+VadccHK68UA4O2rS/DjDjrwhOGeR1GutaCUTq06r6XZrwP0Qj0a3plpOTqDU
-	dCzow1xJQVT+BB7vKlJDqyXg/S/8rZDCFq5kaAZJ0zxJv89SEWwIz3e8r+OwVMSIhoupfiXiz6h
-	5XULOxZcJO8Am25UnMirRjxhNW3hB2Ls83GzsznyNnDLHOEDYalOtuOEG86xLZCeHv1GTkdZH1r
-	8ECicGFqvCXzpibBjsTBsvmtvdQs2D+7m37BYrvI=
-X-Google-Smtp-Source: AGHT+IG5XEgE+sW4JrfW25KmGPKZe4ajiZ6Rq8VhHqb2XfR8yfP2MxccLYb9GoBzE1HSCOODjcEniA==
-X-Received: by 2002:a05:6830:390f:b0:72a:18a6:d431 with SMTP id 46e09a7af769-73006229950mr9722469a34.14.1745332810825;
-        Tue, 22 Apr 2025 07:40:10 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73004884738sm1975442a34.51.2025.04.22.07.40.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 07:40:10 -0700 (PDT)
-Message-ID: <bba47a8a-d2e6-433f-8128-b2a7fc05414d@gmail.com>
-Date: Tue, 22 Apr 2025 07:44:21 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7B728150D;
+	Tue, 22 Apr 2025 14:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745330553; cv=fail; b=SwhEQLjzD4g25/fQbWoQKuscPYlu9SwL3NS0z7i3cyyjhv2cCVLby+05jvwElTGwRMSyhU2qzA3ioBpIq0v1Mbm1eGfXgnSSdETaxZQ4/cSGQ8x8s1ejfgxIHX90u4eXLtIu/H9SdRPPRwalPSPhm31xuZdKbRFSxj4OFXRhQFE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745330553; c=relaxed/simple;
+	bh=m1EPvg0Rmr4tA2gDKnhy29t0GzhsovfVSuPtHqvJO+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=iaebaAAx5J5wIkTgXF/MtNnvY8nteWXe/J8rMbp2sbJS4ThbB6ffwslmdVZSoPm4CEveObFwCIj1DWTTbX5KbBRZwFGfR+h3pEY11IfzgvGK6xy1bJK7HxenrsIcaocB9fy6gqWjPVHxIf1oYH6XEoGyqlhGQA7ttUepU/ybM6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=kaas8Tku; arc=fail smtp.client-ip=40.107.21.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uiioy/Ll/BshE6A2NrdvTgPmLoC8rtwhHIOinOcosYCdQbjuFtezlDfDSqKR+pe2N0wunvrU9PZ5JToUey3dKz9+KB0KBVR8N+7npf4XPxA77EyRGB4hr7qxc7LrBp6j9vH3Geu8syNLekOeB1Vuhrd4P9bRAdlButX2jAQgcZF8ni1HAore7nlDQKo1MgpxwQUPm8sXGioT8FsmBqKPPKmBn1cQWhGAfi2eXbQaGmV0a9+i4ya4EhW1RaX/WXSEW24bURmrytogT77tET51sXTXLHvQFA6pR3P9G641kE2GFdcPb9m9H+aOdEnNdSw/B1LGFvHA1Gl0s6NZ7AxVCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QsVTLtTcR8cr2HxJckI/1cGhfzkcXuvn/8nhq6HkZeY=;
+ b=jC50ecT6g6/OBMAOU3FJUX3NlWT7tvnt3UM9ojpfuboEfoB4YQ1zZhl5eAeVnWnzlQpGh4t7hgsNJyZEOwvraGby68ZpvONeISVtkbYCTWVwxvvasznQSDpHCvgJU3bCw5b4f1OCLm66P3KNTUHwBg292lQ65tVOIUAvFeVU8+qea/vKr35M6EP3IIxDZIisx+Q+aRXHkN867jV2yoeAP3BRG0i7J4+UoU8o6iDSXYtiK084EtNF8J+uj7pMwZ5tkzWRd52NMj9iPrMsEE0ee8ATXeKNEt+vAz2DCagOIx2dAFU9CYiTXBVmejx1jrCCzWiqzspXKg7W9Ic5UTVKRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QsVTLtTcR8cr2HxJckI/1cGhfzkcXuvn/8nhq6HkZeY=;
+ b=kaas8TkuuM36hjBmWT/J+3ByhdhceizgGctbDP/DkIfoTBRTnB/EMuct/asMyNKcKTpk/wIljW9jg+d/zZq90ekV8LJxH8oqWFaVyFgqbBR+LP3rdFTfeGifq8WXZtHpN3PbQ8eumCnmHEimvIkdGZ0sSmynJSeGWI8qVRSoIMIMqvLp6Zef3CUZfFiuQx0yHloO6mHi5mfgPKlNDAiGShud4C8zDOIw8/R96D6tIHPyhmpSML1lV1NaKLlreqjc8e+lSyiXEgMsh0BVz4ZUML07AVFMqx0wsYO/956uWLSDwhztNg+4qJAod47/RMgQ0xzb9FdCR8fqPxOn+DWDEQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from DB7PR03MB3723.eurprd03.prod.outlook.com (2603:10a6:5:6::24) by
+ PA4PR03MB7086.eurprd03.prod.outlook.com (2603:10a6:102:e5::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.35; Tue, 22 Apr 2025 14:02:28 +0000
+Received: from DB7PR03MB3723.eurprd03.prod.outlook.com
+ ([fe80::c4b9:3d44:256f:b068]) by DB7PR03MB3723.eurprd03.prod.outlook.com
+ ([fe80::c4b9:3d44:256f:b068%4]) with mapi id 15.20.8678.021; Tue, 22 Apr 2025
+ 14:02:27 +0000
+From: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wojciech Dubowik <Wojciech.Dubowik@mt.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Philippe Schenker <philippe.schenker@impulsing.ch>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to usdhc2
+Date: Tue, 22 Apr 2025 16:01:57 +0200
+Message-ID: <20250422140200.819405-1-Wojciech.Dubowik@mt.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ZR0P278CA0176.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:45::21) To DB7PR03MB3723.eurprd03.prod.outlook.com
+ (2603:10a6:5:6::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] panic: Allow archs to reduce CPU consumption after
- panic
-To: Sean Christopherson <seanjc@google.com>, Petr Mladek <pmladek@suse.com>,
- jan.glauber@gmail.com
-Cc: carlos.bilbao@kernel.org, tglx@linutronix.de, bilbao@vt.edu,
- akpm@linux-foundation.org, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- takakura@valinux.co.jp, john.ogness@linutronix.de,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Carlos Bilbao <bilbao@vt.edu>
-References: <20250326151204.67898-1-carlos.bilbao@kernel.org>
- <20250326151204.67898-2-carlos.bilbao@kernel.org>
- <Z_khOuvPGEWBAQbp@pathway.suse.cz> <Z_lDzyXJ8JKqOyzs@google.com>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <Z_lDzyXJ8JKqOyzs@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB7PR03MB3723:EE_|PA4PR03MB7086:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfef268c-c3ad-4ff7-080a-08dd81a65073
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RvSPGPG1uNfTGZYnBal9I/1x2D7hMB+Vy7eGO7sOK8x/Rpmt3xLi9+qT894L?=
+ =?us-ascii?Q?9izu7+G6aFaltzfbEDVgVObikpyDdEZGCsZf1rcvj5tZosbKvscsQWqW9qm6?=
+ =?us-ascii?Q?tcrJFJVOWZ8mebva8q/MqFV3CuTeazN+oO+UM71iODst9zz+RVL2+L0Gv+GL?=
+ =?us-ascii?Q?teAAplo8ILEgOKqNW5YNsnKgPQvrVkEQfxsbi0yl1YBxJTUq9joCnqwHafmT?=
+ =?us-ascii?Q?ad1Rz2/eynD2xw5qPPacA+/NTWG7GSH3zz8kppmyIWuKUXirwTvjMubUwRCK?=
+ =?us-ascii?Q?Ya5ovoYSJIblehya7B/XR88jOc75lKL5vW+IhohzC4aqELkPNYbB5sAf0giH?=
+ =?us-ascii?Q?gYXns52JYpKQZLs1igaF7SiKgkbge7oQlom4qPgv26IydgqrnqAnfAkkIbaa?=
+ =?us-ascii?Q?2nx0+NH0rMJtA09KoEN+oft9h5T3e2kIzCYCKGtBnjBSW7P3Lt7fXASO8/1K?=
+ =?us-ascii?Q?SHO9FgIwHv9mLwFsjSCDQxdL/DNUv2YMKvnzlZfg/uhqUqUnbqwO99DO6RIk?=
+ =?us-ascii?Q?BeMPVelrQzvP/owlGuiyM6U+0onSfIBcguP3Np9QDjAdxkA+ck6sSixcO+JI?=
+ =?us-ascii?Q?wde6vbtgvL5qAaGfPfHeg7j1Sn3o94kNAUW5OBmKGORtKihAsquZaKnNlKAr?=
+ =?us-ascii?Q?2LlGXPWvlTGwqIBa+6SrIrWJeIiGptvUkZz3Gl7Ar3gUv0kaSJofRcWGf09C?=
+ =?us-ascii?Q?7vsSqvJhiCjVv2i53xapkeqzFLIABrTBI4XR3RiBw3xxufTWUjf81Y09nSjX?=
+ =?us-ascii?Q?xTQkXUOSZDUMXNzOe0YNOnN5agLY7F87SrsfU6MR03lYp3+Xy1CQ1hCdbt1a?=
+ =?us-ascii?Q?ZBLl4x/RguJzMpvGV9/ty/VzPbY3LiZ6YVmy5PSwE9/vpeezWI/ISPhFgDTW?=
+ =?us-ascii?Q?QiNqH3Zd6XaYn/VX6sfk6B3yrGtCww7vWoOSYpTUMx2HZqJBF7e0+PawyhKL?=
+ =?us-ascii?Q?h0ltp1fjyKkGsLdmul1G9iXXaopGsdhxvCjIFbnULXBy7ZNUAQeOpEKowlDC?=
+ =?us-ascii?Q?bWAiBSMq02kh4NP9z50LdAAzVIgS7dgyN4bILLngRDgl3ZwELe2ZQ8dk8bYM?=
+ =?us-ascii?Q?DLwYsxCs55nh/6l2b2flZlrBlBnL6OgUolBWudxUE7cfmJFz33Wu/mI9dIx1?=
+ =?us-ascii?Q?JbPmSXscXi+azGQkNHMYVJHQwdVbFpYzNwAHD+fYCjwILBh1jCF3TfB0jvWm?=
+ =?us-ascii?Q?b3K+nim0BlCGILLYx3KBRSJ4UItJS/1kDP1BTjlU0qrpaT2OL3D4RxHX9BqE?=
+ =?us-ascii?Q?+rYUkmJWj1DRItGtYuo5J9/oamHi36Tfpn/fm+Kqp+OmYB/qHsHmyIolI9s0?=
+ =?us-ascii?Q?LnG2LSpHt67YkI9wKNqkJhf1ZMLvVJAc0N6eJGz26HVUVg3tm3+vFXQaxZxb?=
+ =?us-ascii?Q?pZCWg1DkZPdnRNiO5AOXcQauJ9/Py21gCz7nzhzP5WTTPZoBG3+bTEFffEWE?=
+ =?us-ascii?Q?JqD9TDe+S5WWdyDXkq3UBKmIZ5zQksfZh9DHJZu1j0pE/lVzU7Biwq+jM4Qw?=
+ =?us-ascii?Q?jaGCVMuA+cmDDP8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB3723.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8pLDwXiVeW0XrLRNvFneykE+Nj9vE49lRN+9seoDAk83rjoxGQRoWUIHh4Qt?=
+ =?us-ascii?Q?Ti3zLDkHmY12T16DFELFvc2lZTxy5kys+JQc3NOnCUixfJ4M5oIRTXv8anlr?=
+ =?us-ascii?Q?7EayQHBujfYqKUGMOyDNU0TjrsrNCryGJz1GdI34ReIPS1BuzFXoVnOt/VDY?=
+ =?us-ascii?Q?NFRvC/JzqGITfmuPkXLTJPnxg13DifovZBvqOJr37IzSIZaR8E7zcbOqzCuO?=
+ =?us-ascii?Q?yPrWAtepQPYPDVrvn9qW2imWV6I8OVpJo6Flack1HWz9J3XxRU9NmzChi+9U?=
+ =?us-ascii?Q?+XUv7rL5rt3vN2cCF8aarkisRBE7Q5Pf0IFtR5ImPc1WrSuKzhlYjXDcGRAf?=
+ =?us-ascii?Q?haQeeYPhW7WF5fSlL/dRntF7GvNVoeJ6AiUzvfo1ZnFw9L8X69cAS2mrSKcC?=
+ =?us-ascii?Q?R7yfsI9km0sNdXCa7NPQJxOyCizaTborGyLocPc7l5YbQdJTqz2KcXu5GthJ?=
+ =?us-ascii?Q?Qk3X+imm9s3FtChawjzYvZq+ZqL0ucsC31IAs2w/A+n1uw2Pk5i/XhPFYgG2?=
+ =?us-ascii?Q?74DZcltMI8krkXqgPBnrOqLh4ieYWsOTfCr0RLoUFUgAIkr0pUF6UpwXUbVD?=
+ =?us-ascii?Q?HC+XPirc+TAi4Q2aRyXh44uUHr5zraIHdmsp9FWuaYjnQ8b81cMrMuReaBXy?=
+ =?us-ascii?Q?3R6beBrSqn7HpT89xGTPoeEFBsn+XZ9uRU81ncy9HghHquI3xnZMttMgbHLJ?=
+ =?us-ascii?Q?x9zWO8w+AViyCwVnVCnyBMnm722xYe0W73bVXyjEtgq5jpWLTToAPmZj1N6W?=
+ =?us-ascii?Q?7H9ukSVy/7s29Gf1WceNb96nkD6jtOZcDIlGJPHVqC52uWOwjtejjk6zL+Wu?=
+ =?us-ascii?Q?TzQzWxZwrY+g6nrPXMO5Q44v9fQIhlvBJQo9oscDCJQLKY3kUvlE/qTH7h0Y?=
+ =?us-ascii?Q?zoC3qDK9wBLG7+hoUZvrCr5ftgD8mLA0ZrsvGTGZS3fDwpVy93KOveAFwOIL?=
+ =?us-ascii?Q?vfMAdqDj1/4Ptwdf+lrJHeO0DI9qjTqgYP2sbKraD3aN6GGjFg+hXd51fuXB?=
+ =?us-ascii?Q?0nBpkVBwHYCoZtpZC7W82xw7iwvv8upTCw7k2KqUnpzx1ylmNCDmNCqt6XlK?=
+ =?us-ascii?Q?SYjgaENl3Qqii3F5wRFWNzzaqDLdmk1SiWWDxO8SKjv5gv4FWTBpUDuZaQkf?=
+ =?us-ascii?Q?9Ury//HnNfMSJ1Bo8GWfIFIh4hL+matSH4MplL+6FCMFrOgf976PHanEg1Gi?=
+ =?us-ascii?Q?6usGMpR4n3vhZ+blaDUCtgv8fUZiXmZe6Nlo8x8SJVmjMTILF+bvE8ZwhA9S?=
+ =?us-ascii?Q?G/O3Ke+FjU08YS0KSiq7oQ2x5w+LUhssG3H07J4IUy1FuAFG+f5G9AyMFjr8?=
+ =?us-ascii?Q?o1quuENVcC9ujuKSYseK8rIJgOh8leehnUbUZmRLM2YTzGqLv7FgpwrJNCAh?=
+ =?us-ascii?Q?knQentJb8qjfXGXe3z6NDYLmNRfjMoyfGgcDiNmh7TfH+iH/E9swc9LXThKo?=
+ =?us-ascii?Q?417KPm+N4Mlkv19uZ7c0dGA56WDwO/GyMMQN7lz/JvhAuT6A0Gm/siKLfv/1?=
+ =?us-ascii?Q?oBy9atelFrN+12G5dChhV6DADaO8Buagm86DsGEGH/KmoukG0/q4E3UEc+ml?=
+ =?us-ascii?Q?ukMcP6RDd377TSm5yDzV/L/QCBeZtD4yVk+itjbx?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfef268c-c3ad-4ff7-080a-08dd81a65073
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB3723.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 14:02:27.2708
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EEg1SkNRtKRbJGd1QcFNJ5saoeZYRBh8X4eFQ+rnLdXjEK/haIEGnSP1++wtEC6duOQHch/1aEXgoQev4Sm2jA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR03MB7086
 
-Thanks for the feedback, everyone!
+Define vqmmc regulator-gpio for usdhc2 with vin-supply
+coming from LDO5.
 
+Without this definition LDO5 will be powered down, disabling
+SD card after bootup. This has been introduced in commit
+f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
 
-On 4/11/25 11:31, Sean Christopherson wrote:
+Fixes: f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5")
 
-> On Fri, Apr 11, 2025, Petr Mladek wrote:
->> Added Linus and Jiri (tty) into Cc.
->>
->> On Wed 2025-03-26 10:12:03, carlos.bilbao@kernel.org wrote:
->>> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->>>
->>> After handling a panic, the kernel enters a busy-wait loop, unnecessarily
->>> consuming CPU and potentially impacting other workloads including other
->>> guest VMs in the case of virtualized setups.
-> Impacting other guests isn't the guest kernel's problem.  If the host has heavily
-> overcommited CPUs and can't meet SLOs because VMs are panicking and not rebooting,
-> that's a host problem.
->
-> This could become a customer problem if they're getting billed based on CPU usage,
-> but I don't know that simply doing HLT is the best solution.  E.g. advising the
-> customer to configure their kernels to kexec into a kdump kernel or to reboot
-> on panic, seems like it would provide a better overall experience for most.
->
-> QEMU (assuming y'all use QEMU) also supports a pvpanic device, so unless the VM
-> and/or customer is using a funky setup, the host should already know the guest
-> has panicked.  At that point, the host can make appropiate scheduling decisions,
-> e.g. userspace can simply stop running the VM after a certain timeout, throttle
-> it, jail it, etc.
->
->>> Introduce cpu_halt_after_panic(), a weak function that archs can override
->>> for a more efficient halt of CPU work. By default, it preserves the
->>> pre-existing behavior of delay.
->>>
->>> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
->>> Reviewed-by: Jan Glauber (DigitalOcean) <jan.glauber@gmail.com>
->>> ---
->>>  kernel/panic.c | 12 +++++++++++-
->>>  1 file changed, 11 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/panic.c b/kernel/panic.c
->>> index fbc59b3b64d0..fafe3fa22533 100644
->>> --- a/kernel/panic.c
->>> +++ b/kernel/panic.c
->>> @@ -276,6 +276,16 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
->>>  		crash_smp_send_stop();
->>>  }
->>>  
->>> +/*
->>> + * Called after a kernel panic has been handled, at which stage halting
->>> + * the CPU can help reduce unnecessary CPU consumption. In the absence of
->>> + * arch-specific implementations, just delay
->>> + */
->>> +static void __weak cpu_halt_after_panic(void)
->>> +{
->>> +	mdelay(PANIC_TIMER_STEP);
->>> +}
->>> +
->>>  /**
->>>   *	panic - halt the system
->>>   *	@fmt: The text string to print
->>> @@ -474,7 +484,7 @@ void panic(const char *fmt, ...)
->>>  			i += panic_blink(state ^= 1);
->>>  			i_next = i + 3600 / PANIC_BLINK_SPD;
->>>  		}
->>> -		mdelay(PANIC_TIMER_STEP);
->>> +		cpu_halt_after_panic();
->> The 2nd patch implements this functions using safe_halt().
->>
->> IMHO, it makes perfect sense to halt a virtualized system or
-> I really, really don't want to arbitrarily single out VMs, especially in core
-> kernel code, as doing so risks creating problems that are unique to VMs.  If the
-> behavior is based on a virtualization-agnostic heuristic like "no console", then
-> by all means, but please don't condition something like this purely based on
-> running in a VM.
->
-> I also have no objection to the host/hypervisor prescribing specific behavior
-> (see below).  What I don't like is the kernel deciding to do things differently
-> because it's a VM, without any knowledge of the environment in which the VM is
-> running.
+Cc: stable@vger.kernel.org
+Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
+---
+v1 -> v2: https://lore.kernel.org/all/20250417112012.785420-1-Wojciech.Dubowik@mt.com/
+ - define gpio regulator for LDO5 vin controlled by vselect signal
+v2 -> v3: https://lore.kernel.org/all/20250422130127.GA238494@francesco-nb/
+ - specify vselect as gpio
+---
+ .../boot/dts/freescale/imx8mm-verdin.dtsi     | 25 +++++++++++++++----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-
-Sean, I understand your point that we shouldn’t make core kernel behavior arbitrarily VM-specific. Even though, arguably, my RFC cover letter focused on VMs -- as that’s where I detected the issue (without oversubscription, BTW) -- the intention is to provide a more general post-panic solution that can help both VM/bare-metal envs. As Jan mentioned, the current default (a
-CPU spinning forever after panic()) is often suboptimal.
-
-
->> a system without a registered "graphical" console.
->>
->> I think that the blinking diods were designed for desktops
->> and laptops with some "graphical" terminal attached. The
->> infinite loop allows to read the last lines, ideally
->> the backtrace on the screen.
->>
->> I wonder if we could make it more clever and do the halt
->> only when the system is virtualized or when there is no
->> "graphical" console registered.
-> Could we do something with panic_notifier_list?  E.g. let panic devices override
-> the default post-print behavior.  Then VMs with a paravirt panic interface could
-> make an explicit call out to the host instead of relying on arch specific code
-> to HLT and hope for the best.  And maybe console drivers that want/need to keep
-> the CPU running can nullify panic_halt?
-
-
-I like your suggestion of a panic_set_hlt() API with a priority mechanism
--- it’s more flexible than a weak function, and I’m happy to integrate that
-into v2. Here's what I propose:
-
-    Patch 1: Introduce panic_set_hlt(func, prio).
-    Patch 2: Register a fallback safe_halt() implementation at priority 0
-             that just calls safe_halt().
-
-Please, LMK if you've any concerns with that plan.
-
-
-> E.g. with a rudimentary priority system so that paravirt devices can override
-> everything else.
->
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index d8635d5cecb2..fe9007222308 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -141,6 +141,18 @@ static long no_blink(int state)
->  long (*panic_blink)(int state);
->  EXPORT_SYMBOL(panic_blink);
->  
-> +static void (*panic_halt)(void) = cpu_halt_after_panic;
-> +static int panic_hlt_priority;
-> +
-> +void panic_set_hlt(void (*fn)(void), int priority)
-> +{
-> +       if (priority <= panic_hlt_priority)
-> +               return;
-> +
-> +       panic_halt = fn;
-> +}
-> +EXPORT_SYMBOL_GPL(panic_set_hlt);
-> +
->  /*
->   * Stop ourself in panic -- architecture code may override this
->   */
-> @@ -467,6 +479,9 @@ void panic(const char *fmt, ...)
->         console_flush_on_panic(CONSOLE_FLUSH_PENDING);
->         nbcon_atomic_flush_unsafe();
->  
-> +       if (panic_halt)
-> +               panic_halt();
-> +
->         local_irq_enable();
->         for (i = 0; ; i += PANIC_TIMER_STEP) {
->                 touch_softlockup_watchdog();
->
-
-Thanks,
-
-Carlos
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+index 7251ad3a0017..b46566f3ce20 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+@@ -144,6 +144,19 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		startup-delay-us = <20000>;
+ 	};
+ 
++	reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
++		compatible = "regulator-gpio";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_usdhc2_vsel>;
++		gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
++		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <1800000>;
++		states = <1800000 0x1>,
++			 <3300000 0x0>;
++		regulator-name = "PMIC_USDHC_VSELECT";
++		vin-supply = <&reg_nvcc_sd>;
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -269,7 +282,7 @@ &gpio1 {
+ 			  "SODIMM_19",
+ 			  "",
+ 			  "",
+-			  "",
++			  "PMIC_USDHC_VSELECT",
+ 			  "",
+ 			  "",
+ 			  "",
+@@ -785,6 +798,7 @@ &usdhc2 {
+ 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_cd>;
+ 	pinctrl-3 = <&pinctrl_usdhc2_sleep>, <&pinctrl_usdhc2_cd_sleep>;
+ 	vmmc-supply = <&reg_usdhc2_vmmc>;
++	vqmmc-supply = <&reg_usdhc2_vqmmc>;
+ };
+ 
+ &wdog1 {
+@@ -1206,13 +1220,17 @@ pinctrl_usdhc2_pwr_en: usdhc2pwrengrp {
+ 			<MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5		0x6>;	/* SODIMM 76 */
+ 	};
+ 
++	pinctrl_usdhc2_vsel: usdhc2vselgrp {
++		fsl,pins =
++			<MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4	0x10>; /* PMIC_USDHC_VSELECT */
++	};
++
+ 	/*
+ 	 * Note: Due to ERR050080 we use discrete external on-module resistors pulling-up to the
+ 	 * on-module +V3.3_1.8_SD (LDO5) rail and explicitly disable the internal pull-ups here.
+ 	 */
+ 	pinctrl_usdhc2: usdhc2grp {
+ 		fsl,pins =
+-			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
+ 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x90>,	/* SODIMM 78 */
+ 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x90>,	/* SODIMM 74 */
+ 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x90>,	/* SODIMM 80 */
+@@ -1223,7 +1241,6 @@ pinctrl_usdhc2: usdhc2grp {
+ 
+ 	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
+ 		fsl,pins =
+-			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
+ 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x94>,
+ 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x94>,
+ 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x94>,
+@@ -1234,7 +1251,6 @@ pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
+ 
+ 	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
+ 		fsl,pins =
+-			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
+ 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x96>,
+ 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x96>,
+ 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x96>,
+@@ -1246,7 +1262,6 @@ pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
+ 	/* Avoid backfeeding with removed card power */
+ 	pinctrl_usdhc2_sleep: usdhc2slpgrp {
+ 		fsl,pins =
+-			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x0>,
+ 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x0>,
+ 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x0>,
+ 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x0>,
+-- 
+2.47.2
 
 
