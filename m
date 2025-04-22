@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-614248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFE4A9680D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC5FA96815
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D19D3A671D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A543B66F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31B827C866;
-	Tue, 22 Apr 2025 11:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4615627CCC5;
+	Tue, 22 Apr 2025 11:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="L2hb+1eX"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RPdD3O+s"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1C3433A6;
-	Tue, 22 Apr 2025 11:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB1F27C85F;
+	Tue, 22 Apr 2025 11:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322284; cv=none; b=sECR/uUbx8S7WiUaBpMLve/0Q66JhEBDeefhkvKi9TFaorlpn15sFVWpAHw3NrSq0ZEJS8Iz6oAxBPYIHylYQdE8IbYgPRoOO9qxN4n+fi7l6473lHaNa4GXCz28xOFndT0HfSa7lw4zsv+LraJshLDARWaJuS/CeKtAXi5lw+c=
+	t=1745322320; cv=none; b=Bfzg1dJBcoRm27d/PWvJlzMR5FbXiv85F6fyCedsNPOGyXMlSIZXogc0aLJk7Cv1I26KW450tLwPMp520Wo3vfBWSrORrzYglNCOA5k83cjrPk661tNZJT6otLZI2bhMxbzIJnyqQyHsX+LVwpTLceH5PKfgXlgl5FLGInQhHr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322284; c=relaxed/simple;
-	bh=EdwYZFSFjLIu2qTKO0uo1rUfdkI6jb3DPa92uYe5N9Y=;
+	s=arc-20240116; t=1745322320; c=relaxed/simple;
+	bh=q9p7yBjwjPbwj1tXsuv8PKEO2QiIdjgvuTCpqPs2yJA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a4k8bNYlx+u5j8roPVpfQLbDmBH651kYfxWNSh6KzPjfEB5EHY28BsWxCauxGGizbQ/S1RKxwFz6+DZcOMckMOxPzgc8QAuLcf/iwl0v2QiU8QpYTlkb5udiad55nLS8Oni1Ef4XDbwYb1irEF+bszZj3AdCQt3kRpTZnnwsDtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=L2hb+1eX; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=LW++rrwg8g7AB1pI1PFV85euq63lRUGJ73FomIIWaUO3lF02cUWcK8hVMMZAyXle7RcONGzE0mdN1V47w+WfrZThMmyaf8X62oe18bDJWfBc0qsOJUgJwpgSvZXayplXXnU52thmwxlvVh3/V1bviDrl+ODLOSCD+cmwbMIDBqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RPdD3O+s; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,33 +35,53 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=5ivL5Ti0Q3RhIMz3cs6p0pT2tGV00FkMsE3PCGA6DQc=; b=L2hb+1eXc4+jkulhn4CY7JiPMu
-	dv9x9FghMf2tSeBqEH85SPHARyjSF9XKCJA8JiXIYah9w0bTIIlvzvyZwZzSM/kwuzasuXY8O/0Dp
-	QzP7IrR9igpe+w/YeDWKiXAmU6Ofkm6f7EdEX4jNFtXMqEBDymsAbx4aWmcshTPa4ALGuIUEYY35i
-	V4p2YZF6JZZlxfqHXwVFORF/omyAugz7mv+B/0pssUNdlPtyAjZpGU3FoGmQrKyc2k0KAlXWQtDjU
-	Cw1K0WD1IP19Go2evvzV3L55EUCxQLU28zARhbgSC+lTZMmrtAdyjpnFElcZMRhRdoBnX1ch6aDyg
-	7MLaueIw==;
+	bh=eduKEqp989VtzN3pDbGRSZ0xqVFdb4NEGh4iT4GHVrg=; b=RPdD3O+sR+4EnrNmrEOnEEmUMV
+	/yKMQq0LSvT22Ew3S6R3GbyVqT7cYb3nD8Rnf3j/IiK2D1FvASRWsycgcxRiLJuacnp/t1w+kLr1Y
+	GCSl/B5pvkyVH/G05Rf9xQdznVPNfqOZ38q+6/CoNxo3CzRs6Lck/RNGlVJx6abaliWuDxRoJATXb
+	wDRoF027reZTKxbCGVsTHqttErf+jH8qS9LeyRN94b/3zPEKNMPr96CjCndhE/M9c4MrnY62rTtZd
+	yy2vumGQ+j+wCNQGIVeTfKKkMgrWEMKl166XPhV6EgEfRr7HC4sBiDsexAT3898T9/y66GXZYm+rq
+	RwpZglGQ==;
 Received: from i53875b95.versanet.de ([83.135.91.149] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u7C3G-0002kK-9A; Tue, 22 Apr 2025 13:44:34 +0200
+	id 1u7C3H-0002kK-AM; Tue, 22 Apr 2025 13:44:35 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>
+To: Damon Ding <damon.ding@rock-chips.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	krzk+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
 	robh@kernel.org,
+	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	dianders@chromium.org,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	boris.brezillon@collabora.com,
+	l.stach@pengutronix.de,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	inux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Rename hdmi-con to hdmi0-con for Cool Pi CM5 EVB
-Date: Tue, 22 Apr 2025 13:44:22 +0200
-Message-ID: <174532226020.263993.13170766558495320938.b4-ty@sntech.de>
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: (subset) [PATCH v8 00/13] Add eDP support for RK3588
+Date: Tue, 22 Apr 2025 13:44:23 +0200
+Message-ID: <174532226019.263993.6647221833577832330.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250419121326.388298-1-andyshrk@163.com>
-References: <20250419121326.388298-1-andyshrk@163.com>
+In-Reply-To: <20250310104114.2608063-1-damon.ding@rock-chips.com>
+References: <20250310104114.2608063-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,21 +92,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 19 Apr 2025 20:13:16 +0800, Andy Yan wrote:
-> There are two hdmi connector on Cool Pi CM5 EVB, the current supported
-> is hdmi0, assign corresponding index to it. It will be convenient for
-> us to add support for another one.
+On Mon, 10 Mar 2025 18:41:01 +0800, Damon Ding wrote:
+> Picked from:
+> https://patchwork.kernel.org/project/linux-rockchip/list/?series=936932
 > 
+> These patchs have been tested with a 1536x2048p60 eDP panel on
+> RK3588S EVB1 board, and HDMI 1080P/4K display also has been verified
+> on RK3588 EVB1 board. Furthermore, the eDP display has been rechecked
+> on RK3399 sapphire excavator board.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/3] arm64: dts: rockchip: Rename hdmi-con to hdmi0-con for Cool Pi CM5 EVB
-      commit: 99685162462c2c70f9e2fbe06481a84a5d0220ca
-[2/3] arm64: dts: rockchip: Enable HDMI1 on Cool Pi CM5 EVB
-      commit: 85e3fd37204a79e0cd3105176081439ddefbd3b2
-[3/3] arm64: dts: rockchip: Enable HDMI audio outputs for Cool Pi CM5 EVB
-      commit: abfe411af85aa6ecde580b1f75b9c8145b635fa7
+[12/13] arm64: dts: rockchip: Add eDP0 node for RK3588
+        commit: dc79d3d5e7c7b2c177b4a4ca84d20d271fb68da0
+[13/13] arm64: dts: rockchip: Enable eDP0 display on RK3588S EVB1 board
+        commit: 53862b991e79d8816d5ff54b5954d6a0fe1dcd4c
 
 Best regards,
 -- 
