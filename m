@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-614581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B806BA96E38
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4074CA96E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3AE188C575
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6707317418C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA36C2853E7;
-	Tue, 22 Apr 2025 14:21:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D56228469B;
-	Tue, 22 Apr 2025 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1222853E7;
+	Tue, 22 Apr 2025 14:21:53 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226CD283C87;
+	Tue, 22 Apr 2025 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745331670; cv=none; b=utzapWSOgnJC+MJYCcyGaujx4Ltmt5g1pTmCBz+vrjATDDNRgO6JSs/k1t02PreQQY6cMwxIQtDxIOe/k80FhKzMc1lbEbhhQNgXVMbFlS5jxv6HYvkcLhkzyEykbNdS+gxB0NeG82PpTCzAgUrlpC+9hkfor1VtlZ5KuLPtyI4=
+	t=1745331712; cv=none; b=MZzUlXQI864wJjhneHyrXE5W5id23XaJWgmxGA3txlNckf2nKG88gp8CDeLcJMis9i3L8P5k00J9GHd3PLkBRBgfs1bGOr9T017KBMnKwbta40jhaJXw63JxPvVZj1UYdGd1jiDYomGxIYPoedAG9fZqGTgyhuNx6/ltKMF/Z20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745331670; c=relaxed/simple;
-	bh=bqIeIQeh4fLBXqUF5XbW0OIF6SuCLBF7zBYy0ok2Z80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLELRAz6PQ/98VyV0qUPNa4SQrRiY8zC9H1vqD6yRTl5M1So3nPpFYfJ+/3Hsk4mizwPfos4iuRR/pD9PPuYrE9h2vKVFIeDciEXYm5P6hzOMJWuFrwkFdLoF1JoZVCvM6pqNg3NQBTTTRJb34LEZKnRMOcIqakcscRj6FtXFUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56BF1152B;
-	Tue, 22 Apr 2025 07:21:03 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 485253F66E;
-	Tue, 22 Apr 2025 07:21:07 -0700 (PDT)
-Date: Tue, 22 Apr 2025 15:21:02 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Yabin Cui <yabinc@google.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/2] coresight: etm-perf: Add AUX_NON_CONTIGUOUS_PAGES to
- cs_etm PMU
-Message-ID: <20250422142102.GI28953@e132581.arm.com>
-References: <20250421215818.3800081-1-yabinc@google.com>
- <20250421215818.3800081-3-yabinc@google.com>
+	s=arc-20240116; t=1745331712; c=relaxed/simple;
+	bh=g5xB4UqWKbc+aaRLpSWtpbb8zpdO0C59mGSdnrVCRm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dVFS8T1UZRGmlsn10WB4l0jpCP0LT/jUhmaY+Mz6lZEkxkgDt1w7klbskRHD8YKVHpUdCirBKrHWPfNZlllYdvlkrR4gbsFP2rmZp4/L5bJqU5xih43x+tPyu34H6iAoQypNeyAIZBkhxPR3mbKUj6fZbELCyJbb4ElOLN7RjvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AE33E438C1;
+	Tue, 22 Apr 2025 14:21:46 +0000 (UTC)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.96)
+	(envelope-from <peko@dell.be.48ers.dk>)
+	id 1u7EVN-009vHX-2k;
+	Tue, 22 Apr 2025 16:21:45 +0200
+From: Peter Korsgaard <peter@korsgaard.com>
+To: Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	Kalyani Akula <kalyani.akula@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Korsgaard <peter@korsgaard.com>,
+	stable@vger.kernel.org,
+	Kalyani Akula <Kalyani.akula@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] nvmem: zynqmp_nvmem: unbreak driver after cleanup
+Date: Tue, 22 Apr 2025 16:21:12 +0200
+Message-Id: <20250422142112.2364822-1-peter@korsgaard.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421215818.3800081-3-yabinc@google.com>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefrvghtvghrucfmohhrshhgrggrrhguuceophgvthgvrheskhhorhhsghgrrghrugdrtghomheqnecuggftrfgrthhtvghrnhepveeiveethfelteelueelvdffieevgfdvtdeivdetuefgffdtvdeuffevheegffdunecukfhppedujeekrdduudelrddurddufeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudejkedrudduledruddrudefjedphhgvlhhopeguvghllhdrsggvrdegkegvrhhsrdgukhdpmhgrihhlfhhrohhmpehpvghkoheskhhorhhsghgrrghrugdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepshhrihhniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepphgvthgvrheskhhorhhsghgrrghrugdrtghomhdprhgtphhtthhopehprhgrvhgvvghnrdhtvghjrgdrkhhunhgurghnrghlrgesrghmugdrtghomhdprhgtphhtthhopehkrghlhigrnhhirdgrkhhulhgrsegrmhgurdgtohhmpdhrtghpt
+ hhtohepmhhitghhrghlrdhsihhmvghksegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: peter@korsgaard.com
 
-On Mon, Apr 21, 2025 at 02:58:18PM -0700, Yabin Cui wrote:
-> The cs_etm PMU, regardless of the underlying trace sink (ETF, ETR or
-> TRBE), doesn't require contiguous pages for its AUX buffer.
+Commit 29be47fcd6a0 ("nvmem: zynqmp_nvmem: zynqmp_nvmem_probe cleanup")
+changed the driver to expect the device pointer to be passed as the
+"context", but in nvmem the context parameter comes from nvmem_config.priv
+which is never set - Leading to null pointer exceptions when the device is
+accessed.
 
-Though contiguous pages are not mandatory for TRBE, I would set the
-PERF_PMU_CAP_AUX_NO_SG flag for it.  This can potentially benefit
-performance.
+Fixes: 29be47fcd6a0 ("nvmem: zynqmp_nvmem: zynqmp_nvmem_probe cleanup")
+Cc: stable@vger.kernel.org
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+Changes since v1:
+- Cc stable
 
-For non per CPU sinks, it is fine to allocate non-contiguous pages.
+ drivers/nvmem/zynqmp_nvmem.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Leo
+diff --git a/drivers/nvmem/zynqmp_nvmem.c b/drivers/nvmem/zynqmp_nvmem.c
+index 8682adaacd692..7da717d6c7faf 100644
+--- a/drivers/nvmem/zynqmp_nvmem.c
++++ b/drivers/nvmem/zynqmp_nvmem.c
+@@ -213,6 +213,7 @@ static int zynqmp_nvmem_probe(struct platform_device *pdev)
+ 	econfig.word_size = 1;
+ 	econfig.size = ZYNQMP_NVMEM_SIZE;
+ 	econfig.dev = dev;
++	econfig.priv = dev;
+ 	econfig.add_legacy_fixed_of_cells = true;
+ 	econfig.reg_read = zynqmp_nvmem_read;
+ 	econfig.reg_write = zynqmp_nvmem_write;
+-- 
+2.39.5
 
-> This patch adds the PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES capability
-> to the cs_etm PMU. This allows the kernel to allocate non-contiguous
-> pages for the AUX buffer, reducing memory fragmentation when using
-> cs_etm.
-> 
-> Signed-off-by: Yabin Cui <yabinc@google.com>
-> ---
->  drivers/hwtracing/coresight/coresight-etm-perf.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index f4cccd68e625..c98646eca7f8 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -899,7 +899,8 @@ int __init etm_perf_init(void)
->  	int ret;
->  
->  	etm_pmu.capabilities		= (PERF_PMU_CAP_EXCLUSIVE |
-> -					   PERF_PMU_CAP_ITRACE);
-> +					   PERF_PMU_CAP_ITRACE |
-> +					   PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES);
->  
->  	etm_pmu.attr_groups		= etm_pmu_attr_groups;
->  	etm_pmu.task_ctx_nr		= perf_sw_context;
-> -- 
-> 2.49.0.805.g082f7c87e0-goog
-> 
-> 
 
