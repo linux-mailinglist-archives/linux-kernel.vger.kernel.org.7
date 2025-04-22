@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-613456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0ECA95CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:09:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0AFA95CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2846167253
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:09:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DC51898909
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57C1A23A2;
-	Tue, 22 Apr 2025 04:07:31 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1621B0F17;
+	Tue, 22 Apr 2025 04:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuKsYz0F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B281F2365;
-	Tue, 22 Apr 2025 04:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C5C1A3148;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745294850; cv=none; b=EQVJDffn0Vbnm70bzIxLTDjb+OyqwaST+169d15Tq691JsOOOOy0nzz/UoF9YfaXuilxo+RWhfGU/S1o4RAE2D48EFU3MaHydyTscF8HowR6RWFxHbWTr+qxCY68Pn9WEmp2ZFEFkHs90HLEw6Xep2YWYliGesQDSbohcBzqXX8=
+	t=1745294837; cv=none; b=NfHX0+GZRuekd+cl4qOBLVoFptrRf5xgtaRm4zgfMYSTAO25oN0xfkPKO3cbU6R8kuOoD4j9yztbgQqyj2oGxN7SFqFpmB9oOme3Lo5lBYONxWo/ZIYltm5Bm7EBXKmUqKvw7H7D0GH2x6u1ufFoBh0aRf3+bKcSe6sC9djiUrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745294850; c=relaxed/simple;
-	bh=WcRU9ZEBKolFnretzZffT86Ip6dYByleNHe+D7oPXYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vCTNgwScTDIeo595sgY2T+KAPVhvqgRZ343sTJd9yHr71u4oI57LN5PTuY1zeQLB+6DYGzf/4mdS5qBxjr4M28ZEq6ZYQvQo5x9j49UzbmGFVQsg1+b8ZqDEfsc3uBHkTK1R/sFBlc8F9PcWzn8ZS+4j++gAyJVMeOH3VP+N2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAA3dAz5FQdoRN8kCw--.63174S2;
-	Tue, 22 Apr 2025 12:07:23 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: mchehab@kernel.org
-Cc: yujiaoliang@vivo.com,
-	hverkuil@xs4all.nl,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] media: dvb: Add error handling for bcm3510_writeB()
-Date: Tue, 22 Apr 2025 12:06:56 +0800
-Message-ID: <20250422040656.2131-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1745294837; c=relaxed/simple;
+	bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZPkD/DnnaCfUTvC11gFedNGK7/CNCymirJYsBP2D+ejBLTndElVX/UAwLSuAzpDIJbHvAnpN+eFXeXCBDRqkq1e3NaytVv8OHvEHvBiQ5NtDecxE0xmPzL3cDDHwT1EoWxdq/T9Jhr+WkSWz+sx5VtesDmk26NrZG3VrtHJAUok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuKsYz0F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 16E2CC4CEE9;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745294837;
+	bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=KuKsYz0F0gYjYoKnE82ceI3ug6ROuDdbTFsWMgO2ScmJ4ADVWuSzoWvXbk1dL2EAe
+	 NUuRqZktpk8owE8ZwQJlWjO/8P1PPRl/QJp/RNNOZGsM5CKNMaCyZETME5wJgQJtPY
+	 QkTZbFMJaa4uV3fpvoECRt9Q4o0M1eW1XfNrPfWMqn2tOmDy11qW4wERix6PATlX1m
+	 zR3IZvEoLznjxc/gD3OesMZmmRhVQG5VLkpDWGh4vv98nKfcxTHfqLMHym2szf6DY4
+	 bA2nBqHheehvQgNh4cV3bfpTetX9CnjYG6JaUQoKOKiLluzPzGJFTV0VUsi5RfZb8K
+	 yIfNKS5SZvQMQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BBAC369D6;
+	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
+From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
+Subject: [PATCH 0/7] stratix10: Add framework for asynchronous
+ communication with SDM
+Date: Tue, 22 Apr 2025 12:07:07 +0800
+Message-Id: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3dAz5FQdoRN8kCw--.63174S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryfCw45Xw1kXFyUGw1UAwb_yoW5Jry3pr
-	4jyFs5ZayUtw4rGFnxtw18KFyFkw1ft3y8GasakF1xAr15Way3Jrn0qa1aqF98AFW3Ja1r
-	Jw43JF1xCFyDtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUejjgDU
-	UUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYAA2gG6Ey+5wAAsa
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOsVB2gC/zXNwQ6CMAyA4VdZdraGMSbIyfcwhMzZYRMHcwViY
+ nx3J8Zb/yb9+pKMiZBlK14y4UpM05hD7YR0NzsOCHTNLcuiNIXSCphiz6vrl8hzQhsA6+bauOO
+ l0trIfBYTenpu5Ln7dcLHkuX5t5QBme0mt2Jzy6ICnpyPg+3/fiB2sGoo4HCsfe2V0c7bE40z3
+ vduCt9XF8sIeQ40t2I97JWB5LTs3u8Pq2i+fdgAAAA=
+X-Change-ID: 20250131-sip_svc_upstream-e78d8c9b4335
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745294834; l=2204;
+ i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
+ bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
+ b=yOC01PESiFGCzXwwSXGAXGJGJ9f0uYkPRgxEKbCrDgMmlyqrc1bw1mkNh4rUMGWI1bN3Y2VAr
+ adB+0TEbSEEAypCwtMnKhHWTL6DhyXZcjn2BJh/X2FTgfzIhhJj0RFm
+X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
+ pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
+X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
+ auth_id=337
+X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
+Reply-To: mahesh.rao@altera.com
 
-In bcm3510_bert_reset(), the function performed multiple writes
-without checking the return value of bcm3510_writeB(). Since almost
-all the bcm3510_writeB() in this driver have check their return
-value, it is necessary to add an error check for the bcm3510_writeB()
-in bcm3510_bert_reset().
+The patch set includes the following changes:
 
-And the returned error code of bcm3510_bert_reset() is ignored in
-bcm3510_set_frontend().
+- Add protection for querying memory objects in
+  multi-threaded flow.
+- Add support to generate and maintain message id
+  and client id for asynchronous communication with SDM.
+- Add framework to communicate with Secure Device
+  Manager(SDM) asynchronously by sending a request
+  and polling for response.
+- Add interrupt definition in Agilex devicetree
+  for asynchronous communication.
+- Add SDM interrupt support for Agilex platform
+  supporting asynchronous communication.
+- Add support to optionally notify the clients if
+  response is available using interrupts from SDM.
+- Add commands for querying temperature and voltage
+  from SDM.
 
-Add error checking for each bcm3510_writeB() and propagate any
-errors immediately in bcm3510_bert_reset().
-
-Add error handling for bcm3510_bert_reset() in bcm3510_set_frontend().
-
-Fixes: 55f51efdb696 ("[PATCH] dvb: flexcop: add BCM3510 ATSC frontend support for Air2PC card")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/media/dvb-frontends/bcm3510.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+Mahesh Rao (7):
+      firmware: stratix10-svc: Add mutex lock and unlock in stratix10 memory allocation/free
+      firmware: stratix10-svc: Implement ID pool management for asynchronous operations
+      firmware: stratix10-svc: Add initial support for asynchronous communication with Stratix 10 service channel
+      dt-bindings: firmware: Add interrupt specification for Intel Stratix 10 Service Layer.
+      dts: agilex: Add support for SDM mailbox interrupt for Intel Agilex SoC FPGA.
+      firmware: stratix10-svc: Add for SDM mailbox doorbell interrupt
+      firmware: stratix10-svc: Add support for HWMON temperature and voltage read command.
 
-diff --git a/drivers/media/dvb-frontends/bcm3510.c b/drivers/media/dvb-frontends/bcm3510.c
-index d935fb10e620..fe89d46cca1d 100644
---- a/drivers/media/dvb-frontends/bcm3510.c
-+++ b/drivers/media/dvb-frontends/bcm3510.c
-@@ -270,10 +270,22 @@ static int bcm3510_bert_reset(struct bcm3510_state *st)
- 	if ((ret = bcm3510_readB(st,0xfa,&b)) < 0)
- 		return ret;
- 
--	b.BERCTL_fa.RESYNC = 0; bcm3510_writeB(st,0xfa,b);
--	b.BERCTL_fa.RESYNC = 1; bcm3510_writeB(st,0xfa,b);
--	b.BERCTL_fa.RESYNC = 0; bcm3510_writeB(st,0xfa,b);
--	b.BERCTL_fa.CNTCTL = 1; b.BERCTL_fa.BITCNT = 1; bcm3510_writeB(st,0xfa,b);
-+	b.BERCTL_fa.RESYNC = 0;
-+	ret = bcm3510_writeB(st, 0xfa, b);
-+	if (ret < 0)
-+		return ret;
-+	b.BERCTL_fa.RESYNC = 1;
-+	ret = bcm3510_writeB(st, 0xfa, b);
-+	if (ret < 0)
-+		return ret;
-+	b.BERCTL_fa.RESYNC = 0;
-+	ret = bcm3510_writeB(st, 0xfa, b);
-+	if (ret < 0)
-+		return ret;
-+	b.BERCTL_fa.CNTCTL = 1; b.BERCTL_fa.BITCNT = 1;
-+	ret = bcm3510_writeB(st, 0xfa, b);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* clear residual bit counter TODO  */
- 	return 0;
-@@ -566,7 +578,9 @@ static int bcm3510_set_frontend(struct dvb_frontend *fe)
- 	bcm3510_do_hab_cmd(st, CMD_STATE_CONTROL, MSGID_BERT_CONTROL, (u8 *) &bert, sizeof(bert), NULL, 0);
- 	bcm3510_do_hab_cmd(st, CMD_STATE_CONTROL, MSGID_BERT_SET, (u8 *) &bert, sizeof(bert), NULL, 0);
- 
--	bcm3510_bert_reset(st);
-+	ret = bcm3510_bert_reset(st);
-+	if (ret < 0)
-+		return ret;
- 
- 	ret = bcm3510_set_freq(st, c->frequency);
- 	if (ret < 0)
+ .../bindings/firmware/intel,stratix10-svc.yaml     |  10 +
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi      |   2 +
+ drivers/firmware/stratix10-svc.c                   | 981 ++++++++++++++++++++-
+ include/linux/firmware/intel/stratix10-smc.h       |  84 ++
+ .../linux/firmware/intel/stratix10-svc-client.h    |  99 +++
+ 5 files changed, 1165 insertions(+), 11 deletions(-)
+---
+base-commit: f34da179a4517854b2ffbe4bce8c3405bd9be04e
+change-id: 20250131-sip_svc_upstream-e78d8c9b4335
+prerequisite-message-id: 20250204-socfpga_sip_svc_misc-v3-0-697f7f153cfa@intel.com
+prerequisite-patch-id: 6a4223bd2c01a0fd20925e597c906dc64e11ec2f
+prerequisite-patch-id: 33ca4dbe8b8e18d3e51145c6bcaae55170878b22
+prerequisite-patch-id: a02bca91874f4405191e60704574a0c99f37d184
+
+Best regards,
 -- 
-2.42.0.windows.2
+Mahesh Rao <mahesh.rao@altera.com>
+
 
 
