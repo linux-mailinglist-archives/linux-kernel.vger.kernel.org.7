@@ -1,198 +1,144 @@
-Return-Path: <linux-kernel+bounces-614541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC85CA96DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:04:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAC9A96DCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5896A188A3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DF9D7A55DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C32836BC;
-	Tue, 22 Apr 2025 14:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB8E284B2E;
+	Tue, 22 Apr 2025 14:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6omGFmt"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="diHRM3SS"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C328134E;
-	Tue, 22 Apr 2025 14:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274BF27C159
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330523; cv=none; b=omj8ovSQs1CDwR8/mviWF3Sv4n/YsOirsK8L+Rj08pE3CMqkACD9XOi/sbnrMqj9G8HWKL4oodyzsT8ko9FMWEtctCmtfPW2Ah2oxywdDYGvZI/DjMQh6NBWdLTHGo5nDewxvYffnUymeI2f3Clzc8PAj7ay8YUsBWInnHj9MuQ=
+	t=1745330622; cv=none; b=fmIFzw6tpu2BMQ1O6k1YmnxdJoLrHODhyt21gf3WM3RKzYRhUMgaUhTcstuLh0QRCEHjQTgOeaimP2msdvyBUgscfs87/W0LC0I4/r56vsgrFqSRPgLLL9Brs22kM1gESOXzpOmVPlZMrqXaQhH02fBjMYhMxgEfMVuInLiqIXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330523; c=relaxed/simple;
-	bh=gpzfHIqtG4xrrnJa8j+492RroxTPtiKYMK20nKKT/k0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WsCNu/jgYyAYIyYfL/wo6VzXr+1qDRy1/kSmaOqVyZ/6o6XPbTninxhFU9E5veywX4wdpw4sR3tIolS+9x3mI7KVpqiK1XUdEKFne9vms7dF6LSyolA6G1oIC1j2PU08jvhKIBCAQAYbBXfNefCuYKrjXoyJRuJYoruHcf3EyPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6omGFmt; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-548409cd2a8so6880696e87.3;
-        Tue, 22 Apr 2025 07:02:00 -0700 (PDT)
+	s=arc-20240116; t=1745330622; c=relaxed/simple;
+	bh=DI5wbiqZFhNjcg4g07wsE2rRpyR+Bg6kHqEcrbHze4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iY4cBDbujO+Nes4MsZboMvTUdbOvh9Zmds2NldWNaozShYXrDh1kkGlpfTFO1dn2JB80MoH9zOv22qbuTgIdrHhbben9l5qxMwRF6E6S6WqK7Z5EVebbN7yCNqcElgyvAm827sQ4pSB35X+VCIJJyGMyS1GKPqIQ7aDLD5ZoC2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=diHRM3SS; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2240aad70f2so182695ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745330519; x=1745935319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GM/5CVrygYQSvYokwNwQr+lHyyAIT7IEVO4DNtORKxA=;
-        b=g6omGFmtWmrAg8k52sMieh5nshJoVNuyp7rmXegg2KnAIrvS3hTa18YotMewvMeCcy
-         HVWZ0Q7vN88gET2Q6RmbEGduut3n3lO1BQ8oZtziD8nVuntpa+nMG3Gv+fzsipkGjddW
-         CARQROeGax19ZqVBI8emMs9GNpHJ+2AX/2cIEXbH3GUuFbfkRX6z0rZn9IdYzU4KUatS
-         Pc3Ewk89XBHIXXyn2fwMxEmHvUpLlArN/LKYrM2EQxIDg94+TDmckxt1X1bV46igZX4g
-         iH3a3DFLbo6KQlnfTS3tRe0gvXoYSOqGHp2wd9T/NatKfxyIqo3cr9+EfSyIeuPYy241
-         gPSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745330519; x=1745935319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1745330620; x=1745935420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GM/5CVrygYQSvYokwNwQr+lHyyAIT7IEVO4DNtORKxA=;
-        b=RB/D3E5BWxNN+XVBmMZCpKQ9yo2GJB4IwRNC8V8tXOVukwCkI3/tGzC+9lEI9/OoZ/
-         HS/f2/cgTGKFsk2ML6HwoGTzLnLT8BF0/7yYh1XrmWraTVuI62VcCPZ/2qDSWCTQIe4U
-         7yot4JloZF4napyYnGQ7h8A7cjk6SFuUvFOHb0hBC7FsFLBDLw22B6iNzcBCxseVw8R5
-         wY1LVoFU9n0mDhuVM0CCywcnYE/T1evzT2tkD7sJiVauYFguPuJYjLe0tPSLy8taJeqK
-         43tqA4NUs/TLMpvNCyx9jbaV++/95gYhTVPdS7I0nXnSGWx9B93gzx35dipSi2Uj5cRN
-         rUVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSMPWAd5s6beWr1NNxK2/Bf9iic3yenMwif6lLkh6S+bPO1RPSL46y/FLkeGczBC1X0/8=@vger.kernel.org, AJvYcCWg9gCZ/3tbeXHoORopKfvXvUjOpUDGOk76yuQfF3KwTi/l6cuftdyOf8D9E3kEQHkZJbzM37eF1ByUEz6n@vger.kernel.org, AJvYcCXt6fGufcfCC+B/pzjM3lY+HDdpXEWytJsFM8Sij7paF0jg/vG8PyXOhtVjwE01/IBHQ73pBSFKxE+LWWgKQKq2XpRt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG7P1PR3B+OwqF1DstrrCftU8H1L5uPqAylsX631ADN6SFc61/
-	/ZsY8vxev+SXY+vKsUZgLnnkycJe6nHTLs/t3J1f4MYH6N02ujDX
-X-Gm-Gg: ASbGncsFWDXtIuBSz9s+IZ/25OtLPE0uPYUhwmcnT6PiRlvbucIz50R2WHcTbgA7XUH
-	XS9ead1swgSqnJ/E4L4GinjAb2P2Sgl4s4/b7fU+aP1obs+uH053QD4u2/l1RDpPXPjMHMdO4yv
-	DAJWaA1Nb3NcY7exiTNyDls2O8vzEky0k0ey0fd6901SHz2xTOp7DLv1HrJN1/xfmJU9odtLD/5
-	KjB3Bx1XKScN5NyOI9EdLRAv4WeE1dBPxri1MsTMCbe4pMw20he1mTShg13PVtwO9juJ8Ru4CA4
-	zR73v3Y+eWX0FvkQZ5nmxV5rweY=
-X-Google-Smtp-Source: AGHT+IEq6YUeCvZOJCsZbBaS2JUjXTcHhttlXP8ATHkEhx7rqb2fksXRqeGL53z6MbJEEYxvzEtPBA==
-X-Received: by 2002:a05:6512:b0f:b0:549:91c6:96a8 with SMTP id 2adb3069b0e04-54d6e6169bamr4248610e87.7.1745330518268;
-        Tue, 22 Apr 2025 07:01:58 -0700 (PDT)
-Received: from krava ([83.148.32.128])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefc72fsm667357366b.101.2025.04.22.07.01.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 07:01:57 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 22 Apr 2025 16:01:56 +0200
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 22/22] man2: Add uprobe syscall page
-Message-ID: <aAehVOlj-W5kVyW3@krava>
-References: <20250421214423.393661-1-jolsa@kernel.org>
- <20250421214423.393661-23-jolsa@kernel.org>
- <42yzod7olktnj4meijj57j5peiojywo2d47d5gefnbmbwxfz4b@5ek6puondmck>
+        bh=wxtxQ2q5f2CesvMzHl2K/43Dvf+KKs8Sp+BtzyImVRI=;
+        b=diHRM3SSYX1rhVTrFh85dMgmHNY8sO2ecyPwPFFxn5sQbKf8uyHGCTCokaasiZyg6F
+         VKxRmeoGqd8z3gNfYfdYx9nRIt0sO2m4rZspMiU89vOTce8M36DF/iBjf+yUOw63OKP3
+         hITordz6p0dyt9ILX6PjDqmdftBpNagsZ2+9Q43sianlor0YDckrxv6UHr73LrRP40nl
+         0RhaPUqvIJhdfxVTKdVpFekbtxJ6p6mBz3v5CgPtgZJFLkFtAW0VeT+gmLV9s0iEgJ0l
+         8gyzbdup2vQ5J4dKQketbtzn+Miv5FOylJYS/7yQo/70s3oaoMk8nilN940PIjwG8SKq
+         /+mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745330620; x=1745935420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wxtxQ2q5f2CesvMzHl2K/43Dvf+KKs8Sp+BtzyImVRI=;
+        b=N1Cy40zAxoXDXCIu5+RwV0uME66HdDb/B1/RbFRt9BmCxa/XpLnncoPigbXxqlTd93
+         KMi7NeDzE6iMMte5PW3nG1dFvHSdayb1wmetkQSJHM/gNFQ55vJ9nrplfMOD3ghIRnha
+         dxsGioHOjW15vcghL/te/6IiE4x7rt0zsGoPMrqsNLYnAXWNg8XWTJJKHkKhlzfsCXK+
+         lUDbBKbKfLASuVa6x/w2u7vK32VldKSNJHgwPgvYfTo/1KT/K/Q0KzbcnklBPjDk+rXG
+         CeiGPf6NriEx0xCmGToYCYOFgWCCYf2UZp5dhCWspb27eiHa88BMI30tF/rPdaf+q0zc
+         Zlkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGMoBTY/fa6iyzPkIJdCWyuRNBjEBoo84NDQeNH98UvNhK2VV8FIA9JTZH1y+ol84qyQ4/eu1HLmK7paY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeiZunfmWnK8KZkvPfQmeXl/vI3WR0pa+JK8W/fbvsYRKTMYSY
+	zu0hhIGvx0Cre/JBXtJYqYt+uHC/U7mypRa5MefbDN9EoN5LNE92jMwBQyFPRvs6lysKs++zK9H
+	gi9xXl7KJtYgpfe22gacmDcg9av/Vi2dSDXZn
+X-Gm-Gg: ASbGncssEC+TmQowkc1GHk50+1DmxytUMv2EBwFUd1ir+4JcyWIMUEQ3nRL5mTfqsYc
+	nUkNxulDKlPM00UAgzcd1aj382BFHTfD3iZC/6youuzX6mIwmkxqTGx/PmkRYa58CJchabyZaDs
+	0YE1iPBOuucKX0DwhI02VcUKyfFwlQZTmPig==
+X-Google-Smtp-Source: AGHT+IG0i+651pdR53K0l/n7uIQCSuRiQEGLD3Fi7ND1TmWV2npssXiwnzzo30HBpgP42jyUy2IALw8wxWFt/Kz8RzE=
+X-Received: by 2002:a17:902:ebc3:b0:22c:33b4:c2ed with SMTP id
+ d9443c01a7336-22c52a93c28mr10089535ad.26.1745330619867; Tue, 22 Apr 2025
+ 07:03:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42yzod7olktnj4meijj57j5peiojywo2d47d5gefnbmbwxfz4b@5ek6puondmck>
+References: <20250417231540.2780723-1-almasrymina@google.com>
+ <20250417231540.2780723-2-almasrymina@google.com> <f7a96367-1bb0-4ed2-8fbf-af7558fccc20@gmail.com>
+In-Reply-To: <f7a96367-1bb0-4ed2-8fbf-af7558fccc20@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 22 Apr 2025 07:03:26 -0700
+X-Gm-Features: ATxdqUHgiM0jEZwKYWOLJlVXJ7i1N-PNg4kE-n9ns-g62S6RZ7kqQTTDhmeVqPw
+Message-ID: <CAHS8izMFxDG5E07ZdqnDH_2D_g1fW8X0M7u3gGyV8efzxDNZbg@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 1/9] netmem: add niov->type attribute to
+ distinguish different net_iov types
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Victor Nogueira <victor@mojatatu.com>, Pedro Tammela <pctammela@mojatatu.com>, 
+	Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 09:00:17AM +0200, Alejandro Colomar wrote:
-> Hi Jiri,
-> 
-> On Mon, Apr 21, 2025 at 11:44:22PM +0200, Jiri Olsa wrote:
-> > Adding man page for new uprobe syscall.
-> > 
-> > Cc: Alejandro Colomar <alx@kernel.org>
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  man/man2/uprobe.2    | 49 ++++++++++++++++++++++++++++++++++++++++++++
-> >  man/man2/uretprobe.2 |  2 ++
-> >  2 files changed, 51 insertions(+)
-> >  create mode 100644 man/man2/uprobe.2
-> > 
-> > diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
-> > new file mode 100644
-> > index 000000000000..2b01a5ab5f3e
-> > --- /dev/null
-> > +++ b/man/man2/uprobe.2
-> > @@ -0,0 +1,49 @@
-> > +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
-> > +.\"
-> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> > +.\"
-> > +.TH uprobe 2 (date) "Linux man-pages (unreleased)"
-> > +.SH NAME
-> > +uprobe
-> > +\-
-> > +execute pending entry uprobes
-> > +.SH SYNOPSIS
-> > +.nf
-> > +.B int uprobe(void);
-> > +.fi
-> > +.SH DESCRIPTION
-> > +.BR uprobe ()
-> > +is an alternative to breakpoint instructions
-> > +for triggering entry uprobe consumers.
-> 
-> What are breakpoint instructions?
+On Tue, Apr 22, 2025 at 1:16=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 4/18/25 00:15, Mina Almasry wrote:
+> > Later patches in the series adds TX net_iovs where there is no pp
+> > associated, so we can't rely on niov->pp->mp_ops to tell what is the
+> > type of the net_iov.
+>
+> That's fine, but that needs a NULL pp check in io_uring as well,
+> specifically in io_zcrx_recv_frag().
+>
 
-it's int3 instruction to trigger breakpoint (on x86_64)
+I think you mean this update in the code:
 
-> 
-> > +.P
-> > +Calls to
-> > +.BR uprobe ()
-> > +are only made from the user-space trampoline provided by the kernel.
-> > +Calls from any other place result in a
-> > +.BR SIGILL .
-> > +.SH RETURN VALUE
-> > +The return value is architecture-specific.
-> > +.SH ERRORS
-> > +.TP
-> > +.B SIGILL
-> > +.BR uprobe ()
-> > +was called by a user-space program.
-> > +.SH VERSIONS
-> > +The behavior varies across systems.
-> > +.SH STANDARDS
-> > +None.
-> > +.SH HISTORY
-> > +TBD
-> > +.P
-> > +.BR uprobe ()
-> > +was initially introduced for the x86_64 architecture
-> > +where it was shown to be faster than breakpoint traps.
-> > +It might be extended to other architectures.
-> > +.SH CAVEATS
-> > +.BR uprobe ()
-> > +exists only to allow the invocation of entry uprobe consumers.
-> > +It should
-> > +.B never
-> > +be called directly.
-> > +.SH SEE ALSO
-> > +.BR uretprobe (2)
-> 
-> The pages are almost identical.  Should we document both pages in the
-> same page?
+if (!niov->pp || niov->pp->mp_ops !=3D &io_uring_pp_zc_ops ||
+    io_pp_to_ifq(niov->pp) !=3D ifq)
+return -EFAULT;
 
-great, I was wondering this was an option, looks much better
-should we also add uprobe link, like below?
+Yes, thanks, will do.
 
-thanks,
-jirka
+> You can also move it to struct net_iov_area and check niov->owner->type
+> instead. It's a safer choice than aliasing with struct page, there is
+> no cost as you're loading ->owner anyway (e.g. for
+> net_iov_virtual_addr()), and it's better in terms of normalisation /
+> not unnecessary duplicating it, assuming we'll never have niovs of
+> different types bound to the same struct net_iov_area.
+>
+
+Putting it in niov->owner->type is an alternative approach. I don't
+see a strong reason to go with one over the other. I'm thinking there
+will be fast code paths that want to know the type of the frag or skb
+and don't need the owner, so it will be good to save loading another
+cacheline. We have more space in struct net_iov than we know what to
+do with anyway.
 
 
----
-diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
-new file mode 100644
-index 000000000000..ea5ccf901591
---- /dev/null
-+++ b/man/man2/uprobe.2
-@@ -0,0 +1 @@
-+.so man2/uretprobe.2
+--
+Thanks,
+Mina
 
