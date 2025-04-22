@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-613699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0567A96015
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:54:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305B7A9600B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9163BA3FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5F71887ADB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDA41F09AD;
-	Tue, 22 Apr 2025 07:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98E91EEA5A;
+	Tue, 22 Apr 2025 07:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAGHDrOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0V5t/33"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973F1EEA5C;
-	Tue, 22 Apr 2025 07:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40B16F858;
+	Tue, 22 Apr 2025 07:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308461; cv=none; b=BRowAJAwyihIINnvj4O9w6ny8lSv/wYJKuA+f08BYb7DeBI8lxtMyVe0+c/BdSyqDPs3oNxo9esHbu6WCm3iU30htbkXu1mZIGY7iculmjD/oYqkEm7DLCVdsZKPeXJUmunGSJLDM3+mZ8DsaNYuPwDyfWf9dlJm3QzFfcW7hfI=
+	t=1745308434; cv=none; b=CWbghNFIZQSWagVt2vWJiH2NEVRdKBWbhY9veR5B7FGTQ3/Q7rQwwUZVdpDp1vY3dPr/IM6MpLehwkPgGhMdUdekmSSCSdtRky98VrcDVgZxKjs3/oIJ3qNcbR7EiAQZimto5MrsUO7cQcdUY9wjYVER3SxNYxukXQK4pOPNLvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308461; c=relaxed/simple;
-	bh=OQNwaf3owJm8HUcBOJNFd8lymmXZ3QEafQN9fN49b7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GMUEARkwQn0fr4NfFb6RrhYOyTa6uA4y7vdV1bHWCl9q/PuVxjTyO6t9P8j4dW4tdruvW8qc5fVSj8WTDxzFewduItQQQ8fjRvCJiygJa+d4Wneu3Zp8QQR4WSuJ7tESb6+5d4OLnQkgk1ge8AOCRmMtsQtwOS65dnSqQoOuf6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAGHDrOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CA9C4CEE9;
-	Tue, 22 Apr 2025 07:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745308460;
-	bh=OQNwaf3owJm8HUcBOJNFd8lymmXZ3QEafQN9fN49b7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GAGHDrOkwFIwffCOhkL91d2DcxXEGu7QN8Mdwz/8QaY6K4RHr179dlUqYbJl93oL1
-	 hIzkVS3kBUY29U/Iq9xoQ3mZcBB8dzgUWEHq8Hf7mMr+bgVk/v5O5eOPWzeY8ch4Ds
-	 bbHQi66JzLQyRksBD2DVBCNRwgfdN2FsT0iuBByHm+wDeD3nE1j8qrqi+6fi7Jf/Jw
-	 lCeTPkZNdkBaqnjzzS/1QRtI91oK9fKEo45mCgCZZXdwrU1qqt7YHYUzAFo7PexUge
-	 vZPd6bKLop+QZd5FL4NnjtgjxanbFBhzmXuRvKhbxxQFLvFk7GTgkosHULMNhIoVBD
-	 PH9f/9avTNoaA==
-Message-ID: <b5ada346-94e7-41f2-852b-6372f02b4122@kernel.org>
-Date: Tue, 22 Apr 2025 09:54:12 +0200
+	s=arc-20240116; t=1745308434; c=relaxed/simple;
+	bh=bN11AdKFan4/zi4bzqZxPMPow5eSnJU3qwTnj0tn9Rw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXhvDO7aLajowa7x0B1YuilUqLtM4vaRaH/Rl4AQUmWFlyGOuB5cCaxeVlJhs5PzG+5u7ZC4NhmfTYAFbsH/CXBqDd/VYen/ZlmE7ScF6tOqj10mUc1QfeJleRlX/FiTCLZWTwoKelKpqYXt/o0M9cNrCyx2f2Ucrd4qwMJdOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0V5t/33; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745308433; x=1776844433;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bN11AdKFan4/zi4bzqZxPMPow5eSnJU3qwTnj0tn9Rw=;
+  b=h0V5t/339p6ZNfFpap0qOEPuq8e2eXwfEvO7fYRN2DiFub4ypq0H3TaB
+   iiVqsJ38nUrTW2Y1JC6WoMtkKMIPSO3N2cKNe3pXOFEKI2yk0srnWnoY4
+   LqetEFnSODk04gDu33O3p6HXu/VOfJyk2f8RPbCmcDlh+CQ+Y/oo/W+0l
+   ZLUTAFJfFGKd71AtXzOLOYJZmvBJFvri8PXvWrhIqgwqQkR30zLxpCnSG
+   eqMMwfBqZqhxkXs6v5jmyM32LKHOD4/bwyTZzJQ5mF3xUoTTnRFuUxV6+
+   80mUuT1WKg37ErNVNVOW293pANQPIPx3zPwF9rfZ2Xkp0lGJDD3qdmzUd
+   Q==;
+X-CSE-ConnectionGUID: OZ9NqcfvS+6a42YLFjD7Jg==
+X-CSE-MsgGUID: 6uWSPq5kQL+G17WQIUGeog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="46736241"
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="46736241"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 00:53:52 -0700
+X-CSE-ConnectionGUID: ELbREccUShGmuQop5UDLng==
+X-CSE-MsgGUID: 7a9xTTQJRdGm62RFmFudLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="131687764"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by orviesa009.jf.intel.com with ESMTP; 22 Apr 2025 00:53:49 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	shangsong2@lenovo.com,
+	Dave Jiang <dave.jiang@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] iommu/vt-d: Assign owner to the static identity domain
+Date: Tue, 22 Apr 2025 15:54:22 +0800
+Message-ID: <20250422075422.2084548-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov920: add cpucl0 clock
- definitions
-To: Shin Son <shin.son@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250418061500.1629200-1-shin.son@samsung.com>
- <CGME20250418061515epcas2p3d2dd703db7eb645f4866dcb01cc288fc@epcas2p3.samsung.com>
- <20250418061500.1629200-2-shin.son@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250418061500.1629200-2-shin.son@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/04/2025 08:14, Shin Son wrote:
-> Add cpucl0 clock definitions.
+The idxd driver attaches the default domain to a PASID of the device to
+perform kernel DMA using that PASID. The domain is attached to the
+device's PASID through iommu_attach_device_pasid(), which checks if the
+domain->owner matches the iommu_ops retrieved from the device. If they
+do not match, it returns a failure.
 
-... and cpucl0 is? Describe the hardware in the commit msg in the future.
+        if (ops != domain->owner || pasid == IOMMU_NO_PASID)
+                return -EINVAL;
 
+The static identity domain implemented by the intel iommu driver doesn't
+specify the domain owner. Therefore, kernel DMA with PASID doesn't work
+for the idxd driver if the device translation mode is set to passthrough.
 
-Best regards,
-Krzysztof
+Fix this by specifying the domain owner for the static identity domain.
+
+Fixes: 2031c469f816 ("iommu/vt-d: Add support for static identity domain")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220031
+Cc: stable@vger.kernel.org
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/iommu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index cb0b993bebb4..63c9c97ccf69 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4385,6 +4385,7 @@ static struct iommu_domain identity_domain = {
+ 		.attach_dev	= identity_domain_attach_dev,
+ 		.set_dev_pasid	= identity_domain_set_dev_pasid,
+ 	},
++	.owner = &intel_iommu_ops,
+ };
+ 
+ const struct iommu_ops intel_iommu_ops = {
+-- 
+2.43.0
+
 
