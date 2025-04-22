@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-614758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC82A97185
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:49:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C1CA97190
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436F917F31B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA993BDF8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EBC28F52C;
-	Tue, 22 Apr 2025 15:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4A01E87B;
+	Tue, 22 Apr 2025 15:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2ve8TfL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgvmWMH+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91D284B5A;
-	Tue, 22 Apr 2025 15:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1042E28FFC0;
+	Tue, 22 Apr 2025 15:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745336935; cv=none; b=GPfphZSMwARVJ2yBK3fsSPz82fn92cCtVAHvodMzF9pT+DVnSoRshw/LmJtJsRFPr9ivwIbwCIU+D/2H/Az1z/Zosk4FySNJ2SXSPrdgU+u+XSsDRGe8SXF1KcJJY4dJxjlrkLWWwzOQhzZzBhnOyAp/ShgUdnSMJcLxo2NkgVg=
+	t=1745336966; cv=none; b=sT8A/aiTsg5UjZeyT4/Qbr8oDeqEel4C/E5DleX7BfhobbhWluJoa3gV8CzCYxwCKZ/G23jaGsxrYcpgxZ6jGWjwL57d+qWmdWsJA+qpeaMG7tNrGUngbLPYgf2MD/AckORUCKr5/0mXknXqazMAfD/O0sGgsODU4Dsu2nMbtNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745336935; c=relaxed/simple;
-	bh=f90SE03H5s+CjjZ4AIiR629Qp83J2dxUvQp5mdrqfqM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m0SMUmxM2aNQn6xvjjfah8Bz+GDm780aIgfCX8KVpztLTCxeqBYC4ikljNdv+MVjSO86UC3t5B9QdheAlU8FJXDhv1ILY6WgxyA8nt55obXBItOf8z6lds/C9UJCe49NcDHVkDD+bK8Tc65Gn14Nz3J7FZHIYyHPgTsxoyQR50Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2ve8TfL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859D9C4CEEB;
-	Tue, 22 Apr 2025 15:48:53 +0000 (UTC)
+	s=arc-20240116; t=1745336966; c=relaxed/simple;
+	bh=F8r3LMqn4Bi/IWC6gn/fsQt778NPJ8n3QrgvX+Iq9C0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqVBeZKeSlaSP7XEgIDw3c5WtdtPKgQ1kKFaQHE1KTUz0ueVmpIWTLgyHS+JCJ4+J1T00iwmC02M8EqDA+RT8GmlKMkbDv4OEG2eZElNqnXQZP/+KGJ+LSqvIJac/pGph43T65qHR257+gF9wCxHjFwjZQAkeZM5LqAQ12IUjwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgvmWMH+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EA3C4CEE9;
+	Tue, 22 Apr 2025 15:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745336933;
-	bh=f90SE03H5s+CjjZ4AIiR629Qp83J2dxUvQp5mdrqfqM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o2ve8TfL274ZYGeiAaohxOZ7ErqNfGMH+p3xLRcd9ZNsaTt/zgUg9Arf4nQbGlfDy
-	 reraeo8/5R7cIktk+O8sKB8fNlhlVNnbfiYcFmGQP/P2H1UAk8IHBCbqRzIyg5fo+R
-	 q9e9cm4nVxnAtUzCUN3ye5HWjGb9L7fkBT494jKdDwZ27t5skSdM/zY37vBKZVlk7t
-	 cIpn5gOri2vadpDhobt1oo16g9KG/s691K1FzoQmqhhPY2sI/NLChGTVKE+vy1PDy+
-	 pXwuieu+OVkX1ZRICMraTQ3iQmU9ueHg6rU0pg6erS8DjYW1IZgL/o9R87DVUgZJD0
-	 0Dq/bnAoJOdiA==
+	s=k20201202; t=1745336965;
+	bh=F8r3LMqn4Bi/IWC6gn/fsQt778NPJ8n3QrgvX+Iq9C0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mgvmWMH+IDP1nMUfhkQDwf7RRMKP0kemox5om1901k7NzTYJ3JBXH3EpnFSFRG3d9
+	 x8+cLHcG1hJxPPSS9o/jrePHanM18OqeKp1fvc8O5cNGjn9HsmEkyZ//1IVe2dg1bd
+	 /kwNRDq+np5LP1U9NR/EWkNJtpfiMtxwfWxUoOv/gS+B29sxFcW3PWbmeTciiuSxr4
+	 DXlVnx/18NDQadYi5A+Qt7TaDvLyNRPNpQo3toqGG9p7uQCa/I6H+tv7RDNu2U0+sl
+	 dVwF/892EzGUuZkAG5hALymoMku2+CvTSYmVVEtBYS5GMTZxlhxQOSWHMmzTq5TwO+
+	 GrmLtL5uVYsLQ==
+Date: Tue, 22 Apr 2025 08:49:23 -0700
 From: Kees Cook <kees@kernel.org>
-To: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib: Ensure prime numbers tests are included in KUnit test runs
-Date: Tue, 22 Apr 2025 08:48:48 -0700
-Message-Id: <174533692623.1069298.11025908565962580290.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250422-lib-fix-prime-numbers-kunit-v1-1-4278c1d4a4ae@kernel.org>
-References: <20250422-lib-fix-prime-numbers-kunit-v1-1-4278c1d4a4ae@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] drm/nouveau: disp: Use __member_size() helper
+Message-ID: <202504220849.A8A9B1D31@keescook>
+References: <aAe5eNDnRyGnxLMX@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAe5eNDnRyGnxLMX@kspp>
 
-On Tue, 22 Apr 2025 16:43:29 +0100, Mark Brown wrote:
-> When the select of PRIME_MUMBERS was removed from it's KUnit test
-> Kconfig nothing was added to the KUnit configs, meaning that when run
-> via the KUnit runner the tests are neither built nor run.  Add
-> PRIME_NUMBERS to all_tests.config so they are enabled when the KUnit
-> runner builds the kernel.
+On Tue, Apr 22, 2025 at 09:44:56AM -0600, Gustavo A. R. Silva wrote:
+> Use __member_size() to get the size of the flex-array member at compile
+> time, instead of the convoluted expression `__struct_size(p) - sizeof(*p)`
 > 
-> 
-> [...]
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Applied to for-linus/hardening, thanks!
-
-[1/1] lib: Ensure prime numbers tests are included in KUnit test runs
-      https://git.kernel.org/kees/c/4ea404fdbc39
-
-Take care,
+Reviewed-by: Kees Cook <kees@kernel.org>
 
 -- 
 Kees Cook
-
 
