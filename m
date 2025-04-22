@@ -1,113 +1,227 @@
-Return-Path: <linux-kernel+bounces-614266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4593A96839
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE0EA9683C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A768417A732
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB24C3A830D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2472327C86F;
-	Tue, 22 Apr 2025 11:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC54C27C87C;
+	Tue, 22 Apr 2025 11:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j/ROrZby"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooAnSbsG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85320151985;
-	Tue, 22 Apr 2025 11:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3073E1A317D;
+	Tue, 22 Apr 2025 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322869; cv=none; b=FIxak0tJ8XZhsRCrNOAajh/KLBJbo1NMKeEGNcsI6GJpLYjqaKNsBO/UBSTOcEUkb1Y7yDp2jqSGtapBASF2fmN9RQq9lVn3viPK6lHMSbFdmMpZWXAAKRuWHA8e+ncsI1JqvSwQKmfi9YcNrR7qn1i5cTj0Mkl4Mh0WIG/wEOA=
+	t=1745322945; cv=none; b=cq9RdS+zwpYZAAigSR8EfimG/5s9VZDtn5QliCiF3kGFF0DNZDFQ9vo87diMTqn5ntDaYUbMJb+ybRTQeByQdub67c/VNOuB2zHZjeOC9No/sNHrVsF/sg9cNRpkzMnkOxze7CTYBg/QgpFWT2VDlnOdruvTkdQaq/PMKucNnrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322869; c=relaxed/simple;
-	bh=e4hOoxwJlowwWg70san1xrXeaRywfsnFnpO5Tk/ZLKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WUnQYkK1P5AJjpfcmVJ3l5h1qKRVJNqsVqrD+lEFf+qGKJfDUu2cJF5ReAPvtR2I/pMzT1yRfOSeITEuJeQoF2vNGI7KDcLFkqtxOUv+qcv6NT3+aBIT60jIw4p4N1SK8g3fv6nfvW9S27K19mjtGkHy2JWEoEp43QhPnELmhVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j/ROrZby; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E8FCA438A5;
-	Tue, 22 Apr 2025 11:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745322858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c9LF1/VpjGGXVIZPcc65Fh5WkTR/rYmFKZlW00U9MEQ=;
-	b=j/ROrZbyVem2JsNP/GdNMHFLAeU8wlsbcORane3eAGsxCPMEWuPf3xJ3xbi59mLGMTFuIx
-	gt83U3eU7GWqDjEWVmC2U9cConxr0ewgVzxyxACFgPHsOGyOIuFDfsmn5Q/PLxcRFHPTwC
-	x6ARpoeCFh6E36G9rdVnTc4lWzKF/MLe5VQG3xoD9/91OkdQ3dpTIIozlYt4kL38ebPz3T
-	Wg4pzq8yxhDTe9K47Gqm72Q4BkFojPqvysDoaaQgTn3J9P97UQeWcxVNfKqEyy4r3MbWJh
-	A3eNmsW5wJXw2+GqS3buQpnT9VBWjQbuOwsgzWZDHpU/0oH1+/Fo5eNKxDZwNg==
-Date: Tue, 22 Apr 2025 13:54:15 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Simon Horman <horms@kernel.org>, Alexis
- =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>
-Subject: Re: [PATCH net 2/3] net: stmmac: socfpga: Don't check for phy to
- enable the SGMII adapter
-Message-ID: <20250422135415.1edd6636@fedora.home>
-In-Reply-To: <aAduzwMTLvaeyQkb@shell.armlinux.org.uk>
-References: <20250422094701.49798-1-maxime.chevallier@bootlin.com>
-	<20250422094701.49798-3-maxime.chevallier@bootlin.com>
-	<aAduzwMTLvaeyQkb@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1745322945; c=relaxed/simple;
+	bh=NlxnJ6QRk+KEGJ5mZ2Iy2KNh2FSE+5CpEr+p6ovAt4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qB8oK7qs7gC5miGzuD8bUzIoL0aWkQoLTYq3ka9Y820u4sBYiNjS0xZbIOrXvvLW41AQMYgx16zjOs4WvHPeSR9P+/G8Pu35mnM91/jTy8yPpX+K1K6237OQWATwpfvxhjUbm0r2mzG/UwPNmpSk+cOGITS/Rl4Sb5Lt8oPuVug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooAnSbsG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D474C4CEEC;
+	Tue, 22 Apr 2025 11:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745322944;
+	bh=NlxnJ6QRk+KEGJ5mZ2Iy2KNh2FSE+5CpEr+p6ovAt4I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ooAnSbsGb4rZ8inSne9/zF+Osgsv+6NoZCHqJVOevRbY9dX8M3m1NVNr8BqkbSGxu
+	 OVG8MILftJ3yywfzBzIGVqhJ4Wmeicabb9zxTiAW/wR/O14C1ymvHE2qtZ/wLuN1iw
+	 0S9ydqDUBRPil54VC8ko5JEEiS4vZlnGDDf75g+jDoW4NwozoF6ws7B+SabDXbD89s
+	 qniCgonrpIqOJFpgZIm3brEVRy/61e/FY0iR9k8+xfJlKkPOppbO4ldS4jZe2Q8u5f
+	 naez/wbrPiPYzDA9BHxWrh1SdZqnocOFl/KqmDOxzQ9XSvLu7Q5yiCJUZ7SPhTgwcp
+	 R1x2lojf7M9lA==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-acb5ec407b1so681993366b.1;
+        Tue, 22 Apr 2025 04:55:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWxTxBOAkYlpMiQqV5VDqkYkQVfr0I9mt9FReP01oM2lucAqcLfu/QQEOhAeYy5/adg7Ys5kZbLxcz8@vger.kernel.org, AJvYcCXePZgFrpIMXEnM4tkknv0gN5lY4uCqZUxeg5EiJqAJKYmTe4FKAumgIjdWOlyHXWu8C+4q31rzLc8ABM6O@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPxJOZYFMCAuuotbmwIZd/I0Q0dXD2MyR04xW02EREiGLjemDG
+	UEdIIWJJU4zYkO8QrLmRT6P4KE/rQZ2F203Fgt49/BijpalH8S/8SiIdnXG9EUABA8vQ3TR3+Ft
+	8NQLRK/KDzvt2X2CxHW8gRo3AjA==
+X-Google-Smtp-Source: AGHT+IFn37a9Lg5i1NLvKHUiFOA39/tRQAT5so5RWqSl5qnZ1/wD62oMMBHhUmLumBZxGZih5sHb7VxtlPiC76dcmq0=
+X-Received: by 2002:a17:907:d643:b0:abf:4da0:28e3 with SMTP id
+ a640c23a62f3a-ace35b7110emr80983166b.18.1745322943158; Tue, 22 Apr 2025
+ 04:55:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefieeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpt
- hhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250414083243.59664-1-bsz@amazon.de> <CAL_JsqJdk_UtCEEVrakO8azjxWeLLDGTfWAVqtoPS99VQz3jWQ@mail.gmail.com>
+ <61efdf178da04ab6ae0d3feb70852cfe@amazon.de>
+In-Reply-To: <61efdf178da04ab6ae0d3feb70852cfe@amazon.de>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 22 Apr 2025 06:55:31 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLpKvw73ry+Dmy=uzOopQ4BgbH3qn7gsuj4+RGAD3UY4A@mail.gmail.com>
+X-Gm-Features: ATxdqUEX_x7RxEl9s0a2hkcgXDQqjmKuHr3HtqIWITgbJIlhkckjpH2Ojah3cCs
+Message-ID: <CAL_JsqLpKvw73ry+Dmy=uzOopQ4BgbH3qn7gsuj4+RGAD3UY4A@mail.gmail.com>
+Subject: Re: [PATCH] fdt: arch/arm64: Delete the rng-seed property after use
+To: "Szczepanek, Bartosz" <bsz@amazon.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>, 
+	=?UTF-8?B?U2Now7ZuaGVyciwgSmFuIEgu?= <jschoenh@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+On Tue, Apr 15, 2025 at 3:52=E2=80=AFAM Szczepanek, Bartosz <bsz@amazon.de>=
+ wrote:
+>
+> > From: Rob Herring <robh@kernel.org>
+> > Sent: Monday, April 14, 2025 4:22 PM
+> > To: Szczepanek, Bartosz
+> >
+> > On Mon, Apr 14, 2025 at 3:33=E2=80=AFAM Bartosz Szczepanek <bsz@amazon.=
+de> wrote:
+> > >
+> > > As a part of platform boot, device tree is being read to extract
+> > > randonmess bits. The 'rng-seed' property is used for that purpose.
+> > > After reading the value, the field was overridden with NOP instead of
+> > > being deleted or zeroed. The problem is that NOPed fields are later n=
+ot
+> > > reused, and kexec code appended this property every time DTB is prepa=
+red:
+> > >
+> > >   /* add rng-seed */
+> > >   if (rng_is_initialized()) {
+> > >           void *rng_seed;
+> > >           ret =3D fdt_setprop_placeholder(dtb, off, FDT_PROP_RNG_SEED=
+,
+> > >                           RNG_SEED_SIZE, &rng_seed);
+> > >           if (ret)
+> > >                   goto out;
+> > >           get_random_bytes(rng_seed, RNG_SEED_SIZE);
+> > >   }
+> > > (source: arch/arm64/kernel/machine_kexec_file.c)
+> > >
+> > > Taken together, DTB grew at each kexec by 140 bytes ie. size of the
+> > > newly added (and not overwritten) rng-seed property. ARM64 sets a har=
+d
+> > > limit on FDT size at 2MB, which means that after at most 14,979 kexec=
+s
+> > > DTB exceeded the limit causing catastrophic (but silent) failure in
+> > > setup_machine_fdt().
+> >
+> > Just like 2MB should be enough for anyone, 14979 kexecs should be enoug=
+h. ;)
+>
+> I'm actually glad it wasn't more than that, I'm afraid if it were 149790 =
+I would
+> be still scratching my head about the occasional crashes out of nowhere (=
+:
+>
+> >
+> >
+> > > This commits addresses the issue as follows:
+> > >  1. Call to fdt_nop_property is replaced with overwriting the rng-see=
+d
+> > >     value with zeros.
+> > >  2. Zeroed rng-seed gets special treatment and is not accepted as val=
+id
+> > >     seed. Warning is emitted on zeroed value.
+> >
+> > How do you get a zeroed seed if you delete the property when zeroed?
+> > Sure, any random bootloader could do that, but that has nothing to do
+> > with kexec. And does it really hurt to add 0s to the random pool? A
+> > warning is fine. In any case, none of this is specific to DT seeds. It
+> > all belongs in the core if it is a problem.
+>
+> You're right that zeroed property should never get to early_init_dt_scan_=
+chosen.
+> If the outgoing kernel can't give us randomness, it removes the previousl=
+y
+> zeroed "rng-seed". So it's an extra check and we could perhaps do without=
+ it.
+>
+> As for whether it hurts to add zeros to random pool, I actually wanted to=
+ avoid
+> any doubts about security by handling that case explicitly. We can make i=
+t a
+> mere warning if you like but I thought that illusion of randomness is wor=
+se
+> than lack of randomness from a security standpoint. If we bail out on zer=
+os,
+> we are sure that under no circumstances we get misguided by "rng-seed" th=
+at is
+> there but doesn't bring us actual entropy.
 
-On Tue, 22 Apr 2025 11:26:23 +0100
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-
-> On Tue, Apr 22, 2025 at 11:46:56AM +0200, Maxime Chevallier wrote:
-> > The SGMII adapter needs to be enabled for both Cisco SGMII and 1000BaseX
-> > operations. It doesn't make sense to check for an attached phydev here,
-> > as we simply might not have any, in particular if we're using the
-> > 1000BaseX interface mode.
-> > 
-> > So, check only for the presence of a SGMII adapter to re-enable it after
-> > a link config.  
-> 
-> I wonder whether:
-> 
-> 	struct stmmac_priv *priv = netdev_priv(dev_get_drvdata(dwmac->dev));
-> 
-> 	if ((priv->plat->phy_interface == PHY_INTERFACE_MODE_SGMII ||
-> 	     priv->plat->phy_interface == PHY_INTERFACE_MODE_1000BASEX) &&
-> 	    sgmii_adapter_base)
->  		writew(SGMII_ADAPTER_ENABLE,
->  		       sgmii_adapter_base + SGMII_ADAPTER_CTRL_REG);
-> 
-> would describe the required functionality here better, making it clear
-> under which interface modes we expect to set the enable bits.
-
-That's true indeed. Thanks for the suggestion, I'll include that in V2
-with your suggested-by :)
-
-Thanks,
-
-Maxime
+My point is your reasoning is true for all other callers of
+add_bootloader_randomness(), so shouldn't all of them be handled the
+same way? What guarantee do we have that UEFI implementation doesn't
+give us all zeros too? We know it can happen since we're also
+implementing the bootloader in this case, but that's not much better
+than not knowing. And there is the 'trust_bootloader' flag too. Do we
+want to warn about the bootloader seed if trust_bootloader=3D=3Dfalse?
+There's also the minor issue that in 1-in-a-gazillion times, the
+random value is all 0s. Does that matter? IDK. Really, you should ask
+the folks that implemented this feature in the first place.
 
 
+> > >  3. Kexec_file code is modified to delete the zeroed property if it
+> > >     can't fill it with valid seed.
+> > >  4. Proper error handling is added for the case when DTB exceeds 2MB.
+> > >
+> > > The change was tested in QEMU arm64 environment. To do so, kernel
+> > > containing the change was built and included in buildroot initramfs.
+> > > Subsequently, kernel was started in QEMU. Using kexec_file, new kerne=
+l
+> > > was loaded and kexec reboot was issued. DTB size was noted in this st=
+ep.
+> > > After new kernel has booted, another kexec_file was issued. DTB size
+> > > was confirmed not to change.
+> > >
+> > > Signed-off-by: Bartosz Szczepanek <bsz@amazon.de>
+> > > ---
+> > >  arch/arm64/kernel/machine_kexec_file.c |  5 +++++
+> > >  drivers/of/fdt.c                       | 18 +++++++++++++++---
+> > >  drivers/of/kexec.c                     | 12 +++++++++++-
+> > >  3 files changed, 31 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kern=
+el/machine_kexec_file.c
+> > > index af1ca875c52c..af0e39f6c96d 100644
+> > > --- a/arch/arm64/kernel/machine_kexec_file.c
+> > > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > > @@ -170,6 +170,11 @@ int load_other_segments(struct kimage *image,
+> > >         /* trim it */
+> > >         fdt_pack(dtb);
+> > >         dtb_len =3D fdt_totalsize(dtb);
+> > > +       if (dtb_len > MAX_FDT_SIZE) {
+> > > +               pr_err("DTB exceeds the maximum size: 0x%lx > 0x%x", =
+dtb_len, MAX_FDT_SIZE);
+> >
+> > You can't check restrictions of the kexec'ed kernel in the current
+> > kernel. That restriction could be removed at any point and might not
+> > be a problem for the kexec'ed kernel.
+>
+> Fair point.
+>
+> What would you say then for making it a warning? That could be a middle g=
+round
+> that would 1) allow us to kexec into more capable kernel without restrict=
+ion,
+> but also 2) help avoid lengthy investigations about early_init_dt_scan_ch=
+osen
+> failures. Keep in mind that the function is so early that early consoles =
+are
+> not plugged in, so from reader perspective it's "Bye!" from the outgoing =
+kernel
+> followed by eternal silence.
+
+Well, I checked DTBs in the tree and the biggest is 178K, so we are a
+lot further off from this being a problem than I thought. So I guess a
+warning would be fine.
+
+Rob
 
