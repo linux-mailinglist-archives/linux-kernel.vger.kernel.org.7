@@ -1,112 +1,238 @@
-Return-Path: <linux-kernel+bounces-614824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C759FA9728D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730E0A97287
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F39547AA278
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16973A6DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4F292922;
-	Tue, 22 Apr 2025 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC086290BB5;
+	Tue, 22 Apr 2025 16:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="Pv+e9eH3"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KFFGJpO1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB822918FF;
-	Tue, 22 Apr 2025 16:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339027; cv=pass; b=jgpEyKpeOedol//jWfOT642Ux+QCbFqyDTDDvc1W0e07FrGILsSEnn/rcOeK1t8DfyAdDvIfJ2eayPZNPHddDAi1VWFqHm9Apfjmuc88JCEcIZtMVMLOWBmd8LXu9h2nzGuFdGWQtiHqCe2eT5P99asqLYnViBUBYhbPWCUkjKA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339027; c=relaxed/simple;
-	bh=vJLo1SAXOEL8jJq2shI0SXXGScBhN8GY9w5yBhm7w5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bDZTxRzN8pYtZOMCyGo9HlvMq0FidZsVCJjayWeimPLEG28gFIF4QH5YQHOyxdrZL63UzOA22JAncyeRQ+qHuncN2RJMZ6Fo5vwmHdU4AmfJnBsoSz9FkIAyeswO8CkcHy5pqBshhXNwdR5syaI/zzDZ+GYfKB9f6UROCqyXszk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=Pv+e9eH3; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1745339009; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TYyfRxCdzIpIgWKgNSE+gRu2Yx+DLe3sMn33GgGr7AvTLi39f/YcFH9wMs7flSeImNqsRg+QAqT/2Cy0H6ZK9zlmhRkTy45r2XSmaWaYLC8oR32FW2u2MaylctzMY6DgG0yMoFUjjaLRRe5dilad2nVIcTQz3btTgTcXhdF37IA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745339009; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rEwnOtEV8d3LGVq1BDTwLd40sKEfTcqEpmUBhVrools=; 
-	b=NtIpdsDq+AjI12Pb+9xq/hCRbdYvsHXfKfLpM6qGjM+y9y7T+kKkjjPZcqjmx27vz7bElJU3KA/0grQW9lAvT4DH7/7Q+YDSsxPvtX7dpvr59y0aBxTGljjQqSxCzXc85JBIbUR1Gi6kxGI00S8f34UICQso4OvCGcRORLlxLhk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745339009;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=rEwnOtEV8d3LGVq1BDTwLd40sKEfTcqEpmUBhVrools=;
-	b=Pv+e9eH3EKh6j7+yRLxi5l7fqBCBEL7K738huaCFwLg6uf7TaeahOeurbxGaKpT8
-	iaK6RoJbFplwI8A0hkGIxNGZ1eberti/pPZjTQo+816vwTKyptrOcIn0bCpJSQkj+vm
-	0dcjkXDRzFgPJbuKKP/5uwmM/D6FSmKdnYi8eXLXxH46dcbcKgwz8jhZUmsa4RE1U1o
-	uxjahZGw03JQhM14uE6FVkkB8Drh8eprvhh5cauxrxewWctmG66ro1GqS/r/4eujvT+
-	ZxFWiEiRp/SgJl5u3Z/P/Mk5YLG1gLbcCVG3DD9RuFVxDCwhTB2ECAT0z12X0H1SY6y
-	iGK4zVfquQ==
-Received: by mx.zohomail.com with SMTPS id 1745339006390925.2438196310163;
-	Tue, 22 Apr 2025 09:23:26 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [RFC PATCH 3/3] riscv: dts: starfive: jh7110-pine64-star64: force no USB overcurrent
-Date: Wed, 23 Apr 2025 00:22:50 +0800
-Message-ID: <20250422162250.436169-4-uwu@icenowy.me>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250422162250.436169-1-uwu@icenowy.me>
-References: <20250422162250.436169-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477BF19F42F;
+	Tue, 22 Apr 2025 16:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745338997; cv=none; b=QUGIl1Qai63fG1wMOchTejNYYXWDj6iDFFUKXQS/PAMgkYZ6yqm1EHMfluDAaxMBCbE6xERTc8bh1YcgM3sPVB8ZGM6ghyev6AWEPmGXY72BISB1v1KyuSDL2h0+62OGK01KLiHUxlGDuzWbCTgnTLb/xAxZGzRYBZbXsgI1M2c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745338997; c=relaxed/simple;
+	bh=Oad193bVydQGs1G8YxGaKsY+n+t7oPHeApz8EPMvtxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DbeBkb5kN5yZfaAOecgVv5J2cLlOUyseTmAKNqpbb7ySN3hdlA7os2Gu7680l1yh/IS08p7QgDg79QBE18lHxxLaQXKTD0UdCREWJB72Yg+KnEPDjy1Ff1cQQSLaIRoGBz4vJskV+9TdzbeHxw2eNBVImbWpdH0cklsn19vuilE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KFFGJpO1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53MCoBxv006082;
+	Tue, 22 Apr 2025 16:23:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3+nuXbr2sSvbHmwT/QDKKWLfcltehTKGMqnO581Bql0=; b=KFFGJpO17wHri5CE
+	wEXr6IQDXXlaUf9NAQTvRHkZsawJOBFzIh8ZQIrE2v1YhNtGUABWR1xfu6qwTGqF
+	VhPlzUUdq+lh6Wp+sSGQwT9/K241FE0Q3CZmaEz4N6s8M+SMyTO7OjA2ARDUX6Qj
+	OWzltTFhWtfoQficTaJByFBOFofN4e/KXApQyC1yGkeYSm1HdfkCn7SOEdNoFH4w
+	mhELV5ylkebCNBGzBzBqOL1f1NtMBTWTHiebFnitJ7No5obOo2qPMvLNrSVscnDo
+	e6qzafGpIBl7NCCQqwucPF/96qPz4TVfnQHZG2H2mujpNtZUvnIH8clnQQwHTghM
+	7iV5Xw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46435jgax5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 16:23:08 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53MGN7IT009702
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 16:23:07 GMT
+Received: from [10.216.4.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Apr
+ 2025 09:23:03 -0700
+Message-ID: <5be729d9-aef0-4c35-a09e-06bb24ad5427@quicinc.com>
+Date: Tue, 22 Apr 2025 21:52:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/8] arm64: dts: qcom: sc7280: Add WSA SoundWire and
+ LPASS support
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@oss.qualcomm.com>, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250317054151.6095-1-quic_pkumpatl@quicinc.com>
+ <NEOU_bSQGIua5HanDOIfAKJq_XghfrHr5H_120hNUkXtFyurq1rHIe-4_cKpCtH7rr4MJzu89TrHWrpxUfR0_Q==@protonmail.internalid>
+ <20250317054151.6095-3-quic_pkumpatl@quicinc.com>
+ <9fd63681-28c3-4797-9ed0-f4b05e77e330@linaro.org>
+Content-Language: en-US
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <9fd63681-28c3-4797-9ed0-f4b05e77e330@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EOYG00ZC c=1 sm=1 tr=0 ts=6807c26c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=SpwO9IhAAyP49T1mwoIA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: l3htXu3c7S_uMD42e52exv54Qt98Ln3k
+X-Proofpoint-ORIG-GUID: l3htXu3c7S_uMD42e52exv54Qt98Ln3k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_08,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 spamscore=0 adultscore=0 impostorscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504220122
 
-The Star64 board has no GPIOs to indicate USB overcurrent, however the
-USB controller would stop to work if the overcurrent_n signal it gets is
-low (which means overcurrent situations happening because of the _n).
 
-Use the pin controller to force the overcurrent_n signal to be high in
-order to ensure stable behavior of the USB controller.
+On 3/27/2025 4:32 AM, Bryan O'Donoghue wrote:
+> On 17/03/2025 05:41, Prasad Kumpatla wrote:
+>> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>
+>> Add WSA macroLPASS Codecs along with SoundWire controller.
+>>
+>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 68 ++++++++++++++++++++++++++++
+>>   1 file changed, 68 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> index 39fbd3c40e47..90b2f6e2b7c0 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> @@ -2602,6 +2602,64 @@ swr1: soundwire@3230000 {
+>>               status = "disabled";
+>>           };
+>>
+>> +        lpass_wsa_macro: codec@3240000 {
+>> +            compatible = "qcom,sc7280-lpass-wsa-macro";
+>> +            reg = <0x0 0x03240000 0x0 0x1000>;
+>> +
+>> +            pinctrl-names = "default";
+>> +            pinctrl-0 = <&lpass_wsa_swr_clk>, <&lpass_wsa_swr_data>;
+>> +
+>> +            clocks = <&lpass_aon LPASS_AON_CC_TX_MCLK_CLK>,
+>> +                 <&lpass_aon LPASS_AON_CC_TX_MCLK_2X_CLK>,
+>> +                 <&lpass_va_macro>;
+>> +            clock-names = "mclk", "npl", "fsgen";
+>
+> clocks* go before pinctrl*
+ACK,
+>
+>> +
+>> +            power-domains = <&lpass_hm 
+>> LPASS_CORE_CC_LPASS_CORE_HM_GDSC>,
+>> +                    <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
+>> +            power-domain-names = "macro", "dcodec";
+>> +
+>> +            #clock-cells = <0>;
+>> +            clock-output-names = "mclk";
+>> +            #sound-dai-cells = <1>;
+>> +
+>> +            status = "disabled";
+>> +        };
+>> +
+>> +        swr2: soundwire@3250000 {
+>> +            compatible = "qcom,soundwire-v1.6.0";
+>> +            reg = <0x0 0x03250000 0x0 0x2000>;
+>> +
+>> +            interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+>> +            clocks = <&lpass_wsa_macro>;
+>> +            clock-names = "iface";
+>> +
+>> +            qcom,din-ports = <2>;
+>> +            qcom,dout-ports = <6>;
+>> +
+>> +            resets = <&lpass_audiocc LPASS_AUDIO_SWR_WSA_CGCR>;
+>> +            reset-names = "swr_audio_cgcr";
+>
+> vendor prefixes should come after standard names
+>
+> Documentation/devicetree/bindings/dts-coding-style.rst
+> "Order of Properties in Device Node"
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
- arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ACK, will check and update in next patch version.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-index 31e825be2065a..dab0e0054e648 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-+++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-@@ -81,6 +81,8 @@ &spi0 {
- };
- 
- &sysgpio {
-+	starfive,force-high-inputs = <GPI_SYS_USB_OVERCURRENT>;
-+
- 	usb0_pins: usb0-0 {
- 		vbus-pins {
- 			pinmux = <GPIOMUX(25,  GPOUT_SYS_USB_DRIVE_VBUS,
--- 
-2.49.0
+Thanks,
+Prasad
 
+>
+>> +
+>> +            qcom,ports-sinterval-low = /bits/ 8 <0x07 0x1f 0x3f 0x07
+>> +                                0x1f 0x3f 0x0f 0x0f>;
+>> +            qcom,ports-offset1 = /bits/ 8 <0x01 0x02 0x0c 0x06 0x12 
+>> 0x0d 0x07 0x0a>;
+>> +            qcom,ports-offset2 = /bits/ 8 <0xff 0x00 0x1f 0xff 0x00 
+>> 0x1f 0x00 0x00>;
+>> +            qcom,ports-hstart = /bits/ 8 <0xff 0xff 0xff 0xff 0xff 
+>> 0xff 0xff 0xff>;
+>> +            qcom,ports-hstop = /bits/ 8 <0xff 0xff 0xff 0xff 0xff 
+>> 0xff 0xff 0xff>;
+>> +            qcom,ports-word-length = /bits/ 8 <0xff 0xff 0xff 0xff 
+>> 0xff 0xff 0xff 0xff>;
+>> +            qcom,ports-block-pack-mode = /bits/ 8 <0xff 0xff 0x01 
+>> 0xff 0xff 0x01
+>> +                                   0xff 0xff>;
+>> +            qcom,ports-block-group-count = /bits/ 8 <0xff 0xff 0xff 
+>> 0xff 0xff 0xff
+>> +                                0xff 0xff>;
+>> +            qcom,ports-lane-control = /bits/ 8 <0xff 0xff 0xff 0xff 
+>> 0xff 0xff
+>> +                                0xff 0xff>;
+>> +
+>> +            #address-cells = <2>;
+>> +            #size-cells = <0>;
+>> +            #sound-dai-cells = <1>;
+>> +
+>> +            status = "disabled";
+>> +        };
+>> +
+>>           lpass_audiocc: clock-controller@3300000 {
+>>               compatible = "qcom,sc7280-lpassaudiocc";
+>>               reg = <0 0x03300000 0 0x30000>,
+>> @@ -2808,6 +2866,16 @@ lpass_tx_swr_data: tx-swr-data-state {
+>>                   pins = "gpio1", "gpio2", "gpio14";
+>>                   function = "swr_tx_data";
+>>               };
+>> +
+>> +            lpass_wsa_swr_clk: wsa-swr-clk-state {
+>> +                pins = "gpio10";
+>> +                function = "wsa_swr_clk";
+>> +            };
+>> +
+>> +            lpass_wsa_swr_data: wsa-swr-data-state {
+>> +                pins = "gpio11";
+>> +                function = "wsa_swr_data";
+>> +            };
+>>           };
+>>
+>>           gpu: gpu@3d00000 {
+>> -- 
+>> 2.34.1
+>>
+>>
+>
 
