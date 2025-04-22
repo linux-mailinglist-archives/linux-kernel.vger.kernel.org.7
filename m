@@ -1,147 +1,95 @@
-Return-Path: <linux-kernel+bounces-614680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38066A97037
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD2FA9708A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C507016B5F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A98173149
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC428EA6E;
-	Tue, 22 Apr 2025 15:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26F428FFCD;
+	Tue, 22 Apr 2025 15:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FE4rPt6f"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="kut5Npwf"
+Received: from mail-106110.protonmail.ch (mail-106110.protonmail.ch [79.135.106.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0202857C9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480A128F951
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745334876; cv=none; b=OiAqBch/0C8mzqrP9zZYjxhLgeHT5i/tMX3sN6VI7vr/iVgA2GPfEd0wrJoTZTMIcpXGLd8OIIscYJTqbl817HYMhCyJxXmBsYf8odSg9QXPHfQH1IQpjbknewNclY6ZelcTsLWJaj0m+JjkkP7N+X+JiC9ncWbK4M+8LvKpG24=
+	t=1745335392; cv=none; b=ST9QRC0j4+zu/bKAM8QeEnXZzDoITHOrYChQ0g8qSOLKGZvfAadobXE5fLBUm2hslJX3Y52iENahRklHMPCnQvsk0fMQN9ut0Cyt3LGIo2S/RQbwGMfIES1y4k/2ic8wi2v5+RUjLk8A4Yt76ch6LbLZ3tpR0Mw9+/2YeY/PH6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745334876; c=relaxed/simple;
-	bh=C5c3cFZtm7yp+COBCFXiahdCKl7yLitMIeAah7EAm4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlDg0Ofnw4//qm/Y+4FoCdRuFur5zgo7SElAjpWNCLsU6K/DhKj0XDeyYV6i+mROBIEJm5DcI7CtZJYVnDHd1477ku63u1P5PQ8geS2QhcL85wuBYW93brCFBLQKZk5a6yu68ITCOoZZmlWfzvCCLV9eqn8fp6cOeC13f7stT2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FE4rPt6f; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3bVIKhHwlJsLAEWAG4KwvjxmrXMbI0ve6Y7iR65LMns=; b=FE4rPt6fQC1uS3oiz/IcCvD9yQ
-	vmlkK492ACLGHlnN6UDjd00KXS0jdOgd9NQo29CBIGR1RVODGrvlEqKU47efKHmGWaYRluQuSCS0z
-	x8zvsP3rWMNdFCZxFuQqH1v8QQCf5nzKKMPZOw+EoFBax1pPBPKwa2euA6JeNxogrRgNwE4hDXH5S
-	UKvbia240UXTcFtskLogTlfA+8IoXOQnIpHWT4NaL2upnjW4HgOhSx2Ihw/Sc/Vqv1SHGFxQuhEVp
-	0r7ylAg8s9v1f9nvbRnLSoTo/Y3JQet+wfgtT73QefhOZCttHuNchUHLakjeBHO3IvYFqD5hCg1UG
-	cawFwniA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7FKI-00000004may-2oMg;
-	Tue, 22 Apr 2025 15:14:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D70F53003C4; Tue, 22 Apr 2025 17:14:21 +0200 (CEST)
-Date: Tue, 22 Apr 2025 17:14:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Omar Sandoval <osandov@osandov.com>
-Cc: Rik van Riel <riel@surriel.com>, Chris Mason <clm@meta.com>,
-	Pat Cody <pat@patcody.io>, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org, patcody@meta.com,
-	kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-Subject: Re: [PATCH] sched/fair: Add null pointer check to pick_next_entity()
-Message-ID: <20250422151421.GB33555@noisy.programming.kicks-ass.net>
-References: <7B2CFC16-1ADE-4565-B555-7525A50494C2@surriel.com>
- <20250402082221.GT5880@noisy.programming.kicks-ass.net>
- <b378f48593ca7449257a1bb55e78b186d88cd9f1.camel@surriel.com>
- <20250415080235.GK5600@noisy.programming.kicks-ass.net>
- <20250416124442.GC6580@noisy.programming.kicks-ass.net>
- <abffc286b637060f631925f9b373fad114d667d6.camel@surriel.com>
- <20250418154438.GH17910@noisy.programming.kicks-ass.net>
- <aALk9DVfjTTHGdvA@telecaster>
- <aAbdlTISuaJnc5AG@telecaster>
- <20250422141351.GG14170@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1745335392; c=relaxed/simple;
+	bh=agBlO360QS5qNy/3UMg3y1FA7SFwQtiXCvg4rIouDvo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ru9gcswlIe/5eEXyrBsfb13P3ePbA/dTreEQ5FBP0U4OTszU6cH0mxwRWipxcbrEtCsdSFU8gC7wTL/ztE6+ZwQ39Y0iX9J+TPxfDujjnEpi2B0ccCjnuAcjd1ZBlq0OJJbs2OkPdpJYQboY6UL5zhrNW6v7Zo9WiQ0vmyPqHo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=kut5Npwf; arc=none smtp.client-ip=79.135.106.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1745334913; x=1745594113;
+	bh=ILoWC/sy2iITa4NSo18LSU+Ros/OxARhBaBtR8WnMRw=;
+	h=From:Subject:Date:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector:List-Unsubscribe:
+	 List-Unsubscribe-Post;
+	b=kut5Npwf/uVvFhC7/VPTDKzQComJndJ4S3b6BQJpDnImAX6LtOIpUvG8VpvJ7pGLB
+	 mqo+qnPgVPGpCeZpCbpjFVmWf9Jcxn+Itl1xEhI2Q8x4IySYRz8AjXI4rFuE1Pbhnd
+	 y4CDQlthNGaeHHYtkviP6/3ir3GyF5S8Dii4a+1I87Zv7LQkQ5B0TJvB7hON+Agctw
+	 1XDFpoVDIJpobx81DtGrzRYd/3LDmo0issgCPurdU0yPI7SbZWS3dBxokX53dAGkfA
+	 AzlAQ3YCVfm2FUnVkxfee+EecxcUkY1XcHEWNX3JAERuB3Hp22Nxu1l4lY1KKiPhnA
+	 ShSYA1Fnc2png==
+From: Esben Haabendal <esben@geanix.com>
+Subject: [PATCH 0/2] input: touch: goodix: Extend reset pull-up fix to DT
+ platforms
+Date: Tue, 22 Apr 2025 17:15:01 +0200
+Message-Id: <20250422-goodix-no-reset-pull-up-v1-0-3983bb65a1bf@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422141351.GG14170@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHWyB2gC/x3MQQqEMBAF0atIr22IrTKMVxlcBPPVBklCMoog3
+ t3g8i2qLspIikxDdVHCoVmDL2jqiqbV+gWsrpjESG86EV5CcHqyD5yQ8ee4bxvvkZ2gs1/bwnw
+ slTomzHq+59943w9Eu3lRaQAAAA==
+X-Change-ID: 20250422-goodix-no-reset-pull-up-d2e4a9a3e07a
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745334911; l=715;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=agBlO360QS5qNy/3UMg3y1FA7SFwQtiXCvg4rIouDvo=;
+ b=J2eFeZ5CJbMnKOF17nODJxt3ofiVjkIpIBWwFomqgHaInTHKG6yUDkGuuUGc9SDfsSBaa2uJi
+ Z5uVNMWJVRnBo2NrObEFAujEzm+oRZ0O/ZKUyTc2KPHWehvTZfgCbKt
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
 
-On Tue, Apr 22, 2025 at 04:13:52PM +0200, Peter Zijlstra wrote:
-> On Mon, Apr 21, 2025 at 05:06:45PM -0700, Omar Sandoval wrote:
-> 
-> > Hey, Peter,
-> > 
-> > We haven't been able to test your latest patch, but I dug through some
-> > core dumps from crashes with your initial zero_vruntime patch. It looks
-> > like on just about all of them, the entity vruntimes are way too spread
-> > out, so we would get overflows regardless of what we picked as
-> > zero_vruntime.
-> > 
-> > As a representative example, we have a cfs_rq with 3 entities with the
-> > follow vruntimes and (scaled down) weights:
-> > 
-> > vruntime           weight
-> > 39052385155836636  2      (curr)
-> > 43658311782076206  2
-> > 42824722322062111  4886
-> > 
-> > The difference between the minimum and maximum is 4605926626239570,
-> 
-> Right, that is quite beyond usable. The key question at this point
-> is how did we get here...
-> 
-> > which is 53 bits. The total load is 4890. Even if you picked
-> > zero_vruntime to be equidistant from the minimum and maximum, the
-> > (vruntime - zero_vruntime) * load calculation in entity_eligible() is
-> > doomed to overflow.
-> > 
-> > That range in vruntime seems too absurd to be due to only to running too
-> > long without preemption. We're only seeing these crashes on internal
-> > node cgroups (i.e., cgroups whose children are cgroups, not tasks). This
-> > all leads me to suspect reweight_entity().
-> > 
-> > Specifically, this line in reweight_entity():
-> > 
-> > 	se->vlag = div_s64(se->vlag * se->load.weight, weight);
-> > 
-> > seems like it could create a very large vlag, which could cause
-> > place_entity() to adjust vruntime by a large value.
-> 
-> Right, I fixed that not too long ago. At the time I convinced myself
-> clipping there wasn't needed (in fact, it would lead to some other
-> artifacts iirc). Let me go review that decision :-)
+This extends the fix for platforms without external pull-up on reset pin
+to device-tree platforms.
 
-In particular, the two most recent commits in this area are:
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+Esben Haabendal (2):
+      dt-bindings: input: touchscreen: goodix: Add no-reset-pull-up property
+      Input: goodix - Allow DT specification of missing reset pull-up
 
-  https://lore.kernel.org/r/20250109105959.GA2981@noisy.programming.kicks-ass.net
-  https://lkml.kernel.org/r/20250110115720.GA17405@noisy.programming.kicks-ass.net
+ .../devicetree/bindings/input/touchscreen/goodix.yaml          |  4 ++++
+ drivers/input/touchscreen/goodix.c                             | 10 +++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250422-goodix-no-reset-pull-up-d2e4a9a3e07a
 
-(from the same thread).
+Best regards,
+-- 
+Esben Haabendal <esben@geanix.com>
 
-Note that it does call update_entity_lag() which does clip. So after
-that it's just scaling for the new weight.
-
-Notably, virtual time = time / weight, and the clip limit is adjusted
-for weight.
-
-So if it is inside limits pre-scaling, it should still be in limits
-after scaling.
-
-l = max / w;
-
-w->w' --> l' = l*w/w' = (max / w) * (w/w') = max / w'
-
-I've stuck some trace_printk()s on again, and the numbers I get here
-seem sane.
 
