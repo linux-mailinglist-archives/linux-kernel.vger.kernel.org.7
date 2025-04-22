@@ -1,161 +1,284 @@
-Return-Path: <linux-kernel+bounces-614517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E68FA96D89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:56:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DEDA96D7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F893AAEB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1115516907F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9932857D5;
-	Tue, 22 Apr 2025 13:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EDA4C85;
+	Tue, 22 Apr 2025 13:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qrsh4W6+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="G/wBOQYu"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A3284682;
-	Tue, 22 Apr 2025 13:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E561EE7BC;
+	Tue, 22 Apr 2025 13:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330101; cv=none; b=o8dB2JLm5o8mkKNmYFPSgNEFJs1xKmFA/2dpqQcLYUPBNTuZWoHWOII9yC8tAv6plxfOHx0+pmV0pHO/fmxIESmGeRjkvtyF+nT3T3mZm2vzHQ7pzuILMsbWoFKJSZh2FgIG/x4sgy8gjOy9Mj0Z8dNEr9hic4/S6tTOqzmEmUs=
+	t=1745330029; cv=none; b=I3gVC+Z1tcn2hCweqvP+Pby8tVP1BgYWh8+lRl1wHITIdabRB163QK4/29rcUd5ryrZrSgFW/AhqjwBK+IEfnT0PKF0jKIrcmL3aMGpK7nkRgIGHYVAT+E9BLaqlGdT8tWzQTKB+jDpDkqG4Xf2rJQ5rF8raEOAEIt1FN9CWqw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330101; c=relaxed/simple;
-	bh=TWyVYWRdbaf00eKHwQrQSn9Z3lMxEd5ED3jW6Avvoy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K4BhedNqF+pXXmYEL51jF/mheCrQjXoKTYcqfwpd7adt6G7KAJw1GUIcEtjvixIJuJG10GDL1Mf/CaHbfLGSKYczYQcBsSKgoB+mEMn10ECQlNHNaVTcdnvKnLVbBjgvD/nJVu7ymkXy3phRUMblyOIcmeVfbn3RunNROsdFtPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qrsh4W6+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745330101; x=1776866101;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TWyVYWRdbaf00eKHwQrQSn9Z3lMxEd5ED3jW6Avvoy4=;
-  b=Qrsh4W6+BtqoThwTZ0Jc3aVuTf8qD5MJyU0nT3vsDJByBoHTtcZMKv7a
-   FUOkEbcpsYDPWpiw+KbrZPQGIZ6FE/ZIKC/CzMxaD6Coe5x6Pgmg6Wl5v
-   Peyg3NLkf4XOGTP2XktUVT2EVMD6LxHXZ6J5aZLhgwgi/ockR3XBLFek5
-   bCnEMxMfDyM6RhtXTqbn2oh5u2P2qD9Am57zswaGurNWU+PYUwzJwC6Jn
-   ZdGDMLXPG/xesOF3mkJgQX01DptTgqUSBmSDe9/qnGwTnGmvDroqj5FJo
-   yo9KlqEfI8ADFhNbokxvHZeIsw0lbqbEUq962/LgFvZghpZnN0gcLyE//
-   g==;
-X-CSE-ConnectionGUID: gzjyOahrRZWGq3r56yZEgw==
-X-CSE-MsgGUID: A3+e24KIT0uXj+wnY8Xexg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50550440"
-X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
-   d="scan'208";a="50550440"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 06:55:00 -0700
-X-CSE-ConnectionGUID: izvj1jXUQEmb6J2HK9B5+A==
-X-CSE-MsgGUID: 6Cx/xDUgTaSAiL7Ccp8hHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
-   d="scan'208";a="136812225"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa005.fm.intel.com with ESMTP; 22 Apr 2025 06:54:56 -0700
-From: Raag Jadav <raag.jadav@intel.com>
-To: rafael@kernel.org,
-	mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	lukas@wunner.de,
-	aravind.iddamsetty@linux.intel.com,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2] PCI/PM: Avoid suspending the device with errors
-Date: Tue, 22 Apr 2025 19:23:41 +0530
-Message-Id: <20250422135341.2780925-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745330029; c=relaxed/simple;
+	bh=eiFHy0TD6ojLHrM6IgI2opGeeWPGapwMgujChqNE3Xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q714OIIP3ljfJz1rYPH00QNWAsQHOrb/vKbCxNkoKZ3evMYzXKrrrgaljgIc056xB7bbqE2y/9JZoC6UqIJyuF2KJXkGlj3AjqQHgl0ORaFl29GAgVOrAQLBv7KaDvd9SQNIPTqF/Nj87yiv7iouSybNfSv5R9nhYaxc3o469JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=G/wBOQYu; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745330025;
+	bh=eiFHy0TD6ojLHrM6IgI2opGeeWPGapwMgujChqNE3Xw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G/wBOQYudLddk7OOF5sCI5SQJzSZbnlpkgWSDAJms7sqo/autmUNrS7xlyI0IzDDm
+	 ceVH3EEjml+WY6L/+awdJJYerRLvRm8UUwMdV9relT7QJqfwgLjuS2j19GR7S1bQ4K
+	 82tuVBf1lTVWmbyVHBvbkuXeMpVUbZUcgpZ1VzMy9tXoUaqjduZJVhOK8fyR4UNRix
+	 eJ7jLyDwqJXN0Vj9rs41R3fPAKjvj57x9irAVbV2B3714m4WF9kjY8ZuyaIf6wzJSd
+	 um98ujwUZ/1rFPDIsiOQQFr2ru/4EQTepMhVEtXlPLhQlPm3JsdMsZv/wgO6snv9E8
+	 0H3EgD5e7FFKA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5C61217E0DD1;
+	Tue, 22 Apr 2025 15:53:44 +0200 (CEST)
+Message-ID: <7b3713d1-df18-4da1-a1e2-16dcff08fe66@collabora.com>
+Date: Tue, 22 Apr 2025 15:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 22/23] drm/mediatek: Introduce HDMI/DDC v2 for
+ MT8195/MT8188
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com,
+ jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com,
+ ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com,
+ jason-jh.lin@mediatek.com
+References: <20250415104321.51149-1-angelogioacchino.delregno@collabora.com>
+ <20250415104321.51149-23-angelogioacchino.delregno@collabora.com>
+ <aestmu2rblcrcz77tuqgkimaj4stg24skyp2avdstahwr3aa3i@cfv5ov2qjcf6>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <aestmu2rblcrcz77tuqgkimaj4stg24skyp2avdstahwr3aa3i@cfv5ov2qjcf6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If an error is triggered before or during system suspend, any bus level
-power state transition will result in unpredictable behaviour by the
-device with failed recovery. Avoid suspending such a device and leave
-it in its existing power state.
+Il 21/04/25 21:16, Dmitry Baryshkov ha scritto:
+> On Tue, Apr 15, 2025 at 12:43:20PM +0200, AngeloGioacchino Del Regno wrote:
+>> Add support for the newer HDMI-TX (Encoder) v2 and DDC v2 IPs
+>> found in MediaTek's MT8195, MT8188 SoC and their variants, and
+>> including support for display modes up to 4k60 and for HDMI
+>> Audio, as per the HDMI 2.0 spec.
+>>
+>> HDCP and CEC functionalities are also supported by this hardware,
+>> but are not included in this commit and that also poses a slight
+>> difference between the V2 and V1 controllers in how they handle
+>> Hotplug Detection (HPD).
+>>
+>> While the v1 controller was using the CEC controller to check
+>> HDMI cable connection and disconnection, in this driver the v2
+>> one does not.
+>>
+>> This is due to the fact that on parts with v2 designs, like the
+>> MT8195 SoC, there is one CEC controller shared between the HDMI
+>> Transmitter (HDMI-TX) and Receiver (HDMI-RX): before eventually
+>> adding support to use the CEC HW to wake up the HDMI controllers
+>> it is necessary to have support for one TX, one RX *and* for both
+>> at the same time.
+>>
+>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/Kconfig            |    7 +
+>>   drivers/gpu/drm/mediatek/Makefile           |    2 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |    4 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |    9 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  385 +++++
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 ++++
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1396 +++++++++++++++++++
+>>   7 files changed, 2066 insertions(+)
+>>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c
+>>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h
+>>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+>>
+>> +
+>> +static int mtk_hdmi_v2_setup_audio_infoframe(struct mtk_hdmi *hdmi)
+>> +{
+>> +	struct hdmi_codec_params *params = &hdmi->aud_param.codec_params;
+>> +	struct hdmi_audio_infoframe frame;
+>> +	u8 buffer[14];
+>> +	ssize_t ret;
+>> +
+>> +	memcpy(&frame, &params->cea, sizeof(frame));
+>> +
+>> +	ret = hdmi_audio_infoframe_pack(&frame, buffer, sizeof(buffer));
+>> +	if (ret < 0)
+>> +		return ret;
+> 
+> This should really be done via
+> drm_atomic_helper_connector_hdmi_update_audio_infoframe() or
+> drm_atomic_helper_connector_hdmi_clear_audio_infoframe().
+> 
+> Ideally this should come from the .hw_params() / .prepare() calls so
+> that you don't need to store the params in the driver data.
+> 
 
-This only covers the devices that rely on PCI core PM for their power
-state transition.
+When switching to the new hdmi audio helpers yes, but I was planning to do that
+later.....
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
+>> +
+>> +	mtk_hdmi_v2_hw_write_audio_infoframe(hdmi, buffer);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline void mtk_hdmi_v2_hw_gcp_avmute(struct mtk_hdmi *hdmi, bool mute)
+>> +{
+>> +	u32 val;
+>> +
+>> +	regmap_read(hdmi->regs, TOP_CFG01, &val);
+>> +	val &= ~(CP_CLR_MUTE_EN | CP_SET_MUTE_EN);
+>> +
+>> +	if (mute) {
+>> +		val |= CP_SET_MUTE_EN;
+>> +		val &= ~CP_CLR_MUTE_EN;
+>> +	} else {
+>> +		val |= CP_CLR_MUTE_EN;
+>> +		val &= ~CP_SET_MUTE_EN;
+>> +	}
+>> +	regmap_write(hdmi->regs, TOP_CFG01, val);
+>> +
+>> +	regmap_set_bits(hdmi->regs, TOP_INFO_RPT, CP_RPT_EN);
+>> +	regmap_set_bits(hdmi->regs, TOP_INFO_EN, CP_EN | CP_EN_WR);
+>> +}
+>> +
+>> +static void mtk_hdmi_v2_hw_ncts_enable(struct mtk_hdmi *hdmi, bool enable)
+>> +{
+>> +	if (enable)
+>> +		regmap_set_bits(hdmi->regs, AIP_CTRL, CTS_SW_SEL);
+>> +	else
+>> +		regmap_clear_bits(hdmi->regs, AIP_CTRL, CTS_SW_SEL);
+>> +}
+>> +
+>> +static void mtk_hdmi_v2_hw_aud_set_channel_status(struct mtk_hdmi *hdmi)
+>> +{
+>> +	u8 *ch_status = hdmi->aud_param.codec_params.iec.status;
+>> +
+>> +	/* Only the first 5 to 7 bytes of Channel Status contain useful information */
+>> +	regmap_write(hdmi->regs, AIP_I2S_CHST0, mtk_hdmi_v2_format_hw_packet(&ch_status[0], 4));
+>> +	regmap_write(hdmi->regs, AIP_I2S_CHST1, mtk_hdmi_v2_format_hw_packet(&ch_status[4], 3));
+>> +}
+>> +
+>> +static void mtk_hdmi_v2_hw_aud_set_ncts(struct mtk_hdmi *hdmi,
+>> +				     unsigned int sample_rate,
+>> +				     unsigned int clock)
+>> +{
+>> +	unsigned int n, cts;
+>> +
+>> +	mtk_hdmi_get_ncts(sample_rate, clock, &n, &cts);
+> 
+> drm_hdmi_acr_get_n_cts() ?
+> 
 
-v2: Synchronize AER handling with PCI PM (Rafael)
+I'd have to update both HDMI drivers to use that instead, and I was planning to do
+that at a later time when switching to the HDMI audio helpers.
 
-More discussion on [1].
-[1] https://lore.kernel.org/all/CAJZ5v0g-aJXfVH+Uc=9eRPuW08t-6PwzdyMXsC6FZRKYJtY03Q@mail.gmail.com/
+>> +
+>> +	regmap_write(hdmi->regs, AIP_N_VAL, n);
+>> +	regmap_write(hdmi->regs, AIP_CTS_SVAL, cts);
+>> +}
+>> +
+> 
+> [...]
+> 
+>> +
+>> +static int mtk_hdmi_v2_audio_hw_params(struct device *dev, void *data,
+>> +				       struct hdmi_codec_daifmt *daifmt,
+>> +				       struct hdmi_codec_params *params)
+>> +{
+>> +	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
+>> +
+>> +	if (hdmi->audio_enable) {
+>> +		mtk_hdmi_audio_params(hdmi, daifmt, params);
+>> +		mtk_hdmi_v2_aud_output_config(hdmi, &hdmi->mode);
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int mtk_hdmi_v2_audio_startup(struct device *dev, void *data)
+>> +{
+>> +	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
+>> +
+>> +	mtk_hdmi_v2_hw_aud_enable(hdmi, true);
+>> +	hdmi->audio_enable = true;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void mtk_hdmi_v2_audio_shutdown(struct device *dev, void *data)
+>> +{
+>> +	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
+>> +
+>> +	hdmi->audio_enable = false;
+>> +	mtk_hdmi_v2_hw_aud_enable(hdmi, false);
+> 
+> Most likely you need to stop sending the AUDIO packet too. Or is it dome
+> by the hardware?
+> 
 
- drivers/pci/pci-driver.c |  3 ++-
- drivers/pci/pcie/aer.c   | 11 +++++++++++
- include/linux/aer.h      |  2 ++
- 3 files changed, 15 insertions(+), 1 deletion(-)
+The call to `mtk_hdmi_v2_hw_aud_enable(hdmi, false)` will set HW registers to both
+mute and stop sending the audio packet.
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index f57ea36d125d..289a1fa7cb2d 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -884,7 +884,8 @@ static int pci_pm_suspend_noirq(struct device *dev)
- 		}
- 	}
- 
--	if (!pci_dev->state_saved) {
-+	/* Avoid suspending the device with errors */
-+	if (!pci_aer_in_progress(pci_dev) && !pci_dev->state_saved) {
- 		pci_save_state(pci_dev);
- 
- 		/*
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 508474e17183..b70f5011d4f5 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -233,6 +233,17 @@ int pcie_aer_is_native(struct pci_dev *dev)
- }
- EXPORT_SYMBOL_NS_GPL(pcie_aer_is_native, "CXL");
- 
-+bool pci_aer_in_progress(struct pci_dev *dev)
-+{
-+	u16 reg16;
-+
-+	if (!pcie_aer_is_native(dev))
-+		return false;
-+
-+	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &reg16);
-+	return !!(reg16 & PCI_EXP_AER_FLAGS);
-+}
-+
- static int pci_enable_pcie_error_reporting(struct pci_dev *dev)
- {
- 	int rc;
-diff --git a/include/linux/aer.h b/include/linux/aer.h
-index 947b63091902..68ae5378256e 100644
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@ -48,12 +48,14 @@ struct aer_capability_regs {
- #if defined(CONFIG_PCIEAER)
- int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
- int pcie_aer_is_native(struct pci_dev *dev);
-+bool pci_aer_in_progress(struct pci_dev *dev);
- #else
- static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
- {
- 	return -EINVAL;
- }
- static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
-+static inline bool pci_aer_in_progress(struct pci_dev *dev) { return false; }
- #endif
- 
- void pci_print_aer(struct pci_dev *dev, int aer_severity,
--- 
-2.34.1
+>> +}
+>> +
+>> +static int mtk_hdmi_v2_audio_mute(struct device *dev, void *data, bool enable, int dir)
+>> +{
+>> +	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
+>> +
+>> +	mtk_hdmi_v2_hw_aud_mute(hdmi, enable);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct hdmi_codec_ops mtk_hdmi_v2_audio_codec_ops = {
+>> +	.hw_params = mtk_hdmi_v2_audio_hw_params,
+>> +	.audio_startup = mtk_hdmi_v2_audio_startup,
+>> +	.audio_shutdown = mtk_hdmi_v2_audio_shutdown,
+>> +	.mute_stream = mtk_hdmi_v2_audio_mute,
+>> +	.get_eld = mtk_hdmi_audio_get_eld,
+>> +	.hook_plugged_cb = mtk_hdmi_v2_audio_hook_plugged_cb,
+>> +};
+> 
+> Do you plan to switch to the OP_HDMI_AUDIO? I'd really like to see
+> bridges use the framework instead of implementing everthing on their
+> own.
+> 
+
+I do, but since I've already reached v9, I really don't want to do that right now
+and delay this driver for another two months.
+
+I plan to do the switch after we at least get this in: as the V1 driver would also
+need the same cleanup, I may even find a way to throw more stuff in the hdmi_common
+when cleaning up both at the same time.
+
+Cheers,
+Angelo
+
 
 
