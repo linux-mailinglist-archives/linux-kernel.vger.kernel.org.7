@@ -1,202 +1,183 @@
-Return-Path: <linux-kernel+bounces-614159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F98A966E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:05:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4CBA966EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C443BD60A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E9B189D795
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93CB279321;
-	Tue, 22 Apr 2025 11:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9CD2749E6;
+	Tue, 22 Apr 2025 11:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p9dzKfqm"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OS/anh0v"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CD7277816
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B25C25D206;
+	Tue, 22 Apr 2025 11:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319865; cv=none; b=aETNKhbJV4i7YB+0dGXSs5nWtfblVljhBQE+N9TKT1evM00zudmxUg1L21EiONTFLcbQKMl+PPLS9h9wLsoEaKeSRV5QY2+Vo/vgWNx1kGOlg8JiydHWhrrRQ1Hzdnff9cqZe0uKOe/ENWwbAftyA1sv/1uxcWjbJfk4kH8y8kA=
+	t=1745320033; cv=none; b=NnQ5urrgwAiSQSGHlMBrDENTh8K6vws2JQKGjlgTYWy5dBc9F2cZm333TOdMln2jC/9GExqKf/GiVB2PhhHa4u4jnI4HCi4jKWVReI1sgu+AH8bRI0HQKR8Ghzj2ddnzkxqFRdQjPJP7xW+BL9JbalYbSweAhMcZRGd+jph+KiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319865; c=relaxed/simple;
-	bh=khrIOuPNydaoE0R69LRaxeUdmtv0GT+QtuOLskCJVgA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jnY+ka8In9E3AAFudi45B9IkG3SPBE8f+1DaFG5KSP2UBiGhlPV4A/N2z1Juy/jxvGjTY731t1QaMXoiSKzISlqbiPpVzOG2S7gBwSQpDG1XLuUUeRkl7w/p+oEM+tSNA48TJN0vqe849tjaVb5xkJGsCqHqi6ioCOKEAiPlMp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p9dzKfqm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so37178275e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745319861; x=1745924661; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ci38G1RmPeuAoUiNuhDTBFPaBQP/k30oBtFbdnT3L54=;
-        b=p9dzKfqmx7Eux9glMhReTxMCtnPQN4hKKGTPMg5dHsN0ZpERmTj3k/0+qjnAh8PN5B
-         /Cgm1dAMOK40RETNMH3GY5a3tgj49Hid0NAAdB4VLbSKS+0ux19jhGFkXEOJ7IMPKBwN
-         rTj6Nte3dg6wZn4XVFe7/lHl5Zkq8b2sSSfTRYu5q11i0Z9iyL1SRxTSykrnnRrVw3up
-         JaI0t9D78dQQ3nizhLA25BcJ+MugbKLLxpsMh/mc+XcMX5WrN5d5Z9nrhw8B0H61objR
-         CtRB1K/IBeNKXIiYcxh9KkmexIEb6jhKW2Ghdq2XJ+OYBkNhZdEIBKEYYih4DTpLOAtf
-         Pa6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745319861; x=1745924661;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ci38G1RmPeuAoUiNuhDTBFPaBQP/k30oBtFbdnT3L54=;
-        b=o+JCh+0N6/JKCQciqXpZTHUTMElWIwxx/9AxhrqfM5L/AggQdk3400acempJ98jZDy
-         F+qq36FpVdnrioHSR/WF39efe03f1OLwIPnApnda959wT96W6+f3FYeuLDnzT2tIyWPi
-         PmZpZlQBsn+WNUzVnpypCP+u8SJQ4GvKPLLlWejhslaKVX0M99y44WtYGQM1O8swDb12
-         ZteyvY4roRzFcllmgaXO1s0ME2aC1ES1hakkDJlNiy3L7jZ5I+yisB3ouzoQmFSG+RZH
-         WEKDWMEB7uv28fRNAgI2vLi+ljYTEYmPE+iTIZJBwfhytlTIluQb1GC1Xij0HQvuuIIK
-         mXkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOJoc6tQWIhVz1s05I6XM20ir+7nOdQ9a93Y0yGotTrECELw96mCJL/8m2EHOo80yJc0SBQbJzFwv7290=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcLvVuv1hIIBakpf//5rmfU8Nu9BoSg3pM+Z5XzlISKIjultqX
-	99DVbB+TYItmDkAvFeXfXDX6W2IEA+ujbEMm6caYDsm9/NnTeFH9Sze5KG8zen8=
-X-Gm-Gg: ASbGncs5X0pOqraI2fedPPasTK7GAKwT/RCWEazLmfou4qZU+fYlGKnPtmb7yO3f1uT
-	f25o7Goy8ahxwBStVvPGBtuukHb74mMF7dQAE5SyXebQu1BW4bE7OxdXebGEBrwDLTCtpfw/Zzo
-	P7+7+Za0DQC248U9LOimwSZ8xl0VFzY4JlrCv9W2Zlf1Vw+PBxpQh+Dcb+0oWWDT/XkpMHR9/Cu
-	gjD7Q+GRABP6UlLmc/a11oe1JbufiQo96Jm3Rs40InJUiiUm9S9Xws6zwSTSO4AAPkQ9AlE7UN/
-	iNEaMWDQG0Gb/MPTzeRUFH3eTh4ziJb9ObT9lD4sqN519raolRtTrG/lbA1W/w7rDg==
-X-Google-Smtp-Source: AGHT+IGckcdlnWQqBL6qiNxjnkHkWJyUfuh1CJ+EyBVjThrN7w/33qBUkDxftZXEgQa6I55NFkVdlQ==
-X-Received: by 2002:a05:600c:384f:b0:440:59eb:bfc with SMTP id 5b1f17b1804b1-4406abf94bamr115861735e9.23.1745319861045;
-        Tue, 22 Apr 2025 04:04:21 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:8847:e39a:2a2f:e614])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5acddfsm169609725e9.15.2025.04.22.04.04.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:04:20 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 22 Apr 2025 13:03:53 +0200
-Subject: [PATCH v2 6/6] arm64: dts: qcom: msm8939: Drop generic UART
- pinctrl templates
+	s=arc-20240116; t=1745320033; c=relaxed/simple;
+	bh=Z1lx0c1DKy5mQNqT6KE2lwDMPc9LmjPkKs+Fx0auDmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dzIJBgSANIrbiOzNBi9zor5QrmRNG2dbvFhHclwF8kDZpzvvbo9ozRwKVskU6+LjcUWzeueei+1BuCk3Zi9pxS8MiSOs4923RfM1aIrd7f/fZUZqS/HdJsvbv1zJAm9djN5+pOHCw0FnPh3QT3MTs/jZ++3GskYsfQbaZ3UZgEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OS/anh0v; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M9v2w5029634;
+	Tue, 22 Apr 2025 11:07:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ftmgQ0hy9b7VESd2ry5NzRU/B9QR7Vu65vxMfgkf2
+	OY=; b=OS/anh0v28e0iapPC/tKfGDzurfmFWzR1mMbMAakR3flo2gL84nx7+aXP
+	P1LjxG4tWyLn9UgQghMza5mi+TlN5gof2f7AZqNcg08aKHLQkvRZZf/i69Z+DRkq
+	vzDqCXDBf+WjN7peW2vYftBPdyV8dV5cNGubS4Mg8M5TVgPd+D2Nzl/SroV1JH/3
+	jD5wxjbezeQDeaR2/cPXqztnnC22huwvFuE6Lg8OZDzcBapIWhF9/z0Rs5KWnR6L
+	IPXQ9KFFNmnK8P9gHWZn56bfagwm6uUmulZpg0DpR4EMYwDG3VeWRIwJkkuJUNLg
+	xdrLV5jO/ScFUP/Z3XPo644N9yxHA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 465x5vtt0a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 11:07:07 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53MB3frp025550;
+	Tue, 22 Apr 2025 11:07:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 465x5vtt09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 11:07:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53M8K6jW001570;
+	Tue, 22 Apr 2025 11:07:05 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 464rck2afm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 11:07:05 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53MB72FC48955752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 11:07:02 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EFCD620124;
+	Tue, 22 Apr 2025 11:07:01 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 97B6F20123;
+	Tue, 22 Apr 2025 11:07:01 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 22 Apr 2025 11:07:01 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        ctshao@google.com, irogers@google.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PING PATCH v3] perf test: Allow tolerance for leader sampling test
+Date: Tue, 22 Apr 2025 13:06:43 +0200
+Message-ID: <20250422110643.2900090-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-msm8916-console-pinctrl-v2-6-f345b7a53c91@linaro.org>
-References: <20250422-msm8916-console-pinctrl-v2-0-f345b7a53c91@linaro.org>
-In-Reply-To: <20250422-msm8916-console-pinctrl-v2-0-f345b7a53c91@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sam Day <me@samcday.com>, Casey Connolly <casey.connolly@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HnSEsrNbpl65pvRThV3W7zNSA0vwaceM
+X-Proofpoint-ORIG-GUID: gfZKAm9cgJbFRHPMC8ixQsR2CaIDLRBL
+X-Authority-Analysis: v=2.4 cv=CuO/cm4D c=1 sm=1 tr=0 ts=6807785b cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8 a=C54mTPxxYbvSgDT82gwA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_05,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=927
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504220083
 
-Remove the generic UART pinctrl templates from msm8939.dtsi and copy the
-definition for the custom UART use cases into the board DT files. This
-makes it clear that the set of pins/pull etc are specific to the board and
-UART use case.
+V3: Added check for missing samples as suggested by Chun-Tse.
+V2: Changed bc invocation to return 0 on success and 1 on error.
 
-No functional change.
+There is a known issue that the leader sampling is inconsistent, since
+throttle only affect leader, not the slave. The detail is in [1]. To
+maintain test coverage, this patch sets a tolerance rate of 80% to
+accommodate the throttled samples and prevent test failures due to
+throttling.
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+[1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
+
+Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+Suggested-by: Ian Rogers <irogers@google.com>
+Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 ---
- arch/arm64/boot/dts/qcom/apq8039-t2.dts | 22 ++++++++++++++--------
- arch/arm64/boot/dts/qcom/msm8939.dtsi   | 23 +----------------------
- 2 files changed, 15 insertions(+), 30 deletions(-)
+ tools/perf/tests/shell/record.sh | 33 ++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8039-t2.dts b/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-index 4aa0ad19bc0f7fde6f5f3a93cdb6be19fb4f1f65..38c281f0fe65ccfc49de70eaef2a970323ecebc8 100644
---- a/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-@@ -122,14 +122,6 @@ &blsp_uart1 {
- 	status = "okay";
- };
+diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+index ba8d873d3ca7..0075ffe783ad 100755
+--- a/tools/perf/tests/shell/record.sh
++++ b/tools/perf/tests/shell/record.sh
+@@ -238,22 +238,43 @@ test_leader_sampling() {
+     err=1
+     return
+   fi
++  perf script -i "${perfdata}" | grep brstack > $script_output
++  # Check if the two instruction counts are equal in each record.
++  # However, the throttling code doesn't consider event grouping. During throttling, only the
++  # leader is stopped, causing the slave's counts significantly higher. To temporarily solve this,
++  # let's set the tolerance rate to 80%.
++  # TODO: Revert the code for tolerance once the throttling mechanism is fixed.
+   index=0
+-  perf script -i "${perfdata}" > $script_output
++  valid_counts=0
++  invalid_counts=0
++  tolerance_rate=0.8
+   while IFS= read -r line
+   do
+-    # Check if the two instruction counts are equal in each record
+     cycles=$(echo $line | awk '{for(i=1;i<=NF;i++) if($i=="cycles:") print $(i-1)}')
+     if [ $(($index%2)) -ne 0 ] && [ ${cycles}x != ${prev_cycles}x ]
+     then
+-      echo "Leader sampling [Failed inconsistent cycles count]"
+-      err=1
+-      return
++      invalid_counts=$(($invalid_counts+1))
++    else
++      valid_counts=$(($valid_counts+1))
+     fi
+     index=$(($index+1))
+     prev_cycles=$cycles
+   done < $script_output
+-  echo "Basic leader sampling test [Success]"
++  total_counts=$(bc <<< "$invalid_counts+$valid_counts")
++  if (( $(bc <<< "$total_counts <= 0") ))
++  then
++    echo "Leader sampling [No sample generated]"
++    err=1
++    return
++  fi
++  isok=$(bc <<< "scale=2; if (($invalid_counts/$total_counts) < (1-$tolerance_rate)) { 0 } else { 1 };")
++  if [ $isok -eq 1 ]
++  then
++     echo "Leader sampling [Failed inconsistent cycles count]"
++     err=1
++  else
++    echo "Basic leader sampling test [Success]"
++  fi
+ }
  
--&blsp_uart1_default {
--	pins = "gpio0", "gpio1";
--};
--
--&blsp_uart1_sleep {
--	pins = "gpio0", "gpio1";
--};
--
- &blsp_uart2 {
- 	pinctrl-0 = <&blsp_uart2_console_default>;
- 	pinctrl-1 = <&blsp_uart2_console_sleep>;
-@@ -329,6 +321,20 @@ &tlmm {
- 		"USBC_GPIO7_1V8",	/* GPIO_120 */
- 		"NC";
- 
-+	blsp_uart1_default: blsp-uart1-default-state {
-+		pins = "gpio0", "gpio1";
-+		function = "blsp_uart1";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
-+	blsp_uart1_sleep: blsp-uart1-sleep-state {
-+		pins = "gpio0", "gpio1";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
- 	pinctrl_backlight: backlight-state {
- 		pins = "gpio98";
- 		function = "gpio";
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index 52a99aea210e04f04f3d25696ecd6b9c604c743a..68b92fdb996c26e7a1aadedf0f52e1afca85c4ab 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -905,20 +905,6 @@ blsp_spi6_sleep: blsp-spi6-sleep-state {
- 				bias-pull-down;
- 			};
- 
--			blsp_uart1_default: blsp-uart1-default-state {
--				pins = "gpio0", "gpio1", "gpio2", "gpio3";
--				function = "blsp_uart1";
--				drive-strength = <16>;
--				bias-disable;
--			};
--
--			blsp_uart1_sleep: blsp-uart1-sleep-state {
--				pins = "gpio0", "gpio1", "gpio2", "gpio3";
--				function = "gpio";
--				drive-strength = <2>;
--				bias-pull-down;
--			};
--
- 			blsp_uart1_console_default: blsp-uart1-console-default-state {
- 				tx-pins {
- 					pins = "gpio0";
-@@ -944,13 +930,6 @@ blsp_uart1_console_sleep: blsp-uart1-console-sleep-state {
- 				bias-pull-down;
- 			};
- 
--			blsp_uart2_default: blsp-uart2-default-state {
--				pins = "gpio4", "gpio5";
--				function = "blsp_uart2";
--				drive-strength = <16>;
--				bias-disable;
--			};
--
- 			blsp_uart2_console_default: blsp-uart2-console-default-state {
- 				tx-pins {
- 					pins = "gpio4";
-@@ -969,7 +948,7 @@ rx-pins {
- 				};
- 			};
- 
--			blsp_uart2_sleep: blsp_uart2_console_sleep: blsp-uart2-sleep-state {
-+			blsp_uart2_console_sleep: blsp-uart2-console-sleep-state {
- 				pins = "gpio4", "gpio5";
- 				function = "gpio";
- 				drive-strength = <2>;
-
+ test_topdown_leader_sampling() {
 -- 
-2.47.2
+2.49.0
 
 
