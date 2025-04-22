@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-614444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EA1A96CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24E9A96CBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6098E17EA26
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF9A19E213F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4766E28EA41;
-	Tue, 22 Apr 2025 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68B528F522;
+	Tue, 22 Apr 2025 13:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="yFWNV9qO"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOC4FzDV"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E077928D820;
-	Tue, 22 Apr 2025 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E09228D85C;
+	Tue, 22 Apr 2025 13:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328305; cv=none; b=Rldw9jIMGvKTx1uJDI/Mu0CsDd7wv9oqWVQ6nACnqOn1Tt3+aUvDQvpPmSZB6JLK+sNt/a/5IEm88V/nZ1JYH7cfI7hHTicahQ6DXxNshR++ccY28x+lfETWLcZo5usHrThOhMkLRie9uhoc1qn/VbOqfLOmr9joOMHwR/t/R/0=
+	t=1745328307; cv=none; b=dcJn5kUXg+vpfBQvqBNQdvVjOXJB/V0HrYD4i269RT0/yemDHVUfcEeQMB+9ySINPEvd7OknSKtByMDXUOkA56yy6YI+E2uEQUNq3srsuaTmANWl8sxRTc5ZfD4TxJJMSnH5jwpgZdPosodXvqJW2dRxtudGPMlCqwL8LCQo3Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328305; c=relaxed/simple;
-	bh=21eAx4qdovnFQdUocuHwoDbkCn3gioL4y3Mbe12E8Gg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NCnVE/alwYbS5AvovwblVDyM/MQYFyMtWO58NtUyM0kv4yRMhIUNbMlVopvtH/thSofuCMDscGrBia3b7VUKbn5MaJOrT0Opd99gskcRqTHHFjD9h6tRGeFSK75BXok71BBfDIEdTw7L4GUXjvhIbIHch7NmdtqKEcNZe+0D2ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=yFWNV9qO; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout3.routing.net (Postfix) with ESMTP id E85A661561;
-	Tue, 22 Apr 2025 13:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1745328297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lAaZA5qK/vVGDqno3S4/pNWQHPXmaevDq5rdyc2qK0A=;
-	b=yFWNV9qOzdoT1XGn0n3XyUIxew8wXFVlrFYhQQVNxnGDgCHGh7EFeF6eV2R0U+rILyQ9Oq
-	6ijwGR1h6xvjGIWgOpw1gvnYM3L9vLwD9Va5AIaCZ58c1NvZhF0e7ul08r5s+6VoetfqL8
-	oT9E8q76HEy7ZvKEB4Zfc/gaoDTiln8=
-Received: from frank-u24.. (fttx-pool-217.61.156.53.bambit.de [217.61.156.53])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 21BE4812E1;
-	Tue, 22 Apr 2025 13:24:56 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	s=arc-20240116; t=1745328307; c=relaxed/simple;
+	bh=ga8X5MpO90NXnqVjZrc/v7Kv/s4aTzdKG3Py9IZtumk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPGY3VIaXHmm5FkQ9PyAAG1oLY+eBufUuGao3HOGpT+e6GIZVS50ps3E1OaIVthv5NQe1pMvIIFbIq3CbAQ6psqsewRI/gqaRhbjKlF4/UgLc6t1qjXsJHnV1+jQMXrjLBM7sNCwBeNtyBd4HDCsk5NmudsZxLKHDNzDfsHJ8Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOC4FzDV; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3035858c687so3715131a91.2;
+        Tue, 22 Apr 2025 06:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745328304; x=1745933104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SkZ4rO5WVQ0vh3cTgpi71ZrF/ZuXKtOK6zU8kW9B0HQ=;
+        b=DOC4FzDVxxbMi6nd4r4PP5WAxWB5TDTLxfnobBSfg+U/OVrJFxp7fFTH45M/RQZAQX
+         zjjeti5hsa7H6rqVVW7mUkrBoi/Xpujjh1CU57IYZ2iRxihEudYW53TyPwoWJv9tj9vA
+         73NImX/dgskTXAXg3gPA6EkBKlVJt20/gNXseok0WJNK1K/Pq+w5Z0fwhbj8aTQaUQLd
+         V3hdnZqCLderWOvjM/ana0ukeL7FV/U6n4RY/Xj1dvSIpBdoj1HJZ5jMcfg/1oUDHF2s
+         Sy4Uy4S0MRdXVPWdOA4UEl+aDNv0pAt/Ytk8++LprOT+a7wY5Kz7/qQrKewVkqWjjZec
+         P/KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745328304; x=1745933104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SkZ4rO5WVQ0vh3cTgpi71ZrF/ZuXKtOK6zU8kW9B0HQ=;
+        b=oMaACGoavn9k/frrvITfgQNS3rapUF22DY+qwgWsnuLvnrlA1HhPulMZvBNvYiy094
+         6PqbQEN4TJD0eezMl2XHJJ/jTCqbteMuZu1ednjjMkJOPYvbEnzSYTsGMMCR9JAZknwb
+         Cj1McrU8q1cEY83qDapWRGW31fHfZD++09LWNxdscjwB4yIPOkRR8Ifr/z1nTyIjsm2y
+         szH5tPmc5tYo3kCem5xZtlaDIUxt1B0rWd5at0Wo295wtT/+O0ud+p4GJD1Y2gtR/9um
+         Hlf+/UAWBXk0VfaTcxOs98cXumJHh0cBRuFgdihEgE5ao9wjhzC35QXeUAABdMZKTdZg
+         uPcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNJkeEooBT/s8gZ6k6qumNl9ibp7pr6N0ioFi71DYllttY5uiaCO0BMqBfh52jbb0BHDa77+1jd1pZ@vger.kernel.org, AJvYcCUW25jzrq4TLr1JH8jjxlOgavKVqHpQNp2Ypsztxvt2UqYeKvkWKZCC92o6bcwst+IkcGat80LumJhrAtSi@vger.kernel.org, AJvYcCVmBZ8eAKif4g2aERPADKiZsAumUMAPyLllC2DsiaeXInkKx6ZK49j51Bdj/J+yXtaMcUGc28A+t4mQO7E=@vger.kernel.org, AJvYcCX9gtTRdyopJ+qyP3g5O/AYmarW1eJF5Bvo+GUMa/vqOailJwGGq9VgxaHLRtV9A9h+76EIeGUKI0wC@vger.kernel.org, AJvYcCXnWRVcHQnRPBz1FJ3R/8ZMS8/fcxh+mhEu92NfkOLsaPoXpZlk9kVaS0fBS2BhrZmEA0bEb9TpUeRs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfY7izmwqrI5jwK8Yx6hkYGAiWIzbRV9NG5yhkIKOLNkvk4OgY
+	5qnZsp8MJZXYB2uPy6WPhcGr2c8888hr98AfMzZpOlsujbE7zTT+
+X-Gm-Gg: ASbGncsiLFFDgUevkIk264gmhTTSambe1GtYFPH0fGrgWYwZaHnGgeIhPXWKhhqwzfz
+	+aev/IzvI+lmogbjONytmBSYLDqDKqWjSle75IgEkyvMA7mlcQnueW2dEDToYwfWGBKs/4NAyt8
+	cRJn95/fi5EWEZ45R8ssdfQcB1JPZRKgVnrPZqftq1YKe/2pLwlX31YXohHgmhBVkkL2fYUru4O
+	bC6Ed0ItZBwz6MQ+u6g1O2cBeQP6q35Lgq2PqK3/L48pI5txVZddr0sM2mP0rt7Iw1zxby8RiRR
+	CLQDibTpwsQv4ru2UI1zig08kpJ1TyG3xzzO6zgiyuexsqVy8auHvQ==
+X-Google-Smtp-Source: AGHT+IHl9x3YDvC9BAgkQoInW+kirFFJHYTa2Lq+KqUMV9d2addKDpazyS2yMd1fkHCYsTlQY7AGVQ==
+X-Received: by 2002:a17:90b:5830:b0:2ee:7c65:ae8e with SMTP id 98e67ed59e1d1-3087bb49201mr23751437a91.11.1745328304379;
+        Tue, 22 Apr 2025 06:25:04 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087dee8997sm8604754a91.9.2025.04.22.06.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 06:25:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 22 Apr 2025 06:25:02 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Sean Wang <sean.wang@mediatek.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org
-Subject: [PATCH v4 8/8] arm64: dts: mediatek: mt7988a-bpi-r4: enable xsphy
-Date: Tue, 22 Apr 2025 15:24:31 +0200
-Message-ID: <20250422132438.15735-9-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250422132438.15735-1-linux@fw-web.de>
-References: <20250422132438.15735-1-linux@fw-web.de>
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: pmbus: add lt3074
+Message-ID: <2cfb4edd-6468-47e5-96c7-4c66b33b4fe2@roeck-us.net>
+References: <20250421-upstream-lt3074-v3-0-71636322f9fe@analog.com>
+ <20250421-upstream-lt3074-v3-1-71636322f9fe@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 0bf218eb-9965-4df4-aefb-1c24f469b40a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421-upstream-lt3074-v3-1-71636322f9fe@analog.com>
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Mon, Apr 21, 2025 at 08:18:18PM +0800, Cedric Encarnacion wrote:
+> Add Analog Devices LT3074 Ultralow Noise, High PSRR Dropout Linear
+> Regulator.
+> 
+> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Enable XS-Phy on Bananapi R4 for pcie2.
+Applied.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 4 ++++
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi                 | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-index 0d332822971d..37e541a98ee1 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-@@ -397,3 +397,7 @@ &tphy {
- &watchdog {
- 	status = "okay";
- };
-+
-+&xsphy {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index a59f8708f0ef..8f6d1dfae24a 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -560,7 +560,7 @@ topmisc: system-controller@11d10084 {
- 			reg = <0 0x11d10084 0 0xff80>;
- 		};
- 
--		xs-phy@11e10000 {
-+		xsphy: xs-phy@11e10000 {
- 			compatible = "mediatek,mt7988-xsphy",
- 				     "mediatek,xsphy";
- 			#address-cells = <2>;
--- 
-2.43.0
-
+Thanks,
+Guenter
 
