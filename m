@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-614152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C2BA966D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDB9A966CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 870FB7A4BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6A817E20C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7C3274FFC;
-	Tue, 22 Apr 2025 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76112276029;
+	Tue, 22 Apr 2025 11:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wvdVwnhq"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J2bfkD7X";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eDk8UKnP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J2bfkD7X";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eDk8UKnP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924B527511F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D61C27584E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319824; cv=none; b=hyIJl/Q5xWEQ3fIf3gVyuCg5cu2Yhj3dLCiJPBOPThbt9D7EEmv40zH1l784VcNV6o3RMmPT/dimJvllcDME38xnIPXtyTVRhdrA60A6Sy+Q58eyffojwObBnNxrhiB8Hl6C0f0Wqy2gf0cS9beoXxrCjnm9c0Yxd/Rw5pf8zNI=
+	t=1745319809; cv=none; b=m8wHbm/hQHqZEwAeCDVcr4bl+NGmEGQ6Uf6gQ7Ifx7mL3pRzKrlz8BmJEwAtKGOhl70tOtu4V9XTbzu9SvkAHdfIy6VTSoJDoGYLNAm9byzZvr1qrBYTPPm3mB5Wjm4bAupf0fdCg1ThdpKeNOTLgEFO5wU1tCnbrU6Jw/VELKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319824; c=relaxed/simple;
-	bh=huaRCgTVnoU4ujqM6yRWiZZZluuDLRVVHL6ECRdplqs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jSYV7OcG5+UYuolyYqIa27TF1aGt2f/0WxSNYl3utyFG8i6BQwTCz5jYVe9L1D3/PikbNq98LUus0DBS/Y+e4Rrlkw57ZuWtL7+mJTy16RpvzDoynNbobFkdhw1FImYP31DZqSAd6YhJBRyPh4o8wYGfDUT/ijAQBamWwX4IOg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wvdVwnhq; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso519784266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745319821; x=1745924621; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hPR5KSp4R+lImMTEyIVXZliHdY6c2d0H/1+T0vAPSew=;
-        b=wvdVwnhqIAH50n8DitYGfa11jqjXHOkeY6WSqsaCvD0iYzIxlPs+fc+2HgJfGT1f3Q
-         HDInH5nVrB1VWjUd1J31sbMzFGKr03ZJo9SnMUIMftSRFzotTVT2jJb+OpswmgSGrtm2
-         Xg1hEJH+M6NPUH4GuEEmELV0FjMjoq7ZGeCD6p/J46VquDb9qbe2U2KxvWJEW+11fZG8
-         wkq1yC96nHwOTfLl/GzDrLxpE/QMKbsziRArpTFxg777hq5cJcGd7Eu8CELAMiX1xdYv
-         CwIkFQIlIS8+69+roQbtRfofl6sA7K7er6PWMStykNaU5QPz2IDzUGiHTPaCYNVL1rRQ
-         2tsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745319821; x=1745924621;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hPR5KSp4R+lImMTEyIVXZliHdY6c2d0H/1+T0vAPSew=;
-        b=tAVNeLbGUbqUnunCTf5zAlKkF3gqx/Nbs2BxaRt6Xp5rw4NVUUJOpd3fMGH1QMTMfb
-         yLcHz1R29EGbV9yZDWM20LRVNWofDQDWTNZyWQ/fksaYc7Fb6L6B9y1oJybn6VOr/RbX
-         KDNE1xpGnM15ifwRCeIPxJ8H/xVRv4UpLyzZpvDz3ap3qbpX8WSlmkW3y0twX1ceM46U
-         0vRD/s3SI7CefzgQtW2VYsO8uZLJ6vQ1WoSS79OR6knJWHEJxY3OufbS8bXl+97qaxSW
-         uGToQMiZxnM3ZjuWJp7PeklvUINqdPB4j5DfCg2+LByJ6EAMd8uG6o5PiGHf8KiuzHx9
-         6D6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxSEnDG/6btXwcQskUs6TQniFSdyTzZG9F+DFmXTstR5UCZtcRk3Iph0g9UDwGACbaT2Xc/0Y2oJC9qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUQSP0R/vH5nYnsxSX1T4YJYQYIgb54aLZslhs+mYyXGEc0vmR
-	C033GC2zasDSoiht+5BADPL0ubu7p69miOKTeurrxTB2RMJwEcgnASlQ9XjfF9g=
-X-Gm-Gg: ASbGncuCQj5C0rR/STFUSphEso2GY/DPdlr/zkxiuagm9Z6a6gal8Vp41Lx2VYGJBA/
-	rEMI9pAEt2fbam3F3S4aOFKpEVF6f3Lr21k1FoOiB3YJ01MejEd9hIaXUon6ZTzgFYSjpKQRi/d
-	wkzQQoEGLkEkDk7VtQk5eRhKOyI6MSnwpbCMic40E2QbFs2YiDYujj7oBHVPWLmzcDlvnCDJyPR
-	nr48wa+s2yFZraK7NNG4gks5dqqT74g0jp6ihgRROrvlsnceXohdpxLuNP7TDF6JNE846Tr3Qvi
-	SVZ6ka5Neh4h9wmMnDfIGws47oHT3S01l1lr57k=
-X-Google-Smtp-Source: AGHT+IHyR8xd5cZJWHsTUNdku8nt1qwWkdqsAnZ5XMN2nR7jFivttenunL1Z4EoJjDpq0m8Ab7J8BQ==
-X-Received: by 2002:a17:907:7b96:b0:abf:742e:1fd7 with SMTP id a640c23a62f3a-acb74dd80c8mr1391000066b.57.1745319820709;
-        Tue, 22 Apr 2025 04:03:40 -0700 (PDT)
-Received: from [127.0.1.1] ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6efadd16sm653085466b.172.2025.04.22.04.03.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:03:39 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 22 Apr 2025 14:03:16 +0300
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Fix PCIe 3rd controller DBI
- size
+	s=arc-20240116; t=1745319809; c=relaxed/simple;
+	bh=L9+c7UWOT4Qooe0Q5bfz3uwjiRUc2T0IrSL+flPYxbE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNv32vRCM6uQJ/uG5Uk0owupDW1rthdt/i/tNj0wtX9HKZUFKLrHef6PuDQzJc7guntKZ6NXDFZMvHNPZb/iCsvwJff5yLwJBifb8ifv8bHbu2ZYyyTiFvkH+Ccw9nKx4S2D27mimXspwp61pknTRo/DQEr63QPZKT3SuyxrU/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J2bfkD7X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eDk8UKnP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J2bfkD7X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eDk8UKnP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E1401F45A;
+	Tue, 22 Apr 2025 11:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745319805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO8ovA6YB8cUVoCUkIr56veXc8hllTBjm8bbQin2qQE=;
+	b=J2bfkD7XAT470oXTN0fcdBLQy1AoMWnkcpNuKDkv6B5cj04oLYQT7GJHh4d0cx6iOOh41u
+	IpFIQoT0ZI55utAMlMcUk+ODFYiw7wQmjZSQWZRknflOiHGDVdSXKUIaut3pKUvNBlJCQD
+	8Hdn1y8rDfKSixxNAb7Gqn9h+qYWmlI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745319805;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO8ovA6YB8cUVoCUkIr56veXc8hllTBjm8bbQin2qQE=;
+	b=eDk8UKnPh8Psd4q1wzG9+nBnT6GWypxHPTmVs+r9Wflwvv6KxkmwncfoPUKy6noA3jlP6F
+	lJfRE+A91+1s3ZCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745319805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO8ovA6YB8cUVoCUkIr56veXc8hllTBjm8bbQin2qQE=;
+	b=J2bfkD7XAT470oXTN0fcdBLQy1AoMWnkcpNuKDkv6B5cj04oLYQT7GJHh4d0cx6iOOh41u
+	IpFIQoT0ZI55utAMlMcUk+ODFYiw7wQmjZSQWZRknflOiHGDVdSXKUIaut3pKUvNBlJCQD
+	8Hdn1y8rDfKSixxNAb7Gqn9h+qYWmlI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745319805;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO8ovA6YB8cUVoCUkIr56veXc8hllTBjm8bbQin2qQE=;
+	b=eDk8UKnPh8Psd4q1wzG9+nBnT6GWypxHPTmVs+r9Wflwvv6KxkmwncfoPUKy6noA3jlP6F
+	lJfRE+A91+1s3ZCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FB92137CF;
+	Tue, 22 Apr 2025 11:03:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yyM7En13B2juAwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 22 Apr 2025 11:03:25 +0000
+Date: Tue, 22 Apr 2025 13:03:24 +0200
+Message-ID: <8734e0tq4j.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Hillf Danton <hdanton@sina.com>
+Cc: alsa-devel@alsa-project.org,
+	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/9] ALSA: usb-audio: Fix possible race at sync of urb completions
+In-Reply-To: <20250422102933.4239-1-hdanton@sina.com>
+References: <20210929080844.11583-1-tiwai@suse.de>
+	<20210929080844.11583-3-tiwai@suse.de>
+	<20250418103533.4078-1-hdanton@sina.com>
+	<87a58dvia7.wl-tiwai@suse.de>
+	<20250418144518.4097-1-hdanton@sina.com>
+	<875xj0ve49.wl-tiwai@suse.de>
+	<20250419080410.4148-1-hdanton@sina.com>
+	<871ptnuvad.wl-tiwai@suse.de>
+	<87mscat1tq.wl-tiwai@suse.de>
+	<20250421104343.4197-1-hdanton@sina.com>
+	<878qnttwcx.wl-tiwai@suse.de>
+	<20250421233900.4221-1-hdanton@sina.com>
+	<875xiwu18n.wl-tiwai@suse.de>
+	<20250422102933.4239-1-hdanton@sina.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-x1e80100-dts-fix-pcie3-dbi-size-v1-1-c197701fd7e4@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHN3B2gC/x2NSwqFMAwAryJZv0BSP4hXkbeobdRsVBoRUby7x
- eXAMHODSVIx6Iobkhxqui4Z+FdAmP0yCWrMDI5cTZVzeLK0xEQYd8NRT9yCSolxUDS9BOtmDMz
- kfdlEyJUtSba+Q/9/nheHQUqGcQAAAA==
-X-Change-ID: 20250422-x1e80100-dts-fix-pcie3-dbi-size-56fc110aa36d
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1161; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=huaRCgTVnoU4ujqM6yRWiZZZluuDLRVVHL6ECRdplqs=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBoB3eFYQA6McFojm6TYHFp6Ic5jRHrXj/gA1xhF
- pfaTBGh8RWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaAd3hQAKCRAbX0TJAJUV
- VizBD/kBAO13UvafFHuA3rOP4JUWc4uMmYjD+jqLpWQcZbcApHDYnb24+PkReRkMPaPu5IUAzX0
- DTpoBjqQkiYL0G78akN9YE1rD7/mZSjV2AcNUhPiKfDxMaiYx1EO5ieL3pwuS8VMmSE/5hLx5Wo
- 9jleY363mhEiJw4vIj/B5f8Lh5qA6gvvE8sUgbUiI+QQzAHCdJioAjX+RL73pbLIRMtcLQH5XLb
- 1Mc+8KpOgBsYgRsM/kPTtEX85zw96blxV7acKRp62HoZmtIrpi9/1/UdiORV7IvDXx6DDoBk8OV
- 1/FXlFGvmwlTKjK0KMFRCgi/aIvpXXniZMoX6y+PVZwSf4VT9OJjK8juWx3uWjke64SBzLkATdr
- 9hdznYY+UOT1aINlOSV680ETpI8RqW1lYmylx7wGdKVESJ0WikLpTbGxtUSJ3Xjm6/EnNvmsToX
- fUyREDIONpOsY352SaEQ9ftKQLXeBVtXEFmH8LrPxumcNtTXbpXa0zdmwRivjYSBt5/xyGrVgPI
- c3uBcP0cAuwdp7UWjhT2dnmwM+pQhKo/fMZohSi6Wkzj8pyqFH8JdvdSE7Q4QhAOO/TEWChxvpp
- Hadh3jNo2NeFahuB2zCbhch+BW7A7Aw+vSjcIfPvMolJ94Bs1P8el4B6ex5lm8RPAjclMLXgn1D
- myFCohF9ZsUXLcg==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[sina.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[alsa-project.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-According to documentation, the DBI range size is 0xf20. So fix it.
+On Tue, 22 Apr 2025 12:29:31 +0200,
+Hillf Danton wrote:
+> 
+> On Tue, 22 Apr 2025 09:03:20 +0200 Takashi Iwai wrote:
+> > On Tue, 22 Apr 2025 01:38:59 +0200, Hillf Danton wrote:
+> > > On Mon, 21 Apr 2025 16:36:30 +0200 Takashi Iwai wrote:
+> > > > On Mon, 21 Apr 2025 12:43:42 +0200, Hillf Danton wrote:
+> > > > > I misread "Which reads and writes are you trying to solve?" though I
+> > > > > showed the read/write, but it is a bad case particulay with UAF.
+> > > > > 
+> > > > > Could you tell us what will happen if the race is not fixed? Could ep
+> > > > > be freed with in-flight urbs for example?
+> > > > 
+> > > > Before the patch, wait_clear_urbs() might return earlier than actually
+> > > > all pending eps are finished, so it can be UAF.
+> > > > 
+> > > Got it.
+> > > 
+> > > > > Is it still race if the wait loop in wait_clear_urbs() ends before the
+> > > > > urb complete callbace completes, given the last sentence in your commit
+> > > > > message? If nope, igore my noise please.
+> > > > 
+> > > > Well, your concern about the missing barrier -- that would
+> > > > wait_clear_urbs() missing the refcount decrement, hence it would be
+> > > > rather to make the return delayed.  So it shouldn't lead to further
+> > > > UAF, but at most it might lead to an unnecessary delay.
+> > > > 
+> > > > That said, I'm willing to take a fix even for a theoretical issue if
+> > > > it clarifies what it really fixes.  But scratching a random surface
+> > > > isn't what we want.
+> > > > 
+> > > Thank you for shedding light on the race, given
+> > > a) the mb in 26fbe9772b8c ("USB: core: Fix hang in usb_kill_urb by adding memory barriers")
+> > > b) the urb complete callback is invoked in giveback, see __usb_hcd_giveback_urb()
+> > > 
+> > > use the urb routines instead to close the race.
+> > 
+> > I'm afraid that it can break things as of this form; the stopped
+> > stream might be restarted without reinitializing URBs.  That is, this
+> > isn't called only from disconnect or close, but also just for stopping
+> > the stream in the middle, too.
+> > 
+> I'd like to test the change proposed locally, so please tippoint me to
+> the test programs that could trigger the break.
 
-Cc: stable@vger.kernel.org # 6.14
-Fixes: f8af195beeb0 ("arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, you need to follow the code logic.  The function isn't called
+only from release / disconnect, but also from the code pattern:
+ trigger(STOP) -> prepare -> sync_stop
+and the URBs aren't released / re-initialized in this case.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 46b79fce92c90d969e3de48bc88e27915d1592bb..34ccabc3cc302b17e944b4343a37fab0bb6334e9 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -3126,7 +3126,7 @@ pcie3: pcie@1bd0000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
- 			reg = <0x0 0x01bd0000 0x0 0x3000>,
--			      <0x0 0x78000000 0x0 0xf1d>,
-+			      <0x0 0x78000000 0x0 0xf20>,
- 			      <0x0 0x78000f40 0x0 0xa8>,
- 			      <0x0 0x78001000 0x0 0x1000>,
- 			      <0x0 0x78100000 0x0 0x100000>,
+For the problem you raised, I suppose it's better to stick with your
+first approach with the manual barriers.  But you'd need to describe
+exactly what it does and why it needed as a proper patch.
 
----
-base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
-change-id: 20250422-x1e80100-dts-fix-pcie3-dbi-size-56fc110aa36d
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+thanks,
 
+Takashi
 
