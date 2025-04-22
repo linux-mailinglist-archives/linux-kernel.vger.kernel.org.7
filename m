@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-613579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D420A95E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:42:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EE7A95E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF223B3263
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFD23AC309
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D889722F3AB;
-	Tue, 22 Apr 2025 06:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7FE22ACFA;
+	Tue, 22 Apr 2025 06:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uOsCyW+1"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JKqbUULz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cw3dfPuX"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2AB2192F5;
-	Tue, 22 Apr 2025 06:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B0A21764B;
+	Tue, 22 Apr 2025 06:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745304155; cv=none; b=D4v2b7jm70CLgxm+C9l3OkDm4qiYD+Yk1exgCTOjxKWH+0g3Ob6NOBLWTX0PITpVKrOQRSRugmlpPEH07Cmugr4nsBkqKI+GXGeWCxpp7SGn3/RH4/WShTgQMOydSj+b4f5/A0ftr9RqIdd2al61+vYzgHj4hmMQCO6jZ3/1a4M=
+	t=1745304076; cv=none; b=eHMrEZYhjBCka42RrOv8xVqVdRoDuT+6jfG2SBmOM8irvIG6+r/zdU1vp7I69SKIOPRYFcDdiP9pRV5ZA+BBENWwEh3D8iJi5bt9QqdEkZrxe5OK7nWAOJomXrUceqFbO5MQUHHTn/vwo/2m49/i7+7F2S2qif/UuxgWPMJ/4z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745304155; c=relaxed/simple;
-	bh=mZ0qEmUZS33nqxAV6p/zjgzzmHR9BzxnkRL/IcSJ9EA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aLAkiUYW/3Y34tCZWi8hU9d6Pe5w26CU2mTlQSx2jupXQgAMuTI7NEfWsr+q6vXXczOqsjJQBTLii2gBJtCgi8Oe6mfMlKcTCMejHSt8EkRq/oFpF6ntv5zZTRk8EL7v/mpL2J487gM/hqigarcJhJiJ2yDQCdzF0In4AtsR8uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uOsCyW+1; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LNPgGE019258;
-	Tue, 22 Apr 2025 08:42:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Xi+JitXGAmFnZDuGwAZkV7H6E509qk6CX9yji9WUBzc=; b=uOsCyW+1InSqYn2g
-	Cx/G5SxzaZIEV88d7LOotKXgI5Fr9o7T4X1BpTbu/e8JRVPUzT5If7A4GPdlY3LS
-	HtE48oiPu4j9pwjmUbLTvsGLAErTnmj1Dek3MxxAcPCB2h3cuxRh6d91mq5mWa9P
-	eFKarYQYFy6ZUyRgJRhS/5vx++fGeUVnhcxTkfsMmHHGgWmhtU+hK/7UuaHQx1+v
-	sWdZQOkgtAXyQEpShuDd96smn4WMmxW9CHRu9KrTYwr9oFC3dLIOuAdNQnq/cIza
-	uZb44K9YHDSls0b0VU9Wm6m0EApUkX9gvFGkSs+5oHWL3UFL2slk9kxlJxIB4Owe
-	yvwztA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 464psp670n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 08:42:08 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2D34740044;
-	Tue, 22 Apr 2025 08:41:08 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E3B918AD2F4;
-	Tue, 22 Apr 2025 08:39:47 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
- 2025 08:39:47 +0200
-Message-ID: <c875e526-c60b-4063-9a98-c344443fdc96@foss.st.com>
-Date: Tue, 22 Apr 2025 08:39:46 +0200
+	s=arc-20240116; t=1745304076; c=relaxed/simple;
+	bh=OfGeYaHrVhXXWga0ArJUhmZF3idRDOHEU5O41HkHdtw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ZKhXfpzAddWP4r88nIMFXnZ+wZ2VUmnjjxDt3m+bs3PAU/yBE6tvL27FI2f+I8SPmg4X4CrnQmv28MxjGVJi9PlAxFTsTRCWm852F6fJsi2jyDm6UceeXvVvA6kMYm3gBNC+UE+GhBi1+VWxLByrZPYevOTJKrqujjtHhM5t8gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JKqbUULz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cw3dfPuX; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 17DCA1140167;
+	Tue, 22 Apr 2025 02:41:13 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Tue, 22 Apr 2025 02:41:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1745304072;
+	 x=1745390472; bh=KJjeYMmw4d06MV7IdK+vWICO7Di3IWNxGYXSaL2nCRY=; b=
+	JKqbUULzw0Gp3cDK9VuC8oHKIQ/0KFMJZUwtYo1yxTzi2NgDSb9X1/17ZsJ84CKO
+	q8cTBCc7AG1kjJPuHpVkH9ZeKxMXYVnOiiGDBohLKNMeTrUp/u473JGbvuN8KH+s
+	0p+1npRGQqQkKOiz4+jAx4hUNmLCONPj40aDUyPrPs4FndSI9zpem/pEeCALgAKV
+	SAAstJsYbluDnT+KGDY4TVY46nQYy8sJi+TxqVG1+FM8Cz7WNdomUjg3tMEc3Vuf
+	GUUoJULp/KiQdrcQ0oGmCWZb9apa1iIw+KVADZrf1KO6YPyVnuoSOR628R3mWOaH
+	Uq4fh5fxGlQiWwCs8YJ5HA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745304072; x=
+	1745390472; bh=KJjeYMmw4d06MV7IdK+vWICO7Di3IWNxGYXSaL2nCRY=; b=c
+	w3dfPuX2DRg/kKszp+VcVKA7/gFyUMVfcaaqH//GR4cTpaSyo3AqW/sTjgPopAf/
+	CwE88HuUM3TJimmJN6jwsP94HaSjpdlq+W7RbhqyJPPdRrYv5aiF/ZMhHpG075RW
+	kj7TihhaNgr2tazH/1nCpJzLqjODXNCP05pIJg3+dVNcAVz35YqFqtCFX232YeUo
+	1lRszwdUp8q7tb1l6yBZE0UHJNdF4eybIPA2cROBBUp4wufVWjsuWDpJaXZcr+BI
+	GmSlcdAKsQ+KJv2I/CRYoR8KuUc0wFS126a1fOfyqyfo0hikhtoWmLfW4wQzGwEB
+	puj7jPS6fkNHOuksyeyHA==
+X-ME-Sender: <xms:BzoHaDfMQJFQzz1ruTZLMNc2nN2f6M8iXFYSMio-DufyAlYTPsTm0g>
+    <xme:BzoHaJN5ukyxgdSeU5HhZfWG-ZyyYsykTRuT-LVorXEFDdnYnOVv-ivn6NRDpgbj5
+    afvRklH7pV-8kNGDbc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeftdefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    vdegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehfrhhivgguvghrsehfrhhish
+    druggvpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdp
+    rhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopegtoh
+    hnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrihgv
+    uggvrhdrshgthhhrvghmphhfsehkohhnthhrohhnrdguvgdprhgtphhtthhopehsrhhinh
+    hivhgrshdrkhgrnhgurghgrghtlhgrsehlihhnrghrohdrohhrgh
+X-ME-Proxy: <xmx:BzoHaMgthLmsNXpyo63_egO3S8DBrggBCT_NFRySoAreRSF8ecZXnw>
+    <xmx:BzoHaE-arKdzLjEa361kAgN-jDTQ6GjalEIKVsE3p_6knTVsBfxXQw>
+    <xmx:BzoHaPtxOHaPwqsEgoXYX1W8_ExFvV3szrgPJ_4uHFcgKbIJSqdAww>
+    <xmx:BzoHaDGmukrU4tB7DOOH6k7akyw1EeGSULwm2Vaq2JBYaRwjFgXdVA>
+    <xmx:CDoHaNnPAoGAMKqEiOVv0aa71npJ8PvwCXwSR8C6XIJJyQXD_qsgnkh5>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B60452220074; Tue, 22 Apr 2025 02:41:11 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: stm32-ospi: Fix an error handling path in
- stm32_ospi_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown
-	<broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <2674c8df1d05ab312826b69bfe9559f81d125a0b.1744975624.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <2674c8df1d05ab312826b69bfe9559f81d125a0b.1744975624.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: Tb1fe2b3b8ab1c58e
+Date: Tue, 22 Apr 2025 08:40:51 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Frieder Schrempf" <frieder@fris.de>, "Peng Fan" <peng.fan@nxp.com>,
+ "Pankaj Gupta" <pankaj.gupta@nxp.com>, linux-arm-kernel@lists.infradead.org,
+ "Conor Dooley" <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, "Rob Herring" <robh@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>
+Cc: "Frieder Schrempf" <frieder.schrempf@kontron.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "Frank Li" <Frank.Li@nxp.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+ "Shengjiu Wang" <shengjiu.wang@nxp.com>,
+ "Shenwei Wang" <shenwei.wang@nxp.com>, "Xu Yang" <xu.yang_2@nxp.com>,
+ "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
+Message-Id: <6ee90a9e-cfa0-45f5-8036-bf04cb19db46@app.fastmail.com>
+In-Reply-To: <20250416142715.1042363-1-frieder@fris.de>
+References: <20250416142715.1042363-1-frieder@fris.de>
+Subject: Re: [RFC PATCH 0/5] Add NVMEM driver for i.MX93 OTP access through ELE
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
 
+On Wed, Apr 16, 2025, at 16:26, Frieder Schrempf wrote:
 
+> Therefore I implemented a simple driver that uses the ELE S400 API only, as the
+> FSB access (1) doesn't provide any benefits except for that it doesn't depend
+> on the ELE firmware being available. This is used by us downstream.
+>
+> For the upstream solution I would like to have some feedback on how to move
+> on:
+>
+> 1. switch imx-ocotp-ele.c to use ELE API exclusively
+>    -> this will create a hard dependency on the ELE firmware/driver 
+> being available
 
-On 4/18/25 13:27, Christophe JAILLET wrote:
-> If an error occurs after a successful stm32_ospi_dma_setup() call, some
-> dma_release_channel() calls are needed to release some resources, as
-> already done in the remove function.
-> 
-> Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->  drivers/spi/spi-stm32-ospi.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-> index 668022098b1e..9ec9823409cc 100644
-> --- a/drivers/spi/spi-stm32-ospi.c
-> +++ b/drivers/spi/spi-stm32-ospi.c
-> @@ -960,6 +960,10 @@ static int stm32_ospi_probe(struct platform_device *pdev)
->  err_pm_enable:
->  	pm_runtime_force_suspend(ospi->dev);
->  	mutex_destroy(&ospi->lock);
-> +	if (ospi->dma_chtx)
-> +		dma_release_channel(ospi->dma_chtx);
-> +	if (ospi->dma_chrx)
-> +		dma_release_channel(ospi->dma_chrx);
->  
->  	return ret;
->  }
-Hi Christophe
+Could this cause problems for real-time Linux users? Usually going
+through a firmware driver adds more latency than doing the thing
+from Linux directly, and the firmware is usually not preemptable.
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+In particular, programming a one-time fuse is likely a slow
+operation in hardware, so it may still be necessary to support
+both methods if there are users that need to update the fuses
+on real-time systems.
 
-Thanks
+     Arnd
 
