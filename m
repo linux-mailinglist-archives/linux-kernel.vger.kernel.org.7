@@ -1,223 +1,132 @@
-Return-Path: <linux-kernel+bounces-614304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9498BA968EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:19:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8D3A968F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F43A7A65A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:17:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC36179CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC70F27D782;
-	Tue, 22 Apr 2025 12:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D441227CB21;
+	Tue, 22 Apr 2025 12:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eo39yckB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f6RPD7rZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E0F27CCCF;
-	Tue, 22 Apr 2025 12:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7411F09B3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745324320; cv=none; b=AqUE9vEKei/gmQJsBt93BauW2rr9vOO8km3wuZ4Nqp7fFUM4aUa9rNA8R8QDICHoGQCp2HT1kpkx4DkGfCphIp9iJvSXKHewzwFi7Zs877tK6GCvf9S30kvpQMQIHRN4mTXTAOPXf8IO0i0OjYf14jjW2TyXIk98Rg2INPpZnWk=
+	t=1745324343; cv=none; b=gpxoVxy6vMBE286v/3JVoRN0ZMYc/ouhXFb0zg5zCP51AyR9lLdhHbyLQ7y0KkJdo0+aXfHFJoNbXetDLXzahcQC64y4t11Bapf8JObYzlSfXN7yuGRiMQ1qHGGbeDnwJZszRUHAbW06MAJa/vZ2nkoMAtOMhzBY/KbheeqGa/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745324320; c=relaxed/simple;
-	bh=zGIA3giuG78kc+j93vXPJJvT30mzAC2qUyglKlcVYtw=;
+	s=arc-20240116; t=1745324343; c=relaxed/simple;
+	bh=FEb1vp9zsmFr2JcPIb0VWNcIkxax01MRvDIaLi1NWfs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wg8z9UDn11CEQfnbQ1YKuZ0HyZo+wAnbfuES5XIbPVaoV58jsZarDc4tZr2s9nrK/SsRFK/vR8Yuv6rZ14UGMRAclNKT+TqS0bQ+hdp+VEviLvbdYVplfHxx2nLtON0R68WAG4O+RIsdssWHyx8g5tVEe9ujj/hWVlHRo5csnVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eo39yckB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E36C4CEEA;
-	Tue, 22 Apr 2025 12:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745324319;
-	bh=zGIA3giuG78kc+j93vXPJJvT30mzAC2qUyglKlcVYtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Eo39yckBjPwIQKtznL+1UvdBuAwI3WYn9qkWSEGBzf/uOatdo1uzcddLl8R/KTPbu
-	 Hu6saBCpgnunIaquZiDtlofgwbJO3Rej8YmuzNHdcWMgdQIt0uFRM6lEQZcMK6+7SL
-	 n9RUYeOA8njFMuSbjvX8/STWX/1z7rC+xDwOaxxAZYxS1eF1yhs8WPX0CEDqpa2phe
-	 07mCC0N6FtdHcxrPQ0aPs3MNsp0EI8tmTOsMI4IB1vtDSAglnbtUVLui7coW4LBFVU
-	 UoNulww5GYTMdWOzoCO4AryDvq4s20kLwcqxpWQrnx2mMchmuJEbC8udqFL5D+eeaN
-	 iRTYyVO1wgTxQ==
-Date: Tue, 22 Apr 2025 07:18:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	Pin-yen Lin <treapking@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Andrei Kuchynski <akuchynski@chromium.org>
-Subject: Re: [PATCH 5/7] dt-bindings: usb: google,cros-ec-typec: Add ports
- for DP altmode
-Message-ID: <20250422121837.GA734359-robh@kernel.org>
-References: <20250416000208.3568635-1-swboyd@chromium.org>
- <20250416000208.3568635-6-swboyd@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wjr/AKIcbhg0x7J6cn5MzITCLILpkavkF5BIzk9IlaVp1AhaCyCECgYYaJ1UK7xwfsR9XBS8PYz2EVTm9tF22irSZRggZhZthd5lxKMojsYWJyUI2vY9+3JYs5d6DGlrIFr5DzbyBaFHLnCkAcioLhXYT3b3YPzzFbbygexHo5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f6RPD7rZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso779380066b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745324339; x=1745929139; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FEb1vp9zsmFr2JcPIb0VWNcIkxax01MRvDIaLi1NWfs=;
+        b=f6RPD7rZsrqWa0d3m5zGKyFjrT/Qv3Hx2VvG/aeUP/JRGP19hY2e53GaEjRSHPfJm5
+         e4E9F4Nj7ZMGqtF0dbA/iR2TVu5SNOL73HBv4yu/2WGc6ein9jUV/R26oKNMfMfKx+5a
+         OtuWdBQo2zysnD6BsfzVxvV2+rhDCdYDnAfolWhVorDt9Nq9BgQspro1Kw0zCTpotzbn
+         5lj05rxGkFcKZ9TO7rzDBgVlwOE0lg4cVyn+TIkF7jYQQMoMAu44iNsj7E9kVR44MvzH
+         LYh3QYCGG+7+A6AXX1/aTXHxVnrlVC5mfQxYQxQWH8vId0BZxkUZ58sbs31xcUA8c9A9
+         ssHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745324339; x=1745929139;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FEb1vp9zsmFr2JcPIb0VWNcIkxax01MRvDIaLi1NWfs=;
+        b=ot/d3w7tqHvL4w+8kK+0waIUK32+UEQHEiZm9tcSlPyZ7aVeITNnqemJ7wzYSe0obB
+         x4bTw2X+agpC82Eb/k4T8GQvxL2dVr+OV/3+9AD8qHbPMmhEGgVT2zyEsXbr/g8On+Gy
+         cf99Xbx9O6JcW3HJdGmhVqrskP2f1drxyKEqF7UpCbK8oPagFysHiubw330swm8Aeg4K
+         qL5mYGWj95+kJwHm0IRZf9NipKu+WvH6PCyaPV6SAvEuakKgW050fR/9RSrtEqJXe42R
+         lVeUZMfK+u6czmfQu3j7rua9UIixYp8Ko/0Zr5XS+Y+GhBcjkMEiCLTLYaKhBajXcHMP
+         VrUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+TkLmqKb2i0BTBsNMWLyiGxwddG3R/ApYQazc1Wi3HGw/ZAYQIjBKHlkOCILzrneERy5jwolvtiqeqmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx10VoHfOw0vS7gV8iHv99/viMwlr5o/zX9bZL3r4z8JM5Sff48
+	fGcalzGSyYDce+hYZ1zzNULCEH2Gr7aW2E9k8FTzzAZXK+74u0TLEX08+MmiSEI=
+X-Gm-Gg: ASbGncsOIzjqoIGnOuzGA/xsMDq9HKNxymJDbNP9ItKGpiyJomUP0faiP00E8fFCuNh
+	su3GTVn1H+uw3wAM4FsAVEeCMzCRMyOkxABSTF/ys3GybEDO9tCuF8sigj6D/XtUsPwE6URLI2K
+	GRNcmztrVGCeA8fPVdjyK+JwB8emENlCVnnA1D2awfQSalFpkrPPeoPyqf5bvcehtoWTyp+m1+h
+	U+iUBgXVGbRHdNIaME53IRgWvOiLRtLmPKZsRZxrtOy2c48pPSXRoH8KgMbgVAV+N5SWBPL1+bG
+	FYvjfSDWVu4K7Lg2E284vaxKlL2QAk5HmvNZSmWIcqA=
+X-Google-Smtp-Source: AGHT+IEvO4I0PXr3VK52/nbiHGb/HzcVEaKVg4zzxE5USQ7ElhY0GjljRx4O+2j+s6yFoHcQWu17EA==
+X-Received: by 2002:a17:907:9496:b0:ac3:446d:142 with SMTP id a640c23a62f3a-acb74ad9369mr1114924566b.2.1745324339474;
+        Tue, 22 Apr 2025 05:18:59 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefc6f3sm655834266b.106.2025.04.22.05.18.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 05:18:58 -0700 (PDT)
+Date: Tue, 22 Apr 2025 14:18:40 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Penglei Jiang <superman.xpt@gmail.com>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, xnxc22xnxc22@qq.com
+Subject: Re: KASAN: slab-use-after-free Read in cgroup_rstat_flush
+Message-ID: <2eatfmps723vwbvqgqppswny73axxgbmmkaseqjkg2hxojpwvr@3fn36fsfed6x>
+References: <Z_1JBt3RMATxnDgL@slm.duckdns.org>
+ <20250419153843.5035-1-superman.xpt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hiej3wsm4kzjo3ca"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250416000208.3568635-6-swboyd@chromium.org>
+In-Reply-To: <20250419153843.5035-1-superman.xpt@gmail.com>
 
-On Tue, Apr 15, 2025 at 05:02:05PM -0700, Stephen Boyd wrote:
-> Add a DT graph binding to google,cros-ec-typec so that it can combine
-> DisplayPort (DP) and USB SuperSpeed (SS) data into a USB type-c endpoint
-> that is connected to the usb-c-connector node's SS endpoint. Allow there
-> to be multiple 'typec' nodes underneath the EC node so that one DT graph
-> exists per DP bridge. The EC is actually controlling TCPCs and redrivers
-> that combine the DP and USB signals together so this more accurately
-> reflects the hardware design without introducing yet another DT node
-> underneath the EC for USB type-c "stuff".
-> 
-> If the type-c ports are being shared between a single DP controller then
-> the ports need to know about each other and determine a policy to drive
-> DP to one type-c port or the other. If the type-c ports each have their
-> own dedicated DP controller then they're able to operate independently
-> and enter/exit DP altmode independently as well. We can't connect the DP
-> controller's endpoint to one usb-c-connector port@1 endpoint and the USB
-> controller's endpoint to another usb-c-connector port@1 endpoint either
-> because the DP muxing case would have DP connected to two
-> usb-c-connector endpoints which the graph binding doesn't support.
-> 
-> Therefore, one typec node is required per the capabilities of the type-c
-> port(s) being managed. Add a port to the DisplayPort altmode as well, so
-> that we can show the connection between the DP controller and the DP
-> altmode. This lets us indicate which type-c ports the DP controller is
-> wired to. For example, if DP was connected to ports 0 and 2, while port
-> 1 was connected to another DP controller we wouldn't be able to
-> implement that without having some other DT property to indicate which
-> output ports are connected to the DP endpoint.
-> 
-> Furthermore, this supports ChromeOS designs like Corsola where a DP
-> controller/PHY is split with two lanes going to one connector and the
-> other two lanes going to another connector. In this case, we wouldn't
-> have the graph binding under the cros-ec-typec node, but we would have
-> the graph binding in the DP altmode directly connected to the DP
-> controller's two output endpoints.
-> 
-> Cc: Rob Herring (Arm) <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Acked-by: Lee Jones <lee@kernel.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Tzung-Bi Shih <tzungbi@kernel.org>
-> Cc: <devicetree@vger.kernel.org>
-> Cc: <chrome-platform@lists.linux.dev>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> Cc: Łukasz Bartosik <ukaszb@chromium.org>
-> Cc: Jameson Thies <jthies@google.com>
-> Cc: Andrei Kuchynski <akuchynski@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  .../bindings/connector/usb-connector.yaml     |   6 +
->  .../bindings/mfd/google,cros-ec.yaml          |   7 +-
->  .../bindings/usb/google,cros-ec-typec.yaml    | 165 ++++++++++++++++++
->  3 files changed, 175 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> index 11e40d225b9f..e3d60997c03e 100644
-> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> @@ -179,6 +179,12 @@ properties:
->              $ref: /schemas/types.yaml#/definitions/uint32
->              description: VDO returned by Discover Modes USB PD command.
->  
-> +          port:
-> +            $ref: /schemas/graph.yaml#/properties/port
-> +            description: OF graph bindings modeling a data bus to the
-> +              DisplayPort altmode from the DisplayPort controller. Used when
-> +              the altmode switch is part of the port manager.
-> +
 
-Why can't this connection be another endpoint on port@1 as that is the 
-port for the SS signals.
+--hiej3wsm4kzjo3ca
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: KASAN: slab-use-after-free Read in cgroup_rstat_flush
+MIME-Version: 1.0
 
->    port:
->      $ref: /schemas/graph.yaml#/properties/port
->      description: OF graph bindings modeling a data bus to the connector, e.g.
-> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> index ac89696fa649..63d506e88abb 100644
-> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> @@ -98,9 +98,6 @@ properties:
->  
->    gpio-controller: true
->  
-> -  typec:
-> -    $ref: /schemas/usb/google,cros-ec-typec.yaml#
-> -
->    ec-pwm:
->      $ref: /schemas/pwm/google,cros-ec-pwm.yaml#
->      deprecated: true
-> @@ -163,6 +160,10 @@ patternProperties:
->      type: object
->      $ref: /schemas/extcon/extcon-usbc-cros-ec.yaml#
->  
-> +  "^typec(-[0-9])*$":
-> +    type: object
-> +    $ref: /schemas/usb/google,cros-ec-typec.yaml#
-> +
->  required:
->    - compatible
->  
-> diff --git a/Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml
-> index 3272d0e01f7e..611345bbe884 100644
-> --- a/Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml
-> +++ b/Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml
-> @@ -26,6 +26,55 @@ properties:
->    '#size-cells':
->      const: 0
->  
-> +  mux-gpios:
-> +    description: GPIOs indicating which way the DisplayPort mux is steered
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  no-hpd:
-> +    description: Indicates this device doesn't signal HPD for DisplayPort
-> +    type: boolean
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          Port for DisplayPort (DP) data
-> +
-> +        properties:
-> +          endpoint@0:
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description: Input DP port
-> +
-> +        patternProperties:
-> +          '^endpoint@[1-8]$':
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description: Output to the usb-c connector's DP altmode
+On Sat, Apr 19, 2025 at 08:38:43AM -0700, Penglei Jiang <superman.xpt@gmail=
+=2Ecom> wrote:
+> On Mon, 14 Apr 2025 07:42:30 -1000, tj <tj@kernel.org> wrote:
+>=20
+> > Maybe another casualty of the bug fixed by a22b3d54de94 ("cgroup/cpuset=
+: Fix
+> > race between newly created partition and dying one")?
+>=20
+> This issue was maybe caused by commit 093c8812de2d3, and was later fixed
+> by commit 7d6c63c319142.
 
-This is odd. Generally (or always?) a port is 1 direction.
+Ah, I overlooked that the original report is not for v6.14 but
+f6e0150b2003 actually (correct?), so this is sensible in that context.
 
-Other bindings IIRC have 3 ports in the device doing the muxing: 1 
-output for connector port@1, 1 USB SS input, and 1 DP input.
+Does it mean you cannot attain the KASAN report post 7d6c63c319142?
 
-Rob
+Thanks,
+Michal
+
+--hiej3wsm4kzjo3ca
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaAeJHgAKCRAt3Wney77B
+SVALAQCxpvY+YXDCaGceP86Ps37TAi1fztt+MjmyKf9IWzf4VQD+LGcIjiluUvvf
+3CDAaVURoOL8D/lTu6M3RIITuf41bQU=
+=V4iz
+-----END PGP SIGNATURE-----
+
+--hiej3wsm4kzjo3ca--
 
