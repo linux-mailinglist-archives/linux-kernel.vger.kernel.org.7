@@ -1,113 +1,167 @@
-Return-Path: <linux-kernel+bounces-614656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DE7A96FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 579BFA96FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E97ADEE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A86E7AE8D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729F328F925;
-	Tue, 22 Apr 2025 14:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyG2Bm/q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D28E29347D;
+	Tue, 22 Apr 2025 15:00:59 +0000 (UTC)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C998935949;
-	Tue, 22 Apr 2025 14:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DAD28F520;
+	Tue, 22 Apr 2025 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745333951; cv=none; b=chNuTfpDjNpsioHvgw2QMUNeM/wJjQ0DWcOe02Q+QruXYaQdoE495/8QfouESeNwD2qjksLvl1kFXEhkgDk+ZShYiAHVuxNAwtSG/JFNSl60pBkHNR+Ygv4iG6LXOung0HiY7DfNbzwKSEGSsQD1MXtWaqXA/KQLrIzEJEdXiJY=
+	t=1745334059; cv=none; b=f2LM7ICMVR5bfxlZU5/tDVMwhTmc6BqE28pz0RqzGoKdWnkSA9aiWCSxpnnwcLyhGpfI8Xvg4AAzshDE9rwtlcdjz3hJ/aYV1mHHW6nww4lMWsEvffQlCp24ziTsu1kPmgH4Ar+3x4RJTOPy3xc8XJNAcJYvn/v8WHcchpJv7fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745333951; c=relaxed/simple;
-	bh=QfUbRAUwdvLjnyJ6+Xvv7d9sVZwBvQJv2ePW9+tPj10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3eiZyfeFsR7Y0OnvyDVbnbqNqn0WWYteoX3tSYaLEL8CD0cHko3NnsXgcRYxZtl72YA8LLoGcfa54Tyu7x8j5UvUdxs4G5oCOFixczBgy9FYtVi8IJmBByVaNqiTG/8SN+aLo1ifnPdYbMHNJaMWke9qlbmvSz3zFyC2Hbq88w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyG2Bm/q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14895C4CEF2;
-	Tue, 22 Apr 2025 14:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745333951;
-	bh=QfUbRAUwdvLjnyJ6+Xvv7d9sVZwBvQJv2ePW9+tPj10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QyG2Bm/qoPGNuAUbAiF1AQkcOgcNEsKa93jlRy5IEX7m6ar4tMwTFnQvWJvgtfuaj
-	 uWfuVB2V2/Ip9q7i0A8P4zQstRDP9vYGibvlwA7kc1KHvTYGAPc6epYVCamctZOMxF
-	 coSO6iaeLqSJN1iXoVlp6LRI8+dc0s9fULdzXMSz1mzANS2EeWpFvaI7i7MZa1MfC8
-	 UX6j4arl9enjTUkaj4Y0ol24nqiJ9/PiOCq/5/PKzWOc1OuUuaAINcDkDdILbIkmSK
-	 rXMc1h05OiAyCm6GVxGia5bzP8y6O+qhKwzhxwJqcjRy1esHt7oksRdc+Q4dauQilb
-	 KTISmvEkJa2og==
-Date: Tue, 22 Apr 2025 07:59:07 -0700
-From: Kees Cook <kees@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	linux <linux@treblig.org>, Mark Brown <broonie@kernel.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] landlock: Work around randstruct unnamed static
- initializer support
-Message-ID: <202504220756.4DD4BAD@keescook>
-References: <20250421000854.work.572-kees@kernel.org>
- <20250422.eetheiPu6aiH@digikod.net>
- <ccdfe9c0-7c28-4ecf-a7da-95c9a20eead7@app.fastmail.com>
+	s=arc-20240116; t=1745334059; c=relaxed/simple;
+	bh=Yo2gLzQafcD8WiYwM9WhXEX8DLLO8XmKGQ/dY3GeMfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GwAE4AO/8TgR//cwGDCqLE2Y/9hAX9ZFXaBG98JRmIymS04pe3vhf2nGs971kh9tBtT0QAj76SGatj6Rg5LbxbGf7PQ+Q+7iMCqAWIoJeCFqYB+jDcOPtJFnKbegHAAOWefkKBnrgUtOrRYok+bBMKrus0a5s6t05gpXAgQatp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: esmtpsz18t1745333955t2a2a5492
+X-QQ-Originating-IP: slj1jKgfTwnqN+XMjwQqPHnengA/+l4/lWr8Zsj3Fts=
+Received: from [127.0.0.1] ( [116.234.26.236])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Apr 2025 22:59:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5860704546774926596
+Message-ID: <22F78335AF3DCDCB+3c44f925-88fc-438d-9482-ab39a1d70df8@radxa.com>
+Date: Tue, 22 Apr 2025 22:59:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccdfe9c0-7c28-4ecf-a7da-95c9a20eead7@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/4] Add static channel mapping between soundwire
+ master and slave
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com,
+ kernel@oss.qualcomm.com
+References: <20250206112225.3270400-1-quic_mohs@quicinc.com>
+From: Xilin Wu <sophon@radxa.com>
+Content-Language: en-US
+In-Reply-To: <20250206112225.3270400-1-quic_mohs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NOnalZjVTVf0CJoUyorzo28YPlGmfqDe4Z9JM+5tIP5PAhgG8Kv5eyMx
+	d0VO+dH+ULZVphZHgISUGqEm9Yvy/is7nA6rr5Mx3KDFTOsP2MMJGKfbJo5ZL7tQmpV3oR4
+	Kraj/RSCVYlo5cHp5OR6PpzGcRS59ZswOQQXf1f6dAb1p8Ibei37ngiXd65HjSYxbhpjcsz
+	+b18tW6I5XCXJhYH/rVEyMhMs32ng8g2QTIBXZIZnYAN05BqjAOmnp2GfdavdVFhA1N+k1U
+	F0ni1iVN1e6wD9iQm99h+6H1JHAFjls+MHZfvShBNzMfiVJAHdMLP4f+8fxHJRctIqd6h2x
+	O268kFN35Ddw6/fYMwvwzhze6NWe7unK23B4ZIZszHIfbA1X58xl9If4nzwOe2khzrSNeth
+	7q2dnpO1jPVx8BTy3pxC9WcKxDrgR/2BQfq+7IZ3296v5IkvCMBV8NFZj1FSDYHBc+ffxn7
+	Tbe6r5VFGViv6xSfRc1RIiCgWKOfD/yAdohHt/Evj1kKlUYEiaxz658OhpvLau6+bh9RDmI
+	oOYd/1tCk+fv5inyT+U0Zk6aNaEW8iaIfxlQVHUXs6OGcSk8QDQ5hixPZwGUFfJWAoQ023u
+	Y2K5aZsVy//wSM5RTX+TYXtN5Yp8OY7z4RGgHE/0A8G2nW6d7Tp7GM3FvGZIxpmc5oiwMDs
+	YJxRf57EXvVGRZl5IS38IXOY53vMr3rx3VhXTk7KvO3hWR7J5egfjakOVKaNDMpf6AFs5bB
+	Q6B/ASdInng8W9i+q6fMVx2Jy7r/TNXSRKNVHBWllEzxLEaB45pEcpDEuy/eQx5/oNjGlya
+	iddax4xk5zTe+ZjLtHJjTI36FHgAw5mSmBPJGrjblb/u9eeV9nvTMqoI7HY+VRQXTUIQqKw
+	cijIKhNKeBSERzEt3BAjobug/bRor+68+nA7v3iFtCHUKXKur3JeqaIFZ8+aVGLK6xlcpJ7
+	8a1eVWoxpAcDY0tQ5rAng4cTz
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Apr 22, 2025 at 02:53:05PM +0200, Arnd Bergmann wrote:
-> On Tue, Apr 22, 2025, at 14:25, Mickaël Salaün wrote:
-> > On Sun, Apr 20, 2025 at 05:08:59PM -0700, Kees Cook wrote:
-> >> Unnamed static initializers aren't supported by the randstruct GCC
-> >> plugin. Quoting the plugin, "set up a bogus anonymous struct field
-> >> designed to error out on unnamed struct initializers as gcc provides
-> >> no other way to detect such code". That is exactly what happens
-> >> with the landlock code, so adjust the static initializers for structs
-> >> lsm_ioctlop_audit and landlock_request that contain a randomized structure
-> >> (struct path) to use named variables, which avoids the intentional
-> >> GCC crashes:
-> >
-> > This is not a sustainable solution.  Could we fix the plugin instead?
-> > This new Landlock change may be the first to trigger this plugin bug but
-> > it will probably not be the last to use unnamed static initializers.
-> > Forbidding specific C constructs should be documented.
+On 2025/2/6 19:22:21, Mohammad Rafi Shaik wrote:
+> Add static channel map support between soundwire master and slave.
 > 
-> I think the version from Kees' patch looks more readable than
-> the version with the compound literal, so it certainly seems appropriate
-> as an immediate regression fix, even if it's possible to fix the
-> plugin later.
+> Currently, the channel value for each soundwire port is hardcoded in the
+> wcd937x-sdw driver and the same channel  value is configured in the
+> soundwire master.
 > 
-> >> We went 8 years before tripping over this! 
+> The Qualcomm board like the QCM6490-IDP require static channel map
+> settings for the soundwire master and slave ports.
 > 
-> Right, it's probably enough to revisit the plugin code after
-> it happens again.
-
-Yeah, that's my thinking as well.
-
-> >> Closes: https://lore.kernel.org/lkml/337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com/
-> >> Signed-off-by: Kees Cook <kees@kernel.org>
+> If another boards which are using enable wcd937x, the channel mapping
+> index values between master and slave may be different depending on the
+> board hw design and requirements. If the above properties are not used
+> in a SoC specific device tree, the channel mapping index values are set
+> to default.
 > 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> With the introduction of the following channel mapping properties, it is
+> now possible to configure the master channel mapping directly from the
+> device tree.
+> 
+> Added qcom_swrm_set_channel_map api to set the master channel values
+> which allows more flexible to configure channel values in runtime for
+> specific active soundwire ports.
+> 
+> Add get and set channel maps support from codec to cpu dais in common
+> Qualcomm sdw driver.
+> 
+> Changes since v5:
+>   - Fixed build compile issue with v5-0003 patch, reported by Mark Brown.
+> 
+> Changes since v4:
+>   - Update the order of channel map index values in v4-0001 dt-bindings patch as suggested by Krzysztof.
+>   
+> Changes since v3:
+>   - Change the order of channel map index values in v3-0002 dt-bindings patch as suggested by Krzysztof.
+>   - Dropped V3-0001 patch which is not required.
+> 
+> Changes since v2:
+>   - Rephrase commit description v2-0001 dt-bindings patch as suggested by Krzysztof.
+> 
+> Changes since v1:
+>   - Modified the design and followed new approach to setting the master channel mask.
+>   - Used existing set_channel_map api as suggested by Pierre-Louis
+>   - Fixed the typo mistake in v1-0001 dt-bindings patch.
+>   - Rephrase the commit description for all v1 patches.
+> 
+> Mohammad Rafi Shaik (4):
+>    ASoC: dt-bindings: wcd937x-sdw: Add static channel mapping support
+>    ASoC: codecs: wcd937x: Add static channel mapping support in
+>      wcd937x-sdw
+>    soundwire: qcom: Add set_channel_map api support
+>    ASoC: qcom: sdw: Add get and set channel maps support from codec to
+>      cpu dais
+> 
+>   .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++
+>   drivers/soundwire/qcom.c                      | 26 +++++++++
+>   sound/soc/codecs/wcd937x-sdw.c                | 39 ++++++++++++--
+>   sound/soc/codecs/wcd937x.c                    | 53 ++++++++++++++++++-
+>   sound/soc/codecs/wcd937x.h                    |  7 ++-
+>   sound/soc/qcom/sdw.c                          | 34 ++++++++++--
+>   6 files changed, 185 insertions(+), 10 deletions(-)
 
-Thanks! Mickaël, are you good with this for now, and if so, do you want
-to carry it or shall I?
+Hi Mohammad,
 
--Kees
+I'm working on a QCS6490 board with the WCD9380 codec. I wonder if a 
+similar patch is needed to enable headset audio? Currently, DisplayPort 
+audio and headset plug-in detection work, but no audio is coming from 
+the headset.
+
+Additionally, I noticed an unusual output in dmesg:
+
+qcom-soundwire 3210000.soundwire: qcom_swrm_irq_handler: SWR Port 
+collision detected
+
+Could this be related to the issue? Let me know if you need further details.
 
 -- 
-Kees Cook
+Best regards,
+Xilin Wu <sophon@radxa.com>
 
