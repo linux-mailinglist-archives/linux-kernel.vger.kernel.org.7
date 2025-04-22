@@ -1,195 +1,198 @@
-Return-Path: <linux-kernel+bounces-614633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB2BA96F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:54:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AAFA96F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF673B4963
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBA44412E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCBF28EA78;
-	Tue, 22 Apr 2025 14:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BFE28EA7C;
+	Tue, 22 Apr 2025 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=florian.bezdeka@siemens.com header.b="aYMEXlm3"
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PkkpUNx3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB40146A60
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B028EA59
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745333676; cv=none; b=t0ku52LyPvNY7hAXiUwAYG3Dcx0Y9wE0FmvYuU0tTfeY+EJcvkUB/OUl/I1HLa+kMfjM1w7KoAtl5P+mnb1gXX0sZ5DeKanEkX6Rvb9+HIDlRk3/NIncRD4WqVDwWplRhgPuNN5+j69qeoaGcYUvRY6/fkYxguCRQTpRqUKz4Ys=
+	t=1745333701; cv=none; b=ARtHXL77RIvr8l3PrZAZ8hTVkQkeN88DhedVCSwIDRVHwibSU1J4rMFA2fFuecqeqA/y1xm9sRM3Q+aJR31MkfdczoP+19W0EJBnQWy05tsqgBFcvAxVyoRgo+lQ2syLZHbdBoIEZrrzWmvtp4Zq+MYdgZXxeALDXal61XuNKko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745333676; c=relaxed/simple;
-	bh=WwXtJRbHgg+XQHn0+MFKZtRBFSSaBHEl/mDkR4j/oKA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ScujLAd1krLJ1uRfzNf6KAK1hFd1J3xfvkrQcCZexXDlPX3xaP3JhcEdgQ3WffQBZ/16J/tskzR95UkdlsmjPcuWTNdqm32gkFnoJrt+zwga5Li2pGs2WyG0TGcohve4urrczuYarmfwaLSJWYWoNq4UAzVh62XFjyehYn/zY5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=florian.bezdeka@siemens.com header.b=aYMEXlm3; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202504221454297cffedfec602a62282
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 22 Apr 2025 16:54:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=florian.bezdeka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=o+2QKvSlwCqUuSsj2WRmkKUQKEwdpqxVgMFG2KgWACg=;
- b=aYMEXlm3QsZGBRM1nYuYKtJY4g8p1DaMXSdNYSvDJq9TprQrZ6aHfjsTL37IpobV7hEpR8
- L4jkFqunOH/N4S/bMwuGFMQtm0VNOrQwHCF/zaOhbQqxtf4FaFWoO8/GKeiES7nqy6Bu1Ne/
- 6sR2dTBWtfSb3ZINpBkauOZY2DyL2mkXQcrkxSasX04UedlNGlEf051nxpig8msbF8FgepoN
- H3PxXn44rxLhs1ZvkOPlHWFYC0nQ5Z86z7gfZBmn8mkNZzDTVJhSoHAGCMiNFbU0b7/QTsAi
- ihxvMXkBWcNS8KNtE0+V9NyV130GcvrZx9NNU/KTWooqsVwIHkCDxY+A==;
-Message-ID: <f320d90db90df2d9583a1af4d83880f052768a64.camel@siemens.com>
-Subject: Re: [RFC PATCH v2 0/7] Defer throttle when task exits to user
-From: Florian Bezdeka <florian.bezdeka@siemens.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Aaron Lu
- <ziqianlu@bytedance.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, Valentin Schneider	
- <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra	
- <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar	
- <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Xi Wang	
- <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
- <juri.lelli@redhat.com>,  Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, 
- Chengming Zhou <chengming.zhou@linux.dev>, Chuyi Zhou
- <zhouchuyi@bytedance.com>, "Sebastian Andrzej Siewior,"	
- <bigeasy@linutronix.de>
-Date: Tue, 22 Apr 2025 16:54:28 +0200
-In-Reply-To: <610fcbfa-a8e7-483c-a112-579879628b99@amd.com>
-References: <20250409120746.635476-1-ziqianlu@bytedance.com>
-	 <cee5bca4e2b024d3406b40b84c0d5db91c7d276f.camel@siemens.com>
-	 <20250414120407.GC3558904@bytedance>
-	 <7483d3ae-5846-4067-b9f7-390a614ba408@siemens.com>
-	 <0a06f6c4-5d69-4fd1-badd-92fd55d8f38d@amd.com>
-	 <55687bb5-7e8a-4d7d-a597-6f97087cab32@siemens.com>
-	 <5e919998-338c-4055-b58a-e4586134956c@amd.com>
-	 <f5111e9f-bdee-480a-b29a-d8d1c207a600@siemens.com>
-	 <ec2cea83-07fe-472f-8320-911d215473fd@amd.com>
-	 <e65a32af-271b-4de6-937a-1a1049bbf511@amd.com>
-	 <20250421120648.GA3357499@bytedance>
-	 <610fcbfa-a8e7-483c-a112-579879628b99@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1745333701; c=relaxed/simple;
+	bh=Zm9oCDIcst4iG1Sdv0EzgN7tQUykHQ/Qo3PQjfMAcus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JKVGrNpJHcNkuKle6rkSFBGl4g7AQlCPnPHvz9GDqO7y4wcvVf7XEepRQk4AePqMholV0rWJqmQmuT3ZsMTCEXWH4XN3EeSJvS6dTSkn82o8FcYZzMBInUVi/pOtA8qrfPwOsfaefVXBLyZxlUkDyRqFjq3lP9kPstfWvI5aMr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PkkpUNx3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745333698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V9n4xCS++5NLC2SIIwS5+2KTMa8y7w2A9E/HfXPsNqQ=;
+	b=PkkpUNx3hE4fTBV1+NXyd1sfculW+/SxcpEMWfI/ESF3xQTD0HOFyD1sV7Q2FgsKzPbB3m
+	tccUaEStMI1qNI74IT4PqmypTb8fIVDzGvbTKj1RD3X+lCROG/BusZuksd3VCvPA7hsrLG
+	hKRsquhhqbGlgTDfUa0LeszppmlXlHk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-512-OSZQE-bFMzuMnQuYQCqWew-1; Tue, 22 Apr 2025 10:54:57 -0400
+X-MC-Unique: OSZQE-bFMzuMnQuYQCqWew-1
+X-Mimecast-MFC-AGG-ID: OSZQE-bFMzuMnQuYQCqWew_1745333696
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ce8f82e66so30559595e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:54:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745333696; x=1745938496;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=V9n4xCS++5NLC2SIIwS5+2KTMa8y7w2A9E/HfXPsNqQ=;
+        b=ek69/6jNogqaOb+1yB4LkeU65z3d2ak/q1XYKsBP6wvQETS99Dqs1s94DlEMe92UMO
+         yWRa3NF0S8aIe5d+B5S1ZYtqiNpZR46s104wJY7ZeWI0sY8ICi25Q8V2hK/vpHoL01Du
+         RdjoBDO0ZL0kV95USJohA5x0/KxsRxPKRj1L7tWHNINnipznfDV+dFHO+Aw6Iagd6Yl+
+         VYTjOjREZoRjTam7SUMUd5GT8WO7LU5dcXdJnwf54UKxOY9DBpPvHs6T9CSmQOAm3fNS
+         4FpwijBMBOVq+qDC5E42yDJkGYqyoHnqKZmaY67XE9da3UxrPU72UNEJHCxlu8ewUXim
+         zwWw==
+X-Gm-Message-State: AOJu0YxiyPI/mRV+EbpbcQfpv6/gX/iiC6zXmZFBbT6LFazMJhEMo2hZ
+	uafl7IsnO7ayG/IIZ9SFpbdY7kPIlJ+W2LlTpYGaHvVes92yQMVGzT9vPHrE2lQvMQeviNi0KLS
+	i2aiI6s0wrgy1n19ev0uuSdixt3up6raWFwUkdDfcb2pj1fGh4w2NXmSn24GW6qmZNzNJVgxiHD
+	10CEqCHy81qlKEzIeHHtfhHYgtVpdkss5N0x7roqHXJb0L
+X-Gm-Gg: ASbGncuaUb2JffNQYC1N/rSBdHFKFW/Ocvc9Fvga7T9v5ZwHzIg+Of0ialQ1/PqYzei
+	5j8tf91rYOxEZqn9P5abdX9arQow/zssz6Rabo76o6Mv7PLTOUVSlRNJEzfyxIhplWD7MNCfMsB
+	d5wJiJkRnD7f5us6y4OU58I6T0/N/iTLV0zn4dpGgcLu97JjOw52GKvL2vfNWi1tSB1iHHxCBmN
+	PE5iD9SK65tii4weHw5+pYBYa8iMSuCFU9is0vQAWF6DygCQJ8XnIybHBaSb/nb2QVXg5rraZ6D
+	1HfzCG5XY0CvTIFZWtMzO2yILQuSvCY6L9dW5USrHmnVEXjuHtPbjUoBOFLVTKcWW1Zpgb1sl7o
+	SWBe8Je8FRSiD/wsboPQMu/dukSGnKNHGPhDp
+X-Received: by 2002:a05:6000:420b:b0:38f:2678:d790 with SMTP id ffacd0b85a97d-39efba5c43amr12631803f8f.33.1745333695950;
+        Tue, 22 Apr 2025 07:54:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRuEwbBYMQsCCDWda6wGIiHy+7hTwpx+J9K/WMvz6TrXnSpkhfkHpSi71bO195mNjMxFxiMw==
+X-Received: by 2002:a05:6000:420b:b0:38f:2678:d790 with SMTP id ffacd0b85a97d-39efba5c43amr12631769f8f.33.1745333695581;
+        Tue, 22 Apr 2025 07:54:55 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c731:8700:3969:7786:322:9641? (p200300cbc73187003969778603229641.dip0.t-ipconnect.de. [2003:cb:c731:8700:3969:7786:322:9641])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43d22esm15688875f8f.52.2025.04.22.07.54.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 07:54:55 -0700 (PDT)
+Message-ID: <9b83ba9c-ca6b-4dd8-8f00-1384c22f5c80@redhat.com>
+Date: Tue, 22 Apr 2025 16:54:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-68982:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] kernel/fork: only call untrack_pfn_clear() on VMAs
+ duplicated for fork()
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, x86@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Ingo Molnar
+ <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250422144942.2871395-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250422144942.2871395-1-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-04-22 at 08:24 +0530, K Prateek Nayak wrote:
-> Hello Aaron,
->=20
-> On 4/22/2025 7:40 AM, Aaron Lu wrote:
-> > > anon_pipe_write()
-> > >    __wake_up_common()
-> > >      ep_poll_callback() {
-> > >        read_lock_irq(&ep->lock)		/* Read lock acquired here */
-> > I was confused by this function's name. I had thought irq is off but
-> > then realized under PREEMPT_RT, read_lock_irq() doesn't disable irq...
->=20
-> Yup! Most of the interrupt handlers are run by the IRQ threads on
-> PREEMPT_RT and the ones that do run in the interrupt context have all
-> been adapted to use non-blocking locks whose *_irq variants disables
-> interrupts on PREEMPT_RT too.
->=20
-> >=20
-> > >        __wake_up_common()
-> > >          ep_autoremove_wake_function()
-> > >            try_to_wake_up()		/* Wakes up "epoll-stall" */
-> > >              preempt_schedule()
-> > >              ...
-> > >=20
-> > > # "epoll-stall-writer" has run out of bandwidth, needs replenish to r=
-un
-> > Luckily in this "only throttle when ret2user" model, epoll-stall-writer
-> > does not need replenish to run again(and then unblock the others).
->=20
-> I can confirm that throttle deferral solves this issue. I have run Jan's
-> reproducer for a long time without seeing any hangs on your series. I
-> hope Florian can confirm the same.
->=20
+On 22.04.25 16:49, David Hildenbrand wrote:
+> Not intuitive, but vm_area_dup() located in kernel/fork.c is not only
+> used for duplicating VMAs during fork(), but also for duplicating VMAs
+> when splitting VMAs or when mremap()'ing them.
+> 
+> VM_PFNMAP mappings can at least get ordinarily mremap()'ed (no change in
+> size) and apparently also shrunk during mremap(), which implies
+> duplicating the VMA in __split_vma() first.
+> 
+> In case of ordinary mremap() (no change in size), we first duplicate the
+> VMA in copy_vma_and_data()->copy_vma() to then call untrack_pfn_clear() on
+> the old VMA: we effectively move the VM_PAT reservation. So the
+> untrack_pfn_clear() call on the new VMA duplicating is wrong in that
+> context.
+> 
+> Splitting of VMAs seems problematic, because we don't duplicate/adjust the
+> reservation when splitting the VMA. Instead, in memtype_erase() -- called
+> during zapping/munmap -- we shrink a reservation in case only the end
+> address matches: Assume we split a VMA into A and B, both would share a
+> reservation until B is unmapped.
+> 
+> So when unmapping B, the reservation would be updated to cover only A. When
+> unmapping A, we would properly remove the now-shrunk reservation. That
+> scenario describes the mremap() shrinking (old_size > new_size), where
+> we split + unmap B, and the untrack_pfn_clear() on the new VMA when
+> is wrong.
+> 
+> What if we manage to split a VM_PFNMAP VMA into A and B and unmap A
+> first? It would be broken because we would never free the reservation.
+> Likely, there are ways to trigger such a VMA split outside of mremap().
 
-Partially, yes.
+As expected ... with a simple reproducer that uses mprotect() to split 
+such a VMA I can trigger
 
-First, let me clarify what I am testing: I'm testing with PREEMPT_RT
-enabled, as that is the setup that makes problems in the field. For
-those setups it's not a performance/jitter optimization it's a critical
-fix. The system locks up completely.
+x86/PAT: pat_mremap:26448 freeing invalid memtype [mem 
+0x00000000-0x00000fff]
 
-I ported the series to 6.14. Background was stability and the
-possibility to replace one of the devices in the field with a patched
-version. We do not trust anything newer yet.
 
-The test results: 6.14 + backport is still running fine for ~10 days
-now on a system where the reproducer (that Jan posted already) crashed
-a unpatched 6.14 in a couple of minutes. Success.
+-- 
+Cheers,
 
-But: I also started a test with 6.14 vanilla (so unpatched) on a
-different system. This one crashes within a couple of minutes. This is
-a completely different story - as the series we're discussing here is
-not even applied - but to be complete, this is the last message we get
-from the device:
-
-The device is completely locked up afterwards. PID 34 is ktimers on
-CPU1.
-
-kernel: ------------[ cut here ]------------
-kernel: !se->on_rq
-kernel: WARNING: CPU: 1 PID: 34 at kernel/sched/fair.c:699 update_entity_la=
-g+0x7d/0x90
-kernel: Modules linked in: veth xt_nat nft_chain_nat xt_MASQUERADE nf_nat n=
-f_conntrack_netlink xfr>
-kernel:  sd_mod mptspi ata_generic mptscsih mptbase psmouse scsi_transport_=
-spi ata_piix libata scs>
-kernel: CPU: 1 UID: 0 PID: 34 Comm: ktimers/1 Not tainted 6.14.0 #1
-kernel: Hardware name: VMware, Inc. VMware7,1/440BX Desktop Reference Platf=
-orm, BIOS VMW71.00V.242>
-kernel: RIP: 0010:update_entity_lag+0x7d/0x90
-kernel: Code: 0f 4d d7 48 89 53 78 5b 5d c3 cc cc cc cc 80 3d e7 f4 dd 01 0=
-0 75 a9 48 c7 c7 d0 81 >
-kernel: RSP: 0018:ffffacf58012fbe8 EFLAGS: 00010082
-kernel: RAX: 0000000000000000 RBX: ffff9ee43ca00080 RCX: 0000000000000027
-kernel: RDX: ffff9ee6efd21988 RSI: 0000000000000001 RDI: ffff9ee6efd21980
-kernel: RBP: ffff9ee421929800 R08: 00000000462951bd R09: ffffffff8e654811
-kernel: R10: ffffffff8e654811 R11: ffffffff8e608a2a R12: 000000000000000e
-kernel: R13: 0000000000000000 R14: 0000000000000000 R15: 000000000000000e
-kernel: FS:  0000000000000000(0000) GS:ffff9ee6efd00000(0000) knlGS:0000000=
-000000000
-kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: CR2: 000000c00082a000 CR3: 0000000113416002 CR4: 00000000007706f0
-kernel: PKRU: 55555554
-kernel: Call Trace:
-kernel:  <TASK>
-kernel:  ? __warn+0x91/0x190
-kernel:  ? update_entity_lag+0x7d/0x90
-kernel:  ? report_bug+0x164/0x190
-kernel:  ? handle_bug+0x58/0x90
-kernel:  ? exc_invalid_op+0x17/0x70
-kernel:  ? asm_exc_invalid_op+0x1a/0x20
-kernel:  ? ret_from_fork_asm+0x1a/0x30
-kernel:  ? ret_from_fork+0x31/0x50
-kernel:  ? ret_from_fork+0x31/0x50
-kernel:  ? update_entity_lag+0x7d/0x90
-kernel:  ? update_entity_lag+0x7d/0x90
-kernel:  dequeue_entity+0x90/0x5a0
-kernel:  dequeue_entities+0x121/0x640
-kernel:  dequeue_task_fair+0xbf/0x290
-kernel:  rt_mutex_setprio+0x37c/0x690
-kernel:  rtlock_slowlock_locked+0xca1/0x1860
-kernel:  ? lock_acquire+0xcb/0x2e0
-kernel:  ? run_ktimerd+0xe/0x80
-kernel:  ? __pfx_smpboot_thread_fn+0x10/0x10
-kernel:  rt_spin_lock+0x86/0x160
-kernel:  __local_bh_disable_ip+0x9d/0x190
-kernel:  ksoftirqd_run_begin+0xe/0x30
-kernel:  run_ktimerd+0xe/0x80
-kernel:  smpboot_thread_fn+0xda/0x1d0
-
+David / dhildenb
 
 
