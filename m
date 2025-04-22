@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-613247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED783A95A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE95A95A0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 02:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A673AA0D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 00:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A803A7CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 00:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5904EEA8;
-	Tue, 22 Apr 2025 00:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFDA31A89;
+	Tue, 22 Apr 2025 00:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dOEAwwm7"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WSdLi1se"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44646376;
-	Tue, 22 Apr 2025 00:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DF928E8;
+	Tue, 22 Apr 2025 00:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745280540; cv=none; b=PFe5E25qYvVffZF7st8/r1jumookwPztqynjUIZiHYKHv5ZcxbFCzkJDNBkBFhxDikZvJcSH8oLX158WVQrm/eaFThLFCnfstmZG86L5hlmmo++b6Co7kN3FOeSQtyEi8bFIoGKB95fgtcwUMovr4T2OIIpG1rwLSSl5TyzIK8M=
+	t=1745280541; cv=none; b=XIES1pooul/jlhuDtEl9FQVHUWBTaMiHBZ6fmwVU+9TvUe8TUdDqG33A0i0yB0ilYMrbStq67dxB5+DAQJgCfRkZL0Bfq/rnr0vtFkF0owHeaWUILG6yq5ovd1/6KBBubKtQRqvq8Qug+Y//3DgfQ67T8SF3Nav7NFvLInWJwYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745280540; c=relaxed/simple;
-	bh=BFI/FSyboXP4auv7wZLDW7xyGGcH/3lTPe/OiPyJwzQ=;
+	s=arc-20240116; t=1745280541; c=relaxed/simple;
+	bh=r0WeCafkn0N6JQq6GB7snU/CxMyGN8maaDkjFfFd71o=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QySB5tXgjocjgeJiT0uhz5E0c0gzHg7txNsuSAGe0lZYPP06AyFXrpGQ+XDykvOFMiO/jbf2ut2+w3rmluarr6eBN2hZLq4P63Xa15MfETwgBRrcIPUcwbSfr6C5bpWlGVdNf/dvtOjwgiqearGJlaOxjodZO3Iy50T2a2w8evY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dOEAwwm7; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=GMMJ3khXZHExSMQJzoZWLAnRQPwWw4OzgzVdHMZhV3F1hvt6j3eyu9+6/+AWqGRT/ZRYVdjo+RCjDXp5Pbp8AeXV8dW4S5pYtRWaoqTjA/sBJ+XRo+cy1LzkP+PWLN/ecyIZRntm67aRAvmMhvYMXwWeoXzEddxV8ov72z8of38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WSdLi1se; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M08qtt1058479
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M08qDO1715195
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Mon, 21 Apr 2025 19:08:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1745280532;
-	bh=hFtrVBd/IPHzLs98dvYRdlS9honVwwUUU/xr84MDx3c=;
+	bh=dtlE8n852ESlBd0Jmsf8siXOlSR5oed0ZYISsStED1w=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=dOEAwwm7Yfp4h5yaC3HOFLiowvRxBRO/H+f8UU8kSRyc92VV6rG+CZg2WvHUlSByr
-	 ackjZI0qqbBWrheNu9XYJuqJ8n5Rl7KkyFL43ruXPNfmgt9zBNuvMb3KqcAX/5aOYy
-	 eLc6Mq+NhEX8175bmIVpZMPFEwsBVWuNKZUOleVE=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M08qj2102107
+	b=WSdLi1seRiEqJoSO6rWoxwrAcgwnJ2uuDIS9li7G/xtYDUOxP7Ra1tV6r9/W4cz6R
+	 00X4vqxZB1xaqUBeoOt829oCIxm5CtWWmcjTRiL/JLXk/Vj6jnJa9OUonVEoChWgWF
+	 yXMNCJCI6z3+KeaNly0OnXjShUN5iy8Xb4lM1eaw=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M08q62079762
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Mon, 21 Apr 2025 19:08:52 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
  Apr 2025 19:08:52 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 19:08:52 -0500
+ Frontend Transport; Mon, 21 Apr 2025 19:08:51 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M08pDF065170;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M08pDG065170;
 	Mon, 21 Apr 2025 19:08:52 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
@@ -66,9 +66,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] arm64: dts: ti: k3-am62p5-sk: Enable PWM
-Date: Mon, 21 Apr 2025 19:08:49 -0500
-Message-ID: <20250422000851.4118545-2-jm@ti.com>
+Subject: [PATCH 2/3] arm64: dts: ti: k3-am62a7-sk: Enable PWM
+Date: Mon, 21 Apr 2025 19:08:50 -0500
+Message-ID: <20250422000851.4118545-3-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250422000851.4118545-1-jm@ti.com>
 References: <20250422000851.4118545-1-jm@ti.com>
@@ -82,80 +82,66 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-PWM signals can be routed to the user expansion header on am62p5
-SK. Enable eCAP0, eCAP1, eHRPWM0, eHRPWM1 and route the output PWM
-signals to pins on J4 header.
+PWM signals can be routed to the user expansion header on am62a7
+SK. Enable eCAP0, eCAP1, eHRPWM1, and route the output PWM signals
+to pins on J3 header.
 
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 54 +++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 40 +++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index d29f524600af0..c2f55cc5a8ebc 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -356,6 +356,32 @@ wlan_en_pins_default: wlan-en-default-pins {
- 			AM62PX_IOPAD(0x0124, PIN_INPUT, 7) /* (J25) MMC2_SDCD.GPIO0_71 */
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+index 1c9d95696c839..a9557ee73b831 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+@@ -383,6 +383,25 @@ vddshv_sdio_pins_default: vddshv-sdio-default-pins {
+ 			AM62AX_IOPAD(0x07c, PIN_OUTPUT, 7) /* (M19) GPMC0_CLK.GPIO0_31 */
  		>;
  	};
 +
-+	main_ecap1_pins_default: main-ecap1-default-pins {
++	main_ecap0_pins_default: main-ecap0-default-pins {
 +		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x019c, PIN_OUTPUT, 2) /* (E24) MCASP0_AXR1.ECAP1_IN_APWM_OUT */
++			AM62AX_IOPAD(0x01b8, PIN_OUTPUT, 3) /* (C16) SPI0_CS1.ECAP0_IN_APWM_OUT */
 +		>;
 +	};
 +
 +	main_ecap2_pins_default: main-ecap2-default-pins {
 +		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01a4, PIN_OUTPUT, 2) /* (F24) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
-+		>;
-+	};
-+
-+	main_epwm0_pins_default: main-epwm0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01b4, PIN_OUTPUT, 2) /* (D20) SPI0_CS0.EHRPWM0_A */
-+			AM62PX_IOPAD(0x01b8, PIN_OUTPUT, 2) /* (E20) SPI0_CS1.EHRPWM0_B */
++			AM62AX_IOPAD(0x01a4, PIN_OUTPUT, 2) /* (A19) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
 +		>;
 +	};
 +
 +	main_epwm1_pins_default: main-epwm1-default-pins {
 +		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01bc, PIN_OUTPUT, 2) /* (B21) SPI0_CLK.EHRPWM1_A */
-+			AM62PX_IOPAD(0x01c0, PIN_OUTPUT, 2) /* (B20) SPI0_D0.EHRPWM1_B */
++			AM62AX_IOPAD(0x019c, PIN_OUTPUT, 6) /* (B18) MCASP0_AXR1.EHRPWM1_A */
++			AM62AX_IOPAD(0x01a0, PIN_OUTPUT, 6) /* (B20) MCASP0_AXR0.EHRPWM1_B */
 +		>;
 +	};
  };
  
- &main_i2c0 {
-@@ -683,3 +709,31 @@ &mcu_gpio0 {
- &mcu_gpio_intr {
- 	status = "reserved";
+ &mcu_pmx0 {
+@@ -741,3 +760,24 @@ dpi1_out: endpoint {
+ 		};
+ 	};
  };
 +
-+&ecap1 {
-+	/* P36 of J4 */
++&ecap0 {
++	/* P26 of J3 */
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&main_ecap1_pins_default>;
++	pinctrl-0 = <&main_ecap0_pins_default>;
 +	status = "okay";
 +};
 +
 +&ecap2 {
-+	/* P11 of J4 */
++	/* P11 of J3 */
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&main_ecap2_pins_default>;
 +	status = "okay";
 +};
 +
-+&epwm0 {
-+	/* P24/P26 of J4 */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_epwm0_pins_default>;
-+	status = "okay";
-+};
-+
 +&epwm1 {
-+	/* P23/P19 of J4 */
++	/* P36/P33 of J3 */
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&main_epwm1_pins_default>;
 +	status = "okay";
