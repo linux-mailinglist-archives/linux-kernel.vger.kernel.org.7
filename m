@@ -1,171 +1,94 @@
-Return-Path: <linux-kernel+bounces-614343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF49A96A01
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:36:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021E2A96A1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B415A189F13B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A0217EA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B3527E1AE;
-	Tue, 22 Apr 2025 12:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4Ev6cvr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A882857F0;
+	Tue, 22 Apr 2025 12:33:06 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3944C27D78A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E103228540E;
+	Tue, 22 Apr 2025 12:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325148; cv=none; b=O0oYXZoXzUWUPqRSw0mk+4bVsYi4sHj6vwr5irgFIOeRpGESGvCGb5cHVZZ66NXI8QWGM6wPiPefbKteo2xvc6Y4fHIZrNtQFRpzCEZ65NT4Tc2yghB28rp17nUcHbR0xL8ZNdxYBwy15PYz5VqdjzoGE4EgNt65CHELOS0owkc=
+	t=1745325186; cv=none; b=YQ9CL1WqazPx/vZEryQQhE6tMTCQyacC3qAK+O8dVd+10muSuBL+INo80GujmHCh6Lx7WAQSsJiJyhRVKUr03EVWLvCdbLrec3W1G7zkj99lKlleBwKsAxGc1QAfUR+XXlQlKX2UFD2CHql8B0yAWW+D/HUllyVmQ/Hj7tYKaPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325148; c=relaxed/simple;
-	bh=ezoVuyjRdCYau8pGkO7iCSZWW0prD2xC5WFm1SyfQlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsOPziWnus6HFcwxiwba3D/SWCo3RhLua/vZ46NHnLNOA65hUh04YUCDYy/YutIaLfGcoNkAwVfzds2YCcWN/BH22rY5vQM+FZwms7yqQU7fitM4EV/moGp4JcUlJDeIWLJAm0lc5U4b+5iUmAih+UQ/LMrmz7KcHeP41ClW218=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4Ev6cvr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 050B5C4CEE9;
-	Tue, 22 Apr 2025 12:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745325147;
-	bh=ezoVuyjRdCYau8pGkO7iCSZWW0prD2xC5WFm1SyfQlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z4Ev6cvrvR6w5mKRckGr7R1Ozh2jaQUlZ03WoKN79kVRaX6wd62pccB/yXdf0eOTX
-	 Wo0EUKxCWjl/Iv4wYvzZK+KbQ9Ye8vhKQZo5Ob+l3s7Cd9mCRmln+fZuswaPQKhoPi
-	 dv5eFN77kMd3iSqAZm9gDjCujUuNBmJbPCvw6q7mpcNxPrK687yjb8eR5/VUfKPD+L
-	 ZnmkC6FMzGOmRi/13Pyo08DfCoOwyWvvsFts2BbTaKRcwdhfKnZOTMwnLWbCV6T0HK
-	 4HnoF6FNrFMxwKi2iQxfitxp01zIpiSuLyq7DfVD+l5z2qxquBDEtzeHnTy1kRwI7f
-	 eonJJhjzfElFg==
-Date: Tue, 22 Apr 2025 14:32:22 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] drm/sched: Warn if pending list is not empty
-Message-ID: <aAeMVtdkrAoMrmVk@cassiopeiae>
-References: <9607e5a54b8c5041dc7fc134425cc36c0c70b5f3.camel@mailbox.org>
- <3ac34c84-fd84-4598-96e1-239418b7109f@igalia.com>
- <aADv4ivXZoJpEA7k@pollux>
- <83758ca7-8ece-433e-b904-3d21690ead23@igalia.com>
- <aAEUwjzZ9w9xlKRY@cassiopeiae>
- <0e8313dc-b1bb-4ce7-b5b7-b8b3e027adb7@igalia.com>
- <0bfa746ca37de1813db22e518ffb259648d29e02.camel@mailbox.org>
- <5a5d4a33-2f7b-46e4-8707-7445ac3de376@igalia.com>
- <aAd54jUwBwgc-_g2@cassiopeiae>
- <d3c0f721-2d19-4a1c-a086-33e8d6bd7be6@igalia.com>
+	s=arc-20240116; t=1745325186; c=relaxed/simple;
+	bh=4tH+zpe/YSXkHKzfy3rNqv/0qp2UaJnSNBUtrafhjpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D2fjo7lqMcwLWLJLVDUqjcWdOg1l6Vk6nqtXLj2+5ZQIMjadHHYvvBcCKROh3fri8Y0VQzDDpelzES0FR2fGFaz4StjMCBYu6B1CRwUsok1ELBhKEZdXpP+427QimjcOAsgzkJPdUspnF0G6NCs5Piuq08LX6MO9gr7HrX/UIVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZhhTV1kj3z1j5wc;
+	Tue, 22 Apr 2025 20:32:46 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2DD221A016C;
+	Tue, 22 Apr 2025 20:33:01 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Apr
+ 2025 20:33:00 +0800
+Message-ID: <93b0a8ad-8de7-4a17-a908-4ef0eb316e1f@huawei.com>
+Date: Tue, 22 Apr 2025 20:33:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3c0f721-2d19-4a1c-a086-33e8d6bd7be6@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] cpufreq: Boost related cleanups / fixes
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>
+CC: <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Nicholas Chin <nic.c3.14@gmail.com>, <linux-kernel@vger.kernel.org>, "Rafael
+ J. Wysocki" <rafael.j.wysocki@intel.com>
+References: <cover.1745315548.git.viresh.kumar@linaro.org>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <cover.1745315548.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Tue, Apr 22, 2025 at 01:07:47PM +0100, Tvrtko Ursulin wrote:
+On 2025/4/22 17:53, Viresh Kumar wrote:
+
+> Hello,
 > 
-> On 22/04/2025 12:13, Danilo Krummrich wrote:
-> > On Tue, Apr 22, 2025 at 11:39:11AM +0100, Tvrtko Ursulin wrote:
-> > > Question I raised is if there are other drivers which manage to clean up
-> > > everything correctly (like the mock scheduler does), but trigger that
-> > > warning. Maybe there are not and maybe mock scheduler is the only false
-> > > positive.
-> > 
-> > So far the scheduler simply does not give any guideline on how to address the
-> > problem, hence every driver simply does something (or nothing, effectively
-> > ignoring the problem). This is what we want to fix.
-> > 
-> > The mock scheduler keeps it's own list of pending jobs and on tear down stops
-> > the scheduler's workqueues, traverses it's own list and eventually frees the
-> > pending jobs without updating the scheduler's internal pending list.
-> > 
-> > So yes, it does avoid memory leaks, but it also leaves the schedulers internal
-> > structures with an invalid state, i.e. the pending list of the scheduler has
-> > pointers to already freed memory.
-> > 
-> > What if the drm_sched_fini() starts touching the pending list? Then you'd end up
-> > with UAF bugs with this implementation. We cannot invalidate the schedulers
-> > internal structures and yet call scheduler functions - e.g. drm_sched_fini() -
-> > subsequently.
-> > 
-> > Hence, the current implementation of the mock scheduler is fundamentally flawed.
-> > And so would be *every* driver that still has entries within the scheduler's
-> > pending list.
-> > 
-> > This is not a false positive, it already caught a real bug -- in the mock
-> > scheduler.
+> This series tries to fix boost related issues found recently.
 > 
-> To avoid furher splitting hairs on whether real bugs need to be able to
-> manifest or not, lets move past this with a conclusion that there are two
-> potential things to do here:
-
-This is not about splitting hairs, it is about understanding that abusing
-knowledge about internals of a component to clean things up is *never* valid.
-
-> First one is to either send separately or include in this series something
-> like:
+> The first two patches (hopefully) fixes the boost related breakage
+> introduced recently. These should be applied for v6.15-rc4. Nicholas,
+> please give the first two patches a try.
 > 
-> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> index f999c8859cf7..7c4df0e890ac 100644
-> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> @@ -300,6 +300,8 @@ void drm_mock_sched_fini(struct drm_mock_scheduler
-> *sched)
->                 drm_mock_sched_job_complete(job);
->         spin_unlock_irqrestore(&sched->lock, flags);
+> The other four patches are general optimizations and fixes for boost
+> handling in general. These can be applied to -rc or next merge window.
 > 
-> +       drm_sched_fini(&sched->base);
-> +
->         /*
->          * Free completed jobs and jobs not yet processed by the DRM
-> scheduler
->          * free worker.
-> @@ -311,8 +313,6 @@ void drm_mock_sched_fini(struct drm_mock_scheduler
-> *sched)
+> --
+> Viresh
 > 
->         list_for_each_entry_safe(job, next, &list, link)
->                 mock_sched_free_job(&job->base);
-> -
-> -       drm_sched_fini(&sched->base);
->  }
+> Viresh Kumar (6):
+>   cpufreq: acpi: Don't enable boost on policy exit
+>   cpufreq: acpi: Re-sync CPU boost state on system resume
+>   cpufreq: Don't unnecessarily call set_boost()
+>   cpufreq: Introduce policy_set_boost()
+>   cpufreq: Preserve policy's boost state after resume
+>   cpufreq: Force sync policy boost with global boost on sysfs update
 > 
->  /**
+>  drivers/cpufreq/acpi-cpufreq.c | 38 ++++++++++------------
+>  drivers/cpufreq/cpufreq.c      | 58 ++++++++++++++++++++--------------
+>  2 files changed, 50 insertions(+), 46 deletions(-)
 > 
-> That should satisfy the requirement to "clear" memory about to be freed and
-> be 100% compliant with drm_sched_fini() kerneldoc (guideline b).
-> 
-> But the new warning from 3/5 here will still be there AFAICT and would you
-> then agree it is a false positive?
 
-No, I do not agree.
-
-Even if a driver does what you describe it is not the correct thing to do and
-having a warning call it out makes sense.
-
-This way of cleaning things up entirely relies on knowing specific scheduler
-internals, which if changed, may fall apart.
-
-> Secondly, the series should modify all drivers (including the unit tests)
-> which are known to trigger this false positive.
-
-Again, there are no false positives. It is the scheduler that needs to call
-free_job() and other potential cleanups. You can't just stop the scheduler,
-leave it in an intermediate state and try to clean it up by hand relying on
-knowledge about internals.
-
-Consequently, when the pending list isn't empty when drm_sched_fini() is called,
-it *always* is a bug.
+Reviewed-by: Lifeng Zheng <zhenglifeng1@huawei.com>
 
