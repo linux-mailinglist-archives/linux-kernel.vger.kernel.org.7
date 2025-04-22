@@ -1,181 +1,210 @@
-Return-Path: <linux-kernel+bounces-614239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37969A967F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:42:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B89AA967E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570633BF9B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AA11883FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1846427815B;
-	Tue, 22 Apr 2025 11:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3091D27BF88;
+	Tue, 22 Apr 2025 11:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pz2n+J30"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="izL5No+a"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2781096F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911CC2AEE9;
+	Tue, 22 Apr 2025 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322065; cv=fail; b=AVmJCXcmt2Bo+yfDpbX9Nnqx1ghH5nNY87aCLLpKqmsIJEOfeQDyoqBYwEQzaEm20FT7ncYRkpBBnBnrtuQKQ3GweuyIARyyAhTNJD+rpkfw9PQg2C7ddEGJsZnEulknIOCOJ9NVpWguUsQxaflPPTCKSF+xTu9U0Eqf/QEywt0=
+	t=1745322031; cv=fail; b=aw92U35RqtpiggQ70p/GOp5mzXRTT5gBj11RhjZkJRH1jb4K/7tkuK85RPPj3ETQvblDdxtSaBmxyiJi7Ic7bYItPMtteb2JKbGbHkflMFAj7/tWmw7SoK3V6PolVVVWtrqoBHTOtudjHempT5JhKm0Ft+W3CglpqvbO8+Kz1Yc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322065; c=relaxed/simple;
-	bh=74I3WecXaAAFGUloOuZWpVBqKaqWzGPMyJwN7Bnmwcw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HS7ZcqfNdhOjd3cIi719azUsdRcQymh1xmgtOtWjiM4ajUVFAmBximvwimyc6lZ9GBfUz63NCc7un2KPYZ0tZAYLUOdTH+Q0XVARmybO+28/0Q0scjLax0u5OcrXE2HN/3mM6g/tdIbqpzUeEG2YV/kS8YcGOmfCtpcYBT4w1h4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pz2n+J30; arc=fail smtp.client-ip=40.107.244.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1745322031; c=relaxed/simple;
+	bh=4ilMxYiLtTDS5alpIjGMmvaTG/rnjYZYOMAVnSJiIA0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RGRWeZ1Pepi6d87jiRWhjo3anP+H49s5LtvCoASTxjGk2chMpqrjAs04JQguFDAsW2DaQtXmOz1oJNCxvHPXRv8spO+CGfr5S3jarzLjlf6H6WJt53/Vw29pOPTBsTWRcbH31kAsBhvllhgavYvM+MuL060hLm5oW3my2wD03uw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=izL5No+a; arc=fail smtp.client-ip=40.107.92.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iqQy46wHHFMK69TQRw6DMPltUtqLU4Q/x7XCNoJ5AFcb1R7JVChOthCa+SLFFUZ3lGhUi/j2LUrbZWhve/XrCqQdvNiH8QxY6CoRdE5BQggFByF1OR5BrkSjJbk6V8M1i4FnGjYU1v4CEYxjVxhu8SJ3riIs03AMEAtBBmy0eBOtoy3QvICC4MjYXOwsUpoOOZzmaA9CQ0IaG2RB0F98Lfuzsnwd2eWU7BIAeayOSMHr/8TFWEKZ6EyXLv4439sofBXVSkPKj3sSrAFyg3FZH6+yvIMbcIw70a2RH45BHztMJ/qr/wQAzw+dc0/pj4GJqQWHwAt+ZE50nzwCfLx/Bg==
+ b=bOl3IZYn39DAPwe6v+HibLcMjHZ14a73PH9wH3o62gVooUqF1FB+TlbRDAvmBplRdSON6F4kA41xoWMxh3rb8ecz1iKQQZxCv0x98wnI8c7CIVG8D8ii2oYCQMIEDAjM9nERgKU/53LTzokdft0hXeUzzdmS0EecuFnmvii3IS/YlJgb3qryy5LdMEtPGKieFT+hAUrhjhkFseKCq8TtFSKOtxObgk/IOOh4/xsrCcgLyylhKzcZKmVtF+4NqMOy15pImBCkFilWjAdNEGHTIAbMyaozvyuJ+Q5nzkoeWxmHL4VHiBKBzrUpeN1Chk/QlQa8RrwlTCbCoh1ZJx2jOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HXhrQCcoFrDymvDNGjOr+++MiJKpILA4vOt7SmKpjoc=;
- b=vOQYjHgNJm4FfysrowEWej+NwVvANgJM1WE06CWZz0kfrf7r9WmUkGbXjkcc7kbJhpLeEYfO8H4Ca/6VTb+z08Uc66d2h1HFFrH0C/pf2cVGqMbSGQ9LjYiAyucXDazJNKPIzncNaoS7YBTqImamqCTqzaOh2TKKGzunw3+rO8UR2dl35Yf/XHmvm+b6+AEAIFkHnWTyNK6ta0fMkCRNejG9G4cplQU9xowtvfWuT9FSlPBNPUR0ITJm0SS0DOVKfd3GoZFh/BWoHLRuhtiBzx8AJbBcYxnd6jyjAfZjU5dFGFG0R6+ZtAPYvqtqcgcb55CfAR6wIhpknBllqKVcXg==
+ bh=3moZLRMZJA/3c7zH0UWU6y/u1JINPZhz5StqFl50TYE=;
+ b=QzmunKrltL4aVQWKZAhvljHjL6OwvkMhIxXaS3V8ah5YMaypmGcs5lEv1wtAZUQm7ZwRb0U1LgQghxhOaTdWPCh7XmE11uO48iq2DAU3w5oVEDjIJmY1zIaE8i1gesId+nEdGnbvn/WKQkS467QJ8AdTa4UHVVNnJfNEaSrCfOdHIx07KdBKQj6vQ0LgEm4jJlt/o1PPzzlt3jbizTKBN+KUjoQuAkqCIOS27Po+CW4xqxmKJyZTEJVmoqd/sOJD8CDlNCjI9U4G1KGeH1WmZ7+6gRHSd/JEVJ56wQ3z1rPOS2xmjYTsz9fHM736D3ZH6C/AJniG9Qbai+vmsbX6cA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXhrQCcoFrDymvDNGjOr+++MiJKpILA4vOt7SmKpjoc=;
- b=pz2n+J304JU4+OHWLKzbKUkqnLzfn8rkMmw2a/a2jb0JUjyeYJg6vOPGiHvJCEVGYTFJLmhhSnWlmdizsXZ4ooyFvVMYpziyBW/dT3C5zUSedVo8SZxU04af12A5t7XgAgW/iL1nmHhurl0DrADNFRZfuiZut68DpsEWIsKErB0=
-Received: from SJ0PR03CA0158.namprd03.prod.outlook.com (2603:10b6:a03:338::13)
- by CYXPR12MB9426.namprd12.prod.outlook.com (2603:10b6:930:e3::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Tue, 22 Apr
- 2025 11:40:57 +0000
-Received: from SJ1PEPF00001CE1.namprd05.prod.outlook.com
- (2603:10b6:a03:338:cafe::5b) by SJ0PR03CA0158.outlook.office365.com
- (2603:10b6:a03:338::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.33 via Frontend Transport; Tue,
- 22 Apr 2025 11:40:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE1.mail.protection.outlook.com (10.167.242.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:40:56 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
- 2025 06:40:51 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <shaggy@kernel.org>, <akpm@linux-foundation.org>
-CC: <willy@infradead.org>, <shivankg@amd.com>, <david@redhat.com>,
-	<wangkefeng.wang@huawei.com>, <jane.chu@oracle.com>, <ziy@nvidia.com>,
-	<donettom@linux.ibm.com>, <apopple@nvidia.com>,
-	<jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-Subject: [PATCH V4 0/2] JFS: Implement migrate_folio for jfs_metapage_aops
-Date: Tue, 22 Apr 2025 11:40:00 +0000
-Message-ID: <20250422114000.15003-1-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
+ bh=3moZLRMZJA/3c7zH0UWU6y/u1JINPZhz5StqFl50TYE=;
+ b=izL5No+azyq49H1D+uNT30T8Ye7v33qh7mJILbbBEXsjxyq281d7v53I/woZwMshfWXouAZnk/OAfFbiYaJBI8UhUwuAf23GQ6bV9cORf+jdoucPNvq4BIrw7a0t72NujW6g072cWECUOf7zzsZHXFfyU8GoaHz9jZ3E5P4Lc0tugPISJJtWfH4f2HkVG8nle986BdZveYRdfwEaiswwp9VlcRiKXdqQ0Az/A20SytTvr8mAhDbmxznLK7SnnO5owmUSaZ3V7rDCCTX/uLBDJGPIvlehP+9FQ0DxS15XU8EVAlm+DkEpH1ljL1O1ZnWOeBtw+dmCTLwfVJ4xjVEDZQ==
+Received: from DM6PR03CA0034.namprd03.prod.outlook.com (2603:10b6:5:40::47) by
+ DS0PR12MB7656.namprd12.prod.outlook.com (2603:10b6:8:11f::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8678.23; Tue, 22 Apr 2025 11:40:26 +0000
+Received: from CY4PEPF0000EE36.namprd05.prod.outlook.com
+ (2603:10b6:5:40:cafe::12) by DM6PR03CA0034.outlook.office365.com
+ (2603:10b6:5:40::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Tue,
+ 22 Apr 2025 11:40:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EE36.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Tue, 22 Apr 2025 11:40:25 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Apr
+ 2025 04:40:10 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Apr
+ 2025 04:40:09 -0700
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Tue, 22 Apr 2025 04:40:08 -0700
+From: Wayne Chang <waynec@nvidia.com>
+To: <waynec@nvidia.com>, <mathias.nyman@intel.com>,
+	<gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jim Lin <jilin@nvidia.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH 1/1] usb: host: tegra: Prevent host controller crash when OTG port is used
+Date: Tue, 22 Apr 2025 19:40:01 +0800
+Message-ID: <20250422114001.126367-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
+X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE1:EE_|CYXPR12MB9426:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff105488-20c2-481d-f84d-08dd81928bfd
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE36:EE_|DS0PR12MB7656:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0fd7659-9ec2-482c-6feb-08dd81927988
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026|13003099007;
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gnjgjBIz6cctCUTjEsrDExMBV5WI85+DMismD5SSKQpavoLRa757KnAuzhb3?=
- =?us-ascii?Q?RaD+owpr7nH6fIkTi9grJXfkJlmstcR0KHJzSuf7OKJcydK/zpr7Nb8Y8Any?=
- =?us-ascii?Q?lEiH0guBdSdO0gsHmmq2NLJlEKkG52ikSCJX82VW9Apiz+5DiOdBjjCDecKM?=
- =?us-ascii?Q?Vdgq0STEvdiXnWBGshBFkOBLSmhMdjiO6juh69b60DGZxvqjOv4DIa2vlBND?=
- =?us-ascii?Q?QaDc8Fdq9evltHY8awRG4nbLfSND4PdnvSK2Fms7nJXYMhc+wXekGPDya97a?=
- =?us-ascii?Q?O85sx3r2GzGEDNMDr0d//5fu617Zws7U0M7robd1/mPFQ2+t03bBYfpio0pb?=
- =?us-ascii?Q?f6iXBeSzxtJHwmXWPXzhaz8CpD7565x/PPffBR9IzPk007lAs3qVfzHfJob+?=
- =?us-ascii?Q?fY1AVHDTloXglHkMBshk1d4aldY2AEgkgETwcJ0K5YN1eDlCCCx545RXYFHt?=
- =?us-ascii?Q?Silcmkh8efS6cZ3XZZsxZ6tYg7ukfTtL22mIoArdyJU2lEyElVWGKQGFymIg?=
- =?us-ascii?Q?jTW0GwxKrNZrD868JHVrwYTPMjASjoyal2JtUl4W2wiZn+TZSUrSqdFbSKZV?=
- =?us-ascii?Q?8KLA6jiVBwIsi/jVVzzK/cilfDvrsvK8fcJVX+X6MwDoLqst73pyO90txU2X?=
- =?us-ascii?Q?58w6l5iFZouMC0Tzt7CwRwva+XZkkr2X1IVzRNfwqBf0oZYlZiHJojOXT1Ya?=
- =?us-ascii?Q?p/W446enXar00DDcYN4pJeXLxrbWrohCh/jaoyfPUHsZ/JDY3OWfNR/QVzFb?=
- =?us-ascii?Q?UKNKuSxnu8j20GRWeCgca0vlzkmBwoZNkoEsK6j7//Vi6PdazbRQZLWkXuC1?=
- =?us-ascii?Q?pZrWbmO1O667B05u2lhP6qZOo7d1aLd7iylXmfJFC1g4j231+I7/wzsSvmV7?=
- =?us-ascii?Q?sibN+GlgAlMkTjE153L6+bjURTR0tE49fEvoUTWKC1YhhPJVNBpDzpju1Uam?=
- =?us-ascii?Q?AUC54Hy4HFeCoOS/fN0gses5gY42zMRchUptDi6N4c95JzQWGYLVtkYS2A66?=
- =?us-ascii?Q?mdMZZF4V6tbkOOc2t+Ll+aA05MCxaFi6rKHx0s/rARl6D6Lh+I5i/URzAsWO?=
- =?us-ascii?Q?pQFjmG7WYSxK+f9mwnZcsXIeyovsZJtumMvm7XRCa8O/AC++U6QQm+J+IoEg?=
- =?us-ascii?Q?YsIW3DZrO+8rZRRwfl8ey3TMlOs9cUTK3WCw7HdrZgNI8pePm0Amw8RVz0z5?=
- =?us-ascii?Q?oatcnjonWHCbIx3JjfAU9qrSx2jhct3NSo3Tmlb1Z/VjEox2krVlsUM5+1Yo?=
- =?us-ascii?Q?+0d9/2nGvgXw5NJt03vxBxpdm4bmUlpy4SX5gg8EKdCWksN68jWOJBchTcmi?=
- =?us-ascii?Q?iGt2NeTQcoLuJUvP5/50P8IJoxWGVSSELdu3x4W7jM+PstpYuGL70kWwjPik?=
- =?us-ascii?Q?pCU9nsH9i2ia6q8yiGeQGAcytaTnug1sxbXOj/h3bbAygDexvFCFJjS00sOV?=
- =?us-ascii?Q?ltVAu0cFf7YQ8+nTVOLKIVoivIyWMVwHydz9sBNZVMf9C1A4eTR6gA=3D=3D?=
+	=?us-ascii?Q?t0QWlPUFiHfai0ckGzbHvjyCjwe7+LbamlATTWCJ3VaC5FUJMIA0iCqQG9RG?=
+ =?us-ascii?Q?zshO+F6KiyjsFzDUbiAzo7/ApGfStps9+q3Dgf1+i/FLUrWLGdRbRbvvvzdo?=
+ =?us-ascii?Q?k8CPqoG1Cyxm48aiVj0iQUpm16wkE2iyMVNBnSMYnqZyBemqzM3S1L3HkdLa?=
+ =?us-ascii?Q?4sO/yhPK3kTiYsMHPjKgW++ahv/ZfMsPp59wlnCnNoJ2KpPcvDfYli1myPEK?=
+ =?us-ascii?Q?LqXqLvYaCuGqMKlGFSRf8Id+cjBfwr3pqNbq6K2AifPLhyPuHNnSZ1wjbEsM?=
+ =?us-ascii?Q?N4WzzlkO/nvbUvA6KpKJh5j22ze2BKy8gQPRU4k0Gb/VKZV7HsyZoP5qHBPp?=
+ =?us-ascii?Q?/9fnvH7BAAu4pgpFZziRDBJPzfhYXTLiJQGQCmIOibddMsUNmG1T0/9maoyu?=
+ =?us-ascii?Q?XMH459T93xTXeUV/YkJfnpAB0QJfgh9jR+v8VDuxr/3grymN3cL4ycdS1E3P?=
+ =?us-ascii?Q?diKROP1Ugbd0HKZl62DoLKzPUA3pbeXLHMfdkESviYgiGAKp2ek8zt0/gt5E?=
+ =?us-ascii?Q?wW2TheFtHDzmGtY16q+mPUEuo8Rz0TYm2cchePr3DFDg6EfxYc9tvVE0v1p3?=
+ =?us-ascii?Q?I4MOcB6CHMbeGKI0o5uUV8TdMrB0NllXDhFdWpXe3aWBYgoh0gi2ruAJtRRS?=
+ =?us-ascii?Q?GTM6tgiLMTe9W5XOVVgoxEdBN3ykorIGgZtOpEsZps8d9bvGErYCXfU9Sk44?=
+ =?us-ascii?Q?vXn5Nj0vfJJZbFe2URrlBvZfBIXn3E8Jz4Y4Sch0dkC2nJ1FmB1WSshr049Z?=
+ =?us-ascii?Q?UrNySJqjSLVIEWAuh+Wp9OftvyymIg06xbyOPf7KviS3crvqe/jQFxXMprym?=
+ =?us-ascii?Q?Asi4FKDA5cBl4+ByUw0E2yKRBzq8aRsi1ym9uosnqUP4m0rg1q20Fto8f7rZ?=
+ =?us-ascii?Q?/iUUnCbxXosBn+711Pqy27aRmvC5w39IlaD6Xeo31nMUYpP30cQVJY1yXOO6?=
+ =?us-ascii?Q?s5q4xEN4fWD4Zxh9p3Fo4HuQqJFEth4zE+GM3BVgtSdFIu/gbbtdeoL9Etxz?=
+ =?us-ascii?Q?cWjguDIh4k0UW1Rmhu2PN/xU3txegatEZW1qo0FYNmiRf0t+K8+xgTCT7gya?=
+ =?us-ascii?Q?ulVKQC+KMKZSJDJhg2AZRDrs20j7uPn2kYKp1W3YdVWBgF2jGQuc1b+do8dt?=
+ =?us-ascii?Q?opdLySdg3aCMCf1hn1MhHuaXdxqY0jM2jM3XpCQ6aQwAL6r7QS2588TRyZyx?=
+ =?us-ascii?Q?b1q3Z2LluC9wtwy+FS3sYS8NEgeH6oQUSMXht3PqpbGvXMvFjw6mi2T3ffpJ?=
+ =?us-ascii?Q?SDSEMjrrqTw6JReLO3EFPiq0yztZzJCBdWwrGIq5yXmqXvMVNuGXy9bMbYfw?=
+ =?us-ascii?Q?saZTEW6zhOksiCPMsCcJNcwF1hBBQCbwlDWXxVsTxaBtzWgeUMYe/gGA/OUm?=
+ =?us-ascii?Q?NNHRrc/5yvLGg/wXcw/bOYPRR9srRNMvP5nxsNQSpl97z8lGR7uexqIeptbt?=
+ =?us-ascii?Q?wzOUm9H2lcCdZ64vxyfR0MY5/gXs95iJ4EVI11cH5plhNarVq28yVVnaS6+T?=
+ =?us-ascii?Q?k2VuWY+rueKLblTGpaSVbcCAqIu+CPccNp6b?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:40:56.9113
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:40:25.9577
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff105488-20c2-481d-f84d-08dd81928bfd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0fd7659-9ec2-482c-6feb-08dd81927988
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE1.namprd05.prod.outlook.com
+	CY4PEPF0000EE36.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9426
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7656
 
-This patch addresses a warning that occurs during memory compaction due
-to JFS's missing migrate_folio operation. The warning was introduced by
-commit 7ee3647243e5 ("migrate: Remove call to ->writepage") which added
-explicit warnings when filesystem don't implement migrate_folio.
+From: Jim Lin <jilin@nvidia.com>
 
-The syzbot reported following [1]:
-  jfs_metapage_aops does not implement migrate_folio
-  WARNING: CPU: 1 PID: 5861 at mm/migrate.c:955 fallback_migrate_folio mm/migrate.c:953 [inline]
-  WARNING: CPU: 1 PID: 5861 at mm/migrate.c:955 move_to_new_folio+0x70e/0x840 mm/migrate.c:1007
-  Modules linked in:
-  CPU: 1 UID: 0 PID: 5861 Comm: syz-executor280 Not tainted 6.15.0-rc1-next-20250411-syzkaller #0 PREEMPT(full) 
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-  RIP: 0010:fallback_migrate_folio mm/migrate.c:953 [inline]
-  RIP: 0010:move_to_new_folio+0x70e/0x840 mm/migrate.c:1007
+When a USB device is connected to the OTG port, the tegra_xhci_id_work()
+routine transitions the PHY to host mode and calls xhci_hub_control()
+with the SetPortFeature command to enable port power.
 
-This implement metapage_migrate_folio which handles both single and multiple
-metapages per page configurations.
+In certain cases, the XHCI controller may be in a low-power state
+when this operation occurs. If xhci_hub_control() is invoked while
+the controller is suspended, the PORTSC register may return 0xFFFFFFFF,
+indicating a read failure. This causes xhci_hc_died() to be triggered,
+leading to host controller shutdown.
 
-[1]: https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
+Example backtrace:
+[  105.445736] Workqueue: events tegra_xhci_id_work
+[  105.445747]  dump_backtrace+0x0/0x1e8
+[  105.445759]  xhci_hc_died.part.48+0x40/0x270
+[  105.445769]  tegra_xhci_set_port_power+0xc0/0x240
+[  105.445774]  tegra_xhci_id_work+0x130/0x240
 
-Previous Versions:
-V1/V2:
-https://lore.kernel.org/all/20250413172356.561544-1-shivankg@amd.com
-V3:
-https://lore.kernel.org/all/20250417060630.197278-1-shivankg@amd.com
+To prevent this, ensure the controller is fully resumed before
+interacting with hardware registers by calling pm_runtime_get_sync()
+prior to the host mode transition and xhci_hub_control().
 
-#syz test: https://github.com/AMDESE/linux-mm.git f17a3b8bc
+Fixes: f836e7843036 ("usb: xhci-tegra: Add OTG support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jim Lin <jilin@nvidia.com>
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+---
+ drivers/usb/host/xhci-tegra.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
-Shivank Garg (2):
-  mm: export folio_expected_refs for JFS migration handler
-  jfs: implement migrate_folio for jfs_metapage_aops
-
- fs/jfs/jfs_metapage.c   | 94 +++++++++++++++++++++++++++++++++++++++++
- include/linux/migrate.h |  1 +
- mm/migrate.c            |  3 +-
- 3 files changed, 97 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 22dc86fb5254..70ec36e4ff5f 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1364,6 +1364,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
+ 	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(tegra->padctl,
+ 								    tegra->otg_usb2_port);
+ 
++	pm_runtime_get_sync(tegra->dev);
+ 	if (tegra->host_mode) {
+ 		/* switch to host mode */
+ 		if (tegra->otg_usb3_port >= 0) {
+@@ -1393,6 +1394,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
+ 		}
+ 
+ 		tegra_xhci_set_port_power(tegra, true, true);
++		pm_runtime_mark_last_busy(tegra->dev);
+ 
+ 	} else {
+ 		if (tegra->otg_usb3_port >= 0)
+@@ -1400,6 +1402,7 @@ static void tegra_xhci_id_work(struct work_struct *work)
+ 
+ 		tegra_xhci_set_port_power(tegra, true, false);
+ 	}
++	pm_runtime_put_autosuspend(tegra->dev);
+ }
+ 
+ #if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_PM_SLEEP)
 -- 
-2.34.1
+2.25.1
 
 
