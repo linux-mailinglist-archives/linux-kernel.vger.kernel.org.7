@@ -1,151 +1,240 @@
-Return-Path: <linux-kernel+bounces-615051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257EDA97618
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:51:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EF5A9762E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA0916C4D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B96188F834
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3222973DB;
-	Tue, 22 Apr 2025 19:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DF298CC0;
+	Tue, 22 Apr 2025 19:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sEsuM4T/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="2AhcQFKs"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ACD29616F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 19:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BB42989BC
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 19:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745351486; cv=none; b=BKHmWuPChjRzm7B/INBLgFlus02da9jLXv322Icv7RUOJls51ja/j3BX5nPLoiwakPmIPzrceDSrdjfmEu9xvrLPeGi33kJPi8zOXy7f1H7j4Gmf1iUP5/S2/lQVNVFte57znjn2lMNTrDfAR+FK4+bcAsRHcnJ3/Ux2hF1cUjc=
+	t=1745351596; cv=none; b=GXOZ7yDIhnj/pQf37c0UUedKT1pkZg7fuqe/u5GaAxc2djzKEKSZb5YOZaaGbqnDeU+wbEWuqshuyCNcvuPy661TIrNk/CsIKA7/EdMIBHznBETVF7F/qR4Bc1gtH/0g8RhgRwf/EHWD0+FwqHxkEucsGt5q9nLkfPMr1csnpaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745351486; c=relaxed/simple;
-	bh=G+t2v6BhLb+5vWztzdpssgwdNSlTOk90KThSVmnEfpo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OUXCGqlBgfIzx8K98WmK+fCELJ2uaCI8fA5ul8xJr96Gnnoqr4O751dzyD/uHtUDbjMsxdf4/uYL9uyMGesVqkVl+dmW7dvhgHz5yUXbE2D+Bg4fxwHax6uEHZhqAkodLCZVRqyy81MN+7LJxy9xJrccPRC1fruXwmwwVKwYfXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sEsuM4T/; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so4868470a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:51:23 -0700 (PDT)
+	s=arc-20240116; t=1745351596; c=relaxed/simple;
+	bh=IwAWbmdSxUyTMHT5B54kwJAXHfPAJQo/18ZEaaxAN2w=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D71pTwIkb/2YP9obfSml7ajHCoBCn6KzMhVHZfqa2mK2kkGVbbP9JvnigYPlJyC7eYvFvXzxHgToSI3kcoKDdxIqv7TlHb6PdhWARF7BluVhOnvzWFKGE9yR5Gl9TcA/JFcoWmwhDAw9xXcXYn1AW+1HrAEs0ZahydAefQRKNis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=2AhcQFKs; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f7019422so55461796d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745351483; x=1745956283; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mH6UGx1+cJUt0+vdtDYj5GNgwh2+pJEonMo7kApLLOI=;
-        b=sEsuM4T/6AiEfbcv6LEBX9nIBDT+43JI3MKdo3iKnkO2YqI70DcND2IDwLROe9Q4D5
-         GArSdE4crjfrbQKmyHy1Els5AUgocKZZBhQ4ePOShvuMia5QfeqWQImCd0ooUy3J7eaq
-         uQ6iKaiB9W6Oab+GGxn3MZLM2zo9IQaI7BW1VoDi98zqEoGP3JMAMBj5PRaUmpBLWtRo
-         mjh4DGwfQSGSsttkwj1ptnNcpnPTSEHYTK8QeWv5i016xI7jxtl9m17cB/A22/f5mrtk
-         Q0lgI2Pwnlfgiq4aj2EbhSZVbFNZn+LTprUdDBVTDrYPrI9CfkqS4laNY2dRY2mAg8i+
-         vevA==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1745351594; x=1745956394; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rYsIXJ0VH1fBZwKk67xkFa5qHHB2W1M/DHJM5j7x72w=;
+        b=2AhcQFKsPB4b1eeIxXxxcG015taR+aZtipBkxzTXTbpguZshQyMv5AEVC7rnK9yAvR
+         tRzvocT1BRhFvoO7WbuZKB0FpsjgRJw6acoBJLq95FoauWCifk3xmVgSXhRbfC71GBDu
+         w6SSGOTRqyTrgb6CVwJMnWaXMTz98CIuAz5zcqzHFmfjsd3pvys1JRGWC8DCjluiamgN
+         WneSIModrXsioHPhES6t8guG/FfstQXwqcpEbVRX6X1JnWg+7Eb/xNSk5Lte9qCyCs8v
+         rKHh+EAmo7BpepNQcHOTd2LctY6E1ByvKIm1FyDI+jh3qlFiO7MMGRnEEqOcyu0/A0kT
+         oNYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745351483; x=1745956283;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mH6UGx1+cJUt0+vdtDYj5GNgwh2+pJEonMo7kApLLOI=;
-        b=mjrm6J/OYZVcsVzOPoE2Be+ckj29y7sK/PwiHJMNzMEAYwbdobwerxjqVOlj3PXfqI
-         ShPbl9FtdvgNR7dXAWLWm1OCCLAYunz/4pEkmvdtoGG5pYtL1wJqPTZ/Su/XwUNRKp0t
-         NvpLDrtGhSJxs/DLoEmRjjiDtrdca4T5wMJYkOYjbx8IqGXzrbV+GG/rHlUDp/aj4e4k
-         MuL3CzVJ6q2eTsIY5GtlSTqwTwBMmXmnOgsrBvr564K7FAtJGN2d+SvWjqu7yhWH+BKR
-         7beIq9ntV4mvd1K0MSsLqLGyT7OFEH83rKpFRt6tSh4IZjhtGraC5qo8VZemYYRibcJ6
-         +9ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEzfYvUyf4mh1baAvjKUsOlM8vQQdXV01UcY7KieXm6G+g0sCgdzUueUyK15kUFZD22mzaufJFarZt6Pw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP0/a5q3qZQSN5o/UiaARbDxxv9mbYyOPlSe78KlyLAXfVrEmO
-	Gt3yKsCZN07J62mNCPMZhW4u9M3qIA+/sZizlpVzZp30W+gUMiioRVqpFf5r+OuFSyyNPRqzeVO
-	Z+Q==
-X-Google-Smtp-Source: AGHT+IGkV0RcloCvNwgssDSlkXsqRo5n8/rzSZ0U6QUVt02K3Nbge8IReH8D+uHUWVsCRD28uFY//07FCPo=
-X-Received: from pjbsr7.prod.google.com ([2002:a17:90b:4e87:b0:301:2679:9d9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b90:b0:2ee:bc7b:9237
- with SMTP id 98e67ed59e1d1-3087bb9ede2mr21004314a91.27.1745351482796; Tue, 22
- Apr 2025 12:51:22 -0700 (PDT)
-Date: Tue, 22 Apr 2025 12:51:21 -0700
-In-Reply-To: <aAfxuby_0eZZTrj-@gmail.com>
+        d=1e100.net; s=20230601; t=1745351594; x=1745956394;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rYsIXJ0VH1fBZwKk67xkFa5qHHB2W1M/DHJM5j7x72w=;
+        b=pqSgeC+hkqQxDg2rBvzrirImxbs9SRIQjmJpQ40rTvY4A7BQwGtRmwYhORTSa7RKnE
+         ze6MSYwrqsgGjq3Tqb5H+Ux94Hq3GXrPuBb58EsMzWZ9COFwn0gqD0TWucCJCzjAjsvR
+         C2S7uAfeTJR4ydIuALGbrkhb6t3QxVinBdyEw689lFzXsMbEQypHWCWYFY/cRTeFKvZw
+         wu35TzcXOokmHGELj5vtEWP8Sj1PO7MxEU0oIWAT98kdVPkBliCU+GSBuvtE6T2Z//gI
+         law/1lkkSa2rJ8/4fmJfs9oeWJfXblLAQVKIAkbpwdS7ntOn3qympZNOhbFb5M9Tx939
+         hivg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKQZBkylv1qeu+bOjtegJQQGt5O6WA7jfRAZb0F3bH5kv+XT/Y4PMfmHH8/+na+6wscSxOFeXDAsTgT0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvr3RdOWz3UI8pWttLOzhxVPJAw2Np2pc1pxnxnfHlLbif+scm
+	ANeBjOrNJSyd4YNzHfnL3lx7/aRoW8T6G5NpdRpQHHkKe6u+yXK6QWGq7B30dqg=
+X-Gm-Gg: ASbGnctRR4240es3TmTDlEaG4Rc6dcBDhC7SMjTCrAP7Q8iiuFMfs8NM2fqFl1NP112
+	gDWmjIA36zWB4aGIa1RiZXnuECy+MXjBcO96LBLqbJBXwqPqOJHhx0L72nMbfZ1H6CGy0BRe+n8
+	3BMhSQNM45XDGQAsH9Qh37RXu4eMF51g9ygjTcYgnDRaJD8wF4B62/jo7fBzVBsNAap+W/2MvVT
+	NHDTNKTyENGnkHvXmqG4xYUdgS6cA3AQfT+RlfhjkX3ieJepSMfsMGEODrSwti2BiHzFDSU2nKF
+	FvfrJP6QB+BUrmrfUKnEHpz6Z4KHy1iUR2sj0ILoLTDMRA==
+X-Google-Smtp-Source: AGHT+IFx37IZxz2XZRa4HUxytJgkJVsEXuyDvydowgtq1jU/C5yFgExdGRxaZiK2dG6HIZZz2N702A==
+X-Received: by 2002:a05:6214:21e7:b0:6e8:f4e2:26ef with SMTP id 6a1803df08f44-6f2c4656c2cmr318324046d6.31.1745351593565;
+        Tue, 22 Apr 2025 12:53:13 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:15:9913::5ac? ([2606:6d00:15:9913::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2bfcfd0sm61261036d6.82.2025.04.22.12.53.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 12:53:12 -0700 (PDT)
+Message-ID: <419ba5e518be4a35ed0277f749ca9a317f6bff5c.camel@ndufresne.ca>
+Subject: Re: [PATCH v3 1/3] media: uapi: add WebP uAPI
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Sebastian Fricke	
+ <sebastian.fricke@collabora.com>, Ricardo Ribalda <ribalda@chromium.org>, 
+ Erling Ljunggren <hljunggr@cisco.com>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Laurent Pinchart	 <laurent.pinchart@ideasonboard.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Jacopo Mondi
+ <jacopo.mondi@ideasonboard.com>, Jean-Michel Hautbois
+ <jeanmichel.hautbois@ideasonboard.com>,  Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 22 Apr 2025 15:53:11 -0400
+In-Reply-To: <20241121131904.261230-2-hugues.fruchet@foss.st.com>
+References: <20241121131904.261230-1-hugues.fruchet@foss.st.com>
+	 <20241121131904.261230-2-hugues.fruchet@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250422082216.1954310-1-xin@zytor.com> <aAevpauKYWwObsB7@google.com>
- <cb4e24a0-fdb7-46d2-9b0e-200f5e3e4c96@zytor.com> <DS7PR11MB6077B4D80EB7020C4D3FCD52FCBB2@DS7PR11MB6077.namprd11.prod.outlook.com>
- <aAfxuby_0eZZTrj-@gmail.com>
-Message-ID: <aAfzOWnYzcPjZDEI@google.com>
-Subject: Re: [RFC PATCH v2 00/34] MSR refactor with new MSR instructions support
-From: Sean Christopherson <seanjc@google.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Xin Li <xin@zytor.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "acme@kernel.org" <acme@kernel.org>, "jgross@suse.com" <jgross@suse.com>, 
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"namhyung@kernel.org" <namhyung@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
-	"irogers@google.com" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, 
-	"ajay.kaher@broadcom.com" <ajay.kaher@broadcom.com>, 
-	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"luto@kernel.org" <luto@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
-	Dexuan Cui <decui@microsoft.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Tue, Apr 22, 2025, Ingo Molnar wrote:
-> 
-> * Luck, Tony <tony.luck@intel.com> wrote:
-> 
-> > > >> base-commit: f30a0c0d2b08b355c01392538de8fc872387cb2b
-> > > >
-> > > > This commit doesn't exist in Linus' tree or the tip tree, and the series doesn't
-> > > > apply cleanly on any of the "obvious" choices.  Reviewing a 34 patches series
-> > > > without being able to apply it is a wee bit difficult...
-> > > >
-> > >
-> > > $ git show f30a0c0d2b08b355c01392538de8fc872387cb2b
-> > > commit f30a0c0d2b08b355c01392538de8fc872387cb2b
-> > > Merge: 49b517e68cf7 e396dd85172c
-> > > Author: Ingo Molnar <mingo@kernel.org>
-> > > Date:   Tue Apr 22 08:37:32 2025 +0200
-> > >
-> > >      Merge branch into tip/master: 'x86/sev'
-> > >
-> > >       # New commits in x86/sev:
-> > >          e396dd85172c ("x86/sev: Register tpm-svsm platform device")
-> > >          93b7c6b3ce91 ("tpm: Add SNP SVSM vTPM driver")
-> > >          b2849b072366 ("svsm: Add header with SVSM_VTPM_CMD helpers")
-> > >          770de678bc28 ("x86/sev: Add SVSM vTPM probe/send_command
-> > > functions")
-> > >
-> > >      Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > >
-> > >
-> > > You probably need to git pull from the tip tree :-)
-> > 
-> > If possible, you should avoid basing a series on tip/master as it 
-> > gets recreated frequently by merging all the topic branches. The SHA1 
-> > is here today, gone tomorrow.
-> 
-> Correct, although for x86 patch submissions via email it's not wrong: 
-> what applies today will likely apply tomorrow as well, regardless of 
-> the SHA1 change. :-)
+Hi,
 
-Yeah, but as Tony pointed out, when using base commit that may be ephemeral, then
-the cover letter needs to call out the tree+branch.  This series applies on the
-current tip/master, but there was nothing to clue me into that fact.
+sorry for the late come back.
+
+Le jeudi 21 novembre 2024 =C3=A0 14:19 +0100, Hugues Fruchet a =C3=A9crit=
+=C2=A0:
+> This patch adds the WebP picture decoding kernel uAPI.
+>=20
+> This design is based on currently available VP8 API implementation and
+> aims to support the development of WebP stateless video codecs
+> on Linux.
+
+Should mention that this new pix fmt is added to make it possible to
+support both intra-only and VP8 with reference, while advertising
+different frame sizes.
+
+>=20
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+> ---
+> =C2=A0.../userspace-api/media/v4l/biblio.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 +++++++++
+> =C2=A0.../media/v4l/pixfmt-compressed.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 +++++++++++++++++
+> =C2=A0drivers/media/v4l2-core/v4l2-ioctl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
+1 +
+> =C2=A04 files changed, 28 insertions(+)
+>=20
+> diff --git a/Documentation/userspace-api/media/v4l/biblio.rst b/Documenta=
+tion/userspace-api/media/v4l/biblio.rst
+> index 35674eeae20d..df3e963fc54f 100644
+> --- a/Documentation/userspace-api/media/v4l/biblio.rst
+> +++ b/Documentation/userspace-api/media/v4l/biblio.rst
+> @@ -447,3 +447,12 @@ AV1
+> =C2=A0:title:=C2=A0=C2=A0=C2=A0=C2=A0 AV1 Bitstream & Decoding Process Sp=
+ecification
+> =C2=A0
+> =C2=A0:author:=C2=A0=C2=A0=C2=A0 Peter de Rivaz, Argon Design Ltd, Jack H=
+aughton, Argon Design Ltd
+> +
+> +.. _webp:
+> +
+> +WEBP
+> +=3D=3D=3D=3D
+> +
+> +:title:=C2=A0=C2=A0=C2=A0=C2=A0 WEBP picture Bitstream & Decoding Proces=
+s Specification
+> +
+> +:author:=C2=A0=C2=A0=C2=A0 Google (https://developers.google.com/speed/w=
+ebp)
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst =
+b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> index 806ed73ac474..08a989511e7d 100644
+> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> @@ -169,6 +169,23 @@ Compressed Formats
+> =C2=A0	this pixel format. The output buffer must contain the appropriate =
+number
+> =C2=A0	of macroblocks to decode a full corresponding frame to the matchin=
+g
+> =C2=A0	capture buffer.
+> +=C2=A0=C2=A0=C2=A0 * .. _V4L2-PIX-FMT-WEBP-FRAME:
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``V4L2_PIX_FMT_WEBP_FRAME``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 'WEBP'
+
+After plenty of thinking, WebP is a container the support 2 codecs. We
+should not name this WebP, but instead VP8_INTRA_FRAME. Meaning, intra
+only VP8 decoder.
+
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - WEBP VP8 parsed frame, excluding WEBP R=
+IFF header, keeping only the VP8
+> +	bitstream including the frame header, as extracted from the container.
+
+This comment will then not be needed, since VP8_INTRA will make it
+clear.
+
+regards,
+Nicolas
+
+> +	This format is adapted for stateless video decoders that implement a
+> +	WEBP pipeline with the :ref:`stateless_decoder`.
+> +	Metadata associated with the frame to decode is required to be passed
+> +	through the ``V4L2_CID_STATELESS_VP8_FRAME`` control.
+> +	See the :ref:`associated Codec Control IDs <v4l2-codec-stateless-vp8>`.
+> +	Because of key frames only bitstream, ``V4L2_VP8_FRAME_FLAG_KEY_FRAME``
+> +	flag must be set, see :ref:`Frame Flags <vp8_frame_flags>`.
+> +	Exactly one output and one capture buffer must be provided for use with
+> +	this pixel format. The output buffer must contain the appropriate numbe=
+r
+> +	of macroblocks to decode a full corresponding frame to the matching
+> +	capture buffer.
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0 * .. _V4L2-PIX-FMT-VP9:
+> =C2=A0
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-co=
+re/v4l2-ioctl.c
+> index 0304daa8471d..e2ff03d0d773 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1501,6 +1501,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *f=
+mt)
+> =C2=A0		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr =3D "VC-1 (SMPTE 412M Annex =
+L)"; break;
+> =C2=A0		case V4L2_PIX_FMT_VP8:		descr =3D "VP8"; break;
+> =C2=A0		case V4L2_PIX_FMT_VP8_FRAME:=C2=A0=C2=A0=C2=A0 descr =3D "VP8 Fra=
+me"; break;
+> +		case V4L2_PIX_FMT_WEBP_FRAME:=C2=A0=C2=A0=C2=A0 descr =3D "WEBP VP8 Fr=
+ame"; break;
+> =C2=A0		case V4L2_PIX_FMT_VP9:		descr =3D "VP9"; break;
+> =C2=A0		case V4L2_PIX_FMT_VP9_FRAME:=C2=A0=C2=A0=C2=A0 descr =3D "VP9 Fra=
+me"; break;
+> =C2=A0		case V4L2_PIX_FMT_HEVC:		descr =3D "HEVC"; break; /* aka H.265 */
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev=
+2.h
+> index e7c4dce39007..09fff269e852 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -757,6 +757,7 @@ struct v4l2_pix_format {
+> =C2=A0#define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /*=
+ SMPTE 421M Annex L compliant stream */
+> =C2=A0#define V4L2_PIX_FMT_VP8=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc(=
+'V', 'P', '8', '0') /* VP8 */
+> =C2=A0#define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F') /* V=
+P8 parsed frame */
+> +#define V4L2_PIX_FMT_WEBP_FRAME v4l2_fourcc('W', 'B', 'P', 'F') /* WEBP =
+VP8 parsed frame */
+> =C2=A0#define V4L2_PIX_FMT_VP9=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc(=
+'V', 'P', '9', '0') /* VP9 */
+> =C2=A0#define V4L2_PIX_FMT_VP9_FRAME v4l2_fourcc('V', 'P', '9', 'F') /* V=
+P9 parsed frame */
+> =C2=A0#define V4L2_PIX_FMT_HEVC=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('H', =
+'E', 'V', 'C') /* HEVC aka H.265 */
 
