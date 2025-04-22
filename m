@@ -1,152 +1,112 @@
-Return-Path: <linux-kernel+bounces-614996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A648A974F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 20:54:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E25A974F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8AA16FF2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5545A02C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5AD29CB4D;
-	Tue, 22 Apr 2025 18:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EE32980D2;
+	Tue, 22 Apr 2025 18:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KuDvxyHy"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ODwmztY8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E55129B221
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 18:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383D41DE3C3;
+	Tue, 22 Apr 2025 18:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745347940; cv=none; b=IOFDbCVXjFVjtflMXntwkPMlAfjUoyoL54yYLm6W1Aj92cZcefv9SirvifWbSuJR0s6lSrmLXldjJNNzkB+ZCpvbixXSYQ/LE9YH8RtAl4KCoePKTeAbm0PWVY6jVEgU0QDy9iLPGPjTCbIwpRuB5tPijpA1J05BO2iEFhBzZ5k=
+	t=1745348110; cv=none; b=BvEYitnp5dWzohYNkRV6aVWSfDceMvhhGFBFVuyCYykHsJHTBKW8mO/15wpusPcwZEWqCRo+N0RT7vGjuFIDCGaq8OsVVPH7Fdy7GT9t1pxXG5Wv8y5bUYeraKC03uLDV2sNeUqO/uGDd792DchUPI1bvjfxQ9mQcMAC3fD9AkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745347940; c=relaxed/simple;
-	bh=1k1unQkkbNJWyNIqqzpizkZc3aIKLdvvcUxlVK4aZEM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m1qrOZ6oFtwMkdIxVr+6hw9ikPLr57CZUTHsG7myJl/rPPPhwtQopj4NQbqWye6yonyX1ycSopu/B2BSyDHu3KNw8tySvGtk459D47+LpSuXswpirWmi996+u9ni6t7mEt2NrcAnu7Nqalw8ACJydHmPqL886HmHeKScOtsllmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KuDvxyHy; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so3716493f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745347935; x=1745952735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ADsz4nM5zt5mk0SaIqSNaWehe790A/IESs0jsUHL+uk=;
-        b=KuDvxyHyGrC25lEjuJl0sHhcCvZF/pF3czD68drf8To7cQccp2Y8qxi3RM0ChZwcqX
-         NbVxTb518ACxsReOslqkprpiBHaHOsJ8IdMQTCRFEV963Ovpcki1WXdbPdsJohoN2OaC
-         DdHN2FholbvCNcoeBTvuMjkjOshdifxbF5wOtUb4xrs4i7LW5nrDHyYm3+H8uo/1UK3R
-         t0mskDWsLu/XNkDzlLEQfHxAoLRN8rqABMX3JXLWx81j8DkSdtZVUAXKY/eYCtcAODTV
-         Na/ivldAIglcA0uzm1Yo6rn9BUBgEVJ6BV7RqnMUXGgkFTqOb49hZ6SdHUNbe0dfMVTC
-         M5nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745347935; x=1745952735;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADsz4nM5zt5mk0SaIqSNaWehe790A/IESs0jsUHL+uk=;
-        b=MDWZh0+saRLkwmRdGEkaC09qKKRxAJXoOWowH9pZ8lWQ8wS0lOiopA09C01Isk0r6S
-         QKGkexF+xnWDYcn+rc+PHejcOlS1Yd4SQZAwLwkXyouvaQcxxp/28VrHKO3RqdL9dLVU
-         Ukf1K+KGvvN879ewI+dGNdx/IURzfDRFFo4QYba51RtN3lNzXM56dtYlW35nDC7e6cJB
-         IIJE9CjFEwK2pHWPkJAX7G8oUnHZVy1Sn80BDYdYLuU6yQYHtxJCC97PdOEKobE9w+x1
-         raTfMX9ogXNaLXvs2QhEGAwK7PKW+algg+JMXQjNlfJwdwny/Czy+i9bVES/d+GNF5WU
-         Nu9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWbDMlOdlqRXjU4Prjx2xvYYAy7+qCkw1h4QngsmrOTl7sghSEeXltCluV5No8BePmtIbkh97IF1Nhn9d4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMhIqfpOVEPFG0xaLmyh5raNoHF7c6rfQyemUTGdNFnHoNKeqT
-	Uw4qldE78orC/Pzg1Pw0V44mltP6auaLHi0VM7262PQg/b4hGg94YE0mPsHFOfA=
-X-Gm-Gg: ASbGnctXMiocqiNHB0+p/he27SKm/nuN7kXJ3p5n3rg6BvgZBOQNdHlPRfsr68IPVOk
-	OrdunioiqAvnKip0+cJJ9e3IBGo3SkoWdXmzirgwDOAcSILF1RLiIs1W79vZx7e/MAjrl1dX9ff
-	6i5a0vYR+VUAg8/eQAsep1qusc2Uxs/7z7C2OChtKekCwPc5zUSQO2aIni80mucCNzxJcIBIXPh
-	uJmqhPI0kATSnjxVLJ7jGVKxmcwgBWAT3wv87QEGXATe+t2y9HtD345cmX4kiz0nj9qaWkdo3g3
-	MJ/9b8n8CZwMwRI/ahi53v+jsPLFHV3d+l8Vfbj7/H/v4mm/SnhU2R3t+M9eV6JfiTRdVQFqZMB
-	HB7VZ9w==
-X-Google-Smtp-Source: AGHT+IHaQWcyIld8HmOWqZEWQ8mfScJy5XfhH5TexVF3JHDuC1C8WH0PzZCZR43OQba1F6XglJkm3Q==
-X-Received: by 2002:a5d:648d:0:b0:39c:141b:904a with SMTP id ffacd0b85a97d-39efba2ca27mr13013041f8f.11.1745347935584;
-        Tue, 22 Apr 2025 11:52:15 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4207afsm16278846f8f.12.2025.04.22.11.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 11:52:15 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+	s=arc-20240116; t=1745348110; c=relaxed/simple;
+	bh=CxS7ehfDRRrqQl0Wv9/+uU3ayMNpuNzblOq2YmeACaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JOuvgAT9fDljYN8NcIqEvM5w7NmMuYxHE7zGvQi5TOSXLQdIgHGVojzKiWWh+COZp75H6MBvyRKNrzTMV4VlSBaN3A7bR07rWqhXyED3r5ORmgF8km3Q8vFL52xR2gwMTC9a28P/oHEFD8B8ExqxM17BJpPDDueX1GDr7fnM9ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ODwmztY8; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745348108; x=1776884108;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CxS7ehfDRRrqQl0Wv9/+uU3ayMNpuNzblOq2YmeACaM=;
+  b=ODwmztY8xMiwThvaWMUsArBfgR4zzMPLluxaZUnz2xgBcopZheNfYKTj
+   EpbzdI6Gpw87dtSUOHoSc7SRPhzmYkTR7hfOufcwOO+lb2ryGyzASJROT
+   EW31LYwOHgv11iWcFaH7M0R8BnTeFVPv61QvXdwgLKBd6ElQbxNJiMYBB
+   Veyo4IqJjFphepXi2E00OsuV8xFRWdJmcGX293R7mraMnwexzXE56mJZk
+   Kay4kE8QWxNfmLcZQ+yNO+TZ9EicQagwIud6FyTwc1uZweQ0dXdTxUUHr
+   48ym1gRYlXt09ZQM/WuIqoQ8b2u5MEJ9T2wHBck1YeZYAtbevpLeNYHCn
+   A==;
+X-CSE-ConnectionGUID: TYkXAG9+SQCYMmzkpFOyFQ==
+X-CSE-MsgGUID: WCf31QMmQ+aTgNqjuQlBSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="72307510"
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="72307510"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 11:55:07 -0700
+X-CSE-ConnectionGUID: 1gJ+rKg4TYq9GEbA9DlR7g==
+X-CSE-MsgGUID: CiZpku3ZSb+cJx2+PVXr3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
+   d="scan'208";a="136883444"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 11:55:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u7Ilq-0000000Eouz-1GrV;
+	Tue, 22 Apr 2025 21:55:02 +0300
+Date: Tue, 22 Apr 2025 21:55:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Raag Jadav <raag.jadav@intel.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH v9 -next 12/12] arm64: defconfig: Enable OF_OVERLAY option
-Date: Tue, 22 Apr 2025 20:53:21 +0200
-Message-ID: <8baf7818aae1fe5be046015e4bd8121ccc9acb20.1745347417.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1745347417.git.andrea.porta@suse.com>
-References: <cover.1745347417.git.andrea.porta@suse.com>
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 0/3] gpiolib: finish conversion to devm_*_action*()
+ APIs
+Message-ID: <aAfmBlE3ZXU65PQR@smile.fi.intel.com>
+References: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The RP1 driver uses the infrastructure enabled by OF_OVERLAY config
-option. Enable that option in defconfig in order to produce a kernel
-usable on RaspberryPi5 avoiding to enable it separately.
+On Thu, Feb 20, 2025 at 06:20:25PM +0200, Andy Shevchenko wrote:
+> GPIOLIB has some open coded stuff that can be folded to the devm_*_action*()
+> calls. This mini-series is for that. The necessary prerequisites are here
+> as well, namely:
+> 1) moving the respective APIs to the devres.h;
+> 2) adding a simple helper that GPIOLIB will rely on;
+> 3) finishing the GPIOLIB conversion to the device managed action APIs.
+> 
+> The series is based on another series that's available via immutable tag
+> devres-iio-input-pinctrl-v6.15 [1]. The idea is to route this via GPIOLIB
+> tree (or Intel GPIO for the starter) with an immutable tag for the device
+> core and others if needed. Please, review and acknowledge.
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Greg, I know you are busy, but do you have a chance to look at this and give
+your Ack if you are okay with the idea? The route is assumed to be via GPIOLIB
+tree.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 53748ea4a5cb..23656b0bb7e0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1640,6 +1640,7 @@ CONFIG_FPGA_BRIDGE=m
- CONFIG_ALTERA_FREEZE_BRIDGE=m
- CONFIG_FPGA_REGION=m
- CONFIG_OF_FPGA_REGION=m
-+CONFIG_OF_OVERLAY=y
- CONFIG_TEE=y
- CONFIG_OPTEE=y
- CONFIG_MUX_GPIO=m
 -- 
-2.35.3
+With Best Regards,
+Andy Shevchenko
+
 
 
