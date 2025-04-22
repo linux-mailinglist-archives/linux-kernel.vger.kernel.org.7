@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-614135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC6CA966A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3331A966A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A267AAC4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5AD17C808
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615CE21B9C8;
-	Tue, 22 Apr 2025 10:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A8D215173;
+	Tue, 22 Apr 2025 10:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="n28loj0g"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="ADXypFDZ"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604120E306;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10340210F58;
 	Tue, 22 Apr 2025 10:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745319416; cv=none; b=PdGJnJksd7KvuEiGaXLlBbtZUYJ1Visg+OvsNOdCdTNVKBzpAbxMSQkm/JqjhFII3QhP4FyWPfHHZ78ML+OroiPtcIQ9rrRDk6REtrWi0b41aSHS481EDznWs4AFmgFe5e6tq18b4HPXDhhi8SdR3tal9eesOCWdYEhOic3+pxM=
+	t=1745319415; cv=none; b=GsprGjnn5HwQqmvrQPPL6zcUXTvoL2PkOZzSesz/6Bg7qouZNfw8ASj3zjP9JwcZnY0wrkaiyOiuGHMrzY1n2Z+fCFqs8PxqYFOy5gsnEC7x4TViI0Ur/4AbEZ0u8Cm9KqI3ISI2nzHzASgHaIscsZNNG1nIOvhI4shytrhsYus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745319416; c=relaxed/simple;
-	bh=5KvVhSE4OzayZxv6zr2nh6tzAm9cRj1gnBUG+aV4J0U=;
+	s=arc-20240116; t=1745319415; c=relaxed/simple;
+	bh=7dNi4yaE2vZu+NT3me9hRD03+wiMLK7okioOpq/8xzg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Rdwu93L3h9MprLvquuDpkpDOKZ7L5ZL2o54pGWvLFFnO/hlo5ql664PgGCT/i2mVzzbgkiOEcd1SacRacLnKdsHmonuems6L53AEpF+fWticGoj3J96dCacghNJO3npXdpdVCdnphfpUL9FH40JCqPO0jkxh9UN9cMd5APspJv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=n28loj0g; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=NGwvYVIE1kJQ9xRHiTjXHMDyDni3I+F6y4F1hEpOf7rAVzKDwsrFklx5/yIHrCPrzhq5ZPS2u0iqoiNT4gM5VbHRAAq2iHI2oL6xB7z1HnpW1s5v+0ZF+fMT4tzN1fThN6hfjICiFmBVOCmzMWC3OEdteZR20jzHMja8imiWIlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=ADXypFDZ; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=zF4UOqdX0b7eFotsJnVlx6i1/S86SnKAsQ01ibQ35ZI=; b=n28loj0gjcEWAkPYmLmZrru4KZ
-	14D+SJCkHXBhx4/DTZ/Fs2wsHKl5u4k2AulXDCIdyQ8uzRSTIkY0UKBQcEnWI7EQ/VYu5zMmA0UTu
-	2YxkCe78BB4mxd0XQ5cPIRxpsTtAO+oo6ms5n/bdA71Ply0PcK7jxMJJagXWtVLrvCzzibwI4nhZR
-	wzKn3y4UYuhCLQw/Kr6bpkw7ANwW1alQGjYFTSu+FHh6rS3WLbsBJs+UXj41Ru1VhBDKLPw9v0ytY
-	MySE96aFtKpUrawY4ZZwzhQvfauniXvXdonEJk35og8iNHeLrLQPCiCRxH53UiMPrZwBjxyAcj5Mc
-	tjKR9l5w==;
+	bh=y4EAGj8J/OPfCu3FA7uzowZgFMJ6Fv3iSV5Sq1MEBIk=; b=ADXypFDZXhEAfy+zl1MRSpjDu+
+	9NX1+bxB7aa4OHdbxvnV0cWjXIJ7CZkEhq/37WasBLmd1dQjQ2+O2jhlz2pFhmTw9dR0l/79nMuN3
+	WQqPxgX9HsT8lsb/pdAU3+rWmmtI3gkRj6VM5HG0GwZDMgDtfYqfygsBE59pswZn4iueDdR1rzLC6
+	MM5Hj4CJH1Y3t7Y5TBLZ4fKQ8sKhZgA2JCm4y87vJR/ifnJ4thPYyZ6yVHB9XoUXlds/bcL33HSyb
+	g1P2hSrytChJtnrZ+AmtWH76CM2Ej07QoqjNApBDWSvd9zg/vlzAwTG5fIYnGkjWP7lwgwonBX/um
+	FvEQkXRg==;
 Received: from [89.212.21.243] (port=36562 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u7BJ5-008kyr-0l;
+	id 1u7BJ5-008kyr-11;
 	Tue, 22 Apr 2025 12:56:51 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v4 05/15] arm64: dts: freescale: imx93-phycore-som: Add eMMC no-1-8-v by default
-Date: Tue, 22 Apr 2025 12:56:34 +0200
-Message-Id: <20250422105644.2725168-6-primoz.fiser@norik.com>
+Subject: [PATCH v4 06/15] arm64: dts: freescale: imx93-phyboard-segin: Drop eMMC no-1-8-v flag
+Date: Tue, 22 Apr 2025 12:56:35 +0200
+Message-Id: <20250422105644.2725168-7-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250422105644.2725168-1-primoz.fiser@norik.com>
 References: <20250422105644.2725168-1-primoz.fiser@norik.com>
@@ -85,36 +85,34 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-The phyCORE-i.MX93 SoM comes in two variants, one with VDD_IO set to
-3.3V and the other variant to 1.8V. The 3.3V variant can only support
-DDR52 mode, while 1.8V variant is capable of HS400ES eMMC mode. The
-information about VDD_IO option is encoded in the SoM's EEPROM. EEPROM
-is read in the bootloader and bootloader clears the "no-1-8-v" flag in
-case of 1.8V SoM variant is detected. Thus add property 'no-1-8-v' by
-default to usdhc1 (eMMC) node and let bootloader handle the flag. In
-case EEPROM is erased or read-out fails, flag "no-1-8-v" also ensures
-fall-back compatibility with both SoM variants.
+Drop redundant 'no-1-8-v' flag from usdhc1 (eMMC) node. Flag is now set
+by default in the SOM include file (imx93-phycore-som.dtsi).
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
 Changes in v4:
 - no changes
 
- arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-index 663530a7e2bb..22dbcc89e311 100644
---- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-@@ -172,6 +172,7 @@ &usdhc1 {
- 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
- 	bus-width = <8>;
- 	non-removable;
-+	no-1-8-v;
+diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+index 85fb188b057f..902b523fc92c 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+@@ -40,11 +40,6 @@ &lpuart1 {
  	status = "okay";
  };
  
+-/* eMMC */
+-&usdhc1 {
+-	no-1-8-v;
+-};
+-
+ /* SD-Card */
+ &usdhc2 {
+ 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
 -- 
 2.34.1
 
