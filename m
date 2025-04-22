@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-614692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C1CA97061
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:20:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A498A97070
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4511632B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F311189EABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43C32900A0;
-	Tue, 22 Apr 2025 15:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDCC28FFE7;
+	Tue, 22 Apr 2025 15:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDJaqasw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfVWQoeh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9F428FFFC;
-	Tue, 22 Apr 2025 15:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A4F28FFC8;
+	Tue, 22 Apr 2025 15:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745335128; cv=none; b=K14quZ/j2Wmyj9uphPahoBCTIOlF76g0Jp5lhiz0I12dXq/E7mJS1U7yaYNclT52odPxapc0hURgd5XY4EkoubxW8dTrJioPUcGx/UDdSUNnqJ8iVHOE7idFUZsjVq94EezChpVY/u558vXWrjkp51aXeKN4+NZfbESmqz3qgcg=
+	t=1745335336; cv=none; b=P+ntz8ErpGW5LTyKPzazWbVB3lowQKHlelJQvzsMIn4O+/UsfgTgARIUyz7U44K8fUy5RrDmBOJ9W4JLk0P4dzMU0G3nro3ysT0GINfhusyZy4wyJ64qVUsWSMmkk8+2+OWwdcIVkNu7H2KPPlerHcJL2LZIbEPGcqp33v7ykDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745335128; c=relaxed/simple;
-	bh=+uhI1MTtLQzUsupFZmaVIdMRmJvOYO+hWinoKLHSAeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QKL2NTOsbMJxWq9KtP5YvLqU0XulOOR8UIy6mF+viuBW7dTR/jkdAwXxB0U5dv4Sl1BySROdgHPVfBCmafBcwEtodzYN5qGzONnyPOYXVJF5pkJD7hY/Af2NTFwOrZONrplDdadLb1SMjOqnYLyiDM4yeozD1cb9PtKK3Kk6BWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDJaqasw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6987BC4CEE9;
-	Tue, 22 Apr 2025 15:18:47 +0000 (UTC)
+	s=arc-20240116; t=1745335336; c=relaxed/simple;
+	bh=zUtpOZDFxmrHW1MXGPjDdrx0vQICEc+s+0Jje5GRyXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tx2QRfvP05lsdsr+yicZAPAaRC0Y13gcMOT3GDlgp8T2o5mWaeDHdfUqArCxSz1QiC6Nbr8zs+3hQ4GfeWitsym8bTzxFOVYHbIl1XaSMrol3xAmnZpGbIevY81VQhVxcRtseyL01/6X71IC23cKXTVMjzgA2hJdd4Zyfkx3YN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfVWQoeh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168A1C4CEE9;
+	Tue, 22 Apr 2025 15:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745335128;
-	bh=+uhI1MTtLQzUsupFZmaVIdMRmJvOYO+hWinoKLHSAeA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZDJaqaswFOATzSYmTY2+jeJM/TttKiNAJn6XqM0j3B7HFP3TwLdaCN9qEjI/IAA5X
-	 o6SYxbwNyvBdxf5dRJzCqt271rMfPNpscR+uvD0YR2mCsI4vSJNsJzNNZRtaXzxTuZ
-	 eosrxUii2do1MWy2bsgdCh4tnPQDeyqmmgBG5Br4OGp65HWbA7oL6OM+MxdR75o5V3
-	 54VqkKw5LEE+KOAODmC48nn+OkTDzN3QzCaSU8Ey9g6vlzkyl5xVoyp4p+lYAYc2qx
-	 cXkEa/UDdhhFKnXEszdJpPquMghOP94SQHwItQUqVjO+SrsdVLwZ49KegctBkOEh0c
-	 t/fFDdTiIva/w==
-Message-ID: <f95750db-a857-4ba3-9c2d-c48caa9ff16e@kernel.org>
-Date: Tue, 22 Apr 2025 10:18:46 -0500
+	s=k20201202; t=1745335335;
+	bh=zUtpOZDFxmrHW1MXGPjDdrx0vQICEc+s+0Jje5GRyXQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WfVWQoehc386JtqAJhFPLmCvJLqfrp7w9HGh1Nfb9QjxTiDCPwoTJbPKOKZF+yS9U
+	 nTJao6xjerKJG2H4uBBQ+IVzI+IBqXhLwElXmdZnHttlJpKGuwSeOX+AYwaZwiwU7k
+	 R7ZgdkSDZhiOVYDqdMCj+/P0nJSnUS5WFGyyOSCkYUAoMS8OhVHSImojj6Gecealml
+	 HPBQmE7MGErHNXKCQK2YcZWvubozmO0deqgN7NQrVRLqICCajZ3ks3DCT+7q0QFqE5
+	 /wvX2w/+dYba3nOjHM67MxB8MGUgsMLzgibZh4JdzgmBs0T45cFuxLLxtQ876FTaBN
+	 qSB/8FIyWAQsg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] Clean up the crypto testing options
+Date: Tue, 22 Apr 2025 08:21:42 -0700
+Message-ID: <20250422152151.3691-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PCI/PM: Put devices to low power state on shutdown'
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: bhelgaas@google.com, mika.westerberg@linux.intel.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- AceLan Kao <acelan.kao@canonical.com>, linux-pm@vger.kernel.org,
- Kai-Heng Feng <kaihengf@nvidia.com>, Bjorn Helgaas <helgaas@kernel.org>
-References: <20250219184646.GA226882@bhelgaas>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250219184646.GA226882@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/19/2025 12:46 PM, Bjorn Helgaas wrote:
-> [+to Rafael, +cc linux-pm]
-> 
-> On Sun, Dec 08, 2024 at 03:41:47PM +0800, Kai-Heng Feng wrote:
->> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
->> connected.
->>
->> The following error message can be found during shutdown:
->> pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
->> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
->> pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
->> pcieport 0000:09:04.0:    [ 7] BadDLLP
->>
->> Calling aer_remove() during shutdown can quiesce the error message,
->> however the spurious wakeup still happens.
-> 
-> aer_remove() disables AER interrupts, so I guess there must be a
-> non-AER interrupt being generated during shutdown?
-> 
-> If so, AER is a red herring and including the AER details above is a
-> distraction from whatever the real interrupt cause is.
-> 
->> The issue won't happen if the device is in D3 before system shutdown, so
->> putting device to low power state before shutdown to solve the issue.
->>
->> ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
->> compatible with the current Power Resource states. In other words, all
->> devices are in the D3 state when the system state is S4."
->>
->> The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
->> state is similar to the S4 state except that OSPM does not save any
->> context." so it's safe to assume devices should be at D3 for S5.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
->> Cc: AceLan Kao <acelan.kao@canonical.com>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
->> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
->> ---
->>   drivers/pci/pci-driver.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
->> index 35270172c833..248e0c9fd161 100644
->> --- a/drivers/pci/pci-driver.c
->> +++ b/drivers/pci/pci-driver.c
->> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
->>   	if (drv && drv->shutdown)
->>   		drv->shutdown(pci_dev);
->>   
->> +	/*
->> +	 * If driver already changed device's power state, it can mean the
->> +	 * wakeup setting is in place, or a workaround is used. Hence keep it
->> +	 * as is.
->> +	 */
->> +	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
->> +		pci_prepare_to_sleep(pci_dev);
-> 
-> 
-> I don't know enough to draw inferences about PCI_D0 meaning a wakeup
-> setting is in place or a workaround being used.  That doesn't seem
-> like enough to be useful for me to maintain this in the future.  But
-> my power management understanding is pretty meager.
-> 
-> Would like an ack from Rafael for this.
+This series reworks the crypto testing kconfig options to fix some
+longstanding issues:
 
-Rafael,
+- Replace the inverted option CONFIG_CRYPTO_MANAGER_DISABLE_TESTS with a
+  regular option CONFIG_CRYPTO_SELFTESTS.
 
-Can you take a look at this patch and provide your thoughts?
+- Make CONFIG_CRYPTO_SELFTESTS enable the full set of tests by default,
+  removing CONFIG_CRYPTO_MANAGER_EXTRA_TESTS.
 
-Thanks!
-> 
->>   	/*
->>   	 * If this is a kexec reboot, turn off Bus Master bit on the
->>   	 * device to tell it to not continue to do DMA. Don't touch
->> -- 
->> 2.47.0
->>
-> 
+- Automatically enable CONFIG_CRYPTO_MANAGER when needed for the tests.
+
+- Rename cryptomgr.noextratests to cryptomgr.noslowtests.
+
+- Remove cryptomgr.panic_on_fail, as panic_on_warn can be used instead.
+
+- Rename CONFIG_CRYPTO_TEST to CONFIG_CRYPTO_BENCHMARK.
+
+Changed in v2:
+  - Moved selftest lines in lib/crypto/Makefile to appropriate places.
+  - Fixed a commit message.
+
+Eric Biggers (9):
+  crypto: tcrypt - remove CRYPTO_TEST from defconfigs
+  crypto: tcrypt - rename CRYPTO_TEST to CRYPTO_BENCHMARK
+  crypto: testmgr - remove CRYPTO_MANAGER_DISABLE_TESTS from defconfigs
+  crypto: testmgr - remove panic_on_fail
+  crypto: testmgr - replace CRYPTO_MANAGER_DISABLE_TESTS with
+    CRYPTO_SELFTESTS
+  crypto: testmgr - make it easier to enable the full set of tests
+  crypto: testmgr - rename noextratests to noslowtests
+  crypto: Kconfig - make CRYPTO_MANAGER a hidden symbol
+  crypto: testmgr - enable CRYPTO_MANAGER when CRYPTO_SELFTESTS
+
+ arch/arm/configs/exynos_defconfig           |   1 -
+ arch/arm/configs/milbeaut_m10v_defconfig    |   2 -
+ arch/arm/configs/pxa_defconfig              |   2 -
+ arch/arm/configs/spitz_defconfig            |   1 -
+ arch/arm64/configs/defconfig                |   1 -
+ arch/loongarch/configs/loongson3_defconfig  |   1 -
+ arch/m68k/configs/amiga_defconfig           |   1 -
+ arch/m68k/configs/apollo_defconfig          |   1 -
+ arch/m68k/configs/atari_defconfig           |   1 -
+ arch/m68k/configs/bvme6000_defconfig        |   1 -
+ arch/m68k/configs/hp300_defconfig           |   1 -
+ arch/m68k/configs/mac_defconfig             |   1 -
+ arch/m68k/configs/multi_defconfig           |   1 -
+ arch/m68k/configs/mvme147_defconfig         |   1 -
+ arch/m68k/configs/mvme16x_defconfig         |   1 -
+ arch/m68k/configs/q40_defconfig             |   1 -
+ arch/m68k/configs/sun3_defconfig            |   1 -
+ arch/m68k/configs/sun3x_defconfig           |   1 -
+ arch/mips/configs/decstation_64_defconfig   |   1 -
+ arch/mips/configs/decstation_defconfig      |   1 -
+ arch/mips/configs/decstation_r4k_defconfig  |   1 -
+ arch/mips/configs/gpr_defconfig             |   1 -
+ arch/mips/configs/ip28_defconfig            |   1 -
+ arch/mips/configs/lemote2f_defconfig        |   1 -
+ arch/mips/configs/mtx1_defconfig            |   1 -
+ arch/mips/configs/rb532_defconfig           |   1 -
+ arch/parisc/configs/generic-32bit_defconfig |   1 -
+ arch/parisc/configs/generic-64bit_defconfig |   1 -
+ arch/powerpc/configs/g5_defconfig           |   1 -
+ arch/powerpc/configs/powernv_defconfig      |   1 -
+ arch/powerpc/configs/ppc64_defconfig        |   1 -
+ arch/powerpc/configs/ppc64e_defconfig       |   1 -
+ arch/powerpc/configs/ppc6xx_defconfig       |   1 -
+ arch/s390/configs/debug_defconfig           |   2 -
+ arch/s390/configs/defconfig                 |   2 -
+ arch/sh/configs/migor_defconfig             |   1 -
+ arch/sparc/configs/sparc64_defconfig        |   1 -
+ crypto/Kconfig                              |  44 ++++----
+ crypto/Makefile                             |   2 +-
+ crypto/algapi.c                             |   5 +-
+ crypto/algboss.c                            |   2 +-
+ crypto/api.c                                |   3 +-
+ crypto/hkdf.c                               |   2 +-
+ crypto/internal.h                           |   5 +-
+ crypto/kdf_sp800108.c                       |   2 +-
+ crypto/tcrypt.c                             |   8 +-
+ crypto/tcrypt.h                             |   4 +-
+ crypto/testmgr.c                            | 115 +++++---------------
+ include/crypto/internal/simd.h              |   6 +-
+ lib/crypto/Makefile                         |  11 +-
+ lib/crypto/aescfb.c                         |   2 +-
+ lib/crypto/aesgcm.c                         |   2 +-
+ lib/crypto/blake2s.c                        |   2 +-
+ lib/crypto/chacha20poly1305.c               |   2 +-
+ lib/crypto/curve25519.c                     |   2 +-
+ 55 files changed, 77 insertions(+), 183 deletions(-)
+
+
+base-commit: bb9c648b334be581a791c7669abaa594e4b5ebb7
+-- 
+2.49.0
 
 
