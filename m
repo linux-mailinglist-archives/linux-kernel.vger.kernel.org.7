@@ -1,306 +1,130 @@
-Return-Path: <linux-kernel+bounces-613864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C57A96320
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACF6A9632C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730AD3BE53F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:51:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8428417EB50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171D3264614;
-	Tue, 22 Apr 2025 08:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403C625F786;
+	Tue, 22 Apr 2025 08:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l66ke73c"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoNMZ1/g"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E52641F8;
-	Tue, 22 Apr 2025 08:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01E225E806;
+	Tue, 22 Apr 2025 08:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311505; cv=none; b=K6ZstwdTwJ5mcyRQ4/skcNdf1WkuZd8jqvUqkigAV25PN1pKXRTt8+hj78wugReYf1IE8rlumddpcb1OT6nJyZrD04ImYCHzWu7Ag8lo6vptGnQlXbb+lWr8G3sfWiW4eoSz1zyDYicua4aihVGz7FxVDBAdqG74kfHek4G7FNc=
+	t=1745311432; cv=none; b=t/a/gMpN6s2P1GBqTs24228QdfApwU2qFU6+d/PcFidoGAsX8UM220HjWVL/4bKrwxIEAYGwNvqXPtVd3/Xk6g5vEM4eIcsMKJrmOhZ6MLm+4yOMwIPvZsxTAKlAo8wL02te1Tmu5+Dj9FXyGSF1IS017ojXhqJXNWQIKPjxk/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311505; c=relaxed/simple;
-	bh=TFNUnXhDe+l5cW2aDpz4oiWpjyRdFW3fpEV13zT27+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GDejgTQTYiqHf2hOCatT4ZTQg7Qm0o2ankdLT1guwtAopy+F2uZlkR90RPucLxZJ6XraYz6YE+l39KYk+S1Eqh48pcJkEG0YZEpOMAykjbdHDHb1D/+AhM2OGNf2iU6/CJmkwf/drIU7Wgx6Nl2bmHSIXL4CDNyfGoQhGkMi2uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l66ke73c; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745311501;
-	bh=TFNUnXhDe+l5cW2aDpz4oiWpjyRdFW3fpEV13zT27+A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l66ke73c+jJ2XMFJHm+CQ2fLrCjlk9IELtpGTUvO6396Dnza8HB2gSSktCZeZtJjm
-	 r1q3uHgjto9bf2pkNnyaey1PrCvgV49hrsfuRWxgqfUdIg6njQPBJru2ULhGP3j9dV
-	 izxk8aHe3FCJuVtiuQZnOb+j7hPY3HfZgUeKQADmGIu9+fL+A1McsFa1IZxmZTzXKl
-	 aeBo+n18ZRt5m5sfA3iV0ywo8Q7YCUvlz4+/f3mnS5RotySW7/+JOiWsxiRXSEFefv
-	 WMwHxTAdTVQeCZDwCvNO26B0c5UORZm012RsuAujzSYNznvtij9EFb8cvWJUct8knI
-	 f2I7echgm0/Uw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8639F17E0FF6;
-	Tue, 22 Apr 2025 10:45:00 +0200 (CEST)
-Date: Tue, 22 Apr 2025 10:44:56 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, Steven Price
- <steven.price@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v9 4/4] drm/panthor: show device-wide list of DRM GEM
- objects over DebugFS
-Message-ID: <20250422104456.6fcca401@collabora.com>
-In-Reply-To: <talp23dokjtrzmwjoj3gvwoh5rvaf5txf3bsjpc5yqfdqabdhv@dex6idqtckci>
-References: <20250418022710.74749-1-adrian.larumbe@collabora.com>
-	<20250418022710.74749-5-adrian.larumbe@collabora.com>
-	<20250418100454.788c9586@collabora.com>
-	<talp23dokjtrzmwjoj3gvwoh5rvaf5txf3bsjpc5yqfdqabdhv@dex6idqtckci>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1745311432; c=relaxed/simple;
+	bh=lqD7m89r2sQrsEOmBfAzRt8RKN827E6V2hOjWrQC4mY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lS4SUd4wqfue1F6+zrJ7DJXNYSbWCcggKJatgVlD/s8Y8R6fyPEMkNd29d+yLhIKihfNH5VBAOsYKnZ9YHN8UndOENlqCn5jJZnVuvU2Wgz3pviQiLlFpLh+C1rgOToN08sKJOkF7fSyX0wvLZtP2NZLebL2DTeFpv8c/ZUsRaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoNMZ1/g; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e8be1bdb7bso7483682a12.0;
+        Tue, 22 Apr 2025 01:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745311429; x=1745916229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=03SE0QEScorD8X63ZKpeNL8JKETFXurDVO26PPtrnKM=;
+        b=JoNMZ1/gyxMannbt9i/1J5HgS+tzX6kFPLD2sL5PYwbHo3yIPeqp5LBG6Y9YiZbNEU
+         jb1RjSnjeCI2L70B16dp2zcgF9+uifk94Q9I+a5ltkqiWr66/n6y/ygqLMzvwPOzSdzr
+         pEo8aYtmSlaHG4oTi8RGB6jXrpU5WFo5y70SJ5/0K3zt9BmHvNH3qgGWdldRbitMF72A
+         Wo4YrAVMe+I8e7uz5YBdO6kLXJQbVd0Ch3pnoDyKV0WHDVfQnEPKEgRLrxEC11uJ/Qlt
+         NiG8obCWAt5o+mhExOrKPXppbGqFwWHsm82XyJsE6w2X8wKQkpQXk/kSmVqv9GLVsIFB
+         rEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745311429; x=1745916229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=03SE0QEScorD8X63ZKpeNL8JKETFXurDVO26PPtrnKM=;
+        b=VT7arvIDRfkpfquvs5JisdzgIBGVu1yu3iii6c7T7my9RMzVYEIkGz2BMQiE6Wskon
+         vs7XBZ6h7x0d9iJVY6lxAVAiX8ZRw3XZO4jB/NTQMNCzIogoMapWYOblkwrz1mQgi0Q6
+         oyYZeeXnHb290iVzgfSoiLf+YLvNCojKS0ccHhgbcaIqaZStecVe0RNc8ykJBP1wzv0Y
+         mKAA/ridEiN7lGw+WmtxDf6SHUSpJI/JY9UulRo0On1VgUHZaHZEyUy9hgLkS/aB1zBE
+         Dfc3AWKyQAbqgQ5fnphbw/NoHO80Ky9SAJdzaK60VvSRVH8tmnDS82lW5Gpwdjk8kSlP
+         9/4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQccODKIh6v81KYPAo8qCQAswkDnkbzFg5oOSRaVREzbTb4OJenc0img0Y3gVz2hP68edN4Rt@vger.kernel.org, AJvYcCVGyOfJGNaKImMFHUByDvcxvvxUK88N4cDLcx34I8aS+mFcKt+Terd7cVBf0d5/UQegrMkeQ4i+B0Uz@vger.kernel.org, AJvYcCW6fuFzWHhsfK0LtXIo8V3NUkvM675eG+BneXg+sEr5PMRvxHSEeZL5NiYlYxf1zcL5lkrv4r1XEA==@vger.kernel.org, AJvYcCWFr6zCvy+X0dwcTSWOxe8nKgh6iknO8rOauaRS9PmcMU2ZW+at7gNEYGvKkPmf5qR3tkYDdCqYIh2vvCbJCJOh@vger.kernel.org, AJvYcCWuX1tIyLmm8WC8WH/EedAnhFUGckwP3h50F3/B8NPovpH2yEMO+3UeL1bv29w4h/4V4Z1n@vger.kernel.org, AJvYcCX7H4ZZcsZ1DgwCJFknaFPXVOj2wWErha/hYHvnD1CQx8yYu7IlrkVYnmPFp9nY6swymRikZfnYgBIGMQfe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwChA7nRNMqYUmZ/d8UsxnwsT74ykiUv+pgWFT/dVY2jXlXzO07
+	rPuGZb97KwgDz084HOmWdNUxQAd7kCNDZDGdEATlqd5QdNucDn3B
+X-Gm-Gg: ASbGncs6fiXetxak4xhs/qqU3vDfUqmphGQikL479W1KSU5jBrdH1ePn/EyVCWtcWal
+	eIiZlWYCdEoS50ujMPAMO9rmG8yM/syKX5aTo0vjKnnKsJzneAk5AZevNkT9Jzlk7fh38M3wI1j
+	ZJPBJ2N81Fwp2VuknMbUB6DKSnYxJ/ljiDb0mBUWxDm33vzewxdwdVQG2Qr/XJnn4Pfd2IkR6N0
+	ZpRWwKxCy/n/Nq21HWCdJZmR1ASSI1uU2/JqGqU8Kh3pWCOgflvWqrqwBuEYqrTOtGdW7K9+uws
+	cWEEsBl1OMuwZSbgNGbmECLdL4SW1ayhUANaA0Y/AOWpSy/zTBT6v/37KqboHy9G
+X-Google-Smtp-Source: AGHT+IHwRLxRlfj/B+cZPJBkcYi+NC7m90ZU8vBSpXmplNdykziG156hWUX5aB76mCTOP3JqMinJQg==
+X-Received: by 2002:a17:906:ef05:b0:aca:db46:8170 with SMTP id a640c23a62f3a-acb74e79d11mr1252517166b.60.1745311429050;
+        Tue, 22 Apr 2025 01:43:49 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::158? ([2620:10d:c092:600::1:558d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec42af6sm623375166b.43.2025.04.22.01.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 01:43:48 -0700 (PDT)
+Message-ID: <484ecaad-56de-4c0d-b7fa-a3337557b0bf@gmail.com>
+Date: Tue, 22 Apr 2025 09:45:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/9] net: add get_netmem/put_netmem support
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ io-uring@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
+ David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+References: <20250417231540.2780723-1-almasrymina@google.com>
+ <20250417231540.2780723-3-almasrymina@google.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250417231540.2780723-3-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Apr 2025 21:15:32 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On 4/18/25 00:15, Mina Almasry wrote:
+> Currently net_iovs support only pp ref counts, and do not support a
+> page ref equivalent.
 
-> Hi Boris,
->=20
-> On 18.04.2025 10:04, Boris Brezillon wrote:
-> > On Fri, 18 Apr 2025 03:27:07 +0100
-> > Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-> > =20
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +static void
-> > > +panthor_gem_debugfs_format_flags(char flags_str[], int flags_len,
-> > > +				 const char * const names[], u32 name_count,
-> > > +				 u32 flags)
-> > > +{
-> > > +	bool first =3D true;
-> > > +	int offset =3D 0;
-> > > +
-> > > +#define ACC_FLAGS(...) \
-> > > +	({ \
-> > > +		offset +=3D snprintf(flags_str + offset, flags_len - offset, ##__V=
-A_ARGS__); \
-> > > +		if (offset =3D=3D flags_len) \
-> > > +			return; \
-> > > +	}) =20
-> >
-> > I tried applying, but checkpatch complains with:
-> >
-> > -:225: WARNING:MACRO_WITH_FLOW_CONTROL: Macros with flow control statem=
-ents should be avoided
-> > #225: FILE: drivers/gpu/drm/panthor/panthor_gem.c:359:
-> > +#define ACC_FLAGS(...) \
-> > +	({ \
-> > +		offset +=3D snprintf(flags_str + offset, flags_len - offset, ##__VA_=
-ARGS__); \
-> > +		if (offset =3D=3D flags_len) \
-> > +			return; \
-> > +	})
-> >
-> >
-> > and now I'm wondering why we even need to return early? Oh, and the
-> > check looks suspicious to: snprintf() returns the number of chars
-> > that would have been written if the destination was big enough, so
-> > the offset will actually be greater than flags_len if the formatted
-> > string doesn't fit. =20
->=20
-> I noticed this warning when running checkpatch myself, and while a return=
- isn't strictly
-> necessary, I thought there was no point in going down the function when n=
-o more bytes
-> could be written into the format string because it's already full.
->=20
-> I did check the code for other locations where flow control is happening =
-inside a macro
-> and found this:
->=20
-> #define group_queue_work(group, wname) \
-> 	do { \
-> 		group_get(group); \
-> 		if (!queue_work((group)->ptdev->scheduler->wq, &(group)->wname ## _work=
-)) \
-> 			group_put(group); \
-> 	} while (0)
->=20
-> although I'm not sure whether the do {} while (0) is right there to make =
-the warning go away.
+Makes me wonder why it's needed. In theory, nobody should ever be
+taking page references without going through struct ubuf_info
+handling first, all in kernel users of these pages should always
+be paired with ubuf_info, as it's user memory, it's not stable,
+and without ubuf_info the user is allowed to overwrite it.
 
-No, the main difference is that it doesn't return behind the callers'
-back which is what checkscript is complaining about, though using do {}
-while(0) is usually preferred over ({}) when
-you have nothing to return.
+Maybe there are some gray area cases like packet inspection or
+tracing? However in this case, after the ubuf_info is dropped, the
+user can overwrite the memory with its secrets. Definitely iffy
+in security terms.
 
->=20
-> > snprintf() returns the number of chars
-> > that would have been written if the destination was big enough, so
-> > the offset will actually be greater than flags_len if the formatted
-> > string doesn't fit. =20
->=20
-> Good catch, I don't know why I thought snprintf() would print at most 'fl=
-ags_len
-> - offset' bytes, and would return exactly that count at most too, rather =
-than
-> throwing a hypothetical max value. Then maybe checking whether 'if (offse=
-t >=3D
-> flags_len)' would be enough ?
+-- 
+Pavel Begunkov
 
-It should.
-
->=20
->=20
-> > There are a few other formatting issues reported by checkpatch
-> > --strict BTW.
-> >
-> > Unfortunately this led me to have a second look at these bits
-> > and I have a few more comments, sorry about that :-/. =20
->=20
-> > +
-> > +	ACC_FLAGS("%c", '('); =20
->=20
-> > Now that flags have their own columns, I'm not sure it makes sense
-> > surround them with parenthesis. That's even weird if we start running
-> > out of space, because there would be an open '(', a few flags,
-> > the last one being truncated, and no closing ')'. The other thing
-> > that's bothering me is the fact we don't know when not all flags
-> > have been displayed because of lack of space.
-> > =20
-> > > +
-> > > +	if (!flags)
-> > > +		ACC_FLAGS("%s", "none");
-> > > +
-> > > +	while (flags) {
-> > > +		u32 bit =3D fls(flags) - 1; =20
-> >
-> > I would probably print flags in bit position order, so ffs()
-> > instead of fls().
-> > =20
-> > > +		u32 idx =3D bit + 1; =20
-> >
-> > Why do you have a "+ 1" here? Feels like an off-by-one error to
-> > me.
-> > =20
-> > > +
-> > > +		if (!first)
-> > > +			ACC_FLAGS("%s", ",");
-> > > +
-> > > +		if (idx < name_count && names[idx])
-> > > +			ACC_FLAGS("%s", names[idx]);
-> > > +
-> > > +		first =3D false;
-> > > +		flags &=3D ~BIT(bit);
-> > > +	}
-> > > +
-> > > +	ACC_FLAGS("%c", ')');
-> > > +
-> > > +#undef ACC_FLAGS
-> > > +} =20
-> >
-> > How about something like that:
-> >
-> > static void
-> > panthor_gem_debugfs_format_flags(char *flags_str, u32 flags_str_len,
-> >                                  const char * const flag_names[],
-> >                                  u32 flag_name_count, u32 flags)
-> > {
-> > 	int offset =3D 0;
-> >
-> > 	if (!flags) {
-> >         	snprintf(flags_str, flags_str_len, "%s", "none");
-> > 		return;
-> > 	}
-> >
-> > 	while (flags) {
-> > 		const char *flag_name =3D "?";
-> > 		u32 flag =3D ffs(flags) - 1;
-> > 		int new_offset =3D offset;
-> >
-> > 		flags &=3D ~BIT(flag);
-> >
-> > 		if (flag < flag_name_count && flag_names[flag])
-> > 			flag_name =3D flag_names[flag];
-> >
-> > 		/* Print as much as we can. */
-> > 		new_offset +=3D snprintf(flags_str + offset, flags_str_len - offset,
-> > 				       "%s%s", offset ? "," : "", flag_name);
-> >
-> > 		/* If we have flags remaining, check that we have enough space for
-> > 		 * the "...".
-> > 		 */
-> > 		if (flags)
-> > 			new_offset +=3D strlen(",...");
-> >
-> > 		/* If we overflowed, replace what we've written by "..." and
-> > 		 * bail out.
-> > 		 */
-> > 		if (new_offset > flags_str_len) {
-> > 			snprintf(flags_str + offset, flags_str_len - offset,
-> > 				 "%s...", offset ? "," : "");
-> > 			return;
-> > 		}
-> >
-> > 		offset =3D new_offset;
-> >         }
-> > } =20
->=20
-> This looks good to me. However, I'm starting to wonder whether it makes s=
-ense to
-> try to come up with a very elaborate flag formatting scheme, because of t=
-wo
-> reasons:
->=20
-> - It messes up with the output because we need to provide enough headroom=
- in
-> case the flag set will increase in the future. This is not a big deal bec=
-ause
-> the debugfs file is meant to be parsed by UM tools, but ...
->=20
-> - In case we go over the space available to print flags, not printing the
-> remaining ones feels even less informative than printing let's say a hexa=
-decimal
-> mask, because parsing tools would rather deal with no missing data than t=
-he
-> absence of human-readable flag names.
->=20
-> On top of that, I think, while these flags could be mostly of interest to=
- parsing
-> tools, they'd be less so to someone casually peeking into the raw textual
-> output. I think they'd be mostly interested in the process which triggered
-> their creation, their size, virtual address in the VM, and above all thei=
-r name
-> (potentially a very long one).
->=20
-> With all these things born in mind, I'd say we'd best just print a 32 bit=
- mask
-> for both flag fields, for which we'd always know the exact span in bytes,=
- and
-> then print all the available flag names in the debugfs file prelude for p=
-arsing
-> tools to pick up on.
-
-Yeah, I think I agree with you. The flag printing is messy as it is,
-and if we're going to use a tool to parse the output, we're probably
-better off with an hexadecimal value here.
-
-Regards,
-
-Boris
 
