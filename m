@@ -1,112 +1,95 @@
-Return-Path: <linux-kernel+bounces-614259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12561A96829
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:50:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E79EA9683A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58BC3A5776
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:50:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C027A7DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E675C27CB1A;
-	Tue, 22 Apr 2025 11:50:18 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3A427C84B;
+	Tue, 22 Apr 2025 11:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s0ma3+ha"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A943827CB04
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E82B27C14C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322618; cv=none; b=c9+wzMgi0RB/PpJ7+sPM4dPJYc5/c56tXZk7NGsr6nHMnASp7n+eB7fqmw8syEi3EjqOLSj7/Uirt1My42ZqPllFkKciQSJEGpgbo3jHWvL59CV6d22KLs0t4s1YaOkEITz62ivvTACxhg2+MO2weCO1cS3l34zjRIOHK2y7Wok=
+	t=1745322895; cv=none; b=RF2JLfSppidNDnB1ZKkdvBTs0pkD/Z+ZIBtBGW9zOFlsCIKOy4x0W/X5YUKsD7vSP81VIxi87xgr/77WxfRi5B5MGjt/PMrPXuOfLq7CcEkO6dAGNfIS++qDZz34hSAcjZxEtu2iT/hM5F+gDdvo7AZj1HbjZa6eUPY+qe58AW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322618; c=relaxed/simple;
-	bh=KKJLjPyWjfnxzFp3p0ywc5/TE412obarPe/mL5i9v4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=llMs6YkiMZ8J+gtKcWLg5vJDJ91F+RX0+W5pqs52TzOXMgJ2mOX/JWxHYThu49ACXlYuH4MOEqjpSMO60hTRDiopCrOIRulF70kpSF8x2KQt/2FdSodLctxt0R63osCMXj5EvXsu0+X/cq7OCFOf9OuJ0ANzKBHbQpR/uYDq9bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZhgYC5tnDz27hFg;
-	Tue, 22 Apr 2025 19:50:55 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id C072D1A0188;
-	Tue, 22 Apr 2025 19:50:12 +0800 (CST)
-Received: from [10.174.177.186] (10.174.177.186) by
- kwepemg500008.china.huawei.com (7.202.181.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Apr 2025 19:50:12 +0800
-Message-ID: <68043882-1878-4cca-a8fc-5e6cb9a88395@huawei.com>
-Date: Tue, 22 Apr 2025 19:50:11 +0800
+	s=arc-20240116; t=1745322895; c=relaxed/simple;
+	bh=QtU2Ig7cGv1x0ko3lwFZZnUxK0bVZVM2/DS0YTIIr7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y+oUtV4J/Cy29HtpdxUypSlJ1SxNnCrYp+tJM1rBwXzwfuFQCePSQbPmMuRoHxNXgiV/GPNKFsYdU/hP0Sw/jr7FbWkpGSr5hZF0XQEvyBAmo+tgcaxS3wQMnOasqLF2JIjlO+28zdR3QmPbInG075KOVIg0NsB2yzozagCHmD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s0ma3+ha; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b286bbf3-0da9-4e84-8d21-7720970833c3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745322891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=560PmuLzdPLFRtzJQ00UO0YuM1ATzDDsC+io5ks5k4g=;
+	b=s0ma3+has+LVQeEEGmz3avw/ZU52ASl+KH3KlZFm+ItjQoCxvUteD4NPRXbs8BCAWK6TZS
+	s87fOnJ93+emLFgqljMqxOg0IpVXa4gpWQebcGTz0lYOiYqwjqOLBa54X39h+EGZf1zjrc
+	w+QUV/FZS9iRflQ9oBgiuLrSIeXj0sY=
+Date: Tue, 22 Apr 2025 13:50:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
- above 4GB
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>
-References: <20250420162706.2844-1-sj@kernel.org>
-From: zuoze <zuoze1@huawei.com>
-In-Reply-To: <20250420162706.2844-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Subject: Re: [PATCH 2/2] soundwire: bus: Add internal slave ID and use for
+ IRQs
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, vkoul@kernel.org
+Cc: yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@opensource.cirrus.com
+References: <20250422104245.958678-1-ckeepax@opensource.cirrus.com>
+ <20250422104245.958678-3-ckeepax@opensource.cirrus.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <20250422104245.958678-3-ckeepax@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+
+On 4/22/25 12:42, Charles Keepax wrote:
+> Currently the SoundWire IRQ code uses the dev_num to create an IRQ
+> mapping for each slave. However, there is an issue there, the dev_num
+> is only allocated when the slave enumerates on the bus and enumeration
+> may happen before or after probe of the slave driver. In the case
+> enumeration happens after probe of the slave driver then the IRQ
+> mapping will use dev_num before it is set. This could cause multiple
+> slaves to use zero as their IRQ mapping.
+> 
+> It is very desirable to have the IRQ mapped before the slave probe
+> is called, so drivers can do resource allocation in probe as normal. To
+> solve these issues add an internal ID created for each slave when it is
+> probed and use that for mapping the IRQ. In the case that
+> get_device_num() is not implemented this ID can also be reused for the
+> dev_num.
+
+Humm, I am missing something. Does this work in the case of spurious 'ghost' ACPI devices, which is quite common for Intel DSDT?
+
+In this case, each 'ghost' device would be assigned a dev_num during the driver probe, but that dev_num would never be used for enumeration, would it?
+
+Let's assume for the sake of the argument there are 16 ghost devices and only one real device that gets enumerated. How can we guarantee that the real device is enumerated with a dev_num <= 11 (the max number of devices supported on the bus)?
+
+I see the patch add a limit during probe, so now that means the number of ACPI devices MUST be lower than 11. That doesn't sound right to me and could cause some configurations to fail. It's perfectly ok to have ghost devices and no limits on how many our BIOS colleagues decide to list.
+
+Using a dedicated IDA for IRQ mapping looks like a good idea to me, but I don't think you can really use the same IDA for dev_num
 
 
 
-在 2025/4/21 0:27, SeongJae Park 写道:
-> Hello Ze,
-> 
-> On Mon, 14 Apr 2025 09:21:55 +0800 zuoze <zuoze1@huawei.com> wrote:
-> 
->>
->>
->> 在 2025/4/12 0:35, SeongJae Park 写道:
->>> On Fri, 11 Apr 2025 14:30:40 +0800 zuoze <zuoze1@huawei.com> wrote:
->>>
->>>> 在 2025/4/11 6:25, SeongJae Park 写道:
->>> [...]
->>>>> So I still don't anticipate big problems with my proposed approach.  But only
->>>>> prototyping and testing would let us know more truth.  If you don't mind, I
->>>>> will quickly write and share a prototype of my idea so that you could test.
->>>>>
->>>>
->>>> Sounds good! Please share the prototype when ready - happy to test and
->>>> help improve it.
->>>
->>> Thanks, I will share the prototype as soon as be ready. I expect up to a few
->>> weeks.
->>>
->>
->> Got it! Excited to see the prototype. Let me know if you need anything
->> in the meantime.
-> 
-> I posted the RFC patch series[1] a few days ago.  I also just implemented[2]
-> and pushed the support of it on DAMON user-space tool.  Please let me know if
-> you find any concern on those.
-> 
-
-Thanks for the patches - I’ve noted the RFC series and user-space
-updates. Apologies for the delay; I’ll prioritize reviewing these soon
-to verify they meet the intended tracking goals. Appreciate your
-patience.
-
-> [1] https://lore.kernel.org/20250416042551.158131-1-sj@kernel.org
-> [2] https://github.com/damonitor/damo/commit/5848e3a516e3b10e62c4ad7ebf0e444d7be09f6b
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
-> 
 
