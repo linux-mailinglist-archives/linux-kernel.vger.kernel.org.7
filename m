@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-614076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6D5A965D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCA5A965C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F80C175334
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA17F173329
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA460216E24;
-	Tue, 22 Apr 2025 10:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E058320E030;
+	Tue, 22 Apr 2025 10:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="H+FXgYcj"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KZt5KOmZ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A346215173;
-	Tue, 22 Apr 2025 10:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C816DF510;
+	Tue, 22 Apr 2025 10:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317469; cv=none; b=ZLH3dJoV4RQzFH2ZkQJrx8Xcypb4lmU6aJCqJUVPJPc3RbrIo2DGqM5E5dboknNSSp6cCLJz7haQ6kGvZ+nsWKN58CcQ/2zqWGudkv4/Lb39hhQBvtpeR5DHlWtNfXH94QK2TbFaMaTcPORH8lT3pvqSqImyYIH+HSBiIQi34EU=
+	t=1745317393; cv=none; b=osllSSzbaZzBOcRiiKw9kxulunocAadKW4/5idnyPq/A12tpNHLbd3BN0WrugXSJr+H3q4xsT9BbzmL3whA1V/vpP1jrJOEcwWuYsGgw8S90YewK0Tl7omR1hQwMR1uug7DhHZnsxCL1nOl0hpqmlib5S7cHBt3QQyrIyz53og4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317469; c=relaxed/simple;
-	bh=niHZ7SywtqEBXhJxXUoQ5qHTD9B3hV3qxTLETfQVkRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SLI/5uL91Nbm29iyPzZH8ZNWDsuJ050TvPyLeqwKXGFoQAM+dCuIOCDEz+f9z2ADa8XqjPK8yqJphZgvnS/sSjMt1bQX+ayKHZpJ/JilknKMBQM3SEckSmDtHiuVCOzhQWHRd/BtQ7998mWDoGHL+CyQm4ReBYvnst7MW9jDZ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=H+FXgYcj; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1745317454;
-	bh=TTsZEPwrBCz/1dlJoPGkzqJ2iCyPoKODASZBVNBm63g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=H+FXgYcjRd57r/eHrlvaQFcywfddTIcB7oF7VLfF2ptSO7t56F5Ujdgc4zOaZiOzc
-	 wAxOO7MZcJ8Tca+qTODn+s3vsf7EC+3nN08l63sGUkb9nIbkmV+8sr8QXzo9L/CaE2
-	 G5KitIdBMrUePjAECogPlVyzxQCx8Re5zDft3GY0=
-X-QQ-mid: zesmtpip4t1745317409t6fbbb0f7
-X-QQ-Originating-IP: 3ilSgnN/hpCJ+v0evZYAElIP8wKs9EEd3cnDgrh72YI=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Apr 2025 18:23:27 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1331914406803930652
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com
-Subject: [PATCH v2 6/6] MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
-Date: Tue, 22 Apr 2025 18:22:53 +0800
-Message-ID: <2AEFB36427BDF18E+20250422102253.137944-6-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
-References: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1745317393; c=relaxed/simple;
+	bh=9U0y8AazlFYUUbq6n7jrNcFwYKUoO+Qq3tFFP4YSOg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBg9wUj7j/ZVqrnS8CRircF7MqBVhi7V01tUW1oCMOhB17prOxwEpaxFWjhIT+GZOJyD6SvZWqJM2efFORZfjT6WpRwEulOvOqrluYOsj+pmWbQdEOyBgz6+A35jehI1TeP5NOQeRPqDGs7FqfN0rQrbEWqmMsu77VgUzBWeKi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KZt5KOmZ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=eWqimEvZYjJ+hHLiu/HNG+SHzYVuamy+C0IrsJuwiZc=; b=KZt5KOmZMimyaXz1jUZ3tCe+nC
+	gHyTmBIBPv2GDXRgIPXD86ceGvYoRmhJR0o+qMKCtK8dw2EQLu6ki9wnqj5auK0MR/ak30Rfjon95
+	nGbKHssWOnmxa85ge4y2nY0ar4CjdgNJeoYn9CgZ7F9f8EilHiWGiOqcw3CIDBe/eCbd4e8bGN11O
+	c3tPXs2mTzCz7XiBqLXQGeN8O+AHDQT1IK1knc6qdihGUGlvml0Mt22pyhq+JTZxrm19eXK+Svrre
+	JWbI/uHRNK3iT8ZGObSGZO5Mvb0L8RLhD9gVSWaFSbO1bEgk/8K2jS1aI5cGd7qYjtqO0YMsiajhR
+	174DMe/w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36088)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u7AmP-0004C5-04;
+	Tue, 22 Apr 2025 11:23:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u7AmM-0007PA-0g;
+	Tue, 22 Apr 2025 11:23:02 +0100
+Date: Tue, 22 Apr 2025 11:23:02 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Simon Horman <horms@kernel.org>,
+	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH net 1/3] net: stmmac: socfpga: Enable internal GMII when
+ using 1000BaseX
+Message-ID: <aAduBtZ9jc_AMmEZ@shell.armlinux.org.uk>
+References: <20250422094701.49798-1-maxime.chevallier@bootlin.com>
+ <20250422094701.49798-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M1EFJi73A4mxs/cags2Do9xngT/5dq0dzmyJlacxwRLzPdQ/8mdDvcQ6
-	h3Xo5pR0v5/zpVV0Pk5sxlv9mbQ9FZZs+8kCVSxDnNHqmRUk8PZeKHvl6TrmSfbwdHsqFIV
-	MeLNSlfcbYaTWGS3T6THgxS4JQfBJlTO7EgCOp+GFnga3a6f4Ccbu7F4bzDGeBNgv9YtRiP
-	ItuZDiy9oI9jCYa9KcefHoot+MPGg6U4OOQjDbcM//3kULHUn2rcU2UI7XJ68+K5HWHttxF
-	quIW9ex40OAFim7X9B2QWFeBIi/mIhdJERDTfUjCvmdssP2TflHDJ1tIsQ7uwZUoGvnjQL2
-	1KGuPKHfoAaYb9nFd/WxA2DjsOlxIEeQ8qcC7egNxSHVWzw8Vn5/8o0jcW4FUlW7Bt9Uylh
-	t4DoXoAPcD3CDgPt50ofu+BjnBkIHhvu4V8axwT2xkcN75H6hduRonidfSgAwdj3c+p+L26
-	JUO/gNBsUynkuFdvKrVGEvM7JI3B/IDiPbBJ5ttX/Nbx/edyUs1sgGu7B151lYZsNvX9i9n
-	YJiGYUFA1FbvpuoCDSC5HpMhmnDT6EcnL1KVV5lDPJLdohRWMCTAcaru663g0VZ3VXj/awC
-	By7+k6sRSEo64HsVFDO11Tq5r84yNA1/qBFPdjZp7thDsbXGpMbc29ky8xEELqj2JT0oAtE
-	SGlomGaMxe1ZS1fz8kIVoqfNoWQkOmkU1t+cvPLopmUo2q+r9hZNHilFiUWGBx1UZuy+Xkd
-	2JPYiqVkRQGLOa9ZBPTNIPU4C4iRlI0MDP/3jaF/z8vP4bJOKQnxDjM3D+2SGGqFFgzq8fV
-	aBXlMvbzut2pLjrgEBB0CazwmHAB0Tk0MLtcJp2e7mCu535zddT1fH79Pkxw8FEHL5xqXqg
-	wjFTY9WO4u851CEWNQoGaSvo1g+uPBn7QMvEUqIhCMFuLWef6UNKggN1uVARMJHr7Y3bCSw
-	W3aLiuVrlrzWOLDllWg8pG/BxrlWKwC/GNQiL48Q5YL8y1rVW8tB1jo1DKWnRSRm0DGKzHz
-	upbTeCDEQaGoNYIfn9SoSBMXetRyzKtcN7yKhX0SzsLtduBXAA1ywXmCiC16xacFOI111Rf
-	w==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422094701.49798-2-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-All compilation issues under decstation_64_defconfig have been
-resolved, and it is now safe to enable CONFIG_WERROR now.
+On Tue, Apr 22, 2025 at 11:46:55AM +0200, Maxime Chevallier wrote:
+> Dwmac Socfpga may be used with an instance of a Lynx / Altera TSE PCS,
+> in which case it gains support for 1000BaseX.
+> 
+> It appears that the PCS is wired to the MAC through an internal GMII
+> bus. Make sure that we enable the GMII_MII mode for the internal MAC when
+> using 1000BaseX.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/configs/decstation_64_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-diff --git a/arch/mips/configs/decstation_64_defconfig b/arch/mips/configs/decstation_64_defconfig
-index bf579866cf4b..12415c5dd28c 100644
---- a/arch/mips/configs/decstation_64_defconfig
-+++ b/arch/mips/configs/decstation_64_defconfig
-@@ -1,3 +1,4 @@
-+CONFIG_WERROR=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_HIGH_RES_TIMERS=y
+Thanks!
+
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
