@@ -1,76 +1,120 @@
-Return-Path: <linux-kernel+bounces-613738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D8BA96071
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F51A96076
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E4F16755F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5E418914E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9572561C7;
-	Tue, 22 Apr 2025 08:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69540256C7C;
+	Tue, 22 Apr 2025 08:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Txu8yv9P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IjAZH6Pu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836AF22A7E9;
-	Tue, 22 Apr 2025 08:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51FC256C71;
+	Tue, 22 Apr 2025 08:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745309009; cv=none; b=XCPZAuffaX0qZMhzPGGKsuBe4rb+bUF3b0lEBeP/9F3kAJwVIRuzwtmdVtWuzsM00lwQF7ywzogHCcK8hVEoxaZlexGkl3NqQGpOxSxNAOEGsAEDmiXiNB5gMAOsKbCqcFTBX2iE37xLhYAwszeq+y7sHb0kg355HXbhvfKf47c=
+	t=1745309019; cv=none; b=AlgqfdZn3wEsvD5mHW9cOQ0nFnH6YyGPfGww6yPz8p3uXZLG011UXo9cwFAkipCizohA8LICDwidsN2jK1AavSo/p5r/UumttRfSkVKJUn/U+vgOyrwdU7m/Kv8IyWz8eX07V+A6FmOYcexdfN3ZhtGQKaM/tN94mHXgHRrDycQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745309009; c=relaxed/simple;
-	bh=tuES01nYOstZWP9hYjFzjWNwqXZ8qG6are8+f6QpstA=;
+	s=arc-20240116; t=1745309019; c=relaxed/simple;
+	bh=o7H/iq0YMoBxJPp7UTWI0Eo19jVEqBYyBI7h/GajBb8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6Zii9MYVszBz0MrI/sQe3vak5iSOHqcbFwX2AnNS6HwoooPlimymea5p2kWx9T2iAtw9m4l+gnjbbNKGB0gRi0xVwu5z/BhEQ0Hi176GnCiHiMaSwl9nFigIVSgiCQJol9cHl1AZ2sIWIvPRYyYyryXi2KpfX2J7kIGTjMMDeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Txu8yv9P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07134C4CEE9;
-	Tue, 22 Apr 2025 08:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745309009;
-	bh=tuES01nYOstZWP9hYjFzjWNwqXZ8qG6are8+f6QpstA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Txu8yv9Pi3B9LpKoeLGmibagv3CEzvFuCI4eOcgABFevGtaUqIehpqsrg78/lZZ+F
-	 HgAXzAodNblMN+YWNEHGWQyQGgi5dcsgmihLv9txLdLQqIwNJ6Jnwq7IRk8gzvtC5h
-	 8NHD1EoCtj40N/ohpMIIZRd7EUklNgN9cuQcoGs/1JayUyiAL6s9CzcsOD+wCmNFF+
-	 xGRbhGmg+VSEOdiqRwLBPKcptlbnb17hIGVKEluprU2YlGlnYfl+Wxu5e2cEhdaYTw
-	 Ik2QdUVBXZ+4C/o0MAvyQD0XOopQqYuB4/t3DANqfTTLkXJNomjgTPiwzXC87Jimql
-	 3RXgtVsJqFqIQ==
-Date: Tue, 22 Apr 2025 10:03:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the vfs-brauner tree
-Message-ID: <20250422-geopfert-scham-999c2bdd6e34@brauner>
-References: <20250417084949.7f9cfe19@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MYX0VYLul6QG2fnv1KjMVOsugGTABBzpEmzvEnTn9EbiX1Y3s91yblBgqMBrv5lI43aPbiNKwu+8PhMzevlJgG4F5DBuPqlkOIidLmgCJKDKn4bbpB8fBY17ItkRKjlBktPlAxv52wEAsZ1/DLYlLsMjQvdxz8mBjSjNKNeiUGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IjAZH6Pu; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745309018; x=1776845018;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o7H/iq0YMoBxJPp7UTWI0Eo19jVEqBYyBI7h/GajBb8=;
+  b=IjAZH6PuFne+uaiTwqKcJ63VnA5oB5qAagSDvlw0Am1LfhGWe8p6zc1g
+   LYprMGj5s2aYaCc+AUbySO+SgUzgKG7+CJ43q3uXw6Y4GwqgfTkvJaO9o
+   FP5WwJ3NOJH8WgeWI4N2J0204b1B5/fcQ/hhaqZQycO3fRNJJvWiBOlhb
+   VUm6NpB3jTy/GqTA8o4OkurmttNYYAUlwVEzqP1ouS1sqKUXymRpUTbKd
+   bSBGbfZvmXW3KIzfQlzE87da6aB0QC8gPOzGlyThDokUhDRODIz0SR0+W
+   +xIkcu5RMusv+EYqdeOMRhlLr6jF3ZHR+Zd9fxONCrCLzwJs8rdg7s7Gs
+   w==;
+X-CSE-ConnectionGUID: vLfpHkRXR6a6zmycar0BYQ==
+X-CSE-MsgGUID: TTibbZMkRTqt+ZMvaW1CtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="47038065"
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="47038065"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 01:03:37 -0700
+X-CSE-ConnectionGUID: DCmJpHjLQI+JbkbI4Kc4KA==
+X-CSE-MsgGUID: kotw2JxqTm2AEiL0dDjwfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,230,1739865600"; 
+   d="scan'208";a="162993425"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 01:03:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u78bM-0000000EfTR-2H33;
+	Tue, 22 Apr 2025 11:03:32 +0300
+Date: Tue, 22 Apr 2025 11:03:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: BCM63XX: Replace strcpy() with strscpy() in
+ board_prom_init()
+Message-ID: <aAdNVAzu0rmIfGGC@smile.fi.intel.com>
+References: <20250422074257.544016-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250417084949.7f9cfe19@canb.auug.org.au>
+In-Reply-To: <20250422074257.544016-2-thorsten.blum@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Apr 17, 2025 at 08:49:49AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commit is also in the vfs-brauner-fixes tree as a different
-> commit (but the same patch):
-> 
->   b1eb86b028e1 ("fs: ensure that *path_locked*() helpers leave passed path pristine")
-> 
-> This is commit
-> 
->   a681b7c17dd2 ("fs: ensure that *path_locked*() helpers leave passed path pristine")
-> 
-> in the vfs-brauner tree.
+On Tue, Apr 22, 2025 at 09:42:55AM +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
 
-Fixed a few days ago. Thanks!
+> Link: https://github.com/KSPP/linux/issues/88
+
+> Cc: linux-hardening@vger.kernel.org
+
+Can you use --cc OR put this line...
+
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+
+...here (after the cutter), so we won't see this in the commit message? The
+list will be available in the lore archive anyway.
+
+> @@ -764,7 +764,7 @@ void __init board_prom_init(void)
+>  			snprintf(cfe_version, 12, "%s", (char *) &cfe[4]);
+>  		}
+>  	} else {
+> -		strcpy(cfe_version, "unknown");
+> +		strscpy(cfe_version, "unknown");
+>  	}
+
+Have you compiled this with `make W=1` with recent GCCs? I would recommend to
+rewrite the whole function, as per commit ee44a1def7ee ("leds: core: Bail out
+when composed name can't fit the buffer") in Linux Next.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
