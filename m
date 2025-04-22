@@ -1,197 +1,528 @@
-Return-Path: <linux-kernel+bounces-614087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49941A965ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3190A965F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03355188C56D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E393A37A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABF92144BB;
-	Tue, 22 Apr 2025 10:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55CE2144DF;
+	Tue, 22 Apr 2025 10:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EfgEK072"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzMcnO7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EA32139CE;
-	Tue, 22 Apr 2025 10:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D3720C03F;
+	Tue, 22 Apr 2025 10:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317677; cv=none; b=lWX6i2ZiWKHciNX3B2JB1so8oJGtN0vapXeV4qdFWw4xHEVP68QVThUCRrGCfBNCUiC9yy/CTp95kWCnkcIvwytVOhHD77fenVDr1kPXx2Rq+w/3RLi4InrIvhyNP2pED008s2TJ/mrHvOFW9463/R+iWDiknY4fBBr6I1t3dWs=
+	t=1745317757; cv=none; b=Vs3gDoOsYGk7dWwqBJZHpF7BvtZx05gXUFDJbmFtQG8rn9ylyuEwQHKL6q0KxV8fskZYKeBwRVMc7x+m5uvc/+1X99m84co92zLlVBFplZ5lPfBKtGCnTBpRkFb6aRZznVFLE+oZMa9dJm6cOFHmRFaAq3XoBB1GNsL9+ny1Ak0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317677; c=relaxed/simple;
-	bh=B2UZi9ugbozdfNpiJDP5cOj3pRIQYoJbDLco0LpvDNM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lpj9klk7d7ShpJpN8fsbgidVCacS9cjubnp4azHZjzXAVjVrs62WvfgeqyOuRyUEZvszj7I+GFEgKrmHkYFX0zD4LgBAM9XI2jL4jRkNAF5y94vP0zKroux6dZbOpK/aG5pzvzhfXVqH6K3w7ARG5P11ms1F8u/A3ApMmvn0/m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EfgEK072; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53MARlGm1181497
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Apr 2025 05:27:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745317667;
-	bh=+tqEJztsEGWVhO4AAXHU0QU5LU+OnvvfKfNHDEDrh+I=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=EfgEK072ZvCgXi6UPy5O9lKiZLuZ3SpBheWeO8X1yZ3jramrmXyXkVRHDBiVBQKlK
-	 EtIpygt05eMkYrYipLoI7pEqy7lkK0ixc7uFZ4RDzspHHaxi2ey/JwrkTC04eeFdmb
-	 Mir8OGBUqYtmc4+3wbPsn0ujb/4gYVkDwe77QL60=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53MARlxQ006133
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 22 Apr 2025 05:27:47 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
- Apr 2025 05:27:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 22 Apr 2025 05:27:46 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53MARj4Y125210;
-	Tue, 22 Apr 2025 05:27:46 -0500
-Date: Tue, 22 Apr 2025 15:57:45 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: "Kumar, Udit" <u-kumar1@ti.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: [PATCH 2/7] arm64: dts: ti: k3-j7200-main: switch to 64-bit
- address space for PCIe1
-Message-ID: <7f6ea98c-df6d-4c94-8f42-76cc8306b6c4@ti.com>
-References: <20250417120407.2646929-1-s-vadapalli@ti.com>
- <20250417120407.2646929-3-s-vadapalli@ti.com>
- <8b707fbc-9d82-48d0-a227-366d4e83e8a7@ti.com>
- <231e009e-0dc2-4876-b052-d11b64ee5a0a@ti.com>
- <d517b2bb-2bf2-44ec-8509-6281c5566972@ti.com>
- <8d43fdc6-760d-49cd-b4f5-95d13a52220b@ti.com>
- <8c7b68fc-c275-45c3-830a-3ea3174f38f5@ti.com>
+	s=arc-20240116; t=1745317757; c=relaxed/simple;
+	bh=OFAd4pLJeK+Mq0F7F6qfF5355bPoI9VG3dxk3BPrGhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+K0URPTE4Cd3J91675KF8qILwEsP4J11RNkF4q/n4wVNHhg6Dfwk/GhouVb6uVcuCkW5eUeu9xiYKMoM9dAsIg/n/15qy7G4HrLzBN7Mb9LOQ/ta1+A+6XsNsbwQmMwjlyA4uXhb6n4gXd0SzlZHRsaMmghBDi59tzG8ILVSuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzMcnO7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFF9C4CEEA;
+	Tue, 22 Apr 2025 10:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745317757;
+	bh=OFAd4pLJeK+Mq0F7F6qfF5355bPoI9VG3dxk3BPrGhs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IzMcnO7/hnMIUrVPk0IUzgI/Vkz11j+5SMzE8iDicQSN9D7ciAKD9+epS1JmSauW5
+	 La4vinMdGWPRqy9r2Ghd+I7rnoEeqBqo0SX5VnqKlld3jHSwdQ90MbrdHXmXC3XWwr
+	 IQJi+JYwOD4NgxoU0kG0c+t0dFcLNN9bDt9oLLRk5AwlCnxrfasXaux6gp4ct8O0LI
+	 h86c5lie0vVAH42fPij467wL1CsUVOesDGRcVf5HV0xESP08o4fcVoLcDb2+5lvlH+
+	 OCwRhCQO1+E8KQz4Qvbd7ffw6nSVpwjs2XU0HhLLy5Iys9MX0ihLboTp8YBFnf7N1O
+	 9AuMsJGmHb0nA==
+Date: Tue, 22 Apr 2025 12:29:09 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 06/16] gpu: nova-core: define registers layout using
+ helper macro
+Message-ID: <aAdvdczmQYBAS7vs@cassiopeiae>
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-6-ecd1cca23963@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c7b68fc-c275-45c3-830a-3ea3174f38f5@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250420-nova-frts-v1-6-ecd1cca23963@nvidia.com>
 
-On Mon, Apr 21, 2025 at 01:29:47PM +0530, Kumar, Udit wrote:
+On Sun, Apr 20, 2025 at 09:19:38PM +0900, Alexandre Courbot wrote:
+> Add the register!() macro, which defines a given register's layout and
+> provide bit-field accessors with a way to convert them to a given type.
+> This macro will allow us to make clear definitions of the registers and
+> manipulate their fields safely.
 > 
-> On 4/20/2025 7:48 PM, Siddharth Vadapalli wrote:
-> > On Sun, Apr 20, 2025 at 10:17:46AM +0530, Kumar, Udit wrote:
-> > > Hello Siddharth
-> > > 
-> > > On 4/20/2025 8:33 AM, Siddharth Vadapalli wrote:
-> > > > On Sat, Apr 19, 2025 at 11:35:50PM +0530, Kumar, Udit wrote:
-> > > > 
-> > > > Hello Udit,
-> > > > 
-> > > > > On 4/17/2025 5:34 PM, Siddharth Vadapalli wrote:
-> > > > > > The PCIe0 instance of PCIe in J7200 SoC supports:
-> > > > > > 1. 128 MB address region in the 32-bit address space
-> > > > > > 2. 4 GB address region in the 64-bit address space
-> > > > > > 
-> > > > > > The default configuration is that of a 128 MB address region in the
-> > > > > > 32-bit address space. While this might be sufficient for most use-cases,
-> > > > > > it is insufficient for supporting use-cases which require larger address
-> > > > > > spaces. Therefore, switch to using the 64-bit address space with a 4 GB
-> > > > > > address region.
-> > > > > > 
-> > > > > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > > > > > ---
-> > > > > >     arch/arm64/boot/dts/ti/k3-j7200-main.dtsi | 7 ++++---
-> > > > > >     1 file changed, 4 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > > > > > index 5ab510a0605f..e898dffdebbe 100644
-> > > > > > --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > > > > > +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > > > > > @@ -759,7 +759,7 @@ pcie1_rc: pcie@2910000 {
-> > > > > >     		reg = <0x00 0x02910000 0x00 0x1000>,
-> > > > > >     		      <0x00 0x02917000 0x00 0x400>,
-> > > > > >     		      <0x00 0x0d800000 0x00 0x00800000>,
-> > > > > > -		      <0x00 0x18000000 0x00 0x00001000>;
-> > > > > > +		      <0x41 0x00000000 0x00 0x00001000>;
-> > > > > >     		reg-names = "intd_cfg", "user_cfg", "reg", "cfg";
-> > > > > >     		interrupt-names = "link_state";
-> > > > > >     		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
-> > > > > > @@ -778,8 +778,9 @@ pcie1_rc: pcie@2910000 {
-> > > > > >     		device-id = <0xb00f>;
-> > > > > >     		msi-map = <0x0 &gic_its 0x0 0x10000>;
-> > > > > >     		dma-coherent;
-> > > > > > -		ranges = <0x01000000 0x0 0x18001000  0x00 0x18001000  0x0 0x0010000>,
-> > > > > > -			 <0x02000000 0x0 0x18011000  0x00 0x18011000  0x0 0x7fef000>;
-> > > > > > +		ranges = <0x01000000 0x00 0x00001000 0x41 0x00001000 0x00 0x00100000>, /* IO (1 MB) */
-> > > > > > +			 <0x02000000 0x00 0x00101000 0x41 0x00101000 0x00 0x08000000>, /* 32-bit Non-Prefetchable MEM (128 MB) */
-> > > > > > +			 <0x43000000 0x41 0x08101000 0x41 0x08101000 0x00 0xf7eff000>; /* 64-bit Prefetchable MEM (4 GB - (129 MB + 4 KB)) */
-> > > > > Sorry for novice question,
-> > > > > 
-> > > > > with this change,  How do you see  old EP working which supports 32 bit
-> > > > > addressing,
-> > > > > 
-> > > > > or some translation is possible ?
-> > > > > 
-> > > > > 0x43000000 0x41 0x08101000 0x41 0x08101000 0x00 0xf7eff000>
-> > > > > 
-> > > > > to
-> > > > > 
-> > > > > 0x63000000 0x00 0x08101000 0x41 0x08101000 0x00 0xf7eff000>
-> > > > I didn't understand the question completely, but I shall try to explain
-> > > > the changes being made which might possibly answer your question.
-> > > If I understood well then what you are doing here
-> > > 
-> > > 0x43000000 0x41 0x08101000 0x41 0x08101000 0x00 0xf7eff000>
-> > > 
-> > > PCIe address
-> > > 0x43000000 0x41 0x08101000 -->
-> > > Property 0x43
-> > > 0x43 as npt000ss ->relocatable, prefetch and 64 Bit memory space PCIe Bus address  0x41 0x08101000
-> > > CPU address space 0x41 0x08101000
-> > > This will work fine, if EP supports 64 bit addressing scheme.
-> > > 
-> > > In case, we want to work with EP of 32 Bit, Then do you see , we need to relocate PCIe (lower 32 bits) to CPU address (64 bits)
-> > A total of 3 Address Regions have been defined:
-> > 1. 1 MB IO in the 32-bit PCIe Bus Address Space
-> > 2. 128 MB Non-Prefetchable MEM in the 32-bit PCIe Bus Address Space
-> > 3. (4 GB - 129 MB - 4 KB) Prefetchable MEM in the 64-bit PCIe Bus
-> > Address Space
-> > 
-> > '1' and '2' above provide backward compatibility with Endpoint Devices
-> > that can only support 32-bit PCIe Bus Addressing. The __newly__ added
-> > '3' enables Endpoint Devices that support 64-bit PCIe Bus Addressing to
-> > claim larger Memory Address Space on top of what is supported by '1' and
-> > '2'.
+> The long-term goal is to eventually move it to the kernel crate so it
+> can be used my other drivers as well, but it was agreed to first land it
+> into nova-core and make it mature there.
 > 
-> Thanks Siddharth,
-> 
-> I understand, you are enabling 64 bit addressing, keeping previous
-> addressing scheme unchanged.
-> 
-> Since, you are changing, it will be good to give max possible addresses for
-> 32 bits EP.
-> 
-> or
-> 
-> If you are saying , 32 bit EP has to be limited to 128MB then
+> To illustrate its usage, use it to define the layout for the Boot0
+> register and use its accessors through the use of the convenience
+> with_bar!() macro, which uses Revocable::try_access() and converts its
 
-Based on the offline discussion, since the total address region is 4 GB,
-and given that all of it is addressable in the 32-bit PCIe Bus Address
-Space, I will update the patch series to allocate the 4 GB region as:
-1. 1MB IO in the 32-bit PCIe Bus Address Space
-2. (4GB - 1MB - 4KB) Non-Prefetchable MEM in the 32-bit PCIe Bus Address
-   Space
+s/try_access/try_access_with/
 
-Regards,
-Siddharth.
+> returned Option into the proper error as needed.
+
+Using try_access_with() / with_bar! should be a separate patch.
+
+> diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
+> index 234d753d3eacc709b928b1ccbfc9750ef36ec4ed..8a459fc088121f770bfcda5dfb4ef51c712793ce 100644
+> --- a/Documentation/gpu/nova/core/todo.rst
+> +++ b/Documentation/gpu/nova/core/todo.rst
+> @@ -102,7 +102,13 @@ Usage:
+>  	let boot0 = Boot0::read(&bar);
+>  	pr_info!("Revision: {}\n", boot0.revision());
+>  
+> +Note: a work-in-progress implementation currently resides in
+> +`drivers/gpu/nova-core/regs/macros.rs` and is used in nova-core. It would be
+> +nice to improve it (possibly using proc macros) and move it to the `kernel`
+> +crate so it can be used by other components as well.
+> +
+>  | Complexity: Advanced
+> +| Contact: Alexandre Courbot
+
+This is good -- thanks for adding it.
+
+> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+> index b1a25b86ef17a6710e6236d5e7f1f26cd4407ce3..e315a3011660df7f18c0a3e0582b5845545b36e2 100644
+> --- a/drivers/gpu/nova-core/regs.rs
+> +++ b/drivers/gpu/nova-core/regs.rs
+> @@ -1,55 +1,15 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -use crate::driver::Bar0;
+> +use core::ops::Deref;
+> +use kernel::io::Io;
+>  
+> -// TODO
+> -//
+> -// Create register definitions via generic macros. See task "Generic register
+> -// abstraction" in Documentation/gpu/nova/core/todo.rst.
+> +#[macro_use]
+> +mod macros;
+>  
+> -const BOOT0_OFFSET: usize = 0x00000000;
+> +use crate::gpu::Chipset;
+>  
+> -// 3:0 - chipset minor revision
+> -const BOOT0_MINOR_REV_SHIFT: u8 = 0;
+> -const BOOT0_MINOR_REV_MASK: u32 = 0x0000000f;
+> -
+> -// 7:4 - chipset major revision
+> -const BOOT0_MAJOR_REV_SHIFT: u8 = 4;
+> -const BOOT0_MAJOR_REV_MASK: u32 = 0x000000f0;
+> -
+> -// 23:20 - chipset implementation Identifier (depends on architecture)
+> -const BOOT0_IMPL_SHIFT: u8 = 20;
+> -const BOOT0_IMPL_MASK: u32 = 0x00f00000;
+> -
+> -// 28:24 - chipset architecture identifier
+> -const BOOT0_ARCH_MASK: u32 = 0x1f000000;
+> -
+> -// 28:20 - chipset identifier (virtual register field combining BOOT0_IMPL and
+> -//         BOOT0_ARCH)
+> -const BOOT0_CHIPSET_SHIFT: u8 = BOOT0_IMPL_SHIFT;
+> -const BOOT0_CHIPSET_MASK: u32 = BOOT0_IMPL_MASK | BOOT0_ARCH_MASK;
+> -
+> -#[derive(Copy, Clone)]
+> -pub(crate) struct Boot0(u32);
+> -
+> -impl Boot0 {
+> -    #[inline]
+> -    pub(crate) fn read(bar: &Bar0) -> Self {
+> -        Self(bar.read32(BOOT0_OFFSET))
+> -    }
+> -
+> -    #[inline]
+> -    pub(crate) fn chipset(&self) -> u32 {
+> -        (self.0 & BOOT0_CHIPSET_MASK) >> BOOT0_CHIPSET_SHIFT
+> -    }
+> -
+> -    #[inline]
+> -    pub(crate) fn minor_rev(&self) -> u8 {
+> -        ((self.0 & BOOT0_MINOR_REV_MASK) >> BOOT0_MINOR_REV_SHIFT) as u8
+> -    }
+> -
+> -    #[inline]
+> -    pub(crate) fn major_rev(&self) -> u8 {
+> -        ((self.0 & BOOT0_MAJOR_REV_MASK) >> BOOT0_MAJOR_REV_SHIFT) as u8
+> -    }
+> -}
+> +register!(Boot0@0x00000000, "Basic revision information about the GPU";
+> +    3:0     minor_rev => as u8, "minor revision of the chip";
+> +    7:4     major_rev => as u8, "major revision of the chip";
+> +    28:20   chipset => try_into Chipset, "chipset model"
+
+Should we preserve the information that this is the combination of two register
+fields?
+
+> +);
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..fa9bd6b932048113de997658b112885666e694c9
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -0,0 +1,297 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Types and macros to define register layout and accessors.
+> +//!
+> +//! A single register typically includes several fields, which are accessed through a combination
+> +//! of bit-shift and mask operations that introduce a class of potential mistakes, notably because
+> +//! not all possible field values are necessarily valid.
+> +//!
+> +//! The macros in this module allow to define, using an intruitive and readable syntax, a dedicated
+> +//! type for each register with its own field accessors that can return an error is a field's value
+> +//! is invalid. They also provide a builder type allowing to construct a register value to be
+> +//! written by combining valid values for its fields.
+> +
+> +/// Helper macro for the `register` macro.
+> +///
+> +/// Defines the wrapper `$name` type, as well as its relevant implementations (`Debug`, `BitOr`,
+> +/// and conversion to regular `u32`).
+> +macro_rules! __reg_def_common {
+> +    ($name:ident $(, $type_comment:expr)?) => {
+> +        $(
+> +        #[doc=$type_comment]
+> +        )?
+> +        #[repr(transparent)]
+> +        #[derive(Clone, Copy, Default)]
+> +        pub(crate) struct $name(u32);
+> +
+> +        // TODO: should we display the raw hex value, then the value of all its fields?
+
+To me it seems useful to have both.
+
+> +        impl ::core::fmt::Debug for $name {
+> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+> +                f.debug_tuple(stringify!($name))
+> +                    .field(&format_args!("0x{0:x}", &self.0))
+> +                    .finish()
+> +            }
+> +        }
+> +
+> +        impl core::ops::BitOr for $name {
+> +            type Output = Self;
+> +
+> +            fn bitor(self, rhs: Self) -> Self::Output {
+> +                Self(self.0 | rhs.0)
+> +            }
+> +        }
+> +
+> +        impl From<$name> for u32 {
+
+Here and in a few more cases below: This needs the full path; also remember to
+use absolute paths everwhere.
+
+> +            fn from(reg: $name) -> u32 {
+> +                reg.0
+> +            }
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `register` macro.
+> +///
+> +/// Defines the getter method for $field.
+> +macro_rules! __reg_def_field_getter {
+> +    (
+> +        $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $comment:expr)?
+> +    ) => {
+> +        $(
+> +        #[doc=concat!("Returns the ", $comment)]
+> +        )?
+> +        #[inline]
+> +        pub(crate) fn $field(self) -> $( $as_type )? $( $bit_type )? $( $type )? $( core::result::Result<$try_type, <$try_type as TryFrom<u32>>::Error> )? {
+
+Please make sure to wrap lines with a length > 100.
+
+> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> +            const SHIFT: u32 = MASK.trailing_zeros();
+> +            let field = (self.0 & MASK) >> SHIFT;
+> +
+> +            $( field as $as_type )?
+> +            $(
+> +            // TODO: it would be nice to throw a compile-time error if $hi != $lo as this means we
+> +            // are considering more than one bit but returning a bool...
+
+Would the following work?
+
+	const _: () = {
+	   build_assert!($hi != $lo);
+	   ()
+	};
+
+Though I guess, the above definition of MASK already guarantees that $hi and $lo
+are known on compile time.
+
+> +            <$bit_type>::from(if field != 0 { true } else { false }) as $bit_type
+> +            )?
+> +            $( <$type>::from(field) )?
+> +            $( <$try_type>::try_from(field) )?
+> +        }
+> +    }
+> +}
+> +
+> +/// Helper macro for the `register` macro.
+> +///
+> +/// Defines all the field getter methods for `$name`.
+> +macro_rules! __reg_def_getters {
+> +    (
+> +        $name:ident
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            $(
+> +            __reg_def_field_getter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
+> +            )*
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `register` macro.
+> +///
+> +/// Defines the setter method for $field.
+> +macro_rules! __reg_def_field_setter {
+> +    (
+> +        $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $comment:expr)?
+> +    ) => {
+> +        kernel::macros::paste! {
+> +        $(
+> +        #[doc=concat!("Sets the ", $comment)]
+> +        )?
+> +        #[inline]
+> +        pub(crate) fn [<set_ $field>](mut self, value: $( $as_type)? $( $bit_type )? $( $type )? $( $try_type)? ) -> Self {
+> +            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> +            const SHIFT: u32 = MASK.trailing_zeros();
+> +
+> +            let value = ((value as u32) << SHIFT) & MASK;
+> +            self.0 = (self.0 & !MASK) | value;
+> +            self
+> +        }
+> +        }
+> +    };
+> +}
+> +
+> +/// Helper macro for the `register` macro.
+> +///
+> +/// Defines all the field setter methods for `$name`.
+> +macro_rules! __reg_def_setters {
+> +    (
+> +        $name:ident
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            $(
+> +            __reg_def_field_setter!($hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)?);
+> +            )*
+> +        }
+> +    };
+> +}
+> +
+> +/// Defines a dedicated type for a register with an absolute offset, alongside with getter and
+> +/// setter methods for its fields and methods to read and write it from an `Io` region.
+> +///
+> +/// Example:
+> +///
+> +/// ```no_run
+> +/// register!(Boot0@0x00000100, "Basic revision information about the chip";
+> +///     3:0     minor_rev => as u8, "minor revision of the chip";
+> +///     7:4     major_rev => as u8, "major revision of the chip";
+> +///     28:20   chipset => try_into Chipset, "chipset model"
+> +/// );
+> +/// ```
+> +///
+> +/// This defines a `Boot0` type which can be read or written from offset `0x100` of an `Io` region.
+> +/// It is composed of 3 fields, for instance `minor_rev` is made of the 4 less significant bits of
+> +/// the register. Each field can be accessed and modified using helper methods:
+> +///
+> +/// ```no_run
+> +/// // Read from offset 0x100.
+> +/// let boot0 = Boot0::read(&bar);
+> +/// pr_info!("chip revision: {}.{}", boot0.major_rev(), boot0.minor_rev());
+> +///
+> +/// // `Chipset::try_from` will be called with the value of the field and returns an error if the
+> +/// // value is invalid.
+> +/// let chipset = boot0.chipset()?;
+> +///
+> +/// // Update some fields and write the value back.
+> +/// boot0.set_major_rev(3).set_minor_rev(10).write(&bar);
+> +///
+> +/// // Or just update the register value in a single step:
+> +/// Boot0::alter(&bar, |r| r.set_major_rev(3).set_minor_rev(10));
+> +/// ```
+> +///
+> +/// Fields are made accessible using one of the following strategies:
+> +///
+> +/// - `as <type>` simply casts the field value to the requested type.
+> +/// - `as_bit <type>` turns the field into a boolean and calls `<type>::from()` with the obtained
+> +///   value. To be used with single-bit fields.
+> +/// - `into <type>` calls `<type>::from()` on the value of the field. It is expected to handle all
+> +///   the possible values for the bit range selected.
+> +/// - `try_into <type>` calls `<type>::try_from()` on the value of the field and returns its
+> +///   result.
+> +///
+> +/// The documentation strings are optional. If present, they will be added to the type or the field
+> +/// getter and setter methods they are attached to.
+> +///
+> +/// Putting a `+` before the address of the register makes it relative to a base: the `read` and
+> +/// `write` methods take a `base` argument that is added to the specified address before access,
+> +/// and adds `try_read` and `try_write` methods to allow access with offsets unknown at
+> +/// compile-time.
+> +///
+> +macro_rules! register {
+> +    // Create a register at a fixed offset of the MMIO space.
+> +    (
+> +        $name:ident@$offset:expr $(, $type_comment:expr)?
+
+Can we use this as doc-comment?
+
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+> +        __reg_def_common!($name);
+> +
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            #[inline]
+> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T) -> Self {
+
+Not necessarily a PCI bar, could be any I/O type.
+
+> +                Self(bar.read32($offset))
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T) {
+> +                bar.write32(self.0, $offset)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn alter<const SIZE: usize, T: Deref<Target=Io<SIZE>>, F: FnOnce(Self) -> Self>(bar: &T, f: F) {
+> +                let reg = f(Self::read(bar));
+> +                reg.write(bar);
+> +            }
+> +        }
+> +
+> +        __reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +
+> +        __reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +    };
+> +
+> +    // Create a register at a relative offset from a base address.
+> +    (
+> +        $name:ident@+$offset:expr $(, $type_comment:expr)?
+> +        $(; $hi:tt:$lo:tt $field:ident
+> +            $(=> as $as_type:ty)?
+> +            $(=> as_bit $bit_type:ty)?
+> +            $(=> into $type:ty)?
+> +            $(=> try_into $try_type:ty)?
+> +        $(, $field_comment:expr)?)* $(;)?
+> +    ) => {
+
+I assume this is for cases where we have multiple instances of the same
+controller, engine, etc. I think it would be good to add a small example for
+this one too.
+
+> +        __reg_def_common!($name);
+> +
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            #[inline]
+> +            pub(crate) fn read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> Self {
+> +                Self(bar.read32(base + $offset))
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) {
+> +                bar.write32(self.0, base + $offset)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn alter<const SIZE: usize, T: Deref<Target=Io<SIZE>>, F: FnOnce(Self) -> Self>(bar: &T, base: usize, f: F) {
+> +                let reg = f(Self::read(bar, base));
+> +                reg.write(bar, base);
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn try_read<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(bar: &T, base: usize) -> ::kernel::error::Result<Self> {
+> +                bar.try_read32(base + $offset).map(Self)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn try_write<const SIZE: usize, T: Deref<Target=Io<SIZE>>>(self, bar: &T, base: usize) -> ::kernel::error::Result<()> {
+> +                bar.try_write32(self.0, base + $offset)
+> +            }
+> +
+> +            #[inline]
+> +            pub(crate) fn try_alter<const SIZE: usize, T: Deref<Target=Io<SIZE>>, F: FnOnce(Self) -> Self>(bar: &T, base: usize, f: F) -> ::kernel::error::Result<()> {
+> +                let reg = f(Self::try_read(bar, base)?);
+> +                reg.try_write(bar, base)
+> +            }
+> +        }
+> +
+> +        __reg_def_getters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +
+> +        __reg_def_setters!($name; $( $hi:$lo $field $(=> as $as_type)? $(=> as_bit $bit_type)? $(=> into $type)? $(=> try_into $try_type)? $(, $field_comment)? );*);
+> +    };
+> +}
+> 
+> -- 
+> 2.49.0
+> 
 
