@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-613620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3438DA95EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF693A95EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059293ABF92
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:06:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D933B1891E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B06324166A;
-	Tue, 22 Apr 2025 07:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C994E23373A;
+	Tue, 22 Apr 2025 07:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MZbk7Du3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85B222F167;
-	Tue, 22 Apr 2025 07:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TmYHdidm"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B037D22DF9E;
+	Tue, 22 Apr 2025 07:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745305559; cv=none; b=fyRmA7GD54MBOjnU9k9F67Yv/BEwiFH06Wwc4gy8sxGIEA+QeCwFsB5sjyZ6QMBY1OJGElctRwSVQ0Dl1iYwbJnWtvGQwBCvIrzYcIdvYRNqh+R3Zc412vFnCnnAOdEpWM39ntAQMhwNb7TYYi33zfHtgeh0p93f/m95WMsPg/w=
+	t=1745305558; cv=none; b=ldGyg8BBTkXoqNqQ3owxnqpMGQzgtcLD21/dGmVJyD/a3A2pThSLlIet3mZ8zeZ0wXAlMcUbLfaxMiuD5TAvphlboyiT2ylvNE63p5xV/PNv/4zM0Oiu7o6+2wjePg0ktxpW2JiyzfB/siouDKQii13fVP7Cv/UfrxVP9iDfqb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745305559; c=relaxed/simple;
-	bh=J/FkQ+SkHYYoPQcELkb+tIcpNOe26kLfqD3rb2wWEoo=;
+	s=arc-20240116; t=1745305558; c=relaxed/simple;
+	bh=UTATp5Vy18bL4XWdu6qCARwaTStSHDvxTPvSI0YaSRQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=byzQk4l51Wjhj7DcYZ4uExRDY9RVnmYRP+7I6KAa6vOY3alBi5p4py8SdyrEtsCxJxXnf1La657O9wmomvmCF4lBQVovow8n1Betv7dvVQZcARtjuztdWL7DuBqXU0MufOij2j9ibmqPPLhBK/rfIJSKQ+EvEMJXSDyf43g46I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MZbk7Du3; arc=none smtp.client-ip=117.135.210.2
+	 MIME-Version; b=awddSnDZ5lL+PNtEEDaTr5G6oPfmUPUTwCcaEMK+peKfE8GBwxwQbzzkD8ZAsul/sDQuKFeJKpDDzyOYlU6HsD6ul03u93H7L+xjuG32hdG1jqVmlzxT8iSClgmHWOMY3efQC93G1OcF2QY7oGwlIuv/XUEymRV9LRNxMBi9ZOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TmYHdidm; arc=none smtp.client-ip=117.135.210.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=XjB5C
-	GDy56iSBUj/onMIQC1Fw0WRXap96Du59NyDvPE=; b=MZbk7Du3gtEV5vLWjmBNY
-	hsZc/cwJS+v9t32PHJApD9sVnR0wss09/U+/niBUCeRPpZ3VEdi++Dvv919EJI5C
-	Em0X7GOFmp42yWgVwF6DBqrWTp71Uxx4Vbco7Cpb5g+vmG6Nj+VLxx2tVLEijMuC
-	PlPJKQGwT7OKsUX6edM43A=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=g3jx9
+	mZP84zW4GKnneObG67nUX/ojN2RZWPwZ8uHvVk=; b=TmYHdidmFBzor6Kw4GG0y
+	goCqFqufUVMQ5yZt7wJ7cqvzoEHa2A5ZT3fE/p9XfLs9BC7QwRQWBARyLr7QvojH
+	Llguvjzmk5+RGTTt84Gd+nDFK8YqRofbuUkvvWX11tpnyPmpHG9bc+k1flv8XdJK
+	9p1ehsgcwnUGzM2jd/bXfo=
 Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCHACaZPwdowMxzBg--.7474S7;
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCHACaZPwdowMxzBg--.7474S8;
 	Tue, 22 Apr 2025 15:05:07 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
@@ -53,9 +53,9 @@ Cc: conor+dt@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v4 5/7] ARM: dts: rockchip: Add ref clk for hdmi
-Date: Tue, 22 Apr 2025 15:04:44 +0800
-Message-ID: <20250422070455.432666-6-andyshrk@163.com>
+Subject: [PATCH v4 6/7] Revert "ARM: dts: rockchip: drop grf reference from rk3036 hdmi"
+Date: Tue, 22 Apr 2025 15:04:45 +0800
+Message-ID: <20250422070455.432666-7-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250422070455.432666-1-andyshrk@163.com>
 References: <20250422070455.432666-1-andyshrk@163.com>
@@ -66,38 +66,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHACaZPwdowMxzBg--.7474S7
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKF1xJw4kAFWfZry3tw4xWFg_yoWDWFX_t3
-	WIgw15GF4fGrZIq34Dtr4UW39F9w4fC397XrnYqr4UJF9aqr4UXF4kGayIyry5Jay2g3sx
-	CFZ5Xw4aya1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Ta0PUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gU3XmgHOe-cKwACsy
+X-CM-TRANSID:_____wCHACaZPwdowMxzBg--.7474S8
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gry5Kr43uFW8Ary3Kw15Arb_yoWkWFX_tF
+	yIg3W5Ka1FkrWYqry8tw4UGwsFywn5GFWrJw1rJr4UGwnYqF4DuFs5GayxAr15Gay2grZ3
+	WFZ5Xa1Yyw13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Tlk7UUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gU3XmgHOe-cKwADsz
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-The RK3036 HDMI DDC bus requires it's PHY's reference clock to be
-enabled first before normal DDC communication can be carried out.
+This reverts commit 1580ccb6ed9dc76b8ff3e2d8912e8215c8b0fa6d.
+
+The HSYNC/VSYNC polarity of rk3036 HDMI are controlled by GRF.
+Without the polarity configuration in GRF, it can be observed from
+the HDMI protocol analyzer that the H/V front/back timing output
+by RK3036 HDMI are currently not in line with the specifications.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+
 ---
 
-(no changes since v1)
+(no changes since v2)
 
- arch/arm/boot/dts/rockchip/rk3036.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v2:
+- First included in this series
+
+ arch/arm/boot/dts/rockchip/rk3036.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3036.dtsi b/arch/arm/boot/dts/rockchip/rk3036.dtsi
-index 6039a0908af1c..22685cd23a708 100644
+index 22685cd23a708..95ae815ba56d3 100644
 --- a/arch/arm/boot/dts/rockchip/rk3036.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3036.dtsi
-@@ -403,8 +403,8 @@ hdmi: hdmi@20034000 {
- 		compatible = "rockchip,rk3036-inno-hdmi";
- 		reg = <0x20034000 0x4000>;
+@@ -405,6 +405,7 @@ hdmi: hdmi@20034000 {
  		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&cru  PCLK_HDMI>;
--		clock-names = "pclk";
-+		clocks = <&cru PCLK_HDMI>, <&cru SCLK_LCDC>;
-+		clock-names = "pclk", "ref";
+ 		clocks = <&cru PCLK_HDMI>, <&cru SCLK_LCDC>;
+ 		clock-names = "pclk", "ref";
++		rockchip,grf = <&grf>;
  		pinctrl-names = "default";
  		pinctrl-0 = <&hdmi_ctl>;
  		#sound-dai-cells = <0>;
