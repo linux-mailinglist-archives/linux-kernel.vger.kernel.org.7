@@ -1,244 +1,115 @@
-Return-Path: <linux-kernel+bounces-614433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DA5A96C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:24:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB834A96CA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0AC417C63E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:24:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD0D3BE338
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B483F283C8E;
-	Tue, 22 Apr 2025 13:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB77D283CBA;
+	Tue, 22 Apr 2025 13:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aF6uwfNx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="gMdVuls7"
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044E22836A7;
-	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE632283CA2;
+	Tue, 22 Apr 2025 13:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328239; cv=none; b=dzkt5gJt6oeG52/09LK8pynoT9Po7mvXtRe5YHjJimZ1zPwaQLFsdCh5wmm4EiI0gTRQC5MOj7fudAUVEbgcl4rYgX2tedQqxtctrnaQq4nNp8+Xfx40vd0WEbcAWP6XIIw4Ndrqvt/C6f35IkvzXTB0B17bwIUUuB85mm2bZ1g=
+	t=1745328301; cv=none; b=Fc/D70015DY/QovW6+kc3k9GSKwef/WZKH8GYVcIsMXiGYJXZP5f8GE462e4NvAVHUxem7TH1szNTQS0suXqUDZb6b6ACCMyDnyIZNjsnHkLqCdduhU9U8dx4fwCjIGVMfSZnzumoPF7QutvqhY1cBzYV7ACLrjuvAFjkvRFE6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328239; c=relaxed/simple;
-	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWHOHD+bS/BS3pJVThhHIztCK4l5jxFWKLiOwQito21csnSXJkYpLBukZ6m/tcvSrh5ziPw5kmtk6c47iEfch0JjRVYV5hcmMncULET+WiWVyfKGFQzoSxcksYomsYG6NxutUbdnNQL0TU0o0jHd+AzqYWMx2sww3KlNBolFO4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aF6uwfNx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E81C4CEE9;
-	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745328238;
-	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aF6uwfNxGWQDz6B8QbEoAER2/1sdnU8HZ5zDVzkfOiEqd40uoKaWO1Su9RC9CNCcR
-	 RG83EWy1CRk1O944lIq0ILzvjeSSBl17q4nTvm4ig7jiCeVuCRVkDC9gqHk/Nl8jK2
-	 SwQpX/C6+/LLjze4+wthk5FgKtHU1PUZPzr+q0Gqnrnq1xG5Apg19SC8IL4jAZRk4M
-	 42tCreRu1IDJnp2EW9DelM07SGtCKjy/shUjiHhVUftv9YHGfCOzPDh62XYj+6O+M/
-	 WSAA+nbPTRdqDP6SkFhanwbsEW9ED8dHH16rP5IWY0ter3PMGzHJjjCXwMyvfGES9F
-	 xjWIAtjm3/RBQ==
-Date: Tue, 22 Apr 2025 08:23:56 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	dinguyen@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: socfpga: convert to yaml
-Message-ID: <20250422132356.GA1020502-robh@kernel.org>
-References: <20250417160616.47558-1-matthew.gerlach@altera.com>
+	s=arc-20240116; t=1745328301; c=relaxed/simple;
+	bh=g10YLCMlwB2V/wklN7BeTQqwlnmG7MvcYy1rnAtdhw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L9Ql7vdtuW7aTDI1Dq7Gb1P17V4p31LwP+ypKNHe1Pm49bO1t9mwVvtKPBy44GZmdglcRuItrQXOEB3QCwXLnR3Jc5zpZ72I/Iz70nwoJ7lbDWvBV/yoJNEoFTkQZtt4/gOGD7izZL7MfBeg0ETIutt4pbYrdnltQ5E7SsUIkdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=gMdVuls7; arc=none smtp.client-ip=134.0.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
+	by mxout1.routing.net (Postfix) with ESMTP id 625AD40478;
+	Tue, 22 Apr 2025 13:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1745328290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yWdt4q2nBEN+fekwxjBT5bMLNlT9eKdoTAr3aBX/enA=;
+	b=gMdVuls7LC4/Y3tfC0NwW0pDq+cSRNk9Y1walrBnMekNtF3+NqhfC0ojU+YTyPtcEL/F/p
+	BI9QoHNMIKpoKSK1cVIyeq3fgjoFc8NYhIaI7QKG6FF7zw3sE0Xm/vkCnz4vp4/7Ti6WM0
+	Vx7Nea8jAwyeNoFdvi+IhhfNnF06Lro=
+Received: from frank-u24.. (fttx-pool-217.61.156.53.bambit.de [217.61.156.53])
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 2C687801F5;
+	Tue, 22 Apr 2025 13:24:49 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH v4 0/8] Add Bananapi R4 variants and add xsphy
+Date: Tue, 22 Apr 2025 15:24:23 +0200
+Message-ID: <20250422132438.15735-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417160616.47558-1-matthew.gerlach@altera.com>
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 1ea57a51-b49c-45da-a7e8-a99325a7d903
 
-On Thu, Apr 17, 2025 at 09:06:16AM -0700, Matthew Gerlach wrote:
-> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
-> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
-> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
-> socfpga-clk-manager.yaml.
-> 
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
->  .../arm/altera/socfpga-clk-manager.yaml       | 118 +++++++++++++++++-
->  .../bindings/clock/altr_socfpga.txt           |  30 -----
->  2 files changed, 117 insertions(+), 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> index 572381306681..4cda13259530 100644
-> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> @@ -9,17 +9,133 @@ title: Altera SOCFPGA Clock Manager
->  maintainers:
->    - Dinh Nguyen <dinguyen@kernel.org>
->  
-> -description: test
-> +description:
-> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
-> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
-> +  chip families.
->  
->  properties:
->    compatible:
->      items:
->        - const: altr,clk-mgr
-> +
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^osc[0-9]$":
-> +        type: object
-> +
-> +      "^[a-z0-9,_]+[clk,pll,clk_gate,clk_divided](@[a-f0-9]+)?$":
+From: Frank Wunderlich <frank-w@public-files.de>
 
-This regex doesn't do what you think it does. You want:
+With this series i continue the mt7988/bananapi-r4 dts upstream work
 
-"^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$"
+changes in v4:
+- changes based on review comments in v3 (mostly bindings)
+- changed topmisc unit address to match reg
 
-However, I don't see clk_gate or clk_divided used anywhere, so I would 
-simplify to:
+Daniel Golle (1):
+  phy: mediatek: xsphy: support type switch by pericfg
 
-"(clk|pll)(@[a-f0-9]+)?$"
+Frank Wunderlich (7):
+  dt-bindings: arm: mediatek: add bpi-r4 2g5 phy variant
+  arm64: dts: mediatek: mt7988a-bpi-r4: allow hw variants of bpi-r4
+  dt-bindings: phy: mtk-xs-phy: Add mt7988 compatible
+  dt-bindings: phy: mtk-xs-phy: support type switch by pericfg
+  dt-bindings: mfd: syscon: Add mt7988-topmisc
+  arm64: dts: mediatek: mt7988: Add xsphy for ssusb0/pcie2
+  arm64: dts: mediatek: mt7988a-bpi-r4: enable xsphy
 
+ .../devicetree/bindings/arm/mediatek.yaml     |   4 +
+ .../devicetree/bindings/mfd/syscon.yaml       |   2 +
+ .../bindings/phy/mediatek,xsphy.yaml          |  16 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |  11 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 400 +----------------
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 403 ++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |  36 ++
+ drivers/phy/mediatek/phy-mtk-xsphy.c          |  85 +++-
+ 9 files changed, 563 insertions(+), 396 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
 
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        properties:
-> +
-> +          compatible:
-> +            enum:
-> +              - altr,socfpga-pll-clock
-> +              - altr,socfpga-perip-clk
-> +              - altr,socfpga-gate-clk
-> +              - altr,socfpga-a10-pll-clock
-> +              - altr,socfpga-a10-perip-clk
-> +              - altr,socfpga-a10-gate-clk
-> +              - fixed-clock
-> +
-> +          clocks:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+-- 
+2.43.0
 
-clocks already has a type.
-
-> +            description: one or more phandles to input clock
-
-I assume there is some max, so make this constraints:
-
-minItems: 1
-maxItems: ?
-
-> +
-> +          "#address-cells":
-> +            const: 1
-> +
-> +          "#clock-cells":
-> +            const: 0
-> +
-> +          "#size-cells":
-> +            const: 0
-> +
-> +          clk-gate:
-> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            items:
-> +              - description: gating register offset
-> +              - description: bit index
-> +
-> +          div-reg:
-> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            items:
-> +              - description: divider register offset
-> +              - description: bit shift
-> +              - description: bit width
-> +
-> +          fixed-divider:
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +          reg:
-> +            maxItems: 1
-> +
-> +        patternProperties:
-> +          "^[a-z0-9,_]+[clk,pll](@[a-f0-9]+)?$":
-
-Similar issues here.
-
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - altr,socfpga-perip-clk
-> +                  - altr,socfpga-gate-clk
-> +                  - altr,socfpga-a10-perip-clk
-> +                  - altr,socfpga-a10-gate-clk
-> +
-> +              "#clock-cells":
-> +                const: 0
-> +
-> +              clocks:
-> +                $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                description: one or more phandles to input clock
-> +
-> +              clk-gate:
-> +                $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                items:
-> +                  - description: gating register offset
-> +                  - description: bit index
-> +
-> +              div-reg:
-> +                $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                items:
-> +                  - description: divider register offset
-> +                  - description: bit shift
-> +                  - description: bit width
-> +
-> +              fixed-divider:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-
-As these properties are all just repeated, put them all under '$defs' 
-and reference that in both places.
-
-> +
-> +              reg:
-> +                maxItems: 1
-
-'reg' goes after compatible.
-
-> +
-> +            required:
-> +              - compatible
-> +              - clocks
-> +              - "#clock-cells"
-> +
-> +        required:
-> +          - compatible
-> +          - "#clock-cells"
-> +
->  required:
->    - compatible
-> +  - reg
->  
->  additionalProperties: false
->  
 
