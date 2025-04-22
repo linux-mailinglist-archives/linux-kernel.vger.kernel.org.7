@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel+bounces-614606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB6CA96F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC373A96EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F7F4440E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A72644134F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFB528D85C;
-	Tue, 22 Apr 2025 14:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B253C2857EB;
+	Tue, 22 Apr 2025 14:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="djk61YA3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RC4uyzCu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BA828A3EA;
-	Tue, 22 Apr 2025 14:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4E55FB95;
+	Tue, 22 Apr 2025 14:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332319; cv=none; b=WGq8REySCgpjaG9yAdu1wEEYbr7riRcqZ95C5C2vip4yBi94ZP5kKMxOo3rkH3hRW/7wDDXN9VdwMZeL7so5pBTKKcsK9mmjpi4NeQR/ZWP+67F0tHnj8PP+xeOc2sQvf44mJv7ncjMZHIBd499Vskpl5mmGNYPmm/LAQblkYUQ=
+	t=1745332310; cv=none; b=VxTBmbEGjWDjcSDWje7RIlX5NXe0PIl8QCiwt7Fc18qE9+KV57d21qe13VvbnYb7RlE5uqFJqa11kFYqjJibOi3kllyAdHgc7yfids0jE3iwT8dqJytlHfAk08d4AoMxYA1OFlFkWFAihbc/GLsJ0GRl1IX979rEn5mc92ur/Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332319; c=relaxed/simple;
-	bh=cp9iCaG6IjleZ8rnxrFEXQOpQGvM5fPYLk4VgnpoCss=;
+	s=arc-20240116; t=1745332310; c=relaxed/simple;
+	bh=/ONe7k84QQs3Jfl6KyExISyHeaYbQCPgqi6g8xPg/b0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tM7VgD3LQJpOB+b3fEDbPs8hVvUpdT7YlR41YkrXQtpekTpZhaTYZKUPqpvTK6jhHJjcnsn+1XZ7ospTmfpkv3EXBaXjHfd8+jKB9U3/2axzlMTgyrUAEih90Xt772gp8zCJLlo54JIGgQofvV8oXZymWLUa7vduynME0NIMZbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=djk61YA3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=i4gjMlBtZTrVVK5rL4/69M/87+0lVpEAYA66vnBwBVA=; b=djk61YA3uNxsIPYl4YCBuNs6Ve
-	dBTA48m1zawlQcz9ZZoQ4W4s9NkiUElMVURgvqobwIfD5A9uyLT69Fx7STvHps3JY3f3y90XmHnY5
-	Xwqc5cs7ATMyIwNFCdEVe2JpO8IWCHpAW8bhs32PixZINu9E77+6JytB6+tK/xZNIvSd9ha91PbZf
-	IPMxbo/6UMUxz6DRblcgoPhHDGMFcjphCFmZe5pgBgur0fD5YU0yN9W9HZcZQjhZz9VvQUwsNf3tS
-	r1sh6T5wayWnEHVRK4ne+vfm1be+Ok3jhvW3CVu2vz3FEFbSplh2o5g0a2G5gISknEL11UE9MsM/A
-	TSMbQUDg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7Ef4-0000000BF5b-2N8w;
-	Tue, 22 Apr 2025 14:31:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 243C53003C4; Tue, 22 Apr 2025 16:31:46 +0200 (CEST)
-Date: Tue, 22 Apr 2025 16:31:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, tmgross@umich.edu,
-	dakr@kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, pmladek@suse.com
-Subject: Re: [PATCH v2 0/2] add Rust version of might_sleep()
-Message-ID: <20250422143145.GC15651@noisy.programming.kicks-ass.net>
-References: <20250410225623.152616-1-fujita.tomonori@gmail.com>
- <aAen7fQYciq2azi9@Mac.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSbLzf02PbGzR0/xZTif1hDrZDK/aLAkNp5Ew2Aog8Br0D5/thLMEK2v1vTmUaWxSoosLBY1WE5/BbzxqDpcm8JNBGa9yDmapHgMCw4hjk3idj5/28xeVYodkK7IQh5UnUn46dtqzfFUMYhuhVfj04UJHl64GRMneX3q9iVJHlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RC4uyzCu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A8B5C4CEE9;
+	Tue, 22 Apr 2025 14:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745332309;
+	bh=/ONe7k84QQs3Jfl6KyExISyHeaYbQCPgqi6g8xPg/b0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=RC4uyzCu9CbgI3t4BsB1lmtsqYVFk233JogzmcNrGLVQF6Esd4+VNqEJ8Q3xXTs/m
+	 Jc7tieWy3DC5DuUwuX8J0pdM2aVRBYplGGRQiYM+ovl4M8WlX9Zcr56ZaRYnhByy52
+	 ZLZxB+xzrlaO5MKe4y3dXuIaqhQH3lqCp1GtiJsKAcYDZfSt86LW0AjA4/vuQfoQBd
+	 nB8BXR0QzjxQRywV86vKo43cGmn2UWPLt3i5Ko3wie25SCqSceCJLnJbSLr0pvV3Rz
+	 UMP62K+8SHpbNZBRfaFJVHP7L8RibQMLDEy6qGa/oSSmttPPvdCUar8vxA4SwdTvrx
+	 /sUlYWftuA/Ng==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3AF63CE0875; Tue, 22 Apr 2025 07:31:49 -0700 (PDT)
+Date: Tue, 22 Apr 2025 07:31:49 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the paulmck tree
+Message-ID: <1eae5a76-9855-469b-969a-22eceb923795@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250422093834.57e9e9d0@canb.auug.org.au>
+ <ef907eca-3a04-461a-9c75-404d65dbaf2b@paulmck-laptop>
+ <aAdJ18rRHdi9y3S9@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,39 +62,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aAen7fQYciq2azi9@Mac.home>
+In-Reply-To: <aAdJ18rRHdi9y3S9@pathway.suse.cz>
 
-On Tue, Apr 22, 2025 at 07:30:05AM -0700, Boqun Feng wrote:
-> On Fri, Apr 11, 2025 at 07:56:21AM +0900, FUJITA Tomonori wrote:
-> > This patchset adds Rust version of might_sleep().
+On Tue, Apr 22, 2025 at 09:48:39AM +0200, Petr Mladek wrote:
+> On Mon 2025-04-21 17:00:57, Paul E. McKenney wrote:
+> > On Tue, Apr 22, 2025 at 09:38:34AM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Commit
+> > > 
+> > >   9e13e90127fb ("ratelimit: Reduce ___ratelimit() false-positive rate limiting")
+> > > 
+> > > is missing a Signed-off-by from its author.
 > > 
-> > These patches were previously part of the IO polling patchset [1], but
-> > they were split out to make upstreaming easier.
+> > Ah, good catch!  I need to chase down that author!
 > > 
-> > The first patch is for sched/core, which adds
-> > __might_sleep_precision(), rust friendly version of __might_sleep(),
-> > which takes a pointer to a string with the length instead of a
-> > null-terminated string. Rust's core::panic::Location::file(), which
-> > gives the file name of a caller, doesn't provide a null-terminated
-> > string. __might_sleep_precision() uses a precision specifier in the
-> > printk format, which specifies the length of a string; a string
-> > doesn't need to be a null-terminated. Providing a null-terminated
-> > string for better C interoperability is under discussion [2].
-> > 
-> > The second patch adds a Rust implementation of might_sleep(), on top
-> > of the changes in the first patch.
-> > 
-> > [1]: https://lore.kernel.org/lkml/20250220070611.214262-1-fujita.tomonori@gmail.com/
-> > [2]: https://github.com/rust-lang/libs-team/issues/466
-> > 
-> > v2:
-> > - improve SAFETY comment
-> > v1: https://lore.kernel.org/lkml/20250406110718.126146-1-fujita.tomonori@gmail.com/
-> > 
+> > Petr, you good with this one?
 > 
-> @scheduler, if there is no objection, I'm going to take these two into a
-> pull request to tip soon. Thanks!
+> Yes, it looks good. I have just approved it...
 
-Yeah, go ahead. I still think Rust should be fixed, but sure, we can
-live with this until that time.
+Thank you very much, and I will apply it on my next rebase.
+
+							Thanx, Paul
 
