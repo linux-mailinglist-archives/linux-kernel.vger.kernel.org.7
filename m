@@ -1,155 +1,152 @@
-Return-Path: <linux-kernel+bounces-613889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C79A96336
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:58:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F4BA9636D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8456B7A8C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:56:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66143BF8F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245119476;
-	Tue, 22 Apr 2025 08:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C9E25742E;
+	Tue, 22 Apr 2025 08:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="OAKwebQs"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dhUS5N9/"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FBB25486B;
-	Tue, 22 Apr 2025 08:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F43256C8D;
+	Tue, 22 Apr 2025 08:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745312170; cv=none; b=LqOahOU4ew5RxQwfqbMd/NAYovtGERRPnJ87E3lpsCJE5EYik0BBzqviSzR8aTrPeDkplH14q4GQ4VsqLB9FTT3qeG8RcQYJNFYHDBDnWbBWuSbpD++RT0rm3Phzpx3sB/1bZhKruPPkb2RuLNlczEgHBRMJgy/t+EiQNmtyRcE=
+	t=1745312180; cv=none; b=GBFq3yM83B/4dH8ULcjsXQpa6l4CDdhrSCiM8a6sOGA9CizhwmyaPZlcc7H+2k4bOdEDFWgABJ4JxHUZ78dwyJw50jJ2QAgDtASvNT+3EXMyFp1ndwLl5q2nEsdoLrDylGXn1z6RmOJ4uYNFfkPi3VN+Hqm1cwI/TbIpJEDd+B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745312170; c=relaxed/simple;
-	bh=47Fl3alaoy9MJ9oE1dW53liNawNp3fX4xzOoCfOY3nk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IVAyjW6UE1+/UEnRddd3Zlf8k+iyEB983dFFjVkLC+J7C1KTeWHHktzacwbfay/2tffUFgO3JA0ECqHQ0bUqTw/WXlmAbLJIoTs+1jF/roXyLLLXSJjMEflxbsFktNpnQdPCyrdfrhtfNtTlowVF+t80DOQYZLQig3vxQHV4J1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=OAKwebQs; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M7ciGP026127;
-	Tue, 22 Apr 2025 04:56:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=yOySj
-	TPHGjn1zF8roB5u3h3nRAAWfkKlV1XNNw9xY9E=; b=OAKwebQsZbJ306GUrWQOj
-	z/+P5KxV3iJBlE82ZE05sZTLv+ymxwplB48VY/zLgT9a7xpPy71e++nQVLwN7JH0
-	DjycVaWRP9DDILYs3uTglRa5TiOVWsFVhR3z4wHOcSipH8RCOyn9HLTwxFBRG5HG
-	z7O4sKciu6vlYqGNyvBx/vYW5oZl6ieFk/9JpgbnBz8wAGlvipqsMTEVMqvbELYw
-	7zOSK7XB9esgvmWn+98oYw+t/ImX/emgrB71YRwBTVlXzrWr8mAH5meS9Mp147Rc
-	uGePfZ6u1rWyrDFSYRmHeK1zG1KeGW9zFf3DyznaD4Iw+guTiG4K56inFrbWCDBs
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4648r6du0u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 04:56:02 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 53M8tsba041701
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 22 Apr 2025 04:55:54 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 22 Apr
- 2025 04:55:54 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 22 Apr 2025 04:55:54 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.211])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53M8tjRX016347;
-	Tue, 22 Apr 2025 04:55:51 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH 2/2] iio: dac: ad7293: add adc reference configuration
-Date: Tue, 22 Apr 2025 11:55:29 +0300
-Message-ID: <20250422085529.4407-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250422085529.4407-1-antoniu.miclaus@analog.com>
-References: <20250422085529.4407-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1745312180; c=relaxed/simple;
+	bh=TpKXeLZ7Fi+2qay5P5RV1UBl1jpJkvwlMTQnMA8coUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bh3kzWzrYxH5X0UCFf5CFAsIRDvdni2qJPxDNqI37TQjq+8ZtGoj6WI4DjLjfkrfXHSoy+e/YkEGXSCBn9G8tpC5OtLJtbKlCghcAEd5CJ3R16lZFztSc76fGtJT2KLcCYfRna7glF5n8HHbEG03G0nPoAm0VIaAcPSSW3ANkPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dhUS5N9/; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EoAqUPC7IVwxmkA7v4AtUYOCTo2JDd0ZDzX1gHoE3Oo=; b=dhUS5N9/CZazvrG6bBoCPIiULc
+	RP+iML0Sv+6n2QvgRsCZEBAzY10DbxiZboYDTZg+prGbs17egcc8U61xixAmlp3HPmhhTdzP70Y4K
+	gxPwb3ynSQGCwepoG0/FfSmUlObNynI4+jq+O9GpuNCSVrfxqwkTo+ckrpydKAHSjx/yvE5xY5eCe
+	A6xVEI97qgYY8XMclRHmTmMocOgiE2iJvzO8kGfMfN6s6b+mYNlv/q37/Kx9wcxtq169tSCONMK/c
+	HHyIZADGB/5CJPmiQtaFkzXiOATDTJftaHvDkn7I7lxDxsn7AMvagAVqFzcY2SBAPCwTmSal4nXcj
+	K4E0b1iQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39526)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u79QC-00044U-0b;
+	Tue, 22 Apr 2025 09:56:04 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u79Q8-0007Ll-1n;
+	Tue, 22 Apr 2025 09:56:00 +0100
+Date: Tue, 22 Apr 2025 09:56:00 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: ethernet-controller:
+ update descriptions of RGMII modes
+Message-ID: <aAdZoMge_CKtqokU@shell.armlinux.org.uk>
+References: <cover.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <218a27ae2b2ef2db53fdb3573b58229659db65f9.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <6be3bdbe-e87e-4e83-9847-54e52984c645@ti.com>
+ <cd483b43465d6e50b75f0b11d0fae57251cdc3db.camel@ew.tq-group.com>
+ <5d74d4b2-f442-4cb8-910e-cb1cc7eb2b3d@ti.com>
+ <b53fba84c8435859a40288f3a12db40685b8863a.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: JarI4uqTEJxw_srIHaV9N1_Rxgb0aSwl
-X-Proofpoint-ORIG-GUID: JarI4uqTEJxw_srIHaV9N1_Rxgb0aSwl
-X-Authority-Analysis: v=2.4 cv=d6z1yQjE c=1 sm=1 tr=0 ts=680759a5 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=XR8D0OoHHMoA:10 a=gAnH3GRIAAAA:8 a=kyzOxrww9Jkk1N5gqB0A:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_04,2025-04-21_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 impostorscore=0 phishscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504220066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b53fba84c8435859a40288f3a12db40685b8863a.camel@ew.tq-group.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add support for configurating the ADC reference (internal/external).
+On Wed, Apr 16, 2025 at 09:41:57AM +0200, Matthias Schiffer wrote:
+> Also note that (as I understand it) I'm not changing anything, I'm updating the
+> documentation to reflect what has been the intended behavior already. Please see
+> the previous discussion with Andrew that I linked, where he convinced me that
+> this is the correct approach.
 
-According to the datasheet, the external reference is enabled by
-default.
+I think you are as I stated in my email yesterday. The use of "MAC or
+PHY" in your new descriptions opens avenues for confusion such as the
+scenarios that I described in yesterday's email.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
- drivers/iio/dac/ad7293.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> Andrew specifically asked to leave it open in the DT bindings whether MAC
+> or PHY add the delay, and it might differ between drivers (and different
+> operating systems using the same Device Tree).
 
-diff --git a/drivers/iio/dac/ad7293.c b/drivers/iio/dac/ad7293.c
-index 99fa2d1f8299..c3797e40cdd9 100644
---- a/drivers/iio/dac/ad7293.c
-+++ b/drivers/iio/dac/ad7293.c
-@@ -114,6 +114,7 @@
- #define AD7293_REG_DATA_RAW_MSK			GENMASK(15, 4)
- #define AD7293_REG_VINX_RANGE_GET_CH_MSK(x, ch)	(((x) >> (ch)) & 0x1)
- #define AD7293_REG_VINX_RANGE_SET_CH_MSK(x, ch)	(((x) & 0x1) << (ch))
-+#define AD7293_GENERAL_ADC_REF_MSK			BIT(7)
- #define AD7293_CHIP_ID				0x18
- 
- enum ad7293_ch_type {
-@@ -141,6 +142,7 @@ struct ad7293_state {
- 	/* Protect against concurrent accesses to the device, page selection and data content */
- 	struct mutex lock;
- 	struct gpio_desc *gpio_reset;
-+	bool vrefin_en;
- 	u8 page_select;
- 	u8 data[3] __aligned(IIO_DMA_MINALIGN);
- };
-@@ -785,6 +787,12 @@ static int ad7293_properties_parse(struct ad7293_state *st)
- 	if (ret)
- 		return dev_err_probe(&spi->dev, ret, "failed to enable VDRIVE\n");
- 
-+	ret = devm_regulator_get_enable_optional(&spi->dev, "vrefin");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to enable VREFIN\n");
-+
-+	st->vrefin_en = ret != -ENODEV;
-+
- 	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
- 						 GPIOD_OUT_HIGH);
- 	if (IS_ERR(st->gpio_reset))
-@@ -818,6 +826,11 @@ static int ad7293_init(struct ad7293_state *st)
- 		return -EINVAL;
- 	}
- 
-+	if (!st->vrefin_en)
-+		return __ad7293_spi_update_bits(st, AD7293_REG_GENERAL,
-+						AD7293_GENERAL_ADC_REF_MSK,
-+						AD7293_GENERAL_ADC_REF_MSK);
-+
- 	return 0;
- }
- 
+I'm hoping that Andrew will read my email form yesterday and reconsider
+because to me this is a backwards step - it doesn't solve the problem
+with unclear documentation. I believe it makes the problem worse, and
+will lead to more bugs and misunderstandings in this area.
+
+> Whether the MAC should add a required delay in cases where it's configurable
+> is an interesting question - not one of the Device Tree bindings, but of
+> driver implementation.
+
+Where Andrew gets this from are MAC drivers that detect the rgmii-*id
+modes, apply the delay at the MAC, and then convert the value passed to
+phylib to PHY_INTERFACE_MODE_RGMII. This is a load of additional special
+handling in the MAC driver, and I'd say it's "advanced" usage and takes
+more time to review. It's open to mistakes without review by those who
+know this "trick", and the chances of phylib maintainers being Cc'd on
+MAC drivers is pretty low.
+
+So, I don't think it's something we want to be generally encouraging,
+but instead the more normal "phy-mode describes the phy_interface_mode_t
+that is passed to phylib" and only allow the "advanced" case in
+exceptional cases.
+
+> On Linux, there currently isn't a way for the MAC driver to query from the PHY
+> whether it could include the delays itself. My assumption is that most PHYs
+> either don't have internal delays, or the delays are configurable.
+
+motorcomm, dp83tg720, icplus, marvell, dp 838678, adin, micrel, tja11xx,
+vitesse, dp83822, mscc, at803x, microchip_t1, broadcom, dp83869,
+intel-xway, realtek all do handle internal delays. I haven't checked
+whether there are PHYs that don't - that's harder because we don't know
+whether PHYs that don't mention RGMII in the driver actually support
+RGMII or not.
+
+> If this is
+> the case, having the MAC add them in internal-delay modes and not adding them on
+> the PHY side would be the best default (also for PHY-less/fixed-link setups,
+> which should be handled like a PHY without internal delay capabilities.)
+
+See my "advanced" use case above. We do have drivers doing that.
+
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
