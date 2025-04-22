@@ -1,231 +1,204 @@
-Return-Path: <linux-kernel+bounces-614055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6842A965A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:16:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E90DA965AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D0D3BCB9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:16:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC2617AC5B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2705202C26;
-	Tue, 22 Apr 2025 10:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3341E2116FE;
+	Tue, 22 Apr 2025 10:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hZw5bpC9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jUQA1QH5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s3IzAOwM"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448FD1EE008
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5882116EB
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745316997; cv=none; b=ETZ33mEf1/DHSiBbHbO1i4szWhoywFikW9s4893zg/i9nNUhWA1MglmqUG0kwnrwShimmtyCh1qu7DnRvXd51/LbGz3GfOkAMmk53rqJvYMI7WkX/sfbZRUxKnmM88ztWGUPlvlFcRaVX2MBqR3veeWJRF3fAAux9sqYfUzkw8M=
+	t=1745317065; cv=none; b=YhCOmHhfmZqmLtjpGN6MChBcZ9r+xPE+mfG/KAl4B6TOjuqjEdt9yWFFMFWEcUoEz2b4BTLZn/kmAhstZrdu6xKDpc5y6O55e2qSgrreIQLOuYo+iy7SSWVUEHJdeeuLUR3AWbUyAS+IdfRWyYgCXbpFtXBIF3dLPHxKp/TdG4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745316997; c=relaxed/simple;
-	bh=F9H2K2tjYeiDKV8dvRE1TU8gJMZgqCVV9Ac4KFLEGHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+OH4FABGLMDzohxAe0Kw92Zw6E6m9ujnj+smBPr13vwEEK8X0JtZdv6s0IEg/9SQuh3Dl9gQqYdhFy+47AKuMwieNGArwyTnzJs4YuoRN/570+iCEAGVFTUUiBrHpJU+2Y1iA7tkXFw486Pk6kLRxRpu15Tx/T1HDzlXkj4HHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hZw5bpC9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ziTWfcWORwWRFTKn2us+ueAEOexAXCnjQZ5dh0LGgF8=; b=hZw5bpC9NZIjmuht1zrXsMOyHO
-	AjEz3Po86Aw01F+JVq6sD0kLQ71FmRqMwYnhDelJzxjpE9clW+FdrA+8NVfbjy27MXSCSsS3skaDN
-	GM57zKfmP31EMg6hUy2GioaNZtf3vNSl14sfBD2ASe7qB/lfSDhzlOq+irrlxJaF1BmK2weYn11nx
-	5Wr4NNl4dFVIifqJUBgXxHrQCTsM0XvgyGOCcZj7HwiKJJfZlNAqV11zvTE24pxruXsMd/9taUAwK
-	5XGF3WpbkH5b7xcClp6Tih7OJDai8M+/I++3f8WkyhwNFfc051E0NYMl4Nmgh4ujQn5m0WHXj9a70
-	FWUIJG8g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7Ag1-00000004N13-0DY7;
-	Tue, 22 Apr 2025 10:16:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4737D3003C4; Tue, 22 Apr 2025 12:16:28 +0200 (CEST)
-Date: Tue, 22 Apr 2025 12:16:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org, dhaval@gianis.ca
-Subject: Re: [PATCH] sched/fair: Increase max lag clamping
-Message-ID: <20250422101628.GA33555@noisy.programming.kicks-ass.net>
-References: <20250418151225.3006867-1-vincent.guittot@linaro.org>
- <20250418155115.GI17910@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1745317065; c=relaxed/simple;
+	bh=vbfued2uU3GT02rn8Jsz3N23RsRLimsTdInqGFiWRwY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SNld9YIx5cvKRWvlmS1uY1Wa1sezlI+L3kMjrPunqWkcO7N30Tnpako9db0lDEmVMUUzge7Tihihx3KUconW05UGNamOw698x0SwIYxtRnRxTYQz8mznHyOAxQZtEtgQzaakyJ3fH2+zu+LekA36e8BQApUicPQiZ7cIvwbXLTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jUQA1QH5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=s3IzAOwM; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 82AB125401D3;
+	Tue, 22 Apr 2025 06:17:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Tue, 22 Apr 2025 06:17:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1745317061;
+	 x=1745403461; bh=6iva4M18jqvPbqUQsfEmLC6SwTowYiuBTDLYua0J8Eg=; b=
+	jUQA1QH5M8T2MMgUeICA98D4v0hxkbLIrd3v1/YhAsrlEBy4A4OAxO/4eRDRKvnY
+	rbEc4jUk9JHQDm5+QFCcw8mBc1WjpPAGvnGIJhu2QDh9GDDeabTHSnd6T4Hp5qt9
+	8YzpZ0RQhEWm9qAAyXNC37AyLpffnZga8pihKnrSKgxqn1+HT5ODDxrfYDfTDCA3
+	yK+d+iqnZffaW1WD5byXuXrTNRVj3N5zg2PqiMEYrE4IAFqBiDRL07UdgmWeo6zP
+	MzFZg9kVe0/AB3OxJoEH3LammTSCtM/cdiZGGE0RvreH8QVKxZSudnWTvw9v17XA
+	38x/GZL8cfAoS8whgMiLtQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745317061; x=
+	1745403461; bh=6iva4M18jqvPbqUQsfEmLC6SwTowYiuBTDLYua0J8Eg=; b=s
+	3IzAOwMDJK/3tCzXq0BSl4o53pcm6apEVNWMmnVea+pRbKBPA/TJv8XloxfNqjGZ
+	ry0rAEiQ/uYi4RB5LGyTysxrTk67uDhoAd18UD2m5pGPDScUDMWz83bIdCOhv8OW
+	aBGaoupR36RJd/3n93h7SSsUQhcnfDyLemP0KbdtnqeTG+U2v8RlPTo0WiypSsyJ
+	mVDgP3aiqdA+k6TcSrIUpKcofng00S7Cm6UCIW4sp8+0AuPqhQrXVWU3AGYJhyi0
+	6A0pYvgn/WY3cHnhcwdA64eZHlTvC7mIbmCw/T4uM7lNwXrnQDd8eHvs0k2xhAUl
+	lUT2v/rcu3ONKDqFZ9WIg==
+X-ME-Sender: <xms:xWwHaLHckWPWFUj6mNfhGjM9P87HwRw5idbiCYetLDvA5DaAmeQI3A>
+    <xme:xWwHaIUZhKrWFL75lmCdVof_hmkO-m9aHT_RwyVw-eSjbnj9bhKVzNY0_7BTnN31G
+    k5qzVU8Q_kbOlCA1Sg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefgeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomh
+    dprhgtphhtthhopeholhhivhgvrhdrshgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthht
+    ohepmhhinhhgoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghlughsse
+    hlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehovgdqlhhkphes
+    lhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xWwHaNKzKB1leyBRIX9T12vDerzlDT5iIesupnLLFB1NwOHIdzZcuw>
+    <xmx:xWwHaJGoXiJuMZKgqzvMzX46m0RMeEj8qeea5qI3gU-h_btNITf5Bg>
+    <xmx:xWwHaBXQrw3RDmamFOuOWS7AlIetVVK-CBDr46DZHdUDRGofd7yPNg>
+    <xmx:xWwHaEMTEVMfNQebUikiB0pvjZeDaAbcx4J2dTv_w5B69fgbQaYAAw>
+    <xmx:xWwHaE1uhaP4QXGNC3h__nhamlSpe1C15aU9IO3tGeiPjDS6t3PFST6w>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F1E982220073; Tue, 22 Apr 2025 06:17:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418155115.GI17910@noisy.programming.kicks-ass.net>
+X-ThreadId: T98d234c297665c71
+Date: Tue, 22 Apr 2025 12:16:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "kernel test robot" <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, "kernel test robot" <lkp@intel.com>,
+ linux-kernel@vger.kernel.org, "Ingo Molnar" <mingo@kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Message-Id: <59198081-15e2-4b02-934f-c34dd1a0ac93@app.fastmail.com>
+In-Reply-To: <202504211553.3ba9400-lkp@intel.com>
+References: <202504211553.3ba9400-lkp@intel.com>
+Subject: Re: [linus:master] [x86/cpu]  f388f60ca9:
+ BUG:soft_lockup-CPU##stuck_for#s![swapper:#]
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 18, 2025 at 05:51:15PM +0200, Peter Zijlstra wrote:
-> On Fri, Apr 18, 2025 at 05:12:25PM +0200, Vincent Guittot wrote:
-> > sched_entity lag is currently limited to the maximum between the tick and
-> > twice the slice. This is too short compared to the maximum custom slice
-> > that can be set and accumulated by other tasks.
-> > Clamp the lag to the maximum slice that a task can set. A task A can
-> > accumulate up to its slice of negative lag while running to parity and
-> > the other runnable tasks can accumulate the same positive lag while
-> > waiting to run. This positive lag could be lost during dequeue when
-> > clamping it to twice task's slice if task A's slice is 100ms and others
-> > use a smaller value like the default 2.8ms.
-> > 
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 16 +++++++++-------
-> >  1 file changed, 9 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index a0c4cd26ee07..1c2c70decb20 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -683,15 +683,17 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
-> >   * is possible -- by addition/removal/reweight to the tree -- to move V around
-> >   * and end up with a larger lag than we started with.
-> >   *
-> > - * Limit this to either double the slice length with a minimum of TICK_NSEC
-> > - * since that is the timing granularity.
-> > - *
-> > - * EEVDF gives the following limit for a steady state system:
-> > + * Limit this to the max allowed custom slice length which is higher than the
-> > + * timing granularity (the tick) and EEVDF gives the following limit for
-> > + * a steady state system:
-> >   *
-> >   *   -r_max < lag < max(r_max, q)
-> >   *
-> >   * XXX could add max_slice to the augmented data to track this.
-> >   */
-> 
-> Right, its that max_slice XXX there.
-> 
-> I think I've actually done that patch at some point, but I'm not sure
-> where I've placed it :-)
+On Mon, Apr 21, 2025, at 10:12, kernel test robot wrote:
+> Hello,
+>
+> by this commit, we notice big config diff [1]
+>
+> then in this rcutorture tests, parent runs quite clean, f388f60ca9 shows
+> various random issues.
 
-No matter, I've redone it by copy-paste from min_slice.
+Thanks for the report!
 
-How's something like this then?
+From my initial reading, my patch most likely caught a preexisting bug,
+but my patch itself is correct. It's worth investigating regardless,
+at the minimum we should perhaps prevent an invalid configuration from
+building or from booting.
 
----
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f96ac1982893..9e90cd9023db 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -573,6 +573,7 @@ struct sched_entity {
- 	u64				deadline;
- 	u64				min_vruntime;
- 	u64				min_slice;
-+	u64				max_slice;
+> config: i386-randconfig-r071-20250410
+
+Generally, I would not expect 'randconfig' kernels to pass all tests,
+and what happened here is that removing the CONFIG_MK8 option made it
+pick some completely different CPU
+
+> compiler: gcc-12
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+The most relevant options here are
+
+ -# CONFIG_M486SX is not set
+ +CONFIG_M486SX=y
+  # CONFIG_SMP is not set
+  CONFIG_X86_GENERIC=y
+
+In theory, setting X86_GENERIC should make a kernel built for an
+older CPU work on any newer one. In practice, I'm not surprised
+that this fails: While AMD K8 is ten years older than Intel Sandy
+Bridge, they are architecturally still very similar. The i486SX
+is another decade older, but its design is as far removed from
+both K8 and Sandy Bridge as it gets.
+
+It would be nice to not have to support 486sx any more.
+We have discussed removing support for older CPUs without
+TSC, FPU and CX8 in the past, but so far always kept them
+around.
+
+> [ 721.016779][ C0] hardirqs last disabled at (159506): 
+> sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1049) 
+> [ 721.016779][ C0] softirqs last enabled at (159174): handle_softirqs 
+> (kernel/softirq.c:408 kernel/softirq.c:589) 
+> [ 721.016779][ C0] softirqs last disabled at (159159): __do_softirq 
+> (kernel/softirq.c:596) 
+> [  721.016779][    C0] CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 
+> 6.14.0-rc3-00037-gf388f60ca904 #1
+> [  721.016779][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 
+> 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [ 721.016779][ C0] EIP: timekeeping_notify 
+> (kernel/time/timekeeping.c:1522) 
+
+Timekeeping code could be related, I see that CONFIG_X86_TSC
+is disabled for i486SX configurations, so even if a TSC is present
+in the emulated machine, it is not being used to measure time
+accurately.
+
+> -CONFIG_X86_CMPXCHG64=y
+
+This could be another issue, if there is code that relies on
+the cx8/cmpxchg8b feature to be used. Since this is a non-SMP
+kernel, this is less likely to be the cause of the problem.
+
+Can you try what happens when you enable the two options, either
+by changing CONFIG_M486SX to CONFIG_M586TSC, or with a patch
+like the one below? Note that CONFIG_X86_CMPXCHG64 recently
+got renamed to CONFIG_X86_CX8, but they are the exact same thing.
+
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index f928cf6e3252..ac6cc69060f1 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -317,7 +317,6 @@ config X86_USE_PPRO_CHECKSUM
  
- 	struct list_head		group_node;
- 	unsigned char			on_rq;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 84916c865377..7c3c95f5cabd 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -676,6 +676,8 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
- 	return cfs_rq->min_vruntime + avg;
- }
+ config X86_TSC
+        def_bool y
+-       depends on (MWINCHIP3D || MCRUSOE || MEFFICEON || MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || MVIAC3_2 || MVIAC7 || MGEODEGX1 || MGEODE_LX || MATOM) || X86_64
  
-+static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq);
-+
- /*
-  * lag_i = S - s_i = w_i * (V - v_i)
-  *
-@@ -689,17 +691,16 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
-  * EEVDF gives the following limit for a steady state system:
-  *
-  *   -r_max < lag < max(r_max, q)
-- *
-- * XXX could add max_slice to the augmented data to track this.
-  */
- static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
-+	u64 max_slice = cfs_rq_max_slice(cfs_rq) + TICK_NSEC;
- 	s64 vlag, limit;
+ config X86_HAVE_PAE
+        def_bool y
+@@ -325,7 +324,6 @@ config X86_HAVE_PAE
  
- 	WARN_ON_ONCE(!se->on_rq);
+ config X86_CX8
+        def_bool y
+-       depends on X86_HAVE_PAE || M586TSC || M586MMX || MK6 || MK7 || MGEODEGX1 || MGEODE_LX
  
- 	vlag = avg_vruntime(cfs_rq) - se->vruntime;
--	limit = calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
-+	limit = calc_delta_fair(max_slice, se);
- 
- 	se->vlag = clamp(vlag, -limit, limit);
- }
-@@ -795,6 +796,21 @@ static inline u64 cfs_rq_min_slice(struct cfs_rq *cfs_rq)
- 	return min_slice;
- }
- 
-+static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq)
-+{
-+	struct sched_entity *root = __pick_root_entity(cfs_rq);
-+	struct sched_entity *curr = cfs_rq->curr;
-+	u64 max_slice = 0ULL;
-+
-+	if (curr && curr->on_rq)
-+		max_slice = curr->slice;
-+
-+	if (root)
-+		max_slice = min(max_slice, root->max_slice);
-+
-+	return max_slice;
-+}
-+
- static inline bool __entity_less(struct rb_node *a, const struct rb_node *b)
- {
- 	return entity_before(__node_2_se(a), __node_2_se(b));
-@@ -820,6 +836,15 @@ static inline void __min_slice_update(struct sched_entity *se, struct rb_node *n
- 	}
- }
- 
-+static inline void __max_slice_update(struct sched_entity *se, struct rb_node *node)
-+{
-+	if (node) {
-+		struct sched_entity *rse = __node_2_se(node);
-+		if (rse->max_slice < se->max_slice)
-+			se->max_slice = rse->max_slice;
-+	}
-+}
-+
- /*
-  * se->min_vruntime = min(se->vruntime, {left,right}->min_vruntime)
-  */
-@@ -827,6 +852,7 @@ static inline bool min_vruntime_update(struct sched_entity *se, bool exit)
- {
- 	u64 old_min_vruntime = se->min_vruntime;
- 	u64 old_min_slice = se->min_slice;
-+	u64 old_max_slice = se->max_slice;
- 	struct rb_node *node = &se->run_node;
- 
- 	se->min_vruntime = se->vruntime;
-@@ -837,8 +863,13 @@ static inline bool min_vruntime_update(struct sched_entity *se, bool exit)
- 	__min_slice_update(se, node->rb_right);
- 	__min_slice_update(se, node->rb_left);
- 
-+	se->max_slice = se->slice;
-+	__max_slice_update(se, node->rb_right);
-+	__max_slice_update(se, node->rb_left);
-+
- 	return se->min_vruntime == old_min_vruntime &&
--	       se->min_slice == old_min_slice;
-+	       se->min_slice == old_min_slice &&
-+	       se->max_slice == old_max_slice;
- }
- 
- RB_DECLARE_CALLBACKS(static, min_vruntime_cb, struct sched_entity,
-@@ -852,6 +883,7 @@ static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	avg_vruntime_add(cfs_rq, se);
- 	se->min_vruntime = se->vruntime;
- 	se->min_slice = se->slice;
-+	se->max_slice = se->slice;
- 	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
- 				__entity_less, &min_vruntime_cb);
- }
+ # this should be set for all -march=.. options where the compiler
+ # generates cmov.
+
+      Arnd
 
