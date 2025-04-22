@@ -1,228 +1,128 @@
-Return-Path: <linux-kernel+bounces-614772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA740A971C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA1EA971CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D657917FD7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCF34407AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BDF28FFF9;
-	Tue, 22 Apr 2025 15:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289E028FFE7;
+	Tue, 22 Apr 2025 15:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEC0aWcU"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fdr3Fh44"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF119ABB6;
-	Tue, 22 Apr 2025 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455619ABB6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745337545; cv=none; b=HkDDCtZrNjraxHatKXJNh6BiuwVY+uit38YEGDk+ukXMU8ErgHHi1l5pVN7eo+04/hbGLOT5RUzKTcWGhuusz3QTt2myzg3NgLnCAIDdwx5I8izZgHqlEbMwwqP6GXge+U1DVdg0UD11xeMLqBhMerDcuABowEw/T/Gz/rnQTzo=
+	t=1745337563; cv=none; b=k75Cr7X9/XSZAO4WNeLJ3BIvhItJdoOyDbCI+tDiNWnvTnCcx6OEH4t38uyxwEjDE6R02R1aL8PYf3Dibiw2OD78K51iIieVfDe/QzYqMGPLU6JioLQSoCN3qXrgljy4bwQBu4luVPeWQscsSMhIRMNk+ztcw9nw/8iMkIfvGA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745337545; c=relaxed/simple;
-	bh=lnd9254tLyB4tDweSMgFvtABXfEUVEra/aiVSRDp8Ig=;
+	s=arc-20240116; t=1745337563; c=relaxed/simple;
+	bh=XbWAU3tmPfW6ONvjlncwRN30filr8TZlVAT1ev3Gz1M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GSh27vqlZ2pn7NhMTUB3labXYao+Zf4fDh+7lTSl6IdjKxZcZmN99zqa/fPKLZx2zl5uZOrC6MZ/Q3BOFpfuA+eNELEPvYgeBGPNGfVdlCHTwioetqtjLlfsN0uImMMtDHyp8D3yCLFeHCoRb9CjOaWNmMHgZv47U9F7N8KNZlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEC0aWcU; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3104ddb8051so47985191fa.1;
-        Tue, 22 Apr 2025 08:59:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=sPwXEji8S8MYTciU2qnYO3wXp7mFSCQ3rclypq5Okmq5cBwbhFpD/M6wcaQ7miStUmvP16WxLdj76zwWiF5LEh2BnRYHrHf/wZNMqlfjjcaS7XAlc95hDvzMJ3IS12WkFEtHm5DN/6GHvoMsTLqNZYdQ0vcqzTJJsaGXuYVw26I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fdr3Fh44; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e8be1c6ff8so9584149a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745337541; x=1745942341; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P95RfQEOnb0c2BR6K6QObHOaYZy5sb19nz4J8BmXf8Q=;
-        b=SEC0aWcUFmu+GrxhMf8R5rX13VawlwEe+5nxJk8CNdnF8L0E1SyOU1LfYnTwfyfsou
-         2D+lcaoW/17TWbCJRHyk3Bu1+gYYwFDSn6CgI/IYUbZ+qNt2iau6pCtyIsBhxdqJL5am
-         DDfmEDnGHa+91NTj2M87plDqhTxhDKNBzNszqpVXdUKLV/cln5XSIeU5/D1RgnF3pG86
-         wea4T7b5GON4EW2ccKTfmi+/RiLt0DL53iV4g7z/ZhW0zWei30RcWiieNlFpAHNIyXMc
-         iUG6bz6/Ea7aPwkqJBbLogAg6bGQ0DvoHG+DnrTx7OKLG0E90rda1NtU6Cb0UVgXTWAf
-         p7OA==
+        d=linux-foundation.org; s=google; t=1745337559; x=1745942359; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HIoPErxyU7XY1H5jqsCEW4/SJIZ39Qm+lQHto6QhKI=;
+        b=fdr3Fh44IzC05AaNMYyg4GQQ1Y9sHvUpKgrxuwzcd/pcjZR2Mktu+9N1YJ5jPaGaPv
+         Kre7S/ii+jnRUcREIuTfZEYqyHMnTS2UHXLHHS7r3N6yb+EcPCOVtv1pQh5kB+HDdm+Q
+         l+PMV2yUAyM1kPzlJ82llwokTTDsnbFO++LIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745337541; x=1745942341;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P95RfQEOnb0c2BR6K6QObHOaYZy5sb19nz4J8BmXf8Q=;
-        b=wHw8m8bvfy7lLL0e4FMCdul8WqDOrPXpxUDke7CHiryb5+rP4r/maaafa3/Qqgvhrc
-         uZWy9LqiLGL932zJigNmL+UWxtalUQMB+Z+QZlTJXCHshtOy2tVcoJDpgOP8xeabsC6q
-         zxX0FISk9eT31fzk3FTJUzLFa4gMpPRFxSvf3Unvk9NzVu9+hUWVX/bAtqgjtW4MVDBg
-         bjuD6i69r/a7yv8W+X28B/bxGC2Z0aDrGV0j00z8ba4DpJ3s3xoIPCHqNheNuNtq+q7U
-         kbPWsxi2Mb3R0SSBztgbE256KwwpUBLtva8ZRGTvgivG66jZwwOgeR89BTZ+jGowpX2N
-         WdvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjA/DOz/aVEJrbJBB+O7hV+rekxvbdXHuPbLqtaMLB9qN0IsCIj0xJPxfnBGdcWhhCDO/f+hQeFwfF@vger.kernel.org, AJvYcCVdkEHN13tccxkzEfpjk2fVMniu27lRcdhYiXBlaOvxXf+WOsOGfbmiNjNT9hjveJ/i5ouVDlB+0ErSnbc=@vger.kernel.org, AJvYcCXQ3+JQ4qpn0GDV6uSwE1E3xQefsVFFSn/6ld1y1QjmqYx//C11S/FZfM0uit0KzmAnIx/1eQGkEDOQpHMA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT4Q/LSUL/rgR8ijrOYj0cnVX6rgvS+APl5aSaquwxqqwo+B/2
-	ojKtdXW7F+uk+NTf/k4el0oSpQ7ekeFjcrDMEG1bhm6H23o2ekWn5S8MWEv7vwyMd2Hop3YK4Ee
-	vlPhGaqm92hKDxW1sGwojQCMFdpA=
-X-Gm-Gg: ASbGncvFfPpQAhK0A/E6ZXpG74CIKZpuhGp68Irf3/hB6XB2vbngfxWdnUd2qIyp9ck
-	er+eb6Cs8B8j372Ard8dZJQ2ykt903iv+vcYLG1BkC3X6SjYW5wdKY8R3jhSPwVCbCB2H+j2qg1
-	sAUAjwob8nYqW+GYDzeak7Re6DKZ7Iosgv
-X-Google-Smtp-Source: AGHT+IHKgcdmILgvUVpncrj//ODq1JMHClCH1kVZRazRm5jxoTJWPHIfWhHjDuVHUsHNkKtQU34Ao2kGXyWLUr7HxTE=
-X-Received: by 2002:a05:651c:210b:b0:308:f860:7c1 with SMTP id
- 38308e7fff4ca-31090556ab0mr53568471fa.30.1745337541131; Tue, 22 Apr 2025
- 08:59:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745337559; x=1745942359;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2HIoPErxyU7XY1H5jqsCEW4/SJIZ39Qm+lQHto6QhKI=;
+        b=HnqcF+A3isp7Ven56PlpQGIi3eVVBCnA6WNsBvJppT/XMO5OwmfD2UySRC5o6YlL66
+         CJABsn0NtL+2ad5JLX/mpCdK4RbDfya8G2vdTiOFdrVi6ce+5UqTdZk5B5NqYSRoYTir
+         iT4OCe/aSd6miTf3nKcrI4W6U3Cio3Hou0VuBIMVv4YGCfXNST9zknUCw+eG2v1gbxKk
+         TLd1npgtexlP4ViH/63dM9elxgrDeDT7zmxRRp3Ro/t+WuXLg8ZWMM333lYm/0/z7KHr
+         MURPL3k26tXWJmorEKvHq4LQ9BSIPypeTv12vQym1KhTJU9oXQPxdf7yy8MgFCUwGF2a
+         l0gQ==
+X-Gm-Message-State: AOJu0Yy43a8SMbgsx8b4Piyh7SME3DauUm3Ezn++JrO8HfhYTCixZk2+
+	tCquipmgr89dgbFvggcctb2UjuRxGXhgGlAWc4ytJkrcNk8bNcDVqTokoBoE3rGxI8pSSCSE4GC
+	ekbw=
+X-Gm-Gg: ASbGncuQqJavNGT74KqpEZjaPBu513Eao0XtL00nMZMT1eRWu/ByYXeV8q9+Zochxf3
+	nnwRdujinHoe2ypOfmexr+yQ/AcpzAylHDsckHuYB6RIshU78XWj3nChWUVysa3vzVjaVdcfH9T
+	3ZKJJMcOWVnV80OofVzPdmV/Pll9DrFvqZTAS8RCui/0Elw/jcJhoVOuvdi/iXVtzF7an5oZxIe
+	DyuBoQL4sGvx3934tX6rlkJJ41pZNtnNtNRZS4prO3w9qurh4vjN40TCDPx6oPRDp+boDwiHF4X
+	SUXOWzZkOc1/RysngTbAsNXaSRqyykKigPdpLEcjKqL+SyaiaXLUu7xot2DIxaWxeg4Iy+9fF5l
+	D9xVUodDW3WQMUUw=
+X-Google-Smtp-Source: AGHT+IFLLWCqSQBViAsy2Lz9XYwe+ppheY5yBfYI2lWa1APTBHjtH7HQVA3/xKNUvsPv+wr/N1s0ZQ==
+X-Received: by 2002:a05:6402:234d:b0:5f6:243c:3e4d with SMTP id 4fb4d7f45d1cf-5f6285418b1mr13664168a12.12.1745337559256;
+        Tue, 22 Apr 2025 08:59:19 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f62583400csm6079088a12.59.2025.04.22.08.59.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 08:59:18 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso816625766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:59:18 -0700 (PDT)
+X-Received: by 2002:a17:906:a412:b0:acb:b966:3a7c with SMTP id
+ a640c23a62f3a-acbb9664fbdmr360938566b.47.1745337558179; Tue, 22 Apr 2025
+ 08:59:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250420-tx1-therm-v1-1-58516c7fc429@gmail.com> <d0da9dbd-7ea7-4047-bab3-22f416c45938@gmail.com>
-In-Reply-To: <d0da9dbd-7ea7-4047-bab3-22f416c45938@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 22 Apr 2025 10:58:48 -0500
-X-Gm-Features: ATxdqUH0WevZlJR3IBcYgltJzhkm5svybFPJXfp0ABMbamr4Xh6jcse-_SS3tzY
-Message-ID: <CALHNRZ-1wY2D4FOauh7tD+2QKBfhtfdJcvpV_B9Y0tEpE1kTVA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable PWM fan on the Jetson TX1 Devkit
-To: Tomasz Maciej Nowak <tmn505@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250422204718.0b4e3f81@canb.auug.org.au>
+In-Reply-To: <20250422204718.0b4e3f81@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 22 Apr 2025 08:59:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjsMVpEvwq=+wAx20RWe_25LDoiMd34Msd4Mrww_-Z3Fw@mail.gmail.com>
+X-Gm-Features: ATxdqUFV2dt2KuulaBup-_NE8Ml_xIQNSWWwroYEWK8Kjdj7aaYMLZjZpPB2BWI
+Message-ID: <CAHk-=wjsMVpEvwq=+wAx20RWe_25LDoiMd34Msd4Mrww_-Z3Fw@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of Linus' tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 9:52=E2=80=AFAM Tomasz Maciej Nowak <tmn505@gmail.c=
-om> wrote:
+On Tue, 22 Apr 2025 at 03:47, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Hi.
->
-> W dniu 21.04.2025 o 00:42, Aaron Kling via B4 Relay pisze:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > This is based on 6f78a94, which enabled added the fan and thermal zones
-> > for the Jetson Nano Devkit. The fan and thermal characteristics of the
-> > two devkits are similar, so usng the same configuration.
->
-> Does this work on Your DevKit? Doesn't on mine, the fan won't budge. Mayb=
-e the
-> revision difference? What I'm using ATM is [1] and [2]. Because inverted =
-polarity
-> of PWM, not submitted since that'll need the driver changes [3],[4].
+> These builds were done with a gcc 11.1.0 cross compiler.
 
-I would have sworn I verified this before sending it in. I've had the
-patches for some time. But you are correct, this does not work as-is.
-Maybe I lost something cleaning up for submission or just plain
-misremembered the verification. I will send a v2 once I've fixed and
-verified. Apologies to the list for the bad submission.
+That sounds like there might be some issue with the cross-compiler
+logic somewhere, because the Makefile logic is using the standard
 
-For inverted polarity, listing them backwards already has precedence
-in mainline, see the Banana Pi R3 dt. This makes me want to double
-check the existing Nano pwm-fan entry in mainline, though. Cause I
-thought all the t210 devices were the same in regards to pwm fan
-inversion. And it doesn't have reversed entries.
+    KBUILD_CFLAGS += $(call cc-option, xyzzy)
 
-Sincerely,
-Aaron Kling
+pattern.  We literally have seven other occurrences of that same logic
+just in that same Makefile above it (and many more in other
+makefiles).
 
->
-> 1. https://github.com/tmn505/linux/commit/a78c520ec94aeab2c9dc8e1f46597c4=
-174ff957d
-> 2. https://github.com/tmn505/linux/commit/99beee4f0cd5d3a6f30e1829d823c11=
-cb8b54bac
-> 3. https://libera.irclog.whitequark.org/tegra/2024-07-19#36707118;
-> 4. https://libera.irclog.whitequark.org/tegra/2024-10-14#37145211;
->
-> Regards
->
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 60 ++++++++++++++++++=
-++++++++
-> >  1 file changed, 60 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm6=
-4/boot/dts/nvidia/tegra210-p2597.dtsi
-> > index 83ed6ac2a8d8f403fb588edce83dc401065c162f..bc02f2eb14bcbd99627c58b=
-398bbf43061c8110b 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> > @@ -1623,6 +1623,14 @@ key-volume-up {
-> >               };
-> >       };
-> >
-> > +     fan: pwm-fan {
-> > +             compatible =3D "pwm-fan";
-> > +             pwms =3D <&pwm 3 45334>;
-> > +
-> > +             cooling-levels =3D <0 64 128 255>;
-> > +             #cooling-cells =3D <2>;
-> > +     };
-> > +
-> >       vdd_sys_mux: regulator-vdd-sys-mux {
-> >               compatible =3D "regulator-fixed";
-> >               regulator-name =3D "VDD_SYS_MUX";
-> > @@ -1778,4 +1786,56 @@ vdd_usb_vbus_otg: regulator-vdd-usb-vbus-otg {
-> >               enable-active-high;
-> >               vin-supply =3D <&vdd_5v0_sys>;
-> >       };
-> > +
-> > +     thermal-zones {
-> > +             cpu-thermal {
-> > +                     trips {
-> > +                             cpu_trip_critical: critical {
-> > +                                     temperature =3D <96500>;
-> > +                                     hysteresis =3D <0>;
-> > +                                     type =3D "critical";
-> > +                             };
-> > +
-> > +                             cpu_trip_hot: hot {
-> > +                                     temperature =3D <70000>;
-> > +                                     hysteresis =3D <2000>;
-> > +                                     type =3D "hot";
-> > +                             };
-> > +
-> > +                             cpu_trip_active: active {
-> > +                                     temperature =3D <50000>;
-> > +                                     hysteresis =3D <2000>;
-> > +                                     type =3D "active";
-> > +                             };
-> > +
-> > +                             cpu_trip_passive: passive {
-> > +                                     temperature =3D <30000>;
-> > +                                     hysteresis =3D <2000>;
-> > +                                     type =3D "passive";
-> > +                             };
-> > +                     };
-> > +
-> > +                     cooling-maps {
-> > +                             cpu-critical {
-> > +                                     cooling-device =3D <&fan 3 3>;
-> > +                                     trip =3D <&cpu_trip_critical>;
-> > +                             };
-> > +
-> > +                             cpu-hot {
-> > +                                     cooling-device =3D <&fan 2 2>;
-> > +                                     trip =3D <&cpu_trip_hot>;
-> > +                             };
-> > +
-> > +                             cpu-active {
-> > +                                     cooling-device =3D <&fan 1 1>;
-> > +                                     trip =3D <&cpu_trip_active>;
-> > +                             };
-> > +
-> > +                             cpu-passive {
-> > +                                     cooling-device =3D <&fan 0 0>;
-> > +                                     trip =3D <&cpu_trip_passive>;
-> > +                             };
-> > +                     };
-> > +             };
-> > +     };
-> >  };
-> >
-> > ---
-> > base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
-> > change-id: 20250420-tx1-therm-9fb3c30fa43f
-> >
-> > Best regards,
-> --
-> TMN
->
+IOW, it's *supposed* to only actually use the flag if the compiler
+supports it, so having the compiler then say "I don't recognize that
+option" is kind of odd. We've explicitly tested that the compiler
+supports it.
+
+Does the warning happen for all files that get built, or just some
+specific ones? I wonder if we have some issue where we end up using
+two different compilers (I'd assume native and cross-built), and we
+use KBUILD_CFLAGS for the wrong compiler (or we use cc-option with the
+wrong compiler, but I'd expect that to affect *everything* - that
+'cc-option' thing is not some kind of unusual pattern).
+
+It may be that the other options we check for have been around for so
+long that they just don't show the issue (ie the 'cc-option' for the
+other cases may also be using the wrong compiler, but then it's hidden
+by the fact that both compiler versions just happen to support all the
+other options anyway).
+
+                    Linus
 
