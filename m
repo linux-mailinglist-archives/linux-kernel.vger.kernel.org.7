@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-613985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906EAA964F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC725A96501
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA48178539
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2CF189C12D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD7C20298C;
-	Tue, 22 Apr 2025 09:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDD220C484;
+	Tue, 22 Apr 2025 09:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9VE6XQh"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ftL+UXJb"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25061F0E2D;
-	Tue, 22 Apr 2025 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BA1F1537;
+	Tue, 22 Apr 2025 09:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745315222; cv=none; b=Sf5Nlnmpx0ICBU76y1aoK1RVdB2vGMmvDLMi4QqdahMsoPwIIAKM00El0pLccoh40Nat2CqRQTkc0AqzsEDpFdKWfYJ3S8/KY4Mo8rQqY84Yc1gaXpAcOeSfXqaqExB6SjZqFBenA/ifHilQXs58thglkXn3pRxYBlqk8SaL3lY=
+	t=1745315245; cv=none; b=lADvAgY1s1ISpYdoNxMTjcWi7PCLcd5hJ9qRXMLVPnvvPEYSApQoshborTy9/WGKaOogjC4mZN/ORcYyjzXPTZL2UWpzMQVxeCJSxuT4njvglwGdDErrwOEO/MbsWD+hLnyz736Lu5LmcDYLbY0874HbJzaww2AF+zRsA+nRCko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745315222; c=relaxed/simple;
-	bh=uR4c7TVXy6cIFrfSyaKbGAwXsLX03FHagsh1jUPtnb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CzVCFPCNoV46U7r8SNF3dN5+rsY5NDkoGtt6k2ke8pn30n4HOCw8OLIud273urYsRDLejwoaqA7GJkoaQ6JJiwlb2Z/IUMf2IUFTEN3lHfDGdlHUE55gu996qgFJiyRH9tmpxMxnZ4+BX6xtCaABfoDx2dQrGtf44dCOhiyxzmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9VE6XQh; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso3437769f8f.2;
-        Tue, 22 Apr 2025 02:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745315219; x=1745920019; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f+aH8Vkp+uMKgYBEzeWu9ULP2uz2ukYCauu+HrKitUU=;
-        b=j9VE6XQhmVUO6Vhm/qVkP4iDNHWpjm95tV9M0DlH44P6NGyzvyt7E+6YKZaCc0Rq1F
-         yzq+F/CsJO9Z2fUvxqUqj0y76kIeMA72HtvUvKbsdfsBvlNoxCRSPbSqCovmQo8fI24W
-         pAykjA0xQm/zer/EseAv+vrs7LMn2Nf2NluOPDhu4R/Y4jv+zHW+8TR2LgFmYBHjsTFm
-         chwDt8DTc2vICe5V8+HHyzZ8jnlug1yAbgp/wjdUZVVQpBrfn3B10wqbBJqcxK487WpA
-         iEVXVvlhi3SK2LNgwTPAE+/e/8lOKkofJQ48xZtpEaOAJFDdHfJXGkR6gQ0Qgv8CfDZ+
-         XeGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745315219; x=1745920019;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f+aH8Vkp+uMKgYBEzeWu9ULP2uz2ukYCauu+HrKitUU=;
-        b=k7jgztKCqZWZArsYpe3b+UGL5xJtCOWmXccuHD7rovPX2CO/NLFwr17JcXlEbyoIHg
-         srfs+BPM5MRDd1LUFtDEa9uwv94vNrZeMZdnG7LHy58h4eYCX83jvosc7aiibvdC51oP
-         BAwnUjJ99awwv6tkRk3rL6+OFKjOCwOUWCeghvuM1aSxfNCt99qcTddkkaL0S6NlW4II
-         DjnuA3Y0uuUKKSjFHB7YQsCfn9I5UqEswSgYlytWU9xGBL4ikKX9XF+kz1jSXAZ7/0NL
-         heMCESebLXvblt0xZb25tP1cwusXWVpkfqq6s3TV9e57NfPDIhRzo7fKc1TpHpR61kIX
-         8NGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuVLuZkvy6FBNBfJ/CZWtjy4fx+sN2Y8TF8E0eBn+TZ0iKrOtzHtBL0vXAkFSgnl5chQ6HC7JLS0Y=@vger.kernel.org, AJvYcCVPuA2NFixD/Iuws2U3njSBDTOApYywxO16QVBCJSgq+SH99fdgvxZQ3rQtuMQaJTORwfhj78p7MmIi@vger.kernel.org, AJvYcCWizeJympk1vlqEdRQ7VQywHjNd/XPF0TPEbg32+9S9OswcygL+JxUX1kbtB4GWsmvysv9o9l1D5Bpfcxb/@vger.kernel.org, AJvYcCWniOcrpRz6XapyvHvHfhNrp6/2ZYUkWxU+JIxurb/2nFsbYUjWBKHx2tsrKVoOGU5T3l2YUiPfiQjl3Z/Zymfb5DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzew+owd3nu0gV4vyvnt2AIDuy0tDWFfnORfv2YdrrOp0H3MgSW
-	pJBXHb/tMWeUDi7QrKzkIWu+nV20eL4OT3hpChzGw5522xirsiKm
-X-Gm-Gg: ASbGncvEW/7TrvpEDDycutJ8iuvTCEHpNZYvjoKZ6ke0W0mKjtFpmi65OnC/RSyTwCN
-	KFftbmrA50H4f2dkGt5FRYFLLrLqfWjQCw/qmOus15ywhLOGvqKI4EqfMz1D0nUa0FE6W5Qcjas
-	TDO3h471/KNXq46dW9SMKFlbDGDmxn5ersu2jCx4WvbG10BAN9qxZogImBS8IqnBNpLOsW5702M
-	WHcJgqVx5/49xOzJNy5iIB5IfQyE5oIHIRVv9nVShVLhG+MAupLMQUdRc4bp6cDEA5NobsGT4Nl
-	zjQoGBubDM8tnQeq4YApTwjPMCjC2U/G6ZtJd4A=
-X-Google-Smtp-Source: AGHT+IEMUuvM8SEPdC7enDvmj1KSIpM8sQDJOmbbZ30nkYK0bXnH8XlvLfXljQ4jhhwjqFCSy8BcVA==
-X-Received: by 2002:a5d:5f93:0:b0:39c:30d8:3290 with SMTP id ffacd0b85a97d-39efba37cebmr12005512f8f.7.1745315218520;
-        Tue, 22 Apr 2025 02:46:58 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:6a3:c300:22ea:3d6a:5919:85f8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43d22esm14785563f8f.52.2025.04.22.02.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 02:46:58 -0700 (PDT)
+	s=arc-20240116; t=1745315245; c=relaxed/simple;
+	bh=0PH9p9mP8Vk336RcLMsj2+oteyeKujORQWxj6U09IBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eH6X+1f8pOG/z7k6IyFbF1uYM1twsNbIrPHMhV033p5Q8ZeHelY8/eR4Ms2GMiKzjGh7uIgIwJXwndRTvfDAiVgAUqPaBVesnJ1/yhjP0wUfn7GId20VO7G+CQ42Pde7DME4zsPUpdYkSFoIk28ngcv+sPmIb0p1HdLp5jBGmUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ftL+UXJb; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 11388439F5;
+	Tue, 22 Apr 2025 09:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745315236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+HOVC4B2L2OpNZ3oHbRKcpYJoMkM0vkX1T6jgPrJEEQ=;
+	b=ftL+UXJbg+THRycWyHPUoC2wbp9hQ1HeXO8Fn7B2Rg6hjnr6SBAhi33A4jt/7KLm/V8ki8
+	F48khAtZTQ5O+fswSSUsoM1sTPYN6ow8TKTqay7mc6HvbRbX7sMiqMXh/xPUShN2ja++of
+	B0Y7Z8TUggraqfZHPLs4F/3uu1vWS/5Bnykb+ssISX3cOzIb9GfnkKiS/lxJgmuX+LpZ/A
+	pls+NXxxet4QdpcpBDETlKPkiOnIEbOnsV5Ccd3H3XfC/mbdH2c6hV/ALKtUrH4cSPsAU8
+	DFU8acQHHKoJ3+ak0BIkg01EUCpnW295hZ9TDmaCh8Q3ckbmDSjzSvPENLmQVA==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Russell King <linux@armlinux.org.uk>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Simon Horman <horms@kernel.org>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: [PATCH net 2/3] net: stmmac: socfpga: Don't check for phy to enable the SGMII adapter
 Date: Tue, 22 Apr 2025 11:46:56 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: t.antoine@uclouvain.be
-Cc: Rob Herring <robh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] power: supply: correct capacity computation
-Message-ID: <20250422094656.GA159257@legfed1>
-References: <20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be>
- <20250421-b4-gs101_max77759_fg-v3-1-50cd8caf9017@uclouvain.be>
+Message-ID: <20250422094701.49798-3-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250422094701.49798-1-maxime.chevallier@bootlin.com>
+References: <20250422094701.49798-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250421-b4-gs101_max77759_fg-v3-1-50cd8caf9017@uclouvain.be>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefgedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmegtkedufeemgeejtgeimeejudelrgemlegusghfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemtgekudefmeegjegtieemjedulegrmeeluggsfhdphhgvlhhopeguvghvihgtvgdqgedtrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtp
+ hhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Thomas,
+The SGMII adapter needs to be enabled for both Cisco SGMII and 1000BaseX
+operations. It doesn't make sense to check for an attached phydev here,
+as we simply might not have any, in particular if we're using the
+1000BaseX interface mode.
 
-On Mon, Apr 21, 2025 at 08:13:32PM +0200, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
-> 
-> From the datasheet of the MAX17201/17205, the LSB should be
-> "5.0μVh/RSENSE". The current computation sets it at 0.5mAh=5.0μVh/10mOhm
-> which does not take into account the value of rsense which can be
-> different from 10mOhm.
-> 
-> Change the computation to fit the specs.
-> 
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
->  drivers/power/supply/max1720x_battery.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-> index ea3912fd1de8bfd0d029c16f276316d06e1b105c..cca5f8b5071fb731f9b60420239ea03d46cb1bf3 100644
-> --- a/drivers/power/supply/max1720x_battery.c
-> +++ b/drivers/power/supply/max1720x_battery.c
-> @@ -288,9 +288,10 @@ static int max172xx_voltage_to_ps(unsigned int reg)
->  	return reg * 1250;	/* in uV */
->  }
->  
-> -static int max172xx_capacity_to_ps(unsigned int reg)
-> +static int max172xx_capacity_to_ps(unsigned int reg,
-> +				   struct max1720x_device_info *info)
->  {
-> -	return reg * 500;	/* in uAh */
-> +	return reg * (500000 / info->rsense);	/* in uAh */
->  }
->  
->  /*
-> 
-> -- 
-> 2.49.0
-> 
-> 
-thanks for finding this.
+So, check only for the presence of a SGMII adapter to re-enable it after
+a link config.
 
-Reviewed-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Best regards,
-Dimitri Fedrau
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+index 027356033e5e..cc9946b58236 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+@@ -67,9 +67,6 @@ static void socfpga_dwmac_fix_mac_speed(void *priv, int speed, unsigned int mode
+ 	struct socfpga_dwmac *dwmac = (struct socfpga_dwmac *)priv;
+ 	void __iomem *splitter_base = dwmac->splitter_base;
+ 	void __iomem *sgmii_adapter_base = dwmac->sgmii_adapter_base;
+-	struct device *dev = dwmac->dev;
+-	struct net_device *ndev = dev_get_drvdata(dev);
+-	struct phy_device *phy_dev = ndev->phydev;
+ 	u32 val;
+ 
+ 	if (sgmii_adapter_base)
+@@ -96,7 +93,7 @@ static void socfpga_dwmac_fix_mac_speed(void *priv, int speed, unsigned int mode
+ 		writel(val, splitter_base + EMAC_SPLITTER_CTRL_REG);
+ 	}
+ 
+-	if (phy_dev && sgmii_adapter_base)
++	if (sgmii_adapter_base)
+ 		writew(SGMII_ADAPTER_ENABLE,
+ 		       sgmii_adapter_base + SGMII_ADAPTER_CTRL_REG);
+ }
+-- 
+2.49.0
+
 
