@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-615198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7463BA97A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:10:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92466A97A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D315A0A6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9565A100E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAB92BCF5D;
-	Tue, 22 Apr 2025 22:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A14F2C178E;
+	Tue, 22 Apr 2025 22:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="O3NYZ6v8"
-Received: from mail-vk1-f228.google.com (mail-vk1-f228.google.com [209.85.221.228])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="CCnermli"
+Received: from mail-yb1-f228.google.com (mail-yb1-f228.google.com [209.85.219.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C37127056B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3B9E56A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 22:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745359806; cv=none; b=tqft+nLwgjoUD5G/HKp2sVGiwh2aEpKg5pGRw6cfv4JPfBEXSFnRMn8GUGqvDfGys8It6tibaebkc9D506ToKdD2RU3pSYx9TUu6sNgDdXKM/4v686YIVWVPQiwUKtGdLEWOYeAlLDE5Vuh5AcVH3EqL5uvXvaPW/FGBmwcl0Ac=
+	t=1745359807; cv=none; b=I3kKyb+iBHggxU2h7pLFlnGzgpZgmmkt+f5/aRuiWMAuq4h44EmkFGjoTxfYbXOa7Vb7aHNFZhdQ1oXm35qHwFnAxAGoMuuFPKJ+VG9NrdHvk9KI4TW1aFkwSZqwE98BUw+4FLr9TTAngYnAEJcGUf9psS7th6/lFVzrFVPygiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745359806; c=relaxed/simple;
-	bh=99JxTRLgZjCmHoulfV6B/DMSLqRmfo8mvgyjr4bpb3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hNhvODXiFbwHmvxNbEXcwB8xoelsnWx9LyqfuHeujV5NlHj39gcfBBeIu4dmM9VAstK4IJ2CN2+BmRrSqBqvlDYTj0gkckjB3DZ01uSwaW0XnmoIqQbELtBTBoBInvgKNCILvMqI3Qu5kKYP9b3/mQjGmxkEMkFtqEztEhSEjXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=O3NYZ6v8; arc=none smtp.client-ip=209.85.221.228
+	s=arc-20240116; t=1745359807; c=relaxed/simple;
+	bh=t9JeHMYuJFQFJqP5gt0M4thwwwP9l+X5gxYpzjhkUQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qM8fVWQytJkXOtjWhhZ6aRMmbbzhKSFF+VxAEzj77svoqgv2KvtCstT1ebiJqIRD9M5COIpPVDwNJCWec5Lv1IOMCljGDZvbuS12K/IZeBAzZizGusQUVLupa7Qp6yZn6WrbX+sFU3uXQjNoR0vQafX8kCAxB5vqA1aQy4iax1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=CCnermli; arc=none smtp.client-ip=209.85.219.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-vk1-f228.google.com with SMTP id 71dfb90a1353d-5240d07fee1so130066e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:10:03 -0700 (PDT)
+Received: by mail-yb1-f228.google.com with SMTP id 3f1490d57ef6-e728740b637so627811276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:10:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1745359803; x=1745964603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KwOPiQZIcSoYiJQce8m9Bf0/9Br1sjvbT2lnDAfcS9w=;
-        b=O3NYZ6v84M1q3AawtzDDRbDGDQNFwyHCs8gK4Ah2KVHUNBB5N5qyDomgPDVALNuyzK
-         ue3mwYuFaEdb9VdFAmUPDCY3SmeO0hFx14O2E7ixc9pmLm5ZLuXZdJiBcHFvDUaOcfZ3
-         opivm2piMMY+J/zVwHCe6ish3QjD9ZOh1JNYgYc+S6prxYhH72c66onGCmoYpUO0K4f4
-         kjy4UwtaUk/SOA/VRiOY54Rkqu+9VoMlG3LC9G9FYXNGV2T3Jwds0tCXVMiNnsR59/KW
-         rVXvYI6JDxIl2s6kd/95VhLA5ZkPKIYBjSjuuuC4zgOvQMse/lxSvO46FDemIT0vKhlH
-         ogXw==
+        d=purestorage.com; s=google2022; t=1745359804; x=1745964604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q3duo+Csxu3imlxdQHveRRBWNAS1YAjez61JSWKYAhc=;
+        b=CCnermliW/oVj10YTR860qaUSXe3gCEwOizOWlZI/zDVERUqL6xHavkvzB3NepyOMI
+         fnocKtGbVKYkqWkFuvL8wV8fOj6tNxn3pBp3TfUiDtl+b80RJ4VFR9mYV1f3aOd/kq14
+         LvC29X3g/g0xls9QkkWZlpAn3S7yfaFnc0kio4JAuauJByDyo0p92bbkEOSKtIV4ZIMt
+         YmoL2u75NGCeLV0rJLtOubykh6CNKhWAH6ECQ54WbGpU9NRF0RBJLBKhQTUn+yO4Zbkf
+         nMe8kHtuELI/lQMnu0fRKdLsRRnpJUlEYjosUUTDQTglAhzVWBSaQQY2Qg7GnCpOuQp6
+         NalQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745359803; x=1745964603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KwOPiQZIcSoYiJQce8m9Bf0/9Br1sjvbT2lnDAfcS9w=;
-        b=A+knTPj0+GYZRFWdqsbxka02NYtUSTw8min22Fj9u1TEpQWt+WIDNUZt4pFClrt4pC
-         zrq4JeIPBsqFEntP91MUfdNg2x+20tq0plkDqkV7GhaQW5F5ytEN7q2hXvCZCjuO19FZ
-         iwBbXPjRD7J544S47votcYwWGkOA06axgFpmjKtkCKYBLZumpljfpVovvMS2mR8qGguE
-         5dELsL5whhLUN5S8StkFvp2vJbMbbu1e6p3OAbBZdOxzPBwnbTxqZiWGESQqUC3gv3hK
-         ph+MlfYP3nObjSSObUQO6OuVfOPtCj38Farg7GP+fP5/wtbhZzuylZPGBHNiCdpRVmTI
-         QzNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6QIfd0mkNRtybPP+OSF0p4U48BQv/4MP0sQCE+IF2+/QZU5rULnU1tWCaSfS6r0po3TEe0IsEHHqWQhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhz406AkHa7SnzdyT37rHkvIGkjYajt77XPhJqHZnv4Utuz330
-	88LAvE0oPVb1bP9Ivp0lYAq5qA1LG5XBYsWfDwuerpDvy4HApzrqr4UkiVZzRf9YUuOO47TqTSV
-	g0/Cpqo+6Wifccw6ZcpqHpGpH4tYNLS8r
-X-Gm-Gg: ASbGncsu4EGHQJ/05eIVyAI/JqbmHdfyqCFB3aqwL5trQUz/n+L+PfzLrFiu0BQ7gZa
-	wm5YZ9K0uyEfP1y4E4sHC9h8pN9XOGXiEI4aqgcFMYUUovd38MvkHmTwfiK7IB4z5R5K0ebK5JM
-	CT1vmolK9Ok0cb861XWbAdmwzPiy++5Zy9fcjqxE/LrukGXzEQ/htbJOO/D8ttmsGujYQJ7InlT
-	bgFx6FG7Q8xUUAV9Q/n/L9iHnHLfv/6ByHezXkU9PV8sqHLvgpq57Qtn5g4AOJwdp8kwmd+sIfE
-	45tfrRP8qfYKhG3SUrfsJCd0Dap415IiqEh3YUaawTVd
-X-Google-Smtp-Source: AGHT+IFxdjGFL/VvbqbDrlnoQYfdKyqz0v7X9GEE7nLpcx5NH6BX81xcZcT2Wtr3f6QKNmjvv2s/vLJ60LMH
-X-Received: by 2002:a05:6122:1051:b0:527:67da:74eb with SMTP id 71dfb90a1353d-529253b58b4mr3568089e0c.1.1745359803082;
-        Tue, 22 Apr 2025 15:10:03 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-52922c112ffsm364279e0c.5.2025.04.22.15.10.02
+        d=1e100.net; s=20230601; t=1745359804; x=1745964604;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q3duo+Csxu3imlxdQHveRRBWNAS1YAjez61JSWKYAhc=;
+        b=cS/pfLFsx/69+oGZxTvujS4eykWvUQTrKmJzaJ8Su6fe7YAoHkjvBgC632yUzkTzqF
+         H6q3Bhab/jQKLTcPKadxCSwdgtL8cooV3CL0IhWDhdO09PoD1qcjREipStnV5SguifI9
+         5KL05pM0u4EbsehuVykaMi5lp4OV6JP+tOu/r+R0ayYy9aCt01qn/k9a3iIhmW1KTVEy
+         j0mlQN1nzp3M9kUIHX2jveOcsNJ+rTbWvkdXayF381IJEqijj2XkvDVK55lGA1xDhC9b
+         2XxMHnkQhkX+Yg/bhqbJrma7hujmbHk4oGuzXWqTDWRm4zOc0tybLmHasHMWlxYx5EHN
+         V04g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGUmK1KpBLzOgmMlGSYzEiDhavu2aHTy0jEfPguLCD2bqXvnL+JzIlLDgDl9lILHAsY/Z/YfWpIw+jbSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt/xbMJlAZCsKQvJgMjadHEQk62zA/lqXdAvJnavPDrp+LqLiz
+	ZbupkBczDDMio7c2XG6pw/3Mna/fhB0fyx3u7bmFdUCBoPcRQqrYr9mJhqQPbOZftvUSHXcyF3l
+	/uTarntDjLYry1+IJKMCF8cuVxnxFbfDCuCIRz6F5toAgqObl
+X-Gm-Gg: ASbGncs1Th4QY3nXzyku5ywcxxKZzx2shD1J3VuQm6AllRZrNfaVfrCoaR485UX203x
+	IRlBY0KO1XljcTgbzDSGB3NXLcDJsh17yZXQ0H6Gpsd7kMGUT92Xw/drc9w++qODxC81pB/FSn+
+	2YFea/hm3/vgcB1sxuWk0rDpNzv3QcTbPt56oHVwJsWlDodYLbbiqqNCSmswF9CWU7ENWju+t1I
+	HJXmVOlTnA59CuB50lDbUx0yc/YnxrLEecwdXozjt1pqRD0txX5HvtaOXpCUzNRa7HsJRbTBUQs
+	fi9aLvehbB6W2d8++230qxO+Ia52Og==
+X-Google-Smtp-Source: AGHT+IEYwgoo4RLAGc+GeQs8g8qLOVHt34WI8ndT0WmR16dcscV7Ta6VOH8lfCbw/+EtF9tG8Y5HbI0z+x3U
+X-Received: by 2002:a05:690c:39b:b0:703:ac44:d369 with SMTP id 00721157ae682-706ccdda133mr109130937b3.5.1745359804156;
+        Tue, 22 Apr 2025 15:10:04 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-706ca475061sm6640437b3.2.2025.04.22.15.10.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 15:10:03 -0700 (PDT)
+        Tue, 22 Apr 2025 15:10:04 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::418a])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 6653234045E;
-	Tue, 22 Apr 2025 16:10:02 -0600 (MDT)
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 9035B340159;
+	Tue, 22 Apr 2025 16:10:03 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 60268E41D69; Tue, 22 Apr 2025 16:10:02 -0600 (MDT)
+	id 8DF5EE41D69; Tue, 22 Apr 2025 16:10:03 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Keith Busch <kbusch@kernel.org>,
 	Jens Axboe <axboe@kernel.dk>,
@@ -87,10 +89,12 @@ Cc: Kanchan Joshi <joshi.k@samsung.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v5 0/3] nvme/pci: PRP list DMA pool partitioning
-Date: Tue, 22 Apr 2025 16:09:49 -0600
-Message-ID: <20250422220952.2111584-1-csander@purestorage.com>
+Subject: [PATCH v5 1/3] dmapool: add NUMA affinity support
+Date: Tue, 22 Apr 2025 16:09:50 -0600
+Message-ID: <20250422220952.2111584-2-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250422220952.2111584-1-csander@purestorage.com>
+References: <20250422220952.2111584-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,54 +103,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-NVMe commands with more than 4 KB of data allocate PRP list pages from
-the per-nvme_device dma_pool prp_page_pool or prp_small_pool. Each call
-to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock.
-These device-global spinlocks are a significant source of contention
-when many CPUs are submitting to the same NVMe devices. On a workload
-issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA nodes
-to 23 NVMe devices, we observed 2.4% of CPU time spent in
-_raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
+From: Keith Busch <kbusch@kernel.org>
 
-Ideally, the dma_pools would be per-hctx to minimize
-contention. But that could impose considerable resource costs in a
-system with many NVMe devices and CPUs.
+Introduce dma_pool_create_node(), like dma_pool_create() but taking an
+additional NUMA node argument. Allocate struct dma_pool on the desired
+node, and store the node on dma_pool for allocating struct dma_page.
+Make dma_pool_create() an alias for dma_pool_create_node() with node set
+to NUMA_NO_NODE.
 
-As a compromise, allocate per-NUMA-node PRP list DMA pools. Map each
-nvme_queue to the set of DMA pools corresponding to its device and its
-hctx's NUMA node. This reduces the _raw_spin_lock_irqsave overhead by
-about half, to 1.2%. Preventing the sharing of PRP list pages across
-NUMA nodes also makes them cheaper to initialize.
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/linux/dmapool.h | 17 +++++++++++++----
+ mm/dmapool.c            | 16 ++++++++++------
+ 2 files changed, 23 insertions(+), 10 deletions(-)
 
-Allocating the dmapool structs on the desired NUMA node further reduces
-the time spent in dma_pool_alloc from 0.87% to 0.50%.
-
-Caleb Sander Mateos (2):
-  nvme/pci: factor out nvme_init_hctx() helper
-  nvme/pci: make PRP list DMA pools per-NUMA-node
-
-Keith Busch (1):
-  dmapool: add NUMA affinity support
-
- drivers/nvme/host/pci.c | 171 +++++++++++++++++++++++-----------------
- include/linux/dmapool.h |  17 +++-
- mm/dmapool.c            |  16 ++--
- 3 files changed, 121 insertions(+), 83 deletions(-)
-
-v5:
-- Allocate dmapool structs on desired NUMA node (Keith)
-- Add Reviewed-by tags
-
-v4:
-- Drop the numa_node < nr_node_ids check (Kanchan)
-- Add Reviewed-by tags
-
-v3: simplify nvme_release_prp_pools() (Keith)
-
-v2:
-- Initialize admin nvme_queue's nvme_prp_dma_pools (Kanchan)
-- Shrink nvme_dev's prp_pools array from MAX_NUMNODES to nr_node_ids (Kanchan)
-
+diff --git a/include/linux/dmapool.h b/include/linux/dmapool.h
+index f632ecfb4238..bbf1833a24f7 100644
+--- a/include/linux/dmapool.h
++++ b/include/linux/dmapool.h
+@@ -9,19 +9,20 @@
+  */
+ 
+ #ifndef LINUX_DMAPOOL_H
+ #define	LINUX_DMAPOOL_H
+ 
++#include <linux/nodemask_types.h>
+ #include <linux/scatterlist.h>
+ #include <asm/io.h>
+ 
+ struct device;
+ 
+ #ifdef CONFIG_HAS_DMA
+ 
+-struct dma_pool *dma_pool_create(const char *name, struct device *dev, 
+-			size_t size, size_t align, size_t allocation);
++struct dma_pool *dma_pool_create_node(const char *name, struct device *dev,
++			size_t size, size_t align, size_t boundary, int node);
+ 
+ void dma_pool_destroy(struct dma_pool *pool);
+ 
+ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
+ 		     dma_addr_t *handle);
+@@ -33,12 +34,13 @@ void dma_pool_free(struct dma_pool *pool, void *vaddr, dma_addr_t addr);
+ struct dma_pool *dmam_pool_create(const char *name, struct device *dev,
+ 				  size_t size, size_t align, size_t allocation);
+ void dmam_pool_destroy(struct dma_pool *pool);
+ 
+ #else /* !CONFIG_HAS_DMA */
+-static inline struct dma_pool *dma_pool_create(const char *name,
+-	struct device *dev, size_t size, size_t align, size_t allocation)
++static inline struct dma_pool *dma_pool_create_node(const char *name,
++	struct device *dev, size_t size, size_t align, size_t boundary,
++	int node)
+ { return NULL; }
+ static inline void dma_pool_destroy(struct dma_pool *pool) { }
+ static inline void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
+ 				   dma_addr_t *handle) { return NULL; }
+ static inline void dma_pool_free(struct dma_pool *pool, void *vaddr,
+@@ -47,10 +49,17 @@ static inline struct dma_pool *dmam_pool_create(const char *name,
+ 	struct device *dev, size_t size, size_t align, size_t allocation)
+ { return NULL; }
+ static inline void dmam_pool_destroy(struct dma_pool *pool) { }
+ #endif /* !CONFIG_HAS_DMA */
+ 
++static inline struct dma_pool *dma_pool_create(const char *name,
++	struct device *dev, size_t size, size_t align, size_t boundary)
++{
++	return dma_pool_create_node(name, dev, size, align, boundary,
++				    NUMA_NO_NODE);
++}
++
+ static inline void *dma_pool_zalloc(struct dma_pool *pool, gfp_t mem_flags,
+ 				    dma_addr_t *handle)
+ {
+ 	return dma_pool_alloc(pool, mem_flags | __GFP_ZERO, handle);
+ }
+diff --git a/mm/dmapool.c b/mm/dmapool.c
+index f0bfc6c490f4..4de531542814 100644
+--- a/mm/dmapool.c
++++ b/mm/dmapool.c
+@@ -54,10 +54,11 @@ struct dma_pool {		/* the pool */
+ 	size_t nr_pages;
+ 	struct device *dev;
+ 	unsigned int size;
+ 	unsigned int allocation;
+ 	unsigned int boundary;
++	int node;
+ 	char name[32];
+ 	struct list_head pools;
+ };
+ 
+ struct dma_page {		/* cacheable header for 'allocation' bytes */
+@@ -197,16 +198,17 @@ static void pool_block_push(struct dma_pool *pool, struct dma_block *block,
+ 	pool->next_block = block;
+ }
+ 
+ 
+ /**
+- * dma_pool_create - Creates a pool of consistent memory blocks, for dma.
++ * dma_pool_create_node - Creates a pool of consistent memory blocks, for dma.
+  * @name: name of pool, for diagnostics
+  * @dev: device that will be doing the DMA
+  * @size: size of the blocks in this pool.
+  * @align: alignment requirement for blocks; must be a power of two
+  * @boundary: returned blocks won't cross this power of two boundary
++ * @node: optional NUMA node to allocate structs 'dma_pool' and 'dma_page' on
+  * Context: not in_interrupt()
+  *
+  * Given one of these pools, dma_pool_alloc()
+  * may be used to allocate memory.  Such memory will all have "consistent"
+  * DMA mappings, accessible by the device and its driver without using
+@@ -219,12 +221,13 @@ static void pool_block_push(struct dma_pool *pool, struct dma_block *block,
+  * boundaries of 4KBytes.
+  *
+  * Return: a dma allocation pool with the requested characteristics, or
+  * %NULL if one can't be created.
+  */
+-struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+-				 size_t size, size_t align, size_t boundary)
++struct dma_pool *dma_pool_create_node(const char *name, struct device *dev,
++				      size_t size, size_t align, size_t boundary,
++				      int node)
+ {
+ 	struct dma_pool *retval;
+ 	size_t allocation;
+ 	bool empty;
+ 
+@@ -249,11 +252,11 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+ 	else if ((boundary < size) || (boundary & (boundary - 1)))
+ 		return NULL;
+ 
+ 	boundary = min(boundary, allocation);
+ 
+-	retval = kzalloc(sizeof(*retval), GFP_KERNEL);
++	retval = kzalloc_node(sizeof(*retval), GFP_KERNEL, node);
+ 	if (!retval)
+ 		return retval;
+ 
+ 	strscpy(retval->name, name, sizeof(retval->name));
+ 
+@@ -262,10 +265,11 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+ 	INIT_LIST_HEAD(&retval->page_list);
+ 	spin_lock_init(&retval->lock);
+ 	retval->size = size;
+ 	retval->boundary = boundary;
+ 	retval->allocation = allocation;
++	retval->node = node;
+ 	INIT_LIST_HEAD(&retval->pools);
+ 
+ 	/*
+ 	 * pools_lock ensures that the ->dma_pools list does not get corrupted.
+ 	 * pools_reg_lock ensures that there is not a race between
+@@ -293,11 +297,11 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+ 		}
+ 	}
+ 	mutex_unlock(&pools_reg_lock);
+ 	return retval;
+ }
+-EXPORT_SYMBOL(dma_pool_create);
++EXPORT_SYMBOL(dma_pool_create_node);
+ 
+ static void pool_initialise_page(struct dma_pool *pool, struct dma_page *page)
+ {
+ 	unsigned int next_boundary = pool->boundary, offset = 0;
+ 	struct dma_block *block, *first = NULL, *last = NULL;
+@@ -333,11 +337,11 @@ static void pool_initialise_page(struct dma_pool *pool, struct dma_page *page)
+ 
+ static struct dma_page *pool_alloc_page(struct dma_pool *pool, gfp_t mem_flags)
+ {
+ 	struct dma_page *page;
+ 
+-	page = kmalloc(sizeof(*page), mem_flags);
++	page = kmalloc_node(sizeof(*page), mem_flags, pool->node);
+ 	if (!page)
+ 		return NULL;
+ 
+ 	page->vaddr = dma_alloc_coherent(pool->dev, pool->allocation,
+ 					 &page->dma, mem_flags);
 -- 
 2.45.2
 
