@@ -1,154 +1,185 @@
-Return-Path: <linux-kernel+bounces-613500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBF3A95D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C39A95D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 07:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0503ABF21
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 05:42:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6409C7A8A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 05:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FC71F03D6;
-	Tue, 22 Apr 2025 05:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397281E51F1;
+	Tue, 22 Apr 2025 05:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c44bTB7T"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="njpcIzaN"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085EF1E503C;
-	Tue, 22 Apr 2025 05:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EAD79C0;
+	Tue, 22 Apr 2025 05:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745300569; cv=none; b=RAYAxcUUJPl2rtTpaS5a/jM3XvysYYjvcHiORn2Gri/z6Y7ppruBCxEgofDpjcWVbaOGSIfb09qOqBShJv3pl++R6S3PkDu17nAlH4INB7hqg0H+wL+ZlgqIF4EtXLtCqZDJb7mO3gUqWGFva6e+3f1zsBvp6uP65jpdayCIzlc=
+	t=1745300745; cv=none; b=jRrErvqsn4m4v6+n1xz/S2gi8KTtBlXwijOzk+Bvs4QcRu3mGiU1R4qt6JXashaMXMEiont1LXoyG32wbEphY2GkvDpnexH1ftZc1gP+Xkn98hPEC9hM4OvUmFIrRnkTLE/31ppUo662f68k76/gbNONEteFdC84rnfbTZ2lPyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745300569; c=relaxed/simple;
-	bh=Xi4w8Pw14towfsIYXC2h2bTNPVlHcod6+YCMqluxCzU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=OHQfwFegkP2D+I9vRid0pfs2R5vYV1KwwK6C7zbUdfVcP026tzrRlDHP47O5ZLa2Ggiwo/ibwWMLr5rdjrSYS8Ec0oab793ZeFRJrBgPAEXkqQQSfJMraLzd32z9SxwiOGUVt0Ezy/aMfViUhl/5wskXU1RZnzQbZV0+39cpR8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c44bTB7T; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M4OsGR011412;
-	Tue, 22 Apr 2025 05:42:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	F3Tw4HEzjXI+VFLuonINWc2kavveyztEildSD+vi+aM=; b=c44bTB7TjkNWj9Jc
-	z7+gDQkcyaHMmdOtW7JhYDUgpvCBGwGRQhJqPn9Uwe3XxKNmZBPGXMuTOYT53R/N
-	vqUcDx7bdUP6ArSqWMG5KSu7X8Xus3gM0zUj0r6CRK/yvtgxDG9OixyJMvng8sVx
-	taz55j4buKyoEWR1q3xFMP3MCnl/AiON3JHfggLCortVFN8PUHAdvvm/1uRlayFE
-	BEPsTEwc4+J8zlmN/zRDNVeOxEjFMxNTjm2z0N1+sT3yHpno/+yaxJ6Ua6uwHIEz
-	uAw6Eqx/n2TGk6cO/5NUG8rYaralPSI3DliKLx4OfBSgx+vcTAov2wjCPRdOB5Pi
-	wWZK/g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46450pe428-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 05:42:44 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53M5ghcx030414
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 05:42:44 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 21 Apr 2025 22:42:39 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Tue, 22 Apr 2025 11:12:12 +0530
-Subject: [PATCH 3/3] arm64: dts: qcom: Add camera clock controller for
- sc8180x
+	s=arc-20240116; t=1745300745; c=relaxed/simple;
+	bh=hNZ3YWvgSgzfycXB5mMbZfjyxAPMwC3ZWfnkIP2c22A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iezJwTls1syDrmuUWoUvhbDTUsMtNxjJjNxf3lv9RuE7c/nqKY0i54dKp/EVDiimZ5+m4kkWaPqZZO558kD/M6rzuUqPM+CzV0jhzuQEfNP+zXmtx9pKaIcDVOzIml8ASKFI0yVyFTooj3uiSGdpt4nmokJeN7DWUea2fvoiHzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=njpcIzaN; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M5jZE01123398
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 00:45:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745300736;
+	bh=7k9B+9VG6goHgGuB8w9jIN886n77aHGdXpjo78qH00A=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=njpcIzaNgcqWHUrYQ4d5s3qjKRklC0Z2oj/Pn5bgUzOfhetqTbsl7bwmMwz4apiWk
+	 8+iPbYdbBJIwfub0Zx1Q5RxF6O890ZdYCadeqiN/u/lgQ6ZV/QLvGxLhxOfa1enO/A
+	 sKFZFV6esiqjtTjOVBx3oZVLRt9Z8NSzPFPw3JOo=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M5jZia051289
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 22 Apr 2025 00:45:35 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
+ Apr 2025 00:45:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 22 Apr 2025 00:45:35 -0500
+Received: from [172.24.227.136] (moteen-ubuntu-desk.dhcp.ti.com [172.24.227.136])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M5jVcL048512;
+	Tue, 22 Apr 2025 00:45:32 -0500
+Message-ID: <c660f217-9bb1-4ba2-8d59-851f69b41042@ti.com>
+Date: Tue, 22 Apr 2025 11:15:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] arm64: dts: ti: k3-am6*: Add boot phase flag to
+ support MMC boot
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250417233040.3658761-1-jm@ti.com>
+ <20250417233040.3658761-3-jm@ti.com>
+Content-Language: en-US
+From: Moteen Shah <m-shah@ti.com>
+In-Reply-To: <20250417233040.3658761-3-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250422-sc8180x-camcc-support-v1-3-691614d13f06@quicinc.com>
-References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
-In-Reply-To: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Hd0UTjE8 c=1 sm=1 tr=0 ts=68072c54 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=fv2zVKLHILqpzYTyU3AA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: -P8Z-9RW_CT84lHFe7Y5L1GtIwpDAnbx
-X-Proofpoint-ORIG-GUID: -P8Z-9RW_CT84lHFe7Y5L1GtIwpDAnbx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- adultscore=0 mlxlogscore=631 phishscore=0 clxscore=1015 spamscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504220042
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add device node for camera clock controller on Qualcomm
-SC8180X platform.
+Hey Judith,
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On 18/04/25 05:00, Judith Mendez wrote:
+> The bootph-all flag was introduced in dt-schema
+> (dtschema/schemas/bootph.yaml) to define node usage across
+> different boot phases.
+>
+> For eMMC and SD boot modes, voltage regulator nodes, io-expander
+> nodes, gpio nodes, and MMC nodes need to be present in all boot
+> stages, so add missing bootph-all phase flag to these nodes to
+> support SD boot and eMMC boot.
+>
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 12 ++++++++++++
+>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts  |  2 ++
+>   2 files changed, 14 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> index 8e9fc00a6b3c7..aafdb90c0eb70 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> @@ -69,6 +69,7 @@ vddshv_sdio: regulator-4 {
+>   		gpios = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
+>   		states = <1800000 0x0>,
+>   			 <3300000 0x1>;
+> +		bootph-all;
+>   	};
+>   };
+>   
+> @@ -77,12 +78,14 @@ vddshv_sdio_pins_default: vddshv-sdio-default-pins {
+>   		pinctrl-single,pins = <
+>   			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (M19) GPMC0_CLK.GPIO0_31 */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_gpio1_ioexp_intr_pins_default: main-gpio1-ioexp-intr-default-pins {
+>   		pinctrl-single,pins = <
+>   			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (C13) UART0_RTSn.GPIO1_23 */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	pmic_irq_pins_default: pmic-irq-default-pins {
+> @@ -118,6 +121,7 @@ exp1: gpio@22 {
+>   
+>   		pinctrl-names = "default";
+>   		pinctrl-0 = <&main_gpio1_ioexp_intr_pins_default>;
+> +		bootph-all;
+>   	};
+>   
+>   	exp2: gpio@23 {
+> @@ -229,6 +233,14 @@ &tlv320aic3106 {
+>   	DVDD-supply = <&buck2_reg>;
+>   };
+>   
+> +&main_gpio0 {
+> +	bootph-all;
+> +};
+> +
+> +&main_gpio1 {
+> +	bootph-all;
+> +};
+> +
+>   &gpmc0 {
+>   	ranges = <0 0 0x00 0x51000000 0x01000000>; /* CS0 space. Min partition = 16MB */
+>   };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> index 1c9d95696c839..7de4a9f139ad4 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> @@ -313,6 +313,7 @@ AM62AX_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* (AC1) MMC0_DAT5 */
+>   			AM62AX_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* (AD2) MMC0_DAT6 */
+>   			AM62AX_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* (AC2) MMC0_DAT7 */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_mmc1_pins_default: main-mmc1-default-pins {
+> @@ -615,6 +616,7 @@ &sdhci0 {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&main_mmc0_pins_default>;
+>   	disable-wp;
+> +	bootph-all;
+>   };
+>   
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index b84e47a461a014871ef11e08d18af70bec8e2d63..a28360ec0a8c85c2215ee9d47307ef07c8835334 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sc8180x.h>
-+#include <dt-bindings/clock/qcom,sc8180x-camcc.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qmp.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
-@@ -2934,6 +2935,18 @@ usb_sec_dwc3_ss: endpoint {
- 			};
- 		};
- 
-+		camcc: clock-controller@ad00000 {
-+			compatible = "qcom,sc8180x-camcc";
-+			reg = <0 0x0ad00000 0 0x20000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&sleep_clk>;
-+			power-domains = <&rpmhpd SC8180X_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: mdss@ae00000 {
- 			compatible = "qcom,sc8180x-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
+Do we have the bootph-all flags in *-uboot.dtsi for the board to boot up?
+If yes we will have to clean that up after this series gets merged.
 
--- 
-2.25.1
+Reviewed-by: Moteen Shah <m-shah@ti.com>
 
+Regards,
+Moteen Shah
+
+>   &sdhci1 {
 
