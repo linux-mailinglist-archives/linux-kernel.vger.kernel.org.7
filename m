@@ -1,157 +1,102 @@
-Return-Path: <linux-kernel+bounces-613457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F052A95CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:09:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB18EA95CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C8F3B96D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:09:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E001898EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F8619CC28;
-	Tue, 22 Apr 2025 04:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BnM8LZde"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79919F42D;
+	Tue, 22 Apr 2025 04:09:34 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000871946BC;
-	Tue, 22 Apr 2025 04:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6386D18D63E;
+	Tue, 22 Apr 2025 04:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745294951; cv=none; b=Z9Y5dTJARkdHEytl6NHC0VkHv7/VJJnRop/am/hO5AqF+arpkf8Kk3U05vTF9K2ds4unWEqrrKisP4NIgMDn3IufTAc5Z9AJIu5aigLo7E++a4JWtCs9Ql1gT8HHwV5cWG4fMdgm+X1WmX0TkdGXxAfdxGl0b4DiW+YfFfCfYXI=
+	t=1745294974; cv=none; b=Y7mELPwqlJfe4qgiRD2+tbhnkDLoHfmh5FO4tkFFw2CC99i8WPalrlrZzeR2PWLHFO/rMSeOSF4GM5khMyZWZ7XvzHa6AyREBX8dIa+3kzPZm9oM53z5QIyC3mXQ8JB539EjwDL6yaoCqIk+DjH3BvL4QQxmUzRvsYZkHOiyZWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745294951; c=relaxed/simple;
-	bh=oGXyR1DBKZUps0EBd6i0V1Gw2kgYtzNBYJVMJvOvhkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K9HTGrYqkAw3S++oJkykT2A7uOW+CZjaEtSBWHN4y7LtyEIQ70XuPQumYRMvOmjgDNdR2X5H+4oUUD5eUvc0CXeIta773lZqgmqvNRUz9/vuoxZpDKMZs0ZRwIndmYgS1TelO5Q9oSFQMjUozqL4dljLfWedNvF47VCggb8KlTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BnM8LZde; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53M490q01109644
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 23:09:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745294940;
-	bh=TCR9027wx+fa73a2CKan1hN/qQLJy2DiiVy5PdCfoiA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BnM8LZdeBhUvDtAJfzRmKJQzxmgTosYauVK1tXkeBXgkmLgDJ+IcgNZv9NgPYJcuv
-	 VF73WhOTjixI19/obkdmQ0C8UbErGX3CuMEz1VE70CogcA/WDkr3hl5dJZgsERA4Tx
-	 k7svP7MPvz2hM9Mle51oD7gTH2q7/iFfn4W4fkd4=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53M490lB006551
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Apr 2025 23:09:00 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
- Apr 2025 23:09:00 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 21 Apr 2025 23:09:00 -0500
-Received: from [172.24.18.98] (lt5cd2489kgj.dhcp.ti.com [172.24.18.98])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53M48udu066347;
-	Mon, 21 Apr 2025 23:08:57 -0500
-Message-ID: <6ae233c8-6401-4aba-b0f2-55468d375721@ti.com>
-Date: Tue, 22 Apr 2025 09:38:56 +0530
+	s=arc-20240116; t=1745294974; c=relaxed/simple;
+	bh=Af1+AkpqfX2f2V8L9uHzFX6RQOHRce6SCz0W2kXUOSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DMj9801eFWJq+ipZIFrbtgbohSbirMfqGvXmDJYyCknh0BfGC4LzOowi4eiiFk3n/qGLxXyHVzZSjyCj3e34hG5eVFspFu7CY8Xcq3rGXd2I5fUlsgd2ab1Hjj4AcaOSj6bMTCFhjbrHg42Zp3Fg1RprEm2Xyy/tsAmOkbvhKVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowABXjwd0FgdoOfIkCw--.63587S2;
+	Tue, 22 Apr 2025 12:09:25 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: obitton@habana.ai,
+	ogabbay@kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] habanalabs: Add error handling for hl_mmu_get_hop_pte_phys_addr()
+Date: Tue, 22 Apr 2025 12:09:02 +0800
+Message-ID: <20250422040903.2153-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am6*: Set eMMC clock parents to
- default
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>,
-        <u-kumar1@ti.com>
-References: <20250417233040.3658761-1-jm@ti.com>
- <20250417233040.3658761-2-jm@ti.com>
- <8f9aad2c-8e51-409e-be90-21230a53a4cf@ti.com>
- <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <7bc92282-6ce3-4ae4-8eef-897df992487f@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-CM-TRANSID:zQCowABXjwd0FgdoOfIkCw--.63587S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr4Uuw18JF4Duw15Kr47CFg_yoW8GryfpF
+	n3Kr4rXFy5Jr1UZayUtr1IvF1Yv39xWFy3K3ZFka9093s8X3s7u343W3WSvw4UArWkGan7
+	Zw1kAFs8CF18ZrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1lc2xSY4AK67AK6r45MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUUpuWJUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRAAA2gG55bEmwAAsa
 
-Thanks Judith
+In _hl_mmu_v2_hr_map(), If hl_mmu_get_hop_pte_phys_addr() fail to
+get physical address, the return address will be set as U64_MAX.
+Hence, the return value of hl_mmu_get_hop_pte_phys_addr() must
+be checked to prevent invalid address access. Add error handling
+and propagate return code to caller function to fix this issue.
 
-On 4/21/2025 8:06 PM, Judith Mendez wrote:
-> Hi Udit,
->
-> On 4/19/25 10:00 AM, Kumar, Udit wrote:
->>
->> On 4/18/2025 5:00 AM, Judith Mendez wrote:
->>> Set eMMC clock parents to the defaults which is MAIN_PLL0_HSDIV5_CLKOUT
->>> for eMMC. This change is necessary since DM is not implementing the
->>> correct procedure to switch PLL clock source for eMMC and we have a
->>> non-glich-free mux. To remove any potential issues, lets switch back to
->>> the defaults.
->>
->> IMO, we need to fix DM  if not then documentation [0] .
->
-> DM cannot be fixed for only one IP and documentation says what clock
-> parents are supported, it does not have to say what are the issues
-> that come with using a specific clock parent.
->
->>
->> Then only this patch is ok because as per document [0]
->>
->> removed clock by this patch is valid parent for eMMC.
->
-> The clock parent currently set is a valid parent, but we have non-
-> glitch-free muxes and to avoid any potential issues with these, we
-> should switch back to the defaults. It seems like we randomly switched
-> from the default for no good reason and it has been copy paste per
-> platforms since then, so we are switching back to the defaults now.
->
-So, if you are saying parent 
-3(DEV_MMCSD0_EMMCSS_XIN_CLK_PARENT_POSTDIV4_16FF_MAIN_0_HSDIVOUT5_CLK)
-and 
-4(DEV_MMCSD0_EMMCSS_XIN_CLK_PARENT_HSDIV4_16FFT_MAIN_2_HSDIVOUT2_CLK) 
-can produce a glitch while
-clock selection then we should document that in clocking section,
-and with note, what care to be taken when above are selected as parent.
-Thanks
-Udit
-> ~ Judith
->
->>
->> [0] 
->> https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j722s/clocks.html
->>
->> Thanks
->>
->> Udit
->>
->>>
->>> Fixes: c37c58fdeb8a ("arm64: dts: ti: k3-am62: Add more peripheral 
->>> nodes")
->>> Fixes: d3ae4e8d8b6a ("arm64: dts: ti: k3-am62a-main: Add sdhci0 
->>> instance")
->>> Fixes: b5080c7c1f7e ("arm64: dts: ti: k3-am62p: Add nodes for more 
->>> IPs")
->>> Signed-off-by: Judith Mendez <jm@ti.com>
->>> ---
->>>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 --
->>>   arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 2 --
->>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
->>>   3 files changed, 6 deletions(-)
->>>
->>> [..]
->
+Fixes: 8aa1e1e60553 ("habanalabs: add gaudi2 MMU support")
+Cc: stable@vger.kernel.org # v6.0+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/accel/habanalabs/common/mmu/mmu_v2_hr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/accel/habanalabs/common/mmu/mmu_v2_hr.c b/drivers/accel/habanalabs/common/mmu/mmu_v2_hr.c
+index 31507b2a431b..cdade07e22c5 100644
+--- a/drivers/accel/habanalabs/common/mmu/mmu_v2_hr.c
++++ b/drivers/accel/habanalabs/common/mmu/mmu_v2_hr.c
+@@ -253,6 +253,11 @@ static int _hl_mmu_v2_hr_map(struct hl_ctx *ctx,
+ 		hop_pte_phys_addr[i] = hl_mmu_get_hop_pte_phys_addr(ctx, mmu_prop, i,
+ 									hops_pgt_info[i]->phys_addr,
+ 									scrambled_virt_addr);
++		if (hop_pte_phys_addr[i] == U64_MAX) {
++			rc = -EINVAL;
++			goto err;
++		}
++
+ 		curr_pte = *(u64 *) (uintptr_t) hl_mmu_hr_pte_phys_to_virt(ctx, hops_pgt_info[i],
+ 							hop_pte_phys_addr[i],
+ 							ctx->hdev->asic_prop.pmmu.hop_table_size);
+-- 
+2.42.0.windows.2
+
 
