@@ -1,81 +1,46 @@
-Return-Path: <linux-kernel+bounces-614591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAE5A96E4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:25:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86984A96E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFE17A66BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 066DD4403F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D4D2853FA;
-	Tue, 22 Apr 2025 14:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E71728469A;
+	Tue, 22 Apr 2025 14:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TGsoT4C7"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA174284B56
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="niBXZbIe"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0FA285411;
+	Tue, 22 Apr 2025 14:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745331899; cv=none; b=EfWHByxKE6UXMMj1t/4Ay3Fm/LdkUijKLt1el+cZIQ7AMbrHyzcepDLC/Ba8l3+kr6xNqiMMWEYd4taM9pr4Wy1I+sqkZwDmkieExwOsPqUTI43YuA/Uqx0WBYnnsnKPHUSJ+9AWfuz3ZFTJVCfGm8dVQKqZA6XJhyJOBAehkwE=
+	t=1745331951; cv=none; b=NrLvZsYF7hZf/Xv35hWXA2/tkQgkZp+9QyloNPH9VtlkNSXHOzBjlCFPW2HY1oFrBGo1yMPIf3kaMaK38/zgCMl7Wzp87i7kD6Gsn+O3ENjZsxOGE8uUxaRi8f+hn4QbXJaRPcY8jw1HLjJt40SSLPdiFe4KhvHhGFzF2ubNH6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745331899; c=relaxed/simple;
-	bh=xTUfvuKK3CXOlCmv6ULKR27CtF4luRCZUB3LOCIZ7Q0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YuuFYVzdRp6Tx5W2T6gY3c/tIXEapsUWg4uVUlKQ02acf6rmIhc+rYqTl0nAFQEccW4EiivxUCzl6UOcoivTT5r1Hkp2i3dHg9+K15dmXlNT7NmTzPVfSvVcgsX8gjibvIoLl3lruoN43v2jOggm+vfwgPFG9l68ffBHjKuKscQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TGsoT4C7; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c1efc457bso3255535f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745331896; x=1745936696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5Jdsjo/xqjalOgmmmiDVixlLCvZSDipVTEuGlq4N+fo=;
-        b=TGsoT4C73yCkwGFhTdpCEBq9rB4k6qf5Wy3oCkGbTuRnSxn7yolRSI3K6wxG48+ydj
-         dLdf+WrnakMpBtkoIrI1kubWsPqv3HJl/Z7B1/9N64O58qLkKdY3Els44V7ImJgTQZIa
-         yaI6CbCUCIlgMDgXXdaJfyCEX0Ba2QjcAgPnXqBWS0ojkcWMBYaMf2RbAVggj+zMxAQf
-         MJq3Qv0rsFkkpCLgTgpu5s3afpbpD0UaNSXF2odfUN3sOYh90sZEjO4ElTcfhD54sUgW
-         E4h72iArkT/5b5TUgtYztNG2MMdTuYzK3ANMCRnldJiRj1O1dX/hZw0IDfEApyq1ijih
-         77Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745331896; x=1745936696;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5Jdsjo/xqjalOgmmmiDVixlLCvZSDipVTEuGlq4N+fo=;
-        b=qZotrsQ74vLIZYfo4i4aQe8Q13qX5Y4HmRoTTzlurQfWpm+YnAh2F6rgsdWIi698Fs
-         10zYQyXroU+duuEdvOE9oIRPZB+OiLAvTStMFJcNVD/GWwyeveXGkUdxSd77I0BZ6Yn2
-         iCTF3LW1Oz6Fnt9xQ9l7N+u/IOAhC73HmsbhRkB2TKj5l10sp5X8vgl+AJ40b/z0f4TR
-         yesn0cVqrhnMyJQA4HpAuQcrRKi1uAdujkH+184lVK8777H8+em3yFOw9G2ageCIZTnk
-         b6JXgGXlmUr/TKBFbkhHX7WYZB9jWylrvFZa3zgUo44OoJGqQBAdmy/l45MdRuvqInlp
-         UnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSuVzM1JEoWTRMW5TpDIyb4lmB+iIclDm056H4ONJ5BuFAiOL7MJ6f2Dx0J75ZMn0mCK0lsvKBcD/suu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZIX4HcQ09wsH8/514g3JHp/9VSkk7GSkeYhpxmAIFxpvC0YpH
-	MjiBIaW/xVt8bzlG8+05fDzuvvkw6EsEwV7nlv2C3rWoYdYBNtslMzvE4TQRk0I=
-X-Gm-Gg: ASbGncvg6C4htEzMvbs3scnJAdT5qoLvBCsuA9oWHQDIj55bcsJGnBPCylqqv81/dgd
-	z60atd0bis3eks2USM0fvW5xckTD9gasA7nTB+jJcesAWBR0SvYd+gqiXBr6tRV67WxEHArZMZ9
-	6zHyS8lrq30WzCXmKmx/zqf/41V3HLKHpz1SZu24jpyK5OsWGFCgcxSbY7gPdvmgSFdo7/i+AJ6
-	DiQOy/p2AocGnG9PYWWvkEslmxzLPHpxs78TyeIx53dQMfUI7o0Gxb3xoA8K//mUEwsMQkyBj8t
-	+gVaRFpsM/CP/KeeimbDHy+4quu88K7YaRtzi3VbJuAVkgdCqFF7aceunHyNcKbhhNd9GRGpoQ+
-	DCOCkNsfAbahU1vFvAw==
-X-Google-Smtp-Source: AGHT+IEMq6D90tumtgiQfuL2iL5ojy1eqb4ZpCOQZ/eL/OvCUSv21+5Nv4KHfhG+kRfhKAADVI9aCQ==
-X-Received: by 2002:a05:6000:4201:b0:39a:ca0c:fb0c with SMTP id ffacd0b85a97d-39efba5f80amr12032095f8f.28.1745331895992;
-        Tue, 22 Apr 2025 07:24:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:b137:7670:8eb9:746f? ([2a01:e0a:3d9:2080:b137:7670:8eb9:746f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6e05d6sm181482765e9.40.2025.04.22.07.24.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 07:24:55 -0700 (PDT)
-Message-ID: <71a6cd6a-cb2b-4628-b558-01c2172a94f9@linaro.org>
-Date: Tue, 22 Apr 2025 16:24:54 +0200
+	s=arc-20240116; t=1745331951; c=relaxed/simple;
+	bh=NdNX0/c69fqedzWEBG6s7uaqJPkkH7/TqpYU4kSDHcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NVPFQ8hyRVlJARaNMIs5wtNVy9D3scPQYMnjQh0iCwLl2xuC8uvtjb3U2Nv5R5hFl1BvvNRD4WFU65URIEC1J1F76RqilIaJFVAbq8y/nSST0/BWyICDunPkIABue943BYyDz+88W2uMgoWm9r92ApguurOF7QobPym9F887jWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=niBXZbIe; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.233.161] (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BEB6D203B870;
+	Tue, 22 Apr 2025 07:25:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BEB6D203B870
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745331949;
+	bh=LANKuzBhzhY2EF0Ndcxjqh9MZSKem70Fh4CxaCYBZSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=niBXZbIep6vCLnivoxVIzyPj7KO8Wzp6EPsS9DGeBlrJ+vUxGYJPaWozsmhAu9jUO
+	 TcjzR0DC+o0rsvdAmz3PjdPKcwTlvQfCnqa3P+rl8rLQ6Chv16xr1CZYDZJY91ktmL
+	 aUF/SHnDlv6PE63E/+qCSQzlTeZq9qCWMqHK5yQw=
+Message-ID: <54905359-035b-4974-bdae-3e60e903adbd@linux.microsoft.com>
+Date: Tue, 22 Apr 2025 19:55:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,96 +48,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/7] Baisc devicetree support for Amlogic S6 S7 and S7D
-To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+Subject: Re: [PATCH v5 1/2] uio_hv_generic: Fix sysfs creation path for ring
+ buffer
+To: Dexuan Cui <decui@microsoft.com>, KY Srinivasan <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-References: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@kernel.org" <stable@kernel.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>
+References: <20250415164452.170239-1-namjain@linux.microsoft.com>
+ <20250415164452.170239-2-namjain@linux.microsoft.com>
+ <BL4PR21MB4627D99C78C22A8C3355059CBFBF2@BL4PR21MB4627.namprd21.prod.outlook.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <BL4PR21MB4627D99C78C22A8C3355059CBFBF2@BL4PR21MB4627.namprd21.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17/03/2025 08:16, Xianwei Zhao via B4 Relay wrote:
-> Amlogic S6 S7 and S7D are application processors designed for
-> hybrid OTT/IP Set Top Box and high-end media box applications.
-> 
-> Add the new S6 SoC/board device tree bindings.
-> Add the new S7 SoC/board device tree bindings.
-> Add the new S7D SoC/board device tree bindings.
-> 
-> Add basic support for the S6 based Amlogic BL209 board, which describes
-> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
-> booting up into the serial console.
-> 
-> Add basic support for the S7 based Amlogic BP201 board, which describes
-> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
-> booting up into the serial console.
-> 
-> Add basic support for the S7D based Amlogic BM202 board, which describes
-> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
-> booting up into the serial console.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
-> Xianwei Zhao (7):
->        dt-bindings: arm: amlogic: add S6 support
->        dt-bindings: arm: amlogic: add S7 support
->        dt-bindings: arm: amlogic: add S7D support
->        dt-bindings: serial: amlogic,meson-uart: Add compatible string for S6/S7/S7D
->        arm64: dts: add support for S6 based Amlogic BL209
->        arm64: dts: add support for S7 based Amlogic BP201
->        arm64: dts: add support for S7D based Amlogic BM202
-> 
->   Documentation/devicetree/bindings/arm/amlogic.yaml | 18 ++++
->   .../bindings/serial/amlogic,meson-uart.yaml        |  3 +
->   arch/arm64/boot/dts/amlogic/Makefile               |  3 +
->   .../boot/dts/amlogic/amlogic-s6-s905x5-bl209.dts   | 42 +++++++++
->   arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 97 +++++++++++++++++++++
->   .../boot/dts/amlogic/amlogic-s7-s805x3-bp201.dts   | 41 +++++++++
->   arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 99 ++++++++++++++++++++++
->   .../boot/dts/amlogic/amlogic-s7d-s905x5m-bm202.dts | 41 +++++++++
->   arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 99 ++++++++++++++++++++++
->   9 files changed, 443 insertions(+)
-> ---
-> base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
-> change-id: 20250221-s6-s7-basic-f300c30877e6
-> 
-> Best regards,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+On 4/18/2025 6:39 AM, Dexuan Cui wrote:
+>> From: Naman Jain <namjain@linux.microsoft.com>
+>> Sent: Tuesday, April 15, 2025 9:45 AM
+>> Subject: [PATCH v5 1/2] uio_hv_generic: Fix sysfs creation path for ring buffer
+>>
+>> On regular bootup, devices get registered to VMBus first, so when
+>> uio_hv_generic driver for a particular device type is probed,
+>> the device is already initialized and added, so sysfs creation in
+>> uio_hv_generic probe works fine. However, when device is removed
+> 
+> Sorry, I'd like to nitpick :-) I guess the maintainer(s) can fix these for you
+> so v6 might not be necessary, if there is no comment from others.
+> 
+> s/uio_hv_generic probe/hv_uio_probe()/
+> s/device/the device/
+> 
+>> and brought back, the channel rescinds and device again gets
+> s/rescinds and device/gets rescinded and the device/
+> 
+>> registered to VMBus. However this time, the uio_hv_generic driver is
+>> already registered to probe for that device and in this case sysfs
+>> creation is tried before the device's kobject gets initialized
+>> completely.
+>>
+>> Fix this by moving the core logic of sysfs creation for ring buffer,
+> s/for/of/
+> 
+>> from uio_hv_generic to HyperV's VMBus driver, where rest of the sysfs
+> s/rest/the rest/
+> 
+>> attributes for the channels are defined. While doing that, make use
+>> of attribute groups and macros, instead of creating sysfs directly,
+>> to ensure better error handling and code flow.
+>>
+>> Problem path:
+> s/Problem/Problematic/
+> 
+>> vmbus_process_offer (new offer comes for the VMBus device)
+> s/new/A new/
+> 
+>>    vmbus_add_channel_work
+>>      vmbus_device_register
+>>        |-> device_register
+>>        |     |...
+>>        |     |-> hv_uio_probe
+>>        |           |...
+>>        |           |-> sysfs_create_bin_file (leads to a warning as
+>>        |                 primary channel's kobject, which is used to
+> s/primary/the primary/
+> 
+>>        |                 create sysfs is not yet initialized)
+> s/sysfs/the sysfs file, /
+> 
+>>        |-> kset_create_and_add
+>>        |-> vmbus_add_channel_kobj (initialization of primary channel's
+> s/primary/the primary/
+> 
+>>                                    kobject happens later)
+>>
+> 
+> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+
+
+Thanks Dexuan. I'll make the required changes and send next patch.
+
+Regards,
+Naman
+
 
