@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-614783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDA9A971FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FF6A97206
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 968A43BF565
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C2916989E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0C914C5B0;
-	Tue, 22 Apr 2025 16:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX3Z65O5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A018128FFEF;
+	Tue, 22 Apr 2025 16:10:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0D720102C;
-	Tue, 22 Apr 2025 16:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6377D1E8353
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745338167; cv=none; b=JdhOK2cufGqqifInAbboux/Bn/0HFE3WEntTljgHt/6tSaWB2CPtQHLdatxrF5w7eRRS/G5LUMVCrd29vEPfIca8zF27DyKb5uQuutKHygtMmBNJ4fb3AB+Yp9fdsMk7ZMieJ4wXpy2FcsU1CxQ356D1BrqVpvm9F3g/fMpmUOw=
+	t=1745338224; cv=none; b=i+LdSkCoF+1j2ba33HTPBZ4Z11ZPRMHOdbMpItE/wYqtXIHdDEaalS5mhgaU54pdrj1DY8tYKaUYJauNaHr1rR5egXuTRdDyYUQcwg3GRhcYm/tNBLwye6ZUj+ghXcwEXrCviXZb5UFyrsrHm5yAtyXLj8H13XTQwFN1OZ2pHpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745338167; c=relaxed/simple;
-	bh=Qd8a4qsvk9G4mClmpO236TQ3jYEPXO158QQTn0cWxKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=dGA5+b+cArV6dIFwPjDmNC/iTf0wyi+ocUCPKDxf2aYkJyseq/pW3G9ghCDVJQUu1OGuT+43q9/rQsr6ZRUeFtJiWEGA+mfK20mUlQ6AQMA1sLGf51D7jOpnhEmWN5RGKfoIsEdA/MSeca9VAA5+65ZmqSRTZroKZp90mNvdmr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX3Z65O5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D83FCC4CEE9;
-	Tue, 22 Apr 2025 16:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745338167;
-	bh=Qd8a4qsvk9G4mClmpO236TQ3jYEPXO158QQTn0cWxKo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HX3Z65O5qlPLh9w2tzD5zgqTmEEUNEK6frdS/LWvlhyQODlex5+w4HSJdCbGoofuA
-	 0gQn+BMTfXd7XLr5lao+kMAgSu5Txq5IIBHoQq02UTsB1+yfusdHTZI/mXSP95k5IE
-	 JCqMtjnYl26+MirO5su+/S/djJo/B6kalqrlikwIdjb4Vu39zEDTDScyyECsjs7Fai
-	 xj3CMInF+87Vc5jbImMVngqirfWPFFY/EVDQg/io5f0AlQfwCXr3BL8xM6gBslPVaG
-	 2Q2/l3deREN+8U1BisoC7SipI13tcn9e/v9PO9fsuIMRuduBgAtTmFYvGLoD4BtpK9
-	 aTOM6KqJS8fLw==
-Date: Tue, 22 Apr 2025 11:09:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jonas Gorski <jonas.gorski@gmail.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, ath11k@lists.infradead.org,
-	ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] PCI/arm64/ath11k/ath12k: Rename pwrctrl Kconfig
- symbols
-Message-ID: <20250422160925.GA331992@bhelgaas>
+	s=arc-20240116; t=1745338224; c=relaxed/simple;
+	bh=nJevJKzYAzfxBEgFa8pg+lNR+fuS5jiwgYumveiDxJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cx/B0gOE/3gJUgTdKy5W13jjCaEj5VD4HBDocDbVhIotOPw3gqFkYGK/W+bCNecy6BLgrWsXXfNh2XJOeAlmT+jSL2MWPE+c4RoaCM4536DvlqWAQayB4dxZEetWWOuq9C9LhztVe9onT4NOewMvwIYnGk6p3BujsyX3pEiV9IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1u7GCK-0004il-Im; Tue, 22 Apr 2025 18:10:12 +0200
+Message-ID: <4c195c2a-81c6-41c8-a134-1c7813904115@pengutronix.de>
+Date: Tue, 22 Apr 2025 18:10:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250402132634.18065-1-johan+linaro@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] i2c: imx: drop master prefix
+To: Troy Mitchell <troymitchell988@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ Yongchao Jia <jyc0019@gmail.com>
+References: <20250421-i2c-imx-update-v1-0-1137f1f353d5@gmail.com>
+ <20250421-i2c-imx-update-v1-2-1137f1f353d5@gmail.com>
+Content-Language: en-US, de-DE, de-BE
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250421-i2c-imx-update-v1-2-1137f1f353d5@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-[cc->to Catalin, Will: note the arm64 Kconfig change; my understanding
-is that this shouldn't break existing configs]
+On 4/21/25 07:36, Troy Mitchell wrote:
+> In light of the recent updates to the i2c subsystem,
+> drop master prefix.
+> 
+> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
 
-On Wed, Apr 02, 2025 at 03:26:30PM +0200, Johan Hovold wrote:
-> The PCI pwrctrl framework was renamed after being merged, but the
-> Kconfig symbols still reflect the old name ("pwrctl" without an "r").
-> 
-> This leads to people not knowing how to refer to the framework in
-> writing, inconsistencies in module naming, etc.
-> 
-> Let's rename also the Kconfig symbols before this gets any worse.
-> 
-> The ath11k, ath12k and arm64 changes could go theoretically go through
-> the corresponding subsystem trees in turn once they have the new
-> symbols, but to avoid tracking dependencies over multiple cycles it is
-> much preferred to have all of these go in through the PCI tree.
-> 
-> The wifi patches have been acked by Jeff and I don't think Will or
-> Catalin will mind the single rename in arm64 if they don't see this
-> message in time.
-> 
-> Note that the patches could be squashed into one, but keeping them
-> separate highlights the changes done to other subsystems. I also find it
-> easier to review the changes this way.
-> 
-> There are some new pwrctrl drivers and an arm64 defconfig change on the
-> lists, but the former should also go in through PCI anyway while we can
-> make sure that the defconfig update matches the new slot symbol.
-> 
-> Note that getting this rename into rc1 would be great as that way it
-> would end up in most subsystem trees soon as well.
-> 
-> Johan
-> 
-> 
-> Changes in v2:
->  - drop deprecated symbol for the new slot driver to avoid having to a
->    add a new user visible symbol (e.g. any early adopters will be asked
->    to enable the renamed option again)
-> 
->  - move arm64 patch last two avoid temporarily not having the pwrseq
->    driver selected (Jonas)
-> 
-> Johan Hovold (4):
->   PCI/pwrctrl: Rename pwrctrl Kconfig symbols and slot module
->   wifi: ath11k: switch to PCI_PWRCTRL_PWRSEQ
->   wifi: ath12k: switch to PCI_PWRCTRL_PWRSEQ
->   arm64: Kconfig: switch to HAVE_PWRCTRL
-> 
->  arch/arm64/Kconfig.platforms            |  2 +-
->  drivers/net/wireless/ath/ath11k/Kconfig |  2 +-
->  drivers/net/wireless/ath/ath12k/Kconfig |  2 +-
->  drivers/pci/pwrctrl/Kconfig             | 22 ++++++++++++++++------
->  drivers/pci/pwrctrl/Makefile            |  8 ++++----
->  5 files changed, 23 insertions(+), 13 deletions(-)
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Applied to pci/pwrctrl for v6.16, thanks!
+Please use a different cover letter title for your v2, adapting the
+mainline doesn't tell the reader anything about what the series is about.
+
+Perhaps something like i2c: imx: lock guards and cleanup
+
+Thanks,
+Ahmad
+
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index cb96a57df4a0..dd07fde79632 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -1690,8 +1690,8 @@ static u32 i2c_imx_func(struct i2c_adapter *adapter)
+>  }
+>  
+>  static const struct i2c_algorithm i2c_imx_algo = {
+> -	.master_xfer = i2c_imx_xfer,
+> -	.master_xfer_atomic = i2c_imx_xfer_atomic,
+> +	.xfer = i2c_imx_xfer,
+> +	.xfer_atomic = i2c_imx_xfer_atomic,
+>  	.functionality = i2c_imx_func,
+>  	.reg_slave	= i2c_imx_reg_slave,
+>  	.unreg_slave	= i2c_imx_unreg_slave,
+> 
+
+-- 
+Pengutronix e.K.                  |                             |
+Steuerwalder Str. 21              | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
 
 
