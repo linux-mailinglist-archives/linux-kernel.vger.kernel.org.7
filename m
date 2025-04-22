@@ -1,278 +1,235 @@
-Return-Path: <linux-kernel+bounces-614251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DFEA96813
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:45:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869ADA96814
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667F63B0C2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41B717B7C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDE827CB0D;
-	Tue, 22 Apr 2025 11:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5B327C87D;
+	Tue, 22 Apr 2025 11:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8YE7EP8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="hC7a5M3q"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022112.outbound.protection.outlook.com [52.101.126.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223EE1F152D;
-	Tue, 22 Apr 2025 11:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745322315; cv=none; b=abSl9o9GsBJvYEtcDRKbwMcw0JZk8+d/nYcqcrHZTn0cOhtOsZxFTXOeYZiW6qtQHFg++Oetj7Uo2gmZUDpU297+nR9mTnmGCbUdoLS/nXcbdOlTV3pcBfOj4Sx/pee0DEMI6AdBqD/kQPs+iNO0qe+5ACqIB1bS2hOtyELjMwc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745322315; c=relaxed/simple;
-	bh=+cAYzrgPIFB3bmk1XxbsIRRVowOU2YhzebrGhkUwKb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVGYl1JC2SeA/jdkLaRd/DrPwvKz8AAIN76IxZCiL29kuqoFBI5a13BOVvD+sV4nrug52kUiFx8Lpn1B88LMnfG83a0CTHlQHKc+B5H6K9nEvso/wKSvssL+yKdJ9BbhwLDddGcH35rQKzIFlz7Gkr6AUnn9dUp+WbMx+r7mkJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8YE7EP8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3373C4CEEA;
-	Tue, 22 Apr 2025 11:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745322314;
-	bh=+cAYzrgPIFB3bmk1XxbsIRRVowOU2YhzebrGhkUwKb4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8YE7EP8Qz+DcdeKrJkBB1/rGjSrMnbo2Q2vRh0AIMZmEgBnUY0o+AydUKhahshoj
-	 4Bawqk4u+v3YY/GTETtTrYIuz+VZ+PRGguLd8GUF3rW9Ak1/sh7XDc8QjCuBRGwyCe
-	 jIv8nmZygCFxxxMkgEueTHGnI5Gqdd9IlJGg2ou+oX28tAdkjgnoB1n54fh9osVutT
-	 zGcKkSp2W7XmaKO8gSBw8fT/9zIzhZp7Jrv3TOA6TkNj+DB0YmshjE15f14/5Trp3h
-	 xDgfM4tb75YIGHsYtJCyrjHy5f7iW3RpzHtX024NXJ4reh+jFMfsjqBZf9O+W8x0ad
-	 XSXB1f9E0th2Q==
-Date: Tue, 22 Apr 2025 13:45:07 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 09/16] gpu: nova-core: register sysmem flush page
-Message-ID: <aAeBQ1aCQSrGFqCd@cassiopeiae>
-References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
- <20250420-nova-frts-v1-9-ecd1cca23963@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B341096F;
+	Tue, 22 Apr 2025 11:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745322340; cv=fail; b=NONcaqgY06UCTOLMNY6v+qeKhvwpnZJLPuVmyVGDvmLwhxavy9rIqWk0DDplmwnjPUm/HQygoTwYJAwQGlqXXTVt7v1sBKSyySJbkbFuewotrCKrGnyL6ycA0ze/cN/4RPdKfpozk6nn6LRTpyv6AAPK0x83eQU8LAjXkHoZy58=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745322340; c=relaxed/simple;
+	bh=/K5aGrb3A+48cfG6wB1krGwoe0JvnTReUUSAiXZfro4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=l+6KIShWKMGvpNWOMoRvlTWIuUH8ahHNwmPPyFtmaxBkZs7aLicL6IEoZdohXL2TLEHrkx5piRsd4iI0TAgte6KR7iMNK/YUxJG/XSEs3Mh/p5n+A7Y+wF5+209mz+IhiMnc7bx6epV9oNs+9ttirLaLUH9Fx66dQrHqkj+3DH4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=hC7a5M3q; arc=fail smtp.client-ip=52.101.126.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j8tyBu4q9If+T7Szz5phoDpkJ4gwbsvS4eyFqzOwUIQ6VCCyWR9E3dbLKcVeaGmDtP3nmfE0wBTqzt8rsckS0TmJ3poLN50R5zSBua6nP0hc9IOAWV4hmg17YEIrgOxuoJ4AtnTfYqlFSkK9+mPWlO9A5FRfACo1z6CgsO/Zum1Iy6faago5fuVID2+3R+kCaN8jjgE+o3Fw/uO+aM4vE+mj0UuSe/XpGPhPBblTCWKr2BXLB5KA5akKdVGEh21/Uepyv6DHDyNLDDW4MvmgPzXkx4pBtD3WFBXb6Cv+UXMxRpXfflRM25MfzYjxQA74yAP8Xuxed/Yg9NJMw3g9mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LLJuCGyNc0R0GtueYEuoVTEK3UJrshkSS50nq7FppYM=;
+ b=PQDAV+/0QU80cHChHaNXdLbjrbxDwj5uqD33sfOd4vNCDbpS69+fQJCz2O7H/cFwyatwmLDGrPSQUN1y8waXg7ho5Mcj17ug3zOHyFNDZfUVmrPN0kyHx7eATp+tZh8Q9drB01wSXLL8R4tmmrBVB8DOGlf90zt8U22Xy6CG86Vm5NFw/aawPLSVLbrUERJ+hi2iEbUf0Yevlsz0cnkV4kGaM+2/wIDYNPdbk5jnKiMVisQ8XkYbUUMdfszIl0NVuzntf6jw9H7fWHKR28G+5CB2epYNxN0qliq31ZbdyBsWtFSuo0kI6kFtEsM2NvUNDIhVd+2CUodIspWWupwXTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LLJuCGyNc0R0GtueYEuoVTEK3UJrshkSS50nq7FppYM=;
+ b=hC7a5M3qIB74oboszBrnfPaVx4/meXGtFYPK3lKSKrQmKKuymvX7fw0rbPpJuvYT9E6+EFMHSwvB2y0wpm5fhePME44BfFlfHLSCjY91Gx7ayEfibB/LgrgFwVPjwM6cCGr3ud72hgrl/V2eJwPFFO0eGScBowiYNuF0kmccm7IcxN8Mx5Hs7Wka9yREVqNNXWXKeXgJn4eDkj4eNDAIMLcBh+YNk6SHecT40ISaj5sJ2yMh9bVAiXD/46mhmDDyGI3BXrvpl1+kRbRpcnbhC5gUaPblseyC3csx6J6zYNlxW0wBM0LE53WBU+g2hRUaEaAPI9Hz1Rf4HJFY/EFFTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by SE1PPFDFE2FD117.apcprd03.prod.outlook.com (2603:1096:108:1::86b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.24; Tue, 22 Apr
+ 2025 11:45:32 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%5]) with mapi id 15.20.8606.027; Tue, 22 Apr 2025
+ 11:45:32 +0000
+Message-ID: <a175ed1d-9e57-4150-af8f-7ca785203108@amlogic.com>
+Date: Tue, 22 Apr 2025 19:45:26 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Baisc devicetree support for Amlogic S6 S7 and S7D
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0047.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::10) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250420-nova-frts-v1-9-ecd1cca23963@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SE1PPFDFE2FD117:EE_
+X-MS-Office365-Filtering-Correlation-Id: cce7eb0a-0eb8-43aa-ae6d-08dd81932f74
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V3RwOVFkZW9VWUhwL0hYeDJDSnFhNjNIbzZKaDNmSkFwdjNrN1Z0bjhmMHA1?=
+ =?utf-8?B?QU1Ocmk5VXhmYk5HYUkyV0N4RnFwWjMxRDZEQVNKcEttbGo5WGdUOCtwSDZo?=
+ =?utf-8?B?eDBVYlBJVEpZelNYOU9TOENFWDQwVjBwN0k3UTZBREw1STl5S3dLejU1Vk1U?=
+ =?utf-8?B?NGNTTjFML2xmMWZaWnZiQ21GdmFYZ3d1N05RQndhbkdtWGNjUWFUbGtISjUx?=
+ =?utf-8?B?ZFNxZG9PNFFzeEhlMk0zU0hUV2tBR0FBY0JJREFKWnRQNXJ0UEM4VlhGZTJ5?=
+ =?utf-8?B?Nno5TlBJS1JxaUVzelp4VzJsSEZTazlqL2FwdDRPQ3g0QjBTSUc3dzJSNU0w?=
+ =?utf-8?B?TXFERFFyK0VrOG90anNRL3BIQVZ5NkRjRU9mekVVSGxJamh6TkFqTEI0QkND?=
+ =?utf-8?B?QlBtM2hZWkFMdk5HMzJXNGxGOUFiMUpzaytwcGlWaUZuZEhRS0h2UHlCdS9t?=
+ =?utf-8?B?VnBManVoaXZoOUovS2dVaDJ5aTZmRmhUUFVwbGE2eUdGb01hbFhCTDh2Q0kz?=
+ =?utf-8?B?U2lJSmhQbTJ3Skp0ODd6VmNjQ2F5dVJpZEJwR21pUlRNQ3ZCd0Q3WFg2MHF2?=
+ =?utf-8?B?ajlhQm94bC9ad2F0REQ4UllXak1FeU13UVFnRDBmUzBwMDZQbW5ZT0ZFSGVi?=
+ =?utf-8?B?NTc3WmhPUkpTeGVJOVBlTmEzeG4xTG9GbEFvRml4ZXBFY2s5ODZCY1hBejZu?=
+ =?utf-8?B?NU9kTVdqR1RqTUtzb0ppM2pHZFNmNWhScXFqUEVMNXY0aEZucDJHZnRpQVdW?=
+ =?utf-8?B?MXRXS0dRYkVRYnVnYUZKUkd3STVXTk80Y0FTUitsa3dGTWhYMjBMeG1kZHU2?=
+ =?utf-8?B?K0xTM2hmbm1TcHVSWWZ5VmlCOEJXTC9SbXJBTVYxVGZBaXhUMjk4cmE1dUJF?=
+ =?utf-8?B?RXpjemZHaVhDYnMwMEhuaXRScWk4angzSlduMEt1bXpnenVFME9MVGJ5VkRs?=
+ =?utf-8?B?cTBxZ01VdUI3VUwwNjdyNU1FQVVSdjQ4UWFLYy9VVk9VV2w2dlkzTFVHV2F0?=
+ =?utf-8?B?bjVTNndDRDYyS1AvSFQyZFY0cXJVTTdYY3VvZU1UNjgzTHByMmw4OTBHM3Nk?=
+ =?utf-8?B?cjBqUHQ0U0Y2QUFMdlN6RFFPQzZrRXVib3UxcHQ5TDVNY3lpK0JIZlloVytS?=
+ =?utf-8?B?bEs4UzBIWHNaSmQvRlc2TVNBY2Z5RjdXcGtkSXYwSndEd3NyZUd1OXFtYmVo?=
+ =?utf-8?B?eWk3c09DTEthT0pVZStwTGoxeDIyWHpEQ2tyYy9pR043eHhXWGQrcWd0SGgx?=
+ =?utf-8?B?TTFpNE1uV2FmVThOVEhPZHBLK2FnUmN0OTV0YUdxOVNvNEtQSlRZU0RZdW1o?=
+ =?utf-8?B?b3lxbHlidWlrUXJoL214Y1dMK1pFeEhCQ0lPQmJBM3BJOXF6N000c1pYQjNU?=
+ =?utf-8?B?UlpaMmU5RkI1aE1DWnNVSkN5REFUNHUybTk2OUR4M2RDcW93VXBpOFJYbkpt?=
+ =?utf-8?B?ZFVyU3kyNDc1ZE5IWkptVXF5L3hMMUlrSzQzcTJjYVhPaStSMFJJOTFZVFNs?=
+ =?utf-8?B?YmhpYUNqWFFsVmJzR2R3TTBSNXNoSWF4TVZkQ2VTVUtSUHdvTVJOS2RtZXd1?=
+ =?utf-8?B?SjJRazNBTnJITjJ4M0JPS29MQXF1ekZ5ZHlLeUNXNTdYajV4Z0FHUzkzdjF4?=
+ =?utf-8?B?MmExS2llakh5d3BCbzgzVEZORVdNOS9FMDlGdnUwcGZnVFIrcDBFbXF2b3ds?=
+ =?utf-8?B?NFIyYkhFNGRJVXJkOGhLbEp5SzFlY3ZQRXFsYTI1V1VZWUNBbG1IRXFlWUx3?=
+ =?utf-8?B?eGZtT0I3T21nZGFKeFMreEhacThDeWo1QzVxZGpSQVlKdHMvWGpDNmdCRUpJ?=
+ =?utf-8?B?M1NOM01BY1VtUmttM2o0WENFcklNN2NFQWNIMmtWeXY2cEsyVkJ6K1RSSkIr?=
+ =?utf-8?B?MCtUYytZbTRoS0tzbGtsZnJDVnRnTm9kTzJ3dmtOcUFnZEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WGZLTzBzb0VjdEVmYTNOcFRDekgvUzBxc3pPSk41ZjljK3hZczJ2RE5OVUlB?=
+ =?utf-8?B?SWczMXB4QXFvdTlXem5XNkVMb3NBS1F4bXRseE9lU2tjZEpYVzFITFFzRUZ3?=
+ =?utf-8?B?eFFHK2tvUkpvcDdxZTFGNHNCL2hXZlYyOEY4YWFLbDN4em5Kb1RJMEFzdE00?=
+ =?utf-8?B?YzdMWmlkSHNRUzJubXZxRDBUUkNLK29heU9sWEc2M0U0cEdyeFpBU3QyUVJj?=
+ =?utf-8?B?U1VZMk0zajQ0bU1DazVkNGlWVm9xSlFzNlNOSEE4ZDhlbEh4WUNCT3phczlh?=
+ =?utf-8?B?d3VlWUFGSHZjYXNVcncwVkhmSkNqcDQwSnkxRklRNXBCVFhHU0o5all1UmVu?=
+ =?utf-8?B?em9qOXZHN1ZrMkRnRTlyS2Y2MWNSY3phWE9OaEVTRWxKRmJ2a3pSeUhvUWxH?=
+ =?utf-8?B?Sm1rNEFEaXl0eHVKbzFWTVZxMWpEd0RrVHZDbkxTelplakQ3Q0EzNnFnZnFv?=
+ =?utf-8?B?Q0pOWU83aVY3L01sSWlTbmlIZ2I0bllsVUhSTkhJZ3FkTTU5NUNDSW9XODlp?=
+ =?utf-8?B?d0NlaVR1QWxZYkdrK2IySGdzZkxwdE01QjdFMlFPWWVJYXJvUmxtWHZrY1FC?=
+ =?utf-8?B?bStqL015a2F1c1Bqbkg2NmMwRGs2MDd6c00yTmllZ1dLS2NUQlhCbWFnbnRt?=
+ =?utf-8?B?ckpuWGRranpxTHRnTituU1VnRnpKVFNvZUFPQlhLcVB1cktVdWYzTll1aTVV?=
+ =?utf-8?B?NXZSTHJJcXRONXFIV0djbSt0Z0o3YWdSQStwdlhNT0ZkTGJPR3JUMjdUQzls?=
+ =?utf-8?B?aWI5b1Q4azMvTDMrdkd3N2J5K0RRZ0ZzNXU2TEljZkUrckFLb1d2WmxKWE9E?=
+ =?utf-8?B?TkRTR2dzOXZoWDFrTWVHekpJdStWRml4SEF6RFZrVEs4RDBDOUdvcXYrRFRS?=
+ =?utf-8?B?VE9WZUNlOHpWWEZQOURHQ2pMbTNHb2M4UXlmZ1RkdW9VOTZoWGVEaHh4cGRa?=
+ =?utf-8?B?MWJsak1ZT29Da3NsTkk0ZkZlcnltdklSdVFGZlVRQkpmM0VRK0lJeHE5WTFB?=
+ =?utf-8?B?MXBJNEhxUEdGM2FHZ3ZrTy9saVVPSGR3d0Z2K20ra1UwbkM0bXlNU3VwbldT?=
+ =?utf-8?B?OGpIR2RXM2pyTGdvQTdSWWpMdlUyUDZkY1FER3EzTkM5dUhEdUR5RHhxVHBT?=
+ =?utf-8?B?UHc4aVpCdnRGcEVBWXU0dDVSQUwvalFUYVp0azdTeXd3S0szY0ExUEZpR3R4?=
+ =?utf-8?B?L05ZKzN5LzFvY3RITlZJbTN5VFZtYkFKand5SDRKQkk1bnkzWTFSaGZZNVJa?=
+ =?utf-8?B?MUZXbEFLbVJJRGVLTGh1bW5uSC9vR0UwR0lTR1gwRnVjUWIyU1A0K1B6aEp1?=
+ =?utf-8?B?cEVjRzVZanl1b3ZNd2ZLM0NTaTVQVFZleWx2Z084Vm5KOVZ4TWhvNXNmNjVw?=
+ =?utf-8?B?N2RpdzFneDVsZ0NXUWJiRWlFeVQzcGpKL1ZmOXkrV05DOHRaUll6L2xRTVZQ?=
+ =?utf-8?B?SDJ6NVMzR1M3UFpSWitUMHJlakJUWmZONWZUVndDOFpXbzh6VHhnUmIvaUlF?=
+ =?utf-8?B?b3NUcmk1UjNIMG9HcDdMQlN6QkJoNnhTbVMxZTM1RnFDY0IwaVBNQXdkaW55?=
+ =?utf-8?B?NCtJekVCVXN6TVg4aXRLdjV6OWR3cDZVb21uSkdoZ3VQUjVHSnlKSWVHd1JS?=
+ =?utf-8?B?eG96NVNBRUFnRVN5SmwrVEFVZUIwOERHVnZVRHBLZkQ4dUtZZWhOZncrTXlr?=
+ =?utf-8?B?YndOSHpkSGRpM3Z0UmxjU3diY3lTZTRob0VMU1o5bDlJQTNDcTJnNU53bW1G?=
+ =?utf-8?B?S3dwL3NFR2tkT3JXRGhIUFl2NHo4bU9taHFQUmpQYXYwMktmWEVvRDVsaHBh?=
+ =?utf-8?B?RGxBODJ1bDZTSW9qWFlFTmlicmJPWDI0T2JRVHN0T3NLWkE0TUM4bVhjaDgv?=
+ =?utf-8?B?ZzFBeStDZGcvRmxSQlhmeCtGdDQwVERvdXpRdDNuU1ZNWGdNcGZBTTQ0OHZo?=
+ =?utf-8?B?c2VXMmRHY3BEMCsrT2ZEQkZKNml3TXNKc0JGQUdqa2xsU0FybmRkeTljM2pJ?=
+ =?utf-8?B?em14YVRLdnU1SXRsMnJHUHJqOVA4bUZUYXIzWDVwSnkxc09uTU5wRzhTSDh0?=
+ =?utf-8?B?U2FYbDhvb1NRamVWWS8yRy92SW5BQ1V1OS9vN3hXaGhPcU94MXBVNDNFUVpq?=
+ =?utf-8?B?MEFVYVhNQkJZOHZSamtVRXgrYUFTTk02YU9USWZSTUszOEJVVkN5eHQ0TnNL?=
+ =?utf-8?B?VEE9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cce7eb0a-0eb8-43aa-ae6d-08dd81932f74
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 11:45:32.3331
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s8xzsNrVFt7YZ4FTD++d1bECadOf8RLpgjafACWz5HAXROKbz5VAvrgbg1jWVRnd+EP+4xY2FHkxtjHP77yzA5WGZC0c08rNI/Pgvz4NugA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPFDFE2FD117
 
-On Sun, Apr 20, 2025 at 09:19:41PM +0900, Alexandre Courbot wrote:
-> A page of system memory is reserved so sysmembar can perform a read on
-> it if a system write occurred since the last flush. Do this early as it
-> can be required to e.g. reset the GPU falcons.
+Hi Neil,
+    A gentle ping, thanks.
+
+On 2025/3/17 15:16, Xianwei Zhao via B4 Relay wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Amlogic S6 S7 and S7D are application processors designed for
+> hybrid OTT/IP Set Top Box and high-end media box applications.
+> 
+> Add the new S6 SoC/board device tree bindings.
+> Add the new S7 SoC/board device tree bindings.
+> Add the new S7D SoC/board device tree bindings.
+> 
+> Add basic support for the S6 based Amlogic BL209 board, which describes
+> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+> booting up into the serial console.
+> 
+> Add basic support for the S7 based Amlogic BP201 board, which describes
+> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+> booting up into the serial console.
+> 
+> Add basic support for the S7D based Amlogic BM202 board, which describes
+> the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+> booting up into the serial console.
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  drivers/gpu/nova-core/dma.rs       | 54 ++++++++++++++++++++++++++++++++++++++
->  drivers/gpu/nova-core/gpu.rs       | 53 +++++++++++++++++++++++++++++++++++--
->  drivers/gpu/nova-core/nova_core.rs |  1 +
->  drivers/gpu/nova-core/regs.rs      | 10 +++++++
->  4 files changed, 116 insertions(+), 2 deletions(-)
+> Xianwei Zhao (7):
+>        dt-bindings: arm: amlogic: add S6 support
+>        dt-bindings: arm: amlogic: add S7 support
+>        dt-bindings: arm: amlogic: add S7D support
+>        dt-bindings: serial: amlogic,meson-uart: Add compatible string for S6/S7/S7D
+>        arm64: dts: add support for S6 based Amlogic BL209
+>        arm64: dts: add support for S7 based Amlogic BP201
+>        arm64: dts: add support for S7D based Amlogic BM202
 > 
-> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a4162bff597132a04e002b2b910a4537bbabc287
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/dma.rs
-> @@ -0,0 +1,54 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Simple DMA object wrapper.
-> +
-> +// To be removed when all code is used.
-> +#![allow(dead_code)]
-> +
-> +use kernel::device;
-> +use kernel::dma::CoherentAllocation;
-> +use kernel::page::PAGE_SIZE;
-> +use kernel::prelude::*;
-> +
-> +pub(crate) struct DmaObject {
-> +    pub dma: CoherentAllocation<u8>,
-> +    pub len: usize,
-
-This should be covered by CoherentAllocation already, no? If it does not have a
-public accessor for its size, please add it for CoherentAllocation instead. I
-can take the corresponding patch through the nova tree.
-
-> +    #[allow(dead_code)]
-
-Please prefer #[expect(dead_code)], such that we are forced to remove it once
-it's subsequently used.
-
-> +    pub name: &'static str,
-> +}
-> +
-> +impl DmaObject {
-> +    pub(crate) fn new(
-> +        dev: &device::Device<device::Bound>,
-> +        len: usize,
-> +        name: &'static str,
-> +    ) -> Result<Self> {
-> +        let len = core::alloc::Layout::from_size_align(len, PAGE_SIZE)
-> +            .map_err(|_| EINVAL)?
-> +            .pad_to_align()
-> +            .size();
-> +        let dma = CoherentAllocation::alloc_coherent(dev, len, GFP_KERNEL | __GFP_ZERO)?;
-> +
-> +        Ok(Self { dma, len, name })
-> +    }
-> +
-> +    pub(crate) fn from_data(
-> +        dev: &device::Device<device::Bound>,
-> +        data: &[u8],
-> +        name: &'static str,
-> +    ) -> Result<Self> {
-> +        Self::new(dev, data.len(), name).and_then(|mut dma_obj| {
-> +            // SAFETY:
-> +            // - The copied data fits within the size of the allocated object.
-> +            // - We have just created this object and there is no other user at this stage.
-> +            unsafe {
-> +                core::ptr::copy_nonoverlapping(
-> +                    data.as_ptr(),
-> +                    dma_obj.dma.start_ptr_mut(),
-> +                    data.len(),
-> +                );
-> +            }
-> +            Ok(dma_obj)
-> +        })
-> +    }
-> +}
-
-The DMA wrapper should probably be added in a separate patch.
-
-> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-> index 1f7799692a0ab042f2540e01414f5ca347ae9ecc..d43e710cc983d51f053dacbd77cbbfb79fa882c3 100644
-> --- a/drivers/gpu/nova-core/gpu.rs
-> +++ b/drivers/gpu/nova-core/gpu.rs
-> @@ -3,6 +3,7 @@
->  use kernel::{device, devres::Devres, error::code::*, pci, prelude::*};
->  
->  use crate::devinit;
-> +use crate::dma::DmaObject;
->  use crate::driver::Bar0;
->  use crate::firmware::Firmware;
->  use crate::regs;
-> @@ -145,12 +146,30 @@ fn new(bar: &Devres<Bar0>) -> Result<Spec> {
->  }
->  
->  /// Structure holding the resources required to operate the GPU.
-> -#[pin_data]
-> +#[pin_data(PinnedDrop)]
->  pub(crate) struct Gpu {
->      spec: Spec,
->      /// MMIO mapping of PCI BAR 0
->      bar: Devres<Bar0>,
->      fw: Firmware,
-> +    sysmem_flush: DmaObject,
-
-Please add a doc-comment for this DmaObject explaining what it is used for by
-the driver and why it is needed.
-
-> +}
-> +
-> +#[pinned_drop]
-> +impl PinnedDrop for Gpu {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // Unregister the sysmem flush page before we release it.
-> +        let _ = with_bar!(&self.bar, |b| {
-> +            regs::PfbNisoFlushSysmemAddr::default()
-> +                .set_adr_39_08(0)
-> +                .write(b);
-> +            if self.spec.chipset >= Chipset::GA102 {
-> +                regs::PfbNisoFlushSysmemAddrHi::default()
-> +                    .set_adr_63_40(0)
-> +                    .write(b);
-> +            }
-> +        });
-> +    }
->  }
->  
->  impl Gpu {
-> @@ -173,6 +192,36 @@ pub(crate) fn new(
->          devinit::wait_gfw_boot_completion(&bar)
->              .inspect_err(|_| pr_err!("GFW boot did not complete"))?;
->  
-> -        Ok(pin_init!(Self { spec, bar, fw }))
-> +        // System memory page required for sysmembar to properly flush into system memory.
-> +        let sysmem_flush = {
-> +            let page = DmaObject::new(
-> +                pdev.as_ref(),
-> +                kernel::bindings::PAGE_SIZE,
-> +                "sysmem flush page",
-> +            )?;
-> +
-> +            // Register the sysmem flush page.
-> +            with_bar!(bar, |b| {
-> +                let handle = page.dma.dma_handle();
-> +
-> +                regs::PfbNisoFlushSysmemAddr::default()
-> +                    .set_adr_39_08((handle >> 8) as u32)
-> +                    .write(b);
-> +                if spec.chipset >= Chipset::GA102 {
-> +                    regs::PfbNisoFlushSysmemAddrHi::default()
-> +                        .set_adr_63_40((handle >> 40) as u32)
-> +                        .write(b);
-> +                }
-> +            })?;
-> +
-> +            page
-> +        };
-> +
-> +        Ok(pin_init!(Self {
-> +            spec,
-> +            bar,
-> +            fw,
-> +            sysmem_flush,
-> +        }))
->      }
->  }
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index 878161e060f54da7738c656f6098936a62dcaa93..37c7eb0ea7a926bee4e3c661028847291bf07fa2 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -21,6 +21,7 @@ macro_rules! with_bar {
->  }
->  
->  mod devinit;
-> +mod dma;
->  mod driver;
->  mod firmware;
->  mod gpu;
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index fd7096f0ddd4af90114dd1119d9715d2cd3aa2ac..1e24787c4b5f432ac25fe399c8cb38b7350e44ae 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -14,6 +14,16 @@
->      28:20   chipset => try_into Chipset, "chipset model"
->  );
->  
-> +/* PFB */
-> +
-> +register!(PfbNisoFlushSysmemAddr@0x00100c10;
-> +    31:0    adr_39_08 => as u32
-> +);
-> +
-> +register!(PfbNisoFlushSysmemAddrHi@0x00100c40;
-> +    23:0    adr_63_40 => as u32
-> +);
-
-Please add some documentation for the register and its fields.
+>   Documentation/devicetree/bindings/arm/amlogic.yaml | 18 ++++
+>   .../bindings/serial/amlogic,meson-uart.yaml        |  3 +
+>   arch/arm64/boot/dts/amlogic/Makefile               |  3 +
+>   .../boot/dts/amlogic/amlogic-s6-s905x5-bl209.dts   | 42 +++++++++
+>   arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 97 +++++++++++++++++++++
+>   .../boot/dts/amlogic/amlogic-s7-s805x3-bp201.dts   | 41 +++++++++
+>   arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 99 ++++++++++++++++++++++
+>   .../boot/dts/amlogic/amlogic-s7d-s905x5m-bm202.dts | 41 +++++++++
+>   arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 99 ++++++++++++++++++++++
+>   9 files changed, 443 insertions(+)
+> ---
+> base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
+> change-id: 20250221-s6-s7-basic-f300c30877e6
+> 
+> Best regards,
+> --
+> Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> 
 
