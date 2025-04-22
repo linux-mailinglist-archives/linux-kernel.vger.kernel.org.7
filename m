@@ -1,125 +1,251 @@
-Return-Path: <linux-kernel+bounces-614809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF000A97262
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A59A97261
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2E918991E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D0D442701
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F317A293B4B;
-	Tue, 22 Apr 2025 16:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335AF290BCE;
+	Tue, 22 Apr 2025 16:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lu1vzrV+"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IFU5+xoH"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4C4292904;
-	Tue, 22 Apr 2025 16:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA2E290BAE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 16:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745338648; cv=none; b=tFf4SzrDHL269aqvsXhYupPd8NrIDoEDfdNQNVrT/TBLDPkzseGa4wODEoBgsP0179kbTIMqKLlYR4J/2bUSI4j+FP4fTNpEBUwxO8HP09grcBDGIxHj3Cn9mZCZdW2nXD52qAiOwCA1izyJa749Ro0fWJEoMB/3TBOwR5f5F6o=
+	t=1745338660; cv=none; b=RLndQaXkYFdUURGvFJNb8n5IxTNEs2TrT9onzUoj+cHIlMDlU8A7FepgabTOz9K2m7OgkQv37u2SfGfuN5tlsem0ER2xRrj7f2meTLGl+BBwlvFs8G0Lena4x+dKm0l1enT27a7NzjpGk6n/LXEt6CCH67YqBU1lwaW03/b5I+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745338648; c=relaxed/simple;
-	bh=hMCxPIYxzmV3KUVfwA4wJCgOM3lhL0C2UHBxP4+Ankc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HSIMhJIAJv2QX0l+lHTMkFNA1KErRYj/gF19m+J1HSLr2RYeT1mOzNM3YHe4mbQ5hi0SG15g00BDycfXHiaxsQO0J3vFMsUgcVe50OmUOT5wtva2EXgq5VBNOTpRLE4SNUQF8TO5cfHXTfgw7QhSBGlC3pgKcB0xQQNwDrLyPqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lu1vzrV+; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AF95C1FD45;
-	Tue, 22 Apr 2025 16:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745338644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VNmfKWXLdsLmg0P+nz3LlGUh4bvQptyAhlgGd24elxg=;
-	b=Lu1vzrV+WjeG/cG/kW3OgBU37GuYW2ZdU+JwxGG1l97/cH4s9bUfwvM5BjzXpU8PbTBq9M
-	dhjEaiFgNLJkmaHstTHzPfDSUlYFFFZhzYbsaa7EzssP7PcvdRbT3sgOQAuKBjx5c0YCk4
-	Mk+BJswp+7tzgxW2BYop89k6tTUv7HXH0v5S3yAl1MKWn3mOywqgzWGgXB4KqdtTcHJm/v
-	TDzVaYcpY8cVLWGkZDxe3bnhZ9QeEPTdJ9KQ2IJ/V+cnR3MAkZFUcKbWeBTCMqidRmUucy
-	KOjFMUTP9CHe/pNNxRlQmzJaulprYn2puo9nhExvuo4CRgb55QVuUabtFtH9YA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: [PATCH net-next v7 3/3] net: ethtool: netlink: Use netdev_hold for dumpit() operations
-Date: Tue, 22 Apr 2025 18:17:16 +0200
-Message-ID: <20250422161717.164440-4-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250422161717.164440-1-maxime.chevallier@bootlin.com>
-References: <20250422161717.164440-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1745338660; c=relaxed/simple;
+	bh=PsselFC7U3wOuPzOdrlcRuBXUrj4nJSPxGm2aehJSuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fJIxOEQ6plAS9yPEy+67I+WaJVt1a+c6p1f6ab8dL9mSYZFU/KsldvsE+Jilfdm6va0eEkZL5dlmxZfJA/MEjfnvLnQv419xSwrA3wZ6EP/gtet9N+CEGlmCFP4TK/4TD7I+XSUYcOlhV8NUe7mmGkn17rrwG28YbdaSaRBkSSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IFU5+xoH; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso58275e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 09:17:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745338657; x=1745943457; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+VlTv/hTKrlRvm1O4sYCipzPw4t9W4hk+Rbsc7ns3M=;
+        b=IFU5+xoHO3rYwGSc97U7Ha9uCbOegw6LVXjfujYgup1lg1vGnTTmHMzPY8lmSEJRke
+         cu7CGbFZNq42BVZkIN5uDwht92Ht/L6D80Q59Fu1m62ryfY8cCT+qw1PJ+Dy0q6HUo07
+         TGCX3EiFBWvVWqkAKZo5xYx4cfIfaOLbY2cZ6vcVrHbBYuroZtK9Qh94NrNeEAq1l2UM
+         1wUNqzqbPRUXV+uCjV9cddpMl0+YNpMmg+w/nyRDasjxBMDFkcDeAvzXLMCND9Tf/rHh
+         OYN7sgnBB7bM8BcLXJYMGb5PKpcnU5Qniudas1vys3ibRMfyxBNGeoxiy6uSEJXHnZIb
+         R9Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745338657; x=1745943457;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7+VlTv/hTKrlRvm1O4sYCipzPw4t9W4hk+Rbsc7ns3M=;
+        b=pGSnaROMNjdv9E04t1/LAvKNgqogH2KSHSO7VOCEiG7oYfa+xItRaqZzu7VZoqgrsk
+         N0W8baMe48wbAPhycXj+zbzGlZhJZ9qoC0NlKlXSFL0J71IfdZN9zD0D8OacJXOfGsc6
+         wH7vNwpuKGHA3gJH5cvt9q/pqXhA94UxydJfvCSAazee4ILLVD+Crqhj86qveo2dQeaM
+         HMK/L3np7o/tV/oCV470nDJfU3piLbVoG425c1kZkhMyXofTsrWnNMwuUQSmE3V1joZm
+         QygW2IOXzJDCBsRyoFN7uCcOvwSvL9BuOaLfVaTeqrrfZoG0teqBuv1m6VRD7Z6YBuSd
+         EGCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXi3QMvHjCBhCKz+ievg2Wf/eu03fTqYDhtz2QWSr7vSE+67T5gDMKebhPyiDMnRZ9c+95er/z3NieQwk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNHYXHHXwEc7t8eD9asCZ9gi9aYAV2M+rOgOF7QR+gRWxLhzF0
+	gRQm+UA4k4e7n5nIk00DC+gONv7VCE350MZ/svx43NMwNDlB0RuyGpXqryATVkW1FEFVHMRhs4q
+	cfAh4V2xOGyYnlqmiZHYl4JCuCU84vESnrrSn
+X-Gm-Gg: ASbGncvbC9dJwyjoEs1HBV86wGKxlVwYfxEbJikKMmUoKlU54/pbdJ9Fyf8b/SnC/Se
+	Q6nSU5CAZ1XijmxhGVD4RwxhAPUImq0a2ZpndM9J9Znkat1IZD0mAm6hefQDfhbR3jLG7+5HWPs
+	a4Q226UrljQymhsGcUsND+ggWz5lyBj1R2E4lLF10/8Nqxtt/mTln4
+X-Google-Smtp-Source: AGHT+IENoY5KLCLbGnv0xSGeh3ak7+yd+up6SvbsAMQAdxs3P8pPk6x9+6wqqUTe/UoTwxZddmChRUUCohE67dhja5o=
+X-Received: by 2002:a05:600c:5809:b0:43d:5b3a:18cc with SMTP id
+ 5b1f17b1804b1-4406a439719mr5397465e9.2.1745338656623; Tue, 22 Apr 2025
+ 09:17:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeegudelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
- giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250417180943.1559755-1-tjmercier@google.com> <a4f72149-70a0-4bbe-bdcc-70384c152f83@amd.com>
+In-Reply-To: <a4f72149-70a0-4bbe-bdcc-70384c152f83@amd.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Tue, 22 Apr 2025 09:17:24 -0700
+X-Gm-Features: ATxdqUFWtfUd0V2lIDMC14HVW9RJdQPpnjsioC_15uNznFDm7wn85ZdVHvIBgZU
+Message-ID: <CABdmKX2-innZC65Fut6wc2MFUNwO2g6w=_iLv9EBkDn+6LQs5w@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: system_heap: No separate allocation for
+ attachment sg_tables
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move away from dev_hold and use netdev_hold with a local reftracker when
-performing a DUMP on each netdev.
+On Tue, Apr 22, 2025 at 1:24=E2=80=AFAM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 17.04.25 um 20:09 schrieb T.J. Mercier:
+> > struct dma_heap_attachment is a separate allocation from the struct
+> > sg_table it contains, but there is no reason for this. Let's use the
+> > slab allocator just once instead of twice for dma_heap_attachment.
+> >
+> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
+>
+> I'm not *that* expert for this code, but looks totally reasonable to me.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- net/ethtool/netlink.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I noticed this while reviewing Maxime Ripard's recent carveout heap
+patches, where I was confused about sg_free_table() until I realized
+it doesn't free the underlying allocation. Then I started looking at
+other heaps and found that most of them do it this way (including the
+cma heap), and figured it was a nice cleanup here.
 
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index 8ccc6957295d..9f08e9d9ed21 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -601,18 +601,19 @@ static int ethnl_default_dumpit(struct sk_buff *skb,
- {
- 	struct ethnl_dump_ctx *ctx = ethnl_dump_context(cb);
- 	struct net *net = sock_net(skb->sk);
-+	netdevice_tracker dev_tracker;
- 	struct net_device *dev;
- 	int ret = 0;
- 
- 	rcu_read_lock();
- 	for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
--		dev_hold(dev);
-+		netdev_hold(dev, &dev_tracker, GFP_ATOMIC);
- 		rcu_read_unlock();
- 
- 		ret = ethnl_default_dump_one(skb, dev, ctx, genl_info_dump(cb));
- 
- 		rcu_read_lock();
--		dev_put(dev);
-+		netdev_put(dev, &dev_tracker);
- 
- 		if (ret < 0 && ret != -EOPNOTSUPP) {
- 			if (likely(skb->len))
--- 
-2.49.0
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> Let me know if I should push that to drm-misc-next.
+>
+> Regards,
+> Christian.
 
+Thanks, yes please!
+
+
+
+
+> > ---
+> >  drivers/dma-buf/heaps/system_heap.c | 43 ++++++++++++-----------------
+> >  1 file changed, 17 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heap=
+s/system_heap.c
+> > index 26d5dc89ea16..bee10c400cf0 100644
+> > --- a/drivers/dma-buf/heaps/system_heap.c
+> > +++ b/drivers/dma-buf/heaps/system_heap.c
+> > @@ -35,7 +35,7 @@ struct system_heap_buffer {
+> >
+> >  struct dma_heap_attachment {
+> >       struct device *dev;
+> > -     struct sg_table *table;
+> > +     struct sg_table table;
+> >       struct list_head list;
+> >       bool mapped;
+> >  };
+> > @@ -54,29 +54,22 @@ static gfp_t order_flags[] =3D {HIGH_ORDER_GFP, HIG=
+H_ORDER_GFP, LOW_ORDER_GFP};
+> >  static const unsigned int orders[] =3D {8, 4, 0};
+> >  #define NUM_ORDERS ARRAY_SIZE(orders)
+> >
+> > -static struct sg_table *dup_sg_table(struct sg_table *table)
+> > +static int dup_sg_table(struct sg_table *from, struct sg_table *to)
+> >  {
+> > -     struct sg_table *new_table;
+> > -     int ret, i;
+> >       struct scatterlist *sg, *new_sg;
+> > +     int ret, i;
+> >
+> > -     new_table =3D kzalloc(sizeof(*new_table), GFP_KERNEL);
+> > -     if (!new_table)
+> > -             return ERR_PTR(-ENOMEM);
+> > -
+> > -     ret =3D sg_alloc_table(new_table, table->orig_nents, GFP_KERNEL);
+> > -     if (ret) {
+> > -             kfree(new_table);
+> > -             return ERR_PTR(-ENOMEM);
+> > -     }
+> > +     ret =3D sg_alloc_table(to, from->orig_nents, GFP_KERNEL);
+> > +     if (ret)
+> > +             return ret;
+> >
+> > -     new_sg =3D new_table->sgl;
+> > -     for_each_sgtable_sg(table, sg, i) {
+> > +     new_sg =3D to->sgl;
+> > +     for_each_sgtable_sg(from, sg, i) {
+> >               sg_set_page(new_sg, sg_page(sg), sg->length, sg->offset);
+> >               new_sg =3D sg_next(new_sg);
+> >       }
+> >
+> > -     return new_table;
+> > +     return 0;
+> >  }
+> >
+> >  static int system_heap_attach(struct dma_buf *dmabuf,
+> > @@ -84,19 +77,18 @@ static int system_heap_attach(struct dma_buf *dmabu=
+f,
+> >  {
+> >       struct system_heap_buffer *buffer =3D dmabuf->priv;
+> >       struct dma_heap_attachment *a;
+> > -     struct sg_table *table;
+> > +     int ret;
+> >
+> >       a =3D kzalloc(sizeof(*a), GFP_KERNEL);
+> >       if (!a)
+> >               return -ENOMEM;
+> >
+> > -     table =3D dup_sg_table(&buffer->sg_table);
+> > -     if (IS_ERR(table)) {
+> > +     ret =3D dup_sg_table(&buffer->sg_table, &a->table);
+> > +     if (ret) {
+> >               kfree(a);
+> > -             return -ENOMEM;
+> > +             return ret;
+> >       }
+> >
+> > -     a->table =3D table;
+> >       a->dev =3D attachment->dev;
+> >       INIT_LIST_HEAD(&a->list);
+> >       a->mapped =3D false;
+> > @@ -120,8 +112,7 @@ static void system_heap_detach(struct dma_buf *dmab=
+uf,
+> >       list_del(&a->list);
+> >       mutex_unlock(&buffer->lock);
+> >
+> > -     sg_free_table(a->table);
+> > -     kfree(a->table);
+> > +     sg_free_table(&a->table);
+> >       kfree(a);
+> >  }
+> >
+> > @@ -129,7 +120,7 @@ static struct sg_table *system_heap_map_dma_buf(str=
+uct dma_buf_attachment *attac
+> >                                               enum dma_data_direction d=
+irection)
+> >  {
+> >       struct dma_heap_attachment *a =3D attachment->priv;
+> > -     struct sg_table *table =3D a->table;
+> > +     struct sg_table *table =3D &a->table;
+> >       int ret;
+> >
+> >       ret =3D dma_map_sgtable(attachment->dev, table, direction, 0);
+> > @@ -164,7 +155,7 @@ static int system_heap_dma_buf_begin_cpu_access(str=
+uct dma_buf *dmabuf,
+> >       list_for_each_entry(a, &buffer->attachments, list) {
+> >               if (!a->mapped)
+> >                       continue;
+> > -             dma_sync_sgtable_for_cpu(a->dev, a->table, direction);
+> > +             dma_sync_sgtable_for_cpu(a->dev, &a->table, direction);
+> >       }
+> >       mutex_unlock(&buffer->lock);
+> >
+> > @@ -185,7 +176,7 @@ static int system_heap_dma_buf_end_cpu_access(struc=
+t dma_buf *dmabuf,
+> >       list_for_each_entry(a, &buffer->attachments, list) {
+> >               if (!a->mapped)
+> >                       continue;
+> > -             dma_sync_sgtable_for_device(a->dev, a->table, direction);
+> > +             dma_sync_sgtable_for_device(a->dev, &a->table, direction)=
+;
+> >       }
+> >       mutex_unlock(&buffer->lock);
+> >
+> >
+> > base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+>
 
