@@ -1,159 +1,168 @@
-Return-Path: <linux-kernel+bounces-614088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F44A965F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:29:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E210A965C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3C21885B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A578173ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F272135B9;
-	Tue, 22 Apr 2025 10:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4C520B7FB;
+	Tue, 22 Apr 2025 10:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="QKymG9BT"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SoDqO9dq"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52921F0E49
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BE20F07D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317751; cv=none; b=T/psRJOwV15XrxpuibuYhQbu9k0xvTubrttIKvHyORwowLFQgN5Mp6yqZVvEd2NWA0ED8zJXgqvrWGwuWCAnm4HM9FYcxdq4g2Gx5lIeOjibt/Ew8/Y/IPf65h4QdZc0T46S9iF3yNiqpT33lPZEd6G0d30mDa5i2B94yz7wKiU=
+	t=1745317293; cv=none; b=dN8QHg8Y2NCRuxl2bkOeumyvoni0+gColXrW5YcpOqoNbskzr51ZQ/5nY6iOQ7hUacQ+7LuT+fU3/e7bxTGyDKxfONlMAErCDKILb4YiX1WzpyvMYWGcn1cHQRdBgGenKr+ztzwyzCMED6hvTjiTY9kyj07mymtqisbPw8Sk2Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317751; c=relaxed/simple;
-	bh=OtKUFMsCCXQuyXdiECTB3D04cRKpceApukek+qlG2Xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l0Cy2ukTBjk9dE8auNMqkx+gnYu9a0UCyy8OVug7dK/xWGCmjgujdzYE6Ir8JtFGPG4F5TwE2EmvntiMB9c87MuZUXRneF9WpuQ83IRtN4nHQ51iE87N6Le+DhxC4/0LOtWavzXHAgHZhVIjZb7TexKKq7Pv8l6dRv2OymGWvoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=QKymG9BT; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736dd9c4b40so5171303b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:29:06 -0700 (PDT)
+	s=arc-20240116; t=1745317293; c=relaxed/simple;
+	bh=vPaSK1YJPMimS0f/8osQJzDVTRZjiow/jJ+CiwFH3dY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YM2bIWMq0Nm0c+AgR5rBL0JANonJwepGMjgXTBtoeUiSA/79SOM/XBxqeTdCw2NReHoKGiEu78vOccjp1J2Q/vvWt76ba9MybiSQOMpdggyZ6vzLCmil547s3jQUUsx9GZRoymNSZc2jvMFq8Vg2CK/eCOIogksmvczwhvXZhH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SoDqO9dq; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfe574976so35853985e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 03:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=inventec.com; s=google; t=1745317746; x=1745922546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wtwwt/qGVMfOAJ61/DZj57iTfzywR/wMkolYpyXZwMg=;
-        b=QKymG9BTaQM/G9cl6fJZmX1DLUhOVviZlTuu7TEKn/JLEzF1C1oBOCeG7qYH7i9fmv
-         CX1ciJbvdYkLqUj2qDmGnQjr/NjYTseiG3TQs9jDGD1q75jhbpXyx+IVe9hLIyKAJuPN
-         2Wmrxxc+WlY4HnZnm3acXCvQpv+RaD8MA9EbNzCN0tDgwmdZa+b260/7OkQGncMoh8Jg
-         diTGNiXX/w5uoOpGcerSSWr49haDExVjHl4FRYMKUc6ZXU8WMHjnuGMPxFEUJCJcTPq5
-         N2tAJjHRQg1uuUoaPIapfIOu4YcmWjvHdyCZIFwGMwu68SfMqasogjvnZPE6J5s3Nh1E
-         yjIw==
+        d=linaro.org; s=google; t=1745317290; x=1745922090; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JvWmQrsXg9zHl1MPjQw5tN8WwrpI48NyLqFNhUg6Edg=;
+        b=SoDqO9dq0Aa2aew459oPiT2uYtaMADhxTOXvHOJMHiTApHI7ULln7G+pqna6lVlU+C
+         NAzXtEpAGlGZmcTRSBCl9kCqoc9cnOscNy/QZvs6fklL4qDTDETydZ+QfiAg93zcNH1U
+         wF9VZdiI4dqwx1ncEHTdPW+wE7SnN2LL5lX8Egm5NNmiSN1rdA66ETpMlgKDfdUpLAQw
+         +KORWQArmNMTjlwst9DTeQd2o3hXaMmbm15PHboGdd7nvuro6BVUTtknD1VRM7jW2Rpw
+         iMNTKWAwS4OIvZAcGXnTSCpUO7S/m5O/M36AKFB2iXrn0oVoaaDXtr0ILX/x2GyImcMF
+         C6iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745317746; x=1745922546;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wtwwt/qGVMfOAJ61/DZj57iTfzywR/wMkolYpyXZwMg=;
-        b=OJUq23ayoR6X4UU5o8QA8MkTnJ61WopiGav02m9a7VuJ2eXYIdgnixner6sjlcEj4/
-         3JMpL4eZ3fni5A60NJGvuzTd+p83HJvVCizgsnCQuTGvyqP2RoiH5PqcnvI/pgxtxfA2
-         pHDwnhZv95O6eKVs3bfIa57MNolR5O1NpiJTUJcZ6yliWWaFyqlEBIVrkjzzOMpqZgFZ
-         GxbeawX/MOV6tg/RyLgb0a1fJkgQgxokc4OjGqO5QzAIpSe0nTmpUNIF8k1AuXIE+wDx
-         AO6duZMrpj6IkxuhGTBGHb+JgaYfvK00K9TE1TUwwKjMM279FkhkUiz3cEC87pxnLvnX
-         ESLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWg/WCWX1kf6DWbsWQ/yx7hB51mEXg8vYj0KrmYd0py2PR8fZcylv8rm5ZTJDtFYgRsF0eMfwjxYwEx4OQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+sK3zzEOBaT2mNi3FVt7N+j6nKV71lrKU90jypraOVKiYS8D3
-	IQBC4KupREoc9LvzuGY0quyn2ihgCOixtHaWaBnAWClxMweSu8/kSPaKK+De5fA=
-X-Gm-Gg: ASbGncsXTufrwumwQXfid+5MNmMGUN7Q2eyhlvjKPOMZKYBJab8m6NbfWt4ezTy69CQ
-	NPAa1rtpTd14WcMtyUH8e4VuzemV3xEG3u7UEfgKyyaZd7LwDKYUPcXjMzzHtvXHXJLmDMYfWqt
-	0fTI8V5jYysTYQRW0p2y51b5JMN0F+hakeeTSihpgSa2+zakZtMIIXb5wG4zo6za9utDTMyGrz7
-	0LYJjGL9fDHJqw+NoJZknOWIDFYIcY4nOeMAlXjZaVEbhRLxMHRC0sk22JwKzyH7kxCKcojtpRL
-	3qUoVHBk3SQYUcPLw2wxBmsS133nc0sTHQZBRGOM0jtOtcipT2Vn/btwAJkmfUTitD/DhP86qwX
-	+5HHmSMh1crWE4H4KY7AIa9dezWWlGrG335NCMAfv8mNqSO9f+t8LVKO5oog=
-X-Google-Smtp-Source: AGHT+IGWvQiFpLLb/JnK+vxMBI1uFfmAhPCio9warje9sSHRSfH/F8j7WFctbSygpqJcvFqmOTJrmg==
-X-Received: by 2002:a05:6a21:3a83:b0:1e1:9e9f:ae4 with SMTP id adf61e73a8af0-203cc6e03e3mr20985847637.13.1745317745940;
-        Tue, 22 Apr 2025 03:29:05 -0700 (PDT)
-Received: from localhost.localdomain (60-250-242-163.hinet-ip.hinet.net. [60.250.242.163])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db13c1c40sm5541763a12.33.2025.04.22.03.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 03:29:05 -0700 (PDT)
-From: Chiang Brian <chiang.brian@inventec.com>
-X-Google-Original-From: Chiang Brian <chiang.brian@inventec.corp-partner.google.com>
-To: linux@roeck-us.net
-Cc: chiang.brian@inventec.com,
-	gnoack@google.com,
-	gpiccoli@igalia.com,
-	jdelvare@suse.com,
-	kees@kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mic@digikod.net,
-	tony.luck@intel.com
-Subject: Re: [PATCH v5] hwmon: (pmbus/tps53679) Add support for TPS53685
-Date: Tue, 22 Apr 2025 18:20:57 +0800
-Message-Id: <20250422102057.2846899-1-chiang.brian@inventec.corp-partner.google.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2628dd1f-1b8f-478a-aa89-4c0f78b27962@roeck-us.net>
-References: <2628dd1f-1b8f-478a-aa89-4c0f78b27962@roeck-us.net>
+        d=1e100.net; s=20230601; t=1745317290; x=1745922090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JvWmQrsXg9zHl1MPjQw5tN8WwrpI48NyLqFNhUg6Edg=;
+        b=ODzxHKEWTfo8p198VXetb0rboXZlRSs0PYLt6TeGb4KUETYinf+WDnhCedqTX0mfbM
+         ZQ016NQUBMSldv0XR7z7ZAuuGNhlPm/2CURTvzoFdRsmU6lT/MkIAZwQQ6i0vkBPc8yZ
+         ZMMawM0tE+0xfdZfKzr2m1zUEeTWDoFkCntc9CE9wqMnNAmPZkMOt0912UwIHy/3Evhs
+         FTDP+uNUsE2CeLWYgUA1dTmMaX4LD1v+qcNMFzZOx6TUJtOi37ZTt5znIA2EFBwY2Tfr
+         IzWcsInMyHnLJeDISOgMDT4W2XrajkzY3LTLY4wSkUtlQ5ntnFwBdfnjDXFC5fg+UtXq
+         NPcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhohuLvGr2gkZA5utf6zDlEKr9RQN4XPV3bStHUC6OukM9aLsL3BYn5KLW+R5wZS1p7cVv7xy5wJIaEH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMFxe+ZsDNGadKOkfJaOVITWf7Lds+6PIAdyGC30ApxoUetoeV
+	1rTtWsaRwx7/ta4IhoJezbu36i00vsOzfVTDIxyvJ9XEAoNZ06XhJth3yISH4rM=
+X-Gm-Gg: ASbGncu8vFSaugHJQV8FGybYpSsrZSKnGghIfh98GkM5IL0Th6lyLWjA4k47+Tv+5Kt
+	PrICugVXOI4s0wc+FOPDY+roQbcQWLBQKRv/cN8vslnmlVhwcUgxhYVmJk64mhlqsJqneC9aGTx
+	F8+0e4YQMeSUiOFolZiM13ox6Xkgzq3Zk85tkoPMK4XgpkoYXpEZaNoyUl1/gZOr35K7Ws5toWn
+	W+Wm3YfFFu+iW1D0ugFZIsY7nzxwQJ4CUswo5BoKEYSeGCcXdQ0sAp01EJX209+Qq0MMrguSv5B
+	vot5xL+3PhSl/Pn0ebTNDktjTPBzUrGrlJ4UWxMk4GE=
+X-Google-Smtp-Source: AGHT+IFaqQKcJYU0wnjYmq4qKpdD7Qb4L05M0qqkdyijsfGrapNInK3N9dhMXV0eheuNB4H3XoJVdQ==
+X-Received: by 2002:a5d:6daf:0:b0:39a:c9cb:819f with SMTP id ffacd0b85a97d-39efbae0e1fmr10293740f8f.37.1745317289921;
+        Tue, 22 Apr 2025 03:21:29 -0700 (PDT)
+Received: from [192.168.1.3] ([77.81.75.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43bf20sm14488732f8f.48.2025.04.22.03.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 03:21:29 -0700 (PDT)
+Message-ID: <48640298-effa-42d4-9137-a18a51637f03@linaro.org>
+Date: Tue, 22 Apr 2025 11:21:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf: Allow non-contiguous AUX buffer pages via PMU
+ capability
+To: Yabin Cui <yabinc@google.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Liang Kan <kan.liang@linux.intel.com>
+References: <20250421215818.3800081-1-yabinc@google.com>
+ <20250421215818.3800081-2-yabinc@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250421215818.3800081-2-yabinc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 3/14/25 10:44, Guenter Roeck wrote:
-> On 3/13/25 20:30, Chiang Brian wrote:
-> > The TPS53685 is a fully AMD SVI3 compliant step down
-> > controller with trans-inductor voltage regulator
-> > (TLVR) topology support, dual channels, built-in
-> > non-volatile memory (NVM), PMBus interface, and
-> > full compatible with TI NexFET smart power
-> > stages.
-> > Add support for it to the tps53679 driver.
-> > 
-> > Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
-> > ---
-> > v4 -> V5:
-> >      1. document the compatible of tps53685 into dt-bindings
-> > 	2. add the buffer length as argument for %*ph
-> > 	3. Add Changelog
-> > v3 -> V4:
-> >      1. Add length comparison into the comparison of "id",or it may be true when
-> > 	   the substring of "id" matches device id.
-> > 	2. Restore `return 0;` in `tps53679_identify_chip()`
-> > V2 -> V3:
-> >      1. Remove the length comparsion in the comparison of "id".
-> > V1 -> V2:
-> > 	1. Modify subject and description to meet requirements
-> > 	2. Add "tps53685" into enum chips with numeric order
-> > 	3. Modify the content of marco "TPS53681_DEVICE_ID" from 0x81 to "\x81"
-> > 	   Add marco "TPS53685_DEVICE_ID" with content "TIShP"
-> > 	4. Modify the type of "id" from u16 to char* in `tps53679_identify_chip()`
-> > 	5. Modify the comparison of "id". It will be true if the string "id" matches
-> > 	   device ID and compare with type char*,
-> > 	6. Add the length comparsion into the comparison of "id".
-> > 	7. Modify "len" as return code in `tps53679_identify_chip()`
-> > 	8. Output device error log with %*ph, instead of 0x%x\n"
-> >      9. Use existing tps53679_identify_multiphase() with argument
-> > 	   "TPS53685_DEVICE_ID" in tps53685_identify() rather than creating one
-> > 	   tps53685_identify_multiphase()
-> > 
-> > boot-log:
+
+
+On 21/04/2025 10:58 pm, Yabin Cui wrote:
+> For PMUs like ARM ETM/ETE, contiguous AUX buffers are unnecessary
+> and increase memory fragmentation.
 > 
-> This is completely useless noise.
+> This patch introduces PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES, allowing
+> PMUs to request non-contiguous pages for their AUX buffers.
+> 
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> ---
+>   include/linux/perf_event.h  | 1 +
+>   kernel/events/ring_buffer.c | 6 ++++++
+>   2 files changed, 7 insertions(+)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 0069ba6866a4..26ca35d6a9f2 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -301,6 +301,7 @@ struct perf_event_pmu_context;
+>   #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
+>   #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
+>   #define PERF_PMU_CAP_AUX_PAUSE			0x0200
+> +#define PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES	0x0400
+>   
+>   /**
+>    * pmu::scope
+> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> index 5130b119d0ae..87f42f4e8edc 100644
+> --- a/kernel/events/ring_buffer.c
+> +++ b/kernel/events/ring_buffer.c
+> @@ -710,6 +710,12 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>   		max_order = ilog2(nr_pages);
+>   		watermark = 0;
+>   	}
+> +	/*
+> +	 * When the PMU doesn't prefer contiguous AUX buffer pages, favor
+> +	 * low-order allocations to reduce memory fragmentation.
+> +	 */
+> +	if (event->pmu->capabilities & PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES)
+> +		max_order = 0;
+>   
+>   	/*
+>   	 * kcalloc_node() is unable to allocate buffer if the size is larger
 
-Sorry for the delay, I've got the approval for posting the boot-log from our 
-customer. I was afraid that there's any confidential information in the boot-log
-of our project. So, I decided to post a boot-log with my laptop then, and I'll 
-append a new one once new patch has been finished and uploaded. 
+Hi Yabin,
 
-And thanks for the suggestion of adding a buffer length for %*ph.
-The kernel crashes and keeps rebooting without adding that.
+I was wondering if this is just the opposite of PERF_PMU_CAP_AUX_NO_SG, 
+and that order 0 should be used by default for all devices to solve the 
+issue you describe. Because we already have PERF_PMU_CAP_AUX_NO_SG for 
+devices that need contiguous pages. Then I found commit 5768402fd9c6 
+("perf/ring_buffer: Use high order allocations for AUX buffers 
+optimistically") that explains that the current allocation strategy is 
+an optimization.
 
-In addition, should I in-reply-to the existing thread or create a new one 
-since the dt-bindings should be included in the same thread as well?
+Your change seems to decide that for certain devices we want to optimize 
+for fragmentation rather than performance. If these are rarely used 
+features specifically when looking at performance should we not continue 
+to optimize for performance? Or at least make it user configurable?
 
-Thank you.
+Thanks
+James
 
-Best Regards,
-Brian Chiang
 
