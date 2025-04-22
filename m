@@ -1,207 +1,220 @@
-Return-Path: <linux-kernel+bounces-615145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E571A97885
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:29:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8C1A9787F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D86016E1E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9B8176426
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFDC29E047;
-	Tue, 22 Apr 2025 21:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gBem73Ec"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944D42BF3DF;
+	Tue, 22 Apr 2025 21:28:22 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27063262FF5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 21:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE7B25C832
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 21:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745357360; cv=none; b=HoKTQSkmeHy824O+v9D/giByQdJSxejHYJnQgjyYt8pM4WELQ+A1GMCjZbuFbusxDLtcDtaEcmygIVJAm55sCOZ2Gcbkrhq6EDR7Bdd0wHSxwRiHSmb2QcoCF8tSGceHhVCJ2qMtnrtNDEPFnmwb4y2HNqbtWEMzQ5UOCnhcDao=
+	t=1745357302; cv=none; b=ZuSnLPQCMW3+rLrLEvbBrjU+ZqVyfS8LRROiKYHg12bPBZEWTW4C53gZ2JzcVZQK24G2wHABX3mzbjeV9SnsTEtHYGCeNvH4YbinPh+7xumPomsM58yfYwXNh70Rswx+tBzzNU/VDtYyrYbTBDp9FbuBOo8mCpcQj+j3WKX7Yt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745357360; c=relaxed/simple;
-	bh=MKbUvh/RyU2Ya4ObtWJFDMOgYe7VZeRqrszwjJFa2cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heCSJQ5i3DChf+5v8WwFLaK1t4Urn8KcgVuy6ZKHbGrxAFfiBAG/Fm62c6lMvJxfUDAkvhUx09OjZEW3jQ5ZRYdolhsYNtbfdM/amlKha2xkEUqsSTKiGHxt+slwvjvPl8srbr3XBZLwEKEqqNNGrbSrZW38B8oBXXnn5uTVlFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gBem73Ec; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Apr 2025 14:28:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745357355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mja1AZU1OxXrkjHbCIJIDiF0DQ5jyuf/4e39r203PXU=;
-	b=gBem73Ecuh0/unsaz3dOF7qOKgwwRL9mqWfxjWOT8enzBQcaVl3uy7KuCfLk8qeDISNsQc
-	aB0qRfO5QrDh+lJOy5fJlyiHF0EOzQLfbR/mdfZDcmXE2xnqtYJgQSuaXnGzBgyGBT5w1h
-	aTV0gtet7CvHeY6tzi2n7dH5Tc54Y/Q=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Marc Zyngier <maz@kernel.org>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <aAgJ8g8Gbb06quSM@linux.dev>
-References: <Z-RGYO3QVj5JNjRB@google.com>
- <20250331145643.GF10839@nvidia.com>
- <Z_PtKWnMPzwPb4sp@google.com>
- <20250407161540.GG1557073@nvidia.com>
- <Z_QAxiEWEyMpfLgL@google.com>
- <SA1PR12MB719976799AD7F9FC4407A5A9B0BD2@SA1PR12MB7199.namprd12.prod.outlook.com>
- <aAdKCGCuwlUeUXKY@linux.dev>
- <20250422135452.GL823903@nvidia.com>
- <aAfI2GR1__-1KQHn@arm.com>
- <20250422170324.GB1645809@nvidia.com>
+	s=arc-20240116; t=1745357302; c=relaxed/simple;
+	bh=TOEieAQ6+BDN9UDChQtQp1yz1EcYoDIM1LqXJUIs5c0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qqATPApgQlE3rqMZ54LphotS5gGMSAKS4nWroC6WIR1I5oi7moUuegUMxk719cBetu1TPqhrilcGHyINI0OvAMztCHoGrujhvw/nsT+ysLAHs5OH19VbceZ1Vxxnm3OuZussfdnXOMr9E5FbSgVMcJWVQa9uzPGXqJJyHDt1+hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d6e10f4b85so107508185ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:28:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745357299; x=1745962099;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8YIgViX41lm5hSSWGRYMyiCZwtaF1138kJCcGLw6638=;
+        b=a3zmwnwkyPx+cmyIjfreXg/R1hgNZbVd6Mt4ik8qfyZydlhu9cOx9M0p0VgIguqx2j
+         nyiR2bUD1eBw6GSHpZzC7IZBxdN9s1tiEWAowYVcOxHpm6QbWuFge+Nj/G5kI/gXTZaJ
+         an0gyIOGowXYDh5etRBM0mN9zWmublNyEVBGTc2zJKqI55py+J2wKWEnMxxbEOqDIOUQ
+         yFySB4ppkgQdqcZh7nCnaGuqmX9yE6TS+VaI3uBuqpE1VrFE4F1ziPPqjyUlT394Qi+M
+         Jnd/oR4jx9Tcd8yKm9hQZma78ZLpeAYDW3lBl2ASqc/ACnuudRHU7wFBPe6T4R39c9Br
+         58fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdPrX8iJwIPwZ5xbpNyJhT1I4uUvIRjy5yTtLh0hEDX5qQ/DSwSRFro76LeyI5R7eir5g+A1AI5NkCH94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF7o/RLnvZrFWJR6YOcRVUYIDAx1EmSP86Sp5ptv8zsx/SiTI8
+	Q+AEGPMwGFjpOvHkh0q+nZZwM0wmQHN8fuHER+X37iOvoswctkXAX39L8qZ9sF4B9Pqpxz1/3XI
+	2R6ySMT/EAuyoIBrhkvPlrzBjehubzC+DnqPv4whvktlZy8VmxoAxqEA=
+X-Google-Smtp-Source: AGHT+IF+9Wq/qdOpUFNtHkZvl/Y43s4FqJvhE2ZTuHkDYJ84EnUYRNM16+4GRyOwE4mhmXaya8qZJl9H3HUVGlRIr5MYPJFeOSQe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422170324.GB1645809@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a92:c24f:0:b0:3d0:19c6:c9e1 with SMTP id
+ e9e14a558f8ab-3d88ee00454mr164020995ab.13.1745357299420; Tue, 22 Apr 2025
+ 14:28:19 -0700 (PDT)
+Date: Tue, 22 Apr 2025 14:28:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680809f3.050a0220.36a438.0003.GAE@google.com>
+Subject: [syzbot] [fs?] INFO: task hung in vfs_rename (2)
+From: syzbot <syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 22, 2025 at 10:54:52AM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 22, 2025 at 12:49:28AM -0700, Oliver Upton wrote:
-> > The reality is that userspace is an equal participant in remaining coherent with
-> > the guest. Whether or not FWB is employed for a particular region of IPA
-> > space is useful information for userspace deciding what it needs to do to access guest
-> > memory. Ignoring the Nvidia widget for a second, userspace also needs to know this for
-> > 'normal', kernel-managed memory so it understands what CMOs may be necessary when (for
-> > example) doing live migration of the VM.
-> 
-> Really? How does it work today then? Is this another existing problem?
-> Userspace is doing CMOs during live migration that are not necessary?
+Hello,
 
-Yes, this is a pre-existing problem. I'm not aware of a live migration
-implementation that handles !S2FWB correctly, and assumes all guest
-accesses are done through a cacheable alias.
+syzbot found the following issue on:
 
-So, if a VMM wants to do migration of VMs on !S2FWB correctly, it'd
-probably want to know it can elide CMOs on something that actually bears
-the feature.
+HEAD commit:    fc96b232f8e7 Merge tag 'pci-v6.15-fixes-2' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10c65fe4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=170d968a88ba5c06
+dashboard link: https://syzkaller.appspot.com/bug?extid=321477fad98ea6dd35b7
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11075470580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a6063f980000
 
-> >  - The memslot flag says userspace expects a particular GFN range to guarantee
-> >    Write-Back semantics. This can be applied to 'normal', kernel-managed memory
-> >    and PFNMAP thingies that have cacheable attributes at host stage-1.
-> 
-> Userspace doesn't actaully know if it has a cachable mapping from VFIO
-> though :(
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fd977d7e57de/disk-fc96b232.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ffa0a3b5b655/vmlinux-fc96b232.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/44df3bd100d2/bzImage-fc96b232.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b166f1d5e115/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12655204580000)
 
-That seems like a shortcoming on the VFIO side, not a KVM issue. What if
-userspace wants to do atomics on some VFIO mapping, doesn't it need to
-know that it has something with WB?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
 
-> I don't really see a point in this. If the KVM has the cap then
-> userspace should assume the S2FWB behavior for all cachable memslots.
+INFO: task syz-executor362:5849 blocked for more than 143 seconds.
+      Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor362 state:D stack:24280 pid:5849  tgid:5849  ppid:5848   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x1b33/0x51f0 kernel/sched/core.c:6767
+ __schedule_loop kernel/sched/core.c:6845 [inline]
+ schedule+0x163/0x360 kernel/sched/core.c:6860
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
+ rwsem_down_write_slowpath+0xedd/0x1420 kernel/locking/rwsem.c:1176
+ __down_write_common kernel/locking/rwsem.c:1304 [inline]
+ __down_write kernel/locking/rwsem.c:1313 [inline]
+ down_write+0x1da/0x220 kernel/locking/rwsem.c:1578
+ inode_lock include/linux/fs.h:867 [inline]
+ vfs_rename+0x6b9/0xf10 fs/namei.c:5051
+ do_renameat2+0xc8d/0x1290 fs/namei.c:5235
+ __do_sys_renameat2 fs/namei.c:5269 [inline]
+ __se_sys_renameat2 fs/namei.c:5266 [inline]
+ __x64_sys_renameat2+0xce/0xe0 fs/namei.c:5266
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc3678ce519
+RSP: 002b:00007ffc519cacb8 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc3678ce519
+RDX: 0000000000000004 RSI: 0000200000000240 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffc519cacf0
+R10: 00002000000001c0 R11: 0000000000000246 R12: 00007ffc519cacf0
+R13: 00007ffc519caf78 R14: 431bde82d7b634db R15: 00007fc36791703b
+ </TASK>
 
-Wait, so userspace simultaneously doesn't know the cacheability at host
-stage-1 but *does* for stage-2? This is why I contend that userspace
-needs a mechanism to discover the memory attributes on a given memslot.
-Without it there's no way of knowing what's a cacheable memslot.
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x30/0x180 kernel/locking/lockdep.c:6764
+2 locks held by getty/5587:
+ #0: ffff8880366f20a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900036d62f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x5bb/0x1700 drivers/tty/n_tty.c:2222
+6 locks held by syz-executor362/5849:
+ #0: ffff88807f054420 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:556
+ #1: ffff88807f054730 (&type->s_vfs_rename_key){+.+.}-{4:4}, at: lock_rename fs/namei.c:3234 [inline]
+ #1: ffff88807f054730 (&type->s_vfs_rename_key){+.+.}-{4:4}, at: do_renameat2+0x5d6/0x1290 fs/namei.c:5181
+ #2: ffff88807b3e8910 (&sb->s_type->i_mutex_key#14/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:902 [inline]
+ #2: ffff88807b3e8910 (&sb->s_type->i_mutex_key#14/1){+.+.}-{4:4}, at: lock_two_directories+0x1a8/0x220 fs/namei.c:3210
+ #3: ffff88807b2b8910 (&sb->s_type->i_mutex_key#14/5){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:902 [inline]
+ #3: ffff88807b2b8910 (&sb->s_type->i_mutex_key#14/5){+.+.}-{4:4}, at: lock_two_directories+0x1d1/0x220 fs/namei.c:3211
+ #4: ffff88807b2b82a0 (&sb->s_type->i_mutex_key#14/2){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:902 [inline]
+ #4: ffff88807b2b82a0 (&sb->s_type->i_mutex_key#14/2){+.+.}-{4:4}, at: vfs_rename+0x63f/0xf10 fs/namei.c:5049
+ #5: ffff88807b2b8910 (&sb->s_type->i_mutex_key#14){++++}-{4:4}, at: inode_lock include/linux/fs.h:867 [inline]
+ #5: ffff88807b2b8910 (&sb->s_type->i_mutex_key#14){++++}-{4:4}, at: vfs_rename+0x6b9/0xf10 fs/namei.c:5051
 
-Along those lines, how is the VMM going to describe that cacheable
-PFNMAP region to the guest?
+=============================================
 
-> What should happen if you have S2FWB but don't pass the flag? For
-> normal kernel memory it should still use S2FWB. Thus for cachable
-> PFNMAP it makes sense that it should also still use S2FWB without the
-> flag?
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x4ab/0x4e0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:437
+ kthread+0x7b7/0x940 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:81
+Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 73 5f 20 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffffff8ea07d60 EFLAGS: 000002c2
+RAX: 5fa1c341e9d1cd00 RBX: ffffffff8197267e RCX: ffffffff8c27d93c
+RDX: 0000000000000001 RSI: ffffffff8e6356dd RDI: ffffffff8ca0e2e0
+RBP: ffffffff8ea07eb8 R08: ffff8880b8632b5b R09: 1ffff110170c656b
+R10: dffffc0000000000 R11: ffffed10170c656c R12: 1ffffffff1d40fc6
+R13: 1ffffffff1d52cb0 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888124fcf000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005597c9480600 CR3: 000000000eb38000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:748
+ default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x22e/0x5d0 kernel/sched/idle.c:325
+ cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:423
+ rest_init+0x2dc/0x300 init/main.c:743
+ start_kernel+0x484/0x510 init/main.c:1099
+ x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:513
+ x86_64_start_kernel+0x66/0x70 arch/x86/kernel/head64.c:494
+ common_startup_64+0x13e/0x147
+ </TASK>
 
-For kernel-managed memory, I agree. Accepting the flag for a memslot
-containing such memory would solely be for discoverability.
 
-OTOH, cacheable PFNMAP is a new feature and I see no issue compelling
-the use of a new bit with it.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Tue, Apr 22, 2025 at 02:03:24PM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 22, 2025 at 05:50:32PM +0100, Catalin Marinas wrote:
-> 
-> > So, for the above, the VMM needs to know that it somehow got into such
-> > situation. If it knows the device (VFIO) capabilities and that the user
-> > mapping is Cacheable, coupled with the new KVM CAP, it can infer that
-> > Stage 2 will be S2FWB, no need for a memory slot flag.
-> 
-> So long as the memslot creation fails for cachable PFNMAP without
-> S2FWB the VMM is fine. qemu will begin its first steps to startup the
-> migration destination and immediately fail. The migration will be
-> aborted before it even gets started on the source side.
-> 
-> As I said before, the present situation requires the site's
-> orchestration to manage compatibility for live migration of VFIO
-> devices. We only expect that the migration will abort early if the
-> site has made a configuration error.
-> 
-> > have such information, maybe a new memory slot flag can be used to probe
-> > what Stage 2 mapping is going to be: ask for KVM_MEM_PFNMAP_WB. If it
-> > fails, Stage 2 is Device/NC and can attempt again with the WB flag.
-> > It's a bit of a stretch for the KVM API but IIUC there's no option to
-> > query the properties of a memory slot.
-> 
-> I don't know of any use case for something like this. If VFIO gives
-> the VMM a cachable mapping there is no fallback to WB.
-> 
-> The operator could use a different VFIO device, one that doesn't need
-> cachable, but the VMM can't flip the VFIO device between modes on the
-> fly.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I agree with you that in the context of a VFIO device userspace doesn't
-have any direct influence on the resulting memory attributes.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The entire reason I'm dragging my feet about this is I'm concerned we've
-papered over the complexity of memory attributes (regardless of
-provenance) for way too long. KVM's done enough to make this dance 'work'
-in the context of kernel-managed memory, but adding more implicit KVM
-behavior for cacheable thingies makes the KVM UAPI even more
-unintelligible (as if it weren't already).
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-So this flag isn't about giving userspace any degree of control over
-memory attributes. Just a way to know for things it _expects_ to be
-treated as cacheable can be guaranteed to use cacheable attributes in
-the VM.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Thanks,
-Oliver
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
