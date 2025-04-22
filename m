@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-614508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4972DA96D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8392EA96D5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A547A2036
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B963ABB71
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87689283683;
-	Tue, 22 Apr 2025 13:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4D8281345;
+	Tue, 22 Apr 2025 13:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1l69cPy"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvPc9hDC"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582A9201271;
-	Tue, 22 Apr 2025 13:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052684C85;
+	Tue, 22 Apr 2025 13:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745329896; cv=none; b=te0RPnzHQlCKzj7A7NEXW2Gae3z5iZWx8ktGZ9iy/4tCvQtHFeiGaxirmVW7/tR9uLZz4v7K0Fz81EKKiFyZOh1/k6SQfRfIxmnbPA7cCT/ykTBz2EOwG2huFYc/6UHxXgPMhp4ZaLsy4GFERV7937cwjsZMAq6LIT12CPPp7tU=
+	t=1745329661; cv=none; b=pbDeGSSCBUnEGKXQQgmaGpw7i2WotgstLoL9y+cJqe0LkqAFacOXK0m14fL2ZCZBay/fvzVICTHhY3X9dT9FEd1Al655SAV9vMasmeV/2gpO25NKI8VZtl5YukjWkJ0N+dnQUpFKmTTh+oxAAPl07P7Adz9M4oq3R/y1PnJlu14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745329896; c=relaxed/simple;
-	bh=cYb5wzdMYyq1bfZwwXLiss9AOzS6rESwiHVLQkIN9oI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qynSnSgoPixQ2mJ+BiNFUlNF9OGHVxBBqSCjW8/OVtyRDWE8IWBBWGOkf0wPcYPQUs7H0kNzEuJNxXkAwYdpeGH68U1SmjqU390pCsOLS1OrNKcUbRN8oY4w9dDJF/XnOTWZHj/kco3fQFwY6J6EGYj5oUvO2+wN467CtQyvBxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1l69cPy; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1745329661; c=relaxed/simple;
+	bh=kDo4HRvvA558Eov+TuiccC+GY9aXbLYZP8MmS1f1QcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C0p3E8yiL4H/zAdogyBkuNF6htUvM1TqBswSrj0zqb6ap521AR3AxrcM0FBnEEDKxX+xOzzVIUH+vN2hYteDDroxWfLGbhqIagqgH8gA5M+9Su2ncwc9TG00JWorM4B+HqBfBGNJhBN1FQqy/nTY0wXpVqEzLx6rXSZfigVKYP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvPc9hDC; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso33689955e9.3;
-        Tue, 22 Apr 2025 06:51:34 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301317939a0so692544a91.2;
+        Tue, 22 Apr 2025 06:47:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745329892; x=1745934692; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745329659; x=1745934459; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P20BR2Tv8R58N8rBs8jFttYwmstLArnkKgOXXmUHnkc=;
-        b=m1l69cPyFgSOKAe+KpCcXIgv15FUkhv+bPR3ezMkLofIfUv7uqEju7/jjxFcuyxWhI
-         e2/D4zbfGIqr1JPa3EArS/aPO/5FUqzcPKM85hEjsO6/DZL7Bu4Owj6hUOFGPQnCBEHV
-         3a15+uHkyyTe0TKt7cfCt4f3S0xRemoGY1HChJE8pdxfTeGD5+js6t3XABU9N6u829+8
-         qhLxQtrMjzrnZcFKb8tNYI99bb0omyagw4sG53CLPp5f2lKzEVPGVFYKr4oqGiH5eoWg
-         iaQO5oBVrftXJH6hozVrRt5WydUYHrOnh2L3R7ZGGULzb3tbeKQ2o3sXfb2qkK7ML65Z
-         /0wg==
+        bh=ZpufMGO9Eqf6bR83oPmEFAFsbu9LRNEFz1I7COzMFeM=;
+        b=YvPc9hDCzm//awY17rmlxLps0UvDHc6HeZpItngBXKzo2OL/jxPhY/0UfXgTwHEJDS
+         zLpBkPHuvl+Fl7sSPvZfy5IONKIkvMUTbi84l5HhW1GJkblClSRwQGTmZEFF+e497E09
+         MIhJdApB0t8or5R88aMirdS4twV8jdKJMRMSbLmdZl/4jMbmjiPVTSLFK0YnuF9Uk47u
+         ovTm6SsSPlmHsJnvRAJ2C7a6icyA42TiJeJh96D83E/TNm+Z5A0at+7Eu1SyE8Vqc8JT
+         GsoOnzuyUEGI87JWdJsWxH2skXZrOy2iYPQkXyF6Zaw2qWL1CgciZG2gt2zpzZ1mWUNa
+         c12Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745329892; x=1745934692;
+        d=1e100.net; s=20230601; t=1745329659; x=1745934459;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P20BR2Tv8R58N8rBs8jFttYwmstLArnkKgOXXmUHnkc=;
-        b=F4UlFNbrl7PT6rTIfAfbqoc0eeM3a0CMN8ASZA7Ugil2PtF+ESKU6xLjoVdkuNhmOr
-         tLL95yJNJzTntxjYlMNmoqRetB5ZBkzJqeCzZhWkxqtj9UwMnbbj5fdu7tHBx6FAUW7L
-         IAPAo9PzII+5M18jfWVJkvt6AHV//rMQHtiNzC0B6Y+ujxhI8WA9lNLyQ4rAWPU0v+S2
-         9bZxuv/V7Jcr2antyaVupCQUFejEKhNRp9dEp3U7b5lc67gsHcoXJxIYtfnmi5tJY7Be
-         wI94PVDIDj7BaxHFhw1TbzE4WBww3PWCv7StUomaq9huC9Fr47p3S4I341LngVzBpChp
-         AMEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyjg4V65y2RvpMTgZAdikn7+vMxDw0ffrqzwzRCR4GxGx3V0HRX/twHMwVINIGYsdBI/stitn1TL9zby8=@vger.kernel.org, AJvYcCWrfwAq8TyqJcnaPTIYYIjj2YLK2wwgyaUKo0xogSPMI+U4lc0UsEY9kiS8COimjIwS7SP8Iqyi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhgTB9q6y/ibyAgsCf7muhBEblyyGNhz4fUwqUXLyBqtOwysFm
-	a42VDVvc+F14hUfvFirMt2wSLyiS+ar66/h04hq+i+z3GlLqclli
-X-Gm-Gg: ASbGncuPAvI3vW8t+WVg0lJzHSIbaxYvnqSL8GGidKkwgpRIfwle/FVJitRzEoNfM/2
-	T72DaWqErI16MhA3VCiTB6bAnG9oeoKh5DHIVtJ9dOi6aNF80AQBBLUqZ4wYHjXXklQP9NkQJqm
-	RxTEFmK4ggj5r5KevxVNwZnPI36cb0xwnlNsBSVcXURHa+rW1P3ZOB3D09VoreZqBZtjIJPyWPU
-	EVOg3igMHXSJ4fjnkxZ/k3y9UQh+v6IrMV9gtbGKuRDSpU6dah2CuMisSV/2S87T0xeGF01NyHs
-	YNM2CxeoUz8H85fZzY09GdOmV5x3TVC/muSOudoe
-X-Google-Smtp-Source: AGHT+IGwe8Z3YpFb5/ecMVn8Y3ic1OOVBuQhJmpxrIzlY7N4S3tEv4JjbxY4U6rgwDI2qjlfOun/Tg==
-X-Received: by 2002:a05:600c:4f8a:b0:43c:fe15:41d4 with SMTP id 5b1f17b1804b1-4406aba7ebfmr151332235e9.18.1745329892446;
-        Tue, 22 Apr 2025 06:51:32 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:b678:ddbe:75a4:837])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5a9e50sm177577005e9.6.2025.04.22.06.51.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 06:51:32 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: heikki.krogerus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	lumag@kernel.org,
-	pooja.katiyar@intel.com,
-	diogo.ivo@tecnico.ulisboa.pt,
-	madhu.m@intel.com,
-	saranya.gopal@intel.com
-Cc: linux-usb@vger.kernel.org,
+        bh=ZpufMGO9Eqf6bR83oPmEFAFsbu9LRNEFz1I7COzMFeM=;
+        b=m2V0ClaMFjx6olAlWrZ2kGd23+JqdPhioFadgEsa45zczbhharnm84Mx8KB4rrpPTf
+         gYHQpxHkcIKLk4N5wpCFH0yD1SkER5SNlNkeRXHNPfzDB5SeJqSumpNdYGy81b4sKl8F
+         V7/+knVXVmdYbMb4sJO9xGajCx8zqra+ntNVSKUC9bVGcvhDpioYfFFEjN0DCXk5evGG
+         aywEPPyMAGKx/sjZ0gcWWDEQGtYB5kFUl6rPSGlN9EjXnLUGqM5XNO25yPipizEutcan
+         1Ig3gAWQCn6ypolb3D76t27+A9E7AWqZeJnPWzjTvlNzOaMWQJKfY+HRdc4zL1HS49AG
+         y0GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYXlti4yQ1NUANVcQy8iANUvqsVg7Rpux7rispZBIYyRMVx/SVh0yfcalYCO//bAeUSdFA+xnMrVuCsMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPIA/SG2c7X5gXqjtGStGXau551y3nq8Hj2m0msKLKifWzk0mx
+	Uw0qo9nSjCBfLXxRjoQK2OoSs6bZf7ehRapk4aPfS5iSiUCkBJkyxsD7XptLBD4=
+X-Gm-Gg: ASbGncsSXLjvDTpEKUVIu7bx3gCizd3u1UMbzkIY6cgYs55XYGrxq6DBAIQ1JJq6GO7
+	om/KwrEP85JoKAZRli+7ZC7n/u56WMGz5qpyuJoqBlXfp8+EhOYjosYba3f2j29wv+YK3hWKjp7
+	agy0Yhc11SOFBIA63Bj/N2cfStMrtiM+Mi9f02icq04zUwR7YmrWcAza2aLh8fpguwlfwpxGPb5
+	Y31hK2pPgbrtuJUAg6ewVoJyvMlz/3PZltcit6jcL8NeT3iQZIEcR149lGwnFYBzoaY0PhHgIUY
+	UriPFnW2ZcLmU05vtYZY+27lQPYzoM2CSjm41zzkkOKXkqFWLpcMy9dIBU/SW28=
+X-Google-Smtp-Source: AGHT+IERpLlhSwaO5nZq8Gw4Gty+WPbaQff7djZpLBz85L/dQ/SkciYvXABq8QRnCmaICpmS1/hDTw==
+X-Received: by 2002:a17:90b:1b44:b0:2fe:b972:a2c3 with SMTP id 98e67ed59e1d1-3087ba5ea96mr8687983a91.0.1745329658872;
+        Tue, 22 Apr 2025 06:47:38 -0700 (PDT)
+Received: from MGG23TF6W0.corp.ebay.com ([202.76.247.146])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3087e05b2bbsm8695214a91.42.2025.04.22.06.47.32
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 22 Apr 2025 06:47:38 -0700 (PDT)
+From: Jianlin Lv <iecedge@gmail.com>
+X-Google-Original-From: Jianlin Lv <jianlv@ebay.com>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: typec: ucsi: fix Clang -Wsign-conversion warning
-Date: Tue, 22 Apr 2025 14:47:17 +0100
-Message-Id: <20250422134717.66218-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	iecedge@gmail.com,
+	jianlv@ebay.com
+Subject: [RFC PATCH  bpf-next 0/2] Eliminate IRQ Time from BPF Program Running Duration
+Date: Tue, 22 Apr 2025 21:47:25 +0800
+Message-Id: <cover.1745250534.git.iecedge@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,47 +108,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-debugfs.c emits the following warnings when compiling with the -Wsign-conversion flag with clang 15:
+From: Jianlin Lv <iecedge@gmail.com>
 
-drivers/usb/typec/ucsi/debugfs.c:58:27: warning: implicit conversion changes signedness: 'int' to 'u32' (aka 'unsigned int') [-Wsign-conversion]
-                ucsi->debugfs->status = ret;
-                                      ~ ^~~
-drivers/usb/typec/ucsi/debugfs.c:71:25: warning: implicit conversion changes signedness: 'u32' (aka 'unsigned int') to 'int' [-Wsign-conversion]
-                return ucsi->debugfs->status;
-                ~~~~~~ ~~~~~~~~~~~~~~~^~~~~~
-                
-During ucsi_cmd() we see:
+Motivation:
+===========
+This proposal aims to enhance the __bpf_prog_run function by eliminating
+IRQ time from the BPF program running duration. When a BPF program is
+attached to a kernel function running in user context, any interrupts that
+occur can lead to the BPF program's execution duration including the time
+spent in interrupt handling. This results in an observed increase in CPU
+usage attributed to eBPF.
 
-	if (ret < 0) {
-		ucsi->debugfs->status = ret;
-		return ret;
-	}
-	
-But "status" is u32 meaning unsigned wrap-around occurs when assigning a value which is < 0 to it, this obscures the real status.
+Design:
+=======
+The elimination of IRQ time is built upon enabling 
+CONFIG_IRQ_TIME_ACCOUNTING. Before a BPF program runs in user context,
+call irq_time_read to record current total IRQ time for the CPU. After the
+BPF program execution, call irq_time_read again to record the total IRQ
+time. The difference between these two readings gives the IRQ handling
+time for this BPF call. Then subtract the IRQ handling time from the
+total BPF processing duration.
 
-To fix this make the "status" of type int since ret is also of type int.
+Currently, the irq_time_read function is defined as static, preventing its
+use by other modules. This proposal suggests exporting irq_time_read for
+use by the BPF module.
 
-Fixes: df0383ffad64 ("usb: typec: ucsi: Add debugfs for ucsi commands")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- drivers/usb/typec/ucsi/ucsi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+TODOs:
+======
+- Support elimination of IRQ time for BPF trampoline.
+- Add selftests to validate the functionality.
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index 3a2c1762bec1..525d28160413 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -432,7 +432,7 @@ struct ucsi_debugfs_entry {
- 		u64 low;
- 		u64 high;
- 	} response;
--	u32 status;
-+	int status;
- 	struct dentry *dentry;
- };
- 
+this mail is mainly to get feedback on the design and implementation
+approach. TODO item will be added in subsequent updates once we gather
+input on the proposal.
+
+Jianlin Lv (2):
+  Enhance BPF execution timing by excluding IRQ time
+  Export irq_time_read for BPF module usage
+
+ include/linux/filter.h | 24 ++++++++++++++++++++++--
+ include/linux/sched.h  |  4 ++++
+ kernel/sched/core.c    | 22 ++++++++++++++++++++++
+ kernel/sched/sched.h   | 19 -------------------
+ 4 files changed, 48 insertions(+), 21 deletions(-)
+
 -- 
-2.39.5
+2.34.1
 
 
