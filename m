@@ -1,177 +1,149 @@
-Return-Path: <linux-kernel+bounces-615071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEA3A976C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B37A976D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 22:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF99189A651
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 20:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67EF5A01DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 20:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197B29A3E5;
-	Tue, 22 Apr 2025 20:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB6029AAF6;
+	Tue, 22 Apr 2025 20:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vdc4dsr2"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cNpG0Nr0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E950813BAF1;
-	Tue, 22 Apr 2025 20:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2404B29AAEE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 20:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745353230; cv=none; b=hB9Cb43sOMQgEnO39+WybS1lcXlq9v6LzHfk/tRHefmP09scueafTR4HlDKIS8Ef3861JghRyh4bhE0n9aJStvLU6Lbc9hUIOjwIQ7HGCXZw4/+Fab7IhbE0+vOeAdKN1M186qBpmoX5VjR1a3nBReLPytsRgiV+p9saDh7T6ns=
+	t=1745353249; cv=none; b=Wy6zlGa/ryoDImNCW5vpCkZm3JtvNEQ1gHJ3b4LfJck/9+QFYg8l6rCxWYR/ttpExsxcWAyADCS+68YFcKlVyaymM/d7YqdctMdeU42jceA7TeB7Mzm1ELFhVS2o2tjMsILzU6V2dGjSGh5oFgBKuLP5Td+eUkmgo9l23SCe43o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745353230; c=relaxed/simple;
-	bh=c670OAK8cZdz7MarUyiLHa1dQF3aIkyIzYyzYke6glc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HX/8fLcRm+1ahbIMMUcCQ56LneJSUgEdoRgLpUBreAmLgonzdiMrOM6ezwt+xyQEDtnR+C7rai4JHYZelXd+EUW65SAvZcdDWGsaZNeO90c0MLC34pahsGZw8rr9C3F7k2kQOGIWlJJ1OB9u3jloXMBBS3JXvpNePV/tKsljsLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vdc4dsr2; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39c14016868so5641883f8f.1;
-        Tue, 22 Apr 2025 13:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745353227; x=1745958027; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rO7p2Xz1WnscXWSSH5QPauUlR12Dd0rgVnR8sWH1ffU=;
-        b=Vdc4dsr2wZF0pou8ZYyLawxMBAyDqoxenZeSEGO2x5tLNIoRVHw3OqzOHGcks1PSc2
-         sl6AS33iHhBqSjNbvf5e5BgpfqCRCpCP3XhKuMGLwRBR4rwuN9gtJDK0SksrXPZquQDs
-         LJJdP9EJWWD2xpUPQeONbU1+iiXUueyv2qTmLBVRYPlW9NIvRvBmAEIYeIwsDGTmir7p
-         yoZgYReA2QOcgA55t1DArCFO8lUVWJpLVrqWupB/TtgYYpB+RAjwoLHLumNuHJdtlGYp
-         G/pWC6lVcI9jL+G36XMBmq0sZSW0+nrBEjmi0rON2fLyvjKGoHgENujNv6x04AZY8g21
-         12qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745353227; x=1745958027;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rO7p2Xz1WnscXWSSH5QPauUlR12Dd0rgVnR8sWH1ffU=;
-        b=DpgHkIqya6m8Fwph7pvlVem4SwcR1bWlXWK3E8HoWeh+a3CrLgQgpCyw+nz5AP283S
-         hbc7J7L8a4TYJ7/HHv9L0NogRhHkbJjOJDzIfsj11odSiHJpmSwl34jYE5cZGhW2iflx
-         e16cXE84la0YDWnnjMsvKTCBActZxqYDskUIKfo0D6fb7Eu7GbSBYAcx71B0lCatOhDA
-         Xmeg42iX+zyT6lxxtYFEn/CbZS0aAl8xw4McOkoU1niYR4dxIYf3YPS1mdVGBz8OiMCg
-         JQQUCYc576aEMYDWmPYsWcb63yJ7Cbwbar6RyUac+LB6zVHntFVXK2JYwnrYiBSjXB7u
-         Ma3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP/K3hq2o9PQ3xL/su2p4W8M00ua298O7veMRV0H37ZX4ppTlwdk3vuFKsB2nbu2HxUdAi1/F2LPr67x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAuzu/zrzU6FVMKe82Gl4LhJXzm7Az1TAvQWY5OY19kkDdeaM9
-	DYbIGXYjDIXLwq8stfU/qoooa1WtM6LLXgJcmpZdduu2QOJyPT5B
-X-Gm-Gg: ASbGncvFbxRtsPbrkfI+44fnYkuq8RDP1PSyWEm71LqkdNRNx5Z6F7i+QBuRoEhFK7u
-	SO54isBOxr0w01T8Mzu8w7DwMl5Q0TCsc0QyI3KfsFZmHr04TgPrIrZrLaLs9TRAJ7SzPD9WDNp
-	DkWgETdNWRzNU70y2kPuY2OeiRehU2MFO8wx52FgL2ztD1/MgkPFJoME80tKXPDV8asY/JzMvgM
-	fV2kRMiWMHiKSKKgcgUDcrQQ66/SBm8TVVNHPM3IK4N7BHv6m/gZnHNgcbD82og/GSbICKhvqx+
-	OcZB0voDTq8GUFckmO+INfLZkR2/3HleizlIzL7X8W+GqQ8vTEH0cgA8HbPu6EAjRd3htLsqSIx
-	hx5eIX9mRqVMIp+FWHpdKDXDrgw==
-X-Google-Smtp-Source: AGHT+IGmBmm3C/2jLNoVcpiFNaVQBfRpos13JsgNqrg+d7vr+5IZSCkCD3uFqGqFACXb0v+yv5GQTA==
-X-Received: by 2002:a05:6000:4029:b0:390:ee01:68fa with SMTP id ffacd0b85a97d-39efba454demr12515857f8f.24.1745353226923;
-        Tue, 22 Apr 2025 13:20:26 -0700 (PDT)
-Received: from ?IPV6:2a02:8010:6606:0:c8cf:b8a9:b26:a03f? ([2a02:8010:6606:0:c8cf:b8a9:b26:a03f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43bef1sm16008927f8f.49.2025.04.22.13.20.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 13:20:26 -0700 (PDT)
-Message-ID: <1997854d-c501-493b-91d5-c3640137f7a6@gmail.com>
-Date: Tue, 22 Apr 2025 21:20:24 +0100
+	s=arc-20240116; t=1745353249; c=relaxed/simple;
+	bh=0xhEb/1qj2qQ0bRHlD3fnJYqGYC7qSd5C7GA5eZYVsM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AUxXaONrUYalhrhCC7ZDM3nFaB2zgN/Ntz0usYQBfH1mUBoPg2wTxQG8RvCgo4fn6ilkAFdBfekYXHKexHB0vtpnFONnXbBx8TNSAkZ2KMhSI0NvrYJyNu55W1z9ISLXbHabYbI7Rw7ep85m2P8VSt620kvSxbVFhPzgUHyucts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cNpG0Nr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FC7C4CEE9;
+	Tue, 22 Apr 2025 20:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1745353248;
+	bh=0xhEb/1qj2qQ0bRHlD3fnJYqGYC7qSd5C7GA5eZYVsM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cNpG0Nr00xDGSF3M25gBTnFvtRX49Nbq/fkg7kZKb0jI53bKD8Prfv/EQQeSNSeTB
+	 pzTm3cbznEUBJiGNI3+RPrbCSdzSoBIL4Q8PZ6G7d81HatnVu5lcyzyqqC/LOOSny6
+	 nOgXkoUau3bOgMLCoFj/+ZluPcYwjnKv+yAJgJ/k=
+Date: Tue, 22 Apr 2025 13:20:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ruihan Li <lrh2000@pku.edu.cn>
+Cc: Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v2] mm/mm_init: Don't iterate pages below
+ ARCH_PFN_OFFSET
+Message-Id: <20250422132047.22c6cd3a00893bdfd6766df4@linux-foundation.org>
+In-Reply-To: <asgvzub435pimtmjt7bsve2hyon6as5twncg3scmdwztvr2tct@nlaw5qsyw33g>
+References: <20250419122801.1752234-1-lrh2000@pku.edu.cn>
+	<aAZ1RzQdgllQYM04@kernel.org>
+	<asgvzub435pimtmjt7bsve2hyon6as5twncg3scmdwztvr2tct@nlaw5qsyw33g>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: rk3588-nanopc-t6: fix usb-c port
- functionality
-To: John Clark <inindev@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- mjuszkiewicz@redhat.com, sebastian.reichel@collabora.com, jonas@kwiboo.se
-References: <20250419023715.16811-1-inindev@gmail.com>
- <bda07179-1ff4-46e4-9dda-ece9c63fd613@gmail.com>
- <20250422000748.59664-1-inindev@gmail.com>
-Content-Language: en-GB
-From: Hugh Cole-Baker <sigmaris@gmail.com>
-In-Reply-To: <20250422000748.59664-1-inindev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 22/04/2025 01:07, John Clark wrote:
-> On Tue, Apr 22, 2025 at 00:12:02 +0100, Hugh Cole-Baker <sigmaris@gmail.com> wrote:
->> Hi John,
->>
->> On 19/04/2025 03:37, John Clark wrote:
->>> The USB-C port on the NanoPC-T6 was not providing VBUS (vbus5v0_typec
->>> regulator disabled, gpio-58 out lo) due to misconfiguration. The
->>> original setup with regulator-always-on and regulator-boot-on forced
->>> the port on, masking the issue, but removing these properties revealed
->>> that the fusb302 driver was not enabling the regulator dynamically.
->>>
->>> Signed-off-by: John Clark <inindev@gmail.com>
->>> ---
->>>  .../boot/dts/rockchip/rk3588-nanopc-t6.dtsi   | 21 ++++++++++---------
->>>  1 file changed, 11 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>> index cecfb788bf9e..8f2bd30786d9 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>> @@ -174,8 +174,6 @@ vbus5v0_typec: regulator-vbus5v0-typec {
->>>  		gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
->>>  		pinctrl-names = "default";
->>>  		pinctrl-0 = <&typec5v_pwren>;
->>> -		regulator-always-on;
->>> -		regulator-boot-on;
->>>  		regulator-name = "vbus5v0_typec";
->>> @@ -465,24 +461,30 @@ regulator-state-mem {
->>>  &i2c6 {
->>> -	clock-frequency = <200000>;
->>>  	status = "okay";
->>>
->>> -	fusb302: typec-portc@22 {
->>> +	usbc0: usb-typec@22 {
->>>  		compatible = "fcs,fusb302";
->>>  		connector {
->>>  			compatible = "usb-c-connector";
->>>  			data-role = "dual";
->>>  			label = "USB-C";
->>> -			power-role = "source";
->>> +			/* fusb302 supports PD Rev 2.0 Ver 1.2 */
->>> +			pd-revision = /bits/ 8 <0x2 0x0 0x1 0x2>;
->>> +			power-role = "dual";
->>> +			op-sink-microwatt = <1000000>;
->>> +			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
->>>  			source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
->>> +			try-power-role = "source";
->>> +			typec-power-opmode = "3.0A";
->>
->> According to the manufacturer wiki [1] "Power Output Capacity" table, the USB-C
->> port maximum output is 5V/2A. So I think "1.5A" would be a better value here.
->>
->> [1]: https://wiki.friendlyelec.com/wiki/index.php/NanoPC-T6
-> 
-> Hi Hugh,
-> 
-> Thank you for your feedback and for referencing the manufacturer’s wiki. To clarify, the line in question:
-> 
-> source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
-> 
-> was not modified in my patch. This value, which sets the USB-C port’s source capability to 5V/2A, is unchanged from the existing device tree.
+On Tue, 22 Apr 2025 17:08:06 +0800 Ruihan Li <lrh2000@pku.edu.cn> wrote:
 
-source-pdos is OK, I was referring to the typec-power-opmode = "3.0A" line just
-above where I commented. As I read it, that'd mean the board would advertise
-via the CC pins that it could source 5V/3A when USB PD is not in use.
-The wiki says it can only source up to 5V/2A.
-
-br, Hugh
-
+> Hi Mike,
 > 
-> Furthermore, the schematic for the NanoPC-T6 and the vendor’s upstream Linux device tree (e.g., FriendlyARM’s kernel at https://github.com/friendlyarm/kernel-rockchip/blob/nanopi6-v6.1.y/arch/arm64/boot/dts/rockchip/rk3588-nanopi6-rev01.dts#L346) also specify the source capability as 5V/2A. Given this consistency across the schematic and vendor sources, I believe 2A is an appropriate value for this configuration.
+> Thanks for your review!
 > 
-> Please let me know if you have further concerns or suggestions!
+> On Mon, Apr 21, 2025 at 07:41:43PM +0300, Mike Rapoport wrote:
+> > On Sat, Apr 19, 2025 at 08:28:01PM +0800, Ruihan Li wrote:
+> > > Currently, memmap_init initializes pfn_hole with 0 instead of
+> > > ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
+> > > page from the page at address zero to the first available page, but it
+> > > won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
+> > > won't pass.
+> > > 
+> > > If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
+> > > kernel is used as a library and loaded at a very high address), the
+> > > pointless iteration for pages below ARCH_PFN_OFFSET will take a very
+> > > long time, and the kernel will look stuck at boot time.
+> > > 
+> > > This commit sets the initial value of pfn_hole to ARCH_PFN_OFFSET, which
+> > > avoids the problematic and useless iteration mentioned above.
+> > > 
+> > > This problem has existed since commit 907ec5fca3dc ("mm: zero remaining
+> > > unavailable struct pages").
+> > > 
+> > > Signed-off-by: Ruihan Li <lrh2000@pku.edu.cn>
+> > > ---
+> > > Link to v1:
+> > >  - https://lore.kernel.org/linux-mm/20250418162727.1535335-1-lrh2000@pku.edu.cn/
+> > > Changes since v1:
+> > >  - Removed the unnecessary Fixes tag.
+> > >  - Fixed the build issue for CONFIG_SPARSEMEM.
+> > > 
+> > >  mm/mm_init.c | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > > 
+> > > diff --git a/mm/mm_init.c b/mm/mm_init.c
+> > > index 84f14fa12..a697a83ff 100644
+> > > --- a/mm/mm_init.c
+> > > +++ b/mm/mm_init.c
+> > > @@ -969,6 +969,15 @@ static void __init memmap_init(void)
+> > >  	unsigned long hole_pfn = 0;
+> > >  	int i, j, zone_id = 0, nid;
+> > >  
+> > > +#ifdef CONFIG_FLATMEM
+> > > +	/*
+> > > +	 * Pages below ARCH_PFN_OFFSET are invalid as far as pfn_valid is
+> > > +	 * concerned, so don't waste time iterating on them when looking
+> > > +	 * for holes.
+> > > +	 */
+> > > +	hole_pfn = ARCH_PFN_OFFSET;
+> > > +#endif
+> > > +
+> > 
+> > I'd prefer a solution for both FLATMEM and SPARSMEM. 
+> > 
+> > David Woodhouse proposed a for_each_valid_pfn() a while ago:
+> > 
+> > https://lore.kernel.org/all/20250404155959.3442111-1-dwmw2@infradead.org
+> > 
+> > It can be used in init_unavailable_range() and will essentially skip the
+> > unpopulated memory map.
 > 
-> Best regards,
-> John Clark
+> for_each_valid_pfn sounds much better. Thanks for your input.
+> 
+> However, the problem is that David's patch is not showing up in the
+> mainline, so what can I do to move forward with my patch?
+> 
+> Perhaps you mean that I should wait until David's patch is merged and
+> send another patch to fix the problem?
 
+(cc David)
+
+> > 
+> > >  	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid) {
+> > >  		struct pglist_data *node = NODE_DATA(nid);
+> > >  
+> > > -- 
+> > > 2.49.0
+> > > 
+> > 
+> > -- 
+> > Sincerely yours,
+> > Mike.
+> 
+> Thanks,
+> Ruihan Li
 
