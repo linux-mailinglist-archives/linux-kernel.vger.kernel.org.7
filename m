@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-614232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18A5A967D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:39:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5244A967E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD80B165E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F253ADB02
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0916227C15D;
-	Tue, 22 Apr 2025 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0830427BF73;
+	Tue, 22 Apr 2025 11:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ACGUFXkk"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="LRw9wxWa"
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E853128F5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356F719CC28
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 11:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321917; cv=none; b=Od0nbziCoTdD1ZPOOR3Mh01m4yI0kYZMsOdGRjANHevkBpxcwJvxXmp+flSq2Fpfs+9fKWm2k8KFJ4BimQiY6Cmpq4D6JQsfhEOIDm73DNvB3qoOVolzGQ1Vo+HzvDhhMzadTQXkHM08CS5QuN81L59BYlck6xx0pZmqlLV05Ow=
+	t=1745321854; cv=none; b=uhpDjw0CCnASqaU2U47pgQJgys/nE1cZIPt7YWPEz724eglOFxdk1fDzYocl/T2s1XaD4Q3v/9RY5xwdfVLCe/4LXptFOPf0QQMoHAorb+SC+TmkEyAiohlsKm7m6pYMS+BCnfP+RO2QX5kW573gytMhfCdPJ/N/xhQJA/CGgI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321917; c=relaxed/simple;
-	bh=JnHjTqESwLGRJ5PjNphLGVoa3ZuZtuO5tEQ0ca62Iuk=;
+	s=arc-20240116; t=1745321854; c=relaxed/simple;
+	bh=NnxY89LYhbLARetPN5zhGa7iUim7I6iRVpsHqE0+Q5w=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=fQJRcPwRLoeQEidfirZ9kg11Eq2qeUB3EQCqnGUcpqpJJNl8DPY1FFtq4to7rZSrtEowiv9+b6LSSxUX4GWwuYHEzD8WsMvIRnwa/2kFxCzHhh9rp3gN7wDxuhTDtWn6IzCKGSeKyRwBC+yuM7iRYT6Uzg4z+f2gSP6jP5Z8k88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ACGUFXkk; arc=none smtp.client-ip=162.62.57.252
+	 MIME-Version; b=dEn8p5RGYweBQQWbzjqtPRt+PUZGoC9mHR54wmehiRpo59xzNK2af8+iSFwZlPpXzWRrPDbP2C3Z04c/8o9L1vPlju2lbOODOskNQS1YYAHqHZH9KBgTXkTiHuig80NyWzHpas9A6CLkedPauw1+GEbLvfV2m7FVWxZYHh/WpeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=LRw9wxWa; arc=none smtp.client-ip=203.205.221.231
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1745321903;
-	bh=ZQpsbhaFgK5N3SJR4O5d1IhEn2A/ayFSnFefybnzbUQ=;
+	s=s201512; t=1745321542;
+	bh=4xl79K4CpovGmqVP3x6m7YPQRoyNgTpQhURrMUQlgOs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ACGUFXkkKpxOqppcz1Pkl0Y5L1sHE1rhGVIJFu9+gmvkG7bw3fG1/f2AmJmJFNn5+
-	 b599rDEPcFUINt/jrOFyoLKHH+AE07Os7g8673DVkOs/Vzlz68Qdcdz2lFQg+XQXjX
-	 38wjfPEOTDu5ZCwvqAL+6fHEOHHx10Pm+/f3hxiQ=
+	b=LRw9wxWaa6FDexKoVP4e0JeQ/mys7Sy0hfnqT0Yvwe+l+eXBraZUDq3UutttyB3qx
+	 PQbCE8iyhLVB9ESSQwaRcz/saPag4pFPJ9T+eVNVunVc/+wM8ZY2yOuizt6blT3VP/
+	 0FT0DsVG0K/zrw8D3j+6fiiKa7zB5Voavu8lmqDM=
 Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 8003C0DB; Tue, 22 Apr 2025 19:32:00 +0800
-X-QQ-mid: xmsmtpt1745321520txa2gqk54
-Message-ID: <tencent_2BC43E7712D51EA49597D8C9DE5CAE2B5906@qq.com>
-X-QQ-XMAILINFO: NYgPVFNA92vRqhHCPMzjzMEAdpQ0c/0TGw/C8xi1tTbBbfBw1THL3K5ajx8CKo
-	 FywglcONyfYoDaHYh491mXJhJKVkyXBWJ6aBuwISp6MUqPYbFUCPlH3cvIjxr5Gb7YPF2d96+Fw/
-	 /Z0hXPVIL8ewiRLjbZSHzSU1VsOwi0pf+8bmY+Y9ZDx1D4duhQQvkk4K1o/MugPcgGs/QEj4M0wU
-	 itV34Mu1N3SXJux+wpPqed3xJURyFpaB3uMEuoMsuXtJJXOEiMtWvS1A4soIhjejYBiTR0L92PQa
-	 IcEVFi21+rntdf9IctzMyLy/5mdzfVbq6aL4/+d8kRKBL3yMjuU8r8/MHVx5Af9xlHcBye6NXUw4
-	 ISunKYggGsDnuMcLczv/crppnPGgefqbbSvZqxcHFJ9vNUQu8w2nteDye8mUgmHcMu5onyLIe5LK
-	 /fjFzTa6GldSTxsFEaseCEB3IzCJkw69nuSVySpxc+XnPziuZk6eMfgsXjwZ97smRrEEgAGTotLs
-	 e5lmFOSQ4C+JtcW2dYHa3egSOMFqf+/5jwLym7cvo7hkWIu1mnnadYNLhhPkWhqkv85K7GBF0d93
-	 /gSr5Q0kXvRsh7UFlq+SjKa8Pq6bCBxLyy52d+UHGvnDDFnJwzwXErKrcm0mEaeHQ5TNS4HkX9/7
-	 Cxkf7J0yqQBXQp69T1oUvLiz8YvfouWomP4RpUnNJh5lM7eaOaHf8IIMt6pFBiHyAH3WtFfju2j0
-	 lwjNpOucLBVVNfFOuzLZls0hmzkER0DipVssIFU7P4OqQVwSI5r2pxcR+SB0+fzlEJ9F8IoSJC+E
-	 NU4uVhNLKNGmxvhAFSgPqhE1DWfHtKRTdAWI58UCPk06ODI7lDZD1mIVHgHL/ROrXNzW2AuTm4JX
-	 wANDuYB3WxYt4no2a8HAPdCfNbeq9JT+yAPoKLG/ILUf1hF25ehFXdqWobHg1HtiNNdEeQhqP+Ka
-	 Z2ONInpj6Cs85TU2rP/veHFnBF11E+G9h867HCrmb1pZU26L1RIGqmaQNMVNikZw150lHLHM5c/h
-	 GsmDVA6dP25lbIhsIwwtCKTiReVf8=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 814266CC; Tue, 22 Apr 2025 19:32:20 +0800
+X-QQ-mid: xmsmtpt1745321540t4fv6o3a1
+Message-ID: <tencent_3FA290FB5E6F27C37304AEA91143DC0F5408@qq.com>
+X-QQ-XMAILINFO: OdDhBiKk1LgMsLreFc7Yg+e5ZO1/TZcbbcK7wIXcZrI8vC4xKJFncMk6OhOYBZ
+	 R8DWimveepk0MHIy5TD57YHIarEvUAP1Hp99hFFgL+x0YWAhCNpQ5ctZ4yH7ErXBgAIpQV08jRwf
+	 8ccDn9b7jR7vHGXjLToLjlzP15nExwZZ9ig4b55uxoek9W0x1kg8mqtgWQ0rC+olMeK9fZbUR1dt
+	 KOIXSm38HDVJQ6xs8a+tKn2QOzfWUzyiLkhxZOcaDfFkwphHkhpHOmfj0DLSKehYl9qAM4gNiqyy
+	 8lDD+l+13RAXHE8wCkTJ4xqDgN3faAki97WbLjky0H0J21Pc61qOA2ONTFD7y5OhtPTv4UZcDa+B
+	 meGVMaArMio77/oOtBaWSPskPKaE+0xLgjcW032wKHHkVmSenV1OHy6jkdnAaBmntbj+IhglhV2J
+	 ZQnBArsuz4tXdDC/8kbwn2nR3C1oFDS9zfrqc79DTW/V3P7favda/bOLIPk0mClxiPQk9wbyZQxg
+	 wNInOsaWlbGdl6mGIacYmgRM9gSp8yVUCiS4LXuWv3ElxHETPVMzu84gpTFQFY5nOKZoaVnyHlH3
+	 Uk8yltmNzx3OpIC3hbBHwu8o0eiifnorZm47yp6okHEH35HQxGXF9ly1yyfCNv+BKzFi+Aj6wncA
+	 kWWUpD49X27YOBa7rjNIHjzs0KHSqk5TNznnYmfZJU9sKk0gdWPBHwFDCBOY22SKkfUXg5Zt9ZWg
+	 C4jnm3gz2aaDv+zgFG5fbGckE6phEkp4gSOIJqB657l67wg0K7jEDtFfltt5rgTN6ZT5GLI6GquP
+	 qX3s4kL7VyFkFwiY4raR/za/aiPfKPf0sXhBKt6AEQX68kq3BfbwhbMO/jEHBlc9Dea8gr6NgpfK
+	 OLqLpDbZ8VNSE53l2jCI3Ot1jLfZUeHWk8Mebo63N58Q1YtU3wsNSUGiReYX8zyPW4oA1iNij94W
+	 KpO2TwVZ+fMKQ/YeUriPzMWpZWAS8FEGk7/HjNhFAn1x0PUTgmj0H82ftAuFtiWq9rSWk+cbsm/f
+	 0R4mrDC1vhi6rumduR09ufoU4FGWsWAUsYGa12tA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 From: xiaopeitux@foxmail.com
 To: xiaopeitux@foxmail.com
 Cc: andriy.shevchenko@linux.intel.com,
@@ -66,9 +66,9 @@ Cc: andriy.shevchenko@linux.intel.com,
 	robh@kernel.org,
 	xiaopei01@kylinos.cn,
 	xuwei5@hisilicon.com
-Subject: [PATCH 2/3 V1] lib: logic_pio: export function symbol in logic_pio
-Date: Tue, 22 Apr 2025 19:31:59 +0800
-X-OQ-MSGID: <0f8001acfb2b89ea88f819a14553310ef8c91d71.1745320689.git.xiaopei01@kylinos.cn>
+Subject: [PATCH 3/3 V2] lib: logic_pio: Add detailed comments for find_io_range() and logic_pio_trans_cpuaddr()
+Date: Tue, 22 Apr 2025 19:32:19 +0800
+X-OQ-MSGID: <acf45319e9599976304fc5d8172f8291d091cba9.1745320689.git.xiaopei01@kylinos.cn>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1745320689.git.xiaopei01@kylinos.cn>
 References: <cover.1745320689.git.xiaopei01@kylinos.cn>
@@ -82,67 +82,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Pei Xiao <xiaopei01@kylinos.cn>
 
-export some function via EXPORT_SYMBOL, convenient to use in
-kernel modules in the future if somebody went to use this lib.
-This is one reason for this library exists.
+Add comments that we were previously overlooked for find_io_range()
+and logic_pio_trans_cpuaddr().
 
 Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 ---
- lib/logic_pio.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+changes in v2: fix returns differ
+---
+ lib/logic_pio.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
 diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-index e29496a38d06..db3ad65ccc48 100644
+index db3ad65ccc48..44ba50386714 100644
 --- a/lib/logic_pio.c
 +++ b/lib/logic_pio.c
-@@ -99,6 +99,7 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
- 	mutex_unlock(&io_range_mutex);
- 	return ret;
+@@ -141,7 +141,15 @@ struct logic_pio_hwaddr *find_io_range_by_fwnode(const struct fwnode_handle *fwn
  }
-+EXPORT_SYMBOL(logic_pio_register_range);
+ EXPORT_SYMBOL(find_io_range_by_fwnode);
  
- /**
-  * logic_pio_unregister_range - unregister a logical PIO range for a host
-@@ -113,6 +114,7 @@ void logic_pio_unregister_range(struct logic_pio_hwaddr *range)
- 	mutex_unlock(&io_range_mutex);
- 	synchronize_rcu();
- }
-+EXPORT_SYMBOL(logic_pio_unregister_range);
- 
- /**
-  * find_io_range_by_fwnode - find logical PIO range for given FW node
-@@ -137,6 +139,7 @@ struct logic_pio_hwaddr *find_io_range_by_fwnode(const struct fwnode_handle *fwn
- 
- 	return found_range;
- }
-+EXPORT_SYMBOL(find_io_range_by_fwnode);
- 
- /* Return a registered range given an input PIO token */
+-/* Return a registered range given an input PIO token */
++/**
++ * find_io_range - find a registered range by PIO
++ * @pio: logical PIO value
++ *
++ * Traverse the io_range_list to find the registered node for @pio.
++ * The input PIO should be unique in the whole logical PIO space.
++ *
++ * Returns a registered range, NULL otherwise.
++ */
  static struct logic_pio_hwaddr *find_io_range(unsigned long pio)
-@@ -177,6 +180,7 @@ resource_size_t logic_pio_to_hwaddr(unsigned long pio)
- 
- 	return (resource_size_t)~0;
+ {
+ 	struct logic_pio_hwaddr *range, *found_range = NULL;
+@@ -209,6 +217,14 @@ unsigned long logic_pio_trans_hwaddr(const struct fwnode_handle *fwnode,
  }
-+EXPORT_SYMBOL(logic_pio_to_hwaddr);
+ EXPORT_SYMBOL(logic_pio_trans_hwaddr);
  
- /**
-  * logic_pio_trans_hwaddr - translate HW address to logical PIO
-@@ -203,6 +207,7 @@ unsigned long logic_pio_trans_hwaddr(const struct fwnode_handle *fwnode,
- 	}
- 	return addr - range->hw_start + range->io_start;
- }
-+EXPORT_SYMBOL(logic_pio_trans_hwaddr);
- 
++/**
++ * logic_pio_trans_cpuaddr - translate CPU address to logical PIO
++ * @addr: Host-relative CPU address
++ *
++ * translate CPU address to logical PIO
++ *
++ * Returns Logical PIO value if successful, ~0UL otherwise
++ */
  unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
  {
-@@ -227,6 +232,7 @@ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
- 
- 	return ~0UL;
- }
-+EXPORT_SYMBOL(logic_pio_trans_cpuaddr);
- 
- #if defined(CONFIG_INDIRECT_PIO) && defined(PCI_IOBASE)
- #define BUILD_LOGIC_IO(bwl, type)					\
+ 	struct logic_pio_hwaddr *range;
 -- 
 2.25.1
 
