@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-614402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030D5A96BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3594A96BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FCB166ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010FD188A01E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56EB27E1BA;
-	Tue, 22 Apr 2025 13:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B0728135E;
+	Tue, 22 Apr 2025 13:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Gzpoavgt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2kSGLEhG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Gzpoavgt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2kSGLEhG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="C4zXWLtl"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748D218CBE1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 13:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B087B27F4E7;
+	Tue, 22 Apr 2025 13:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326843; cv=none; b=E56k32R31Is+YIGEjJjgCt3E1v5BTirANSaxER3E/eWtaHJMm2AdN4ZwX0wZzNaQhHCuYMN5Efq6ScU49kZE6p6GwxRa5F5ihflrxaGJK+rVnxx2o7SEydDB8Pp/zX5SCcGEOc8SQdEtS0hMWPFKSSECrC1zEAvKeG8KHLPjmjg=
+	t=1745326897; cv=none; b=bK2fstjg2Aoti3SD9PiRNRD2Z+FqN7ONo6gvKz8Jd1KKbW6viKbgU7XZlJgydZsCq9UjZivVwb1bC/3AxzTmRq84/KnYh+MM9T+zeI+4a3zUZbSwIEhOW/yjO3dbqR8RDOmrk5DrlwGpVOArhyn5FSWZtRntevB2afljy+4PeLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326843; c=relaxed/simple;
-	bh=v8rarTBnH88kBBOaIdRRR1GZuNP3zVXGE6MWo1DgdB4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RESJBfk3JkOewz6fjQgMe9HVWr5KcFA9/DOBHkBWD2Sfv5xTYxeb09frjS/j3bMYkJn4C8WtdeqOFRan5ljooQN+oOjsg1DeEMqPVm7G1oruyiVVeJXAD/aYtLzcCTesDXARDphdczI8fdhD3Uczi132XxLFCMD91h99LTTJF4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Gzpoavgt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2kSGLEhG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Gzpoavgt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2kSGLEhG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9EDF1211CD;
-	Tue, 22 Apr 2025 13:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745326839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKOzh1Sy9EUyITBcFi/dPVZRj55vyyBaFV0Vlnor+Mk=;
-	b=GzpoavgtGR6QDgBRDd5wmDNjveJ13cXS/P8KGmgIKeJnuV0snvWY5P8WLuu2h4eDLDD/xy
-	Hb1YdOBkoe2NBtYHUoytUmM+vLT331DbSYVOl55ApDQSpKpGUCbBGLhw6AjpoL8tSNIVfa
-	uTu/vt3KVjFhzcmnIO5F99Zxz+OhZXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745326839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKOzh1Sy9EUyITBcFi/dPVZRj55vyyBaFV0Vlnor+Mk=;
-	b=2kSGLEhGImQ/5H+XxgZfNbQtmzi3b18q9ZUeCT9eIU1AWCkDULA3dnK78uPXzs/vNyGTn/
-	8SOK0J34mxd2E+Bg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745326839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKOzh1Sy9EUyITBcFi/dPVZRj55vyyBaFV0Vlnor+Mk=;
-	b=GzpoavgtGR6QDgBRDd5wmDNjveJ13cXS/P8KGmgIKeJnuV0snvWY5P8WLuu2h4eDLDD/xy
-	Hb1YdOBkoe2NBtYHUoytUmM+vLT331DbSYVOl55ApDQSpKpGUCbBGLhw6AjpoL8tSNIVfa
-	uTu/vt3KVjFhzcmnIO5F99Zxz+OhZXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745326839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKOzh1Sy9EUyITBcFi/dPVZRj55vyyBaFV0Vlnor+Mk=;
-	b=2kSGLEhGImQ/5H+XxgZfNbQtmzi3b18q9ZUeCT9eIU1AWCkDULA3dnK78uPXzs/vNyGTn/
-	8SOK0J34mxd2E+Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7540B137CF;
-	Tue, 22 Apr 2025 13:00:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CYNcG/eSB2gBLwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 22 Apr 2025 13:00:39 +0000
-Date: Tue, 22 Apr 2025 15:00:39 +0200
-Message-ID: <87msc8s64o.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: pcm: Make snd_pcm_lib_malloc_pages() debug message say "allocate"
-In-Reply-To: <20250421085244.377228-1-wenst@chromium.org>
-References: <20250421085244.377228-1-wenst@chromium.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1745326897; c=relaxed/simple;
+	bh=5LMGE4ZovaTauFyhzyyvbLqIw01XMG3sYlgkOB3VihQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLUe3Dv17eE9FHMK2dJb8Vn/sZJG+2GglqVTTAwb+EmVso0YE0SyUtN8I9mbgQD6wKDcl4h0AH5JyZo/jgx21FgYvmh+TSDzInMSwZKhT/a+BSP5kP8PMJXl7xn82PkDsSxJgqC59mEXpxIjtKoOMJ9lYewwo+eiYVsY4BycoBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=C4zXWLtl; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 072081F99E;
+	Tue, 22 Apr 2025 15:01:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1745326891;
+	bh=vjca4SS0LDQaoBRT4ZcgCIXZFJwOWWihMEoq+jbhB/o=; h=From:To:Subject;
+	b=C4zXWLtlL3y67SU1zoapsx4icmhYWhMeUCN1+Dr/K5iofMbMRwqEtYbmtBr/diRVo
+	 WBE7GTpJmG2QiK0IiWCQR+sBO95Wu/XMZqT6cVREWWdTfiKoaOMx18iYPMhkBEHHJh
+	 j4EgkGVlI2GS962j1yky/mfJsEYSkOjKlwNp6MyiEGtnt5ZhHoJ2zRBSjvcWpbb9JG
+	 OYeoQ+x1QMIDpEt8MJb2319XF5JN675YzWIgbL19PiUSvUrMpLYcZo6bZPPhLBakhf
+	 NHWnuz9c5a50LpziXXGaZCwd8NrQzZRH8U6dodWuS92/Rqfvem54ZP788P3RdrB76K
+	 vbkzG8mEnNLhg==
+Date: Tue, 22 Apr 2025 15:01:27 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Philippe Schenker <philippe.schenker@impulsing.ch>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to
+ usdhc2
+Message-ID: <20250422130127.GA238494@francesco-nb>
+References: <20250422124619.713235-1-Wojciech.Dubowik@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[chromium.org:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422124619.713235-1-Wojciech.Dubowik@mt.com>
 
-On Mon, 21 Apr 2025 10:52:42 +0200,
-Chen-Yu Tsai wrote:
+Hello Wojciech,
+
+On Tue, Apr 22, 2025 at 02:46:15PM +0200, Wojciech Dubowik wrote:
+> Define vqmmc regulator-gpio for usdhc2 with vin-supply
+> coming from LDO5.
 > 
-> snd_pcm_lib_malloc_pages() is commonly used for allocating buffers during
-> the hw_params callback, whereas preallocating buffers goes through
-> preallocate_pcm_pages().
+> Without this definition LDO5 will be powered down, disabling
+> SD card after bootup. This has been introduced in commit
+> f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
 > 
-> Having the same terminology in the failure debug messages in both
-> misleads developers.
+> Fixes: f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5")
 > 
-> Change the debug message in snd_pcm_lib_malloc_pages() to use the
-> term "allocate" to match its intended use.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
 > ---
-> I found this small discrepancy in the ALSA PCM memory management debug
-> messages that made it a bit confusing for me to trace code.
+> v1 -> v2: https://lore.kernel.org/all/20250417112012.785420-1-Wojciech.Dubowik@mt.com/
+>  - define gpio regulator for LDO5 vin controlled by vselect signal
+> ---
+>  .../boot/dts/freescale/imx8mm-verdin.dtsi     | 23 +++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> index 7251ad3a0017..9b56a36c5f77 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> @@ -1206,13 +1220,17 @@ pinctrl_usdhc2_pwr_en: usdhc2pwrengrp {
+>  			<MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5		0x6>;	/* SODIMM 76 */
+>  	};
+>  
+> +	pinctrl_usdhc2_vsel: usdhc2vselgrp {
+> +		fsl,pins =
+> +			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT	0x10>; /* PMIC_USDHC_VSELECT */
 
-Thanks, applied now to for-next branch.
+This needs to be muxed as GPIO, MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4
 
+Francesco
 
-Takashi
 
