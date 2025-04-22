@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-613916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA01CA963CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAF9A963DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 11:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B183160C30
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:11:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C801783E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 09:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB0125A2A7;
-	Tue, 22 Apr 2025 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTAcr/gJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D41125291D;
+	Tue, 22 Apr 2025 09:11:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE9F2586EE;
-	Tue, 22 Apr 2025 09:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E45D238C2F;
+	Tue, 22 Apr 2025 09:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745313017; cv=none; b=JghLoSNqVI8ajGWxhRG/lrtijtnbY7l7FXzjCbpbwf75dCfyb7mRavdP2JPCosHsdMACO3WHmY86Dszfb5RlvoAQXry45Hx4Lo6714PreCcZNbzvgMe4eyW4YEUVhslOMk6ZuNUgMA8UJrPqGeORsv+z439uEcl/RG4qYtDb5LA=
+	t=1745313070; cv=none; b=NB/4e70bWlCOcvCf5wou8Ec5B9fEHx6h/Cc7NYdVyEhS9XweqZaUgE4gtfbGDSn8dCswrfYSXC7QJ8OJH9coJvnjJYwNTgVBA5mmXIWp0IMp7pEQEGcnvIoQ8zM3lIJsv+jFPKArQlo+2vB2xQ6hCOCrZqyOUEi3gIqDMQX1XS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745313017; c=relaxed/simple;
-	bh=jH8At2SfPuZmHTg0yL5nlwxNBYfhw+LxJLy97iuYdhE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dc++SXyv7Nx8pCvrTAJCtLHWKpJ0P+nuCD/ylM6iVnDsj8eW2dYYuo4pUiy7lgzIqDiNPdU4YGFDcYZguXE31IfRtEI366lawWMFn3DHvPlxtEeEFk449cS0O1Rxwi80jDU3MajtC14HSS9uQOgippEp5mqhtpJj6fS8n2xqob4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTAcr/gJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5EF9C4CEEA;
-	Tue, 22 Apr 2025 09:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745313016;
-	bh=jH8At2SfPuZmHTg0yL5nlwxNBYfhw+LxJLy97iuYdhE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CTAcr/gJdCJTdZlKktxEL0yQa28Bts9wANoF/1DSJZkwFyX9qoC0EGD5SuUnD+8jr
-	 Ht7A8t2Die7Pb6D0lHa6EYMW/mWGGaqIM1RICn8L8fihsLLKmYwG4Fh/WZ18gYttio
-	 sEz/+ZKXsJaHdBF8JwF3EYgxaazeEfn9KEUg/L2J7FXjtEdhZRva4GHqVKfKzkMuPI
-	 TKnx6qqiYaRMvbT+hifgTzPQ49LOt2rfhYzVs1QhZlX53HeZ8SifSqTxqUXFU+vMdi
-	 yP7RczoAF1q4nFO0jA+Ua5Mw8uEdzxcSW43gP3RxQ7AaDBMketqFVGK111m6SPUFX9
-	 ti3TbIs0I7/sQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCA39D6546;
-	Tue, 22 Apr 2025 09:10:56 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745313070; c=relaxed/simple;
+	bh=f9deQhR1Q1RCnOm2h2vN8BQsniXjGP3x0y8ywwgWRtk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dJAhQii1YMkz6PPVHpSGduZMXz5Tknvh/sxsypIlOZMKpObQegvCWswo4fSQ4IdeSFLu+nBpUehTJrfjlcut9ZIhzu5/gpIEOET2rq7MvG38qXG1JM0cWkFGapvlowDMStfgqY6JkjkA50m0Bgt6opnTdTkIgPTJivO8CCQIUrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: b5c0a77c1f5911f0a216b1d71e6e1362-20250422
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:045f0ceb-7dcd-4879-9c5a-e6eb51568785,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:20
+X-CID-META: VersionHash:6493067,CLOUDID:494d66d8953aae14750653e069c5005b,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b5c0a77c1f5911f0a216b1d71e6e1362-20250422
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1169028749; Tue, 22 Apr 2025 17:11:01 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id D5C54E000F3B;
+	Tue, 22 Apr 2025 17:11:00 +0800 (CST)
+X-ns-mid: postfix-68075D24-730977898
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 5BE65E000F3A;
+	Tue, 22 Apr 2025 17:11:00 +0800 (CST)
+From: zhangzihuan <zhangzihuan@kylinos.cn>
+To: rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangzihuan <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] ACPI: battery: Reduce unnecessary calls to acpi_battery_update()
+Date: Tue, 22 Apr 2025 17:10:56 +0800
+Message-Id: <20250422091056.972734-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net/mlx5: Fix spelling mistakes in mlx5_core_dbg
- message and comments
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174531305524.1477965.14350667004501439792.git-patchwork-notify@kernel.org>
-Date: Tue, 22 Apr 2025 09:10:55 +0000
-References: <20250418135703.542722-1-colin.i.king@gmail.com>
-In-Reply-To: <20250418135703.542722-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+When entering the acpi_mattery_notify function, no matter what the event
+is, acpi_mattery_update will definitely be called.
+Use the acpi_listen command to listen, sometimes the log looks like this:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+battery xxx:00 00000081 00000001
+battery xxx:00 00000000 00000001
+battery xxx:00 00000080 00000001
 
-On Fri, 18 Apr 2025 14:57:03 +0100 you wrote:
-> There is a spelling mistake in a mlx5_core_dbg and two spelling mistakes
-> in comment blocks. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Firmware manufacturers will customize some events like 0x0, so
+non-matching events will be ignored.
+Signed-off-by: zhangzihuan <zhangzihuan@kylinos.cn>
+---
+ drivers/acpi/battery.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [next] net/mlx5: Fix spelling mistakes in mlx5_core_dbg message and comments
-    https://git.kernel.org/netdev/net-next/c/1e3647321529
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index 6760330a8af5..9446c57b77e7 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -1083,7 +1083,8 @@ static void acpi_battery_notify(acpi_handle handle,=
+ u32 event, void *data)
+ 		msleep(battery_notification_delay_ms);
+ 	if (event =3D=3D ACPI_BATTERY_NOTIFY_INFO)
+ 		acpi_battery_refresh(battery);
+-	acpi_battery_update(battery, false);
++	if (event =3D=3D ACPI_BATTERY_NOTIFY_STATUS)
++		acpi_battery_update(battery, false);
+ 	acpi_bus_generate_netlink_event(device->pnp.device_class,
+ 					dev_name(&device->dev), event,
+ 					acpi_battery_present(battery));
+--=20
+2.25.1
 
 
