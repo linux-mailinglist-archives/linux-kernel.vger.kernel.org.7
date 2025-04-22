@@ -1,151 +1,122 @@
-Return-Path: <linux-kernel+bounces-613841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02F1A962F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:53:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4A9A962CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47B919E2189
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2253167371
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C52233D72;
-	Tue, 22 Apr 2025 08:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B730628152D;
+	Tue, 22 Apr 2025 08:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="aC/BBYhR"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pY1FOnwL"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3953365;
-	Tue, 22 Apr 2025 08:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC1222A1ED;
+	Tue, 22 Apr 2025 08:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745311172; cv=none; b=srjfX9UCADBkk44KM1Pv1TfMEOYEve75tbPDqifVxMp7lhpuzuaN8YZOEM4zxp2kwjHv3agTW3rZZ8jV8Y75eskZ6fQ9sgbOeGkU/gJKImE3+XvN7sUXWRFGB/ba6ynzSKAsij3cyyDaR8cO9+gIexHiU77AgMJqvQdMSnT0O/4=
+	t=1745311102; cv=none; b=JI3UOSKW9c3A9tdjhOu0fHJvgteWHuQKowqCasdKm7ZNOtJ4A3ti0FA3xh2fIAuPve9QIrVo3mno5qEtK5Ju+ZO8fio2S3fG32QN4uXEuxUL56UaNjxpQLvPBAfSXO0Dm1PGIkCEO6UuhGWO7sx4EwZOBmefK7gHw3MRSeODiKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745311172; c=relaxed/simple;
-	bh=oJIN19zQgzez3l06SIhTIk1FH+znpSFgnJG9QeeBL/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z6ffDgyWL/JzBJmPaOph+tS5e7KyfJl1AQrmPTy+SX0S5yPZC43h+aVJLOcmC8fZ7AO77DsZvXvs2Te17kYj/4ANk/bU4CiEhvigVcbbv4DyndAxjoUDw6IhumQ6owJNtIUueC1223NXJrS7/9ZMdiDlfrOG/tqU9A0V4m1Rh4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=aC/BBYhR; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M7dHvO023461;
-	Tue, 22 Apr 2025 10:39:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	p1HgdGedqFLflmSyTqaih9yVCR93DL2hpGbz6kInKgQ=; b=aC/BBYhR30IsKwaq
-	tyXav00NKeBxVSsNoWFNtYcD6H9WlT1jyliHwkZlkjlzTA/WZMWKKmL1deiqVbVt
-	htwGqnGex+KHq+8vJt+g2M2eKMEjYxkefrVasUGA+dllSKegRZD+nrgwCVl5xrqO
-	28E+zfrbHA4tUUPmN/WDR7Yy7kGKVi1imh1Eb8ZRj9AR4uDs4Z3Zppptoz2grf2E
-	KVt0F1ClLRjN/9OxEVWjHE4QFDnJWRS64EP72K59/tWbg483bcB33G2JXE+cKOVq
-	JKVfhOSs/rDH8J7y2lEvP5MD4D3mupygVYw9iv1EkuSD2Z7Cydpze78W8zX9iFiN
-	rQdc2g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 464nd3y1w8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Apr 2025 10:39:00 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B88C340059;
-	Tue, 22 Apr 2025 10:37:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E93E99D6100;
-	Tue, 22 Apr 2025 10:37:04 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Apr
- 2025 10:37:04 +0200
-Message-ID: <2bdbee00-07d2-4f6d-830a-1e5e6982d5a6@foss.st.com>
-Date: Tue, 22 Apr 2025 10:37:03 +0200
+	s=arc-20240116; t=1745311102; c=relaxed/simple;
+	bh=p8VDFnBBLQB+c84WukX9np3V2pQTHpPbephzaUIJxy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTQbBDfTAqfSdgzqAkaa0iCnb4MrpmqG5+RQpDFJ7lGuIp72RTXaFZt/Fm1zz04vEn/EzyJr+uvFTluiEDHQSSGAYnA+MSguPGY5bZ3xHAED3A9HWqmvkU20YJB0y2qlHO9D/133840/mk1B/JXIHWLSOKJKe9ND8TYQcNywSEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pY1FOnwL; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=o0w6pamxCxDKHzVZmfTHs/uYuK6PeXKb0434M6fEc3M=; b=pY1FOnwL/S8J3yGEKh1QZZ5tZL
+	Vp5eQoQWU2/fdqKvavzm9zcqh0HuU5etRNXQGprVs9hiAsBfNYdPqrgId2x5g/Xe0bKHniIm2xhvE
+	8qg3NSfGSBE/rkWYZks9XUrVuCuPYpQP1SMdO3Ip+CZZ50Utq3eo9em0yld9lfynz3LfK+NJMuc+A
+	ZqdNlAzkl5OT2o8YyCKMhreS5amF8eK3LuM7nR4+SHjRhbC9YRoQ1WMob9krsSoaaSnHEVBf1u6/r
+	YxqplweIaUZVt50eYcclgDhxG7A5F7pkPpGykSHp04WnpNU8QIqCrDU0sf7ITae99C+JYPuZxBI4C
+	vfDNrPJw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42670)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u798f-00042g-1a;
+	Tue, 22 Apr 2025 09:37:57 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u798X-0007KW-2n;
+	Tue, 22 Apr 2025 09:37:49 +0100
+Date: Tue, 22 Apr 2025 09:37:49 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: ethernet-controller:
+ update descriptions of RGMII modes
+Message-ID: <aAdVXQhR7-mYl783@shell.armlinux.org.uk>
+References: <cover.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <218a27ae2b2ef2db53fdb3573b58229659db65f9.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <6be3bdbe-e87e-4e83-9847-54e52984c645@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/3] memory: Add STM32 Octo Memory Manager driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250410-upstream_ospi_v6-v9-0-cf119508848a@foss.st.com>
- <20250410-upstream_ospi_v6-v9-2-cf119508848a@foss.st.com>
- <3dd741ef-4589-49cd-967f-8a2d72e75cf4@kernel.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <3dd741ef-4589-49cd-967f-8a2d72e75cf4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_04,2025-04-21_02,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6be3bdbe-e87e-4e83-9847-54e52984c645@ti.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-
-
-On 4/15/25 08:00, Krzysztof Kozlowski wrote:
-> On 10/04/2025 11:27, Patrice Chotard wrote:
->> +	for (i = 0; i < omm->nb_child; i++) {
->> +		idx = of_property_match_string(dev->of_node,
->> +					       "memory-region-names",
->> +					       mm_name[i]);
->> +		if (idx < 0)
->> +			continue;
->> +
->> +		/* res1 only used on second loop iteration */
->> +		res1.start = res.start;
->> +		res1.end = res.end;
->> +
->> +		node = of_parse_phandle(dev->of_node, "memory-region", idx);
->> +		if (!node)
->> +			continue;
->> +
->> +		ret = of_address_to_resource(node, 0, &res);
->> +		if (ret) {
->> +			of_node_put(node);
->> +			dev_err(dev, "unable to resolve memory region\n");
->> +			return ret;
->> +		}
->> +
->> +		/* check that memory region fits inside OMM memory map area */
->> +		if (!resource_contains(omm->mm_res, &res)) {
->> +			dev_err(dev, "%s doesn't fit inside OMM memory map area\n",
->> +				mm_name[i]);
->> +			dev_err(dev, "%pR doesn't fit inside %pR\n", &res, omm->mm_res);
->> +
+On Tue, Apr 15, 2025 at 04:06:31PM +0530, Siddharth Vadapalli wrote:
+> On Tue, Apr 15, 2025 at 12:18:01PM +0200, Matthias Schiffer wrote:
+> > As discussed [1], the comments for the different rgmii(-*id) modes do not
+> > accurately describe what these values mean.
+> > 
+> > As the Device Tree is primarily supposed to describe the hardware and not
+> > its configuration, the different modes need to distinguish board designs
 > 
-> I don't understand. I already pointed out that you leak OF reference.
-> You fixed it in one place, ignoring all the rest. You must fix it
-> everywhere.
+> If the Ethernet-Controller (MAC) is integrated in an SoC (as is the case
+> with CPSW Ethernet Switch), and, given that "phy-mode" is a property
+> added within the device-tree node of the MAC, I fail to understand how
+> the device-tree can continue "describing" hardware for different board
+> designs using the same SoC (unchanged MAC HW).
 > 
+> How do we handle situations where a given MAC supports various
+> "phy-modes" in HW? Shouldn't "phy-modes" then be a "list" to technically
+> descibe the HW? Even if we set aside the "rgmii" variants that this
+> series is attempting to address, the CPSW MAC supports "sgmii", "qsgmii"
+> and "usxgmii/xfi" as well.
 
-Hi Krzysztof
+phy-mode is quite simply the operating mode for the link between the PHY
+and the MAC, and depends how the PHY is wired to the MAC.
 
-My bad, i will add all missing of_node_put().
+The list of modes that a MAC supports is dependent on its hardware
+design and is generally known by the MAC driver without need to specify
+it firmware.
 
-Thanks
-Patrice
-
->> +			return -EFAULT;
->> +		}
->> +
-> 
-> 
-> Best regards,
-> Krzysztof
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
