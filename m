@@ -1,167 +1,222 @@
-Return-Path: <linux-kernel+bounces-614663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579BFA96FC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:03:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9829BA96FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A86E7AE8D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D903E401B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D28E29347D;
-	Tue, 22 Apr 2025 15:00:59 +0000 (UTC)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AECD29008A;
+	Tue, 22 Apr 2025 14:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="gdUEso98"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DAD28F520;
-	Tue, 22 Apr 2025 15:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A502900B8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 14:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745334059; cv=none; b=f2LM7ICMVR5bfxlZU5/tDVMwhTmc6BqE28pz0RqzGoKdWnkSA9aiWCSxpnnwcLyhGpfI8Xvg4AAzshDE9rwtlcdjz3hJ/aYV1mHHW6nww4lMWsEvffQlCp24ziTsu1kPmgH4Ar+3x4RJTOPy3xc8XJNAcJYvn/v8WHcchpJv7fs=
+	t=1745333971; cv=none; b=r8VmK3irc2Ne2GC2Cye3D0WIFA12s9yqfeWAed9GpPWde6x29k9vyoK/sKT21rQQ/fM+5nDlIZ38KuTGOxNnPVcyQ8RjJOs4Acm3CQeeR5vbzOboBXCxPqYJ1xsB/4GolxC4Wfnz8PtpetY0pzBO3mZDAVMC+/jjQ5gRvTQVAu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745334059; c=relaxed/simple;
-	bh=Yo2gLzQafcD8WiYwM9WhXEX8DLLO8XmKGQ/dY3GeMfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwAE4AO/8TgR//cwGDCqLE2Y/9hAX9ZFXaBG98JRmIymS04pe3vhf2nGs971kh9tBtT0QAj76SGatj6Rg5LbxbGf7PQ+Q+7iMCqAWIoJeCFqYB+jDcOPtJFnKbegHAAOWefkKBnrgUtOrRYok+bBMKrus0a5s6t05gpXAgQatp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: esmtpsz18t1745333955t2a2a5492
-X-QQ-Originating-IP: slj1jKgfTwnqN+XMjwQqPHnengA/+l4/lWr8Zsj3Fts=
-Received: from [127.0.0.1] ( [116.234.26.236])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Apr 2025 22:59:12 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5860704546774926596
-Message-ID: <22F78335AF3DCDCB+3c44f925-88fc-438d-9482-ab39a1d70df8@radxa.com>
-Date: Tue, 22 Apr 2025 22:59:13 +0800
+	s=arc-20240116; t=1745333971; c=relaxed/simple;
+	bh=QWsuGSrV0jBviRJ5z4yTu4Oqodj0PgaVYZ4TbaGeH84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=crzhkDwisWiba7jWti7NUwq99+VFrMfcFyd7Wqghvj2pfCNTxol1rwh4HUHMZ5e711fPk3G3i8N7+SgxJF8OhKwxZA4koqF5cCa15BUptCGS/m2+FMvm5jXAZ6QUTkmayMZb0/AZ8DIKmOu50D8Jyv7jtCkEYnF3+vCxP1aZf+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=gdUEso98; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22403c99457so8623495ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 07:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1745333968; x=1745938768; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=izolhSLfhzwZrQK7PfhoIMtyHLECubQLEJRViHMUUBg=;
+        b=gdUEso98MCJfA+fLdLEMpyS4kqLEI3INTJ/n5LB5GUmMzhpw4OsY2LRWcJWrxbZK/y
+         kMPyoM9oMG6jh8/76OJ4ZvaZlOJvIfA35joDvGLPb7uc7apK2NnyyQHjOWIpuUngY1QA
+         /CNVdgU0maiYSJd7DAFfBBzndGyRCU9PHW8X82dvtld6lZ5CDK+tMSyA0nf/A4gL78ps
+         LUMrViAontv3+ewD2yMZUhlcnvQkkWkObRIuA69UJlWKyHh7dYCjX8feRGj1zUmBziH6
+         tkte1d9H7KtDoY9PJ/IY333xABFd4vteqzot6yfV4D1uR33t116RCHTf6j8jnvppnD9c
+         7bKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745333968; x=1745938768;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=izolhSLfhzwZrQK7PfhoIMtyHLECubQLEJRViHMUUBg=;
+        b=ptodiFN6Je7L1fV8TIgffhbAbNuzTxp9Zd3PH/Xewjfi0oh/YYJuLxoTL84RXVdu+L
+         5wyyeFi+NgemCb5Ns4t55I9IejbEa2HoSiqlJU9gLzSUSByxJXmqcL4oP7ZxHqHD2+UN
+         vYmEcttOQ7zyIOQNhvHqaHkQUUn7ML2nXFzG4axCS3oDtVOHPL6csLaf1t6eFkhuzj9n
+         KNywaQvjRzC/VMZ8d3tksFhFR5HxkbLtnGT1fceNWNMPIGRcjDkc/CwlZDbhI1CL6d6A
+         MHMuowxRtJPOIPojd2E5Iw9npm5RSHsdNiKnJ4eAW6PN858pVMndWgYprj91mMpW6fC2
+         m2Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh6G8hw2Dq6XZ3tpdgImwztnQoK3iqeHLnTvd/0R3PxJvJtVb9hTLabnv6q3P7RcLq5rXURMRt+49rMFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjBMZb763Fu/Y9vT1DX1kETCZ/ce4QDuMcVTqignsxyx006YqS
+	7Yue4ZdaSlqkg4f8jSGEIZ8OLCZr5xtfSBgo4KbPI/hZT9S9QF8oagey/WfS2eMRocS1ycKLsI4
+	r3N/wWeYyO06lWgD7DhGwiiBu6g492W5hit7L8A==
+X-Gm-Gg: ASbGncuKtG1VltBB6Xnz/Lrg015R64WIsDdabE3qsAyazM99pBy9QG62i8m3I/7EMG0
+	liIxxnvtSMqWvqxK4VOLASGlS1IvQzoPrNfkZXy8+JUBRP5mKaKaC4fvphx+PLgtnscm41WmfRj
+	TFFS2EdlEsU4jkIdus9caO
+X-Google-Smtp-Source: AGHT+IFUBS5IUsBu+10X4ca16j0Ntg3JLwzmjLbsVTHDlU6zPvzWH8OTHReFUT3I2Aj8cS1yr9Q2aEROrGRTkMy2Jnc=
+X-Received: by 2002:a17:903:22d1:b0:21f:1365:8bcf with SMTP id
+ d9443c01a7336-22c53605b60mr86126535ad.10.1745333968421; Tue, 22 Apr 2025
+ 07:59:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] Add static channel mapping between soundwire
- master and slave
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com,
- kernel@oss.qualcomm.com
-References: <20250206112225.3270400-1-quic_mohs@quicinc.com>
-From: Xilin Wu <sophon@radxa.com>
-Content-Language: en-US
-In-Reply-To: <20250206112225.3270400-1-quic_mohs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NOnalZjVTVf0CJoUyorzo28YPlGmfqDe4Z9JM+5tIP5PAhgG8Kv5eyMx
-	d0VO+dH+ULZVphZHgISUGqEm9Yvy/is7nA6rr5Mx3KDFTOsP2MMJGKfbJo5ZL7tQmpV3oR4
-	Kraj/RSCVYlo5cHp5OR6PpzGcRS59ZswOQQXf1f6dAb1p8Ibei37ngiXd65HjSYxbhpjcsz
-	+b18tW6I5XCXJhYH/rVEyMhMs32ng8g2QTIBXZIZnYAN05BqjAOmnp2GfdavdVFhA1N+k1U
-	F0ni1iVN1e6wD9iQm99h+6H1JHAFjls+MHZfvShBNzMfiVJAHdMLP4f+8fxHJRctIqd6h2x
-	O268kFN35Ddw6/fYMwvwzhze6NWe7unK23B4ZIZszHIfbA1X58xl9If4nzwOe2khzrSNeth
-	7q2dnpO1jPVx8BTy3pxC9WcKxDrgR/2BQfq+7IZ3296v5IkvCMBV8NFZj1FSDYHBc+ffxn7
-	Tbe6r5VFGViv6xSfRc1RIiCgWKOfD/yAdohHt/Evj1kKlUYEiaxz658OhpvLau6+bh9RDmI
-	oOYd/1tCk+fv5inyT+U0Zk6aNaEW8iaIfxlQVHUXs6OGcSk8QDQ5hixPZwGUFfJWAoQ023u
-	Y2K5aZsVy//wSM5RTX+TYXtN5Yp8OY7z4RGgHE/0A8G2nW6d7Tp7GM3FvGZIxpmc5oiwMDs
-	YJxRf57EXvVGRZl5IS38IXOY53vMr3rx3VhXTk7KvO3hWR7J5egfjakOVKaNDMpf6AFs5bB
-	Q6B/ASdInng8W9i+q6fMVx2Jy7r/TNXSRKNVHBWllEzxLEaB45pEcpDEuy/eQx5/oNjGlya
-	iddax4xk5zTe+ZjLtHJjTI36FHgAw5mSmBPJGrjblb/u9eeV9nvTMqoI7HY+VRQXTUIQqKw
-	cijIKhNKeBSERzEt3BAjobug/bRor+68+nA7v3iFtCHUKXKur3JeqaIFZ8+aVGLK6xlcpJ7
-	8a1eVWoxpAcDY0tQ5rAng4cTz
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+References: <20250421165525.1618434-1-csander@purestorage.com>
+ <20250421165525.1618434-3-csander@purestorage.com> <4cf8af38-419e-4d7c-95f7-7248faf3c7bb@grimberg.me>
+In-Reply-To: <4cf8af38-419e-4d7c-95f7-7248faf3c7bb@grimberg.me>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 22 Apr 2025 07:59:16 -0700
+X-Gm-Features: ATxdqUFa7hpMhqNeBArzW1f7_U-MXLOc0R42TakRSbVP4GANnHTXCxIfw7jUpCY
+Message-ID: <CADUfDZoJixufDq4wfdtmNpqNOxmByj6Tekw=e-5G_Yc5y5XaBw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] nvme/pci: make PRP list DMA pools per-NUMA-node
+To: Sagi Grimberg <sagi@grimberg.me>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/2/6 19:22:21, Mohammad Rafi Shaik wrote:
-> Add static channel map support between soundwire master and slave.
-> 
-> Currently, the channel value for each soundwire port is hardcoded in the
-> wcd937x-sdw driver and the same channel  value is configured in the
-> soundwire master.
-> 
-> The Qualcomm board like the QCM6490-IDP require static channel map
-> settings for the soundwire master and slave ports.
-> 
-> If another boards which are using enable wcd937x, the channel mapping
-> index values between master and slave may be different depending on the
-> board hw design and requirements. If the above properties are not used
-> in a SoC specific device tree, the channel mapping index values are set
-> to default.
-> 
-> With the introduction of the following channel mapping properties, it is
-> now possible to configure the master channel mapping directly from the
-> device tree.
-> 
-> Added qcom_swrm_set_channel_map api to set the master channel values
-> which allows more flexible to configure channel values in runtime for
-> specific active soundwire ports.
-> 
-> Add get and set channel maps support from codec to cpu dais in common
-> Qualcomm sdw driver.
-> 
-> Changes since v5:
->   - Fixed build compile issue with v5-0003 patch, reported by Mark Brown.
-> 
-> Changes since v4:
->   - Update the order of channel map index values in v4-0001 dt-bindings patch as suggested by Krzysztof.
->   
-> Changes since v3:
->   - Change the order of channel map index values in v3-0002 dt-bindings patch as suggested by Krzysztof.
->   - Dropped V3-0001 patch which is not required.
-> 
-> Changes since v2:
->   - Rephrase commit description v2-0001 dt-bindings patch as suggested by Krzysztof.
-> 
-> Changes since v1:
->   - Modified the design and followed new approach to setting the master channel mask.
->   - Used existing set_channel_map api as suggested by Pierre-Louis
->   - Fixed the typo mistake in v1-0001 dt-bindings patch.
->   - Rephrase the commit description for all v1 patches.
-> 
-> Mohammad Rafi Shaik (4):
->    ASoC: dt-bindings: wcd937x-sdw: Add static channel mapping support
->    ASoC: codecs: wcd937x: Add static channel mapping support in
->      wcd937x-sdw
->    soundwire: qcom: Add set_channel_map api support
->    ASoC: qcom: sdw: Add get and set channel maps support from codec to
->      cpu dais
-> 
->   .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++
->   drivers/soundwire/qcom.c                      | 26 +++++++++
->   sound/soc/codecs/wcd937x-sdw.c                | 39 ++++++++++++--
->   sound/soc/codecs/wcd937x.c                    | 53 ++++++++++++++++++-
->   sound/soc/codecs/wcd937x.h                    |  7 ++-
->   sound/soc/qcom/sdw.c                          | 34 ++++++++++--
->   6 files changed, 185 insertions(+), 10 deletions(-)
+On Tue, Apr 22, 2025 at 4:48=E2=80=AFAM Sagi Grimberg <sagi@grimberg.me> wr=
+ote:
+>
+>
+>
+> On 21/04/2025 19:55, Caleb Sander Mateos wrote:
+> > NVMe commands with more than 4 KB of data allocate PRP list pages from
+> > the per-nvme_device dma_pool prp_page_pool or prp_small_pool. Each call
+> > to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock=
+.
+> > These device-global spinlocks are a significant source of contention
+> > when many CPUs are submitting to the same NVMe devices. On a workload
+> > issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA node=
+s
+> > to 23 NVMe devices, we observed 2.4% of CPU time spent in
+> > _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
+> >
+> > Ideally, the dma_pools would be per-hctx to minimize
+> > contention. But that could impose considerable resource costs in a
+> > system with many NVMe devices and CPUs.
+> >
+> > As a compromise, allocate per-NUMA-node PRP list DMA pools. Map each
+> > nvme_queue to the set of DMA pools corresponding to its device and its
+> > hctx's NUMA node. This reduces the _raw_spin_lock_irqsave overhead by
+> > about half, to 1.2%. Preventing the sharing of PRP list pages across
+> > NUMA nodes also makes them cheaper to initialize.
+> >
+> > Link: https://lore.kernel.org/linux-nvme/CADUfDZqa=3DOOTtTTznXRDmBQo1Wr=
+FcDw1hBA7XwM7hzJ-hpckcA@mail.gmail.com/T/#u
+> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > ---
+> >   drivers/nvme/host/pci.c | 144 +++++++++++++++++++++++----------------=
+-
+> >   1 file changed, 84 insertions(+), 60 deletions(-)
+> >
+> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> > index 642890ddada5..7d86d1ec989a 100644
+> > --- a/drivers/nvme/host/pci.c
+> > +++ b/drivers/nvme/host/pci.c
+> > @@ -16,10 +16,11 @@
+> >   #include <linux/kstrtox.h>
+> >   #include <linux/memremap.h>
+> >   #include <linux/mm.h>
+> >   #include <linux/module.h>
+> >   #include <linux/mutex.h>
+> > +#include <linux/nodemask.h>
+> >   #include <linux/once.h>
+> >   #include <linux/pci.h>
+> >   #include <linux/suspend.h>
+> >   #include <linux/t10-pi.h>
+> >   #include <linux/types.h>
+> > @@ -110,21 +111,24 @@ struct nvme_queue;
+> >
+> >   static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
+> >   static void nvme_delete_io_queues(struct nvme_dev *dev);
+> >   static void nvme_update_attrs(struct nvme_dev *dev);
+> >
+> > +struct nvme_prp_dma_pools {
+> > +     struct dma_pool *large;
+> > +     struct dma_pool *small;
+> > +};
+> > +
+> >   /*
+> >    * Represents an NVM Express device.  Each nvme_dev is a PCI function=
+.
+> >    */
+> >   struct nvme_dev {
+> >       struct nvme_queue *queues;
+> >       struct blk_mq_tag_set tagset;
+> >       struct blk_mq_tag_set admin_tagset;
+> >       u32 __iomem *dbs;
+> >       struct device *dev;
+> > -     struct dma_pool *prp_page_pool;
+> > -     struct dma_pool *prp_small_pool;
+> >       unsigned online_queues;
+> >       unsigned max_qid;
+> >       unsigned io_queues[HCTX_MAX_TYPES];
+> >       unsigned int num_vecs;
+> >       u32 q_depth;
+> > @@ -160,10 +164,11 @@ struct nvme_dev {
+> >       struct nvme_host_mem_buf_desc *host_mem_descs;
+> >       void **host_mem_desc_bufs;
+> >       unsigned int nr_allocated_queues;
+> >       unsigned int nr_write_queues;
+> >       unsigned int nr_poll_queues;
+> > +     struct nvme_prp_dma_pools prp_pools[];
+> >   };
+> >
+> >   static int io_queue_depth_set(const char *val, const struct kernel_pa=
+ram *kp)
+> >   {
+> >       return param_set_uint_minmax(val, kp, NVME_PCI_MIN_QUEUE_SIZE,
+> > @@ -189,10 +194,11 @@ static inline struct nvme_dev *to_nvme_dev(struct=
+ nvme_ctrl *ctrl)
+> >    * An NVM Express queue.  Each device has at least two (one for admin
+> >    * commands and one for I/O commands).
+> >    */
+> >   struct nvme_queue {
+> >       struct nvme_dev *dev;
+> > +     struct nvme_prp_dma_pools prp_pools;
+> >       spinlock_t sq_lock;
+> >       void *sq_cmds;
+> >        /* only used for poll queues: */
+> >       spinlock_t cq_poll_lock ____cacheline_aligned_in_smp;
+> >       struct nvme_completion *cqes;
+> > @@ -395,18 +401,67 @@ static int nvme_pci_npages_prp(void)
+> >       unsigned max_bytes =3D (NVME_MAX_KB_SZ * 1024) + NVME_CTRL_PAGE_S=
+IZE;
+> >       unsigned nprps =3D DIV_ROUND_UP(max_bytes, NVME_CTRL_PAGE_SIZE);
+> >       return DIV_ROUND_UP(8 * nprps, NVME_CTRL_PAGE_SIZE - 8);
+> >   }
+> >
+> > +static struct nvme_prp_dma_pools *
+> > +nvme_setup_prp_pools(struct nvme_dev *dev, unsigned numa_node)
+> > +{
+> > +     struct nvme_prp_dma_pools *prp_pools;
+> > +     size_t small_align =3D 256;
+> > +
+> > +     prp_pools =3D &dev->prp_pools[numa_node < nr_node_ids ? numa_node=
+ : 0];
+>
+> I'm assuming you are checking numa_node =3D=3D NUMA_NO_NODE ?
+> Perhaps it is better to check that explicitly?
 
-Hi Mohammad,
+Yeah, I wasn't sure whether that was a possible value of
+hctx->numa_node. The field is defined as an unsigned and NUMA_NO_NODE
+is defined as -1, so I guess it shouldn't ever be set to NUMA_NO_NODE?
+I can replace this with just numa_node.
 
-I'm working on a QCS6490 board with the WCD9380 codec. I wonder if a 
-similar patch is needed to enable headset audio? Currently, DisplayPort 
-audio and headset plug-in detection work, but no audio is coming from 
-the headset.
-
-Additionally, I noticed an unusual output in dmesg:
-
-qcom-soundwire 3210000.soundwire: qcom_swrm_irq_handler: SWR Port 
-collision detected
-
-Could this be related to the issue? Let me know if you need further details.
-
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Thanks,
+Caleb
 
