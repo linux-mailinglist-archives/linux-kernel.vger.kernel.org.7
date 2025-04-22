@@ -1,186 +1,207 @@
-Return-Path: <linux-kernel+bounces-613759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB46A960B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB0EA96097
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C82188F95C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC6B3ADA8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE7123DEAD;
-	Tue, 22 Apr 2025 08:14:40 +0000 (UTC)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7312E23ED56;
+	Tue, 22 Apr 2025 08:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYv+/pYI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E232367D9;
-	Tue, 22 Apr 2025 08:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8453A1E7C32;
+	Tue, 22 Apr 2025 08:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745309679; cv=none; b=G3pLo+gZmWqTovU7vxl0O5prnyPsotwGqAr94PArG7ScKye+yzS6jOpKIWDS2x32Vr7xKwfBv/z7jxiIdD/YIj/uK+hUimUZOATZq/zKkUbWw5Q+/evgnHnK/5oAzaGTeqD63EHgcygDfSEJa3108pb9RC5GQtZ5If/IFgaMBg8=
+	t=1745309333; cv=none; b=LpwpxKSmg/mrOzsQRCJToKuwasVafPwuMK/5uEKdJH/p0nARbnQsbqSce8vtgP1hQx1clwYcqbpYA9kMpEm8bvZGWuaFoKdN+ZZaLF17o7G5fyiVxXF8IXm/L2OZ8rtGMerdT9IBKXtowbXJWP7v60yXc5E6CXcCg9Zv3pGGvKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745309679; c=relaxed/simple;
-	bh=583NgnkZC2ZT7AwTWERouOxzfLOJBfqNK35QOwK3mdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/mHjXjAoiTsHj19/O/ZgsL4+J2mXoqhIoKRNzkZ4mOwi2JaqCAVBvsBfX837SfZWeqSfmKuGaJyAM2Vjmow3EOAu8DWGwGWQt1HYOZrXegl34pIGSj8T/D5QmNbUzLI8zi/49z8XqpjAjZkfJp8lY+srVEFKUHVkItHXTvY8Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7302a769534so938026a34.1;
-        Tue, 22 Apr 2025 01:14:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745309676; x=1745914476;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i8c8ma1h4TTKBEevU7DpgPt28PGW8UxGjza0Ib9e0KQ=;
-        b=ZzjvGHF5MbYq9CZXi9+tDaimNNmRrDh8ks7oRO7D/K5PYAviQXLf0VMqppXuyuyP2o
-         A/lDxLydO2TBimRxiTR2a51ij56wKc23d/8lybpdULphXvZNt4GIEFLsbJxiq4pvZCyp
-         4thZH0RgxzZxiY403TVWjO/8VB1dbMRr9RDRjj7K2asto2OUBU0w+q/N586y+SxENsy0
-         iLfh+7x1zzOyArQfxHx5f+r8nmw3Yp4ymgF5QzI0i+IapEkvdHo4QEYnT1nTVL42yqCN
-         yngN4iDqKzB1QbOc2eP53Wl3f5ZkdSdpMY79wsLc3F5AGErkzdk8cu3X3u+Hc3f4wbpS
-         MXcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnbWwsuwUheZmKccDlxp1JxjSkI1TjobsAJ8hotX+YVCrbEpdRirUjuLQOvyR8trAKZLmMszU9s4dloPil@vger.kernel.org, AJvYcCWKa5OJRISAQ0nUU24gtm2OHuXaUGdjqERXOELQ5mJRsSE8lCevIAovFdt63hI0kYq1P0D78nrHWe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrFiZGoSYlhwY8MuFJEuGVLXGUTPW/nCBIkDprMgzROg6yHYMC
-	ARjDiwoVUF0HYojmCkw5m9Nav4Pv6sspMCt48xbzgGfq4+jzh2j3vwKEaFFt
-X-Gm-Gg: ASbGncsLG+xUSsri2LhPJgCYgwmm9LdUH0NukcEo3MOy+fi6Ps9L6BUrL/dJqiVX2nS
-	OuwSSp9E2DLtTME/MSVZUR6SufR3LNRH72SY23tYpIjhqZC11pgn9HwodoF3li+YgzS0iTlv0/I
-	svrS465/ejZ6bd5wIWnF95AzCfB7T6XhreZwO6pRfHEWuCn1+NrkmSCluSIDyMi8h7fWYc9rLsq
-	wScQ2aW+OvVgLsVEhfUi8XPysTcFlBEgH+Bm3CVDkGDRhXbozxGAEOMiQQpk4QqZzD4oBEFlKyq
-	9Zb6Uj379nBTpXoF5kfVDdQH9DfmHMZpseLqP8GyEiZN1oi0aU4mrski/ZH9zVmBsJW21Z3819d
-	IOCI=
-X-Google-Smtp-Source: AGHT+IEvQAyr1Pd9r90vUvMHKjHLZOY6rOJktS7bSdwdJwvpzN6O861WyOOqxV+2HCqsWJzsgBii8g==
-X-Received: by 2002:a05:6830:2713:b0:72b:9506:8db1 with SMTP id 46e09a7af769-730061f15f1mr8821685a34.4.1745309676112;
-        Tue, 22 Apr 2025 01:14:36 -0700 (PDT)
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7300489de9esm1869598a34.63.2025.04.22.01.14.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 01:14:35 -0700 (PDT)
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-605fda00c30so1940027eaf.1;
-        Tue, 22 Apr 2025 01:14:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXnsj7URHDv+ba18nrG2OtS6C7Ynl+AAps+QmGffPzdLJpxYOy4VAEreq+CF2S1RzZZei9y9hzeT/o=@vger.kernel.org, AJvYcCXsD4TZkedWYQ9yNs12ihq/zZ932nsTzTrq4eFP/7tkpU6H9z7BpDduZ/0Slu3TdBQKWYEL7KXUmJc3RcCB@vger.kernel.org
-X-Received: by 2002:a05:6102:5f09:b0:4bb:c24b:b644 with SMTP id
- ada2fe7eead31-4cb802080d4mr7323250137.20.1745309264946; Tue, 22 Apr 2025
- 01:07:44 -0700 (PDT)
+	s=arc-20240116; t=1745309333; c=relaxed/simple;
+	bh=cjxeTIBjmGDBo3MhtyDpWmP+BZTYc/JTlOwvci9CQTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SkCO88mc4YTNQZsguE9E3YB9Ce516Z90gbPqDpNN35pVZaVsVsmzmB9idZdQjEwpbqjiE5Sm18277ineAqZfRiHBqgTdRCNCs60ApOAYHtUVPfvUxplUhwWwt0WhAaa2rXXSGeC8J12f9r3tDYKPQrEVANIR33SkGQ8lJBqyOzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYv+/pYI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93959C4CEEA;
+	Tue, 22 Apr 2025 08:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745309333;
+	bh=cjxeTIBjmGDBo3MhtyDpWmP+BZTYc/JTlOwvci9CQTY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fYv+/pYIPEf1BOh4BavScuPJYtjWNwaFWhndS7H1TtiwqP/rDqM6fk00o1uZG4opD
+	 UYRwUStlpRweKSPIpdx4AqHbCfAseLNyoR7WkbKpadjdWf9Fq3j+52kwd7wgnkvYcS
+	 HFw4/P3UPCfPcx/Pf7w/nzRzuxHcJFYnadVqnRhomdAfL0uRuhsQxNwZtQC5M0AFOG
+	 A9s+qhrcdYFnCJm6DCkvdgWWtYFMVRnnIYGCuxRg2+sp9AcFq4qKMD8fJ16su56nhT
+	 dCtnULXRrkttGHNnGgrrw2ygxpaesNSTmT/AG7fgTILnL5Hl6lqO7cNXpXt8b+WP3i
+	 6IWF06kixtj2g==
+Message-ID: <14de236b-e2a7-4bde-986d-1e5ffddd01b4@kernel.org>
+Date: Tue, 22 Apr 2025 10:08:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-In-Reply-To: <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 Apr 2025 10:07:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
-X-Gm-Features: ATxdqUEkl9rVCtzV1tSRbSe8H75mXfNa-MVqCJWBKpRzjTvK50pHzHN-MSLc5t4
-Message-ID: <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
- extending %p4cc
-To: Aditya Garg <gargaditya08@live.com>, Hector Martin <marcan@marcan.st>
-Cc: alyssa@rosenzweig.io, Petr Mladek <pmladek@suse.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sven Peter <sven@svenpeter.dev>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Aun-Ali Zaidi <admin@kodeit.net>, 
-	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com, joe@perches.com, 
-	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, Kees Cook <kees@kernel.org>, 
-	tamird@gmail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	Asahi Linux Mailing List <asahi@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/13] dt-bindings: mmc: vt8500-sdmmc: Convert to YAML
+To: Alexey Charkov <alchark@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20250416-wmt-updates-v1-0-f9af689cdfc2@gmail.com>
+ <20250416-wmt-updates-v1-3-f9af689cdfc2@gmail.com>
+ <20250416201407.GC3811555-robh@kernel.org>
+ <CABjd4YyTKquLcYC+DVg_koi3p7AhqwBNiazCiC713DQKjCaBSA@mail.gmail.com>
+ <CABjd4Yxi4SLqsAk_fb9C=1BW6XjnZ8LQ_JKYu6KZ3TtMS0fnhg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABjd4Yxi4SLqsAk_fb9C=1BW6XjnZ8LQ_JKYu6KZ3TtMS0fnhg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Aditya, Hector,
+On 18/04/2025 14:38, Alexey Charkov wrote:
+>>
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    items:
+>>>> +      - description: SDMMC controller interrupt
+>>>> +      - description: SDMMC controller DMA interrupt
+>>>> +
+>>>> +  sdon-inverted:
+>>>> +    type: boolean
+>>>> +    description: SD_ON bit is inverted on the controller
+>>>
+>>> This implies I know what the non-inverted state is. If you know, please
+>>> state that here.
+>>
+>> This is a tricky one. The only answer I have is "it's inverted in
+>> later versions vs. the first version I saw in the wild, and I'm not
+>> sure if it's board related or IP version related - nor if the original
+>> was active low or high". No docs, no schematics, no vendor left around
+>> to chase for answers.
+>>
+>> Will dig around some more and update the description if I succeed in
+>> uncovering any further clues :)
+> 
+> I've found some extra clues and would like to consult on the best way forward.
+> 
+> It turns out (if my understanding of the decompiled binary-only WM8505
+> vendor driver is correct) that all chips before (not including) WM8505
+> rev. A2 treated their "clock stop" bit (register offset 0x08 a.k.a.
+> SDMMC_BUSMODE, bit 0x10 a.k.a. BM_CST in vendor sources, BM_SD_OFF in
+> mainline) as "set 1 to disable SD clock", while all the later versions
+> treated it as "set 0 to disable SD clock". Which means that there are
+> WM8505 based systems that rely on either of those behaviours, while
+> any later chips need "set 0 to disable". This is not a board related
+> quirk but an on-chip SDMMC controller revision related quirk.
+> 
+> I'd love to switch to a compatible-based logic and drop the
+> "sdon-inverted" flag altogether from the binding I'm writing, but here
+> are my doubts where I'd love to consult.
+> 
+> * Looks like WM8505 rev. A2 needs a separate compatible string vs.
+> prior WM8505. Can we have something like "wm,wm8505a2-sdhc" and
+> "wm,wm8505-sdhc" respectively? WM8505a2 not being an actual chip name,
+> but something discoverable by reading its hardware ID from a system
+> configuration register at runtime
 
-On Tue, 8 Apr 2025 at 08:48, Aditya Garg <gargaditya08@live.com> wrote:
-> From: Hector Martin <marcan@marcan.st>
->
-> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
-> it's useful to be able to print generic 4-character codes formatted as
-> an integer. Extend it to add format specifiers for printing generic
-> 32-bit FourCCs with various endian semantics:
->
-> %p4ch   Host byte order
-> %p4cn   Network byte order
-> %p4cl   Little-endian
-> %p4cb   Big-endian
->
-> The endianness determines how bytes are interpreted as a u32, and the
-> FourCC is then always printed MSByte-first (this is the opposite of
-> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
-> allow printing LSByte-first FourCCs stored in host endian order
-> (other than the hex form being in character order, not the integer
-> value).
->
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Tested-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+Then maybe it can be fully detected runtime? E.g. via soc_id driver (see
+drivers/soc/)?
 
-Thanks for your patch, which is now commit 1938479b2720ebc0
-("lib/vsprintf: Add support for generic FourCCs by extending %p4cc")
-in drm-misc-next/
+> * If I introduce new compatible strings for "wm,wm8650-sdhc",
+> "wm,wm8750-sdhc", "wm,wm8850-sdhc" and "wm,wm8880-sdhc" in bindings,
+> DTS and driver code, then the new driver and new DTB should work fine,
+> and the DTS should pass schema checks. New driver code won't work with
+> older DTB unless I keep the logic to parse "sdon-inverted" which
+> wouldn't be part of the binding. Old driver code would not work with
+> newer DTB except for pre-A2 versions of WM8505. Is that acceptable?
+> * Existing DTS doesn't differentiate between pre-A2 vs. post-A2
+> revisions of WM8505 and is bound to fail on the latter
 
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -648,6 +648,38 @@ Examples::
->         %p4cc   Y10  little-endian (0x20303159)
->         %p4cc   NV12 big-endian (0xb231564e)
->
-> +Generic FourCC code
-> +-------------------
-> +
-> +::
-> +       %p4c[hnlb]      gP00 (0x67503030)
-> +
-> +Print a generic FourCC code, as both ASCII characters and its numerical
-> +value as hexadecimal.
-> +
-> +The generic FourCC code is always printed in the big-endian format,
-> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
-> +
-> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
-> +endianness is used to load the stored bytes. The data might be interpreted
-> +using the host byte order, network byte order, little-endian, or big-endian.
-> +
-> +Passed by reference.
-> +
-> +Examples for a little-endian machine, given &(u32)0x67503030::
-> +
-> +       %p4ch   gP00 (0x67503030)
-> +       %p4cn   00Pg (0x30305067)
-> +       %p4cl   gP00 (0x67503030)
-> +       %p4cb   00Pg (0x30305067)
-> +
-> +Examples for a big-endian machine, given &(u32)0x67503030::
-> +
-> +       %p4ch   gP00 (0x67503030)
-> +       %p4cn   00Pg (0x30305067)
+That's an old platform, so we should not break the ABI, thus drivers
+must fully support old DTBs.
 
-This doesn't look right to me, as network byte order is big endian?
-Note that I didn't check the code.
+> 
+> I realize that breaking backward/forward compatibility is undesirable,
+> but frankly these systems seem to have few mainline users, and those
+> people who do run mainline on them ought to be compiling the kernel
+> and its DTB at the same time, because the firmware doesn't know
 
-> +       %p4cl   00Pg (0x30305067)
-> +       %p4cb   gP00 (0x67503030)
-> +
->  Rust
->  ----
->
+There might be other users of DTS and anyway what would be exactly the
+benefit? This hardware aspect is already documented via sdon-inverted
+property.
 
-Gr{oetje,eeting}s,
+> anything about DT and any modern kernel can only be booted in
+> "appended DTB" mode. I also don't know of any non-Linux code that
+> might be using these device trees.
+> 
+> Any guidance would be much appreciated.
+> 
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
 
