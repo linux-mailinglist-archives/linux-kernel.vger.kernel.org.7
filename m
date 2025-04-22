@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-613450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0AFA95CBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D371A95CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DC51898909
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1EC3B3016
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 04:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1621B0F17;
-	Tue, 22 Apr 2025 04:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3065B28382;
+	Tue, 22 Apr 2025 04:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuKsYz0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="L7I5E0Uj"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C5C1A3148;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941B917A2ED
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 04:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745294837; cv=none; b=NfHX0+GZRuekd+cl4qOBLVoFptrRf5xgtaRm4zgfMYSTAO25oN0xfkPKO3cbU6R8kuOoD4j9yztbgQqyj2oGxN7SFqFpmB9oOme3Lo5lBYONxWo/ZIYltm5Bm7EBXKmUqKvw7H7D0GH2x6u1ufFoBh0aRf3+bKcSe6sC9djiUrM=
+	t=1745294833; cv=none; b=RyBVE4/bnocvl04Mr1I33BsEIZ8CW1ped27Fq64IaGZ5xAw6F9gdWlCkVTKEFVPSZTYa6uEXrhj6Ivz3xoPOvYjXnTO/GYTmbWU8DoD+Ek23MvvdqLY99uL/6q0VfM3Nkl0blgAcLa3sS5t/1HwJsjQO3yRPznCQOLptjcB28Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745294837; c=relaxed/simple;
-	bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZPkD/DnnaCfUTvC11gFedNGK7/CNCymirJYsBP2D+ejBLTndElVX/UAwLSuAzpDIJbHvAnpN+eFXeXCBDRqkq1e3NaytVv8OHvEHvBiQ5NtDecxE0xmPzL3cDDHwT1EoWxdq/T9Jhr+WkSWz+sx5VtesDmk26NrZG3VrtHJAUok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuKsYz0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16E2CC4CEE9;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745294837;
-	bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=KuKsYz0F0gYjYoKnE82ceI3ug6ROuDdbTFsWMgO2ScmJ4ADVWuSzoWvXbk1dL2EAe
-	 NUuRqZktpk8owE8ZwQJlWjO/8P1PPRl/QJp/RNNOZGsM5CKNMaCyZETME5wJgQJtPY
-	 QkTZbFMJaa4uV3fpvoECRt9Q4o0M1eW1XfNrPfWMqn2tOmDy11qW4wERix6PATlX1m
-	 zR3IZvEoLznjxc/gD3OesMZmmRhVQG5VLkpDWGh4vv98nKfcxTHfqLMHym2szf6DY4
-	 bA2nBqHheehvQgNh4cV3bfpTetX9CnjYG6JaUQoKOKiLluzPzGJFTV0VUsi5RfZb8K
-	 yIfNKS5SZvQMQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BBAC369D6;
-	Tue, 22 Apr 2025 04:07:17 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Subject: [PATCH 0/7] stratix10: Add framework for asynchronous
- communication with SDM
-Date: Tue, 22 Apr 2025 12:07:07 +0800
-Message-Id: <20250422-sip_svc_upstream-v1-0-088059190f31@altera.com>
+	s=arc-20240116; t=1745294833; c=relaxed/simple;
+	bh=QAdDrtj1nuZWWw4f191Dtr6SFFTVJHIvpOTS7gaWUHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENVKZyq9c6jzViRylOxQ3aFflLeCqaNegZ4dqZwVAVRkpmGqCvvEl9s4icfnQoY/rqG0GecKTnH8/WwaEA7vUN96vKqgm6E6wkC3yWSnbCKeWf67CqvrAkTYT79jBdggUUVVQkHxteUBk00hX/smVjccJyC5Th5Pfn5kX3LI+B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=L7I5E0Uj; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c55b53a459so469264485a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Apr 2025 21:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1745294830; x=1745899630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pn51hFpFTFagOSHuF4DEwBg/7u0CH8uTd7Ja7DWosA0=;
+        b=L7I5E0UjDaJ9Kw43mBYcXRbUwwn0OwmdkoO2lTm+Ox3CRyvs51GKcrCGZPSPq9twdm
+         QKMWauOQbhMKMdjEWmUrWrbW1Ynp0vTKmMCLeFiVOU6M0u27qynPP1bPWDu3PlIYataQ
+         cO1T3nH15sVSTtg64oVF1lLavVBax9p0eGX12o4bMMZJ846ooTQ1xXcLuRnWBS0ooWdH
+         cQUCpPEb84PyJHqncUvvDP6qEu2DIRR9idO40Nm/dj32++eOn1LBnNbx99jpl1XZdPmv
+         LRED1mnJnG2nTcszS0DdfPH4B3mtnA3feZ5Nfj5I0+CNJj6hEy/pP7pqHYJOhODtktLV
+         LoKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745294830; x=1745899630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pn51hFpFTFagOSHuF4DEwBg/7u0CH8uTd7Ja7DWosA0=;
+        b=YRztP57Rvqdix2c+uez2I40E6loubLp/Ar2YD+aCCGhPKnKkzvV/YCVY2bVQMfLObE
+         thQRSjKyLXwzK7JDK49jr1o8oOHI9TEvkGme8UcEa4tG9to/SpB+Fqo+4qDdLBG5hCbn
+         9llY/fKrguDEwVTffvCsSSNgAYCpD+ogVQFDT7rHf2ziezXv/It/KtYVr3BIC9yiasHC
+         3QOZ2nZceNyenr1V8fCNAinRqkGifOxFMXos4MlFjAWXYMkk7dlDj0z2UOsvzXjm7/4D
+         EMJc7QZY46d9FLO6suJkSGHK1nR4v0VUKW1l9Ddmf2lQ8HkGkt0OyMsDJIvnnU3Yez/n
+         MkqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfx4npPexYVqWHdsLLBPvTK2LpsDGVxKI2w4Cygw1LGxSq0smOZcjVj1DBu5/OJPK8RI2cZ9vP2np6TVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiG6SZNj2Iiyrm/pxnjS5Og3GQuCL1MPKs5aDMWWAxSmik01p/
+	gzFxQ9nA5pO+LJ7glPXNuVu3CD6G7v780nSdCByfrtJYy5MUJFxcfTOCCwvhrfBWpIT2Epni9bD
+	h
+X-Gm-Gg: ASbGncsuTGE+CsE0SaAawKhh9RYuugPDsYJaZpXTe+l2vzXUyShC/RCAy8lcdbsLcHr
+	A/21Rz8Rhj1J7pMbhezY0RoqWvqWKQPl+Jtv033Wx6SdGlIyQgk5FIc9+LGJBoWNiMOIQ2RZIIX
+	xRq30l1BIqpOt0yvEhr99J907E8rZQ9AGSq+eZv9SQu20h89yCfiFQxM2SPkZbUOwuZsOCWWe++
+	6Ran1llR4akv8EhNJ4QxmiR/UUvsq9shF3y0BxnYaGLesbTdN5I6sSkpCseFLgBzuqksvRkyp8c
+	mYmdtX3tBBBERCODHq/rkXVeiuLtRJSykVcncc7/r3M9z5IieUYU/gQlPPcQj4YkIg0YdmP4mID
+	yZe03q1msutMv0N10Arc36tc=
+X-Google-Smtp-Source: AGHT+IEiqfCY4yW0u7a48f8L6A0kzRDy2F8MnJUbXRTzNqpzbAbE0B6Uy/hIslrtvzFwl6GwITBPpA==
+X-Received: by 2002:a05:620a:1929:b0:7c9:2537:be48 with SMTP id af79cd13be357-7c927f81067mr2156091385a.24.1745294830360;
+        Mon, 21 Apr 2025 21:07:10 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b6e198sm500347285a.103.2025.04.21.21.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Apr 2025 21:07:09 -0700 (PDT)
+Date: Tue, 22 Apr 2025 00:07:08 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Waiman Long <llong@redhat.com>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org,
+	mkoutny@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 2/2] vmscan,cgroup: apply mems_effective to reclaim
+Message-ID: <aAcV7GmTJGbC1R_s@gourry-fedora-PF4VCD3F>
+References: <20250422012616.1883287-1-gourry@gourry.net>
+ <20250422012616.1883287-3-gourry@gourry.net>
+ <d7568176-6199-488f-b45a-c494c8baec25@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOsVB2gC/zXNwQ6CMAyA4VdZdraGMSbIyfcwhMzZYRMHcwViY
- nx3J8Zb/yb9+pKMiZBlK14y4UpM05hD7YR0NzsOCHTNLcuiNIXSCphiz6vrl8hzQhsA6+bauOO
- l0trIfBYTenpu5Ln7dcLHkuX5t5QBme0mt2Jzy6ICnpyPg+3/fiB2sGoo4HCsfe2V0c7bE40z3
- vduCt9XF8sIeQ40t2I97JWB5LTs3u8Pq2i+fdgAAAA=
-X-Change-ID: 20250131-sip_svc_upstream-e78d8c9b4335
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745294834; l=2204;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=Pgy4tMCSKaFzxkix9tVlNrpCpOWuWpmWTI9nbJQ0qg8=;
- b=yOC01PESiFGCzXwwSXGAXGJGJ9f0uYkPRgxEKbCrDgMmlyqrc1bw1mkNh4rUMGWI1bN3Y2VAr
- adB+0TEbSEEAypCwtMnKhHWTL6DhyXZcjn2BJh/X2FTgfzIhhJj0RFm
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7568176-6199-488f-b45a-c494c8baec25@redhat.com>
 
-The patch set includes the following changes:
+On Mon, Apr 21, 2025 at 10:02:22PM -0400, Waiman Long wrote:
+> > +bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
+> > +{
+> > +	struct cgroup_subsys_state *css;
+> > +	struct cpuset *cs;
+> > +	bool allowed;
+> > +
+> > +	/*
+> > +	 * In v1, mem_cgroup and cpuset are unlikely in the same hierarchy
+> > +	 * and mems_allowed is likely to be empty even if we could get to it,
+> > +	 * so return true to avoid taking a global lock on the empty check.
+> > +	 */
+> > +	if (!cpuset_v2())
+> > +		return true;
+> > +
+> > +	css = cgroup_get_e_css(cgroup, &cpuset_cgrp_subsys);
+> > +	if (!css)
+> > +		return true;
+> > +
+> > +	cs = container_of(css, struct cpuset, css);
+> > +	rcu_read_lock();
+> 
+> Sorry, I missed the fact that cgroup_get_e_css() will take a reference to
+> the css and so it won't go away. In that case, rcu_read_lock() isn't really
+> needed. However, I do want a comment to say that accessing effective_mems
+> should normally requrie taking either a cpuset_mutex or callback_lock, but
+> is skipped in this case to avoid taking a global lock in the reclaim path at
+> the expense that the result may be inaccurate in some rare cases.
+> 
 
-- Add protection for querying memory objects in
-  multi-threaded flow.
-- Add support to generate and maintain message id
-  and client id for asynchronous communication with SDM.
-- Add framework to communicate with Secure Device
-  Manager(SDM) asynchronously by sending a request
-  and polling for response.
-- Add interrupt definition in Agilex devicetree
-  for asynchronous communication.
-- Add SDM interrupt support for Agilex platform
-  supporting asynchronous communication.
-- Add support to optionally notify the clients if
-  response is available using interrupts from SDM.
-- Add commands for querying temperature and voltage
-  from SDM.
+I'll add a differential patch here.
 
----
-Mahesh Rao (7):
-      firmware: stratix10-svc: Add mutex lock and unlock in stratix10 memory allocation/free
-      firmware: stratix10-svc: Implement ID pool management for asynchronous operations
-      firmware: stratix10-svc: Add initial support for asynchronous communication with Stratix 10 service channel
-      dt-bindings: firmware: Add interrupt specification for Intel Stratix 10 Service Layer.
-      dts: agilex: Add support for SDM mailbox interrupt for Intel Agilex SoC FPGA.
-      firmware: stratix10-svc: Add for SDM mailbox doorbell interrupt
-      firmware: stratix10-svc: Add support for HWMON temperature and voltage read command.
-
- .../bindings/firmware/intel,stratix10-svc.yaml     |  10 +
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi      |   2 +
- drivers/firmware/stratix10-svc.c                   | 981 ++++++++++++++++++++-
- include/linux/firmware/intel/stratix10-smc.h       |  84 ++
- .../linux/firmware/intel/stratix10-svc-client.h    |  99 +++
- 5 files changed, 1165 insertions(+), 11 deletions(-)
----
-base-commit: f34da179a4517854b2ffbe4bce8c3405bd9be04e
-change-id: 20250131-sip_svc_upstream-e78d8c9b4335
-prerequisite-message-id: 20250204-socfpga_sip_svc_misc-v3-0-697f7f153cfa@intel.com
-prerequisite-patch-id: 6a4223bd2c01a0fd20925e597c906dc64e11ec2f
-prerequisite-patch-id: 33ca4dbe8b8e18d3e51145c6bcaae55170878b22
-prerequisite-patch-id: a02bca91874f4405191e60704574a0c99f37d184
-
-Best regards,
--- 
-Mahesh Rao <mahesh.rao@altera.com>
-
-
+~Gregory
 
