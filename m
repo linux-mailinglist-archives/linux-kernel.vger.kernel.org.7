@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-615157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64551A978CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F09A978D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 23:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A168D461483
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9755A1506
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 21:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E10629A3EE;
-	Tue, 22 Apr 2025 21:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32BC26C398;
+	Tue, 22 Apr 2025 21:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OrVBUXJx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RpJd7j2w"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8625CC6F;
-	Tue, 22 Apr 2025 21:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5C25CC59;
+	Tue, 22 Apr 2025 21:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745357690; cv=none; b=MPswodLjk2cln8zXC+FpC8TgcyWDGn7i9zMjSPGTvPf+cGxNBzS7/Qg5nmcNPZ1WJwz8Mwraj4wqyVp8aZX1ww5hlStcKlJKwQyhgmi1ns4MsJHTAzBkRVO8Q1MNflNpCrfEcsN0sA7vfHFVLWlpfybJt25u9nMLzGCuZws2/XA=
+	t=1745357692; cv=none; b=q1pFRPw3kKXdxp7vEwYle9sgMDPeKve5k8BkkSv/PWSA77qGfmnnpM6rKFPM499eSMCmyvUfcqT1QnCKCF7NFiCRUyp5o4aNweg56WD6GxK5ZOVpV3gUrz7BzEc+4MABNgnOdB67v8PWYi3upkJ8VYpiC8lcQIXPPcSs5vt/uIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745357690; c=relaxed/simple;
-	bh=AnkJrFBkkfn9XNqrAtm49YgyvIfq2PfUAJSZ0+GDhz8=;
+	s=arc-20240116; t=1745357692; c=relaxed/simple;
+	bh=Lsz0SmSLHBuNAOhBY+Z7GEFPJPrtXYFlVmulYacxyns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jlB6RfzkTS9r3UBkdVfoFl9EBQl+h7z/0+viptD0iMHIkzSBRp1Nua+Ks1cTLuHhVfUL6oBzSyB3XEWa2u3HheUhI9OuqnUt+5/7BhgrmclwgayTvQpB73+iQ4jdjAKq/OrvO1Wv1SHWbYfiOrzEoAkxtT2SaIl2rp2P3F1LDTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OrVBUXJx; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=GvpHmnaEQst2lWd9zpZi+a1jgDAzY+SnfsohTwl3gzqr4u/QfJuj75HH/LYewbxus1q3/l07DsUIQ2rL8NSblSDjN3CD34Bxlo/kNd4qI0sg9zkrS3iZ5TNv72LSHYT4BNJO553v7V5or7UgGefBAQrKxBr6AMd/CymnTO50QB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RpJd7j2w; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1745357689; x=1776893689;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=AnkJrFBkkfn9XNqrAtm49YgyvIfq2PfUAJSZ0+GDhz8=;
-  b=OrVBUXJxzamhAqQCbJkL2e/MB8PNtnlsoR4v0472B1fVBYAnWfWyTjR3
-   qhQpCi9jMF6L1Kh4rAr0N4l8iGtTRHvHK2s1vsbsPnlx/X5updkI/gfPo
-   zeE9j2M+vuUAGQcTqPKRx1vg0ElYXAkm6q+yScGkupsku0p4DX86W2XAD
-   cFO2f5z/KpNDU0jsLUWTle73EE7wNmnpyCGAYuNk0YblaFEeBEtBxNB2e
-   2mUqcINE49tiZ18/Dxx43U4US1RIRJb6/EviMmFm9cGPuLNQe7wwExFvj
-   TiajhvdEdA+OpNuJaU1L/df1XoPB4IcdBKhOX6x1lVB6hJahzZbvxknlz
-   Q==;
-X-CSE-ConnectionGUID: RxoS5UWbQ/S78PYxFO1Q0Q==
-X-CSE-MsgGUID: NxUn6MLOSRqMfGyVh/VyOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="46053988"
+  bh=Lsz0SmSLHBuNAOhBY+Z7GEFPJPrtXYFlVmulYacxyns=;
+  b=RpJd7j2wfpmDHFy09wSh6MIYglgEaHlSPgNuFyW+BiSx4ZdYHnO8oFLa
+   8LtsjwP3zd2nPicu4QF9FvuRx+lsflGp25Ud8dWfGuVzZnOByvNwySFkN
+   +xSy135c1XRiPXbUrde1xAcs4QFwVe/vvfpv82RQ3zownutkDW558dLOX
+   +/pjqP4FsSp+DtKQuYU7hRQgMScN4UwV2kRe+bweUeS4LKIf/7Hmnp9mb
+   mN/oYllL1jFeV97sffzNUWdzmEZL3JSaFfuHkW/fVHkN3fiAIh/zE0lDD
+   VlMaW7HI2urRyMukac0KeYHCHYC5OkMG9GUzet8Vmly7E/O7V9JnkuLIw
+   A==;
+X-CSE-ConnectionGUID: PdHx6LhUSD6cLEXir8jCzg==
+X-CSE-MsgGUID: II1W1QLqTyyPOjFFf8dgUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="46053990"
 X-IronPort-AV: E=Sophos;i="6.15,232,1739865600"; 
-   d="scan'208";a="46053988"
+   d="scan'208";a="46053990"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
   by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 14:34:44 -0700
-X-CSE-ConnectionGUID: Gc/RJ4qAQuGtjgbGHuXTCw==
-X-CSE-MsgGUID: 1bokvClbSseNVe0Mtk/iGw==
+X-CSE-ConnectionGUID: ZZ/6caK2SeyVT2FnRkQcMg==
+X-CSE-MsgGUID: LEtV1NOXToucSih3/zmnhQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,232,1739865600"; 
-   d="scan'208";a="133070684"
+   d="scan'208";a="133070685"
 Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
   by orviesa008.jf.intel.com with ESMTP; 22 Apr 2025 14:34:43 -0700
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
@@ -63,9 +63,9 @@ To: hdegoede@redhat.com,
 Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/5] Documentation: admin-guide: pm: Add documentation for agent_types
-Date: Tue, 22 Apr 2025 14:34:24 -0700
-Message-ID: <20250422213427.1943328-3-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 3/5] platform/x86/intel: power-domains: Add interface to get Linux die ID
+Date: Tue, 22 Apr 2025 14:34:25 -0700
+Message-ID: <20250422213427.1943328-4-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250422213427.1943328-1-srinivas.pandruvada@linux.intel.com>
 References: <20250422213427.1943328-1-srinivas.pandruvada@linux.intel.com>
@@ -77,29 +77,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add documentation to describe agent_types attribute.
+The die ID in the Linux topology sysfs is a logical identifier that
+differs from the one presented in CPUID leaf 0x1F or via MSR 0x54.
+
+Introduce an interface that returns the Linux CPU die ID based on a
+given package ID and power domain ID. This mapping is stored during the
+CPU online callback in an array.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../admin-guide/pm/intel_uncore_frequency_scaling.rst        | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../platform/x86/intel/tpmi_power_domains.c   | 34 ++++++++++++++++---
+ .../platform/x86/intel/tpmi_power_domains.h   |  1 +
+ 2 files changed, 31 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-index 5151ec312dc0..84608dad84bd 100644
---- a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-+++ b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-@@ -97,6 +97,11 @@ Attributes in each directory:
- ``package_id``
- 	This attribute is used to get the package id of this instance.
+diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platform/x86/intel/tpmi_power_domains.c
+index 2f01cd22a6ee..9aaebd74a2af 100644
+--- a/drivers/platform/x86/intel/tpmi_power_domains.c
++++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+@@ -74,6 +74,8 @@ static enum cpuhp_state tpmi_hp_state __read_mostly;
  
-+``agent_types``
-+	This attribute displays all the hardware agents present within the
-+	domain. Each agent has the capability to control one or more hardware
-+	subsystems, which include: core, cache, memory, and I/O.
+ static cpumask_t *tpmi_power_domain_mask;
+ 
++static u16 *domain_die_map;
 +
- The other attributes are same as presented at package_*_die_* level.
+ /* Lock to protect tpmi_power_domain_mask and tpmi_cpu_hash */
+ static DEFINE_MUTEX(tpmi_lock);
  
- In most of current use cases, the "max_freq_khz" and "min_freq_khz"
+@@ -152,6 +154,15 @@ cpumask_t *tpmi_get_power_domain_mask(int cpu_no)
+ }
+ EXPORT_SYMBOL_NS_GPL(tpmi_get_power_domain_mask, "INTEL_TPMI_POWER_DOMAIN");
+ 
++int tpmi_get_linux_die_id(int pkg_id, int domain_id)
++{
++	if (pkg_id >= topology_max_packages() || domain_id >= MAX_POWER_DOMAINS)
++		return -EINVAL;
++
++	return domain_die_map[pkg_id * MAX_POWER_DOMAINS + domain_id];
++}
++EXPORT_SYMBOL_NS_GPL(tpmi_get_linux_die_id, "INTEL_TPMI_POWER_DOMAIN");
++
+ static int tpmi_get_logical_id(unsigned int cpu, struct tpmi_cpu_info *info)
+ {
+ 	u64 data;
+@@ -189,6 +200,9 @@ static int tpmi_cpu_online(unsigned int cpu)
+ 	cpumask_set_cpu(cpu, &tpmi_power_domain_mask[index]);
+ 	hash_add(tpmi_cpu_hash, &info->hnode, info->punit_core_id);
+ 
++	domain_die_map[info->pkg_id * MAX_POWER_DOMAINS + info->punit_domain_id] =
++			topology_die_id(cpu);
++
+ 	return 0;
+ }
+ 
+@@ -212,17 +226,28 @@ static int __init tpmi_init(void)
+ 	if (!tpmi_power_domain_mask)
+ 		return -ENOMEM;
+ 
++	domain_die_map = kcalloc(size_mul(topology_max_packages(), MAX_POWER_DOMAINS),
++				 sizeof(*domain_die_map), GFP_KERNEL);
++	if (!domain_die_map)
++		goto free_domain_mask;
++
+ 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+ 				"platform/x86/tpmi_power_domains:online",
+ 				tpmi_cpu_online, NULL);
+-	if (ret < 0) {
+-		kfree(tpmi_power_domain_mask);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto free_domain_map;
+ 
+ 	tpmi_hp_state = ret;
+ 
+ 	return 0;
++
++free_domain_map:
++	kfree(domain_die_map);
++
++free_domain_mask:
++	kfree(tpmi_power_domain_mask);
++
++	return ret;
+ }
+ module_init(tpmi_init)
+ 
+@@ -230,6 +255,7 @@ static void __exit tpmi_exit(void)
+ {
+ 	cpuhp_remove_state(tpmi_hp_state);
+ 	kfree(tpmi_power_domain_mask);
++	kfree(domain_die_map);
+ }
+ module_exit(tpmi_exit)
+ 
+diff --git a/drivers/platform/x86/intel/tpmi_power_domains.h b/drivers/platform/x86/intel/tpmi_power_domains.h
+index e35750dd9273..2fd0dd7afbd2 100644
+--- a/drivers/platform/x86/intel/tpmi_power_domains.h
++++ b/drivers/platform/x86/intel/tpmi_power_domains.h
+@@ -14,5 +14,6 @@ int tpmi_get_linux_cpu_number(int package_id, int die_id, int punit_core_id);
+ int tpmi_get_punit_core_number(int cpu_no);
+ int tpmi_get_power_domain_id(int cpu_no);
+ cpumask_t *tpmi_get_power_domain_mask(int cpu_no);
++int tpmi_get_linux_die_id(int pkg_id, int domain_id);
+ 
+ #endif
 -- 
 2.48.1
 
