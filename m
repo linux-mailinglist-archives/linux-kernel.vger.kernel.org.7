@@ -1,266 +1,204 @@
-Return-Path: <linux-kernel+bounces-613828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7AFA96215
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94414A96229
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D3A3B9774
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353103B28B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC007297A60;
-	Tue, 22 Apr 2025 08:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17A7298CA5;
+	Tue, 22 Apr 2025 08:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="JNSlZw1l"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010000.outbound.protection.outlook.com [52.103.68.0])
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="DY0Xm/Cd"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2050.outbound.protection.outlook.com [40.107.20.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD2C296165;
-	Tue, 22 Apr 2025 08:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE742980D1;
+	Tue, 22 Apr 2025 08:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310615; cv=fail; b=uVSW+6l7N2+FNoFdRSp+cZqhjg6tXtf9YrlfDBn8a4phxCpqwyGvxE847iS16O9Vaw7StQVekIOCcXs6NV70MDHEx0uyQgZ4edG1vaSVNRtEsg9KwoeHx+S5NWxKV845Aues6cZM3ozbk+EQjNkx0lZdk/WFBthGibSIjtUDuKs=
+	t=1745310646; cv=fail; b=uoQaP0TfF/q7hXG7tbwaWf68U7AVtM2pBn/vzbmqQrqFFFob+DwApx0C7fV/xyjtpjBMQJv56OgWjZPBYo1Jf/wIKQuYJ3B6qB/tdl7hX59MTrAWxrK8Mo2c8mrcgjlGfydgWVvJ+dOUQtjNtATt/Q8oAqbvDghqblC6T7raly4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310615; c=relaxed/simple;
-	bh=xJ4Yqrjf/HqWAWNnUX+UnmaG/HpVGJnfvxi4sebFXro=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MMnnrlBdZ52ECOPNBEuUGfIc5fNmkyLgFVKwyRgXTmsBZfKrdIbZe0CrBiapSS8gprcD1QXraaryNfAp0JcdJKrCuHFXeMZHcA/z+3vfQGRpbH4cGuOWihzJ6ChI+rrPwwlqpVG7HYlr0l61SUJ+6nlkfdqDBb47oyCwAW4zEYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=JNSlZw1l; arc=fail smtp.client-ip=52.103.68.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1745310646; c=relaxed/simple;
+	bh=VPGJnyPFaYpJPVGnFdIJCCOV5qHhP+yqqKpXxno0ZEY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sBJfHMit84jZARWqembS0IeAbSS4ieOgS4KMwfvtIYWV0SsFKKIGrCIAwh0ZzKSCcnly8dKuXEMlVeVosfmqJa+QyL6DXWb7oFuQoZyvM2xl3SVGVsy5POCt2oDS3hRdmtHCn2HPIwfCBEcmgkq6QicY9RuviDSOw6Inr4N/8qg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=DY0Xm/Cd; arc=fail smtp.client-ip=40.107.20.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t3dGkOCIeoRxsF62+NwjWqiUJ1SnhBR38ZplLtdH3Wit0TT9gTJ8okT6BIiD3NioaVId/NGWUKCwTsW5mCM9fDTWNvkdPZpLKzI+VFO847KzzP4TvZcx00KrXalkayschIEi/wZgWhZrlzX3LWAhUSv12BQ+fEnHoF5XsbPN7lyfQ44/a2xV3ziULhPwkRDOybwNGvNQx5gMYBMNMcDbWlz63zpDIqgQFo5L9RHY2m+i6/ML9NBIKAwQf8EgMqLBq4ZZXPtnHMGt3uejoQ8GtrCmxvpqWHhw1+Qd5WKiTPvgsdHg5MxzhPoGkpKJL68oBsfK+2tj693e/rYImTrHlA==
+ b=J91g4Mgbx+4OI4BQ8RSoY0cQw6xW572ASXlt00M2Dl6niH8uFWAJT+mrDizCcldlMMBJFdFo8dhxfazbkKqNDUg80nGbwrESf+AooTDTAKmIUSnj/ZpI8SaAMsjiNPo1nBdgIJKlgVPqXA0ud+XoEJadya9V7SNDOYjRbBSh6kob0yJ7pDzmFBkUu0vQiKZ0A1VJOYWyYpewb8HzNyJ8Doug8lkgiunDc8KLyDzt2xUTfThlLlRAvCCHXBl98Qe4FSAdyTyNV+DMVXrlC5l2e0Rdx4ONNvFut66gfn6lzctlbvYGQn+h6VV9Bq3I8me6pVXLjMOC+j7HK92N1gjz0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e4MVuYhk59MIDXtBDW7oQHPIQ3QFj9hh2GXnA329RJE=;
- b=pSFMUOzUo0iYrJaEiQ+mAPbVYAE4JcLfBFl4kzjO+oNvE+JlZuAi0xtIOVttKFKdUJCysCtJE0PBLJTJplVjNsFwnEY0v6W6k+4CMzbfQet0QGoa4uWKeP9Et+gzlM5gGSG4JOKbWeQxJZG1/KsjeSMawQWGQxhKLr7G7BSK+x8QrLiDzAANnVAoeuaRSX8VIdUR/VGesXM/XhgaEvU8XNevKPoPPys5W/GoFdAbtgvhqCrC1RLLSsKjBMO/CbEHVuUbb/9ZnYSg/+8QGHeXbZl4xLV9v4qULoVnHs8B1qpGxstmpTAl+BwK4aG40NMeHV1aPK6fg12XGdCXlFr4lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=VPGJnyPFaYpJPVGnFdIJCCOV5qHhP+yqqKpXxno0ZEY=;
+ b=ZgXF1sI4zNmua6aNszO3M7sobrnugmndu5kAM/mD0G5OnJJTVQyXeOPOH4U75PcsRQkTnf/a7p+1LAIZPmHrHcnHfZp0qj13L/ZNDlCxmz3FkcNHyxStnZe/GyWfThpw2otUMgkh7Q++ms04H4J9mpfIOe4Ox+P8jikFHRz8+LnBBz/1cVovN1KJ7orvtzNF9UxpKrDQjIOt6BBDA3wFG/Indiu8kzdA2+S8IXO/wScSO6HQYebScGOs4Mnf139Ah1hk6koHoH8rYwxtVMVzrNbLXlzc5XKKSjOTXzmOKSVOtm8qQcWCdDonsYkYSVKED6F4FHcl75XNLYbett0+KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
+ header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4MVuYhk59MIDXtBDW7oQHPIQ3QFj9hh2GXnA329RJE=;
- b=JNSlZw1lWW4f+HeS2ef52p3FurfUklXBLkX2XHj0UHa1Wl5RKTjXZDpRhCv8g9zV9x5esVBwSuARmpRmDqxU2m9+Puj9rygOa62djtDArykuYTjhRQOwFfPva14JfC0iagIpHLeRKVZ+CptUI6MZEH6hBhl/b2vwPrEFf39lr9rLZAEsc8qvfF7pR9FPKYcfd234gFqwqEdbSM1q4x8BQOGlHeTrXTTY8bgkaCsHCuLQGC5o5CwnXZLa4RdL1z3rtNt//RSI4EANZMQG3XQ5zTaPYDx3ULLd/+yshc7QIRaPd0RfJwen1Sip3RZ9k1SXgQvElOTEJTdyLnel/TGHCQ==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN2PPFCAA8F9158.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c04:1::5a8) with
+ bh=VPGJnyPFaYpJPVGnFdIJCCOV5qHhP+yqqKpXxno0ZEY=;
+ b=DY0Xm/CdcOgfX0qQ9rtMdcsgkmLDxIg2a1Lo/XRzOMVfFNdCsfHMpSoAxipNP3PVWJoJYnRgvyF4VisugRqnKs0yQ5G3NOtBqGiZ3kofEa0MK9xhr5I7KqvUqunr8M/KKC6BlWGGqM8BJUmGgjtkpbPsoxsbSp0GD7S2W3qS+HM=
+Received: from AM8PR06MB7521.eurprd06.prod.outlook.com (2603:10a6:20b:355::8)
+ by VI1PR06MB8926.eurprd06.prod.outlook.com (2603:10a6:800:1dd::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Tue, 22 Apr
- 2025 08:30:03 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8655.031; Tue, 22 Apr 2025
- 08:30:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Tue, 22 Apr
+ 2025 08:30:39 +0000
+Received: from AM8PR06MB7521.eurprd06.prod.outlook.com
+ ([fe80::570d:8853:c13b:c7d3]) by AM8PR06MB7521.eurprd06.prod.outlook.com
+ ([fe80::570d:8853:c13b:c7d3%5]) with mapi id 15.20.8655.033; Tue, 22 Apr 2025
+ 08:30:39 +0000
+From: SCHNEIDER Johannes <johannes.schneider@leica-geosystems.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: "dmurphy@ti.com" <dmurphy@ti.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "f.fainelli@gmail.com"
+	<f.fainelli@gmail.com>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "michael@walle.cc" <michael@walle.cc>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, GEO-CHHER-bsp-development
+	<bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH net] net: dp83822: Fix OF_MDIO config check
+Thread-Topic: [PATCH net] net: dp83822: Fix OF_MDIO config check
+Thread-Index: AQHbs1DvM4M+ls1LDESK0RNB9qSHpLOvVqCAgAAD6iQ=
+Date: Tue, 22 Apr 2025 08:30:39 +0000
 Message-ID:
- <PN3PR01MB9597B3AE75E009857AA12D4DB8BB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Date: Tue, 22 Apr 2025 13:59:57 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
- extending %p4cc
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Hector Martin <marcan@marcan.st>
-Cc: alyssa@rosenzweig.io, Petr Mladek <pmladek@suse.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sven Peter <sven@svenpeter.dev>, Thomas Zimmermann <tzimmermann@suse.de>,
- Aun-Ali Zaidi <admin@kodeit.net>, Maxime Ripard <mripard@kernel.org>,
- airlied@redhat.com, Simona Vetter <simona@ffwll.ch>,
- Steven Rostedt <rostedt@goodmis.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- apw@canonical.com, joe@perches.com, dwaipayanray1@gmail.com,
- lukas.bulwahn@gmail.com, Kees Cook <kees@kernel.org>, tamird@gmail.com,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- Asahi Linux Mailing List <asahi@lists.linux.dev>
-References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
+ <AM8PR06MB7521A0F0650D07ECCCC013E7BCBB2@AM8PR06MB7521.eurprd06.prod.outlook.com>
+References: <20250422063638.3091321-1-johannes.schneider@leica-geosystems.com>
+ <20250422101455.08c8883c@device-24.home>
+In-Reply-To: <20250422101455.08c8883c@device-24.home>
+Accept-Language: en-US
 Content-Language: en-US
-From: Aditya Garg <gargaditya08@live.com>
-In-Reply-To: <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0180.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:be::17) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <a511caca-ce0f-4a1a-81dc-c2faf7caa563@live.com>
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=leica-geosystems.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM8PR06MB7521:EE_|VI1PR06MB8926:EE_
+x-ms-office365-filtering-correlation-id: 0e3c1d69-b0eb-44a0-bdab-08dd8177f69f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?1lzfcossVpOUSlplUWLNtSIrUsYL6kJSiRiy5SxgCNIrR2Ou3dTquOKaDG?=
+ =?iso-8859-1?Q?b2zk5rp8ykxyfKMy3MGJFGqs9qnH3b6JZNTBuaaO2MGmo4Eewd6Fw+viyT?=
+ =?iso-8859-1?Q?ZT3JRASUXyYKE6my722HbHzJ/b+5sRx+ShQeLpty2weNBzUzEfCCApcHYG?=
+ =?iso-8859-1?Q?D1UMHSRKII/UVU5ABy4uFohP9pNCuY3ee0hu7ACzSAHlikgUfnzPOrIbMj?=
+ =?iso-8859-1?Q?1ON6vQA8faFP7e6EWl4GftaFzrzeSPdQdTADmxchIOpTnSsJxuBfFKyvPk?=
+ =?iso-8859-1?Q?OR4ftOZ7v7P0XmiOfqNaVR7cK+tLeCJrB9qqNecIXS+/wHxnVJOMD0mttC?=
+ =?iso-8859-1?Q?Idec8NR4j3v2w8xIaYDQhGuypKKRcKPlXBcTFVj3sdDzqpbOmkIS5SJWn8?=
+ =?iso-8859-1?Q?f/wi4YMksuHHq+W2p8ndEjrrb5X/pfYvQbCpfMYgoFDiC7xsBG9M1jJ+qz?=
+ =?iso-8859-1?Q?r3E6NVOTjX0DqOQWFaI2/x5q+cPQfl6uaptRVGelbntOGYtZh4A1CI0zxV?=
+ =?iso-8859-1?Q?Dg7wA3uhtHszQryDHzcPY8AaTIjx+2JDHFw5B89eiSBEwBK/JeLf3MRxGI?=
+ =?iso-8859-1?Q?vBlmIUEA/7WOQesA3DND9PIzmiNqajW+XKHDUMRpwszAa8js2jecvUgkGP?=
+ =?iso-8859-1?Q?M5WLLBNBsnTEVCLfDunUI0tda8uknwz3V47EijBaTVDnPQxt58MM28Dpms?=
+ =?iso-8859-1?Q?SHTQERY6DA0TQzH9Jlm6g0llxQe0fNu/P8Zxtp8CxWHOHqGondSOSOVC41?=
+ =?iso-8859-1?Q?zi5GXHmKWHjMg/Bs6qWOQcuK4vIK1hK64EgNZpLofR9lB4M2skB/txWcaD?=
+ =?iso-8859-1?Q?ZSg3vXqcadRbpH1f3hwuFWVVI7JdC3MxrKmRzdp6kG4Xa2oPZps/WEg6a7?=
+ =?iso-8859-1?Q?ThXHoIQqzkpHQLz3TTN2e+wBQw9q0hcDMJxqt2XO4JZ/Wkmn5hCenhLcNX?=
+ =?iso-8859-1?Q?OVn+x682JltTKBWfUsiIAqYAlBPzdW1WAbjcMHVTjHEPQZIMPnsCoymjxY?=
+ =?iso-8859-1?Q?Bqsf65bcETXhLophhn4NRg248Djw2e7PjW3W20wh3bB9V6wAac5J0cXC6b?=
+ =?iso-8859-1?Q?XjOPrdqjWIpiYIIMky4FIZYEvwNBeIAGmWHyzWC5tcqWRKJp2v6yBjqdLe?=
+ =?iso-8859-1?Q?RQhRSZ7XgEJ2UXs27NZ71iOeE5k16KTx2yHRF739OEUZa/UO7BzNqZrrAT?=
+ =?iso-8859-1?Q?W7pnFyvDCr/MqpJiBz2+fS9uF+g5Gn+jvGjd9MAJ/BTobJnY7dAF6UIle8?=
+ =?iso-8859-1?Q?ju0/hJ9IWDoSyrGvIocxZnfcXKbqf2qMfTq699k3eUGu9enOzYpdBI7GT+?=
+ =?iso-8859-1?Q?Tb6oITw8rHxSXuw8dbikwtf2X62r4eapW+ZrzWs3BOPQHOmm7fI1HAro9o?=
+ =?iso-8859-1?Q?zvAPRwPceEhe2kwqAXkF0kd3PNqZxkYfZHRYqlXSHLAvsX5MqOmjjO3FCl?=
+ =?iso-8859-1?Q?Hz9Ab9G/Osg0zgX2XGXIaE6Vjr5ow137AxkxeCdASV0Lhr8alnHAinypGv?=
+ =?iso-8859-1?Q?tC5m3dkDq4KwHqPYnubDzIK2LOFfwy4DUP8F+CHI+pQw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR06MB7521.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?vaYngZfqznm4PabWX9WYvYDWwPC+X10tQXu64Xb5UghugZQ91uAFprr6lk?=
+ =?iso-8859-1?Q?TsfUnRIqT/DzbDWNoe5PBff/R1NFEYDBBvvBUrO+HQBDlfeP1Mn9k1vRmT?=
+ =?iso-8859-1?Q?DARIAYD6tXX3jITUo3GFkd/5OxvuWjrG7AHTvZnkIqwTHNAQuzp6Qqbp+p?=
+ =?iso-8859-1?Q?M+Iz2Y4siFJ9GvZwNkzwpHBTJ/LBpWyRZkSrtf/mB6+mJy7n41EWY5+3vg?=
+ =?iso-8859-1?Q?7oqBonvvRbO7FQ5KxzXJZ3lVco+ZCJLYSYYe/s1MRzROZrkwkQEBnaCi/u?=
+ =?iso-8859-1?Q?RlwG8+W6lF9ETPOz6tQ3gaO9Bkvq2NNbP28tyzzblOi/PrKmuQ/IEsElAX?=
+ =?iso-8859-1?Q?o6BHg0/u7rgD11u6LO5dAPwbv1fAUb67G+4gMTKh7YIBRpnoTpRjWpWX96?=
+ =?iso-8859-1?Q?LZ9OlZLgXMfiUnTv2ZBPoNSqiWIWAj8yq+A3N5YRHaEh5hgmSVWxeojaFw?=
+ =?iso-8859-1?Q?hcr26TsXg9D9K9GMQRjqm+nrtOR39Qit2Uy+9n2SvgopA+/Q/c8JHAy+q3?=
+ =?iso-8859-1?Q?V2tah/t/wagiIBKssvRu4ut0eMPl/OW3rCsOcO8ngrnrwm3EW130MSHDHl?=
+ =?iso-8859-1?Q?oySc+a4IyPLCkgDfbNwaLQyC1wqbLM0T40b80aHTF3FtMR+PHEsLKTc24M?=
+ =?iso-8859-1?Q?oB5bjxeaseETdrPrGceJQzrhz1VWwkuy7nEBBaJL9pdH6i7BdxMelc/px/?=
+ =?iso-8859-1?Q?F+dI82bLZD7SphoTyU1FxKQUCIqH0a9hFAYDEwsZDQZUn5lilpzMIm4HV8?=
+ =?iso-8859-1?Q?4wNpEyVGwnLOisGNZcetquGAFOaf4UsVgenTnMNf7U2D7LAhssfOnLuFEx?=
+ =?iso-8859-1?Q?lvOXcRfnV4TAEccM6YsNoDCywuUnM0uxVrtzpQM+M7/Xd+HL5g/z2GfYDE?=
+ =?iso-8859-1?Q?IyGAv62675vjUT3zFs8ihTTgQB5Vf1XHW7G78N55ZtNhRe5yAJMf4Yyd3B?=
+ =?iso-8859-1?Q?MupSLkKJsiM1cGo9AzvQ29T+3B8Q59JFISaPVDUppSMNGwww4N1QbpiV/n?=
+ =?iso-8859-1?Q?2SUNtJNvVT1DkqhCjSmlhKG0E1fKWcaWpyS90NIuh3HchLC4RLl7dve4Sg?=
+ =?iso-8859-1?Q?nnDF5NMTPR+blcJrEnnL1jmtcQCwNdI6vq83DVPtDBF6z1+vsUsLlwOFBA?=
+ =?iso-8859-1?Q?1/zsNsZIRrj/qVvnGHiFpnrwbuqx/NK9B2NGqBdI4Yg8R6Bo/AwuMFbIA+?=
+ =?iso-8859-1?Q?n0s2s66yipCr/a1jSdfV2/XsY4sI2VnZgzt7PfYrPB9GtsBcaEndTiNrfA?=
+ =?iso-8859-1?Q?CWBuZHmprn+LtlqWeV2Lyyy2vbDutDf3XCpC/4e+GalGkhiZgdmKbR94xW?=
+ =?iso-8859-1?Q?RQAM3FGCqGwvaq3pdpxIj1vP1wku1XCedcmzs20mWl+c4C4UptKp0g+8S9?=
+ =?iso-8859-1?Q?b1/6CfxFZjSCyN69ZJ5G/PfOwEZvrcX8nZvKfc1SIkuyMXHCaSyyKoQt61?=
+ =?iso-8859-1?Q?H7D46MZY+BYHHnYa4AdPw9xoW/sfCiD3JgcZjFV/y5Zhzve9Ve9hF/n1T5?=
+ =?iso-8859-1?Q?mC3rF1BkeskMlCq5bNYPuXsia6f3fmcaqfGCo+6fiIkJj6Fq8r0TuXES5P?=
+ =?iso-8859-1?Q?kll4l6UtM+z64Qe+cmJ+DFN4YZ/XetzDE8gxanfvSo6OaEY8EKPKZ0OChE?=
+ =?iso-8859-1?Q?7HAeZteJWWeTLgLD2tUG6U5qw9Ffk7CW7eJk/sfga2oBxxdYuybnGFz1fE?=
+ =?iso-8859-1?Q?8Cg1sGBtNsqxgsOV2wg=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|PN2PPFCAA8F9158:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f4f6130-76a3-4370-d188-08dd8177e116
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|6090799003|5072599009|8060799006|15080799006|7092599003|461199028|19110799003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?azFHNDN4bUZTL3BRcWEwdkhQYys3MGc3ckpXUjNPSDR1eDdPNCtGZ0hmQmRv?=
- =?utf-8?B?M0twVE5wdWtYSGY0QitYbmRmMWVxa09EZnpBeW4rcStJV0JmWFk4ZzVwbjYy?=
- =?utf-8?B?S2FlWDEyTndXZTJWb0gza2hyMjZlbVNHNS9Ic09IOW9HbS9tUER6NUR4Tlkw?=
- =?utf-8?B?WkQwTUtUUVBwdEZRclRBaS9xVXU0YWMyVnZ0N0NsOHplbFl1TElyaURFdFUy?=
- =?utf-8?B?UnJuKzJZdEoxejMvOTdTZ0Vsd2VWUkF5Und0YnVQWTlHbXgyRGJseTJzY1lN?=
- =?utf-8?B?bzlMeUtuazAyUEltYXFZbzNnK3huWERPZHgrR1A0dk1pNG9VQzhvMnFQeFQy?=
- =?utf-8?B?dUx1SEg1WG1aRFZMOTc2RXRyZklwMDBqWEpoVjdJdjNPOTVVcVpnbWd2a3RK?=
- =?utf-8?B?cjhYazgxdlZhNEpocjJhTHFnZmx6SXRTeEdSTTUxU0xQUjRScXJnZmJFUUxG?=
- =?utf-8?B?eVZjOVVQc2F1anFMaERqd003Q0hSZlZDeWNmOUN6RTF4dWJISW52dGJtZmJt?=
- =?utf-8?B?YkxNR1RKUTVSeG5aSHdzTkVMT0loQmZMc2JVNWNqcnNTd0RXcWY5UmtUeVRo?=
- =?utf-8?B?dmgyak1oWmI2K3N6MFF6d2JFWHNzWXdtTDVMRjB3M1lMeW50RWpseFZZanJy?=
- =?utf-8?B?Ri9LaHNsUzJhOXlmeFAzMUFsQU50Q2dYaU5abkFCWTNONnNubUk1ODRJRy93?=
- =?utf-8?B?MGdwWE1uazV3TytZVjFjam1YajhsakMybzhOVmM3VW5UR1dZV21sUzRQenUr?=
- =?utf-8?B?eE9aZVNkVEY1TWxIRWNmN2VnS2RMY0svVnZBYXlHQnlQYnFzUUVxb0VoQVBq?=
- =?utf-8?B?VWtGV1BYTktSdjZwNUNhUkRLT0hmWTVjcG5rd3hEQ0JYMHNwcVROeDNId1cw?=
- =?utf-8?B?M0xXRnlwNXlKb1lIZEFoOWxtSG9uMG5zSVdJREplVmZaU1J4S2RoYXVrQXdN?=
- =?utf-8?B?aC9XaWdFSVk3QXFBMGRranNUWnROaTNDSUZrUEdNZDFlOC85a2VSeU4xaXVV?=
- =?utf-8?B?Zlk3YXlQQXBaZ01yNjBRQUMrT3BtZnIzcWNCUUdRTzRXTDFRYnN0ZmtocGMx?=
- =?utf-8?B?dEVPcjNTQXlNSEoyUjJab2svQ3hTbm5kdmgwc0p0T1ZPVEs2TyszZUpXZEU4?=
- =?utf-8?B?bndTSG8vVG9SV2JzWTVsWWdHRWR2djBFajB1K2ZhaHRvMkZsMExBM2hOa1lK?=
- =?utf-8?B?RGhkemE1ZXNYUXBOSEpDcGwzTmZsN25neGFyTXk2RGFoWFJ1TUh3dTJQdkRN?=
- =?utf-8?B?ZEd1RzdjUkplMUM5TCttS1l3MUE2MzBHU3BOVTYxcmhjMHdLWld0eEllbHdn?=
- =?utf-8?B?Q0diWW9UdEdWODVVcXhkY1dQcDlqajN0andaZ3VrZWNlR0lrTDZvcmVpWmd6?=
- =?utf-8?B?QWxJRHR5NUxLd3duNXZRM1JEM2phY093Q003QzRLNnlkbnpXOFNkU3RFNWpE?=
- =?utf-8?B?WnIrQ2VBWlZ3R3Uwa2lNUWR5T0YzNHorZXFvSFpvNm9sTTdtV2pJRGZRNUM5?=
- =?utf-8?B?Z2lLSTNuLzJUZDUzZHBRWm9YU1QwSjRWUE8wRGhHT0FVelZTSVYvQjlQOXJC?=
- =?utf-8?B?NTZaUT09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OUZhTnlsdDJFclRuYnE5NkZvVHNhcVBucDlOSGNRQkc3bE5hR0pNRmRyUTdG?=
- =?utf-8?B?NjRUVUVNTEVPak5md3F5NTZWaEE1MXUzZ2lva09mOFY5RFdtYS9VRldrWDli?=
- =?utf-8?B?QmIzTkx0UVR0RFJIVG8ycG8vcWJkY3d6WXhHbHdOSzRudUlNc2RHbWdkSHU4?=
- =?utf-8?B?WUZGRkZweHNPWnBwVmFERS9SZkJzanFDQXkraUdVZEJFVEVyTlhOV01VeFN0?=
- =?utf-8?B?K3BqVXh4dElGMDdEQXdiaUlaemRRLzNlcG1UbUpEZU0vY3N0cFVLTjBTVlJr?=
- =?utf-8?B?ZXRRV3RmYWNPbWtlR2pHTVhpMXluM0owVnFSMk94ZHNCRklLcXBrS2Y5ZkVJ?=
- =?utf-8?B?UnNKeElSekk5TXdRUGdSZFpSNXliVG9WNTVkZFB2OWYxUkNacXloc1JoZlEx?=
- =?utf-8?B?aGxxY1ZPWFRTd0JJWVZ6THRvUjM5RlFDbW41c3UrdndmaGpQZjE5ejlMMTJD?=
- =?utf-8?B?MW1XV1phVFQvVHR3TjA0UTdOeUhtdWhlTUtWQ2NSSzFVeFI0UjdhQkZZcWho?=
- =?utf-8?B?VVBQTjZFTHpjR0NxMjk3OVkrNXpkdGxZcFYxQ0lsNjZQZHllTW9UTitwR3Z2?=
- =?utf-8?B?aEVabDVFcDdteFhhTDkzZHlSSzBaS29XNWhuWGR1ODhseFo0N0lIQjY0ODhY?=
- =?utf-8?B?MnhXYkd5U1VlR2xFR2JUclBtY3Y5M1hjcXNlNzErdlo2M0VxeUorVDhTSUdO?=
- =?utf-8?B?Q1RpWnhldHRtZy94a3BDNFRvTVQyT3plQzY1aVg3a0ttakdoV1VUMmJkVngw?=
- =?utf-8?B?SFF2ellJQzZNZmRiMStJSGZOSDhkaVFXeVFPVWw2WU1qM21YV0xyNXRlS1Nk?=
- =?utf-8?B?cFdtSmVsL2IxczlwTWgrYmt6dGtrOVNlVWJOZElLTXN0Zm85Q1VCZHFsQjR5?=
- =?utf-8?B?a0JrUGE4UjBhNTZFeU9IYzJLRHc5TC85SHg5Wkc3K0t1L1pTZzRXSU5EYytT?=
- =?utf-8?B?WEZmV0Y1Nk1ZbmZCWU1Lc1hRTzlWTnlTNzZvUmZRYTJ5aXFiU3dhckhEZWZT?=
- =?utf-8?B?dG5aYnhVbU05c1VPYVZPQmJsYjRNc05uTzdycTRoaUZlT3BIbjhJT2JLQllL?=
- =?utf-8?B?SkswWEVzU3FKNTlWS3ltS0hkYW81akpkOVZ4WHYxWUVxQ1d3ZVNzSFJEZDNY?=
- =?utf-8?B?ZkNoQ2l0cjRNaWZ3eDBkVFJZSDM4aXZwTjd6Z2ZDUzNRRzhVWkRpekxxN21E?=
- =?utf-8?B?aWxMSjJIM05JR0UvbFNTeGJwRUZ4b0J0enkxcDUwWFFNSFYvS1l3cEU0eGxx?=
- =?utf-8?B?RjVQUk1yNnduN09zb1N3L01rSURyZjR0My9qSVJ2c1dBZXlaWGVXNEN5bEhj?=
- =?utf-8?B?TE9XK21QUFNhTERMV2ZDeGgrOVRXMy9aMGJYbnN3cHFHRXEvWG5pbkh6NkZ5?=
- =?utf-8?B?aHVLQ1ZaeXlEMHd0NTBrSklNOGpCbEpwd29OREovVDVKRzFDR0FyM2RwQktq?=
- =?utf-8?B?SEtvNnhORUdIT2EvWm10QUQ1ZWVPVzRRVlM4Z1NhcWV2c29ZZ3NKWDY3R1pz?=
- =?utf-8?B?Y0x4Z0RmKzdYV1p5bjg1b1JDY0k4YUREcUdlQld0WW9pUm11eTVCR2dneFhs?=
- =?utf-8?B?dFpRbXc5MUJZenBVZ3Q3d1pLbjB3NXVkalpCcThQZDFqSDBWbjdpdjRDY3p5?=
- =?utf-8?B?YU1KYjJHY0dkSkdPTmQ1bzB6TjZPb0Nra0NORys3bDFLY3Q4c0wzWXdwSitS?=
- =?utf-8?B?ZVI2WmhQK0pCUTNUNW1TcUJwY05FdDdxaUQ0ZkxoY0sySGMzTUtzd3NQdGU4?=
- =?utf-8?Q?RLnyT5v6Y4F/FsSCw44dL1maWSPPbZqpceurztn?=
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f4f6130-76a3-4370-d188-08dd8177e116
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-OriginatorOrg: leica-geosystems.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 08:30:03.6232
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR06MB7521.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e3c1d69-b0eb-44a0-bdab-08dd8177f69f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Apr 2025 08:30:39.4983
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPFCAA8F9158
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8IegEMdrV/L16UAf5EIw3CokD8FrWcJMxQC/bbOG3msqHMSeLQK0J0C0hOOA/qHYQNnu2oJyxecSy2MAs7boex8qysuIrEjDmW3yvPSdTa6Yizt7zZDPfUbHR+JxmZf5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB8926
 
-
-
-On 22-04-2025 01:37 pm, Geert Uytterhoeven wrote:
-> Hi Aditya, Hector,
-> 
-> On Tue, 8 Apr 2025 at 08:48, Aditya Garg <gargaditya08@live.com> wrote:
->> From: Hector Martin <marcan@marcan.st>
->>
->> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
->> it's useful to be able to print generic 4-character codes formatted as
->> an integer. Extend it to add format specifiers for printing generic
->> 32-bit FourCCs with various endian semantics:
->>
->> %p4ch   Host byte order
->> %p4cn   Network byte order
->> %p4cl   Little-endian
->> %p4cb   Big-endian
->>
->> The endianness determines how bytes are interpreted as a u32, and the
->> FourCC is then always printed MSByte-first (this is the opposite of
->> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
->> allow printing LSByte-first FourCCs stored in host endian order
->> (other than the hex form being in character order, not the integer
->> value).
->>
->> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Reviewed-by: Petr Mladek <pmladek@suse.com>
->> Tested-by: Petr Mladek <pmladek@suse.com>
->> Signed-off-by: Hector Martin <marcan@marcan.st>
->> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> 
-> Thanks for your patch, which is now commit 1938479b2720ebc0
-> ("lib/vsprintf: Add support for generic FourCCs by extending %p4cc")
-> in drm-misc-next/
-> 
->> --- a/Documentation/core-api/printk-formats.rst
->> +++ b/Documentation/core-api/printk-formats.rst
->> @@ -648,6 +648,38 @@ Examples::
->>         %p4cc   Y10  little-endian (0x20303159)
->>         %p4cc   NV12 big-endian (0xb231564e)
->>
->> +Generic FourCC code
->> +-------------------
->> +
->> +::
->> +       %p4c[hnlb]      gP00 (0x67503030)
->> +
->> +Print a generic FourCC code, as both ASCII characters and its numerical
->> +value as hexadecimal.
->> +
->> +The generic FourCC code is always printed in the big-endian format,
->> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
->> +
->> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
->> +endianness is used to load the stored bytes. The data might be interpreted
->> +using the host byte order, network byte order, little-endian, or big-endian.
->> +
->> +Passed by reference.
->> +
->> +Examples for a little-endian machine, given &(u32)0x67503030::
->> +
->> +       %p4ch   gP00 (0x67503030)
->> +       %p4cn   00Pg (0x30305067)
->> +       %p4cl   gP00 (0x67503030)
->> +       %p4cb   00Pg (0x30305067)
->> +
->> +Examples for a big-endian machine, given &(u32)0x67503030::
->> +
->> +       %p4ch   gP00 (0x67503030)
->> +       %p4cn   00Pg (0x30305067)
-> 
-> This doesn't look right to me, as network byte order is big endian?
-> Note that I didn't check the code.
-
-Originally, it was %p4cr (reverse-endian), but on the request of the maintainers, it was changed to %p4cn.
-
-So here network means reverse of host, not strictly big-endian.
-
-> 
->> +       %p4cl   00Pg (0x30305067)
->> +       %p4cb   gP00 (0x67503030)
->> +
->>  Rust
->>  ----
->>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-
+Hoi,=0A=
+=0A=
+> =0A=
+> Hello Johannes,=0A=
+> =0A=
+> On Tue, 22 Apr 2025 08:36:38 +0200=0A=
+> Johannes Schneider <johannes.schneider@leica-geosystems.com> wrote:=0A=
+> =0A=
+> > When CONFIG_OF_MDIO is set to be a module the code block is not=0A=
+> > compiled. Use the IS_ENABLED macro that checks for both built in as=0A=
+> > well as module.=0A=
+> >=0A=
+> > Fixes: 5dc39fd ("net: phy: DP83822: Add ability to advertise Fiber conn=
+ection")=0A=
+> > Signed-off-by: Johannes Schneider <johannes.schneider@leica-geosystems.=
+com>=0A=
+> > ---=0A=
+> =0A=
+> The patch looks correct, but doesn't apply. Have you correctly rebased=0A=
+> it on the latest net tree ?=0A=
+>=0A=
+=0A=
+ah, merde! i was still on "our" kernel: 6.14.0 =0A=
+I'll rebase and send out an updated version=0A=
+=0A=
+> =0A=
+> Thanks,=0A=
+> =0A=
+> Maxime=0A=
+> =0A=
+=0A=
+gru=DF=0A=
+Johannes=
 
