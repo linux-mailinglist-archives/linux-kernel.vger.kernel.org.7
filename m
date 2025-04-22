@@ -1,77 +1,129 @@
-Return-Path: <linux-kernel+bounces-614743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E24AA9712F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B2DA97141
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6163A2BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE7A188D4B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F1B1A0BD0;
-	Tue, 22 Apr 2025 15:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9EE290092;
+	Tue, 22 Apr 2025 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elv0NarH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1+LYod9"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF0E28F939;
-	Tue, 22 Apr 2025 15:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC0828F92D;
+	Tue, 22 Apr 2025 15:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745336257; cv=none; b=Tuzp2Z1YqD+dkdLOnbE8HLP+zYCjagS3cuYOWM/C5ZFt6mtis+Wszzht/lAT+7UjTSYrvm+CileCccPtuVitX4URK8i1HxZ4ookDsoHglp4yZa/wV68cqXfUbZGynwEH3I0+b3B01ruhP/kCC4wS//IaiinoOkIHWoJyRG4XQWQ=
+	t=1745336279; cv=none; b=Mh2572ZZtzAk3tKIh0BZwl0/K8DuOlGrJRTAxcd1cU4zDRhXbuXAzVxYZqscYVGzNmvPe+ScJtCWekmaY5mQ7z8xzRcBPgIMlNDs0/UE2CuL8d02i9Jp2G2E90z8UXROit9lI+tBBXFhQ7JMP/mBNpj0HQCpsc+KrpQKNpahLqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745336257; c=relaxed/simple;
-	bh=Jw42RzPTFH1JXQNle4D+HMuCHvBjjQsEcqF8GaNCQ+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbPcCY/s+EVhRSP6/VjSqHj1cn6I8fOvIp+PV9PNEleY1dE/A8zoW8VJcbs4rc4zOdcB10rWTV1KrcpvilrYS9MrgPK1HMt5rAXvwDecl4SDjieDxvOjJ8arkt0WOT5RR1syp+iNTwT7WAWzFMYCbUOmqd/ArBkRNcaTn3fGGqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elv0NarH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A3D4C4CEE9;
-	Tue, 22 Apr 2025 15:37:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745336256;
-	bh=Jw42RzPTFH1JXQNle4D+HMuCHvBjjQsEcqF8GaNCQ+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=elv0NarH2n/lq8UrYUtfHAlnPf/1/3aBSPh+fAApFr3vHAJBaMeEaCOxedR7X/eHA
-	 0O1Hp2gsWiNi6sOI1WpYiBrepayRN645FUwnridGqWldpYqc/VpUTyaUrQf4iPZiC9
-	 ivQwg2KLIEre4q0vhgfCQUu0UZhLoay4HDly3YasZfChJn1OE9wqYECrxfwqsgPYsg
-	 msT8SMAXytrt1XFbsu27m02zH3kGZKGMaHLbeJvAsiA/BUCqZdcVwj8uWi2unO4cli
-	 z37W7wGYgvugjyC1gt88O381NfaoHOxNdokEKSS8oxH4C6S43dzWJMrS+ccrJIdcGg
-	 Mns5sDlNhK4Uw==
-Date: Tue, 22 Apr 2025 17:37:31 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] rust: alloc: allow coercion from `Box<T>` to `Box<dyn
- U>` if T implements U
-Message-ID: <aAe3u_HHQUOmH0KS@cassiopeiae>
-References: <20250412-box_trait_objs-v3-1-f67ced62d520@nvidia.com>
+	s=arc-20240116; t=1745336279; c=relaxed/simple;
+	bh=wkljQJpf2uBwa/vHkF2k+MDlr9Ewo2RpAiy8uTu39Ks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vC34lXgj3cXWTCdqr1yFzczdTWWnWnCrtqvByelJfVrA6v8W1/fPc77a+EJUAYpjlLDLFfHZrRyANpjvjMlwbpz57M5D7AV9JyxnviH9sP88p8w9hL/zbhKgiGQxMW4VDY84t11rJMgytN4HkDFoudHBDVx5jMRWd0NkQooC8pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y1+LYod9; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-440685d6afcso50331145e9.0;
+        Tue, 22 Apr 2025 08:37:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745336276; x=1745941076; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t97VeSNUpG2hiAo6wIqYqqcOXTDfHHY6JtBldkkckaA=;
+        b=Y1+LYod9fGBPv/QsNGBXWuAXbkd42lEMh3Lw8Gs5XOye102XlQiwLTpNyffhF33jGr
+         jjGJByjUVerL9uHpvXuSqyXEbjOttGhHNK3uqe95iLPJXMVZHtQj+qh97vc2Hil9zqRG
+         thR533IvVj0n9YxX8n/QZHZFLsH0KddbbEIQh3kQYrb53gJKOKb5PBCPxDJJHNTLHRmi
+         L3vtMq/OnXswAhO5W8eGJqnEeT4hQIK+bfy4yZ8+IMMrtfkoADsas5/4ULMwNBCSzZOK
+         KPmumgAA/KDeN4UOC9+VNb7ln28ihkZXp2J/ip6aE6O1eCW0uozUdaCLchTqc/pE2NU3
+         jltA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745336276; x=1745941076;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t97VeSNUpG2hiAo6wIqYqqcOXTDfHHY6JtBldkkckaA=;
+        b=TrUxNpFwaidKWEFzjf3PZa8jaxmeNmBOBGNf2c3yrUKqMZ8REtmDJY9NenM8RfkoAx
+         mJcsa5gZjTfDoQe6tG4TasibvBUQVisEmjPfEgbwEiB6u/aqaHriOn0V3eACrvcAm5Nd
+         L6KFHxS/Noi0huoK4uEylSrruDzrOEBb5QOpD2acFIv0QE/W/oKPCyLUXHuTVzpnNDYO
+         LZ/uPfaVpRl1SGRYYYgjLjSH9BJKxpK/GcYd9Cwbt5gFM+1IsU5rIx16EtGaKbWCFWqB
+         hhhSvwtJqLIdol6qgeWTstLOh9f7K8bKP0eYX91Ig2nmFvuGPuWV7jMedjKXzXacpqVp
+         sWzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC1aAkeLCsDokduoK0jzdyPsGuA9UiWMr3BT/W8PWpLhoubQk2TmWPoY7AGiix6jOdp7f0USXW5hs3deY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH6z4emUtZV4d+QQ87pg9bnKuYA/w/joHhSZI5J5g/uOevn2dZ
+	phTuwquT/vx0LHTB6ilY9LlYES0XJA5b+38SBzGfpUkcWDdJnglt
+X-Gm-Gg: ASbGncsk8eoAEpLfPRCJNBGLftXgDg3UkwfrZNHGXfvJTfHGyzLd/ehb1cnD8VObKQK
+	Q5IFidnIlT72xN1ASHBb0viJa9YErNKEGeyy1SxMV2O2VljXt/8GH+LTMBJ+tKfftsxU4NCrfHz
+	CRsOmr9h7uUyNtz0RBYDYqaP23yL6jkr0XwTZ6EU8auWiGgAotRree6Zgg/s0KA3aCL8KqILMP2
+	vmrGemDT26kifDnpaLOAVMp37IrNh0+4gLtqVEYmKKqnaDpBLHnUupQGenQBfvAxPbz9UpKuNGw
+	Aj1aKcYjOkQJSkGzZDuHt8OEpGX+NblznZVRSzH53w==
+X-Google-Smtp-Source: AGHT+IGLPpRDDlkDW7Yin3pzT8Q0kiZj2p4DTstyz2bK/H34CFnMgNZd4wZTj9aaX9SHeRN+skhNaQ==
+X-Received: by 2002:a05:600c:4e4a:b0:43c:fffc:7855 with SMTP id 5b1f17b1804b1-4406aba7c2fmr148303565e9.15.1745336275381;
+        Tue, 22 Apr 2025 08:37:55 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:314a:dc00:e03f:5030])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5bbd7fsm177321085e9.21.2025.04.22.08.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 08:37:55 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: mdf@kernel.org,
+	hao.wu@intel.com,
+	yilun.xu@intel.com,
+	trix@redhat.com,
+	akpm@linux-foundation.org,
+	marpagan@redhat.com,
+	arnd@arndb.de
+Cc: linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marco Pagani <marco.pagani@linux.dev>
+Subject: [PATCH v2 RESEND] fpga: fix potential null pointer deref in fpga_mgr_test_img_load_sgt()
+Date: Tue, 22 Apr 2025 16:37:37 +0100
+Message-Id: <20250422153737.5264-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412-box_trait_objs-v3-1-f67ced62d520@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 12, 2025 at 03:29:13PM +0900, Alexandre Courbot wrote:
-> This enables the creation of trait objects backed by a Box, similarly to
-> what can be done with the standard library.
-> 
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+fpga_mgr_test_img_load_sgt() allocates memory for sgt using
+kunit_kzalloc() however it does not check if the allocation failed. 
+It then passes sgt to sg_alloc_table(), which passes it to
+__sg_alloc_table(). This function calls memset() on sgt in an attempt to
+zero it out. If the allocation fails then sgt will be NULL and the
+memset will trigger a NULL pointer dereference.
 
-Applied to alloc-next, thanks!
+Fix this by checking the allocation with KUNIT_ASSERT_NOT_ERR_OR_NULL().
+
+Reviewed-by: Marco Pagani <marco.pagani@linux.dev>
+Fixes: ccbc1c302115 ("fpga: add an initial KUnit suite for the FPGA Manager")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+v2:
+- Remove stable CC tag since its just a kunit test
+
+ drivers/fpga/tests/fpga-mgr-test.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+index 9cb37aefbac4..1902ebf5a298 100644
+--- a/drivers/fpga/tests/fpga-mgr-test.c
++++ b/drivers/fpga/tests/fpga-mgr-test.c
+@@ -263,6 +263,7 @@ static void fpga_mgr_test_img_load_sgt(struct kunit *test)
+ 	img_buf = init_test_buffer(test, IMAGE_SIZE);
+ 
+ 	sgt = kunit_kzalloc(test, sizeof(*sgt), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, sgt);
+ 	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 	sg_init_one(sgt->sgl, img_buf, IMAGE_SIZE);
+-- 
+2.39.5
+
 
