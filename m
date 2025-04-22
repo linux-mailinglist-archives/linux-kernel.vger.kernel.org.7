@@ -1,171 +1,264 @@
-Return-Path: <linux-kernel+bounces-614085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63706A965E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:27:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ABCA9659E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C493ACE44
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7AD189E13B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 10:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD5B214811;
-	Tue, 22 Apr 2025 10:27:16 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2121.outbound.protection.partner.outlook.cn [139.219.146.121])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1115216392;
+	Tue, 22 Apr 2025 10:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Ny5G3pbi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jh5PkcDA"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1555720C03F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 10:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.121
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317635; cv=fail; b=Dz4CB86CguZPdwBNES6vpveqqliDqICsVOhttZnds91GyVepVuVTMSbygSzLrDdmmhj0aSdJ3IvQKXLBtMaBZhvfXHM0F+eSOAc2XIvWascJiKAJ9kA3Wp6U+f3rqy1bsYkpJ3kVeHsD4tYBKbhmT8zrxvjm7V3ZeSxJbv+c+aI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317635; c=relaxed/simple;
-	bh=w5EGxkPRBvz7166tsFSZhJaNvLQcRE1LYf7KzRxE8X8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=L28rPEQQpN0gX+NCmUApezCsKgm4ga4S1m8z7bBZWGYrO45xGheHw9YrNdX3RMT36uUoAG7Io3BN7/lIwRsdA/34LE1sbU24YD0XZ6TTnpyxTbn7uVddk4G5xlSGiX+99lU1Ry4jw0K0g47zk64ENSHzr3BnJjmueb9dPKDR9OI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fsQtQ0sT3usdM38843HRvpuRgakDALWbdL8xrUEVo5BkC+CPT18qYjDhV6NmE0z5z9I5EJ/4Q0x7qcooH+OsSsrzCoIansNdbhqyNlwVQFiC+DbLGL9y0ImwyMEMavIz4JVLkuqimSUfuQkUmwMHXWkMUymIUtm62kSCYGgy6D/gZmx6gHGmD+R7S17QspckSr8rPOAf+kWN7XczU/qC8C6ZJ/+p5AXq3RSqGggx1LicdFKvL2sYPoJZ2F3C/FGwCjO7rOlF6WOmJjhlzHDKjwFmkFItc8mpBfYjysQfjV+fM423ExK6c+zvpvVtggrzvbl/GlUVHErq8gDtalgXNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yeLpyXpKtOWjvFBC94p61QdYrj6+aJerJ5wpUcQsdHg=;
- b=QwEgi5Jm+hMG5Mgx0BrZoOOG0PbFyvei8K5F/+6GjHJp1sypbQVu47kdBjNEJ3MPc1U4a0UpfDQQAmGxSGs+JEgmvt4GT3CxOiyBtQnCgXDDkGCmBa64HOPoYzCqOXZoY5bwrH29+ilGoC0Bw3b4ntBMUb9s3xo2aZ+nrvumdkDbHL7vwfoBjFsM5tikhgv8Ny1GS+RoBaQ5pK3+Q2uFaliJ+BHoj4lHBCdzp1uTbciFdbpXM/DGBpxNvn3sy2GuozHiK013P2/lEXEoZDOxrxznyTEGA4xVZnJchKUXCnE/59INsFBwAON9eyP18cjU5WhzIFRf/JhgsC1N1i2sgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1241.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:6::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Tue, 22 Apr
- 2025 10:12:51 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7%4]) with mapi id 15.20.8655.033; Tue, 22 Apr 2025
- 10:12:51 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Minda Chen <minda.chen@starfivetech.com>
-Cc: Hal Feng <hal.feng@starfivetech.com>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] phy: starfive: jh7110-usb: Fix USB 2.0 host occasional detection failure
-Date: Tue, 22 Apr 2025 18:12:44 +0800
-Message-ID: <20250422101244.51686-1-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.43.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZQ0PR01CA0014.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:5::19) To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE5720C03F;
+	Tue, 22 Apr 2025 10:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745316807; cv=none; b=cJuKeHB6/m14Fb4AOEAjnR3z+d/ahpsY1v+k8rHzf0H/bih77TdijzeDsUErLUdP/IR7XqyhHi6t//mGeorwryDGIVRcVSeGfqesztG3NPlHHfS0pWq/Yia6rg/D5zBD5cC57bWI95d6ZmU3tcRvfsdG70VMRFG/PaTi0xQ/Jbw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745316807; c=relaxed/simple;
+	bh=rrmozzNxumnGfR9XKl/Tk4HoyfrHtNJ6j/pS/lYfCG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lqaDcc8jEvrmEtKzJV7yYaxFZ0rM3NMzJGWDRnlGfnapIUHos8ZleY5NIkkbRD47r10xvE0fA1hqWeihorrIlwMV19RWhG1iXzy+jLKklMT9D3dDOwcNmSl+qZxalQs9zBkTvFl8pXN1/UeK27cd8THdk48raz81zaVQbemBcjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Ny5G3pbi; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jh5PkcDA reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1745316802; x=1776852802;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=GTgyBYM0atbB7o8tyo96ALPdwLqQ7fnnytL7AnbCemc=;
+  b=Ny5G3pbi6964mSBk9xceTVUd8b7J8SJK1m9+rl+5FgBiWAFVjbF9BVgD
+   lupwHqmUXwbHBgwJyFKlLAM3zPW2XkqnOX7K9BLJD/p6L669egqi0crZl
+   GgREhn43soZ7rAjB2sRxhGpnaTzd/0UdVU2vBoDpM0XM5by/esgg9LKYd
+   nSve7kcUFsUdBoqquKOo5gPZJAvwDkre4iKojnBAkrbYxRQcwn0IE6uX7
+   bb8UAsgbhtJJ5rp0aX6vDqpPhOtsGbwOQADzq9VSr7PP+ubKf7EnUGM7X
+   pPQe4Z4ePeXPOCNN7U10FZ69lRkgJkEGL/YCjwIDbhLM6tW/r4lwiKCL1
+   g==;
+X-CSE-ConnectionGUID: aFnZ/5SfRwmMZma6TXZltg==
+X-CSE-MsgGUID: zm9SyFfMT+ynQMFBCmSLdA==
+X-IronPort-AV: E=Sophos;i="6.15,230,1739833200"; 
+   d="scan'208";a="43643392"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 22 Apr 2025 12:13:13 +0200
+X-CheckPoint: {68076BB9-D-DC4DC9A0-F4F29281}
+X-MAIL-CPID: E85EBD5DCC334B9006B24DBC4B5A8702_0
+X-Control-Analysis: str=0001.0A006368.68076BC7.004D,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4392516157F;
+	Tue, 22 Apr 2025 12:13:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1745316787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GTgyBYM0atbB7o8tyo96ALPdwLqQ7fnnytL7AnbCemc=;
+	b=jh5PkcDACdr42zBpglMQlTtHe2GsSeBycBax5AeNrIxoKMDEJi7pZOJGlvzcbqZPXoEuQW
+	itX8TLKWSVXdsogH8yaE3qZS5OuU1HYtmNkf2FX4wEkhC/kWqwImVYs+TJAapW5oJYdJs1
+	89o/8/ZpbhEe5nLHs9mSAI6iZLeSl9p2sxmMCWrCo2sr/bfNrYq7stmyIWZwc6hcLLrj7Y
+	BLaiAxio5vEP2Ka1JGJJNPal5ZJBBH8IuYQc37TxJwWtH9Hw5TKQ8ZTCblhwH2Qwq+3Zfw
+	jERP+NMjT+g1hrYcyTSSkzKjWX1+FZAGQs7slMKzOq6v31gpOcqFoqlTN+LlvQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>,
+ Alison Wang <alison.wang@nxp.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] dt-bindings: display: imx: convert fsl,
+ dcu.txt to yaml format
+Date: Tue, 22 Apr 2025 12:13:04 +0200
+Message-ID: <2782645.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250417151934.3570681-1-Frank.Li@nxp.com>
+References: <20250417151934.3570681-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1241:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b35b912-6a60-49c2-5987-08dd81863d64
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|41320700013|366016|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	dCiqKbL2GShrf62vsS3PyeqtQxVYIn+dBLy4TNj9RiZ608I26wJurVzxfSmoJ6oJ/O37L5Ln5Vrgx6eiT5vTDOVCN+34su03JF1S54c+Y8kbpGgmBMRqLdkJro5dYwVevv4M7YyjYdIzgh9Uv4ek5P9UcAkxv033AUzH2iSEFM8TWCE5XQfViuGj9109h2aEaugX1eOyaVdqX7SdUmVLQphvA+V4ZBMG/Ta3KQ7mndwAuuBufQY/M+fsuyisEzBqRJJM5NhxVEAP6xxmELLm4Oh3zn6Vn3+XlwNPGdYF6RXUsLr1/4GkwzYt0LHOqDP2YbCQG6+iVm4wVOnHWyiACaP3sDyu2JT51z2klZMLQdL9263C8bcmocJWYYbMelmy4/lxaeWcA9lVQRBvgprB9odF2dPH339ksadb72URC6N3FKt6P7eorZ+Z3ibfmxw10fWXjdmWghy9fO9Ic5RZfqK2YmFuYkI02yNE/FRoXfLQWyYYkA3NM9UiGgp3nGLZdzizNU1Q+8Q1MACQ2b8zruhI/ZNf3rxwWHQwBKnjcTUYeB5ZfZjZfbwz3dCVwCpMEqT0CliTgeAzbFFJ6cILS18IhArKi+GmMZeKWT5dLWs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IPwKhXBSgnRb6PzEHARAgurt0ojzhefzIee/cpfI5rIPeLaLVZvBMdrBq+ze?=
- =?us-ascii?Q?eVcbSnZ+ajFvwqN0V/V9fNAzY4w27u2aZmCBDdTBPxKPGkcBgIEYRj8F4JQL?=
- =?us-ascii?Q?r31Ex8NOYhxAjrDdZ3+hHlFwGV5ff8JpyR2KXTj4eJeVuK+/jCxlIotG4Fs5?=
- =?us-ascii?Q?vPY5+tpdk7EblqknfweFLjnlRy2uZ+O+9BlWM71YfeW1EMQjUaQgOh4FodYd?=
- =?us-ascii?Q?ZwLV1PHNbrhuCdwqawLx1bRDgV4kLusid7n5nNYUMBE4PXE2+Uh45/mqZK/8?=
- =?us-ascii?Q?RUjqnY0gWuC02AZgzyK4oeZjBJAEESZZdg7QI53KvxAy1UMifvTO/rPefF2q?=
- =?us-ascii?Q?PDm6qzdg6F4GeuszmaPeYHTmHtys41eyGb59UjDe2A0soxlJyJEbbSfuqARd?=
- =?us-ascii?Q?0oG5Nl1+sP+tx0geUivYjFqrGrB0ihOw1BBYKAabrEUFMLX3n7lbvTmnN40C?=
- =?us-ascii?Q?Qz1r55yXozgZn4yEFxLksNrjm45kD81nUbgV4WXuKe7MT43HvblnkDBrGDSM?=
- =?us-ascii?Q?HjcIID68CooGidMwF6gXTA9oeSerQc01HL3lXFbzrjhFICxvTcaqAo2gBqnI?=
- =?us-ascii?Q?pKEjj/im6GulrkyL3AmY5zHvcV8+quum3P0CXVq1al+OTEd05ojJY0cQlrFQ?=
- =?us-ascii?Q?G5EX+QHDHfqrvpWFWdMFKuf3aMYRzFP5QoQVxervB5G/eQBf7ewVltwtUT9m?=
- =?us-ascii?Q?SAci1LoDpKXdq3+jfgwakUq19+Zt6SaKhqgcJvew67W2ZjeynzBKJ2br38OH?=
- =?us-ascii?Q?wsCh40gKSpKa//rccNwhZ26oXJibOapc+cGABIDXTBuNcRtK9oDdkAynzXbI?=
- =?us-ascii?Q?KEb0bxJnciHD3BhaKNBPF7CZ4kDLfVvCHEkPtpbJrzeI3KeM5ZlsFMpux8dS?=
- =?us-ascii?Q?04PvdtdHkWvak6FPvpsVd4/c489wOrIVwpUgLdEbr/kLpqhqYTpDQZdResru?=
- =?us-ascii?Q?0kZL/v1E3/NXQqZpte96q0UcvvXbYxzArWPEvNAGhGizgox5qRBnNseZ2gtO?=
- =?us-ascii?Q?PRSTtpV+H3weEu/S9ve1ERh10cnGznNcLyFKcrF0gPPi6L9GchOtPA06JDi7?=
- =?us-ascii?Q?5lFYm1neQhWAsOvgobVF9lIu14vOOmOaCFXuvrvim+Z1JFiWftanTO4i4ez4?=
- =?us-ascii?Q?uavtBkEwXZ7Leun5qB2VnJkSmUiKVzHtNw+vbTKNsQNSSwOGrKKwSuuF1lTq?=
- =?us-ascii?Q?3Cz8oRuYxGRhoYPrT+zoLbeJCH5XKrFgei5Ail+SeRgRqg7hvXyBa1/ZOwCZ?=
- =?us-ascii?Q?/U1JhZdUgKf6rmAgI1dxTnS9CxC6fJkuR5KYVADrNHEmq+blxGGNH4K6ZwwK?=
- =?us-ascii?Q?zVwRrNcs0aAQUSRloFpVkiXeSpyyUiJRsW40g/dP6WhSTfDqYwaevMARsFSR?=
- =?us-ascii?Q?qInUEx0sscr+/K8sOYgb+hXO4ozbYBItvwUeqg2mBxq3KMnNZymWkF6YoPoS?=
- =?us-ascii?Q?Y7o53NJmnr5wQyY5AVXXOdQdcyApXEDX7rhinZxI1cVgWQQVkFaaH5pbBhAY?=
- =?us-ascii?Q?3T2+Z30kL9k7OJlEj0V5tE3FtFxwSQ20k5w9QtL7yU7NEHCkh2asP0XdJXk2?=
- =?us-ascii?Q?fvAWfeGCcIgLECYBgb3JLSf2mwovv39oJSiD7pO32jMwmm1Ua811iX2LnOQ8?=
- =?us-ascii?Q?9A=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b35b912-6a60-49c2-5987-08dd81863d64
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 10:12:51.3298
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NEdIqW3p6XnuL6XaCgtTHiCQeTnml7WdZPCqLcdEL8QilIUWcF2j1yyjz2UJEV/zSMAdz+v970lSByldfNqZnHWgtfG4Ei0EfvtXkDeRY/Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1241
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-JH7110 USB 2.0 host fails to detect USB 2.0 devices occasionally. With a
-long time of debugging and testing, we found that setting Rx clock gating
-control signal to normal power consumption mode can solve this problem.
+Am Donnerstag, 17. April 2025, 17:19:33 CEST schrieb Frank Li:
+> Convert fsl,dcu.txt to yaml format.
+>=20
+> Additional changes:
+> - remove label in example.
+> - change node to display-controller in example.
+> - use 32bit address in example.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/display/fsl,dcu.txt   | 34 ----------
+>  .../bindings/display/fsl,ls1021a-dcu.yaml     | 68 +++++++++++++++++++
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 69 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/display/fsl,dcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/display/fsl,ls1021a=
+=2Ddcu.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/fsl,dcu.txt b/Docu=
+mentation/devicetree/bindings/display/fsl,dcu.txt
+> deleted file mode 100644
+> index 63ec2a624aa94..0000000000000
+> --- a/Documentation/devicetree/bindings/display/fsl,dcu.txt
+> +++ /dev/null
+> @@ -1,34 +0,0 @@
+> -Device Tree bindings for Freescale DCU DRM Driver
+> -
+> -Required properties:
+> -- compatible:		Should be one of
+> -	* "fsl,ls1021a-dcu".
+> -	* "fsl,vf610-dcu".
+> -
+> -- reg:			Address and length of the register set for dcu.
+> -- clocks:		Handle to "dcu" and "pix" clock (in the order below)
+> -			This can be the same clock (e.g. LS1021a)
+> -			See ../clocks/clock-bindings.txt for details.
+> -- clock-names:		Should be "dcu" and "pix"
+> -			See ../clocks/clock-bindings.txt for details.
+> -- big-endian		Boolean property, LS1021A DCU registers are big-endian.
+> -- port			Video port for the panel output
+> -
+> -Optional properties:
+> -- fsl,tcon:		The phandle to the timing controller node.
+> -
+> -Examples:
+> -dcu: dcu@2ce0000 {
+> -	compatible =3D "fsl,ls1021a-dcu";
+> -	reg =3D <0x0 0x2ce0000 0x0 0x10000>;
+> -	clocks =3D <&platform_clk 0>, <&platform_clk 0>;
+> -	clock-names =3D "dcu", "pix";
+> -	big-endian;
+> -	fsl,tcon =3D <&tcon>;
+> -
+> -	port {
+> -		dcu_out: endpoint {
+> -			remote-endpoint =3D <&panel_out>;
+> -	     };
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/display/fsl,ls1021a-dcu.ya=
+ml b/Documentation/devicetree/bindings/display/fsl,ls1021a-dcu.yaml
+> new file mode 100644
+> index 0000000000000..7246c89271a8d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/fsl,ls1021a-dcu.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/fsl,ls1021a-dcu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale DCU DRM Driver
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,ls1021a-dcu
+> +      - fsl,vf610-dcu
+> +
+> +  reg:
+> +    maxItems: 1
 
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
- drivers/phy/starfive/phy-jh7110-usb.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+interrupts:
+  maxItems: 1
 
-diff --git a/drivers/phy/starfive/phy-jh7110-usb.c b/drivers/phy/starfive/phy-jh7110-usb.c
-index cb5454fbe2c8..b505d89860b4 100644
---- a/drivers/phy/starfive/phy-jh7110-usb.c
-+++ b/drivers/phy/starfive/phy-jh7110-usb.c
-@@ -18,6 +18,8 @@
- #include <linux/usb/of.h>
- 
- #define USB_125M_CLK_RATE		125000000
-+#define USB_CLK_MODE_OFF		0x0
-+#define USB_CLK_MODE_RX_NORMAL_PWR	BIT(1)
- #define USB_LS_KEEPALIVE_OFF		0x4
- #define USB_LS_KEEPALIVE_ENABLE		BIT(4)
- 
-@@ -78,6 +80,7 @@ static int jh7110_usb2_phy_init(struct phy *_phy)
- {
- 	struct jh7110_usb2_phy *phy = phy_get_drvdata(_phy);
- 	int ret;
-+	unsigned int val;
- 
- 	ret = clk_set_rate(phy->usb_125m_clk, USB_125M_CLK_RATE);
- 	if (ret)
-@@ -87,6 +90,10 @@ static int jh7110_usb2_phy_init(struct phy *_phy)
- 	if (ret)
- 		return ret;
- 
-+	val = readl(phy->regs + USB_CLK_MODE_OFF);
-+	val |= USB_CLK_MODE_RX_NORMAL_PWR;
-+	writel(val, phy->regs + USB_CLK_MODE_OFF);
-+
- 	return 0;
- }
- 
+2D-ACE (DCU) has a single interrupt (204 in RM)
 
-base-commit: a33b5a08cbbdd7aadff95f40cbb45ab86841679e
--- 
-2.43.2
+Best regards,
+Alexander
+
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: dcu
+> +      - const: pix
+> +
+> +  big-endian: true
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    unevaluatedProperties: false
+> +    description: Video port for the panel output
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +  fsl,tcon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle to the timing controller node.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    display-controller@2ce0000 {
+> +        compatible =3D "fsl,ls1021a-dcu";
+> +        reg =3D <0x2ce0000 0x10000>;
+> +        clocks =3D <&platform_clk 0>, <&platform_clk 0>;
+> +        clock-names =3D "dcu", "pix";
+> +        big-endian;
+> +        fsl,tcon =3D <&tcon>;
+> +
+> +        port {
+> +            endpoint {
+> +                remote-endpoint =3D <&panel_out>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 65e0716554203..02504134e1f5d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7894,7 +7894,7 @@ M:	Alison Wang <alison.wang@nxp.com>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Supported
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> -F:	Documentation/devicetree/bindings/display/fsl,dcu.txt
+> +F:	Documentation/devicetree/bindings/display/fsl,ls1021a-dcu.yaml
+>  F:	Documentation/devicetree/bindings/display/fsl,tcon.txt
+>  F:	drivers/gpu/drm/fsl-dcu/
+> =20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
