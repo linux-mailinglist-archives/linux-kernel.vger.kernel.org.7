@@ -1,139 +1,132 @@
-Return-Path: <linux-kernel+bounces-614293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0288A968A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B60A9689C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A183B4401
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 643C7189B471
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB52727CB2C;
-	Tue, 22 Apr 2025 12:10:53 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9E527CB1F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8432527CB3F;
+	Tue, 22 Apr 2025 12:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZT4Cge2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13E3202F7B;
+	Tue, 22 Apr 2025 12:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745323853; cv=none; b=ujbTaPnQt7mcTUzpAep59VPkocwFQfyUKRINnojDagiNGsm/xGz2gRR7ddTPrXn56YaaR9vdU9F2gTCSwzl/CNgVirxP/eOpM2A6pPOO1ZWM0/FFUnvhiuqNmja1YiAk7ca5RbhYfI0BegK0wELq9oO3V8Pfs7rwcAOkoo3PJ/Y=
+	t=1745323828; cv=none; b=NvqWqVhnxgrem5uMKrrC8QzbONRVgcw/v9kQyYXeXVlfsFOLaJtkcxqVdzBp1rT1pz+OA7u/E9dl2FYh8rHu2ufFs0dW31/Y2xgF7IKF2nb4DbtOlIEx+Wrb6z5Gxf0Oqe4YFGNkAnQZBnB0bmlVsnTeBJmf0CLdkMzRTHx0gaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745323853; c=relaxed/simple;
-	bh=HBXxxcMj6yimVD2C3On0JjGwyRFmqNjW2E9yu56nhPw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=C5UH2xWdUu9fPP55oLO1lVR0i3DetqugDTLkM054c/CyTyIaPHQ7KwK43IB8sNGgWhIM82d9mzgUgTQJoe5u7NnDzuYm5xhkCrlyztG0EGBHcXdie2gGF6zazigpC3PsTumHtkxHE/ojuh1zfM2vHkNVYgZDfuX2gLUI4lX8uP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8AxjmtHhwdongTEAA--.62012S3;
-	Tue, 22 Apr 2025 20:10:47 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowMBx3MRDhwdoA_GPAA--.28378S3;
-	Tue, 22 Apr 2025 20:10:45 +0800 (CST)
-Subject: Re: [PATCH] mm/page_alloc.c: Avoid infinite retries caused by cpuset
- race
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>
-References: <20250416082405.20988-1-zhangtianyang@loongson.cn>
- <aAYXP4f417_bx6Is@harry>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <025e3f51-2ab5-bc58-5475-b57103169a82@loongson.cn>
-Date: Tue, 22 Apr 2025 20:10:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1745323828; c=relaxed/simple;
+	bh=gn8U39yE8fPjRVht2QyZ2B6L1GURwrgsQ9paV7eDdQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDFAecRMsnvOLd3JUmFUP+sCp8D1ej+JNUZWtZGJI2qx4qLW13d1phVb9hfmgnR1uh8VTnTuuPMqCxS3vVe9dd20HHX7q7kGAnQyBz1ma+9urwdrbrEstcqLQQ+1Mo4PSA0+8Hv0YPeN1E10mlRlJAsGD2ygFnjyvsfx9K66eiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZT4Cge2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B8BC4CEE9;
+	Tue, 22 Apr 2025 12:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745323827;
+	bh=gn8U39yE8fPjRVht2QyZ2B6L1GURwrgsQ9paV7eDdQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aZT4Cge28FVq4lBf7Vgmk87GoOawUeOjQcs2I4YLEAoiTJX6hMegOF4kqJg93zQlF
+	 oFDhbX8eCzap/igxTecFcGgXle9spH1gIhecrCrWSRcVsXNakaAmYIdu49NX4d305+
+	 Ce8RTw0gEkRa4E/e9YOva7T83TIYDK8kCtJwH2bM/pacs5TN4Nwq7HJ9fK9SMkV2Qs
+	 1xuwQEnHC4KxDU0hcm9OfNEow3XPgvYFzZIRfumYlTQJZvl9y/n5zp0w3DgRSu/6qN
+	 BK7uQKVQfeGOIdpzdIFDdd1Vj+qmIblzYRIu457YI10Ae403Cjshhm9Qs18HK8V9SA
+	 yEStyec9WPZ5w==
+Date: Tue, 22 Apr 2025 14:10:23 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	"Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfs: remove duplicate Zoned Filesystems sections in
+ admin-guide
+Message-ID: <dhowchhm6zfb3hir76tmbmunadqobbkmgaa5uardswon2keggy@3bgfjikvj5sf>
+References: <_RxmFF7sLGc26Wr0UDPdK5Mxv9AicUnbJ2I5Cji6QZiiHz5pr9uYx7Zk8xOeDutTUsJvS143LlYYxoitgsEEGA==@protonmail.internalid>
+ <20250422114854.14297-1-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aAYXP4f417_bx6Is@harry>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMBx3MRDhwdoA_GPAA--.28378S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZryrCw1fWw4DAr45Cr13ZFc_yoW8ur1Upa
-	yxJF13Kws3JF18Grs2v3409ryUZw4DJrW3Jr1UJryUA3s3G3yIkr47WrZ09FWDCrnxJw15
-	tF4Yy348WF4FvagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8TCJPUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422114854.14297-1-hans.holmberg@wdc.com>
 
-Hi.
+On Tue, Apr 22, 2025 at 11:50:07AM +0000, Hans Holmberg wrote:
+> Remove the duplicated section and while at it, turn spaces into tabs.
+> 
+> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
 
-ÔÚ 2025/4/21 ÏÂÎç6:00, Harry Yoo Ð´µÀ:
-> On Wed, Apr 16, 2025 at 04:24:05PM +0800, Tianyang Zhang wrote:
->> __alloc_pages_slowpath has no change detection for ac->nodemask
->> in the part of retry path, while cpuset can modify it in parallel.
->> For some processes that set mempolicy as MPOL_BIND, this results
->> ac->nodemask changes, and then the should_reclaim_retry will
->> judge based on the latest nodemask and jump to retry, while the
->> get_page_from_freelist only traverses the zonelist from
->> ac->preferred_zoneref, which selected by a expired nodemask
->> and may cause infinite retries in some cases
->>
->> cpu 64:
->> __alloc_pages_slowpath {
->>          /* ..... */
->> retry:
->>          /* ac->nodemask = 0x1, ac->preferred->zone->nid = 1 */
->>          if (alloc_flags & ALLOC_KSWAPD)
->>                  wake_all_kswapds(order, gfp_mask, ac);
->>          /* cpu 1:
->>          cpuset_write_resmask
->>              update_nodemask
->>                  update_nodemasks_hier
->>                      update_tasks_nodemask
->>                          mpol_rebind_task
->>                           mpol_rebind_policy
->>                            mpol_rebind_nodemask
->> 		// mempolicy->nodes has been modified,
->> 		// which ac->nodemask point to
->>
->>          */
->>          /* ac->nodemask = 0x3, ac->preferred->zone->nid = 1 */
->>          if (should_reclaim_retry(gfp_mask, order, ac, alloc_flags,
->>                                   did_some_progress > 0, &no_progress_loops))
->>                  goto retry;
->> }
->>
->> Simultaneously starting multiple cpuset01 from LTP can quickly
->> reproduce this issue on a multi node server when the maximum
->> memory pressure is reached and the swap is enabled
->>
->> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
->> ---
-> What commit does it fix and should it be backported to -stable?
->
-> There's a new 'MEMORY MANAGEMENT - PAGE ALLOCATOR' entry (only in
-> Andrew's mm.git repository now).
->
-> Let's Cc the page allocator folks here!
+Sounds good.
 
-We first identified this issue in 6.6.52-stable , and through root cause 
-analysis,
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
-it appears the problem may have existed for a significant period.
+Hans, I'm adding a Fixes tag before merging if you don't mind me editing the
+patch before applying.
 
-However It is recommended that the fix should be backported to at least 
-Linux kernel versions after 6.6-stable
+Fixes: c7b67ddc3c9 ("xfs: document zoned rt specifics in admin-guide")
 
+
+> ---
+> 
+> This fixes up the warning reported by Stephen Rothwell for linux-next
+> 
+>  Documentation/admin-guide/xfs.rst | 29 ++++++++---------------------
+>  1 file changed, 8 insertions(+), 21 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/xfs.rst b/Documentation/admin-guide/xfs.rst
+> index 3e76276bd488..5becb441c3cb 100644
+> --- a/Documentation/admin-guide/xfs.rst
+> +++ b/Documentation/admin-guide/xfs.rst
+> @@ -562,7 +562,7 @@ The interesting knobs for XFS workqueues are as follows:
+>  Zoned Filesystems
+>  =================
+> 
+> -For zoned file systems, the following attribute is exposed in:
+> +For zoned file systems, the following attributes are exposed in:
+> 
+>    /sys/fs/xfs/<dev>/zoned/
+> 
+> @@ -572,23 +572,10 @@ For zoned file systems, the following attribute is exposed in:
+>  	is limited by the capabilities of the backing zoned device, file system
+>  	size and the max_open_zones mount option.
+> 
+> -Zoned Filesystems
+> -=================
+> -
+> -For zoned file systems, the following attributes are exposed in:
+> -
+> - /sys/fs/xfs/<dev>/zoned/
+> -
+> - max_open_zones                 (Min:  1  Default:  Varies  Max:  UINTMAX)
+> -        This read-only attribute exposes the maximum number of open zones
+> -        available for data placement. The value is determined at mount time and
+> -        is limited by the capabilities of the backing zoned device, file system
+> -        size and the max_open_zones mount option.
+> -
+> - zonegc_low_space               (Min:  0  Default:  0  Max:  100)
+> -        Define a percentage for how much of the unused space that GC should keep
+> -        available for writing. A high value will reclaim more of the space
+> -        occupied by unused blocks, creating a larger buffer against write
+> -        bursts at the cost of increased write amplification.  Regardless
+> -        of this value, garbage collection will always aim to free a minimum
+> -        amount of blocks to keep max_open_zones open for data placement purposes.
+> +  zonegc_low_space		(Min:  0  Default:  0  Max:  100)
+> +	Define a percentage for how much of the unused space that GC should keep
+> +	available for writing. A high value will reclaim more of the space
+> +	occupied by unused blocks, creating a larger buffer against write
+> +	bursts at the cost of increased write amplification.  Regardless
+> +	of this value, garbage collection will always aim to free a minimum
+> +	amount of blocks to keep max_open_zones open for data placement purposes.
+> --
+> 2.34.1
 
