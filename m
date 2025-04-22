@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-614914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9580A973CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD80A973D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 19:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A668B7A6F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C7E3A6F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF8E1B3935;
-	Tue, 22 Apr 2025 17:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9D71DD9D3;
+	Tue, 22 Apr 2025 17:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEy8WRQF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="freslzEy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A2B1D63C2;
-	Tue, 22 Apr 2025 17:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F3C1A841E;
+	Tue, 22 Apr 2025 17:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745343718; cv=none; b=tjs3L17Pn0zH1sym8resLXGKS0i82XqW7e+F6KzwJbM7gzdeBdTVzubJ2Hox3j6Jb4OclZkgO8buaMaHjQ/iPmv/+yRkIlcJ9nfgEyH4gMdiWo/91vGn5grqN2eDty/Z0UK/t4IGl3Zsucv1csLzvOqBWWbbwI+i+C8CVoOsp5E=
+	t=1745343784; cv=none; b=i8qqJFKxehaUyrYdzI35IZz8u2pcDuDjtdp4W0/RlwEItmuqtTulND0wsM3oj1IcfQhW+pTPe2fiNV2RRxdGQ7jAs1+gJTyzi9pAlDJZtQCk3yIjh7cucTrRy3XrcQsu8yT81jJ7mppB6+j+LWSBcbYqmTygBAOdauWLAgJtus4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745343718; c=relaxed/simple;
-	bh=uq0jfSz7h0BjZ8ZpTqc6CuX5FFVkIxfTxureh4fqZro=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=anol45xnf7odKxS2Z3oSDX2t9UrYyEHYjNdfDD0Cuy4WWot4U3bCILLF+6OQpYyY589pEXEPR6w4a7wxKYAFGxvJHlrFgcXeYgOZCSQKd1ZGUvZb98TltgQ5blaFOr6TtSjl3oXLbjqP8/jky7lq8Z4KUnaHB/2jhN9kXWUTGB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEy8WRQF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E667CC4CEEB;
-	Tue, 22 Apr 2025 17:41:57 +0000 (UTC)
+	s=arc-20240116; t=1745343784; c=relaxed/simple;
+	bh=F1mdJasUstpDuUqPhDFuWV/JlMqr9iPpRTPmyLpZmw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hy/Pz10sQo1gpamQHooZpqgs1kuFDEsCu+ERsL18ebjvX7h1s3jbTI+R59v8nScELAPHMO8NzyqyYAfirKhTMt6IzxVEh8HEPowwf1LMYWUTvX9tGMkUAQU3/3PfT5SQTmXzI6Y/nTZeycDsrUBHjUX/7Z+J2s1Kpf3P3bYWirQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=freslzEy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD7FC4CEE9;
+	Tue, 22 Apr 2025 17:43:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745343718;
-	bh=uq0jfSz7h0BjZ8ZpTqc6CuX5FFVkIxfTxureh4fqZro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=EEy8WRQF134ZRnLUMOw1REGAnSr4h7t7LjozRR5uQeOga6pLqJEu1PNtpK8GPajFl
-	 9Ms6+eK1MG0lhpVUfrsu6XvmlV0spw7EkWxSWHzFeS/9AROv/bwK9hWOAQbh9TMkPF
-	 wLLNeRjdwbYllVfX2HhxzMFR4xjJtIOkcRWFSkwiet3LrnUydheQeTT4x2cBvz9stP
-	 7nTq13b2DziCDxdrS24IX4ym45xns+8p3Qc0zSTiQBMYZyN0qtEZRuMYzDasCWgPyA
-	 nKw7Mm9mm9Fx5JJsfl69eBCH5LZwjPAJL9Drv3ToeU2X5r350VTnL6Aha7Q0ZxBCMF
-	 JljBFb4XcfggA==
-Date: Tue, 22 Apr 2025 12:41:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mark Kettenis <mark.kettenis@xs4all.nl>
-Subject: Re: [PATCH v3 07/13] PCI: apple: Move away from INTMSK{SET,CLR} for
- INTx and private interrupts
-Message-ID: <20250422174156.GA344533@bhelgaas>
+	s=k20201202; t=1745343784;
+	bh=F1mdJasUstpDuUqPhDFuWV/JlMqr9iPpRTPmyLpZmw8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=freslzEyg2R+LAGEbk8BZGGzb9DIft+3ss845IPqNqeLhDqmbjHwNe+I4+MlZxgBW
+	 Q8Lf3MeY/kWfMrowLEWNWQgm7LKcH4+SU13cKTCP1j/5GNampA0q7rh6dwstIfl6dp
+	 cWiavI13Yw0IopUiUlu3b/GzY+VGuZHnIxdJC/lkvGIB+5tTmLCvtjen3lWzs/vqXb
+	 dPjqFkXJjQoSVAufUo5MQQx1Siz/tTXN0umfAVHS/ODn6QrW5Qzzq3jcMUvMFhyO4w
+	 W8WgXSos51k9TJ9fqhmUB4BxKHyJAwMV/FctAAnWq0Q9/plH4Bd1vomS4IweIZRhYh
+	 atxHrByRHIqJw==
+From: SeongJae Park <sj@kernel.org>
+To: zuoze <zuoze1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com
+Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring above 4GB
+Date: Tue, 22 Apr 2025 10:43:01 -0700
+Message-Id: <20250422174301.58953-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <68043882-1878-4cca-a8fc-5e6cb9a88395@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401091713.2765724-8-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 01, 2025 at 10:17:07AM +0100, Marc Zyngier wrote:
-> T602x seems to have dropped the rather useful SET/CLR accessors
-> to the masking register.
-> 
-> Instead, let's use the mask register directly, and wrap it with
-> a brand new spinlock. No, this isn't moving in the right direction.
+On Tue, 22 Apr 2025 19:50:11 +0800 zuoze <zuoze1@huawei.com> wrote:
 
-> @@ -261,14 +262,16 @@ static void apple_port_irq_mask(struct irq_data *data)
->  {
->  	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
->  
-> -	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKSET);
-> +	guard(raw_spinlock_irqsave)(&port->lock);
-> +	rmw_set(BIT(data->hwirq), port->base + PORT_INTMSK);
+[...]
+> Thanks for the patches - I’ve noted the RFC series and user-space
+> updates. Apologies for the delay; I’ll prioritize reviewing these soon
+> to verify they meet the intended tracking goals. Appreciate your
+> patience.
 
-sparse v0.6.4-39-gce1a6720 complains about this (and similar usage
-elsewhere):
+No worry.  Please take your time and let me know if there is anything I can
+help.
 
-  $ make C=2 drivers/pci/
-  drivers/pci/controller/pcie-apple.c:311:13: warning: context imbalance in 'apple_port_irq_mask' - wrong count at exit
-  drivers/pci/controller/pcie-apple.c:319:13: warning: context imbalance in 'apple_port_irq_unmask' - wrong count at exit
+I think we can improve the user-space tool support better for usability.  For
+example, it could find LPAE case, set addr_unit parameter, and convert
+user-input and output address ranges on its own.  But hopefully the current
+support allows simple tests of the kernel side change, and we could do such
+improvement after the kernel side change is made.
 
-But I guess we just have to live with this for now until somebody
-makes sparse smarter:
 
-https://lore.kernel.org/linux-sparse/CAHk-=wiVDZejo_1BhOaR33qb=pny7sWnYtP4JUbRTXkXCkW6jA@mail.gmail.com/
+Thanks,
+SJ
 
-Nothing to do, just "huh".
-
-Bjorn
+[...]
 
