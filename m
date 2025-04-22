@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-613581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-613583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F350A95E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BAEA95E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 08:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4863A3D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4811760D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 06:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA2022B8D2;
-	Tue, 22 Apr 2025 06:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qm51iqSm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88052367C6;
+	Tue, 22 Apr 2025 06:44:11 +0000 (UTC)
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C63422B5B8
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 06:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824B233D72
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 06:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745304246; cv=none; b=A77YRSpFJBOj0PdRUzoViLWnJxNlynfB1sOddEnWpRbN3drVs3O+AnEAFbFDAWySW0Lu5z/uiQGF9isHMGfr47mgL55uDEG3myBu5dvfi39aB/jy1ffUUknpwAUzoOkRKSaupJMPa0Ne7STZGQJMeVy2HKtG/LhYkJKOtAGcznM=
+	t=1745304251; cv=none; b=QjCjlfKxL58hytFqvP6uPn9nNSTwJ+AOPfIOxexRIEvMpAvkGvwyE3Hje+KqC9XLUdvFqvJVvY7hNz4S40ldRUeZ6VLmcoGwIN01uxXB4QQ5+cXT7yfewjPuHOWswzKLPqxIrahHD07rYvC6CBFPIxaqcCt9FN0K/kSZvKyIa8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745304246; c=relaxed/simple;
-	bh=35gc6Immqq0MX1Xg7bIpvgHSlP2TVRMDUhK/ipSq3Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BEF1bsiaVi4/9MtcQacnoTqXOJSwg3gUUAJpGu4IXsOnZVMGFV1yc5CMQzDI6DUmx1IlbxJRc2RFONNeHU5p5fbGLIvclpRJ4nMo4PTgeMOgFOkDPgjQ+WWYlmq9ipjB3SYn2GoYtJcA4dCbGxjqoFb2D7aMIl3VIwNCHwgD3CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qm51iqSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E0AC4CEE9;
-	Tue, 22 Apr 2025 06:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745304245;
-	bh=35gc6Immqq0MX1Xg7bIpvgHSlP2TVRMDUhK/ipSq3Ak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qm51iqSmxA1RaxH1oXBSAEvF6Ou8B3PJeylxnlcZQlOnrhtTw3kS1HjJmtCBnNZkL
-	 /SAUvz5t+1QElKR8z+bEZ2xxzwM7QNSOyAN3MbYJk18mtXBCDMoSjGjmp85MRtOGtp
-	 BHKeTUbfVuL4l04D7NZt2Cnylv6WH4R08lEcVHlDz3GfcgvbfmKExMOXcaPV/yC5Dn
-	 5amJTdykrSFHDVgHtA+ZcD5s/MH4IZ5rJFgAxn9LbY0DOU3jkPJApeYH919p9jvDBV
-	 Nuv1YgHWtw2gxtrdP8Nn3kU0vHEO5QgLYDRrHW9K0635RSjn8voqfItzQmYHDtLLH1
-	 LOBBV09R0Mk3w==
-Date: Tue, 22 Apr 2025 09:43:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
+	s=arc-20240116; t=1745304251; c=relaxed/simple;
+	bh=YFdpGTJe2ONQHWtEEiTTwADv75IaKRIEkB2Fv3z6uWo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccAXOiD0FyhCWUQ3W1Oge7tQY8aT2KURLKe3ZjCvFAz9Ja7WNQNtUfr8Yj8KrmUnvaxpGqOFwSwK2lFb8v75tJmM4gI3fY15WaAzxaMKaRK0/MJvCMIo1Z+I2/fboPnRXoj43CQki/hQ1UfoqEqqlGKZJntPJfUENbX1UYbcmBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 2f6dd8d8-1f45-11f0-8efd-005056bdfda7;
+	Tue, 22 Apr 2025 09:44:06 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 Apr 2025 09:44:05 +0300
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Juergen Gross <jgross@suse.com>, "H . Peter Anvin" <hpa@zytor.com>,
 	Kees Cook <keescook@chromium.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
 	Paul Menzel <pmenzel@molgen.mpg.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 08/29] x86/boot/e820: Print E820_TYPE_RAM entries as ...
- RAM entries
-Message-ID: <aAc6rS_eiFr5WCAw@kernel.org>
+Subject: Re: [PATCH 10/29] x86/boot/e820: Use 'u64' consistently instead of
+ 'unsigned long long'
+Message-ID: <aAc6teOZ3dgLIW-O@surfacebook.localdomain>
 References: <20250421185210.3372306-1-mingo@kernel.org>
- <20250421185210.3372306-9-mingo@kernel.org>
- <aAc3wxUI2Jvqj2xx@surfacebook.localdomain>
+ <20250421185210.3372306-11-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,37 +58,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aAc3wxUI2Jvqj2xx@surfacebook.localdomain>
+In-Reply-To: <20250421185210.3372306-11-mingo@kernel.org>
 
-On Tue, Apr 22, 2025 at 09:31:31AM +0300, Andy Shevchenko wrote:
-> Mon, Apr 21, 2025 at 08:51:48PM +0200, Ingo Molnar kirjoitti:
-> > So it is a bit weird that the actual RAM entries of the E820 table
-> > are not actually called RAM, but 'usable':
-> > 
-> > 	BIOS-e820: [mem 0x0000000000100000-0x000000007ffdbfff]    1.9 GB usable
-> > 
-> > 'usable' is pretty passive-aggressive in that context and ambiguous,
-> > most E820 entries denote 'usable' address ranges - reserved ranges
-> > may be used by devices, or the platform.
-> > 
-> > Clarify and disambiguate this by making the boot log entry
-> > explicitly say 'kernel usable RAM':
-> > 
-> > 	BIOS-e820: [mem 0x0000000000100000-0x000000007ffdbfff]    1.9 GB kernel usable RAM
+Mon, Apr 21, 2025 at 08:51:50PM +0200, Ingo Molnar kirjoitti:
+> There's a number of structure fields and local variables related
+> to E820 entry physical addresses that are defined as 'unsigned long long',
+> but then are compared to u64 fields.
 > 
-> Can't user space use that RAM?
-> 
-> Shouldn't we rather refer to "OS usable RAM"?
+> Make the types all consistently u64.
 
-Or "System RAM", just like in /proc/iomem
-  
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+...
+
+> +		u64 start = e820_table->entries[i].addr;
+> +		u64 end = start + e820_table->entries[i].size;
+
+Perhaps struct range as well?
 
 -- 
-Sincerely yours,
-Mike.
+With Best Regards,
+Andy Shevchenko
+
+
 
