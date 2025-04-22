@@ -1,142 +1,180 @@
-Return-Path: <linux-kernel+bounces-614765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14ADDA9719D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:51:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB83A971A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFFCA7AE9E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0588C3B2D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F062900B8;
-	Tue, 22 Apr 2025 15:50:33 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DB8290BB1;
+	Tue, 22 Apr 2025 15:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WC2yptBz"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FF4290086;
-	Tue, 22 Apr 2025 15:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453B2290BA4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745337032; cv=none; b=b/hoQma2r28pJfbxBdYBtFv5nJx7GR24AYtl5dap5kROvt7G3WNlh5Q5eIrAKAQh10N0BQlPprfZoVCaDn0DyrEHJuPD8b3t7Ma6Y8ogdlL0hbXF0TlsZhjYVhATLnGWx5fiPruElwvu/MJEufRdZXpYaHZ++I38GioNx9PxhVU=
+	t=1745337067; cv=none; b=dqnVaBG6xmiSdhI4KmWlfctnvE1+LBZ8WHOZWnlKLoGqjG+GkYh/YeMnImeVg8ITvPlHwbK0xHQg45bik7Dbyj0LfBIDPXDaIWQ2LDjY/C37f6+xqFtdeQk8lwerUQ9lK4ikaN3kNUSz5q/ioocUObudv+x09acwehXSk69otA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745337032; c=relaxed/simple;
-	bh=X/Jm8EpGyPPW/TPBD8j9CgUl3gKs8re5bMeAjVZN3NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7MjQjZg5ICV9FMPU9S3vADcZF7WQCnOCpHe9ijDIpVqwziksG9jXyhYcUMioxfFuMQjI4fQJMWjzFryObDAtnOrlj/3Qa63x6cIPCXU3+btISR35jzDq7tBT+Ynsb4h3G2FhskgjUg/KCHNRtlxHlG99YygvFRZG7Vjb4viMfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: nS2QrUHeQR6B1ayodn4d1Q==
-X-CSE-MsgGUID: 2AyZxiO7SkquyZ5YFhZK1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="58267022"
-X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
-   d="scan'208";a="58267022"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 08:50:31 -0700
-X-CSE-ConnectionGUID: jNzoMomCR2iiPXpLQhUytw==
-X-CSE-MsgGUID: qt0fV3ONStmkyAJZsMGD8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,231,1739865600"; 
-   d="scan'208";a="132594964"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2025 08:50:22 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1u7Ft6-0000000EloN-0apC;
-	Tue, 22 Apr 2025 18:50:20 +0300
-Date: Tue, 22 Apr 2025 18:50:19 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] Documentation: ABI: add oversampling frequency in
- sysfs-bus-iio
-Message-ID: <aAe6u6NhAsgjaL5_@smile.fi.intel.com>
-References: <20250422-iio-driver-ad4052-v2-0-638af47e9eb3@analog.com>
- <20250422-iio-driver-ad4052-v2-1-638af47e9eb3@analog.com>
+	s=arc-20240116; t=1745337067; c=relaxed/simple;
+	bh=3sqNGatK3nNf3ioHPn/vTJ1ihZQnxYjPJUzKw2ujuNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJe9dM+wxJFHRk5sC5Snwg4DXo7AxPuMJeyMPQ7WJ7f1QmfrJNFkI0voaiSB2FVhQtai4YifYdet1HmssSJJTGTYqBI67d/YZy7eGF6XwU8k6yQGvXR0Cai8GdX0QmO6bZF9mXLTGDBuim6XoVdOT9qRx+cCMV4yDk35GD6ql6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WC2yptBz; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54d486d3535so6775e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745337062; x=1745941862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IdFGD2OG7sa0PhB8zVDzwTwQ3rmo3v4yX/7hU6EpgHE=;
+        b=WC2yptBzUE4Cu5A/1Zf0rY4marKoohubisGqMU8HDaA2CjNIt4qc3VnKoqK32RBc8D
+         YvwEXXqgZhR6L2rVT0epwwDea4opUN/G4hNHUNKRh8/OTxgDPCzPvOSISShOfzroiq4O
+         3lNWa5dAXrIEVv6U2MiO3WRR0Ob/snHAXS6WSY6TGi23SM6Dwm3z0D/Mzfl0gGXrzmQj
+         MKML2Xx1Jjg2ucMkUEF6hcyY7B6frA1bHLSpMM2vX2Gz7INJAb9tSk+8UKfeFFusiTtq
+         sDofLki336i6ILQWAkTT6OpgDGG17ZlnrOzdEf6Gc3wjvSZi1G9f2eTZGAnB5InApZXb
+         i7aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745337062; x=1745941862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IdFGD2OG7sa0PhB8zVDzwTwQ3rmo3v4yX/7hU6EpgHE=;
+        b=XaM9wTfGOXtoYNKMrJsX6gDdCuJyuy5Vrmgxjh8kgSZhiIxb6JtFbGtRkKffcZzR5g
+         uaKeNbci4MKLRQEfSCbpnXEt70Haq5L1jLJZslFGRX0htQEaEmSB1Xjf1ix2/jbqlm1q
+         6RbvM5ULx4Xwe5jx1xy3p/DtbjDCB6hZEGmXB7WZZ30TbShgtokv7tSajV0Nb9eqkOeC
+         i+6+HTCCt6D33DD6IUwKcdr0vWz1Uk99AECxwhAdlhp/0pm+eN+HrH6OCYqpqCO1Y8hV
+         QBQxMge/8GRDZcDGKvvoHLkHGJOXnotag5HDRSehhFUSnKkT2leZWNXi16CYKosNShlx
+         EDfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6w/9kFkKZPRNPs5LXOkA/AKUWqCLIVpynMzq2rVNrbh0pr/U818unz0dtgIGGlIz1SilgopSPH2BuJxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9lIRtK23/WPo4qQ/qRhqasFhF9zm47SCj2LHZZfo3tvU8FI5g
+	Bm3XHXkz2sqoOPkLmSq/pMO7BYg1rw451SVMHbjIaH9YDAisTo7/TJfHgUVjwO/3/EdC/7RQqaW
+	BbBoKBs5YyWbQZQ25tUqUE9GoK5r3vsQGk3lwkOWo4Sa21a5AuEqXqrQ=
+X-Gm-Gg: ASbGncuzYQFjrvjV3B56j+3kp9LBPxqz0K590CqKybg8ckGScKtdtkWdKlq02JGkrpM
+	tJ/kkDuPJoyKyeJoI4jqBbyGoVNhadfZn/vzAf3uSWFadBqLvMvnNCZlmtc4v7FGbZ1Gp+CNfvH
+	HcxzcykqCZgX+wXEevvWET533TEHEzVHh7hiuuPkhpL0eOdM6g/3zpYdua
+X-Google-Smtp-Source: AGHT+IHQqUWx2u3/cq0FvzsslIUm5Dy/4pb7LqJE77ayHMAIePU0Cj0gbTYfXvpwXwPkr+tZIRDQNcab7m9Im8ZO0D8=
+X-Received: by 2002:ac2:5181:0:b0:545:1cbb:74e5 with SMTP id
+ 2adb3069b0e04-54d6e956f35mr697284e87.3.1745337061944; Tue, 22 Apr 2025
+ 08:51:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422-iio-driver-ad4052-v2-1-638af47e9eb3@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250416100515.2131853-1-khtsai@google.com> <20250419012408.x3zxum5db7iconil@synopsys.com>
+ <CAKzKK0qCag3STZUqaX5Povu0Mzh5Ntfew5RW64dTtHVcVPELYQ@mail.gmail.com> <20250421232007.u2tmih4djakhttxq@synopsys.com>
+In-Reply-To: <20250421232007.u2tmih4djakhttxq@synopsys.com>
+From: Kuen-Han Tsai <khtsai@google.com>
+Date: Tue, 22 Apr 2025 23:50:35 +0800
+X-Gm-Features: ATxdqUHW9FF8cqE3jm_WZD_OgsvjOfh6Q1uw_o-6F0YcJvOWm3NGOVNgd0xjp7M
+Message-ID: <CAKzKK0pReSZeJ1-iRUbU=w+dK0O1fB7AgecfC7KJap6m5cQWnQ@mail.gmail.com>
+Subject: Re: [PATCH v4] usb: dwc3: Abort suspend on soft disconnect failure
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 01:34:46PM +0200, Jorge Marques wrote:
-> Some devices have an internal clock used to space out the conversion
-> trigger for the oversampling filter,
-> Consider an ADC with conversion and data ready pins topology:
-> 
->   Sampling trigger |       |       |       |       |
->   ADC conversion   ++++    ++++    ++++    ++++    ++++
->   ADC data ready      *       *       *       *       *
-> 
-> With the oversampling frequency, conversions are spaced:
-> 
->   Sampling trigger |       |       |       |       |
->   ADC conversion   + + + + + + + + + + + + + + + + + + + +
->   ADC data ready         *       *       *       *       *
-> 
-> In some devices and ranges, this internal clock can be used to evenly
-> space the conversions between the sampling edge.
-> In other devices the oversampling frequency is fixed or is computed
-> based on the sampling frequency parameter, and the parameter is
-> read only.
-> 
-> Devices with this feature are max1363, ad7606, ad799x, and ad4052.
-> The max1363 driver included the events/sampling_frequency in
-> commit 168c9d95a940 ("iio:adc:max1363 move from staging.")
-> and ad799x in
-> commit ba1d79613df3 ("staging:iio:ad799x: Use event spec for threshold
-> hysteresis")
-> but went undocumented so far.
+On Tue, Apr 22, 2025 at 7:20=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys=
+.com> wrote:
+>
+> On Mon, Apr 21, 2025, Kuen-Han Tsai wrote:
+> > On Sat, Apr 19, 2025 at 9:24=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@syno=
+psys.com> wrote:
+> > >
+> > > On Wed, Apr 16, 2025, Kuen-Han Tsai wrote:
+>
+> <snip>
+>
+> > > > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> > > > index 89a4dc8ebf94..630fd5f0ce97 100644
+> > > > --- a/drivers/usb/dwc3/gadget.c
+> > > > +++ b/drivers/usb/dwc3/gadget.c
+> > > > @@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+> > > >       int ret;
+> > > >
+> > > >       ret =3D dwc3_gadget_soft_disconnect(dwc);
+> > > > -     if (ret)
+> > > > -             goto err;
+> > > > -
+> > > > -     spin_lock_irqsave(&dwc->lock, flags);
+> > > > -     if (dwc->gadget_driver)
+> > > > -             dwc3_disconnect_gadget(dwc);
+> > > > -     spin_unlock_irqrestore(&dwc->lock, flags);
+> > > > -
+> > > > -     return 0;
+> > > > -
+> > > > -err:
+> > > >       /*
+> > > >        * Attempt to reset the controller's state. Likely no
+> > > >        * communication can be established until the host
+> > > >        * performs a port reset.
+> > > >        */
+> > > > -     if (dwc->softconnect)
+> > > > +     if (ret && dwc->softconnect) {
+> > > >               dwc3_gadget_soft_connect(dwc);
+> > > > +             return -EAGAIN;
+> > >
+> > > This may make sense to have -EAGAIN for runtime suspend. I supposed t=
+his
+> > > should be fine for system suspend since it doesn't do anything specia=
+l
+> > > for this error code.
+> > >
+> > > When you tested runtime suspend, did you observe that the device
+> > > successfully going into suspend on retry?
+> >
+> > Hi Thinh,
+> >
+> > Yes, the dwc3 device can be suspended using either
+> > pm_runtime_suspend() or dwc3_gadget_pullup(), the latter of which
+> > ultimately invokes pm_runtime_put().
+> >
+> > One question: Do you know how to naturally cause a run stop failure?
+> > Based on the spec, the controller cannot halt until the event buffer
+> > becomes empty. If the driver doesn't acknowledge the events, this
+> > should lead to the run stop failure. However, since I cannot naturally
+> > reproduce this problem, I am simulating this scenario by modifying
+> > dwc3_gadget_run_stop() to return a timeout error directly.
+> >
+>
+> I'm not clear what you meant by "naturally" here. The driver is
+> implemented in such a way that this should not happen. If it does, we
+> need to take look to see what we missed.
+>
+> However, to force the driver to hit the controller halt timeout, just
+> wait/generate some events and don't clear the GEVNTCOUNT of event bytes
+> before clearing the run_stop bit.
+>
+> BR,
+> Thinh
 
-So, it was no documentation for the nodes this change describes, right?
+Hi Thinh,
 
-...
+Thank you for getting back to me and the method to force the timeout!
 
-> +What:		/sys/bus/iio/devices/iio:deviceX/oversampling_frequency
-> +KernelVersion:	6.15
+By "naturally," I meant reproducing the issue without artificial steps
+designed solely to trigger it. You're right; since the driver is
+designed to prevent this state, reproducing it "naturally" is
+difficult.
 
-Then why don't you put the real version of the first release that has it?
+I really appreciate your patience, and thank you once more for the
+helpful clarification.
 
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Some devices have internal clocks for oversampling.
-> +		Sets the resulting frequency in Hz to trigger a conversion used by
-> +		the oversampling filter.
-> +		If the device has a fixed internal clock or is computed based on
-> +		the sampling frequency parameter, the parameter is read only.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/oversampling_frequency_available
-> +KernelVersion:	6.15
-
-Ditto.
-
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Hardware dependent values supported by the oversampling
-> +		frequency.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Kuen-Han
 
