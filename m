@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-614442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CF9A96CB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E91CA96CAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434AE17E9C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28E117EE4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 13:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF97D28DF1D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D316F28DF1C;
 	Tue, 22 Apr 2025 13:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="lqQpi2Ur"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="CrDWJScJ"
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF728CF65;
-	Tue, 22 Apr 2025 13:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179028CF73;
+	Tue, 22 Apr 2025 13:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328305; cv=none; b=PAbuR8z5Ke44F9fIaLH4FvIpE6pjW8GZ9rwNoSGjgq2UrawbXeauysIoXop7T4zeNCtHtK+UTj4Kg6jlfuFpupAOcCOYybxfEX25H/7NBObrqKZk2+xkArCntdoARQ3/aYdeq4D52NJ3dKBhSSvkiEB/2oiPKcOzaeSjUclgXsU=
+	t=1745328305; cv=none; b=XR39tj9a5BiMC8UldeHuhjDoF3FSTdNslslOLCFVURg32mLJ6nNiimGOmBRRJk+yr6UmNmna2X7DOngx7gANNyGRNdyHojZh8II3ArJjfIEXsNFBXLmpW9bWMAd6HeTyUJvpJcQ5cIq7uuZRR9IDAxDf+Yf1++vp5L7HOHR2OTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745328305; c=relaxed/simple;
-	bh=75LJ2+MGXPl3iHbcC0Ozkg40P53VaqzfB8RywROL95A=;
+	bh=deut4ZYqkcVgWjS4Uw29TFCku8mZ64yPAZgRPoQIWdg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IixTjcnAw5/1VjoUM9bCCuzXDgOsux8fLWs0fP4ivhB/TZTydNU9dCmInIUrbuDAL57BubpVIWAzlqiLuzc+kflqE7fRD0y9tMs1ogEn+OWNDQZ/BN26IIU3gXjiTIAeA3ID2yd5zge9DkHc+5nQ8yty0+RpCe7+NocQ8C4FX+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=lqQpi2Ur; arc=none smtp.client-ip=134.0.28.8
+	 MIME-Version; b=kwgcFR5nl6J5De34m6zmz6Ht9WijscdkWnTg43jLgjlrTJ7YK5QFWc7fn9C6PVy7V5j8HrSHbdsNU+o+bOXVuLzRIuvmobO4iv11ykYnO9bHYGbyY/I1QNDfCSrT0o3w7jF9cuPNGRFwJWWpeNDPR643L9DPe9gdSp0K3DH7dBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=CrDWJScJ; arc=none smtp.client-ip=134.0.28.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout3.routing.net (Postfix) with ESMTP id 6159F61560;
-	Tue, 22 Apr 2025 13:24:55 +0000 (UTC)
+	by mxout4.routing.net (Postfix) with ESMTP id 3032C10095D;
+	Tue, 22 Apr 2025 13:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1745328295;
+	s=20200217; t=1745328296;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WwQBx5fEB+uvLYfypIdunG+zLMu/9QNNGo72DjZopiw=;
-	b=lqQpi2Ury/h+25PHTojKuxA7jEmpzU3C05jQBvrCjcI5dWKKCKUrE/pMgjdX/XYA7H1eLL
-	wK4IrFTiz93EZum0Q06FRH85xHJe66q8U/70GcMHjscqZQaO9LUR7UZDCm1n9sFA6bFXBq
-	5Hppy+kmVtUsNqVKkPBAvFolA39JUQk=
+	bh=qDQBMTPiiPjxF7DC5uGdU/8r5EOacgDwnKHqoNPCrU4=;
+	b=CrDWJScJzPB+c5joJI/OKPnlekALfiX2skGYLR4uKpTqEfxkJFWJ4gE2s4pe5yHfMs1auN
+	CQ1MWHsEbVYbg0urNlD0q+MVDPVNjjjBMs2vOneOH3bHgVq6X3M0jL6Frtu7g+LJcWv8h7
+	ld/8LWWP+mKklwZziRG8tr3aSeZHeOY=
 Received: from frank-u24.. (fttx-pool-217.61.156.53.bambit.de [217.61.156.53])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 81EC780318;
-	Tue, 22 Apr 2025 13:24:54 +0000 (UTC)
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 504B0801F5;
+	Tue, 22 Apr 2025 13:24:55 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -65,9 +65,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-phy@lists.infradead.org
-Subject: [PATCH v4 6/8] phy: mediatek: xsphy: support type switch by pericfg
-Date: Tue, 22 Apr 2025 15:24:29 +0200
-Message-ID: <20250422132438.15735-7-linux@fw-web.de>
+Subject: [PATCH v4 7/8] arm64: dts: mediatek: mt7988: Add xsphy for ssusb0/pcie2
+Date: Tue, 22 Apr 2025 15:24:30 +0200
+Message-ID: <20250422132438.15735-8-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250422132438.15735-1-linux@fw-web.de>
 References: <20250422132438.15735-1-linux@fw-web.de>
@@ -78,175 +78,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 814a2e1d-e4bb-4860-9157-67475ebe6d0c
+X-Mail-ID: 3df57c91-f0e1-43d9-be6f-95cea4f19eca
 
-From: Daniel Golle <daniel@makrotopia.org>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Patch from Sam Shih <sam.shih@mediatek.com> found in MediaTek SDK
-released under GPL.
+First usb and third pcie controller on mt7988 need a xs-phy to work
+properly.
 
-Get syscon and use it to set the PHY type.
-Extend support to PCIe and SGMII mode in addition to USB2 and USB3.
-
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- drivers/phy/mediatek/phy-mtk-xsphy.c | 85 +++++++++++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
+v3:
+- drop unneeded properties and compatibles from topmisc
+- change offset to have clean syscon (without power controller)
+v4:
+- fix unit adress of topmisc
+---
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 36 +++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/phy/mediatek/phy-mtk-xsphy.c b/drivers/phy/mediatek/phy-mtk-xsphy.c
-index 7c248f5cfca5..c0ddb9273cc3 100644
---- a/drivers/phy/mediatek/phy-mtk-xsphy.c
-+++ b/drivers/phy/mediatek/phy-mtk-xsphy.c
-@@ -11,10 +11,12 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index 88b56a24efca..a59f8708f0ef 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -334,6 +334,8 @@ usb@11190000 {
+ 				 <&infracfg CLK_INFRA_133M_USB_HCK>,
+ 				 <&infracfg CLK_INFRA_USB_XHCI>;
+ 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
++			phys = <&xphyu2port0 PHY_TYPE_USB2>,
++			       <&xphyu3port0 PHY_TYPE_USB3>;
+ 			status = "disabled";
+ 		};
  
- #include "phy-mtk-io.h"
+@@ -398,6 +400,9 @@ pcie2: pcie@11280000 {
+ 			pinctrl-0 = <&pcie2_pins>;
+ 			status = "disabled";
  
-@@ -81,12 +83,22 @@
- #define XSP_SR_COEF_DIVISOR	1000
- #define XSP_FM_DET_CYCLE_CNT	1024
++			phys = <&xphyu3port0 PHY_TYPE_PCIE>;
++			phy-names = "pcie-phy";
++
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 0x7>;
+ 			interrupt-map = <0 0 0 1 &pcie_intc2 0>,
+@@ -548,6 +553,37 @@ tphyu3port0: usb-phy@11c50700 {
+ 			};
+ 		};
  
-+/* PHY switch between pcie/usb3/sgmii */
-+#define USB_PHY_SWITCH_CTRL	0x0
-+#define RG_PHY_SW_TYPE		GENMASK(3, 0)
-+#define RG_PHY_SW_PCIE		0x0
-+#define RG_PHY_SW_USB3		0x1
-+#define RG_PHY_SW_SGMII		0x2
 +
- struct xsphy_instance {
- 	struct phy *phy;
- 	void __iomem *port_base;
- 	struct clk *ref_clk;	/* reference clock of anolog phy */
- 	u32 index;
- 	u32 type;
-+	struct regmap *type_sw;
-+	u32 type_sw_reg;
-+	u32 type_sw_index;
- 	/* only for HQA test */
- 	int efuse_intr;
- 	int efuse_tx_imp;
-@@ -259,6 +271,10 @@ static void phy_parse_property(struct mtk_xsphy *xsphy,
- 			inst->efuse_intr, inst->efuse_tx_imp,
- 			inst->efuse_rx_imp);
- 		break;
-+	case PHY_TYPE_PCIE:
-+	case PHY_TYPE_SGMII:
-+		/* nothing to do */
-+		break;
- 	default:
- 		dev_err(xsphy->dev, "incompatible phy type\n");
- 		return;
-@@ -305,6 +321,62 @@ static void u3_phy_props_set(struct mtk_xsphy *xsphy,
- 				     RG_XTP_LN0_RX_IMPSEL, inst->efuse_rx_imp);
- }
- 
-+/* type switch for usb3/pcie/sgmii */
-+static int phy_type_syscon_get(struct xsphy_instance *instance,
-+			       struct device_node *dn)
-+{
-+	struct of_phandle_args args;
-+	int ret;
++		topmisc: system-controller@11d10084 {
++			compatible = "mediatek,mt7988-topmisc",
++				     "syscon";
++			reg = <0 0x11d10084 0 0xff80>;
++		};
 +
-+	/* type switch function is optional */
-+	if (!of_property_present(dn, "mediatek,syscon-type"))
-+		return 0;
++		xs-phy@11e10000 {
++			compatible = "mediatek,mt7988-xsphy",
++				     "mediatek,xsphy";
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++			status = "disabled";
 +
-+	ret = of_parse_phandle_with_fixed_args(dn, "mediatek,syscon-type",
-+					       2, 0, &args);
-+	if (ret)
-+		return ret;
++			xphyu2port0: usb-phy@11e10000 {
++				reg = <0 0x11e10000 0 0x400>;
++				clocks = <&infracfg CLK_INFRA_USB_UTMI>;
++				clock-names = "ref";
++				#phy-cells = <1>;
++			};
 +
-+	instance->type_sw_reg = args.args[0];
-+	instance->type_sw_index = args.args[1] & 0x3; /* <=3 */
-+	instance->type_sw = syscon_node_to_regmap(args.np);
-+	of_node_put(args.np);
-+	dev_info(&instance->phy->dev, "type_sw - reg %#x, index %d\n",
-+		 instance->type_sw_reg, instance->type_sw_index);
++			xphyu3port0: usb-phy@11e13000 {
++				reg = <0 0x11e13400 0 0x500>;
++				clocks = <&infracfg CLK_INFRA_USB_PIPE>;
++				clock-names = "ref";
++				#phy-cells = <1>;
++				mediatek,syscon-type = <&topmisc 0x194 0>;
++			};
++		};
 +
-+	return PTR_ERR_OR_ZERO(instance->type_sw);
-+}
-+
-+static int phy_type_set(struct xsphy_instance *instance)
-+{
-+	int type;
-+	u32 offset;
-+
-+	if (!instance->type_sw)
-+		return 0;
-+
-+	switch (instance->type) {
-+	case PHY_TYPE_USB3:
-+		type = RG_PHY_SW_USB3;
-+		break;
-+	case PHY_TYPE_PCIE:
-+		type = RG_PHY_SW_PCIE;
-+		break;
-+	case PHY_TYPE_SGMII:
-+		type = RG_PHY_SW_SGMII;
-+		break;
-+	case PHY_TYPE_USB2:
-+	default:
-+		return 0;
-+	}
-+
-+	offset = instance->type_sw_index * BITS_PER_BYTE;
-+	regmap_update_bits(instance->type_sw, instance->type_sw_reg,
-+			   RG_PHY_SW_TYPE << offset, type << offset);
-+
-+	return 0;
-+}
-+
- static int mtk_phy_init(struct phy *phy)
- {
- 	struct xsphy_instance *inst = phy_get_drvdata(phy);
-@@ -325,6 +397,10 @@ static int mtk_phy_init(struct phy *phy)
- 	case PHY_TYPE_USB3:
- 		u3_phy_props_set(xsphy, inst);
- 		break;
-+	case PHY_TYPE_PCIE:
-+	case PHY_TYPE_SGMII:
-+		/* nothing to do, only used to set type */
-+		break;
- 	default:
- 		dev_err(xsphy->dev, "incompatible phy type\n");
- 		clk_disable_unprepare(inst->ref_clk);
-@@ -403,12 +479,15 @@ static struct phy *mtk_phy_xlate(struct device *dev,
- 
- 	inst->type = args->args[0];
- 	if (!(inst->type == PHY_TYPE_USB2 ||
--	      inst->type == PHY_TYPE_USB3)) {
-+	      inst->type == PHY_TYPE_USB3 ||
-+	      inst->type == PHY_TYPE_PCIE ||
-+	      inst->type == PHY_TYPE_SGMII)) {
- 		dev_err(dev, "unsupported phy type: %d\n", inst->type);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
- 	phy_parse_property(xsphy, inst);
-+	phy_type_set(inst);
- 
- 	return inst->phy;
- }
-@@ -510,6 +589,10 @@ static int mtk_xsphy_probe(struct platform_device *pdev)
- 			dev_err(dev, "failed to get ref_clk(id-%d)\n", port);
- 			return PTR_ERR(inst->ref_clk);
- 		}
-+
-+		retval = phy_type_syscon_get(inst, child_np);
-+		if (retval)
-+			return retval;
- 	}
- 
- 	provider = devm_of_phy_provider_register(dev, mtk_phy_xlate);
+ 		clock-controller@11f40000 {
+ 			compatible = "mediatek,mt7988-xfi-pll";
+ 			reg = <0 0x11f40000 0 0x1000>;
 -- 
 2.43.0
 
