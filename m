@@ -1,222 +1,112 @@
-Return-Path: <linux-kernel+bounces-614366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154EFA96A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C70AA96A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84273BBF4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E85617E8B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16BB27CCFB;
-	Tue, 22 Apr 2025 12:41:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5F27E1AE;
+	Tue, 22 Apr 2025 12:41:32 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB1722E3F9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9FB27BF81
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325691; cv=none; b=rAg+5Zewsrykgf7yi4LPTVoo94Psi1hC/zd7uC1bJivOyINh1tl6zDQfQy1+0m+1GynicsQQ4LPPypV6gM8NjLiqjonV5AHl6mCCGmtcMQvCGinU7BuRbTpv/V9bXvMZ4FokmrVTRubNhRGycUXNeQThhs+X8a6HwpFzU8yLvaA=
+	t=1745325692; cv=none; b=nTXY2GInj8gXxabpmMkTgMdoDI1BZ0iWh18MZv5xNv43ybGIArmbBaKebdH0iQfhSqB4H1WMpS1yhauyMASZc85dgGm1TUhO1sJEO8R3uhxJcU2EtTOiHMV4JIEIWazWvpwIGup5bgeUUUWoyzVrzuHv5hlzOVLBKAnXPCTZ2a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325691; c=relaxed/simple;
-	bh=yrR7LOXwJQk7YQ1++keSJbA50DlyDggdAVg3h1c50S4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PDOe5KaUWw80es6esMVVw65rb8O3b1dCHsQ7nSy2g2sq6KsKRZ0zlKmrRsgvysaU4jAi0JCTTJK8G+CcP9j5xIGagdNXIBDd2hkO9M5lKlyzS/sJK8v7n6ZrE3aVULT6JX3D72m68xSM9wUZZTnfiESMs22pCKe+s8yKIp0DMTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+	s=arc-20240116; t=1745325692; c=relaxed/simple;
+	bh=s0Lly+5EiFjtFbtqJC2EYdIUp3/HF2UfL6FHemjnw4M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KZTL/nmrFY1VXkhlYivqJyz4FKyqsGYxnVJUXh2GQ/XdYLLpBDFga9dwQpnC3hlFfl+JDkZfoIv3yYT0IwqM0Mv3PE6DYubbKmoKUOLqcCoFqEFRw9aDBuCxI6kwdLb+bxwBSKQk9BfZRWy+kqWlb8yqlpeER6209VY5RVArrqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d81820d5b3so98627505ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:41:29 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d81b9bb1b3so47848295ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:41:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745325688; x=1745930488;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LHaMmz1KAcplF6Q361yXlo+F2t66/ZiHyob+lJweXSw=;
-        b=q3SuOEePqT/1n9SeTomAdlL19XDe2ZGIztZJ9tX5C4VnL2qWuUmlyLEO9xOJAhWsQF
-         F80VVt1Nzt63HqjCiMRW67lnVYIqGEKWGsn2M794gq6u/tBKgpOSU+EAdYVtdQmPnJkC
-         iiDHNVFUPbFzjaMtpJXR8XDC/zC+mUa44oTycoFhr6PnWAyk5CA1jLUq70kCM+uk15x0
-         1CLJSfFCNOFJtZWM6qsrJ5q/sy42rP+896PqO3OlZKIhbOv9onWn1h/jV4Q6InotQL/1
-         UBIhn+5gXEPSHwVVolQtM7fjavDTnN9rvHqmdoFDGXJlExF4adWzFcAmzyWramcnwznS
-         W9rQ==
-X-Gm-Message-State: AOJu0YwysiUNTNFMLELJIC9k5lCxHmkUBqauSVyz3S4+32Q9OHCGLzsm
-	h7Wi2B9emmYi6FjMMSYGJ80mj5YBOkPncUgGhbTNdon/+Hq6CN6IKnSYIs5OnJCoLUro6xiIyQB
-	Pe1Io7aWV4UT1Zgy0vxMdFZX50YaUMEvlR1iW/7z2fIBulRwX3WDs0oKIBQ==
-X-Google-Smtp-Source: AGHT+IHm7TwyyFiErPZqJRZMqdjsfoBD/EOXnH9bRtYg+WVOwKN8X6SvbPB8XXmyVLL4nzY9TDLeb5+2xonzOlFmX0x3O4/WCJ0n
+        d=1e100.net; s=20230601; t=1745325689; x=1745930489;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XabI1/RqwgBmusfjMpa9WeWdHvqbiQieUH0AtSV1/ck=;
+        b=f6sF+Fwb24BoWPmzowXAagwbZoOUqBcwmdHL+QeU8sB6HCNMBFzvI5dlFNX0uizOUo
+         F05IAB0IPwTL8df51c8N7lk/U8JaqPt+LA19pKkzUiekjaEzF6XBi3vpPCEpLT7X6ce0
+         /Hrr50DoJ/8n1utxcyrwfQn9VJCcUPZrHb2Cwj3rjfngSWzkwtCXSQwDLyncFuVidCXM
+         JNnC140R1xgG++A9pgNrFL5cAlsRwMRhviCjDwE7xZ9uGG8E3LkWbywIhMUb59lhA/py
+         5L+gBlSZ0fUtteikze59Vtds0N9ovzDphBGG16L7gnasql07mOBwKODOjW2hdQRfT2wy
+         5WAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYae9QfQaEG8va5Azugf73EEUzv+wttaitcJtYACEDpOu/WN6Vyn8mQ5GsnclNYOiXb6nM4fQfxWbyrCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP7xVcEWeKF2xWzrUDeAmdQ6G7LgWD4Ho/BpEj3hcrc9bgytuo
+	58+W2a+DTizMxpUS6+7yPRQb8n//fYKLgPXsCq9g+s3TcQrHvawz2N7Exy6sBC3MZU6QttQAJhb
+	86EWNSX8tbpmkBHgxOKP3feYOBa1/O+t085wBC2U+Hgx/ecRfimi+MeE=
+X-Google-Smtp-Source: AGHT+IHsJFmvhTE+LiZnbVa2m7xTT+ulUSnaA4+MC58bJXSsdd5Bs6X9iVu6jteEb71dc9qKl0tjv/rZShIRDajGk1e7O+3MrZwY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b01:b0:3d6:d147:81c9 with SMTP id
- e9e14a558f8ab-3d88ee0018fmr178968965ab.12.1745325688677; Tue, 22 Apr 2025
- 05:41:28 -0700 (PDT)
-Date: Tue, 22 Apr 2025 05:41:28 -0700
+X-Received: by 2002:a05:6e02:b49:b0:3d0:4b3d:75ba with SMTP id
+ e9e14a558f8ab-3d88ed7c338mr138875475ab.4.1745325689577; Tue, 22 Apr 2025
+ 05:41:29 -0700 (PDT)
+Date: Tue, 22 Apr 2025 05:41:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68078e78.050a0220.8500a.0014.GAE@google.com>
-Subject: [syzbot] [trace?] linux-next test error: WARNING in trace_event_raw_init
-From: syzbot <syzbot+52d4b07bbd2e3a104dc9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, rostedt@goodmis.org, sfr@canb.auug.org.au, 
+Message-ID: <68078e79.050a0220.8500a.0016.GAE@google.com>
+Subject: [syzbot] Monthly dri report (Apr 2025)
+From: syzbot <syzbot+listf1760c45c1a8a15cf5e1@syzkaller.appspotmail.com>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hello dri maintainers/developers,
 
-syzbot found the following issue on:
+This is a 31-day syzbot report for the dri subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/dri
 
-HEAD commit:    2c9c612abeb3 Add linux-next specific files for 20250422
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D1624afac580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbba13bd7967a7c4=
-b
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D52d4b07bbd2e3a104=
-dc9
-compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 18 issues are still open and 32 have already been fixed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b491f42bb495/disk-=
-2c9c612a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6a3ea2226cf2/vmlinux-=
-2c9c612a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cf779772656e/bzI=
-mage-2c9c612a.xz
+Some of the still happening issues:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+52d4b07bbd2e3a104dc9@syzkaller.appspotmail.com
-
-CPU topo: Max. threads per core:   2
-CPU topo: Num. cores per package:     1
-CPU topo: Num. threads per package:   2
-CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
-PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
-PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
-PM: hibernation: Registered nosave memory: [mem 0xbfffd000-0xffffffff]
-[mem 0xc0000000-0xfffbbfff] available for PCI devices
-Booting paravirtualized kernel on KVM
-clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_=
-idle_ns: 19112604462750000 ns
-setup_percpu: NR_CPUS:8 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:2
-percpu: Embedded 70 pages/cpu s245960 r8192 d32568 u1048576
-kvm-guest: PV spinlocks enabled
-PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
-Kernel command line: earlyprintk=3Dserial net.ifnames=3D0 sysctl.kernel.hun=
-g_task_all_cpu_backtrace=3D1 ima_policy=3Dtcb nf-conntrack-ftp.ports=3D2000=
-0 nf-conntrack-tftp.ports=3D20000 nf-conntrack-sip.ports=3D20000 nf-conntra=
-ck-irc.ports=3D20000 nf-conntrack-sane.ports=3D20000 binder.debug_mask=3D0 =
-rcupdate.rcu_expedited=3D1 rcupdate.rcu_cpu_stall_cputime=3D1 no_hash_point=
-ers page_owner=3Don sysctl.vm.nr_hugepages=3D4 sysctl.vm.nr_overcommit_huge=
-pages=3D4 secretmem.enable=3D1 sysctl.max_rcu_stall_to_panic=3D1 msr.allow_=
-writes=3Doff coredump_filter=3D0xffff root=3D/dev/sda console=3DttyS0 vsysc=
-all=3Dnative numa=3Dfake=3D2 kvm-intel.nested=3D1 spec_store_bypass_disable=
-=3Dprctl nopcid vivid.n_devs=3D64 vivid.multiplanar=3D1,2,1,2,1,2,1,2,1,2,1=
-,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,=
-1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2 netrom.nr_ndevs=3D32 rose.rose_ndevs=3D32 s=
-mp.csd_lock_timeout=3D100000 watchdog_thresh=3D55 workqueue.watchdog_thresh=
-=3D140 sysctl.net.core.netdev_unregister_timeout_secs=3D140 dummy_hcd.num=
-=3D32 max_loop=3D32 nbds_max=3D32 panic_on_warn
-Unknown kernel command line parameters "spec_store_bypass_disable=3Dprctl n=
-bds_max=3D32 BOOT_IMAGE=3D/boot/bzImage", will be passed to user space.
-random: crng init done
-printk: log buffer data + meta data: 262144 + 917504 =3D 1179648 bytes
-software IO TLB: area num 2.
-Fallback order for Node 0: 0 1=20
-Fallback order for Node 1: 1 0=20
-Built 2 zonelists, mobility grouping on.  Total pages: 2097051
-Policy zone: Normal
-mem auto-init: stack:all(zero), heap alloc:on, heap free:off
-stackdepot: allocating hash table via alloc_large_system_hash
-stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
-SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D2, Nodes=3D2
-allocated 167772160 bytes of page_ext
-Node 0, zone      DMA: page owner found early allocated 0 pages
-Node 0, zone    DMA32: page owner found early allocated 21222 pages
-Node 0, zone   Normal: page owner found early allocated 0 pages
-Node 1, zone   Normal: page owner found early allocated 19843 pages
-Kernel/User page tables isolation: enabled
-Dynamic Preempt: full
-Running RCU self tests
-Running RCU synchronous self tests
-rcu: Preemptible hierarchical RCU implementation.
-rcu: 	RCU lockdep checking is enabled.
-rcu: 	RCU restricting CPUs from NR_CPUS=3D8 to nr_cpu_ids=3D2.
-rcu: 	RCU callback double-/use-after-free debug is enabled.
-rcu: 	RCU debug extended QS entry/exit.
-	All grace periods are expedited (rcu_expedited).
-	Trampoline variant of Tasks RCU enabled.
-	Tracing variant of Tasks RCU enabled.
-rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
-rcu: Adjusting geometry for rcu_fanout_leaf=3D16, nr_cpu_ids=3D2
-Running RCU synchronous self tests
-RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1 rcu_task_=
-cpu_ids=3D2.
-RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1 rcu=
-_task_cpu_ids=3D2.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:596 test_event_printk=
- kernel/trace/trace_events.c:596 [inline]
-WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:596 trace_event_raw_i=
-nit+0xbda/0x1170 kernel/trace/trace_events.c:616
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc3-next-20250422-s=
-yzkaller #0 PREEMPT(full)=20
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 02/12/2025
-RIP: 0010:test_event_printk kernel/trace/trace_events.c:596 [inline]
-RIP: 0010:trace_event_raw_init+0xbda/0x1170 kernel/trace/trace_events.c:616
-Code: 89 d8 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 1b 1e 64 0a 80 3d =
-0e 26 7e 0e 01 0f 85 7e 03 00 00 e8 79 50 f7 ff eb d5 90 <0f> 0b 90 4c 89 f=
-6 48 83 e6 01 31 ff e8 45 55 f7 ff 4c 89 f3 49 83
-RSP: 0000:ffffffff8ea07e30 EFLAGS: 00010002
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8ea965c0
-RDX: 0000000000000000 RSI: 0000000000000020 RDI: 0000000000000000
-RBP: 0000000000000020 R08: ffffffff81cbc889 R09: ffffffff8ebf6886
-R10: ffffffff8ebf6886 R11: ffffffff8ebf6886 R12: 0000000000000005
-R13: ffffffff8ebf67e0 R14: 0000000000000020 R15: 0000000000000028
-FS:  0000000000000000(0000) GS:ffff888124f9f000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88823ffff000 CR3: 000000000eb38000 CR4: 00000000000000b0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- event_init kernel/trace/trace_events.c:3111 [inline]
- event_trace_enable+0x1f3/0x3a0 kernel/trace/trace_events.c:4455
- trace_event_init+0x13/0x20 kernel/trace/trace_events.c:4548
- trace_init+0xf/0x40 kernel/trace/trace.c:11070
- start_kernel+0x206/0x510 init/main.c:994
- x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:304
- x86_64_start_kernel+0x66/0x70 arch/x86/kernel/head64.c:285
- common_startup_64+0x13e/0x147
- </TASK>
-
+Ref  Crashes Repro Title
+<1>  3442    Yes   WARNING in __alloc_frozen_pages_noprof
+                   https://syzkaller.appspot.com/bug?extid=03fb58296859d8dbab4d
+<2>  403     Yes   WARNING in vkms_get_vblank_timestamp (2)
+                   https://syzkaller.appspot.com/bug?extid=93bd128a383695391534
+<3>  76      Yes   WARNING in drm_wait_one_vblank (2)
+                   https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+<4>  75      No    INFO: task hung in drm_atomic_get_plane_state
+                   https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
+<5>  72      Yes   WARNING in drm_mode_create_lease_ioctl
+                   https://syzkaller.appspot.com/bug?extid=6754751ad05524dae739
+<6>  35      Yes   KASAN: slab-use-after-free Read in drm_atomic_helper_wait_for_vblanks (2)
+                   https://syzkaller.appspot.com/bug?extid=0f999d26a4fd79c3a23b
+<7>  21      Yes   WARNING in drm_gem_prime_fd_to_handle
+                   https://syzkaller.appspot.com/bug?extid=268d319a7bfd92f4ae01
+<8>  4       Yes   WARNING in drm_prime_destroy_file_private (2)
+                   https://syzkaller.appspot.com/bug?extid=59dcc2e7283a6f5f5ba1
+<9>  3       Yes   WARNING in drm_prime_fd_to_handle_ioctl
+                   https://syzkaller.appspot.com/bug?extid=0da81ccba2345eeb7f48
+<10> 1       No    WARNING in virtio_gpu_queue_fenced_ctrl_buffer
+                   https://syzkaller.appspot.com/bug?extid=5afbc12ca70811c2bffb
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+You may send multiple commands in a single email message.
 
