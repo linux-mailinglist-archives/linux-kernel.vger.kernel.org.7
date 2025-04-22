@@ -1,126 +1,222 @@
-Return-Path: <linux-kernel+bounces-614364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A30A96A54
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154EFA96A58
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 14:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7534516E8B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:41:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84273BBF4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 12:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9E627D770;
-	Tue, 22 Apr 2025 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQMQmt82"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16BB27CCFB;
+	Tue, 22 Apr 2025 12:41:31 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1129427C851;
-	Tue, 22 Apr 2025 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB1722E3F9
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 12:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745325574; cv=none; b=mw5n/hCMVTYwOL38DqncBTjmZLJeUD4D4/1mWhNzjrOhI4hkXd5V09CItyg9mJqH7pO4xKsPy0ZL/b1BBpLakovecQoh74G6Zm8sCRHcdXhm6Agvoj4K0B0yG759fGCjrSs3GJgpMMchrf+qXz80mOYJv1AU7Zd/ggVsuP6u51o=
+	t=1745325691; cv=none; b=rAg+5Zewsrykgf7yi4LPTVoo94Psi1hC/zd7uC1bJivOyINh1tl6zDQfQy1+0m+1GynicsQQ4LPPypV6gM8NjLiqjonV5AHl6mCCGmtcMQvCGinU7BuRbTpv/V9bXvMZ4FokmrVTRubNhRGycUXNeQThhs+X8a6HwpFzU8yLvaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745325574; c=relaxed/simple;
-	bh=xP8Dv5I1fJiOex+Vj8UPxNH7vE0QPVtpzuMKiEQT+24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHmXS08UD2YzA4iVkFclJYNcWTY6aPvhmoy2mC75ufzKihvfc6TNajQn4bsgvFUGz/Lp6QHw7XbiRVB2aZTe0MJh30nvzDXbahnFhJZ06BQh9TPSMNTtsmY6dSmFt7ev2f7tpLGu7DkDNIxkt9JFq1NvFBhk0UV6DGeV0JgFJJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQMQmt82; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A87C4CEE9;
-	Tue, 22 Apr 2025 12:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745325573;
-	bh=xP8Dv5I1fJiOex+Vj8UPxNH7vE0QPVtpzuMKiEQT+24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FQMQmt82A0wep1yJlcQaDueszEc8Z1XNmvlwPK7e40zLXS2uQ1OY0zxzfpRvz6A6P
-	 ow78l+mEGvwLNtiyv7E/RV7y9CCPeX4s9vZVnFWr3BxkfXUsPM7b2cATJANKxnv6gb
-	 lfE+HCMaZkTdneT7+0zwDvWGDIFFbwug5L1+WKNyxKc3S7yGEgpQP375e59m+kfUse
-	 bdCR8uUF9cAJc1VaPu8j8ac1vXHyQVMNub6uhGjEx/hL4cVnuRzPXOynlrCOV7xzqo
-	 GSIBuq8JRFAAamrvkdrbDiWfXe4KNjkjRU6oSNRlUqxXdAQs0CWemjpNt9IfLjIJnV
-	 OMjDlh7BjZoCA==
-Date: Tue, 22 Apr 2025 14:39:29 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
-	hch <hch@lst.de>, "linux@roeck-us.net" <linux@roeck-us.net>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>
-Subject: Re: [PATCH] XFS: fix zoned gc threshold math for 32-bit arches
-Message-ID: <y2yqlycoihdszskhm57idjmzmllj3qvppp27tqqylwfi3uqrwe@qcsmimh5vv73>
-References: <20250422114231.1012462-1-cem@kernel.org>
- <37cQwsCB-vfrE2GVpLDweuT6AGImO9AX7_gX5a2Zy2geWo5AdDrN4NXJTXvX_5hkHEf04owtz-_FoYdo79RElg==@protonmail.internalid>
- <fb6536ec-244f-4a90-949d-ddff7f15d18b@wdc.com>
+	s=arc-20240116; t=1745325691; c=relaxed/simple;
+	bh=yrR7LOXwJQk7YQ1++keSJbA50DlyDggdAVg3h1c50S4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PDOe5KaUWw80es6esMVVw65rb8O3b1dCHsQ7nSy2g2sq6KsKRZ0zlKmrRsgvysaU4jAi0JCTTJK8G+CcP9j5xIGagdNXIBDd2hkO9M5lKlyzS/sJK8v7n6ZrE3aVULT6JX3D72m68xSM9wUZZTnfiESMs22pCKe+s8yKIp0DMTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d81820d5b3so98627505ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 05:41:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745325688; x=1745930488;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LHaMmz1KAcplF6Q361yXlo+F2t66/ZiHyob+lJweXSw=;
+        b=q3SuOEePqT/1n9SeTomAdlL19XDe2ZGIztZJ9tX5C4VnL2qWuUmlyLEO9xOJAhWsQF
+         F80VVt1Nzt63HqjCiMRW67lnVYIqGEKWGsn2M794gq6u/tBKgpOSU+EAdYVtdQmPnJkC
+         iiDHNVFUPbFzjaMtpJXR8XDC/zC+mUa44oTycoFhr6PnWAyk5CA1jLUq70kCM+uk15x0
+         1CLJSfFCNOFJtZWM6qsrJ5q/sy42rP+896PqO3OlZKIhbOv9onWn1h/jV4Q6InotQL/1
+         UBIhn+5gXEPSHwVVolQtM7fjavDTnN9rvHqmdoFDGXJlExF4adWzFcAmzyWramcnwznS
+         W9rQ==
+X-Gm-Message-State: AOJu0YwysiUNTNFMLELJIC9k5lCxHmkUBqauSVyz3S4+32Q9OHCGLzsm
+	h7Wi2B9emmYi6FjMMSYGJ80mj5YBOkPncUgGhbTNdon/+Hq6CN6IKnSYIs5OnJCoLUro6xiIyQB
+	Pe1Io7aWV4UT1Zgy0vxMdFZX50YaUMEvlR1iW/7z2fIBulRwX3WDs0oKIBQ==
+X-Google-Smtp-Source: AGHT+IHm7TwyyFiErPZqJRZMqdjsfoBD/EOXnH9bRtYg+WVOwKN8X6SvbPB8XXmyVLL4nzY9TDLeb5+2xonzOlFmX0x3O4/WCJ0n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb6536ec-244f-4a90-949d-ddff7f15d18b@wdc.com>
+X-Received: by 2002:a05:6e02:1b01:b0:3d6:d147:81c9 with SMTP id
+ e9e14a558f8ab-3d88ee0018fmr178968965ab.12.1745325688677; Tue, 22 Apr 2025
+ 05:41:28 -0700 (PDT)
+Date: Tue, 22 Apr 2025 05:41:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68078e78.050a0220.8500a.0014.GAE@google.com>
+Subject: [syzbot] [trace?] linux-next test error: WARNING in trace_event_raw_init
+From: syzbot <syzbot+52d4b07bbd2e3a104dc9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, rostedt@goodmis.org, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 12:31:01PM +0000, Hans Holmberg wrote:
-> On 22/04/2025 13:42, cem@kernel.org wrote:
-> > From: Carlos Maiolino <cem@kernel.org>
-> >
-> > xfs_zoned_need_gc makes use of mult_frac() to calculate the threshold
-> > for triggering the zoned garbage collector, but, turns out mult_frac()
-> > doesn't properly work with 64-bit data types and this caused build
-> > failures on some 32-bit architectures.
-> >
-> > Fix this by essentially open coding mult_frac() in a 64-bit friendly
-> > way.
-> >
-> > Notice we don't need to bother with counters underflow here because
-> > xfs_estimate_freecounter() will always return a positive value, as it
-> > leverages percpu_counter_read_positive to read such counters.
-> >
-> > Fixes: 845abeb1f06a ("xfs: add tunable threshold parameter for triggering zone GC")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202504181233.F7D9Atra-lkp@intel.com/
-> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> > ---
-> >
-> >  fs/xfs/xfs_zone_gc.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-> > index 8c541ca71872..b0e8915ef733 100644
-> > --- a/fs/xfs/xfs_zone_gc.c
-> > +++ b/fs/xfs/xfs_zone_gc.c
-> > @@ -171,6 +171,7 @@ xfs_zoned_need_gc(
-> >  	struct xfs_mount	*mp)
-> >  {
-> >  	s64			available, free;
-> > +	s32			threshold, remainder;
-> >
-> >  	if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE))
-> >  		return false;
-> > @@ -183,7 +184,12 @@ xfs_zoned_need_gc(
-> >  		return true;
-> >
-> >  	free = xfs_estimate_freecounter(mp, XC_FREE_RTEXTENTS);
-> > -	if (available < mult_frac(free, mp->m_zonegc_low_space, 100))
-> > +
-> > +	threshold = div_s64_rem(free, 100, &remainder);
-> 
-> Hmm, shouldn't threshold be a s64?
+Hello,
 
-Uff, yes, I wrote it to use as a divisor initially, changed my mind and forgot
-to fix the definition. I'll send a V2, thanks for spotting it. Only remainder
-must be a s32.
+syzbot found the following issue on:
+
+HEAD commit:    2c9c612abeb3 Add linux-next specific files for 20250422
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D1624afac580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbba13bd7967a7c4=
+b
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D52d4b07bbd2e3a104=
+dc9
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b491f42bb495/disk-=
+2c9c612a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6a3ea2226cf2/vmlinux-=
+2c9c612a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cf779772656e/bzI=
+mage-2c9c612a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+52d4b07bbd2e3a104dc9@syzkaller.appspotmail.com
+
+CPU topo: Max. threads per core:   2
+CPU topo: Num. cores per package:     1
+CPU topo: Num. threads per package:   2
+CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
+PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+PM: hibernation: Registered nosave memory: [mem 0xbfffd000-0xffffffff]
+[mem 0xc0000000-0xfffbbfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_=
+idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:8 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:2
+percpu: Embedded 70 pages/cpu s245960 r8192 d32568 u1048576
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: earlyprintk=3Dserial net.ifnames=3D0 sysctl.kernel.hun=
+g_task_all_cpu_backtrace=3D1 ima_policy=3Dtcb nf-conntrack-ftp.ports=3D2000=
+0 nf-conntrack-tftp.ports=3D20000 nf-conntrack-sip.ports=3D20000 nf-conntra=
+ck-irc.ports=3D20000 nf-conntrack-sane.ports=3D20000 binder.debug_mask=3D0 =
+rcupdate.rcu_expedited=3D1 rcupdate.rcu_cpu_stall_cputime=3D1 no_hash_point=
+ers page_owner=3Don sysctl.vm.nr_hugepages=3D4 sysctl.vm.nr_overcommit_huge=
+pages=3D4 secretmem.enable=3D1 sysctl.max_rcu_stall_to_panic=3D1 msr.allow_=
+writes=3Doff coredump_filter=3D0xffff root=3D/dev/sda console=3DttyS0 vsysc=
+all=3Dnative numa=3Dfake=3D2 kvm-intel.nested=3D1 spec_store_bypass_disable=
+=3Dprctl nopcid vivid.n_devs=3D64 vivid.multiplanar=3D1,2,1,2,1,2,1,2,1,2,1=
+,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,=
+1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2 netrom.nr_ndevs=3D32 rose.rose_ndevs=3D32 s=
+mp.csd_lock_timeout=3D100000 watchdog_thresh=3D55 workqueue.watchdog_thresh=
+=3D140 sysctl.net.core.netdev_unregister_timeout_secs=3D140 dummy_hcd.num=
+=3D32 max_loop=3D32 nbds_max=3D32 panic_on_warn
+Unknown kernel command line parameters "spec_store_bypass_disable=3Dprctl n=
+bds_max=3D32 BOOT_IMAGE=3D/boot/bzImage", will be passed to user space.
+random: crng init done
+printk: log buffer data + meta data: 262144 + 917504 =3D 1179648 bytes
+software IO TLB: area num 2.
+Fallback order for Node 0: 0 1=20
+Fallback order for Node 1: 1 0=20
+Built 2 zonelists, mobility grouping on.  Total pages: 2097051
+Policy zone: Normal
+mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+stackdepot: allocating hash table via alloc_large_system_hash
+stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D2, Nodes=3D2
+allocated 167772160 bytes of page_ext
+Node 0, zone      DMA: page owner found early allocated 0 pages
+Node 0, zone    DMA32: page owner found early allocated 21222 pages
+Node 0, zone   Normal: page owner found early allocated 0 pages
+Node 1, zone   Normal: page owner found early allocated 19843 pages
+Kernel/User page tables isolation: enabled
+Dynamic Preempt: full
+Running RCU self tests
+Running RCU synchronous self tests
+rcu: Preemptible hierarchical RCU implementation.
+rcu: 	RCU lockdep checking is enabled.
+rcu: 	RCU restricting CPUs from NR_CPUS=3D8 to nr_cpu_ids=3D2.
+rcu: 	RCU callback double-/use-after-free debug is enabled.
+rcu: 	RCU debug extended QS entry/exit.
+	All grace periods are expedited (rcu_expedited).
+	Trampoline variant of Tasks RCU enabled.
+	Tracing variant of Tasks RCU enabled.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=3D16, nr_cpu_ids=3D2
+Running RCU synchronous self tests
+RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1 rcu_task_=
+cpu_ids=3D2.
+RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1 rcu=
+_task_cpu_ids=3D2.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:596 test_event_printk=
+ kernel/trace/trace_events.c:596 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:596 trace_event_raw_i=
+nit+0xbda/0x1170 kernel/trace/trace_events.c:616
+Modules linked in:
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc3-next-20250422-s=
+yzkaller #0 PREEMPT(full)=20
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 02/12/2025
+RIP: 0010:test_event_printk kernel/trace/trace_events.c:596 [inline]
+RIP: 0010:trace_event_raw_init+0xbda/0x1170 kernel/trace/trace_events.c:616
+Code: 89 d8 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 1b 1e 64 0a 80 3d =
+0e 26 7e 0e 01 0f 85 7e 03 00 00 e8 79 50 f7 ff eb d5 90 <0f> 0b 90 4c 89 f=
+6 48 83 e6 01 31 ff e8 45 55 f7 ff 4c 89 f3 49 83
+RSP: 0000:ffffffff8ea07e30 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8ea965c0
+RDX: 0000000000000000 RSI: 0000000000000020 RDI: 0000000000000000
+RBP: 0000000000000020 R08: ffffffff81cbc889 R09: ffffffff8ebf6886
+R10: ffffffff8ebf6886 R11: ffffffff8ebf6886 R12: 0000000000000005
+R13: ffffffff8ebf67e0 R14: 0000000000000020 R15: 0000000000000028
+FS:  0000000000000000(0000) GS:ffff888124f9f000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823ffff000 CR3: 000000000eb38000 CR4: 00000000000000b0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ event_init kernel/trace/trace_events.c:3111 [inline]
+ event_trace_enable+0x1f3/0x3a0 kernel/trace/trace_events.c:4455
+ trace_event_init+0x13/0x20 kernel/trace/trace_events.c:4548
+ trace_init+0xf/0x40 kernel/trace/trace.c:11070
+ start_kernel+0x206/0x510 init/main.c:994
+ x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:304
+ x86_64_start_kernel+0x66/0x70 arch/x86/kernel/head64.c:285
+ common_startup_64+0x13e/0x147
+ </TASK>
 
 
-> 
-> > +	threshold = threshold * mp->m_zonegc_low_space +
-> > +		    remainder * div_s64(mp->m_zonegc_low_space, 100);
-> > +
-> > +	if (available < threshold)
-> >  		return true;
-> >
-> >  	return false;
-> 
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
