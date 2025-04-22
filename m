@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-614776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-614759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFC0A971D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9D5A97186
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 17:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8963B189C37F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 16:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF7C189BFAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Apr 2025 15:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432ED28FFDC;
-	Tue, 22 Apr 2025 16:04:11 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A428FFD0;
+	Tue, 22 Apr 2025 15:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIMvFOq5"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC874284B51;
-	Tue, 22 Apr 2025 16:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5BB1E87B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 15:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745337850; cv=none; b=G2uuMuVi+sT4Qq/oiYGxJmMvxLfxEfXBNHyFBhPn3ccTcdmrUfTZIOJ89ZkUnrv+TmTPrRsBf/9PpxXf+Qnq2Hskc4zG7WJ6ZocACr/f3uHE0Hmukx3lC0v0BlMIrzCO6onGAc1cKBZyC3R/owAzeGDwNBlGaxHiB413meutn2k=
+	t=1745336936; cv=none; b=pcxA7zyajOhaQfUZzzh7UScTKQuJFDC8MTvFNk1+GBGPkvR6T6jStK5QCuJlT/Qbh1QnUEAbvYJ6sk5LBbHNjFRCLmPCJV2dlum24xLOLxqqV+DCA7rZQzWV9I2TXnVSDLM46yZnRSVBZiNdmHoXJBMGfnhhOTmZ8rR5AYQ2JVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745337850; c=relaxed/simple;
-	bh=Q3FGj0NUnDmy7Sa2MUrcTAGYijhd3QOEr4vyd6qDpTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hsEQw3MBmwiM8ljy9MF7+v0OHTfYoIMSBUJKz8BK8OmtgXqO8BYQkfPwmjOMiUhai0UDWfaUQP2DWVEldwPXLF8do+EBv0Hj0bc7U6AqpMM1s/FCMb5zAf8kk1tkXNJLZSFeLx4r1UzndJt4qGWhu/Ekl+okjxzPfZX/X0rWVOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4ZhmqQ1BrQzpV14;
-	Tue, 22 Apr 2025 23:48:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 5FB3A140156;
-	Tue, 22 Apr 2025 23:48:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwA37d9VugdoALKABg--.62087S2;
-	Tue, 22 Apr 2025 16:48:42 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: torvalds@linux-foundation.org
-Cc: zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [GIT PULL] Integrity fix for kernel 6.15-rc3
-Date: Tue, 22 Apr 2025 17:48:05 +0200
-Message-Id: <20250422154805.1817045-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745336936; c=relaxed/simple;
+	bh=UMtNs131EaLOx7wO3hdnO/FjcPM0kkHKVloE7mySrEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WwU0OVTvSgOyLNWXTftmXKCCkmdQLlB3lk37sY1eJhcJaGBqCHCkdKd0HNaNdqJPMWilNunUYyIqiEVyXkjCJ1QCuCu2Yokufmqn77PD7tscqaFsBAUTkCQtzsaZYRk0cxr66G860fTVsl3FyExsX8OgGCsIaXlWJlj7uEzcpe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIMvFOq5; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22c3407a87aso79903025ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 08:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745336934; x=1745941734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F3BuEXZnKsXPHQ5Xh9DOgfd6QvLyVRzAGX4k5Jq5y8M=;
+        b=XIMvFOq5YlJNZYLDkXTrfjvhWiQ2kMGrDMGYVLifr5CGk76PYj5eZQuNbOoFkwWJA4
+         Fvo50j9a4oyugOmoXPhoK5SldRcr1dYSkrflr+4MtBA98ld15zSlHp0/5z333gz+Ng4u
+         a4Ef3bm/6tqodJf6mNHjxq+mNJtgLQEGI9RLpmGxZlBDQyprTOf7U5xYT4eVtgtbbhCl
+         nS2u4TdT9bMieAiWM5XYN6p/scobsymf0jQeR54+TUhB8w1xvNVtICL1QSWX1RpSFV4n
+         pyE/6dDfVVPHn9eKyeXvExmzfUV5fMPusVuH4p94kXpGgbWRpMGbpo/ozwHA95JMoI3K
+         YBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745336934; x=1745941734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F3BuEXZnKsXPHQ5Xh9DOgfd6QvLyVRzAGX4k5Jq5y8M=;
+        b=E+nvAtx+9+oJkxOmfOhD0HnjBPYdgaG24lyJTIDEi37T70W/UbMH4yUL4fSC2uj+70
+         2Xq785PeyXegv35J8E6zQwuZtRvFfO5LDNzfwq1LjKsBhKhUX0VmkkXT3+xH/MIqlwAf
+         b7hhyp79qnCR+G5UXNTSqKwR6xY3TX07U7hCoRrOgoWMOureGpnhkvErLwkywrz34AOG
+         x/R0sM6k/SzWFwRfVPcNb9aTCJkxGjGp3BNcyK6l30p0T0/8BglXLwH5BwIeFsk6CTlK
+         +ujZxwBPPvRIMUbQlzNFNLG1/G0eiwNKSWp5nYYHvHfAl6Q04NEs/cttNJkfin6BsGgf
+         a6yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxTSxFUF1Pabhd5X9Ef4SZHU3T3n9D34mHYylAY5jRQyGgxXF8/w46KNQ2tiDI9Sjf3iWWTtsg+XXbHoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwINV4l4loot92qsYnTAD21iZMAvumaMH1NO4vQkyVfm5ztr5q
+	xHmFJFCJmfornEMCGVJSA4z6nvt22s5b5p58JJetVu3s2M6A9isZPdJJ75+1Fl+f02gsZdzQvF6
+	E04/h08j0dY4ZTHkI+NeeeTcwrGQ=
+X-Gm-Gg: ASbGncuAeOmTrGhftZD9k5c0KMed/krL7p9/LFf4t9GbBB8X//loIMvkjK3aCF010X3
+	rZhI0bgNXbsuABSVAIPDiRppCYAa2t4cydAxpMzCIl+/HilTK5TlYcmezEfEOTAxaR22wkwUxiA
+	lSalzupGbUg3XlmCY+iHujpTww
+X-Google-Smtp-Source: AGHT+IF5RXtOoSyS+g1JsVzJ0J7F82ka7oNT7qpCZYOvJpmeKw8xROThdScpfeWwjTXd9BOT4dsrg2Qf8Ljbor5QgSo=
+X-Received: by 2002:a17:90b:582b:b0:2ff:592d:23bc with SMTP id
+ 98e67ed59e1d1-3087bb39a57mr24696993a91.4.1745336933752; Tue, 22 Apr 2025
+ 08:48:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwA37d9VugdoALKABg--.62087S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFWktr48tw4fJr1xCF17KFg_yoWDuFX_uF
-	yktF18JrWUXr1kCw4Utr17Wr4rWryDGr15JryUGF42v347JwnxJ348GFWrXr1kXF4Dtr9r
-	JrWkJr1DJw17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkvb40E47kJMIIYrxkI7VAK
-	I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-	4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
-	6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07bzjjgUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBGgHP+AHcgAAsG
+References: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
+In-Reply-To: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 22 Apr 2025 08:48:39 -0700
+X-Gm-Features: ATxdqUHTSugEKAn0vqFWcZ94mbFzB-E9GL_UC5IMPhdbs5lblBBMn_m60AT-9aM
+Message-ID: <CAEf4BzbTSAp6-2HZYuALuoF8bDeaJGtSyePe0DvmdRK29pN0aA@mail.gmail.com>
+Subject: Re: [PATCH v2] maccess: fix strncpy_from_user_nofault empty string handling
+To: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, rostedt@goodmis.org, 
+	mhiramat@kernel.org, andrii@kernel.org, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, Mykyta Yatsenko <yatsenko@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Tue, Apr 22, 2025 at 6:15=E2=80=AFAM Mykyta Yatsenko
+<mykyta.yatsenko5@gmail.com> wrote:
+>
+> From: Mykyta Yatsenko <yatsenko@meta.com>
+>
+> strncpy_from_user_nofault should return the length of the copied string
+> including the trailing NUL, but if the argument unsafe_addr points to
+> an empty string ({'\0'}), the return value is 0.
+>
+> This happens as strncpy_from_user copies terminal symbol into dst
+> and returns 0 (as expected), but strncpy_from_user_nofault does not
+> modify ret as it is not equal to count and not greater than 0, so 0 is
+> returned, which contradicts the contract.
+>
+> Signed-off-by: Mykyta Yatsenko <yatsenko@meta.com>
+> ---
+>  mm/maccess.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Hi Linus
+Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
 
-this pull request contains one performance improvement to avoid
-unnecessarily taking the inode lock.
-
-It has been tested by both me and Mimi.
-
-Please pull, thanks!
-
-Roberto
-
--- 
-
-The following changes since commit 9c32cda43eb78f78c73aee4aa344b777714e259b:
-
-  Linux 6.15-rc3 (2025-04-20 13:43:47 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/linux-integrity/linux.git tags/integrity-6.15-rc3-fix
-
-for you to fetch changes up to 30d68cb0c37ebe2dc63aa1d46a28b9163e61caa2:
-
-  ima: process_measurement() needlessly takes inode_lock() on MAY_READ (2025-04-22 16:39:32 +0200)
-
-----------------------------------------------------------------
-Integrity fix for kernel 6.15-rc3
-
-----------------------------------------------------------------
-Frederick Lawler (1):
-      ima: process_measurement() needlessly takes inode_lock() on MAY_READ
-
- security/integrity/ima/ima_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
+> diff --git a/mm/maccess.c b/mm/maccess.c
+> index 8f0906180a94..831b4dd7296c 100644
+> --- a/mm/maccess.c
+> +++ b/mm/maccess.c
+> @@ -196,7 +196,7 @@ long strncpy_from_user_nofault(char *dst, const void =
+__user *unsafe_addr,
+>         if (ret >=3D count) {
+>                 ret =3D count;
+>                 dst[ret - 1] =3D '\0';
+> -       } else if (ret > 0) {
+> +       } else if (ret >=3D 0) {
+>                 ret++;
+>         }
+>
+> --
+> 2.49.0
+>
 
