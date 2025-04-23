@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-616544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE86A98FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:13:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609AEA98F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1FEA1BA07A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5D27AF2A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4573328EA56;
-	Wed, 23 Apr 2025 15:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E993528D85E;
+	Wed, 23 Apr 2025 15:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="SNHD406j"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m30e9pEf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AFA283680;
-	Wed, 23 Apr 2025 15:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CD128D83D;
+	Wed, 23 Apr 2025 15:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420551; cv=none; b=hq589xpgK1WPbtjKkpMDaRI3fSTjBBVrFU2Xci6QD3Fj+tuoqiMkxTkb6FmJ6tdNgYBZCz9ribq8p0A2mjfFuwfx3cRPD687eCvy3X3MV7U+u4IKtc3/waDQwdS6uuf/BIXN/CD6qcDWIXYzJedmn2TZFaqbOZQaAUdqeZGM6bg=
+	t=1745420775; cv=none; b=IBdFr9jjxM/Ls239u8xlKULu0uenvonaIZtqzsG22wFDFo8xAKcl7JExGcqEcLeqhJD1DMyY10opyIb4hoft2j7lR+8YfB5nYJywIIQyye1cSgfkX0Z43USNFDaYSIj68ej6jWWhdkwiQXY6wNRTMGiWX3PbxwDjUiX0MROyCbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420551; c=relaxed/simple;
-	bh=9lbS6NFVV60cvSDLK1COpVDjjL2o/3HjYKEkjhk3J7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VcBMaHPHwFJ/0agEZmb3zleTQ0Mur1gwgxfP3xyQndco/qTAWC5J2dDFLf2X6C1qjYH0x42UTuYnN3DuVGxZT+645muslvwv95sNMboTuQ0CIAVPkRxRXGlmp/5Ib9S4771/9vH2dTMQ113ZzaTV59XL0keCmAwsqr+aGVYddcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=SNHD406j; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4394441A9F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1745420543; bh=9lbS6NFVV60cvSDLK1COpVDjjL2o/3HjYKEkjhk3J7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SNHD406j0r3aIOywKru2rdq7LfbtVgjFedfUnDQk+k5a/1t3bfZ9m+iEj3XruX3as
-	 UtUPGFucvAYGkadqdNQLYDQshEV+BeqgCMdnTyf9pgxmZzTv+Ec4SRnF76NCaP+s2A
-	 heUVD9luRT+tEZd2GTSHKm4X/luQa1XdfyAX1QTS845oVVtimSowCxnpO50UyceLM5
-	 S8mGUjLTUz5p42vrgdtSZBDE8RVZYcB9Egjir7os5NCg023o3BF0zN6G/vptyYn4D4
-	 yFJvR8HMvyM6mVkTD9RJsQ3ixOtuRb/QJdGEs9N/uzmnn2cAttz307cDv0HPUEoIeI
-	 uv7VJTAGzh2Ng==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4394441A9F;
-	Wed, 23 Apr 2025 15:02:23 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>, Ilpo
- =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam
- <yazen.ghannam@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>, "open list:DOCUMENTATION"
- <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC"
- <linux-i2c@vger.kernel.org>, "open list:AMD PMC DRIVER"
- <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] AMD Zen debugging documentation
-In-Reply-To: <20250422234830.2840784-1-superm1@kernel.org>
-References: <20250422234830.2840784-1-superm1@kernel.org>
-Date: Wed, 23 Apr 2025 09:02:22 -0600
-Message-ID: <87frhysyyp.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1745420775; c=relaxed/simple;
+	bh=MKfNl/vKy4qc7YFj2UqPbycwbIBF6/vxIf1HgVczXlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cqoOd1FqOPw7BAwFGgAN+dqUoqEpOuh2QaApQi8eMriIrQyModiz5BCO2a6DeFGcVD+o6pWjkaqWCU2iOunNkyeSNPCjNCrEH32Wq+1Y0KP7v/fuvSZOxPAmpiotnMkq4Td0bras8NDWLK0K36AyLinfZp6bkxgJ8R4cmSlYRkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m30e9pEf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fd89d036so81611795ad.1;
+        Wed, 23 Apr 2025 08:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745420773; x=1746025573; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GTcgf5wGkRP/G2TvF4vXSu8ZLKj7vSHNlv5neOpUl0A=;
+        b=m30e9pEfdZT33SCL7jl4wzzCrAcQeIXtcipQ3GM09ScR7NE3wmvR0ssJmfslXoxbfa
+         TaqClrKpIBKhYro/RZuh4NrCwI30vkTUVZE8C13poazrxkbCEK3ZItWpEvatn9TbCc1j
+         h1qDc3B/4XmtDmOnJWpzTOLmyxMG+MTpB+vW56zJTBXC3kF5VnSielLa3TRA96Li/r2q
+         QCqDU3Qwo5kOPlc5TbEXIB4Dyp2NH4o1UpEHrcOGZFq6ksoRFocM0AbkufkrSmH/x5Ne
+         L/+3x7kdYEMSqbEEQzIazRY77wpgknSNOrHIZPS6OyGTQ4J9BOk4C9MUrJafV+agU9Xa
+         zhcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745420773; x=1746025573;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GTcgf5wGkRP/G2TvF4vXSu8ZLKj7vSHNlv5neOpUl0A=;
+        b=b0ou+WtKqZSUMVgL6WCHS+M+KjQfz9YXfoPKJ56GE5Gx7iYemwugFw+kQcb4vDUYxx
+         u6djzh8WlB1QpsimCvcOKXtemX0QL6eOPsFxpjn3N67/anuzzA65XOs2mONuypvsFl2V
+         X7bCsCnMF2uGOxCkvKQhKVhnBuZbyVNj6fggG57THW9YSB7DF7nDV1HIRSfuqlwyVHAy
+         3yXLF6WlQgERIUuI2RY+lQgvQC/0JFkU0S39WWenDUw+gcM2TTRVl/KsplkKjEbQPMDq
+         vFVRfKmown3C+4mr+qFwhzWBqUd4FZ3/1TAKv1vSYt7nyZ3tnvIPP8S7UAEV/6N0kMEF
+         msMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnGfrbRiupbsuEcUpLxcyBE0TAGMOtkkYMjs8us97d+a18+PjzZAYaWu7H2HBnWRROwjYXz3Si2FoF/NU=@vger.kernel.org, AJvYcCXnnuG97lndTgZM1BCdJkPbnXldrVXcxwBCr0hH7f+fl7BtNJ/JiuhYO/8gf5is0V8gsdM6iYM6OqkcbC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdup+pEM84LTdRQRDp3Lvk3HfJpFd942TNXHBBU/qPfjHeq9u0
+	/C/+g9hf3l/W72htfspZBQnHPazYTvxeYzTt1yZwnLzLzPOGSre3
+X-Gm-Gg: ASbGncuZ0Kd37Gm/SLrPwaC0QZVKEMye4AnaUP5GXiZwzChVuO6zjnYQ4uh9rPIC+Mv
+	VWbFjpt8gU2uAjs/vsgOtfpS7TToW5ohxjBjL/0cd8n1Fgjc4J55zeTmyyRAaT9m5T+6W2L2bCj
+	2Uuvum0VrOSFb+knzsN9cg5ONEeW8Mwhdze/dfUY4jvv6NVnF5xpUZm70hC6P3wXwvzmLoETzjI
+	uy1aNws4Gj2JoGCDJKJn2qWnQXYa2hzD8KkTTnMBXXNlvGnCXVbqH5Lq8fLUCPNVuD/76BaWkS4
+	1RZMUzrBpSE1MDg58sDn30G9cWTO2tcvTQY7CqwxfeRfQVudv2Y0qFR38z6eS/s=
+X-Google-Smtp-Source: AGHT+IEZYUncIM0+Gq7FgAxhpIWNnNJTQ1hwm7juNuxoQt6bm/+vxQDEWXqXzxe7i+iQELNVfASfnQ==
+X-Received: by 2002:a17:903:1b25:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22c5357f266mr285717295ad.14.1745420773250;
+        Wed, 23 Apr 2025 08:06:13 -0700 (PDT)
+Received: from tech-Alienware-m15-R6.. ([223.185.129.6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50ed12cdsm105519825ad.204.2025.04.23.08.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 08:06:12 -0700 (PDT)
+From: Sunny Patel <nueralspacetech@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sunny Patel <nueralspacetech@gmail.com>
+Subject: [PATCH] media: i2c: ov13858: Enable clock frequency macro
+Date: Wed, 23 Apr 2025 20:32:49 +0530
+Message-ID: <20250423150606.26917-1-nueralspacetech@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <Z_5K9Kz2i8TouhC4@kekkonen.localdomain>
+References: <Z_5K9Kz2i8TouhC4@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Mario Limonciello <superm1@kernel.org> writes:
+Define a macro `OV13858_EXTCLK` for the clock frequency (19.2 MHz)
+and use it instead of the hardcoded value in the probe function.
 
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> Introduce documentation for debugging some issues on AMD zen hardware.
-> As one of the debugging techniques read and add information for
-> S5_RESET_STATUS register.
+Signed-off-by: Sunny Patel <nueralspacetech@gmail.com>
 
-I've been assuming that this work will go through the x86 tree; please
-let me know if you'd like me to pick it up instead.
+Thanks for the feedback. I have revised the commit message to use
+correct terminology. And please discard the privious mail as it doesn't
+have correct patch file.
 
-Thanks,
+---
+ drivers/media/i2c/ov13858.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-jon
+diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
+index 7a3fc1d28514..a1242a90cdc9 100644
+--- a/drivers/media/i2c/ov13858.c
++++ b/drivers/media/i2c/ov13858.c
+@@ -21,6 +21,8 @@
+ #define OV13858_REG_SOFTWARE_RST	0x0103
+ #define OV13858_SOFTWARE_RST		0x01
+ 
++#define OV13858_MCLK				19200000
++
+ /* PLL1 generates PCLK and MIPI_PHY_CLK */
+ #define OV13858_REG_PLL1_CTRL_0		0x0300
+ #define OV13858_REG_PLL1_CTRL_1		0x0301
+@@ -1664,7 +1666,7 @@ static int ov13858_probe(struct i2c_client *client)
+ 	u32 val = 0;
+ 
+ 	device_property_read_u32(&client->dev, "clock-frequency", &val);
+-	if (val != 19200000)
++	if (val != OV13858_MCLK)
+ 		return -EINVAL;
+ 
+ 	ov13858 = devm_kzalloc(&client->dev, sizeof(*ov13858), GFP_KERNEL);
+-- 
+2.43.0
+
 
