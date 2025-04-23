@@ -1,226 +1,92 @@
-Return-Path: <linux-kernel+bounces-616074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7822EA986F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4865AA986D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948D65A0AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C524437B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82B92749EC;
-	Wed, 23 Apr 2025 10:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A1426B0A9;
+	Wed, 23 Apr 2025 10:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CZglPaG/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fcWNNml/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7EC2741B7;
-	Wed, 23 Apr 2025 10:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB74A4430;
+	Wed, 23 Apr 2025 10:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745403109; cv=none; b=OIsk/cb3RfCXP/J0/hR7OiiozXt2fIKByxgiqaIE8PYTqefkhppjT8LzQwcR4HUZa6M533sPSs03QLC9OfdiVhsDetsJ4KT4SzKpsbNzHetw3hn4jv3tR4BGjvGr9xLGa5W6lOQ7CEMIwX5VetUf+gakE3NvY/HJcOCHrpYFcus=
+	t=1745403091; cv=none; b=dLDblRsk0GBlRJXCG8iE13qLn5YlCoGCXGvKp3cTRtgKzFRfOWpyT2ecCnsYRyaN4u+wDaTLmz7C7L4VmhwwA3XTWadOfLnqmpWjHFFmKEPETk4rtmVL1zH2a4lw0KwBj8bV9jSRxvGM4A6n1lPV9J7GBYjtcYDQgh8fmmzqJcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745403109; c=relaxed/simple;
-	bh=cIKvuzizy2GK/U5rJ33c7ePxU6KGY6hs1Nj9utVsEFo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QHwByv8rUDrNYsxmYJF+S1/XCuMQxepOx4sZPKrwxQOeqk0jXp8X2YxukCm/Pz5xfzFx4n2s4pHoOI3SDQ3yTGLDgOsxPcD3mjaL4A4RJVLXbP3XmO7BMapjF4zUkB/PG5cxD5CfpQU/HDbOvgmIzyLRYq8OGQuFncfSwRbWRQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CZglPaG/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N0i7SV022437;
-	Wed, 23 Apr 2025 10:11:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cg2vc7IT4AFysQebcXg1sFQ25+QiyXdjEbxwg67yizc=; b=CZglPaG/22Lt/895
-	cxp/sQay+BSvQIlD+W26fi3upi63DUWjm086otICymVvauZthWgCFejT4NmqPilV
-	ONpk9l7svkZUjWKC++TCkpPNgyH19WLk3xA3Q+77FW6W4FJiNcZSiKlf7Y9mjkqS
-	DSo6nSfaC8zympgpr4QxINJlVdpoTP4cg0e7VaKRgkY9fc3mZkiE9XjzMB7QjpHT
-	zqvzKC5ueCZLW3IyWkSGVxCBXDjPtFX2l+EzpN6mEl95dccDytUWk2QOxqaeYaU0
-	Pf0dRt7shvDLVAc8nTPkpiZqbEttpoZEB4RlxoV/tMnIElV9ZGkDw+UH8WOI/T2q
-	JT/3gw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh29r2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 10:11:39 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53NABcbT030654
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 10:11:38 GMT
-Received: from ap-cloud-sh02-lnx.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 23 Apr 2025 03:11:35 -0700
-From: Songwei Chai <quic_songchai@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v4 7/7] coresight-tgu: add reset node to initialize
-Date: Wed, 23 Apr 2025 18:10:54 +0800
-Message-ID: <20250423101054.954066-8-quic_songchai@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423101054.954066-1-quic_songchai@quicinc.com>
-References: <20250423101054.954066-1-quic_songchai@quicinc.com>
+	s=arc-20240116; t=1745403091; c=relaxed/simple;
+	bh=BT0URqQuwfsACm4vF9xOCdDJ48YY41muRXdHRTohRGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u6UqAtLXLeFu1+m6NPJyhIPf9fxhHkn6PBrUs3ARAgq60ScC0UXatZQfeu9ib8UgRAAuk7x3Rk8aiYJmQgIV+8ilKr/qYk45rfeC5jlAK5vRu22620rSkCSS+JlCD32+kXOzQPPIzzL85A9c6Zx+qM/0vEv/YREwmzLZ1vFxRY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fcWNNml/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745403087;
+	bh=BT0URqQuwfsACm4vF9xOCdDJ48YY41muRXdHRTohRGM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fcWNNml/dvVcgeCLvWLmhaz+03YnE1QwDR5CzBDMX7VIzBW2poxomoLaLFVapa6Yg
+	 DYsiJVRG4LJpw5j+bEX6ALNndC6qa7blbyD29czqnVIkznj2YMTjHQLcSgoJ/v4UbE
+	 aoLuv8uFTZ30H30ZMPs/sWmL0lxIkcQ17tRPb4zuLuT6ov5mi8e0ENnCkVudcEglFm
+	 JUxiF93CwtpVHdAD8o541/A5qJj/ViwWJETMCUW0BkyvOEXi9S10q9DhRX4lL0tHig
+	 Fo+jzXe82zzKWFalAmKRmCA/3+udRtEpf+glAWmdT0uCBRA8yav3KiQ3xGVhIogxK+
+	 GIiAKS0ja2Ofg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5943E17E0FF6;
+	Wed, 23 Apr 2025 12:11:27 +0200 (CEST)
+Message-ID: <77edf457-75f3-439a-b3b4-b4b03e319ca4@collabora.com>
+Date: Wed, 23 Apr 2025 12:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mVgfIgoyRZNrd-9AF9KkZNaPDzIR6ppl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA2OCBTYWx0ZWRfX086xUy43VpIW zI9u/RssFUAEUKdtI+R6AFG53XXJR8YDfyTmMlAmeLBVzNCiZvsUXaFxgrrPPL+0pISCp6O9ukM BitxBPZFITGPcuixRGT6CrGCIF3CO8selmgt1VhVJYKndg0FpYg4CcOMQcGtiRNef6pJT8wSuq1
- 1DViVJ8dNVb5ukYuaIY6cwCPd2bugxcm7b0tzpFbeCrb7/jYAl0vZOnCOH6lZm3veBy1/ZnBtqq jJ2GKHtSze98PxXcUhYl6hcJ+Ac0uB8Lp48OZu2QrJcjZr63aI559RSRKbZqEtTzDbLW66PWFrS xg/xgweXb2E0Ww0wYoXMu7a/joLqXTrq6L97/hgbX5J7ZfYGQ5xF/y1uvvg+XaeiDbQf5jW3hor
- AjpmBMsq6M0x4TdifEZ37TdrJf57MR8ebC6kSlcC2lpyg9BjaxYDExbnOHcXTuL3qaTW/7Rj
-X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=6808bcdb cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=TW7uPGGm3D3UErKGQS8A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: mVgfIgoyRZNrd-9AF9KkZNaPDzIR6ppl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-23_06,2025-04-22_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230068
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Add display
+ on DSI0
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250224-mt8395-genio-1200-evk-enable-dsi-panel-v1-1-74f31cf48a43@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250224-mt8395-genio-1200-evk-enable-dsi-panel-v1-1-74f31cf48a43@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add reset node to initialize the value of
-priority/condition_decode/condition_select/timer/counter nodes
+Il 24/02/25 14:34, Louis-Alexis Eyraud ha scritto:
+> This board has a Startek KD070FHFID078 MIPI-DSI panel on the DSI0
+> connector, so add and configure the pipeline connecting VDOSYS0
+> components to DSI0, with the needed pinctrl and display nodes in
+> devicetree.
+> 
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> ---
+> I've tested this patch on a Mediatek Genio 1200 EVK P1V2 board,
+> with a kernel based on linux-next (tag: next-20250224) plus the
+> following patchsets:
+> - MediaTek MT8195/MT8395 Display Controller Graph [1]
+> - Add driver for Himax HX8279 DriverIC panels [2]
+> 
+Applied, thanks!
 
-Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
----
- .../testing/sysfs-bus-coresight-devices-tgu   |  7 ++
- drivers/hwtracing/coresight/coresight-tgu.c   | 75 +++++++++++++++++++
- 2 files changed, 82 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-index 2843cecead55..117e648d2853 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-@@ -42,3 +42,10 @@ KernelVersion   6.15
- Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
- Description:
-                 (RW) Set/Get the counter value with specific step for TGU.
-+
-+What:           /sys/bus/coresight/devices/<tgu-name>/reset_tgu
-+Date:           February 2025
-+KernelVersion   6.15
-+Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
-+Description:
-+                (Write) Write 1 to reset the dataset for TGU.
-diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
-index 4a58f2cb8d8c..b44c876e7cc7 100644
---- a/drivers/hwtracing/coresight/coresight-tgu.c
-+++ b/drivers/hwtracing/coresight/coresight-tgu.c
-@@ -477,6 +477,80 @@ static ssize_t enable_tgu_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(enable_tgu);
- 
-+/* reset_tgu_store - Reset Trace and Gating Unit (TGU) configuration. */
-+static ssize_t reset_tgu_store(struct device *dev,
-+			       struct device_attribute *attr, const char *buf,
-+			       size_t size)
-+{
-+	unsigned long value;
-+	struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+	int i, j, ret;
-+
-+	if (kstrtoul(buf, 0, &value) || value == 0)
-+		return -EINVAL;
-+
-+	if (!drvdata->enable) {
-+		ret = pm_runtime_get_sync(drvdata->dev);
-+		if (ret < 0) {
-+			pm_runtime_put(drvdata->dev);
-+			return ret;
-+		}
-+	}
-+
-+	spin_lock(&drvdata->spinlock);
-+	CS_UNLOCK(drvdata->base);
-+
-+	tgu_writel(drvdata, 0, TGU_CONTROL);
-+
-+	if (drvdata->value_table->priority)
-+		memset(drvdata->value_table->priority, 0,
-+			    MAX_PRIORITY * drvdata->max_step *
-+				drvdata->max_reg * sizeof(unsigned int));
-+
-+	if (drvdata->value_table->condition_decode)
-+		memset(drvdata->value_table->condition_decode, 0,
-+			    drvdata->max_condition_decode * drvdata->max_step *
-+				sizeof(unsigned int));
-+
-+		/* Initialize all condition registers to NOT(value=0x1000000) */
-+	for (i = 0; i < drvdata->max_step; i++) {
-+		for (j = 0; j < drvdata->max_condition_decode; j++) {
-+			drvdata->value_table
-+			->condition_decode[calculate_array_location(
-+			drvdata, i, TGU_CONDITION_DECODE, j)] =
-+			0x1000000;
-+		}
-+	}
-+
-+	if (drvdata->value_table->condition_select)
-+		memset(drvdata->value_table->condition_select, 0,
-+				drvdata->max_condition_select * drvdata->max_step *
-+				sizeof(unsigned int));
-+
-+	if (drvdata->value_table->timer)
-+		memset(drvdata->value_table->timer, 0,
-+			    (drvdata->max_step) *
-+				(drvdata->max_timer) *
-+				sizeof(unsigned int));
-+
-+	if (drvdata->value_table->counter)
-+		memset(drvdata->value_table->counter, 0,
-+			    (drvdata->max_step) *
-+				(drvdata->max_counter) *
-+				sizeof(unsigned int));
-+
-+	dev_dbg(dev, "Coresight-TGU reset complete\n");
-+
-+	CS_LOCK(drvdata->base);
-+
-+	drvdata->enable = false;
-+	spin_unlock(&drvdata->spinlock);
-+	pm_runtime_put(drvdata->dev);
-+
-+	return size;
-+}
-+static DEVICE_ATTR_WO(reset_tgu);
-+
- static const struct coresight_ops_helper tgu_helper_ops = {
- 	.enable = tgu_enable,
- 	.disable = tgu_disable,
-@@ -488,6 +562,7 @@ static const struct coresight_ops tgu_ops = {
- 
- static struct attribute *tgu_common_attrs[] = {
- 	&dev_attr_enable_tgu.attr,
-+	&dev_attr_reset_tgu.attr,
- 	NULL,
- };
- 
+Cheers,
+Angelo
 
