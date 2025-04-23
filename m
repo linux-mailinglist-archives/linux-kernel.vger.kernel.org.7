@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-616820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7667A99685
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:24:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92402A9968D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56031B85C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED716920968
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16428BAB3;
-	Wed, 23 Apr 2025 17:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6942328C5DB;
+	Wed, 23 Apr 2025 17:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Rx4uvcSb"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BBzOXkiD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BEF13B797;
-	Wed, 23 Apr 2025 17:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38892280CDC;
+	Wed, 23 Apr 2025 17:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745429060; cv=none; b=M7QQqxZGyMXUfxtsirOfIj3WG2fbBe9K99f4aV7F5SVLzhm9XcuxQGWP/2PMaTujb63iFqy36kCQ89AuIygozwjn+j+zyQ2Hc4Y9ZTAT6QDFELITyPdJCIWWE3Ms8kWup7aAuXjJwrOos8RlSfML7+kDY+6P1H9x1qjVnLBCYxk=
+	t=1745429135; cv=none; b=Bo+09pFjfe1ns7GUUxJZMjs7BUKDwM+FedDVzPbG0kXAzu67OD/Auk06B3WEJ7+j0hfnXX0CWzdJIw7HuvlBrmvG9RqxPEZY4B/DmzPx3x8n6qaSmbia8lHXL7CaqYD1RUVG0wZ+uoBlm5a5dKTzijQAM3tEVLdeXrBb/rFhzaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745429060; c=relaxed/simple;
-	bh=yeOm1bRB3Atij+ZTfp6eaNb/4+mfC36qGQgJzn4E+sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KmbORZbkUvEH107+x/mo4IPcyRNjD7XNSQcPv7iV7vkOUfU0iDwhwOwQGUYzUKoTOvxew3uhibhzF3/A7KIkaE7c5nS+NBoFEQhrOdo3YrTTRp0dyQmQ4k1tJbr3AQKWSJgaCwSD78Pd7hv0X9YMhgzyH9YTbIaHHOOMAqSWxbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Rx4uvcSb; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53NHNUhb3816392
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 23 Apr 2025 10:23:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53NHNUhb3816392
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745429016;
-	bh=KGV0WbN8TQwHu403QGuVpSGpOVYPp977T4l8EnRBnpo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rx4uvcSbUxH27ZQufmzp9l6akeq6GAi04sDD2NQ2xWVKfdMclJjO/DcJ9bIJk5ZG1
-	 bscfklmB1ttA3gzakhyLww5MWnvMsItmBlyJjingcwZnTTm1oYYfF7Qpf27ZfId+5F
-	 Ez85JANkyjBmXnLXd+PhV1vM7/AIZ5QfjZDbcghLL9pJ+wAI8EdZGxfPPEI8qELUl9
-	 LC09mduxpQ/6PRNDwNsLr8nEp2KuEP/mRBfORYy9GV2SNxTRqCFfrqSv7eOpU1snyu
-	 NzeDiDDgVnY3Qi3mqxpv4Z7c/1Ea5do28c8gpruH0YApRf8wfcUUDz3ihrvAg2jbjw
-	 wfyCSXMbouIaA==
-Message-ID: <08b7e342-61f7-47fe-bc8a-5ce55e658e84@zytor.com>
-Date: Wed, 23 Apr 2025 10:23:29 -0700
+	s=arc-20240116; t=1745429135; c=relaxed/simple;
+	bh=VPDAEHukUbI+oi/4og11d+8ZLIVqGYmsWG4hYtjyuhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+ML2B4m27A9BM4M+dhdNYS1tMFtBJUeRAyTPDctYYtXwm1wpywD0cgJtf1fahibE0jqT43YKXch8QKW9cTfvO1dtzLFLBdG+tpWb3p9uqLnWmWbirf0f8XV4bntscj0/OPPU2fvSooUHtjYXF3+VBD9phkB+b2yTVkMSjTrcEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BBzOXkiD; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745429134; x=1776965134;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VPDAEHukUbI+oi/4og11d+8ZLIVqGYmsWG4hYtjyuhI=;
+  b=BBzOXkiDinigD5GjV7pxJfAJTUlocbUPiZZMLBEwrkbCt/18ntnyySCs
+   EhsVfiSk+vNx9XmRnt8Fzak1v8m7dJcsLN+1LWuK6MqAHo6G0uceYo9xO
+   V6fQtZG83C9IoqRdoC7BeDx5eLAKf2yBb+NfIBZvaw5aglH2ZiILiXpE2
+   nvqZ2xS1s1jGzNOlvpSKP/AY+4W0apFqp2eHQnZF0TrWt0pAgZkQyZ48T
+   1sVteVKWI5JPdVJ7xNMakg2ki/HxxZI/MWjHBpgcqOAL0Y+Aitbp9HXyX
+   5QRToy2zSL8rUDEwvufXrbEyRvUZy6apXP9zz/tVV5zWK0t8SG2yFqEBX
+   g==;
+X-CSE-ConnectionGUID: VBzGLQAETDS/Q9+HlvFXEQ==
+X-CSE-MsgGUID: +oSlkJEgQx29DHQi/wyMSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="50863731"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="50863731"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 10:25:33 -0700
+X-CSE-ConnectionGUID: bMooqzDqQdeZnoEE66eaag==
+X-CSE-MsgGUID: CoVTSh/MTHqyaZCTwy5v8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="132908758"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 23 Apr 2025 10:25:30 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u7dqh-0003Up-2m;
+	Wed, 23 Apr 2025 17:25:27 +0000
+Date: Thu, 24 Apr 2025 01:25:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+Message-ID: <202504240112.hZy9LpvD-lkp@intel.com>
+References: <20250422-iio-introduce-iio_declare_buffer_with_ts-v2-1-3fd36475c706@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 03/34] x86/msr: Rename rdpmcl() to rdpmcq()
-To: Dave Hansen <dave.hansen@intel.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
-        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, luto@kernel.org,
-        boris.ostrovsky@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
-        decui@microsoft.com
-References: <20250422082216.1954310-1-xin@zytor.com>
- <20250422082216.1954310-4-xin@zytor.com> <aAj5F9IZXG7MB0ai@google.com>
- <6211378e-955b-47f4-8688-ec93728f0087@intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <6211378e-955b-47f4-8688-ec93728f0087@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422-iio-introduce-iio_declare_buffer_with_ts-v2-1-3fd36475c706@baylibre.com>
 
-On 4/23/2025 8:06 AM, Dave Hansen wrote:
-> On 4/23/25 07:28, Sean Christopherson wrote:
->> Now that rdpmc() is gone, i.e. rdpmcl/rdpmcq() is the only helper, why not simply
->> rename rdpmcl() => rdpmc()?  I see no point in adding a 'q' qualifier; it doesn't
->> disambiguate anything and IMO is pure noise.
-> 
-> That makes total sense to me.
-> 
+Hi David,
 
-Unable to argue with two maintainers on a simple naming ;), so will make
-the change.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on aff301f37e220970c2f301b5c65a8bfedf52058e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-introduce-IIO_DECLARE_BUFFER_WITH_TS-macros/20250423-061049
+base:   aff301f37e220970c2f301b5c65a8bfedf52058e
+patch link:    https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_ts-v2-1-3fd36475c706%40baylibre.com
+patch subject: [PATCH v2 1/6] iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+config: sh-randconfig-001-20250424 (https://download.01.org/0day-ci/archive/20250424/202504240112.hZy9LpvD-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250424/202504240112.hZy9LpvD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504240112.hZy9LpvD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/iio/industrialio-buffer.c:29:
+>> include/linux/iio/iio.h:813:1: error: static assertion failed: "macros above assume that IIO_DMA_MINALIGN also ensures s64 timestamp alignment"
+     813 | _Static_assert(sizeof(IIO_DMA_MINALIGN) % sizeof(s64) == 0,
+         | ^~~~~~~~~~~~~~
+
+
+vim +813 include/linux/iio/iio.h
+
+   781	
+   782	#define _IIO_DECLARE_BUFFER_WITH_TS(type, name, count) \
+   783		type name[ALIGN((count), sizeof(s64) / sizeof(type)) + sizeof(s64) / sizeof(type)]
+   784	
+   785	/**
+   786	 * IIO_DECLARE_BUFFER_WITH_TS() - Declare a buffer with timestamp
+   787	 * @type: element type of the buffer
+   788	 * @name: identifier name of the buffer
+   789	 * @count: number of elements in the buffer
+   790	 *
+   791	 * Declares a buffer that is safe to use with iio_push_to_buffer_with_ts(). In
+   792	 * addition to allocating enough space for @count elements of @type, it also
+   793	 * allocates space for a s64 timestamp at the end of the buffer and ensures
+   794	 * proper alignment of the timestamp.
+   795	 */
+   796	#define IIO_DECLARE_BUFFER_WITH_TS(type, name, count) \
+   797		_IIO_DECLARE_BUFFER_WITH_TS(type, name, count) __aligned(sizeof(s64))
+   798	
+   799	/**
+   800	 * IIO_DECLARE_DMA_BUFFER_WITH_TS() - Declare a DMA-aligned buffer with timestamp
+   801	 * @type: element type of the buffer
+   802	 * @name: identifier name of the buffer
+   803	 * @count: number of elements in the buffer
+   804	 *
+   805	 * Same as IIO_DECLARE_BUFFER_WITH_TS(), but is uses __aligned(IIO_DMA_MINALIGN)
+   806	 * to ensure that the buffer doesn't share cachelines with anything that comes
+   807	 * before it in a struct. This should not be used for stack-allocated buffers
+   808	 * as stack memory cannot generally be used for DMA.
+   809	 */
+   810	#define IIO_DECLARE_DMA_BUFFER_WITH_TS(type, name, count) \
+   811		_IIO_DECLARE_BUFFER_WITH_TS(type, name, count) __aligned(IIO_DMA_MINALIGN)
+   812	
+ > 813	_Static_assert(sizeof(IIO_DMA_MINALIGN) % sizeof(s64) == 0,
+   814		"macros above assume that IIO_DMA_MINALIGN also ensures s64 timestamp alignment");
+   815	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
