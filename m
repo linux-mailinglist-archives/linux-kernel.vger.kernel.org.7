@@ -1,164 +1,140 @@
-Return-Path: <linux-kernel+bounces-616267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAEBA98A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B4CA98A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D22B3B1E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499443B0A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3B52940D;
-	Wed, 23 Apr 2025 13:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8FD1474DA;
+	Wed, 23 Apr 2025 13:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jebbOYq2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GT6E4KPG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8CB20311
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B0213B797;
+	Wed, 23 Apr 2025 13:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413275; cv=none; b=eEmELn4mNH0kg1wr1BqjvYPn0KkrNOnb0iwWMPRiXJ/pc+aIDTet1gN34Mg1gAB8GljDeKoG8VWWvcv1Xiw1ObeJKtcGpKapLPDPQKzdBuimDCh0RrDKEluk9pokBfhSPCRIrOMlLJSkYppkoj4/CMS5Jut3UTtO2pnecPFl4fE=
+	t=1745413319; cv=none; b=Q9lxKZnqddg4In5YgRx7czKmNtjv4g5HNTd6KYPmVy3m1jRHlfa+u4rTUkNNXJvfXMc7B6yk1Ltzs8Xijqo6m1N1g6PsAcW1f8RAUjK8JhFltZIQmbxngK549+yOuGsI72+2zRiLc4/Or2JJNLUv89SvRI+mFqxBS/LEIa3a5aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413275; c=relaxed/simple;
-	bh=wd9BuDyfY2g+YcmDFO0GJF3WmdKVfVi8IfjkUW9YZzU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=niqrJKsVgUhm0ylTqAageMsigPh3y0VLSiKkXEweb6Req/IYkUzbukwmHN2GR3gjnxkRO0ULd5P9DqbsYYaoEIQMWIxFhdsFglBoKyC6VnvgOW9RX5djnxsrfSThxDSBsoZYkuLZbQ5shmtdtY8LIYyMGE77f/heANAdsoFIvwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jebbOYq2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAiRSB022331
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:01:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xPikF6CHMtboH8wVgZUcnmTj+ScLp41cXAhI3chWQ6s=; b=jebbOYq2L4NxvuWT
-	OgGT6NlsvwUlxEMsseGJeXf+uSDT3Phwfeia/pLvt2f9Mnd3upe0+fLHgPZxcmYs
-	cSyStGCmznyp94Ooi/KJGUQXCvp4rv/3pmWuXf2Z4yLlAvoZqHOXUdUnOcIBckFf
-	QAMokAIUHz7BXCsvvbKnS195TQ1Uzbpk2Ua2wF4j1BKE3djSoH3htCccvH9nzC25
-	g4E7BSfqA7CoIQvAGQemCJrVKhA3dQJb+cavut9Zp+vK54xBguiVItxHrop4Rf6t
-	Cd4mng7hAS2DtGBoB5+xU1iTO/pqAKxjQkj76N0GNGSWPCWAB4BMFsf4nhzpv3BR
-	65supg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh125h3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:01:12 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c545ac340aso37934785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:01:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745413272; x=1746018072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPikF6CHMtboH8wVgZUcnmTj+ScLp41cXAhI3chWQ6s=;
-        b=RTPFZsTIdnU2vNXxbcwCf0yPg0z3oJbcjAZ08+FlzsxNeea7YDXoD+LkajXTXqbdzg
-         NzCx7TI0xvHxlTPPdfY0p50PVGiG2XlUJ7ABa0b+lDCdb4b7D+4tMsodk6zeOL76qa2w
-         JALSkCMBU6MrMkTiZACH1dFmKb44ELjlBm6gMgbsLNxCmVPM8BHmqkoTc9MFrTbBlrYj
-         ZQt6gWLpF8hoHdPNQwf/i2A8/JZAfV/GKsQ/CLk0LPHMabTK0EEluTyOkxdbbS7NpGlk
-         XclI7QZktgeNUPXiODOJNBTXutJ72Lb2cqAC9SOtUOtgRlxehbOSR/7GLP9/XDdu3HpL
-         8M+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX2n2QMybdqCehHXHjTbSYshg5qqJFvfL0CjVixY31AvDGaTn2jLlR2PcvaopbMuTxldjGEj0Pg9yvJG20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmjH3ebPgxuTxB8LUdqSoOfQlZfrHTvMhWyhKQUsxQxRSGV41L
-	NNSlNEa1fBzrrtixZpdDwPo9DhTzL1i8VVF0gTgTL3K0FnZTzEyPYo8r4FJtNsVVXvHEdyCKPI3
-	Rry1wy/3FGabRmic5R/5GsBVvDq0x31awp5XTrU486NpdubIQCtTL8aMGj0VMKnU=
-X-Gm-Gg: ASbGncvRFOp+ZCIEEI6sKWWp2ZO5+5Y7inWo6kkycRWBti+vUYSjEcfA6LT74DU2a/K
-	TSyoHCgcA/9KABKK/g9CLGUptWfbYRSF7zLw0mDGwJtrXmdgaJ5lXlqzlHVQekKhzgiIxkNj/gC
-	7WouD/apbex4tqgZVTEPhOr82WMtg9KCkgEFpfEguJC60gb/O+10q8YhSex4f5OdbAX78ci9KyO
-	qxDCImjikZn+Wyeig7q9QWJxXuFmeXJ2dVMEOpM06GUPTlUVMlq3yDjNL5FnlxFzp1sfSPPnhka
-	9znyZhQZiT0pg5iZO815+6y3mJUlWL051ROqPXvMFeF+4ImBlVaPZeKi3RPtGSkYswc=
-X-Received: by 2002:a05:620a:2584:b0:7c7:a574:c0ac with SMTP id af79cd13be357-7c94d234d2bmr199585085a.3.1745413271771;
-        Wed, 23 Apr 2025 06:01:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvC0BBlTo+m5g1Fq3RkWdluOAVAwUmBFljOPIeXR01i5VEzyjJw3LAtEQjfmCHpr6YmNfHig==
-X-Received: by 2002:a05:620a:2584:b0:7c7:a574:c0ac with SMTP id af79cd13be357-7c94d234d2bmr199580785a.3.1745413271071;
-        Wed, 23 Apr 2025 06:01:11 -0700 (PDT)
-Received: from [192.168.65.183] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefc72fsm809912366b.101.2025.04.23.06.01.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 06:01:10 -0700 (PDT)
-Message-ID: <6662b275-6b8e-40be-b62f-c17ae8e63dfa@oss.qualcomm.com>
-Date: Wed, 23 Apr 2025 15:01:07 +0200
+	s=arc-20240116; t=1745413319; c=relaxed/simple;
+	bh=nr7eK+0dqXRK1d1tXygpO9kC8XuZU4HynoNFnbIr94s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rYNqHtG4aw/AS9xhtNxf5NNGYGO6T62bvheb+0i64WQ9v2oKu+IxiP14u73e2bdmaxAPeZjRK0bwJ8g6hbYxPLrjXJRuy/9A08sxHKQom8o6jof3JhShjC+3heKSJn3djTmVjOLO0QFGfQSjKx93hmrGAjcR5+AMUkx7yj14ZGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GT6E4KPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B33C4CEE2;
+	Wed, 23 Apr 2025 13:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745413319;
+	bh=nr7eK+0dqXRK1d1tXygpO9kC8XuZU4HynoNFnbIr94s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GT6E4KPGX1gTcnndAeGg/LyYOg5GRjXy0BFKn0uMevUJmalFrX/Y5DwMLkQzJ4UhY
+	 SsBr6/yh6rqk0JNhmM7aqtsv4GKeFz5kRNX/8lKlMpUjL3ax3eeDo65mWg8yKqI1pJ
+	 RkGBXgb/E4HVJuankYkR9WPlFT3ojrT/KyJFeyoPDpja4HfrQXifk2xPnZQ8I3fjdC
+	 JdgV58it8RiGMpsvMXg8z3jvgqZHB7wbRNICHBmt9j1XoBuW6FasR6HOHNi1hEiCQo
+	 M4rCeTaU7q94mxNKs0MnE/SfTzNroT8ikSa/3evf6L6dOdono5GZPk4SOaV9WEL1HJ
+	 lM9TszioR2lAg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,  Boqun
+ Feng <boqun.feng@gmail.com>,  FUJITA Tomonori <fujita.tomonori@gmail.com>,
+  Frederic Weisbecker <frederic@kernel.org>,  Thomas Gleixner
+ <tglx@linutronix.de>,  Anna-Maria Behnsen <anna-maria@linutronix.de>,
+  John Stultz <jstultz@google.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  Benno Lossin <benno.lossin@proton.me>,  Alice Ryhl
+ <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,  Danilo
+ Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 8/8] rust: hrtimer: Add HrTimer::expires()
+In-Reply-To: <20250415195020.413478-9-lyude@redhat.com> (Lyude Paul's message
+	of "Tue, 15 Apr 2025 15:48:29 -0400")
+References: <20250415195020.413478-1-lyude@redhat.com>
+	<20250415195020.413478-9-lyude@redhat.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 23 Apr 2025 15:01:41 +0200
+Message-ID: <87cyd3kp56.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] Enable QUPs and Serial on SA8255p Qualcomm
- platforms
-To: Praveen Talari <quic_ptalari@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
-        quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
-        quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com
-References: <20250418151235.27787-1-quic_ptalari@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250418151235.27787-1-quic_ptalari@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: OlycTGwy4ggMjBxcL5Rwp3O3QUsW6uWX
-X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=6808e498 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=NEAV23lmAAAA:8 a=TM_zcG2lH5YfWnRg5aMA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: OlycTGwy4ggMjBxcL5Rwp3O3QUsW6uWX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5MSBTYWx0ZWRfX/7E7GbWl1HLd nmY+RMftVVMLXAlt60epB+fPXYnj87H/ydIgtjSTbkgrROlNgSIpbcZk2JtV53IyveVtGppjCWc WzOzfphel2N6AaGcSTt60eyvF4JxC+OuKqe8eZBmW04AKoFeF86sSoURXCGiaGT41t24xunAMjI
- EDYEK355Dicuv3V22lXEejuDezilZvBM1Ky2tfibMhMWXsJ2/qTIW1t6kcby5293q8htPE2FqHp +mhwcdTiUwwa6KND1Hpi9BtqqtKuT0aYXuzFAtIuqITKaUzMlcnKDiGB3oh/Y2pkgmpt+bbOXgG r6t+1d3nrXWuntmEhoMXoDlFPdj3HkPqPBKhvZxMZ1ouRDKLODOUSH2lbTqowDYWNBGorIPEOdU
- PguZpD48FEGe3Ttawzy3BPiJp/SqupDFYf2SFaZpZAy15jKCJv2rqlDeZVRCTPR/FTNPyYWN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=928 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230091
+Content-Type: text/plain
 
-On 4/18/25 5:12 PM, Praveen Talari wrote:
-> The Qualcomm automotive SA8255p SoC relies on firmware to configure
-> platform resources, including clocks, interconnects and TLMM. The device
-> drivers request resources operations over SCMI using power and
-> performance protocols.
-> 
-> The SCMI power protocol enables or disables resources like clocks,
-> interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
-> such as resume/suspend, to control power states(on/off).
-> 
-> The SCMI performance protocol manages UART baud rates, with each baud
-> rate represented by a performance level. Drivers use the
-> dev_pm_opp_set_level() API to request the desired baud rate by
-> specifying the performance level.
-> 
-> The QUP drivers are SCMI clients, with clocks, interconnects, pinctrl
-> and power-domains abstracted by a SCMI server.
+Lyude Paul <lyude@redhat.com> writes:
 
-So I recently started working on abstracting away power controls from
-the SE protocol drivers into a single place, among other improvements
+> This adds the ability to read the expiry time of the given timer.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>
+> ---
+> V2:
+> * Convert from Ktime to Instant
+> * Use read_volatile instead of read and add a FIXME
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  rust/kernel/time/hrtimer.rs | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index c84dcdacb4882..b8a74c15e6609 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -73,7 +73,10 @@
+>      time::{Delta, Instant},
+>      types::Opaque,
+>  };
+> -use core::{marker::PhantomData, ptr::NonNull};
+> +use core::{
+> +    marker::PhantomData,
+> +    ptr::{addr_of, NonNull},
+> +};
+>  use pin_init::PinInit;
+>  
+>  /// A timer backed by a C `struct hrtimer`.
+> @@ -136,7 +139,7 @@ unsafe fn raw_get(this: *const Self) -> *mut bindings::hrtimer {
+>          // SAFETY: The field projection to `timer` does not go out of bounds,
+>          // because the caller of this function promises that `this` points to an
+>          // allocation of at least the size of `Self`.
+> -        unsafe { Opaque::raw_get(core::ptr::addr_of!((*this).timer)) }
+> +        unsafe { Opaque::raw_get(addr_of!((*this).timer)) }
+>      }
+>  
+>      /// Cancel an initialized and potentially running timer.
+> @@ -225,6 +228,21 @@ pub fn forward(&mut self, now: Instant, duration: Delta) -> u64 {
+>      pub fn forward_now(&mut self, duration: Delta) -> u64 {
+>          self.forward(self.clock_base().time(), duration)
+>      }
+> +
+> +    /// Return the time expiry for this [`HrTimer`].
+> +    ///
+> +    /// This value should only be used as a snapshot, as the actual expiry time could change after
+> +    /// this function is called.
+> +    pub fn expires(&self) -> Instant {
+> +        // SAFETY: `self` is an immutable reference and thus always points to a valid `HrTimer`.
+> +        let c_timer_ptr = unsafe { HrTimer::raw_get(self) };
+> +
+> +        // SAFETY: There's no actual locking here, a racy read is fine and expected.
+> +        Instant::from_nanos(unsafe {
+> +            // FIXME: read_volatile
 
-A snapshot of this work is available here
+Please adopt similar wording as in `file.rs`:
 
-https://github.com/quic-kdybcio/linux/commits/topic/single_node_genise/
+        // This `read_volatile` is intended to correspond to a READ_ONCE call.
+        // FIXME(read_once): Replace with `read_once` when available on the Rust side.
 
-(not yet 100% ready..)
 
-I think it'd make sense to get it done first, so that we can condense
-most of your changes in the common driver, where we'd swap out the clock
-handling for perf level setting instead
+Best regards,
+Andreas Hindborg
 
-Konrad
+
 
