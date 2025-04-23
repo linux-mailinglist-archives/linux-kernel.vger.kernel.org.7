@@ -1,91 +1,87 @@
-Return-Path: <linux-kernel+bounces-616262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D33A98A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F39A98A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16400189E47D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4FB3AA992
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906A5C133;
-	Wed, 23 Apr 2025 12:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B91BE4A;
+	Wed, 23 Apr 2025 12:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/MDVqo4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SyY+MpGo"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDBC4C62;
-	Wed, 23 Apr 2025 12:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4611D2701D7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 12:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745412691; cv=none; b=KxTv6jXVG/J3GblnvBRwMrd/rlB2tDazJH8OYscMcXTzBq8tOu5vGoKjlPJuWlD+qt8CkmWZ4pPsEraVUMNNX7ipUH6AVHpz3Hzpl3tGkQdaPDCpCEMPB4KezsP9FK3GzRpn+GrhdGIyMMcKy5RfCXaZlhFCKHFZ+w9AJr19PM4=
+	t=1745412843; cv=none; b=Z7hT4nqMjpmA9afb3W/vVL3JYCoUH7gmo9KQ9FtRQs6S66q7qOX/AR39e2mAUBQdY9iZZf5fXuCQrPSSQlZa4sVdSi21Z60bdeezYdmwe0dp+Jm3AHE6/bKN+ztDvQgbkbU5lG1SueJ+GZP9sMaSj5tXk4AEosknrSUS4IQ4/FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745412691; c=relaxed/simple;
-	bh=O24AVo87Xl3zKaU3Z4Nac3ocv+3MkbB4zf+ZspP3r6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uF6NTOzhNs9IU9lmw51fqskrQICT9TuzHgLOVAh4fKIBueIzT4xhrjHm1/Um3kPqKp/kwe57gzFM4tShrJm81dhDTOEtSwYbNBzTgLfY5kf+LHu2EgGy4H+arr6uoCp7RZq+qZ4Q+8A7yrw8p+Dt7F7si5nq0nbBNemy1uH2NDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/MDVqo4; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745412690; x=1776948690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O24AVo87Xl3zKaU3Z4Nac3ocv+3MkbB4zf+ZspP3r6c=;
-  b=i/MDVqo4WT85uCQOsh9DBKxyoRCyhKMB+nOaW7lm1CMt/QUlth4vc/of
-   HiBUsgL1JHJNK6TuMPSDYxIyss9U/03bvsu8iBH0QvK6xy2OBL6nst0Sr
-   jCUwnEFWm2uB1dcG/VXC61hXCNlIkafjmwXMJJaWeBnfeKVEBIRzNP1Dp
-   Lzv1oPvtjsPeOf8W/dFtlQHFiGa/3w9N1dEKJiVKfZ/soRW92Yr8uSLwL
-   HvEysBfEGeX9ufmnLL+pJRyKE/lXPErQlJ6mIRRW2FiMb7Osf1HNsqkIP
-   n0oQ84Rf/jRY4z9IirU3f4QXVF1rvTSHEBjOnYgRg74gYB9S1m606gC2c
-   A==;
-X-CSE-ConnectionGUID: M7bjXovzTaCWp2t5ONGCsg==
-X-CSE-MsgGUID: pS0Qxy02QEWBKf/SHXQW+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50665060"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="50665060"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:51:29 -0700
-X-CSE-ConnectionGUID: h88h5D9OT66vHIycEe6hZw==
-X-CSE-MsgGUID: OfANx+SmSLGfjdfkMYLzCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="137465673"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:51:26 -0700
-Date: Wed, 23 Apr 2025 15:51:21 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: eugen.hristev@linaro.org, mchehab@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, hugues.fruchet@foss.st.com,
-	alain.volmat@foss.st.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, andriy.shevchenko@linux.intel.com,
-	sakari.ailus@linux.intel.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Convert media drivers to use devm_kmemdup_array()
-Message-ID: <aAjiSa_TD1r6Sqrn@black.fi.intel.com>
-References: <20250409084738.1851463-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1745412843; c=relaxed/simple;
+	bh=NHdZjySggeTDKobceZS9DQ5Yfvb8aCo2uv+8BnJA33g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QaXvg9xIakW1zG9hmo0hyDFhRLD77O4Ez44fBn48DXbJbM+TS7PlmbJ7Ghs9lmpA4gpTwE8LALTQabR1oiRlwQQKo9UWjdl/GNa+ogiTJqtE9+GekXkMJSgvLCdydSqtjesQv7Fn2Tgv3jRGK/yTG72+ebwatABc/ouA8uZsu/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SyY+MpGo; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745412838;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FVH6kGTenEWZHy8NHiK0SANB1ahHff4reeRNMe869nw=;
+	b=SyY+MpGoXUy1WPK3S/KJW8Nt7cTxfHFbxaM65qSxxnSVUmgzu6sRQNtMtAPfx1gQ+G+03v
+	2j015L8tU8J270Fqs+AGcFvfQ954wNZpvejqdgyVP5lad43BJn3GMOJS0O3yzg9cYsoBYq
+	X5lqIF24Po77teCff15cPCYqzxH7CpM=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: linux-kernel@vger.kernel.org
+Cc: mrpre@163.com,
+	mkoutny@suse.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	syzbot+01affb1491750534256d@syzkaller.appspotmail.com,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH v1] workqueue: annotate data-races around pwq->stats
+Date: Wed, 23 Apr 2025 20:53:41 +0800
+Message-ID: <20250423125341.503659-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409084738.1851463-1-raag.jadav@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 09, 2025 at 02:17:36PM +0530, Raag Jadav wrote:
-> This series converts media drivers to use the newly introduced[1]
-> devm_kmemdup_array() helper.
-> 
-> [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
+Suppress warning by annotating these accesses using
+READ_ONCE() / WRITE_ONCE().
 
-Bump. Any guidance on this?
+Reported-by: syzbot+01affb1491750534256d@syzkaller.appspotmail.com
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+---
+ kernel/workqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Raag
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index cf6203282737..d78640b5d188 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -3241,7 +3241,7 @@ __acquires(&pool->lock)
+ 	 * point will only record its address.
+ 	 */
+ 	trace_workqueue_execute_end(work, worker->current_func);
+-	pwq->stats[PWQ_STAT_COMPLETED]++;
++	WRITE_ONCE(pwq->stats[PWQ_STAT_COMPLETED], READ_ONCE(pwq->stats[PWQ_STAT_COMPLETED]) + 1);
+ 	lock_map_release(&lockdep_map);
+ 	if (!bh_draining)
+ 		lock_map_release(pwq->wq->lockdep_map);
+-- 
+2.47.1
+
 
