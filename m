@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-615745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562ACA981E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5C0A981F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C22BF7ADF01
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA041889AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3393C274FFE;
-	Wed, 23 Apr 2025 07:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3ED9278E4A;
+	Wed, 23 Apr 2025 07:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcoAG/Ea"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sauz9oQE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A367426FA41;
-	Wed, 23 Apr 2025 07:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0013277000;
+	Wed, 23 Apr 2025 07:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394841; cv=none; b=Pni41TDVjuEWJ2JhvCSVgo1FVnFBZ4AYhDzxqMZoQPv88M0CluJYpwS0T5LrEZ2Rm/TnrLYkBkp19RmLSwyMsv6fpx71wWyEoLcii1zag4APfAH5fp+huLrMUYZ+poJn1V42dFvsnAdS1E2+cJJdGlielB8SMHHwUiFfiC6nG8o=
+	t=1745394848; cv=none; b=u/Gbrp1c/fRVY7/JqnxHyzQKSqvyXJAQydX45gC53O3wkDGjkEpu1IJpDG+bC6DptJluA+rqYprftZL4J/tjptcy9/tGjNAUepYiu6ikky8iisaC3BN6KxhnthuzGRNpb1z54V/n/ULIFkxSzUK/GHdV3gDJYLH7k8TcOLdya/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394841; c=relaxed/simple;
-	bh=v7rNe7nvrKZC9xeVLWg4sajLhvuKnW8g13iiuAlRy0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Laut9+tWuU1eL5jb+uZITKtn+ltnkGC/3qlW5ELd34Ye83uTxT2UE8MyaIeDyH9YwXkfMgzCRPZHN/Mg0l+V/j9irtrpJ/zws+WVStHYcSYs0q2ddrWOhwaknglh88ZwH48p8tu2gN/0dm40R8PJJJlJ6dcBl2huJCtKfRJOivY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcoAG/Ea; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5F5C4CEE2;
-	Wed, 23 Apr 2025 07:53:55 +0000 (UTC)
+	s=arc-20240116; t=1745394848; c=relaxed/simple;
+	bh=BgLyIthlR1ViWBWQqISVLsAmPUpfYVKzJ2Vwu2Qx03Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ONTbSoyDoi60NhxyDnKOJMnbyD8G0JihB4t5aSkEHOjTguDvp4009T7q0An6OUSb+ZcbIIWBjfXiWVQrdpjM94NvZLL5TfW9SpLaQgkxvj6COeZGieJQ6NtmBHkxtNRRk87HSQBHR0qguTazkUTTgeGS0l2oyjFWRJEY1zoE8YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sauz9oQE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9990C4CEE2;
+	Wed, 23 Apr 2025 07:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394841;
-	bh=v7rNe7nvrKZC9xeVLWg4sajLhvuKnW8g13iiuAlRy0Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gcoAG/EakeRu4xIJsNGLcFvYpG6bri74lrJc4kE4urHhx5i2BgE+zpSj3EKJgoqfb
-	 9RLg+F7f+GbWG4KAR9CpIxTLZwc8b6Budo/7/Fh/7Sfq4FGzhZIEiQcAk+ujDno1H1
-	 rF2XXFwmOiwhFp7BdsjgLWWxi2DTit3a/+BUsJ+fAi5hjYUmDwh4KfaZDsDv3b/68N
-	 KMGdZSwS6bfMGHZHPpwa88qnl5e/Mo2etRphJmwUKRESJ+YBFALh3xDbzEIf1qT7jT
-	 n5UoFoZdrp6zwKyFRSsV5axpO/XVS/sQQ8WC9Qy5aL+F+OBs+aqlod9iNiUL/2u+uM
-	 AMKW87Knd3GrQ==
+	s=k20201202; t=1745394847;
+	bh=BgLyIthlR1ViWBWQqISVLsAmPUpfYVKzJ2Vwu2Qx03Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Sauz9oQEHQK7J51glj74IIddjBbegHfZpGbMfIAEbaBRYxDQGQTRZRSeXMzvOTxpa
+	 cZORTi2JrxT+/Y+DYWTvOEc/CR2EzlK00NHsDkA1t9tSzNc2owh/QnWr3NGI2EF575
+	 0CW2hrc/H78gBMPRxUadygGej/OABMGq8ziMvhHWsLxUeL4w85rR9aIUQjacEEXp+j
+	 iBfnoR8blEj11N190FI818WsNbg0obJZyn4kn7oVNmwoYQTtXPUb10VtyAbATHbFra
+	 8+eI5RURiLrp60/B4W7TCZKaM6MsVcQXK65vGudp4sPPoXC3OOSew8HCruWZFdNZ2Y
+	 hQJSZ7C2X2qTg==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -58,10 +59,12 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/28] ALSA: Phase out hybrid PCI devres API
-Date: Wed, 23 Apr 2025 09:53:18 +0200
-Message-ID: <20250423075346.45907-1-phasta@kernel.org>
+Subject: [PATCH v2 01/28] ALSA: sonicvibes: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:19 +0200
+Message-ID: <20250423075346.45907-2-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
+References: <20250423075346.45907-1-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,97 +73,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes in v2:
-  - Add RB from Andy
-  - Remove ASoC patches, branch out this series for Alsa. (Andy)
+pci_request_regions() is a hybrid function which becomes managed if
+pcim_enable_device() was called before. This hybrid nature is deprecated
+and should not be used anymore.
 
-Hi,
+Replace pci_request_regions() with the always-managed function
+pcim_request_all_regions().
 
-a year ago we spent quite some work trying to get PCI into better shape.
-Some pci_ functions can be sometimes managed with devres, which is
-obviously bad. We want to provide an obvious API, where pci_ functions
-are never, and pcim_ functions are always managed.
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ sound/pci/sonicvibes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thus, everyone enabling his device with pcim_enable_device() must be
-ported to pcim_ functions. Porting all users will later enable us to
-significantly simplify parts of the PCI subsystem. See here [1] for
-details.
-
-This patch series does that for sound.
-
-Feel free to squash the commits as you see fit.
-
-P.
-
-[1] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/pci/devres.c#L18
-
-Philipp Stanner (28):
-  ALSA: sonicvibes: Use pure devres PCI
-  ALSA: rme96: Use pure devres PCI
-  ALSA: rme32: Use pure devres PCI
-  ALSA: ens1370: Use pure devres PCI
-  ALSA: cmipci: Use pure devres PCI
-  ALSA: via82: Use pure devres PCI
-  ALSA: sis7019: Use pure devres PCI
-  ALSA: intel8x: Use pure devres PCI
-  ALSA: fm801: Use pure devres PCI
-  ALSA: es19x8: Use pure devres PCI
-  ALSA: azt3328: Use pure devres PCI
-  ALSA: als: Use pure devres PCI
-  ALSA: oxygen: Use pure devres PCI
-  ALSA: lx6464es: Use pure devres PCI
-  ALSA: vx222: Use pure devres PCI
-  ALSA: trident: Use pure devres PCI
-  ALSA: rme9652: Use pure devres PCI
-  ALSA: ymfpci: Use pure devres PCI
-  ALSA: riptide: Use pure devres PCI
-  ALSA: nm256: Use pure devres PCI
-  ALSA: ice: Use pure devres PCI
-  ALSA: emu10k1: Use pure devres PCI
-  ALSA: echoaudio: Use pure devres PCI
-  ALSA: cs5535: Use pure devres PCI
-  ALSA: cs46xx: Use pure devres PCI
-  ALSA: ca0106: Use pure devres PCI
-  ALSA: ali5451: Use pure devres PCI
-  ALSA: maestro3: Use pure devres PCI
-
- sound/pci/ali5451/ali5451.c         | 2 +-
- sound/pci/als300.c                  | 2 +-
- sound/pci/als4000.c                 | 2 +-
- sound/pci/azt3328.c                 | 2 +-
- sound/pci/ca0106/ca0106_main.c      | 2 +-
- sound/pci/cmipci.c                  | 2 +-
- sound/pci/cs46xx/cs46xx_lib.c       | 2 +-
- sound/pci/cs5535audio/cs5535audio.c | 2 +-
- sound/pci/echoaudio/echoaudio.c     | 2 +-
- sound/pci/emu10k1/emu10k1_main.c    | 2 +-
- sound/pci/emu10k1/emu10k1x.c        | 2 +-
- sound/pci/ens1370.c                 | 2 +-
- sound/pci/es1938.c                  | 2 +-
- sound/pci/es1968.c                  | 2 +-
- sound/pci/fm801.c                   | 2 +-
- sound/pci/ice1712/ice1712.c         | 2 +-
- sound/pci/ice1712/ice1724.c         | 2 +-
- sound/pci/intel8x0.c                | 2 +-
- sound/pci/intel8x0m.c               | 2 +-
- sound/pci/lx6464es/lx6464es.c       | 2 +-
- sound/pci/maestro3.c                | 2 +-
- sound/pci/nm256/nm256.c             | 2 +-
- sound/pci/oxygen/oxygen_lib.c       | 2 +-
- sound/pci/riptide/riptide.c         | 2 +-
- sound/pci/rme32.c                   | 2 +-
- sound/pci/rme96.c                   | 2 +-
- sound/pci/rme9652/hdsp.c            | 2 +-
- sound/pci/rme9652/rme9652.c         | 2 +-
- sound/pci/sis7019.c                 | 2 +-
- sound/pci/sonicvibes.c              | 2 +-
- sound/pci/trident/trident_main.c    | 2 +-
- sound/pci/via82xx.c                 | 2 +-
- sound/pci/via82xx_modem.c           | 2 +-
- sound/pci/vx222/vx222.c             | 2 +-
- sound/pci/ymfpci/ymfpci_main.c      | 2 +-
- 35 files changed, 35 insertions(+), 35 deletions(-)
-
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index c30eaf1038e7..808a793ff4da 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1227,7 +1227,7 @@ static int snd_sonicvibes_create(struct snd_card *card,
+ 	sonic->pci = pci;
+ 	sonic->irq = -1;
+ 
+-	err = pci_request_regions(pci, "S3 SonicVibes");
++	err = pcim_request_all_regions(pci, "S3 SonicVibes");
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
 2.48.1
 
