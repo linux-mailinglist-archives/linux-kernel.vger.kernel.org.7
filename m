@@ -1,179 +1,103 @@
-Return-Path: <linux-kernel+bounces-616692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFDAA9948B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B9EA99432
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF45163D3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D969A088B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF05527A108;
-	Wed, 23 Apr 2025 16:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F492989AA;
+	Wed, 23 Apr 2025 15:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OV/ltiR1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DDC266F1E;
-	Wed, 23 Apr 2025 16:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ncaZrwL5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AD81A08A4;
+	Wed, 23 Apr 2025 15:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745424324; cv=none; b=Ja7aOSXoTnZHnHLjEqKGQK05MJWXeYILI5miQZI0XxPFT3detcaWKz8UuF7goKRBVXwuXWCjnAZwsrzOxbAzygalLZ4GYxe0Y0bAm6Y5UE6sws6hMilDqResY1/Tt9/6vm2aF1/HD42Y58DE/qrvP5k3h8Oq0tT9gzF+yZjHdbQ=
+	t=1745422432; cv=none; b=fH9v9InmG+rwVHTw0X4oTn8noUqydtHVOfsFLf5wfQdM6AVeRoE1cz9zmvDkd7QbW6S6dVGQxNhc+6DBdTmxP/gk0ZggkUO3FctBrxEaFncXc+Odu2u081dI4QO80yxl5s4OYERnTjfGF0Y1ZQLi7Wuoa3PC2t2COuQ0Cmj6c80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745424324; c=relaxed/simple;
-	bh=3dzRklZ7ar/Z+lU1ajuWagKEaicvxwAoj0zZhUgFqyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6VcO2S2Z+H+aUKMDlgsZ7GziGlB/Ljq1MKTP3JKquBFPxQWHBuuuJyPJ36DsXHQMMNctvSTHlJROQGykCWUdFzubT48Yx+ejVB72zY/0WuUb1IT0KxByjOz5zFmgb4Ru8dhVTe+EYuMgKxUPPIEFHfdSON0wKUM0ZtZkdNVrGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OV/ltiR1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DBC2C4CEE2;
-	Wed, 23 Apr 2025 16:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745424324;
-	bh=3dzRklZ7ar/Z+lU1ajuWagKEaicvxwAoj0zZhUgFqyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OV/ltiR1ERJ/AQvFsoBmHQRfj7XCg7hAlEvlNF+59sBqJtvlYuFUiigte5E6B310i
-	 o4y//LjXvcvN6iyvVHJ560aT5DzeFfqb2ZuODIgFyvfDdKdgGoT+fPwROz/Fij6oAt
-	 zp6zYc9DHjLE8t69TyUcLM13PqSj2md1K8cvrs1k=
-Date: Wed, 23 Apr 2025 16:50:48 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
- allocation failure
-Message-ID: <2025042355-hypnotize-relight-789f@gregkh>
-References: <2024122837-CVE-2024-56705-049b@gregkh>
- <aAicoAmxX0B_O3Ok@tiehlicka>
- <2025042301-flammable-masculine-ec48@gregkh>
- <aAiwaM5ru-FJG2fI@tiehlicka>
- <2025042329-mystify-dramatic-dcb9@gregkh>
- <aAjOK_f-GPFHIdWK@tiehlicka>
+	s=arc-20240116; t=1745422432; c=relaxed/simple;
+	bh=HKLmHV0ZtG/a4Tkd0yHHJS/176AZM+g1/tCMQTabZzk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P3ZRLhlUo+Nnc6OwYmYzW5OctZk4oapgkshkkjmZeBHwm7SHaMgeZz3ZxfZuBsVYrY7LsctJWsoGb2MZe6hhEXpcwB5luwgfFUHjfT9NPx9GOZtt4a3WOOYKiX2osfwONU9CFeh/19dLJ+2TY6paGPsnYopZm0cyigruCQsPTZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ncaZrwL5; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EY9gG
+	G+ynYNdnB1j3/6lY26zStHwpPSt9Msjmy1Whvk=; b=ncaZrwL59hzIp0+ge+E0O
+	21ImkguoI3jiNwf6M03zCOVeA1Qr2/j03j49kF53eQc5Y95yKEN0tyND4Nso5iwW
+	O6WaIetY+zY1U4VcCxKcPmvaNkSb+xWD7BzvwQqpR2bEnrD4lOTfidVZ2giP6dSW
+	uInkZC3qjQJfWEHQVvc7ko=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCnosAACAlogeYfCA--.9428S3;
+	Wed, 23 Apr 2025 23:32:19 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de
+Cc: manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	shawn.lin@rock-chips.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: [PATCH v3 1/3] PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+Date: Wed, 23 Apr 2025 23:32:12 +0800
+Message-Id: <20250423153214.16405-2-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250423153214.16405-1-18255117159@163.com>
+References: <20250423153214.16405-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAjOK_f-GPFHIdWK@tiehlicka>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnosAACAlogeYfCA--.9428S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw1kCw48Gw15WrykXrW8WFg_yoWkXrXE9r
+	yUuF4xXryDKrWSk392yw4xZFn0yas7ur1xGFZYgFsIva47Kr4rXry8ZrWrX3WDGr43JFyf
+	t34vyF4ruayxtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_66wJUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxg4o2gJAM7G6gAAsb
 
-On Wed, Apr 23, 2025 at 01:25:31PM +0200, Michal Hocko wrote:
-> On Wed 23-04-25 12:20:47, Greg KH wrote:
-> > On Wed, Apr 23, 2025 at 11:18:32AM +0200, Michal Hocko wrote:
-> > > On Wed 23-04-25 10:21:04, Greg KH wrote:
-> > > > On Wed, Apr 23, 2025 at 09:54:08AM +0200, Michal Hocko wrote:
-> > > > > Hi,
-> > > > > our internal tools which are working with vulns.git tree have noticed
-> > > > > that this CVE entry has been altered after the announcement.
-> > > > 
-> > > > Good catch!
-> > > > 
-> > > > > There was an additional commit added to the CVE entry. The current state
-> > > > > is
-> > > > > $ cat cve/published/2024/CVE-2024-56705.sha1
-> > > > > ed61c59139509f76d3592683c90dc3fdc6e23cd6
-> > > > > 51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
-> > > > 
-> > > > Yup!
-> > > > 
-> > > > > There seem to be handful of other cases like this one AFAICS.
-> > > > 
-> > > > Yes, we had to add support for this type of problem.
-> > > > 
-> > > > > I have 3 questions:
-> > > > > 1) What is 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
-> > > > >    relation to the original CVE which seems to be about a missing memory
-> > > > >    allocation failure check?
-> > > > 
-> > > > Removing the driver entirely from the kernel "fixed" the vulnerability :)
-> > > 
-> > > What is _the_ vulnerability? While I do understand that _any_ potential
-> > > vulnerability in the removed code is removed as well I still do not see
-> > > how the driver removal is related to _this_ specific CVE.
-> > 
-> > "The" vulnerability is what is fixed in the last commit id, and is what
-> > is documented in the text of the CVE, specifically:
-> > 
-> > 	In ia_css_3a_statistics_allocate(), there is no check on the allocation
-> > 	result of the rgby_data memory. If rgby_data is not successfully
-> > 	allocated, it may trigger the assert(host_stats->rgby_data) assertion in
-> > 	ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
-> 
-> I do understand this statement.
+The PCIE_CLIENT_GENERAL_DEBUG register offset is defined but never
+used in the driver. Its presence adds noise to the register map and
+may mislead future developers.
 
-That is the commit information, and as such we deemed it a
-vulnerability.
+Remove this redundant definition to keep the register list minimal
+and aligned with actual hardware usage.
 
-> 
-> > That has not changed here at all.  It's just that the ranges of git
-> > versions for when Linux was vulnerable to this issue has been "tightened
-> > up" to only reflect when it was possible for this to be a problem (i.e.
-> > we now do not count the range of releases where the driver was not
-> > present at all in the kernel tree.)
-> 
-> But I fail to follow this. The commit itself says Fixes: a49d25364dfb
-> ("staging/atomisp: Add support for the Intel IPU v2") which makes it
-> clear since when the issue has been introduced. If this tag was not
-> present then there is CVE-$FOO.vulnerable which can specify the same
-> thing. I do not understand how 51b8dc5163d2 is related as it has a
-> different implementation of ia_css_3a_statistics_allocate that doesn't
-> have any unchecked kernel allocations AFAICS.
+Signed-off-by: Hans Zhang <18255117159@163.com>
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
+---
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Ah, ok, that changes things.  The person who said that we should count
-the previous version of the driver said it was vulnerable at that point
-when it was in the kernel tree.  If this isn't the case, we will be glad
-to change this CVE to reflect that.
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index 0e0c09bafd63..fd5827bbfae3 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -54,7 +54,6 @@
+ #define PCIE_CLIENT_GENERAL_CONTROL	0x0
+ #define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
+ #define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
+-#define PCIE_CLIENT_GENERAL_DEBUG	0x104
+ #define PCIE_CLIENT_HOT_RESET_CTRL	0x180
+ #define PCIE_CLIENT_LTSSM_STATUS	0x300
+ #define PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
+-- 
+2.25.1
 
-> > > > > 2) What is the process when a CVE is altered? have I missed any email
-> > > > >    notification?
-> > > > 
-> > > > We do not do email notifications when CVEs are altered.  You have to
-> > > > watch the cve.org json feed for that.  Otherwise the email list would
-> > > > just be too confusing.  Think about every new stable update that happens
-> > > > which causes 10+ different CVEs to be updated showing where they are now
-> > > > resolved.  That does not come across well in an email feed, but the json
-> > > > feed shows it exactly.
-> > > 
-> > > I do understand you do not want to send notifications for that. Would it
-> > > make sense to announce a new upstream commit added to the CVE, though? This
-> > > would make it much easier to see that we might be missing a fix that is
-> > > considered related to a particular CVE.
-> > 
-> > As this has only happened 2 times so far, it's a pretty rare occurance
-> > given us allocating over 6000 CVEs.  And how exactly would that email
-> > look like?
-> 
-> We have identified that CVE-$FOO fix has been incomplete so far and
-> extended list of fixes required for this CVE. Please make sure that
-> those are appplied.
-> 
-> Or something in those lines.
-
-Again, that would happen every stable release, and every -rc release,
-could you really keep up with such an email flow in a way that wouldn't
-just mirror watching the json feed instead?
-
-> > We are just changing the ranges here, we change ranges of where a kernel
-> > is vulnerable all the time by adding new .vulnerable files to the tree
-> > as people report them, and as fixes are backported to older stable
-> > kernel trees.  That's much more important to you than this type of
-> > change, right?
-> 
-> Nope, being aware of what is actually the CVE fix is the most important
-> information. Which kernels are affected specifcally is something that is
-> downstream specific and stable tree ranges are only of a value to those
-> who are using stable trees. Updates to vulnerable files is helpful
-> during evaluation phase but once the assessment is done it acts mostly
-> as a double check.
-
-.vulnerable files get added all the time, so hopefully you are catching
-those updates :)
-
-thanks,
-
-greg k-h
 
