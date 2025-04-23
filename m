@@ -1,202 +1,135 @@
-Return-Path: <linux-kernel+bounces-615926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2481A98437
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DCFA9845E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0262F3A6469
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7842C171E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13481EE02E;
-	Wed, 23 Apr 2025 08:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF651EA7CD;
+	Wed, 23 Apr 2025 08:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z6ssTRoy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OnAVW6yD"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFE41A0BC9;
-	Wed, 23 Apr 2025 08:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EBD1DE3C3
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745398402; cv=none; b=CEyrCPfkT/OsavHSGGMhALd7RUkBzIYpYMfFoZl2GASg9MlRMpVjP6Zhs/ObVlJLCUck5GTL3FDh3jKhLNnQk1/cb+zt3iTYCvngvgIy9pAfQNn2Fv4MG+S4b10CrMneftIfix2LTDwirRolPH+WLeIykHS4dbsmZrC1RT/5jGc=
+	t=1745398539; cv=none; b=NOU3GpHsybZMO2Cod8DNhs+wabeEzMkKKKV0/CH4WjEzhns8sDDitsUH2ZnZ/6uGOg1kMdeKFAuTZTALlYwrHfUZIk0GMpvig6x9XUBcBbvzJ1cZxR3HsnWLGHRufF70BZr8Q8j7XGJAyTHWgPQh97MCPoe8xqgg32Uh0uln1P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745398402; c=relaxed/simple;
-	bh=KD9Cl3NthrDkg28+cyb3nHO/tjJn3qP+nuv9lHaS+YE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a2LbLIadL27sZnW+q7HXyJP26gFQyRzQdKGLzFQK0TgmDHuAKTeH30XSlpkOLz95rRHe8mlfDlb5taMiq1CsQPWH9xvRGQAkM2XU7DUWbrAQOhNqy6/mY0GzlBVDcxdePI1JiJyQb3bJ40iVSeahswV2JyJ5uc+r7flU3+5S7RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z6ssTRoy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745398396;
-	bh=KD9Cl3NthrDkg28+cyb3nHO/tjJn3qP+nuv9lHaS+YE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Z6ssTRoySSu3OVlfvIDl9j04yp9RSXUNLJboOF/eMsbAibPM1LQuA+fDT+Q2V4Zod
-	 q4M5sddll854+FuVbxLoj+Xv+PtOPQ3uC6cUCy830q33HFbAHCZixzdCsaHryibEo6
-	 sPeokSI/13wnOJjcHrbeuGy6DUPnM+lPre68C+/JZLSywXE3Nfm6Yh09hIkadQeMqe
-	 Y9ZviPcZKlAQ3aPinwbetw1GLwEaXhNnti433ayGTCP5L0yjyDfxARkoMHP2s2WVVp
-	 FHlLHoxznnt/c/rnAJWKsEIZVM++uc8udHSVL6fn19/R/VuzyT3nnuQhXaMLaQ+Vif
-	 U75JlmtAGZX6A==
-Received: from apertis-1.home (2a01cb0892F2D600c8f85cf092d4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 905DC17E0CAB;
-	Wed, 23 Apr 2025 10:53:15 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Wed, 23 Apr 2025 10:53:13 +0200
-Subject: [PATCH v2] arm64: dts: mediatek: mt8395-nio-12l: Enable Audio DSP
- and sound card
+	s=arc-20240116; t=1745398539; c=relaxed/simple;
+	bh=JM4EG3DbC8o+kLfP96/N8eGtrMofAULCfcav7gqViBY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RJNsOmov00SROZvSO1FNQTi8tt43mJa3waDL8zBGDTJxqmLqJrcyD2A3A15jdR6NowPeJeaD18bfzvykuv682IBbg3ZKVjeA22TZ+jFP4yGwMewyFa9FrRXUulExQFX+zmkbjplwkAXOqQ6MlTzyurOFTDYqPaMq2KMv3Eeku78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OnAVW6yD; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d6c65dc52so38901725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745398536; x=1746003336; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaKVzVOJgOSKOkuhk/ngmT/zkmJ5Y9OFTfOrz7bXPoY=;
+        b=OnAVW6yDkYHTDe9OnY3PkzWPOs2TwGQtEGl4Xn88y6udgCGpzooiX69nFNu8Y8l3Zj
+         h7bYhO7t3rbbV2Pp9QdiPrP7guh3bss3f+14d3eAtjFM4qnfaeFZH60D9i1yCxiGPer5
+         p0ov9t8x/0UjL0TJBRObvg1lokn0El15sSwMMOqGrSWCwOUtL7V+4qyStsKSKu8WrvoP
+         JcGWLDqXn9FxcyOn0cgbY+AUL3aZ/r8je/TCcm8pIFoptlWSrvMmW5uIBUIYdGLKoqUa
+         tull0jyZt09tvop9zVqYGiAhVLmTGB5gya137Bn9+J/cnSGlMrCX2/O5CzauDPO52xRR
+         eZzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745398536; x=1746003336;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaKVzVOJgOSKOkuhk/ngmT/zkmJ5Y9OFTfOrz7bXPoY=;
+        b=g+Sho94vzIUXVfhlHutRigOqxDtY9qMNi925orfxF23g27/mSfiniFO3xOoAukiQQF
+         ErnkwrGQ8r/n0+TYU+cOo0TAaxPlI8W9a8xtLDf5I3zk+FgCrLdY6J3vfLuCDgWSwCwj
+         F59TsmuMgFSNUqOCyOL7m1Crb68/y8fE3BUVJXNgpZ8bZiz1PMbxjli4B1Lmc57qv7Yx
+         hBF95GmCgJrdgseFY+OcEdHZP8dSNcK40H+Ylk2mWRwJefA7EyMGGzH9TA7RYhL1E+qM
+         BYKzFAtdlX0CfnmH8oXCEnw9/Ry57GLpxGG6sirgTylK6vsRnCEqNkMC31GtEnM26m3f
+         TmHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYPzyd0WCq/7BfehXYhkx4PFxoiOTJJIize0K6QHVzZFJw5bhMbZqaiLFyLDC6UijvvJk9NMbBHEUCCZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK2NScMG1/ePRUQzU/sNRdlYPjjWiUIBCKIj64teAhN7Adh7O/
+	khbQ3fP3DVs+KCjkO0HEJyv5801pWNOFMiwN5VevTCq09n3jOA4CME3d9/h2qaURa5s4IikB0KT
+	guyDjPIdf6MPhhg==
+X-Google-Smtp-Source: AGHT+IFchQbxy+8MVQTjIQqNWsxg6egaeHXm1u76QC4qBxCuS48lqBAj021IovR8qHS/3rQkqOqbffo+RHfbE4o=
+X-Received: from wmbep21.prod.google.com ([2002:a05:600c:8415:b0:43d:1873:dbaf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1c8f:b0:43c:f332:7038 with SMTP id 5b1f17b1804b1-4406ac1fe30mr124784795e9.21.1745398536504;
+ Wed, 23 Apr 2025 01:55:36 -0700 (PDT)
+Date: Wed, 23 Apr 2025 08:55:34 +0000
+In-Reply-To: <68080a53.050a0220.c2cd7.6290@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250422-vec-methods-v3-0-deff5eea568a@google.com>
+ <20250422-vec-methods-v3-3-deff5eea568a@google.com> <68080a53.050a0220.c2cd7.6290@mx.google.com>
+Message-ID: <aAirBuiNdraU4ty3@google.com>
+Subject: Re: [PATCH v3 3/7] rust: alloc: add Vec::push_within_capacity
+From: Alice Ryhl <aliceryhl@google.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-mt8395-audio-sof-v2-1-5e6dc7fba0fc@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAHiqCGgC/32NTQ6CMBBGr0Jm7ZhSKKAr72FYlP7IJMCYFomG9
- O5WDuDyveR73w7RBXIRrsUOwW0UiZcM8lSAGfXycEg2M0ghlajLFue1qy4K9csSY2SPg9bSNLI
- TlfWQZ8/gPL2P5L3PPFJcOXyOh6382T+xrUSBlVBdW8vGKWtvhqdJDxz02fAMfUrpC+w9lgG0A
- AAA
-X-Change-ID: 20250417-mt8395-audio-sof-baa2c62803df
-To: kernel@collabora.com, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
 
-Add memory regions for the Audio DSP (ADSP) and Audio Front-End (AFE),
-and enable both components in the device tree.
+On Tue, Apr 22, 2025 at 02:29:53PM -0700, Boqun Feng wrote:
+> On Tue, Apr 22, 2025 at 09:52:18AM +0000, Alice Ryhl wrote:
+> > This introduces a new method called `push_within_capacity` for appending
+> > to a vector without attempting to allocate if the capacity is full. Rust
+> > Binder will use this in various places to safely push to a vector while
+> > holding a spinlock.
+> > 
+> > The implementation is moved to a push_within_capacity_unchecked method.
+> > This is preferred over having push() call push_within_capacity()
+> > followed by an unwrap_unchecked() for simpler unsafe.
+> > 
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/alloc/kvec.rs | 41 ++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 38 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index ebca0cfd31c67f3ce13c4825d7039e34bb54f4d4..a005a295262cb1e8b7c118125ffa07ae252e257c 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -307,17 +307,52 @@ pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
+> >      /// ```
+> >      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
+> >          self.reserve(1, flags)?;
+> > +        // SAFETY: The call to `reserve` was successful, so the capacity is at least one greater
+> > +        // than the length.
+> > +        unsafe { self.push_within_capacity_unchecked(v) };
+> > +        Ok(())
+> > +    }
+> > +
+> > +    /// Appends an element to the back of the [`Vec`] instance without reallocating.
+> > +    ///
+> > +    /// Fails if the vector does not have capacity for the new element.
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// let mut v = KVec::with_capacity(10, GFP_KERNEL);
+> 
+> Should be:
+> 
+>     /// let mut v = KVec::with_capacity(10, GFP_KERNEL)?;
+> 
+> , right? I.e. a question mark is missing.
+> 
+> The rest looks good to me.
 
-Also, define the required pin configuration and add a sound card node
-configured to use the ADSP. This enables audio output through the 3.5mm
-headphone jack available on the board.
+Will be fixed in the next version. Let me know if you want me to add
+your Reviewed-by tag with this fixed?
 
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
-This patch series adds support for audio playback on the MT8395-based Radxa NIO 12L platform, which uses the integrated MT6359 codec via internal DAI links.
-
-Key additions:
-- Support for a new `mediatek,mt8195_mt6359` card configuration that does not rely on external codecs like rt5682.
-- Proper memory region declarations and pinctrl setup for the audio front-end (AFE) and audio DSP (ADSP).
-- A device tree sound node for headphone audio routing using `DL_SRC_BE` and `AIF1`.
-- Enhancements to the DT bindings to document the new compatible string, missing link-name, and additional audio routes (Headphone L/R).
----
-Changes in v2:
-- The first five commits have already been merged into linux-next; only one remains pending.
-- Improved the commit description of the former patch 6/6, now labeled as 1/1.
-- Link to v1: https://lore.kernel.org/r/20250417-mt8395-audio-sof-v1-0-30587426e5dd@collabora.com
----
- .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 58 +++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-index f2eb1b683eb76f783f5a13f28a78f6e33238b5f0..329c60cc6a6be0b4be8c0b8bb033b32d35302804 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-@@ -139,9 +139,21 @@ bl31_secmon_mem: memory@54600000 {
- 			no-map;
- 		};
- 
--		afe_mem: memory@60000000 {
-+		adsp_mem: memory@60000000 {
- 			compatible = "shared-dma-pool";
--			reg = <0 0x60000000 0 0x1100000>;
-+			reg = <0 0x60000000 0 0xf00000>;
-+			no-map;
-+		};
-+
-+		afe_dma_mem: memory@60f00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x60f00000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		adsp_dma_mem: memory@61000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x61000000 0 0x100000>;
- 			no-map;
- 		};
- 
-@@ -152,6 +164,16 @@ apu_mem: memory@62000000 {
- 	};
- };
- 
-+&adsp {
-+	memory-region = <&adsp_dma_mem>, <&adsp_mem>;
-+	status = "okay";
-+};
-+
-+&afe {
-+	memory-region = <&afe_dma_mem>;
-+	status = "okay";
-+};
-+
- &cpu0 {
- 	cpu-supply = <&mt6359_vcore_buck_reg>;
- };
-@@ -514,6 +536,18 @@ &mt6359_vsram_others_ldo_reg {
- &pio {
- 	mediatek,rsel-resistance-in-si-unit;
- 
-+	audio_default_pins: audio-default-pins {
-+		pins-cmd-dat {
-+			pinmux = <PINMUX_GPIO70__FUNC_AUD_SYNC_MOSI>,
-+				 <PINMUX_GPIO69__FUNC_AUD_CLK_MOSI>,
-+				 <PINMUX_GPIO71__FUNC_AUD_DAT_MOSI0>,
-+				 <PINMUX_GPIO72__FUNC_AUD_DAT_MOSI1>,
-+				 <PINMUX_GPIO73__FUNC_AUD_DAT_MISO0>,
-+				 <PINMUX_GPIO74__FUNC_AUD_DAT_MISO1>,
-+				 <PINMUX_GPIO75__FUNC_AUD_DAT_MISO2>;
-+		};
-+	};
-+
- 	dsi0_backlight_pins: dsi0-backlight-pins {
- 		pins-backlight-en {
- 			pinmux = <PINMUX_GPIO107__FUNC_GPIO107>;
-@@ -854,6 +888,26 @@ &scp {
- 	status = "okay";
- };
- 
-+&sound {
-+	compatible = "mediatek,mt8195_mt6359";
-+	model = "mt8395-evk";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&audio_default_pins>;
-+	audio-routing =
-+		"Headphone", "Headphone L",
-+		"Headphone", "Headphone R";
-+	mediatek,adsp = <&adsp>;
-+	status = "okay";
-+
-+	headphone-dai-link {
-+		link-name = "DL_SRC_BE";
-+
-+		codec {
-+			sound-dai = <&pmic 0>;
-+		};
-+	};
-+};
-+
- &spi1 {
- 	/* Exposed at 40 pin connector */
- 	pinctrl-0 = <&spi1_pins>;
-
----
-base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
-change-id: 20250417-mt8395-audio-sof-baa2c62803df
-
-Best regards,
--- 
-Julien Massot <julien.massot@collabora.com>
-
+Alice
 
