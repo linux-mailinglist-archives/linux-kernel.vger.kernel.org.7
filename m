@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-616123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA161A987ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6086CA987F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BFF443CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:55:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8116B1B64AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4864726C3B5;
-	Wed, 23 Apr 2025 10:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9FE26D4DA;
+	Wed, 23 Apr 2025 10:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GpmujaI8"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEC826D4C6;
-	Wed, 23 Apr 2025 10:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qVuQPSwL"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C36326D4CF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745405711; cv=none; b=c9uJ+L1LMr4TlTGcGddIIaVowpjChQLryKlusnNP8Q2i83tvlj+J+bNmoXbsMHbNtjkRiMHtVD15s9I5BQaazqblbtuQ+9pomUVlg9piW9OOjGcoRogSkNU6KKrL/O6YZ/7RK3jmBUJ77O9TWn+gdR75SF10TFGgTI9d3f+9hK8=
+	t=1745405734; cv=none; b=aQ1jfzgOs8yN3ff5WUTeKlSwykqieTbXXdvWJzvkp2xRIduFZ4pablR5+9wHSy1c79FG+uHYMkcd4TH4YFBPiYSm/Aoer0xhHG1XV+3+EmS4oJgRQAySBVXB194u+kT0sDiHdVcA6jMDCOyd3wU10N6in6NTDiKSYcWWNrEL3xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745405711; c=relaxed/simple;
-	bh=wvUZeNvbPTQtNmJGim0FkGS4BcohX3rf0yyLJJKnivc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nr1VAGj0yFc+ShGgUmnO8AgjXu22AdUwjkFqq5yXEW5ajMg2OrEEXM6O7JvYjJJUdm/KkyJxcTFTsIJjZqTTMcg6heuEtnicD/GVd6cwgqxq76+hQN7SznuKJTNvraFrkwoTwM8Fkvnx9/knFiVxR/hWZiTqc2StWYnnhdSKN6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GpmujaI8; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BwcYZ
-	3QAYUzjwMBUPfQj13lIgXFp+SqbT5MeM2baqWQ=; b=GpmujaI8FCZcKvs82Yh3z
-	zYps0LtQ7AUYKfvsrt4o+w9MeEgsfcFMpON4kByy8qL/8vOB0Ha4cu5bQIMBVX9C
-	snluvgaim8xQ4FfgXhZNtyfWlaIEkNRjT1BUiC7BYQWFC6xXlsV+3TKIWvYbb14F
-	eFT81BmbPVGms5iUa1+OGc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAnRTjYxghozJctBw--.58909S5;
-	Wed, 23 Apr 2025 18:54:22 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	heiko@sntech.de
-Cc: manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	jingoohan1@gmail.com,
-	shawn.lin@rock-chips.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 3/3] PCI: dw-rockchip: Unify link status checks with FIELD_GET
-Date: Wed, 23 Apr 2025 18:54:15 +0800
-Message-Id: <20250423105415.305556-4-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250423105415.305556-1-18255117159@163.com>
-References: <20250423105415.305556-1-18255117159@163.com>
+	s=arc-20240116; t=1745405734; c=relaxed/simple;
+	bh=SKjFk3ffMxkD+dpYkzedNGkdOncbZzOJkyC9yRRgP4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSSjTuPBim1AXHttqxJ4YvAZ22RaDBukORW5hW3m/UY3ZUOJB+WeVUz5iL0sgDJBjn/vmyez88GNbo4tT8YMm+kziPika8PMACYrp4IE70jidKcGogm1iSavASKaDu8dXVuejuJf7SlTdK/q08MYOSrxaCd0YGWG9E9apeALUs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qVuQPSwL; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-548409cd2a8so8093868e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 03:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745405730; x=1746010530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=izklXv4BZeIiwFrKYnOhuYZikqixEWPdKCdY/Q0QGIw=;
+        b=qVuQPSwLwgkX3QNhRQpYTK/PvXRDY6DjmASI1/oqILesDlz7NAet+z8NQOp086efis
+         brb2hSV3iZv7EOlcj/44dPta3cLI25UruAo+iQ7H6hWBLZIwMnCV1ybfDEK+qzdql1Yu
+         YlzaQgZjDknt0+JaEYhQ2GpuEh+As01MJeV4p6GnBWMo6FXzwQFFgT/PcM4y3XEgnMDi
+         ifYOIH/D9faqE5V7q9b/lfivnZLiH21XxybncxeRe3WylaoWLqMpkX+IbCPNYt0te80L
+         QnU09eGtV268Jia/l6vQVU1IiFmIGtP2ByAmhyfYN6sQnZVo9qgx6AT/w9aKy7nvodk5
+         kPqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745405730; x=1746010530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=izklXv4BZeIiwFrKYnOhuYZikqixEWPdKCdY/Q0QGIw=;
+        b=bVs90Bt38WWj3R/2RI1u5ipxNHHUdnRnMB1WoHQ2q+CWli1ixEW3Zp5IjE9KXLhlvN
+         SzLC3/XrPiDizXmC9KafgVCVAJcNqKSLW8j63RKKf2aL90moIAGG6v0Jeq4exq9vbYRS
+         SU7Vfa7U0e8AZ9f6Sgbx0HjCGq93+sNNz38LTYU1wcdJuui3xMmJcR0hxeu99zqcAW5I
+         HrbtfkfwalGV7Cw8Nw5+xAeRRyMmS7J5cIoTgn+T33uYbppPs6mV1WujcAgnKgAgRVf5
+         HwdAVm1AgOcZlanwdonyZsOLndUQjwqBmegIvhd3dAgVbDesNi5CyD/QbISkKEMIzoiH
+         z5Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqPVHJ8wBO9TsViqQbYROzTjNsN8Io2DlcGin0K71c7d+9QPv8cUxg9a4Mnx+HbPmB+eU0fc+We3OnszU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoYXjjsshdQqClpKRD2MMbmaeZN4nY9YbBYFGYsp9tcBsj2lQj
+	YJU2G3Aryx1q/1wXStPrSTFTXIkdyT4+qJjlmP7N+wVzOE6Sxc0RdY+OkscXUPe9++3juCvZv1t
+	wVyOsgbN+6UDZkGpBW5KJxcCRnjhewi0mboUcWg==
+X-Gm-Gg: ASbGnctXAwp0AkekakN4yIIki87+u4B9zjyMRatCd9asqrA1l4pwoiHX9sbRmE3OF+n
+	24QoMiN1pPqB4RdKP2I5seF2MuDsVpWxUMuTNmLVW+yYBBBqkvq9Txa5KDagdFywmMq6c8Cjq7u
+	MiBiKSMXKSzKEWiF9v8BrF3g==
+X-Google-Smtp-Source: AGHT+IH+wCC5kClOVa4KPQf9TkYFzC5VIZsHRFGsDXyoHjryg0sqITG6UMuWyQQrZUY+WCXhYGb106JflCU2vKSyjt8=
+X-Received: by 2002:a05:6512:2315:b0:54a:cbfb:b62e with SMTP id
+ 2adb3069b0e04-54d6e657553mr6996509e87.35.1745405730442; Wed, 23 Apr 2025
+ 03:55:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAnRTjYxghozJctBw--.58909S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCF15Gr13Cw17GFW7Zw18Zrb_yoW5uF4xpa
-	98Aa4vkr48Gw4j9F1kCFZ5ZFW5tFnI9ayUCrn7K3WxW3ZIyw1UG3WUWr9Iqr4xJr4rCFy3
-	Cw4rta4xJr43ZwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UoBTwUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwI4o2gIwTqyAgAAs9
+References: <20250422162250.436169-1-uwu@icenowy.me> <20250422162250.436169-2-uwu@icenowy.me>
+ <CACRpkdbGwPyQgVL18iMvUTAvh4XTjo6g3mGT4e_b2aNAjr2obg@mail.gmail.com> <B4C8B369-E345-4133-A106-7C5E71513329@icenowy.me>
+In-Reply-To: <B4C8B369-E345-4133-A106-7C5E71513329@icenowy.me>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 Apr 2025 12:55:19 +0200
+X-Gm-Features: ATxdqUFXqKFRF-URPzhUFDAqkzV6vbnyL8yKyfMNTaK_xdGbJBDYNfkObBbEMA0
+Message-ID: <CACRpkdYgkDpC1iJ-KaZj2GZ3A3_V=3-KQef_nCRhMDrUK=FHXg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: jh7110-sys: add force inputs
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Link-up detection manually checked PCIE_LINKUP bits across RC/EP modes,
-leading to code duplication. Centralize the logic using FIELD_GET. This
-removes redundancy and abstracts hardware-specific bit masking, ensuring
-consistent link state handling.
+On Wed, Apr 23, 2025 at 11:41=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me> wro=
+te:
+> =E4=BA=8E 2025=E5=B9=B44=E6=9C=8823=E6=97=A5 GMT+08:00 17:09:42=EF=BC=8CL=
+inus Walleij <linus.walleij@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
+> >Hi Icenowy,
+> >
+> >thanks for your patch!
+> >
+> >On Tue, Apr 22, 2025 at 6:23=E2=80=AFPM Icenowy Zheng <uwu@icenowy.me> w=
+rote:
+> >
+> >> +  starfive,force-low-inputs:
+> >> +    description:
+> >> +      The list of input signals forced to be low inside the SoC itsel=
+f.
+> >> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> >
+> >I don't see why you need this hack.
+>
+> Unfortunately these properties are not for pins, but internal signals tha=
+t isn't
+> bound to external pins.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 21 +++++++------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+We don't really care if pins are external or not, we are an operating syste=
+m
+not a philosophy department ;)
 
-diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-index 6cf75160fb1c..8c2b2b642ba7 100644
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -8,6 +8,7 @@
-  * Author: Simon Xue <xxm@rock-chips.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/gpio/consumer.h>
- #include <linux/irqchip/chained_irq.h>
-@@ -73,9 +74,8 @@
- 
- /* LTSSM Status Register */
- #define PCIE_CLIENT_LTSSM_STATUS	0x300
--#define  PCIE_SMLH_LINKUP		BIT(16)
--#define  PCIE_RDLH_LINKUP		BIT(17)
--#define  PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
-+#define  PCIE_LINKUP			0x3
-+#define  PCIE_LINKUP_MASK		GENMASK(17, 16)
- #define  PCIE_LTSSM_STATUS_MASK		GENMASK(5, 0)
- 
- struct rockchip_pcie {
-@@ -209,10 +209,7 @@ static int rockchip_pcie_link_up(struct dw_pcie *pci)
- 	struct rockchip_pcie *rockchip = to_rockchip_pcie(pci);
- 	u32 val = rockchip_pcie_get_ltssm(rockchip);
- 
--	if ((val & PCIE_LINKUP) == PCIE_LINKUP)
--		return 1;
--
--	return 0;
-+	return FIELD_GET(PCIE_LINKUP_MASK, val) == PCIE_LINKUP;
- }
- 
- static void rockchip_pcie_enable_l0s(struct dw_pcie *pci)
-@@ -512,7 +509,7 @@ static irqreturn_t rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
- 	struct dw_pcie *pci = &rockchip->pci;
- 	struct dw_pcie_rp *pp = &pci->pp;
- 	struct device *dev = pci->dev;
--	u32 reg, val;
-+	u32 reg;
- 
- 	reg = rockchip_pcie_readl_apb(rockchip, PCIE_CLIENT_INTR_STATUS_MISC);
- 	rockchip_pcie_writel_apb(rockchip, reg, PCIE_CLIENT_INTR_STATUS_MISC);
-@@ -521,8 +518,7 @@ static irqreturn_t rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
- 	dev_dbg(dev, "LTSSM_STATUS: %#x\n", rockchip_pcie_get_ltssm(rockchip));
- 
- 	if (reg & PCIE_RDLH_LINK_UP_CHGED) {
--		val = rockchip_pcie_get_ltssm(rockchip);
--		if ((val & PCIE_LINKUP) == PCIE_LINKUP) {
-+		if (rockchip_pcie_link_up(pci)) {
- 			dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
- 			/* Rescan the bus to enumerate endpoint devices */
- 			pci_lock_rescan_remove();
-@@ -539,7 +535,7 @@ static irqreturn_t rockchip_pcie_ep_sys_irq_thread(int irq, void *arg)
- 	struct rockchip_pcie *rockchip = arg;
- 	struct dw_pcie *pci = &rockchip->pci;
- 	struct device *dev = pci->dev;
--	u32 reg, val;
-+	u32 reg;
- 
- 	reg = rockchip_pcie_readl_apb(rockchip, PCIE_CLIENT_INTR_STATUS_MISC);
- 	rockchip_pcie_writel_apb(rockchip, reg, PCIE_CLIENT_INTR_STATUS_MISC);
-@@ -553,8 +549,7 @@ static irqreturn_t rockchip_pcie_ep_sys_irq_thread(int irq, void *arg)
- 	}
- 
- 	if (reg & PCIE_RDLH_LINK_UP_CHGED) {
--		val = rockchip_pcie_get_ltssm(rockchip);
--		if ((val & PCIE_LINKUP) == PCIE_LINKUP) {
-+		if (rockchip_pcie_link_up(pci)) {
- 			dev_dbg(dev, "link up\n");
- 			dw_pcie_ep_linkup(&pci->ep);
- 		}
--- 
-2.25.1
+You calculate the offset and shift like this and write into a base+offset:
 
++                       offset =3D 4 * (pin / 4);
++                       shift  =3D 8 * (pin % 4);
++
++                       val =3D readl_relaxed(sfp->base +
++                                           info->gpi_reg_base + offset);
+
+Compare to jh7110_pin_dbg_show():
+
+               unsigned int offset =3D 4 * (pin / 4);
+                unsigned int shift  =3D 8 * (pin % 4);
+                u32 dout =3D readl_relaxed(sfp->base +
+info->dout_reg_base + offset);
+                u32 doen =3D readl_relaxed(sfp->base +
+info->doen_reg_base + offset);
+
+So clearly the entities that you affect are in the same numberspace,
+and that is all we care about. They are not enumerated in any way
+orthogonal to any other pins AFAICT.
+
+Both pin control and GPIO handle chip-internal lines that are not
+routed outside sometimes, that's fine. Just deal with them as any other
+"pins".
+
+Yours,
+Linus Walleij
 
