@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-615756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F53A981FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:59:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37463A98215
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4207AED24
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A18F440803
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AE127A13E;
-	Wed, 23 Apr 2025 07:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF152820B3;
+	Wed, 23 Apr 2025 07:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TPfbqkkM"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeFY7NdO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D47278E7E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D106E28153C;
+	Wed, 23 Apr 2025 07:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394855; cv=none; b=ivjD9vmaxE89ggBFW8mfe3wUfJnwOWKK4OUF/osvgAdzcwQ8aLUFPSEVMT2Bbd5j/kVUwRT5a9VvcPMDXHkS7F84CcSs3NtueMIN9NHzpUuPd9N1lN0Q39opNE6k1hLKu01JsrEsDZtOX8h6K0fBzIoWO4mDbIFxyHN+fu8pmo4=
+	t=1745394925; cv=none; b=OxoMmYlqM/uzgXhkCyhDAq7m2FsYWrSi0tom7J9V5YRr4qpiUJBRGs+uAopF5fMEO+FKf56IykrpSW3La2EERB8XfJk+m+1dkL3QZWhtY+CteXzK2h0bt2n8u25cLxS6SwN6f3FHCLdX5wUb1QHAWsZNGCl6YpLadAJtvJvEdAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394855; c=relaxed/simple;
-	bh=ODkKc9w5DAH5YPIV3Ui/p7vc8dyQNmpHNTi579avV9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIKLSPV4/akvLTC82okGb1ZVwjESFXCxbbPgcl5c8yRNtmd6v95pi2irflQrSQ+IUZu53JVSboiQIuz8JyMee7CScM6NjD4RMrHAlUl6+CJm0YtnxMrwnDa7iT98SnamP1/Kso2TD1VTHDVoZmr47JuejFIy9sUqDqAzEIGqj6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TPfbqkkM; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so9338328a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:54:11 -0700 (PDT)
+	s=arc-20240116; t=1745394925; c=relaxed/simple;
+	bh=tjgo4np+Z6AJeX0xArPypis+FgYghdSG5VHGIPEzWvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5CabXKZl+oTIRLCjeFNgSkukxwcY24Oygw9v7m6C8lpSGUrHv6+6Aaz6yKPHT3zjvScSB4/TkazoURHAa6E0WZd+c3qLogssL1eu9yMF/B770ItL+p4fmju+eFudZpR01C2tRn0tBsxtpxcPkzylHPpAAdO0G2SqIB3DNmAxuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeFY7NdO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-440685d6afcso57060105e9.0;
+        Wed, 23 Apr 2025 00:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745394850; x=1745999650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nqMLdKqIS7/vudO+K0aCSoNHv7ZBATh/BYxTws4kcI=;
-        b=TPfbqkkMrU+1t6eJqxkvu4HR+PffOnCElxmte4YUtGD76Z4AnylDg4FSBSCEpt0XC/
-         90mZvsFrqWywv7Ea1xxyggrHZb3okG5nGHuO5w6Gc64PzuMHv58Vq33eCSjUwvJyT/ZJ
-         yY+ii1EkqVOtOIDOVZB6ypOh9pSwkC3VVN46ngJKoMYzbrNZcgxfsE+DmSPfiZCKPZkc
-         S1BYAMFdZfnHaZU2Nf6jU4mRExuBeI8QLKqWOQqKQWUAS6kzt9vmtmU/B4X9Owps30n4
-         ZtaDjI+bscMbRxqapAgLH4MufZGVuyWU9r4IrB/zPH106hWV/W0n0t359VimqyHEYoL0
-         CZHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745394850; x=1745999650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1745394922; x=1745999722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2nqMLdKqIS7/vudO+K0aCSoNHv7ZBATh/BYxTws4kcI=;
-        b=c70h5+th20N8838lAa3vW3Wh2oGZIBW634FtoBpPJa28ZfqEt11rlinfYxlTPUmRbK
-         duA7rpkf34hUWgM6QXIni8aPePuBtVAOLG+NZIj/YjTIl4hQu7+7dENtoVrF7bzrl3BK
-         PRqwLQ9TgU5RiExb5U69YdnkRzcEScHNrPpmeHU92OIlkwoBkj/jAI3naVFv1hLuKSKp
-         upfCx9w8bKyvUl2vsxO+Z935Z0VoqH6/aFTmTBezWO2+Ti37Ky595WMQdO4S66+lJNnS
-         BqWS47Pxv9iuANYlNvNdNFptDXOU/Os7U4Y1EZbsh1H0cXL3y99/tgOk/1OIJy+4GmQu
-         OdFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRFyJqoxlhHpf5HRVFjaXZc8kQyE3oHAmPGEOr+hh5Wo3tOCOVrhJp1WknFRTLxd6q71K2n62QOIyJtWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxsrvHCpsXQltDsG57kxqUOlgIUz0LDfpGSOebwlqEM1RR3eEK
-	hA6FEyYFmPke4qT1wjviS6qqWkyiTq6sfCjhB6th851VA1a8D0k0yWt27WAzJNbTtMHerX7uktK
-	2
-X-Gm-Gg: ASbGncuQzDCAf1xo61ii8nZ5KEK4CgKY590pwXc/4RCSbNvW4JaSHLP+byu2A8OGaZC
-	45njLxGz23dqxB+CRGWF3dtxbC93+LbbFjaHKSDyDgQmF2u3jiedXNx8VYVaCp5QGrpvoNTX6ma
-	YxO381TWpne1nPEz5QFfaNKxaWP4pOiMldm6GREXaI7rp/WFBsjLpBPkfpOhzwB+Y/qM593Ha6H
-	hzh0Fu3pD9+2ufHTAAxtkc0j/sZQOyFKxDDkoi1RBbBbHxOych5ompMtm00xk75leo5WD7ZUc/V
-	do+3+ASg5r6Jz7tuRp6pAUwUfEOsqK8=
-X-Google-Smtp-Source: AGHT+IHmXmgSOu2wPnbZzY+Ub0Gp+ArzZ1ZZDgHAjJdTh9TPLQ4EXkWlzoSi+QNcSE0lhT8bkWL55w==
-X-Received: by 2002:a17:907:2ce4:b0:ac2:dc00:b34d with SMTP id a640c23a62f3a-acb74e0ed59mr1576701566b.53.1745394849267;
-        Wed, 23 Apr 2025 00:54:09 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-acb6ef41605sm756431266b.124.2025.04.23.00.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 00:54:08 -0700 (PDT)
-Date: Wed, 23 Apr 2025 09:54:08 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
- allocation failure
-Message-ID: <aAicoAmxX0B_O3Ok@tiehlicka>
-References: <2024122837-CVE-2024-56705-049b@gregkh>
+        bh=1eWzS/Ah2cnA75NtUgIRsIHb+DY3iDF+Qb9KegxCV7A=;
+        b=AeFY7NdOdPIWgFpf37NBlBTHutA0XKzCjVNohb7Hq8EJmvw7hMKnM3s8OyBQ9aY8C4
+         xETIPkB5okP/Nz7AGrQYB4PKm0LKAsp4lE7EB8Z47mASkiNNoTZL9EUjPihRjDYX8eSb
+         xPB+dEarMKbSNhi1vGjtUsEChS58/dkOFL3AnIi2Q5bc/OLdzR1wVQXwzUMG7idknwQy
+         qIkmcuGU4I02lnXTHcwxNZpiynOlWuFgkmFllidJM3EVHAw4f89iyqATjMnsAvm/VM27
+         mhsErBUV8l+mfH5CS1UQfl0nBDWiUboAkpUfBxRHGH67jij/cK/s/LsrKeypbDJxq2d2
+         gTcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745394922; x=1745999722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1eWzS/Ah2cnA75NtUgIRsIHb+DY3iDF+Qb9KegxCV7A=;
+        b=qzHS/sfAgnTEjoGOXXKaOhAaZ1Qm8NondsQnO0K5mlkskUgJmRSpJ5sORfxrLgo6P4
+         wvCEeWHibOU/KdyjeUeQ/EctsbxLTghFv/GsO2CCYdo994RRwd69jsB4ddjFOLvpDL/3
+         IVGpPvNABm0mYq5HvU1+MjqRlVRUCJO9YagGzCevnTS5JGEF+ROi0u/Z/fheAHLRGXzz
+         yybaZTyRiDEvOGdl2F4ned7z4u5HbO7lHrtLwiAs30OGlzZYDSzdXncJgeDVCgq+b7F5
+         hjpaoj00g9qV4Hj10dTEhxQV+QEYW4hKho/J7v8ir0XMJt12ZyyeS+KYTdak0ORcc/9D
+         ephw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2eE6e9sk9fGB+wRFAKvb5xVrqfvNRWt2mvqKwvc6eD+6jyOibcD1pgxLuyINvUVSGJBlUrxPg/yL8ebK1S72ibxY=@vger.kernel.org, AJvYcCWqJlqNM9Dbh0RXIuyayhzNa2/eBQQedBfdUkPL7eCSSeMin/ydHiqIaewAqR1VnJWBMjqqPcyNogDc9bzF@vger.kernel.org, AJvYcCX6hRiQMxbzND3swlIB/UuHxD9eQt0TaXdaXvI9vRsCpty+AKcWnXfNQg/4MSWMxDwUnPJ9hRO2@vger.kernel.org, AJvYcCXSmcfs5JVkIi2xwM0hmqmKzSITEyfNH/sblXbmnMhVcoJiWaGGLVW162nsi9/S6nglYuny37JHv2lQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7eFTSH3hReoXub+h3M2tTjtGkiX+MykbKRCcMVnLO4G6aFXy6
+	iGCHF4Vgq3aIRQkuW9H6ZkXevTNiNnTqBMy1eDp2D1hfGRXsat2V8ok7lBHIV59ID9YRYdFAsiE
+	GzxQwb3ag6Opgaznee2SSg4GWFBo=
+X-Gm-Gg: ASbGncvA4Jp2CUv7BZgEcz09PL57yf4bRnfxMHSgbtXYIb827X50XtWPkLIa17bjFrz
+	Bg5+/NgK7xgtQhvX9i0pGeXPX+Md/G3XqvVTgIjzvfNcki9WxLcN1ljkaPCk9rGdix7Bn+lZOh+
+	lbnXB/0EGu6DrmlJeF1k01PA==
+X-Google-Smtp-Source: AGHT+IEetajyp7tewz7gSg2bUmPRDylKdQxo3ZKlMaQaOjNuvNTMi3XEyh1phX3DcIWXuVWrhzLhzxViAkCb79CfcaQ=
+X-Received: by 2002:a05:600c:358b:b0:439:9424:1b70 with SMTP id
+ 5b1f17b1804b1-4406ac17329mr182625395e9.30.1745394921859; Wed, 23 Apr 2025
+ 00:55:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024122837-CVE-2024-56705-049b@gregkh>
+References: <20250417084015.74154-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250417084015.74154-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250422184813.02b21095@kernel.org>
+In-Reply-To: <20250422184813.02b21095@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 23 Apr 2025 08:54:54 +0100
+X-Gm-Features: ATxdqUENAmcd1iPlreTGMgox3_qZS9GKX_Vez1-JK_b3xBLNPYkG-7O4wKnzxvI
+Message-ID: <CA+V-a8uk33D7m17nOa3tFviq+OEajPFm-haU+oFJwiE3Hvo3Aw@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 4/4] MAINTAINERS: Add entry for Renesas
+ RZ/V2H(P) DWMAC GBETH glue layer driver
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-our internal tools which are working with vulns.git tree have noticed
-that this CVE entry has been altered after the announcement.
+Hi Jakub,
 
-There was an additional commit added to the CVE entry. The current state
-is
-$ cat cve/published/2024/CVE-2024-56705.sha1
-ed61c59139509f76d3592683c90dc3fdc6e23cd6
-51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
+On Wed, Apr 23, 2025 at 2:48=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Thu, 17 Apr 2025 09:40:15 +0100 Prabhakar wrote:
+> > +RENESAS RZ/V2H(P) DWMAC GBETH GLUE LAYER DRIVER
+> > +M:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +L:   netdev@vger.kernel.org
+> > +L:   linux-renesas-soc@vger.kernel.org
+> > +S:   Supported
+>
+> I'm going to make this Maintained when applying, please see:
+> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#suppo=
+rted-status-for-drivers
+>
+Ok, thanks for taking care of this.
 
-There seem to be handful of other cases like this one AFAICS.
-
-I have 3 questions:
-1) What is 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
-   relation to the original CVE which seems to be about a missing memory
-   allocation failure check?
-2) What is the process when a CVE is altered? have I missed any email
-   notification?
-3) Until now CVE -> sha was a 1:1 mapping. Can we expect this to change
-   and what exactly is the process here?
-
-Thanks!
-
-On Sat 28-12-24 10:45:57, Greg KH wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> media: atomisp: Add check for rgby_data memory allocation failure
-> 
-> In ia_css_3a_statistics_allocate(), there is no check on the allocation
-> result of the rgby_data memory. If rgby_data is not successfully
-> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
-> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-56705 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.10.231 with commit 0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.15.174 with commit 4676e50444046b498555b849e6080a5c78cdda9b
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.1.120 with commit 02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.6.64 with commit 8066badaf7463194473fb4be19dbe50b11969aa0
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.11.11 with commit 74aa783682c4d78c69d87898e40c78df1fec204e
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.12.2 with commit 0c25ab93f2878cab07d37ca5afd302283201e5af
-> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.13-rc1 with commit ed61c59139509f76d3592683c90dc3fdc6e23cd6
-> 
-> Please see https://www.kernel.org for a full list of currently supported
-> kernel versions by the kernel community.
-> 
-> Unaffected versions might change over time as fixes are backported to
-> older supported kernel versions.  The official CVE entry at
-> 	https://cve.org/CVERecord/?id=CVE-2024-56705
-> will be updated if fixes are backported, please check that for the most
-> up to date information about this issue.
-> 
-> 
-> Affected files
-> ==============
-> 
-> The file(s) affected by this issue are:
-> 	drivers/staging/media/atomisp/pci/sh_css_params.c
-> 
-> 
-> Mitigation
-> ==========
-> 
-> The Linux kernel CVE team recommends that you update to the latest
-> stable kernel version for this, and many other bugfixes.  Individual
-> changes are never tested alone, but rather are part of a larger kernel
-> release.  Cherry-picking individual commits is not recommended or
-> supported by the Linux kernel community at all.  If however, updating to
-> the latest release is impossible, the individual changes to resolve this
-> issue can be found at these commits:
-> 	https://git.kernel.org/stable/c/0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
-> 	https://git.kernel.org/stable/c/4676e50444046b498555b849e6080a5c78cdda9b
-> 	https://git.kernel.org/stable/c/02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
-> 	https://git.kernel.org/stable/c/8066badaf7463194473fb4be19dbe50b11969aa0
-> 	https://git.kernel.org/stable/c/74aa783682c4d78c69d87898e40c78df1fec204e
-> 	https://git.kernel.org/stable/c/0c25ab93f2878cab07d37ca5afd302283201e5af
-> 	https://git.kernel.org/stable/c/ed61c59139509f76d3592683c90dc3fdc6e23cd6
-
--- 
-Michal Hocko
-SUSE Labs
+Cheers,
+Prabhakar
 
