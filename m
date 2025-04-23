@@ -1,194 +1,168 @@
-Return-Path: <linux-kernel+bounces-616176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3984EA988AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229CEA988B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3BD16CF9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7121B647BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E87426D4E5;
-	Wed, 23 Apr 2025 11:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KefzT5YJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D9A270544;
+	Wed, 23 Apr 2025 11:37:34 +0000 (UTC)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD95FC08;
-	Wed, 23 Apr 2025 11:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620A5FC08;
+	Wed, 23 Apr 2025 11:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745408238; cv=none; b=A9plolTa6fCJiKJ5ckqnoWlvCvRHDfPGhUww+YH+ycxC2XAlxDTM3JBa6TbOnQNszgwh7u/I4LO2UHvDdT6H/6JBNdjE4yZmcSj/BXby7HzhGtav9IQcL5MCcp+gDHQbGNn4BbMJAMJp0E25UfeL3P34cVClDTohqL0hHZQTcwg=
+	t=1745408254; cv=none; b=FHVbqB7I2gdss7OGJeceCZc0XaC37/tabiuNvZ1OsjJyPgEQwkCKrxfc305OUbJkSSNNqHOchyxPWYM+NPzzIUFyK6ahn1ZO2eIahHYninJ/tAQQjEP8vOZsz76xlj23qIj6eAXSP68omWWtmNZDZ0naHQ2kWiUOVHl7JF2XvbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745408238; c=relaxed/simple;
-	bh=3pJoG+d0HhWoOv/Vb4FGPIm7v1quxhGiCBygqX42Q1k=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=f/azfOTjpIx0zkd1Ym3h6AmbH6O6JQuOTvW8woPumXEuVvi+y5Zj/dUPPuYjfzd3B656o6+lr0YFOq67E2mygGJNxmIz/dfres2kjrB1ob9O5HLMBHeqRJ/KmU2WoEAqnHEHUuBVNTGEvhdUpAuEZI3Dk2/rZ2o500OVJSf5Zw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KefzT5YJ; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745408237; x=1776944237;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3pJoG+d0HhWoOv/Vb4FGPIm7v1quxhGiCBygqX42Q1k=;
-  b=KefzT5YJy8F4rWfLKDanbcVPj4h1IneKlwGRLy04NptCHUDzR+F+0+Fw
-   L91MALsuB4b/ghwEZdMRBxJnJ+RI42DJKmz86pLLGq2h9z7WbadWT419b
-   +0fX+m0bqwZXq9PYIik7dHNRxLQ8qm1KB1k7O+D8paPrQzRAmNKomRBjv
-   hKRCwAg1w/ipoB9JDyk8nDwvfPz2IwohTgdyxJAbpr5ig+HVFlzPSa2fu
-   qAaDW0J3kp2p39SIorNSKEOiRYYWz4c9LkKwWEx1MWleuXquKM8Wweato
-   xN9tyIaVq0+LX9d5CddpctPnDEkzSVw72qdvlnzZdmMY++ZG6dwG2UMex
-   w==;
-X-CSE-ConnectionGUID: HqROGo77T8CnmpAZBP5QGA==
-X-CSE-MsgGUID: ukiphQd7SC+pJ4ckwfHAQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="58368794"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="58368794"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 04:37:16 -0700
-X-CSE-ConnectionGUID: noNNdf+cRe+BGXl5d2u+xA==
-X-CSE-MsgGUID: Pb5RVM01SwqE7BmDKL6/+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="132828354"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.36])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 04:37:14 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 23 Apr 2025 14:37:11 +0300 (EEST)
-To: Lukas Wunner <lukas@wunner.de>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    "Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCH v2 1/1] PCI/bwctrl: Replace lbms_count with PCI_LINK_LBMS_SEEN
- flag
-In-Reply-To: <aAi734h55l7g6eXH@wunner.de>
-Message-ID: <87631533-312f-fee9-384e-20a2cc69caf0@linux.intel.com>
-References: <20250422115548.1483-1-ilpo.jarvinen@linux.intel.com> <aAi734h55l7g6eXH@wunner.de>
+	s=arc-20240116; t=1745408254; c=relaxed/simple;
+	bh=6OQ2IkiNk4wkMhSgShhUXpqGsET/HqmzKTydByHvaQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qxzMOnvjG4o0C+Wt+8gx+R6TXNEslMnBzyruBKwb8Mw0qCCYaK+F7+UA9YLlxZ0X9hO9DzgAimSZ+Aply4CYuxlgHIFsGROLa9KA4CqyA+rnAtH/IvB/Iv4HwL/5wpP4/mgYPzI1OdRsbw81dIFXXy2Up7Zy+hYzWlcecupJAYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86d3805a551so2659217241.3;
+        Wed, 23 Apr 2025 04:37:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745408249; x=1746013049;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aDuaTM9ibNIGOgABq8eZY4S2tIlVdKvchipAQzhVOaM=;
+        b=le6f/7Df904/SroYxS3IuE4ZGyVBwgdaJKT+WVpcUORwNV/ky8WVh8hryHLElAOt27
+         tRpWZPd7+W/W3mjHAKec/CTTkFvmRtXMiIS6M5XFUBicbWamP5baUiSiBXNaVVReoXM7
+         EqKWZ3JaA0ZVMg4ORoUirhSAT1LsZUJo0T2PQZHdYeVTnb/fkauKWp47mOBXBjib12na
+         o7aQo5oKx/o86gRwDTzIImmsGsHa35cjNxGfC50LWUsvG43ve32GiqdqqVAHJTES04l9
+         TcQqFPE6It351oWPWNACC83nxJKc/UXbXkqAabOuNB3/dXQKHsuws/lF/KT2HTszdtl3
+         7n4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDl27DJcHKDrJFbbtjrk2eI6egDJpj9QZLBf50rufUeWO4AhXgdxzN4GxNziEzQm9eFtm5nHHLNkAP6WqaHwjPZ5o=@vger.kernel.org, AJvYcCV8i+S5XPoOG9TWqFAm+RPZpLmobbdnqWv+aj6maBeh3Yf6mt6IIVZYH3YnlqvYqf3TJfvke/X2G4d6MLQk@vger.kernel.org, AJvYcCVfOAOK6JQzHfxB/nxuYypoTKLPhDaj4CV1gbDAH2LFYvn5UOuIs5EvkiheAXewBhELUCf8SMq7zggW@vger.kernel.org, AJvYcCX1KDFh5AV0QfEEVouUAHioCm43t0dIBJRX6fUbE31YwaP2kj6otPavWLI5U524dDgzFp3DPspLg/KN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjr9woYuq/mXKa4a5n9Uzlth9cihmNpCZcqQaxuI8abts2EBI0
+	jZtUKnhTg663+y0mZrPFufTwCvrqcE7UTFaV+cnmk6vQcpI+c0GSNidEUaUKkfE=
+X-Gm-Gg: ASbGncuHjZI1pBpM9x/URackJBoz8CFbzUvHU5LRLFy+1DE8ZBhtVGSdFPfvVSgZlDE
+	8Z9E8chYMIoEmBjVZSYJBur9H6z2IK7y5ePYfaly39hBR7Jixph4e5pUxyT4sEFj0vB3X4LDOUp
+	L1UTU3hD2/DDyyI61k/RNqLg99ImKYWTxZEHuFBLsWYCqSR52/9szLWCeX7MB7SsbD3hrDaLQdM
+	zdoZY0yqFivzM7fRCpoFSMabbyJVSpKMKiJDEMzXbWNZpA6mSmPcfbgMhmUTSgqSTI6i2VTJP4b
+	QlUbAswuqFyAIi1KUTg3qoqDg69P9EoW5ZTkndoORy8974A+zD/zMs0Kse3ZB1S6QjWvKKoppg7
+	latI=
+X-Google-Smtp-Source: AGHT+IHhfmifE9P37+rg1v5BsnaKS0MXrAvHKGQ27idYcFRc26FFY+/pKYWYsIFHaI1HBYucH6GDpA==
+X-Received: by 2002:a05:6102:2259:b0:4c3:64be:5983 with SMTP id ada2fe7eead31-4cb8023ef61mr12389892137.25.1745408249183;
+        Wed, 23 Apr 2025 04:37:29 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-877647776b6sm2718858241.26.2025.04.23.04.37.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 04:37:28 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86fbc8717fcso2382967241.2;
+        Wed, 23 Apr 2025 04:37:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHT+BqWU0un8QmQ1x2ICMyoJKW5dWOU6sMy6StSHicNZPd67wb4F2z1otCnS437N561BahYrmEphrP@vger.kernel.org, AJvYcCUf5/e45t9sRUROWltZ48q5pMbiXPxvzUsXC6TGJsdaJ19dqpjzToCe77/6YXK2mMTmlJAVO/jVe3J+@vger.kernel.org, AJvYcCWPM+N3qe7G169BwBzsixI3+L4e0q5DKpXjtAZc1aawsfpSgQiRTDYkCKsuQn0ex+jhDnZRpYq4q/sIyXb6@vger.kernel.org, AJvYcCX0nzmgX8h//ahmFfx1RJURlVzU2VSAJS6RUnSLq0KivDnrgJyltuW36dW0qyPqlnKpYtoFM2uS1+PB3DDyelznBpU=@vger.kernel.org
+X-Received: by 2002:a05:6102:27ca:b0:4bb:9b46:3f8a with SMTP id
+ ada2fe7eead31-4cb800c1a61mr11696598137.2.1745408248312; Wed, 23 Apr 2025
+ 04:37:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1399898896-1745408231=:1158"
+References: <20250422173937.3722875-1-fabrizio.castro.jz@renesas.com> <20250422173937.3722875-3-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250422173937.3722875-3-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 13:37:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUKVDzLUfcr_0R_VQ0TzBtPWGVbwfX_pKbwOjzuaBLcEw@mail.gmail.com>
+X-Gm-Features: ATxdqUH9su4W4mn8i54UlLb_HgPMtRPSv1JRSwXDunzWGUFbnDSkwnpEps3CkW0
+Message-ID: <CAMuHMdUKVDzLUfcr_0R_VQ0TzBtPWGVbwfX_pKbwOjzuaBLcEw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/6] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Fabrizio,
 
---8323328-1399898896-1745408231=:1158
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+On Tue, 22 Apr 2025 at 19:40, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> Renesas RZ/G2L family of SoCs, but there are some differences:
+> * It only uses one register area
+> * It only uses one clock
+> * It only uses one reset
+> * Instead of using MID/IRD it uses REQ No
+> * It is connected to the Interrupt Control Unit (ICU)
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v5->v6:
+> * Reworked the description of `#dma-cells`.
+> * Reworked `renesas,icu` related descriptions.
+> * Added `reg:`->`minItems: 2` for `renesas,r7s72100-dmac`.
+> * Since the structure of the document remains the same, I have kept
+>   the tags I have received. Please let me know if that's not okay.
 
-On Wed, 23 Apr 2025, Lukas Wunner wrote:
+Thanks for the update!
 
-> [cc +=3D Maciej, start of thread is here:
-> https://lore.kernel.org/r/20250422115548.1483-1-ilpo.jarvinen@linux.intel=
-=2Ecom/
-> ]
->=20
-> On Tue, Apr 22, 2025 at 02:55:47PM +0300, Ilpo J=E4rvinen wrote:
-> > +void pcie_reset_lbms(struct pci_dev *port)
-> >  {
-> > -=09struct pcie_bwctrl_data *data;
-> > -
-> > -=09guard(rwsem_read)(&pcie_bwctrl_lbms_rwsem);
-> > -=09data =3D port->link_bwctrl;
-> > -=09if (data)
-> > -=09=09atomic_set(&data->lbms_count, 0);
-> > -=09else
-> > -=09=09pcie_capability_write_word(port, PCI_EXP_LNKSTA,
-> > -=09=09=09=09=09   PCI_EXP_LNKSTA_LBMS);
-> > +=09clear_bit(PCI_LINK_LBMS_SEEN, &port->priv_flags);
-> > +=09pcie_capability_write_word(port, PCI_EXP_LNKSTA, PCI_EXP_LNKSTA_LBM=
-S);
-> >  }
->=20
-> Hm, previously the LBMS bit was only cleared in the Link Status register
-> if the bandwith controller hadn't probed yet.  Now it's cleared
-> unconditionally.  I'm wondering if this changes the logic somehow?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hmm, that's a good question and I hadn't thought all the implications.
-I suppose leaving if (!port->link_bwctrl) there would retain the existing=
-=20
-behavior better allowing bwctrl to pick the link speed changes more=20
-reliably.
+> --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> @@ -80,12 +85,26 @@ properties:
+>      items:
+>        - description: Reset for DMA ARESETN reset terminal
+>        - description: Reset for DMA RST_ASYNC reset terminal
+> +    minItems: 1
+>
+>    reset-names:
+>      items:
+>        - const: arst
+>        - const: rst_async
+>
+> +  renesas,icu:
+> +    description:
+> +      It must contain the phandle to the ICU, and the index of the DMAC as seen
+> +      from the ICU (e.g. parameter k from register ICU_DMkSELy).
 
-However, I'm not entirely sure if the old code was a good idea either as=20
-it assumed the irq handler had read LBMS by the time lbms_count is reset.
-Solving that would seemingly require locking to not race with remove,=20
-which just got removed (LOL) :-(.
+Doesn't really hurt, but this description is identical to the formal
+description of the items below.
 
-Given this flag is only for the purposes of the quirk, it seems very much=
-=20
-out of proportions. The quirk seeing extra LBMS doesn't seem to have a big=
-=20
-practical impact. At worst case, the link speed becomes gen1 if the quirk=
-=20
-fails to restore the original link speed for some reason (which, IIRC, it=
-=20
-didn't yet attempt do when the original LBMS reset code was added).
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to the ICU node.
 
-So I'd prefer going with the if (!port->link_bwctrl) solution.
+Phandle
 
-> >  static bool pcie_lbms_seen(struct pci_dev *dev, u16 lnksta)
-> >  {
-> > -=09unsigned long count;
-> > -=09int ret;
-> > -
-> > -=09ret =3D pcie_lbms_count(dev, &count);
-> > -=09if (ret < 0)
-> > -=09=09return lnksta & PCI_EXP_LNKSTA_LBMS;
-> > +=09if (test_bit(PCI_LINK_LBMS_SEEN, &dev->priv_flags))
-> > +=09=09return true;
-> > =20
-> > -=09return count > 0;
-> > +=09return lnksta & PCI_EXP_LNKSTA_LBMS;
-> >  }
->=20
-> Another small logic change here:  Previously pcie_lbms_count()
-> returned a negative value if the bandwidth controller hadn't
-> probed yet or wasn't compiled into the kernel.
+> +          - description:
+> +              The number of the DMAC as seen from the ICU, i.e. parameter k from
+> +              register ICU_DMkSELy. This may differ from the actual DMAC instance
+> +              number.
+> +
+>  required:
+>    - compatible
+>    - reg
 
-One cannot disable bwctrl, it always comes on with PCIe.
+Gr{oetje,eeting}s,
 
-> Only in those two cases was the LBMS flag in the lnksta variable=20
-> returned.
->=20
-> Now the LBMS flag is also returned if the bandwidth controller
-> is compiled into the kernel and has probed, but its irq handler
-> hasn't recorded a seen LBMS bit yet.
->=20
-> I'm guessing this can happen if the quirk races with the irq
-> handler and wins the race, so this safety net is needed?
+                        Geert
 
-The main reason why this check is here is for the boot when bwctrl is not=
-=20
-yet probed when the quirk runs. But the check just seems harmless, or=20
-even somewhat useful, in the case when bwctrl has already probed. LBMS=20
-being asserted should result in PCI_LINK_LBMS_SEEN even if the irq=20
-handler has not yet done its job to transfer it into priv_flags.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> This is quite subtle so I thought I'd ask.
-
-It's good that you asked! :-)
-
-> The patch otherwise
-> LGTM, so assuming the two subtle logic changes above are intentional
-> and can be explained, this is
->=20
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
->=20
-> Thanks,
->=20
-> Lukas
->=20
-
---=20
- i.
-
---8323328-1399898896-1745408231=:1158--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
