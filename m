@@ -1,158 +1,91 @@
-Return-Path: <linux-kernel+bounces-616260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8349A98A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D33A98A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B965B189FFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16400189E47D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DA4A934;
-	Wed, 23 Apr 2025 12:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906A5C133;
+	Wed, 23 Apr 2025 12:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jt2Jiezn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/MDVqo4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B554A06;
-	Wed, 23 Apr 2025 12:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDBC4C62;
+	Wed, 23 Apr 2025 12:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745412423; cv=none; b=ndyiEVlw50fyZLF4eEiIINwf0v7NcqzEerFuqsi/2BO8ytU60DL5wj+Hb9NMlcLgbnmGvmelI/6ax6hsLkvtIaiInzG+DkIzZv8VXhoBLE/FLUlhOpM0R1vWGWhM8ol7pdg03T9hF/DqKheXESX68+Jb1rzKsxM4aEP9mNGjTEQ=
+	t=1745412691; cv=none; b=KxTv6jXVG/J3GblnvBRwMrd/rlB2tDazJH8OYscMcXTzBq8tOu5vGoKjlPJuWlD+qt8CkmWZ4pPsEraVUMNNX7ipUH6AVHpz3Hzpl3tGkQdaPDCpCEMPB4KezsP9FK3GzRpn+GrhdGIyMMcKy5RfCXaZlhFCKHFZ+w9AJr19PM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745412423; c=relaxed/simple;
-	bh=hGSoWXRerC4y6sjQp1uLlynwN9i8PNQILUr1jeJ2sRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m42UqwTySvJh4a4fjfv4nocFyX4p/sCBxrGCW571OG26YcD15JO9FiJBlkNQUZ+vt8kZytcitrbCPbpIWSCQfn3WQne60bERJOsodVd2B9+5XbIXm0vdDdn9gpXpJkaQUDi0G6RkL3qnXakpTuSwUJVvCQWR/4icXP/tY+wGiJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jt2Jiezn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6B3C4CEE2;
-	Wed, 23 Apr 2025 12:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745412422;
-	bh=hGSoWXRerC4y6sjQp1uLlynwN9i8PNQILUr1jeJ2sRg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jt2Jiezn0v7M6allPE/MTBkR4mCmRHp9vTQq7OUlElrIicIXqQJebpJRfYzXRTvkB
-	 EKY+WSgpkidbvEZqUk+TM7r4rH6r5m7ozzM/RoiysXwUybPMuHMjMvkJqxW6fRHoiE
-	 qGGnUqRuDPWkdpvKSep7rNosDr/3/QvXk2UwQkKpZARssGAtQk2+lGSZsP+vxO4rRP
-	 fNOWzmjhkYqVPs7kcO2E8xymtj0Z0HdG5M/hv0bMlyjJCQv8f+pdtFU1Xlly65oBIr
-	 n/R/fJ7SNUjBRSDBj12PSgjtnkqH8ldD2qqD/gDGrUlIXYotrYNx+tt13AXXab1rBA
-	 hgLnPM2cJVuYw==
-Message-ID: <af965f9a-97c9-4e80-8d28-06532b16e80b@kernel.org>
-Date: Wed, 23 Apr 2025 14:46:58 +0200
+	s=arc-20240116; t=1745412691; c=relaxed/simple;
+	bh=O24AVo87Xl3zKaU3Z4Nac3ocv+3MkbB4zf+ZspP3r6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uF6NTOzhNs9IU9lmw51fqskrQICT9TuzHgLOVAh4fKIBueIzT4xhrjHm1/Um3kPqKp/kwe57gzFM4tShrJm81dhDTOEtSwYbNBzTgLfY5kf+LHu2EgGy4H+arr6uoCp7RZq+qZ4Q+8A7yrw8p+Dt7F7si5nq0nbBNemy1uH2NDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/MDVqo4; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745412690; x=1776948690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O24AVo87Xl3zKaU3Z4Nac3ocv+3MkbB4zf+ZspP3r6c=;
+  b=i/MDVqo4WT85uCQOsh9DBKxyoRCyhKMB+nOaW7lm1CMt/QUlth4vc/of
+   HiBUsgL1JHJNK6TuMPSDYxIyss9U/03bvsu8iBH0QvK6xy2OBL6nst0Sr
+   jCUwnEFWm2uB1dcG/VXC61hXCNlIkafjmwXMJJaWeBnfeKVEBIRzNP1Dp
+   Lzv1oPvtjsPeOf8W/dFtlQHFiGa/3w9N1dEKJiVKfZ/soRW92Yr8uSLwL
+   HvEysBfEGeX9ufmnLL+pJRyKE/lXPErQlJ6mIRRW2FiMb7Osf1HNsqkIP
+   n0oQ84Rf/jRY4z9IirU3f4QXVF1rvTSHEBjOnYgRg74gYB9S1m606gC2c
+   A==;
+X-CSE-ConnectionGUID: M7bjXovzTaCWp2t5ONGCsg==
+X-CSE-MsgGUID: pS0Qxy02QEWBKf/SHXQW+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50665060"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="50665060"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:51:29 -0700
+X-CSE-ConnectionGUID: h88h5D9OT66vHIycEe6hZw==
+X-CSE-MsgGUID: OfANx+SmSLGfjdfkMYLzCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="137465673"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:51:26 -0700
+Date: Wed, 23 Apr 2025 15:51:21 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: eugen.hristev@linaro.org, mchehab@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, hugues.fruchet@foss.st.com,
+	alain.volmat@foss.st.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, andriy.shevchenko@linux.intel.com,
+	sakari.ailus@linux.intel.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Convert media drivers to use devm_kmemdup_array()
+Message-ID: <aAjiSa_TD1r6Sqrn@black.fi.intel.com>
+References: <20250409084738.1851463-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] dt-bindings: ASoC: Document Tegra264 APE support
-To: "Sheetal ." <sheetal@nvidia.com>, broonie@kernel.org,
- linux-sound@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
- spujar@nvidia.com
-References: <20250422072805.501152-1-sheetal@nvidia.com>
- <20250422072805.501152-2-sheetal@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250422072805.501152-2-sheetal@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409084738.1851463-1-raag.jadav@intel.com>
 
-On 22/04/2025 09:27, Sheetal . wrote:
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> index b4bee466d67a..ee33f056b125 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> @@ -21,6 +21,7 @@ allOf:
->  properties:
->    compatible:
->      enum:
-> +      - nvidia,tegra264-audio-graph-card
->        - nvidia,tegra210-audio-graph-card
->        - nvidia,tegra186-audio-graph-card
->  
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-> index e15f387c4c29..26e1ed7ec7a7 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-asrc.yaml
-> @@ -31,7 +31,9 @@ properties:
->  
->    compatible:
->      oneOf:
-> -      - const: nvidia,tegra186-asrc
-> +      - enum:
-> +          - nvidia,tegra264-asrc
-> +          - nvidia,tegra186-asrc
-Keep proper order, not random, not reversed.
+On Wed, Apr 09, 2025 at 02:17:36PM +0530, Raag Jadav wrote:
+> This series converts media drivers to use the newly introduced[1]
+> devm_kmemdup_array() helper.
+> 
+> [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Bump. Any guidance on this?
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
+Raag
 
