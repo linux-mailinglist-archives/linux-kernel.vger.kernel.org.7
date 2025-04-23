@@ -1,145 +1,527 @@
-Return-Path: <linux-kernel+bounces-615977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC83A984F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF51CA98514
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B624168EBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F245D5A7F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C342242D68;
-	Wed, 23 Apr 2025 09:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E5B26AA93;
+	Wed, 23 Apr 2025 09:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Ji33UZRI"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D0aMATJB"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA23202C3A;
-	Wed, 23 Apr 2025 09:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE8B26A0D6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 09:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745399238; cv=none; b=nZtgc4CF4N8O0IYklcI1e09dY1/AuBPFOTTRpMTjuLLLVo08SXvVSGejpif0zRw9Nw1MEmWE2ejdyOk73Ej96Cy9PN12WXHfqVZuONKxMrVKp+w/UQXppkGYh8mJFuPvVNUiJWErbDgAy/cUKNOw5p27fLd7Xk/nS7KdJaL7uS4=
+	t=1745399294; cv=none; b=ndGx1wdy9g5B9m2pBkwycFWuGGHwtnmT54P6XfuFpzgrwEWZpa6bCFikAY3ZfVKMJRKVO2VawqH5H46IkIHgtMjTzKdTE11G8psxfGq5ITWWtjIdkDTIVZmJ4YCA70lPETrdEyddXKOwqT7XmACn5aqv9g6SrsUS92G0E38b0cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745399238; c=relaxed/simple;
-	bh=hLSARZ7ezUIq94E3XhsRXvqFBKwnXy1y41F52yDm+4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RGyWhzIHHUoC83t56AHo4R+mt+n8fHlgpfCuMzcrK+iUWcEa8KDvhyu789Ns2Xqc8jniDCc8X+qkwYwBJiYgiLyhMwjQq3+hU74w0xIRKKKzQEGmBXqwOy2iVmgTAjNHt7jjnTD67SkYU7Sb1lIcstS0tgrVYz/Q9nL3ga4r3H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Ji33UZRI; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53N979GH3193929
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 23 Apr 2025 02:07:09 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53N979GH3193929
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745399230;
-	bh=VjiSCI2JWGHeVcYMO/H7zWlpwh581PPs/q3++1PExpY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ji33UZRIUpEME1IjGELrymZaXtLvxPrFsYusqS19Q0xdCe0mFaa0gDh/JSw6p1d0l
-	 PqCvthRxi4c5WjxuhHKWtkfgXeL/rp5l0lf7fNTT1vMmKNZHV/IrgktZm0ve8XL3GP
-	 BnK7uJzs0ZuDYZ3IG3Hu6rkmxWPR3l8SBpHTqo/usYSUnoKwuN/Gcq4vXgu97erMSN
-	 l0eizhqd4y5iF/lyTU2X2opWJ3nbC4x4hRCJ8L3DA0vjWbqkxR9W1V1/lKBJaH2bG/
-	 /04SkaI9UMbshlp9VpAw6NvbHh9VMnSrwSzILkxIH/CpXCSGT3IReK17J7cEFG/tv4
-	 8muXMfOvur7Pg==
-Message-ID: <08e2aa3f-4232-45bc-8a95-1eac1074ff9c@zytor.com>
-Date: Wed, 23 Apr 2025 02:07:08 -0700
+	s=arc-20240116; t=1745399294; c=relaxed/simple;
+	bh=qK+Bht5I8TbFJ37fxMJ/CZN+W/3pEIzqCUuBSR0d7+I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BIsl1i44B943CXMsOVn6veCVw9E33xYoydaul+GGLtduWFFbetc+WMZXck1bX5sulpk68gO/4Z5GIqiHXKUCmwuThOVQicWxq1i9aANSgfn3ct3huTF5zK5oysOVS9QyjPwGSRZCqA8LRcz06P5uGzWhlbrkPrhtlTlo/CJFyI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=D0aMATJB; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso8624970a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 02:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745399289; x=1746004089; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GSzE3rftnozhvBrUV0vIpg9NkBc+hyjjqSB2+GzIiAM=;
+        b=D0aMATJBHEnoohL30eQjLg8rCZAjz22lvTPujlxxWN8YrkhSYkNgEg8TRc8dbzhZb0
+         V1RbWqE45g/uQp3Mg8uJl3dQNhCcWjkAArm5J9umfV1s84BugwzDvbt4yC2Q0hiXJ2KO
+         JMFxxRS9fXe6mpjI7IC5dtrGdEFMTvCUK0XhnR3Xq6qSIukamf8zditaK0c7sPxrxtb8
+         FVWzFCAqCKn0H6zTBeNF+SioxYeUcnfBcjJMLdBXoC6+kC76vHo69gUldMhMgL1s6AZm
+         ZuIhltRNGbj4Mt9ACaibXskzL1VtV749P4S8UwXtLIbV0/yer9LSu2AEkFiy66bQxHpr
+         VCnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745399289; x=1746004089;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GSzE3rftnozhvBrUV0vIpg9NkBc+hyjjqSB2+GzIiAM=;
+        b=l1nb67e+JpvCSvbevS5tvE57B8CWPFNvTrCbS8u9kQKU7GdGdyyEKPw14om2bBTCUS
+         YdlzFCwb0IdL26chWJ2im6qVn2IoZgmWpSg5McjSlIp7AUV2k0oYTtBmsvdpwbP5Xtbv
+         zatyPlx9+LNF1Vz9z7xA1MoA1J2KAFUbUwG1mQUcMGTymXbReP6NOX8jSbqzulSQhXdS
+         B3mAABm7Ch5dhEpkGutqBqOUyTxMQrtI/pR7Uex3x0ApxwOYEEfaaqDyBHqOCGvmVEyw
+         vOhGPiO+KINyLV2QJBKIU9XtIjncifIrEI1xQNCdSDyYR4LY1Yi1lUkoH0VxWvpGNYpm
+         qivQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRD3++yUBG7xpSQoPW+Q8QlPkQNNVYKHjI/upRWpCKeKY0LYw8UNGLNQmVHVnYqDPhtYqmoqSaM5hLmVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1lsBYYkLXNzcZoNFmKKLK8iT7/1cEwl9jCHp8+DD/yGT39By7
+	gTlfb/nJyYkrkfrnAOKJ9su7AaugBSQAzalgNjSJ8Cky/vspznzl1FO63k+eGLo=
+X-Gm-Gg: ASbGnctncGCzu/x3szaPha8EY3l1tNR39MXegyTj+ouwPxgifOs3phSry1EMHZKDx/F
+	l/k7S1eZinR2VeBhlOpsfO/HZDuz0uJfMGulYa8RdKaqOvkGlG2kq5e7DxUdhgB5dWHU1PSJFKt
+	M8BhxNVtfTxsTMXSaAZS/DB/CGQDAgy+ZtdgpCMS8Gd/mh4CKz6Q7B/7FyE6CGz3Pohu03ak6+p
+	ojeizd2cdqH0Ql9zTvAtBztC9E/CAJJVHLaIDzIfQ2syd1rs/e0XhT0XN9zBauqAe37zMczzdWg
+	rrH3IAT/3r+ho6V/ufJ0hgKfIDLtovzSDzQ=
+X-Google-Smtp-Source: AGHT+IGIVEtcneQ6QBHI27+IaUMZuGJ4Lg8B5LwWyJ7fqeDehKNvd+aExONZx2dG0jkMVlHozlkkTw==
+X-Received: by 2002:a05:6402:35cc:b0:5e7:5b30:3c4f with SMTP id 4fb4d7f45d1cf-5f628554785mr17378191a12.14.1745399288737;
+        Wed, 23 Apr 2025 02:08:08 -0700 (PDT)
+Received: from localhost ([2001:4091:a245:826e:3c1:b5a5:4b3e:82ca])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f62557943esm7103055a12.25.2025.04.23.02.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 02:08:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: MSR access API uses in KVM x86
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "H. Peter Anvin"
- <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
-References: <a82f4722-478f-4972-a072-80cd13666137@zytor.com>
- <aAeqRk8fk8mvutw2@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aAeqRk8fk8mvutw2@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=1ce015bcc28bc69295cb23bd2888779d0acaa7cc063525b3c34be3e71a95;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 23 Apr 2025 11:07:59 +0200
+Message-Id: <D9DWENILJAPY.3LSS0LRD0H5Y1@baylibre.com>
+Cc: "Vignesh Raghavendra" <vigneshr@ti.com>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Tero Kristo" <kristo@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Sebin Francis" <sebin.francis@ti.com>,
+ "Nishanth Menon" <nm@ti.com>, "Kendall Willis" <k-willis@ti.com>, "Dhruva
+ Gole" <d-gole@ti.com>, "Kevin Hilman" <khilman@baylibre.com>, "Vishal
+ Mahaveer" <vishalm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+ "Akashdeep Kaur" <a-kaur@ti.com>
+Subject: Re: [PATCH 0/7] arm64: dts: ti: k3-am62: Add wakeup-sources for low
+ power modes
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250421-topic-am62-dt-partialio-v6-15-v1-0-6ced30aafddb@baylibre.com> <174524753085.2426038.13409894396395372581.robh@kernel.org>
+In-Reply-To: <174524753085.2426038.13409894396395372581.robh@kernel.org>
 
-On 4/22/2025 7:40 AM, Sean Christopherson wrote:
-> On Mon, Apr 21, 2025, Xin Li wrote:
->> It looks to me that MSR access API uses in KVM x86 are NOT consistent;
->> sometimes {wr,rd}msrl() are used and sometimes native_{wr,rd}msrl() are
->> used.
->>
->> Was there a reason that how a generic or native MSR API was chosen?
-> 
-> I doubt anyone knows for sure; that'd likely require a time travelling device
-> and/or telepathic abilities :-)
-> 
->> In my opinion KVM should use the native MSR APIs, which can streamline
->> operations and potentially improve performance by avoiding the overhead
->> associated with generic MSR API indirect calls when CONFIG_XEN_PV=y.
-> 
-> As Jürgen pointed out, they aren't indirect calls.  Though IIUC, there is still
+--1ce015bcc28bc69295cb23bd2888779d0acaa7cc063525b3c34be3e71a95
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Right, I didn't notice such an optimization went in.
+Hi,
 
-> a direct CALL and thus a RET when PARAVIRT_XXL=Y.
+On Mon Apr 21, 2025 at 5:07 PM CEST, Rob Herring (Arm) wrote:
+>
+> On Mon, 21 Apr 2025 10:14:18 +0200, Markus Schneider-Pargmann wrote:
+>> Hi,
+>>=20
+>> This series adds devicetree changes needed for Partial-IO support
+>> on TI am62, am62a, and am62p SoCs. It defines system states for various
+>> low power modes and configures the wakeup-sources for devices in the CAN=
+UART
+>> group. Depending on the SoC and board details, some low power modes may =
+not
+>> be available, so the wakeup-sources are described in the board files.
+>> The series also adds the necessary pinctrl settings required for proper
+>> wakeup functionality.
+>>=20
+>> Partial-IO Overview
+>> ------------------
+>> Partial-IO is a low power system state in which nearly everything is
+>> turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
+>> wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the sys=
+tem
+>> on pin activity. Note that this does not resume the system as the DDR is
+>> off as well. So this state can be considered a power-off state with wake=
+up
+>> capabilities.
+>>=20
+>> A documentation can also be found in section 6.2.4 in the TRM:
+>>   https://www.ti.com/lit/pdf/spruiv7
+>>=20
+>> Implementation Details
+>> ----------------------
+>> The complete Partial-IO feature requires three coordinated series, each =
+handling
+>> a different aspect of the implementation:
+>>=20
+>> 1. m_can driver series: Implements device-specific wakeup functionality
+>>     for m_can devices, allowing them to be set as wakeup sources.
+>>     https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-sour=
+ce/v6.15?ref_type=3Dheads
+>>     https://lore.kernel.org/r/20250421-topic-mcan-wakeup-source-v6-12-v7=
+-0-1b7b916c9832@baylibre.com
+>>=20
+>> 2. This series (devicetree): Defines system states and wakeup sources in=
+ the
+>>     devicetree for am62, am62a and am62p.
+>>=20
+>> 3. TI-SCI firmware series: Implements the firmware interface to enter Pa=
+rtial-IO
+>>     mode when appropriate wakeup sources are enabled.
+>>     https://gitlab.baylibre.com/msp8/linux/-/tree/topic/tisci-partialio/=
+v6.15?ref_type=3Dheads
+>>=20
+>> Devicetree Bindings
+>> -------------------
+>> This series depends on the dt-schema pull request that adds bindings for
+>> system-idle-states and updates the binding for wakeup-source:
+>>   https://github.com/devicetree-org/dt-schema/pull/150
+>>=20
+>> These new bindings allow us to define the system states and reference th=
+em
+>> from device wakeup-source properties.
+>>=20
+>> Testing
+>> -------
+>> A test branch is available here that includes all patches required to
+>> test Partial-IO:
+>>=20
+>> https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-partialio=
+/v6.15?ref_type=3Dheads
+>>=20
+>> After enabling Wake-on-LAN the system can be powered off and will enter
+>> the Partial-IO state in which it can be woken up by activity on the
+>> specific pins:
+>>     ethtool -s can0 wol p
+>>     ethtool -s can1 wol p
+>>     poweroff
+>>=20
+>> I tested these patches on am62-lp-sk.
+>>=20
+>> Best,
+>> Markus
+>>=20
+>> Previous versions
+>> -----------------
+>>  - As part of the series "firmware: ti_sci: Partial-IO support"
+>>    https://lore.kernel.org/r/20250306-topic-am62-partialio-v6-12-b4-v5-0=
+-f9323d3744a2@baylibre.com
+>>=20
+>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>> ---
+>> Markus Schneider-Pargmann (7):
+>>       arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+>>       arm64: dts: ti: k3-am62: Define possible system states
+>>       arm64: dts: ti: k3-am62a: Define possible system states
+>>       arm64: dts: ti: k3-am62p: Define possible system states
+>>       arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source system-states
+>>       arm64: dts: ti: k3-am62a7-sk: Set wakeup-source system-states
+>>       arm64: dts: ti: k3-am62p5-sk: Set wakeup-source system-states
+>>=20
+>>  arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 60 +++++++++++++++++++++++++
+>>  arch/arm64/boot/dts/ti/k3-am62.dtsi      | 22 +++++++++
+>>  arch/arm64/boot/dts/ti/k3-am62a.dtsi     | 27 ++++++++++++
+>>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts  | 76 +++++++++++++++++++++++++=
++++++++
+>>  arch/arm64/boot/dts/ti/k3-am62p.dtsi     | 27 ++++++++++++
+>>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts  | 76 +++++++++++++++++++++++++=
++++++++
+>>  arch/arm64/boot/dts/ti/k3-pinctrl.h      |  2 +
+>>  7 files changed, 290 insertions(+)
+>> ---
+>> base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+>> change-id: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da
+>> prerequisite-change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d6993=
+1bd8:v7
+>> prerequisite-patch-id: 02b7142f56c849c9a3faab2d2871805febd647aa
+>> prerequisite-patch-id: 830b339ea452edd750b04f719da91e721be630cb
+>> prerequisite-patch-id: 56fd0aae20e82eb2dfb48f1b7088d62311a11f05
+>> prerequisite-patch-id: 41f55b96c0428240d74d488e3c788c09842a1753
+>>=20
+>> Best regards,
+>> --
+>> Markus Schneider-Pargmann <msp@baylibre.com>
+>>=20
+>>=20
+>>=20
+>
+>
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>
+>   pip3 install dtschema --upgrade
+>
 
-Correct.
+Yes, these issues are expected as long as the github PR on the dt-schema is=
+ not merged.
+https://github.com/devicetree-org/dt-schema/pull/150
 
-> 
-> I agree that using PV APIs in KVM doesn't make much sense, as running KVM in a
-> XEN PV guest doesn't seem like something we should optimize for, if it's even
-> supported.  So if we end up churning all of the rdmsr/wrmsr macros, I have no
-> objection to switching to native variants.
+Best
+Markus
 
-Thanks for the confirmation.
+>
+> This patch series was applied (using b4) to base:
+>  Base: using specified base-commit 64e9fdfc89a76fed38d8ddeed72d42ec71957e=
+d9
+>  Deps: looking for dependencies matching 11 patch-ids
+>  Deps: Applying prerequisite patch: [PATCH v7 1/4] dt-bindings: can: m_ca=
+n: Add wakeup properties
+>  Deps: Applying prerequisite patch: [PATCH v7 2/4] can: m_can: Map WoL to=
+ device_set_wakeup_enable
+>  Deps: Applying prerequisite patch: [PATCH v7 3/4] can: m_can: Return ERR=
+_PTR on error in allocation
+>  Deps: Applying prerequisite patch: [PATCH v7 4/4] can: m_can: Support pi=
+nctrl wakeup state
+>  Deps: Applying prerequisite patch: [PATCH 1/7] arm64: dts: ti: k3-pinctr=
+l: Add WKUP_EN flag
+>  Deps: Applying prerequisite patch: [PATCH 2/7] arm64: dts: ti: k3-am62: =
+Define possible system states
+>  Deps: Applying prerequisite patch: [PATCH 3/7] arm64: dts: ti: k3-am62a:=
+ Define possible system states
+>  Deps: Applying prerequisite patch: [PATCH 4/7] arm64: dts: ti: k3-am62p:=
+ Define possible system states
+>  Deps: Applying prerequisite patch: [PATCH 5/7] arm64: dts: ti: k3-am62-l=
+p-sk: Set wakeup-source system-states
+>  Deps: Applying prerequisite patch: [PATCH 6/7] arm64: dts: ti: k3-am62a7=
+-sk: Set wakeup-source system-states
+>  Deps: Applying prerequisite patch: [PATCH 7/7] arm64: dts: ti: k3-am62p5=
+-sk: Set wakeup-source system-states
+>
+> If this is not the correct base, please add 'base-commit' tag
+> (or use b4 which does this automatically)
+>
+> New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/ti/' fo=
+r 20250421-topic-am62-dt-partialio-v6-15-v1-0-6ced30aafddb@baylibre.com:
+>
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: /system-idle-s=
+tates/system-partial-io: failed to match any schema with compatible: ['syst=
+em-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: /system-idle-stat=
+es/system-partial-io: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: /system-idle-s=
+tates/system-deep-sleep: failed to match any schema with compatible: ['syst=
+em-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: /system-idle-stat=
+es/system-deep-sleep: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: /system-idle-states/=
+system-partial-io: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: /system-idle-s=
+tates/system-mcu-only: failed to match any schema with compatible: ['system=
+-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: /system-idle-stat=
+es/system-mcu-only: failed to match any schema with compatible: ['system-id=
+le-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: /system-idle-states/=
+system-deep-sleep: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: /system-idle-states/=
+system-partial-io: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: /system-idle-s=
+tates/system-standby: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: /system-idle-stat=
+es/system-standby: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: /system-idle-states/=
+system-mcu-only: failed to match any schema with compatible: ['system-idle-=
+state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: /system-idle-states/=
+system-deep-sleep: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: /system-idle-states/=
+system-standby: failed to match any schema with compatible: ['system-idle-s=
+tate']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: /system-idle-states/=
+system-mcu-only: failed to match any schema with compatible: ['system-idle-=
+state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: /system-idle-states/=
+system-standby: failed to match any schema with compatible: ['system-idle-s=
+tate']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: /system-idle-stat=
+es/system-partial-io: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: /system-idle-states/syste=
+m-partial-io: failed to match any schema with compatible: ['system-idle-sta=
+te']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: /system-idle-stat=
+es/system-deep-sleep: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: /system-idle-states/syste=
+m-deep-sleep: failed to match any schema with compatible: ['system-idle-sta=
+te']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: /system-idle-stat=
+es/system-mcu-only: failed to match any schema with compatible: ['system-id=
+le-state']
+> arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: /system-idle-states/syste=
+m-mcu-only: failed to match any schema with compatible: ['system-idle-state=
+']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: /system-idle-stat=
+es/system-standby: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: /system-idle-states/syste=
+m-standby: failed to match any schema with compatible: ['system-idle-state'=
+]
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: /system-idle-states/system-parti=
+al-io: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: /system-idle-states/system-io-dd=
+r: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: /system-idle-st=
+ates/system-partial-io: failed to match any schema with compatible: ['syste=
+m-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: /system-idle-states/system-deep-=
+sleep: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: /system-idle-st=
+ates/system-deep-sleep: failed to match any schema with compatible: ['syste=
+m-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: /system-idle-states/system-mcu-o=
+nly: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: /system-idle-st=
+ates/system-mcu-only: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: /system-idle-states/system-stand=
+by: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: /system-idle-st=
+ates/system-standby: failed to match any schema with compatible: ['system-i=
+dle-state']
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: serial@4a00000 (ti,am64-uart): w=
+akeup-source: [[4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: can@4e08000 (bosch,m_can): wakeu=
+p-source: [[14, 4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: can@4e18000 (bosch,m_can): wakeu=
+p-source: [[14, 4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: serial@0 (ti,am64-uart): wakeup-=
+source: [[4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: /system-idle-states/system-parti=
+al-io: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: /system-idle-states/system-io-dd=
+r: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: /system-idle-states/system-deep-=
+sleep: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: /system-idle-states/system-mcu-o=
+nly: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: /system-idle-states/system-stand=
+by: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: serial@4a00000 (ti,am64-uart): w=
+akeup-source: [[4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: can@4e08000 (bosch,m_can): wakeu=
+p-source: [[13, 4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: can@4e18000 (bosch,m_can): wakeu=
+p-source: [[13, 4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: serial@0 (ti,am64-uart): wakeup-=
+source: [[4, 5, 6, 7]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: /system-idle-stat=
+es/system-partial-io: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: /system-idle-stat=
+es/system-io-ddr: failed to match any schema with compatible: ['system-idle=
+-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: /system-idle-stat=
+es/system-deep-sleep: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: /system-idle-stat=
+es/system-mcu-only: failed to match any schema with compatible: ['system-id=
+le-state']
+> arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: /system-idle-stat=
+es/system-standby: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: /system-idle-stat=
+es/system-partial-io: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: /system-idle-stat=
+es/system-deep-sleep: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: /system-idle-stat=
+es/system-mcu-only: failed to match any schema with compatible: ['system-id=
+le-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: /system-idle-stat=
+es/system-standby: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: /system-idle-states/system-part=
+ial-io: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: /system-idle-states/system-deep=
+-sleep: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: /system-idle-states/system-mcu-=
+only: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: /system-idle-states/system-stan=
+dby: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: can@4e08000 (bosch,m_can): wake=
+up-source: [[9, 10, 11, 12]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: can@4e18000 (bosch,m_can): wake=
+up-source: [[9, 10, 11, 12]] is not of type 'boolean'
+> 	from schema $id: http://devicetree.org/schemas/wakeup-source.yaml#
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: /system-idle-state=
+s/system-partial-io: failed to match any schema with compatible: ['system-i=
+dle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: /system-idle-state=
+s/system-deep-sleep: failed to match any schema with compatible: ['system-i=
+dle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: /system-idle-state=
+s/system-mcu-only: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: /system-idle-state=
+s/system-standby: failed to match any schema with compatible: ['system-idle=
+-state']
+> arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: /system-idle-state=
+s/system-partial-io: failed to match any schema with compatible: ['system-i=
+dle-state']
+> arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: /system-idle-state=
+s/system-deep-sleep: failed to match any schema with compatible: ['system-i=
+dle-state']
+> arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: /system-idle-state=
+s/system-mcu-only: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: /system-idle-state=
+s/system-standby: failed to match any schema with compatible: ['system-idle=
+-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: /system-idle-s=
+tates/system-partial-io: failed to match any schema with compatible: ['syst=
+em-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: /system-idle-s=
+tates/system-deep-sleep: failed to match any schema with compatible: ['syst=
+em-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: /system-idle-s=
+tates/system-mcu-only: failed to match any schema with compatible: ['system=
+-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: /system-idle-s=
+tates/system-standby: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: /system-idle-stat=
+es/system-partial-io: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: /system-idle-stat=
+es/system-deep-sleep: failed to match any schema with compatible: ['system-=
+idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: /system-idle-stat=
+es/system-mcu-only: failed to match any schema with compatible: ['system-id=
+le-state']
+> arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: /system-idle-stat=
+es/system-standby: failed to match any schema with compatible: ['system-idl=
+e-state']
+> arch/arm64/boot/dts/ti/k3-am625-sk.dtb: /system-idle-states/system-partia=
+l-io: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-sk.dtb: /system-idle-states/system-deep-s=
+leep: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-sk.dtb: /system-idle-states/system-mcu-on=
+ly: failed to match any schema with compatible: ['system-idle-state']
+> arch/arm64/boot/dts/ti/k3-am625-sk.dtb: /system-idle-states/system-standb=
+y: failed to match any schema with compatible: ['system-idle-state']
 
-> 
-> Though if we do that, it would be nice if there's a way to avoid the "native_"
-> prefix everywhere, for the sake of readability.
-> 
 
-Yeah, I will think about better naming them.
+--1ce015bcc28bc69295cb23bd2888779d0acaa7cc063525b3c34be3e71a95
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iIcEABYKAC8WIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaAit7xEcbXNwQGJheWxp
+YnJlLmNvbQAKCRCFwVZpkBVKU6rZAQCv4WGsjlyZsCbQdrqAhbR+FSn6m9DV0jUy
+sOYZRnY7WQD/YdfardzogMugKEpuWJsPRwBbqDAPgm1544SbpgdKSg0=
+=97q1
+-----END PGP SIGNATURE-----
+
+--1ce015bcc28bc69295cb23bd2888779d0acaa7cc063525b3c34be3e71a95--
 
