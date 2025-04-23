@@ -1,90 +1,266 @@
-Return-Path: <linux-kernel+bounces-615386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A0EA97C78
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:50:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAAFA97C7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DBD167E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:50:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ECEE16BDBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F45264615;
-	Wed, 23 Apr 2025 01:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39353264FBF;
+	Wed, 23 Apr 2025 01:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gw2Xi4CO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hDIfCpjq"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B1D2566DF;
-	Wed, 23 Apr 2025 01:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071E6263F27;
+	Wed, 23 Apr 2025 01:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745372896; cv=none; b=Oz1nP4S7Vb63zXNMJnZqtc65saFjYtjyr+G5veRe7yM2pv6H/V3rfVb8kv55XfP0XP/+WL1z8/0UQhA6ECh7BwIPLHKaOJZRARMxXhhYzhBqlgzHtTAPTXnspuFaDdGxl0tzB+lLIRld2m/L5eyxq0jV2Z0ItqddP8brVv5bh0k=
+	t=1745372979; cv=none; b=AbkEHGuHGfPMBdE7xpZPzii9GtJX/81yLuYrvqX2gwHvHKHuY2yIJqgIMioAMP2SUIobsEm4mYWF6+QCKwg9k5LcAfZZQATaMDlpnPAPV0Q9qncoN02oNIkdWNmqS9edTpstMpAqD+sriL/Zg72v/yrGs6U0de+fQIo42vQCAiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745372896; c=relaxed/simple;
-	bh=b2Ty2Y4IHTlG+wCuGIQJJ+LjqBQxitk5tYKjHEox70M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o+TM2wiHM2KLyb+3zmhZqX4b4GHWp2wz5Q5+VeT3CFrtlf/Zt5Eb2m35p0Kv3AWGUwj7IVkrDj2lc16IbRY3WcS2AvCityKLuJ4nmh7TOx9Im32X6LkBrC7x2Wc9VbDYINtctaoPKUIst3Bs0VdjZOOpFjh/o9tZ6YpkDY7EJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gw2Xi4CO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6879DC4CEE9;
-	Wed, 23 Apr 2025 01:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745372895;
-	bh=b2Ty2Y4IHTlG+wCuGIQJJ+LjqBQxitk5tYKjHEox70M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Gw2Xi4CODtGpUsSD2n7vzegKZNAZrX7v7cP5MoWILH/deNzm1Mc6zYYPZyjAgzEUP
-	 b5RHT7XkZw9rcxU1kAdZouBfsUPF/Ea6MAS1C68foXvQn9KlVl1IUKD/p+MG0GKTiM
-	 e7OhHfTpWbI2gj2556A0HiCdv0k1eWyDTlWcfRaeLCq1PCYJo5Qt8Npe4cXlvMXjQI
-	 VGQ2xKKQRHKx628jjrIuDHLjjb4OtLDEEonf3W43a6W0ZNI6itZhkhcbkxzEAMvFtR
-	 +xBrfrLCLoDih5+yyQ3T9OaZ0DOQcb76WYojV5Dr/7OoVmG/CXNhQCNblxrZvQCD9f
-	 syV4wS6dwAtzw==
-Date: Tue, 22 Apr 2025 18:48:13 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Richard Cochran <richardcochran@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "Russell
- King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro
- <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>,
- netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, Biju Das
- <biju.das.jz@bp.renesas.com>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v8 4/4] MAINTAINERS: Add entry for Renesas
- RZ/V2H(P) DWMAC GBETH glue layer driver
-Message-ID: <20250422184813.02b21095@kernel.org>
-In-Reply-To: <20250417084015.74154-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250417084015.74154-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<20250417084015.74154-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1745372979; c=relaxed/simple;
+	bh=jMSJ0gf0b0aPu4uBEGao57zRb4usICWr8tS/e0fHtJw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VdYk4hEP69Sm3OEdiTjflh5GzFUcyMaj2bRkSkZTpLcZ7Cn1fevaMo1kv2k0VvzVdKJd3tzFJrZWzC8iBB2PzpdFAIWjbmDWWRm4W1t6XVsa8iP4xro6OZjJGPI7XkZ0jNcCv6rKtOcohkNwKYaAyTiakTaOB+oufwPDWnUkT+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hDIfCpjq; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745372973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=D7+Eeawz4Y8be/9ifCJRuEJtqE9u4PyZ//yEy9tp5gM=;
+	b=hDIfCpjquE1JLYG/4MpX+xVTGu9k+j4qthA+S/jS9mLcZMNR6fspBEDZeuI/O4zCMlPkyP
+	Z5qhwNtkHDuUCJWpPusNB6X5SoGfoJUSXafQalpX/21JzuyG/OqZiVm9yU14C8anogzOJ1
+	wJ9xXiQb+ouXbvv5z7MY0YlzBQwDU9Y=
+From: Ye Liu <ye.liu@linux.dev>
+To: akpm@linux-foundation.org
+Cc: linux-debuggers@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-toolchains@vger.kernel.org,
+	osandov@osandov.com,
+	paulmck@kernel.org,
+	sweettea-kernel@dorminy.me,
+	liuye@kylinos.cn,
+	ye.liu@linux.dev
+Subject: [PATCH v3] tools/mm: Add script to display page state for a given PID and VADDR
+Date: Wed, 23 Apr 2025 09:48:50 +0800
+Message-Id: <20250423014850.344501-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 17 Apr 2025 09:40:15 +0100 Prabhakar wrote:
-> +RENESAS RZ/V2H(P) DWMAC GBETH GLUE LAYER DRIVER
-> +M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +L:	netdev@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
+From: Ye Liu <liuye@kylinos.cn>
 
-I'm going to make this Maintained when applying, please see:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#supported-status-for-drivers
+Introduces a new drgn script, `show_page_info.py`, which allows users
+to analyze the state of a page given a process ID (PID) and a virtual
+address (VADDR). This can help kernel developers or debuggers easily
+inspect page-related information in a live kernel or vmcore.
 
-> +F:	Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-> +F:	drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+The script extracts information such as the page flags, mapping, and
+other metadata relevant to diagnosing memory issues.
+
+Output example:
+sudo ./show_page_info.py 1 0x7f43df5acf00
+PID: 1 Comm: systemd mm: 0xffff8881273bbc40
+Raw: 0017ffffc000416c ffffea00043a4508 ffffea0004381e08 ffff88810f086a70
+Raw: 0000000000000000 ffff888120c9b0c0 0000002500000007 ffff88812642c000
+User Virtual Address: 0x7f43df5acf00
+Page Address:         0xffffea00049a0b00
+Page Flags:           PG_referenced|PG_uptodate|PG_lru|PG_head|PG_active|
+		      PG_private|PG_reported
+Page Size:            16384
+Page PFN:             0x12682c
+Page Physical:        0x12682c000
+Page Virtual:         0xffff88812682c000
+Page Refcount:        37
+Page Mapcount:        7
+Page Index:           0x0
+Page Memcg Data:      0xffff88812642c000
+Memcg Name:           init.scope
+Memcg Path:           /sys/fs/cgroup/memory/init.scope
+Page Mapping:         0xffff88810f086a70
+Page Anon/File:       File
+Page VMA:             0xffff88810e4af3b8
+VMA Start:            0x7f43df5ac000
+VMA End:              0x7f43df5b0000
+This page is part of a compound page.
+This page is the head page of a compound page.
+Head Page:            0xffffea00049a0b00
+Compound Order:       2
+Number of Pages:      4
+
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
+
+Changes in v3:
+- Adjust display style.
+- Link to v2:https://lore.kernel.org/all/20250421080748.114750-1-ye.liu@linux.dev/
+
+Changes in v2:
+- Move the show_page_info.py file to tools/mm.
+- Link to v1: https://lore.kernel.org/all/20250415075024.248232-1-ye.liu@linux.dev/
+---
+ MAINTAINERS                |   5 ++
+ tools/mm/show_page_info.py | 120 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+)
+ create mode 100755 tools/mm/show_page_info.py
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 17ed0b5ffdd2..85686a30dc72 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18351,6 +18351,11 @@ F:	Documentation/mm/page_table_check.rst
+ F:	include/linux/page_table_check.h
+ F:	mm/page_table_check.c
+ 
++PAGE STATE DEBUG SCRIPT
++M:	Ye Liu <liuye@kylinos.cn>
++S:	Maintained
++F:	tools/mm/show_page_info.py
++
+ PANASONIC LAPTOP ACPI EXTRAS DRIVER
+ M:	Kenneth Chan <kenneth.t.chan@gmail.com>
+ L:	platform-driver-x86@vger.kernel.org
+diff --git a/tools/mm/show_page_info.py b/tools/mm/show_page_info.py
+new file mode 100755
+index 000000000000..8622c5499dfe
+--- /dev/null
++++ b/tools/mm/show_page_info.py
+@@ -0,0 +1,120 @@
++#!/usr/bin/env drgn
++# SPDX-License-Identifier: GPL-2.0-only
++# Copyright (C) 2025 Ye Liu <liuye@kylinos.cn>
++
++import argparse
++from drgn import Object
++from drgn.helpers.linux import find_task, follow_page, page_size
++from drgn.helpers.linux.mm import (
++    decode_page_flags, page_to_pfn, page_to_phys, page_to_virt, vma_find,
++    PageSlab, PageCompound, PageHead, PageTail, compound_head, compound_order, compound_nr
++)
++from drgn.helpers.linux.cgroup import cgroup_name, cgroup_path
++
++DESC = """
++This is a drgn script to show the page state.
++For more info on drgn, visit https://github.com/osandov/drgn.
++"""
++
++MEMCG_DATA_OBJEXTS = 1 << 0
++MEMCG_DATA_KMEM = 1 << 1
++__NR_MEMCG_DATA_FLAGS = 1 << 2
++
++def format_page_data(data):
++    """Format raw page data into a readable hex dump."""
++    chunks = [data[i:i+8] for i in range(0, len(data), 8)]
++    hex_chunks = ["".join(f"{b:02x}" for b in chunk[::-1]) for chunk in chunks]
++    lines = [" ".join(hex_chunks[i:i+4]) for i in range(0, len(hex_chunks), 4)]
++    return "\n".join(f"Raw: {line}" for line in lines)
++
++def get_memcg_info(page):
++    """Retrieve memory cgroup information for a page."""
++    memcg_data = page.memcg_data.value_()
++    if memcg_data & MEMCG_DATA_OBJEXTS:
++        memcg_value = 0
++    elif memcg_data & MEMCG_DATA_KMEM:
++        objcg = Object(prog, "struct obj_cgroup *", address=memcg_data & ~__NR_MEMCG_DATA_FLAGS)
++        memcg_value = objcg.memcg.value_()
++    else:
++        memcg_value = memcg_data & ~__NR_MEMCG_DATA_FLAGS
++
++    memcg = Object(prog, "struct mem_cgroup *", address=memcg_value)
++    cgrp = memcg.css.cgroup
++    return cgroup_name(cgrp).decode(), f"/sys/fs/cgroup/memory{cgroup_path(cgrp).decode()}"
++
++def show_page_state(page, addr, mm, pid, task):
++    """Display detailed information about a page."""
++    print(f'PID: {pid} Comm: {task.comm.string_().decode()} mm: {hex(mm)}')
++    print(format_page_data(prog.read(page.value_(), 64)))
++    fields = {
++        "User Virtual Address": hex(addr),
++        "Page Address": hex(page.value_()),
++        "Page Flags": decode_page_flags(page),
++        "Page Size": page_size(page).value_(),
++        "Page PFN": hex(page_to_pfn(page).value_()),
++        "Page Physical": hex(page_to_phys(page).value_()),
++        "Page Virtual": hex(page_to_virt(page).value_()),
++        "Page Refcount": page._refcount.counter.value_(),
++        "Page Mapcount": page._mapcount.counter.value_(),
++        "Page Index": hex(page.index.value_()),
++        "Page Memcg Data": hex(page.memcg_data.value_()),
++    }
++
++    memcg_name, memcg_path = get_memcg_info(page)
++    fields["Memcg Name"] = memcg_name
++    fields["Memcg Path"] = memcg_path
++    fields["Page Mapping"] = hex(page.mapping.value_())
++    fields["Page Anon/File"] = "Anon" if page.mapping.value_() & 0x1 else "File"
++
++    vma = vma_find(mm, addr)
++    fields["Page VMA"] = hex(vma.value_())
++    fields["VMA Start"] = hex(vma.vm_start.value_())
++    fields["VMA End"] = hex(vma.vm_end.value_())
++
++    # Calculate the maximum field name length for alignment
++    max_field_len = max(len(field) for field in fields)
++
++    # Print aligned fields
++    for field, value in fields.items():
++        print(f"{field}:".ljust(max_field_len + 2) + f"{value}")
++
++    # Additional information about the page
++    if PageSlab(page):
++        print("This page belongs to the slab allocator.")
++
++    if PageCompound(page):
++        print("This page is part of a compound page.")
++        if PageHead(page):
++            print("This page is the head page of a compound page.")
++        if PageTail(page):
++            print("This page is the tail page of a compound page.")
++        print(f"{'Head Page:'.ljust(max_field_len + 2)}{hex(compound_head(page).value_())}")
++        print(f"{'Compound Order:'.ljust(max_field_len + 2)}{compound_order(page).value_()}")
++        print(f"{'Number of Pages:'.ljust(max_field_len + 2)}{compound_nr(page).value_()}")
++    else:
++        print("This page is not part of a compound page.")
++
++def main():
++    """Main function to parse arguments and display page state."""
++    parser = argparse.ArgumentParser(description=DESC, formatter_class=argparse.RawTextHelpFormatter)
++    parser.add_argument('pid', metavar='PID', type=int, help='Target process ID (PID)')
++    parser.add_argument('vaddr', metavar='VADDR', type=str, help='Target virtual address in hexadecimal format (e.g., 0x7fff1234abcd)')
++    args = parser.parse_args()
++
++    try:
++        vaddr = int(args.vaddr, 16)
++    except ValueError:
++        print(f"Error: Invalid virtual address format: {args.vaddr}")
++        return
++
++    task = find_task(args.pid)
++    mm = task.mm
++    page = follow_page(mm, vaddr)
++
++    if page:
++        show_page_state(page, vaddr, mm, args.pid, task)
++    else:
++        print(f"Address {hex(vaddr)} is not mapped.")
++
++if __name__ == "__main__":
++    main()
+\ No newline at end of file
+-- 
+2.25.1
+
 
