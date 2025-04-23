@@ -1,82 +1,146 @@
-Return-Path: <linux-kernel+bounces-616902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61329A997BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:21:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A59AA997B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC0F7AFD6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDD65A1E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAB828E600;
-	Wed, 23 Apr 2025 18:21:05 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B540328E5F1;
+	Wed, 23 Apr 2025 18:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYmXNekC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1030928F50A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156B28DF17
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432465; cv=none; b=EMQrPj2A6cK8vJjFBfyVY6bmAo9nVmsEOeDeS/eTWD5JsWejJQKWXBbuYbP4jhIMktqxe43djHJ+cD240QDZtuN9OgJqq8v/994arOL83LLg0Vv/q4A2nZ81I49lnSFXEOAo6xBTZjqBmJeNByZ1ZxpQMBmbM8yNIpclB9nRLQw=
+	t=1745432460; cv=none; b=VK5FeNsVFwwOM8KmtvPZt7JZXSkC8fxEpBY+thTiv4t7m2SDgKUhm1Y2SGQTdcEc9se5HwT6bvvAeARGb44I3GQuEBvyXkDPqiiZXMYt+Bygxt/w+f6s6yKKg6AvGM1rzhlzisG2wGYwEuKk5y68MXZfsX+qRqCk02KESu6a+GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432465; c=relaxed/simple;
-	bh=3cwv0921IscvB/NrWSs0v/7SM8HODWnllMIfji9Jqrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c98aTyUQa7lBcMwtNWQp/JAvD2wMssTanjZdV9Uaom51JDNO8bYy+2p0v79u5pqPv3jlnjq/SN3GziAO5KTFHTMgMpEcOiwfDHq42jlwX99bsSp6f6dSLUlBQmth64MZUkdxw3gBZC9sHyjIHnZAkPtkvh5GE1lz84pJgK41piI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-148.bstnma.fios.verizon.net [173.48.82.148])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 53NIKdBm005121
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 14:20:40 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 5587A2E00EC; Wed, 23 Apr 2025 14:20:39 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, Tom Vierjahn <tom.vierjahn@acm.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, dirk.gouders@w-hs.de,
-        linux-ext4@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: ext4: Add fields to ext4_super_block documentation
-Date: Wed, 23 Apr 2025 14:20:34 -0400
-Message-ID: <174543076505.1215499.16527346379212459412.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250324221004.5268-1-tom.vierjahn@acm.org>
-References: <20250324221004.5268-1-tom.vierjahn@acm.org>
+	s=arc-20240116; t=1745432460; c=relaxed/simple;
+	bh=rL40QV7ZOck7njFnFxpE1AOhrGFBkAAgQb6AOZESYyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGogXTm4MF28iZjPjMGn3PnJRnR9twLHdmwdcVwQPdDHHTyuzZPnX3U96nZKrqKBOGhn2VSjBaM6lzTx2ing6Ret49tyEVlIec3yGhV34l0GWEapmvUGotsKEncVHc+CTkc/S4Dq+au4Lop0Ss+LSr/KI3WczWL/PunHJw86lK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYmXNekC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7290BC4CEE2;
+	Wed, 23 Apr 2025 18:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745432459;
+	bh=rL40QV7ZOck7njFnFxpE1AOhrGFBkAAgQb6AOZESYyw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=pYmXNekC41LOXDoH5QOAMkKFF6Pojdh/uf/H3CaggiSY8u7YrARpBTt1dVtMR6hW/
+	 4Nm9fFX2uN5qdm+uucfDF/+f9k4cqlAEmVsA4VZhHAk9cf3T0dGlhdJHK16KKjVKRE
+	 vHBh5fXsu6Nft8qXYuNRk9HvBeqaFzTbY8BbUb+e8R9D0Ua0fqmm35lFRIty+Z/hw4
+	 vda7hLUFnFd37j4eudAdpd0wx01sTzqUkx19TJSl0bBXnrvzoVktJ9ONNl1flgYLb5
+	 crgVvc/v3XzS8Vo2MvZyMFYWaYyKvv613fMQZmkAbK6hqLplAvkDwsxRxv3vQL3tp/
+	 z+MUXr2tbH9nw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 21DA6CE0B75; Wed, 23 Apr 2025 11:20:59 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:20:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Aishwarya.TCV@arm.com, sraithal@amd.com
+Subject: Re: [PATCH v2 ratelimit 11/14] ratelimit: Force re-initialization
+ when rate-limiting re-enabled
+Message-ID: <559db775-f151-4694-86e6-72809b386097@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
+ <20250418171359.1187719-11-paulmck@kernel.org>
+ <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
 
-
-On Mon, 24 Mar 2025 23:09:30 +0100, Tom Vierjahn wrote:
-> Documentation and implementation of the ext4 super block have
-> slightly diverged: Padding has been removed in order to make room for
-> new fields that are still missing in the documentation.
+On Wed, Apr 23, 2025 at 04:59:49PM +0100, Mark Brown wrote:
+> On Fri, Apr 18, 2025 at 10:13:56AM -0700, Paul E. McKenney wrote:
+> > Currently, rate limiting being disabled results in an immediate early
+> > return with no state changes.  This can result in false-positive drops
+> > when re-enabling rate limiting.  Therefore, mark the ratelimit_state
+> > structure "uninitialized" when rate limiting is disabled.
 > 
-> Add the new fields s_encryption_level, s_first_error_errorcode,
-> s_last_error_errorcode to the documentation of the ext4 super block.
+> Today's -next is failing to boot a defconfig on a wide range of arm64
+> ACPI platforms.  One ACPI platform (Softiron) is still fine, and I've
+> not noticed any DT platforms having issues.  Output grinds to a halt
+> during boot shortly after userspace starts on affected systems:
 > 
-> [...]
+> [   23.334050] Freeing unused kernel memory: 11328K
+> [   23.355182] Run /init as init process
+> [   23.378221] NET: Registered PF_INET6 protocol family
+> [   23.396506] Segment Routing with IPv6
+> [   23.414054] In-situ OAM (IOAM) with IPv6
+> 
+> A bisect converges fairly smoothly on this patch in -next, which doesn't
+> look completely implausible for something that stops console output - I
+> didn't dig into it at all though.  I see that Sirkanth (CCed) seems to
+> have reported a similar issue though with a different SHA1 since he
+> noticed on yesterday's -next.
 
-Applied, thanks!
+Thank you for the confirmation of Bert's and Srikanth's reports!
 
-[1/1] Documentation: ext4: Add fields to ext4_super_block documentation
-      commit: ce7e8a65aa1b7e8a6833403b314fa8f2cf133119
+They reported that the replacing the offending commit with the following
+patch fixed things up:
 
-(Apologies for sending this late; I've been dealing with a family
-medical emergency.  In any case, the patch landed in v6.16-rc2.)
+------------------------------------------------------------------------
 
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+index 04f16b8e24575..13ed636642270 100644
+--- a/lib/ratelimit.c
++++ b/lib/ratelimit.c
+@@ -35,7 +35,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	if (!interval || !burst)
++	if (interval <= 0 || burst <= 0)
+ 		return 1;
+ 
+ 	/*
+
+------------------------------------------------------------------------
+
+If that fixes things for you, could you also please try the following,
+also replacing that same commit?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+index 04f16b8e24575..8f6c54f719ef2 100644
+--- a/lib/ratelimit.c
++++ b/lib/ratelimit.c
+@@ -35,8 +35,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	if (!interval || !burst)
++	if (interval <= 0 || burst <= 0) {
++		ret = burst > 0;
+ 		return 1;
++	}
+ 
+ 	/*
+ 	 * If we contend on this state's lock then just check if
 
