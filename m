@@ -1,118 +1,136 @@
-Return-Path: <linux-kernel+bounces-616177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC259A988AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:37:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6A4A988B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A891B64009
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07CA444801
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DB427054D;
-	Wed, 23 Apr 2025 11:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A33C26D4E5;
+	Wed, 23 Apr 2025 11:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFRKD46K"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9qYYqJB"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FE5FC08;
-	Wed, 23 Apr 2025 11:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60BA26D4CF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 11:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745408249; cv=none; b=nYjFosT4XeANYXU71+rAAjS6GtA5JPvJ2GL1F5F1yE2w7ek/OiMbYagICl/gLlqCzLv8YvKJ7rgoJ4QmX+bjfZ66tuuqgvtQeUYj2dkGgoNiFJj4kRzLpLIddus6zqsiwmg/LgEXhbFmZaFjfylJe/Lxd8g41bG+wNrcD4UPhIw=
+	t=1745408271; cv=none; b=TClcNkwH7DX9YUpNAH4Kii4Yb/pf4yZiq5+4JvTMW8u/UlKKkUHmcVSukS6Mc0cH5keZycqhfci+uKFirLFUEwFHAHKhL/zv89O4pXhRQu7DDVezl7zTZ50DNwIyY4mpfqn+v28I9W6fbZ/RUxZqNix2zE/vYZAmIQE28AsjTgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745408249; c=relaxed/simple;
-	bh=ZOYMbzEXP8RLe+8yWrKjk75zGEZAVkvv3WQseXJv0cQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YUIAh0xzBT0Ib9VYPo0XyJgDp3sAIGckBla2XNkuGgoMIuCpSd/eK3rMbfAHajRw3AtNKsmUp9wTQz/HdP4T8nu0Lv9wqcIIUk/rhaGbixOY5G/+pM6H++qZJm7hQkGbFiULA22eoJhUlR29+SorKRtaykAqPW47pRqq2uu8oKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFRKD46K; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1745408271; c=relaxed/simple;
+	bh=FQQQ/K5rW6vlX9BcB6bydAxidGDB2slgR5PpP4BqqSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SGaM6vZw7h8LxKy4lVM+0K1Du7LsPFtjsk8LHQBOUuEHtcc6swicVQFQMGt+ZPcAoWF83qnnEKVN16wtsSRVlLBMjPufC1FA5rwElIczBfumCN2EzaUqmoCgN2pLU/jyLiX8fomfs3o9ziIKu+JYph37ZHmoJqIeAOPlQi/O/38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9qYYqJB; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso6121145f8f.0;
-        Wed, 23 Apr 2025 04:37:27 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so50650045e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 04:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745408246; x=1746013046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sOaslwO/iDwgRO6fHWCqrlxeNb4sZEAWfunB5Ekm3Yw=;
-        b=CFRKD46KAxCSY0GnRw3hpSW2CTnMcs+t5+zUcvTICIm595UnYv+fNvGC1IaEWX2VGj
-         G8Yerid3y+63qAbNBjy5Z91GmvWrdZaFzsz7iXIKQo8UInPK+QIxyUX3BZN6LouKsZ6x
-         hR2/zdMHFzkhz4UMykPFcwPAFF6EOwjs3AM7YU1NVLs0shtnkNmiWaJ907yPuKrsGD41
-         bnhN0CSgvJtG25s533hJ3HfDRh87ZOZzt1EYdjgbHI//bSZn1DXHi+Cqni1sz7+R5qsD
-         2qYxxaNnRHHMID4Ppbw1f7UyUu+V85p8bILHVUxHxj+R5tdktrDpMm25oApGpF9RqMeU
-         ag3w==
+        d=gmail.com; s=20230601; t=1745408268; x=1746013068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mhExEbzgWbHRdVPDka5irWi7FH/fa2wSUUhM4mfor5I=;
+        b=Q9qYYqJB46Y3xtT8+KddP5vuXsJms74pxWkiCHc3ylvVECG9k2kt24vlEr6Rs4jQYH
+         7LZPpbfSpHazWPc5jzbrldwAnyORohmEEeh5Dsh8wMtv0bvR5AS74+ZL9Oecjsru0YeA
+         0HfJmywstO5ijnASyHHvmpIDQXXVorlQt4gmvct76HmhVr7AvIZaDNqPLz4Qbt6l2zJN
+         1NHhF4qwf1doH/xfiLBUWk1Te8AKAYGVq1ixgltKiF5/oJESwE9AY3VQDAtaXPKinSas
+         1gKJ54GqxsELHEFnpfP7i5sBLumxWYFccV3TZR/lNOb0pesNBetJC3hzBf9M9nqPFtX/
+         Cs4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745408246; x=1746013046;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sOaslwO/iDwgRO6fHWCqrlxeNb4sZEAWfunB5Ekm3Yw=;
-        b=ACYaAK8cWKihFAcJvUKTR2pwhutWHqm2J7YMTIoSEVs6dPScAoToHtdf2Rsy7AQnbx
-         eqrTM5s7SYlgz0zkmMOQBNK1IC+ANgw2VRPojCfISGA4qMuOgSuBFuYiSHzzW0o4c9zQ
-         +ebTMubYIGYeypQiEE+hFCAPvrJwS5gY2RJjHMC2uX1hlcsi0LM3HAnoWZ2vBGSq1IGx
-         hq815QSHqzBlBowR3BNdL7VecHPkRjcULaYHWwItSiIkWtFaHv8BRtY95FW3I2iO4hDS
-         CUVppMFi4YTNUSu6UAn083mZsAH2ciEWgn2Bvx6idIQrSkVRn6T4QkcbNCQF12aih6UE
-         UKmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ+w8ahaAOeaWCjBxujFKzv7z9xHuhBeLR1T/tF1LHngzybhGrpvizLQULxGL5YUrEK7qwB/MIBAMHbFM=@vger.kernel.org, AJvYcCVpbCVTde6MIACnQ/zLCt6aOsAKtfSVcavgfCIZ9VzHJZ5Nb0Gihg7ExleBTuw07cHjGvNN8XMr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/3sZFMVp1LwJMFx6fiST35JO4Rtx0U1+7dQLPLU/TZYu/rUT+
-	G1aWvU6pCykERHSyJNr6QcZ5rFvVqWXK7StdMhNGAvD/1xQpP7jp
-X-Gm-Gg: ASbGncv6Gmqr9CjhmDZziqNX9kuuhBwtRCDXtOA0908q1/f7guph0yvnmbdqNKSPr2S
-	LEMJsMgWtNo/Wb4Fy93eeIjTYe/zeA/aqYTsVb2441PcHBiakezqC0OQ2F3nml63W0odOE9rYYC
-	v3mZ5eaQ84k2FjCqgTZKR/gnuXlu2u3K6sMSohh0QMh7sdthJtmXgeH5GMad8SEaha+Yaqd/NBa
-	M/U62SwxS64DnNi1bS1kvzbyztrK3+3EJ49gL2vJgMEUB/X9/7jpAWlCL1CFTsRTXq5ztH1ejcC
-	KCAq2g+oWe8FcqejddhYanuYi2MUImLGlRsRxm14aA==
-X-Google-Smtp-Source: AGHT+IHSoaSXaAgj53jWAGtI7Z7mMkdXhhLo9jTahymT0NfSoVyVjCueixP+i4S5vMsc6dh5pNJwhw==
-X-Received: by 2002:a5d:6d88:0:b0:399:737f:4e02 with SMTP id ffacd0b85a97d-39efbad2f10mr16252645f8f.39.1745408245796;
-        Wed, 23 Apr 2025 04:37:25 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43d22esm18699323f8f.52.2025.04.23.04.37.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 04:37:25 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: ip_gre: Fix spelling mistake "demultiplexor" -> "demultiplexer"
-Date: Wed, 23 Apr 2025 12:37:19 +0100
-Message-ID: <20250423113719.173539-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1745408268; x=1746013068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mhExEbzgWbHRdVPDka5irWi7FH/fa2wSUUhM4mfor5I=;
+        b=tOZ2ZvHzBpbWhRxm8PL9fMFAnQB9T6DYIZ2W8L7YDC29Q+Atz7GzMdw4hVY4aq4l8s
+         ufcMpbvjdhyy6BWApvUHETsmJCVpV/Xgdyp72wb6UbrCZI3Kg6NSSwfggU7rG4dWNiWN
+         /L46EH0sNTrl0NFYU9chJDjxb8E4cecaz22mgveES6EhpCr6PepDcWWnjf2P/qUoVUcN
+         h5CB5VZPDKTMDa0cZojJsXpp82KRxjL2Ox6DUH7ndUsubrx8buJ6pwoMBUbLWRYiJo22
+         ShFApZz/P5g2fHGwYFUQeNEsAJUhOmsHCrbB+ocBQf5hs2Q5BPQS2RywxtLn7Y7cFIqe
+         CP+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXc4kdL+c6azb4k/POp+yXTtwY/NABGuJRnyzrtcgqvnQE9Cd1kep5v7G5aSNI8H7Ass1dbHiOPHrAQgVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsQTO5wFCxgSN+Vd9Ol0zAdE5zCDg39exyzp5i2MxbKykR5OAA
+	9FsMp/j36sdEoKfFdJtjUtOYYyWm7nf5F8Vm/DDx/1G8PY64a7lWwDYA/Q==
+X-Gm-Gg: ASbGnctRoS8P97viECTpPJU/yS0rC2FyLoGekqauuDFQ1xWFu9Um7kyJ3tUwEo45IDX
+	gFQoZ54Sp9jZXWSHi3nUbAkKhnCrBywu+2pbg5kXorZFzqF/cIWXgYP0HiuhNV+HM2bX/GJY7GD
+	fjujMBe62zXgWxTjjtBVcElz38STyjR1Dxg4XMQJ6XHY8m/F3BsaihzIVyiepDgEWCiy1hzfMzj
+	eDvL8D4LZr7qEAW0U/zpI/tvj/24mot8dh80ThOI4XdC/+IRz6nTuvVoNh5jmQMEgduF/bUOzMN
+	ujgoBYXsLgNTg3nA23ovHJoqQ3bmdIVB399dO1TiJZBBvUC5XRcoGT6xIsB/aPUhS9eBF1jzOjh
+	CdCx46YndNK0jKrAR59x0XHjesuqqmUW0
+X-Google-Smtp-Source: AGHT+IGYez2ECW8B1kEuSylophgfv1+Bkfs2ZDLT9gQj6bh2P/nNq51jUvWpsxpfSvT8b90/rY8rxg==
+X-Received: by 2002:a05:600c:cc8:b0:43d:54a:221c with SMTP id 5b1f17b1804b1-44074f18848mr156108385e9.18.1745408267809;
+        Wed, 23 Apr 2025 04:37:47 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bf28:2e00:ff96:2dac:a39:3e10? ([2a01:4b00:bf28:2e00:ff96:2dac:a39:3e10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092d3ed88sm22899445e9.35.2025.04.23.04.37.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 04:37:47 -0700 (PDT)
+Message-ID: <08e3ec4c-4401-403e-9d81-5ee0abebba5c@gmail.com>
+Date: Wed, 23 Apr 2025 12:37:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] maccess: fix strncpy_from_user_nofault empty string
+ handling
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, rostedt@goodmis.org, mhiramat@kernel.org,
+ andrii@kernel.org, kernel-team@meta.com, linux-kernel@vger.kernel.org,
+ Mykyta Yatsenko <yatsenko@meta.com>, Kees Cook <keescook@chromium.org>
+References: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
+ <20250422172011.feb243d2f7478c0e7109b74c@linux-foundation.org>
+Content-Language: en-US
+From: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
+In-Reply-To: <20250422172011.feb243d2f7478c0e7109b74c@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There is a spelling mistake in a pr_info message. Fix it.
+On 4/23/25 01:20, Andrew Morton wrote:
+> On Tue, 22 Apr 2025 14:14:49 +0100 Mykyta Yatsenko <mykyta.yatsenko5@gmail.com> wrote:
+>
+>> From: Mykyta Yatsenko <yatsenko@meta.com>
+>>
+>> strncpy_from_user_nofault should return the length of the copied string
+>> including the trailing NUL, but if the argument unsafe_addr points to
+>> an empty string ({'\0'}), the return value is 0.
+>>
+>> This happens as strncpy_from_user copies terminal symbol into dst
+>> and returns 0 (as expected), but strncpy_from_user_nofault does not
+>> modify ret as it is not equal to count and not greater than 0, so 0 is
+>> returned, which contradicts the contract.
+>>
+>> ...
+>>
+> Thanks.
+>
+> Does this fix any known runtime issue?  If so, please fully describe this?
+Not that I'm aware of. The issue could be found when trying to copy empty
+user space string in BPF program (and relying on return value).There are 
+some usage of
+`strncpy_from_user_nofault` in tracing subsystem, but I'm not sure how to
+hit those code paths.
+>
+>> --- a/mm/maccess.c
+>> +++ b/mm/maccess.c
+>> @@ -196,7 +196,7 @@ long strncpy_from_user_nofault(char *dst, const void __user *unsafe_addr,
+>>   	if (ret >= count) {
+>>   		ret = count;
+>>   		dst[ret - 1] = '\0';
+>> -	} else if (ret > 0) {
+>> +	} else if (ret >= 0) {
+>>   		ret++;
+>>   	}
+>>   
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/ipv4/gre_demux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv4/gre_demux.c b/net/ipv4/gre_demux.c
-index 6701a98d9a9f..dafd68f3436a 100644
---- a/net/ipv4/gre_demux.c
-+++ b/net/ipv4/gre_demux.c
-@@ -199,7 +199,7 @@ static const struct net_protocol net_gre_protocol = {
- 
- static int __init gre_init(void)
- {
--	pr_info("GRE over IPv4 demultiplexor driver\n");
-+	pr_info("GRE over IPv4 demultiplexer driver\n");
- 
- 	if (inet_add_protocol(&net_gre_protocol, IPPROTO_GRE) < 0) {
- 		pr_err("can't add protocol\n");
--- 
-2.49.0
 
 
