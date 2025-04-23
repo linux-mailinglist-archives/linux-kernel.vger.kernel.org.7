@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-616846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4EDA996EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:44:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B00CA996EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B1F81B867B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F82A3B18F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088128C5AF;
-	Wed, 23 Apr 2025 17:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D70D2857C3;
+	Wed, 23 Apr 2025 17:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfHgI4V7"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sqBaQ1ux"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB991E2606;
-	Wed, 23 Apr 2025 17:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B39428BA93
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745430262; cv=none; b=K+80Gz0/TqppfZv079wvCeQrNNbe7+NxAtXLfOZ5mYyRBr6AfJAi0FVzqr1ZuH5dcOqHKBtMzHz9FKQ45cRQtbslhTsRUPHNUtBF0QTFBFFf7T4kf+C2QArzNysFidZJiHnf5mAC8V1mMPJ0V+erQx6E/2t4gzGMjanUaMYPC3U=
+	t=1745430285; cv=none; b=BqVee4pPacvZmqu/NNybeTs9fU9/Zk6YwnNHnQDbL3+QotTbMoCASSvOX4mj9nE6rByK27BjVwKHDQHO7/c7e7NBMcML9iT+zHaZujjh7E2a1cujGVSo80e2TXxRJiF1znnUBV1UbHjMUAgINNF21oKpvGUe7qa925qRG+09xeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745430262; c=relaxed/simple;
-	bh=iBqZrtUF65GxCBEB/tBmx3CX5f4LbQNLDGq7Zc9HeEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UmZhMCf8+00dMA5b32UOa6kQ7cGwa5IbpcmC9PAowEK+ZeZy2jpillf8E3jZFNJqLcAZqF6CJUhq4JYkdXgzz6Om3kIM3BucwNlxnpXspbLWvT4FbN+FI5vTE8s/DqXwiwXhx5y9W3czJf6toCgqMq7x/JUDywPeMqwPgp2usL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfHgI4V7; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso25083066b.3;
-        Wed, 23 Apr 2025 10:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745430258; x=1746035058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=te3m5kvvTYT3R1fNk+O6lgZtuB7zTSSbqk9CYuqTNH8=;
-        b=cfHgI4V7ZSGFMJZ7HNnYeBZ/5csFizhDDhBtHtL5P/Ndq+moEIvKWuhT16RDsrKnyq
-         eiB5Mlp1At/m01PBlspW2Xh6/UUeJ+BgLENnSOoXplXmSHmUMhNFaG4zGiXwFnBi61/r
-         JkQgCbVF1IftUFTPdNFDGLCvKKqTtaXK4UO3EDIOcHAE8QSSMC/v17nX2/JBbiM1y64s
-         3QK8mVh5ZdW9MZuAcnwAPLEklKtgSXHbfajk2xvT+myaWW3/qJ+feYgvXmJYiFaowpRh
-         U9k2CjIB1vgrZGUN+silYVY0bfKx5yUNPu6Lq6XGzsyOdPOHI6iTvMkPcF7IftdtXuRB
-         sKKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745430258; x=1746035058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=te3m5kvvTYT3R1fNk+O6lgZtuB7zTSSbqk9CYuqTNH8=;
-        b=BhaEshduEOjg4i+nf1WhsKOcHSh2dwdTQilOk9E6LDzdHCjagNjOOJzm7JXHsbtAHt
-         ZR8ZhI9dYtoKC7psRWrC0iCUD7cOoTehIhdvM+5vQH/BpVPuScXo+XsdzNgGUgNNjaYX
-         SZchMpidwhRFfmh+dyXIe/g2gNF/nYzXKNr8qTeCUN4PyMNtyHPFeqPzfBZrLQIiWjDR
-         x2JqauFIGGk6lxuAr/FFmjjejk8ndoswHkZ3gF1ECj+TzuiwjHySktacy2WS5dK/8FRc
-         Zsx2WEkg0hIdXah0zDunaHSo5S82hTWdrQY7G04tv3wblMg6AafZGxicbt40abZwDp5b
-         6ZNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIgbuzeIDDmIIfQ79LrfRxbVvOt71jF6fVHD7wvIUToJ54vWmAyrGg0j2wjrJSJNua/ec=@vger.kernel.org, AJvYcCUMMSL8CXARVsNMYLAF4RBNUAjYTXR4YZiL7LmMY+3o/fy52i6hBETkmO7dWS/9BDC8CFhwh+6BE1D/x7+f@vger.kernel.org, AJvYcCWo4Z2F7qkupa/l++1tnPABioLsuImnEFXm1PcI/+cSyh63S6pHaf3fWqXZ/peIoXImDoBVrROuCoqLyOo9YO42m/0R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjz+OhSZfatdHVJcBJ+kSav4X1hAlr4tYywo5t25vuRm44g4I1
-	eI1ACVo3G3lhL032sAxpetJL5Wpcjn5uGEjL1xiVy3zZYY0JnC1XdATL8yzK0zhg8uHP2a1rQ7F
-	WwHQWfFDaYUr2y09uhC/Ti+Fco4w=
-X-Gm-Gg: ASbGnct8D5of2pJ0+ZAv/50kM1/9Cwa8NwKntqY50XkbQ9TLD+8QuYB4l+X8dnbPMPb
-	JqAvdQfCyImTUgyve8yshX+KXzpVV26pLGIi8FMNt8JxEw7IfrnX+QYRPIENTh8P3aA83kK54B9
-	1rvb3XSjKl9fTp5cypYlDAG7LVNRbnfNexk9hIvg==
-X-Google-Smtp-Source: AGHT+IGB3SPDItC+6gD8fM3F/cH/O6vPqeY7c3S0HbRaRKqc54QechD95yEyJzGqD+f31CetLXp7OciSn4jm15CqXxY=
-X-Received: by 2002:a17:907:60ce:b0:ac7:cfcc:690d with SMTP id
- a640c23a62f3a-ace5525c6fbmr340366b.40.1745430258398; Wed, 23 Apr 2025
- 10:44:18 -0700 (PDT)
+	s=arc-20240116; t=1745430285; c=relaxed/simple;
+	bh=BCHCHTOXyJMmtJ+KLeDMf9yKqjTgX/D00D6l5oiWD8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZ+29aWfIYQ+JLbj55W3ZUNU3N0QA4dsxbJIzp7kU95SzdME6os7hhGyTBlzJ7iJX/zcFxtsS5W+l4lKB/ahBwd0yIVUhrOZ9zjbf3nBFeVvL+JEk7DSallZrKhPX++grIPECZPp803FsiDhLBHVRuyAdl/E5T8lSHPPoU/nkfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sqBaQ1ux; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nNi428VMmxCpWKvb50p/bX9DgxfivgEs4/Ad9gqYDsM=; b=sqBaQ1uxVV1Pn/zOz3VaBK6aKx
+	/I4dFGbXcARGryXfnbvPWLGUtk1kZlUt0TMwuBBUgGzsc3TawnlO4KVddk2aiB7QCiDSrPFPX0UhH
+	fAnQPyqWRWhA73bcXJ2cxstme/cqQdzOdeNSmykzWRsh7LguLYXdC5mKFviArEbe7kE7StwD/luU3
+	KaDv+C24wS1f2nrM7EGI4Qu+rjOFF0owG01q4uyOVWtiu6Lq6cJ+r2oe6qSLvesrvkieXTZFlEpCY
+	oJqVHW/y/NnxmVaJAjV/Hdz8qBaF/6CgmBwCcTXNn4Q2H5Uve2R+1UJLcaWz6BwQT9kp9UqPXceRD
+	DY3fZ9pw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54318)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u7e93-0006K9-0Z;
+	Wed, 23 Apr 2025 18:44:25 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u7e8t-0000Dc-15;
+	Wed, 23 Apr 2025 18:44:15 +0100
+Date: Wed, 23 Apr 2025 18:44:15 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Marc Zyngier <maz@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Luo Jie <quic_luoj@quicinc.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, quic_kkumarcs@quicinc.com,
+	quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
+	quic_suruchia@quicinc.com, quic_pavir@quicinc.com
+Subject: Re: [PATCH v3 0/6] Add FIELD_MODIFY() helper
+Message-ID: <aAkm79R8f5Vf6TLh@shell.armlinux.org.uk>
+References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+ <86sem7jb5t.wl-maz@kernel.org>
+ <0c97c659-bd28-45e0-8537-d9be2637cb22@lunn.ch>
+ <86mscek7h3.wl-maz@kernel.org>
+ <aAJq9mGswYsnAOS8@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421214423.393661-1-jolsa@kernel.org> <20250421214423.393661-18-jolsa@kernel.org>
-In-Reply-To: <20250421214423.393661-18-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 23 Apr 2025 10:44:04 -0700
-X-Gm-Features: ATxdqUG9D5LkDuQUuyKNSLt3iaC9fuF-CZvsCMSmG0lYrDX9BeFFGTJZy-lWPIY
-Message-ID: <CAEf4BzYH3EBxswa_6SC7uWDmwSR6RMAZNbuKVqbfzaf3CCorxA@mail.gmail.com>
-Subject: Re: [PATCH perf/core 17/22] selftests/bpf: Add optimized usdt variant
- for basic usdt test
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAJq9mGswYsnAOS8@yury>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Apr 21, 2025 at 2:47=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Adding optimized usdt variant for basic usdt test to check that
-> usdt arguments are properly passed in optimized code path.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/testing/selftests/bpf/prog_tests/usdt.c | 38 ++++++++++++-------
->  1 file changed, 25 insertions(+), 13 deletions(-)
->
+On Fri, Apr 18, 2025 at 11:08:38AM -0400, Yury Norov wrote:
+> The _replace_bits() functions return fixed-width values, and intended
+> for: "manipulating bitfields both in host- and fixed-endian", as the
+> very first line in the commit message says.
+> 
+> Those using _replace_bits() for something else abuse the API, and
+> should switch to FIELD_MODIFY().
 
-LGTM
+Sorry, but please explain this statement, because it means nothing to
+me.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+FIELD_MODIFY() replaces bits in host endian. _replace_bits() also
+replaces bits, but has a wider range of which encompass FIELD_MODIFY().
 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testin=
-g/selftests/bpf/prog_tests/usdt.c
-> index 495d66414b57..3a5b5230bfa0 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-> @@ -40,12 +40,19 @@ static void __always_inline trigger_func(int x) {
->         }
->  }
->
+I see nothing that precludes using using _replace_bits() with
+bitfields.
 
-[...]
+I see nothing that would differentiate the behaviour, other than maybe
+religous ideals about C functions vs macros or upper vs lower case.
+
+Please explain why you think there's a difference between the two
+because I really can't see any reason not to use one over the other
+apart from asthetics.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
