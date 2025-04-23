@@ -1,97 +1,190 @@
-Return-Path: <linux-kernel+bounces-616641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED819A9946F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092E1A99453
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2009A1F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB1B1BA7F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206AA28DEE4;
-	Wed, 23 Apr 2025 15:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092182957B6;
+	Wed, 23 Apr 2025 15:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T01Ahhfn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekQhzARo"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FAD28A1DB;
-	Wed, 23 Apr 2025 15:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D64284685;
+	Wed, 23 Apr 2025 15:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422695; cv=none; b=OJednE2wUBZx9a/27uDu1vs4C63y2swrKQSXfWrW4mfRUsL9PQxSEaQv3qctIT/eHEtqrPM8bQ1eAH+CSB37x+PWqhE4LU2dL2rkC+AS4YClQJbxAlAulkP3oGUHb3bSQ4ojDREDClfwtQDvdMxOiMlf1rfYRGM/RYOOv50qu2k=
+	t=1745422750; cv=none; b=nKOSPjD/5ggEwXJLUU9v3EVmCkGs5L0Nju8a5eOU2r++TyZdLBv+43fhrRO6iZopFD1pCY6Uvm0hgKoFtRdyCWDnknh3hkfwcfLwkkr0OPL87XNOsK/RjheZ/HqepNlnpWG7IhPoqiyzKGWMMmWKVNoNgTBgiy6vVx9E5bQUGRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422695; c=relaxed/simple;
-	bh=IaaWKmBkn5xlCdfV5Tc/lHW54iBmhXUi5MviWMueOo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ipm5vX45SDktW1ZtLrgNZqfb5bQkwrpSgjb1qiv8ZOqa0L/EzUKVsAsDZ3J6rDsuUw5DpMAcy/fXnTjeO5uSuUF77NXWbLkN61mG5PE7RL3Lc4ZBwDec7dZe7LRWyCAbZdqJKs09DqZKZ3+EJLRNOXSfQ3vx+bDXecRyUDWTRb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T01Ahhfn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E47EC4CEE2;
-	Wed, 23 Apr 2025 15:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745422695;
-	bh=IaaWKmBkn5xlCdfV5Tc/lHW54iBmhXUi5MviWMueOo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T01Ahhfn32j66N81kHE9Doy0oHXEWbktmsfLpFjf0g8br7wl8u/uOvsaF0mRueV1X
-	 I/UXtyC/A3ZUqAkMCJhRbFpqRaGXvQEPfXdZwUGqA1sWn/+AMlh2+fJwDAw2V0MPeG
-	 MbarfDODtoomYQ/bgLi2wFxZfeaoQL/dpzSlZtwNAcJAWkcXtdJfDshpDhesq8bXqj
-	 0maEsfIIaPbJrttTYSEMbiKFJ7NEnYOeDbL8mosiviPh8oN+FKnuEtdaXfYtT5IU84
-	 8SVKlJ7CHBnoO9TZHa6e9Jidvv9FRj62pnFB0h1sRbLthBTF5+BBc0t3omXq0ktcDd
-	 OEX+ZTYJnzFkw==
-Date: Wed, 23 Apr 2025 10:38:13 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: quic_vbadigan@quicinc.com, Bjorn Helgaas <bhelgaas@google.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, quic_mrana@quicinc.com,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: PCI: qcom: Move phy, wake & reset
- gpio's to root port
-Message-ID: <174542269294.567149.8123466089628259520.robh@kernel.org>
-References: <20250419-perst-v3-0-1afec3c4ea62@oss.qualcomm.com>
- <20250419-perst-v3-1-1afec3c4ea62@oss.qualcomm.com>
+	s=arc-20240116; t=1745422750; c=relaxed/simple;
+	bh=aLWLGHASdIvWAs2AKS4uxhlZjTrDzIENEUz3FT77U8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kwrQiBruvrYByrYD9EP45Dq56ZmYyOTTc2lwaNXhYi/H3K/0hl7RmXuMejD6PvlyNvY8Wf1WTs1BEoBx9GqRIQl+5FA41vhuaKzpkCgbTVucOqIgrR8YVdxoJ8Y4b3U2uvdwsA+Ks5TjN3mXQHl2oxUhX5V12AoOr8muEgUtBXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekQhzARo; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3106217268dso405781fa.1;
+        Wed, 23 Apr 2025 08:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745422747; x=1746027547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qj/rpTDCGzjajFcuOznqZseSs8yVW83bcJ88dS6enYQ=;
+        b=ekQhzARoBIE5TqSLnMQLhMF6D7cuwfr3sq/MGMV/B7h+ywV5beP76/gm05MJ3jI+5p
+         z/EZPBKkfU2dIJFcuDpJn+PZu1uUhcXdW97itOmkvhlZjUaYNPf0nnT6H9exawB3mh6a
+         ssbncOmRjXiPdgBG8ylzmH0xeXSIPRzt91/PurKCpsoRikl+GJpJKCGbPgEWnlZWJx2Q
+         /fEiepTfcOlBUSrKvPqlKIeoL4O1VZ3qFJc4+d1+6ZpRe6I0NbFsUBkCWgt/SuP2LNcg
+         Zju+8+gmrU5lknTApMdAMfVEK+rVn802sy1GcDkeDiBS42/FaME0ID5utHp00+0HHAl7
+         LWeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745422747; x=1746027547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qj/rpTDCGzjajFcuOznqZseSs8yVW83bcJ88dS6enYQ=;
+        b=JuqhCcQ3+aH0pCp916zY2zQ7nMybCh0awFezJXOifU3QTzs6GKlFfZQMi+ptB9SaeS
+         3AmQm/FC5dCVyT9VLr15sApRCpxi+lxx52H78LFkJ2FpjGt6/3G+kVX+3uf3rY3ra+bt
+         +au7qfrRlg8MZUgchTNBE6PPYaPRjSFtYv2kFsuUaBuZypDgMiuINaHxULa/+gpjfM0P
+         1oLHOxf/rr2UzhVaeMfpMooCCB1BIW3jLvS3FLsvwYX0OTiX07BK8lnB9rRNxGDc+ZgH
+         jnJV4ZaHMuFPisF/ncvX9Vf/0vmDcw6L3iIhWFpaWF/AYVZmBYgOWU0hokUpWKf0ag0Y
+         jSVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSt8hgaAc1ms39/78O4fK8XkuZaYIh7TQgM9A9BqJvmR9j3A3U6lq75LZieMOyqQ+4Na/JHUM+fLFSiF0=@vger.kernel.org, AJvYcCWYfqtMZG8ONw0xSsdw4v5Y6PiWigsanjn2C3CF2UH9MiseZrW4V8n7FMBCJk4l/yjvL8Je1oMiuCEJV7EtFCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUqkDhgmVdWAXT1nn/C9YtmsxA/b7C7Fc8eqM90ffZs8WuTyIc
+	/uTDsMMAk4O9tJ/yU7U2pJRJYd+6JDakCuc+v0rBNr2Ks3QsEJpCzv7a/Sq4VK/USXUMYtutaoB
+	d62NQpub6PYFe+///YG3YWpr5JMQ=
+X-Gm-Gg: ASbGncuCbBei1zVwQmAvaSoBZlB48JAvSgXGC4k8Xuy0l0XpskZLNPDQCaxzcf9W8hM
+	NPyRFf1WT8yU1uId907OBC1fjuyFt2Bt/W0P0B0+xWqTZhf4FulzPIQtSn576+06/RQV2FomIEK
+	z01m5j70GQ9yrnALRfCc5UqKx7eYWaoskg7EH8Kg==
+X-Google-Smtp-Source: AGHT+IErTYD9FmiTU04dScC6WH5JBnJKk2+xJBs+4iYQrHVDYocNYDbve58f7lhlHHFbzIrwogO1DTuhgKl8AkuRRcI=
+X-Received: by 2002:a05:651c:1a0a:b0:30d:e104:9ad4 with SMTP id
+ 38308e7fff4ca-31090578015mr52371301fa.41.1745422746277; Wed, 23 Apr 2025
+ 08:39:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250419-perst-v3-1-1afec3c4ea62@oss.qualcomm.com>
+References: <20250422-vec-methods-v3-0-deff5eea568a@google.com> <20250422-vec-methods-v3-3-deff5eea568a@google.com>
+In-Reply-To: <20250422-vec-methods-v3-3-deff5eea568a@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 23 Apr 2025 11:38:28 -0400
+X-Gm-Features: ATxdqUFiwujpGMdZdZ1giwLuKCi0Tc-D6TTwU-UiYOcKmywexj8MpadUnkae0fU
+Message-ID: <CAJ-ks9mg7U0YV805YEY_ViB0i3f_afHcR1xFEe9dhZeQz=rFDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] rust: alloc: add Vec::push_within_capacity
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Sat, 19 Apr 2025 10:49:24 +0530, Krishna Chaitanya Chundru wrote:
-> Move the phy, phy-names, wake-gpio's to the pcie root port node instead of
-> the bridge node, as agreed upon in multiple places one instance is[1].
-> 
-> Update the qcom,pcie-common.yaml to include the phy, phy-names, and
-> wake-gpios properties in the root port node. There is already reset-gpios
-> defined for PERST# in pci-bus-common.yaml, start using that property
-> instead of perst-gpio.
-> 
-> For backward compatibility, do not remove any existing properties in the
-> bridge node.
-> 
-> [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+On Tue, Apr 22, 2025 at 5:53=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This introduces a new method called `push_within_capacity` for appending
+> to a vector without attempting to allocate if the capacity is full. Rust
+> Binder will use this in various places to safely push to a vector while
+> holding a spinlock.
+>
+> The implementation is moved to a push_within_capacity_unchecked method.
+> This is preferred over having push() call push_within_capacity()
+> followed by an unwrap_unchecked() for simpler unsafe.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  .../devicetree/bindings/pci/qcom,pcie-common.yaml  | 36 ++++++++++++++++++++--
->  .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  | 16 +++++++---
->  2 files changed, 46 insertions(+), 6 deletions(-)
-> 
+>  rust/kernel/alloc/kvec.rs | 41 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 38 insertions(+), 3 deletions(-)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index ebca0cfd31c67f3ce13c4825d7039e34bb54f4d4..a005a295262cb1e8b7c118125=
+ffa07ae252e257c 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -307,17 +307,52 @@ pub fn spare_capacity_mut(&mut self) -> &mut [Maybe=
+Uninit<T>] {
+>      /// ```
+>      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError>=
+ {
+>          self.reserve(1, flags)?;
+> +        // SAFETY: The call to `reserve` was successful, so the capacity=
+ is at least one greater
+> +        // than the length.
+> +        unsafe { self.push_within_capacity_unchecked(v) };
+> +        Ok(())
+> +    }
+> +
+> +    /// Appends an element to the back of the [`Vec`] instance without r=
+eallocating.
+> +    ///
+> +    /// Fails if the vector does not have capacity for the new element.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D KVec::with_capacity(10, GFP_KERNEL);
+> +    /// for i in 0..10 {
+> +    ///     v.push_within_capacity(i).unwrap();
+> +    /// }
+> +    ///
+> +    /// assert!(v.push_within_capacity(10).is_err());
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn push_within_capacity(&mut self, v: T) -> Result<(), T> {
+> +        if self.len() < self.capacity() {
+> +            // SAFETY: The length is less than the capacity.
+> +            unsafe { self.push_within_capacity_unchecked(v) };
+> +            Ok(())
+> +        } else {
+> +            Err(v)
+> +        }
+> +    }
+>
+> +    /// Appends an element to the back of the [`Vec`] instance without r=
+eallocating.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The length must be less than the capacity.
+> +    pub unsafe fn push_within_capacity_unchecked(&mut self, v: T) {
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Did you intend for this to be pub? The commit message doesn't
+obviously indicate it.
 
+>          let spare =3D self.spare_capacity_mut();
+>
+>          // SAFETY: The call to `reserve` was successful so the spare cap=
+acity is at least 1.
+
+What call to reserve?
+
+>          unsafe { spare.get_unchecked_mut(0) }.write(v);
+>
+>          // SAFETY: We just initialised the first spare entry, so it is s=
+afe to increase the length
+> -        // by 1. We also know that the new length is <=3D capacity becau=
+se of the previous call to
+> -        // `reserve` above.
+> +        // by 1. We also know that the new length is <=3D capacity becau=
+se the caller guarantees that
+> +        // the length is less than the capacity at the beginning of this=
+ function.
+>          unsafe { self.inc_len(1) };
+> -        Ok(())
+>      }
+>
+>      /// Removes the last element from a vector and returns it, or `None`=
+ if it is empty.
+>
+> --
+> 2.49.0.805.g082f7c87e0-goog
+>
+>
 
