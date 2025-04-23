@@ -1,184 +1,196 @@
-Return-Path: <linux-kernel+bounces-615661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A89A98066
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:19:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0CFA97F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666FE5A0E0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1663417CCE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95DF2686AF;
-	Wed, 23 Apr 2025 07:16:57 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16B266F13;
+	Wed, 23 Apr 2025 06:40:28 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D43419ABDE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C0F17BED0;
+	Wed, 23 Apr 2025 06:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392617; cv=none; b=jST+s6uCbt6v1u+eLreAGqhuxydv9KRrxxZxMz8TpzhLfq0rmeVvamKdlrk4zs/os0yRVOHDi8z+FhClmYo7x58YdSqsuEZPyTqDXKz8TqDxN5oYXq2r52OlcG3YzF9xW1LbX6yda92OF2W8pJHAgDQaIR6vlBjiE6DtbGw6pTA=
+	t=1745390428; cv=none; b=VD2s0Uiytd7OKuDbpJ9frfLUVwK9ci/4KCpZgQWg6CqsxfPhx1hg9LQsPwISFoNrDuh+2zG7P9goPtM/oBA+R/AD4c2r0L0zgpVwp0XutH5i1cfh3cS/s/bBU8zcGPaYG14SZXGEKv3xn4bDMqow++px0qp0JLI84hLY2zHmMy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392617; c=relaxed/simple;
-	bh=lkzPUJ10gT52uuukb7HPgV/Nh5/UgrSQsaxpNq47X+U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HvVK31cwiI+JRdbGmhkr/pPujxwRs+NWQKUmx1Ph8VGufLrVw3WV4NGLX5iipHdF2pwNXWYB9V89IBqYoMc4GEVEoy7DxIW3/nSUW08c+xULHRZZ6lv69l2vyiCPbTMtkdRETP5t9OIAShSZINw8HgenAjZlc3iknKk1V7g03Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1745391830-1eb14e386e17140001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx2.zhaoxin.com with ESMTP id t02AG7rUbgqsF5UE (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 23 Apr 2025 15:03:50 +0800 (CST)
-X-Barracuda-Envelope-From: SilviaZhao-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 23 Apr
- 2025 15:03:49 +0800
-Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
- ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
- 15.01.2507.044; Wed, 23 Apr 2025 15:03:49 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from silvia-OptiPlex-3010.Zhaoxin.com (10.29.8.50) by
- ZXBJMBX02.zhaoxin.com (10.29.252.6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 23 Apr 2025 14:35:10 +0800
-From: SilviaZhao-oc <silviazhao-oc@zhaoxin.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <namhyung@kernel.org>, <irogers@google.com>,
-	<adrian.hunter@intel.com>, <tglx@linutronix.de>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kan.liang@linux.intel.com>
-CC: <ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <louisqi@zhaoxin.com>,
-	<silviazhao@zhaoxin.com>, <cooperyan@zhaoxin.com>, SilviaZhao
-	<silviazhao-oc@zhaoxin.com>
-Subject: [PATCH RESEND 3/3] perf/x86/zhaoxin: Add Yongfeng support
-Date: Wed, 23 Apr 2025 14:35:09 +0800
-X-ASG-Orig-Subj: [PATCH RESEND 3/3] perf/x86/zhaoxin: Add Yongfeng support
-Message-ID: <20250423063509.20996-4-silviazhao-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423063509.20996-1-silviazhao-oc@zhaoxin.com>
-References: <20250423063509.20996-1-silviazhao-oc@zhaoxin.com>
+	s=arc-20240116; t=1745390428; c=relaxed/simple;
+	bh=3HuTyXhJkl/yTOit/a2M9L4/0zusi54xYyhWG2QCJpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aA7r0BZnKMwgw7lGMlGxek+vLzy/PyCJmrXrDDaB2tXOuGnxRVWU6lOVmLnhPzQN+QRqliKMur3/mJuFGjJQ6iBrx0UuZDcC9daYotEpoPFtnvoiaZ3YNeY5OZxR43vdX3JoLUG5MBj6bQS4kNYEy5F/4mXBgukbazake0/nEUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5290be1aedcso717034e0c.1;
+        Tue, 22 Apr 2025 23:40:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745390424; x=1745995224;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Ba6tmlAbCMQPw4GSQHNs/ApOFK/gml2sfoYUe2vXaM=;
+        b=ogGSxiwtyoqrLhcdzAptRDitjKguXY/oeR1bA60b7AmUTlgD3Gvzll+AsR4vrgWH2Y
+         EwHqHAEdQVu02QNsoHe19mw3jcLvrU0L3xb1jQumd147Oop90v+Zhv3RE/0j/78MBz7y
+         oVRv3vn0fJ9+pksOvDA25zTL48q6ClAa0nJ4TM5tZwK8b0BVkH8bwCVzz9UtDn9K2Qhd
+         h7Nz64kgfnNS7brrVuFix9eJ9Tp+JtuFpjZZe757u4g1R3QiSSP8tC5elsR60Se9CoSs
+         YLrqG56A4NjJW2kve71XD8bKiCA7KN0T2LDmAtnLdn4G1zcHjlQUPkefFk+ExeNR0sMP
+         Aguw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcf+T7lsM1TE5o06ts6xNs5AYyBnWqISXCpUi0C5IDeDJzSd0LwZ0i1bDBvORwQe7EZFbAK+/oLrQr@vger.kernel.org, AJvYcCXAVDJ7+MeS91hVEpXlODNfSgC5hJiZls4MxhGcdOvv5m1XEWkziy0waOJzasSUzS3f4wFj5ChpUsqty6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOMLFKJq2iAXqrtVdC9pNc3o7pZF6FtkwFg6OoN5W9xSUPGxJq
+	33dRJuGsFJt59LssOPsawZz3ULD1y0C1F1fXD1+tH8Op1ozZIWFYuUy0pG71
+X-Gm-Gg: ASbGncvaCRdwLX5fSoxOcEavcjUybgFwGllzzk3Kis97TTT5oSwYjX0Q0v6Hr1aw4ap
+	0bvIRgUWeJMYtq2CFv17hdL+6/o6YdkmDbb3YM23uY0pwZ9e2v6F6jMyXaHAABGAw0sNPMoT+Jx
+	CSFRaxGw82cV2fwJ29eucp2t60kzwcL3QM6HPdlhkvqAoX2p7FaT4B29lCVFDOXc/xE6sKUXO6A
+	mfWDJb7AGqGP4f8bmXP8q4ueoWxUyz5ZOOaZHqF9L7SHmEskXmCPjdM5OWV+CCHRT9Ms2mfi3zb
+	orWTvN41kTW9oAv/losumBqum7ti3O8ZCZMMqNDdaagQw9VpJuADDs8TH2bxV1srZXzc9Q7mYwk
+	9UzkTwyXg7VDDKgYAQg==
+X-Google-Smtp-Source: AGHT+IGkOQS6KwEV/82Ot42E9pmhSyvr6ClKKExYlDs07kEFlRYt5anAucsORyAln1oIolMiL2MoUw==
+X-Received: by 2002:ac5:c244:0:b0:524:2fe0:3898 with SMTP id 71dfb90a1353d-52a6a18683dmr801496e0c.5.1745390424551;
+        Tue, 22 Apr 2025 23:40:24 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8776468cd5fsm2608595241.20.2025.04.22.23.40.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 23:40:24 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5240a432462so636686e0c.1;
+        Tue, 22 Apr 2025 23:40:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUA2VPCCNRaAejawxUoF/tqX+w538bGcPqOWSm1wChBv2uDwNyuygAWPsgN43UNNZjLWCRlR4eD9jbt9s4=@vger.kernel.org, AJvYcCVVfF5+g2jNkQLn1A5rD1QULIJlwuKZ8jUk9JowWyGitactN1h6N97VEjOsanIUzjgW2tMo3wNwgbYJ@vger.kernel.org
+X-Received: by 2002:a05:6122:d9c:b0:520:4806:a422 with SMTP id
+ 71dfb90a1353d-52a6a053f6bmr1128149e0c.3.1745390424170; Tue, 22 Apr 2025
+ 23:40:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX02.zhaoxin.com (10.29.252.6)
-X-Moderation-Data: 4/23/2025 3:03:49 PM
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1745391830
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 3315
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.140368
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+References: <20250325091007.24070-1-hans.holmberg@wdc.com> <iB7R4jpT-AaCUfizQ4YDpmyoSwGWmjJCdGfIRdvTE76nG3sPcUxeHgwVOgS5vFYV0DCeR1L5EINLppSGbgC3gg==@protonmail.internalid>
+ <476cf4b6-e3e6-4a64-a400-cc1f05ea44cc@roeck-us.net> <mt3tlttnxheypljdkyy6bpjfkb7n5pm2w35wuf7bsma3btwnua@a3zljdrqqaq7>
+ <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net>
+In-Reply-To: <e5ccf0d5-a757-4d1b-84b9-36a5f02e117c@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 08:40:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVXh+9htop6R=1gn5AmX0YJtqtAB9iFmZm6DweyyG-k3w@mail.gmail.com>
+X-Gm-Features: ATxdqUEM8b8nkIhMlBvzC9FFlRhWR9t_hxBPLVk7olyTZGn4yR9E9kXDjILDzD8
+Message-ID: <CAMuHMdVXh+9htop6R=1gn5AmX0YJtqtAB9iFmZm6DweyyG-k3w@mail.gmail.com>
+Subject: Re: [PATCH] xfs: add tunable threshold parameter for triggering zone GC
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Carlos Maiolino <cem@kernel.org>, Hans Holmberg <Hans.Holmberg@wdc.com>, 
+	Dave Chinner <david@fromorbit.com>, "Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: SilviaZhao <silviazhao-oc@zhaoxin.com>
+On Sun, 20 Apr 2025 at 19:43, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 4/20/25 03:53, Carlos Maiolino wrote:
+> > On Sun, Apr 20, 2025 at 02:47:02AM -0700, Guenter Roeck wrote:
+> >> On Tue, Mar 25, 2025 at 09:10:49AM +0000, Hans Holmberg wrote:
+> >>> Presently we start garbage collection late - when we start running
+> >>> out of free zones to backfill max_open_zones. This is a reasonable
+> >>> default as it minimizes write amplification. The longer we wait,
+> >>> the more blocks are invalidated and reclaim cost less in terms
+> >>> of blocks to relocate.
+> >>>
+> >>> Starting this late however introduces a risk of GC being outcompeted
+> >>> by user writes. If GC can't keep up, user writes will be forced to
+> >>> wait for free zones with high tail latencies as a result.
+> >>>
+> >>> This is not a problem under normal circumstances, but if fragmentation
+> >>> is bad and user write pressure is high (multiple full-throttle
+> >>> writers) we will "bottom out" of free zones.
+> >>>
+> >>> To mitigate this, introduce a zonegc_low_space tunable that lets the
+> >>> user specify a percentage of how much of the unused space that GC
+> >>> should keep available for writing. A high value will reclaim more of
+> >>> the space occupied by unused blocks, creating a larger buffer against
+> >>> write bursts.
+> >>>
+> >>> This comes at a cost as write amplification is increased. To
+> >>> illustrate this using a sample workload, setting zonegc_low_space to
+> >>> 60% avoids high (500ms) max latencies while increasing write
+> >>> amplification by 15%.
+> >>>
+> >> ...
+> >>>   bool
+> >>>   xfs_zoned_need_gc(
+> >>>     struct xfs_mount        *mp)
+> >>>   {
+> >>> +   s64                     available, free;
+> >>> +
+> >> ...
+> >>> +
+> >>> +   free = xfs_estimate_freecounter(mp, XC_FREE_RTEXTENTS);
+> >>> +   if (available < mult_frac(free, mp->m_zonegc_low_space, 100))
+> >>> +           return true;
+> >>> +
+> >>
+> >> With some 32-bit builds (parisc, openrisc so far):
+> >>
+> >> Error log:
+> >> ERROR: modpost: "__divdi3" [fs/xfs/xfs.ko] undefined!
+> >> ERROR: modpost: "__umoddi3" [fs/xfs/xfs.ko] undefined!
+> >> ERROR: modpost: "__moddi3" [fs/xfs/xfs.ko] undefined!
+> >> ERROR: modpost: "__udivdi3" [fs/xfs/xfs.ko] undefined!
+> >>
+> >
+> > I opened a discussion about this:
+> >
+> > https://lore.kernel.org/lkml/20250419115157.567249-1-cem@kernel.org/
+>
+> A possible local solution is below. Note the variable type change from s64 to u64.
+>
+> Guenter
+> ---
+>
+> diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
+> index 8c541ca71872..6dde2a680e75 100644
+> --- a/fs/xfs/xfs_zone_gc.c
+> +++ b/fs/xfs/xfs_zone_gc.c
+> @@ -170,7 +170,7 @@ bool
+>   xfs_zoned_need_gc(
+>          struct xfs_mount        *mp)
+>   {
+> -       s64                     available, free;
+> +       u64                     available, free, rem;
+>
+>          if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE))
+>                  return false;
+> @@ -183,7 +183,12 @@ xfs_zoned_need_gc(
+>                  return true;
+>
+>          free = xfs_estimate_freecounter(mp, XC_FREE_RTEXTENTS);
+> -       if (available < mult_frac(free, mp->m_zonegc_low_space, 100))
+> +
+> +       rem = do_div(free, 100);
+> +       free = free * mp->m_zonegc_low_space +
+> +               div_u64(rem * mp->m_zonegc_low_space, 100);
+> +
+> +       if (available < free)
+>                  return true;
+>
+>          return false;
 
-Add support for Yongfeng which is Zhaoxin's successor microarchitecture
-to Lujiazui.
+There's also mul_u64_u32_div():
 
-Remove PERF_COUNT_HW_CACHE_REFERENCES and PERF_COUNT_HW_CACHE_MISSES
-from global zx_pmon_event_map, since the cache hierarchy was changed
-from Yongfeng, and these pmc event map changed too.
+    static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
+    ...
 
-Add PERF_COUNT_HW_BRANCH_INSTRUCTIONS and PERF_COUNT_HW_BRANCH_MISSES
-to global zx_pmon_event_map, since these two event will keep consistent
-for Lujiazui and later.
+Unsigned, too.
 
-Signed-off-by: SilviaZhao <silviazhao-oc@zhaoxin.com>
----
- arch/x86/events/zhaoxin/core.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.=
-c
-index 75e51a3f5438..d7dced6ca934 100644
---- a/arch/x86/events/zhaoxin/core.c
-+++ b/arch/x86/events/zhaoxin/core.c
-@@ -20,15 +20,15 @@
- #include "../perf_event.h"
-=20
- /*
-- * Zhaoxin PerfMon, used on zxc and later.
-+ * Zhaoxin PerfMon, used on Lujiazui and later.
-  */
- static u64 zx_pmon_event_map[PERF_COUNT_HW_MAX] __read_mostly =3D {
-=20
- 	[PERF_COUNT_HW_CPU_CYCLES]        =3D 0x0082,
- 	[PERF_COUNT_HW_INSTRUCTIONS]      =3D 0x00c0,
--	[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
--	[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
- 	[PERF_COUNT_HW_BUS_CYCLES]        =3D 0x0083,
-+	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0028,
-+	[PERF_COUNT_HW_BRANCH_MISSES]	=3D 0x0029,
- };
-=20
- static struct event_constraint zxc_event_constraints[] __read_mostly =3D {
-@@ -560,6 +560,8 @@ __init int zhaoxin_pmu_init(void)
- 			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES] =3D 0;
- 			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES] =3D 0;
- 			zx_pmon_event_map[PERF_COUNT_HW_BUS_CYCLES] =3D 0;
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0;
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0;
-=20
- 			pr_cont("ZXC events, ");
- 			break;
-@@ -580,6 +582,9 @@ __init int zhaoxin_pmu_init(void)
-=20
- 			x86_pmu.event_constraints =3D wudaokou_event_constraints;
-=20
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
-+
- 			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0700;
- 			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0x0709;
-=20
-@@ -591,11 +596,26 @@ __init int zhaoxin_pmu_init(void)
-=20
- 			x86_pmu.event_constraints =3D wudaokou_event_constraints;
-=20
--			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0028;
--			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0x0029;
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
-=20
- 			pr_cont("Lujiazui events, ");
- 			break;
-+		case ZHAOXIN_FAM7_YONGFENG:
-+			zx_pmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =3D
-+				X86_CONFIG(.event =3D 0x02, .umask =3D 0x01, .inv =3D 0x01,
-+						.cmask =3D 0x01);
-+
-+			memcpy(hw_cache_event_ids, lujiazui_hw_cache_event_ids,
-+					sizeof(hw_cache_event_ids));
-+
-+			x86_pmu.event_constraints =3D wudaokou_event_constraints;
-+
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x051a;
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0;
-+
-+			pr_cont("Yongfeng events, ");
-+			break;
- 		default:
- 			return -ENODEV;
- 		}
---=20
-2.34.1
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
