@@ -1,157 +1,127 @@
-Return-Path: <linux-kernel+bounces-615877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254A1A98391
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:35:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14977A98397
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1069188D3D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438231678C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB5E28BA82;
-	Wed, 23 Apr 2025 08:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0116C28CF6E;
+	Wed, 23 Apr 2025 08:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAsvJnjw"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bW39eyc1"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690F428B51C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C942749E8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396752; cv=none; b=HoayTHCgnGs73QDDyPMFUCB1vJb2+wTdjGPFjMLmeWzeK6s7PbQrn35buE6CM6hBVHoPVmEZc6EKVcahcyOfi2xhkrvbGvYOEY76e6wVQftYbr7AtvwD3Qyu0TlD7y+d6NjOeoq7bD8R35b0LSPDPqAlzBZJYpY7SDX1/DLHaMs=
+	t=1745396787; cv=none; b=PXLf32AMAPzIcFrAzeM8eTiw5QMYibu9vNbxHXPGVpTCeSAFRJWfHmOLx/d8y95yV3fQ6uW74TDMTDzAcE8kEDsQTwBaoQn8CTwwPOF8Jq0cUuANInv9UaXDdkpIFKoBjlPoI+mUnuNpioW8e2Y3Stl42OaEaIyK1lBoorp9gQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396752; c=relaxed/simple;
-	bh=wQUGCqIwRiCAJNXe0S9/0jDLS0hUb0JxM7vV3/rRgZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I16sathtDmXNTQNY0uTKF5LIURZYNrQm5tnC024fITXBngMDPDRzTzKowsR4+lqOzb6FlyG0N78mRBKUUQKDPZbx0KcQ9RtWOVfhBujo97QMC7uGalRGmFLgN49SLMRkLAi6NzfdYcZeXxFL1oJgluAGrIPSZDrev9ZrozlU/PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BAsvJnjw; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf257158fso39630025e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745396749; x=1746001549; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGuXXvzB6S1IWSanPpei3FWjhooa/wauPws9AXZMY=;
-        b=BAsvJnjwzoAkxcuLXHA1BM0GCT/wHzvjFhm8BZeZ/YQzJMPaMBFFDQbnHVFb78dyHR
-         CUhalt6fOqeehz5J1vIvEtvGbaurhcd958BHjTRaX32stVNFggwVrm7RX0tba6Z4DyJm
-         5p6coI2CS4uN06MHhi/60r9Imerhsexv3HxvinrgcxnPbDqpVyeBEVEkgNEd0O7O7z6f
-         lwPzdMVRCTqh8Uo8P5JHkM+1aXxwHYI+cUdJKnZSmHXeFE+gZwDgDtw4o5wM3E9jIQ6x
-         wh9V+tC6E26Q+fxEW1UzAPQxjmDUf5+lZdOw7zuMqtzG+B4IuQ4z3LhwCN2Qniyq/IAk
-         1uPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745396749; x=1746001549;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGuXXvzB6S1IWSanPpei3FWjhooa/wauPws9AXZMY=;
-        b=NKHAGfPA1A6XP5Q/Uhz3WxV8kCKmLE5QH2E4Eu1ELWtDvFDx+nn6AoeDuOerZy8yuf
-         3VtksnllpeKe1FpeyFJwUbroGbyWJttFr0oqvisbDwsOaf3Cb/uZyYTi43cZu6/2r2PI
-         nD1xk74IX5rU7rViqyO9MI57CXWZul4jfRWCYtfWTVxBtXMGIMZvGAIMKQp4ulOmNoi5
-         QZFCfe7X+AJQ8qD5X4RF6Q8ozgO6efQD1IVklbPzNBoZRq45rBbO/aaeittdc9oakkuo
-         X1xRNq2zT7WD3wUcYR0mH3jCUnYJCmJLoTairNgJqe9d8fIUXOufnuIvoYo6HTAKaVt5
-         lELA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3jDpkZMrs/l6ejwQ/1nxbsoPQvThWWzeE31c+iXoHvA7JGdLguPx816N0MPa75Yq8mUVafyZYsXUE9XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg15QhEkHi1cDShmu9uGLLTVWV3tCJVjUWHz+XRBDIw8AK5uTR
-	4gRBCF7j1XkzUQbak8PJI+O/Bu38WenHKhfnU83qOJkDnTxzuQD4yofnfSpjBgs=
-X-Gm-Gg: ASbGnctBcX7rEZU99B0D1SNfaMKP7wzZ4PTCo1j3otEkfDKXHKC5xmaDFXubYScWw9I
-	bVeCG5nUU6zUXM8Nqcf6Lon6EAqj56T6VkoHg2IH5IAcG7p7n4kGWPqWSTzpar9oZIaX2D7PhYA
-	BDE5dqgWVnSxezE1slkys9/AvaXAFGt1H/1kyN4MU9Q2hoow9b2rL5ZHZaGZWMbXJKO86bV9+W3
-	wlaiGGsUvXRSl1Vju/uqIjc4df5rJ9gtVcLFo8QzfNMo7pZpTrTk7w4/dPPO30ITanHGVIyLLcy
-	t7pdNh2ho6aKJhdPjwJHHalXI2pYFGRd/vZeYLr3PWk8ww==
-X-Google-Smtp-Source: AGHT+IFpRv76nP4pFCeRNrK8Buzz7/miJML9dPdQu84BHUP/kQP8XSQQSLgAkC4W9foMctxFScbIbQ==
-X-Received: by 2002:a05:600c:3c9d:b0:43c:f8fc:f69a with SMTP id 5b1f17b1804b1-4406ab676fdmr165779985e9.4.1745396748678;
-        Wed, 23 Apr 2025 01:25:48 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092d179cfsm17268355e9.4.2025.04.23.01.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:25:48 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:25:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: rxgk: Fix some reference count leaks
-Message-ID: <aAikCbsnnzYtVmIA@stanley.mountain>
+	s=arc-20240116; t=1745396787; c=relaxed/simple;
+	bh=zd76tPWLvz03FGMRE8CwkIY4StHtha9RgA2vfs7dSNk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tiwd+HmKDLssAT+lcxfny/W2Ox7qxsI4o76VFRtylRtI9WpBpZreHpn5tFEvvt4dDYCsg0KdLmCA3rEku6HhW1YKK14rM5xAyKuXiwav4358m91QAlHvubgDP4+P2Eve1yJ/TuZQosOUoijL61gaK+3PoIpqJt777e/gHFCfr0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bW39eyc1; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zd76
+	tPWLvz03FGMRE8CwkIY4StHtha9RgA2vfs7dSNk=; b=bW39eyc1Zdqb7rdfP2F5
+	ieY6UgWtp/+V4BS8I1m4xQx/dVMgWvxNAmrFmuJyWfGqWHOC82aJQtPMDmRxjaaC
+	khIXz0V503r+QdyccqIDl5NZKEvxB/sZn2cKgHYEtIdVK1NgrvP0u8BnA+AtkIHv
+	CSX26KQEnqVf8RVbCl9kptC3RGyfiA65cPtBUwPp6ZV86/y9rOzFXm7XSbZvBSbG
+	vl84MUTbQXn8rDWW+8abP72BsFj252Ahen/lMHxrFNyATrdSsEB8dePrdK1rS3VN
+	4lWc9nyIoq2iLNcWLW+CxYIusHhg9gqOsUUjZwfQM+MIt90fyZx6eduBzBfOuLlN
+	gw==
+Received: (qmail 3005372 invoked from network); 23 Apr 2025 10:26:18 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Apr 2025 10:26:18 +0200
+X-UD-Smtp-Session: l3s3148p1@/wX82m0z4OUgAwDPXx6JAAunYj8Nf7DC
+Date: Wed, 23 Apr 2025 10:26:18 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v8] i2c: riic: Implement bus recovery
+Message-ID: <aAikKreK-BCP-zLp@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Andy Shevchenko <andy@kernel.org>
+References: <20250407121859.131156-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aAC8f0dAMERD8GjW@shikoro>
+ <CA+V-a8sM2mFS--zLSZt28mOUDuO2FpW0TsaV50A_VxFZ-juP4Q@mail.gmail.com>
+ <aAFgwEB4SdgH-1fQ@shikoro>
+ <CA+V-a8tmTqFi4iqGhR3cfUgKw7mxJrm6ixGAHq747ptrL3t2jA@mail.gmail.com>
+ <aAITBfrOI0GAhGRA@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eYv3UB7V5mlJ9iEk"
+Content-Disposition: inline
+In-Reply-To: <aAITBfrOI0GAhGRA@shikoro>
+
+
+--eYv3UB7V5mlJ9iEk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-These paths should call rxgk_put(gk) but they don't.  In the
-rxgk_construct_response() function the "goto error;" will free the
-"response" skb as well calling rxgk_put() so that's a bonus.
 
-Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/rxrpc/rxgk.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> Well, frankly, this is the only test I tried and, yes, it did work for
+> me. Will check 'incomplete_write_byte' later today. I will also check if
+> I need to run the tests more often. I did not do an endless loop.
 
-diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
-index ba8bc201b8d3..1e19c605bcc8 100644
---- a/net/rxrpc/rxgk.c
-+++ b/net/rxrpc/rxgk.c
-@@ -440,8 +440,10 @@ static int rxgk_secure_packet(struct rxrpc_call *call, struct rxrpc_txbuf *txb)
- 		return PTR_ERR(gk) == -ESTALE ? -EKEYREJECTED : PTR_ERR(gk);
- 
- 	ret = key_validate(call->conn->key);
--	if (ret < 0)
-+	if (ret < 0) {
-+		rxgk_put(gk);
- 		return ret;
-+	}
- 
- 	call->security_enctype = gk->krb5->etype;
- 	txb->cksum = htons(gk->key_number);
-@@ -483,7 +485,7 @@ static int rxgk_verify_packet_integrity(struct rxrpc_call *call,
- 
- 	hdr = kzalloc(sizeof(*hdr), GFP_NOFS);
- 	if (!hdr)
--		return -ENOMEM;
-+		goto put_gk;
- 
- 	hdr->epoch	= htonl(call->conn->proto.epoch);
- 	hdr->cid	= htonl(call->cid);
-@@ -505,6 +507,7 @@ static int rxgk_verify_packet_integrity(struct rxrpc_call *call,
- 		sp->len = len;
- 	}
- 
-+put_gk:
- 	rxgk_put(gk);
- 	_leave(" = %d", ret);
- 	return ret;
-@@ -594,6 +597,7 @@ static int rxgk_verify_packet(struct rxrpc_call *call, struct sk_buff *skb)
- 	call->security_enctype = gk->krb5->etype;
- 	switch (call->conn->security_level) {
- 	case RXRPC_SECURITY_PLAIN:
-+		rxgk_put(gk);
- 		return 0;
- 	case RXRPC_SECURITY_AUTH:
- 		return rxgk_verify_packet_integrity(call, gk, skb);
-@@ -969,7 +973,7 @@ static int rxgk_construct_response(struct rxrpc_connection *conn,
- 
- 	ret = rxgk_pad_out(response, authx_len, authx_offset + authx_len);
- 	if (ret < 0)
--		return ret;
-+		goto error;
- 	len = authx_offset + authx_len + ret;
- 
- 	if (len != response->len) {
--- 
-2.47.2
+Both tests work for me, even in an endless loop. I also get the desired
+signal outputs checking with the logic analyzer.
 
+Here is the branch I used:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/g3s/riic-recovery-experimental
+
+
+--eYv3UB7V5mlJ9iEk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgIpCYACgkQFA3kzBSg
+KbYICg//YRlqSOeTRx9J+3cE0wYqmYTceyFoeDieEwHHdgw8XbU2bWLrIrIiC+aA
+XfUVbc/TFcfXCOmzVueXWo+HQAJ5KWSsrwW7wOAlkD+SxgJVMDC7+GjKE0Yu8zLf
+7y8E+fGop+9hoPCmsJ2dzDVrja5URBfFy6fLn/xdjzGTmm6PIlcwvp+8Hi3ySMLe
+amXYX1zfUf5YqmC2JpyivLannnQ6/AA4yWSHH5UKRlO2wKr2rCbdbmV7nmASFYJp
+FZa2Iu86k0WLYSVz6FuWx5/ObT5lhZvmhR3s30MwKE+FvUKWeDRFQ2dTUwKB/SK7
+nKo5bXmCT0sB60SX+FrUeoLdbP2JiB/cSQbsVuZ3z75rqULI5dkE+bUOvgfxFsfe
+WqZ5DpSBsBanxvHx12r37xNl+/bCWtJMsO/iXqhp3m4SBg9WseQ/bgKbRWQwp/yi
+I+z3ZY5I0lgcijwjdQuwcSYyQPRlUJU/uO7poVFvWzqGzBwoErj5lnfHWtmRdOp5
+iLhXhZ90U33uDoSAn9ukrFKXox8TgavFfaG5MHZMWOtpw+CmBHpNIso69q+WTD0O
+i40k0Sgpr38oJjXtMYfELVtFX2E/3m/P2ZXETEDzp0Pa0AfnnVLJd0C0NAGfaxFQ
+GnL+w+r98SFDHiXEM9HE80PiwfnqhFO5V5dH34tktpyCDeZNDVU=
+=dlc3
+-----END PGP SIGNATURE-----
+
+--eYv3UB7V5mlJ9iEk--
 
