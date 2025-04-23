@@ -1,145 +1,214 @@
-Return-Path: <linux-kernel+bounces-616880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAB6A9976A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A55A99774
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0011B835DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:02:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E46189C6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CA828E5F3;
-	Wed, 23 Apr 2025 18:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A91328CF65;
+	Wed, 23 Apr 2025 18:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oME2bGbG"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="jRBHzFfh"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CA1266572
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91041EEA47;
+	Wed, 23 Apr 2025 18:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431345; cv=none; b=Npzfa94+O/SoXbABp7p6PhXBID9v5fK7rgQSeWcQfkAaa2MKfhnAhdBarLwadf2bghbmGSGGvUgkxnktp9PJkNx6yizXeYoyL1UBVa6huCxuBEUD1kPSSQeEPGEnxp5VTN68BARjkEWk0fVG4fISCe/pj5RRhiWgKbf14X9EA7Y=
+	t=1745431462; cv=none; b=OdezWySEhRW5Lm/9eiZ6KaKS28Q4LIyVW1SrXnf/Kw8Jeo8aY7oIXdohwewRGYbx9PtyIlquXdD4zbvA8sJDBKI8Flss575rrSuNsMUYQ6/ToDYX9ZgXFtfiyQfMkIoi0edkmyxPYK+8OmqpZ7ObeTJspom99UIp09jiRlEfVf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431345; c=relaxed/simple;
-	bh=jMGBnlKKS3wriE0M2t3GS1b7w0yLhTPXvhMeTWbbHrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cczCqyViWgG5tzQZ3Mh1mU0R2xJuvkjFDvWz+q5ZQUSQIPQNS4FMle25g5Y0XeoT+G0jVeMMtxnnpZjpjwvXrB/mc8hlbbHqbxTyB/HOO4gAbNY7QrN2/k8JT45RjH4ki+3xoS3mpA5ArnG6uSQE2RGLiP1LGyFkrG4pcOUIxFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=oME2bGbG; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6eeb7589db4so2217596d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 11:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1745431340; x=1746036140; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/H5CAwHQKAGhhgyjSbvaHcVayhHkcFdusJoJuYFxH8=;
-        b=oME2bGbGIz+n8qPmjxlLjGtl64CvjZEPLK7vic6PtKju9KvsD8hbQoAkwLgEIUXBXg
-         iqMA9uiI8nIhmBox8Z7ZtsEVF9rde1sOPnx8+Ic/YkmuJ9mTOLkrk722E5IWEIRNAYGR
-         CVnGLdLxvEKtC2PTbivi1fVVAU/xnbJH1e3h1aYaD6xXqyyQUWxXFa7Xe/FlDmqtEMBh
-         M2vt6LSy6VXOVecd3pdAWZPlsCrclj/UmngB8o9ubhNBU5XVxQpZ9ogcCm6n3z5DL56T
-         4rghcIF1xc2841w2V+rvve+AZ1efnzAOOk4mZhF4CMwBHIR6quQkjZVOdYpgnKUYZnoy
-         QpAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745431340; x=1746036140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/H5CAwHQKAGhhgyjSbvaHcVayhHkcFdusJoJuYFxH8=;
-        b=Pkpd0XKs5aIy3sVF2UhdYV7gXQekoMxiqElie3e+jre9UdB1FlSrMCSErS1q7hYIBp
-         6Uee0jmmQWObOoQgeCNnGeAWB//CdlmTflYBeOXIGQtIWYoYTqgCxjE6rn4EVdwvuLfB
-         aH8t4hUPMmcOpEY2rn3GsqnJ1c9DMNm8JDAb3M4bzaKcgVl6C5ocvHGJ9wJpUjR5dL8u
-         iCbLOfFcpNX+7GjHXNRA621lkcWlDj8SIfdtsuKHIOxDs1qTB/FN0ual8zymrjgcdsX8
-         C1n8GIwP5nlkRtdMRn1sYk4sS+WLKOoeZ0O1MMSO/+jM1wWC9yjdfQnPjeQcLep9Bcb2
-         mR5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXslMKnFQKDd6Js5OZY5kQDGLdMh9ql/KX338G5y3CkUhbauveZr9vbljFGTieGKZ0y0Ze8PI/5L6KSA+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO3U7kYEzhNDbws0bLehjTSlXHrqf9d96eXkiNMpQogXMyr6Al
-	ux3PK+VHH2J1Mxh9ofRRe6Vqpd9HYk42VWrzH6nONuC7zGP6eG/nEq4dMIA63pE=
-X-Gm-Gg: ASbGncvjoUM5EX+h0p0mqL8C2uKLPYJKXe7k3mykxKemPBQsPsWf4YzkgsM8dzKHT+l
-	bHyLhhqOwj27/A6JdatIZRX7uOVsGpwX69aw+9CDo7TzfnQvM1q8UEkw5UM8vMKDArKwbx+ciPQ
-	hMCKY7oI5BKA6nWEWS8JbuWcLLTp4lkotX2VWTo0o3CgEmap0czpJP77Gisesy5mxYFmxZRn2U2
-	RfYPw0YxnWhtFmF54By3xYvMYpwVeyBif3IHGDQqZSvbuzaM9+dCkV2Z2Tr9hsXFghcQM8oK2MX
-	ukX9ZAqxtwL67UqViq/tPzD4xhbj7hhWJ+eyisMw4OUy5GJnacdsUsSRxF0KacdZ2PV+cAO91rD
-	5oPrzWzbZhwRPfbcXFPg=
-X-Google-Smtp-Source: AGHT+IHxXzsMEe6MN5UQygppndiI4ddaFnTKWUy8FtozhFzNSVoZsB8f3DMDl3MfRyMHEIrbMun+Mw==
-X-Received: by 2002:a05:6214:19c8:b0:6ee:ba58:e099 with SMTP id 6a1803df08f44-6f2c454e522mr330593466d6.15.1745431340219;
-        Wed, 23 Apr 2025 11:02:20 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2c3ba3fsm73300796d6.125.2025.04.23.11.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 11:02:19 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1u7eQN-00000007LrM-0sGN;
-	Wed, 23 Apr 2025 15:02:19 -0300
-Date: Wed, 23 Apr 2025 15:02:19 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 16/24] vfio/mlx5: Rewrite create mkey flow to allow
- better code reuse
-Message-ID: <20250423180219.GR1213339@ziepe.ca>
-References: <cover.1745394536.git.leon@kernel.org>
- <eefe5ad450fd434dff981963ec3c61df7b3734e1.1745394536.git.leon@kernel.org>
+	s=arc-20240116; t=1745431462; c=relaxed/simple;
+	bh=wfRl/RypUO8ceS575eXPKl5GQ37HGwrZDH0Qoyc1jGk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=llZ0vWxzYSo4wN3juvfuJ3fBM0a228igJpjpoHfdGv57qNU5x0EH0q+uDjsygm1Y5Lk/0G4N5+DQiAW0D1SlJceslD6T0u+sK7GCbo8/q0H+laC6k4RQVhgrR0E9oSkqNjy6yJWazFT8GJ6MT3FTi9O81Or27h1z53AzxaAbDc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=jRBHzFfh; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1745431441; x=1746036241; i=spasswolf@web.de;
+	bh=Ea+/RW3vPQxraf3vrcIKOoD9pjeBatxejp9QgYT3zKE=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jRBHzFfhHwBQwA95MYsP1xWA+RPWdCwp1BBieNr3d2QnffTRHHS7a/0OCwETFyQk
+	 U4Nk3m6qqkrtjoXoJIJyMPqAIdkYTQIWM+B+5FHZiq/bYlaKyi1806aPs6ZoGhUgL
+	 bhKqwEtOpPX+4OodxpcypCZinlo5olkRaoycVCsWuAKJEMzZOY4ANaO8qj22YheX8
+	 TjWyxeVFcR7o4fxG3LowqyMaeFFNliYjmMG2m9MDCFd6aNUZ7u5XF+aJNxIJa6YPi
+	 GXif5gfX8D53sVoW+NQj8uJpoqFIZ3KZx909zLIgud/nJcO6k8bNx9j3fWHVJOts+
+	 zx7iySrtXC87jVI4ZQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMpCg-1uQQK50aZw-00QJCZ; Wed, 23
+ Apr 2025 20:04:01 +0200
+Message-ID: <395d9ed9cf1ab427f6b71645f4c732737981c547.camel@web.de>
+Subject: Re: commit dd4cf8c9e1f4 leads to failed boot
+From: Bert Karwatzki <spasswolf@web.de>
+To: paulmck@kernel.org, "Aithal, Srikanth" <sraithal@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kuniyuki Iwashima	
+ <kuniyu@amazon.com>, Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek	
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness	
+ <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ 	linux-kernel@vger.kernel.org, Linux-Next Mailing List	
+ <linux-next@vger.kernel.org>, spasswolf@web.de
+Date: Wed, 23 Apr 2025 20:03:58 +0200
+In-Reply-To: <fe8ff6a7943b8438de2daa237e20a940cb6a86e8.camel@web.de>
+References: <20250423115409.3425-1-spasswolf@web.de>
+		 <647b9aa4-f46e-4009-a223-78bfc6cc6768@amd.com>
+		 <fa8dd394-45c1-48d3-881c-5f3d5422df39@paulmck-laptop>
+	 <fe8ff6a7943b8438de2daa237e20a940cb6a86e8.camel@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eefe5ad450fd434dff981963ec3c61df7b3734e1.1745394536.git.leon@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:04SdokCtARSie/l+U/5sm7eBPUjwidSdLxaADDcOL8Lon2sLq2h
+ VOgOar5qj/eHxs7Y0ELTcUyyodLLDLrZ1ALYmyZ7DvRoFBcuAB1DnJWqJeHz2WnbPt8as8r
+ FjxHhN+RjuJDee0WEo6xxZXAPBZZ7a39eS1dqD9Q4SGJRS4IFPSD8GEtIdxd/3QhqQs6Spa
+ 7avpc+4fGC50h8Auh/5Vg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:orZLkKIEuEM=;4J2q8bP648as3jodY6cdWT7Hurp
+ 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
+ Q==
 
-On Wed, Apr 23, 2025 at 11:13:07AM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Change the creation of mkey to be performed in multiple steps:
-> data allocation, DMA setup and actual call to HW to create that mkey.
-> 
-> In this new flow, the whole input to MKEY command is saved to eliminate
-> the need to keep array of pointers for DMA addresses for receive list
-> and in the future patches for send list too.
-> 
-> In addition to memory size reduce and elimination of unnecessary data
-> movements to set MKEY input, the code is prepared for future reuse.
-> 
-> Tested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  drivers/vfio/pci/mlx5/cmd.c | 157 ++++++++++++++++++++----------------
->  drivers/vfio/pci/mlx5/cmd.h |   4 +-
->  2 files changed, 91 insertions(+), 70 deletions(-)
+Am Mittwoch, dem 23.04.2025 um 16:59 +0200 schrieb Bert Karwatzki:
+> Am Mittwoch, dem 23.04.2025 um 07:18 -0700 schrieb Paul E. McKenney:
+> > On Wed, Apr 23, 2025 at 07:09:42PM +0530, Aithal, Srikanth wrote:
+> > > On 4/23/2025 5:24 PM, Bert Karwatzki wrote:
+> > > > Since linux next-20250422 booting fails on my MSI Alpha 15 Laptop =
+runnning
+> > > > debian sid. When booting kernel message appear on screen but no me=
+ssages from
+> > > > init (systemd). There are also no logs written even thought emerge=
+ncy sync
+> > > > via magic sysrq works (a message is printed on screen), presumably=
+ because
+> > > > / is not mounted. I bisected this (from 6.15-rc3 to next-20250422)=
+ and found
+> > > > commit dd4cf8c9e1f4 as the first bad commit.
+> > > > Reverting commit dd4cf8c9e1f4 in next-20250422 fixes the issue.
+> > >=20
+> > >=20
+> > > Hello,
+> > >=20
+> > > On AMD platform as well boot failed starting next-20250422, bisectin=
+g the
+> > > issue led me to same commit dd4cf8c9e1f4. I have attached kernel con=
+fig and
+> > > logs.
+> >=20
+> > Thank you all for the bisection and the report!
+> >=20
+> > Please check out the predecessor of commit dd4cf8c9e1f4 ("ratelimit:
+> > Force re-initialization when rate-limiting re-enabled"):
+> >=20
+> > 13fa70e052dd ("ratelimit: Allow zero ->burst to disable ratelimiting")
+>=20
+> The predecessor commit is 24ff89c63355 ("ratelimit: Allow zero ->burst t=
+o
+> disable ratelimiting") in linux-next.
+>=20
+> >=20
+> > Then please apply the patch shown below, and let me know what happens?
+> > (Yes, I should have split that commit up...)
+> >=20
+> > 							Thanx, Paul
+> >=20
+> > ----------------------------------------------------------------------=
+=2D-
+> >=20
+> > diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+> > index 04f16b8e24575..13ed636642270 100644
+> > --- a/lib/ratelimit.c
+> > +++ b/lib/ratelimit.c
+> > @@ -35,7 +35,7 @@ int ___ratelimit(struct ratelimit_state *rs, const c=
+har *func)
+> >  	unsigned long flags;
+> >  	int ret;
+> > =20
+> > -	if (!interval || !burst)
+> > +	if (interval <=3D 0 || burst <=3D 0)
+> >  		return 1;
+> > =20
+> >  	/*
+>=20
+> The patch applied on top of 24ff89c63355 ("ratelimit: Allow zero ->burst=
+ to
+> disable ratelimiting") works fine.
+>=20
+> Bert Karwatzki
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+The problem seems to be the burst =3D=3D 0 case, this patch fixes the issu=
+e in
+next-20250422:
 
-Jason
+diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+index b5c727e976d2..cb7810655027 100644
+=2D-- a/lib/ratelimit.c
++++ b/lib/ratelimit.c
+@@ -40,7 +40,8 @@ int ___ratelimit(struct ratelimit_state *rs, const char =
+*func)
+         * interval says never limit.
+         */
+        if (interval <=3D 0 || burst <=3D 0) {
+-               ret =3D burst > 0;
++               //ret =3D burst > 0;
++               ret =3D 1;
+                if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
+                    !raw_spin_trylock_irqsave(&rs->lock, flags))
+                        return ret;
+
+
+Bert Karwatzki
 
