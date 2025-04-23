@@ -1,401 +1,531 @@
-Return-Path: <linux-kernel+bounces-615620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133FAA97FF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:00:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4329BA97FFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE0B3BE403
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10253BEEDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ECA253F35;
-	Wed, 23 Apr 2025 07:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A875D253F35;
+	Wed, 23 Apr 2025 07:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="t5AqjDxn"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2107.outbound.protection.outlook.com [40.107.249.107])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BoJPgxZm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785C52580D0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745391601; cv=fail; b=rGkMkBV4A9CbB7V9wEJvf2OXYFGG6N6VZMD9esqj/3OCgcjy1DEITRgdVM3dyldjTrljmQm9ZzT2UxaLEPCnQWRx7BvxHSWPh93s6wxuYW8zFTm7cdOHNbEur6SJ8NWgkBAQhfAquFfR2GcAj+QMY/Dwtin0XJHaDUjXAmZMAME=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745391601; c=relaxed/simple;
-	bh=18auVoT5CXjzXtoR3YWU6pfVcsiV8u/blkoxpMB3JO0=;
-	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oiombZERQhOuAg87vSsFm29legyhvXU+AwH2q1j2pGOOGM2gEdUj4HeY7zw+ZaUyjudKaP/OBsxN6fN+/n5CpBb8IIUtb80RTChwtYBXEJJVPjQ9gIe0FqRXycHXEnajvQrf/99TNot/Fm9UlLWU5zMCszW785WUepUaOtl8JhQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=t5AqjDxn; arc=fail smtp.client-ip=40.107.249.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=topic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Oyu5RJqhktQf/LIznmEH/B2jFWotphbHo9jk9jU4heSZ22ifhTH5BA+90ajKlEW+qXXiyOSG6f2wwYG67ro7GnN2xX6h092fcXs14vplsWMVg8f8r+oxGEHZ2z0VVY3meDExijrxdJ3Zb7htRSqH47ofLAyHsUrS3iZvlh6cDlj3JdjcvtNox63udNX7dUxEqeRyJiOB2Qd48RKDRgIk/vKkHFT0kUxL369zlvaYoPu8FwZh9PUSnQ9Cr4UCVPcceZgzuRKOLRQzRZSuIIrqEiGoLcr60LMKJW9RgDsRmrGbI8ZFw+dLvZDa/qi1z4FKfCyyioaAbVBj8j6Vn7fJNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5qDtEYamRKOkIz1CDELHskVQjOz/RgpQpauim7KbwR4=;
- b=REiNbEicOKYJ1qfBjLwpiopjSAr4Wr1UrLhOgmpcvWbws9cbILkOvdfnVQ9D0R/+iaxXAXfGZhovYqdYV9VCb3johUJCSju3KO36gsRlarAzD/3/UjriR56nUh3n2e9tw88y2TLhsvuXGfWKgY70DxVHQRW21BWlRaXBq9P8q7eJyPr4VQj6naYpAwuV/d0wrcZqBWx8N3YW/JydFo7tvP9x7PsykQuKzdCsg2j7lliUnLwcnfgvmaNZCpBSg0ARbp8jLnIhpXTQRKHDfAvTc3LHiXGvaGVjU/Jelx42xQuZyMEue2120OptnLzn9tGRZ92gFrFLb4mi/ukoqd3Zhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 13.93.42.39) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=topic.nl;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=topic.nl;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5qDtEYamRKOkIz1CDELHskVQjOz/RgpQpauim7KbwR4=;
- b=t5AqjDxnTLKAmnVySmqfhAQRZLWqEpZi9O026S/f6RKGzy97pNrxEpST3IQGBPINtTTQaxxz/CU7KaRadhA5hnSU6QuKlYHGhizd4RwyHMcvTVMpSCeihpxMmo3unr180/Nn5LmKZHp3r1J/wqulSPaWIyBgkQ978qfoijXOMBqoz8uw+4Z5bkl20HXPuIJAOZncliBtVwZFB9Vb1e3hgFtVaOLgGYgg2K+WqY5Gn4EDhxES6gGZGzdBxYosxDmDpKi/q9dRyTB8INMy8XY+xiKMVKJs/h1aF2Nqa/d+Ej40WQ1TsrUyUzj6mjW76T4JGil+XRzu8/74ftw1ne6csA==
-Received: from AS9PR06CA0183.eurprd06.prod.outlook.com (2603:10a6:20b:45d::17)
- by AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Wed, 23 Apr
- 2025 06:59:49 +0000
-Received: from AMS0EPF000001B4.eurprd05.prod.outlook.com
- (2603:10a6:20b:45d:cafe::e5) by AS9PR06CA0183.outlook.office365.com
- (2603:10a6:20b:45d::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.36 via Frontend Transport; Wed,
- 23 Apr 2025 06:59:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=topic.nl; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=topic.nl;
-Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
- 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
- client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
-Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- AMS0EPF000001B4.mail.protection.outlook.com (10.167.16.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Wed, 23 Apr 2025 06:59:49 +0000
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (104.47.51.234) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Wed, 23 Apr 2025 06:59:48 +0000
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=topic.nl;
-Received: from AS8PR04MB8644.eurprd04.prod.outlook.com (2603:10a6:20b:42b::12)
- by VE1PR04MB7405.eurprd04.prod.outlook.com (2603:10a6:800:1a4::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Wed, 23 Apr
- 2025 06:59:44 +0000
-Received: from AS8PR04MB8644.eurprd04.prod.outlook.com
- ([fe80::e86d:f110:534e:480a]) by AS8PR04MB8644.eurprd04.prod.outlook.com
- ([fe80::e86d:f110:534e:480a%5]) with mapi id 15.20.8655.033; Wed, 23 Apr 2025
- 06:59:44 +0000
-Message-ID: <f3051d1d-ecb2-4a93-ad6b-76ab7a5538af@topic.nl>
-Date: Wed, 23 Apr 2025 08:59:43 +0200
-User-Agent: Mozilla Thunderbird
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH] phy-zynqmp: Postpone getting clock rate until actually
- needed
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: linux-phy@lists.infradead.org, Kishon Vijay Abraham I
- <kishon@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Vinod Koul <vkoul@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.7a5992b5-aa78-4b18-bf5c-70f893b58f48@emailsignatures365.codetwo.com>
- <20250314150431.28319-1-mike.looijmans@topic.nl>
- <20250422221802.GB32759@pendragon.ideasonboard.com>
-Content-Language: nl, en-US
-Organization: TOPIC
-In-Reply-To: <20250422221802.GB32759@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: AS4P190CA0065.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:656::10) To AS8PR04MB8644.eurprd04.prod.outlook.com
- (2603:10a6:20b:42b::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045FD28F1;
+	Wed, 23 Apr 2025 07:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745391719; cv=none; b=AX2uYj3x7BM/JPIU7Md32XyDt4o9vra4GVwxGT2/JKvfQ2h8MaAtJF7QavkUF1eiprAELlrF5HVG+GIPtLW5a5sl3+ZntyPcngHuelVtm7tVDAjmeVuRc/0TsuAsI0Zb7ajrhUnC3fOUUJIlEOH2Vzwn8yucn84ca1QOItlM9VE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745391719; c=relaxed/simple;
+	bh=fxfjIVU+ZhirxND5ra6vazmGa+OoPozdqLaVl+mbqC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WBXYN9GZEs9VWArnbYPFGo/qDas9rOGEDdbBYc4CE7PraxFt9Y8YhBKYQFK8U4vedeN1ZblKiBt7w2FdeTMB7N0CGUNyYi/KPlzmmumyBk2o1gwQ9OmDDey8nrtfSXAkZz9Fpr0aflHihOJ/OIx7NEbnQdY9c5kzvakRrBAIvPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BoJPgxZm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745391714;
+	bh=fxfjIVU+ZhirxND5ra6vazmGa+OoPozdqLaVl+mbqC0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BoJPgxZmuy5/Mr7Hjz8cmKl9RitRo+zaUWgYLM/n+pRO0HkZThYKg+7PrODtwfcKj
+	 vJ3vWCXs+9mPR/TRcSEEEZXDDTyvnJcxo2G4rQmFb8kM7SQGdXNJiSkJm6Z9v5kVUU
+	 WEERjX5TkApodHm/nav3xae9hRMzzp9MLA9RTKiLOvgL443NH5UC+mpJJx4IbOWuNT
+	 lInb3G7HJI3MddwjcQzsDAPfJgOjNg3tbY4VLv2on3bILSvHLnSrsBx/HtPuOhExvz
+	 a0GQRbipfosghR2WtoPaPzxqDcq/X1sRNhjsEF48YtuSbWDAjtkTRFfYSGiU0CxH7d
+	 0ZgxgEvRNnACw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 57FFA17E0702;
+	Wed, 23 Apr 2025 09:01:54 +0200 (CEST)
+Date: Wed, 23 Apr 2025 09:01:49 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, Steven Price
+ <steven.price@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v10 4/4] drm/panthor: show device-wide list of DRM GEM
+ objects over DebugFS
+Message-ID: <20250423090149.2748ef62@collabora.com>
+In-Reply-To: <20250423021238.1639175-5-adrian.larumbe@collabora.com>
+References: <20250423021238.1639175-1-adrian.larumbe@collabora.com>
+	<20250423021238.1639175-5-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR04MB8644:EE_|VE1PR04MB7405:EE_|AMS0EPF000001B4:EE_|AS4PR04MB9692:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0102330-9926-4f7f-4cfc-08dd82347076
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?Q0YvU3N1ZVVWRVVEMlA1VVdrcEpEbytrVHpvT2lXTXJrRWpSL0RHYnB6dkxk?=
- =?utf-8?B?Rk5WVVB0VEVsQ0FtejQ1REtLQlZPTE1vOTVPN2M2djA0WVNhd1NseHQ0Zng1?=
- =?utf-8?B?eXkvNWtKM1lLSy9iZVVadmQrL0JQb3BjcXI2SjFNLzc2WmtEdzloVi9RN0ky?=
- =?utf-8?B?R04zWW5kemhjTUJFMDUya0pJdzZEU2lLb2NyQWFpR283RG1DTFRxU3pOYW5T?=
- =?utf-8?B?ZlA3OGlKK0RmdFhZTGNqeHNUWks2eHBVMFRTYkM5c0RuQmZIMTFWT3FuamlY?=
- =?utf-8?B?TFE3WVN4dWp1a1NLdklMTnR5RFYrYlRUWWw4UGwrTm5La09IbGIrdFhXb3Fs?=
- =?utf-8?B?WXZGNnlGNE9xNU01ZG5lQjNkZkhpNm9rVDVnVEk1R1Y0bnVkQWR3NU91T092?=
- =?utf-8?B?T2ptY3lSUldyc0NGU1FXTU1rN285bzdvQ2ozNitJZzNRUUtoV3N6Rm1tUC9s?=
- =?utf-8?B?cXpQS3Q5TWJXelhwY2ZZazllYnVtWjZCN1puUEtBV1hlVFYrQk85SkxKT1NI?=
- =?utf-8?B?d0ZseVh0NWRUTTVkeVlyYllyY0lvRm0wbEJ1VjdXaGc3MDROUG1SL2NBWTk4?=
- =?utf-8?B?M08wNHJlUVFVYjRSeU9wSmxyL3ZLZlNPdjBjTkdKV0hJbyt5amxMTDBaemRI?=
- =?utf-8?B?aXRpVUJQb2RDUWVoTzU4dkNObElSTlZXbHRyVHAvWStRcGo2U0pzeUNveGp4?=
- =?utf-8?B?U3gvTTRqMTREVmQwdjhkTkRTT2JMVDFURDZWYWRBTkhvemtGeXA2QURQQzZT?=
- =?utf-8?B?Wlp0TktzTDRZTi94VEJ5bHRvN1FncG92NDgwWjJ6L1BJUUsxNVZDN21TNjN2?=
- =?utf-8?B?TUppSGx1N3oyam9WZlg0aExKYytGK1pXa2dSYzkybitBNWRWN3RFbkRpb09M?=
- =?utf-8?B?UGNMMG80L2piQ3RCUkdodnZHS0Qva0VOT3hic0MwcG1ZYmdNY2VkWXdJT2Iz?=
- =?utf-8?B?TmZIMm5XaGI0QThuRHhGTUVXZzhmUEtzYkNaUFY3K2c1akU3ZU1OMVd5TjFY?=
- =?utf-8?B?TnlQVmNzUkd4MkxmM2w3SWUraWhYdWE5VjgrbUo5NjQ1c3B4L2R3d0dIMjl0?=
- =?utf-8?B?WVY3S1Y1NUUxR29SdHFXWXArV0kxUnFKY1QwcGNZM1JiNUlqUjhiUEhDWFZP?=
- =?utf-8?B?ZlBzNlozaXlTUnRNMmNPZUxSWDBRaVhjKzI0SngvSnA5VlJsdWhBcGlhczgx?=
- =?utf-8?B?dGVJMkptbmNpSTEvVEZwcVVzMUpMdE5VUEJWRkpTYlhyelllM3ZzU2dJVFVj?=
- =?utf-8?B?TVlGMm0wYTdLWmR4T3I4TTY1QngwQWdNV0lHakxyYVB3OFJEYVNZakVjMlY3?=
- =?utf-8?B?R2lIeENjQk04RjhQeCt4KzMrWE1hTTYwSE5VbGtJcGNHSEtzc1czZlZWZkV5?=
- =?utf-8?B?QVBhcDNndHJEbzVtVFIyeWlhclliU1FQYjRuQ1pRcDkwdTFId0U2V2YvbHI5?=
- =?utf-8?B?YncwN3JtMmF2S2YxOW80WW1GRzNZSHNzb1BCei9kR3dEblRtWVBlQlBZbjli?=
- =?utf-8?B?d1BjR3pXYWFnUXd6alhUOWVCOFFqRHVpTVZkRUtGMnlRQ3UvOHRLUWRNK09p?=
- =?utf-8?B?RXhHZCsyN3pLNFJzcGRzWlpBejd5blhTSHRvWUplc2wySzVhTkZGTWE2dkRy?=
- =?utf-8?B?bHMwamZHRzJkMlZ2bkRsWTV4RDQvRHJpek1ZYm5TTk8wL1NzUVdpL3FKb1Fy?=
- =?utf-8?B?alh3U0pkVklad1E2ODVZU3R3a09aQ2d4SHVsaEhOYzB2VVhRNVRxb1cvT3hj?=
- =?utf-8?B?K0tLNm5NV1BIb0JReHhsNENLVGxDbXU4Q2xGUWljb0NHVUNPamJJUG1OV055?=
- =?utf-8?B?cDdGc2ZKdnpUQjltWFdBekNaMGVOUEs3ZmRDSGREQWhWd05lOFo5cXFDRzZr?=
- =?utf-8?B?K0dNZjJrdnNtWUhWQWJwcXpBRlJyci9MWXc4T2s0OHh4UFVtSFRTay9vRjQv?=
- =?utf-8?Q?+FklEWCKjHo=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8644.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7405
-X-CodeTwo-MessageID: e54b62cd-61fa-49f3-ba8b-c57f7aaeef81.20250423065948@westeu12-emailsignatures-cloud.codetwo.com
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF000001B4.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	8b62c567-1589-4ac2-308e-08dd82346d63
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|14060799003|82310400026|35042699022|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1ZQeVo3dzdvMlo2UTlIUmRCYWw2WXgreWErQW5tWFZKRnNVT3RvRHBPMXAw?=
- =?utf-8?B?Z3kvT3IzTXU5Qjg1NnZjRXNnejlUS1R0eVMvOWhaelAzRUN4MVc2M2dtakdU?=
- =?utf-8?B?bnJiVjJlRmc1NGJqTFAvMUdvTVkzQzMwRGUwTU9kbXN0aktNYU01VS9BZFN1?=
- =?utf-8?B?WkdyU1lFYm8xWTBGcWZzUVBNUkthY3QvQzh5dzFPbXFlb2dlRzc1VU9LNnUx?=
- =?utf-8?B?aDJySGxkUXAvY1hsRmhtOXF1M2lIUXYxUTJLLzRlS0E2MVVNTmx6TTNxNEl4?=
- =?utf-8?B?Sy8xcXdyM3RQS2pvSmZSSmtIOStHTlFrd0Vmald6R0ZidE56Nk1WeWxIYUFM?=
- =?utf-8?B?SnNFeVB6MlBBVitVcE1xeThhQUlVcnNKNW0vaGJaNFBJWjdGOENkVk1JM2xx?=
- =?utf-8?B?dkJHT3k4bUwvbEkzNHh5Rk51KzJvQk1LMnJOQ1dYM0l6L09tcHpWZ3NudWNn?=
- =?utf-8?B?K1p0WVhjL3pSa1NESFNheVVTTG9NWXczamd6am9pRWlpMmdCT2FUTmw4a3E2?=
- =?utf-8?B?eUg2S3I1bE11WkQvZWROMVBaWCtvR2dpNTRqNWxJMUxmQ0V1VzdBK1p5VlZN?=
- =?utf-8?B?Sk5rMUdYV0djeHRaNU44ZTBvTzFiQU5tVDFpdE9GNjJ2RURkaFFWS2lQT29F?=
- =?utf-8?B?Y3NJTlNYS2JvV21iMzVueXkwTFpDTzcvN3lFejdIMGk2WHlIV1FTWjlCalI4?=
- =?utf-8?B?eWxzUjFQQ2NsOUVoVk0yaytWOHV6Y0luRmNTaTJhMVlla3Raalk5dzNBU2tY?=
- =?utf-8?B?SzlsMnpyTW5LbER6bnd2RUZ5YkFsV1JXZVExZDkvOSs0UXUrc0srTFRyYXJu?=
- =?utf-8?B?S0Jmcm8xMmY0L1RmZkwvQ1VPeHUyUXVNR2RKYVByNlRqZ2JKalRkR3d0UDZY?=
- =?utf-8?B?STFCOFlhK3RYWTRMZVZlQzQ0R2dzT1dyN2lGRExmbUpVbDFrS0xmS3B6UkM2?=
- =?utf-8?B?YTJiVTNBRmhzOFJWMFJQdWhvdlhPTDdGMWl2OFFvTFBMTnl2OWEydEUyNHlQ?=
- =?utf-8?B?alBSTkVNQU44QmsweWFoSkRYTjFWNzYxR21JRUhWc3VpL1JjdElKK3NFNHJO?=
- =?utf-8?B?QlBFQUxDbi9WSEpQQVFtRHl6UEJRZzJ1Z2tuSVZnV0tWa20xU3pjNndxUkVK?=
- =?utf-8?B?QXJvNVNnR1ZXdUpUbjgvMEhPL3JsVjkzQTZGeGdxeHd6TVp2RFFYeWJtRTFD?=
- =?utf-8?B?aWJoamlKdDhURXpvdWxudGp6TFh2VnBRWnJrWEJpT3c2ZHZSSFpEc29GN2lm?=
- =?utf-8?B?dFFIelh1NTVzM3F1aENRMWd5UFlyUTI1TExZQXlYQUhvMTdCODZlNXFnWS9i?=
- =?utf-8?B?NHErNStZNjlIWDZ6U0NVeWVuQWpOb3pldVl1T0R3aWNzdG9PaGFOOFdTYzBC?=
- =?utf-8?B?TG9uT3lwLzlqVEVWTWRRUUd6eVZMSG9yRXNudVJGZ0REVC9HZFBja1dsMW56?=
- =?utf-8?B?Tjg1MnRmWVN4UEFsNjdXT0w1NmNFbGxnQ3k3QVpWd0R1b2pjcUNxNDJlSDJu?=
- =?utf-8?B?b0Q5enJMMFlIY3pxemR1c0U5Tk9EeW96OWNUWjkwNGgvTFBsZFZsSmxhNitq?=
- =?utf-8?B?aUEvS0h1dVUyR2lIblNJRzN5bEZDU1VUdTR2RGxrYnNsZCs3RTQvUzZyODZX?=
- =?utf-8?B?RzBjK0JXU1BTZEc1TG9kbllTcXR1UlFSM1JpTjZCNTNFM05PTHJ4MGpLVDdD?=
- =?utf-8?B?WU1CdGZodUtuSktTWTVRQi9WZCtrUFE0ZUc4LzQ4cHM2T0dkQzlNOUlqTHV4?=
- =?utf-8?B?UG9ZSnA4R21hbHgzYmpSREE2Y0xlZ1RmSEJQRngwU3RFYkZXUC8ybFhudmhD?=
- =?utf-8?B?Zm0zVVBjWlc0dkZqTkJNV3JuTmtMdjlGUEtXa0lWU1R5TkYzM05mME5HNzRT?=
- =?utf-8?B?UE5XQ1poelo3OXVvbUZHNWtYQlRIMmpFeElBUmtYMjhubFBDWjJvS0M2NXl4?=
- =?utf-8?B?QVpvRGVPRFdrZHV5ZlZoL0lhSWZtWjcwRnM4d1hMSS9oS0prQlFzQTdnVkpM?=
- =?utf-8?B?bTcwWHl6ZjR3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(14060799003)(82310400026)(35042699022)(36860700013)(13003099007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 06:59:49.3033
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0102330-9926-4f7f-4cfc-08dd82347076
-X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001B4.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9692
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 23 Apr 2025 03:12:34 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Met vriendelijke groet / kind regards,=0A=
-=0A=
-Mike Looijmans=0A=
-System Expert=0A=
-=0A=
-=0A=
-TOPIC Embedded Products B.V.=0A=
-Materiaalweg 4, 5681 RJ Best=0A=
-The Netherlands=0A=
-=0A=
-T: +31 (0) 499 33 69 69=0A=
-E: mike.looijmans@topic.nl=0A=
-W: www.topic.nl=0A=
-=0A=
-Please consider the environment before printing this e-mail=0A=
-On 23-04-2025 00:18, Laurent Pinchart wrote:
-> Hi Mike,
->
-> Thank you for the patch.
->
-> On Fri, Mar 14, 2025 at 04:04:18PM +0100, Mike Looijmans wrote:
->> At probe time the driver would display the following error and abort:
->>    xilinx-psgtr fd400000.phy: Invalid rate 0 for reference clock 0
->>
->> This issue was that at probe time, the system has not decided yet whethe=
-r
->> the GTR is to be used for SATA (150MHz) or PCIe (100 MHz).
-> At what point does the system decide that ? I've only used (and tested)
-> this driver for DisplayPort.
-
-In retrospect, yeah, the commit text could be a bit more elaborate on that.
-
-This PHY driver probes before the I2C bus which contains the programmable=20
-clock chip that provides the GT clocks for the PS. This isn't a problem, as=
-=20
-the PHY lane won't be needed yet.
-
-When the SATA (or PCIe or network or displayport or ...) driver probes, the=
-=20
-clock gets programmed. The PHY lane won't be enabled until after that.
-
-
->
->> The driver
->> doesn't need to know the clock frequency at that point yet, so wait unti=
-l
->> the lane is actually being initialized before requesting the clock rate
->> setting.
->>
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->> ---
->>
->>   drivers/phy/xilinx/phy-zynqmp.c | 61 ++++++++++++++++-----------------
->>   1 file changed, 30 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zy=
-nqmp.c
->> index 05a4a59f7c40..e29e3e51d380 100644
->> --- a/drivers/phy/xilinx/phy-zynqmp.c
->> +++ b/drivers/phy/xilinx/phy-zynqmp.c
->> @@ -222,7 +222,6 @@ struct xpsgtr_phy {
->>    * @siou: siou base address
->>    * @gtr_mutex: mutex for locking
->>    * @phys: PHY lanes
->> - * @refclk_sscs: spread spectrum settings for the reference clocks
->>    * @clk: reference clocks
->>    * @tx_term_fix: fix for GT issue
->>    * @saved_icm_cfg0: stored value of ICM CFG0 register
->> @@ -235,7 +234,6 @@ struct xpsgtr_dev {
->>   	void __iomem *siou;
->>   	struct mutex gtr_mutex; /* mutex for locking */
->>   	struct xpsgtr_phy phys[NUM_LANES];
->> -	const struct xpsgtr_ssc *refclk_sscs[NUM_LANES];
->>   	struct clk *clk[NUM_LANES];
->>   	bool tx_term_fix;
->>   	unsigned int saved_icm_cfg0;
->> @@ -398,13 +396,40 @@ static int xpsgtr_wait_pll_lock(struct phy *phy)
->>   	return ret;
->>   }
->>  =20
->> +/* Get the spread spectrum (SSC) settings for the reference clock rate =
+> Add a device DebugFS file that displays a complete list of all the DRM
+> GEM objects that are exposed to UM through a DRM handle.
+>=20
+> Since leaking object identifiers that might belong to a different NS is
+> inadmissible, this functionality is only made available in debug builds
+> with DEBUGFS support enabled.
+>=20
+> File format is that of a table, with each entry displaying a variety of
+> fields with information about each GEM object.
+>=20
+> Each GEM object entry in the file displays the following information
+> fields: Client PID, BO's global name, reference count, BO virtual size,
+> BO resize size, VM address in its DRM-managed range, BO label and a GEM
+> state flags.
+>=20
+> There's also a usage flags field for the type of BO, which tells us
+> whether it's a kernel BO and/or mapped onto the FW's address space.
+>=20
+> GEM state and usage flag meanings are printed in the file prelude, so
+> that UM parsing tools can interpret the numerical values in the table.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c |   5 +
+>  drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+>  drivers/gpu/drm/panthor/panthor_drv.c    |  25 ++++
+>  drivers/gpu/drm/panthor/panthor_gem.c    | 156 +++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_gem.h    |  65 ++++++++++
+>  5 files changed, 262 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/p=
+anthor/panthor_device.c
+> index a9da1d1eeb70..b776e1a2e4f3 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -184,6 +184,11 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  	if (ret)
+>  		return ret;
+> =20
+> +#ifdef CONFIG_DEBUG_FS
+> +	drmm_mutex_init(&ptdev->base, &ptdev->gems.lock);
+> +	INIT_LIST_HEAD(&ptdev->gems.node);
+> +#endif
+> +
+>  	atomic_set(&ptdev->pm.state, PANTHOR_DEVICE_PM_STATE_SUSPENDED);
+>  	p =3D alloc_page(GFP_KERNEL | __GFP_ZERO);
+>  	if (!p)
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/p=
+anthor/panthor_device.h
+> index da6574021664..86206a961b38 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -205,6 +205,17 @@ struct panthor_device {
+> =20
+>  	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+>  	unsigned long fast_rate;
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +	/** @gems: Device-wide list of GEM objects owned by at least one file. =
 */
->> +static const struct xpsgtr_ssc *xpsgtr_find_sscs(struct xpsgtr_phy *gtr=
-_phy)
->> +{
->> +	unsigned long rate;
->> +	struct clk *clk;
->> +	unsigned int i;
->> +
->> +	clk =3D gtr_phy->dev->clk[gtr_phy->refclk];
->> +	rate =3D clk_get_rate(clk);
->> +
->> +	for (i =3D 0 ; i < ARRAY_SIZE(ssc_lookup); i++) {
->> +		/* Allow an error of 100 ppm */
->> +		unsigned long error =3D ssc_lookup[i].refclk_rate / 10000;
->> +
->> +		if (abs(rate - ssc_lookup[i].refclk_rate) < error)
->> +			return &ssc_lookup[i];
->> +	}
->> +
->> +	dev_err(gtr_phy->dev->dev, "Invalid rate %lu for reference clock %u\n"=
-,
->> +		rate, gtr_phy->refclk);
->> +
->> +	return NULL;
->> +}
->> +
->>   /* Configure PLL and spread-sprectrum clock. */
->>   static void xpsgtr_configure_pll(struct xpsgtr_phy *gtr_phy)
->>   {
->>   	const struct xpsgtr_ssc *ssc;
->>   	u32 step_size;
->>  =20
->> -	ssc =3D gtr_phy->dev->refclk_sscs[gtr_phy->refclk];
->> +	ssc =3D xpsgtr_find_sscs(gtr_phy);
->> +	if (!ssc)
->> +		return;
-> Isn't it an issue that we now fail here without propagating an error
-> back to the caller ? The function is called by xpsgtr_phy_init(), which
-> return an int, so I think returning an error code here would make sense.
+> +	struct {
+> +		/** @gems.lock: Protects the device-wide list of GEM objects. */
+> +		struct mutex lock;
+> +
+> +		/** @node: Used to keep track of all the device's DRM objects */
+> +		struct list_head node;
+> +	} gems;
+> +#endif
+>  };
+> =20
+>  struct panthor_gpu_usage {
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index 7308fad02c9e..dfe2e89942a0 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1537,9 +1537,34 @@ static const struct file_operations panthor_drm_dr=
+iver_fops =3D {
+>  };
+> =20
+>  #ifdef CONFIG_DEBUG_FS
+> +static int panthor_gems_show(struct seq_file *m, void *data)
+> +{
+> +	struct drm_info_node *node =3D m->private;
+> +	struct drm_device *dev =3D node->minor->dev;
+> +	struct panthor_device *ptdev =3D container_of(dev, struct panthor_devic=
+e, base);
+> +
+> +	panthor_gem_debugfs_print_bos(ptdev, m);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct drm_info_list panthor_debugfs_list[] =3D {
+> +	{"gems", panthor_gems_show, 0, NULL},
+> +};
+> +
+> +static int panthor_gems_debugfs_init(struct drm_minor *minor)
+> +{
+> +	drm_debugfs_create_files(panthor_debugfs_list,
+> +				 ARRAY_SIZE(panthor_debugfs_list),
+> +				 minor->debugfs_root, minor);
+> +
+> +	return 0;
+> +}
+> +
+>  static void panthor_debugfs_init(struct drm_minor *minor)
+>  {
+>  	panthor_mmu_debugfs_init(minor);
+> +	panthor_gems_debugfs_init(minor);
+>  }
+>  #endif
+> =20
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
+hor/panthor_gem.c
+> index 3f4ab5a2f2ae..fedb9697fe57 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> @@ -11,14 +11,51 @@
+>  #include <drm/panthor_drm.h>
+> =20
+>  #include "panthor_device.h"
+> +#include "panthor_fw.h"
+>  #include "panthor_gem.h"
+>  #include "panthor_mmu.h"
+> =20
+> +#ifdef CONFIG_DEBUG_FS
+> +static void panthor_gem_debugfs_bo_add(struct panthor_device *ptdev,
+> +				       struct panthor_gem_object *bo)
+> +{
+> +	INIT_LIST_HEAD(&bo->debugfs.node);
+> +
+> +	bo->debugfs.creator.tgid =3D current->group_leader->pid;
+> +	get_task_comm(bo->debugfs.creator.process_name, current->group_leader);
+> +
+> +	mutex_lock(&ptdev->gems.lock);
+> +	list_add_tail(&bo->debugfs.node, &ptdev->gems.node);
+> +	mutex_unlock(&ptdev->gems.lock);
+> +}
+> +
+> +static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo)
+> +{
+> +	struct panthor_device *ptdev =3D container_of(bo->base.base.dev,
+> +						    struct panthor_device, base);
+> +
+> +	if (list_empty(&bo->debugfs.node))
+> +		return;
+> +
+> +	mutex_lock(&ptdev->gems.lock);
+> +	list_del_init(&bo->debugfs.node);
+> +	mutex_unlock(&ptdev->gems.lock);
+> +}
+> +
+> +#else
+> +static void panthor_gem_debugfs_bo_add(struct panthor_device *ptdev,
+> +				       struct panthor_gem_object *bo)
+> +{}
+> +static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo) {}
+> +#endif
+> +
+>  static void panthor_gem_free_object(struct drm_gem_object *obj)
+>  {
+>  	struct panthor_gem_object *bo =3D to_panthor_bo(obj);
+>  	struct drm_gem_object *vm_root_gem =3D bo->exclusive_vm_root_gem;
+> =20
+> +	panthor_gem_debugfs_bo_rm(bo);
+> +
+>  	/*
+>  	 * Label might have been allocated with kstrdup_const(),
+>  	 * we need to take that into account when freeing the memory
+> @@ -88,6 +125,7 @@ panthor_kernel_bo_create(struct panthor_device *ptdev,=
+ struct panthor_vm *vm,
+>  	struct drm_gem_shmem_object *obj;
+>  	struct panthor_kernel_bo *kbo;
+>  	struct panthor_gem_object *bo;
+> +	u32 debug_flags =3D PANTHOR_DEBUGFS_GEM_USAGE_FLAG_KERNEL;
+>  	int ret;
+> =20
+>  	if (drm_WARN_ON(&ptdev->base, !vm))
+> @@ -107,7 +145,11 @@ panthor_kernel_bo_create(struct panthor_device *ptde=
+v, struct panthor_vm *vm,
+>  	kbo->obj =3D &obj->base;
+>  	bo->flags =3D bo_flags;
+> =20
+> +	if (vm =3D=3D panthor_fw_vm(ptdev))
+> +		debug_flags |=3D PANTHOR_DEBUGFS_GEM_USAGE_FLAG_FW_MAPPED;
+> +
+>  	panthor_gem_kernel_bo_set_label(kbo, name);
+> +	panthor_gem_debugfs_set_usage_flags(to_panthor_bo(kbo->obj), debug_flag=
+s);
+> =20
+>  	/* The system and GPU MMU page size might differ, which becomes a
+>  	 * problem for FW sections that need to be mapped at explicit address
+> @@ -210,6 +252,8 @@ struct drm_gem_object *panthor_gem_create_object(stru=
+ct drm_device *ddev, size_t
+>  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
+>  	mutex_init(&obj->label.lock);
+> =20
+> +	panthor_gem_debugfs_bo_add(ptdev, obj);
+> +
+>  	return &obj->base.base;
+>  }
+> =20
+> @@ -258,6 +302,12 @@ panthor_gem_create_with_handle(struct drm_file *file,
+>  	/* drop reference from allocate - handle holds it now. */
+>  	drm_gem_object_put(&shmem->base);
+> =20
+> +	/*
+> +	 * No explicit flags are needed in the call below, since the
+> +	 * function internally sets the INITIALIZED bit for us.
+> +	 */
+> +	panthor_gem_debugfs_set_usage_flags(bo, 0);
+> +
+>  	return ret;
+>  }
+> =20
+> @@ -296,3 +346,109 @@ panthor_gem_kernel_bo_set_label(struct panthor_kern=
+el_bo *bo, const char *label)
+> =20
+>  	panthor_gem_bo_set_label(bo->obj, str);
+>  }
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +struct gem_size_totals {
+> +	size_t size;
+> +	size_t resident;
+> +	size_t reclaimable;
+> +};
+> +
+> +static void panthor_gem_debugfs_print_flag_names(struct seq_file *m)
+> +{
+> +	int len;
+> +	int i;
+> +
+> +	static const char * const gem_state_flags_names[] =3D {
+> +		[PANTHOR_DEBUGFS_GEM_STATE_IMPORTED_BIT] =3D "imported",
+> +		[PANTHOR_DEBUGFS_GEM_STATE_EXPORTED_BIT] =3D "exported",
+> +	};
+> +
+> +	static const char * const gem_usage_flags_names[] =3D {
+> +		[PANTHOR_DEBUGFS_GEM_USAGE_KERNEL_BIT] =3D "kernel",
+> +		[PANTHOR_DEBUGFS_GEM_USAGE_FW_MAPPED_BIT] =3D "fw-mapped",
+> +	};
+> +
+> +	seq_puts(m, "GEM state flags: ");
+> +	for (i =3D 0, len =3D ARRAY_SIZE(gem_state_flags_names); i < len; i++) {
+> +		if (!gem_state_flags_names[i])
+> +			continue;
+> +		seq_printf(m, "%s (0x%x)%s", gem_state_flags_names[i],
+> +			   (u32)BIT(i), (i < len - 1) ? ", " : "\n");
+> +	}
+> +
+> +	seq_puts(m, "GEM usage flags: ");
+> +	for (i =3D 0, len =3D ARRAY_SIZE(gem_usage_flags_names); i < len; i++) {
+> +		if (!gem_usage_flags_names[i])
+> +			continue;
+> +		seq_printf(m, "%s (0x%x)%s", gem_usage_flags_names[i],
+> +			   (u32)BIT(i), (i < len - 1) ? ", " : "\n\n");
+> +	}
+> +}
+> +
+> +static void panthor_gem_debugfs_bo_print(struct panthor_gem_object *bo,
+> +					 struct seq_file *m,
+> +					 struct gem_size_totals *totals)
+> +{
+> +	unsigned int refcount =3D kref_read(&bo->base.base.refcount);
+> +	char creator_info[32] =3D {};
+> +	size_t resident_size;
+> +	u32 gem_usage_flags =3D bo->debugfs.flags & (u32)~PANTHOR_DEBUGFS_GEM_U=
+SAGE_FLAG_INITIALIZED;
+> +	u32 gem_state_flags =3D 0;
+> +
+> +	/* Skip BOs being destroyed. */
+> +	if (!refcount)
+> +		return;
+> +
+> +	resident_size =3D bo->base.pages ? bo->base.base.size : 0;
+> +
+> +	snprintf(creator_info, sizeof(creator_info),
+> +		 "%s/%d", bo->debugfs.creator.process_name, bo->debugfs.creator.tgid);
+> +	seq_printf(m, "%-32s%-16d%-16d%-16zd%-16zd0x%-16lx",
+> +		   creator_info,
+> +		   bo->base.base.name,
+> +		   refcount,
+> +		   bo->base.base.size,
+> +		   resident_size,
+> +		   drm_vma_node_start(&bo->base.base.vma_node));
+> +
+> +	if (bo->base.base.import_attach)
+> +		gem_state_flags |=3D PANTHOR_DEBUGFS_GEM_STATE_FLAG_IMPORTED;
+> +	if (bo->base.base.dma_buf)
+> +		gem_state_flags |=3D PANTHOR_DEBUGFS_GEM_STATE_FLAG_EXPORTED;
+> +
+> +	seq_printf(m, "0x%-8x 0x%-10x", gem_state_flags, gem_usage_flags);
+> +
+> +	scoped_guard(mutex, &bo->label.lock) {
+> +		seq_printf(m, "%s\n", bo->label.str ? : "");
+> +	}
+> +
+> +	totals->size +=3D bo->base.base.size;
+> +	totals->resident +=3D resident_size;
+> +	if (bo->base.madv > 0)
+> +		totals->reclaimable +=3D resident_size;
+> +}
+> +
+> +void panthor_gem_debugfs_print_bos(struct panthor_device *ptdev,
+> +				   struct seq_file *m)
+> +{
+> +	struct gem_size_totals totals =3D {0};
+> +	struct panthor_gem_object *bo;
+> +
+> +	panthor_gem_debugfs_print_flag_names(m);
+> +
+> +	seq_puts(m, "created-by                      global-name     refcount  =
+      size            resident-size   file-offset       state      usage   =
+    label\n");
+> +	seq_puts(m, "----------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------\n");
+> +
+> +	scoped_guard(mutex, &ptdev->gems.lock) {
+> +		list_for_each_entry(bo, &ptdev->gems.node, debugfs.node) {
+> +			if (bo->debugfs.flags & PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED)
+> +				panthor_gem_debugfs_bo_print(bo, m, &totals);
+> +		}
+> +	}
+> +
+> +	seq_puts(m, "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D\n");
+> +	seq_printf(m, "Total size: %zd, Total resident: %zd, Total reclaimable:=
+ %zd\n",
+> +		   totals.size, totals.resident, totals.reclaimable);
+> +}
+> +#endif
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
+hor/panthor_gem.h
+> index 3c09af568e47..4641994ddd7f 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -15,6 +15,54 @@ struct panthor_vm;
+> =20
+>  #define PANTHOR_BO_LABEL_MAXLEN	4096
+> =20
+> +enum panthor_debugfs_gem_state_flags {
+> +	PANTHOR_DEBUGFS_GEM_STATE_IMPORTED_BIT =3D 0,
+> +	PANTHOR_DEBUGFS_GEM_STATE_EXPORTED_BIT =3D 1,
+> +
+> +	/** @PANTHOR_DEBUGFS_GEM_STATE_FLAG_IMPORTED: GEM BO is PRIME imported.=
+ */
+> +	PANTHOR_DEBUGFS_GEM_STATE_FLAG_IMPORTED =3D BIT(PANTHOR_DEBUGFS_GEM_STA=
+TE_IMPORTED_BIT),
+> +
+> +	/** @PANTHOR_DEBUGFS_GEM_STATE_FLAG_EXPORTED: GEM BO is PRIME exported.=
+ */
+> +	PANTHOR_DEBUGFS_GEM_STATE_FLAG_EXPORTED =3D BIT(PANTHOR_DEBUGFS_GEM_STA=
+TE_EXPORTED_BIT),
+> +};
+> +
+> +enum panthor_debugfs_gem_usage_flags {
+> +	PANTHOR_DEBUGFS_GEM_USAGE_KERNEL_BIT =3D 0,
+> +	PANTHOR_DEBUGFS_GEM_USAGE_FW_MAPPED_BIT =3D 1,
 
-Agree, I'll make a v2
+Now that you print the flags as raw hex values, you don't need those
+_BIT definitions.
 
-
->
-> The rest of the patch looks good to me. I would however appreciate
-> feedback from someone at AMD more knowledgeable than I am with the
-> hardware. Michal, could you propose an appropriate second maintainer for
-> this driver ?
->
->> +
->>   	step_size =3D ssc->step_size;
->>  =20
->>   	xpsgtr_clr_set(gtr_phy->dev, PLL_REF_SEL(gtr_phy->lane),
->> @@ -823,8 +848,7 @@ static struct phy *xpsgtr_xlate(struct device *dev,
->>   	}
->>  =20
->>   	refclk =3D args->args[3];
->> -	if (refclk >=3D ARRAY_SIZE(gtr_dev->refclk_sscs) ||
->> -	    !gtr_dev->refclk_sscs[refclk]) {
->> +	if (refclk >=3D ARRAY_SIZE(gtr_dev->clk)) {
->>   		dev_err(dev, "Invalid reference clock number %u\n", refclk);
->>   		return ERR_PTR(-EINVAL);
->>   	}
->> @@ -928,9 +952,7 @@ static int xpsgtr_get_ref_clocks(struct xpsgtr_dev *=
-gtr_dev)
->>   {
->>   	unsigned int refclk;
->>  =20
->> -	for (refclk =3D 0; refclk < ARRAY_SIZE(gtr_dev->refclk_sscs); ++refclk=
-) {
->> -		unsigned long rate;
->> -		unsigned int i;
->> +	for (refclk =3D 0; refclk < ARRAY_SIZE(gtr_dev->clk); ++refclk) {
->>   		struct clk *clk;
->>   		char name[8];
->>  =20
->> @@ -946,29 +968,6 @@ static int xpsgtr_get_ref_clocks(struct xpsgtr_dev =
-*gtr_dev)
->>   			continue;
->>  =20
->>   		gtr_dev->clk[refclk] =3D clk;
->> -
->> -		/*
->> -		 * Get the spread spectrum (SSC) settings for the reference
->> -		 * clock rate.
->> -		 */
->> -		rate =3D clk_get_rate(clk);
->> -
->> -		for (i =3D 0 ; i < ARRAY_SIZE(ssc_lookup); i++) {
->> -			/* Allow an error of 100 ppm */
->> -			unsigned long error =3D ssc_lookup[i].refclk_rate / 10000;
->> -
->> -			if (abs(rate - ssc_lookup[i].refclk_rate) < error) {
->> -				gtr_dev->refclk_sscs[refclk] =3D &ssc_lookup[i];
->> -				break;
->> -			}
->> -		}
->> -
->> -		if (i =3D=3D ARRAY_SIZE(ssc_lookup)) {
->> -			dev_err(gtr_dev->dev,
->> -				"Invalid rate %lu for reference clock %u\n",
->> -				rate, refclk);
->> -			return -EINVAL;
->> -		}
->>   	}
->>  =20
->>   	return 0;
-
+> +
+> +	/** @PANTHOR_DEBUGFS_GEM_USAGE_FLAG_KERNEL: BO is for kernel use only. =
+*/
+> +	PANTHOR_DEBUGFS_GEM_USAGE_FLAG_KERNEL =3D BIT(PANTHOR_DEBUGFS_GEM_USAGE=
+_KERNEL_BIT),
+> +
+> +	/** @PANTHOR_DEBUGFS_GEM_USAGE_FLAG_FW_MAPPED: BO is mapped on the FW V=
+M. */
+> +	PANTHOR_DEBUGFS_GEM_USAGE_FLAG_FW_MAPPED =3D BIT(PANTHOR_DEBUGFS_GEM_US=
+AGE_FW_MAPPED_BIT),
+> +
+> +	/** @PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED: BO is ready for DebugF=
+S display. */
+> +	PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED =3D BIT(31),
+> +};
+> +
+> +/**
+> + * struct panthor_gem_debugfs - GEM object's DebugFS list information
+> + */
+> +struct panthor_gem_debugfs {
+> +	/**
+> +	 * @node: Node used to insert the object in the device-wide list of
+> +	 * GEM objects, to display information about it through a DebugFS file.
+> +	 */
+> +	struct list_head node;
+> +
+> +	/** @creator: Information about the UM process which created the GEM. */
+> +	struct {
+> +		/** @creator.process_name: Group leader name in owning thread's proces=
+s */
+> +		char process_name[TASK_COMM_LEN];
+> +
+> +		/** @creator.tgid: PID of the thread's group leader within its process=
+ */
+> +		pid_t tgid;
+> +	} creator;
+> +
+> +	/** @flags: Combination of panthor_debugfs_gem_usage_flags flags */
+> +	u32 flags;
+> +};
+> +
+>  /**
+>   * struct panthor_gem_object - Driver specific GEM object.
+>   */
+> @@ -62,6 +110,10 @@ struct panthor_gem_object {
+>  		/** @lock.str: Protects access to the @label.str field. */
+>  		struct mutex lock;
+>  	} label;
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +	struct panthor_gem_debugfs debugfs;
+> +#endif
+>  };
+> =20
+>  /**
+> @@ -157,4 +209,17 @@ panthor_kernel_bo_create(struct panthor_device *ptde=
+v, struct panthor_vm *vm,
+> =20
+>  void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
+> =20
+> +#ifdef CONFIG_DEBUG_FS
+> +void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
+> +				   struct seq_file *m);
+> +static inline void
+> +panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 u=
+sage_flags)
+> +{
+> +	bo->debugfs.flags =3D usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INIT=
+IALIZED;
+> +}
+> +
+> +#else
+> +void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, =
+u32 usage_flags) {};
+> +#endif
+> +
+>  #endif /* __PANTHOR_GEM_H__ */
 
 
