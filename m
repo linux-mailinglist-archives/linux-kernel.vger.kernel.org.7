@@ -1,154 +1,132 @@
-Return-Path: <linux-kernel+bounces-616883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ADEA99778
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A6CA9977F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245843A0667
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918135A1D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D279B28CF75;
-	Wed, 23 Apr 2025 18:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1CD28D830;
+	Wed, 23 Apr 2025 18:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zaa7Fsfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="etJnk9LL"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A226A0D6;
-	Wed, 23 Apr 2025 18:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4B128C5CA;
+	Wed, 23 Apr 2025 18:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431666; cv=none; b=kAsxqsKwTXQqjidUMb1Bm7ieiJT2T62wJxieX6/3X5MqcdDdJSRtSSYT/LKMnNv57DP3md/JXIwRIH/vdAu7sxMNBPDVZ+GXg8PZ4pfp69diFogaf3VbLsL23fboAlh+wsgc7X8tnq4PCk116w3d2LdLWsSPlxALKXQR0KfIsAI=
+	t=1745431720; cv=none; b=lJzwUoNYPEgX8w7vKKscVN2roCj1+YFgAEGFoeq1quaHGj+cB0wNC4dj8wDNK1BGSzPHNVhVlk/wTU5oBpaSO6aNKtwlWl/lA79Nq8HB2d3jb46eeJif5degacRGz0vQhyC3eI1S5LDSpLXJiphWfPAIwa18qTAAlf73x5qFPko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431666; c=relaxed/simple;
-	bh=Hiz3p5NAaskU2bEZcPcr5jV+32+iZJuF/POMLz1Hv6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMRUdYKl8vlbwn5F7agYnOw46BfNV+uLZwkzAhl42Syk6Soyw9HKJh2Yp14kujLjzUV3Vb6fikahwObNaTVfOjTp1fgKb77JHWDhqqWZHODJDUEDsJK1iFrBcdeuyavOZHJe1JbDuQx6+edn5QQsg25WQX7vxi75XuX+urUNNw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zaa7Fsfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB844C4CEE2;
-	Wed, 23 Apr 2025 18:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745431665;
-	bh=Hiz3p5NAaskU2bEZcPcr5jV+32+iZJuF/POMLz1Hv6c=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Zaa7Fsfdo3kR8k5RbaP5uRSD8biSiXcWJWecKzBmbd91m91nQF0MOy3cBVs29mffX
-	 CVtFxfFKJwbTswG2FV1df5sCuXbto5dr/bqz7yNTXpT2XFDrk5WB9GkUEm01pLFyP6
-	 PEES81ECwJun1oTlDmCwQ/b5jVcVALBXuM99PhzKZf5uEQu2aL/MuKbqpLJbtPaSim
-	 FyE2ZLO5MU81zWRYzP9pKrEKhomf/syi8DHXpfbfnom82JVp7bTqwi4nvUj6MRwv7Q
-	 NY+vNbZiYM7gNxn8fFN2nKw092UTv+wSnwIogYioBlusTvuPzEIQE9XPw9uO/hY3OS
-	 xdaqCvCynb0ag==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5A5FECE0B75; Wed, 23 Apr 2025 11:07:45 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:07:45 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: "Aithal, Srikanth" <sraithal@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: commit dd4cf8c9e1f4 leads to failed boot
-Message-ID: <82ff38fc-b295-472c-bde5-bd96f0d144fb@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250423115409.3425-1-spasswolf@web.de>
- <647b9aa4-f46e-4009-a223-78bfc6cc6768@amd.com>
- <fa8dd394-45c1-48d3-881c-5f3d5422df39@paulmck-laptop>
- <5a4a3d0d-a2e1-4fd3-acd2-3ae12a2ac7b0@amd.com>
+	s=arc-20240116; t=1745431720; c=relaxed/simple;
+	bh=+Ki4H7wivjI2Q8MWTECBILoqGHb0mMSFqBmPA79zYnk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=juagi0Mtc6TKy8sjj+12V4cNPoUF8/PPizdwtdQA3tdWlvz95L/kgF/kGhSnxbCFPgj7+6wr0cMDc++kSjFo8nkbhU6KEO1rTYm8N25yv/SR6toeugKw9JNiWdFm6vN3jBuzeLPZFScnvWgBH9x3oEOPqXv545wfE9y5LQBwejI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=etJnk9LL; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53NI8ATV1615961
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Apr 2025 13:08:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745431690;
+	bh=EFWPuqQMAL7NxNHoKz6mQkM5FY+ToS1fRX2hOlbxr9M=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=etJnk9LL5YyulNfARr1RPpEstaU5mXL0BY4HyWpMQ0Gf47Ckr+BDOp/N94jB/ydmO
+	 ugPHD9U1x8CCzjCg3DnCM7mcrF8MhJ/7/2c4LIGltEzVM+jJRoD3UW7d57RmnHaXVJ
+	 k3PysXHTXqvBiBCFZ3BfnwQkf08+VkB4hcdtvUrY=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53NI8AMr116997
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Apr 2025 13:08:10 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
+ Apr 2025 13:08:09 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 23 Apr 2025 13:08:09 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53NI89wp126662;
+	Wed, 23 Apr 2025 13:08:09 -0500
+Date: Wed, 23 Apr 2025 13:08:09 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Judith Mendez <jm@ti.com>, Josua Mayer <josua@solid-run.com>,
+        "Sverdlin,
+ Alexander" <alexander.sverdlin@siemens.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Josua Mayer
+	<josua@solid-run.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Francesco Dolcini
+	<francesco@dolcini.it>,
+        Hiago De Franco <hiagofranco@gmail.com>, Moteen Shah
+	<m-shah@ti.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH RESEND v3 0/3] Add ti,suppress-v1p8-ena
+Message-ID: <20250423180809.l3l6sfbwquaaazar@shrank>
+References: <20250422220512.297396-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <5a4a3d0d-a2e1-4fd3-acd2-3ae12a2ac7b0@amd.com>
+In-Reply-To: <20250422220512.297396-1-jm@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Apr 23, 2025 at 08:49:08PM +0530, Aithal, Srikanth wrote:
-> On 4/23/2025 7:48 PM, Paul E. McKenney wrote:
-> > On Wed, Apr 23, 2025 at 07:09:42PM +0530, Aithal, Srikanth wrote:
-> > > On 4/23/2025 5:24 PM, Bert Karwatzki wrote:
-> > > > Since linux next-20250422 booting fails on my MSI Alpha 15 Laptop runnning
-> > > > debian sid. When booting kernel message appear on screen but no messages from
-> > > > init (systemd). There are also no logs written even thought emergency sync
-> > > > via magic sysrq works (a message is printed on screen), presumably because
-> > > > / is not mounted. I bisected this (from 6.15-rc3 to next-20250422) and found
-> > > > commit dd4cf8c9e1f4 as the first bad commit.
-> > > > Reverting commit dd4cf8c9e1f4 in next-20250422 fixes the issue.
-> > > 
-> > > 
-> > > Hello,
-> > > 
-> > > On AMD platform as well boot failed starting next-20250422, bisecting the
-> > > issue led me to same commit dd4cf8c9e1f4. I have attached kernel config and
-> > > logs.
-> > 
-> > Thank you all for the bisection and the report!
-> > 
-> > Please check out the predecessor of commit dd4cf8c9e1f4 ("ratelimit:
-> > Force re-initialization when rate-limiting re-enabled"):
-> > 
-> > 13fa70e052dd ("ratelimit: Allow zero ->burst to disable ratelimiting")
-> > 
-> > Then please apply the patch shown below, and let me know what happens?
-> > (Yes, I should have split that commit up...)
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-> > index 04f16b8e24575..13ed636642270 100644
-> > --- a/lib/ratelimit.c
-> > +++ b/lib/ratelimit.c
-> > @@ -35,7 +35,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
-> >   	unsigned long flags;
-> >   	int ret;
-> > -	if (!interval || !burst)
-> > +	if (interval <= 0 || burst <= 0)
-> >   		return 1;
-> >   	/*
+On 17:05-20250422, Judith Mendez wrote:
+> Resend patch series to fix cc list
 > 
+> There are MMC boot failures seen with V1P8_SIGNAL_ENA on Kingston eMMC
+> and Microcenter/Patriot SD cards on Sitara K3 boards due to the HS200
+> initialization sequence involving V1P8_SIGNAL_ENA. Since V1P8_SIGNAL_ENA
+> is optional for eMMC, do not set V1P8_SIGNAL_ENA by default for eMMC.
+> For SD cards we shall parse DT for ti,suppress-v1p8-ena property to
+> determine whether to suppress V1P8_SIGNAL_ENA. Add new ti,suppress-v1p8-ena
+> to am62x, am62ax, and am62px SoC dtsi files since there is no internal LDO
+> tied to sdhci1 interface so V1P8_SIGNAL_ENA only affects timing.
 > 
-> I applied above patch on top of 13fa70e052dd ("ratelimit: Allow zero ->burst
-> to disable ratelimiting") [linux-20250423]. This is fixing the boot issue.
+> This fix was previously merged in the kernel, but was reverted due
+> to the "heuristics for enabling the quirk"[0]. This issue is adressed
+> in this patch series by adding optional ti,suppress-v1p8-ena DT property
+> which determines whether to apply the quirk for SD.
+[...]
 > 
-> Tested-by: Srikanth Aithal <sraithal@amd.com>
+> [0] https://lore.kernel.org/linux-mmc/20250127-am654-mmc-regression-v2-1-9bb39fb12810@solid-run.com/
 
-Thank you both, and to Bert for intuiting the correct -next commit!
+Why cant we use compatible to enable the quirk instead of blindly
+enabling for all IPs including ones that have onchip LDOs? That was the
+reason it failed in the first place for am64x.
 
-Could you please try the next increment, which is this patch, again
-on top of 24ff89c63355 ("ratelimit: Allow zero ->burst to > disable
-ratelimiting")?
+This is very much like a quirk that seems to go hand-in-hand with the
+compatible for am62-sdhci ?
 
-In the meantime, I will expose the version you two just tested to
--next.
+Is it worth exploring that option in the driver thread? from where I
+stand, this sounds very much like an issue that AM62x IP has, and should
+be handled by the driver instead of punting to dts to select where to
+use and not to use the quirk.
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 04f16b8e24575..8f6c54f719ef2 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -35,8 +35,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	unsigned long flags;
- 	int ret;
- 
--	if (!interval || !burst)
-+	if (interval <= 0 || burst <= 0) {
-+		ret = burst > 0;
- 		return 1;
-+	}
- 
- 	/*
- 	 * If we contend on this state's lock then just check if
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
