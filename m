@@ -1,126 +1,178 @@
-Return-Path: <linux-kernel+bounces-616359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA05A98B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:40:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D93A98B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F1A3B4053
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C2D17846C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A2F1D5AB5;
-	Wed, 23 Apr 2025 13:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF93D944E;
+	Wed, 23 Apr 2025 13:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OtTQ35MY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBTK9IV7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5F81A3161
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FDA18859B;
+	Wed, 23 Apr 2025 13:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415514; cv=none; b=ZO60i84aoxkcT9khzc6Bdmuv+sj6cWHrzUYEq4hUUpak/JXNwYUggLxlTNzPgYV9PWRyjyaTXylDJwe4boyy9GvyduU+tipgEKJyNpqfgkyU+m6GlXaAWGRHGL3uPhhtIU9MXl9LJAmhonBDgpvN55zcCIHQF9I9n5Sk+ls75cg=
+	t=1745415260; cv=none; b=JNWwZJ09OJdGxp5bVx8MQRdV1CDWxp/QTBrvACsXdCeJSB80q0JL0v9dTZa6SkDtsVmfQAoy08CbXumTns6xFjspsCMElWZ9ynlBG8GzawvI0QVF/yv5LE0WZyaAoJemOeMpFqPF0kNka60hhoOwsO5a47KQUNMP9l4B2k3DlSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415514; c=relaxed/simple;
-	bh=UbtwA9lLkcQ7mu+I/4nJ4sjYkyD8wB5Y4jW5OI0T7Gc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZwVi1nHj/t1T5IKUYfCNFHyClQNnUhUufgPfmNt8NCL7eQ2HrV0VSfmjqoprKBmrdPqg+lOF//d93PB8lXtIK9CyN67FXDdrQtiLX+92DUNGX/54N9jItgFgJw6DjLr4KZktb/gApfJbrFjycqC1KUDlLJlxosv5q6qbukwdm34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OtTQ35MY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=cHeGB9xL4xI+MiA09JZcxauxbai7M3ZdaQGCwpwKwYc=; b=OtTQ35MYVVFzlBDjRKO32e5b7V
-	JKZQap+w4ReSZRYdLvuNEdG20jcGXzJYGgnBZksCtHtYaIHuFZdfJC2LkytvGe0F0Fwvs4jg4VUAp
-	sW4yMAGFT2mfP4qgvYXWTJU07yULYEFsLZcNSNRQ4DnLkDsImYTTYNI7BlCNZaT7xnOOwFJ7hTURw
-	zd8eul2gdbYaM8IY9b3kNtIBy9DUlx7lBDMtsUWjW8oQUg7kw7br8cxrAcVO+vBqFRVpLieTrFVqk
-	Nb74tB4Rciylk8F3fjyktXQmX46ID++vHqpY6w1/bh0yEQHnshvxfwd5p8xdDkK9qOOZNs32RauSB
-	/QfRgfzg==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7aIx-000000097Ji-2GnN;
-	Wed, 23 Apr 2025 13:38:23 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7aIx-00000003JP0-1P6r;
-	Wed, 23 Apr 2025 14:38:23 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Ruihan Li <lrh2000@pku.edu.cn>
-Subject: [PATCH v4 7/7] mm/mm_init: Use for_each_valid_pfn() in init_unavailable_range()
-Date: Wed, 23 Apr 2025 14:33:43 +0100
-Message-ID: <20250423133821.789413-8-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423133821.789413-1-dwmw2@infradead.org>
-References: <20250423133821.789413-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1745415260; c=relaxed/simple;
+	bh=ueUfGPiRe8CWFt/O1EQf5z5vxeIPa9k232U3/o+JgxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkqT5H0rWKXLwb2UbDuZKkUv5pURBQupSXFKWzadlCvyT4CzCy7PaasKyYhRw67rh3PLvyDLG+9nNPyG9NlYgx8m06BvkHxEJSp7+/v44qL7eCrm9WV22SGhjJq0QqeGRcA7WQ3xeAL9jMhV+eJrFx/AMY9R/ah3c+mswGFI1Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBTK9IV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C41EC4CEE2;
+	Wed, 23 Apr 2025 13:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745415256;
+	bh=ueUfGPiRe8CWFt/O1EQf5z5vxeIPa9k232U3/o+JgxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kBTK9IV7mbg1F9P+I6yRAqsmiDAfQ8VwP0UPACt3x4Q58QN21dpx8SfxQMOhJ/Oae
+	 u3bpfrgDsBMFmm//YSdnlxsTtAYc3YMXpsP1CbRTU468E0IVifsKRyhlql+rxVydF2
+	 BAtOe4q+finogOh41KWxU3JrHBvKtzKrgny2a71XD0g+yXLSLoY7TKp4VxM4+ucMgg
+	 7BDeSUIRQWhSsq//ZxZ8mDR199dZVnGpBfgXV+39fMFzf2gMHvWUf2T7TRcU4VvmoC
+	 AuBFNONti3ADtZPvbU/gE7qsBUBP4rnH/pqvXaytDr6ai16jJn74lR9d6+FHfpU/j8
+	 bG0i9iXLi3Fiw==
+Date: Wed, 23 Apr 2025 15:34:09 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ntb@lists.linux.dev, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] PCI: endpoint: improve fixed_size bar handling
+ when allocating space
+Message-ID: <aAjsUXiK5PK7S6Jd@ryzen>
+References: <20250422-pci-ep-size-alignment-v4-0-6bd58443fee9@baylibre.com>
+ <20250422-pci-ep-size-alignment-v4-1-6bd58443fee9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422-pci-ep-size-alignment-v4-1-6bd58443fee9@baylibre.com>
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Tue, Apr 22, 2025 at 04:54:19PM +0200, Jerome Brunet wrote:
+> When trying to allocate space for an endpoint function on a BAR with a
+> fixed size, the size saved in the 'struct pci_epf_bar' should be the fixed
+> size. This is expected by pci_epc_set_bar().
+> 
+> However, if the fixed_size is smaller that the alignment, the size saved
+> in the 'struct pci_epf_bar' matches the alignment and it is a problem for
+> pci_epc_set_bar().
+> 
+> To solve this, continue to allocate space that match the iATU alignment
+> requirement, saving it as .aligned_size, then save the size that matches
+> what is present in the BAR.
+> 
+> Fixes: 2a9a801620ef ("PCI: endpoint: Add support to specify alignment for buffers allocated to BARs")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/pci/endpoint/pci-epf-core.c | 21 ++++++++++++++-------
+>  include/linux/pci-epf.h             |  3 +++
+>  2 files changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index 394395c7f8decfa2010469655a4bd58a002993fd..982db6c1fbe77653f6a74a31df5c4e997507d2d8 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -236,12 +236,13 @@ void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar,
+>  	}
+>  
+>  	dev = epc->dev.parent;
+> -	dma_free_coherent(dev, epf_bar[bar].size, addr,
+> +	dma_free_coherent(dev, epf_bar[bar].aligned_size, addr,
+>  			  epf_bar[bar].phys_addr);
+>  
+>  	epf_bar[bar].phys_addr = 0;
+>  	epf_bar[bar].addr = NULL;
+>  	epf_bar[bar].size = 0;
+> +	epf_bar[bar].aligned_size = 0;
+>  	epf_bar[bar].barno = 0;
+>  	epf_bar[bar].flags = 0;
+>  }
+> @@ -264,7 +265,7 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+>  			  enum pci_epc_interface_type type)
+>  {
+>  	u64 bar_fixed_size = epc_features->bar[bar].fixed_size;
+> -	size_t align = epc_features->align;
+> +	size_t aligned_size, align = epc_features->align;
+>  	struct pci_epf_bar *epf_bar;
+>  	dma_addr_t phys_addr;
+>  	struct pci_epc *epc;
+> @@ -285,12 +286,17 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+>  			return NULL;
+>  		}
+>  		size = bar_fixed_size;
+> +	} else {
+> +		/* BAR size must be power of two */
+> +		size = roundup_pow_of_two(size);
+>  	}
+>  
+> -	if (align)
+> -		size = ALIGN(size, align);
+> -	else
+> -		size = roundup_pow_of_two(size);
+> +	/*
+> +	 * Allocate enough memory to accommodate the iATU alignment requirement.
+> +	 * In most cases, this will be the same as .size but it might be different
+> +	 * if, for example, the fixed size of a BAR is smaller than align.
+> +	 */
+> +	aligned_size = align ? ALIGN(size, align) : size;
+>  
+>  	if (type == PRIMARY_INTERFACE) {
+>  		epc = epf->epc;
+> @@ -301,7 +307,7 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+>  	}
+>  
+>  	dev = epc->dev.parent;
+> -	space = dma_alloc_coherent(dev, size, &phys_addr, GFP_KERNEL);
+> +	space = dma_alloc_coherent(dev, aligned_size, &phys_addr, GFP_KERNEL);
+>  	if (!space) {
+>  		dev_err(dev, "failed to allocate mem space\n");
+>  		return NULL;
+> @@ -310,6 +316,7 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+>  	epf_bar[bar].phys_addr = phys_addr;
+>  	epf_bar[bar].addr = space;
+>  	epf_bar[bar].size = size;
+> +	epf_bar[bar].aligned_size = aligned_size;
+>  	epf_bar[bar].barno = bar;
+>  	if (upper_32_bits(size) || epc_features->bar[bar].only_64bit)
+>  		epf_bar[bar].flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
+> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+> index 879d19cebd4fc6d8df9d724e3a52fa7fbd61e535..23b0878c2665db1c21e6e83543c33149ab1e0009 100644
+> --- a/include/linux/pci-epf.h
+> +++ b/include/linux/pci-epf.h
+> @@ -114,6 +114,8 @@ struct pci_epf_driver {
+>   * @phys_addr: physical address that should be mapped to the BAR
+>   * @addr: virtual address corresponding to the @phys_addr
+>   * @size: the size of the address space present in BAR
+> + * @aligned_size: the size actually allocated to accommodate the iATU alignment
+> + *                requirement.
 
-Currently, memmap_init initializes pfn_hole with 0 instead of
-ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
-page from the page at address zero to the first available page, but it
-won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
-won't pass.
+Nit: Since none of the other lines end with a full stop.
+Perhaps add one for all lines, or continue not having it for all lines.
 
-If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
-kernel is used as a library and loaded at a very high address), the
-pointless iteration for pages below ARCH_PFN_OFFSET will take a very
-long time, and the kernel will look stuck at boot time.
-
-Use for_each_valid_pfn() to skip the pointless iterations.
-
-Reported-by: Ruihan Li <lrh2000@pku.edu.cn>
-Suggested-by: Mike Rapoport <rppt@kernel.org>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Tested-by: Ruihan Li <lrh2000@pku.edu.cn>
----
- mm/mm_init.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 41884f2155c4..0d1a4546825c 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -845,11 +845,7 @@ static void __init init_unavailable_range(unsigned long spfn,
- 	unsigned long pfn;
- 	u64 pgcnt = 0;
- 
--	for (pfn = spfn; pfn < epfn; pfn++) {
--		if (!pfn_valid(pageblock_start_pfn(pfn))) {
--			pfn = pageblock_end_pfn(pfn) - 1;
--			continue;
--		}
-+	for_each_valid_pfn(pfn, spfn, epfn) {
- 		__init_single_page(pfn_to_page(pfn), pfn, zone, node);
- 		__SetPageReserved(pfn_to_page(pfn));
- 		pgcnt++;
--- 
-2.49.0
-
+Regardless:
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
