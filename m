@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-615772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7536AA98219
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00269A98217
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E403A7DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EEDE17DEA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6D1281376;
-	Wed, 23 Apr 2025 07:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075B82836BE;
+	Wed, 23 Apr 2025 07:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tffuB9CS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNyBMOBN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D181E3793;
-	Wed, 23 Apr 2025 07:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5586F18D63A;
+	Wed, 23 Apr 2025 07:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394921; cv=none; b=PQoZoh0sQOHFGhtN7aA3CuKNiw9F4vYyLx/r5e/l1HWNodo7Rup7jiZFW+XEtE550O5zmz+e+O4hwPnNj52y1KhM94coKZkrOQjACtGFAhN8yFeV7xIKtNP4yXN7O8ZnyXZ/X2vzpaS1H+UGSjIwxavvGBjYdV2O1G/bIOA1CBg=
+	t=1745394927; cv=none; b=WG02FWidjI5dmQmcYJr/l/O+QyN/0bnH+BSoegZlQc3biOwS5kO1ImIUFgO96Hqotizx2+rRxV3kCtcQ5jDYNrfJV5YcrjKfJomYqNk6UAzt1K+SiR/S+MZDLPLOT8iluJ7SXvJOXmJPp6nDTNsAjvzRYP1/ic/kFwVOmH7qljU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394921; c=relaxed/simple;
-	bh=WJYylwhCepb1SNsaRnb/rTV5rCelb585I7xMBcKHMJo=;
+	s=arc-20240116; t=1745394927; c=relaxed/simple;
+	bh=pRlQuKwYT6jW8iLQvmqLXqutr9MP9tCZHFL43ftBrws=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nAM3vXjZF/sdlBBZnTfRRy+fCLeWLYvawKqs2Ksq2jk5k65gL1fWHcAin+SFSgIM5zoJ5Tq7YUKC+tQVCgOdvNVzrqKL84egXYl0qN+5pvnRzaUceogD/MWWgJFOapPRKCKlONEgxDQBg/TnHFIYd0x2p1u+7plM3s4J5PCttTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tffuB9CS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0DB1C4CEE2;
-	Wed, 23 Apr 2025 07:55:15 +0000 (UTC)
+	 MIME-Version; b=WGzMm4+ntyvELV/+eNX9ilhWztfLvq+SJXknqx5NN9S/iRYyUy5P309H46VYupi9SBANvXEAvZjorfKwc7ZORCOiExN6un+Lmcw3PNz/O0WVPjh8FWJC93IhfQ727Q2AjngBFudWYa9aRQwEbHUrWTZpjYBvJyWYITWuBVUz93g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNyBMOBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C53C4CEE2;
+	Wed, 23 Apr 2025 07:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394921;
-	bh=WJYylwhCepb1SNsaRnb/rTV5rCelb585I7xMBcKHMJo=;
+	s=k20201202; t=1745394926;
+	bh=pRlQuKwYT6jW8iLQvmqLXqutr9MP9tCZHFL43ftBrws=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tffuB9CSQVsXysR8StVkUU+VGT5twYPHrqVVlRBl4Np7x6UJQfQwSMzo/5Mb/Zc2t
-	 tIIWsPUkMz/8ln03M0+FZgOFKC4c43mfuRFy7MLc+NA1fRRMYiVccSxD6IaQLB4xSX
-	 iWnQKvNQF9J4J4hkNQ1P4UGPPqLspPsD3OvMBEt9P9ZxBbHHgGIAA7gIf3R0Mr1qJ7
-	 pmANq2uvv33is/hU0AEP7vZinzJ2zsEsnOhkFB0/nA924krNBVrU0XOOARf0ytGN+p
-	 8fkIU4LgAt90gYck3RVm6Z46vIVbP4td66MiTtC0noeryRpDO5bFFYRL4pBumkM8rm
-	 uMUZki6qLVd8g==
+	b=nNyBMOBNWQdYVnm+yOBa4Kty5N0oznkPpIkB7ty8MJ/lk8ZgKEqF0mUZEoHKgHimj
+	 zesi+6EYwxv5lY/yQ2AuE24sg2+wZh0Bxo1VjFfYfmlJC2JrfUpMTwyYVbhELImytg
+	 w61Fygzpg306la6O0su98fiXogzKhtL2JEki7XkSoQH+nBkm6WDPeieYsKwUtdMgeb
+	 s+1QPK2y9sn1z3kc7ylnqNwVNQwbfPcTBO1PAOWlg8LOIqiKjxYJg0nPv22jwjUsRz
+	 QhsCYA3y0wBAJHX5c7zE4svo3pd7whUty3pVcKSKQ8x3J118VmiwE01ZzYHShVm8XM
+	 N4+qFdcJVKovg==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -59,9 +59,9 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/28] ALSA: lx6464es: Use pure devres PCI
-Date: Wed, 23 Apr 2025 09:53:32 +0200
-Message-ID: <20250423075346.45907-15-phasta@kernel.org>
+Subject: [PATCH v2 15/28] ALSA: vx222: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:33 +0200
+Message-ID: <20250423075346.45907-16-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
 References: <20250423075346.45907-1-phasta@kernel.org>
@@ -80,25 +80,28 @@ and should not be used anymore.
 Replace pci_request_regions() with the always-managed function
 pcim_request_all_regions().
 
+Pass the driver's name as the name parameter of
+pcim_request_all_regions().
+
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/pci/lx6464es/lx6464es.c | 2 +-
+ sound/pci/vx222/vx222.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/lx6464es/lx6464es.c b/sound/pci/lx6464es/lx6464es.c
-index bd9b6148dd6f..63ebf9803ea8 100644
---- a/sound/pci/lx6464es/lx6464es.c
-+++ b/sound/pci/lx6464es/lx6464es.c
-@@ -944,7 +944,7 @@ static int snd_lx6464es_create(struct snd_card *card,
- 	mutex_init(&chip->setup_mutex);
+diff --git a/sound/pci/vx222/vx222.c b/sound/pci/vx222/vx222.c
+index fdb039896205..693a4e471cf7 100644
+--- a/sound/pci/vx222/vx222.c
++++ b/sound/pci/vx222/vx222.c
+@@ -123,7 +123,7 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
+ 	vx = to_vx222(chip);
+ 	vx->pci = pci;
  
- 	/* request resources */
--	err = pci_request_regions(pci, card_name);
-+	err = pcim_request_all_regions(pci, card_name);
+-	err = pci_request_regions(pci, CARD_NAME);
++	err = pcim_request_all_regions(pci, KBUILD_MODNAME);
  	if (err < 0)
  		return err;
- 
+ 	for (i = 0; i < 2; i++)
 -- 
 2.48.1
 
