@@ -1,100 +1,165 @@
-Return-Path: <linux-kernel+bounces-616684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC798A994C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4A6A994D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9EE1BA5EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3439C3040
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE7D27FD7D;
-	Wed, 23 Apr 2025 15:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3EF28A3F9;
+	Wed, 23 Apr 2025 16:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4OVJxLgq"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f97jNSgf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C6267AF8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E314D27F4D9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 16:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423759; cv=none; b=crqof3RdjdYO191uJlNG06qjtPl/3+ApPkIKzCsWs03OcTJR5y0RQwg9ss/xYDx9igO6tatUCE6zMsioQ+hw1wbQlroY1kkYvTI/NAJmBp/Pn05poz6iwiUT69awF+fxIE2J3qvVcm1gt0donxENNrFO4n1TYWOQHqUjc81Tl80=
+	t=1745424145; cv=none; b=hZBBvVRu4AL8sqBut9NY4s3WYicbD9QCg311iLE6++9zF6EprWzgmMTwu/9zwlzmgmo1T9Sm/5V4Sksxnm7D2yGdIrJ44jxJv8fADmCSurKXLAKmhoEeiSOGo9GuLmusGVzfQQXICola/Ua4ZjKt3XdVd1uZWf/N1w/oo24y6Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423759; c=relaxed/simple;
-	bh=+2Q0TqTUlO+XxdYqin3kJ59kqtlT8h5Kw4yFiitoAu4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Rpygm/Bl2Bn/9L+6gECa72paeWoXzD5vh4aNWXqgT8vezLlKRAIyZjv386OPiAl+t8zQYo7bglh6yb8vNM3AW+3wrOljENVrpYHyKHPa2O8th8BHyQbc0T2HtBKblz7Zl7c9ahyNSS/uKAwR8Fxj1o7dH4QhoERRX+XEuNJO7u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4OVJxLgq; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so19791a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745423758; x=1746028558; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmJGVTNM68EN1Na+PFsjzt6zkvxFPDOKXQFGaHd/MNo=;
-        b=4OVJxLgq7yQkXec/gpLkz9iv5/PLWU420CoYpKP8880ek60gBNTCC0WFREfJp5KC4Z
-         SaXDyam9s72dD5F5N0+6m7DHBUlZgtvea/DvRDjDISL2bziWggyAF/CQTsQ9B00ihEq7
-         ufw7MTg2fTrpGrAlpz30CLk5U+2T16iMINDFXwFxvoUY0So2pjLYQuLouKpA6ENTFTiK
-         cvczy//hU74hhep9XwQnQCiqGsruOeHIsKrlIhV6ca3t/mHRdS0gqj9wVndmzmcSU/VY
-         lya36nqLTPxKD2sA3bC1cAsK+xFJdbAIvdOQ7Uc26drvjYDDwfhj1XXKCu5PlVDW8feO
-         DCRQ==
+	s=arc-20240116; t=1745424145; c=relaxed/simple;
+	bh=4i+Aa42MxjqCMrZwNRo+lSzwmT1xTOZvTjo84XR38Ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGh7NVm+Fbb0wcsTWlIVtyOseKtnf0Nr+uyxLmZTsxBsLnckkT70LVY26yR34b/prPkyevLA7Nifqh/zFKHNT4NG5Xm9wnO9udvXQNXuNphPYsZG9OZlfio8ffsCNTDqj4Vanalg5sOs2EMoZ/+zcpHWy5sDetB4IPJw7uLGwRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f97jNSgf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745424142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh+sYc0+MNHSUal421oTmCDMNe+GTwBu1Zv/uziK5zE=;
+	b=f97jNSgfj9bFBQGXIVihJS5Se0v8SpXd455eb2AWTKH4BsQ3P1OtJ6jEolzDrI6xTxfjys
+	gClIDOx6rZ07VqkkjHBNvgTR3V4KCmnVh9Fbm5VxZivbJwPZlvqWZifae6A4wMHV1ie+A6
+	xUSE8e0Y1gY6e9phR7mc8QGY9k577rY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-599-6X5SgKh6PsW8Oeo-P-vmeg-1; Wed, 23 Apr 2025 11:57:36 -0400
+X-MC-Unique: 6X5SgKh6PsW8Oeo-P-vmeg-1
+X-Mimecast-MFC-AGG-ID: 6X5SgKh6PsW8Oeo-P-vmeg_1745423856
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c09f73873fso987491985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:57:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745423758; x=1746028558;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmJGVTNM68EN1Na+PFsjzt6zkvxFPDOKXQFGaHd/MNo=;
-        b=St+evLYKkjEvXkR2WzF4I29cYaoXLnIkzsSR2MBmsHtXC33GybkX+4rysFX4hGMQgp
-         /tWeAI4u1QJWUdxDTmxLHGA+BOusn0IhFMwjd0V7y5PHBE9jyUS31HFpo1KadFf9JODW
-         CyTfHqBYYCZw4uowcmm3dUeI8NGNyE9hQ2934X02C+s3NyNhSiTcPU+thp1h3PsBw6Hu
-         Jofu1kkv0cxregxZtFm9aJ/tfHO26i5xDrNh2VDneMxLeFuiphxVFx/uqeh8eBtz6+D5
-         WBiPsosUaiGh/LFd4PGoRWc3OmUiZPpWhglLhdG5500fFm5cH6DWzlwivr2UD+CSYDVz
-         eNtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNv1dEAM8/9g8uFH6+4I4WzjeDZSzJQcmie41VOUiQDuKUk168Wgtqw+92hjwoiXuezkhRHOaFN5rp1OQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztsNr/xn1wOhIrNk+78cG32T8hrgc1Yvua3Vug+MwW6zWhUISK
-	jLkS3GenrkAEtVgKsFhC4qcegXjLcOovx+bpsxuQF+si6guRinIrB7lNr/vL3JxRatIIL41HRAv
-	yfQ==
-X-Google-Smtp-Source: AGHT+IHnOGraDXWHVwtcHF/KJZows5bTw5g1o0e7YCWv5QZQLWNkV6iHhA0+G3682VIduWV5Xwdn6KbTATw=
-X-Received: from pjyp14.prod.google.com ([2002:a17:90a:e70e:b0:2fa:15aa:4d1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2404:b0:309:eb44:2a58
- with SMTP id 98e67ed59e1d1-309eb442db3mr417907a91.22.1745423757994; Wed, 23
- Apr 2025 08:55:57 -0700 (PDT)
-Date: Wed, 23 Apr 2025 08:55:56 -0700
-In-Reply-To: <15e24c455fb9fca05b5af504251019b905b1bd77.camel@gmail.com>
+        d=1e100.net; s=20230601; t=1745423856; x=1746028656;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sh+sYc0+MNHSUal421oTmCDMNe+GTwBu1Zv/uziK5zE=;
+        b=HddmcgrDvB/gxiFVhwAwDfUye/EabBPZPI1PvrIBkSss+aUMFzoOxXGIkaq2YQMnFw
+         kul3pip0CEK6JR4SYzEcE0Qh013RmwXIZjQN3RhAUZaa7ly0cTYu7CPmaWsPn8zQJmhb
+         vk40fNUZR4akT6DlXpnH7dG3FW0JfMKvSynOTXddNnRuvp/Z/061IPd/3s2io2joADd9
+         SvC9lsBO0VhaXqbfcD2omaAVTauP5kjm9qxMiCEYsNoWjlbLw3ReDo2+GTI0nSC2xgYJ
+         wemfGMRNiFoCVZuM7pbW3s44KlwWY2HL78bNddkt9YmzzZ5dV6FNBU1koszAr9xAzIAQ
+         8M6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4gPBW41K38x+s89guTJz8z8HE6cWhmNyknMM44Jyb1u2mCkazdqcK++SxvRKnTx2arUm8o8JNN4lb/vU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznZpOYJtV+FOUzpnS9ugr6q7MbIRiQ9oLeFL84camPUM12gV/k
+	pWxU/LCizav2W2OAw7PldQg66HEldzxf3GYIhX09pwz9mdBmu0yCooDjMeb7CbbluNk/NJW2ngb
+	JiQDpjKFcy+3B8j+NGNWYYhxrVJnqNW4azyy2ng01ZybJH15l92Wks7iGENsOpw==
+X-Gm-Gg: ASbGnctMwvtayBcBqW+mLHoW7YFQqKWR7CBi4k5yFBep7uKj/2hcMiZcunOIrxBiE2M
+	AAN0o0DOLZMVJzTlmR8/9+cfHJkxsOh6BjDhZ9b2QeqZ7NTGcMyPfA7pxsWHM6PNIyDMnq/zQye
+	FocHx7Dvw5YJbHEuWMZ9KFnm0Zc81AtHpbcuDMS0tmBcI8TZhDs6VBFLeOv1/MMVwT7YsRYoH3J
+	AyM5/5zv/1FDYxPQoPZo9w8kiZHxpxSQPYDEiIGg4WFyWzlDhufv/X5gX/cVyGySYMkzsWVcEmc
+	TjcnY9WNSilj1/EUFU2zNZ218fimO7/H8MZDTEBhwCs=
+X-Received: by 2002:a05:620a:414e:b0:7c5:55c0:db9b with SMTP id af79cd13be357-7c955e14742mr15096785a.58.1745423855998;
+        Wed, 23 Apr 2025 08:57:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIWB7Ovf66R3odop/eHj81SRynR7IlhrgKznJ816AeoHzYOpFR49dK5BzR9wKwh5ZqiuAyNQ==
+X-Received: by 2002:a05:620a:414e:b0:7c5:55c0:db9b with SMTP id af79cd13be357-7c955e14742mr15093785a.58.1745423855655;
+        Wed, 23 Apr 2025 08:57:35 -0700 (PDT)
+Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4301:5e20:98fe:4ecb:4f14:576b])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925a6eb60sm698231385a.24.2025.04.23.08.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 08:57:35 -0700 (PDT)
+Date: Wed, 23 Apr 2025 08:57:32 -0700
+From: Jared Kangas <jkangas@redhat.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+	jstultz@google.com, tjmercier@google.com, christian.koenig@amd.com,
+	mripard@kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] dma-buf: heaps: Use constant name for CMA heap
+Message-ID: <aAkN7BXIT7RR85PR@jkangas-thinkpadp1gen3.rmtuswa.csb>
+References: <20250422191939.555963-1-jkangas@redhat.com>
+ <CAO_48GELW3ax5Q3h9=qpWBJJa0Uy3eJwFkEcbaz4ZT56Gq513A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250404193923.1413163-32-seanjc@google.com> <15e24c455fb9fca05b5af504251019b905b1bd77.camel@gmail.com>
-Message-ID: <aAkNjKIleB97r2fe@google.com>
-Subject: Re: [PATCH 31/67] KVM: SVM: Extract SVM specific code out of get_pi_vcpu_info()
-From: Sean Christopherson <seanjc@google.com>
-To: Francesco Lavra <francescolavra.fl@gmail.com>
-Cc: baolu.lu@linux.intel.com, dmatlack@google.com, dwmw2@infradead.org, 
-	iommu@lists.linux.dev, joao.m.martins@oracle.com, joro@8bytes.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com, 
-	pbonzini@redhat.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO_48GELW3ax5Q3h9=qpWBJJa0Uy3eJwFkEcbaz4ZT56Gq513A@mail.gmail.com>
 
-On Wed, Apr 23, 2025, Francesco Lavra wrote:
-> On 2025-04-04 at 19:38, Sean Christopherson wrote:
-> > @@ -876,20 +874,21 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd
-> > *irqfd, struct kvm *kvm,
-> >  	 * 3. APIC virtualization is disabled for the vcpu.
-> >  	 * 4. IRQ has incompatible delivery mode (SMI, INIT, etc)
-> >  	 */
-> > -	if (new && new->type == KVM_IRQ_ROUTING_MSI &&
-> > -	    !get_pi_vcpu_info(kvm, new, &vcpu_info, &svm) &&
-> > -	    kvm_vcpu_apicv_active(&svm->vcpu)) {
-> > +	if (new && new && new->type == KVM_IRQ_ROUTING_MSI &&
+Hi Sumit,
+
+On Wed, Apr 23, 2025 at 08:53:20PM +0530, Sumit Semwal wrote:
+> Hello Jared,
 > 
-> The `&& new` part is redundant.
+> On Wed, 23 Apr 2025 at 00:49, Jared Kangas <jkangas@redhat.com> wrote:
+> >
+> > Hi all,
+> >
+> > This patch series is based on a previous discussion around CMA heap
+> > naming. [1] The heap's name depends on the device name, which is
+> > generally "reserved", "linux,cma", or "default-pool", but could be any
+> > arbitrary name given to the default CMA area in the devicetree. For a
+> > consistent userspace interface, the series introduces a constant name
+> > for the CMA heap, and for backwards compatibility, an additional Kconfig
+> > that controls the creation of a legacy-named heap with the same CMA
+> > backing.
+> >
+> > The ideas to handle backwards compatibility in [1] are to either use a
+> > symlink or add a heap node with a duplicate minor. However, I assume
+> > that we don't want to create symlinks in /dev from module initcalls, and
+> > attempting to duplicate minors would cause device_create() to fail.
+> > Because of these drawbacks, after brainstorming with Maxime Ripard, I
+> > went with creating a new node in devtmpfs with its own minor. This
+> > admittedly makes it a little unclear that the old and new nodes are
+> > backed by the same heap when both are present. The only approach that I
+> > think would provide total clarity on this in userspace is symlinking,
+> > which seemed like a fairly involved solution for devtmpfs, but if I'm
+> > wrong on this, please let me know.
+> 
+> Thanks indeed for this patch; just one minor nit: the link referred to
+> as [1] here seems to be missing. Could you please add it? This would
+> make it easier to follow the chain of discussion in posterity.
 
-Ha, good job me.  Better safe than sorry?  :-)
+My bad, I must have dropped the link while revising the cover letter.
+Here's the dropped reference:
+
+[1]: https://lore.kernel.org/all/f6412229-4606-41ad-8c05-7bbba2eb6e08@ti.com/
+
+Thanks to you and John for looking this over,
+Jared
+
+> >
+> > Changelog:
+> >     v2: Use tabs instead of spaces for large vertical alignment.
+> >
+> > Jared Kangas (2):
+> >   dma-buf: heaps: Parameterize heap name in __add_cma_heap()
+> >   dma-buf: heaps: Give default CMA heap a fixed name
+> >
+> >  Documentation/userspace-api/dma-buf-heaps.rst | 11 ++++---
+> >  drivers/dma-buf/heaps/Kconfig                 | 10 +++++++
+> >  drivers/dma-buf/heaps/cma_heap.c              | 30 ++++++++++++++-----
+> >  3 files changed, 40 insertions(+), 11 deletions(-)
+> >
+> > --
+> > 2.49.0
+> >
+> 
+> Best,
+> Sumit
+> 
+
 
