@@ -1,213 +1,156 @@
-Return-Path: <linux-kernel+bounces-615643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6F8A9803B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5565A98041
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640721940292
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096C519402CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9FC267721;
-	Wed, 23 Apr 2025 07:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317B267733;
+	Wed, 23 Apr 2025 07:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OMPCeQmz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f7x/Tyjl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjlZbh98";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a0t8xvjf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DvYU/P5b"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19027267715
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4EF1A704B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392482; cv=none; b=gniKxHFvPm0Q7WFCc//Ts/AVY5m8WlvdZ7c3Vuhpf1kyyiQoZbo/VlpY4IDbLH/gRMFpp8hRZmlA1OkFnSetuxO+DeeR4jjFDwyDKANnRkTOTilZ2lTYXP8AUrCdV+EXWGxtGE7ugUAMGZFD3OJab/DM/r/G92oR0bRya7DS7wE=
+	t=1745392521; cv=none; b=PaIZchRQdX260sS79d1Y2nN14jfczlsp8nj21PwIiS3JkFodVa7iK7r1hW+aKS0CTaUTT5DSDNQm8toTAlDbk1DdfRwdtpDXH3EcgrvkWRQ6H+48p4m8fm+0XBWDpS9HdZ2M2xAxOiZao3YmzuC8r4L89glKDMVNocb1pHEj2wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392482; c=relaxed/simple;
-	bh=2QjcY8oZdI84Z3AkI5288+S4rRI/wiJvEbCHzkh/fFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHAJbwDyogpqpRh6gV+UHQtKiRw0SnMXbMk/1ygwFH2ayohXEVxCbQkS/80UX7I6Ac3JcBp0Kx04t9HxThvch/59dqm7V9nrifFYYrVQuWhJHOYOW6n7Ya3b6XIDURYVJLjwvxY/hi7x2H9g7xOAjuib0cx+X1JBTmKiHybGj7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OMPCeQmz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f7x/Tyjl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjlZbh98; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a0t8xvjf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0795211A8;
-	Wed, 23 Apr 2025 07:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745392478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7zZPVktYGdWMKB/Oe2xuwcSVvsgPHmSKHp/5PsSPBo0=;
-	b=OMPCeQmz0MbY0kliMesi9H9E0GD72JSHmkvlJC2+b4kUnpPXSiCZ9jN75+VU5EkY9dPhLf
-	bsfuq+Dw420FRWv+vSRqiEnLwG3ufrN25NENXxrfw3cLzmpxBZih4OShKcGcAI/uRzjNhD
-	Srqsg3Fzf4EXeS7q3dySQbNzzEmsKcU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745392478;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7zZPVktYGdWMKB/Oe2xuwcSVvsgPHmSKHp/5PsSPBo0=;
-	b=f7x/TyjlIWDBuN0yhnoyEU+F7bixSACjMVOzRE5pqqeMx+y09/CRqlZNSngAGYV3DncdU1
-	5Ua3UWHm2tQtEuDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PjlZbh98;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=a0t8xvjf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745392477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7zZPVktYGdWMKB/Oe2xuwcSVvsgPHmSKHp/5PsSPBo0=;
-	b=PjlZbh98Y5R2jsw1LShJnfiqFUJFicn1ZGTo4gm/4A8q1A3APen+t/n9UEQzbzjnX9291V
-	B87ZhX0V1CBG0YaClW2/zks6P2YCICF+wqmbz74+c8o6FgSaRtEqYNwIdx2puY2tEVTBLO
-	XYpxnzuAIviEHWJANiqNZN4FxLTaHcc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745392477;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7zZPVktYGdWMKB/Oe2xuwcSVvsgPHmSKHp/5PsSPBo0=;
-	b=a0t8xvjf9qU+UpWm3eRPh9H5M6zr3nkB5HXjHxTJHJsSFcLTSITgpvPSzHPEyAKavfOM34
-	VE2gqHomLu1NH4CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE1B413A3D;
-	Wed, 23 Apr 2025 07:14:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Tlf6MV2TCGjUYAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Apr 2025 07:14:37 +0000
-Message-ID: <0981c1fe-05d2-4bab-a0a4-6dc5666d98d7@suse.cz>
-Date: Wed, 23 Apr 2025 09:14:37 +0200
+	s=arc-20240116; t=1745392521; c=relaxed/simple;
+	bh=P8T6A2RfhQi9cs8jlDhrwJia7IeYiHPIj6iHNUhHRRs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r34qtX0xFqiXkNOpVMsO4OZBmm7ScrpjBa3P/aqrAf1n6FkzDU9ZekOiUEp5W0vnqaytpMEPmiEtFCqV30XJZjBYxn9mRodkFM3j9+iPnPlKQHy+OV/fzJUMeaOyXV+4GQFYKN/PHaF1j7K1GzpfMzQLaP6pMnV+jECRkWyuiZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DvYU/P5b; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so42678305e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745392516; x=1745997316; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfQbp+syyXkO/RHw4GNJukoFm6a9w8JqJKtPVgxdN5o=;
+        b=DvYU/P5b2BI1gSao6BNYuea7FrQZ8ZUrFejJsRnXByxIVMs2CNzx0tdLfK//Dzewjo
+         NO7pDUSmQGvRf40zYv86hvfdMZkwa3u+VL39iqdcMGzBOMtQbcfUdXaZY971ReECFur9
+         JKF69M7UtxnLRYt4l0+nk+HJmGccrNcpnWCKhqZ3AkKP7gGM6UY+arJUDzPRa9rJXT+p
+         blX5LX7Sr+NPNGavWigN5Cf/h8UI0Ve+ijeAQFGa2S+TpfYa94tOgiX0UKdRAOJBcpil
+         kehBN8pUoTLxY9YinY2FeB2Lyz1PAHDp8KH+vlewCutVIym0g/qszwAkvxrQuhCXwCDI
+         o7tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745392516; x=1745997316;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfQbp+syyXkO/RHw4GNJukoFm6a9w8JqJKtPVgxdN5o=;
+        b=Er6bx42dKddmM9rbFnMTc9UJvQcJiKSaYG36MnTBkZE5YFlf4oleqHXzCtdgqpaoiP
+         BBFrKEYq2mAhq76ZkSYLzAxH0M/xw8oGv2K8gcHbodLnkMgLDEqN648YlSgBnnE5V7HK
+         8JpQS9pPjFsbi2dvR6KL3rMHlM+coGKG/Ta+7tw2gKL+BSWgBuGI1oXhKZPadj7GKb4s
+         kvX/EwZ4n5wQCj4wUZzsCaf6ttwL1rNiDjBkPEcLs6UoP1XxAWsEKnVg8jFEnVtY4JUA
+         2ueHVWMMZprFV0dQVKJ4ExuXZlmADgeeXl70s/Lb/WIrvfeygOHiGvjLqFfR6Y8Kv4/B
+         58EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXACRUcsV924bQEbRwgKbRJ2ODOA+kJhy0INJRbboRsgOkjgsiLI1wr17KuE9gditvFrPCrwuNoDIZlEWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9xhOQSuqNKCLm5m0ByCzym3OJ46IW7UL0G6mU4hV47dLarkbj
+	D8zUmRpilcsUjlHk9OBtHi4nnJsxRHikEZo4DxQ37vf2cRL1oZfQGbBMKFAxz78=
+X-Gm-Gg: ASbGncsQpMbu6MDrDnbeHeZ77Cqlofq7ndWt3SVJbEml7O2ke5jHkEhRJU4c30wPmPn
+	zSPljfkxBrLr/cN0i+w+EgfIUHDJRxMUUkiLgR0vVLW3YpGVLGan9OAOgi/PFvPxZistnXUOiw7
+	r1U2gduj/nsGVZZjKGXbe2yslNDTiB1lrPnU3fOgms4g/yahWxdEN8R1bzcyQTTWNDyNOvPA8Yi
+	sF74hnUkAprp63+HGPyvqHkNmQUTyRcd/f9Jou1dbVRsSDj4NL3LwCObc6cXH0TfiRfXVc/ygGi
+	TUe0NIFPiK9zuyHw7Ymzucoo+GEyZcx2W2BjFM5IpDCa
+X-Google-Smtp-Source: AGHT+IG+tJxvr2pB5uojdqPwlJlUoCOQYCF7lDXIVNF2nVM1sZvKoDsybtSZIIss18Pryk/S0Ef3fA==
+X-Received: by 2002:a5d:588b:0:b0:391:45e9:face with SMTP id ffacd0b85a97d-39efbb0252emr14722584f8f.54.1745392516313;
+        Wed, 23 Apr 2025 00:15:16 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:74b0:71bd:6dda:dcc1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493446sm17696935f8f.74.2025.04.23.00.15.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 00:15:15 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/12] gpio: convert more GPIO chips to using new value
+ setters - part 2 for v6.16
+Date: Wed, 23 Apr 2025 09:15:02 +0200
+Message-Id: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Linux 6.15-rc3
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Dave Airlie <airlied@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Sebastian Sewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
- <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
- <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: F0795211A8
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux.dev,linutronix.de,linux-foundation.org];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHaTCGgC/x3MPQqAMAwG0KtIZgM1+H8VcRD7qVm0pCKCeHeL4
+ 1veQxGmiNRnDxkujXrsCUWe0bxN+wpWn0zipHKlCK9Bj3nTwBEn2/Wbw2SncAPxtUNX+xaUgmB
+ Y9P7zYXzfDxJIbI9sAAAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1756;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=P8T6A2RfhQi9cs8jlDhrwJia7IeYiHPIj6iHNUhHRRs=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCJN9PtDzo6pQhpJrIbuv3TgdhcsxmnoGxcbPW
+ lRtYYU14zeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAiTfQAKCRARpy6gFHHX
+ creZD/4wB84rig0XgfTyX7mc6x1ZYJw3YX7GCsmp8eACazubUCcNQBQO4dD9X2QWoeyiZr9sNj0
+ kG9snhzeXa0Tvzh5T2gedGUErStlmEEtNkjAjWsaq9hswKDrmsuc/mKcA5qWrkhvkLhcc/Pbj12
+ cpxHdFxDAASelR4triAIaQu18P1ZQp2Vj8paAhxBlPEaCPy8hUL0e4FYVMB1Fv6j4lrnLuw73xB
+ Mokir5p0P2mOSlg7jZ1KDABtZMRJ3CPkcRtQNnaeOTtbw+iMAeR5G1DDptYOQFchClFJcz/xL3c
+ GPMzwOimJLewFHGUaLNPOD++aD3pgcAdTPjwEFrbnawGcOeo9aVVaHTLh6A6y/5IzUup2dND530
+ zgLyZAtdQ1aYqwT43bhc5q8GGZbwkhi44RrPiO6wbxV+nySlux9Qeik/KNe/sCId8qpryzVd1ZS
+ eWLn8FftriS0QGv8+xltz/TLVnEDjrxdGBl/xTpUgFPtY9cEsdvhi/cOJu+CgO1aX6HcCbfRbOo
+ DMzzTyiMPndixsvtLUQBW71OgMqChX+LF/Ti24nk6z4tzcBW1oeIArw4ew5oJv7DacVyy+DdDTi
+ z2Oe6DeVscjg4pu7aChY2RpA1zzxwUS7QhJ3BDJZGw7UjNPoDfYoRHSX/kMd+8zwZFidXAVhwUI
+ bR7t8EKz9jVunow==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On 4/23/25 01:37, Alexei Starovoitov wrote:
-> On Tue, Apr 22, 2025 at 4:01 PM Dave Airlie <airlied@gmail.com> wrote:
->>
->> > Alexei Starovoitov (2):
->> >       locking/local_lock, mm: replace localtry_ helpers with
->> > local_trylock_t type
->>
->> This seems to have upset some phoronix nginx workload
->> https://www.phoronix.com/review/linux-615-nginx-regression/2
-> 
-> 3x regression? wow.
-> Thanks for heads up.
-> I'm staring at the patch and don't see it.
-> Adding more experts.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of
+converting all GPIO drivers to using the new API. This series converts
+another round of GPIO controllers.
 
-Incidentally my work on slab sheaves using local_trylock() got to a phase
-yesterday when after rebasing on rc3 and some refactoring I was looking at
-sheaf stats that showed the percpu sheaves were used exactly once per cpu,
-and other attempts failed. Which would be explained by local_trylock()
-failing. In the context of rc3 itself it would mean the memcg stocks aren't
-used at all because they can't be try-locked. Which could make benchmarks
-unhappy of course, although surprising that it would be that much.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (12):
+      gpio: imx-scu: don't check the GPIO range
+      gpio: imx-scu: use lock guards
+      gpio: imx-scu: destroy the mutex in detach path
+      gpio: imx-scu: use new line value setter callbacks
+      gpio: it87: use new line value setter callbacks
+      gpio: janz-ttl: use new line value setter callbacks
+      gpio: kempld: use new line value setter callbacks
+      gpio: ljca: use new line value setter callbacks
+      gpio: logicvc: use new line value setter callbacks
+      gpio: loongson-64bit: use new line value setter callbacks
+      gpio: loongson: use new line value setter callbacks
+      gpio: lp3943: use new line value setter callbacks
 
-What I suspect now is the _Generic() part doesn't work as expected. So consider:
+ drivers/gpio/gpio-imx-scu.c        | 47 +++++++++++++++++---------------------
+ drivers/gpio/gpio-it87.c           | 11 +++++----
+ drivers/gpio/gpio-janz-ttl.c       |  6 +++--
+ drivers/gpio/gpio-kempld.c         |  7 ++++--
+ drivers/gpio/gpio-ljca.c           | 13 +++++++----
+ drivers/gpio/gpio-logicvc.c        | 11 ++++-----
+ drivers/gpio/gpio-loongson-64bit.c |  6 +++--
+ drivers/gpio/gpio-loongson.c       |  8 ++++---
+ drivers/gpio/gpio-lp3943.c         | 13 +++++++----
+ 9 files changed, 69 insertions(+), 53 deletions(-)
+---
+base-commit: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
+change-id: 20250422-gpiochip-set-rv-gpio-part2-7e2d60e96d8e
 
-local_trylock() (or _irqsave variant) has no _Generic() part, does the
-"if (READ_ONCE(tl->acquired))" and "WRITE_ONCE(tl->acquired, 1)" directly,
-succeeds the first attempt on each cpu where executed.
-
-local_unlock() goes via __local_lock_release() and since the _Generic() part
-there doesn't work, we don't do WRITE_ONCE(tl->acquired, 0); so it stays 1.
-
-preempt or irq handling is fine so nothing like lockdep, preempt debugging,
-watchdogs gets suspicious, just the cpu can never succeed local_trylock() again
-
-local_lock(_irqsave()) uses __local_lock_acquire() which also has a
-_Generic() part but since it doesn't work, the "lockdep_assert(tl->acquired
-== 0);" there isn't triggered either
-
-In fact I've put BUG() in the _Generic() sections of _acquire() and _release()
-and it didn't trigger, which would prove the code isn't executed. But I don't
-know why _Generic() doesn't recognize the correct type there.
-
---- a/include/linux/local_lock_internal.h
-+++ b/include/linux/local_lock_internal.h
-@@ -104,6 +104,7 @@ do {                                                                \
-                _Generic((lock),                                        \
-                        local_trylock_t *: ({                           \
-                                lockdep_assert(tl->acquired == 0);      \
-+                               BUG();                                  \
-                                WRITE_ONCE(tl->acquired, 1);            \
-                        }),                                             \
-                        default:(void)0);                               \
-@@ -173,6 +174,7 @@ do {                                                                \
-                _Generic((lock),                                        \
-                        local_trylock_t *: ({                           \
-                                lockdep_assert(tl->acquired == 1);      \
-+                               BUG();                                  \
-                                WRITE_ONCE(tl->acquired, 0);            \
-                        }),                                             \
-                        default:(void)0);                               \
-
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
