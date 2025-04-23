@@ -1,83 +1,168 @@
-Return-Path: <linux-kernel+bounces-617034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D60EA9999B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A29A999A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94FE87A7A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:45:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC847A8319
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7F22686A2;
-	Wed, 23 Apr 2025 20:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150226B2DF;
+	Wed, 23 Apr 2025 20:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8EnpIoe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="K0BKg295"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259141A2389;
-	Wed, 23 Apr 2025 20:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90861A2389
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745441202; cv=none; b=tVmp8u5VVXz3K745P2uF1OYZOgm0OEEDWg4GDzHqI12CjyOuvOOFyntVS+7H/IEuD+5Vyho4na6Ny4SbLTLhj/Qbr6ty1aVrClCzZMoX5pq1ptUoZdKX3j3tn3QOlg2tDlF6iCiVa69Skw0qwek+q/IarioQCRDzzBKTUqsPDZ0=
+	t=1745441244; cv=none; b=PIt6+1TFGI7jGi3noKWqi3ZPyzz448wycFBtlnKbU0X3QYf1HdH/4u8CdMKPdUVfq/PAyTJnhqeXeVvPBBUJZSsxvnhl6IfciAoytQoR4lx3DcmAyXyTDj+lt37dtEbTRMBiR1oGslvwR0kf4lv1HTMaV9UzQaRXuJRvDgRLeeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745441202; c=relaxed/simple;
-	bh=IoHj0h5hlZiOLUVsZqvtZr3MiQxq7erpybqB+GSMXNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koQrhFzWauzP1FxVTv5XC7EQhPmpquRY00H8gO8Lmw+18gFWb+toR++a40sck/srthCorbi4j/045sgPnOJIWmFIV+fDgoZHZ44Nc5HiCj3GCKa/ANJJ6rf2mOlIOD13cuqWPMJIF8PdFuX7cs7i7v8IXSAQydCwHp4FdiZ47Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8EnpIoe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14132C4CEE2;
-	Wed, 23 Apr 2025 20:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745441199;
-	bh=IoHj0h5hlZiOLUVsZqvtZr3MiQxq7erpybqB+GSMXNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I8EnpIoeAtRwuZEg/pPsDRY5ZxB5+VlM8mPKJ/10zNi9rfnzuJxO7bOtt4zn7QYCz
-	 zglLXDaUjVrT7sxxzxjP9ZRkBfnhUGbd5y0BKl1o00lB7PLC35+1gQxZTh+BPYq+3P
-	 foYIze2nSoFgtQcVF50NICBeaczuTC078Qo5xSE8wvzzyKS9r+gl3rQyAmcXk4SR3v
-	 tgAkU/7rRNMq7Sd+mfCG3Sv4FeICykM/hLEyBmDi0vU867bjGAVFsYXMBCog70lFAs
-	 45MOtARWIqJC4KE9IXHyykImor/D2mlpCGMkA27q6zNDY8oj5TIlnPRoRmGgCzYf8Y
-	 8UddeegnRwnSQ==
-Date: Wed, 23 Apr 2025 17:46:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 0/4] perf report: Support custom output fields in
- hierarchy mode
-Message-ID: <aAlRrFyNFQNyFhA0@x1>
-References: <20250331073722.4695-1-namhyung@kernel.org>
+	s=arc-20240116; t=1745441244; c=relaxed/simple;
+	bh=9o+fog/E8/Y/Ep3sI6pTRlp7waYxHqWZlzLlUSvxIbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BA2AXTp//6dFIiuCnP30TPqw1sf8Dk20QtLuUKSb4qixJP1euODhthUWgAU4vYZlVDmbA4biAX0MJZqmBCZWx8qsG66hjR3fT0jCJJboVQ+dRFwxFT3S1tmkqus8ANG2bG5cG2xEMpjMPAhipztRZbMNTsgz7ED9FGxYOJIr+ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=K0BKg295; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-aee773df955so1274301a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1745441242; x=1746046042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qadNYoaJhFPVnikI7MqGvzeOQWIRrwJCqdY+2xJb3Ik=;
+        b=K0BKg2958DiU4hWdg/ztCOoAJvYPW3CMDZWb+ZwOdV6Vl9Pv5dXsC/jmzEMVjtPXBB
+         gHX+Xdkfw0E6jHzenQLnmmZkOTn8LG6zIg3qudIRXqOpWNqOQgUBOQJrAf9UIBrL5OLf
+         LZeEWySKA3ix1BiFJxTB28jx3On+Wq0TN+eXE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745441242; x=1746046042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qadNYoaJhFPVnikI7MqGvzeOQWIRrwJCqdY+2xJb3Ik=;
+        b=w27Zss6fCv5cB/biDgjPLfJrFalHEDOz6hgiUBVlp6zjs0YsFmLoumt5jWKO+6Y7qi
+         spa4qf4NtSrv+I8OFljv6zEQiXTgx/TjjUwz2k72bmhIyaMcYlm0Dmz2ImQ+UQxw7xSW
+         6vb4zepLZbsGXSQ9dNNC/WW2IDMq7F+E3W43e1lCJA/+ZrK3XA0+O6q0AgrYu8EJpqyI
+         wKwqaNkgpPp3ihFwP9mMdqF1zcz1lHdvQEvJ23pcCCNn2wrsUUe2JGvCgoZUgyt7MZOO
+         qN6i67NdTwwTX2r/TdDR3E7REHxpeINEWDmNpSRaIf+1J8Gm13jpxLry+LAwHLXsbLlr
+         za7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX6eFNFKif4Av6YjOn3iA+wb7yJCw0TRx0LcZsRJzBqdulYOilRT2ankcfq/7yPXnDxBhyaWrBS7i4joho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6b6t2qaOlf4hx8a67kr17bSpKksMzFyh/bNSM+Eue58bk3dT+
+	gILcocXPQUgjk/JmI3+1RN4tnjG/8meDFChASTLGKKS/WRZ7d31U1P6AyS5QDwg=
+X-Gm-Gg: ASbGncstJ5miiQ0OgKAtvzzU2m+7haBCWx/TfzoFpIw0R4gwcsnDJE0wN4hiUumewhT
+	Z/ewmI+a7AOAiXJNf837W/IX32MTBT93RYzwU+iKkyfJemYPU59ZFYbNRGmvIvBaqmaKUDQ+tDx
+	eku2oDWbX9fOPshOgLX2/6qnsGzOOnNbam38riSOlbjtFzhzaFgriqmcQn/60VbbL5mQeofz/Uy
+	drdkoSt0EvkkJgPtRUXTUQyDrTgDBy8GPLJtGvOsg9GqH5K80rcIsjhqRQ64acElF+6XLRUSJJj
+	cN+4W0B3agrxTBKtsGZSPHwA7oKTp5yqBE7kZaynSGVpm1iMoGLfPxQBAWU=
+X-Google-Smtp-Source: AGHT+IF5+OdbC6uuNEBaPHTOjQ76F8Y9VNe3wZx/cneGiXQy2TYO2E3fpZtgPx1i/wPR7pX74IsDUw==
+X-Received: by 2002:a17:90b:2801:b0:2f1:2e10:8160 with SMTP id 98e67ed59e1d1-309edab1bd7mr1408a91.11.1745441241864;
+        Wed, 23 Apr 2025 13:47:21 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309e0d09cacsm2120908a91.49.2025.04.23.13.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 13:47:21 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: kuba@kernel.org,
+	donald.hunter@gmail.com,
+	Joe Damato <jdamato@fastly.com>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Hao Luo <haoluo@google.com>,
+	Tejun Heo <tj@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tools/Makefile: Add ynl target
+Date: Wed, 23 Apr 2025 20:46:44 +0000
+Message-ID: <20250423204647.190784-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331073722.4695-1-namhyung@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 31, 2025 at 12:37:18AM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> This is to remove arbitrary restrictions in the hierarchy mode.
-> 
-> The -F/--fields option is to specify output fields and sort keys in perf
-> report exactly what users want.  It was not allowed in the hierarchy mode
-> because it missed to handle the field correctly.
-> 
-> This patchset addresses that problem and allows the option.  It'd make
-> the output more flexible.  For example, this is possible:
-> 
->   $ perf report -F overhead,comm,dso -H
+Add targets to build, clean, and install ynl headers, libynl.a, and
+python tooling.
 
-Thanks, tested and applied to perf-tools-next.
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+---
+ tools/Makefile | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-- Arnaldo
+diff --git a/tools/Makefile b/tools/Makefile
+index 5e1254eb66de..c31cbbd12c45 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -41,6 +41,7 @@ help:
+ 	@echo '  mm                     - misc mm tools'
+ 	@echo '  wmi			- WMI interface examples'
+ 	@echo '  x86_energy_perf_policy - Intel energy policy tool'
++	@echo '  ynl			- ynl headers, library, and python tool'
+ 	@echo ''
+ 	@echo 'You can do:'
+ 	@echo ' $$ make -C tools/ <tool>_install'
+@@ -118,11 +119,14 @@ freefall: FORCE
+ kvm_stat: FORCE
+ 	$(call descend,kvm/$@)
+ 
++ynl: FORCE
++	$(call descend,net/ynl)
++
+ all: acpi counter cpupower gpio hv firewire \
+ 		perf selftests bootconfig spi turbostat usb \
+ 		virtio mm bpf x86_energy_perf_policy \
+ 		tmon freefall iio objtool kvm_stat wmi \
+-		debugging tracing thermal thermometer thermal-engine
++		debugging tracing thermal thermometer thermal-engine ynl
+ 
+ acpi_install:
+ 	$(call descend,power/$(@:_install=),install)
+@@ -157,13 +161,16 @@ freefall_install:
+ kvm_stat_install:
+ 	$(call descend,kvm/$(@:_install=),install)
+ 
++ynl_install:
++	$(call descend,net/$(@:_install=),install)
++
+ install: acpi_install counter_install cpupower_install gpio_install \
+ 		hv_install firewire_install iio_install \
+ 		perf_install selftests_install turbostat_install usb_install \
+ 		virtio_install mm_install bpf_install x86_energy_perf_policy_install \
+ 		tmon_install freefall_install objtool_install kvm_stat_install \
+ 		wmi_install debugging_install intel-speed-select_install \
+-		tracing_install thermometer_install thermal-engine_install
++		tracing_install thermometer_install thermal-engine_install ynl_install
+ 
+ acpi_clean:
+ 	$(call descend,power/acpi,clean)
+@@ -214,12 +221,15 @@ freefall_clean:
+ build_clean:
+ 	$(call descend,build,clean)
+ 
++ynl_clean:
++	$(call descend,net/$(@:_clean=),clean)
++
+ clean: acpi_clean counter_clean cpupower_clean hv_clean firewire_clean \
+ 		perf_clean selftests_clean turbostat_clean bootconfig_clean spi_clean usb_clean virtio_clean \
+ 		mm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+ 		freefall_clean build_clean libbpf_clean libsubcmd_clean \
+ 		gpio_clean objtool_clean leds_clean wmi_clean firmware_clean debugging_clean \
+ 		intel-speed-select_clean tracing_clean thermal_clean thermometer_clean thermal-engine_clean \
+-		sched_ext_clean
++		sched_ext_clean ynl_clean
+ 
+ .PHONY: FORCE
+
+base-commit: 45bd443bfd8697a7da308c16c3e75e2bb353b3d1
+-- 
+2.43.0
+
 
