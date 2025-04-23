@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-617206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278B6A99C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:47:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71543A99C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF77188E0E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E69B3ADF33
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6EB25EF9C;
-	Wed, 23 Apr 2025 23:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A6A262FE6;
+	Wed, 23 Apr 2025 23:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBDQmxkl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxHPGqLW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F9238C3B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C9F2620C3
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745451956; cv=none; b=d21j0p+maSsFRBScO8Hn5HVB8EtPt7VwnoUQ893+sgYmPO5/5o3htKwkrW2YkBGFvsonDsFFjtaReGgXDpndPUjrui6lsiuRH9IeluSJqcJn2VoGti3s1dfPMqdIx5XilBPXxzNZMe4tivF6omGefjXxQutNR2eF2sZObXiNCoI=
+	t=1745451957; cv=none; b=ra2ordl530/2ZOD4tLOzbuRWHHGUfATNB929+NZy5SsSwN1z3MO02t5ao78rhvS/eoIt4W7P2R7FwrdpPRUes/1Zk1LFA8SQcXFBLA8r/sRJZD+M/KxrPbvcjAofKcOCpSN6z1im2OsDqjKmAlPggW79gKBZlgU5rZxzVbTZ5iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745451956; c=relaxed/simple;
-	bh=x6NrtwdNtLnBFOpOdGrx+xkfceVTGm3Et04NTYLcIRY=;
+	s=arc-20240116; t=1745451957; c=relaxed/simple;
+	bh=Y6fptssCVzF+ZMR09N+MM95qFggzX5ES4xLOV4h9IQo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nXcLzdYp3uvsHGyhEie0NiIqO6fA35rNjXSsp0KefnjZ86bqYoKLrQBweY5GqMT+fSfKfh+06vzmjXIcso2PDFgnhMP5OAJ17LBGf3txL/7FdyYYdJZYAPv335FaO+x9zDnxDcopHLpZgHxTGTgmoG+1uu9L7aG00t68DrG4PVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBDQmxkl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43B12C4CEE2;
-	Wed, 23 Apr 2025 23:45:55 +0000 (UTC)
+	 MIME-Version; b=V8RzdS+rSXgurTCIAU5n3ojN4lZpsgxlOsFQrAlWilCkS9K6F4gY3MY3xzcoeaiyy0nftp4Wv7v1ns100juTV3Qwx1YfTNJY8sRUBGHtVG+TGADoScjvr7iX/0qdXg/G3WNjSPw7VY6h2UePqJwSSh8qS1AUfVAZiz99EWN6TJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxHPGqLW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFE2C4CEEA;
+	Wed, 23 Apr 2025 23:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745451955;
-	bh=x6NrtwdNtLnBFOpOdGrx+xkfceVTGm3Et04NTYLcIRY=;
+	s=k20201202; t=1745451956;
+	bh=Y6fptssCVzF+ZMR09N+MM95qFggzX5ES4xLOV4h9IQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OBDQmxklcuykedHnrDtM57RinczpzrEM1rBXQEJg2dITM2TTz9moqVE2Vkb8k6TZA
-	 tV/sxue6scVgkYEbZbXOSvJuCzW+gfUjUJ+6dnYBaEnVZQppecFWOvV+URTOqPcteu
-	 yNyAS84m9jZOUpmmiruZks+qOGPZiRTBEnwEbmZZEPimtKOVWOANksFdx0Po+aNzOF
-	 l9jYiVb/UM9cXqqq4DZyAJ7uA088NawYzLSQ1pzAnOi8vGC86PPVNJHZLuuKLfwDJ/
-	 u5v1Bz2qmRmr4jonV1OKQmch3Ahw49HJx0iY0eFPJzhrr1VzRt6VQ4BznTJv3tgoNZ
-	 PtZyQiIXrjQ0w==
+	b=JxHPGqLWgQZfOl8zB6KXsAyKwnYl3oF3DM71ElRN7oyb3nqmO5YCq2247sa8c9Yeo
+	 2FjsgfE1Yir7QkXOCbz99Wk7gSow5dSv95aU+MIiqyCFSLIbYvTr+9luRAmKo5RqPy
+	 WHUrejURAM2EZyy4RDlzx9N3UTrMP4khMzDaT7BltssZ8PzmVIG0TZCoNlHXByovzs
+	 kmJjYxzIw4n8mbeABe+WedmRu+J8Bu7hZqPxOK1pxUWCqQhKZNxjItcmf5xm/wpRiC
+	 ynIQSL5c9TsGDiFiG7BqjCeQm9i08xEDPP0j4+ybTqIoOgyDup3l0f5zS+DlDM9fcs
+	 w7HEMt+Ci+tvg==
 From: Tejun Heo <tj@kernel.org>
 To: David Vernet <void@manifault.com>,
 	Andrea Righi <arighi@nvidia.com>,
 	Changwoo Min <changwoo@igalia.com>,
 	linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>
-Subject: [PATCH 07/12] sched_ext: Move global_dsqs into scx_sched
-Date: Wed, 23 Apr 2025 13:44:45 -1000
-Message-ID: <20250423234542.1890867-8-tj@kernel.org>
+Subject: [PATCH 08/12] sched_ext: Relocate scx_event_stats definition
+Date: Wed, 23 Apr 2025 13:44:46 -1000
+Message-ID: <20250423234542.1890867-9-tj@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250423234542.1890867-1-tj@kernel.org>
 References: <20250423234542.1890867-1-tj@kernel.org>
@@ -60,205 +60,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Global DSQs are going to become per scheduler instance. Move global_dsqs
-into scx_sched. find_global_dsq() already takes a task_struct pointer as an
-argument and should later be able to determine the scx_sched to use from
-that. For now, assume scx_root.
+In prepration of moving event_stats_cpu into scx_sched, move scx_event_stats
+definitions above scx_sched definition. No functional changes.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/sched/ext.c | 95 ++++++++++++++++++++++++----------------------
- 1 file changed, 49 insertions(+), 46 deletions(-)
+ kernel/sched/ext.c | 114 ++++++++++++++++++++++-----------------------
+ 1 file changed, 57 insertions(+), 57 deletions(-)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index a086b024301f..5beb2dd868ad 100644
+index 5beb2dd868ad..244ccf134cee 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -767,7 +767,17 @@ struct scx_sched {
+@@ -763,6 +763,63 @@ enum scx_opi {
+ 	SCX_OPI_END			= SCX_OP_IDX(init),
+ };
+ 
++/*
++ * Collection of event counters. Event types are placed in descending order.
++ */
++struct scx_event_stats {
++	/*
++	 * If ops.select_cpu() returns a CPU which can't be used by the task,
++	 * the core scheduler code silently picks a fallback CPU.
++	 */
++	s64		SCX_EV_SELECT_CPU_FALLBACK;
++
++	/*
++	 * When dispatching to a local DSQ, the CPU may have gone offline in
++	 * the meantime. In this case, the task is bounced to the global DSQ.
++	 */
++	s64		SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE;
++
++	/*
++	 * If SCX_OPS_ENQ_LAST is not set, the number of times that a task
++	 * continued to run because there were no other tasks on the CPU.
++	 */
++	s64		SCX_EV_DISPATCH_KEEP_LAST;
++
++	/*
++	 * If SCX_OPS_ENQ_EXITING is not set, the number of times that a task
++	 * is dispatched to a local DSQ when exiting.
++	 */
++	s64		SCX_EV_ENQ_SKIP_EXITING;
++
++	/*
++	 * If SCX_OPS_ENQ_MIGRATION_DISABLED is not set, the number of times a
++	 * migration disabled task skips ops.enqueue() and is dispatched to its
++	 * local DSQ.
++	 */
++	s64		SCX_EV_ENQ_SKIP_MIGRATION_DISABLED;
++
++	/*
++	 * Total number of times a task's time slice was refilled with the
++	 * default value (SCX_SLICE_DFL).
++	 */
++	s64		SCX_EV_REFILL_SLICE_DFL;
++
++	/*
++	 * The total duration of bypass modes in nanoseconds.
++	 */
++	s64		SCX_EV_BYPASS_DURATION;
++
++	/*
++	 * The number of tasks dispatched in the bypassing mode.
++	 */
++	s64		SCX_EV_BYPASS_DISPATCH;
++
++	/*
++	 * The number of times the bypassing mode has been activated.
++	 */
++	s64		SCX_EV_BYPASS_ACTIVATE;
++};
++
+ struct scx_sched {
  	struct sched_ext_ops	ops;
  	DECLARE_BITMAP(has_op, SCX_OPI_END);
- 
-+	/*
-+	 * Dispatch queues.
-+	 *
-+	 * The global DSQ (%SCX_DSQ_GLOBAL) is split per-node for scalability.
-+	 * This is to avoid live-locking in bypass mode where all tasks are
-+	 * dispatched to %SCX_DSQ_GLOBAL and all CPUs consume from it. If
-+	 * per-node split isn't sufficient, it can be further split.
-+	 */
- 	struct rhashtable	dsq_hash;
-+	struct scx_dispatch_q	**global_dsqs;
-+
- 	bool			warned_zero_slice;
- 
- 	atomic_t		exit_kind;
-@@ -998,16 +1008,6 @@ static unsigned long __percpu *scx_kick_cpus_pnt_seqs;
-  */
- static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
+@@ -1539,63 +1596,6 @@ static struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
+ 	return p;
+ }
  
 -/*
-- * Dispatch queues.
-- *
-- * The global DSQ (%SCX_DSQ_GLOBAL) is split per-node for scalability. This is
-- * to avoid live-locking in bypass mode where all tasks are dispatched to
-- * %SCX_DSQ_GLOBAL and all CPUs consume from it. If per-node split isn't
-- * sufficient, it can be further split.
+- * Collection of event counters. Event types are placed in descending order.
 - */
--static struct scx_dispatch_q **global_dsqs;
+-struct scx_event_stats {
+-	/*
+-	 * If ops.select_cpu() returns a CPU which can't be used by the task,
+-	 * the core scheduler code silently picks a fallback CPU.
+-	 */
+-	s64		SCX_EV_SELECT_CPU_FALLBACK;
 -
- static const struct rhashtable_params dsq_hash_params = {
- 	.key_len		= sizeof_field(struct scx_dispatch_q, id),
- 	.key_offset		= offsetof(struct scx_dispatch_q, id),
-@@ -1108,7 +1108,9 @@ static bool u32_before(u32 a, u32 b)
- 
- static struct scx_dispatch_q *find_global_dsq(struct task_struct *p)
- {
--	return global_dsqs[cpu_to_node(task_cpu(p))];
-+	struct scx_sched *sch = scx_root;
-+
-+	return sch->global_dsqs[cpu_to_node(task_cpu(p))];
- }
- 
- static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
-@@ -2785,11 +2787,11 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- 	return false;
- }
- 
--static bool consume_global_dsq(struct rq *rq)
-+static bool consume_global_dsq(struct scx_sched *sch, struct rq *rq)
- {
- 	int node = cpu_to_node(cpu_of(rq));
- 
--	return consume_dispatch_q(rq, global_dsqs[node]);
-+	return consume_dispatch_q(rq, sch->global_dsqs[node]);
- }
- 
- /**
-@@ -3035,7 +3037,7 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
- 	if (rq->scx.local_dsq.nr)
- 		goto has_tasks;
- 
--	if (consume_global_dsq(rq))
-+	if (consume_global_dsq(sch, rq))
- 		goto has_tasks;
- 
- 	if (unlikely(!SCX_HAS_OP(scx_root, dispatch)) ||
-@@ -3065,7 +3067,7 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
- 		}
- 		if (rq->scx.local_dsq.nr)
- 			goto has_tasks;
--		if (consume_global_dsq(rq))
-+		if (consume_global_dsq(sch, rq))
- 			goto has_tasks;
- 
- 		/*
-@@ -4406,6 +4408,11 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
- 	struct scx_sched *sch = container_of(rcu_work, struct scx_sched, rcu_work);
- 	struct rhashtable_iter rht_iter;
- 	struct scx_dispatch_q *dsq;
-+	int node;
-+
-+	for_each_node_state(node, N_POSSIBLE)
-+		kfree(sch->global_dsqs[node]);
-+	kfree(sch->global_dsqs);
- 
- 	rhashtable_walk_enter(&sch->dsq_hash, &rht_iter);
- 	do {
-@@ -5244,7 +5251,7 @@ static struct kthread_worker *scx_create_rt_helper(const char *name)
- static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
- {
- 	struct scx_sched *sch;
--	int ret;
-+	int node, ret;
- 
- 	sch = kzalloc(sizeof(*sch), GFP_KERNEL);
- 	if (!sch)
-@@ -5260,16 +5267,40 @@ static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
- 	if (ret < 0)
- 		goto err_free_ei;
- 
-+	sch->global_dsqs = kcalloc(nr_node_ids, sizeof(sch->global_dsqs[0]),
-+				   GFP_KERNEL);
-+	if (!sch->global_dsqs) {
-+		ret = -ENOMEM;
-+		goto err_free_hash;
-+	}
-+
-+	for_each_node_state(node, N_POSSIBLE) {
-+		struct scx_dispatch_q *dsq;
-+
-+		dsq = kzalloc_node(sizeof(*dsq), GFP_KERNEL, node);
-+		if (!dsq) {
-+			ret = -ENOMEM;
-+			goto err_free_gdsqs;
-+		}
-+
-+		init_dsq(dsq, SCX_DSQ_GLOBAL);
-+		sch->global_dsqs[node] = dsq;
-+	}
-+
- 	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
- 	sch->ops = *ops;
- 
- 	sch->kobj.kset = scx_kset;
- 	ret = kobject_init_and_add(&sch->kobj, &scx_ktype, NULL, "root");
- 	if (ret < 0)
--		goto err_free_hash;
-+		goto err_free_gdsqs;
- 
- 	return sch;
- 
-+err_free_gdsqs:
-+	for_each_node_state(node, N_POSSIBLE)
-+		kfree(sch->global_dsqs[node]);
-+	kfree(sch->global_dsqs);
- err_free_hash:
- 	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
- err_free_ei:
-@@ -5331,7 +5362,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 	struct scx_task_iter sti;
- 	struct task_struct *p;
- 	unsigned long timeout;
--	int i, cpu, node, ret;
-+	int i, cpu, ret;
- 
- 	if (!cpumask_equal(housekeeping_cpumask(HK_TYPE_DOMAIN),
- 			   cpu_possible_mask)) {
-@@ -5358,34 +5389,6 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 		}
- 	}
- 
--	if (!global_dsqs) {
--		struct scx_dispatch_q **dsqs;
+-	/*
+-	 * When dispatching to a local DSQ, the CPU may have gone offline in
+-	 * the meantime. In this case, the task is bounced to the global DSQ.
+-	 */
+-	s64		SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE;
 -
--		dsqs = kcalloc(nr_node_ids, sizeof(dsqs[0]), GFP_KERNEL);
--		if (!dsqs) {
--			ret = -ENOMEM;
--			goto err_unlock;
--		}
+-	/*
+-	 * If SCX_OPS_ENQ_LAST is not set, the number of times that a task
+-	 * continued to run because there were no other tasks on the CPU.
+-	 */
+-	s64		SCX_EV_DISPATCH_KEEP_LAST;
 -
--		for_each_node_state(node, N_POSSIBLE) {
--			struct scx_dispatch_q *dsq;
+-	/*
+-	 * If SCX_OPS_ENQ_EXITING is not set, the number of times that a task
+-	 * is dispatched to a local DSQ when exiting.
+-	 */
+-	s64		SCX_EV_ENQ_SKIP_EXITING;
 -
--			dsq = kzalloc_node(sizeof(*dsq), GFP_KERNEL, node);
--			if (!dsq) {
--				for_each_node_state(node, N_POSSIBLE)
--					kfree(dsqs[node]);
--				kfree(dsqs);
--				ret = -ENOMEM;
--				goto err_unlock;
--			}
+-	/*
+-	 * If SCX_OPS_ENQ_MIGRATION_DISABLED is not set, the number of times a
+-	 * migration disabled task skips ops.enqueue() and is dispatched to its
+-	 * local DSQ.
+-	 */
+-	s64		SCX_EV_ENQ_SKIP_MIGRATION_DISABLED;
 -
--			init_dsq(dsq, SCX_DSQ_GLOBAL);
--			dsqs[node] = dsq;
--		}
+-	/*
+-	 * Total number of times a task's time slice was refilled with the
+-	 * default value (SCX_SLICE_DFL).
+-	 */
+-	s64		SCX_EV_REFILL_SLICE_DFL;
 -
--		global_dsqs = dsqs;
--	}
+-	/*
+-	 * The total duration of bypass modes in nanoseconds.
+-	 */
+-	s64		SCX_EV_BYPASS_DURATION;
 -
- 	if (scx_enable_state() != SCX_DISABLED) {
- 		ret = -EBUSY;
- 		goto err_unlock;
+-	/*
+-	 * The number of tasks dispatched in the bypassing mode.
+-	 */
+-	s64		SCX_EV_BYPASS_DISPATCH;
+-
+-	/*
+-	 * The number of times the bypassing mode has been activated.
+-	 */
+-	s64		SCX_EV_BYPASS_ACTIVATE;
+-};
+-
+ /*
+  * The event counter is organized by a per-CPU variable to minimize the
+  * accounting overhead without synchronization. A system-wide view on the
 -- 
 2.49.0
 
