@@ -1,175 +1,131 @@
-Return-Path: <linux-kernel+bounces-615924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54339A9842D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F19A98494
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374711885DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69E197A254A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFA1C3BEB;
-	Wed, 23 Apr 2025 08:52:23 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22E8242D63;
+	Wed, 23 Apr 2025 09:03:32 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9362701B3;
-	Wed, 23 Apr 2025 08:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0F721FF47;
+	Wed, 23 Apr 2025 09:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745398343; cv=none; b=fJVE0oG9HfO4wEEj/7U9RImIIGqyXH58s6fLKXXfnZ0pLO622NgZvJBRPlJtvju6RTpURQZ8wWJxVcvqPNpl/zTHwzjw1hLX3mRow+iPru8klGgshqFd3/rk8Z7SgMFrtJt7+e7SQsI8fLUiNTrv4EBPXprw9bnYLslzTbo30p4=
+	t=1745399012; cv=none; b=NMbGmMVvTBZr0t5/QpGWKCe88bOSyNbesfN7BBLs2M7F4AmRleVKjpYW56m+WDNcJbnC8QNxl4pw318m+QWvGuWAnD0pZY8Ex43J4QpzMEX6LjLjLzV+tDRemJc3E2Oa2MY7BBp4RmgskioK6xlRgfkcGU4JJArrYZjD36uM9HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745398343; c=relaxed/simple;
-	bh=ZT+aTcDj6n7xgMSrVmH50CHyTSXx7NxekjQJ77DmiUw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1TQnXIQAvFSSlbnR5VJ6J4HPQqCZiz+ep4D3P0f+ImFFZVbfa4+B70004bVD68A+jU+/oEnDREhr+qAOr558LjoONlnRnhAliI0pHNLz4ryu4R02UlwtxDyuiQM6OmFi8W1HixbDbQgM6RhbzBbZdXDg58tgwiKK84b3CIw2u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so2205242e0c.0;
-        Wed, 23 Apr 2025 01:52:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745398340; x=1746003140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NNzLMhAwEW1BPiNK9bNE9/7Jt7OBYMaBTaiFgrT60mM=;
-        b=QfzgZeFLqfpVRsAoj2mctYF9vI3QJOUA3ew5pEA5WCgezM71prXuBKiEDJ6a2zNCf9
-         +wFDMD1ZMFaBghL1ilULmCmAnV/RUvpZtForMA7UCRcN8fYGqFDDVDthroD1VBjJQe9p
-         DNZBxpMqnr12Dp9jzBoS9wUXnGl5aahGP2pJ9RTGc27zwOr4MYXEdnRSeg0miAt59SvN
-         Bfoj8nXPF7K5quiWK9jwvdQseG8XDEdHQBRSR5wUOwTyF8nSqkk3yT/ZWG929e27S+0F
-         SoTQP/p5DHAl3fadFF3+q0Z7GLUJ62CGdt25ptLmwmN0FjwFpQ8JAVFm9QRSeurWklm0
-         pdJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaApltNSXHi+2gSERVjbzKS8pFc0Rh/RTQ/7EzWMW/NBtxpxl5rJ54wseU8t7uggRTGSp1GKO0aEMsyxu4rKvo1QA=@vger.kernel.org, AJvYcCW83BD3YJHIf52odiu7XSj+OGFcMHXSmmzuc+ApPWGigbIRWwQB5dbnuHBhhYvS6IJ0kWR6ZRFn0wKF0Nn7@vger.kernel.org, AJvYcCWZTJ/XBkvFWznufKD/wmjQF9eWNtH8gUf0lPQqGB8th4SHN6skwpQm8TuUYE30xGhL/scJ+4m1vdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjii8uCY9ds/9aAJ5el6jIXTM7aFgmoMSsnn2Fmh3wGW5bLTsl
-	2m6ilphADJaBUYS6cnk+2LpKhGrk8KUqj/Ft2o8UhXwtoW6fMJ1rxm82RsjIv/M=
-X-Gm-Gg: ASbGncuF/KoQp3GzltVymTrkd8CtVQMJEKzGNAXbOYykaJx1G7R//4KKIZu2Ki5IYZW
-	Ct5hhvbPHktjdC6nHwWIE2KS9BUy6QMOOrvrhRjyFskp47pxxX8M5iBXNq0ATw/hdUu6M/+Moeb
-	PdwCUkc0rO2rhDrI3s5EEDokxIsQjFj5YSr3gCgVRwP9AhLmyHgcibvK5o3xxxQrVDHgoQWnwmb
-	go6gPdPJQ5w6j5UF7YbZipb9M0cRDFLL9Bh+v68swzu0XyCa57z6XGoRJwDHq3Y+k0J0AZqCDol
-	/AUT6uaQlhz4z3KMj4P0AxDzbVdYTskDrb0WIgKsGOYtOflb4g00HCI0SQGbti4L8nP+T5vS8A8
-	QgHU=
-X-Google-Smtp-Source: AGHT+IH6PPSFCelTrABPZ42fVLMnN2h+MLsrcczEgUEY+njHcY0u0A97j62o3tScqdAtCRcxDLgXkQ==
-X-Received: by 2002:a05:6122:d8d:b0:526:42c2:8453 with SMTP id 71dfb90a1353d-5292547e851mr14802070e0c.7.1745398339858;
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52922c10c1bsm2264081e0c.12.2025.04.23.01.52.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso2278496241.3;
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAEdzfE5SpKLo2zkyTIE64xvGtGCpIF2aZC/qF9TGonOf7LtLL8913AasGFKhjuEqpgwBThs9kwg4048t6w6OB8b4=@vger.kernel.org, AJvYcCUduIrfmFflL5NpEicLWoxhS+5LvZ9ab8UnMUSKZBL4Xgo8J1LSmEDYTWQ2zvKrAt5UHzxjGDz77oO0ZI/K@vger.kernel.org, AJvYcCX2th1CJWm1XrxpgVNGUucpgqRW15W+9wPdtcu14IUxedRFwFW6xWxARu7z0pr5sBkJ4nPlZqoXkbM=@vger.kernel.org
-X-Received: by 2002:a05:6102:311a:b0:4c4:e42c:38ba with SMTP id
- ada2fe7eead31-4cb80145a4bmr9745862137.13.1745398339507; Wed, 23 Apr 2025
- 01:52:19 -0700 (PDT)
+	s=arc-20240116; t=1745399012; c=relaxed/simple;
+	bh=iZgg129lpik5ZGSuOYF9PgB8mFRZDSWkTauXVN//Kvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npgXu52kko+rMRmX3+0Y5lzeH2gVYA4BjKILvnE++GaC8zPAS1NdHyi3xXVaeB9XEOzrdk5J+wHH7VRvJ8il4GiwuCp8jrclTCLoh2FaueWZR3khAcILjxKDo3/TrC5suZtW3KeFEA2gFuj/0RRFZ8RTaRYFFEASadqdZIZoJqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZjCmt6kNVz4f3lVM;
+	Wed, 23 Apr 2025 17:02:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 688651A1479;
+	Wed, 23 Apr 2025 17:03:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP3 (Coremail) with SMTP id _Ch0CgAXacPQrAhoJkGrKA--.8976S4;
+	Wed, 23 Apr 2025 17:03:18 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/9] ext4: fix stale extent status entries and clairfy rules
+Date: Wed, 23 Apr 2025 16:52:48 +0800
+Message-ID: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
- <20250403212919.1137670-7-thierry.bultel.yh@bp.renesas.com>
- <CAMuHMdVpiZ+F0TMbLm000M_Scwozj2-SHPrUwTHqFKckVcmufQ@mail.gmail.com>
- <TYCPR01MB11492BCF416760E978541AFE18ABF2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <CAMuHMdVQPbP0Fi5SDN8uOJ23S=_8pqHRVR2QFS8vHNfohzae2g@mail.gmail.com> <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Apr 2025 10:52:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
-X-Gm-Features: ATxdqUG3FZzI8HCkNGm5T6G_ujgFMbIetZczmb5fQaQtW6-2uSwvcnMI6dgpIjs
-Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
-Subject: Re: [PATCH v7 06/13] clk: renesas: Add support for R9A09G077 SoC
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAXacPQrAhoJkGrKA--.8976S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw43CFyUKw13JFykGw47XFb_yoW8CrWfpF
+	sxGw4fWr18Xa4aya9xAw4UJFy5G3yxGa17CF9rJw17uF45uFyjqF48KF1FvFyrXrW8Xr1j
+	vF4Iyr17G3WjyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Thierry,
+This patch series addresses the potential problems discussed with Jan
+Kara regarding the modification rules for mapping extents[1]. Preparing
+for the buffered I/O conversion for regular files.
 
-On Wed, 23 Apr 2025 at 09:36, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Fri, 18 Apr 2025 at 23:22, Thierry Bultel
-> > <thierry.bultel.yh@bp.renesas.com> wrote:
-> >  > +};
-> > > > > +
-> > > > > +static const struct mssr_mod_clk r9a09g077_mod_clks[] __initcons=
-t =3D
-> > {
-> > > > > +       DEF_MOD("sci0", 108, R9A09G077_PCLKM),
-> > > >
-> > > > Shouldn't that be 8 instead of 108?
-> > > > Using R9A09G077_PCLKM as the parent is a temporary simplification,
-> > right?
-> > >
-> > > I am probably missing something, isn=E2=80=99t PCKML actually the par=
-ent clock ?
-> >
-> > According to Figure 7.1 ("Block diagram of clock generation circuit"), =
-it
-> > is PCLKSCI0, which can be switched to PCLKM.  I guess that is the defau=
-lt,
-> > hence my "temporary simplification" question.
-> >
-> > As the actual switching is controlled through the SCI's CCR3 register, =
-the
-> > SCI block should have two clock inputs in DT (PCLKM and PCLKSCIn), and
-> > thus the DT bindings should be amended.  See also Figure 33.1 ("SCI blo=
-ck
-> > diagram").
-> >
->
-> Thanks for clarifying.
-> Indeed, this is the default setting (and the one we have at this stage).
-> I think that support for PCLKSCIn can be added at the time we support
-> baudrate setting.
+This change includes:
 
-I am not sure we can do that in a clean backwards-compatible way.
-Currently the DT bindings describe a single clock:
+Patch 1-5 fixes problems related to stale extent status entries that
+may arise during the collapsing of ranges, the insertion of ranges, or
+file truncation when these operations compete with concurrent writeback,
+fiemap, or get extent cache.
 
-  clock-names:
-    const: fck # UART functional clock
+Patch 6-8 adds a helper function to verify whether the context for
+modifying extents is safe when EXT4_DEBUG is enabled. It primarily
+checks the inode's i_rwsem and the mapping's invalidate_lock.
 
-The documentation calls the two clocks:
-  - Bus clock (PCLKM),
-  - Operation clock (PCLKSCIn).
+Patch 9 adds a comment to clarify the rules for loading, mapping,
+modifying, and removing extents.
 
-Which one is the functional clock? I'd say the latter...
-Currently, DT says:
+Please refer to the following patches for details.
 
-        clocks =3D <&cpg CPG_MOD 8>;
-        clock-names =3D "fck";
+[1] https://lore.kernel.org/linux-ext4/20241211160047.qnxvodmbzngo3jtr@quack3/
 
-and the clock driver uses PCLKM as the module's parent clock,
-I think you will have a very hard time to synchronize all of the clock
-driver, sci driver, and DTS when transitioning to something like:
+Thanks,
+Yi.
 
-        clocks =3D <&cpg CPG_MOD 8>, <&cpgR9A09G077_PCLKM>;
-        clock-names =3D "fck", "bus";
+Zhang Yi (9):
+  ext4: ext4: unify EXT4_EX_NOCACHE|NOFAIL flags in
+    ext4_ext_remove_space()
+  ext4: generalize EXT4_GET_BLOCKS_IO_SUBMIT flag usage
+  ext4: prevent stale extent cache entries caused by concurrent I/O
+    writeback
+  ext4: prevent stale extent cache entries caused by concurrent fiemap
+  ext4: prevent stale extent cache entries caused by concurrent get
+    es_cache
+  ext4: factor out is_special_ino()
+  ext4: introduce ext4_check_map_extents_env() debug helper
+  ext4: check env when mapping and modifying extents
+  ext4: clairfy the rules for modifying extents
 
-where the modulo clock has to become PCLKSCIn (actually SCInASYNC,
-as seen from the CPG).
+ fs/ext4/ext4.h           | 26 ++++++++++++---
+ fs/ext4/extents.c        | 54 ++++++++++++++++++++----------
+ fs/ext4/extents_status.c | 35 ++++++++++++++++++--
+ fs/ext4/fast_commit.c    |  4 ++-
+ fs/ext4/inode.c          | 71 +++++++++++++++++++++++++++++++---------
+ fs/ext4/ioctl.c          |  8 ++++-
+ 6 files changed, 157 insertions(+), 41 deletions(-)
 
-Does that make sense, or am I missing something?
+-- 
+2.46.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
