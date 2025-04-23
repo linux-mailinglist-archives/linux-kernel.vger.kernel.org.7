@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-616350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAD4A98B5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:38:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF8DA98B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEA717B1E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:38:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 465F47A1E06
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A143B1A5B85;
-	Wed, 23 Apr 2025 13:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E64D1A8401;
+	Wed, 23 Apr 2025 13:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kazjBkX5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqxGEHGm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE9E1A3029;
-	Wed, 23 Apr 2025 13:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DE71A5B8F;
+	Wed, 23 Apr 2025 13:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415462; cv=none; b=CgVcgQiP//+ASIYMQTLGLsnWN9rPLmqTMZrNA406+kmuQ2vpr+GBtrcP5mGdZV4/YTfPWUocxUPoWtNc9g1F4TjNBSn82VtXaQRQt4NhMH+C7DaLItQ5HuAxBy2I87z/bgJxWJi3A7Ouh0ZDpVyn47H4nW8KIrt/1+D1h8oBltM=
+	t=1745415465; cv=none; b=A5qLc2ERgYOF45pb5B05xnd9BhjpQtxma4+eGAB7peKfasPuGs7Qd4ken1csuDJfFGVqBM3Wp6J0aaK+sc4wpO67LpwnCgA8SVU0AujuMLExY89ocZDVBEtILmLbsA7iiVccktvXdHAIcqOHnT5QGh8AixleJTyLB/MEDjfvQpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415462; c=relaxed/simple;
-	bh=eywy900SjYxtAyo4CfVaSLEC3OTfBf1b1QhPnJKjZ1o=;
+	s=arc-20240116; t=1745415465; c=relaxed/simple;
+	bh=Z7aXhF1PMMnEtCARJD64Zg3Ihl0WPcHH/gy6wwnFk6A=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=SEf/dxyJU3IUyjg4RroqF5oYWyGKFRmFfWOSeivpT0k2Qh0Q+Mmc8ZKch9E2OJkCP536JGZ0xMr94+Vz8sQywZ0QZKjqCOrKbt6AgAvJbV7/oooP1t9qaWC9SzwwS9UeC55VpgdPTgZIYSzv5pUye0Zqh1jLCYeY3cwLdn3LLcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kazjBkX5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C09C4CEED;
-	Wed, 23 Apr 2025 13:37:41 +0000 (UTC)
+	 Message-Id:Subject; b=R8he4v8nRi0guN/iUaUQaLG/n8gosqPoAWQT1NdUBp+M5F016BsRExbBJYxq9ZmV66qGzLOyfHuySsAVZghfI8TFob8M1OBu3MvotxcSacWbK4z3izR5JRJ91Oo88/jMHV5U2C29rKgjHYg921WFoggqQCV76vEwonyPjR1rmY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqxGEHGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39CAC4CEEC;
+	Wed, 23 Apr 2025 13:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745415462;
-	bh=eywy900SjYxtAyo4CfVaSLEC3OTfBf1b1QhPnJKjZ1o=;
+	s=k20201202; t=1745415464;
+	bh=Z7aXhF1PMMnEtCARJD64Zg3Ihl0WPcHH/gy6wwnFk6A=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=kazjBkX5KBgtLtmEUmbE7O7EHp1X297RTN17di/ekpdAykhJwaTz1UOOnYJbsFNRg
-	 hhp3gkOaRrpDXcKLm+ssabVvI4Yv/AJgfuDF5F+ChBJNE3u/mHXHETaJ+zTCihPsRm
-	 kwVadg7W/hURrq2qs2kpxYj+Drm7qjnKo33ibuWk3bWoPRmhxMihGMFn6X110RLjlE
-	 STlAHD0aY87O8mFi0+PN8qjHh4C+OUIuCUg2uUyDb4iL5qu4NiTVOuLM2aPa2X11+i
-	 LMvPG/r8uyyKv2I6AWSo+/eQl4mnLAX6E2xNwD4NetncjvtU37u2RtpEQ3Wixgmv/J
-	 4QFhqkhkKtgiQ==
-Date: Wed, 23 Apr 2025 08:37:40 -0500
+	b=WqxGEHGmgyYAqddIT0VvUzUx3lFjwbKNUPUT6SlacMhiWPAJH/caP+smHmx0Hsb2q
+	 mdez6aN4cDkGv2QvYFKP22MNBGYzqfbSvmMtCGCKrdNl20N7ipCqVwoO1spXv28gFb
+	 ACpmc9Ovk8rFgqucNV6XFLWrGb8US38hIQqBc0hoEdi5/ok5ywXRO8txDx6ZVBhI2M
+	 ++jMNJ71NXMG97shTSOruANWwrnJW2kWvWTU8AZWCNDdFPt/53NiA05YKr0U74VSkS
+	 LM1zsAtscxqQCqEaaF7VIBuOFUoRqVMU7WUwtfYiDv/5B1b2IM8m3jvg6K4bDa73Q3
+	 T/wapBMh7ltlg==
+Date: Wed, 23 Apr 2025 08:37:42 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,194 +50,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, 
- Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev, 
- Peng Fan <peng.fan@nxp.com>, linux-amarula@amarulasolutions.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>, Abel Vesa <abelvesa@kernel.org>, 
- Fabio Estevam <festevam@gmail.com>, Stephen Boyd <sboyd@kernel.org>, 
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-In-Reply-To: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
-References: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
-Message-Id: <174541475668.315199.12653523227980789003.robh@kernel.org>
-Subject: Re: [PATCH v11 00/18] Support spread spectrum clocking for i.MX8M
- PLLs
+Cc: dianders@google.com, daniel@ffwll.ch, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, matthias.bgg@gmail.com, 
+ dri-devel@lists.freedesktop.org, sam@ravnborg.org, 
+ angelogioacchino.delregno@collabora.com, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, neil.armstrong@linaro.org, 
+ knoxchiou@google.com, hsinyi@google.com, devicetree@vger.kernel.org
+To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+In-Reply-To: <20250423093647.4074135-1-cengjianeng@huaqin.corp-partner.google.com>
+References: <20250423093647.4074135-1-cengjianeng@huaqin.corp-partner.google.com>
+Message-Id: <174541475783.315252.12086637953539668018.robh@kernel.org>
+Subject: Re: [PATCH v10 0/2]
 
 
-On Wed, 23 Apr 2025 08:02:17 +0200, Dario Binacchi wrote:
-> This version keeps the version v9 patches that can be merged and
-> removes the patches that will need to be modified in case Peng's
-> PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
-> The idea is to speed up the merging of the patches in the series
-> that have already been reviewed and are not dependent on the
-> introduction of the assigned-clocks-sscs property, and postpone
-> the patches for spread spectrum to a future series once it becomes
-> clear what needs to be done.
-> 
-> Specifically, the patches:
-> 
-> 01/18 dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
-> 02/18 clk: imx8mm: rename video_pll1 to video_pll
-> 03/18 dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
-> 04/18 clk: imx8mp: rename video_pll1 to video_pll
-> 
-> are a replica for i.MX8MM and i.MX8MP of the patch for i.MX8MM
-> bedcf9d1dcf88 ("clk: imx: rename video_pll1 to video_pll"), which was
-> merged some time ago. The patches are split into four because, during
-> the review, Krzysztof asked me to separate the driver modifications
-> from the dt-bindings changes.
-> 
-> All the other patches in the series, from 5 to 18, are necessary for
-> the implementation of the anatop driver for i.MX8M{M,N,P}. The review of
-> this series has taken a long time, partly due to misunderstandings
-> arising from incorrect design choices.
-> 
-> As Peng stated in [1]:
-> "In current design, CCM is taken as producer of CLK_IMX8M_VIDEO_PLL, not consumer."
-> 
-> These patches fix this issue by ensuring that the PLLs are now produced by
-> Anatop and consumed by CCM, aligning with the hardware logic.
-> 
-> Finally, a clarification: I decided to keep the same title for the series
-> despite having removed all the patches for spread spectrum support in order
-> to maintain a clear connection with the previous versions.
-> 
-> [1] https://patchwork.kernel.org/project/linux-clk/patch/20241106090549.3684963-2-dario.binacchi@amarulasolutions.com/
-> 
-> Changes in v11:
-> - Fix conflict while rebasing on master for patches:
->   13/18 clk: imx: add support for i.MX8MP anatop clock driver
->   14/18 clk: imx8mp: rename ccm_base to base
->   15/18 dt-bindings: clock: imx8m-clock: add PLLs
-> - Add 'Reviewed-by' tag of Peng Fan for patches:
->   11/18 clk: imx: add support for i.MX8MM anatop clock driver
->   13/18 clk: imx: add support for i.MX8MP anatop clock driver
->   14/18 clk: imx8mp: rename ccm_base to base
-> 
+On Wed, 23 Apr 2025 17:36:45 +0800, Jianeng Ceng wrote:
+> This is v10 of the MT8186 Chromebook device tree series.
+> ---
 > Changes in v10:
-> - Drop the v9 patches:
->   16/23 dt-bindings: clock: imx8m-clock: support spread spectrum clocking
->   17/23 clk: imx: pll14xx: support spread spectrum clock generation
->   17/23 clk: imx8mn: support spread spectrum clock generation
->   21/23 clk: imx8mp: support spread spectrum clock generation
->   23/23 clk: imx8mm: support spread spectrum clock generation
+> - PATCH 1/2: Add enum for ponyta sku.
+> - Link to v9:https://lore.kernel.org/all/20250328094034.3400233-2-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v9:
-> - Add 'Reviewed-by' tag of Peng Fan for imx8mn platform patches
-> - Fix building warning raised by the kernel test robot for patch
->   v8, 11/18 clk: imx: add support for i.MX8MN anatop clock driver
-> - Add patches for imx8m{m,p} platforms:
->   - 23/23 clk: imx8mm: support spread spectrum clock generation
->   - 22/23 clk: imx: add support for i.MX8MM anatop clock driver
->   - 21/23 clk: imx8mp: support spread spectrum clock generation
->   - 20/23 clk: imx8mp: rename ccm_base to base
->   - 19/23 clk: imx: add support for i.MX8MP anatop clock driver
+> - PATCH 2/2: Add sound model to fix the warning.
+> - Link to v8:https://lore.kernel.org/all/20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v8:
-> - Drop the patches added in version 7:
->   - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
->   - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
->   - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
->   - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
->   - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
+> - PATCH 1/2: Remove custom label.
+> - PATCH 2/2: Change the commit about ponyta.
+> - Link to v7:https://lore.kernel.org/all/20240913031505.372868-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v7:
-> - Add and manage fsl,anatop property as phandle to the anatop node with
->   the new patches:
->   - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
->   - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
->   - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
->   - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
->   - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
+> - PATCH 2/2: Remove prototype sku.
+> - PATCH 2/2: Disable the other trackpad to enable one of them.
+> - Link to v5:https://lore.kernel.org/all/20240913015503.4192806-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v6:
-> - Merge patches:
->   10/20 dt-bindings: clock: imx8mm: add binding definitions for anatop
->   11/20 dt-bindings: clock: imx8mn: add binding definitions for anatop
->   12/20 dt-bindings: clock: imx8mp: add binding definitions for anatop
->   to
->   05/20 dt-bindings: clock: imx8m-anatop: define clocks/clock-names
->   now renamed
->   05/18 dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-> - Split the patch
->   15/20 dt-bindings-clock-imx8m-clock-support-spread-spectru.patch
->   into
->   12/18 dt-bindings: clock: imx8m-clock: add PLLs
->   16/18 dt-bindings: clock: imx8m-clock: support spread spectrum clocking
+> - No change.
 > 
 > Changes in v5:
-> - Fix compilation errors.
-> - Separate driver code from dt-bindings
+> - PATCH 1/2: Remove sku2147483647.
+> - PATCH 2/2: Remove sku2147483647.
+> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v4:
-> - Add dt-bindings for anatop
-> - Add anatop driver
-> - Drop fsl,ssc-clocks from spread spectrum dt-bindings
+> - PATCH 1/2: Add more info for Ponyta custom label in commit.
+> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v3:
-> - Patches 1/8 has been added in version 3. The dt-bindings have
->   been moved from fsl,imx8m-anatop.yaml to imx8m-clock.yaml. The
->   anatop device (fsl,imx8m-anatop.yaml) is indeed more or less a
->   syscon, so it represents a memory area accessible by ccm
->   (imx8m-clock.yaml) to setup the PLLs.
-> - Patches {3,5}/8 have been added in version 3.
-> - Patches {4,6,8}/8 use ccm device node instead of the anatop one.
+> - PATCH 0/2: Add the modify records.
+> - PATCH 1/2: Modify lable to label.
+> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
 > Changes in v2:
-> - Add "allOf:" and place it after "required:" block, like in the
->   example schema.
-> - Move the properties definition to the top-level.
-> - Drop unit types as requested by the "make dt_binding_check" command.
+> - PATCH 2/2: Modify the dtb name without rev2.
+> - Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
-> Dario Binacchi (18):
->   dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
->   clk: imx8mm: rename video_pll1 to video_pll
->   dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
->   clk: imx8mp: rename video_pll1 to video_pll
->   dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
->   arm64: dts: imx8mm: add anatop clocks
->   arm64: dts: imx8mn: add anatop clocks
->   arm64: dts: imx8mp: add anatop clocks
->   arm64: dts: imx8mq: add anatop clocks
->   clk: imx: add hw API imx_anatop_get_clk_hw
->   clk: imx: add support for i.MX8MM anatop clock driver
->   clk: imx: add support for i.MX8MN anatop clock driver
->   clk: imx: add support for i.MX8MP anatop clock driver
->   clk: imx8mp: rename ccm_base to base
->   dt-bindings: clock: imx8m-clock: add PLLs
->   arm64: dts: imx8mm: add PLLs to clock controller module (CCM)
->   arm64: dts: imx8mn: add PLLs to clock controller module (CCM)
->   arm64: dts: imx8mp: add PLLs to clock controller module (CCM)
+> Jianeng Ceng (2):
+>   dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
+>   arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
 > 
->  .../bindings/clock/fsl,imx8m-anatop.yaml      |  53 +-
->  .../bindings/clock/imx8m-clock.yaml           |  27 +-
->  arch/arm64/boot/dts/freescale/imx8mm.dtsi     |  11 +-
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi     |  11 +-
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  11 +-
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi     |   2 +
->  drivers/clk/imx/Makefile                      |   6 +-
->  drivers/clk/imx/clk-imx8mm-anatop.c           | 287 ++++++++
->  drivers/clk/imx/clk-imx8mm.c                  | 262 ++++---
->  drivers/clk/imx/clk-imx8mn-anatop.c           | 283 ++++++++
->  drivers/clk/imx/clk-imx8mn.c                  | 183 +++--
->  drivers/clk/imx/clk-imx8mp-anatop.c           | 306 ++++++++
->  drivers/clk/imx/clk-imx8mp.c                  | 672 +++++++++---------
->  drivers/clk/imx/clk.c                         |  15 +
->  drivers/clk/imx/clk.h                         |   2 +
->  include/dt-bindings/clock/imx8mm-clock.h      |  76 +-
->  include/dt-bindings/clock/imx8mn-clock.h      |  64 ++
->  include/dt-bindings/clock/imx8mp-clock.h      |  80 ++-
->  18 files changed, 1740 insertions(+), 611 deletions(-)
->  create mode 100644 drivers/clk/imx/clk-imx8mm-anatop.c
->  create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
->  create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
+>  .../devicetree/bindings/arm/mediatek.yaml     | 13 +++++
+>  arch/arm64/boot/dts/mediatek/Makefile         |  2 +
+>  .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 18 +++++++
+>  .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 22 +++++++++
+>  .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 49 +++++++++++++++++++
+>  5 files changed, 104 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
 > 
 > --
-> 2.43.0
+> 2.34.1
 > 
 > 
 > 
@@ -259,37 +142,169 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/v6.15-rc1-1-g7ed7d1ed852d (exact match)
+ Base: tags/next-20250423 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250423060241.95521-1-dario.binacchi@amarulasolutions.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250423093647.4074135-1-cengjianeng@huaqin.corp-partner.google.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[34], [35], [37], [38], [39], [40]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[34], [35], [37], [38], [39], [40]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[33], [34], [36], [37], [38], [39]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[33], [34], [36], [37], [38], [39]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[33], [34], [36], [37], [38], [39]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clock-names: ['osc_32k', 'osc_24m', 'clk_ext1', 'clk_ext2', 'clk_ext3', 'clk_ext4'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: clock-controller@30380000 (fsl,imx8mp-ccm): clocks: [[33], [34], [36], [37], [38], [39]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/imx8m-clock.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dtb: pinctrl@10005000 (mediatek,mt8183-pinctrl): 'i2c0', 'i2c1', 'i2c2', 'i2c3', 'i2c4', 'i2c5', 'i2c6', 'keyboard' do not match any of the regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: / (google,ponyta-sku0): compatible: 'oneOf' conditional failed, one must be fixed:
+	['google,ponyta-sku0', 'google,ponyta', 'mediatek,mt8186'] is too long
+	['google,ponyta-sku0', 'google,ponyta', 'mediatek,mt8186'] is too short
+	'google,ponyta-sku0' is not one of ['mediatek,mt2701-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt2712-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6580-evbp1']
+	'google,ponyta-sku0' is not one of ['prestigio,pmt5008-3g']
+	'google,ponyta-sku0' is not one of ['fairphone,fp1', 'mundoreader,bq-aquaris5']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6592-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6755-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6765-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6779-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt6795-evb', 'sony,xperia-m5']
+	'google,ponyta-sku0' is not one of ['archermind,mt6797-x20-dev', 'mediatek,mt6797-evb']
+	'google,ponyta-sku0' is not one of ['bananapi,bpi-r64', 'mediatek,mt7622-rfb1']
+	'google,ponyta-sku0' is not one of ['mediatek,mt7623a-rfb-emmc', 'mediatek,mt7623a-rfb-nand', 'mediatek,mt7623n-rfb-emmc', 'bananapi,bpi-r2']
+	'google,ponyta-sku0' is not one of ['mediatek,mt7629-rfb']
+	'google,ponyta-sku0' is not one of ['cudy,wr3000-v1', 'openwrt,one', 'xiaomi,ax3000t']
+	'google,ponyta-sku0' is not one of ['acelink,ew-7886cax', 'bananapi,bpi-r3', 'bananapi,bpi-r3mini', 'mediatek,mt7986a-rfb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt7986b-rfb']
+	'google,ponyta-sku0' is not one of ['bananapi,bpi-r4']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8127-moose']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8135-evbp1']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8167-pumpkin']
+	'google,elm-rev8' was expected
+	'google,hana-rev6' was expected
+	'google,hana-rev7' was expected
+	'google,ponyta-sku0' is not one of ['mediatek,mt8173-evb']
+	'google,burnet' was expected
+	'google,cozmo' was expected
+	'google,damu' was expected
+	'google,ponyta-sku0' is not one of ['google,fennel-sku0', 'google,fennel-sku1', 'google,fennel-sku2', 'google,fennel-sku6', 'google,fennel-sku7']
+	'google,ponyta-sku0' is not one of ['google,juniper-sku16', 'google,juniper-sku17']
+	'google,kakadu-rev3' was expected
+	'google,kakadu-rev3-sku22' was expected
+	'google,kappa' was expected
+	'google,ponyta-sku0' is not one of ['google,katsu-sku32', 'google,katsu-sku38']
+	'google,ponyta-sku0' is not one of ['google,kodama-sku16', 'google,kodama-sku272', 'google,kodama-sku288', 'google,kodama-sku32']
+	'google,ponyta-sku0' is not one of ['google,krane-sku0', 'google,krane-sku176']
+	'google,ponyta-sku0' is not one of ['google,makomo-sku0', 'google,makomo-sku1']
+	'google,ponyta-sku0' is not one of ['google,pico-sku1', 'google,pico-sku2']
+	'google,ponyta-sku0' is not one of ['google,willow-sku0', 'google,willow-sku1']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8183-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8183-pumpkin']
+	'google,chinchou-sku0' was expected
+	'google,chinchou-sku1' was expected
+	'google,chinchou-sku16' was expected
+	'google,steelix-sku393219' was expected
+	'google,steelix-sku393220' was expected
+	'google,steelix-sku393221' was expected
+	'google,ponyta-sku1' was expected
+	'google,steelix-sku196609' was expected
+	'google,starmie-sku0' was expected
+	'google,starmie-sku1' was expected
+	'google,ponyta-sku0' is not one of ['google,steelix-sku131072', 'google,steelix-sku131073']
+	'google,tentacruel-sku262147' was expected
+	'google,tentacruel-sku262151' was expected
+	'google,tentacruel-sku327681' was expected
+	'google,tentacruel-sku327683' was expected
+	'google,ponyta-sku0' is not one of ['google,voltorb-sku589824', 'google,voltorb-sku589825']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8186-evb']
+	'google,ponyta-sku0' is not one of ['google,ciri-sku0', 'google,ciri-sku1', 'google,ciri-sku2', 'google,ciri-sku3', 'google,ciri-sku4', 'google,ciri-sku5', 'google,ciri-sku6', 'google,ciri-sku7']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8188-evb']
+	'google,hayato-rev1' was expected
+	'google,spherion-rev3' was expected
+	'google,ponyta-sku0' is not one of ['mediatek,mt8192-evb']
+	'google,ponyta-sku0' is not one of ['google,tomato-rev2', 'google,tomato-rev1']
+	'google,tomato-rev4' was expected
+	'google,dojo-sku7' was expected
+	'google,ponyta-sku0' is not one of ['mediatek,mt8195-demo', 'mediatek,mt8195-evb']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8365-evk']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8370-evk']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8390-evk']
+	'google,ponyta-sku0' is not one of ['kontron,3-5-sbc-i1200', 'mediatek,mt8395-evk', 'radxa,nio-12l']
+	'google,ponyta-sku0' is not one of ['mediatek,mt8516-pumpkin']
+	'mediatek,mt2701' was expected
+	'mediatek,mt2712' was expected
+	'mediatek,mt6580' was expected
+	'mediatek,mt6582' was expected
+	'mediatek,mt6589' was expected
+	'mediatek,mt6592' was expected
+	'mediatek,mt6755' was expected
+	'mediatek,mt6765' was expected
+	'mediatek,mt6779' was expected
+	'mediatek,mt6795' was expected
+	'mediatek,mt6797' was expected
+	'mediatek,mt7622' was expected
+	'mediatek,mt7623' was expected
+	'mediatek,mt7629' was expected
+	'mediatek,mt7981b' was expected
+	'mediatek,mt7986a' was expected
+	'mediatek,mt7986b' was expected
+	'mediatek,mt7988a' was expected
+	'mediatek,mt8127' was expected
+	'mediatek,mt8135' was expected
+	'mediatek,mt8167' was expected
+	'google,elm-rev7' was expected
+	'google,hana-rev5' was expected
+	'mediatek,mt8173' was expected
+	'mediatek,mt8183' was expected
+	'google,fennel' was expected
+	'google,juniper' was expected
+	'google,kakadu-rev2' was expected
+	'google,kakadu-rev2-sku22' was expected
+	'google,katsu' was expected
+	'google,kodama' was expected
+	'google,krane' was expected
+	'google,makomo' was expected
+	'google,pico' was expected
+	'google,willow' was expected
+	'google,chinchou-sku2' was expected
+	'google,chinchou-sku3' was expected
+	'google,chinchou-sku18' was expected
+	'google,steelix-sku393216' was expected
+	'google,steelix-sku393217' was expected
+	'google,steelix-sku393218' was expected
+	'google,ponyta-sku0' was expected
+	'google,steelix-sku196608' was expected
+	'google,starmie-sku2' was expected
+	'google,starmie-sku4' was expected
+	'google,steelix' was expected
+	'google,tentacruel-sku262146' was expected
+	'google,tentacruel-sku262150' was expected
+	'google,tentacruel' was expected
+	'google,voltorb' was expected
+	'mediatek,mt8186' was expected
+	'google,ciri' was expected
+	'mediatek,mt8188' was expected
+	'google,hayato' was expected
+	'google,spherion-rev2' was expected
+	'mediatek,mt8192' was expected
+	'google,tomato' was expected
+	'google,tomato-rev3' was expected
+	'google,dojo-sku5' was expected
+	'mediatek,mt8195' was expected
+	'mediatek,mt8365' was expected
+	'mediatek,mt8370' was expected
+	'mediatek,mt8390' was expected
+	'mediatek,mt8395' was expected
+	'mediatek,mt8516' was expected
+	'google,elm-rev6' was expected
+	'google,hana-rev4' was expected
+	'google,kakadu' was expected
+	'google,chinchou-sku4' was expected
+	'google,chinchou-sku6' was expected
+	'google,chinchou-sku19' was expected
+	'google,ponyta' was expected
+	'google,starmie-sku3' was expected
+	'google,starmie' was expected
+	'google,tentacruel-sku262145' was expected
+	'google,tentacruel-sku262149' was expected
+	'google,spherion-rev1' was expected
+	'google,dojo-sku3' was expected
+	from schema $id: http://devicetree.org/schemas/arm/mediatek.yaml#
 
 
 
