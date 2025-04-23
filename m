@@ -1,174 +1,179 @@
-Return-Path: <linux-kernel+bounces-616634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421ADA99429
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFDAA9948B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D060E925223
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF45163D3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACA12C257E;
-	Wed, 23 Apr 2025 15:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF05527A108;
+	Wed, 23 Apr 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dIcD5TDH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OV/ltiR1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8429B201;
-	Wed, 23 Apr 2025 15:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DDC266F1E;
+	Wed, 23 Apr 2025 16:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422483; cv=none; b=gSCzgUHDTHiLDEFeHHmmY5NoipEECSD/8Mq0/1RtXwzGoHhh0XMoLvyPI1g4M6Q7SJs5x9t0YRDg11+PGG6S4ShMaKaC+MPIwbl5K1b+ReebZyFa4D4yS2RTP6DXZrQjM+yabRIsaDTbIV/3hDkMCxXN+ipk5+xEl46lT6b/rlg=
+	t=1745424324; cv=none; b=Ja7aOSXoTnZHnHLjEqKGQK05MJWXeYILI5miQZI0XxPFT3detcaWKz8UuF7goKRBVXwuXWCjnAZwsrzOxbAzygalLZ4GYxe0Y0bAm6Y5UE6sws6hMilDqResY1/Tt9/6vm2aF1/HD42Y58DE/qrvP5k3h8Oq0tT9gzF+yZjHdbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422483; c=relaxed/simple;
-	bh=nBOB2RB8Gi5Quj2lV/zQhImxicJWnB8a6mxXg5tyIMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uYyV4a+nJwZaB0ZMwgAyN9SLw1ge5ecmi2rgbwCv0hK1a3AVDYjppDbgCHGa27iJktDZkDq3HrwjvvSes5Y2plkBtiWKBMkYvFrNGrWBWvj/AI1Y7C8tWGTymAFERTsJmyP0+OI0kTeDXbqI6t6z8VjmEQKvPtXdYUjP4072o6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dIcD5TDH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E9FC4CEE2;
-	Wed, 23 Apr 2025 15:34:42 +0000 (UTC)
+	s=arc-20240116; t=1745424324; c=relaxed/simple;
+	bh=3dzRklZ7ar/Z+lU1ajuWagKEaicvxwAoj0zZhUgFqyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6VcO2S2Z+H+aUKMDlgsZ7GziGlB/Ljq1MKTP3JKquBFPxQWHBuuuJyPJ36DsXHQMMNctvSTHlJROQGykCWUdFzubT48Yx+ejVB72zY/0WuUb1IT0KxByjOz5zFmgb4Ru8dhVTe+EYuMgKxUPPIEFHfdSON0wKUM0ZtZkdNVrGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OV/ltiR1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DBC2C4CEE2;
+	Wed, 23 Apr 2025 16:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745422482;
-	bh=nBOB2RB8Gi5Quj2lV/zQhImxicJWnB8a6mxXg5tyIMY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dIcD5TDHhqBmF7mynXS0s154aZje1oXFoYvt+BMgnI5+k4NsBz5saoD1U97fSmagk
-	 cF/RJbPuC1CTzA4ZIWwEYs4Y52OW9+x0kSByrrMYqpsMC8T5x9v1JmjCZTAorsOR/D
-	 NXli8K9j/5+ePp3iQcFe+lsymhiNY+RO1yljxl6Q=
+	s=korg; t=1745424324;
+	bh=3dzRklZ7ar/Z+lU1ajuWagKEaicvxwAoj0zZhUgFqyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OV/ltiR1ERJ/AQvFsoBmHQRfj7XCg7hAlEvlNF+59sBqJtvlYuFUiigte5E6B310i
+	 o4y//LjXvcvN6iyvVHJ560aT5DzeFfqb2ZuODIgFyvfDdKdgGoT+fPwROz/Fij6oAt
+	 zp6zYc9DHjLE8t69TyUcLM13PqSj2md1K8cvrs1k=
+Date: Wed, 23 Apr 2025 16:50:48 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	SeongJae Park <sj@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.6 368/393] Fix mmu notifiers for range-based invalidates
-Date: Wed, 23 Apr 2025 16:44:24 +0200
-Message-ID: <20250423142658.539422318@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
-References: <20250423142643.246005366@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+To: Michal Hocko <mhocko@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
+ allocation failure
+Message-ID: <2025042355-hypnotize-relight-789f@gregkh>
+References: <2024122837-CVE-2024-56705-049b@gregkh>
+ <aAicoAmxX0B_O3Ok@tiehlicka>
+ <2025042301-flammable-masculine-ec48@gregkh>
+ <aAiwaM5ru-FJG2fI@tiehlicka>
+ <2025042329-mystify-dramatic-dcb9@gregkh>
+ <aAjOK_f-GPFHIdWK@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAjOK_f-GPFHIdWK@tiehlicka>
 
-6.6-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Apr 23, 2025 at 01:25:31PM +0200, Michal Hocko wrote:
+> On Wed 23-04-25 12:20:47, Greg KH wrote:
+> > On Wed, Apr 23, 2025 at 11:18:32AM +0200, Michal Hocko wrote:
+> > > On Wed 23-04-25 10:21:04, Greg KH wrote:
+> > > > On Wed, Apr 23, 2025 at 09:54:08AM +0200, Michal Hocko wrote:
+> > > > > Hi,
+> > > > > our internal tools which are working with vulns.git tree have noticed
+> > > > > that this CVE entry has been altered after the announcement.
+> > > > 
+> > > > Good catch!
+> > > > 
+> > > > > There was an additional commit added to the CVE entry. The current state
+> > > > > is
+> > > > > $ cat cve/published/2024/CVE-2024-56705.sha1
+> > > > > ed61c59139509f76d3592683c90dc3fdc6e23cd6
+> > > > > 51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
+> > > > 
+> > > > Yup!
+> > > > 
+> > > > > There seem to be handful of other cases like this one AFAICS.
+> > > > 
+> > > > Yes, we had to add support for this type of problem.
+> > > > 
+> > > > > I have 3 questions:
+> > > > > 1) What is 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
+> > > > >    relation to the original CVE which seems to be about a missing memory
+> > > > >    allocation failure check?
+> > > > 
+> > > > Removing the driver entirely from the kernel "fixed" the vulnerability :)
+> > > 
+> > > What is _the_ vulnerability? While I do understand that _any_ potential
+> > > vulnerability in the removed code is removed as well I still do not see
+> > > how the driver removal is related to _this_ specific CVE.
+> > 
+> > "The" vulnerability is what is fixed in the last commit id, and is what
+> > is documented in the text of the CVE, specifically:
+> > 
+> > 	In ia_css_3a_statistics_allocate(), there is no check on the allocation
+> > 	result of the rgby_data memory. If rgby_data is not successfully
+> > 	allocated, it may trigger the assert(host_stats->rgby_data) assertion in
+> > 	ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+> 
+> I do understand this statement.
 
-------------------
+That is the commit information, and as such we deemed it a
+vulnerability.
 
-From: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+> 
+> > That has not changed here at all.  It's just that the ranges of git
+> > versions for when Linux was vulnerable to this issue has been "tightened
+> > up" to only reflect when it was possible for this to be a problem (i.e.
+> > we now do not count the range of releases where the driver was not
+> > present at all in the kernel tree.)
+> 
+> But I fail to follow this. The commit itself says Fixes: a49d25364dfb
+> ("staging/atomisp: Add support for the Intel IPU v2") which makes it
+> clear since when the issue has been introduced. If this tag was not
+> present then there is CVE-$FOO.vulnerable which can specify the same
+> thing. I do not understand how 51b8dc5163d2 is related as it has a
+> different implementation of ia_css_3a_statistics_allocate that doesn't
+> have any unchecked kernel allocations AFAICS.
 
-commit f7edb07ad7c66eab3dce57384f33b9799d579133 upstream.
+Ah, ok, that changes things.  The person who said that we should count
+the previous version of the driver said it was vulnerable at that point
+when it was in the kernel tree.  If this isn't the case, we will be glad
+to change this CVE to reflect that.
 
-Update the __flush_tlb_range_op macro not to modify its parameters as
-these are unexepcted semantics. In practice, this fixes the call to
-mmu_notifier_arch_invalidate_secondary_tlbs() in
-__flush_tlb_range_nosync() to use the correct range instead of an empty
-range with start=end. The empty range was (un)lucky as it results in
-taking the invalidate-all path that doesn't cause correctness issues,
-but can certainly result in suboptimal perf.
+> > > > > 2) What is the process when a CVE is altered? have I missed any email
+> > > > >    notification?
+> > > > 
+> > > > We do not do email notifications when CVEs are altered.  You have to
+> > > > watch the cve.org json feed for that.  Otherwise the email list would
+> > > > just be too confusing.  Think about every new stable update that happens
+> > > > which causes 10+ different CVEs to be updated showing where they are now
+> > > > resolved.  That does not come across well in an email feed, but the json
+> > > > feed shows it exactly.
+> > > 
+> > > I do understand you do not want to send notifications for that. Would it
+> > > make sense to announce a new upstream commit added to the CVE, though? This
+> > > would make it much easier to see that we might be missing a fix that is
+> > > considered related to a particular CVE.
+> > 
+> > As this has only happened 2 times so far, it's a pretty rare occurance
+> > given us allocating over 6000 CVEs.  And how exactly would that email
+> > look like?
+> 
+> We have identified that CVE-$FOO fix has been incomplete so far and
+> extended list of fixes required for this CVE. Please make sure that
+> those are appplied.
+> 
+> Or something in those lines.
 
-This has been broken since commit 6bbd42e2df8f ("mmu_notifiers: call
-invalidate_range() when invalidating TLBs") when the call to the
-notifiers was added to __flush_tlb_range(). It predates the addition of
-the __flush_tlb_range_op() macro from commit 360839027a6e ("arm64: tlb:
-Refactor the core flush algorithm of __flush_tlb_range") that made the
-bug hard to spot.
+Again, that would happen every stable release, and every -rc release,
+could you really keep up with such an email flow in a way that wouldn't
+just mirror watching the json feed instead?
 
-Fixes: 6bbd42e2df8f ("mmu_notifiers: call invalidate_range() when invalidating TLBs")
+> > We are just changing the ranges here, we change ranges of where a kernel
+> > is vulnerable all the time by adding new .vulnerable files to the tree
+> > as people report them, and as fixes are backported to older stable
+> > kernel trees.  That's much more important to you than this type of
+> > change, right?
+> 
+> Nope, being aware of what is actually the CVE fix is the most important
+> information. Which kernels are affected specifcally is something that is
+> downstream specific and stable tree ranges are only of a value to those
+> who are using stable trees. Updates to vulnerable files is helpful
+> during evaluation phase but once the assessment is done it acts mostly
+> as a double check.
 
-Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Raghavendra Rao Ananta <rananta@google.com>
-Cc: SeongJae Park <sj@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: iommu@lists.linux.dev
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
-Link: https://lore.kernel.org/r/20250304085127.2238030-1-pjaroszynski@nvidia.com
-Signed-off-by: Will Deacon <will@kernel.org>
-[will: Resolve conflicts due to lack of LPA2 support]
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/tlbflush.h |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+.vulnerable files get added all the time, so hopefully you are catching
+those updates :)
 
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -369,31 +369,33 @@ static inline void arch_tlbbatch_flush(s
- #define __flush_tlb_range_op(op, start, pages, stride,			\
- 				asid, tlb_level, tlbi_user)		\
- do {									\
-+	typeof(start) __flush_start = start;				\
-+	typeof(pages) __flush_pages = pages;				\
- 	int num = 0;							\
- 	int scale = 3;							\
- 	unsigned long addr;						\
- 									\
--	while (pages > 0) {						\
-+	while (__flush_pages > 0) {					\
- 		if (!system_supports_tlb_range() ||			\
--		    pages == 1) {					\
--			addr = __TLBI_VADDR(start, asid);		\
-+		    __flush_pages == 1) {				\
-+			addr = __TLBI_VADDR(__flush_start, asid);	\
- 			__tlbi_level(op, addr, tlb_level);		\
- 			if (tlbi_user)					\
- 				__tlbi_user_level(op, addr, tlb_level);	\
--			start += stride;				\
--			pages -= stride >> PAGE_SHIFT;			\
-+			__flush_start += stride;			\
-+			__flush_pages -= stride >> PAGE_SHIFT;		\
- 			continue;					\
- 		}							\
- 									\
--		num = __TLBI_RANGE_NUM(pages, scale);			\
-+		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
- 		if (num >= 0) {						\
--			addr = __TLBI_VADDR_RANGE(start, asid, scale,	\
--						  num, tlb_level);	\
-+			addr = __TLBI_VADDR_RANGE(__flush_start, asid,	\
-+						scale, num, tlb_level);	\
- 			__tlbi(r##op, addr);				\
- 			if (tlbi_user)					\
- 				__tlbi_user(r##op, addr);		\
--			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
--			pages -= __TLBI_RANGE_PAGES(num, scale);	\
-+			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
-+			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
- 		}							\
- 		scale--;						\
- 	}								\
+thanks,
 
-
+greg k-h
 
