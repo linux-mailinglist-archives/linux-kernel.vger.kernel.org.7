@@ -1,149 +1,167 @@
-Return-Path: <linux-kernel+bounces-616483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A73FA98D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB0CA98ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B06F97AC1C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CAD1B84E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907A527F757;
-	Wed, 23 Apr 2025 14:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84683280CFF;
+	Wed, 23 Apr 2025 14:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtxE8g1/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bFnc2Fje"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE13827F4F5;
-	Wed, 23 Apr 2025 14:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD04A143736;
+	Wed, 23 Apr 2025 14:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745419220; cv=none; b=WOFulfxmN55nz0/CKlmhfL8KumskDgebDjHdI8UlKHutiT3Ds/+OSM7nV10UKt5MrLJfurTjq8MAPc/R+X9m4bxgmQfi0jmcXmXDTUGMelGIR9szqnDuUxD1oINz1uZfujOqF1o3DoKLtE6isjLBPoO/fW7BE45Hb9DZtsv+OTk=
+	t=1745420161; cv=none; b=i7YWV1w5dIlPBqc4cR2NjFya1dTUJqzoylJg90s5e+sGNr8GQ4G4hqNm3lD9NDQxENfAmrsx85e5cUtJ41xaWj6uZZu7HS7tiDGNL3DcJ+8xE+HxzP1d93BzvKe9uyPSDtERdb8kArWQm5X51SR0uh4ODPHqqJy4anl9y+bAPBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745419220; c=relaxed/simple;
-	bh=iWJGqy5H8iXR0YJhyJq2G9sNh+8Y6FpC+938zCMyJgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyKxkyxWqEVoRVHNe6fiYEW0ZKXjpuKTftlnLIreFsvD7U7CR5wVXb1pH2qCzsK5VKbweIlp/tR6Q3pfYejDFvgVsYztA14XTZqr2LIvNRqOB0r+wFK5vtwdOWpS6aIPfEgDKpF9x61DDx7pi7PJSolu/kagUDEUphMFrkrz5to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtxE8g1/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5D9C4CEE3;
-	Wed, 23 Apr 2025 14:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745419216;
-	bh=iWJGqy5H8iXR0YJhyJq2G9sNh+8Y6FpC+938zCMyJgk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jtxE8g1/oO5hR38F+CxvLKzuPXsrTsXFSjtXjOmhsuQpnORR0N0qKVCeudDprn8S/
-	 64XFFZ6mioK/MaFpSeWRh3zYPe0BLKpeXA9TYa4EcGslM0aSeokG+LwbUye2GpW6pf
-	 TlLaEofHu4xlutfGRrMrGu3mLg1OddhqfYA1pu8ghaRUu6se8jTvbyNfYZARU46BBb
-	 hPXQZ0GtjE86uFYAwnCL8qQKid5bIRqsEGMfb3MugVQZzaLQyOriTbt/BuqrYRfj1A
-	 5WJBT/IG3RU75krKLreG1j3aFd7rugC2Dqi0OqbgDwOZXcUnYIyLnPv74ckfFXy8Tn
-	 j9L8RGpDqc83g==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2c7f876b320so4224060fac.1;
-        Wed, 23 Apr 2025 07:40:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpiBUkOY/kDV6paIaeVuZ2VTGONDfpxfOcoX4ujbtRiuGQn6fcr2b5DiJj26Zsi3z+oOovRJoYlrw=@vger.kernel.org, AJvYcCVuFeXYbcNdIjji481UM14gEVnBnFbYWhnSyqjFxwz7tPgaY4/7s2vd0H9bun34IX9UMZS+TYFVp672juY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt/ef977zCJcD4vC//RXV/xPdBxdRoIzbdcvCAxgCqJAvz0/QZ
-	BYJfuf9UA8/esA7vaZRo6bXRaEoIk/WyQuLmKwLZJu/w4lp4uO6Rx7IJw3pAL080v1bI9/fOgWY
-	AsIvy7r3e+DZQGf5yHjY1pl2Kr1M=
-X-Google-Smtp-Source: AGHT+IH373maOnOzxY9wLz+CtIc4yR18PpNCKS0Q8+anv8KfyRwem1tB6xnC+r0+MOhz10gEPXdffKy/zMvBdXncw9Y=
-X-Received: by 2002:a05:6870:eca2:b0:29e:2594:81e with SMTP id
- 586e51a60fabf-2d526a2e955mr10845257fac.13.1745419215687; Wed, 23 Apr 2025
- 07:40:15 -0700 (PDT)
+	s=arc-20240116; t=1745420161; c=relaxed/simple;
+	bh=pThfYhQRdELTTxQkZsf2/KFpLPo7A8043wxi+GTobAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OGSh8YVbT4gX29Qvgebj+5kXoNf/uHz4npNWQ7988RuH2WHzJ+C2Xh5Wv0IQiUw/w0Nz4GpWkgnVf9VD8X3Z1Fqc2TZc1gpTMXXvocBPHbpnRsVuJjKah1FdoiJzRyGEhFjQBwTyOrGj7iislHyQS3z2BB6gq6J+AX0450E4Fe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bFnc2Fje; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D116C4CEE2;
+	Wed, 23 Apr 2025 14:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745420160;
+	bh=pThfYhQRdELTTxQkZsf2/KFpLPo7A8043wxi+GTobAg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bFnc2FjeSNMF+3LBhDDRzy9UCmO3fLTBgPz6MWb1yiiyYgzHotIvLMl8HZIfTXX8U
+	 X086Y1NXMcCKfTOdITAVm6DJcwAKG6BvTXjlAqFElzrNBLMU/Ud3t4yC9MZIjrzyi2
+	 Gcr/FGdO4bjTwup6o2TWd3+UgpgOpLjvH6/Eup/s=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Max Grobecker <max@grobecker.info>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 022/291] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
+Date: Wed, 23 Apr 2025 16:40:11 +0200
+Message-ID: <20250423142625.311555140@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250423142624.409452181@linuxfoundation.org>
+References: <20250423142624.409452181@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1745315548.git.viresh.kumar@linaro.org> <d8651db6d8687a0e37d527267ebfec05f209b1b7.1745315548.git.viresh.kumar@linaro.org>
- <CAJZ5v0hWUdRdbPL2=qybaEsNfPzAqdxW+xBrjwy4HaBXnTwD0g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hWUdRdbPL2=qybaEsNfPzAqdxW+xBrjwy4HaBXnTwD0g@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 Apr 2025 16:40:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jFy9ch4ZcW_zQs6GfvB=LCnzm94d35ifMpdv=VrqTHQA@mail.gmail.com>
-X-Gm-Features: ATxdqUHlWTde2s4t2St_YDL0Wj7nuiDZM0S4dXLseFALgsWoHYbklbzMAhY56ks
-Message-ID: <CAJZ5v0jFy9ch4ZcW_zQs6GfvB=LCnzm94d35ifMpdv=VrqTHQA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] cpufreq: acpi: Re-sync CPU boost state on system resume
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Lifeng Zheng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Nicholas Chin <nic.c3.14@gmail.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 23, 2025 at 4:26=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Tue, Apr 22, 2025 at 11:54=E2=80=AFAM Viresh Kumar <viresh.kumar@linar=
-o.org> wrote:
-> >
-> > During suspend/resume cycles, platform firmware may alter the CPU boost
-> > state.
-> >
-> > If boost is disabled before suspend, it correctly remains off after
-> > resume. However, if firmware re-enables boost during suspend, the syste=
-m
-> > may resume with boost frequencies enabled=E2=80=94even when the boost f=
-lag was
-> > originally disabled. This violates expected behavior.
-> >
-> > Ensure the boost state is re-synchronized with the kernel policy during
-> > system resume to maintain consistency.
-> >
-> > Fixes: 2b16c631832d ("cpufreq: ACPI: Remove set_boost in acpi_cpufreq_c=
-pu_init()")
-> > Reported-by: Nicholas Chin <nic.c3.14@gmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220013
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  drivers/cpufreq/acpi-cpufreq.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpuf=
-req.c
-> > index 7002e8de8098..0ffabf740ff5 100644
-> > --- a/drivers/cpufreq/acpi-cpufreq.c
-> > +++ b/drivers/cpufreq/acpi-cpufreq.c
-> > @@ -893,8 +893,19 @@ static int acpi_cpufreq_cpu_init(struct cpufreq_po=
-licy *policy)
-> >         if (perf->states[0].core_frequency * 1000 !=3D freq_table[0].fr=
-equency)
-> >                 pr_warn(FW_WARN "P-state 0 is not max freq\n");
-> >
-> > -       if (acpi_cpufreq_driver.set_boost)
-> > -               policy->boost_supported =3D true;
-> > +       if (acpi_cpufreq_driver.set_boost) {
-> > +               if (policy->boost_supported) {
-> > +                       /*
-> > +                        * The firmware may have altered boost state wh=
-ile the
-> > +                        * CPU was offline (for example during a suspen=
-d-resume
-> > +                        * cycle).
-> > +                        */
-> > +                       if (policy->boost_enabled !=3D boost_state(cpu)=
-)
-> > +                               set_boost(policy, policy->boost_enabled=
-);
-> > +               } else {
-> > +                       policy->boost_supported =3D true;
->
-> IIUC policy->boost_enabled is false at this point, so say that
-> boost_state(cpu) returns true and say cpufreq_boost_enabled() returns
-> false.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
-This cannot happen for CPU 0 because of acpi_cpufreq_boost_init() ->
+------------------
 
-> cpufreq_online() will see policy->boost_enabled =3D=3D
-> cpufreq_boost_enabled(), so it won't do anything regarding boost, and
-> say that this happens for all online CPUs.
+From: Max Grobecker <max@grobecker.info>
 
--> so if boost_state(0) returns true, policy->boost_enabled will be
-set for all policies to start with due to the code in
-cpufreq_online(), but this is far from obvious.
+[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
 
-I would at least say in the changelog that set_boost() need not be
-called directly at the policy initialization time because of the
-above.
+When running in a virtual machine, we might see the original hardware CPU
+vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
+hypervisor. In case we run on AMD hardware and the hypervisor sets a model
+ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
+capabilities present to circumvent a bug with some BIOSes in conjunction with
+AMD K8 processors.
+
+Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
+bash scripts and prebuilt Docker containers, as it does not need to have
+additionals tools present – even though more reliable ways like using "kcpuid",
+which calls the CPUID instruction instead of parsing a list, should be preferred.
+Scripts, that use /proc/cpuinfo to determine if the current CPU is
+"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
+claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
+in that flags list.
+
+This can prevent some docker containers from starting or build scripts to create
+unoptimized binaries.
+
+Admittably, this is more a small inconvenience than a severe bug in the kernel
+and the shoddy scripts that rely on parsing /proc/cpuinfo
+should be fixed instead.
+
+This patch adds an additional check to see if we're running inside a
+virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
+understanding, can't be present on a real K8 processor as it was introduced
+only with the later/other Athlon64 models.
+
+Example output with the "lahf_lm" flag missing in the flags list
+(should be shown between "hypervisor" and "abm"):
+
+    $ cat /proc/cpuinfo
+    processor       : 0
+    vendor_id       : AuthenticAMD
+    cpu family      : 15
+    model           : 6
+    model name      : Common KVM processor
+    stepping        : 1
+    microcode       : 0x1000065
+    cpu MHz         : 2599.998
+    cache size      : 512 KB
+    physical id     : 0
+    siblings        : 1
+    core id         : 0
+    cpu cores       : 1
+    apicid          : 0
+    initial apicid  : 0
+    fpu             : yes
+    fpu_exception   : yes
+    cpuid level     : 13
+    wp              : yes
+    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
+                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
+                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
+                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
+                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
+
+... while kcpuid shows the feature to be present in the CPU:
+
+    # kcpuid -d | grep lahf
+         lahf_lm             - LAHF/SAHF available in 64-bit mode
+
+[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
+
+Signed-off-by: Max Grobecker <max@grobecker.info>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 37796a1d0715f..9ac93b4ba67b4 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -787,7 +787,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	 * (model = 0x14) and later actually support it.
+ 	 * (AMD Erratum #110, docId: 25759).
+ 	 */
+-	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
++	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
+ 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+ 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
+ 			value &= ~BIT_64(32);
+-- 
+2.39.5
+
+
+
 
