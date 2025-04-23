@@ -1,176 +1,137 @@
-Return-Path: <linux-kernel+bounces-615863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224A6A98362
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:31:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CD9A98364
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0933317540B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:31:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEEC17B1556
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED8E27F755;
-	Wed, 23 Apr 2025 08:21:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BCD280CD9;
+	Wed, 23 Apr 2025 08:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozVjPv2E"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9166427C867
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C6280A51
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396478; cv=none; b=l3k8875zwnLtTEjOP+25IPTRUyzz3PpgsRFy1j9ZOOXfL+nc0l8l1PlwZNiMt39/okaECgb7mATjqnKQW2lmBSPiRYw4lljraq8AhNdM+2gEcy6AMyDl1ljvyNzE4i+Xt3RL3w2JgG+NuT7OXhXwEIemSAoTnCmOM3s/D2UFQzw=
+	t=1745396485; cv=none; b=XHWipP6VG7rq0t1zHKQ3ZW9z9UfXzUE7qcaxp/4WeaMfxNQl44bxcwfD8ALBi4O/YhxyhJ4epAQRgK2VJyHSme2poHkEaxsOMpxT/1e5/MAUD/tvU5zpQYbw9k+aGRdvNuVt6pb7NtnW+dK+HnzukZBLslPr8N417yi9zdUzd78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396478; c=relaxed/simple;
-	bh=MM8zTb7fBXXRsmhqv/GChF68VhXTaKMR0tZATYq8nfM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EDgC8xauqW2XtC5H+J9wDVK8O/s+nf8yKaGTiQAWy3jnOfTNd97c22xHjok2mTMAS6korw4em0WhyGsJke4x4w1rCbUlYdNUSBOKY65C4jjSlXRlHYnkNjNxMpY/aQW6JmT2uSDkL3ygu3BYP2qopzPaIxcAxoQj6TrXQ0kus3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u7VLu-0003K3-5G; Wed, 23 Apr 2025 10:21:06 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u7VLt-001gbG-1x;
-	Wed, 23 Apr 2025 10:21:05 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u7VLt-00BoAZ-1e;
-	Wed, 23 Apr 2025 10:21:05 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 23 Apr 2025 10:21:05 +0200
-Subject: [PATCH v2 4/4] wifi: mwifiex: remove mwifiex_sta_init_cmd() last
- argument
+	s=arc-20240116; t=1745396485; c=relaxed/simple;
+	bh=0XEqfSAxlPY5os2nxDoIwRW/AGhrDkurjFzqdCvEZyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FZ++WKbadHjMqLTKVFkfG8iykjl3kD3L/65feaqFu4uz1rICfX4QhdZfWYSXqo2+8IEEKrQgcUF1V62rrnulWDcDnNUkeK0ToR68oErmDD76xy4GUdTtHRQmjjd3X0/mABrfTEo99QnonMm3b3i4KKa0CZ3z/1g5KsTl3toXMHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozVjPv2E; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so55235105e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745396482; x=1746001282; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
+        b=ozVjPv2EvWvqWbFFDCuonjx+z/Lz6ZvSEDHCzbc5Nvo+TyqVBFmVK+BbmUqi/H3Roe
+         8mPR5AVbtjfD26khBXumkCKjd5Yv1A3qg54Ko8heYdQIVHzLZJybbGQTuheMHwEd7Q0l
+         NmNyldolTZZOnMFRAZtKu3M7tpiBIOIybRD8GRFeh2H7QoBAHY1UavFQnH0HtiCWdP+P
+         /mOdAoGQp7ux3IY0XL46ZC6WYYicT3i2l4cScUfeCWsxl36nF3mDrCVnNMiVQGN56+Qv
+         VThP5gs7A8TtKPNPWZem3XjY4fAM0ZZBqEtl91bUCwxLrAFIQo4S6puIRaCg2Enhzvf0
+         +B+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745396482; x=1746001282;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
+        b=eCnfWvqeCYR7Gyj+Q/SJpovx+G8TPdJo+jKbcNYkyZHmd7zXHvVB5awG8RDaJlDJI9
+         yMcWvqsUeC1lWnTeqHQOf37HJVgWagG85PzHQdlOvrAcZuYwkcjSnsxhJqsW/OZSWRzc
+         uH9JncHyMzvJ4djUznLtDZ9JV3gDZIPKPREl89h6uFlsfTRdoZ303mIhqtNDmw8Tm4o+
+         y7tcHv4VDLs4eyNobCF4Id4gCJQa+YHiEj095kSnhloUuJqTaAOpy47ZAhwE6ySNtisj
+         TCBtI5xWH0F37eR5JFSGxeikLuNXnf1yUGtBUfA3e1Q3A8UIurFF8U4FHkP3BhcW1jrY
+         3BhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/PZio9IvHFpEpGTobEUCK1bLqi1fvYmi1oN6g+HBI/1xOdQT+yp+MgT4QqICGhRBJf6bJ19mHEqiHgHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrKpbJXhrbPEwQ3UDgaS6nEscYu22xNouP9Vfo+hHXXOGh2Lq6
+	jJgeQtNTRIcPVftPrlsSifwbZZ5joaQaPeki1v3VaRx65pNVnXxeK1gLcwsDMcI=
+X-Gm-Gg: ASbGncsHATxa6kJpbo2Ct833q4GNZNOQTfFmQEQzAbPmZTLQUH2IfPi6pJvhJZCKU+j
+	BVFoVidxEjhNgFj4GZG3G7FSda+dHMfm3KbyI3V71gxGPzBcsZoRIkqZFfBFnQr8q+MjBdVrm6q
+	MOztYA86rDJN3SJcPb5jJmL0gVl1BCOscau9JYHByzSEGKwDoA0J8p2gJgkZYX6loTsPP9MiGkj
+	hBlcIz3+vHD4gktMjw2+5LxOiYaV9FZw0Z8hEEFt3WSfPWq3V5BVzH2chPpyWVjfE22eNBBv0rb
+	ec/+Vd9buGp1Wh52kRhGodGTC9KQLHcp8g34ms1r1zFUBw==
+X-Google-Smtp-Source: AGHT+IHWYSrmnac2ZIJgkK3CcnsC+6t1hYnQGT7QpTZYVmOgik/OcS5nSxSw/Lh3KD6scYknsYVhAQ==
+X-Received: by 2002:a05:600c:3c85:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-4406ab98242mr134584375e9.8.1745396482254;
+        Wed, 23 Apr 2025 01:21:22 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092db2bd5sm16760175e9.26.2025.04.23.01.21.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 01:21:21 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:21:18 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] i2c: Fix end of loop test in
+ i2c_atr_find_mapping_by_addr()
+Message-ID: <aAii_iawJdptQyCt@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-mwifiex-drop-asynchronous-init-v2-4-1bb951073a06@pengutronix.de>
-References: <20250423-mwifiex-drop-asynchronous-init-v2-0-1bb951073a06@pengutronix.de>
-In-Reply-To: <20250423-mwifiex-drop-asynchronous-init-v2-0-1bb951073a06@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>, 
- Francesco Dolcini <francesco@dolcini.it>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745396465; l=3985;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=MM8zTb7fBXXRsmhqv/GChF68VhXTaKMR0tZATYq8nfM=;
- b=qHDdlj4etJcCatxtjge4NhvULdjxQqgfWi3QqDFXrN3qT8qW7geA6GpuzKvuNk49fT6iztuki
- fQ9x+R76EpmD/8rpZ2pqTBCnENFCIFR9SuKPcVylQTzyY+xoni5rWJD
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The init argument from mwifiex_sta_init_cmd() is no longer used. Drop
-it.
+When the list_for_each_entry_reverse() exits without hitting a break
+then the list cursor points to invalid memory.  So this check for
+if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+variable to track if we found what we were looking for or not.
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Acked-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Fixes: c3f55241882b ("i2c: Support dynamic address translation")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 8 ++++----
- drivers/net/wireless/marvell/mwifiex/init.c     | 2 +-
- drivers/net/wireless/marvell/mwifiex/main.h     | 2 +-
- drivers/net/wireless/marvell/mwifiex/sta_cmd.c  | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/i2c/i2c-atr.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index a099fdaafa45d..df4186c0678ae 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -1126,7 +1126,7 @@ mwifiex_change_vif_to_p2p(struct net_device *dev,
- 			     HostCmd_ACT_GEN_SET, 0, NULL, true))
- 		return -1;
- 
--	if (mwifiex_sta_init_cmd(priv, false, false))
-+	if (mwifiex_sta_init_cmd(priv, false))
- 		return -1;
- 
- 	return 0;
-@@ -1167,7 +1167,7 @@ mwifiex_change_vif_to_sta_adhoc(struct net_device *dev,
- 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
- 			     HostCmd_ACT_GEN_SET, 0, NULL, true))
- 		return -1;
--	if (mwifiex_sta_init_cmd(priv, false, false))
-+	if (mwifiex_sta_init_cmd(priv, false))
- 		return -1;
- 
- 	return 0;
-@@ -1204,7 +1204,7 @@ mwifiex_change_vif_to_ap(struct net_device *dev,
- 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
- 			     HostCmd_ACT_GEN_SET, 0, NULL, true))
- 		return -1;
--	if (mwifiex_sta_init_cmd(priv, false, false))
-+	if (mwifiex_sta_init_cmd(priv, false))
- 		return -1;
- 
- 	return 0;
-@@ -3122,7 +3122,7 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
- 		if (ret)
- 			goto err_set_bss_mode;
- 
--		ret = mwifiex_sta_init_cmd(priv, false, false);
-+		ret = mwifiex_sta_init_cmd(priv, false);
- 		if (ret)
- 			goto err_sta_init;
- 	}
-diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
-index dd2c17d946d7c..32c374e477943 100644
---- a/drivers/net/wireless/marvell/mwifiex/init.c
-+++ b/drivers/net/wireless/marvell/mwifiex/init.c
-@@ -510,7 +510,7 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
- 	} else {
- 		for (i = 0; i < adapter->priv_num; i++) {
- 			ret = mwifiex_sta_init_cmd(adapter->priv[i],
--						   first_sta, true);
-+						   first_sta);
- 			if (ret == -1)
- 				return -1;
- 
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 35d13eada0868..e01310ccef54f 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1150,7 +1150,7 @@ void mwifiex_process_sta_txpd(struct mwifiex_private *priv,
- 			      struct sk_buff *skb);
- void mwifiex_process_uap_txpd(struct mwifiex_private *priv,
- 			      struct sk_buff *skb);
--int mwifiex_sta_init_cmd(struct mwifiex_private *, u8 first_sta, bool init);
-+int mwifiex_sta_init_cmd(struct mwifiex_private *, u8 first_sta);
- int mwifiex_cmd_802_11_scan(struct host_cmd_ds_command *cmd,
- 			    struct mwifiex_scan_cmd_config *scan_cfg);
- void mwifiex_queue_scan_cmd(struct mwifiex_private *priv,
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-index 7a8a74df86ab1..b7cae596294bd 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-@@ -2258,7 +2258,7 @@ int mwifiex_sta_prepare_cmd(struct mwifiex_private *priv, uint16_t cmd_no,
-  *      - Set 11d control
-  *      - Set MAC control (this must be the last command to initialize firmware)
-  */
--int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta, bool init)
-+int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta)
- {
- 	struct mwifiex_adapter *adapter = priv->adapter;
+diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
+index d5aa6738370c..1aeaecacc26c 100644
+--- a/drivers/i2c/i2c-atr.c
++++ b/drivers/i2c/i2c-atr.c
+@@ -240,6 +240,7 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+ 	struct i2c_atr *atr = chan->atr;
+ 	struct i2c_atr_alias_pair *c2a;
+ 	struct list_head *alias_pairs;
++	bool found = false;
+ 	u16 alias;
  	int ret;
-
+ 
+@@ -258,11 +259,14 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+ 		if (unlikely(list_empty(alias_pairs)))
+ 			return NULL;
+ 
+-		list_for_each_entry_reverse(c2a, alias_pairs, node)
+-			if (!c2a->fixed)
++		list_for_each_entry_reverse(c2a, alias_pairs, node) {
++			if (!c2a->fixed) {
++				found = true;
+ 				break;
++			}
++		}
+ 
+-		if (c2a->fixed)
++		if (!found)
+ 			return NULL;
+ 
+ 		atr->ops->detach_addr(atr, chan->chan_id, c2a->addr);
 -- 
-2.39.5
+2.47.2
 
 
