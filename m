@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-616668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937B4A99444
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:11:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ACCA994C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7C04A3ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76601BC1B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519A82989AD;
-	Wed, 23 Apr 2025 15:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D437628B517;
+	Wed, 23 Apr 2025 15:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p+8Ilk4t"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0PG0OWA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C3D28A3F9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371E5285401;
+	Wed, 23 Apr 2025 15:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423301; cv=none; b=rc+8bY1k3g3y8qSQFAOHBjPTAlXMt7wuKj2zZZhMq8gz0cq3MF6nKYnW8N7WgCNsL0cvy+rRA3wzLcnWVA8of/XUId+GRwlXknWNe3/XwxYDyilO8xLygkhzAWeKsRzjXWVWE4LQ3bR2HsH2n9Ucj3KNrh528GHxT6wy85BajQw=
+	t=1745423373; cv=none; b=RpOSaFbYuR9Y/0UtEEaAXkYEgnck3XY+ZOUhCp7PWSYZET6i0VTWlfV21v1ziR4Z2x98dLBlFI7thMgBUKiE2XQGHpd0gWi2hVNISL1Nl8uZISfAnIHG8PTvGoqwvIhLL7CZUQEEqYQN5L5eZZjL481mdXwc3PjjArqOAy7VqlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423301; c=relaxed/simple;
-	bh=TMWxvRwLgAuk7MEXyPeTN9k9WqrUYKuo8TciIrD4hzE=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=GdyELC5jUnTfQ5yWbsfpU/Uqd41BHG895AgPgV65t38v7zWAUBQ2BHcQmb5g7CKukJ2vt0GD4kOP45k82osGOvQHXoJ28GfJBlJBP/3ENcvQudL15RMlhus7kPJFX80b9PmDEpbYXiD6a+LY+xSvJAMlRQ+y6F3hNugpAf2jlr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p+8Ilk4t; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1745423373; c=relaxed/simple;
+	bh=Rd6C0AT8kRiDT9Gitf5UOmK5rHvXSI/4LUIbOAcAcWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpMB2ZC1Dm/tTnCzgwW09nuVV6IJQAcPf5ScHyC9J1eejuySKQ8+BUlYxJnqtNvAULsu/R7ZfIOXKG2Gqz84UxLJGq+sPNmxW4hG6adgZPC3aQKWiVtgFWalK9W4F+X2wermnbWX9ysfkT0rg5yeWlqrlGiT6AE3RNWOSf9a9ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0PG0OWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6031FC4CEE2;
+	Wed, 23 Apr 2025 15:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745423372;
+	bh=Rd6C0AT8kRiDT9Gitf5UOmK5rHvXSI/4LUIbOAcAcWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y0PG0OWAI+2W/ge4r1n+ZVwPbQIzUTMG9Qfvf8bmuuEHZ0COTIPA7+Oyv91NxxUgM
+	 lVM2/9F/ssXzOPY4Xu/DuoJEKfQwxn3vHV0aEgY4VRgx/uqjvuqeSsOZnrjM+11tHm
+	 9+1YkjLtIcWSuqqM1LT3WQaz+KmkuavW/gAySngz7Uqz5SLAPyH7AghzKlclsuZsa6
+	 xlg5r5SzgF2gqi0oer+43A009BlYknBI/xG1/azywsD3pCc+7t8lVSELM/S5v6vKD4
+	 e/hdUXBhfo1mHahkpeyAHd0BjMMZ+VIVwVVAMrQAhG5ZPqT72kGWcQdTRomOFaKt2l
+	 6iOCE4JorUREQ==
+Date: Wed, 23 Apr 2025 10:49:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	Olivia Wen <olivia.wen@mediatek.com>, kernel@collabora.com,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: mediatek: Add missing
+ minItems for 8192/8195
+Message-ID: <20250423154930.GA579807-robh@kernel.org>
+References: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
+ <20250421-scp-dual-core-mt8390-v2-1-c84117a959a9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745423297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Ff17WZFxu67PNkbJBO+JX+8St9CljDp4X4Y65eqRDE=;
-	b=p+8Ilk4t6h5IJzadE4De6H7iPNqW7gb4OE3/s5bmrg3JBbnoZ+eEAmABRW4J9J7gOdz2Qa
-	qrFIw+onyja499qrar2C9ewy2gsZww5AmgzKrgs214kpIF9CwwQd0A/zXvuTEwp1eHuJKl
-	UgXEaVayJ7ZUkC2K7lu7/pMz/GWeMCk=
-Date: Wed, 23 Apr 2025 15:48:14 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <a89746d8897c81ed6e55c99d8ba71223ef3e318c@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v1] workqueue: annotate data-races around pwq->stats
-To: "Tejun Heo" <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mrpre@163.com, mkoutny@suse.com,
- syzbot+01affb1491750534256d@syzkaller.appspotmail.com, "Lai Jiangshan"
- <jiangshanlai@gmail.com>
-In-Reply-To: <aAkHrjU22pCSkWif@slm.duckdns.org>
-References: <20250423125341.503659-1-jiayuan.chen@linux.dev>
- <aAkHrjU22pCSkWif@slm.duckdns.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250421-scp-dual-core-mt8390-v2-1-c84117a959a9@collabora.com>
 
-April 23, 2025 at 23:30, "Tejun Heo" <tj@kernel.org> wrote:
+On Mon, Apr 21, 2025 at 04:49:04PM -0400, Nícolas F. R. A. Prado wrote:
+> Both MT8192 and MT8195 have an L1TCM memory, so it should be described
+> in reg, and therefore reg's minItems should be 3, as is already implicit
+> by reg-names being three entries long. However minItems is currently
+> unset for mt8192/mt8195, resulting in it being equal to 2, from the base
+> schema. Fix reg minItems for MT8192 and MT8195 by setting it to 3.
+> 
+> Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -185,6 +185,7 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> +          minItems: 3
+>            maxItems: 3
 
+As the max is already 3 at the top-level, you should drop maxItems here.
 
-
->=20
->=20On Wed, Apr 23, 2025 at 08:53:41PM +0800, Jiayuan Chen wrote:
->=20
->=20>=20
->=20> Suppress warning by annotating these accesses using
-> >=20
->=20>  READ_ONCE() / WRITE_ONCE().
-> >=20
->=20>=20=20
->=20>=20
->=20>  Reported-by: syzbot+01affb1491750534256d@syzkaller.appspotmail.com
-> >=20
->=20>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> >=20
->=20>  ---
-> >=20
->=20>  kernel/workqueue.c | 2 +-
-> >=20
->=20>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
->=20>=20=20
->=20>=20
->=20>  diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> >=20
->=20>  index cf6203282737..d78640b5d188 100644
-> >=20
->=20>  --- a/kernel/workqueue.c
-> >=20
->=20>  +++ b/kernel/workqueue.c
-> >=20
->=20>  @@ -3241,7 +3241,7 @@ __acquires(&pool->lock)
-> >=20
->=20>  * point will only record its address.
-> >=20
->=20>  */
-> >=20
->=20>  trace_workqueue_execute_end(work, worker->current_func);
-> >=20
->=20>  - pwq->stats[PWQ_STAT_COMPLETED]++;
-> >=20
->=20>  + WRITE_ONCE(pwq->stats[PWQ_STAT_COMPLETED], READ_ONCE(pwq->stats[=
-PWQ_STAT_COMPLETED]) + 1);
-> >=20
->=20
-> The function acquires pool->lock down below. Can you move it down insid=
-e the
->=20
->=20locked region instead of adding READ/WRITE_ONCE()?
->=20
->=20Thanks.
->=20
->=20--=20
->=20
-> tejun
->
-Thanks, I can do that.
-Previously, I thought it was for performance considerations that the
-metrics calculation is out of the lock's scope...
+>          reg-names:
+>            items:
+> 
+> -- 
+> 2.49.0
+> 
 
