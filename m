@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-615360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8961DA97C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B66A97BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319B63B0B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807DC3BC892
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D91F5841;
-	Wed, 23 Apr 2025 01:21:38 +0000 (UTC)
-Received: from 190-102-104-130.static.hvvc.us (190-102-104-130.static.hvvc.us [190.102.104.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730F2257AD7;
+	Wed, 23 Apr 2025 00:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YQK08dS+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D783338F91
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=190.102.104.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531771F153A;
+	Wed, 23 Apr 2025 00:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745371298; cv=none; b=XA5+kbFRKb/eBmSrCZLoMngvwq/RKYFAcBXaZPokQ2/i/dbSG6uRIPWAejFGbcHw+HMWExiuG6HJCwvWi2SpWKH/ggLW+W9FcPv91H8x/gZR5WOPvagBvxiyiM3GNLN3KYEQE1EMf3sV+reEafvow0YDJyF1eYdniySjwm+2Hrg=
+	t=1745369919; cv=none; b=Gw276l2VYuFTEsqgFqhGiBFbVR6DmUKfUvNlmQZ/X9k3E/EVMD9eCOhhymJEi7iLZERmI6a+rilkTBUd6Di1xWLuz71aRicv0/2Z9pn8rpNdI0ocmW+K35WsAeduh5IVl2eHIHe34gpnv6oVntR7Dp5Aj9v2dqrzfU4HPUN5518=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745371298; c=relaxed/simple;
-	bh=8hxQ4bVtRg7C2EkHwlLBO27eCchHZAwpqN2l5qTpA+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N26pkmRn/CsIAX0N/tdDODnYTkqVRsc6sS+byO4/rccO8zfbOCA543BXrofTu3VnBsgPEXcX/W5AqmCaEQ+hnk3TZ6006J8+5mnpI99VcY2uzvAZrZx7dZjt20tirxj4zLSrJ4Ms6z4e0kZubWHJkSSvDt3vgvBa+V3vGLh1fro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com; spf=pass smtp.mailfrom=phoronix.com; arc=none smtp.client-ip=190.102.104.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phoronix.com
-Received: from c-24-15-38-32.hsd1.in.comcast.net ([24.15.38.32]:6175 helo=[192.168.1.194])
-	by milan.phoronix.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <Michael@phoronix.com>)
-	id 1u7OOI-0000000EJsP-1qhP;
-	Tue, 22 Apr 2025 20:55:04 -0400
-Message-ID: <896a67ec-9f48-4137-9d34-4bb16861e284@phoronix.com>
-Date: Tue, 22 Apr 2025 19:54:59 -0500
+	s=arc-20240116; t=1745369919; c=relaxed/simple;
+	bh=QD/951DXfIsapdv56c5XXqNjxOuGMA1nZZ5Px7DpvWQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZSAfY3W7jIbkXoiLGH59z8B7qT7LS7PzPsdpwfIo1o81gtYaeKypvnipZCRH8tisRoXeW1CpHRjepfT2Z6fjs7pGmPhIEjWF1+1Bi7MQiCPoAG7AigdEj+tS02hBHTEmAliQJPvSyGR0rwu0DBjUGRVAJRBOK2KYuDtALiLPpIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YQK08dS+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N0i7c7020392;
+	Wed, 23 Apr 2025 00:58:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=83W0VPeGc5SyYnArV0JEVr
+	ZRTV1S9xpB2QWW1QO/5J8=; b=YQK08dS+SDu1b4JUBoU9tkWeQme4izuvKw9TWP
+	rP3HJY+IUjlJAkuBjjfFBPodrBM/iOu8QUWhhMOBWcv7lwvhZFlp/h0kRgdY0N/B
+	XFSmsP29co5xxkqT6jsF1gIonFcM7fHVInDT++7gK7IA9J4CfNYH68f0NWAT8L7Z
+	urMVomnchYO7Xfa/jqnJF4aKE/UcoMIw17JBAWeXXrpQ84zGr6YwvWhtX/hbz1/a
+	76/+kmMvReNAxyg83VlQ+6Z1QWJLPqcWMJ9GmrohFEmkXvjh2SkPZLUC+FIoxfX4
+	W91htnCK4/ODK2eRsNiRePNGrgXjoxDlccF7sBV6COycOHGw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh20dmj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 00:58:31 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53N0wU7D024503
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 00:58:30 GMT
+Received: from hu-djaggi-lv.qualcomm.com (10.49.16.6) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Apr 2025 17:58:30 -0700
+From: Deepti Jaggi <quic_djaggi@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <robh@kernel.org>,
+        <conor+dt@kernel.org>, <krzysztof.kozlowski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_ptalari@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_djaggi@quicinc.com>,
+        <quic_shazhuss@quicinc.com>
+Subject: [PATCH v5] dt-bindings: firmware: arm,scmi: allow multiple instances
+Date: Tue, 22 Apr 2025 17:58:24 -0700
+Message-ID: <20250423005824.3993256-1-quic_djaggi@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Linux 6.15-rc3
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Dave Airlie <airlied@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Sebastian Sewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
- <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
- <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
- <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
-Content-Language: en-CA
-From: Michael Larabel <Michael@phoronix.com>
-In-Reply-To: <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - milan.phoronix.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - phoronix.com
-X-Get-Message-Sender-Via: milan.phoronix.com: authenticated_id: michael@phoronix.com
-X-Authenticated-Sender: milan.phoronix.com: michael@phoronix.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EtLSrTcA c=1 sm=1 tr=0 ts=68083b37 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=7CQSdrXTAAAA:8
+ a=jixImWN2ZbPRd6SRAMsA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-GUID: LMfdflG8Att-BAjhZYWJgy_AC1rc2xtN
+X-Proofpoint-ORIG-GUID: LMfdflG8Att-BAjhZYWJgy_AC1rc2xtN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDAwMyBTYWx0ZWRfX5sSZrPr121Jm mTieecMZRRMnnX7FIizT93yI6xtOurbIXJxJIxn5acRLF3+jnaxQ2LT03MXH6nyPqiC4QsISQhZ r0H1zO3DS0O2STrF5P4vxdKyE0v2kP909Xkn4+yKNj00JXywfmsONEDhUKRH58HsJ3KpL8L2kJN
+ 0eCweurT4t/0gllwZBrLN9yVIN2joDPIN3Ttjhs2jFPsPAEcF4a8A1XQzf62HKh3rHSMOKy08id XTu1o1wUuRZbLe4w3MNZQysUkgHmC2T11SUpcmvCppmhXW408Uph3rWx7orG//69ftMfdU7m+r/ HdV3Sv/Oao8WLs/4N3M//d8BTHtBdbiBr2kCMKAwY2fEsagogRLxurF2MXS+BZI8WDzpQsVaxB7
+ umWKIvCzr4tnWBikQs+hK4HT2YPDdZUlqXam7kmAVkHHPJfqQ29cPrB4m3V6npK8QVfZCsjq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_11,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 clxscore=1011 spamscore=0 mlxlogscore=970
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230003
 
-On 4/22/25 7:12 PM, Shakeel Butt wrote:
-> Ccing Michael
->
-> On Tue, Apr 22, 2025 at 04:37:59PM -0700, Alexei Starovoitov wrote:
->> On Tue, Apr 22, 2025 at 4:01 PM Dave Airlie <airlied@gmail.com> wrote:
->>>> Alexei Starovoitov (2):
->>>>        locking/local_lock, mm: replace localtry_ helpers with
->>>> local_trylock_t type
->>> This seems to have upset some phoronix nginx workload
->>> https://www.phoronix.com/review/linux-615-nginx-regression/2
->> 3x regression? wow.
->> Thanks for heads up.
->> I'm staring at the patch and don't see it.
->> Adding more experts.
-> Hi Michael,
->
-> Can you please share a bit more on your nginx workload and how can we
-> reproduce locally? In the mean time, I can try netperf locally to
-> reproduce.
->
-> I do have some followup optimizations [1, 2] which hopefully are aimed
-> for next release but we can try those as well.
->
-> [1] https://lkml.kernel.org/r/20250416180229.2902751-1-shakeel.butt@linux.dev
-> [2] https://lkml.kernel.org/r/20250410025752.92159-1-shakeel.butt@linux.dev
->
-> thanks,
-> Shakeel
+From: Nikunj Kela <quic_nkela@quicinc.com>
 
-The Nginx test case is a fairly stock Nginx build measuring HTTPS 
-throughput for serving some static web page with Wrk used as the 
-stressor, all on the same host for stressing just the local host. All of 
-the assets and execution scripts used for that Nginx test in raw form 
-are here - 
-https://openbenchmarking.org/innhold/c7b555063f5732b4f1bb08444e258984d1dbb94b 
-Let me know if any problems reproducing, etc.
+This change extends scmi node name so as to allow multiple
+SCMI instances.
 
-Thanks, I can try out those patches tomorrow. At the moment on that same 
-server currently running through some of the other workloads I also 
-found regressed on Linux 6.15 GIt to see if attributed to same commit or 
-not.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+Signed-off-by: Deepti Jaggi <quic_djaggi@quicinc.com>
+---
+Changes in v5:
+        - Added Reviewed-by tag
 
-So far, when comparing 51339d99c0131bc0d16d378e9b05bc498d2967e2 as the 
-first bad commit against the parent commit 
-a30951d09c33c899f0e4aca80eb87fad5f10ecfa, I was able to reproduce a 
-regression for the OpenFOAM CFD software using drivaerFastback with the 
-small mesh size: 30.6 seconds on the bad commit, 23.6 seconds on the 
-parent. So that too seems to be related while the other tests are still 
-running at the moment.
+Changes in v4:
+        - Dropped 'virtual' from subject and description
 
-Michael
+Changes in v3:
+        - Added Reviewed-by tag
+        - Removed the patch from original series[1]
 
+Changes in v2:
+        - Fixed scmi nodename pattern
+
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+index abbd62f1fed0..be817fd9cc34 100644
+--- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
++++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+@@ -27,7 +27,7 @@ anyOf:
+ 
+ properties:
+   $nodename:
+-    const: scmi
++    pattern: '^scmi(-[0-9]+)?$'
+ 
+   compatible:
+     oneOf:
+-- 
+2.25.1
 
 
