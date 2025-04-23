@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-615936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA31AA9845C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C159A986BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A131B62973
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F61C1B64F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0921FC0E6;
-	Wed, 23 Apr 2025 08:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B444A2CCC9;
+	Wed, 23 Apr 2025 10:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oQP22YwH"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZZaUwGUI"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC661B393C;
-	Wed, 23 Apr 2025 08:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A87E17D346
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745398531; cv=none; b=UXOcT0fCIgP4XmZrJdpXDOpxHm6DekqL387Y0Q4bShvpTsuNQY11vCHsrxUIDR7C1RXKO7fi5TYzg/SwbwT3G/aVuMNsM8LbfWrPo57nXgwe05MHtQfH9TdvpV6SFiuAK395q0O5vHFI4wPUtX3NLqc6ZvusH3ONZ44b+JmalYA=
+	t=1745402761; cv=none; b=FxrpmoBhug3l43fYXpqo+iwTbtHyYrTi0wms9hPzroeahG1j0pcgew1jp9GPIHd4H8vRz1emuPOLDskYP8XAvIbWUakaHcbBbjZGnI35Ar4e3KudnHLMcDMrBlKjjLmYdbvXKP7sDoyGwHR3rb7LVLXPTJkkkMpooIN7FPkSgS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745398531; c=relaxed/simple;
-	bh=E8lCmYELthXVrgPK9DiQF5wazPVbs7kqfzcZCrjY54c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NGc3tC+NCbdpw93bVPPL2jxhHDCuzdBpJJ6OWhAkeb2boS9c3MvPNa17jHk46lNa6M3ABLMqSHmJsMgL8V8C9HDA6xBXcu4nDpLP8fZmFp57O3IpiXyh3H9la97oZvWazDf27+k1SeorHj2mzH2sgzdY36/WdrIR5CPPjYxFYVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oQP22YwH; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A3F943226;
-	Wed, 23 Apr 2025 08:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745398528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B4zIqLZCfsgZ3vHsVWWBu8KvyZdoEpgxEavAMbbq/00=;
-	b=oQP22YwHEeTSzgAnr3FkTp5W8J7XvMwbt9r6IsUtIMZIYUwXjoRTFkKvifGUhKIdQja4Qd
-	gNL2D8WCgOQSs1WP9vjITextePsQpFfJozpzhp4WZ4PP4WiZuBzainP4SOyCrddvXeqB14
-	Pna587uV6z2qmovWVBIjqzWBv3mx/hcelxGThvUwqe+C5vpLJtn+0RFAg1+dbYPls9uXZr
-	0X3YZGR2xLMWckEcQzwyufkNmzZUCKeCAwsgdmXE/YSJYXQXm8tt5QQ82fyeF2eNqXQ1a8
-	4nwhpBbu728dXnfDx93arCZqP3pTTSke9q9i7LyMZ7zsw52CUOfo2s5NQMW3QA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Russell King <linux@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Simon Horman <horms@kernel.org>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH net v2 3/3] net: stmmac: socfpga: Remove unused pcs-mdiodev field
-Date: Wed, 23 Apr 2025 12:46:45 +0200
-Message-ID: <20250423104646.189648-4-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423104646.189648-1-maxime.chevallier@bootlin.com>
-References: <20250423104646.189648-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1745402761; c=relaxed/simple;
+	bh=kw3oA6g0L/J+SJt52KtP3qj/6ZRBvYA/Jj7aRmbJo2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGFiyNCekBR6p7LmSWo8QyT7qu62kizEXgMExhantvpWWmAA6GIhRQ8uhX8LVzHmAvFNM0ECGBx/MBRUA/vdEQ2YfKiloRjQ2e3wMonfGNzEHUYfNugcMG8xUfv+9ghfgNEBkKGEmyGOpq3ld3VNFTqviifaC65X/usy2eiM2Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZZaUwGUI; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso5260835e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 03:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745402757; x=1746007557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OUbJaI9VUAIMhFIIcaT0OkYeQfgO+gViGfE+fCTNZxE=;
+        b=ZZaUwGUIG0lRs1GV/UbImRtSvwp/uFdK7NO3fZYZ0z+6H+c9MyhLXH8+IKLfniBS+V
+         A9HWCIxeGh9rWikmPYY3Ve5DlZNn5Irpg+mq30lP/SLRsWn2Y5U8VCRTna5j1uEZpiLi
+         VcDUcXv8rRG3hXTN03WJbmXK554J6TYjxUZKLUsFiUDmviB6c6iBA7vG/iN1UIA6ZRo7
+         u7wZh14U3H3wP35O+4vAUcWxxHS4DMWNE46FZu4d9pFEEWrEftL6XGgupMG+FifOg67P
+         QAl60cj0Ifx9fV82ndMHkVvG71VZ/KxeSJN5E5KQHkOBXxFl6d/m7/ja3TsoeE6aqG6d
+         Dfhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745402757; x=1746007557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OUbJaI9VUAIMhFIIcaT0OkYeQfgO+gViGfE+fCTNZxE=;
+        b=d2A99laG9Rz/5bJ6pjk/NOX5IgH3fL3c7ZmsXmsg/H95pNjr3VF6gPqHkhz/mR/aq1
+         MDTbEOI0d7phKSXm7radAgNzxRfRp0Sz+s4pgzIfbWGx6nNvp8J2hq8d9wIiAJCIfrhG
+         cRpR52q/VtfN0gQIr/j+7oz1gV9+t5nzZKUnw/5egJ5MPBN0JlGgDReE1Dje54iX8fon
+         T+ulBVqhM8jztPgHFnqb8QPX7zh7pOy9I3nM6tbNa6r7AVirk1vLrXc/a0UNE8MKHpLO
+         aCZdPTZg9m0yfZhocd9HmbJSkYSRG7YlWni9hpI1PlTLeZNuta67YIxGBZrHCtTsscKT
+         JR9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8TXLbR4l+amsAlaZG0Xa9yXP3LyxiMuj3hNYScWvGgN364bGwE9i4CKw6gfnToLpyRvzfupk6b4+jDpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXesFeLhK/QZyGiJ42bHAkNupGzSscCXXVM2ra3wfDCb3i4Z81
+	Lh39o7oe/nZhVvohR4Sk4cQf1Dc7Xa3ZUdOuUCvnqWrMiYJDwjgs/0qcufmijrk=
+X-Gm-Gg: ASbGncsWgJbtwGbKFyaLEYA/AZMMl10LdfhXPoc7V5Tq8sTPP3qXEKS/M4ligDm60jI
+	4JCz0rPR1XZ0V+F5uDkrxcJc98qqaQMNE6yL0JEMScjz9b5d/AX7J+PjsV3zvTEPe1/7IMkWTsO
+	7QRWtwF7adUBi5MomVJWu3ZEhCYHVuvtF9nl0cRjPXkmlEiLAyC8IwI2j0S/RU7RHuLl0L7G4kT
+	RiXlecji7gXkprhCkktg28TP+MYw7lrXkWELOZ90tDKFOCPK8OY+RVHnVwPwrxHV8jwd+EK31LN
+	urkdUxT2vbeL/0O+qOlNVJu5Q0mai9+gQvbK9P/lG3J36g==
+X-Google-Smtp-Source: AGHT+IFPFttObT8wggvieeFV9lBPKhqslxXbFCmW0/ya4RhTdPNGx6jYRFvipkYVNlPNySJfBOYuEA==
+X-Received: by 2002:a05:600c:3b24:b0:43d:5264:3cf0 with SMTP id 5b1f17b1804b1-4409386c438mr17536985e9.11.1745402757553;
+        Wed, 23 Apr 2025 03:05:57 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092dbfac7sm20079765e9.37.2025.04.23.03.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 03:05:57 -0700 (PDT)
+Date: Wed, 23 Apr 2025 13:05:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] driver core: auxiliary bus: Fix IS_ERR() vs NULL
+ check in __devm_auxiliary_device_create()
+Message-ID: <0354481c-c6a3-4573-a138-56449b55034c@stanley.mountain>
+References: <aAiiLzqVulfGDPsl@stanley.mountain>
+ <1jzfg7nrzn.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeiudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhto
- hepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1jzfg7nrzn.fsf@starbuckisacylon.baylibre.com>
 
-When dwmac-socfpga was converted to using the Lynx PCS (previously
-referred to in the driver as the Altera TSE PCS), the
-lynx_pcs_create_mdiodev() was used to create the pcs instance.
+On Wed, Apr 23, 2025 at 11:31:56AM +0200, Jerome Brunet wrote:
+> On Wed 23 Apr 2025 at 11:17, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+> > The auxiliary_device_create() function returns NULL.  It doesn't return
+> > error pointers.  Update the checking to match.
+> >
+> > Fixes: eaa0d30216c1 ("driver core: auxiliary bus: add device creation helpers")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Thanks for catching this mistake Dan.
+> 
+> The thing was initially setup to return error code. Greg asked to
+> simply return NULL on error and I forgot to re-align the devm variant.
+> 
+> So I think the fix should be to check for NULL as you did but return
+> NULL too so it is aligned with non-devm variant.
+> 
+> If you wish, I can handle a v2.
 
-As this function didn't exist in the early versions of the series, a
-local mdiodev object was stored for PCS creation. It was never used, but
-still made it into the driver, so remove it.
+Of course, it's hard to resist an offer like that but I can send a v2.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V2: Added Russell's r'd-by tag
-
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index c832a41c1747..72b50f6d72f4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -59,7 +59,6 @@ struct socfpga_dwmac {
- 	void __iomem *sgmii_adapter_base;
- 	bool f2h_ptp_ref_clk;
- 	const struct socfpga_dwmac_ops *ops;
--	struct mdio_device *pcs_mdiodev;
- };
- 
- static void socfpga_dwmac_fix_mac_speed(void *bsp_priv, int speed,
--- 
-2.49.0
+regards,
+dan carpenter
 
 
