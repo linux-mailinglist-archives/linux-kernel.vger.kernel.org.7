@@ -1,98 +1,153 @@
-Return-Path: <linux-kernel+bounces-617055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB20A999E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:06:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE5AA999EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500654404B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ECCD1B850F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53561274675;
-	Wed, 23 Apr 2025 21:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FC327E1A7;
+	Wed, 23 Apr 2025 21:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpoUCWo9"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="GNOR0nNI"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BB933F9;
-	Wed, 23 Apr 2025 21:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FC82D98;
+	Wed, 23 Apr 2025 21:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745442396; cv=none; b=cc3syOh4BA6AXIk0jchChSFqQuxiSskEn20Iar0Ier/mnEGx0BzSj4e96WILxEKXPOyqD1e6quEcVWNuXLM1uBoKfGumIleVSmbLWvyP+zfxZ5abwEjpnJeeybrmSTFWdGnCo/qPYg1hsKh1TvfXR9dWyjKjkivGUOI2KuQ84bw=
+	t=1745442422; cv=none; b=cFuEQtoOBiT2woL83zhTJrJLaNPBieH7r3QHlB+3bk2HBpEH3Z+A97qimilHRgjFCV2g3Vg1kHHXJggNjAqLcSk+6v1e9+cSoCivhBoOqdWQUtKS7qTHYxzuedRm2/Qr0jsH5Osb9PJ505t8g0j/56mDYKDZbEPHdvaQdn3ofl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745442396; c=relaxed/simple;
-	bh=N4QKT41EBNf3HAkmFM/arySxeneLArpbylTJ3iSI5tw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=htXonxA74rHbNw8Td7Fi7fskj4JtYPgu1rtqBPUyKxiCBWcD/nc0EDp7+Et/pMiiNhT8s8HfRudOXb08OobB4vdSbyN2CgLjvTL6YOlw5QkOSMHd62LElBcxbtwpp1J1186Lr6ppxIvTioLu/QBULOQ6d/GNePHnhbtpBJHCxt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpoUCWo9; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913d129c1aso240679f8f.0;
-        Wed, 23 Apr 2025 14:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745442393; x=1746047193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4QKT41EBNf3HAkmFM/arySxeneLArpbylTJ3iSI5tw=;
-        b=mpoUCWo9g3WOgSIFycOgY8R0I4Utog8So4eU3+E/L3JuUVFsaRrBtsityybwefAQQ7
-         dz3YM+z7CRQnhtAdW/nMkWY89u1ol3yS0MXbdeWPj3cQ5k3KkDluQudcqWDuhuzN4R6w
-         09LV4ot5RQ4hSe13El/2szeDT2qOU0DL1USltR+QK91ixdatCDuzBZ7eM2Sds9w5qG5e
-         Mxm70d+EbOGgtJDtOIYuIS+QH1HXYQRJSAS9O93UBqb3AFSulT2pR+PLvFGZ5CqcN3ov
-         nDIDTaJSa0/0iOUnZr+5fG/4PpUNGHjrHdtlBi2evotZ+q5wxVXPKgVkYyvudoCCwXAe
-         cTwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745442393; x=1746047193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N4QKT41EBNf3HAkmFM/arySxeneLArpbylTJ3iSI5tw=;
-        b=QotRQjdREos0PcGFOJhmxjYQrxFdFlnwy4bvPwwLmYgjJi01CS5rkY1HTxDQiCM7lN
-         bgoK6Bff7J16kZVYt+OSuPn4dETcON2EAzjHJBc0gakyQBAcvKd5/dzXBNwwioqed0Sy
-         8JtPQKvF5rYsxgvDL0XmIv8f/LmU11REZJRDBi2joAbWA51VrE0+OptnqvP6JZqcLtHf
-         qfA3LpxhLBuqdqqvS4IRYMEFJrSiMXBDjTpaLeYzJnRH63F7Xfip9T+BQVCUfc2ELhLm
-         DnIvy/towyGH/Etj8wkUh6sMtXlKj2P/u84Gm3m9AT5wPiDc2b4fKL5zaj+9A6rjg9zJ
-         Hssg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKaXZllO04nKCRep6k7aRRPgn2FG3NJebLd5ZEwDMcQsvRty/Ts9NYQ0cuVQWtrWUoMOT1IZhG6oiVf+vy@vger.kernel.org, AJvYcCXVvueWp/dH6jee4cwwPBCkM9AkYFzlecwaICbqdxcYhEACW4rawTEjlnrXii+S+nTYFdeDWZz7G2kGWKwxEWkhuXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4OqAz0sCCZ1iDUprqrl9P1vY2UbX7MNZ5tOl43sVt5wB4qKcS
-	uwA4FAbyV1+JeeDkiP46mIz4ZFK5uOQC8I1/jzrvnCLNVrxu37Hk8ktbqQ==
-X-Gm-Gg: ASbGnctxLsYUUjV1ODocw+4CXQ4siBTEd0Kgi9GwFpzzxqr3kVYAeS7P5VeABmu0RH5
-	fWLbFU4J3Dy0l5W9vMeLQoo/z2qfFYgiIRlymN9Q2/lDvYEV4dkNze0z7Xch74g20p12cIxrGyE
-	5rxLzKtFdFz9rKJr73FaCtrEhlJV2OdqugBduTDUu8E+MSPxdhjNsbhXUPsxXTwDtuT65vfhVo8
-	+gC2inGS86gyhhRb5OYz08aAcn9jhIJA/aL6Gde4JSCdLWtRrHY9lV0wJ6LwcDjdC3FJjSGPEg2
-	i5l2MzEo7aar2yh4bbDryyKHqoAoWrXETSBWaWeVjzqBi1vv8CWSMZfxupt9FPC9yLDILts9Daq
-	cFQjZuJKExOdV
-X-Google-Smtp-Source: AGHT+IFzXcduj7t+Sv67G370ODGZktFo13iDYRhymgWTOUPa8Usb6dAgzSTDy31r7r8+cgsZ7cFkFA==
-X-Received: by 2002:a05:6000:1886:b0:39c:30d8:32a4 with SMTP id ffacd0b85a97d-3a06ced96eemr23672f8f.26.1745442393292;
-        Wed, 23 Apr 2025 14:06:33 -0700 (PDT)
-Received: from nadav-asus.lan (85.64.206.118.dynamic.barak-online.net. [85.64.206.118])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49312fsm19935327f8f.70.2025.04.23.14.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 14:06:32 -0700 (PDT)
-From: Nadav Tasher <tashernadav@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: cve@kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tashernadav@gmail.com
-Subject: Re: CVE-2025-22032: wifi: mt76: mt7921: fix kernel panic due to null pointer dereference
-Date: Thu, 24 Apr 2025 00:06:30 +0300
-Message-Id: <20250423210630.30822-1-tashernadav@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025042316-silk-brunette-213b@gregkh>
-References: <2025042316-silk-brunette-213b@gregkh>
+	s=arc-20240116; t=1745442422; c=relaxed/simple;
+	bh=zjf+eXgupeic2NaH/eGimc8iMxf81f1qq6U1j6+oTT8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TsDpEHzJmTI8YtmLHxiY7z1bYaXKugXj2yc5HWthfvMUoY9PzJNgbw1WtVSDcMPrBtFjA1cuDXz5mQpzHj3v2aj6KmGY8Y3ZTo+Pw6DM2E9HCO/sNNVfpzsFpJAoyikjahRQwD5hQRg22L2xeR6kAk6b0nQ+CEANu1+JsJB+2QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=GNOR0nNI; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1u7hIm-007XIA-I3; Wed, 23 Apr 2025 23:06:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=phjtsSuA7wXOgFfhHsYA1FEf7UdFgY655or67qmY9Pc=; b=GNOR0nNIQ2FiqFC/eDoT+vExNp
+	FsA5Grmx2TCUGJL8W5swIWk3n+rQcFlHyUj+jRkGnPvFlG8SRGUrVWDH7hhmQoSawrRMQUd072214
+	3zXaGoAQLjhFwQPl2Yi09ZjgWRFJ8F3N/FiCeudMXnL8j2xg0ryh0ygxH1BFtXAzLXq33hfAZwvC/
+	Jy6uEwHGYXzHSFZEmeeu2cCjqofuDA/9x755HtfqjaePb8ROXUuNfbf1rvgZUj/3QMJ16cE8sHx//
+	yi5jSHeB9GKveUUATGbvSqrrR+aQnPNiXQ1SIYx6NxBXLZcSS5Af3YMFa6GzVbQhyBu4srwIV9b2y
+	HG/ZA6CQ==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1u7hIl-0006FL-Eq; Wed, 23 Apr 2025 23:06:39 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1u7hIh-000BZQ-4r; Wed, 23 Apr 2025 23:06:35 +0200
+Message-ID: <ee09df9b-9804-49de-b43b-99ccd4cbe742@rbox.co>
+Date: Wed, 23 Apr 2025 23:06:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next v2 1/3] vsock: Linger on unsent data
+To: Stefano Garzarella <sgarzare@redhat.com>,
+ Luigi Leonardi <leonardi@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250421-vsock-linger-v2-0-fe9febd64668@rbox.co>
+ <20250421-vsock-linger-v2-1-fe9febd64668@rbox.co>
+ <km2nad6hkdi3ngtho2xexyhhosh4aq37scir2hgxkcfiwes2wd@5dyliiq7cpuh>
+ <k47d2h7dwn26eti2p6nv2fupuybabvbexwinvxv7jnfbn6o3ep@cqtbaqlqyfrq>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <k47d2h7dwn26eti2p6nv2fupuybabvbexwinvxv7jnfbn6o3ep@cqtbaqlqyfrq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sorry for the hassle :)
+On 4/23/25 18:34, Stefano Garzarella wrote:
+> On Wed, Apr 23, 2025 at 05:53:12PM +0200, Luigi Leonardi wrote:
+>> Hi Michal,
+>>
+>> On Mon, Apr 21, 2025 at 11:50:41PM +0200, Michal Luczaj wrote:
+>>> Currently vsock's lingering effectively boils down to waiting (or timing
+>>> out) until packets are consumed or dropped by the peer; be it by receiving
+>>> the data, closing or shutting down the connection.
+>>>
+>>> To align with the semantics described in the SO_LINGER section of man
+>>> socket(7) and to mimic AF_INET's behaviour more closely, change the logic
+>>> of a lingering close(): instead of waiting for all data to be handled,
+>>> block until data is considered sent from the vsock's transport point of
+>>> view. That is until worker picks the packets for processing and decrements
+>>> virtio_vsock_sock::bytes_unsent down to 0.
+>>>
+>>> Note that such lingering is limited to transports that actually implement
+>>> vsock_transport::unsent_bytes() callback. This excludes Hyper-V and VMCI,
+>>> under which no lingering would be observed.
+>>>
+>>> The implementation does not adhere strictly to man page's interpretation of
+>>> SO_LINGER: shutdown() will not trigger the lingering. This follows AF_INET.
+>>>
+>>> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+>>> ---
+>>> net/vmw_vsock/virtio_transport_common.c | 13 +++++++++++--
+>>> 1 file changed, 11 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>>> index 7f7de6d8809655fe522749fbbc9025df71f071bd..aeb7f3794f7cfc251dde878cb44fdcc54814c89c 100644
+>>> --- a/net/vmw_vsock/virtio_transport_common.c
+>>> +++ b/net/vmw_vsock/virtio_transport_common.c
+>>> @@ -1196,12 +1196,21 @@ static void virtio_transport_wait_close(struct sock *sk, long timeout)
+>>> {
+>>> 	if (timeout) {
+>>> 		DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>>> +		ssize_t (*unsent)(struct vsock_sock *vsk);
+>>> +		struct vsock_sock *vsk = vsock_sk(sk);
+>>> +
+>>> +		/* Some transports (Hyper-V, VMCI) do not implement
+>>> +		 * unsent_bytes. For those, no lingering on close().
+>>> +		 */
+>>> +		unsent = vsk->transport->unsent_bytes;
+>>> +		if (!unsent)
+>>> +			return;
+>>
+>> IIUC if `unsent_bytes` is not implemented, virtio_transport_wait_close 
+>> basically does nothing. My concern is that we are breaking the 
+>> userspace due to a change in the behavior: Before this patch, with a 
+>> vmci/hyper-v transport, this function would wait for SOCK_DONE to be 
+>> set, but not anymore.
+> 
+> Wait, we are in virtio_transport_common.c, why we are talking about 
+> Hyper-V and VMCI?
+> 
+> I asked to check `vsk->transport->unsent_bytes` in the v1, because this 
+> code was part of af_vsock.c, but now we are back to virtio code, so I'm 
+> confused...
 
-Nadav
+Might your confusion be because of similar names?
+vsock_transport::unsent_bytes != virtio_vsock_sock::bytes_unsent
+
+I agree with Luigi, it is a breaking change for userspace depending on a
+non-standard behaviour. What's the protocol here; do it anyway, then see if
+anyone complains?
+
+As for Hyper-V and VMCI losing the "lingering", do we care? And if we do,
+take Hyper-V, is it possible to test any changes without access to
+proprietary host/hypervisor?
 
