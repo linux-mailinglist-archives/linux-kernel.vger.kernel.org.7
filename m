@@ -1,97 +1,80 @@
-Return-Path: <linux-kernel+bounces-615533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E83A97EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:06:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC9DA97FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAABA189FEA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C59217F2A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937EE26A1D5;
-	Wed, 23 Apr 2025 06:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE40268685;
+	Wed, 23 Apr 2025 06:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KLCB9KX6"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cxS8GEU+"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D83269D17
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC16A267F57
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745388207; cv=none; b=ufBx0Tp5Ief6mot5JNcPmQ+JSnrSOajl+b223oBEXE93HDarzzOFCqDL1Ax2JIACuEDXCR6cg9CTp1Cv/8ZMUHx+gktc/JbEcIyTbs58cD9vozksOR1ARBazrvv0o+MVDCseSXffyxpZ78DdW0i9T7xm+YhCwhBjKZgrj6JgIOw=
+	t=1745391137; cv=none; b=PzqsQMOZKrAyiyba8onVCEA/rz3Dq8OWXR8ML39YhNJzDqC/2rUDaWSwH20BUEYc+0bBCf0w7tuLVvIXdlmmQljWgxgq56WJclIbbnpPm3lp0178edK4zpCLvzMhmKIt5Z0ttXHBBPUHw/rb7uy706vAfjjKN/lPBYCw65dqOGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745388207; c=relaxed/simple;
-	bh=7yYZJd86bIYU+vT8RAjY7wEp1oq0Xfmfy1RQITDVRe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AG1U09MsmS8hdqQRfCAb/Mb021gVz1PWW8M44iwp1vYvguVpxhpubtcvpS2ZBms2LUBQfI26NOEZmYv9m/XTlMwEiAYVs20V2XiQ7SKUg2+XnPSYFRA1DYyNM13FlPyIu3+9gF8sq5YATO4pifezz+ud7FSkwvs0EA0Z/0EgA2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=KLCB9KX6; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso986573a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 23:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1745388204; x=1745993004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8grfYWwIX4hpiA7jlx82Mk2yoAsYJcNHuOuvJvnYwRc=;
-        b=KLCB9KX6r6o957n+xQESPWLdVV3PHVVIOekAlCvLhuKm0Hz7U6jcN719cBB3sv7NOQ
-         8FsoiuFksxx5n4VyKCttftr9EnpY7qzc4Yb16c629LKio3VRUOzizFiDMx2x/Kl8wLJl
-         dbHswO+j3+qAvVBlSFYDpX1mA33+VgHm7wdTk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745388204; x=1745993004;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8grfYWwIX4hpiA7jlx82Mk2yoAsYJcNHuOuvJvnYwRc=;
-        b=mSiudOqekKBy08j8HH5aW8be/+74O2F0Lbe3FzWKKI/4JcdV+xcTrWMl+YJaX7qpqj
-         6QQU578WXtv/c1IwiMXPFlBRMruLEuOZyS57vO75uM2UvW8VZwLZxWSlyMwqlJ44aRhq
-         OMKp/1uTW109Od8phMGOzJfgG0ZghYQVwMuFEYI1i1bKdeUVgcZfy3WmDUkcGNQMnnvV
-         GaWaOx5ssT1lhbOGo1YTb/vYWt3vyuHzPq2TjXQWD9tuwDGyOFbetHpDALU3ChxG87en
-         8Aa5ftVILsjPQfkFmG2SCbE0SwLsYbq9j0Edi1EK/pS1xLsTISCggVyEMcbAEOLoqKly
-         r9BA==
-X-Gm-Message-State: AOJu0YwHzluS1lLkf1+ekkcfifETlorU5/tqHNlg4YUYbCaqljGLZ/Re
-	QatzQpKspRfKjYP4IbI0g5Wd8wyIfG17YZmAAmE0r97zJ0wSpWAu+GUrDTiR1B0l0NErrjyKu3F
-	k
-X-Gm-Gg: ASbGnctaM19p/k3D0gGsbCr+sl1Gg6ovk6E2fczVo4TCenherlss69uPriq6w19xyYn
-	gwSmPdD+lKHNi+LxGD2twhEYK3qAUjB+Y+pnfVHMk1RHHcLVV2iIVGjzd0PoVAnlJ/pQRv6G8dP
-	WyQOp6IMQ3QU0PWBwW1tLJyUja+puByhX5xjr1R/Yw2y/UYZNPDihzys9/pUlq3siIAEONzV9Wy
-	Qq7a1guBUwrZiuDB+OG4bb1A6pkHeVgyFwbP1Cs1jqZF35xr89AgzBjxab9H+D4NXTTXqt85Jda
-	bpMl+i3qC43HTgW+67AmdvasNvV+7kvo2G06PANUND3I1nKTSGuTYDt7VJViqLHkdWntaZwpJio
-	CE5CyqK6VVgi821M=
-X-Google-Smtp-Source: AGHT+IFZSf+bG+KI7r41cPCeoQNA0TACINpcw/DiMJU59t/n7F33j98DIG9obiHLOdT98I7Ur4zh6A==
-X-Received: by 2002:a17:907:1c94:b0:ace:395c:124d with SMTP id a640c23a62f3a-ace3f559e71mr99328266b.25.1745388203852;
-        Tue, 22 Apr 2025 23:03:23 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef9e7e6sm745234366b.162.2025.04.22.23.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 23:03:23 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v11 17/18] arm64: dts: imx8mn: add PLLs to clock controller module (CCM)
-Date: Wed, 23 Apr 2025 08:02:34 +0200
-Message-ID: <20250423060241.95521-18-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
-References: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1745391137; c=relaxed/simple;
+	bh=bL+LtkMfOsvBWlXbFClLhSCh0I7SAFPogrm5vzCCgBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=n4sLZm+dj6GLhdfOU0B6vukBus/IDiuG/bdXLOADhTDZ2KaKmIrtRl1pxNvxRgxvOWCjqtgqSCsGkqwS8mDq7T/oQf8MvoWd6dKDphKUKT6YCSneitRVMv+3bw1gsEdczQ5OGUPyFSGBZ/B48YOJznoYLcOunk+MbBM1Tp8sl7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cxS8GEU+; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250423065212epoutp0476a7d6e17b173542cbc678c78b802afd~43-zak8Ub2044420444epoutp04Z
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:52:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250423065212epoutp0476a7d6e17b173542cbc678c78b802afd~43-zak8Ub2044420444epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745391132;
+	bh=sCMKVaP+cy0u4Wt+s96a/0ZTfWOMeEFbK8aMXkMagXQ=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=cxS8GEU+7Ab2SOkAiApnW7D7k+yUo7151cykyy7EqqffQgBs9F/mRf3QCOTHx8pDP
+	 LmMszPKfRiEp29K/1uvR/sLZIqsJhns/UO5dkzsyrKKee0d6TNhRIo+XoBA4+NLSOB
+	 qTvjhBODGlI5P0Z6go66T15RzgBeYCfUsSRH3uZE=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250423065212epcas5p2e537f7634a3d93d9f54c4aea48399cca~43-y5S0v71817318173epcas5p2l;
+	Wed, 23 Apr 2025 06:52:12 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4Zj8t25dc1z6B9mB; Wed, 23 Apr
+	2025 06:52:10 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a~43S1K6yxW1700517005epcas5p2o;
+	Wed, 23 Apr 2025 06:00:42 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250423060042epsmtrp2ffea677e8c78fe8fe5d99ded8a24997a~43S1JwWvn2017920179epsmtrp2h;
+	Wed, 23 Apr 2025 06:00:42 +0000 (GMT)
+X-AuditID: b6c32a29-55afd7000000223e-4a-6808820af8c7
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	17.34.08766.A0288086; Wed, 23 Apr 2025 15:00:42 +0900 (KST)
+Received: from INBRO002053.samsungds.net (unknown [107.122.2.234]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250423060040epsmtip2463b8b5e2df2ed814f7deaae604d3280~43Szb_efD1997919979epsmtip2y;
+	Wed, 23 Apr 2025 06:00:40 +0000 (GMT)
+From: Yashwant Varur <yashwant.v@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: cs0617.lee@samsung.com, g.naidu@samsung.com, niyas.ahmed@samsung.com,
+	yashwant.v@samsung.com
+Subject: [PATCH] arm64: dts: exynos: Added the ethernet pin configuration
+Date: Wed, 23 Apr 2025 11:30:34 +0530
+Message-Id: <20250423060034.973-1-yashwant.v@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,44 +82,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSvC5XE0eGweud7BYP5m1js1iz9xyT
+	xap3vBbzj5xjtdgy8zKzxctZ99gsNj2+xmpxedccNosZ5/cxWTyZ8ojV4v+eHewWqyY+YnPg
+	8di0qpPNY/OSeo++LasYPT5vkgtgieKySUnNySxLLdK3S+DK+HD4FnvBbf6KzlOHmRsYJ/N2
+	MXJySAiYSOxcfZupi5GLQ0hgN6PEjVNNbF2MHEAJKYmGN+EQNcISK/89Z4eo+coo8ezCb0aQ
+	BJuArsS+L0cZQRIiAs8YJZa2LmUBSTALpEn8fdsJViQs4Clx7lcLE4jNIqAqMe/ZdzCbV8BS
+	YvvbR0wQG+Ql9h88ywwRF5Q4OfMJ1Bx5ieats5knMPLNQpKahSS1gJFpFaNkakFxbnpusWGB
+	YV5quV5xYm5xaV66XnJ+7iZGcChrae5g3L7qg94hRiYOxkOMEhzMSiK8v9zYM4R4UxIrq1KL
+	8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwbRRf+kinNHiFor/O2VfJ
+	eReDA/cdZ1q5mPvpOt/GTEkTSVGz1sPhs+P/eUhIHfFUvnWjfmPoriqXlvf+S2OnaMXdzeB9
+	bbwoUfP26ojVnw60f7zTxpSiH6e3aGn045/cVbcSj56tv1rpFtFSHx/BYr9qjemSmx9M2XXy
+	s3RP3kmofeWlOHVx1N6DEbb1IgxPJdRmH7sTM9/23t0i1iNTs6rbDx534Ak5ZdF8zfqGooHC
+	g6wXBz8wiu8T+OJmavBpHZPOipXW0t+rHu248EDJzV2HR4XXp6Gk7mq1kpWFUmBysbjRBLOj
+	Yt0xyx3/X3n4xH1FwK/Tr1b+iktmzm+7lDAjdsrheculOFsa2kWUWIozEg21mIuKEwHD0cEp
+	1AIAAA==
+X-CMS-MailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
+References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
 
-Add the PLLs generated by anatop to the clock list of the Clock
-Controller Module (CCM) node.
+This patch adds the ethernet pin configuration.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
+Signed-off-by: Yashwant Varur <yashwant.v@samsung.com>
+Signed-off-by: Changsub Lee <cs0617.lee@samsung.com>
 ---
+ .../dts/exynos/exynosautov920-pinctrl.dtsi    | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-(no changes since v4)
-
-Changes in v4:
-- New
-
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index 49be492b5687..01013c1fd61d 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -643,9 +643,14 @@ clk: clock-controller@30380000 {
- 					     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 				#clock-cells = <1>;
- 				clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
--					 <&clk_ext3>, <&clk_ext4>;
-+					 <&clk_ext3>, <&clk_ext4>,
-+					 <&anatop IMX8MN_ANATOP_AUDIO_PLL1>,
-+					 <&anatop IMX8MN_ANATOP_AUDIO_PLL2>,
-+					 <&anatop IMX8MN_ANATOP_DRAM_PLL>,
-+					 <&anatop IMX8MN_ANATOP_VIDEO_PLL>;
- 				clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
--					      "clk_ext3", "clk_ext4";
-+					      "clk_ext3", "clk_ext4", "audio_pll1", "audio_pll2",
-+					      "dram_pll", "video_pll";
- 				assigned-clocks = <&clk IMX8MN_CLK_A53_SRC>,
- 						<&clk IMX8MN_CLK_A53_CORE>,
- 						<&clk IMX8MN_CLK_NOC>,
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+index 663e8265cbf5..778584d339d5 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+@@ -166,6 +166,24 @@ gph6: gph6-gpio-bank {
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
++
++	eth0_pps_out: eth0_pps_out {
++		samsung,pins = "gph3-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++
++	eth0_rgmii: eth0_rgmii {
++		samsung,pins = "gph3-1", "gph3-2", "gph3-3", "gph3-4",
++				"gph3-5", "gph3-6", "gph3-7", "gph4-0",
++				"gph4-1", "gph4-2", "gph4-3", "gph4-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++	};
++
++	eth0_mdc_mdio: eth0_mdc_mdio {
++		samsung,pins = "gph4-5", "gph4-6";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++	};
+ };
+ 
+ &pinctrl_hsi2ufs {
+@@ -750,6 +768,29 @@ i3c3_bus: i3c3-bus-pins {
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	};
++
++	eth_extpll_avb: eth_extpll_avb {
++		samsung,pins = "gpg3-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV3>;
++	};
++
++	eth0_pps_out0: eth0_pps_out0 {
++		samsung,pins = "gpg0-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++	};
++
++	eth0_pps_out1: eth0_pps_out1 {
++		samsung,pins = "gpg0-1";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++	};
++
++	eth_phy_reset: eth_phy_reset {
++		samsung,pins = "gpg3-1";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++	};
++
+ };
+ 
+ &pinctrl_peric1 {
 -- 
-2.43.0
+2.34.1
 
 
