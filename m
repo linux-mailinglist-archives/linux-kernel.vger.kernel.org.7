@@ -1,231 +1,123 @@
-Return-Path: <linux-kernel+bounces-616884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAEEA9977B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:08:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8E4A99780
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0165146011A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:08:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E47227ACEED
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A405D28D83E;
-	Wed, 23 Apr 2025 18:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2A328DEE6;
+	Wed, 23 Apr 2025 18:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AY+apih7"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="f4foq/8A"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E19426A0D6;
-	Wed, 23 Apr 2025 18:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18AE28CF77;
+	Wed, 23 Apr 2025 18:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431713; cv=none; b=aoTU8paE42uUo7psGbDNFf/vs4DOiMkSxyS0u6DgsOSXkOXptNsZatQM5uHjtXRe5TuhzmxX9wndjnF7lwTYHCaNZrN2Tqvo3n5QSwAY1nnY3ErO43txKXxL/kal8VFO5a/tKcC9ez6s4atfcL/02s1cbia+IQq7ObHpeBwW2JM=
+	t=1745431737; cv=none; b=HIV6RWCJiNDUACuhjOGUn213zngQn8WhzX3S23YX4aANy5itPuOcmbCxl9b7ekZ3Dfe9E8eldpa5mi/fU268DcBCwdJdq695SBe8CNYO+N0pJxny7+TkynCw7GCml19/Bt/CY0ifICVjsYMhVwHhmHbhFI0HDQz8UCrLbPsqOpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431713; c=relaxed/simple;
-	bh=Qa109e2Yerw+mY7jqK/IU4w9d41jbcc6x0fyLkrDnas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=asV5mXGPXS0uWsECkSBGoC5SScAgCUe8uKaLIvzSmxLiLpqYo5LRKICKSvlUDLSGUlqONcZNXHK9SaciI3Mgw9vU06MSaGuQlGtSIadTMXJYi8L2k/5UDku17rK0Zh5yIl8pf14uiSqPtrLAMHNFpo08CZx1jKrfQJ9iGJFZZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AY+apih7; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac29fd22163so25348266b.3;
-        Wed, 23 Apr 2025 11:08:30 -0700 (PDT)
+	s=arc-20240116; t=1745431737; c=relaxed/simple;
+	bh=/a6rlE6WF6SC5/BC0SPA4vfety/OfUOdkiUb0LxSejs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nHL909+gyqQUeTmV9IOlkh+6yhVY3aWastvtnVkCqE/bfmFe26pwoCrvfyG/3R4fhv84HBqH4AUu0itwWPAN040AnMJiryATry/sqbNG7wXRCtrcOjPGS5T2hefESZXpIHkYNZLtuZbiriW++PQgK9IyOWqe/og6Sqfbcj9HD+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=f4foq/8A; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d0782d787so908945e9.0;
+        Wed, 23 Apr 2025 11:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745431709; x=1746036509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xi60dEtyUhPZNtpwovqAvM845aWNbX2RRNkZ0SaNpQQ=;
-        b=AY+apih7D9iZQGY76nGRRVk2rpH2xMNfz+R7NK0pfMfwh6519MCAUyD1buBQNTRm0j
-         xV622T/bSW2YsjYWBFcoazHIvp2xU4Fec1hx43eVW5Rz2pXG68uU02sjV9bvM8zqWDoN
-         lX/gZoEWBQYSQx5MZ0JDRzW/bNm/PkGrtzmiFzXetJVKkpacVmxXLjCU4hAVaM7biQoG
-         LoIzWdnUWuTJFHI9PVJsLrmYfLZZXZLjceR00vp+JAT3itgHLZ9L4P4D5GL4p96z5oCZ
-         eK0Heks+cbDkws/Qh1/2rfUanZjvlWCtHdUPnlu7nyWft6ZMYrnGsQGsylVY9Hx4Ynmx
-         EmSA==
+        d=googlemail.com; s=20230601; t=1745431734; x=1746036534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/5xauHxSZRZBjL1s6uQdVTJHCQeRvkb+4xCubFVd7n4=;
+        b=f4foq/8A0PvfZhhEk/kaNMcMbETbyKqQWbkhKN9WJa8AKa30iQh1z42vqmnokPqX9T
+         D3fpQh8b8DpfsfTZJL2oxcjbV2YVJgwGzAv8Ds4jo5kM1s1FhIpAeR9FiTVyeZL7sGfC
+         fdA2ePEOnq3uHy2ZV4TGzYtyZsBRHdevFtLEYfnD0gIxEdSS8YMtBb/pMhck2O8o4Eik
+         gUc//xmTKb5tx9omHt+8Ls3K3YBQBXdxgT6A6YOmpmo8GeWlZGmiDrNjtHx4E/cGP+g/
+         vZ6xPo1qzMu27uRI1sXC6W7GA4hjXkcrAk+B9S881exnNXbKJvwbJ/W7XO5/meTfG0e5
+         jaUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745431709; x=1746036509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xi60dEtyUhPZNtpwovqAvM845aWNbX2RRNkZ0SaNpQQ=;
-        b=hV57HynVqGkK8VsxoJWTOlgWA1qH8HPV5PPJW8pOhriY1D8KzzRKtKl1C/GXOCGRsR
-         yQxaXTP/a1fvx8tkjimtaUG5GCnC+Xp3V9MIIbibEbj/9XmrnHL5TcmIwY42jMtopUcQ
-         eWAITgNE+aOdsE1JtQO24KqqyyZq0UumJuHL/KEz5Bd9kkBP/2VXCEfdl9z9Vk4GPn9E
-         EYShXAv3KALtoJpAcvHmxTz4LLgNxNyslaqO5MQrfVnpPd+6226jL7eOJhTo5cXQzgCh
-         MyEhnK38hNgHdRhTAGmRjpR8MM+mID9rWz9dq5qmPIHxYeN3OvoOXhRH4nMoruTqvbAH
-         zn0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/yGcqDtcUGEOEi4lV122gk+RY8s3gjhrn6ExhYQpzcEkC9E8XEtyBkVySy9JSvhkmZ9o=@vger.kernel.org, AJvYcCWT4GdxDzZtGr0hRddQ5vB6DTy9Kur3lkBk+Q2QS/7IZdzWC3BIM0lY/+kqoVes/TNtmbJGDjbOTtOehJl6@vger.kernel.org, AJvYcCWlD6ZrmqxQkjtWm6kITaKvobuzN/XgDBdeA5Vdsq29Zku7fmZn5SxrwbtAUy2WVD0YEUN5CQ65DRv18OKX91D55KvS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnktYOUSSf4ifPKm0MznkI4rJggIvySa6TlhzSFjmai+2I4026
-	UTdosRnhQFcW8XRM5KKisRwT96+IDG1NHwwFZC/xzjiqnFat+Us0RMP19/FS4JdXlcsmvG0cZ/V
-	ZgXWk1xmYEfIiCqo0tufDopbAZgncEWpF
-X-Gm-Gg: ASbGnct9/UcIz/kBs2S7fBWnF/yRoAdQaKFvKKTd8eKxJGyTChO74NX7je4/uzVDLbU
-	Mn84Ddu+YuQWPr5jJ3mpyyhTB7uBKHyLsoz8UBv9gIwag0iNfKJkVnL8HgiVc1/v+S0JHtpvQLy
-	/1ibf3WMHAJAPTugyGfrMQCTkU2ZzJ45CSYYL6tQ==
-X-Google-Smtp-Source: AGHT+IEUz+FjvBAD0SgTo5QNsN500GYb2FaOEiFZf2hUtW3G4MlRraoJZ25kw8TmyqSeLTC0Rt6SB03a01k9n1/8QzE=
-X-Received: by 2002:a17:907:1c10:b0:aca:cda9:3170 with SMTP id
- a640c23a62f3a-acb74d65bacmr1910978866b.46.1745431709234; Wed, 23 Apr 2025
- 11:08:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745431734; x=1746036534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5xauHxSZRZBjL1s6uQdVTJHCQeRvkb+4xCubFVd7n4=;
+        b=TKyiEAVgXq3fH8HrncRNHvm+tlMCiYasFbs6tvIxIi9fO6ASGA4BE4e3Wr5ZaQWhnt
+         xwyzxxO6FBvxTO2uxVcBghrrlmhbJp2dU+BkWVuo1VkOGjwkLZjpzOtwV1S+YlKEni8v
+         b301mEfJX6rkqH8YD1M+060sQqdihZ10Pblq7JIJtQVJOWx7ud97nQLwZ2CQ27dNfGE4
+         R7q6+mu9RnpIl7UQ6LGiWjQBOmEn717uyOtN0gNXR6uEAn9lyFnocbzunuBmNMqUkwrI
+         VIc2u9BkxxcwuKpddgBdCIymkhnJ44wsG4zwsJqiVUoqBq9MzxPNUKaGpltnuIw4ZGD0
+         SGZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmIAexi5nrXDoRLWSZXYKx/Dc2DVxiWK5aQevk3XARjGGLJRlqSoPOHVFooIssMO77ejgXFjla@vger.kernel.org, AJvYcCXUm4xvZNzQaG1FcESUh+enrVy9DS67neFbZolENc556v2GgUPQerZXJa1GDUsh90kyv04pemUQe3Z9s7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlEQKSGcZcQNZQDkVFNP6/d9+NDqt2PYbwiGIqlsyjaG+k4vTb
+	qSHpF7XWsTb273hcE4HuNRtuS7EnOOtACkBdaWhvUMfIcRSmWRo=
+X-Gm-Gg: ASbGncv7693zo+CQ6WIpJn/g8lqYjKmJU9+Bxs3AOHT2NsolvlSYcaUwgRozpNQng2S
+	54pyaU1fGA0bweSnx6Ap7SUPMYk090fgVW7Wx0l4BtcaqjzA1wAx4DISOqV+Hu3uV2rSKDIMyVN
+	8nGIlZkEreIshrtic4sJkwqRZoOIAGwXfBJm9uAGqBi6YkYtABnXro118fNUeCCv0heL9MaViBx
+	Ou4E/O0LIh6W3L4oj+oxL78BoUOULtxOFk4qkk6tF5a1fLLT9oYaRJq09PFamOOJQQZcYhIFUY1
+	3gSQHyCuKBM6EFqi/3maC+ZNFj0V4ABDQJsJhmGpYNowRCiVQtTpP9W+1wu29VMaHX8SaJZUCiR
+	IiHunSvRdB+WteRwyJg==
+X-Google-Smtp-Source: AGHT+IENifynQvLMfyjbaFmHerjupvosjrvvoV00BFoAAhIPUsf6sZjXUl/Wm/EfEtV8y/3bKy3dfg==
+X-Received: by 2002:a05:6000:18a8:b0:391:1218:d5f7 with SMTP id ffacd0b85a97d-39efbad7d6amr16420654f8f.40.1745431733961;
+        Wed, 23 Apr 2025 11:08:53 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ac758.dip0.t-ipconnect.de. [91.42.199.88])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4a4cd0sm20036747f8f.90.2025.04.23.11.08.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 11:08:53 -0700 (PDT)
+Message-ID: <14fbae74-0620-4e9c-aebc-5f4337e14089@googlemail.com>
+Date: Wed, 23 Apr 2025 20:08:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423073151.297103-1-yangfeng59949@163.com>
-In-Reply-To: <20250423073151.297103-1-yangfeng59949@163.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 23 Apr 2025 11:08:14 -0700
-X-Gm-Features: ATxdqUGYawM4t6dv3vcfJQGfxK9pbDXk54HpkHaSvGFwCeEH0FwcNdd-mxfiJA0
-Message-ID: <CAEf4Bza6gK3dsrTosk6k3oZgtHesNDSrDd8sdeQ-GiS6oJixQg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4] bpf: streamline allowed helpers between
- tracing and base sets
-To: Feng Yang <yangfeng59949@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/393] 6.6.88-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250423142643.246005366@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 23, 2025 at 12:33=E2=80=AFAM Feng Yang <yangfeng59949@163.com> =
-wrote:
->
-> From: Feng Yang <yangfeng@kylinos.cn>
->
-> Many conditional checks in switch-case are redundant
-> with bpf_base_func_proto and should be removed.
->
-> Regarding the permission checks bpf_base_func_proto:
-> The permission checks in bpf_prog_load (as outlined below)
-> ensure that the trace has both CAP_BPF and CAP_PERFMON capabilities,
-> thus enabling the use of corresponding prototypes
-> in bpf_base_func_proto without adverse effects.
-> bpf_prog_load
->         ......
->         bpf_cap =3D bpf_token_capable(token, CAP_BPF);
->         ......
->         if (type !=3D BPF_PROG_TYPE_SOCKET_FILTER &&
->             type !=3D BPF_PROG_TYPE_CGROUP_SKB &&
->             !bpf_cap)
->                 goto put_token;
->         ......
->         if (is_perfmon_prog_type(type) && !bpf_token_capable(token, CAP_P=
-ERFMON))
->                 goto put_token;
->         ......
->
-> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> Acked-by: Song Liu <song@kernel.org>
-> ---
+Am 23.04.2025 um 16:38 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.88 release.
+> There are 393 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-LGTM, applied to bpf-next, thanks. See comments on remaining helpers below.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-> Changes in v4:
-> - Only modify patch description information.
-> - At present, bpf_tracing_func_proto still has the following ID:
-> - BPF_FUNC_get_current_uid_gid
-> - BPF_FUNC_get_current_comm
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-I don't see why these two cannot be used in any program, after all, we
-have bpf_get_current_task(), these are in the same family.
 
-> - BPF_FUNC_get_smp_processor_id
+Beste Grüße,
+Peter Schneider
 
-Based on another thread, I think it's some filter programs that have
-to use raw variant of it, right? All other should use non-raw
-implementation. So I think the right next step would be to make sure
-that bpf_base_func_proto returns non-raw implementation, and only
-those few program types that are exceptions should use raw ones?
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-> - BPF_FUNC_perf_event_read
-
-should be fine to use anywhere (and actually can be useful for
-networking programs to measure its own packet processing overhead or
-something like that). Checking implementation I don't see any
-limitations, it's just PERF_EVENT_ARRAY map access
-
-> - BPF_FUNC_probe_read
-> - BPF_FUNC_probe_read_str
-
-generic tracing helpers, should be OK to be used anywhere with
-CAP_PERFMON capabilities
-
-> - BPF_FUNC_current_task_under_cgroup
-
-same as above current_comm, if there is CGROUP_ARRAY, this should be
-fine (though I don't know, there might be cgroup-specific
-restrictions, not sure)
-
-> - BPF_FUNC_send_signal
-> - BPF_FUNC_send_signal_thread
-
-fine to do from NMI, so should be fine to do anywhere (with
-CAP_PERFMON, presumably)
-
-> - BPF_FUNC_get_task_stack
-
-seems fine (again, if it works under NMI and doesn't use any
-context-dependent things, should be fine for any program type)
-
-> - BPF_FUNC_copy_from_user
-> - BPF_FUNC_copy_from_user_task
-
-same as probe_read/probe_read_str (but only for sleepable)
-
-> - BPF_FUNC_task_storage_get
-> - BPF_FUNC_task_storage_delete
-
-this is designed to work anywhere, so yeah, why not?
-
-> - BPF_FUNC_get_func_ip
-
-nope, very context dependent, definitely not generic (and just doesn't
-make sense for most program types)
-
-> - BPF_FUNC_get_branch_snapshot
-
-NMI-enabled and not context-dependent, good to be used anywhere
-
-> - BPF_FUNC_find_vma
-
-non-sleepable, but other than that doesn't really make any assumptions
-about program type, should be fine everywhere (NMI-safe, I believe?)
-
-> - BPF_FUNC_probe_write_user
-
-it's just like probe_read_user, CAP_PERFMON, so we can enable it
-anywhere for completeness, but I'm not sure if that is a good idea...
-
-> - I'm not sure which ones can be used by all programs, as Zvi Effron said=
-(https://lore.kernel.org/all/CAC1LvL2SOKojrXPx92J46fFEi3T9TAWb3mC1XKtYzwU=
-=3DpzTEbQ@mail.gmail.com/)
-> - get_smp_processor_id also be retained(https://lore.kernel.org/all/CAADn=
-VQ+WYLfoR1W6AsCJF6fNKEUgfxANXP01EQCJh1=3D99ZpoNw@mail.gmail.com/)
-
-yep, I saw the discussion, that's fine
-
->
-> - Link to v3: https://lore.kernel.org/all/20250410070258.276759-1-yangfen=
-g59949@163.com/
->
-> Changes in v3:
-> - Only modify patch description information.
-> - Link to v2: https://lore.kernel.org/all/20250408071151.229329-1-yangfen=
-g59949@163.com/
->
-> Changes in v2:
-> - Only modify patch description information.
-> - Link to v1: https://lore.kernel.org/all/20250320032258.116156-1-yangfen=
-g59949@163.com/
-> ---
->  kernel/trace/bpf_trace.c | 72 ----------------------------------------
->  1 file changed, 72 deletions(-)
->
-
-[...]
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
