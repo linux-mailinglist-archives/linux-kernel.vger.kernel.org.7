@@ -1,285 +1,346 @@
-Return-Path: <linux-kernel+bounces-616364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EB2A98B85
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB14A98B7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5030E3BB681
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81A7144536C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22131B392B;
-	Wed, 23 Apr 2025 13:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F2F1A257D;
+	Wed, 23 Apr 2025 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Qtdk1/ux"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YJxhRpoP"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D781A5BB7
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2830B19E992
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415587; cv=none; b=iw2nvnTBpkNGReNa/nlu4KpRwP1bEPXicIVrSe55MdnSWTBbSq1P1n0FdHALsxaXYr50QV7xzwZQFyHMIbjJHCkKPPtlLLnYPE0a5BRG6isborKgNHyUNnssi6BmZ8+zBpmlApFgGW4XXkVH5RshZTiHEiVKWw9dMlfaSTqQr/0=
+	t=1745415565; cv=none; b=cHzS5q+/L4Y67i4Ue4laanvJTVQrv5KbCovn7LoDs8Vf3hx5XgGgA7/M9N2DZelKTmxPjuojmTRloPF9UcbM+DzDySWsSzISpRsmswULb5NvOvrJD8ZV4WjAPDrBq5wzZw8css4zUWb9hdoJi0KqQ6CtC45vEMrifKzi5szLyGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415587; c=relaxed/simple;
-	bh=uJBVdZvqBOEUMTWrnXpjWUMjhvUeVxx4u3ef8ehhyYw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/Ks4ahxfQzlEXSLHVrealbLl7tDH7uz7W/zMI00MyvqxWs48dGBsNQPo/ZOzt8VJd6nk7/Cxj2kjmFtRPTcGOUG0l0f3+Ygd5uI/bL3cL8BalLPDPLnRFTo0Fw1gEVIvcxVWTYrX/fcPutgzWxpG9HuZIY5z0U5KifnqLCXfHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Qtdk1/ux; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1745415565; c=relaxed/simple;
+	bh=Iz/h+JAfIC+Q1WuoPV8jLTH7KxGCgg7v8vfv/nRpMwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRjpAcbomMTjFdqyidmMcCdAAKfsdFaQNBJcc9GoRR0LtZKEkUCmd1iKQ3as6KVG2rH9i8zKGs+IrUPY/QZbjbOi6Mk7c2Jx/an6LX/w0fTPzucDJzeCr/ym48iyQpSml7TS1y3oSwEmaa9AFMKovrFIqYsp98aG06eNm/VdlQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YJxhRpoP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so56314265e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1745415583; x=1776951583;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DoX1mLsF5BZf8Dfmzq+q3ULu4XnvR8sckoyZnXWuhbo=;
-  b=Qtdk1/uxZxB10+b7aG/58yox1x7W91NuWp3mRcGoltZjyrh3de8JCES3
-   3Udg/S8eqSaSxdgEdYiHv06kMfI8cTagiuwyQhMcPcxo5uWdGxkN9ew+F
-   ZbkbdVPNM9FgZ22flKk6psWwi0AjsCAPGsA8pH8gHWwiPGk8PUKJPGYPI
-   4=;
-X-IronPort-AV: E=Sophos;i="6.15,233,1739836800"; 
-   d="scan'208";a="491901288"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 13:39:39 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:47330]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.127:2525] with esmtp (Farcaster)
- id b3015d5d-5400-4018-90ac-1dbab7b74be4; Wed, 23 Apr 2025 13:39:24 +0000 (UTC)
-X-Farcaster-Flow-ID: b3015d5d-5400-4018-90ac-1dbab7b74be4
-Received: from EX19D029EUC001.ant.amazon.com (10.252.61.252) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 13:39:24 +0000
-Received: from dev-dsk-bsz-1b-e2c65f5d.eu-west-1.amazon.com (10.13.227.240) by
- EX19D029EUC001.ant.amazon.com (10.252.61.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 13:39:22 +0000
-From: Bartosz Szczepanek <bsz@amazon.de>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-CC: <nh-open-source@amazon.com>, Bartosz Szczepanek <bsz@amazon.de>, Alexander
- Graf <graf@amazon.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] arm64: Emit debug bootcodes for early kernel boot
-Date: Wed, 23 Apr 2025 13:39:07 +0000
-Message-ID: <20250423133910.909-1-bsz@amazon.de>
-X-Mailer: git-send-email 2.47.1
+        d=suse.com; s=google; t=1745415561; x=1746020361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LQj0aWA0uhLFimVD63/qUQ7O934wTcmBz9rBbgLbZq4=;
+        b=YJxhRpoPNgbudxHL40/udSMG8Wxn1vi+ewIiLbdb9zm5Y/wsNPtgaSvxztUV0146lB
+         K6rbLmes07ot3JNuh0W1l06xOXdTLWTj4HUxsnw8JuDZgyzWygXol2IqOwUvtkLmD1Kv
+         2jXB2Bf1+fLmD7BLgChXt1F6CsWmmh+Ws8nqJRPrVeAx+3zfMryPqv83GdWAeglxcnfR
+         YfOyIW7fbrW1OXIbpo71dzN2kWAXLNOKYzLDKYe+qwEpSofVHPHTcf8IFDOG3IW/7OBT
+         FJ5s5huH08ITk4PoofHD2scJLOLNoNGu0VtBUmYa+yWI6Ek7GSpoI+5gYe06SKf4WnZA
+         XHvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745415561; x=1746020361;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LQj0aWA0uhLFimVD63/qUQ7O934wTcmBz9rBbgLbZq4=;
+        b=TTGZm7kO1E8+/Qj6l+ulClOwtBukD3W+W26JgxwQziV2AF+5v+I2Ehgv8lHIUlCZ1T
+         N7Fh7Hjqs+IK2qRuQT759fyhaLBToM0gY+bIiziilp2KElicorGBjH42BqoHynGavk2D
+         MmvWREo5mVfppln2MuKhvliy5u98pG/NJuRM45lE5DbWpH2iACruPR7CaamCS2VIAwV/
+         FBFrjTyqaxr/bFlSB1D1gZGEXZpJCdbQ95QKNjpT+LIU8MyBoDI6DKOBgq2ilNsdjm82
+         VkNHqzX794uS47NaPshGhmHRfhRREke1n0LMb0xs/cqeue9g7RcfQL5xMtzRrxvNT/AE
+         qpyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXD+qGU8SqCwZFOnXDg39GFtYbiOFufGTTbLpXmcVXBXxIFzuruNcXkltmY/l6tRnI5wLA8QC8vZb+iDcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5VD3XJ6Q/ti31F05P80vw0WwpUod+Xq2bEHUEfmqW/THUM3vP
+	ERuzHVAZ86aJR5vu+eeC3rbauwRIIrWoZEOUigri/lvQYLpxSq/zenwN4D/CFPw=
+X-Gm-Gg: ASbGncvuZPvtfajw9xPlVhONUAwAIowEuaRSW2xdBm+Rh3UKvysz/er/FiTIDeycoiY
+	BPJ1j41y+xlE1Nya4d1DKb3DCmesXcg1zVQz/GI0fbwPCoTJxDXQna0TZLpiCXX1kpC0rue1Edm
+	OTomK6yHNIZdc8x4Pa9eoPXu7tiT9/Dtz0yQUyuZfHOTnz7DPjd0iELAgk1tf0Q99d+F3vgJALQ
+	SVDvf9YnTh83+dUgKQ7mUQLWOugi1x3r5zAXUbNT7/d3ybLkqse1WdJc+T2AnMExgX2vY3in9vj
+	4dv2t68z6s4V7ZEevFWSJbn58K8pIN8lO/X0bxt8U+o=
+X-Google-Smtp-Source: AGHT+IFSUhI0GoSrqlt5Y3r/ho99jNi0Y05l/TGhtWyQ6IK4273s3NboVQgNwSsoCRz1OM2e9M8GYw==
+X-Received: by 2002:a05:600c:4e52:b0:43c:e6d1:efe7 with SMTP id 5b1f17b1804b1-4408efbaebemr42210395e9.26.1745415561308;
+        Wed, 23 Apr 2025 06:39:21 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092b0a4b5sm26482605e9.0.2025.04.23.06.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:39:20 -0700 (PDT)
+Date: Wed, 23 Apr 2025 15:39:18 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Aditya Garg <gargaditya08@live.com>, Hector Martin <marcan@marcan.st>,
+	alyssa@rosenzweig.io,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com,
+	joe@perches.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	Kees Cook <kees@kernel.org>, tamird@gmail.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>,
+	netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Message-ID: <aAjthvTuIeUIO4CT@pathway.suse.cz>
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
+ <PN3PR01MB9597B3AE75E009857AA12D4DB8BB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <CAMuHMdWpqHLest0oqiB+hG47t=G7OScLmHz5zr2u0ZgED_+Obg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D042UWB004.ant.amazon.com (10.13.139.150) To
- EX19D029EUC001.ant.amazon.com (10.252.61.252)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWpqHLest0oqiB+hG47t=G7OScLmHz5zr2u0ZgED_+Obg@mail.gmail.com>
 
-Hi all,
+On Tue 2025-04-22 10:43:59, Geert Uytterhoeven wrote:
+> Hi Aditya,
+> 
+> CC netdev
+> 
+> On Tue, 22 Apr 2025 at 10:30, Aditya Garg <gargaditya08@live.com> wrote:
+> > On 22-04-2025 01:37 pm, Geert Uytterhoeven wrote:
+> > > On Tue, 8 Apr 2025 at 08:48, Aditya Garg <gargaditya08@live.com> wrote:
+> > >> From: Hector Martin <marcan@marcan.st>
+> > >>
+> > >> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+> > >> it's useful to be able to print generic 4-character codes formatted as
+> > >> an integer. Extend it to add format specifiers for printing generic
+> > >> 32-bit FourCCs with various endian semantics:
+> > >>
+> > >> %p4ch   Host byte order
+> > >> %p4cn   Network byte order
+> > >> %p4cl   Little-endian
+> > >> %p4cb   Big-endian
+> > >>
+> > >> The endianness determines how bytes are interpreted as a u32, and the
+> > >> FourCC is then always printed MSByte-first (this is the opposite of
+> > >> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+> > >> allow printing LSByte-first FourCCs stored in host endian order
+> > >> (other than the hex form being in character order, not the integer
+> > >> value).
+> > >>
+> > >> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > >> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > >> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > >> Tested-by: Petr Mladek <pmladek@suse.com>
+> > >> Signed-off-by: Hector Martin <marcan@marcan.st>
+> > >> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> > >
+> > > Thanks for your patch, which is now commit 1938479b2720ebc0
+> > > ("lib/vsprintf: Add support for generic FourCCs by extending %p4cc")
+> > > in drm-misc-next/
+> > >
+> > >> --- a/Documentation/core-api/printk-formats.rst
+> > >> +++ b/Documentation/core-api/printk-formats.rst
+> > >> @@ -648,6 +648,38 @@ Examples::
+> > >>         %p4cc   Y10  little-endian (0x20303159)
+> > >>         %p4cc   NV12 big-endian (0xb231564e)
+> > >>
+> > >> +Generic FourCC code
+> > >> +-------------------
+> > >> +
+> > >> +::
+> > >> +       %p4c[hnlb]      gP00 (0x67503030)
+> > >> +
+> > >> +Print a generic FourCC code, as both ASCII characters and its numerical
+> > >> +value as hexadecimal.
+> > >> +
+> > >> +The generic FourCC code is always printed in the big-endian format,
+> > >> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
+> > >> +
+> > >> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
+> > >> +endianness is used to load the stored bytes. The data might be interpreted
+> > >> +using the host byte order, network byte order, little-endian, or big-endian.
+> > >> +
+> > >> +Passed by reference.
+> > >> +
+> > >> +Examples for a little-endian machine, given &(u32)0x67503030::
+> > >> +
+> > >> +       %p4ch   gP00 (0x67503030)
+> > >> +       %p4cn   00Pg (0x30305067)
+> > >> +       %p4cl   gP00 (0x67503030)
+> > >> +       %p4cb   00Pg (0x30305067)
+> > >> +
+> > >> +Examples for a big-endian machine, given &(u32)0x67503030::
+> > >> +
+> > >> +       %p4ch   gP00 (0x67503030)
+> > >> +       %p4cn   00Pg (0x30305067)
+> > >
+> > > This doesn't look right to me, as network byte order is big endian?
+> > > Note that I didn't check the code.
+> >
+> > Originally, it was %p4cr (reverse-endian), but on the request of the maintainers, it was changed to %p4cn.
+> 
+> Ah, I found it[1]:
+> 
+> | so, it needs more information that this mimics htonl() / ntohl() for
+> networking.
+> 
+> IMHO this does not mimic htonl(), as htonl() is a no-op on big-endian.
+> while %p4ch and %p4cl yield different results on big-endian.
+> 
+> > So here network means reverse of host, not strictly big-endian.
+> 
+> Please don't call it "network byte order" if that does not have the same
+> meaning as in the network subsystem.
+> 
+> Personally, I like "%p4r" (reverse) more...
+> (and "%p4ch" might mean human-readable ;-)
+> 
+> [1] https://lore.kernel.org/all/Z8B6DwcRbV-8D8GB@smile.fi.intel.com
 
-I'm looking for your comments on the following change, that came out
-of our investigations of rare crashes in the very early phase of kernel
-boot while still in the assembly code. The change we came up with relies
-on contextidr_el2 which is used to record checkpoints (bootcodes), to be
-used later for narrowing down on the point of failure. To do so, one needs
-modified firmware or another tool capable of dumping contextidr_el2 after
-failure happens.
+I have to admit that I was always a bit confused by the meaning of the
+new modifiers. And I did give up at some point and decided to do not
+block the patch when it made sense to others.
 
-The usage of contextidr_el2 register comes from the fact that it's not
-used for any purpose within the kernel (contrary to contextidr_el1), and
-contents of it are unlikely to change even if any other code would be
-executed after the failure.
+But I have to agree with Geert here. The current behavior of %p4ch
+is confusing on big endian system. I would expect that it does not
+revert the ordering.
 
-Primary alternative solution – debugging by printing – hardly applies to
-such early code, as page table mappings are not yet established and
-stable virtual address of console can't be relied upon.
+Well, I still think that people might find all 4 variants useful.
+Andy does not like "r". What about "hR"? It is inspired by
+the existing %pmR.
 
-On the other hand, bisecting through the code is not always feasible,
-especially if the failure rates are very low. Bootcodes help that case.
+I tried to implement it and the complexity of the code is similar:
 
-What I'd like to get your input on:
-- Is there an alternative solution for post-mortem analysis of rare
-  crashes in very early kernel boot that we missed?
-- Would the introduction of bootcodes be welcome upstream, in this or
-  any other shape? If so, how could we make it suitable for inclusion?
+From f6aa2213cec9b9d25c0506e3112f32e90a18aa7f Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Wed, 23 Apr 2025 15:02:10 +0200
+Subject: [PATCH] vsprintf: Use %p4chR instead of %p4cn for reading data in
+ reversed host ordering
 
-Kind regards
-Bartosz
+The generic FourCC format always prints the data using the big endian
+order. It is generic because it allows to read the data using a custom
+ordering.
 
--------------------------------------------------
-arm64: Emit debug bootcodes for early kernel boot
+The current code uses "n" for reading data in the reverse host ordering.
+It makes the 4 variants [hnbl] consistent with the generic printing
+of IPv4 addresses.
 
-Reuse contextidr_el2 register which is unused in the early boot phase
-for the purpose of tracking bootcodes. This allows to identify point of
-failure in early boot code and helps investigations.
+Unfortunately, it creates confusion on big endian systems. For example,
+it shows the data &(u32)0x67503030 as
 
-To make the change safe on targets without contextidr_el2, we're
-checking dfr0_el1 debug version bits. If it tells us we're below
-ARMV8.1, we bail out without writing to contextidr_el2.
+	%p4cn	00Pg (0x30305067)
 
-To make use of the change, modified firmware or another tool capable of
-periodically dumping contextidr_el2 is necessary.
+But people expect that the ordering stays the same. The network ordering
+is a big-endian ordering.
 
-Signed-off-by: Bartosz Szczepanek <bsz@amazon.de>
+The problem is that the semantic is not the same. The modifiers affect
+the output ordering of IPv4 addresses while they affect the reading order
+in case of FourCC code.
+
+Avoid the confusion by replacing the "n" modifier with "hR", aka
+reverse host ordering.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- arch/arm64/Kconfig.debug   |  6 ++++++
- arch/arm64/kernel/Makefile |  5 +++++
- arch/arm64/kernel/head.S   | 40 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
+ Documentation/core-api/printk-formats.rst | 10 +++++-----
+ lib/tests/printf_kunit.c                  |  2 +-
+ lib/vsprintf.c                            | 11 ++++++++---
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
-index 265c4461031f..668bda096773 100644
---- a/arch/arm64/Kconfig.debug
-+++ b/arch/arm64/Kconfig.debug
-@@ -20,4 +20,10 @@ config ARM64_RELOC_TEST
- 	depends on m
- 	tristate "Relocation testing module"
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index 125fd0397510..f531873bb3c9 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -652,7 +652,7 @@ Generic FourCC code
+ -------------------
  
-+config DEBUG_EARLY_BOOT
-+	bool "Early boot debugging"
-+	help
-+	  Enable this option to use contextidr_el2 register for storing
-+	  bootcodes from the early assembly code.
-+
- source "drivers/hwtracing/coresight/Kconfig"
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 71c29a2a2f19..72b38e8314d4 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -84,5 +84,10 @@ ifeq ($(CONFIG_DEBUG_EFI),y)
- AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
- endif
+ ::
+-	%p4c[hnlb]	gP00 (0x67503030)
++	%p4c[h[R]lb]	gP00 (0x67503030)
  
-+ifeq ($(CONFIG_DEBUG_EARLY_BOOT),y)
-+AFLAGS_head.o += -march=armv8.1-a
-+CFLAGS_setup.o += -march=armv8.1-a
-+endif
-+
- # for cleaning
- subdir- += vdso vdso32
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 2ce73525de2c..f15db7e83b6e 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -42,6 +42,34 @@
- #error PAGE_OFFSET must be at least 2MB aligned
- #endif
+ Print a generic FourCC code, as both ASCII characters and its numerical
+ value as hexadecimal.
+@@ -660,23 +660,23 @@ value as hexadecimal.
+ The generic FourCC code is always printed in the big-endian format,
+ the most significant byte first. This is the opposite of V4L/DRM FourCCs.
  
-+#ifdef CONFIG_DEBUG_EARLY_BOOT
-+/*
-+ * This debugging enhancement makes use of contextidr_el2 for the purpose
-+ * of storing bootcodes.
-+ */
-+.macro _emit_bootcode val, t1
-+	/* Check if in EL2 */
-+	mrs	\t1, CurrentEL
-+	ubfx    \t1, \t1, #2, #2
-+	cmp	\t1, #2
-+	b.ne	1f
-+
-+	/* Check if we're at least ARMv8.1 */
-+	mrs	\t1, ID_AA64DFR0_EL1
-+	ubfx	\t1, \t1, #0, #4
-+	cmp	\t1, #7
-+	b.lt	1f
-+
-+	mov	\t1, #\val
-+	msr	contextidr_el2, \t1
-+1:
-+	/* Quit */
-+.endm
-+#define emit_bootcode(reg) _emit_bootcode __LINE__, reg
-+#else
-+#define emit_bootcode(reg)
-+#endif
-+
- /*
-  * Kernel startup entry point.
-  * ---------------------------
-@@ -86,6 +114,7 @@ SYM_CODE_START(primary_entry)
- 	bl	record_mmu_state
- 	bl	preserve_boot_args
+-The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
++The additional ``h``, ``hR``, ``l``, and ``b`` specifiers define what
+ endianness is used to load the stored bytes. The data might be interpreted
+-using the host byte order, network byte order, little-endian, or big-endian.
++using the host, reversed host byte order, little-endian, or big-endian.
  
-+	emit_bootcode(x22)
- 	adrp	x1, early_init_stack
- 	mov	sp, x1
- 	mov	x29, xzr
-@@ -101,6 +130,7 @@ SYM_CODE_START(primary_entry)
- 	cbnz	x19, 0f
- 	dmb     sy
- 	mov	x1, x0				// end of used region
-+	emit_bootcode(x22)
- 	adrp    x0, init_idmap_pg_dir
- 	adr_l	x2, dcache_inval_poc
- 	blr	x2
-@@ -126,7 +156,9 @@ SYM_CODE_START(primary_entry)
- 	 * On return, the CPU will be ready for the MMU to be turned on and
- 	 * the TCR will have been set.
- 	 */
-+	emit_bootcode(x22)
- 	bl	__cpu_setup			// initialise processor
-+	emit_bootcode(x22)
- 	b	__primary_switch
- SYM_CODE_END(primary_entry)
+ Passed by reference.
  
-@@ -220,10 +252,12 @@ SYM_CODE_END(preserve_boot_args)
- SYM_FUNC_START_LOCAL(__primary_switched)
- 	adr_l	x4, init_task
- 	init_cpu_task x4, x5, x6
-+	emit_bootcode(x22)
+ Examples for a little-endian machine, given &(u32)0x67503030::
  
- 	adr_l	x8, vectors			// load VBAR_EL1 with virtual
- 	msr	vbar_el1, x8			// vector table address
- 	isb
-+	emit_bootcode(x22)
+ 	%p4ch	gP00 (0x67503030)
+-	%p4cn	00Pg (0x30305067)
++	%p4chR	00Pg (0x30305067)
+ 	%p4cl	gP00 (0x67503030)
+ 	%p4cb	00Pg (0x30305067)
  
- 	stp	x29, x30, [sp, #-16]!
- 	mov	x29, sp
-@@ -236,6 +270,7 @@ SYM_FUNC_START_LOCAL(__primary_switched)
+ Examples for a big-endian machine, given &(u32)0x67503030::
  
- 	mov	x0, x20
- 	bl	set_cpu_boot_mode_flag
-+	emit_bootcode(x22)
+ 	%p4ch	gP00 (0x67503030)
+-	%p4cn	00Pg (0x30305067)
++	%p4chR	00Pg (0x30305067)
+ 	%p4cl	00Pg (0x30305067)
+ 	%p4cb	gP00 (0x67503030)
  
- #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
- 	bl	kasan_early_init
-@@ -243,6 +278,7 @@ SYM_FUNC_START_LOCAL(__primary_switched)
- 	mov	x0, x20
- 	bl	finalise_el2			// Prefer VHE if possible
- 	ldp	x29, x30, [sp], #16
-+	emit_bootcode(x22)
- 	bl	start_kernel
- 	ASM_BUG()
- SYM_FUNC_END(__primary_switched)
-@@ -464,6 +500,7 @@ SYM_FUNC_START(__enable_mmu)
- 	cmp     x3, #ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MAX
- 	b.gt    __no_granule_support
- 	phys_to_ttbr x2, x2
-+	emit_bootcode(x22)
- 	msr	ttbr0_el1, x2			// load TTBR0
- 	load_ttbr1 x1, x1, x3
+diff --git a/lib/tests/printf_kunit.c b/lib/tests/printf_kunit.c
+index b1fa0dcea52f..b8a4b5006f9c 100644
+--- a/lib/tests/printf_kunit.c
++++ b/lib/tests/printf_kunit.c
+@@ -738,7 +738,7 @@ static void fourcc_pointer(struct kunit *kunittest)
  
-@@ -506,16 +543,19 @@ SYM_FUNC_START_LOCAL(__no_granule_support)
- SYM_FUNC_END(__no_granule_support)
- 
- SYM_FUNC_START_LOCAL(__primary_switch)
-+	emit_bootcode(x22)
- 	adrp	x1, reserved_pg_dir
- 	adrp	x2, init_idmap_pg_dir
- 	bl	__enable_mmu
- 
-+	emit_bootcode(x22)
- 	adrp	x1, early_init_stack
- 	mov	sp, x1
- 	mov	x29, xzr
- 	mov	x0, x20				// pass the full boot status
- 	mov	x1, x21				// pass the FDT
- 	bl	__pi_early_map_kernel		// Map and relocate the kernel
-+	emit_bootcode(x22)
- 
- 	ldr	x8, =__primary_switched
- 	adrp	x0, KERNEL_START		// __pa(KERNEL_START)
+ 	fourcc_pointer_test(kunittest, try_cc, ARRAY_SIZE(try_cc), "%p4cc");
+ 	fourcc_pointer_test(kunittest, try_ch, ARRAY_SIZE(try_ch), "%p4ch");
+-	fourcc_pointer_test(kunittest, try_cn, ARRAY_SIZE(try_cn), "%p4cn");
++	fourcc_pointer_test(kunittest, try_cn, ARRAY_SIZE(try_cn), "%p4chR");
+ 	fourcc_pointer_test(kunittest, try_cl, ARRAY_SIZE(try_cl), "%p4cl");
+ 	fourcc_pointer_test(kunittest, try_cb, ARRAY_SIZE(try_cb), "%p4cb");
+ }
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 2c5de4216415..34587b2dbdb1 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1804,9 +1804,8 @@ char *fourcc_string(char *buf, char *end, const u32 *fourcc,
+ 	orig = get_unaligned(fourcc);
+ 	switch (fmt[2]) {
+ 	case 'h':
+-		break;
+-	case 'n':
+-		orig = swab32(orig);
++		if (fmt[3] == 'R')
++			orig = swab32(orig);
+ 		break;
+ 	case 'l':
+ 		orig = (__force u32)cpu_to_le32(orig);
+@@ -2396,6 +2395,12 @@ early_param("no_hash_pointers", no_hash_pointers_enable);
+  *       read the documentation (path below) first.
+  * - 'NF' For a netdev_features_t
+  * - '4cc' V4L2 or DRM FourCC code, with endianness and raw numerical value.
++ * - '4c[h[R]lb]' For generic FourCC code with raw numerical value. Both are
++ *	 displayed in the big-endian format. This is the opposite of V4L2 or
++ *	 DRM FourCCs.
++ *	 The additional specifiers define what endianness is used to load
++ *	 the stored bytes. The data might be interpreted using the host,
++ *	 reversed host byte order, little-endian, or big-endian.
+  * - 'h[CDN]' For a variable-length buffer, it prints it as a hex string with
+  *            a certain separator (' ' by default):
+  *              C colon
 -- 
-2.47.1
+2.49.0
 
 
