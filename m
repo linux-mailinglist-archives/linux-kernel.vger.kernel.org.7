@@ -1,225 +1,102 @@
-Return-Path: <linux-kernel+bounces-617014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2BEA99952
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:19:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F5AA99970
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A8D1B83EEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B95A1B850E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E63426A0FD;
-	Wed, 23 Apr 2025 20:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87B526B96A;
+	Wed, 23 Apr 2025 20:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+51yhMk"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="y6cC8Mwn";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="picldoR9"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9F72676D5;
-	Wed, 23 Apr 2025 20:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1617D1FC10E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745439548; cv=none; b=AbWpTN6TLvSZl3jDX4ONrYYTFQMXnT0p958gulhbOnrkrsHvIYnKu5YHrpkq/UY7K5aJ0E2qJmgJ2JnBu/jn+6WuNeSs6gKJsIVt6lMl/tSIMwsJCi+yHHvMRc8rS2RNlKUYRqXN1om1gyiIu+wLGS8dMGNfp/n2U0N7WpVS4YU=
+	t=1745440076; cv=none; b=D+1LX6gXqof7qCyS61ahn3nnS57D0WsRK5T5VkPriIhWFsHH3bIRvZqYe+RQ2/YUQQUg4UKTjRWT0fp/1NgAh2HomyilPjQbkw4bNBtHpqiR/v9jxplEiEkJfbWilUzhyhjjsqA84tw3lGrH/wphrs0nEpTkXAkkjuvUGOJG18Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745439548; c=relaxed/simple;
-	bh=Hjyfm1RDvnrb3r506AIGW33tNSvbha+9sei4TDw4B1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQGYIpD1FVJijeFf9vkV2gMjPtWbpvhjFxdHciFZL6+PKxh4zmiC3xtOkpyaGIxYzYNsmsdjcHLl4plkJcUpPc6PRcANoFCZDOUkgSEKCyQqDbxbDYQw3+Jf47AhbUWCKhqI8qzoeJqwJiX7XPzmtDWbyJU/PBd2VNUVZfw6Y1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I+51yhMk; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-401be80368fso75087b6e.1;
-        Wed, 23 Apr 2025 13:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745439546; x=1746044346; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g4Ay+yxjyvrecwm+hKWiGn1hvCte1K1DikL5dI6YUSI=;
-        b=I+51yhMkWpGBn4W94ykbCDPRempOHgibaJPBj4itAhmrYlGF7CoKhdGSSbWWoLfznC
-         2gAnVVeOhXMyg0bt/U2qd4mjRcGADOQWu1m+4pqsDMvVqvpgYV+1h0JjLQgV99Z+JhmI
-         PuX/wj1RYQavj0Eq6YOYY4FNjkIyCrAx3sgsyvAcK0somdw++4LqmsScoEksPkzhCW3o
-         6v/orlEkw+gviAMaoYg227EAnS92UgePEfMjaTE5geKxs6U8GD4sn4KZu5vIl+zHR4gz
-         hmkjDq7glnbpjGv8Rg/qcx+ZG1ojt2faqJgCOpQYw0W8MLtzdJG3a7IL3Vji/tvpglUD
-         +/6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745439546; x=1746044346;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4Ay+yxjyvrecwm+hKWiGn1hvCte1K1DikL5dI6YUSI=;
-        b=NQxIUZAnA4mW8stgQ2iDm2yLBj4+4HcF9uMCY1u/lq2zAljA/9AZM5cFcO5O63MLQx
-         zkQxgVUIwYtUYxhXbd3mZs21V2RnFlk1klZ0Jh7B+nJKRdTrP4mlRC+CFFY5NB3yoH5V
-         bSOyls2b9ybFPlATADZ4O3A+041qNC+f2XiuMEGzLmQ5vOeSF0nyMO/vSNZhZlzAEn5G
-         lF8llXAndnVHgQ5YQMlruZDhEmuvizhtmxa9NB6gMt5JtRVxJx4WVCled9Qo7kV0wKUF
-         KslnYIPl6vvFc5+/u4p2ixj8RYCChUPzrYUdcZU6qFVJcHCGsgg5zsLRK49MQewg7p4y
-         TWKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Gj3vrms3LO5LyEwxr+o6eEQUgC8a6KLWQBjNmEhHnLZoPNPR0/8KmQF6kusV8xsGJUs8D4P/B/I=@vger.kernel.org, AJvYcCWZXWFz4wBIvlQ7zc7G4FymeDc8CStfuondxnA4Cb6NQAeOlm/aMdT4Vm5DvnBO1vxXU0IhNhteZg5z4AWY@vger.kernel.org, AJvYcCWnibpx9HBUPf1HHngTqNCowhZuThTg0NWHItDLK7M0QEHpvTorvgk3xeIEdrCa101y6PT20Je5438GRc70VA==@vger.kernel.org, AJvYcCXzJ2gv3kwHjNJIpjQmuTAfBR5ym9twJd/CPjzfburZZk/Uh0oTAoEa/IPqkvLWLY9ZAWoBm2DrTSGJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy9rznmEQ+iW8XVCqYmRbhhAwi4P3fpR+c/Q1XdquzVo4bv95U
-	pgwWDuSs7rSA8r3Pxx2Zg4VxLKuL8pxtCUbOZtlFDwHNxzheSGRK
-X-Gm-Gg: ASbGncuQ8sZPBIfH+7puBz0ko1mHuDxZuBVe6lKYG2m02gI4A+QipPcpUn/8qhR3JA5
-	5Kgc0ZQUC5h2o54SblStWG2vcJyr4XDaIIxK+zF1I1KZY5vk0IBN0xh2/GfQ3XYsUQqAcEz9Sn/
-	1w0yLOmv5glxKvFggoM9gLGDY5/pYWsEjRPBJ1nUyRPQoi2whBqJJODbXJOgNzzoK0mZTn+LEoQ
-	Ku5V4cWgK2Ev+U4PZHpe1zZ9BYadusKI+AW6/RJn4RfYrFiCTeFyQSbVfUHXt1zH8g06wUBb/gP
-	kIFQ+rbbPZHbE6x8QHIK5FQPUOJLNVGDhRo9nxSQSebiiJtWhk07r6HmpCFY5+fEYiOIoLs=
-X-Google-Smtp-Source: AGHT+IEoll/IipbPMTUh46dRuaEBH4kvJbYYprGZYgOTzElLJasG3TcogRN8wLTOCXAPApRgQMleOQ==
-X-Received: by 2002:a05:6808:1c0a:b0:400:fa6b:5dfb with SMTP id 5614622812f47-401eb3d2997mr176263b6e.36.1745439545564;
-        Wed, 23 Apr 2025 13:19:05 -0700 (PDT)
-Received: from Borg-550.local ([2603:8080:1500:3d89:44cc:5f45:d31b:d18f])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-401bf09a0a3sm2721677b6e.42.2025.04.23.13.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 13:19:05 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Wed, 23 Apr 2025 15:19:02 -0500
-From: John Groves <John@groves.net>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC PATCH 11/19] famfs_fuse: Basic famfs mount opts
-Message-ID: <4lknmgdq4d6xlmejrddwumpxuwog3l5iwtmoaet7w6swbtc37i@33xmye5u3g5a>
-References: <20250421013346.32530-1-john@groves.net>
- <20250421013346.32530-12-john@groves.net>
- <CAJnrk1a40QE+8q-PTTP6GgpDO9d9i_biuN8zk-KSEEiK7S34kA@mail.gmail.com>
+	s=arc-20240116; t=1745440076; c=relaxed/simple;
+	bh=guGqrLyF/UfkIOG7hzSkbW1E0cva2VFPvrXecL0SQt8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PWOsyfk+T8yg4RmO5tcWYpTBT4KujWyWdI/2uUhryTOP0qm8e3Xmo72p+jR83xdW/UsScJcjiH5g+NY8mrPyKNiBoXJt8/1v82NS/Le3YCbkojNCuTRXm40PCVHjfnprthpmI5DowAkZa4GBxFosqXqd+984DrTzfKQzlmch8Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=y6cC8Mwn; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=picldoR9; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id A6D19209655C;
+	Thu, 24 Apr 2025 05:20:20 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1745439620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HV8lXwcdIJI2t6jVsYzsmLu181G/eR1BqpBO9hmuwFg=;
+	b=y6cC8MwnLEMlYxKn2xb1//B1skbOcjfCUcizUY8Mm103UimeTQwfnIIbvTkv3H8g5mkjW8
+	92ZxY5OYKuVlVCVuyfzoGDmg3StQy72SPSIlQb71/l3zWO5q1iTxSOrE0KP6Vt0a8pMMu7
+	q+6NXZWcDMIB/pEwI7/0pNGatdyw2YyogLYch2XxkBXWmgsQrb1DDOhZat1b5x4sbZVIVI
+	RHzy7YfbQX2Wy568r/xWpm6CDImu9UBjv7v9Ox3HjsWASDSWzYKve8qGKsZmuE7u+17P2P
+	7XKcQKqodqNt0HGAfIpHI0l1XH3mGxYDIV+8ncKsSM7X3StNH0qTtzjLag93dw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1745439620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HV8lXwcdIJI2t6jVsYzsmLu181G/eR1BqpBO9hmuwFg=;
+	b=picldoR9oqAr/UqMgs28TfAybJnkNFe9k+hoin+j6DqspqtpwXy2Ztagnsf4/0ASrKgRtw
+	Mq9AaFPxpHIRtTCg==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 53NKKJFj149017
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 24 Apr 2025 05:20:20 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 53NKKJsl347945
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 24 Apr 2025 05:20:19 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 53NKKJLD347944;
+	Thu, 24 Apr 2025 05:20:19 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: "now4yreal" <now4yreal@foxmail.com>
+Cc: "linux-kernel" <linux-kernel@vger.kernel.org>
+Subject: Re: [Bug Report] warning in FAT filesystem
+In-Reply-To: <tencent_C03A9DA8102E348E06CBA9C15201F369BB06@qq.com>
+References: <tencent_C03A9DA8102E348E06CBA9C15201F369BB06@qq.com>
+Date: Thu, 24 Apr 2025 05:20:19 +0900
+Message-ID: <87y0vqhbp8.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1a40QE+8q-PTTP6GgpDO9d9i_biuN8zk-KSEEiK7S34kA@mail.gmail.com>
+Content-Type: text/plain; charset=iso-2022-jp
 
-On 25/04/22 06:51PM, Joanne Koong wrote:
-> On Sun, Apr 20, 2025 at 6:34 PM John Groves <John@groves.net> wrote:
-> >
-> > * -o shadow=<shadowpath>
-> > * -o daxdev=<daxdev>
-> >
-> > Signed-off-by: John Groves <john@groves.net>
-> > ---
-> >  fs/fuse/fuse_i.h |  8 +++++++-
-> >  fs/fuse/inode.c  | 25 ++++++++++++++++++++++++-
-> >  2 files changed, 31 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index b2c563b1a1c8..931613102d32 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -580,9 +580,11 @@ struct fuse_fs_context {
-> >         unsigned int blksize;
-> >         const char *subtype;
-> >
-> > -       /* DAX device, may be NULL */
-> > +       /* DAX device for virtiofs, may be NULL */
-> >         struct dax_device *dax_dev;
-> >
-> > +       const char *shadow; /* famfs - null if not famfs */
-> > +
-> >         /* fuse_dev pointer to fill in, should contain NULL on entry */
-> >         void **fudptr;
-> >  };
-> > @@ -938,6 +940,10 @@ struct fuse_conn {
-> >         /**  uring connection information*/
-> >         struct fuse_ring *ring;
-> >  #endif
-> > +
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       char *shadow;
-> > +#endif
-> >  };
-> >
-> >  /*
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index 5c6947b12503..7f4b73e739cb 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -766,6 +766,9 @@ enum {
-> >         OPT_ALLOW_OTHER,
-> >         OPT_MAX_READ,
-> >         OPT_BLKSIZE,
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       OPT_SHADOW,
-> > +#endif
-> >         OPT_ERR
-> >  };
-> >
-> > @@ -780,6 +783,9 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
-> >         fsparam_u32     ("max_read",            OPT_MAX_READ),
-> >         fsparam_u32     ("blksize",             OPT_BLKSIZE),
-> >         fsparam_string  ("subtype",             OPT_SUBTYPE),
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       fsparam_string("shadow",                OPT_SHADOW),
-> > +#endif
-> >         {}
-> >  };
-> >
-> > @@ -875,6 +881,15 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
-> >                 ctx->blksize = result.uint_32;
-> >                 break;
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       case OPT_SHADOW:
-> > +               if (ctx->shadow)
-> > +                       return invalfc(fsc, "Multiple shadows specified");
-> > +               ctx->shadow = param->string;
-> > +               param->string = NULL;
-> > +               break;
-> > +#endif
-> > +
-> >         default:
-> >                 return -EINVAL;
-> >         }
-> > @@ -888,6 +903,7 @@ static void fuse_free_fsc(struct fs_context *fsc)
-> >
-> >         if (ctx) {
-> >                 kfree(ctx->subtype);
-> > +               kfree(ctx->shadow);
-> >                 kfree(ctx);
-> >         }
-> >  }
-> > @@ -919,7 +935,10 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
-> >         else if (fc->dax_mode == FUSE_DAX_INODE_USER)
-> >                 seq_puts(m, ",dax=inode");
-> >  #endif
-> > -
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       if (fc->shadow)
-> > +               seq_printf(m, ",shadow=%s", fc->shadow);
-> > +#endif
-> >         return 0;
-> >  }
-> >
-> > @@ -1825,6 +1844,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
-> >         sb->s_root = root_dentry;
-> >         if (ctx->fudptr)
-> >                 *ctx->fudptr = fud;
-> > +
-> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > +       fc->shadow = kstrdup(ctx->shadow, GFP_KERNEL);
-> > +#endif
-> 
-> Since this is kstrdup-ed, I think you meant to also kfree this in
-> fuse_conn_put() when the last refcount on fc gets dropped?
+"now4yreal" <now4yreal@foxmail.com> writes:
 
-Good catch Joanne! That's queued in my "-next" branch.
+> Although I understand that errors caused by maliciously crafted file
+> systems may not be within your scope of consideration, please consider
+> whether such validation might indeed lead to any other chain
+> reactions? Please feel free to reach out if you need any clarification
+> or would like additional information.
+>
+> I$B!G(Bve attached the POC (written in C) for your convenience $B!=(B it can be
+> compiled directly with `gcc`.
 
-Thanks,
-John
+Yes, corrupted image can be the cause of fatal error. Can you real
+reproducible program instead of stress test?  If it can be prevented
+easily, we would be able to add the check.
 
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
