@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-615761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488DCA98206
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A50A98193
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7FB7A2790
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:58:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5644E165095
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779F927CB27;
-	Wed, 23 Apr 2025 07:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53CE26AAAB;
+	Wed, 23 Apr 2025 07:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DgKK1wem"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsotPfbB"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEF527C156;
-	Wed, 23 Apr 2025 07:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B290226A092;
+	Wed, 23 Apr 2025 07:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394867; cv=none; b=K7DM74dwPAb6+XQDo5qVGwI/r8QdyK8LAeW00MovZUO358geTrwqqgPk9QQ4kUDvX1SSfBhxnDExGfeI4nPBiUz3/IevHfkHompl2T/Dgb7kt/g7dCvqokDYdysYNKzBIjfC43RdV+tGFp9K2SCPsrgAGd3n/FQGKO2Pj7RUEog=
+	t=1745394613; cv=none; b=e2YLN1b+nyeO4k1n61pMyz3P/vi7YdKnQucVKEg5VX+C6NmKZ3isIve0h/bYvKGZRhzba0gffdA7nwScBtvFkj+ZNVw7AuaavUMZKFkJ+Jn+UWOaJUUKt26UGyGHczyGd3b/fvs4ahbmBtl5lNnaxFVv32c2MMVC0tp0pYchzqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394867; c=relaxed/simple;
-	bh=SAogXjErmnUKWUV3LPeC/KcgOjnw/QZRkCVS8VQvp7g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mxrwon5wOQHFVDhTY66PhAzO1QWyqUveKFRXkvH2G9+tphqQ9M7NQyrwzbAvteLGuYIgkFWop8MRMSKqj/UM5RUQh8hwDI80KIooco78lTvICjwnhh9bTgNXZpkaK3oxUJE6mpCcd2i9T3HvHwmuaK/O4CtfrAEenbttygldvw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DgKK1wem; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N6K2bZ017716;
-	Wed, 23 Apr 2025 09:53:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	D1vrqcKSTo7wXwCZBje6dgQBk+XJl1AKFrrz1y87N6A=; b=DgKK1wemVM/7tfNV
-	t2eP+SXYN4Be0ioJ2K0nwoR/R8htvejSn8I/EekCj+5r79yh3Cw1jKxFWkZyGV/c
-	1y7J2mtTiCZi294Xujb66Af7youacmqEn5AZeQjLApPgq7x+rBFHMskHYEVgT80X
-	E/OmwHO2tSq+pFT5FmuzXxCZFfWvXDmY9fnIU3PwwkduvU9Ib4v1gCUzavgZVWDg
-	GZ9szizctmJ+39ap4XbcE2qzBZ/DpeiAOLqp4Z3DrdKbn3bzqi1GebRGfa15Hq9D
-	6mqdwDSWgWucZk3CA4egrozQf0lWOkMDnMYMo0sE39ccdCO9hM4vVxSQNC++t9/v
-	XCkIyQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jk29xwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 09:53:57 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AE13740061;
-	Wed, 23 Apr 2025 09:52:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED3D6A0B194;
-	Wed, 23 Apr 2025 09:51:10 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Apr
- 2025 09:51:10 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <cassel@kernel.org>, <johan+linaro@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 9/9] arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
-Date: Wed, 23 Apr 2025 09:49:40 +0200
-Message-ID: <20250423074940.3849091-10-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423074940.3849091-1-christian.bruel@foss.st.com>
-References: <20250423074940.3849091-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1745394613; c=relaxed/simple;
+	bh=aeqdj/wdcz+x26fwzx/HX+zznG9Z+guBS6p9E5Hi9mM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=djE65v9pfRjyd+Y05uy5SHx03cS+u2bLQ11dMZBnZGKBWZw42ms4sIOyoYCiJ2J5ZuTQ/2aHrYVR0r13IMMxlZf3PgLGaD+JrM3hLvAnn2ohrBDCy0MULuXuy/La3OjdAo9+oP4azY4bhoikOF6djI1qv4ULSoCvbk5M5r+08DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DsotPfbB; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2243803b776so94624955ad.0;
+        Wed, 23 Apr 2025 00:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745394611; x=1745999411; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3HKmvn7msuvgVm/2Zx8cHDv5Bn16on0KtIYGyc45jPg=;
+        b=DsotPfbBBQ+s+dCiEaBQ5Qrw5ZfA4GRrGUfDmqA7HgrikG0YrlP0taXvAon7vHfbAT
+         b7KUH0oURiUuWAEO9/LsXFa1/8tsWmiOreN0ryJCVVCpFzxBswTvnixxnrL6H2pqEGkg
+         xHIMAIPn7XzheJ4EeGue/+7QN6GYQBElzd5vZBWZd7/cJhbK74XA3cEpVheO0EnzsRQi
+         qqPLr0Hm3mGGsjMHOEaQXb4tMpvclRvlxYd3PpW1Y2avyWWn7jOinwRimv3WlzhcbInh
+         wLAdC84VOqLVj6udMFTdUVUJVhDTtmD00OqfKhS0v2A0ite19Wz6RpZ3Y8bezuvKx+Qg
+         23sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745394611; x=1745999411;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3HKmvn7msuvgVm/2Zx8cHDv5Bn16on0KtIYGyc45jPg=;
+        b=E5jiK6WykGFdxlEgkVTeAPnuzgtUXeHegQVqpZAm5Etl0NqulgzABR1Fz60uKVHfOB
+         k+u9B/avH1866K6KAd5yfpR7NCYgwEbhw0iZPhyyGJc+5SymIiNq09j1d7vsiHqxbUi0
+         pbu2ZlKONkLMiv5Z4B2qxwx4iqz48uikgF1GSUa6PGPeSq5V7f3CjN7192KG4S4uFdkU
+         N4Dp8ag+5lR0hj8m09xo8DdtgNjJxMvfZ0j98h2hWNLe/dMXw7gaSgqEgzJJFMSe7a7l
+         VNeuYy5hY6dmhCLsIFRU2o/LUcC15BdxpyX4QZfYZYqM7fPu4AFm5FLOQjAwR0gmIbeS
+         3gOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ujpHq065v2lbpccpmTW7xFDvysG684rD2Qc4B04DXJ32trSnwm1rR9FOaQKNzc+2JLVP8kI7wZ49VNI=@vger.kernel.org, AJvYcCUkNsmQISl3BeFvnTxjxZzkhC2LlKB7h47DQUxzU0YV5fmKZ56ggNscVvuZAUBWiVCaj2jfCJshHDmiOFl3PiRFZ8F8Gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy76N5nc94vEMGOmk7OzGjYvNtHzUrj16ZWowX/l6uWqP0in9iA
+	IDm0GhuzVIaQvAjIrd62e9r4Z25+xyZLNt9sXKeUGeCdeHpWwSKQ
+X-Gm-Gg: ASbGncufuEcXKgWju4AlCNoklvK3OgmLzRugP/SMHSyoWwp7G47mTSa1pp/lejI4m0o
+	Qk2763unJWCuB+dRhqPUlXKuJy1+HNcK1qjNjdoEurg2TsKl4WvGHGe08H+mPrkkwwyQPCyhKhp
+	52qk74M0+2En1xuCWcMOkjyQ5OAN4GCWXGAt9MHFz5f1Z73hfZSLgPkKxnhmM9RQd/Y1xUJxcyi
+	+Dt/ijRSO4HIsA9qVcyFbQl5mCzW7q3QcSFzPyizw8DtOCNUiwhwTmq7T+QZY63ezvU5Y31432l
+	gQTWS6BZOELyYA4fNEKDC+yuVPS/rm1jV5MxJ5CI
+X-Google-Smtp-Source: AGHT+IEgc1OE2+8U7RLtGI8tI78OAo9nMPoPHH9CNp4kpr09rcULrR1pCdntxyPLEd6+n+N2+x9lXg==
+X-Received: by 2002:a17:902:c40f:b0:224:10a2:cad5 with SMTP id d9443c01a7336-22c5357a132mr286942995ad.10.1745394610802;
+        Wed, 23 Apr 2025 00:50:10 -0700 (PDT)
+Received: from [192.168.1.26] ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdac67sm98240235ad.29.2025.04.23.00.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 00:50:10 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Subject: [PATCH 0/2] platform/x86: alienware-wmi-wmax: Add support for GPIO
+ methods
+Date: Wed, 23 Apr 2025 04:49:44 -0300
+Message-Id: <20250423-awcc-gpio-v1-0-160a11bc3f9a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-23_05,2025-04-22_01,2024-11-22_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJibCGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0Nj3cTy5GTd9ILMfF0jkyTDNNNkUxOzFCMloPqCotS0zAqwWdGxtbU
+ A7+OkbVsAAAA=
+X-Change-ID: 20250413-awcc-gpio-24b1f5c546d2
+To: Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Armin Wolf <W_Armin@gmx.de>
+Cc: Gabriel Marcano <gabemarcano@yahoo.com>, 
+ platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>
+X-Mailer: b4 0.14.2
 
-Add PCIe RC and EP support on stm32mp257f-ev1 board.
-Default to RC mode.
+Hi all,
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+I found a great blog post [1], which described the reverse engineering
+process of the GPIO control methods present on this device.
+
+In summary, these methods expose some debugging capabilities of the RGB
+lighting controller present on Dell gaming laptops. See [Patch 2] for
+more info.
+
+Exposing these methods to DebugFS is useful for developers exploring
+this RGB controllers (myself included).
+
+Thanks for your feedback!
+
+[1] https://gabriel.marcanobrady.family/blog/2024/12/16/dell-g5-5505-se-acpi-or-figuring-out-how-to-reset-the-rgb-controller/
+
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Kurt Borja (2):
+      platform/x86: alienware-wmi-wmax: Expose GPIO debug methods
+      Documentation: wmi: alienware-wmi: Add GPIO control documentation
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1..a7646503d6b2 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -225,6 +225,27 @@ scmi_vdd_sdcard: regulator@23 {
- 	};
- };
- 
-+&pcie_ep {
-+	pinctrl-names = "default", "init";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+	status = "disabled";
-+};
-+
-+&pcie_rc {
-+	pinctrl-names = "default", "init", "sleep";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	pinctrl-2 = <&pcie_sleep_pins_a>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		 reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+		 wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+	};
-+};
-+
- &sdmmc1 {
- 	pinctrl-names = "default", "opendrain", "sleep";
- 	pinctrl-0 = <&sdmmc1_b4_pins_a>;
+ Documentation/wmi/devices/alienware-wmi.rst    |  85 +++++++++++++++++-
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 116 ++++++++++++++++++++++++-
+ 2 files changed, 196 insertions(+), 5 deletions(-)
+---
+base-commit: 981527828c301644bc4014faa9c523e8a5e32a32
+change-id: 20250413-awcc-gpio-24b1f5c546d2
+
+Best regards,
 -- 
-2.34.1
+ ~ Kurt
 
 
