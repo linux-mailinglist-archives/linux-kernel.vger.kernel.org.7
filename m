@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-615639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9DDA98034
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03947A9803A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3D93A9742
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0AC019401AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CD3267721;
-	Wed, 23 Apr 2025 07:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BAB268C41;
+	Wed, 23 Apr 2025 07:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hN0KSyrw"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpRIocsJ"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE302580D0;
-	Wed, 23 Apr 2025 07:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D787A2676DD;
+	Wed, 23 Apr 2025 07:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392445; cv=none; b=sI4r6azxftnP2yKbcTIw4VU8Z/fu2q4vdkxeXhhR8MrgKLxFdQ14m8fQDHTfXsvJ2kpwIL1woEgCAkKv5IvISX7LMXOArWDsItdADaMGtech7fsX/LycIflDMnRZNDxh9fi1d76BAyN9qPgp98trFhm841FSvDZ4Uff8ZV1d0oY=
+	t=1745392447; cv=none; b=QI9hBOkjQSo82UoOvJjT4MdZEI/0UTim+Mz7xhQhZpgz2bSMsnmqyUBJpO51df1fVPuGSsqOO5TzRY88XPn9/D27+cuEygmYFkEXzuXNgTd+bt0DpQROS8iQRZ/bxlSITOFAshTPd8zJMWQSRhUcrCKvlww1BVCwk9rFbKfF8Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392445; c=relaxed/simple;
-	bh=YB3U1vGWiGbGv/SZx3xK3oLfCX1vsYzknR/aXytg8xc=;
+	s=arc-20240116; t=1745392447; c=relaxed/simple;
+	bh=mPaxqxMfXu2jds9nxm8nPXmpGmw1deHYcqq7wlxh/1o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tuluvW/OffDytkLevlcLkm2MvPnWB+nEs1wa5FGPbiB/2mc9Izi/t5Eh9GY5c5ZaWElFq3Bn+sZKKnJyqmv0aebYUM/dVcVnP51Mw3HJNx1ft+1myKcC6zA9i/hpI91Rx9zs/koC/dGaMdOSwQd629pjB2ifPnhDl+6QpYqFb3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hN0KSyrw; arc=none smtp.client-ip=209.85.167.46
+	 In-Reply-To:To:Cc; b=rh9cg/jiTrYjsy93Cu09EGhZNp91TMNN98cfpkQP2L2+i/Dqk3VwjfjA3z1l1qeWGnqqKhFP/hfcRii0FGE67/yfYC45ipTJqz4QJlWuI6WvFCrsPzEj9zApx/nwVoZBpHCotqN8kFmExuzPGsunCwO1M4ZE5cf06MhmZvstoQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpRIocsJ; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-548409cd2a8so7870625e87.3;
-        Wed, 23 Apr 2025 00:14:02 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so5790027e87.1;
+        Wed, 23 Apr 2025 00:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745392441; x=1745997241; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745392443; x=1745997243; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Wp1eUvMBdcnYqPsD1ECvMkcidMJ054ioPzyghi4FuDQ=;
-        b=hN0KSyrwjHZDhGbQ4GCrxW8Z9rSgc3BbuIVDZL/DO9pvcrwyXGRIM6Likfdx7guR2u
-         zC5AYiFWROe6Si7idLsrADGErPrYC4MfpWozDVSURWzZbptuApAJht7bRl2AYeeuWroF
-         rKFBdK6bpMmvStDMv4nkk5YeYkDrXBLCnNufpYlr9JQCGJo46jx1AFmd+Lj6XhyG4uix
-         hu95WUwCSX7MklG648rYnIIM+11Rjt71ZKeIjXI3k1kfmFgrs3KYB9ijyUCzJjfEcMxJ
-         8biPRRM1duGJxcZMHkM/DDpcZmY7YzhIBt90WRqKgIJNdk4mSY/0du98DQvEci3aWdLY
-         84eA==
+        bh=uT0mmBoFpVCNKxQIfaRHc1XTDAIec9qTlPRMU5LqDHg=;
+        b=jpRIocsJ7kuaT7u/Isy7TJdlWzAxxJai3e1ksIrH+ChiCHPPJZOJR/oeEAvtLoiDZc
+         +SFtm+cf/rmBVA9bU2+9/jJXvZOXnFAYpM65LcyumSymB90Y84zGqdBPyKG00ipjhzwZ
+         SJmw36MRXYpWgU09XxIxIhIo9PjUEjXr8i7u0U1LTptbA5bfkX9TASB5DVhZSuk9CB69
+         VuOdmZMss+xECcE6xEq+whOMM3MFkSGpwE4swVc+c7md30rRiPwuHU/tlQmwqDJsZEr5
+         KOU67zdWUgvVnkt0RLVI7jegYm9HMWdH/o+Qc9tiA7dlSiQGvhIBb4YI4JoD8NCmxCT2
+         G1Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745392441; x=1745997241;
+        d=1e100.net; s=20230601; t=1745392443; x=1745997243;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wp1eUvMBdcnYqPsD1ECvMkcidMJ054ioPzyghi4FuDQ=;
-        b=BU9/SIF3amDKEnkIc6RgTutv5QiCm0RF4MbowKT7lKT1qvC2+Cwf21gxiSJNo6X8hW
-         6tKGU3/kS2rgI04fpSQJbv2jVzl3tfSPnQPXqTgvZv1ThM2Mbpx8jm5GnGx/YNq+0E9Q
-         bpBxVRMuRjK/cOTW3/NryYxlOhWK4R0ErvNIk0VRpGvB93jFpW/w8kYYRw1SKA6OXcbt
-         0WSTFAlMDYVzmSI3KaqqiWFElOVPhRX9yU59vfavfbnl2LnQofHgYsT8cPCPbB5PtgSw
-         GGiTDJGbuOO8X1Y8ZCZWmd57YyWIVGWMlrklAiB0NPRF3Y0qLRZlolybP0XpjGnuZI5f
-         reMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxvNu/fmx44c3Gz8XTkjtWwgyQsbMyJN6pn8wKaqt/DMI6glYU3JZtNvBIvUYVWKL2eHf4ed2sT8qV@vger.kernel.org, AJvYcCXjv+QJ5kweVyVZaQkLvpR0LjJtqWCAjCVSI5tWJ8F+9LgjN8+y7X+NwfSxo9GDJXAQLZxNKlMT33MxV8FX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwNjN6FzIgZEBjUj3ygKryQsKNSXYy9erQG1D2sWaZnoGo0QQ6
-	7yjf4IgPcIZKPfnAzcMP674pzVl8uCQSvdrtqNIkU3+8ZLQt54ZH
-X-Gm-Gg: ASbGncuGUTkR3gmYL8lOrI/Mep8cSK3UTRYTSXpECze5uMLfHsoapcXkRCzOMRcqpIy
-	c5Kj4/+2w1tbmsX/mX4F/x4ec/hSGZFFpzt0lfSVQywU34fogP4CQM9zi5nCwHdsXciyUrdbDcQ
-	wbHq+W4KFEwaBGpSAUhEcGMUDtbvXfrdh4t29vYp48639/f4T0I3XFmGM0j27CVfz4EqbP+Wnln
-	SwTsmBXF4SNtpyuqtlqih7hNERBzHJrITQMOozgiJCexttfxXw8kOiixV+KLMgT0x+B7O1lYIXK
-	Y4TYYznRkEX6oKNF27Ssbt4cgbEDhtx9Ne72o5EXMGK002uc7AEtmMea6lZU54lQLz9yVlB+9Rr
-	UcpBQfCPj
-X-Google-Smtp-Source: AGHT+IGvowmu55PG6LtPWhPWoZ5Kg5bAoX9r8U7PcI5/15ZB2sjHiJaCS9lWdbPisTPDmn+Kuh46aQ==
-X-Received: by 2002:a05:6512:3b29:b0:54d:676c:ddfa with SMTP id 2adb3069b0e04-54d6e61609bmr5153223e87.4.1745392440901;
-        Wed, 23 Apr 2025 00:14:00 -0700 (PDT)
+        bh=uT0mmBoFpVCNKxQIfaRHc1XTDAIec9qTlPRMU5LqDHg=;
+        b=dqvwUjSit50TwXrKjvshCi3f0NHuR0+yTaeXTnqBaeNiEYlDLWKtitQV7p7ZOOBnu5
+         KTPbsHVQW+k0Os/zNdr0YSw2Qj+tff/Z7XI0leUsuYVKcYsoY2SVExbW/SNjYrU/Z5SD
+         tLWyg13ncT6oYrormIB20R3yDlpGZEUgY4ZnmezmzuKTqJRL/bxXZg4sO4CfvRDvldUs
+         ABJ7KNIwV23XlYKmGf8Oun4BS14AvAI8yFz5/mSFISMajG2wocawPqkXFgcGmJF9tjzH
+         spJdXHleBKyAUhdqhdWwos0WVpTn7tJhoOfYD+HRGGrul4oSdP6azdCGD08WoGH8V9eC
+         ZWaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9GdC9/RWgfL2Wg3B7dhqa+z3leQl8x8TC3ES0CYBrG0u1hdzxcXdjj+aY+jZpNWPe6qHP0j3Q9WsFM+zG@vger.kernel.org, AJvYcCUaGAieK2bTgHQWgxmm1LM9EugDt4lq4Zbns2QdfHOdSeC2YyH5363rd4CU6SGJxD93nbLwA6Eb2pcG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2M9x0vPxo7zuZ6pJto/zMpUKMwgbk5u1DUvoEI1GyJ9lSQBMQ
+	taOF/5wRhtewFgHS+lBUoE/0BeZDLP7GJsMTgKnMiPOndHH6CrJr
+X-Gm-Gg: ASbGnctclaIELz68YlubuTn6rp6ZsptK53dSgKDkeyDdSF/wGP3Vgm1nSqOXuitFIIC
+	XqP1i0hS8NGvDuH7bKz1K6fxN4vn18kDpPr++cv4rByO4lSD0wEmUHxCYoLC/0TVkwc8gW85CLv
+	uvllR1ZuB7fJTik8TtNUPyw8v3yYeeX4FKKJIKc3xlG2gn6KA2cvN+4o9JOh5wtEmVHB5UN4Crk
+	iwiyPoX1c29xcCbw8DsOdMrpCt1yBuYbPgScgmQmhmLXpZmh0VxZ0h4Yrz43W0UbsLg9S+SQfMJ
+	Wv4dhlQgJDgBpqvrgxDKUqoLGFdvjjc2rXyzuNeXS3etHprqnIxeWuCHBcKkzoIClCyskIyCxI0
+	sn96Uokcf
+X-Google-Smtp-Source: AGHT+IFByiNWEW0mLAqwSNTlgwhM7cqvcaCZ0X8o8MUqyR8SBSIRwrXUADW7pFiSfHXFXx3S0M7VDw==
+X-Received: by 2002:a05:6512:3b90:b0:549:5b54:2c6c with SMTP id 2adb3069b0e04-54d6e62776amr5039746e87.23.1745392442370;
+        Wed, 23 Apr 2025 00:14:02 -0700 (PDT)
 Received: from [192.168.2.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e524645sm1428793e87.41.2025.04.23.00.13.59
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e524645sm1428793e87.41.2025.04.23.00.14.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 00:14:00 -0700 (PDT)
+        Wed, 23 Apr 2025 00:14:01 -0700 (PDT)
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Wed, 23 Apr 2025 09:13:33 +0200
-Subject: [PATCH v5 1/3] dt-bindings: display: Add Sitronix ST7571 LCD
- Controller
+Date: Wed, 23 Apr 2025 09:13:34 +0200
+Subject: [PATCH v5 2/3] drm/st7571-i2c: add support for Sitronix ST7571 LCD
+ controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,8 +83,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-st7571-v5-1-a283b752ad39@gmail.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250423-st7571-v5-2-a283b752ad39@gmail.com>
 References: <20250423-st7571-v5-0-a283b752ad39@gmail.com>
 In-Reply-To: <20250423-st7571-v5-0-a283b752ad39@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -94,118 +94,1087 @@ To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Thomas Zimmermann <tzimmrmann@suse.de>, 
+ Javier Martinez Canillas <javierm@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2443;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=32395;
  i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=YB3U1vGWiGbGv/SZx3xK3oLfCX1vsYzknR/aXytg8xc=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBoCJMnpPP5Uv6KlMXzj7js3h5xWuDgruYzpR5Sd
- WzqEPK5ggKJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaAiTJwAKCRCIgE5vWV1S
- MpSwD/4j7O0k2Ad7fUd2A/3jFfXd8tieImPyatFp/ocYrhFuwHgCNlFMNNBSdvXohr0zsC3nPYL
- 7z/Uk+rymGBQSd1HEnR+7rvK5A5mWEw428SZa8BHkVPW8HKL+N3pSjcsOdA/l/+Uug8FuMKi1iK
- puCQ5veEdSvMaC6DAEf+jy0M4OVdsnxq6HezsvCoW8gxR3Bulw6+6NDykonYt9FPU4NlRBxYYGC
- iN47n5dG0VoDyJ0B8+31vg0ffnyRmVRYt/FbEWOqAQiSPCvxKsonsNYbUmjVBKlR0Nj+86EQ3K+
- aoTQAwBIEaDTitJAYHsn+7KgWoAWhl0MVgT0N41pUaf+CReNuR3hbtzd0xSrECdbjroQQ0Iq61T
- hGTbQhwaHqeuo8x6cURqFPqmqS9mUOA1RAVihCALkUoW2kBG7tsfKDrWTV4zFhL9soCYgE8cAGP
- JWJ5wA4+ancz+jU+DrviMEJaSEbVSmgjESQ96YEJpP6Vn4qRsrFiXuw1h2EWs8n2ZHI1QWBKPGo
- q7mSH7NDV9/wtlAC7VEBdUgx3kUquZcT0jxXenZMuJc9rJdWNukKhZCllPiMaaTJBj+Ty7fgUIa
- Mqp4BSkGWi78eqU67xsfuokWdnA4AZb8VFFgimDCOjt+zJpoo04heFW2Sswmofaf/ajNEy5vZA0
- YyHHDD3DeckjZug==
+ bh=mPaxqxMfXu2jds9nxm8nPXmpGmw1deHYcqq7wlxh/1o=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBoCJMsQYPkUxsRTQTLasOrZroGaEeh2pKjMg/FO
+ pxEpJxU1pCJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaAiTLAAKCRCIgE5vWV1S
+ MsWuD/wP1/haD54GJ/WyGBj4ZQn4CM55TeY6s9USrW0dEoWVsjKz+ZoWeIhc2Mihv+g+0ZHcRGK
+ 4MxIUqWRnb8xE9YBAVD/C+TGrpK9thgDpAQWRwKF1X9/UsxyUY8G1re48g4EF35WsbC6xQPHtbp
+ GjiXuw5gXITfaApPq4sEsi3FA0D1gdK8dxNgQLIRfddatdBvcne+dTRVTtW1e+3vX5XsQzeFwRd
+ eKRM4UU5czv9CqE1wC8hjnEkA9OnMhH66cfuGzQmIgn2wpevFoL8XW9ngigMnijNnHLZZq/EAj4
+ SFZb9//Tux49s/Pd6cUoeD1+p9mvftm06u4nHSzzJMrDpRz2J9qfe+eZuvLznuw7o6dKgclVkl/
+ 4C+3E0A1UGXjZSaSCs4tvf3VwG/SizJ2TGVBCF2mHkeRhO3zMAIj7Lv6QVpQVQCoJVPor2yHRKe
+ lRE/Gn1u9zEvkNwc9KNRfO/Uribiv9t1oTQ2TI9BLvpw8AUAkMrUgTZ9emN45ulnHHzkAhRM/4b
+ vVSH4vIA86I8Ff51zw6nInjStngvvC86yhaHC2r40URR11mStY1y2Rms7qII6vyPhMNABiTu8eJ
+ rT+5P2839igBpdu5R3kcFreiQ4/0q/hi53aNS4iMBmYIB9yMWGI5Xd79QHBeMnFiVOLKYKBnYeV
+ 5WYUj5Zr8n3myow==
 X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
  fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-Sitronix ST7571 is a dot matrix LCD controller supporting
-both 4bit grayscale and monochrome LCDs.
+Sitronix ST7571 is a 4bit gray scale dot matrix LCD controller.
+The controller has a SPI, I2C and 8bit parallel interface, this
+driver is for the I2C interface only.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Thomas Zimmermann <tzimmrmann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- .../bindings/display/sitronix,st7571.yaml          | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ drivers/gpu/drm/tiny/Kconfig      |   11 +
+ drivers/gpu/drm/tiny/Makefile     |    1 +
+ drivers/gpu/drm/tiny/st7571-i2c.c | 1007 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1019 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sitronix,st7571.yaml b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
+index 94cbdb1337c07f1628a33599a7130369b9d59d98..e4a55482e3bcd3f6851df1d322a14cbe1f96adfb 100644
+--- a/drivers/gpu/drm/tiny/Kconfig
++++ b/drivers/gpu/drm/tiny/Kconfig
+@@ -232,6 +232,17 @@ config TINYDRM_ST7586
+ 
+ 	  If M is selected the module will be called st7586.
+ 
++config DRM_ST7571_I2C
++	tristate "DRM support for Sitronix ST7571 display panels (I2C)"
++	depends on DRM && I2C && MMU
++	select DRM_GEM_SHMEM_HELPER
++	select DRM_KMS_HELPER
++	select REGMAP_I2C
++	help
++	  DRM driver for Sitronix ST7571 panels controlled over I2C.
++
++	  if M is selected the module will be called st7571-i2c.
++
+ config TINYDRM_ST7735R
+ 	tristate "DRM support for Sitronix ST7715R/ST7735R display panels"
+ 	depends on DRM && SPI
+diff --git a/drivers/gpu/drm/tiny/Makefile b/drivers/gpu/drm/tiny/Makefile
+index 60816d2eb4ff93b87228ed8eadd60a0a33a1144b..eab7568c92c880cfdf7c2f0b9c4bfac4685dbe95 100644
+--- a/drivers/gpu/drm/tiny/Makefile
++++ b/drivers/gpu/drm/tiny/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_DRM_GM12U320)		+= gm12u320.o
+ obj-$(CONFIG_DRM_OFDRM)			+= ofdrm.o
+ obj-$(CONFIG_DRM_PANEL_MIPI_DBI)	+= panel-mipi-dbi.o
+ obj-$(CONFIG_DRM_SIMPLEDRM)		+= simpledrm.o
++obj-$(CONFIG_DRM_ST7571_I2C)		+= st7571-i2c.o
+ obj-$(CONFIG_TINYDRM_HX8357D)		+= hx8357d.o
+ obj-$(CONFIG_TINYDRM_ILI9163)		+= ili9163.o
+ obj-$(CONFIG_TINYDRM_ILI9225)		+= ili9225.o
+diff --git a/drivers/gpu/drm/tiny/st7571-i2c.c b/drivers/gpu/drm/tiny/st7571-i2c.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..4fea782fccd701f5095a08290c13722a12a58b52
+index 0000000000000000000000000000000000000000..a5b7d2068e3e14030116b1f4af17c716ac02869d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/sitronix,st7571.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/gpu/drm/tiny/st7571-i2c.c
+@@ -0,0 +1,1007 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Driver for Sitronix ST7571, a 4 level gray scale dot matrix LCD controller
++ *
++ * Copyright (C) 2025 Marcus Folkesson <marcus.folkesson@gmail.com>
++ */
 +
-+title: Sitronix ST7571 Display Controller
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
 +
-+maintainers:
-+  - Marcus Folkesson <marcus.folkesson@gmail.com>
++#include <drm/clients/drm_client_setup.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_connector.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_damage_helper.h>
++#include <drm/drm_drv.h>
++#include <drm/drm_encoder.h>
++#include <drm/drm_fb_helper.h>
++#include <drm/drm_fbdev_shmem.h>
++#include <drm/drm_fourcc.h>
++#include <drm/drm_framebuffer.h>
++#include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_gem_shmem_helper.h>
++#include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_module.h>
++#include <drm/drm_plane.h>
++#include <drm/drm_probe_helper.h>
 +
-+description:
-+  Sitronix ST7571 is a driver and controller for 4-level gray
-+  scale and monochrome dot matrix LCD panels.
++#include <video/display_timing.h>
++#include <video/of_display_timing.h>
 +
-+allOf:
-+  - $ref: panel/panel-common.yaml#
++#define ST7571_COMMAND_MODE			(0x00)
++#define ST7571_DATA_MODE			(0x40)
 +
-+properties:
-+  compatible:
-+    const: sitronix,st7571
++/* Normal mode command set */
++#define ST7571_DISPLAY_OFF			(0xae)
++#define ST7571_DISPLAY_ON			(0xaf)
++#define ST7571_OSC_ON				(0xab)
++#define ST7571_SET_COLUMN_LSB(c)		(0x00 | FIELD_PREP(GENMASK(3, 0), (c)))
++#define ST7571_SET_COLUMN_MSB(c)		(0x10 | FIELD_PREP(GENMASK(2, 0), (c) >> 4))
++#define ST7571_SET_COM0_LSB(x)			(FIELD_PREP(GENMASK(6, 0), (x)))
++#define ST7571_SET_COM0_MSB			(0x44)
++#define ST7571_SET_COM_SCAN_DIR(d)		(0xc0 | FIELD_PREP(GENMASK(3, 3), (d)))
++#define ST7571_SET_CONTRAST_LSB(c)		(FIELD_PREP(GENMASK(5, 0), (c)))
++#define ST7571_SET_CONTRAST_MSB			(0x81)
++#define ST7571_SET_DISPLAY_DUTY_LSB(d)		(FIELD_PREP(GENMASK(7, 0), (d)))
++#define ST7571_SET_DISPLAY_DUTY_MSB		(0x48)
++#define ST7571_SET_ENTIRE_DISPLAY_ON(p)		(0xa4 | FIELD_PREP(GENMASK(0, 0), (p)))
++#define ST7571_SET_LCD_BIAS(b)			(0x50 | FIELD_PREP(GENMASK(2, 0), (b)))
++#define ST7571_SET_MODE_LSB(m)			(FIELD_PREP(GENMASK(7, 2), (m)))
++#define ST7571_SET_MODE_MSB			(0x38)
++#define ST7571_SET_PAGE(p)			(0xb0 | FIELD_PREP(GENMASK(3, 0), (p)))
++#define ST7571_SET_POWER(p)			(0x28 | FIELD_PREP(GENMASK(2, 0), (p)))
++#define ST7571_SET_REGULATOR_REG(r)		(0x20 | FIELD_PREP(GENMASK(2, 0), (r)))
++#define ST7571_SET_REVERSE(r)			(0xa6 | FIELD_PREP(GENMASK(0, 0), (r)))
++#define ST7571_SET_SEG_SCAN_DIR(d)		(0xa0 | FIELD_PREP(GENMASK(0, 0), (d)))
++#define ST7571_SET_START_LINE_LSB(l)		(FIELD_PREP(GENMASK(6, 0), (l)))
++#define ST7571_SET_START_LINE_MSB		(0x40)
 +
-+  reg:
-+    maxItems: 1
++/* Extension command set 3 */
++#define ST7571_COMMAND_SET_3			(0x7b)
++#define ST7571_SET_COLOR_MODE(c)		(0x10 | FIELD_PREP(GENMASK(0, 0), (c)))
++#define ST7571_COMMAND_SET_NORMAL		(0x00)
 +
-+  sitronix,grayscale:
-+    type: boolean
-+    description:
-+      Display supports 4-level grayscale.
++#define ST7571_PAGE_HEIGHT 8
 +
-+  reset-gpios: true
-+  width-mm: true
-+  height-mm: true
-+  panel-timing: true
++#define DRIVER_NAME "st7571"
++#define DRIVER_DESC "ST7571 DRM driver"
++#define DRIVER_MAJOR 1
++#define DRIVER_MINOR 0
 +
-+required:
-+  - compatible
-+  - reg
-+  - reset-gpios
-+  - width-mm
-+  - height-mm
-+  - panel-timing
++enum st7571_color_mode {
++	ST7571_COLOR_MODE_GRAY = 0,
++	ST7571_COLOR_MODE_BLACKWHITE = 1,
++};
 +
-+additionalProperties: false
++struct st7571_device;
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
++struct st7571_panel_constraints {
++	u32 min_nlines;
++	u32 max_nlines;
++	u32 min_ncols;
++	u32 max_ncols;
++	bool support_grayscale;
++};
 +
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
++struct st7571_panel_data {
++	int (*init)(struct st7571_device *st7571);
++	struct st7571_panel_constraints constraints;
++};
 +
-+      display@3f {
-+        compatible = "sitronix,st7571";
-+        reg = <0x3f>;
-+        reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
-+        width-mm = <37>;
-+        height-mm = <27>;
++struct st7571_panel_format {
++	void (*prepare_buffer)(struct st7571_device *st7571,
++			       const struct iosys_map *vmap,
++			       struct drm_framebuffer *fb,
++			       struct drm_rect *rect,
++			       struct drm_format_conv_state *fmtcnv_state);
++	int (*update_rect)(struct drm_framebuffer *fb, struct drm_rect *rect);
++	enum st7571_color_mode mode;
++	const u8 nformats;
++	const u32 formats[];
++};
 +
-+        panel-timing {
-+          hactive = <128>;
-+          vactive = <96>;
-+          hback-porch = <0>;
-+          vback-porch = <0>;
-+          clock-frequency = <0>;
-+          hfront-porch = <0>;
-+          hsync-len = <0>;
-+          vfront-porch = <0>;
-+          vsync-len = <0>;
-+        };
-+      };
-+    };
++struct st7571_device {
++	struct drm_device dev;
++
++	struct drm_plane primary_plane;
++	struct drm_crtc crtc;
++	struct drm_encoder encoder;
++	struct drm_connector connector;
++
++	struct drm_display_mode mode;
++
++	const struct st7571_panel_format *pformat;
++	const struct st7571_panel_data *pdata;
++	struct i2c_client *client;
++	struct gpio_desc *reset;
++	struct regmap *regmap;
++
++	/*
++	 * Depending on the hardware design, the acknowledge signal may be hard to
++	 * recognize as a valid logic "0" level.
++	 * Therefor, ignore NAK if possible to stay compatible with most hardware designs
++	 * and off-the-shelf panels out there.
++	 *
++	 * From section 6.4 MICROPOCESSOR INTERFACE section in the datasheet:
++	 *
++	 * "By connecting SDA_OUT to SDA_IN externally, the SDA line becomes fully
++	 * I2C interface compatible.
++	 * Separating acknowledge-output from serial data
++	 * input is advantageous for chip-on-glass (COG) applications. In COG
++	 * applications, the ITO resistance and the pull-up resistor will form a
++	 * voltage  divider, which affects acknowledge-signal level. Larger ITO
++	 * resistance will raise the acknowledged-signal level and system cannot
++	 * recognize this level as a valid logic “0” level. By separating SDA_IN from
++	 * SDA_OUT, the IC can be used in a mode that ignores the acknowledge-bit.
++	 * For applications which check acknowledge-bit, it is necessary to minimize
++	 * the ITO resistance of the SDA_OUT trace to guarantee a valid low level."
++	 *
++	 */
++	bool ignore_nak;
++
++	bool grayscale;
++	u32 height_mm;
++	u32 width_mm;
++	u32 startline;
++	u32 nlines;
++	u32 ncols;
++	u32 bpp;
++
++	/* Intermediate buffer in LCD friendly format */
++	u8 *hwbuf;
++
++	/* Row of (transformed) pixels ready to be written to the display */
++	u8 *row;
++};
++
++static inline struct st7571_device *drm_to_st7571(struct drm_device *dev)
++{
++	return container_of(dev, struct st7571_device, dev);
++}
++
++static int st7571_regmap_write(void *context, const void *data, size_t count)
++{
++	struct i2c_client *client = context;
++	struct st7571_device *st7571 = i2c_get_clientdata(client);
++	int ret;
++
++	struct i2c_msg msg = {
++		.addr = st7571->client->addr,
++		.flags = st7571->ignore_nak ? I2C_M_IGNORE_NAK : 0,
++		.len = count,
++		.buf = (u8 *)data
++	};
++
++	ret = i2c_transfer(st7571->client->adapter, &msg, 1);
++
++	/*
++	 * Unfortunately, there is no way to check if the transfer failed because of
++	 * a NAK or something else as I2C bus drivers use different return values for NAK.
++	 *
++	 * However, if the transfer fails and ignore_nak is set, we know it is an error.
++	 */
++	if (ret < 0 && st7571->ignore_nak)
++		return ret;
++
++	return 0;
++}
++
++ /* The st7571 driver does not read registers but regmap expects a .read */
++static int st7571_regmap_read(void *context, const void *reg_buf,
++			       size_t reg_size, void *val_buf, size_t val_size)
++{
++	return -EOPNOTSUPP;
++}
++
++static int st7571_send_command_list(struct st7571_device *st7571,
++				    const u8 *cmd_list, size_t len)
++{
++	int ret;
++
++	for (int i = 0; i < len; i++) {
++		ret = regmap_write(st7571->regmap, ST7571_COMMAND_MODE, cmd_list[i]);
++		if (ret < 0)
++			return ret;
++	}
++
++	return ret;
++}
++
++static inline u8 st7571_transform_xy(const char *p, int x, int y)
++{
++	int xrest = x % 8;
++	u8 result = 0;
++
++	/*
++	 * Transforms an (x, y) pixel coordinate into a vertical 8-bit
++	 * column from the framebuffer. It calculates the corresponding byte in the
++	 * framebuffer, extracts the bit at the given x position across 8 consecutive
++	 * rows, and packs those bits into a single byte.
++	 *
++	 * Return an 8-bit value representing a vertical column of pixels.
++	 */
++	x = x / 8;
++	y = (y / 8) * 8;
++
++	for (int i = 0; i < 8; i++) {
++		int row_idx = y + i;
++		u8 byte = p[row_idx * 16 + x];
++		u8 bit = (byte >> xrest) & 1;
++
++		result |= (bit << i);
++	}
++
++	return result;
++}
++
++static int st7571_set_position(struct st7571_device *st7571, int x, int y)
++{
++	u8 cmd_list[] = {
++		ST7571_SET_COLUMN_LSB(x),
++		ST7571_SET_COLUMN_MSB(x),
++		ST7571_SET_PAGE(y / ST7571_PAGE_HEIGHT),
++	};
++
++	return st7571_send_command_list(st7571, cmd_list, ARRAY_SIZE(cmd_list));
++}
++
++static int st7571_fb_clear_screen(struct st7571_device *st7571)
++{
++	u32 npixels = st7571->ncols * round_up(st7571->nlines, ST7571_PAGE_HEIGHT) * st7571->bpp;
++	char pixelvalue = 0x00;
++
++	for (int i = 0; i < npixels; i++)
++		regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, &pixelvalue, 1);
++
++	return 0;
++}
++
++static void st7571_prepare_buffer_monochrome(struct st7571_device *st7571,
++			       const struct iosys_map *vmap,
++			       struct drm_framebuffer *fb,
++			       struct drm_rect *rect,
++			       struct drm_format_conv_state *fmtcnv_state)
++{
++	unsigned int dst_pitch;
++	struct iosys_map dst;
++	u32 size;
++
++	switch (fb->format->format) {
++	case DRM_FORMAT_XRGB8888:
++		dst_pitch = DIV_ROUND_UP(drm_rect_width(rect), 8);
++		iosys_map_set_vaddr(&dst, st7571->hwbuf);
++
++		drm_fb_xrgb8888_to_mono(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
++		break;
++
++	case DRM_FORMAT_R1:
++		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 8;
++		memcpy(st7571->hwbuf, vmap->vaddr, size);
++		break;
++	}
++}
++
++static void st7571_prepare_buffer_grayscale(struct st7571_device *st7571,
++			       const struct iosys_map *vmap,
++			       struct drm_framebuffer *fb,
++			       struct drm_rect *rect,
++			       struct drm_format_conv_state *fmtcnv_state)
++{
++	u32 size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 8;
++	unsigned int dst_pitch;
++	struct iosys_map dst;
++
++	switch (fb->format->format) {
++	case DRM_FORMAT_XRGB8888: /* Only support XRGB8888 in monochrome mode */
++		dst_pitch = DIV_ROUND_UP(drm_rect_width(rect), 8);
++		iosys_map_set_vaddr(&dst, st7571->hwbuf);
++
++		drm_fb_xrgb8888_to_mono(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
++		break;
++
++	case DRM_FORMAT_R1:
++		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 8;
++		memcpy(st7571->hwbuf, vmap->vaddr, size);
++		break;
++
++	case DRM_FORMAT_R2:
++		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 4;
++		memcpy(st7571->hwbuf, vmap->vaddr, size);
++		break;
++	};
++
++}
++
++static int st7571_fb_update_rect_monochrome(struct drm_framebuffer *fb, struct drm_rect *rect)
++{
++	struct st7571_device *st7571 = drm_to_st7571(fb->dev);
++	char *row = st7571->row;
++
++	/* Align y to display page boundaries */
++	rect->y1 = round_down(rect->y1, ST7571_PAGE_HEIGHT);
++	rect->y2 = min_t(unsigned int, round_up(rect->y2, ST7571_PAGE_HEIGHT), st7571->nlines);
++
++	for (int y = rect->y1; y < rect->y2; y += ST7571_PAGE_HEIGHT) {
++		for (int x = rect->x1; x < rect->x2; x++)
++			row[x] = st7571_transform_xy(st7571->hwbuf, x, y);
++
++		st7571_set_position(st7571, rect->x1, y);
++
++		/* TODO: Investige why we can't write multiple bytes at once */
++		for (int x = rect->x1; x < rect->x2; x++)
++			regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, row + x, 1);
++	}
++
++	return 0;
++}
++
++static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct drm_rect *rect)
++{
++	struct st7571_device *st7571 = drm_to_st7571(fb->dev);
++	uint32_t format = fb->format->format;
++	char *row = st7571->row;
++	int x1;
++	int x2;
++
++	/* Align y to display page boundaries */
++	rect->y1 = round_down(rect->y1, ST7571_PAGE_HEIGHT);
++	rect->y2 = min_t(unsigned int, round_up(rect->y2, ST7571_PAGE_HEIGHT), st7571->nlines);
++
++	switch (format) {
++	case DRM_FORMAT_XRGB8888:
++		/* Threated as monochrome (R1) */
++		fallthrough;
++	case DRM_FORMAT_R1:
++		x1 = rect->x1;
++		x2 = rect->x2;
++		break;
++	case DRM_FORMAT_R2:
++		x1 = rect->x1 * 2;
++		x2 = rect->x2 * 2;
++		break;
++	}
++
++	for (int y = rect->y1; y < rect->y2; y += ST7571_PAGE_HEIGHT) {
++		for (int x = x1; x < x2; x++)
++			row[x] = st7571_transform_xy(st7571->hwbuf, x, y);
++
++		st7571_set_position(st7571, rect->x1, y);
++
++		/* TODO: Investige why we can't write multiple bytes at once */
++		for (int x = x1; x < x2; x++) {
++			regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, row + x, 1);
++
++			/*
++			 * As the display supports grayscale, all pixels must be written as two bits
++			 * even if the format is monochrome.
++			 *
++			 * The bit values maps to the following grayscale:
++			 * 0 0 = White
++			 * 0 1 = Light gray
++			 * 1 0 = Dark gray
++			 * 1 1 = Black
++			 *
++			 * For monochrome formats, write the same value twice to get
++			 * either a black or white pixel.
++			 */
++			if (format == DRM_FORMAT_R1 || format == DRM_FORMAT_XRGB8888)
++				regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, row + x, 1);
++		}
++	}
++
++	return 0;
++}
++
++static int st7571_connector_get_modes(struct drm_connector *conn)
++{
++	struct st7571_device *st7571 = drm_to_st7571(conn->dev);
++
++	return drm_connector_helper_get_modes_fixed(conn, &st7571->mode);
++}
++
++static const struct drm_connector_helper_funcs st7571_connector_helper_funcs = {
++	.get_modes = st7571_connector_get_modes,
++};
++
++static const struct st7571_panel_format st7571_monochrome = {
++	.prepare_buffer = st7571_prepare_buffer_monochrome,
++	.update_rect = st7571_fb_update_rect_monochrome,
++	.mode = ST7571_COLOR_MODE_BLACKWHITE,
++	.formats = {
++		DRM_FORMAT_XRGB8888,
++		DRM_FORMAT_R1,
++	},
++	.nformats = 2,
++};
++
++static const struct st7571_panel_format st7571_grayscale = {
++	.prepare_buffer = st7571_prepare_buffer_grayscale,
++	.update_rect = st7571_fb_update_rect_grayscale,
++	.mode = ST7571_COLOR_MODE_GRAY,
++	.formats = {
++		DRM_FORMAT_XRGB8888,
++		DRM_FORMAT_R1,
++		DRM_FORMAT_R2,
++	},
++	.nformats = 3,
++};
++
++static const uint64_t st7571_primary_plane_fmtmods[] = {
++	DRM_FORMAT_MOD_LINEAR,
++	DRM_FORMAT_MOD_INVALID
++};
++
++static int st7571_primary_plane_helper_atomic_check(struct drm_plane *plane,
++						 struct drm_atomic_state *state)
++{
++	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
++	struct drm_crtc *new_crtc = new_plane_state->crtc;
++	struct drm_crtc_state *new_crtc_state = NULL;
++
++	if (new_crtc)
++		new_crtc_state = drm_atomic_get_new_crtc_state(state, new_crtc);
++
++	return drm_atomic_helper_check_plane_state(new_plane_state, new_crtc_state,
++						   DRM_PLANE_NO_SCALING,
++						   DRM_PLANE_NO_SCALING,
++						   false, false);
++}
++
++static void st7571_primary_plane_helper_atomic_update(struct drm_plane *plane,
++						   struct drm_atomic_state *state)
++{
++	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
++	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(state, plane);
++	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
++	struct drm_framebuffer *fb = plane_state->fb;
++	struct drm_atomic_helper_damage_iter iter;
++	struct drm_device *dev = plane->dev;
++	struct drm_rect damage;
++	struct st7571_device *st7571 = drm_to_st7571(plane->dev);
++	int ret, idx;
++
++	if (!fb)
++		return; /* no framebuffer; plane is disabled */
++
++	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
++	if (ret)
++		return;
++
++	if (!drm_dev_enter(dev, &idx))
++		goto out_drm_gem_fb_end_cpu_access;
++
++	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
++	drm_atomic_for_each_plane_damage(&iter, &damage) {
++
++		st7571->pformat->prepare_buffer(st7571,
++					      &shadow_plane_state->data[0],
++					      fb, &damage,
++					      &shadow_plane_state->fmtcnv_state);
++
++		st7571->pformat->update_rect(fb, &damage);
++	}
++
++	drm_dev_exit(idx);
++
++out_drm_gem_fb_end_cpu_access:
++	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
++}
++
++static void st7571_primary_plane_helper_atomic_disable(struct drm_plane *plane,
++							  struct drm_atomic_state *state)
++{
++	struct drm_device *dev = plane->dev;
++	struct st7571_device *st7571 = drm_to_st7571(plane->dev);
++	int idx;
++
++	if (!drm_dev_enter(dev, &idx))
++		return;
++
++	st7571_fb_clear_screen(st7571);
++	drm_dev_exit(idx);
++}
++
++static const struct drm_plane_helper_funcs st7571_primary_plane_helper_funcs = {
++	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
++	.atomic_check = st7571_primary_plane_helper_atomic_check,
++	.atomic_update = st7571_primary_plane_helper_atomic_update,
++	.atomic_disable = st7571_primary_plane_helper_atomic_disable,
++};
++
++static const struct drm_plane_funcs st7571_primary_plane_funcs = {
++	.update_plane = drm_atomic_helper_update_plane,
++	.disable_plane = drm_atomic_helper_disable_plane,
++	.destroy = drm_plane_cleanup,
++	DRM_GEM_SHADOW_PLANE_FUNCS,
++};
++
++/*
++ * CRTC
++ */
++
++static enum drm_mode_status st7571_crtc_mode_valid(struct drm_crtc *crtc,
++					   const struct drm_display_mode *mode)
++{
++	struct st7571_device *st7571 = drm_to_st7571(crtc->dev);
++
++	return drm_crtc_helper_mode_valid_fixed(crtc, mode, &st7571->mode);
++}
++
++static const struct drm_crtc_helper_funcs st7571_crtc_helper_funcs = {
++	.atomic_check = drm_crtc_helper_atomic_check,
++	.mode_valid = st7571_crtc_mode_valid,
++};
++
++static const struct drm_crtc_funcs st7571_crtc_funcs = {
++	.reset = drm_atomic_helper_crtc_reset,
++	.destroy = drm_crtc_cleanup,
++	.set_config = drm_atomic_helper_set_config,
++	.page_flip = drm_atomic_helper_page_flip,
++	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
++};
++
++/*
++ * Encoder
++ */
++
++static void ssd130x_encoder_atomic_enable(struct drm_encoder *encoder,
++					  struct drm_atomic_state *state)
++{
++	struct drm_device *drm = encoder->dev;
++	struct st7571_device *st7571 = drm_to_st7571(drm);
++	u8 command = ST7571_DISPLAY_ON;
++	int ret;
++
++	ret = st7571->pdata->init(st7571);
++	if (ret)
++		return;
++
++	st7571_send_command_list(st7571, &command, 1);
++}
++
++static void ssd130x_encoder_atomic_disable(struct drm_encoder *encoder,
++					   struct drm_atomic_state *state)
++{
++	struct drm_device *drm = encoder->dev;
++	struct st7571_device *st7571 = drm_to_st7571(drm);
++	u8 command = ST7571_DISPLAY_OFF;
++
++	st7571_send_command_list(st7571, &command, 1);
++}
++
++
++static const struct drm_encoder_funcs st7571_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++
++};
++
++static const struct drm_encoder_helper_funcs st7571_encoder_helper_funcs = {
++	.atomic_enable = ssd130x_encoder_atomic_enable,
++	.atomic_disable = ssd130x_encoder_atomic_disable,
++};
++
++/*
++ * Connector
++ */
++
++static const struct drm_connector_funcs st7571_connector_funcs = {
++	.reset = drm_atomic_helper_connector_reset,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.destroy = drm_connector_cleanup,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++};
++
++static const struct drm_mode_config_funcs st7571_mode_config_funcs = {
++	.fb_create = drm_gem_fb_create_with_dirty,
++	.atomic_check = drm_atomic_helper_check,
++	.atomic_commit = drm_atomic_helper_commit,
++};
++
++static struct drm_display_mode st7571_mode(struct st7571_device *st7571)
++{
++	struct drm_display_mode mode = {
++		DRM_SIMPLE_MODE(st7571->ncols, st7571->nlines,
++				st7571->width_mm, st7571->height_mm),
++	};
++
++	return mode;
++}
++
++static int st7571_mode_config_init(struct st7571_device *st7571)
++{
++	struct drm_device *dev = &st7571->dev;
++	const struct st7571_panel_constraints *constraints = &st7571->pdata->constraints;
++	int ret;
++
++	ret = drmm_mode_config_init(dev);
++	if (ret)
++		return ret;
++
++	dev->mode_config.min_width = constraints->min_ncols;
++	dev->mode_config.min_height = constraints->min_nlines;
++	dev->mode_config.max_width = constraints->max_ncols;
++	dev->mode_config.max_height = constraints->max_nlines;
++	dev->mode_config.preferred_depth = 24;
++	dev->mode_config.funcs = &st7571_mode_config_funcs;
++
++	return 0;
++}
++
++static int st7571_plane_init(struct st7571_device *st7571,
++			     const struct st7571_panel_format *pformat)
++{
++	struct drm_plane *primary_plane = &st7571->primary_plane;
++	struct drm_device *dev = &st7571->dev;
++	int ret;
++
++	ret = drm_universal_plane_init(dev, primary_plane, 0,
++				       &st7571_primary_plane_funcs,
++				       pformat->formats,
++				       pformat->nformats,
++				       st7571_primary_plane_fmtmods,
++				       DRM_PLANE_TYPE_PRIMARY, NULL);
++	if (ret)
++		return ret;
++
++	drm_plane_helper_add(primary_plane, &st7571_primary_plane_helper_funcs);
++	drm_plane_enable_fb_damage_clips(primary_plane);
++
++	return 0;
++}
++
++static int st7571_crtc_init(struct st7571_device *st7571)
++{
++	struct drm_plane *primary_plane = &st7571->primary_plane;
++	struct drm_crtc *crtc = &st7571->crtc;
++	struct drm_device *dev = &st7571->dev;
++	int ret;
++
++	ret = drm_crtc_init_with_planes(dev, crtc, primary_plane, NULL,
++					&st7571_crtc_funcs, NULL);
++	if (ret)
++		return ret;
++
++	drm_crtc_helper_add(crtc, &st7571_crtc_helper_funcs);
++
++	return 0;
++}
++
++static int st7571_encoder_init(struct st7571_device *st7571)
++{
++	struct drm_encoder *encoder = &st7571->encoder;
++	struct drm_crtc *crtc = &st7571->crtc;
++	struct drm_device *dev = &st7571->dev;
++	int ret;
++
++	ret = drm_encoder_init(dev, encoder, &st7571_encoder_funcs, DRM_MODE_ENCODER_NONE, NULL);
++	if (ret)
++		return ret;
++
++	drm_encoder_helper_add(encoder, &st7571_encoder_helper_funcs);
++
++	encoder->possible_crtcs = drm_crtc_mask(crtc);
++
++	return 0;
++}
++
++static int st7571_connector_init(struct st7571_device *st7571)
++{
++	struct drm_connector *connector = &st7571->connector;
++	struct drm_encoder *encoder = &st7571->encoder;
++	struct drm_device *dev = &st7571->dev;
++	int ret;
++
++	ret = drm_connector_init(dev, connector, &st7571_connector_funcs,
++				 DRM_MODE_CONNECTOR_Unknown);
++	if (ret)
++		return ret;
++
++	drm_connector_helper_add(connector, &st7571_connector_helper_funcs);
++
++	return drm_connector_attach_encoder(connector, encoder);
++}
++
++DEFINE_DRM_GEM_FOPS(st7571_fops);
++
++static const struct drm_driver st7571_driver = {
++	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
++
++	.name		 = DRIVER_NAME,
++	.desc		 = DRIVER_DESC,
++	.major		 = DRIVER_MAJOR,
++	.minor		 = DRIVER_MINOR,
++
++	.fops		 = &st7571_fops,
++	DRM_GEM_SHMEM_DRIVER_OPS,
++	DRM_FBDEV_SHMEM_DRIVER_OPS,
++};
++
++static const struct regmap_bus st7571_regmap_bus = {
++	.read = st7571_regmap_read,
++	.write = st7571_regmap_write,
++};
++
++static const struct regmap_config st7571_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.use_single_write = true,
++};
++
++static int st7571_validate_parameters(struct st7571_device *st7571)
++{
++	struct device *dev = st7571->dev.dev;
++	const struct st7571_panel_constraints *constraints = &st7571->pdata->constraints;
++
++	if (st7571->width_mm  == 0) {
++		dev_err(dev, "Invalid panel width\n");
++		return -EINVAL;
++	}
++
++	if (st7571->height_mm == 0) {
++		dev_err(dev, "Invalid panel height\n");
++		return -EINVAL;
++	}
++
++	if (st7571->nlines < constraints->min_nlines ||
++	    st7571->nlines > constraints->max_nlines) {
++		dev_err(dev, "Invalid timing configuration.\n");
++		return -EINVAL;
++	}
++
++	if (st7571->startline + st7571->nlines > constraints->max_nlines) {
++		dev_err(dev, "Invalid timing configuration.\n");
++		return -EINVAL;
++	}
++
++	if (st7571->ncols < constraints->min_ncols ||
++	    st7571->ncols > constraints->max_ncols) {
++		dev_err(dev, "Invalid timing configuration.\n");
++		return -EINVAL;
++	}
++
++	if (st7571->grayscale && !constraints->support_grayscale) {
++		dev_err(dev, "Grayscale not supported\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int st7571_parse_dt(struct st7571_device *st7571)
++{
++	struct device *dev = &st7571->client->dev;
++	struct device_node *np = dev->of_node;
++	struct display_timing dt;
++	int ret;
++
++	ret = of_get_display_timing(np, "panel-timing", &dt);
++	if (ret) {
++		dev_err(dev, "Failed to get display timing from DT\n");
++		return ret;
++	}
++
++	of_property_read_u32(np, "width-mm", &st7571->width_mm);
++	of_property_read_u32(np, "height-mm", &st7571->height_mm);
++	st7571->grayscale = of_property_read_bool(np, "sitronix,grayscale");
++
++	if (st7571->grayscale) {
++		st7571->pformat = &st7571_grayscale;
++		st7571->bpp = 2;
++	} else {
++		st7571->pformat = &st7571_monochrome;
++		st7571->bpp = 1;
++	}
++
++	st7571->startline = dt.vfront_porch.typ;
++	st7571->nlines = dt.vactive.typ;
++	st7571->ncols = dt.hactive.typ;
++
++	st7571->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(st7571->reset))
++		return PTR_ERR(st7571->reset);
++
++	return 0;
++}
++
++static void st7571_reset(struct st7571_device *st7571)
++{
++	gpiod_set_value_cansleep(st7571->reset, 1);
++	udelay(20);
++	gpiod_set_value_cansleep(st7571->reset, 0);
++}
++
++static int st7571_lcd_init(struct st7571_device *st7571)
++{
++	/*
++	 * Most of the initialization sequence is taken directly from the
++	 * referential initial code in the ST7571 datasheet.
++	 */
++	u8 commands[] = {
++		ST7571_DISPLAY_OFF,
++
++		ST7571_SET_MODE_MSB,
++		ST7571_SET_MODE_LSB(0x2e),
++
++		ST7571_SET_SEG_SCAN_DIR(0),
++		ST7571_SET_COM_SCAN_DIR(1),
++
++		ST7571_SET_COM0_MSB,
++		ST7571_SET_COM0_LSB(0x00),
++
++		ST7571_SET_START_LINE_MSB,
++		ST7571_SET_START_LINE_LSB(st7571->startline),
++
++		ST7571_OSC_ON,
++		ST7571_SET_REGULATOR_REG(5),
++		ST7571_SET_CONTRAST_MSB,
++		ST7571_SET_CONTRAST_LSB(0x33),
++		ST7571_SET_LCD_BIAS(0x04),
++		ST7571_SET_DISPLAY_DUTY_MSB,
++		ST7571_SET_DISPLAY_DUTY_LSB(st7571->nlines),
++
++		ST7571_SET_POWER(0x4),	/* Power Control, VC: ON, VR: OFF, VF: OFF */
++		ST7571_SET_POWER(0x6),	/* Power Control, VC: ON, VR: ON, VF: OFF */
++		ST7571_SET_POWER(0x7),	/* Power Control, VC: ON, VR: ON, VF: ON */
++
++		ST7571_COMMAND_SET_3,
++		ST7571_SET_COLOR_MODE(st7571->pformat->mode),
++		ST7571_COMMAND_SET_NORMAL,
++
++		ST7571_SET_REVERSE(0),
++		ST7571_SET_ENTIRE_DISPLAY_ON(0),
++	};
++
++	/* Perform a reset before initializing the controller */
++	st7571_reset(st7571);
++
++	return st7571_send_command_list(st7571, commands, ARRAY_SIZE(commands));
++}
++
++static int st7571_probe(struct i2c_client *client)
++{
++	struct st7571_device *st7571;
++	struct drm_device *dev;
++	int ret;
++
++	st7571 = devm_drm_dev_alloc(&client->dev, &st7571_driver,
++				    struct st7571_device, dev);
++	if (IS_ERR(st7571))
++		return PTR_ERR(st7571);
++
++	dev = &st7571->dev;
++	st7571->client = client;
++	i2c_set_clientdata(client, st7571);
++	st7571->pdata = device_get_match_data(&client->dev);
++
++	ret = st7571_parse_dt(st7571);
++	if (ret)
++		return ret;
++
++	ret = st7571_validate_parameters(st7571);
++	if (ret)
++		return ret;
++
++
++	st7571->mode = st7571_mode(st7571);
++
++	/*
++	 * The hardware design could make it hard to detect a NAK on the I2C bus.
++	 * If the adapter does not support protocol mangling do
++	 * not set the I2C_M_IGNORE_NAK flag at the expense * of possible
++	 * cruft in the logs.
++	 */
++	if (i2c_check_functionality(client->adapter, I2C_FUNC_PROTOCOL_MANGLING))
++		st7571->ignore_nak = true;
++
++	st7571->regmap = devm_regmap_init(&client->dev, &st7571_regmap_bus,
++					   client, &st7571_regmap_config);
++	if (IS_ERR(st7571->regmap)) {
++		return dev_err_probe(&client->dev, PTR_ERR(st7571->regmap),
++			"Failed to initialize regmap\n");
++	}
++
++	st7571->hwbuf = devm_kzalloc(&client->dev,
++				     (st7571->nlines * st7571->ncols * st7571->bpp) / 8,
++				     GFP_KERNEL);
++	if (IS_ERR(st7571->hwbuf))
++		return dev_err_probe(&client->dev, PTR_ERR(st7571->hwbuf),
++			"Failed to allocate intermediate buffer\n");
++
++	st7571->row = devm_kzalloc(&client->dev,
++				   (st7571->ncols * st7571->bpp),
++				   GFP_KERNEL);
++	if (IS_ERR(st7571->row))
++		return dev_err_probe(&client->dev, PTR_ERR(st7571->row),
++			"Failed to allocate row buffer\n");
++
++	ret = st7571_mode_config_init(st7571);
++	if (ret)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to initialize mode config\n");
++
++	ret = st7571_plane_init(st7571, st7571->pformat);
++	if (ret)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to initialize primary plane\n");
++
++	ret = st7571_crtc_init(st7571);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to initialize CRTC\n");
++
++	ret = st7571_encoder_init(st7571);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to initialize encoder\n");
++
++	ret = st7571_connector_init(st7571);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to initialize connector\n");
++
++	drm_mode_config_reset(dev);
++
++	ret = drm_dev_register(dev, 0);
++	if (ret)
++		return dev_err_probe(&client->dev, ret,
++			"Failed to register DRM device\n");
++
++	drm_client_setup(dev, NULL);
++	return 0;
++}
++
++static void st7571_remove(struct i2c_client *client)
++{
++	struct st7571_device *st7571 = i2c_get_clientdata(client);
++
++	drm_dev_unplug(&st7571->dev);
++}
++
++struct st7571_panel_data st7571_config = {
++	.init = st7571_lcd_init,
++	.constraints = {
++		.min_nlines = 1,
++		.max_nlines = 128,
++		.min_ncols = 128,
++		.max_ncols = 128,
++		.support_grayscale = true,
++	},
++};
++
++static const struct of_device_id st7571_of_match[] = {
++	{ .compatible = "sitronix,st7571", .data = &st7571_config },
++	{},
++};
++MODULE_DEVICE_TABLE(of, st7571_of_match);
++
++
++static const struct i2c_device_id st7571_id[] = {
++	{ "st7571", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, st7571_id);
++
++static struct i2c_driver st7571_i2c_driver = {
++	.driver = {
++		.name = "st7571",
++		.of_match_table = st7571_of_match,
++	},
++	.probe = st7571_probe,
++	.remove = st7571_remove,
++	.id_table = st7571_id,
++};
++
++module_i2c_driver(st7571_i2c_driver);
++
++MODULE_AUTHOR("Marcus Folkesson <marcus.folkesson@gmail.com>");
++MODULE_DESCRIPTION("DRM Driver for Sitronix ST7571 LCD controller");
++MODULE_LICENSE("GPL");
 
 -- 
 2.49.0
