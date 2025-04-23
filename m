@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-616511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DAFA98EBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:59:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83546A98D53
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434D63B318A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB475443642
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C958027F4F3;
-	Wed, 23 Apr 2025 14:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tEKOF5AJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FA327FD7F;
+	Wed, 23 Apr 2025 14:39:07 +0000 (UTC)
+Received: from 190-102-104-130.static.hvvc.us (190-102-104-130.static.hvvc.us [190.102.104.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA0143736;
-	Wed, 23 Apr 2025 14:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD2E27F757
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=190.102.104.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420142; cv=none; b=T3npLzqxz4LjA3GQwh6SBzz3MzbfADArhBLPq3YB8XUzcZXswVQEGmtJU094daYuFx0RZogVwMFubWwBrV6253v/sSjTS+5M00Mb0BPS/M0Iw5aCOb4x2Q4TDUJmMKRZPD89727zmWhX3r9qF4w2fk+qmN5gejOTAuYJNXxSW4E=
+	t=1745419147; cv=none; b=axUh6F6ROrWJw8KKlNtQXRbfZFvzNMLmZ3JrrcmDntfiY0FbkSJzDjqAelRdnTE9ZNKxkqhD5PSpHoJzFBYTOVKj08wCMsb/T53ZlmIvrzJnOCaZkhLTJLdSATCLYqJPe0luwUkTD36QlZqKApEyfLwVca4zVdFXvdnDJ53cAkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420142; c=relaxed/simple;
-	bh=oDo3UZgN2f0i5SU10aU0wh8oxr5T89ZFV8R4Orckq3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O9UFEKDrd1Xly85tRsKUhbqoqfhPVdNDELBsgTOstpA50sA2bnL8GqaPltmLw/xQwK0OFINhQWOjJOy7+FfAgt0w1Aqal+uvC7u0kl2NuBSSmOJY8DNjkRE5sxF+h+PJ3QmU/tGJunmLczTzpc+nMe+C8jAIv8EKqI3WV454OT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tEKOF5AJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE3FC4CEE2;
-	Wed, 23 Apr 2025 14:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745420142;
-	bh=oDo3UZgN2f0i5SU10aU0wh8oxr5T89ZFV8R4Orckq3g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tEKOF5AJdI6dvv1qWrqGB9O8/fu8TuTK7z8o0nvkbT3IgYq+BIvI0JlJdfopstZZX
-	 tOlSn3IOykmT3EolEmSTqHL1BxxlwnlS95sE8uMPqHT4K6kio1mqijC7Yzu4/Ui6rm
-	 aeHuTkp8eqRrJUJe8oOwOqCm2KI3JT34bqbpFFkc=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Max Grobecker <max@grobecker.info>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6 042/393] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
-Date: Wed, 23 Apr 2025 16:38:58 +0200
-Message-ID: <20250423142645.029766418@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
-References: <20250423142643.246005366@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1745419147; c=relaxed/simple;
+	bh=8GouovEUUce40wJMEqAWPhT8EI0FiNSvFiQmAVQdSms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lp1A/CsOy2UeaZdBGW/yK73P6FHozJ06z3ur1lVg8ZNV64b4KgXDsItQZ7znbO8/bsWLFCQWrd4dEqhhBew50Y88aZFIs1sTY0GK1ULhmwAFqxgRy8ZCwnNCmXWfrsTdwQPAttzCe5VJB8nCdpOS+8MU3+YlE2kGpRiDV8BJPXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com; spf=pass smtp.mailfrom=phoronix.com; arc=none smtp.client-ip=190.102.104.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phoronix.com
+Received: from c-24-15-38-32.hsd1.in.comcast.net ([24.15.38.32]:7366 helo=[192.168.1.194])
+	by milan.phoronix.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <Michael@phoronix.com>)
+	id 1u7bFh-0000000FA70-2e1K;
+	Wed, 23 Apr 2025 10:39:03 -0400
+Message-ID: <8626886c-59b7-4294-9bb2-08663650e199@phoronix.com>
+Date: Wed, 23 Apr 2025 09:38:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.15-rc3
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Dave Airlie <airlied@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Sebastian Sewior <bigeasy@linutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
+ <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
+ <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
+ <0981c1fe-05d2-4bab-a0a4-6dc5666d98d7@suse.cz>
+ <bb701616-26b8-41f0-8a19-0f76b2a64deb@suse.cz>
+ <d1c0f057-63c8-4be5-9638-d1a67d9b9e15@suse.cz>
+Content-Language: en-CA
+From: Michael Larabel <Michael@phoronix.com>
+In-Reply-To: <d1c0f057-63c8-4be5-9638-d1a67d9b9e15@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - milan.phoronix.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - phoronix.com
+X-Get-Message-Sender-Via: milan.phoronix.com: authenticated_id: michael@phoronix.com
+X-Authenticated-Sender: milan.phoronix.com: michael@phoronix.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-6.6-stable review patch.  If anyone has any objections, please let me know.
+On 4/23/25 3:08 AM, Vlastimil Babka wrote:
+> On 4/23/25 10:03, Vlastimil Babka wrote:
+>> On 4/23/25 09:14, Vlastimil Babka wrote:
+>>
+>> Oh I see, replacing the default: which "local_lock_t *:" which is the only
+>> other expected type, forces the compiler to actually tell me what's wrong:
+>>
+>> ./include/linux/local_lock_internal.h:174:26: error: ‘_Generic’ selector of
+>> type ‘__seg_gs local_lock_t *’ is not compatible with any association
+>>
+>>
+> This should fix the issue hopefully and prevent more unexpected default matches:
+>
+> diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
+> index bf2bf40d7b18..8d5ac16a9b17 100644
+> --- a/include/linux/local_lock_internal.h
+> +++ b/include/linux/local_lock_internal.h
+> @@ -102,11 +102,11 @@ do {								\
+>   		l = (local_lock_t *)this_cpu_ptr(lock);			\
+>   		tl = (local_trylock_t *)l;				\
+>   		_Generic((lock),					\
+> -			local_trylock_t *: ({				\
+> +			__percpu local_trylock_t *: ({			\
+>   				lockdep_assert(tl->acquired == 0);	\
+>   				WRITE_ONCE(tl->acquired, 1);		\
+>   			}),						\
+> -			default:(void)0);				\
+> +			__percpu local_lock_t *: (void)0);		\
+>   		local_lock_acquire(l);					\
+>   	} while (0)
+>   
+> @@ -171,11 +171,11 @@ do {								\
+>   		tl = (local_trylock_t *)l;				\
+>   		local_lock_release(l);					\
+>   		_Generic((lock),					\
+> -			local_trylock_t *: ({				\
+> +			__percpu local_trylock_t *: ({			\
+>   				lockdep_assert(tl->acquired == 1);	\
+>   				WRITE_ONCE(tl->acquired, 0);		\
+>   			}),						\
+> -			default:(void)0);				\
+> +			__percpu local_lock_t *: (void)0);		\
+>   	} while (0)
+>   
+>   #define __local_unlock(lock)					\
+>
+>
 
-------------------
+In addition to fixing the Nginx performance, I can confirm this patch 
+does also fix the other regressions I found as well caused by 51339d99c 
+with Memcached, ClickHouse, and OpenFOAM. All the tests I have been 
+running with current Git + this patch have been working out well and 
+haven't noticed any other problems from it. Will keep running through 
+some more workloads on that server but seems to now be in good shape.
 
-From: Max Grobecker <max@grobecker.info>
+Thanks,
 
-[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
-
-When running in a virtual machine, we might see the original hardware CPU
-vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
-hypervisor. In case we run on AMD hardware and the hypervisor sets a model
-ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
-capabilities present to circumvent a bug with some BIOSes in conjunction with
-AMD K8 processors.
-
-Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
-bash scripts and prebuilt Docker containers, as it does not need to have
-additionals tools present – even though more reliable ways like using "kcpuid",
-which calls the CPUID instruction instead of parsing a list, should be preferred.
-Scripts, that use /proc/cpuinfo to determine if the current CPU is
-"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
-claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
-in that flags list.
-
-This can prevent some docker containers from starting or build scripts to create
-unoptimized binaries.
-
-Admittably, this is more a small inconvenience than a severe bug in the kernel
-and the shoddy scripts that rely on parsing /proc/cpuinfo
-should be fixed instead.
-
-This patch adds an additional check to see if we're running inside a
-virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
-understanding, can't be present on a real K8 processor as it was introduced
-only with the later/other Athlon64 models.
-
-Example output with the "lahf_lm" flag missing in the flags list
-(should be shown between "hypervisor" and "abm"):
-
-    $ cat /proc/cpuinfo
-    processor       : 0
-    vendor_id       : AuthenticAMD
-    cpu family      : 15
-    model           : 6
-    model name      : Common KVM processor
-    stepping        : 1
-    microcode       : 0x1000065
-    cpu MHz         : 2599.998
-    cache size      : 512 KB
-    physical id     : 0
-    siblings        : 1
-    core id         : 0
-    cpu cores       : 1
-    apicid          : 0
-    initial apicid  : 0
-    fpu             : yes
-    fpu_exception   : yes
-    cpuid level     : 13
-    wp              : yes
-    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
-                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
-                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
-                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
-                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
-                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
-
-... while kcpuid shows the feature to be present in the CPU:
-
-    # kcpuid -d | grep lahf
-         lahf_lm             - LAHF/SAHF available in 64-bit mode
-
-[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
-
-Signed-off-by: Max Grobecker <max@grobecker.info>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 9413fb767c6a7..be378b44ca35f 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -825,7 +825,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	 * (model = 0x14) and later actually support it.
- 	 * (AMD Erratum #110, docId: 25759).
- 	 */
--	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
-+	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
- 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
- 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
- 			value &= ~BIT_64(32);
--- 
-2.39.5
+Michael
 
 
+Tested-by: Michael Larabel <Michael@phoronix.com>
 
 
