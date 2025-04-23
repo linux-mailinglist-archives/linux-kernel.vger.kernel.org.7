@@ -1,213 +1,113 @@
-Return-Path: <linux-kernel+bounces-616418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8C2A98C46
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:04:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E79A98C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226DA189233F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB5E3BDD9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31864279911;
-	Wed, 23 Apr 2025 14:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2907E27A13A;
+	Wed, 23 Apr 2025 14:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gqLJFhRC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="NErA9wOa"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3A279348
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80FB2797B8;
+	Wed, 23 Apr 2025 14:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745417048; cv=none; b=dm+bdzbeSiB4KdqgX2n1F7pKpJXlw9DSmBPrxgBWKhoQPVnO/mp7sy5aPpsDOCpJ8ZOH5UD7JToX6y8kUU9ag7AIHkpGD20li5UXSb2hasozNsfUInUB8fyHyIPUx+tIfem6ugJX5mPnd4ugySh8TrxGYQCK5bEWFsP5gCTgOy4=
+	t=1745417050; cv=none; b=t9iOEktozQmKnB0HoY2nvAH4QRXkr83scSkHnUmv6ritAGyG2/DMG/tIbbvCvmaOtFmhZrBDFNyDpoiXWR1/Y0weviYGMeeM1UKySQ77SMbPISpB4pBOyTQH+H8Dw9nU9de/qu4uf9Q5kC37sS2ZSobvxXMnRV99BWHBVPH5+TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745417048; c=relaxed/simple;
-	bh=Kpbhj1qhSKEadaVbA0z6YY9AlvNfJBM7kna2rhKpIUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFHHH2t5/wNCA/NTXlqxeNcjHonCbMd5LsvDpFA4Oa+uujGm+gppYIG/6LwL9680UZ2ZB71VQ7na8JfE8qJ25/imypqzH+RYdhyO6Gi5EXmrCjunlkBkPaMRwS1QyDHWNaRnX/RTP6JI/WX9whNw7g3wM7UMVDdwlkgtuc1aiT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gqLJFhRC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAkwxp014559
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:04:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HK4v2UxJbR5fXrAk1G29VWPj/UWIHaIHZOcZYqRxF9s=; b=gqLJFhRCUndtiYt7
-	7nVFud9l/0MH6QpvE/kIW4J63tMdeelEMdTC1IAEuFA5K8jVzh0/d2qRdrDKK0pn
-	GZ33/RXPMfhZ4ODI8LwwhwIjrHfe0CCVJ9oGBukOxpkpnVOdAvlmpDk6pQ9Yr6Sd
-	sGmrczDi829QgGOBpgyZcaaTXhafCwhyZ5ukT4NVV2sYiNrr/zgOGkk/+us2b4qe
-	PQ0B8HH0A/1PTId4jL0cQbCi2yPTJVav6wv3gPj9Mryc4kD+5qj9DW91th1v8CHe
-	sqcBZzwfinKADXufKObWXY4eajJl+7rEEMVrYwYjd4EyLomAZtuIXhSz+/e8iXwP
-	1ecJ8g==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0jays-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:04:04 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5841ae28eso122370785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:04:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745417043; x=1746021843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HK4v2UxJbR5fXrAk1G29VWPj/UWIHaIHZOcZYqRxF9s=;
-        b=gWrzXK2pazAvkS/LBbyXHiQ96+mRpPXVskociLol1SBW8dtTKUNuTnFsTbxgff0Lyk
-         mc4oSESyGumnxLYlgBKJBo4OMASDp+qjXI/qCkWiZVR//AyNQe7xGYbA40kcCgpeg1A5
-         NHvLEhrRzi0Nwl0CsQat/F/lOWUjREipD6pRTc8s3CYIBhw932dovMH8NAUrXX5fkR9H
-         SUfHY5yjZA9GMPiidDHW8uR+paIQXdJDFtYK8eFt4ORs1E7nAzYVEbUgLZxVZsxsD3ey
-         EKnPDCT71rOZxibaF9GUfRcQza4loa4cPMQLcUVD4WnGaJKYItIKO60urbvcJHqRvqcV
-         ffqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeWsUHdhZwSAynhGnzMu4+noV16qjUQPDQMapYmS9PWIOODQ9pINF6JUB6EObYhu7wRTOB4b2i4GypF+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVXqnyVrGVEE3d4Z6iz1puazGqRgPFG2DXFRPbKAmH9rCHPPrg
-	oyElBZr7Ld2iGvu7AmUHhT3YWgC2WRtcLu08KrKem0StTjpjhv0fhpysqu87+Mr3O473ZGZ0IvJ
-	Aq4fOxUT0HWm3WT4Qa5HEOENFgF/ivejhweFa78NULqr5t4mfcXa2xm1E8LzDErA=
-X-Gm-Gg: ASbGncua0U4KBestdk6l99s3kyjZHiGCef69H2FOfq2Ns1otXxezlfulm6FrzlGwgl1
-	F1+Ki0hT7ojTDkn2sToJI7rzb2qRs2UCaWT7sWM4nQcSrRBCNBWf/56LJuR97gLK0Cy34kG9FUI
-	Q3R9MxDLaJOvxaCvUXxUhnykBldx5B7wLbfok0KEaF15T0DTcdP4YflyFfbuH4Tnyrb6njG28mI
-	tkLueUix/3MM/i+cc+nac6q7LJLCdwpiQlQiP9D3DISfuQm5V9klUjylGQkDSz+JaVSHiSQb9nL
-	X7E4xgLNrgb6InqafRnwigouyh/ot9jftK9+Ze2xjH2IjiZ7HS8vb0duJs+cIL98cbs=
-X-Received: by 2002:a05:620a:40c4:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c928038e5emr1063392885a.11.1745417043392;
-        Wed, 23 Apr 2025 07:04:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5Nmp61dxe3+g8XquReGtc6SZo2EBLqOi9MgrQLq0RCvHH8eZt76lUCj3q3b5DnYlZ2FEF3g==
-X-Received: by 2002:a05:620a:40c4:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c928038e5emr1063386885a.11.1745417042771;
-        Wed, 23 Apr 2025 07:04:02 -0700 (PDT)
-Received: from [192.168.65.183] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec4d397sm808450266b.59.2025.04.23.07.03.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 07:04:02 -0700 (PDT)
-Message-ID: <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
-Date: Wed, 23 Apr 2025 16:03:57 +0200
+	s=arc-20240116; t=1745417050; c=relaxed/simple;
+	bh=IE9+QhGjstZ+dXjDylZNdtZWhXj8gUk7kwoxYglND5A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A/8P0afwX0BdJRrknzu7/5q98GAOYKkMAqab3BP16nxiF1tQFVvLqLKfx66LBmDBdq5R40aeg1qUTOlhwUsU5v9gqoVkGeGyt5QYVd85JyueafwBAW+OBy/Bg2yq15HLChySSzkyc7Cj2PPQeqIIXJuhZgk16ZP2rBIEZaqqnR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=NErA9wOa; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=oaGiHzShZ+7Se81JoQaFP8hejDedRsEVccoTeyzc4dw=;
+	t=1745417049; x=1746626649; b=NErA9wOauBzLnyJ1h7Ns/jH0B6mcuYXQnm/MjDb7+KkTK5N
+	W7YnpftsMJvRXEVwEGvZWHzdNAPx+vn2dPqDsMyqu70sTRQ7uh/HtJIuFeXwF/DZ+E8Hk6Copl7Zp
+	hjJeaZ1+koGDwAC2fPR+uqLvZZHOjw/HcdJEfXczFlhcL+2EvbsHaoFTlZJ1C3FX+5N2X17fEkrrR
+	9fUBChg7JxhKOP2IN5wRFNuEClEUDqNHWdn38isSb9AjmCnRsK5jwljR1i/PXNsNVwzYvtEQcmaE4
+	UbeshGkJ+XwjRsJQybjcWyvrH79tcpabm3PNzzE6+5Q/6LmIsT3wYc9Ak4wz/7vw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1u7ahp-0000000Ej6j-2iEm;
+	Wed, 23 Apr 2025 16:04:05 +0200
+Message-ID: <ff63580712b8f20b4be7b38a31bc3bb9d69a4820.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: mac80211_hwsim: Prevent tsf from setting if
+ beacon is disabled
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org,
+ syzbot+064815c6cd721082a52a@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Date: Wed, 23 Apr 2025 16:04:04 +0200
+In-Reply-To: <tencent_6FF36BC379E97AE3ADC450776CD77EA6C405@qq.com>
+References: 
+	<b30cc04676a031db8c36df243160992094b3848d.camel@sipsolutions.net>
+	 <tencent_6FF36BC379E97AE3ADC450776CD77EA6C405@qq.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Adam Skladowski
- <a_skl39@protonmail.com>,
-        Sireesh Kodali <sireeshkodali@protonmail.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        linux@mainlining.org, Dang Huynh <danct12@riseup.net>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
- <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 3fxPG4wnoxzk2ip1JLXEMysw5bksM9UM
-X-Authority-Analysis: v=2.4 cv=ftfcZE4f c=1 sm=1 tr=0 ts=6808f354 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=bBqXziUQAAAA:8 a=OuZLqq7tAAAA:8 a=GsLbDo3STCR25-WXoqoA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=BjKv_IHbNJvPKzgot4uq:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-GUID: 3fxPG4wnoxzk2ip1JLXEMysw5bksM9UM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5OCBTYWx0ZWRfX7xAvskVn99rg wiYqYh0P/ftzxU5s6CWQplawF9rHjrI25kXhH4O30tXYL3DgaV1yJ8cA7mBIC+lbUBb6U0WMTE2 5Fjv30dSRDgnKVeAaOftf8h5O7zMlKlI0+DFCoTdorKMwZtdU6W+aAxMFzhl9KBNN7OoSgi187C
- S5tSFnd+Og5fLm9F/UzLPk4+UkQsdrcPQYBzc+uEKUPQB/kGE5oJyfNpAdWm7yr3mAP7UVRHuP+ XoZaVbDXp8TALbKR55tm4ZNwAmnRJpCPX8zzgUvVbaIGn7K8tbTJURj1CUU8EwFhCdhxPGMQP5g BZgb9P/Ut+ERl2U2az1B/owmFpr591sumfyVzXkzkhM5M/UuZ7MMunbAtYr0kk2HmJjNk23v+5J
- gaaagjDpvMjZ1L3HHaJQuLoYys8Ax1v9bI4Oda3/NX5mO2fPt2VIKGtZvYOk1FfZ5QjXay6J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230098
+X-malware-bazaar: not-scanned
 
-On 4/21/25 10:18 PM, Barnabás Czémán wrote:
-> From: Dang Huynh <danct12@riseup.net>
-> 
-> Add initial support for MSM8937 SoC.
-> 
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
+On Wed, 2025-04-23 at 21:56 +0800, Edward Adam Davis wrote:
+> On Wed, 23 Apr 2025 14:53:53 +0200, Johannes Berg wrote:
+> > > --- a/drivers/net/wireless/virtual/mac80211_hwsim.c
+> > > +++ b/drivers/net/wireless/virtual/mac80211_hwsim.c
+> > > @@ -1226,6 +1226,11 @@ static void mac80211_hwsim_set_tsf(struct ieee=
+80211_hw *hw,
+> > >  {
+> > >  	struct mac80211_hwsim_data *data =3D hw->priv;
+> > >  	u64 now =3D mac80211_hwsim_get_tsf(hw, vif);
+> > > +	struct ieee80211_bss_conf *conf =3D link_conf_dereference_protected=
+(vif,
+> > > +			data->link_data[0].link_id);
+> > > +
+> > > +	if (conf && !conf->enable_beacon)
+> > > +		return;
+> > >  	/* MLD not supported here */
+> > >  	u32 bcn_int =3D data->link_data[0].beacon_int;
+> > >  	u64 delta =3D abs(tsf - now);
+> >=20
+> > Please keep kernel coding style - the line break there is awful (but
+> > with "conf =3D ..." on a line by itself it can be just one line), and y=
+ou
+> > shouldn't have code before variable declarations.
+> like this?
 
-[...]
+Looks good I guess, not sure you wanted bcn_int/delta to be calculated
+before or after.
 
-> +			tsens_base1: base1@1d8 {
-> +				reg = <0x1d8 1>;
+> > The comment should probably also move because it's relevant for your ne=
+w
+> > [0] as well.
+> I don't understand what you mean.
 
-The size part should be hex too
+The "/* MLD not supported here */" comment refers to the [0] - it
+explains why the [0] (rather than link id) is OK. So it also applies to
+your [0], if you're going to put it before the comment then IMHO it
+makes sense to move the comment. With what you did now the comment is
+still earlier though, of course.
 
-[...]
-
-> +				wcss-wlan2-pins {
-> +					pins = "gpio76";
-> +					function = "wcss_wlan2";
-> +					drive-strength = <6>;
-> +					bias-pull-up;
-> +
-> +				};
-> +
-> +			};
-
-random newline /\
-
-[...]
-
-> +		mdss: display-subsystem@1a00000 {
-> +			compatible = "qcom,mdss";
-> +			reg = <0x01a00000 0x1000>,
-> +			      <0x01ab0000 0x1040>;
-
-The latter region is 0x3000-long
-
-> +			reg-names = "mdss_phys", "vbif_phys";
-
-Please make reg-names a vertical list too
-
-[...]
-
-
-> +		gpu: gpu@1c00000 {
-> +			compatible = "qcom,adreno-505.0", "qcom,adreno";
-> +			reg = <0x1c00000 0x40000>;
-
-Please pad the address part to 8 hex digits
-
-[...]
-
-> +			gpu_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-19200000 {
-> +					opp-hz = /bits/ 64 <19200000>;
-> +					opp-supported-hw = <0xff>;
-
-The comment from the previous revision still stands
-
-Konrad
+johannes
 
