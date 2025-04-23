@@ -1,93 +1,194 @@
-Return-Path: <linux-kernel+bounces-615322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DF7A97BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FE4A97BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E2E1B62553
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276281B62657
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25B61EF38E;
-	Wed, 23 Apr 2025 00:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22031F1531;
+	Wed, 23 Apr 2025 00:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="wGqd3kU4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b="gsF/xgNZ"
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEE51EDA3F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC411EFFBE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745367613; cv=none; b=plhYpFSTLrBJpklJVV2NFU8mg0SnQiU/y1H7mCCX+M75LI8UACqyvYwssp9l1rNOc6H9BraqhVbXZ+Sdp2q4wK/ekyyRG7ZLksoIgFfyM/TEaDEmQRSyUPyGT635Kd6CnS3fTlsSqKzxgJ7jbM+erK0PnTRW4oWA96rmtyIPNXM=
+	t=1745367622; cv=none; b=f4ZwEB6qmpemtDZJ7q2ia1Qp2jLk9NWJVySRWlGBNGGEox1zlxCXt9COQDI1l9Qujm+5wyZqB51cIyqqvvqOznCO6hIXRsvsGoyr7vHpQ+hbfYn7gLsDSdqDd0aMJHZE+oLJwpfUt6EcYVgNBsUIPebF06+UyRJnjttXFfF3s9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745367613; c=relaxed/simple;
-	bh=JiYKYwIlggoXaMGUSuySy12m3WMDMH23uuAhv8VzJ9E=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dm+pbUtJqhaPK8DAxnkWDIonSfOgOLtaCBiJMEuQaVJXOH3LSG5mLN0/wPQkf7h9xEIVq6d5zCas81hZD4QO9U/jz/2IYDimRKjZRxXV2jQAMh+KElXT7AMWk0lBVwszuf/Jvwm56DsyEKeNhoObJZzOy4AmC+o34bgspm/ZUVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=wGqd3kU4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72546C4CEEC;
-	Wed, 23 Apr 2025 00:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1745367612;
-	bh=JiYKYwIlggoXaMGUSuySy12m3WMDMH23uuAhv8VzJ9E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=wGqd3kU4TiUNozMylRf7ZRapHRxqFfIXkVFguKnhcTggZUKOihtgqz5wqh69hAvPA
-	 D7qD7DX/6iQSzMQrz58Bhx44lxaByL5qpiRAA5sB18+zXK0VBgRD3+IMLLi7YIsI8o
-	 bqsmnMAywBXWauX4H5YQHU2w5zVGebPKBs82xrWQ=
-Date: Tue, 22 Apr 2025 17:20:11 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
-Cc: linux-mm@kvack.org, rostedt@goodmis.org, mhiramat@kernel.org,
- andrii@kernel.org, kernel-team@meta.com, linux-kernel@vger.kernel.org,
- Mykyta Yatsenko <yatsenko@meta.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] maccess: fix strncpy_from_user_nofault empty string
- handling
-Message-Id: <20250422172011.feb243d2f7478c0e7109b74c@linux-foundation.org>
-In-Reply-To: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
-References: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745367622; c=relaxed/simple;
+	bh=+r3R+rr2bW0jfdEyFH6BjapHu/ndfnpWM2yE25YJd2c=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=flRIyaeaXkeMattNCsXjixp/HweD/oUpMOQM/a6N5EvAuZd8ACAsW1moFDcwlFZwQiCd5BvyeDFvouZpfzuLDN0T1/+H0OjazLd2Wl+4buvjLv4K1QWyybA16rIJscffZH+Eig3hu6DY+WxLLLas0pgoJaqCKay6dpgmMeQbvTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca; spf=pass smtp.mailfrom=gianis.ca; dkim=pass (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b=gsF/xgNZ; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gianis.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gianis.ca;
+	s=protonmail; t=1745367618; x=1745626818;
+	bh=dk+pasafF4bM7w+MFfwsEvyKgaRymc8SSrDzFjrIskQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=gsF/xgNZz9F+qYh3bwgztJo+49+eal2kVBMuTXUnF7qNnYDW561DF61Q0FBB9weYs
+	 4cw/dYk0VGK7VGQcyQGUCMY39bGCX3EaA1dfTRepHgqbvq6AeUtnnuUVLfE1XR3Mzc
+	 Ge+CCJpJos+Nk+ye8xhrefcFkL6iXqSqPG38DxzEuMQhm6es+x7cPdRZbzcseBQb3Z
+	 Tr/EPloIHhsg9Y69eXXxcxlXpEAN/U1uCk6LmPOLlMh3vAZvSgz4A3pJy+jW3XlQOq
+	 N9DX0H1fCCqIwgDiqdvmCZO79Xya9k6PbOScC5uL8DgiZiankBQjL+aMgK10VwU410
+	 8KgCueI2GeYQg==
+Date: Wed, 23 Apr 2025 00:20:14 +0000
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+From: "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Cc: linux-kernel@vger.kernel.org, Dhaval Giani <dhaval.giani@amd.com>, Gautham Shenoy <gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Subject: [PATCH 1/3] sched/fair: Introduce a new debugfs directory for EEVDF tests
+Message-ID: <20250422-b4-eevdf-tests-v1-post-v1-1-35d158254c72@gianis.ca>
+In-Reply-To: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
+References: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
+Feedback-ID: 128275035:user:proton
+X-Pm-Message-ID: d7f28bbef72c90bc7d8a399e3a768f4d2324476b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 22 Apr 2025 14:14:49 +0100 Mykyta Yatsenko <mykyta.yatsenko5@gmail.com> wrote:
+To: Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Ben Segall <bsegall@google.com>
+To: Mel Gorman <mgorman@suse.de>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: Dhaval Giani <dhaval.giani@amd.com>
+Cc: Gautham Shenoy <gautham.shenoy@amd.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Dhaval Giani (AMD) <dhaval@gianis.ca>
+---
+ kernel/Kconfig.preempt     |  9 +++++++++
+ kernel/sched/Makefile      |  1 +
+ kernel/sched/debug.c       |  2 ++
+ kernel/sched/eevdf-tests.c | 27 +++++++++++++++++++++++++++
+ kernel/sched/sched.h       |  7 +++++++
+ 5 files changed, 46 insertions(+)
 
-> From: Mykyta Yatsenko <yatsenko@meta.com>
-> 
-> strncpy_from_user_nofault should return the length of the copied string
-> including the trailing NUL, but if the argument unsafe_addr points to
-> an empty string ({'\0'}), the return value is 0.
-> 
-> This happens as strncpy_from_user copies terminal symbol into dst
-> and returns 0 (as expected), but strncpy_from_user_nofault does not
-> modify ret as it is not equal to count and not greater than 0, so 0 is
-> returned, which contradicts the contract.
-> 
-> ...
->
+diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+index 54ea59ff8fbeb653b7084a78bd0d933076deaad5..96f47cf498aa10d7cbb375093e5=
+533753ed7a414 100644
+--- a/kernel/Kconfig.preempt
++++ b/kernel/Kconfig.preempt
+@@ -176,3 +176,12 @@ config SCHED_CLASS_EXT
+ =09  For more information:
+ =09    Documentation/scheduler/sched-ext.rst
+ =09    https://github.com/sched-ext/scx
++
++config SCHED_EEVDF_TESTING
++=09bool "EEVDF testing"
++=09help
++=09  This option is a debug option to test that your changes to the
++=09  fair scheduling code do not break EEVDF invariants. There are
++=09  controls exposted in debugfs to allow tests to be run. This has a
++=09  performance impact, so do not enable unless you are a scheduler
++=09  developer and know what you are doing.
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 8ae86371ddcddf836172ee93ca34f2e91b4057a7..1a8416b8009ebf7cf38ac7b326f=
+4b6472e62909a 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -37,3 +37,4 @@ obj-y +=3D core.o
+ obj-y +=3D fair.o
+ obj-y +=3D build_policy.o
+ obj-y +=3D build_utility.o
++obj-y +=3D eevdf-tests.o
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 557246880a7e0839277df662703b7bfabeb3a497..e61acd5463145e4a54dcc816c1d=
+a774922ed0127 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -536,6 +536,8 @@ static __init int sched_init_debug(void)
+=20
+ =09debugfs_fair_server_init();
+=20
++=09debugfs_eevdf_testing_init(debugfs_sched);
++
+ =09return 0;
+ }
+ late_initcall(sched_init_debug);
+diff --git a/kernel/sched/eevdf-tests.c b/kernel/sched/eevdf-tests.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..3bc016d3025733e53f586e30fcd=
+31f650156d47e
+--- /dev/null
++++ b/kernel/sched/eevdf-tests.c
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright (C) 2025 Advanced Micro Devices, Inc
++ *
++ * Author: Dhaval Giani (AMD) <dhaval@gianis.ca>
++ *
++ * Basic functional tests for EEVDF - Invariants
++ *
++ * Use the debugfs triggers to run them
++ *
++ */
++
++#include <linux/debugfs.h>
++#include <linux/sched.h>
++
++#include "sched.h"
++
++#ifdef CONFIG_SCHED_EEVDF_TESTING
++
++static struct dentry *debugfs_eevdf_testing;
++void debugfs_eevdf_testing_init(struct dentry *debugfs_sched)
++{
++=09debugfs_eevdf_testing =3D debugfs_create_dir("eevdf-testing", debugfs_s=
+ched);
++
++}
++#endif /* CONFIG_SCHED_EEVDF_TESTING */
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c5a6a503eb6de3867ea25f13dca3660da2805ff8..09cefe2aa871bbd533a413c7602=
+6895e969a58e7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -44,6 +44,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/minmax.h>
+ #include <linux/mm.h>
++#include <linux/mmu_context.h>
+ #include <linux/module.h>
+ #include <linux/mutex_api.h>
+ #include <linux/plist.h>
+@@ -3987,4 +3988,10 @@ void sched_enq_and_set_task(struct sched_enq_and_set=
+_ctx *ctx);
+=20
+ #include "ext.h"
+=20
++#ifdef CONFIG_SCHED_EEVDF_TESTING
++void debugfs_eevdf_testing_init(struct dentry *debugfs_sched);
++#else /* CONFIG_SCHED_EEVDF_TESTING */
++static inline void init_eevdf_testing_debugfs(struct dentry *debugfs_sched=
+) {}
++#endif /* CONFIG_SCHED_EEVDF_TESTING */
++
+ #endif /* _KERNEL_SCHED_SCHED_H */
 
-Thanks.
+--=20
+2.49.0
 
-Does this fix any known runtime issue?  If so, please fully describe this?
-
-> --- a/mm/maccess.c
-> +++ b/mm/maccess.c
-> @@ -196,7 +196,7 @@ long strncpy_from_user_nofault(char *dst, const void __user *unsafe_addr,
->  	if (ret >= count) {
->  		ret = count;
->  		dst[ret - 1] = '\0';
-> -	} else if (ret > 0) {
-> +	} else if (ret >= 0) {
->  		ret++;
->  	}
->  
 
 
