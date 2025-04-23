@@ -1,199 +1,172 @@
-Return-Path: <linux-kernel+bounces-616602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738E2A9925A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:43:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D214A98D83
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC90E1BA3E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A6E442AF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9352A2949F3;
-	Wed, 23 Apr 2025 15:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A04280A21;
+	Wed, 23 Apr 2025 14:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K6s5U3y5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kghucQGA"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581128A402;
-	Wed, 23 Apr 2025 15:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90072279790
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421736; cv=none; b=S2ENhUbVSligeE3yDyNWb3n828xXU1RNYF+qVkK2Z/d8Wx+Rl1n4lQKZ1D0Yg+75f3Z0OB+9rqMiRjzFIgXNTLEm6wja8snMvmePQ7AfikUemZQVR9eRxsN2OnH3PCwSEb6L4sXRoFlcQAm6pH8QDoSdk83H3s0t3Iwk0H7yMU8=
+	t=1745419559; cv=none; b=d4E/6G76+/bdT/ae8KMHPwUK2iB32P+XVLcTgjUkU6/o5r0i+rDuPpiMKHqUIPXF7ySBGOJ0I/WlQdDw/NzfUoVCZ7XN5xJrsg7xwv3hupzL48IHfzFnSv/dwgRm7Pp7Fin8oC0giOGnizCSyM2wMzwvorT1zH7Y61DBWqycQ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421736; c=relaxed/simple;
-	bh=mD+dv+PEt1ufPDp6ohHJqlNFRkaPmJBo0UfyAitqRvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+QXnmY4FftmYEdaMZdOUM3kGItCNku/LwmZ2erim81Nf3nm+DKjFOGq4VFyPNbRPjLIt2uLW/IILb0OIfDC2Zv7EzXoNePMz92W01jY/zixvxaauB4guTVmgct89yYuwAQ4ZLHzULiQTEZBTuOYUeC/08jqt05eUj7fF5BgzDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K6s5U3y5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE26C4CEE3;
-	Wed, 23 Apr 2025 15:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745421734;
-	bh=mD+dv+PEt1ufPDp6ohHJqlNFRkaPmJBo0UfyAitqRvo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K6s5U3y5qsvaQXh+puonBw4SkgAMFdRecRT4gtZxSJT27ydoqGKIZZCBdNKyU5pGT
-	 u6BwMiqkST9NDhqiGy5lpOGx0RNeSAZfqHOd0+uagQCcJnNuLJGO+7mPRxAtCaedSo
-	 EBtwppACKOId9FpSxvd8dOgeZtMQbFvy3SeA/Ef4=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 6.14 227/241] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
-Date: Wed, 23 Apr 2025 16:44:51 +0200
-Message-ID: <20250423142629.838396660@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423142620.525425242@linuxfoundation.org>
-References: <20250423142620.525425242@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1745419559; c=relaxed/simple;
+	bh=WuJs1L8beWP8qPqs8QhESGttVeHCU6eXpL36rcMevaQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VR7+u1p6qpMnK0JuC7wcKyx+YUoPSXaOnjG/LNK3+Tr0xXAxejBw+NUltO0obAB5Mhw9tqYxvsfxn3VjmL/KzBEbSzJpx5xpMp60JeZgdMyV0QFHAholo9nWr+Z+1Apv9+WoJP2a4MZmFpJTHdVDdiz+Wafq9BAZgeTpMfJNjYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kghucQGA; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86b9d1f729eso2521855241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745419556; x=1746024356; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XVzS4DFXKFHCvPld98KfR1XMwmy5WtS3R3h/ahLL1ME=;
+        b=kghucQGAFAzl+CH+j3gRkyG+1tnVlteutJW/Gxd38uNUbNLO7QZuhf2UYQNtoZ7uia
+         Ay1QMEAP59iA6m6ZqDIb9phM8oaMgkIHzpNqArh/jUGCWyvcq2ONboHeX+v/YX/KFF/i
+         yNQNl5RejYQTpp1ASZbURP7JQxBHPTn+bejHs2BQ1ReuhTsdoXdWfxURYZ02aPQ0Ro7v
+         sYd+E9rdrF3aLhEPhvku+QQ/ODtB3g/QkMEsMFTToc+ODx8/JHe6bTwTxNro703Qrs5T
+         fOU9ec8BwM0r8M6qrlIx+V4r2p2/4zlAnZhqKjIzPAcWbcy0E6vYioxhxyMkt5YiYwRm
+         QY7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745419556; x=1746024356;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XVzS4DFXKFHCvPld98KfR1XMwmy5WtS3R3h/ahLL1ME=;
+        b=sPdTCLm2udhO8HQ82SwnN0wOoywntzIgpbmzoOfwKuOP8qOXJ7lKcwhvkg3tq9R19F
+         DwgjcEy0pnjYWqiIRDcJLHcnKpFfX4fOFe8I2fr5aLepd5upDKzVVlygM5kmjYjZ66Bj
+         W0LTocm3pUV+KWl6aLYoOJbSUguSzJ3qiHaoMmvlvEE94ahKkkThaaQmdzGzrLlQvayL
+         vT+cNO0y4F0iCTZMFBrhQGU4Hn0WbEBXAPANNRuhIWTzzEP3RbMhmr1drgaNh9ROAIqb
+         dR+2npMAg1/POSnyZtOocx1lqSC2PkqzNTMD5x5MtY1IqA1NQsGalU4ApNBNhIOaq2eH
+         Yv/Q==
+X-Gm-Message-State: AOJu0YzCxmC5aFplEgzpPf3iD5kc/YlMC+bDMgd4z70iXQpnQbgfRpqn
+	XP75b90zpplpUlTKph4Z9ruwjnzrEIAbvQR+ePP/GYF+fJWYuFhJf15pRpe61qyJtDngrb16tDt
+	diF+KyCBwvR2ThndLQIn7eARCHPw/a+PlkXdaRNW3Rqu4JD2kjwI=
+X-Gm-Gg: ASbGncsQBGLONUenWCCbu1bjPH3EqTqoV43PXPl77a2JH/uXe1BcDVsL1E/u6ajBoGD
+	0AOJmGDj1bmDUYGGg1s/nqVzKwd6rtMzqfSQtoUno5+cY4//tCvui3Wn9CznDn0YbxHBZewoZqx
+	DgLxxDGG3y/AJEPv8Aj6zA1b+EmoqVCBgZ/e+qx939huD13P52Uvd+NJdn7m39yEzTJ4Q=
+X-Google-Smtp-Source: AGHT+IERRJGw6BAbTzZ7eENF+DT2FWTrJnr1CWFNiPg11ivsYpv0iKhIOifBDRXvHHv1G8kwWKWca5Of8Ul4FmXDow8=
+X-Received: by 2002:a05:6102:3195:b0:4bb:db41:3b6c with SMTP id
+ ada2fe7eead31-4cb8012897dmr13504466137.12.1745419556210; Wed, 23 Apr 2025
+ 07:45:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 23 Apr 2025 20:15:45 +0530
+X-Gm-Features: ATxdqUFKPsvKE8tS36jt8rkB_HWHxH1SfL5siJ13k1SJ6uSB3Mz80W-5YsuEDvs
+Message-ID: <CA+G9fYtN2ie+YtK3H9mrQ5QqrSCFGGjVbtJcfiYX0oHMVWMn9w@mail.gmail.com>
+Subject: next-20250422: arch/riscv/kernel/vdso/vdso.so.dbg: dynamic
+ relocations are not supported
+To: open list <linux-kernel@vger.kernel.org>, 
+	linux-riscv <linux-riscv@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Nam Cao <namcao@linutronix.de>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-6.14-stable review patch.  If anyone has any objections, please let me know.
+Regressions on riscv tinyconfig and lkftconfig failed with clang-20
+and gcc-13 on the Linux next-20250422 tag onwards.
 
-------------------
+The defconfig builds pass but tinyconfig and lkftconfig (compat and
+VDSO) failed.
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+First seen on the next-20250422
+ Good: next-20250417
+ Bad:  next-20250422..next-20250423
 
-commit 858c7bfcb35e1100b58bb63c9f562d86e09418d9 upstream.
+Regressions found on riscv:
+  - build/rv32-clang-20-tinyconfig
+  - build/rv32-clang-20-tinyconfig
+  - build/korg-clang-20-lkftconfig-hardening
+  - build/gcc-13-lkftconfig
 
-FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
-access from EL1 requires appropriate EL2 fine grained trap configuration
-via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
-Otherwise such register accesses will result in traps into EL2.
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
 
-Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
-grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
-bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
-PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
+Build regression: riscv vdso.so.dbg dynamic relocations are not supported
 
-Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_FGT2
-based registers to be accessible in EL2.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kvmarm@lists.linux.dev
-Fixes: 0bbff9ed8165 ("perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access control")
-Fixes: d8226d8cfbaf ("perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter")
-Tested-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Link: https://lore.kernel.org/r/20250227035119.2025171-1-anshuman.khandual@arm.com
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/arch/arm64/booting.rst |   22 ++++++++++++++++++++++
- arch/arm64/include/asm/el2_setup.h   |   25 +++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
+## Build log riscv
+build errors with gcc
+arch/riscv/kernel/vdso/vdso.so.dbg: dynamic relocations are not supported
+make[3]: *** [arch/riscv/kernel/vdso/Makefile:60:
+arch/riscv/kernel/vdso/vdso.so.dbg] Error 1
 
---- a/Documentation/arch/arm64/booting.rst
-+++ b/Documentation/arch/arm64/booting.rst
-@@ -288,6 +288,12 @@ Before jumping into the kernel, the foll
- 
-     - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
- 
-+  For CPUs with the Fine Grained Traps 2 (FEAT_FGT2) extension present:
-+
-+  - If EL3 is present and the kernel is entered at EL2:
-+
-+    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
-+
-   For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
- 
-   - If EL3 is present and the kernel is entered at EL2:
-@@ -382,6 +388,22 @@ Before jumping into the kernel, the foll
- 
-     - SMCR_EL2.EZT0 (bit 30) must be initialised to 0b1.
- 
-+  For CPUs with the Performance Monitors Extension (FEAT_PMUv3p9):
-+
-+ - If EL3 is present:
-+
-+    - MDCR_EL3.EnPM2 (bit 7) must be initialised to 0b1.
-+
-+ - If the kernel is entered at EL1 and EL2 is present:
-+
-+    - HDFGRTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-+    - HDFGRTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-+    - HDFGRTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-+
-+    - HDFGWTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-+    - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-+    - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-+
-   For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
- 
-   - If the kernel is entered at EL1 and EL2 is present:
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -259,6 +259,30 @@
- .Lskip_fgt_\@:
- .endm
- 
-+.macro __init_el2_fgt2
-+	mrs	x1, id_aa64mmfr0_el1
-+	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
-+	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
-+	b.lt	.Lskip_fgt2_\@
-+
-+	mov	x0, xzr
-+	mrs	x1, id_aa64dfr0_el1
-+	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMUVer_SHIFT, #4
-+	cmp	x1, #ID_AA64DFR0_EL1_PMUVer_V3P9
-+	b.lt	.Lskip_pmuv3p9_\@
-+
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMICNTR_EL0
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
-+.Lskip_pmuv3p9_\@:
-+	msr_s   SYS_HDFGRTR2_EL2, x0
-+	msr_s   SYS_HDFGWTR2_EL2, x0
-+	msr_s   SYS_HFGRTR2_EL2, xzr
-+	msr_s   SYS_HFGWTR2_EL2, xzr
-+	msr_s   SYS_HFGITR2_EL2, xzr
-+.Lskip_fgt2_\@:
-+.endm
-+
- .macro __init_el2_gcs
- 	mrs_s	x1, SYS_ID_AA64PFR1_EL1
- 	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
-@@ -304,6 +328,7 @@
- 	__init_el2_nvhe_idregs
- 	__init_el2_cptr
- 	__init_el2_fgt
-+	__init_el2_fgt2
-         __init_el2_gcs
- .endm
- 
+build errors with clang
+ld.lld: error: version script assignment of 'LINUX_4.15' to symbol
+'__vdso_getrandom' failed: symbol not defined
+llvm-nm: error: arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg: No
+such file or directory
+ld.lld: error: version script assignment of 'LINUX_4.15' to symbol
+'__vdso_getrandom' failed: symbol not defined
+llvm-objcopy: error:
+'arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg': No such file or
+directory
+arch/riscv/kernel/compat_signal.c:220:28: error: use of undeclared
+identifier 'compat__vdso_rt_sigreturn_offset'
+  220 |         regs->ra = (unsigned long)COMPAT_VDSO_SYMBOL(
+      |                                   ^
+arch/riscv/include/asm/vdso.h:29:42: note: expanded from macro
+'COMPAT_VDSO_SYMBOL'
+   29 |         (void __user *)((unsigned long)(base) +
+compat__vdso_##name##_offset)
+      |                                                 ^
+<scratch space>:317:1: note: expanded from here
+  317 | compat__vdso_rt_sigreturn_offset
+      | ^
+1 error generated.
 
 
+## Source
+* Kernel version: 6.15.0-rc3
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
+* Git describe: next-20250422
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/
+* Architectures: riscv
+* Toolchains: clang-20, gcc-13
+* Kconfigs: lkftconfig
+
+## Build riscv
+* Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/details/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/config
+
+## Steps to reproduce on riscv
+ - tuxmake --runtime podman --target-arch riscv --toolchain clang-20
+--kconfig tinyconfig --kconfig-add rv32_defconfig LLVM=1
+ - tuxmake --runtime podman --target-arch riscv --toolchain gcc-13
+--kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
