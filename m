@@ -1,127 +1,191 @@
-Return-Path: <linux-kernel+bounces-616235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE176A989B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BBEA989B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7702A5A231F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE49F1798E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F49214A91;
-	Wed, 23 Apr 2025 12:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941722F763;
+	Wed, 23 Apr 2025 12:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nv/TOtqT"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLXUgFnW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1911E522;
-	Wed, 23 Apr 2025 12:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FFD3C1F;
+	Wed, 23 Apr 2025 12:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745410980; cv=none; b=LE3PC9FTHpzY1HXsLklPGL24/lxlflaYwETY/xOBZYJNWgIjJg9Y8maNPpVRQ0x923WpzXJtWqSpI6hNQKlwpful0QSRazsVpkXgNyxoF8Jii+c7D3lW8xcPeUh5I7vlKNBlByA8zjFZHxMHKd4yPAOKM00A9fxdbdAGojGrPYQ=
+	t=1745411061; cv=none; b=VOS/xYY/joPurBqPjqSspwMCrlF8X/+ZER54zu/DYrT2Y5jcPOke9dVFAjkFKSz8hbMUX+lQFQNyTrpIlB+OjnsQOhym1VymbunF9yEk170I7gj0vL0biU2+ypQ2Y80hUOQk5noVWjhz08TZl7i8BOdZSyv/7xH5nWLgHcAn4yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745410980; c=relaxed/simple;
-	bh=HnPu7j6sgJzVwudx0LKxUL7+884C8qH1FQULmojI5+w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:Cc:References:To:
-	 In-Reply-To:Content-Type; b=aDg2yb+gPnr99LLPgoT35SkcX1NJEuS3m6LD0+Mng8R3HJONDsQ/RCozUx7TL2U9O/wWv6IxoPis10J9/mJtD4jhmv5vvZ/aI7EQ0eJpinlaloAK4xJRrg6aTuDx4KHhXXbNBwbFKS9gbvXNR7mMbZxBeST8cFtSPuciPTm0Ptc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draigBrady.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nv/TOtqT; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draigBrady.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c30d9085aso4811838f8f.1;
-        Wed, 23 Apr 2025 05:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745410976; x=1746015776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:to:content-language
-         :references:cc:from:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=21cooLsZt7+Ib4zLsXhitekoycP4WyhBP1wFPyAZigo=;
-        b=Nv/TOtqT9rEpph3j1U7ixJTqA2Vvpl2KfyFXPMX33d72Amsl6hl3E7sUqOZH8uhQP7
-         pVc43IovBNVw36yr/9cPhI3dshmQN4qNNf9OgPoSJyy6eZyS3PbJrMrZXpkAYKU+Zq5I
-         xlPsHiFVdSS5yg0h75N3UhkAUEIk35l6lPgcfw72Q7Dy8fQEYy64ipkhvWma/o15Dm1A
-         8JOd/eL05HuPN6clOPgVHg7B0Nym/IXDiwkT0BAqKO5AyX4gK1z7a2B4ljouGD2Vclk8
-         ieK+WLGvxaLlVs9iJs+SDkoxp0iv+/XgZbohfBIVWWV31aFr98hExynlUFvX+bXLK9EZ
-         QPNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745410976; x=1746015776;
-        h=content-transfer-encoding:in-reply-to:to:content-language
-         :references:cc:from:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=21cooLsZt7+Ib4zLsXhitekoycP4WyhBP1wFPyAZigo=;
-        b=kVd5NRvZk23NfqnSloJe0keIXpfjPoAUY0Z525F6mdWtvDhHhA3Pls99/hhz36ZNIb
-         vR4M0xqCoXdteKVN0Ot8D5FoUJJWF1gtccOYCRO1HyI6PBrRk+sRPC54gu3uQcfzGebP
-         VhNIgcp4r8uizoYa2I8iEbUQ9yTJxGrZdzF2cc9cn2gsg/PhBPYha8X6tppfvluhatet
-         HpxHHbrS01zP9wByAjrvoVFRntbsqtK6sTh7KoNcSWiFFvvIdzMHunBqLmzv1XVyRLyw
-         cPvIwIVz21eT3UsjqbCi3K865i4TxRQm5hrui+y33ZsjEXFsRiJ6y2CkBz1GnqrbVBI8
-         VOJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwD8uo4RIdDgyJqhiLMmkLmMZGHn/4FznAJrIVrB6uUC/ASKywExjB2HUB3W9pnFMXJPfIAQGxqCIYg94OeZNL8ZVNC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybyntHVNxBHArc/NYQHOuYLa2deK8hkuCq5eR8rMkm4dgUeRHo
-	EW6gElATD3o+uibs6KoPOCDmp8dVl2m2mbsO12AONC+BKZPvYc32P09LTg==
-X-Gm-Gg: ASbGncvrRIGcfvHAoIA0zrhlRMeumNJFnaqf92ndkujlkjTzGcfzMykqR/4CPh7nIPJ
-	mM4fy/3LQFWO/G3DZH/Mge4/4RvpC23HUVAEpthmWYOIBdRaC1Ydd6TFyk8DNN+A+wbJtJaLj7N
-	Ab2345hRFFWv5CE6t397BTV1SzJajHUEhgw9p8yMF4cg6NtcKJd6oJh3dVzNe2BMxVYW9OYi6AG
-	/JOslu7nVfqFW+O39lXYZ6VVOCi+qGhZ50V51OOf22QDyMSAbseFjTKZtxScJoXDxkkaVh27STA
-	jpAMkPDyIMvPrkUlSDK5GgpZwOUv7/Zv7tnpYFI=
-X-Google-Smtp-Source: AGHT+IEKDYteCQcfk3Z30r2wb4x3W8b0O6ydDFY1mIHMwY49tgkK/xu0y/LqgMayC8ZP49NK1BkaOg==
-X-Received: by 2002:a5d:64cb:0:b0:38d:e401:fd61 with SMTP id ffacd0b85a97d-39efbb05ea0mr14029009f8f.49.1745410975909;
-        Wed, 23 Apr 2025 05:22:55 -0700 (PDT)
-Received: from [192.168.1.31] ([86.44.211.146])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39efa4330d8sm19081582f8f.33.2025.04.23.05.22.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 05:22:55 -0700 (PDT)
-Sender: =?UTF-8?Q?P=C3=A1draig_Brady?= <pixelbeat@gmail.com>
-Message-ID: <64b14829-381d-4295-8878-f6b06906ef3c@draigBrady.com>
-Date: Wed, 23 Apr 2025 13:22:54 +0100
+	s=arc-20240116; t=1745411061; c=relaxed/simple;
+	bh=TZtTB377HTVmvNYYpv+aypNwFzVqY1qeiZzkRtzEG2A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=b3jMfkqIi4YA8PUnjY/xjQ5ZMQxxV4U8rgwJ3lHoypHDnHrlziYGh9fnwC47iEwYPuqN7ovwqTi9zZ1Duzi1QkpW6TG3KcLRGJ0UNuz1+Q5VCYM8QaaJ+mYtZ6RvPvGmEEwiDamRJ6TXAhzsfCYnOaFDw7FRA+PMNMsPLGECD0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLXUgFnW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A5AC4CEEB;
+	Wed, 23 Apr 2025 12:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745411061;
+	bh=TZtTB377HTVmvNYYpv+aypNwFzVqY1qeiZzkRtzEG2A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bLXUgFnWDRYjl1Y+yWUmB+jRy7NmMWBAfVvzkCLFjQnuOaVa0+hO9EyLmE0yXS//e
+	 Vx6W0E2m6YwSmjM2PI0Z7y4444fhQdjyKuFMRx6Hi+tJv6LiO7GZPRl/4cG01KWLe6
+	 J6MVleKbtisruGHzaxpC/ZNJ4yD5/ONXPOPFqLb0ApTEoldESwaR1wjnpWy1P59FKd
+	 HUjD2QUzlLHoe1IokJnHIUaYkLGW1QiWmhSpo29x8Iqqi2ykeKLrcFph9YUYcJ5by3
+	 MEjpm8TWmuInuEfCncdF5qQVFJnB4s8m1SaEsqajcWHvrbNthJptPqGWHDI/H2EGR2
+	 WxfJwTngPVWnA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,  Boqun
+ Feng <boqun.feng@gmail.com>,  FUJITA Tomonori <fujita.tomonori@gmail.com>,
+  Frederic Weisbecker <frederic@kernel.org>,  Thomas Gleixner
+ <tglx@linutronix.de>,  Anna-Maria Behnsen <anna-maria@linutronix.de>,
+  John Stultz <jstultz@google.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  Benno Lossin <benno.lossin@proton.me>,  Alice Ryhl
+ <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,  Danilo
+ Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 3/8] rust: hrtimer: Add HrTimerCallbackContext and
+ ::forward()
+In-Reply-To: <20250415195020.413478-4-lyude@redhat.com> (Lyude Paul's message
+	of "Tue, 15 Apr 2025 15:48:24 -0400")
+References: <20250415195020.413478-1-lyude@redhat.com>
+	<20250415195020.413478-4-lyude@redhat.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 23 Apr 2025 14:24:10 +0200
+Message-ID: <874iyfm5g5.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: listxattr() should return ENOTSUP for sysfs / tmpfs entries, not 0
-From: =?UTF-8?Q?P=C3=A1draig_Brady?= <P@draigBrady.com>
-Cc: 77597@debbugs.gnu.org, Rahul Sandhu <nvraxn@gmail.com>,
- Paul Eggert <eggert@CS.UCLA.EDU>
-References: <D8Z6FP3UZG2G.I8H42ZV6DM08@gmail.com>
- <41067aa3-0e72-456f-b3f2-7bd713242457@cs.ucla.edu>
- <c7d16a13-79c9-4e81-996a-0f32bcff79cc@draigBrady.com>
- <2e24f40d-b475-4199-b53b-e4c266d0d314@cs.ucla.edu>
- <60b2252d-9295-4d03-921e-a596444da960@draigBrady.com>
-Content-Language: en-US
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-security-module@vger.kernel.org
-In-Reply-To: <60b2252d-9295-4d03-921e-a596444da960@draigBrady.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Older coreutils was less efficient and always called getxattr("security.selinux"),
-and thus shows the SELinux context as expected:
+Lyude Paul <lyude@redhat.com> writes:
 
-   $ coreutils-9.3/src/ls -lZd /run/initramfs
-   drwxr-xr-x. 3 root root system_u:object_r:tmpfs_t:s0 60 Apr 19 14:52 /run/initramfs
-   $ coreutils-9.3/src/ls -lZd /sys/block
-   drwxr-xr-x. 2 root root system_u:object_r:sysfs_t:s0 0 Apr 23 12:54 /sys/block
+> With Linux's hrtimer API, there's a number of methods that can only be
+> called in two situations:
+>
+> * When we have exclusive access to the hrtimer and it is not currently
+>   active
+> * When we're within the context of an hrtimer callback context
+>
+> This commit handles the second situation and implements hrtimer_forward()
+> support in the context of a timer callback. We do this by introducing a
+> HrTimerCallbackContext type which is provided to users during the
+> RawHrTimerCallback::run() callback, and then add a forward() function to
+> the type.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>
+> ---
+>
+> V2:
+> * Improve SAFETY comments for HrTimerCallbackContext uses (I forgot to
+>   mention that we're within RawHrTimerCallback::run()
+> * Split forward into forward() and raw_forward() since we're going to have
+>   two contexts that we can call forward() from now.
+> * Clarify contexts in which certain hrtimer methods can be called.
+> * Make sure that we use a mutable reference for forward() here - just in
+>   case :).
+> * Rename interval to duration
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  rust/kernel/time/hrtimer.rs         | 51 +++++++++++++++++++++++++++--
+>  rust/kernel/time/hrtimer/arc.rs     |  9 ++++-
+>  rust/kernel/time/hrtimer/pin.rs     |  9 ++++-
+>  rust/kernel/time/hrtimer/pin_mut.rs | 11 +++++--
+>  rust/kernel/time/hrtimer/tbox.rs    |  9 ++++-
+>  5 files changed, 82 insertions(+), 7 deletions(-)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index aadae8666f7ea..507fff67f8ab2 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -73,7 +73,7 @@
+>      time::{Delta, Instant},
+>      types::Opaque,
+>  };
+> -use core::marker::PhantomData;
+> +use core::{marker::PhantomData, ptr::NonNull};
+>  use pin_init::PinInit;
+>  
+>  /// A timer backed by a C `struct hrtimer`.
+> @@ -314,7 +314,10 @@ pub trait HrTimerCallback {
+>      type Pointer<'a>: RawHrTimerCallback;
+>  
+>      /// Called by the timer logic when the timer fires.
+> -    fn run(this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>) -> HrTimerRestart
+> +    fn run<T>(
+> +        this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>,
+> +        ctx: HrTimerCallbackContext<'_, T>,
+> +    ) -> HrTimerRestart
+>      where
+>          Self: Sized;
+>  }
+> @@ -507,6 +510,50 @@ fn into_c(self) -> bindings::hrtimer_mode {
+>      }
+>  }
+>  
+> +/// Privileged smart-pointer for a [`HrTimer`] callback context.
+> +///
+> +/// Many [`HrTimer`] methods can only be called in two situations:
+> +///
+> +/// * When the caller has exclusive access to the `HrTimer` and the `HrTimer` is guaranteed not to
+> +///   be running.
+> +/// * From within the context of an `HrTimer`'s callback method.
+> +///
+> +/// This type provides access to said methods from within a timer callback context.
+> +///
+> +/// # Invariants
+> +///
+> +/// * The existence of this type means the caller is currently within the callback for an
+> +///   [`HrTimer`].
+> +/// * `self.0` always points to a live instance of [`HrTimer<T>`].
+> +pub struct HrTimerCallbackContext<'a, T>(NonNull<HrTimer<T>>, PhantomData<&'a ()>);
+> +
+> +impl<'a, T> HrTimerCallbackContext<'a, T> {
+> +    /// Create a new [`HrTimerCallbackContext`].
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// This function relies on the caller being within the context of a timer callback, so it must
+> +    /// not be used anywhere except for within implementations of [`RawHrTimerCallback::run`]. The
+> +    /// caller promises that `timer` points to a valid initialized instance of
+> +    /// [`bindings::hrtimer`].
+> +    pub(crate) unsafe fn from_raw(timer: *mut HrTimer<T>) -> Self {
+> +        // SAFETY: The caller guarantees `timer` is a valid pointer to an initialized
+> +        // `bindings::hrtimer`
+> +        Self(unsafe { NonNull::new_unchecked(timer) }, PhantomData)
+> +    }
+> +
+> +    /// Forward the timer expiry so it expires at `duration` after `now`.
+> +    ///
+> +    /// Note that this does not requeue the timer, it simply updates its expiry value. It returns
+> +    /// the number of overruns that have occurred as a result of the expiry change.
+> +    pub fn forward(&mut self, now: Instant, duration: Delta) -> u64 {
+> +        // SAFETY:
+> +        // - We are guaranteed to be within the context of a timer callback by our type invariants
+> +        // - By our type invariants, `self.0` always points to a valid `HrTimer<T>`
+> +        unsafe { HrTimer::<T>::raw_forward(self.0.as_ptr(), now, duration) }
 
-However newer coreutils is more efficient, and does not call getxattr()
-if listxattr() returns 0 indicating that there are no xattrs.
+Safety comment do not match requirements for `raw_forward`. We should
+require that either we are in timer context, or the timer is stopped and
+we have exclusive access.
 
-   $ coreutils-9.7/src/ls -lZd /run/initramfs
-   drwxr-xr-x 3 root root ? 60 Apr 19 14:52 /run/initramfs
-   $ coreutils-9.7/src/ls -lZd /sys/block
-   drwxr-xr-x 2 root root ? 0 Apr 23 12:54 /sys/block
 
-I also noticed the same issue with the exa utility for example.
-For coreutils to maintain efficient processing and to fix the issue centrally,
-it would be more correct for listxattr() to return ENOTSUP,
-in which case ls will try the getxattr() call and operate as expected.
-Otherwise I can't see a way for coreutils to be both efficient and always correct.
+Best regards,
+Andreas Hindborg
 
-I'm currently testing on kernel 6.14.2-300.fc42.x86_64
 
-thanks,
-Padraig
 
