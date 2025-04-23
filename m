@@ -1,131 +1,204 @@
-Return-Path: <linux-kernel+bounces-615790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A5DA98235
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:06:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABF5A98240
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE76C7B0793
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAE31899272
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ED627815A;
-	Wed, 23 Apr 2025 07:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A826B966;
+	Wed, 23 Apr 2025 07:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stsLIYbz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rl8Ymkaf"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2AE27780B;
-	Wed, 23 Apr 2025 07:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D01726B959
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745395060; cv=none; b=ZC6RWzcNSOrH9yFRJWU6V05FQaARXPSs7Gc1Wj6YhyOKrQWMVRNOyLZm/CyaRJt1+hKNFmL2OsMeB5Bo0ZbL6J8GavByak5EqIjTRXsdOWJCXdPFUkslWJPEnqVAI56hTzpjztDzST8js8Tpz2YSLf5zT0ODapAyY/SCDpDULKM=
+	t=1745395126; cv=none; b=k1pYZoV3ywkzmZf3KvMNP+TaC9FIEtJ5Z5zFf6pGSheaOt/sjOr4KxW6sHb5gLXYx8ufzeCFiI4gMM/hJdA0rXP4hSgNBUAbz836p9xP3RPX+2tejeqHhge0vLBnbk2GQSw9Clfo2c+aFk8R8uy0rzvBeoLqBM2y9Bj26dTaQdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745395060; c=relaxed/simple;
-	bh=yNmwVGrDgbCtRlFwMtWRCumYMQG64ApPT+3w1d4vZrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyzCXRqGAtkdz6cJun1/GNzQfymxiOCtgwvsH3ARm93mRg0nxvdIR6ipiuTrgz43JV4knHqfYZba4V1kbaJOSUR6QBgIGh1pu6tweaFsOzE+0wpAdx6UUPr8/JWFCf7GP+54I8TK+vlg/GDmvVpFNY7yEUYZF3t1XWPGDE8dq5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stsLIYbz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF6EC4CEE2;
-	Wed, 23 Apr 2025 07:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745395059;
-	bh=yNmwVGrDgbCtRlFwMtWRCumYMQG64ApPT+3w1d4vZrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=stsLIYbzqNWZwwaLBX20CHWv2vLU9ObmcgpySg69lUSemrfLfGiwXtytZWtTi/WUX
-	 NxT4pxjQIerCiwLSt9Uf8oBibxzDPd/U3XsRExW5Du4Wyw5E8X07biYxDZNyCsv9gc
-	 PLQDdNy+wuMkW0JX/kmBDLY6ktXaclvACPFMJx93KlpIbZbNvdqS2uL+2/kwaITiKI
-	 x9fMCdSwCGGydHR9iLqYws2JK+M5UtYEC4sqR4Ik9vucnxLDjTCfrCcxdjxobR3NpL
-	 zZAvXpqmAh7kZfENSANnf8ZqBz7DBivw6YyesAkEliBTVnfcdllAf9JVpecDRaT6zQ
-	 q804Nr0hxCFwA==
-Date: Wed, 23 Apr 2025 07:57:35 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org
-Subject: Re: [PATCH v5 2/2] KVM: x86: Include host suspended time in steal
- time
-Message-ID: <aAidb496s6ke8RoO@google.com>
-References: <20250325041350.1728373-1-suleiman@google.com>
- <20250325041350.1728373-3-suleiman@google.com>
+	s=arc-20240116; t=1745395126; c=relaxed/simple;
+	bh=X+aUROIJbDq0/WVAsN/aL3+kk/RTavZCUl3H6Q6PUsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U2+XPs5J6n3M5Szw4+IZ+Fp2gVr5IOlym5QmpmATRfxXVS3whlVWlvyxhm0/k6NedvGIWzJrlGTu6JE0OfHfzfSSvNNHktNNKSZwbl4WAswL/qaPLfBYC7i1w3AunKSNtKwtASKJ9rz8cMgPQaO2MLKfPHQVm0OzSWkRsdWLICY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rl8Ymkaf; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70427fb838cso47714797b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745395124; x=1745999924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98OKaYF4tpZApGWukE9uaoalFuC45/rEeEJt/zz+1to=;
+        b=rl8Ymkaf2QJ1lpB1Y4CEiiBHzPc7ZAu3PwB/+KD69X81DPnswVFjtZlk8QdU/93+P9
+         PtPfCq49madHiOFb7BJsQSyUi4cvg2u4I+wC+ydfQZ+U7neKUPVcdNpHvlQZcRvoZTWC
+         GAnkZHN6UuLAyqhcg/3iMxTkc60F4K//EwdlWyj6y9ObC+fmQkphoSuPc5xdPcRAH8E8
+         wq3SFIIamFYp7h80RGwdgZ0+MuxJ/YXFBSjfmb71ahNHG4xz/VHZG33GSrPpH56BJ33i
+         dKZIGDl79SP3jUDe2Fi3bNOZVpFQHRKl9ZboyBDq4kUiTWh17ZC2wJzrIxBduNGic240
+         mQyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745395124; x=1745999924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98OKaYF4tpZApGWukE9uaoalFuC45/rEeEJt/zz+1to=;
+        b=VT9GryjI702VzVKRU57txn/AyLEk92BMc4nw2n9GIGrR3eigv1e80q1D1hSSa+qoeb
+         1PTvKkFLh+Cx5kSNdhkk58mhAQDH0H4nQZi7DYRnTff3fiWyab9XWQDDDUq+/2YKYecd
+         nOaHwl0EMxq6v1xJNleLWhjUvzDbDHjbH9YcIlOMGQ+4Cqb0HgUyCHWHBBuUYJnIRVZ2
+         SbnREVoyWtMZ4JZrsOMoJ9VIfDq1dT+yLT7WqfbELb/4oGyOWaBv/2ee1D63WKrJ+++a
+         X6W8D1QWMImZVHp8ZnkDiAvYEMDc7bNmvCIkRJCKiXbtGEwRHZTMOmWxCMnfDPb6t2cv
+         LQIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEp7+TITCfjbmFYcCFGrchhcY7C21uZCQBIMyXWbCExZ7GW4x4X4PisJEq36ziMHqq97SDuJmQ32XowPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUTZ2uR8joiyToIjXzEkKVlw9Y2Q614ufUEsURw/e/Cd0NNODB
+	AsG7KKtgbM3qCTxym9L5Lzu7yTPwrH0efbLFGrc5RE1Fw8bUX7HET35fy1fHTK/Zu97ZJfUmk9+
+	k9GzNdy5l9wb8eH5d0V/EQrQwu4l3GSahw0JXDA==
+X-Gm-Gg: ASbGncuHb08UGOW+dSijwh+cR1r21Ld3eP/jdsss7vU6Z95L5JZ1s4WhPxbyL2raZ6N
+	uXxKFu4aAa2Kkg1hDdYwSnupW+5C5WjMuTHJ1sxJ6lCEs0LzqWQ/qwlj9P9WqrrNGni0NWJWe0T
+	z0fP/rQOoFpzY/Gvf9P6gm+Q==
+X-Google-Smtp-Source: AGHT+IEid6abI3qyjvwJVFhFo6K8MH5FI0X29/TyKFu7qItzM19P/8jYPPedtCkMFzrRPgTlj3DcfgKz+l+YCjA6mJo=
+X-Received: by 2002:a05:690c:d07:b0:6f7:5605:c62b with SMTP id
+ 00721157ae682-706ccdc6cf9mr271103927b3.27.1745395123911; Wed, 23 Apr 2025
+ 00:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325041350.1728373-3-suleiman@google.com>
+References: <20250417142513.312939-1-ulf.hansson@linaro.org>
+ <20250417142513.312939-9-ulf.hansson@linaro.org> <CAGETcx9rvTWPbDCnTLb+ToVk8BMipTa1Y14vpn=bPBkM=CjoZg@mail.gmail.com>
+In-Reply-To: <CAGETcx9rvTWPbDCnTLb+ToVk8BMipTa1Y14vpn=bPBkM=CjoZg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 23 Apr 2025 09:58:08 +0200
+X-Gm-Features: ATxdqUF5401xpyLBZD02333wpwgBQly_TMiuPAqVbNXp07uH7DpC68Wtyaxt4dM
+Message-ID: <CAPDyKFoxggSnRZxQ7QBbF2-akoj8TTMGawxeH_0ZnPQ7CBCnUA@mail.gmail.com>
+Subject: Re: [PATCH 08/11] pmdomain: core: Add internal ->sync_state() support
+ for genpd providers
+To: Saravana Kannan <saravanak@google.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>, 
+	Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 01:13:50PM +0900, Suleiman Souhlal wrote:
-> When the host resumes from a suspend, the guest thinks any task
-> that was running during the suspend ran for a long time, even though
-> the effective run time was much shorter, which can end up having
-> negative effects with scheduling.
-> 
-> [...]
-> 
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+On Fri, 18 Apr 2025 at 02:24, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Thu, Apr 17, 2025 at 7:25=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> >
+> > If the genpd provider's fwnode doesn't have an associated struct device
+> > with it, we can make use of the generic genpd->dev and it corresponding
+> > driver internally in genpd to manage ->sync_state().
+> >
+> > More precisely, while adding a genpd OF provider let's check if the fwn=
+ode
+> > has a device and if not, make the preparation to handle ->sync_state()
+> > internally through the genpd_provider_driver and the genpd_provider_bus=
+.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/pmdomain/core.c   | 36 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/pm_domain.h |  7 +++++++
+> >  2 files changed, 43 insertions(+)
+> >
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index 512f89e6d302..9c5a77bf59d2 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -2374,6 +2374,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd=
+,
+> >         INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
+> >         atomic_set(&genpd->sd_count, 0);
+> >         genpd->status =3D is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
+> > +       genpd->sync_state =3D GENPD_SYNC_STATE_OFF;
+> >         genpd->device_count =3D 0;
+> >         genpd->provider =3D NULL;
+> >         genpd->device_id =3D -ENXIO;
+> > @@ -2656,6 +2657,7 @@ int of_genpd_add_provider_simple(struct device_no=
+de *np,
+> >                                  struct generic_pm_domain *genpd)
+> >  {
+> >         struct fwnode_handle *fwnode;
+> > +       struct device *dev;
+> >         int ret;
+> >
+> >         if (!np || !genpd)
+> > @@ -2665,6 +2667,10 @@ int of_genpd_add_provider_simple(struct device_n=
+ode *np,
+> >                 return -EINVAL;
+> >
+> >         fwnode =3D &np->fwnode;
+> > +       dev =3D fwnode->dev;
+> > +
+> > +       if (!dev)
+> > +               genpd->sync_state =3D GENPD_SYNC_STATE_SIMPLE;
+>
+> I don't want people directly poking into fwnode.
 
-Saw the corresponding host suspended time has been compensated in
-update_rq_clock_task():
-Tested-by: Tzung-Bi Shih <tzungbi@kernel.org>
+There are already other subsystems doing it like this. Like
+drivers/gpio/gpiolib.c for example. I didn't think it was a big deal,
+my bad!
 
-With 1 minor comment:
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
+>
+> Use get_device_from_fwnode() that's in drivers/base/core.c? Might need
+> to move it to a header. Make sure to put_device() it back.
 
-> @@ -917,8 +918,13 @@ struct kvm_vcpu_arch {
->  
->  	struct {
->  		u8 preempted;
-> +		bool host_suspended;
+Sure, I can certainly do that!
 
-Use it in bool manner.
+>
+> Or ideally, figure it out using some other means like looking for
+> #power-domain-cells number? (if that'll always give the right answer).
+> Point being, the framework should know which type it's registering
+> even if there was no fwnode/fw_devlink.
 
-> +static void wait_for_resume(struct kvm_vcpu *vcpu)
-> +{
-> +	wait_event_interruptible(vcpu->arch.st.resume_waitq,
-> +	    vcpu->arch.st.host_suspended == 0);
+When adding the genpd-of-provider we are only passing a device node.
+Looking for "#power-domain-cells" can't tell us whether the node will
+have a device or not.
 
-E.g.: !vcpu->arch.st.host_suspended.
+>
+> >
+> >         device_set_node(&genpd->dev, fwnode);
+> >
+> > @@ -2718,8 +2724,10 @@ int of_genpd_add_provider_onecell(struct device_=
+node *np,
+> >  {
+> >         struct generic_pm_domain *genpd;
+> >         struct fwnode_handle *fwnode;
+> > +       struct device *dev;
+> >         unsigned int i;
+> >         int ret =3D -EINVAL;
+> > +       bool sync_state =3D false;
+> >
+> >         if (!np || !data)
+> >                 return -EINVAL;
+> > @@ -2728,6 +2736,10 @@ int of_genpd_add_provider_onecell(struct device_=
+node *np,
+> >                 data->xlate =3D genpd_xlate_onecell;
+> >
+> >         fwnode =3D &np->fwnode;
+> > +       dev =3D fwnode->dev;
+>
+> Can you do this some other way please? I really don't like this look up.
 
-> @@ -6939,6 +6954,19 @@ static int kvm_arch_suspend_notifier(struct kvm *kvm)
->  
->  	mutex_lock(&kvm->lock);
->  	kvm_for_each_vcpu(i, vcpu, kvm) {
-> +		vcpu->arch.st.last_suspend = ktime_get_boottime_ns();
-> +		/*
-> +		 * Tasks get thawed before the resume notifier has been called
-> +		 * so we need to block vCPUs until the resume notifier has run.
-> +		 * Otherwise, suspend steal time might get applied too late,
-> +		 * and get accounted to the wrong guest task.
-> +		 * This also ensures that the guest paused bit set below
-> +		 * doesn't get checked and cleared before the host actually
-> +		 * suspends.
-> +		 */
-> +		vcpu->arch.st.host_suspended = 1;
+Okay, I will use get_device_from_fwnode().
 
-E.g.: true.
+Thanks again for reviewing!
 
-> +static int kvm_arch_resume_notifier(struct kvm *kvm)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	unsigned long i;
-> +
-> +	mutex_lock(&kvm->lock);
-> +	kvm_for_each_vcpu(i, vcpu, kvm) {
-> +		vcpu->arch.st.host_suspended = 0;
+[...]
 
-E.g.: false.
+Kind regards
+Uffe
 
