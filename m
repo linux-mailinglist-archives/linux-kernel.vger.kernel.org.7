@@ -1,154 +1,202 @@
-Return-Path: <linux-kernel+bounces-615961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49392A984B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:06:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2481A98437
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6676D1B664D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0262F3A6469
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF3526A0D0;
-	Wed, 23 Apr 2025 09:03:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13481EE02E;
+	Wed, 23 Apr 2025 08:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z6ssTRoy"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1788C25C807;
-	Wed, 23 Apr 2025 09:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFE41A0BC9;
+	Wed, 23 Apr 2025 08:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745399016; cv=none; b=Tnl5bhe1ak63B9td4d3jqIuVr5QK2ZeM2avIrYMZxmfJiwg8Chwe1CBvczQ6VMhyQLEfdoaE9uQlGxiPW3g1GcKnwliY2n3lnpcZvztfsXAm8Sps4Es1gWuUSXtKF9zGA5FCXHVOkBKbc0cG5j9rVjt7NrnmyL7GLhwm/4i6oxI=
+	t=1745398402; cv=none; b=CEyrCPfkT/OsavHSGGMhALd7RUkBzIYpYMfFoZl2GASg9MlRMpVjP6Zhs/ObVlJLCUck5GTL3FDh3jKhLNnQk1/cb+zt3iTYCvngvgIy9pAfQNn2Fv4MG+S4b10CrMneftIfix2LTDwirRolPH+WLeIykHS4dbsmZrC1RT/5jGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745399016; c=relaxed/simple;
-	bh=nbWjo6YQ71Giydu9YT7lfljl3reXvDy4nvKwmznj7xs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YnP/N5wYyqwaFZHXy01sZhZsz+3KqO7/gndv5zPRcb2A958P28rzZRnF+Vtlfp+RD/6yTWkQ2qujIy0QgedT9ttHro1vZlT3tf4AghUSPf90SAzIWqEiew0TMHepLV0ilG5URwOVYsVvc1oVwnPEJWHuTitBMjk2DSRUaJnmeYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZjCn05Hbrz4f3jdX;
-	Wed, 23 Apr 2025 17:03:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id A99941A018D;
-	Wed, 23 Apr 2025 17:03:24 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgAXacPQrAhoJkGrKA--.8976S13;
-	Wed, 23 Apr 2025 17:03:24 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 9/9] ext4: clairfy the rules for modifying extents
-Date: Wed, 23 Apr 2025 16:52:57 +0800
-Message-ID: <20250423085257.122685-10-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
-References: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1745398402; c=relaxed/simple;
+	bh=KD9Cl3NthrDkg28+cyb3nHO/tjJn3qP+nuv9lHaS+YE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a2LbLIadL27sZnW+q7HXyJP26gFQyRzQdKGLzFQK0TgmDHuAKTeH30XSlpkOLz95rRHe8mlfDlb5taMiq1CsQPWH9xvRGQAkM2XU7DUWbrAQOhNqy6/mY0GzlBVDcxdePI1JiJyQb3bJ40iVSeahswV2JyJ5uc+r7flU3+5S7RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z6ssTRoy; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745398396;
+	bh=KD9Cl3NthrDkg28+cyb3nHO/tjJn3qP+nuv9lHaS+YE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Z6ssTRoySSu3OVlfvIDl9j04yp9RSXUNLJboOF/eMsbAibPM1LQuA+fDT+Q2V4Zod
+	 q4M5sddll854+FuVbxLoj+Xv+PtOPQ3uC6cUCy830q33HFbAHCZixzdCsaHryibEo6
+	 sPeokSI/13wnOJjcHrbeuGy6DUPnM+lPre68C+/JZLSywXE3Nfm6Yh09hIkadQeMqe
+	 Y9ZviPcZKlAQ3aPinwbetw1GLwEaXhNnti433ayGTCP5L0yjyDfxARkoMHP2s2WVVp
+	 FHlLHoxznnt/c/rnAJWKsEIZVM++uc8udHSVL6fn19/R/VuzyT3nnuQhXaMLaQ+Vif
+	 U75JlmtAGZX6A==
+Received: from apertis-1.home (2a01cb0892F2D600c8f85cf092d4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 905DC17E0CAB;
+	Wed, 23 Apr 2025 10:53:15 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Date: Wed, 23 Apr 2025 10:53:13 +0200
+Subject: [PATCH v2] arm64: dts: mediatek: mt8395-nio-12l: Enable Audio DSP
+ and sound card
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAXacPQrAhoJkGrKA--.8976S13
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr48ArWfWFykXF48Kw1xKrg_yoW5WF1Upr
-	Z3C34fJr18G34xGrW3J3W8Jr45G348JrW7Jrn7Jry7AF15JrySyr1UK34UAr1UGrWkAr15
-	Zr48tw18Wa17A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUljgxUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-mt8395-audio-sof-v2-1-5e6dc7fba0fc@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAHiqCGgC/32NTQ6CMBBGr0Jm7ZhSKKAr72FYlP7IJMCYFomG9
+ O5WDuDyveR73w7RBXIRrsUOwW0UiZcM8lSAGfXycEg2M0ghlajLFue1qy4K9csSY2SPg9bSNLI
+ TlfWQZ8/gPL2P5L3PPFJcOXyOh6382T+xrUSBlVBdW8vGKWtvhqdJDxz02fAMfUrpC+w9lgG0A
+ AAA
+X-Change-ID: 20250417-mt8395-audio-sof-baa2c62803df
+To: kernel@collabora.com, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Add memory regions for the Audio DSP (ADSP) and Audio Front-End (AFE),
+and enable both components in the device tree.
 
-Add a comment at the beginning of extents_status.c to clarify the rules
-for loading, mapping, modifying, and removing extents and blocks.
+Also, define the required pin configuration and add a sound card node
+configured to use the ADSP. This enables audio output through the 3.5mm
+headphone jack available on the board.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
- fs/ext4/extents_status.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+This patch series adds support for audio playback on the MT8395-based Radxa NIO 12L platform, which uses the integrated MT6359 codec via internal DAI links.
 
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index d1401d4a5513..31dc0496f8d0 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -120,9 +120,40 @@
-  *      memory.  Hence, we will reclaim written/unwritten/hole extents from
-  *      the tree under a heavy memory pressure.
-  *
-+ * ==========================================================================
-+ * 3. Assurance of Ext4 extent status tree consistency
-+ *
-+ * When mapping blocks, Ext4 queries the extent status tree first and should
-+ * always trusts that the extent status tree is consistent and up to date.
-+ * Therefore, it is important to adheres to the following rules when createing,
-+ * modifying and removing extents.
-+ *
-+ *  1. Besides fastcommit replay, when Ext4 creates or queries block mappings,
-+ *     the extent information should always be processed through the extent
-+ *     status tree instead of being organized manually through the on-disk
-+ *     extent tree.
-+ *
-+ *  2. When updating the extent tree, Ext4 should acquire the i_data_sem
-+ *     exclusively and update the extent status tree atomically. If the extents
-+ *     to be modified are large enough to exceed the range that a single
-+ *     i_data_sem can process (as ext4_datasem_ensure_credits() may drop
-+ *     i_data_sem to restart a transaction), it must (e.g. as ext4_punch_hole()
-+ *     does):
-+ *
-+ *     a) Hold the i_rwsem and invalidate_lock exclusively. This ensures
-+ *        exclusion against page faults, as well as reads and writes that may
-+ *        concurrently modify the extent status tree.
-+ *     b) Evict all page cache in the affected range and recommend rebuilding
-+ *        or dropping the extent status tree after modifying the on-disk
-+ *        extent tree. This ensures exclusion against concurrent writebacks
-+ *        that do not hold those locks but only holds a folio lock.
-+ *
-+ *  3. Based on the rules above, when querying block mappings, Ext4 should at
-+ *     least hold the i_rwsem or invalidate_lock or folio lock(s) for the
-+ *     specified querying range.
-  *
-  * ==========================================================================
-- * 3. Performance analysis
-+ * 4. Performance analysis
-  *
-  *   --	overhead
-  *	1. There is a cache extent for write access, so if writes are
-@@ -134,7 +165,7 @@
-  *
-  *
-  * ==========================================================================
-- * 4. TODO list
-+ * 5. TODO list
-  *
-  *   -- Refactor delayed space reservation
-  *
+Key additions:
+- Support for a new `mediatek,mt8195_mt6359` card configuration that does not rely on external codecs like rt5682.
+- Proper memory region declarations and pinctrl setup for the audio front-end (AFE) and audio DSP (ADSP).
+- A device tree sound node for headphone audio routing using `DL_SRC_BE` and `AIF1`.
+- Enhancements to the DT bindings to document the new compatible string, missing link-name, and additional audio routes (Headphone L/R).
+---
+Changes in v2:
+- The first five commits have already been merged into linux-next; only one remains pending.
+- Improved the commit description of the former patch 6/6, now labeled as 1/1.
+- Link to v1: https://lore.kernel.org/r/20250417-mt8395-audio-sof-v1-0-30587426e5dd@collabora.com
+---
+ .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 58 +++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
+index f2eb1b683eb76f783f5a13f28a78f6e33238b5f0..329c60cc6a6be0b4be8c0b8bb033b32d35302804 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
+@@ -139,9 +139,21 @@ bl31_secmon_mem: memory@54600000 {
+ 			no-map;
+ 		};
+ 
+-		afe_mem: memory@60000000 {
++		adsp_mem: memory@60000000 {
+ 			compatible = "shared-dma-pool";
+-			reg = <0 0x60000000 0 0x1100000>;
++			reg = <0 0x60000000 0 0xf00000>;
++			no-map;
++		};
++
++		afe_dma_mem: memory@60f00000 {
++			compatible = "shared-dma-pool";
++			reg = <0 0x60f00000 0 0x100000>;
++			no-map;
++		};
++
++		adsp_dma_mem: memory@61000000 {
++			compatible = "shared-dma-pool";
++			reg = <0 0x61000000 0 0x100000>;
+ 			no-map;
+ 		};
+ 
+@@ -152,6 +164,16 @@ apu_mem: memory@62000000 {
+ 	};
+ };
+ 
++&adsp {
++	memory-region = <&adsp_dma_mem>, <&adsp_mem>;
++	status = "okay";
++};
++
++&afe {
++	memory-region = <&afe_dma_mem>;
++	status = "okay";
++};
++
+ &cpu0 {
+ 	cpu-supply = <&mt6359_vcore_buck_reg>;
+ };
+@@ -514,6 +536,18 @@ &mt6359_vsram_others_ldo_reg {
+ &pio {
+ 	mediatek,rsel-resistance-in-si-unit;
+ 
++	audio_default_pins: audio-default-pins {
++		pins-cmd-dat {
++			pinmux = <PINMUX_GPIO70__FUNC_AUD_SYNC_MOSI>,
++				 <PINMUX_GPIO69__FUNC_AUD_CLK_MOSI>,
++				 <PINMUX_GPIO71__FUNC_AUD_DAT_MOSI0>,
++				 <PINMUX_GPIO72__FUNC_AUD_DAT_MOSI1>,
++				 <PINMUX_GPIO73__FUNC_AUD_DAT_MISO0>,
++				 <PINMUX_GPIO74__FUNC_AUD_DAT_MISO1>,
++				 <PINMUX_GPIO75__FUNC_AUD_DAT_MISO2>;
++		};
++	};
++
+ 	dsi0_backlight_pins: dsi0-backlight-pins {
+ 		pins-backlight-en {
+ 			pinmux = <PINMUX_GPIO107__FUNC_GPIO107>;
+@@ -854,6 +888,26 @@ &scp {
+ 	status = "okay";
+ };
+ 
++&sound {
++	compatible = "mediatek,mt8195_mt6359";
++	model = "mt8395-evk";
++	pinctrl-names = "default";
++	pinctrl-0 = <&audio_default_pins>;
++	audio-routing =
++		"Headphone", "Headphone L",
++		"Headphone", "Headphone R";
++	mediatek,adsp = <&adsp>;
++	status = "okay";
++
++	headphone-dai-link {
++		link-name = "DL_SRC_BE";
++
++		codec {
++			sound-dai = <&pmic 0>;
++		};
++	};
++};
++
+ &spi1 {
+ 	/* Exposed at 40 pin connector */
+ 	pinctrl-0 = <&spi1_pins>;
+
+---
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+change-id: 20250417-mt8395-audio-sof-baa2c62803df
+
+Best regards,
 -- 
-2.46.1
+Julien Massot <julien.massot@collabora.com>
 
 
