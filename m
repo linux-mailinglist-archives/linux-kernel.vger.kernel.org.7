@@ -1,101 +1,345 @@
-Return-Path: <linux-kernel+bounces-615321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F5FA97BA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAD5A97BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36BF3AA20E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6D43BF506
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A421F2BAE;
-	Wed, 23 Apr 2025 00:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA10A1F1908;
+	Wed, 23 Apr 2025 00:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuaYF4a4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b="nMkvV+tF"
+Received: from mail-24422.protonmail.ch (mail-24422.protonmail.ch [109.224.244.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A0E1EDA36;
-	Wed, 23 Apr 2025 00:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553B01F152E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745367593; cv=none; b=mxz5JcwOyYA72SQoZpEGdKfNTZ9ds4TG2k99Jhb1zpIzn8dE/a9tOHAPIzGkmKFiFkHhu6hmas4FSGVlFnHfUjtGZyfzPgLh4nJoBjavollTC1jpkh2mtxz9Bqhlg2wh51Z2X/n+q1Lyh/Dn7JA3uZttBIfCELkov9LMakiXnXk=
+	t=1745367645; cv=none; b=ZRxBquCDV+yIiuodsoKI+g87Teo51sXc2fRrJpv3Kb5ZhJR/qE9pR24Qp9EQIhBOElgmENzwuHtjmgujUAoQRZZ4KPd4Ve1qOf/TK9iSbYu69ihfqbJz6rjt9xfA1yK8IWR2YPseOMXlNL4Bcju1izTtfEsiWYQwLEYh7ZzBmjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745367593; c=relaxed/simple;
-	bh=g4wT0br6Q3eKj2Xok4jODJ5FYGVqkxwnEIQSKqaQeVY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ean243GOAMWCRdza7SHF4GpQG5Fa4k0xfcpEsjoR7TYungDLaduoY/elIgFMScswlW5pUZR91mcMURW+DxgDij5OBPrR43P8rWrrmbJyGEwwHWtAueEy5fVas59yvmFMSe/64fGeAIFPx5wAV+y293hwSCd9OduNYkUMGb6YpXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuaYF4a4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF94C4CEE9;
-	Wed, 23 Apr 2025 00:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745367593;
-	bh=g4wT0br6Q3eKj2Xok4jODJ5FYGVqkxwnEIQSKqaQeVY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AuaYF4a4LmETrC4hV+qrXOzzVOrFV3aT2VEhjAlSVKXhY05HlyTifHoS0Zw/iqT1Z
-	 wTgSYmLaiX3LyNXwAhJjj1suIanbbDEHkyQ6MrGIcU1y6MLQcVijLgUtEjDlfqVmcw
-	 FV7t2QyjjweaJdvn+u2CAl3SYWPZHfH5oH11jg24jpUrJ1q9NABoDIJUfq03dweAPW
-	 K3nOqMMZtgQIpab2pByaJw9I7BCX5BspzJCHttIBL6ya4idyLh7AZ+WTUUUV0B7sO3
-	 Xrp/Qw8dzQ9RpL5nlNB2VxqRZLIj0BXUZDpsr2Rd16tD9b4HLQLoiqG6TlHrbR/6Wa
-	 9M2MYkWh1fbbw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0C2380CEF4;
-	Wed, 23 Apr 2025 00:20:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745367645; c=relaxed/simple;
+	bh=yKWL4jY2BDIdsh1Ps7x8Yc3DgzHrdvlNGJSABfpgIts=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GSiHlRxqNd5lzFuCObofMk9HIoKhqxY50lPPrX9kNK8dloI42uaP341TZUNHBMbVjf4dNOkmbeGNWZL4GmIVo11r0OvAK+/iCedC5Ftu/L+I8BOrOzlSQFQhkXCn3qanVj9qXrOftd/+B5vMxCKcK2CI/3u0cbg3FzVfynSJwkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca; spf=pass smtp.mailfrom=gianis.ca; dkim=pass (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b=nMkvV+tF; arc=none smtp.client-ip=109.224.244.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gianis.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gianis.ca;
+	s=protonmail; t=1745367635; x=1745626835;
+	bh=TQv8xWy2SuXNR3w9HMn48sP4mhxMyjWREB0DUyFohuQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=nMkvV+tF3YMF+8a37K8aUOvXMLd32B5LlkYEt33lyjPMbvwcKo4fEDeZcUZuIF21U
+	 Y/HCE28UD+cXdQPm/n7cN6MiqJF9+BOWjWTVkmQGbn34DNd3+2z0faoXDjgNHhU15p
+	 bl5VPr9Du7zOgd2XH9NZcrMkHJIxAbUzr30ud4ezd/IBfX0cfV6G8XuPRl2sUkIeYt
+	 ciCDe0ep2cVVEIlSen/dQz118m7I+HPZ2o+cu9eZTp2O2YNxWmy8Lz6TKU0dL/yyLB
+	 +ZejqyT+ITuyW737ZjxtWPoaZX3otpAWN2P+A35wCcRwW65dn9wwrDtlTcozYbnCGW
+	 8bpDyPRz/jAnw==
+Date: Wed, 23 Apr 2025 00:20:31 +0000
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+From: "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Cc: linux-kernel@vger.kernel.org, Dhaval Giani <dhaval.giani@amd.com>, Gautham Shenoy <gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Subject: [PATCH 3/3] sched/fair: Test that the average lag across the system is zero
+Message-ID: <20250422-b4-eevdf-tests-v1-post-v1-3-35d158254c72@gianis.ca>
+In-Reply-To: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
+References: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
+Feedback-ID: 128275035:user:proton
+X-Pm-Message-ID: ee092e29a38b4d4c7f6ab4f77a354ae860b6914c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 bpf-next 0/3] libbpf: Fix event name too long error and add
- tests
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174536763175.2096010.2128821424847053296.git-patchwork-notify@kernel.org>
-Date: Wed, 23 Apr 2025 00:20:31 +0000
-References: <20250417014848.59321-1-yangfeng59949@163.com>
-In-Reply-To: <20250417014848.59321-1-yangfeng59949@163.com>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, hengqi.chen@gmail.com,
- olsajiri@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Lemma 2 of the EEVDF paper says that the sum of lags of all the
+tasks in the system is zero.
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+The test is slightly different - the sum of lag across a runqueue is
+zero.
 
-On Thu, 17 Apr 2025 09:48:45 +0800 you wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> Hi everyone,
-> 
-> This series tries to fix event name too long error and add tests.
-> 
-> When the binary path is excessively long, the generated probe_name in libbpf
-> exceeds the kernel's MAX_EVENT_NAME_LEN limit (64 bytes).
-> This causes legacy uprobe event attachment to fail with error code -22.
-> 
-> [...]
+The linux EEVDF implementation doesn't track a global vruntime.
+Instead it tracks the "zero-lag" vruntime. This can be obtained by
+calling avg_vruntime(cfs_rq).
 
-Here is the summary with links:
-  - [v5,bpf-next,1/3] libbpf: Fix event name too long error
-    https://git.kernel.org/bpf/bpf-next/c/4dde20b1aa85
-  - [v5,bpf-next,2/3] selftests/bpf: Add test for attaching uprobe with long event names
-    https://git.kernel.org/bpf/bpf-next/c/e1be7c45d244
-  - [v5,bpf-next,3/3] selftests/bpf: Add test for attaching kprobe with long event names
-    https://git.kernel.org/bpf/bpf-next/c/9b72f3e5b760
+Walk through every single CFS runqueue (per CPU as well as per-cgroup),
+and add up the vruntimes. The average should be the same as
+avg_vruntime.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+To: Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Ben Segall <bsegall@google.com>
+To: Mel Gorman <mgorman@suse.de>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: Dhaval Giani <dhaval.giani@amd.com>
+Cc: Gautham Shenoy <gautham.shenoy@amd.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Dhaval Giani (AMD) <dhaval@gianis.ca>
+---
+ include/linux/sched.h      |   7 ++
+ kernel/sched/eevdf-tests.c | 174 +++++++++++++++++++++++++++++++++++++++++=
+++++
+ kernel/sched/fair.c        |   3 +
+ 3 files changed, 184 insertions(+)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac198289349199b9c671240a20fc7826228ad..72788d51912657919adfad7f451=
+983e80be4fa39 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -610,6 +610,13 @@ struct sched_entity {
+ =09 */
+ =09struct sched_avg=09=09avg;
+ #endif
++#ifdef CONFIG_SCHED_EEVDF_TESTING
++=09/*
++=09 * Add a list element so that we don't recurse
++=09 * in the EEVDF unit test
++=09 */
++=09struct list_head tg_entry;
++#endif
+ };
+=20
+ struct sched_rt_entity {
+diff --git a/kernel/sched/eevdf-tests.c b/kernel/sched/eevdf-tests.c
+index 8532330769bcc93dbf9cd98ebba75c838f62c045..c343e94b9a44ad32d01a0eedcb6=
+1c1bbf5fdbaf6 100644
+--- a/kernel/sched/eevdf-tests.c
++++ b/kernel/sched/eevdf-tests.c
+@@ -24,6 +24,35 @@
+ bool eevdf_positive_lag_test;
+ u8 eevdf_positive_lag_count =3D 10;
+=20
++static int test_total_zero_lag(void *);
++static void launch_test_zero_lag(void);
++
++static int eevdf_zero_lag_show(struct seq_file *m, void *v)
++{
++=09return 0;
++}
++
++static int eevdf_zero_lag_open(struct inode *inode, struct file *filp)
++{
++=09return single_open(filp, eevdf_zero_lag_show, NULL);
++}
++
++static ssize_t eevdf_zero_lag_write(struct file *filp, const char __user *=
+ubuf,
++=09=09=09=09   size_t cnt, loff_t *ppos)
++{
++=09launch_test_zero_lag();
++=09return 1;
++
++}
++
++static const struct file_operations eevdf_zero_lag_fops =3D {
++=09.open=09=09=3D eevdf_zero_lag_open,
++=09.write=09=09=3D eevdf_zero_lag_write,
++=09.read=09=09=3D seq_read,
++=09.llseek=09=09=3D seq_lseek,
++=09.release=09=3D single_release,
++};
++
+ static struct dentry *debugfs_eevdf_testing;
+ void debugfs_eevdf_testing_init(struct dentry *debugfs_sched)
+ {
+@@ -33,6 +62,8 @@ void debugfs_eevdf_testing_init(struct dentry *debugfs_sc=
+hed)
+ =09=09=09=09debugfs_eevdf_testing, &eevdf_positive_lag_test);
+ =09debugfs_create_u8("eevdf_positive_lag_test_count", 0600,
+ =09=09=09=09debugfs_eevdf_testing, &eevdf_positive_lag_count);
++=09debugfs_create_file("eevdf_zero_lag_test", 0700, debugfs_eevdf_testing,
++=09=09=09=09NULL, &eevdf_zero_lag_fops);
+=20
+ }
+=20
+@@ -65,4 +96,147 @@ void test_eevdf_positive_lag(struct cfs_rq *cfs, struct=
+ sched_entity *se)
+ =09}
+ }
+=20
++/*
++ * we do, what we need to do
++ */
++#define __node_2_se(node) \
++=09rb_entry((node), struct sched_entity, run_node)
++
++static bool test_eevdf_cfs_rq_zero_lag(struct cfs_rq *cfs, struct list_hea=
+d *tg_se)
++{
++=09u64 cfs_avg_vruntime;
++=09u64 calculated_avg_vruntime;
++
++=09u64 total_vruntime =3D 0;
++=09u64 nr_tasks =3D 0;
++
++=09struct sched_entity *se;
++=09struct rb_node *node;
++=09struct rb_root *root;
++
++=09cfs_avg_vruntime =3D avg_vruntime(cfs);
++
++=09/*
++=09 * Walk through the rb tree -> look at the se->vruntime value and add i=
+t
++=09 */
++
++=09total_vruntime =3D 0;
++=09nr_tasks =3D 0;
++
++=09root =3D &cfs->tasks_timeline.rb_root;
++
++=09for (node =3D rb_first(root); node; node =3D rb_next(node)) {
++=09=09se =3D __node_2_se(node);
++=09=09WARN_ON_ONCE(__builtin_add_overflow(total_vruntime,
++=09=09=09=09=09se->vruntime, &total_vruntime));
++=09=09/*
++=09=09 * if it is a task group, add to a list to look at later
++=09=09 */
++=09=09if (!entity_is_task(se))
++=09=09=09list_add_tail(&se->tg_entry, tg_se);
++=09=09nr_tasks++;
++=09}
++
++=09if (cfs->curr) {
++=09=09WARN_ON_ONCE(__builtin_add_overflow(total_vruntime,
++=09=09=09=09=09cfs->curr->vruntime, &total_vruntime));
++=09=09nr_tasks++;
++=09}
++
++=09/* If there are no tasks, there is no lag :-) */
++=09if (!nr_tasks)
++=09=09return true;
++
++=09calculated_avg_vruntime =3D total_vruntime / nr_tasks;
++
++=09return (calculated_avg_vruntime =3D=3D cfs_avg_vruntime);
++
++}
++
++/*
++ * Call with rq lock held
++ *
++ * return false on failure
++ */
++static bool test_eevdf_zero_lag(struct cfs_rq *cfs)
++{
++=09struct list_head tg_se =3D LIST_HEAD_INIT(tg_se);
++=09struct list_head *se_entry;
++
++=09/*
++=09 * The base CFS runqueue will always have sched entities queued.
++=09 * Test it, and start populating the tg_se list.
++=09 *
++=09 * If it fails, short circuit and return fail.
++=09 */
++
++=09if (!test_eevdf_cfs_rq_zero_lag(cfs, &tg_se))
++=09=09return false;
++
++=09/*
++=09 * We made it here, let's walk through the list. Since it is
++=09 * setup as a queue, as we continue calling the rq test, it
++=09 * will add new task_groups to the list. Once drained, if we
++=09 * haven't failed, we will return true.
++=09 */
++
++=09list_for_each(se_entry, &tg_se) {
++=09=09struct sched_entity *se =3D list_entry(se_entry, struct sched_entity=
+, tg_entry);
++
++=09=09if (!test_eevdf_cfs_rq_zero_lag(group_cfs_rq(se), &tg_se))
++=09=09=09return false;
++=09}
++
++=09/*
++=09 * WOOT! We succeeded!
++=09 */
++=09return true;
++
++}
++
++/*
++ * The average vruntime of the entire cfs_rq should be equal
++ * to the avg_vruntime(cfs_rq)
++ */
++static int test_total_zero_lag(void *data)
++{
++=09int cpu;
++=09struct rq *rq;
++=09struct cfs_rq *cfs;
++=09bool success =3D false;
++
++=09for_each_online_cpu(cpu) {
++
++=09=09rq =3D cpu_rq(cpu);
++=09=09guard(rq_lock_irq)(rq);
++
++=09=09cfs =3D &rq->cfs;
++
++=09=09success =3D test_eevdf_zero_lag(cfs);
++
++=09=09if (!success)
++=09=09=09break;
++=09}
++=09if (!success) {
++=09=09trace_printk("FAILED: tracked average vruntime doesn't match calcula=
+ted average vruntime\n");
++=09=09return -1;
++=09}
++=09trace_printk("PASS: Tracked average runtime matches calculated average =
+vruntime\n");
++=09return 0;
++}
++
++static void launch_test_zero_lag(void)
++{
++=09struct task_struct *kt;
++
++=09kt =3D kthread_create(&test_total_zero_lag, NULL, "eevdf-tester-%d",
++=09=09=09=09=09smp_processor_id());
++=09if (!kt) {
++=09=09trace_printk("Failed to launch kthread\n");
++=09=09return;
++=09}
++
++=09wake_up_process(kt);
++}
++
+ #endif /* CONFIG_SCHED_EEVDF_TESTING */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 924d9d35c2aa937bc0f4ca9565ba774397b90f77..858c4e1b8fac661996d879a8dca=
+b2776db09d1c8 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13473,6 +13473,9 @@ void init_tg_cfs_entry(struct task_group *tg, struc=
+t cfs_rq *cfs_rq,
+ =09/* guarantee group entities always have weight */
+ =09update_load_set(&se->load, NICE_0_LOAD);
+ =09se->parent =3D parent;
++#ifdef CONFIG_SCHED_EEVDF_TESTING
++=09INIT_LIST_HEAD(&(se->group_node));
++#endif
+ }
+=20
+ static DEFINE_MUTEX(shares_mutex);
+
+--=20
+2.49.0
 
 
 
