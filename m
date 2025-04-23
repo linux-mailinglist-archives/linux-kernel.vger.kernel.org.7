@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-616856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1462A99704
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FCEA99729
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A8E5A45CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43FB4A20F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261F628D83B;
-	Wed, 23 Apr 2025 17:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18840291159;
+	Wed, 23 Apr 2025 17:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7Hx2Et6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D6F288C9A;
-	Wed, 23 Apr 2025 17:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sQ39TYqr"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAA2289361;
+	Wed, 23 Apr 2025 17:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745430622; cv=none; b=EWl8MwbIAaGBW7+Swq44KA370QFz2c5TDv/i4Iz8T8KBMCkt5PGL8dXB+d0ALqjdCk9+5R5ajz5PGKSGKxcWkp55OqBgzg94KF+w26Qce2qrOtfAv8DJikDd2ASivifEuEbmEv9uVjsb9TqVXfX4LwmaXTOiC7Zp8BUC0L0AwIs=
+	t=1745430661; cv=none; b=N525c/bXIrd/IwD0+Zqy/dZ0Ab6AFjQzBOpRp84NbgCqesw94j4YkVr3tSpZqurvPoLPGVODoU20sEI1L7ruYBOaYl8rukG8KWpjCU+XtQ2cJfpsxQ28VsUTZn2CaVmBQO+kEqdGAnDM2d9a9dn8Eeb7GStHEg+QZMCoa15bp/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745430622; c=relaxed/simple;
-	bh=Egp3Yszj4dH8xTnJVf5ZAxkxoyrRymUIA54q4ihDQHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yp/wOiZVp2t9fmoCp4DO1oaIYOzTxB/0NNvbvp/x2yHANL3vQ1HygET3bbDDo3blF1MWNdfYTME3GjMHDBEAq4GJhFmFVTT2iY9ntPDSyTlu8bjt50TlJ28Gx/bDwfsFGI7wCtYmAsSbdtdr0Wu51ul6kUGDxB5y6+GGkpQQUmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7Hx2Et6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EBCC4CEE2;
-	Wed, 23 Apr 2025 17:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745430622;
-	bh=Egp3Yszj4dH8xTnJVf5ZAxkxoyrRymUIA54q4ihDQHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a7Hx2Et6Gc58QrcEBYMSxR4ISbAAzxE36+ukyUOr7y3CPDLBhIK0sTsC0/zxaYHEl
-	 DfLzLcxqfCD4RAV2ToZbpZcVkpYp5JN8u7F5tlZYVb63jscDdepELpvhqdihfd8MOX
-	 L6sPy/Lfjtzs106AqLsHozQ+8Bir45pOHn2mPLpVGoAVPd4h5vAbe9gNKUyJ1W0SQ1
-	 wSmoHkgyHZls087dZMOY0oikCvUsKNvVmlbq/Hr8OqAYMhneUHgKkAm5Vy4KWy9ttS
-	 mslgMN1ZZn4Te57TvTL9m8CZXJVTXhHcKA2pcq07gliK+vZpYDMm8lNZX9ZzZjhxdw
-	 2C1CrEmYmAXrA==
-Date: Wed, 23 Apr 2025 19:50:16 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, shawn.lin@rock-chips.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] PCI: dw-rockchip: Reorganize register and
- bitfield definitions
-Message-ID: <aAkoWCtCS7Lxx3Gx@ryzen>
-References: <20250423153214.16405-1-18255117159@163.com>
- <20250423153214.16405-3-18255117159@163.com>
+	s=arc-20240116; t=1745430661; c=relaxed/simple;
+	bh=H6tBuwWjiTa3b3mLuTFDXVmLQC0Vman+596WG65RK38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lryLr/pEcTThbW12QtgkOkFhOnvNRSIXV9ZsLTisQ7Ke91JFSc2Etf2dwCIjWsAC2Zla3iV+q7OzlXvFTlDKI78uePgfotoeEg7zYvEhKWz3u4/8d4y0Q4NYYluLw/cZ1vMyBEN7HJ0WuDaFZ2RSbGdypyIbKEkkQMn/4G3dAF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sQ39TYqr; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.161.193] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BECB4203B87E;
+	Wed, 23 Apr 2025 10:50:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BECB4203B87E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745430659;
+	bh=f8CH2rF6M32Fr1wA/Z2C1KBnMC6UpjyuKfRuhJo6RnQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=sQ39TYqro8mNxCzgFzTVoLBiOwe6FBjtFYnXnVOYwR+TxOSmN6DKe6bwlGNxehSFK
+	 jCUvM4ljgfl3+2bLu20terHXNlptGszeQPOD5W64MZcXi21BueuM3apNfzpBrTEp0W
+	 EzZCarIaNhY1Q+dNMRyM61qeYLNebVuuQqazqQgM=
+Message-ID: <495d5444-b82e-4ec7-9095-d34f0ac8d40c@linux.microsoft.com>
+Date: Wed, 23 Apr 2025 10:50:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423153214.16405-3-18255117159@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] Drivers: hv: Fix bad ref to hv_synic_eventring_tail
+ when CPU goes offline
+To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, kys@microsoft.com, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org
+References: <20250421163134.2024-1-mhklinux@outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250421163134.2024-1-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 11:32:13PM +0800, Hans Zhang wrote:
-> Register definitions were scattered with ambiguous names (e.g.,
-> PCIE_RDLH_LINK_UP_CHGED in PCIE_CLIENT_INTR_STATUS_MISC) and lacked
-> hierarchical grouping. Magic values for bit operations reduced code
-> clarity.
+On 4/21/2025 9:31 AM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
 > 
-> Group registers and their associated bitfields logically. This improves
-> maintainability and aligns the code with hardware documentation.
+> When a CPU goes offline, hv_common_cpu_die() frees the
+> hv_synic_eventring_tail memory for the CPU. But in a normal VM (i.e., not
+> running in the root partition) the per-CPU memory has not been allocated,
+> resulting in a bad memory reference and oops when computing the argument
+> to kfree().
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
+> Fix this by freeing the memory only when running in the root partition.
+> 
+> Fixes: 04df7ac39943 ("Drivers: hv: Introduce per-cpu event ring tail")
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
 > ---
+>  drivers/hv/hv_common.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index b3b11be11650..8967010db86a 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -566,9 +566,11 @@ int hv_common_cpu_die(unsigned int cpu)
+>  	 * originally allocated memory is reused in hv_common_cpu_init().
+>  	 */
+>  
+> -	synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
+> -	kfree(*synic_eventring_tail);
+> -	*synic_eventring_tail = NULL;
+> +	if (hv_root_partition()) {
+> +		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
+> +		kfree(*synic_eventring_tail);
+> +		*synic_eventring_tail = NULL;
+> +	}
+>  
+>  	return 0;
+>  }
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
