@@ -1,59 +1,95 @@
-Return-Path: <linux-kernel+bounces-615359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BDDA97C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94960A97C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13AC17F38A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:18:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3644717F639
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE421F5841;
-	Wed, 23 Apr 2025 01:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96F225A2CB;
+	Wed, 23 Apr 2025 01:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2/2xe3W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="daqp3zPZ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C84242AA1
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD469259C89
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745371075; cv=none; b=AqNtWiFQ0KfKecyiAm+t8kOMP/CD2c5FP4wD2OVZjm1yPVJlAasK8FqHUkJk8DUFhqzQuZxXOM6mWELTMkz84+4QforWgJOGK1JTKRIEFahDBoCKPvyShgSJHHSvAPVxDqge3In2mQRRCPMVNrnjE+RzDEdaN1hCs2UfkdwK3bs=
+	t=1745371306; cv=none; b=FHFZvsVNb5iBQLuKYGMufxzTygv3MqK2x5D7tUO+yBFnu+mAWPWwyjrVd+szMnFeSuQpiP0wLfPzVdgf6FfFUsBL/J7p3LwvoDv+P3d0RKvUQY2hhG6lb2Dg13J/lWUbhp3HlWMLCUcIgvB04QGW4Otn6OQGjwVeEyYzdLWSj0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745371075; c=relaxed/simple;
-	bh=Zylnpb2TEmbMQh5WC0vsdH2I+J9na/9RUwBuAp0YScE=;
+	s=arc-20240116; t=1745371306; c=relaxed/simple;
+	bh=7oCvZbjyJy+tbhwD741EF4yStpE1Dx0IW6TfkQyeRW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMpxhv0Jdh5S4XkKfdSPORFVTvCYFwc1wUyEtdvS5nmSg7R69k4+NnwXi627h2Nuuse5pjTWUfx6w7u/P5vUOZGr/Q8Drw4zT0YRPa2b6DdZFBk0LT6b8fwujf4yQAti06zKDqPAwf5u1TjTEEgtbmABrabXd6MnEEGqiRQvLV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2/2xe3W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D61C4CEE9;
-	Wed, 23 Apr 2025 01:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745371074;
-	bh=Zylnpb2TEmbMQh5WC0vsdH2I+J9na/9RUwBuAp0YScE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a2/2xe3WFytGgxOnWjC+Er9KJ4V2acrQ/2OFwTsINq50VN/MkTk1ge6H6Fq0gaEtp
-	 302ejpCSGFofo//ErRRv0kAeH3xzjqcIv2Qnx6Jt1Iov8SegtAeq2sUNMln1AKKGTp
-	 UtlEa5L19MB2X0iXhtH/94Dm1Qv10bIftdxSIz5t3/wQ7UygZwUxNS8OjkbZRzD8w3
-	 Q95LYwjI8qk3TGQJ6hwNW1ATZrJ9/sjcrlM7jX3XTqqzoN10oHSwqt3LFTCGhbCGVl
-	 QJBOsR51TFoyUrOHsDDheKMZld6TQq1Uc2/sp4ET0RaGeeITM9IHU76uE1zi87kk3s
-	 rZlmc6Jt4oBoA==
-Date: Tue, 22 Apr 2025 18:17:52 -0700
-From: Dennis Zhou <dennis@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: gaoxu <gaoxu2@honor.com>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"surenb@google.com" <surenb@google.com>,
-	yipengxiang <yipengxiang@honor.com>
-Subject: Re: mm: percpu: increase PERCPU_MODULE_RESERVE to avoid allocation
- failure
-Message-ID: <aAg_wPQa_RJkmFDa@snowbird>
-References: <bcfb90b2cecf43d7a0760ebaddde10d8@honor.com>
- <20250422170209.a8beaa8a3610d2e92421476f@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAA1wkVkI5iepYEUXE695YhIzQXPx5F1S8jNBolWm8mkb0VLvzsiRNFQXY4xs5ZWZcj6dhSR+98+ZXQ/BHOv0URF5NdT1HbG0V6X+hv1VifWrfTs4mesWrU+QtRqipjUlxhiR52qDEaCNX3TznEGC7ZKDZLL5mf5YKhRvC+/BFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=daqp3zPZ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227b828de00so62935965ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 18:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1745371303; x=1745976103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0XoWI2RzfOQa1ulADmyuzmk0HP40c08H5o4VzcnZv4o=;
+        b=daqp3zPZNNV7iK4TepUPhTYEpn6RwbrbtR7sps2dPn3NSFLuSay/HsTFy4Ac9wq0Ve
+         GGQWNZmSMHf7RqzU53AaXXmxRPhoJmT6mdib4L9Yii6m57XFhSujez8uRHhGQiITS/7c
+         VxkJU94+g3O+UunhexUinKL91eqw5u6HQA/3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745371303; x=1745976103;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XoWI2RzfOQa1ulADmyuzmk0HP40c08H5o4VzcnZv4o=;
+        b=aX/dSBNkiOvyZ2dXOqqwsX0de3JadMHuBql28TIFBz9EUY7gpcCjoMWSmvcTV2DUst
+         LmaZo5ldE6YEb4K8MDZ6K5JqLqMou7QP/K1kekpxDRgXisdAAsQEXvNKOZ1DWX2NIaUL
+         FvfNhLdqibP4HeMI40JHcbHcPbO4HY2VfniFEPFFc1U1z4W5UjxeNxMUKQrP394ROoNI
+         +AM6isbMjePtohFoXMsVvHFT0rhK1lEZFPlMM8wlXl3Htmzk43hLXERe+BGB7wKBF8Gk
+         Vt+OV27UlX660dWJ7kRav1tIDy6kyUZy6BdCi7TgK761jc+zCk+bnWZNZw6w2lBDG0Ov
+         RkGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFPC/6uasdSCaCFZ9DeGCpXB1USYWDGCCaoTQooWQi8TqjkSVr4sJ17tLbZhQQYNIxrLCCdaJIRazIZTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJYW815+HbLC8ThBS9o/0PTG5vNMugQpRfzgQiSKJA3Fnz7HL
+	oWGcdSqaY7mzCx6BxtG0Yx0u1q71j/KQGfu6lq1NerUcy6BpXIttVz+026U9Fgs=
+X-Gm-Gg: ASbGncvyw7jAXkXvvo3uugM3aBOH1QcjOxoSHWpvn8ny4dtnGWVIYKBp3CTLeWRfN4d
+	huazZyhIgLeQm69RBPklphhsQUA1HTcXcJ4QTSM5SBYQlJvkIvZtGbw7DRqPPePrFwEwjU4nyih
+	h4A9euDqUm/70uWyYDaUtK1RkgtsUB89Ozq7XHl0ybOeP9GQ4u8GGsqlwCBnwb/cxuGNKxQ6FI5
+	hBgz7fKbKHav5rsMl2/ohug8KXArSixM+NprjrUXMt/osT4Ni60hpeSPkblLHK9JmLGpINFJFnA
+	RkWyuIT1u4XFGHHdDHVlO8V7uVPjBVK0XPSvYrsF4UakvSudLtdX2BAn518GPz+8Vv32tKTPlCr
+	UPUgs6QLopMhSaN63Cg==
+X-Google-Smtp-Source: AGHT+IHFoWOXbc0yjeIcAUEo6Kb0nJ7VwpRb9IXpFAJ3MPY1vqBMFBg87lY6ydyBLOYb+AiXf+/KeQ==
+X-Received: by 2002:a17:902:f70d:b0:225:abd2:5e39 with SMTP id d9443c01a7336-22c535ac94bmr241821455ad.30.1745371302877;
+        Tue, 22 Apr 2025 18:21:42 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50cfae4asm92420035ad.106.2025.04.22.18.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 18:21:42 -0700 (PDT)
+Date: Tue, 22 Apr 2025 18:21:39 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Harshitha Ramamurthy <hramamurthy@google.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jeroendb@google.com,
+	andrew+netdev@lunn.ch, willemb@google.com, ziweixiao@google.com,
+	pkaligineedi@google.com, yyd@google.com, joshwash@google.com,
+	shailend@google.com, linux@treblig.org, thostet@google.com,
+	jfraker@google.com, horms@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 4/6] gve: Add rx hardware timestamp expansion
+Message-ID: <aAhAoxmUSCQkq979@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jeroendb@google.com,
+	andrew+netdev@lunn.ch, willemb@google.com, ziweixiao@google.com,
+	pkaligineedi@google.com, yyd@google.com, joshwash@google.com,
+	shailend@google.com, linux@treblig.org, thostet@google.com,
+	jfraker@google.com, horms@kernel.org, linux-kernel@vger.kernel.org
+References: <20250418221254.112433-1-hramamurthy@google.com>
+ <20250418221254.112433-5-hramamurthy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,78 +98,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422170209.a8beaa8a3610d2e92421476f@linux-foundation.org>
+In-Reply-To: <20250418221254.112433-5-hramamurthy@google.com>
 
-Hi Andrew,
-
-On Tue, Apr 22, 2025 at 05:02:09PM -0700, Andrew Morton wrote:
-> On Tue, 22 Apr 2025 11:39:30 +0000 gaoxu <gaoxu2@honor.com> wrote:
+On Fri, Apr 18, 2025 at 10:12:52PM +0000, Harshitha Ramamurthy wrote:
+> From: John Fraker <jfraker@google.com>
 > 
-> > In android16-6.12, enabling CONFIG_MEM_ALLOC_PROFILING causes some modules
-> > to fail to load during boot because of failed percpu memory allocation.
+> Allow the rx path to recover the high 32 bits of the full 64 bit rx
+> timestamp.
 > 
-> Which modules?  If they're in-tree modules then we should fix this
-> issue in -stable kernels also.
+> Use the low 32 bits of the last synced nic time and the 32 bits of the
+> timestamp provided in the rx descriptor to generate a difference, which
+> is then applied to the last synced nic time to reconstruct the complete
+> 64-bit timestamp.
 > 
-> If they're out-of-tree modules then what argument is there for altering
-> the mainline kernel?
+> This scheme remains accurate as long as no more than ~2 seconds have
+> passed between the last read of the nic clock and the timestamping
+> application of the received packet.
 > 
-> > [811:modprobe]percpu: allocation failed, size=5200 align=8 atomic=0, alloc
-> > from reserved chunk failed
-> > [811:modprobe]Call trace:
-> > [811:modprobe] dump_backtrace+0xfc/0x17c
-> > [811:modprobe] show_stack+0x18/0x28
-> > [811:modprobe] dump_stack_lvl+0x40/0xc0
-> > [811:modprobe] dump_stack+0x18/0x24
-> > [811:modprobe] pcpu_alloc_noprof+0x96c/0xb58
-> > [811:modprobe] percpu_modalloc+0x50/0xec
-> > [811:modprobe] load_module+0x1158/0x153c
-> > [811:modprobe] __arm64_sys_finit_module+0x23c/0x340
-> > [811:modprobe] invoke_syscall+0x58/0x10c
-> > [811:modprobe] el0_svc_common+0xa8/0xdc
-> > [811:modprobe] do_el0_svc+0x1c/0x28
-> > [811:modprobe] el0_svc+0x40/0x90
-> > [811:modprobe] el0t_64_sync_handler+0x70/0xbc
-> > [811:modprobe] el0t_64_sync+0x1a8/0x1ac
-> > [811:modprobe]ipam: Could not allocate 5200 bytes percpu data
-> > 
-> > Increase PERCPU_MODULE_RESERVE to resolve this issue.
-> > 
-> > ...
-> >
-> > --- a/include/linux/percpu.h
-> > +++ b/include/linux/percpu.h
-> > @@ -16,7 +16,7 @@
-> >  /* enough to cover all DEFINE_PER_CPUs in modules */
-> >  #ifdef CONFIG_MODULES
-> >  #ifdef CONFIG_MEM_ALLOC_PROFILING
-> > -#define PERCPU_MODULE_RESERVE		(8 << 13)
-> > +#define PERCPU_MODULE_RESERVE		(8 << 14)
-> >  #else
-> >  #define PERCPU_MODULE_RESERVE		(8 << 10)
-> >  #endif
+> Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
+> Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: John Fraker <jfraker@google.com>
+> Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> ---
+>  drivers/net/ethernet/google/gve/gve_rx_dqo.c | 23 ++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> PERCPU_MODULE_RESERVE is a pretty unpleasant thing.  It appears that it
-> gives us the choice between either wasting memory or failing module
-> loading.  But I expect that something more dynamic would be a ton of work.
+> diff --git a/drivers/net/ethernet/google/gve/gve_rx_dqo.c b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+> index dcb0545baa50..483d188d33ab 100644
+> --- a/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+> +++ b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+> @@ -437,6 +437,29 @@ static void gve_rx_skb_hash(struct sk_buff *skb,
+>  	skb_set_hash(skb, le32_to_cpu(compl_desc->hash), hash_type);
+>  }
+>  
+> +/* Expand the hardware timestamp to the full 64 bits of width, and add it to the
+> + * skb.
+> + *
+> + * This algorithm works by using the passed hardware timestamp to generate a
+> + * diff relative to the last read of the nic clock. This diff can be positive or
+> + * negative, as it is possible that we have read the clock more recently than
+> + * the hardware has received this packet. To detect this, we use the high bit of
+> + * the diff, and assume that the read is more recent if the high bit is set. In
+> + * this case we invert the process.
+> + *
+> + * Note that this means if the time delta between packet reception and the last
+> + * clock read is greater than ~2 seconds, this will provide invalid results.
+> + */
+> +static void __maybe_unused gve_rx_skb_hwtstamp(struct gve_rx_ring *rx, u32 hwts)
+> +{
+> +	s64 last_read = rx->gve->last_sync_nic_counter;
 
-From Tj's commit back in 2009... 6b19b0c24004
-
-+/*
-+ * On x86_64 symbols referenced from code should be reachable using
-+ * 32bit relocations.  Reserve space for static percpu variables in
-+ * modules so that they are always served from the first chunk which
-+ * is located at the percpu segment base.  On x86_32, anything can
-+ * address anywhere.  No need to reserve space in the first chunk.
-+ */
-
-I'm not too sure where our x86_64 32 bit support is. If that is no
-longer true then we can likely fold the reserved region back into the
-dynamic region.
-
-Given the above, there's not really an opportunity to do this after the
-system has booted hence why it's baked into the first chunk.
-
-Thanks,
-Dennis
+Does this need a READ_ONCE to match the WRITE_ONCE in the previous
+patch ?
 
