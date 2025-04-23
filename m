@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-615396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BA1A97C94
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 04:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4754AA97C98
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 04:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C40E7AA174
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84CC717FB97
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00A4263C9E;
-	Wed, 23 Apr 2025 02:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B938263F47;
+	Wed, 23 Apr 2025 02:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XVljt1Mx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DE9OgOV2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767E6255E31
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 02:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCA10F9;
+	Wed, 23 Apr 2025 02:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745374060; cv=none; b=YuVJjg2vS6NEY3WDa1zjV+BoQFP7GljEbFwninYKBJQdiQtw42F7CGrTaBYpPg10YapbPKYl+lDbpeb0N3QnXg6rv7sRVRdSziywXwg4S6mPfDaaYiH3Emq0AZBotVcU1zBgSOHU6ADXahToGIzSnuhNuLiekAU0UTCQrAWGvnw=
+	t=1745374168; cv=none; b=uWdilxkEtxVrsUSfMbUOtfSCSE0Gzw5ffPeSVLyDvXdTdaal5VPqiyLRRWPh9u4btoi4n/Tle34ZzvLTrwae3IboBl1vHy+bIZ/9Til28b90EIYdDQjHEWY4QFsgExxYo3rjE7vp039Jzhf7BKPJuCW33Y57apujPJ6wVQQfNWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745374060; c=relaxed/simple;
-	bh=iFO9sIvMLfAtIRJe8DuFrkDGtMs6KITrsfxMzgYB540=;
+	s=arc-20240116; t=1745374168; c=relaxed/simple;
+	bh=UBnQaCV//yg967A/9uE6enHkyJdNZjfOvSrMoDjBkno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnH81vsiET8tmbJMXP42gY05mAn4F/MIRGLobKz7lx6EAFfKArC77cvegAQ+wgc7fUTfK1awS4ZF3t+AS3ZZ49VrkCzNhTeN4+e+03lpPev6HxyGwFyhMiIluUxYxFh1V6G00eUgl7tWfSFzKiHBS/MvYLeKN2rBbQD1WcdtRkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XVljt1Mx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K3bvHhOuzFDWG21uSveSS4IlmdR6tNlM7Eg3Pt1CNJQ=; b=XVljt1MxBfBaQS0j7G3ARlX46X
-	XQd0euqi1MvW3hy5nnMwaXu1DdBkHCwC/f/3IZrX7Yw37eFiwiqaLL8WeIoghv7j758UL+35nKK6I
-	Kd5M536psondnaVNg8Rg2eotJVZ8mDuc45baWhyMs0nX9xLTHUeNZybjJlL6FRTfty9BqVjBQs9A+
-	pXXJCkwHzHEV7d7keWUeuGQlq4K2Y1Dc1t51WmaYR5Th1+Vh5sXtzW7xyKUlwY+6YWFk1CbL6fVZy
-	4maL93cgQShcP0QYBIFpLhqwxxqxdllg7qZvKt9ONVmCHctNOvbxHXeHil3EAa837EOXAO1y2ZAhp
-	EIkWn7Ag==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7PWQ-00000006lwV-2N5S;
-	Wed, 23 Apr 2025 02:07:34 +0000
-Date: Wed, 23 Apr 2025 03:07:34 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] mm: workingset: Simplify lockdep check in update_node
-Message-ID: <aAhLZgLT6qPNK4lz@casper.infradead.org>
-References: <20250421-workingset-simplify-v1-1-de5c40051e0e@suse.de>
- <bmzzod73cuumphqg6nyhegogc6wciyw7oewydljexni7tgdcni@32hathqdj7qo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ItkCA9z04Y9+ON/xgBbx2a7VQOJsnNJXuL0CQ5sT/z+zJtQWPkdZF5xbJZO45WBoSDQL9DNnOMaNm+dMQO25qFLfDSodjgPFLHGSCSp88/yartzy3ssovGufA6oaY/Zu/l4kxKGHPDphsIyMoN330Wvr+GCsmfh6zCAHpKTlrpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DE9OgOV2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C9CEC4CEE9;
+	Wed, 23 Apr 2025 02:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745374168;
+	bh=UBnQaCV//yg967A/9uE6enHkyJdNZjfOvSrMoDjBkno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DE9OgOV2eH5NQkUpwEWGdMYVvqx9xfqi5Tr9Cto2AOon+pq7t8VfrjgaEUj5h20fN
+	 pU994/5jvQPCjlSAtcJoZGsIbKVAYuyXFCICHw/IP/5kTcGKyLU5KT+VPQxQItjldu
+	 3V6CYLu4UlnrnwipwWqa5sMXn56CkC/EJVi6l9ooKcFhfNHklhRdecAsk09NhaxvIV
+	 xHPTuocr//cyraIB41TPTiSEIzOclWdv8CP7CsfZIIObReiz2U7/4hKTvJIK1/0Lak
+	 sATF5jD5wimhvyFxuEnvovG0YFsjUwBk8UOrLft0UtPJdCWw8yoQg8uT/2OyqTchoJ
+	 PtjmR1Uqqabyg==
+Date: Tue, 22 Apr 2025 21:09:25 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: dts: qcom: msm8974-oneplus-bacon: Add alias for
+ mmc0
+Message-ID: <uiocx75uir23fiaaun2etbafqwmstez4teoi566m35bdk4mui4@gjid3e5rbm7i>
+References: <20250419-msm8974-mmc-alias-v1-0-82aa131224b6@lucaweiss.eu>
+ <20250419-msm8974-mmc-alias-v1-1-82aa131224b6@lucaweiss.eu>
+ <k7dm2tpw3mg34fydyug3rjnkwgfu2lwwzddd4edmano6jsgoiv@6klzba5rjpdy>
+ <ea7ac010-3b9d-4915-9a19-cb5ebb77c764@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,16 +62,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bmzzod73cuumphqg6nyhegogc6wciyw7oewydljexni7tgdcni@32hathqdj7qo>
+In-Reply-To: <ea7ac010-3b9d-4915-9a19-cb5ebb77c764@lucaweiss.eu>
 
-On Mon, Apr 21, 2025 at 06:39:53PM +0100, Pedro Falcato wrote:
-> Actually, not sure if this is wanted given the original code is a little more
-> explicit on what the lock is. +CC the original author
+On Sun, Apr 20, 2025 at 07:14:12PM +0200, Luca Weiss wrote:
+> Hi Bjorn,
 > 
-> If people think this is worse, just drop the patch, I don't really care - was just
-> checking out the function for other purposes and found this bit a little confusing.
+> On 20-04-2025 7:05 p.m., Bjorn Andersson wrote:
+> > On Sat, Apr 19, 2025 at 11:03:57AM +0200, Luca Weiss wrote:
+> > > Add an alias for the internal storage so it always becomes mmcblk0.
+> > > 
+> > 
+> > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> > calls for a problem description to start your commit message. Sometimes
+> > the problem is obvious, but here &sdhc_2 is disable on this board, so
+> > when does this not become mmcblk0? What is the problem you're solving?
+> 
+> I have really seen internal storage become mmcblk1 on one of these devices
+> with no SD card. I can't recall which one anymore, but this was the main
+> idea why I wrote these patches. Maybe it's something to do with the mmc wifi
+> on some of the boards?
+> 
+> But I think it's not a bad idea to make this explicit for all, and align the
+> boards with each other.
+> 
 
-I think it's clearer.
+Thanks for clarifying. I have no concrete objections to the patch, but
+from the commit message it's not clear if this patch solves a problem or
+not. So, please incorporate your motivation in the commit message.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Thanks,
+Bjorn
+
+> Regards
+> Luca
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> > > ---
+> > >   arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
+> > > index 4c8edadea0ac63db668dbd666fbb8d92e23232b7..88ff6535477bffefe475cc5fe927b3cc5d223084 100644
+> > > --- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
+> > > +++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-oneplus-bacon.dts
+> > > @@ -13,6 +13,7 @@ / {
+> > >   	qcom,board-id = <8 0>;
+> > >   	aliases {
+> > > +		mmc0 = &sdhc_1;
+> > >   		serial0 = &blsp1_uart2;
+> > >   	};
+> > > 
+> > > -- 
+> > > 2.49.0
+> > > 
+> 
 
