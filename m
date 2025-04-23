@@ -1,104 +1,177 @@
-Return-Path: <linux-kernel+bounces-616671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6C7A9948F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4244A9944D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EC51BA3F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825F21BC5018
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCBB28F924;
-	Wed, 23 Apr 2025 15:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F5528BA83;
+	Wed, 23 Apr 2025 15:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM3VirT1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWLEduGE"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C0928B4E6;
-	Wed, 23 Apr 2025 15:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8517B421;
+	Wed, 23 Apr 2025 15:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423413; cv=none; b=S59gZvBPcNtU/hs9oLhshomZUDSmpymIoFNwW/Jd7rFb75KZML4LuVxD6+gxii5oII/h54/ijFQr59dLmyWo2Di7L4ZirzYOV6GTmr9x+56hIJbQqSEPAvd/GUYM3huekGX9VW0QgVnxEwP26eaBa8Cm39/yTSMTukGcGmkbooc=
+	t=1745423467; cv=none; b=PpvCgUcdx6ijn5ZawuK9W84DtLu8/S3ck+pYK9SLBxKXP4Gu2tvQ4V/L42XjVtgt8H2MushJZgBDIdUuQcQ4l/HBynLr08NpkBpRywT0m26jysBy2CV+8MGu2j5i9os3NbtJTLlxyh9PFUj5usP9YbTVjTD5iobSz8KFKL2CUhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423413; c=relaxed/simple;
-	bh=Fa+PXibvXrxCCcV4W6GLI93MbvVmhGXd8DSbkWF71F8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCDqpc3GnLUGaFHw7tz3jWNSkl2NxZbv0Dtn9Iuz5wWhHFqUiAPD6LnSKUZoTXJnOoJkyOYiHuSe0eOflEqMucmKqhENK+MtWuvj2gsWGY+C/xdUW3JNh2Hrsz1rpPx7fh+UZJUTCSLyHccevSYtq+EGCSDQL6SjVS1AuPxE2P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM3VirT1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C73C4CEE8;
-	Wed, 23 Apr 2025 15:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745423413;
-	bh=Fa+PXibvXrxCCcV4W6GLI93MbvVmhGXd8DSbkWF71F8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IM3VirT1GCLdpUWumjiEIQBBP6rEFB0Qkq8Nrq/DxatvqXR2/nHyjfCjvRd3OIrAJ
-	 g1QLm8T11TqC6QWNzIRojs5wcE80r6maY82RhYQhN2bhfbHoax2HQStzzOsn848I7c
-	 Qg5HM+7K+/uEe+e2ky383M530lHz2zQofT+v8e+mZGe2X/axgEfwviMCjWsuK5Gfj/
-	 8olmnuXWJtkMDX3XrHfnKpqJOEKv2sTiVOa1nngV9UM4hRUb3gGcy7Zi15CYO6eaV1
-	 4hTixLiM5MXXYX8MAnZe5GFlu/2W/UEHLkEuHFlE1bpMTtRXeMdwHEL9wXAxT5QZB7
-	 9c+ZZIkU6xXYQ==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30dd5a93b49so692471fa.0;
-        Wed, 23 Apr 2025 08:50:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJxnyY+YPMdMbD4lfmAVInh6BtNDMIqxH239FDCmLfPnxUlHPGffB7mugPKGCjx03SAKW6fjH05RES/r+s@vger.kernel.org, AJvYcCVG7i27uVlfwwuNQsvnHWSX1bW1ObklvSCjMGvgDBVv9E4TIV25/KRJahxp7aJn5PkFRa1Ryxxwbys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyonft45XlerO/69w6Q4ewsuoDXcpgAmsNMn9a3QkIxSRmTRERP
-	9BnmYdgLdprmt3KQOHQGCLdez7m1uuo9bZ+QWMH21aDa3Y14uz86Pi9Aq0SvaUwT1d5C6pT7L4y
-	fcv5gk4YptGrQzn/mFnxn5sjCYl4=
-X-Google-Smtp-Source: AGHT+IGVwIf9+lBNVcSQ5X7gdZBSr7LfTa4BLGGADmZZiuPVg72vW71YQfuhY0ZP6YfYdzgScoBjHf5DE11HEX6F/ww=
-X-Received: by 2002:a2e:b892:0:b0:308:f4cc:9519 with SMTP id
- 38308e7fff4ca-310904b8545mr50500811fa.5.1745423411571; Wed, 23 Apr 2025
- 08:50:11 -0700 (PDT)
+	s=arc-20240116; t=1745423467; c=relaxed/simple;
+	bh=B1YKMJ/VnCvb13tK2on40+VgvnHD3klALa7QqH6XHwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwD9DK8jJwl5mfFE0gZ6V56FDlbhJi7xa6kAXvF+uqlyeCs5crCESoCJOXwm1xqpR8zKB25xQJ7FAnedQPkxjipBHt+ayWTS5yvOPgKU+4YSCdbYNqi2OuHatvE56N4q6ygMAz7XgR15ziubYNdYEiy6dK8FU/pPN4G4cbx29BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWLEduGE; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22c33ac23edso66860585ad.0;
+        Wed, 23 Apr 2025 08:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745423462; x=1746028262; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1x0LjQOtwd7ZGiLXKIcfaebNJm+NkVU0O+im0vtc/gI=;
+        b=NWLEduGEMeXuU4QId0UOeUDjZ1zm5eVoKsLFfAMyXRNR9Yw2AZFTKS0MlPvj0qxJSV
+         D5KHe6za5HiL1SmK6K4XioOB8svZd4JZjYtsJPZJNY0+OFE7lroBDaiJcNfs/gAjop3P
+         0PXJtkwXuvgCctsMrKLtNuw/dPgptUDTDX3EEya1ubTETRKdl2uTXDkQTdFkq6VMsHXg
+         fAoGHlezXe3XqlskXmbMHwdkr07PQtHT9yS8KWm0XHXEHtWVHKgsrsTPJUu4sVP0+wCk
+         By9DevaGQC0EjKf0rVJD4+ZfCZsC1WEe5bWL40H58ynSqfEWllc8VZ2OHbYJdhtO9VJM
+         moAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745423462; x=1746028262;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1x0LjQOtwd7ZGiLXKIcfaebNJm+NkVU0O+im0vtc/gI=;
+        b=xIl85koxElVmVVBmKy59a4PpvpulnO8+5BCRc+DQJfLN4eGkEEvABeplfBgkVg31vf
+         wPnjHQqd3szIMSHsvDakDRos6Spow3XX0neeVwULhv+hFdEW06OyDnC0KorUIZlewPED
+         VydVkLSm5bmarJUKWsobgFrVa7reGfxK8EGsN2a7J7WmMin9FcBCTzwQhFL9g8HG43+I
+         yTyrG3gMFdkaPLPvDCawDxafAwLyZiOPzEvLiOrBvNAHoNT17e3baHwtQEyhdgXpcMTY
+         VMxKy5coirgEpHuHJBOuqJfCsO3XPq2NVBp6Y02NVfK+vo04qoGe4bjJQkAKWs2d9P5j
+         aKzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu4pT4QTvPFVfLdvFdijiv1EClLMiWLZvuPNvJtcX9i+OIv99GxE1u88nUYVdWCrvs6pMLl2ayjsBsB8k=@vger.kernel.org, AJvYcCWGSGw3jDIvRTL6xOjnp2zflRZcN2AiOx1G9TlC0gQrczAkV2qLLhuRUWgpY3DCbzKFF09/TQZqv/hxA4DSlqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXvAi39Yf1xe2WukVhQ0TcR7hU1J1AHs2zpBrFyaA37eiiO79c
+	/VYisFGREKF9g/TGLT4BsGejG9M8CNZyR48LSfOqhTqYdqPl3N2U
+X-Gm-Gg: ASbGncvAftKR6ZdfhsivAi7ZhYQie2M2piiPsx5OzyFER1q5Vv+4tZj/5f3oMBiNgn6
+	+aj6f6jAyRJ8KQL82N+jb15s3px+/0FNjDiJbstWn+N85HLSxKutxzgRzIe95FhYO8ItUe8hpZp
+	hOcoEQbNr7qqMFMb1c2488MgncyyfViS0FU/GHBn7OiYoVfuOBc6iGR1RsUp7Xy/zErYtm0f6cY
+	Vw8g5q01A/DojuxYfCD+woLX8B4AqquvsUBBgZDE5SRdYpuX6GTWIVH4gq6lF+rAxyEQAZR2I5v
+	HRoXZM26FVrgsGxytVnLMpMmqD8kCzc07lmFK4Gb
+X-Google-Smtp-Source: AGHT+IGmT+yDYzc6f9FEH4JY+azUgWMSi7aZqK6fuTmOSzIp64TCmCxmBamClG/qmaIP+RwQylsdIA==
+X-Received: by 2002:a17:90b:2f06:b0:305:5f25:59a5 with SMTP id 98e67ed59e1d1-3087bcc8b21mr27744965a91.35.1745423461783;
+        Wed, 23 Apr 2025 08:51:01 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309df9232f2sm1813224a91.0.2025.04.23.08.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 08:51:01 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:50:59 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Burak Emir <bqe@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/5] rust: add bindings for bitops.h
+Message-ID: <aAkMY2QBG5btKVIO@yury>
+References: <20250423134344.3888205-2-bqe@google.com>
+ <20250423134344.3888205-4-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418141253.2601348-8-ardb+git@google.com> <20250418141253.2601348-11-ardb+git@google.com>
- <cf878810-81ed-3017-52c6-ce6aa41b5f01@amd.com>
-In-Reply-To: <cf878810-81ed-3017-52c6-ce6aa41b5f01@amd.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 23 Apr 2025 17:50:00 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGDyM-W1umDsBGO17+UqczhODBcb73StPELfOAQN2_V2A@mail.gmail.com>
-X-Gm-Features: ATxdqUGXliD83dE5faxOPvQJQzy9RCZaO4k0iC9l4w0xrGgHzIW_T4_87Kjf41s
-Message-ID: <CAMj1kXGDyM-W1umDsBGO17+UqczhODBcb73StPELfOAQN2_V2A@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] x86/sev: Split off startup code from core code
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, mingo@kernel.org, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423134344.3888205-4-bqe@google.com>
 
-On Wed, 23 Apr 2025 at 17:22, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> On 4/18/25 09:12, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Disentangle the SEV core code and the SEV code that is called during
-> > early boot. The latter piece will be moved into startup/ in a subsequent
-> > patch.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
->
-> This patch breaks SNP guests. The SNP guest boots, but no longer has
-> access to the VMPCK keys needed to communicate with the ASP, which is
-> used, for example, to obtain an attestation report.
->
-> It looks like the secrets_pa is defined as static in both startup.c and
-> core.c. It is set by a function in startup.c and so when used in core.c
-> its value will be 0.
->
-> The following fixed the issue for me. Let me know if it can be squashed
-> in or a full patch is needed. Although, it likely should be named
-> sev_secrets_pa since it is no longer static.
->
+On Wed, Apr 23, 2025 at 01:43:34PM +0000, Burak Emir wrote:
+> Makes atomic set_bit and clear_bit inline functions as well as the
+> non-atomic variants __set_bit and __clear_bit available to Rust.
+> Adds a new MAINTAINERS section BITOPS API BINDINGS [RUST].
+> 
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Burak Emir <bqe@google.com>
 
-Thanks for the fix, and apologies for using you as a guinea pig - I've
-been struggling to get access to SEV-SNP capable hardware, although a
-suitable EPYC based machine should be arriving in a month or 2.
+Acked-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
-I'd assume a proper patch is better, and renaming it to sev_secrets_pa
-doesn't seem that intrusive. But it is ultimately Ingo's call.
+> ---
+>  MAINTAINERS            |  5 +++++
+>  rust/helpers/bitops.c  | 23 +++++++++++++++++++++++
+>  rust/helpers/helpers.c |  1 +
+>  3 files changed, 29 insertions(+)
+>  create mode 100644 rust/helpers/bitops.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b11eb9ebc53d..1f162f64eded 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4149,6 +4149,11 @@ F:	include/linux/bitops.h
+>  F:	lib/test_bitops.c
+>  F:	tools/*/bitops*
+>  
+> +BITOPS API BINDINGS [RUST]
+> +M:	Yury Norov <yury.norov@gmail.com>
+> +S:	Maintained
+> +F:	rust/helpers/bitops.c
+> +
+>  BLINKM RGB LED DRIVER
+>  M:	Jan-Simon Moeller <jansimon.moeller@gmx.de>
+>  S:	Maintained
+> diff --git a/rust/helpers/bitops.c b/rust/helpers/bitops.c
+> new file mode 100644
+> index 000000000000..1fe9e3b23a39
+> --- /dev/null
+> +++ b/rust/helpers/bitops.c
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bitops.h>
+> +
+> +void rust_helper___set_bit(unsigned int nr, unsigned long *addr)
+> +{
+> +	__set_bit(nr, addr);
+> +}
+> +
+> +void rust_helper___clear_bit(unsigned int nr, unsigned long *addr)
+> +{
+> +	__clear_bit(nr, addr);
+> +}
+> +
+> +void rust_helper_set_bit(unsigned int nr, volatile unsigned long *addr)
+> +{
+> +	set_bit(nr, addr);
+> +}
+> +
+> +void rust_helper_clear_bit(unsigned int nr, volatile unsigned long *addr)
+> +{
+> +	clear_bit(nr, addr);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index aa0c0c2cdee2..aaf0f735d1c2 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -8,6 +8,7 @@
+>   */
+>  
+>  #include "bitmap.c"
+> +#include "bitops.c"
+>  #include "blk.c"
+>  #include "bug.c"
+>  #include "build_assert.c"
+> -- 
+> 2.49.0.805.g082f7c87e0-goog
 
