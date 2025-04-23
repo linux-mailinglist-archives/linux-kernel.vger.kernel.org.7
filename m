@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-616605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C12AA992BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:49:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46287A992A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3389A0D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34C29A1958
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B930529AB1C;
-	Wed, 23 Apr 2025 15:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46E528CF4C;
+	Wed, 23 Apr 2025 15:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLQsHTSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B67B298CB0;
-	Wed, 23 Apr 2025 15:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Cp0hA+Ip"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3754F28BAA9;
+	Wed, 23 Apr 2025 15:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421807; cv=none; b=fL/q7hCnKs8HTFOdg8RKXscYmXK9nuy5Oz/eaVT5/C6uP1o6Qs0Qv/S8Xt/lblqQ58vJkL/A5rlpAOx0DZEnGOUn6uxsVhi/7/X+gdOmBRfFIBucPWH/mmYKzITPfHX5As58c4gg78YjNBNCTbIhVO/o5OrYK87edsjDuuu9/lA=
+	t=1745421881; cv=none; b=Qoc0UROV8jt7VWzdun7WZMfDpP+zi5msVMB2/1C7Pf6/dna4h2vE+qU+dw+Td5RJYL6IZUaJqxww9LDMDtBcyjKZ/fC6aYNQxRER/QGGJfzLLRSgrHxWVPKLnzYFWQE3gmNQ+gVqbZlzrAaWEMOqhzUS4X70Ol0pwZGmuBVtFus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421807; c=relaxed/simple;
-	bh=ttYFtyupJCMupeSXwyqSaNxnbRiKjhqkBV9hyVnYY30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7dLB4nmy3LkG3ZMebUsb/0cCDJkKzTqqqw9BDvxIlOFb5uOcJH7t3kvtaCZE42BMOi/mg/KS5DjLu5Rk/fQUdm5TFbnzxO8qPmMrfJ2FPKU9mJ/kfGSaJaF6gATeyh24Osabd+S16nRMUxxJzhyd93Tlnf2e/yz9KzpGCKtrMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLQsHTSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D98C4CEE2;
-	Wed, 23 Apr 2025 15:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421806;
-	bh=ttYFtyupJCMupeSXwyqSaNxnbRiKjhqkBV9hyVnYY30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLQsHTSROUAK6ThwkWXhF5VTQtSjbjK5MKQgPWBeAYm3OnQl3xo9vUW3c5NIrFpzg
-	 z+lp7GpBGY+WxxQMdQI0S5e9vR73KD0m+fgVfer7oIVylZ0pDaQSMvatCNmhoAYjJz
-	 WjC+opRME537JuHl44GZKOV0qEjjp92qrZ18eFetM0akxL79A+P90DDu+CKlRgaKUc
-	 +2oRVCZHEj7iQ802qNTm67K8mbY+93IrU7H5otIH+P13xmfpnzMl3ELoTX0YE+MNMi
-	 zDHktPncfG76nUvxqFwQANV/QL0RWZHJPaNKtMlkPxd2+oKXeWR5eToaz5f6GmRs6a
-	 qhWfSTuHn/N6Q==
-Date: Wed, 23 Apr 2025 10:23:25 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ze Huang <huangze@whut.edu.cn>
-Cc: linux-phy@lists.infradead.org, linux-riscv@lists.infradead.org,
-	Junzhong Pan <junzhong.pan@spacemit.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v2 2/4] dt-bindings: phy: spacemit: add K1 PCIe/USB3
- combo PHY
-Message-ID: <174542180456.549434.17717366396864684617.robh@kernel.org>
-References: <20250418-b4-k1-usb3-phy-v2-v2-0-b69e02da84eb@whut.edu.cn>
- <20250418-b4-k1-usb3-phy-v2-v2-2-b69e02da84eb@whut.edu.cn>
+	s=arc-20240116; t=1745421881; c=relaxed/simple;
+	bh=nMhCwAOTSMRyVPdhT0XUroexVj2lZ57XR6Ezp9vic6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LtWxzADva783RYCqN0pglLXrFYmrhJC+PxPyh7qqk7WNcMqW9TH6L8AgHPKViE6cZoLp7cb8+aXjQjnaEvqi40J6wt2XISDnQYnvvwMl5VgkJGXMPZo/GDe/fRSJf35K4mTAqMPLNyZ3JGXZKbFrC+z224jRZfizY83WFGW/LKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Cp0hA+Ip; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=fLf6c6c5ft8eN46VJWzZEfTcLHZ/iFnsmavl08qDxwU=;
+	b=Cp0hA+IpCX8WlV1svNV2MyHKPXjl4LoFaXE7Xrw/Badl8BO+C+hHZwx+ElOkcQ
+	eqscdFuprmIXObh56TRVMM7UNOB9XYAOuXyt5vptI36gOtPLW2cXYqMpWSy29JsW
+	I9URNWxVX2J5ZPX6Bj4iY0vFHAtrO5y0QAwoayJE6hVwI=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDnfGf9BQloLLNpCA--.43427S2;
+	Wed, 23 Apr 2025 23:23:42 +0800 (CST)
+Message-ID: <9212f2ee-9562-4409-a378-20e41fe30325@163.com>
+Date: Wed, 23 Apr 2025 23:23:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418-b4-k1-usb3-phy-v2-v2-2-b69e02da84eb@whut.edu.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] PCI: dw-rockchip: Reorganize register and bitfield
+ definitions
+To: Niklas Cassel <cassel@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250423105415.305556-1-18255117159@163.com>
+ <20250423105415.305556-3-18255117159@163.com> <aAjufPQnBsR6ysAH@ryzen>
+ <352e40a0-65e2-499f-a7dd-904a4a7b19da@163.com> <aAkDRIqIOjLo7haw@ryzen>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aAkDRIqIOjLo7haw@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnfGf9BQloLLNpCA--.43427S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF4ktF47Gw18Cr4UtrWUJwb_yoW3trgEqr
+	4UArsxCryqgF9xWa93Jr1jyFsIk3ykuw45urykXr4Iyw1agrs5Kr429rZ3JFy8Ja13GFs2
+	kw15Aa1ruryS9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjqjg3UUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWw44o2gJAM5KAgABso
 
 
-On Fri, 18 Apr 2025 21:19:51 +0800, Ze Huang wrote:
-> Introduce support for SpacemiT K1 PCIe/USB3 combo PHY controller.
+
+On 2025/4/23 23:12, Niklas Cassel wrote:
+> On Wed, Apr 23, 2025 at 10:14:57PM +0800, Hans Zhang wrote:
+>>> I can see why you renamed PCIE_CLIENT_GENERAL_CONTROL to PCIE_CLIENT_GENERAL_CON
+>>> (to match PCIE_CLIENT_MSG_GEN_CON).
+>>>
+>>> But now we have PCIE_CLIENT_MSG_GEN_CON / PCIE_CLIENT_GENERAL_CON and
+>>> PCIE_CLIENT_HOT_RESET_CTRL.
+>>>
+>>> _CTRL seems like a more common shortening. How about renaming all three to
+>>> end with _CTRL ?
+>>
+>> I saw that TRM is named like this.
+>>
+>> PCIE_CLIENT_GENERAL_CON / PCIE_CLIENT_MSG_GEN_CON /
+>> PCIE_CLIENT_HOT_RESET_CTRL
+>>
+>> Shall we take TRM as the standard or your suggestion?
 > 
-> PCIe portA and USB3 controller share this phy, only one of them can work
-> at any given application scenario.
+> Aha, so the inconsistency is in the TRM... hahaha :)
 > 
-> Co-developed-by: Junzhong Pan <junzhong.pan@spacemit.com>
-> Signed-off-by: Ze Huang <huangze@whut.edu.cn>
-> ---
->  .../bindings/phy/spacemit,k1-combphy.yaml          | 72 ++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
+> Probably best to keep it identical to the TRM.
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Niklas,
+
+Thank you very much for your reply. Okay.
+
+Best regards,
+Hans
 
 
