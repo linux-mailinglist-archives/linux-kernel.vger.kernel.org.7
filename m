@@ -1,63 +1,50 @@
-Return-Path: <linux-kernel+bounces-616660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81413A994B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456FEA99456
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D381BA4657
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92CA170B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E7028937A;
-	Wed, 23 Apr 2025 15:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0f0eh/2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59686292938;
+	Wed, 23 Apr 2025 15:46:24 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A092135D0;
-	Wed, 23 Apr 2025 15:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F417D176AC8;
+	Wed, 23 Apr 2025 15:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423145; cv=none; b=Ke8c0kmO+axNV5w/OC5U4kMOlItiqvriTFToYQHLmn3mQj01DRipfUE/FswH4ya9HxQJJzt4q5wHn6gcQz59Ez43c+H1mdyh2YKRKgIM6J7sQbVYs72Z4zawsWZ9XlIgXZMDbBneV8hpQzJRi+YMTtXK3ojqzTk+deBJPjvOCrU=
+	t=1745423183; cv=none; b=tiyott2uZN+pIVjRiMokVobfHExQ2vRXX1VXN3o/IRq3dzL9bD5Esu9dmlKfT0Cw20d3dswqT1YMB5egNZOXrcwf27tyJKwjq7c+t6DFC0SvRpQiFvmpWi62wh1ycNBzd5Rni5PNyMHMm/0Ifj06dJWj5sj6lcqvmqsELvMVelo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423145; c=relaxed/simple;
-	bh=uXGY1VAD0ezdy/ybNS4JN/GqOzUTWI23//dv6QmQUdA=;
+	s=arc-20240116; t=1745423183; c=relaxed/simple;
+	bh=Bs2vkrYkdLBN+hEWYlKD6nWHngnhzbBykaskkdjOSbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCwtNAtPOrg2q3f61In6tpOOGPWSJfb/8NkpJiMq2tW2B8xC+Q60L4zusnFTDF0O1Izj6gETnuu74d/9lHnZLKniuB4dnPxtIuDHZPCb5NC6vPXUcWsVusuUWAcKvIBswoDZzjxJOVRps3Ec2tgQ2+4dtzZFHG4rZLZkVSECzUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0f0eh/2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3897C4CEE2;
-	Wed, 23 Apr 2025 15:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745423144;
-	bh=uXGY1VAD0ezdy/ybNS4JN/GqOzUTWI23//dv6QmQUdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R0f0eh/2LvsfL4iutKlrnN7chSnjyw9pMqdFl73WtrDzgT2ZydtvcA8ApMRrfVIYy
-	 0CZgrRPJS++EmO8LsVSliQHDPcJ4RjdLHd80VCSoQOqGK2G/sxQPoZ0XojLkat0gbl
-	 X9euuD1yjltFR9FrI4sj7wt/r4snbcmpPCPgsfGpPE6QkuX0XI/6o5kEQETPqu2/NC
-	 34NzBeNuKsBs5HwcJNh7E93sOIpOuLw5h5wZ4lGRL6HeCBSSF4EK6B1Vxc96zgxjOV
-	 XwqUIMgq4hiEEAgxXOvGPFodHikCT0z4VCIUYX0Ma0thcWjIropdyYMZw+iZRxy4cb
-	 R0dclULDW9zZA==
-Date: Wed, 23 Apr 2025 10:45:42 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-mediatek@lists.infradead.org, linux-input@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: HID: i2c-hid: elan: Introduce Elan
- eKTH8D18
-Message-ID: <174542314188.576994.12974029497689302557.robh@kernel.org>
-References: <20250421101248.426929-1-wenst@chromium.org>
- <20250421101248.426929-2-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qz5mARTMAVjGSRLdbtZSFJ2IHJ+P0WFYm/iqqxaUPdt04kpaFYe19kvnJNz0eBLlPh1hgfjXTABJz/YvWaXykh5oRod+lo+20noaGJHPtonTPq7oRtP3oiowf7hqfNmyIrckojX0Wr2iKB8fmcnJB8e1bfT8/jAqi0dhiw4P4uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 8483368C4E; Wed, 23 Apr 2025 17:46:15 +0200 (CEST)
+Date: Wed, 23 Apr 2025 17:46:15 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 05/15] xfs: ignore HW which cannot atomic write a
+ single block
+Message-ID: <20250423154615.GA31899@lst.de>
+References: <20250422122739.2230121-1-john.g.garry@oracle.com> <20250422122739.2230121-6-john.g.garry@oracle.com> <20250423003823.GW25675@frogsfrogsfrogs> <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com> <20250423081055.GA28307@lst.de> <f27ea8f7-700a-4fb1-b9cd-a0cba04c9e47@oracle.com> <20250423083317.GB30432@lst.de> <20250423151224.GC25675@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +53,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250421101248.426929-2-wenst@chromium.org>
+In-Reply-To: <20250423151224.GC25675@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Wed, Apr 23, 2025 at 08:12:24AM -0700, Darrick J. Wong wrote:
+> I disagree, leaving the hardware awu_min/max in the buftarg makes more
+> sense to me because the buftarg is our abstraction for a block device,
+> and these fields describe the atomic write units that we can use with
+> that block device.
 
-On Mon, 21 Apr 2025 18:12:39 +0800, Chen-Yu Tsai wrote:
-> The Elan eKTH8D18 touchscreen controller is an I2C HID device with a
-> longer boot-up time. Power sequence timing wise it is compatible with
-> the eKTH6A12NAY, with a power-on delay of at least 5ms, 20ms
-> out-of-reset for I2C ack response, and 150ms out-of-reset for I2C HID
-> enumeration, both shorter than what the eKTH6A12NAY requires.
-> Enumeration and subsequent operation follows the I2C HID standard.
-> 
-> Add a compatible string for it with the ekth6a12nay one as a fallback.
-> No enum was used as it is rare to actually add new entries. These
-> chips are commonly completely backward compatible, and unless the
-> power sequencing delays change, there is no real effort being made to
-> keep track of new parts, which come out constantly.
-> 
-> Also drop the constraints on the I2C address since it's not really
-> part of the binding.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> Changes since v1:
-> - Reworded commit message
-> - Dropped the enum for the new compatible string entry
-> - Dropped constraint on I2C address completely
-> ---
->  .../devicetree/bindings/input/elan,ekth6915.yaml     | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Yeah.  If you want to keep it I'd suggest we go back to my earlier
+suggestion.
 
 
