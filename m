@@ -1,99 +1,257 @@
-Return-Path: <linux-kernel+bounces-616914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DE7A997E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:30:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C741AA997F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EE44A2C28
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F024A2D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A5928EA4C;
-	Wed, 23 Apr 2025 18:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B2028CF7C;
+	Wed, 23 Apr 2025 18:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urV/TSvq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcgI1gCg"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0B28BABA;
-	Wed, 23 Apr 2025 18:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1B14900B;
+	Wed, 23 Apr 2025 18:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432992; cv=none; b=s327jKM0v9wkM7R1grq/yqshFWlD6imtw0es1d8Skz5KQX8JbAO3xybCtIU7qR50fRe7T8dOGBoKSVTO4DZO88whwIR5YCW3yfDiIIaMkS84Gejafo7Qm16pWOgu/Ul+pSzs/PQySWOsjTS+PM8gQUD26+Vq2zvYtV6yDVZpB1c=
+	t=1745433085; cv=none; b=qpHLbWiuyATxcpG83f2C3sweGU2Dtakw+rGIHcjicO3G1LyRObNUDR2FQt1QVZnoiIV9BPzE2I5wGmR0U8E3yEza9l2GmdygXxykTOjJa4Lo66dLiNviK2cNyn7I7HeMO7nxJ4PDOsE4Hu7u92lldPfddWIGwge6eatoqRpee98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432992; c=relaxed/simple;
-	bh=RReBdPMcE9SDpIbtu6uKovd5n+T3FuJGV0zcFaRD2WQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ziyyd0W3sqJRDRVsoGkla8uRbxiC2OF4WC9aIZ6ZOf++1oYvjDNmT/jGKbH95IjTLda5hltgJ6bfVDXP1ngcabpiZDdJ4wKgTi/XV1KfkNf9F41ACNYiwcgIcZMgrNqlGlXh+5IjWzX0fzSt9CsO2ZJEyU3UIlK5haHbA7JQ38U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urV/TSvq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD775C4CEE2;
-	Wed, 23 Apr 2025 18:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745432991;
-	bh=RReBdPMcE9SDpIbtu6uKovd5n+T3FuJGV0zcFaRD2WQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=urV/TSvqRVJt3e7O7/GiOobiZevqEe6tBp1hLQqTsh8UX5Nhzoc2IC4SCfJVb9At1
-	 Gpf73boqIuDReA5ETLNb6IRdmLR/f0KA/ReJvMcS4bwUmKJkAhTrodWu8fPwsQU5Zh
-	 HC8bgSmWaLITIFxMU0cVTwUzYAeXGs5Xp38461dUwZJy3PQEtM8IDD9S0YrrAAmXmt
-	 OcWI+ZB4Z6fRXjsdH2EebOi63lDK5gUJcKuDZszOnVaRnkkEQ1UMGXskX5PmlvHGUY
-	 Pw8fS5pSGJQgUhnidB2VrHS5vc7fTMBNMonryrjIfV6kSpKDWKao9yZt+U+bKAW7AN
-	 ZKpIBOo+hm5og==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCC380CED9;
-	Wed, 23 Apr 2025 18:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745433085; c=relaxed/simple;
+	bh=tJBn0sbdCDEFGfNg120jO88woAsVmT552TfvpbvWXyo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=ZUI/gFNLwHxXBHDK0SGl5Pw2r6AEu2K6J6fvgh1ZpUJzoiXL77Ty3inrtrrmSjtx1yJmzI9N1BZKYCk7O/MGlaL+C5GOTP3rGHobm0vnGgQ3OWBvBAnH3ZKOzciHoNrM3nQExOib/xyG6ZGfCSx/kdjgUm2zqAh8HoOSaWcGKgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcgI1gCg; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so1329542a91.1;
+        Wed, 23 Apr 2025 11:31:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745433083; x=1746037883; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cOpQeKb3vixx81nI9GHXsTk9qiiQQKOXE/nG8kKovQA=;
+        b=bcgI1gCgRpEsoG/X2cNMAmoOd6LX9CC7i1NNGugvhJ5d/WyqhZmFJpJ7j50yGv/2UW
+         ZOrkthQZXIvgWZBUJt0q3WJTioWXLPUE1ZASz0D+goo9xFGSmZ7d3Ogf3IFnd6VrTwYD
+         abcNDTS4If7DugBTFie2yvddfb5DKeiKIsmUYdAYB67JXLFPaYigaQbXBgBukAsVHioZ
+         5rjsyJbH2mIXq3l52EwgC2GpVBAzzQI2iO9BqA5mVS1Kd/UWg7ph6e+IqQB9fRruv4ow
+         Bp/m6CH0Fo9oKQSY7lktY1MRJPjRQWfJLxo36Wvh/yfWmzif09s63J1jtcakAiuF35vd
+         3YlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745433083; x=1746037883;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cOpQeKb3vixx81nI9GHXsTk9qiiQQKOXE/nG8kKovQA=;
+        b=SFbVjwWjb5BhTEkAWw5xt+Fgxy2XKMAfT9o1nzryjRzghOLlfGc26fuIrO8sZ/jlDc
+         ByegdsQhbM/HVwVupRTcCnDcz28QyrIuc4GET9aw9D+hcs4MpdzbgkOo7n6jz3WNKRTb
+         BxG2LgBG3H/4cwLD2fJeMEQIImyFv0fXHgI+yszNPW2nnVxCrAcW125QcPRXScmK2Q3r
+         tLobjM06gzmDdaOhSmLadIvb3FI9L5icb1kbeUeVM5IFeIXPCavHMYMvqnmAAYCIXFmw
+         9G/2WZipsq/Z0WQTbguzTf3c+0Ib7LCixFKtWDSoRRyhXnOjKw4FckOac0mB1zSqq9D4
+         C7XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQWO47ZtJHFByJNyICNqPDKMJYw/4A4OiY0x7zJADfcgm+ZfOaAu9utTpdKJ2nwz8c2xdV0Ji8f8nvpLQ=@vger.kernel.org, AJvYcCV2NPwgNfsN4tJKaa0pjptK5ZiioiOyZVCUSFQq1rhN4G+HBtsoiMCqTGLF7dJiijXJ9vVqMxidW/Iql48=@vger.kernel.org, AJvYcCWFcbvXnR7BfOAUxcj9WK63fzt3K/exnQ6FKWTP6q5lVPCF6yjW0tcBHuX7uKYqLUam/+Q+5F7XUA3ryNQcxfpBoirHbw==@vger.kernel.org, AJvYcCWU6RCNqr6Kh6CuOO14CkSrijPo9g2AqCqoaJu7UJo8YdlJAw9lGiupLsoz5QAEO4D75lYVNV2kRxqK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNnUer6kmvyqV4XFf7hgcwg6QYFht/x5XkIn1Je+DF8BDYbyVr
+	jufMbwzagJHmvTRskJONBi6NU3o0y9ZX2xEmnLenHbBYns4d1ghi
+X-Gm-Gg: ASbGncuPbUAPL5F+kQJThMpHXAaAKVM4OOBnBwZ4junpqW0opgvD2LFp9NmW9zmLI8S
+	CQfPuVJAgtq58aSXxqZKpLtTIT65jZJ3zL8E4wmL43yc16qxTxoQ1+DzlZhK683iQqd1hwUHxRk
+	uBgXJ2eySGBwIGv/twERJgXWxqrQAWhZ3BjqHXCmRl8Z+U6YLkxPLX5TPbOCXzBmbYrjlU0mh08
+	QNHpRssmxJBv6Ot+sj4eiCayFOHSE5DyyWEiZMQLj7fFWIG/msufIRzLFJ+YyKvtRcomBqnDt6n
+	vL9woy/9Itx3/hqhawoogG5mYDzNRa+C37c7AV9z6Wqz
+X-Google-Smtp-Source: AGHT+IEHrNiRnTXjVPBRN3km9ezXq9nftJR+dFDQktX4gOLxCfeSk1aB3DWtqmO/wcVrpprP5KJBrA==
+X-Received: by 2002:a17:90b:58ed:b0:2fa:2133:bc87 with SMTP id 98e67ed59e1d1-309ec5e69fdmr363341a91.6.1745433083197;
+        Wed, 23 Apr 2025 11:31:23 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309e0d06b13sm1984557a91.43.2025.04.23.11.31.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 11:31:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v4 0/2] bpf: Allow access to const void pointer
- arguments in tracing programs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174543303025.2731730.15635932606525248538.git-patchwork-notify@kernel.org>
-Date: Wed, 23 Apr 2025 18:30:30 +0000
-References: <20250423121329.3163461-1-mannkafai@gmail.com>
-In-Reply-To: <20250423121329.3163461-1-mannkafai@gmail.com>
-To: KaFai Wan <mannkafai@gmail.com>
-Cc: alexei.starovoitov@gmail.com, martin.lau@linux.dev, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- mykolal@fb.com, shuah@kernel.org, memxor@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, leon.hwang@linux.dev
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Apr 2025 15:31:17 -0300
+Message-Id: <D9E8DY5E0CTO.2O6K5NWUGKA6Z@gmail.com>
+Subject: Re: [PATCH 6/7] platform/x86/dell: alienware-wmi: update sysfs
+ visibility macros
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "David E. Box" <david.e.box@linux.intel.com>, <corbet@lwn.net>,
+ <bhelgaas@google.com>, <hdegoede@redhat.com>,
+ <ilpo.jarvinen@linux.intel.com>, <vkoul@kernel.org>,
+ <yung-chuan.liao@linux.intel.com>, <pierre-louis.bossart@linux.dev>,
+ <sanyog.r.kale@intel.com>, <gregkh@linuxfoundation.org>,
+ <rafael@kernel.org>, <dakr@kernel.org>, <dan.j.williams@intel.com>,
+ <andriy.shevchenko@linux.intel.com>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
+ <Dell.Client.Kernel@dell.com>, <linux-sound@vger.kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250423175040.784680-1-david.e.box@linux.intel.com>
+ <20250423175040.784680-7-david.e.box@linux.intel.com>
+In-Reply-To: <20250423175040.784680-7-david.e.box@linux.intel.com>
 
-Hello:
+On Wed Apr 23, 2025 at 2:50 PM -03, David E. Box wrote:
+> Replace deprecated visibility macros and align group naming with new API.
+>
+> In alienware-wmi-base.c, use NAMED_ATTRIBUTE_GROUP_COMBO_VISIBLE(rgb_zone=
+s)
+> to define the rgb_zones attribute group concisely. To preserve the existi=
+ng
+> userspace ABI, rename zone_attr_visible and rgb_zones_attr_visible to
+> zone_group_visible and rgb_zones_group_visible, respectively, to reflect =
+the
+> 'rgb_zones' group.
+>
+> In alienware-wmi-wmax.c, replace DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE() with
+> the renamed DEFINE_SYSFS_GROUP_VISIBILITY() macro for the hdmi, amplifier=
+,
+> and deepsleep attributes to match the updated API.
+>
+> While here, add missing sysfs.h include and sort headers alphabetically. =
+No
+> functional changes are intended.
+>
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+Thanks! I like these new macros.
 
-On Wed, 23 Apr 2025 20:13:27 +0800 you wrote:
-> If we try to access argument which is pointer to const void, it's an
-> UNKNOWN type, verifier will fail to load.
-> 
-> Use is_void_or_int_ptr to check if type is void or int pointer.
-> Add a selftest to check it.
-> 
-> 
-> [...]
+Reviewed-by: Kurt Borja <kuurtb@gmail.com>
 
-Here is the summary with links:
-  - [bpf-next,v4,1/2] bpf: Allow access to const void pointer arguments in tracing programs
-    https://git.kernel.org/bpf/bpf-next/c/1271a40eeafa
-  - [bpf-next,v4,2/2] selftests/bpf: Add test to access const void pointer argument in tracing program
-    https://git.kernel.org/bpf/bpf-next/c/4c0a42c50021
+Small comment bellow.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> ---
+>  .../platform/x86/dell/alienware-wmi-base.c    | 23 ++++++++-----------
+>  .../platform/x86/dell/alienware-wmi-wmax.c    |  7 +++---
+>  2 files changed, 13 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/platform/x86/dell/alienware-wmi-base.c b/drivers/pla=
+tform/x86/dell/alienware-wmi-base.c
+> index 64562b92314f..ee41892e562c 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi-base.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi-base.c
+> @@ -10,10 +10,11 @@
+> =20
+>  #include <linux/acpi.h>
+>  #include <linux/cleanup.h>
+> -#include <linux/module.h>
+> -#include <linux/platform_device.h>
+>  #include <linux/dmi.h>
+>  #include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/sysfs.h>
+>  #include "alienware-wmi.h"
+> =20
+>  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
+> @@ -326,8 +327,8 @@ static ssize_t lighting_control_state_store(struct de=
+vice *dev,
+> =20
+>  static DEVICE_ATTR_RW(lighting_control_state);
+> =20
+> -static umode_t zone_attr_visible(struct kobject *kobj,
+> -				 struct attribute *attr, int n)
+> +static umode_t rgb_zones_attr_visible(struct kobject *kobj,
+> +				      struct attribute *attr, int n)
+>  {
+>  	if (n < alienfx->num_zones + 1)
+>  		return attr->mode;
+> @@ -335,13 +336,12 @@ static umode_t zone_attr_visible(struct kobject *ko=
+bj,
+>  	return 0;
+>  }
+> =20
+> -static bool zone_group_visible(struct kobject *kobj)
+> +static bool rgb_zones_group_visible(struct kobject *kobj)
+>  {
+>  	return alienfx->num_zones > 0;
+>  }
+> -DEFINE_SYSFS_GROUP_VISIBLE(zone);
+> =20
+> -static struct attribute *zone_attrs[] =3D {
+> +static struct attribute *rgb_zones_attrs[] =3D {
+>  	&dev_attr_lighting_control_state.attr,
+>  	&dev_attr_zone00.attr,
+>  	&dev_attr_zone01.attr,
+> @@ -349,12 +349,7 @@ static struct attribute *zone_attrs[] =3D {
+>  	&dev_attr_zone03.attr,
+>  	NULL
+>  };
+> -
+> -static struct attribute_group zone_attribute_group =3D {
+> -	.name =3D "rgb_zones",
+> -	.is_visible =3D SYSFS_GROUP_VISIBLE(zone),
+> -	.attrs =3D zone_attrs,
+> -};
+> +NAMED_ATTRIBUTE_GROUP_COMBO_VISIBLE(rgb_zones);
+> =20
+>  /*
+>   * LED Brightness (Global)
+> @@ -410,7 +405,7 @@ static int alienfx_probe(struct platform_device *pdev=
+)
+>  }
+> =20
+>  static const struct attribute_group *alienfx_groups[] =3D {
+> -	&zone_attribute_group,
+> +	&rgb_zones_group,
+>  	WMAX_DEV_GROUPS
+>  	NULL
+>  };
+> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pla=
+tform/x86/dell/alienware-wmi-wmax.c
+> index 0c3be03385f8..559415849bcc 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/dmi.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/platform_profile.h>
+> +#include <linux/sysfs.h>
 
+JFYI, this line conflicts with linux-next.
+
+--=20
+ ~ Kurt
+
+>  #include <linux/wmi.h>
+>  #include "alienware-wmi.h"
+> =20
+> @@ -356,7 +357,7 @@ static bool hdmi_group_visible(struct kobject *kobj)
+>  {
+>  	return alienware_interface =3D=3D WMAX && alienfx->hdmi_mux;
+>  }
+> -DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(hdmi);
+> +DEFINE_SYSFS_GROUP_VISIBILITY(hdmi);
+> =20
+>  static struct attribute *hdmi_attrs[] =3D {
+>  	&dev_attr_cable.attr,
+> @@ -404,7 +405,7 @@ static bool amplifier_group_visible(struct kobject *k=
+obj)
+>  {
+>  	return alienware_interface =3D=3D WMAX && alienfx->amplifier;
+>  }
+> -DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(amplifier);
+> +DEFINE_SYSFS_GROUP_VISIBILITY(amplifier);
+> =20
+>  static struct attribute *amplifier_attrs[] =3D {
+>  	&dev_attr_status.attr,
+> @@ -475,7 +476,7 @@ static bool deepsleep_group_visible(struct kobject *k=
+obj)
+>  {
+>  	return alienware_interface =3D=3D WMAX && alienfx->deepslp;
+>  }
+> -DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(deepsleep);
+> +DEFINE_SYSFS_GROUP_VISIBILITY(deepsleep);
+> =20
+>  static struct attribute *deepsleep_attrs[] =3D {
+>  	&dev_attr_deepsleep.attr,
 
 
