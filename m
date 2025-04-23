@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-616198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456C0A98906
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754B6A9890A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4047AE7CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:59:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5003AB24B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D92A1F8BBD;
-	Wed, 23 Apr 2025 12:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5DB2135B9;
+	Wed, 23 Apr 2025 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MgxPtVC+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kL3TB5E5"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8F2701D5;
-	Wed, 23 Apr 2025 12:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9E1C84B9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 12:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745409625; cv=none; b=Vr/zP4gszffu7aKXWE9BJ2GqBLxnI9frLd1Vwanv/u2/T4BucCMS8sUNkSsDQLguRiR3s514uonnYU81gyVZCPq+Ed3ChLE6k0Ov5s2dn/Nt7oekDnqDwOjen0TOywZZCtN6JiLMqVXPGTJ4yfReWKNtAF+1cfdysiIfRF1Z6lY=
+	t=1745409668; cv=none; b=VI8LekiQlFdBfruZ1fpiXSd/z9ma4a/0xgiKqcYvPHELGMnBJLqsE0k7FUQgGkFFpsZ5plGxKdVF+1pramUU7A/IgzG3TYcCA9eGLPD6vbhSxAQjQoXwcesSd03PmL7c7l9T9nhrm/95LNoag6TFil6sG9ONJz4A1TWZvvDlqoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745409625; c=relaxed/simple;
-	bh=wB5Z8asKFlEWIqWWQJPXzolubaSIl3Ml/1hZiNUVMy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoyE6iE7g2E+kgcW+8UBvVKedygPBWtKgzI8P9Se0Zd2t1ma4kUhkm5NjIT2+rQsDY4eqjsh1EN+oI4VASbhxjtGkEaRLClvhtSAfCTfdZcIvRUtSY2DeKZWygypCYuyORTXp98/YcDCX6e5LnnpdUwNaGsAx+Mo9pbruuFNaLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MgxPtVC+; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745409625; x=1776945625;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wB5Z8asKFlEWIqWWQJPXzolubaSIl3Ml/1hZiNUVMy8=;
-  b=MgxPtVC+PsIwmUJ1rtDVy+7azEkPrvVaORTClbodJ9QYE692GDT1Kn3+
-   Paq9qHFbbcDLXStXksheJd3BOOBdYp0QUVZdpTyRocsVCaunXHlgKIS5C
-   I50YeLtBK16USxaTvvnbqKwD7yymQOhDhwrHK/hY9qdXGNY5BlOzTfDqk
-   InnW9eyAOE7OJBkCbcbsciNl2Y7hkqK5wbSh3OCmbAEoESHcndcQcQAEB
-   cabF2FY2rMbAV9rlKheYJ+1A/rdusRKgpfpR2pYsrq4GmIGoLZZKhDkWb
-   Hx9iFO51mIc07fOVgofPK3HkdzlX8YJSYb6Z3fjYJyjqVuCHDDQ3UZQ1N
-   A==;
-X-CSE-ConnectionGUID: mC0PpyfnReSu7mOK3BplVg==
-X-CSE-MsgGUID: Z/3tHJfUTaaRgHDlAnBAMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="57192470"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="57192470"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:00:25 -0700
-X-CSE-ConnectionGUID: KSP7qUiRQwKXovaObvQiRQ==
-X-CSE-MsgGUID: aPXobac+QCOe3s8IYN37eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="137157046"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 05:00:21 -0700
-Date: Wed, 23 Apr 2025 14:00:00 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Maor Gottlieb <maorg@nvidia.com>
-Subject: Re: [PATCH net 2/5] net/mlx5: E-Switch, Initialize MAC Address for
- Default GID
-Message-ID: <aAjWNaBKzKxeHbks@mev-dev.igk.intel.com>
-References: <20250423083611.324567-1-mbloch@nvidia.com>
- <20250423083611.324567-3-mbloch@nvidia.com>
- <aAjBk5gX27FtnE3f@mev-dev.igk.intel.com>
- <77df78bb-8bcf-42e8-b307-cc8bbe97254c@nvidia.com>
+	s=arc-20240116; t=1745409668; c=relaxed/simple;
+	bh=hxhs2KUniZpzTm392vVGlXp0MApW9RLKujRwgFDxO4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KviHUesKFmSSVYxFJJROoAMO8B+MVi/jQVfWUX3LPJ4aIKHSwsRRJI+zZ2txq4MVpHhRBqsXttvJMBO/h5yBVexUx2ejS401C9q3x9ExWJR86BBIwhP0cAOMPeoZUlmoE1MYsYwoMKH99clEbFPk87dFZXdiCpZMq7t7BH0wyCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kL3TB5E5; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6041e84715eso4810371eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 05:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745409666; x=1746014466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ljPySLmCIyaDmpmK4mqQYBe7mtVNq+JITC0VWQEJ4rg=;
+        b=kL3TB5E5SGEGNrVNJd2hgvQvZYDckJKaMLlmQfOLYTTvhOu60/BVVX2eP5H0DMp/zl
+         x9LlV3wyXR34VpAqnC+YIEoPtckJ/+5PUJVAL+oSHYW/IvOaKF8nKiFwXopJujl0iuyS
+         whUJUKopfxccQj9Hi6ieGgeuFco7Y4Fi8Hn/En1AunIe6eQZZ7Ir/PjHQsQlAH7XJIb6
+         vzmDSXuI3LOY0LHyDqFIfoEjFkh/9OTIIis58Aea86IduSidjRkAWvwmlEDB7dIpuup5
+         xpQSOBlK2ziKWQO0yV5ejLYl43JIWVBEYAxh42vp8aHTMVnu5AEllQOVw+Mxf5CFnznz
+         KXzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745409666; x=1746014466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ljPySLmCIyaDmpmK4mqQYBe7mtVNq+JITC0VWQEJ4rg=;
+        b=gODaAz3l44G3N/GRYccD1mzm7QMsmkS5xUk8XECpPhjLuL0aBfR/aq8+Gs2JG8ll0g
+         OiVT4ZJNPqqVF8usYJ06urQedwfz/p50LoPPLo8YqRkaRQ128741sBNemAYaC4VNI259
+         BqUtVBpMqJ+BfuoynRGU/MCPbu262gACIh1WywxPe5NbcevFo2HtU/yQcS2XklriAc0t
+         grkzCkBIaK7MwGlR0lhXwUqmPT7EHSWuRXJnWutIjZcaGU9H7/+aNSi6REXYUczVGHQI
+         QFX9qeYTMzuXhkO0pukKIZHKcdWc7zaR0SqgT9jiJcLX1yFrF9ks/8ynHQb9Av75Qf8S
+         0xvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQfpQMHaVu+ns7WHnQyQoMIvMdPStTszFuo0iolXqcVIEZhyclq8oyVcK1VyULEVg7TSvPNhx0dBOgT4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh9k+8TqkIPjcObV5CN1QbPfMHd68jQ17XCM+jTKbg7PLrTzd9
+	OAoPszjK5D3tms7yrhdAEt2363055kCYPSuyV7yMGbeJYILSWHLUzDI3akZRqPdn3vZqhqGd/Lq
+	I3orf1SXgdY2K/eWFrrTEUmWAAjtknIRvj91S
+X-Gm-Gg: ASbGncsrd2mMuUJAY4SRuNNpHilSWJI+d33RShUXtyc7rpGGX/gt1xFv7Nm49cCMFXP
+	YbFF6j56y8TMt05X7LyeaX3N0sNPTSziKU3//to/P6TdSbQ4uMJhAjGsFPc1bMFuFYBuqGqO7mY
+	u/3tT5XaEYx7/bAYvuhXtaAXH/VkzU5wXml6gR8TCZ66UNERRu8sDC
+X-Google-Smtp-Source: AGHT+IEICUZ6rIOt0VtEfuUiCSPVFrcDz/xsGuPmI4E/ktXozNO6fxNk5SFEZA5wiNy2AEhnJ4EDTcCM112plD6Sqwk=
+X-Received: by 2002:a4a:ec44:0:b0:601:cdab:15b5 with SMTP id
+ 006d021491bc7-606004d8aacmr10698191eaf.2.1745409664237; Wed, 23 Apr 2025
+ 05:01:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77df78bb-8bcf-42e8-b307-cc8bbe97254c@nvidia.com>
+References: <20250327161617.117748-1-bqe@google.com> <Z-rFPhrNTB8t5xTF@thinkpad>
+ <CANiq72kSVHsgZGULhy+t4XyD2xGAKdiyKshC1VgKjTFoHUbMNg@mail.gmail.com>
+In-Reply-To: <CANiq72kSVHsgZGULhy+t4XyD2xGAKdiyKshC1VgKjTFoHUbMNg@mail.gmail.com>
+From: Burak Emir <bqe@google.com>
+Date: Wed, 23 Apr 2025 14:00:52 +0200
+X-Gm-Features: ATxdqUE76yazRjG4CXiNAyJEU1c522phlZ3cjUnLxo46ATiEfE0-3T2IJ3hPCRo
+Message-ID: <CACQBu=V+OrsgBTv3hhWgFhGCBOXC=ytDwcS5v=j8uKcrDaXb6Q@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] rust: adds Bitmap API, ID pool and bindings
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 02:20:56PM +0300, Mark Bloch wrote:
-> 
-> 
-> On 23/04/2025 13:31, Michal Swiatkowski wrote:
-> > On Wed, Apr 23, 2025 at 11:36:08AM +0300, Mark Bloch wrote:
-> >> From: Maor Gottlieb <maorg@nvidia.com>
-> >>
-> >> Initialize the source MAC address when creating the default GID entry.
-> >> Since this entry is used only for loopback traffic, it only needs to
-> >> be a unicast address. A zeroed-out MAC address is sufficient for this
-> >> purpose.
-> >> Without this fix, random bits would be assigned as the source address.
-> >> If these bits formed a multicast address, the firmware would return an
-> >> error, preventing the user from switching to switchdev mode:
-> >>
-> >> Error: mlx5_core: Failed setting eswitch to offloads.
-> >> kernel answers: Invalid argument
-> >>
-> >> Fixes: 80f09dfc237f ("net/mlx5: Eswitch, enable RoCE loopback traffic")
-> >> Signed-off-by: Maor Gottlieb <maorg@nvidia.com>
-> >> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
-> >> ---
-> >>  drivers/net/ethernet/mellanox/mlx5/core/rdma.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/rdma.c b/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
-> >> index a42f6cd99b74..f585ef5a3424 100644
-> >> --- a/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
-> >> +++ b/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
-> >> @@ -118,8 +118,8 @@ static void mlx5_rdma_make_default_gid(struct mlx5_core_dev *dev, union ib_gid *
-> >>  
-> >>  static int mlx5_rdma_add_roce_addr(struct mlx5_core_dev *dev)
-> >>  {
-> >> +	u8 mac[ETH_ALEN] = {};
-> > 
-> > Won't it be helpful to add comment that it needs to be unicast and 0 is
-> > a valid MAC?
-> 
-> That's why the commit message has: "it only needs to
-> be a unicast address. A zeroed-out MAC address is sufficient for this
-> purpose."
-> 
-> I feel this is good enough.
+On Mon, Mar 31, 2025 at 8:52=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Mar 31, 2025 at 6:39=E2=80=AFPM Yury Norov <yury.norov@gmail.com>=
+ wrote:
+> >
+> > I didn't find any discussions related to the bit_set in kernel context.
+> > Is it possible to use it in kernel? If not, can you mention that in com=
+mit
+>
+> In principle, from a very quick look, yes, it supports `no_std` and
+> should be very easy to vendor since they don't have dependencies (i.e.
+> `bit_set` and `bit_vec`).
+>
+> > message? If yes, I think you should consider to use internal language
+> > tools.
+>
+> Hmm... if by "internal language tools" you mean a normal library (like
+> that one you mention), then yeah, they can be considered.
+>
+> In general, we have been prudent about using third-party libraries so
+> far, but it is possible if it is the right choice -- please see:
+>
+>     https://rust-for-linux.com/third-party-crates#suitability-of-a-crate
+>
+> So if everyone agrees that or another library would be the best fit
+> than mimicking or using the C side (performance-wise,
+> maintainability-wise, etc.), then I am happy to integrate it.
+>
 
-Make sense, thanks
+IMHO, we should strive to avoid parallel implementations of basic data
+structures.
 
-> 
-> > 
-> > Anyway,
-> > Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> 
-> Thanks!
-> 
-> > 
-> > hw_id in mlx5_rdma_make_default_gid() is also used without assigining.
-> > Is it fine to have random bits there?
-> 
-> We pass hw_id to mlx5_query_mac_address() which fills it.
-> However, there's a separate issue where mlx5_query_mac_address()
-> might fail, this is unlikely, but still possible.
-> We'll address that in a follow-up patch.
-> 
-> Thanks for the review! 
-> 
-> Mark
-> 
-> > 
-> > Thanks
-> > 
-> >>  	union ib_gid gid;
-> >> -	u8 mac[ETH_ALEN];
-> >>  
-> >>  	mlx5_rdma_make_default_gid(dev, &gid);
-> >>  	return mlx5_core_roce_gid_set(dev, 0,
-> >> -- 
-> >> 2.34.1
-> 
+This little patch series was started to replace a self-contained C
+code with Rust implementation. It may not representative for all Rust
+code, but building an abstraction over C code will make porting a lot
+easier to write and review.
+
+Now, one can argue that Rust abstractions could use alternative
+implementations instead of binding the C code underneath. This opens
+the door to subtle differences in performance or correctness (e.g. the
+case with atomics and inner mutability).
+
+> > I encourage you to implement the tests as normal kernel tests - in
+> > source files that may be enabled in config. I can't insist on that,
+> > and will not block the series because of lack of benchmarks and
+> > tests written in a traditional way.
+> >
+> > But to me, scattered wrongly formatted commented-out in-place way of
+> > writing tests is something fundamentally wrong. Not mentioning that
+> > it bloats source files, making them harder to read.
+>
+> I don't think documentation makes things harder to read; quite the
+> opposite -- if the docs are good.
+>
+> But, yeah, if it is an actual test that is not suitable as an example,
+> then it should be a separate test (whether as a `#[test]` one, if that
+> works already for this use case, or as a sample module otherwise).
+>
+
+Now that I figured out how to do it, I'll add the separate kunit test
+that exercise code paths which are not helpful in documentation.
+
+Thanks,
+Burak
 
