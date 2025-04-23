@@ -1,246 +1,111 @@
-Return-Path: <linux-kernel+bounces-617007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA00A9992E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:07:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8267DA99937
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DFF3461484
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D4C1B85CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1661F27FD75;
-	Wed, 23 Apr 2025 20:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FFC2820A8;
+	Wed, 23 Apr 2025 20:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjxqHEXk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MiSEKTvM"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C902690D4;
-	Wed, 23 Apr 2025 20:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A022262FD6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745438852; cv=none; b=cjoqJhu4/tDKxY8Fc9zD7s25TnfNMXnrLgK2eYajTrBtT/I75kBzOj6WF+F4WAvR0yHkx/QRhrKv7AlGy1rKAQf4TTckFEmQm0Yk0/QMuWE24Qvkxpg49ELdx08E7HtaFkdbvdNWWqOiKekXIrea3w4ejJaxLl1uMO2BjVKPug8=
+	t=1745439044; cv=none; b=H3T7IjHIpgDFFr8bDPPViETG+FbMJmhwZLHjsKTOQkq0YrQmuW7A8cFk+sQcrLRaQCSNA7VsTc8r3QwgnY53OTgWvnXJVME0JfVwLr5/pMPtGmKDZsZeFZDzKIMOYH1kE/odaZGNngFHvWzcpDSdDmvvRYHMmK9FL7AGb5WEX2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745438852; c=relaxed/simple;
-	bh=YoVn7nDZ5+wXUEYeIen7MDDYqYkq/JetAQBw8G9pR9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVPR5LY/zt6zN2CW5Cg7XR1vMTb2QlZs85TwSSqexYOKyqtuZ9ciPHNTsKEdd4HNgJHqaM+VRedOKhOVkNyWTg4/C+4eiCP8AaxYJuR4nEuvzhno/zs6x0Bkxq1MWjsXKize+26df7/kTxhebkuo/ZRsIPulAJFAAnmSH4M5iTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjxqHEXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBFDC4CEE2;
-	Wed, 23 Apr 2025 20:07:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745438850;
-	bh=YoVn7nDZ5+wXUEYeIen7MDDYqYkq/JetAQBw8G9pR9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jjxqHEXk4S4owqnj1iFNY+lvsQtnw+rHojPk8ouhHChhnEka9pHh59TPree+yV5xC
-	 AOCpGlIGZJ+R+5n9qdgnB+/V8AeQ0qPne2fFn0l272spOWdCR/rs31FO/I3JB6N/H7
-	 JLf3Of0z8i3YX9ClyxUVRqNK8Msov4wAZlGlOoPv//zjEcneyTnncJ2qXD2E/tLrPw
-	 fAL6AhbGcSmLMwRay8sSTRBkipDPv7kFG8pQljGf0qUt2kwgkOtkE2ZV1fbjpdyD8I
-	 5ppss9kSTHS7PPSERgKctrMKsLq+4wuF+1wqlpcUyQIU9TKUiCyhWaOf46FHCfnHtk
-	 kyiF+wLR5eFmw==
-Date: Wed, 23 Apr 2025 15:07:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, dinguyen@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: socfpga: convert to yaml
-Message-ID: <20250423200728.GA954453-robh@kernel.org>
-References: <20250423150318.27101-1-matthew.gerlach@altera.com>
+	s=arc-20240116; t=1745439044; c=relaxed/simple;
+	bh=HqIXcWpEBWid+l2OiDQI7nWiV0QSluTCCJghdbBX6dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCQS5j0++GjSpmf0A/GoAcSyajCjKKIEroN2BXxRn3x4pfFAG3MVQ1QEYEG7qnHtaZWZhr2/nZp8qoeJLfVQc07/cTtoBVXfy86z4XRIrC6zOhMbsv0LQMqDibGH5pxUIY7j2/+o8ZYVCk8R3NRJZWmAuSEpK+dFM7dbCnKedLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MiSEKTvM; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85b3f92c8dfso10179239f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745439040; x=1746043840; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L4aZh75tam4hiDyoi4zEtwQZvmp/wQknrw8epVfbLHc=;
+        b=MiSEKTvMIqJvuLqLM8ajCEgcpuFblwLhddbGYTD+0ZyEwTtdzaM4wOxWnJJGTdStVa
+         be44CH4kCK0LAiNcnuHrpfOFre4rrr/6a3IiEZ82IsLrPuv0xoDBGCIIZVFPOtIsXce/
+         59gTEwf3UwF3BL0tud6bVFy3B34ri9TFotChK5qS/zzxaOZo/m7oIFhnjN8+uIz2NyRL
+         OI+QHF+VzjneNrt3MRHizQgE1+eu7BdablOCF3awH69JvweN0nMIUVKZIojo7sDao8VK
+         hs/VopUE7XnSmod6rEMN+Hhx5QDs0E7pIOYfWerTVXYjU+e+xgZ4EB2NCp8bRP4vrOeq
+         eVcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745439040; x=1746043840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4aZh75tam4hiDyoi4zEtwQZvmp/wQknrw8epVfbLHc=;
+        b=woSSwHuNM+E/OVYYN9JC63QbZcpbOcDXwj84srWBct1nvGw+xNzH5eyEqYEXXooWTG
+         ffBMHT/YB3LLadI7+adsnoObBmDM7MDSQ/2JQzBNJk77B5HGnX6qARdUzb+5zDaWgpit
+         h33j97N0GPbGmGEJh60yr4ciHCpJdmLiIvaFTroU24upIdVoc3rUymVU9t9FBohAZkwy
+         EPYLmdE89y+mb07vYwB6aDbZKnbKGzS549CAKHezPX9YQyI9QIn2CA47siTGTyzMrfHU
+         cJQ/q/9XjZKrhXh5ykQt6Ffwfu6w7fV02uW1/r8Oyof/+IrIxV42oE3KderuMEe9OHxD
+         XwFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN854KAorqxgwYW1PTgs93nR1CD0fcu2IyPUvOvtsUdDQB9+f3DRwuUpOnmjFPDVdyuHxsoWxfEDNX6ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMY8UqUjL9pdNFcJ4kBBzsw4iRZjRSoKjfkj9SrVEK01dXMRnJ
+	Cp8rrwtXEgaptijMDaicXX8Lgv1CpuAm6Epsu48OSE6F94NPiYKkwU4cAtMYh9M=
+X-Gm-Gg: ASbGncuwFVkUv4PP/GJNtS1bd+NYuREhK+P6dP2lbZsPl0x4MbYkB3+3T5PWidl8W9y
+	8dSv/1AV/YY5PIsZ5xwbQTbyyl8wxKwGZPtVkysqNrdrDAZh4O8W6ipFvyzY5aAWaOLCjmnhDa9
+	nGA1F/R66M5dcEPLzRUDU4TMVI8/7Xn5o+6h+VuGHxo9i6J0so2P/9rxi3aGfx1hWErLhzLvCyj
+	bA4V3doyKVJJ7fH6MwSxvrTebLENQvt5w7Up6G8+wAmYTpwlE6TLv0HlhGXLiH1e6FBbnONua70
+	bG6413bOL1I/Lq6zF2pR0UMA+zJaOcNtec9K
+X-Google-Smtp-Source: AGHT+IHUo12s5KpqBhFFTUaVnPuLGTIq+azon1loYWCZ4jeC2mqhJUfYZKyFttdMlmM23xuFgMyaVw==
+X-Received: by 2002:a05:6602:4a08:b0:861:d71f:33e3 with SMTP id ca18e2360f4ac-8644f9b422amr34522539f.5.1745439040629;
+        Wed, 23 Apr 2025 13:10:40 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a38383dfsm2918100173.70.2025.04.23.13.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 13:10:39 -0700 (PDT)
+Message-ID: <c3880483-7cd6-4151-9af8-f6a1be9977c9@kernel.dk>
+Date: Wed, 23 Apr 2025 14:10:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423150318.27101-1-matthew.gerlach@altera.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] splice: remove duplicate noinline from pipe_clear_nowait
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250423180025.2627670-1-tjmercier@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250423180025.2627670-1-tjmercier@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 08:03:18AM -0700, Matthew Gerlach wrote:
-> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
-> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
-> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
-> socfpga-clk-manager.yaml.
+On 4/23/25 12:00 PM, T.J. Mercier wrote:
+> pipe_clear_nowait has two noinline macros, but we only need one.
 > 
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
-> v2:
->  - Fix node name regexs.
->  - Remove redundant type for clocks.
->  - Put repeated properties under '$defs'.
->  - Move reg property after compatible.
-> ---
->  .../arm/altera/socfpga-clk-manager.yaml       | 129 +++++++++++++++++-
->  .../bindings/clock/altr_socfpga.txt           |  30 ----
->  2 files changed, 128 insertions(+), 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
+> I checked the whole tree, and this is the only occurrence:
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> index 572381306681..6f09458f22a4 100644
-> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> @@ -9,20 +9,147 @@ title: Altera SOCFPGA Clock Manager
->  maintainers:
->    - Dinh Nguyen <dinguyen@kernel.org>
->  
-> -description: test
-> +description:
-> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
-> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
-> +  chip families.
->  
->  properties:
->    compatible:
->      items:
->        - const: altr,clk-mgr
-> +
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^osc[0-9]$":
-> +        type: object
-> +
-> +      "^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$":
-> +        type: object
-> +        additionalProperties: false
+> $ grep -r "noinline .* noinline"
+> fs/splice.c:static noinline void noinline pipe_clear_nowait(struct file *file)
+> $
 
-Add another level to $defs and move the reference here:
+Funky! Obivously looks fine:
 
-           $ref: '#/$defs/clock-props'
-           unevaluatedProperties: false
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-You can also move 'reg' and '#clock-cells' into $defs/clock-props.
+-- 
+Jens Axboe
 
-> +
-> +        properties:
-> +
-> +          compatible:
-> +            enum:
-> +              - altr,socfpga-pll-clock
-> +              - altr,socfpga-perip-clk
-> +              - altr,socfpga-gate-clk
-> +              - altr,socfpga-a10-pll-clock
-> +              - altr,socfpga-a10-perip-clk
-> +              - altr,socfpga-a10-gate-clk
-> +              - fixed-clock
-> +
-> +          reg:
-> +            maxItems: 1
-> +
-> +          clocks:
-> +            description: one or more phandles to input clock
-> +            minItems: 1
-> +            maxItems: 5
-> +
-> +          "#address-cells":
-> +            const: 1
-> +
-> +          "#clock-cells":
-> +            const: 0
-> +
-> +          "#size-cells":
-> +            const: 0
-> +
-
-> +          clk-gate:
-> +            $ref: '#/$defs/clk-gate'
-> +            unevaluatedProperties: false
-> +
-> +          div-reg:
-> +            $ref: '#/$defs/div-reg'
-> +            unevaluatedProperties: false
-> +
-> +          fixed-divider:
-> +            $ref: '#/$defs/fixed-divider'
-> +            unevaluatedProperties: false
-
-And then drop all these. Same in the child node below.
-
-> +
-> +        patternProperties:
-> +          "^[a-z0-9,_]+(clk|pll)(@[a-f0-9]+)?$":
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - altr,socfpga-perip-clk
-> +                  - altr,socfpga-gate-clk
-> +                  - altr,socfpga-a10-perip-clk
-> +                  - altr,socfpga-a10-gate-clk
-> +
-> +              reg:
-> +                maxItems: 1
-> +
-> +              "#clock-cells":
-> +                const: 0
-> +
-> +              clocks:
-> +                description: one or more phandles to input clock
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +              clk-gate:
-> +                $ref: '#/$defs/clk-gate'
-> +                unevaluatedProperties: false
-> +
-> +              div-reg:
-> +                $ref: '#/$defs/div-reg'
-> +                unevaluatedProperties: false
-> +
-> +              fixed-divider:
-> +                $ref: '#/$defs/fixed-divider'
-> +                unevaluatedProperties: false
-> +
-> +            required:
-> +              - compatible
-> +              - clocks
-> +              - "#clock-cells"
-> +
-> +        required:
-> +          - compatible
-> +          - "#clock-cells"
-> +
->  required:
->    - compatible
-> +  - reg
->  
->  additionalProperties: false
->  
-> +$defs:
-> +  clk-gate:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    items:
-> +      - description: gating register offset
-> +      - description: bit index
-> +
-> +  div-reg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    items:
-> +      - description: divider register offset
-> +      - description: bit shift
-> +      - description: bit width
-> +
-> +  fixed-divider:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
->  examples:
->    - |
->      clkmgr@ffd04000 {
 
