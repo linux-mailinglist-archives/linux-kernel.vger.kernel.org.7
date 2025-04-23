@@ -1,157 +1,174 @@
-Return-Path: <linux-kernel+bounces-616676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A9DA99479
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 868FEA9947D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97489A0E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106C39C1D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74AD29B23C;
-	Wed, 23 Apr 2025 15:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C606B29009A;
+	Wed, 23 Apr 2025 15:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ln3aThXU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SNCEYJdo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BC228935F;
-	Wed, 23 Apr 2025 15:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC8919DFA7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423513; cv=none; b=t8w325yyMTEnD/xoWJh1K3//LaXHIa61/KH3afok9Me/nq8Z8fPe2GIxuXW/KwQZW2gbnzN0CHV29UTQ5LIjkdd7bKvzCUL6EnQbpafZFrEoGPRKuftmVt8ruQvsVN4TWaz8m0bEizhQqjhRFl64YSG+QiIUiKWQZH//LwbEByM=
+	t=1745423602; cv=none; b=riU8FYrdnDqIOonnCS9hmHggRO2BbbbWozZJ9mnjQ+dxW0B+bNtBu8m1/ysiQ8rZTfW6i6Xzd2XX/cFV8PU20KnZPbmJoSOCu0BIV66HNdjgp65rZkRtr+gKOlVDeAsvo5mVPmHxQ9GxhetYShDjD3jpTMUIKtxHYiiXIhWfE0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423513; c=relaxed/simple;
-	bh=+Vs1gbKb9PXsqFgKfHEk/GoqZdyjHR87hYimAakyT2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D9twN7O9l4OoTXz6MqBUl2GB9aixuGufJRvWsPRnH8D97P+FePCA9UcMgzUWLOYuIIOhTMLrV7DgglOIq9CEN7+2VFcBrsbEoSzQgLttFNtDDm0W+uykcFyeoaBAFGEkA4yOsW5xLGxHzxFLNyVMTBM82XUSH+O+TqWAAJq504s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ln3aThXU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745423512; x=1776959512;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+Vs1gbKb9PXsqFgKfHEk/GoqZdyjHR87hYimAakyT2k=;
-  b=Ln3aThXUPv7efrE2YTUUlJAOtT2zmPULSRzcGdvuMd1pEJtOUyAhmm8h
-   SYS3Zj7ndGfwrHjLaLiYLVWZxkVmhYPkT0KIirxmdsu9mRbz0oXEFaE9B
-   RJwy6WNYkyrVuuLlOolkrkk16N1gzNbtx68Hg8+BtjwxIPRmXjZ5OGF27
-   IH86XY81j550MqB28YqOyRK72M9VIPKHblx0+ndx+2nCNvP3OMm6K+TNd
-   mm+qL/642Xi9pImzxTpScNBoxmw9fURVSr4XarGV29eIBmNpnLLdNPyZB
-   0H0MizFmP5Ak2GAXNdKfmReGQfHKLOFWBaOcNaH94Itg9chQStEmAb5KN
-   w==;
-X-CSE-ConnectionGUID: VkEhFynnTOKGh+IkCC1lcg==
-X-CSE-MsgGUID: 6rSuu8R7TRWNyEfCLIwmBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47207974"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="47207974"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:51:49 -0700
-X-CSE-ConnectionGUID: Ex8PVZ5NQH2Gb0DRTatbBA==
-X-CSE-MsgGUID: ItnS2ooiSY2V5FCleHnyyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="137140944"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.221.81]) ([10.124.221.81])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:51:47 -0700
-Message-ID: <2932db03-164a-447e-92cf-1ef6c35c15a4@intel.com>
-Date: Wed, 23 Apr 2025 08:51:45 -0700
+	s=arc-20240116; t=1745423602; c=relaxed/simple;
+	bh=9F5t42L4T7DlrKAbIEzJacTshtoofiMJhhUWO+3Np/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J00VLnT/lDd01wCE5IKx+aIKExkRxf+VrIU1tpQjRIXVzR34stnLVptsLt0FY7b2u8DVEAUvMuvh705+LTVCFOlWV1DrPMv41cRmGwlcsJxZOLwd8VOXoQvzGVhcEpObd1PcpphAWOqgWYgXG+IeEBK5fbrLSDYP/1E3bjxKfDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SNCEYJdo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745423598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4vXjdITA2otLqOLfSkM93EoHhrqfeYMofeR1JyUMjL4=;
+	b=SNCEYJdo7nhpxVk8M+AtmeH8RaV0IxA6XwD6HCL23i/4NP8KrMxho1FEIiyOSmMkzOuEG8
+	G+tuVJzgliwLhrtwJLS55wyikg+SQky0cUxZ3lMPu/x4ntTP1ZHPWLImhhoNOU0rIWCopB
+	m8gb+LW+Sor8aDBVtLKqeCub3cCg5Rs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-401-R-_Mi8iSODOaQyVCK-I0FQ-1; Wed, 23 Apr 2025 11:53:16 -0400
+X-MC-Unique: R-_Mi8iSODOaQyVCK-I0FQ-1
+X-Mimecast-MFC-AGG-ID: R-_Mi8iSODOaQyVCK-I0FQ_1745423595
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43efa869b19so39783335e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:53:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745423595; x=1746028395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4vXjdITA2otLqOLfSkM93EoHhrqfeYMofeR1JyUMjL4=;
+        b=QTt7DCrrfcXMgwUflHwehGgvjys/tOb6rjlTVl7hcT6LpkhbafmhOdNWZugu7eC5nM
+         vxx1ngMZ9XyugCcX9vvMk63KDlf52+ljbl8RxhlD3S8Ca8gPBEPfEfeNPd02yiChgPPy
+         N0kW2eTxyJ+q3Ae1NKAprCewG+bEGXikb6wQ0lbhwV2wYU3JDr3Yfep4KVJJoTGaHYIF
+         Uq2NTNxsxwrzaJZqrsXhlVJhVzFy0M28MT8aAt2TnwR8cfG0xO+Cx7Mzl0n+NTtNX9DB
+         T4aRvp7eqXEc1hmy/+KEthh7bHGkRxEMJnB5os4GhyjbpJASshPz3MxfyxJZP1nlTbMl
+         0qZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZRmr/U+Uu9UPU3ksY1gtg4EDjO6AYHYg5mQMzXulgHvoBXzy4QD5RvLGngUbjPhTJh+6yEnH/YA2u9v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRmGmUzS5Y9D9t9ut7PJzYWY7IjciSP8ZJu2ueLLPF9p+0GyjP
+	NcyE9sjKFPBdbzNdO9IkfZSN1ecrrUaZAu9kowrBLmEuHV3JpKOMK9Phag6qmm22pTLXGvmg8/D
+	6YWXu6hmHkeEbdRYGcPmfDxsu60sNa+SThWOcaveKROoq2T9BDxdhG2cZMO0orA==
+X-Gm-Gg: ASbGncvIRi7AZj5c7WCnOPF9uHY8ZxZKJFka1lkbHd2S3gzElm6MArMp4difHbYjtIq
+	jYzfbIOKJbdw8RH6j03ez+Ph0HrHL5OLpnTdtwefvnLOWVMjRmwQgYRezIOb14psBqER1Sm0KVA
+	YrbvgUMt9gr+Ephsp/EewZWqcEwTMoLJezN1i9JnTYB1hlj8fOF9XWbykv0LsUdnBjjaHFZomEV
+	pCVfTJf4FFSnNvfEHPVXMvJFr91aJuPulR0Br1G5oF2HD+pFcz2UG3PA0yvFn1foJ7kxxQsEMu2
+	EW7X6UVH2jMgtg==
+X-Received: by 2002:a05:6000:402b:b0:39c:e0e:bb46 with SMTP id ffacd0b85a97d-39efba383d1mr15395531f8f.4.1745423595609;
+        Wed, 23 Apr 2025 08:53:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3Ev46g9NwPjawD8USomZKAsrAiFv9uPuXFN35OxT/qY5CZ5sbL5NV6EP3Ne7VxwIqM91Svg==
+X-Received: by 2002:a05:6000:402b:b0:39c:e0e:bb46 with SMTP id ffacd0b85a97d-39efba383d1mr15395506f8f.4.1745423595246;
+        Wed, 23 Apr 2025 08:53:15 -0700 (PDT)
+Received: from leonardi-redhat ([151.29.33.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493212sm19371776f8f.66.2025.04.23.08.53.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 08:53:14 -0700 (PDT)
+Date: Wed, 23 Apr 2025 17:53:12 +0200
+From: Luigi Leonardi <leonardi@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/3] vsock: Linger on unsent data
+Message-ID: <km2nad6hkdi3ngtho2xexyhhosh4aq37scir2hgxkcfiwes2wd@5dyliiq7cpuh>
+References: <20250421-vsock-linger-v2-0-fe9febd64668@rbox.co>
+ <20250421-vsock-linger-v2-1-fe9febd64668@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 08/34] x86/msr: Convert a native_wrmsr() use to
- native_wrmsrq()
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
- linux-pm@vger.kernel.org, linux-edac@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
- linux-hwmon@vger.kernel.org, netdev@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, acme@kernel.org,
- jgross@suse.com, andrew.cooper3@citrix.com, peterz@infradead.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, wei.liu@kernel.org,
- ajay.kaher@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
- seanjc@google.com, luto@kernel.org, boris.ostrovsky@oracle.com,
- kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
-References: <20250422082216.1954310-1-xin@zytor.com>
- <20250422082216.1954310-9-xin@zytor.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250422082216.1954310-9-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250421-vsock-linger-v2-1-fe9febd64668@rbox.co>
 
-On 4/22/25 01:21, Xin Li (Intel) wrote:
->  static __always_inline void sev_es_wr_ghcb_msr(u64 val)
->  {
-> -	u32 low, high;
-> -
-> -	low  = (u32)(val);
-> -	high = (u32)(val >> 32);
-> -
-> -	native_wrmsr(MSR_AMD64_SEV_ES_GHCB, low, high);
-> +	native_wrmsrq(MSR_AMD64_SEV_ES_GHCB, val);
->  }
+Hi Michal,
 
-A note on ordering: Had this been a native_wrmsr()=>__wrmsr()
-conversion, it could be sucked into the tree easily before the big
-__wrmsr()=>native_wrmsrq() conversion.
+On Mon, Apr 21, 2025 at 11:50:41PM +0200, Michal Luczaj wrote:
+>Currently vsock's lingering effectively boils down to waiting (or timing
+>out) until packets are consumed or dropped by the peer; be it by receiving
+>the data, closing or shutting down the connection.
+>
+>To align with the semantics described in the SO_LINGER section of man
+>socket(7) and to mimic AF_INET's behaviour more closely, change the logic
+>of a lingering close(): instead of waiting for all data to be handled,
+>block until data is considered sent from the vsock's transport point of
+>view. That is until worker picks the packets for processing and decrements
+>virtio_vsock_sock::bytes_unsent down to 0.
+>
+>Note that such lingering is limited to transports that actually implement
+>vsock_transport::unsent_bytes() callback. This excludes Hyper-V and VMCI,
+>under which no lingering would be observed.
+>
+>The implementation does not adhere strictly to man page's interpretation of
+>SO_LINGER: shutdown() will not trigger the lingering. This follows AF_INET.
+>
+>Signed-off-by: Michal Luczaj <mhal@rbox.co>
+>---
+> net/vmw_vsock/virtio_transport_common.c | 13 +++++++++++--
+> 1 file changed, 11 insertions(+), 2 deletions(-)
+>
+>diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>index 7f7de6d8809655fe522749fbbc9025df71f071bd..aeb7f3794f7cfc251dde878cb44fdcc54814c89c 100644
+>--- a/net/vmw_vsock/virtio_transport_common.c
+>+++ b/net/vmw_vsock/virtio_transport_common.c
+>@@ -1196,12 +1196,21 @@ static void virtio_transport_wait_close(struct sock *sk, long timeout)
+> {
+> 	if (timeout) {
+> 		DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>+		ssize_t (*unsent)(struct vsock_sock *vsk);
+>+		struct vsock_sock *vsk = vsock_sk(sk);
+>+
+>+		/* Some transports (Hyper-V, VMCI) do not implement
+>+		 * unsent_bytes. For those, no lingering on close().
+>+		 */
+>+		unsent = vsk->transport->unsent_bytes;
+>+		if (!unsent)
+>+			return;
 
-Yeah, you'd have to base the big rename on top of this. But with a
-series this big, I'd prioritize whatever gets it trimmed down.
+IIUC if `unsent_bytes` is not implemented, virtio_transport_wait_close 
+basically does nothing. My concern is that we are breaking the userspace 
+due to a change in the behavior: Before this patch, with a vmci/hyper-v 
+transport, this function would wait for SOCK_DONE to be set, but not 
+anymore.
+
+>
+> 		add_wait_queue(sk_sleep(sk), &wait);
+>
+> 		do {
+>-			if (sk_wait_event(sk, &timeout,
+>-					  sock_flag(sk, SOCK_DONE), 
+>&wait))
+>+			if (sk_wait_event(sk, &timeout, unsent(vsk) == 
+>0,
+>+					  &wait))
+> 				break;
+> 		} while (!signal_pending(current) && timeout);
+>
+>
+>-- 2.49.0
+>
+
+Thanks,
+Luigi
+
 
