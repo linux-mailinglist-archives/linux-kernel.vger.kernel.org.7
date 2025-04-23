@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-616402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DEAA98C04
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3072EA98C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D4B5A43EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39143A67E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF151E1E16;
-	Wed, 23 Apr 2025 13:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E031B040B;
+	Wed, 23 Apr 2025 13:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsj9dmlI"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mhe/JN8p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C31AF0B5;
-	Wed, 23 Apr 2025 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C01A9B3D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745416489; cv=none; b=fHKA60g0ae7evhRatWgg3pCXYqm2PUJkn5GFw1urT2TrrmRSWUKMvQYRgY3qgQWHGsy0dHbSnW2qgb2ChAoD/Ii1ahE/ge8BlpcDU4tcBfl+BdOAb8fPLAK8YUtd4lE1ZzjAaeajQPp39do4r+2T0Tj8Rjs1jRdL4Kyx0xszLrU=
+	t=1745416503; cv=none; b=M6KlJUnnTVkTTRBSQuVnUa3S/8fVwxZ9/fW8AJTaZsptrNFgp3mHUWF/FrFl17V7ab4JbpOwAjstaZ1l+5KvnsD4BrYnP4iEMAX6AqeG00PUP9/BtbREDJ7Ohv7bxyBXcV4ATyg/CDeEcKNHo8drtmY+DFbcuSQ99hQqUtEOySw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745416489; c=relaxed/simple;
-	bh=OTgMdZaw+c5NGr/9Til4thtTT36TGX8yCwq4TYTPiks=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xx67uYPsVtoFsqfbEpb+jml3yik7IRaowWDycgXr5ltAeqryMhIEYypr0O3Y7CotgSZGJuyfPiXlwhXLw2FqFhxaH/b5ZCo/wDrl1Dg54avPiid6gNeEafT52qji86IHUux2ecWW8XeyrgmzZ58wBtOgrLSqy0wdAk+JGqfQYkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsj9dmlI; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-476977848c4so72577681cf.1;
-        Wed, 23 Apr 2025 06:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745416486; x=1746021286; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CuqgNpQtYEXMZS1DrSHgUIFvXUKBF5Ic3ONpr4JBBA0=;
-        b=bsj9dmlI/y+qVwuPI8z5UWasVIqaUpV5q2DST2q7hyvF4+w8TRgf1FlNq6YddEkW3N
-         5/LrQdeCNE0p3ElzNCBf3HzI9ixCZW29Nj05MT7KhBeAcAgMr1YHivhaFwwf3h81vfIx
-         bYS+kMIGxrxrqxs4xlT2AS5HLoI/F6B7g/VJ6C/CShJ5Aazf2jMyF0POrxDF3htPWawu
-         zoA40ZWInPIfe7Hg3N64Lo19P1pNC/ZqyFDGtkbrgek6d7Nbmx2o1OAx/QATc2Fgiaaf
-         d2zjw5o45RgHe/W66l5QbO82HG8QMuwUv/NrBjkzDkEtlbD+yuyYcuAEivOohJnL7rib
-         5LAQ==
+	s=arc-20240116; t=1745416503; c=relaxed/simple;
+	bh=k62o+ay2M0IbQRNfbp10YC+dWMBh5vmDDp0amjZHXxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WN6EMiZzFbFIY5SR1GB1Jz1mAdwanx4UO6Lgoyx3OVNZBdayW+jDcYpT5w1y3Tmr7PskOAoAiwtWVcjCqYIx9ttaCBYpEjepyQYx/kdghQW5CJ+aTaMmbjpiA7P1Xoc1zgb6iec84Pxd9LZ3nr+W+Jpgqkz5T+hIFKO+zX8zxFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mhe/JN8p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NALFkQ014799
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:55:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Ch6JIJp6fDzsw1vuIJ2eZ7S5
+	WCWU4GzfWZUvcdjbWkA=; b=Mhe/JN8pCtR+E92A8mMd4EhXFKMkh2kZiPy+dN0q
+	Mt0QhakfGp0lFBe5ucWHN9RoxBj7DMIYf2b9je+98CsBB7qHlVV8+GCtTX5TPivh
+	25f9FZ6nTPnG5fGN1gjA7fugN1lsoo/LZe61BL3aUyckyq5zeuZ4afmCO11lgeIT
+	wQpKADPDvbsWamqduJw0k41OZdiXrFVtMZJZr8Gk5E1kJdiQLRpfPT5Sdbh6w6dW
+	EHrQNryfSL6ukFxcGoNw97aNpQSlMK3LVTxpUfFrqHU52WvrzcMqlJSR56q+Kkv2
+	hCT7Gyvu6nSAJ6FBlyr7eKNBj5LHMzSU+njlPslSKdomrw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0ja5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:55:00 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0b0cf53f3so959598385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:54:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745416486; x=1746021286;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CuqgNpQtYEXMZS1DrSHgUIFvXUKBF5Ic3ONpr4JBBA0=;
-        b=WkeF8EmP46PtUhHi+0nykwtH7B1oP18MKy1dEYaCynXW8bjQxxx+BbSm5eoPxFpQJ6
-         ToFm/yE1pPHd8rC91eZDjoWebqo9mTJWr2S/dt3f2ZQ3w/3Aj8Uc20fCoaFmBrANkNtF
-         lxXLhhElzjg71GyxCQpVBlRGwm55OT6a+2puJkivKps8x2NNdmCwxvb4Ry4YnKBsKs32
-         LXYKAiOwwHIyVyANVMA8rZX452ia/LYxKxDeRRbQeY1N1bj+Fh332PKYKAZmpOHQZDbQ
-         MBk8K3KFyM6d4/nv2lUPWdlJPSTE7LBSu5WC45a5nOrySmfpxw5C1ve34MaluHLckLbC
-         LS0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFdOSgHAjBXjjbyy/0EqFJ09XHGC244viMaaOg+5p6XgnuhsW1pLawnKu4eUDLNJHtyYLrZN/guIbs28CU@vger.kernel.org, AJvYcCUZYderfpL79wXZeaQqfhd7ZOJ4X2n1gantCzRQJ8tcb0+GNSaJeSyDrSUZzHLeWrWe6d7/i1d35OdJAnyr@vger.kernel.org, AJvYcCWO1L9JPp75OVmy/Ljm5qJLLdE7uvVlydwPVtHBkTl8idQbtLSChi7oGMxJXjptdcN3KVB1Al4k3d1O@vger.kernel.org, AJvYcCWXwhC/d5VFvQeCc7q0Qx3+KXaxxHbAu2VMZlBivfSUT1VNCF1wvo7uXuDibrpQDJVqWZtCHjaBzZlfthObzwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgW1uuisN84477ie/eBYrm3URdIcAtm/6lNOOd0evyMTVzZkw1
-	bzOAFitybbCbkRFbiSfYOoMtB+2mClsya1HoyPAGlJ6ZJHOJ4nSw
-X-Gm-Gg: ASbGncuFp4O1qhuaWyX2oTgFFA907CBHvGycdecpfF1eAzVwy+xR2RCj6Im8lrWjoxQ
-	6t1J7tfp4G/VLSbc6RFOc6EJx3jiXmAEe0mfjjL0E8pcmCN9zg1hHbBE05bLjZZIsTXG/EEcUOx
-	ddKdG3bJwCb2rYnusd7eWP9sNjLvLP8hLC5OB5LYyDwReiJ2QWFLNxrf+RhHVKqAY7FC2JXACFc
-	ri35CwisfJz/bLhiRWqAK93SP09uz2iP+bljIAWXRrFCkdmt/ELNFc4LGVfCdJBGNEVoQNep78h
-	sdOu5SislPEf0dSi+g6M8jKwp5LB4ySE2RkE648D/1uXv731ILOoSjC/aFfds+q/2xc0ykzEicZ
-	1ioFYJ39PtCAWhvtY7Vr4/ydZaMUiWsmqPiH6INRe6sm+x5MrAvjEghr8UUnn
-X-Google-Smtp-Source: AGHT+IGeEjYsFDhltXcZCq9irwEbKANOyTBHg4Za/JkGXn9YfvMrHB2vnBRdejBXniq5yhRW3lC/Ww==
-X-Received: by 2002:a05:622a:28d:b0:478:f03c:b3dc with SMTP id d75a77b69052e-47aec491329mr332173931cf.41.1745416486510;
-        Wed, 23 Apr 2025 06:54:46 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:e2b6])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47ae9cf9f7dsm68135461cf.74.2025.04.23.06.54.45
+        d=1e100.net; s=20230601; t=1745416499; x=1746021299;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ch6JIJp6fDzsw1vuIJ2eZ7S5WCWU4GzfWZUvcdjbWkA=;
+        b=b5XONqv2qLp17SczDc9ufn8f/ccFes90ggoVhKRiP2fxGobULo1LimG6qT1y5IHMe6
+         trak+eSaOTGWQrlx0QI2CG9xBnJrbaQE4e5KOK6au3bQwc5iarZqoP2Wz3yaFuZzxZ/V
+         vN+LcByGs4OSxX5ehoCLXdKJAZ/l/bCcPFF5u7tQ1G0gWi8lHnZuXcUTRGCKZwCSm8tV
+         xOBh1O1VZiAumrCl/xFS7RGKYVyLLL9gIuTdHCrAEOkDOJzksdNnSAAERgMy1gDoqGAa
+         x49hDStZvqLsnlWxNLjVwMrsnAK+XONoDR/wN+cFCVt+1+05fSeBdh5epJTPtNzqCdY2
+         pTKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZaUg8KJZTaOdNRDkCU9160kOTTnghyPF8FTqLeq/FOtX+jzUZooPBFqwMLml5j1rav5d3MnqQZiW45Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhhprxQ6nXX/New7vQdfqJ/8Y+y04mJu5m70yqo518/dbW7xT6
+	HqHyb2RuNWuqavC0qYZFkHNiwNx8z8hBZNmCEzrMLTtdPCRtGQexMXJ/8cy4RjTsfpawelzrBn9
+	iQvDyMiT1ZVqcp2JDrXrgZuMOetS3ZrGO3K8b7JDL8sZrEUae8I1m6r6Uqdlz7sU=
+X-Gm-Gg: ASbGncumj+PvwS6wskk9imgmBFSFDqAXM5woUtifbETvv0jZorsdrl6Y9dAG5Z+cSgV
+	y7elv4L2TU/+oOwEdUAGn/RU+9shwgoAK7DTSu9zl3/KJEuEjZh21JNFvhZx9QmmuOgdY1QtXnB
+	15fdmHL49rYP327WimuG+3uZNprnGnIKHPtVn/MdQ/ZY54bdSU7R7Tic5zOViyLTz0CozdOIWpl
+	tHRZIoCGAbvU6/yrEjKbKU/rMmj33L3/aWdXeU7iuzC8v8jFDMQKHsSQVebxDWEtixBpPtCPgBA
+	nB91NnktyVy6K6UM7MIwcfMa8SkWTSlIkPvUQazY9QItErhf6mA/Qia0GIFruTOvh4LdooLRWns
+	=
+X-Received: by 2002:a05:620a:1a1f:b0:7c5:642f:b22c with SMTP id af79cd13be357-7c927f99563mr2964406485a.20.1745416499211;
+        Wed, 23 Apr 2025 06:54:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCYGAKdZu53by47MDLIJhd7FQhQZJw0CY/lsfFM4Rh7noGH96BnMs9HrnTEVjA/8jZt7RYLA==
+X-Received: by 2002:a05:620a:1a1f:b0:7c5:642f:b22c with SMTP id af79cd13be357-7c927f99563mr2964401385a.20.1745416498738;
+        Wed, 23 Apr 2025 06:54:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-310907844f3sm18420431fa.38.2025.04.23.06.54.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 06:54:46 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 23 Apr 2025 09:54:39 -0400
-Subject: [PATCH v19 3/3] MAINTAINERS: add entry for Rust XArray API
+        Wed, 23 Apr 2025 06:54:58 -0700 (PDT)
+Date: Wed, 23 Apr 2025 16:54:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: camcc-sc8180x: Add SC8180X camera clock
+ controller driver
+Message-ID: <xlueboano26kjqkukhdmealdkzdpxdde57w6v5r4rjegydce35@i3e77s54t6yt>
+References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
+ <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-rust-xarray-bindings-v19-3-83cdcf11c114@gmail.com>
-References: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
-In-Reply-To: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
+X-Proofpoint-ORIG-GUID: QwkZQh206aNiWbJ0ThywVHzomXlPsDn7
+X-Authority-Analysis: v=2.4 cv=ftfcZE4f c=1 sm=1 tr=0 ts=6808f134 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=TIlaLBFy8nvcEV5Zc5gA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: QwkZQh206aNiWbJ0ThywVHzomXlPsDn7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5NyBTYWx0ZWRfX4qUU1JfwZH0M CmMj8mq+X8RZPf6WLxWOgvEAJ+vpZ7DeI8vmZSJh2ynMFvr1Y2TfZnBv6eWyCRrBihpmk3ZuZUX doiscQe7Z9QkUQqVpJFosWZ/l+3WL09aTcPY7OSnLUblAnwww7db3DHJUkEFZCZDEQ/eyLCp5J/
+ m4Te3TfJXmnWvbIk9CQ9TaKQfZag6xNHQezHTpUjx7a8uDXorZiYPm4LostlDdBjfjQ6h9W7cK3 Sp54zc34l4QG7V5lg+ZUd8YR5R5A8EWyb0jgqei90mcHg6vdNe2Q4K2UYWZn9aIXuhYso/yUEqp 7BhuxmOA3B34cnXJhiMKoyToLbVc5DTeECOgJRb5O6AfxPfQw5HRoqMIsd5JENpbKEcXC8IDn7g
+ 1BxSotU/3kgzNNpd1RxG7GCd3ir30DvxyfHWHrPykKfd/UYMMlUOonv4zyTgbSmkh0bleTXz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=869 lowpriorityscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230097
 
-Add an entry for the Rust xarray abstractions.
+On Tue, Apr 22, 2025 at 11:12:11AM +0530, Satya Priya Kakitapalli wrote:
+> Add support for the camera clock controller for camera clients to
+> be able to request for camcc clocks on SC8180X platform.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  drivers/clk/qcom/Kconfig         |   10 +
+>  drivers/clk/qcom/Makefile        |    1 +
+>  drivers/clk/qcom/camcc-sc8180x.c | 2896 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 2907 insertions(+)
+> 
 
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa1e04e87d1d..925d64be9dd6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26310,6 +26310,17 @@ F:	lib/test_xarray.c
- F:	lib/xarray.c
- F:	tools/testing/radix-tree
- 
-+XARRAY API [RUST]
-+M:	Tamir Duberstein <tamird@gmail.com>
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+C:	https://rust-for-linux.zulipchat.com
-+T:	git https://github.com/Rust-for-Linux/linux.git rust-next
-+F:	rust/kernel/xarray.rs
-+
- XBOX DVD IR REMOTE
- M:	Benjamin Valentin <benpicco@googlemail.com>
- S:	Maintained
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
 
 -- 
-2.49.0
-
+With best wishes
+Dmitry
 
