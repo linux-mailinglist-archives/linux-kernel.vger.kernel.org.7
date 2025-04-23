@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-616286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D70A98A6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31460A98A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB894449EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C345A1B659D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF35B78F36;
-	Wed, 23 Apr 2025 13:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F51257C93;
+	Wed, 23 Apr 2025 13:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DHBv1N3y"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EGU1V1Ro"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29C2701B7;
-	Wed, 23 Apr 2025 13:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC088481B1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413549; cv=none; b=OjYdPBG71aBM7+Iou7HYf9YuSWC/BTQVAnsSho3TVHq+jWfGuU+YMjhkoDasXCuGiBKwtYLHs4BQu6IeEOKPjfWPDmf2nwa0S/2kJoaD7dBd1iWhQ9sMNfEyJkdoJ7+HCihqFlNdxKUnedNu2lhC/s6ZCxjCzxHFm9sPRtPc244=
+	t=1745413585; cv=none; b=IfoII83Yex2a4Zl+eCA2cvktSxASVf6ZpYdmyLWFYfYLRngbuNYKsm0EagLr/T1Q/uI79IMAzmqXLdWVC4YOtu74Jvtj8wGEXG1qfovd2r6eIag2PyOMkyo4uUN9Qvwe0bADxAqM9LeGozVpsWzDG9fiLUbeTj3sYGGUVUmJkV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413549; c=relaxed/simple;
-	bh=RcgQTUHQ+Pl7003DZJD+mnP7u8UiOqqBTHs7cX83a+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eojc8d+Bqq9/HmgxnuEHVqZSYUyAIaFfHe3+K5/auwXDBbsmmAlggc7CD1CcMI3zJ9wboFCF1JoSrd6ZSKMudADZa8kscPs5QW53Le01b81XL/1Be+Uu2z/zzYDQgs49KcowRCickJmFbKnM89HuoKASoOLeSk7TtNsXD63+PxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DHBv1N3y; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 40DEE1FCEC;
-	Wed, 23 Apr 2025 13:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745413544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a7aC+Unu0bxBebacdFme4H9z3bxAWup925qXizcBc+k=;
-	b=DHBv1N3yynrOyPyxrdijD6lEG1jabNBCfFJU4BIgfUXE2lcqDbbbEf1zhdtrjQ7iSYLKUs
-	QgylcTwkSmf4QM/jgukMBqr42/AjKMF5ILXOwhCjuhQVCuhilO/d8bJjaQPoIFLdRDF0oj
-	93ycOniN6NhTkyE/SQIJVQIjzrNQkVz1hVypI6RNO15LrCECnZJVGMESv/OjBYrn65Isa1
-	/wdWGDgg/QUVgQslGxI+kCASASTjZkSns3AK2jXKVA3w/R6tizYk46Pm6QaF7ovP0d8FvC
-	Hp0RTR/AaLCRZ5YztZi4tyVGUD3eQ3dGqSWu//W7AiN8G8YhXlbTd6l/rhKXYQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Date: Wed, 23 Apr 2025 15:05:38 +0200
-Message-ID: <1923319.16XuQ88jBL@fw-rgant>
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
+	s=arc-20240116; t=1745413585; c=relaxed/simple;
+	bh=QXZOXiQoVte68E+OhfrEVya/2C3HhWKA9wuEqFHja0o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=cWvq1iA3AguaAgjXY18C70l0789XtgpTWXCSY5w6vz7NhcOhl1n+MKsT9ibbtLoLaAajfKlLsowAZ9PsnDJoZBm2QjjxDjzxLcD6ZobZ/1rqrf8tI49vitbEmxRMjcDhhGLdQHhXkMgAiiCbl2xpdZTcnkJlxUtbPnaDb7inN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EGU1V1Ro; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAbfrI003028;
+	Wed, 23 Apr 2025 13:05:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dbiIO3r1xFAtnDUD174p9j71UWbTGBeWLa/ZZ2MHI7s=; b=EGU1V1RoPpwTV0Dk
+	HtZuXkiX6YSS+gkHqMVgolOvgdsC77YqlkSZRSFMt2SznYLQ6/3DjUf1HAuK90bL
+	ghxCtT1U82C4Aj17XPCcka0NbFrM3sVBfsqO25GTNy9p7OxVQ31KuOQ6NJElm+Kg
+	0HBuwiWU/9Y/We/WCijRC8/6VJkw53orwUz3ID8JKeCT0cUpH5VOvg/Ed7+8Scej
+	FGXtqp0BmVycauebqUquqWHYiY0Hu6scLD2utCGX6ZHsC6wOmjpGLixYrPl+3s3m
+	KlOp49MS7EBxFjWaJBRgljOVaUlvAqaxzmHto1kFLQuVbLEmMUEnNF2UWQ2RUe8e
+	NNp7/w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jgy26fk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 13:05:56 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53ND5tvn030684
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 13:05:55 GMT
+Received: from [10.253.74.233] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Apr
+ 2025 06:05:50 -0700
+Message-ID: <968d21dc-437e-4909-bca8-fac4402f515d@quicinc.com>
+Date: Wed, 23 Apr 2025 21:05:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3153738.SdYAi8KGqb";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeiieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrn
- hhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+From: Jie Luo <quic_luoj@quicinc.com>
+Subject: Re: [PATCH v3 1/6] bitfield: Add FIELD_MODIFY() helper
+To: Yury Norov <yury.norov@gmail.com>
+CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Julia Lawall
+	<Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, "Marc
+ Zyngier" <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Joey Gouly
+	<joey.gouly@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu
+	<yuzenghui@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <cocci@inria.fr>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.linux.dev>, <andrew@lunn.ch>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>
+References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+ <20250417-field_modify-v3-1-6f7992aafcb7@quicinc.com> <aAKH37xa1brIAXfs@yury>
+Content-Language: en-US
+In-Reply-To: <aAKH37xa1brIAXfs@yury>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5MSBTYWx0ZWRfX4TP2GyrZl2bD j6o5xqwG5uolOPgkZM7X1CKnS3GuJhM7tmWZix521YhiWNBerHYtIC/RZvjJiA++wdsHc6KXOGt feGfqf4d6AripWWplDXnKv7Oypre9uFe4B6+sMxjpyPEJl2LijTok5gAwh2Det6EPBt3J2sdRQ8
+ Zc8IjH8SKi/vzkFTVXm3+VeegMXCT3hBOwUKIbP2Md5+fKa9ILG31larC7qKAC2cfmKmRiiBPn9 DQgTD61eDfJQwnBWaWcnY5bsTWG8thxvLzKduoFuysR+TcbBDSJ8UC0pU8vg5utqoo6D8kE6UIn svdbAbkln7Bg5GnhWhlR4/HuSqTNcfi7ZZGVV5mexmUnPlV8Bj+HSg1lcTjU9bXj+Lx1mQ3AgjG
+ UWl+1TbHzvTDaHFvaAZyVaYBtDl7P3lK5bCmdPezLva7IedogMgr39gBX9hg71Hb9AO4au6u
+X-Proofpoint-GUID: R4LFE6L8_KJPKtN4i2COLAGKmLFNWmG9
+X-Proofpoint-ORIG-GUID: R4LFE6L8_KJPKtN4i2COLAGKmLFNWmG9
+X-Authority-Analysis: v=2.4 cv=M5VNKzws c=1 sm=1 tr=0 ts=6808e5b4 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=UqDml5D6FPZDCTgpU1gA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=928 malwarescore=0 impostorscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230091
 
---nextPart3153738.SdYAi8KGqb
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Date: Wed, 23 Apr 2025 15:05:38 +0200
-Message-ID: <1923319.16XuQ88jBL@fw-rgant>
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
-MIME-Version: 1.0
 
-On Wednesday, 23 April 2025 10:22:30 CEST Dan Carpenter wrote:
-> The "port_id" is used as an array index into the struct fpc202_priv
-> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
-> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
-> out of bounds.  Change the > to >= to fix this bug.
+
+On 4/19/2025 1:11 AM, Yury Norov wrote:
+>> Add a helper for replacing the contents of bitfield in memory
+>> with the specified value.
+>>
+>> Even though a helper xxx_replace_bits() is available, it is not
+>> well documented, and only reports errors at the run time, which
+>> will not be helpful to catch possible overflow errors due to
+>> incorrect parameter types used.
+>>
+>> Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
+>> macros. It is functionally similar as xxx_replace_bits(), and in
+>> addition adds the compile time type checking.
+> This paragraph duplicates the above. I'll drop it and take this
+> patch to bitmap-for-next. Regarding the rest of the series - it's up
+> to ARM64 and Cocci maintainers if they want them or not.
 > 
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/misc/ti_fpc202.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks for the work!
 > 
-> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
-> index b9c9ee4bfc4e..4e1871870769 100644
-> --- a/drivers/misc/ti_fpc202.c
-> +++ b/drivers/misc/ti_fpc202.c
-> @@ -370,7 +370,7 @@ static int fpc202_probe(struct i2c_client *client)
->  			goto unregister_chans;
->  		}
-> 
-> -		if (port_id > FPC202_NUM_PORTS) {
-> +		if (port_id >= FPC202_NUM_PORTS) {
->  			dev_err(dev, "port ID %d is out of range!\n", port_id);
->  			ret = -EINVAL;
->  			goto unregister_chans;
+> Thanks,
+> Yury
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-
---nextPart3153738.SdYAi8KGqb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgI5aIACgkQ3R9U/FLj
-287sTRAAhGdCDX6fkbP3CN7e8zSAnAe60jWHF4tgsI/gul+Oq84ouZ1RpameFWPj
-bXrNk+5u/PgbIqYydcshqRgGwlKVgYMi4B8qEyvemETp1p/i3ClXhxm8w1JML/Fb
-rzJkrY/oRVKimTIXGv9k3RmeEkubGeYgGpNZ2LUBCsPiSMjkmk8WNnwTtCbUh9XM
-Qsskh5W8TWtswRc+RB16xHTzr11BM3EI19uPxnfPRJsTb+rVwAn0wktkTf7G5WYb
-2nKJ7Rp9ji93xet5Bgu2ZL3owyE3zn8qdZOiz7vWDvJMSFZV+tz9Z84abU4EZqf+
-KINf2mhNH7Fftp9wY7ZO2eTG4DOt25Ua6UXEbvIFc31Tiwwpv7xyX8orFpU79+IV
-7lpOdbR5n6R5nnn54kjbi+37Ws4lFUcn9GAVxUeNlR3SHFriWKmMtG9LhtonFtgM
-JEA3GQowSUgW3CF+XmAwgXrOwh0WCMNm/OUtb/jEtO+EmRxLbh6EXto9hTl4U/SR
-ffLA0ZS2wMlMIMDqrP/aFGIuSbzAxMjZfB1kKaBh/DvmHZ4W54E7J+wdBGWfy/mh
-fhRCuo0ykjh7kyBvfs0KNv+iq6PEAxj03bO/TYbU0XR8gwOY/dLCUjk7UHuBsy+Z
-QE76BPu4TRTUtGjQ3Zyd+siKVItB+FBDNy2pjy/KnEPpkiZMoOY=
-=u/4n
------END PGP SIGNATURE-----
-
---nextPart3153738.SdYAi8KGqb--
-
-
-
+OK, thanks.
 
