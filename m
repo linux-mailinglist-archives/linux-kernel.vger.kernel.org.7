@@ -1,212 +1,148 @@
-Return-Path: <linux-kernel+bounces-616271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0EAA98A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E81A98A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCE05A3F18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0931443723
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE0C155757;
-	Wed, 23 Apr 2025 13:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4564B101F2;
+	Wed, 23 Apr 2025 12:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOhDTP6A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqQag7lU"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E4541C69;
-	Wed, 23 Apr 2025 13:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECBD79D2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 12:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413324; cv=none; b=l5REBMyVsZOOhpcskBhJEPMvYxxDalohSBnJz0Ctm0WR7i42AD+YeVhfKQIGQ61awlOnMY9/43hy0Un9WkHk0nYgxiNXuTjZCBHyHSY+psk87Fy+jgswFmXKWk9nhW6b0CKWgKtxTZ3sQbSHSikbleMCp6VqHCj5AJPGaeIlJ+E=
+	t=1745413145; cv=none; b=Nt/5zuJ5cvJvf15xoJ7HGJqfSuA0n37j4Q8HATUaS2tApCNjOx6CZcaDWQxWQmKdUaUOQbuIb/bECtR4yqGU6c4KtM6G1jW1EBWS/H4KskXCCxt0oKUq6pc0mS403LG/z3UbUDBLl+jIpkPIshO0h3lHFPUb2s124DQmBhszvag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413324; c=relaxed/simple;
-	bh=0yi/5RGccvozn62Qin1Y2rrPalzPKkJWKkwLeXjcir4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tvIPUUVEA+NERPSxiK+YCslWPzEk9iueclASYdXnn/8FqW/dUgz9ouLywp+tZRH+DUXzqUl4lpuSY/2hQNji2ynJPJKto5u5E72X1k1ol6rW31d4B8s4qCOO7nE0NGwkyHCxv/ZnbK89cYLxVSFbwp4i87Utah+g4iVmJEeTyII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOhDTP6A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F39C4CEEB;
-	Wed, 23 Apr 2025 13:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745413324;
-	bh=0yi/5RGccvozn62Qin1Y2rrPalzPKkJWKkwLeXjcir4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OOhDTP6AfVpGYb3OLtzvCU68EeqoqzOMMvcfZUadM3r29Xciwv2sSA9Jn0QlXMtd5
-	 HcAtk9v53g5ALrwG1+oar6pajGOICQkCMhgkvLAkWA4S0vf299LoyGucW+QMmaS6Y+
-	 iHfyBQajs35k+aHKnISlhzUSNniQlB4SI90No+zKeDtxE6gKwVlj573Iva8wixH3fP
-	 wnSQaMBx1HK4Nwd8tR5JaAvNNJsIAYu3ZHLnfTqFhitulGdEwrk4gc35qdxw5/ueUQ
-	 GtS92jL9jrzlp06zA58JG89HuckbR8DhwaGedUn28UvmfBi2mz3GzaKvB7KP/woXJG
-	 JpS8HU/6A/dKg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,  Boqun
- Feng <boqun.feng@gmail.com>,  FUJITA Tomonori <fujita.tomonori@gmail.com>,
-  Frederic Weisbecker <frederic@kernel.org>,  Thomas Gleixner
- <tglx@linutronix.de>,  Anna-Maria Behnsen <anna-maria@linutronix.de>,
-  John Stultz <jstultz@google.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  Benno Lossin <benno.lossin@proton.me>,  Alice Ryhl
- <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,  Danilo
- Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 2/8] rust: hrtimer: Add HrTimer::raw_forward() and
- forward()
-In-Reply-To: <20250415195020.413478-3-lyude@redhat.com> (Lyude Paul's message
-	of "Tue, 15 Apr 2025 15:48:23 -0400")
-References: <20250415195020.413478-1-lyude@redhat.com>
-	<20250415195020.413478-3-lyude@redhat.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Wed, 23 Apr 2025 14:57:24 +0200
-Message-ID: <87ikmvkpcb.fsf@kernel.org>
+	s=arc-20240116; t=1745413145; c=relaxed/simple;
+	bh=TyEJqV+iPI49wYRxxheS7AY0Oo5A/AIP7GetFD9olro=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NP13jXVjhfyOSPQK1lWFaAO6fRfDjn6sAztB4tNCdcwo2+gZ+q+5PauAWpduMAK6WPBBzVvX6kVj+MU+rih1ISvNf5GBSqyYxxwlP7wL34OAflMkpjaLw4YVR2B4/GwYI8ggndEpwgmqgk/SZWAbIKWP9i58vfKyTpGih2qT8DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqQag7lU; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso773796a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 05:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745413142; x=1746017942; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWSgYU4Bs/P+4N0/0yj45j2zwuuB7lOSEXG+V6K+MOE=;
+        b=IqQag7lU35JYDzug7NsQHo0KBA2LA1ZA3GNWFFO4RPQ4w+KOcYBCK28u7qMaJd3PSz
+         flNb+6CtW/ZW+NXr1FkmjEX2U8YPqiCZ9Xb93lcaGwy1IIFpbtkVypny6EIPWW/C9hQv
+         b/Dhmg2ysslUUcCGKfDk2TC2KaebgezPXUNs0u7YL4dHQA/+wy2Wm7H/Hu02uZ3RkgFt
+         9VlOOJ9kan/9ORfkTaIiR7qX177EP01X5Sqtqznk056XWn4xblE+0aDDFdWjOXX6o5x/
+         yLljq2vECAYD9x8+4ZibEpmALOY9E5r8W0/zTV9UflfGl5g2MxNa5GXa92TLgGZOqm07
+         OHbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745413142; x=1746017942;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dWSgYU4Bs/P+4N0/0yj45j2zwuuB7lOSEXG+V6K+MOE=;
+        b=JgoeSZ+gNifwnY8LBPG3p/PeVRfKyakI4Pe+e0YhQ5pst3BaUWcOIKNUjNjyhWyCnX
+         271OvvEnY0JWBnSeGYQEHM85EjvuofPu6eSRxuPoxX5dMl3ZBgwu3fX592RrrKG8w6qr
+         FhGUxG/EWDQ9az3ksm/cPh/yGg1fD5bPiyasx2ZULBcD39cTybDdry5Atv4o6SZNDXfD
+         qtXZ1lCZkBYehlOxNHYeh6z9WZ/Qihm3FoTE8K1ipzqHOksNB8YO03h6IgjkheyBN4jE
+         +lVJGWxoP7QNsgMAg2JChPjCZJv+Vjec4gDJGss4PEarOcyAcy/ABKwphnr8oY54klTT
+         YFFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7kdJfqdqcq2+M9CKkp+O5dFafhHzjHQZ7tzQhlzjMmKQIozZHB5QYIo7J2abwuZzHawSiG040Exvitw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF9upZNg4t9JTPUIxIB7uB3hg0gM9ytypPy7gIpxP8DiKXWN5m
+	zQtuUV30EIxNSjXRH41n1EdWfAk4C+sGEQ4Q9wuwQL/F7utuRhRfVjL7mLLItnM=
+X-Gm-Gg: ASbGncuBvqW6njfyVXu5y8e+T1i12Jcgr6p7aJus9piVbtj+kA3c5D/+AqZlfDEmzzL
+	xljiKYy2OP2UeA8w0mAiexu5PzIWl6Ze3ThOqTa/oeg9sgThZz5wFHFaiAEpiINoB3YndgtYBih
+	LUNfA6gQcOD0GQDf8fewZFFdlfavpWiBW2b3+IIESL1GMIK0oLXw+VpSnqNENEN8tXKuprsDs8A
+	UADlB9pYIYxOeOAt+bFia0CN7jbf7CnFfYLI2YZo1Jb5kh9mHkWzZPeK0AgmOLZHlyZbajBDrzX
+	ym+9PjRJ08KIGHoJpkka2d8zsQxtgaUWYWt2Ia0=
+X-Google-Smtp-Source: AGHT+IHOahSmPfO3hs7sUfnCfxpEOAB/NiskqrVfwSdRbErJuG4vZlaOfuNODVHDVcw1+Mk7JEWnnw==
+X-Received: by 2002:a17:907:1c21:b0:ab7:1012:3ccb with SMTP id a640c23a62f3a-acb74b2e84cmr1485463766b.14.1745413141636;
+        Wed, 23 Apr 2025 05:59:01 -0700 (PDT)
+Received: from [127.0.1.1] ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef426c4sm794377966b.131.2025.04.23.05.59.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 05:59:00 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Wed, 23 Apr 2025 15:58:52 +0300
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Add GFX power domain to GPU
+ clock controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-x1e80100-add-gpucc-gfx-pd-v1-1-677d97f61963@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAvkCGgC/x3MPQrDMAxA4asEzRVIzg+hVykdjCU7WhJj02IIu
+ XtMxm9474SqxbTCezih6N+qHXsHvwYIm9+Tokk3OHIzTW7ExroSE6EXwZR/IWCKDbOgn1nHGJ0
+ sytD7XDRae96f73XdscwmEGsAAAA=
+X-Change-ID: 20250423-x1e80100-add-gpucc-gfx-pd-a51e3ff2d6e1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
+ stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1206; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=TyEJqV+iPI49wYRxxheS7AY0Oo5A/AIP7GetFD9olro=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBoCOQN3ZP4llDd4xTrqoYEBqHvi08og4dAIxlKD
+ 0RC5xJ1rEGJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaAjkDQAKCRAbX0TJAJUV
+ VgTbD/0dGPsZw4skZK545sXIXLPy9uRQDXtDk2p36rtTpN1x9m/yIy//KakO+AGrY0jhZ7m82w0
+ v7KZkA+ehartHeFVBRnJp39j/OJxk0nRKe6n0E8n+8UX4VTo3Sjvkmtp1Gj15S7XXePHGTsZe/C
+ veXybYjS4DJ64K2LZiEak+bZ/2F3gYs7FiddjNFZYtoUSds6Ei7L1NOCWbJN4V1odiQLdrf6gMo
+ fhWstp0V3ah4AZgcZVNs8yv/tGcjdtbXxte+u0LLCeGFQLXMHi+lqnAh4LkVX1TqV0ris3lGz4H
+ dt1bgOuiLh8NuBUKzDEJpRdTGVzmFmC7enE/hUZHfd8hLWVMdP3ORRSvfPfA/514LPqIWFUqFYM
+ mgDLwDnuA3eSwCi+XF7c/j5keiRYBqUgDnxKAy25kUSvSfu4d15+mfvzkNZjBXKN5uU3SJg9Hht
+ A6552zu/PIwaKfAHFOL8oQS6Lq17APphEQbacmdzZ4TsTVlXNzqvZxsJqB2/Haslew6iUjwbvgx
+ FSWmlPmDJCeEed2K1F2YAb6tDD+CDPbzhdbz3rv4AdIJC5Hzjwq6HbeSMuSFVB93w6ZEXV1kaBK
+ wE86cK6Bdxy9qsVI3ur08wzx3rS13c8cmVb2B3OvrnWwTaq06hFvhnxlvLfDk+wSa5zxImn+ey7
+ lUK1qHepyy2Kg7Q==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Lyude Paul <lyude@redhat.com> writes:
+According to documentation, the VDD_GFX is powering up the whole GPU
+subsystem. The VDD_GFX is routed through the RPMh GFX power domain.
 
-> Within the hrtimer API there are quite a number of functions that can only
-> be safely called from one of two contexts:
->
-> * When we have exclusive access to the hrtimer and the timer is not activ=
-e.
-> * When we're within the hrtimer's callback context as it is being execute=
-d.
->
-> This commit adds bindings for hrtimer_forward() for the first such contex=
-t,
-> along with HrTimer::raw_forward() for later use in implementing the
-> hrtimer_forward() in the latter context.
->
-> Since we can only retrieve a &mut reference to an HrTimer<T> in contexts
-> where it is not possible for the timer to be accessed by others or
-> currently executing (e.g. a UniqueArc), a &mut is actually enough of a
-> guarantee to safely fulfill the C API requirements here.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/time/hrtimer.rs | 36 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index bfe0e25f5abd0..aadae8666f7ea 100644
-> --- a/rust/kernel/time/hrtimer.rs
-> +++ b/rust/kernel/time/hrtimer.rs
-> @@ -68,7 +68,11 @@
->  //! `start` operation.
->=20=20
->  use super::ClockId;
-> -use crate::{prelude::*, time::Instant, types::Opaque};
-> +use crate::{
-> +    prelude::*,
-> +    time::{Delta, Instant},
-> +    types::Opaque,
-> +};
->  use core::marker::PhantomData;
->  use pin_init::PinInit;
->=20=20
-> @@ -164,6 +168,36 @@ pub(crate) unsafe fn raw_cancel(this: *const Self) -=
-> bool {
->          // handled on the C side.
->          unsafe { bindings::hrtimer_cancel(c_timer_ptr) !=3D 0 }
->      }
-> +
-> +    /// Forward the timer expiry for a given timer pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `self_ptr` must point to a valid `Self`.
-> +    unsafe fn raw_forward(self_ptr: *mut Self, now: Instant, interval: D=
-elta) -> u64 {
-> +        // SAFETY:
-> +        // * The C API requirements for this function are fulfilled by o=
-ur safety contract.
-> +        // * `self_ptr` is guaranteed to point to a valid `Self` via our=
- safety contract
-> +        unsafe {
-> +            bindings::hrtimer_forward(Self::raw_get(self_ptr), now.as_na=
-nos(), interval.as_nanos())
-> +        }
-> +    }
-> +
-> +    /// Forward the timer expiry so it expires at `duration` after `now`.
-> +    ///
-> +    /// This is mainly useful for timer types that can start off providi=
-ng a mutable reference (e.g.
-> +    /// `Pin<Box<=E2=80=A6>>`) before the timer is started.
-> +    ///
-> +    /// Note that this does not requeue the timer, it simply updates its=
- expiry value. It returns
-> +    /// the number of overruns that have occurred as a result of the exp=
-iry change.
+So tie the RPMh GFX power domain to the GPU clock controller.
 
-Looking at C `hrtimer_forward`, I don't think the description is
-correct:
+Cc: stable@vger.kernel.org # 6.11
+Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-    u64 hrtimer_forward(struct hrtimer *timer, ktime_t now, ktime_t interva=
-l)
-    {
-      u64 orun =3D 1;
-      ktime_t delta;
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 46b79fce92c90d969e3de48bc88e27915d1592bb..96d5ab3c426639b0c0af2458d127e3bbbe41c556 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -3873,6 +3873,7 @@ gpucc: clock-controller@3d90000 {
+ 			clocks = <&bi_tcxo_div2>,
+ 				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
+ 				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
++			power-domains = <&rpmhpd RPMHPD_GFX>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
 
-      delta =3D ktime_sub(now, hrtimer_get_expires(timer));
-
-      if (delta < 0)
-        return 0;
-
-      if (WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED))
-        return 0;
-
-      if (interval < hrtimer_resolution)
-        interval =3D hrtimer_resolution;
-
-      if (unlikely(delta >=3D interval)) {
-        s64 incr =3D ktime_to_ns(interval);
-
-        orun =3D ktime_divns(delta, incr);
-        hrtimer_add_expires_ns(timer, incr * orun);
-        if (hrtimer_get_expires_tv64(timer) > now)
-          return orun;
-        /*
-        * This (and the ktime_add() below) is the
-        * correction for exact:
-        */
-        orun++;
-      }
-      hrtimer_add_expires(timer, interval);
-
-      return orun;
-    }
-
-As I read the code:
-
-  If the timer expires 2s after `now` and `interval` is 6s, then the new ex=
-piry
-  time is moved 6s forward. Not to 6s after `now`. Return value will be 0.
-
-  If the timer expires 3s after `now` and `interval` is 2s, then the
-  expiry time is moved 2s forward and the return value is 1.
-
-  If the timer expires 4s after `now` and `interval` is 2s, then the
-  expiry time is moved 4s forward and the return value is 2.
-
-  If the timer expires 5s after `now` and `interval` is 2s, then the
-  expiry time is moved 4s forward and the return value is 2.
-
-Can you capture this behavior in the docs?
-
+---
+base-commit: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
+change-id: 20250423-x1e80100-add-gpucc-gfx-pd-a51e3ff2d6e1
 
 Best regards,
-Andreas Hindborg
-
-
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
 
