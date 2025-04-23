@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-615864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CD9A98364
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:32:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18F9A98375
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEEC17B1556
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687831675E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BCD280CD9;
-	Wed, 23 Apr 2025 08:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AA4284B53;
+	Wed, 23 Apr 2025 08:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozVjPv2E"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CDF2gUzC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C6280A51
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF3527466A;
+	Wed, 23 Apr 2025 08:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396485; cv=none; b=XHWipP6VG7rq0t1zHKQ3ZW9z9UfXzUE7qcaxp/4WeaMfxNQl44bxcwfD8ALBi4O/YhxyhJ4epAQRgK2VJyHSme2poHkEaxsOMpxT/1e5/MAUD/tvU5zpQYbw9k+aGRdvNuVt6pb7NtnW+dK+HnzukZBLslPr8N417yi9zdUzd78=
+	t=1745396617; cv=none; b=DMPPlqtcSqmZDMqDwNl6hryMt64Bd/X0Dt9xSuvOzJUirdFWASbtq8yZLqzt4MuMb/OGrAtPQ3R5Vtzm+u37mulkvolmbOMutWnTnWFlENz/xozUol3P3ckpmVaLroigZQKAWgm4Si3ipulP1sjGglSwGQtTZuO4n8tKsMFULeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396485; c=relaxed/simple;
-	bh=0XEqfSAxlPY5os2nxDoIwRW/AGhrDkurjFzqdCvEZyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FZ++WKbadHjMqLTKVFkfG8iykjl3kD3L/65feaqFu4uz1rICfX4QhdZfWYSXqo2+8IEEKrQgcUF1V62rrnulWDcDnNUkeK0ToR68oErmDD76xy4GUdTtHRQmjjd3X0/mABrfTEo99QnonMm3b3i4KKa0CZ3z/1g5KsTl3toXMHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozVjPv2E; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so55235105e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:21:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745396482; x=1746001282; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
-        b=ozVjPv2EvWvqWbFFDCuonjx+z/Lz6ZvSEDHCzbc5Nvo+TyqVBFmVK+BbmUqi/H3Roe
-         8mPR5AVbtjfD26khBXumkCKjd5Yv1A3qg54Ko8heYdQIVHzLZJybbGQTuheMHwEd7Q0l
-         NmNyldolTZZOnMFRAZtKu3M7tpiBIOIybRD8GRFeh2H7QoBAHY1UavFQnH0HtiCWdP+P
-         /mOdAoGQp7ux3IY0XL46ZC6WYYicT3i2l4cScUfeCWsxl36nF3mDrCVnNMiVQGN56+Qv
-         VThP5gs7A8TtKPNPWZem3XjY4fAM0ZZBqEtl91bUCwxLrAFIQo4S6puIRaCg2Enhzvf0
-         +B+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745396482; x=1746001282;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
-        b=eCnfWvqeCYR7Gyj+Q/SJpovx+G8TPdJo+jKbcNYkyZHmd7zXHvVB5awG8RDaJlDJI9
-         yMcWvqsUeC1lWnTeqHQOf37HJVgWagG85PzHQdlOvrAcZuYwkcjSnsxhJqsW/OZSWRzc
-         uH9JncHyMzvJ4djUznLtDZ9JV3gDZIPKPREl89h6uFlsfTRdoZ303mIhqtNDmw8Tm4o+
-         y7tcHv4VDLs4eyNobCF4Id4gCJQa+YHiEj095kSnhloUuJqTaAOpy47ZAhwE6ySNtisj
-         TCBtI5xWH0F37eR5JFSGxeikLuNXnf1yUGtBUfA3e1Q3A8UIurFF8U4FHkP3BhcW1jrY
-         3BhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/PZio9IvHFpEpGTobEUCK1bLqi1fvYmi1oN6g+HBI/1xOdQT+yp+MgT4QqICGhRBJf6bJ19mHEqiHgHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrKpbJXhrbPEwQ3UDgaS6nEscYu22xNouP9Vfo+hHXXOGh2Lq6
-	jJgeQtNTRIcPVftPrlsSifwbZZ5joaQaPeki1v3VaRx65pNVnXxeK1gLcwsDMcI=
-X-Gm-Gg: ASbGncsHATxa6kJpbo2Ct833q4GNZNOQTfFmQEQzAbPmZTLQUH2IfPi6pJvhJZCKU+j
-	BVFoVidxEjhNgFj4GZG3G7FSda+dHMfm3KbyI3V71gxGPzBcsZoRIkqZFfBFnQr8q+MjBdVrm6q
-	MOztYA86rDJN3SJcPb5jJmL0gVl1BCOscau9JYHByzSEGKwDoA0J8p2gJgkZYX6loTsPP9MiGkj
-	hBlcIz3+vHD4gktMjw2+5LxOiYaV9FZw0Z8hEEFt3WSfPWq3V5BVzH2chPpyWVjfE22eNBBv0rb
-	ec/+Vd9buGp1Wh52kRhGodGTC9KQLHcp8g34ms1r1zFUBw==
-X-Google-Smtp-Source: AGHT+IHWYSrmnac2ZIJgkK3CcnsC+6t1hYnQGT7QpTZYVmOgik/OcS5nSxSw/Lh3KD6scYknsYVhAQ==
-X-Received: by 2002:a05:600c:3c85:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-4406ab98242mr134584375e9.8.1745396482254;
-        Wed, 23 Apr 2025 01:21:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092db2bd5sm16760175e9.26.2025.04.23.01.21.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:21:21 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:21:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] i2c: Fix end of loop test in
- i2c_atr_find_mapping_by_addr()
-Message-ID: <aAii_iawJdptQyCt@stanley.mountain>
+	s=arc-20240116; t=1745396617; c=relaxed/simple;
+	bh=+k9yqO/s4OaNqrko4uLFiQ6t4We61L1bjrE/LVw5Jcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR2soVJS6LUlRuvFrUyHaB85oi8SE3d2cleQITx6zK3uHuCRyCCvyqo6M770rJU+DVR7ijgJ1mbzLIHv9WTkPTNj6Yp5mmpDTf9q9w8JMOoI9FDaZQfrdCpvUlhoX0Oh07sadODjX8bZ1yb6XrKRecUcoKlor9d3mz3RME64cKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CDF2gUzC; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745396615; x=1776932615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+k9yqO/s4OaNqrko4uLFiQ6t4We61L1bjrE/LVw5Jcg=;
+  b=CDF2gUzCXstymEhEI/jUMZQ9tFpPdLZTm5Eu9vVAFCUbjDY2If1xOIAB
+   4vV7QXtw7FGRW/9zm0w6KViA60/T1go1r34fQcPk/oXLq/JOofA8O6eUg
+   1VOqRKRCRxLZlXfe39EYuqVa+H52DzCv/zdt/KCC0Fy5tlTh82dFy4gWY
+   qe55LeDS5KWxf9FBG75zDxB+RFFHtdqn5EvkTAMRyZ75VlIbFhVgJvg5/
+   gQgQK9D15yQkJjkfphRAtTfEZqqU05K8Wy0H1+dtJa64Sv4RavZbYUOJK
+   VvgiojJJZD0fZAL/FpQsWmfZ8JraZnGW6yaRoLUaSw7hvc+OZVzYwmGEa
+   A==;
+X-CSE-ConnectionGUID: Zo21e1MQQKuDIPAb/nrgMg==
+X-CSE-MsgGUID: BCgFH1cMSI2UwkPgzfkrNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50809243"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="50809243"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 01:22:04 -0700
+X-CSE-ConnectionGUID: /3T1SlrDSG+PlKYOBY46FQ==
+X-CSE-MsgGUID: mcZ7cnjoRSuOafvzc1VPVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="137114903"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 23 Apr 2025 01:22:01 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u7VMl-0001jd-0G;
+	Wed, 23 Apr 2025 08:21:59 +0000
+Date: Wed, 23 Apr 2025 16:21:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: xu xin <xu.xin.sc@gmail.com>, xu.xin16@zte.com.cn
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	akpm@linux-foundation.org, david@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, wang.yaxin@zte.com.cn, yang.yang29@zte.com.cn
+Subject: Re: [PATCH RESEND 6/6] memcontrol-v1: add ksm_profit in
+ cgroup/memory.ksm_stat
+Message-ID: <202504231523.owjrO2Yy-lkp@intel.com>
+References: <20250422112251.3231599-1-xu.xin16@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,50 +80,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20250422112251.3231599-1-xu.xin16@zte.com.cn>
 
-When the list_for_each_entry_reverse() exits without hitting a break
-then the list cursor points to invalid memory.  So this check for
-if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
-variable to track if we found what we were looking for or not.
+Hi xu,
 
-Fixes: c3f55241882b ("i2c: Support dynamic address translation")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/i2c/i2c-atr.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-index d5aa6738370c..1aeaecacc26c 100644
---- a/drivers/i2c/i2c-atr.c
-+++ b/drivers/i2c/i2c-atr.c
-@@ -240,6 +240,7 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
- 	struct i2c_atr *atr = chan->atr;
- 	struct i2c_atr_alias_pair *c2a;
- 	struct list_head *alias_pairs;
-+	bool found = false;
- 	u16 alias;
- 	int ret;
- 
-@@ -258,11 +259,14 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
- 		if (unlikely(list_empty(alias_pairs)))
- 			return NULL;
- 
--		list_for_each_entry_reverse(c2a, alias_pairs, node)
--			if (!c2a->fixed)
-+		list_for_each_entry_reverse(c2a, alias_pairs, node) {
-+			if (!c2a->fixed) {
-+				found = true;
- 				break;
-+			}
-+		}
- 
--		if (c2a->fixed)
-+		if (!found)
- 			return NULL;
- 
- 		atr->ops->detach_addr(atr, chan->chan_id, c2a->addr);
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.15-rc3 next-20250422]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/xu-xin/memcontrol-rename-mem_cgroup_scan_tasks/20250422-231623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250422112251.3231599-1-xu.xin16%40zte.com.cn
+patch subject: [PATCH RESEND 6/6] memcontrol-v1: add ksm_profit in cgroup/memory.ksm_stat
+config: i386-buildonly-randconfig-006-20250423 (https://download.01.org/0day-ci/archive/20250423/202504231523.owjrO2Yy-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250423/202504231523.owjrO2Yy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504231523.owjrO2Yy-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: ksm_process_profit
+   >>> referenced by memcontrol-v1.c:1843 (mm/memcontrol-v1.c:1843)
+   >>>               mm/memcontrol-v1.o:(evaluate_memcg_ksm_stat) in archive vmlinux.a
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
