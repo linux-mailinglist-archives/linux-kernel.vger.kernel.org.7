@@ -1,263 +1,136 @@
-Return-Path: <linux-kernel+bounces-615693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC49A980F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:32:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F16A98103
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB1A17A381
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6407D1B60736
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00191E47C5;
-	Wed, 23 Apr 2025 07:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD5526B956;
+	Wed, 23 Apr 2025 07:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s4yOJDK4"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TICk2Rj1"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8280426A0AB;
-	Wed, 23 Apr 2025 07:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D585D26B0B6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745393412; cv=none; b=ZeiAM0ZLNploGQupcki2heJkk3xr5m0gWYsacfIiznTZev88LEqpJSEc5qZ4QM+5h6dE5EDKrnMipEo03jHjQ2OaPyu5fwuBGmp5LXFgOjB7j2lguUvzeULmX1+TKnDOX9Z2S+6VW5K0dnK7NKasl0I3I5k2r5dERBlMXkKA6SA=
+	t=1745393441; cv=none; b=mGxB05As+knFzQod7FFQ8dTLMWQNe6D9mRMpFx3DZowsW7kU126tqv3fDgGMvzOYvF0rbgLiYK7xdXCjoPD8cqXxiRVD2LwehnHQqlALsN5IUcnZoHSEU7bSX6JTle0Fbw2BW2r2BSKdt5kfLMUMg/S1h9eJ9eCH/GeRc/gc6Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745393412; c=relaxed/simple;
-	bh=o+phP31kmrAYsA7kQQZnwNWQ6u/lBY83aHaSbMuUKkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SJCFhcBgL4VYef/Xw9sIVSYQJhR2LPlfhgOxuu/2+U4SW4/anTaa18f/tvPaYQOdeiEf/W25gt7LY6VCfp6cKNaVkBFY9wAe/tRTHycQvLk+l2hIrk6nFby31RkNdzV/eF9Iog0/fEOXvwhHfQP+fceQUZ98LpmtuE+VKL479go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s4yOJDK4; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1745393406; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=lH4lDINRe2o7t1vSewfvz5VOPesF2wiTgnlvHI8Ti7Y=;
-	b=s4yOJDK4EVklcxUrVbpwCkhrArbBuH1BZn2dLeKsJAKBARNsh0UvndxnnijhwTAcpAjzzDaQDUQR8kMhbZPza0ymsN0EIBg3mmAgTP8z1jKsdGX9xjMS/52zHKr4YbEURQ1OTaFYMVtoKLqh4odcChasPsiuyLhFirFm6Bxacno=
-Received: from 30.74.144.121(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WXtXXfj_1745393402 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 23 Apr 2025 15:30:03 +0800
-Message-ID: <e4e4aaae-92be-4cd2-9435-dccad99961bf@linux.alibaba.com>
-Date: Wed, 23 Apr 2025 15:30:02 +0800
+	s=arc-20240116; t=1745393441; c=relaxed/simple;
+	bh=ugdh0Jwg8OtNDnnvSXX+JcwFs/E/9kEcCZ1PVSsw1oo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jErZZhv6rz7tx76jQ3uFhTH/6cs6bzbCV9TRbJF6O7R5XPVP75rbCTHLbmjQ1be/f2GWm8DK9kwvoPVOlSrdcFf2b7huf7YgnJL/z1eaQDl4NG8EcXXWqi4YFxIBiuBN8M2z8v4VNdXwN7XpTDE2ZWN/pyb/aigjzbkbZkQnBDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TICk2Rj1; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39c1ee0fd43so5494087f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745393436; x=1745998236; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IAVOf9WwZt5yb8GSwQ0W6u8pvseS1B6MX+loQMEGJLQ=;
+        b=TICk2Rj1l2YRJmLdqOz5FZwY43nDW2Lk32jG8grGPWZPJneWLq7G9cL+ffkwAclNsE
+         Rz/0Atm00/xafJJfGnHaNe2rSY6AuE6tjc6Hhp6UM0r+MK++tJP+rRntbBXwS1lHPtt8
+         lt8rGmFOCk2ElOs5VUEHS2Ck+7AjbUonhJ+FfhBLyIqSy/rd33MVj5M/rEMGbmfrRThA
+         KVgbXeR2QkZA4ixX3D616vpaga9OH1g9mPyV4hVBiG2tgX6+WxByuzPQ7Qp12fSl8wLF
+         RJAcoGFUTMYnfDVXD0ZCIGw4xWctHP9TbMho/W6aqwt08gDbOWBkSWuNmFab3/0hgqIX
+         fOMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745393436; x=1745998236;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IAVOf9WwZt5yb8GSwQ0W6u8pvseS1B6MX+loQMEGJLQ=;
+        b=P+73KAMLF9eKQO89X1PFdwy3TLvNbrjJ0Q3HD5c5aM45E6peyHqYdhURJn20Ajn54o
+         9ikdid0HF6mm6ZdfJdknQpR+8ZBELgoIlvh6d70PZ7sxxAZKEPVY4cjXWYsMFGy1oBKQ
+         2d2DGV7uoTHNtb3HmWlRNl0QhuKPyMwOyJiK2sA9So1nq4adKTzFx8BKAr4kswGalDUH
+         aEcZSTQBbF9ClEVmEcKkgwwFVFlZ1LexAs0LvWIAqQtoA5orxn06F0NBoP/x0/6YFLrs
+         nn7Q2BtINt7+F0k0SmCw0ZReH1lTvlE3PcvjNwBNU15j+EEG9KQa3JPBlp1RO2GLzBfP
+         6/LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGDSPyli4jV70HM534ezvUHse8dsX57LdMPb8DmFVNaVZgMxKU5Rs8HKVbUed5RdKDN9+FgSPgLVCmhAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtgsevmL5BYcQdn00s2dYvKc9gd/IdwHybQUic00PXJclG5Yg1
+	OPWbz1l652AhYa6FpJGgzLNpcrxcHjgJ/QmaadPYI+EgJNziNjHzeiK3cPRSDII=
+X-Gm-Gg: ASbGncvTL+Piql3henkylzB2FV/wq7lBDzYkt/aktPuhsWiLfyyLukGAHCVncy5Qwdi
+	CLpMwkzZz3ymUNtn2cafKJ/jJdQdO8jvbg4GmrgTKnQ+IrSjy4V5mMB5uw/7fWX5sxrJ7AqFBMi
+	2cHnp3y9oD2JDTBuTKR7Whxq/Xv2b+o5ARgawhBJglo1PL5xB2wO/3PIKlSGWGkBvlZyq24/l0p
+	Qq1s8xQ9l/m3T+jI9hflz/enXhv420qXCNKDQTlfYL3rTeqfB80wo2m0yWv3xsFiy3uTVx/34oX
+	slzNVUFOQcbaCvwwVH0ULa/NF9yDObynjInZmd4OfNGIKfxiEoy0LBc=
+X-Google-Smtp-Source: AGHT+IFDeOQJ84DRhqUsU2I2qejWhkxN7owbw0EAeDx/ORw4YLo17BdfeLQzG90l677GOD8n8erpdw==
+X-Received: by 2002:a05:6000:438a:b0:391:298c:d673 with SMTP id ffacd0b85a97d-39efbade41emr14796194f8f.40.1745393436055;
+        Wed, 23 Apr 2025 00:30:36 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:67a8:3ed8:e19f:5eaa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493115sm17761699f8f.78.2025.04.23.00.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 00:30:35 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/6] arm64: dts: qcom: x1*: Fix vreg_l2j_1p2 voltage
+Date: Wed, 23 Apr 2025 09:30:06 +0200
+Message-Id: <20250423-x1e-vreg-l2j-voltage-v1-0-24b6a2043025@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/12] khugepaged: generalize __collapse_huge_page_*
- for mTHP support
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
- baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
- peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
- usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
- cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org
-References: <20250417000238.74567-1-npache@redhat.com>
- <20250417000238.74567-6-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250417000238.74567-6-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP6WCGgC/x2MQQqAIBAAvyJ7biEXw+gr0SFyqw3R0JAg+nvSc
+ WBmHsichDMM6oHERbLEUEE3CpZ9DhujuMpALXWtIcJbM5bEG3o6sER/zdUx1GvnrLFke6jpmXi
+ V+9+O0/t+/insk2YAAAA=
+X-Change-ID: 20250422-x1e-vreg-l2j-voltage-4281dd747278
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>, 
+ Xilin Wu <wuxilin123@gmail.com>, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johan Hovold <johan@kernel.org>
+X-Mailer: b4 0.14.2
 
+Several of the Qualcomm X1* device trees upstream specify the wrong voltage
+for the L2J regulator. In the ACPI DSDT table, PPP_RESOURCE_ID_LDO2_J is
+configured with 1256000 uV instead of the 1200000 uV. Change all affected
+device trees to use the same for consistency and correctness.
 
+In the other device trees upstream, the voltage is already correct:
+ - x1e78100-lenovo-thinkpad-t14s.dtsi
+ - x1e80100-dell-xps13-9345.dts
+ - x1e80100-microsoft-romulus.dtsi
 
-On 2025/4/17 08:02, Nico Pache wrote:
-> generalize the order of the __collapse_huge_page_* functions
-> to support future mTHP collapse.
-> 
-> mTHP collapse can suffer from incosistant behavior, and memory waste
-> "creep". disable swapin and shared support for mTHP collapse.
-> 
-> No functional changes in this patch.
-> 
-> Co-developed-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->   mm/khugepaged.c | 46 ++++++++++++++++++++++++++++------------------
->   1 file changed, 28 insertions(+), 18 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 883e9a46359f..5e9272ab82da 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -565,15 +565,17 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   					unsigned long address,
->   					pte_t *pte,
->   					struct collapse_control *cc,
-> -					struct list_head *compound_pagelist)
-> +					struct list_head *compound_pagelist,
-> +					u8 order)
->   {
->   	struct page *page = NULL;
->   	struct folio *folio = NULL;
->   	pte_t *_pte;
->   	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
->   	bool writable = false;
-> +	int scaled_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - order);
->   
-> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
-> +	for (_pte = pte; _pte < pte + (1 << order);
->   	     _pte++, address += PAGE_SIZE) {
->   		pte_t pteval = ptep_get(_pte);
->   		if (pte_none(pteval) || (pte_present(pteval) &&
-> @@ -581,7 +583,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   			++none_or_zero;
->   			if (!userfaultfd_armed(vma) &&
->   			    (!cc->is_khugepaged ||
-> -			     none_or_zero <= khugepaged_max_ptes_none)) {
-> +			     none_or_zero <= scaled_none)) {
->   				continue;
->   			} else {
->   				result = SCAN_EXCEED_NONE_PTE;
-> @@ -609,8 +611,8 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   		/* See hpage_collapse_scan_pmd(). */
->   		if (folio_maybe_mapped_shared(folio)) {
->   			++shared;
-> -			if (cc->is_khugepaged &&
-> -			    shared > khugepaged_max_ptes_shared) {
-> +			if (order != HPAGE_PMD_ORDER || (cc->is_khugepaged &&
-> +			    shared > khugepaged_max_ptes_shared)) {
->   				result = SCAN_EXCEED_SHARED_PTE;
->   				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
->   				goto out;
-> @@ -711,13 +713,14 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
->   						struct vm_area_struct *vma,
->   						unsigned long address,
->   						spinlock_t *ptl,
-> -						struct list_head *compound_pagelist)
-> +						struct list_head *compound_pagelist,
-> +						u8 order)
->   {
->   	struct folio *src, *tmp;
->   	pte_t *_pte;
->   	pte_t pteval;
->   
-> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
-> +	for (_pte = pte; _pte < pte + (1 << order);
->   	     _pte++, address += PAGE_SIZE) {
->   		pteval = ptep_get(_pte);
->   		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> @@ -764,7 +767,8 @@ static void __collapse_huge_page_copy_failed(pte_t *pte,
->   					     pmd_t *pmd,
->   					     pmd_t orig_pmd,
->   					     struct vm_area_struct *vma,
-> -					     struct list_head *compound_pagelist)
-> +					     struct list_head *compound_pagelist,
-> +					     u8 order)
->   {
->   	spinlock_t *pmd_ptl;
->   
-> @@ -781,7 +785,7 @@ static void __collapse_huge_page_copy_failed(pte_t *pte,
->   	 * Release both raw and compound pages isolated
->   	 * in __collapse_huge_page_isolate.
->   	 */
-> -	release_pte_pages(pte, pte + HPAGE_PMD_NR, compound_pagelist);
-> +	release_pte_pages(pte, pte + (1 << order), compound_pagelist);
->   }
->   
->   /*
-> @@ -802,7 +806,7 @@ static void __collapse_huge_page_copy_failed(pte_t *pte,
->   static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
->   		pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
->   		unsigned long address, spinlock_t *ptl,
-> -		struct list_head *compound_pagelist)
-> +		struct list_head *compound_pagelist, u8 order)
->   {
->   	unsigned int i;
->   	int result = SCAN_SUCCEED;
-> @@ -810,7 +814,7 @@ static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
->   	/*
->   	 * Copying pages' contents is subject to memory poison at any iteration.
->   	 */
-> -	for (i = 0; i < HPAGE_PMD_NR; i++) {
-> +	for (i = 0; i < (1 << order); i++) {
->   		pte_t pteval = ptep_get(pte + i);
->   		struct page *page = folio_page(folio, i);
->   		unsigned long src_addr = address + i * PAGE_SIZE;
-> @@ -829,10 +833,10 @@ static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
->   
->   	if (likely(result == SCAN_SUCCEED))
->   		__collapse_huge_page_copy_succeeded(pte, vma, address, ptl,
-> -						    compound_pagelist);
-> +						    compound_pagelist, order);
->   	else
->   		__collapse_huge_page_copy_failed(pte, pmd, orig_pmd, vma,
-> -						 compound_pagelist);
-> +						 compound_pagelist, order);
->   
->   	return result;
->   }
-> @@ -1000,11 +1004,11 @@ static int check_pmd_still_valid(struct mm_struct *mm,
->   static int __collapse_huge_page_swapin(struct mm_struct *mm,
->   				       struct vm_area_struct *vma,
->   				       unsigned long haddr, pmd_t *pmd,
-> -				       int referenced)
-> +				       int referenced, u8 order)
->   {
->   	int swapped_in = 0;
->   	vm_fault_t ret = 0;
-> -	unsigned long address, end = haddr + (HPAGE_PMD_NR * PAGE_SIZE);
-> +	unsigned long address, end = haddr + (PAGE_SIZE << order);
->   	int result;
->   	pte_t *pte = NULL;
->   	spinlock_t *ptl;
-> @@ -1035,6 +1039,12 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->   		if (!is_swap_pte(vmf.orig_pte))
->   			continue;
->   
-> +		/* Dont swapin for mTHP collapse */
-> +		if (order != HPAGE_PMD_ORDER) {
-> +			result = SCAN_EXCEED_SWAP_PTE;
-> +			goto out;
-> +		}
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (6):
+      arm64: dts: qcom: x1-crd: Fix vreg_l2j_1p2 voltage
+      arm64: dts: qcom: x1e001de-devkit: Fix vreg_l2j_1p2 voltage
+      arm64: dts: qcom: x1e80100-asus-vivobook-s15: Fix vreg_l2j_1p2 voltage
+      arm64: dts: qcom: x1e80100-hp-omnibook-x14: Fix vreg_l2j_1p2 voltage
+      arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: Fix vreg_l2j_1p2 voltage
+      arm64: dts: qcom: x1e80100-qcp: Fix vreg_l2j_1p2 voltage
 
-IMO, this check should move into hpage_collapse_scan_pmd(), that means 
-if we scan the swap ptes for mTHP collapse, then we can return 
-'SCAN_EXCEED_SWAP_PTE' to abort the collapse earlier.
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi                     | 4 ++--
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts             | 4 ++--
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts  | 4 ++--
+ arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts    | 4 ++--
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 4 ++--
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                | 4 ++--
+ 6 files changed, 12 insertions(+), 12 deletions(-)
+---
+base-commit: 39155a896925c3af2156ad61e821aa9fa5a1dbdb
+change-id: 20250422-x1e-vreg-l2j-voltage-4281dd747278
 
-The logic is the same as how you handle the shared ptes for mTHP.
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
 
->   		vmf.pte = pte;
->   		vmf.ptl = ptl;
->   		ret = do_swap_page(&vmf);
-> @@ -1154,7 +1164,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   		 * that case.  Continuing to collapse causes inconsistency.
->   		 */
->   		result = __collapse_huge_page_swapin(mm, vma, address, pmd,
-> -						     referenced);
-> +				referenced, HPAGE_PMD_ORDER);
->   		if (result != SCAN_SUCCEED)
->   			goto out_nolock;
->   	}
-> @@ -1201,7 +1211,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
->   	if (pte) {
->   		result = __collapse_huge_page_isolate(vma, address, pte, cc,
-> -						      &compound_pagelist);
-> +					&compound_pagelist, HPAGE_PMD_ORDER);
->   		spin_unlock(pte_ptl);
->   	} else {
->   		result = SCAN_PMD_NULL;
-> @@ -1231,7 +1241,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   
->   	result = __collapse_huge_page_copy(pte, folio, pmd, _pmd,
->   					   vma, address, pte_ptl,
-> -					   &compound_pagelist);
-> +					   &compound_pagelist, HPAGE_PMD_ORDER);
->   	pte_unmap(pte);
->   	if (unlikely(result != SCAN_SUCCEED))
->   		goto out_up_write;
 
