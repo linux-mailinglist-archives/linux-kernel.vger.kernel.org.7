@@ -1,353 +1,157 @@
-Return-Path: <linux-kernel+bounces-616591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746AEA991ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:37:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C5EA991BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786C01B84594
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:28:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B401B862BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD6829E071;
-	Wed, 23 Apr 2025 15:18:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C821D28DEF4
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D3D29114D;
+	Wed, 23 Apr 2025 15:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="eDZnm2MS"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640D0284685;
+	Wed, 23 Apr 2025 15:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421485; cv=none; b=rXzzsqPqaurK8AfyYoxROmJZuqyp1a0xEVDOQye+iYrwL45F11Ki1KUJTjSlhQ72ZqIDmP2XTh3uAu0rp0sqIVRz132jH8MJlAf20NC6EY79ZWffo6bOfCJducisQRy/12PA7mFTcMCscFylqGrXAPN+nJlaIDQZSAI4becY5n8=
+	t=1745421459; cv=none; b=npFrpNqWWmsiW37YVtcyGrACWfJpHSQuKynhF2/jU/efpIKNJqnt711344z9jpyCyDJC9payfqCmOeOkgl5C66XZ2tWg5HQk2EZ9v0j5TeUIxWwPsaFRIo3xldQWTMvz5cEi+bHuaXKGnPRRYhK4mhTn3IIuTq6LEnA7YMVEguI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421485; c=relaxed/simple;
-	bh=L+rD1RA9qs0mxczLZFLOu8j+uSfWmGAAg2eBiGl0yfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cZ77sg/vLZ0K3EfcT8rFlnfpBzTqzmQiZPwn3lmt8arrhHWz7GB8stmr/gCVCGMv4lxp36YyNzAjH3T0/yvgH5C3F8guc9j1FX6IwKc/H53tIY/j/pZlzfUPi6KlNheYXVzklTv8Lfb5MkheGcJ79FTqDRoOVHBBqblQ00QauvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59CB21063;
-	Wed, 23 Apr 2025 08:17:58 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D0553F66E;
-	Wed, 23 Apr 2025 08:18:01 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 9/9] coresight: Refactor runtime PM
-Date: Wed, 23 Apr 2025 16:17:26 +0100
-Message-Id: <20250423151726.372561-10-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423151726.372561-1-leo.yan@arm.com>
-References: <20250423151726.372561-1-leo.yan@arm.com>
+	s=arc-20240116; t=1745421459; c=relaxed/simple;
+	bh=RLOU3IDmax4zTd10jqcY2sq4SEHMcbxI1llMeEizx/c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ENj0eJ+KddI+tWcSutrA21sq3ctO2fngRXfiyDk1IVdB0a/ZdWebKzWn/q49s3NodsqVn1pK4e4ZCnHxZLFAEAVDfnu7Pcc7jBp8SgdXSKEQ5ze+u/nmwekXrI37ZnReVM+Axb9+LGUgVCahr2p7B0z6iDQs5LBj0QqGPTO2pwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=eDZnm2MS; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=0lL7SuiPgUfyiSheen74q8JqInT1gIRp7Z1Ky9LkvS4=;
+	t=1745421457; x=1746631057; b=eDZnm2MSlpvUCcyDhOUZ74kWUJ/5YVJtg4PPvM2N5vJQsC6
+	ZULfSrXFv/ApcZJHhCkHe5afnD5gIj9Tv3nHLo08NXLZ1JnAaDlmsUA6WmOSto1cBQzFiY6E6U2Jk
+	j1jSk6dx+HPG3WKB86VL002dXz51NZ0pKjHg2M79zfzFXpYXSD/einBpr70j//w/v371AWvHJmhQ2
+	suLlK9XGwvSGckxEfE1CPyauO7KfQfweDC1SWbJwx9pUdMBOrJYfl+jroNulooGWOcBkGHxJFyji1
+	HxfNWquJQHFMvVN1ry9Zj3XEtN/XjEo1SbCjygLx6yT6G4TV99ChkIvSMH0I46Fg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1u7bqu-0000000EmZ9-2uns;
+	Wed, 23 Apr 2025 17:17:32 +0200
+Message-ID: <db0f8ec385762e6edb3edf5054a76ea189135e6e.camel@sipsolutions.net>
+Subject: Re: [PATCH v3 15/28] module: Use RCU in all users of
+ __module_text_address().
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	johannes@sipsolutions.net
+Cc: Daniel Gomez <da.gomez@samsung.com>, Luis Chamberlain
+ <mcgrof@kernel.org>,  "Paul E . McKenney"	 <paulmck@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Petr Pavlu	 <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Thomas Gleixner	 <tglx@linutronix.de>
+Date: Wed, 23 Apr 2025 17:17:31 +0200
+In-Reply-To: <20250108090457.512198-16-bigeasy@linutronix.de>
+References: <20250108090457.512198-1-bigeasy@linutronix.de>
+	 <20250108090457.512198-16-bigeasy@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
-The validation for driver data pointers and clock pointers are redundant
-in the runtime PM callbacks.  After a driver's probing, its driver data
-and clocks have been initialized successfully, this ensures it is safe
-to access driver data and clocks in the runtime PM callbacks.  A corner
-case is a clock pointer is NULL, in this case, the clock core layer can
-handle it properly.  So remove these redundant checking.
+Hi,
 
-In runtime resume, respect values returned from clock function and add
-error handling.
+On Wed, 2025-01-08 at 10:04 +0100, Sebastian Andrzej Siewior wrote:
+> __module_text_address() can be invoked within a RCU section, there is no
+> requirement to have preemption disabled.
+>=20
+> Replace the preempt_disable() section around __module_text_address()
+> with RCU.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/hwtracing/coresight/coresight-cpu-debug.c  |  8 +++-----
- drivers/hwtracing/coresight/coresight-ctcu-core.c  |  8 ++------
- drivers/hwtracing/coresight/coresight-etb10.c      |  8 ++------
- drivers/hwtracing/coresight/coresight-etm3x-core.c |  8 ++------
- drivers/hwtracing/coresight/coresight-funnel.c     | 21 +++++++++++----------
- drivers/hwtracing/coresight/coresight-replicator.c | 20 +++++++++++---------
- drivers/hwtracing/coresight/coresight-stm.c        | 20 +++++++++++---------
- drivers/hwtracing/coresight/coresight-tpiu.c       | 20 +++++++++++---------
- 8 files changed, 53 insertions(+), 60 deletions(-)
+Unfortunately, this patch causes a performance regression for us. The
+trouble is that we enable kmemleak and run trace-cmd so a lot of stack
+traces need to be collected. Obviously, we also have lockdep enabled.
 
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 481ffcbed534..dff663ac7805 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -731,8 +731,8 @@ static int debug_runtime_suspend(struct device *dev)
- {
- 	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
-+	clk_disable_unprepare(drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -740,9 +740,7 @@ static int debug_runtime_resume(struct device *dev)
- {
- 	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
--	return 0;
-+	return clk_prepare_enable(drvdata->pclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-index 75b5114ef652..c586495e9a08 100644
---- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
-+++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-@@ -278,8 +278,7 @@ static int ctcu_runtime_suspend(struct device *dev)
- {
- 	struct ctcu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->apb_clk))
--		clk_disable_unprepare(drvdata->apb_clk);
-+	clk_disable_unprepare(drvdata->apb_clk);
- 
- 	return 0;
- }
-@@ -288,10 +287,7 @@ static int ctcu_runtime_resume(struct device *dev)
- {
- 	struct ctcu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->apb_clk))
--		clk_prepare_enable(drvdata->apb_clk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->apb_clk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 45c2f8f50a3f..3f3b0eb48fdb 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -807,8 +807,7 @@ static int etb_runtime_suspend(struct device *dev)
- {
- 	struct etb_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
- 
- 	return 0;
- }
-@@ -817,10 +816,7 @@ static int etb_runtime_resume(struct device *dev)
- {
- 	struct etb_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->atclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-index adbb134f80e6..615ff743eef0 100644
---- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-@@ -925,8 +925,7 @@ static int etm_runtime_suspend(struct device *dev)
- {
- 	struct etm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
- 
- 	return 0;
- }
-@@ -935,10 +934,7 @@ static int etm_runtime_resume(struct device *dev)
- {
- 	struct etm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->atclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index 62e5125c37ad..6494a3b5d18e 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -283,11 +283,8 @@ static int funnel_runtime_suspend(struct device *dev)
- {
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
--
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
- 	return 0;
- }
-@@ -295,13 +292,17 @@ static int funnel_runtime_suspend(struct device *dev)
- static int funnel_runtime_resume(struct device *dev)
- {
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 56b03e6d8336..8595dc104795 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -322,24 +322,26 @@ static int replicator_runtime_suspend(struct device *dev)
- {
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int replicator_runtime_resume(struct device *dev)
- {
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index f17986edac00..f859ab932d22 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -957,24 +957,26 @@ static int stm_runtime_suspend(struct device *dev)
- {
- 	struct stm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int stm_runtime_resume(struct device *dev)
- {
- 	struct stm_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index 4701b34778bd..a68ed6b97bf7 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -206,24 +206,26 @@ static int tpiu_runtime_suspend(struct device *dev)
- {
- 	struct tpiu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int tpiu_runtime_resume(struct device *dev)
- {
- 	struct tpiu_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
--- 
-2.34.1
+Now, combine this with the UML stack dumping code calling into
+__kernel_text_address a lot[1] and it really has a relevant performance
+impact. I saw the kernel spending 40% of its own CPU time just on the
+lock in is_module_text_address.
+
+Maybe kernel_text_address should leave the RCU handling to the caller
+and assume that the RCU read lock is already taken?
+
+Benjamin
+
+[1] The UM arch dump_stack function reads every "unsigned long" on the
+stack and tests it using __kernel_text_address.
+
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+> =C2=A0kernel/module/main.c | 16 +++++-----------
+> =C2=A01 file changed, 5 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 80877741ac7e5..6a99076146cbc 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -823,13 +823,12 @@ void symbol_put_addr(void *addr)
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Even though we hold a reference on the module; we still
+> need to
+> -	 * disable preemption in order to safely traverse the data
+> structure.
+> +	 * RCU read section in order to safely traverse the data
+> structure.
+> =C2=A0	 */
+> -	preempt_disable();
+> +	guard(rcu)();
+> =C2=A0	modaddr =3D __module_text_address(a);
+> =C2=A0	BUG_ON(!modaddr);
+> =C2=A0	module_put(modaddr);
+> -	preempt_enable();
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_GPL(symbol_put_addr);
+> =C2=A0
+> @@ -3694,20 +3693,15 @@ struct module *__module_address(unsigned long
+> addr)
+> =C2=A0 */
+> =C2=A0bool is_module_text_address(unsigned long addr)
+> =C2=A0{
+> -	bool ret;
+> -
+> -	preempt_disable();
+> -	ret =3D __module_text_address(addr) !=3D NULL;
+> -	preempt_enable();
+> -
+> -	return ret;
+> +	guard(rcu)();
+> +	return __module_text_address(addr) !=3D NULL;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> =C2=A0 * __module_text_address() - get the module whose code contains an
+> address.
+> =C2=A0 * @addr: the address.
+> =C2=A0 *
+> - * Must be called with preempt disabled or module mutex held so that
+> + * Must be called within RCU read section or module mutex held so
+> that
+> =C2=A0 * module doesn't get freed during this.
+> =C2=A0 */
+> =C2=A0struct module *__module_text_address(unsigned long addr)
 
 
