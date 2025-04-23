@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-615433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEC0A97D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 05:01:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A967A97D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 05:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27AC917F5AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD3C189B9A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22C1263F4B;
-	Wed, 23 Apr 2025 03:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057AD26462E;
+	Wed, 23 Apr 2025 03:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLIb4Hxx"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="A9uLzmLD"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9F74430;
-	Wed, 23 Apr 2025 03:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503712627EC;
+	Wed, 23 Apr 2025 03:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745377301; cv=none; b=FFMfv7asWkUtOWRIQiNGePi+OJnBc/M3LLl+5DTo3VOhDIQuxL1ECHkhhfb0K5G7W9jHDFq/Vx11mg7lNZfJoW4VOnOERMFKB+cuiVWOl+aKcSrzeKvkr+zmldSzCrWKY/S0Cn11p++M+xyuKmQjQaRZsIZbLg3ddUvwXSZ0OGo=
+	t=1745377653; cv=none; b=i99ujQUxLb98NnKXde2OD0TF/a9NSywie7LankKx8fZg8aCUlUEzBgsV9jx/bFmwC9232IbGLTbREkXtr0qCqQAivYsLY/TkPGaV0NJE1PFR51v7k2g+a0cxNCQUbA8aX3ggOeYitlwp1OHljWkGENL02kIrz59tFodVlDDRfks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745377301; c=relaxed/simple;
-	bh=BAItGtMvUQMaGArBydxBPtvmh5HWfBTAHeLnEo7Qhhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CprrXcwj4W04VTgJuBCz8fq/X/RR+zeX7uuwF+lcxiFyE4RVDgkKUq77VCCDi6JddtsSRvEMz2GTtuaQP2/SQIYcpWylQD7SaIoIeXFjaQrYnxeR0n2ldp/yar2s0mn3xUNnnzYLQe7Q/v8IaZqlVVbdiUqQqQmHrsm3q8NPLmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLIb4Hxx; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-af548cb1f83so5685919a12.3;
-        Tue, 22 Apr 2025 20:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745377299; x=1745982099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwxzT9QLt6IshzEG1Tru0bmv2OjKa0OhkfKjCsQ9V4c=;
-        b=MLIb4HxxYhlFfDsB0poPcCjYRrXdaw1dw5tRRDwe+wcaoqqVFnpUTCyDh/S9nLUHAJ
-         e4ZSM9YTgbMOWlrHBgbHCr5qD0UxHRygNq4ZUVRDsYGb8ZkLr312Z3+4+9vLKlwW+iCX
-         CnHZVMuythHRJ35LMo7zAOUjqMe+VE05M6DhSEbqnI0n9KYsJaYbLXrpbLmssxIim2db
-         YUEYMISwRN5AXfC49Lvp8HeECsQNOWLief8eIeaboYrf25hiFvDQv+6tBaA/nfMDZUKF
-         TBMPSJPt5htRtf5GbITrX+MjUg6OuRMqQRIfVNNSYdPLgRDONjRakVH5+BETcETrjynk
-         Pr5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745377299; x=1745982099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LwxzT9QLt6IshzEG1Tru0bmv2OjKa0OhkfKjCsQ9V4c=;
-        b=MVfi1MvA1NTWyTRppUI7nF2nll9D1Wo4q+0eFvC63zhL2tpg0xHerSx8cZrUEo4K5G
-         VXyHXDmMuGILEalKAHqcB8NUXSqJYUb/To49oV3n78pcg7BQbcfZ9BeVhPG5LJVlhEQK
-         q82YAqt0ow9GwsEDvkLkFvC4dpic5T+FA8aPNd78CpnAr53SbD8mldAKVBw4UrRu4lqe
-         WgTX0/8JoJpmcS9kezHDcGZJ2ow2N7d5UVoINU0OgShIKThLfvopyZq77vtf86NBcBFv
-         ACJek6m/mSf9VeoSc61vC44TGJ/IUPJqXF9ld6kePrv4vdvTidhiW4yKY7NW9r7/5nJT
-         owPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEpsqZ8aB2agHuMnYBoNPNi3QTHRgJTIk7tUuPHL1mkfI4pYIAA3qkwyrUb7evgNMetWnRLgGR5DFAiYli@vger.kernel.org, AJvYcCXcrGRDGO2g5LghPFnit1mjSZZJeA2JxgwBTX+daR5tTuAVIPIXCdeiWhHlpqLv6j6f8XuXJJR6Mwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSbWtnbJsvBbdjt3foxFat/KBlp5wTKfPAr0WloFWpmXEPrJ/0
-	/pARVR9EruhUlz9lTh6nIABV2+yv33C7i46NLLUtMZXogQck2HxE
-X-Gm-Gg: ASbGncuH+F1x7hdxE6n3Kt6DYCdgJNdKQhzKKoT5JHyIPBOu7sfWVOne+Eg0SGyugHi
-	kXnuTg0CLRHtblKXhRnlu1N/jNH9b85zrWLV5r8k7kfefCwk7axZXuqFBqfNb4+tGcbelUVobsn
-	cVo2CgJD45RTQRuvXSL/BULM8HuAscwtMk/7+M448gT/14M8V0PN/gq2tbQlvV65Ew/ZR4VnhfI
-	ylAyCNQak+aAbmJqxS6VNrNW8ddow9uvLTUQTVOKFhi9ZPrVv9PqLJ46kq2sBEoU65UIfR/rMIY
-	Nif86kTBRRXJr9BYk+BmPe6V1qadm4y1odUDCziw
-X-Google-Smtp-Source: AGHT+IG7j5f5kDqzRaacdMWuwEx5CcG85GeEJmOYeCzHIk4y+xMtnsBehjvQW7y9PJSJi4MwyOSjcQ==
-X-Received: by 2002:a17:90b:3d09:b0:2ff:5ed8:83d1 with SMTP id 98e67ed59e1d1-3087bb6d268mr23641556a91.19.1745377298665;
-        Tue, 22 Apr 2025 20:01:38 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309d3472785sm1573470a91.0.2025.04.22.20.01.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 20:01:37 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 300974209E47; Wed, 23 Apr 2025 10:01:34 +0700 (WIB)
-Date: Wed, 23 Apr 2025 10:01:33 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: leds: improve readibility of multicolor
- doc
-Message-ID: <aAhYDY2DBxFW0yI_@archie.me>
-References: <20250421-leds-doc-v1-1-9a32df7fc6f4@yoseli.org>
+	s=arc-20240116; t=1745377653; c=relaxed/simple;
+	bh=hA90ZuESohqk54ATH6Bc81QbVyOvEr18HVCgZ1JaJS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dhsFN3jqIgSLnxuzZ2gGTHh6w22aXPt1oY7Rhjmm3Aqw+zYZqE6eyCxbFXimpJrk8/PImOCAxvRqFeWj4gxLPo3Isno5ZeTJB4h1uqNfffXyKK2xJSVJsMxmPdZqrVeYGzImSeDiE1IngF6k/+FWOPV9VqpOZgwJhdln5M0aPBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=A9uLzmLD; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745377613;
+	bh=YlbavwK4ijk6OQzwlNHVeqYb/SvZ1tfITRJFThEGh80=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=A9uLzmLD+SLBSGe22+Gtf/RISftzJNC1lHj0l6vleVjV+CnxuDV41OCIB/Wp4GAjc
+	 mXq/Do+SlI0iL1ZSFAyk2qJFqDEQXY2wxV/Crcmiqsizxiri1KLaXDp827ojpBcfPx
+	 yPfLTk5OnrIqQidGwqzIP4Q/g29cPPaOQUIfSXUI=
+X-QQ-mid: zesmtpip3t1745377600tadf8fc5c
+X-QQ-Originating-IP: X5Aw6R2DDq/YO33JgpDlNDuCWKFjBcQ+z/6flHw0eNo=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 23 Apr 2025 11:06:37 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16401725662011210989
+EX-QQ-RecipientCnt: 24
+From: WangYuli <wangyuli@uniontech.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	corbet@lwn.net
+Cc: bpf@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	void@manifault.com,
+	psreep@gmail.com,
+	yhs@fb.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Chen Linxuan <chenlinxuan@uniontech.com>
+Subject: [PATCH] bpf, docs: iterator: Rectify non-standard line break
+Date: Wed, 23 Apr 2025 11:06:32 +0800
+Message-ID: <DB66473733449DB0+20250423030632.17626-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SYRXAiKrxoZNUrDh"
-Content-Disposition: inline
-In-Reply-To: <20250421-leds-doc-v1-1-9a32df7fc6f4@yoseli.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: ORfZ13EUooM/eCcKeC1dM/vs289RsBJavTcKc7grA4nkbIYZZcJAimOk
+	h7lvcr0fqTNfjE4ozS2J7oOBdgY6SImH6+jW0XyhoH+h8ttu9VjZBdrF/flT4OTc4M00nIE
+	kUkBBWmaWt6NTTIO2rOf1v16m7mzLsE7Q6c44oEyvjIFVBRriAWdmMQAnzDjMk+t21PvZA1
+	mBVdhumNXUW1/WuBiu04gjWuGbA2K3yAePwHvWybrbBcTONfsURE9i5+IImo/bzKzrvj3BW
+	EBDJySRxWs1dQkoTP7WGYjEMj/EY+pHiGfpCRSeZ3LNe/dfE5FAeb81Hu3GSBG+i2xo1e2j
+	G1IjBQiyKdfUb2NlbGFVhqYIdxiRadzyIpBEKrA2vSbP7SVJ6ErAkV21u1knsD1JR/n2kiz
+	1Xz5HHaun0wOxHRK9sahxEjC+D19kwetV2rs4eGXK91Ocu7ToB4JG4m/uRd19Ok76Au7TGv
+	DS3YXha3FoW61sg16rrmt6+7sEnPulu6GtZIsF7a4U2nUzDqQtodVXvlFTttUtUMttcMPRV
+	qQFj5rGB8jUFI+PSWjBT6Gx1cW36oihAHoAoAwttNzlV6sEeWngM2t4FtAnubeAHmpQUVbK
+	+9yiyvSsFbuVC2lhAuok15+o2fJIme7x/f8mRzTL1DIQZyLm6D5ZMdF0CTRrTjaWTPxnsvI
+	4OIdFtuJO1dUT6OC6u8lxHQeNTQlJVa9LsCWNlStclxLsONNdKJ2R0qnB6yp2mvtsDkh853
+	91IsB0Rc8C/MSCGtfW0WEfZpegwJK99KMeO2mIO2q73EV1RcWJEgmobgmaFECeCGzzSxyi+
+	DIoFyenp4Y5S+QQ4asfYbLHd6OUP2DFRsoT/EFkWzb6vsnFTpawnMPx9BPmXoYkSwdgAylK
+	UajsxPKCW+R1S9nyGQlE3CDmmywkquKPZ+9+OZt7psrCxoLVa/skr2QbVNk1Os/yNSRy8Ci
+	C2nh2Sit3hj+SC1U8/zPLIHgN4BQ1rveo6TbxbpUaIbUPHuPuZDDLb7gRvQmP4yytvcVjz7
+	K5PeqEChK7uHqDEsXsiccLMh+DP+U=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
+Even though the kernel's coding-style document does not explicitly
+state this, we generally put a newline after the semicolon of every
+C language statement to enhance code readability.
 
---SYRXAiKrxoZNUrDh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adjust the placement of newlines to adhere to this convention.
 
-On Mon, Apr 21, 2025 at 06:48:10PM +0200, Jean-Michel Hautbois wrote:
-> +.. code-block:: console
-> +
-> +    root:/sys/class/leds/multicolor:status# ls -lR
+Reported-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ Documentation/bpf/bpf_iterators.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The equivalent is ``ls -lR /sys/class/leds/multicolor``.
+diff --git a/Documentation/bpf/bpf_iterators.rst b/Documentation/bpf/bpf_iterators.rst
+index 7f514cb6b052..385cd05aabf5 100644
+--- a/Documentation/bpf/bpf_iterators.rst
++++ b/Documentation/bpf/bpf_iterators.rst
+@@ -323,8 +323,8 @@ Now, in the userspace program, pass the pointer of struct to the
+ 
+ ::
+ 
+-  link = bpf_program__attach_iter(prog, &opts); iter_fd =
+-  bpf_iter_create(bpf_link__fd(link));
++  link = bpf_program__attach_iter(prog, &opts);
++  iter_fd = bpf_iter_create(bpf_link__fd(link));
+ 
+ If both *tid* and *pid* are zero, an iterator created from this struct
+ ``bpf_iter_attach_opts`` will include every opened file of every task in the
+-- 
+2.49.0
 
-> +    -rw-r--r--    1 root     root          4096 Oct 19 16:16 brightness
-> +    -r--r--r--    1 root     root          4096 Oct 19 16:16 max_brightn=
-ess
-> +    -r--r--r--    1 root     root          4096 Oct 19 16:16 multi_index
-> +    -rw-r--r--    1 root     root          4096 Oct 19 16:16 multi_inten=
-sity
-> +
-> +..
-> =20
-> <snipped>...
->
-> @@ -71,16 +79,28 @@ may want to dim the LED color group to half.  The use=
-r would write a value of
->  128 to the global brightness file then the values written to each LED wi=
-ll be
->  adjusted base on this value.
-> =20
-> -cat /sys/class/leds/multicolor:status/max_brightness
-> -255
-> -echo 128 > /sys/class/leds/multicolor:status/brightness
-> +.. code-block:: console
-> +
-> +    # cat /sys/class/leds/multicolor:status/max_brightness
-> +    255
-> +    # echo 128 > /sys/class/leds/multicolor:status/brightness
-> =20
-> -adjusted_red_value =3D 128 * 138/255 =3D 69
-> -adjusted_green_value =3D 128 * 43/255 =3D 21
-> -adjusted_blue_value =3D 128 * 226/255 =3D 113
-> +..
-> +
-> +.. code-block:: none
-> +
-> +    adjusted_red_value =3D 128 * 138/255 =3D 69
-> +    adjusted_green_value =3D 128 * 43/255 =3D 21
-> +    adjusted_blue_value =3D 128 * 226/255 =3D 113
-> +
-> +..
-
-Are these adjusted values intended to be part of previous block on brightne=
-ss
-status? If not, I'd like to interleave these two blocks with "The adjusted
-values are now::".
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---SYRXAiKrxoZNUrDh
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaAhYBwAKCRD2uYlJVVFO
-o0z8AP4zTmN5lD/WuS5ZzbFW201LkvpK5+CJh1BNpRZUknJkqQD/S1nhav8VoIVa
-yAxrs+a+kuWrmf0+DlDvyPHyT9hgMAo=
-=ETle
------END PGP SIGNATURE-----
-
---SYRXAiKrxoZNUrDh--
 
