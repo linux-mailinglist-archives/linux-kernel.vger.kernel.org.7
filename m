@@ -1,101 +1,150 @@
-Return-Path: <linux-kernel+bounces-616865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FCEA99729
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EEF3A9970C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43FB4A20F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644C63A054F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18840291159;
-	Wed, 23 Apr 2025 17:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B2C28D829;
+	Wed, 23 Apr 2025 17:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sQ39TYqr"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAA2289361;
-	Wed, 23 Apr 2025 17:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVO4ExS1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11BE41C69;
+	Wed, 23 Apr 2025 17:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745430661; cv=none; b=N525c/bXIrd/IwD0+Zqy/dZ0Ab6AFjQzBOpRp84NbgCqesw94j4YkVr3tSpZqurvPoLPGVODoU20sEI1L7ruYBOaYl8rukG8KWpjCU+XtQ2cJfpsxQ28VsUTZn2CaVmBQO+kEqdGAnDM2d9a9dn8Eeb7GStHEg+QZMCoa15bp/U=
+	t=1745430652; cv=none; b=LtZkTPEc5z62Y6eg4SaYoHzaS9Mjjbf9opasq9xEop3uGwu765T17llugAZesncEPEB8UC14VmES1i8Y0VRuQ3R2DmfhUJoXBLZaogHtdDPaTKP7LzIqqpcuVtAyJA6OxduLZKsWOcSGqB0TVu4J8MzuSRPcFBZc58GbQQDUNxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745430661; c=relaxed/simple;
-	bh=H6tBuwWjiTa3b3mLuTFDXVmLQC0Vman+596WG65RK38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lryLr/pEcTThbW12QtgkOkFhOnvNRSIXV9ZsLTisQ7Ke91JFSc2Etf2dwCIjWsAC2Zla3iV+q7OzlXvFTlDKI78uePgfotoeEg7zYvEhKWz3u4/8d4y0Q4NYYluLw/cZ1vMyBEN7HJ0WuDaFZ2RSbGdypyIbKEkkQMn/4G3dAF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sQ39TYqr; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.161.193] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BECB4203B87E;
-	Wed, 23 Apr 2025 10:50:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BECB4203B87E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745430659;
-	bh=f8CH2rF6M32Fr1wA/Z2C1KBnMC6UpjyuKfRuhJo6RnQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=sQ39TYqro8mNxCzgFzTVoLBiOwe6FBjtFYnXnVOYwR+TxOSmN6DKe6bwlGNxehSFK
-	 jCUvM4ljgfl3+2bLu20terHXNlptGszeQPOD5W64MZcXi21BueuM3apNfzpBrTEp0W
-	 EzZCarIaNhY1Q+dNMRyM61qeYLNebVuuQqazqQgM=
-Message-ID: <495d5444-b82e-4ec7-9095-d34f0ac8d40c@linux.microsoft.com>
-Date: Wed, 23 Apr 2025 10:50:27 -0700
+	s=arc-20240116; t=1745430652; c=relaxed/simple;
+	bh=YHqV0/vsjdlvZq49xUct2su2HrCcfTwULHjf8E7ltpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dROXmDyQDR2Wd6sv/JgC9zL4HP0qRXLL/RljcmJTUpKjdGLDMk8I4Sd/pcTxB638LwMb2xN/BGfGe7fpm1hwdDn5TVg1qsAm0kxqZ5klnmSRLoc0rQ4UGjLogWdIRBEKXa2HVh5uaO9St1MWmWXOTclQh+0oqtf+FlQTG7bVjSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVO4ExS1; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745430651; x=1776966651;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YHqV0/vsjdlvZq49xUct2su2HrCcfTwULHjf8E7ltpY=;
+  b=LVO4ExS1Q7RpcTje8AqhuZsT47Nt1xvo2S3Bg4qfV50HiATBgq23Ibgu
+   lSuZffcg3tNeeLMSOyMt7IeL+wJH9Wc7p/M2i41QHZMVruJ6AkElUwB1C
+   1ytbLqg0kOo2goJoeD/Z4m7j3TEel9uX6N8Cnx/yzc9TOJaTKFhjiAeTd
+   9sdeL5XYSkr+X7XVDS5v/WoGQsTNECRafhkR7DrqXSPNkQTm/a9sDaqrR
+   dT9YXlqZ18UeRxiBZ1W4C0Saz23yAWHqv0d5D4sEyS8R1f9of9w2O24yg
+   aeWfxMsFMR/sb6XCgnznOpK23jC0y+4ugcXYpPJ8aJSn80Yv8mumOAg8c
+   A==;
+X-CSE-ConnectionGUID: 3wqbSBiUSjWqjvXlo6sU/A==
+X-CSE-MsgGUID: YmIsj/G5TZW8Jvhc1QV01A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47168307"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="47168307"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 10:50:50 -0700
+X-CSE-ConnectionGUID: CAE7ZIKpQdiQnEIAbnnH5Q==
+X-CSE-MsgGUID: kDCQGA9HQaGOPbeE+lWXbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="163350453"
+Received: from ldmartin-desk2.corp.intel.com (HELO debox1-desk4.lan) ([10.125.111.241])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 10:50:50 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: corbet@lwn.net,
+	bhelgaas@google.com,
+	kuurtb@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	vkoul@kernel.org,
+	yung-chuan.liao@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	sanyog.r.kale@intel.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	david.e.box@linux.intel.com,
+	dan.j.williams@intel.com,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Dell.Client.Kernel@dell.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 0/7] sysfs: Introduce macros for attribute groups with visibility control
+Date: Wed, 23 Apr 2025 10:50:30 -0700
+Message-ID: <20250423175040.784680-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] Drivers: hv: Fix bad ref to hv_synic_eventring_tail
- when CPU goes offline
-To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, kys@microsoft.com, linux-kernel@vger.kernel.org,
- linux-hyperv@vger.kernel.org
-References: <20250421163134.2024-1-mhklinux@outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250421163134.2024-1-mhklinux@outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 4/21/2025 9:31 AM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> When a CPU goes offline, hv_common_cpu_die() frees the
-> hv_synic_eventring_tail memory for the CPU. But in a normal VM (i.e., not
-> running in the root partition) the per-CPU memory has not been allocated,
-> resulting in a bad memory reference and oops when computing the argument
-> to kfree().
-> 
-> Fix this by freeing the memory only when running in the root partition.
-> 
-> Fixes: 04df7ac39943 ("Drivers: hv: Introduce per-cpu event ring tail")
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  drivers/hv/hv_common.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index b3b11be11650..8967010db86a 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -566,9 +566,11 @@ int hv_common_cpu_die(unsigned int cpu)
->  	 * originally allocated memory is reused in hv_common_cpu_init().
->  	 */
->  
-> -	synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
-> -	kfree(*synic_eventring_tail);
-> -	*synic_eventring_tail = NULL;
-> +	if (hv_root_partition()) {
-> +		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
-> +		kfree(*synic_eventring_tail);
-> +		*synic_eventring_tail = NULL;
-> +	}
->  
->  	return 0;
->  }
+The ATTRIBUTE_GROUP() helper does not support adding an .is_visible
+function for visibility control. With the introduction of
+SYSFS_GROUP_VISIBLE, DEFINE_SYSFS_GROUP_VISIBLE, and related macros,
+attribute group definitions can now fully encapsulate visibility logic
+while eliminating boilerplate code.
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+The following new macros are introduced:
+
+        NAMED_ATTRIBUTE_GROUP_VISIBLE()
+        NAMED_ATTRIBUTE_GROUPS_VISIBLE()
+        NAMED_ATTRIBUTE_GROUP_COMBO_VISIBLE()
+        NAMED_ATTRIBUTE_GROUPS_COMBO_VISIBLE()
+
+This isn=E2=80=99t just a cleanup effort =E2=80=94 I plan to use these macr=
+os in new driver
+code I'm working on, and wanted to avoid having to open-code these common
+visibility patterns yet again. Documenting and generalizing them now will
+help avoid duplication and make future code easier to read and maintain.
+
+These macros integrate visibility logic directly into attribute group
+definitions, improving readability and maintainability. The
+DEFINE[_SIMPLE_]ATTRIBUTE_GROUP_VISIBLE() macros current have four users.
+Two out of them could be modified. The usbtouchscreen driver uses the @name
+field which isn't supported by ATTRIBUTE_GROUPS(). But for the ones that
+could be modified the diffstat was significant:
+
+ drivers/pci/doe.c                              |  2 +-
+ drivers/platform/x86/dell/alienware-wmi-base.c | 23 +++++++++--------------
+ drivers/platform/x86/dell/alienware-wmi-wmax.c |  7 ++++---
+ drivers/soundwire/sysfs_slave.c                | 32 +++++++++++++---------=
+----------
+ 4 files changed, 27 insertions(+), 37 deletions(-)
+
+David E. Box (7):
+  sysfs: Rename attribute group visibility macros
+  sysfs: Introduce macros to simplify creation of visible attribute
+    groups
+  docs: sysfs.rst: document additional attribute group macros
+  pci: doe: Replace sysfs visibility macro
+  soundwire: sysfs: Use ATTRIBUTE_GROUP_VISIBLE()
+  platform/x86/dell: alienware-wmi: update sysfs visibility macros
+  sysfs: Remove transitional attribute group alias macros
+
+ Documentation/filesystems/sysfs.rst           | 244 ++++++++++++++++++
+ drivers/pci/doe.c                             |   2 +-
+ .../platform/x86/dell/alienware-wmi-base.c    |  23 +-
+ .../platform/x86/dell/alienware-wmi-wmax.c    |   7 +-
+ drivers/soundwire/sysfs_slave.c               |  32 +--
+ include/linux/sysfs.h                         |  46 +++-
+ 6 files changed, 306 insertions(+), 48 deletions(-)
+
+
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+--=20
+2.43.0
+
 
