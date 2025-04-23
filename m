@@ -1,188 +1,101 @@
-Return-Path: <linux-kernel+bounces-615325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022DCA97BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F5FA97BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F63D3AF0F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36BF3AA20E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1EDF71;
-	Wed, 23 Apr 2025 00:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A421F2BAE;
+	Wed, 23 Apr 2025 00:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b="hFgYO+g1"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuaYF4a4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A862F1EEA4A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A0E1EDA36;
+	Wed, 23 Apr 2025 00:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745367633; cv=none; b=r6ak/ZM8u43Sdqr/nzHT+jbfOhOLmsjQq1BlEZsBXr8wdWLyRG6USjqtCwkU6gA8X1tR4B7osVD+JfxvJeWln535c7ddkTL+Q1vxH6EmTayls9pslHQFDjrGyxpQ+p4ocP6BrhmLQkiFE3KXhf7dygjDI4zE2kiQDHMtYfl3hiE=
+	t=1745367593; cv=none; b=mxz5JcwOyYA72SQoZpEGdKfNTZ9ds4TG2k99Jhb1zpIzn8dE/a9tOHAPIzGkmKFiFkHhu6hmas4FSGVlFnHfUjtGZyfzPgLh4nJoBjavollTC1jpkh2mtxz9Bqhlg2wh51Z2X/n+q1Lyh/Dn7JA3uZttBIfCELkov9LMakiXnXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745367633; c=relaxed/simple;
-	bh=Rj+1L7wiGc50aCgbicmrIfLIlsPYyFqQnB3WkNjAi7w=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rLFaSEFjrVgBXzmlPB3w9ECYiRxOvlER3fdxRCLfvtH7OZqAduGEmwhUisROeENyHH9YDZ/Bstjd30iBYb79qsH29JaKg6TAiCyntKoESVS8wuxfXnv9u3roNiZrlx2SP6lUg+DuPsvzo+XL2uHNAJFAGN9wo5YA9IlUyK3jLfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca; spf=pass smtp.mailfrom=gianis.ca; dkim=pass (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b=hFgYO+g1; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gianis.ca
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gianis.ca;
-	s=protonmail; t=1745367629; x=1745626829;
-	bh=qWMVyorMyU7WrTA+bky3Xgb1ylZ1FY0Pzqsqe9JTPKI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=hFgYO+g17Z7f0z7U1SH712Qf0n/1MSMi9uNpqT1n0hSAFpeyxvN+c9R1CVG5WSvHG
-	 QzuhCt9hAdkw6g7HB5o1eEIHuKmYX6MTY+i8UfgJU7QL4vIvMHnz2vaVPOvwAKWVVq
-	 ZXsX8kXSLjNLevDd4YHuDABEgOorG4NdfreLWCGL9G8rhsqAV6mhrlBW14spEcI3fY
-	 vTz/qQ+J8HBCPII1Qk9zGTZW/MDlIEt60nOhX5LHg7yY6B+09AisDu5IOkPZqd1RX9
-	 FvHN1fQavk4CU8gFsl8lOxlgGB8pd57JzDEQlDwUEiTZUPUnz38+RC52Y0fV8if8u7
-	 hoC+2jJlbN8EA==
-Date: Wed, 23 Apr 2025 00:20:22 +0000
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-From: "Dhaval Giani (AMD)" <dhaval@gianis.ca>
-Cc: linux-kernel@vger.kernel.org, Dhaval Giani <dhaval.giani@amd.com>, Gautham Shenoy <gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Dhaval Giani (AMD)" <dhaval@gianis.ca>
-Subject: [PATCH 2/3] sched/fair: Add a test to test that a task selected to run has positive lag
-Message-ID: <20250422-b4-eevdf-tests-v1-post-v1-2-35d158254c72@gianis.ca>
-In-Reply-To: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
-References: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
-Feedback-ID: 128275035:user:proton
-X-Pm-Message-ID: a9caaeb7b2dd126acf537f9ed036f7b74efe0297
+	s=arc-20240116; t=1745367593; c=relaxed/simple;
+	bh=g4wT0br6Q3eKj2Xok4jODJ5FYGVqkxwnEIQSKqaQeVY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ean243GOAMWCRdza7SHF4GpQG5Fa4k0xfcpEsjoR7TYungDLaduoY/elIgFMScswlW5pUZR91mcMURW+DxgDij5OBPrR43P8rWrrmbJyGEwwHWtAueEy5fVas59yvmFMSe/64fGeAIFPx5wAV+y293hwSCd9OduNYkUMGb6YpXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuaYF4a4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF94C4CEE9;
+	Wed, 23 Apr 2025 00:19:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745367593;
+	bh=g4wT0br6Q3eKj2Xok4jODJ5FYGVqkxwnEIQSKqaQeVY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AuaYF4a4LmETrC4hV+qrXOzzVOrFV3aT2VEhjAlSVKXhY05HlyTifHoS0Zw/iqT1Z
+	 wTgSYmLaiX3LyNXwAhJjj1suIanbbDEHkyQ6MrGIcU1y6MLQcVijLgUtEjDlfqVmcw
+	 FV7t2QyjjweaJdvn+u2CAl3SYWPZHfH5oH11jg24jpUrJ1q9NABoDIJUfq03dweAPW
+	 K3nOqMMZtgQIpab2pByaJw9I7BCX5BspzJCHttIBL6ya4idyLh7AZ+WTUUUV0B7sO3
+	 Xrp/Qw8dzQ9RpL5nlNB2VxqRZLIj0BXUZDpsr2Rd16tD9b4HLQLoiqG6TlHrbR/6Wa
+	 9M2MYkWh1fbbw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0C2380CEF4;
+	Wed, 23 Apr 2025 00:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 bpf-next 0/3] libbpf: Fix event name too long error and add
+ tests
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174536763175.2096010.2128821424847053296.git-patchwork-notify@kernel.org>
+Date: Wed, 23 Apr 2025 00:20:31 +0000
+References: <20250417014848.59321-1-yangfeng59949@163.com>
+In-Reply-To: <20250417014848.59321-1-yangfeng59949@163.com>
+To: Feng Yang <yangfeng59949@163.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, hengqi.chen@gmail.com,
+ olsajiri@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Lemma 1 from the original EEVDF paper says that any task that
-has a positive lag is eligible to run.
+Hello:
 
-This test tests the opposite - any task that is picked to run must
-have a positive lag for it to be eligible to run.
+This series was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-To: Ingo Molnar <mingo@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-To: Ben Segall <bsegall@google.com>
-To: Mel Gorman <mgorman@suse.de>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Dhaval Giani <dhaval.giani@amd.com>
-Cc: Gautham Shenoy <gautham.shenoy@amd.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Dhaval Giani (AMD) <dhaval@gianis.ca>
----
- kernel/sched/eevdf-tests.c | 41 +++++++++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c        |  2 ++
- kernel/sched/sched.h       |  2 ++
- 3 files changed, 45 insertions(+)
+On Thu, 17 Apr 2025 09:48:45 +0800 you wrote:
+> From: Feng Yang <yangfeng@kylinos.cn>
+> 
+> Hi everyone,
+> 
+> This series tries to fix event name too long error and add tests.
+> 
+> When the binary path is excessively long, the generated probe_name in libbpf
+> exceeds the kernel's MAX_EVENT_NAME_LEN limit (64 bytes).
+> This causes legacy uprobe event attachment to fail with error code -22.
+> 
+> [...]
 
-diff --git a/kernel/sched/eevdf-tests.c b/kernel/sched/eevdf-tests.c
-index 3bc016d3025733e53f586e30fcd31f650156d47e..8532330769bcc93dbf9cd98ebba=
-75c838f62c045 100644
---- a/kernel/sched/eevdf-tests.c
-+++ b/kernel/sched/eevdf-tests.c
-@@ -18,10 +18,51 @@
-=20
- #ifdef CONFIG_SCHED_EEVDF_TESTING
-=20
-+/*
-+ * Test parameters
-+ */
-+bool eevdf_positive_lag_test;
-+u8 eevdf_positive_lag_count =3D 10;
-+
- static struct dentry *debugfs_eevdf_testing;
- void debugfs_eevdf_testing_init(struct dentry *debugfs_sched)
- {
- =09debugfs_eevdf_testing =3D debugfs_create_dir("eevdf-testing", debugfs_s=
-ched);
-=20
-+=09debugfs_create_bool("eevdf_positive_lag_test", 0700,
-+=09=09=09=09debugfs_eevdf_testing, &eevdf_positive_lag_test);
-+=09debugfs_create_u8("eevdf_positive_lag_test_count", 0600,
-+=09=09=09=09debugfs_eevdf_testing, &eevdf_positive_lag_count);
-+
- }
-+
-+void test_eevdf_positive_lag(struct cfs_rq *cfs, struct sched_entity *se)
-+{
-+=09static int eevdf_positive_lag_test_counter;
-+=09u64 eevdf_average_vruntime;
-+
-+=09if (!eevdf_positive_lag_test)
-+=09=09return;
-+
-+=09if (!se || !cfs)
-+=09=09return;
-+
-+=09eevdf_average_vruntime =3D avg_vruntime(cfs);
-+=09eevdf_positive_lag_test_counter++;
-+
-+=09if (se->vruntime > eevdf_average_vruntime) {
-+=09=09trace_printk("FAIL: Lemma 1 failed - selected task has negative lag\=
-n");
-+=09=09eevdf_positive_lag_test =3D 0;
-+=09=09eevdf_positive_lag_test_counter =3D 0;
-+=09=09return;
-+=09}
-+
-+=09if (eevdf_positive_lag_test_counter > eevdf_positive_lag_count) {
-+=09=09eevdf_positive_lag_test =3D 0;
-+=09=09eevdf_positive_lag_test_counter =3D 0;
-+=09=09trace_printk("PASS: At least %u selected tasks had positive lag\n",
-+=09=09=09=09=09=09=09eevdf_positive_lag_count);
-+=09}
-+}
-+
- #endif /* CONFIG_SCHED_EEVDF_TESTING */
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index eb5a2572b4f8b6b5517befc299312b6ae7476e88..924d9d35c2aa937bc0f4ca9565b=
-a774397b90f77 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -980,6 +980,8 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *c=
-fs_rq)
- =09if (!best || (curr && entity_before(curr, best)))
- =09=09best =3D curr;
-=20
-+=09test_eevdf_positive_lag(cfs_rq, best);
-+
- =09return best;
- }
-=20
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 09cefe2aa871bbd533a413c76026895e969a58e7..5ad5e033e1c81167b712ab176d4=
-d55e6b5d82d06 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3990,8 +3990,10 @@ void sched_enq_and_set_task(struct sched_enq_and_set=
-_ctx *ctx);
-=20
- #ifdef CONFIG_SCHED_EEVDF_TESTING
- void debugfs_eevdf_testing_init(struct dentry *debugfs_sched);
-+void test_eevdf_positive_lag(struct cfs_rq *cfs, struct sched_entity *se);
- #else /* CONFIG_SCHED_EEVDF_TESTING */
- static inline void init_eevdf_testing_debugfs(struct dentry *debugfs_sched=
-) {}
-+static inline void test_eevdf_positive_lag(struct cfs_rq *cfs, struct sche=
-d_entity *se) {}
- #endif /* CONFIG_SCHED_EEVDF_TESTING */
-=20
- #endif /* _KERNEL_SCHED_SCHED_H */
+Here is the summary with links:
+  - [v5,bpf-next,1/3] libbpf: Fix event name too long error
+    https://git.kernel.org/bpf/bpf-next/c/4dde20b1aa85
+  - [v5,bpf-next,2/3] selftests/bpf: Add test for attaching uprobe with long event names
+    https://git.kernel.org/bpf/bpf-next/c/e1be7c45d244
+  - [v5,bpf-next,3/3] selftests/bpf: Add test for attaching kprobe with long event names
+    https://git.kernel.org/bpf/bpf-next/c/9b72f3e5b760
 
---=20
-2.49.0
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
