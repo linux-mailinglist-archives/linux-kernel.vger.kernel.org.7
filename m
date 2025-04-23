@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-616342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FBBA98B37
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:34:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183E8A98B76
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751A51885AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733E64452F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE272701DA;
-	Wed, 23 Apr 2025 13:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8F21A8412;
+	Wed, 23 Apr 2025 13:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lhv9eXCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CGlnf3Kl"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AFA4315F;
-	Wed, 23 Apr 2025 13:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97E01A3165
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415204; cv=none; b=bf2BLBR0mqm4DqSSgOtvxUBBB5UiZhOq7MHFPKXVJxS1v2py2D9D3Guef5Pr2B3cxMjDndixb04k8RPh1PEM4g44diN0WVwRn/BLzgdcgy7H+crDZmLeuEpU0MtEVFpbH8/3n4+9+j/1EGAniEwRewJqwwWs5UaolzCAvEyDehM=
+	t=1745415513; cv=none; b=NJ+bTXJboQa367V5XW0aAf9Y96nfT0OkqOC56mmanwZG794Jlb6r/tmrOevFwRFkONKa0Vyg6kfCYqdmGqdqPzFa2Y5SczlsWHXjwgfuAuZcDxm4SEGlPMMytaOjVpfuWuR2VZTvTcu6k2QEVjO55w79Om1n37xWI/igw8/olUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415204; c=relaxed/simple;
-	bh=VhWoNd6QDgqzPaFDzKXzz8wt8AdcVP4ZGz7YZmxeeKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jsi10suw9j2pVs/L36a0E1g1NOWc9C/sX/a60xK07lvODn6SbFOTW7EBPmogjowkMAxY1lQfKcBwGQYfaC5FIgDffqnZac36FY879arlt45/qX72z6LuPGH5ezijMXPYBRniFhijFy+8udk3EFWkd6+iUrtZmLg20L4tptQFtmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lhv9eXCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE1DDC4CEE2;
-	Wed, 23 Apr 2025 13:33:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745415203;
-	bh=VhWoNd6QDgqzPaFDzKXzz8wt8AdcVP4ZGz7YZmxeeKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lhv9eXCAUwFGvkecgZ/eXjJ8bnIqiwFBvuGfgk2GFw95jkXdOvlGDcGExkfZMNYsz
-	 MWvWRyDJ5sWBaqUw0eBxIUgEt/9jMR2rL+AeQlkRyCzRuQPnVGxWYtG0PERSHWEpXC
-	 KpDfGrpzfjnp6HQ2ovpMeUQwRLs1gL9hRnjqlycOf2g0/vobi4OezLLds31Ai8uk2b
-	 WPhE+7tUHrcir6ybEQzRfYnmxq3DmYxw3zrxf3nkSkO2MkM1W8SnPmWQEhK9GqBbzp
-	 R1nLlXMtPC5TSNrYKI6U9Nw1A1Px1mrAbkU3uMgVcYIAHTA/E658gjztNdVOkMy2s9
-	 9fZsDIFNEnNPw==
-Date: Wed, 23 Apr 2025 10:33:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	s=arc-20240116; t=1745415513; c=relaxed/simple;
+	bh=/ny8+C0v+NSGF96Dv23SSTp1anixdtvMj/J2vLjN9vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M2XpCDk4ursI0Up0TiaHj2Kj1EaWqIssDMF4BA+GQhFj2nwxKWyFHWrG6mrqwUPBXtTW+WDZP4VuPJU3HouyPZfeaRhPQ4DylqJsY6lLKdy8ZM6QKqYiWXBgKrDAou0LTWbaFyeukGQ3kj/d0XNQhlpC84yPE8at5JvvRpDxwCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CGlnf3Kl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=1R2wcJ8WNozyVRB5Zez0LopaRMyXxGSmC5SqBu1VNhc=; b=CGlnf3KlkTK55NNfKmHL9MINWg
+	+8gBwwSBH8guIB5zf/6WnJ0xNk0PpV8AuYk6sWWCeuM5UOHzvEkf4+3PdGLNoF+qdj/MD4En6fCHH
+	wLnFpZtfBTTIZmrwVgZNhtNOnhino6tLdsvwH/cr6s2eHgiqY68/xqu2MZer9FESkr7VbTi9/kk5M
+	UqDG0CHFGaQkYQvHy1cUON8QERKW4HHD6f7mhnergDvcrwOPehlYSvRXotGZagqsaf0rHr1rVqnr1
+	NDy5QciXcB17D3HTG/e4u60Fa+eEtDCl8qCaogiQt+kS2Llcn4al/QnOM+c0j98lmcEPgopQiIqYy
+	w/sFi4xg==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7aIx-000000097Jc-1AzY;
+	Wed, 23 Apr 2025 13:38:23 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u7aIx-00000003JOZ-04bE;
+	Wed, 23 Apr 2025 14:38:23 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Sauerwein, David" <dssauerw@amazon.de>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Marc Zyngier <maz@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Caleb Biggers <caleb.biggers@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: Re: [PATCH v5 00/16] Intel TPEBS min/max/mean/last support
-Message-ID: <aAjsIGKS6e3MfI60@x1>
-References: <20250414174134.3095492-1-irogers@google.com>
- <cfa0aa31-3fe7-4174-8cce-89e8aadbcd07@linux.intel.com>
- <CAP-5=fVo_yGgEwndavWaNAQRg=1MR121PQ-KwOW0HsUWGBLLnA@mail.gmail.com>
+	Mike Rapoport <rppt@linux.ibm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Ruihan Li <lrh2000@pku.edu.cn>
+Subject: [PATCH v4 0/7] mm: Introduce for_each_valid_pfn()
+Date: Wed, 23 Apr 2025 14:33:36 +0100
+Message-ID: <20250423133821.789413-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVo_yGgEwndavWaNAQRg=1MR121PQ-KwOW0HsUWGBLLnA@mail.gmail.com>
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Apr 21, 2025 at 11:13:49AM -0700, Ian Rogers wrote:
-> On Mon, Apr 14, 2025 at 12:08 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
-> > On 2025-04-14 1:41 p.m., Ian Rogers wrote:
-> > > Ian Rogers (16):
-> > >   perf intel-tpebs: Cleanup header
-> > >   perf intel-tpebs: Simplify tpebs_cmd
-> > >   perf intel-tpebs: Rename tpebs_start to evsel__tpebs_open
-> > >   perf intel-tpebs: Separate evsel__tpebs_prepare out of
-> > >     evsel__tpebs_open
-> > >   perf intel-tpebs: Move cpumap_buf out of evsel__tpebs_open
-> > >   perf intel-tpebs: Reduce scope of tpebs_events_size
-> > >   perf intel-tpebs: Inline get_perf_record_args
-> > >   perf intel-tpebs: Ensure events are opened, factor out finding
-> > >   perf intel-tpebs: Refactor tpebs_results list
-> > >   perf intel-tpebs: Add support for updating counts in evsel__tpebs_read
-> > >   perf intel-tpebs: Add mutex for tpebs_results
-> > >   perf intel-tpebs: Don't close record on read
-> > >   perf intel-tpebs: Use stats for retirement latency statistics
-> > >   perf stat: Add mean, min, max and last --tpebs-mode options
-> > >   perf pmu-events: Add retirement latency to JSON events inside of perf
-> > >   perf record: Retirement latency cleanup in evsel__config
 
-> > Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
- 
-> Ping.
- 
-> It would be great if we could land:
-> https://lore.kernel.org/lkml/CAP-5=fWxuKHLZJjd2NVWjA7ktCX6X3yQBsH2kh+eTTaNcSqbTg@mail.gmail.com/T/#m1bba00c3a699397b54e1a77da9b9ff392b435e4d
-> and then land this series.
+There are cases where a naïve loop over a PFN range, calling pfn_valid() on
+each one, is horribly inefficient. Ruihan Li reported the case where
+memmap_init() iterates all the way from zero to a potentially large value
+of ARCH_PFN_OFFSET, and we at Amazon found the reserve_bootmem_region()
+one as it affects hypervisor live update. Others are more cosmetic.
 
-Applied that and then this one,
+By introducing a for_each_valid_pfn() helper it can optimise away a lot
+of pointless calls to pfn_valid(), skipping immediately to the next
+valid PFN and also skipping *all* checks within a valid (sub)region
+according to the granularity of the memory model in use.
 
-Thanks,
+https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/for_each_valid_pfn
 
-- Arnaldo
+v4:
+ • Collect Reviewed/Acked/Tested-by tags
+ • Fix rebase mistake reverting FLATMEM cleanups
+
+v3: https://lore.kernel.org/all/20250423081828.608422-1-dwmw2@infradead.org/
+ • Fold the 'optimised' SPARSEMEM implementation into the original patch
+ • Drop the use of (-1) as end marker, and use end_pfn instead.
+ • Drop unused first_valid_pfn() helper for FLATMEM implementation
+ • Add use case in memmap_init() from discussion at 
+   https://lore.kernel.org/linux-mm/20250419122801.1752234-1-lrh2000@pku.edu.cn/
+
+v2 [RFC]: https://lore.kernel.org/linux-mm/20250404155959.3442111-1-dwmw2@infradead.org/
+ • Revised implementations with feedback from Mike
+ • Add a few more use cases
+
+v1 [RFC]: https://lore.kernel.org/linux-mm/20250402201841.3245371-1-dwmw2@infradead.org/
+ • First proof of concept
+
+David Woodhouse (7):
+      mm: Introduce for_each_valid_pfn() and use it from reserve_bootmem_region()
+      mm: Implement for_each_valid_pfn() for CONFIG_FLATMEM
+      mm: Implement for_each_valid_pfn() for CONFIG_SPARSEMEM
+      mm, PM: Use for_each_valid_pfn() in kernel/power/snapshot.c
+      mm, x86: Use for_each_valid_pfn() from __ioremap_check_ram()
+      mm: Use for_each_valid_pfn() in memory_hotplug
+      mm/mm_init: Use for_each_valid_pfn() in init_unavailable_range()
+
+ arch/x86/mm/ioremap.c              |  7 ++-
+ include/asm-generic/memory_model.h | 10 ++++-
+ include/linux/mmzone.h             | 88 ++++++++++++++++++++++++++++++++++++++
+ kernel/power/snapshot.c            | 42 +++++++++---------
+ mm/memory_hotplug.c                |  8 +---
+ mm/mm_init.c                       | 29 +++++--------
+ 6 files changed, 133 insertions(+), 51 deletions(-)
+
 
