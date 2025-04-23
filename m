@@ -1,147 +1,126 @@
-Return-Path: <linux-kernel+bounces-616115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4FEA987CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF082A987DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B35C7A6CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9351B66EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83794268C49;
-	Wed, 23 Apr 2025 10:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D8B26B0AD;
+	Wed, 23 Apr 2025 10:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ibM4+fvo"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ws6+6zNd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J8Z6rLJA"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283102701A7
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0679D268FC2;
+	Wed, 23 Apr 2025 10:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745405244; cv=none; b=nPC009gcbU9A11LwWpvHb1pZs1KiAjn3gdaoTGkozNrf8huMhSfYkt+zJLc0CxodvZDjZUm8HWOTTNx3iF628ytDEC7lbA4zwHRfJlyv9X/s0JczoKoHZlDaN/5N1oARskxN8aO7W2CyJ0eJcrjBiNmlEcMiwP57ywZDRbyp7cE=
+	t=1745405372; cv=none; b=q6z7XaaYLMcIxRSL4i+s6/TZ2Yj31/ppQww+UBnTKdb+RuJn37Ds/bf0SMIcXo1T6Umvexe0WRcVztnplx7QERSGTwQDGWK5XLf8kE4ihRcvZSxHSDi2Onk/4fGahG0FKmiudo48kakqvn51SMTdgcWrvN3St+cPvUDTe88wNFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745405244; c=relaxed/simple;
-	bh=UU9YoAHKOkXYDXJAShmuDPdc1qbY8RZWY4PpxLmQsaU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dAouqawTf5fUcP/iTS8w3/VGEscFDoLUEW/KNXR9TAM7uSlKb9TgSDe0tfvIuUAchDpCAqrnjydJ/MxXdvzR5aLaU7iEIscbPbp/+gMbbFTT2yETJiF1utnDssncL8nN5FOp+XuJGIV7AkunbX51rD5vBAsAf6wMmrVJ6Yu02ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ibM4+fvo; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c266c2dd5so6261508f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 03:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1745405239; x=1746010039; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fMrbMlTagXkTnenmyJmmNlOF+FvuaE9CmrOSpWPOLlw=;
-        b=ibM4+fvoC/i1nZm6QjOLYEBcEtNY4VRglgE1h9FtCfApED6ztndjIFTTsaUJVbYMHP
-         OiTGl9IvNvI08ZjkU+mbfgE/DaLyykjEqJEhSety9WnAM1/ZpvmWl7HhKVp4gwICAeYX
-         CDleHED2ciEYCw6j3RsTTXemJULWU4cjZWWMEbKFmjFi48VXhZYWhaffvNgg8GSpKzGa
-         +csGPJz5tqp0jJ9yWsA04Nee/aP52jd+btsdtZ6wRDzgUiBp5ZiE3elcSEbzT1/zqNkj
-         wPMHqyyMmdRqQlxe+XopSsRkBaXoZek2ju9py5UI265vVOoRhjNgl6+pyAk0a71UQjX6
-         /Wkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745405239; x=1746010039;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fMrbMlTagXkTnenmyJmmNlOF+FvuaE9CmrOSpWPOLlw=;
-        b=b6FXviTUwAWGouRkdDCWgUHYrjCcWjZJarvUFr9zi6UtOoVZPO2zl0pryh04yTPGyL
-         uPXguvFHa9Y165KI0xAzyt307lSX25z+JB3RuNhmXjnMFYyO7LXrjOw5kyLuSN8j6mp1
-         49GNsVHcPUPXiXMkgNgRzYSV8rvK+vczs2Va98gZMSPTBtwe+JbIuZexpTzZ8hy+5IGp
-         PAzyMTdIkplJZ9CB+X5DzBK/9XK1tMoSYS1sjQH4HpmhvswAHSO2KVZ9XskXKljwzeDb
-         nd0yuj5iuEKWl4To7/AIDSoJi8NoLw3WrjbUXq6uVexPnvJsK15dmTG6Aglpa70bkY1F
-         oOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrrVTS11cxMDzRyUTT+6TC9NMgDkdGXnmdKElCjBzq0T4yvR0cpxKR+LBzgP83hf6nL6n47fe4CTcs4KY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUewVnTzuWYWjGZgjTn9NFv1kJuj+PDLkQ9DNzAiAuq2XUtNwM
-	OvYLGsOww+mdPKobQEQNVue5C3egIkKK/tuer/cipyziuei/64dvcIaSglJBmbs=
-X-Gm-Gg: ASbGnct+elgZT4vSFztT/UZANiX35pL0RxByFrwWHse5JX0ypswUefu1sMSMmSL87We
-	ldDY3vlzoQRVeedMYDeSJlL1xw4PZrutX8qpC6nnVDv57TLmbPxIENjjXi6wa1x4A9eNATvT3tx
-	4MRIGCpBv19dpt0He7zosZArpy7CD9gKYZRV2mypUs8XWSfboCmmigOcvrx+Am7h/IdgZc4SKGo
-	8R43/+62eRX4vui4EFooW71duWCY22gyaXImv7qVZTzwsm3gPjN9T7Tpcw2LP8PE/yQy/xvLF11
-	sCPQi3jubeascx6m0Krh/JGtZSKtA3j129/NxpAncSM=
-X-Google-Smtp-Source: AGHT+IHzSNJo3Tq0+q1KtrvricG5SZh6DtKPLrPA5t2OxS4b3WEMt4hP3LFMNMdr80qgkwfOW+ZF3g==
-X-Received: by 2002:a05:6000:4308:b0:390:f6aa:4e7c with SMTP id ffacd0b85a97d-39efba5e837mr14942355f8f.28.1745405239415;
-        Wed, 23 Apr 2025 03:47:19 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-44092d2f514sm21242895e9.24.2025.04.23.03.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 03:47:18 -0700 (PDT)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 23 Apr 2025 11:47:15 +0100
-Subject: [PATCH v2] staging: bcm2835-camera: Initialise dev in v4l2_dev
+	s=arc-20240116; t=1745405372; c=relaxed/simple;
+	bh=GZW5rZ92n5nSfDahO/HbWsl9vTtzX0nsXwTMgd7hG4E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=mmJ4nnOiCJkjDhwAkWSgxAZQrj6PVMWw1nt2t4cuRNeJhrQz7pA17AbXJyfPV8qyz/uGhsRRXiOSIoroqBKZ0nJXzlDO5v26BcgMB+v9FZ6+H7/RHiic48Y2uXj5lzy6XsNf+pEuMfKan20qetMfQRR8Ej/d1oRbE4wRH02uN9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ws6+6zNd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J8Z6rLJA; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C08482540234;
+	Wed, 23 Apr 2025 06:49:27 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Wed, 23 Apr 2025 06:49:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1745405367;
+	 x=1745491767; bh=dgGNq7d0G1/PWhPlhLSXNkc2S9AqH2jVe/cjv1rl06o=; b=
+	ws6+6zNdJ1sSDTMpM2qvSx8JvAre2XkqW59mo8j9MhmwGoYH8a9Nt27t6DF6keyL
+	n3Qr1LgPgCOj6vhMfHyWM/FkbnqpUjTYpscQWq/d6leawaHRxnE1gnrG5MT8XQfx
+	xlzwahI+kqPPV3BTQo/f5FiezF6b1ODzuZ/x4hP1npE8cEmu9Ym7BVYaMX0XVzJA
+	IOFe3Ck1+N3HnNLA4IwafA0o9lvb0erI1Y+x2cxDPXLNc7kjEw107F9pER+fkif4
+	waUrcR/XTxFAJHFrO0pKVCdfmjMfmvOeema524nsPirzOpCcCj8CU4ncnLg2zIBG
+	0Z5sq3CkA40IS90cJYXfvg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745405367; x=
+	1745491767; bh=dgGNq7d0G1/PWhPlhLSXNkc2S9AqH2jVe/cjv1rl06o=; b=J
+	8Z6rLJA3e8JcXS20AItgtZiqhot7R3nmOtCK9Wp2fd4fB9LijU7bUmuzcVZgIAp/
+	QttPgRoSA7a2sM14TEFWIBcPxwl3oIkuCKT/porVnaWZYKikP4Z6+uGLweozs3mz
+	P7dBcdnSTMQieWq0J5Mqao2Md0CZTpvzYVv1lRbYn7j0N1vIWXt1N3TbMCDPOkAg
+	Ugl9C/+N84UtVYK8RY1kpg3j4VKs8DdiBRNyTNrXZrPotcAPuupZk/MONkOG25pD
+	1co8ye87Nf01d+u5Ob2Hn5jicVHgp1D4jIvaIHPrfv438C89nngj1C9xC6jySosP
+	uVFPqtsnRQ3cCkvfx9hsw==
+X-ME-Sender: <xms:tsUIaIQYu7QRxOgkwWGNRF-5e2DOim6wkFYAVELHFlpHC3bzaihDOg>
+    <xme:tsUIaFwkVmUn92Fett6rnEr5IrYP93TuhpYhpGtLEaVAyYf3fFiznZhOYqfIPjg55
+    HrHk6qeeT9kxnUJAPI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeigedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoih
+    hssegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghroh
+    drohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhr
+    ghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
+    dprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhn
+    ghdrtghomhdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:tsUIaF17iM6FlVDB1UVi6Qr5JrTu-R1HTnQe3XIGGuCI2BN3DJLfPA>
+    <xmx:t8UIaMCAkTPHlbIt2jbfwE5qOidtp8i43a1EU9SyVdVD1G_kcPtmEg>
+    <xmx:t8UIaBgW5Bv4-go_IzC4TqU5T7d_O7JO_xU-oH900KaI1MLAiY0xjg>
+    <xmx:t8UIaIqU_XoetQemU-l1YfVhyjt4SbWsmEAyp60-8xrfgzV42Twmnw>
+    <xmx:t8UIaDfOfXyPES32LeAJf0bmfXbKaBngnEur1D6l2jAtlwGzbRvK8s6l>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DDFB42220073; Wed, 23 Apr 2025 06:49:26 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: T775286d0781a9516
+Date: Wed, 23 Apr 2025 12:49:06 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Romain Gantois" <romain.gantois@bootlin.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Andi Shyti" <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Message-Id: <48972165-8cda-4db4-a5d9-299854afb112@app.fastmail.com>
+In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
+References: <aAijRtGLzKLdwP0-@stanley.mountain>
+Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-staging-bcm2835-v4l2-fix-v2-1-3227f0ba4700@raspberrypi.com>
-X-B4-Tracking: v=1; b=H4sIADLFCGgC/3WNSwqDQBAFrxJ6nQ5Oj4JmlXsEF/NTG+KHHhki4
- t0zEbLMsgpevR1iEA4R7pcdJCSOPE8Z6HoBN5ipD8g+M1BBVVGqAuNqep56tG6kWleYyhdhx2+
- 0tbe+0dqRtpDni4Ssz/SzzTxwXGfZzqekvvYXLf9Hk0KFZMnbxtQdNfohJi42iGwL39w8Qnscx
- wclnBYlxgAAAA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Umang Jain <umang.jain@ideasonboard.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>, linux-staging@lists.linux.dev, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- stable@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
 
-Commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
-vchiq_state") changed mmal_init to pass dev->v4l2_dev.dev to
-vchiq_mmal_init, however nothing iniitialised dev->v4l2_dev, so we got
-a NULL pointer dereference.
+On Wed, Apr 23, 2025, at 10:22, Dan Carpenter wrote:
+> The "port_id" is used as an array index into the struct fpc202_priv
+> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
+> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
+> out of bounds.  Change the > to >= to fix this bug.
+>
+> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Set dev->v4l2_dev.dev during bcm2835_mmal_probe. The device pointer
-could be passed into v4l2_device_register to set it, however that also
-has other effects that would need additional changes.
-
-Fixes: 42a2f6664e18 ("staging: vc04_services: Move global g_state to vchiq_state")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Noted as we switched to 6.12 that the driver would fail during probe
-with an invalid dereference if a camera module was actually configured
-for the legacy camera stack.
-https://github.com/raspberrypi/linux/issues/6753
----
-Changes in v2:
-- cc stable
-- Add Stefan's R-b
-- Link to v1: https://lore.kernel.org/r/20250414-staging-bcm2835-v4l2-fix-v1-1-2b2db9a8f293@raspberrypi.com
----
- drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index b839b50ac26a..fa7ea4ca4c36 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -1900,6 +1900,7 @@ static int bcm2835_mmal_probe(struct vchiq_device *device)
- 				__func__, ret);
- 			goto free_dev;
- 		}
-+		dev->v4l2_dev.dev = &device->dev;
- 
- 		/* setup v4l controls */
- 		ret = bcm2835_mmal_init_controls(dev, &dev->ctrl_handler);
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250410-staging-bcm2835-v4l2-fix-b8dbd933c23b
-
-Best regards,
--- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
