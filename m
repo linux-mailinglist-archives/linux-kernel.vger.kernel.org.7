@@ -1,161 +1,155 @@
-Return-Path: <linux-kernel+bounces-616896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA60CA997A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEC8A997B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1B0189DFF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44495A43D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED9D28E618;
-	Wed, 23 Apr 2025 18:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BD528C5DC;
+	Wed, 23 Apr 2025 18:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dzaUhanA"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mw0BLyt3"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FCA28D843
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0665289359
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432231; cv=none; b=HXO23N0DYm0+7OuyhxPiAVLvs7Bj9dvcx2q/d5UMGEul2KpLeXuJ4Y0+wVB38v2ZrJtdbcKuq6xFEWpW/urvoSg6cpVL7mT4RokB/mBWQvqEIm7VwjKgCRCqQsrZt6f3tfVFg99+Ylj4qsw9SL8YXZZ91zkDAVCe3idSQCiXAok=
+	t=1745432297; cv=none; b=TEczF8fTeGMmpFUTMZJ4VBi1SYlfL3wtqH8yNgooOtKqPd5AEumPmcQSwKyrjzfteNRfbqI6lpHlPuzn4Bn39Z51j40Nh90/mx8gKupVj9RWYRY+bFpaPv9qcVToGAWDyeXwE6/YOaWWGSafMKCP7A2W5IK1kFu24N+oS2r0m6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432231; c=relaxed/simple;
-	bh=ZwDA7dKaeXsaxB3idhnk/64Z7wWQuL5MluTl3MVfp1Y=;
+	s=arc-20240116; t=1745432297; c=relaxed/simple;
+	bh=4Lb81w2s/iHKlg0tr1kLg33vsHa3w3DDNgPzLbNjD+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obcYWuYpIanxo89eisa5RQ23STfcF8x8lBVn7uDgxH11ipRNZsbBvFwaFZtvIS3JuL/A1WNx+jN1H4m8bPUOQXJJntUEsYe90ZTfE/tLJsNf8zSA5yqdRPwJfnEjhhl/rHCpS3O1s6cZLKZkpdDtTH3NQneAqIzPWqYNNCcCZWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dzaUhanA; arc=none smtp.client-ip=209.85.160.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5d2p+exW3L5CHKU7NqZIK0n8KSfSDSDvrydTf/T2jV4Vb7P6VZwHK9c4rXyEXKKTR0BCQGlDKCJrxXkgCMVrF4IPjCSMOjTPi90formZdGQY5WpV8v6/9eOv/l7BX9OalJhevgxBJeY3uhTUqcRqCbS4xpm2OAmgxtJ6THR8tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=mw0BLyt3; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47663aeff1bso1561681cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 11:17:08 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8f6970326so2117006d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 11:18:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1745432227; x=1746037027; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jJ8s1tHlAlZHZLBcym34Knli5JlhGSSEZ8s9pr2exho=;
-        b=dzaUhanAGnWmjNzX6EyAJDr56KrTb45PN/EThCXWubagFRugBhYwJihgbUIyGS7Oy1
-         7GCzjFgYzXJUcXpS8X+v0qNySEabX0xTyun1iMVdJj3qj7/oFbt6x+cURruzijRAYdDk
-         zJXE80/VTSJyoH+CBJNYr9Vdstbr/gur7d8cvS2fLvOMqEGRPHY5k6Y6gLOO5/5May8s
-         H49s9x4oaXHEAdgo7tHaFvKLT9alL5RGrDTb+nerpdzTtDdRYFk429vfBzWlKvfpumte
-         pXaxpLOcpJsZjP3xS3wk5BUoqNCzCRTm/fkrFCf4Nifmgv7OBgK+QHEISYKhL//7rMfK
-         9lMg==
+        d=ziepe.ca; s=google; t=1745432295; x=1746037095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S2K4Lg9UXWodayqGkEaP9bm9sDSNteHJq58dHhFg6dY=;
+        b=mw0BLyt31cJrngz/aBlEqUNCOkBB1gSFAicpqFxsnuU55usihLqj9CppOCLuDQTA44
+         QGx2p6pdozkZhZRlIGlFVwDs2dtgpe6fKnSF94krJoWMELaEUPODqoGDeQkQzFCw7fMV
+         18e8lwSuBtKVpxOxM6QBw77NM9mD/y5Y2FmSeg4RArtyuojpdQcARSL6ApYsWQ+PskiA
+         VYLc9AXF9mmC8s11Eb3OYyph7ohBk6xnHFnCP4/3jXhK/bh74E+StCO4Lj+LW7u56WRs
+         9XeG6U9hTlaw3CySXpgHG9sCEMP7zHmh4QNZbhH5sLPkW3k0S9B3Insiwp1+IWlISncI
+         SbKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745432227; x=1746037027;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJ8s1tHlAlZHZLBcym34Knli5JlhGSSEZ8s9pr2exho=;
-        b=beVF6uyAYzEV3fNecWJhqvsU8RkDjuxzYu0mGuNiv8UVhw2SskVsEzxT0RVbn+rYsV
-         oUZDwkSLbMb4chfBA9IfbqGKlp/u6zGX/QKy79liAJzt2JMPu9ItwhhAbcMuEsZek3mM
-         L5o6ur5muxq+P1d77vjCMEC4z3X1BZItQWno9ULf7qgjGgjG0m+Cpo4qEZ08+gHiePgD
-         fXQqCTrwuHkaVDDPL6J7T4vc3I2vfWEUW3+x0OSs/G3ZcbIqr//f3fZXqgol6agLClYo
-         CCUiAIk+0xxq7BSiYKKzG2PxvCZHsOViV/e6NIbPrlbUt/+ImNtbMrzx9KjMBJ6hJMAA
-         Br3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuNhne+iP77gA4SlRTLASDRdL8ZD/w7AoWad/1yIduvPcqmgjPLq0Qr3+8+0gwEW8Gvg8ZTbsTl3xXwrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyfgn9zyUzkk7Eq1WOTYmaQ3mLzZJ+Igdw01dSNDLO/Td/hebH
-	nwIO6xI601qeLwzvGw86ESeblXIIexDYhSytVyAyLfbJmg2bDlkOaUuXpn95EF8=
-X-Gm-Gg: ASbGncvkUftCy0fXN9nCNGgEoBZ3YpKtCKbb4/VIhovhkBXcyumc/ZegDRXNbOg8kvJ
-	YmD1n6JugmHaBMBnQ+Uf6h5/AHP+5Xb7LPBDHjsTP1gUSQ6NxIfbK/pPUHQW9vTcPQe8y1pZOvw
-	anv1GugcolxwUT7utTTb6fnl0BLCz6bvYpyo/H0EpZQyzW7wxSw3aTwhYy5n8gytfHeEL5+xjxV
-	GzAoRqSb0CzsC8/HQsD5a9CKum9V7cCbDPWuxJUMO+mHf+8/lPYK4rSXKvQA8hDy9WCZOEppQUm
-	lBVW4fXR0HHE2B5+0XUTZkWUcUAqBR+L7O+ERLHpHA/zLFj5j9fi7c2W117eSqDnUOwAQpGBcdg
-	FRjcrIDoEiAywh8U7Poc=
-X-Google-Smtp-Source: AGHT+IECPlcFTYHnkwAKKk3B5MzEp2J+Q23qmmOis8VDE/Xdu9ZIh9LzQbjBc0+xoVESECxntDW6lg==
-X-Received: by 2002:a05:622a:d4:b0:476:95a2:64a1 with SMTP id d75a77b69052e-47e76175c16mr4073601cf.17.1745432227237;
-        Wed, 23 Apr 2025 11:17:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745432295; x=1746037095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S2K4Lg9UXWodayqGkEaP9bm9sDSNteHJq58dHhFg6dY=;
+        b=JR124TKWzeC1fKlPerSciI3r1tqFHZ8NPmI09HDEOH+mHiOl9gfs9SeTmdZDB+TdkC
+         QagO8iXH/gZ0uiiRyo8NspVmL81SOuZSGeWbY9upIFDoYXxlnMRYH2mxQ4bEEHLzWalY
+         YeQSkd5g0aJvw8PFl6WP7gxw/qrBvuclCVsDAdo/nWXyIzXZdUVGZxVAaJ/W4bMBxp8Y
+         cRTzC9Aq1fsezaGc1ix9VZQup9UbYakg6uOCe1Pzd+4ECo9xWMxGEmyxvdmeBn8iNf/M
+         9jmCyNK/mQtiq3m15cjiNbmybMLfzkE02DRMmYm57Og49Hq3jwBc9kp2cDrHPBMjztkq
+         k1Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCXNwEvV15dKlLVsprUqGqtoHMynKn8+sNtopBSzj41M3HmeLIWUtOKJ1QNdgt+XjOW1s0hcKCPVWlpSbJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8OQj9V1MRoLSELWsIvzMF1mA1enkk6BaKa0nqSws0cJ4AH4jB
+	VblSOKT42UQtrxiLZoCnZMKtnKWX3/nNqFQDXVQ2LD3BUXi5ZQm2KF5aUWXARZg=
+X-Gm-Gg: ASbGncuIbvEYaSEW1cJkd9kjQfxsSm/7EPcxb5BJJOehthEcTNltx6zs4t+NogZcTFq
+	an80i5mmBbalhU70ZOpQ3FAzwRysjnsheWVk66WhZYFRNJI4OFoJ3EXDsZ0oFiGV021aoTi8bi+
+	O99k1k7ku8Oo/Lygjd9cxTTK33COhPdd0zBTWK7BtVK/4UKlgrnWVyeYwxIvfVwbgfZLjRQzizP
+	ZvdnLfXCkVP+cxVOlsvB0csdha51g6FPyxwaBrLHvOoE4izh7aQbx8wKJb05qlTQzm8+waD8fad
+	p9wQF+DYnzb84cHSmFm2XmUNZ9t6S81NIhKElVc1hWhmTCVSarkGZJSTp5waKkn9e74LGVifCg/
+	wjC6bvtVm/O244/xbRVo=
+X-Google-Smtp-Source: AGHT+IG4/MsY26Rj4xYm6pWmvlAPuVFdcPLdJFOh3iEBlJVLpm+B1c5dpvU4P4SztDpvWCyGwRESRw==
+X-Received: by 2002:a05:6214:21c4:b0:6e6:5f28:9874 with SMTP id 6a1803df08f44-6f4bed4600emr4321856d6.2.1745432294768;
+        Wed, 23 Apr 2025 11:18:14 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47ae9c16dd2sm70921841cf.14.2025.04.23.11.17.06
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2af1433sm73395536d6.19.2025.04.23.11.18.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 11:17:06 -0700 (PDT)
+        Wed, 23 Apr 2025 11:18:14 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1u7eeg-00000007Lzi-1CSb;
-	Wed, 23 Apr 2025 15:17:06 -0300
-Date: Wed, 23 Apr 2025 15:17:06 -0300
+	id 1u7efl-00000007M0V-3VVh;
+	Wed, 23 Apr 2025 15:18:13 -0300
+Date: Wed, 23 Apr 2025 15:18:13 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mika =?utf-8?B?UGVudHRpbMOk?= <mpenttil@redhat.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 10/24] mm/hmm: let users to tag specific PFN with DMA
- mapped bit
-Message-ID: <20250423181706.GT1213339@ziepe.ca>
-References: <cover.1745394536.git.leon@kernel.org>
- <0a7c1e06269eee12ff8912fe0da4b7692081fcde.1745394536.git.leon@kernel.org>
- <7185c055-fc9e-4510-a9bf-6245673f2f92@redhat.com>
+To: William McVicker <willmcvicker@google.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
+ path
+Message-ID: <20250423181813.GU1213339@ziepe.ca>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
+ <aAa2Zx86yUfayPSG@google.com>
+ <20250422190036.GA1213339@ziepe.ca>
+ <aAgQUMbsf0ADRRNc@google.com>
+ <20250422234153.GD1213339@ziepe.ca>
+ <aAkj5P1I-e9lylIU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7185c055-fc9e-4510-a9bf-6245673f2f92@redhat.com>
+In-Reply-To: <aAkj5P1I-e9lylIU@google.com>
 
-On Wed, Apr 23, 2025 at 08:54:05PM +0300, Mika Penttilä wrote:
-> > @@ -36,6 +38,13 @@ enum hmm_pfn_flags {
-> >  	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
-> >  	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
-> >  	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
-> > +
-> > +	/*
-> > +	 * Sticky flags, carried from input to output,
-> > +	 * don't forget to update HMM_PFN_INOUT_FLAGS
-> > +	 */
-> > +	HMM_PFN_DMA_MAPPED = 1UL << (BITS_PER_LONG - 7),
-> > +
+On Wed, Apr 23, 2025 at 10:31:16AM -0700, William McVicker wrote:
+> On 04/22/2025, Jason Gunthorpe wrote:
+> > On Tue, Apr 22, 2025 at 02:55:28PM -0700, William McVicker wrote:
+> > 
+> > > On this note, I was looking through `of_dma_configure_id()` and am also
+> > > wondering if we may hit other race conditions if the device is still being
+> > > probed and the dma properties (like the coherent dma mask) haven't been fully
+> > > populated? Just checking if the driver is bound, doesn't seem like enough to
+> > > start configuring the DMA when async probing can happen.
+> > 
+> > I think the reasoning at work here is that the plugin path for a
+> > struct device should synchronously setup the iommu.
+> > 
+> > There is enough locking there that the iommu code won't allow the
+> > device plugin to continue until the iommu is fully setup under the
+> > global lock.
+> > 
+> > The trick of using dev->driver is only a way to tell if this function
+> > is being called from the driver plugin path just before starting the
+> > driver, or from the iommu code just before configuring the iommu.
+> > 
+> > Given that explanation can you see issues with of_dma_configure_id() ?
+> > 
+> > Jason
 > 
-> How is this playing together with the mapped order usage?
+> I think the only concern is when a driver calls dma_set_mask_and_coherent() in
+> it's probe function. If we can handle that case in an asynchrounous manner,
+> then I think we are good.
 
-Order shift starts at bit 8, DMA_MAPPED is at bit 7
-
-The pfn array is linear and simply indexed. The order is intended for
-page table like HW to be able to build larger entries from the hmm
-data without having to scan for contiguity.
-
-Even if order is present the entry is still replicated across all the
-pfns that are inside the order.
-
-At least this series should replicate the dma_mapped flag as well as
-it doesn't pay attention to order.
-
-I suspect a page table implementation may need to make some small
-changes. Indeed with guarenteed contiguous IOVA there may be a
-significant optimization available to have the HW page table cover all
-the contiguous present pages in the iommu, which would be a higher
-order than the pages themselves. However this would require being able
-to punch non-present holes into contiguous mappings...
+You should never get to a driver probe function while iommu setup is
+still concurrently running. That would be a major bug and break alot
+of stuff.
 
 Jason
 
