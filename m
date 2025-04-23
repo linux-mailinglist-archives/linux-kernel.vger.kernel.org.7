@@ -1,271 +1,132 @@
-Return-Path: <linux-kernel+bounces-615737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4146A981C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:54:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D66A98190
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DB01B63885
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:54:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF131899085
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D4C26B978;
-	Wed, 23 Apr 2025 07:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Hle+v/Yb"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B5426C3AB;
+	Wed, 23 Apr 2025 07:49:36 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B63926772C;
-	Wed, 23 Apr 2025 07:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B52266B71
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394839; cv=none; b=Zv5Cot5UX4q6BvA43Zx5qX5c0U+QKzatG5cTawndnwAxnMAAV2hz4FXSA2efWXE1qkbrEkpVbjp7ayrT80oxa/TluqAi/fZ8e3haImnTX7HqUcLo58e1O72z7OaTbSukY8YpaNc0vFaBMh6e6xdyEcg9RgIgULExLF680OaapfE=
+	t=1745394576; cv=none; b=EnPQc7GorD938MT2scIi6SOz5i9t041+UbMwTopJ+rJZSX2br0DJUvCNhz8vpiH0h59NR8wIELt8+6IAKznQw/vBOxCHrb1eeucvH+11mcSxUqkUKvLK+/j3cN32PnDJC95Pfv6RZbDWnOtFTRxVg0W/+y3OsF78HISGqvcJ+Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394839; c=relaxed/simple;
-	bh=q+lQXjaZ1l+yG5MxLHXHU02zoVRchMlGeudXCp14EAg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SR5d2+3OIsDUqe1WBw9EAJZJwmx40hB1qib8SJwiJMUYODpTKdnUb7Y7Slr8uJthVsIB2Ml6a2bWyKu6nxGSzWyGm9S3FybJXrd1OOlHT01BVes4V3kpgE3Sj698l+91FewiY2NV6guC5e/uwMMprWJot5qWOe7G6OxI5DY3J64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Hle+v/Yb; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N6RX9D028394;
-	Wed, 23 Apr 2025 09:53:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	IzV24CKy9+GByv4nV3URGiNxMvyLfi5b2XJFt9IvXeI=; b=Hle+v/YbHnRw+HSa
-	y/+IbbuCG22DcqahaSwpRAeuIBjKO1WJBS3hbjMvZH7bw36Il78lLQH4s2t2gQWP
-	/bp9ijW7vL3S89eQorg1jrBnfncmUqaepj/zAXv6jFNkq+WqvoRvlPJpQm7/k4+/
-	oAYWO+eDeZ6eN8VMiQMA6JVueBvS6btI09o8J/lkXaM/7ulwpmTt9pYICiDwlDu9
-	jjLpVYPhlfuRUhbJ7qWiQX0BLusYgCSGD/TIN5lxY6JRarlAAV3rwOd4qdj00tzO
-	Z7QbnrZWGzKBb9FMmsFjqSBFo/GgwttwjCk+QFVHvJ5UHchhDIjE0VhIxjeg/rio
-	6TDNUg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jjv9wkb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 09:53:27 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CC21140053;
-	Wed, 23 Apr 2025 09:51:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F10E0A09691;
-	Wed, 23 Apr 2025 09:50:05 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Apr
- 2025 09:50:05 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <cassel@kernel.org>, <johan+linaro@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 1/9] dt-bindings: PCI: Add STM32MP25 PCIe Root Complex bindings
-Date: Wed, 23 Apr 2025 09:49:32 +0200
-Message-ID: <20250423074940.3849091-2-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423074940.3849091-1-christian.bruel@foss.st.com>
-References: <20250423074940.3849091-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1745394576; c=relaxed/simple;
+	bh=l8ky2QhzN6LS0wt5qCaExxISA6kghgJvi/mLCOgJFqA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NNvD9Zr01Yqr4GtrGXcCPd5ix4jK8jF27YaEMrIlTNwM7VGiQ2eeU9xspgCPzipzPu93r1rzxZrwt0gzXzaFYhyYZ8OIMYr/6H8FBoJozYFb/N0nQLQ1K7iX8yxa+MxAPsiUYvBQpNXpG1rotiy4/0sRXKAjWVwZ5zvw1n/KmcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d8f1c1ce45so92209205ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:49:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745394574; x=1745999374;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSKtXzbeEK9AbIC3smKkMKPobrSVNoSlrl9FplPF804=;
+        b=hvgLpZ5bNzBEuUxR1dDT74CkIpUbgO5S2r+8JIkgtyRyyXnEKUWnzFKIV76djlR7nq
+         NzjuYSS7MpwTzThmlNG8TgQ1j40cJB/3K0GyoI4lLFdVWaV+lAmZgbfke6VoHg7YYFZI
+         TH0yUNQXS9/HgGKvdKstpucNFoG5xfv4ceuSJ7fqYUhKYDNFHRNeR87o5vKEydN1kXqx
+         CRkjmUy7eeqTfcCzjEXSnC0D69tBh3LUwV/FmfeUTnt8i1H8unH8a+zOFrZAWWoDKyrI
+         26mYwp8sffBmkYQ5/bjrrw7/hboZtBxhVRoNOuAYDdRs31XCdE3bGajYGU9QYDjXlqCd
+         Yw3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWE4HXvpsvW8OndWJwfyY0t79GnvuqwilqU0i8REQUmgTs0PgZfob7cDtb7M3nHmqqeqZ7EAlraIs7UHKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweW40o0cV+kQlB2JQkUU4dfs+YDdYJ3B3L/wUyjrPFopQXiB/J
+	39JzpdsqWos/12zXDUgwxaMrYeGC12RQ68D7Mys/zbXzkRmvHGZQE5yrXWBW+nl3J9F8cHC+qaJ
+	LT6eFuTcRn1mBlEDQ04E+c+hmku54dhjDfS2HMl2m2GvmjTp9uz31bSo=
+X-Google-Smtp-Source: AGHT+IHvkow66BMhG/TSSICfHddGnFKQ1S6/ST+RAgW16u672roFKspEn7cEMe8LQrIh1dVhqlBlBAWDDVJS8J+NLsZf6ebK+43H
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-23_05,2025-04-22_01,2024-11-22_01
+X-Received: by 2002:a05:6e02:1648:b0:3d6:d145:2ffb with SMTP id
+ e9e14a558f8ab-3d89428c8f1mr216463595ab.21.1745394573985; Wed, 23 Apr 2025
+ 00:49:33 -0700 (PDT)
+Date: Wed, 23 Apr 2025 00:49:33 -0700
+In-Reply-To: <675101f3.050a0220.17bd51.0081.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68089b8d.050a0220.36a438.000a.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] INFO: task hung in do_truncate (3)
+From: syzbot <syzbot+effe7da6578cd423f98f@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, jack@suse.cz, jaegeuk@kernel.org, 
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Document the bindings for STM32MP25 PCIe Controller configured in
-root complex mode with one root port.
+syzbot has found a reproducer for the following issue on:
 
-Supports 4 INTx and MSI interrupts from the ARM GICv2m controller.
+HEAD commit:    bc3372351d0c Merge tag 'for-6.15-rc3-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138cdccc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3bbffc3b5b4301e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=effe7da6578cd423f98f
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c8ac70580000
 
-STM32 PCIe may be in a power domain which is the case for the STM32MP25
-based boards.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6c893a6bd7cc/disk-bc337235.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6c31d81cbcae/vmlinux-bc337235.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/acf5d144656b/bzImage-bc337235.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/53b1b110f131/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16d4f204580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/3185ba5a394f/mount_4.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=14ebe7ac580000)
 
-Supports WAKE# from wake-gpios
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+effe7da6578cd423f98f@syzkaller.appspotmail.com
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+INFO: task syz.9.68:6713 blocked for more than 143 seconds.
+      Not tainted 6.15.0-rc3-syzkaller-00019-gbc3372351d0c #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.9.68        state:D stack:27592 pid:6713  tgid:6701  ppid:6519   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x1b33/0x51f0 kernel/sched/core.c:6767
+ __schedule_loop kernel/sched/core.c:6845 [inline]
+ schedule+0x163/0x360 kernel/sched/core.c:6860
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
+ rwsem_down_write_slowpath+0xedd/0x1420 kernel/locking/rwsem.c:1176
+ __down_write_common kernel/locking/rwsem.c:1304 [inline]
+ __down_write kernel/locking/rwsem.c:1313 [inline]
+ down_write+0x1da/0x220 kernel/locking/rwsem.c:1578
+ inode_lock include/linux/fs.h:867 [inline]
+ do_truncate+0x20e/0x310 fs/open.c:63
+ vfs_truncate+0x4a6/0x540 fs/open.c:115
+ do_sys_truncate+0xd8/0x190 fs/open.c:138
+ __do_sys_truncate fs/open.c:150 [inline]
+ __se_sys_truncate fs/open.c:148 [inline]
+ __x64_sys_truncate+0x5b/0x70 fs/open.c:148
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6c9918e169
+RSP: 002b:00007f6c983dd038 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007f6c993b6080 RCX: 00007f6c9918e169
+RDX: 0000000000000000 RSI: 0000000000008001 RDI: 00002000000000c0
+RBP: 00007f6c99210a68 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f6c993b6080 R15: 00007ffc2675ba78
+
+
 ---
- .../bindings/pci/st,stm32-pcie-common.yaml    |  33 ++++++
- .../bindings/pci/st,stm32-pcie-host.yaml      | 112 ++++++++++++++++++
- 2 files changed, 145 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-
-diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
-new file mode 100644
-index 000000000000..5adbff259204
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
-@@ -0,0 +1,33 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/st,stm32-pcie-common.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STM32MP25 PCIe RC/EP controller
-+
-+maintainers:
-+  - Christian Bruel <christian.bruel@foss.st.com>
-+
-+description:
-+  STM32MP25 PCIe RC/EP common properties
-+
-+properties:
-+  clocks:
-+    maxItems: 1
-+    description: PCIe system clock
-+
-+  resets:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  access-controllers:
-+    maxItems: 1
-+
-+required:
-+  - clocks
-+  - resets
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-new file mode 100644
-index 000000000000..443bfe2cdc98
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-@@ -0,0 +1,112 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/st,stm32-pcie-host.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32MP25 PCIe Root Complex
-+
-+maintainers:
-+  - Christian Bruel <christian.bruel@foss.st.com>
-+
-+description:
-+  PCIe root complex controller based on the Synopsys DesignWare PCIe core.
-+
-+allOf:
-+  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-+  - $ref: /schemas/pci/st,stm32-pcie-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: st,stm32mp25-pcie-rc
-+
-+  reg:
-+    items:
-+      - description: Data Bus Interface (DBI) registers.
-+      - description: PCIe configuration registers.
-+
-+  reg-names:
-+    items:
-+      - const: dbi
-+      - const: config
-+
-+  msi-parent:
-+    maxItems: 1
-+
-+patternProperties:
-+  '^pcie@[0-2],0$':
-+    type: object
-+    $ref: /schemas/pci/pci-pci-bridge.yaml#
-+
-+    properties:
-+      reg:
-+        maxItems: 1
-+
-+      phys:
-+        maxItems: 1
-+
-+      reset-gpios:
-+        description: GPIO controlled connection to PERST# signal
-+        maxItems: 1
-+
-+      wake-gpios:
-+        description: GPIO used as WAKE# input signal
-+        maxItems: 1
-+
-+    required:
-+      - phys
-+      - ranges
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - interrupt-map
-+  - interrupt-map-mask
-+  - ranges
-+  - dma-ranges
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/phy/phy.h>
-+    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-+
-+    pcie@48400000 {
-+        compatible = "st,stm32mp25-pcie-rc";
-+        device_type = "pci";
-+        reg = <0x48400000 0x400000>,
-+              <0x10000000 0x10000>;
-+        reg-names = "dbi", "config";
-+        #interrupt-cells = <1>;
-+        interrupt-map-mask = <0 0 0 7>;
-+        interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
-+                        <0 0 0 2 &intc 0 0 GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+                        <0 0 0 3 &intc 0 0 GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+                        <0 0 0 4 &intc 0 0 GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+        ranges = <0x01000000 0x0 0x00000000 0x10010000 0x0 0x10000>,
-+                 <0x02000000 0x0 0x10020000 0x10020000 0x0 0x7fe0000>,
-+                 <0x42000000 0x0 0x18000000 0x18000000 0x0 0x8000000>;
-+        dma-ranges = <0x42000000 0x0 0x80000000 0x80000000 0x0 0x80000000>;
-+        clocks = <&rcc CK_BUS_PCIE>;
-+        resets = <&rcc PCIE_R>;
-+        msi-parent = <&v2m0>;
-+        access-controllers = <&rifsc 68>;
-+        power-domains = <&CLUSTER_PD>;
-+
-+        pcie@0,0 {
-+            device_type = "pci";
-+            reg = <0x0 0x0 0x0 0x0 0x0>;
-+            phys = <&combophy PHY_TYPE_PCIE>;
-+            wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+            reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            ranges;
-+        };
-+    };
--- 
-2.34.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
