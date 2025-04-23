@@ -1,211 +1,197 @@
-Return-Path: <linux-kernel+bounces-616824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6F9A99692
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856AFA9969F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257991B8606F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7FD1B861AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B028B516;
-	Wed, 23 Apr 2025 17:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA16028BAA9;
+	Wed, 23 Apr 2025 17:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kwptRyiN"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dxsWaW6W"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB7F280CDC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445B428B50C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745429284; cv=none; b=fQau4eXmFA1WPbdtdNqYQQCotwFkr7OpJoEangXAFPQTW57jqYuAct8csmBMN5TGtVnuvFCng/NqldhrkE7MReUqxjfz+Ir+8MKIkkpTmVnEuH3nH7uZYCtpzCEKoDSjZwodBPKMIMIhrJfqaqn/1C8NNvUGFyxZ+gQiGL8UfGk=
+	t=1745429331; cv=none; b=Nj/DofDjKLLgbtBt9ClGJ34LsYznvLq/j4+pyMUZnqt9za4Wc1SpncWUvvSbLJ9ic/nNaAxQIZkInqcamklZv1yfK0G1kQdwv1KASz/1s5HIpOcS6zq2W/5xgvIuMFkKD9vlfgVW07p9kqtLJESzqjfCePnIN/g9KHJeybF1r3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745429284; c=relaxed/simple;
-	bh=To5+mXKVqJ4D8W9A86Idf9GAwp67sMMUFZetXoeXhNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukXWrriPvZSqPSEGVszpujnTIBjsg1ean5FY5lV4StauFvyVquhwwIJsp7qUZIgEViLkMM1bnZKNTiNii07Fs7SNdIUG0t9ANY8Pxno699VtnDPrvolXDlLwxueE5vIPPGoqP0800C7XWa0CfLB/Gf2f0DCo2Jr8dkgc9/ZAe3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kwptRyiN; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2260c91576aso592785ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:28:02 -0700 (PDT)
+	s=arc-20240116; t=1745429331; c=relaxed/simple;
+	bh=aUHYeBNDDTz4AuY5ZlMWvTK2dNVriebG4hadKzUUw5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UoHUKpAGeTyyD1FJojBIHeGix6I4v1s8ceh1rBz+FlLi4EaHwUHLzvGXEK4Cwg7akmkfOAsb1TxByLfC6Ls7mXKf9HXvlNtKWuQiDreJCuCtQfEFrzRf6w2HhFzRYb578d5cGuxuo0thOyNwFoIGu2jdr8nTn05KwYCfCitWn+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dxsWaW6W; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so91848a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745429282; x=1746034082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZpN3s3qmY26UBKN47K4OXTIlbbWZaDEQfwBQfiV1DYQ=;
-        b=kwptRyiNCqvGFx3+PD7w7R4QKX4gHQ+pl8yv9mEO2J8SrWhAi21JpGuYcLSM8wMHGE
-         ifw25qSB4pR+IYmmzG3TtVSmZxe9ngqSd1eOIkE4uvxmdGAFHY3Ji+Nn0zLEHpnQRKO6
-         t6O0nbPGwMpyJ6e/q09r++UcdFllVRG3gafZINDPDK+yGwXc9hW0TPebyabqxSh8gTj2
-         /R0alS72ta1gDZoxdxzuUgv6eURI9OQK/GRnjfgZJBRYEdBPrycAvQF8+5mDE26EYxNy
-         vjqHlHnn9fF4125j5oC3V3VMcERB1yapMngeH2vfKIIQbdAykUEf7tuvV07uV+4K/9Ac
-         a9EA==
+        d=broadcom.com; s=google; t=1745429327; x=1746034127; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfiWY5A6In+jRdtiCqHpHZTyeZu5gzE/1KRWWqOVuiQ=;
+        b=dxsWaW6W/t4OhrJ7fiu904VD3b5sAjjZSFsX2iTPDH56j5yefIz0jYtsSj6ebqQNhz
+         4R4DyjLmiTUx/xStXdJW0GifMhniL3VLuGQQgylVtkbCxBqEHnOdlToMURcKgpASfJaS
+         l1P0Ytbm8GpLZ5EEO9ofl+PwyQgUnp+4LC2LQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745429282; x=1746034082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZpN3s3qmY26UBKN47K4OXTIlbbWZaDEQfwBQfiV1DYQ=;
-        b=rLCHyHw/Pn7/UacnY/G8gSrr7sOtQNLTbXBUKvNaflfw8yKE7/Cl3lFQWOq/4oBnKp
-         7FJZEgm4kebv2lhnJCEBLI6S7al/+aIpkayX6y0pvRM4Woy+YNbRIF5c8V4e81gY9HMj
-         bLsZrPbaidttSI11Z8EjI6GVQqomEcaVE2wLWK+L2MOAItTcHLfp+LBP9yKPW1cYWOo1
-         G4LVfoLwIulmVE1oxXR3CE+zTSVfkM+GupTg4N0cy4yHKemYy7NCiDH6s9aaI3InXNN5
-         tmIdLOi2PV0mKKKNEMowCNW6Qx7+0rEeGeLmfxPQXOvoRF6UIxD5VRFPL2NkZeUd1eti
-         k7cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbtvFQQaiw6T3FDhIeC5prFQzedSTEHgVyKoWLBVwCXCrLKIEazOwZNMSPOnJKoY0+Udff6i0mPSlE3KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCTcTbgeTU34bGZzUnFy8NBcAcoX0wPumGcKgsOL23DVuzaBsR
-	7V3ikBgHSK484de3Qmx7GD47V+zrLQvH3MzGF+ObiC2LK8Dpr0gessUu1MZHKw==
-X-Gm-Gg: ASbGncuFAftJyQWgulxbaAW3bj1sATsIe1mYaz1eIQq2pcpE1tGiQ8ASgG06zFQouun
-	gYRYwvKnUgoN6WeFXDFRJjPS3I1h/+t8vd6sGAXkzS5ZbN8eH3Sqh0yKaGQrK1FivBA7t91WIH2
-	vXpEI+inbfnTNVkTt0n+VIEsOGoKABVtPXIOKbl4oC/H242WwQi+qsXu8YYiPmt3FW7IddsIFZF
-	NjBAl7XwfaJL95AIRvOXJmjQzjvzto0QfXa1Hnuy9nrDUkIONmsmRBgSWDvdtDASDEQ91aUsUp/
-	noY4xrRFH8+h3IOTR/vR83j6lJjN4vTprOCwrsuXM65u+UZBz/dj4chCdBLLcutV60K6zvyGMwi
-	h/w2YLg==
-X-Google-Smtp-Source: AGHT+IHa77CexBJ8kZ0MMVz4lBWN5XuYsJm19QW6W7Xn3LZrvzkSypYq7z6BTcnhDO0elSznGaYPdA==
-X-Received: by 2002:a17:902:e5c5:b0:224:c7c:7146 with SMTP id d9443c01a7336-22c53573e54mr225103025ad.6.1745429281505;
-        Wed, 23 Apr 2025 10:28:01 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eced45sm107077345ad.175.2025.04.23.10.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 10:28:00 -0700 (PDT)
-Date: Wed, 23 Apr 2025 10:27:56 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Joerg Roedel <jroedel@suse.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	iommu@lists.linux.dev, Saravana Kannan <saravanak@google.com>,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] platform: Fix race condition during DMA configure at
- IOMMU probe time
-Message-ID: <aAkjHMCQ82v5Ea0n@google.com>
-References: <20250423150823.GA422889@bhelgaas>
- <4129dca9-07fa-4b9d-a7d8-de7561d509e7@arm.com>
+        d=1e100.net; s=20230601; t=1745429327; x=1746034127;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nfiWY5A6In+jRdtiCqHpHZTyeZu5gzE/1KRWWqOVuiQ=;
+        b=v6jB67dfbgxGKUUts+SoTR9cRtLJfe2zB0k+WwJkkxLQ9D/KR1n0EBrhCRe6qWWTQm
+         nsmC51o/9JPP1t1hPi7QL9frr2llOO6sXoBMJDPfDJKLqYZz4fjMpryqWFxz6KGhXKGc
+         N+N451Gw5lRdm4EFwLS+MPyUsiOp5Gku1ylJPEGjS33Vu1h9umOe6HVb9BL6zGMBUcNl
+         eud5HtxL3XVTwy7KZF0gFi1OX4KNRIkPwX0YDMfl6FaO2b3p2bCS6MoRL62hAJxi8Lxm
+         ZC2LkOzJX/BodeIsMyyBjyufiPeZIOWpP0jsgYuhPPQQwj52P7LbmYlHeHuWbvyhkEu8
+         abfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjl1DUvqBzo/IQ/PKMR6UhHIVPQsH1l9F+aYMcmXV1XQan4jEV2dPq/A6KUk+IixVDDVleBSDlz7/F2ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys1V/ItBFcFupjjUj5ghvXafUa/snjs5+iKwBZZdaN1SUklIaR
+	eeMe9mAuoBww3hvfqN9IW7YSbFEXu+Uhuke775bV1LwPB/zqALMHHswje5OVsnjvzuGvyZyIKie
+	UsTgCoWMwVqtyqb/q3RCokx9E6QnElUJhRYCy
+X-Gm-Gg: ASbGncujWvs3DkjA6nJyVcAyFY2CO5rtWRVOaHhb2OymYkfMS4dxSX11yqdmkENhM/o
+	6u4r/kQKwVHUSNGHyrEI8I+ndqvFSB+DQYfYj6z9VSu6/ac23HwGbcOlHoKBIz5VrVQNcq32S8J
+	aNqEC3W8e4eclXOwkuStzVUQw=
+X-Google-Smtp-Source: AGHT+IGtaebr+9wc/CZzxOBIW9tL/b7kbxMR6GPeIiP98fSLRWViOuUlMov5FNq8jZYSDeSHXnFxpJx47ViYKvtSLCw=
+X-Received: by 2002:a05:6402:42c7:b0:5f6:26d3:c6c3 with SMTP id
+ 4fb4d7f45d1cf-5f628613a3amr17416968a12.32.1745429327554; Wed, 23 Apr 2025
+ 10:28:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4129dca9-07fa-4b9d-a7d8-de7561d509e7@arm.com>
+References: <20250423162827.2189658-1-arnd@kernel.org>
+In-Reply-To: <20250423162827.2189658-1-arnd@kernel.org>
+From: Michael Chan <michael.chan@broadcom.com>
+Date: Wed, 23 Apr 2025 10:28:35 -0700
+X-Gm-Features: ATxdqUEOmLwVjGObugaSugFKbc1buyb6TfsLXSF6NuJ4b_lG9rhYukLxXn_Tlz0
+Message-ID: <CACKFLimF7defCWyxtRs1x+jtSD7O-+nBq+tQHUMpQ8GK=48tWA@mail.gmail.com>
+Subject: Re: [PATCH] bnxt_en: hide CONFIG_DETECT_HUNG_TASK specific code
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Pavan Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
+	Andy Gospodarek <andrew.gospodarek@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Somnath Kotur <somnath.kotur@broadcom.com>, Simon Horman <horms@kernel.org>, 
+	Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000001152460633756f5f"
 
-On 04/23/2025, Robin Murphy wrote:
-> On 2025-04-23 4:08 pm, Bjorn Helgaas wrote:
-> > On Tue, Apr 22, 2025 at 04:26:49PM -0700, Will McVicker wrote:
-> > > If devices are probed asynchronously, then there is a chance that during
-> > > the IOMMU probe the driver is bound to the device in parallel. If this
-> > > happens after getting the platform_driver pointer while in the function
-> > > `platform_dma_configure()`, then the invalid `drv` pointer
-> > > (drv==0xf...ffd8) will be de-referenced since `dev->driver != NULL`.
-> > 
-> > I need a little more hand-holding to make sense out of this.
+--0000000000001152460633756f5f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for not making it super clear :/ I was trying to find the right balance
-between being too verbose and not clear enough. I guess a threaded call flow
-might help visually demonstrate the race condition.
+On Wed, Apr 23, 2025 at 9:28=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The CONFIG_DEFAULT_HUNG_TASK_TIMEOUT setting is only available when the
+> hung task detection is enabled, otherwise the code now produces a build
+> failure:
+>
+> drivers/net/ethernet/broadcom/bnxt/bnxt.c:10188:21: error: use of undecla=
+red identifier 'CONFIG_DEFAULT_HUNG_TASK_TIMEOUT'
+>  10188 |             max_tmo_secs > CONFIG_DEFAULT_HUNG_TASK_TIMEOUT) {
+>
+> Enclose this warning logic in an #ifdef to ensure this builds.
+>
+> Fixes: 0fcad44a86bd ("bnxt_en: Change FW message timeout warning")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> > 
-> > After digging out
-> > https://lore.kernel.org/all/aAa2Zx86yUfayPSG@google.com/, I see that
-> > drv==0xf...ffd8 must be a result of applying to_platform_driver() to a
-> > NULL pointer.  This patch still applies to_platform_driver(NULL), but
-> > avoids using the result by testing drv for NULL later, which seems
-> > prone to error.
-> > 
-> > I think this would all be clearer if we tested for the NULL pointer
-> > explicitly before applying to_platform_driver().  I don't like setting
-> > a pointer to an invalid value.  I think it's better if the pointer is
-> > either valid or uninitialized because the compiler can help find uses
-> > of uninitialized pointers.
-> 
-> Yeah, I was also in the middle of looking at this after managing to hit it
-> playing with driver_async_probe at the end of last week. I guess when I
-> originally wrote this pattern I was maybe thinking the compiler would defer
-> the to_x_driver() computation to the point it's eventually dereferenced, but
-> I suppose it can't since dev is passed to an external function in program
-> order in between.
+I also cannot think of a better way, so this looks fine to me.  Thanks.
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
 
-Glad to hear I'm not the only one hitting this. I agree we should test for the
-NULL pointer first before trying to get the platform driver. I'll send a v2 for
-this.
+--0000000000001152460633756f5f
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> 
-> Indeed in my half-written version of this patch I was leaning towards
-> removing the drv variable altogether (just doing
-> to_x_driver(dev->driver)->driver_managed_dma inline), or at least doing the
-> same as Will's previous diff. I figure the one-liner replacing
-> "!dev->driver" with "!&drv->driver" would be too disgustingly non-obvious
-> for anyone else's tastes...
-> 
-> For consistency we should really fix all the buses the same way - sorry for
-> the bother (I can write up the other patches if you'd like). FWIW this part
-
-Yes please. Thanks!
-
-> really was the most temporary stopgap, as my planned next step is to propose
-> moving driver_managed_dma and the use_default_domain() call up into the
-> driver core and so removing all this bus-level code anyway, hence trying to
-> minimise the effort spent churning it. Oh well.
-> 
-> > > To avoid a kernel panic and eliminate the race condition, we should
-> > > guard the usage of `dev->driver` by only reading it once at the
-> > > beginning of the function.
-> > > 
-> > > Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-> > > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > > ---
-> > >   drivers/base/platform.c | 7 ++++---
-> > >   1 file changed, 4 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > > index 1813cfd0c4bd..b948c6e8e939 100644
-> > > --- a/drivers/base/platform.c
-> > > +++ b/drivers/base/platform.c
-> > > @@ -1440,7 +1440,8 @@ static void platform_shutdown(struct device *_dev)
-> > >   static int platform_dma_configure(struct device *dev)
-> > >   {
-> > > -	struct platform_driver *drv = to_platform_driver(dev->driver);
-> > > +	struct device_driver *drv = READ_ONCE(dev->driver);
-> 
-> Beware this might annoy a different set of people as it's not paired with a
-> WRITE_ONCE(), but for now I guess using it is still arguably better than
-> not. Really we should be under device_lock at this point and so have no race
-> at all, but we can't do that without keeping track of which devices are
-> IOMMUs themselves to avoid deadlock, and that's not something I fancy
-> throwing out as an -rc fix in a hurry...
-> 
-> Thanks,
-> Robin.
-
-Thanks again!
---Will
-
-> 
-> > > +	struct platform_driver *pdrv = to_platform_driver(drv);
-> > >   	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> > >   	enum dev_dma_attr attr;
-> > >   	int ret = 0;
-> > > @@ -1451,8 +1452,8 @@ static int platform_dma_configure(struct device *dev)
-> > >   		attr = acpi_get_dma_attr(to_acpi_device_node(fwnode));
-> > >   		ret = acpi_dma_configure(dev, attr);
-> > >   	}
-> > > -	/* @drv may not be valid when we're called from the IOMMU layer */
-> > > -	if (ret || !dev->driver || drv->driver_managed_dma)
-> > > +	/* @dev->driver may not be valid when we're called from the IOMMU layer */
-> > > +	if (ret || !drv || pdrv->driver_managed_dma)
-> > >   		return ret;
-> > >   	ret = iommu_device_use_default_domain(dev);
-> > > -- 
-> > > 2.49.0.805.g082f7c87e0-goog
-> > > 
-> 
+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
+OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
+/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
+L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
+kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
+5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
+hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
+E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJgMIIC
+XAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
+DQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIM5CGDSAmsKPcTfTuIQauhnjKA8nhdV4
+PF7INNuTxQc8MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDQy
+MzE3Mjg0N1owXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEB
+AQUABIIBAGSAgeqdFs1bnh9bSuP2+TIMKn3Th/BvtXhhL2TyztMGf4GrSunYSi/gOGhdi9Aur4+k
+khNrqomyMXoOYa96Ka3hxrWL4n8qVpeEsQg6o3Cur2o7cgsokO+2eKDYuWI7WItp4vcpI+TWnRdr
+IqNBwEQahSPxVTQbRtwQ8goQJbfIECRGoije0JdYjYNX74MMxbXCfj5QFfCUmd6HM/aZOf/bC3LZ
+w0R38BWMHBg1Vaz4pvDxOldi86Xjd/+m08Gz+lD7SuGsGjEb9c67lmJen1YVXw7/mr0mRwb2bWMr
+dgafTqA7tHIYvAwFvqcHWSINSrLN3m8RaIPnS5Yl0ml/El4=
+--0000000000001152460633756f5f--
 
