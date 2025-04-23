@@ -1,177 +1,321 @@
-Return-Path: <linux-kernel+bounces-615659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3530A9805D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:18:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E9EA9808B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECC73B143C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:18:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9407AEDB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ABD26E17C;
-	Wed, 23 Apr 2025 07:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEBF267724;
+	Wed, 23 Apr 2025 07:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BXDG2Dwr"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yi/izMcI"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8095726AA93
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48C71E1E1B;
+	Wed, 23 Apr 2025 07:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392532; cv=none; b=CFgMs4eHeo0waA9dAkU/Vxy+H6q0WR8YO62uOVETWFwTiwNgY4LXh6ZZzjc3zGj6g4RuIdQ3CBOSIx67izPKK01DN9qKB92JG2ooCH3Yu9N4gVVAGfHSJfsRf2rXG1tPzfMgqLhBtQyoWlOH1lbujb3OknnhTGFzqC8ZCAt3RnQ=
+	t=1745392923; cv=none; b=t9t+N2/Hi1JaGb+UQq3vwiu3ypJMYaamSSd/ZJUb3fz9zME6RJRFEWym4kUlzT7LvS0PPU+f3oBfxpoimbTMiQ8j+lEB1xpcOKJ4XzpoCfO4BWvzdSV74yesgsoyui23ITX63WQoCXqJd8TV0uNwNYyHJm1rY1fShsCNp/J5do4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392532; c=relaxed/simple;
-	bh=sl1wLB7qfa5cmKKEREVGzg9gBscjJ57jgLR48mBriYo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=omzehrFcWSCv2SU6xrG2byulD2TajOCskXjFzf6svJpkFoLeXbtEJb5WrW7urJLAzsrkU++I+qyEK7iCeOS8cGGprV0blK8MsLapIxB6IGDsIzab3Pc845BHoOa7ieRdn+u+iXzPkh6+Hw/lP9ja3SApjQLHsaae14GGdNusMBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BXDG2Dwr; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c1efc457bso3880766f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745392528; x=1745997328; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nDPnLb9e7MtlJKq+kitIrFY2UoRe6RaLIN9ni7aHQLA=;
-        b=BXDG2DwrSe54Os8xMKyG5ZugMVHd57apd5M1lZBamZl3be4590IrFrDJa/mKS/wL2I
-         dFePDMdrU3KtmaaCQED/1Tf4et0KhjtBDHfPAFRAn6h7H/wqUMN9TQ7MXNOhGhf3IpWD
-         i7V+95z/06mHc44oWk8urafLeOmGsQPqJAvjRZeWgcqPRyPKYnNBJHkn7UzdeWZD9XsV
-         p2fYvB99jFyaQefkRt+BrUrbj399wAS3oA8ZhsO85VHar0VWm+skvFwCobsB/WDt+wuO
-         BCklaax6LFNG9ZM0H4umN5oO11NvvGdSDuGFtIoTQ0J08Uk5bWjyupyR6tCBz9UXr13I
-         bssQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745392528; x=1745997328;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nDPnLb9e7MtlJKq+kitIrFY2UoRe6RaLIN9ni7aHQLA=;
-        b=hJ2Y8FWQ59WgWrOKhCB8PCMdewjaEOytTxgbRZQN21J0aapnxAWm8wm/XgRLJyGBQi
-         gep0ogGk554WCSI1sOI8rAicLYHRSrDnSnD9QFHnob3GAsf8bXywprdOqI6vQ5AeTAzd
-         Bi0b2XpQbP9hFGZLXYqAqRI88uD3L8aUas+NPNDzXtnLVIgRDMM66FiGfNd2g62kTsFA
-         HfjxyU1hbQHn8RH1YzWxZ1JZGBaMKz1eaZDAenYDZcAJms/uU5/zmGtFAy/cMJP5MJxl
-         hKlPp2DnhWfObbI3hosu4bxx/gLAw8LLxsSuFDzGRen04YdgISkdTUMhnF38x05EgnAz
-         wMcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQvDAKwW2hpvE8kffkFtoGPgx0HEATUauYp/c7pujIrD+4HxwxnPjCerJaKdQmNE3ykGT9GGKVvh5p44I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyint5CwOfp/0u3IPQ+QKwn6w37nYcawJJLIwTVwtmz6KqR2PjM
-	NGPDU8xxfxESszR6P9n8om8f64Cc6maipTzJcOfedzfZ8XcDFUIWqe+SE/bvTkY=
-X-Gm-Gg: ASbGncvV8ryxzWvZDSodcN/+DCbwl+4MTcRqVh6/lO8kI/UdK/KtrqKJlbGsE44cU6c
-	fUf1aYGsh8LI7oV37r+iIV+xZRUiPEWbKZPPAZi74TDzAOv6xq8IYeE/Vdd22VIkNJjf0GnMKg5
-	9pV6PRdheN1lVd+hafLgelcVgF0wxoxDWhuhpQHploJwatCROZ/9RAy6E5Q4zY3/z6mcBGTEOR6
-	CaWaeKOax3TbBW1+ODSUTstLKuyOIt2rBRes8KHeuIF7w5dd3BZ67+Jqf3QVn+FetF/Q3eAU3p5
-	QWxRQksfdKWJ6A1jxA6WINIP/ZenK2zhMg==
-X-Google-Smtp-Source: AGHT+IG4ElSHC7IwlTsGTLIS8AFpJo6V3IEFvD0t8DPJXLGCbfVBAFrUXLFfWQ80OqkPgdRhHCCGkA==
-X-Received: by 2002:a5d:47cf:0:b0:391:3b11:d604 with SMTP id ffacd0b85a97d-39efbaf6f60mr15814842f8f.54.1745392528677;
-        Wed, 23 Apr 2025 00:15:28 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:74b0:71bd:6dda:dcc1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493446sm17696935f8f.74.2025.04.23.00.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 00:15:28 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 23 Apr 2025 09:15:14 +0200
-Subject: [PATCH 12/12] gpio: lp3943: use new line value setter callbacks
+	s=arc-20240116; t=1745392923; c=relaxed/simple;
+	bh=mCHNrJx2OXmmlNCO1RdGINSUwa/TdSOBqAY8r9vs+eI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m7A86CU5ankgcmIxpCRBtQTxgypAbnd1TfWalwwKGiDvad29/JF2XcblYP+3motvV+vp7FF0O7aruF0zm9HCXJHzH7FIDT/pcjW32xnr0pzph9/qJIYRkb8qyqhCOka/VvNVPm2tPTXrIep0ZWOxBTJDWUZKh1k7xBQi/619JaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yi/izMcI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N6iMai016682;
+	Wed, 23 Apr 2025 09:21:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	oz186CoW0SK4vdktfWzxbngjxDVHLIW2MQ5lAkHyRTo=; b=yi/izMcIM8bA++XQ
+	qCxgQYc7IR9w6QJz8/5kbWJN9ZvXvsAJGHu0B6o3CiixBggQL3c0d2WtErXdg7Fb
+	A0KCbgW7C4/B/i0eQ97HTLw7XB08OXyZonT2xxH77mJAFLYttZHsIIL1QYDbt3rK
+	YvDPM3TovVtUDOuLsXZN3oYl03y0DCBybt3UBjxWo4ynR36+WsknbH2kpr9TRZMF
+	UgD05x7QnWZbvJsfx3TNMXdavSgpVrk7w4LTtYhyJF8Gbssgso7XhvZZC0wqhRRY
+	CjZ7GxaTKp3goIClEpp31/Z9FAfSwzmOBR+kJTyj73bTqam1DMoRV56sexw0VfSN
+	KCSIdQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jjx9rnr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 09:21:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8690540078;
+	Wed, 23 Apr 2025 09:20:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C1547932A52;
+	Wed, 23 Apr 2025 09:15:16 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Apr
+ 2025 09:15:16 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Apr
+ 2025 09:15:15 +0200
+Message-ID: <60e77932-9be7-443d-aed9-2b54945fdce6@foss.st.com>
+Date: Wed, 23 Apr 2025 09:15:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rpmsg: core: Remove deadcode
+To: <linux@treblig.org>, <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <corbet@lwn.net>, <linux-remoteproc@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250420204146.154807-1-linux@treblig.org>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20250420204146.154807-1-linux@treblig.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-gpiochip-set-rv-gpio-part2-v1-12-b22245cde81a@linaro.org>
-References: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-In-Reply-To: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1908;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=FKv0jedtK8ZiOafLuePhziFUAqITUizBRiw5s9uuJh4=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCJODsx6BmS5Uu3epYT6N1MlKACyMV3s6UBiz6
- 5RntwZ/tcOJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAiTgwAKCRARpy6gFHHX
- ckvDD/9EH2Cq8MY5MoOXZTt6EMH1AEYUaKFr0FsHiSrhY9sp8VAZlwuAebQrfiTazzJ54yI1HAA
- zxk/F2yLuHJo5SxVJs7u6h+/0wf5MNJhKNr05ZJQdTzhn3M0KsE2MJDCzvf189nXA3B5BlBysbF
- KLaDTCGPJBGO9DjOm3BakFKHwT+YN53PZFKNlZkpjg2q9EkmGgondq0BFDC21gw5BDK8NCpBYwd
- YEYQ38fp/o/YGTlg4Dia8DPwYwmzI2mzyG7H/HnGGlWbqd/OqaHf4zx39t+kcKq6JQtdnn0s9SK
- 1/SEkXmveDecJYUqkS7ckKP3EUD7nZcEReypoLwPhYn8Gi3veJVeEXns3Bfz9tnQororc28L1b5
- z+ZS+HTK2fV2O2HThQThzilNSepFKOq6Q23mFIiRnP7JpEKRRd27GgfknT6+xC6Dya2e4ZZ+KKO
- +UuGlTDBQFU48+cNeuJVfJYXNZroT6fbFjMpPUAZ0B/FU622qgWCjtX2Okt8O5bHdu9l88Xv2wV
- FHf/+EB8a06+atxP5WHtqCSfEv48CirSDeUCg1w+qeQicvBiJ7JmJKXm/u3OEGPAH3toIq3ktI8
- KTWWXlFIIUkIlVM15leFB/hrsHmBZgrOaLWx4zbAy8YNfAKZh4e3P9pPkKNRtXI58kWPncyMps6
- vqDvC+FesU7V9xQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-23_05,2025-04-22_01,2024-11-22_01
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+On 4/20/25 22:41, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> rpmsg_send_offchannel() and rpmsg_trysend_offchannel() have been
+> unused since they were added in 2011's
+> commit bcabbccabffe ("rpmsg: add virtio-based remote processor messaging
+> bus")
+> 
+> Remove them and associated docs.
+> 
+> I suspect this means the trysend_offchannel and send_offchannel
+> member function pointers and the virtio implementation of them can be
+> removed as well, but haven't yet gone that far.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-lp3943.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+It seems to me that this API is not safe as it allows an endpoint to usurp the
+identity of another one thanks to the source address.
 
-diff --git a/drivers/gpio/gpio-lp3943.c b/drivers/gpio/gpio-lp3943.c
-index 8e58242f5123..52ab3ac4844c 100644
---- a/drivers/gpio/gpio-lp3943.c
-+++ b/drivers/gpio/gpio-lp3943.c
-@@ -147,7 +147,8 @@ static int lp3943_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 		return lp3943_get_gpio_out_status(lp3943_gpio, chip, offset);
- }
- 
--static void lp3943_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-+static int lp3943_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			   int value)
- {
- 	struct lp3943_gpio *lp3943_gpio = gpiochip_get_data(chip);
- 	u8 data;
-@@ -157,15 +158,19 @@ static void lp3943_gpio_set(struct gpio_chip *chip, unsigned int offset, int val
- 	else
- 		data = LP3943_GPIO_OUT_LOW;
- 
--	lp3943_gpio_set_mode(lp3943_gpio, offset, data);
-+	return lp3943_gpio_set_mode(lp3943_gpio, offset, data);
- }
- 
- static int lp3943_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
- 					int value)
- {
- 	struct lp3943_gpio *lp3943_gpio = gpiochip_get_data(chip);
-+	int ret;
-+
-+	ret = lp3943_gpio_set(chip, offset, value);
-+	if (ret)
-+		return ret;
- 
--	lp3943_gpio_set(chip, offset, value);
- 	lp3943_gpio->input_mask &= ~BIT(offset);
- 
- 	return 0;
-@@ -179,7 +184,7 @@ static const struct gpio_chip lp3943_gpio_chip = {
- 	.direction_input	= lp3943_gpio_direction_input,
- 	.get			= lp3943_gpio_get,
- 	.direction_output	= lp3943_gpio_direction_output,
--	.set			= lp3943_gpio_set,
-+	.set_rv			= lp3943_gpio_set,
- 	.base			= -1,
- 	.ngpio			= LP3943_MAX_GPIO,
- 	.can_sleep		= 1,
+So, +1 to remove it.
 
--- 
-2.45.2
+That said, to complete the remove it would be nice to also remove associated ops
+declared in rpmsg_endpoint_ops and implemented in virtio_rpmsg_bus.c.
 
+Regards,
+Arnaud
+
+
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  Documentation/staging/rpmsg.rst | 46 ------------------------
+>  drivers/rpmsg/rpmsg_core.c      | 63 ---------------------------------
+>  include/linux/rpmsg.h           | 22 ------------
+>  3 files changed, 131 deletions(-)
+> 
+> diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
+> index 3713adaa1608..40282cca86ca 100644
+> --- a/Documentation/staging/rpmsg.rst
+> +++ b/Documentation/staging/rpmsg.rst
+> @@ -110,31 +110,6 @@ or a timeout of 15 seconds elapses. When the latter happens,
+>  The function can only be called from a process context (for now).
+>  Returns 0 on success and an appropriate error value on failure.
+>  
+> -::
+> -
+> -  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -							void *data, int len);
+> -
+> -
+> -sends a message across to the remote processor, using the src and dst
+> -addresses provided by the user.
+> -
+> -The caller should specify the endpoint, the data it wants to send,
+> -its length (in bytes), and explicit source and destination addresses.
+> -The message will then be sent to the remote processor to which the
+> -endpoint's channel belongs, but the endpoint's src and channel dst
+> -addresses will be ignored (and the user-provided addresses will
+> -be used instead).
+> -
+> -In case there are no TX buffers available, the function will block until
+> -one becomes available (i.e. until the remote processor consumes
+> -a tx buffer and puts it back on virtio's used descriptor ring),
+> -or a timeout of 15 seconds elapses. When the latter happens,
+> --ERESTARTSYS is returned.
+> -
+> -The function can only be called from a process context (for now).
+> -Returns 0 on success and an appropriate error value on failure.
+> -
+>  ::
+>  
+>    int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+> @@ -173,27 +148,6 @@ return -ENOMEM without waiting until one becomes available.
+>  The function can only be called from a process context (for now).
+>  Returns 0 on success and an appropriate error value on failure.
+>  
+> -::
+> -
+> -  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -							void *data, int len);
+> -
+> -
+> -sends a message across to the remote processor, using source and
+> -destination addresses provided by the user.
+> -
+> -The user should specify the channel, the data it wants to send,
+> -its length (in bytes), and explicit source and destination addresses.
+> -The message will then be sent to the remote processor to which the
+> -channel belongs, but the channel's src and dst addresses will be
+> -ignored (and the user-provided addresses will be used instead).
+> -
+> -In case there are no TX buffers available, the function will immediately
+> -return -ENOMEM without waiting until one becomes available.
+> -
+> -The function can only be called from a process context (for now).
+> -Returns 0 on success and an appropriate error value on failure.
+> -
+>  ::
+>  
+>    struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 207b64c0a2fe..6ee36adcbdba 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -193,38 +193,6 @@ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+>  }
+>  EXPORT_SYMBOL(rpmsg_sendto);
+>  
+> -/**
+> - * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
+> - * @ept: the rpmsg endpoint
+> - * @src: source address
+> - * @dst: destination address
+> - * @data: payload of message
+> - * @len: length of payload
+> - *
+> - * This function sends @data of length @len to the remote @dst address,
+> - * and uses @src as the source address.
+> - * The message will be sent to the remote processor which the @ept
+> - * endpoint belongs to.
+> - * In case there are no TX buffers available, the function will block until
+> - * one becomes available, or a timeout of 15 seconds elapses. When the latter
+> - * happens, -ERESTARTSYS is returned.
+> - *
+> - * Can only be called from process context (for now).
+> - *
+> - * Return: 0 on success and an appropriate error value on failure.
+> - */
+> -int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -			  void *data, int len)
+> -{
+> -	if (WARN_ON(!ept))
+> -		return -EINVAL;
+> -	if (!ept->ops->send_offchannel)
+> -		return -ENXIO;
+> -
+> -	return ept->ops->send_offchannel(ept, src, dst, data, len);
+> -}
+> -EXPORT_SYMBOL(rpmsg_send_offchannel);
+> -
+>  /**
+>   * rpmsg_trysend() - send a message across to the remote processor
+>   * @ept: the rpmsg endpoint
+> @@ -301,37 +269,6 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  }
+>  EXPORT_SYMBOL(rpmsg_poll);
+>  
+> -/**
+> - * rpmsg_trysend_offchannel() - send a message using explicit src/dst addresses
+> - * @ept: the rpmsg endpoint
+> - * @src: source address
+> - * @dst: destination address
+> - * @data: payload of message
+> - * @len: length of payload
+> - *
+> - * This function sends @data of length @len to the remote @dst address,
+> - * and uses @src as the source address.
+> - * The message will be sent to the remote processor which the @ept
+> - * endpoint belongs to.
+> - * In case there are no TX buffers available, the function will immediately
+> - * return -ENOMEM without waiting until one becomes available.
+> - *
+> - * Can only be called from process context (for now).
+> - *
+> - * Return: 0 on success and an appropriate error value on failure.
+> - */
+> -int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -			     void *data, int len)
+> -{
+> -	if (WARN_ON(!ept))
+> -		return -EINVAL;
+> -	if (!ept->ops->trysend_offchannel)
+> -		return -ENXIO;
+> -
+> -	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
+> -}
+> -EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+> -
+>  /**
+>   * rpmsg_set_flow_control() - request remote to pause/resume transmission
+>   * @ept:	the rpmsg endpoint
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index 90d8e4475f80..fb7ab9165645 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -184,13 +184,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+>  
+>  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+>  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+> -int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -			  void *data, int len);
+>  
+>  int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+>  int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+> -int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -			     void *data, int len);
+>  
+>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  			poll_table *wait);
+> @@ -271,15 +267,6 @@ static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+>  
+>  }
+>  
+> -static inline int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
+> -					u32 dst, void *data, int len)
+> -{
+> -	/* This shouldn't be possible */
+> -	WARN_ON(1);
+> -
+> -	return -ENXIO;
+> -}
+> -
+>  static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+>  {
+>  	/* This shouldn't be possible */
+> @@ -297,15 +284,6 @@ static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  	return -ENXIO;
+>  }
+>  
+> -static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+> -					   u32 dst, void *data, int len)
+> -{
+> -	/* This shouldn't be possible */
+> -	WARN_ON(1);
+> -
+> -	return -ENXIO;
+> -}
+> -
+>  static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>  				      struct file *filp, poll_table *wait)
+>  {
 
