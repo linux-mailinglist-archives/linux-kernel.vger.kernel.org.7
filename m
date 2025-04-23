@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-616899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844DEA997B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:20:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E99A997BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9585C1B83456
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40C609219BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE57A28DF17;
-	Wed, 23 Apr 2025 18:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C0528F50A;
+	Wed, 23 Apr 2025 18:21:13 +0000 (UTC)
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C065328D847
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF528E5F5
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432452; cv=none; b=MQ7w7lqpARH8FZ2lrH6xq23DQzVf/qZ4IEyDxR5AVI0b718Yg1wFleT0iQ8ZGC5CbXEd9mNs8PH1E0IF3vFiVnVKLWQGnd5b+AboTwsf+hlwXT47BngpnnY8Kl6UBN24IVofQo2OaQ9qQdBParXclnupxZmrXQnmAcnKpgzIKOs=
+	t=1745432473; cv=none; b=U+MysD3Y/WArYgKQo300n3TFnd9Rq4WKg6B6aluv7gKYY8pabHYA/Er7ZgyFRX/6xnhPPAAI4iZ+V3PiOHxqi+gr64FsRyysbUvnqpR8Ir4SGcbO97cdyZrwbyqKnBx7bTDHSHjRitVYBaC0tY/BQj2B3XDthx1/3jVgmTdjyN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432452; c=relaxed/simple;
-	bh=BXomuzHUN126JCY1qWIkZJBlPF7DBcz84bj7SMVpS5A=;
+	s=arc-20240116; t=1745432473; c=relaxed/simple;
+	bh=Fjq3beIRfZMl+TYLgKDIgBaBVl4VEGbQn6fBRLomcW8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TS3XCnOEmPb0JMSPfQZqXHwU9+xdYaf3aecoouGivTkluOKKShS1v37Y05zrlOtt245aydwnIv6wBGYxSjinU7idcVPLMF+yBU01uow/ezv1aSTBAxSCZ/6AltebWJnF0A4LFu1pF/+jPyByh/2xU8RacKdxQKLWRMgyYb9bk0Y=
+	 MIME-Version:Content-Type; b=dnjwi2zGq5PPsAIBdgrJzGKqnYMxNn5ImhKbWbXb2cEAuVxPb35Nqe2o/VHT2aDnlr3RlR0hgHuziNUxYfB5rBgts3sgd81QjjqlhOTh3Tm0OTU/zbtjQMcZC5TXoTX50uR0yTAHVvO7ye10gSknLWvLqCMXPShGOr9xzZJovJc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-82-148.bstnma.fios.verizon.net [173.48.82.148])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 53NIKdV8005122
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 53NIKd71005123
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 23 Apr 2025 14:20:40 -0400
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 503922E00EA; Wed, 23 Apr 2025 14:20:39 -0400 (EDT)
+	id 530D02E00EB; Wed, 23 Apr 2025 14:20:39 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] ext4: Avoid -Wflex-array-member-not-at-end warning
-Date: Wed, 23 Apr 2025 14:20:32 -0400
-Message-ID: <174543076506.1215499.12197124623558022635.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Baokun Li <libaokun1@huawei.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ext4: Make block validity check resistent to sb bh corruption
+Date: Wed, 23 Apr 2025 14:20:33 -0400
+Message-ID: <174543076504.1215499.7893481546772162865.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <Z-SF97N3AxcIMlSi@kspp>
-References: <Z-SF97N3AxcIMlSi@kspp>
+In-Reply-To: <0c06bc9ebfcd6ccfed84a36e79147bf45ff5adc1.1743142920.git.ojaswin@linux.ibm.com>
+References: <0c06bc9ebfcd6ccfed84a36e79147bf45ff5adc1.1743142920.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,21 +58,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 26 Mar 2025 16:55:51 -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On Fri, 28 Mar 2025 11:54:52 +0530, Ojaswin Mujoo wrote:
+> Block validity checks need to be skipped in case they are called
+> for journal blocks since they are part of system's protected
+> zone.
 > 
-> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-> a flexible structure where the size of the flexible-array member
-> is known at compile-time, and refactor the rest of the code,
-> accordingly.
+> Currently, this is done by checking inode->ino against
+> sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
+> buffer head. If someone modifies this underneath us then the
+> s_journal_inum field might get corrupted. To prevent against this,
+> change the check to directly compare the inode with journal->j_inode.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] ext4: Avoid -Wflex-array-member-not-at-end warning
-      commit: 7e50bbb134aba1df0854f171b596b3a42d35605a
+[1/1] ext4: Make block validity check resistent to sb bh corruption
+      commit: ccad447a3d331a239477c281533bacb585b54a98
 
 (Apologies for sending this late; I've been dealing with a family
 medical emergency.  In any case, the patch landed in v6.16-rc2.)
