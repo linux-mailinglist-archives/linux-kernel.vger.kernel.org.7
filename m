@@ -1,178 +1,174 @@
-Return-Path: <linux-kernel+bounces-616964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3EFA99887
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A1DA9988F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031E01B81011
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7175A0924
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC3293B4D;
-	Wed, 23 Apr 2025 19:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F530293B7A;
+	Wed, 23 Apr 2025 19:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6OObWSo"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ayeByuZW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AFB293471;
-	Wed, 23 Apr 2025 19:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181229345A;
+	Wed, 23 Apr 2025 19:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745436782; cv=none; b=FENzhPQKeq2vi24i5q2V97e0pCbDA6H1lvijNpsKZeMCy/6B+OOl1MRs8Ajl+7r21F8Tqyzvdui2KlZUV53W/F4hHbW9UdUv4ZdIScfZuTTKs9/7lp5CgTuhamDcuJMC+30DqQslfXjdfiFz6jZ1fQAiAxzJu6ubSbwOyQ2kEy8=
+	t=1745436839; cv=none; b=J8pcpjsqwpnm/yDI6YiRa21OrWxjMNqVp9Ub1/iIw9sRgWl5jLx6DKONuZy8WAWxTrEa9COcR3nDAg/oYMdQ0as5tYobFe7gOtpxS1aziXLF+cI1Ylbr+gOLHE/k6F8uqKP+unqQ+hiYvRt2QDijkIBzVOn1pck7V94Li20xzT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745436782; c=relaxed/simple;
-	bh=qeXaEOZxb709KPbgIWs4cj6m9zaoicIroOb1v3e0D38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CthRZKd88FMoLO+UkujMd+uNO+OLS6RyNH0xGBEYxYm31KBCLegcUHPCNlV36hg8QnpQmXmkQvYKHxwZSSRfL7cT6NK4P+BYxXNIYVyr2yfFSfVJW7ALF0OombShBRGO4IKLdnwDk1G/qkgc2ekbhsS5pyrOxx2AdZ78senHeE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6OObWSo; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22c33e4fdb8so1914005ad.2;
-        Wed, 23 Apr 2025 12:33:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745436780; x=1746041580; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7TWawy/oO2koF169FCbsai+IajiXPIwWUAaxyA1lZrk=;
-        b=T6OObWSoyjLfGNeKZZI692OwBdfvG0Cr/tu+jL7l3+I4Tn7fRcs4VxzJzqbyDf1JOb
-         bZTyjlbgkatxWkRBuK9TcRU+aSFucd88RU0gLHK0HKq6QkooTjVdM176uSFQ6dG2ZIMt
-         PI9AjvnULsLvBXX18umqufxRZv5EnwesFYlUhbeD5Zg4JlNXdDucqrSVHs+0Zfi/mZSG
-         J4zGBAR221/eEPVKcKh+Wn69SyFNNXds9Lhecn09WeurRR0zlv57mrHNp8cxNAvO266y
-         jcA4T3PB3KJkgHx9Wbnkvfti3goBbEXFicA08aBHm2CDxEEaSIJmSFmmsnblVGsjTcKN
-         x/XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745436780; x=1746041580;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TWawy/oO2koF169FCbsai+IajiXPIwWUAaxyA1lZrk=;
-        b=LOzMZRGxuufmnA0UmehSm+stTINdMZzN5z4OUXYlrAkFzk/RB5yWFWrBm+pQYGY6G3
-         sG+xJ9VgsgREl0cX521jnXtvzAuIE9tSsgciEYMoXkA0Bd22dYbwRrbf9xhbujAh6mU2
-         pbe9htcqW+Yh3ka0pTH1BtJUTt/sJZWwciuIddnRi6UQyV7J4CLuaLnmSJ35q3CWO/NB
-         GiqxBOz6SVGFeJWai/zcRGWrs5WRlIJ6P5Eh8rMHevFWRL5YvkW970RU08c8qBFCrLrd
-         4NaybmQ9bvPvlhJ99T8gIjQE1nxpY+xwtMME+m908yq1rvbJ8+lSZmORB5e6Dq5HN1Xp
-         gpxw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8JM5jJ5bsUY1aTV1eC9u1YyByOW5R0yV9nLKmcC+UWrmTpbXnzxIhgXtQWTfE2ZrYHTidPQuqssH571k=@vger.kernel.org, AJvYcCVdpQ527Q5WpGiPwYf9r1bSW9hBbLn0e4dOGb/okdlWhwZT/5xqQ4rrQTLlDyi2zhIH+Z0X6ntK@vger.kernel.org, AJvYcCXcWUvwuticsw/mRhd3TnkQB82MdV7sKxonEFIM4u7byWlVxB9uHuh/sIHt21+GDLNDj/S7CzIe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLTibhI7Si7lMssZh2tAbu8QmhU2RTQQ+n+U9K+rOOG2GJBnhv
-	YqYzeyVEemNEs7Tp+KTnb1xzrw5+8Tx6v1141VmWOCZ9Tw1iz3nu
-X-Gm-Gg: ASbGncsfSPJzMaWM5m/BN5gmwmmvT70HqcAA+X+tnTqR9BPBcOpekqJB+JWmmD/6Uxh
-	FGqfA+PuwGu7sfAWZHR0H4pxoBc1mZz/BwL8WfguJ2N5KztXyKtJsYeZv5Q+PajpacQlV5CR7h2
-	RTW2pKuPx0t2L9bOv+JbnHhoN++5aaIT48+yfECNmMPG0oRTYt/jWESjMm+0mz7FIpEA3Wyg5Oe
-	Ayp7HreHqrfaOaY3cjrYDq4J+BLvrGeIYU1bvcRDNnVVgcZKbKrFA1xtKUe/O7jqt/b1Cox6JDY
-	mbZcMU6l3VvcaYpFynU20rZMocgQ6PqO50mZEVG0h9Sb
-X-Google-Smtp-Source: AGHT+IEWT0wZBmAOH0PSIjsDQw7UecOVeWgSLRwG+BXz/ugDANFWFinATMDNMWo+M4dyODERvpT75A==
-X-Received: by 2002:a17:902:e5cc:b0:223:3630:cd32 with SMTP id d9443c01a7336-22c5365eaefmr309410525ad.53.1745436780172;
-        Wed, 23 Apr 2025 12:33:00 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf52cesm108249605ad.65.2025.04.23.12.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 12:32:59 -0700 (PDT)
-Date: Wed, 23 Apr 2025 12:32:58 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: "Alan J. Wylie" <alan@wylie.me.uk>
-Cc: Holger =?iso-8859-1?Q?Hoffst=E4tte?= <holger@applied-asynchrony.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>, regressions@lists.linux.dev,
-	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Octavian Purdila <tavip@google.com>,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-	stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [REGRESSION] 6.14.3 panic - kernel NULL pointer dereference in
- htb_dequeue
-Message-ID: <aAlAakEUu4XSEdXF@pop-os.localdomain>
-References: <20250421131000.6299a8e0@frodo.int.wylie.me.uk>
- <20250421200601.5b2e28de@frodo.int.wylie.me.uk>
- <89301960-1758-5b2e-6d91-81ef06843e14@applied-asynchrony.com>
- <20250421210927.50d6a355@frodo.int.wylie.me.uk>
- <20250422175145.1cb0bd98@frodo.int.wylie.me.uk>
- <4e2a6522-d455-f0ce-c77d-b430c3047d7c@applied-asynchrony.com>
- <aAf/K7F9TmCJIT+N@pop-os.localdomain>
- <20250422214716.5e181523@frodo.int.wylie.me.uk>
- <aAgO59L0ccXl6kUs@pop-os.localdomain>
- <20250423105131.7ab46a47@frodo.int.wylie.me.uk>
+	s=arc-20240116; t=1745436839; c=relaxed/simple;
+	bh=lGsfM0YE4fOa4De+TTZOodmd878I+2yJ1yZmukK3EEY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=EZSoR6ZMNZ1lkOGCQpVr2UnyVyDwi6POs3gUbSr7645Flo4vtFkoQZIkiKetAUoxo5qn4eVDtx5OApuySt4iGXzw87PVNkNoaK/aFXsitzMf51Xg9ulU1L1qR6xD80+rWnKHifZnSMhIPFCtxGa33Aevzx0jYkkUxh7eHEzFL/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ayeByuZW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N9rKYT007637;
+	Wed, 23 Apr 2025 19:33:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9O4XVfQFkJ04PlfOMtgBk5
+	5vtD1zvpUJSZ0Z5uuCr9c=; b=ayeByuZW6lMp/lSjHG+ERSfgAPPrsfV9yetiKe
+	MpjdGlckBdb0QOLWDnC5T/LKNxb7ZCYusWf0WfwywuFrz5O1R4S8AAlKR6NC9ltG
+	yLpEQJM6w0NhU+V5DFbGpqSqXVWjHIXDLnx1KM2hlAYdCl4tIboZ55EJzXbToNaI
+	ONBG2HGignGRSgZPP06BVCNPx2OPXBI9ku1dyYiZd6MvEIU9ekCRhFiIkbfPX+fB
+	x2FueIoYTHogRzRieoKopJmVGvJDdkLDwhtoH2mwtchEy6mxJvOXi1wuaZyWCKny
+	bn0sCu41Vhn5Y9FYVKH1FRmh0sFLYKNPzLRf2K0Us7N8YkNw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh5b7jj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 19:33:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53NJXkiV021749
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 19:33:46 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 23 Apr 2025 12:33:42 -0700
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v4 0/5] media: qcom: iris: add support for QCS8300
+Date: Thu, 24 Apr 2025 01:03:30 +0530
+Message-ID: <20250424-qcs8300_iris-v4-0-6e66ed4f6b71@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423105131.7ab46a47@frodo.int.wylie.me.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAItACWgC/32Py27DIBBFf8ViXaqBAQNe5T+qqgI8bljYTsC1U
+ kX+9xJn0ae6vKM5Z+5cWaGcqLCuubJMayppnmpQDw2LRz+9Ek99zUyC1KCE5edYLAK8pJwKN94
+ RtaBQKM8qcso0pMuue3q+50znt2pd7sNPadfsSik1X+ZTiryM9qKB795VAPdSuGC9DcqYbjU3f
+ fCFeJzHMS1dI5SSOET0qm4OQWHb995qpQHRUZRhEE4EbNmtyDGVZc7v+5ur2Jv8/dEqOPDWGCc
+ DulDNh1o/pik+1ru7apX/4bLigkCg1cEBud84fsEl/sCx4r0hBy20pLT9jm/b9gFKQJXusQEAA
+ A==
+X-Change-ID: 20250418-qcs8300_iris-7a9ee604314a
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745436821; l=2414;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=lGsfM0YE4fOa4De+TTZOodmd878I+2yJ1yZmukK3EEY=;
+ b=5hOT1gvXshaUidmdGCSkPzUM4IM+1adqbQAVGd+wmc6kqRUr6KeqppyKqupik8hE13EAFKojk
+ HTRBuFjH2VmBDkRD3lavBRXhVocx8X92KM9otJQHq6PGWVPfEH34PdM
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDEzNSBTYWx0ZWRfX5omE4OwKoxrm Oqlg4zbZh9SBEaW9u4Yt3ZIWTv66fHTEX4rR0/CeWAklJIIeEsfUHni5i6yxgSj/pHimZoYKFWt qu12dblU8TEop+6psl/UQqAbophqnFM4OBcmj3Oe17j/ejufyqYmmOLDa4EylDiknsn2mZzQMnC
+ XA+gty3uyio9pOFMsTu9WoKxknSM++oc8OpW+no1tGzohz2nx9xqTGsGPAc8jRpxF2/MiXkpLq3 ModoRi3Oguv9AStkIjGQLYaMZqoT3I0sxrwotiH2H3BraDj1v/11dBA7vmSN0K3M/tHaK4zGqn0 1rH+w4cr8F2JOui8bbONFoDjAIgBttDzLyzl1O8msvc90dZ8fGYH9u4tL3HktNz+pHZSZcFPp4R
+ 6zsWCAaUkwAWQ0nhBriWCkUZGGlwZ532k3efUu4J38/goChLc4kzs1jXX7Wyw1lTPLSGvjdA
+X-Proofpoint-GUID: dzFrhIBmzRoPwSO7vcCR4U_Mt_BH8YIE
+X-Authority-Analysis: v=2.4 cv=B/S50PtM c=1 sm=1 tr=0 ts=6809409f cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=h97imd1RtcNJs7uGSNUA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: dzFrhIBmzRoPwSO7vcCR4U_Mt_BH8YIE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_11,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230135
 
-On Wed, Apr 23, 2025 at 10:51:49AM +0100, Alan J. Wylie wrote:
-> On Tue, 22 Apr 2025 14:49:27 -0700
-> Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> 
-> > Although I am still trying to understand the NULL pointer, which seems
-> > likely from:
-> > 
-> >  478                         if (p->inner.clprio[prio].ptr == cl->node + prio) {
-> >  479                                 /* we are removing child which is pointed to from
-> >  480                                  * parent feed - forget the pointer but remember
-> >  481                                  * classid
-> >  482                                  */
-> >  483                                 p->inner.clprio[prio].last_ptr_id = cl->common.classid;
-> >  484                                 p->inner.clprio[prio].ptr = NULL;
-> >  485                         }
-> > 
-> > Does the following patch work? I mean not just fixing the crash, but
-> > also not causing any other problem.
-> 
-> > ---
-> > 
-> > diff --git a/net/sched/sch_htb.c b/net/sched/sch_htb.c
-> > index 4b9a639b642e..0cdc778fddef 100644
-> > --- a/net/sched/sch_htb.c
-> > +++ b/net/sched/sch_htb.c
-> > @@ -348,7 +348,8 @@ static void htb_add_to_wait_tree(struct htb_sched *q,
-> >   */
-> >  static inline void htb_next_rb_node(struct rb_node **n)
-> >  {
-> > -	*n = rb_next(*n);
-> > +	if (*n)
-> > +		*n = rb_next(*n);
-> >  }
-> >  
-> >  /**
-> 
-> There's been three of these: 
-> 
-> Apr 23 08:08:32 bilbo kernel: WARNING: CPU: 0 PID: 0 at htb_deactivate+0xd/0x30 [sch_htb]
-> Apr 23 08:08:32 bilbo kernel: WARNING: CPU: 0 PID: 0 at htb_deactivate+0xd/0x30 [sch_htb]
-> Apr 23 10:41:36 bilbo kernel: WARNING: CPU: 1 PID: 0 at htb_deactivate+0xd/0x30 [sch_htb]
-> 
-> But no panic.
-> 
-> I've run scripts/decode.sh on the last one.
-> 
+add support for video hardware acceleration on QCS8300 platform.
 
-Thanks a lot for testing! This helped a lot to verify how far we can go
-beyond the panic and what I still missed. To me it looks a bit
-complicated for -stable if we make everything idempotent along the path.
+This series depends on
+https://lore.kernel.org/all/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
 
-Do you mind testing the following one instead? Please revert the
-above one for htb_next_rb_node(). I think maybe this is the safest fix
-we could have for -stable.
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+---
+Changes in v4:
+- Introduce a patch to fix existing order of compat strings.
+- Fix the order of header inclusions.
+- Link to v3: https://lore.kernel.org/r/20250423-qcs8300_iris-v3-0-d7e90606e458@quicinc.com
 
-Thanks!
+Changes in v3:
+- Fix commit description to better describe about QCS8300.
+- Fix the order of the patch.
+- Collect the review tags.
+- Link to v2: https://lore.kernel.org/r/20250418-qcs8300_iris-v2-0-1e01385b90e9@quicinc.com
 
---------->
+Changes in v2:
+- Added dependent info in binding patch as well.
+- Fix a sparse error.
+- Link to v1: https://lore.kernel.org/r/20250418-qcs8300_iris-v1-0-67792b39ba21@quicinc.com
 
-diff --git a/net/sched/sch_htb.c b/net/sched/sch_htb.c
-index 4b9a639b642e..3786abbdc4c3 100644
---- a/net/sched/sch_htb.c
-+++ b/net/sched/sch_htb.c
-@@ -1487,7 +1487,8 @@ static void htb_qlen_notify(struct Qdisc *sch, unsigned long arg)
- 
- 	if (!cl->prio_activity)
- 		return;
--	htb_deactivate(qdisc_priv(sch), cl);
-+	if (!cl->leaf.q->q.qlen)
-+		htb_deactivate(qdisc_priv(sch), cl);
- }
- 
- static inline int htb_parent_last_child(struct htb_class *cl)
+---
+Vikash Garodia (5):
+      dt-bindings: media: qcom,sm8550-iris: document QCS8300 IRIS accelerator
+      media: iris: fix the order of compat strings
+      media: iris: add qcs8300 platform data
+      arm64: dts: qcom: qcs8300: add support for video node
+      arm64: dts: qcom: qcs8300-ride: enable video
+
+ .../bindings/media/qcom,sm8550-iris.yaml           |   1 +
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts          |   4 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi              |  71 ++++++++++++
+ .../platform/qcom/iris/iris_platform_common.h      |   1 +
+ .../media/platform/qcom/iris/iris_platform_gen2.c  |  57 ++++++++++
+ .../platform/qcom/iris/iris_platform_qcs8300.h     | 124 +++++++++++++++++++++
+ drivers/media/platform/qcom/iris/iris_probe.c      |  16 ++-
+ 7 files changed, 268 insertions(+), 6 deletions(-)
+---
+base-commit: 14423fc3a4a21fb436dda85450339ec2bf191b36
+change-id: 20250418-qcs8300_iris-7a9ee604314a
+prerequisite-change-id: 20250225-topic-sm8x50-iris-v10-a219b8a8b477:v7
+prerequisite-patch-id: afffe7096c8e110a8da08c987983bc4441d39578
+prerequisite-patch-id: b93c37dc7e09d1631b75387dc1ca90e3066dce17
+prerequisite-patch-id: b7b50aa1657be59fd51c3e53d73382a1ee75a08e
+prerequisite-patch-id: 30960743105a36f20b3ec4a9ff19e7bca04d6add
+prerequisite-patch-id: 2bba98151ca103aa62a513a0fbd0df7ae64d9868
+prerequisite-patch-id: 0e43a6d758b5fa5ab921c6aa3c19859e312b47d0
+prerequisite-patch-id: 35f8dae1416977e88c2db7c767800c01822e266e
+
+Best regards,
+-- 
+Vikash Garodia <quic_vgarodia@quicinc.com>
+
 
