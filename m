@@ -1,186 +1,216 @@
-Return-Path: <linux-kernel+bounces-616790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0ADA99607
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE87A9960B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3E13BF3C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE96246578B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7172857F6;
-	Wed, 23 Apr 2025 17:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA754288C8D;
+	Wed, 23 Apr 2025 17:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FDruBmda"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aaQMHqLA"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4C1DDAD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB298DDAD
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745427955; cv=none; b=qMq/W48tnwpKZMDFbOjaPUVOWBhHE/DwVY5nTyUVikOXRxmDcXqHLevspxwctDaKrbx4C/728/fsUDA+QYTs7/I+qwRKww4x+5wNseYNiH3xFhP8+eP7cgTIuMwyjbK9ed4yUtqWE+YGupxod2IMzXkN7hpeRZwhLW3Pd5xYxdI=
+	t=1745428025; cv=none; b=gSG5qoVk1WJSOmIXfdk4hDzVqGoA8GwtUGQxH0D6dg70Ipywaz/AdpRS3spbp4MwaZ8MehCcxLQvMbQySFjTqrkFOcNQnApvX53KECEUhczy4poYoKt2wvR4FiLFBaLe0cZMi9eeiaM7a21W9/MN3JyTqfUy1j7IMpZIrM6/YvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745427955; c=relaxed/simple;
-	bh=+ieYwaDCw94dSTBEsxjc2oXkTMPtIySnWtLyPN0/FNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EAGh6qKwfkV7WK1hFPCF+6jWo6XRHqO+wCMWR7TYx7u5G1EcHxEddPux784Iv7mPQNdl9uM1b1/K2D4fRrFxP7gUa5sB/UdSZKqsz8rqxupQLblJJpiAAaR55JOVFg76BGdtrPHHnHp1560yuw+xYLa0sE6UApkOzkMW/qwEs9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FDruBmda; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745427953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jJbMTWCqncnPcN2b8Q1cWkuDPNiPsy4soPd5FpvRDOk=;
-	b=FDruBmdamgr2inrO7QAJJAZ+Se9RtuGBWKc5pZ+G8HeEUA3o2FKrErUTzWO0bWHs2AtorM
-	XoY/reXQn0xMXqcoR1TUPrQfkccRYPxewPIcnUBubkhnK/+huBTrBib0b64J6D4wlrP7gH
-	R+/BIXlK4UqlvDoe/RgpenZZIF/Cu1s=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-2WjquSTBM9K8Mmdp1BWBIA-1; Wed, 23 Apr 2025 13:05:51 -0400
-X-MC-Unique: 2WjquSTBM9K8Mmdp1BWBIA-1
-X-Mimecast-MFC-AGG-ID: 2WjquSTBM9K8Mmdp1BWBIA_1745427950
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac3e0c1336dso7015966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:05:51 -0700 (PDT)
+	s=arc-20240116; t=1745428025; c=relaxed/simple;
+	bh=+sKJnklG2LeYRGBTYEi2wsi1oZ6mYYTO1oaYPp93AXI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tSrFlgPVPppG4Cb/Zxmu8Rk0kT57uvcumEvcr7qrfsTRusG2ejlYAb4oDWVkS0Xwz6mU16mqQ1uTA0+eiyKzp4OPZftqy6WbSZw9ywIhsx9UYaHLw4g1k7/gwBo0E34C23e/WeABCiYJ52ukdL2aPtOofTjIPKrhJTnZTV6G6NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aaQMHqLA; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so1341056d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745428022; x=1746032822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nwoLC090KAiMN1YJGTa664tyM6EnyyhutxXQA6EbVAA=;
+        b=aaQMHqLA6srFtBPwzJSka5RjkA+yerGTKs3zRg5sCVyxCbloNENxJFdmI5s4vPCxoq
+         ngXYXC8xhGw92UALtCCst3wUzI/1oO6Oku4yrTd0hgRDs6Gp3ADO/jPKMT3KHqXGfhk8
+         Tahr4h+kEn1yo0iIyi5eTv4BH1IvrxU5qeZcTbgSGVTzz/XkVJ7QJvd7hBeWDRkkT8Is
+         +W92nGA/Q3Ti76UsAXRJqQUKmYXz2bkOfNCpaVurD5Ob3wh5BF3/7zPukhsZpf9j/97m
+         EIHr8ZBFFEdaujiMalhiKgHcZQTbbyhnffRk/bxhiTR52H1PPL0RsxZjujO3iMe5e7d7
+         5Rvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745427950; x=1746032750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJbMTWCqncnPcN2b8Q1cWkuDPNiPsy4soPd5FpvRDOk=;
-        b=iRReYfeh2JoV2bMzrWZeArd8bsE0DpH1AR3c8mh5tOhkvMxj0GMLH2eKBfVUB1l2L4
-         qYZtJS172LejPgGvQVxE8IHxhhdHB0y3duUQZQElKC+nmX9TsHAe8DfUGkgRCIW2TJxu
-         UZPKFtNA/gmRbH4D7nBXVz6OVmaJweB8S+4dAmGkc5khlawXFjimSxDS2WmgbDQoECIl
-         2+v2bmW9NB0c8H9sbT5w1t6hFZGIOEyoR176fhh9BSuvMVyV5cAnaGd0vHnaNKM8Nfca
-         4wmLGiE6Zo3qBse0hD7EQUwBqYDvV1GneFIb/NkOrxBRWlXb0bYYyCwaVYQa5Z0Mn5Al
-         dQGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2U6xe7WyY77GB/VxsgKgynTNd1edscdJY2/KIhHfAUflzjDMVLRVcr82sAeOLgSyekG1PGoZbM6NfTKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu0H2zJVDMCXwpXPHTHJAolSPb+hTlcGJfsTCLMJG5Auha0BfA
-	lCvBFHEIkACbYZXRx1JLTIpqS3ewWlMarU/wR8llT3n6Sq9SAD4Gej0u5T0i4Lw4Ra4o9accHNq
-	gbhJ8mqIvoSM3fnLymbhPZMklCdhYMJuVyZhhXtpTOcg0T2fzwS3W066JD34gY3ZE0Mi0q65j
-X-Gm-Gg: ASbGncsvF4lKWYPaM8D5+F0ea8zyagrU01zaWPTlxMirkVEn86rJEgh+DIaXfPPppX2
-	7+z4+llIRfNoJmJYOYsa4YXuc8l4d427KBCEzHWcpEon6EaP1N8sKHOa7DWU6QWA7HOMp2k9k8T
-	rvS2lD4jiznKAMHMlgIbKnXNHxRla1cFKazz00l9AZeDpw8G7NxRWOlvZZYHBJAvqSkgmq4/5GP
-	iOCrA9/PtT3DKBXIFw9yuJD63h2sNjT1Ll0Asox5OGgw81K9fcam4erQf9Ozh74UsmtDFLgUeOm
-	ocm6sjUTVMc0r6jLQ0W2HaZVhFeTuSCJ934ulsq+jW4nP/TAlEgfViJOK0aAcBa7HtABFMUSnKF
-	exBWLxVQLXr6rQ0xw6SRKfnkOVK8VAQ4M9U0D+jspy6zZdZnYyr9mYDslLNzpzQ==
-X-Received: by 2002:a17:907:2d06:b0:ac8:1142:a9e5 with SMTP id a640c23a62f3a-acb74dd5490mr1382502166b.47.1745427949878;
-        Wed, 23 Apr 2025 10:05:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGUfyLp7pQ4wJXXGTs2A/h6iN7pW1UaixQPCQ/wM5hvKHeCIIA+Ui+fcJHeyhgvS/98gQqCQ==
-X-Received: by 2002:a17:907:2d06:b0:ac8:1142:a9e5 with SMTP id a640c23a62f3a-acb74dd5490mr1382496266b.47.1745427949256;
-        Wed, 23 Apr 2025 10:05:49 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acbb945b434sm335158666b.184.2025.04.23.10.05.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 10:05:48 -0700 (PDT)
-Message-ID: <3ae149b5-a936-45b4-8887-eb7cde1ee4b0@redhat.com>
-Date: Wed, 23 Apr 2025 19:05:47 +0200
+        d=1e100.net; s=20230601; t=1745428022; x=1746032822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nwoLC090KAiMN1YJGTa664tyM6EnyyhutxXQA6EbVAA=;
+        b=rmtI/vaxzY5vzz0shJUieaOaZty+7Lkm6EGqAhW1DRw5gVgysfb/9fRuwFcHkmzTmO
+         twsLAgxONqz44zYYE3qg6T3y28H4M/JIKI5X0pXoM4UHgJTkb35mHuEsoG5ZGyDuSDLu
+         ble+GtWALpWUIjjeGzJWBWDyHBO0BY6kr4zLVvocUDYoEWN8kOI+B+WciAf+mf/s8D8q
+         HacQiZbUW7q80Iwm2yUHM598mFl5VBunwnfxdO/x0vDcQq7uSvr8Qk1FgKDUdrVBJDKN
+         f/ClpdpbxUxtScX90PtFOfzT18C+xFGRmi6xNcFWEkqJ4QevxQUkMn4aBY/KVg7YSn2M
+         Mr6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsr6eTx7Bjy8wcpa6vMAwJ5ujTVsibDDO1YjyfcHhVFGlgPRVYgC7PRxltQB6aWmIyHqhkt2lfxDTyjbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEGO+nH4ZtwgbLrBlVipyCEdeFkSHYB9L8AwqAwI9UyESn4aAD
+	gCeRZwSIS1YnZHQSynL2X9Bqj3lC5t6aQtlQgttL0PrEbum/YHcPIamYa4XRtkqKHgB4ta1wXBo
+	buyTt8XbHaJOL2vX+EA7mc9n6LRU3CDZDjP8=
+X-Gm-Gg: ASbGncsgvMzoie2XtpXTNypRNm+4TwVrGCgNAx1Sy58Ic9XoeyINnOGQsAN8eyCEiuZ
+	OFHNj6HSlN4cMD3JFKXYv/H5vTWBLUc32T432ms4WM4eKk9KafhCjN/LLetjust7To+z0QWKKww
+	wS+2WfBWJZjMr6xvLBgITvX+F12SKIfosBuToU+2PhFxWgiXPcIR3ACcVl/whpFA==
+X-Google-Smtp-Source: AGHT+IG9kj/bKbm3xOybDI1j9UpcbimSJl5hS4BlvPDwk4FKqxsGFeVSFvWjRYvDk3VbKvPh1kjAaZOMmUl54mN2ssk=
+X-Received: by 2002:a05:6214:5d8e:b0:6f2:c94f:56b5 with SMTP id
+ 6a1803df08f44-6f2c94f57e4mr420533326d6.10.1745428021880; Wed, 23 Apr 2025
+ 10:07:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] platform/x86: dell-pc: Transition to faux device
-To: Kurt Borja <kuurtb@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Lyndon Sanche <lsanche@lyndeno.ca>,
- Mario Limonciello <mario.limonciello@amd.com>,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20250411-dell-faux-v1-0-ea1f1c929b7e@gmail.com>
- <20250411-dell-faux-v1-3-ea1f1c929b7e@gmail.com>
- <2afb6e58-44cb-486e-8062-074ff397dc2c@linux.intel.com>
- <1e8a6fe0-518d-4eac-9895-51179ca23f36@redhat.com>
- <D9E5H5B9X448.12FJT48775C50@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <D9E5H5B9X448.12FJT48775C50@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250415184649.356683-1-yabinc@google.com> <20250415184649.356683-2-yabinc@google.com>
+ <20250423081648.GJ28953@e132581.arm.com>
+In-Reply-To: <20250423081648.GJ28953@e132581.arm.com>
+From: Yabin Cui <yabinc@google.com>
+Date: Wed, 23 Apr 2025 10:06:50 -0700
+X-Gm-Features: ATxdqUHA6VR574bbzyvYawg5qzV7NglTFU4wSViIiTNQ0tOAE65VyLttkuLoKeA
+Message-ID: <CALJ9ZPN+JoL1SCoWhgRvCkTa6YPv-psGgOoxL9aotNmbdS+cHA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] coresight: catu: Introduce refcount and spinlock
+ for enabling/disabling
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	James Clark <james.clark@linaro.org>, Jie Gan <quic_jiegan@quicinc.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kurt,
+On Wed, Apr 23, 2025 at 1:16=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> Hi Yabin,
+>
+> Sorry for late reply as I was on vacation for the past two weeks.
+>
+> On Tue, Apr 15, 2025 at 11:46:48AM -0700, Yabin Cui wrote:
+> > When tracing ETM data on multiple CPUs concurrently via the
+> > perf interface, the CATU device is shared across different CPU
+> > paths. This can lead to race conditions when multiple CPUs attempt
+> > to enable or disable the CATU device simultaneously.
+> >
+> > To address these race conditions, this patch introduces the
+> > following changes:
+> >
+> > 1. The enable and disable operations for the CATU device are not
+> >    reentrant. Therefore, a spinlock is added to ensure that only
+> >    one CPU can enable or disable a given CATU device at any point
+> >    in time.
+> >
+> > 2. A reference counter is used to manage the enable/disable state
+> >    of the CATU device. The device is enabled when the first CPU
+> >    requires it and is only disabled when the last CPU finishes
+> >    using it. This ensures the device remains active as long as at
+> >    least one CPU needs it.
+> >
+> > Signed-off-by: Yabin Cui <yabinc@google.com>
+>
+> LGTM:
+>
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+>
+> As Jie reminded, please add James' review tag in next spin.
 
-On 23-Apr-25 6:14 PM, Kurt Borja wrote:
-> Hi all,
-> 
-> On Wed Apr 23, 2025 at 10:44 AM -03, Hans de Goede wrote:
->> Hi Ilpo,
->>
->> On 23-Apr-25 3:27 PM, Ilpo Järvinen wrote:
->>> On Fri, 11 Apr 2025, Kurt Borja wrote:
->>>
->>>> Use a faux device parent for registering the platform_profile instead of
->>>> a "fake" platform device.
->>>>
->>>> The faux bus is a minimalistic, single driver bus designed for this
->>>> purpose.
->>>
->>> Hi Kurt, Hans & Greg,
->>>
->>> I'm not sure about this change. So dell-pc not a platform device but
->>> a "fake".
->>
->> Arguably the dell-pc driver does not need a struct device at all,
->> since it just exports /sys/firmware/acpi/platform_profile sysfs
->> interface by using the relevant Dell SMBIOS interfaces for this.
->>
->> As such maybe we should just completely get rid of the whole
->> struct device here?
->>
->> If we do decide to keep the struct device, then since the struct device
->> seems to just be there to tie the lifetime of the platform_profile
->> handler to, I guess that calling it a faux device is fair.
-> 
-> I think it's important to mention that a parent device is required to
-> register a platform profile, see [1].
+Sorry for forgetting to add Reviewed-by. Will add it in next spin.
 
-Ah ok, that is new, I guess that was changed with the new support
-for registering multiple platform-profile handlers.
-
-> I guess we could get away with removing the device altogether from here,
-> but that would require to find another suitable parent device. The
-> obvious choice would be the `dell-smbios` device, however that would
-> require exporting it in the first place.
-> 
-> For some reason, exporting devices doesn't seem right to me, so IMO a
-> faux device is a good choice here.
-
-Agreed.
-
-> Another solution that would make more sense, lifetime wise, is to turn
-> this into an aux driver and let `dell-smbios` create the matching aux
-> device. I could do this, but I think it's overly complicated.
-
-Yes that does seem overly complicated, lets just go with the faux
-device.
-
-Regards,
-
-Hans
-
-
-
-
->>> Is it just because this driver only happens to call
->>> dell_send_request(), etc., not contains that low-level access code within? 
->>> Or is that dell-smbios "fake" too?
-> 
-> IMO `dell-smbios` is "fake" too? It is there only to expose either the
-> WMI or the SMM backend through a single sysfs interface.
-> 
-> I think a more natural design for `dell-smbios` would be an aux driver
-> that exposed it's interface through a class device. Maybe I'm wrong in
-> this regard though.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.15-rc3/source/drivers/acpi/platform_profile.c#L556
-> 
-
+>
+> Thanks,
+> Leo
+>
+> > ---
+> >  drivers/hwtracing/coresight/coresight-catu.c | 25 +++++++++++++-------
+> >  drivers/hwtracing/coresight/coresight-catu.h |  1 +
+> >  2 files changed, 18 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwt=
+racing/coresight/coresight-catu.c
+> > index fa170c966bc3..3909b562b077 100644
+> > --- a/drivers/hwtracing/coresight/coresight-catu.c
+> > +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> > @@ -458,12 +458,17 @@ static int catu_enable_hw(struct catu_drvdata *dr=
+vdata, enum cs_mode cs_mode,
+> >  static int catu_enable(struct coresight_device *csdev, enum cs_mode mo=
+de,
+> >                      void *data)
+> >  {
+> > -     int rc;
+> > +     int rc =3D 0;
+> >       struct catu_drvdata *catu_drvdata =3D csdev_to_catu_drvdata(csdev=
+);
+> >
+> > -     CS_UNLOCK(catu_drvdata->base);
+> > -     rc =3D catu_enable_hw(catu_drvdata, mode, data);
+> > -     CS_LOCK(catu_drvdata->base);
+> > +     guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+> > +     if (csdev->refcnt =3D=3D 0) {
+> > +             CS_UNLOCK(catu_drvdata->base);
+> > +             rc =3D catu_enable_hw(catu_drvdata, mode, data);
+> > +             CS_LOCK(catu_drvdata->base);
+> > +     }
+> > +     if (!rc)
+> > +             csdev->refcnt++;
+> >       return rc;
+> >  }
+> >
+> > @@ -486,12 +491,15 @@ static int catu_disable_hw(struct catu_drvdata *d=
+rvdata)
+> >
+> >  static int catu_disable(struct coresight_device *csdev, void *__unused=
+)
+> >  {
+> > -     int rc;
+> > +     int rc =3D 0;
+> >       struct catu_drvdata *catu_drvdata =3D csdev_to_catu_drvdata(csdev=
+);
+> >
+> > -     CS_UNLOCK(catu_drvdata->base);
+> > -     rc =3D catu_disable_hw(catu_drvdata);
+> > -     CS_LOCK(catu_drvdata->base);
+> > +     guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+> > +     if (--csdev->refcnt =3D=3D 0) {
+> > +             CS_UNLOCK(catu_drvdata->base);
+> > +             rc =3D catu_disable_hw(catu_drvdata);
+> > +             CS_LOCK(catu_drvdata->base);
+> > +     }
+> >       return rc;
+> >  }
+> >
+> > @@ -550,6 +558,7 @@ static int __catu_probe(struct device *dev, struct =
+resource *res)
+> >       dev->platform_data =3D pdata;
+> >
+> >       drvdata->base =3D base;
+> > +     raw_spin_lock_init(&drvdata->spinlock);
+> >       catu_desc.access =3D CSDEV_ACCESS_IOMEM(base);
+> >       catu_desc.pdata =3D pdata;
+> >       catu_desc.dev =3D dev;
+> > diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwt=
+racing/coresight/coresight-catu.h
+> > index 141feac1c14b..755776cd19c5 100644
+> > --- a/drivers/hwtracing/coresight/coresight-catu.h
+> > +++ b/drivers/hwtracing/coresight/coresight-catu.h
+> > @@ -65,6 +65,7 @@ struct catu_drvdata {
+> >       void __iomem *base;
+> >       struct coresight_device *csdev;
+> >       int irq;
+> > +     raw_spinlock_t spinlock;
+> >  };
+> >
+> >  #define CATU_REG32(name, offset)                                     \
+> > --
+> > 2.49.0.604.gff1f9ca942-goog
+> >
 
