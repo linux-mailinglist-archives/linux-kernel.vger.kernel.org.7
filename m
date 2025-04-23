@@ -1,214 +1,208 @@
-Return-Path: <linux-kernel+bounces-616371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD0AA98BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:45:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9B8A98BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D381B809F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D036D3BA37A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB0F1A4E70;
-	Wed, 23 Apr 2025 13:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508281A23A6;
+	Wed, 23 Apr 2025 13:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+XMiSyX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ez7WHop2"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EF81885B4;
-	Wed, 23 Apr 2025 13:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AB52AEFD
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415809; cv=none; b=nyPwXqFEr3f0sm6bPjds/aXvoi65UjqjBjzCup+yHV9GZcTnGRFc2YnjIxo0c1BaNRQ4IjUB8tffbxPEXGxqV8cI8TU0gw5T1Z9sYV1PEk7OEuZ1U2ofcmIO3dJzQ4fPmdmMopUMrAMIIXRHeTYK7xbUTmxKrsMr9CBqppjvdMc=
+	t=1745415856; cv=none; b=t3A4uFYMOAYU9sr14lADvLYqNLiB1BN8uHNVgkby7Cf1fXXitENZlV+GZKVT3bm0O3egPlL1Y7e7+U3HzbSJyvh6wc5SafDH3oyEadsa/V+OtBWnNphhCmVb2/iqFcCmFDke6LQj5LcHHVGzS3SFdVWHecgE83F9fc9RGwUnISU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415809; c=relaxed/simple;
-	bh=RkSxu8+Z8qu5S8q9vP5yPS9GfAqR33hG2mgDplUda0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uMhwsyq9gXFANgaff302hEy9iyL3ELkmvrI6mSIXsDLCJSs5aQt2TkySHr1PFn1C6dhuWczUuMf4dA0m/we+rFrpFicR10jbVuMjkLKYgHPXFoYWSnai1vt2zVbn5tSky676UYc2GiVu0xQyrzuoWD+ePqMTItnBSUx98gfFBfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+XMiSyX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 995B3C4CEE2;
-	Wed, 23 Apr 2025 13:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745415809;
-	bh=RkSxu8+Z8qu5S8q9vP5yPS9GfAqR33hG2mgDplUda0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m+XMiSyXBbgt1xJDQN1CCEw+xs1+/DC9D5DEOaSZ7thsO40MS3cDf0JUu0P21h5sj
-	 /7A1Ux1kGPGmL1mlvJwXGhQZTzaBCpVG05AzmUoYTbp4WQPWst6Jzo/B2BmURUtxNk
-	 mI4/kiZFbe8KiJUMUq2VedOH7saGlOqMwouOBbG/f14i/eoI+0H/gZmumGktjQ0exd
-	 SFcaA4V9XAD5XvZR7bbw3RL5m2FWvTCB/OdS5zg5F4R0fHwKVxCY7aq1t2FXESldjO
-	 fbVvzi+GNTAc4v6NDZTmTv3C6ibPBxtzuiHovfSOhdjCWT8Kcd6AkNQjqUnZ/2Z2BO
-	 E1KeXoxXkCjew==
-Date: Wed, 23 Apr 2025 15:43:24 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, shawn.lin@rock-chips.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] PCI: dw-rockchip: Reorganize register and
- bitfield definitions
-Message-ID: <aAjufPQnBsR6ysAH@ryzen>
-References: <20250423105415.305556-1-18255117159@163.com>
- <20250423105415.305556-3-18255117159@163.com>
+	s=arc-20240116; t=1745415856; c=relaxed/simple;
+	bh=koYwGuUlAjVKjJaf9kXUnq6WAIl4zO5fu+z5zGkm/Zo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tVxkWLjCIQAhiTU58nbtkK3/t8nSPwj6xzggJ9E1iUecPlR9WdAbp7YOpXy0TeJaO5f2juUw5VPxwpN2XgBITU9pokEIqQrOyYZGVlDvlS/UEC705XpTsOdRq3v6yrEj/xNfLCio5G842fv5avGXOttYHRkr5zwmldUbKfHd0d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ez7WHop2; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43f405810b4so35445625e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745415853; x=1746020653; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IS7BQk6NlVySYfIFUz3SiBwSL24Jb0ogTAQPQZ8wPwE=;
+        b=Ez7WHop2E0PwgEa8TMIfdRcGSDvYll4sTPag7U7nlYGXhE931ikF1j0b5qD3MLKGwy
+         10C3sAgYO44oexHzLPuUTmk67jlqgj/WEwm93fTySDJ5yQlh+QMjXmxJLRvzEmYNLukT
+         Kqy6YhT2lvPocCYpFzMXcF175GvbMGH7imT6MQ2D6U48P4Zl5eyK4Bmdkm6epTkzUbeh
+         +ypCMP3nuVeJO1keCA/xUWNJOzgLpgtQ6U3o/Ip1vSih26Flt+6G9NAFGexZxjSBE8Gq
+         Bi+BlrEV3wKCIvHFs8umz2IAEAOKqRsESLwfULW5PVVlxvGOf7wGhBxWK3vcwuMI4CxG
+         lB+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745415853; x=1746020653;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IS7BQk6NlVySYfIFUz3SiBwSL24Jb0ogTAQPQZ8wPwE=;
+        b=jr3WECt7LLWciVdRzVKhg8y7hwc0bMH4ud48y665G/oq8QMFjsXw4upQZTuPZrKxi1
+         Uz5quGFhjtowSAFC3WKo243S347yGJNjySLND5dJ61uryKQk2qFTxz608CdFy0nEPa4q
+         zKysPH8bNXNhETVFD9cy3uYOxRYlnsY8gVDv3MotK1yhYAzud8vtduwdkfAbHcasVGNx
+         DT7Cpx1uF5FZCXBPg7kJVLVySmM+Mce7+++XYLYDDI1LDiWR23Kz9G2NpxKaMzEm+C2S
+         cIryrS9kQI3AWGMK14VRVwWDNwEI4XL/S7DbtDpM1v1GuCno+/3mTdWECVEjhbryZt1A
+         GIKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBVMYh+w80JDjQpXfr3HGfat2v+aYtkO4ZYypgX19+Lo/d4nN9RPzkeJhj2J48+/piuz4+ao9j5gazxnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT6hr2PqAOhu2b0bD8OMbq93//cKzOgWxdI1/conJ1MuUbvzna
+	Qu71OAnlxHV7fCWknjeef0gBs+21Nm2T/hQ50m2CHr8ALrlZ8lZ3RIsc+nWNBV6Qhw==
+X-Google-Smtp-Source: AGHT+IGRzya3Vvf5DQzkF5Iu6HxNxBIppYIzPLWcw7WGKWPZpaHHs2ULoRsvITf7o06ohBXuc+7Gij4=
+X-Received: from wmbeu8.prod.google.com ([2002:a05:600c:81c8:b0:43c:fe64:2de3])
+ (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4f8f:b0:440:54ef:dfdc
+ with SMTP id 5b1f17b1804b1-4406ab9342dmr161125355e9.8.1745415853149; Wed, 23
+ Apr 2025 06:44:13 -0700 (PDT)
+Date: Wed, 23 Apr 2025 13:43:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423105415.305556-3-18255117159@163.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
+Message-ID: <20250423134344.3888205-2-bqe@google.com>
+Subject: [PATCH v7 0/5] rust: adds Bitmap API, ID pool and bindings
+From: Burak Emir <bqe@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Apr 23, 2025 at 06:54:14PM +0800, Hans Zhang wrote:
-> Register definitions were scattered with ambiguous names (e.g.,
-> PCIE_RDLH_LINK_UP_CHGED in PCIE_CLIENT_INTR_STATUS_MISC) and lacked
-> hierarchical grouping. Magic values for bit operations reduced code
-> clarity.
-> 
-> Group registers and their associated bitfields logically. This improves
-> maintainability and aligns the code with hardware documentation.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 71 ++++++++++++-------
->  1 file changed, 45 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index fd5827bbfae3..6cf75160fb1c 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -34,30 +34,49 @@
->  
->  #define to_rockchip_pcie(x) dev_get_drvdata((x)->dev)
->  
-> -#define PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
-> -#define PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
-> -#define PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
-> -#define PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
-> -#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x04
-> -#define PCIE_CLIENT_INTR_STATUS_MISC	0x10
-> -#define PCIE_CLIENT_INTR_MASK_MISC	0x24
-> -#define PCIE_CLIENT_POWER		0x2c
-> -#define PCIE_CLIENT_MSG_GEN		0x34
-> -#define PME_READY_ENTER_L23		BIT(3)
-> -#define PME_TURN_OFF			(BIT(4) | BIT(20))
-> -#define PME_TO_ACK			(BIT(9) | BIT(25))
-> -#define PCIE_SMLH_LINKUP		BIT(16)
-> -#define PCIE_RDLH_LINKUP		BIT(17)
-> -#define PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
-> -#define PCIE_RDLH_LINK_UP_CHGED		BIT(1)
-> -#define PCIE_LINK_REQ_RST_NOT_INT	BIT(2)
-> -#define PCIE_CLIENT_GENERAL_CONTROL	0x0
-> +/* General Control Register */
-> +#define PCIE_CLIENT_GENERAL_CON		0x0
-> +#define  PCIE_CLIENT_RC_MODE		HIWORD_UPDATE_BIT(0x40)
-> +#define  PCIE_CLIENT_EP_MODE		HIWORD_UPDATE(0xf0, 0x0)
-> +#define  PCIE_CLIENT_ENABLE_LTSSM	HIWORD_UPDATE_BIT(0xc)
-> +#define  PCIE_CLIENT_DISABLE_LTSSM	HIWORD_UPDATE(0x0c, 0x8)
-> +
-> +/* Interrupt Status Register Related to Message Reception */
-> +#define PCIE_CLIENT_INTR_STATUS_MSG_RX	0x4
-> +
-> +/* Interrupt Status Register Related to Legacy Interrupt */
->  #define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
-> +
-> +/*  Interrupt Status Register Related to Miscellaneous Operation */
+This series adds a Rust bitmap API for porting the approach from
+commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
 
-double spaces, other comments just have one space.
+The Rust bitmap API provides a safe abstraction to underlying bitmap
+and bitops operations. For now, only includes method necessary for
+dbitmap.h, more can be added later. We perform bounds checks for
+hardening, violations are programmer errors that result in panics.
 
+We include set_bit_atomic and clear_bit_atomic operations. One has
+to avoid races with non-atomic operations, which is ensure by the
+Rust type system: either callers have shared references &bitmap in
+which case the mutations are atomic operations. Or there is a
+exclusive reference &mut bitmap, in which case there is no concurrent
+access.
 
-> +#define PCIE_CLIENT_INTR_STATUS_MISC	0x10
-> +#define  PCIE_RDLH_LINK_UP_CHGED	BIT(1)
-> +#define  PCIE_LINK_REQ_RST_NOT_INT	BIT(2)
-> +
-> +/* Interrupt Mask Register Related to Legacy Interrupt */
->  #define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
-> +
-> +/* Interrupt Mask Register Related to Miscellaneous Operation */
-> +#define PCIE_CLIENT_INTR_MASK_MISC	0x24
-> +
-> +/* Power Management Control Register */
-> +#define PCIE_CLIENT_POWER_CON		0x2c
-> +#define  PME_READY_ENTER_L23		BIT(3)
-> +
-> +/*  Message Generation Control Register */
+This version includes an optimization to represent the bitmap inline,
+as suggested by Yury.
 
-double spaces, other comments just have one space.
+We introduce a Rust API that would replace (dbitmap.h) in file id_pool.rs. 
+This data structure is tightly coupled to the bitmap API. Includes an example of usage
+that requires releasing a spinlock, as expected in Binder driver.
 
+This is v7 of a patch introducing Rust bitmap API [v6]. Thanks
+for all the helpful comments, this series has improved significantly
+as a result of your work.
 
-> +#define PCIE_CLIENT_MSG_GEN_CON		0x34
-> +#define  PME_TURN_OFF			HIWORD_UPDATE_BIT(BIT(4))
-> +#define  PME_TO_ACK			HIWORD_UPDATE_BIT(BIT(9))
-> +
-> +/* Hot Reset Control Register */
->  #define PCIE_CLIENT_HOT_RESET_CTRL	0x180
-> +#define  PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
-> +
-> +/* LTSSM Status Register */
->  #define PCIE_CLIENT_LTSSM_STATUS	0x300
-> -#define PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
-> -#define PCIE_LTSSM_STATUS_MASK		GENMASK(5, 0)
-> +#define  PCIE_SMLH_LINKUP		BIT(16)
-> +#define  PCIE_RDLH_LINKUP		BIT(17)
-> +#define  PCIE_LINKUP			(PCIE_SMLH_LINKUP | PCIE_RDLH_LINKUP)
-> +#define  PCIE_LTSSM_STATUS_MASK		GENMASK(5, 0)
->  
->  struct rockchip_pcie {
->  	struct dw_pcie pci;
-> @@ -176,13 +195,13 @@ static u32 rockchip_pcie_get_pure_ltssm(struct dw_pcie *pci)
->  static void rockchip_pcie_enable_ltssm(struct rockchip_pcie *rockchip)
->  {
->  	rockchip_pcie_writel_apb(rockchip, PCIE_CLIENT_ENABLE_LTSSM,
-> -				 PCIE_CLIENT_GENERAL_CONTROL);
-> +				 PCIE_CLIENT_GENERAL_CON);
->  }
->  
->  static void rockchip_pcie_disable_ltssm(struct rockchip_pcie *rockchip)
->  {
->  	rockchip_pcie_writel_apb(rockchip, PCIE_CLIENT_DISABLE_LTSSM,
-> -				 PCIE_CLIENT_GENERAL_CONTROL);
-> +				 PCIE_CLIENT_GENERAL_CON);
->  }
->  
->  static int rockchip_pcie_link_up(struct dw_pcie *pci)
-> @@ -274,8 +293,8 @@ static void rockchip_pcie_pme_turn_off(struct dw_pcie_rp *pp)
->  	u32 status;
->  
->  	/* 1. Broadcast PME_Turn_Off Message, bit 4 self-clear once done */
-> -	rockchip_pcie_writel_apb(rockchip, PME_TURN_OFF, PCIE_CLIENT_MSG_GEN);
-> -	ret = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_MSG_GEN,
-> +	rockchip_pcie_writel_apb(rockchip, PME_TURN_OFF, PCIE_CLIENT_MSG_GEN_CON);
-> +	ret = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_MSG_GEN_CON,
->  				 status, !(status & BIT(4)), PCIE_PME_TO_L2_TIMEOUT_US / 10,
->  				 PCIE_PME_TO_L2_TIMEOUT_US);
->  	if (ret) {
-> @@ -294,7 +313,7 @@ static void rockchip_pcie_pme_turn_off(struct dw_pcie_rp *pp)
->  
->  	/* 3. Clear PME_TO_Ack and Wait for ready to enter L23 message */
->  	rockchip_pcie_writel_apb(rockchip, PME_TO_ACK, PCIE_CLIENT_INTR_STATUS_MSG_RX);
-> -	ret = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_POWER,
-> +	ret = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_POWER_CON,
->  				 status, status & PME_READY_ENTER_L23,
->  				 PCIE_PME_TO_L2_TIMEOUT_US / 10,
->  				 PCIE_PME_TO_L2_TIMEOUT_US);
-> @@ -552,7 +571,7 @@ static void rockchip_pcie_ltssm_enable_control_mode(struct rockchip_pcie *rockch
->  	val = HIWORD_UPDATE_BIT(PCIE_LTSSM_ENABLE_ENHANCE);
->  	rockchip_pcie_writel_apb(rockchip, val, PCIE_CLIENT_HOT_RESET_CTRL);
->  
-> -	rockchip_pcie_writel_apb(rockchip, mode, PCIE_CLIENT_GENERAL_CONTROL);
-> +	rockchip_pcie_writel_apb(rockchip, mode, PCIE_CLIENT_GENERAL_CON);
+Changes v6 --> v7:
+- Added separate unit tests in bitmap.rs and benchmark module,
+  following the example in find_bit_benchmark.c
+- Added discussion about using vendored bitset to commit message.
+- Refined warning about naming convention
 
-I can see why you renamed PCIE_CLIENT_GENERAL_CONTROL to PCIE_CLIENT_GENERAL_CON
-(to match PCIE_CLIENT_MSG_GEN_CON).
+Changes v5 --> v6:
+- Added SAFETY comment for atomic operations.
+- Added missing volatile to bitops set_bit and clear_bit bindings.
+- Fixed condition on `nbits` to be <= i32::MAX, update SAFETY comments.
+- Readability improvements.
+- Updated doc comments wording and indentation.
 
-But now we have PCIE_CLIENT_MSG_GEN_CON / PCIE_CLIENT_GENERAL_CON and
-PCIE_CLIENT_HOT_RESET_CTRL.
+Changes v4 --> v5: (suggested by Yury and Alice)
+- rebased on next-20250318
+- split MAINTAINERS changes
+- no dependencies on [1] and [2] anymore - Viresh,
+  please do add a separate section if you want to maintain cpumask.rs
+  separately.
+- imports atomic and non-atomic variants, introduces a naming convention
+  set_bit and set_bit_atomic on the Rust side.
+- changed naming and comments. Keeping `new`.
+- change dynamic_id_pool to id_pool
+- represent bitmap inline when possible
+- add some more tests
+- add myself to M: line for the Rust abstractions
 
-_CTRL seems like a more common shortening. How about renaming all three to
-end with _CTRL ?
+Changes v3 --> v4:
+- Rebased on Viresh's v3 [2].
+- split into multiple patches, separate Rust and bindings. (Yury)
+- adds dynamic_id_pool.rs to show the Binder use case. (Yury)
+- include example usage that requires release of spinlock (Alice)
+- changed bounds checks to `assert!`, shorter (Yury)
+- fix param names in binding helpers. (Miguel)
+- proper rustdoc formatting, and use examples as kunit tests. (Miguel)
+- reduce number of Bitmap methods, and simplify API through
+  use Option<usize> to handle the "not found" case.
+- make Bitmap pointer accessors private, so Rust Bitmap API
+  provides an actual abstraction boundary (Tamir)
+- we still return `AllocError` in `Bitmap::new` in case client code
+  asks for a size that is too large. Intentionally
+  different from other bounds checks because it is not about
+  access but allocation, and we expect that client code need
+  never handle AllocError and nbits > u32::MAX situations
+  differently.
+
+Changes v2 --> v3:
+- change `bitmap_copy` to `copy_from_bitmap_and_extend` which
+  zeroes out extra bits. This enables dbitmap shrink and grow use
+  cases while offering a consistent and understandable Rust API for
+  other uses (Alice)
+
+Changes v1 --> v2:
+- Rebased on Yury's v2 [1] and Viresh's v3 [2] changes related to
+  bitmap.
+- Removed import of `bindings::*`, keeping only prefix (Miguel)
+- Renamed panic methods to make more explicit (Miguel)
+- use markdown in doc comments and added example/kunit test (Miguel)
+- Added maintainer section for BITOPS API BINDINGS [RUST] (Yury)
+- Added M: entry for bitmap.rs which goes to Alice (Viresh, Alice)
+- Changed calls from find_* to _find_*, removed helpers (Yury)
+- Use non-atomic __set_bit and __clear_bit from Bitmap Rust API (Yury)
+
+Link [1] https://lore.kernel.org/all/20250224233938.3158-1-yury.norov@gmail.com/
+Link [2] https://lore.kernel.org/rust-for-linux/cover.1742296835.git.viresh.kumar@linaro.org/
+Link [v6] https://lore.kernel.org/rust-for-linux/20250327161617.117748-1-bqe@google.com/ 
+
+Burak Emir (5):
+  rust: add bindings for bitmap.h
+  rust: add bindings for bitops.h
+  rust: add bitmap API.
+  rust: add find_bit_benchmark_rust module.
+  rust: add dynamic ID pool abstraction for bitmap
+
+ MAINTAINERS                     |  15 ++
+ lib/Kconfig.debug               |  15 +-
+ lib/Makefile                    |   1 +
+ lib/find_bit_benchmark_rust.rs  | 102 ++++++++
+ rust/bindings/bindings_helper.h |   2 +
+ rust/helpers/bitmap.c           |   9 +
+ rust/helpers/bitops.c           |  23 ++
+ rust/helpers/helpers.c          |   2 +
+ rust/kernel/bitmap.rs           | 410 ++++++++++++++++++++++++++++++++
+ rust/kernel/id_pool.rs          | 201 ++++++++++++++++
+ rust/kernel/lib.rs              |   2 +
+ 11 files changed, 781 insertions(+), 1 deletion(-)
+ create mode 100644 lib/find_bit_benchmark_rust.rs
+ create mode 100644 rust/helpers/bitmap.c
+ create mode 100644 rust/helpers/bitops.c
+ create mode 100644 rust/kernel/bitmap.rs
+ create mode 100644 rust/kernel/id_pool.rs
+
+-- 
+2.49.0.805.g082f7c87e0-goog
+
 
