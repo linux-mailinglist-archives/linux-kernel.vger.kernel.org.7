@@ -1,296 +1,208 @@
-Return-Path: <linux-kernel+bounces-616554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F3EA99057
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E8FA990AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFA31B83C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E911BA188D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66AF261573;
-	Wed, 23 Apr 2025 15:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECEB28EA4D;
+	Wed, 23 Apr 2025 15:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKMwItCK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIdqFxWQ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7CC28E5EC;
-	Wed, 23 Apr 2025 15:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3862820CC
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420794; cv=none; b=NfyAMpVTjt/jTCRJz1Th9GHbnDn6OIPtNbTMff2tW/C+4nmtJ15B3FkzBk2LBqsKqBziLvj2HtNRIR88w0zplMCM9mZ4lYsUg0NEzuNwEZ1WpkHNGZpxm6Ha5Y0Ru8JSrEUaJszG7pyfSlbtK+MRRT9N5aF7Ph0koetgzWF2m84=
+	t=1745420832; cv=none; b=bzE/ddT9XKFuhIqV229XpVwSypJdIIaitxLc2jkLgm5AkX2haAxT2suV6h8ObkePM6JNSmPBRTeFs+YlBJTFcxfAfeO+IW83tL6EJ4H9KFP82B7nRBiBT60Bkuq31nle3aTHxv/3AtYRVkLKaIsWktEfAWQFDdKlMS11v4+PIPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420794; c=relaxed/simple;
-	bh=dnUfZfy4SbfOanqTrD95ug3i8Q/GGLV+FT4TvY9Q8QM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBccdtorBjITyX2aY5CD1UNQMQUQCMtLgQ67f0kNqBUqUqCXB9PDixRoieu+Bj/m6IYshTjG6XUc4z+2AX76rXij3VojtrFzxmxqfkDdD2FssziVfiYci0SlNbVecrhUxSnIa+KYAdZqcid7lA1sgce28DVwx/ypmBik9VElPbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKMwItCK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E4AC4CEE2;
-	Wed, 23 Apr 2025 15:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745420794;
-	bh=dnUfZfy4SbfOanqTrD95ug3i8Q/GGLV+FT4TvY9Q8QM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OKMwItCKAkaxJQZbpiM6Gzi7Jew9HrDMTseSZPPy5i/fqn4K0u6m9hqjXMGCVxELF
-	 Q8AL7wVF45soHbT4WnW2sYk+kMbSUWz+9bjkybM2YZvLlkJaW8/D+SuidStQ2Lip2G
-	 ZkbJTYX2x4nVcmCy/poZ3PSQcg/xKS5JDzJUc42woCT5CEPT0V1txmDsm+j3Lp6OtU
-	 UM3zU5fRSXUCYHCl9FAlRuV+K2AC6sKgNUxlUXAIfrfwLj/Vdcsitond324HQRCVjz
-	 mutRPqyGb65eAqBU67HpQapBju53q7ZVaYnDTmAgcZprZouW51OFufX1eF0cOdpj53
-	 gbibELIFbrw7Q==
-Date: Wed, 23 Apr 2025 16:06:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jacek Luczak <difrost.kernel@gmail.com>
-Cc: regressions@lists.linux.dev, linux-sound@vger.kernel.org,
-	venkataprasad.potturu@amd.com, LKML <linux-kernel@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [REGRESSION] Resume from suspend broken in 6.15-rc due to ACP
- changes.
-Message-ID: <99dce57f-8947-4c7a-abeb-2e27afdd0d65@sirena.org.uk>
-References: <CADDYkjR0JG_JTQeQMAvUJvtb9RxFH6_LzV2Fr_1cnqPTgV_Z8w@mail.gmail.com>
+	s=arc-20240116; t=1745420832; c=relaxed/simple;
+	bh=IdBv6YTztLBcPUzjy+NEEOJavwBudUE5lS8WbW9sTd0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pxxj6dDk1ptjGQxJnAVMZ9E86cSRh6kD3sEGDE3JKXvwm88iI6L8NcM5T4fVk4bVqHDChOZqTMJjhIb9+61NPmTqF3RAHMcgk0fIEbtkuSCtppEH7Ruu5DKFI8wJwp7cHhyueYdF3hMkxv+BJ/5wi0wEt4nvTu+nPoNTIHXBrLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PIdqFxWQ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso31897005e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745420829; x=1746025629; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Le4FePmuI1cf2O7gbMot632SfgGL/fcYU/XLeIWLsAo=;
+        b=PIdqFxWQDNJ+M/5Mf2PomlyweVOQLjnSLrlHZSo4VofxBlE3aR0XuMf4cctfU4MoxL
+         hZy0Yi6ud1bj85wsIagc+DrwfqYeNZWn/Tw99roamlAf5sQ9+/Ij1wrE/WQU14EgIICl
+         IgFF2Bpf32wFUq3OE8hxbczyZ8sK4W2J2UWmQapQVzczpTiBDLiBVCM1kqVqKvRNarOv
+         yvVS0oH/3ine5dojMWVsotZqUMK+pmC/FSXrTpXLmXa8J2j1Mht2gilXZFayE+1MoaMg
+         MbhAO6sBEul5NgXYeY64xZthcB577ZyM/Gu1pk/COSVyHdEeskBCtDedN/FTXtOb9DTq
+         Hb+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745420829; x=1746025629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Le4FePmuI1cf2O7gbMot632SfgGL/fcYU/XLeIWLsAo=;
+        b=AK1PItGCKUeN4rMPKAr8MgIAFld0I0Ma1lmwG9cqEHm+fXpYBWXeqnu7h1zbaAEsQc
+         df8iiR1LeYeqCxFP4vC0kkk9EmYVlFSryxo+RDTIQmrHhS+8T+unKEBwOfKUGp5Ma40Y
+         wXBH0T6e3sRyyIIwCLRF2SkKCukt+kRbJ8etG1C91TmGVZtPZK1Rp8jh60m2/htgmvsS
+         +ylfwiRSuEiLMtD/2k2q8gj1MviBYCPSJ70byr1DiNr8Bndu8MCCy9a6kJPZPKK8bGN3
+         8RWLSbzjt23+nv9wmUDCcYjQrjS/HGdFVqguLycWCb4ulfGvtx7kqQ2rq8BWbLDB5w/t
+         qGww==
+X-Forwarded-Encrypted: i=1; AJvYcCXtVFeHQU9/xxFYf0too4RbXXywG+IJYEXNHlN3S/rVjocyyGb9HKVH60Jk6fjuizWYa1rlBjxEvKZp0lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSKgNyCk3lfDMxF/CUhUFA58l2FsBDhee8XGLIGoiK5ke6bHvd
+	7f6zf4X1rDc+0LBwMPmnmibC1rnB6TXr20A/7WQV9CcZojsrY6XeQR5SINJjMrO/Pv15x2F3+CR
+	7el09VmX9xva3zINW980dbW3HLvY=
+X-Gm-Gg: ASbGnctwPHWb5O4HZR2m9T5VT7ehfu+bA2hFWdNtFTlO3S6d4/N0+Pd+OREhVzCJF8T
+	QkOydyp8oeoZntuWb631YQYmth5gVzr+QObftoxhq64I36IwiXE0gqy0JrrqwlSxcTDWP3ROaLy
+	2Gf+ahGfuFlsZ0sjnQoR5ZQA13y0sm42f8hI+bzg==
+X-Google-Smtp-Source: AGHT+IHTLuyTdeudidq8XkvasdRpWK3D2wAaxDhiCe0Sw2GOJduNkztOVqdOUHOfktMaHaz+WhVIPKHWgI1wGZvBA3I=
+X-Received: by 2002:a05:600c:4f0d:b0:43c:f1b8:16ad with SMTP id
+ 5b1f17b1804b1-4406ac2194cmr185955755e9.30.1745420828986; Wed, 23 Apr 2025
+ 08:07:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6a1h689nxIoRIfcI"
-Content-Disposition: inline
-In-Reply-To: <CADDYkjR0JG_JTQeQMAvUJvtb9RxFH6_LzV2Fr_1cnqPTgV_Z8w@mail.gmail.com>
-X-Cookie: If you have to hate, hate gently.
-
-
---6a1h689nxIoRIfcI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
+ <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
+ <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
+ <0981c1fe-05d2-4bab-a0a4-6dc5666d98d7@suse.cz> <bb701616-26b8-41f0-8a19-0f76b2a64deb@suse.cz>
+In-Reply-To: <bb701616-26b8-41f0-8a19-0f76b2a64deb@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 23 Apr 2025 08:06:57 -0700
+X-Gm-Features: ATxdqUHC-VVGLPrDjeNr0MwBJPmCNhVA75DFkOqY9-G__yUUy3LNBUkEhKvgj78
+Message-ID: <CAADnVQ+bDD8T6trgGePCUbjAcz36x1P0RqhNy0nRju_ULiw+mg@mail.gmail.com>
+Subject: Re: Linux 6.15-rc3
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dave Airlie <airlied@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Sebastian Sewior <bigeasy@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 01:20:33PM +0200, Jacek Luczak wrote:
-> Hi,
->=20
-> On my ASUS Vivobook S16 (and on similar ASUS HW - see [1]) on resume
-> from suspend system dies (no logs available) soon after GPU completes
-> resume - I can see the login screen, only power cycle left.
+On Wed, Apr 23, 2025 at 1:03=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 4/23/25 09:14, Vlastimil Babka wrote:
+> > On 4/23/25 01:37, Alexei Starovoitov wrote:
+> >> On Tue, Apr 22, 2025 at 4:01=E2=80=AFPM Dave Airlie <airlied@gmail.com=
+> wrote:
+> >>>
+> >>> > Alexei Starovoitov (2):
+> >>> >       locking/local_lock, mm: replace localtry_ helpers with
+> >>> > local_trylock_t type
+> >>>
+> >>> This seems to have upset some phoronix nginx workload
+> >>> https://www.phoronix.com/review/linux-615-nginx-regression/2
+> >>
+> >> 3x regression? wow.
+> >> Thanks for heads up.
+> >> I'm staring at the patch and don't see it.
+> >> Adding more experts.
+> >
+> > Incidentally my work on slab sheaves using local_trylock() got to a pha=
+se
+> > yesterday when after rebasing on rc3 and some refactoring I was looking=
+ at
+> > sheaf stats that showed the percpu sheaves were used exactly once per c=
+pu,
+> > and other attempts failed. Which would be explained by local_trylock()
+> > failing. In the context of rc3 itself it would mean the memcg stocks ar=
+en't
+> > used at all because they can't be try-locked. Which could make benchmar=
+ks
+> > unhappy of course, although surprising that it would be that much.
+> >
+> > What I suspect now is the _Generic() part doesn't work as expected. So =
+consider:
+> >
+> > local_trylock() (or _irqsave variant) has no _Generic() part, does the
+> > "if (READ_ONCE(tl->acquired))" and "WRITE_ONCE(tl->acquired, 1)" direct=
+ly,
+> > succeeds the first attempt on each cpu where executed.
+> >
+> > local_unlock() goes via __local_lock_release() and since the _Generic()=
+ part
+> > there doesn't work, we don't do WRITE_ONCE(tl->acquired, 0); so it stay=
+s 1.
+> >
+> > preempt or irq handling is fine so nothing like lockdep, preempt debugg=
+ing,
+> > watchdogs gets suspicious, just the cpu can never succeed local_trylock=
+() again
+> >
+> > local_lock(_irqsave()) uses __local_lock_acquire() which also has a
+> > _Generic() part but since it doesn't work, the "lockdep_assert(tl->acqu=
+ired
+> > =3D=3D 0);" there isn't triggered either
+> >
+> > In fact I've put BUG() in the _Generic() sections of _acquire() and _re=
+lease()
+> > and it didn't trigger, which would prove the code isn't executed. But I=
+ don't
+> > know why _Generic() doesn't recognize the correct type there.
+> >
+> > --- a/include/linux/local_lock_internal.h
+> > +++ b/include/linux/local_lock_internal.h
+> > @@ -104,6 +104,7 @@ do {                                               =
+                 \
+> >                 _Generic((lock),                                       =
+ \
+> >                         local_trylock_t *: ({                          =
+ \
+> >                                 lockdep_assert(tl->acquired =3D=3D 0); =
+     \
+> > +                               BUG();                                 =
+ \
+> >                                 WRITE_ONCE(tl->acquired, 1);           =
+ \
+> >                         }),                                            =
+ \
+> >                         default:(void)0);                              =
+ \
+> > @@ -173,6 +174,7 @@ do {                                               =
+                 \
+> >                 _Generic((lock),                                       =
+ \
+> >                         local_trylock_t *: ({                          =
+ \
+> >                                 lockdep_assert(tl->acquired =3D=3D 1); =
+     \
+> > +                               BUG();                                 =
+ \
+> >                                 WRITE_ONCE(tl->acquired, 0);           =
+ \
+> >                         }),                                            =
+ \
+> >                         default:(void)0);                              =
+ \
+> >
+>
+> Oh I see, replacing the default: which "local_lock_t *:" which is the onl=
+y
+> other expected type, forces the compiler to actually tell me what's wrong=
+:
+>
+> ./include/linux/local_lock_internal.h:174:26: error: =E2=80=98_Generic=E2=
+=80=99 selector of
+> type =E2=80=98__seg_gs local_lock_t *=E2=80=99 is not compatible with any=
+ association
 
-Are there any updates on this from the AMD side?  As things stand my
-inclination is to revert the bulk of the changes to the driver from the
-past merge window, I don't really know anything about this hardware
-specifically and "dies without logs" is obviously giving few hints.
-None of the skipped commits looks immediately suspect, there's doubtless
-some unintended change in there.
+That explains why I and others couldn't repro it yesterday
+no matter what we tried.
+We're still on gcc-13 and this bit wasn't triggering:
+#define CC_HAS_TYPEOF_UNQUAL (__GNUC__ >=3D 14)
 
-Adding Mario and leaving the context for his benefit.
-
-> I've managed to bisect this as close as possible to following commits:
-> - [f8b4f3f525e82d78079a6ebbde68e4a0d79fd1c0] ASoC: amd: acp: Refactor
-> acp70 platform resource structure
-> - [c8b5f251f0e53edab220ac4edf444120815fed3c] ASoC: amd: acp: Remove white=
- line
-> - [a95a1dbbd3d64adf392fed13c8eef4f72b4e5b90] ASoC: amd: acp: Move
-> spin_lock and list initialization to acp-pci driver
-> - [e3933683b25e2cc94485da4909e3338e1a177b39] ASoC: amd: acp: Remove
-> redundant acp_dev_data structure
-> - [aaf7a668bb3814f084f9f6f673567f6aa316632f] ASoC: amd: acp: Add new
-> interrupt handle callbacks in acp_common_hw_ops
->=20
-> Attached lspci and bisection log.
->=20
-> Regards,
-> -jacek
->=20
-> [1] https://bbs.archlinux.org/viewtopic.php?id=3D304816
-
-> git bisect start
-> # status: waiting for both good and bad commits
-> # good: [ed92bc5264c4357d4fca292c769ea9967cd3d3b6] ASoC: codecs: wm0010: =
-Fix error handling path in wm0010_spi_probe()
-> git bisect good ed92bc5264c4357d4fca292c769ea9967cd3d3b6
-> # status: waiting for bad commit, 1 good commit known
-> # bad: [47c4f9b1722fd883c9745d7877cb212e41dd2715] Tidy up ASoC control ge=
-t and put handlers
-> git bisect bad 47c4f9b1722fd883c9745d7877cb212e41dd2715
-> # good: [74da545ec6a8b41de96b4c350bb59dfe45c0d822] ASoC: codec: madera: u=
-se inclusive language for SND_SOC_DAIFMT_CBx_CFx
-> git bisect good 74da545ec6a8b41de96b4c350bb59dfe45c0d822
-> # bad: [a935b3f981809272d2649ad9c27a751685137846] ASoC: SOF: ipc4-topolog=
-y: Allocate ref_params on stack
-> git bisect bad a935b3f981809272d2649ad9c27a751685137846
-> # good: [24056de9976dfc33801d2574c1672d91f840277a] ASoC: codecs: Update d=
-evice_id tables for Realtek
-> git bisect good 24056de9976dfc33801d2574c1672d91f840277a
-> # good: [a1462fb8b5dd1018e3477a6861822d75c6a59449] ASoC: Intel: boards: u=
-pdates for 6.15
-> git bisect good a1462fb8b5dd1018e3477a6861822d75c6a59449
-> # skip: [8a7e7a03e3c53cd9abbbf233899cc2e05b2c6ec0] ASoC: SOF: Intel: Add =
-support for ACE3+ mic privacy
-> git bisect skip 8a7e7a03e3c53cd9abbbf233899cc2e05b2c6ec0
-> # skip: [aaf7a668bb3814f084f9f6f673567f6aa316632f] ASoC: amd: acp: Add ne=
-w interrupt handle callbacks in acp_common_hw_ops
-> git bisect skip aaf7a668bb3814f084f9f6f673567f6aa316632f
-> # good: [c6141ba0110f98266106699aca071fed025c3d64] ASoC: Merge up fixes
-> git bisect good c6141ba0110f98266106699aca071fed025c3d64
-> # skip: [ad5a0970f86d82e39ebd06d45a1f7aa48a1316f8] ASoC: cs35l41: check t=
-he return value from spi_setup()
-> git bisect skip ad5a0970f86d82e39ebd06d45a1f7aa48a1316f8
-> # good: [269b844239149a9bbaba66518db99ebb06554a15] ASoC: dapm: Fix change=
-s to DECLARE_ADAU17X1_DSP_MUX_CTRL
-> git bisect good 269b844239149a9bbaba66518db99ebb06554a15
-> # skip: [89be3c15a58b2ccf31e969223c8ac93ca8932d81] ASoC: qcom: sm8250: ex=
-plicitly set format in sm8250_be_hw_params_fixup()
-> git bisect skip 89be3c15a58b2ccf31e969223c8ac93ca8932d81
-> # bad: [02e1cf7a352a3ba5f768849f2b4fcaaaa19f89e3] ASoC: amd: acp: Fix for=
- enabling DMIC on acp platforms via _DSD entry
-> git bisect bad 02e1cf7a352a3ba5f768849f2b4fcaaaa19f89e3
-> # good: [7a2ff0510c51462c0a979f5006d375a2b23d46e9] ASoC: soc-pcm: reuse d=
-pcm_state_string()
-> git bisect good 7a2ff0510c51462c0a979f5006d375a2b23d46e9
-> # good: [a8fed0bddf8fa239fc71dc5c035d2e078c597369] ASoC: dt-bindings: add=
- regulator support to dmic codec
-> git bisect good a8fed0bddf8fa239fc71dc5c035d2e078c597369
-> # bad: [ee7ab0fd540877fceb3d51f87016e6531d86406f] ASoC: amd: acp: Refacto=
-r rembrant platform resource structure
-> git bisect bad ee7ab0fd540877fceb3d51f87016e6531d86406f
-> # good: [0d2d276f53ea3ba1686619cde503d9748f58a834] ASoC: SOF: Intel: lnl/=
-ptl: Only set dsp_ops which differs from MTL
-> git bisect good 0d2d276f53ea3ba1686619cde503d9748f58a834
-> # good: [8aeb7d2c3fc315e629d252cd601598a5af74bbb0] ASoC: SOF: Intel: Crea=
-te ptl.c as placeholder for Panther Lake features
-> git bisect good 8aeb7d2c3fc315e629d252cd601598a5af74bbb0
-> # skip: [ac5b4a24f16f2f56b5cc5092969930b867274edc] ASoC: Intel: soc-acpi-=
-intel-ptl-match: Add cs42l43 support
-> git bisect skip ac5b4a24f16f2f56b5cc5092969930b867274edc
-> # skip: [8ae746fe51041484e52eba99bed15a444c7d4372] ASoC: amd: acp: Implem=
-ent acp_common_hw_ops support for acp platforms
-> git bisect skip 8ae746fe51041484e52eba99bed15a444c7d4372
-> # good: [0978e8207b61ac6d51280e5d28ccfff75d653363] ASoC: SOF: Intel: hda-=
-mlink: Add support for mic privacy in VS SHIM registers
-> git bisect good 0978e8207b61ac6d51280e5d28ccfff75d653363
-> # good: [4a43c3241ec3465a501825ecaf051e5a1d85a60b] ASoC: SOF: Intel: ptl:=
- Add support for mic privacy
-> git bisect good 4a43c3241ec3465a501825ecaf051e5a1d85a60b
-> # skip: [1ec3f1dc215d4b3d3679ecdc4a549d4e82b3a609] ASoC: dmic: add regula=
-tor support
-> git bisect skip 1ec3f1dc215d4b3d3679ecdc4a549d4e82b3a609
-> # good: [e2cda461765692757cd5c3b1fc80bd260ffe1394] ASoC: amd: acp: Refact=
-or dmic-codec platform device creation
-> git bisect good e2cda461765692757cd5c3b1fc80bd260ffe1394
-> # skip: [a95a1dbbd3d64adf392fed13c8eef4f72b4e5b90] ASoC: amd: acp: Move s=
-pin_lock and list initialization to acp-pci driver
-> git bisect skip a95a1dbbd3d64adf392fed13c8eef4f72b4e5b90
-> # bad: [f8b4f3f525e82d78079a6ebbde68e4a0d79fd1c0] ASoC: amd: acp: Refacto=
-r acp70 platform resource structure
-> git bisect bad f8b4f3f525e82d78079a6ebbde68e4a0d79fd1c0
-> # good: [6e60db74b69c29b528c8d10d86108f78f2995dcb] ASoC: amd: acp: Refact=
-or acp machine select
-> git bisect good 6e60db74b69c29b528c8d10d86108f78f2995dcb
-> # skip: [e3933683b25e2cc94485da4909e3338e1a177b39] ASoC: amd: acp: Remove=
- redundant acp_dev_data structure
-> git bisect skip e3933683b25e2cc94485da4909e3338e1a177b39
-> # skip: [c8b5f251f0e53edab220ac4edf444120815fed3c] ASoC: amd: acp: Remove=
- white line
-> git bisect skip c8b5f251f0e53edab220ac4edf444120815fed3c
-> # only skipped commits left to test
-> # possible first bad commit: [f8b4f3f525e82d78079a6ebbde68e4a0d79fd1c0] A=
-SoC: amd: acp: Refactor acp70 platform resource structure
-> # possible first bad commit: [c8b5f251f0e53edab220ac4edf444120815fed3c] A=
-SoC: amd: acp: Remove white line
-> # possible first bad commit: [a95a1dbbd3d64adf392fed13c8eef4f72b4e5b90] A=
-SoC: amd: acp: Move spin_lock and list initialization to acp-pci driver
-> # possible first bad commit: [e3933683b25e2cc94485da4909e3338e1a177b39] A=
-SoC: amd: acp: Remove redundant acp_dev_data structure
-> # possible first bad commit: [aaf7a668bb3814f084f9f6f673567f6aa316632f] A=
-SoC: amd: acp: Add new interrupt handle callbacks in acp_common_hw_ops
-
-> 00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix/Stri=
-x Halo Root Complex [1022:1507]
-> 00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Strix/Strix Halo=
- IOMMU [1022:1508]
-> 00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix/Stri=
-x Halo Dummy Host Bridge [1022:1509]
-> 00:01.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo PCIe USB4 Bridge [1022:150a]
-> 00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix/Stri=
-x Halo Dummy Host Bridge [1022:1509]
-> 00:02.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo GPP Bridge [1022:150b]
-> 00:02.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo GPP Bridge [1022:150b]
-> 00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix/Stri=
-x Halo Dummy Host Bridge [1022:1509]
-> 00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix/Stri=
-x Halo Dummy Host Bridge [1022:1509]
-> 00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo Internal GPP Bridge to Bus [C:A] [1022:150c]
-> 00:08.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo Internal GPP Bridge to Bus [C:A] [1022:150c]
-> 00:08.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Strix/Strix=
- Halo Internal GPP Bridge to Bus [C:A] [1022:150c]
-> 00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus Contro=
-ller [1022:790b] (rev 71)
-> 00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC Bri=
-dge [1022:790e] (rev 51)
-> 00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 0 [1022:16f8]
-> 00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 1 [1022:16f9]
-> 00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 2 [1022:16fa]
-> 00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 3 [1022:16fb]
-> 00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 4 [1022:16fc]
-> 00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 5 [1022:16fd]
-> 00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 6 [1022:16fe]
-> 00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Strix Data=
- Fabric; Function 7 [1022:16ff]
-> 61:00.0 Non-Volatile memory controller [0108]: Micron Technology Inc 2400=
- NVMe SSD (DRAM-less) [1344:5413] (rev 03)
-> 62:00.0 Network controller [0280]: MEDIATEK Corp. MT7922 802.11ax PCI Exp=
-ress Wireless Network Adapter [14c3:0616]
-> 63:00.0 Display controller [0380]: Advanced Micro Devices, Inc. [AMD/ATI]=
- Strix [Radeon 880M / 890M] [1002:150e] (rev c1)
-> 63:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Rembr=
-andt Radeon High Definition Audio Controller [1002:1640]
-> 63:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] =
-Strix/Krackan/Strix Halo CCP/ASP [1022:17e0]
-> 63:00.4 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device =
-[1022:151e]
-> 63:00.5 Multimedia controller [0480]: Advanced Micro Devices, Inc. [AMD] =
-ACP/ACP3X/ACP6x Audio Coprocessor [1022:15e2] (rev 70)
-> 63:00.6 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17=
-h/19h/1ah HD Audio Controller [1022:15e3]
-> 64:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc=
-=2E [AMD] Strix/Strix Halo PCIe Dummy Function [1022:150d]
-> 64:00.1 Signal processing controller [1180]: Advanced Micro Devices, Inc.=
- [AMD] Strix/Krackan/Strix Halo Neural Processing Unit [1022:17f0] (rev 10)
-> 65:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device =
-[1022:151f]
-> 65:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device =
-[1022:151a]
-> 65:00.4 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device =
-[1022:151b]
-> 65:00.5 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device =
-[1022:151c]
-
---6a1h689nxIoRIfcI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgJAfQACgkQJNaLcl1U
-h9D9Hgf/TYhaPzJb0HCNumDdXKTO8CERdxcAmZodwzitd1qcdzEsX1mzbWLn5uDh
-Tg8t052c1hEZCHXwtNdaSPWsDjZeKDa6gpgZXnz11jLwiYAo0ls6n2v72e8SttmF
-TNwPRehGo5QdTVccfjLR3GABPLjiSSCogpkoOSp+1+ZO+ee34RnNBBXlth2JR8SN
-91hlWn7dOhvZ7SfQHNfvmdKtq4ENWqgiZ8dP1LvXVxl4B5yDyiX+gqAYll9roT2l
-JHOpymdO9tb+3RrDx7J56yKuz+PoCMOvAkKr4JHvoqdpIeGESf9w5sswpuZu6NcT
-j7aGo8iEhPGqiRQ8AGMV7qFwT8v8aQ==
-=Secz
------END PGP SIGNATURE-----
-
---6a1h689nxIoRIfcI--
+Upgraded the compiler and can confirm everything.
 
