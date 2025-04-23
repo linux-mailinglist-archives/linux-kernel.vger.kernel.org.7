@@ -1,45 +1,37 @@
-Return-Path: <linux-kernel+bounces-615615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8D9A97FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E54CA97FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F4C189DBAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272383B8F97
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CF91922C4;
-	Wed, 23 Apr 2025 06:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EEK6Wc0j"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE00267386;
+	Wed, 23 Apr 2025 06:57:31 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAF82676D1;
-	Wed, 23 Apr 2025 06:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC5D1E47C5
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745391362; cv=none; b=ByNkPAuSByu3y2BGS7zccs2H7/ECMOu/p1xEio5SACv14x2xRZPimhT3rRIhNVtfCSUM5f4UvOnkoxe95RI30Dps615SKI9UQ6WuIVea0SIXM6F6A6wOZY/Op7hbCZzRYwqF06CH1kNSPOsI/RN0oni2slXXdtMIoaJMhSCYgzI=
+	t=1745391451; cv=none; b=qyePLv9fmUnk9hwvrD6AyXkWcakbq6wgfQICR647hBh7srYnVDdVur29Z6mL+L8C1W7sm3LOcqTBL3yPb7QSQsa7r7CyTGCiWhq2iZJCdHRp/PfFzynxa7WfFDzZ9teV+XwSBvZJfIjFSc6DI1Q8Eh+0NvfVXp+VGtlhqm2fDU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745391362; c=relaxed/simple;
-	bh=3i7r/58CtDZFupNSmZUcH6QLoYJHCa1IatB2xCxRyRs=;
+	s=arc-20240116; t=1745391451; c=relaxed/simple;
+	bh=7DLJVm3N0JmP4hmUEkWwaz4ULDAWWUBUnfX/0IKUKN8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ow+jMrIk95gBzwQ6RJnUIBLvQNTxF4DIAPUcQpL167eZELDY/2kQRQ1gGyfhR4O8OLBfMZxS/js2FlumQzFyG7HoodEbKoGeNLakA16KW00WqsdjSYMAS+yjpQs3a6wtmK/JNRTJTjpmJMVlM7VoYdk0MpAW8sbfLdQVveDVOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EEK6Wc0j; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1745391356; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=H1skONK6cs8UBil9X8sWmmdRUJr3xZeKqf2Y3Px4r6c=;
-	b=EEK6Wc0jZrd0zYtCVb8w0ejHkm0uon0l9OSofXYYotzP3g3d2i2pqlGvHy6/a4k0BziLSYE6FqssVrzOwdXEJzlc+ij6EI4/cw5ZUBgnnHMm2eysBpis2dKypJqfh76VLi721aPnThVA5ACvJooMobHqaUaSF/J8e+mQovTslE8=
-Received: from 30.74.144.121(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WXtS1Fp_1745391352 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 23 Apr 2025 14:55:53 +0800
-Message-ID: <821dc0ef-faf9-460e-8396-2c0fdf3f6e94@linux.alibaba.com>
-Date: Wed, 23 Apr 2025 14:55:52 +0800
+	 In-Reply-To:Content-Type; b=nCrsS9cYJPfQZ/utYctT1iT5cDFfrYkixoQ0xm/GxexBMBCxx7iLGImmnVphCtFCPqDOW+LHkLARKMjlEk0exNCJM7QOt/joEQ7HC64r3lJFyGOi2CnvW0h+wNMQeHrW5NhtVOzYcQT6HoRzgVo2mjIDfpsDj2QZtGDw+iKF89c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C7FBC4396E;
+	Wed, 23 Apr 2025 06:57:21 +0000 (UTC)
+Message-ID: <267bf21f-a42d-4209-8348-e91d45c6e463@ghiti.fr>
+Date: Wed, 23 Apr 2025 08:57:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,99 +39,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
- baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
- peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
- usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
- cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org
-References: <20250417000238.74567-1-npache@redhat.com>
- <20250417000238.74567-4-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250417000238.74567-4-npache@redhat.com>
+Subject: Re: [RFC PATCH] riscv: Optimize gcd() performance by selecting
+ CPU_NO_EFFICIENT_FFS
+Content-Language: en-US
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ jserv@ccns.ncku.edu.tw, eleanor15x@gmail.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20250217013708.1932496-1-visitorckw@gmail.com>
+ <61173b04-faea-4dfe-8e82-95a55ee33f3f@ghiti.fr>
+ <Z+/km3h1ZmnJjyId@visitorckw-System-Product-Name>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <Z+/km3h1ZmnJjyId@visitorckw-System-Product-Name>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeehleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepvdeludfgleffteekgfelheetvdeugffgiedtueetgedtfeefleeileehieekvddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemtgeludgrmegtkeehvgemtgduuddtmeekuggvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemtgeludgrmegtkeehvgemtgduuddtmeekuggvvddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemtgeludgrmegtkeehvgemtgduuddtmeekuggvvdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepledprhgtphhtthhopehvihhsihhtohhrtghkfiesghhmrghilhdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghom
+ hdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepjhhsvghrvhestggtnhhsrdhntghkuhdrvgguuhdrthifpdhrtghpthhtohepvghlvggrnhhorhduheigsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Kuan-Wei,
+
+On 04/04/2025 15:54, Kuan-Wei Chiu wrote:
+> +Cc Andrew, since this might touch lib/math/gcd.c
+>
+> On Fri, Mar 28, 2025 at 03:07:36PM +0100, Alexandre Ghiti wrote:
+>> Hi Kuan-Wei,
+>>
+>> First sorry for the late review.
+>>
+>> On 17/02/2025 02:37, Kuan-Wei Chiu wrote:
+>>> When the Zbb extension is not supported, ffs() falls back to a software
+>>> implementation instead of leveraging the hardware ctz instruction for
+>>> fast computation. In such cases, selecting CPU_NO_EFFICIENT_FFS
+>>> optimizes the efficiency of gcd().
+>>>
+>>> The implementation of gcd() depends on the CPU_NO_EFFICIENT_FFS option.
+>>> With hardware support for ffs, the binary GCD algorithm is used.
+>>> Without it, the odd-even GCD algorithm is employed for better
+>>> performance.
+>>>
+>>> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+>>> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+>>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+>>> ---
+>>> Although selecting NO_EFFICIENT_FFS seems reasonable without ctz
+>>> instructions, this patch hasn't been tested on real hardware. We'd
+>>> greatly appreciate it if someone could help test and provide
+>>> performance numbers!
+>>>
+>>>    arch/riscv/Kconfig | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>> index 7612c52e9b1e..2dd3699ad09b 100644
+>>> --- a/arch/riscv/Kconfig
+>>> +++ b/arch/riscv/Kconfig
+>>> @@ -91,6 +91,7 @@ config RISCV
+>>>    	select CLINT_TIMER if RISCV_M_MODE
+>>>    	select CLONE_BACKWARDS
+>>>    	select COMMON_CLK
+>>> +	select CPU_NO_EFFICIENT_FFS if !RISCV_ISA_ZBB
+>>>    	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
+>>>    	select EDAC_SUPPORT
+>>>    	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
+>>
+>> So your patch is correct. But a kernel built with RISCV_ISA_ZBB does not
+>> mean the platform supports zbb and in that case, we'd still use the slow
+>> version of gcd().
+>>
+>> Then I would use static keys instead, can you try to come up with a patch
+>> that does that?
+>>
+> Here's my current thought: I'd like to add a static key named
+> efficient_ffs_key in gcd.c, and possibly call
+> static_branch_disable(&efficient_ffs_key) somewhere under arch/riscv/
+> when RISCV_ISA_ZBB is enabled but the Zbb extension is not detected at
+> runtime.
+>
+> However, I'm new to the RISC-V kernel code and not sure where would be
+> the most appropriate place to insert that static_branch_disable() call.
+> Suggestions are very welcome!
 
 
+Sorry for the late answer, I missed your message.
 
-On 2025/4/17 08:02, Nico Pache wrote:
-> For khugepaged to support different mTHP orders, we must generalize this
-> function for arbitrary orders.
-> 
-> No functional change in this patch.
-> 
-> Co-developed-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
+So we put all of those initializations that depend on the discovery of 
+extensions at the end of setup_arch() 
+(https://elixir.bootlin.com/linux/v6.14.3/source/arch/riscv/kernel/setup.c#L334).
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Thanks,
 
-> ---
->   mm/khugepaged.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index b6281c04f1e5..54d7f43da69c 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -920,7 +920,7 @@ static int khugepaged_find_target_node(struct collapse_control *cc)
->   static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->   				   bool expect_anon,
->   				   struct vm_area_struct **vmap,
-> -				   struct collapse_control *cc)
-> +				   struct collapse_control *cc, int order)
+Alex
+
+
+>
+> Below is the diff for context.
+>
+> Regards,
+> Kuan-Wei
+>
+> diff --git a/lib/math/gcd.c b/lib/math/gcd.c
+> index e3b042214d1b..514b8a86b461 100644
+> --- a/lib/math/gcd.c
+> +++ b/lib/math/gcd.c
+> @@ -2,6 +2,7 @@
+>   #include <linux/kernel.h>
+>   #include <linux/gcd.h>
+>   #include <linux/export.h>
+> +#include <linux/jump_label.h>
+>
+>   /*
+>    * This implements the binary GCD algorithm. (Often attributed to Stein,
+> @@ -11,6 +12,8 @@
+>    * has decent hardware division.
+>    */
+>
+> +DEFINE_STATIC_KEY_TRUE(efficient_ffs_key);
+> +
+>   #if !defined(CONFIG_CPU_NO_EFFICIENT_FFS)
+>
+>   /* If __ffs is available, the even/odd algorithm benchmarks slower. */
+> @@ -20,7 +23,7 @@
+>    * @a: first value
+>    * @b: second value
+>    */
+> -unsigned long gcd(unsigned long a, unsigned long b)
+> +static unsigned long gcd_binary(unsigned long a, unsigned long b)
 >   {
->   	struct vm_area_struct *vma;
->   	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-> @@ -932,9 +932,9 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->   	if (!vma)
->   		return SCAN_VMA_NULL;
->   
-> -	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
-> +	if (!thp_vma_suitable_order(vma, address, order))
->   		return SCAN_ADDRESS_RANGE;
-> -	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
-> +	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, order))
->   		return SCAN_VMA_CHECK;
->   	/*
->   	 * Anon VMA expected, the address may be unmapped then
-> @@ -1130,7 +1130,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   		goto out_nolock;
->   
->   	mmap_read_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
->   	if (result != SCAN_SUCCEED) {
->   		mmap_read_unlock(mm);
->   		goto out_nolock;
-> @@ -1164,7 +1164,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	 * mmap_lock.
->   	 */
->   	mmap_write_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
->   	if (result != SCAN_SUCCEED)
->   		goto out_up_write;
->   	/* check if the pmd is still valid */
-> @@ -2790,7 +2790,7 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
->   			mmap_read_lock(mm);
->   			mmap_locked = true;
->   			result = hugepage_vma_revalidate(mm, addr, false, &vma,
-> -							 cc);
-> +							 cc, HPAGE_PMD_ORDER);
->   			if (result  != SCAN_SUCCEED) {
->   				last_fail = result;
->   				goto out_nolock;
+>   	unsigned long r = a | b;
+>
+> @@ -44,7 +47,7 @@ unsigned long gcd(unsigned long a, unsigned long b)
+>   	}
+>   }
+>
+> -#else
+> +#endif
+>
+>   /* If normalization is done by loops, the even/odd algorithm is a win. */
+>   unsigned long gcd(unsigned long a, unsigned long b)
+> @@ -54,6 +57,11 @@ unsigned long gcd(unsigned long a, unsigned long b)
+>   	if (!a || !b)
+>   		return r;
+>
+> +#if !defined(CONFIG_CPU_NO_EFFICIENT_FFS)
+> +	if (static_branch_likely(&efficient_ffs_key))
+> +		return binary_gcd(a, b);
+> +#endif
+> +
+>   	/* Isolate lsbit of r */
+>   	r &= -r;
+>
+> @@ -80,6 +88,4 @@ unsigned long gcd(unsigned long a, unsigned long b)
+>   	}
+>   }
+>
+> -#endif
+> -
+>   EXPORT_SYMBOL_GPL(gcd);
 
