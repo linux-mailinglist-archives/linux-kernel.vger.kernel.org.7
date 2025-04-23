@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-616900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A59AA997B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E4BA997C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDD65A1E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F741886E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B540328E5F1;
-	Wed, 23 Apr 2025 18:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A8F28DF1D;
+	Wed, 23 Apr 2025 18:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYmXNekC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cl2EDV52"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156B28DF17
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861FD28DEEA;
+	Wed, 23 Apr 2025 18:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432460; cv=none; b=VK5FeNsVFwwOM8KmtvPZt7JZXSkC8fxEpBY+thTiv4t7m2SDgKUhm1Y2SGQTdcEc9se5HwT6bvvAeARGb44I3GQuEBvyXkDPqiiZXMYt+Bygxt/w+f6s6yKKg6AvGM1rzhlzisG2wGYwEuKk5y68MXZfsX+qRqCk02KESu6a+GY=
+	t=1745432511; cv=none; b=NMbfTe5h07KbDWFU+pRthOj4sPnfsq8T7N6qMjWxCGrrUeqr18ZO+mO2SaBraCF6bhPdJblAoFaU3r+660T71CN2GOLxYomuSG1MCfFOdDiVfGaVXJwEoHNmjf9wtgBM5LrszKsNqSBlfBVpPb/c9PSMlB++Z8YY3yVHFN5xsH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432460; c=relaxed/simple;
-	bh=rL40QV7ZOck7njFnFxpE1AOhrGFBkAAgQb6AOZESYyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGogXTm4MF28iZjPjMGn3PnJRnR9twLHdmwdcVwQPdDHHTyuzZPnX3U96nZKrqKBOGhn2VSjBaM6lzTx2ing6Ret49tyEVlIec3yGhV34l0GWEapmvUGotsKEncVHc+CTkc/S4Dq+au4Lop0Ss+LSr/KI3WczWL/PunHJw86lK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYmXNekC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7290BC4CEE2;
-	Wed, 23 Apr 2025 18:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745432459;
-	bh=rL40QV7ZOck7njFnFxpE1AOhrGFBkAAgQb6AOZESYyw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=pYmXNekC41LOXDoH5QOAMkKFF6Pojdh/uf/H3CaggiSY8u7YrARpBTt1dVtMR6hW/
-	 4Nm9fFX2uN5qdm+uucfDF/+f9k4cqlAEmVsA4VZhHAk9cf3T0dGlhdJHK16KKjVKRE
-	 vHBh5fXsu6Nft8qXYuNRk9HvBeqaFzTbY8BbUb+e8R9D0Ua0fqmm35lFRIty+Z/hw4
-	 vda7hLUFnFd37j4eudAdpd0wx01sTzqUkx19TJSl0bBXnrvzoVktJ9ONNl1flgYLb5
-	 crgVvc/v3XzS8Vo2MvZyMFYWaYyKvv613fMQZmkAbK6hqLplAvkDwsxRxv3vQL3tp/
-	 z+MUXr2tbH9nw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 21DA6CE0B75; Wed, 23 Apr 2025 11:20:59 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:20:59 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Aishwarya.TCV@arm.com, sraithal@amd.com
-Subject: Re: [PATCH v2 ratelimit 11/14] ratelimit: Force re-initialization
- when rate-limiting re-enabled
-Message-ID: <559db775-f151-4694-86e6-72809b386097@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
- <20250418171359.1187719-11-paulmck@kernel.org>
- <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
+	s=arc-20240116; t=1745432511; c=relaxed/simple;
+	bh=n5KEgKPWGyndOy8RBM0wXCL7YL1bmrK2XR2keNckLaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jvZfUW1+2rIeLvQvIm5N//sQ8ZHQEY3F7pFxz5NVnZzByTAu8SZYws3apHmrIWguqq45Yishx3v8+xAg6z5xWxYnpJkfjdHir83wFBenn56C3S9hcdFbsHX2GErOciozQRcvYlXJlZYUO3CXjiVZ2StAIpWj2+P2mjHWgiaTIPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cl2EDV52; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f62d3ed994so172030a12.2;
+        Wed, 23 Apr 2025 11:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745432508; x=1746037308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NhlqINkYpZZBLzVdSPqg22TCWxPQvkr1ZzGoXFf5r1M=;
+        b=cl2EDV52G7UXR88D2b+Ku+trcK8nub6TC31rjkxsal9iSKRDP1qab3CWKtXBfSIX6W
+         60K0hx1rWKhkLHoljiFmyk7dw/GVdYRVnVxLkNQ7lZb5b+GHIWec338zKDHmqEc38Re0
+         xMvAlkIyAP4EScG/TXCaZOFy0p1wHAjKneP3F4PrRWg5BIWdyRdKjBh/d4PYmqqVnJXW
+         VLrLbsZvBpkhBhuNbLvkK18gElc/wSsbYrBjpqBNMjjo88XlwrInc3x1/4hAjpIizg2M
+         d2eHLeUJ951FByiVyd8YHVzON6k7x3sgRl3UvcT1kslqapQd5nD1v+kEhHuHB5mwRJeC
+         rnBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745432508; x=1746037308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NhlqINkYpZZBLzVdSPqg22TCWxPQvkr1ZzGoXFf5r1M=;
+        b=qC4EK7DTEeLMraOJqBcJw0BpHN172I5cyFjE4Y6lRZH44QaxlgvGcs8bQdLLKzBsTk
+         qVvsbRHZK7OW8DsGuB/ZnZn7xNfWG7VO1Jg1u0qvfIHthikEt5uIrDABGMWvSbQhZZe3
+         OcLGvbQK5Z7k18pSQHGUHH6sTdGcVrmfcuhBpkfuNw0NrY6kvtD7mXng2dRix0k6Gmlq
+         t/8lgeIzXfFzzBaZU5cOTOgOe1pxc8pinOpHm3FCr+T8TDY+C6UQpOoVZZa7tcqz7vRt
+         DuLQL+s5IsFExIjLEeThytBMZ/E8ZUt9bzb3XQpVMp55i3c55qqn7EaLWuyVNqPnNE11
+         a/Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOYKfKTZZZzdUvlXzkc1h3TAkj3N/IiTvuMjD81/Tjg7ki2X3x1gt1WjcEt8oIOgo2aIE=@vger.kernel.org, AJvYcCVrRN1dM0f/sOstAO88FMHdQfmGfPEDGoymUeKnYXfyLBsuw3SJgyDcEbrU1qJ+IdopraM92qfODv3BiqeVCe9wPkSx@vger.kernel.org, AJvYcCWTn8SUlCBeGXT8asANdWme4bEp+suOB/LwYGcuS7uqM/mkMZihhCVBLHYLq5/ojCqA2QZrFkop@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHlvyDj45bOy4ndQpGp7Wsb4q7Zbnys3mz6d/L35mpn/Lw3b9N
+	65DQSyENTbaWT6w2WzOBjf4JrqIKdekrf9EkxNbUulNoDXMz/3iTRL6YvBvPdN/CDcq4kGQm99a
+	C4MkxZQ8YfQ9nPvrieSdbsbfbm6YtmkWu
+X-Gm-Gg: ASbGncuUBlWEiDPtt3sVqswjuEtHaCNXl0tlCKgPsp+Ng1a9t8r6jhXkoNCjL6fJkCr
+	K6r//g21mgQJyekqnUIr2gCj9quhZf1Hh7TrxBTbg5iH32Heexr+jhAMh628mygUspNkS4AEDFK
+	jMrMYe/Ta7IcTAfGHXcS+T/orZD4em8ud2sCw3FQ==
+X-Google-Smtp-Source: AGHT+IH5HySMSVpWQQiLuLBm1KmGGdctAt+lPhEDR0CAkLYpQS/qWp3FPfJC0WRecO9a0ItoWqyOqKqk1/lb4NE26vI=
+X-Received: by 2002:a17:907:26c3:b0:ac1:f003:be08 with SMTP id
+ a640c23a62f3a-ace54e6c8ecmr12271066b.12.1745432507647; Wed, 23 Apr 2025
+ 11:21:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
+References: <20250418110104.12af6883@gandalf.local.home>
+In-Reply-To: <20250418110104.12af6883@gandalf.local.home>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 23 Apr 2025 11:21:25 -0700
+X-Gm-Features: ATxdqUHQ9RunUOfE64hoOmU3UUAYp4mJ_IcDoTqKsW5Uram8ZVu2YLxD24VGhnk
+Message-ID: <CAEf4BzZfoCV=irWiy1MCY0fkhsJWxq8UGTYCW9Y3pQQP35eBLQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] tracepoint: Have tracepoints created with
+ DECLARE_TRACE() have _tp suffix
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, David Ahern <dsahern@kernel.org>, 
+	Juri Lelli <juri.lelli@gmail.com>, Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf@vger.kernel.org, 
+	Gabriele Monaco <gmonaco@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 04:59:49PM +0100, Mark Brown wrote:
-> On Fri, Apr 18, 2025 at 10:13:56AM -0700, Paul E. McKenney wrote:
-> > Currently, rate limiting being disabled results in an immediate early
-> > return with no state changes.  This can result in false-positive drops
-> > when re-enabling rate limiting.  Therefore, mark the ratelimit_state
-> > structure "uninitialized" when rate limiting is disabled.
-> 
-> Today's -next is failing to boot a defconfig on a wide range of arm64
-> ACPI platforms.  One ACPI platform (Softiron) is still fine, and I've
-> not noticed any DT platforms having issues.  Output grinds to a halt
-> during boot shortly after userspace starts on affected systems:
-> 
-> [   23.334050] Freeing unused kernel memory: 11328K
-> [   23.355182] Run /init as init process
-> [   23.378221] NET: Registered PF_INET6 protocol family
-> [   23.396506] Segment Routing with IPv6
-> [   23.414054] In-situ OAM (IOAM) with IPv6
-> 
-> A bisect converges fairly smoothly on this patch in -next, which doesn't
-> look completely implausible for something that stops console output - I
-> didn't dig into it at all though.  I see that Sirkanth (CCed) seems to
-> have reported a similar issue though with a different SHA1 since he
-> noticed on yesterday's -next.
+On Fri, Apr 18, 2025 at 7:59=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> From: Steven Rostedt <rostedt@goodmis.org>
+>
+> Most tracepoints in the kernel are created with TRACE_EVENT(). The
+> TRACE_EVENT() macro (and DECLARE_EVENT_CLASS() and DEFINE_EVENT() where i=
+n
+> reality, TRACE_EVENT() is just a helper macro that calls those other two
+> macros), will create not only a tracepoint (the function trace_<event>()
+> used in the kernel), it also exposes the tracepoint to user space along
+> with defining what fields will be saved by that tracepoint.
+>
+> There are a few places that tracepoints are created in the kernel that ar=
+e
+> not exposed to userspace via tracefs. They can only be accessed from code
+> within the kernel. These tracepoints are created with DEFINE_TRACE()
 
-Thank you for the confirmation of Bert's and Srikanth's reports!
+The part about accessing only from code within the kernel isn't true.
+Can we please drop that? BPF program can be attached to these bare
+tracepoints just fine without tracefs (so-called BPF raw tracepoint
+program types).
 
-They reported that the replacing the offending commit with the following
-patch fixed things up:
+But I don't have an objection to the change itself, given all of them
+currently do have _tp suffix except a few that we have in BPF
+selftests's module, just as Jiri mentioned.
 
-------------------------------------------------------------------------
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 04f16b8e24575..13ed636642270 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -35,7 +35,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	unsigned long flags;
- 	int ret;
- 
--	if (!interval || !burst)
-+	if (interval <= 0 || burst <= 0)
- 		return 1;
- 
- 	/*
+>
+> Most of these tracepoints end with "_tp". This is useful as when the
+> developer sees that, they know that the tracepoint is for in-kernel only
+> and is not exposed to user space.
+>
+> Instead of making this only a process to add "_tp", enforce it by making
+> the DECLARE_TRACE() append the "_tp" suffix to the tracepoint. This
+> requires adding DECLARE_TRACE_EVENT() macros for the TRACE_EVENT() macro
+> to use that keeps the original name.
+>
+> Link: https://lore.kernel.org/all/20250418083351.20a60e64@gandalf.local.h=
+ome/
+>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  include/linux/tracepoint.h   | 38 ++++++++++++++++++++++++------------
+>  include/trace/bpf_probe.h    |  4 ++--
+>  include/trace/define_trace.h | 17 +++++++++++++++-
+>  include/trace/events/sched.h | 30 ++++++++++++++--------------
+>  include/trace/events/tcp.h   |  2 +-
+>  5 files changed, 60 insertions(+), 31 deletions(-)
+>
 
-------------------------------------------------------------------------
-
-If that fixes things for you, could you also please try the following,
-also replacing that same commit?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 04f16b8e24575..8f6c54f719ef2 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -35,8 +35,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	unsigned long flags;
- 	int ret;
- 
--	if (!interval || !burst)
-+	if (interval <= 0 || burst <= 0) {
-+		ret = burst > 0;
- 		return 1;
-+	}
- 
- 	/*
- 	 * If we contend on this state's lock then just check if
+[...]
 
