@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-616553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609AEA98F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2139A99001
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5D27AF2A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9970E1888D14
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E993528D85E;
-	Wed, 23 Apr 2025 15:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B532284B37;
+	Wed, 23 Apr 2025 15:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m30e9pEf"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rs5ps9jj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CD128D83D;
-	Wed, 23 Apr 2025 15:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEFE280CC8;
+	Wed, 23 Apr 2025 15:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420775; cv=none; b=IBdFr9jjxM/Ls239u8xlKULu0uenvonaIZtqzsG22wFDFo8xAKcl7JExGcqEcLeqhJD1DMyY10opyIb4hoft2j7lR+8YfB5nYJywIIQyye1cSgfkX0Z43USNFDaYSIj68ej6jWWhdkwiQXY6wNRTMGiWX3PbxwDjUiX0MROyCbs=
+	t=1745420586; cv=none; b=ilmSy5KJuV5nHu0cP/zqik5ob3W9sYFqJF1hvwM/tlHi+NG5wuktUTLQil/H+XWOC/MvGrvuiBImoXXyUWtY8Q6ZzW6iRSBZBLhZg4VS9fU/Po27+xzwOrPoj9DpV8hFF+C10EdI00RO9xsJZxCNoN/kffeC780/Ksr4+tCYmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420775; c=relaxed/simple;
-	bh=MKfNl/vKy4qc7YFj2UqPbycwbIBF6/vxIf1HgVczXlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cqoOd1FqOPw7BAwFGgAN+dqUoqEpOuh2QaApQi8eMriIrQyModiz5BCO2a6DeFGcVD+o6pWjkaqWCU2iOunNkyeSNPCjNCrEH32Wq+1Y0KP7v/fuvSZOxPAmpiotnMkq4Td0bras8NDWLK0K36AyLinfZp6bkxgJ8R4cmSlYRkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m30e9pEf; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fd89d036so81611795ad.1;
-        Wed, 23 Apr 2025 08:06:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745420773; x=1746025573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GTcgf5wGkRP/G2TvF4vXSu8ZLKj7vSHNlv5neOpUl0A=;
-        b=m30e9pEfdZT33SCL7jl4wzzCrAcQeIXtcipQ3GM09ScR7NE3wmvR0ssJmfslXoxbfa
-         TaqClrKpIBKhYro/RZuh4NrCwI30vkTUVZE8C13poazrxkbCEK3ZItWpEvatn9TbCc1j
-         h1qDc3B/4XmtDmOnJWpzTOLmyxMG+MTpB+vW56zJTBXC3kF5VnSielLa3TRA96Li/r2q
-         QCqDU3Qwo5kOPlc5TbEXIB4Dyp2NH4o1UpEHrcOGZFq6ksoRFocM0AbkufkrSmH/x5Ne
-         L/+3x7kdYEMSqbEEQzIazRY77wpgknSNOrHIZPS6OyGTQ4J9BOk4C9MUrJafV+agU9Xa
-         zhcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745420773; x=1746025573;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GTcgf5wGkRP/G2TvF4vXSu8ZLKj7vSHNlv5neOpUl0A=;
-        b=b0ou+WtKqZSUMVgL6WCHS+M+KjQfz9YXfoPKJ56GE5Gx7iYemwugFw+kQcb4vDUYxx
-         u6djzh8WlB1QpsimCvcOKXtemX0QL6eOPsFxpjn3N67/anuzzA65XOs2mONuypvsFl2V
-         X7bCsCnMF2uGOxCkvKQhKVhnBuZbyVNj6fggG57THW9YSB7DF7nDV1HIRSfuqlwyVHAy
-         3yXLF6WlQgERIUuI2RY+lQgvQC/0JFkU0S39WWenDUw+gcM2TTRVl/KsplkKjEbQPMDq
-         vFVRfKmown3C+4mr+qFwhzWBqUd4FZ3/1TAKv1vSYt7nyZ3tnvIPP8S7UAEV/6N0kMEF
-         msMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnGfrbRiupbsuEcUpLxcyBE0TAGMOtkkYMjs8us97d+a18+PjzZAYaWu7H2HBnWRROwjYXz3Si2FoF/NU=@vger.kernel.org, AJvYcCXnnuG97lndTgZM1BCdJkPbnXldrVXcxwBCr0hH7f+fl7BtNJ/JiuhYO/8gf5is0V8gsdM6iYM6OqkcbC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdup+pEM84LTdRQRDp3Lvk3HfJpFd942TNXHBBU/qPfjHeq9u0
-	/C/+g9hf3l/W72htfspZBQnHPazYTvxeYzTt1yZwnLzLzPOGSre3
-X-Gm-Gg: ASbGncuZ0Kd37Gm/SLrPwaC0QZVKEMye4AnaUP5GXiZwzChVuO6zjnYQ4uh9rPIC+Mv
-	VWbFjpt8gU2uAjs/vsgOtfpS7TToW5ohxjBjL/0cd8n1Fgjc4J55zeTmyyRAaT9m5T+6W2L2bCj
-	2Uuvum0VrOSFb+knzsN9cg5ONEeW8Mwhdze/dfUY4jvv6NVnF5xpUZm70hC6P3wXwvzmLoETzjI
-	uy1aNws4Gj2JoGCDJKJn2qWnQXYa2hzD8KkTTnMBXXNlvGnCXVbqH5Lq8fLUCPNVuD/76BaWkS4
-	1RZMUzrBpSE1MDg58sDn30G9cWTO2tcvTQY7CqwxfeRfQVudv2Y0qFR38z6eS/s=
-X-Google-Smtp-Source: AGHT+IEZYUncIM0+Gq7FgAxhpIWNnNJTQ1hwm7juNuxoQt6bm/+vxQDEWXqXzxe7i+iQELNVfASfnQ==
-X-Received: by 2002:a17:903:1b25:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22c5357f266mr285717295ad.14.1745420773250;
-        Wed, 23 Apr 2025 08:06:13 -0700 (PDT)
-Received: from tech-Alienware-m15-R6.. ([223.185.129.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50ed12cdsm105519825ad.204.2025.04.23.08.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 08:06:12 -0700 (PDT)
-From: Sunny Patel <nueralspacetech@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sunny Patel <nueralspacetech@gmail.com>
-Subject: [PATCH] media: i2c: ov13858: Enable clock frequency macro
-Date: Wed, 23 Apr 2025 20:32:49 +0530
-Message-ID: <20250423150606.26917-1-nueralspacetech@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <Z_5K9Kz2i8TouhC4@kekkonen.localdomain>
-References: <Z_5K9Kz2i8TouhC4@kekkonen.localdomain>
+	s=arc-20240116; t=1745420586; c=relaxed/simple;
+	bh=gz5NPn6ncGhKoKG7PwCxbRreNA35vwbFRsi4H4w0xJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbQznlIHUUlOEj1JUz9raxEtrBaM2ww0eJFzSXr/rW5AHx4hr7t76ULzoZpnYxZn/oM1VNBddtSQ5GpD2nLn3tpSY94R5PEKguK29x7VEe2Qq1y96eV2FsOuyyH6LocDvHxI7Z2AO7hnXzWMAyk4e0epxX9E+L9btK9gafYGMFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rs5ps9jj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE447C4CEE2;
+	Wed, 23 Apr 2025 15:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745420586;
+	bh=gz5NPn6ncGhKoKG7PwCxbRreNA35vwbFRsi4H4w0xJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rs5ps9jjqKqL/4uyBfL+df57g0sl4VdfJoO/9kkFxCOMQJgyE/Dr9++jaScNT4tzV
+	 d7S5naC18jgE9OTQ/orroVkWBH6p9paUB5FS1i1Mrxtq4iCPEcRoyy63wU3EqBbJfG
+	 6RgFkztGZSeCUZoLHP+1ixBzOX3ccN0bJ2DtUpXz3GTMTK+LUtnAIE/EjfJE3pd/dq
+	 qGvuKmcWMCCjEf+QDqB0UiQCX4EtZ9Ivj1g8lBQben2VgI2BJdn4vodC5EGr3QiR8g
+	 7CSA82mnHzQKjf0yYx0YasFMMHKUKfTNH+e7mBaSyHdGTZQ+Ju+kvty33dx1j+PCLB
+	 yRVfZ94Gy74WA==
+Date: Wed, 23 Apr 2025 17:02:58 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 13/16] gpu: nova-core: Add support for VBIOS ucode
+ extraction for boot
+Message-ID: <aAkBIvfTkKVNbdnm@pollux>
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-13-ecd1cca23963@nvidia.com>
+ <aAjz2CYTsAhidiEU@pollux>
+ <88937e2b-6950-4c9d-8f02-50f9b12c7376@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88937e2b-6950-4c9d-8f02-50f9b12c7376@nvidia.com>
 
-Define a macro `OV13858_EXTCLK` for the clock frequency (19.2 MHz)
-and use it instead of the hardcoded value in the probe function.
+On Wed, Apr 23, 2025 at 10:52:42AM -0400, Joel Fernandes wrote:
+> Hello, Danilo,
+> Thanks for all the feedback. Due to the volume of feedback, I will respond
+> incrementally in multiple emails so we can discuss as we go - hope that's Ok but
+> let me know if that is annoying.
 
-Signed-off-by: Sunny Patel <nueralspacetech@gmail.com>
+That's perfectly fine, whatever works best for you. :)
 
-Thanks for the feedback. I have revised the commit message to use
-correct terminology. And please discard the privious mail as it doesn't
-have correct patch file.
+> On 4/23/2025 10:06 AM, Danilo Krummrich wrote:
+> 
+> >> +impl Vbios {
+> >> +    /// Read bytes from the ROM at the current end of the data vector
+> >> +    fn read_more(bar0: &Devres<Bar0>, data: &mut KVec<u8>, len: usize) -> Result {
+> >> +        let current_len = data.len();
+> >> +        let start = ROM_OFFSET + current_len;
+> >> +
+> >> +        // Ensure length is a multiple of 4 for 32-bit reads
+> >> +        if len % core::mem::size_of::<u32>() != 0 {
+> >> +            pr_err!("VBIOS read length {} is not a multiple of 4\n", len);
+> > 
+> > Please don't use any of the pr_*() print macros within a driver, use the dev_*()
+> > ones instead.
+> 
+> Ok I'll switch to this. One slight complication is I've to retrieve the 'dev'
+> from the Bar0 and pass that along, but that should be doable.
 
----
- drivers/media/i2c/ov13858.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+You can also pass the pci::Device reference to VBios::probe() directly.
 
-diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
-index 7a3fc1d28514..a1242a90cdc9 100644
---- a/drivers/media/i2c/ov13858.c
-+++ b/drivers/media/i2c/ov13858.c
-@@ -21,6 +21,8 @@
- #define OV13858_REG_SOFTWARE_RST	0x0103
- #define OV13858_SOFTWARE_RST		0x01
- 
-+#define OV13858_MCLK				19200000
-+
- /* PLL1 generates PCLK and MIPI_PHY_CLK */
- #define OV13858_REG_PLL1_CTRL_0		0x0300
- #define OV13858_REG_PLL1_CTRL_1		0x0301
-@@ -1664,7 +1666,7 @@ static int ov13858_probe(struct i2c_client *client)
- 	u32 val = 0;
- 
- 	device_property_read_u32(&client->dev, "clock-frequency", &val);
--	if (val != 19200000)
-+	if (val != OV13858_MCLK)
- 		return -EINVAL;
- 
- 	ov13858 = devm_kzalloc(&client->dev, sizeof(*ov13858), GFP_KERNEL);
--- 
-2.43.0
+> 
+> > 
+> >> +            return Err(EINVAL);
+> >> +        }
+> >> +
+> >> +        // Allocate and zero-initialize the required memory
+> > 
+> > That's obvious from the code, if you feel this needs a comment, better explain
+> > what we need it for, why zero-initialize, etc.
+> 
+> Sure, actually the extends_with() is a performance optimization as we want to do
+> only a single allocation and then fill in the allocated data. It has nothing to
+> do with 0-initializing per-se. I will adjust the comment, but:
+> 
+> This code...
+> 
+> >> +        data.extend_with(len, 0, GFP_KERNEL)?;
+> >> +        with_bar!(?bar0, |bar0_ref| {
+> >> +            let dst = &mut data[current_len..current_len + len];
+> >> +            for (idx, chunk) in dst
+> >> +                .chunks_exact_mut(core::mem::size_of::<u32>())
+> >> +                .enumerate()
+> >> +            {
+> >> +                let addr = start + (idx * core::mem::size_of::<u32>());
+> >> +                // Convert the u32 to a 4 byte array. We use the .to_ne_bytes()
+> >> +                // method out of convenience to convert the 32-bit integer as it
+> >> +                // is in memory into a byte array without any endianness
+> >> +                // conversion or byte-swapping.
+> >> +                chunk.copy_from_slice(&bar0_ref.try_read32(addr)?.to_ne_bytes());
+> >> +            }
+> >> +            Ok(())
+> >> +        })?;
+> >> +
+> >> +        Ok(())
+> >> +    }
+> ..actually initially was:
+> 
+> +        with_bar!(self.bar0, |bar0| {
+> +            // Get current length
+> +            let current_len = self.data.len();
+> +
+> +            // Read ROM data bytes push directly to vector
+> +            for i in 0..bytes as usize {
+> +                // Read byte from the VBIOS ROM and push it to the data vector
+> +                let rom_addr = ROM_OFFSET + current_len + i;
+> +                let byte = bar0.try_readb(rom_addr)?;
+> +                self.data.push(byte, GFP_KERNEL)?;
+> 
+> Where this bit could result in a lot of allocation.
+> 
+> There was an unsafe() way of not having to do this but we settled with
+> extends_with().
+> 
+> Thoughts?
 
+If I understand you correctly, you just want to make sure that subsequent push()
+calls don't re-allocate? If so, you can just use reserve() [1] and keep the
+subsequent push() calls.
+
+[1] https://rust.docs.kernel.org/kernel/alloc/kvec/struct.Vec.html#method.reserve
 
