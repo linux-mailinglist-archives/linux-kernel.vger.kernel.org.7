@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-616537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C32BA98FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:12:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93190A98FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5141B83FDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077728E2D78
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC8028C5A0;
-	Wed, 23 Apr 2025 15:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4243528E601;
+	Wed, 23 Apr 2025 15:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9VTdJx9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aPiHloiK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouW/wBxa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7DA28469B;
-	Wed, 23 Apr 2025 15:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6BC26A082;
+	Wed, 23 Apr 2025 15:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420508; cv=none; b=lYw49MPbIwiNhfynNMM23cfBpQuGbhb1z2KZp6xpDbiLTURIOhq+bnBi3B+GPdtXBXvpHjGLY/gPSMtbXPavaURna7NqkaYtk8yNASKcfCRU01izyaOkkaeZqhTlJQnb1W4LS77S9yOwl+rywa3XJnc1wqtNUcNMPc8pNzA0SvM=
+	t=1745420517; cv=none; b=qB7YNcUXXJywqXZbtM7Dtlw2ryXuqVdztym6Xnffok4pSNHL/As2a6elFkmmI8Do7T1Xt1m1NnC9Ll8inATWi81sl5W8X22oyMgymPQ3k95JY6IKjZ9nxjjk1tQsLTnm2UuSmhoRW+voKDpzLkB9nCk5eTn+8b71t/OWBGIR078=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420508; c=relaxed/simple;
-	bh=vxoT92of/rlazXwaV9YXlg1WYXN/+U03gMMmCD+41y8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C64vwQ1TIk8v+MOYqH2qUjacqrwa8uTthZSTDZjbMu4QjClqcawh/46WD06oOg4j1xmuNG/LeNgm94Eh6L1pjt962Zxa42F6UWkgc3sI0W3qArFKyTDMsFqu+AvbuKlGEWvPaYy1Y8ovtlDHzGajwsXdZOharLzGJpz5Nd4JHm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9VTdJx9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aPiHloiK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745420505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKJi5obWY5ETMlVCxwTzt0WlZX9v+939EY9af8zla/8=;
-	b=f9VTdJx9wewfT1biawm7CSSNtiIXwWVlKbF3na10U54NbCBV+u8kI+Rmny2iwA3Kdl0uWP
-	5cMfIzxUx9jNkUFOAUFcWP9tEXGjeW8qfaUm0BdsHXpKhLx0W4Aju4VmvsnSf/cDShdUU+
-	fYwnGzNQAiyppNkuuaLjOJG3JL2cIRPNchBeoVlF6vIjtmwdkyKna+7iUJc4XXi3wkGduL
-	IG5t+RP6IqqJHoQgmz+v4gFhBI+0xM9HKkwLY8z9s12hfQdBN08adHOHKY1hCQCPZQNiB1
-	RsqPoCeh+KX2aedqbsohmqy4XNzjKeGCTX+skNF4XxE4cODU97XqmCAWm9lv4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745420505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKJi5obWY5ETMlVCxwTzt0WlZX9v+939EY9af8zla/8=;
-	b=aPiHloiKog+oNTX5cL0sR44zKc7UgtstArQr8TJgYBhfAgzVbU0lpmvwn9y83TfuIBc/MF
-	x0rABOUTWaNxp/CA==
-Date: Wed, 23 Apr 2025 17:01:41 +0200
-Subject: [PATCH 11/15] tools/nolibc: add difftime()
+	s=arc-20240116; t=1745420517; c=relaxed/simple;
+	bh=tQ5WuliRJvwcD2ksGop6yO+1sA09407P6BEmUGUWq6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UkLxneXKuHLB7SojBonmVl6plW12QuX/dcv8yRI6C4yWsEqFGF4T4d6dU1kjoSXKAZzGcZodXnTi6G6drm+x8RaQLpqNCi/Uh9tUOD0TiqdYbyEaYv1wXhN8ffGxBjCIfPSnS2g+xUNBAl0P/35AbcuSOc8Qh7TQM9zx50n30+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouW/wBxa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2566FC4CEE3;
+	Wed, 23 Apr 2025 15:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745420515;
+	bh=tQ5WuliRJvwcD2ksGop6yO+1sA09407P6BEmUGUWq6k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ouW/wBxaeKMwR+BAXHBjp5BVlj55baRrrgszNZrGVrX/kM6VVON224jd5YIUIEHgg
+	 7jmVxxS0JK7d9CrLm2vgvIqapsdckKNdSOXwcsVOWiTZYdVjIARRgS59otjCgHtEaz
+	 zRJZD6TeZwHsfFq46GPZoh6O5eMeuzCJ5/X4Of8LyYsJmxK67jhRoMWcU5JrGOFCv8
+	 Z1geBlk/c2zmSlcaB9rMbbOImOuoER6okmb3Lb1LeXMgVu5cYNRw+ogLypNaW5Lo5F
+	 +F24d/CFcsQyrINp2P6JZpX+4lI+5Eo3AmJELd3IDlBh03jDJMi2f7GeYcn/rU6QIr
+	 YqNr0trcKyBuw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bf1d48843so56600271fa.2;
+        Wed, 23 Apr 2025 08:01:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhKO8b8tu6q3gOa36jaBQ319Zc43E8T7HtDQOMujMwecGqTeJqCQ6fkjr4msMboqGCLjUSFHqInQaEOoBSWsAGaHQ=@vger.kernel.org, AJvYcCVwle+dMfq2Zo3H25AHTnOvC5n7koUV4B0PWa1S5KF1KkSwyBV/VTKLbS/aMNTqxNlVDLPU35465xcNG5eY@vger.kernel.org, AJvYcCVxjWgVqnmRjsz7tMKWhBzphAfeaLHceYLtNa1VamWHq7bxiU4WjBYgB6JwiA5qdexHoZ6MnIi4oYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwcYDzkxMJztmEoPzrhnCzbaSRY1Dnmnq+K5q6FYSrYoV0v1PW
+	mPG6KQf5m1pg7iCwlZdEGpxELIJ5MDAVs2MtffKGxY5rkmUfRX9X9BddhiWibpEdhgG/McSPBTF
+	1JwBg6Rt6W33S9791UwYNFbRtOy4=
+X-Google-Smtp-Source: AGHT+IG2CDF+UodCIQHaafpJRyR/ccpNZb7CjOiGJ6oVpwDftbX6t5n1A8Nk9bWvGYjTETNxukRBteMmCOyyzvR34NQ=
+X-Received: by 2002:a05:651c:1592:b0:30b:ed8c:b1e7 with SMTP id
+ 38308e7fff4ca-310904f0efbmr53117761fa.18.1745420513361; Wed, 23 Apr 2025
+ 08:01:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250423-nolibc-misc-v1-11-a925bf40297b@linutronix.de>
-References: <20250423-nolibc-misc-v1-0-a925bf40297b@linutronix.de>
-In-Reply-To: <20250423-nolibc-misc-v1-0-a925bf40297b@linutronix.de>
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745420497; l=1567;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=vxoT92of/rlazXwaV9YXlg1WYXN/+U03gMMmCD+41y8=;
- b=0JCWS5hFZRx4Av49TwqS3Jo6OqH6tDeA4kYh2G+y46p1j2JB3a1TNbKQgh20tVRfYF+yLAVV8
- S/S/CDpfMx2Da3xrBIQq+JQ7ZILMdWXGysklEkDP2wl7IY1eQdIV9lC
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+References: <20250422210510.600354-2-ardb+git@google.com> <174539448176.31282.2929835259793717594.tip-bot2@tip-bot2>
+ <odoambb32hnupncbqfisrlqih2b2ggthhebcrg42e5fg25uxol@xe5veqq52xif>
+In-Reply-To: <odoambb32hnupncbqfisrlqih2b2ggthhebcrg42e5fg25uxol@xe5veqq52xif>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 23 Apr 2025 17:01:42 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFpE=P0_a3fTAnb7qQmXLt19dCtuEcd5U8xwYzAcO=ufQ@mail.gmail.com>
+X-Gm-Features: ATxdqUEFwtCb4nqIi7NO0Py2cAxP4hjMqkFdrhvexGPyj24fTTWcg1ZgiO_bY9E
+Message-ID: <CAMj1kXFpE=P0_a3fTAnb7qQmXLt19dCtuEcd5U8xwYzAcO=ufQ@mail.gmail.com>
+Subject: Re: [tip: x86/boot] x86/boot: Disable jump tables in PIC code
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: tip-bot2 for Ard Biesheuvel <tip-bot2@linutronix.de>, linux-tip-commits@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, linux-efi@vger.kernel.org, 
+	x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This is used in various selftests and will be handy when integrating
-those with nolibc.
+On Wed, 23 Apr 2025 at 16:55, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> On Wed, Apr 23, 2025 at 07:48:01AM +0000, tip-bot2 for Ard Biesheuvel wrote:
+> > The following commit has been merged into the x86/boot branch of tip:
+> >
+> > Commit-ID:     121c335b36e02d6aefb72501186e060474fdf33c
+> > Gitweb:        https://git.kernel.org/tip/121c335b36e02d6aefb72501186e060474fdf33c
+> > Author:        Ard Biesheuvel <ardb@kernel.org>
+> > AuthorDate:    Tue, 22 Apr 2025 23:05:11 +02:00
+> > Committer:     Ingo Molnar <mingo@kernel.org>
+> > CommitterDate: Wed, 23 Apr 2025 09:30:57 +02:00
+> >
+> > x86/boot: Disable jump tables in PIC code
+> >
+> > objtool already struggles to identify jump tables correctly in non-PIC
+> > code, where the idiom is something like
+> >
+> >   jmpq  *table(,%idx,8)
+> >
+> > and the table is a list of absolute addresses of jump targets.
+> >
+> > When using -fPIC, both the table reference as well as the jump targets
+> > are emitted in a RIP-relative manner, resulting in something like
+> >
+> >   leaq    table(%rip), %tbl
+> >   movslq  (%tbl,%idx,4), %offset
+> >   addq    %offset, %tbl
+> >   jmpq    *%tbl
+> >
+> > and the table is a list of offsets of the jump targets relative to the
+> > start of the entire table.
+> >
+> > Considering that this sequence of instructions can be interleaved with
+> > other instructions that have nothing to do with the jump table in
+> > question, it is extremely difficult to infer the control flow by
+> > deriving the jump targets from the indirect jump, the location of the
+> > table and the relative offsets it contains.
+> >
+> > So let's not bother and disable jump tables for code built with -fPIC
+> > under arch/x86/boot/startup.
+>
+> Hm, does objtool even run on boot code?
+>
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/include/nolibc/time.h                  | 7 +++++++
- tools/testing/selftests/nolibc/nolibc-test.c | 1 +
- 2 files changed, 8 insertions(+)
-
-diff --git a/tools/include/nolibc/time.h b/tools/include/nolibc/time.h
-index 28a1549adb14e2087fa8fbdb7e9c35e1c3f22c2a..760133c574ece97165e3bba5616a387deaf07aff 100644
---- a/tools/include/nolibc/time.h
-+++ b/tools/include/nolibc/time.h
-@@ -105,6 +105,13 @@ int clock_settime(clockid_t clockid, struct timespec *tp)
- }
- 
- 
-+static __inline__
-+double difftime(time_t time1, time_t time2)
-+{
-+	return time1 - time2;
-+}
-+
-+
- static __attribute__((unused))
- time_t time(time_t *tptr)
- {
-diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-index aed71de4b4f3dd1f183c7fc25e5a5cee466600ed..fd8bab42e75157967658690005bc9142360fc135 100644
---- a/tools/testing/selftests/nolibc/nolibc-test.c
-+++ b/tools/testing/selftests/nolibc/nolibc-test.c
-@@ -1423,6 +1423,7 @@ int run_stdlib(int min, int max)
- 		CASE_TEST(toupper_noop);            EXPECT_EQ(1, toupper('A'), 'A'); break;
- 		CASE_TEST(abs);                     EXPECT_EQ(1, abs(-10), 10); break;
- 		CASE_TEST(abs_noop);                EXPECT_EQ(1, abs(10), 10); break;
-+		CASE_TEST(difftime);                EXPECT_EQ(1, difftime(200., 100.), 100.); break;
- 
- 		case __LINE__:
- 			return ret; /* must be last */
-
--- 
-2.49.0
-
+This is about startup code, not boot code. This is code that is part
+of vmlinux, but runs from a different mapping of memory than the one
+the linker assumes, and so it needs to be built with -fPIC to
+discourage the compiler and linker from inserting symbol references
+via the kernel virtual mapping, which may not be up yet when this code
+runs.
 
