@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-616631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B9EA99432
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C71A9942E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D969A088B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619639A45F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F492989AA;
-	Wed, 23 Apr 2025 15:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ncaZrwL5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AD81A08A4;
-	Wed, 23 Apr 2025 15:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CE52989A3;
+	Wed, 23 Apr 2025 15:32:53 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D36528A1F9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422432; cv=none; b=fH9v9InmG+rwVHTw0X4oTn8noUqydtHVOfsFLf5wfQdM6AVeRoE1cz9zmvDkd7QbW6S6dVGQxNhc+6DBdTmxP/gk0ZggkUO3FctBrxEaFncXc+Odu2u081dI4QO80yxl5s4OYERnTjfGF0Y1ZQLi7Wuoa3PC2t2COuQ0Cmj6c80=
+	t=1745422372; cv=none; b=XGmxdKG/TNnFeXPBIOeSucnIke1gzrxRJJhkEW1b0GwliduLTS5C9xAbw20KesINfNrzDuE3/hMurXGZGOGPtNKVA0eR5I82LT1oVU6FXoX/lya+4dm84mZP2MchbkQorbGtB3a8s6iaj9u5iCnLxXWNGWCf3UWSjhnB0DR4zZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422432; c=relaxed/simple;
-	bh=HKLmHV0ZtG/a4Tkd0yHHJS/176AZM+g1/tCMQTabZzk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P3ZRLhlUo+Nnc6OwYmYzW5OctZk4oapgkshkkjmZeBHwm7SHaMgeZz3ZxfZuBsVYrY7LsctJWsoGb2MZe6hhEXpcwB5luwgfFUHjfT9NPx9GOZtt4a3WOOYKiX2osfwONU9CFeh/19dLJ+2TY6paGPsnYopZm0cyigruCQsPTZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ncaZrwL5; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EY9gG
-	G+ynYNdnB1j3/6lY26zStHwpPSt9Msjmy1Whvk=; b=ncaZrwL59hzIp0+ge+E0O
-	21ImkguoI3jiNwf6M03zCOVeA1Qr2/j03j49kF53eQc5Y95yKEN0tyND4Nso5iwW
-	O6WaIetY+zY1U4VcCxKcPmvaNkSb+xWD7BzvwQqpR2bEnrD4lOTfidVZ2giP6dSW
-	uInkZC3qjQJfWEHQVvc7ko=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCnosAACAlogeYfCA--.9428S3;
-	Wed, 23 Apr 2025 23:32:19 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	heiko@sntech.de
-Cc: manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	jingoohan1@gmail.com,
-	shawn.lin@rock-chips.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Hans Zhang <18255117159@163.com>,
-	Niklas Cassel <cassel@kernel.org>
-Subject: [PATCH v3 1/3] PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
-Date: Wed, 23 Apr 2025 23:32:12 +0800
-Message-Id: <20250423153214.16405-2-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250423153214.16405-1-18255117159@163.com>
-References: <20250423153214.16405-1-18255117159@163.com>
+	s=arc-20240116; t=1745422372; c=relaxed/simple;
+	bh=b9MCldmDA/h5FP9ANGVDKiW5DFZ9EgTsuv73U19O+pc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lDwtSVlQL39oSWJsid7KkCwHro28yqU6gF9sqKOBOgAdPxH7BpkFwpKizN190GGDtWaKdAhcbtgJ1T9nAcGtH3lEtd03mzrgRPJRizg5jeaqYupit8TDGBTJqY57qI/dM1b+1DmiQatVmsQwZdNEbBQajdGG9Gb3mQS4MnLLUMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d817b17661so308805ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:32:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745422370; x=1746027170;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kkd362/q2z1UAxcAa/GgKrwz2Xzk1H/o+cvqHhRxKG0=;
+        b=LzgR/lM9xi5FmG82x1Yc66EbFVvyAAfoN1GXYaoHcyX9y9ggh5lRpNPebrL7HwszDx
+         PZHCJs69Np8aco6SH56cNNOvkMwjmPuNEKf08eGKlgiwBTV0a8SqNr0zf+xSSOc8ThAZ
+         9OWyaE/0dNVeutob0G/FXiJSA4LjdJ92vHu0zo6/st+kXSXAsD0KGSRDJGZ9+N9WjLlD
+         5xhQGk3vY5cPA3r+OUTLQPdab3osw+Od9GEsmc776MH6DBsgyV3MrW4UmTRJTJOBgXQn
+         dW9R4H+DQFDfo0Wt+/oWBKbSii5lUGCzYjtyFvKXaibCdJKAj6BuXeL6Q7Hhx3wthAnt
+         94KA==
+X-Gm-Message-State: AOJu0YzRprqlChAe3I5iJg+pHQk2aY/1xF5YirDWpiwzlNMVGESabXFs
+	OmFa8PoGDUaHxtQM2niuJ8yX1QTS0oQXFLf27QHOMmxmfXiF81pZ86ShWFZ5EPevZmiCLIKfTc2
+	Xgx9zMqkJOBpyzsyAbn0mVSr3K02Ynb+liKg95wSiY8mjUA/6QYBMaPo=
+X-Google-Smtp-Source: AGHT+IEpuxwqtncIh+k1KwUA43O8xx/1auyWPrMQ3YgA9ywlHrLlTXY2jvxl68wp81V0uMEC/a7c8FYpEc4NyWE3oSlEyDJG6TWH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnosAACAlogeYfCA--.9428S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWruw1kCw48Gw15WrykXrW8WFg_yoWkXrXE9r
-	yUuF4xXryDKrWSk392yw4xZFn0yas7ur1xGFZYgFsIva47Kr4rXry8ZrWrX3WDGr43JFyf
-	t34vyF4ruayxtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_66wJUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxg4o2gJAM7G6gAAsb
+X-Received: by 2002:a05:6e02:250f:b0:3d6:cbed:3305 with SMTP id
+ e9e14a558f8ab-3d88ed7c41dmr173161065ab.10.1745422370199; Wed, 23 Apr 2025
+ 08:32:50 -0700 (PDT)
+Date: Wed, 23 Apr 2025 08:32:50 -0700
+In-Reply-To: <000000000000736bd406151001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68090822.050a0220.dd94f.01f1.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [crypto?] KMSAN: uninit-value in
+ __crc32c_le_base (4)
+From: syzbot <syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The PCIE_CLIENT_GENERAL_DEBUG register offset is defined but never
-used in the driver. Its presence adds noise to the register map and
-may mislead future developers.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Remove this redundant definition to keep the register list minimal
-and aligned with actual hardware usage.
+***
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in __crc32c_le_base (4)
+Author: richard120310@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 614da38e2f7a
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 ---
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/bcachefs/btree_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-index 0e0c09bafd63..fd5827bbfae3 100644
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -54,7 +54,6 @@
- #define PCIE_CLIENT_GENERAL_CONTROL	0x0
- #define PCIE_CLIENT_INTR_STATUS_LEGACY	0x8
- #define PCIE_CLIENT_INTR_MASK_LEGACY	0x1c
--#define PCIE_CLIENT_GENERAL_DEBUG	0x104
- #define PCIE_CLIENT_HOT_RESET_CTRL	0x180
- #define PCIE_CLIENT_LTSSM_STATUS	0x300
- #define PCIE_LTSSM_ENABLE_ENHANCE	BIT(4)
+diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+index debb0edc3455..dc00c5273ffe 100644
+--- a/fs/bcachefs/btree_io.c
++++ b/fs/bcachefs/btree_io.c
+@@ -115,7 +115,7 @@ static void *btree_bounce_alloc(struct bch_fs *c, size_t size,
+ 	BUG_ON(size > c->opts.btree_node_size);
+ 
+ 	*used_mempool = false;
+-	p = kvmalloc(size, __GFP_NOWARN|GFP_NOWAIT);
++	p = kvzalloc(size, __GFP_NOWARN|GFP_NOWAIT);
+ 	if (!p) {
+ 		*used_mempool = true;
+ 		p = mempool_alloc(&c->btree_bounce_pool, GFP_NOFS);
 -- 
-2.25.1
+2.43.0
 
 
