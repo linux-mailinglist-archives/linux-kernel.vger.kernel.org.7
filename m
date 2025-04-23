@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-615580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A0CA97F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71F8A97F52
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D263AA0C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2E618978EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639A926739A;
-	Wed, 23 Apr 2025 06:48:53 +0000 (UTC)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D959F267385;
+	Wed, 23 Apr 2025 06:34:32 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC3B3398B;
-	Wed, 23 Apr 2025 06:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073C413C3F6;
+	Wed, 23 Apr 2025 06:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745390933; cv=none; b=EnpmclyB/kmrH8YPAX+EcBsv7eof8XKirw6pxgu4sDxT09HxGRnuexSG1raU4Pte/+z93C5Wnq+nhRb2F1fYav4ViVFJoYE2qmsNKpHQAphCzkmGMw1kvJiFTV1YJpwlI9imKmJdCo1tl+IaM829TX1e0txnlK0eMrQu4shLtgk=
+	t=1745390072; cv=none; b=gBbeBhIjYfMRGTl/9ZGbSTb2QteWCQ9fB4y1EFZf3XnukSNsaNaS1zWTkCtmmgezwa71OCxP0lOkD+pprZ6wgvF4vto4F7vPb6fWYXpDf7tldG9UQAAhqH6VtxeYtr/fUaomoPplqnkkaASgL6PJsnp0I7aB1eyGeIAivyFY8TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745390933; c=relaxed/simple;
-	bh=rz3h6aO1iqe6HjpBhPgGdm/q1GWce7TmX00nfd6SlpA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EIAH/yAbjjNhnIjyYx5OBfBOXRzJxs6A5kn9mcYt7V3gSv0ME2WcsL5quB0z2pZFK3Kj4iSwntZ9k9ukfbMy4NfbDGfltvjsx77tXDMGyNo1cbIntEN4vlIgSYBIx82g14hx2NyXpEKvk9H5Ob+gy9Scrj7Jtq0AXWC+JiqHGuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpsz6t1745390836t9b6dfae2
-X-QQ-Originating-IP: d5OllYoDBWfSWoV0vu3d6MtEzomJiKDiaIT5EPH1lH4=
-Received: from [127.0.0.1] ( [117.144.82.47])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 23 Apr 2025 14:47:12 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5299619483516575992
-Message-ID: <98F1324C86982D2B+13f97453-f1ec-4c08-977b-c1bd9a68d409@radxa.com>
-Date: Wed, 23 Apr 2025 14:47:12 +0800
+	s=arc-20240116; t=1745390072; c=relaxed/simple;
+	bh=Qlt8fOU7S3qN3z2CYEB2iLHJtb0RRgm0RQ9Hv1XYFIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OOzGgsSpvuloulz2VwGDlld4LReFktBZWv6PPjmyPYqfUUkm9VHx2kec0YqY7RjRCtWVEurs6ns+MHAZDp0LS3KYVhASWKEeFbpuaMPyjxaaetLiNjGovJ+gIqoI/LOBEm/gOlEwkJR3hMutokkYPxjK4TuST5ikATXWCtpwbJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zj8T45MPnz4f3lCm;
+	Wed, 23 Apr 2025 14:34:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3BD031A06DC;
+	Wed, 23 Apr 2025 14:34:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl_wiQhoEV49KQ--.26381S4;
+	Wed, 23 Apr 2025 14:34:25 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	ravi.bangoria@amd.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/x86: Fix open counting event error
+Date: Wed, 23 Apr 2025 06:47:24 +0000
+Message-Id: <20250423064724.3716211-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] Add static channel mapping between soundwire
- master and slave
-From: Xilin Wu <sophon@radxa.com>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com,
- kernel@oss.qualcomm.com
-References: <20250206112225.3270400-1-quic_mohs@quicinc.com>
- <22F78335AF3DCDCB+3c44f925-88fc-438d-9482-ab39a1d70df8@radxa.com>
-Content-Language: en-US
-In-Reply-To: <22F78335AF3DCDCB+3c44f925-88fc-438d-9482-ab39a1d70df8@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NfJJAz0ICuA6DrZEMsSV3vPXNizf8zo+0RCjvFzhNAyG8tonserKM+B5
-	tqNOPOrp+xfOrMpPE2elETKfkE1oONKDPWICDfeXpY+wmXSLlllzoN82Z0nII6yAj9GTyY/
-	P9lyYBKES/ZspLn6/EddqK88WXyb1oEDA0MgaaggUsJylHjcm1p3cqSFp0nUjNPFPhxX94V
-	AQDXxdT2ti+OjZyr74/bVTdaaFlNXUvrjpLKWOyk36X3a7UbmGsyIqD0TIKL+EaBXtxXyda
-	mj+PNBa4+OnmuEaJLE3y04g2ebqqREAEYB2l5O+bkbfjBtnzJCe1N3EQMlHFCdr68Wg2cHc
-	2+I3pg5a4rK7R6H5Boql3Ne+HmTRQvgyt+RqJ542dbMvANIgRpDYjfM3+/2Ym7bpPzs4o7t
-	2zbHf9QhLCft1BYTzmfGMVwU7RSbRFbfZW/ETjtQ9SyonwL+RSTXzYQCU2BSQlM/INIRTGX
-	S30jIwe3XF1nVcVF0jJBFMCnDdzNruCgD9nuDQIOkgVqW49+ukO5Bx+/tENnQj9+zfwPy06
-	osUDm/C/45WfbML1AFlC8PbfNpxLAe3ubC7gPnS/Nkts7JtCxVmwwJrNqXteZ6ZN+mmQSMx
-	mpjHubBcRXShsrom5PP1D6yeR7gfQv5r1KO2M9apCapWoGSjZUwNsjn001ZoxrWKPCsQjdp
-	BiiAnRfvNgW0TxfjzF6CVpht8xna8v3grx4hgvqQjmScRQuKJ4cyIoHJbkNNevfSq/6B0zP
-	DNBbjTmCck4CLESPIIMfVLTRk2hNclIOefA9/OPaQfJgukP6gj4ksUP8btYF8UbrVnI6qbQ
-	UBEfMjqnAh4ozKOIgbFBdmDrfzWgtP3g8nImcEszlWxZ+cY+uIJhZhdH6qArqomlwtNphea
-	yuNOwVnZnklENXvOshPQ9d3V19+qtoTsb9DduACWx1rR2Q2DzvUGdkhPYs8Tr4e4OWUW60f
-	XV0PvW9RXOuT31NGQsjITg2m7MUor3j52csA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:gCh0CgCnCl_wiQhoEV49KQ--.26381S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr1xGF1rZr45JryrCFyfWFg_yoW8Gr15p3
+	47Crn3KFyIgrn8Wwn8JF4Iya1UZF4ktr9rJ3WfWr45A345WwnxXFWxKFs8Wa15Ar1fJ34f
+	tanagF9rurWkA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUIa0PDUUUU
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On 2025/4/22 22:59:13, Xilin Wu wrote:
-> On 2025/2/6 19:22:21, Mohammad Rafi Shaik wrote:
->> Add static channel map support between soundwire master and slave.
->>
->> Currently, the channel value for each soundwire port is hardcoded in the
->> wcd937x-sdw driver and the same channel  value is configured in the
->> soundwire master.
->>
->> The Qualcomm board like the QCM6490-IDP require static channel map
->> settings for the soundwire master and slave ports.
->>
->> If another boards which are using enable wcd937x, the channel mapping
->> index values between master and slave may be different depending on the
->> board hw design and requirements. If the above properties are not used
->> in a SoC specific device tree, the channel mapping index values are set
->> to default.
->>
->> With the introduction of the following channel mapping properties, it is
->> now possible to configure the master channel mapping directly from the
->> device tree.
->>
->> Added qcom_swrm_set_channel_map api to set the master channel values
->> which allows more flexible to configure channel values in runtime for
->> specific active soundwire ports.
->>
->> Add get and set channel maps support from codec to cpu dais in common
->> Qualcomm sdw driver.
->>
->> Changes since v5:
->>   - Fixed build compile issue with v5-0003 patch, reported by Mark Brown.
->>
->> Changes since v4:
->>   - Update the order of channel map index values in v4-0001 dt- 
->> bindings patch as suggested by Krzysztof.
->> Changes since v3:
->>   - Change the order of channel map index values in v3-0002 dt- 
->> bindings patch as suggested by Krzysztof.
->>   - Dropped V3-0001 patch which is not required.
->>
->> Changes since v2:
->>   - Rephrase commit description v2-0001 dt-bindings patch as suggested 
->> by Krzysztof.
->>
->> Changes since v1:
->>   - Modified the design and followed new approach to setting the 
->> master channel mask.
->>   - Used existing set_channel_map api as suggested by Pierre-Louis
->>   - Fixed the typo mistake in v1-0001 dt-bindings patch.
->>   - Rephrase the commit description for all v1 patches.
->>
->> Mohammad Rafi Shaik (4):
->>    ASoC: dt-bindings: wcd937x-sdw: Add static channel mapping support
->>    ASoC: codecs: wcd937x: Add static channel mapping support in
->>      wcd937x-sdw
->>    soundwire: qcom: Add set_channel_map api support
->>    ASoC: qcom: sdw: Add get and set channel maps support from codec to
->>      cpu dais
->>
->>   .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++
->>   drivers/soundwire/qcom.c                      | 26 +++++++++
->>   sound/soc/codecs/wcd937x-sdw.c                | 39 ++++++++++++--
->>   sound/soc/codecs/wcd937x.c                    | 53 ++++++++++++++++++-
->>   sound/soc/codecs/wcd937x.h                    |  7 ++-
->>   sound/soc/qcom/sdw.c                          | 34 ++++++++++--
->>   6 files changed, 185 insertions(+), 10 deletions(-)
-> 
-> Hi Mohammad,
-> 
-> I'm working on a QCS6490 board with the WCD9380 codec. I wonder if a 
-> similar patch is needed to enable headset audio? Currently, DisplayPort 
-> audio and headset plug-in detection work, but no audio is coming from 
-> the headset.
-> 
-> Additionally, I noticed an unusual output in dmesg:
-> 
-> qcom-soundwire 3210000.soundwire: qcom_swrm_irq_handler: SWR Port 
-> collision detected
-> 
-> Could this be related to the issue? Let me know if you need further 
-> details.
-> 
+Perf doesn't work at perf stat for hardware events:
 
-Well, headset audio works now. It seems that the error message has 
-nothing to do with it :)
+ $perf stat -- sleep 1
+ Performance counter stats for 'sleep 1':
+             16.44 msec task-clock                       #    0.016 CPUs utilized
+                 2      context-switches                 #  121.691 /sec
+                 0      cpu-migrations                   #    0.000 /sec
+                54      page-faults                      #    3.286 K/sec
+   <not supported>	cycles
+   <not supported>	instructions
+   <not supported>	branches
+   <not supported>	branch-misses
 
+The reason is that the check in x86_pmu_hw_config for sampling event is
+unexpectedly applied to the counting event.
+
+Fixes: 88ec7eedbbd2 ("perf/x86: Fix low freqency setting issue")
+Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+---
+ arch/x86/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 6866cc5acb0b..3a4f031d2f44 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -629,7 +629,7 @@ int x86_pmu_hw_config(struct perf_event *event)
+ 	if (event->attr.type == event->pmu->type)
+ 		event->hw.config |= x86_pmu_get_event_config(event);
+ 
+-	if (!event->attr.freq && x86_pmu.limit_period) {
++	if (is_sampling_event(event) && !event->attr.freq && x86_pmu.limit_period) {
+ 		s64 left = event->attr.sample_period;
+ 		x86_pmu.limit_period(event, &left);
+ 		if (left > event->attr.sample_period)
 -- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+2.34.1
+
 
