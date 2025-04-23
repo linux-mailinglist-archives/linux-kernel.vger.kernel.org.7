@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-616930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000C9A99825
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:50:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B962A9982A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C26E4A0A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:50:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22647AFACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CFF28D822;
-	Wed, 23 Apr 2025 18:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077B28EA71;
+	Wed, 23 Apr 2025 18:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lhHEjxGE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SeuaYYDi"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C39280CDC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4110E28EA52
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745434241; cv=none; b=hb/eE132JGxSL1RMAOcd47lC52rJlScUmAoOEQ97V4OmQ3mVA+zGF9QlmuNAeIloNKPdKec5khOblKijKcTrqye6O3UKKFDa1JTXYBC49Al7AJOHCBtRbpQz35NNmC5ihmKHcMZejBE241bk9xslXYwtaXrf3Ead46jCjWuelDA=
+	t=1745434293; cv=none; b=Ofruwq3M/cpTlmxSHvYpzb2BmAxM/BqVzVs4PX5I2QjkRYeSUiEOh3gnPShvrqTFHxhfk2fkqoLZz6FTLbQ3vQ9IT41nNjOxagSpRLsyrq6swxRVH9IZM0AOCpuGQ+OUg+NDmcQA/i5iIjlZOy0+u0npEFV84AccVOHxx1R5sPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745434241; c=relaxed/simple;
-	bh=QwhTgQXPrLEnsOMCtPpaGts4Mr6pEIvqpO9ftc958uM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IULmGeeKPgpt6FD2uTQh9JgQx4wJzUQw016ywT39WGoKLOZieqwCsOoUq/JiQXKKI/B8G+fQiDLOshmA/lrtM5B+TJbUUaaL3GbzTCtEbwXHYfxMIQiWg1+C56a4UNbAPPh6Wl29JO8+UdWqRZIDD6iHca2rTN70QW96djWTCx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lhHEjxGE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=163fqENWuFQxoVuJPb9NCuNRkwVafkYxdXQIBrpfRPE=; b=lhHEjxGEl1FWIkenDXcvQ3ESps
-	370Cy8bfjUgZw6Y8R/oGtN/oX+rd5YGVZPGjVhDdmwD2YZQBD4wAL3kydqlXnXf+dg6WBBoJnalpS
-	Y3FrhrD6iZ7RE9Boc/eIY+Z5KJChC6leZBdA+9qSAnQ1P1ZOkfEA0ffX2MiprjMXrlZPyLWa2C4sE
-	bO37mXg2jeL1lMkL1KrryRRCzqbDqtMSgkXWv6tIT6w/sIRj6zVZPY3nshweOZq2j6LsXBJaQyOdR
-	DYgrMSertn4MmcFFarkZN9ol+tYPeUUmF10sHa+Q85s9TSXOfWXNbuawIGG+gZoHN4iTCEU/vhYVM
-	haqw/fVA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7fAy-00000009uQl-4ALn;
-	Wed, 23 Apr 2025 18:50:29 +0000
-Date: Wed, 23 Apr 2025 19:50:28 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Fan Ni <nifan.cxl@gmail.com>
-Cc: muchun.song@linux.dev, mcgrof@kernel.org, a.manzanares@samsung.com,
-	dave@stgolabs.net, akpm@linux-foundation.org, david@redhat.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hugetlb: Convert &folio->page to folio_page(folio, 0)
-Message-ID: <aAk2dCTru-C595oY@casper.infradead.org>
-References: <20250409004937.634713-1-nifan.cxl@gmail.com>
- <Z_XmUrbxKtYmzmJ6@casper.infradead.org>
- <aALVZdStnPQ-d9PA@debian>
+	s=arc-20240116; t=1745434293; c=relaxed/simple;
+	bh=l0v4hiT1NtXehQ/nyJXOvrDjzP/TouoxBo+iAUpcCxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=de5YaDQJ6MPqL6oxGeFNCIMcen8e6bakdHsXWSYv9TxbiKR+VvH9QObSsA6+qSBaMzu7IgKEdCiAAzzZlQb5ISgzpk1HjWkcxiUycUkekoASKtlNji/oYLit2AdMf5ufKjgfnzt4eltNnh7RhQtkiGSGmXMHxikBf2TdCWH5PGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SeuaYYDi; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=me2zQfOMtr0IzB1wW01DnjY95ZOpk1z1IE3Ehm7bRR0=; b=SeuaYYDiGwXZpLo0gpuCrg3Al1
+	QDusqd/lb/ZJj2TKNhc02gQOOEKXzIfrL8qG6u58UgfZfvLvNKRuHmxAQbSs31prEP4QKPiAjBr6K
+	fLZMubS8jkoF4mikZnfi0uWGPvEhqvvTxWmgnOBHohskQqZJwHInUZfGVvDAErJ9UxUDJP2/C9Xoc
+	RfricAD7Lb+KIAmYnrW8Co3WxRqPeJGogrgsouLicAjk2f0cqS+k85GDY5/LE/DkTG+IEchdyqlCw
+	NR7hsNLHIkZaux8ac+GTGMF+oBvtJknSsRJuLqVummAXmdk0jEH1K4L34bgCrYBLR7zp71M8H5dqz
+	B57UOBwQ==;
+Received: from [177.98.23.232] (helo=[192.168.68.130])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u7fBe-007320-4F; Wed, 23 Apr 2025 20:51:10 +0200
+Message-ID: <b7795d63-ca8c-4746-84aa-49793d1b6852@igalia.com>
+Date: Wed, 23 Apr 2025 15:51:01 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aALVZdStnPQ-d9PA@debian>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] drm/ci: Add devicetree validation and KUnit tests
+To: Vignesh Raman <vignesh.raman@collabora.com>,
+ dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com, daniel@fooishbar.org, helen.fornazier@gmail.com,
+ airlied@gmail.com, simona.vetter@ffwll.ch, robdclark@gmail.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ valentine.burley@collabora.com, lumag@kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com, quic_abhinavk@quicinc.com,
+ mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
+ linux-kernel@vger.kernel.org
+References: <20250417030439.737924-1-vignesh.raman@collabora.com>
+Content-Language: en-US
+From: Helen Koike <koike@igalia.com>
+In-Reply-To: <20250417030439.737924-1-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 18, 2025 at 03:42:45PM -0700, Fan Ni wrote:
-> > >  	result = install_pmd
-> > > -			? set_huge_pmd(vma, haddr, pmd, &folio->page)
-> > > +			? set_huge_pmd(vma, haddr, pmd, folio_page(folio, 0))
-> > >  			: SCAN_SUCCEED;
-> > 
-> > I feel that set_huge_pmd() should take a folio.
-> There is a patch on the mailing list for it,
-> https://lore.kernel.org/linux-mm/20240817095122.2460977-5-wangkefeng.wang@huawei.com/
+Hi Vignesh,
+
+Thanks for this version, please see my comments below.
+
+On 17/04/2025 00:04, Vignesh Raman wrote:
+> Add jobs to validate devicetrees and run KUnit tests.
 > 
-> If the above patch is needed, do_set_pmd() should be converted to use folio.
+> Pipeline link,
+> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1407489
 
-Maybe?  I think we'll eventually want to support folios larger than PMD
-size.  So I don't want to pass in a folio here unless we can calculate the
-precise PMD-size chunk we want to map from this folio given the
-information available in vmf.  I know that today the implementation
-does this:
+I see this message:
 
-        if (folio_order(folio) != HPAGE_PMD_ORDER)
-                return ret;
-        page = &folio->page;
+WARNING: Running pip as the 'root' user can result in broken permissions 
+and conflicting behaviour with the system package manager. It is 
+recommended to use a virtual environment instead: 
+https://pip.pypa.io/warnings/venv
 
-but eventually we should do better than that.  And I don't want to
-lose the information about which page in the folio we really want
-to map.  So have a think about what the right interface should be
-(passing in a page?  folio + offset-in-number-of-pages?  Something
-involving the PFN?)
 
-The obvious hurdle is folio_add_file_rmap_pmd() which today takes both a
-folio and a page.
+It would be nice to fix this at some point.
+
+With or without this, for the entire series:
+
+Acked-by: Helen Koike <helen.fornazier@gmail.com>
+
+Thanks
+Helen
+
+> 
+> Link to v1,
+> https://lore.kernel.org/all/20250327160117.945165-1-vignesh.raman@collabora.com/
+> 
+> Link to v2,
+> https://lore.kernel.org/all/20250409061543.311184-1-vignesh.raman@collabora.com/
+> 
+> Vignesh Raman (2):
+>    drm/ci: Add jobs to validate devicetrees
+>    drm/ci: Add jobs to run KUnit tests
+> 
+>   drivers/gpu/drm/ci/check-devicetrees.yml | 44 ++++++++++++++++++++++++
+>   drivers/gpu/drm/ci/dt-binding-check.sh   | 16 +++++++++
+>   drivers/gpu/drm/ci/dtbs-check.sh         | 19 ++++++++++
+>   drivers/gpu/drm/ci/gitlab-ci.yml         |  4 +++
+>   drivers/gpu/drm/ci/kunit.sh              | 11 ++++++
+>   drivers/gpu/drm/ci/kunit.yml             | 33 ++++++++++++++++++
+>   6 files changed, 127 insertions(+)
+>   create mode 100644 drivers/gpu/drm/ci/check-devicetrees.yml
+>   create mode 100755 drivers/gpu/drm/ci/dt-binding-check.sh
+>   create mode 100755 drivers/gpu/drm/ci/dtbs-check.sh
+>   create mode 100755 drivers/gpu/drm/ci/kunit.sh
+>   create mode 100644 drivers/gpu/drm/ci/kunit.yml
+> 
+
 
