@@ -1,141 +1,170 @@
-Return-Path: <linux-kernel+bounces-616837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E046CA996C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDDAA996D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2487ABC3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFCBC162441
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E8228BAB3;
-	Wed, 23 Apr 2025 17:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D4528CF6C;
+	Wed, 23 Apr 2025 17:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jKeC0wG0"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sjv2Ujpn"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D812857F6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B24228A1FA;
+	Wed, 23 Apr 2025 17:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745429699; cv=none; b=d49w4oKIlCYLLrO6MiLbFQvSFiTMItZdOOHtiP7FzToQcHQEdmyNV7nSsITwWQkLrO53E1WLXRN2dOak85j1Hh/+7mLfq566vgdbJCOB+wFOjta4a2YS3xfDKtETNgnLmiehBDgVve0870dBPKmcMNuPAPZsKe0NFPn1uo0wH7w=
+	t=1745429798; cv=none; b=AhqvDrvX6tfZSB4hC5JVB8T++il+34Z+iQST3GOWTVTpZmHc9LM4CybsynUkVcWunZd/jXaOAOAoAwNYH4pHrLedqK8Y2nb5vYIHGoXrMyQ+qMYg/0tmaVJTYu8CCkjyvrTxNIRshr34GUQ/TJqL78s1RjqlFq7RqKvCQNgZUDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745429699; c=relaxed/simple;
-	bh=zB24IJl1jZzMHzgO4K1Iy0NHxHgoWs9FaxvjZYsQalw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODHvKcoz25qHk5sIHKs9NB552JzPiDJgEsLCR5bU4fJifjdrnsZCzKq9/b3Bd7PQEwVj2U0LiFOUy2OwDVeDgdGHE65X60j6+f7VN4N4PNPlB/UDbwnPwCJBYNT2/pg9M0aBZbG93+nuzQWAzNu5+Ucq41L3hmlKS5MOnUVl5HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=jKeC0wG0; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c56a3def84so9680785a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 10:34:57 -0700 (PDT)
+	s=arc-20240116; t=1745429798; c=relaxed/simple;
+	bh=jy+ZRKVNRiujeGKF8YIwesyEdV3DOe9oDzkNAMKTV/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ccrKdDqXGhMCcMXPe8mw/T2U4WCoFek120Uh7pBfifXFIed6r5+Igvk8Pi/2rivho173/sNthp6qp23awc4mq12Ap4UpX/PWGGQJkESvGeOjKRbCjiSa7S1mGbrKG0twsOLJ3nGxKBZUTsCj1v4x+/SYGvpdxyi5XYFdFKEQ1WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sjv2Ujpn; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af50f56b862so28029a12.1;
+        Wed, 23 Apr 2025 10:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1745429696; x=1746034496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I+fayQ/PBTnrOfxtrw3IgFnI1QJK9xAjEiHuuXs7Kpg=;
-        b=jKeC0wG0Rxs29aLtFTXrwvm6sCjBlI+WjPNCPmALgo/mjnmuyNi8RzQ8EoTi2n9ato
-         G2uR8+wTHeXdzUwlwgxBh5NicR8ymrLhg0bWgtzToqLWFgmbk1yR2sBCKvTWpQ2XzEqK
-         c+gqSngWmaHabqIMpagt+bie9Wb3ZUbIY0uf9WN8dkBe5oq6/jz0Omc/q/isRe5XxD6s
-         wIyd2QIvWZ+V+k8HV/tY0iBuNr8JlAnZaGxdHRzWwWJdpEc7zUCULfC7NElEQ7ugzKS1
-         ukaL0jDlfBwfBtKiA5JthSNqw13rTy4KL+WCFZHxth3Teiilhqthip7KWkPBUKtkiX7c
-         Z7dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745429696; x=1746034496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1745429797; x=1746034597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I+fayQ/PBTnrOfxtrw3IgFnI1QJK9xAjEiHuuXs7Kpg=;
-        b=vefaVV7xfpJsq5iOmjKoyORKKEiWpjFHyEu0lcWtdi2uW0e4W+RGF0syZHaqxE1gTb
-         kHQwtOL/nrt+4VC4aOzwSMRtzKgaJxdlXHQiB9M3lnoQSHUOcS4q+/Y6VGnsxtqWBP0D
-         vWs11oGmaYd66967IBAIQtVX8XrZomJ35xitHkjadvveR8/oJggl5RlgMe4V6jfo+L4p
-         zOw1+4LbbcHXNFiUtWaRbJLMpW3d5nplxlD6Vlr4+1y3GnRs+Eiq17anPSHSDvcRtZ1S
-         0DdqIB03UzGdctT5jU7srK4JnLPlpRQslaTZgJUhg6zde6gPaVgKGtyJr8dnLzNqZAt/
-         sCkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9wM6oq9Ivt5x5l4/1vyzkvAgZwxW4/iTD4CHRGSdGceaGBsSpxECmqJqL3VLwKqrZD8mabZIm/MOaKRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+rtouuR5AEMydZQJot0pmh1xFzNH+ASJ3ZkX3rjMbV9uZ36DK
-	XCCb98DaXeFg4FT/KBzJT4k1VPj3UefiedJ/kVyxq8O/he6NG1RaEDoo48iLTqY=
-X-Gm-Gg: ASbGnctPv6pRVZhW0psc8cLmyYCXoqovt/fqJbWs6xU/+9RH6I3m97pvJDs57IKf1vk
-	bF1z12zmalhw49weTXahImTXcK5hPuFj/QcfclpG1ZZr+2Bwp+9BGJZZUgh7f7FYW5YyCt4cn0x
-	LQuJIvn+Lj5Tk96lWv7KnVXGh5bjoT/O+iZgDlzfqnwU6Az4eurI89hIydJ9GhgTScoYk3JlAya
-	lKjASi02/fDM5yiEHN8Jam36N6/V0zIrpPbvUSOCydUTpF4uUKIz5RpdbJB6IlILy80IOPUzjjj
-	1sPwwlNdmuypCi3C8/pNB23IpHmPw1y2MHXb0gkVFRzPB3MDQewLcJMJ1eamC5Q1wSk8utEOn6G
-	iyCxHFGdaJg/ekgyvU6k=
-X-Google-Smtp-Source: AGHT+IHrcKTZfJXCAhkO2WaOum0PT2hRMW3vGaRhpe2sCjwAXzgjbldqD9beTUKDcznlrIIPKNuBAw==
-X-Received: by 2002:a05:620a:2953:b0:7c7:97ff:ca42 with SMTP id af79cd13be357-7c955e7c7d7mr65261285a.41.1745429696505;
-        Wed, 23 Apr 2025 10:34:56 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925a8bf65sm707741185a.25.2025.04.23.10.34.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 10:34:56 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1u7dzr-00000007LbA-2PtY;
-	Wed, 23 Apr 2025 14:34:55 -0300
-Date: Wed, 23 Apr 2025 14:34:55 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 12/24] RDMA/umem: Store ODP access mask information in
- PFN
-Message-ID: <20250423173455.GN1213339@ziepe.ca>
-References: <cover.1745394536.git.leon@kernel.org>
- <f81331e55cf95b941e6c57f940a2a204141bf2e1.1745394536.git.leon@kernel.org>
+        bh=YymHYKdRssVDIPxOqRIXyV6k16xbhfnv2bMsDvOlCdY=;
+        b=Sjv2UjpnLMRi//STcbvxTvz3moh4A6zhtCBIq9MKrofYfN/R6Zc0DzKHcB+my3KSg+
+         vr9g3SB+XGinoaVnIuPDSMjkz7VDTTcXhJohp/eUE0ATdXxKLm4lqb4/lIAlvsygGK4Y
+         P3ZSHFcLteWE5d2wvHXAHk2hHde5XZ7ZNZ4zH8Upq8PHaOTWlYSyMG3JbG04HVQKS9ZH
+         Bu1UqlY/KjgvlAaPimqU50s9zeC3HzyQ6mj8X1yRJqiQtV74yBQREFZnwJaHFuSJEd6D
+         QUT/hpWWY1Pz7U1wBMIryUNCs78Ft/oMqmIZd5zrONPkT9b7Ve7vehu8FxWCJIhQ9Xx/
+         DP6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745429797; x=1746034597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YymHYKdRssVDIPxOqRIXyV6k16xbhfnv2bMsDvOlCdY=;
+        b=GaSTSI6cCgokI0swnjHdfMBFHKgrdU+LNVt6bX9wRuFBKRxXm3pzvTiaEVVNuOCDCO
+         KDduBMHp9Byw8Fq5hYCol3AdnR/EeuN3yi/dEXUEzEOj0dd6YTO3Fog6qs7DXWgWkd/j
+         R+mJoepIsCm9PNd0rVbOeFv8y/nB8FhtPnEY1TWabC0o/lG/dkJEgF6n/qJ0+ynfJi0v
+         /1xHEgRjga1PwsH/IjEl6N1us+TcgjkpSiFM4ijzMd4xO9lMY4k5gntHYI01HkdnR560
+         INPWB5PibRFRbZEmT5A4G6nm8CnZDqVX9HKTN9K8STj5CT5uJFbvxoWjE8Wh5ehJKXZ+
+         SZfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPUPn2a4Rvda4/53ELLxqicZAB+46dbH3yqRYO1QRaHjy0u4KoDvF4j7eXn+lpEBKmdcfkkZYh8MmdJsORD38+DtPx@vger.kernel.org, AJvYcCVjS+WJOroy2XsGCJr38gqccZiZszChRwIQHNhaV/IFuvuLj4XQ7+/fsw8dr6qL2cQNGEc=@vger.kernel.org, AJvYcCWfD6BGpnH+FtF1siUWEqv/vi8oo/j/YXuA9PZC0aWGzffOaqcl04dxA5H6m/X1uhuMR2ckfHcgD6KybDTV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1omGXujdoxSGVEYHjUWkk9WR3MD49aLNKJZYbZNz6huWvwfJD
+	5tecp5udEI5eEzMutvMTiFMwn29KMMS+AtNpJ3mJ1+KqSnAQwHB1T/MboqWlu1a+uq6yDGOOWuc
+	AXyyriP5a2wyHYX2yYwBXo4p5U5s=
+X-Gm-Gg: ASbGncvHD8co6UVYig/RuXlcVWgL7iJtCTp51CoAeBYOEz3lfE88RQPDRSvl4foHJPa
+	fZelkwjevDRg+oS8vj5CLfTluJyVstWWXw+GnjvXsjvVus3Wm1QTtouvtD/O6xcVYLcSYwdouUI
+	xYjZT541PzDkojs2zfeRRNokYO0/BhtS0Ro5Rbwg==
+X-Google-Smtp-Source: AGHT+IEi18m5O4uQoO1eHpBP62ScrettsV16PQvj6E28PxxVmqpqhRYFr9D1umr9k3JnRX+6tHhktH78VQXj5O3OwAw=
+X-Received: by 2002:a17:90b:270d:b0:2ff:5357:1c7e with SMTP id
+ 98e67ed59e1d1-3087bb6954amr28384399a91.20.1745429796711; Wed, 23 Apr 2025
+ 10:36:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f81331e55cf95b941e6c57f940a2a204141bf2e1.1745394536.git.leon@kernel.org>
+References: <20250421214423.393661-1-jolsa@kernel.org> <20250421214423.393661-14-jolsa@kernel.org>
+In-Reply-To: <20250421214423.393661-14-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 23 Apr 2025 10:36:22 -0700
+X-Gm-Features: ATxdqUEHGfNBKiuTHJ2_OrkYqvRSsVc8Vn-z9IgFkBNOkXsf9a7h8Z9OT-bwm8k
+Message-ID: <CAEf4BzaseiF10Ady4FCCx=ii+es9vkcbRYLBkdaDRZ_tH8NzdQ@mail.gmail.com>
+Subject: Re: [PATCH perf/core 13/22] selftests/bpf: Rename uprobe_syscall_executed
+ prog to test_uretprobe_multi
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 11:13:03AM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> As a preparation to remove dma_list, store access mask in PFN pointer
-> and not in dma_addr_t.
-> 
-> Tested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+On Mon, Apr 21, 2025 at 2:47=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Renaming uprobe_syscall_executed prog to test_uretprobe_multi
+> to fit properly in the following changes that add more programs.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  drivers/infiniband/core/umem_odp.c   | 103 +++++++++++----------------
->  drivers/infiniband/hw/mlx5/mlx5_ib.h |   1 +
->  drivers/infiniband/hw/mlx5/odp.c     |  37 +++++-----
->  drivers/infiniband/sw/rxe/rxe_odp.c  |  14 ++--
->  include/rdma/ib_umem_odp.h           |  14 +---
->  5 files changed, 70 insertions(+), 99 deletions(-)
+>  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c   | 8 ++++----
+>  .../testing/selftests/bpf/progs/uprobe_syscall_executed.c | 4 ++--
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/to=
+ols/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> index 2b00f16406c8..3c74a079e6d9 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> @@ -277,10 +277,10 @@ static void test_uretprobe_syscall_call(void)
+>                 _exit(0);
+>         }
+>
+> -       skel->links.test =3D bpf_program__attach_uprobe_multi(skel->progs=
+.test, pid,
+> -                                                           "/proc/self/e=
+xe",
+> -                                                           "uretprobe_sy=
+scall_call", &opts);
+> -       if (!ASSERT_OK_PTR(skel->links.test, "bpf_program__attach_uprobe_=
+multi"))
+> +       skel->links.test_uretprobe_multi =3D bpf_program__attach_uprobe_m=
+ulti(skel->progs.test_uretprobe_multi,
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+this is a bit long, maybe
 
-Jason
+struct bpf_link *link;
+
+link =3D bpf_program__attach...
+skel->links.test_uretprobe_multi =3D link;
+
+?
+
+But other than that
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+
+> +                                                       pid, "/proc/self/=
+exe",
+> +                                                       "uretprobe_syscal=
+l_call", &opts);
+> +       if (!ASSERT_OK_PTR(skel->links.test_uretprobe_multi, "bpf_program=
+__attach_uprobe_multi"))
+>                 goto cleanup;
+>
+>         /* kick the child */
+> diff --git a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c =
+b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> index 0d7f1a7db2e2..2e1b689ed4fb 100644
+> --- a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> +++ b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> @@ -10,8 +10,8 @@ char _license[] SEC("license") =3D "GPL";
+>  int executed =3D 0;
+>
+>  SEC("uretprobe.multi")
+> -int test(struct pt_regs *regs)
+> +int test_uretprobe_multi(struct pt_regs *ctx)
+>  {
+> -       executed =3D 1;
+> +       executed++;
+>         return 0;
+>  }
+> --
+> 2.49.0
+>
 
