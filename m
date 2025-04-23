@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-616254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B7BA989F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:41:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E617A989FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA337440719
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98EF1893440
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68EC26C39E;
-	Wed, 23 Apr 2025 12:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3657320C028;
+	Wed, 23 Apr 2025 12:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDH4MpuZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T9HGnT8B"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F2419AD8B;
-	Wed, 23 Apr 2025 12:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FFA264638;
+	Wed, 23 Apr 2025 12:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745412073; cv=none; b=REwxqBWcyayAsimcgGxXdw3JVW9fXAcuQqMzTmDNaDZQrx/JXdkd/4aUJzT/AAf3MgYdg/rG5qfpm6fUbsOpSw637s8tSbYB7TJeFLqKbB4e/tP+/nLcmYrx7vxy9JGyZ06DPj1W8rKHeBd8iiE4JO1XMnud2i4rdPo6Ce+RndQ=
+	t=1745412113; cv=none; b=ox8x424Vj2Bxv1R4W1mzraakTuwPPM1MWf20ds/bZ9qn7Ffe2vAExOxolatm5Ev2KfnEocu/cXks6VXdMsMns3TfXguCzzNyaLysHOdyYslYy6ssXLVPyp9zyS6sDQJFKP19+AypjrTUupqqtUbxZ62K7zZsHNipRhP6YwwTf3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745412073; c=relaxed/simple;
-	bh=vuPHSXDYGJIDkCqEVb7xzubmHAFjmIAu6deVCTDXe5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zt/mBxGeStUmVYx1lXlNMam3e6mjsqs7n1w2wOm/ZYaJ2HE4dNBk8hsaBSvzgAJOP0RuswKuniRsaHLL9iXpVOs1nbjLXnyBiy5Z1X6uPzZr4t6C9LjCvX8jdAdT/p19OzcFLRsvHmrcDDmS7Ek4QDOZ17WwFbPfrIXT6UdkCs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDH4MpuZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FC1C4CEE2;
-	Wed, 23 Apr 2025 12:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745412072;
-	bh=vuPHSXDYGJIDkCqEVb7xzubmHAFjmIAu6deVCTDXe5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SDH4MpuZmgQybX1eY37H/yKYnZhDg6DAis3McprvezR9yjHdpSgM2sn1I2aE9x1AB
-	 xIGpL0+YBtK5II54K4yMp6WWpNcX7HxtM0+FHw4xhtzqVF22nFmM0ZOCQffQ9ZvIIW
-	 zlrtKxncSH83B/Y3id0o3PCZ7zXwDPhkv7LnjhtVfncL3y1c3h/j6rCosB5gqlu2Au
-	 Jpxy+N29g3AE6P+Sl9Nh6Sohr9boBRizf1CkAHWtFKCe+hiBmTV/vlTn3iZhmWyusC
-	 Sa4RlgUGvnkE/aLBq2ArHOWsV8fYIV6i1BWi5hQeY2olu0dwCtQLZ07TgMimOk7SJr
-	 72ekoDy3dr1Bw==
-Date: Wed, 23 Apr 2025 07:41:10 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] usb: dwc3: qcom: Fix error handling in probe
-Message-ID: <al4hz5pukil2mc263cyzq5atm4gdjn6v2kdanayhd7edfueidu@obr7h7365w2w>
-References: <aAijmfAph0FlTqg6@stanley.mountain>
+	s=arc-20240116; t=1745412113; c=relaxed/simple;
+	bh=YJp+KN4fGn1Yq3f60T/CgZ8MNTPN3RJIOPy323RzpGo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=ul6Ka36/3+PYaO3wjnEyABALTyDPCNoTFr0gRVcBg3AifIKD+g1mOMUyujvtuTYFw57buhc0IyPx5gJB88aKcPNKV4NWvjhM0mdWSTmWalukC8Jx1AIoT52klAg8mYYsQcnzHoIzlEF2lnUMh3U+PB46bB3L4XkvKq+DsOtp+vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T9HGnT8B; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4D1E54392E;
+	Wed, 23 Apr 2025 12:41:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745412108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YJp+KN4fGn1Yq3f60T/CgZ8MNTPN3RJIOPy323RzpGo=;
+	b=T9HGnT8BGOZfbMl+oWfb03Z2bNsweCKX0GLR+02cE9ssc2QBAXi2tdQv44GT9O8QEmI31e
+	MUNDbCI+qJ0yntaEWe+2inkns2UALLHDRblL3XkxNTL3ctx4MXVoKCpKGrgurq9475w6Iv
+	XUTygsSCDOGnMZF7pS6CScWnxCuMp2Hnw+z6++E2ulnsq262PScxDbnQFUUEJaE1LcDUtz
+	fN4tmGEqjNHfBpHz/QTDPl33IrGnUrMbxSZswJSzjLmuQCNsxTVH0LATgxjQwR3UqKHbDj
+	huxXWF+pyYSTDgScQp7wlxjJtrCsb0qmXzY999h23Zpc4w+JkHr9OOhmjCwMeQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAijmfAph0FlTqg6@stanley.mountain>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Apr 2025 14:41:47 +0200
+Message-Id: <D9E0YCJXMSJ6.2689GYOSQDC8M@bootlin.com>
+Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-input@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <andriy.shevchenko@intel.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-5-7a2535876e39@bootlin.com>
+ <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
+In-Reply-To: <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeiiedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtt
+ hhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Wed, Apr 23, 2025 at 11:23:53AM +0300, Dan Carpenter wrote:
-> There are two issues:
-> 1) Return -EINVAL if platform_get_resource() fails.  Don't return
->    success.
-> 2) The devm_ioremap() function doesn't return error pointers, it returns
->    NULL.  Update the check.
-> 
-> Fixes: 1881a32fe14d ("usb: dwc3: qcom: Transition to flattened model")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Wed Apr 9, 2025 at 5:19 PM CEST, Mark Brown wrote:
+> On Wed, Apr 09, 2025 at 04:55:52PM +0200, Mathieu Dubois-Briand wrote:
+>> BUG() never returns, so code after it is unreachable: remove it.
+>
+> BUG() can be compiled out, CONFIG_BUG.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Hi Mark,
 
-Regards,
-Bjorn
+Thanks for your review.
 
-> ---
->  drivers/usb/dwc3/dwc3-qcom.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> index d512002e1e88..b63fcaf823aa 100644
-> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> @@ -740,15 +740,17 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
->  	}
->  
->  	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!r)
-> +	if (!r) {
-> +		ret = -EINVAL;
->  		goto clk_disable;
-> +	}
->  	res = *r;
->  	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
->  
->  	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
-> -	if (IS_ERR(qcom->qscratch_base)) {
-> -		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
-> -		ret = PTR_ERR(qcom->qscratch_base);
-> +	if (!qcom->qscratch_base) {
-> +		dev_err(dev, "failed to map qscratch region\n");
-> +		ret = -ENOMEM;
->  		goto clk_disable;
->  	}
->  
-> -- 
-> 2.47.2
-> 
-> 
+As there has been a bit of discussion on this patch, may I ask you for
+your current opinion about this change?
+
+Should I drop it from my next series?
+
+Best regards,
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
