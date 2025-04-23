@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-615764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A31A98210
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:02:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF8DA9820C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087213A6109
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3DFF1887490
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955BD27F4F3;
-	Wed, 23 Apr 2025 07:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACDB27FD58;
+	Wed, 23 Apr 2025 07:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="da+Ppkt/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvPjGJGl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F034526F476;
-	Wed, 23 Apr 2025 07:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A9026FA4C;
+	Wed, 23 Apr 2025 07:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394883; cv=none; b=J9egekx/7I6DEpb024qg9891PT0uTfOTSVnheuSVqVUYAuurZ9tA79pa3lAgX17Ih2Qh1C6pLStHu9RCp54vFFwLrFx1oR3kvHVsvJwuoV5ZQH9ayDjKTTo8dICVy+NwStkOc4p0s3i7+OvLU1neUlraSZSr4iE9P5eiQBPAEn0=
+	t=1745394887; cv=none; b=FY66NqMzXDX+fz+EX4EBp4poH9TzCqfXEwILgIF0uAh2WJFJusLioGBk4hSvxBcCJakeIJt0gVlFDZNuttjOlnUsBkSp9BMTlpBbrVq6BXIbyt2WPmKjh4+wyX+PYq97JYP27dPTIIrWZW5F3KUJRLJs5ftWhUd2UaM87t4SKz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394883; c=relaxed/simple;
-	bh=cyoX0S0RxKOZeNzlIOigmhm5/jak5UazXis0dWDaZX0=;
+	s=arc-20240116; t=1745394887; c=relaxed/simple;
+	bh=dh8pO19QIEXWKzKoDuFgHcqwku73Ixk3mwAOAY6eB5I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gXwWYxzMVzPGpmqzWNdsSqs4Fi00nnNz4MS2ZZSZjidim88GkZNviLJtdI9oWITT/pCjJayxCuz/H1k7k9zmFfXN7GnNG8EX+jNMDfXXpWd73L1ZVzNtqx3VvNk3YYXCIQikF5k47uOmX94i87xXYHjrW+YrMuPWSUug0bDcUxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=da+Ppkt/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCABC4CEE2;
-	Wed, 23 Apr 2025 07:54:35 +0000 (UTC)
+	 MIME-Version; b=a2k4a7hoF47zvqGnVMMgeDBoyFAzK4G9qg3aJIWMZC6ZvY9AqurQSxJcl0JaR+kmcctVD7tnGVZ0ZvlJJknJW0dQ3hd6kzzdEUlDtw54CFHCWBtGOlhwOe+CWHfiuKeJMrDqNACK35QgLBcpAJnCrh863dozvxnluUCmKkqOE20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvPjGJGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 186EBC4CEEA;
+	Wed, 23 Apr 2025 07:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394881;
-	bh=cyoX0S0RxKOZeNzlIOigmhm5/jak5UazXis0dWDaZX0=;
+	s=k20201202; t=1745394887;
+	bh=dh8pO19QIEXWKzKoDuFgHcqwku73Ixk3mwAOAY6eB5I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=da+Ppkt/9EGu1Cxjj6ADT7OaQmwPVcxmWkfPavQbs4xPpvX+rMDREw5r4f37FUO5l
-	 tJSrnH6rHdP/A3hm6eBCWY9ar1ORZAy5gT3hHwMZAYhoNKMfV7fLjWs1VTyJxfGCph
-	 Fl3FuXk5Sgpx8stjg3/kHTs7aL15JshOzSlnY7T41tnLSy6Ku2GPYyYc9n1KVBnQ5D
-	 /wUPENFe+hePwrkKSOolS6b0ohzhw6qPRgBzxEMIlfZ/lhgPL2iSnyttLD6kucUS1W
-	 LKsOgI4c29hSQW2KxLwwF58f4Q2iMqCo05qQ8xePsAPhnQSzFyQhgLg05VirjY8yF3
-	 e66ySe4kuBEJA==
+	b=uvPjGJGlVUhfPSreiwB9AKpjezUZHZ+r1AEw72nbsdDbIHe/VYALeuVm+x4sbquT/
+	 NMw5qjFaVVW4ed4Eu4YM81E+XYmhO0kA3gVM/6tegpOl1RLd5IBz/hUpsjWh1Z9V2S
+	 lUcrt1vE+3pfX2t0M7ofV+FyrWt/YGy+oiOFXCPP+Kb07p+G5HNyyQa8GKJUgAzvYz
+	 A41dSQmAc65AWzRJ03OFITLbuAVfhQNBxa8wlZHC+qBsF6R29DK2DtcKlH8S6YVr/P
+	 JOmZMkcUdGWhYcX0yDyR72HQknDu5WJxQvX98T0Ib3g7Kl1v2z+T1SnBHrcJuBu3lo
+	 ohHcrMMS5mt0w==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -59,9 +59,9 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/28] ALSA: sis7019: Use pure devres PCI
-Date: Wed, 23 Apr 2025 09:53:25 +0200
-Message-ID: <20250423075346.45907-8-phasta@kernel.org>
+Subject: [PATCH v2 08/28] ALSA: intel8x: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:26 +0200
+Message-ID: <20250423075346.45907-9-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
 References: <20250423075346.45907-1-phasta@kernel.org>
@@ -83,22 +83,36 @@ pcim_request_all_regions().
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/pci/sis7019.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/intel8x0.c  | 2 +-
+ sound/pci/intel8x0m.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
-index 53206beb2cb5..42b22f123fa7 100644
---- a/sound/pci/sis7019.c
-+++ b/sound/pci/sis7019.c
-@@ -1273,7 +1273,7 @@ static int sis_chip_create(struct snd_card *card,
- 	sis->irq = -1;
- 	sis->ioport = pci_resource_start(pci, 0);
+diff --git a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
+index e4bb99f71c2c..51e7f1f1a48e 100644
+--- a/sound/pci/intel8x0.c
++++ b/sound/pci/intel8x0.c
+@@ -2926,7 +2926,7 @@ static int snd_intel8x0_init(struct snd_card *card,
+ 	    pci->device == PCI_DEVICE_ID_INTEL_440MX)
+ 		chip->fix_nocache = 1; /* enable workaround */
  
--	rc = pci_request_regions(pci, "SiS7019");
-+	rc = pcim_request_all_regions(pci, "SiS7019");
- 	if (rc) {
- 		dev_err(&pci->dev, "unable request regions\n");
- 		return rc;
+-	err = pci_request_regions(pci, card->shortname);
++	err = pcim_request_all_regions(pci, card->shortname);
+ 	if (err < 0)
+ 		return err;
+ 
+diff --git a/sound/pci/intel8x0m.c b/sound/pci/intel8x0m.c
+index 38f8de51d641..1ce775fe8a70 100644
+--- a/sound/pci/intel8x0m.c
++++ b/sound/pci/intel8x0m.c
+@@ -1060,7 +1060,7 @@ static int snd_intel8x0m_init(struct snd_card *card,
+ 	chip->pci = pci;
+ 	chip->irq = -1;
+ 
+-	err = pci_request_regions(pci, card->shortname);
++	err = pcim_request_all_regions(pci, card->shortname);
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
 2.48.1
 
