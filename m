@@ -1,278 +1,175 @@
-Return-Path: <linux-kernel+bounces-615928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1B5A98444
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:54:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54339A9842D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9303B4D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374711885DB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880DF1FCFE2;
-	Wed, 23 Apr 2025 08:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dl3P7bXF"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFA1C3BEB;
+	Wed, 23 Apr 2025 08:52:23 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5691F2BAB;
-	Wed, 23 Apr 2025 08:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9362701B3;
+	Wed, 23 Apr 2025 08:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745398406; cv=none; b=kXatubg/QDNCoEKJV2cDeimGGLnrUlkNid4qNRCsBYloxCirg3knqgaN4wj5hx/hnN6hBoz67Xtird627sAasHZl+nITvGDakxc1nh+ygtcmh2qi5u4Lv2FJ4OtAZlEouENhGUG8PpVG9VrhPU19MO0uNiIdSxffTNQSfoSpC8c=
+	t=1745398343; cv=none; b=fJVE0oG9HfO4wEEj/7U9RImIIGqyXH58s6fLKXXfnZ0pLO622NgZvJBRPlJtvju6RTpURQZ8wWJxVcvqPNpl/zTHwzjw1hLX3mRow+iPru8klGgshqFd3/rk8Z7SgMFrtJt7+e7SQsI8fLUiNTrv4EBPXprw9bnYLslzTbo30p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745398406; c=relaxed/simple;
-	bh=auPKMW+q1+Qqn2QTB5GXMprPrUP+dPOtU3JF8GSfRa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ndeoyMDsTWU9n0hDDJNI5xWEd7V1cZaqD2nqn3tyEPNwJZYVZAnZPxfjAB5x6lA4DLM9w+4WJUFyvnF4XCd9Z9YEYadQ4DKMMXSFM/H/DFOp7HbiJEYY5U2p17Kf+l5UitundvEY35t/CcUlKHCpIf3WWJFs40NDqwgmGoSfa8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dl3P7bXF; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53N8pdPU3180274
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 23 Apr 2025 01:51:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53N8pdPU3180274
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745398303;
-	bh=6kmN/+GrZw4rC3Ys6pLoNaD/Wf1DQKhvLOyIykqio94=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dl3P7bXFsCov3PgD20ymOIC1FG1eSAGxGe1DQbY2LG6O/NrMHMVBlGAk+JDp60Fgf
-	 +Pnv70fyGnLeBBbiUkB5NfR80TUqf9PoUmAU9iHHDMoRGzCfwBcwkKjONfEfh6RU3y
-	 Xd+yt6SiKMOPKs7smA0LIwhSCJBbmEF2pgXMq1hR7ce2lmLZxa2oozrZU5Xx64YBSy
-	 em5fezjfad3PGQcOwdbxM11bSPQVT17+MM/RZhPGMfA5z1Fo8GISFAxn0dAWTxVqKs
-	 NapT16DwTl3Gg6ZXI0V3IlW3sqxII7MOJohN3YgP4fSuVYSwWgYi1N7Og/gNcKFK4d
-	 023Wanxii0hkw==
-Message-ID: <f7198308-e8f8-4cc5-b884-24bc5f408a2a@zytor.com>
-Date: Wed, 23 Apr 2025 01:51:38 -0700
+	s=arc-20240116; t=1745398343; c=relaxed/simple;
+	bh=ZT+aTcDj6n7xgMSrVmH50CHyTSXx7NxekjQJ77DmiUw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A1TQnXIQAvFSSlbnR5VJ6J4HPQqCZiz+ep4D3P0f+ImFFZVbfa4+B70004bVD68A+jU+/oEnDREhr+qAOr558LjoONlnRnhAliI0pHNLz4ryu4R02UlwtxDyuiQM6OmFi8W1HixbDbQgM6RhbzBbZdXDg58tgwiKK84b3CIw2u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so2205242e0c.0;
+        Wed, 23 Apr 2025 01:52:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745398340; x=1746003140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NNzLMhAwEW1BPiNK9bNE9/7Jt7OBYMaBTaiFgrT60mM=;
+        b=QfzgZeFLqfpVRsAoj2mctYF9vI3QJOUA3ew5pEA5WCgezM71prXuBKiEDJ6a2zNCf9
+         +wFDMD1ZMFaBghL1ilULmCmAnV/RUvpZtForMA7UCRcN8fYGqFDDVDthroD1VBjJQe9p
+         DNZBxpMqnr12Dp9jzBoS9wUXnGl5aahGP2pJ9RTGc27zwOr4MYXEdnRSeg0miAt59SvN
+         Bfoj8nXPF7K5quiWK9jwvdQseG8XDEdHQBRSR5wUOwTyF8nSqkk3yT/ZWG929e27S+0F
+         SoTQP/p5DHAl3fadFF3+q0Z7GLUJ62CGdt25ptLmwmN0FjwFpQ8JAVFm9QRSeurWklm0
+         pdJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaApltNSXHi+2gSERVjbzKS8pFc0Rh/RTQ/7EzWMW/NBtxpxl5rJ54wseU8t7uggRTGSp1GKO0aEMsyxu4rKvo1QA=@vger.kernel.org, AJvYcCW83BD3YJHIf52odiu7XSj+OGFcMHXSmmzuc+ApPWGigbIRWwQB5dbnuHBhhYvS6IJ0kWR6ZRFn0wKF0Nn7@vger.kernel.org, AJvYcCWZTJ/XBkvFWznufKD/wmjQF9eWNtH8gUf0lPQqGB8th4SHN6skwpQm8TuUYE30xGhL/scJ+4m1vdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjii8uCY9ds/9aAJ5el6jIXTM7aFgmoMSsnn2Fmh3wGW5bLTsl
+	2m6ilphADJaBUYS6cnk+2LpKhGrk8KUqj/Ft2o8UhXwtoW6fMJ1rxm82RsjIv/M=
+X-Gm-Gg: ASbGncuF/KoQp3GzltVymTrkd8CtVQMJEKzGNAXbOYykaJx1G7R//4KKIZu2Ki5IYZW
+	Ct5hhvbPHktjdC6nHwWIE2KS9BUy6QMOOrvrhRjyFskp47pxxX8M5iBXNq0ATw/hdUu6M/+Moeb
+	PdwCUkc0rO2rhDrI3s5EEDokxIsQjFj5YSr3gCgVRwP9AhLmyHgcibvK5o3xxxQrVDHgoQWnwmb
+	go6gPdPJQ5w6j5UF7YbZipb9M0cRDFLL9Bh+v68swzu0XyCa57z6XGoRJwDHq3Y+k0J0AZqCDol
+	/AUT6uaQlhz4z3KMj4P0AxDzbVdYTskDrb0WIgKsGOYtOflb4g00HCI0SQGbti4L8nP+T5vS8A8
+	QgHU=
+X-Google-Smtp-Source: AGHT+IH6PPSFCelTrABPZ42fVLMnN2h+MLsrcczEgUEY+njHcY0u0A97j62o3tScqdAtCRcxDLgXkQ==
+X-Received: by 2002:a05:6122:d8d:b0:526:42c2:8453 with SMTP id 71dfb90a1353d-5292547e851mr14802070e0c.7.1745398339858;
+        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52922c10c1bsm2264081e0c.12.2025.04.23.01.52.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso2278496241.3;
+        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAEdzfE5SpKLo2zkyTIE64xvGtGCpIF2aZC/qF9TGonOf7LtLL8913AasGFKhjuEqpgwBThs9kwg4048t6w6OB8b4=@vger.kernel.org, AJvYcCUduIrfmFflL5NpEicLWoxhS+5LvZ9ab8UnMUSKZBL4Xgo8J1LSmEDYTWQ2zvKrAt5UHzxjGDz77oO0ZI/K@vger.kernel.org, AJvYcCX2th1CJWm1XrxpgVNGUucpgqRW15W+9wPdtcu14IUxedRFwFW6xWxARu7z0pr5sBkJ4nPlZqoXkbM=@vger.kernel.org
+X-Received: by 2002:a05:6102:311a:b0:4c4:e42c:38ba with SMTP id
+ ada2fe7eead31-4cb80145a4bmr9745862137.13.1745398339507; Wed, 23 Apr 2025
+ 01:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 21/34] x86/msr: Utilize the alternatives mechanism
- to write MSR
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, andrew.cooper3@citrix.com, peterz@infradead.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
-        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
-        haiyangz@microsoft.com, decui@microsoft.com
-References: <20250422082216.1954310-1-xin@zytor.com>
- <20250422082216.1954310-22-xin@zytor.com>
- <b2624e84-6fab-44a3-affc-ce0847cd3da4@suse.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <b2624e84-6fab-44a3-affc-ce0847cd3da4@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
+ <20250403212919.1137670-7-thierry.bultel.yh@bp.renesas.com>
+ <CAMuHMdVpiZ+F0TMbLm000M_Scwozj2-SHPrUwTHqFKckVcmufQ@mail.gmail.com>
+ <TYCPR01MB11492BCF416760E978541AFE18ABF2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+ <CAMuHMdVQPbP0Fi5SDN8uOJ23S=_8pqHRVR2QFS8vHNfohzae2g@mail.gmail.com> <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 10:52:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
+X-Gm-Features: ATxdqUG3FZzI8HCkNGm5T6G_ujgFMbIetZczmb5fQaQtW6-2uSwvcnMI6dgpIjs
+Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
+Subject: Re: [PATCH v7 06/13] clk: renesas: Add support for R9A09G077 SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/22/2025 2:57 AM, Jürgen Groß wrote:
-> On 22.04.25 10:22, Xin Li (Intel) wrote:
->> The story started from tglx's reply in [1]:
->>
->>    For actual performance relevant code the current PV ops mechanics
->>    are a horrorshow when the op defaults to the native instruction.
->>
->>    look at wrmsrl():
->>
->>    wrmsrl(msr, val
->>     wrmsr(msr, (u32)val, (u32)val >> 32))
->>      paravirt_write_msr(msr, low, high)
->>        PVOP_VCALL3(cpu.write_msr, msr, low, high)
->>
->>    Which results in
->>
->>     mov    $msr, %edi
->>     mov    $val, %rdx
->>     mov    %edx, %esi
->>     shr    $0x20, %rdx
->>     call    native_write_msr
->>
->>    and native_write_msr() does at minimum:
->>
->>     mov    %edi,%ecx
->>     mov    %esi,%eax
->>     wrmsr
->>     ret
->>
->>    In the worst case 'ret' is going through the return thunk. Not to
->>    talk about function prologues and whatever.
->>
->>    This becomes even more silly for trivial instructions like STI/CLI
->>    or in the worst case paravirt_nop().
-> 
-> This is nonsense.
-> 
-> In the non-Xen case the initial indirect call is directly replaced with
-> STI/CLI via alternative patching, while for Xen it is replaced by a direct
-> call.
-> 
-> The paravirt_nop() case is handled in alt_replace_call() by replacing the
-> indirect call with a nop in case the target of the call was paravirt_nop()
-> (which is in fact no_func()).
-> 
->>
->>    The call makes only sense, when the native default is an actual
->>    function, but for the trivial cases it's a blatant engineering
->>    trainwreck.
-> 
-> The trivial cases are all handled as stated above: a direct replacement
-> instruction is placed at the indirect call position.
+Hi Thierry,
 
-The above comment was given in 2023 IIRC, and you have addressed it.
+On Wed, 23 Apr 2025 at 09:36, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > On Fri, 18 Apr 2025 at 23:22, Thierry Bultel
+> > <thierry.bultel.yh@bp.renesas.com> wrote:
+> >  > +};
+> > > > > +
+> > > > > +static const struct mssr_mod_clk r9a09g077_mod_clks[] __initcons=
+t =3D
+> > {
+> > > > > +       DEF_MOD("sci0", 108, R9A09G077_PCLKM),
+> > > >
+> > > > Shouldn't that be 8 instead of 108?
+> > > > Using R9A09G077_PCLKM as the parent is a temporary simplification,
+> > right?
+> > >
+> > > I am probably missing something, isn=E2=80=99t PCKML actually the par=
+ent clock ?
+> >
+> > According to Figure 7.1 ("Block diagram of clock generation circuit"), =
+it
+> > is PCLKSCI0, which can be switched to PCLKM.  I guess that is the defau=
+lt,
+> > hence my "temporary simplification" question.
+> >
+> > As the actual switching is controlled through the SCI's CCR3 register, =
+the
+> > SCI block should have two clock inputs in DT (PCLKM and PCLKSCIn), and
+> > thus the DT bindings should be amended.  See also Figure 33.1 ("SCI blo=
+ck
+> > diagram").
+> >
+>
+> Thanks for clarifying.
+> Indeed, this is the default setting (and the one we have at this stage).
+> I think that support for PCLKSCIn can be added at the time we support
+> baudrate setting.
 
-> 
->> Later a consensus was reached to utilize the alternatives mechanism to
->> eliminate the indirect call overhead introduced by the pv_ops APIs:
->>
->>      1) When built with !CONFIG_XEN_PV, X86_FEATURE_XENPV becomes a
->>         disabled feature, preventing the Xen code from being built
->>         and ensuring the native code is executed unconditionally.
-> 
-> This is the case today already. There is no need for any change to have
-> this in place.
-> 
->>
->>      2) When built with CONFIG_XEN_PV:
->>
->>         2.1) If not running on the Xen hypervisor (!X86_FEATURE_XENPV),
->>              the kernel runtime binary is patched to unconditionally
->>              jump to the native MSR write code.
->>
->>         2.2) If running on the Xen hypervisor (X86_FEATURE_XENPV), the
->>              kernel runtime binary is patched to unconditionally jump
->>              to the Xen MSR write code.
-> 
-> I can't see what is different here compared to today's state.
-> 
->>
->> The alternatives mechanism is also used to choose the new immediate
->> form MSR write instruction when it's available.
-> 
-> Yes, this needs to be added.
-> 
->> Consequently, remove the pv_ops MSR write APIs and the Xen callbacks.
-> 
-> I still don't see a major difference to today's solution.
+I am not sure we can do that in a clean backwards-compatible way.
+Currently the DT bindings describe a single clock:
 
-The existing code generates:
+  clock-names:
+    const: fck # UART functional clock
 
-     ...
-     bf e0 06 00 00          mov    $0x6e0,%edi
-     89 d6                   mov    %edx,%esi
-     48 c1 ea 20             shr    $0x20,%rdx
-     ff 15 07 48 8c 01       call   *0x18c4807(%rip)  # <pv_ops+0xb8>
-     31 c0                   xor    %eax,%eax
-     ...
+The documentation calls the two clocks:
+  - Bus clock (PCLKM),
+  - Operation clock (PCLKSCIn).
 
-And on native, the indirect call instruction is patched to a direct call
-as you mentioned:
+Which one is the functional clock? I'd say the latter...
+Currently, DT says:
 
-     ...
-     bf e0 06 00 00          mov    $0x6e0,%edi
-     89 d6                   mov    %edx,%esi
-     48 c1 ea 20             shr    $0x20,%rdx
-     e8 60 3e 01 00          call   <{native,xen}_write_msr> # direct
-     90                      nop
-     31 c0                   xor    %eax,%eax
-     ...
+        clocks =3D <&cpg CPG_MOD 8>;
+        clock-names =3D "fck";
 
+and the clock driver uses PCLKM as the module's parent clock,
+I think you will have a very hard time to synchronize all of the clock
+driver, sci driver, and DTS when transitioning to something like:
 
-This patch set generates assembly w/o CALL on native:
+        clocks =3D <&cpg CPG_MOD 8>, <&cpgR9A09G077_PCLKM>;
+        clock-names =3D "fck", "bus";
 
-     ...
-     e9 e6 22 c6 01          jmp    1f   # on native or nop on Xen
-     b9 e0 06 00 00          mov    $0x6e0,%ecx
-     e8 91 d4 fa ff          call   ffffffff8134ee80 <asm_xen_write_msr>
-     e9 a4 9f eb 00          jmp    ffffffff8225b9a0 <__x86_return_thunk>
-         ...
-1:  b9 e0 06 00 00          mov    $0x6e0,%ecx   # immediate form here
-     48 89 c2                mov    %rax,%rdx
-     48 c1 ea 20             shr    $0x20,%rdx
-     3e 0f 30                ds wrmsr
-     ...
+where the modulo clock has to become PCLKSCIn (actually SCInASYNC,
+as seen from the CPG).
 
-It's not a major change, but when it is patched to use the immediate 
-form MSR write instruction, it's straightforwardly streamlined.
+Does that make sense, or am I missing something?
 
-> 
-> Only the "paravirt" term has been eliminated.
+Gr{oetje,eeting}s,
 
-Yes.
+                        Geert
 
-But a PV guest doesn't operate at the highest privilege level, which
-means MSR instructions typically result in a #GP fault.  I actually 
-think the pv_ops MSR APIs are unnecessary because of this inherent
-limitation.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Looking at the Xen MSR code, except PMU and just a few MSRs, it falls
-back to executes native MSR instructions.  As MSR instructions trigger
-#GP, Xen takes control and handles them in 2 ways:
-
-   1) emulate (or ignore) a MSR operation and skip the guest instruction.
-
-   2) inject the #GP back to guest OS and let its #GP handler handle it.
-      But Linux MSR exception handler just ignores the MSR instruction
-      (MCE MSR exception will panic).
-
-So why not let Xen handle all the details which it already tries to do?
-(Linux w/ such a change may not be able to run on old Xen hypervisors.)
-
-BTW, if performance is a concern, writes to MSR_KERNEL_GS_BASE and
-MSR_GS_BASE anyway are hpyercalls into Xen.
-
-Thanks!
-     Xin
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
