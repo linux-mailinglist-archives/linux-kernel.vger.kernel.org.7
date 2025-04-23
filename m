@@ -1,178 +1,195 @@
-Return-Path: <linux-kernel+bounces-616446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB617A98CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957C3A98CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EC917A171
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA783A4C96
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650827CCDB;
-	Wed, 23 Apr 2025 14:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C5D27CB38;
+	Wed, 23 Apr 2025 14:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cV1nN/Lc"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BCp7xZzU"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08C27CB33;
-	Wed, 23 Apr 2025 14:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F077D2797A1;
+	Wed, 23 Apr 2025 14:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745418069; cv=fail; b=WSM9mDD19905AYY6xrKQxCZkhXDyz+nsbccXKNSK2TL+xOJcjYuklR3tzRIK1VV9C9r7odYGc2GcnBDJFQQUdarYpwlMnbT32QBNwI8IkCP9pIGeJKJ7si2ONrCOID47/MWt1HNhdETW2xqRNa4z0Q8nSKwiUf3k7sSqhvj006M=
+	t=1745418141; cv=pass; b=ZMjnnU/rdzFfxYi1/oHP3biIj9z/Uo+PkXLu8SziOf3l2hVgT/g2zeZfgDSOliLsPMSem/L5EWwxERjSresjBOBMRP/HmMcq4Y7obOY8M0kYE70Is2yBImiNadR8njhJsGvr/qqedN5CF/IoSeni8/Be9hUYqZ1l1npz2fgBMyY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745418069; c=relaxed/simple;
-	bh=scZp+efHiy4ggJrhIF92KMGwT4uySbl8BkdKqjTVjzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GgnvkXL//69zCyBd8QFMTw9UPc5mTAnLv1mSzFX+1gjDGbR1rNJAVPBppas82rbj3D1BT/b/G4dpDD4oq478j2PTp7AU8D912xL77TJQp3JpG0RhVrqQsBl3pP3y9/tHIbyGM2ktZvl4aFse3PDDIfs1iStZIu1V3fzpWtYODlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cV1nN/Lc; arc=fail smtp.client-ip=40.107.94.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AiZMY/pqVrJGkkWGRer7GOJu+YB144JIWgBsYmwMv/ydQ77WwhX6bLLELuv1eZPbf0OqQZxugqIXov4jbSW0MWuNMjVaV/LPQ9lJC2VowQQEA1Yk9K8U8qnQelKO6NmMMWZvSBKRIbOdfZDSaC92AjjVOMTiXXmzNSimFSQ47mVNclLitYJ2ME5xTVQbVY09ot0BXk+pUrX+npho54cHEJi8igbBDjon/TW5gbddjbmexkpunFo0koO3wjXiuxUxry2BQXTEcoMm8Uhc9v+JBbZ+ZWZplidsEawbgFRph8+JgSB2VdyPtuVU6ck1GKlGC+RUpasRXMYqb9wDydXBBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wy/fwtf7JTaDoyDpLlkdk1R1yBDUMS33mhBvMNAHZns=;
- b=ECr4I5xnq1py+3MA+rNQQu4Mjxw6DNwsaWaARyh3U+DmrvGyu5Lxj+cTpjHmffSv/xGhrtY61Xb8y390jWEniCaF6a8AsFwZR/DMv3IkYYT5sZCz9eLNzF5Ea70zxVhsRFOopFskNp+X7j7qdwA/zfQfb6Vb7oYlKEwyZMzE2rUZlGh/QBtcKFQzPRi5dgTaIxQdwRDpLY5k4TahkqYus9ciikpxEfdA1A1l++KrwFUT4A2UyRs9yUZlrNFVcVMIJuinjLsMS+1JDo/qS8fuovbPPQCBbCTTa7EtiFN1ZvO8+mQeyaN59lJ63eT+wD1K8nQqcNEyBMU0YxgifE8MdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wy/fwtf7JTaDoyDpLlkdk1R1yBDUMS33mhBvMNAHZns=;
- b=cV1nN/LcXeB9CFV205saFl09xdlF5CBb0EySWao04RU9I2+bBZ+35wfI7oOwFij0TIGdibyafLnkDHOBqK/XqB5w04GWQN9vj3DPNYb6jSodXKrxgqRVx/Fx17iFnCmkkcJezfbQqwXuJ7VQGlJasPbymQhCBXrXKlBnNcKOFuRdcCgq95PUaOfP5uPXnHhgSaEWHPDEVTmDB+lJrXXEIF5M07K6eftrvVXFKvdeFPAKyB27sWpfnpXwaE+AvAj4QUdBPkjZ98h+om456XV6rKqUv1mnZQiUUedovw0GJB2YCe6i+XJNOs1v/vi1q2kpBh5n2AAd6Ex4BER57yl7YA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by IA1PR12MB6017.namprd12.prod.outlook.com (2603:10b6:208:3d7::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Wed, 23 Apr
- 2025 14:21:04 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8632.030; Wed, 23 Apr 2025
- 14:21:04 +0000
-Date: Wed, 23 Apr 2025 11:21:02 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, shangsong2@lenovo.com,
-	Dave Jiang <dave.jiang@intel.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] iommu: Allow attaching static domains in
- iommu_attach_device_pasid()
-Message-ID: <20250423142102.GL1648741@nvidia.com>
-References: <20250423021839.2189204-1-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423021839.2189204-1-baolu.lu@linux.intel.com>
-X-ClientProxiedBy: BLAPR03CA0005.namprd03.prod.outlook.com
- (2603:10b6:208:32b::10) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	s=arc-20240116; t=1745418141; c=relaxed/simple;
+	bh=9yB/Qq+BRZ2Phu3AIq9BfdJXrDlB28zaBQ+JFyqEXRQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XZlyV5W7w5YWuANla/mC3kYaQHqMsZVG9DAv6ggzxzbUyeiZXi/KO+6EXg5+M67qJpN56XVWmoOU6zxhw/WmTTKo/nTEQGDJy/pcPGlMbloNyI+6qeBEw5f2BDOZCwWqKf7A5Tm8M1sHtGz3DlbyXVg6Opy1BcbTXy9xfkZvtso=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BCp7xZzU; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1745418119; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZDV+mpsgzh1T0Z7SwITf51hq64jkmPmYNt4ZPn0hf+9iQUFiOtzyQMPeXB87ELeh+mtm0UOI4jL2g1e/LMrwTzDC0BRsX75fwD0adNraebUpUKmFHW9gr7CgloAcfeoufKzEPsJjkocYEdjaYrgmGLmoOfPEbLhalr0b5sCzNPU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745418119; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9yB/Qq+BRZ2Phu3AIq9BfdJXrDlB28zaBQ+JFyqEXRQ=; 
+	b=F5/MLn65UFcUWqfKpz3lDq0IhkS7oAIQyNKd2KZ5EU9HZHN+B9YFkSdfZyQmIXdM3Wz7VOf6+ZJCfWet4D+HuzGYUTSINMcFZ2hlkO9UxfYg1oiKMWGFCLuYV5pL+BIJEImgjBEJyHXXSNXmt48yYpxZd76A9sTv88MnprWaJ1s=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745418119;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=9yB/Qq+BRZ2Phu3AIq9BfdJXrDlB28zaBQ+JFyqEXRQ=;
+	b=BCp7xZzUEkm77k0kl7WIn+l0ZF78PFghvUmTccTyk2NkPGAR5Mow55ts+gKKKQzO
+	lRN2aPfzHc1aWe5MSAQDSLtrzwrnCdch6bRj126kI6Z+R9I2D3wtlAcVHvNROyzAyFi
+	ITU2NmEE4IervwC6IboL3/0/bp5d59sP/fTsMJRApy/BaqBcsGExlTQOGzBaUavdYU5
+	8zNNFQvUE5hPg+Qutt+DiVV3CiAV6x7MvaSromHkNvCcRZZp3Ih12fOAJf6m3gxkUeg
+	2nsU/Hr/gyo4GmKdRLdXdra415DjJutSVRAf20Pg0dDLBYR2Sm7KGECIO/nFRn+17Qd
+	RI3tRN6TsQ==
+Received: by mx.zohomail.com with SMTPS id 1745418117666283.0504327658683;
+	Wed, 23 Apr 2025 07:21:57 -0700 (PDT)
+Message-ID: <c5efd677fd2199cbf8f9d6006905acdf19da02bc.camel@icenowy.me>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: jh7110-sys: add force
+ inputs
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang
+ <jianlong.huang@starfivetech.com>, Hal Feng <hal.feng@starfivetech.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Date: Wed, 23 Apr 2025 22:21:51 +0800
+In-Reply-To: <CACRpkdYgkDpC1iJ-KaZj2GZ3A3_V=3-KQef_nCRhMDrUK=FHXg@mail.gmail.com>
+References: <20250422162250.436169-1-uwu@icenowy.me>
+	 <20250422162250.436169-2-uwu@icenowy.me>
+	 <CACRpkdbGwPyQgVL18iMvUTAvh4XTjo6g3mGT4e_b2aNAjr2obg@mail.gmail.com>
+	 <B4C8B369-E345-4133-A106-7C5E71513329@icenowy.me>
+	 <CACRpkdYgkDpC1iJ-KaZj2GZ3A3_V=3-KQef_nCRhMDrUK=FHXg@mail.gmail.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA1PR12MB6017:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06c86477-924c-4bbf-6fcc-08dd82721463
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MUSC9Ik3yZm6AMm3x9lG8b0eaOqBgTr5MTjuuBcdwwJw0VR2Nh3ZiuK6+Pwj?=
- =?us-ascii?Q?ME5qMf+m/0LseEiHOPujSu67cvhvud8q9e5ebv/NHsXSOZB6DsruEnxzcd9j?=
- =?us-ascii?Q?Pl2Fxh/6ZBDPJGL65ZO5SVHsn+/YgMvDG/049+3Wm4520ZRRkAFFoJ0ZxAk2?=
- =?us-ascii?Q?E8TLVoSchwaYCWNqVIuDPj3ZcHDEe+u6EFTAFc2SpHE+Hc7/tUE4Zbwcf3cz?=
- =?us-ascii?Q?N033lZkZ4QkzkUzOBItPqWcwLsefIXYLt3HFhwKzJe5QKHx8ppicNYwvPJGq?=
- =?us-ascii?Q?mZlD0xxmkpNr7JBsvNYBlY10St5UrCQX0JnibSdaS9aNCvK/fmmkZ7hqnUIU?=
- =?us-ascii?Q?SgCSFRYKnI+tGygA70kPzg7/kFkI/bAl9zulIDYpVdDe/m31SZRqCqYHtUsl?=
- =?us-ascii?Q?s2RSfx+JOXwX3d8vDp62g3wzg7Nu97GbcWtAThxa4TD+6Pw8xYzxafFExvL/?=
- =?us-ascii?Q?Hb/mM0JMCQN56XfWjRq+gwkmdbRJ/i51gb1bVFrea6I3aXJ28dhRxsVpAj1p?=
- =?us-ascii?Q?0kCapZLBjvjn97isiPywJJ0WCZsSm4eFY7obRJJw/6prTkGxDQZoGw2nSe7p?=
- =?us-ascii?Q?/ZBB7pDuG5ruBLTxeN1kEQFIZ698qlWViWfuaOfR7YR6gNoQvxhGce4+oALU?=
- =?us-ascii?Q?Z527Wj+HnuGgoOFzWL1NnyuQXFob7c+SycoX/luAlji/J5VzGIyK8nJKshyv?=
- =?us-ascii?Q?i9S4ybRhK0iKPtOroCQnYP0sb74tLFqdIx97UKD/ZNUfOEEkx8S4dMZSpqSx?=
- =?us-ascii?Q?p1tmlM1oxwclihCKyNCtv664C5TEJyA6duXLGpEaRrRvlC9enkD2psnSDozc?=
- =?us-ascii?Q?Eog5isuBjaP3TV1KlfJkaY8LcR9Q1SPxhamxV7S/PAeTqKe7y6Yc7Rqbk3S3?=
- =?us-ascii?Q?ZfvP957yKYdQT70WlIl/cmr5tzbOPa9OVZ2f9SEGBKe8aPo0tMid0erc735+?=
- =?us-ascii?Q?wNPOOdGz/iUaJUkzhkJXAenvmrSo4RK8gBe7ff8/OUNj6UTVTsLDhguBDz6A?=
- =?us-ascii?Q?F3ZpNb5TY26NV/pR/99zUUHfOvQXHbNd1QMKzw9y3N9BPRbHESlEGsgaZdjQ?=
- =?us-ascii?Q?wLtf2fxIr1ESWMxPI79RqBGOIwrC/fVnUn5J7JMiSVGb8aBAMmFB6FNYWakK?=
- =?us-ascii?Q?0mZHOAv6o2zdeAu1cQEX4BJdmO1uOcOxQeNSWVMXHdL76KTcKwRQvC46G7Mb?=
- =?us-ascii?Q?5M3Swj4WLCyZObbgnEiw3fgQNUG5TckyRZXLwMARiL4ex+oNLkDY8LNUqfK0?=
- =?us-ascii?Q?VJjQtS0kn9n3qHxSHDoK37jKFk7+8TKSZI+9J921LFdUrRbROBq2OG7Xzsri?=
- =?us-ascii?Q?EpZfJw1kVSkV0Lr/PVQhM2MK6SoiApAqjgbQ3JQIsZicxLWxptrVMC3MxFY3?=
- =?us-ascii?Q?50kRZpcSLilU+9KNP53aIkGkN1UGNKKlkoz3GoNS9/AQ1LcTVoiUcAXENQyY?=
- =?us-ascii?Q?N2uGdqdaY0A=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cMqRLQAzu6vtgf0lTonxTgAIErFU7AQkA4kTjv37Bi5YbFzYTp7Xh/biTXYD?=
- =?us-ascii?Q?eF9/qHUspsu0GBRpRNJyx9pGFSUV7+4fJcnhvRr+L2XiBQ5w0PMviLygSyAe?=
- =?us-ascii?Q?NILXdiuTT/9QSSeEUbXOK9TQcYeY99a0zxil8zo9+khDUJVGzP5fUlqvKDGb?=
- =?us-ascii?Q?Ffy0QV+wA1LyK6SF37LkxvitAnz4F0quXV4wPDE0Dnf4NZVd0Xi3qkSZB0b7?=
- =?us-ascii?Q?Me9eM5nBJvTCdZpFw6qrZ3xJ6IplZsRmP6h8KnFBFe49a8YrluHQEQXhuZ9y?=
- =?us-ascii?Q?9wtqCMJu4+ibNO+gYKX6yQjYz5n2gmmLOFIoTJ3yyBj+BBQBr4qhxr5gPNil?=
- =?us-ascii?Q?q0xKP+ObXTSLCctxevrX2ZDyWoxPerb8JPXU3cwk4bp2kg1Bom1u0wdjgA5X?=
- =?us-ascii?Q?tMldeeL4ae1EXI02Dds4eWIRg2DmxzVhxDbZeZNUsFIBQqHn81pppmDgfb7L?=
- =?us-ascii?Q?M1+SRNKcpOP+E0XYjzlvdejRfdf6AK4M6AkWVqd813Nn7XRYk8dU+tVfDSbk?=
- =?us-ascii?Q?TMbAcFXiLwq2/MHASbD6OODmOHYy1qjowq/y9J+i68TkV1jr08v13F1HHhM/?=
- =?us-ascii?Q?fhT9I7nuF2KgHm69ivcYwLisY8JGRlUWDoypDSVU4JVWHZ6mIUZufhnzwqyx?=
- =?us-ascii?Q?rs6G9MKw4Z4Yrv6NA2kXI6TDuCQF0VYhS72UPpYaS1Hf2CcCk4WsqRiFpcGo?=
- =?us-ascii?Q?eBS743imjq7SDNtaWuL1DYS4zy7I3i1P45kudih+o2dN3HmQ7Qtiy6jcC9zH?=
- =?us-ascii?Q?ZU2KE9a1rIsoLucV8cOZ8lZM/B9ezR3D7b9otUJVjrmJkR96rzplV86bSkNp?=
- =?us-ascii?Q?y+ymuhPJ+RLwRyBIOKx9/uN8XecJ0ID+5hX+lRIXC7uUWdEFyWgMEgs6+RmM?=
- =?us-ascii?Q?qaM6lJjF2u2xnftPlsNENmb5QOWP7rjCPecLH/V8PFmxbddSYl9Hgn+yTDLN?=
- =?us-ascii?Q?4k8eDP0lyR0qMAW3HQY2oKD6Awbe8AF6ltbSJA+BXHlfLOKNqd2RdRxnlLjW?=
- =?us-ascii?Q?kWhvlLgvAi140KYvNdSrxeS/XiYPGRNmETQUUs01WsvTA4COt62BxUvKbWxQ?=
- =?us-ascii?Q?r8XTTBI4iLNR++ZyHrszrfONPy7hbEAqVPd6alqR0Z8F3DBsXhrYSq2NTJ/j?=
- =?us-ascii?Q?uV0F1ygufrLhh2l1X3sBvlgQsuQtnjyFzA4GSVq0RMSHQVdSSgaHKEo1l91k?=
- =?us-ascii?Q?QbfBTqn0o2p7oSTiMIVimbBMOFIJSl44ceZjJUT+lhw0nUOt3FBKUR+OiqrU?=
- =?us-ascii?Q?JGagFOpl4Zcvpo7vE25PUOuHnHds0pvtguhxPd37/Yn7ekrsGUZRR0faQfKJ?=
- =?us-ascii?Q?4giYyPgcBhVazMqA9abe3sLmW5mV5HaL3XeWdUIPPw0dABN5p3KmtlN5l6An?=
- =?us-ascii?Q?FRRoVHXPNVchhL6zVDIBRheVts7k3o6ucE31ota1kNx9yOGQ0hQfh9oeU7XU?=
- =?us-ascii?Q?7L8KggXBqEFsvgqyFTXPGko8le1ZPdV/KDNO0aDW/4EhXqro5Hmcq9l9RlJz?=
- =?us-ascii?Q?3T6BmedUt7HQLC1nh4Dy5L2P0zGsOgfQ5MoCTrctuOnR/BcphAy1BICXZUpz?=
- =?us-ascii?Q?JbkqerTybooXx6F88U8y7soffu0yCZvhHZWB6IA7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c86477-924c-4bbf-6fcc-08dd82721463
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 14:21:03.9317
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6Qp6jkwK9AX70JIZ/prMYQ2M1q12K48DstL5EcNX3NLoMUWw3Ersxav1TPp5AWz8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6017
+X-ZohoMailClient: External
 
-On Wed, Apr 23, 2025 at 10:18:39AM +0800, Lu Baolu wrote:
-> @@ -3435,7 +3448,8 @@ int iommu_attach_device_pasid(struct iommu_domain *domain,
->  	    !ops->blocked_domain->ops->set_dev_pasid)
->  		return -EOPNOTSUPP;
->  
-> -	if (ops != domain->owner || pasid == IOMMU_NO_PASID)
-> +	if (!domain_iommu_ops_compatible(ops, domain) ||
-> +	    pasid == IOMMU_NO_PASID)
->  		return -EINVAL;
+=E5=9C=A8 2025-04-23=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 12:55 +0200=EF=BC=
+=8CLinus Walleij=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Apr 23, 2025 at 11:41=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me>
+> wrote:
+> > =E4=BA=8E 2025=E5=B9=B44=E6=9C=8823=E6=97=A5 GMT+08:00 17:09:42=EF=BC=
+=8CLinus Walleij
+> > <linus.walleij@linaro.org> =E5=86=99=E9=81=93=EF=BC=9A
+> > > Hi Icenowy,
+> > >=20
+> > > thanks for your patch!
+> > >=20
+> > > On Tue, Apr 22, 2025 at 6:23=E2=80=AFPM Icenowy Zheng <uwu@icenowy.me=
+>
+> > > wrote:
+> > >=20
+> > > > +=C2=A0 starfive,force-low-inputs:
+> > > > +=C2=A0=C2=A0=C2=A0 description:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The list of input signals forced to=
+ be low inside the
+> > > > SoC itself.
+> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32-a=
+rray
+> > >=20
+> > > I don't see why you need this hack.
+> >=20
+> > Unfortunately these properties are not for pins, but internal
+> > signals that isn't
+> > bound to external pins.
+>=20
+> We don't really care if pins are external or not, we are an operating
+> system
+> not a philosophy department ;)
+>=20
+> You calculate the offset and shift like this and write into a
+> base+offset:
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 offset =3D 4 *=
+ (pin / 4);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 shift=C2=A0 =
+=3D 8 * (pin % 4);
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D readl_=
+relaxed(sfp->base +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 info->gpi_reg_base +
+> offset);
+>=20
+> Compare to jh7110_pin_dbg_show():
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 unsigned int offset =3D 4 * (pin / 4);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 unsigned int shift=C2=A0 =3D 8 * (pin % 4);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 u32 dout =3D readl_relaxed(sfp->base +
+> info->dout_reg_base + offset);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 u32 doen =3D readl_relaxed(sfp->base +
+> info->doen_reg_base + offset);
+>=20
+> So clearly the entities that you affect are in the same numberspace,
+> and that is all we care about. They are not enumerated in any way
+> orthogonal to any other pins AFAICT.
 
-Convert all the places checking domain->owner to the new function..
+They just share the field width, they're not in the same numberspace.
 
-static int __iommu_attach_group(struct iommu_domain *domain,
-				struct iommu_group *group)
+The design of the JH7110 pin mux control is quite simple and stupid:
 
-int iommu_replace_device_pasid(struct iommu_domain *domain,
-			       struct device *dev, ioasid_t pasid,
-			       struct iommu_attach_handle *handle)
+- First per-GPIO map configuration to map the GPIO's DOEn pin to
+internal tri-stating signals.
+- Then per-GPIO map configuration to map the GPIO's DOUT pin to
+internal output signals.
+- Then per-input-signal configuration (note that it's no longer per-
+GPIO) map configuration to map the signal to a GPIO's DIN (or fixed
+low/high).
 
-Jason
+For examples, here's some field names of a few registers (according to
+the TRM):
+0x0 [5:0]: sys_iomux_gpo0_doen_cfg
+0x40 [6:0]: sys_iomux_gpo0_dout_cfg
+0x80 [6:0]: sys_iomux_gpi_u0_WAVE511_i_=C2=ADuart_rxsin_cfg
+
+P.S. I just now found that the vendor's 6.12 BSP (which uses the
+mainlined pinctrl driver) has pinmux configuration that maps the same
+GPIO pin (GPIO38) to two input signals (both BCLK signals of two I2S
+controllers, one RX and one TX) [1]. This makes me think use two
+virtual pad numbers (one for internal low level, another for internal
+high) for these internal connections viable again -- In this case I can
+write `GPIOMUX(PAD_INTERNAL_HIGH, GPOUT_LOW, GPOEN_DISABLE,
+GPI_SYS_USB_OVERCURRENT)` .
+
+[1]
+https://github.com/starfive-tech/linux/blob/JH7110_VisionFive2_6.12.y_devel=
+/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi#L298
+
+>=20
+> Both pin control and GPIO handle chip-internal lines that are not
+> routed outside sometimes, that's fine. Just deal with them as any
+> other
+> "pins".
+>=20
+> Yours,
+> Linus Walleij
+
 
