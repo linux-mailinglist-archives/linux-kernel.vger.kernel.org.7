@@ -1,159 +1,156 @@
-Return-Path: <linux-kernel+bounces-616669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E79FA99392
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C30AA993A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C92AC7ACB75
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9E37AE1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D97298CCD;
-	Wed, 23 Apr 2025 15:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B9YnfKIn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA012989AA;
-	Wed, 23 Apr 2025 15:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5E228BA82;
+	Wed, 23 Apr 2025 15:50:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D8227FD49
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423303; cv=none; b=DjJn998uFCdakGx5TUDRGRLegHI7y03+BuqAQgNCVotMIicOAf94voA5VxE6rrraT8UhgKW79xnFnbADkuoClpzuXckM0prvy8JxvmbmzCAOOxijBwA3yviRVy7865lofArfU4Xzogy58d28lPJ3M7E1AngDB73OS6cCSq2yfiQ=
+	t=1745423436; cv=none; b=uCvvzsaXpumiUOKe2zCxhtOAjzbWHK1lGGkhv9GtFz3/I2AMMJ2gAsIIfqPv0yButEGelAJxykR1rQWIc3M6AOGVRCGnpTdP+IM2xrq0/YCZsOHbxIGMVf84kjaJq4C/TZMl869U1LKuXJPHHX7crHtJtrCDXdLqJTBHmrZ+8+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423303; c=relaxed/simple;
-	bh=4WyWXiBZlLAYmPUiyPkMd/zqqMYaA8iQvgehTct4eVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7gbViDo727oy5FJjG+Kd5IaX//B4Wwbm3+3eWuqILo3nILHmtfArbS6DI26sZCT4Z+WJRRNoJdMG25hWkaKYkLstTtq0D2EL9fOlDWIu436q8j9+9cApzZbxPdcWV9X0SVFKrZpgzcE6Y0NFWC/Qvg/1Cpe7+hZKDK5nzY+68Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B9YnfKIn; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745423302; x=1776959302;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4WyWXiBZlLAYmPUiyPkMd/zqqMYaA8iQvgehTct4eVI=;
-  b=B9YnfKIn4nmHR8kfQbvejmCwBbbzS3ZM5uBfL3CLYjpHq5CJuJSKHB3b
-   dfa2QRzbPgkRO+x6YggZaI80oKl4w7f0IMiCytCkRJuzJ3ElQvaPcq/De
-   idfYraYizuOVyYrCgsuOp078mhgv4uMOb5thuRkZ5rZxBLBk89PvAI8vV
-   170VeolI3Im6/7+Tn/ogpPI8V48yyIrWxu23BJI37lQbFthXsvE6HHyI+
-   CwcvCHdG4SUt2M2/5YWPneeX36KwFxZ1etmwNr3eYjFubCQUCMXYtfy29
-   5W5cmFgFKTmjCeoFRTQu9IMS9/iSPMoLHFqvoHzVBbaLOIkObRxOsNTGX
-   w==;
-X-CSE-ConnectionGUID: aVTBtnZHQC+HJR1ETrZiqw==
-X-CSE-MsgGUID: 1gvgl+CCTi+tMfa1WEq1eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="46258024"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="46258024"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:48:21 -0700
-X-CSE-ConnectionGUID: ypmLoP8WSymIQf+IK0oKGg==
-X-CSE-MsgGUID: UUyQ1S+FR/KyGISpmBtYhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="169560586"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:48:19 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id C4DF511F9FE;
-	Wed, 23 Apr 2025 18:48:12 +0300 (EEST)
-Date: Wed, 23 Apr 2025 15:48:12 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] media: i2c: Add driver for ST VD55G1 camera sensor
-Message-ID: <aAkLvCqsJ9Tf-O2d@kekkonen.localdomain>
-References: <20250404-b4-vd55g1-v5-0-98f2f02eec59@foss.st.com>
- <20250404-b4-vd55g1-v5-2-98f2f02eec59@foss.st.com>
- <20250422150746.GA23173@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1745423436; c=relaxed/simple;
+	bh=obJ4KNRdop1ri6ey3P8GkkISiNkN9TepbOopmkOaHtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YfTnYkOL0hYjHlzRTolEGJkM2mnPaDejuBHvPhao/0UYmca3fWfmkRhP3rQih1sU7eFzvECIathIPtpF+K3NwigLffsmRKTe2jEm7aZSr3S2s0qIHBbBN0V3hFqPPEsXOyZQp7zOfAqmlYs9B9/l4ep1n7Sp0hjZSgah+JtXUq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FB331063;
+	Wed, 23 Apr 2025 08:50:29 -0700 (PDT)
+Received: from [10.57.74.63] (unknown [10.57.74.63])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA5153F66E;
+	Wed, 23 Apr 2025 08:50:31 -0700 (PDT)
+Message-ID: <4129dca9-07fa-4b9d-a7d8-de7561d509e7@arm.com>
+Date: Wed, 23 Apr 2025 16:50:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250422150746.GA23173@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] platform: Fix race condition during DMA configure at
+ IOMMU probe time
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Will McVicker <willmcvicker@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, "Rob Herring (Arm)" <robh@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Joerg Roedel <jroedel@suse.de>,
+ Bjorn Helgaas <bhelgaas@google.com>, iommu@lists.linux.dev,
+ Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org
+References: <20250423150823.GA422889@bhelgaas>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250423150823.GA422889@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent,
-
-On Tue, Apr 22, 2025 at 06:07:46PM +0300, Laurent Pinchart wrote:
-> Hi Benjamin,
+On 2025-04-23 4:08 pm, Bjorn Helgaas wrote:
+> On Tue, Apr 22, 2025 at 04:26:49PM -0700, Will McVicker wrote:
+>> If devices are probed asynchronously, then there is a chance that during
+>> the IOMMU probe the driver is bound to the device in parallel. If this
+>> happens after getting the platform_driver pointer while in the function
+>> `platform_dma_configure()`, then the invalid `drv` pointer
+>> (drv==0xf...ffd8) will be de-referenced since `dev->driver != NULL`.
 > 
-> Thank you for the patch.
+> I need a little more hand-holding to make sense out of this.
 > 
-> On Fri, Apr 04, 2025 at 04:50:52PM +0200, Benjamin Mugnier wrote:
-> > The VD55G1 is a monochrome global shutter camera with a 804x704 maximum
-> > resolution with RAW8 and RAW10 bytes per pixel.
-> > The driver supports :
-> > - Auto exposure from the sensor, or manual exposure mode
-> > - HDR subtraction mode, allowing edge detection and background removal
-> > - Auto exposure cold start, using configuration values from last stream
-> > to start the next one
-> > - LED GPIOs for illumination
-> > - Most standard camera sensor features (hblank, vblank, test patterns,
-> > again, dgain, hflip, vflip, auto exposure bias, etc.)
-> > Add driver source code to MAINTAINERS file.
-> > 
-> > Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> > ---
-> >  MAINTAINERS                |    2 +
-> >  drivers/media/i2c/Kconfig  |   11 +
-> >  drivers/media/i2c/Makefile |    1 +
-> >  drivers/media/i2c/vd55g1.c | 2005 ++++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 2019 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 4f5e9005063a157de69e81b10f8def9da9e6c04c..9991c5f63e3d49a4e7a6ef0071f3b81825e84eee 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -22416,6 +22416,7 @@ M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
-> >  L:	linux-media@vger.kernel.org
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml
-> > +F:	drivers/media/i2c/vd55g1.c
-> >  
-> >  ST VGXY61 DRIVER
-> >  M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> > @@ -24801,6 +24802,7 @@ F:	drivers/media/i2c/mt*
-> >  F:	drivers/media/i2c/og*
-> >  F:	drivers/media/i2c/ov*
-> >  F:	drivers/media/i2c/s5*
-> > +F:	drivers/media/i2c/vd55g1.c
-> >  F:	drivers/media/i2c/vgxy61.c
+> After digging out
+> https://lore.kernel.org/all/aAa2Zx86yUfayPSG@google.com/, I see that
+> drv==0xf...ffd8 must be a result of applying to_platform_driver() to a
+> NULL pointer.  This patch still applies to_platform_driver(NULL), but
+> avoids using the result by testing drv for NULL later, which seems
+> prone to error.
 > 
-> I suppose that
-> 
-> F:	drivers/media/i2c/v*
-> 
-> would be too broad. Sakari, is it time to create a sensors subdirectory
-> (not as a prerequisite for this series of course) ?
+> I think this would all be clearer if we tested for the NULL pointer
+> explicitly before applying to_platform_driver().  I don't like setting
+> a pointer to an invalid value.  I think it's better if the pointer is
+> either valid or uninitialized because the compiler can help find uses
+> of uninitialized pointers.
 
-Good question. Right now everything is arranged according to the bus the
-device attaches to, and camera sensors are practically all I²C devices. I
-do anticipate to get some I3C devices in the future, but it's been slow.
+Yeah, I was also in the middle of looking at this after managing to hit 
+it playing with driver_async_probe at the end of last week. I guess when 
+I originally wrote this pattern I was maybe thinking the compiler would 
+defer the to_x_driver() computation to the point it's eventually 
+dereferenced, but I suppose it can't since dev is passed to an external 
+function in program order in between.
 
-Would you create a new directory for cameras under i2c? Should the same be
-done to various bridge chips, TV tuners and the few flash controller
-drivers we have left?
+Indeed in my half-written version of this patch I was leaning towards 
+removing the drv variable altogether (just doing 
+to_x_driver(dev->driver)->driver_managed_dma inline), or at least doing 
+the same as Will's previous diff. I figure the one-liner replacing 
+"!dev->driver" with "!&drv->driver" would be too disgustingly 
+non-obvious for anyone else's tastes...
 
-I don't have much of an opinion on this right now. While the current
-arrangement requires some care when changing MAINTAINERS, it works for me.
+For consistency we should really fix all the buses the same way - sorry 
+for the bother (I can write up the other patches if you'd like). FWIW 
+this part really was the most temporary stopgap, as my planned next step 
+is to propose moving driver_managed_dma and the use_default_domain() 
+call up into the driver core and so removing all this bus-level code 
+anyway, hence trying to minimise the effort spent churning it. Oh well.
 
--- 
-Regards,
+>> To avoid a kernel panic and eliminate the race condition, we should
+>> guard the usage of `dev->driver` by only reading it once at the
+>> beginning of the function.
+>>
+>> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
+>> Signed-off-by: Will McVicker <willmcvicker@google.com>
+>> ---
+>>   drivers/base/platform.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+>> index 1813cfd0c4bd..b948c6e8e939 100644
+>> --- a/drivers/base/platform.c
+>> +++ b/drivers/base/platform.c
+>> @@ -1440,7 +1440,8 @@ static void platform_shutdown(struct device *_dev)
+>>   
+>>   static int platform_dma_configure(struct device *dev)
+>>   {
+>> -	struct platform_driver *drv = to_platform_driver(dev->driver);
+>> +	struct device_driver *drv = READ_ONCE(dev->driver);
 
-Sakari Ailus
+Beware this might annoy a different set of people as it's not paired 
+with a WRITE_ONCE(), but for now I guess using it is still arguably 
+better than not. Really we should be under device_lock at this point and 
+so have no race at all, but we can't do that without keeping track of 
+which devices are IOMMUs themselves to avoid deadlock, and that's not 
+something I fancy throwing out as an -rc fix in a hurry...
+
+Thanks,
+Robin.
+
+>> +	struct platform_driver *pdrv = to_platform_driver(drv);
+>>   	struct fwnode_handle *fwnode = dev_fwnode(dev);
+>>   	enum dev_dma_attr attr;
+>>   	int ret = 0;
+>> @@ -1451,8 +1452,8 @@ static int platform_dma_configure(struct device *dev)
+>>   		attr = acpi_get_dma_attr(to_acpi_device_node(fwnode));
+>>   		ret = acpi_dma_configure(dev, attr);
+>>   	}
+>> -	/* @drv may not be valid when we're called from the IOMMU layer */
+>> -	if (ret || !dev->driver || drv->driver_managed_dma)
+>> +	/* @dev->driver may not be valid when we're called from the IOMMU layer */
+>> +	if (ret || !drv || pdrv->driver_managed_dma)
+>>   		return ret;
+>>   
+>>   	ret = iommu_device_use_default_domain(dev);
+>> -- 
+>> 2.49.0.805.g082f7c87e0-goog
+>>
+
 
