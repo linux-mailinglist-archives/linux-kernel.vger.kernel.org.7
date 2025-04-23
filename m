@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-615637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69024A9802C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:12:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64722A9818B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817971940202
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4531169BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AC2267B61;
-	Wed, 23 Apr 2025 07:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78A726B2DF;
+	Wed, 23 Apr 2025 07:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bGfCmCgB"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="mmk4QKMI"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3BB22D793;
-	Wed, 23 Apr 2025 07:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13E26B2A1;
+	Wed, 23 Apr 2025 07:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392344; cv=none; b=LRhKTowZb3uxWBmn5rFYJIoHJDpkNDmDWvZ2ubt40Vi2AVfBRfdHoP/0OtnqSxKK4/QwccimKyOY6OfWUdBAjCknw9mKdJ7FJaok7yvQxLfmQyokV8VY/nhV4jqH7PW1FbR2sQpJm5JA4h1zUf8FJi2BISvV70A2Xh6AUAd/8tU=
+	t=1745394535; cv=none; b=NhMbbkpIDA6oys7eZbEEV/DklhNmFiJfbC7H9G55II72ovm7rndjbS0SJe7ttAjjvsky2fGVqRhFY85V3iTVRREc33/3J0zm+dpJQr0H/ik9/WsMwr25gL0IJCU9Z9HrXP4kEUe7us+fLVv7wm4Bu3WSnm+D6ZHanmi7PlDvUgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392344; c=relaxed/simple;
-	bh=2jV62OjI4EGwSMWVYUa63VPh+aP1JMgho08Ke8TykIs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HyFPuNyX2UhADoW98vMj8bblTyUgSiocBrVTV9/s2BeIzKWCmiAAkI9bLj8EWiUar09+IT3R1ithiGfShrLK2RwTG2x2HaqoDuX+s/G7A4YChHDpVZS5tWkn+hIeiUm5LTFzU7pSD+ruWF2w+pl2skVVCjrshQI2Je63JCnCIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bGfCmCgB; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3B21743A53;
-	Wed, 23 Apr 2025 07:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745392339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OLySCWSlH0Sb9P602cy0L3AE+j4XwAS06FELO6RcWVA=;
-	b=bGfCmCgBvq/udV2NrOkw1l1IoijqGAVUUvhC/kg58tPe+68ZZg+XtvprSk+iataEHjYyHm
-	0pUkiZctX9u/H3QvrA6zIoi2adTyRoffwWJKjWz28eeBgFRfr7K8Qyf5fjsNwHbW5JuScJ
-	d/WcNIS12Y2Zbu/iN9vfM0KdEvgZ6iG+YrPuGZKYRJJF7rVua2iEhUzHAbM3cIdhHr8rFN
-	vVQmVwIv0Ti6GkGUfRpL3KgygwWusBeeNt42HxCSyS0Atu3ToeQ1qdDBi1UoTg8EVBUlfv
-	PccLM0CIq1MklC53ycV9zGXWiI5LTKuQKxygUoHNzIhv9XNrVv0nmuErV2O5Kw==
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Date: Wed, 23 Apr 2025 09:12:10 +0200
-Subject: [PATCH net v2 2/2] net: stmmac: fix multiplication overflow when
- reading timestamp
+	s=arc-20240116; t=1745394535; c=relaxed/simple;
+	bh=/Wub9CFRtt0AtAxGPFB10GQcM5GZazbfFhA0jn7wydg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KGg9cXzfsU+rDTQsTBUvbzUMJS7Bjk/fuuf/TUJxuHrzoHfh3Fke2wGVnxI3omm4o+dC+4L6XbYyitYVzm3Zk7JffPd4uxuRthBGaVsNCM2q8aC1yf9GCQRHLN+RjNeKs3hg+emQQg7yBo811Bg1uqe00meVrPB37aXfcNzBMGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=mmk4QKMI; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=2nkAQ7fLyP2LfmpJZMBXSQZ/uaucc6/NS2Ynh8Ha9jc=; b=mmk4QKMIi/tOv5r14sFA2O/Bl/
+	aF6p3CEoOGGbIBKOBeiL9+HMFtS4JfU1JiWS9qNBXJw1q9HxupoLxZwNaQTe9lUc5mXwmPXTtxltu
+	fKLG0C7bRe5uoRMKnvuLyLRyDLP431foY+yE61+2bVMup2lzm6xDU9ZTFID3pxP/jcVE=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:55820 helo=[127.0.1.1])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1u7UHr-0063ZQ-2L; Wed, 23 Apr 2025 09:12:51 +0200
+From: Matthias Fend <matthias.fend@emfend.at>
+Subject: [PATCH v3 0/2] Support for Texas Instruments TPS6131X flash LED
+ driver
+Date: Wed, 23 Apr 2025 09:12:48 +0200
+Message-Id: <20250423-leds-tps6131x-v3-0-ca67d346a4ea@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,77 +56,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250423-stmmac_ts-v2-2-e2cf2bbd61b1@bootlin.com>
-References: <20250423-stmmac_ts-v2-0-e2cf2bbd61b1@bootlin.com>
-In-Reply-To: <20250423-stmmac_ts-v2-0-e2cf2bbd61b1@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Daniel Machon <daniel.machon@microchip.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- "Russell King (Oracle)" <linux@armlinux.org.uk>, 
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAPCSCGgC/2XM0QqCMBTG8VeJXbc450ybdtV7RBfTHXNQKpsMQ
+ 3z3phBFXX4f/H+zCOwdB3HazcJzdMH1XRpqvxN1a7obS2fTFgSUA5GWd7ZBjkM4osJJGp0pXRS
+ KMwCRmsFz46bNu1zTbl0Ye//c+Ijr+5aKHymiBGkRNNoSmpLNmR8Nd/ZgRrFKkT61wr+aUl3VU
+ Nba5FARf9fLsrwAZPl90ugAAAA=
+X-Change-ID: 20250227-leds-tps6131x-a7437883e400
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Matthias Fend <matthias.fend@emfend.at>, 
+ bsp-development.geo@leica-geosystems.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeehleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeghfetffeuhfehkeekleffffdvuefggfevjefftddvffduheettdeiveetteenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvudgnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopehmtghoqhhuvghlihhnrdhsthhmfedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhmrggthhhonhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhug
- iesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghnughrvgdrthhorhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexis.lothore@bootlin.com
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-The current way of reading a timestamp snapshot in stmmac can lead to
-integer overflow, as the computation is done on 32 bits. The issue has
-been observed on a dwmac-socfpga platform returning chaotic timestamp
-values due to this overflow. The corresponding multiplication is done
-with a MUL instruction, which returns 32 bit values. Explicitly casting
-the value to 64 bits replaced the MUL with a UMLAL, which computes and
-returns the result on 64 bits, and so returns correctly the timestamps.
+The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+stage is capable of supplying a maximum total current of roughly 1500mA.
+The TPS6131x provides three constant-current sinks, capable of sinking up
+to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+each sink (LED1, LED2, LED3) supports currents up to 175m
 
-Prevent this overflow by explicitly casting the intermediate value to
-u64 to make sure that the whole computation is made on u64. While at it,
-apply the same cast on the other dwmac variant (GMAC4) method for
-snapshot retrieval.
-
-Fixes: 477c3e1f6363 ("net: stmmac: Introduce dwmac1000 timestamping operations")
-Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c  | 2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes in v3:
+- Add comment for locking
+- Drop handling based on CONFIG_V4L2_FLASH_LED_CLASS
+- Stop if getting reset GPIO fails
+- Optimize locks
+- Fix type of num_channels (u32 -> int)
+- Convert a remaining return sequence to dev_err_probe
+- Link to v2: https://lore.kernel.org/r/20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-index a8b901cdf5cbb395a0f6b4800ad6f06c6e870077..56b76aaa58f04a6f01eb56c7ad6aa135a7f76c96 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-@@ -553,7 +553,7 @@ void dwmac1000_get_ptptime(void __iomem *ptpaddr, u64 *ptp_time)
- 	u64 ns;
- 
- 	ns = readl(ptpaddr + GMAC_PTP_ATNR);
--	ns += readl(ptpaddr + GMAC_PTP_ATSR) * NSEC_PER_SEC;
-+	ns += (u64)readl(ptpaddr + GMAC_PTP_ATSR) * NSEC_PER_SEC;
- 
- 	*ptp_time = ns;
- }
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-index 0f59aa98260404bece530f505500f13d35884d0c..e2840fa241f29121c4f074872c4986906201cb57 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-@@ -222,7 +222,7 @@ static void get_ptptime(void __iomem *ptpaddr, u64 *ptp_time)
- 	u64 ns;
- 
- 	ns = readl(ptpaddr + PTP_ATNR);
--	ns += readl(ptpaddr + PTP_ATSR) * NSEC_PER_SEC;
-+	ns += (u64)readl(ptpaddr + PTP_ATSR) * NSEC_PER_SEC;
- 
- 	*ptp_time = ns;
- }
+Changes in v2:
+- Bindings: Extend device description
+- Bindings: Drop unused address/size cells
+- Bindings: Use fallback compatible 
+- Bindings: Corrected minimum current for 50mA steps
+- Bindings: Drop node label
+- Fix name of REGISTER4 INDC shift define
+- Save device instead i2c_client in private data
+- Add comment for mutex
+- Use macro to convert from uA to mA
+- Use defines to describe initial register values
+- Add safety delay during reset sequence
+- Use fixed value enum to set the mode
+- Renamed some local variables
+- Re-sorted local variables
+- Replaced ifdefs for V4L2_FLASH_LED_CLASS
+- Improved some error messages
+- Link to v1: https://lore.kernel.org/r/20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at
 
+---
+Matthias Fend (2):
+      dt-bindings: leds: add Texas Instruments TPS6131x flash LED driver
+      leds: tps6131x: add support for Texas Instruments TPS6131X flash LED driver
+
+ .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-tps6131x.c                 | 798 +++++++++++++++++++++
+ 5 files changed, 937 insertions(+)
+---
+base-commit: bc3372351d0c8b2726b7d4229b878342e3e6b0e8
+change-id: 20250227-leds-tps6131x-a7437883e400
+
+Best regards,
 -- 
-2.49.0
+Matthias Fend <matthias.fend@emfend.at>
 
 
