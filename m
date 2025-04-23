@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-616513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB0CA98ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2323BA98D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CAD1B84E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1BC17405C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84683280CFF;
-	Wed, 23 Apr 2025 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF95481CD;
+	Wed, 23 Apr 2025 14:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bFnc2Fje"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="EF/UBBn+"
+Received: from outbound.pv.icloud.com (p-west1-cluster2-host3-snip4-6.eps.apple.com [57.103.64.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD04A143736;
-	Wed, 23 Apr 2025 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB64626F442
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420161; cv=none; b=i7YWV1w5dIlPBqc4cR2NjFya1dTUJqzoylJg90s5e+sGNr8GQ4G4hqNm3lD9NDQxENfAmrsx85e5cUtJ41xaWj6uZZu7HS7tiDGNL3DcJ+8xE+HxzP1d93BzvKe9uyPSDtERdb8kArWQm5X51SR0uh4ODPHqqJy4anl9y+bAPBs=
+	t=1745419278; cv=none; b=Nphs9CN/W0xwYjs+kb3j2BGO5tYB8fFZnK9qk1TDY2VQdp1JzU9jNjcSDTMQ5ezxz99FCl9f85oLv6ng5uqXbCizznALbzcbOtpD5Y4wiqEh8ZN1C7AccYvF4cSeNhDm7pr5wjUPI07Mpq/Su5+K21y+fKPDs/jIknU+XoyczUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420161; c=relaxed/simple;
-	bh=pThfYhQRdELTTxQkZsf2/KFpLPo7A8043wxi+GTobAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OGSh8YVbT4gX29Qvgebj+5kXoNf/uHz4npNWQ7988RuH2WHzJ+C2Xh5Wv0IQiUw/w0Nz4GpWkgnVf9VD8X3Z1Fqc2TZc1gpTMXXvocBPHbpnRsVuJjKah1FdoiJzRyGEhFjQBwTyOrGj7iislHyQS3z2BB6gq6J+AX0450E4Fe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bFnc2Fje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D116C4CEE2;
-	Wed, 23 Apr 2025 14:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745420160;
-	bh=pThfYhQRdELTTxQkZsf2/KFpLPo7A8043wxi+GTobAg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bFnc2FjeSNMF+3LBhDDRzy9UCmO3fLTBgPz6MWb1yiiyYgzHotIvLMl8HZIfTXX8U
-	 X086Y1NXMcCKfTOdITAVm6DJcwAKG6BvTXjlAqFElzrNBLMU/Ud3t4yC9MZIjrzyi2
-	 Gcr/FGdO4bjTwup6o2TWd3+UgpgOpLjvH6/Eup/s=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Max Grobecker <max@grobecker.info>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 022/291] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
-Date: Wed, 23 Apr 2025 16:40:11 +0200
-Message-ID: <20250423142625.311555140@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423142624.409452181@linuxfoundation.org>
-References: <20250423142624.409452181@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1745419278; c=relaxed/simple;
+	bh=zErhtI3a0XzGBOiMo0E5nQ9ED7Ta0ruzPDfrjh7EFAw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fp2fQJxFNWdyE7G4fAjj19P+Dr0IqtASG6bJ6yUzittJvU77SeTZI8zCZdFdVlkDMbX1xvP9q1uoHJgNdNapAuquPRJyiEAsuSqgvolqn9lZnQcKM+D9pmJeC1scpfDxqOIja5QkMjcPT7A8pZpkGwM2nfFxXaSNIwSJ0mqdTK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=EF/UBBn+; arc=none smtp.client-ip=57.103.64.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=OFTUbeC1duWE3NcbJV6ltGL1mi1k8xQIxToGjB2DcOM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=EF/UBBn+Szp+r56Tgs60E4q5LFMtwNrOAqTFE+ysfJQmJFxE1kbIcIEs40UVhRn6x
+	 YNnHZ5uXdAmnObY+atZs8tgsQGaNmPUw9yTN0ECiZWZKtOLp58HOKmo38PL4yokeEG
+	 yI8secp6CjUqQwsK+uCNUKn1KS+oNkVP3cZ6sCBOviBK/5nFWq8YzjlDMgnrcFNiLX
+	 rkQCnSOhSqkjOEn7DFNCrUIDGTfD4KzCMTNiS34MHvE58yAfBnCSMCzjpz52HSDSEJ
+	 DLR0wJXEDw0asdF7T02r3UNVG3oNYhm5A0bjI5QgP/zMPOnUX+rOxeWCD+J7ZtabNy
+	 VeImS16qwlKoQ==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id F070418003B9;
+	Wed, 23 Apr 2025 14:41:11 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Wed, 23 Apr 2025 22:40:56 +0800
+Subject: [PATCH] tty: Remove unused API tty_port_register_device_serdev()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-remove_api-v1-1-fac673d09feb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPf7CGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyNj3aLU3Pyy1PjEgkxdI9OkZDMDC2MDC7NUJaCGgqLUtMwKsGHRsbW
+ 1AAhQZ2dcAAAA
+X-Change-ID: 20250423-remove_api-25bc6083086e
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: JyRHJ_qnXfICI58kySRXI_kuIX3VS6EP
+X-Proofpoint-ORIG-GUID: JyRHJ_qnXfICI58kySRXI_kuIX3VS6EP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2503100000 definitions=main-2504230103
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-------------------
+Remove API tty_port_register_device_serdev() which has no caller.
 
-From: Max Grobecker <max@grobecker.info>
-
-[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
-
-When running in a virtual machine, we might see the original hardware CPU
-vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
-hypervisor. In case we run on AMD hardware and the hypervisor sets a model
-ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
-capabilities present to circumvent a bug with some BIOSes in conjunction with
-AMD K8 processors.
-
-Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
-bash scripts and prebuilt Docker containers, as it does not need to have
-additionals tools present – even though more reliable ways like using "kcpuid",
-which calls the CPUID instruction instead of parsing a list, should be preferred.
-Scripts, that use /proc/cpuinfo to determine if the current CPU is
-"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
-claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
-in that flags list.
-
-This can prevent some docker containers from starting or build scripts to create
-unoptimized binaries.
-
-Admittably, this is more a small inconvenience than a severe bug in the kernel
-and the shoddy scripts that rely on parsing /proc/cpuinfo
-should be fixed instead.
-
-This patch adds an additional check to see if we're running inside a
-virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
-understanding, can't be present on a real K8 processor as it was introduced
-only with the later/other Athlon64 models.
-
-Example output with the "lahf_lm" flag missing in the flags list
-(should be shown between "hypervisor" and "abm"):
-
-    $ cat /proc/cpuinfo
-    processor       : 0
-    vendor_id       : AuthenticAMD
-    cpu family      : 15
-    model           : 6
-    model name      : Common KVM processor
-    stepping        : 1
-    microcode       : 0x1000065
-    cpu MHz         : 2599.998
-    cache size      : 512 KB
-    physical id     : 0
-    siblings        : 1
-    core id         : 0
-    cpu cores       : 1
-    apicid          : 0
-    initial apicid  : 0
-    fpu             : yes
-    fpu_exception   : yes
-    cpuid level     : 13
-    wp              : yes
-    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
-                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
-                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
-                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
-                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
-                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
-
-... while kcpuid shows the feature to be present in the CPU:
-
-    # kcpuid -d | grep lahf
-         lahf_lm             - LAHF/SAHF available in 64-bit mode
-
-[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
-
-Signed-off-by: Max Grobecker <max@grobecker.info>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/tty_port.c   | 20 --------------------
+ include/linux/tty_port.h |  3 ---
+ 2 files changed, 23 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 37796a1d0715f..9ac93b4ba67b4 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -787,7 +787,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	 * (model = 0x14) and later actually support it.
- 	 * (AMD Erratum #110, docId: 25759).
- 	 */
--	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
-+	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
- 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
- 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
- 			value &= ~BIT_64(32);
+diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
+index 14cca33d226930f56ecbcce0d8ad8e90df8eee4f..4af1fbf73f51ca6eb321e7bf507a1cde74442b89 100644
+--- a/drivers/tty/tty_port.c
++++ b/drivers/tty/tty_port.c
+@@ -199,26 +199,6 @@ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
+ }
+ EXPORT_SYMBOL_GPL(tty_port_register_device_attr_serdev);
+ 
+-/**
+- * tty_port_register_device_serdev - register tty or serdev device
+- * @port: tty_port of the device
+- * @driver: tty_driver for this device
+- * @index: index of the tty
+- * @host: serial port hardware controller device
+- * @parent: parent if exists, otherwise NULL
+- *
+- * Register a serdev or tty device depending on if the parent device has any
+- * defined serdev clients or not.
+- */
+-struct device *tty_port_register_device_serdev(struct tty_port *port,
+-		struct tty_driver *driver, unsigned index,
+-		struct device *host, struct device *parent)
+-{
+-	return tty_port_register_device_attr_serdev(port, driver, index,
+-			host, parent, NULL, NULL);
+-}
+-EXPORT_SYMBOL_GPL(tty_port_register_device_serdev);
+-
+ /**
+  * tty_port_unregister_device - deregister a tty or serdev device
+  * @port: tty_port of the device
+diff --git a/include/linux/tty_port.h b/include/linux/tty_port.h
+index 1b861f2100b69f120971c7dd503d6635db1fb468..08f89a59836621b2c8864c46c4ed8883b3f9045b 100644
+--- a/include/linux/tty_port.h
++++ b/include/linux/tty_port.h
+@@ -147,9 +147,6 @@ struct device *tty_port_register_device_attr(struct tty_port *port,
+ 		struct tty_driver *driver, unsigned index,
+ 		struct device *device, void *drvdata,
+ 		const struct attribute_group **attr_grp);
+-struct device *tty_port_register_device_serdev(struct tty_port *port,
+-		struct tty_driver *driver, unsigned index,
+-		struct device *host, struct device *parent);
+ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
+ 		struct tty_driver *driver, unsigned index,
+ 		struct device *host, struct device *parent, void *drvdata,
+
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250423-remove_api-25bc6083086e
+
+Best regards,
 -- 
-2.39.5
-
-
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
