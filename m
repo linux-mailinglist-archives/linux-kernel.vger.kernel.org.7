@@ -1,122 +1,91 @@
-Return-Path: <linux-kernel+bounces-616083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F15DA98735
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:22:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2AFA9873C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D109F5A2439
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4089442940
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BB267F75;
-	Wed, 23 Apr 2025 10:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FABD2686A1;
+	Wed, 23 Apr 2025 10:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="bs9vJAu8"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y+jRbLBQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BU3+R4iM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B6242D69;
-	Wed, 23 Apr 2025 10:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C768242D69;
+	Wed, 23 Apr 2025 10:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745403713; cv=none; b=Z2UF1fn+26zpEbhfPjceyEmajfagL27Mk2QhRIsuvhmkdRQ5n2qf0nUWDuzGzjMoW2k55Z6VQzVjuSTuTE1POgK78ia7Zis8OMVPKMqbEMOen5VmfeWiBUn9ANpcUfbN0VxU2a031ncJzyJ9E1R1V95n/JFbdkOCQEhi7TOXnIM=
+	t=1745403848; cv=none; b=nIdPgDWi/XzRVUvERfTJ0906W7TdIeKav1V6AyG0/SWOkWOGeX9qR6Ml7/z9FNMN6cJ8XW2JXI1HC7pH1UxtyAqvzrOB0I+WOLpNJaB5NkiEZbmHskc70uow0czNRewkHY9d49kjuf1KEQyBGYRRVWS5R68CedowT5wFaGhfEQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745403713; c=relaxed/simple;
-	bh=EzJ4TVYM7nZiaOGpLXPH1VDEv7n0lyNcyhQoLP0U2hM=;
+	s=arc-20240116; t=1745403848; c=relaxed/simple;
+	bh=8BC5r9nCxmn/POTYq7cf5uAoU24Ba73dr0Z/8M4qJlE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjf5i+3dOJigIZ3+jviKnXhdCQbqUNBZNfDEekuLbb2LfHK6qd9in7M2QtLzsJ04fy50yJIBfA+wr1TxqI4UmpJrpzj87FpU5Ba9cNLn2hfotNkOA+/rnqGSvppZViB7LY4CQ/fUxVOsPD4oL029+k2Glw8mjevZNCV7e5BI5o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=bs9vJAu8; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 39DB71F971;
-	Wed, 23 Apr 2025 12:21:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1745403709;
-	bh=UpUgGYYSAAKZGIFCG/nSCZXQYMN9IB2AgKsoywhruMI=;
-	h=Received:From:To:Subject;
-	b=bs9vJAu8mvqc64WiUDtIkUvfcUb4obpM/9YuSrhL8j7Vf7lxVPdfW71e+syvIXd1a
-	 Z5lEEGZEWw1DTQnmiQFEiVdPLzJiUThmOm5/z3mgV298aExt2W5sPjXWagKqSnLEqY
-	 KX/SLQeGzGMWzNkNp/QyLeYq+CIxgSxMSV7me4oj8/4qud415eWABSKV+rzFXm6YpU
-	 zVPFjVu4lOM2/b3UrIH/MPyyPog7ySt+d9Ob5Us1hr2WRQ8R/MgEYBur+xIBooNxWj
-	 g3ZYkcSG/fIurgTtS8TcwVQuSv2gSfthjHosrHA+uBiVcsl3gXBo94k+8HZgcg5gm7
-	 aXSusdN1PxU+A==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id E57297F820; Wed, 23 Apr 2025 12:21:48 +0200 (CEST)
-Date: Wed, 23 Apr 2025 12:21:48 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Philippe Schenker <philippe.schenker@impulsing.ch>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Wojciech Dubowik <Wojciech.Dubowik@mt.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to
- usdhc2
-Message-ID: <aAi_PPaZRF26pv_d@gaggiata.pivistrello.it>
-References: <20250422140200.819405-1-Wojciech.Dubowik@mt.com>
- <20250423095309.GA93156@francesco-nb>
- <222ce25ee0bb1545583ad7a04f621bac2617893c.camel@impulsing.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7a8ke1HvCbUNRcw9qlW7tbW202ZtFEKN+/SnLC0CsdpxOkI7UV4DqexY0s4HuTyoqyc1BSi2ZlIlO+mJLp4lEwueElpMRMo1BsUwDXDHV4AtMBFDDzaZsBGEJEW5AZe2EqoBwJ4M3jJ/IIdLdbR9e2JWiscmrxsOhDDh71z3eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y+jRbLBQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BU3+R4iM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 23 Apr 2025 12:24:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745403844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TPRw+axkJFcjhHDTuYr2A1761jrA3Q28pCtIdm4HXwk=;
+	b=Y+jRbLBQs2+InjYCQ4Z++bBUG9MV0g0zxRFd9ZCp46H+PaxA0ZsGIAfZlY9v2eFUBbhQx8
+	i8a0r6+d0gujrN9/7tp1XBSZ2AULSIoISAPdqqEZMK58YyykGkl9W/JnCvj2fVvYFpLEzW
+	ekQQF0XzSxjmvAzaq4BsIgcXz+QTBdzZtpCsFReLqx4PY317oSKFCFGLDvBE5B0XDH9HY6
+	2msUwNiqyC9YZ7ITP2h9QwDcwzR3b+s7qpbA0JMBTphusnnmwOeKFXiir9Pj5XPqPDzHIm
+	JprZJnuH9fnQ192Lv0sOz3FUAJxMNsQ7MYO2gB3T3RXRoj3euNAwOr8GhWn9Vg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745403844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TPRw+axkJFcjhHDTuYr2A1761jrA3Q28pCtIdm4HXwk=;
+	b=BU3+R4iMWPq9T0tBiL9gRULUwfm5F3Eyioai5no9cNVZphwrC76xgcxzWrjZpm2dIf3hg/
+	cbDQYxlg2XG2vqBg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	Tariq Toukan <tariqt@nvidia.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [Intel-wired-lan] [PATCH net-next v2 0/2] net: Don't use %pK
+ through printk
+Message-ID: <20250423122301-64a5773d-a3cf-4e21-9f24-04294ca4eeb0@linutronix.de>
+References: <20250417-restricted-pointers-net-v2-0-94cf7ef8e6ae@linutronix.de>
+ <4918f292-46b5-491f-a8da-5d42432bde56@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <222ce25ee0bb1545583ad7a04f621bac2617893c.camel@impulsing.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4918f292-46b5-491f-a8da-5d42432bde56@linux.intel.com>
 
-On Wed, Apr 23, 2025 at 10:16:43AM +0000, Philippe Schenker wrote:
+On Thu, Apr 17, 2025 at 03:39:13PM +0200, Dawid Osuchowski wrote:
+> On 2025-04-17 3:24 PM, Thomas Weißschuh wrote:
+> > acquire sleeping looks in atomic contexts.
 > 
+> typo? s/sleeping looks/sleeping locks/
 > 
-> On Wed, 2025-04-23 at 11:53 +0200, Francesco Dolcini wrote:
-> > On Tue, Apr 22, 2025 at 04:01:57PM +0200, Wojciech Dubowik wrote:
-> > > Define vqmmc regulator-gpio for usdhc2 with vin-supply
-> > > coming from LDO5.
-> > > 
-> > > Without this definition LDO5 will be powered down, disabling
-> > > SD card after bootup. This has been introduced in commit
-> > > f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
-> > > 
-> > > Fixes: f5aab0438ef1 ("regulator: pca9450: Fix enable register for
-> > > LDO5")
-> > > 
-> > no empty lines in between commit message tags, not sure if Shawn can
-> > fix
-> > this up or you need to send a v4.
-> > 
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-> > 
-> > Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > 
-> > I would backport this to also older kernel, so to me
-> > 
-> > Fixes: 6a57f224f734 ("arm64: dts: freescale: add initial support for
-> > verdin imx8m mini")
-> 
-> NACK for the proposed Fixes, this introduces a new Kconfig which could
-> have side-effects in users of current stable kernels.
+> present in patch descriptions as well
 
-The driver for "regulator-gpio" compatible? I do not agree with your argument,
-sorry. 
-
-The previous description was not correct. There was an unused
-regulator in the DT that was not switched off just by chance.
-
-Francesco
-
-
+Thanks for noticing. I fixed it up in my template now.
 
