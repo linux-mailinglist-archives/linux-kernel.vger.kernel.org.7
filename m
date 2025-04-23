@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-616369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC8BFA98BA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:44:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177C7A98B9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4460F1889045
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C777A16CFB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C382AEFD;
-	Wed, 23 Apr 2025 13:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34861A9B3D;
+	Wed, 23 Apr 2025 13:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXF0HiMD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i45NS8VH"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA80F19F48D;
-	Wed, 23 Apr 2025 13:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE7319D892
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415794; cv=none; b=BLrmiTQjPubLUHENB4pJpWiIvWHADuSXwYOluGaPKRCimuqb2XZ00GuMs0c16El1EBf7Z0p9nVe8Wa5Pqg2BTKTt1wepaizkDs/xmc46DxPfhfX/xDSq2GEVgd+JXJMu7qfVpc084fnFL0/6ayyhQL3weo2N3fuuM3gXs22rBJk=
+	t=1745415796; cv=none; b=Tpt0+/cd3geWgTiYMbQ+HgQ4n7x3mxmvHBEBE7PWQsQug2FDn2YCW0ZMLvaJc7pLQHBE97zjxOgrNxJEPvF7/rP+jb2zoafM6MnXT1nrNwX+rK+XSnou9P1kFh6yUaS4Fd0WJCmSVpDJsIMvHjba5PAHTetDX8p/p859rV1THQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415794; c=relaxed/simple;
-	bh=sdSO4vtsyCgKCiuvtLa7sZ+BGvUG/9woFfGbGd3g5bQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ushm6cbGX4lpuxpaU0RNRoCCQDuq2VwxB+yrM3JC4P8u2wt9OI3BsgqzxcLbTDJziii0MXe9CVAkLaqRsCeXGd4dyoVI/noSBZgJwWE6VTzZw2fxenprobuvlxBhMpDu+ZgzXxA/cXOEYHl9OfhWFmPlDMtng5ZJGiBzrDIj/vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXF0HiMD; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745415793; x=1776951793;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sdSO4vtsyCgKCiuvtLa7sZ+BGvUG/9woFfGbGd3g5bQ=;
-  b=aXF0HiMDG8aokgs2pUXUgmVKpAXWaTqmr1miWTryTsPmWgtSrKMQliwY
-   CYJNabgflCH38W0oBdMiCzY6ZI4VSV933+QTuYOKW5S4bNrzXoXHU1QM+
-   rtcLKIhLnEAMLPSjVfs+t19Gm9vURj/80AOvt9WUb+qOg9Aq7Wb4JCjJ3
-   yVU/yUOtYh5sz5NkqGIf6xmuHmPBb8ekjETio7q4LQ/LgrPapn+GkDoDa
-   mPcaTaQDzKYcCmcU5zU7A6P6JacJwYFn1x3vPB4jTZLt7KoUtrcBx1ume
-   XyeFglpQTGUUKhW1dhXCeC+zNBhfnCKxaIbP59aUGVUBoDC2KDAvrgQTv
-   A==;
-X-CSE-ConnectionGUID: BwfN/wC0S+iYbyhxVAV4tw==
-X-CSE-MsgGUID: b/91ykZeQeimDnhn0T6KPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47190576"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="47190576"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 06:43:12 -0700
-X-CSE-ConnectionGUID: 1WWXhu/HSWKk3VQE5qeX7A==
-X-CSE-MsgGUID: J53B5CQbTdKylLhvMnSWAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="132164514"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa006.fm.intel.com with SMTP; 23 Apr 2025 06:43:08 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 23 Apr 2025 16:43:07 +0300
-Date: Wed, 23 Apr 2025 16:43:07 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: gregkh@linuxfoundation.org, lumag@kernel.org, pooja.katiyar@intel.com,
-	diogo.ivo@tecnico.ulisboa.pt, madhu.m@intel.com,
-	saranya.gopal@intel.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: fix Clang -Wsign-conversion warning
-Message-ID: <aAjua0rWkHO4H6Rj@kuha.fi.intel.com>
-References: <20250422134717.66218-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1745415796; c=relaxed/simple;
+	bh=2oNxgFh7wQy3eSTXUuVVZ5YrZWKlKCIvbcZjJzlgFfk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b2zWwGpaRNq9kZx3TPCw4yxMW6Nsp8RhmWiaRbQdpVG2A2e5fqlbfR+JnRlU/yV2Xmx2DD96VyJgmkOc+YeWR+vKEDiDGmbVuitnfiHGemTp/RKI1M2E8LsM/zJ1ih+tbhvyq/99x1KKyaHpwdsUfS1mC5k9G8xaWca14KzZUVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i45NS8VH; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso62196845e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745415792; x=1746020592; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FfrnhMcNKf5rCGWHGoNIZp7mNgbnWoHESdB7RpEhfqo=;
+        b=i45NS8VH9j1Oz0y0h9MAM2BESfQeaGh+Dh+a6FJhpDkpc/b5nSBZi6eUChnC3FtqOB
+         h9RYFH9VVn2NY3O6feDekcZTqtzU81CFECv4chNYTcRWpXluuaXpyhvsUJrIwD3lvj0i
+         g541zgQKukKKx5+D2EpbjzeO6J/1nFSeAOSvvyYJxVgmqlHzBUegXZf2/O1wUR5QnTKL
+         etVuKR5KPf5z13JejwrvSqbRsCW4zFAUwncAbqrA9TIS7dVdUaGFDyNAeWQ/6swPf5U3
+         0bD/tIlq0iMfTnvTVLaD15P8xHbFsCCKpyh6UgibOswlmcmWqOM6njeJJ+ECcYGXv+aY
+         XnHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745415792; x=1746020592;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FfrnhMcNKf5rCGWHGoNIZp7mNgbnWoHESdB7RpEhfqo=;
+        b=Be1UwUKdN1XN8NTt05dp6IH585OHpRvQ64YP08P8snmldR5mJW8MPingI94A6h7FQu
+         /HiD83dI7VNLFsyp0Jeh+CXBeVhP6z+csrAS62laeVpEov0vnIK/lhaBjXJLC1+fsLNC
+         NKXxVPA08E1Z72/aB2/GD2W3IJ/ognKNAukbg49U2lSYK0MP3IDPSVj1o3EojkhB6f2O
+         Fq2I+1u8ZqM+wU74OK6gDymkpZUaihj9sc5pWIvdIJz9/05rQo4RQp6hoK+zTwVoedNB
+         G1xVZvWjROeCO2esQRzRO8xHuT+1DizwF4KHvPs/XC8awQqYmMFlqzQOuxKSXwSKIvyQ
+         fxmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMOAFCC2Uc68D0a1LkxzMhotCNTPYvM7fWUIM9ZcyWK+ZhxhG070ui4dyg2MzXJshBk92RjVsgXTNGDNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQHCFet+yXLDP1uAu5PUu6jG4cfo3GWhMewm+M8vokuorHDLzV
+	ZlYhbopXRnLjEAPJ+8Z4aNyqZaPkX14FM6CFECDuPT3h51i8/DkBTXi/ZUyrFNA=
+X-Gm-Gg: ASbGnct/4XXfn8Aqx2He29uw4kJ4em2kJ1TR3CP9L8B4vk+57g2DoYasR/0VJsx8X66
+	wr9IxBfmCljRclcGadDP4hWl0eFzxZPUt0lWoFAlZGg9oqLmBNb+FLdUh6QUQ6Ppnecotz0SHOg
+	nYDNXzMND9QZq9TggsAPUYstvPOL1hgEyzIFThkYyEB7sdtFQppouskXjZzGUn1xHDxaAJBGSrz
+	YcsolfutL8DcktoyzToQ8pOwQY5xzQwzJjpqhBHC8AXLdMyueuK8xVpbPL0gzTqgkg9uNXyiqeU
+	dr65KX+MMGLNIh/CYEsEv0whoFr3vLprpy4duMXe/pVMnMn55xONT4uoKQQeeNvzM2GkCjCoijA
+	lTSmnCj/BYPYNSE/k/w==
+X-Google-Smtp-Source: AGHT+IHnS/+w8vgB7Qer4VFmmeqW2fg9vqIPQjMtQu2PKuXwZePY3kDPFYEnC2G7XWePQ888jen21Q==
+X-Received: by 2002:a05:600c:5027:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-4406abfa6bcmr157183955e9.20.1745415792377;
+        Wed, 23 Apr 2025 06:43:12 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:2835:c2f4:c226:77dd? ([2a01:e0a:3d9:2080:2835:c2f4:c226:77dd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092db2ba6sm26108245e9.31.2025.04.23.06.43.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 06:43:11 -0700 (PDT)
+Message-ID: <1acbe9dc-02ca-4233-a79a-901e714f5c9c@linaro.org>
+Date: Wed, 23 Apr 2025 15:43:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422134717.66218-1-qasdev00@gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 32/33] dt-bindings: display: panel: samsung,ams581vf01:
+ Add google,sunfish
+To: Danila Tikhonov <danila@jiaxyga.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-hardening@vger.kernel.org, linux@mainlining.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250422213137.80366-1-danila@jiaxyga.com>
+ <20250422213137.80366-16-danila@jiaxyga.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250422213137.80366-16-danila@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 02:47:17PM +0100, Qasim Ijaz wrote:
-> debugfs.c emits the following warnings when compiling with the -Wsign-conversion flag with clang 15:
+On 22/04/2025 23:31, Danila Tikhonov wrote:
+> This panel is used in Google Pixel 4a (google,sunfish). Document the
+> corresponding string.
 > 
-> drivers/usb/typec/ucsi/debugfs.c:58:27: warning: implicit conversion changes signedness: 'int' to 'u32' (aka 'unsigned int') [-Wsign-conversion]
->                 ucsi->debugfs->status = ret;
->                                       ~ ^~~
-> drivers/usb/typec/ucsi/debugfs.c:71:25: warning: implicit conversion changes signedness: 'u32' (aka 'unsigned int') to 'int' [-Wsign-conversion]
->                 return ucsi->debugfs->status;
->                 ~~~~~~ ~~~~~~~~~~~~~~~^~~~~~
->                 
-> During ucsi_cmd() we see:
-> 
-> 	if (ret < 0) {
-> 		ucsi->debugfs->status = ret;
-> 		return ret;
-> 	}
-> 	
-> But "status" is u32 meaning unsigned wrap-around occurs when assigning a value which is < 0 to it, this obscures the real status.
-> 
-> To fix this make the "status" of type int since ret is also of type int.
-> 
-> Fixes: df0383ffad64 ("usb: typec: ucsi: Add debugfs for ucsi commands")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 > ---
->  drivers/usb/typec/ucsi/ucsi.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   .../bindings/display/panel/samsung,ams581vf01.yaml        | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index 3a2c1762bec1..525d28160413 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -432,7 +432,7 @@ struct ucsi_debugfs_entry {
->  		u64 low;
->  		u64 high;
->  	} response;
-> -	u32 status;
-> +	int status;
->  	struct dentry *dentry;
->  };
->  
-> -- 
-> 2.39.5
+> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+> index 70dff9c0ef2b..a3a1de32d8be 100644
+> --- a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+> @@ -17,7 +17,13 @@ allOf:
+>   
+>   properties:
+>     compatible:
+> -    const: samsung,ams581vf01
+> +    oneOf:
+> +      - enum:
+> +          - samsung,ams581vf01
+> +      - items:
+> +          - enum:
+> +              - google,ams581vf01-sunfish
+> +          - const: samsung,ams581vf01
 
--- 
-heikki
+
+Why do you introduce a new compatible ? using samsung,ams581vf01 is prefectly fine
+if it's same panel.
+
+Neil
+
+>   
+>     reg:
+>       maxItems: 1
+
 
