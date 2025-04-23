@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-616580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7F8A990FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D69AA99176
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0FEE7A7238
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:24:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61814616CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD9A28D845;
-	Wed, 23 Apr 2025 15:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OjPls7wN"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB328CF52
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16292957BB;
+	Wed, 23 Apr 2025 15:17:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD7A284685
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421411; cv=none; b=CYsDsJD32yHvues4OBgnLnqrjVHAyXGcDVwBBZ4XroX6ddUEmSCKaLDJ8VlZuGzrnBOOuMqivXyspt52YqBv3f5RUD6AwpIQ99Zr9ZHKovW2mTkbA1XK70nifG8fEMgpZfu21/B/MpO6JsCkx7bTZrcu4fwpwJnE2K10MGchmGk=
+	t=1745421467; cv=none; b=U4iDCa0mDE+JRzsiA7HpyuOpTDE3cZurgWFr6vt6CwyH+zsE9TS3DlFMMJ3XLWx3WBHV4EQ8zCQTKCc1grNe0MBneYKjF0Cqoijif0AxMQOhk7U/NVPV6nG8+vyGnis21+7sXFVUa/nY8ARcD7CNh6XExT72M/sSNJnQyuVJaBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421411; c=relaxed/simple;
-	bh=wiQRxjVfq6FHjvTR4eF4WEQlEgSYtFXiwIFHwN6ZJdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7ZJRby5ddlVmDCdeXBwJNXW04QJZ3dkAzVJ2sc8nOAKFb1EpnMlDvJ6/Sx298uU8M5yEvAxxY6cjqlqrV1PZNAkGjIubinpPTcTXrmCFezMkhOhsTv36oZ4qUCZaHFtHnZ8WmR8Z97syy5ltqif8DgoXCfeX3oY+yb7b9eHjWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OjPls7wN; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso17781fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:16:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745421407; x=1746026207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9jo5fNYX7M8KjPw/nzhDjJuKY3qNiI/6SOFAiqZVsVI=;
-        b=OjPls7wNqoIHWJqn8Vtmy4jfhirj5aOrFBgpxDsy4m1towrIGT5zXUMNjwFJUO8/IL
-         g7jsiWCs5cA8zDI8bGU1znOZXshKwoEX6iqtDXaf9nn/jfZqF64bJ8Zka1mYpCbcRMGr
-         KIgHo7WtE2Gofn1RG8ZgGnWel8B5hTJi+IMenI3Zj8hYk2K661e7iNfoahxBX3xG6eOq
-         zBO4VR2dYMweIw7CBFBTt+n7ks7rU09WAcSDA2i79ZnCrRDM+nUOpyXh/aalXYIUsTq6
-         Frmmyt+DZiPRLJAfqopWdKFCdHGzxYW4Fdw6WWGrPJX9XgeBJzFA/F24E3JwnspCciVz
-         +7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745421407; x=1746026207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9jo5fNYX7M8KjPw/nzhDjJuKY3qNiI/6SOFAiqZVsVI=;
-        b=M/5vlFwIc7njYXx8ZoLmH7g1zk8noOqbGfwmF0wXUCvCKitp1uLQzGV+ytvgoJWIWv
-         dNQEL7cZSB5FUMMoNAYaOOcI4x+RmWS6NI2COVyOIotcl5pJwfPiL4RyA5a0ejFSMUxF
-         fBmAbVt2OISxDY1o7GdOK0NEya/JEZIP9Xgh28tCCXc6vJRcF8jev9BR2YmNyDNCboBz
-         y11N311RmhSZd9tSw8MHwCzalf7bJ7DGj4DRNmMnkMa3eCYhONpTvEHdhxJe7z9tJkDr
-         Vhr0BhbnALwbnVwELdEoTjm5uZPzQTSk7XFvDb2JZ69M2ktn8KIcggoA4j+Wp8FTI2Kd
-         ACBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyoHmpdJ5g8BPRevdPyWMm71RoLYOuGsz8/WsrdRqGxhvRD+xDn9Qox3IMYD3tVmoI4wMPVehJmIoULXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqlxkbKdbe39Ep9acAvJF/CHECiB9BKMSPVN9RKEX+ltV15c6I
-	5Rpl5kyCQdKyGZaGFadTaWzWMbw5l7ibuWj4xXdDHaD9AOKAYiKK5VHJ5WRyGB44iFwdSGxyYRp
-	cj4WgKb+h5uazGQh3r5O7LQ2rWNwvgaBul3mkRA==
-X-Gm-Gg: ASbGncuVzRMlKlBUy7+4XS7Lh2NNpSgCOl9qqtD2ZS2Fmr/LyzG+xmc2mlbZkkeu6JW
-	2e4fr1VY/nOeH86JEEZzzqY1dyRrmc4rE84WpIY2bJCH4pR7oZJ8onQWnQg2RjSeYyGb12Errwl
-	019ZrDd1u3TMbq6NO4i+M3gZ8VuRI6/TxV4yqBh9WtW+wmh56lO3MmQg==
-X-Google-Smtp-Source: AGHT+IETE/k4w1fu2U8cN+Dnfk6dutM38e/zDtMkQO31fN5/T3kjC7GQG5tDFfOMiRyAghFnvFrA/27CKuuGkDO0Ong=
-X-Received: by 2002:a05:651c:1463:b0:30b:b956:53bd with SMTP id
- 38308e7fff4ca-310904c7e91mr63840301fa.4.1745421407059; Wed, 23 Apr 2025
- 08:16:47 -0700 (PDT)
+	s=arc-20240116; t=1745421467; c=relaxed/simple;
+	bh=T/2s/sIQTZwzj2yZUSCBDBnwMqUW9SGS+tVzidDzlBY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=k7faIpMBPcN1YU9EiqVFioTRzlIeR/Vn4epb7MnW7ZPvyD0vyFFEkmXKYgxNZSeN5RKyuB8eiJa7MwBViHlt7+fzvsM9J8xFMqykcJBm4OVX9797Gj8tKLAx5AEdJ3jey1HO77mo4KI4yR398PEzGlru66uO4ix4uZeWuuWcNBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDFB01063;
+	Wed, 23 Apr 2025 08:17:38 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8EDA83F66E;
+	Wed, 23 Apr 2025 08:17:41 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v2 0/9] coresight: Fix and improve clock usage
+Date: Wed, 23 Apr 2025 16:17:17 +0100
+Message-Id: <20250423151726.372561-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407-gpiochip-set-rv-mips-v1-0-e7f74a4eee2b@linaro.org>
-In-Reply-To: <20250407-gpiochip-set-rv-mips-v1-0-e7f74a4eee2b@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 23 Apr 2025 17:16:34 +0200
-X-Gm-Features: ATxdqUELgS6WCJFQes3519gHJSdg6pzOWNNHSfSI0N6izE-OdLoImE-rCQIjitc
-Message-ID: <CAMRc=MdOVSWzt-J4_g+4H-TSVYyc0tCOmog0WSpHUqE+hCEe6w@mail.gmail.com>
-Subject: Re: [PATCH 0/4] MIPS: convert board-file GPIO drivers to using new
- value setters
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 7, 2025 at 9:25=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. We're in the process of
-> converting all GPIO drivers to using the new API. This series converts
-> all MIPS board-file level controllers.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Bartosz Golaszewski (4):
->       MIPS: rb532: gpio: use new line value setter callbacks
->       MIPS: bcm63xx: gpio: use new line value setter callbacks
->       MIPS: alchemy: gpio: use new line value setter callbacks
->       MIPS: txx9: gpio: use new line value setter callbacks
->
->  arch/mips/alchemy/common/gpiolib.c | 6 ++++--
->  arch/mips/bcm63xx/gpio.c           | 7 ++++---
->  arch/mips/kernel/gpio_txx9.c       | 8 +++++---
->  arch/mips/rb532/gpio.c             | 8 +++++---
->  arch/mips/txx9/generic/setup.c     | 8 +++++---
->  5 files changed, 23 insertions(+), 14 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250324-gpiochip-set-rv-mips-43c07e67328e
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+This series fixes and improves clock usage in the Arm CoreSight drivers.
 
-Gentle ping.
+Based on the DT binding documents, the trace clock (atclk) is defined in
+some CoreSight modules, but support is absent.  In most cases, the issue
+is hidden because the atclk clock is shared by multiple CoreSight
+modules and the clock is enabled anyway by other drivers.  The first
+three patches address this issue.
 
-Bart
+The programming clock (pclk) management in CoreSight drivers does not
+use the devm_XXX() variant APIs, the drivers needs to manually disable
+and release clocks for errors and for normal module exit.  However, the
+drivers miss to disable clocks during module exit.  The atclk may also
+not be disabled in CoreSight drivers during module exit.  By using devm
+APIs, patches 04 and 05 fix clock disabling issues.
+
+Another issue is pclk might be enabled twice in init phase - once by
+AMBA bus driver, and again by CoreSight drivers.
+This is fixed in patch 06.
+
+Patches 07 to 09 refactor the clock related code.  Patch 07 consolidats
+the clock initialization into a central place.  Patch 08 makes the
+clock enabling sequence consistent.  Patch 09 removes redundant
+condition checks and adds error handling in runtime PM.
+
+This series is verified on Arm64 Hikey960 platform.
+
+Changes from v1:
+- Moved the coresight_get_enable_clocks() function into CoreSight core
+  layer (James).
+- Added comments for clock naming "apb_pclk" and "apb" (James).
+- Re-ordered patches for easier understanding (Anshuman).
+- Minor improvement for commit log in patch 01 (Anshuman).
+
+
+Leo Yan (9):
+  coresight: tmc: Support atclk
+  coresight: catu: Support atclk
+  coresight: etm4x: Support atclk
+  coresight: Disable programming clock properly
+  coresight: Disable trace bus clock properly
+  coresight: Avoid enable programming clock duplicately
+  coresight: Consolidate clock enabling
+  coresight: Make clock sequence consistent
+  coresight: Refactor runtime PM
+
+ drivers/hwtracing/coresight/coresight-catu.c       | 53 ++++++++++++++++-----------------
+ drivers/hwtracing/coresight/coresight-catu.h       |  1 +
+ drivers/hwtracing/coresight/coresight-core.c       | 45 ++++++++++++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 41 +++++++++-----------------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c  | 24 +++++----------
+ drivers/hwtracing/coresight/coresight-etb10.c      | 18 ++++--------
+ drivers/hwtracing/coresight/coresight-etm3x-core.c | 17 ++++-------
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 32 ++++++++++----------
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  4 ++-
+ drivers/hwtracing/coresight/coresight-funnel.c     | 66 +++++++++++++++---------------------------
+ drivers/hwtracing/coresight/coresight-replicator.c | 63 ++++++++++++++--------------------------
+ drivers/hwtracing/coresight/coresight-stm.c        | 34 +++++++++-------------
+ drivers/hwtracing/coresight/coresight-tmc-core.c   | 48 +++++++++++++++---------------
+ drivers/hwtracing/coresight/coresight-tmc.h        |  2 ++
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 36 ++++++++++-------------
+ include/linux/coresight.h                          | 30 ++-----------------
+ 16 files changed, 225 insertions(+), 289 deletions(-)
+
+-- 
+2.34.1
+
 
