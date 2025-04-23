@@ -1,113 +1,175 @@
-Return-Path: <linux-kernel+bounces-616897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EC0A997AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:17:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FF6A997A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505304A2D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2221C4A2710
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAA628DF1C;
-	Wed, 23 Apr 2025 18:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B928D83B;
+	Wed, 23 Apr 2025 18:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="H3D2KdsW"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbVgA2W7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E5228CF6D;
-	Wed, 23 Apr 2025 18:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122018DF86;
+	Wed, 23 Apr 2025 18:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432249; cv=none; b=QPPzrafjCfOCEAm4tdLta/UDSQokXkwO/wsfvNrjfqw4Oyuy3EO66wdtfDI2cHfj+ws5Ma8DNXckSkryfYYzIXot2rQry4AI4A1JL8bYNFMuGg45S2iT4kfqhK5MpEHZ6c+HeTjZdv+fc+NjhWK5+xgXg0brxUnwfX/ik/5vzbQ=
+	t=1745432211; cv=none; b=DBaYY3DTaYamvZia1L+W4GYyCfLxOsKzXfkWKW+dh1p7NVKq7svH05a3326LHNK2VnJVFqCwSAPn33OfaDcaDQuCWDTaCIzHAfrB7unjhzrZlRlsgPLEyZASPWURnB9QRyJzUiLftKuv1AJ0acIYcmUKeT/vVsyJpTT33OeguGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432249; c=relaxed/simple;
-	bh=cWViDUuxcwp4/QVdZ3TBEnvofiMGdKFWJSsT4185cWw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BARUX7S+r23m3xmP1OsUOqXEcrQtXwm5UKcpNuoBRZfNvZc7WKrV0U7eS21m3atElr8zjhTJt+ZyOFtJd2fFUI+HWMFjTGkJ0LF7jKq6KcPbM6N9GQfji40a5lIkiSsch8Hxq3ytXiqrBz6nLIodozBi/Hthn9y0aEZfSaVCZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=H3D2KdsW; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1745432248; x=1776968248;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yqfu2rj6ntU/1h7MczMuErOve4BDb+YoGDcVuGCnHY4=;
-  b=H3D2KdsWAzESkCW3Omfcr3LkCjN1qH/Xn7KeTPmf0T28exm7Xiec09lm
-   NGLXxLUXsIupKRIr7brrym7ClWIlG0tDc1PhUTsQqizROuurxJeHffUVR
-   IOkHY+6QB3Nc0nt3ZnRRiJIafQDoJCa8R1q1nGoTlIiVxM1DlzKTaoiUv
-   k=;
-X-IronPort-AV: E=Sophos;i="6.15,233,1739836800"; 
-   d="scan'208";a="190040270"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 18:17:26 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:2327]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.13.240:2525] with esmtp (Farcaster)
- id 44cf353b-ca45-47b7-b2b2-94e0c0015865; Wed, 23 Apr 2025 18:17:26 +0000 (UTC)
-X-Farcaster-Flow-ID: 44cf353b-ca45-47b7-b2b2-94e0c0015865
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 18:17:25 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.101.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 18:17:23 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <johannes@sipsolutions.net>
-CC: <i.abramov@mt-integration.ru>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] cfg80211: Restore initial state on failed device_rename() in cfg80211_switch_netns()
-Date: Wed, 23 Apr 2025 11:16:40 -0700
-Message-ID: <20250423181714.24628-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <4a91f731c49d3449632f19dcf4a1a8f5a9eb847b.camel@sipsolutions.net>
-References: <4a91f731c49d3449632f19dcf4a1a8f5a9eb847b.camel@sipsolutions.net>
+	s=arc-20240116; t=1745432211; c=relaxed/simple;
+	bh=UCMgqoUk/35E+0AbklcegPwWnbbccv3El9DIubtxTbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjSSV1CVeFii86prIFZZCq0FZx173dplr9KlqOxk7Dq6pCV1JNr0c0HUg+dlMzlziBo1cSiZh7xbBAMZWpJTT377vlAHimPcknA8zEuTVa5vIdcc7QhtnTpHE4KT4JW8YO7G8/2t2LVHmTWpU3COzEqI+ZgHmmxU+4/B6UKaSXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbVgA2W7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC3CC4CEE2;
+	Wed, 23 Apr 2025 18:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745432210;
+	bh=UCMgqoUk/35E+0AbklcegPwWnbbccv3El9DIubtxTbA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kbVgA2W7BzGd24i9NZuPM5D1kKlokI9fRXpflISX/6YJ1QJEoqxHGs2S2/7a/htw8
+	 GwkgO2DlW6rqb3KavlQWXeOfABadxRNzO8cQj4sjug1tLbpV3DokH6q1XF/4sVrrGN
+	 uiTytMLFteY9fhzTR4XWbJQE6uA8AVNgVH/TtVMSAr80LTNEOZOJiyR6vEdYZaAziV
+	 leJVlJWfHrLQsV9kivxEVHa4uP9Z9iGJXRw9KkPIJQ0yjIUi9lsyq/+kiT6fB2v+gX
+	 ispA8YeqtUs3xbQ1GwCWFMPt5Z+hxZ0t0FPf5nMzyQJhfe4GgeKlF1rKHP6VVRNB99
+	 QP0sDdHG9CA/g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3E58DCE0B75; Wed, 23 Apr 2025 11:16:49 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:16:49 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+	johannes@sipsolutions.net, Daniel Gomez <da.gomez@samsung.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 15/28] module: Use RCU in all users of
+ __module_text_address().
+Message-ID: <4446525f-4e89-41bb-91a0-89c72dd0e8f8@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250108090457.512198-1-bigeasy@linutronix.de>
+ <20250108090457.512198-16-bigeasy@linutronix.de>
+ <db0f8ec385762e6edb3edf5054a76ea189135e6e.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWB001.ant.amazon.com (10.13.139.152) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+In-Reply-To: <db0f8ec385762e6edb3edf5054a76ea189135e6e.camel@sipsolutions.net>
 
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 23 Apr 2025 17:44:45 +0200
-> On Mon, 2025-04-07 at 15:53 +0300, Ivan Abramov wrote:
-> > Currently, the return value of device_rename() is not acted upon.
+On Wed, Apr 23, 2025 at 05:17:31PM +0200, Benjamin Berg wrote:
+> Hi,
+> 
+> On Wed, 2025-01-08 at 10:04 +0100, Sebastian Andrzej Siewior wrote:
+> > __module_text_address() can be invoked within a RCU section, there is no
+> > requirement to have preemption disabled.
 > > 
-> > To avoid an inconsistent state in case of failure, roll back the changes
-> > made before the device_rename() call.
+> > Replace the preempt_disable() section around __module_text_address()
+> > with RCU.
 > 
-> This kind of seems complicated for something that ought to not happen
-> ...
+> Unfortunately, this patch causes a performance regression for us. The
+> trouble is that we enable kmemleak and run trace-cmd so a lot of stack
+> traces need to be collected. Obviously, we also have lockdep enabled.
 > 
-> And also (+netdev), what do we do in case this is called from
-> cfg80211_pernet_exit() - leak the whole network namespace because we
-> couldn't allocate memory for the name? That seems counterproductive.
+> Now, combine this with the UML stack dumping code calling into
+> __kernel_text_address a lot[1] and it really has a relevant performance
+> impact. I saw the kernel spending 40% of its own CPU time just on the
+> lock in is_module_text_address.
+> 
+> Maybe kernel_text_address should leave the RCU handling to the caller
+> and assume that the RCU read lock is already taken?
+> 
+> Benjamin
+> 
+> [1] The UM arch dump_stack function reads every "unsigned long" on the
+> stack and tests it using __kernel_text_address.
 
-default_device_exit_net() does BUG() in such a case, it doens't
-assume -ENOMEM as we are freeing memory in the netns dismantle.
+Use of a single guard(rcu)() is regressing performance?  Interesting and
+quite unexpected.  That said, tiven the amount of debug you have enabled,
+I am not so sure that people are going to be all that excited about a
+further performance regression.
 
+But is this regression due to the cleanup hook that guard(rcu)()
+registers?  If so, please feel free to try using rcu_read_lock()
+and rcu_read_unlock() instead.  I would be surprised if this makes a
+difference, but then again, your initial regression report also comes
+as a surprise, so...
 
-static void __net_exit default_device_exit_net(struct net *net)
-{
-...
-	for_each_netdev_safe(net, dev, aux) {
-...
-		err = dev_change_net_namespace(dev, &init_net, fb_name);
-		if (err) {
-			pr_emerg("%s: failed to move %s to init_net: %d\n",
-				 __func__, dev->name, err);
-			BUG();
-		}
-	}
-}
+Another way to reduce guard(rcu)() overhead is to build your kernel
+with CONFIG_PREEMPT_NONE=y.  Not so good for real-time response, but
+then again, neither are your debug options.
+
+							Thanx, Paul
+
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > ---
+> >  kernel/module/main.c | 16 +++++-----------
+> >  1 file changed, 5 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index 80877741ac7e5..6a99076146cbc 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -823,13 +823,12 @@ void symbol_put_addr(void *addr)
+> >  
+> >  	/*
+> >  	 * Even though we hold a reference on the module; we still
+> > need to
+> > -	 * disable preemption in order to safely traverse the data
+> > structure.
+> > +	 * RCU read section in order to safely traverse the data
+> > structure.
+> >  	 */
+> > -	preempt_disable();
+> > +	guard(rcu)();
+> >  	modaddr = __module_text_address(a);
+> >  	BUG_ON(!modaddr);
+> >  	module_put(modaddr);
+> > -	preempt_enable();
+> >  }
+> >  EXPORT_SYMBOL_GPL(symbol_put_addr);
+> >  
+> > @@ -3694,20 +3693,15 @@ struct module *__module_address(unsigned long
+> > addr)
+> >   */
+> >  bool is_module_text_address(unsigned long addr)
+> >  {
+> > -	bool ret;
+> > -
+> > -	preempt_disable();
+> > -	ret = __module_text_address(addr) != NULL;
+> > -	preempt_enable();
+> > -
+> > -	return ret;
+> > +	guard(rcu)();
+> > +	return __module_text_address(addr) != NULL;
+> >  }
+> >  
+> >  /**
+> >   * __module_text_address() - get the module whose code contains an
+> > address.
+> >   * @addr: the address.
+> >   *
+> > - * Must be called with preempt disabled or module mutex held so that
+> > + * Must be called within RCU read section or module mutex held so
+> > that
+> >   * module doesn't get freed during this.
+> >   */
+> >  struct module *__module_text_address(unsigned long addr)
+> 
 
