@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-615759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E0DA981FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AC5A98205
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AB91B63A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2871895759
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C7327C16D;
-	Wed, 23 Apr 2025 07:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC40826E168;
+	Wed, 23 Apr 2025 07:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGJxdhvX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey+dwbsI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D426D4E6;
-	Wed, 23 Apr 2025 07:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353F726E164;
+	Wed, 23 Apr 2025 07:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394866; cv=none; b=fEvXqhQJ5zrJnYK/Z9OWBnBppbSfmNEBGrmKMIQt8rjvrvyNRQ53zlpUwLvAEkT/qEMEgGG33LGL/1q2MrMneW0u9O7lT20HFVoHSXbqFb5WUTgEso8Ii3qwscRDgMwIo1P2aIEM9q+OaRPBFrLa3fFyK38R7EZffA4d4UTnyf0=
+	t=1745394872; cv=none; b=DtwPpGfVr8nuZ75rwkOVgIQIQ6gQ9MZZq6ta2EvD299muF1wX9XBhFAhlJGIibst2oyDl4ki8KWfGAM/YKEw8k03dKRFiaA4L2gLrQFpqzzcEIlmh8Zic7q0NhpJ8Lf4Ay2AuzMSBauBUcy3pHErax5kJvqNyCjJxBRE50TI0HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394866; c=relaxed/simple;
-	bh=zp8MWTdchx+xn/ppkDoZU95BK9wmgT/7c0FOAN4CkbE=;
+	s=arc-20240116; t=1745394872; c=relaxed/simple;
+	bh=yyUvT9JkMyum4hiAa1+6ebNVa9FblrUX8+2SiiZ1X9E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T9H3cRcOv+FJkjeFCNsmxUBn6XqmCQgedKZPRvwbuPIBuNh2IuUPUHhTwCzm20nYHY5nVsyS6CchbbrxtYYT1DjEbfZKxqb5SZiRLB9XQco26bbj9ScXzpBJ7d5B5uMMViH8FqPrLmljCpg6TU+Cu5PxERmHVph1mUnNZSXE6EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGJxdhvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD511C4CEEA;
-	Wed, 23 Apr 2025 07:54:19 +0000 (UTC)
+	 MIME-Version; b=Xb/3Ttb6Hgx9LC+ynd0fvbuvi+/mC3YsRiGMhhX5S4pndfNUKcO27cEcGG6w2SNKixwvTN3SMLH7NI5juktn6igEYw4Duactp4MTt6LTQJa6fIZuyNgLn6tSKbb8G6q6bklwA2LiRiXXER13Ehr3lL2ePGm5vb3X/iJnZo8JTpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey+dwbsI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0709C4CEE2;
+	Wed, 23 Apr 2025 07:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394865;
-	bh=zp8MWTdchx+xn/ppkDoZU95BK9wmgT/7c0FOAN4CkbE=;
+	s=k20201202; t=1745394870;
+	bh=yyUvT9JkMyum4hiAa1+6ebNVa9FblrUX8+2SiiZ1X9E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VGJxdhvXR4sPTThCQAJTuZko7z4HzR+4wFxbLN+/S9RkxgA5+wrmfoMOOXruNWwUI
-	 +o5zKs9W0E1aYdcFwNASVN1ozBXKPxTg+ObCu340dDODh5mTpODxp2XDKiDeGqzKH3
-	 +5ipqLM/foYOEbJD5U2hfDfo4Rn6dlvdhtNXIyAFsNUUbkPUxRLX52rkvoG1Mjm++S
-	 miE4Spb9j3oW/38dPCIkHwK3lrE8pXIQ855/Q8HHkFn6BcU0mAEyWex0QoUJVl0S6q
-	 TjDFJJvRKSVo+8VABlb4kXCN9O0Mi0irgRGj8iy9G6MuT1f8QEKiJzenUMLDztQpLd
-	 O4ikevSx3PGZg==
+	b=ey+dwbsI4hAt0upV2zp5IbIphcj8DHK8kea4mW9K4WqR1Xwm1meeBMPSD+gzDO0rE
+	 Wwe6vStUO41BvYAU8Oy8u56n/sl17Zx5DhS4i9IMdq5dCdaWDodcm5k6ez4sqwjhnG
+	 CwPvtJkSk3DuCain1BtAPf+oFrgulmk7QPg/RHggcc568fbMVOibbaHr/kIVlAWfIl
+	 5nGxe78QtUveIEqLxrpqzTrVu5zQc30aKRL/gdpFVkHa+y3oOdmYnX2QSvOTRrdKOs
+	 OhnWO9is3WhLlI2s+uiyy+JzqxaxQUoxrHYLokKhhWBFGa5/sDoWNiIdiNDUnT+kNh
+	 jPrkoAvfr5LvA==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -59,9 +59,9 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/28] ALSA: ens1370: Use pure devres PCI
-Date: Wed, 23 Apr 2025 09:53:22 +0200
-Message-ID: <20250423075346.45907-5-phasta@kernel.org>
+Subject: [PATCH v2 05/28] ALSA: cmipci: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:23 +0200
+Message-ID: <20250423075346.45907-6-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
 References: <20250423075346.45907-1-phasta@kernel.org>
@@ -83,22 +83,22 @@ pcim_request_all_regions().
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/pci/ens1370.c | 2 +-
+ sound/pci/cmipci.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/ens1370.c b/sound/pci/ens1370.c
-index 71c89e4e3090..1e6adf1ae304 100644
---- a/sound/pci/ens1370.c
-+++ b/sound/pci/ens1370.c
-@@ -2022,7 +2022,7 @@ static int snd_ensoniq_create(struct snd_card *card,
- 	ensoniq->card = card;
- 	ensoniq->pci = pci;
- 	ensoniq->irq = -1;
--	err = pci_request_regions(pci, "Ensoniq AudioPCI");
-+	err = pcim_request_all_regions(pci, "Ensoniq AudioPCI");
+diff --git a/sound/pci/cmipci.c b/sound/pci/cmipci.c
+index cb8593c376ee..b00df0a60d3f 100644
+--- a/sound/pci/cmipci.c
++++ b/sound/pci/cmipci.c
+@@ -2980,7 +2980,7 @@ static int snd_cmipci_create(struct snd_card *card, struct pci_dev *pci,
+ 	cm->channel[1].ch = 1;
+ 	cm->channel[0].is_dac = cm->channel[1].is_dac = 1; /* dual DAC mode */
+ 
+-	err = pci_request_regions(pci, card->driver);
++	err = pcim_request_all_regions(pci, card->driver);
  	if (err < 0)
  		return err;
- 	ensoniq->port = pci_resource_start(pci, 0);
+ 	cm->iobase = pci_resource_start(pci, 0);
 -- 
 2.48.1
 
