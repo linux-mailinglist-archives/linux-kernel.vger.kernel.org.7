@@ -1,50 +1,67 @@
-Return-Path: <linux-kernel+bounces-616662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456FEA99456
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FB1A9941D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92CA170B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7291BA7A83
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59686292938;
-	Wed, 23 Apr 2025 15:46:24 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CF2293B65;
+	Wed, 23 Apr 2025 15:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="g0He3GFF"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F417D176AC8;
-	Wed, 23 Apr 2025 15:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D79628A1F7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423183; cv=none; b=tiyott2uZN+pIVjRiMokVobfHExQ2vRXX1VXN3o/IRq3dzL9bD5Esu9dmlKfT0Cw20d3dswqT1YMB5egNZOXrcwf27tyJKwjq7c+t6DFC0SvRpQiFvmpWi62wh1ycNBzd5Rni5PNyMHMm/0Ifj06dJWj5sj6lcqvmqsELvMVelo=
+	t=1745423223; cv=none; b=S9jWBg9jjuLNHDJT99zSgetJk6caPqfdqAvT3pJs1ddOZYZSME/sfWlofQxGw+97wP9gf+nmW21EKXZIUKXdKyJqp+Qb4QulCfHVW9z4XuqIPWK594CNfpfLe5wSb+a7Zvk4zT/yZ15ni7IAqe68NLOIUogw+u9DVtDEgrCClaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423183; c=relaxed/simple;
-	bh=Bs2vkrYkdLBN+hEWYlKD6nWHngnhzbBykaskkdjOSbI=;
+	s=arc-20240116; t=1745423223; c=relaxed/simple;
+	bh=Dlxtg6HfRMV30lx7TpyBWf0ABYivxrUw+hEbZcVQ55I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qz5mARTMAVjGSRLdbtZSFJ2IHJ+P0WFYm/iqqxaUPdt04kpaFYe19kvnJNz0eBLlPh1hgfjXTABJz/YvWaXykh5oRod+lo+20noaGJHPtonTPq7oRtP3oiowf7hqfNmyIrckojX0Wr2iKB8fmcnJB8e1bfT8/jAqi0dhiw4P4uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8483368C4E; Wed, 23 Apr 2025 17:46:15 +0200 (CEST)
-Date: Wed, 23 Apr 2025 17:46:15 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 05/15] xfs: ignore HW which cannot atomic write a
- single block
-Message-ID: <20250423154615.GA31899@lst.de>
-References: <20250422122739.2230121-1-john.g.garry@oracle.com> <20250422122739.2230121-6-john.g.garry@oracle.com> <20250423003823.GW25675@frogsfrogsfrogs> <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com> <20250423081055.GA28307@lst.de> <f27ea8f7-700a-4fb1-b9cd-a0cba04c9e47@oracle.com> <20250423083317.GB30432@lst.de> <20250423151224.GC25675@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oz1WoeMZH6vcYluxamJKU5kLhBF6so1/nd6ynxgew08Cfj/kIIJE3drnF22UZo69akSjxfNVYwV+AsB1Tz7K0k5bLwhX0jY3l65YlOxMlJcnJLlqBRMUjhK8fuDHGNmxdKhwswQJMq1hkI/Otiu2mKui+aDpFSmQYII5mljhcZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=g0He3GFF; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Wed, 23 Apr 2025 11:46:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1745423209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uTQ6p+V1jTDw30/bAcPN/7+p5TBcCgK8gHCjb8Oz0Q=;
+	b=g0He3GFFtIeA0y+TZSb8ZM5l4SKbGuwYGKGOYwdpzty/lxLNEiXCOv5K3IiaArEH3gZOvC
+	OUvGYNJpg0LXfJ2XzYkLKJon6mmOe1XmPjKBaULtWsbZsRORyC2xET6NZT8ygT4vr88qAa
+	XaBvJ9NiJK5TMMpTlEEhA1szOHKYyBWBZaRHg1MxwQ4RAzncmwmaGy31MtV4ZdlRi5WqtO
+	wuz+lTHuyiOOFi0dwmcpXei6JAzKQHxAJ2Ismpak5mxi5Z1Rb7YuFCAd9LRZPEvjsyW4W1
+	Vncv3A1dF010GrnpFagFy6liYg3iWr5UB4K8ypp6HLgTRZrK51KOvKVl75q/mQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Rob Herring <robh@kernel.org>
+Cc: Nick Chan <towinchenmi@gmail.com>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: spmi: Add generic SPMI NVMEM
+Message-ID: <aAkLY3TYIPG7ojwx@blossom>
+References: <20250417-spmi-nvmem-v2-0-b88851e34afb@gmail.com>
+ <20250417-spmi-nvmem-v2-1-b88851e34afb@gmail.com>
+ <20250422133619.GA1095169-robh@kernel.org>
+ <CAMT+MTTwY=z1-_94ws+Oi+wvE2PA_s57dPmpMABC26q=MPw1Mg@mail.gmail.com>
+ <e4159c2b-4081-4a4b-9a53-d6d559a3196c@gmail.com>
+ <CAL_JsqKwASbUtpO=wU-16v=y8S_wLyBxnFUmQqsE8GkzCz0hDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,16 +70,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250423151224.GC25675@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAL_JsqKwASbUtpO=wU-16v=y8S_wLyBxnFUmQqsE8GkzCz0hDg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 23, 2025 at 08:12:24AM -0700, Darrick J. Wong wrote:
-> I disagree, leaving the hardware awu_min/max in the buftarg makes more
-> sense to me because the buftarg is our abstraction for a block device,
-> and these fields describe the atomic write units that we can use with
-> that block device.
+> > >> What makes this generic?
+> > >>
+> > >> A generic driver is great, but "generic" or "simple" bindings are
+> > >> generally a mistake.
+> > > There is nothing apple-specific in that driver, just re-exporting
+> > > several registers as cells. If you think that it is a mistake, I can
+> > > rename it to apple-pmic, or something similar.
+> 
+> Like I said, a generic *driver* is great! I'm all for them. We should
+> have more of them! Generic bindings on the other hand are generally a
+> mistake. The problem is whether a generic driver works for you or not
+> can evolve in either direction. You add more things like described
+> below and then a generic driver doesn't work.
 
-Yeah.  If you want to keep it I'd suggest we go back to my earlier
-suggestion.
+It sounds like the path of least resistance here is then:
 
+1. rename the bindings to be apple m1+ (at least for now)
+2. keep the driver as-is (no mfd, etc - at least for now)
+3. land just that (at least for now)
+
+Evolving the driver to share with not-Apple, or evolving the
+bindings+driver to share with pre-M1, can happen in future series
+if/when somebody wants to do that work.
+
+Is this a fair understanding of the situation?
 
