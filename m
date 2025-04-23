@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-616625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727F3A993B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D26DA9939E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419A29267A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4851BA1C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4201E2973A4;
-	Wed, 23 Apr 2025 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCA22BEC2B;
+	Wed, 23 Apr 2025 15:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btPf0GO1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A565F263F2D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DuAUA07N"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5141E298CB5;
+	Wed, 23 Apr 2025 15:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422255; cv=none; b=FGyJ7twqkChnCW+0+d/3bLwqq3J7N62i6lXwnY5CKlProwAC0/VYrBS7lVDFBPhwyVd2RyB4AamfGlZ+ETgJmY1/FsY0UM5qS3347waQlzLJMg1Eqi74CehdEi2nj9WXAZl/hQ2cLGZumo0vZCZWFTHrX0l2N1QIJj2kiYc1DAI=
+	t=1745422441; cv=none; b=LKEXKzgMSNbF/edHLbb2R8z/vbL4RxvSrURPWdGAuXjJGKjuUbwtaOnQqsVjBWExRfIIi/FpSYyoNkPg+0avCgbdnc4dnhoDw6Qr2LEGth94MEbq+WtnFtB+3vE3KWqHo0RaY/pb+sgVeFUR4rQuddDXnvbsbNXdhZab87yZQHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422255; c=relaxed/simple;
-	bh=pRGZRE/J9Ym4C0y5/OE2t+BlXhI2eeAOLYTZFR8RKgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+CUAIEDa9RdLb7cZomssCY1fMubb6CcymMDTX2RcqMriJb6sYbf22phR2Z7KNV8ggR/gbgpj3vIhLh0kXswf2V5nK6Q9q72tcUblJokiBqP7AEwOqkssmmBs850g6evjq+tUKo1dWQC4v9azcCqLUkDUyUYgyzTfg3V3bSE8b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btPf0GO1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07301C4CEE2;
-	Wed, 23 Apr 2025 15:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745422255;
-	bh=pRGZRE/J9Ym4C0y5/OE2t+BlXhI2eeAOLYTZFR8RKgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=btPf0GO1KzfSYvGrT7KbaTDblenmKQzpMynLCtktPltTlhX/JkwZpmiVjWFIh2AHB
-	 RFWScL64AndoRPXbx8TOZkLG74fBVZ7uVxNv/F39xl5hAzT31dN1ZUctej7u9qmHne
-	 Ja+Rgue+06K82g02kuIisSdiYNdtccy7XMUCDqEN2+CqMXfZtRlJXzTa2LUSDRJaWR
-	 pgzza336Ppz8juASOrZrR191zQySkWT2KP+UtGrShx3ijDkWUFZn6owyDXwoNZHNc6
-	 9GOO/lFL55MCgK//hGvGSH2v4WQs55Hf6qYQB47Ap5jW082mRgiBWS/+QQO6cmfwi9
-	 TwJr3NT0c7qag==
-Date: Wed, 23 Apr 2025 05:30:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-kernel@vger.kernel.org, mrpre@163.com, mkoutny@suse.com,
-	syzbot+01affb1491750534256d@syzkaller.appspotmail.com,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH v1] workqueue: annotate data-races around pwq->stats
-Message-ID: <aAkHrjU22pCSkWif@slm.duckdns.org>
-References: <20250423125341.503659-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1745422441; c=relaxed/simple;
+	bh=opnKFTMm+a02TWuFe4RTIDKmUrtlWqmONLUdXLdysMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tM1vLkINO914Fxa9aadLiVtW3FZcRopS9z4UNjS9QLGphJVCPlpW96EJAoQfL01bmtwx8NIAYgO8cLaZ7xNLF7a3UZpItbTuL2yyK1MHn8DNTV+pA3QlTL8g6pJG6bkFO0gGU5Rbf+6OQIzktW7mnMm0RXR14OLKAcLDp8AU8co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DuAUA07N; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=T0Bwx
+	Q0ZQe3Cgjyln3gV2mBApbISigEbknxbPIiH8GU=; b=DuAUA07NVrrnDCLaBesvX
+	foWKFnBcrcmTKtxRiy6XAmMx5jC+TEtLFzvJ0RIr9MG9T9/5OJhu90mg3MOQTjp6
+	EollnGNab1HVLWDqKTCYniQKfBNTbu2tv/IQ7U9vEvIkgb/SMaw2z3/HGb27GV1i
+	7KATc7Pl++rneBmRW587Ts=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCnosAACAlogeYfCA--.9428S2;
+	Wed, 23 Apr 2025 23:32:17 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de
+Cc: manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	shawn.lin@rock-chips.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v3 0/3] PCI: dw-rockchip: Reorganize register and bitfield definitions
+Date: Wed, 23 Apr 2025 23:32:11 +0800
+Message-Id: <20250423153214.16405-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423125341.503659-1-jiayuan.chen@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnosAACAlogeYfCA--.9428S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJFyfWr1rAFWkWF47ZF45GFg_yoW5Jw13p3
+	Z8JFZ5ur4fJw40van7Jw17XFy8K3ZrCFWY9w4UKw18Xa40qa48WFyftF1rury7XrWxKF17
+	ZwsrX3yI9a1Yy3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEQJ5hUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgs4o2gJB+UC5AAAsP
 
-On Wed, Apr 23, 2025 at 08:53:41PM +0800, Jiayuan Chen wrote:
-> Suppress warning by annotating these accesses using
-> READ_ONCE() / WRITE_ONCE().
-> 
-> Reported-by: syzbot+01affb1491750534256d@syzkaller.appspotmail.com
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> ---
->  kernel/workqueue.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index cf6203282737..d78640b5d188 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -3241,7 +3241,7 @@ __acquires(&pool->lock)
->  	 * point will only record its address.
->  	 */
->  	trace_workqueue_execute_end(work, worker->current_func);
-> -	pwq->stats[PWQ_STAT_COMPLETED]++;
-> +	WRITE_ONCE(pwq->stats[PWQ_STAT_COMPLETED], READ_ONCE(pwq->stats[PWQ_STAT_COMPLETED]) + 1);
+1. PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+2. PCI: dw-rockchip: Reorganize register and bitfield definitions
+3. PCI: dw-rockchip: Unify link status checks with FIELD_GET
 
-The function acquires pool->lock down below. Can you move it down inside the
-locked region instead of adding READ/WRITE_ONCE()?
+---
+Changes for v3:
+- Delete the redundant Spaces in the comments of patch 2/3.
 
-Thanks.
+Changes for v2:
+- Add register annotations to enhance readability.
+- Use macro definitions instead of magic numbers.
 
+https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
+
+Bjorn Helgaas:
+These would be material for a separate patch:
+
+- The #defines for register offsets and bits are kind of a mess,
+  e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
+  PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
+  PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
+  names, and they're not even defined together.
+
+- Same for PCIE_RDLH_LINK_UP_CHGED, PCIE_LINK_REQ_RST_NOT_INT,
+  PCIE_RDLH_LINK_UP_CHGED, which are in PCIE_CLIENT_INTR_STATUS_MISC.
+
+- PCIE_LTSSM_ENABLE_ENHANCE is apparently in PCIE_CLIENT_HOT_RESET_CTRL?
+  Sure wouldn't guess that from the names or the order of #defines.
+
+- PCIE_CLIENT_GENERAL_DEBUG isn't used at all.
+
+- Submissions based on the following v5 patches:
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-1-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-2-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-3-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
+---
+
+Hans Zhang (3):
+  PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+  PCI: dw-rockchip: Reorganize register and bitfield definitions
+  PCI: dw-rockchip: Unify link status checks with FIELD_GET
+
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 87 +++++++++++--------
+ 1 file changed, 50 insertions(+), 37 deletions(-)
+
+
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+prerequisite-patch-id: 5d9f110f238212cde763b841f1337d0045d93f5b
+prerequisite-patch-id: b63975b89227a41b9b6d701c9130ee342848c8b6
+prerequisite-patch-id: 46f02da0db4737b46cd06cd0d25ba69b8d789f90
+prerequisite-patch-id: d06e25de3658b73ad85d148728ed3948bfcec731
 -- 
-tejun
+2.25.1
+
 
