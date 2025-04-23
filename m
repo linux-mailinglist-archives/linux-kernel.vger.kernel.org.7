@@ -1,168 +1,125 @@
-Return-Path: <linux-kernel+bounces-616620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A76A993D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:03:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E26DA9938F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8011BA4B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326429A37EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54B927979C;
-	Wed, 23 Apr 2025 15:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16962918EE;
+	Wed, 23 Apr 2025 15:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3zXwlaU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C131291170;
-	Wed, 23 Apr 2025 15:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VKe3aNkW"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC28A290BC4;
+	Wed, 23 Apr 2025 15:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422078; cv=none; b=j4aQo7lkfQnr9Cuz5yAuDMhj9jTpYGCW8HhpZ6Nf5i8tvkOUiIqjq4g0WkCaM3R8VCjB6kOk1MckivAzCoUYh6XeLMvYpOQKuS+Ao2oGkLN8T4P4F0lsEaAjaW6I22zdlk9PC9eSDaNT4bT+pc6ZSkKRs70vi0cEYls5hXustnM=
+	t=1745422190; cv=none; b=hpe2rg79W3D5Il4kJZRgOYJWpAwIhqvjAEHmFK/R1CwaTIuJ+iTIEPD8/OHs0vzriIi7j3r2Pqcjf3nLt0ELKyIIJeAoTi4UGeak7x2kbA921xXfEsxJiOE4AkenF56tXjbvuNCYdbe2fVXMgTyv0GVDtb8SqMh4GvYvd3/8tWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422078; c=relaxed/simple;
-	bh=KY+tkNDWDQZc8s3Rmj/OQu/O+PqFkhqgtS5wh4QnnsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QFAOdB11yIhB72q5YE4tn7bQfkGR42G4p0l/uwrA+VhKUZbRThEkDC0ZBjsD83jzcx1XITY3HwdjS86k9dlk9mJQwI0xfdFvggZDtG9eTJMjYP6B8Lgzl7XmVLYwRn1nYp9Ze7+RQX4IBz7LQ6akIQLBjhzIhR4NG/FK375k18k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c3zXwlaU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEF1C4CEE3;
-	Wed, 23 Apr 2025 15:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745422078;
-	bh=KY+tkNDWDQZc8s3Rmj/OQu/O+PqFkhqgtS5wh4QnnsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c3zXwlaUmJmzED06i0Arh6uR15KC4Rmlp9ZDHW51VPPjYu4t+4jwaqw65GFMq1BtN
-	 BGh/lYNWxPIwVKZkIVdetzumhA4yLoRoZrLI313fhOBDW6m8Mu5E37EUaGO8DrtLby
-	 Z5/mAiOQQgHeMv4lVH5dVD4oGs+oD9IOLalmou4l4DowFa7j9/n64SRzBInZdSHrKe
-	 upNppygtWOMY0hDpi3jEqYbmPIokkY8EavdFSMz7N/PO9IhPO7c223pEesJUxEnqJ3
-	 8mTBBAI66I/yIvFaNK39X5v2H+MpPolr1/9URVUI1SC/kceH8hCdJN9aW/X8OCeQrO
-	 VYhORklofkxtg==
-Date: Wed, 23 Apr 2025 16:27:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	Djordje Todorovic <djordje.todorovic@htecgroup.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: timer: mti,gcru
-Message-ID: <20250423-blazer-obtain-ef4a0cd0a23d@spud>
-References: <DU0PR09MB61968695A2A3146EE83B7708F6BA2@DU0PR09MB6196.eurprd09.prod.outlook.com>
- <DU0PR09MB619646561DF9B4F262F8B2B7F6BA2@DU0PR09MB6196.eurprd09.prod.outlook.com>
+	s=arc-20240116; t=1745422190; c=relaxed/simple;
+	bh=mTnOEvztkfKLWsBS8tmmBTk1Hq32rvvAP+K2zR/06Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DBrzFV1cBRcmgHcFcOTEAi/nNGD5ZrQhQdRIxDjgsxV8dHfrUBt/V+RC0x8p1uI2SWYcfkWgQL4ekVYw5I7Yqmz9QPY8MHI+CuuzpVy9K5+jHZxBFcVE5GRoYe5SmLhiAUi03muVIYNIkZqPX7vvcpPwaiIRXhRfMdnw7rE1eYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VKe3aNkW; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.70.64.216] (unknown [172.172.34.12])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0A9E6211308D;
+	Wed, 23 Apr 2025 08:29:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A9E6211308D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745422188;
+	bh=LC7pkHihs4T9XyOd3vElvpj55QuaAXTM1TekQVBmxmM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VKe3aNkWdbI858tuCCCibH52jv6/KugZ24rss+dWKHRXrezKFC7/K1lhGJbWzMwlP
+	 h7CQC44Hl5LjBE4wXv/dNphwSp55Nt50mVpImBvZw0JVs8TH7j3dS1RpMVoxu4TEYs
+	 OVmQHglqmVS7WgCKhYndQ95NNmWxb5ogldgZJYiM=
+Message-ID: <99e18151-2866-4646-8532-3d10d63279b9@linux.microsoft.com>
+Date: Wed, 23 Apr 2025 08:29:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iO+1mqSGaor1E+bf"
-Content-Disposition: inline
-In-Reply-To: <DU0PR09MB619646561DF9B4F262F8B2B7F6BA2@DU0PR09MB6196.eurprd09.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 3/9] kexec: define functions to map and unmap segments
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250421222516.9830-1-chenste@linux.microsoft.com>
+ <20250421222516.9830-4-chenste@linux.microsoft.com>
+ <f2f4a873489b28d3baa4ac1f6073a49fe888d120.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <f2f4a873489b28d3baa4ac1f6073a49fe888d120.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 4/22/2025 5:29 PM, Mimi Zohar wrote:
+> On Mon, 2025-04-21 at 15:25 -0700, steven chen wrote:
+>> From: Steven Chen <chenste@linux.microsoft.com>
+>>
+>> Implement kimage_map_segment() to enable IMA to map the measurement log
+>> list to the kimage structure during the kexec 'load' stage. This function
+>> gathers the source pages within the specified address range, and maps them
+>> to a contiguous virtual address range.
+>>
+>> This is a preparation for later usage.
+>>
+>> Implement kimage_unmap_segment() for unmapping segments using vunmap().
+>>
+>> Cc: Eric Biederman <ebiederm@xmission.com>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Co-developed-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Checkpatch.pl is complaining that the Signed-off-by tag does not matches the
+> "From:" line only on this patch.  I've updated your Signed-off-by tag to match
+> the "From:" line above.
+>
+>> Acked-by: Baoquan He <bhe@redhat.com>
+> Missing from v13 is Stefan's Tested-by tag.  As the code hasn't changed, I've
+> added it.  In the future, please don't forget to add the tags.
+>
+> Stefen Berger spent quite a bit of time reviewing this patch set, but with v13
+> most of his Reviewed-by tags are missing. Stefan?
+>
+> For now the patch set is staged in the next-integrity-testing branch.
+>
+> thanks,
+>
+> Mimi
 
---iO+1mqSGaor1E+bf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mimi,
 
-On Wed, Apr 23, 2025 at 12:14:26PM +0000, Aleksa Paunovic wrote:
-> HTEC Public
->=20
-> Add dt-bindings for the GCR.U memory mapped timer device for RISC-V
-> platforms. The GCR.U memory region contains shadow copies of the RISC-V
-> mtime register and the hrtime Global Configuration Register.
->=20
-> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-> ---
->  .../devicetree/bindings/timer/mti,gcru.yaml   | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/mti,gcru.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/timer/mti,gcru.yaml b/Docu=
-mentation/devicetree/bindings/timer/mti,gcru.yaml
-> new file mode 100644
-> index 000000000000..6555dbab402e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/mti,gcru.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/timer/mti,gcru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GCR.U timer device for RISC-V platforms
-> +
-> +maintainers:
-> +  - Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-> +
-> +description:
-> +  The GCR.U memory region contains memory mapped shadow copies of
-> +  mtime and hrtime Global Configuration Registers,
-> +  which software can choose to make accessible from user mode.
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: mti,gcru
-> +
-> +  required:
-> +    - compatible
+Could you help to add
+Tested-by tag for this patch set: "Tested-by: Stefan Berger 
+<stefanb@linux.ibm.com> # ppc64/kvm"
+Reviewed-by tags "Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>" to 
+patch 1, 5, 6, 9.
 
-Why is this select required?
-I don't see why it would be since there's not a fallback to a compatble
-=66rom some toher binding.
+Thanks a lot.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: mti,gcru
-> +
-> +  reg:
-> +    items:
-> +      - description: Read-only shadow copy of the RISC-V mtime register.
-> +      - description: Read-only shadow copy of the high resolution timer =
-register.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    gcru: timer@1617F000 {
+Hi Stefen,
 
-Drop the "gcru" label from here, there are no users.
+Thanks for your help all the time and sorry missing tags to show your work.
 
-> +        compatible =3D "mti,gcru";
-> +        reg =3D <0x1617F050 0x8>,
-> +              <0x1617F090 0x8>;
-> +    };
-> --
-> 2.34.1
+Sorry again,
 
---iO+1mqSGaor1E+bf
-Content-Type: application/pgp-signature; name="signature.asc"
+Steven
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaAkG+QAKCRB4tDGHoIJi
-0m/WAQDYPIh35x33CEHzP0x5YIEB2rQl4h95pdgfeAO5nr4vpQEAlP+ccB+DDUpu
-svNC2aK4eMOyUOMWxmIQQH4KYNchcwE=
-=fPzU
------END PGP SIGNATURE-----
-
---iO+1mqSGaor1E+bf--
 
