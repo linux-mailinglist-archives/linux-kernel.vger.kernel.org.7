@@ -1,169 +1,181 @@
-Return-Path: <linux-kernel+bounces-615754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9015DA981F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:58:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F53A981FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDE11889626
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:58:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4207AED24
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EF6279356;
-	Wed, 23 Apr 2025 07:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AE127A13E;
+	Wed, 23 Apr 2025 07:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yJ+9L7cy"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TPfbqkkM"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE974275843
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D47278E7E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394849; cv=none; b=ceEdohks9mshf4gG/MpCHkhihszfNDI/SfMny4O9LVaQO/TXjDaQrri6rMmvhzBbb8aJ/EPBE4OKxvlsm8NXXp4enqOIzVYPJ+jgdocWCFwgCUW+lI74BeDUY6OlHL7N8wmCIvORlM/OP+xjCdvtbWSWKQDFeCZX+J2B7KJZQS4=
+	t=1745394855; cv=none; b=ivjD9vmaxE89ggBFW8mfe3wUfJnwOWKK4OUF/osvgAdzcwQ8aLUFPSEVMT2Bbd5j/kVUwRT5a9VvcPMDXHkS7F84CcSs3NtueMIN9NHzpUuPd9N1lN0Q39opNE6k1hLKu01JsrEsDZtOX8h6K0fBzIoWO4mDbIFxyHN+fu8pmo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394849; c=relaxed/simple;
-	bh=VqGDq+aiJzH+1k4/p5pVXAekbmppDm03yyolVhT8cKU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K4QVKr0uwPGPP7CFaj2tYOKFiCePr7pWu9/Nx+bXxwqoXy3bfdPQGrsJxaHWNU/1ZXksYk7Xf7lHydObhgrFB8yf9P6skTTjr6dilRPkfKZ3UY1Py98vOt+hjTCW89gSlDdG8OR8cGpVlliCzSwCQjQX2LKtvUIb1HWQY5/n/mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yJ+9L7cy; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so48437155e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:54:06 -0700 (PDT)
+	s=arc-20240116; t=1745394855; c=relaxed/simple;
+	bh=ODkKc9w5DAH5YPIV3Ui/p7vc8dyQNmpHNTi579avV9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIKLSPV4/akvLTC82okGb1ZVwjESFXCxbbPgcl5c8yRNtmd6v95pi2irflQrSQ+IUZu53JVSboiQIuz8JyMee7CScM6NjD4RMrHAlUl6+CJm0YtnxMrwnDa7iT98SnamP1/Kso2TD1VTHDVoZmr47JuejFIy9sUqDqAzEIGqj6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TPfbqkkM; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so9338328a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745394845; x=1745999645; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GTFfJZb1P5uU8ezKo9spOiDP3fTS97bBPzPp1VNuiFE=;
-        b=yJ+9L7cy5xIO1QVUjmi9YeiPTmQ7PuD63tm5UuRxkJBYFgRZN0FSYTHOVGN9FFFMFW
-         CgtGeE2PoYmae2C7F1v+wqFFfoT6XF0nGtH2vgbVqbhlAJJEZDpoN81O9Ac/xfbOVe8T
-         QVPcMFWvaU9TuWiuM3gugil2F5FYaxupnwGn38DJ4nbooyukMN+dDn+OcjEZqn66HTrK
-         Ms9/ggo2XVvJwtw+Awx8smTUnzESrhIP6kak81WLJP/AyTM9arr/itEdk+hlIVskcDn6
-         Qf7F/xN0TBjh6KdjZb0wit3WzBYtGLUXFh2f+jh85WRox2z6j+ZmdvnFRR8efh8pXjCS
-         GVZw==
+        d=suse.com; s=google; t=1745394850; x=1745999650; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nqMLdKqIS7/vudO+K0aCSoNHv7ZBATh/BYxTws4kcI=;
+        b=TPfbqkkMrU+1t6eJqxkvu4HR+PffOnCElxmte4YUtGD76Z4AnylDg4FSBSCEpt0XC/
+         90mZvsFrqWywv7Ea1xxyggrHZb3okG5nGHuO5w6Gc64PzuMHv58Vq33eCSjUwvJyT/ZJ
+         yY+ii1EkqVOtOIDOVZB6ypOh9pSwkC3VVN46ngJKoMYzbrNZcgxfsE+DmSPfiZCKPZkc
+         S1BYAMFdZfnHaZU2Nf6jU4mRExuBeI8QLKqWOQqKQWUAS6kzt9vmtmU/B4X9Owps30n4
+         ZtaDjI+bscMbRxqapAgLH4MufZGVuyWU9r4IrB/zPH106hWV/W0n0t359VimqyHEYoL0
+         CZHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745394845; x=1745999645;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GTFfJZb1P5uU8ezKo9spOiDP3fTS97bBPzPp1VNuiFE=;
-        b=LDVzsL7bp8BEV8sMFGbo2ZCiYIi5A+Hbyzg3IIAsWf8s+ynfUPqzbu8e5Mh0MyUmlD
-         mS8EMGBsEWzJgd1p9xfwfZM0uJwdmF/koFd4y6Us7drUfX4yXL41UfSR39uMWkwQCAkr
-         GjCA5+5xMrkR/joo2EP0c6godwesqfV/KWX2c8LbtcLu5+qUqKPmOO73/f+lgkQn4qXn
-         FIqr/TtH/j8VfSQSSh23TsJe7OiVrwpdvEydc5iPf0rqG1B9EoeSvGP43GaAOITGOwXJ
-         pxWZAfW3cn7ntTVIOIK+66GXOawK5A/PDaGq6zh7ZsS7G6NlMBCxiWr/VoSCGRV60Wh8
-         31vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJVAzLVtBbB8dA+ou7bVKAAP4bJyj0SIUzF7gXXzGockfNKCxsqmTWh/cpmo2EjFaVwSQoTHLSyUCMH2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA2CfFD1IENjDbFOMZzfA+5jTUWYz257Px2B7k7WFYL888D2W6
-	Cqo+8EA/fwrss/3h8vqtpEvG/uPEE/HDelUbOqFhcl+bcKE/qSvdj7I/60zJbj4=
-X-Gm-Gg: ASbGnctiWAi/DfteHpgMbkkEn2N1xW1qdNYVeRi15WXIhZRArWSZCmjo9aK7VbupfDk
-	pAWGEIo8pMoUFMhep1fX6x5iqpSD2+pXNEWwUDmzYQvwjdlyQKeRscMWDRBJFgyC6yQW7B+IHc3
-	Jb/6UekLJqBHQzG/Vc/XlxamLycxP2KLxZSrui0aC1Tp+bqDlzrRmuCyT8N9fJTXzrLaQ6O11Ei
-	YGW4pWHE+bFahsAI+lfAKomBkt6hsLeOckQKRfziV16+NURfLfQ2/gpCwBCQTgE1AhQQYt0QTeA
-	2uxOGcDCN/lv0/pOsDA+k0ioNpmsk2zo9IjpJSbxuRhk
-X-Google-Smtp-Source: AGHT+IGTjzRevoWNUsBJdpmO0+4XcLcpnz8hcwqfrYaEOvZnTxWcAwwm6v+Zm7rMHLQ3zUTTTB4kuA==
-X-Received: by 2002:a05:600c:1548:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-4406ab7f661mr150504825e9.5.1745394845053;
-        Wed, 23 Apr 2025 00:54:05 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:74b0:71bd:6dda:dcc1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4330d8sm18266655f8f.33.2025.04.23.00.54.04
+        d=1e100.net; s=20230601; t=1745394850; x=1745999650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2nqMLdKqIS7/vudO+K0aCSoNHv7ZBATh/BYxTws4kcI=;
+        b=c70h5+th20N8838lAa3vW3Wh2oGZIBW634FtoBpPJa28ZfqEt11rlinfYxlTPUmRbK
+         duA7rpkf34hUWgM6QXIni8aPePuBtVAOLG+NZIj/YjTIl4hQu7+7dENtoVrF7bzrl3BK
+         PRqwLQ9TgU5RiExb5U69YdnkRzcEScHNrPpmeHU92OIlkwoBkj/jAI3naVFv1hLuKSKp
+         upfCx9w8bKyvUl2vsxO+Z935Z0VoqH6/aFTmTBezWO2+Ti37Ky595WMQdO4S66+lJNnS
+         BqWS47Pxv9iuANYlNvNdNFptDXOU/Os7U4Y1EZbsh1H0cXL3y99/tgOk/1OIJy+4GmQu
+         OdFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRFyJqoxlhHpf5HRVFjaXZc8kQyE3oHAmPGEOr+hh5Wo3tOCOVrhJp1WknFRTLxd6q71K2n62QOIyJtWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxsrvHCpsXQltDsG57kxqUOlgIUz0LDfpGSOebwlqEM1RR3eEK
+	hA6FEyYFmPke4qT1wjviS6qqWkyiTq6sfCjhB6th851VA1a8D0k0yWt27WAzJNbTtMHerX7uktK
+	2
+X-Gm-Gg: ASbGncuQzDCAf1xo61ii8nZ5KEK4CgKY590pwXc/4RCSbNvW4JaSHLP+byu2A8OGaZC
+	45njLxGz23dqxB+CRGWF3dtxbC93+LbbFjaHKSDyDgQmF2u3jiedXNx8VYVaCp5QGrpvoNTX6ma
+	YxO381TWpne1nPEz5QFfaNKxaWP4pOiMldm6GREXaI7rp/WFBsjLpBPkfpOhzwB+Y/qM593Ha6H
+	hzh0Fu3pD9+2ufHTAAxtkc0j/sZQOyFKxDDkoi1RBbBbHxOych5ompMtm00xk75leo5WD7ZUc/V
+	do+3+ASg5r6Jz7tuRp6pAUwUfEOsqK8=
+X-Google-Smtp-Source: AGHT+IHmXmgSOu2wPnbZzY+Ub0Gp+ArzZ1ZZDgHAjJdTh9TPLQ4EXkWlzoSi+QNcSE0lhT8bkWL55w==
+X-Received: by 2002:a17:907:2ce4:b0:ac2:dc00:b34d with SMTP id a640c23a62f3a-acb74e0ed59mr1576701566b.53.1745394849267;
+        Wed, 23 Apr 2025 00:54:09 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-acb6ef41605sm756431266b.124.2025.04.23.00.54.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 00:54:04 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 23 Apr 2025 09:53:53 +0200
-Subject: [PATCH 4/4] leds: tca6507: use new line value setter callbacks
+        Wed, 23 Apr 2025 00:54:08 -0700 (PDT)
+Date: Wed, 23 Apr 2025 09:54:08 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
+ allocation failure
+Message-ID: <aAicoAmxX0B_O3Ok@tiehlicka>
+References: <2024122837-CVE-2024-56705-049b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-gpiochip-set-rv-leds-v1-4-2f42d8fbb525@linaro.org>
-References: <20250423-gpiochip-set-rv-leds-v1-0-2f42d8fbb525@linaro.org>
-In-Reply-To: <20250423-gpiochip-set-rv-leds-v1-0-2f42d8fbb525@linaro.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Riku Voipio <riku.voipio@iki.fi>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1758;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=j50twcusbXfbWf3YimG8kilK3UrQntg92BiiLpapoiE=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCJyXXWKiAH3snFZHuRbLDBqkRUlZiVNabT/vi
- W2Az4GKo/aJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAiclwAKCRARpy6gFHHX
- csOmD/4z8pV0ShS8Bn+cluVeSrGpphqnovNsAHA6+L3NqKstpdKCMPStq21vJwK4g0mxS0hWlcS
- W/xwr4ddv3T9CvuZwJXyS7Qsh0WGkIrfEB6jWJn8zwbVmsNCnhvq+2geTenkaVPKnom/4ctM5j4
- JgsfG9W9EsKZmGRPe0IlnNhYGnrgwwKhPfh0FEzyqylBMBT3LDWTQ80EfwgIUjP2RsJz8laoB50
- ddVugrvsnNWDihdOrIbIo+zST06DfSO5zbXNSywQ/eAZ+/PLO4SpYiNOQRkbpwQkQ+9EzIcCOFn
- cXVbzHvISKu+pMczH2P959jlGJTH8z/bWQoQI8jQRqfHQSG1ty/je2WdbzcwPEhxmvIQMptJw8j
- cphEyFKe6MMttqhABUYsYNSBFfHYdZMDtGEfth03zput/5fK950xdoMp3rIdIUtPoLfbTeNv6GO
- hQfx7dRubXy1YAi/UYOKd5DXqD/NjH94DTTiI1jmVAClq6lQrdBg0jEvJYCSe+x1Dtulx2A7DMy
- XoRGElSeAKl6Xl0dphxCCmFmCdeqggex2mMrB2WtNCC8dvRYFOPV9mGqU3ScI5IliD6RvVjisvh
- SbVb4siNzfRdTGn/30tY7d5lK031ZpAZm55H710vzt14UeGyNepkLazvm3OW+IpHgdMCcJ4VT6X
- svAfxJVCje8xDhg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024122837-CVE-2024-56705-049b@gregkh>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi,
+our internal tools which are working with vulns.git tree have noticed
+that this CVE entry has been altered after the announcement.
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+There was an additional commit added to the CVE entry. The current state
+is
+$ cat cve/published/2024/CVE-2024-56705.sha1
+ed61c59139509f76d3592683c90dc3fdc6e23cd6
+51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/leds/leds-tca6507.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+There seem to be handful of other cases like this one AFAICS.
 
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index acbd8169723c..89c165c8ee9c 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -588,8 +588,8 @@ static int tca6507_blink_set(struct led_classdev *led_cdev,
- }
- 
- #ifdef CONFIG_GPIOLIB
--static void tca6507_gpio_set_value(struct gpio_chip *gc,
--				   unsigned offset, int val)
-+static int tca6507_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
-+				  int val)
- {
- 	struct tca6507_chip *tca = gpiochip_get_data(gc);
- 	unsigned long flags;
-@@ -604,13 +604,14 @@ static void tca6507_gpio_set_value(struct gpio_chip *gc,
- 	spin_unlock_irqrestore(&tca->lock, flags);
- 	if (tca->reg_set)
- 		schedule_work(&tca->work);
-+
-+	return 0;
- }
- 
- static int tca6507_gpio_direction_output(struct gpio_chip *gc,
- 					  unsigned offset, int val)
- {
--	tca6507_gpio_set_value(gc, offset, val);
--	return 0;
-+	return tca6507_gpio_set_value(gc, offset, val);
- }
- 
- static int tca6507_probe_gpios(struct device *dev,
-@@ -636,7 +637,7 @@ static int tca6507_probe_gpios(struct device *dev,
- 	tca->gpio.base = -1;
- 	tca->gpio.owner = THIS_MODULE;
- 	tca->gpio.direction_output = tca6507_gpio_direction_output;
--	tca->gpio.set = tca6507_gpio_set_value;
-+	tca->gpio.set_rv = tca6507_gpio_set_value;
- 	tca->gpio.parent = dev;
- 	err = devm_gpiochip_add_data(dev, &tca->gpio, tca);
- 	if (err) {
+I have 3 questions:
+1) What is 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
+   relation to the original CVE which seems to be about a missing memory
+   allocation failure check?
+2) What is the process when a CVE is altered? have I missed any email
+   notification?
+3) Until now CVE -> sha was a 1:1 mapping. Can we expect this to change
+   and what exactly is the process here?
+
+Thanks!
+
+On Sat 28-12-24 10:45:57, Greg KH wrote:
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> media: atomisp: Add check for rgby_data memory allocation failure
+> 
+> In ia_css_3a_statistics_allocate(), there is no check on the allocation
+> result of the rgby_data memory. If rgby_data is not successfully
+> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
+> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-56705 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.10.231 with commit 0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.15.174 with commit 4676e50444046b498555b849e6080a5c78cdda9b
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.1.120 with commit 02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.6.64 with commit 8066badaf7463194473fb4be19dbe50b11969aa0
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.11.11 with commit 74aa783682c4d78c69d87898e40c78df1fec204e
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.12.2 with commit 0c25ab93f2878cab07d37ca5afd302283201e5af
+> 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.13-rc1 with commit ed61c59139509f76d3592683c90dc3fdc6e23cd6
+> 
+> Please see https://www.kernel.org for a full list of currently supported
+> kernel versions by the kernel community.
+> 
+> Unaffected versions might change over time as fixes are backported to
+> older supported kernel versions.  The official CVE entry at
+> 	https://cve.org/CVERecord/?id=CVE-2024-56705
+> will be updated if fixes are backported, please check that for the most
+> up to date information about this issue.
+> 
+> 
+> Affected files
+> ==============
+> 
+> The file(s) affected by this issue are:
+> 	drivers/staging/media/atomisp/pci/sh_css_params.c
+> 
+> 
+> Mitigation
+> ==========
+> 
+> The Linux kernel CVE team recommends that you update to the latest
+> stable kernel version for this, and many other bugfixes.  Individual
+> changes are never tested alone, but rather are part of a larger kernel
+> release.  Cherry-picking individual commits is not recommended or
+> supported by the Linux kernel community at all.  If however, updating to
+> the latest release is impossible, the individual changes to resolve this
+> issue can be found at these commits:
+> 	https://git.kernel.org/stable/c/0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
+> 	https://git.kernel.org/stable/c/4676e50444046b498555b849e6080a5c78cdda9b
+> 	https://git.kernel.org/stable/c/02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
+> 	https://git.kernel.org/stable/c/8066badaf7463194473fb4be19dbe50b11969aa0
+> 	https://git.kernel.org/stable/c/74aa783682c4d78c69d87898e40c78df1fec204e
+> 	https://git.kernel.org/stable/c/0c25ab93f2878cab07d37ca5afd302283201e5af
+> 	https://git.kernel.org/stable/c/ed61c59139509f76d3592683c90dc3fdc6e23cd6
 
 -- 
-2.45.2
-
+Michal Hocko
+SUSE Labs
 
