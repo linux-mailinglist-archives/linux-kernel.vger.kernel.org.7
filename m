@@ -1,136 +1,200 @@
-Return-Path: <linux-kernel+bounces-617035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A18A9999E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:47:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F8CA999A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A6DF7A6D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C774632A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB73626FA72;
-	Wed, 23 Apr 2025 20:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F7226D4E1;
+	Wed, 23 Apr 2025 20:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QTdCQmA6"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r0h6jKF5"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637D11A2389
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E02253921
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745441223; cv=none; b=bRxVW4LovCSBHb7Pqed/UdLeuy2CrHmfMZwtrM4aFPtYtWvOIGqFwrshrKo5gaxs/cnShm3k937u+EsrCy9Kc82Ia7d6hy+a1enXRQ5LbzypOtyMLTXRvwNbAZoWLDlVTQpIWE0bimo/KAn9RMtkazyckVmtmGPQ/7ZJCsfB41E=
+	t=1745441316; cv=none; b=uDaCVIKV/wuKozRMmsZHjZdTPO0scmBPd12OdTI5TjkfPCqO0euiILiyMUtZIHTL/Etl100q5iebSSoQD9uz++5le4ZTLqlYDNq3GPJq4+/4ZWQBDwn//YS0+kFBWJixc2I8NMcg6mzNIqK7QiuInYdEWuGYTnl9mjefuQ6ljI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745441223; c=relaxed/simple;
-	bh=snhV2XiNpG4U8XzST8X2IiBFztNuEg7ofnejtq0sGFA=;
+	s=arc-20240116; t=1745441316; c=relaxed/simple;
+	bh=GMkKnDZs2TogS+OZnK3g/cGnwU+bgfYk9NTXbGCQMeI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MttVntIkIzAZ5GgWDiC6KNChMMbOVxPbKq0nx9C8r6XSunVTB3Ks7hmr9wWiHv0e32kuBBoEZAuB0zarv4g0vJSL+dCgNdhpVcVlz4x/vHOkywNJRkMDhMHKk7zcoDuMFe9ZOCR2mzeeDX0D4Wmc5A0waKQazAKF7MpheQy5AD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QTdCQmA6; arc=none smtp.client-ip=209.85.128.44
+	 To:Cc:Content-Type; b=dQHKgIt8L1datHWJY/g5LyenVcZhFP7OPasYRZKk1PpFkk+lmC+tt+5qL9gYdFzMv4/y0Y0hOeMZ9EOdKZ2o53MWMOrtnT3TDLolXh9qgRI2amiqml48LQGzHQuuRhw6EyBBIAra7yheL1kJLpIqcB5wfDP36E5wTfvtoKuyMRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r0h6jKF5; arc=none smtp.client-ip=209.85.166.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43ef83a6bfaso6095e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:47:01 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d44cb27ef4so13745ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745441219; x=1746046019; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745441314; x=1746046114; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EFkS/yyfa25uyiibdv8tLizNMHglHTEPA9b7aVCxr88=;
-        b=QTdCQmA6gPv5PbQRZk8hIpPeRjR+gv7Vehhb125d+mrcOFBbYNW/NuP9Wp9dxvoFha
-         ctw72j0tY0kKcCFwVKQifwYaksLGmg47KogCgClsk/1DfZxEnaLKRghFzgMsQc9oesAb
-         2fnDm6JOu6gettKrb+JADv7EropPNYoX4mg6HFCPPdZ70Dz73edWHKKV12s7fPe9ss2C
-         xahWfoc/mSuekrdLRQ45uZFkMFecGfo+EOQG8XdlLP1yRtZ3mRdd2MS2rInThXQm4NEU
-         X+NoV1ajjYetfK63/9LDvlUAhdQgzrElD5uEW9tL2ajk+G2JooHEGSYBsOGuDWsXKXdE
-         UIQw==
+        bh=7T7e3sZe+hUN4WNXu8vyuvnIhtGlIZfELcc/drShjUE=;
+        b=r0h6jKF5mxSbKqVCNQ927I7hJWgyo98H9GT+dnhO1gKb3UGJ+CSMRd8Q/IvINjVY0l
+         FXDYO99siitfEa9lDCo3GO1wGNaTE2auPIYNrv5lyg+0ArAT3qNL7uziSkZD1S8ybrnc
+         1LDmbsu2Ft+L8ujw4c/p4cmqM2uMxutt0D0ijYSTqrl3Ae3DD71cFARJB3+6B3dHW3vy
+         lrueD8386q1CCvTXXKUjT1AW/MSbkOTbeJcLrCMyZOUHJFY5B/L9AjzWURMHuVUh9TsO
+         QBNk5bsaB0Kv57yL5eNlFBrO1bQLv7MxfSG+Z7TjoGo24OCVTHKT/NTqIUr12CizMBHm
+         7uDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745441219; x=1746046019;
+        d=1e100.net; s=20230601; t=1745441314; x=1746046114;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EFkS/yyfa25uyiibdv8tLizNMHglHTEPA9b7aVCxr88=;
-        b=try3WktPzF9nziUA+XlSQZkFB3+Je8Gpwt80zu5ixzlu3V66Kd+x4CHtgLdJYORHSn
-         eDOmrKS0dBlcrqj/4y17ErISorXXBp9XBVhVZsVhZA/Ef5XZMjXj2dHdTezbowaqxij9
-         /qIHf9tFMvz6QZg9wNgXuqi3a8KJCts4lBmSDUTaP8nsUZhmBS0N85oGvR3JR8PldybQ
-         yz1qz0rCzDVnUmFXqRloPNPkFbVPwr5g6W0J0eEEpuk/66YP0/TXA7ucLDaxiB5RxK/0
-         RSW+aX6n35thu0RWXRdvUCNP5BvxkGvZZX5ggWx0GEfXa0B5fUgb/8yP+DIDojGbzmmf
-         zmig==
-X-Forwarded-Encrypted: i=1; AJvYcCUWO2hoz7tPIgY4ji2ZQeh1GqC0MjXwHrC5k/9+Jg4agFHAkBCY66zgfplkXgrhhFDJ09Gt3b5+Yv8wpgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwh02mQoymFmcw0IuGpc8FfRALVSk6Be+/QTYNB/lQmH20sM9d
-	OlahpW0vggxw85eHN0chkp7/c/VwP+zf4kEISYfl3dUZ+pbCIe10lazC4NJQkEsNUpntnXsp6vQ
-	uqJRCFh0xmCoAJNouuiD4zfBIGYfs4AXX0FOn
-X-Gm-Gg: ASbGncv2aDt6A/S3MAHcerZv0eDQ72VXYVXsVfyJaadaRsPTL416BkNbv5oP9PJsAke
-	tL4/lSobbbLDJUECUw+CZMAwd1X5V8kIIhF1mwPJgZNYzW+UKpdrHVL9yc+7eb90gJwl0ZKarjO
-	RbEVc5w4ywQOi4wk8vWeOzYG5f2mtMXQhaa1R1h7PQ8ZVcahAFnpOI
-X-Google-Smtp-Source: AGHT+IGEAejb+q0eYprUhrjih1DfSbXp5RpbqXJTJQJ5gPUdM0VLt77TTPHPCf9I9+WeRUkPGH/szPwHF5TaK/eZhZ0=
-X-Received: by 2002:a05:600c:1c29:b0:43d:169e:4d75 with SMTP id
- 5b1f17b1804b1-4409bca45afmr122455e9.1.1745441219476; Wed, 23 Apr 2025
- 13:46:59 -0700 (PDT)
+        bh=7T7e3sZe+hUN4WNXu8vyuvnIhtGlIZfELcc/drShjUE=;
+        b=iN8vemMwhzREiKOjbDw0DJF3p4RwcnpYoHXvG1rQEGJcq5ykB93Gpd3nOdZqZrQkQc
+         dOva4olD2b+Lm77WKwDUBokUuRn7houlwVZkJ2WNaPUX77tEyNnk5knshNGa5pJshm/L
+         C0S1zatQLYxoj5ircmk3xfqem7m34rXC/G5sitTNKVmaAJeu9BAlQi71UUHKGCqJW7gR
+         fTMCqNroigL/QJI5Buoif3tQFjwrZjK6jMkZfyk9oCbFOiDWsibjxoQif84+pno6XEvj
+         6MfM0t3mfFzF9Wzl938R7YRIa+P/SaBngC+U++koVZd0qh3HLtPQGximC+A96tP+wvqw
+         PN/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWz6kmSoQAsUGi77/47FCUzIcEY2ZDYDgg+Cz60PAcLEsqCjo3zMYT2aTsy2EXp9UaPTbJO/fHOjVJmIqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsdGKeEUAW7ZtVSvPicsJOYOVNCuUybU5THZjRoFfk1+quAbJw
+	RrrkeYhBId6obtI7WeukqwTepWr/ORR/6aWvGWx26v+rVCg4zJ7sN/VJZEDLd/Ix9eNMgwoksuo
+	BJ/zZyEVJtEXnrGceMVSlHZNq36x9mRLuZmzt
+X-Gm-Gg: ASbGncsQLFIS7MbYxBIOKr4YFx4Is+5iqWSili76xgk3MIN6FzDEIwnKDZ4X7NZdIPd
+	3j52JT6AW2MM41t8Zrdkl3tjEVTNWA59N/jPf0uRqPSkbIK0vvMxQKk/QU85wieGCXGJvUzvyII
+	LBLOv2J2kwQ0APLLItnJOYOyQptWFAysWVlaiY2BZX/t6K+Q3Y0aE=
+X-Google-Smtp-Source: AGHT+IExdZYQcSL4ZSE7r1r2DmT7LBXNbY8cNlCpvdhQiBrWm3wh+b/AgOTeN8dIsbroRlDeDuYqAySGeHwYi5u0CYk=
+X-Received: by 2002:a05:6e02:1b05:b0:3ce:46e2:42c7 with SMTP id
+ e9e14a558f8ab-3d9303a5da2mr152855ab.13.1745441313785; Wed, 23 Apr 2025
+ 13:48:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418221254.112433-1-hramamurthy@google.com> <d3e40052-0d23-4f9e-87b1-4b71164cfa13@linux.dev>
-In-Reply-To: <d3e40052-0d23-4f9e-87b1-4b71164cfa13@linux.dev>
-From: Ziwei Xiao <ziweixiao@google.com>
-Date: Wed, 23 Apr 2025 13:46:47 -0700
-X-Gm-Features: ATxdqUF7GLWp2UyqWvifI0Ek-kzWh0WRuL_TLzs86Rr0wZt9m6nYIFIt3D6I-pI
-Message-ID: <CAG-FcCN-a_v33_d_+qLSqVy+heACB5JcXtiBXP63Q1DyZU+5vw@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/6] gve: Add Rx HW timestamping support
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jeroendb@google.com, 
-	andrew+netdev@lunn.ch, willemb@google.com, pkaligineedi@google.com, 
-	yyd@google.com, joshwash@google.com, shailend@google.com, linux@treblig.org, 
-	thostet@google.com, jfraker@google.com, horms@kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250410044532.52017-1-irogers@google.com> <Z_dp7E2wtSek-KHo@z2>
+In-Reply-To: <Z_dp7E2wtSek-KHo@z2>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 23 Apr 2025 13:48:22 -0700
+X-Gm-Features: ATxdqUHWMdNSnRzm2rl_aY_rXQ9Wb0DO-h_rZ2fPkL42xi7zcht25wdHFLc9Iq4
+Message-ID: <CAP-5=fU6NM4LZWt9SdTFX9JKTgfghwAVvtXc-qBuUb0vpUeTQA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] Metric related performance improvements
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	John Garry <john.g.garry@oracle.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 3:13=E2=80=AFAM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
+On Wed, Apr 9, 2025 at 11:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> On 18/04/2025 23:12, Harshitha Ramamurthy wrote:
-> > From: Ziwei Xiao <ziweixiao@google.com>
-> >
-> > This patch series add the support of Rx HW timestamping, which sends
-> > adminq commands periodically to the device for clock synchronization wi=
-th
-> > the nic.
+> Hi Ian,
 >
-> It looks more like other PHC devices, but no PTP clock is exported. Do
-> you plan to implement TX HW timestamps for this device later?
-> Is it possible to use timecounter to provide proper PTP device on top of
-> GVE?
-Yes, the TX HW timestamps and PTP device work is undergoing. Those
-would be sent out in separate patch series when they are ready.
+> On Wed, Apr 09, 2025 at 09:45:29PM -0700, Ian Rogers wrote:
+> > The "PMU JSON event tests" have been running slowly, these changes
+> > target improving them with an improvement of the test running 8 to 10
+> > times faster.
+> >
+> > The first patch changes from searching through all aliases by name in
+> > a list to using a hashmap. Doing a fast hashmap__find means testing
+> > for having an event needn't load from disk if an event is already
+> > present.
+> >
+> > The second patch switch the fncache to use a hashmap rather than its
+> > own hashmap with a limited number of buckets. When there are many
+> > filename queries, such as with a test, there are many collisions with
+> > the previous fncache approach leading to linear searching of the
+> > entries.
+> >
+> > The final patch adds a find function for metrics. Normally metrics can
+> > match by name and group, however, only name matching happens when one
+> > metric refers to another. As we test every "id" in a metric to see if
+> > it is a metric, the find function can dominate performance as it
+> > linearly searches all metrics. Add a find function for the metrics
+> > table so that a metric can be found by name with a binary search.
+> >
+> > Before these changes:
+> > ```
+> > $ time perf test -v 10
+> >  10: PMU JSON event tests                                            :
+> >  10.1: PMU event table sanity                                        : =
+Ok
+> >  10.2: PMU event map aliases                                         : =
+Ok
+> >  10.3: Parsing of PMU event table metrics                            : =
+Ok
+> >  10.4: Parsing of PMU event table metrics with fake PMUs             : =
+Ok
+> >  10.5: Parsing of metric thresholds with fake PMUs                   : =
+Ok
+> >
+> > real    0m18.499s
+> > user    0m18.150s
+> > sys     0m3.273s
+> > ```
+> >
+> > After these changes:
+> > ```
+> > $ time perf test -v 10
+> >  10: PMU JSON event tests                                            :
+> >  10.1: PMU event table sanity                                        : =
+Ok
+> >  10.2: PMU event map aliases                                         : =
+Ok
+> >  10.3: Parsing of PMU event table metrics                            : =
+Ok
+> >  10.4: Parsing of PMU event table metrics with fake PMUs             : =
+Ok
+> >  10.5: Parsing of metric thresholds with fake PMUs                   : =
+Ok
+> >
+> > real    0m2.338s
+> > user    0m1.797s
+> > sys     0m2.186s
+> > ```
+>
+> Great, I also see the speedup on my machine from 32s to 3s.
+>
+> Tested-by: Namhyung Kim <namhyung@kernel.org>
+
+Ping.
+
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
 >
 > >
-> > John Fraker (5):
-> >    gve: Add device option for nic clock synchronization
-> >    gve: Add adminq command to report nic timestamp.
-> >    gve: Add rx hardware timestamp expansion
-> >    gve: Add support for SIOC[GS]HWTSTAMP IOCTLs
-> >    gve: Advertise support for rx hardware timestamping
+> > Ian Rogers (3):
+> >   perf pmu: Change aliases from list to hashmap
+> >   perf fncache: Switch to using hashmap
+> >   perf metricgroup: Binary search when resolving referred to metrics
 > >
-> > Kevin Yang (1):
-> >    gve: Add initial gve_clock
+> >  tools/perf/builtin-stat.c                |   6 +-
+> >  tools/perf/pmu-events/empty-pmu-events.c |  66 ++++++++-
+> >  tools/perf/pmu-events/jevents.py         |  66 ++++++++-
+> >  tools/perf/pmu-events/pmu-events.h       |  23 +++-
+> >  tools/perf/tests/pmu-events.c            | 129 +++++++++--------
+> >  tools/perf/util/fncache.c                |  69 +++++-----
+> >  tools/perf/util/fncache.h                |   1 -
+> >  tools/perf/util/hwmon_pmu.c              |  43 +++---
+> >  tools/perf/util/metricgroup.c            | 102 ++++++--------
+> >  tools/perf/util/metricgroup.h            |   2 +-
+> >  tools/perf/util/pmu.c                    | 167 +++++++++++++++--------
+> >  tools/perf/util/pmu.h                    |   4 +-
+> >  tools/perf/util/srccode.c                |   4 +-
+> >  tools/perf/util/tool_pmu.c               |  17 +--
+> >  14 files changed, 430 insertions(+), 269 deletions(-)
 > >
-> >   drivers/net/ethernet/google/gve/Makefile      |   2 +-
-> >   drivers/net/ethernet/google/gve/gve.h         |  14 +++
-> >   drivers/net/ethernet/google/gve/gve_adminq.c  |  51 ++++++++-
-> >   drivers/net/ethernet/google/gve/gve_adminq.h  |  26 +++++
-> >   drivers/net/ethernet/google/gve/gve_clock.c   | 103 +++++++++++++++++=
-+
-> >   .../net/ethernet/google/gve/gve_desc_dqo.h    |   3 +-
-> >   drivers/net/ethernet/google/gve/gve_ethtool.c |  23 +++-
-> >   drivers/net/ethernet/google/gve/gve_main.c    |  47 ++++++++
-> >   drivers/net/ethernet/google/gve/gve_rx_dqo.c  |  26 +++++
-> >   9 files changed, 290 insertions(+), 5 deletions(-)
-> >   create mode 100644 drivers/net/ethernet/google/gve/gve_clock.c
+> > --
+> > 2.49.0.504.g3bcea36a83-goog
 > >
->
 
