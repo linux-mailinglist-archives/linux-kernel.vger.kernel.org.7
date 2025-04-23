@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-615344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA50A97BD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:53:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8961DA97C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 03:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9577A346A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319B63B0B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 01:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44660257420;
-	Wed, 23 Apr 2025 00:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPxfjcbW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D91F5841;
+	Wed, 23 Apr 2025 01:21:38 +0000 (UTC)
+Received: from 190-102-104-130.static.hvvc.us (190-102-104-130.static.hvvc.us [190.102.104.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D6D1F153A;
-	Wed, 23 Apr 2025 00:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D783338F91
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=190.102.104.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745369607; cv=none; b=A4LtTam8w26x4O90bUJfqAWfBV0/cqHiGAwZ9/vxl7ZYuKT9PkL834vJxLDEGTLXHmpLGYQp5qxbyQ0HTxpMRoru90nCbzjo1wgglsmyf6ulru/IIvD6qC3r3WKlYsuuxoG1HX2Ss/09fpVO0uhgDAxCwZd6tj00vWD3MIwc198=
+	t=1745371298; cv=none; b=XA5+kbFRKb/eBmSrCZLoMngvwq/RKYFAcBXaZPokQ2/i/dbSG6uRIPWAejFGbcHw+HMWExiuG6HJCwvWi2SpWKH/ggLW+W9FcPv91H8x/gZR5WOPvagBvxiyiM3GNLN3KYEQE1EMf3sV+reEafvow0YDJyF1eYdniySjwm+2Hrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745369607; c=relaxed/simple;
-	bh=vEGRcZwU6uei83h+2nEL0bS/T3AeOHiIWgX5B9iygzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQRh/W2hp6sUj04mhhbHlo2+4M6trgPG3W4pZuYAkUQpJlYhSiWVfD2VjUBAhmD9/JkAJ57J3sgefg8hR16plJyct0ASLRTqUMrz1wW+Xc4jw33lIDMyNnOY0LOEjee5ukxZY35dcgtDaoy1kaYRQgYfnOMTrSqekGmXvSsSRTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPxfjcbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76F9C4CEE9;
-	Wed, 23 Apr 2025 00:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745369607;
-	bh=vEGRcZwU6uei83h+2nEL0bS/T3AeOHiIWgX5B9iygzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gPxfjcbWk7PJWHQ7s/KGv1hsH9Mr3548gesh6wvRTR3wd+bdf1FgbmF8mhLlnZoe/
-	 Sj7+m8UjXA4agembUdxP03iNF+EYDYMvNXvW/Rbft1C4bG2p5xmXsNEys/Xv+G5a+J
-	 cxTXavSzuaBUrI39MJTMF7hVGK2dYKsHU8HWXD0mnD7JDLt0np57GyOaoVGV4CE+9Z
-	 DsVJdb2Ey9nM3+46+sJ8FYP8vMHhQtBdjJWrVANSydvU2/2rzbIISd7P4t3oZVqy5X
-	 fZkfv1p0gaoiqic/EIPvTbbOodutqpxeSZ4O7hy8pT9/bBoHyyPqdBE6tJZtX0NBLB
-	 aSjY/vrL1z3WQ==
-Date: Tue, 22 Apr 2025 17:53:24 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v5 6/6] x86/vdso: Enable sframe generation in VDSO
-Message-ID: <2dypxtkfs6wj2i6pjhabkn5aiwaorbg25gltlinu4voo2l767d@jpwxylis7xaq>
-References: <20250422183439.895236512@goodmis.org>
- <20250422183722.919601983@goodmis.org>
+	s=arc-20240116; t=1745371298; c=relaxed/simple;
+	bh=8hxQ4bVtRg7C2EkHwlLBO27eCchHZAwpqN2l5qTpA+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N26pkmRn/CsIAX0N/tdDODnYTkqVRsc6sS+byO4/rccO8zfbOCA543BXrofTu3VnBsgPEXcX/W5AqmCaEQ+hnk3TZ6006J8+5mnpI99VcY2uzvAZrZx7dZjt20tirxj4zLSrJ4Ms6z4e0kZubWHJkSSvDt3vgvBa+V3vGLh1fro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com; spf=pass smtp.mailfrom=phoronix.com; arc=none smtp.client-ip=190.102.104.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phoronix.com
+Received: from c-24-15-38-32.hsd1.in.comcast.net ([24.15.38.32]:6175 helo=[192.168.1.194])
+	by milan.phoronix.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <Michael@phoronix.com>)
+	id 1u7OOI-0000000EJsP-1qhP;
+	Tue, 22 Apr 2025 20:55:04 -0400
+Message-ID: <896a67ec-9f48-4137-9d34-4bb16861e284@phoronix.com>
+Date: Tue, 22 Apr 2025 19:54:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422183722.919601983@goodmis.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.15-rc3
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Dave Airlie <airlied@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Sebastian Sewior <bigeasy@linutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
+ <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
+ <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
+ <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
+Content-Language: en-CA
+From: Michael Larabel <Michael@phoronix.com>
+In-Reply-To: <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - milan.phoronix.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - phoronix.com
+X-Get-Message-Sender-Via: milan.phoronix.com: authenticated_id: michael@phoronix.com
+X-Authenticated-Sender: milan.phoronix.com: michael@phoronix.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Tue, Apr 22, 2025 at 02:34:45PM -0400, Steven Rostedt wrote:
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -47,13 +47,17 @@ quiet_cmd_vdso2c = VDSO2C  $@
->  $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
->  	$(call if_changed,vdso2c)
->  
-> +ifeq ($(CONFIG_AS_SFRAME),y)
-> +  SFRAME_CFLAGS := -Wa$(comma)-gsframe
-> +endif
-> +
+On 4/22/25 7:12 PM, Shakeel Butt wrote:
+> Ccing Michael
+>
+> On Tue, Apr 22, 2025 at 04:37:59PM -0700, Alexei Starovoitov wrote:
+>> On Tue, Apr 22, 2025 at 4:01 PM Dave Airlie <airlied@gmail.com> wrote:
+>>>> Alexei Starovoitov (2):
+>>>>        locking/local_lock, mm: replace localtry_ helpers with
+>>>> local_trylock_t type
+>>> This seems to have upset some phoronix nginx workload
+>>> https://www.phoronix.com/review/linux-615-nginx-regression/2
+>> 3x regression? wow.
+>> Thanks for heads up.
+>> I'm staring at the patch and don't see it.
+>> Adding more experts.
+> Hi Michael,
+>
+> Can you please share a bit more on your nginx workload and how can we
+> reproduce locally? In the mean time, I can try netperf locally to
+> reproduce.
+>
+> I do have some followup optimizations [1, 2] which hopefully are aimed
+> for next release but we can try those as well.
+>
+> [1] https://lkml.kernel.org/r/20250416180229.2902751-1-shakeel.butt@linux.dev
+> [2] https://lkml.kernel.org/r/20250410025752.92159-1-shakeel.butt@linux.dev
+>
+> thanks,
+> Shakeel
 
-Based on the discussion with Jens on v4, I think the $(comma) can just
-be an actual comma here.
+The Nginx test case is a fairly stock Nginx build measuring HTTPS 
+throughput for serving some static web page with Wrk used as the 
+stressor, all on the same host for stressing just the local host. All of 
+the assets and execution scripts used for that Nginx test in raw form 
+are here - 
+https://openbenchmarking.org/innhold/c7b555063f5732b4f1bb08444e258984d1dbb94b 
+Let me know if any problems reproducing, etc.
 
--- 
-Josh
+Thanks, I can try out those patches tomorrow. At the moment on that same 
+server currently running through some of the other workloads I also 
+found regressed on Linux 6.15 GIt to see if attributed to same commit or 
+not.
+
+So far, when comparing 51339d99c0131bc0d16d378e9b05bc498d2967e2 as the 
+first bad commit against the parent commit 
+a30951d09c33c899f0e4aca80eb87fad5f10ecfa, I was able to reproduce a 
+regression for the OpenFOAM CFD software using drivaerFastback with the 
+small mesh size: 30.6 seconds on the bad commit, 23.6 seconds on the 
+parent. So that too seems to be related while the other tests are still 
+running at the moment.
+
+Michael
+
+
 
