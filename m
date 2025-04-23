@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-615559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896E1A97F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751B8A97F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23F13BB6E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:29:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38EA17CD26
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52998266EF0;
-	Wed, 23 Apr 2025 06:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2882673B7;
+	Wed, 23 Apr 2025 06:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Ai2o+Lzq"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ePhdXMsP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2CB266B70;
-	Wed, 23 Apr 2025 06:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2D5266EF5;
+	Wed, 23 Apr 2025 06:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745389753; cv=none; b=KvU79Jc59vD4nK3iUiHjeLzFE3IiTrpT0qJ8ztc76hDG4paibYCerhKubfokK6FS9OgyuKGNjOQ9VVSNoHkjQkoRHJW+Cps9YtnKV5ftoJs0Ckuq0G02GMd5Th0RqD5PEMyFPgZjPQG7+Ine5DZJEye19doykvOZaDLLfCQffp8=
+	t=1745389915; cv=none; b=nglc6gimYJiZ1bmnmmbJFVCtzFvE8WL9vA55Q3eUsV9jDuGDTYDuLbGSwwOaW1+ubkySmjsqoJPZNRROrz6dzpnfKs2i16VnRHvOh6OLmdncfNMB/bSn1ZvKlz3nfkpYJ65BEeS1GrV8f/UmMtN5rS/eSVyFgrAmCBsKuNjfIyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745389753; c=relaxed/simple;
-	bh=dDdED1nBrBb89ziJQR35iHLFgJ9A0k3A7KcihAdoeMw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H1qeaQQKs+cJiNb0zbRSa0vDrfGRR61znd+2lx69niy+Z4b2QPf0x+8X4K0H/4DpRGDQtgu3AERJihxvVleo6pex2fcYAEBG+UEAY+5a7PwaLR1BYER4teOeOkhDzFX9wtR/vtAJr4Fl0uSi3n57pJWphLFYA+zdNWsR7W10azA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Ai2o+Lzq; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Zj8MS1pWBz9tLw;
-	Wed, 23 Apr 2025 08:29:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1745389748; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PbqkQ0oCVQhLChHpB4lCCWhlmmo3Fq1yx2gTxvrL90c=;
-	b=Ai2o+Lzq+TT/XzSb59BRtH4QxeAsuVjW0YIWvXBvZUbWbvHLyOfR4SxwIHxCzoMZ6gXyrf
-	5bcblzQGBbbluQ3Jg/ja44C8v+dNhFqX92JYueO55mG0UqY8dRHgXhvgo+E56C10mz/RQo
-	9WGzni/t/N/QdtwqOuAb9r3oHwLWsM1sS9HJ5vSpkbqIXUKdJeS887ejzbclxmkHKzRTGu
-	Wq9DmetDr38Htl6ps4OAIAI9gRq99wTjwxdByFadhCfCx6Xwd/ygz9XXfwSCuGRGTsuGeg
-	qtcax9IlVOUK/Zb6IrGGirWUFDeNtfqUAO0fHp6g/BW0SPP6/0qbJqAVWWGvaA==
-Message-ID: <5e20b320cbbe492769c87ed60b591b22d5e8e264.camel@mailbox.org>
-Subject: Re: [PATCH 2/8] net: octeontx2: Use pure PCI devres API
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Jakub Kicinski <kuba@kernel.org>, Philipp Stanner <phasta@kernel.org>
-Cc: Sunil Goutham <sgoutham@marvell.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>,  "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Geetha
- sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
- hariprasad <hkelam@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
- Taras Chornyi <taras.chornyi@plvision.eu>, Daniele Venzano
- <venza@brownhat.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Helge Deller
- <deller@gmx.de>, Ingo Molnar <mingo@kernel.org>,  Simon Horman
- <horms@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Sabrina Dubroca
- <sd@queasysnail.net>,  Jacob Keller <jacob.e.keller@intel.com>,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
-Date: Wed, 23 Apr 2025 08:28:59 +0200
-In-Reply-To: <20250422174914.43329f7f@kernel.org>
-References: <20250416164407.127261-2-phasta@kernel.org>
-	 <20250416164407.127261-4-phasta@kernel.org>
-	 <20250422174914.43329f7f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1745389915; c=relaxed/simple;
+	bh=+annVE2q0ppxD8ITBko0jmqklIyHebktuLn+jcbQ/9s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JDFOlOgCcS4FuXDNNEJLPaY+UEovc4YUmrMdu/fqsyU8z2/NCo5wC8Yl2rdpI/u2ZlNqTf+HsLcLfVP3JRdHZpP9IPSPZaZmQnY5C+WoEEeFMRjcl7Z2G99yAnJe6d0/sYGs08m3KiFyAQJZRRul2RL/CesQFuP9lPeGUnzQR18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ePhdXMsP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N0iAiq023892;
+	Wed, 23 Apr 2025 06:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=+6WqrjoXPvdWgCP7F3pe1fIcKrBi1oigzlwoSjidNJg=; b=eP
+	hdXMsPPffFKIV/rTqQt0aqQNRFgthkVTr+Td3xA3WgBdI2w8NDPxXpWJegFVab/w
+	ouqH8cUvceiX38PelFTyyM6zSYG8iC03Mvo5xdN3vIvumTSe5n2fjdP9qj0v4ftE
+	DcgX/Dp0fZP2vWNHCkgzk8a6aog5oPpvdHSnFcfVAFEtZvHhFmH+JYrRogqaOJ6M
+	sUwgUPKUWGcnqA5CyUEpsYOdCnr0gnF3J7AWE+aj8SH0gZkPYAPdvvjVzqy8k8xM
+	tf03lVgNxBitsKH7iaGJ5aI3EcRNr9suYMeab8e7cLq8585ees7bXInjxZH4ro+Q
+	gmfHRlCzYHckglmSi0iQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh393hx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 06:31:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53N6VccK024144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 06:31:38 GMT
+Received: from hu-kaushalk-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Apr 2025 23:31:33 -0700
+From: Kaushal Kumar <quic_kaushalk@quicinc.com>
+To: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>,
+        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>,
+        Kaushal Kumar <quic_kaushalk@quicinc.com>
+Subject: [PATCH v3 0/5] Enable QPIC BAM and QPIC NAND support for SDX75
+Date: Wed, 23 Apr 2025 12:00:49 +0530
+Message-ID: <20250423063054.28795-1-quic_kaushalk@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: bd44cb326753e922362
-X-MBO-RS-META: r486tdi16475h8inaws1o3xcg7yufct1
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wRCdQKavkm4O_6Khebeo3s8W026o0uJr
+X-Proofpoint-GUID: wRCdQKavkm4O_6Khebeo3s8W026o0uJr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA0MyBTYWx0ZWRfX/5DoX8SE+eSG vstYSon9NgCD9QjRgbHLZXOViiEkjWJ4W5CnvS03O66cgTbgHhjdNW6Rj7lZv8WfBomu3LgQBSL ocj3GLAqFwHdVrfCNBXmd5Mqvo2LPEyDhewLz4AVDUNGd+bToAUHHoHDj9PNJZgPzQQRiWUZLTN
+ RadlVeLOZWcX0RYZsDZjFsO2xCsq2/rRCsmKdzexy39jMx/k6GyU9AdIAPA8+XC0BiqnUZPR5Mm oD/jicpfQnvtS++eCsp4iUX9rtWq1KkHf6QWGBXn5vl0+jj1cisjrc2UmZhv6Vwp64L/uEK3z70 WWnDXgx+HZxXQcFzrvYRf42XBqENDUMcAWpB+bLzu8CuWug1/nMmZmtbQiAIdfn1hviKnBfwxpS
+ oQ7Gi3SzlXMln1/15KwHaBLFRD0uGXpwG0+uYNgxe8rkppoYEXCZPqfjPz72crPCkR2cCWUv
+X-Authority-Analysis: v=2.4 cv=Mepsu4/f c=1 sm=1 tr=0 ts=6808894a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=c2BNjoVmnf2s0oQOp70A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-23_05,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 clxscore=1015
+ mlxlogscore=767 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230043
 
-On Tue, 2025-04-22 at 17:49 -0700, Jakub Kicinski wrote:
-> On Wed, 16 Apr 2025 18:44:02 +0200 Philipp Stanner wrote:
-> > =C2=A0err_release_regions:
-> > =C2=A0	pci_set_drvdata(pdev, NULL);
-> > -	pci_release_regions(pdev);
->=20
-> This error path should be renamed. Could you also apply your
-> conversion
-> to drivers/net/ethernet/marvell/octeontx2/af/ ?
+Hello,
 
-Hm, those must have slipped me for some reason. Will reiterate with
-them and the error path.
+This series adds and enables devicetree nodes for QPIC BAM and QPIC NAND
+for Qualcomm SDX75 platform.
 
-P.
+This patch series depends on the below patches:
+https://lore.kernel.org/linux-spi/20250410100019.2872271-1-quic_mdalam@quicinc.com/
+
+---
+Changes since v2:
+ - Add qcom,bam-v1.7.4 as a compatible for QPIC BAM DMA controller DT node.
+ - Link to v2: https://lore.kernel.org/all/20250415072756.20046-1-quic_kaushalk@quicinc.com/
+
+Changes since v1:
+ - Use sleep clock instead of adding a dummy clock for QPIC NAND since
+   sleep clock has the required properties.
+ - QPIC BAM controllers have dma-coherent support hence document it as a
+   global property.
+ - dma-coherent property is not applicable for QPIC NAND controller so
+   remove it.
+ - iommus items is fixed for SDX75 NAND controller so document it likewise.
+ - Merge QPIC NAND and BAM devicetree enablement into a single patch.
+ - Fix minor coding style issues.
+ - Link to v1: https://lore.kernel.org/all/5a1b52a3-962b-04f9-cdfc-4e38983610b5@quicinc.com/
+
+Kaushal Kumar (5):
+  dt-bindings: mtd: qcom,nandc: Document the SDX75 NAND controller
+  dt-bindings: dma: qcom,bam: Document dma-coherent property
+  arm64: dts: qcom: sdx75: Add QPIC BAM support
+  arm64: dts: qcom: sdx75: Add QPIC NAND support
+  arm64: dts: qcom: sdx75-idp: Enable QPIC BAM & QPIC NAND support
+
+ .../devicetree/bindings/dma/qcom,bam-dma.yaml |  2 ++
+ .../devicetree/bindings/mtd/qcom,nandc.yaml   | 30 +++++++++++++----
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts        | 18 ++++++++++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi           | 33 +++++++++++++++++++
+ 4 files changed, 77 insertions(+), 6 deletions(-)
+
+--
+2.17.1
 
 
