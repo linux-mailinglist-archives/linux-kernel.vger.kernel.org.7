@@ -1,266 +1,175 @@
-Return-Path: <linux-kernel+bounces-616473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E727A98D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A183A98D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A4737AC632
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F5317561A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF5127FD58;
-	Wed, 23 Apr 2025 14:35:01 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B027F74D;
-	Wed, 23 Apr 2025 14:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DED280A21;
+	Wed, 23 Apr 2025 14:34:42 +0000 (UTC)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6388A27CCD7;
+	Wed, 23 Apr 2025 14:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745418900; cv=none; b=iuZN5BU0SWhMo8Xfwqh68axMd0brPDIysji5P87F4GgWFaFW6ONcIH4CfoHKSLOvA6OtV6sUur8TKRWYuj2y8kX+cQuc0+C39oKxlai/JgtSqnqBUFhjOa5oXVjirNepP1czyExa0Q9Ihpu2N3LO8rV6Z8ajseEcKjrhn53Zx+k=
+	t=1745418882; cv=none; b=LiENEIoP1BEqMLNP4+/02rEjrtp2N76StUXszBdM4KvTQuVerAbIeiwbo+m+WvVJwFej7Z5RNTPKDDeFO7Y9tmWJN0172WB799B/erxs2hmlVh7I8iftgaymqG3xG+8RQflSIksuEC5yukMB+r0UNOq8QN8vkqcbkWogVb0sKfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745418900; c=relaxed/simple;
-	bh=aSxZtiDHEgDenEfma2Y66eleAd1WAeJPy7GVm4XdlXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UtwV7PgTywAV5Iae70yuoZcLIreOS4UG4se5+u2ASkOgMX70IBUITx1VP9Goo5Fes5fJY6Hl10ZcGAr9dQm2a8uI5xVMrbNmx+v/yQLifktJp0mxWBeVgTm4jZgydCv3/dMobug5YiufW7ODNRZiyFgkGAL+xnVveXZcnzeuHpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: /pRZC7qKRwePKnY9I735Gg==
-X-CSE-MsgGUID: Gx6B6chLT4CEkno39pz7fQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Apr 2025 23:34:57 +0900
-Received: from mulinux.home (unknown [10.226.92.16])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8A76F42722E4;
-	Wed, 23 Apr 2025 23:34:53 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v7 6/6] arm64: dts: renesas: r9a09g057: Add DMAC nodes
-Date: Wed, 23 Apr 2025 15:34:22 +0100
-Message-Id: <20250423143422.3747702-7-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250423143422.3747702-1-fabrizio.castro.jz@renesas.com>
-References: <20250423143422.3747702-1-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1745418882; c=relaxed/simple;
+	bh=a4y38McJMKy/vRssLXic7j050ogA7R8SzlVsEuJfxXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N4QV68AFvIdsoFDxiZf9/aC4Q2tYQBIHktbsP3Anc6OcDTMAwWxFVJeEzRxbRHORIduh7K7JadHpwyzrKdstjKFKb6L1K4sJmiyCDrAeIbRKJByAy/W4WMyyoZyLZXgy+ClFhPFWSFCvKhGKgjPHaVaM9FpFhVH1p67BvxhdfZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72c09f8369cso2046716a34.3;
+        Wed, 23 Apr 2025 07:34:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745418879; x=1746023679;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G9rr401OufXElmvBl3vcgyDTpasOf1VvGYueuVS+Uto=;
+        b=wCmv0BMGv20hmwQVIcYcwElTWK/uJjjlftryEeyKVszRCnW9VOOc0S8hM6dV0WfwNE
+         LkDbOpwiIRgpxi1wRekrX8QR5qJ/dDmo/ht5gtren7zFVjrVQEpI6abO3/nUf4hwZUZx
+         vAsdPBK8pKC45sgKnG5Js89t4Y9oZcaxzMICcQojvuOMN3zocgfsmVY+o39MBG9TxeqP
+         BAGKfl1gN6GZA+NgqsNqYtQndKC3yHn7OWwV13WgK9wnl1uEXnLf34mwPLy4/9pk04HP
+         p181ZfbcUAv9nXyIRjKak+NzYwzRs5bUvw4TOrCxvFTRvvbBj9iSs13bZCYUx/g5ZhIh
+         sumg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUMh5AVPFmhLmwk4PXlaMTjtYiMHlRsIujJBZ+/5y8ejZGlMXUerGPeh7NpleN6jh0I7YGZOfsbmo=@vger.kernel.org, AJvYcCVulTDqC+J+BEyhmRetVlGX7b5Aeii0q3uHZgbRxp7kffN/QJEvI1VirdN3GgWGY1qfhHGujWbJLppxiA7P@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdaPApIlKppNUBVlt+JUYc64qCOeNqDrlxy9vJhEGGegWxZxA5
+	MOhLrvTTgPUlNBefutAqFFsw5dqcJI1oea8243fMnUR0X/XdV81pO4A8w0Pwz7M=
+X-Gm-Gg: ASbGnctVuHVaroQ6G2o2ZUL7XQUSLuB4hqjlecdys8nyzzRj5enGnUPgRhgY2atSr+7
+	2e/hWHCJmKDs4K2gXToEUXOQ37sVUMDoBOdColE4v+6pU02KTinzwll0ClsiAblCuifABkz7t/o
+	hUTyJA/Sn3t+EjwIw9YClSrkygZi5fc/8WbbHwY44nJ3AuZYV30yb7wBqbDS3JJetVIb7Q0pDZx
+	6ijt4UYuRARUxxYIEji+0YNbbZUA+hSOE8akl40jZOG5+a0+NjRnyBR+Gr5iUIJLLJncTAhEC+x
+	3tsAEWAvMtp4fcqPWd/eX3JgO7DikAtvMtouAhlyjLGVSRbuQGSyG/Tkajchnejwoczi77vVBep
+	8wg/Txl6Y1iLU/A==
+X-Google-Smtp-Source: AGHT+IHlzHCBDmy9BNkihH1ZqyB0xcMuxmZgs6yCc2qsrV0j7sHrbggCUuBKrVp9xUwskqJcsKjjjw==
+X-Received: by 2002:a05:6830:630b:b0:72c:3235:3b99 with SMTP id 46e09a7af769-730062f6de9mr11561949a34.19.1745418878978;
+        Wed, 23 Apr 2025 07:34:38 -0700 (PDT)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7300478c51asm2536121a34.8.2025.04.23.07.34.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 07:34:38 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7303d9d5edeso478837a34.1;
+        Wed, 23 Apr 2025 07:34:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV00euaNTmKxQwHfvVKaLJ3cvaEJbgnyNAo/YofeL/hNHcgA7bJpeFJ5HOemRf8YqMYbmMhx8Ud7arPiGd5@vger.kernel.org, AJvYcCVmdhn/m/CyhpVLm/eMT7HMEoQEAtNnM4TjzoKSnwHQ9y8pfRB8zOnRA80m8xWpdnTpLPzQUKXyEfk=@vger.kernel.org
+X-Received: by 2002:a05:6830:6687:b0:72b:8ec3:9297 with SMTP id
+ 46e09a7af769-730062f764bmr15710973a34.21.1745418878334; Wed, 23 Apr 2025
+ 07:34:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <50dbaf4ce962fa7ed0208150ca987e3083da39ec.1745345400.git.geert+renesas@glider.be>
+ <b1f19b31-3535-4bb5-bcef-6f17ad2a0ee6@arm.com> <CAMuHMdVJKA8zYETKJTRAwg6=+EuTq4YqbFO32K4+py9YNsD1Gw@mail.gmail.com>
+ <aAjTg8dgvxqLQOwQ@vaman> <CAMuHMdXQKG0qptWMi169MVBL1S3hPo1TsaOSxWspoHAwRd+fug@mail.gmail.com>
+ <aAjaPV/2DSyPAGRB@vaman> <b7557def-d0a1-4035-9586-a2651e28ab24@arm.com>
+In-Reply-To: <b7557def-d0a1-4035-9586-a2651e28ab24@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 16:34:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWoxPc71YYrEMdPwdq-HOhmP2jNiwo1+-8o6_v4YJ0NHQ@mail.gmail.com>
+X-Gm-Features: ATxdqUEnXX6HpwpOQNi-bNaBAYBUuz0gKv8TfTPMoWQoV5DcAvXfFibPzFN2Uu4
+Message-ID: <CAMuHMdWoxPc71YYrEMdPwdq-HOhmP2jNiwo1+-8o6_v4YJ0NHQ@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: ARM_DMA350 should depend on ARM/ARM64
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add nodes for the DMAC IPs found on the Renesas RZ/V2H(P) SoC.
+Hi Robin,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v6->v7:
-* No change.
-v5->v6:
-* Rebased on top of the latest changes.
-* Added Prabhakar's Reviewed-by tag.
-v4->v5:
-* Collected tags.
-v3->v4:
-* No change.
-v2->v3:
-* No change.
-v1->v2:
-* No change.
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 165 +++++++++++++++++++++
- 1 file changed, 165 insertions(+)
+On Wed, 23 Apr 2025 at 15:29, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 2025-04-23 1:17 pm, Vinod Koul wrote:
+> > On 23-04-25, 14:13, Geert Uytterhoeven wrote:
+> >> On Wed, 23 Apr 2025 at 13:48, Vinod Koul <vkoul@kernel.org> wrote:
+> >>> On 23-04-25, 13:11, Geert Uytterhoeven wrote:
+> >>>> On Wed, 23 Apr 2025 at 12:59, Robin Murphy <robin.murphy@arm.com> wrote:
+> >>>>> On 2025-04-22 7:11 pm, Geert Uytterhoeven wrote:
+> >>>>>> The Arm DMA-350 controller is only present on Arm-based SoCs.
+> >>>>>
+> >>>>> Do you know that for sure? I certainly don't. This is a licensable,
+> >>>>> self-contained DMA controller IP with no relationship whatsoever to any
+> >>>>> particular CPU ISA - our other system IP products have turned up in the
+> >>>>> wild paired with non-Arm CPUs, so I don't see any reason that DMA-350
+> >>>>> wouldn't either.
+> >>>>
+> >>>> The dependency can always be relaxed later, when the need arises.
+> >>>> Note that currently there are no users at all...
+>
+> Huh? There is now an upstream DT binding, and DTs using that binding
+> most certainly already exist - not least the one I have, but I'm not the
+> only one. We don't have a requirement that bindings must have
+> upstream-supported consumers.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 18ab5639b301..0f3501951409 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -280,6 +280,171 @@ sys: system-controller@10430000 {
- 			resets = <&cpg 0x30>;
- 		};
- 
-+		dmac0: dma-controller@11400000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x11400000 0 0x10000>;
-+			interrupts = <GIC_SPI 499 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 89  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 90  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 91  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 92  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 93  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 94  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 95  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 96  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 97  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 98  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 99  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 100 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 101 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 104 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x0>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x31>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 4>;
-+		};
-+
-+		dmac1: dma-controller@14830000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x14830000 0 0x10000>;
-+			interrupts = <GIC_SPI 495 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 25  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 26  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 27  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 28  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 29  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 30  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 31  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 32  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 33  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 34  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 35  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 36  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 37  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 38  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 39  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 40  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x1>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x32>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 0>;
-+		};
-+
-+		dmac2: dma-controller@14840000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x14840000 0 0x10000>;
-+			interrupts = <GIC_SPI 496 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 41  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 42  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 43  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 44  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 45  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 46  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 47  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 48  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 49  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 50  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 51  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 52  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 53  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 54  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 55  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 56  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x2>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x33>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 1>;
-+		};
-+
-+		dmac3: dma-controller@12000000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x12000000 0 0x10000>;
-+			interrupts = <GIC_SPI 497 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 57  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 58  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 59  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 60  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 61  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 62  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 63  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 64  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 65  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 66  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 67  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 68  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 69  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 70  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 71  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 72  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x3>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x34>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 2>;
-+		};
-+
-+		dmac4: dma-controller@12010000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x12010000 0 0x10000>;
-+			interrupts = <GIC_SPI 498 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 73  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 74  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 75  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 76  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 77  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 78  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 79  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 80  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 81  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 82  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 83  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 84  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 85  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 86  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 87  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 88  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x4>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x35>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 3>;
-+		};
-+
- 		ostm0: timer@11800000 {
- 			compatible = "renesas,r9a09g057-ostm", "renesas,ostm";
- 			reg = <0x0 0x11800000 0x0 0x1000>;
+Dependencies in Kconfig are not related to DT bindings, they only
+control what can be built?
+
+> >>> True, but do we have any warnings generated as a result, if there are no
+> >>> dependency should we still limit a driver to an arch?
+> >>
+> >> I am not aware of any warnings (I built it on MIPS yesterday ;-).
+> >> It is just one more question that pops up during "make oldconfig",
+> >> and Linus may notice and complain, too...
+>
+> Well, yeah? It's a new driver for some (relatively) new hardware; every
+> release always adds loads of new drivers for things I don't personally
+> care about, so I press "n" a lot when updating my config, just like I
+> imagine most other people do, Linus included.
+
+Please read [1] and ask yourself if Linux wants to see a question
+about Arm DMA-350 when configuring a kernel for his AMD Threadripper
+workstation...
+
+> > True, give there are no users, lets pick this and drop if we get a non
+> > arm user
+>
+> Well by that logic surely it should just depend on COMPILE_TEST, because
+> there are no ARM or ARM64 "users" either?
+
+If you want to push it that far, fine for me ;-)
+
+> FWIW the not-quite-upstream platform I developed on (a custom build of
+> fvp-base-revc with a DMA-350 component added) did happen to be ARM64, as
+> are some other Arm-internal designs and one available SoC that I do know
+> of containing DMA-350; I am not aware of any Linux-capable 32-bit
+> platforms to justify an ARM dependency, so I'd consider that just as
+> arbitrarily pulled out of thin air.
+
+OK, then the ARM dependency can be dropped for now.
+I had done a quick Google search to find SoCs that contain a DMA-350
+instance, and had only found a Cortex-M0-based SoC, so I assumed it
+would be used on ARM, too.
+
+> But then to pick another example at random, XILINX_DMA equally has no
+> "users", so please make that depend on something arbitrary as well for
+> consistency; it's only fair.
+
+Sure, there are lots of Kconfig symbols that could benefit from
+additional dependencies. Unfortunately my time is limited, so usually
+I create and send patches for new Kconfig symbols only....
+
+Thanks!
+
+[1] https://lore.kernel.org/all/CAHk-=wg+38EHPKGou1MqXwAAXC30cM8sMgZAGnZ7TcFO4L9J2w@mail.gmail.com
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
