@@ -1,218 +1,161 @@
-Return-Path: <linux-kernel+bounces-616407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F8EA98C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90CDA98C1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789CE1B80974
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF1C3A48F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40E61A5BB1;
-	Wed, 23 Apr 2025 13:57:31 +0000 (UTC)
-Received: from 190-102-104-130.static.hvvc.us (190-102-104-130.static.hvvc.us [190.102.104.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8613A2367DF;
+	Wed, 23 Apr 2025 13:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UTgqP1+e"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A5A1A3161
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=190.102.104.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C54E2309B3
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745416651; cv=none; b=RnXGBvDCMi9//kAqxQZ/E0XePKxcadbjDUgn9gI4wz/QcvPtaDRwT+AR+U6yJ2eKS50wI/ADQi9RemBYb6hc0y+OR8Awr8uQt4YwVuC+4DellTueKl2/7PAvPxAyktJdUjAzMLEFl83O3MyOOxu2XQsHt+dULUf/iLpjJkRC/rE=
+	t=1745416713; cv=none; b=NyvDetyzWzNrzU//KUmXnXbaQ7+fcxLRF74iceY4d19ondAlhxtEkTuOb/GIqGdmx+vBtvjel5a069xNgrt7eb/+dNsRMxdmrU98in1yHBhDjaoLkqhtNVlQAi57f09eGkjGjlK3Qgs+UB6s8ghFRutsREup+Daz2Io4hZEtZl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745416651; c=relaxed/simple;
-	bh=hXi467e5lK9y8o8T9Dbl+dFVYltnzBAE6NeASwbtAU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SFaZnr+GH6jYzpUvk516XFuDWfgTtqSc62RqVY2d+wJXstVaPBYozSpoDcF2bESLr0HDJYkTGOwDHsH8uQTVRsh3hLcSB9+Bjc+KUB+vj9g5g4m3rxsQkX4lL5T6kFoMiBHWWKhrMQP1DNOPn8b/dAuMI9zHaoFNuf4sd9GN2Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com; spf=pass smtp.mailfrom=phoronix.com; arc=none smtp.client-ip=190.102.104.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=phoronix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phoronix.com
-Received: from c-24-15-38-32.hsd1.in.comcast.net ([24.15.38.32]:5249 helo=[192.168.1.194])
-	by milan.phoronix.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <Michael@phoronix.com>)
-	id 1u7abR-0000000F7nL-2hOf;
-	Wed, 23 Apr 2025 09:57:27 -0400
-Message-ID: <173297ef-d806-4c5f-bc88-90b5bad03671@phoronix.com>
-Date: Wed, 23 Apr 2025 08:57:23 -0500
+	s=arc-20240116; t=1745416713; c=relaxed/simple;
+	bh=QQHtOrdweEikUQHTCxA3LcUXxjA1M6UDeACDwl7O8n0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SrggUGgqaaZFXkQLhF6rnLr91ElDXKT8zldAoXsIpME6ckA9SserR7sP8SSAftU1naxciS8Dla3QqeyQ2vgKx5CX997nA2CvJcYa0TVuyPrTIs0lfVtpN4ywkmHoTlLDBTWv4kdvB6T1MT1kXiU7NOmwnxeRwoCKWJvUPgFywGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UTgqP1+e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAVHlG015748
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:58:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=C1pEN0V7ta1blhUvOSjeh8t4
+	4YefebhUlQwfthVEXOM=; b=UTgqP1+etb3ty0z6u7O7hwoOAlcDHh5vsbXu8c0z
+	rwfN6RHS+54OuaLDkQPttzlnSpLzH/+b/o4UPUfSno6Ii6P0XKAvyFXhBYXRqGKD
+	oSVtEJdBFsvlTxZj08ZjWxSvofBfOQGBlTPcY169WdwxucX2FL/eff9cDybipwQg
+	L1Qq5AgQRK2M9anMqZeVzx3hPa0NYXdoKRkVQzQDPdtB4qk/1SHO7YQeGZPh2cbH
+	IL+pXOWUaZv1EU8Gwk2Q2eQFVCrwM7UQpGzZ7fgl6vaXirhM0sHUheRN9QdZkczN
+	MOXHY3NwAEfwsmDAC3N0/Dbj+KHHsbbZ1YErmYLVmef7zg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0jaee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:58:31 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5b9333642so806344985a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:58:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745416710; x=1746021510;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C1pEN0V7ta1blhUvOSjeh8t44YefebhUlQwfthVEXOM=;
+        b=ubasgIDp3ovGhKhMeQLOgEsak69O8xVXpzultfsMar71iHSTjkxucwAq6H+CzVgD5u
+         /z41l2XfZHvXLwmcTarwORd5BtPMz6gQvPgWdRbQSE7r8ab0wIrcNaO4NNLsJhdHdVOJ
+         IvIbsCdvinKzqFJkJlk0tfUB3e7/Pt6W7LS/7iysfvpCaWbb1OdxLT1+ChVaWwFrM6a9
+         8BNbCglmQoMWQPpfF0MOv7skgL+VMmHZgyUBvfjex5JREiuX1n5G6fiA6GTvqWtF3fcH
+         7kK0AMRTnPuyaC7jGOc3CvcAIQOjslLZFm/JqHD9ZI9g5JpllyHBzDm7BAFhaYIbRqbQ
+         iZuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtFtKyAqorFttBwl4VS5IQlcjMOj298/kOxv5LmfK9nymuC7mgOh9e1lpYDnr57eJjvd43icqj/XgDNnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlnqIuKMUKt5bNGCXenqpvMJRSIKzzAvZ61BS2AAsNjfx4weM/
+	9QJ085GWKWVsmKALNQB5KoZ5T/Ce/lfta4Y+Nkf1f+BsfXEu0iCvNtV7suSha5CABx8zICPPC0d
+	vyvqcBaahGC20K7Mr5BpNvIyoiKomteZTWjd58dzxbqTcW1ovWCcbO4mmse2xLd4=
+X-Gm-Gg: ASbGncuX7Jd8YW1bPX70l6bjrHuK6U5ANQCqPXQbY+5pmW38jCn64nXXpDWaBKs/ZhM
+	YEypQv1UhSpMIz3E5mFexOckHEP+l73CDnJgdoy+2NT0CoA73bi1FBYJZzrU6X3qHTogLhfM01W
+	VVkWpLLoEJutbB2mHB9eqN1pN2A1tmtVVn3E2I+/T2bIz9W2ai+asBbxknpK/14ebK2E0HF50Qg
+	qv3qPx12x2QUrBCSj7vaFqPUn/34heJcHLHM+omPRxRiIzCpOfwMXPNFnn2wGkj/K1Yr6coNH1E
+	Auctsy1RAAQ7ziujo/9JQaYGRb5gC8FBz3TtaqYQY9fMXsnbD3MUeKj/kIlFNzXMgYmUh3kyo1U
+	=
+X-Received: by 2002:a05:620a:29d4:b0:7c5:642f:b22f with SMTP id af79cd13be357-7c927f780aemr2925736585a.18.1745416710325;
+        Wed, 23 Apr 2025 06:58:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbMHBNHoF6fiuAveTacg+V4AVRjDSJG6H3O7cmW3Wv+n7Ux0OzCJ4jiXurojEiqthLPkdZuw==
+X-Received: by 2002:a05:620a:29d4:b0:7c5:642f:b22f with SMTP id af79cd13be357-7c927f780aemr2925730785a.18.1745416709828;
+        Wed, 23 Apr 2025 06:58:29 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e721ab8c6sm461722e87.232.2025.04.23.06.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:58:28 -0700 (PDT)
+Date: Wed, 23 Apr 2025 16:58:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+Cc: Ayushi Makhija <amakhija@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robdclark@gmail.com, sean@poorly.run, marijn.suijten@somainline.org,
+        andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        krzk+dt@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org,
+        andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
+        quic_jesszhan@quicinc.com
+Subject: Re: [PATCH v4 10/11] drm/bridge: anx7625: fix anx7625_sink_detect()
+ to return correct hpd status
+Message-ID: <5mbgo73lfr5yc7nmdgzgdogdtog6cfhqya7ekjjd2guhmogtml@ngoial7rsmrh>
+References: <20250417053909.1051416-1-amakhija@qti.qualcomm.com>
+ <20250417053909.1051416-11-amakhija@qti.qualcomm.com>
+ <g5mrn6o2arkbt356xtisszqtiokxm4oq4gkwa23y3f3aaahbfr@umcg5ikf5qjb>
+ <783a80d6-63d7-4c00-ba09-0ec07492103c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Linux 6.15-rc3
-To: Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Dave Airlie <airlied@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Sebastian Sewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
- <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
- <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
- <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
- <896a67ec-9f48-4137-9d34-4bb16861e284@phoronix.com>
- <27d55aab-c2d8-4edf-bab5-91a04b8383c5@suse.cz>
-Content-Language: en-CA
-From: Michael Larabel <Michael@phoronix.com>
-In-Reply-To: <27d55aab-c2d8-4edf-bab5-91a04b8383c5@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - milan.phoronix.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - phoronix.com
-X-Get-Message-Sender-Via: milan.phoronix.com: authenticated_id: michael@phoronix.com
-X-Authenticated-Sender: milan.phoronix.com: michael@phoronix.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <783a80d6-63d7-4c00-ba09-0ec07492103c@quicinc.com>
+X-Proofpoint-ORIG-GUID: KKk0qP_Sm2K7KV26-0bLObNEtPkpa2ir
+X-Authority-Analysis: v=2.4 cv=ftfcZE4f c=1 sm=1 tr=0 ts=6808f207 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=TmeSYMYVi8BcKzM9Xd0A:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: KKk0qP_Sm2K7KV26-0bLObNEtPkpa2ir
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5OCBTYWx0ZWRfXx0Hy1v+bB6ei HCtxsJIuXsaO89R3wvPsFqNzRn2Ht/STZvP2rh+SlQJmN1M3g3PrsxaDtNJ1ub5UXeig2ilhvf+ RT+ehcuBPAwau+mOldOBJYIBWNCtlcA5VwsdIehHoxg2ckB2dGlOi5mqbKo0MSRSwJefzlKhbH6
+ bo/11Wb+BA047maHHUn0GjpFscXZz88qUzTdemIfudMXG56NFoqovmIMRKO80dywheGF5JciqkU h91NfZ/WQn/IBEvu3uTHYBJfJ+UE1peYlhlJb8quBddLB6okwxJbmPMiC9NQNcccEioERu/hIdu GCJXL7QDi7i2ONaosIhYFYTraF6uiGkSGR97SJK3J9LwGal6dX+v+aS5bfQkaEK6EwL6Pp1Ic3V
+ GhiIkuEPIV9Nud0huy7PX90Xrf800i0J7yiQ2fW+9ammL7WV9dQiHhPc6Fo//5nhzaS68Iku
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230098
 
+On Wed, Apr 23, 2025 at 03:03:02PM +0530, Ayushi Makhija wrote:
+> On 4/17/2025 4:14 PM, Dmitry Baryshkov wrote:
+> > On Thu, Apr 17, 2025 at 11:09:08AM +0530, Ayushi Makhija wrote:
+> >> From: Ayushi Makhija <quic_amakhija@quicinc.com>
+> >>
+> >> In the anx7625_sink_detect(), the device is checked to see
+> >> if it is a panel bridge, and it always sends a "connected"
+> >> status to the connector. When adding the DP port on port 1 of the
+> >> anx7625, it incorrectly treats it as a panel bridge and sends an
+> >> always "connected" status. Instead of checking the status on the
+> >> panel bridge, it's better to check the hpd_status for connectors
+> >> that supports hot-plugging. This way, it verifies the hpd_status
+> >> variable before sending the status to the connector.
+> > 
+> > Does this work if the Analogix bridge is connected to an eDP panel? In
+> > such a case it should report 'connected' even before powering up the
+> > panel (which might mean HPD pin being low).
+> > 
+> 
+> Hi Dmitry,
+> 
+> Thanks for the review.
+> 
+> In case of eDP, anx7625_bridge_detect()  will not get called, because this below condition
+> in anx7625_link_bridge() will not get satisfy. anx7625_sink_detect() is getting called from
+> anx7625_bridge_detect().
 
-On 4/23/25 3:42 AM, Vlastimil Babka wrote:
-> On 4/23/25 02:54, Michael Larabel wrote:
->> On 4/22/25 7:12 PM, Shakeel Butt wrote:
->>> Ccing Michael
->>>
->>> On Tue, Apr 22, 2025 at 04:37:59PM -0700, Alexei Starovoitov wrote:
->>>> On Tue, Apr 22, 2025 at 4:01 PM Dave Airlie <airlied@gmail.com> wrote:
->>>>>> Alexei Starovoitov (2):
->>>>>>         locking/local_lock, mm: replace localtry_ helpers with
->>>>>> local_trylock_t type
->>>>> This seems to have upset some phoronix nginx workload
->>>>> https://www.phoronix.com/review/linux-615-nginx-regression/2
->>>> 3x regression? wow.
->>>> Thanks for heads up.
->>>> I'm staring at the patch and don't see it.
->>>> Adding more experts.
->>> Hi Michael,
->>>
->>> Can you please share a bit more on your nginx workload and how can we
->>> reproduce locally? In the mean time, I can try netperf locally to
->>> reproduce.
->>>
->>> I do have some followup optimizations [1, 2] which hopefully are aimed
->>> for next release but we can try those as well.
->>>
->>> [1] https://lkml.kernel.org/r/20250416180229.2902751-1-shakeel.butt@linux.dev
->>> [2] https://lkml.kernel.org/r/20250410025752.92159-1-shakeel.butt@linux.dev
->>>
->>> thanks,
->>> Shakeel
->> The Nginx test case is a fairly stock Nginx build measuring HTTPS
->> throughput for serving some static web page with Wrk used as the
->> stressor, all on the same host for stressing just the local host. All of
->> the assets and execution scripts used for that Nginx test in raw form
->> are here -
->> https://openbenchmarking.org/innhold/c7b555063f5732b4f1bb08444e258984d1dbb94b
->> Let me know if any problems reproducing, etc.
->>
->> Thanks, I can try out those patches tomorrow. At the moment on that same
->> server currently running through some of the other workloads I also
->> found regressed on Linux 6.15 GIt to see if attributed to same commit or
->> not.
-> Hi, please try the following patch. I also realized I left you out of my previous
-> replies leading to it, due to replying to an earlier mail of the thread:
-> https://lore.kernel.org/all/0981c1fe-05d2-4bab-a0a4-6dc5666d98d7@suse.cz/
->
-> Thanks,
-> Vlastimil
+Please mention this in the commit message. With that fixed, LGTM.
 
-
-Thanks, Vlastimil. I tested your later patch @ 
-https://lore.kernel.org/all/d1c0f057-63c8-4be5-9638-d1a67d9b9e15@suse.cz/#t
-
-I can confirm that latest Git + that patch does indeed correct the 
-regression affecting Nginx. All the Nginx runs I have carried out this 
-morning are back aligned with the 6.14 and the results prior to the 
-bisected commit.
-
-Currently repeating tests for other regressed workloads to confirm there 
-but at least for the Nginx case is resolved by that patch.
-
-Michael
-
-
->
-> ----8<----
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Wed, 23 Apr 2025 10:21:29 +0200
-> Subject: [PATCH] locking/local_lock: fix _Generic() matching of
->   local_trylock_t
->
-> Michael Larabel reported [1] a nginx performance regression in v6.15-rc3 and
-> bisected it to commit 51339d99c013 ("locking/local_lock, mm: replace
-> localtry_ helpers with local_trylock_t type")
->
-> The problem is the _Generic() usage with a default association that
-> masks the fact that "local_trylock_t *" association is not being
-> selected as expected. Replacing the default with the only other expected
-> type "local_lock_t *" reveals the underlying problem:
->
-> ./include/linux/local_lock_internal.h:174:26: error: ‘_Generic’ selector of
-> type ‘__seg_gs local_lock_t *’ is not compatible with any association
->
-> The local_locki's are part of __percpu structures and thus the __percpu
-> attribute is needed to associate the type properly. Add the attribute
-> and keep the default replaced to turn any further mismatches into
-> compile errors.
->
-> The failure to recognize local_try_lock_t in __local_lock_release()
-> means that a local_trylock[_irqsave]() operation will set tl->acquired
-> to 1 (there's no _Generic() part in the trylock code), but then
-> local_unlock[_irqrestore]() will not set tl->acquired back to 0, so
-> further trylock operations will always fail on the same cpu+lock, while
-> non-trylock operations continue to work - a lockdep_assert() is also
-> not being executed in the _Generic() part of local_lock() code.
->
-> This means consume_stock() and refill_stock() operations will fail
-> deterministically, resulting in taking the slow paths and worse
-> performance.
->
-> Fixes: 51339d99c013 ("locking/local_lock, mm: replace localtry_ helpers with local_trylock_t type")
-> Reported-by: Michael Larabel <Michael@phoronix.com>
-> Closes: https://www.phoronix.com/review/linux-615-nginx-regression/2 [1]
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->   include/linux/local_lock_internal.h | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
-> index bf2bf40d7b18..8d5ac16a9b17 100644
-> --- a/include/linux/local_lock_internal.h
-> +++ b/include/linux/local_lock_internal.h
-> @@ -102,11 +102,11 @@ do {								\
->   		l = (local_lock_t *)this_cpu_ptr(lock);			\
->   		tl = (local_trylock_t *)l;				\
->   		_Generic((lock),					\
-> -			local_trylock_t *: ({				\
-> +			__percpu local_trylock_t *: ({			\
->   				lockdep_assert(tl->acquired == 0);	\
->   				WRITE_ONCE(tl->acquired, 1);		\
->   			}),						\
-> -			default:(void)0);				\
-> +			__percpu local_lock_t *: (void)0);		\
->   		local_lock_acquire(l);					\
->   	} while (0)
->   
-> @@ -171,11 +171,11 @@ do {								\
->   		tl = (local_trylock_t *)l;				\
->   		local_lock_release(l);					\
->   		_Generic((lock),					\
-> -			local_trylock_t *: ({				\
-> +			__percpu local_trylock_t *: ({			\
->   				lockdep_assert(tl->acquired == 1);	\
->   				WRITE_ONCE(tl->acquired, 0);		\
->   			}),						\
-> -			default:(void)0);				\
-> +			__percpu local_lock_t *: (void)0);		\
->   	} while (0)
->   
->   #define __local_unlock(lock)					\
+-- 
+With best wishes
+Dmitry
 
