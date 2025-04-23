@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-616543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2BFA98FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:14:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3405A98DD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5076C1B85260
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3ADA3B9873
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C13617B421;
-	Wed, 23 Apr 2025 15:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8345027FD4F;
+	Wed, 23 Apr 2025 14:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="H4zmsSu8"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0iTAgQt"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BBE27FD7A;
-	Wed, 23 Apr 2025 15:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC812522B9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420543; cv=none; b=ODYcvuVFhKPlE+Vb2LM3comtb0ESabcGDjigGxBd4Y8WhLaO9xsyAgfgNElAGFQ9mlQ0sSqAfEmgboN/7fx4JsCG5NgxaS4RvEoxo3J/3ZFqpsLvdThv4ksjJg+U3IdKgMe1kPPjJa67fdhHJ/sBk74Nejq0D7VP2qVP8UqraOE=
+	t=1745419738; cv=none; b=Lc82Kef4H9PfVs/D6YrKSYa3goEQKSNLzHI0BBl94gswLMHamy5Gj9vDPmHHQpL9l2cI8Dqg0vKhMJBvHv2XINPiUqT7nvnryoCH321emmqrwt7+e83RBVtqQbsrsjg5m3CHm6y3F36JLHVQUlBRMGXzjkW+7iRH7adtX2UP0oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420543; c=relaxed/simple;
-	bh=m4X9pNOHsc7T2z08TBIhPjyUadOODJKOYSxeSZHs7GU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=SAruNrseevVl/1z37JI5q7e8qAzMfheHGzqnzSMgg/OC0/mUyW7o7dqTA93Pm234gRS6e2sh5zjaa9EMWa+xXFhN3ssluTO3km0fJjQy3PE88th44HmddiaA5/ydxbTo5D2TUEbiqhPRtcwuFmiHFv7rjP0Enefk5dEpGJwjGRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=H4zmsSu8; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1745420534; bh=PbsmIm23XBEYvGxVRz/EvPQr2pSsFB6HCJforH58gAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=H4zmsSu8vZzAFTSVrLn1g1+joIxYviFibcOtXNWAVEqXyrkKOeRh1HfRWeO5rcp8L
-	 KkVKPgbklpSgfJdlen/IkOrQq3ow1orTh/22/tsb066YgTcLY0kvP27q5vXFxM02VO
-	 J0O31r4GyBFEbaUZqov3tLR8EmckqiDbroHK4qXs=
-Received: from ubuntu.localdomain ([112.5.207.89])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id C24B3211; Wed, 23 Apr 2025 22:48:36 +0800
-X-QQ-mid: xmsmtpt1745419716twgvx82xi
-Message-ID: <tencent_B16F0FDE60249B5B302F900AE6EEE48C4F06@qq.com>
-X-QQ-XMAILINFO: Ma5fc9cIcIhRIAXKF1anoehPcR6M+5t9py8p47x5lifCL4G5e1wu91/Xab6FIc
-	 sFSNWmid3jkFuNli+8plOx6noPps7t4no02oKwow2I8IshYI0cJv28xw/YyGkxSq31ZT2o+ErlUW
-	 F2nm1WpxsacAJQbtmJBrs26ieZlpZ+vI8iSgMlBA1AcardkmJld/FoBtjDjPmeqtrPeEmyMyPyZP
-	 rldnv1yU/cmOsHPP/m2CszLllXcGI+4fjc8sO1bCFx+ilyWuKbWIuhBEDNz2IZh34ITTiey5rD/g
-	 fib9WoZc0f6pfEuxXLTrqkp8wW/Xy8d5AmHNbOZSRpp+R9ZKoJRrA6fY6FpzX0/iPwu0V7suPd1a
-	 7ytKvPuVc/KaN0iILg8NFXYcaapHKcj28xKW+bj30DJfatpyEuOfmpcyLNOwdGsnO/sCHBePAGkr
-	 9MZOjuCLqTze8KeN2BEMMqPP0Pfhbci4Qy1BC8DuZVLDJUageWNp6QaHdVbD5mxXiHrTs8Zpx/q6
-	 c0XRI0pf4AeLZY7UFao+uD7NDZFE9ReZ+m9ePTL7FU0zaYAH2pErRZptappHtdXBRZqzagC5REnT
-	 upS8iXfb0gygVVvFOb+GJ0QIaqMAmPfwqUGSAubhgDgwjwM0Gn9nSB5sEinip54IYTgo7l0ky5Hx
-	 i0B7RUW85VjZIcNss5PrLH04CXLRKQexE4xHaxRxQ7XSuN3WY/RwfB5EWdifWqVEaFRHOldXY2OE
-	 p9GjQNXnVXMx9U9psllK5xrZxbn1SUDVWhT1KvQ5Z0PcNbI2dP5rnixnnvk6V12+Mu3vcs4ccdI6
-	 hJ7LEzYzzPIhKGjecbdObruc9vq+jAH5PBy4HFy5C5dDhENgFF2mMZ0prK6QIirII5Q/ak423ePA
-	 dsd7NqwGbF++94OpfdTog7V8c6L7Vz7NcoAtguqs9Cau2TwnCovDn0jvQfuXPmInhn3mOG8bRXy8
-	 u+P+tu4kIhTUQACfcnD9mwyzdM27mGVTjwIF72ZmsfVb47XsvHvcJl+n3GbEF/
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: 1425075683@qq.com
-To: robin.murphy@arm.com
-Cc: 1425075683@qq.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	saravanak@google.com
-Subject: Re: [PATCH] of: Build warn for missing fn() in _OF_DECLARE
-Date: Wed, 23 Apr 2025 22:48:35 +0800
-X-OQ-MSGID: <20250423144835.294788-1-1425075683@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <a4277fb4-c982-43c7-9f02-e0050eff417a@arm.com>
-References: <a4277fb4-c982-43c7-9f02-e0050eff417a@arm.com>
+	s=arc-20240116; t=1745419738; c=relaxed/simple;
+	bh=nIxaNcf672B7BSGcnupZqGaWJgpILObY6cKHqizWiH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bbEk3uIN8Xo76EopF2gNl7MJ4FynwvKS5nTAquFTt936jEysadwZWRlF2Id2X62wc95reUemNoBwBnMIMp+g5rAW1IZI4K799RsS+gtmVdlna575Qst/vc7Qb0WJzyBEXFPwZDZI8jGDY9JASGg2X1swp6oHeswqYQoYINbzSSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0iTAgQt; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso70275825e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:48:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745419734; x=1746024534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U40sY2uDKd5zyA1HQw2VSyNbPCI1Z9a/feni+xQEoJo=;
+        b=D0iTAgQtwkhOpGkvnehrYuTYLMsn5sJGO93gdKFfXaaiwBb70KYDauXc7mn+sGGgHt
+         K3kKcAP3idB6FXk+iOiKLDEDr3Ije85y/UFuJduYA282rEidRGwRG7UhPf4UPGzzhVZZ
+         AhGPfgnq96ZrmMBwQac91b5kFgC5pyq6A29Z95ZghyoOpmV1YuCqemglPqeHDoyPZtcK
+         Z53O1gVEF/Y/lqpgk37Ccl8qx70BYFkEW8rquREs2Ymx7f/lh1v/iacUM/r+hp6BmI0U
+         gYzEpcHG5ufkM883d41L7vipCxrW0NXIKdLshaJnDtDiigNJZ4ecvX2C7VDyQfccZmTb
+         cdjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745419734; x=1746024534;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U40sY2uDKd5zyA1HQw2VSyNbPCI1Z9a/feni+xQEoJo=;
+        b=tPaPLt1akjpm1MraOJ2oqcvg9DWk3BQwdUP6NDGfRT6NmcRWelbI9lFNjiuZUinz8R
+         8u/4MOEiUxU96+GRqV0u2nXhbv348X6WAGdbx8PpvFIhBri0wGjwz7svHuG5DDB1+nbS
+         wR3Hq4mZGN9joKyFQR3XUKjDul6ZWStfRD3LgyVVP89RFq1IYjAbwL8gWI+tA6OeRezX
+         CnWttdB/j5UvpPftsQtimAFUEj7QhU+/1RE+PP6WRpes/BdODu7k5tJAniPP4HoCay7g
+         XPl9ArNK+siLzN/QisNWe1LObaXglJFWbrxFZd/iE61un3z2keL0wi/nya+S6ztCTD1P
+         j2EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XJj8/V2C+RsjxkJY0p5bsQ6ln1h5wteuTh3SqIxSoOSkObYQYK/gTnr4ePsbTU7vi+IzO0oTF7dnguo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYn9zH3qYCBtXMIVvTEwMCpH7UsTJbZxyh/C3gQ36qkbg3Epz
+	qMqDZI+qu8zUSpuwjz1UvZcV3RzaFZ4GjAnpfOr89M185MXPffgM
+X-Gm-Gg: ASbGncsnzeGISa4rgfAqI0Qv3PpqHppP97eQuUNS6vk0sS8IXZ+zVC9g/A5bSKQM1En
+	sguptNWxkw3vboMxduaHm4+nVy/OsvO0ZE0UtBOwLRujX4KnEF1xabSQi9J+OI9rIcsM7lp7cgU
+	Kr+p1FQXooX2AnEYMw2tNyxLZ2kuiKpmkO866qICYP2IteM4wZMqX/inATKNVvl0XA78dPgAX0N
+	Cmncj49RKGJtqzJoBTnzFEkiaga44DOxMi8cS8zfwklGUca12zpS2UC+Rer1clD71kCJulSuJF8
+	80wtkkxQnN9VZCxumEd56u5Jmkk3T8vZp+xkQ8kkSfuZsdsdrH0XSUGt28PL/0uH4p4YNUP/arC
+	yHvn80EF1QsFSv/0133Bqiw==
+X-Google-Smtp-Source: AGHT+IGD09CKrm4TLFkOE3DHOpjoorPdju1PSsQrQJIXZsv/BX5Okilz+aUMdimUZnYgR81Op3U6CA==
+X-Received: by 2002:a05:600c:11:b0:43c:f575:e305 with SMTP id 5b1f17b1804b1-4406d846ba6mr108270405e9.8.1745419733416;
+        Wed, 23 Apr 2025 07:48:53 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bf28:2e00:ff96:2dac:a39:3e10? ([2a01:4b00:bf28:2e00:ff96:2dac:a39:3e10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa433191sm19319164f8f.31.2025.04.23.07.48.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 07:48:53 -0700 (PDT)
+Message-ID: <ccfc1eeb-8bd1-41f9-9146-c8752723ccad@gmail.com>
+Date: Wed, 23 Apr 2025 15:48:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] maccess: fix strncpy_from_user_nofault empty string
+ handling
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ mhiramat@kernel.org, andrii@kernel.org, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org, Mykyta Yatsenko <yatsenko@meta.com>,
+ Kees Cook <keescook@chromium.org>
+References: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
+ <20250422172011.feb243d2f7478c0e7109b74c@linux-foundation.org>
+ <08e3ec4c-4401-403e-9d81-5ee0abebba5c@gmail.com>
+ <20250423095941.1cab813f@gandalf.local.home>
+Content-Language: en-US
+From: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
+In-Reply-To: <20250423095941.1cab813f@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->On 2025-04-17 2:23 pm, Liya Huang wrote:
->> The function pointer fn() in _OF_DECLARE macro might be NULL. For example,
->> in __reserved_mem_init_node(), only non-NULL cases are handled, and NULL
->> function pointers are ignored.
->> 
->> This patch introduces a check to handle cases where fn() is NULL. If fn()
->> is found to be NULL, a warning is issued during compilation to notify
->> developers about the missing function pointer.
->> 
->> ---
->> The function pointer fn() in _OF_DECLARE macro might be NULL. For example,
->> in __reserved_mem_init_node(), only non-NULL cases are handled, and NULL
->> function pointers are ignored.
->> 
->> This patch introduces a check to handle cases where fn() is NULL. If fn()
->> is found to be NULL, a warning is issued during compilation to notify
->> developers about the missing function pointer.
+On 4/23/25 14:59, Steven Rostedt wrote:
+> On Wed, 23 Apr 2025 12:37:46 +0100
+> Mykyta Yatsenko <mykyta.yatsenko5@gmail.com> wrote:
 >
->This patch in -next appears to be responsible for syzbot complaining 
->about build errors for some configs:
+>>> Does this fix any known runtime issue?  If so, please fully describe this?
+>> Not that I'm aware of. The issue could be found when trying to copy empty
+>> user space string in BPF program (and relying on return value).There are
+>> some usage of
+>> `strncpy_from_user_nofault` in tracing subsystem, but I'm not sure how to
+>> hit those code paths.
+>>>   
+> Although your patch found a bug in the tracing subsystem, this wasn't the
+> cause. It only cared if the read faulted or not. It was incorrectly
+> checking for zero as non fault when in reality, it needed to check >= 0.
 >
->"
->kernel/dma/coherent.c:410:1: error: static assertion expression is not 
->an integral constant expression
->kernel/dma/contiguous.c:497:1: error: static assertion expression is not 
->an integral constant expression
->"
+> With that fixed, it should work the same with or without this patch.
 >
->https://lore.kernel.org/linux-iommu/6808d00a.050a0220.7184a.0010.GAE@google.com/
->
->Also on closer inspection, just outside the diff context we still seem 
->to be explicitly anticipating fn being NULL with:
->
->	.data = (fn == (fn_type)NULL) ? fn : fn
->
->so something doesn't seem quite right...
->
->Thanks,
->Robin.
-
-I tested this patch, and it compiled successfully with GCC but failed with
-Clang.I couldn't find a better way to consistently check for null function
-pointers during compilation across these two compilers.
-I even tried using the method of preventing negative array indexing, but 
-it failed to compile with GCC instead.
-Perhaps it would be better to abandon this patch. :(
-
---
-Thanks, 
-Liya Huang <1425075683@qq.com>
-
+> -- Steve
+Sure, I had in mind usages from trace_probe_kernel.h,
+namely fetch_store_string_user, fetch_store_string, having a second look,
+it appears these only used in trace_events_synth.c, and we are good there.
 
