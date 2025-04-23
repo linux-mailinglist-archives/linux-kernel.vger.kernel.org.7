@@ -1,93 +1,57 @@
-Return-Path: <linux-kernel+bounces-617148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE37A99B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD66FA99B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3848B1B683D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:12:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A87164F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8CA20766E;
-	Wed, 23 Apr 2025 22:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BB8101F2;
+	Wed, 23 Apr 2025 22:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="sliEkyfU"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FpZ6E9zE"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C491F3B97
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 22:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A704D157487
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 22:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745446355; cv=none; b=GON4N2f8628KMM/uznwLhPS1XEZILh3YoC5O2HIWDLFNN+OM6uhoE2Wwnav/j55C0wPg+0AxsBObaVi1Pwi+iU+A17TsaRkhXFRqn3bfJ5BmXoMshktXolpCtQCIUe4wcOmEpUfUeFZYFnNiyUY2wE+44iD1gPfZHkNq/xkKOXY=
+	t=1745446437; cv=none; b=fBEcAbuOttYhlzULVHREy3TNM7KShQ/Y808Jp1kOkNvJJKA/lztaoGjqyfBGRidniQr67dyPnNEn5TJbiS8MmrB2DM5XH4ag43MKkUEY/0EbysKAWYS9XFRNTccZ5pmiWGLt9zyAP/ZmCiTe2gdFr8UMcpYPUYkZNDFbxyxZ84c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745446355; c=relaxed/simple;
-	bh=pxCRpPeP5/ZuKvy/5RkvJwDJBdNzzC8Jwte8C1sV994=;
+	s=arc-20240116; t=1745446437; c=relaxed/simple;
+	bh=rzqv/y3yi54Tdp14FpA0KdAPOU65g0x0e/dLqWnvJo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEm92lkBQKwTfiMdj6/cyVofq3udv1GWGAtiL3xwC93cVGBrxO+3ZF7XxMj7x7vpcGFRsw0VYRsUhszfqQeFqyUvjVWhT+pYj1uo581sSVHTJzWHCWqOeJ7BMdxPXkAWVIFVxGkeFDgOe9p2QB5bDa+S2nZ40SD0hsBTgCS5ZAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=sliEkyfU; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774ce422easo4039861cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1745446353; x=1746051153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GGSu2/ndlUdb1fs1CGKQUBgSMxzZ0kzGZd1szVYFmbc=;
-        b=sliEkyfURIL6k21GLQLmGysmvfrfKcErG9dxM3G7B2oN0/VNqOgj0MKM0/DTtmCIkj
-         cg6tphrPjaQyS/g9914g57Jqy3coG2LWQzmytidCse9DYT6udGo9ld4Mf3hEVnSpbC2L
-         1rAl9ItsZEjE6+1D+5c3U+Ly+a6idncMk1GuSPBGLFluzcgCB88kDmE7pr3Oam47xAWS
-         ZdC33heqDDXF7h9OZFsJM++k0siOTeAZkCEeZWqVzb6RxGoCnXz60QpkUVSVL58L75C1
-         R7PTyr2+VyHlVOLUF6xXAtKl/2zY59pdE7/I0vUpN+pHCYG5tbqIlp5tnvW++CBbLs4C
-         qYdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745446353; x=1746051153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GGSu2/ndlUdb1fs1CGKQUBgSMxzZ0kzGZd1szVYFmbc=;
-        b=pBQLdkqEWfQ9LYiNSOKh+cjA4bt5VWzanFKKA7LwFDrMYE2apJCXtK9cVvJbOs/NxH
-         4prlISjNW04oxpfoI1ZM8cl3QB84dS4Tcf/OzWQpypKm7ghd22e38sxNkYYyPxtvyw9k
-         cR5tEByMbBD+gO5KsNlepiSs/8g+Oi+C70YYevsj7yWxlzq1BOPbBVMG7qRK35H4HOEJ
-         50OXWvAUP42cLxS+uScSaBIL8DeSD2Kw/6VePAJB86oqABdK+gFL53kJWOWlJcN3Pu7h
-         X1e9EAZzf4C2AYihjlka17SoLMjnn3OkMnnSBhJqCXQXuQNOuHgLc+g/evtACaPZcI7Q
-         cwPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrYXmKISvKrVDvT6OdaUTg2rpmyne7B5WgouP2QMRzfYcIJw1ThH6OsK3w2+bWF0QXD/K51GhXcOvCe0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEOG4o2ZaciK6DgmOeSpqIAei6AXi3XFREWjAWIAySgYDw2D2O
-	IQUJZU6j1adwEpcyc4mcp7hE6Z/B5tgcNeV2ZaflAW4H/cCZHkPjpkdHeiR1j64=
-X-Gm-Gg: ASbGncshepXQqpkNvmc4pEo4aGFwfJ1n9H9ZNHK83C4uq4zwFz6p3qqJ2TfN6VIJygA
-	AC8EOgdUoulDh+IxriHSyMivZnVMNdzGJfa42F4skxcmD/DuhRBZFKLu8vb4KqrUdjfkxNQzSRi
-	PgNe7ikm3FruwKEKYCLR5A7U+aeAWGg//ozhV7x1pTlT5EnTAyALG1gyVpRneUER8HbAim0ozW7
-	6FCG/3KB1zoU8LtNSznfr8+PGLGVZiEr8IN5+T1siHYYjIKAhg9wAUZ9fnaMz4zm0ln0FINHqd4
-	vX7+L47KQhijd1LjOkjgAEifsivpZdAwJUUuNf5KrjTrHzeZB/rjUB1Poq4z0YbbGEgsg03KKgX
-	9fecM98a24sGwIZQWv24GFcU=
-X-Google-Smtp-Source: AGHT+IEJWvDnsGY3vjry1HMHq7KBzCnRVUDLDsSKkcGTXxw03nK1OpLwZUuU/+EBwGnc/8OlsEG6Og==
-X-Received: by 2002:ac8:5f90:0:b0:479:1a11:2f95 with SMTP id d75a77b69052e-47eb248cc30mr3193401cf.4.1745446352954;
-        Wed, 23 Apr 2025 15:12:32 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9ebea2absm1710081cf.2.2025.04.23.15.12.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 15:12:32 -0700 (PDT)
-Date: Wed, 23 Apr 2025 18:12:30 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
-	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
-	rrichter@amd.com, nathan.fontenot@amd.com,
-	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
-	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-Subject: Re: [PATCH v8 03/16] CXL/AER: Introduce Kfifo for forwarding CXL
- errors
-Message-ID: <aAllzsbEOotodnMJ@gourry-fedora-PF4VCD3F>
-References: <20250327014717.2988633-1-terry.bowman@amd.com>
- <20250327014717.2988633-4-terry.bowman@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDFCaiPOslNEnWimHXsmsQGB32Gpx3VG/HC7zBKf4+IGrffhBBVOlXbxx7vSO5YpdZ976xEXF1Bvr3jV/SafbJb+dwFZXA645FfK86lJdMsF4UVe9d8bkw8Ple5aJ9Y79Rr6Bq5WRmuqNu5Tx2EHqH6mYvLhrQ1bYw3uULCdyhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FpZ6E9zE; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 23 Apr 2025 15:13:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745446432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2+E9cdn9Glqpj5x7uDYNuQcvdwYFdyCr3nSZbwJvgho=;
+	b=FpZ6E9zEa+lLOExpS2FXQfpVOhVk22iM5558fY6pBKGIx5nUk5rvnPXAh2Li02cLFagoGK
+	OLM3zqppzThUDt8Ebm84CgZtwLFYLtcIdMfSFcs1R1OyAOn4/VEjskTOJEk7sgFeInW5SI
+	gWJdZBVbOzkF52EO6pCqjjWzTpIIytI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Huan Yang <link@vivo.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH 1/2] mm/memcg: use kmem_cache when alloc memcg
+Message-ID: <dp5frcrqofkjjp77hw5sbkri6etnpdsvxnahs6nazvakaxt6im@xouxw25rggci>
+References: <20250423084306.65706-1-link@vivo.com>
+ <20250423084306.65706-2-link@vivo.com>
+ <20250423145912.3e0062864b6969b3623c8ff6@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,18 +60,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250327014717.2988633-4-terry.bowman@amd.com>
+In-Reply-To: <20250423145912.3e0062864b6969b3623c8ff6@linux-foundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 26, 2025 at 08:47:04PM -0500, Terry Bowman wrote:
-> index 485a831695c7..ecb60a5962de 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
-... snip ...
-> +
-> +struct work_struct cxl_prot_err_work;
+On Wed, Apr 23, 2025 at 02:59:12PM -0700, Andrew Morton wrote:
+> On Wed, 23 Apr 2025 16:43:04 +0800 Huan Yang <link@vivo.com> wrote:
+> 
+> > @@ -3652,7 +3654,10 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
+> >  	int __maybe_unused i;
+> >  	long error;
+> >  
+> > -	memcg = kzalloc(struct_size(memcg, nodeinfo, nr_node_ids), GFP_KERNEL);
+> > +	memcg = likely(memcg_cachep) ?
+> > +			kmem_cache_zalloc(memcg_cachep, GFP_KERNEL) :
+> > +			kzalloc(struct_size(memcg, nodeinfo, nr_node_ids),
+> > +				GFP_KERNEL);
+> 
+> Why are we testing for memcg_cachep=NULL?
+> 
+> > @@ -5055,6 +5061,10 @@ static int __init mem_cgroup_init(void)
+> >  		INIT_WORK(&per_cpu_ptr(&memcg_stock, cpu)->work,
+> >  			  drain_local_stock);
+> >  
+> > +	memcg_size = struct_size_t(struct mem_cgroup, nodeinfo, nr_node_ids);
+> > +	memcg_cachep = kmem_cache_create("mem_cgroup", memcg_size, 0,
+> > +					 SLAB_PANIC | SLAB_HWCACHE_ALIGN, NULL);
+> 
+> If it's because this allocation might have failed then let's not
+> bother.  If an __init-time allocation failed, this kernel is unusable
+> anyway.
 
-This changes in patch 5, but this commit fails to build when the drivers
-are built-in.  This should be static.
-
-~Gregory
++1 to Andrew's point. SLAB_PANIC is used here, so, memcg_cachep can't be
+NULL later.
 
