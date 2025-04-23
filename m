@@ -1,175 +1,104 @@
-Return-Path: <linux-kernel+bounces-615650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480BDA9804C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BD3A98040
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D9B3BEFF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C24D440513
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B85269826;
-	Wed, 23 Apr 2025 07:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="J/Jj7Abg"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396D4267724;
+	Wed, 23 Apr 2025 07:15:22 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D0F267F57
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC151C863D;
+	Wed, 23 Apr 2025 07:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392525; cv=none; b=NJX2Xi5qDFW6THznej5U2hfqmOEdo83Bmw3h+AT3aNKqVaTJIBYfr0/tvgAH7tW7/rwjCd9+K8TwQKDCXRVOTf3DzhBSX7DyjM+nmTPaOnCnpbsXGrVnqgcD3M2cduIZz87yvjwcWYx+/nG65v1/8NcCjZ1Q9W7vGz1l6YjcWbY=
+	t=1745392521; cv=none; b=jK3i9/6J+dJKkHFxXtlXzLrUjmY1kyJXEAT0xu18Vr9f+YH4VkgWKY02ds03Fg2mO8/ujXxh6ZeRcLpD5N8tgg5pUOTUk78BUHDeLxjHXZyvKt7DdHJrHJOksEdEWM0mx4SS2AaVm5DplN3xpRls2s4tr2xHjZiTD3PhVY+T6ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392525; c=relaxed/simple;
-	bh=XZ6xojvd/sruxF+mCw9vlXl0QAMDn2VLNkwr1xB5uWE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kwprv1MSVzi4edvnleRmulNTBToa+WHHIzj2TfLa2ZvrIKchEc5nfrQj9fipBdq69aobUDeSvlHMOxVAJVoChVZLKsNfzPCPEZ8uqE2TxCiyTIgcZ0myoVdQIqkOsbXJPp23bJaKeebxNfu0kboqxYqLrxxYgxgcjM1D4AakjWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=J/Jj7Abg; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so4136028f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:15:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745392522; x=1745997322; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EFMUXD1U+4Z14AqM+HV1w8wuHug1ZmPE1i35Sl+Hm6o=;
-        b=J/Jj7Abg283jnLsj+yavSCkfxvRD7ExsmlBGM917xPKsfa3IUukPWVTPEAv5iH3w0/
-         jR76KJQ37gw1TDGy4yGwLswamvRQtmG/p1S+0JeqiL1hLcr1J+8PsipSYO7UlXmWdiKF
-         gr4ktZQIzp30FxFJ/XqEiPjPY+J7+CTLoAQ+bUedEcLUDeer+TssqfToxyQfa/VykZwz
-         4JiEssWMnDUGKymvQnCznbF36mtPzG+Uh8h5OHmevUkS95HN4LFPMOKgRCJ/loBLp96/
-         nVuI+VBlIHHutN71Zn2wKGveJVcyVWUqGzH2TloWK76Euz/JYmPuE9iQ7wRAG1ext+r6
-         QuVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745392522; x=1745997322;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EFMUXD1U+4Z14AqM+HV1w8wuHug1ZmPE1i35Sl+Hm6o=;
-        b=Qx6BCWKdql0HmoQDLaGtdpnDV+QR+2Jhqld3JA8V83wcVoQyce6WgyuVsuEA8DNhjS
-         m4PX78VMWO4lUqrvKEY/9W5zbQiw9bLIEI62x44jIEUeGoNl9JHa8ljizLVYN4ajF83y
-         KjY0IoNWfzqyiY6smwMR3JJdqItnOB+YyMD7nQaq91l03YSXmZSp7FpCSE+RgRVFJiKZ
-         OVDVOzX/KRXxtaIbqJlojIoB/mQEWANmt022j4FRvtrKpOzfMYeN/1fjp9AW4xvlcEnA
-         Si/zBfVVPCGnPsF39MYpjt7Tt5Zh1wBVJYPQJv5T8tkzYIU02Ok2utW8fqlumA9NkhFB
-         bLQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0GuJqApU4rpaJzjUaWj9P7KSAWkaipm+dO092Fm6QIy4ZiBBacZ/oGqVPzomoHvBvMvEmYvP1oG2P31Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtXPCF4r5jMWmVLjb7b7eEmMKnjGybz6Ok8mp7AoTfTwGcOJbF
-	VO931du70pKhRDLkiInxVa1YdB++K+z55ylOmjAW90nnuZnjow8rtL+WZ76ibBM=
-X-Gm-Gg: ASbGnctFEFtRTOp7LMJAnqEGcvrVKv9TWfFYC52OBTgmPfaESNuiZ8Hh3N93ek8Jj/P
-	RLRye4g1prS83PPcdGexcs/ehc8wIALAA42hfdXviSfg+juvZEri3PthkfiMo/9mt2UdqOIkhEh
-	daJTrkwn8CdzeXs2tfssLsJHGaLHDcnECPczqHuzQJDWdfC8RuN9xReuCeSytEG+S8J7beLza8s
-	/4YVZiAibgX3SaC8aXVDI8y/R49/xa62kk4nNISdGXjJVH/cLnI3NE9D9mgRRVDRlwonIU8RfhY
-	anwWvAZPAHK7iC+Q0jTz0c5oeVU2o5IDog==
-X-Google-Smtp-Source: AGHT+IHvsBcpeDWfBI/J2ZFwFCxrj5c1G/ZijldBOLJ+QHGBhSPa+tWadnMgTQM8cXeS6fsrFI6NKQ==
-X-Received: by 2002:adf:f94a:0:b0:39f:6e9:8701 with SMTP id ffacd0b85a97d-39f06e9871dmr8041245f8f.7.1745392521822;
-        Wed, 23 Apr 2025 00:15:21 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:74b0:71bd:6dda:dcc1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493446sm17696935f8f.74.2025.04.23.00.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 00:15:20 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 23 Apr 2025 09:15:07 +0200
-Subject: [PATCH 05/12] gpio: it87: use new line value setter callbacks
+	s=arc-20240116; t=1745392521; c=relaxed/simple;
+	bh=7BeiM33tIFbOTRutD30UoZt7L8uwqjMGY6dC3PxiqfE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=GOLp+2FJz0yiqWrsuP09iGErvzC1CZl5pn6uaBo9nK0Hd2erJNTQgwc0+GVV5LZHhGtaLeYFZJmF1+HA//3dJ/BpGHB8MMvveCnv4xq/hH6Iv84cqxkfuGGzW5EA6u/MrDzkKo4XDKLnj1r8cYkDd1Pmd9RAJAyVV9v3Q8QXLfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id CDA28298562;
+	Wed, 23 Apr 2025 09:15:10 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id DZHaED16jdEb; Wed, 23 Apr 2025 09:15:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 71C9B298566;
+	Wed, 23 Apr 2025 09:15:09 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BBTVQAOqKOEG; Wed, 23 Apr 2025 09:15:09 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 43B6C298562;
+	Wed, 23 Apr 2025 09:15:09 +0200 (CEST)
+Date: Wed, 23 Apr 2025 09:15:08 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	regressions <regressions@lists.linux.dev>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Message-ID: <1915007212.329812247.1745392508953.JavaMail.zimbra@nod.at>
+In-Reply-To: <20250423065432.GA4811@francesco-nb>
+References: <20250408082018.GA23886@francesco-nb> <20250422175409.GA877874@francesco-nb> <aAhAylotNK_zHl0C@gondor.apana.org.au> <20250423065432.GA4811@francesco-nb>
+Subject: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-gpiochip-set-rv-gpio-part2-v1-5-b22245cde81a@linaro.org>
-References: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-In-Reply-To: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1685;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=yQXPOqcv3YdoDMJN26EWQWwmF6WtRyLx2iAMkZ4jR2Q=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCJOB/2C4C8bp0IytZf1fZVlthvBDEJeTwZpbU
- 1xYV3YMLBeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAiTgQAKCRARpy6gFHHX
- cvFCEACywxkvcnWQIWdFASec3Bgy1BDbBkOwECogN+Tf0BW6jjjtMhLaYlakK70ThJwbwhpvbUk
- uTcNGfW73G5dusyRfhVo8jV864P9WLKJRvPWN4fY6POTOmkYS8HuSB8y2ySIFdhkY11wIAMaWEr
- V5GFNUiFTHl5LpHdBfU/iA8u0VAq4PkvdFd2P6sC8l6QPnQK2yRAjaXgtw7l0oDscOTrwr8nkZb
- zpD3HIqIbp+4DW5XLnmZPFlpv+5GOiIJzKjY4VP38iPJltW3gFZthDg730+RrKm2dYY9dT8XMKX
- t6veqXdJwNvyWBDvwMj6jlzOMSHcoKL9EI/GN2LQnHD8K14P95f4wN6nJdjzkhIp8kY8NMvAG0M
- vGDY2MmLZFfx/viAY9H/jX5kELjO4upTXGb0HMpsMNlvPiLh9Obee+3BMN1we/axJVmGCCa5qgp
- BJTAqJAQWupVylYmsGyeIrDN6oVny1bg9T9J3BXIRKbRFeGY4wLeYXvTICsl3XDDyMyupOjltOI
- Rt9Z/iBdMS3P0O7JYIvMdF7U1hKFuabfVoQymeyQEgm5dc4F6zOt2WPSJHbUub145QgCVOorCXL
- K5zAKoQuqxCtTJYGPyTlNwNei70stMpgj1yXWSLNJ7/RNuvDZy0IHUkeqD2TGsRE6ZRsTp5vgV/
- xluig4eEUuGwCzw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF136 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Linux 6.15-rc1 regression, folio/ubifs Oops
+Thread-Index: aSEnPblkZA1AkRc1OuHeR6xBDkS3zw==
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Francesco Dolcini" <francesco@dolcini.it>
+> An: "Herbert Xu" <herbert@gondor.apana.org.au>
+> CC: "Francesco Dolcini" <francesco@dolcini.it>, "chengzhihao1" <chengzhih=
+ao1@huawei.com>, "richard" <richard@nod.at>,
+> "linux-mtd" <linux-mtd@lists.infradead.org>, "Matthew Wilcox" <willy@infr=
+adead.org>, "regressions"
+> <regressions@lists.linux.dev>, "linux-kernel" <linux-kernel@vger.kernel.o=
+rg>, "Linux Crypto Mailing List"
+> <linux-crypto@vger.kernel.org>
+> Gesendet: Mittwoch, 23. April 2025 08:54:46
+> Betreff: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+> On Wed, Apr 23, 2025 at 09:22:18AM +0800, Herbert Xu wrote:
+>> On Tue, Apr 22, 2025 at 07:54:09PM +0200, Francesco Dolcini wrote:
+>> >=20
+>> > On Tue, Apr 08, 2025 at 10:20:18AM +0200, Francesco Dolcini wrote:
+>> > > I do have the following regression on single core system using UBIFS=
+,
+>> > > dual core seems not affected, any idea?
+>>=20
+>> Please try this patch which will go in today:
+>>=20
+>> https://patchwork.kernel.org/project/linux-crypto/patch/aAW8E9NrKWq1Xk2w=
+@gondor.apana.org.au/
+>=20
+> Yes, I fixes the issue, thanks.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-it87.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Thanks for testing this!
 
-diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
-index f332341fd4c8..d8184b527bac 100644
---- a/drivers/gpio/gpio-it87.c
-+++ b/drivers/gpio/gpio-it87.c
-@@ -213,8 +213,7 @@ static int it87_gpio_direction_in(struct gpio_chip *chip, unsigned gpio_num)
- 	return rc;
- }
- 
--static void it87_gpio_set(struct gpio_chip *chip,
--			  unsigned gpio_num, int val)
-+static int it87_gpio_set(struct gpio_chip *chip, unsigned int gpio_num, int val)
- {
- 	u8 mask, curr_vals;
- 	u16 reg;
-@@ -228,6 +227,8 @@ static void it87_gpio_set(struct gpio_chip *chip,
- 		outb(curr_vals | mask, reg);
- 	else
- 		outb(curr_vals & ~mask, reg);
-+
-+	return 0;
- }
- 
- static int it87_gpio_direction_out(struct gpio_chip *chip,
-@@ -249,7 +250,9 @@ static int it87_gpio_direction_out(struct gpio_chip *chip,
- 	/* set the output enable bit */
- 	superio_set_mask(mask, group + it87_gpio->output_base);
- 
--	it87_gpio_set(chip, gpio_num, val);
-+	rc = it87_gpio_set(chip, gpio_num, val);
-+	if (rc)
-+		goto exit;
- 
- 	superio_exit();
- 
-@@ -264,7 +267,7 @@ static const struct gpio_chip it87_template_chip = {
- 	.request		= it87_gpio_request,
- 	.get			= it87_gpio_get,
- 	.direction_input	= it87_gpio_direction_in,
--	.set			= it87_gpio_set,
-+	.set_rv			= it87_gpio_set,
- 	.direction_output	= it87_gpio_direction_out,
- 	.base			= -1
- };
-
--- 
-2.45.2
-
+Thanks,
+//richard
 
