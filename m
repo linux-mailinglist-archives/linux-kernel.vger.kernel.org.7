@@ -1,193 +1,378 @@
-Return-Path: <linux-kernel+bounces-616789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2507A99602
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:05:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDA8A9960A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4E9D1B8110E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BB046576C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2539928A3EF;
-	Wed, 23 Apr 2025 17:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9504328A3EF;
+	Wed, 23 Apr 2025 17:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBl9SIb+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGTZSSJJ"
 Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586E1EFFBB;
-	Wed, 23 Apr 2025 17:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19270202961;
+	Wed, 23 Apr 2025 17:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745427915; cv=none; b=LxAZXipolWjaIxdk4zdWyy0w4o7/43OeoEOPAoj3ZcCAizVG7FZW41Dlz6wEnqW1qtqn2odPLQPLBNa88NFNjfQNfQxYYgwXhuf0NMM0/Hgut8/TN39nrC3supdGgrelkyhvT+9W+CYCnVrWObtWMrBpFmJKju7BPiipFm4h8cc=
+	t=1745427982; cv=none; b=QR7JfdAtlZQt/eeWQr05rT0ZC5xJRiJy2iA8tIG2YqbDDlSNZaFVTWVqdl3A+k3dWyU23fmhlWzJASD60u98ecv8U2BqfM2qbQEwmNAHI2IdQF7NwqGHdvtAMWUtVhQIlkXYwq2LvbYUFslPzGOcSIj1Z2ej6KjG14n/6CH3MA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745427915; c=relaxed/simple;
-	bh=6zKpPS9+zRAIYHWO5bW9Y1SGeFtJzszIk1IQ9wX2yuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SwWSzEj0q2cZu9x64OltwDYVqTW2erUtycrAqI/B9EYSMEd0Tv0ZGOxb0q1iX5nSBjKnozivaTwtugfyNwqm1c3IZQFAmikJZ5MidbzNaYQ9Wefv7P3fxWF8uuryJY4Au0AkEJwvusN1Fis9FMK6xrQpJ95fdzmH/VhrDgpG2QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBl9SIb+; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1745427982; c=relaxed/simple;
+	bh=n0hLIQMV4RgMq6A50D+8hjviVxHs848BOPaJqtM4q90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tZhww1ddhy9W2PbbDk6tmVG0eQdww4OFUxEbGkgz9YiepUu2UvOiUCFTAyc0AgsHolDuxqbVTMz/p+vmeIYB+nWvaUiMgebXzcdlqTaPgbBO2VeGT8Oqn+qThfs2jnKdJEKLb356yj2lEmb6LTreLLoAwx00Zr7kxJgAdhjOHKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGTZSSJJ; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22928d629faso690575ad.3;
-        Wed, 23 Apr 2025 10:05:13 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2264aefc45dso1354405ad.0;
+        Wed, 23 Apr 2025 10:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745427913; x=1746032713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6zKpPS9+zRAIYHWO5bW9Y1SGeFtJzszIk1IQ9wX2yuU=;
-        b=IBl9SIb+EIhbiykHnqaHS8wFZrzxK3u9PlE+0wI+wYskPPz6kw3z8DuzJSe253erdc
-         lXjpeFxIdhIIBBmLp+pZmFLF2DwbX7XYd07p6q6ZFXK/+Hc1J7VUJwD8eQDkaYh7E00x
-         /rVskkbhIoZFJnX0KO0SDj1NL5WIJJkODnrDr7J0v2+MwIN6SZNyaVAhIaghy1LeF6Kk
-         wVX981hEQxgGyfKUh13TVCcJWvRZew2ZN5sGc9xazN+wErwSapRtlMyuqHHKBdMish2S
-         ZQ4XFqWt5nWglIPEoG4d2ZmD6tyG7k9yKVKuK3y8gciCwtGxhSFahGizRD8uJs79KSnt
-         SOiA==
+        d=gmail.com; s=20230601; t=1745427980; x=1746032780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zq5XdeL9ToAKwNn1O6D6mibDHxiyxNVwdZRqKOds+wk=;
+        b=RGTZSSJJAETTZi7uxGXZQLvoEBWZViVYwKBqo6WfFFlgyDlI48BQr9ozkJMdoXQ+j/
+         1hAEFlG7AlZEzCiULElEoljNcpnP9EaA3DCUyrcv4AuyjZzpWxnfa/Cs9yuGOpEIEmO1
+         3VVRUlmxH7VL9chPgwMDmWx3axAQjGIquJyPrxN/amGoxooqBHJcb4UZZHufIqN3JRBE
+         65RXS8X6jVsjcH5oftCQk6HeFbaLjqRxkkiK+6nWz7La1FbIF6xV4aGqTvuirD5c5Hgg
+         NFhmZVGKDnwBZLEt/323FEP5nMYYOhL+3gC6t+Uy3KcWekIYVMhGYN378iTIauOm11uP
+         dh5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745427913; x=1746032713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6zKpPS9+zRAIYHWO5bW9Y1SGeFtJzszIk1IQ9wX2yuU=;
-        b=Cp0FfCH/I0/lTiRFhJAy9NwkBhhd4ltUWETtrubvSKcwwFTLtACK3WFv2y3G/X8qpL
-         cNfyMxbvBgLay7nVVhp8hAS5TEFh3/7eD0SNaO+1Zblt3S3K2WL3r9b+kjQaCcA4LUXY
-         Noyd+N7z8+QFvnwfY5YaYA+q4zB9p1xiu1EO2sEWS1p7dIQ9cW9hi1sCCLgaqFeZDuxt
-         +NZnZv+1NGVReroouowgeBiBfbpawEoakHU5YAQ02v4vafIfkkORmw5/6yuMpaxQcxYY
-         LUTvCIyr4r2nZNP2/gBHUiEeMnPegp/nKXK1LfEdtDvjkYFtRPR53mK+UV82eJbrL0aS
-         lAwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVliKPwMfRP8jR6j7bLjkyk+qWOiWgLppe/qeLwS0MYsU4RQZOFR6COAd/zTihkVdMjB69btDsLj0s2EuY+CU/18+Ey@vger.kernel.org, AJvYcCWbC9nKiEqXrMHG8egeixIZMQuBsd7Uu3raeOoqkGw/RQwkOww8r/LzGUEQ95sOxVGqcSM=@vger.kernel.org, AJvYcCWjiTa4k1NYU29sbGvgLq3MZZCamq0QTf+ErcFp2svJbbQsuOEBgyX/zesIQcy5Tf4qlsuW7TtTxx39N/kx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEFimf267bjrowWFHPcyxWrpxrbuypJgfCu60XeuaaZlUsbqp3
-	c4PU88O8Ulfr23gp34IvEbnKurRm+Zqhw/+eVgteqm9H6aWS41p6NkgKHKBf6wjeLDT6C9pjgZS
-	b4HVAQSHn+NnOOF3Kt349V4/wciy/hA==
-X-Gm-Gg: ASbGncvp9gJLfZK/vYblTJ+npVx9y2yNGXZ8wGageqgHrTPbkrMmhWpMdbOHJcjova1
-	SM6ueS2faoDZRjgUBXlni8rwoodrvasqk8GHAVE7/eEOrJN90MFqLSTNICnd3uiEWsTGsrFUh0S
-	71AHR6Zf1lLEOPjUimTlQ0W2n2NF4a0rCHzFyhgg==
-X-Google-Smtp-Source: AGHT+IGMZQKwDubGKkLCAEJvDU99u5TZOFapB+c2J61U8leklrLSHzo/pkQaNbIOUkY2y9M+FjfNNc4gRUsis+yKnzI=
-X-Received: by 2002:a17:90a:d010:b0:2fe:7f40:420a with SMTP id
- 98e67ed59e1d1-3087bb69218mr31482113a91.17.1745427912929; Wed, 23 Apr 2025
- 10:05:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745427980; x=1746032780;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zq5XdeL9ToAKwNn1O6D6mibDHxiyxNVwdZRqKOds+wk=;
+        b=KX6AOL5lXHxs55YjiyYEPlwwXeuGXPpmub4mDyqUcXBsQB7FtD7B124mIpY1m2+LzI
+         pOfUEn9fdkEpNGqCFTyQGsU1EN2pe9XFsOg8PbxauGhVmQLMNxXSJLBaUZUwOU6ppIav
+         tnm4vB/+YW1PRsUJFfToUsdqiBX2EdPhpq7XveFObGgWDJUCVUc28SCVrHEX00+HWQAQ
+         Ln2/uLkDMD6Q3bDkMoh0jA9+dY3oD5Gy8M9J6xN6VrE9O08TQrqgXd7h9WlIsA/Sz+Le
+         mNTVftSCCNSZFUlB1AKfHE4XMzl5RYQ8w+ErC1nEXt1iF1fxyVdAhUJEBBnc8xRse5jX
+         ALQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy2fLWlEEZAvpqQ9/Xadex9zqthmRCVhWqaXxN6LUj8EAs2HC4vvBFx4pRF55hHbD+OTzM40vVD6V4WwZD@vger.kernel.org, AJvYcCVm37PvyRYw+UintLk/ubEL4+olSrSAsjx8M79tFEhlDYfLR395pjBlYRCA/4Bj+CaMadvpQ7rtONY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLMMcy10oN0cPJXG5dnEnYN25SKleOvLYUL+qN+55Vj/IuWBbL
+	Xtdq7clcQvAIpRgCiuxQLNRW9kaALSw3QxaEnEPtlCLB5zD267La
+X-Gm-Gg: ASbGncuqusQuciF9+mDDI1DtJT2S1QtLbhySg0OQ8g5RtHQyzcKLU7jinlIYlYbgNww
+	xllaa3l7UDcwUNTYoCgDDG9QGCXMAx/qDMRC+kdM8/3gDQeo6CZskKBkH7e0DOmYg/lUAfNiNMX
+	jXPrsUvb1G6wF2k2zzc9+KnHzZwdLrIt/H9f3MRpTCorzuys7yooR7a/UOaBl3PZWmXddVJRwi8
+	T6V/tspKxcUljuqZcOd8q5WfT+ktpW4t/4JGkWN0kqmV2RBpGaC1f/3m3a4dktIuxwoCymNMXct
+	ICKFY4ogZHVn75ceHu68HQPuK86V8znGb/jmXoVWASb8Es/VWRvzt7uivQ4=
+X-Google-Smtp-Source: AGHT+IEvexOcjSgNuSPlOz9TKyCXBOjUd5ptRfZhm3pBbIhNiVkRxQRrLtdhgoJbdiDeq9RqFeZxSA==
+X-Received: by 2002:a17:903:410a:b0:223:536d:f67b with SMTP id d9443c01a7336-22c53607c21mr266532495ad.38.1745427980450;
+        Wed, 23 Apr 2025 10:06:20 -0700 (PDT)
+Received: from delta4.semfio.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50fdf3a6sm106943875ad.259.2025.04.23.10.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 10:06:20 -0700 (PDT)
+From: Andrew Ijano <andrew.ijano@gmail.com>
+X-Google-Original-From: Andrew Ijano <andrew.lopes@alumni.usp.br>
+To: jic23@kernel.org
+Cc: andrew.lopes@alumni.usp.br,
+	gustavobastos@usp.br,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	jstephan@baylibre.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: accel: sca3000: remove duplicated code in sca3000_read_data
+Date: Wed, 23 Apr 2025 14:05:26 -0300
+Message-ID: <20250423170526.15143-1-andrew.lopes@alumni.usp.br>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410070258.276759-1-yangfeng59949@163.com>
- <CAEf4Bzai7NL-3=1SVi4-WWYWEY6Lzrb8GBfKnt6FG8sNm2OMRQ@mail.gmail.com> <CAC1LvL2SOKojrXPx92J46fFEi3T9TAWb3mC1XKtYzwU=pzTEbQ@mail.gmail.com>
-In-Reply-To: <CAC1LvL2SOKojrXPx92J46fFEi3T9TAWb3mC1XKtYzwU=pzTEbQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 23 Apr 2025 10:05:00 -0700
-X-Gm-Features: ATxdqUGMzy3AYWGX5UwpIo9ghrB61M-1gmWsamJS27T0RdXOwdL9vKenW5sik14
-Message-ID: <CAEf4BzZtOUWyQego7Uj5GH48-bLM1stSyi-uZ=+JTtGzYojFAA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] bpf: Remove redundant checks
-To: Zvi Effron <zeffron@riotgames.com>
-Cc: Feng Yang <yangfeng59949@163.com>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 3:44=E2=80=AFPM Zvi Effron <zeffron@riotgames.com> =
-wrote:
->
-> On Wed, Apr 16, 2025 at 2:56=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Thu, Apr 10, 2025 at 12:03=E2=80=AFAM Feng Yang <yangfeng59949@163.c=
-om> wrote:
-> > >
-> > > From: Feng Yang <yangfeng@kylinos.cn>
-> > >
-> > > Many conditional checks in switch-case are redundant
-> > > with bpf_base_func_proto and should be removed.
-> > >
-> > > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> > > Acked-by: Song Liu <song@kernel.org>
-> > > ---
-> > > Changes in v3:
-> > > - Only modify patch description information.
-> > > - Link to v2: https://lore.kernel.org/all/20250408071151.229329-1-yan=
-gfeng59949@163.com/
-> > >
-> > > Changes in v2:
-> > > - Only modify patch description information.
-> > > - Link to v1: https://lore.kernel.org/all/20250320032258.116156-1-yan=
-gfeng59949@163.com/
-> > > ---
-> > > kernel/trace/bpf_trace.c | 72 ---------------------------------------=
+Remove duplicated code between sca3000_read_data and
+sca3000_read_data_short functions.
+
+The common behavior is centralized in just one sca3000_read_data
+function and used for every case.
+
+Signed-off-by: Andrew Ijano <andrew.lopes@alumni.usp.br>
+Co-developed-by: Gustavo Bastos <gustavobastos@usp.br>
+Signed-off-by: Gustavo Bastos <gustavobastos@usp.br>
+---
+ drivers/iio/accel/sca3000.c | 85 ++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index aabe4491efd7..cdede5df63d8 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -281,10 +281,11 @@ static int sca3000_write_reg(struct sca3000_state *st, u8 address, u8 val)
+ 	return spi_write(st->us, st->tx, 2);
+ }
+ 
+-static int sca3000_read_data_short(struct sca3000_state *st,
+-				   u8 reg_address_high,
+-				   int len)
++static int sca3000_read_data(struct sca3000_state *st,
++			     u8 reg_address_high,
++			     int len)
+ {
++	int ret;
+ 	struct spi_transfer xfer[2] = {
+ 		{
+ 			.len = 1,
+@@ -294,9 +295,15 @@ static int sca3000_read_data_short(struct sca3000_state *st,
+ 			.rx_buf = st->rx,
+ 		}
+ 	};
++
+ 	st->tx[0] = SCA3000_READ_REG(reg_address_high);
++	ret = spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
++	if (ret) {
++		dev_err(&st->us->dev, "problem reading register\n");
++		return ret;
++	}
+ 
+-	return spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
++	return 0;
+ }
+ 
+ /**
+@@ -309,7 +316,7 @@ static int sca3000_reg_lock_on(struct sca3000_state *st)
+ {
+ 	int ret;
+ 
+-	ret = sca3000_read_data_short(st, SCA3000_REG_STATUS_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_STATUS_ADDR, 1);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -412,7 +419,7 @@ static int sca3000_read_ctrl_reg(struct sca3000_state *st,
+ 	ret = sca3000_write_reg(st, SCA3000_REG_CTRL_SEL_ADDR, ctrl_reg);
+ 	if (ret)
+ 		goto error_ret;
+-	ret = sca3000_read_data_short(st, SCA3000_REG_CTRL_DATA_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_CTRL_DATA_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	return st->rx[0];
+@@ -432,7 +439,7 @@ static int sca3000_print_rev(struct iio_dev *indio_dev)
+ 	struct sca3000_state *st = iio_priv(indio_dev);
+ 
+ 	mutex_lock(&st->lock);
+-	ret = sca3000_read_data_short(st, SCA3000_REG_REVID_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_REVID_ADDR, 1);
+ 	if (ret < 0)
+ 		goto error_ret;
+ 	dev_info(&indio_dev->dev,
+@@ -575,7 +582,7 @@ static inline int __sca3000_get_base_freq(struct sca3000_state *st,
+ {
+ 	int ret;
+ 
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	switch (SCA3000_REG_MODE_MODE_MASK & st->rx[0]) {
+@@ -665,7 +672,7 @@ static int sca3000_read_3db_freq(struct sca3000_state *st, int *val)
+ {
+ 	int ret;
+ 
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -703,7 +710,7 @@ static int sca3000_write_3db_freq(struct sca3000_state *st, int val)
+ 		mode = SCA3000_REG_MODE_MEAS_MODE_OP_2;
+ 	else
+ 		return -EINVAL;
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -732,7 +739,7 @@ static int sca3000_read_raw(struct iio_dev *indio_dev,
+ 				return -EBUSY;
+ 			}
+ 			address = sca3000_addresses[chan->address][0];
+-			ret = sca3000_read_data_short(st, address, 2);
++			ret = sca3000_read_data(st, address, 2);
+ 			if (ret < 0) {
+ 				mutex_unlock(&st->lock);
+ 				return ret;
+@@ -742,7 +749,7 @@ static int sca3000_read_raw(struct iio_dev *indio_dev,
+ 					     chan->scan_type.realbits - 1);
+ 		} else {
+ 			/* get the temperature when available */
+-			ret = sca3000_read_data_short(st,
++			ret = sca3000_read_data(st,
+ 						      SCA3000_REG_TEMP_MSB_ADDR,
+ 						      2);
+ 			if (ret < 0) {
+@@ -830,7 +837,7 @@ static ssize_t sca3000_read_av_freq(struct device *dev,
+ 	int len = 0, ret, val;
+ 
+ 	mutex_lock(&st->lock);
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	val = st->rx[0];
+ 	mutex_unlock(&st->lock);
+ 	if (ret)
+@@ -969,32 +976,6 @@ static const struct attribute_group sca3000_attribute_group = {
+ 	.attrs = sca3000_attributes,
+ };
+ 
+-static int sca3000_read_data(struct sca3000_state *st,
+-			     u8 reg_address_high,
+-			     u8 *rx,
+-			     int len)
+-{
+-	int ret;
+-	struct spi_transfer xfer[2] = {
+-		{
+-			.len = 1,
+-			.tx_buf = st->tx,
+-		}, {
+-			.len = len,
+-			.rx_buf = rx,
+-		}
+-	};
 -
-> > > 1 file changed, 72 deletions(-)
-> > >
-> >
-> > All this looks good, I checked that those functions indeed are allowed
-> > in bpf_base_func_proto. The only (minor) differences are capabilities,
-> > bpf_base_func_proto() correctly guards some of the helpers with
-> > CAP_BPF and/or CAP_PERFMON checks, while bpf_tracing_func_proto()
-> > doesn't seem to bother (which is either a bug or any tracing prog
-> > implies CAP_BPF and CAP_PERFMON, I'm not sure, didn't check).
-> >
-> > But I think we can take it further and remove even more stuff from
-> > bpf_tracing_func_proto and/or add more stuff into bpf_base_func_proto
-> > (perhaps as a few patches in a series, so it's easier to review and
-> > validate).
-> >
-> > Basically, except for a few custom implementations that depend on
-> > tracing program type (like get_stack and others like that), if
-> > something is OK to call from a tracing program it should be ok to call
-> > from any program type. And as such it can (should?) be added to
-> > bpf_base_func_proto, IMO.
->
-> Is this true? Does it make sense? (See below.)
->
-> > P.S. I'd name the patch/series as "bpf: streamline allowed helpers
-> > between tracing and base sets" or something like that to make the
-> > purpose clearer
-> >
-> > [...]
-> >
-> > > case BPF_FUNC_get_current_uid_gid:
-> > > return &bpf_get_current_uid_gid_proto;
-> > > case BPF_FUNC_get_current_comm:
-> > > return &bpf_get_current_comm_proto;
-> >
-> > I'm surprised these two are not part of bpf_base_func_proto, tbh...
-> > maybe let's move them there while we are cleaning all this up?
->
-> Do these make sense in all BPF program types such that they belong in
-> bpf_base_func_proto? For example, XDP programs don't have a current uid a=
-nd
-> gid, do they?
+-	st->tx[0] = SCA3000_READ_REG(reg_address_high);
+-	ret = spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
+-	if (ret) {
+-		dev_err(&st->us->dev, "problem reading register\n");
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+ /**
+  * sca3000_ring_int_process() - ring specific interrupt handling.
+  * @val: Value of the interrupt status register.
+@@ -1008,7 +989,7 @@ static void sca3000_ring_int_process(u8 val, struct iio_dev *indio_dev)
+ 	mutex_lock(&st->lock);
+ 
+ 	if (val & SCA3000_REG_INT_STATUS_HALF) {
+-		ret = sca3000_read_data_short(st, SCA3000_REG_BUF_COUNT_ADDR,
++		ret = sca3000_read_data(st, SCA3000_REG_BUF_COUNT_ADDR,
+ 					      1);
+ 		if (ret)
+ 			goto error_ret;
+@@ -1017,7 +998,7 @@ static void sca3000_ring_int_process(u8 val, struct iio_dev *indio_dev)
+ 		 * num_available is the total number of samples available
+ 		 * i.e. number of time points * number of channels.
+ 		 */
+-		ret = sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR, st->rx,
++		ret = sca3000_read_data(st, SCA3000_REG_RING_OUT_ADDR,
+ 					num_available * 2);
+ 		if (ret)
+ 			goto error_ret;
+@@ -1060,7 +1041,7 @@ static irqreturn_t sca3000_event_handler(int irq, void *private)
+ 	 * but ensures no interrupt is missed.
+ 	 */
+ 	mutex_lock(&st->lock);
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_STATUS_ADDR, 1);
+ 	val = st->rx[0];
+ 	mutex_unlock(&st->lock);
+ 	if (ret)
+@@ -1121,7 +1102,7 @@ static int sca3000_read_event_config(struct iio_dev *indio_dev,
+ 	/* read current value of mode register */
+ 	mutex_lock(&st->lock);
+ 
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 
+@@ -1164,7 +1145,7 @@ static int sca3000_freefall_set_state(struct iio_dev *indio_dev, bool state)
+ 	int ret;
+ 
+ 	/* read current value of mode register */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1214,7 +1195,7 @@ static int sca3000_motion_detect_set_state(struct iio_dev *indio_dev, int axis,
+ 	}
+ 
+ 	/* read current value of mode register */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		return ret;
+ 	/* if off and should be on */
+@@ -1287,7 +1268,7 @@ int __sca3000_hw_ring_state_set(struct iio_dev *indio_dev, bool state)
+ 	int ret;
+ 
+ 	mutex_lock(&st->lock);
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	if (state) {
+@@ -1322,7 +1303,7 @@ static int sca3000_hw_ring_preenable(struct iio_dev *indio_dev)
+ 	mutex_lock(&st->lock);
+ 
+ 	/* Enable the 50% full interrupt */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_MASK_ADDR, 1);
+ 	if (ret)
+ 		goto error_unlock;
+ 	ret = sca3000_write_reg(st,
+@@ -1353,7 +1334,7 @@ static int sca3000_hw_ring_postdisable(struct iio_dev *indio_dev)
+ 	/* Disable the 50% full interrupt */
+ 	mutex_lock(&st->lock);
+ 
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_MASK_ADDR, 1);
+ 	if (ret)
+ 		goto unlock;
+ 	ret = sca3000_write_reg(st,
+@@ -1383,7 +1364,7 @@ static int sca3000_clean_setup(struct sca3000_state *st)
+ 
+ 	mutex_lock(&st->lock);
+ 	/* Ensure all interrupts have been acknowledged */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_STATUS_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_STATUS_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 
+@@ -1409,7 +1390,7 @@ static int sca3000_clean_setup(struct sca3000_state *st)
+ 	if (ret)
+ 		goto error_ret;
+ 	/* Enable interrupts, relevant to mode and set up as active low */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_MASK_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	ret = sca3000_write_reg(st,
+@@ -1423,7 +1404,7 @@ static int sca3000_clean_setup(struct sca3000_state *st)
+ 	 * Ring in 12 bit mode - it is fine to overwrite reserved bits 3,5
+ 	 * as that occurs in one of the example on the datasheet
+ 	 */
+-	ret = sca3000_read_data_short(st, SCA3000_REG_MODE_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_MODE_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	ret = sca3000_write_reg(st, SCA3000_REG_MODE_ADDR,
+@@ -1510,7 +1491,7 @@ static int sca3000_stop_all_interrupts(struct sca3000_state *st)
+ 	int ret;
+ 
+ 	mutex_lock(&st->lock);
+-	ret = sca3000_read_data_short(st, SCA3000_REG_INT_MASK_ADDR, 1);
++	ret = sca3000_read_data(st, SCA3000_REG_INT_MASK_ADDR, 1);
+ 	if (ret)
+ 		goto error_ret;
+ 	ret = sca3000_write_reg(st, SCA3000_REG_INT_MASK_ADDR,
+-- 
+2.49.0
 
-everything in the kernel, whether NMI handler, hardirq, softirq, or
-whatnot runs with *some* current task. So in that sense there is
-always pid/tgid and uid/gid. It might not be very relevant for XDP
-programs, but it's there, and so if we allow to get current pid/tgid,
-why not allow the current comm and uid/gid?
-
->
-> > pw-bot: cr
-> >
-> > > - case BPF_FUNC_trace_printk:
-> > > - return bpf_get_trace_printk_proto();
-> > > case BPF_FUNC_get_smp_processor_id:
-> > > return &bpf_get_smp_processor_id_proto;
-> >
-> > this one should be cleaned up as well and
-> > bpf_get_smp_processor_id_proto removed. All BPF programs either
-> > disable CPU preemption or CPU migration, so bpf_base_func_proto's
-> > implementation should work just fine (but please do it as a separate
-> > patch)
-> >
-> > > - case BPF_FUNC_get_numa_node_id:
-> > > - return &bpf_get_numa_node_id_proto;
-> > > case BPF_FUNC_perf_event_read:
-> > > return &bpf_perf_event_read_proto;
-> >
-> > [...]
-> >
 
