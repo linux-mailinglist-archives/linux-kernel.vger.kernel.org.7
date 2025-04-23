@@ -1,152 +1,113 @@
-Return-Path: <linux-kernel+bounces-615320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622F3A97BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:19:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABBBA97BA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683F81B6247F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238C71680A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE171EEA4A;
-	Wed, 23 Apr 2025 00:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DFD1F30BE;
+	Wed, 23 Apr 2025 00:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="flgn3bZJ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b="gwdVBpjD"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248DE1EDA36
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55621EDA3F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745367585; cv=none; b=vFS1Hht+Xa+3QpVUKGVeE8JVPCDIWA5QuGkpWjV7bGbl/aB8zHiAIum7jz+3qHYFvdMDrwoGc6LxY24nh34s8HfcAJaisMHinQ5k967O4hOa3t2SNOlTU31cvJvfUt4VQ5S7in0vIE0hQB1I2jbCHRS4GNd/q0s2s2iR9Mq4r1Y=
+	t=1745367618; cv=none; b=ob3FnteyoFFDFzwDmx2YyWLLEGF/oG9ibjesxexbt+TObdkbk0ADe3gK01zOS9ayaI45F4Xi1SrkxMjXpF4gWutHBKdRtXm5tkmWnhSII7lD1mARDEpTmDRCk3/5MknbZ9sU/3exlWIdcE2MPJa7/mdaorQhug+wZ5Pbvy6gixo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745367585; c=relaxed/simple;
-	bh=3kmM2qqgxTVB7JWUywAuVTMZugyRWCYS+tSJARSp1qk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QUSb/Ogi2ZbJSqU4o6CdC56iD7K6Tje26Y+ZLygzFKfodnbKwOfRtj11TOf98VFGDuHsbkvRpyiTynp0X7LFvDhWL68L81ODAO6eojPXvPaFdPourWGxWhjR803+eiKN6qxKP2ouXWkq886naqLTVqSKM/QraiOh+e1eKrB8b/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=flgn3bZJ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47666573242so203811cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 17:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745367583; x=1745972383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H3No/2dtu0+LXKUdzwtUjJdhYkwOoEuO1odhuEfxBQU=;
-        b=flgn3bZJblWYlZ/qM/QY6U67Pg7mkAmysLImwbdGVMfSnA/jbhcxF9IMKuECFroMXu
-         ENWBoXxoWNDm8OvLADbkT1zJvJw1x/nIsuicEh7e43gpUopAKub8vBMNCmjLQ4/wqmzd
-         ZD9Kqc2IDGbyUUEG7HoWFXd2+BWUPcxfETsoI1nK1wiWH51SOsC1LdPOYie8aK/xfGeE
-         rXv4XZpkvzF7reEbzoKQ1BkgPDG7MeVFvnt7kKmE0l4fedoWPDIeN2xjxErSZBCTumGE
-         6tRREYcUYypC+cYWyNzTqI6rELHk6SR6y9CACO7+QOS/0y00QhDl6a/f2pg2ZgNU71Jf
-         b08w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745367583; x=1745972383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H3No/2dtu0+LXKUdzwtUjJdhYkwOoEuO1odhuEfxBQU=;
-        b=sIjrfzt9SVZ94kd3t9RUifMm+MnLPhSfJ1M51fwxBwRykbjUzr1IYUqcLYMT7DyKgo
-         sPjdowRR45/7rNe7OTfdKtvoTcSBWnW0itbtxMpRhAz8cwN+NRLhxRuqVkzvoQVImvNV
-         d01VqGHbnYz3oZr0MrpGGxFJIGMy0eDkLyzFXYnOWX1kN6Ap0TxkZC3YbxS/h4rsKjTv
-         wEVCfL2us29I1wd1JsiprtkSDqoS20sT4YRiNQG9ZIchqsLUw76PX7BA4Dd5TPAoYO1A
-         9g//Y+tpE9oebDP73049ZIs+7bv4SSHcU54ioXDXkGWmwhAl+Ugc/IGLp3A3zNMZHM2B
-         VgNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFNenJ/ASKxhe2pt43MxmC1JHJBvZMtIDxHnszhhtVx6gsPLDOc95kEB0G7SSj8BSma2UZ/CVPPvuI3WE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCD3eXnGW0i9b+jv2VQE4f2UdF8v33DJH1j08T5pdVkaOuGQoJ
-	jZKbbE8gXeqVSLBs0MLUDw0nNrd+TEFumz+LtT1crdN1e4zabz1EhxFADpUIR9Hsm9Ex+XLqzdy
-	Db2YrAzGi8epnGFoG1ZCf23r1KnZ+kf2wjKH/
-X-Gm-Gg: ASbGncsWt4Yob4Ss0O8gMQrUPkrROlaX/lK5yEBrPxTLtx/++gf6T3/rPRGp56+NE2c
-	yt9oW+QuMPQP63uAkLoFtfxvUuwjQXOiNp1QOPZtsGRXPGO4o9J+qsRJ0tbTz0QAxpEOMMGSzZu
-	BmmvxI8phHdFw2q2lUJZ2a2B5q2nWEUc382Ets+q/dkS2rp2rcqo4N2slwIx0SNrI=
-X-Google-Smtp-Source: AGHT+IH7IorgCmV+iTHjEMuegFoDGcglumG/XFNa/8Q0aSWzo413n+eMzU+6LX09zNqmBYpuTFc45XT/cHmnWQol8zM=
-X-Received: by 2002:a05:622a:5106:b0:477:1f57:5493 with SMTP id
- d75a77b69052e-47d139f00e8mr1861481cf.20.1745367582741; Tue, 22 Apr 2025
- 17:19:42 -0700 (PDT)
+	s=arc-20240116; t=1745367618; c=relaxed/simple;
+	bh=bl3djlCh13/JgV2cS+vRgPMrELu/1OX8ds+lNWmeiz4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Yp4Iuo5WgaK3aA1gFLYuIQioDt3E/lF166yirvQFdu0HJtXTtebD6lFFHWv6p24E8TfuAS78/mcVyhDj2lLY3G++hrBzYH31GewPhBnNCpVsIsD2hqd7mP6D2/bW4ozQCaegOOH36vS5knDLcMvfBwt8B+1UFfY3Fjs+qZuAOTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca; spf=pass smtp.mailfrom=gianis.ca; dkim=pass (2048-bit key) header.d=gianis.ca header.i=@gianis.ca header.b=gwdVBpjD; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gianis.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gianis.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gianis.ca;
+	s=protonmail; t=1745367614; x=1745626814;
+	bh=UK+yaoHH+O3rgV/wGr+xWV4QxYCSeYcQk2YWtKSZ3hQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=gwdVBpjDithviqMf8Q5CPNzc9/9dzoVpoQQb251TxqcZySCJwNoBkM0YFaq0TYVMX
+	 4nUZfOYowTAbUZJdFfkrP6ISZ4+Q3mPLP8LtZq9bj+DUS/uALJ+IJ1UUV6GzkzgtUS
+	 xzVdWJzZXif8dhPafkhzZ8jrphXD6vWDA7y7ntPiKB3GmoSrgTPLz6QWllewhhHA8w
+	 sGCEUbCUKWEPYZPaZ7fX1sPTqHFan9n7F7ceRy3gljp/4kGzIy5DEf27dtHthqJUBz
+	 n6agXnoQWZiwcT0PcGAnrTkMS3P1S422G+UQtdHKkPv1p+H60vne+hnuzE+IiHncr2
+	 Fixlk2rI440Ag==
+Date: Wed, 23 Apr 2025 00:20:07 +0000
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+From: "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Cc: linux-kernel@vger.kernel.org, Dhaval Giani <dhaval.giani@amd.com>, Gautham Shenoy <gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Dhaval Giani (AMD)" <dhaval@gianis.ca>
+Subject: [PATCH 0/3] sched/eevdf: Introduce functional invariants for EEVDF
+Message-ID: <20250422-b4-eevdf-tests-v1-post-v1-0-35d158254c72@gianis.ca>
+Feedback-ID: 128275035:user:proton
+X-Pm-Message-ID: fe70808ad1d3b08f57abb991096f9834a9f728a9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bcfb90b2cecf43d7a0760ebaddde10d8@honor.com> <20250422170209.a8beaa8a3610d2e92421476f@linux-foundation.org>
-In-Reply-To: <20250422170209.a8beaa8a3610d2e92421476f@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 22 Apr 2025 17:19:31 -0700
-X-Gm-Features: ATxdqUHmT4ZISXhJZbUGDnKoBch92eAZqzRFMlN3Azi0veRBlQYlRe8wECJBt5g
-Message-ID: <CAJuCfpF4SbPWMgECD89e=QDcrCTNqnchYZ=dpod-cdRxfsCtjA@mail.gmail.com>
-Subject: Re: mm: percpu: increase PERCPU_MODULE_RESERVE to avoid allocation failure
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: gaoxu <gaoxu2@honor.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, yipengxiang <yipengxiang@honor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 5:02=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 22 Apr 2025 11:39:30 +0000 gaoxu <gaoxu2@honor.com> wrote:
->
-> > In android16-6.12, enabling CONFIG_MEM_ALLOC_PROFILING causes some modu=
-les
-> > to fail to load during boot because of failed percpu memory allocation.
->
-> Which modules?  If they're in-tree modules then we should fix this
-> issue in -stable kernels also.
->
-> If they're out-of-tree modules then what argument is there for altering
-> the mainline kernel?
+Introducing test cases for testing invariants for EEVDF. These are based
+of the original tech report available at
+https://citeseerx.ist.psu.edu/document?repid=3Drep1&type=3Dpdf&doi=3D805acf=
+7726282721504c8f00575d91ebfd750564
 
-These are most likely out-of-tree modules from an Android partner.
+There are two invariants being tested here
 
->
-> > [811:modprobe]percpu: allocation failed, size=3D5200 align=3D8 atomic=
-=3D0, alloc
-> > from reserved chunk failed
-> > [811:modprobe]Call trace:
-> > [811:modprobe] dump_backtrace+0xfc/0x17c
-> > [811:modprobe] show_stack+0x18/0x28
-> > [811:modprobe] dump_stack_lvl+0x40/0xc0
-> > [811:modprobe] dump_stack+0x18/0x24
-> > [811:modprobe] pcpu_alloc_noprof+0x96c/0xb58
-> > [811:modprobe] percpu_modalloc+0x50/0xec
-> > [811:modprobe] load_module+0x1158/0x153c
-> > [811:modprobe] __arm64_sys_finit_module+0x23c/0x340
-> > [811:modprobe] invoke_syscall+0x58/0x10c
-> > [811:modprobe] el0_svc_common+0xa8/0xdc
-> > [811:modprobe] do_el0_svc+0x1c/0x28
-> > [811:modprobe] el0_svc+0x40/0x90
-> > [811:modprobe] el0t_64_sync_handler+0x70/0xbc
-> > [811:modprobe] el0t_64_sync+0x1a8/0x1ac
-> > [811:modprobe]ipam: Could not allocate 5200 bytes percpu data
-> >
-> > Increase PERCPU_MODULE_RESERVE to resolve this issue.
-> >
-> > ...
-> >
-> > --- a/include/linux/percpu.h
-> > +++ b/include/linux/percpu.h
-> > @@ -16,7 +16,7 @@
-> >  /* enough to cover all DEFINE_PER_CPUs in modules */
-> >  #ifdef CONFIG_MODULES
-> >  #ifdef CONFIG_MEM_ALLOC_PROFILING
-> > -#define PERCPU_MODULE_RESERVE                (8 << 13)
-> > +#define PERCPU_MODULE_RESERVE                (8 << 14)
-> >  #else
-> >  #define PERCPU_MODULE_RESERVE                (8 << 10)
-> >  #endif
->
-> PERCPU_MODULE_RESERVE is a pretty unpleasant thing.  It appears that it
-> gives us the choice between either wasting memory or failing module
-> loading.  But I expect that something more dynamic would be a ton of work=
-.
+1. This is based of Lemma 1 in the paper, which states that if a task
+has positive lag, it is eligible. We do not test exactly this. Instead
+we test if a task is eligible (which it is, if it is being to run), that
+it has a positive lag.
 
-Allocating this reserved area dynamically would be ideal. OTOH this
-change increases the area size from 64kb to 128kb. Don't know how much
-effort we should put into it.
+2. This test is based of Lemma 2, which states that the sum of the lags
+of all the tasks in the system is zero.
+
+The patch series introduce a debugfs directory with triggers to run
+each test.
+
+This is not meant to enabled in production. This is a development tool
+for scheduler developers
+
+Changes since v1
+- Add a tunable to change number of tasks to check for Lemma 1
+- Remove the recursion in Lemma 2
+- Use functions to detect overflows in Lemma 2
+
+Signed-off-by: Dhaval Giani (AMD) <dhaval@gianis.ca>
+---
+Dhaval Giani (AMD) (3):
+      sched/fair: Introduce a new debugfs directory for EEVDF tests
+      sched/fair: Add a test to test that a task selected to run has positi=
+ve lag
+      sched/fair: Test that the average lag across the system is zero
+
+ include/linux/sched.h      |   7 ++
+ kernel/Kconfig.preempt     |   9 ++
+ kernel/sched/Makefile      |   1 +
+ kernel/sched/debug.c       |   2 +
+ kernel/sched/eevdf-tests.c | 242 +++++++++++++++++++++++++++++++++++++++++=
+++++
+ kernel/sched/fair.c        |   5 +
+ kernel/sched/sched.h       |   9 ++
+ 7 files changed, 275 insertions(+)
+---
+base-commit: c70fc32f44431bb30f9025ce753ba8be25acbba3
+change-id: 20250402-b4-eevdf-tests-v1-post-a7550c4a94cf
+
+Best regards,
+--=20
+Dhaval Giani (AMD) <dhaval@gianis.ca>
+
+
 
