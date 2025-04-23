@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-616408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECAFA98C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:58:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF94A98C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164823ABFC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE931884A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DD11F4628;
-	Wed, 23 Apr 2025 13:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55522500DE;
+	Wed, 23 Apr 2025 13:59:24 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B1E1F4607
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F558F40;
+	Wed, 23 Apr 2025 13:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745416670; cv=none; b=G2HWZNo+nCzsDrHPB/c+7g0d53QOawIRqjxp1RXwAm7S4g39uxMrv9oKgsrDSOAad57EjVcskI1Tp625XJps4y1qF3fx0acGTfPhqndRgKwbmhn9kk5VVAUBT3rGsMT73WpM63psKTzevpqJF5/okKaFXTLLJ/I7J3icUC+8IpI=
+	t=1745416764; cv=none; b=Rhfme/5Tv9iGQ03xNqEZX5wZB9G86xju5ngjljgGQG2nLgfKX9Jr5dvW8Vv9k4+rxMoPI7YYF2rCkEGCy3JYUFCCqEnhFaJAAwFzlMkt0AcwOteZOtjwQWeLGgJUbOCvl0HDgtxOsqqryBHkWSx+5hyEXGLXiJ4Ac2vBe1V6TB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745416670; c=relaxed/simple;
-	bh=vnkLyf6k0QPFzQxJhCH4hV8rAcbflrSoaxIrZeMLXNE=;
+	s=arc-20240116; t=1745416764; c=relaxed/simple;
+	bh=NIsvHkb3YAHcStXHbWWTCowsMopNVZxMx4x+Yl26gZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KO1QcNpUxDeU6dswhJzHplCsjBSPzjhR478yjLjn+SLgqqFdcA33GtB5WMOuu6Kjq9ClO7w8zFT3KNPTj445HR8jzV06gwo0zL4T6TngZu+XgX88zusfg3BX4+pb/SVeC7g34JIIpJJVNzN4kvYa99tg3oEw3eUi2xjVKh/iz8E=
+	 MIME-Version:Content-Type; b=ltk+Vdj/k8w+xmd61nd8bfu9sgD03uHACHwE/DBT9jOT43bH0GMs/6xrpEm/p12OjRTzEM0DDAeURa274boj8+GSfEUys612imp+Lm48X56CJiAY1NSeidjcsOH9NSr+GzVjGLgWQrALBjS2/nlnITQpbB7+1HQfAjZtDSgOiVQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37715C4CEE2;
-	Wed, 23 Apr 2025 13:57:49 +0000 (UTC)
-Date: Wed, 23 Apr 2025 09:59:41 -0400
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1432C4CEE3;
+	Wed, 23 Apr 2025 13:59:22 +0000 (UTC)
+Date: Wed, 23 Apr 2025 10:01:15 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
-To: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- mhiramat@kernel.org, andrii@kernel.org, kernel-team@meta.com,
- linux-kernel@vger.kernel.org, Mykyta Yatsenko <yatsenko@meta.com>, Kees
- Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] maccess: fix strncpy_from_user_nofault empty string
- handling
-Message-ID: <20250423095941.1cab813f@gandalf.local.home>
-In-Reply-To: <08e3ec4c-4401-403e-9d81-5ee0abebba5c@gmail.com>
-References: <20250422131449.57177-1-mykyta.yatsenko5@gmail.com>
-	<20250422172011.feb243d2f7478c0e7109b74c@linux-foundation.org>
-	<08e3ec4c-4401-403e-9d81-5ee0abebba5c@gmail.com>
+To: "Aithal, Srikanth" <sraithal@amd.com>
+Cc: Bert Karwatzki <spasswolf@web.de>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kuniyuki
+ Iwashima <kuniyu@amazon.com>, Mateusz Guzik <mjguzik@gmail.com>, Petr
+ Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
+ Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: commit dd4cf8c9e1f4 leads to failed boot
+Message-ID: <20250423100115.657c68be@gandalf.local.home>
+In-Reply-To: <8f7671cc-32f1-4028-a1b0-c7dccf472f76@amd.com>
+References: <20250423115409.3425-1-spasswolf@web.de>
+	<647b9aa4-f46e-4009-a223-78bfc6cc6768@amd.com>
+	<20250423094655.2a0e25e0@gandalf.local.home>
+	<8f7671cc-32f1-4028-a1b0-c7dccf472f76@amd.com>
 X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,22 +54,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Apr 2025 12:37:46 +0100
-Mykyta Yatsenko <mykyta.yatsenko5@gmail.com> wrote:
+On Wed, 23 Apr 2025 19:17:43 +0530
+"Aithal, Srikanth" <sraithal@amd.com> wrote:
 
-> > Does this fix any known runtime issue?  If so, please fully describe this?  
-> Not that I'm aware of. The issue could be found when trying to copy empty
-> user space string in BPF program (and relying on return value).There are 
-> some usage of
-> `strncpy_from_user_nofault` in tracing subsystem, but I'm not sure how to
-> hit those code paths.
-> >  
+> On todays linux-next build the commit id is 
+> c8943bdecfc76711f83241e21da9d4530f872f0d.
 
-Although your patch found a bug in the tracing subsystem, this wasn't the
-cause. It only cared if the read faulted or not. It was incorrectly
-checking for zero as non fault when in reality, it needed to check >= 0.
+Which is why you should always state the subject of the commit and not only
+use the sha of the commit.
 
-With that fixed, it should work the same with or without this patch.
+Thanks,
 
 -- Steve
 
