@@ -1,172 +1,158 @@
-Return-Path: <linux-kernel+bounces-616492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D214A98D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D2AA98D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A6E442AF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7AC440A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A04280A21;
-	Wed, 23 Apr 2025 14:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4505628136F;
+	Wed, 23 Apr 2025 14:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kghucQGA"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="TWoHECXV"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90072279790
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B34280CD2;
+	Wed, 23 Apr 2025 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745419559; cv=none; b=d4E/6G76+/bdT/ae8KMHPwUK2iB32P+XVLcTgjUkU6/o5r0i+rDuPpiMKHqUIPXF7ySBGOJ0I/WlQdDw/NzfUoVCZ7XN5xJrsg7xwv3hupzL48IHfzFnSv/dwgRm7Pp7Fin8oC0giOGnizCSyM2wMzwvorT1zH7Y61DBWqycQ/A=
+	t=1745419568; cv=none; b=aKK2i5fIW6xm9iV2zOmGa2o5+VNMDj7Ag9NPhX1Yb3xU+bXbB6CNgsM91lA8hs7L2L4GJpyOIur2v+5Fx+Qd32DEPLZIx0/1DzrP9fKE02JPNYvpWyAgM4ecb55B0/4tYcVPj35okG9pFtbDZ4jgQUs9NdL8l848mOzY6gN/u3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745419559; c=relaxed/simple;
-	bh=WuJs1L8beWP8qPqs8QhESGttVeHCU6eXpL36rcMevaQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VR7+u1p6qpMnK0JuC7wcKyx+YUoPSXaOnjG/LNK3+Tr0xXAxejBw+NUltO0obAB5Mhw9tqYxvsfxn3VjmL/KzBEbSzJpx5xpMp60JeZgdMyV0QFHAholo9nWr+Z+1Apv9+WoJP2a4MZmFpJTHdVDdiz+Wafq9BAZgeTpMfJNjYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kghucQGA; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86b9d1f729eso2521855241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745419556; x=1746024356; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XVzS4DFXKFHCvPld98KfR1XMwmy5WtS3R3h/ahLL1ME=;
-        b=kghucQGAFAzl+CH+j3gRkyG+1tnVlteutJW/Gxd38uNUbNLO7QZuhf2UYQNtoZ7uia
-         Ay1QMEAP59iA6m6ZqDIb9phM8oaMgkIHzpNqArh/jUGCWyvcq2ONboHeX+v/YX/KFF/i
-         yNQNl5RejYQTpp1ASZbURP7JQxBHPTn+bejHs2BQ1ReuhTsdoXdWfxURYZ02aPQ0Ro7v
-         sYd+E9rdrF3aLhEPhvku+QQ/ODtB3g/QkMEsMFTToc+ODx8/JHe6bTwTxNro703Qrs5T
-         fOU9ec8BwM0r8M6qrlIx+V4r2p2/4zlAnZhqKjIzPAcWbcy0E6vYioxhxyMkt5YiYwRm
-         QY7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745419556; x=1746024356;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XVzS4DFXKFHCvPld98KfR1XMwmy5WtS3R3h/ahLL1ME=;
-        b=sPdTCLm2udhO8HQ82SwnN0wOoywntzIgpbmzoOfwKuOP8qOXJ7lKcwhvkg3tq9R19F
-         DwgjcEy0pnjYWqiIRDcJLHcnKpFfX4fOFe8I2fr5aLepd5upDKzVVlygM5kmjYjZ66Bj
-         W0LTocm3pUV+KWl6aLYoOJbSUguSzJ3qiHaoMmvlvEE94ahKkkThaaQmdzGzrLlQvayL
-         vT+cNO0y4F0iCTZMFBrhQGU4Hn0WbEBXAPANNRuhIWTzzEP3RbMhmr1drgaNh9ROAIqb
-         dR+2npMAg1/POSnyZtOocx1lqSC2PkqzNTMD5x5MtY1IqA1NQsGalU4ApNBNhIOaq2eH
-         Yv/Q==
-X-Gm-Message-State: AOJu0YzCxmC5aFplEgzpPf3iD5kc/YlMC+bDMgd4z70iXQpnQbgfRpqn
-	XP75b90zpplpUlTKph4Z9ruwjnzrEIAbvQR+ePP/GYF+fJWYuFhJf15pRpe61qyJtDngrb16tDt
-	diF+KyCBwvR2ThndLQIn7eARCHPw/a+PlkXdaRNW3Rqu4JD2kjwI=
-X-Gm-Gg: ASbGncsQBGLONUenWCCbu1bjPH3EqTqoV43PXPl77a2JH/uXe1BcDVsL1E/u6ajBoGD
-	0AOJmGDj1bmDUYGGg1s/nqVzKwd6rtMzqfSQtoUno5+cY4//tCvui3Wn9CznDn0YbxHBZewoZqx
-	DgLxxDGG3y/AJEPv8Aj6zA1b+EmoqVCBgZ/e+qx939huD13P52Uvd+NJdn7m39yEzTJ4Q=
-X-Google-Smtp-Source: AGHT+IERRJGw6BAbTzZ7eENF+DT2FWTrJnr1CWFNiPg11ivsYpv0iKhIOifBDRXvHHv1G8kwWKWca5Of8Ul4FmXDow8=
-X-Received: by 2002:a05:6102:3195:b0:4bb:db41:3b6c with SMTP id
- ada2fe7eead31-4cb8012897dmr13504466137.12.1745419556210; Wed, 23 Apr 2025
- 07:45:56 -0700 (PDT)
+	s=arc-20240116; t=1745419568; c=relaxed/simple;
+	bh=xguUTgtQfB5ymNwtCZa/MB5eCO/TXBVnXyGl/tCSe5E=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=GJUIvVoZniig7W06extcwkYAcJmlI7s1Y8jnU1F/pIxnxnmtOBte05Cvy1HRsldjVBcfU+NLx4Ao/eUFrh2PUOkNTahdYtkFsUpvgjXQfKQW1Zp3VdglGRF43aoAv7OBjUmJEkclDRUF/zq2dVogKWKMTD0D+KaAiv58UEPbnUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=TWoHECXV; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (web.docker-mailserver_default [172.18.0.2])
+	by mail.mainlining.org (Postfix) with ESMTPSA id D5499BBAD2;
+	Wed, 23 Apr 2025 14:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1745419564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qt4FkHi2EY45p4uPV+pG4bxirlNtonFL07/CXVit5gw=;
+	b=TWoHECXVZKAY5+HLO5u5if3eku6fLJsTBNmm+T/qN58v4Gf5mlGJIlZpBJ+gA2DWyzfsfG
+	GOYQE93zyxX1Amfgnt1UNJgzoPPpfpr0A5xuV8erHXaOrfi62K0A9sod6d/kW4RRDB7Due
+	+pFhmYBw1Fur2KCgAg2it5U4mcV+1xHFNYPGhp2TaPFUuyImiqd30xUSYWdck+Qsn0J3kj
+	+tcai4piLl0bX6PSLU+eNecBkc2S4CfPx02p9yJcac5IZRhpiLpscC/aQZzf5U5h+h2wZu
+	kN8aV4fU6tyEn0IvhRsG7r+eDp1KKo7B4iwBBuI+YSpH7mdTfeQZfMly16CMpg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 23 Apr 2025 20:15:45 +0530
-X-Gm-Features: ATxdqUFKPsvKE8tS36jt8rkB_HWHxH1SfL5siJ13k1SJ6uSB3Mz80W-5YsuEDvs
-Message-ID: <CA+G9fYtN2ie+YtK3H9mrQ5QqrSCFGGjVbtJcfiYX0oHMVWMn9w@mail.gmail.com>
-Subject: next-20250422: arch/riscv/kernel/vdso/vdso.so.dbg: dynamic
- relocations are not supported
-To: open list <linux-kernel@vger.kernel.org>, 
-	linux-riscv <linux-riscv@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Nam Cao <namcao@linutronix.de>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 23 Apr 2025 16:46:03 +0200
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+ <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Dmitry
+ Baryshkov <lumag@kernel.org>, Adam Skladowski <a_skl39@protonmail.com>,
+ Sireesh Kodali <sireeshkodali@protonmail.com>, Srinivas Kandagatla
+ <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
+ <danct12@riseup.net>
+Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
+In-Reply-To: <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+ <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
+ <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
+Message-ID: <790a0b7537e0b82b70bc4b32612ecee6@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Regressions on riscv tinyconfig and lkftconfig failed with clang-20
-and gcc-13 on the Linux next-20250422 tag onwards.
-
-The defconfig builds pass but tinyconfig and lkftconfig (compat and
-VDSO) failed.
-
-First seen on the next-20250422
- Good: next-20250417
- Bad:  next-20250422..next-20250423
-
-Regressions found on riscv:
-  - build/rv32-clang-20-tinyconfig
-  - build/rv32-clang-20-tinyconfig
-  - build/korg-clang-20-lkftconfig-hardening
-  - build/gcc-13-lkftconfig
-
-Regression Analysis:
- - New regression? Yes
- - Reproducibility? Yes
-
-Build regression: riscv vdso.so.dbg dynamic relocations are not supported
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log riscv
-build errors with gcc
-arch/riscv/kernel/vdso/vdso.so.dbg: dynamic relocations are not supported
-make[3]: *** [arch/riscv/kernel/vdso/Makefile:60:
-arch/riscv/kernel/vdso/vdso.so.dbg] Error 1
-
-build errors with clang
-ld.lld: error: version script assignment of 'LINUX_4.15' to symbol
-'__vdso_getrandom' failed: symbol not defined
-llvm-nm: error: arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg: No
-such file or directory
-ld.lld: error: version script assignment of 'LINUX_4.15' to symbol
-'__vdso_getrandom' failed: symbol not defined
-llvm-objcopy: error:
-'arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg': No such file or
-directory
-arch/riscv/kernel/compat_signal.c:220:28: error: use of undeclared
-identifier 'compat__vdso_rt_sigreturn_offset'
-  220 |         regs->ra = (unsigned long)COMPAT_VDSO_SYMBOL(
-      |                                   ^
-arch/riscv/include/asm/vdso.h:29:42: note: expanded from macro
-'COMPAT_VDSO_SYMBOL'
-   29 |         (void __user *)((unsigned long)(base) +
-compat__vdso_##name##_offset)
-      |                                                 ^
-<scratch space>:317:1: note: expanded from here
-  317 | compat__vdso_rt_sigreturn_offset
-      | ^
-1 error generated.
-
-
-## Source
-* Kernel version: 6.15.0-rc3
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git sha: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
-* Git describe: next-20250422
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/
-* Architectures: riscv
-* Toolchains: clang-20, gcc-13
-* Kconfigs: lkftconfig
-
-## Build riscv
-* Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250422/testrun/28190346/suite/build/test/gcc-13-lkftconfig/details/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/config
-
-## Steps to reproduce on riscv
- - tuxmake --runtime podman --target-arch riscv --toolchain clang-20
---kconfig tinyconfig --kconfig-add rv32_defconfig LLVM=1
- - tuxmake --runtime podman --target-arch riscv --toolchain gcc-13
---kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2w5Fmeq3a09b3torxIis2kurhBY/config
-
---
-Linaro LKFT
-https://lkft.linaro.org
+On 2025-04-23 16:03, Konrad Dybcio wrote:
+> On 4/21/25 10:18 PM, Barnabás Czémán wrote:
+>> From: Dang Huynh <danct12@riseup.net>
+>> 
+>> Add initial support for MSM8937 SoC.
+>> 
+>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+> 
+> [...]
+> 
+>> +			tsens_base1: base1@1d8 {
+>> +				reg = <0x1d8 1>;
+> 
+> The size part should be hex too
+> 
+> [...]
+> 
+>> +				wcss-wlan2-pins {
+>> +					pins = "gpio76";
+>> +					function = "wcss_wlan2";
+>> +					drive-strength = <6>;
+>> +					bias-pull-up;
+>> +
+>> +				};
+>> +
+>> +			};
+> 
+> random newline /\
+> 
+> [...]
+> 
+>> +		mdss: display-subsystem@1a00000 {
+>> +			compatible = "qcom,mdss";
+>> +			reg = <0x01a00000 0x1000>,
+>> +			      <0x01ab0000 0x1040>;
+> 
+> The latter region is 0x3000-long
+> 
+>> +			reg-names = "mdss_phys", "vbif_phys";
+> 
+> Please make reg-names a vertical list too
+> 
+> [...]
+> 
+> 
+>> +		gpu: gpu@1c00000 {
+>> +			compatible = "qcom,adreno-505.0", "qcom,adreno";
+>> +			reg = <0x1c00000 0x40000>;
+> 
+> Please pad the address part to 8 hex digits
+> 
+> [...]
+> 
+>> +			gpu_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-19200000 {
+>> +					opp-hz = /bits/ 64 <19200000>;
+>> +					opp-supported-hw = <0xff>;
+> 
+> The comment from the previous revision still stands
+If i remove opp-supported-hw i will got -22 EINVAL messages and the opp 
+will be not fine.
+> 
+> Konrad
 
