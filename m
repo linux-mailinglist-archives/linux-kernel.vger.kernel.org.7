@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-615778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A390A98223
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E4DA9821D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B6D3A3007
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DAE3188FED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A862857C3;
-	Wed, 23 Apr 2025 07:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DF226AA9B;
+	Wed, 23 Apr 2025 07:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pizUXIS0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObLdY3m0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B637F2749DB;
-	Wed, 23 Apr 2025 07:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C58D27056C;
+	Wed, 23 Apr 2025 07:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394949; cv=none; b=fvgjeM6UqJRDe128h4reBko8ymaDPyeI02kGt9c5O5PBdGQ5ix1JR4pgphJm9ifnkzoH+bc1GSgVglWlOHNN4vV5IIkdHmhLdH7pV9Kj+7caQgjgFApLWavHuUDP1LdDk/F+TZahwbMZjZV+Y75xClGztYZkO4MTKVjCb3G+gDI=
+	t=1745394961; cv=none; b=jRt7DvBXEKvkPq3ytEYJR0gk84H58rCzdlGXQNx/HJMQvnz0stowEOyTjCH2WRxdb+rWYAmLO7jb1abljP8nWWK4CWvVp49dn8y4buXIDM7185ouyLZRRVyEEAfuBYT2+byfFxP1sQU2T7IGX5YLIYvO8Fps9mb/HIt6qiVix3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394949; c=relaxed/simple;
-	bh=FOml+/b/imwGGSqny080hhfuNCDfVvOdmZO95YoEmPE=;
+	s=arc-20240116; t=1745394961; c=relaxed/simple;
+	bh=YbeGJwJcAGjAdYjyTvpCClUTJ2o/Qzlqprcetq20FfM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mZ9UEuo7uUdmgpu78ds25heI3MhahXV9GdBLot3ervpMT9EfC2Ywe94qg5xv0lV9shwX+st8U0vlqCbAkc8bQwItin1/AvmUV7plhCNO4IedZ4o+IIYXMhxv1ow+EGFcSEkH8ur430lQUA88wZfc1hP7JPgejMiH8Ft4OrX3CpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pizUXIS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 598F0C4CEE2;
-	Wed, 23 Apr 2025 07:55:44 +0000 (UTC)
+	 MIME-Version; b=XRELuhEMuhp4zXF10E1T2QarogLVUA2wPHdmiOiv/pxStS0P9WANSw25s+dZtHBq0T0Vgl6uUHe3sKEmvzuwBazCv5JSRmuVQiSUfu/xF9CNwDcjhfIc+3OlvjoiI7URFhNH/kvgbtmVnsj+R28IVhzxkqmZz8QoQE9h5Thl3gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObLdY3m0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9877CC4CEE2;
+	Wed, 23 Apr 2025 07:55:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394949;
-	bh=FOml+/b/imwGGSqny080hhfuNCDfVvOdmZO95YoEmPE=;
+	s=k20201202; t=1745394960;
+	bh=YbeGJwJcAGjAdYjyTvpCClUTJ2o/Qzlqprcetq20FfM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pizUXIS09V4HZRnSBYYlUjnhxPbgdLU/2FnztyA/arI9ftV1t19aEliI0+WMC73g1
-	 uIqjSzGSn22HQcZIFZBF0nT83MOAY3U1Z33xj2GwunIiDV0jgUDUvQcCbWpXOsxwyK
-	 +24zg9Gp+SbclUfbP8V8OJ1XSJx/vbkGC+UaLsu/Nv8tOioHLH9VxhPgdIscnGAhao
-	 RHueUxbCE795cwjQa48NvsnKMWNWjnRqwTN0B77+kX09Cn31jntuCWw25LH5qJnxWx
-	 6MXkC/dP4PA9ojNiDe3AI7MFDkz5RQ5UREAwx5W03xOQtr4/rXqoe1koZK+9PeZ7FU
-	 HFumJ6RsBS4cw==
+	b=ObLdY3m0oQY3GuzW9JfU9eL8oPqLm80oJi+Ezh77oS2yn4fnpWi5n/yLMVoQng1Va
+	 GVcc83hBWaBf8CZnJkYEFYFZL/oOzHA8r398xBJLrgRmSf0gjQ8GxlkLpRc1BjGF7X
+	 IFu7Pj+82gnSd3RHR/1wTa0Sugj/WJJTYwpNeFE6VWbNdLX5PUxHOVae7NCSD2VuII
+	 3wEzGRhnbxbSF5nTJDh1EL9sqc4uiVhGBHX8SgPVGxIx3tulXOMRiuYIJ/tow9qFjA
+	 p8zZM7zPdQJwcuI8i6BSrNL8Fih5TBDKwnCP2h4BfrZ2sEpSs0rNSOAKqFuGjP/7L4
+	 096K8e4hOYQNg==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -59,9 +59,9 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/28] ALSA: riptide: Use pure devres PCI
-Date: Wed, 23 Apr 2025 09:53:37 +0200
-Message-ID: <20250423075346.45907-20-phasta@kernel.org>
+Subject: [PATCH v2 21/28] ALSA: ice: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:39 +0200
+Message-ID: <20250423075346.45907-22-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
 References: <20250423075346.45907-1-phasta@kernel.org>
@@ -83,22 +83,36 @@ pcim_request_all_regions().
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/pci/riptide/riptide.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/ice1712/ice1712.c | 2 +-
+ sound/pci/ice1712/ice1724.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-index 329816f37b76..578be0755b8a 100644
---- a/sound/pci/riptide/riptide.c
-+++ b/sound/pci/riptide/riptide.c
-@@ -1831,7 +1831,7 @@ snd_riptide_create(struct snd_card *card, struct pci_dev *pci)
- 	chip->cif = NULL;
- 	card->private_free = snd_riptide_free;
+diff --git a/sound/pci/ice1712/ice1712.c b/sound/pci/ice1712/ice1712.c
+index 3b0c3e70987b..a8ac14887676 100644
+--- a/sound/pci/ice1712/ice1712.c
++++ b/sound/pci/ice1712/ice1712.c
+@@ -2502,7 +2502,7 @@ static int snd_ice1712_create(struct snd_card *card,
+ 	pci_write_config_word(ice->pci, 0x42, 0x0006);
+ 	snd_ice1712_proc_init(ice);
  
--	err = pci_request_regions(pci, "RIPTIDE");
-+	err = pcim_request_all_regions(pci, "RIPTIDE");
+-	err = pci_request_regions(pci, "ICE1712");
++	err = pcim_request_all_regions(pci, "ICE1712");
  	if (err < 0)
  		return err;
- 	hwport = (struct riptideport *)chip->port;
+ 	ice->port = pci_resource_start(pci, 0);
+diff --git a/sound/pci/ice1712/ice1724.c b/sound/pci/ice1712/ice1724.c
+index 1dc776acd637..be22b159e65a 100644
+--- a/sound/pci/ice1712/ice1724.c
++++ b/sound/pci/ice1712/ice1724.c
+@@ -2491,7 +2491,7 @@ static int snd_vt1724_create(struct snd_card *card,
+ 	pci_set_master(pci);
+ 	snd_vt1724_proc_init(ice);
+ 
+-	err = pci_request_regions(pci, "ICE1724");
++	err = pcim_request_all_regions(pci, "ICE1724");
+ 	if (err < 0)
+ 		return err;
+ 	ice->port = pci_resource_start(pci, 0);
 -- 
 2.48.1
 
