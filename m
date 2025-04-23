@@ -1,166 +1,237 @@
-Return-Path: <linux-kernel+bounces-615572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60AAA97F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE67EA97F93
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0883B6509
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986DD3A6A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB54266F1D;
-	Wed, 23 Apr 2025 06:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3892676D9;
+	Wed, 23 Apr 2025 06:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKUoYKrM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="szjf+beS"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830E2266F00
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FD9223DFB;
+	Wed, 23 Apr 2025 06:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745390568; cv=none; b=aFBs5FM490eorE9U+BA1uVvXpFlAv4zybtBdTY6/Y1w5fCbzwQ8hOth7McyqM4s/2RACVT62m4Rmwh5kXewfuRh8Ru8N3igcY6x0HKqxcr/0RCUt6qd6omTTDce0DY1sHC0UNp81qy+0Qcdx8IkQDmy1PeE/vcQ73fgBiGvKXAM=
+	t=1745390979; cv=none; b=XHZB4jdAhzanslUF368wKPKyG9ZXNTUBWWozfJYdhKsJYjczL0kp/7BUSvAp2DvOBonrd7Wj+Kl/DjWrGEoO6uO9PRM6dajGEgGeC+zjbEhDq5rDvQ0X6BqhktdC2Up5Wizx/EIyo+KhbeEYCzrQZMn8NA6Pcjkk++/+9yrEMlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745390568; c=relaxed/simple;
-	bh=1z9o8ll4AHzFt/k/hmidvON8KqNqYeHpKakhn28WR60=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AFygNxmVZw5964nUxMYq1Zs5iaIQgMHTIveS60rLUKAXQTJ2RgBZlazxsc6nKLkNJ8oeuHnOAFFca3zrokHu22h8vmbpx4JCE4sAp70Yy4et+QXFgwWxQQC85cRr9fFI++uvFc78Vf7QzEJsuOL6y0niG6y639TtOo7djRG4pUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKUoYKrM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745390565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=A+IIFd1CyCLzYQbKkS9qdqGwkTTadepQIc+Dm7g0mP0=;
-	b=GKUoYKrM+xf0vIhjWHd2I9iDmIixmuYNAntbcJq87GWTQvkUD7sZTcz20aLEAWF5vskZVi
-	w5svPeTVxetcijgLvvhjant5Zb8hJW2TzRHKYHq5EQKsL+7Da80mx7kL+rPiPaBYfPgTa3
-	9cdmwKqHferq+tuPoQrCzUY2B7dR5Ug=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-VYV_tdGcNvqnP3qzadmipg-1; Wed, 23 Apr 2025 02:42:44 -0400
-X-MC-Unique: VYV_tdGcNvqnP3qzadmipg-1
-X-Mimecast-MFC-AGG-ID: VYV_tdGcNvqnP3qzadmipg_1745390563
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3912539665cso212928f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 23:42:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745390563; x=1745995363;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A+IIFd1CyCLzYQbKkS9qdqGwkTTadepQIc+Dm7g0mP0=;
-        b=k2yvjdzNY7yypQTT067ncDRb7xT1y9DCUTVYfVZMXImbXcTsicjSnq+felcFIc6hJt
-         iqfHIPt+u/r9d2oa7WmmmQZ9AQUcFELcDJaBfcFF5d/jNcxCcPjMbDEp72bTHPX8Ohuv
-         ytmqTZpZElJpXk1uBdTpATXgSy4oKbF55hR7JQ3XmWd7D42LtZc/3mQo2u9lA+qTFZz6
-         wJBeK1ljfi4jzAKP4kjeaAZEiVyzGp6b/p7MMkpJEfucjGogUOTNZM06gRWMW+6yj14c
-         GZIBr/VX1JyPfIlRTBEc8OfN5m4ufW7n5CH5g1nOfbgw6VNZv16K+osBVenh1D+R8lAd
-         Ps+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWlzlNQHAUR7KlITKzyFmt4t6X8ymoOCNWE6RQHjcQTNtok+ecuR6xxtNkQYvYtRQArb8UDrYAMmdHW38w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdevKB7jdzsof11vXVjn51Zzof3vm5Ar1iZMwfOuvJmcLuOfkE
-	82h3tOZhk/6epywN7xEHT/MPW8DPd7MquhueNsMRkfPopBz4jQphDygKvQxP0wnRumvm+pcjZBz
-	p1G/gWbVV5FZC34hqpLY7BsMiKi1lYr02hh8f12lVDQpqpT7kThsjRxNvjY6MDg==
-X-Gm-Gg: ASbGnct1rlgjF3EQn4084OnDdxnffPnckt7bO1dZCijsm2ppJsp66pPgg6Fbhhao1/g
-	aHhc5EHZiRfnMKunceiVRYotH+AA07URvqt0JOZSwpIjeklKGiu//IN70QMORpyUxSRYDZ5SSxc
-	MEiELXhq7BKWs97lAAyCDKaUZ+1EWAmJSxvI+ev/suxe2TAK6EJT266TdUcZvcYigXq6T0TT5YV
-	t9j+RQpKuA6FEGWfseaOFFn1TtqLnfWwRxuDE79RlUumD2pOaJpEhiymZXBJRFICjC28gX3Obpt
-	SWPlmg==
-X-Received: by 2002:a5d:64a4:0:b0:38d:ba8e:7327 with SMTP id ffacd0b85a97d-3a06723c38cmr1327894f8f.8.1745390562742;
-        Tue, 22 Apr 2025 23:42:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfqF3/DnXpz0jT/bVyus2YqORUpTFcY/LdcHG+U6sJT+ZpWhfo0iR0WXLgcAAw16VAtx6A4g==
-X-Received: by 2002:a5d:64a4:0:b0:38d:ba8e:7327 with SMTP id ffacd0b85a97d-3a06723c38cmr1327865f8f.8.1745390562360;
-        Tue, 22 Apr 2025 23:42:42 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4930f1sm17830202f8f.61.2025.04.22.23.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 23:42:41 -0700 (PDT)
-Date: Wed, 23 Apr 2025 02:42:39 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	danielj@nvidia.com, dongli.zhang@oracle.com, eauger@redhat.com,
-	eric.auger@redhat.com, jasowang@redhat.com, jfalempe@redhat.com,
-	maxbr@linux.ibm.com, mst@redhat.com, pasic@linux.ibm.com,
-	quic_zhonhan@quicinc.com, sgarzare@redhat.com,
-	syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com
-Subject: [GIT PULL] virtio, vhost: fixes
-Message-ID: <20250423024239-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1745390979; c=relaxed/simple;
+	bh=lUuKd3ibErYYayL//vzQvPhmAbfz1EX03LJr3UQb6yU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwuBaihxp87aEG3inT6hia6uanKUc2bk8XrodeIE8W5uioh+RjhtiHJXqs1pThvi7Jvn2FTrspoW4ePYwZYxynr98hKhSNnHueW5Z7GsMglLdde244PIMhsc2D3HkcOwSY6GhsN/o8blxIVXdZkyObbMZpLU+CJi1W5JSLNJl2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=szjf+beS; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1745390967; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JGm9lYL8xvhbTj7FN+hg66vA+WW9yw+RDmjxEEjhhuQ=;
+	b=szjf+beSqHvZ4+g3t4cv+4oZdDBgNPLWxKUB8YHjKzNnALpNIxRsLbkC6Ch1yMee9MD03ClrtYkS4/yzAP/kJfofzEwtXeCPbXTePp4ql5pxoZIBXB7d46QmerHCRvPPxdpLUngYTkABtFF/xPdm/2iwCpNZB+dKiE/hXRS+mds=
+Received: from 30.74.144.121(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WXtRz4h_1745390641 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 23 Apr 2025 14:44:02 +0800
+Message-ID: <a881ed65-351a-469f-b625-a3066d0f1d5c@linux.alibaba.com>
+Date: Wed, 23 Apr 2025 14:44:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] introduce khugepaged_collapse_single_pmd to
+ unify khugepaged and madvise_collapse
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
+ baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
+ peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+ usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+ cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250417000238.74567-1-npache@redhat.com>
+ <20250417000238.74567-2-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250417000238.74567-2-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
 
-  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
 
-are available in the Git repository at:
+On 2025/4/17 08:02, Nico Pache wrote:
+> The khugepaged daemon and madvise_collapse have two different
+> implementations that do almost the same thing.
+> 
+> Create khugepaged_collapse_single_pmd to increase code
+> reuse and create an entry point for future khugepaged changes.
+> 
+> Refactor madvise_collapse and khugepaged_scan_mm_slot to use
+> the new khugepaged_collapse_single_pmd function.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+Can you add a prefix 'khugepaged:' for the subject line?
 
-for you to fetch changes up to 58465d86071b61415e25fb054201f61e83d21465:
+> ---
+>   mm/khugepaged.c | 92 ++++++++++++++++++++++++-------------------------
+>   1 file changed, 46 insertions(+), 46 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index b8838ba8207a..cecadc4239e7 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -2363,6 +2363,48 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+>   }
+>   #endif
+>   
+> +/*
+> + * Try to collapse a single PMD starting at a PMD aligned addr, and return
+> + * the results.
+> + */
+> +static int khugepaged_collapse_single_pmd(unsigned long addr,
+> +				   struct vm_area_struct *vma, bool *mmap_locked,
+> +				   struct collapse_control *cc)
+> +{
+> +	int result = SCAN_FAIL;
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
+> +
+> +	if (thp_vma_allowable_order(vma, vma->vm_flags,
+> +					tva_flags, PMD_ORDER)) {
 
-  vhost-scsi: Fix vhost_scsi_send_status() (2025-04-18 10:08:11 -0400)
+We've already checked the thp_vma_allowable_order() before calling this 
+function, why check again?
 
-----------------------------------------------------------------
-virtio, vhost: fixes
+> +		if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+> +			struct file *file = get_file(vma->vm_file);
+> +			pgoff_t pgoff = linear_page_index(vma, addr);
+> +
+> +			mmap_read_unlock(mm);
+> +			*mmap_locked = false;
+> +			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
+> +							  cc);
+> +			fput(file);
+> +			if (result == SCAN_PTE_MAPPED_HUGEPAGE) {
+> +				mmap_read_lock(mm);
+> +				if (hpage_collapse_test_exit_or_disable(mm))
+> +					goto end;
+> +				result = collapse_pte_mapped_thp(mm, addr,
+> +								 !cc->is_khugepaged);
 
-A small number of fixes.
+why drop the following check?
+if (*result == SCAN_PMD_MAPPED)
+	*result = SCAN_SUCCEED;
 
-virtgpu is exempt from reset shutdown fow now -
-	 a more complete fix is in the works
-spec compliance fixes in:
-	virtio-pci cap commands
-	vhost_scsi_send_bad_target
-	virtio console resize
-missing locking fix in vhost-scsi
-virtio ring - a KCSAN false positive fix
-VHOST_*_OWNER documentation fix
+> +				mmap_read_unlock(mm);
+> +			}
+> +		} else {
+> +			result = hpage_collapse_scan_pmd(mm, vma, addr,
+> +							 mmap_locked, cc);
+> +		}
+> +		if (cc->is_khugepaged && result == SCAN_SUCCEED)
+> +			++khugepaged_pages_collapsed;
+> +	}
+> +end:
+> +	return result;
+> +}
+> +
+>   static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>   					    struct collapse_control *cc)
+>   	__releases(&khugepaged_mm_lock)
+> @@ -2437,33 +2479,9 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>   			VM_BUG_ON(khugepaged_scan.address < hstart ||
+>   				  khugepaged_scan.address + HPAGE_PMD_SIZE >
+>   				  hend);
+> -			if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+> -				struct file *file = get_file(vma->vm_file);
+> -				pgoff_t pgoff = linear_page_index(vma,
+> -						khugepaged_scan.address);
+>   
+> -				mmap_read_unlock(mm);
+> -				mmap_locked = false;
+> -				*result = hpage_collapse_scan_file(mm,
+> -					khugepaged_scan.address, file, pgoff, cc);
+> -				fput(file);
+> -				if (*result == SCAN_PTE_MAPPED_HUGEPAGE) {
+> -					mmap_read_lock(mm);
+> -					if (hpage_collapse_test_exit_or_disable(mm))
+> -						goto breakouterloop;
+> -					*result = collapse_pte_mapped_thp(mm,
+> -						khugepaged_scan.address, false);
+> -					if (*result == SCAN_PMD_MAPPED)
+> -						*result = SCAN_SUCCEED;
+> -					mmap_read_unlock(mm);
+> -				}
+> -			} else {
+> -				*result = hpage_collapse_scan_pmd(mm, vma,
+> -					khugepaged_scan.address, &mmap_locked, cc);
+> -			}
+> -
+> -			if (*result == SCAN_SUCCEED)
+> -				++khugepaged_pages_collapsed;
+> +			*result = khugepaged_collapse_single_pmd(khugepaged_scan.address,
+> +						vma, &mmap_locked, cc);
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+If the khugepaged_collapse_single_pmd() returns a failure caused by 
+hpage_collapse_test_exit_or_disable(), we should break out of the loop 
+according to the original logic. But you've changed the action in this 
+patch, is this intentional?
 
-----------------------------------------------------------------
-Daniel Jurgens (1):
-      virtio_pci: Use self group type for cap commands
-
-Dongli Zhang (3):
-      vhost-scsi: protect vq->log_used with vq->mutex
-      vhost-scsi: Fix vhost_scsi_send_bad_target()
-      vhost-scsi: Fix vhost_scsi_send_status()
-
-Halil Pasic (1):
-      virtio_console: fix missing byte order handling for cols and rows
-
-Maximilian Immanuel Brandtner (1):
-      virtio_console: fix order of fields cols and rows
-
-Michael S. Tsirkin (1):
-      virtgpu: don't reset on shutdown
-
-Stefano Garzarella (2):
-      vhost: fix VHOST_*_OWNER documentation
-      vhost_task: fix vhost_task_create() documentation
-
-Zhongqiu Han (1):
-      virtio_ring: Fix data race by tagging event_triggered as racy for KCSAN
-
- drivers/char/virtio_console.c        |  7 ++--
- drivers/gpu/drm/virtio/virtgpu_drv.c |  9 +++++
- drivers/vhost/scsi.c                 | 74 +++++++++++++++++++++++++++---------
- drivers/virtio/virtio.c              |  6 +++
- drivers/virtio/virtio_pci_modern.c   |  4 +-
- drivers/virtio/virtio_ring.c         |  2 +-
- include/linux/virtio.h               |  3 ++
- include/uapi/linux/vhost.h           |  4 +-
- include/uapi/linux/virtio_pci.h      |  1 +
- kernel/vhost_task.c                  |  2 +-
- 10 files changed, 85 insertions(+), 27 deletions(-)
-
+>   
+>   			/* move to next address */
+>   			khugepaged_scan.address += HPAGE_PMD_SIZE;
+> @@ -2783,36 +2801,18 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
+>   		mmap_assert_locked(mm);
+>   		memset(cc->node_load, 0, sizeof(cc->node_load));
+>   		nodes_clear(cc->alloc_nmask);
+> -		if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+> -			struct file *file = get_file(vma->vm_file);
+> -			pgoff_t pgoff = linear_page_index(vma, addr);
+>   
+> -			mmap_read_unlock(mm);
+> -			mmap_locked = false;
+> -			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
+> -							  cc);
+> -			fput(file);
+> -		} else {
+> -			result = hpage_collapse_scan_pmd(mm, vma, addr,
+> -							 &mmap_locked, cc);
+> -		}
+> +		result = khugepaged_collapse_single_pmd(addr, vma, &mmap_locked, cc);
+> +
+>   		if (!mmap_locked)
+>   			*prev = NULL;  /* Tell caller we dropped mmap_lock */
+>   
+> -handle_result:
+>   		switch (result) {
+>   		case SCAN_SUCCEED:
+>   		case SCAN_PMD_MAPPED:
+>   			++thps;
+>   			break;
+>   		case SCAN_PTE_MAPPED_HUGEPAGE:
+> -			BUG_ON(mmap_locked);
+> -			BUG_ON(*prev);
+> -			mmap_read_lock(mm);
+> -			result = collapse_pte_mapped_thp(mm, addr, true);
+> -			mmap_read_unlock(mm);
+> -			goto handle_result;
+> -		/* Whitelisted set of results where continuing OK */
+>   		case SCAN_PMD_NULL:
+>   		case SCAN_PTE_NON_PRESENT:
+>   		case SCAN_PTE_UFFD_WP:
 
