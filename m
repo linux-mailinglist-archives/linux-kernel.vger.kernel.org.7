@@ -1,99 +1,94 @@
-Return-Path: <linux-kernel+bounces-616627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C71A9942E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E97A993F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619639A45F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5D91B87E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CE52989A3;
-	Wed, 23 Apr 2025 15:32:53 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517E028D834;
+	Wed, 23 Apr 2025 15:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJJkdLwJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D36528A1F9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00AF28CF7E;
+	Wed, 23 Apr 2025 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422372; cv=none; b=XGmxdKG/TNnFeXPBIOeSucnIke1gzrxRJJhkEW1b0GwliduLTS5C9xAbw20KesINfNrzDuE3/hMurXGZGOGPtNKVA0eR5I82LT1oVU6FXoX/lya+4dm84mZP2MchbkQorbGtB3a8s6iaj9u5iCnLxXWNGWCf3UWSjhnB0DR4zZA=
+	t=1745422669; cv=none; b=rb8h8vX12dfWccEATroYWrWSVIUgSjMua/VH+QMfBUpM3yFjfOOY/W31BG5ZpQ9llkYCM+OW0QUavHV8eddYIpAD24dJBYbry+hOtYeOuvl4srLaCWeub6UbDFcs70OQgXANqi7skkuEGOwVUsBN1tKk2+tzvPsCQuHqLB1Cg50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422372; c=relaxed/simple;
-	bh=b9MCldmDA/h5FP9ANGVDKiW5DFZ9EgTsuv73U19O+pc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lDwtSVlQL39oSWJsid7KkCwHro28yqU6gF9sqKOBOgAdPxH7BpkFwpKizN190GGDtWaKdAhcbtgJ1T9nAcGtH3lEtd03mzrgRPJRizg5jeaqYupit8TDGBTJqY57qI/dM1b+1DmiQatVmsQwZdNEbBQajdGG9Gb3mQS4MnLLUMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d817b17661so308805ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:32:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745422370; x=1746027170;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kkd362/q2z1UAxcAa/GgKrwz2Xzk1H/o+cvqHhRxKG0=;
-        b=LzgR/lM9xi5FmG82x1Yc66EbFVvyAAfoN1GXYaoHcyX9y9ggh5lRpNPebrL7HwszDx
-         PZHCJs69Np8aco6SH56cNNOvkMwjmPuNEKf08eGKlgiwBTV0a8SqNr0zf+xSSOc8ThAZ
-         9OWyaE/0dNVeutob0G/FXiJSA4LjdJ92vHu0zo6/st+kXSXAsD0KGSRDJGZ9+N9WjLlD
-         5xhQGk3vY5cPA3r+OUTLQPdab3osw+Od9GEsmc776MH6DBsgyV3MrW4UmTRJTJOBgXQn
-         dW9R4H+DQFDfo0Wt+/oWBKbSii5lUGCzYjtyFvKXaibCdJKAj6BuXeL6Q7Hhx3wthAnt
-         94KA==
-X-Gm-Message-State: AOJu0YzRprqlChAe3I5iJg+pHQk2aY/1xF5YirDWpiwzlNMVGESabXFs
-	OmFa8PoGDUaHxtQM2niuJ8yX1QTS0oQXFLf27QHOMmxmfXiF81pZ86ShWFZ5EPevZmiCLIKfTc2
-	Xgx9zMqkJOBpyzsyAbn0mVSr3K02Ynb+liKg95wSiY8mjUA/6QYBMaPo=
-X-Google-Smtp-Source: AGHT+IEpuxwqtncIh+k1KwUA43O8xx/1auyWPrMQ3YgA9ywlHrLlTXY2jvxl68wp81V0uMEC/a7c8FYpEc4NyWE3oSlEyDJG6TWH
+	s=arc-20240116; t=1745422669; c=relaxed/simple;
+	bh=DYSy+qmwiF957Xw7JoDarN4VF8dIzkd7/mjUvvdeY5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTlNvjw/PsBpiSq0sukujkrkOu+XAhFlBSKJXJVwzi7KSsvJzL7bI9AyFj+t9Rw/M4dmeckcVDpHQMJfPIsaWk2W6TgjFBacjBuD+2wJWBjP+H5ejowTJf6cAYMadLRekYolvBVpbLHBiz8bFl8RKB7eBrpjKyefZX3HUBM/9HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJJkdLwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28FE7C4CEE2;
+	Wed, 23 Apr 2025 15:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745422669;
+	bh=DYSy+qmwiF957Xw7JoDarN4VF8dIzkd7/mjUvvdeY5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJJkdLwJOCMRstGGmc5r5k7rkhC04hkgGDk6y9hYds+TGO5XNWc8qGdeY+wy81xrN
+	 7I7SGj4NeKrWN3/TxicsXBusj0u16vm8S7O8WudeSsjF69QSAA3RpDpLpSusEfIBXn
+	 P8sE8ys/t+ikBkOqHQJ6zYBqGDGXkQk/5rAl78mf2ALmKZCWPBg9WKr28txRcFJAqv
+	 KKW+IKQMTE6jmKpOPAnJ3tcgCwlQ0ISBup3bct9xyQ6/3m4J21nBKAJzZrdvPJcvET
+	 F9zA9HNag8y5dgQVYbd6bcihIvGuFz4n5f0RfTwDAaqbLTy0JGNYCWqR1zHh/xoE/r
+	 q0gnCRcnqHx0g==
+Date: Wed, 23 Apr 2025 10:37:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 3/3] arm64: qcom: sc7280: Move phy, perst to root port
+ node
+Message-ID: <20250423153747.GA563929-robh@kernel.org>
+References: <20250419-perst-v3-0-1afec3c4ea62@oss.qualcomm.com>
+ <20250419-perst-v3-3-1afec3c4ea62@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:250f:b0:3d6:cbed:3305 with SMTP id
- e9e14a558f8ab-3d88ed7c41dmr173161065ab.10.1745422370199; Wed, 23 Apr 2025
- 08:32:50 -0700 (PDT)
-Date: Wed, 23 Apr 2025 08:32:50 -0700
-In-Reply-To: <000000000000736bd406151001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68090822.050a0220.dd94f.01f1.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [crypto?] KMSAN: uninit-value in
- __crc32c_le_base (4)
-From: syzbot <syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250419-perst-v3-3-1afec3c4ea62@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Sat, Apr 19, 2025 at 10:49:26AM +0530, Krishna Chaitanya Chundru wrote:
+> There are many places we agreed to move the wake and perst gpio's
+> and phy etc to the pcie root port node instead of bridge node[1].
+> 
+> So move the phy, phy-names, wake-gpio's in the root port.
+> There is already reset-gpio defined for PERST# in pci-bus-common.yaml,
+> start using that property instead of perst-gpio.
 
-***
+Moving the properties will break existing kernels. If that doesn't 
+matter for these platforms, say so in the commit msg.
 
-Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in __crc32c_le_base (4)
-Author: richard120310@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 614da38e2f7a
-
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
----
- fs/bcachefs/btree_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-index debb0edc3455..dc00c5273ffe 100644
---- a/fs/bcachefs/btree_io.c
-+++ b/fs/bcachefs/btree_io.c
-@@ -115,7 +115,7 @@ static void *btree_bounce_alloc(struct bch_fs *c, size_t size,
- 	BUG_ON(size > c->opts.btree_node_size);
- 
- 	*used_mempool = false;
--	p = kvmalloc(size, __GFP_NOWARN|GFP_NOWAIT);
-+	p = kvzalloc(size, __GFP_NOWARN|GFP_NOWAIT);
- 	if (!p) {
- 		*used_mempool = true;
- 		p = mempool_alloc(&c->btree_bounce_pool, GFP_NOFS);
--- 
-2.43.0
-
+> 
+> [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   | 5 ++++-
+>  arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 5 ++++-
+>  arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       | 5 ++++-
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi           | 6 ++----
+>  4 files changed, 14 insertions(+), 7 deletions(-)
 
