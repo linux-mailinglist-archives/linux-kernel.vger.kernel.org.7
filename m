@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-616572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FCBA99153
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:29:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F789A99081
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5193F1BA165C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:19:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04B497ACE0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934032980CC;
-	Wed, 23 Apr 2025 15:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B458F284666;
+	Wed, 23 Apr 2025 15:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3v3rKRv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="lbDO9Ppy"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA72820C2;
-	Wed, 23 Apr 2025 15:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AC927CB33;
+	Wed, 23 Apr 2025 15:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421144; cv=none; b=vEomUWouwVIk/3MdalCW2Wh+9E3IdeHuOsy62pNpfljyPjzk62EqblelzrqeDJQWYS0+Bb2RW73PHoywzals0Qt4h4dmOGroaQW/IBdCX7KwLmEymEvrZzAXjR+E9ylgdUfuvn8ubHU0s40wYl1d0TrEW2ZC1m3z4rbv2Z9Z0EU=
+	t=1745421219; cv=none; b=ma3IL7fh0uCz5voSVDDLXgdILsR08asLV5Z5MWJO5JDiM0ivnp9VNlA+dEpct7jZO5C7dJG7iBmBmWdxJyig7NYJ1aB40eex2QVC0U+lVetjK9TVubgxYO8VK8r4wgidS/4qtkKKMnLomwQRbywaINM1ROWt4AfRNuzESE6LieE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421144; c=relaxed/simple;
-	bh=zx/Oy6A5lqsXTBmfLcAGRgtyQAq3DSyvj2acgQbiHZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oi9KfaOGP179tWMfo++NdENPtR8S8wcH3tLPFpVP5EfjwhTnQXJBIT2ysa9IFqQLpSdgAV9s0Tfl7bRC1+Iqj+yBJ9iL7rWM4KnQMzRvDJHbkvgt4WyW5xtKPkZShxI70tGhtT3MHJw/Wc6XHcejzChGzdSwHSrye7A53xcvdbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3v3rKRv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D01C4CEE3;
-	Wed, 23 Apr 2025 15:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421144;
-	bh=zx/Oy6A5lqsXTBmfLcAGRgtyQAq3DSyvj2acgQbiHZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q3v3rKRvbDCRGJfaIyHi/pkzwLyfKW/Q5OmN7Tp2CSSl1mLmtDyMsoZnGKDaSw3Hr
-	 c1VyMsbQmPXCpl7HMrKUTzloMBAUTV2L2Okf7JGSQEtXGLRJxjb3e3QiV8N5l7KLx4
-	 SgRA3OB2TohvCyZipNabA1AZ78fwyeAgYuSdHEHrfYs/zQmLs5vPwG9U/l4Xh6o5ch
-	 awi4NHeUstrRkanpy+V6T93PuMi4D+Kkp1oIDWruIo+eVuM1npdUySmBy7HlbezUuA
-	 +LgNDaZbXRJY4JSJMIzkBnxPaNzIm2ZWZeCJBWrUgB5eAADoaQaAU8aAzEQncxtUI3
-	 WQ5Z82Av1ehtQ==
-Date: Wed, 23 Apr 2025 08:12:24 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 05/15] xfs: ignore HW which cannot atomic write a
- single block
-Message-ID: <20250423151224.GC25675@frogsfrogsfrogs>
-References: <20250422122739.2230121-1-john.g.garry@oracle.com>
- <20250422122739.2230121-6-john.g.garry@oracle.com>
- <20250423003823.GW25675@frogsfrogsfrogs>
- <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com>
- <20250423081055.GA28307@lst.de>
- <f27ea8f7-700a-4fb1-b9cd-a0cba04c9e47@oracle.com>
- <20250423083317.GB30432@lst.de>
+	s=arc-20240116; t=1745421219; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p6++vwXz/QCRHfXmKX237gpoKxUihPull4YwkTYoV53p7LWktR2xmqNNKr1ze5dPJtKvjsZZ3nBCnV6sB/J8CC0wQozejCImSfRqb1Zel0wAedrRPdTPUIEdkGMjZpzsmnzgf4gq2XhzrWPPEuLV8aOr+eDqGtbbmxXVOtqKBDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=lbDO9Ppy; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1745421198; x=1746025998; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=lbDO9PpyCw6/XeT9fWfYSItoms/7171/GwSyf+9r9JTpdLcL835dIdo11X1AaWZk
+	 g2qFKsqiVXB1JU2v7foI7CHNXeZ1qp3h8Z7DPU1wozbfu8s8Rc8FAJ1vFOrE0HPhx
+	 u4pOp+QuQTUKsQpmeABXbjF8VJCO++5nB59Yi/0DQv9sUONmjBwydJGsBOP7H/2st
+	 TM4FZDuxO8v30/s75Tx5Nmw4Ino5bBdv+QTPXtOa/LKvSP2S72+XdiWxpdiiOd2JZ
+	 o78tuNiDx7RbRCGiL0VXp5IL4j4zMqtgcxBQe75Cc4pKU3TJw8+7bASs/7A7UCgYD
+	 hst4Tdjl1o/ySdGtSQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.32.99]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbRfv-1ueTYt12hV-00mmrz; Wed, 23
+ Apr 2025 17:13:18 +0200
+Message-ID: <f5ee9a3f-8534-46df-873c-073f61a68fed@gmx.de>
+Date: Wed, 23 Apr 2025 17:13:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423083317.GB30432@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/241] 6.14.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250423142620.525425242@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250423142620.525425242@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:aqrLckR4uCwlgh6/JEaYQP0FOJLWHt9SZpk3kTxgPRM8y2T0w2r
+ lXA+NkLgiXy4ilB7vHJiDnef6cDXvCkC4Jl+dgG/rLrUgk/IyE3z1YNog5KmLOBVvyJdakn
+ To13MbRmgSXgVg0TU2dK0jWmMWxAhtX+mEA9KUUNytPEgXXGFHzM9Yqq+qGZ8afPgHhxhh6
+ KwTMV1jD1IbsYuxGJqJsw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ImHXXAdgq8g=;t1oBT8mUFMrEy2aeGi+oO3fQRWJ
+ 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
+ 50KdhfiJXQ==
 
-On Wed, Apr 23, 2025 at 10:33:17AM +0200, Christoph Hellwig wrote:
-> On Wed, Apr 23, 2025 at 09:28:14AM +0100, John Garry wrote:
-> >> But maybe we should just delay setting the atomic values until later so
-> >> that it can be done in a single pass?  E.g. into xfs_setsize_buftarg
-> >> which then should probably be rename to something like
-> >> xfs_buftarg_setup.
-> >>
-> >
-> > How about just do away with btp->bt_bdev_awu_{min, max} struct members, and 
-> > call bdev_atomic_write_unit_max(mp->m_ddev_targp->bt_bdev) [and same for 
-> > RT] to later to set the mp awu max values at mountfs time? I think that 
-> > would work..
-> 
-> Sounds reasonable.
+Hi Greg
 
-I disagree, leaving the hardware awu_min/max in the buftarg makes more
-sense to me because the buftarg is our abstraction for a block device,
-and these fields describe the atomic write units that we can use with
-that block device.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-IOWs, I don't like dumping even more into struct xfs_mount.  xfs_group
-has an awu_max for the software fallback, xfs_buftarg has an awu_min/max
-for hardware, and even this V8 has yet a third pair of awu_min/max in
-xfs_mount which I think is just the buftarg version but possibly
-truncated.  I find those last two pairs confusing.
+Thanks
 
---D
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
+
 
