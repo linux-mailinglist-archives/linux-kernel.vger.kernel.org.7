@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-615653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C72DA98052
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A89A98066
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F48E19407B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666FE5A0E0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2B826A0B0;
-	Wed, 23 Apr 2025 07:15:29 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95DF2686AF;
+	Wed, 23 Apr 2025 07:16:57 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBDB268C46
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D43419ABDE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392528; cv=none; b=NPC4KEG+wjb1N07u36vyBYvN+9mQabXdWLe4Is/wovuyRXOHAAxTqH7qq3Pw8b/ta6c7lzhrTloxyokbC6MstswB/zLZNgMmidd0EVQlttNCLo+yutMzTKLgajXwRI0J0yBKiNXiTPbJZ5q5nDRgxwe6Pa9SpjM0PFKqW0LvcZc=
+	t=1745392617; cv=none; b=jST+s6uCbt6v1u+eLreAGqhuxydv9KRrxxZxMz8TpzhLfq0rmeVvamKdlrk4zs/os0yRVOHDi8z+FhClmYo7x58YdSqsuEZPyTqDXKz8TqDxN5oYXq2r52OlcG3YzF9xW1LbX6yda92OF2W8pJHAgDQaIR6vlBjiE6DtbGw6pTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392528; c=relaxed/simple;
-	bh=hA8C8wkUGtRRk/EHjUob2kGix5pwVUrNpaC9+vsXIhw=;
+	s=arc-20240116; t=1745392617; c=relaxed/simple;
+	bh=lkzPUJ10gT52uuukb7HPgV/Nh5/UgrSQsaxpNq47X+U=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OAJNJbYaf2fQeGac3nPCH+TwU9PAv3Kk6H3N/ZO6LT6aIo7nd0zZG7DQ5I72NVRA9HDcTA1+5sDRCTnUO76ogUGyXuFLxNMbP9iU5mXrH7hXYntEs9sF7kyAJNgDjsC+HuLDubuJnTfejkL+OHcRouAz2oxNAJ83IXbGphaoy64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+	 MIME-Version:Content-Type; b=HvVK31cwiI+JRdbGmhkr/pPujxwRs+NWQKUmx1Ph8VGufLrVw3WV4NGLX5iipHdF2pwNXWYB9V89IBqYoMc4GEVEoy7DxIW3/nSUW08c+xULHRZZ6lv69l2vyiCPbTMtkdRETP5t9OIAShSZINw8HgenAjZlc3iknKk1V7g03Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1745391830-086e234cd095e40001-xx1T2L
-Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id 1KN34JB33lWzc8KH (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 23 Apr 2025 15:03:50 +0800 (CST)
+X-ASG-Debug-ID: 1745391830-1eb14e386e17140001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx2.zhaoxin.com with ESMTP id t02AG7rUbgqsF5UE (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 23 Apr 2025 15:03:50 +0800 (CST)
 X-Barracuda-Envelope-From: SilviaZhao-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX2.zhaoxin.com
- (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 23 Apr
  2025 15:03:49 +0800
 Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
  ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
  15.01.2507.044; Wed, 23 Apr 2025 15:03:49 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
 Received: from silvia-OptiPlex-3010.Zhaoxin.com (10.29.8.50) by
  ZXBJMBX02.zhaoxin.com (10.29.252.6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -55,10 +55,10 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <louisqi@zhaoxin.com>,
 	<silviazhao@zhaoxin.com>, <cooperyan@zhaoxin.com>, SilviaZhao
 	<silviazhao-oc@zhaoxin.com>
-Subject: [PATCH RESEND 2/3] perf/x86/zhaoxin: Replace open-coded model number with macros
-Date: Wed, 23 Apr 2025 14:35:08 +0800
-X-ASG-Orig-Subj: [PATCH RESEND 2/3] perf/x86/zhaoxin: Replace open-coded model number with macros
-Message-ID: <20250423063509.20996-3-silviazhao-oc@zhaoxin.com>
+Subject: [PATCH RESEND 3/3] perf/x86/zhaoxin: Add Yongfeng support
+Date: Wed, 23 Apr 2025 14:35:09 +0800
+X-ASG-Orig-Subj: [PATCH RESEND 3/3] perf/x86/zhaoxin: Add Yongfeng support
+Message-ID: <20250423063509.20996-4-silviazhao-oc@zhaoxin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250423063509.20996-1-silviazhao-oc@zhaoxin.com>
 References: <20250423063509.20996-1-silviazhao-oc@zhaoxin.com>
@@ -72,13 +72,13 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
  ZXBJMBX02.zhaoxin.com (10.29.252.6)
-X-Moderation-Data: 4/23/2025 3:03:48 PM
-X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Moderation-Data: 4/23/2025 3:03:49 PM
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
 X-Barracuda-Start-Time: 1745391830
 X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
 X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 3716
+X-Barracuda-Scan-Msg-Size: 3315
 X-Barracuda-BRTS-Status: 1
 X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
 X-Barracuda-Spam-Score: -2.02
@@ -90,109 +90,94 @@ X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.140368
 
 From: SilviaZhao <silviazhao-oc@zhaoxin.com>
 
-Replace open-coded family-7 model number in arch/x86/events/zhaoxin/
-core.c with the macros defined in zhaoxin-family.h.
+Add support for Yongfeng which is Zhaoxin's successor microarchitecture
+to Lujiazui.
 
-Zhaoxin used to use non-canonical name for family 7 processors in
-arch/x86/events/zhaoxin/core.c. Replace them with architecture name
-to keep consistent with the macros. Following are the correspondences:
-ZXD -> Wudaokou
-ZXE -> Lujiazui
+Remove PERF_COUNT_HW_CACHE_REFERENCES and PERF_COUNT_HW_CACHE_MISSES
+from global zx_pmon_event_map, since the cache hierarchy was changed
+from Yongfeng, and these pmc event map changed too.
+
+Add PERF_COUNT_HW_BRANCH_INSTRUCTIONS and PERF_COUNT_HW_BRANCH_MISSES
+to global zx_pmon_event_map, since these two event will keep consistent
+for Lujiazui and later.
 
 Signed-off-by: SilviaZhao <silviazhao-oc@zhaoxin.com>
 ---
- arch/x86/events/zhaoxin/core.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ arch/x86/events/zhaoxin/core.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.=
 c
-index 2fd9b0cf9a5e..75e51a3f5438 100644
+index 75e51a3f5438..d7dced6ca934 100644
 --- a/arch/x86/events/zhaoxin/core.c
 +++ b/arch/x86/events/zhaoxin/core.c
-@@ -14,6 +14,7 @@
-=20
- #include <asm/cpufeature.h>
- #include <asm/hardirq.h>
-+#include <asm/zhaoxin-family.h>
- #include <asm/apic.h>
-=20
+@@ -20,15 +20,15 @@
  #include "../perf_event.h"
-@@ -36,7 +37,7 @@ static struct event_constraint zxc_event_constraints[] __=
-read_mostly =3D {
- 	EVENT_CONSTRAINT_END
+=20
+ /*
+- * Zhaoxin PerfMon, used on zxc and later.
++ * Zhaoxin PerfMon, used on Lujiazui and later.
+  */
+ static u64 zx_pmon_event_map[PERF_COUNT_HW_MAX] __read_mostly =3D {
+=20
+ 	[PERF_COUNT_HW_CPU_CYCLES]        =3D 0x0082,
+ 	[PERF_COUNT_HW_INSTRUCTIONS]      =3D 0x00c0,
+-	[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
+-	[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
+ 	[PERF_COUNT_HW_BUS_CYCLES]        =3D 0x0083,
++	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0028,
++	[PERF_COUNT_HW_BRANCH_MISSES]	=3D 0x0029,
  };
 =20
--static struct event_constraint zxd_event_constraints[] __read_mostly =3D {
-+static struct event_constraint wudaokou_event_constraints[] __read_mostly =
-=3D {
+ static struct event_constraint zxc_event_constraints[] __read_mostly =3D {
+@@ -560,6 +560,8 @@ __init int zhaoxin_pmu_init(void)
+ 			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES] =3D 0;
+ 			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES] =3D 0;
+ 			zx_pmon_event_map[PERF_COUNT_HW_BUS_CYCLES] =3D 0;
++			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0;
++			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0;
 =20
- 	FIXED_EVENT_CONSTRAINT(0x00c0, 0), /* retired instructions */
- 	FIXED_EVENT_CONSTRAINT(0x0082, 1), /* unhalted core clock cycles */
-@@ -44,7 +45,7 @@ static struct event_constraint zxd_event_constraints[] __=
-read_mostly =3D {
- 	EVENT_CONSTRAINT_END
- };
+ 			pr_cont("ZXC events, ");
+ 			break;
+@@ -580,6 +582,9 @@ __init int zhaoxin_pmu_init(void)
 =20
--static __initconst const u64 zxd_hw_cache_event_ids
-+static __initconst const u64 wudaokou_hw_cache_event_ids
- 				[PERF_COUNT_HW_CACHE_MAX]
- 				[PERF_COUNT_HW_CACHE_OP_MAX]
- 				[PERF_COUNT_HW_CACHE_RESULT_MAX] =3D {
-@@ -148,7 +149,7 @@ static __initconst const u64 zxd_hw_cache_event_ids
- },
- };
+ 			x86_pmu.event_constraints =3D wudaokou_event_constraints;
 =20
--static __initconst const u64 zxe_hw_cache_event_ids
-+static __initconst const u64 lujiazui_hw_cache_event_ids
- 				[PERF_COUNT_HW_CACHE_MAX]
- 				[PERF_COUNT_HW_CACHE_OP_MAX]
- 				[PERF_COUNT_HW_CACHE_RESULT_MAX] =3D {
-@@ -471,7 +472,7 @@ static const struct x86_pmu zhaoxin_pmu __initconst =3D=
- {
- 	.max_events		=3D ARRAY_SIZE(zx_pmon_event_map),
- 	.apic			=3D 1,
- 	/*
--	 * For zxd/zxe, read/write operation for PMCx MSR is 48 bits.
-+	 * For wudaokou/lujiazui, read/write operation for PMCx MSR is 48 bits.
- 	 */
- 	.max_period		=3D (1ULL << 47) - 1,
- 	.get_event_constraints	=3D zhaoxin_get_event_constraints,
-@@ -573,27 +574,27 @@ __init int zhaoxin_pmu_init(void)
- 			X86_CONFIG(.event =3D 0x0f, .umask =3D 0x04, .inv =3D 0, .cmask =3D 0);
-=20
- 		switch (boot_cpu_data.x86_model) {
--		case 0x1b:
--			memcpy(hw_cache_event_ids, zxd_hw_cache_event_ids,
-+		case ZHAOXIN_FAM7_WUDAOKOU:
-+			memcpy(hw_cache_event_ids, wudaokou_hw_cache_event_ids,
- 			       sizeof(hw_cache_event_ids));
-=20
--			x86_pmu.event_constraints =3D zxd_event_constraints;
-+			x86_pmu.event_constraints =3D wudaokou_event_constraints;
-=20
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
++
  			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0700;
  			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0x0709;
 =20
--			pr_cont("ZXD events, ");
-+			pr_cont("Wudaokou events, ");
+@@ -591,11 +596,26 @@ __init int zhaoxin_pmu_init(void)
+=20
+ 			x86_pmu.event_constraints =3D wudaokou_event_constraints;
+=20
+-			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0028;
+-			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0x0029;
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x0515,
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0x051a,
+=20
+ 			pr_cont("Lujiazui events, ");
  			break;
--		case 0x3b:
--			memcpy(hw_cache_event_ids, zxe_hw_cache_event_ids,
-+		case ZHAOXIN_FAM7_LUJIAZUI:
++		case ZHAOXIN_FAM7_YONGFENG:
++			zx_pmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =3D
++				X86_CONFIG(.event =3D 0x02, .umask =3D 0x01, .inv =3D 0x01,
++						.cmask =3D 0x01);
++
 +			memcpy(hw_cache_event_ids, lujiazui_hw_cache_event_ids,
- 			       sizeof(hw_cache_event_ids));
-=20
--			x86_pmu.event_constraints =3D zxd_event_constraints;
++					sizeof(hw_cache_event_ids));
++
 +			x86_pmu.event_constraints =3D wudaokou_event_constraints;
-=20
- 			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] =3D 0x0028;
- 			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES] =3D 0x0029;
-=20
--			pr_cont("ZXE events, ");
-+			pr_cont("Lujiazui events, ");
- 			break;
++
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES]  =3D 0x051a;
++			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES]      =3D 0;
++
++			pr_cont("Yongfeng events, ");
++			break;
  		default:
  			return -ENODEV;
+ 		}
 --=20
 2.34.1
 
