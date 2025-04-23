@@ -1,64 +1,49 @@
-Return-Path: <linux-kernel+bounces-616555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BB3A99061
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:19:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1796A990A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612768E2C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269373A949E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77C4292930;
-	Wed, 23 Apr 2025 15:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB38293B54;
+	Wed, 23 Apr 2025 15:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dWipDlHi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mvEA8f6w"
+Received: from outbound.pv.icloud.com (p-west1-cluster6-host3-snip4-10.eps.apple.com [57.103.67.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2A2820AF;
-	Wed, 23 Apr 2025 15:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5DA2836A4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.67.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420824; cv=none; b=cBgWr7ulf76TeOUnFfZ9DunNP5Z5DU8z/wXHRIO6foKO/uCgZk0PFwiSxNzr4bCxb0cLMtHw+y0v2cTZYsYqMyZnfBfgt5ZwUAW+J1Ev/1f69+Mu0XMBjgUrZq/sVcjZMBHWQ2+QFI8JxNxvYy2rXmCBJBLpX2Fc0X8J2/EfLKA=
+	t=1745420834; cv=none; b=NMxv97oqsVsC0L7HPdHsv5im1eJ1CFsv8FEYJ7zz9hPZ5FTmCLxvusd8l5LLs9YQnEPIOojipNH7RZjBklze6gAGwhO9q7asK4QMdsNp7eFUWkcBNUe+VwJrWDA4qaRR3/FgOatIrUOVEgWNXA1tQiCjHfGRAqKjblLiL1PUcFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420824; c=relaxed/simple;
-	bh=1IBSmbrEamwkd/uYLGHmz0tlnktc/QQDObId3PwCnwo=;
+	s=arc-20240116; t=1745420834; c=relaxed/simple;
+	bh=ncYCUqrnH4k5DtzAx1ju7n3hv+FcGflODH2JtmcBMIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lv8CB16f4dYO/nPDmxBDh1IZIUacGBsq9to5u7AiH4wI2HW2p4JKAHtnZfx8gBsO584XeL+qfUmhZ3i/O5hb+7F299yuyOYkdSpkkNCiCIAZp6WXTLioKiE/6GjKiPL6w7+4D4hCOKcSUubHvoGjMc/td8TIt9JIrj+FYIyxWi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dWipDlHi; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745420823; x=1776956823;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1IBSmbrEamwkd/uYLGHmz0tlnktc/QQDObId3PwCnwo=;
-  b=dWipDlHic63JJPApLQ405dC1dDjv5d+2IXyuN6RSkg7nGdDpk4ZMzKR/
-   Zdp+tsg/cQw3ZRx+HYet8QcdTrBEU9hmwrKQIPsrqq8K+x9KQICrA8s28
-   lWOHPfuHpPNR7QkOWd/EMgNqGxuvO4+uOoyHhd7AHDc555d9KgsGGau+w
-   B1MS6FoOwyqdW2Jl2ff63nHSdBBwAJezuVYNzjHg/mCuIgf8ZrJuaIWa8
-   ixiiQjX4ItAnR1ALPMbAaHAS0vu40Hl+GOy20sG1w0pwrOkliSwxAnqqC
-   yU9Qs6IOBA4dEWExxsbPeuiNxYOMeYtHFuvH0fbmLqQv8CnEVjjrKot12
-   Q==;
-X-CSE-ConnectionGUID: o4lj1H3WR76hO8eYRqHwDA==
-X-CSE-MsgGUID: nbHfQE3HSKembeNU+nYUEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47147855"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="47147855"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:07:02 -0700
-X-CSE-ConnectionGUID: iDsVbrwbSiG0hLFroBu7Nw==
-X-CSE-MsgGUID: 1WJHMlZ7QNWJ5G37ZY206Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="132256914"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.221.81]) ([10.124.221.81])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:06:59 -0700
-Message-ID: <6211378e-955b-47f4-8688-ec93728f0087@intel.com>
-Date: Wed, 23 Apr 2025 08:06:58 -0700
+	 In-Reply-To:Content-Type; b=cee36KvSzj3UyFetMe8hLuLKUzFZpkwlo+T5xKDeniz1iqpaZcd0c+3GYjLEMpRsEJ7i/SNPqIKN0pYRsDOR7qzuYhi50LHepta1dbIHeQ9N4PB6G7rvAGHbcBaOIDTh2giji6PR8/CcNP6Kbu+6D/oy8xPXtabbLr8xw8NPCd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mvEA8f6w; arc=none smtp.client-ip=57.103.67.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=I7RV8N38I93hHJRFS2/QoJ+fPJKvXSud4F74bGT/hOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=mvEA8f6wqjPBna8m7yl6VxFX8P/N57pMFl+ZahWns9JPq7wx5i6YqnF1QxiSnH2/4
+	 1Yk2J9LehvRYs9vCntN/R0hbY8h+DBSAqpX4kvCqKR3nb/vwsKTJCwrB328/Mige1G
+	 7PniYqj8qGhNJSUf99Eym9/VqegSnvltSIrAqfqlHiM0ZhM66IoWq/m2PgmGncZT4w
+	 g+zlkNqBDrVcMbX3KjX74WKe2oJfIN4zjfEufQPV1OIXJSmFqZNWDHQloc/WJzQ1ZC
+	 sJkDwMG5NdZ+RnvHQGpF2qY4qeECsQF9OqGEkSUQG/7oaCjOYcn964FqNy819MjWPX
+	 w5t3WtoUkv+lw==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id DCF7D180205C;
+	Wed, 23 Apr 2025 15:07:07 +0000 (UTC)
+Message-ID: <2130b658-0c7a-497a-99b4-d3a5c4ecd8eb@icloud.com>
+Date: Wed, 23 Apr 2025 23:07:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,79 +51,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 03/34] x86/msr: Rename rdpmcl() to rdpmcq()
-To: Sean Christopherson <seanjc@google.com>, "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
- virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
- linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
- netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, acme@kernel.org,
- jgross@suse.com, andrew.cooper3@citrix.com, peterz@infradead.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, wei.liu@kernel.org,
- ajay.kaher@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
- luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
- haiyangz@microsoft.com, decui@microsoft.com
-References: <20250422082216.1954310-1-xin@zytor.com>
- <20250422082216.1954310-4-xin@zytor.com> <aAj5F9IZXG7MB0ai@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] serdev: Get serdev controller's name by dev_name()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20250423-fix_serdev-v1-1-26ca3403fd33@quicinc.com>
+ <2025042354-imply-pointy-92e5@gregkh>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aAj5F9IZXG7MB0ai@google.com>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2025042354-imply-pointy-92e5@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: CifquE0U03FnfBqBwURMvSJMjVttTVyB
+X-Proofpoint-ORIG-GUID: CifquE0U03FnfBqBwURMvSJMjVttTVyB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=853 bulkscore=0
+ adultscore=0 phishscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2504230106
 
-On 4/23/25 07:28, Sean Christopherson wrote:
-> Now that rdpmc() is gone, i.e. rdpmcl/rdpmcq() is the only helper, why not simply
-> rename rdpmcl() => rdpmc()?  I see no point in adding a 'q' qualifier; it doesn't
-> disambiguate anything and IMO is pure noise.
+On 2025/4/23 22:35, Greg Kroah-Hartman wrote:
+>> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+>> index eb2a2e58fe78fbbdb5839232936a994bda86d0b4..971651b8e18dcbb5b7983cdfa19e7d60d4cd292b 100644
+>> --- a/drivers/tty/serdev/core.c
+>> +++ b/drivers/tty/serdev/core.c
+>> @@ -783,8 +783,8 @@ int serdev_controller_add(struct serdev_controller *ctrl)
+>>  		goto err_rpm_disable;
+>>  	}
+>>  
+>> -	dev_dbg(&ctrl->dev, "serdev%d registered: dev:%p\n",
+>> -		ctrl->nr, &ctrl->dev);
+>> +	dev_dbg(&ctrl->dev, "%s registered: dev:%p\n",
+>> +		dev_name(&ctrl->dev), &ctrl->dev);
+> dev_dbg() already has the name in it, so why repeat it again?
 
-That makes total sense to me.
+i guess the author wants to print a sentence which is easy to read.
+
+for built in name of dev_dbg(), it always happens at fixed location
+and not where good sentence wants.
+
+actually. drivers/tty/serdev/* have other such usages, for example.
+
+dev_dbg(&serdev->dev, "device %s registered\n", dev_name(&serdev->dev));
+dev_err(&serdev->dev, "Can't add %s, status
+%pe\n",dev_name(&serdev->dev), ERR_PTR(err));
+
 
