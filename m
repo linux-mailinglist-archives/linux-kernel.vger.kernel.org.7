@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-616429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A58A98C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C6A98C76
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21FC443AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F762446209
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9A727979C;
-	Wed, 23 Apr 2025 14:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB662797B8;
+	Wed, 23 Apr 2025 14:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMZmow7D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+2I8o4R"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CA457C9F;
-	Wed, 23 Apr 2025 14:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5443426D4D4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745417356; cv=none; b=ttN2sE8v9jq4oi5O+09zH91vjtnS2unRv8/ra70Cpi3CR5+oeT/Ng8Euyk13YfnuYNdlZ8T9edMWCQHqPVmkETgf1gAW3+tebHwIBpOLh3FlxGbEinKfTHRbv6lVBYc7pPObZt7EIcN4L7/l3UgD5SnvDI1D3psHe8XfNZud0Tw=
+	t=1745417420; cv=none; b=SpPOzHv98WR6vG37R4hWhmDHKwTBXmaxPtZPLG+PQO6k1nQjyq3YTV8+axn6BDx9/HBa2t11mzHwUmT1EuoGa4nCImtmcp51Yc4ESCT6agNBq/KUFgZXjJIRTBo/29rBd4MmIT9bfaJkAcTwJZSTY2/PQPHFGErnfXatYhtrmZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745417356; c=relaxed/simple;
-	bh=dWOG7RGEkSsD3bDbFE9e385tYFW5t5n87RHkOeTFJ2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BI04mA5YK00NrSypY4tDLe59qzOnl7Cy3J9HDEGMI2MdQPGJndu0goJAsIc4du+11WHWeDiLFjpF4WGj5DFMDX5eFFkt4of+dbiHLPKYyaWvetphm5/3to7w2KHANZMZGkIx9SwpHAB5el/1hhjclWSULeDH2Xbh3jCbDcAXutA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMZmow7D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F145C4CEE2;
-	Wed, 23 Apr 2025 14:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745417355;
-	bh=dWOG7RGEkSsD3bDbFE9e385tYFW5t5n87RHkOeTFJ2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dMZmow7DCJnSh3Rs2NF7VXq/Q/gcgKjcJjEJ3lCP9ftu2LVkuFNWzCcFxmTEfLAh+
-	 O26ab7P35o5Qff+n84u/WKNoph7BvCqIyuR2JObEpv8vGg+TpOT43IINELvXtSwjBe
-	 lK3UCWP0vbGft1rdQtrEEQRLRNWD3kMsF6g+90Qg2oZvv8MDzFK4BxNBnIm8+8VF0W
-	 i/fWaBdXzGTHeJ/XqVkmMsGoDdBmhklcI6m4JKxAIEUVUrqN9Zp4Pc/vPLRZMWeSnS
-	 ToKomBeJBj4v7BvqmKJ1DqnB/wg+eSqYilLq6TXcRFvUlcHSgCXj87D9G2GaiTiRGR
-	 /zTseAq4NBK3g==
-Date: Wed, 23 Apr 2025 09:09:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Grzegorz Jaszczyk <jaszczyk@chromium.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	saravanak@google.com, dmaluka@chromium.org, bgrzesik@google.com,
-	jaszczyk@google.com, ilpo.jarvinen@linux.intel.com,
-	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, tnowicki@google.com,
-	mazurekm@google.com, vineethrp@google.com
-Subject: Re: [PATCH v2 2/2] x86/of: add support for reserved memory defined
- by DT
-Message-ID: <20250423140913.GA360030-robh@kernel.org>
-References: <20250418124718.1009563-1-jaszczyk@chromium.org>
- <20250418124718.1009563-3-jaszczyk@chromium.org>
+	s=arc-20240116; t=1745417420; c=relaxed/simple;
+	bh=Dz89GFlN2JljQrIc14AWHN1O2IwJFShFDlgptdkGrjs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ALBRDhAHpaNIa50psUekbfVjKQuAsTPj5uENJZ0gaS9TCBYk3IxOvlGQj4sssaFN52qsZrcIvghtqcO9ugXhpq7bHg+H5fS7fH94kHAu/vIdfRnl8EOOtCWixnV72osI+ldeHA44MJf1OpICPdsTIRxZY9XNvVwPl+qjj+Aolok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S+2I8o4R; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3032f4eca83so5792012a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745417418; x=1746022218; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JRPtkANxs/lxTlYEyf3yKr1v4372m0NJkPrJwTq5HVg=;
+        b=S+2I8o4RHeGcNjW/wa0UHw5nIRfngDWFZTdIxsu8rQ4ZaDzsiVvMLcSUaiCVr0jn//
+         aH+zQxS8XQgk3EFWI2mUD6YqX9GVK+g9LNzyfxr7LAej19LDYD8FOxzVhdXU6TbALyEC
+         n8W1SoSbA6F8WKicjqAbiEcdKRGB3fAHA6BdiUxhwj3wVhWFVFBuV69RJI6EUDpRO6eD
+         wTAqlbdF8nWRqtXVvRAvFj+MPZVRIUDk/LwKceL1vNazRSS9D1EN4f2sY+RCdrjO7M80
+         A+R12MKTU+mr3UnpyA5dU10GceNj5f6GozPtRjLG3BPNg6Q3Ezr/j1wXKn8y6CoCNUVv
+         Tbzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745417418; x=1746022218;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JRPtkANxs/lxTlYEyf3yKr1v4372m0NJkPrJwTq5HVg=;
+        b=hPgK5OC7JZt9oT8kAV1/iPwzuatTr3JTFWibiu/N6JfGeFo24GO0FVfXvt3Vj+k/pZ
+         2iUSiOjM2IgoaMjQdxuxpJVEfheh7G91FjN3WuVZrFysVi7/wcqdZkptCL/rcDb0ldPC
+         95AO+3y10N1Hqv+DEyKNy2UqnHiywHp8RjWZIVbYudXkzT03ChhBcKe5ia+JlesGkFQ4
+         LDR1JMAXpwX/5rSGDQkB8X36BQHEpPJBgCTiTDLei/bkvEIxQUWIInMal+mMjEvVsTpD
+         4GOryJXBrDJZiVtA37Bu+1qPEHvpoeqntVPRA3sH6BDfm3OIymH1zJxlkzAmkuKJEAK6
+         m3+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVu69paMTm+ucwt+lMz35BgPaQhZxI/OY3XU3QRSYJWQw4ur9aaCD5EyNuTnzDtVzm/2OhH+q6jEPL3Ut0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGGZQd/86pN+SmfDphRAh8BHVO4m1fSb31Yzx4e+HyHgeP9SPJ
+	0J/stDWm1LxiHzCrYXuCbwLwMZUAmFeSzYNUMAu4R+M3e3Q4ogz0w0HxBxI8ns54JpfSujUG0II
+	Ngw==
+X-Google-Smtp-Source: AGHT+IGP6Lom1BPKavrHj+L/hYk1rz8ce5XJ1ZecFXItOld7t2WKEYU5e7ilQVFK+tWjHPvfJX12j9p9nXY=
+X-Received: from pjbqd3.prod.google.com ([2002:a17:90b:3cc3:b0:2ff:6e58:8a0a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3146:b0:2ee:e113:815d
+ with SMTP id 98e67ed59e1d1-3087bb5341amr27709612a91.8.1745417418541; Wed, 23
+ Apr 2025 07:10:18 -0700 (PDT)
+Date: Wed, 23 Apr 2025 07:10:17 -0700
+In-Reply-To: <20250423072017.GAaAiUsYzDOdt7cmp2@renoirsky.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250418124718.1009563-3-jaszczyk@chromium.org>
+Mime-Version: 1.0
+References: <20250331143710.1686600-2-sashal@kernel.org> <aAKDyGpzNOCdGmN2@duo.ucw.cz>
+ <aAKJkrQxp5on46nC@google.com> <20250418173643.GEaAKNq_1Nq9PAYf4_@fat_crate.local>
+ <aAKaf1liTsIA81r_@google.com> <20250418191224.GFaAKkGBnb01tGUVhW@fat_crate.local>
+ <aAfQbiqp_yIV3OOC@google.com> <20250422173355.GDaAfTA8GqnGBfDk7G@renoirsky.local>
+ <aAfynEK3wcfQa1qQ@google.com> <20250423072017.GAaAiUsYzDOdt7cmp2@renoirsky.local>
+Message-ID: <aAj0ySpCnHf_SX2J@google.com>
+Subject: Re: CONFIG_X86_HYPERVISOR (was: Re: [PATCH AUTOSEL 5.10 2/6] x86/cpu:
+ Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in
+ a virtual machine)
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Pavel Machek <pavel@denx.de>, Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>, 
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, 
+	x86@kernel.org, thomas.lendacky@amd.com, perry.yuan@amd.com, 
+	mario.limonciello@amd.com, riel@surriel.com, mjguzik@gmail.com, 
+	darwi@linutronix.de, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Apr 18, 2025 at 12:47:18PM +0000, Grzegorz Jaszczyk wrote:
-> From: Grzegorz Jaszczyk <jaszczyk@google.com>
+On Wed, Apr 23, 2025, Borislav Petkov wrote:
+> > Eww.  Optimization to lessen the pain of DR7 interception.  It'd be nice to clean
+> > this up at some point, especially with things like SEV-ES with DebugSwap, where
+> > DR7 is never intercepted.
+> >   arch/x86/include/asm/debugreg.h:        if (static_cpu_has(X86_FEATURE_HYPERVISOR) && !hw_breakpoint_active())
+> >   arch/x86/kernel/hw_breakpoint.c:                 * When in guest (X86_FEATURE_HYPERVISOR), local_db_save()
 > 
-> The DT reserved-memory nodes can be present in DT as described in
-> Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml.
-> Similar to other architecture, which supports DT, there is a need to
-> create reserved memory regions for such nodes.
-> 
-> Additionally, the x86 architecture builds its memory map based on E820
-> description passed by bootloader and not on DT. Since x86 already has
-> some DT support and allows booting with both ACPI and DT at the same
-> time, let's register an arch specific hook which will validate if a
-> reserved-memory region passed by DT is valid (covered by E820 reserved
-> region entry).
-> 
-> Without this check, the reserved memory from DT could be successfully
-> registered, even though such a region could conflict with e820
-> description e.g. it could be described as E820_RAM and could be already
-> used at early x86 boot stage for memblock initialization (which happens
-> before DT parsing).
+> Patch adding it says "Because DRn access is 'difficult' with virt;..."
+> so yeah. I guess we need to agree how to do debug exceptions in guests.
+> Probably start documenting it and then have guest and host adhere to
+> that. I'm talking completely without having looked at what the code does
+> but the "handshake" agreement should be something like this and then we
+> can start simplifying code...
 
-Sorry, I don't get how it conflicts. Wouldn't the E820_RAM be registered 
-with memblock and memblock then handles the conflict (or should).
+I don't know that we'll be able to simplify the code.
 
-Rob
+#DBs in the guest are complex because DR[0-3] aren't context switched by hardware,
+and running with active breakpoints is uncommon.  As a result, loading the guest's
+DRs into hardware on every VM-Enter is undesirable, because it would add significant
+latency (load DRs on entry, save DRs on exit) for a relatively rare situation
+(guest has active breakpoints).
+
+KVM (and presumably other hypervisors) intercepts DR accesses so that it can
+detect when the guest has active breakpoints (DR7 bits enabled), at which point
+KVM does load the guest's DRs into hardware and disables DR interception until
+the next VM-Exit.
+
+KVM also allows the host user to utilize hardware breakpoints to debug the guest,
+which further adds to the madness, and that's not something the guest can change
+or even influence.
+
+So removing the "am I guest logic" entirely probably isn't feasible, because in
+the common case where there are no active breakpoints, reading cpu_dr7 instead
+of DR7 is a significant performance boost for "normal" VMs.
+
+I mentioned SEV-ES+ DebugSwap because in that case DR7 is effectively guaranteed
+to not be intercepted, and so the native behavior of reading DR7 instead of the
+per-CPU variable is likely desirable.  I believe TDX has similar functionality
+(I forget if it's always on, or opt-in).
 
