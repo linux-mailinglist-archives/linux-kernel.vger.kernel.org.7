@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-615310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C05A97B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:11:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D72A97B8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 02:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219B0189FD96
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C3C1B61BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 00:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8659479;
-	Wed, 23 Apr 2025 00:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B410DEC4;
+	Wed, 23 Apr 2025 00:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U+6wmdj4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Onhd3FHc"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5282581
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0D18BEC
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745367077; cv=none; b=gXCQ1j57RKVC9JY8r0PvLsQ7iQiVsvGQCipeFsP0H6p11mYCPyEY0NPHAIpzLN433jvUkzd6FgZrzKmIwLTG1jtSjE6LJC4O1zcp3q3SWGprd66bHqvACZrOR2xRdiX4LpjOwPjP++A8eZHR8s38y7OlUdWIzNkH95bRnfeg9NQ=
+	t=1745367167; cv=none; b=hje5GbJnGdD6yGOo+D3ggQKKykjYWY0ylKoLkdN85YsXfhxRak8rK46nxnqlIAVmVvEeCqCv0kuRUhZbUarilrap+0ErBwRr9auncxHDHNF5AIbRuEhMTt/0XSTO+CspIH8APTnDansPaDNnoqf7TVj/fIe3cWyz9qPIF6EM04E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745367077; c=relaxed/simple;
-	bh=tOdyDpcmSPuna6OVZeVmCsiyEbkbe0V8h/LovKA/HVg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Th/XvIrff4gau6cRb0nlNw76Jr2BJXrqRjQ/ssiOq2+n3jLrQWO0AygfuK7HhGtZdD59BR5wgQNzqGsLuHTHG5tbEg2qtryTYJlcOC9nUryoR+3Ni8/vrzWhZ9HaDLSII4mFXNdZzCMp98Tgp0Vdo7hD3OBENO2Tdn4pGtLZB54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U+6wmdj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE034C4CEE9;
-	Wed, 23 Apr 2025 00:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1745367077;
-	bh=tOdyDpcmSPuna6OVZeVmCsiyEbkbe0V8h/LovKA/HVg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=U+6wmdj42j4fJfaZ4selTaZxFyi3hfSY8e0F/wddiayP8G+UrCEwR4OzOWxy0aAT6
-	 epMr7qCVxhP7G7w3gApscqw87I6WOXG/0xBGC1ld/rX98Ysr6RoWcbzmgc0IINms4I
-	 ymEe5lWvo/4kDTQsd411jX+zROYYUH6FeJA8exy4=
-Date: Tue, 22 Apr 2025 17:11:16 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>
-Cc: Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, Suren
- Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Brendan
- Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan
- <ziy@nvidia.com>
-Subject: Re: [PATCH] mm/page_alloc.c: Avoid infinite retries caused by
- cpuset race
-Message-Id: <20250422171116.f3928045a13205dc1b9a46ea@linux-foundation.org>
-In-Reply-To: <025e3f51-2ab5-bc58-5475-b57103169a82@loongson.cn>
-References: <20250416082405.20988-1-zhangtianyang@loongson.cn>
-	<aAYXP4f417_bx6Is@harry>
-	<025e3f51-2ab5-bc58-5475-b57103169a82@loongson.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745367167; c=relaxed/simple;
+	bh=0Bg7GKhaJNgYElTeYrTXobRx9z3pfoLdQeFBBrjtsAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaJwWlsjlGXTbLMgcelFu8jmFNYOCTfjrxgCMCgRkK/ezSwN8eNR8U2LZFH+1G1mrUA2KO6unLTZe3WxOzvfZ8+YNwiA06DOA5vfCieoRWnx3TJJNqR3Q47CjYo30pW0wi74z3eVqVR7bKaL2ezi58BxH2UufSlb7TKXvDL1Wf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Onhd3FHc; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Apr 2025 17:12:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745367161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=70rBAlR0qVsBxIj85/MzbQ/zQlV/awU58P9W9ld1or0=;
+	b=Onhd3FHccHw6U3RedmsYOTaQfanX3ARpVxQkzwZelGFUvFqD+KHm8pWfNIBTRSpew1k9IQ
+	bviRnZlx5wLa7l3rkcaiuz7ML4dqJoX25D1I8qPAhz5NZAlPylhSdkcQCrF6IbfgQqfVZ2
+	7+MnVCstxmZhj5hIgTre8897ap41Y04=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Michael Larabel <Michael@phoronix.com>
+Cc: Dave Airlie <airlied@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Sebastian Sewior <bigeasy@linutronix.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.15-rc3
+Message-ID: <mhewqdlvb5ahqordw2nuebq7yvsxo7xvdas4vl6gehmbmypcil@v3fn7nzllglj>
+References: <CAHk-=wgjZ4fzDKogXwhPXVMA7OmZf9k0o1oB2FJmv-C1e=typA@mail.gmail.com>
+ <CAPM=9tzj_OBFJNsN9j7nMs4OR3=V9yrPmaH7VvN-KNYUYhf-vQ@mail.gmail.com>
+ <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+KnfDLd-=Mg1BDJxCf80K_=RN0dJy_yp681gf1dQMhtg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 22 Apr 2025 20:10:06 +0800 Tianyang Zhang <zhangtianyang@loongson.cn> wrote:
+Ccing Michael
 
->
-> ...
->
-> >>
-> >> Simultaneously starting multiple cpuset01 from LTP can quickly
-> >> reproduce this issue on a multi node server when the maximum
-> >> memory pressure is reached and the swap is enabled
-> >>
-> >> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> >> ---
-> > What commit does it fix and should it be backported to -stable?
+On Tue, Apr 22, 2025 at 04:37:59PM -0700, Alexei Starovoitov wrote:
+> On Tue, Apr 22, 2025 at 4:01 PM Dave Airlie <airlied@gmail.com> wrote:
 > >
-> > There's a new 'MEMORY MANAGEMENT - PAGE ALLOCATOR' entry (only in
-> > Andrew's mm.git repository now).
+> > > Alexei Starovoitov (2):
+> > >       locking/local_lock, mm: replace localtry_ helpers with
+> > > local_trylock_t type
 > >
-> > Let's Cc the page allocator folks here!
+> > This seems to have upset some phoronix nginx workload
+> > https://www.phoronix.com/review/linux-615-nginx-regression/2
 > 
-> We first identified this issue in 6.6.52-stable , and through root cause 
-> analysis,
-> 
-> it appears the problem may have existed for a significant period.
-> 
-> However It is recommended that the fix should be backported to at least 
-> Linux kernel versions after 6.6-stable
+> 3x regression? wow.
+> Thanks for heads up.
+> I'm staring at the patch and don't see it.
+> Adding more experts.
 
-OK, thanks,
+Hi Michael,
 
-This has been in mm-hotfixes-unstable for six days.  Hopefully we'll
-see some review activity soon (please).
+Can you please share a bit more on your nginx workload and how can we
+reproduce locally? In the mean time, I can try netperf locally to
+reproduce.
 
+I do have some followup optimizations [1, 2] which hopefully are aimed
+for next release but we can try those as well.
+
+[1] https://lkml.kernel.org/r/20250416180229.2902751-1-shakeel.butt@linux.dev
+[2] https://lkml.kernel.org/r/20250410025752.92159-1-shakeel.butt@linux.dev
+
+thanks,
+Shakeel
 
