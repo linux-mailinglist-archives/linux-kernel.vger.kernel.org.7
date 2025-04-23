@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-616334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59B9A98B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:29:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB440A98B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B7363B5351
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC251B63A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2344C16B3B7;
-	Wed, 23 Apr 2025 13:29:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AD29460;
-	Wed, 23 Apr 2025 13:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA01944E;
+	Wed, 23 Apr 2025 13:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uh0FXmMG"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD665339A8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745414967; cv=none; b=ZqES12ClFLhIV1QkolGINE+lB4iSVCKh5mFlgmLX+c5vA2lsUWuAANy/5hjKPwRBAU1U0cwtS+yieRavFAZ77wj9XCQ0Scjzv3VYtdg2MeTXpyzYqRrqufp/V594SjIrSb6aPI2eoziAxjKlzSUgKHHMDNMy5mN8ABS+4LUJh0Q=
+	t=1745415057; cv=none; b=FFkaxjRw3sA1zjtPVyvi6rL/4ojA3bCBSH3uPAYXmpDYm+1r/IOAaEiWOTOCgXP/fLlEo7QHAMLS3uNHPfaeiIkQ5TGK+2/SjCglW9LUeozu04Ec3xK0lEp5Lw4YOaW/zS8fUnNYyR//jOBXBvAP4FGOmnylUd2vtaegzMbMvf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745414967; c=relaxed/simple;
-	bh=8IiNl2CeWD9T7AVvpJ1UnuYq7ckE9s7BVYvdL8mzHY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ncLEb23zsUcQXOkYT5eB2/sRGEs1IXG+HlTzsrB2763jfl7vxCHab+xHIVUmJp1osDGfqIdRO8LkyAeUl/Vy89Tae39q2TVatBpwVoR5ie1fnQb7u98Lm5fUwkVaQYJhZ46QJdcJPrf8Ftq4qDLKBbJLPnlcTkbwinVG1dV7Ybg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A0761063;
-	Wed, 23 Apr 2025 06:29:19 -0700 (PDT)
-Received: from [10.57.74.63] (unknown [10.57.74.63])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D0473F66E;
-	Wed, 23 Apr 2025 06:29:23 -0700 (PDT)
-Message-ID: <b7557def-d0a1-4035-9586-a2651e28ab24@arm.com>
-Date: Wed, 23 Apr 2025 14:29:21 +0100
+	s=arc-20240116; t=1745415057; c=relaxed/simple;
+	bh=+f6xtCOr3qPNZXzy5wQc2bN9/T4ZRVTQ6UKQvq1tPuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OVTtwitBPeKT3nASYGweCYsz4IeJR3OcxsBN9sCOETBRB+VFHAkKit4JwxQg2k/xg5wQ6/0nhwBwXa1XPCldvbegvEoJyirrmsZb/2CKfT5M73agHtnMIomw6dBBIg/KHYoX5t6hdubdBHr++GKJ/O3hffQIqfeKX67hg7paGG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uh0FXmMG; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-401e77e5443so204262b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745415054; x=1746019854; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4L5TNO4YtE2jxiFN/yCn5WrVeYAQNfukr6iFB6Lfgxc=;
+        b=uh0FXmMGxomEzIxQfjQR29eGX2ln4zjh7Jl0MrwBHihx/9CLM5DdV0jHZdI7ULFzPY
+         zr25DKoO3+r+nbQziWkZLrjf9l9Bp7NPc86+sR2W3+pFTqnoxrgToHXy1f3+QDqkuwMr
+         Xb0cWwWBjr/hVEWXv6HNZ4RmZ/a+V6jAdEvsv7V9s7q0WlvhTvVjLlhs+oBnrBzRfKFt
+         pZr68UrXFJbg4PI202lXDO04qXZBfXLLAXan66PvqD9oJlDzaIGh8aSPlYXPovRrrIFP
+         ygT1LriZVD4CgQUy/3rmbQLMnK2QSItUFdz2MOWYy8mM5i6pNfxZYyLDr1/hG/E9zw6A
+         hqCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745415054; x=1746019854;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4L5TNO4YtE2jxiFN/yCn5WrVeYAQNfukr6iFB6Lfgxc=;
+        b=oCqbV8KbUeQ/2UINEK01QM9f7ULn/KNoZh3eqNXD9VbBnNQoj8iWJfyYrebNtrcy5J
+         NXKftgXlektsdScq3/zCORTyrFizpAtResaSkrkdNp9CV0NqAKPkrDBo79GTH/lPbSS2
+         MPIC2Iy7jECPG0rB22d65Y72aFieNVDKEMmTkASc5dlRb5qj0iXmAVIaUy0Erkt8AKoT
+         vaSuetOmqtQJIA7z/b+RAd+AI/qR5qsUOfgFTNQ5sf/Auj4rS6oioLzu4H44gFP+3o6V
+         hZXf+bMO0cUgNbbwQF+5fVxuuMzAP1pskbiOuG8rTb7XwH9NvQAQvRTwcRG7ukcZ1mfR
+         uDaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSfogLfcAIJophDbeqI4Poq7NIISt7Nvgc/BOZQrlDKSZaedaQpQZxP92HnlBhrhYAn44nH5gZZOEjIw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqNRsVNoJtYdwQzk2Z7KxuG8dd/XdzCCJl7jzlEdy4dap5R4Fa
+	YP+imaR2ZnNpdvYAhFiVvYAiQqtVATEIpvOvRHupcvOjt/bTccZXMlvjrQ4pjXzUX3rnv0+0Q0n
+	24cRZvbj4qhrrVC9q/GuUVg/05YAH6k8ziN72
+X-Gm-Gg: ASbGncuSZw8JPG2D90pn5X+zV86qL3xNiEekTFGyGf0SrBSzYWZCI4SYHfOD3+cyFiO
+	r2JKpDagAij+1s+E+Dv2n4+V1IXf86gvj7Ofpio8AzD1/VUQfgImPV1mJzTWEQjukuir/V2DRZ5
+	Vt3K5T8K245XXRhN1bxptJqxu9aNhAfRbu6tsT/QaozR4LH7Ozj+Y=
+X-Google-Smtp-Source: AGHT+IFJ8QPjuWBxnpaVUx/3DhaUd/royzzBXai7qs+Wlr6MWAT8hRsDyWaIvUr5041uAWksA00B1VIsPM44idkA76k=
+X-Received: by 2002:a05:6808:3389:b0:401:e949:6374 with SMTP id
+ 5614622812f47-401e94965eamr224040b6e.16.1745415054538; Wed, 23 Apr 2025
+ 06:30:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: ARM_DMA350 should depend on ARM/ARM64
-To: Vinod Koul <vkoul@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <50dbaf4ce962fa7ed0208150ca987e3083da39ec.1745345400.git.geert+renesas@glider.be>
- <b1f19b31-3535-4bb5-bcef-6f17ad2a0ee6@arm.com>
- <CAMuHMdVJKA8zYETKJTRAwg6=+EuTq4YqbFO32K4+py9YNsD1Gw@mail.gmail.com>
- <aAjTg8dgvxqLQOwQ@vaman>
- <CAMuHMdXQKG0qptWMi169MVBL1S3hPo1TsaOSxWspoHAwRd+fug@mail.gmail.com>
- <aAjaPV/2DSyPAGRB@vaman>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aAjaPV/2DSyPAGRB@vaman>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250416085446.480069-1-glider@google.com> <20250416085446.480069-6-glider@google.com>
+In-Reply-To: <20250416085446.480069-6-glider@google.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 23 Apr 2025 15:30:18 +0200
+X-Gm-Features: ATxdqUEd4B89CtgCh-IpkJ7kUq5K69XFf4rQc1EYsavp22XzPfItwK0vxopKh40
+Message-ID: <CAG_fn=VfLhCNdU7Yu5D_nWuaxF7nU=YVirK2aTPM6h9o2wsy5A@mail.gmail.com>
+Subject: Re: [PATCH 5/7] kcov: add ioctl(KCOV_UNIQUE_ENABLE)
+To: glider@google.com
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-04-23 1:17 pm, Vinod Koul wrote:
-> On 23-04-25, 14:13, Geert Uytterhoeven wrote:
->> Hi Vinod,
->>
->> On Wed, 23 Apr 2025 at 13:48, Vinod Koul <vkoul@kernel.org> wrote:
->>> On 23-04-25, 13:11, Geert Uytterhoeven wrote:
->>>> On Wed, 23 Apr 2025 at 12:59, Robin Murphy <robin.murphy@arm.com> wrote:
->>>>> On 2025-04-22 7:11 pm, Geert Uytterhoeven wrote:
->>>>>> The Arm DMA-350 controller is only present on Arm-based SoCs.
->>>>>
->>>>> Do you know that for sure? I certainly don't. This is a licensable,
->>>>> self-contained DMA controller IP with no relationship whatsoever to any
->>>>> particular CPU ISA - our other system IP products have turned up in the
->>>>> wild paired with non-Arm CPUs, so I don't see any reason that DMA-350
->>>>> wouldn't either.
->>>>
->>>> The dependency can always be relaxed later, when the need arises.
->>>> Note that currently there are no users at all...
+>  void notrace __sanitizer_cov_trace_pc_guard(u32 *guard)
+>  {
+> -       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+> -               return;
+> +       u32 pc_index;
+> +       enum kcov_mode mode = get_kcov_mode(current);
+>
+> -       sanitizer_cov_write_subsequent(current->kcov_state.s.trace,
+> -                                      current->kcov_state.s.trace_size,
+> -                                      canonicalize_ip(_RET_IP_));
+> +       switch (mode) {
+> +       case KCOV_MODE_TRACE_UNIQUE_PC:
+> +               pc_index = READ_ONCE(*guard);
+> +               if (unlikely(!pc_index))
+> +                       pc_index = init_pc_guard(guard);
+> +
+> +               /*
+> +                * Use the bitmap for coverage deduplication. We assume both
+> +                * s.bitmap and s.trace are non-NULL.
+> +                */
+> +               if (likely(pc_index < current->kcov_state.s.bitmap_size))
+> +                       if (test_and_set_bit(pc_index,
 
-Huh? There is now an upstream DT binding, and DTs using that binding 
-most certainly already exist - not least the one I have, but I'm not the 
-only one. We don't have a requirement that bindings must have 
-upstream-supported consumers.
+A promising improvement would be removing the LOCK prefix here by
+changing test_and_set_bit() to __test_and_set_bit().
 
->>> True, but do we have any warnings generated as a result, if there are no
->>> dependency should we still limit a driver to an arch?
->>
->> I am not aware of any warnings (I built it on MIPS yesterday ;-).
->> It is just one more question that pops up during "make oldconfig",
->> and Linus may notice and complain, too...
-
-Well, yeah? It's a new driver for some (relatively) new hardware; every 
-release always adds loads of new drivers for things I don't personally 
-care about, so I press "n" a lot when updating my config, just like I 
-imagine most other people do, Linus included.
-
-> True, give there are no users, lets pick this and drop if we get a non
-> arm user
-
-Well by that logic surely it should just depend on COMPILE_TEST, because 
-there are no ARM or ARM64 "users" either?
-
-FWIW the not-quite-upstream platform I developed on (a custom build of 
-fvp-base-revc with a DMA-350 component added) did happen to be ARM64, as 
-are some other Arm-internal designs and one available SoC that I do know 
-of containing DMA-350; I am not aware of any Linux-capable 32-bit 
-platforms to justify an ARM dependency, so I'd consider that just as 
-arbitrarily pulled out of thin air.
-
-But then to pick another example at random, XILINX_DMA equally has no 
-"users", so please make that depend on something arbitrary as well for 
-consistency; it's only fair.
-
-Thanks,
-Robin.
+> +                                            current->kcov_state.s.bitmap))
+> +                               return;
+> +               /* If the PC is new, write it to the trace. */
+> +               fallthrough;
+> +       case KCOV_MODE_TRACE_PC:
+> +               sanitizer_cov_write_subsequent(current->kcov_state.s.trace,
+> +                                              current->kcov_state.s.trace_size,
+> +                                              canonicalize_ip(_RET_IP_));
+> +               break;
+> +       default:
+> +               return;
+> +       }
+>  }
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard);
 
