@@ -1,190 +1,187 @@
-Return-Path: <linux-kernel+bounces-617017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB1EA99959
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:22:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89CAA99963
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B7946207F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B34922057
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6107326A0FD;
-	Wed, 23 Apr 2025 20:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3199426B978;
+	Wed, 23 Apr 2025 20:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hHQqEXr9"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn7/+6qi"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502DA2701BC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA619268FF6;
+	Wed, 23 Apr 2025 20:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745439724; cv=none; b=r0hG/PAQxqD89h4eLHI3YU/pfvlOF3eYFWp3NgEcr/IEb+tfRjVnn1dPJ8u44vupZO91/gB1GjHHWp4zYGzl7+v8ELbYOPIMpRbqSKGeHOTA1Wz4FsSdj9SqK77JUkWm/2lBr5kruj0GE++whEkGPfpr9Q4wSJMhMVEMkoHdKbI=
+	t=1745439793; cv=none; b=RkyxU2/mRJFAQTokbr1SmRCkXOOHQNkzzK1GLgsIPOjKAZj8/0TzrrTVeTs/TSZ47QuQGOx2RNhaK0qfrMbqxPC2vNF1JilQE5MY8hy45jh7cS/sHaH/iy8LrN2Q/qgDUpQiySzFeMdgZIZPyERhqTHsKKsTdLnngzTP5CpAbc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745439724; c=relaxed/simple;
-	bh=IZnu6wdyPtClzTpUQpTWkf4YSITWNNs3ibqRNmz2PFA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kTzDeqnm8ALCUNlknyCRxfIOLi/VV8x2OJEJyZGOdLXR2kUXPcjArBPpmqtYYCc1E8R/LSgtsi3p8+Cf5gXBr+45w0ypkPwRXrT8TX3sJKh9m5Vk1rhRmq00JmNpmEnaLVBGFg3T/4N0EYo9XH+cuKLnk4FKI70nsyRGoDBYfdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hHQqEXr9; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c7df9b6cso221424b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:22:03 -0700 (PDT)
+	s=arc-20240116; t=1745439793; c=relaxed/simple;
+	bh=9FXiIL8sGXQRZbcF0o7E4cI6TAMvfaP3y1StfzQkbXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XzjyFmHnFlPPWgutBLHvGL/4Hwd2H7DbtExpUHqjEmxRZjFz2RRSlaEhgshgKPg7Ctg6D8DHzf45VqHCXci0fc7StqyhsrzzgV3Pb1cmhUkehvy3bvYVWP3Q6cTqUWPWRPsssTiWwiM5WCiEgbeAKPh81EsOLpxDE/0oq5XtkFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn7/+6qi; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3fea67e64caso170538b6e.2;
+        Wed, 23 Apr 2025 13:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745439722; x=1746044522; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lb5Hj4079cmmz08gkncfU6HRHYwb2cTW68BpAu1pjpA=;
-        b=hHQqEXr9+PCQ4471VW3+obysjcFBHCpHjIV3G5mc7ikxmkVFgjbFw0kd6heprsAb5E
-         4SpRiAMULhDilLQdu5wJZpoGZrGz14err+IAB+Cg+9YjHzAQWuh9TEBAKM6ScOiGhQiV
-         xyfd123JGEHSExNY+Zc4dNGUwQOlQ/AvV+mkiP0r1CP7Nolv+ugWrJsSmMaN2Zz/mRlt
-         LbN6JuQ9354SJozUlEo3yqvZLR80idSITei1f0wBs3JlL0WOerfdZc1PKIMJrthWDXPY
-         2NY6sRGVQRD9cHHYt2YbAv0vc8qS9wFxAdsZZXsglKMujjAAF9Q2RNrl/UMvPSaTRs0M
-         TvDA==
+        d=gmail.com; s=20230601; t=1745439791; x=1746044591; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=97lECeIymX5vGttM40ZC9LxwILKEadxdlNBvDo4t1iE=;
+        b=Yn7/+6qi3HsoQgfOj1vPtUL3AiF09BLevy+xjGkOesiDk+lqkbxusm/oefCd9BzOYJ
+         i1I8qCH9TIcZkXGorDlyj170XiinQE7/um4iInjgpY63Zj9GT3b/JQK0aRPjVhyNFSxI
+         +LF1gBaixlnqvIcTuPSGXSwqDp0YJoZ01zKfJ+qcB/wB6wzMtxhowQg+FwwDjJkAKlPK
+         A+mQheZtYXV3OOKxuNOxPGWL8W73R9WK+r+ggEFFTORXCOxsv2vlQ3iaMznvPLCPKq7b
+         zniPvazekWv0aW7IgbuVWySqyWHkN2Z+0FK9oLuBESmgQ8QLZ+9pxc2aKN/gUeKXZZ56
+         Yuuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745439722; x=1746044522;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lb5Hj4079cmmz08gkncfU6HRHYwb2cTW68BpAu1pjpA=;
-        b=APEs6wRGKoqW2UwisMm5zOY+/blCqQUtaY5XtGNqBikjsZQPlOXY2JbLmlmvsQeNpq
-         5dD9xvh1eBSdEwGnhS3sJNyR/soVh2O5B/ddP6cQTNsjmu+AIpNEAdAZzTlzxpbz98XO
-         ydgfTmT96XR1hxP+tkH3XAvRhy7YOqQrf2O3nUC6tUokiiM60BmpT4tXoJaKxQbJxKoO
-         G0X96tIMku4AD4UeO65+XI7c2WA0okDfdmVfCjc1JqAJierfJqeHbm1YDcSxEWwVXfLc
-         6ylUDAS4QY21ybhpb6EZPnStA2/LcgCNj+KcyBR3i/62WxLM59s+ZAr1fJC1J2bptMpg
-         /0Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZsH15+B88lAIJm0IYSbgOtuvtdhWT83wJTdNzyY9ljJ97b570qDGT5PzSds0evsAPfsposJsx6m8Idg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR68fTCJhiYSnmWQyJHDtl2uTQ5CkZEL0/Z50yWLzcTcncnoHZ
-	AfFhaOr77aNDTrQSYVan16WfprBIweiisY13JZoNQ7UlusQfe/CYHC/VPuue7xnrn9MH/uqo6li
-	e55uGh6D/2/6gGk2acyG/bg==
-X-Google-Smtp-Source: AGHT+IEZQzaRzavelSAVxJna7z3rzv2eWOXWrhC8lNuigMph7H21lihWm3EaY9BgIQuvCBgTk8eHqn8ZKABOoog4TQ==
-X-Received: from pglc21.prod.google.com ([2002:a63:d15:0:b0:b14:9718:f939])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:ce48:b0:1f5:709d:e0c6 with SMTP id adf61e73a8af0-203cbd418efmr30504920637.42.1745439722591;
- Wed, 23 Apr 2025 13:22:02 -0700 (PDT)
-Date: Wed, 23 Apr 2025 13:22:00 -0700
-In-Reply-To: <Z+y2nU7KDmRpuISM@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1745439791; x=1746044591;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=97lECeIymX5vGttM40ZC9LxwILKEadxdlNBvDo4t1iE=;
+        b=P0sPPffJ5JAqH3UTC7/+ExdB4CTCzHMtKeGZi890aIlvSBoq4x8UFuZ0YLX2OCsNOa
+         1W8szcOdYxu2+L8yKAxC1j2xuHTTJBUx8r4gOllu4/UC+miGUH036ulCEmyuQK2sm7L7
+         qa4ZhIhi8JZZEGt54KZREPNDabnhT0FvjKyiRRI9JIzdlJO+PpDeO7j78rqXWh0l4jbq
+         +z/a590mQEMOPqkJeU6thrSmwqPqtpBAmdmBH1nsRmjGAE5rJBwVYPZeKXmoYZnYA0OA
+         MUO7QDy6+bZlxzljB+2NTjX81dSEuXmUjMrgqLOLMPoMvZtLVTNox0XdqBw7av8vyaV9
+         jTqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUOzv61KHrmWhbkDrdfUR2WKep1Gyp/iAo013/Uvofstlw45wzO0YjX8l0I3zyuWoox8siU4sUNKls8CgU@vger.kernel.org, AJvYcCVhEm0TiumLmIAwYmvFgt5zimidTxWIf+6SA9C85n3RUaAqSFjxZoaXWKuQ98HzU6BoL8XOtMnUloRY@vger.kernel.org, AJvYcCW1fvHxsZrFamFBWH3H0jbZV3almgRnSrJDa3VMTPDdZ2jeysJAG/lEWPFOBuQ7D4b7v+NBx3rwlcQ=@vger.kernel.org, AJvYcCWbQnuTZPytgqvX5ZlHtV+7qJCwyxdLpTRU+faSlc0Tti+8PaU+X/0j33ThvPZF6t1iIIFQO0hgFdCogqzeyg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY7H4CStUG1/7GzqRL4YMm38REYxLpp1+tHCRl8/qj9Aa08ogN
+	XNmlfCvY3Mz97ino+YRDzZFzADWYYRcoI+CWkFYHum2GntdHOnpG
+X-Gm-Gg: ASbGncs0jyIpwH4t29MjPBf7FSxxpZJrmjxYzDrtA9Gt8Wu33pQoLbB6RYGoMGtLdTU
+	S/+kjSJb3qpVgmyymxUzTTJGH65jqINRH+gYM9sdnRUD8kVkq5VQYfZVmMLuZSi4cXXAo7DJK+q
+	bEZEFD+XcFH/wXzeuTqbMl7lpxoQh2vHVpeldn5tbokBvTAiFoMZAh01OxlNGmj5aTSjYjb3dm1
+	6icetdSPZfP/9Gw7wmneri+9XdanLwKDaVL6ZDScmYljh6VOY04OnRlxmcDnP+xRkGEtILw1yT2
+	s+Bxdemz9cc3vlO+yQ7V199oR8pZsLVj0NVD2yljaAlzdUN/HTf3qJCO7jAa
+X-Google-Smtp-Source: AGHT+IGEiSY1ULEDyb+dL3+puS1rpFXM4in/5b9Ry3B8H9erXdcwyUm6OyQs+f8oqghalhCsVGHxEQ==
+X-Received: by 2002:a05:6808:384a:b0:3f9:56ff:1468 with SMTP id 5614622812f47-401eb2570bamr216304b6e.24.1745439790720;
+        Wed, 23 Apr 2025 13:23:10 -0700 (PDT)
+Received: from Borg-550.local ([2603:8080:1500:3d89:44cc:5f45:d31b:d18f])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-401becc2294sm2790759b6e.0.2025.04.23.13.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 13:23:10 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Wed, 23 Apr 2025 15:23:07 -0500
+From: John Groves <John@groves.net>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC PATCH 10/19] famfs_fuse: Basic fuse kernel ABI enablement
+ for famfs
+Message-ID: <qjwm7z3zr4njddcbnt4dqbl3zof4nck5ovfysdopeogcmizsn7@7fei7dldwe6x>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-11-john@groves.net>
+ <CAJnrk1aROUeJY2g8vHtTgVc=mb+1+7jhJE=B3R0qV_=o6jjNTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1726009989.git.ackerleytng@google.com> <d1940d466fc69472c8b6dda95df2e0522b2d8744.1726009989.git.ackerleytng@google.com>
- <Z+y2nU7KDmRpuISM@yzhao56-desk.sh.intel.com>
-Message-ID: <diqzselyzl07.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 13/39] KVM: guest_memfd: Make guest mem use guest mem
- inodes instead of anonymous inodes
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
-	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
-	fvdl@google.com, jthoughton@google.com, seanjc@google.com, 
-	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com, 
-	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev, 
-	mike.kravetz@oracle.com, erdemaktas@google.com, vannapurve@google.com, 
-	qperret@google.com, jhubbard@nvidia.com, willy@infradead.org, 
-	shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
-	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
-	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
-	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
-	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-fsdevel@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1aROUeJY2g8vHtTgVc=mb+1+7jhJE=B3R0qV_=o6jjNTA@mail.gmail.com>
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+On 25/04/22 06:36PM, Joanne Koong wrote:
+> On Sun, Apr 20, 2025 at 6:34 PM John Groves <John@groves.net> wrote:
+> >
+> > * FUSE_DAX_FMAP flag in INIT request/reply
+> >
+> > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+> >   famfs-enabled connection
+> >
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  fs/fuse/fuse_i.h          | 3 +++
+> >  fs/fuse/inode.c           | 5 +++++
+> >  include/uapi/linux/fuse.h | 2 ++
+> >  3 files changed, 10 insertions(+)
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index e04d160fa995..b2c563b1a1c8 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -870,6 +870,9 @@ struct fuse_conn {
+> >         /* Use io_uring for communication */
+> >         unsigned int io_uring;
+> >
+> > +       /* dev_dax_iomap support for famfs */
+> > +       unsigned int famfs_iomap:1;
+> > +
+> >         /** Maximum stack depth for passthrough backing files */
+> >         int max_stack_depth;
+> >
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 29147657a99f..5c6947b12503 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1392,6 +1392,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> >                         }
+> >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> >                                 fc->io_uring = 1;
+> > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> > +                                      flags & FUSE_DAX_FMAP)
+> > +                               fc->famfs_iomap = 1;
+> >                 } else {
+> >                         ra_pages = fc->max_read / PAGE_SIZE;
+> >                         fc->no_lock = 1;
+> > @@ -1450,6 +1453,8 @@ void fuse_send_init(struct fuse_mount *fm)
+> >                 flags |= FUSE_SUBMOUNTS;
+> >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >                 flags |= FUSE_PASSTHROUGH;
+> > +       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
+> > +               flags |= FUSE_DAX_FMAP;
+> >
+> >         /*
+> >          * This is just an information flag for fuse server. No need to check
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 5e0eb41d967e..f9e14180367a 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -435,6 +435,7 @@ struct fuse_file_lock {
+> >   *                 of the request ID indicates resend requests
+> >   * FUSE_ALLOW_IDMAP: allow creation of idmapped mounts
+> >   * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+> > + * FUSE_DAX_FMAP: kernel supports dev_dax_iomap (aka famfs) fmaps
+> >   */
+> >  #define FUSE_ASYNC_READ                (1 << 0)
+> >  #define FUSE_POSIX_LOCKS       (1 << 1)
+> > @@ -482,6 +483,7 @@ struct fuse_file_lock {
+> >  #define FUSE_DIRECT_IO_RELAX   FUSE_DIRECT_IO_ALLOW_MMAP
+> >  #define FUSE_ALLOW_IDMAP       (1ULL << 40)
+> >  #define FUSE_OVER_IO_URING     (1ULL << 41)
+> > +#define FUSE_DAX_FMAP          (1ULL << 42)
+> 
+> There's also a protocol changelog at the top of this file that tracks
+> any updates made to the uapi. We should probably also update that to
+> include this?
 
-> Hi Ackerley,
->
-> Not sure if below nits have been resolved in your latest code.
-> I came across them and felt it's better to report them anyway.
->
-> Apologies for any redundancy if you've already addressed them.
+Another good catch, thanks Joanne! Adding that in -next
 
-No worries, thank you so much for your reviews!
+John
 
->
-> On Tue, Sep 10, 2024 at 11:43:44PM +0000, Ackerley Tng wrote:
->> +static void kvm_gmem_init_mount(void)                                         
->> +{                                                                             
->> +     kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);                                 
->> +     BUG_ON(IS_ERR(kvm_gmem_mnt));                                            
->> +                                                                              
->> +     /* For giggles. Userspace can never map this anyways. */                 
->> +     kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;                                   
->> +}                                                                             
->> +                                                                              
->>  static struct file_operations kvm_gmem_fops = {                               
->>       .open           = generic_file_open,                                     
->>       .release        = kvm_gmem_release,                                      
->> @@ -311,6 +348,8 @@ static struct file_operations kvm_gmem_fops = {            
->>  void kvm_gmem_init(struct module *module)                                     
->>  {                                                                             
->>       kvm_gmem_fops.owner = module;                                            
->> +                                                                              
->> +     kvm_gmem_init_mount();                                                   
->>  } 
-> When KVM is compiled as a module, looks "kern_unmount(kvm_gmem_mnt)" is
-> missing in the kvm_exit() path.
->
-> This may lead to kernel oops when executing "sync" after KVM is unloaded or
-> reloaded.
->
-
-Thanks, Fuad will be addressing this in a revision of [1].
-
-> BTW, there're lots of symbols not exported under mm.
->
-
-Thanks again, is there a good way to do a build test for symbols not
-being exported?  What CONFIG flags do you use?
-
->> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
->> +						  u64 flags)
->> +{
->> +	static const char *name = "[kvm-gmem]";
->> +	struct inode *inode;
->> +	struct file *file;
->> +
->> +	if (kvm_gmem_fops.owner && !try_module_get(kvm_gmem_fops.owner))
->> +		return ERR_PTR(-ENOENT);
->> +
->> +	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
->> +	if (IS_ERR(inode))
-> Missing module_put() here. i.e.,
->
-> -       if (IS_ERR(inode))
-> +       if (IS_ERR(inode)) {
-> +               if (kvm_gmem_fops.owner)
-> +                       module_put(kvm_gmem_fops.owner);
-> +
->                 return ERR_CAST(inode);
-> +       }
->
-
-Thanks, Fuad will be addressing this in a revision of [1].
-
->> +		return ERR_CAST(inode);
->> +
->> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
->> +				 &kvm_gmem_fops);
->> +	if (IS_ERR(file)) {
->> +		iput(inode);
->> +		return file;
->> +	}
->> +
->> +	file->f_mapping = inode->i_mapping;
->> +	file->f_flags |= O_LARGEFILE;
->> +	file->private_data = priv;
->> +
->> +	return file;
->> +}
->> +
->
-> Thanks
-> Yan
-
-[1] https://lore.kernel.org/all/20250328153133.3504118-2-tabba@google.com/
 
