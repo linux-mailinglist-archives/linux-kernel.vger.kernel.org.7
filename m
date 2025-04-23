@@ -1,207 +1,167 @@
-Return-Path: <linux-kernel+bounces-616480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E15A98D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DAFA98EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5361B6572E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434D63B318A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDCD27F754;
-	Wed, 23 Apr 2025 14:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C958027F4F3;
+	Wed, 23 Apr 2025 14:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gp49xHL9"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tEKOF5AJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EC02798E3;
-	Wed, 23 Apr 2025 14:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA0143736;
+	Wed, 23 Apr 2025 14:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745419144; cv=none; b=VQurEuDklB8v60yFsuBLHceut3V7LawMSAClCcT6uMWsCtEo863jBEvjU9p/bq6dHytA6j9/t+jDIf8sKRYP8lg4sWji9u9uvz92BeoyAFN0lvHfncwEilmu8cmcO0YXk/lkYXIXqrtoJU9WJVQWi6t4hGLlmUV7CSX5bqLLKY8=
+	t=1745420142; cv=none; b=T3npLzqxz4LjA3GQwh6SBzz3MzbfADArhBLPq3YB8XUzcZXswVQEGmtJU094daYuFx0RZogVwMFubWwBrV6253v/sSjTS+5M00Mb0BPS/M0Iw5aCOb4x2Q4TDUJmMKRZPD89727zmWhX3r9qF4w2fk+qmN5gejOTAuYJNXxSW4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745419144; c=relaxed/simple;
-	bh=5mju1pziZp67y68q2bVfFblg4yUURMiUzwJ1qLOGAAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DlbmvwicbpkbdUj5nQOasd3xH2E1vv5sw9deh1rae7NoTyZMQ7eTcgkPwUkPWtzDU4MFfKuaV6GnAgkpKasmOH5Nop/QBLUg9YJH/ttIEo4n2KTBcP83dYmDKtaLppyrO2xIC77krwlwnZZFObD/lgmA8g2rnvn13y5F5UqHSnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gp49xHL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 723F5C4CEE2;
-	Wed, 23 Apr 2025 14:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745419144;
-	bh=5mju1pziZp67y68q2bVfFblg4yUURMiUzwJ1qLOGAAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gp49xHL9i6k64DwA3VAaVH67p543v1XE+2BM7HDAKXnXb0C0xqQxEiADVmufAIsPe
-	 U50ZXU4fcvcG2mha3N3YVzMZ7BBoFZXdNkErmRY8q0cekI3icOfBK12wAG018C6HsC
-	 Zi1KixTSLX2uNZdNL8WmE9jC/QltZrJyi383g7OB0eWtiqaTx0+VWf1vP+Xxtkf6T6
-	 Glln++PTVH/nmD8WZOhTjVBW++eDhbpC0aHJfRWoUWsZv0xadl6V4w4mMf+05QloMQ
-	 Vt9ohND/A93C0g2BMaoRGLhmnPg5zLlUACWgVR6o17dKLlVxvva/qE+lpg6BKRwKrM
-	 yfJGInUEcG7Ew==
-Date: Wed, 23 Apr 2025 16:38:56 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Lyude Paul <lyude@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH v2 2/2] rust: drm: Add GPUVM abstraction
-Message-ID: <aAj7gAzFVRX3dN7L@pollux>
-References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
- <20250422-gpuvm-v2-2-44d4fc25e411@collabora.com>
- <aAgHGuzCZzh7YPz2@cassiopeiae>
- <DBB3E8CE-19AA-437D-AF54-BF23763B254F@collabora.com>
+	s=arc-20240116; t=1745420142; c=relaxed/simple;
+	bh=oDo3UZgN2f0i5SU10aU0wh8oxr5T89ZFV8R4Orckq3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O9UFEKDrd1Xly85tRsKUhbqoqfhPVdNDELBsgTOstpA50sA2bnL8GqaPltmLw/xQwK0OFINhQWOjJOy7+FfAgt0w1Aqal+uvC7u0kl2NuBSSmOJY8DNjkRE5sxF+h+PJ3QmU/tGJunmLczTzpc+nMe+C8jAIv8EKqI3WV454OT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tEKOF5AJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE3FC4CEE2;
+	Wed, 23 Apr 2025 14:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745420142;
+	bh=oDo3UZgN2f0i5SU10aU0wh8oxr5T89ZFV8R4Orckq3g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tEKOF5AJdI6dvv1qWrqGB9O8/fu8TuTK7z8o0nvkbT3IgYq+BIvI0JlJdfopstZZX
+	 tOlSn3IOykmT3EolEmSTqHL1BxxlwnlS95sE8uMPqHT4K6kio1mqijC7Yzu4/Ui6rm
+	 aeHuTkp8eqRrJUJe8oOwOqCm2KI3JT34bqbpFFkc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Max Grobecker <max@grobecker.info>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6 042/393] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
+Date: Wed, 23 Apr 2025 16:38:58 +0200
+Message-ID: <20250423142645.029766418@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
+References: <20250423142643.246005366@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DBB3E8CE-19AA-437D-AF54-BF23763B254F@collabora.com>
 
-On Wed, Apr 23, 2025 at 10:29:01AM -0300, Daniel Almeida wrote:
-> Hi Danilo,
-> 
-> FYI, most of this patch still retains the original code from the Asahi project,
-> 
-> > On 22 Apr 2025, at 18:16, Danilo Krummrich <dakr@kernel.org> wrote:
-> > 
-> > (Not a full review, but some things that took my attention from a brief look.)
-> > 
-> > On Tue, Apr 22, 2025 at 01:41:53PM -0300, Daniel Almeida wrote:
-> 
-> > 
-> >> +        &mut self,
-> >> +        gpuvm: &mut UpdatingGpuVm<'_, T>,
-> >> +        gpuva: Pin<KBox<GpuVa<T>>>,
-> >> +        gpuvmbo: &ARef<GpuVmBo<T>>,
-> >> +    ) -> Result<(), Pin<KBox<GpuVa<T>>>> {
-> >> +        // SAFETY: We are handing off the GpuVa ownership and it will not be moved.
-> >> +        let p = KBox::leak(unsafe { Pin::into_inner_unchecked(gpuva) });
-> >> +        // SAFETY: These C functions are called with the correct invariants
-> >> +        unsafe {
-> >> +            bindings::drm_gpuva_init_from_op(&mut p.gpuva, &mut self.0);
-> >> +            if bindings::drm_gpuva_insert(gpuvm.0.gpuvm() as *mut _, &mut p.gpuva) != 0 {
-> >> +                // EEXIST, return the GpuVa to the caller as an error
-> >> +                return Err(Pin::new_unchecked(KBox::from_raw(p)));
-> >> +            };
-> > 
-> > How do you ensure that the VM lock is held when there's a list of operations?
-> 
-> Are you saying that this will not work for async binds, or that it’s already broken in sync binds too?
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-I think here it's fine since sm_map() is implemented for LockedGpuVm, and that
-seems to be the only place where you hand out a reference to an OpMap. But this
-falls apart once we give out sets of operations, e.g. as list.
+------------------
 
-Even though, your patch doesn't do that yet, that's where we're heading to
-eventually. Hence, the initial design must consider those things, otherwise
-we only end up with something upstream that needs to be rewritten.
+From: Max Grobecker <max@grobecker.info>
 
-> 
-> Perhaps we can get rid of this `UpdatingGpuVm` type and pass `LockedGpuVm` instead?
+[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
 
-At a first glance I didn't get what's the difference between the two anyways.
-But I don't think it's really related to the problem above, is it?
+When running in a virtual machine, we might see the original hardware CPU
+vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
+hypervisor. In case we run on AMD hardware and the hypervisor sets a model
+ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
+capabilities present to circumvent a bug with some BIOSes in conjunction with
+AMD K8 processors.
 
-> 
-> > 
-> >> +            // SAFETY: This takes a new reference to the gpuvmbo.
-> >> +            bindings::drm_gpuva_link(&mut p.gpuva, &gpuvmbo.bo as *const _ as *mut _);
-> > 
-> > How do you ensure that the dma_resv lock is held?
-> 
-> Right, I totally missed that.
-> 
-> > 
-> >> +        }
-> >> +        Ok(())
-> >> +    }
-> >> +}
+Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
+bash scripts and prebuilt Docker containers, as it does not need to have
+additionals tools present – even though more reliable ways like using "kcpuid",
+which calls the CPUID instruction instead of parsing a list, should be preferred.
+Scripts, that use /proc/cpuinfo to determine if the current CPU is
+"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
+claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
+in that flags list.
 
-<snip>
+This can prevent some docker containers from starting or build scripts to create
+unoptimized binaries.
 
-> >> +// SAFETY: DRM GpuVmBo objects are always reference counted and the get/put functions
-> >> +// satisfy the requirements.
-> >> +unsafe impl<T: DriverGpuVm> AlwaysRefCounted for GpuVmBo<T> {
-> >> +    fn inc_ref(&self) {
-> >> +        // SAFETY: The drm_gpuvm_get function satisfies the requirements for inc_ref().
-> >> +        unsafe { bindings::drm_gpuvm_bo_get(&self.bo as *const _ as *mut _) };
-> >> +    }
-> >> +
-> >> +    unsafe fn dec_ref(mut obj: NonNull<Self>) {
-> >> +        // SAFETY: drm_gpuvm_bo_put() requires holding the gpuva lock, which is
-> >> +        // the dma_resv lock by default.
-> >> +        // The drm_gpuvm_put function satisfies the requirements for dec_ref().
-> >> +        // (We do not support custom locks yet.)
-> >> +        unsafe {
-> >> +            let resv = (*obj.as_mut().bo.obj).resv;
-> >> +            bindings::dma_resv_lock(resv, core::ptr::null_mut());
-> >> +            bindings::drm_gpuvm_bo_put(&mut obj.as_mut().bo);
-> >> +            bindings::dma_resv_unlock(resv);
-> > 
-> > What if the resv_lock is held already? Please also make sure to put multiple
-> > unsafe calls each in a separate unsafe block.
-> 
-> By whom?
+Admittably, this is more a small inconvenience than a severe bug in the kernel
+and the shoddy scripts that rely on parsing /proc/cpuinfo
+should be fixed instead.
 
-The lock might be held already by the driver or by TTM when things are called
-from TTM callbacks.
+This patch adds an additional check to see if we're running inside a
+virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
+understanding, can't be present on a real K8 processor as it was introduced
+only with the later/other Athlon64 models.
 
-This is why GPUVM never takes locks by itself, but asserts that the correct lock
-is held.
+Example output with the "lahf_lm" flag missing in the flags list
+(should be shown between "hypervisor" and "abm"):
 
-I think we really want to get proof by the driver by providing lock guard
-references.
+    $ cat /proc/cpuinfo
+    processor       : 0
+    vendor_id       : AuthenticAMD
+    cpu family      : 15
+    model           : 6
+    model name      : Common KVM processor
+    stepping        : 1
+    microcode       : 0x1000065
+    cpu MHz         : 2599.998
+    cache size      : 512 KB
+    physical id     : 0
+    siblings        : 1
+    core id         : 0
+    cpu cores       : 1
+    apicid          : 0
+    initial apicid  : 0
+    fpu             : yes
+    fpu_exception   : yes
+    cpuid level     : 13
+    wp              : yes
+    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
+                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
+                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
+                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
+                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
 
-> See my comment about “[..] a new type for GEM objects which are known to be locked"
-> below.
+... while kcpuid shows the feature to be present in the CPU:
 
-<snip>
+    # kcpuid -d | grep lahf
+         lahf_lm             - LAHF/SAHF available in 64-bit mode
 
-> >> +
-> >> +    /// Obtains the [`GpuVmBo`] object that connects `obj` to this VM.
-> >> +    ///
-> >> +    /// This connection is unique, so an instane of [`GpuVmBo`] will be
-> >> +    /// allocated for `obj` once, and that instance will be returned from that
-> >> +    /// point forward.
-> >> +    pub fn obtain_bo(&mut self, obj: &DriverObject<T>) -> Result<ARef<GpuVmBo<T>>> {
-> >> +        // SAFETY: LockedGpuVm implies the right locks are held.
-> > 
-> > No, this must be locked by the dma-resv or the GEM gpuva lock, not by the
-> > GPUVM lock that protects the interval tree.
-> 
-> By “GEM gpuva lock” you’re referring to the custom lock which we
-> currently do not support, right?
+[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
 
-Yes.
+Signed-off-by: Max Grobecker <max@grobecker.info>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> This series currently rely on manual calls to dma_resv_{lock,unlock}, I wonder
-> if we should ditch that in favor of something written in Rust directly. This
-> would let us introduce a new type for GEM objects which are known to have
-> `resv` locked. WDYT?
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 9413fb767c6a7..be378b44ca35f 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -825,7 +825,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	 * (model = 0x14) and later actually support it.
+ 	 * (AMD Erratum #110, docId: 25759).
+ 	 */
+-	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
++	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
+ 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+ 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
+ 			value &= ~BIT_64(32);
+-- 
+2.39.5
 
-Not all functions that require the dma-resv lock to be held are called with a
-GEM object parameter, it could also be a struct drm_gpuvm_bo, struct drm_gpuva
-or struct drm_gpuvm, since they all carry GEM object pointers.
 
-For reference, you can look for "_held" in drivers/gpu/drm/drm_gpuvm.c.
+
 
