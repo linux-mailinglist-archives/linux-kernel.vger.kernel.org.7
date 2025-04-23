@@ -1,203 +1,240 @@
-Return-Path: <linux-kernel+bounces-615676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D76A980A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10D1A980B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B351717B057
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00DC35A1328
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3666267724;
-	Wed, 23 Apr 2025 07:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B178826981A;
+	Wed, 23 Apr 2025 07:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Org+shMj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="lYaZJFnP"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011029.outbound.protection.outlook.com [52.101.129.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54D2701CD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745393114; cv=none; b=LqrJqaKk7Hef1dSEt0nszHWNMz2WJJUWXpc30pC2VsB2AMzXtf3qdZox+5CjcyAMHlKCDTXEATTf8ADqxVnprTi7Yt2eBqi4UZnHCK825Rl3gy6zvkNmCa+9UW7hKtXPZeRAXJjLvePDwi0xnOoaOEHyAFvmCam+qFBhOipF/44=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745393114; c=relaxed/simple;
-	bh=RrqWGfEWBfj0kL39Bmaz1ymh8H/j/R3TDFS/i+5rma0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sGznCQWHb6d4jnz/eiuUrAlTbY/troxOhlZzV69fCBETe7v1l248SLtvjdLZWc6YIhDMtEERU9vRgfFyE5gR2QlGUHGbWfkg0+QOc+49ri2rDTb8UfvYHAgSI5aHP/6D8jxy2Y27BUJXmiN7Q3ymxmyhCURmapy3lpFj9nw8IZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Org+shMj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745393111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H9oblxL5TFk3MzBoB5qC6ZXg151NO2zDTMpCh9STN7A=;
-	b=Org+shMj+G2cOo4W6bDyv5zhh2wdTzatX95n7qUmSUwDy/mUjGYvD2KUkjjvBNTa1qplxz
-	J+GDhi6lWQchFEGLWHIvWLMWZZo3vg/MiNXlqC8z5BQCg0IM9aZQgsuKTWFvGEIe6GTbIY
-	QAmG+swRSOGdoUDcN+M2AG93puC7ctc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-540-stszeJvBOoqiumq3Gb4TrQ-1; Wed, 23 Apr 2025 03:25:09 -0400
-X-MC-Unique: stszeJvBOoqiumq3Gb4TrQ-1
-X-Mimecast-MFC-AGG-ID: stszeJvBOoqiumq3Gb4TrQ_1745393108
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39c1b1c0969so3535624f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:25:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745393108; x=1745997908;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H9oblxL5TFk3MzBoB5qC6ZXg151NO2zDTMpCh9STN7A=;
-        b=wtLama2YEGsnbDf6zfdkycSQ99VyD1dRkyI5iA1Vz0gqVlq2LRHRrOPo6t8LDwPTrz
-         hrcV6YN5eArpJOwexR93UXGyRe1VOzjDXNfHldJt14bTRr4pBwY2Ou1LOSCeaWCoOuFY
-         giPL+Zh+AlQcINDn6F6hZBhPS6FY/486ccHNCI6zsyTjI5TVU1ErYOd9qi14atQ7Kr3y
-         qbkQx4bj7R1j1Foc4z/C9LqTpnXxdgXmfyWcaUjJxtjd2m8oSEj4gUIYz+MvzESoYQKn
-         ui/zVNzP6tdjRU6q0YTOlq3HTFcv6bAFQHSBoQHrTaSZGe/BOBHmYLhQ5a3jOMzDJoh2
-         RkTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ4vEcPy/NFNuTOw6C2CH6unP6Oczc5RDY5SZ7sl97VQEcJIhG+8CrBnzskjlYWghrjH1c7gX3B5nYJP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPsRzRfEFcVuBf02EX/mr0YGGIa7CXNvfgRVINHJHTI9qszhXS
-	STyFR2+qv8ljRRSU66GefMKAWH9PDzWJ3U3KhK60C47ht18EGz8MZc49beC3ZJ7UqpydvTeVPwT
-	Ah5Fu/6hD9dh+wYUgJU0gaBcWZPTLS2FcTkDELaoCn4icqp8B0ES0JH5XtRDZHA==
-X-Gm-Gg: ASbGnctrId+JKZ72E7TaLNErdmqO1eimCtkREucabZCc096byPRjT3FYH1u9D6XX6G0
-	nnpXkHkZDkNWuEV85sWvReIyThZTq/4mqbWmw9RsFpSHs+kfqNTR15YZWwUPCU6x6g0iDWh2OrJ
-	P41sPNCf3n93ZQNUNYjoX2nqWxSmYA7SRpiSBsCt6NZ+EcKezvzldbbwqZJ/PTe2wg6BmzLMgu6
-	1oj+dvHocOo0cPk5k/PTxdFSNZLsWOQaNJwQ6mLKRNYphAYHU8swN+AlTMrPmkWa9Xz5hbxv9ET
-	GhezIks2g6FhAkIJRE9BTzv6aaNdsxqKwtPgEIM4H91ziZ8DCYb7/teq/VTAUhDu4s98a0cyiB7
-	rwWzWyr1gRB/WjdeSyJ70S/L+Pxb5PT50dfDlkRQ=
-X-Received: by 2002:a05:6000:4012:b0:399:6dd9:9f40 with SMTP id ffacd0b85a97d-39efba385acmr15017847f8f.9.1745393107714;
-        Wed, 23 Apr 2025 00:25:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG74s8pPqbYZHsSrh21SVIY8YNHPjcZYCwN0STxCwH4JIuShxilAUosxVBeO42YGvriqyfMHg==
-X-Received: by 2002:a05:6000:4012:b0:399:6dd9:9f40 with SMTP id ffacd0b85a97d-39efba385acmr15017821f8f.9.1745393107332;
-        Wed, 23 Apr 2025 00:25:07 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c740:2c00:d977:12ba:dad2:a87f? (p200300cbc7402c00d97712badad2a87f.dip0.t-ipconnect.de. [2003:cb:c740:2c00:d977:12ba:dad2:a87f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa49313asm17747612f8f.75.2025.04.23.00.25.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 00:25:06 -0700 (PDT)
-Message-ID: <8f24de4d-5088-498a-968d-9e8bb85201ac@redhat.com>
-Date: Wed, 23 Apr 2025 09:25:05 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5D9269819;
+	Wed, 23 Apr 2025 07:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745393156; cv=fail; b=sH6I2nQ8WBCsQsyY+vBG1o1Q0FpgjMVDLEmzNm7fGOK7dPKYYf1xlsoEZE42lhQDAt8ePiJx0ImQAQ5V4MacBMwuN+ol8CcoaHR2mDNhulOhS7SaEoO2LKA9FcAswfT0xDZc1JzLUDzJ9+7XFtCkksM286JY91yc6KVkiDCLvOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745393156; c=relaxed/simple;
+	bh=DGj9GT9YMuKov3r7XOOo2opjhvtsEy3gBBSTQRWt1OU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XJtf5JVG6218DXYmYxUpp0KtrbKkUCaMU8tPHVr9wZB9/j3971i1LBVjpZ7KtZe3rr8X4i3oQVDYIy4uDSu9j4jVie3ta+Gh2Bvbmc6LPSP4bnwfrrncVYKFBqT+eWnS+fDNH1aO++599bhTLYpoU6hdgq67C07T3stnrAtaha4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=lYaZJFnP; arc=fail smtp.client-ip=52.101.129.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n3nQs3BeDh/sxltz7WC8jvpluJ9F+CFwYmtAn9fY9frzj9y5lhjP7BNNekaGhCAdGrTaA+JhVneynT4Dv2R2mk4UAXahC8LNfsPUl7Xrs8CK260k4u8BcFA69JwgJ3PGImaSmdl/XmBNCGpGu9EMuR9qnsfXwcSVuVG3Qle2jHCCCJVwgFI8jAMy/QyAZtYOtF/1mLT9P/WdCVnQLAO8lfpHXBy287MH1FXum9O75b7dGqX9P7BI3RZxzKBqlkqdtZ9RrKKNNC8HABvrXh4LJ3kuvHvbVjF2Wouon+QDk5OuvCxSVCnTPzann6iGgam7+lG7c6Fsj0IPbABiTsCUUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3/Hher/0vVjuQFLizgUG0Vq+oluo6oiEEymW8fTbIiY=;
+ b=TkZ1QUsY7QGT9T/Oie5DHSP0xOH4A7LFu1ghzytnl10dVDshleOlFj9sonTtqhFWw/PREbiea5sPY37xV+XrSLZfsS5ff8D9FcCUFmvas2F2rAUW/gyvcuOTT3ngRC6kZ+/taLy60P/JmOD43cJt9JZNi8ug6pkBpUMZsUE2kfrrY/GmrFcLCBUwPPh0UqNOnYosApXAZ1R4exjYTLyWb5F0YvadmyA0gdRYaE5DKqakj/HFLxokmbS2rFM5ajp2/z2FUPnfwJE11+hq/O6tJmB8aSrydTXenoH3EdIO8sCrP+ODlKANp4bRfUVNNy90Pm4Xw5z7zymshcoCFVJAiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3/Hher/0vVjuQFLizgUG0Vq+oluo6oiEEymW8fTbIiY=;
+ b=lYaZJFnPdL90FYAjzEWZhvHTJy8tuQWgDbpmuenw0oJOFeSz7O1RF/UPqx3SRnYrhuWWIZxp57Ur4dsGK0HzO39FvmxIxhMcH0nT05RFeXJ+pBi397c397zoFec89tuRwgQBuCN+LdfZKXgqezY5hZzo20/AqGMPIgbiFJN37AE/i4IvWEDCV9f4qDAVhw/PdBENb7EuAdYF4oEw/S1o//uou960pMknvsjrYfIawii+iqDVAcxQupuWT6kuylHC/QgxI0QMpIsZO4BUeOcl+gahqOhBbu7KiOp6TYjOYQDYf9/LyLaI0+F8kbxT2mWJbooHp/MwF/sh7i36I9s8hA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by TY0PR06MB6853.apcprd06.prod.outlook.com (2603:1096:405:11::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Wed, 23 Apr
+ 2025 07:25:51 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.8632.036; Wed, 23 Apr 2025
+ 07:25:51 +0000
+Message-ID: <bb249aaa-a51f-4a50-99de-dd6ab5d71898@vivo.com>
+Date: Wed, 23 Apr 2025 15:25:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] udmabuf: fix vmap missed offset page
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Dave Airlie <airlied@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>,
+ "bingbu.cao@linux.intel.com" <bingbu.cao@linux.intel.com>
+References: <20250415031548.2007942-1-link@vivo.com>
+ <20250415031548.2007942-3-link@vivo.com>
+ <IA0PR11MB7185796FAA2A065CBE4EAB37F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB7185796FAA2A065CBE4EAB37F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCP286CA0088.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::20) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/2] mm: add folio_migration_expected_refs() as inline
- function
-From: David Hildenbrand <david@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Shivank Garg <shivankg@amd.com>, shaggy@kernel.org,
- wangkefeng.wang@huawei.com, jane.chu@oracle.com, ziy@nvidia.com,
- donettom@linux.ibm.com, apopple@nvidia.com,
- jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
-References: <20250422114000.15003-1-shivankg@amd.com>
- <20250422114000.15003-2-shivankg@amd.com>
- <20250422164111.f5d3f0756ad94d012180ece5@linux-foundation.org>
- <aAg1-hZ0a-44WW6b@casper.infradead.org>
- <b84b6c31-578f-4abe-9b06-6e7cf4882eb3@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b84b6c31-578f-4abe-9b06-6e7cf4882eb3@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TY0PR06MB6853:EE_
+X-MS-Office365-Filtering-Correlation-Id: 680ff38b-ebc0-44a6-1b7f-08dd82381330
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|921020|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0lyZVB4V0FKc1RVbnkrMXhBK0swNStJUFA1MnpBd2wrK3R4L3lVZEU1VFZ0?=
+ =?utf-8?B?RFQ1Nkl6eGViTWZBdjJDN2NKNTdtWTM0TlRwSHRHQW1LVEEwYXJiZ2k2UFZw?=
+ =?utf-8?B?Uzl2ZzVEa2FteUFONmFaTnNzRVVRR3h5NktvbUR6UHpxNk9USkN6V00vS3R2?=
+ =?utf-8?B?bWYzeFRhaEtCSzZYZ01ERzYzZElldjdaWFRNVmNrZjlKdWtXMElVM0tIM3Fa?=
+ =?utf-8?B?WHNRbVlSUERjYUtaNitPUTBob24wRmh5VUZCcUdUazkzYXVPVnVzalBwd2Zh?=
+ =?utf-8?B?RTBUdGVTSEhpVDgxaEhCajdMbUxXcmlTS0NhckZRZFE1d3YwbGsrMXVxa2hF?=
+ =?utf-8?B?bDlqWk9jSWIwelR3Y0ZLdUpPK1lRY2lIeGRIR3NKaURiNThtbmRxQ0NDNEh0?=
+ =?utf-8?B?R1dFZTBkS0NYSittcjVzYTBPOGVNUTJKSEVaRmFHbk1DMnVBRGEyTi9tRFJ3?=
+ =?utf-8?B?UXRuVmlkMERXZ0V4NHdCeW13T3NyOFRyWnA4SGRWZEszMlJWYnhGcFJMK0pE?=
+ =?utf-8?B?M1E2MEtFRU5GdFNoVXJ5TGxHSW0weEQxS1NadFhrMlJJSk9Xd01ma01sQTdF?=
+ =?utf-8?B?Nzg1V25McGJ1em01UG9obS92Nko5cHFjSVN5VFhtbEVlMy9kdGxyRUdCZ0hC?=
+ =?utf-8?B?dGlDbHVhYjhwV2ZQZnA1Wkp2eXBjSVJLTzdSU0FVMWZFaWtpbVo5UzY2NVB0?=
+ =?utf-8?B?WTlpN2ZTZnl3NE5Sam1vTlArYkcwRWI2TStYTjJ0Si80Vm0wUnEzcWJ2amRP?=
+ =?utf-8?B?VWpheC9peEdWVCtQZ28xN3Z6d0RmM3huWG53b0RneWF6SVZJZGNkNm03cXEz?=
+ =?utf-8?B?U3JsL3FMRnBkejcwb3hhU01FeS9sQ1JhVmZKcU5oeHlWN2RwWTJJV0xVVERU?=
+ =?utf-8?B?d0tlckkxSk5LRjlGd1VjZXFtSXVMWGhFcEJQUDBLdmw3d2NOZkNqbUYxdGFW?=
+ =?utf-8?B?MFk1eUl0aHVyWUY4Q2x3OWc3ZURoNkF3ZTdNQTNvQ1hyV3J2a0dPenBYNnRp?=
+ =?utf-8?B?RnFQNmd6MjZyampkVHdJS1JMWUJxYTdiVW9CSzFGK2UvSXZzaGRqeExpRXdE?=
+ =?utf-8?B?WC9ac09hakk1bGQ5VFlQTTJMbDlFMms0VU9rNFJGbUJrR2xqNCs4SWdzQmt2?=
+ =?utf-8?B?ZVovdVBTZDQ5U0pVNklvV3RING5FMWh6VkE5RG5lZFZYMzNaYUgzak5uWktL?=
+ =?utf-8?B?YVV6ZDJ6SzVGTElBeVRPQVpERVJiNFJkWFpCbFhHOFhaaDR5RWsva25iejRZ?=
+ =?utf-8?B?QzdvRDkzd2FOUitneXlFTkUxeGNlSDAxanhQdEVkVjlVS2t6TTQrRGdhNmFa?=
+ =?utf-8?B?Rkp6YzNNTDdBQ3BqMFo2a2VSYU1xYmJmNFNXQXdYWmhtYmRVRERudkVqSThQ?=
+ =?utf-8?B?TzFIQnR0dU9XRlZyRnlyM3l0VFhyaWdKeXRHRERYQldpR1FIOHprM1d0c1pN?=
+ =?utf-8?B?SHRaRE1ObVNLT0NmTGcxNEFOSzlPVDVubkpjT2YycUs4ZWx1d2pDWUxsZkQ4?=
+ =?utf-8?B?WWN2SEk4MkJ1V2FiYVhsZUN1djB1OUZDZFYyWW1wcXE5QllnVUg2MEJsZWNQ?=
+ =?utf-8?B?b2krcm8xQ1E5VTc2Qyt3ei9Od29GVzdlQkx3NTNGdWExY1JhSXBtSVNnc1Z2?=
+ =?utf-8?B?LzhmeHhOcU5YSlBtSkhEOHN6SlNncnBOYzdhRDJFMytuOG82cTFIdlZGeWMz?=
+ =?utf-8?B?aFFqZTNPMkVQSmUydVdWdUk1aXVGd0oxbXE4Z2RtS3pmckd5a0llTkl1K3V5?=
+ =?utf-8?B?VDUyYWg2dDBJOXlBQmlTdUV5SDl3VThUV1l5MXdYUStVOFlYSFNZRjBja08z?=
+ =?utf-8?B?cExhbi9HSFA4SmYrYlhpRjdiRStwY3Mxd0x3RUUxRXFEZng5SWRpTTBueTRM?=
+ =?utf-8?B?OURZeGs0cjYxdS83QmpCZDEvanYyMXN2WHo2VTZOYVBWMzNFTW9KK2FJbjd4?=
+ =?utf-8?B?cjdEMTcxOW5yZ2M5cm5MbDF5U2N0cDNJMkhWVXdmS2R0cXA3SHhXMlZPSmNr?=
+ =?utf-8?Q?Gzr1j0mo4REdq+NooUxSumYFiXGE64=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(921020)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UHpuRkhiUHhzSGxkNHBBeUEvUEdabVhWNVVZeWdHSXIzUHp2QWNUcW43SU1I?=
+ =?utf-8?B?bW9PZHVCNThyVWdJOVovdnFMTXRNT1VwZkI2TEx5WmRTVm5aYnpWM1A1S0Vq?=
+ =?utf-8?B?WXVpZVJIVjFVd2hNMy9hUWYzeTJOdlEzbFI5NkFVdGduUGplOEFmcVN4NlpD?=
+ =?utf-8?B?Z2xxdkMzK0pYNGkzai9sMndMTUwvTXk5dkRBZ3YvM2ZTdC80ZmZoYlpGcS9j?=
+ =?utf-8?B?dW1SUWVaMTZsVk5PZEc2QUlUL2gvZHIzZ0k2RmlsaERKZHdFS2ZvaXVzVktj?=
+ =?utf-8?B?ZGltRXNWaU5kUDNaMG1RbGNYTXNpZVVXSVQ0bGJ5K25DMndQL2tVaVBJNFA2?=
+ =?utf-8?B?MnJZblluektqaFdSZTlUMGg2bUZqejlHK2dkbXRHdGJLZEVxK3JBQ2Z2Wkts?=
+ =?utf-8?B?OFRjTFpNL2pHazR4K25aRGpLR2Y2dll4dVZwZFBaV1Boc1doZTFSUlJpQzB3?=
+ =?utf-8?B?VytsR3dDeEplTEZSODRXWVI3RHlmYXdyT2NPczJKNFFyRW94NUJ4RDNlWCtE?=
+ =?utf-8?B?bkYvM0lJRUdtQTY5MDR0MUxWY29PN1V5LzJoa3E0cXlKRzVxdmF6bEJsSnNt?=
+ =?utf-8?B?a0dKNWIrU2RidFdEa3YrZHRvNVJZOEU0a09ZUXNZZ0pKRG5MK3B4NlRpejlw?=
+ =?utf-8?B?d1ZOMExaQ1oyWkYxUFpZdGR6MExOenVNRHRnQmQ0d1VjT3NxRWtlTDltVXNO?=
+ =?utf-8?B?ZCtWeDF2M0hZQXNwNXpKR2w0c3lXRUY4YkoxUlowQTNaWmV1ME1tY29lSmZF?=
+ =?utf-8?B?MHFwSWZnQUhvSzN4VFl3NWRwV3FBcGR4TVZnVXprTjB4ODdXeU9tVFYxZ0Ur?=
+ =?utf-8?B?b0xYQUxZUmpIdnhRRzU3QW85RFVLKzROdThUV2FySnVlOWFpTjF0QVNtTEwz?=
+ =?utf-8?B?TW9wT2JxQ3h0cGoyT2xaSWtJLzdKZ3B6ZE4xN2xKcVJpWGNRWk5NU3BROUdG?=
+ =?utf-8?B?SSs0MlA2L3pzMXRVSTVZL1Bid0Fub2tKWjVZQzFqZkkrUXZLc2QrZ0djOXJF?=
+ =?utf-8?B?Ymd5L1I4VmZXZTMwNnBqdDZIanZSNDJZMHNqU01oSXVaOXhNQ1hJN1hjQlJF?=
+ =?utf-8?B?Mzhoby9BV3RyZ0ZJR3p6RkNHZmIxR20vWlZPcS9qL093Mnhmam5ldldlSnU4?=
+ =?utf-8?B?c1UwUVNjNi9VQnlSL0grMDFFZTk0VVhkTG1zZWhndUcvd2xFSFpidUhncFhD?=
+ =?utf-8?B?MjJKUXhBa2RNWVpqMEp1VXhUZEdMb1NQUUQ4M0p3UFIyNThOU2V1MU1JZ2tS?=
+ =?utf-8?B?YVRRQjNmVjVNek9FUjdlK1ltbU1pYjFsdmdhWW9PeUVEbERRZU9MZjBYVGpl?=
+ =?utf-8?B?YmxkL3RlblNBVkdqUFYyTTM2UkZoYkhkTjBEdWhjTFhmeUtINHdHdHJpMXdj?=
+ =?utf-8?B?Vm53QmdVZWxvRHREUEZwaDRySC9kdEEyMi9lZVd3eTJqc2RWTERJOEdBa0w2?=
+ =?utf-8?B?d1dIOW1nQTFBcXJ0VDZYNjdTamlEbmtIcTFNdkpDZUxNREpxQTltVFArb252?=
+ =?utf-8?B?VzREWHJudnRtZXN6aXNDQ3FzVkNTVHlIRC9CdURnVEwwRytQdC9USVZOTTRM?=
+ =?utf-8?B?Q3Q1WHhEUjB6RUdHTjNoWWhUNnNDc1JwQjkwTDBXT1JrcCswdGR2QkhZZnNN?=
+ =?utf-8?B?ZjVGS2x2R0h4V2lOZC9qQWd3QkNHMnJmQkJKZ1lhd1ZNM3NaeDdPNWR0emxa?=
+ =?utf-8?B?U2UwMFMySjE4UVp0TzBYT1FjT3JLaDRQSVpnNWd5OS8rcnByNzc2eGVrY2ZQ?=
+ =?utf-8?B?YzRFUFRzWnZpZVhoSUpHWjFPMGdXTTZhbE9vZitoOTMwZVpsc1BqZEx6U2JM?=
+ =?utf-8?B?aDRSZmVRUThaK3ExbDFJRGhKek0zWEVBdm93WWM1UkR4dlV6SzE2MWZseUtW?=
+ =?utf-8?B?a1dpQy9Sb2FzekJ4NUJlU1RWd2hITU1DcnNxb0ptdHdQa2owR2VFblFYdjRW?=
+ =?utf-8?B?angwYmhFblVWbUEwVi85SmhoM25EYTljSUFmNHJyaGtYTC8ycjZnbUU2WEZW?=
+ =?utf-8?B?SEtkRUpzNzJxUDNoVFdOWTlLcUFwTm5rWDhyMFV0aEpKVkdnVmFPZ2VpSzZS?=
+ =?utf-8?B?b2VJOWxLL05ldXdhcithUU92eDdENU1wNHpHTGpvTGp1b2pIQUh4bFI0ZTUv?=
+ =?utf-8?Q?eOIZSk8LpfCuhUeaUeJ0dc8TL?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 680ff38b-ebc0-44a6-1b7f-08dd82381330
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 07:25:51.0415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wU6Gs0l2ZnN3FLCG4ps8QuGHEj2C2hV5U2kkFIY81BjBOePz6I46w3/LZszxizYhjcMm7m4+EXE9xnPGTXIBhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB6853
 
-On 23.04.25 09:22, David Hildenbrand wrote:
-> On 23.04.25 02:36, Matthew Wilcox wrote:
->> On Tue, Apr 22, 2025 at 04:41:11PM -0700, Andrew Morton wrote:
->>>> +/**
->>>> + * folio_migrate_expected_refs - Count expected references for an unmapped folio.
->>>
->>> "folio_migration_expected_refs"
+Hi Vivek
+
+在 2025/4/22 13:22, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH 2/2] udmabuf: fix vmap missed offset page
 >>
->> Please run make W=1 fs/jfs/ in order to run kernel-doc on this file.
->> It'll flag this kind of error.
+>> Before invoke vmap, we need offer a pages pointer array which each page
+>> need to map in vmalloc area.
 >>
->>> It's concerning that one particular filesystem needs this - one
->>> suspects that it is doing something wrong, or that the present API
->>> offerings were misdesigned.  It would be helpful if the changelogs were
->>> to explain what is special about JFS.
+>> But currently vmap_udmabuf only set each folio's head page into pages,
+>> missed each offset pages when iter.
 >>
->> It doesn't surprise me at all.  Almost no filesystem implements its own
->> migrate_folio operation.  Without going into too much detail, almost
->> all filesystems can use filemap_migrate_folio(), buffer_migrate_folio()
->> or buffer_migrate_folio_norefs().  So this is not an indication that
->> jfs is doing anything wrong (except maybe it's misdesigned in that the
->> per-folio metadata caches the address of the folio, but changing that
->> seems very much too much work to ask someone to do).
+>> This patch set the correctly offset page in each folio into array.
 >>
->> What I do wonder is whether we want to have such a specialised
->> function existing.  We have can_split_folio() in huge_memory.c
->> which is somewhat more comprehensive and doesn't require the folio to be
->> unmapped first.
-> 
-> I was debating with myself whether we should do the usual "refs from
-> ->private, refs from page table mappings" .. dance, and look up the
-> mapping from the folio instead of passing it in.
-> 
-> I concluded that for this (migration) purpose the function is good
-> enough as it is: if abused in wrong context (e.g., still ->private,
-> still page table mappings), it would not fake that there are no
-> unexpected references.
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> Fixes: 5e72b2b41a21 ("udmabuf: convert udmabuf driver to use folios")
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 79845565089d..af5200e360a6 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -120,7 +120,8 @@ static int vmap_udmabuf(struct dma_buf *buf, struct
+>> iosys_map *map)
+>>   		return -ENOMEM;
+>>
+>>   	for (pg = 0; pg < ubuf->pagecount; pg++)
+>> -		pages[pg] = &ubuf->folios[pg]->page;
+>> +		pages[pg] = folio_page(ubuf->folios[pg],
+>> +				       ubuf->offsets[pg] >> PAGE_SHIFT);
+> IIUC, it does not look like vm_map_ram() or the other functions it calls would
+> write to these tail page pointers (struct page*), which should be safe even
+> when HVO is enabled (based on your conversations with Muchun). However,
 
-Sorry, I forgot that we still care about the reference from ->private 
-here. We expect the folio to be unmapped.
+Yes, and need point, each write to tail page's va pointer is no permit.(HVO changed this va in vmemmap's prot
 
--- 
-Cheers,
+into RO), so, easy to observe. And  I see each vmap-api, only turn to read it, no write. :)
 
-David / dhildenb
+Thanks,
 
+Huan
+
+> I am wondering whether Bingbu can test this out with HVO enabled?
+>
+> Regardless,
+> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>
+> Thanks,
+> Vivek
+>
+>>   	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
+>>   	kvfree(pages);
+>> --
+>> 2.48.1
 
