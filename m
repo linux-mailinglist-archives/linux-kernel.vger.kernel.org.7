@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-615848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E962AA98347
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:28:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD13A98355
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3445D442C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:28:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82F13A566E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DDA278155;
-	Wed, 23 Apr 2025 08:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC6F279787;
+	Wed, 23 Apr 2025 08:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KWGOaFJX"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KGBHe0CZ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672F7268FC9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA4279358
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396323; cv=none; b=Me5bktoKF6aCaJ0e067PCBTpP+z1kZbQQjkI/U02E5yWyBHr3JCib5xDGz4pIO5lzC86QJbnkrJPb7bT9X9Sb7B6/9Sv3YKh+BBd+lxxIbiEKwS4iPqj04FfRy+57gFJAc4XTg5+wjAccqEHFBlHaliqCEu8itasWb43c+Zn/X0=
+	t=1745396331; cv=none; b=bole00U90YcpR4PUJnc4C7jXTpXf3EYQPZcbvoGFOdz0e1VkLFLCTwgqyknTuL7cc9TdGBQEUjEi0wK/YmEuG8Zxna9vQFUFTs/dz/UQi+y0voR1wjTckkHaoXgKuvJZHjF+015rJKGRmQzA08upH/FNVXMCJ++Y2T/40rTgiDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396323; c=relaxed/simple;
-	bh=cXmDa/smw3SFfJ5+0v25YOs7nGxAYzIsbMas66vAH5g=;
+	s=arc-20240116; t=1745396331; c=relaxed/simple;
+	bh=4xt093V4K6X9m5HSUSUKEV60HAXCvM4r8RMK8XVZ6NU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IW5d5HST+Sn8NbFraciFSgchsKHZkHC6hbY6YvyBW0rzWyOJ6pyQzvxShpa3v0awWpmiL2vGs7iLAzEG6wusNKgR3bRuDJk2ePvcLY5qp5PQ1ATSVcHQIpgmREBNMQTkF+qnKKocm1xRWJBWackuvkpI+w927ABD/yTj/bA7Nw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KWGOaFJX; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=bTWyZVgqxwJCJUqMhEXC63NRt/RuFht0JavmU7b3tAS3Mn7B/+E/OfggVXG0BvmEecl1WkZ/TYJQVVkqPBDqXKkizDY9Lq/8pQ5Oy1jdyaQcxrIhBNZbyNLFWtNYoYMeoOdZ5sK5clAqQpmN4GgdyuWbNqay0EM3PCHofNEuftU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KGBHe0CZ; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=SAQbWjWGGmEWV/yrGcgLnMo50LiJ5Xc9HvWor5bjKpE=; b=KWGOaFJXU2Zhudn7trVxYUEU0g
-	7QQaPkpOyTCf67dYB0FTPxHraBznEqfyf3CWdnhygxC8xk5dbP9BsRCymIsPTF4wAwP6KqFkr2FA6
-	FmzLrm8fgn5FNEGSPdZIG7zgut0D0wdH/1mn1S9JEK5UNaDsTXfnf9Rrdsasucwbo6CRYk20ltlub
-	zqk/SOxkESDY8NKrxvp7RlTzavj/40AZ/QicG71H0mgMDCefzRigaplRoo9o5ZJdYGcaUnGaaogvj
-	80uEUTHcGn5ocHFj4LephL03r6fmWs2hRgpoez0yWwQeFioSX2KC8ThpS1JtfEfE0maumlFjzlgHM
-	BdNg+AgA==;
+	bh=5rBTRXVZOLvGm6tGVdaRqt3altL1kwi2KMEQoupVT9M=; b=KGBHe0CZaJNHjqUBvFJmhnk4e+
+	UPDycIuE82wa2XxkK87oLluII3D4UaUzDWr0aOdY4m4yTxi3S2ftbKW4yvTGKJRXQzkk/25oVwohE
+	cTVuPyVEq7s3Ye8YtV+otsybX6FzJx9x1GJO7w6lIWpZZeg5pQRN5w4tjAjk7Zqa2Vgqu0Q9NVL5T
+	zdFVyJqvVItORW1K8NoW7QRZdg0cPaMapuy9M8Asd1O75iUL9aJl+n0dGnBaKBExsZIY6QMxYm1dr
+	8SV+6xIkv4HXj6ZFHgb4D1nGpSv+vzwrbr03bVHHniVI2uB++M/9EcdJNQQEGULkue6uwxepbUBty
+	4SlyGv+w==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7VJQ-000000081P3-0EV6;
-	Wed, 23 Apr 2025 08:18:32 +0000
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u7VJR-0000000BOig-1ajG;
+	Wed, 23 Apr 2025 08:18:37 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7VJO-00000002YNz-1z0F;
+	id 1u7VJO-00000002YO2-27ZK;
 	Wed, 23 Apr 2025 09:18:30 +0100
 From: David Woodhouse <dwmw2@infradead.org>
 To: Mike Rapoport <rppt@kernel.org>
@@ -64,9 +64,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Ruihan Li <lrh2000@pku.edu.cn>
-Subject: [PATCH v3 5/7] mm, x86: Use for_each_valid_pfn() from __ioremap_check_ram()
-Date: Wed, 23 Apr 2025 08:52:47 +0100
-Message-ID: <20250423081828.608422-6-dwmw2@infradead.org>
+Subject: [PATCH v3 6/7] mm: Use for_each_valid_pfn() in memory_hotplug
+Date: Wed, 23 Apr 2025 08:52:48 +0100
+Message-ID: <20250423081828.608422-7-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250423081828.608422-1-dwmw2@infradead.org>
 References: <20250423081828.608422-1-dwmw2@infradead.org>
@@ -78,42 +78,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-Instead of calling pfn_valid() separately for every single PFN in the
-range, use for_each_valid_pfn() and only look at the ones which are.
-
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/mm/ioremap.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ mm/memory_hotplug.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 331e101bf801..12c8180ca1ba 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -71,7 +71,7 @@ int ioremap_change_attr(unsigned long vaddr, unsigned long size,
- static unsigned int __ioremap_check_ram(struct resource *res)
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 8305483de38b..8f74c55137bf 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1756,12 +1756,10 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
  {
- 	unsigned long start_pfn, stop_pfn;
--	unsigned long i;
-+	unsigned long pfn;
+ 	unsigned long pfn;
  
- 	if ((res->flags & IORESOURCE_SYSTEM_RAM) != IORESOURCE_SYSTEM_RAM)
- 		return 0;
-@@ -79,9 +79,8 @@ static unsigned int __ioremap_check_ram(struct resource *res)
- 	start_pfn = (res->start + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 	stop_pfn = (res->end + 1) >> PAGE_SHIFT;
- 	if (stop_pfn > start_pfn) {
--		for (i = 0; i < (stop_pfn - start_pfn); ++i)
--			if (pfn_valid(start_pfn + i) &&
--			    !PageReserved(pfn_to_page(start_pfn + i)))
-+		for_each_valid_pfn(pfn, start_pfn, stop_pfn)
-+			if (!PageReserved(pfn_to_page(pfn)))
- 				return IORES_MAP_SYSTEM_RAM;
- 	}
+-	for (pfn = start; pfn < end; pfn++) {
++	for_each_valid_pfn (pfn, start, end) {
+ 		struct page *page;
+ 		struct folio *folio;
+ 
+-		if (!pfn_valid(pfn))
+-			continue;
+ 		page = pfn_to_page(pfn);
+ 		if (PageLRU(page))
+ 			goto found;
+@@ -1805,11 +1803,9 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 	static DEFINE_RATELIMIT_STATE(migrate_rs, DEFAULT_RATELIMIT_INTERVAL,
+ 				      DEFAULT_RATELIMIT_BURST);
+ 
+-	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
++	for_each_valid_pfn (pfn, start_pfn, end_pfn) {
+ 		struct page *page;
+ 
+-		if (!pfn_valid(pfn))
+-			continue;
+ 		page = pfn_to_page(pfn);
+ 		folio = page_folio(page);
  
 -- 
 2.49.0
