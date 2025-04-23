@@ -1,426 +1,218 @@
-Return-Path: <linux-kernel+bounces-616276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DA5A98A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:04:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60B0A98A6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944E21B65983
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09303AF1AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0375D8F0;
-	Wed, 23 Apr 2025 13:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62FF86331;
+	Wed, 23 Apr 2025 13:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Dy8MG6qp"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2073.outbound.protection.outlook.com [40.107.243.73])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iahpS7n/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C633F9;
-	Wed, 23 Apr 2025 13:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413420; cv=fail; b=a+ZWXp+3fKcgh2I4jnTGljHOq9Pschm91MOEZCI+Y7bD/yzNtt/yeTcyCtAABOkP4/25nIMdDqU743ADKwANZgDAlObEhjxZm67xt1yUP0gd7EmH8QEWlnGSwqKmTK2go6sah+1EGcQZNKLSONfj7GmG3Vt2SQ8G9sNE72N/Wsw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413420; c=relaxed/simple;
-	bh=ULuoJ9xYPGyxuOnJszCtnPMqHNogUD64k67dO/Y6YTI=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=c3weWT1nWTPEfX9mGy2PcVe3WCKZNKwG97/aXxWr1jPSMYCHEfjZnZ8DGPg3kSeU3eQZZp/4fL9IvM4tNNcv5PdD/d/6LS0b6EEvlbcBCJ0knV9lPgLCY+4usz3Pn9oAM1YGkaYuSs/KdZ6wi1weeoDcX+id8TJnzo/FItVCidU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Dy8MG6qp; arc=fail smtp.client-ip=40.107.243.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LiGnHRb0E/6sbXA1pxm9Zg1QCBQU+mEQ2wyaUMOk+K9RShPBSCNefDNLPk2JG5dqBAgtFsOXhZGX7yMLaEBwf4lux9uP775KH3acVT6Kmu5mEESEdI3YTNd6ATiyf/da2PnAizlwxSJCSKBk4kzm0hOKXHTo9xJnKnzGhKO4iuswLx0sPuSdabJiKyVCRC5IwinVef7yyn8AxLFL6LsAJ6yXOUtwuyhXbRbxW+o+y7E5TRRxRkOGsp8aF4qW3k2t1Sc+tOGVx5m0JstRvyu94vxn9zSVq8/XnHZrg4hdjzvCxqf+fVL74VUbj9STTb+LLM5QIrS7v9UsxX9hXIiQjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zjmTT8X0NMrBmBNON/YJ7swB9z/zQmyCfg2p5WJdQN8=;
- b=IIo4mFntiE1RbIB+p4J4bnKgpGJhqKzPza+o+R0UhYp82FzUdT8w31K5qUq0dOt6FM+hDpAQP9Ij2C9W8pj2JcHAok0Uq6tkWkxk1e4kJHpwSInLw8CSnYJXSAoYyhV9DelpN4RDBuNj7qUOas8dKVwV70Nx9kR5w8hIAo1rUMKDPkQj8bTQsFjL8K5exj/tDjhfgBJVoVkkAf5QRhAx3VmlDNg9qPeaqI+vHN5uPRQTh8Y8Ek9P19Ic9vl5xchTZKa48S4AoK5D27Ub8aIe6W1fu+HkzsMkvAiUjusdE7Ppg7xMDe6c2CE0aQeIeziWX8s1pR13nzhMJX3xGzPKUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zjmTT8X0NMrBmBNON/YJ7swB9z/zQmyCfg2p5WJdQN8=;
- b=Dy8MG6qpfd23dR0rgDaHa0VB6rtKwZnZZrkDZa498GZHsjiuI52U4pi7wTCy+0fsPFmcGlce+RL5XNrBYy6PPKxu7FnkIWzjabuBq5ZA/IWs+HlkWeHNNrrzAtxEhqXYlrtKiKMn2l6b7ZTFX2L0iWWL/MR8bN2SBeQfV+jvUD6ZtIb0SdfLpZMrkWld6/6DmK+dMNMMNXlYJANBdXSRUBHk+Q5P4bP45WKtneGlVfPLgS4niykWrUt1uwmUv641hQzttt39n3qpz1KycIcthY1VzjZJZ+F+eYVjQvVjlAWWQGL7MS658Q8HFkmRypQ2XQe6MzQhL+ZZPRbBvQ4gqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB7947.namprd12.prod.outlook.com (2603:10b6:8:150::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Wed, 23 Apr
- 2025 13:03:34 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8655.033; Wed, 23 Apr 2025
- 13:03:34 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 23 Apr 2025 22:03:30 +0900
-Message-Id: <D9E1EZA9E2MF.RMVBUAANS7EW@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Jonathan Corbet"
- <corbet@lwn.net>, "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs"
- <bskeggs@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 09/16] gpu: nova-core: register sysmem flush page
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
- <20250420-nova-frts-v1-9-ecd1cca23963@nvidia.com>
- <aAeBQ1aCQSrGFqCd@cassiopeiae>
-In-Reply-To: <aAeBQ1aCQSrGFqCd@cassiopeiae>
-X-ClientProxiedBy: TYCP286CA0056.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b5::17) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37E33F9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745413502; cv=none; b=tFw96B46wgUGKeNeO/9N11WD+vpivEda1mbwBMTGPBwYGDcv2hW6MLKyBbpEySyL8E6uYWJjgIC24mx3+0k97R/WnnGkPOpMhps29stvPrrnvwi6A6qTO725Cfod9md5SuRItwxUWSP0X8zTV/u557r1kjLUAZbhixjAHYl+YTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745413502; c=relaxed/simple;
+	bh=Uy02wVdhD61fwpKCpvdDIBbR7OoR00YFzmhx9wQmIFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u/dWa/mc1f1TC/hJbAtL7c9Ii2bCG46sW3Efz04zq4LvZEby+QEIDbelfcqf+PiD+IDAn7wb249RC842WC0WotqY8K2RmFWtbd0Mz2TGkjK75POeGRh6ryadPnQeYBhxbhDybi3aAhX7zw/tq5RZ4jP9mDcpgl1eAKdhmYvBfFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iahpS7n/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAIXvJ017291;
+	Wed, 23 Apr 2025 13:04:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Phbedu7xpyuH5nYJsAMb3poKKBwNLxsZinqwYSuHzUE=; b=iahpS7n/F/bDarVN
+	E3ZgF4vG03KNPbYQZbzTR7ZVrZ6f7spf+ve30cp9n1a94p3PuxUqi00n3y8lRvvI
+	wYeT6TdPvqFQw/elaCyTxG2NvtzNFHv0dqQYUQ7cXRZGTkObQ48IsB+uRVNE4BU5
+	GUPowKohVHSJ7erHRx5C6yCDdCjFfHNgdduSisW+buhWeTd/EoBg05mc7CZMJYsQ
+	3Nde65fRdfjE+0C300JVsYGeCqGquQfr7QNCB/k95lIugHLJLRhDTN7ddoVKHqwk
+	LebYGTZAj84zWJHKJ88R133kfCjcQEZzKNEwLLZMQ8FhtEKfnz/1iN44XnnNHCKb
+	QqIohw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3j5y0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 13:04:29 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53ND4S04016458
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 13:04:28 GMT
+Received: from [10.253.74.233] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Apr
+ 2025 06:04:22 -0700
+Message-ID: <0ee48e2f-58db-49b0-b651-dcc0e517465e@quicinc.com>
+Date: Wed, 23 Apr 2025 21:04:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB7947:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c5ecee3-9a27-4327-872d-08dd8267405d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R2daOXJIcVAwL1ZYRnBjd2NoWjNPTnFWZWswa3RKLytVVEhjZGFNUTlJNkt5?=
- =?utf-8?B?R3htOTZaV1lvYXlGNTZqK1pTeUNveFQ0YWcxR3VsWEJKMWg4aC81b3E1Nlc0?=
- =?utf-8?B?ZEZJZmxyL2JrQnFFM2lqTGZtQ0pzcHlTUWEwemd6d01qczdOSHlWR3JzZ0x1?=
- =?utf-8?B?VjJOaEg3Y3M2YTBvT0Urc2NYZ2l4S1lJNnh6Y3BZaUxQMVNYZ09JNW1uRVpt?=
- =?utf-8?B?Uk0yU3VjRnIwUTUyZVdvTTQ3dDljSDVwNHA0S0trYlVpUk5ZenB3Z0RHeUJj?=
- =?utf-8?B?aDBlQkRpNlk4VzJSc2xCN1NLSzZiZnZaVHZmSDBGbVNiYlUyb0xMNzlPMHVy?=
- =?utf-8?B?U1crUXd2cU4vWGEvdEd6MG9lc3RkdExCQ2JGK0hmT0xnSjN3UFBlTGNHN2hC?=
- =?utf-8?B?bEt5UTB2aDlNYVpkM0xhMXpyajV2R0hVYm9ZYkp4ZnoycTBvd25ET3dsOXJB?=
- =?utf-8?B?UC91b3FGOG1jR0IrQnFDVU4rdjV2YjQwRTcxSW9zMWljMTVZR2JJYk5HSWtT?=
- =?utf-8?B?TGtSRUl4NjcxNWJoS041N3h4MHZ4Nm9wZkN4SE4xRStyY0hqMkZUNjBwNlBh?=
- =?utf-8?B?Z2NCU3VtMkxNdSt4elk4TjJCVVFSUktXakN1MnV6aUpGNnNXOEE4WVNOeVJ5?=
- =?utf-8?B?RWhrNEh6R3F6RExhUmtHdXlPTDdlRmk0dzB1MUt4V2h4OGlZQVd0ZmQyTndZ?=
- =?utf-8?B?U1dtZWxVSHpzb3Rib0hFM0NhTkZQTzdOVUFWZUgvU3lFRVJIWWpYRG55bEJV?=
- =?utf-8?B?cExKb2puRnp6ZW1TNy9yWTYvQ05SMkc0b2Q2RmRXclA1T2U5T05vNzRPcDJj?=
- =?utf-8?B?NGFRa3Q0RXVubkgrK3kveWgxbm84YjBCOUcza2JTQXZmZGt0eHpteXE0a2N3?=
- =?utf-8?B?RVlhRTdjbzNrYmNsR2ducFFGeUY4Nnc1ZERVbldMWTRWNXd0YmpNd2FhWlVF?=
- =?utf-8?B?eVhKQ04yRTRSMXljQStPZDJpVzVvQ2x5c01vRGZQWWQ4aTAzRzF2VlVaNjZZ?=
- =?utf-8?B?Nm9qMmVoSmMyMkk0dFRlSWZGNGMyRFpEejlwUW56ZWtHZHlLczZScEpQUUFP?=
- =?utf-8?B?UWQvWk1XSVFXVVJFTVRLSzBHVVQzNEx5Q2J4T1QrUFFsaStWT2dmdUlaTTFC?=
- =?utf-8?B?azJpajcxbDdNQ29KTENXcFo4QjNnNkcyTXJHeEttd0NrQ0tQU0dlOUE3VjNP?=
- =?utf-8?B?VVJjc050ZmVTMjAwcThzSmlibGRtYXV0dUVUaFlwTnkrOGQxbVVNRVYxcmho?=
- =?utf-8?B?NUdHWXlNdDVjWDE4UFR0QTlKZzVYNXNIajR3eEJoUnN3K3dMaHdEWUxKWkxq?=
- =?utf-8?B?elFxREhSN1FFV3lLNjB1QlliOTBiR0NSWFlEb3BGNnZCemVrNERkOGh4TjZq?=
- =?utf-8?B?NGVVeHN4cTBJODZLYXd5Q3hPLzEvMmQ0Mk92RGlRVklpdlhWcXlMRVZHU3hy?=
- =?utf-8?B?WWdTcytQWjZmVTdFZUxzb09GMnJjelIvNHVmMW9qaXA5V3NOUnZvMXgyRHI5?=
- =?utf-8?B?U3BSeE5LL0lDaGtEZFZROXpUZ2dLdTRPZ0hJVGJIUXhvOUZ3M3N4d0drUU1q?=
- =?utf-8?B?TTUxQlprVStjcUJ2dlJOWmd6RVdQSjRVdFNUbGNGZW4wVUU1SVRBN3BNNENn?=
- =?utf-8?B?ZDVBakQ4OTBLejZHQTFhNGxVYUZBVGRGMENJcllGRUpIWVVtZ0toMWhpck1r?=
- =?utf-8?B?U0s2MWRROHNRWnF5UkNqK3JqMjU1Ly94bURPckFiTmhIcEFDTlBESUt2QXJ5?=
- =?utf-8?B?YWJxejR4RWtHbUxtVXhhaU80WFRTekw1eTZDQnJ6SzlWZVlLcGlQeUwrYUxG?=
- =?utf-8?B?akJrY1YvdkRMSjdRQ1ZaWHVvRjBiYW0vWmJzQkpYN1A2VVpaZ1dkZitTVlMy?=
- =?utf-8?B?bnZzWDBud3B3S0lneE51Y0ZFZG00U1N0NFBRZm1wdlA3aEVHMVpBUmZaNGRn?=
- =?utf-8?Q?/pbTxg0ZkCI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Mkd4UkdtUjZkVXN4UEZMWmtSaUs5UmJpTkdSVzBiMnBjY0hjeTVnZittWURx?=
- =?utf-8?B?OVFoVkVsVUZNTk81Q0RPR2g5NWd6Z3NLMmRGM2FIK1o0aG4wNGlVS29QQ2NX?=
- =?utf-8?B?L1J4azB5bGM2RG9IRnpGNmpQb2lMK3dxeW5EWDlVVXdjU1UwZGxTUU5OMm9i?=
- =?utf-8?B?aE1oZXcxT2twQ3Q4UC9pd1V1UU1LempHNlFHVmVuOVltd09WNnN6dmozR2Yv?=
- =?utf-8?B?am1QQ1NTNTNIanNpWmI2WG1RQTR4TThsUElxeXFpajJiY29lQnFQSUtLV0ZL?=
- =?utf-8?B?djdEUW80RVJLM0wyM0pTS1ZwcHI2cTc4aHYwejh2ZHFtSFhkZzBDVVFOeUZx?=
- =?utf-8?B?U0w3SE1HYTloUXl0bTBIWlJJVFd1SkJzUWY4TTF0K1J4QkJrRVUzMS9WVVZs?=
- =?utf-8?B?ajNqRGtsaWNLdGpTQ1duR0tpZVRrZWJRN1U1VE0wa3JDTnpObEg3ZkplZFQw?=
- =?utf-8?B?MkUxUER2dkFUdkNES2RmNnRYaGVRNzV6M2pXVGpuaXl5SnhsS24wUU1OWXBS?=
- =?utf-8?B?MlRNMldnR01lRk5mbjdRTE0xdEFkZmI2bzE3Ly95TlF5YVZxMHFLd0hCUXU1?=
- =?utf-8?B?QjgrdHR3V0puV0dkL29OWEVYdUdLaVpCa2VUZFdWNm10c2RNMWlRL2M0K2tx?=
- =?utf-8?B?d01xVStkTHg3bjFWOXZXK3hIZTR3MGFleHVGY1laaTJBcks1QVdqOU5jQmdr?=
- =?utf-8?B?bkJmYjkwNHBIMUUzQ1hTZUIrMElud3RNdE9xeDdQdXZibDZTdHh5a0tnNUZI?=
- =?utf-8?B?bHp5MFNsMThoK2dyZTZNYVk1bGZkT2k5Nnd3bU9pRHQ1cmhYN2tDdjUwMWQw?=
- =?utf-8?B?Z0w1VUg2cFBOeEhqTFB6bG96YUVuMzFQcHlFUGVYVkY4ejY3RzZoNkgrb0Zy?=
- =?utf-8?B?MERrM0haNzFSZnpub3V4TVhNL1JYYVFueDV6bFh5V3lYWFQ2VlR1WnJDOFJv?=
- =?utf-8?B?eGhScHJpNnc3UnBGUUJGTTJ5bzJVYmZJTy94Ti9rZjc0aTBEL1ZPQ1Znajk1?=
- =?utf-8?B?UElmUk05M25KMzJWRXAwTFpqRGlRaCtuV3c5YW5OaERFWW5sbmhreTBaNy9v?=
- =?utf-8?B?V1ZpUVFUT1RieEJoMGtDekZGbmZiMVpSYWFKRnlxci84RG4rak9oTUtHTjZn?=
- =?utf-8?B?eEw0bzk5R0tLTUZFRVk0TCtudHJQaURFS3h0aVpXR01hbnlicDk2TjRRQlNQ?=
- =?utf-8?B?NVNjTXdON285Zjd6MEVNbzlMQTRUTitkNGxXWEdxMVdPWjN2U2RhSURxSTIx?=
- =?utf-8?B?RVdVTnR2dVNxNHNoTEkxdVFaeDJOQjRFcGlxZjcwbHRsUlVFK2JBdDZlSldM?=
- =?utf-8?B?M2FKcVpiSGI3c3pNU3h5Ym5CTDVmY05Nanc4U0twL0V1STlCVWdseW1WcVFP?=
- =?utf-8?B?c2NuWE9ISGpoeTZuQ2duNkk0Z3BCc084TzMyL3dqdXVpVXl2Y0RhSkJDQzN6?=
- =?utf-8?B?a3I1RzRmbWpicUxweHhFVnFjQzNYQURMMFEwL1FpV3RPSFhyd2xVSVYzYTBi?=
- =?utf-8?B?MFVGK1g4R3FjN3ljaWdHc2JqMXI2alNZV0oreGRwUnpPdjJYVjhnL0hRTm8v?=
- =?utf-8?B?YU1UU3FCNEdCdURPNUYyd2E5MVBKOWhFMWFJMi94UFpUUFFZa0t3Y01NVWdK?=
- =?utf-8?B?TmtuSUQydlBmQSs1Y2JkMlBXSjdpSmlEeEtFenYzaXF6aUEzOVp4ajhDd3pl?=
- =?utf-8?B?QU80N2VmRE4rajFmL2EzU3dZOXhqa3BUa1dCMUw0eTRFRjN4c3p5UjFiY2kw?=
- =?utf-8?B?Z0hGL0hHRGlseTQ1T2F4YUJJWWlrQ1VQMzJ3YmFBaEVJNTRnZEpiU01mMmNN?=
- =?utf-8?B?NERnZWZiVGkxK2V4T0JsQytMZ21ZTWYrVHJiTHJmMy95ellOQXZPam4wZHp6?=
- =?utf-8?B?WGZMcld3d2tudFo5cFdrUEpaM1RHRXNhbHJkRk5GeWJnZXZheTdwYzJETVRR?=
- =?utf-8?B?VTNnYVVRU3N0bWpnUHFLdFJZckFyaFRaMTBXY3JONFoxUVlVWWpBWUNBcG0x?=
- =?utf-8?B?bTNmRXliR1NUV0ZVMG5uQ1VZWWxQYTAreUY0QTBGT3R2Q05hQnRBUGpWUHlG?=
- =?utf-8?B?Zy8yWU02OVo4MlFsazJlcWh6Y3lNVW9RU0FmejAxMGUwUTNRT3crSDlWVTV5?=
- =?utf-8?B?T1hjQlQ3bTY3Umk5U1ZCTVR5VlcyaHNYSWpaODMzcHVtd2F2SWxwNXZQSDNC?=
- =?utf-8?Q?MxSXUd6LRR6/BYP9U/LHrnRAOqDsEXyfwzMmi9uk/qOK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c5ecee3-9a27-4327-872d-08dd8267405d
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 13:03:34.3706
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 76lxySC51U0AKhSggsz9ZAZYbKUClCWGu0bTyn+IZysGDn7u/ihSJ2MHM6ex6f3uqthBlmG/qXFHYKRSgv7Pwg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7947
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH v3 2/6] coccinelle: misc: Add field_modify script
+To: Markus Elfring <Markus.Elfring@web.de>, <cocci@inria.fr>,
+        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Joey Gouly <joey.gouly@arm.com>,
+        "Julia
+ Lawall" <Julia.Lawall@inria.fr>, Marc Zyngier <maz@kernel.org>,
+        Nicolas Palix
+	<nicolas.palix@imag.fr>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        "Rasmus
+ Villemoes" <linux@rasmusvillemoes.dk>,
+        Suzuki Poulouse
+	<suzuki.poulose@arm.com>,
+        Will Deacon <will@kernel.org>, Yury Norov
+	<yury.norov@gmail.com>,
+        Zenghui Yu <yuzenghui@huawei.com>
+CC: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        "Kiran
+ Kumar C.S.K" <quic_kkumarcs@quicinc.com>,
+        Lei Wei <quic_leiwei@quicinc.com>, Pavithra R <quic_pavir@quicinc.com>,
+        Suruchi Agarwal
+	<quic_suruchia@quicinc.com>,
+        <quic_linchen@quicinc.com>
+References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+ <20250417-field_modify-v3-2-6f7992aafcb7@quicinc.com>
+ <a1be0efc-a4c9-461d-a01a-8fb830b2c68d@web.de>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <a1be0efc-a4c9-461d-a01a-8fb830b2c68d@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: d1C-_VtA2se0ltPj1-LpCYtqKYl_3Kko
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5MSBTYWx0ZWRfX2HoPaNVS9Rs7 skvMbPo1O3/lDaMF3Rx3zRJoaEiSWBgzeVDMxsZJJO2e9jxt8qfRvlI5KD8g0tcaAR5W59oIxT+ HbBNVqMHeINLSNyJEZrhMSINbaakgbrmZ0ZiDWmSNbyHPI+R2LL38UK371n8IX1nZ6zOg0ZrD+I
+ qh7h1Y/9oTycKb5NEkF7+MN42ZHOBl0ZLWDEXlfTm4PK2nG48KB76GjHDlzt4mph4wRmXS4D5+4 DNajvL7sbg8WYHwyZ/Eo3L8lzNDzj2dMZFcnpW+ZPWPJ15WlnizmFQKiI1TItPgf57CKGuKUy/5 JP1wSn2OXVEeDpkISxi9dbaxR9IVqixTVflxlExmCrIw93KqGsirZTE/jH8XwEkdbxTJcT9YjLR
+ Fs4Cq/DHFYwvzw6HgDHY4XwnEp7yE8FJZj912d+vyIMPObrHmV3lzNcAIIouzKAnJlaIxQKN
+X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=6808e55d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=ZOzjf2MOAAAA:8 a=Tm5InjWKXzpK7Ii0gWsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1Mhi-5-LkjG4w5oc0yAU:22
+X-Proofpoint-GUID: d1C-_VtA2se0ltPj1-LpCYtqKYl_3Kko
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 clxscore=1011 bulkscore=0 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230091
 
-On Tue Apr 22, 2025 at 8:45 PM JST, Danilo Krummrich wrote:
-> On Sun, Apr 20, 2025 at 09:19:41PM +0900, Alexandre Courbot wrote:
->> A page of system memory is reserved so sysmembar can perform a read on
->> it if a system write occurred since the last flush. Do this early as it
->> can be required to e.g. reset the GPU falcons.
->>=20
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  drivers/gpu/nova-core/dma.rs       | 54 +++++++++++++++++++++++++++++++=
-+++++++
->>  drivers/gpu/nova-core/gpu.rs       | 53 +++++++++++++++++++++++++++++++=
-++++--
->>  drivers/gpu/nova-core/nova_core.rs |  1 +
->>  drivers/gpu/nova-core/regs.rs      | 10 +++++++
->>  4 files changed, 116 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..a4162bff597132a04e002b2b=
-910a4537bbabc287
->> --- /dev/null
->> +++ b/drivers/gpu/nova-core/dma.rs
->> @@ -0,0 +1,54 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Simple DMA object wrapper.
->> +
->> +// To be removed when all code is used.
->> +#![allow(dead_code)]
->> +
->> +use kernel::device;
->> +use kernel::dma::CoherentAllocation;
->> +use kernel::page::PAGE_SIZE;
->> +use kernel::prelude::*;
->> +
->> +pub(crate) struct DmaObject {
->> +    pub dma: CoherentAllocation<u8>,
->> +    pub len: usize,
->
-> This should be covered by CoherentAllocation already, no? If it does not =
-have a
-> public accessor for its size, please add it for CoherentAllocation instea=
-d. I
-> can take the corresponding patch through the nova tree.
 
-`CoherentAllocation::count` is currently not accessible publicly. I
-agree that exposing it would make sense, let me add a patch doing that.
 
->
->> +    #[allow(dead_code)]
->
-> Please prefer #[expect(dead_code)], such that we are forced to remove it =
-once
-> it's subsequently used.
+On 4/23/2025 7:01 PM, Markus Elfring wrote:
+>> This script finds and suggests conversions of opencoded field
+>> modify patterns with the wrapper FIELD_MODIFY() API defined in
+>> include/linux/bitfield.h for better readability.
+> 
+> See also:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.15-rc3#n94
 
-Ah, that's indeed more suitable, thanks!
+OK, I will update the commit message with the imperative mood.
 
->
->> +    pub name: &'static str,
->> +}
->> +
->> +impl DmaObject {
->> +    pub(crate) fn new(
->> +        dev: &device::Device<device::Bound>,
->> +        len: usize,
->> +        name: &'static str,
->> +    ) -> Result<Self> {
->> +        let len =3D core::alloc::Layout::from_size_align(len, PAGE_SIZE=
-)
->> +            .map_err(|_| EINVAL)?
->> +            .pad_to_align()
->> +            .size();
->> +        let dma =3D CoherentAllocation::alloc_coherent(dev, len, GFP_KE=
-RNEL | __GFP_ZERO)?;
->> +
->> +        Ok(Self { dma, len, name })
->> +    }
->> +
->> +    pub(crate) fn from_data(
->> +        dev: &device::Device<device::Bound>,
->> +        data: &[u8],
->> +        name: &'static str,
->> +    ) -> Result<Self> {
->> +        Self::new(dev, data.len(), name).and_then(|mut dma_obj| {
->> +            // SAFETY:
->> +            // - The copied data fits within the size of the allocated =
-object.
->> +            // - We have just created this object and there is no other=
- user at this stage.
->> +            unsafe {
->> +                core::ptr::copy_nonoverlapping(
->> +                    data.as_ptr(),
->> +                    dma_obj.dma.start_ptr_mut(),
->> +                    data.len(),
->> +                );
->> +            }
->> +            Ok(dma_obj)
->> +        })
->> +    }
->> +}
->
-> The DMA wrapper should probably be added in a separate patch.
+> 
+> 
+> …
+>> +++ b/scripts/coccinelle/misc/field_modify.cocci
+>> @@ -0,0 +1,24 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +///
+> 
+> I suggest to omit a blank comment line here.
 
-Sure.
+OK.
 
->
->> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
->> index 1f7799692a0ab042f2540e01414f5ca347ae9ecc..d43e710cc983d51f053dacbd=
-77cbbfb79fa882c3 100644
->> --- a/drivers/gpu/nova-core/gpu.rs
->> +++ b/drivers/gpu/nova-core/gpu.rs
->> @@ -3,6 +3,7 @@
->>  use kernel::{device, devres::Devres, error::code::*, pci, prelude::*};
->> =20
->>  use crate::devinit;
->> +use crate::dma::DmaObject;
->>  use crate::driver::Bar0;
->>  use crate::firmware::Firmware;
->>  use crate::regs;
->> @@ -145,12 +146,30 @@ fn new(bar: &Devres<Bar0>) -> Result<Spec> {
->>  }
->> =20
->>  /// Structure holding the resources required to operate the GPU.
->> -#[pin_data]
->> +#[pin_data(PinnedDrop)]
->>  pub(crate) struct Gpu {
->>      spec: Spec,
->>      /// MMIO mapping of PCI BAR 0
->>      bar: Devres<Bar0>,
->>      fw: Firmware,
->> +    sysmem_flush: DmaObject,
->
-> Please add a doc-comment for this DmaObject explaining what it is used fo=
-r by
-> the driver and why it is needed.
+> 
+> 
+>> +/// Replaced below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
+> 
+> Replace?
 
-Will do.
+I will correct it.
 
->
->> +}
->> +
->> +#[pinned_drop]
->> +impl PinnedDrop for Gpu {
->> +    fn drop(self: Pin<&mut Self>) {
->> +        // Unregister the sysmem flush page before we release it.
->> +        let _ =3D with_bar!(&self.bar, |b| {
->> +            regs::PfbNisoFlushSysmemAddr::default()
->> +                .set_adr_39_08(0)
->> +                .write(b);
->> +            if self.spec.chipset >=3D Chipset::GA102 {
->> +                regs::PfbNisoFlushSysmemAddrHi::default()
->> +                    .set_adr_63_40(0)
->> +                    .write(b);
->> +            }
->> +        });
->> +    }
->>  }
->> =20
->>  impl Gpu {
->> @@ -173,6 +192,36 @@ pub(crate) fn new(
->>          devinit::wait_gfw_boot_completion(&bar)
->>              .inspect_err(|_| pr_err!("GFW boot did not complete"))?;
->> =20
->> -        Ok(pin_init!(Self { spec, bar, fw }))
->> +        // System memory page required for sysmembar to properly flush =
-into system memory.
->> +        let sysmem_flush =3D {
->> +            let page =3D DmaObject::new(
->> +                pdev.as_ref(),
->> +                kernel::bindings::PAGE_SIZE,
->> +                "sysmem flush page",
->> +            )?;
->> +
->> +            // Register the sysmem flush page.
->> +            with_bar!(bar, |b| {
->> +                let handle =3D page.dma.dma_handle();
->> +
->> +                regs::PfbNisoFlushSysmemAddr::default()
->> +                    .set_adr_39_08((handle >> 8) as u32)
->> +                    .write(b);
->> +                if spec.chipset >=3D Chipset::GA102 {
->> +                    regs::PfbNisoFlushSysmemAddrHi::default()
->> +                        .set_adr_63_40((handle >> 40) as u32)
->> +                        .write(b);
->> +                }
->> +            })?;
->> +
->> +            page
->> +        };
->> +
->> +        Ok(pin_init!(Self {
->> +            spec,
->> +            bar,
->> +            fw,
->> +            sysmem_flush,
->> +        }))
->>      }
->>  }
->> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/=
-nova_core.rs
->> index 878161e060f54da7738c656f6098936a62dcaa93..37c7eb0ea7a926bee4e3c661=
-028847291bf07fa2 100644
->> --- a/drivers/gpu/nova-core/nova_core.rs
->> +++ b/drivers/gpu/nova-core/nova_core.rs
->> @@ -21,6 +21,7 @@ macro_rules! with_bar {
->>  }
->> =20
->>  mod devinit;
->> +mod dma;
->>  mod driver;
->>  mod firmware;
->>  mod gpu;
->> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.=
-rs
->> index fd7096f0ddd4af90114dd1119d9715d2cd3aa2ac..1e24787c4b5f432ac25fe399=
-c8cb38b7350e44ae 100644
->> --- a/drivers/gpu/nova-core/regs.rs
->> +++ b/drivers/gpu/nova-core/regs.rs
->> @@ -14,6 +14,16 @@
->>      28:20   chipset =3D> try_into Chipset, "chipset model"
->>  );
->> =20
->> +/* PFB */
->> +
->> +register!(PfbNisoFlushSysmemAddr@0x00100c10;
->> +    31:0    adr_39_08 =3D> as u32
->> +);
->> +
->> +register!(PfbNisoFlushSysmemAddrHi@0x00100c40;
->> +    23:0    adr_63_40 =3D> as u32
->> +);
->
-> Please add some documentation for the register and its fields.
+> 
+> 
+> …
+>> +// Copyright (C) 2025 Qualcomm Innovation Center, Inc.
+> 
+> Copyright: ?
 
-Ack.
+I will fix it.
 
-Thanks,
-Alex.
+> 
+> 
+>> +// URL: https://coccinelle.gitlabpages.inria.fr/website
+> 
+> I suggest to omit such information here.
+
+OK.
+
+> 
+> 
+> …
+>> +virtual patch
+> 
+> How do you think about to support additional operation modes?
+
+Sure, I will update the patch to support other operation modes.
+
+> 
+> 
+> …
+>> +- reg &= ~mask;
+>> +- reg |= FIELD_PREP(mask, val);
+>> ++ FIELD_MODIFY(mask, &reg, val);
+> 
+> Would you like to integrate the following SmPL code variant?
+> 
+> -reg &= ~mask;
+> -reg |= FIELD_PREP
+> +       FIELD_MODIFY
+>                    (mask,
+> +                  &reg,
+>                     val
+>                    );
+> 
+> 
+> Regards,
+> Markus
+> 
+
+With this code variant, there is no space prior to &reg, here is the
+example code changes generated by the SmPL code as below, is this
+expected?
+
+Thanks for the review comments.
+
+--- a/drivers/phy/starfive/phy-jh7110-dphy-tx.c
++++ b/drivers/phy/starfive/phy-jh7110-dphy-tx.c
+@@ -244,8 +244,7 @@ static int stf_dphy_configure(struct phy
+         i = stf_dphy_get_config_index(bitrate);
+
+         tmp = readl(dphy->topsys + STF_DPHY_APBIFSAIF_SYSCFG(100));
+-       tmp &= ~STF_DPHY_REFCLK_IN_SEL;
+-       tmp |= FIELD_PREP(STF_DPHY_REFCLK_IN_SEL, STF_DPHY_REFCLK_12M);
++       FIELD_MODIFY(STF_DPHY_REFCLK_IN_SEL,&tmp, STF_DPHY_REFCLK_12M);
+         writel(tmp, dphy->topsys + STF_DPHY_APBIFSAIF_SYSCFG(100));
+
 
