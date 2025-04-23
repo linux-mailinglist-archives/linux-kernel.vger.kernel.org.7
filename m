@@ -1,102 +1,162 @@
-Return-Path: <linux-kernel+bounces-616188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28A0A988D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:44:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A4BA988DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F393F1B659D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB403BA442
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7F727054A;
-	Wed, 23 Apr 2025 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1E520D51E;
+	Wed, 23 Apr 2025 11:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUwF4t6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GwVm5guX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="e1oT5lrY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GwVm5guX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="e1oT5lrY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A385B26F444;
-	Wed, 23 Apr 2025 11:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00BA20E00C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 11:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745408667; cv=none; b=OYmALDYU3dU0HjCFQVlp3+fA6Uifd9POOEF7bQRx1VBhlibTi8x9G3h1Xp84bIINRNrWQ4YgatP2bzeaCVA0sxNbQGiDMWpyqz6d7P/SJ493eSITltBEx/5Rry+PFj+v52efMvQcL0/pkl7kcNPU2YQo5SUKUJ2c6KVxjoE52uI=
+	t=1745408909; cv=none; b=iB7RYV1OI0wGPi+KSI1yL3BhsCCPreW+r4bEFc4XE8KptiRnTg+p060kh5q6aqYIZeYNRLbKLnXRS+hGlUfZHJsbQbNiz46Z3xErNJpavHrJjieRqYIlP0oXxseRMmLNiPp59tc4meZFcgnkZK2VMDp2k7sKQ5oFo1TAmX51Z68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745408667; c=relaxed/simple;
-	bh=5cQQ2k3EMTyhmzUp7//r0VkHXfsAWm3XNAjUaKxYfeQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HPCVynFomGc6blN3pnoTSqeAv42eYqzbAtirg2NmCiBGa3G7bvDRvf+k81qiPfSfnp5wZeeQVgGc2wPCUR5I3OXLT3c2TugOOfaCYiRR70a+MKFi74Ict1u8cFJJQw7AqFMAzSw9Iqvf1n20Ese181/Z/c0/mnpt6J95z/w7qNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUwF4t6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A09BC4CEE2;
-	Wed, 23 Apr 2025 11:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745408667;
-	bh=5cQQ2k3EMTyhmzUp7//r0VkHXfsAWm3XNAjUaKxYfeQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KUwF4t6t487uwT0ohnuanuQXtWNurrxiMBebUH6vxSwX5yH0Tw2/KTnMxUDmHBki7
-	 nbKsWGXM6N2YMMhZ/01UNvhT+W/vhKfCCsf356vtSTOilONszEn/yvXP+KNNrLSahd
-	 EMPy5RawgUx7sTFvBsGjSaWGI3gI6F1xy1xaKy2lgbe6xoCNhmmJ3k3Vw8yqx2LbaG
-	 uBMCNyho0hRJXJSr1DZGo1Xp96zUQf3iTX6T5RPXlSU/uzFhY40tZ995cJ0svqMqdN
-	 0cF3vqjjvdT8shUAEJIBofeEg6b5ZEaOPqOBKcW0K/sa2OJJEg6zz1PYmGE68ydWms
-	 Y0i9IX+SDeacQ==
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <2674c8df1d05ab312826b69bfe9559f81d125a0b.1744975624.git.christophe.jaillet@wanadoo.fr>
-References: <2674c8df1d05ab312826b69bfe9559f81d125a0b.1744975624.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: stm32-ospi: Fix an error handling path in
- stm32_ospi_probe()
-Message-Id: <174540866515.26715.3420851726467928798.b4-ty@kernel.org>
-Date: Wed, 23 Apr 2025 12:44:25 +0100
+	s=arc-20240116; t=1745408909; c=relaxed/simple;
+	bh=yD35uR97vBk7xWcCBm15oQRNSiMnQl1zX9rUghgEyp4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MNymjuleWVGtF8TUWRsxWvdG4KePVpk4LNNnr4pVJtjfD2NUYVUBq6Oii34AMfpGvOwtqHqv7x4UESHniT0JJnjl0/1y29oWnyEXAdaMJE88kCeiT3E4JlYmpEjCq4Q73td3sxoS/Kuqrl8vyvFtuE5090dk3xrqw445Zlp5X/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GwVm5guX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=e1oT5lrY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GwVm5guX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=e1oT5lrY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 13BA61F38D;
+	Wed, 23 Apr 2025 11:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745408905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wz3PTQnLCthgEyehHEykcK3kjIg/rWBspJNGsd6ek8=;
+	b=GwVm5guXUh0jXvluZgFmoBJq5IdhAdLN1ceH+5ps0IRfvb7P1O8ly4K+/up5a6Ihp+ju3z
+	Ah4+UbrkAplC7sOYOLRS4/PcLvX5xdBQazh3f6MwOcOn3ABWPqV4OF6ZAqpTk8OLuW1RMQ
+	rcoB9LETTbj4KBU3Fe9zWjH/yTUHAsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745408905;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wz3PTQnLCthgEyehHEykcK3kjIg/rWBspJNGsd6ek8=;
+	b=e1oT5lrY/LMKOvMJsUIGhLRC6wPA4j4yr38pV4qXvFGiHS86F0ZWblEeWMvrOVPwvSpySC
+	ODXACYg+axvxQADw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745408905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wz3PTQnLCthgEyehHEykcK3kjIg/rWBspJNGsd6ek8=;
+	b=GwVm5guXUh0jXvluZgFmoBJq5IdhAdLN1ceH+5ps0IRfvb7P1O8ly4K+/up5a6Ihp+ju3z
+	Ah4+UbrkAplC7sOYOLRS4/PcLvX5xdBQazh3f6MwOcOn3ABWPqV4OF6ZAqpTk8OLuW1RMQ
+	rcoB9LETTbj4KBU3Fe9zWjH/yTUHAsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745408905;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wz3PTQnLCthgEyehHEykcK3kjIg/rWBspJNGsd6ek8=;
+	b=e1oT5lrY/LMKOvMJsUIGhLRC6wPA4j4yr38pV4qXvFGiHS86F0ZWblEeWMvrOVPwvSpySC
+	ODXACYg+axvxQADw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4D6C13691;
+	Wed, 23 Apr 2025 11:48:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hXlxM4jTCGgaOQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 23 Apr 2025 11:48:24 +0000
+Date: Wed, 23 Apr 2025 13:48:16 +0200
+Message-ID: <87ldrr3xq7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Cc: <perex@perex.cz>,
+	<tiwai@suse.com>,
+	<peter.ujfalusi@linux.intel.com>,
+	<yung-chuan.liao@linux.intel.com>,
+	<pierre-louis.bossart@linux.dev>,
+	<maxtram95@gmail.com>,
+	<hkallweit1@gmail.com>,
+	<ranjani.sridharan@linux.intel.com>,
+	<skend@chromium.org>,
+	<lumag@kernel.org>,
+	<chaitanya.kumar.borah@intel.com>,
+	<kai.vehmanen@linux.intel.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<CobeChen@zhaoxin.com>,
+	<TimGuo@zhaoxin.com>,
+	<LeoLiu-oc@zhaoxin.com>,
+	<JoanneBao@glenfly.com>
+Subject: Re: [PATCH] ALSA: HDA: Add Zhaoxin HDMI Controller and Codec support
+In-Reply-To: <20250423102851.57997-1-TonyWWang-oc@zhaoxin.com>
+References: <20250423102851.57997-1-TonyWWang-oc@zhaoxin.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,linux.intel.com,linux.dev,gmail.com,chromium.org,kernel.org,intel.com,vger.kernel.org,zhaoxin.com,glenfly.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Fri, 18 Apr 2025 13:27:53 +0200, Christophe JAILLET wrote:
-> If an error occurs after a successful stm32_ospi_dma_setup() call, some
-> dma_release_channel() calls are needed to release some resources, as
-> already done in the remove function.
+On Wed, 23 Apr 2025 12:28:51 +0200,
+Tony W Wang-oc wrote:
 > 
+> Add newer Zhaoxin HD Audio PCI IDs, and HDMI codec vendor IDs.
 > 
+> Because Zhaoxin hardware limitation, set BDL position to 128 to
+> increase interrupt interval.
+> 
+> To fix response write request not synced to memory when handle
+> HDAC interrupt, set bus->polling_mode = 1.
+> 
+> Signed-off-by: Joanne Bao <JoanneBao@glenfly.com>
+> Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
 
-Applied to
+Applied to for-next branch.  Thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thanks!
-
-[1/1] spi: stm32-ospi: Fix an error handling path in stm32_ospi_probe()
-      commit: 460b14b0929fa9f658a7e159ef646ce456962ab0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Takashi
 
