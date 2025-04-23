@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-616324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFF6A98ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:25:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073E8A98AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECA03B1F18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DBC1B66206
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759C11AF0C7;
-	Wed, 23 Apr 2025 13:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D71192B66;
+	Wed, 23 Apr 2025 13:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WYz23Fj6";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WYz23Fj6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="iu4GVOzd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8479618DB19
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54FF156C6F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745414554; cv=none; b=nmPX1l3TjzR6UQemQKo9OvXmSorJWZi36IJokLagWEZRUSkKIVTR++XFlwIXLZqV1Zs0DWC/1E6BaYB3CFvkKZ1NXDyVGGtoX9KvTX6q9fzfiRORPZzNs1cuZiCdZ/E7lu/fppUfN+PUTbn3Z3L4C9TO+nN9yH0VMPzDG3oqTpM=
+	t=1745414582; cv=none; b=bY7BZRPyfrPGiWaFvaaMe3iSBQLtM30zrM61Mx0w/pwqh4pWaIq1JYgaTq5nWpNVyDYlR+QSJ1zbo3nmzhvS8USGja42jr/QslSfe1u4tjJ4xV7TKXVS4Xvgga/TGxd1AUnLXof4YelHuE6Pc/thdKeTJiPLBKyK8J/L83FJmFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745414554; c=relaxed/simple;
-	bh=2fSGqfGe9QF0hCkGFRwBT0+5mcM+4uAzRmVq171CGlg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jac+TpgAuqnfzNqVeH+K8g7A9ywOHoKgRRBBvqdve9VcE1K7v5Mh+C5VlTUZU09k16tGXn41cTSheKLenQyn7NH+K9EdcJy3nYJvMfTJLwluWn6VYeNkAZ4g/Laxna6+GJ2tsPZ6vQ/Z+lddK70YJH020y1q5SEsjPI0zrbf/Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WYz23Fj6; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WYz23Fj6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8312E1F441;
-	Wed, 23 Apr 2025 13:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1745414550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sbm+i1YS9B9TwaPdJxxSVF9m6Ca6BSDgVpX6BzZzH4E=;
-	b=WYz23Fj6yBwM4ukDzfxvaRNJM6mI/ZA6pFm8VFNRtmk9ff48jVvbW/iXqKJPd5DHx1EeV8
-	vaafql/+9gIT5jmqwkBrf+zlQ29KXkWmafiB7WPDTryaT1w08eLEOmJ9LRnJFy8xHxlYkq
-	nh4YjZeEPrtaYCZjCVim8XVmpEiKsaw=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=WYz23Fj6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1745414550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sbm+i1YS9B9TwaPdJxxSVF9m6Ca6BSDgVpX6BzZzH4E=;
-	b=WYz23Fj6yBwM4ukDzfxvaRNJM6mI/ZA6pFm8VFNRtmk9ff48jVvbW/iXqKJPd5DHx1EeV8
-	vaafql/+9gIT5jmqwkBrf+zlQ29KXkWmafiB7WPDTryaT1w08eLEOmJ9LRnJFy8xHxlYkq
-	nh4YjZeEPrtaYCZjCVim8XVmpEiKsaw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 619CE13A3D;
-	Wed, 23 Apr 2025 13:22:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RO7qFpbpCGhRWAAAD6G6ig
-	(envelope-from <neelx@suse.com>); Wed, 23 Apr 2025 13:22:30 +0000
-From: Daniel Vacek <neelx@suse.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Nick Terrell <terrelln@fb.com>
-Cc: Daniel Vacek <neelx@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] btrfs: harden parsing of compress mount option
-Date: Wed, 23 Apr 2025 15:22:19 +0200
-Message-ID: <20250423132220.4052042-1-neelx@suse.com>
+	s=arc-20240116; t=1745414582; c=relaxed/simple;
+	bh=yGMSVv9f4+/4b3cn0zZNoJ4i27It+95C4eOcXL1wdAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NDMoSg03K6cA/LyFxLyYGWo5E8iUbM7vl8o8hqQOd0ZBAnSGROeGtXV8HiaG/VSrC3NNb/wsk41XDK3n/pBdzWM4XzRcoOg8LQ9pNGdTvkixS3FDu1IGHnkuDDODvxDec3/bmJnJOmuQizm2b1oCCoHbttA/4BFE92WYnInKpDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=iu4GVOzd; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso54252955e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1745414578; x=1746019378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UKMjh80pkF0U1r9Ws45Yco9sh0xx3u5MhQd3yiBsdSA=;
+        b=iu4GVOzdGdvIbkMoSUvuhlzhXz9vyGHeztUkkvHfi9avJq426ILdaRtLltID3d0zWp
+         la8GZ7n80hgTegYWxVoRWvJRsm6TThFJSxqyivyUp5w8nsnymgfLQtjEWEexVu35rtyc
+         kbNUlI/SPWT2M4vCaave98TXhR8OYSOHpWX/T4D7ySjwOqirrW8bjgpMDfYI0W9rJ/zn
+         ncBfu0H8/mjUeOZe5c8eduTav0qDU2bSugzAyHqBNEoYcZ3IZJqS+1/aDjscCKq5kFVo
+         hkr+c7aRqPAO5VaJ428e29Id9rq3SQgj6CNn+mViTYGpUl0wUqaV5WQ4/vaWIYzODNOr
+         AjKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745414578; x=1746019378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UKMjh80pkF0U1r9Ws45Yco9sh0xx3u5MhQd3yiBsdSA=;
+        b=MjmPGVSOzCJAljcH6XqcX89ut4numJvRAkDVwApun3ostdVIfYIlkk6RF/u2yj5HVJ
+         m5opkvZnb6g269y70e+Wysl0iGyIgXiceexHxLfQW5T5RYY1VFFAGilvWmWG3LoaPQRQ
+         PUVqu8WwKSQODqtAOrJ32B9hM3LrMGUMdQzGZoptD9Kp/Sj4ztHoxK6B2KmRB61uiU7h
+         Ms0a9jUDhVckx2yRJDMIvCnFM8U8r8j9hhDdWASYuXPn/Kt3JoKTpWx+AVOz/4edP01Q
+         GsxJ2D3ZciLJ8chAX3G0QJ0Z4ohp4gW9BuxQCVBJxUl0hF3WHqXNvrOCvtixDVu9VX7L
+         ZFkg==
+X-Gm-Message-State: AOJu0Yz0OZwPljtiJ3LFwYkOSnxlCpWM2EUzoAKBjRu6brqNvtg/ZT97
+	/0M2kuj+XV5MAryb1hfQy84bpdLP79trEBOs0xhm+Z4C8eqJJ5s0Ey+IobagWFNn9Z//fzVJoPy
+	+
+X-Gm-Gg: ASbGncuaR5a14M5D7SImudVeb9c5iqjampaJS6/GZl2ON9C0u32wrGs5sU7svaAVBUv
+	zXCT7kUivXnEcNyuPRaeFtHPYYOQIsiR5fAosdQoN3uoD4JdbOi9E+vPuffADb/OB82uHWri9UQ
+	CHNdC1noEXKS1wRq4kZH1+K8V+yr2m12wt2u8uEDBjX/4k6ZlHLO9MBiBZxMo3EKezhc521pCt3
+	raLPJLL+CPIwtu6Q8dvNqiUvmwSdkruNoA2AeU/f2AG+IiAqrLV+mDO5ro6hvFChfIRuiitVR7V
+	3NXEZRQ5zg2VIVlPRN/p7fwBg6C97s7fNGT1NLvWmwFMsYpR1Vh/3nvCmkBE51mZB4oCP74Hsw5
+	8OoN9H46OBIq4dK+iwZfbUO6nIjZg3Cu2JoSBXUJh
+X-Google-Smtp-Source: AGHT+IH3oOCJPqy8g9E1uMBWxJG33+l7Q/cJgMxL7y9T/lFqjvdA8c0HXVW/rdbAsZ8zObi1wqadtg==
+X-Received: by 2002:a05:600c:3107:b0:43d:ed:ad07 with SMTP id 5b1f17b1804b1-4406ac21886mr167630725e9.29.1745414577838;
+        Wed, 23 Apr 2025 06:22:57 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f041700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f04:1700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092d16dc0sm25792765e9.6.2025.04.23.06.22.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:22:57 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: linux-nfs@vger.kernel.org,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	dwysocha@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/nfs/read: fix double-unlock bug in nfs_return_empty_folio()
+Date: Wed, 23 Apr 2025 15:22:50 +0200
+Message-ID: <20250423132250.1821518-1-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250423073329.4021878-1-neelx@suse.com>
-References: <20250423073329.4021878-1-neelx@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,177 +89,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8312E1F441
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
 
-Btrfs happily but incorrectly accepts the `-o compress=zlib+foo` and similar
-options with any random suffix. Let's handle that correctly.
+Sometimes, when a file was read while it was being truncated by
+another NFS client, the kernel could deadlock because folio_unlock()
+was called twice, and the second call would XOR back the `PG_locked`
+flag.
 
-Signed-off-by: Daniel Vacek <neelx@suse.com>
+Most of the time (depending on the timing of the truncation), nobody
+notices the problem because folio_unlock() gets called three times,
+which flips `PG_locked` back off:
+
+ 1. vfs_read, nfs_read_folio, ... nfs_read_add_folio,
+    nfs_return_empty_folio
+ 2. vfs_read, nfs_read_folio, ... netfs_read_collection,
+    netfs_unlock_abandoned_read_pages
+ 3. vfs_read, ... nfs_do_read_folio, nfs_read_add_folio,
+    nfs_return_empty_folio
+
+The problem is that nfs_read_add_folio() is not supposed to unlock the
+folio if fscache is enabled, and a nfs_netfs_folio_unlock() check is
+missing in nfs_return_empty_folio().
+
+Rarely this leads to a warning in netfs_read_collection():
+
+ ------------[ cut here ]------------
+ R=0000031c: folio 10 is not locked
+ WARNING: CPU: 0 PID: 29 at fs/netfs/read_collect.c:133 netfs_read_collection+0x7c0/0xf00
+ [...]
+ Workqueue: events_unbound netfs_read_collection_worker
+ RIP: 0010:netfs_read_collection+0x7c0/0xf00
+ [...]
+ Call Trace:
+  <TASK>
+  netfs_read_collection_worker+0x67/0x80
+  process_one_work+0x12e/0x2c0
+  worker_thread+0x295/0x3a0
+
+Most of the time, however, processes just get stuck forever in
+folio_wait_bit_common(), waiting for `PG_locked` to disappear, which
+never happens because nobody is really holding the folio lock.
+
+Fixes: 000dbe0bec05 ("NFS: Convert buffered read paths to use netfs when fscache is enabled")
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
-v2: Drop useless check for comma and split compress options
-    into a separate helper function
+ fs/nfs/read.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- fs/btrfs/super.c | 108 +++++++++++++++++++++++++++--------------------
- 1 file changed, 62 insertions(+), 46 deletions(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 40709e2a44fce..422fb82279877 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -270,6 +270,67 @@ static inline blk_mode_t btrfs_open_mode(struct fs_context *fc)
- 	return sb_open_mode(fc->sb_flags) & ~BLK_OPEN_RESTRICT_WRITES;
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 81bd1b9aba17..3c1fa320b3f1 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -56,7 +56,8 @@ static int nfs_return_empty_folio(struct folio *folio)
+ {
+ 	folio_zero_segment(folio, 0, folio_size(folio));
+ 	folio_mark_uptodate(folio);
+-	folio_unlock(folio);
++	if (nfs_netfs_folio_unlock(folio))
++		folio_unlock(folio);
+ 	return 0;
  }
  
-+static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
-+				struct fs_parameter *param, int opt)
-+{
-+	/*
-+	 * Provide the same semantics as older kernels that don't use fs
-+	 * context, specifying the "compress" option clears
-+	 * "force-compress" without the need to pass
-+	 * "compress-force=[no|none]" before specifying "compress".
-+	 */
-+	if (opt != Opt_compress_force && opt != Opt_compress_force_type)
-+		btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
-+
-+	if (opt == Opt_compress || opt == Opt_compress_force) {
-+		ctx->compress_type = BTRFS_COMPRESS_ZLIB;
-+		ctx->compress_level = BTRFS_ZLIB_DEFAULT_LEVEL;
-+		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-+		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-+		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-+	} else if (strncmp(param->string, "zlib", 4) == 0 &&
-+			(param->string[4] == ':' ||
-+			 param->string[4] == '\0')) {
-+		ctx->compress_type = BTRFS_COMPRESS_ZLIB;
-+		ctx->compress_level =
-+			btrfs_compress_str2level(BTRFS_COMPRESS_ZLIB,
-+						 param->string + 4);
-+		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-+		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-+		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-+	} else if (strncmp(param->string, "lzo", 3) == 0 &&
-+			param->string[3] == '\0') {
-+		ctx->compress_type = BTRFS_COMPRESS_LZO;
-+		ctx->compress_level = 0;
-+		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-+		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-+		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-+	} else if (strncmp(param->string, "zstd", 4) == 0 &&
-+			(param->string[4] == ':' ||
-+			 param->string[4] == '\0')) {
-+		ctx->compress_type = BTRFS_COMPRESS_ZSTD;
-+		ctx->compress_level =
-+			btrfs_compress_str2level(BTRFS_COMPRESS_ZSTD,
-+						 param->string + 4);
-+		btrfs_set_opt(ctx->mount_opt, COMPRESS);
-+		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-+		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-+	} else if ((strncmp(param->string, "no", 2) == 0 &&
-+			param->string[2] == '\0') ||
-+		   (strncmp(param->string, "none", 4) == 0 &&
-+			param->string[4] == '\0')) {
-+		ctx->compress_level = 0;
-+		ctx->compress_type = 0;
-+		btrfs_clear_opt(ctx->mount_opt, COMPRESS);
-+		btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
-+	} else {
-+		btrfs_err(NULL, "unrecognized compression value %s",
-+			  param->string);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static int btrfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct btrfs_fs_context *ctx = fc->fs_private;
-@@ -339,53 +400,8 @@ static int btrfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		fallthrough;
- 	case Opt_compress:
- 	case Opt_compress_type:
--		/*
--		 * Provide the same semantics as older kernels that don't use fs
--		 * context, specifying the "compress" option clears
--		 * "force-compress" without the need to pass
--		 * "compress-force=[no|none]" before specifying "compress".
--		 */
--		if (opt != Opt_compress_force && opt != Opt_compress_force_type)
--			btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
--
--		if (opt == Opt_compress || opt == Opt_compress_force) {
--			ctx->compress_type = BTRFS_COMPRESS_ZLIB;
--			ctx->compress_level = BTRFS_ZLIB_DEFAULT_LEVEL;
--			btrfs_set_opt(ctx->mount_opt, COMPRESS);
--			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
--			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--		} else if (strncmp(param->string, "zlib", 4) == 0) {
--			ctx->compress_type = BTRFS_COMPRESS_ZLIB;
--			ctx->compress_level =
--				btrfs_compress_str2level(BTRFS_COMPRESS_ZLIB,
--							 param->string + 4);
--			btrfs_set_opt(ctx->mount_opt, COMPRESS);
--			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
--			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--		} else if (strncmp(param->string, "lzo", 3) == 0) {
--			ctx->compress_type = BTRFS_COMPRESS_LZO;
--			ctx->compress_level = 0;
--			btrfs_set_opt(ctx->mount_opt, COMPRESS);
--			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
--			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--		} else if (strncmp(param->string, "zstd", 4) == 0) {
--			ctx->compress_type = BTRFS_COMPRESS_ZSTD;
--			ctx->compress_level =
--				btrfs_compress_str2level(BTRFS_COMPRESS_ZSTD,
--							 param->string + 4);
--			btrfs_set_opt(ctx->mount_opt, COMPRESS);
--			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
--			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
--		} else if (strncmp(param->string, "no", 2) == 0) {
--			ctx->compress_level = 0;
--			ctx->compress_type = 0;
--			btrfs_clear_opt(ctx->mount_opt, COMPRESS);
--			btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
--		} else {
--			btrfs_err(NULL, "unrecognized compression value %s",
--				  param->string);
-+		if (btrfs_parse_compress(ctx, param, opt))
- 			return -EINVAL;
--		}
- 		break;
- 	case Opt_ssd:
- 		if (result.negated) {
 -- 
 2.47.2
 
