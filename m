@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-616456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42A6A98CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:27:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84672A98D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0CDA3A5011
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E03189D646
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77B927D76A;
-	Wed, 23 Apr 2025 14:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E56A27D779;
+	Wed, 23 Apr 2025 14:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI4RAf3j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="l90t+uL5"
+Received: from outbound.pv.icloud.com (p-west1-cluster6-host2-snip4-3.eps.apple.com [57.103.67.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD0B143736;
-	Wed, 23 Apr 2025 14:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80721A239D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 14:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.67.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745418411; cv=none; b=qEy4LNuQq4dXEIhgq5xRPU3kijjeKF0ifkVFt8rrcEvn5LfHbi573tB5pVaw6IyN336DLQzzR0GfllDSKtDYRVG9g1o7Bj5Oy2oWzPN+/KMktgaO0t2OkucFesLuRs04QuiZAnGB+40Fr/xY+xiw+RvzPlGXT9ZIusDvOOGHhpA=
+	t=1745418452; cv=none; b=dQ1kwAEy+N8prR6Lo0IyFOOLJ/zZfepluGFN5CcPh5fGwmbjmQ7lg72stjuxnR2AMY/s7t+JFCNZcZ71nDob0IBkywnsizD5jrTRBWXM7kjaJgnRD3dKFyjO3i+R/eTW5RpRYhDfskRlnP7b+RS2NY/hqg+bXw98KQKbSn45jkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745418411; c=relaxed/simple;
-	bh=YQYhn8HZx7ubPYTlNSiK99ntMYepg0AMRX7OXqpob3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eqBA5RbjzZEyrKeL3Q/GwUxGjT46AIOIIIJtURmHaNaEsSCHMOQjAv7B7cgga9jiDMTMYkpfRCICMBklcCWYe34aCu3NWDRiVBNjsks1cYkoU10HzrTG5iNXv/I1eZSyNN89CZlPO72Og5UEJjj37KYxK1nwH77VNs7YFkV8Peo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI4RAf3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7652C4CEE3;
-	Wed, 23 Apr 2025 14:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745418410;
-	bh=YQYhn8HZx7ubPYTlNSiK99ntMYepg0AMRX7OXqpob3w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oI4RAf3j4M1r2VV6NRgs1xBOJEm2flOIoypXVAMl1a1YvNUbGNE84IEzxCTuVm6GU
-	 pW+qYfhxnSaHqbWYoPkJrnTod7niNrZtYOcDI5DauZVoXHqrvGintx4D9IPYZaXj8G
-	 OP4amihUP6Q21gQMpm2qrKvzwPYHAzII5oWrvNL5ygDMED+N8owCNRs/Vj0/PS0oBW
-	 j45EJfKEzEuvL0kQcipUPF3FrbQKU6DkiQ33rQFPaKpB7zQuEtX5FjSt/RJYx6wwAv
-	 2hYXwW5Tb1aj3rKPirsgIpgoMnqaX5GnhFUPV2Uce62CwkiIjyCNCSXkwuY8BlcgU+
-	 6bZriRBFBABJw==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3f6a92f234dso4069163b6e.3;
-        Wed, 23 Apr 2025 07:26:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVVHT6NKQngTyRf+MS+TjRgMKzP0Z5hrWWPaghlasHX3WPdmbliJW40WCWhNIUwHDretu+7Oa3V9paLX8E=@vger.kernel.org, AJvYcCVr2A60j0M7y/7s/DfO/sWT0HE6kbwk7RtikCxj78I5WB5IM6Ms+OLFJw7+l3ZgubpnN1RfD90PoOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2wNduIhZYHVvtvWLW2AKxcPWXtPiNv6CITUXJ27jUuMujewAH
-	Ih08+W1AdMzzojiUplGfFLAugD895Os6HlfEff2Ugk9uFbnUbdWUxEBquylZbKgreOIfRNUy9sh
-	nF/LgjYsTAf0cyYHQ0paxxjkO8wo=
-X-Google-Smtp-Source: AGHT+IF86QSYcG4iBnR8KfUoSgrDuxUjBg1Hhrec5DRZmfTgDqFoRXL12KcMeRoA1Yl8dkNcre81jhSzAziC3JcdFNc=
-X-Received: by 2002:a05:6871:741d:b0:2d4:e101:13dd with SMTP id
- 586e51a60fabf-2d526979cc4mr12643088fac.1.1745418410039; Wed, 23 Apr 2025
- 07:26:50 -0700 (PDT)
+	s=arc-20240116; t=1745418452; c=relaxed/simple;
+	bh=nXM6AtnLN1ZYma1X8iT5aCvbm82H6Km8UHls5cOvQwU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sXSKjyULA3W4LXtHt3Lzm02ZXaFC+KG/uHsdnr8O8C87WV04bIghagH++iZuHNV3s+F0g6K9XvCUOD6xyJm6E+AXvOE2t+spBYI3hTVDs7qX5Lp5ix4LRNgt+sUqVnFOgCsf3WuPyWZ35ZoIrgGPrNFtatcHIlq1kiHH5DyZiJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=l90t+uL5; arc=none smtp.client-ip=57.103.67.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=8kCbBm/AY2YEx86pOWpcj7Bacq0Dl+t7vQBYVAMNewo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=l90t+uL5t0JUhuluYM4CfGZzd/4ElHfi0EpGncKalxCRRawtXnktgfNfn6aPTMOgf
+	 UHAMiuN4iN3o9ZozX2tWBIWgkoUp2I2OsavtPS+q2naTIJ21+jrRM4WiCQ7j3cXZZC
+	 eWHuRSSNxFO1sIW8+nETrEwLINreG0XOQ80T7jDZo6TntxQOX+ELZ+8SjSa0Kf9Ni+
+	 3UGH6cVoB1DUDik50MwICZUpgKqjMFsgdmvJHAfmJIyjIo9cCL6HgZkbWk7F6N97ls
+	 SUcYQtJBYmtghdTi0BFPnGtlGFAm80qV/VFYZEUyeXqnqI8a8+9qAaUBLKN6LMb8oJ
+	 hZabAm7bOmVrQ==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id D409C18019D2;
+	Wed, 23 Apr 2025 14:27:27 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Wed, 23 Apr 2025 22:27:00 +0800
+Subject: [PATCH] serdev: Get serdev controller's name by dev_name()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1745315548.git.viresh.kumar@linaro.org> <d8651db6d8687a0e37d527267ebfec05f209b1b7.1745315548.git.viresh.kumar@linaro.org>
-In-Reply-To: <d8651db6d8687a0e37d527267ebfec05f209b1b7.1745315548.git.viresh.kumar@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 Apr 2025 16:26:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hWUdRdbPL2=qybaEsNfPzAqdxW+xBrjwy4HaBXnTwD0g@mail.gmail.com>
-X-Gm-Features: ATxdqUGtzCcRuzs8_RMtDyNBoI0AmDx05VZ1ZJDD6JW5HMnWEgCwZuUfEuq10rY
-Message-ID: <CAJZ5v0hWUdRdbPL2=qybaEsNfPzAqdxW+xBrjwy4HaBXnTwD0g@mail.gmail.com>
-Subject: Re: [PATCH 2/6] cpufreq: acpi: Re-sync CPU boost state on system resume
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Lifeng Zheng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Nicholas Chin <nic.c3.14@gmail.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-fix_serdev-v1-1-26ca3403fd33@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALP4CGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyMj3bTMinignpTUMl3LlESQkKWBhWGSElBDQVEqUBZsWHRsbS0A3pq
+ 2tlwAAAA=
+X-Change-ID: 20250422-fix_serdev-9da04229081b
+To: Rob Herring <robh@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-serial@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: q-hAJCDiicWJMw6D8RkcY1pff6e-Kkve
+X-Proofpoint-GUID: q-hAJCDiicWJMw6D8RkcY1pff6e-Kkve
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ mlxscore=0 bulkscore=0 adultscore=0 clxscore=1015 spamscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=890 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.22.0-2503100000 definitions=main-2504230102
 
-On Tue, Apr 22, 2025 at 11:54=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
->
-> During suspend/resume cycles, platform firmware may alter the CPU boost
-> state.
->
-> If boost is disabled before suspend, it correctly remains off after
-> resume. However, if firmware re-enables boost during suspend, the system
-> may resume with boost frequencies enabled=E2=80=94even when the boost fla=
-g was
-> originally disabled. This violates expected behavior.
->
-> Ensure the boost state is re-synchronized with the kernel policy during
-> system resume to maintain consistency.
->
-> Fixes: 2b16c631832d ("cpufreq: ACPI: Remove set_boost in acpi_cpufreq_cpu=
-_init()")
-> Reported-by: Nicholas Chin <nic.c3.14@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220013
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/acpi-cpufreq.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufre=
-q.c
-> index 7002e8de8098..0ffabf740ff5 100644
-> --- a/drivers/cpufreq/acpi-cpufreq.c
-> +++ b/drivers/cpufreq/acpi-cpufreq.c
-> @@ -893,8 +893,19 @@ static int acpi_cpufreq_cpu_init(struct cpufreq_poli=
-cy *policy)
->         if (perf->states[0].core_frequency * 1000 !=3D freq_table[0].freq=
-uency)
->                 pr_warn(FW_WARN "P-state 0 is not max freq\n");
->
-> -       if (acpi_cpufreq_driver.set_boost)
-> -               policy->boost_supported =3D true;
-> +       if (acpi_cpufreq_driver.set_boost) {
-> +               if (policy->boost_supported) {
-> +                       /*
-> +                        * The firmware may have altered boost state whil=
-e the
-> +                        * CPU was offline (for example during a suspend-=
-resume
-> +                        * cycle).
-> +                        */
-> +                       if (policy->boost_enabled !=3D boost_state(cpu))
-> +                               set_boost(policy, policy->boost_enabled);
-> +               } else {
-> +                       policy->boost_supported =3D true;
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-IIUC policy->boost_enabled is false at this point, so say that
-boost_state(cpu) returns true and say cpufreq_boost_enabled() returns
-false.
+serdev_controller_add() uses hardcoded serdev controller's name, and that
+may be wrong once user changes the name after serdev_controller_alloc().
 
-cpufreq_online() will see policy->boost_enabled =3D=3D
-cpufreq_boost_enabled(), so it won't do anything regarding boost, and
-say that this happens for all online CPUs.
+Fix by using dev_name() instead of hardcoded name.
 
-cpufreq_boost_enabled() will be false, policy->boost_enabled will be
-false for every policy, but boost will be effectively enabled AFAICS.
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ drivers/tty/serdev/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +               }
-> +       }
->
->         return result;
->
-> --
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index eb2a2e58fe78fbbdb5839232936a994bda86d0b4..971651b8e18dcbb5b7983cdfa19e7d60d4cd292b 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -783,8 +783,8 @@ int serdev_controller_add(struct serdev_controller *ctrl)
+ 		goto err_rpm_disable;
+ 	}
+ 
+-	dev_dbg(&ctrl->dev, "serdev%d registered: dev:%p\n",
+-		ctrl->nr, &ctrl->dev);
++	dev_dbg(&ctrl->dev, "%s registered: dev:%p\n",
++		dev_name(&ctrl->dev), &ctrl->dev);
+ 	return 0;
+ 
+ err_rpm_disable:
+
+---
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+change-id: 20250422-fix_serdev-9da04229081b
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
