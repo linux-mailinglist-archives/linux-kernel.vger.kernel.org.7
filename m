@@ -1,145 +1,93 @@
-Return-Path: <linux-kernel+bounces-616566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EF2A990A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7485A99150
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92FF465850
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DA51BA2F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A6D2957BD;
-	Wed, 23 Apr 2025 15:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BE12973B5;
+	Wed, 23 Apr 2025 15:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBWG/m0f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lmauy6Ji"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1042C28DEEA;
-	Wed, 23 Apr 2025 15:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A9828E61A;
+	Wed, 23 Apr 2025 15:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421082; cv=none; b=NiRIvBLOqLGzsU83foLhiBK53h62VdDLJSUf1AoSG6OwwzAK7BOuB4I6G0i2tj/pXVRJBfpt8OcWQ3ykWb/28tC1UBPMQWvUR44GofSIbONV9efXXT4jODx8Hzd+0K7HoOFIO8MF7gY63mGdypA1F/Pr/pLH0a6yNJ8bqYqQVAI=
+	t=1745421130; cv=none; b=c9dGNqNhfAXAecUZHr5IRdC1nK8FCAjU+js8AlUEpmuVzsA9HqVi1N6h/pcETXFRfp57hZrs3E5+radUzd02KhfwUB2lrAQxDtb+by2v8Z5TWp3Qu1z5t+EO6y28TQaat1s+9Ja+6GK/Nvmjk5iv+LhsFfSPFc3tOJJHEp7FdHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421082; c=relaxed/simple;
-	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0pd4irOHrA4eVsQIMIfXx7N8WctUrGz486PDU1uvGLfDu2IHpDgonrU0op+Tn3wrPjHxlWNKrP8KdmZXFzS5E5HhLHYKT1E74J2kwY+UCRKvE94UK/sUrQy4xPILTS8GFizPF/P5rJDr0Me7IxR8wFiR3PGIrqIPhh0wqHMShI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBWG/m0f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07956C4CEE2;
-	Wed, 23 Apr 2025 15:11:18 +0000 (UTC)
+	s=arc-20240116; t=1745421130; c=relaxed/simple;
+	bh=rDayEnmW5wOjUNCI7vo/8BM3UfjynySd1YOsFEmc0Ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=klr+MnAxrzvARgPS2eRij68pMbW1ikRh0lPRvZ2qHwre5VLuzi752Xu5DvLZhw8wHwimRA3G5A7rc2sNredbl8Pth+0/QJlPYRPcKDsJjK6MV2kOE8HnetqWs7ca/HMEnOZaUqZk67rH2wgiHC9rZrC/9VsdC9nPLR6y1fE/WVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lmauy6Ji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF997C4CEE3;
+	Wed, 23 Apr 2025 15:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421081;
-	bh=Tt0HiJfb+wVciTetjSuEPJJuvsCtECqC5J7G/1L1SOU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TBWG/m0fbeEFmjbCQ89c2kv9m8z78XaJ99uv+3it9vZLLLi4x2whCHZWX9cOMc2oT
-	 s9eWcVzQvtzlwD4FQRsThqZuJqmiJZOV1ACSnYz36VVrO5fw/W+9++7kfKZOnZOgCI
-	 ISnKH7TXixp1X/Y3MFt2AIe3ZxL/iW66NEeTMBUrFNweX5WtH09zvq9wRInOchNgA9
-	 UaifIAQ1tpjFKfewMKQy/GriX9c342U75IeRqRJQKIyiLKG/vXySc76YDkd0jnMF1a
-	 fSNCZ/p+5Th1fiuDC2VO28+rNH1KauTdETT7tHGj/krwUyZLrIzFcIov9nQmzq4bf0
-	 U5hgDcG2ClynA==
-Message-ID: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-Date: Wed, 23 Apr 2025 17:11:17 +0200
+	s=k20201202; t=1745421129;
+	bh=rDayEnmW5wOjUNCI7vo/8BM3UfjynySd1YOsFEmc0Ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lmauy6JiNq31WB8nrkpG+4X/sEHthcQJQm2py5Vba/EmUN9bzIRhSR0UvV3/zkITx
+	 dGqyTsFQ4MTM/5leecxr54xpAW57wuUiBTQ7h9eWklX+q/7l6y40/qDaDPpwJhG+Va
+	 xWZslDaKQkeSPAGLQGXwfO7zpv/OdzggwUNWaIbjX5YeTMUi03qR4caFTORBEIvjns
+	 z5stAHX+gU7cyJ1ASUYCytTFa7gtSzeScWqE3zI8TU5EOFN72logSZZanzybyfYVqF
+	 SHAiqUiWEdKGMuP2VBpdB5SWiUIbkx01wEx7PkG2Chytgur6o3doj7Pg1iazdD4y2R
+	 BylRBMaA3C1PA==
+Date: Wed, 23 Apr 2025 17:12:04 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+	heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	jingoohan1@gmail.com, shawn.lin@rock-chips.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] PCI: dw-rockchip: Reorganize register and
+ bitfield definitions
+Message-ID: <aAkDRIqIOjLo7haw@ryzen>
+References: <20250423105415.305556-1-18255117159@163.com>
+ <20250423105415.305556-3-18255117159@163.com>
+ <aAjufPQnBsR6ysAH@ryzen>
+ <352e40a0-65e2-499f-a7dd-904a4a7b19da@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos: Added the ethernet pin configuration
-To: Yashwant Varur <yashwant.v@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: cs0617.lee@samsung.com, g.naidu@samsung.com, niyas.ahmed@samsung.com
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
- <20250423060034.973-1-yashwant.v@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250423060034.973-1-yashwant.v@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <352e40a0-65e2-499f-a7dd-904a4a7b19da@163.com>
 
-On 23/04/2025 08:00, Yashwant Varur wrote:
-> This patch adds the ethernet pin configuration.
-
-
+On Wed, Apr 23, 2025 at 10:14:57PM +0800, Hans Zhang wrote:
+> > I can see why you renamed PCIE_CLIENT_GENERAL_CONTROL to PCIE_CLIENT_GENERAL_CON
+> > (to match PCIE_CLIENT_MSG_GEN_CON).
+> > 
+> > But now we have PCIE_CLIENT_MSG_GEN_CON / PCIE_CLIENT_GENERAL_CON and
+> > PCIE_CLIENT_HOT_RESET_CTRL.
+> > 
+> > _CTRL seems like a more common shortening. How about renaming all three to
+> > end with _CTRL ?
 > 
-> Signed-off-by: Yashwant Varur <yashwant.v@samsung.com>
-> Signed-off-by: Changsub Lee <cs0617.lee@samsung.com>
-
-Incorrect chain or confusing. Who was the author? What is the meaning of
-the last SoB?
-
-
-> ---
->  .../dts/exynos/exynosautov920-pinctrl.dtsi    | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> I saw that TRM is named like this.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> index 663e8265cbf5..778584d339d5 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> @@ -166,6 +166,24 @@ gph6: gph6-gpio-bank {
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
->  	};
-> +
-> +	eth0_pps_out: eth0_pps_out {
+> PCIE_CLIENT_GENERAL_CON / PCIE_CLIENT_MSG_GEN_CON /
+> PCIE_CLIENT_HOT_RESET_CTRL
+> 
+> Shall we take TRM as the standard or your suggestion?
 
-Please follow DTS coding style carefully. This applies to all commits
-you try to send from your downstream/vendor code.
+Aha, so the inconsistency is in the TRM... hahaha :)
 
-What is more important, I don't really understand why you are doing this
-- there is no user of these entries - and commit msg does not help here.
+Probably best to keep it identical to the TRM.
 
 
-Best regards,
-Krzysztof
+Kind regards,
+Niklas
 
