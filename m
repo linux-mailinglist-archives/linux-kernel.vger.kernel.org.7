@@ -1,105 +1,139 @@
-Return-Path: <linux-kernel+bounces-615783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97253A98221
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:05:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B2EA981E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DEF4411B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4461B60E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA2E289360;
-	Wed, 23 Apr 2025 07:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCAA25FA26;
+	Wed, 23 Apr 2025 07:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oc4STb2G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MDqkO/p+"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AD1274FFE;
-	Wed, 23 Apr 2025 07:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6048A27055A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394977; cv=none; b=BC/QnmdPIrj9jvZJO0iyRrb2VzMsBb0/NAYBe4j7xtiyf6lsJ2S3F0bLgSUU3m1Wl7aqsoFLj4MAkdieDa1TyHocpifBKIH411CD5dLdC5Cz/+l+3zj9Vg37lammWYmHXoPKP4rIGCJmjVUawPK2PZldl5vAZcrL1HIW1Vf282A=
+	t=1745394844; cv=none; b=T1oJLjmVS0nsde6A5jEwsnlTmi5VRkxXYQvhR9TMsPjjMUc7tn4/umdt8iV7HrXG0PVIm0NazjI6a9OjO/7hoMxDG1xZYU+tB0+LVlJfjYF9AdZS0QCoCBJi1tOt7/04dfnfkgvpV6367frWqwqMHjSLgLcfuli3Xh2Rfoa520A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394977; c=relaxed/simple;
-	bh=hVM9VlTYcI4bKCfu0tZacwR+Hp9K7x5sbnt77Pure7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lsiYyHzMN5hzlb5tkbWMl7CT+eTrFFbucTSiceso9fMCuw4bgMOZiyyDrJ1iQBlGwZThief3v3rAxtd/pOLbSSL9fTxoKci/GB0fNDKfM7XehMR4J5MNOWUWo6eDXc5befiQCQPIkkKuMkMw0B1wBiEzDsE69kB6KXbLWgtZZzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oc4STb2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341D8C4CEE2;
-	Wed, 23 Apr 2025 07:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745394977;
-	bh=hVM9VlTYcI4bKCfu0tZacwR+Hp9K7x5sbnt77Pure7c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oc4STb2GM/yCnKQpbkZ/YdxMzurULQTXbSAUEUcFvGkmN3L6cFWmO+rzTcK10F4lK
-	 3kQSFoC77Z+rK8sWaTck7heeJUX/p9yvQ8hDGcusi8kEqRjBVfOkHOuK0M+T9VilV9
-	 M39d0I0Imeci2iwGO+edWj6IiSMTuEv3liYTKLrqByRziOb+ahCde9111HpSHDTWcO
-	 ENGSRSVMFU8LwvzpSV4UXhciFz26lAGSPOtkO1D9YJLKjN4z47T0W3lPrLhJ3mq80k
-	 wpV1Hr6BM+zEpKBgiWSLKUTcEv/GzlYzE0NejqObErU7oUNRWzzD/ZlFL6Fc5nMl3m
-	 YZf+++xEMhiAA==
-From: Philipp Stanner <phasta@kernel.org>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jaya Kumar <jayakumar.alsa@gmail.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Mark Brown <broonie@kernel.org>,
-	liujing <liujing@cmss.chinamobile.com>,
-	Andres Urian Florez <andres.emb.sys@gmail.com>,
-	Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	David Rhodes <drhodes@opensource.cirrus.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 24/28] ALSA: cs5535: Use pure devres PCI
-Date: Wed, 23 Apr 2025 09:53:42 +0200
-Message-ID: <20250423075346.45907-25-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
-References: <20250423075346.45907-1-phasta@kernel.org>
+	s=arc-20240116; t=1745394844; c=relaxed/simple;
+	bh=N0WwTN6cuFBMQtVPSuk+m8VXYpNYq64YYcC2HR1dSt4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ka+r5THyTyF+Xw/9MdZdjv8BOB8+aBp5lRGPds8cdPqQ0jMigzQXj9yCbuxhMxPaMRqBE0+YTVye62++I2p9kRJMWk573W1R/7uoRKvhndyMD0PTFey3XmeCpWVT6n65O0H9I962le9DgR9WyQCXGHw8aPFyny7X/rOYQHXIcgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MDqkO/p+; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4781965e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745394841; x=1745999641; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPRTWsIFDattDg+pyjOf0c8PqdiKxpRrUpEN2x7oMCM=;
+        b=MDqkO/p+6l13y5VsiVuAr9E5roNMGqinuA8Ut5rE1rS7KHqa6zd02J2bvKsnDTLj4P
+         wthP4uR8sVTMX6pPY2hpfUkWD1IJ1a6gDQS67/6rtlADTy8f0sjRgq6Mq7qAbtLqMGql
+         WnZqKJJMPuoWC/YBhNQc998LGMgXazEjHwqSCaBET5but6j5sKIQ6MWyZHoSEgUL957u
+         qaIS9aUt1wsiyqjXPymlWkd5g56hsLMyQY0Z5QvajWsIRv6fFfcyrHe1tvG29AKtn7t6
+         7qc/SWtzuJM6Xi2MwrRwymDnzRb6qIB30smNqPWMPm4HswaC+wSSqOHN5S+NOlzYEDwZ
+         FLXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745394841; x=1745999641;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VPRTWsIFDattDg+pyjOf0c8PqdiKxpRrUpEN2x7oMCM=;
+        b=i5NgpLLh29fsU6uMV/tw+rYzmGYJQdNf4xp3pwiI2boSPKkmjj2nPnD9L4OiR3Zc9p
+         CJNQ0SB8fO18FaeP8XL7oKTfLXgkSwfr7IOGJcZWKyrgwGUDLAaL5GSj31tCIAxP11dq
+         IalGwCynxitDSeGYyxg/+hq1KBgH/lTyb4M6mq4zeTr5oPn5gRd+Udiy32FuK23kWzGu
+         PePeYkChsHKunFzFzA8o53OTBGjp//yhG921hlf4Cmc40g0FtA+9XkmmUBooXCZSLYYR
+         CZXAUBquspPCTzCvOTLrhtmGoLN01g4KVlWxtO6/HGW+ls6V/wBZiuZHK9yO4gXwjNjK
+         n0yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXguxgR3wRZvljNO5+Z91M3lQBVZAmq7nT9GVoFLVNPQz3OdAGkcBwCp750mArp10hOlHvhoeKUVLsK7jI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqWXd6mhmbVoFeIBUFnIFcZJ3UjYMapjusTWcK86TtVn6lsZch
+	Z9UHrSJ0i3JVshv46bItMtWvR/KBc6ieoIDyxdZD1DmAPYzCsyQt6iI6gGttOqk=
+X-Gm-Gg: ASbGncuXN+cddAU3jGuT8lf2FQBSRVdOoGwk3/gg3jrpxvwK60DYb/S2Wg6mqD5Ceq3
+	zVPjeUyrPip6c+ybVlQBDhZqs7aRQ1HOt+o4C/eV5srrOv27VekzztBujXwy8hHQYhfo7zdwFUv
+	HQTUG3/j+M09GZyy1JGvRMjIX6y7DbonynhJ9/Ocx3xiIKTwvafN13iDxXvQDGgNDS67L38PFJH
+	NV4wv4j5mXZkUG3KgL0FRXdIsrQM38bNM2Z99iCmcBRUU2RBEDpwgfVkWmLwFhJm648+cRtlN9k
+	syO6ZiB32pw1zlvLQywJipuqGgrzBGsbng==
+X-Google-Smtp-Source: AGHT+IHI5oJcBEzU/+dqI9+s526iScFMzOCWLPWNYgVlJrgGNMkgt2vl8zY5oFysLDdkEPsKBo2JNg==
+X-Received: by 2002:a05:600c:1c98:b0:43c:f509:2bbf with SMTP id 5b1f17b1804b1-44091fddd38mr18823105e9.15.1745394840657;
+        Wed, 23 Apr 2025 00:54:00 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:74b0:71bd:6dda:dcc1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4330d8sm18266655f8f.33.2025.04.23.00.54.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 00:54:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/4] leds: use new GPIO setter callbacks
+Date: Wed, 23 Apr 2025 09:53:49 +0200
+Message-Id: <20250423-gpiochip-set-rv-leds-v1-0-2f42d8fbb525@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI6cCGgC/x3MSwqAMAxF0a1Ixga0/tCtiAOprxoQLY2IUNy7x
+ eEZ3BtJEQRKQxYp4BaV80go84zsNh8rWJZkMoVpitpUvHo57SaeFReHm3csys6gKVvXW8wdpdQ
+ HOHn+7Ti97wesVD2XZgAAAA==
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Riku Voipio <riku.voipio@iki.fi>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1126;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=N0WwTN6cuFBMQtVPSuk+m8VXYpNYq64YYcC2HR1dSt4=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoCJyT0+OlYThjZx+FJ1bQJdzMWTUnPIg5r6TIS
+ XEKMFC4+VKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaAickwAKCRARpy6gFHHX
+ cjt/D/wPBEC+V/mt3kFZcJSkkFnnWauvhCM+yNIUveQso7mRwm86BhNda9mFAFk3cHZoOPDScyc
+ o3T3/BU9SfQhnyvx0poAisMlg8Sd9ONLBy97qOfTBpt/5jmM/1ReopFmJJieQhtaHSV9j+NFyNP
+ kZLzEnuXAJiNhKsUYjAA77dvZ+L913ZvUbPCuyjehMrBG5gvOt2XEF0UvnH+EvRFqu3r2cYpSts
+ qUIyfoJ/5FBgx7zBsLDZr0TctfcpyJQ/31m7G7ApNCZr7p9jK+jQGmMYNJJISu6g5MCa8wcU5TJ
+ +C1rWHB5SFK9n5wN+4F3oAb8Ivs9geYfuG6GjNz/BC94KQb+axKWBiPXATLtf67jEWYGoSIrqUK
+ MrFv7kAmjwxrmmLQe9DtPMCG6AaElSjhbgQKaqx+sKsD4yW8POPXUsoj94zf+CeXxzQBgUlIB8n
+ /bBpXT4WAtqYjMiA1rUJzY6TEmTuCCJ4eugdleVBEtwOeXDJAEVCv2SNYuR3i43KdqpOk/5+Bza
+ 5TchKROmGc6E3P1pSJQC1FrxdHvhVIRpnql/A2j6OG7zYsRfIftAv8biQClezXW6T1c+teoDL/8
+ 2ctKakglr4OPG3MsBekAVlRelsbt9xvUDyYGQeFUq0H3Lsnp+RNhBJDfuIHp0qOorgC9luxsMBZ
+ IV3RS3CjYTlRSoA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-pci_request_regions() is a hybrid function which becomes managed if
-pcim_enable_device() was called before. This hybrid nature is deprecated
-and should not be used anymore.
+Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+values") added new line setter callbacks to struct gpio_chip. They allow
+to indicate failures to callers. We're in the process of converting all
+GPIO controllers to using them before removing the old ones. This series
+converts all GPIO drivers under drivers/leds/.
 
-Replace pci_request_regions() with the always-managed function
-pcim_request_all_regions().
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- sound/pci/cs5535audio/cs5535audio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Bartosz Golaszewski (4):
+      leds: lgm-sso: use new line value setter callbacks
+      leds: pca955x: use new line value setter callbacks
+      leds: pca9532: use new line value setter callbacks
+      leds: tca6507: use new line value setter callbacks
 
-diff --git a/sound/pci/cs5535audio/cs5535audio.c b/sound/pci/cs5535audio/cs5535audio.c
-index 440b8f9b40c9..0f319013a2a2 100644
---- a/sound/pci/cs5535audio/cs5535audio.c
-+++ b/sound/pci/cs5535audio/cs5535audio.c
-@@ -262,7 +262,7 @@ static int snd_cs5535audio_create(struct snd_card *card,
- 	cs5535au->pci = pci;
- 	cs5535au->irq = -1;
- 
--	err = pci_request_regions(pci, "CS5535 Audio");
-+	err = pcim_request_all_regions(pci, "CS5535 Audio");
- 	if (err < 0)
- 		return err;
- 
+ drivers/leds/blink/leds-lgm-sso.c |  6 ++++--
+ drivers/leds/leds-pca9532.c       | 11 ++++++-----
+ drivers/leds/leds-pca955x.c       |  8 ++++----
+ drivers/leds/leds-tca6507.c       | 11 ++++++-----
+ 4 files changed, 20 insertions(+), 16 deletions(-)
+---
+base-commit: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
+change-id: 20250423-gpiochip-set-rv-leds-f2e516f9cea7
+
+Best regards,
 -- 
-2.48.1
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
