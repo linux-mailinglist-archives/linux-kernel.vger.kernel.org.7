@@ -1,162 +1,303 @@
-Return-Path: <linux-kernel+bounces-615858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45307A9835D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:30:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463EFA9835B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD80441A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:30:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6377B092B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB04C27C15B;
-	Wed, 23 Apr 2025 08:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hkIdFz1W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E89527E1C3;
+	Wed, 23 Apr 2025 08:21:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F6426AA93;
-	Wed, 23 Apr 2025 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBE227C862
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396473; cv=none; b=Ir33WbvjqmOIIBWHZya7ddGEKmUWdsF7bQMZpU5ap6yZWUKzxLssXwdcgbDZU1eBhnz6awy17gDFCA3e+d2g6lOOzWYVo9g5yXfD1EhvhJ741CWQ3+GhWS0GR7wo1zDI8FVBjm5B1bs5Qg5EhK7tLdbnHQ07GvYY6WatvJFvKWM=
+	t=1745396478; cv=none; b=LtR0Ry6pqBAbxOj6FHhjdrOT+gSXCMMr2QxtAoAUp8uG+58KMlpYeIqBwgbu3Ed+Oc6ua3yndwyD9YDWLosPGMvmURGsG7AiuxxjN5QyHOOJZyexRRX1qz850WhDNT1KMY8+ztfv1RzXROmmud44fHEa7JAsxu7pu4OImitksfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396473; c=relaxed/simple;
-	bh=I1q2Dpm1ydFtkNUSvYSxkbmRdd0OEB80H9jvtglEtt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/BXibv1Joio41Axxq5jimWF6ES5yKVBLFKER+UKjhT4kV0keK/Kasyas3IVZblZo99o0rW1ncCsjI9mPZt07hM9oyRUJe/1r0INQrThVIQF7l4uQK0qAKP/0VtQWktTbJHToWJQPTSgT9vuCno57CL9t13JItpnp/bU/yrD1qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hkIdFz1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4539CC4CEE2;
-	Wed, 23 Apr 2025 08:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745396472;
-	bh=I1q2Dpm1ydFtkNUSvYSxkbmRdd0OEB80H9jvtglEtt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hkIdFz1WcY8wkJlqvDDv1ObJS2X/+ILWIFxxo9VTzxv6asQdnhfZV/IJUZDESK/48
-	 ZSQmTspuewRjK8lk/5OJ2CMTFWG/ihC8p89dMgGUCsSNxBe8AIssTOa6z62q4RKUH7
-	 ufugjgn4/t7KTqLP2yPqslYeNgkLBHzuySM5ulFk=
+	s=arc-20240116; t=1745396478; c=relaxed/simple;
+	bh=pZN1CHAKoCst/C+8jzXhb0QdTymlffmmARiAVh8UwXU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UnO0dl8ObLNoHJpNopclVdUOPPVTSS5NRuEBbpGjy62cO2vGqhyhvFS0KxglHjXicFZ23Oym3fbfv4Ph5bukfiAivZTzKvbTYeWyFPFJ8E8VPdbMAjZ1GQOh1dM94stBB3UxyvP/E1cX2+5SmBi+XcVM7LwDBNzUcHxyNa58MN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u7VLt-0003K5-VX; Wed, 23 Apr 2025 10:21:05 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u7VLt-001gbE-1y;
+	Wed, 23 Apr 2025 10:21:05 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u7VLt-00BoAZ-1d;
+	Wed, 23 Apr 2025 10:21:05 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
 Date: Wed, 23 Apr 2025 10:21:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
- allocation failure
-Message-ID: <2025042301-flammable-masculine-ec48@gregkh>
-References: <2024122837-CVE-2024-56705-049b@gregkh>
- <aAicoAmxX0B_O3Ok@tiehlicka>
+Subject: [PATCH v2 3/4] wifi: mwifiex: drop asynchronous init waiting code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAicoAmxX0B_O3Ok@tiehlicka>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-mwifiex-drop-asynchronous-init-v2-3-1bb951073a06@pengutronix.de>
+References: <20250423-mwifiex-drop-asynchronous-init-v2-0-1bb951073a06@pengutronix.de>
+In-Reply-To: <20250423-mwifiex-drop-asynchronous-init-v2-0-1bb951073a06@pengutronix.de>
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745396465; l=8580;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=pZN1CHAKoCst/C+8jzXhb0QdTymlffmmARiAVh8UwXU=;
+ b=wx7aTylmP2ImZtOzm60/jGiZpiOL9vxyq1k5rmwadpAHu/JppLMzEPb0OBBMYFp94txy8fiAr
+ +NamtSul8VuD8aAdkqDL3myTNUqt5oJ2GWH6ifwudWI7mBScFX3LC6v
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Apr 23, 2025 at 09:54:08AM +0200, Michal Hocko wrote:
-> Hi,
-> our internal tools which are working with vulns.git tree have noticed
-> that this CVE entry has been altered after the announcement.
+Historically all commands sent to the mwifiex driver have been
+asynchronous. The different commands sent during driver initialization
+have been queued at once and only the final command has been waited
+for being ready before finally starting the driver.
 
-Good catch!
+This has been changed in Commit 7bff9c974e1a ("mwifiex: send firmware
+initialization commands synchronously"). With this the initialization
+is finished once the last mwifiex_send_cmd_sync() (now
+mwifiex_send_cmd()) has returned. This makes all the code used to
+wait for the last initialization command to be finished unnecessary,
+so it's removed in this patch.
 
-> There was an additional commit added to the CVE entry. The current state
-> is
-> $ cat cve/published/2024/CVE-2024-56705.sha1
-> ed61c59139509f76d3592683c90dc3fdc6e23cd6
-> 51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
+Acked-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c  | 16 ----------------
+ drivers/net/wireless/marvell/mwifiex/init.c    |  5 +++--
+ drivers/net/wireless/marvell/mwifiex/main.c    | 18 +-----------------
+ drivers/net/wireless/marvell/mwifiex/main.h    |  6 ------
+ drivers/net/wireless/marvell/mwifiex/sta_cmd.c |  4 ----
+ drivers/net/wireless/marvell/mwifiex/util.c    | 18 ------------------
+ 6 files changed, 4 insertions(+), 63 deletions(-)
 
-Yup!
+diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+index 5573e2ded72f2..c07857c49a713 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
++++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+@@ -900,18 +900,6 @@ int mwifiex_process_cmdresp(struct mwifiex_adapter *adapter)
+ 		ret = mwifiex_process_sta_cmdresp(priv, cmdresp_no, resp);
+ 	}
+ 
+-	/* Check init command response */
+-	if (adapter->hw_status == MWIFIEX_HW_STATUS_INITIALIZING) {
+-		if (ret) {
+-			mwifiex_dbg(adapter, ERROR,
+-				    "%s: cmd %#x failed during\t"
+-				    "initialization\n", __func__, cmdresp_no);
+-			mwifiex_init_fw_complete(adapter);
+-			return -1;
+-		} else if (adapter->last_init_cmd == cmdresp_no)
+-			adapter->hw_status = MWIFIEX_HW_STATUS_INIT_DONE;
+-	}
+-
+ 	if (adapter->curr_cmd) {
+ 		if (adapter->curr_cmd->wait_q_enabled)
+ 			adapter->cmd_wait_q.status = ret;
+@@ -1030,10 +1018,6 @@ mwifiex_cmd_timeout_func(struct timer_list *t)
+ 			mwifiex_cancel_pending_ioctl(adapter);
+ 		}
+ 	}
+-	if (adapter->hw_status == MWIFIEX_HW_STATUS_INITIALIZING) {
+-		mwifiex_init_fw_complete(adapter);
+-		return;
+-	}
+ 
+ 	if (adapter->if_ops.device_dump)
+ 		adapter->if_ops.device_dump(adapter);
+diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
+index dd24e8b140655..dd2c17d946d7c 100644
+--- a/drivers/net/wireless/marvell/mwifiex/init.c
++++ b/drivers/net/wireless/marvell/mwifiex/init.c
+@@ -480,14 +480,12 @@ int mwifiex_init_lock_list(struct mwifiex_adapter *adapter)
+  *      - Initialize the private structure
+  *      - Add BSS priority tables to the adapter structure
+  *      - For each interface, send the init commands to firmware
+- *      - Send the first command in command pending queue, if available
+  */
+ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
+ {
+ 	int ret;
+ 	struct mwifiex_private *priv;
+ 	u8 i, first_sta = true;
+-	int is_cmd_pend_q_empty;
+ 
+ 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
+ 
+@@ -526,6 +524,9 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
+ 
+ 	adapter->hw_status = MWIFIEX_HW_STATUS_READY;
+ 
++	if (adapter->if_ops.init_fw_port)
++		adapter->if_ops.init_fw_port(adapter);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+index 3f1b8be5ad26c..73298b0769c94 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.c
++++ b/drivers/net/wireless/marvell/mwifiex/main.c
+@@ -354,13 +354,6 @@ int mwifiex_main_process(struct mwifiex_adapter *adapter)
+ 		if (adapter->cmd_resp_received) {
+ 			adapter->cmd_resp_received = false;
+ 			mwifiex_process_cmdresp(adapter);
+-
+-			/* call mwifiex back when init_fw is done */
+-			if (adapter->hw_status == MWIFIEX_HW_STATUS_INIT_DONE) {
+-				adapter->hw_status = MWIFIEX_HW_STATUS_READY;
+-				mwifiex_init_fw_complete(adapter);
+-				maybe_quirk_fw_disable_ds(adapter);
+-			}
+ 		}
+ 
+ 		/* Check if we need to confirm Sleep Request
+@@ -587,18 +580,11 @@ static int _mwifiex_fw_dpc(const struct firmware *firmware, void *context)
+ 			goto err_dnld_fw;
+ 	}
+ 
+-	adapter->init_wait_q_woken = false;
+ 	ret = mwifiex_init_fw(adapter);
+ 	if (ret == -1)
+ 		goto err_init_fw;
+ 
+-	/* Wait for mwifiex_init to complete */
+-	if (!adapter->mfg_mode) {
+-		wait_event_interruptible(adapter->init_wait_q,
+-					 adapter->init_wait_q_woken);
+-		if (adapter->hw_status != MWIFIEX_HW_STATUS_READY)
+-			goto err_init_fw;
+-	}
++	maybe_quirk_fw_disable_ds(adapter);
+ 
+ 	if (!adapter->wiphy) {
+ 		if (mwifiex_register_cfg80211(adapter)) {
+@@ -1555,7 +1541,6 @@ mwifiex_reinit_sw(struct mwifiex_adapter *adapter)
+ 
+ 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
+ 	clear_bit(MWIFIEX_SURPRISE_REMOVED, &adapter->work_flags);
+-	init_waitqueue_head(&adapter->init_wait_q);
+ 	clear_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags);
+ 	adapter->hs_activated = false;
+ 	clear_bit(MWIFIEX_IS_CMD_TIMEDOUT, &adapter->work_flags);
+@@ -1723,7 +1708,6 @@ mwifiex_add_card(void *card, struct completion *fw_done,
+ 
+ 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
+ 	clear_bit(MWIFIEX_SURPRISE_REMOVED, &adapter->work_flags);
+-	init_waitqueue_head(&adapter->init_wait_q);
+ 	clear_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags);
+ 	adapter->hs_activated = false;
+ 	init_waitqueue_head(&adapter->hs_activate_wait_q);
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+index 63f1c900e0967..35d13eada0868 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -239,7 +239,6 @@ struct mwifiex_dbg {
+ enum MWIFIEX_HARDWARE_STATUS {
+ 	MWIFIEX_HW_STATUS_READY,
+ 	MWIFIEX_HW_STATUS_INITIALIZING,
+-	MWIFIEX_HW_STATUS_INIT_DONE,
+ 	MWIFIEX_HW_STATUS_RESET,
+ 	MWIFIEX_HW_STATUS_NOT_READY
+ };
+@@ -865,8 +864,6 @@ struct mwifiex_adapter {
+ 	unsigned long work_flags;
+ 	u32 fw_release_number;
+ 	u8 intf_hdr_len;
+-	u16 init_wait_q_woken;
+-	wait_queue_head_t init_wait_q;
+ 	void *card;
+ 	struct mwifiex_if_ops if_ops;
+ 	atomic_t bypass_tx_pending;
+@@ -919,7 +916,6 @@ struct mwifiex_adapter {
+ 	struct cmd_ctrl_node *curr_cmd;
+ 	/* spin lock for command */
+ 	spinlock_t mwifiex_cmd_lock;
+-	u16 last_init_cmd;
+ 	struct timer_list cmd_timer;
+ 	struct list_head cmd_free_q;
+ 	/* spin lock for cmd_free_q */
+@@ -1060,8 +1056,6 @@ void mwifiex_free_priv(struct mwifiex_private *priv);
+ 
+ int mwifiex_init_fw(struct mwifiex_adapter *adapter);
+ 
+-int mwifiex_init_fw_complete(struct mwifiex_adapter *adapter);
+-
+ void mwifiex_shutdown_drv(struct mwifiex_adapter *adapter);
+ 
+ int mwifiex_dnld_fw(struct mwifiex_adapter *, struct mwifiex_fw_image *);
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+index af38744eddaa9..7a8a74df86ab1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+@@ -2433,9 +2433,5 @@ int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta, bool init)
+ 	ret = mwifiex_send_cmd(priv, HostCmd_CMD_11N_CFG,
+ 			       HostCmd_ACT_GEN_SET, 0, &tx_cfg, true);
+ 
+-	if (init)
+-		/* set last_init_cmd before sending the command */
+-		priv->adapter->last_init_cmd = HostCmd_CMD_11N_CFG;
+-
+ 	return ret;
+ }
+diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
+index 1f1f6280a0f25..daa363f082612 100644
+--- a/drivers/net/wireless/marvell/mwifiex/util.c
++++ b/drivers/net/wireless/marvell/mwifiex/util.c
+@@ -115,24 +115,6 @@ static struct mwifiex_debug_data items[] = {
+ 
+ static int num_of_items = ARRAY_SIZE(items);
+ 
+-/*
+- * Firmware initialization complete callback handler.
+- *
+- * This function wakes up the function waiting on the init
+- * wait queue for the firmware initialization to complete.
+- */
+-int mwifiex_init_fw_complete(struct mwifiex_adapter *adapter)
+-{
+-
+-	if (adapter->hw_status == MWIFIEX_HW_STATUS_READY)
+-		if (adapter->if_ops.init_fw_port)
+-			adapter->if_ops.init_fw_port(adapter);
+-
+-	adapter->init_wait_q_woken = true;
+-	wake_up_interruptible(&adapter->init_wait_q);
+-	return 0;
+-}
+-
+ /*
+  * This function sends init/shutdown command
+  * to firmware.
 
-> There seem to be handful of other cases like this one AFAICS.
+-- 
+2.39.5
 
-Yes, we had to add support for this type of problem.
-
-> I have 3 questions:
-> 1) What is 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
->    relation to the original CVE which seems to be about a missing memory
->    allocation failure check?
-
-Removing the driver entirely from the kernel "fixed" the vulnerability :)
-
-> 2) What is the process when a CVE is altered? have I missed any email
->    notification?
-
-We do not do email notifications when CVEs are altered.  You have to
-watch the cve.org json feed for that.  Otherwise the email list would
-just be too confusing.  Think about every new stable update that happens
-which causes 10+ different CVEs to be updated showing where they are now
-resolved.  That does not come across well in an email feed, but the json
-feed shows it exactly.
-
-Or you can follow the github cve feed, which shows this, OR you can just
-follow the vulns.git git commits which also show this.
-
-> 3) Until now CVE -> sha was a 1:1 mapping. Can we expect this to change
->    and what exactly is the process here?
-
-The process has changed in that we have had to handle a number of CVEs
-where both the commit that caused the vulnerabilty has been tracked to
-mutiple commits (think of one-off changes that only happened on
-different stable branches, and then were fixed with different commit
-ids, like what happened in CVE-2025-40364), or this example you are
-pointing out where a vulnerability was introduced, later removed by
-having the entire driver removed, and then added back by adding the
-driver back and then resolving the vulnerability.
-
-The original CVE had this information as you point out:
-
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.10.231 with commit 0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 5.15.174 with commit 4676e50444046b498555b849e6080a5c78cdda9b
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.1.120 with commit 02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.6.64 with commit 8066badaf7463194473fb4be19dbe50b11969aa0
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.11.11 with commit 74aa783682c4d78c69d87898e40c78df1fec204e
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.12.2 with commit 0c25ab93f2878cab07d37ca5afd302283201e5af
- 	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 6.13-rc1 with commit ed61c59139509f76d3592683c90dc3fdc6e23cd6
-
-And now it shows this:
-
-	Issue introduced in 4.12 with commit a49d25364dfb9f8a64037488a39ab1f56c5fa419 and fixed in 4.18 with commit 51b8dc5163d2ff2bf04019f8bf7e3bd0e75bb654
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 5.10.231 with commit 0c24b82bc4d12c6a58ceacbf2598cd4df63abf9a
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 5.15.174 with commit 4676e50444046b498555b849e6080a5c78cdda9b
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 6.1.120 with commit 02a97d9d7ff605fa4a1f908d1bd3ad8573234b61
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 6.6.64 with commit 8066badaf7463194473fb4be19dbe50b11969aa0
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 6.11.11 with commit 74aa783682c4d78c69d87898e40c78df1fec204e
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 6.12.2 with commit 0c25ab93f2878cab07d37ca5afd302283201e5af
-	Issue introduced in 5.8 with commit ad85094b293e40e7a2f831b0311a389d952ebd5e and fixed in 6.13 with commit ed61c59139509f76d3592683c90dc3fdc6e23cd6
-
-Showing that the kernel ranges from 4.18 -> 5.8 were NOT vulnerable to
-this specific issue.  Information that is hopefully very valuable to
-distros dealing with old kernels, like yours :)
-
-So now we can properly handle this types of issues in an automated
-fashion, thanks again for noticing, this was a non-trivial amount of
-work to implement.  Given that no one had ever done this before, we have
-had to create all of this "from scratch".
-
-Our trees are crazy, hopefully this helps explain the lifecycle of
-vulnerabilities and their fixes better than before.
-
-One other note, perhaps you just want to parse the .dyad files we
-create instead of mbox files?  That provides a machine-readable format
-of what commits caused a specific vulnerability, and what commits fixed
-it, if any, in any specific kernel branch that is known.  I know at
-least one distro and one company that just relies on those files
-directly instead of attempting to parse the crazy json output that
-cve.org requires which in some places, I would argue, shows actually
-incorrect information, but that's a different topic...
-
-I really should write up more information about all of this one day, but
-we've just been heads-down trying to implement all of this to deal with
-the complexity involved in a way that is scalable over time.
-
-Does that help?
-
-thanks,
-
-greg k-h
 
