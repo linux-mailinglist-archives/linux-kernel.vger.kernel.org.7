@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-616321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39BCA98ADB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:24:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A493A98AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 427C57A9FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2CE6189A226
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FD61A9B4C;
-	Wed, 23 Apr 2025 13:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B960191484;
+	Wed, 23 Apr 2025 13:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klMyHZSm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S9xDLQNp"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CEF1A9B28
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F9C189F57
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745414546; cv=none; b=B3Gs6eJPiGlkKsOjlVPyRTdcxSmvO4B839gqZNam9Hobcz85TP1YYmgzqwJX9D3tDTU4XK5/kZX9UYPHC6w40nY/nxkSIKhRRUO5HagOFNUcH0KMqbrGbSozJhpbR4G970/qUItwOf4agAsa+ASErr6z9hS8HRMB6W4rvapNlS8=
+	t=1745414522; cv=none; b=ZQS6NwBEMWfzjcW58sHLkysO//AuRRUheoJU46FfsVwL7ub8iOEcy0kHzAwfTAWRYD5XUAWrMW71BKfoxAEK294AzMAAS/vEtwS8SfDMNj/lyYkxwF6Dyi+PE8+QgT7yqAl9Ru/NM20/vOCqQo0v1BmzvstqQfsEu8qHkRbbWNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745414546; c=relaxed/simple;
-	bh=NnHI6Paao3NgdBRHQkL+L4jcP1yEUV4TLY9mPyueH3w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GMhpKychDCsxLGhVsosolo9DbtG+RGIiUH5+GjkNX8c/jhmD/i3YLpq2JSeXGvNKRcQQOvu4pqlq6PSQkQuTkjKWq7YIIp7apcD1JkSUHncly5dKaTjYdp+Ex05vu8/PCRklJu/Qnx5ILdlTAeAlLEosL98BAwvxhva0XdEw8aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klMyHZSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845B3C4CEE2;
-	Wed, 23 Apr 2025 13:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745414545;
-	bh=NnHI6Paao3NgdBRHQkL+L4jcP1yEUV4TLY9mPyueH3w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=klMyHZSmxKc/xXNzVRz+rJJICulW7EiqNI41446qVIicVCSEvSEEVij6NHH/AzivB
-	 tYRIZvGs73gIkQNs4sjwkNTWGgibURhleKa3nxtJXKe/5JAE8v1k/8l2zir4htDBgC
-	 FtPXHZaXzDO5jNOQqqbVFFF1JZjvNpB2NPSBzjYlYn6JeZ4Y3706naY+11XpQ2r4Ad
-	 EQdz8t70XS7+ctfHeaDDp2RTpx3jvUYQXyNT9jrZcfaLasCrgVqi7oWsW75FxjWGBc
-	 iqWo+HUwD4Fd6ZYVUADppz4q+BaZ4UWiAwPwz0u+F3wqv8NTYXzbTdUTDEHXFbUP6a
-	 J1+S0/I8MgdAg==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Wed, 23 Apr 2025 15:21:55 +0200
-Subject: [PATCH v5 12/14] nvmet-fc: free pending reqs on tgtport unregister
+	s=arc-20240116; t=1745414522; c=relaxed/simple;
+	bh=Kows0XL7gKJe1i0pLaRBE/Sn74cJUIQtD6WutoBDJ4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bPEB6TRX8woIt86S2/jZeM0nfBs0mC04LE3bWIN2dNGn0iR+WdVD+FaZTTfM1un/YZriQsSDX7JvbSSRaWZNnxEz/54RxUDxxEMfF8097orF1B1T81UzMw2EUZSl5EaJUvsaW/hDF0svk4t7PmJ3Q1g2PSA5kAko+Jr4rbXDE1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S9xDLQNp; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d6d162e516so50140275ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745414518; x=1746019318; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yFxbUqe4x1e+3vHnnMvSYfdGB6uDRsaUIx6ClI9ClLM=;
+        b=S9xDLQNpEUIHmOMZiW//GTUUsvSii7NrHzNYOFwiGC6L/56nmMF8Vh1yS6+l8VpyUc
+         Nit3U6vRiOH+bIC8BI+tAlVIpH11WzKe0ISppzJ0crKo5wvhsAdJllS1QXOVIM25a1ej
+         253xFJLcGmLXTt8KUzMIg0GX2dEkIsosNQsh1zJDoM01Lspz5GmVFsIJCCQhdlUhIjW3
+         ixG+SQQnY5kWkfeNRjUaszVXoTeUtv2kv6q2L8MdErhYyaHErP6sTdlQsRts/AiZQTpR
+         0jusBQ31oo5xPeTfMjY1Y53mMPPHAPm0e+xHTXhp9B4jDOj/7PXKwn28CUqKzpHtuMGA
+         Xu8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745414518; x=1746019318;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFxbUqe4x1e+3vHnnMvSYfdGB6uDRsaUIx6ClI9ClLM=;
+        b=MZ/gckUJf+9/GIXbAX00IwyD/q0X4I+3nBCgO15gj5QxP1Kg6bk1qBb679akdaxkmi
+         0D7HDo4cymP3Je8ZkKxQQ3zxreZAeug0UCc9soVSkc/iDNL9TMhSSzYGq9mcUIiwG8eN
+         JtBv+ICi44pvtoRGNQU9h5NZLRUN2P/cX+3s5pSCpfxeXVNSMzrq8BaQRBaLeLDYdWIh
+         eU+J49LHSCQLeJ6UbwS63eFBKN/cJg7+hXy2Bl5qtqlq6uTyZa+gmprGx31UBTHQAXNn
+         weg9bwdd392OfoLrSfgK++JFWoANavAQPtXDTxOO8AzHA11L7qXbv2jgk+A+UTASamDN
+         hhGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXalr8doXE+OF7oZOyC1GOOH4XdPcS3W2FaLROGG1NKXNnOCTpNXB3My1QFliufKqe4+5AQEDg6BGNZdRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhfBSn2Ud93ikdkREwQp9KLvKMnbLiqzK5B0DpKpA0sTUyoJ2T
+	Rj2W3I+RRBeCoHZ9dmDxq5nmYOKJZVZjQqfWomLzd3nKmGlWL+/ep43Uocc+UmhC2J8Ic7w3GIn
+	g
+X-Gm-Gg: ASbGnctCHqrxLmYXxp5CRZzzVlIjoDeRLf2ZJL5wxm+4lgkJM01AngtEcT5YJIAIq1Q
+	guuf48ijT0hJfPpG8lWoHhqYUPUWKjcyAEdUYfpd9YrdwRFCR30ibLisCJuwmJjes3xCGMdEqXD
+	a9UM54JldqDFUBUVIdjoynkbWsP5HrqP4iNuudb5UyknkodfMgGL1M+V8MsDZvhNzxjUqJqYWIP
+	gbpCi619v9xmyZEXbLicf/RtNookHCJGfcADs7zTXJfhXqb4i6jQ/uvECHE30Gw96Y3BV4oPhj+
+	UCLtFVSV3LRnqgw4k4kK3Jkkq4kZngQZqmm8+Lefvs9BesEY
+X-Google-Smtp-Source: AGHT+IGTVEkt9W2JltunyBersFyZ6wDo6AvaUWgTrYHtS8zxIbIrUCUZrDuNaD9JWWXTO8zilUtOtA==
+X-Received: by 2002:a05:6e02:17cd:b0:3d3:f6ee:cc4c with SMTP id e9e14a558f8ab-3d889047eb1mr178691565ab.0.1745414517912;
+        Wed, 23 Apr 2025 06:21:57 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3806326sm2806031173.42.2025.04.23.06.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 06:21:57 -0700 (PDT)
+Message-ID: <09bde11c-a3f3-4c5a-91ed-74bfd2e0f61d@kernel.dk>
+Date: Wed, 23 Apr 2025 07:21:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] nvme/pci: PRP list DMA pool partitioning
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250422220952.2111584-1-csander@purestorage.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250422220952.2111584-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-nvmet-fcloop-v5-12-3d7f968728a5@kernel.org>
-References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
-In-Reply-To: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
-To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
 
-When nvmet_fc_unregister_targetport is called by the LLDD, it's not
-possible to communicate with the host, thus all pending request will not
-be process. Thus explicitly free them.
+On 4/22/25 4:09 PM, Caleb Sander Mateos wrote:
+> NVMe commands with more than 4 KB of data allocate PRP list pages from
+> the per-nvme_device dma_pool prp_page_pool or prp_small_pool. Each call
+> to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock.
+> These device-global spinlocks are a significant source of contention
+> when many CPUs are submitting to the same NVMe devices. On a workload
+> issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA nodes
+> to 23 NVMe devices, we observed 2.4% of CPU time spent in
+> _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
+> 
+> Ideally, the dma_pools would be per-hctx to minimize
+> contention. But that could impose considerable resource costs in a
+> system with many NVMe devices and CPUs.
+> 
+> As a compromise, allocate per-NUMA-node PRP list DMA pools. Map each
+> nvme_queue to the set of DMA pools corresponding to its device and its
+> hctx's NUMA node. This reduces the _raw_spin_lock_irqsave overhead by
+> about half, to 1.2%. Preventing the sharing of PRP list pages across
+> NUMA nodes also makes them cheaper to initialize.
+> 
+> Allocating the dmapool structs on the desired NUMA node further reduces
+> the time spent in dma_pool_alloc from 0.87% to 0.50%.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- drivers/nvme/target/fc.c | 41 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 7 deletions(-)
+Looks good to me:
 
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 7b50130f10f6578e6e49fe8ea661de34dfbb3683..75ddb7425605dd6623db38a133b63e201592354c 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -1580,6 +1580,39 @@ nvmet_fc_delete_ctrl(struct nvmet_ctrl *ctrl)
- 	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
- }
- 
-+static void
-+nvmet_fc_free_pending_reqs(struct nvmet_fc_tgtport *tgtport)
-+{
-+	struct nvmet_fc_ls_req_op *lsop;
-+	struct nvmefc_ls_req *lsreq;
-+	struct nvmet_fc_ls_iod *iod;
-+	int i;
-+
-+	iod = tgtport->iod;
-+	for (i = 0; i < NVMET_LS_CTX_COUNT; iod++, i++)
-+		cancel_work(&iod->work);
-+
-+	/*
-+	 * After this point the connection is lost and thus any pending
-+	 * request can't be processed by the normal completion path. This
-+	 * is likely a request from nvmet_fc_send_ls_req_async.
-+	 */
-+	while ((lsop = list_first_entry_or_null(&tgtport->ls_req_list,
-+				struct nvmet_fc_ls_req_op, lsreq_list))) {
-+		list_del(&lsop->lsreq_list);
-+
-+		if (!lsop->req_queued)
-+			continue;
-+
-+		lsreq = &lsop->ls_req;
-+		fc_dma_unmap_single(tgtport->dev, lsreq->rqstdma,
-+				    (lsreq->rqstlen + lsreq->rsplen),
-+				    DMA_BIDIRECTIONAL);
-+		nvmet_fc_tgtport_put(tgtport);
-+		kfree(lsop);
-+	}
-+}
-+
- /**
-  * nvmet_fc_unregister_targetport - transport entry point called by an
-  *                              LLDD to deregister/remove a previously
-@@ -1608,13 +1641,7 @@ nvmet_fc_unregister_targetport(struct nvmet_fc_target_port *target_port)
- 
- 	flush_workqueue(nvmet_wq);
- 
--	/*
--	 * should terminate LS's as well. However, LS's will be generated
--	 * at the tail end of association termination, so they likely don't
--	 * exist yet. And even if they did, it's worthwhile to just let
--	 * them finish and targetport ref counting will clean things up.
--	 */
--
-+	nvmet_fc_free_pending_reqs(tgtport);
- 	nvmet_fc_tgtport_put(tgtport);
- 
- 	return 0;
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
-2.49.0
+Jens Axboe
 
 
