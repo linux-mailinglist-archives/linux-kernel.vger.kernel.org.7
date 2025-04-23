@@ -1,184 +1,212 @@
-Return-Path: <linux-kernel+bounces-615714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F79A9816E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44181A9817D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 810F57A21A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BAD3AB5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA5E26A081;
-	Wed, 23 Apr 2025 07:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB81926A09E;
+	Wed, 23 Apr 2025 07:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rkPMDIwq"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2070.outbound.protection.outlook.com [40.107.102.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEiwK0Dq"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338EC249E5;
-	Wed, 23 Apr 2025 07:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394342; cv=fail; b=QRfWMbI3JedpKWPAscF+qQFyVu9sYTH7Agl+fKphfjgbvSovt1GcGPeKCWanZiQE3LUMOZBDfNmYppW8XS+GjNX7whhUS0Ao+RK4p3VzUd+QiKf5B5mCv7BNoJcMGKJFLTsPpncwhiEZXPBF5NkiR8pCtYY2iFvMqkvTQjt9ZrM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394342; c=relaxed/simple;
-	bh=A4wQkUfk5wsgsbGyW+FiqJFt3RP5M8TAidGnLhTnm2U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jej/6HmV81Vveb7L7J0kcSBK1XB94VtMyiQnryG6u+ZyvUAnOHeMXSFyMTxTyzII8eA97TLJ1bE3RQ2uZFANfsTG4FrX9OE01rK5ZkY7MYCstnrigwPMKTnIq2LfHdMu5zHOvsixIHbn53pc1T+MA8iIh8JjwofwDWBTHKVw1xg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rkPMDIwq; arc=fail smtp.client-ip=40.107.102.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wcWRp57vlpMlePaDtLR/wmCAJ8vOZCxQ4Oq7IkdBOeWxnRpS+T4HLkNBazVU8mcVVND3MGKV+xWgVRL3xQ2FzqFwX5M0BCwmC31qN54bp5eoSa4APgYVVQV4kg5NmFZcQuKEmAXY13V9xJwXw58V7cf3QnRW/XNZI2s7RP5vg8A8OCvzMOTrLU1Jf/mFyyrgrbLCmQu8q+1iL1KyeVCmQI2fb1CBlllY3oyDgwi6wCzFrJhAQ3uskkQgdTJcQhylOy/DAvQfCEmmrSjOoc70PitnlAe/O0/bY2jwkhRPpf6pxr7KV9XO3Jgijh2Hs2h1gH9VunRnkpq6jecGPlOthw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=64RdGmRYqp/sSMpHw4BhOUZBLE4NLGggS7HwZ9PNQrg=;
- b=W1UNBOOnfG8ktjKeVkAb69WYCwiZcVfCod4Crs0anWuJLgtcZelPOLPggWo5C5YGYIxsrRJGbq+EV4Me53FNvCXdd8oYWw/1gUl3dTZ9YqKzYDBWycKBxyKTjdGYh+6KBuoOeYRpyliz9ezuoPdu5DSrNtVxHa7SIxNq75hqomGvFhXGPTGrbTw0w4D2hy+WKo7j6t9IuyGZ57+daWPEUcSCknvYVbPmvZ317wbk2stS5iyLHoH0EbnCqDTH9pb8kVH2mZyqUzKpudOj3VUCjrMrRlDD8RWLDOv+2ZCK8GniJ5N/utZsRJXr9niOBFzHFzEYUQ8XSaycK9hbGU/Lmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=64RdGmRYqp/sSMpHw4BhOUZBLE4NLGggS7HwZ9PNQrg=;
- b=rkPMDIwqbQY08ICHSECRkeWhLnP8GfXEwQ7Bm0E6MIaXV5IoWmAj7+DgUZpYE/8j6PXr1TVGVHDAbu1A55oQCGajWfbSO8Ujt/8PuOTuZ1Asit7PklSVlowfSM6QBs9OeZZ4sWeCgnB/vlnzGK6VBrcqblLMqScoQpc1drhhthhUwQKosKo3Xg94I10zhPq2kXEDcd8OLPz3d/bjc1ixCf4gQ9mr/rPN7F471RmJxJ9HOVVsDZPyPrYYsoW5oPQi0KRCBdSKw6CHE3ojbuKsZSmT9KD5k7+RJjHZ3YAELtkq9WQsrnMkHNo8nFHHphbApp7w13nn1VKUgSH6gnoPhg==
-Received: from BL1PR13CA0160.namprd13.prod.outlook.com (2603:10b6:208:2bd::15)
- by IA1PR12MB9466.namprd12.prod.outlook.com (2603:10b6:208:595::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Wed, 23 Apr
- 2025 07:45:36 +0000
-Received: from BL02EPF0002992E.namprd02.prod.outlook.com
- (2603:10b6:208:2bd:cafe::3) by BL1PR13CA0160.outlook.office365.com
- (2603:10b6:208:2bd::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.23 via Frontend Transport; Wed,
- 23 Apr 2025 07:45:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Wed, 23 Apr 2025 07:45:36 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 23 Apr
- 2025 00:45:18 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 23 Apr 2025 00:45:18 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 23 Apr 2025 00:45:16 -0700
-Date: Wed, 23 Apr 2025 00:45:14 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Vasant Hegde <vasant.hegde@amd.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<shuah@kernel.org>, <praan@google.com>, <nathan@kernel.org>,
-	<peterz@infradead.org>, <yi.l.liu@intel.com>, <jsnitsel@redhat.com>,
-	<mshavit@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v1 00/16] iommufd: Add vIOMMU infrastructure (Part-4
- vCMDQ)
-Message-ID: <aAiaiomYczA22xik@Asurada-Nvidia>
-References: <cover.1744353300.git.nicolinc@nvidia.com>
- <a0c248f0-71ff-4477-98ec-1bbd52eda566@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA161E3793
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745394436; cv=none; b=Kdy+Dvak59/zQkX24ucqCcIgTOdlKedurcRTEl0/hN/JmqOu8nEtJBwjlXh3VqhNQOv7L5uFoYpv82knATSTZ5q1zfMh17X/qnoy8SY0FuIW+XOpOBTKsqcVMJ1jSbsRJMOGlBjh8WD58/mI7cZG3nBawZUJVJ5nTnnys7yqv+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745394436; c=relaxed/simple;
+	bh=idezHrxL8iT6WyB59666TSLYbxBALAVQXAu+2zp6U6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NM/zOgebjuX6dqApiUveJpeiNi9qM0NR0m4vnTaduEX+9gHiOeyJ3qrMKaLV+ph2BdGFgJM/fSAsAHuV6KhP1y+e3p7eXNrhiumJoTPx4mcOc6M96rV9pENhaaSnDjcg6vxveMrMaVL45KhNyj0NQMz8OnhyyD581zElPbWyhyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEiwK0Dq; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6febbd3b75cso56971457b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745394432; x=1745999232; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHGMFL0fUvT51G5doXrMDZ4P+H09IeAYckYXE5kSZCE=;
+        b=XEiwK0DqyfSy44ha50y1L7JQg/OoyLf7p+9YWPSZEBMlXXurVmAT3uKlWnyIvVthwm
+         3wwoIpIuralyGl4mjEgCNsNg7+VKowcHE5gb69IKLNEsAdBH/+YIUx41nXM1Oh5paKhl
+         G70igNy6YkY58/4p51uCw4xz9hI+lMn59OIbdH5zi4KJGBzyVDFJ0C/ECKrjhf+56Nni
+         AL6DaURcTUeOEq6MbCUvgM+L7kTN5zNznlP9pQufyz55k4I6uLjswoGhaVi/m3feaZh/
+         l2IVs2cHowof9qKI+Bjsmh0owpqwmbTSLQltS8QoPdRn2IVwMH+zYOnd04JzGfvhDxHZ
+         Wrjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745394432; x=1745999232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JHGMFL0fUvT51G5doXrMDZ4P+H09IeAYckYXE5kSZCE=;
+        b=m7gHOyGtvvF081AQQGzXzzJX3p73kmsV0SBgEidAFQTlS8vU3GXj839S95voq7/z9D
+         wWvwhOqUzjTe9s2YhpyXblVtY6wNRytNTHDgrlYBGLihjmKaDOFH7gvxOaZDHdQNIkNB
+         HmhITC2hJbX6W0VIztVL8HeOUbE9my9irqqVM/0aSlBSb3WtEoZzXzWLU9MJrsGFJtvB
+         BHmQjymSr5SJmyBsSJ6rKzmAwzd7Ps+F06p+hFdolzGjVfvvZBRh/jGCCaUV/sducO/7
+         LmQ21iHcDbkSA8uOgx5U6mYbOZfydfGLbk+4SfXddSnp/Ewq4hqhvVUv5zvIlK23FL6D
+         uNMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsR80R6hhUlBv+mGAkLDao/gqTaftlZL10bKgnl+kQ37xvu+ok9Ig7WDnYLCFEO+RMxFqpUv/Ruj+AuiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7oPn4SoE5btDXK+FIqrQzGnUNN0hXFANmWQrp0dzBGm1LLm+t
+	Jra3UoI8W21zA/a8ouHGYcINX/zEacPcioCkgeFGK/LEM5zvxroGWcjpZwPaIiWz9dzT4G88A5l
+	9xVDygoENLDBgM0wU0FMdw7dPlRU4ADBBmjRL9g==
+X-Gm-Gg: ASbGncsSaoVkvmArbMAYm+1eBTTN6+LBsPEr6x3vuhZ0/NhTPXgN9ki573zz0xpioE5
+	DAoBiEDa8oqIQrNRNaf1l+w7x9O0cldXwlCzrAwLiIkfqiUQ4sCJQz4XBSEY5LqSZqnHTybYeAB
+	vSSJnD3cGwgcIlrQASXOy1VQ==
+X-Google-Smtp-Source: AGHT+IEIsuGeT70VcTTtBNp0FoTy4Z2BzN/eP/3me52qwbQRMCmDjAmuOo6CONr2SdNAR783FwZ/SpPV+be9CTnuF48=
+X-Received: by 2002:a05:690c:7344:b0:6fb:2c34:8ee4 with SMTP id
+ 00721157ae682-706ccce4bc4mr266811177b3.13.1745394432562; Wed, 23 Apr 2025
+ 00:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a0c248f0-71ff-4477-98ec-1bbd52eda566@amd.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|IA1PR12MB9466:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92e077c5-227a-4d3c-eacb-08dd823ad5ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ptrrVyCrjwBxyOQgE3gVxguJHyGHuJObClihX3QFBca7TAjHnd8GRLtiCfHF?=
- =?us-ascii?Q?SLCMxNfk3JxnnKydWk8ICZK3vFEXhL5riYj8EpJkXC2BesKrAbm2AHhnbr6C?=
- =?us-ascii?Q?2FqjEyO+3SMq0EjfXpfOtGsGVVzyAjfeuT3P9OB15bBKeoeOfFxnESEJGM4W?=
- =?us-ascii?Q?1Z+PSc9Bm2oHJVn29Y5Vy2JL0Dhuo9Dfk9fQr9v77uCDB4yPFaWZdcoj0Rpk?=
- =?us-ascii?Q?L3ZtlgxCbc3o5En+4Cq7vFKWSF/KgRa2rE5/SAkWyUvK5srbaukpTj47mZKL?=
- =?us-ascii?Q?B3LGdO8kk8JbCjBY33LDXxJiu9DJiiwUo3+rTpxF384XitDjv2plKUwYIxXR?=
- =?us-ascii?Q?/WM9/Iir0LKwb/uWUUr/MCsErSJRCZJL6TqI7UDv5E8ouKRZu83vpn0kpFKz?=
- =?us-ascii?Q?yvtoe2hrIxS4GJH3PtlAeBGUkA4pFzkB/3N2pXrrUI2P3u24I+pHCQzmzK9M?=
- =?us-ascii?Q?OKpLhUXrwaivy1J5Ka/wW9o+AWEEq0az05EI+X/B+2w5FxJoS+s+trkMSARK?=
- =?us-ascii?Q?5pC4MbrG93KJFD1yR6sPZ1LbEE9u1hmJ3djEzW1Acbtnall1lGY4grtRbQUo?=
- =?us-ascii?Q?OiFdvlbTXWVtbqMWGSMt9TesWV4wfM9SuJrvLu6kXWzZ3ECRO+EBfcJ0g/VF?=
- =?us-ascii?Q?b4LibpvV+L+89QZj8R4YdqzaqGggZ6cSXAFDl4/bwsnZDKz3PGbyMOODTIqn?=
- =?us-ascii?Q?hVLCtyAglxVU3KBb4AqaBCn8tUSi8ICUkUKL2NhR3veN9ll/p3fQ+M/tZpgx?=
- =?us-ascii?Q?OIoPUAnj+xZZCakH9Cdtc1Cqfz5xyxMCakgOiaVN+IPj74keH0+1tmodfI9C?=
- =?us-ascii?Q?o1+U8LHoA147mnq9p7tkt6elGiYAj34+UYn/crWDdsN8MkVmrO2/FmMSAX6Z?=
- =?us-ascii?Q?YQw+S1VF1XdJKIE2qpYovxwgXdPLNbX+R7M/04T0n1+NZ1avq8FO8T/BfEnv?=
- =?us-ascii?Q?s0VnBzd4s7NG3IKIEYNJjnCsMs4GH9ylWlJpK+McPzOyo6XXa3c4WLAr58n/?=
- =?us-ascii?Q?Zyu7olkQ/nxfe4RnhepugXFq9qugkX5vmi812fBR7O/iNXqRorFAIYifrvJy?=
- =?us-ascii?Q?SLRMErL2SAFK1n5jjVQLX7ydQrierS64iO+o2am7PHNhGfPm2OPy+js9/m2I?=
- =?us-ascii?Q?htENRTfWZgYlmYXoIL1zyIpgl+DrE0QHRGsovsXXP4Du0BsslzLYHt1IZ17G?=
- =?us-ascii?Q?n22yuNM4cNL8jjT2VNq5hcVeA05xGvh2meLPGH4VeKDcFYqqg0d6ry8MHn4P?=
- =?us-ascii?Q?JnC9kDc0wAHlkVqq3qo8z7P4ChfD1PrKn9dYMkWbnmjc6YduN4OUmpH1P9ww?=
- =?us-ascii?Q?nZMbqWTwinilyH4Edc/doJioOoHGs5a8x3OYHq5OguGGw8tGZKIphsypxzX6?=
- =?us-ascii?Q?dH5D3cq53sqqKXyHRjDXX1aY8AmBT/dPm49VMGqSPThDmeVkM31npDeG1q9I?=
- =?us-ascii?Q?tXqZCw2oxO8Fl0nzbDlssSTF/DQU0VWMFcq1jaQN+NshQfHUwt0a2kAyfFow?=
- =?us-ascii?Q?s39sAT2CVNCEgqWmwZOWbnYcD6FOAKs1eRMu?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 07:45:36.4526
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92e077c5-227a-4d3c-eacb-08dd823ad5ff
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0002992E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9466
+References: <20250417142513.312939-1-ulf.hansson@linaro.org>
+ <20250417142513.312939-12-ulf.hansson@linaro.org> <CAGETcx_hQRr1hRQD0vyAN9bhZRx+763zfHUG0oBi0sqFUi85pA@mail.gmail.com>
+In-Reply-To: <CAGETcx_hQRr1hRQD0vyAN9bhZRx+763zfHUG0oBi0sqFUi85pA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 23 Apr 2025 09:46:36 +0200
+X-Gm-Features: ATxdqUFpGCWv8eNSiRWf2Ei2Irds9OMqUnTlzN0BIWYYRzIieJAOU8hDoreYi_s
+Message-ID: <CAPDyKFqS-rOv6cMDUWwJS=B4uMdpOK2FvE23z+jsU4V1zXNG7w@mail.gmail.com>
+Subject: Re: [PATCH 11/11] pmdomain: core: Leave powered-on genpds on until ->sync_state()
+To: Saravana Kannan <saravanak@google.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>, 
+	Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 12:58:19PM +0530, Vasant Hegde wrote:
-> On 4/11/2025 12:07 PM, Nicolin Chen wrote:
-> > The vIOMMU object is designed to represent a slice of an IOMMU HW for its
-> > virtualization features shared with or passed to user space (a VM mostly)
-> > in a way of HW acceleration. This extended the HWPT-based design for more
-> > advanced virtualization feature.
-> > 
-> > A vCMDQ introduced by this series as a part of the vIOMMU infrastructure
-> > represents a HW supported queue/buffer for VM to use exclusively, e.g.
-> >   - NVIDIA's virtual command queue
-> >   - AMD vIOMMU's command buffer
-> 
-> I assume we can pass multiple buffer details (like GPA, size) from guest to
-> hypervisor. Is that correct understanding?
+On Fri, 18 Apr 2025 at 02:51, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Thu, Apr 17, 2025 at 7:25=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> >
+> > Powering-off a genpd that was on during boot, before all of its consume=
+r
+> > devices have been probed, is certainly prone to problems.
+> >
+> > Let's fix these problems by preventing these genpds from being powered-=
+off
+> > until ->sync_state(). Note that, this only works for OF based platform =
+as
+> > ->sync_state() are relying on fw_devlink.
+>
+> For non-OF platforms, this will still wait until late_initcall(). So,
+> there's at least SOME protection. We could potentially even move that
+> to happen after deferred probe timeout expires.
 
-Yes. The NVIDIA model passes through a Virtual-Interface to a VM,
-and the VM can allocate and map multiple command queues (buffers)
-to the V-Interface, by providing each command queue info in:
+If I understand correctly, you are suggesting that we could update
+genpd_power_off_unused() (late_initcall_sync) to clear genpd->stay_on
+for the non-OF case? That should work I think.
 
-+struct iommu_vcmdq_tegra241_cmdqv {
-+	__u32 vcmdq_id;
-+	__u32 vcmdq_log2size;		// size
-+	__aligned_u64 vcmdq_base;	// GPA
- };
+>
+> -Saravana
 
-Thanks
-Nicolin
+Kind regards
+Uffe
+
+>
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/pmdomain/core.c   | 12 +++++++++++-
+> >  include/linux/pm_domain.h |  1 +
+> >  2 files changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index 695d7d9e5582..a8c56f7a7ba0 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -212,6 +212,12 @@ static inline bool irq_safe_dev_in_sleep_domain(st=
+ruct device *dev,
+> >         return ret;
+> >  }
+> >
+> > +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+> > +static bool genpd_may_stay_on(bool on) { return on; }
+> > +#else
+> > +static bool genpd_may_stay_on(bool on) { return false; }
+> > +#endif
+> > +
+> >  static int genpd_runtime_suspend(struct device *dev);
+> >
+> >  /*
+> > @@ -933,11 +939,12 @@ static void genpd_power_off(struct generic_pm_dom=
+ain *genpd, bool one_dev_on,
+> >          * The domain is already in the "power off" state.
+> >          * System suspend is in progress.
+> >          * The domain is configured as always on.
+> > +        * The domain was on at boot and still need to stay on.
+> >          * The domain has a subdomain being powered on.
+> >          */
+> >         if (!genpd_status_on(genpd) || genpd->prepared_count > 0 ||
+> >             genpd_is_always_on(genpd) || genpd_is_rpm_always_on(genpd) =
+||
+> > -           atomic_read(&genpd->sd_count) > 0)
+> > +           genpd->stay_on || atomic_read(&genpd->sd_count) > 0)
+> >                 return;
+> >
+> >         /*
+> > @@ -2374,6 +2381,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd=
+,
+> >         INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
+> >         atomic_set(&genpd->sd_count, 0);
+> >         genpd->status =3D is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
+> > +       genpd->stay_on =3D genpd_may_stay_on(!is_off);
+> >         genpd->sync_state =3D GENPD_SYNC_STATE_OFF;
+> >         genpd->device_count =3D 0;
+> >         genpd->provider =3D NULL;
+> > @@ -2640,6 +2648,7 @@ void of_genpd_sync_state(struct device *dev)
+> >         list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
+> >                 if (genpd->provider =3D=3D &np->fwnode) {
+> >                         genpd_lock(genpd);
+> > +                       genpd->stay_on =3D false;
+> >                         genpd_power_off(genpd, false, 0);
+> >                         genpd_unlock(genpd);
+> >                 }
+> > @@ -3486,6 +3495,7 @@ static void genpd_provider_sync_state(struct devi=
+ce *dev)
+> >
+> >         case GENPD_SYNC_STATE_SIMPLE:
+> >                 genpd_lock(genpd);
+> > +               genpd->stay_on =3D false;
+> >                 genpd_power_off(genpd, false, 0);
+> >                 genpd_unlock(genpd);
+> >                 break;
+> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> > index 2185ee9e4f7c..c5358cccacad 100644
+> > --- a/include/linux/pm_domain.h
+> > +++ b/include/linux/pm_domain.h
+> > @@ -193,6 +193,7 @@ struct generic_pm_domain {
+> >         unsigned int performance_state; /* Aggregated max performance s=
+tate */
+> >         cpumask_var_t cpus;             /* A cpumask of the attached CP=
+Us */
+> >         bool synced_poweroff;           /* A consumer needs a synced po=
+weroff */
+> > +       bool stay_on;                   /* Stay powered-on during boot.=
+ */
+> >         enum genpd_sync_state sync_state; /* How sync_state is managed.=
+ */
+> >         int (*power_off)(struct generic_pm_domain *domain);
+> >         int (*power_on)(struct generic_pm_domain *domain);
+> > --
+> > 2.43.0
+> >
 
