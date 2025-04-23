@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-616599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E642DA992B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:48:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DBAA99234
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0396F9A021A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417ED4A218D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865D21A08A4;
-	Wed, 23 Apr 2025 15:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E138129A3CB;
+	Wed, 23 Apr 2025 15:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rbZqPiwj"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BzksKl4n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2FC2F2E;
-	Wed, 23 Apr 2025 15:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4632225EF8E;
+	Wed, 23 Apr 2025 15:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421698; cv=none; b=b99CmNsf9GEaBjzR/+WaR0qezURbOheZCbW4UKZIuoKSRcpdUxRUtKU5Bncl1K8K/4v+XkryGpOV7qQ84tvP+F07Bxk9wDVR2HomAHiIWTL5SXeBZ0pkEUyr7qmODj/EsD27uTEuVnzBxkiA6qT/y+GBBp1KFsCX4GkHgWuKtGc=
+	t=1745421774; cv=none; b=Qz3quZlCg/kywAOskGSVKINWXlc/CepEFXV4OlnfVFuv8dq/cSxyOaQo0b1uwBDWHc1L56m3xWQQ8Hig6RaLV0n2u49p/xSDsF61FJB0BK7tWQmaHhvcNqv2mrvxT+E5WgrIWuRb1MWswC1X5qX9PGfOf5EOSMKXRkbZDgOg/98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421698; c=relaxed/simple;
-	bh=NkZRqXQRTNgj9/u3XXnJVb4GYvU54IhrT3eUzBk3RiY=;
+	s=arc-20240116; t=1745421774; c=relaxed/simple;
+	bh=EWILyffNhy9aVgftGdVYYD7RJoM4rq9jo3kOfc442Xg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S/BgDYu6Aico1eehqE6SqFWck09+qrzC/UypnET3xBBwX4lZQOJ5b+181zGf4MhQfuOi0vVFxVp7Ta3Vd+78VaO1BNmYsCrMmH2OII8je04At0zi6+xYNLJHFYudQt1WgTGki3y1e79Mo4ZrfTA6xnN+BeykBDbgy0+TftvLVwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rbZqPiwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55682C4AF0C;
-	Wed, 23 Apr 2025 15:21:37 +0000 (UTC)
+	 MIME-Version; b=CsqxwksXddCAT8wew6YaqcTMRFyb9jrqKoXd496qk0F9q3DNs6taBavH18TMvUGZ66zM+UkVTI19PhE1SJLe2lMl3mXEONLJXMw53oTzN8EcYs39UUDCvChrRP9rQu+xWtP30EtfixaMr/lx9UMTF1y3wE+KyG4X9yALxCbYmE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BzksKl4n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C09C4CEE2;
+	Wed, 23 Apr 2025 15:22:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745421697;
-	bh=NkZRqXQRTNgj9/u3XXnJVb4GYvU54IhrT3eUzBk3RiY=;
+	s=korg; t=1745421773;
+	bh=EWILyffNhy9aVgftGdVYYD7RJoM4rq9jo3kOfc442Xg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rbZqPiwjAJiOP7/WJ8xwzFyqQjmYliIOkn+vRpGtui8xQ5yYXLbOHNcB23Fh/naCH
-	 IJ02w8qcA11i2CTsKbxL1wSGC+nZ99ucKeo2kruSRj1txmSxRKhHcsY00LkO5u8gnD
-	 amavq0AtAA2I16g2CHDsvTBAWFK3RI2JGsO6lZ8M=
+	b=BzksKl4nEz/107AeFayEC9HglEnbr+o36GkHLwKEKDlJRu4YrwAfp82BYGKuQO1aZ
+	 5xFQ845AQrWhkoEkPcNVaf/yGCKVnTjT6EvedMd3dbla89J1Zi82OT2HDYSKk4hwV5
+	 hqj2ehphVx0wwtRWSsSlqjU/WAqtjvFhHpn7eGzg=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Auger <eric.auger@redhat.com>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 6.14 221/241] arm64/sysreg: Update register fields for ID_AA64MMFR0_EL1
-Date: Wed, 23 Apr 2025 16:44:45 +0200
-Message-ID: <20250423142629.585270529@linuxfoundation.org>
+Subject: [PATCH 6.14 222/241] arm64/sysreg: Add register fields for HDFGRTR2_EL2
+Date: Wed, 23 Apr 2025 16:44:46 +0200
+Message-ID: <20250423142629.625029010@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250423142620.525425242@linuxfoundation.org>
 References: <20250423142620.525425242@linuxfoundation.org>
@@ -71,9 +71,9 @@ Content-Transfer-Encoding: 8bit
 
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 
-commit cc15f548cc77574bcd68425ae01a796659bd3705 upstream.
+commit 44844551670cff70a8aa5c1cde27ad1e0367e009 upstream.
 
-This updates ID_AA64MMFR0_EL1 register fields as per the definitions based
+This adds register fields for HDFGRTR2_EL2 as per the definitions based
 on DDI0601 2024-12.
 
 Cc: Will Deacon <will@kernel.org>
@@ -83,32 +83,52 @@ Cc: linux-kernel@vger.kernel.org
 Reviewed-by: Eric Auger <eric.auger@redhat.com>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Link: https://lore.kernel.org/r/20250203050828.1049370-2-anshuman.khandual@arm.com
+Link: https://lore.kernel.org/r/20250203050828.1049370-3-anshuman.khandual@arm.com
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/tools/sysreg |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/tools/sysreg |   29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -1664,6 +1664,7 @@ EndEnum
- UnsignedEnum	59:56	FGT
- 	0b0000	NI
- 	0b0001	IMP
-+	0b0010	FGT2
- EndEnum
- Res0	55:48
- UnsignedEnum	47:44	EXS
-@@ -1725,6 +1726,7 @@ Enum	3:0	PARANGE
- 	0b0100	44
- 	0b0101	48
- 	0b0110	52
-+	0b0111	56
- EndEnum
+@@ -2643,6 +2643,35 @@ Field	0	E0HTRE
  EndSysreg
  
+ 
++Sysreg HDFGRTR2_EL2	3	4	3	1	0
++Res0	63:25
++Field	24	nPMBMAR_EL1
++Field	23	nMDSTEPOP_EL1
++Field	22	nTRBMPAM_EL1
++Res0	21
++Field	20	nTRCITECR_EL1
++Field	19	nPMSDSFR_EL1
++Field	18	nSPMDEVAFF_EL1
++Field	17	nSPMID
++Field	16	nSPMSCR_EL1
++Field	15	nSPMACCESSR_EL1
++Field	14	nSPMCR_EL0
++Field	13	nSPMOVS
++Field	12	nSPMINTEN
++Field	11	nSPMCNTEN
++Field	10	nSPMSELR_EL0
++Field	9	nSPMEVTYPERn_EL0
++Field	8	nSPMEVCNTRn_EL0
++Field	7	nPMSSCR_EL1
++Field	6	nPMSSDATA
++Field	5	nMDSELR_EL1
++Field	4	nPMUACR_EL1
++Field	3	nPMICFILTR_EL0
++Field	2	nPMICNTR_EL0
++Field	1	nPMIAR_EL1
++Field	0	nPMECR_EL1
++EndSysreg
++
+ Sysreg HDFGRTR_EL2	3	4	3	1	4
+ Field	63	PMBIDR_EL1
+ Field	62	nPMSNEVFR_EL1
 
 
 
