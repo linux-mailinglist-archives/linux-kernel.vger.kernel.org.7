@@ -1,157 +1,285 @@
-Return-Path: <linux-kernel+bounces-616353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627C4A98B6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EB2A98B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140F73B237D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5030E3BB681
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFAD1AF0C7;
-	Wed, 23 Apr 2025 13:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22131B392B;
+	Wed, 23 Apr 2025 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EMq2faP6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Qtdk1/ux"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF041A0BFD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D781A5BB7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415477; cv=none; b=EXI0Ld+HbhQG91QIHRzSWa+VwgTL8lS9KUEmaXEOGeyUoktvaACq70fveGy2TyQQqPyrx36aRbeU6sqX5V0PtASExke6zildjLI+eFz6lHUPCxdTZOVDh7y3CsM6E2rIB0LWA+0g1SmQ/j38TlB2dR+ZuXs2Uq3YYQ/MWctXjOo=
+	t=1745415587; cv=none; b=iw2nvnTBpkNGReNa/nlu4KpRwP1bEPXicIVrSe55MdnSWTBbSq1P1n0FdHALsxaXYr50QV7xzwZQFyHMIbjJHCkKPPtlLLnYPE0a5BRG6isborKgNHyUNnssi6BmZ8+zBpmlApFgGW4XXkVH5RshZTiHEiVKWw9dMlfaSTqQr/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415477; c=relaxed/simple;
-	bh=Bk1vBly7Gn9wz6+X16ugqS+ZdEVmF8hiBAf0LZPkYjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQOZGuTy9XEu5KbKqT5n+hdrtfYjBXmcRixGMoGVctgQ1jURplw+eAsB44RRPXDzEehJfMMTyfjODvYiHtMIC17d4L+O+DNy2zcj4gsrjo2DHU/qDKF+1F08mzB52v/uEh5XkTSqU0sScvKMR+CTpILqTLjVnvNIAae67v6Z/ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EMq2faP6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAMdQQ014535
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:37:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+2ze/rnX+AqFYjoGgrqs+s9R
-	DoXeSpWH2VHtigOpg8U=; b=EMq2faP65RSDIjkMhd4B/vQC1OAI1u2q4B8h76xD
-	bo05K3A2ocZpXMZDt7r/8iq8PtmXUjxoVVsauKPKOvCOisWrNCrKBAA1/fY0Ioo0
-	pau+Txpiq+sCHgqfJT0r5wEeLm+GmvzcjuPXAfIOjnj1eOEleAYY/K6hafyWCxfL
-	uBoxCQntWvVt689Xcxwy11Ok4ppVL8Hwm52qVNUV1EbFyNO++6dfZROQo1Wmmyd/
-	9tmjR5Uw70HUs4Akj7iaFvXMqmImXtj21goy0VVnfU1T0qdHg6VyfXXX2od8KqAT
-	VK+E63ecyTp9hUv55QmFN+4AFm2da6ryERG3fZyqV8QKVg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0j8xb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:37:54 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c572339444so984090285a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:37:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745415474; x=1746020274;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+2ze/rnX+AqFYjoGgrqs+s9RDoXeSpWH2VHtigOpg8U=;
-        b=YpQgpE9jouWrHkTCPJYREG/31kibIqCMyeAjxi/aK5GTM5q2tShS4GhDYqns5bLp6k
-         8N+PdrpbF46CyH8Ln/PdpEUXqJOiscslMxef57IVFR+AZMyNgAZkvNbNJZ88Wl0pP6uW
-         RY0PonZdesNBbNljVyXnorefa+6pP/XMzHQ7hKZJjkYyjoUXM1dzjw/6HAl29lq5zsHn
-         9UlnafbhXD9qrFV3a4bsMpo0gatafXl49UmF2A7Y9p7SWQb2vOvWXZ1jbRdP1xrvqnv2
-         PbT98/0vDWFMAhtcKi1rAD/pva/nqPAc8e3QHKCBFBePcVkhyCaYHKTmgTd20Un2yDft
-         R18g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRecB+dGltr69UqjvNcPg6mB016vjnOD0wdIbv12BHYbdYOIqBu5yMG42apljjtrrq6TJTMT9lp9jL2/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlpVho7vLW/ewtXYAOpNkpy8+WrquG00qNDJnabWwz0z/Dcc6U
-	EEhtYqJk50DWUH+3gp91dFevE5F49589GI2JilM+YgM9yuNQ2EtOCAkPJDZJDZf5BRRTRQYzzZg
-	KI5lUKHj/R0YJ2OY022/HZjrDyBn1AE0D5dEMAkvL35M+X3CAoq5RzTP8vJ2VzLs=
-X-Gm-Gg: ASbGnctnjsEQx5N8iq/RQkurMxohoD0rpCi7C/OHKZcRjZHPhM2xIDC6JojdO1VQ35i
-	CozKCR41cqZ91YXPS9TbBTJQjFZ93fCaIRc1j3hCMpfl7UlwPJ4Npz6zLYanf7TkY6bLbEx/NUt
-	lWwUi43rNB1fuKXvzHqlZWKTGDOEUiDke0aG1XYAs1FnKh23Qvw7KFiEQPwxgn+zvCXtqhJ/ffy
-	E85LyGH+FFIlkq54YLqKFjsG/C7/UGUwTRULJ4heNeVHexWwZ6ZdmkYXbpJhdEUB0zNLrNYrBUs
-	gqZBqv/P7XwNL4JUU0NzzR4Owr2XRhRud1DcjRmzCnjhG4i/MZ1Mrb1VhKKmsmELPyDBAcVvLPM
-	=
-X-Received: by 2002:a05:620a:d95:b0:7c5:18bb:f8b8 with SMTP id af79cd13be357-7c927f63367mr2730405485a.1.1745415474037;
-        Wed, 23 Apr 2025 06:37:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHQxjyT3iMSomg5ijBHCAHqMp5xzTzundL8sqlTqkPCKrDcBt3wVLGtMzpfLC7BB1RtedrtQ==
-X-Received: by 2002:a05:620a:d95:b0:7c5:18bb:f8b8 with SMTP id af79cd13be357-7c927f63367mr2730399985a.1.1745415473543;
-        Wed, 23 Apr 2025 06:37:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5d010dsm1533420e87.120.2025.04.23.06.37.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 06:37:52 -0700 (PDT)
-Date: Wed, 23 Apr 2025 16:37:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, krishna.chundru@oss.qualcomm.com,
-        quic_vbadigan@quicinc.com, quic_nayiluri@quicinc.com,
-        quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com
-Subject: Re: [PATCH 1/2] phy: qcom: qmp-pcie: Update PHY settings for SA8775P
-Message-ID: <tqzmof6rq7t7k3jbdmay7dplz7el3c6i3ehesdiqnp7iq5f7ul@3lnf3awj7af5>
-References: <20250423-update_phy-v1-0-30eb51703bb8@oss.qualcomm.com>
- <20250423-update_phy-v1-1-30eb51703bb8@oss.qualcomm.com>
+	s=arc-20240116; t=1745415587; c=relaxed/simple;
+	bh=uJBVdZvqBOEUMTWrnXpjWUMjhvUeVxx4u3ef8ehhyYw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/Ks4ahxfQzlEXSLHVrealbLl7tDH7uz7W/zMI00MyvqxWs48dGBsNQPo/ZOzt8VJd6nk7/Cxj2kjmFtRPTcGOUG0l0f3+Ygd5uI/bL3cL8BalLPDPLnRFTo0Fw1gEVIvcxVWTYrX/fcPutgzWxpG9HuZIY5z0U5KifnqLCXfHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Qtdk1/ux; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1745415583; x=1776951583;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DoX1mLsF5BZf8Dfmzq+q3ULu4XnvR8sckoyZnXWuhbo=;
+  b=Qtdk1/uxZxB10+b7aG/58yox1x7W91NuWp3mRcGoltZjyrh3de8JCES3
+   3Udg/S8eqSaSxdgEdYiHv06kMfI8cTagiuwyQhMcPcxo5uWdGxkN9ew+F
+   ZbkbdVPNM9FgZ22flKk6psWwi0AjsCAPGsA8pH8gHWwiPGk8PUKJPGYPI
+   4=;
+X-IronPort-AV: E=Sophos;i="6.15,233,1739836800"; 
+   d="scan'208";a="491901288"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 13:39:39 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:47330]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.127:2525] with esmtp (Farcaster)
+ id b3015d5d-5400-4018-90ac-1dbab7b74be4; Wed, 23 Apr 2025 13:39:24 +0000 (UTC)
+X-Farcaster-Flow-ID: b3015d5d-5400-4018-90ac-1dbab7b74be4
+Received: from EX19D029EUC001.ant.amazon.com (10.252.61.252) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 23 Apr 2025 13:39:24 +0000
+Received: from dev-dsk-bsz-1b-e2c65f5d.eu-west-1.amazon.com (10.13.227.240) by
+ EX19D029EUC001.ant.amazon.com (10.252.61.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 23 Apr 2025 13:39:22 +0000
+From: Bartosz Szczepanek <bsz@amazon.de>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: <nh-open-source@amazon.com>, Bartosz Szczepanek <bsz@amazon.de>, Alexander
+ Graf <graf@amazon.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] arm64: Emit debug bootcodes for early kernel boot
+Date: Wed, 23 Apr 2025 13:39:07 +0000
+Message-ID: <20250423133910.909-1-bsz@amazon.de>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423-update_phy-v1-1-30eb51703bb8@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 68bDsJgZymDthWZ_Ku4Jgl4u2PG8cOC7
-X-Authority-Analysis: v=2.4 cv=ftfcZE4f c=1 sm=1 tr=0 ts=6808ed32 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=Vt7sqbXHGhqwYxysgRMA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: 68bDsJgZymDthWZ_Ku4Jgl4u2PG8cOC7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA5NSBTYWx0ZWRfX0joL2YD9fFeY zzgMGVsN1AnayWzaTDrU+M/ko1ih4idDWPwWA76ZNxdu3Oi/r+/vfvOnHYT2n4TkI5QjGJKw3g5 EMbdf4MKLQsgSK3anZyFEoYR+pswYoTmPwiJZyCx4o9+RNOfPILMD6Wx0xKqsiPkqJUjcA5FR0l
- kl/oUZJ7qWRXEYcg7ujExTf41NrrpcpWi9VBdkbl+3QjoiORkHI1n8w7Ey1rsfcnFQBjgnI1LoU 8LbgjlC7auNo8zva7xb/K5E/EwY1+HEpf6mXOTB82E2ahaKRiqhW69UWqa62KvFYgRpQvD1dz03 fvTVGRKsBAdMIlcelt54TIeVntgRl8JGhlKRIj3EOU2i7c3dT6q3tIw0gCjovyMbw5elirKgzAV
- iehR93DebBoSbg+qSGt2u5t7sWXehQipnnIIRJ4wWgNrYNJAc0EG2seOGd8831xYvE0HN5Lq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-23_08,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230095
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D042UWB004.ant.amazon.com (10.13.139.150) To
+ EX19D029EUC001.ant.amazon.com (10.252.61.252)
 
-On Wed, Apr 23, 2025 at 04:45:43PM +0530, Mrinmay Sarkar wrote:
-> This change updates the PHY settings to align with the latest
-> PCIe PHY Hardware Programming Guide for both PCIe controllers
-> on the SA8775P platform.
+Hi all,
 
-Please read Documentation/process/submitting-patches.rst, look for
-'[This patch] makes xyzzy'.
+I'm looking for your comments on the following change, that came out
+of our investigations of rare crashes in the very early phase of kernel
+boot while still in the assembly code. The change we came up with relies
+on contextidr_el2 which is used to record checkpoints (bootcodes), to be
+used later for narrowing down on the point of failure. To do so, one needs
+modified firmware or another tool capable of dumping contextidr_el2 after
+failure happens.
 
-> 
-> Signed-off-by: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 89 ++++++++++++----------
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h |  2 +
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v5_20.h      |  4 +
->  .../phy/qualcomm/phy-qcom-qmp-qserdes-ln-shrd-v5.h | 11 +++
->  drivers/phy/qualcomm/phy-qcom-qmp.h                |  1 +
->  5 files changed, 66 insertions(+), 41 deletions(-)
-> 
-> @@ -3191,6 +3194,7 @@ static const struct qmp_pcie_offsets qmp_pcie_offsets_v5_20 = {
->  	.rx		= 0x0200,
->  	.tx2		= 0x0800,
->  	.rx2		= 0x0a00,
-> +	.ln_shrd	= 0x0e00,
->  };
+The usage of contextidr_el2 register comes from the fact that it's not
+used for any purpose within the kernel (contrary to contextidr_el1), and
+contents of it are unlikely to change even if any other code would be
+executed after the failure.
 
-This does more than just updating PHY sequences. ln_shrd-related changes
-should go into a separate commit.
+Primary alternative solution – debugging by printing – hardly applies to
+such early code, as page table mappings are not yet established and
+stable virtual address of console can't be relied upon.
 
->  
->  static const struct qmp_pcie_offsets qmp_pcie_offsets_v5_30 = {
+On the other hand, bisecting through the code is not always feasible,
+especially if the failure rates are very low. Bootcodes help that case.
 
+What I'd like to get your input on:
+- Is there an alternative solution for post-mortem analysis of rare
+  crashes in very early kernel boot that we missed?
+- Would the introduction of bootcodes be welcome upstream, in this or
+  any other shape? If so, how could we make it suitable for inclusion?
+
+Kind regards
+Bartosz
+
+-------------------------------------------------
+arm64: Emit debug bootcodes for early kernel boot
+
+Reuse contextidr_el2 register which is unused in the early boot phase
+for the purpose of tracking bootcodes. This allows to identify point of
+failure in early boot code and helps investigations.
+
+To make the change safe on targets without contextidr_el2, we're
+checking dfr0_el1 debug version bits. If it tells us we're below
+ARMV8.1, we bail out without writing to contextidr_el2.
+
+To make use of the change, modified firmware or another tool capable of
+periodically dumping contextidr_el2 is necessary.
+
+Signed-off-by: Bartosz Szczepanek <bsz@amazon.de>
+---
+ arch/arm64/Kconfig.debug   |  6 ++++++
+ arch/arm64/kernel/Makefile |  5 +++++
+ arch/arm64/kernel/head.S   | 40 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index 265c4461031f..668bda096773 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -20,4 +20,10 @@ config ARM64_RELOC_TEST
+ 	depends on m
+ 	tristate "Relocation testing module"
+ 
++config DEBUG_EARLY_BOOT
++	bool "Early boot debugging"
++	help
++	  Enable this option to use contextidr_el2 register for storing
++	  bootcodes from the early assembly code.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 71c29a2a2f19..72b38e8314d4 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -84,5 +84,10 @@ ifeq ($(CONFIG_DEBUG_EFI),y)
+ AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
+ endif
+ 
++ifeq ($(CONFIG_DEBUG_EARLY_BOOT),y)
++AFLAGS_head.o += -march=armv8.1-a
++CFLAGS_setup.o += -march=armv8.1-a
++endif
++
+ # for cleaning
+ subdir- += vdso vdso32
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 2ce73525de2c..f15db7e83b6e 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -42,6 +42,34 @@
+ #error PAGE_OFFSET must be at least 2MB aligned
+ #endif
+ 
++#ifdef CONFIG_DEBUG_EARLY_BOOT
++/*
++ * This debugging enhancement makes use of contextidr_el2 for the purpose
++ * of storing bootcodes.
++ */
++.macro _emit_bootcode val, t1
++	/* Check if in EL2 */
++	mrs	\t1, CurrentEL
++	ubfx    \t1, \t1, #2, #2
++	cmp	\t1, #2
++	b.ne	1f
++
++	/* Check if we're at least ARMv8.1 */
++	mrs	\t1, ID_AA64DFR0_EL1
++	ubfx	\t1, \t1, #0, #4
++	cmp	\t1, #7
++	b.lt	1f
++
++	mov	\t1, #\val
++	msr	contextidr_el2, \t1
++1:
++	/* Quit */
++.endm
++#define emit_bootcode(reg) _emit_bootcode __LINE__, reg
++#else
++#define emit_bootcode(reg)
++#endif
++
+ /*
+  * Kernel startup entry point.
+  * ---------------------------
+@@ -86,6 +114,7 @@ SYM_CODE_START(primary_entry)
+ 	bl	record_mmu_state
+ 	bl	preserve_boot_args
+ 
++	emit_bootcode(x22)
+ 	adrp	x1, early_init_stack
+ 	mov	sp, x1
+ 	mov	x29, xzr
+@@ -101,6 +130,7 @@ SYM_CODE_START(primary_entry)
+ 	cbnz	x19, 0f
+ 	dmb     sy
+ 	mov	x1, x0				// end of used region
++	emit_bootcode(x22)
+ 	adrp    x0, init_idmap_pg_dir
+ 	adr_l	x2, dcache_inval_poc
+ 	blr	x2
+@@ -126,7 +156,9 @@ SYM_CODE_START(primary_entry)
+ 	 * On return, the CPU will be ready for the MMU to be turned on and
+ 	 * the TCR will have been set.
+ 	 */
++	emit_bootcode(x22)
+ 	bl	__cpu_setup			// initialise processor
++	emit_bootcode(x22)
+ 	b	__primary_switch
+ SYM_CODE_END(primary_entry)
+ 
+@@ -220,10 +252,12 @@ SYM_CODE_END(preserve_boot_args)
+ SYM_FUNC_START_LOCAL(__primary_switched)
+ 	adr_l	x4, init_task
+ 	init_cpu_task x4, x5, x6
++	emit_bootcode(x22)
+ 
+ 	adr_l	x8, vectors			// load VBAR_EL1 with virtual
+ 	msr	vbar_el1, x8			// vector table address
+ 	isb
++	emit_bootcode(x22)
+ 
+ 	stp	x29, x30, [sp, #-16]!
+ 	mov	x29, sp
+@@ -236,6 +270,7 @@ SYM_FUNC_START_LOCAL(__primary_switched)
+ 
+ 	mov	x0, x20
+ 	bl	set_cpu_boot_mode_flag
++	emit_bootcode(x22)
+ 
+ #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+ 	bl	kasan_early_init
+@@ -243,6 +278,7 @@ SYM_FUNC_START_LOCAL(__primary_switched)
+ 	mov	x0, x20
+ 	bl	finalise_el2			// Prefer VHE if possible
+ 	ldp	x29, x30, [sp], #16
++	emit_bootcode(x22)
+ 	bl	start_kernel
+ 	ASM_BUG()
+ SYM_FUNC_END(__primary_switched)
+@@ -464,6 +500,7 @@ SYM_FUNC_START(__enable_mmu)
+ 	cmp     x3, #ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MAX
+ 	b.gt    __no_granule_support
+ 	phys_to_ttbr x2, x2
++	emit_bootcode(x22)
+ 	msr	ttbr0_el1, x2			// load TTBR0
+ 	load_ttbr1 x1, x1, x3
+ 
+@@ -506,16 +543,19 @@ SYM_FUNC_START_LOCAL(__no_granule_support)
+ SYM_FUNC_END(__no_granule_support)
+ 
+ SYM_FUNC_START_LOCAL(__primary_switch)
++	emit_bootcode(x22)
+ 	adrp	x1, reserved_pg_dir
+ 	adrp	x2, init_idmap_pg_dir
+ 	bl	__enable_mmu
+ 
++	emit_bootcode(x22)
+ 	adrp	x1, early_init_stack
+ 	mov	sp, x1
+ 	mov	x29, xzr
+ 	mov	x0, x20				// pass the full boot status
+ 	mov	x1, x21				// pass the FDT
+ 	bl	__pi_early_map_kernel		// Map and relocate the kernel
++	emit_bootcode(x22)
+ 
+ 	ldr	x8, =__primary_switched
+ 	adrp	x0, KERNEL_START		// __pa(KERNEL_START)
 -- 
-With best wishes
-Dmitry
+2.47.1
+
 
