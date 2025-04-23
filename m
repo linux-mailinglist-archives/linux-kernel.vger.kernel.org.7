@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-616852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC93A996FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:47:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E73A996FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8374A02AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9335464740
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2E628CF6F;
-	Wed, 23 Apr 2025 17:46:59 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F85A28A1EF;
+	Wed, 23 Apr 2025 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="flczgPhJ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F8926772C;
-	Wed, 23 Apr 2025 17:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028DD41C69
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745430419; cv=none; b=gAub/Jl08UKgNBmG0QOClgXighApO8GLDEFRrCkykSY/toF01sOvfylFgQyXz5G7eHvJf0APUy91U9+bUfT7inwZ59WF8ru7Km83/wTUSBrYQOJ4KUDw4TioRP+mbUd7l1rqa41GnCxl554cYjPMtcXfeGzVN8ZrffL6xIhw7oE=
+	t=1745430527; cv=none; b=u0dklD9zJstkVWgeAnLbzAgFtOEAM0sHYklZkb0Bh4MXBfxZCrEkDoyU6qDIUuaWl3n3qj14fhUq8n7a5dUgqOmi+ifK09wbvEi+GU5iONiOX7RonX4588NZ6o7K2c0dXPVXM32vboPjZatCZlyuiZDlSVJunfIMQK0c0KBvtgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745430419; c=relaxed/simple;
-	bh=mUzTTN/4NXsdcyMh1iWWXDct71g5yfltXc88uy92cmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I34bsEBDf+hh1+w7SZRTxOUaGBvJP1OT8pjhRzwXc3MHxs9qGBcYyFe8c/EYh483ONzAWRd4X83P1HU/f0bKvjw493fEGjF9OuXI/UcYx4HqrZcoouj8OSccxkd+2Gix7nvlI0Xz4Jdtgsx+j2RMSsptL+UQK0pR+GkB+dVJiVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-873ac8037ecso60586241.3;
-        Wed, 23 Apr 2025 10:46:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745430415; x=1746035215;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wLqipjscszx2Mp0FY64qeFZMiD5TTEV8hZP6rO4hjpA=;
-        b=TyLVeEkWhQLYwu5MoSI0oFjMp5B+FTPWyNz4nHIWpMUQ6M3O4uvTCXC2vBj3h6DtaF
-         9ImT+gfVKc76fPxVcimeD64zJdtJIFETuItUB071U9d0Ah5rRq2qnFAZ0E+kz7zvh8fm
-         uLrFvBCfHse/MSD2cu75rm7ffxzRfRR9Q+78wvs7x5p6UkjTGreuYUQGR5LvvHjKz37b
-         5w2StymfYc17xWhCm+NRHX+eVhxU3MYAXg8KNY0SKlLuPUqTlUf5mgjCKHasnbXzj7I4
-         IZxgvUq625W4DeU95IhQ7cf4XZtH2gsM81LvVSm9LhYlwbVsOTkT1fq+G4JJ6W3NrPn2
-         NPWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtqtwB737LFfEQQcuZGpxH48VN1MfRB3gjcPtAGwgnxt2d7EPoOKVgmikWjfDTLQx1N975/utw@vger.kernel.org, AJvYcCVLswJjEv6p5mfd8nwPmBEFuUcZvVEZnft4cY4V0gEu/T0wKxkfCWP64R7Q4rvYZaDR/THJxDGcWHDtSpoP@vger.kernel.org, AJvYcCWsl3XHT+9KlvUgfZVAa2J9jfvXb/cxS1NCv1tUdj9L7Clklua/kRx2mrI9+30w26R9Qc16sWAp7TI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywJ28/iEHafffddCedwvisGv+6fV3HLAjYDqnMl0G/1rn8fbVw
-	8rnrQz3A0esQbhbH0RV1Wm8jYyOABLRGIQPw0tadi2ljyoizLaCkGkaTx2wKHl0=
-X-Gm-Gg: ASbGncuEC7QgXRonJWM3sZc6zBvninXyv+E3aK1e5BMFexm9j0lmwdg1vqgXZ2ZzIGh
-	TFsIzX73FHUXadhxBFpJPEPKGn6fc3Mnwvt96+ohPq8ipEDS7TzWTOIgyT/uXLapeGyAm/FARxM
-	e6mAwVeoEgm7pf8Um5pdsTzi+TMKHB3WVgiftD8WifL3A5LwN4YgyoGKJUaGRBXIXWERQdox0Sb
-	X3hI2MSvp0Yc3LXL7Gzqou06oe2jIDO7kNuBJ1vB7080f/fAhjH4HLUl5PZii9aC3Fv8KJgxLod
-	Armd0no5ldBfnFa6RDiGz0o9qJjrpEWRqZxt0aZm+l4oRTapqmNWVlBUiB9StKXmKgSYjIcgG1y
-	QwHLuB/A=
-X-Google-Smtp-Source: AGHT+IE+gjuwIY1FsGyjscWq7LtFgQq7O+yKZ8X9hbDn0qAWEGwtA48+ObWTnEd63Ov1+kbdpwE6Ww==
-X-Received: by 2002:a05:6102:15a2:b0:4c1:801e:deb2 with SMTP id ada2fe7eead31-4d37bed5052mr213141137.7.1745430414838;
-        Wed, 23 Apr 2025 10:46:54 -0700 (PDT)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87764777674sm2894884241.24.2025.04.23.10.46.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 10:46:52 -0700 (PDT)
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-525da75d902so53099e0c.3;
-        Wed, 23 Apr 2025 10:46:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJUlHc5yj/t8cOmysbqLaTGSyJl64xCd2DlinA0G9VxHHpusY/QAIjT2dGO8Z2AngqQAf8hjxlZ2k=@vger.kernel.org, AJvYcCVi7xK4z60PdOc+vV897S2k6p4YdOtvuMr9AZk9wBUMYtNc1XcZyadxsAbOu7O0WK5EiYX00UQ0@vger.kernel.org, AJvYcCWzsZSMeRkCNdJLHx7to7hlCZ+PEGaRdwC5SnHQ0JGye28uRgGXEXDg5AJjOjEI4FF6WlKuizts7Rf+We52@vger.kernel.org
-X-Received: by 2002:a05:6122:2a02:b0:529:f50:7904 with SMTP id
- 71dfb90a1353d-52a76b54183mr283580e0c.9.1745430411699; Wed, 23 Apr 2025
- 10:46:51 -0700 (PDT)
+	s=arc-20240116; t=1745430527; c=relaxed/simple;
+	bh=3FNguulO/qyzIGlULRCSXYiQu5VPk19bxekq9naZME0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7IVLl/8WyxltCDnVoeXVzWe2TelJSu0hDRmGsb/sXfkzl8noZDh1/8kkC+zR0WbH788r9Hn1u2CFU5f/ujBq4NhDREsgwJnJBP8uHTghNr1UfVig2ecKKz4o0iuPbj7mBiPw3D4+xGdEZsyVvdbiPbczUM+DzuUmGmmZUVZt7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=flczgPhJ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pQtVtfjcISAXVaI5AkP35trRWt3Y1MNmZDafxANLqh0=; b=flczgPhJv9872LkI9et9T6x2/0
+	OPgsl+sGZke1RUeQyscDdDs4GZCWisrK1xr6Ywv1u5BG1MsOWYrM/LuT78pfbIJI9AschGQVFUq7Z
+	rSBUNfbbyK/d8iZ6ZCflpEVTa7EVx4o1ogXzL77WBvUmdrj7ec4xaE7CVlOfYSKVv/zoJ2kLeXPVy
+	IoK9Dz+c0hfOYoCs2+EwPsP7b0N1AbrfT0pRgIw+5nZsvvTFrIGWO7adzV9Kpb0GEEY3vXMJp1PFi
+	oDQfH42qZeCPYQ5kBE4HEG+MhocFyF0AoXaVwVpnKRLEb4yHiGQSE839LjU+Hmr+JZdHzyddsp+vw
+	9gb86kKQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45988)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u7eD6-0006Kz-0U;
+	Wed, 23 Apr 2025 18:48:36 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u7eD4-0000Dl-0q;
+	Wed, 23 Apr 2025 18:48:34 +0100
+Date: Wed, 23 Apr 2025 18:48:34 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Marc Zyngier <maz@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, andrew@lunn.ch, quic_kkumarcs@quicinc.com,
+	quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
+	quic_suruchia@quicinc.com, quic_pavir@quicinc.com
+Subject: Re: [PATCH v3 4/6] arm64: nvhe: Convert the opencoded field modify
+Message-ID: <aAkn8lvzoa1grdkt@shell.armlinux.org.uk>
+References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+ <20250417-field_modify-v3-4-6f7992aafcb7@quicinc.com>
+ <86r01rjald.wl-maz@kernel.org>
+ <aAJsaNdznnz-1qap@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB9597B01823415CB7FCD3BC27B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com>
- <PN3PR01MB9597B3AE75E009857AA12D4DB8BB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <CAMuHMdWpqHLest0oqiB+hG47t=G7OScLmHz5zr2u0ZgED_+Obg@mail.gmail.com>
- <aAjthvTuIeUIO4CT@pathway.suse.cz> <CAMuHMdXuawN0eC0yO40-zrz70TH-3_Y-CFSy6=hHCCMLAPvU5w@mail.gmail.com>
- <aAkVcaRrMmqXRSFz@smile.fi.intel.com>
-In-Reply-To: <aAkVcaRrMmqXRSFz@smile.fi.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Apr 2025 19:46:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUUkhJm++zitVRQdSHJUo9McjYGeVz4Frv2sct_Can+aw@mail.gmail.com>
-X-Gm-Features: ATxdqUEiZpgKy-OUmSil13Kt3gOTH1qjKd6FZI95GjTyFDCgENU6kR4WqaMubEM
-Message-ID: <CAMuHMdUUkhJm++zitVRQdSHJUo9McjYGeVz4Frv2sct_Can+aw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] lib/vsprintf: Add support for generic FourCCs by
- extending %p4cc
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Aditya Garg <gargaditya08@live.com>, 
-	Hector Martin <marcan@marcan.st>, alyssa@rosenzweig.io, Sven Peter <sven@svenpeter.dev>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Aun-Ali Zaidi <admin@kodeit.net>, 
-	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com, Simona Vetter <simona@ffwll.ch>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com, joe@perches.com, 
-	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, Kees Cook <kees@kernel.org>, 
-	tamird@gmail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	Asahi Linux Mailing List <asahi@lists.linux.dev>, netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAJsaNdznnz-1qap@yury>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Andy,
+On Fri, Apr 18, 2025 at 11:14:48AM -0400, Yury Norov wrote:
+> On Thu, Apr 17, 2025 at 12:23:10PM +0100, Marc Zyngier wrote:
+> > On Thu, 17 Apr 2025 11:47:11 +0100,
+> > Luo Jie <quic_luoj@quicinc.com> wrote:
+> > > 
+> > > Replaced below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
+> > > - reg &= ~MASK;
+> > > - reg |= FIELD_PREP(MASK, val);
+> > > The semantic patch that makes this change is available
+> > > in scripts/coccinelle/misc/field_modify.cocci.
+> > > 
+> > > More information about semantic patching is available at
+> > > https://coccinelle.gitlabpages.inria.fr/website
+> > > 
+> > > Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> > > ---
+> > >  arch/arm64/kvm/hyp/include/nvhe/memory.h | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > index 34233d586060..b2af748964d0 100644
+> > > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > @@ -30,8 +30,7 @@ enum pkvm_page_state {
+> > >  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
+> > >  						 enum pkvm_page_state state)
+> > >  {
+> > > -	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
+> > > -	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
+> > > +	FIELD_MODIFY(PKVM_PAGE_STATE_PROT_MASK, &prot, state);
+> > >  	return prot;
+> > >  }
+> > 
+> > Following up on my suggestion to *not* add anything new, this patch
+> > could be written as:
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > index 34233d5860607..08cb6ba0e0716 100644
+> > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > @@ -30,9 +30,8 @@ enum pkvm_page_state {
+> >  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
+> >  						 enum pkvm_page_state state)
+> >  {
+> > -	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
+> > -	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
+> > -	return prot;
+> > +	u64 p = prot;
+> > +	return u64_replace_bits(p, state, PKVM_PAGE_STATE_PROT_MASK);
+> >  }
+> 
+> This is a great example where u64_replace_bit() should NOT be used. 
 
-On Wed, 23 Apr 2025 at 18:30, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Wed, Apr 23, 2025 at 04:50:02PM +0200, Geert Uytterhoeven wrote:
-> > On Wed, 23 Apr 2025 at 15:39, Petr Mladek <pmladek@suse.com> wrote:
-> > > On Tue 2025-04-22 10:43:59, Geert Uytterhoeven wrote:
->
-> ...
->
-> > > The problem is that the semantic is not the same. The modifiers affect
-> > > the output ordering of IPv4 addresses while they affect the reading order
-> > > in case of FourCC code.
-> >
-> > Note that for IPv4 addresses we have %pI4, which BTW also takes [hnbl]
-> > modifiers.
->
-> Ouch, now I think I understand your complain. You mean that the behaviour of
-> h/n here is different to what it is for IPv4 case?
-
-Indeed. "%pI4n" byte-swaps on little-endian, but not on big-endian
-(remember, network byte-order _is_ big-endian), while "%p4cn" swaps
-everywhere.
-
-> > > Avoid the confusion by replacing the "n" modifier with "hR", aka
-> > > reverse host ordering.
->
-> Not ideal, but better than 'h'ost / 'r'everse pair. Not giving a tag and not
-> objecting either if there is a consensus.
-
-That is worth as much as my LGTM ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Why not? Explain it. Don't leave people in the dark, because right
+now it looks like it's purely a religous fanaticism about what
+should and should not be used. Where's the technical reasoning?
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
