@@ -1,78 +1,75 @@
-Return-Path: <linux-kernel+bounces-615802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E75A9825F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:10:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD5CA982CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FAE45A311C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167ED189F392
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A84265CDC;
-	Wed, 23 Apr 2025 08:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9036527CCC5;
+	Wed, 23 Apr 2025 08:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="X0eL+KbB";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DP2mQwEt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eOmOA4kJ"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A6B266EE0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1025D27C15B;
+	Wed, 23 Apr 2025 08:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745395806; cv=none; b=OO4eBBoK15loTMmpiTSYQjLUbBxbBudqDSWn45HjHxyqxHASWyKUHmLZw1QEy1SkS1x7NXMtdGEtWBmhwv1Fpu7XPIUjfDTT/QMqldM7XzAZKQ4vSBi1V+Yt1vrVWSoAU4CcRBxy3wsg46zOfFg1YpI6to6dbptbZD6PYAAoABU=
+	t=1745396075; cv=none; b=Y45H2ULVXVwzn2TbfrhnbiLurtnIcFw5Cy2rAEFlYoQhUAyeiDgamc6frZ2se6FzpVCaHTofwDsBNk7CM/IUZvoAOfGHPdGWZMLn/lBnS4y6LL6jiGWJJuxzO/RYsh0vR+2Bt87Pipm0MkVDmtrqz1uXbhUP+lRcnzxE9wtn8oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745395806; c=relaxed/simple;
-	bh=2cSfyhXHhJ42GXom0kqjnGO5lfglC3xG8oSxl8JfM6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fffkh2VmHa178/EP0cfXQAQJNj3LvQ8fbaZvJZ9+uRrPnZbnzN5H5QMLmXHpl0qKL8swgfqgactyDPC9C2RTggkRAa0LWxSkO15loVxdiZxr2Ee8H2S39zRcMixVagCipAZI1rL06ozX7SfViABpLBWyYXpJTuIwawAKMbH5GkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=X0eL+KbB; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DP2mQwEt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EDA1B1F7D3;
-	Wed, 23 Apr 2025 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1745395802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=MCRBBOJuZClETEUqixfcgMiw71j1SO+5sacu/xekEao=;
-	b=X0eL+KbBxVoDPpj3zNoOtdnWfvXKKeXx2MzMadN4kkXY2FvnCSghlJxGBAIZaOAIwMMvyi
-	Jwc2P6nrCoe0eZ+MM0RGVTAqNO8+A/KC+KJXRHWfhiZg47wPwXL8+YeM0XDl8Hdve2oJ2v
-	8mlMM7/AmWP7EEOn3W676ZVq3bHmDyc=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=DP2mQwEt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1745395801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=MCRBBOJuZClETEUqixfcgMiw71j1SO+5sacu/xekEao=;
-	b=DP2mQwEtcBIneT+iowSZ1uVTeNEZdtWCUppdDu0fyL9efuLxM3madybFM1rmw7eGemHRtJ
-	gzvVMZ2MJN8KOTLtB0eSPq+trrkA0GNybL97hng+RGtD0qJZ1SxP9gY1XDd0Ndb3ahDNTT
-	/m/ae+JMb6AfKl9Ns6P5WVaopUvdn/0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3B3413691;
-	Wed, 23 Apr 2025 08:10:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wrL1MlmgCGgycwAAD6G6ig
-	(envelope-from <neelx@suse.com>); Wed, 23 Apr 2025 08:10:01 +0000
-From: Daniel Vacek <neelx@suse.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: Daniel Vacek <neelx@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: fiemap: make the assert more explicit after handling the error cases
-Date: Wed, 23 Apr 2025 10:09:39 +0200
-Message-ID: <20250423080940.4025020-1-neelx@suse.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1745396075; c=relaxed/simple;
+	bh=u5+GAHAtElv97qBlSvORRvjZ6rQ3Ednmjnp1aN+0J1A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ND/eSDd+WgM3MxaR5bRFVs12Zkx73dWFqAFjJs+ZnzOS/0GNGph+LxNbyWTcm/0ZFFapHq3fXWVLMcKNanR6B+Alp0LdNDOXnjADwZXK13pyhs4bPwr4tevk2QeZUSkjNmle4Jd+7pjBJ0R22LjieCSgBLPeMqaH3uG/xLVQqGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eOmOA4kJ; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N6XXAH010685;
+	Wed, 23 Apr 2025 10:14:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=0g5P1vpX91HDoX+XwfRcnh
+	/gCOZfuoeA3kwE8ZY9iBw=; b=eOmOA4kJIqmnzHAVThgXoRWwzGDZpgGSA+wbCh
+	AF0Ua4odlTYSyMzlR1ZCU+W52Aq49XDOaUXaISStsxNlq6hGTSNCPIBN+2G2Omg2
+	8NxwXHo5JbxiMvJ5Uf8ucPsiV6ZS9ISXD1GtesTZeny/GLQEOmFCQcVGYVyWTJWr
+	xmUCt9d3D+Z9Gk6BiXKNJq+OsTvLXF6CUBdz6jLYQ9+M1AOXIWM8wj2q5H0jSCtW
+	Qtc6duyjpoPiwv/OhyiDJfUtQ0uTTLZo5qrETyYDBCNL0dhGAoa9avahR3eH2jcv
+	IrhPJ3YqmUyjGp0cj90wFEWDmUv/P2ywc0vVCIBmOxLokJwg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jk3a25r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 10:14:03 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BEA2540068;
+	Wed, 23 Apr 2025 10:12:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 560C17ED12A;
+	Wed, 23 Apr 2025 10:10:56 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Apr
+ 2025 10:10:56 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
+        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
+        <cassel@kernel.org>, <johan+linaro@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 0/9] Add STM32MP25 PCIe drivers
+Date: Wed, 23 Apr 2025 10:10:42 +0200
+Message-ID: <20250423081051.3907930-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,65 +77,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: EDA1B1F7D3
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-23_06,2025-04-22_01,2024-11-22_01
 
-Let's not assert the errors and clearly state the expected result only
-after eventual error handling. It makes a bit more sense this way.
+this patch depends on patch 
+https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=953545
 
-Signed-off-by: Daniel Vacek <neelx@suse.com>
----
- fs/btrfs/fiemap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v8:
+   - Whitespace in comment
+   
+Changes in v7:
+   - Use device_init_wakeup to enable wakeup
+   - Fix comments (Bjorn)
 
-diff --git a/fs/btrfs/fiemap.c b/fs/btrfs/fiemap.c
-index b80c07ad8c5e7..034f832e10c1a 100644
---- a/fs/btrfs/fiemap.c
-+++ b/fs/btrfs/fiemap.c
-@@ -568,10 +568,10 @@ static int fiemap_find_last_extent_offset(struct btrfs_inode *inode,
- 	 * there might be preallocation past i_size.
- 	 */
- 	ret = btrfs_lookup_file_extent(NULL, root, path, ino, (u64)-1, 0);
--	/* There can't be a file extent item at offset (u64)-1 */
--	ASSERT(ret != 0);
- 	if (ret < 0)
- 		return ret;
-+	/* There can't be a file extent item at offset (u64)-1 */
-+	ASSERT(ret == 1);
- 
- 	/*
- 	 * For a non-existing key, btrfs_search_slot() always leaves us at a
+Changes in v6:
+   - Call device_wakeup_enable() to fix WAKE# wakeup.
+   Address comments from Manivanna:
+   - Fix/Add Comments
+   - Fix DT indents
+   - Remove dw_pcie_ep_linkup() in EP start link
+   - Add PCIE_T_PVPERL_MS delay in RC PERST# deassert
+   
+Changes in v5:
+   Address driver comments from Manivanna:
+   - Use dw_pcie_{suspend/resume}_noirq instead of private ones.
+   - Move dw_pcie_host_init() to probe
+   - Add stm32_remove_pcie_port cleanup function
+   - Use of_node_put in stm32_pcie_parse_port
+   - Remove wakeup-source property
+   - Use generic dev_pm_set_dedicated_wake_irq to support wake# irq
+   
+Changes in v4:
+   Address bindings comments Rob Herring
+   - Remove phy property form common yaml
+   - Remove phy-name property
+   - Move wake_gpio and reset_gpio to the host root port
+   
+Changes in v3:
+   Address comments from Manivanna, Rob and Bjorn:
+   - Move host wakeup helper to dwc core (Mani)
+   - Drop num-lanes=<1> from bindings (Rob)
+   - Fix PCI address of I/O region (Mani)
+   - Moved PHY to a RC rootport subsection (Bjorn, Mani)
+   - Replaced dma-limit quirk by dma-ranges property (Bjorn)
+   - Moved out perst assert/deassert from start/stop link (Mani)
+   - Drop link_up test optim (Mani)
+   - DT and comments rephrasing (Bjorn)
+   - Add dts entries now that the combophy entries has landed
+   - Drop delaying Configuration Requests
+
+Changes in v2:
+   - Fix st,stm32-pcie-common.yaml dt_binding_check	
+
+Changes in v1:
+   Address comments from Rob Herring and Bjorn Helgaas:
+   - Drop st,limit-mrrs and st,max-payload-size from this patchset
+   - Remove single reset and clocks binding names and misc yaml cleanups
+   - Split RC/EP common bindings to a separate schema file
+   - Use correct PCIE_T_PERST_CLK_US and PCIE_T_RRS_READY_MS defines
+   - Use .remove instead of .remove_new
+   - Fix bar reset sequence in EP driver
+   - Use cleanup blocks for error handling
+   - Cosmetic fixes
+
+Christian Bruel (9):
+  dt-bindings: PCI: Add STM32MP25 PCIe Root Complex bindings
+  PCI: stm32: Add PCIe host support for STM32MP25
+  dt-bindings: PCI: Add STM32MP25 PCIe Endpoint bindings
+  PCI: stm32: Add PCIe Endpoint support for STM32MP25
+  MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
+  arm64: dts: st: add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: Add PCIe Rootcomplex mode on stm32mp251
+  arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
+  arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
+
+ .../bindings/pci/st,stm32-pcie-common.yaml    |  33 ++
+ .../bindings/pci/st,stm32-pcie-ep.yaml        |  67 +++
+ .../bindings/pci/st,stm32-pcie-host.yaml      | 112 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  20 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |  57 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  21 +
+ drivers/pci/controller/dwc/Kconfig            |  24 +
+ drivers/pci/controller/dwc/Makefile           |   2 +
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 417 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.c       | 370 ++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.h       |  16 +
+ 12 files changed, 1146 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
+
 -- 
-2.47.2
+2.34.1
 
 
