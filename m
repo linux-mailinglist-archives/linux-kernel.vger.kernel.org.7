@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-616355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A5EA98B6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA05A98B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7A23AAC5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F1A3B4053
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27481A5BB6;
-	Wed, 23 Apr 2025 13:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A2F1D5AB5;
+	Wed, 23 Apr 2025 13:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ELHyTWTw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OtTQ35MY"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51371A0BFD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5F81A3161
 	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415513; cv=none; b=ZXbdnVsMS+Kx6cnzkYlgy5S8Uc5pBTNJTAaaytUlMS2xRZcsWUcqOceM0D5JHMFSvuRVPvgk4GMNt4oDXL6UWSqTe67e+CFCrBlVz03KI68LJYSp7jNYWxtoquyC4c0R1xJFZtQ4TaNnFcm2oCnVEnOl98cyOD9bdhafWQIWcbg=
+	t=1745415514; cv=none; b=ZO60i84aoxkcT9khzc6Bdmuv+sj6cWHrzUYEq4hUUpak/JXNwYUggLxlTNzPgYV9PWRyjyaTXylDJwe4boyy9GvyduU+tipgEKJyNpqfgkyU+m6GlXaAWGRHGL3uPhhtIU9MXl9LJAmhonBDgpvN55zcCIHQF9I9n5Sk+ls75cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415513; c=relaxed/simple;
-	bh=EdpzRbGYPaQq7CSxSZt7PPoOnmEOzdvFx9cKEIgBmkQ=;
+	s=arc-20240116; t=1745415514; c=relaxed/simple;
+	bh=UbtwA9lLkcQ7mu+I/4nJ4sjYkyD8wB5Y4jW5OI0T7Gc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EV7jZrRLJUnB3f3AT/5ldElWbYNGSHG7pwdRqHHyJn4tb5VzVsFAk8uRFXy1GV+3K5IrNHjGaAEcoZ+FBB2uAQj2VjFoIwovPIT4xAEdcfZvJuJjs01fH0GDfSOOAEnvvja09iQOmTnrbBwJ5rSP7FwaCarCiOAn5n+ZJmmpf4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ELHyTWTw; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=ZwVi1nHj/t1T5IKUYfCNFHyClQNnUhUufgPfmNt8NCL7eQ2HrV0VSfmjqoprKBmrdPqg+lOF//d93PB8lXtIK9CyN67FXDdrQtiLX+92DUNGX/54N9jItgFgJw6DjLr4KZktb/gApfJbrFjycqC1KUDlLJlxosv5q6qbukwdm34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OtTQ35MY; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Q9DrO1JHwLaIt6bW4FlCMne9odphYqzBVZA9TwC5d4I=; b=ELHyTWTwfHf+2TH6xRVBmTjUpF
-	mtsx52hyXN1IeETj3AyY/nShlOo1qhFnu/mGq5rz8FXCP1FTrDpVnMW0CihtnzP6YGYn3MCI7iTZj
-	nyhgKEiqfyDYNFPdJ7fDe+YfhXTspEDcIybAXPRMvZEN9EudYqyXh154H81CKUWxBe1Cy0Evh9xcN
-	43r/+6rW763eJORToBRl6knbLz5hz1SRBKuIfoNtycSHpzd0dWAl/I5G/mfirqHK/qXtv7H20IK1D
-	MLwOGVkGUt/0olVUWbm3C0+Ej7GbXA7TtCtQ17QK9Svjw4Pr+lfWazarAyNc5YwRAr35vizU8X7d6
-	ZFFzWSFw==;
+	bh=cHeGB9xL4xI+MiA09JZcxauxbai7M3ZdaQGCwpwKwYc=; b=OtTQ35MYVVFzlBDjRKO32e5b7V
+	JKZQap+w4ReSZRYdLvuNEdG20jcGXzJYGgnBZksCtHtYaIHuFZdfJC2LkytvGe0F0Fwvs4jg4VUAp
+	sW4yMAGFT2mfP4qgvYXWTJU07yULYEFsLZcNSNRQ4DnLkDsImYTTYNI7BlCNZaT7xnOOwFJ7hTURw
+	zd8eul2gdbYaM8IY9b3kNtIBy9DUlx7lBDMtsUWjW8oQUg7kw7br8cxrAcVO+vBqFRVpLieTrFVqk
+	Nb74tB4Rciylk8F3fjyktXQmX46ID++vHqpY6w1/bh0yEQHnshvxfwd5p8xdDkK9qOOZNs32RauSB
+	/QfRgfzg==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7aIx-000000097Jh-2A4h;
+	id 1u7aIx-000000097Ji-2GnN;
 	Wed, 23 Apr 2025 13:38:23 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7aIx-00000003JOw-1HUC;
+	id 1u7aIx-00000003JP0-1P6r;
 	Wed, 23 Apr 2025 14:38:23 +0100
 From: David Woodhouse <dwmw2@infradead.org>
 To: Mike Rapoport <rppt@kernel.org>
@@ -63,9 +63,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Ruihan Li <lrh2000@pku.edu.cn>
-Subject: [PATCH v4 6/7] mm: Use for_each_valid_pfn() in memory_hotplug
-Date: Wed, 23 Apr 2025 14:33:42 +0100
-Message-ID: <20250423133821.789413-7-dwmw2@infradead.org>
+Subject: [PATCH v4 7/7] mm/mm_init: Use for_each_valid_pfn() in init_unavailable_range()
+Date: Wed, 23 Apr 2025 14:33:43 +0100
+Message-ID: <20250423133821.789413-8-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250423133821.789413-1-dwmw2@infradead.org>
 References: <20250423133821.789413-1-dwmw2@infradead.org>
@@ -81,43 +81,45 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- mm/memory_hotplug.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Currently, memmap_init initializes pfn_hole with 0 instead of
+ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
+page from the page at address zero to the first available page, but it
+won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
+won't pass.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 8305483de38b..8f74c55137bf 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1756,12 +1756,10 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
- {
+If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
+kernel is used as a library and loaded at a very high address), the
+pointless iteration for pages below ARCH_PFN_OFFSET will take a very
+long time, and the kernel will look stuck at boot time.
+
+Use for_each_valid_pfn() to skip the pointless iterations.
+
+Reported-by: Ruihan Li <lrh2000@pku.edu.cn>
+Suggested-by: Mike Rapoport <rppt@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Tested-by: Ruihan Li <lrh2000@pku.edu.cn>
+---
+ mm/mm_init.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 41884f2155c4..0d1a4546825c 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -845,11 +845,7 @@ static void __init init_unavailable_range(unsigned long spfn,
  	unsigned long pfn;
+ 	u64 pgcnt = 0;
  
--	for (pfn = start; pfn < end; pfn++) {
-+	for_each_valid_pfn (pfn, start, end) {
- 		struct page *page;
- 		struct folio *folio;
- 
--		if (!pfn_valid(pfn))
+-	for (pfn = spfn; pfn < epfn; pfn++) {
+-		if (!pfn_valid(pageblock_start_pfn(pfn))) {
+-			pfn = pageblock_end_pfn(pfn) - 1;
 -			continue;
- 		page = pfn_to_page(pfn);
- 		if (PageLRU(page))
- 			goto found;
-@@ -1805,11 +1803,9 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 	static DEFINE_RATELIMIT_STATE(migrate_rs, DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
- 
--	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-+	for_each_valid_pfn (pfn, start_pfn, end_pfn) {
- 		struct page *page;
- 
--		if (!pfn_valid(pfn))
--			continue;
- 		page = pfn_to_page(pfn);
- 		folio = page_folio(page);
- 
+-		}
++	for_each_valid_pfn(pfn, spfn, epfn) {
+ 		__init_single_page(pfn_to_page(pfn), pfn, zone, node);
+ 		__SetPageReserved(pfn_to_page(pfn));
+ 		pgcnt++;
 -- 
 2.49.0
 
