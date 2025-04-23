@@ -1,204 +1,353 @@
-Return-Path: <linux-kernel+bounces-615792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABF5A98240
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:07:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC953A98242
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAE31899272
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3906844133F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A826B966;
-	Wed, 23 Apr 2025 07:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531032797BB;
+	Wed, 23 Apr 2025 08:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rl8Ymkaf"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQLFl+SD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D01726B959
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4211F279783
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745395126; cv=none; b=k1pYZoV3ywkzmZf3KvMNP+TaC9FIEtJ5Z5zFf6pGSheaOt/sjOr4KxW6sHb5gLXYx8ufzeCFiI4gMM/hJdA0rXP4hSgNBUAbz836p9xP3RPX+2tejeqHhge0vLBnbk2GQSw9Clfo2c+aFk8R8uy0rzvBeoLqBM2y9Bj26dTaQdM=
+	t=1745395236; cv=none; b=WO+bRa/3mGYNnmDRa/ozhlvVgeEIcVVaI8KH1d1m9HdCvfAsYvYlvw50nCN5bCxV9nl73qnJC4FNMMznoIfCm4g3AHMry5clrlNz1YBTMzcKCNpcXqvQ6J9QYPJojzYkkrKAuVtG/OCwaooRHslJYw2ct8b05VnRMTNlqsfKFwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745395126; c=relaxed/simple;
-	bh=X+aUROIJbDq0/WVAsN/aL3+kk/RTavZCUl3H6Q6PUsI=;
+	s=arc-20240116; t=1745395236; c=relaxed/simple;
+	bh=CG9gdIK65YymTmQgFg6PHvGy4WTKKFxCr9FsnVLGWZA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U2+XPs5J6n3M5Szw4+IZ+Fp2gVr5IOlym5QmpmATRfxXVS3whlVWlvyxhm0/k6NedvGIWzJrlGTu6JE0OfHfzfSSvNNHktNNKSZwbl4WAswL/qaPLfBYC7i1w3AunKSNtKwtASKJ9rz8cMgPQaO2MLKfPHQVm0OzSWkRsdWLICY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rl8Ymkaf; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70427fb838cso47714797b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745395124; x=1745999924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98OKaYF4tpZApGWukE9uaoalFuC45/rEeEJt/zz+1to=;
-        b=rl8Ymkaf2QJ1lpB1Y4CEiiBHzPc7ZAu3PwB/+KD69X81DPnswVFjtZlk8QdU/93+P9
-         PtPfCq49madHiOFb7BJsQSyUi4cvg2u4I+wC+ydfQZ+U7neKUPVcdNpHvlQZcRvoZTWC
-         GAnkZHN6UuLAyqhcg/3iMxTkc60F4K//EwdlWyj6y9ObC+fmQkphoSuPc5xdPcRAH8E8
-         wq3SFIIamFYp7h80RGwdgZ0+MuxJ/YXFBSjfmb71ahNHG4xz/VHZG33GSrPpH56BJ33i
-         dKZIGDl79SP3jUDe2Fi3bNOZVpFQHRKl9ZboyBDq4kUiTWh17ZC2wJzrIxBduNGic240
-         mQyg==
+	 To:Cc:Content-Type; b=hyR3kApu0YmrByCq1HdE9xqlRBjRKgcTsOF2fOBCm6DWqYDd0xLf+Bz61FaIp0hjpic3K06Dbsgria/w3scThSdZod4FsANOZuOvwcKPmGtFQDQVcxX9krxIVnZ16dNe1rlTYUgjXrQ784hE5679jIO6Q5YtLBFFw1+uum/aZhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQLFl+SD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745395233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pq6JJyE1lUcScUvzEi1AKzoi0Ad5IMEJ+LYrlFPu2HM=;
+	b=PQLFl+SDGvyaqrqO4L1j0llQ1WHFL7abBlL76KTBH3pfAb61k+giayMOcFPWbtkkSB4UlL
+	UblFIZDoqrXZu/+sdH9ZFf/JFwMYG7n/fKXTfEcl2SzHu+d4ZFzR+PwYpbroMOTOGR7aJ/
+	4kCxYvBgTr6wcxU7GYas9zCjba6FXkk=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94-cbSnHXljMxWFocB6QCsAWg-1; Wed, 23 Apr 2025 04:00:30 -0400
+X-MC-Unique: cbSnHXljMxWFocB6QCsAWg-1
+X-Mimecast-MFC-AGG-ID: cbSnHXljMxWFocB6QCsAWg_1745395229
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-7082b4462a9so3176137b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 01:00:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745395124; x=1745999924;
+        d=1e100.net; s=20230601; t=1745395229; x=1746000029;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=98OKaYF4tpZApGWukE9uaoalFuC45/rEeEJt/zz+1to=;
-        b=VT9GryjI702VzVKRU57txn/AyLEk92BMc4nw2n9GIGrR3eigv1e80q1D1hSSa+qoeb
-         1PTvKkFLh+Cx5kSNdhkk58mhAQDH0H4nQZi7DYRnTff3fiWyab9XWQDDDUq+/2YKYecd
-         nOaHwl0EMxq6v1xJNleLWhjUvzDbDHjbH9YcIlOMGQ+4Cqb0HgUyCHWHBBuUYJnIRVZ2
-         SbnREVoyWtMZ4JZrsOMoJ9VIfDq1dT+yLT7WqfbELb/4oGyOWaBv/2ee1D63WKrJ+++a
-         X6W8D1QWMImZVHp8ZnkDiAvYEMDc7bNmvCIkRJCKiXbtGEwRHZTMOmWxCMnfDPb6t2cv
-         LQIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEp7+TITCfjbmFYcCFGrchhcY7C21uZCQBIMyXWbCExZ7GW4x4X4PisJEq36ziMHqq97SDuJmQ32XowPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUTZ2uR8joiyToIjXzEkKVlw9Y2Q614ufUEsURw/e/Cd0NNODB
-	AsG7KKtgbM3qCTxym9L5Lzu7yTPwrH0efbLFGrc5RE1Fw8bUX7HET35fy1fHTK/Zu97ZJfUmk9+
-	k9GzNdy5l9wb8eH5d0V/EQrQwu4l3GSahw0JXDA==
-X-Gm-Gg: ASbGncuHb08UGOW+dSijwh+cR1r21Ld3eP/jdsss7vU6Z95L5JZ1s4WhPxbyL2raZ6N
-	uXxKFu4aAa2Kkg1hDdYwSnupW+5C5WjMuTHJ1sxJ6lCEs0LzqWQ/qwlj9P9WqrrNGni0NWJWe0T
-	z0fP/rQOoFpzY/Gvf9P6gm+Q==
-X-Google-Smtp-Source: AGHT+IEid6abI3qyjvwJVFhFo6K8MH5FI0X29/TyKFu7qItzM19P/8jYPPedtCkMFzrRPgTlj3DcfgKz+l+YCjA6mJo=
-X-Received: by 2002:a05:690c:d07:b0:6f7:5605:c62b with SMTP id
- 00721157ae682-706ccdc6cf9mr271103927b3.27.1745395123911; Wed, 23 Apr 2025
- 00:58:43 -0700 (PDT)
+        bh=Pq6JJyE1lUcScUvzEi1AKzoi0Ad5IMEJ+LYrlFPu2HM=;
+        b=RKeYvDb6z97Jr+ynZ93AG8S/Nsp0GatfTVllOe7MC1Nt8Xv6s9Qlr3xcBM2mYI5Qlq
+         /usKYJFK8osn2RPbXVIb7shwqjRT9p9xmpbSyPvCHHXMUoBiUtzbl0vOThAMk1SvWyVd
+         pRITC/CnYhTgOhucVYF7NZoQbiWM0V49RbfxvegbvW+WP7aPMUPcBA322QNep4NQh4xd
+         NK9ZsPs+J0/9Z7x+4zpeCJDyUxdTMX1UYDZ1p6jW6yUIzMM6pyYPCpDhM0h1YOApbxBi
+         yI8M6/vI7UdFdSmpyHfsWSnLSj79ugKWJ45LcU4+EcwwVBRFxm07aziymZ700hNcQWJI
+         SbRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLpnSK7FEOUuPuG9aeP8OM+3ydNYyNd0jMPucU196fSHGuNp6QKeFyubIQsdIMySyTv5zLCs/J+332nEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGNV2ONmI55xc1XNuUBjwsB0BNsuNBM4N4I9ewxwm/ZEhuiEC6
+	pyTP/FBXOcFFVBQv7/RGnwzUV4DzlB93pxj6olrCcabypMNdUyXXCn1N1hGeYm1M1tX/dXkfPG0
+	pnC+pbr+7f7A+tCseFI+Z8yejn56357wIjl7fenzKfdUbfoesRTzcbggiCY3qH7FfGzBX2FMOUU
+	qb1H4TtbDaspf2ds9X82rVCxYXop/caJlU0EQC
+X-Gm-Gg: ASbGnctb36DYmg1Osh9CcAtIhtJBodFZs1Rfc7WgiMGjWMMI3Af4GCKhFalUdpUDX39
+	0y9HWTBvb71vWdmHlwwc8iShR58UCyV+JxLoaObVGzO3rRL70wu5gLLziKwxt0V/UC5WZbZeBJ6
+	p+BGfXQWQ=
+X-Received: by 2002:a05:6902:2306:b0:e63:eea5:814e with SMTP id 3f1490d57ef6-e7297f18e96mr24243744276.49.1745395229323;
+        Wed, 23 Apr 2025 01:00:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcCTPjpedjmo/EmBXv6tqxaN45OKrfhHIsGnEdaHOpFxJwDplUSiSoY/A69k8zpRkhmzh2clsKJrIlRgmJNzc=
+X-Received: by 2002:a05:6902:2306:b0:e63:eea5:814e with SMTP id
+ 3f1490d57ef6-e7297f18e96mr24243654276.49.1745395228492; Wed, 23 Apr 2025
+ 01:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417142513.312939-1-ulf.hansson@linaro.org>
- <20250417142513.312939-9-ulf.hansson@linaro.org> <CAGETcx9rvTWPbDCnTLb+ToVk8BMipTa1Y14vpn=bPBkM=CjoZg@mail.gmail.com>
-In-Reply-To: <CAGETcx9rvTWPbDCnTLb+ToVk8BMipTa1Y14vpn=bPBkM=CjoZg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 23 Apr 2025 09:58:08 +0200
-X-Gm-Features: ATxdqUF5401xpyLBZD02333wpwgBQly_TMiuPAqVbNXp07uH7DpC68Wtyaxt4dM
-Message-ID: <CAPDyKFoxggSnRZxQ7QBbF2-akoj8TTMGawxeH_0ZnPQ7CBCnUA@mail.gmail.com>
-Subject: Re: [PATCH 08/11] pmdomain: core: Add internal ->sync_state() support
- for genpd providers
-To: Saravana Kannan <saravanak@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>, 
-	Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250417000238.74567-1-npache@redhat.com> <20250417000238.74567-6-npache@redhat.com>
+ <e4e4aaae-92be-4cd2-9435-dccad99961bf@linux.alibaba.com>
+In-Reply-To: <e4e4aaae-92be-4cd2-9435-dccad99961bf@linux.alibaba.com>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 23 Apr 2025 02:00:02 -0600
+X-Gm-Features: ATxdqUGNjJmmO8jrL1BN9O1IFvnBok1I_See3e65e9BAIwYYolf-6xO9jl5pg2k
+Message-ID: <CAA1CXcBsjAVdu4RWAYJC82Wm3o=OY_Z6iyEu0YNuiC5grG_z-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 05/12] khugepaged: generalize __collapse_huge_page_*
+ for mTHP support
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com, 
+	baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org, 
+	peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
+	tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, 
+	cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com, 
+	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com, 
+	rdunlap@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Apr 2025 at 02:24, Saravana Kannan <saravanak@google.com> wrote:
+On Wed, Apr 23, 2025 at 1:30=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
 >
-> On Thu, Apr 17, 2025 at 7:25=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
+>
+>
+> On 2025/4/17 08:02, Nico Pache wrote:
+> > generalize the order of the __collapse_huge_page_* functions
+> > to support future mTHP collapse.
 > >
-> > If the genpd provider's fwnode doesn't have an associated struct device
-> > with it, we can make use of the generic genpd->dev and it corresponding
-> > driver internally in genpd to manage ->sync_state().
+> > mTHP collapse can suffer from incosistant behavior, and memory waste
+> > "creep". disable swapin and shared support for mTHP collapse.
 > >
-> > More precisely, while adding a genpd OF provider let's check if the fwn=
-ode
-> > has a device and if not, make the preparation to handle ->sync_state()
-> > internally through the genpd_provider_driver and the genpd_provider_bus=
-.
+> > No functional changes in this patch.
 > >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Co-developed-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Nico Pache <npache@redhat.com>
 > > ---
-> >  drivers/pmdomain/core.c   | 36 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/pm_domain.h |  7 +++++++
-> >  2 files changed, 43 insertions(+)
+> >   mm/khugepaged.c | 46 ++++++++++++++++++++++++++++------------------
+> >   1 file changed, 28 insertions(+), 18 deletions(-)
 > >
-> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > index 512f89e6d302..9c5a77bf59d2 100644
-> > --- a/drivers/pmdomain/core.c
-> > +++ b/drivers/pmdomain/core.c
-> > @@ -2374,6 +2374,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd=
-,
-> >         INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
-> >         atomic_set(&genpd->sd_count, 0);
-> >         genpd->status =3D is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
-> > +       genpd->sync_state =3D GENPD_SYNC_STATE_OFF;
-> >         genpd->device_count =3D 0;
-> >         genpd->provider =3D NULL;
-> >         genpd->device_id =3D -ENXIO;
-> > @@ -2656,6 +2657,7 @@ int of_genpd_add_provider_simple(struct device_no=
-de *np,
-> >                                  struct generic_pm_domain *genpd)
-> >  {
-> >         struct fwnode_handle *fwnode;
-> > +       struct device *dev;
-> >         int ret;
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index 883e9a46359f..5e9272ab82da 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -565,15 +565,17 @@ static int __collapse_huge_page_isolate(struct vm=
+_area_struct *vma,
+> >                                       unsigned long address,
+> >                                       pte_t *pte,
+> >                                       struct collapse_control *cc,
+> > -                                     struct list_head *compound_pageli=
+st)
+> > +                                     struct list_head *compound_pageli=
+st,
+> > +                                     u8 order)
+> >   {
+> >       struct page *page =3D NULL;
+> >       struct folio *folio =3D NULL;
+> >       pte_t *_pte;
+> >       int none_or_zero =3D 0, shared =3D 0, result =3D SCAN_FAIL, refer=
+enced =3D 0;
+> >       bool writable =3D false;
+> > +     int scaled_none =3D khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER =
+- order);
 > >
-> >         if (!np || !genpd)
-> > @@ -2665,6 +2667,10 @@ int of_genpd_add_provider_simple(struct device_n=
-ode *np,
-> >                 return -EINVAL;
+> > -     for (_pte =3D pte; _pte < pte + HPAGE_PMD_NR;
+> > +     for (_pte =3D pte; _pte < pte + (1 << order);
+> >            _pte++, address +=3D PAGE_SIZE) {
+> >               pte_t pteval =3D ptep_get(_pte);
+> >               if (pte_none(pteval) || (pte_present(pteval) &&
+> > @@ -581,7 +583,7 @@ static int __collapse_huge_page_isolate(struct vm_a=
+rea_struct *vma,
+> >                       ++none_or_zero;
+> >                       if (!userfaultfd_armed(vma) &&
+> >                           (!cc->is_khugepaged ||
+> > -                          none_or_zero <=3D khugepaged_max_ptes_none))=
+ {
+> > +                          none_or_zero <=3D scaled_none)) {
+> >                               continue;
+> >                       } else {
+> >                               result =3D SCAN_EXCEED_NONE_PTE;
+> > @@ -609,8 +611,8 @@ static int __collapse_huge_page_isolate(struct vm_a=
+rea_struct *vma,
+> >               /* See hpage_collapse_scan_pmd(). */
+> >               if (folio_maybe_mapped_shared(folio)) {
+> >                       ++shared;
+> > -                     if (cc->is_khugepaged &&
+> > -                         shared > khugepaged_max_ptes_shared) {
+> > +                     if (order !=3D HPAGE_PMD_ORDER || (cc->is_khugepa=
+ged &&
+> > +                         shared > khugepaged_max_ptes_shared)) {
+> >                               result =3D SCAN_EXCEED_SHARED_PTE;
+> >                               count_vm_event(THP_SCAN_EXCEED_SHARED_PTE=
+);
+> >                               goto out;
+> > @@ -711,13 +713,14 @@ static void __collapse_huge_page_copy_succeeded(p=
+te_t *pte,
+> >                                               struct vm_area_struct *vm=
+a,
+> >                                               unsigned long address,
+> >                                               spinlock_t *ptl,
+> > -                                             struct list_head *compoun=
+d_pagelist)
+> > +                                             struct list_head *compoun=
+d_pagelist,
+> > +                                             u8 order)
+> >   {
+> >       struct folio *src, *tmp;
+> >       pte_t *_pte;
+> >       pte_t pteval;
 > >
-> >         fwnode =3D &np->fwnode;
-> > +       dev =3D fwnode->dev;
-> > +
-> > +       if (!dev)
-> > +               genpd->sync_state =3D GENPD_SYNC_STATE_SIMPLE;
+> > -     for (_pte =3D pte; _pte < pte + HPAGE_PMD_NR;
+> > +     for (_pte =3D pte; _pte < pte + (1 << order);
+> >            _pte++, address +=3D PAGE_SIZE) {
+> >               pteval =3D ptep_get(_pte);
+> >               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> > @@ -764,7 +767,8 @@ static void __collapse_huge_page_copy_failed(pte_t =
+*pte,
+> >                                            pmd_t *pmd,
+> >                                            pmd_t orig_pmd,
+> >                                            struct vm_area_struct *vma,
+> > -                                          struct list_head *compound_p=
+agelist)
+> > +                                          struct list_head *compound_p=
+agelist,
+> > +                                          u8 order)
+> >   {
+> >       spinlock_t *pmd_ptl;
+> >
+> > @@ -781,7 +785,7 @@ static void __collapse_huge_page_copy_failed(pte_t =
+*pte,
+> >        * Release both raw and compound pages isolated
+> >        * in __collapse_huge_page_isolate.
+> >        */
+> > -     release_pte_pages(pte, pte + HPAGE_PMD_NR, compound_pagelist);
+> > +     release_pte_pages(pte, pte + (1 << order), compound_pagelist);
+> >   }
+> >
+> >   /*
+> > @@ -802,7 +806,7 @@ static void __collapse_huge_page_copy_failed(pte_t =
+*pte,
+> >   static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
+> >               pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
+> >               unsigned long address, spinlock_t *ptl,
+> > -             struct list_head *compound_pagelist)
+> > +             struct list_head *compound_pagelist, u8 order)
+> >   {
+> >       unsigned int i;
+> >       int result =3D SCAN_SUCCEED;
+> > @@ -810,7 +814,7 @@ static int __collapse_huge_page_copy(pte_t *pte, st=
+ruct folio *folio,
+> >       /*
+> >        * Copying pages' contents is subject to memory poison at any ite=
+ration.
+> >        */
+> > -     for (i =3D 0; i < HPAGE_PMD_NR; i++) {
+> > +     for (i =3D 0; i < (1 << order); i++) {
+> >               pte_t pteval =3D ptep_get(pte + i);
+> >               struct page *page =3D folio_page(folio, i);
+> >               unsigned long src_addr =3D address + i * PAGE_SIZE;
+> > @@ -829,10 +833,10 @@ static int __collapse_huge_page_copy(pte_t *pte, =
+struct folio *folio,
+> >
+> >       if (likely(result =3D=3D SCAN_SUCCEED))
+> >               __collapse_huge_page_copy_succeeded(pte, vma, address, pt=
+l,
+> > -                                                 compound_pagelist);
+> > +                                                 compound_pagelist, or=
+der);
+> >       else
+> >               __collapse_huge_page_copy_failed(pte, pmd, orig_pmd, vma,
+> > -                                              compound_pagelist);
+> > +                                              compound_pagelist, order=
+);
+> >
+> >       return result;
+> >   }
+> > @@ -1000,11 +1004,11 @@ static int check_pmd_still_valid(struct mm_stru=
+ct *mm,
+> >   static int __collapse_huge_page_swapin(struct mm_struct *mm,
+> >                                      struct vm_area_struct *vma,
+> >                                      unsigned long haddr, pmd_t *pmd,
+> > -                                    int referenced)
+> > +                                    int referenced, u8 order)
+> >   {
+> >       int swapped_in =3D 0;
+> >       vm_fault_t ret =3D 0;
+> > -     unsigned long address, end =3D haddr + (HPAGE_PMD_NR * PAGE_SIZE)=
+;
+> > +     unsigned long address, end =3D haddr + (PAGE_SIZE << order);
+> >       int result;
+> >       pte_t *pte =3D NULL;
+> >       spinlock_t *ptl;
+> > @@ -1035,6 +1039,12 @@ static int __collapse_huge_page_swapin(struct mm=
+_struct *mm,
+> >               if (!is_swap_pte(vmf.orig_pte))
+> >                       continue;
+> >
+> > +             /* Dont swapin for mTHP collapse */
+> > +             if (order !=3D HPAGE_PMD_ORDER) {
+> > +                     result =3D SCAN_EXCEED_SWAP_PTE;
+> > +                     goto out;
+> > +             }
 >
-> I don't want people directly poking into fwnode.
+> IMO, this check should move into hpage_collapse_scan_pmd(), that means
+> if we scan the swap ptes for mTHP collapse, then we can return
+> 'SCAN_EXCEED_SWAP_PTE' to abort the collapse earlier.
+I dont think this is correct. We currently abort if the global
+max_swap_ptes or max_shared_ptes is exceeded during the PMD scan.
+However if those pass (and we dont collapse at the PMD level), we will
+continue to mTHP collapses. Then during the isolate function we check
+for shared ptes in this specific mTHP range and abort if there's a
+shared ptes. For swap we only know that some pages in the PMD are
+unmapped, but we arent sure which, so we have to try and fault the
+PTEs, and if it's a swap pte, and we are on mTHP collapse, we abort
+the collapse attempt. So having swap/shared PTEs in the PMD scan, does
+not indicate that ALL mTHP collapses will fail, but some will.
 
-There are already other subsystems doing it like this. Like
-drivers/gpio/gpiolib.c for example. I didn't think it was a big deal,
-my bad!
-
->
-> Use get_device_from_fwnode() that's in drivers/base/core.c? Might need
-> to move it to a header. Make sure to put_device() it back.
-
-Sure, I can certainly do that!
-
->
-> Or ideally, figure it out using some other means like looking for
-> #power-domain-cells number? (if that'll always give the right answer).
-> Point being, the framework should know which type it's registering
-> even if there was no fwnode/fw_devlink.
-
-When adding the genpd-of-provider we are only passing a device node.
-Looking for "#power-domain-cells" can't tell us whether the node will
-have a device or not.
+This may make more sense as you continue to review the series!
 
 >
+> The logic is the same as how you handle the shared ptes for mTHP.>
+> >               vmf.pte =3D pte;
+> >               vmf.ptl =3D ptl;
+> >               ret =3D do_swap_page(&vmf);
+> > @@ -1154,7 +1164,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >                * that case.  Continuing to collapse causes inconsistenc=
+y.
+> >                */
+> >               result =3D __collapse_huge_page_swapin(mm, vma, address, =
+pmd,
+> > -                                                  referenced);
+> > +                             referenced, HPAGE_PMD_ORDER);
+> >               if (result !=3D SCAN_SUCCEED)
+> >                       goto out_nolock;
+> >       }
+> > @@ -1201,7 +1211,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >       pte =3D pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
+> >       if (pte) {
+> >               result =3D __collapse_huge_page_isolate(vma, address, pte=
+, cc,
+> > -                                                   &compound_pagelist)=
+;
+> > +                                     &compound_pagelist, HPAGE_PMD_ORD=
+ER);
+> >               spin_unlock(pte_ptl);
+> >       } else {
+> >               result =3D SCAN_PMD_NULL;
+> > @@ -1231,7 +1241,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
 > >
-> >         device_set_node(&genpd->dev, fwnode);
-> >
-> > @@ -2718,8 +2724,10 @@ int of_genpd_add_provider_onecell(struct device_=
-node *np,
-> >  {
-> >         struct generic_pm_domain *genpd;
-> >         struct fwnode_handle *fwnode;
-> > +       struct device *dev;
-> >         unsigned int i;
-> >         int ret =3D -EINVAL;
-> > +       bool sync_state =3D false;
-> >
-> >         if (!np || !data)
-> >                 return -EINVAL;
-> > @@ -2728,6 +2736,10 @@ int of_genpd_add_provider_onecell(struct device_=
-node *np,
-> >                 data->xlate =3D genpd_xlate_onecell;
-> >
-> >         fwnode =3D &np->fwnode;
-> > +       dev =3D fwnode->dev;
+> >       result =3D __collapse_huge_page_copy(pte, folio, pmd, _pmd,
+> >                                          vma, address, pte_ptl,
+> > -                                        &compound_pagelist);
+> > +                                        &compound_pagelist, HPAGE_PMD_=
+ORDER);
+> >       pte_unmap(pte);
+> >       if (unlikely(result !=3D SCAN_SUCCEED))
+> >               goto out_up_write;
 >
-> Can you do this some other way please? I really don't like this look up.
 
-Okay, I will use get_device_from_fwnode().
-
-Thanks again for reviewing!
-
-[...]
-
-Kind regards
-Uffe
 
