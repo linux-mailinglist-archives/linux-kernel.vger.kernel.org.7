@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-617024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EEFA9996F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:26:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A0A99972
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 22:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231AA4624E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7E01B850F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E170926B941;
-	Wed, 23 Apr 2025 20:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB65C26C3B6;
+	Wed, 23 Apr 2025 20:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="NJ4Jaoyr"
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BxISFlk9"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFC91FC10E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E638426A0B1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745440009; cv=none; b=DAnPlW8oPyUqSbOtCCnzpddHYpmArQWZqUZKYTgK2BfGo/yqzltPc35cKqvLUT3DlAi7I/VnIvHIJ8lK7b+NKrBYrVMJW5EQOv8dzQwbAqLAn3fbU10hUw6WmtOd87Y02/pg9KcqeZxYtZZOi3n8sB0lmEhumETAf62ZvsOrDFY=
+	t=1745440110; cv=none; b=m5iOgbKKaj35qTww8odj2n+VN1+T8aP+Etu83zLsPoiXNyim8QIlh56s8yMdbALMaOyk4I4OfLauQVLp3A0ZLy5E5D7v/OXEy7Kn2n4UYpQ8mEW58W5Je6FPqGSeVFGjifq3b8gRGEzh78FVxujW0A7T7XO5eOm0DqQfVsl4J4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745440009; c=relaxed/simple;
-	bh=UtiG6C3ePVTMaP6Gy85DuOb898RAmJXEx39uAd37NPw=;
-	h=From:To:Cc:Subject:Date:Message-ID; b=RBYWNcJXEgMlk85x6gsKJ+9W2YUpgeL0V6prCv+3LWioaHH0+5RYT9LnsvOaKCZ8DHivu6eYVtKhkkVJJLufIXV4oYFhIS5L0QQd7Fc1Hz85BfJpjbJ9NHTW7HOABPlP1ZVuO7VjncnUnjay54/eZ1ki50BqHvUOKjcNGBrZW9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=NJ4Jaoyr; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-2279915e06eso2880955ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:26:47 -0700 (PDT)
+	s=arc-20240116; t=1745440110; c=relaxed/simple;
+	bh=2RjA3K+20hOlo+w2EtMfB5HnfDnpGVGbjQV0yf7+ROI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=roYhW2M52KId03gxyO1kbmEjZ/CzHFkwSpo/5Ya9V0mv4JOTv9WCY4She4gDB4Y+6H3Uv0mgtxSZEhDh7kmSNMdl4JVGdl4A2blw0UDMZcmLwdIIj/VxdflBSxbbRYQ2jp8X37cAn+ozeCj2k3qAWW2V5LpCFDPPtEKSQIFSlKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BxISFlk9; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-309e8dc1e21so430701a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745440108; x=1746044908; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ah6zkuRCc/Z7s5oeCTOt9XwXTfn1W/VtyormqwMBFB4=;
+        b=BxISFlk998XDIFbFaLcYNxmAuoEIeYq3Z8AVHzfM6nq6bJwV7qcWrzDUMzB67F1vTP
+         u8tzA4/42VgDnbJ/Fc1zQx/zcggdRM+0sLt8K6myJU33xE3V79RBgRE5rjlpy0aTaK3G
+         Nu0wcXI7MDdWsOeXMYxKdA7ZZqApPiJZgUVhYsnBhRWdcsJDfdhaeU9oBgNKiDYamPvi
+         E5PciGTzDRUQp/KUPg/n84EU8hDSQItfNwTKwXycFihatIFIL7r7YTyDWZvAilwVVs8p
+         a9Ep8IZmUsiReLuvEZlR7UUCGS+DvS/+pTjpvf9S3HtDe6PlyF9NltxkpAol/hanJYZA
+         qG7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745440007; x=1746044807;
-        h=content-transfer-encoding:message-id:date:subject:cc:to:from
-         :dkim-signature:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n9VzpnqKaBUOLcjy0iBYoA9/MIid2WGRZFWdfEXFXtU=;
-        b=U9qHBB0DPjXID+32dMrRQNydm3HJb4UbTwIV7PTfnJJrEbX3RDqYxLTc3skViGnrES
-         rv64pMdULPMWufMPBD7Mqkc33jSlRVh1B612ZTDiROsAdewqKBbpRKRL9IkQCYzfo8Dc
-         ZICYZ9NOj9qf34qxwgYS/vhfCcwySTJC2jnKvk35FlXPcs5Ne6MK5Rz94tmze6ScXqDc
-         6FD9z8cxBbX5nD396TjdtHSOV3OiIViSDUhQTTCgSQpIu13TaBGrjEdALuAIvzU9Ka3e
-         zaLLasqAbV+h0ALjl84q72AIzSlSEs0txIcaZvOd43Zz/N+QeYwKlT35Hndw3b4JBBlA
-         xU6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWi9FIeFhYJmkgEDyf0O3uhyP8cJJBFQrjI5TBzrOMUCPA4+3E1OZZB5te4nsyMhYmC4LJnTTULd4MTyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoczVprZyXZS8TFowvrarIln9mR4Z3Ms4G/Og+rcUQF5bmIjWw
-	hxlIGqXlHM0u/RGptgMigBOnufl/nqygLXMEjie2Tcsa6AsrYjO5jopILYTlb0rMH17AJJ8KKpW
-	janAjLPONH9VLmtMyzXtgl1YcaDm0Nw==
-X-Gm-Gg: ASbGnctxiQP5T5lyqLM0+AnWrG75SLZ0QAG2P0dfkLvmZmcHje/1bCrv9CbkTSTKM2p
-	A64W8cDfOyqw8Ej01++XOMyBjKlibU5BaRke1ONPbv1zeKoHvJqOe7o8+pxmbk4Anc3Aah4lFxZ
-	5TQ+4F8QugNlVhiyyWJhugaP32MGtbWMRxd/kFuq14s8T0qdligvrItiAaTAy43R//9yFAFFWgB
-	2wHVaYdZS+sCpunxn5x2CXhhtcy/BeHNoaMQLwKpyCxeffmq6TKdj0t4SlxIXt3DP67Dzkrargq
-	qi2mGZgWlZH/UjrnfEW7yp66mefRZ+jrAVmHQfraP55RtRQVrOTtFJ7mP0w83AZPP2a1snY=
-X-Google-Smtp-Source: AGHT+IEPyfWnPE2zgbDmhgAvZ+4h1eHB1ZVOkuhjQtBmvmmCgMA1uIjtTMe0J23uUPqY6b1O+vXJSwpOWCzH
-X-Received: by 2002:a17:90b:2c8e:b0:2ff:796b:4d05 with SMTP id 98e67ed59e1d1-309ed270499mr251259a91.11.1745440006583;
-        Wed, 23 Apr 2025 13:26:46 -0700 (PDT)
-Received: from smtp.aristanetworks.com (ec2-54-84-120-176.compute-1.amazonaws.com. [54.84.120.176])
-        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-309dfa3ec16sm140664a91.11.2025.04.23.13.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 13:26:46 -0700 (PDT)
-X-Relaying-Domain: arista.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-	s=Arista-A; t=1745440005;
-	bh=n9VzpnqKaBUOLcjy0iBYoA9/MIid2WGRZFWdfEXFXtU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NJ4Jaoyr6SE4P7qKacXCe5CXXrXPwurmb4Ltg03Hf/o3LiQpflguLf1fFltI5Goxr
-	 YkP4L3ZqFdhzehCbzKDjjyX0sbAYNrIn0ms7WxemRblon/6RQfDTGR22XeRVPONVPn
-	 76RVXHFp7u+FJJYbFlvXYZLLUIO8PblWF2sTtQQiTX4eQQdBTbjmW+YppH3S6zetRg
-	 B3Q1EnBt97FhIvsXfzu7XCVPsRw4jWBdH+RGMD4jcqA8ATfzbpzh302PhXdtwQFqsx
-	 85NWWoP2QExq6mtk5FPwI430XBIyE/Q3ffHGP4tZHRDcKuh0poJg1vfBLDRR4yB/E6
-	 R93PbjGfuSRqg==
-Received: from kevmitch-g-eos-trunk-kernel63.sjc.aristanetworks.com (unknown [10.243.109.61])
-	by smtp.aristanetworks.com (Postfix) with ESMTP id B9612C023F;
-	Wed, 23 Apr 2025 20:26:44 +0000 (UTC)
-X-SMTP-Authentication: Allow-List-permitted
-X-SMTP-Authentication: Allow-List-permitted
-From: Kevin Mitchell <kevmitch@arista.com>
-To: "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-Cc: Kevin Mitchell <kevmitch@arista.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ryo Takakura <takakura@valinux.co.jp>,
-	Joel Granados <joel.granados@kernel.org>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] printk/panic: deduplicate backtrace on PANIC_PRINT_ALL_CPU_BT
-Date: Wed, 23 Apr 2025 13:26:17 -0700
-Message-ID: <20250423202620.1686446-1-kevmitch@arista.com>
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20230601; t=1745440108; x=1746044908;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ah6zkuRCc/Z7s5oeCTOt9XwXTfn1W/VtyormqwMBFB4=;
+        b=Lv0ECFJtlHeyu+bALTPmfC+ExtWuQnfxDlJMLLofSKyBy/bWrwTi4ImIZ13GI7Gci1
+         GKL3CJW6KKqzH4uC1tU0hHN7Pfp6KPXm/zhhRAWqNIZJXCDejxv9u36y5LTef8t0q5Ek
+         GNOexlg5JyhHQJ7KBZftoi7P0pVUtbldZ3j+q/yAhx9kW6W9nUNEHCssXa0Uz15yAjB1
+         Pl+SAM9x9+KwZfbbrqBMeSEfkUF/4cgWqbPDEcHuV93tmEgsPBmOcwT0FUv/vLS9X6I3
+         CtHVagE9e7kWGqkTcswQ7nyBUj+lP67KeJl7S4S5puUcxvykynhQzdhY60dNh7z3NuS9
+         knyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0heil0rrOGxYiLNM5J7oiyx5bSbWg498b1hWrXIy8e8G0QHPPunE8oZEB1RDT7KO87UdsVI95ETZwgdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrogcsuxOIZ76xsYwddHYpkIXE+6gZePVFJR/mFMqidZ8MRhLP
+	gFba2rL7NKq/J5LdbexzRA+TjZoLm1UkN6KDmdMGPNgqB5ngnKcpxHotimJoQDRRIdMLkNfWC+q
+	Ki2098o0Sej8BEZz193FCiw==
+X-Google-Smtp-Source: AGHT+IFiQVdxeBhTsiJOg9dL2jv2xFuiQooZC1rWX975oVPQU0mYN3lKF6SuxLR/yO5H1PbpNGLjnT3cV40FkFG7uQ==
+X-Received: from pftb21.prod.google.com ([2002:a05:6a00:2d5:b0:730:7b0c:592c])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:6d8e:b0:201:8a06:6e3b with SMTP id adf61e73a8af0-204447b1cb0mr161140637.9.1745440107858;
+ Wed, 23 Apr 2025 13:28:27 -0700 (PDT)
+Date: Wed, 23 Apr 2025 13:28:26 -0700
+In-Reply-To: <Z+y4E3tcOCOJxCiS@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <cover.1726009989.git.ackerleytng@google.com> <5a05eb947cf7aa21f00b94171ca818cc3d5bdfee.1726009989.git.ackerleytng@google.com>
+ <Z+y4E3tcOCOJxCiS@yzhao56-desk.sh.intel.com>
+Message-ID: <diqzmsc6zkph.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 27/39] KVM: guest_memfd: Allow mmapping guest_memfd files
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
+	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
+	fvdl@google.com, jthoughton@google.com, seanjc@google.com, 
+	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com, 
+	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev, 
+	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
+	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
+	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
+	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
+	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
+	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On panic, the backtrace of the panicking CPU will be printed either from
-within panic() itself or by the oops handling. Previously, when
-PANIC_PRINT_ALL_CPU_BT was enabled, the backtrace of the panicking CPU
-would be printed again.
+Yan Zhao <yan.y.zhao@intel.com> writes:
 
-To avoid cluttering up the crash log or console with this redundant
-information, this commit omits the panicking CPU from the all-cpu
-backtrace printed by panic_printk=PANIC_PRINT_ALL_CPU_BT.
+> On Tue, Sep 10, 2024 at 11:43:58PM +0000, Ackerley Tng wrote:
+>> guest_memfd files can always be mmap()ed to userspace, but
+>> faultability is controlled by an attribute on the inode.
+>> 
+>> Co-developed-by: Fuad Tabba <tabba@google.com>
+>> Signed-off-by: Fuad Tabba <tabba@google.com>
+>> Co-developed-by: Ackerley Tng <ackerleytng@google.com>
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> 
+>> ---
+>>  virt/kvm/guest_memfd.c | 46 ++++++++++++++++++++++++++++++++++++++++--
+>>  1 file changed, 44 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index b603518f7b62..fc2483e35876 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -781,7 +781,8 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>  {
+> Hi Ackerley,
+>
+> If userspace mmaps a guest_memfd to a VA when a GFN range is shared, it looks
+> that even after the GFN range has been successfully converted to private,
+> userspace can still call madvise(mem, size, MADV_REMOVE) on the userspace VA.
+> This action triggers kvm_gmem_punch_hole() and kvm_gmem_invalidate_begin(),
+> which can zap the private GFNs in the EPT.
+>
+> Is this behavior intended for in-place conversion, and could it potentially lead
+> to private GFN ranges being accidentally zapped from the EPT?
+>
+> Apologies if I missed any related discussions on this topic.
 
-Signed-off-by: Kevin Mitchell <kevmitch@arista.com>
----
- kernel/panic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No worries and thank you for your review! The next revision will not be
+requiring userspace to do madvise(MADV_REMOVE), because memory could be
+mapped in multiple processes, so unmapping from the kernel saves the
+trouble of coordination in userspace between multiple processes.
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index a3889f38153d..e53b23449fcf 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -258,7 +258,7 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
- 	if (panic_print & PANIC_PRINT_ALL_CPU_BT) {
- 		/* Temporary allow non-panic CPUs to write their backtraces. */
- 		panic_triggering_all_cpu_backtrace = true;
--		trigger_all_cpu_backtrace();
-+		trigger_allbutcpu_cpu_backtrace(raw_smp_processor_id());
- 		panic_triggering_all_cpu_backtrace = false;
- 	}
- 
--- 
-2.34.1
-
+>
+> Thanks
+> Yan
+>
+>>  	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+>>  	pgoff_t start = offset >> PAGE_SHIFT;
+>> -	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+>> +	pgoff_t nr = len >> PAGE_SHIFT;
+>> +	pgoff_t end = start + nr;
+>>  	struct kvm_gmem *gmem;
+>>  
+>>  	/*
+>> @@ -790,6 +791,9 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>  	 */
+>>  	filemap_invalidate_lock(inode->i_mapping);
+>>  
+>> +	/* TODO: Check if even_cows should be 0 or 1 */
+>> +	unmap_mapping_range(inode->i_mapping, start, len, 0);
+>> +
+>>  	list_for_each_entry(gmem, gmem_list, entry)
+>>  		kvm_gmem_invalidate_begin(gmem, start, end);
+>>  
 
