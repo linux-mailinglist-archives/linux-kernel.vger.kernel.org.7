@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-616626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08F5A9927A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:45:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36C4A99395
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449DB7A7EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:44:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9574A6444
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5352120D4F8;
-	Wed, 23 Apr 2025 15:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72FE290BD6;
+	Wed, 23 Apr 2025 15:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CbVD+On4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="K64VmT7X"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C415289367;
-	Wed, 23 Apr 2025 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19E529008D;
+	Wed, 23 Apr 2025 15:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745422369; cv=none; b=dpeKFrxHnaZsXXFD3B07cP7ELbOq14wMiGO0WkV4mB9ECdTnytPm87/6wxwJ4a5o7ip+BlOVwwIRBKrkqM62bRYzpFr8SBGuw5CBAxUNQvgvL8lln5RNduv6urOr6FPm2xcqBo41QVi3v7hMLyUyhTLf8JdK11oDqOr2rOB9hvo=
+	t=1745422708; cv=none; b=sxLyxw49LyPMHJHZvObkNpaUGH7XJ26Jr8CD39ALNtMNgz/d2xdmPCsghDGfLvE4DaQqFU7Kq2eZn79YG+CnVatN3FcjO5+UNH29aFomFXTOc385S4pMwH2BujBXIbEAhwlBEHmJwM9L/4FQwGrIKbvzEuTNaQqUw7lCu8u7X14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745422369; c=relaxed/simple;
-	bh=2GHmm17IseTCHBmk68FkRNzafrsvvsR9qWtUqz4tmMc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hfZCbopd1bKJx72X43bdi1m04/BTCiZJqHKyw9DpvY4PNea8q0clcGee71N1R6uClFKSGcnQkEcBXz8tqtLwA9s3ZOBf0Qpbg9XL+Ek6gH0P2+cGWzl2F0VVgQEjX1T6r5gHko2A16+SXXdi7CLiynAx2W/hMCihqnTyLBcP+4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CbVD+On4; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745422368; x=1776958368;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2GHmm17IseTCHBmk68FkRNzafrsvvsR9qWtUqz4tmMc=;
-  b=CbVD+On4LZQ6Oqd12zhHl8poTHCQvEMmiPcZBj8pFjTS0xC4Etci4dHg
-   dPPmSSRMf3oIcsLBUtlIVr+Ev3Q/O9/TXjSrGXweXIWF3OhvNDvCwOUXa
-   8FccASo1x/buuADSeWGL6hrx6iLPEM65hjxiqyOQF6kpWhevcCbipGlSX
-   9Q/imsGY/HAohTV06FGcSXu5A4QSmWezQ6H8QgLmF8eFI+fAp5sd3Rq+D
-   /lyQwAM7mE33t1bNDaMUbQk+MyOuDeUz0u5ufXDAcH9i61SauBMpUn1Gv
-   bp2nz0vo6TcU9nGFz5LvwtP1LyULhmumJkS8RE5ut+4eqheC5LpEf5zvl
-   w==;
-X-CSE-ConnectionGUID: WOSXzw99R3q/PFlfUhVBsQ==
-X-CSE-MsgGUID: Qz4i85mJRCu0ToXcXPjASQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="46144884"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="46144884"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:32:47 -0700
-X-CSE-ConnectionGUID: ItjRgvcvQVqdnX+kW4EfkQ==
-X-CSE-MsgGUID: EUyrFs4kRI6fgCcWYOeEqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="132651941"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.196])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 08:32:43 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Robert Richter <rrichter@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>,
- Robert Richter <rrichter@amd.com>
-Subject:
- Re: [PATCH v4 09/14] cxl/region: Factor out code to find a root decoder's
- region
-Date: Wed, 23 Apr 2025 17:32:40 +0200
-Message-ID: <3120993.CnGb9OGePT@fdefranc-mobl3>
-In-Reply-To: <20250306164448.3354845-10-rrichter@amd.com>
-References:
- <20250306164448.3354845-1-rrichter@amd.com>
- <20250306164448.3354845-10-rrichter@amd.com>
+	s=arc-20240116; t=1745422708; c=relaxed/simple;
+	bh=mohsE5Vqds5YWoBBauAQ6zbZMHHjxudeDOZFcUECQs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EOwJkf73MG2ed2ZcdoakioypfoqL4ziCGnOLY8bAe1RdolVHu7ms4QSy6IXtRkTOBtfI5O4dpCsba7logVeQl1axQU+9gotpnTt1GT+2M15741/GVo/XQXsu8s5BA9k2bSdNWaRTSPVOsDPG5lAf23LndzgmPOj5CiiGP77I4mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=K64VmT7X; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (host-88-217-226-44.customer.m-online.net [88.217.226.44])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 8853A2FC004A;
+	Wed, 23 Apr 2025 17:38:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1745422695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CsrRfvsK8H5f4CKApG2FFAZq+/r8/VdgR/k9Hykvb58=;
+	b=K64VmT7XZRMb9FTkx2QowrKV68X8S7Lro4gaTowt5LoivnkohCW8lgsYC8EdaDYnJ6bJZ7
+	AMrKAkaqWPvVvE0Rmt8vCSSRn5nGuCZseFHekQW9GyBQ+mPD/AaS944W9uHNrGulEBRveJ
+	1dqrKfwnpLeOy3E7+ldGDexWAv6kpr8=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Werner Sembach <wse@tuxedocomputers.com>
+Subject: [PATCH v8 0/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO NB04 devices
+Date: Wed, 23 Apr 2025 17:33:09 +0200
+Message-ID: <20250423153804.64395-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thursday, March 6, 2025 5:44:43=E2=80=AFPM Central European Summer Time =
-Robert Richter wrote:
-> In function cxl_add_to_region() there is code to determine a root
-> decoder's region. Factor that code out. This is in preparation to
-> further rework and simplify function cxl_add_to_region().
->=20
-> No functional changes.
->=20
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Tested-by: Gregory Price <gourry@gourry.net>
+@Ilpos you can ignore my small question from my last e-mail. The spec file
+of the firmware wants the struct to be zeroed (albeit it does also work if
+not) so I implemented it like that.
 
-Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+v2: - Integrated Armins feedback and fixed kernel test robot warnings.
+v3: - Fixed borked subject line of v2.
+v4: - Remove unrequired WMI mutex.
+    - Move device checking from probe to init.
+    - Fix device checking working exactly reverse as it should.
+    - Fix null pointer dereference because,
+        hdev->driver_data != hdev->dev.driver_data.
+v5: - Move everything to subfolder nb04 in preparation for the eventual
+        upstreaming of other tuxedo-driver parts.
+    - Integrated Ilpos coding style feedback.
+    - Use dev_set/get_drvdata() based on Armins feedback.
+v6: - Integrated more of Ilpo coding style feedback from a different LKML
+        patch-thread (less files, local functions prefixed with a short
+        string).
+v7: - Integrated more of Ilpos feedback e.g.:
+        - Use cleanup.h
+        - replace some if cases with a pointer in driver_data
+        - coding style oversights
+v8: - Integrated more of Ilpos feedback
+    - Typo fix spotted by Alok
 
+Werner Sembach (1):
+  platform/x86/tuxedo: Add virtual LampArray for TUXEDO NB04 devices
 
+ MAINTAINERS                                 |   6 +
+ drivers/platform/x86/Kconfig                |   2 +
+ drivers/platform/x86/Makefile               |   3 +
+ drivers/platform/x86/tuxedo/Kconfig         |   8 +
+ drivers/platform/x86/tuxedo/Makefile        |   8 +
+ drivers/platform/x86/tuxedo/nb04/Kconfig    |  15 +
+ drivers/platform/x86/tuxedo/nb04/Makefile   |  10 +
+ drivers/platform/x86/tuxedo/nb04/wmi_ab.c   | 916 ++++++++++++++++++++
+ drivers/platform/x86/tuxedo/nb04/wmi_util.c |  91 ++
+ drivers/platform/x86/tuxedo/nb04/wmi_util.h | 109 +++
+ 10 files changed, 1168 insertions(+)
+ create mode 100644 drivers/platform/x86/tuxedo/Kconfig
+ create mode 100644 drivers/platform/x86/tuxedo/Makefile
+ create mode 100644 drivers/platform/x86/tuxedo/nb04/Kconfig
+ create mode 100644 drivers/platform/x86/tuxedo/nb04/Makefile
+ create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_ab.c
+ create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_util.c
+ create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_util.h
+
+-- 
+2.43.0
 
 
