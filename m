@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-615567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71F8A97F52
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64524A97F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2E618978EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:34:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 234373B71C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D959F267385;
-	Wed, 23 Apr 2025 06:34:32 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493E3266F1D;
+	Wed, 23 Apr 2025 06:47:51 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073C413C3F6;
-	Wed, 23 Apr 2025 06:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCD61426C;
+	Wed, 23 Apr 2025 06:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745390072; cv=none; b=gBbeBhIjYfMRGTl/9ZGbSTb2QteWCQ9fB4y1EFZf3XnukSNsaNaS1zWTkCtmmgezwa71OCxP0lOkD+pprZ6wgvF4vto4F7vPb6fWYXpDf7tldG9UQAAhqH6VtxeYtr/fUaomoPplqnkkaASgL6PJsnp0I7aB1eyGeIAivyFY8TQ=
+	t=1745390870; cv=none; b=kSQukl2nWXQ/A6OMe8x7lmLMzQU5cUb5PGtRrLIZShT2ImaKWjcfGaQEJfnlbja6TWaTghgKCpv3CBHUYsVuei1Kilv/b2i5962Fpm3l9jFuRqzNCAFifYCSFmYN9+4+52aflSwr7uhV4w7JN/kew4fXfUq62tuq3bLfIlD8/vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745390072; c=relaxed/simple;
-	bh=Qlt8fOU7S3qN3z2CYEB2iLHJtb0RRgm0RQ9Hv1XYFIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OOzGgsSpvuloulz2VwGDlld4LReFktBZWv6PPjmyPYqfUUkm9VHx2kec0YqY7RjRCtWVEurs6ns+MHAZDp0LS3KYVhASWKEeFbpuaMPyjxaaetLiNjGovJ+gIqoI/LOBEm/gOlEwkJR3hMutokkYPxjK4TuST5ikATXWCtpwbJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zj8T45MPnz4f3lCm;
-	Wed, 23 Apr 2025 14:34:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3BD031A06DC;
-	Wed, 23 Apr 2025 14:34:26 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl_wiQhoEV49KQ--.26381S4;
-	Wed, 23 Apr 2025 14:34:25 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	ravi.bangoria@amd.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf/x86: Fix open counting event error
-Date: Wed, 23 Apr 2025 06:47:24 +0000
-Message-Id: <20250423064724.3716211-1-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745390870; c=relaxed/simple;
+	bh=s/1X5YNyN+CdDurbJV7J7vZqXcyMtwS7lCt/LK+S5Gw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ze2Kuo24vrbG89nTV7aM8rccLxB0qnVcOfjIRkvIofOKiVG76bMSeVOQICdPz3YTc8ip7SZnVj4Kc3M854N67Ts1PWSXmYTvWYMqNMBHctw2jQHww/k7ckg8cKH8jpjG/DfYfS+nGYi+3eEYCfAGpuYyTbY8wYfrQgCmQZABXsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523dc190f95so2635903e0c.1;
+        Tue, 22 Apr 2025 23:47:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745390867; x=1745995667;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NNOx3PXNDnzinyO2ItTDl2s1Y3UOOcEz8gmDtrKSNt8=;
+        b=QbmTpDaqFgDbNRWOW/gKYFcX7WT1BNnBTxCZf5xx89Vw+aaGgd6ZQc4W8GH359+6Np
+         BUyUOA7C5KlfUX62Ld3UN2Hru30hK5+JwXahac46DUsxb/o1fHBESpKN4T7zxYDjX91c
+         MwTl4uC8wDNNiWm3tL96ulmD3lh8XPCo5Bt5Abcf6ff6k4HQ6fYDl+GDn0yu4apWvL6m
+         1dOhUXbOCZdLGDj0SOuqkS/ZTivrB2W7tnoi6wYeJvT58n2MGH7uGd7E/3LW3E/qg6BU
+         eqUSO3QK/JJRpPNj7PwZaiTgIlGr7W+BF31l/dBsCVa2+uwkqc/zV98g+iDi3Sktgltj
+         UQWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAihJukWuo4P72m+qokUfyklxSGskIO90uOPZGVSKzf9uuqr3XS9ClvyZFK8QcGgteRXGxVslb2+QyfKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfPrIC+Cdcrn8reKEs5PAZl2V3P45I9Qo1KekCAFhr83DVzMRL
+	gJeLCLhkr1Jh0+Q/0PZKYp2QlBF7vQ4nxuIctd3ekJ3SC3XeZ+B29QvnWt5f
+X-Gm-Gg: ASbGncsaKkbzZ8XcL4gL1aIglXLwfAtz4n/fgeY6rql8ptH8oIz2m90fGjnjS/DlLr8
+	yxyPZZpit4psRkXM9nXm8fV5HeIS/2aTAdA7ikuO1ydrSsZ18KhmclWIU0E0ivK+gCfWafUbeVf
+	23nz8EeaEGx9muskVIKW9OAY4PP7IDOjwJPTay3nRFm9KxANQJhQ56Fp5/QgZ1o5vCWk6IFK9FV
+	p9FQ1qWsZ/xBBfQeaRXsHDOEXp3kCZYMJOsz3npzyneBPJ/Y6vVGDjaqD5fbIisFWjyMF0l5Tx3
+	PpIAZ9NKgEaw/JFDO17W2pFv2Fb9tJaYmC/yDqqevdWoxLbv2Kf+UBCO5DUrn/5iH48xmegrQEo
+	a73w=
+X-Google-Smtp-Source: AGHT+IEIfwWSy3c6E6D6wo9aLLH4Ef+bsTbWC4uD9egJerATZDSzG5Mo78EY/hTZk/l/sNDfEznblg==
+X-Received: by 2002:a05:6102:21a4:b0:4b2:adfb:4f91 with SMTP id ada2fe7eead31-4cb80233fa9mr10924892137.21.1745390866878;
+        Tue, 22 Apr 2025 23:47:46 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4cb7dd7bf14sm2568687137.2.2025.04.22.23.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 23:47:46 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-873ac8037ecso2159063241.3;
+        Tue, 22 Apr 2025 23:47:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXweBVMg+totZCPKw7JDoZcHJtAm1zv4MIOsiVsLpMzZamuhxFdaAchGQknMFJ/zc8HLAWaWgTlRZPljY=@vger.kernel.org
+X-Received: by 2002:a05:6102:55c8:b0:4c1:801e:deb2 with SMTP id
+ ada2fe7eead31-4cb8011dfacmr9907626137.7.1745390866356; Tue, 22 Apr 2025
+ 23:47:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl_wiQhoEV49KQ--.26381S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr1xGF1rZr45JryrCFyfWFg_yoW8Gr15p3
-	47Crn3KFyIgrn8Wwn8JF4Iya1UZF4ktr9rJ3WfWr45A345WwnxXFWxKFs8Wa15Ar1fJ34f
-	tanagF9rurWkA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUIa0PDUUUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+References: <20250419161543.139344-1-ebiggers@kernel.org> <20250419161543.139344-2-ebiggers@kernel.org>
+In-Reply-To: <20250419161543.139344-2-ebiggers@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 08:47:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU6coLggkFt-CKsaLJ7fCcc+8q51QFYUp6_6QgWtGfmrQ@mail.gmail.com>
+X-Gm-Features: ATxdqUEAjYzB4VDfBMC5OibqqaiFWBcBJ1xMq81c3OoazPmPD4fLzYADLc586G8
+Message-ID: <CAMuHMdU6coLggkFt-CKsaLJ7fCcc+8q51QFYUp6_6QgWtGfmrQ@mail.gmail.com>
+Subject: Re: [PATCH 1/9] crypto: tcrypt - remove CRYPTO_TEST from defconfigs
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Perf doesn't work at perf stat for hardware events:
+Hi Eric,
 
- $perf stat -- sleep 1
- Performance counter stats for 'sleep 1':
-             16.44 msec task-clock                       #    0.016 CPUs utilized
-                 2      context-switches                 #  121.691 /sec
-                 0      cpu-migrations                   #    0.000 /sec
-                54      page-faults                      #    3.286 K/sec
-   <not supported>	cycles
-   <not supported>	instructions
-   <not supported>	branches
-   <not supported>	branch-misses
+On Sat, 19 Apr 2025 at 18:18, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> CONFIG_CRYPTO_TEST enables a benchmarking module that is only really
+> useful for developers working on the crypto subsystem.  It is in a bunch
+> of defconfigs.  But as with most of the other crypto options that tend
+> to be randomly set in defconfigs, it is unlikely that much thought was
+> put into these, especially when placed in "production" defconfigs.
+> Clear it out of the defconfigs for now.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-The reason is that the check in x86_pmu_hw_config for sampling event is
-unexpectedly applied to the counting event.
+Thanks for your patch!
 
-Fixes: 88ec7eedbbd2 ("perf/x86: Fix low freqency setting issue")
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
- arch/x86/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All of these are modular, so I don't think it's a big issue, even on
+"production" defconfigs. It just means the test is available when
+someone feels the urge to run it.
+Hence I try to make all tests available as modules in m68k defconfigs.
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 6866cc5acb0b..3a4f031d2f44 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -629,7 +629,7 @@ int x86_pmu_hw_config(struct perf_event *event)
- 	if (event->attr.type == event->pmu->type)
- 		event->hw.config |= x86_pmu_get_event_config(event);
- 
--	if (!event->attr.freq && x86_pmu.limit_period) {
-+	if (is_sampling_event(event) && !event->attr.freq && x86_pmu.limit_period) {
- 		s64 left = event->attr.sample_period;
- 		x86_pmu.limit_period(event, &left);
- 		if (left > event->attr.sample_period)
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
