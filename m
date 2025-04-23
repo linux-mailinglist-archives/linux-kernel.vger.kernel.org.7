@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-616420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7697A98C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:05:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88508A98C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00011441BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:04:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CD657A6FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177FD27B508;
-	Wed, 23 Apr 2025 14:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA7727C16F;
+	Wed, 23 Apr 2025 14:04:18 +0000 (UTC)
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464D8279917;
-	Wed, 23 Apr 2025 14:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA1E279792;
+	Wed, 23 Apr 2025 14:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745417051; cv=none; b=M1zIAft2d34YDd/Grv0vOJfqRZDW0SZ6Oc7PbM5J/nyC1GCDDBsbmPnZ8x07pmjkRqCKiG1BTrdwjZ9ukMdhOK5D2f5Fys987ghSXn4EH9iULklDfE8wcz+2T+HSO1s34GoyNr1pnoKENVvj4TVq5plN0oUKS6oRGy8IC0YiDX4=
+	t=1745417058; cv=none; b=CeQfhpvams37cQ5Rpoye1rH/1i+IUKPnZUiMLX1x3GJSlVsIUHaOJIfDwWkcrDL2nN+Btk0nmiihSJwWZZgx+5liPNYajY0t/gnoXQODlNyDegPA0kMNuyaTo+JriZ06JbQeUUGcss5EsIFyAlRxghQW2nTZJ/8hgBDRZMgm7eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745417051; c=relaxed/simple;
-	bh=fNoJRpHuKT1mrda+dXosfcR63wOlI+o2Qg/r3AfmdGQ=;
+	s=arc-20240116; t=1745417058; c=relaxed/simple;
+	bh=lKyymF7Hpjd26M8XcjHpoVGsP92kwq3xGudaxC8q40M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=swZapadK0RhW0QAQ8peZ1HMpgHuXed4WDEnWSH+JNlJR+YdZTfzlRq4OW9Zlshjsqu4hNL7EouYJQVQHi67fyrWdDafkyKqkCuwxz9V17TACMlRS3fofXkuz2b09TxgymyOxiOMylxfYGRClnRmRMOP+WOvv5Y7DS22vQ9umjBQ=
+	 In-Reply-To:To:Cc; b=TGUZ9aQHONWv6yY2Gf40OQ/UnPd7SUM8lA58WyOB/NG3PVrcnO6r9njKa4mJLYQVRxZO9BGMuH1Rw+w/rbjjJm93sdTFZOwsDsUptXrQWET/XmXaUOCZNWIozaVcywp2XkhD3iATjCrS/1/+bnGklmXmqfnFlDegItjRFTGLr/0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -33,11 +33,11 @@ Received: from [127.0.0.1] (unknown [116.232.18.95])
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 5F3523430F9;
-	Wed, 23 Apr 2025 14:04:04 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 4D5DC3430AC;
+	Wed, 23 Apr 2025 14:04:10 +0000 (UTC)
 From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 23 Apr 2025 22:03:22 +0800
-Subject: [PATCH 1/5] dt-bindings: sram: sunxi-sram: Add A523 compatible
+Date: Wed, 23 Apr 2025 22:03:23 +0800
+Subject: [PATCH 2/5] dt-bindings: arm: sunxi: Add A523 EMAC0 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-01-sun55i-emac0-v1-1-46ee4c855e0a@gentoo.org>
+Message-Id: <20250423-01-sun55i-emac0-v1-2-46ee4c855e0a@gentoo.org>
 References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
 In-Reply-To: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -61,42 +61,42 @@ Cc: Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
  Yixun Lan <dlan@gentoo.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=987; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=fNoJRpHuKT1mrda+dXosfcR63wOlI+o2Qg/r3AfmdGQ=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoCPM8tzxyRwM5JaEizk2cNclzPvX++EJ0fWumI
- +ET5sc3sJyJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaAjzPF8UgAAAAAAuAChp
+X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=lKyymF7Hpjd26M8XcjHpoVGsP92kwq3xGudaxC8q40M=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoCPM/BF4N7i/TYB6b3RNTlrp4EIT9sg8KqYeMb
+ gv6OH1IHvOJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaAjzP18UgAAAAAAuAChp
  c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277SdDD/9ZZ0Hso/3o+n/pod
- 4Vcz6ad9dd0AuydxpIuJZolPthCKCSHL3oPvWZW3S7D2fVAJ5B8dCw6dAAuv5D7FCEzfEHqUiKq
- c9CPebORx/66nLiB6PZrmdTWtUX/1BXaogZwJjr9sulTEBpRrWTJVoqt842wahV2GIij/JZ6XD+
- 01GrOr2Xj+X/BK6C3RrhdqnRgJxOskoBOVhftQcnpFDfSKNSzHhvQaFXpnkwR308xiPhuZE4eLh
- Vl/KWdbEuNhZoyykq2p3x2rayeE16p0UYqz0aSNFvTOWSs/sUGdjF6Jo6fnaLPsewkye6Bi8l/t
- obiKMbLT07Bl2FlfwZuX1rhSZGPu7fCK3RPLcAXgNY2c/BGgYw+7Jj1ZeJCVr+vk7A/U3YYGOJP
- yOWuR7ywl633p5mTX1AWXag0kJWCySDR/OYeNkCtvKlV5wMCzIhILsuayDC9/mdYGo8vpZQvsTS
- qZjmgAYdNfFnkPXdueuwIHNnEvpOShtZHjjHqUANgzLN6mYtQTLfAQgnDX7PX2GVZBtc87tyKBg
- C7I6/cM/WeQCp1o5A2aK1qqYXbAy2AFB82ntCwY0sxf5JzEbEKyzWQgR3beTqVm/mDdfYZChdCm
- HG+FuA4VpsQ3iSIsKsxnBtAzFpU3KQMfyDXjRue9K/gQXz0atGdfd5mCC/JUKe4ZWTnQ==
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277XUmEACZ800KPPzNvd5qzG
+ dq77Xn4pkeobCVGqmHVzjTxaG8jl6AqbrT+hPCyYVIysejlUeys+viVgGx6RvEZaUJM2BdhsmoQ
+ hQ4u7z2XMeqFaUntVWbRDUsQnZNCITcWMAm9BaG68IYCfRCKteFo6xJ2+VOymprkW4HvTDOKXnV
+ wZcpRU1q3q8I/OtkgcIhbZLP9xbZA1drlyOJ+CLwQ/kjXJn6UZQhDzSx4I8d8iveb6/67WmCUlC
+ g9lNCSDGfrDvs9lmW4yff8cFC0twTdBx2JyvJ61nu+fEwAUgrpc9y58QAPSZN6mglDsdye8E5wH
+ diV08zakE9J/fL63Sq01dzetXf2EeAVj/5qvHCkMMriTKNAg2dyKRyfBHCLAoI/2Sszo+sFoR0I
+ s70uY4X8Xw9w7jpQM6Z1EwZjni5NoUisdb6U1RW282qfvTnxbYmcKIAqns3paow0Qs1ZS11Qha0
+ JgNR7VkgsH4DyxPRR0mO2/SjSfT69hLdqTjtBC5YyygX5TSU1s5zMc+zDVZdKakWInM7CCvqN+r
+ Nbj/WmuG+cxzTJ9EZ3Y4qeomWqagv2v35dp6PsF2Qq1jaFMVjb2r03J9Xtg1s4OKN1d3KdBSdsC
+ mceosQP+8eVz4Nd8jeSMC70lknR5kQUeVEq6udQ1dP0HeefUDlqxJhFa+2Pbt6fAEaQQ==
 X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-Add new compatible for A527/T527 chips which using same die
-as the A523 SoC.
+Allwinner A523 SoC variant (A527/T527) contains an "EMAC0" Ethernet
+MAC compatible to the A64 version.
 
 Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
- .../devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml     | 1 +
+ Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml b/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
-index a7236f7db4ec34d44c4e2268f76281ef8ed83189..e7f7cf72719ea884d48fff69620467ff2834913b 100644
---- a/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
-+++ b/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
-@@ -50,6 +50,7 @@ properties:
-           - enum:
-               - allwinner,sun50i-a100-system-control
-               - allwinner,sun50i-h6-system-control
-+              - allwinner,sun55i-a523-system-control
-           - const: allwinner,sun50i-a64-system-control
+diff --git a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
+index 7fe0352dff0f8d74a08f3f6aac5450ad685e6a08..7b6a2fde8175353621367c8d8f7a956e4aac7177 100644
+--- a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
++++ b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
+@@ -23,6 +23,7 @@ properties:
+               - allwinner,sun20i-d1-emac
+               - allwinner,sun50i-h6-emac
+               - allwinner,sun50i-h616-emac0
++              - allwinner,sun55i-a523-emac0
+           - const: allwinner,sun50i-a64-emac
  
    reg:
 
