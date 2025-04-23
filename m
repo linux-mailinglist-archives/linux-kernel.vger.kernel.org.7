@@ -1,145 +1,128 @@
-Return-Path: <linux-kernel+bounces-616713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E58A994F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D971A994FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C8D87A82BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF37B7AE89B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33FD281375;
-	Wed, 23 Apr 2025 16:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC99E281352;
+	Wed, 23 Apr 2025 16:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0ZQsBGx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAX2ppDU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABA1280CDC;
-	Wed, 23 Apr 2025 16:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B519E966;
+	Wed, 23 Apr 2025 16:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745425579; cv=none; b=ch6H/3y3S0al7KnV+BN/qRIinXpmzo2SzUX0dTdJd+U58S0hnSrYP6jxKeCaaZSnwp0JXMVTbxHLebng5Oc7g9MqgsFXGJPij6IepfNhfOwNlHjjgR04U3RwBq7NxByKN89F+39zn6gxYp+qh99x8jEZv8t7YFjLcyymHXnYEl4=
+	t=1745425612; cv=none; b=q6Dms4etnmErGYADYRPY13T6GHwFzRvJJYIItk7vm+uJNBduMOdHQzfqNRIp2ZPNQe2CjzrBNh1rZgXhr1lNui8QJCEJN3rhIeO7my2yzDX2XT1OLL/9XrgoFznkfQLnQPA5bASybyiBEAfbbiZ7TgYwzUz5I+j/9myaazehMzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745425579; c=relaxed/simple;
-	bh=ogMKzGyxgNsRLI52o+wQUuU/FxCjNBZR167etGTl+Eg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NYKRkuNXlEz+XlAcEfxsNnd3YH5HyMfTEZY7NkSTnOmpxgH17jLFVeeo3tXk65E+KuvLtHzFxHSNj8xY1C/q8V/Tbh0xxyIpRByeHQreXa/mNAg5lQN7PJFTCTx6CCCXkz1uuuKf/fkMrYXSpb4Z2/QHmBiGEBOfNnB1+jYL228=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0ZQsBGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE821C4CEEA;
-	Wed, 23 Apr 2025 16:26:15 +0000 (UTC)
+	s=arc-20240116; t=1745425612; c=relaxed/simple;
+	bh=GUZor68HKAiFhk1CoHF1cPigBjqy7WyQHNIzboArcL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=otuDPwdjb4x9y+sFJkM4J8Vss4BvZ6btfR5P+7587d8f3h3iyXFFT4M9Shnx3QwHK3Fcee5pp4wbEZp2ZTquKw23nEJHtrMy9dh6pg20XaXGshIAcklZRUg9Jm8fUCRazUKJejdm2u+9L9uKIzvpeqM9/hJEPmbeB+fqnM9fbKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAX2ppDU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB64C4CEE2;
+	Wed, 23 Apr 2025 16:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745425578;
-	bh=ogMKzGyxgNsRLI52o+wQUuU/FxCjNBZR167etGTl+Eg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=s0ZQsBGxMLPVHZuPTsdOLlbDPlnzQruO2+xnEAnaSGhG0hXAl+/1GmhrtmJZqNLiF
-	 CVLwMyNfM08ZoQJinvdltnGc7pvzw4EH7tYWWqTuY+oy8NbMsOasEbgL727PLY0q1f
-	 uKA5jXBjRwpUhE9gmAE2hJ8/arLLsx4a+1YkCAQBlRlb5JUygY+b7iBCLHzT2gR5kl
-	 IjfaKapJbFENs/TfRHV9Ej8iRirSgo5ydnTH27DhqO9lPZ1/od+PAINDdY2YUEeSgV
-	 +zpqB2WoKwck15W65xIq7C9PMX+2uCnxtjBuxtKo2BnovxE/kodlcLspiRQQfI/68u
-	 FX98fKgpG/Zuw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: qcom: use modern PM macros
-Date: Wed, 23 Apr 2025 18:26:09 +0200
-Message-Id: <20250423162613.2082417-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1745425611;
+	bh=GUZor68HKAiFhk1CoHF1cPigBjqy7WyQHNIzboArcL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cAX2ppDUspAzzI/coldlB9n2gPLSqST2GWYpV8k4Bz733pJZjW0+LNA9k2sDiY6jU
+	 dQZfPTjK8Qcz/t7yAAGHCA4g40uvt22NhyNDylcLTkkUjUUSR2PbHWNuxnGjYjZn/O
+	 X4HwqpdlsfCsOU+GLJyR2TrLT0mprTc3AVZH2QpRJW1zHDvPyBCfeR6Xez4OFJBudb
+	 frZXPA6GIP3KdyRtIJlBnBUB19W6rES4U7AUBMQr3WMA5ob4URDgdrHI6HbCgOqitf
+	 OmViEctw2ReC/So0/xtlGCJY2jCs9/vEHayVOsAX/MCSwe0Xe4xV2d+zaCjgjqtS6V
+	 3Tf2WI43fBVCA==
+Date: Wed, 23 Apr 2025 13:26:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] perf trace: Implement syscall summary in BPF
+Message-ID: <aAkUyFjRFLkS170u@x1>
+References: <20250326044001.3503432-1-namhyung@kernel.org>
+ <CAH0uvojPaZ-byE-quc=sUvXyExaZPU3PUjdTYOzE5iDAT_wNVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvojPaZ-byE-quc=sUvXyExaZPU3PUjdTYOzE5iDAT_wNVA@mail.gmail.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Mar 28, 2025 at 06:46:36PM -0700, Howard Chu wrote:
+> Hello Namhyung,
+> 
+> On Tue, Mar 25, 2025 at 9:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > When -s/--summary option is used, it doesn't need (augmented) arguments
+> > of syscalls.  Let's skip the augmentation and load another small BPF
+> > program to collect the statistics in the kernel instead of copying the
+> > data to the ring-buffer to calculate the stats in userspace.  This will
+> > be much more light-weight than the existing approach and remove any lost
+> > events.
+> >
+> > Let's add a new option --bpf-summary to control this behavior.  I cannot
+> > make it default because there's no way to get e_machine in the BPF which
+> > is needed for detecting different ABIs like 32-bit compat mode.
+> >
+> > No functional changes intended except for no more LOST events. :)
+> >
+> >   $ sudo ./perf trace -as --summary-mode=total --bpf-summary sleep 1
+> >
+> >    Summary of events:
+> >
+> >    total, 6194 events
+> >
+> >      syscall            calls  errors  total       min       avg       max       stddev
+> >                                        (msec)    (msec)    (msec)    (msec)        (%)
+> >      --------------- --------  ------ -------- --------- --------- ---------     ------
+> >      epoll_wait           561      0  4530.843     0.000     8.076   520.941     18.75%
+> >      futex                693     45  4317.231     0.000     6.230   500.077     21.98%
+> >      poll                 300      0  1040.109     0.000     3.467   120.928     17.02%
+> >      clock_nanosleep        1      0  1000.172  1000.172  1000.172  1000.172      0.00%
+> >      ppoll                360      0   872.386     0.001     2.423   253.275     41.91%
+> >      epoll_pwait           14      0   384.349     0.001    27.453   380.002     98.79%
+> >      pselect6              14      0   108.130     7.198     7.724     8.206      0.85%
+> >      nanosleep             39      0    43.378     0.069     1.112    10.084     44.23%
+> >      ...
 
-The use of the old SET_SYSTEM_SLEEP_PM_OPS/SET_RUNTIME_PM_OPS macros
-without __maybe_unused annotations causes warnings when build testing
-without CONFIG_PM:
+I added the following to align sched_[gs]etaffinity,
 
-drivers/usb/dwc3/dwc3-qcom.c:421:12: error: unused function 'dwc3_qcom_suspend' [-Werror,-Wunused-function]
-  421 | static int dwc3_qcom_suspend(struct dwc3_qcom *qcom, bool wakeup)
-      |            ^~~~~~~~~~~~~~~~~
-drivers/usb/dwc3/dwc3-qcom.c:457:12: error: unused function 'dwc3_qcom_resume' [-Werror,-Wunused-function]
-  457 | static int dwc3_qcom_resume(struct dwc3_qcom *qcom, bool wakeup)
+Thanks,
 
-Change these to the modern SYSTEM_SLEEP_PM_OPS/RUNTIME_PM_OPS/pm_ptr
-macros, which avoids the warnings and improves readability at the same
-time.
+- Arnaldo
 
-Fixes: 1881a32fe14d ("usb: dwc3: qcom: Transition to flattened model")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/usb/dwc3/dwc3-qcom.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index d512002e1e88..cbba11589cd0 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -832,7 +832,6 @@ static void dwc3_qcom_remove(struct platform_device *pdev)
- 	reset_control_assert(qcom->resets);
- }
+diff --git a/tools/perf/util/bpf-trace-summary.c b/tools/perf/util/bpf-trace-summary.c
+index 114d8d9ed9b2d3f3..af37d3bb5f9c42e7 100644
+--- a/tools/perf/util/bpf-trace-summary.c
++++ b/tools/perf/util/bpf-trace-summary.c
+@@ -139,9 +139,9 @@ static int print_common_stats(struct syscall_data *data, FILE *fp)
+ 		/* TODO: support other ABIs */
+ 		name = syscalltbl__name(EM_HOST, node->syscall_nr);
+ 		if (name)
+-			printed += fprintf(fp, "   %-15s", name);
++			printed += fprintf(fp, "   %-17s", name);
+ 		else
+-			printed += fprintf(fp, "   syscall:%-7d", node->syscall_nr);
++			printed += fprintf(fp, "   syscall:%-9d", node->syscall_nr);
  
--#ifdef CONFIG_PM_SLEEP
- static int dwc3_qcom_pm_suspend(struct device *dev)
- {
- 	struct dwc3 *dwc = dev_get_drvdata(dev);
-@@ -886,12 +885,7 @@ static int dwc3_qcom_prepare(struct device *dev)
- 
- 	return dwc3_pm_prepare(dwc);
- }
--#else
--#define dwc3_qcom_complete NULL
--#define dwc3_qcom_prepare NULL
--#endif /* CONFIG_PM_SLEEP */
- 
--#ifdef CONFIG_PM
- static int dwc3_qcom_runtime_suspend(struct device *dev)
- {
- 	struct dwc3 *dwc = dev_get_drvdata(dev);
-@@ -922,14 +916,13 @@ static int dwc3_qcom_runtime_idle(struct device *dev)
- {
- 	return dwc3_runtime_idle(dev_get_drvdata(dev));
- }
--#endif /* CONFIG_PM */
- 
- static const struct dev_pm_ops dwc3_qcom_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(dwc3_qcom_pm_suspend, dwc3_qcom_pm_resume)
--	SET_RUNTIME_PM_OPS(dwc3_qcom_runtime_suspend, dwc3_qcom_runtime_resume,
-+	SYSTEM_SLEEP_PM_OPS(dwc3_qcom_pm_suspend, dwc3_qcom_pm_resume)
-+	RUNTIME_PM_OPS(dwc3_qcom_runtime_suspend, dwc3_qcom_runtime_resume,
- 			   dwc3_qcom_runtime_idle)
--	.complete = dwc3_qcom_complete,
--	.prepare = dwc3_qcom_prepare,
-+	.complete = pm_sleep_ptr(dwc3_qcom_complete),
-+	.prepare = pm_sleep_ptr(dwc3_qcom_prepare),
- };
- 
- static const struct of_device_id dwc3_qcom_of_match[] = {
-@@ -943,7 +936,7 @@ static struct platform_driver dwc3_qcom_driver = {
- 	.remove		= dwc3_qcom_remove,
- 	.driver		= {
- 		.name	= "dwc3-qcom",
--		.pm	= &dwc3_qcom_dev_pm_ops,
-+		.pm	= pm_ptr(&dwc3_qcom_dev_pm_ops),
- 		.of_match_table	= dwc3_qcom_of_match,
- 	},
- };
--- 
-2.39.5
-
+ 		printed += fprintf(fp, " %8u %6u %9.3f %9.3f %9.3f %9.3f %9.2f%%\n",
+ 				   stat->count, stat->error, total, min, avg, max,
 
