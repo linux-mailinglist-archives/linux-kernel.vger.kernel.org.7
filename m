@@ -1,59 +1,66 @@
-Return-Path: <linux-kernel+bounces-616570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F0CA9915A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:30:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FCBA99153
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3840C1B81A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5193F1BA165C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E62E280CEA;
-	Wed, 23 Apr 2025 15:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934032980CC;
+	Wed, 23 Apr 2025 15:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R34x74x8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3v3rKRv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED51D280A2C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA72820C2;
+	Wed, 23 Apr 2025 15:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421128; cv=none; b=FeAvb5kCptT9wtmDzvB/tEhekxYxAYxjOGqRQ+SWoocMWmue+2gAfczzO+cd2wfSOU0EsoSbG8nHQ9RX47/BnCTrKWfR3p4wSZFKHeinb2S1O81Mu2ef++ys+ydLrXl0sN2LFQNMrW8SLOeIPtex476/TsWhe7RFgpI1MxfHzvQ=
+	t=1745421144; cv=none; b=vEomUWouwVIk/3MdalCW2Wh+9E3IdeHuOsy62pNpfljyPjzk62EqblelzrqeDJQWYS0+Bb2RW73PHoywzals0Qt4h4dmOGroaQW/IBdCX7KwLmEymEvrZzAXjR+E9ylgdUfuvn8ubHU0s40wYl1d0TrEW2ZC1m3z4rbv2Z9Z0EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421128; c=relaxed/simple;
-	bh=Q61qQez5UnHF9zfHJ4kGv5x076vnjHwkr5s2qepPiAc=;
+	s=arc-20240116; t=1745421144; c=relaxed/simple;
+	bh=zx/Oy6A5lqsXTBmfLcAGRgtyQAq3DSyvj2acgQbiHZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQGkk/m2JUot7aVuv+fNz2RjSMSlaAi01692C7RtPBPnpU2bbNv2okFlurtlMpmlLUJ83ru7SC+1koLDU9rg0UA/XgbHaXCDBr6RrVGIIweezUmqZQFOniUg5VZ3hztLNiLIMR/W1ZfdiLR/X8pxl5lrk1VctFyFDv2A/Foya7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R34x74x8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F8CC4CEE2;
-	Wed, 23 Apr 2025 15:12:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oi9KfaOGP179tWMfo++NdENPtR8S8wcH3tLPFpVP5EfjwhTnQXJBIT2ysa9IFqQLpSdgAV9s0Tfl7bRC1+Iqj+yBJ9iL7rWM4KnQMzRvDJHbkvgt4WyW5xtKPkZShxI70tGhtT3MHJw/Wc6XHcejzChGzdSwHSrye7A53xcvdbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3v3rKRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D01C4CEE3;
+	Wed, 23 Apr 2025 15:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421127;
-	bh=Q61qQez5UnHF9zfHJ4kGv5x076vnjHwkr5s2qepPiAc=;
+	s=k20201202; t=1745421144;
+	bh=zx/Oy6A5lqsXTBmfLcAGRgtyQAq3DSyvj2acgQbiHZo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R34x74x8E/GSFGWZ5m+9EbzgrAfdYbTSE5a1mEAPpvDlHh7KA0cPK10twzml4AXox
-	 7CccmKY7KDDDm5SsgGpq7kW6Ubn2FQZO7xzsdqFJjxIcJnJ2UU04CNef7Wbp8bfbk8
-	 TBB3AmDS0WgAopfq7uXn+Ln7NvzDtLvn7qeU7HeykjX5kahaDHvkeEF1jGTDBR6bRO
-	 rhu4Do/epOw+gBOnFza6HEuiUDEQtFX9NB976SI/ZMy+SJSYiNYIFwDW/9QiyYVCIU
-	 hykLIbl33cSoZut46KWf209FF+RhYPKnhwZeEc24xCft+6DTLvcyN5yBI00ASMxOwF
-	 M3d++d7AV3B/g==
-Date: Wed, 23 Apr 2025 05:12:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, gaoxu <gaoxu2@honor.com>,
-	Dennis Zhou <dennis@kernel.org>, Christoph Lameter <cl@linux.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	yipengxiang <yipengxiang@honor.com>
-Subject: Re: mm: percpu: increase PERCPU_MODULE_RESERVE to avoid allocation
- failure
-Message-ID: <aAkDRg0Ajl3ByXMq@slm.duckdns.org>
-References: <bcfb90b2cecf43d7a0760ebaddde10d8@honor.com>
- <20250422170209.a8beaa8a3610d2e92421476f@linux-foundation.org>
- <CAJuCfpF4SbPWMgECD89e=QDcrCTNqnchYZ=dpod-cdRxfsCtjA@mail.gmail.com>
+	b=Q3v3rKRvbDCRGJfaIyHi/pkzwLyfKW/Q5OmN7Tp2CSSl1mLmtDyMsoZnGKDaSw3Hr
+	 c1VyMsbQmPXCpl7HMrKUTzloMBAUTV2L2Okf7JGSQEtXGLRJxjb3e3QiV8N5l7KLx4
+	 SgRA3OB2TohvCyZipNabA1AZ78fwyeAgYuSdHEHrfYs/zQmLs5vPwG9U/l4Xh6o5ch
+	 awi4NHeUstrRkanpy+V6T93PuMi4D+Kkp1oIDWruIo+eVuM1npdUySmBy7HlbezUuA
+	 +LgNDaZbXRJY4JSJMIzkBnxPaNzIm2ZWZeCJBWrUgB5eAADoaQaAU8aAzEQncxtUI3
+	 WQ5Z82Av1ehtQ==
+Date: Wed, 23 Apr 2025 08:12:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 05/15] xfs: ignore HW which cannot atomic write a
+ single block
+Message-ID: <20250423151224.GC25675@frogsfrogsfrogs>
+References: <20250422122739.2230121-1-john.g.garry@oracle.com>
+ <20250422122739.2230121-6-john.g.garry@oracle.com>
+ <20250423003823.GW25675@frogsfrogsfrogs>
+ <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com>
+ <20250423081055.GA28307@lst.de>
+ <f27ea8f7-700a-4fb1-b9cd-a0cba04c9e47@oracle.com>
+ <20250423083317.GB30432@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +69,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpF4SbPWMgECD89e=QDcrCTNqnchYZ=dpod-cdRxfsCtjA@mail.gmail.com>
+In-Reply-To: <20250423083317.GB30432@lst.de>
 
-On Tue, Apr 22, 2025 at 05:19:31PM -0700, Suren Baghdasaryan wrote:
-...
-> Allocating this reserved area dynamically would be ideal. OTOH this
-> change increases the area size from 64kb to 128kb. Don't know how much
-> effort we should put into it.
+On Wed, Apr 23, 2025 at 10:33:17AM +0200, Christoph Hellwig wrote:
+> On Wed, Apr 23, 2025 at 09:28:14AM +0100, John Garry wrote:
+> >> But maybe we should just delay setting the atomic values until later so
+> >> that it can be done in a single pass?  E.g. into xfs_setsize_buftarg
+> >> which then should probably be rename to something like
+> >> xfs_buftarg_setup.
+> >>
+> >
+> > How about just do away with btp->bt_bdev_awu_{min, max} struct members, and 
+> > call bdev_atomic_write_unit_max(mp->m_ddev_targp->bt_bdev) [and same for 
+> > RT] to later to set the mp awu max values at mountfs time? I think that 
+> > would work..
+> 
+> Sounds reasonable.
 
-The easiest solution would be switching the modules to use alloc_percpu()
-instead of declaring per-cpu variables statically. I couldn't think of a
-better way to support static percpu variables in modules and still can't,
-but there aren't noticeable downsides to using dynamically allocated percpu
-variables, so if you have several bytes here and there, sure, declare them
-statically, but for anything chunky, please use dynamic allocations.
+I disagree, leaving the hardware awu_min/max in the buftarg makes more
+sense to me because the buftarg is our abstraction for a block device,
+and these fields describe the atomic write units that we can use with
+that block device.
 
-Thanks.
+IOWs, I don't like dumping even more into struct xfs_mount.  xfs_group
+has an awu_max for the software fallback, xfs_buftarg has an awu_min/max
+for hardware, and even this V8 has yet a third pair of awu_min/max in
+xfs_mount which I think is just the buftarg version but possibly
+truncated.  I find those last two pairs confusing.
 
--- 
-tejun
+--D
 
