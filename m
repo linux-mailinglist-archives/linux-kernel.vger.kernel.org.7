@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-615825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321F0A982D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56697A98324
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640387ADC21
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D971B64631
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB48427FD71;
-	Wed, 23 Apr 2025 08:14:41 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CD427C864;
-	Wed, 23 Apr 2025 08:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71028E5FD;
+	Wed, 23 Apr 2025 08:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dGfYKXuG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D9F28DF1C;
+	Wed, 23 Apr 2025 08:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396081; cv=none; b=QfLi76bQPUZ3LVdh5FzqLAlca9Ek065tUiVcSYpVZFbnsrpNqSs6Lz9jYDz03E06NtBuZSflbsrWEMirDdbcuKkq1ISZqZ/apnB3wcllOErK9J2yUg+QK9ABuybmEI9ChyGn/H7JMtvKRHQ/XMqx7jWA0b8XASLpbDjC/7pbKC8=
+	t=1745396126; cv=none; b=Ax2zZECXMfbEyacPeKQAl2nRNTWQcJRNRO6Z0C8g/KLHrt5Jqy1e+2m73EZVs/VjR+F2OdfKAeFpBkV9TEdfzJ3G2/ETn/i9dJGTLW0AT294Ns7jivn57YEtKOlxQus91jdKhniB74F9WPkZjcj11x/SWYXe10v7SrUiJ8FVKGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396081; c=relaxed/simple;
-	bh=Mpivr1RWx8BaFRRvDOGgtkp3WTYmZ8tEWCgYFTkGq/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7Shz1+bh3TCvlMj1Ve683fkuMwksYTlBQm9RTZxJ/Jt2j8CGo7oZmAF+cHdlm1byBoAj9pnZeEe3kuUEloK0SnkqhS0uXocZRE1Bd6RYCnuLVek+Y3ikwrJSwYSwNT+Nm5o6GCOm4EhCZP2Ll4MdBPIR0zOapYE5eR9HHkaS+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.207.111.194])
-	by gateway (Coremail) with SMTP id _____8BxnmtkoQho4YbEAA--.63256S3;
-	Wed, 23 Apr 2025 16:14:28 +0800 (CST)
-Received: from [10.180.13.127] (unknown [111.207.111.194])
-	by front1 (Coremail) with SMTP id qMiowMAxHsddoQhoGmuRAA--.41144S2;
-	Wed, 23 Apr 2025 16:14:21 +0800 (CST)
-Message-ID: <14bc5d9c-7311-46ae-b46f-314a7ca649d5@loongson.cn>
-Date: Wed, 23 Apr 2025 16:14:21 +0800
+	s=arc-20240116; t=1745396126; c=relaxed/simple;
+	bh=JREAk/5888oU3fX4u/afdl96Aiwf0b+fAZlav0DmLbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dkPm1Ow2t8j4ywRTi8kbyH3H6KdP198uYB0NXcKhdj4rKxYpBsoDwpx8f/LroNp2FiKHMxt1qaXPefsh1O3VVewUKrgrSQsh4Gf08ci9b2csyAnS+EwY4B8HMmg8L5weyov0+AQVdKJsN9LwS3O2XSNMKaCP+zuEqWK0xMvSE3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dGfYKXuG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N0i8p4011273;
+	Wed, 23 Apr 2025 08:15:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qZ4dAc3zEs2+CWBeqQ9MAC8977LAguWV8px1Fpbg/Q0=; b=dGfYKXuGiw0LeGG8
+	+BInR+ecNMN0xDN8Ak7nUrTLlvUYtEeWFFgmGnsHmMpNBM+EBIaN1MIpVON5cOme
+	pjnSwY6WvGwyQFXwOR2rWYy9OMXyOZJrxZkKSu2qhBgZ6Pkc7TIH7GUYaz0oXXhB
+	YT2eV0REtGAI+sBVTTNw7zj8HzQJfN7jLyH/tVvlPBktfDIm5CvLzd3Y/v9GqzHf
+	2q+ZPT0EwByjYED4BADB9D9QuD+e7lDN8Wo0DtPuAPRly+buoHtM8leFHHgCT9+h
+	K8U2uT1QUEbrLtC9+gT8a4p9U9U/HIxCtjZ5uvtNwKlC2kyscE5JOntQ1wgnA69O
+	Q5mD6Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh1hd3t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 08:15:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53N8FFtA006573
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 08:15:15 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Apr
+ 2025 01:15:12 -0700
+Message-ID: <f98ed1af-e190-404f-a2d2-aa64a712e7c2@quicinc.com>
+Date: Wed, 23 Apr 2025 16:15:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,138 +64,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: Fix crash in smaps_hugetlb_range for non-present
- hugetlb entries
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>, Michal Hocko <mhocko@suse.cz>,
- David Rientjes <rientjes@google.com>, Joern Engel <joern@logfs.org>,
- Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Cc: Huacai Chen <chenhuacai@kernel.org>, lixuefeng@loongson.cn,
- Hongchen Zhang <zhanghongchen@loongson.cn>
-References: <20250423010359.2030576-1-wangming01@loongson.cn>
- <b64aea02-cc44-433a-8214-854feda2c06d@redhat.com>
+Subject: Re: [PATCH v2] wifi: ath11k: Fix memory reuse logic
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Jeff Johnson
+	<jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Anilkumar Kolli
+	<quic_akolli@quicinc.com>
+CC: <kernel@collabora.com>, <linux-wireless@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250423065931.4017574-1-usama.anjum@collabora.com>
 Content-Language: en-US
-From: Ming Wang <wangming01@loongson.cn>
-In-Reply-To: <b64aea02-cc44-433a-8214-854feda2c06d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxHsddoQhoGmuRAA--.41144S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAQEBEmgIG+UJiwAAsP
-X-Coremail-Antispam: 1Uk129KBj93XoWxZw1rZr1Uur15Kw4UKrWDZFc_yoWrCF1DpF
-	9Yg398WFZ5GrykXws7Gw4qqrW5Zr4fW3WUGFn8Gr1Yk3sxJryq9FWFgrWagFyrArZ5Gw42
-	9FW2q3srZ3Z8t3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUP529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUtVW8ZwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082
-	IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC2
-	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
-	WxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
-	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0GLvtUUUUU==
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250423065931.4017574-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0rT3HxEE1QY2ANCXM7tXp71xeZqJvl4D
+X-Proofpoint-ORIG-GUID: 0rT3HxEE1QY2ANCXM7tXp71xeZqJvl4D
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA1NCBTYWx0ZWRfXzbTBBl7K5xjw LdVxx8ZDjUqMuKiq5Q+JPJYBn7YHJcjzZeW97QvJVde994MA6RIlqABITgdyO/1G6WxU0RVPE+F clXy05Wv7ycKz3P3UUrTIKC6s1QiL5GNIAojYfLngoueQUDw5E9ymOLgz2zpI+BxO5sYJdqmhVP
+ G1dl5D4+5UHlGVzd8bHHceLNYp05uQNOMAAeniQP/gv5XyfWXPhpVojGE4JXXOaxsTMr/ScUtsL SOBf3rDJL29YqNT4fLQXtgOeNeGd0JrQUmguvpONs9JdDYYLSvwzdZ/PAJKxxCk84YZDKVu//kr NyRKhBkNm30fpbV7FbAETyElf3u3PRBLFpQSjN1j0hAn4yutzZeQL5c0P+KuXBMm3QCMdK1f2Sj
+ cMXegOeb56iBEAHEztvyBvUB2i7YQwL6VeJiYFKQ4JcCJnnyhYtKnlfOUIJg3yBotNRdJeQy
+X-Authority-Analysis: v=2.4 cv=ZpjtK87G c=1 sm=1 tr=0 ts=6808a193 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=QX4gbG5DAAAA:8 a=jXdBDdtSTMXgVRb5xNEA:9
+ a=QEXdDO2ut3YA:10 a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-23_06,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230054
 
 
 
-On 4/23/25 15:07, David Hildenbrand wrote:
-> On 23.04.25 03:03, Ming Wang wrote:
->> When reading /proc/pid/smaps for a process that has mapped a hugetlbfs
->> file with MAP_PRIVATE, the kernel might crash inside 
->> pfn_swap_entry_to_page.
->> This occurs on LoongArch under specific conditions.
->>
->> The root cause involves several steps:
->> 1. When the hugetlbfs file is mapped (MAP_PRIVATE), the initial PMD
->>     (or relevant level) entry is often populated by the kernel during 
->> mmap()
->>     with a non-present entry pointing to the architecture's 
->> invalid_pte_table
->>     On the affected LoongArch system, this address was observed to
->>     be 0x90000000031e4000.
->> 2. The smaps walker (walk_hugetlb_range -> smaps_hugetlb_range) reads
->>     this entry.
->> 3. The generic is_swap_pte() macro checks `!pte_present() && ! 
->> pte_none()`.
->>     The entry (invalid_pte_table address) is not present. Crucially,
->>     the generic pte_none() check (`!(pte_val(pte) & ~_PAGE_GLOBAL)`)
->>     returns false because the invalid_pte_table address is non-zero.
->>     Therefore, is_swap_pte() incorrectly returns true.
->> 4. The code enters the `else if (is_swap_pte(...))` block.
->> 5. Inside this block, it checks `is_pfn_swap_entry()`. Due to a bit
->>     pattern coincidence in the invalid_pte_table address on LoongArch,
->>     the embedded generic `is_migration_entry()` check happens to return
->>     true (misinterpreting parts of the address as a migration type).
->> 6. This leads to a call to pfn_swap_entry_to_page() with the bogus
->>     swap entry derived from the invalid table address.
->> 7. pfn_swap_entry_to_page() extracts a meaningless PFN, finds an
->>     unrelated struct page, checks its lock status (unlocked), and hits
->>     the `BUG_ON(is_migration_entry(entry) && !PageLocked(p))` assertion.
->>
->> The original code's intent in the `else if` block seems aimed at handling
->> potential migration entries, as indicated by the inner 
->> `is_pfn_swap_entry()`
->> check. The issue arises because the outer `is_swap_pte()` check 
->> incorrectly
->> includes the invalid table pointer case on LoongArch.
+On 4/23/2025 2:59 PM, Muhammad Usama Anjum wrote:
+> Firmware requests 2 segments at first. The first segment is of 6799360
+> whose allocation fails due to dma remapping not available. The success
+> is returned to firmware. Then firmware asks for 22 smaller segments
+> instead of 2 big ones. Those get allocated successfully. At suspend/
+> hibernation time, these segments aren't freed as they will be reused
+> by firmware after resuming.
 > 
-> This has a big loongarch smell to it.
+> After resume the firmware asks for 2 segments again with first segment
+> of 6799360 and vaddr is not NULL. We compare the type and size with
+
+suggest to rephrase as:
+
+After resume the firmware asks for 2 segments again with first segment
+of 6799360. Since chunk->vaddr is not NULL, we compare the type and size with
+
+> previous type and size to know if it can be reused or not.
+> Unfortunately, we detect that it cannot be reuses and this first smaller
+
+s/reuses/reused/
+
+> segment is freed. Then we continue to allocate 6799360 size memory from
+> dma which fails and we call ath11k_qmi_free_target_mem_chunk() which
+
+it is odd with 'from dma' ...
+
+I think just say 'allocate 6799360 size memory' is good enough.
+
+> frees the second smaller segment as well. Later success is returned to
+> firmware which asks for 22 smaller segments again. But as we had freed 2
+> segments already, we'll allocate the first 2 new smaller segments again
+> and reuse the remaining 20. Hence we aren't reusing the all 22 small
+> segments, but only 20.
 > 
-> If we end up passing !pte_present() && !pte_none(), then loongarch must 
-> be fixed to filter out these weird non-present entries.
+> This patch is correcting the skip logic when vaddr is set, but size/type
+> don't match. In this case, we should use the same skip and success logic
+> as used when dma_alloc_coherent fails without freeing the memory area.
 > 
-> is_swap_pte() must not succeed on something that is not an actual swap pte.
+> We had got reports that memory allocation in this function failed at
+> resume [1] which made us debug why the reuse logic is wrong. Those
+
+The link is just v1 of this patch, it is not the report. If there is no public report,
+just don't mention it.
+
+> failures weren't because of the bigger chunk allocation failure as they
+> are skipped. Rather these failures were because of smaller chunk
+> allocation failures. This issue is in the kernel side as because of
+> memory pressure or fragmentation, the dma memory allocation fails. This
+> patch fixes freeing and allocation of 2 smaller chunks.
+
+I know you are describing why you start to debug this issue. But I don't think it is
+needed in the commit message. No matter kernel allocation fails or succeeds, the issue is
+there, and the description above is sufficient to make the issue clear.
+
 > 
+> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
 
-Hi David,
+blank line needed.
 
-Thanks a lot for your feedback and insightful analysis!
+> [1] https://lore.kernel.org/all/b30bc7f6-845d-4f9d-967e-c04a2b5f13f5@collabora.com
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes since v1:
+> - Update description
+> 
+> Fixes: 5962f370ce41 ("ath11k: Reuse the available memory after firmware reload")
+> I think we should keep fixes tag as ^ claimed that its adding reuse
+> support. But it left a bug in reuse which we are fixing.
+> 
+> Feel free to add it or leave it as it is.
 
-You're absolutely right, the core issue here stems from how the generic 
-is_swap_pte() macro interacts with the specific value of 
-invalid_pte_table (or the equivalent invalid table entries for PMD) on 
-the LoongArch architecture. I agree that this has a strong LoongArch 
-characteristic.
+Jeff, what do you think?
 
-On the affected LoongArch system, the address used for invalid_pte_table 
-(observed as 0x90000000031e4000 in the vmcore) happens to satisfy both 
-!pte_present() and !pte_none() conditions. This is because:
-1. It lacks the _PAGE_PRESENT and _PAGE_PROTNONE bits (correct for an 
-invalid entry).
-2. The generic pte_none() check (`!(pte_val(pte) & ~_PAGE_GLOBAL)`) 
-returns false, as the address value itself is non-zero and doesn't match 
-the all-zero (except global bit) pattern.
-This causes is_swap_pte() to incorrectly return true for these 
-non-mapped, initial entries set up during mmap().
-
-The reason my proposed patch changes the condition in 
-smaps_hugetlb_range() from is_swap_pte(ptent) to 
-is_hugetlb_entry_migration(pte) is precisely to leverage an 
-**architecture-level filtering mechanism**, as you suggested LoongArch 
-should provide.
-
-This works because is_hugetlb_entry_migration() internally calls 
-`huge_pte_none()`. LoongArch **already provides** an 
-architecture-specific override for huge_pte_none() (via 
-`__HAVE_ARCH_HUGE_PTE_NONE`), which is defined as follows in 
-arch/loongarch/include/asm/pgtable.h:
-
-```
-static inline int huge_pte_none(pte_t pte)
-{
-     unsigned long val = pte_val(pte) & ~_PAGE_GLOBAL;
-     /* Check for all zeros (except global) OR if it points to 
-invalid_pte_table */
-     return !val || (val == (unsigned long)invalid_pte_table);
-}
-```
+> ---
+>  drivers/net/wireless/ath/ath11k/qmi.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+> index 47b9d4126d3a9..3c26f4dcf5d29 100644
+> --- a/drivers/net/wireless/ath/ath11k/qmi.c
+> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
+> @@ -1990,8 +1990,16 @@ static int ath11k_qmi_alloc_target_mem_chunk(struct ath11k_base *ab)
+>  		 */
+>  		if (chunk->vaddr) {
+>  			if (chunk->prev_type == chunk->type &&
+> -			    chunk->prev_size == chunk->size)
+> +			    chunk->prev_size == chunk->size) {
+>  				continue;
+> +			} else if (ab->qmi.mem_seg_count <= ATH11K_QMI_FW_MEM_REQ_SEGMENT_CNT) {
+> +				ath11k_dbg(ab, ATH11K_DBG_QMI,
+> +					   "size/type mismatch (current %d %u) (prev %d %u), try later with small size\n",
+> +					    chunk->size, chunk->type,
+> +					    chunk->prev_size, chunk->prev_type);
+> +				ab->qmi.target_mem_delayed = true;
+> +				return 0;
+> +			}
+>  
+>  			/* cannot reuse the existing chunk */
+>  			dma_free_coherent(ab->dev, chunk->prev_size,
 
 
