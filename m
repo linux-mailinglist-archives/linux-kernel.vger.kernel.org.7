@@ -1,106 +1,79 @@
-Return-Path: <linux-kernel+bounces-616421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88508A98C4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:05:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34ACEA98C3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CD657A6FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E32445C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA7727C16F;
-	Wed, 23 Apr 2025 14:04:18 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389D27933D;
+	Wed, 23 Apr 2025 14:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PT1NCN7H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA1E279792;
-	Wed, 23 Apr 2025 14:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92509460;
+	Wed, 23 Apr 2025 14:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745417058; cv=none; b=CeQfhpvams37cQ5Rpoye1rH/1i+IUKPnZUiMLX1x3GJSlVsIUHaOJIfDwWkcrDL2nN+Btk0nmiihSJwWZZgx+5liPNYajY0t/gnoXQODlNyDegPA0kMNuyaTo+JriZ06JbQeUUGcss5EsIFyAlRxghQW2nTZJ/8hgBDRZMgm7eg=
+	t=1745417018; cv=none; b=VoesJMs4iZjRSe+3GLf23t/eOfvN1JOls3akcEaHxKUxlloL9NHpY5YFT7KAaTs8lqyCkeN3QJYBl5gd83+feB/+AqvibpoVkf2rISSZALqjYqG1o/aAkaTD1PTp7Ie6PxfNKb3Ah9v08ifpWM8KY+hbcvejZUzY+w8NVBl21ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745417058; c=relaxed/simple;
-	bh=lKyymF7Hpjd26M8XcjHpoVGsP92kwq3xGudaxC8q40M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TGUZ9aQHONWv6yY2Gf40OQ/UnPd7SUM8lA58WyOB/NG3PVrcnO6r9njKa4mJLYQVRxZO9BGMuH1Rw+w/rbjjJm93sdTFZOwsDsUptXrQWET/XmXaUOCZNWIozaVcywp2XkhD3iATjCrS/1/+bnGklmXmqfnFlDegItjRFTGLr/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [116.232.18.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 4D5DC3430AC;
-	Wed, 23 Apr 2025 14:04:10 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 23 Apr 2025 22:03:23 +0800
-Subject: [PATCH 2/5] dt-bindings: arm: sunxi: Add A523 EMAC0 compatible
+	s=arc-20240116; t=1745417018; c=relaxed/simple;
+	bh=JMiBb+zS3fYzDT05tiFPjYsap9yUQQQP9Uzq9dFQ8Gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QN1JmD7EU/MxDA0EVfr/Bgr6qTgD5aVXnu1LRsfy+lGHSyUSGWW0NVJOr67UEMc14AbnNsxXz0PMhLgu4tTJKn2Nak32OyTuXfp7PguWX9qbv/8WXxtum1w//hNZFkYn/fxZlxU2vP+GAt/6usWjbsLctOkhOPI7BpovWv06038=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PT1NCN7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CECC4CEE2;
+	Wed, 23 Apr 2025 14:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745417018;
+	bh=JMiBb+zS3fYzDT05tiFPjYsap9yUQQQP9Uzq9dFQ8Gc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PT1NCN7HCs3p+RGalpS8t3HV0yZxPCHSXqCRJEI+mudKq6/ZARFdQvx1j7n+RU+8M
+	 5kAXvJiZ2+j/xS5Cy2rqgt2UvNEZJ+kcJFSEJorY8igFXxwaBJs5iwkcIO/WaObVMw
+	 N4XsZc53tPw4kZMPjBBSvwXS6fnP2oAUnGQG3ASWyFBjL4eoAJhw78nGQzPeOpP3eb
+	 gStiIxu80GNp6WjN4JwUzZgwJaIL1BAjUntWw+BgyYsPaw1iDWJg5hXE2YeuYelTX4
+	 GMqIjtU6CnuLjfmviBScBhCROsz32De46oOe8c3Cl7haJu+fOfPv9+180hm4UH3354
+	 7B1+EJcf7SOmw==
+Date: Wed, 23 Apr 2025 09:03:36 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Peter Korsgaard <peter@korsgaard.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,tmp102: document optional V+
+ supply property
+Message-ID: <174541701572.358405.2954689215131157058.robh@kernel.org>
+References: <20250417180426.3872314-1-peter@korsgaard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-01-sun55i-emac0-v1-2-46ee4c855e0a@gentoo.org>
-References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
-In-Reply-To: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=lKyymF7Hpjd26M8XcjHpoVGsP92kwq3xGudaxC8q40M=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoCPM/BF4N7i/TYB6b3RNTlrp4EIT9sg8KqYeMb
- gv6OH1IHvOJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaAjzP18UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277XUmEACZ800KPPzNvd5qzG
- dq77Xn4pkeobCVGqmHVzjTxaG8jl6AqbrT+hPCyYVIysejlUeys+viVgGx6RvEZaUJM2BdhsmoQ
- hQ4u7z2XMeqFaUntVWbRDUsQnZNCITcWMAm9BaG68IYCfRCKteFo6xJ2+VOymprkW4HvTDOKXnV
- wZcpRU1q3q8I/OtkgcIhbZLP9xbZA1drlyOJ+CLwQ/kjXJn6UZQhDzSx4I8d8iveb6/67WmCUlC
- g9lNCSDGfrDvs9lmW4yff8cFC0twTdBx2JyvJ61nu+fEwAUgrpc9y58QAPSZN6mglDsdye8E5wH
- diV08zakE9J/fL63Sq01dzetXf2EeAVj/5qvHCkMMriTKNAg2dyKRyfBHCLAoI/2Sszo+sFoR0I
- s70uY4X8Xw9w7jpQM6Z1EwZjni5NoUisdb6U1RW282qfvTnxbYmcKIAqns3paow0Qs1ZS11Qha0
- JgNR7VkgsH4DyxPRR0mO2/SjSfT69hLdqTjtBC5YyygX5TSU1s5zMc+zDVZdKakWInM7CCvqN+r
- Nbj/WmuG+cxzTJ9EZ3Y4qeomWqagv2v35dp6PsF2Qq1jaFMVjb2r03J9Xtg1s4OKN1d3KdBSdsC
- mceosQP+8eVz4Nd8jeSMC70lknR5kQUeVEq6udQ1dP0HeefUDlqxJhFa+2Pbt6fAEaQQ==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417180426.3872314-1-peter@korsgaard.com>
 
-Allwinner A523 SoC variant (A527/T527) contains an "EMAC0" Ethernet
-MAC compatible to the A64 version.
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 17 Apr 2025 20:04:25 +0200, Peter Korsgaard wrote:
+> TMP102 is powered by its V+ supply, document it. The property is called
+> "vcc-supply" since the plus sign (+) is not a valid property character.
+> 
+> Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-diff --git a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-index 7fe0352dff0f8d74a08f3f6aac5450ad685e6a08..7b6a2fde8175353621367c8d8f7a956e4aac7177 100644
---- a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-+++ b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-@@ -23,6 +23,7 @@ properties:
-               - allwinner,sun20i-d1-emac
-               - allwinner,sun50i-h6-emac
-               - allwinner,sun50i-h616-emac0
-+              - allwinner,sun55i-a523-emac0
-           - const: allwinner,sun50i-a64-emac
- 
-   reg:
-
--- 
-2.49.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
