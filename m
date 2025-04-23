@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-616525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA316A98F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:05:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C0BA98F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 17:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7F9462D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628BC1B80B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676672820D1;
-	Wed, 23 Apr 2025 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFDB2857DF;
+	Wed, 23 Apr 2025 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OecdS9Du"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pa4zyvLy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B9356qdh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A6280CE0;
-	Wed, 23 Apr 2025 15:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B028469E;
+	Wed, 23 Apr 2025 15:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420472; cv=none; b=jjOtHp0HDsx+Rt6fT1AyivsWOi56D84elNrcv3pvjcKYqRlrCKnJ3pMK+qp0d08wgP6ymXZr5piBsc6KcAIlqUiBdqOx2MmehLbuE1gfw/QOxlmTOYkh2YAGQkKdrtw3swGb9iKQZBCogrom9EV9QhKviW+Rm/mTxrYlpFsnOC4=
+	t=1745420503; cv=none; b=tIWke4z4m0EA+M/BE57GvNIbTAAAId2DaTCCp3r4NZ/4WdnAu1YwVF7FDI0m8Oz09m6Cf7OkLsgtM5w9Q1IZv0XsZHccphEDAbD4B/9OwQbNNjQAWgbiDqsPw1ZAC8wqVNlQVhrTR0qYysexpzAEqKGri6WKp7IbB8tVLG0rM7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420472; c=relaxed/simple;
-	bh=EejihSG4dhJo9Xlvr1jU9YQU1gFxoDhpb+JD6EWedwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPX9vxC3TFfHt4Z3T+qOt3G/1pZPN5Dy87rkcoAGsOMk0AxQ6Zm1QghqXLtsGqZDCAizWLnzSgjduxjcmntpDKx9n9fiyveCOFlDTZxtzzKX7/J4Y2Ds1Dxs0Y2TX86WFSHk1tREyOT93mA9Tq9WH1UwJitBGgkyz7kcsisc/WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OecdS9Du; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FF5C4CEE2;
-	Wed, 23 Apr 2025 15:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745420472;
-	bh=EejihSG4dhJo9Xlvr1jU9YQU1gFxoDhpb+JD6EWedwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OecdS9Du5yMgDqzO08LwDx/95Z5FyyQeV6qvL/kkV6wLUfAUebaWOjcGjxeG32a3W
-	 LJ4UznS7wIceKrF1H1VJMNm1KqqG3wPA5g7wh0jTVAHWkyTEMLQAq2DcSzpYBTOoZz
-	 GyRGiiJbwwgeon5fdP2SFuTQQFsD8POlDu9o86Bg3xagxNe8OiZu0WTywuPylKBqsF
-	 YbnZ/g7yVxoUn9dLwKd3AKRkxo5pxgsH7OXFzPMefD2/LLnUOFColh8p82FQnvBPGC
-	 AfAPpzsP1/MXDLd0WeFyPrkZGfVbQMUhr/CE80l3CvNtc/Xh86jWzn6p11ASbNzUF7
-	 Ne/Ynlr4L+1mg==
-Date: Wed, 23 Apr 2025 08:01:10 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 15/15] xfs: allow sysadmins to specify a maximum
- atomic write limit at mount time
-Message-ID: <20250423150110.GB25675@frogsfrogsfrogs>
-References: <20250422122739.2230121-1-john.g.garry@oracle.com>
- <20250422122739.2230121-16-john.g.garry@oracle.com>
- <20250423083209.GA30432@lst.de>
+	s=arc-20240116; t=1745420503; c=relaxed/simple;
+	bh=hQ2b6646ySA6SY1fU7pM29KKP/mxFAlDV118VMCkMhA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aES6RgTLIXHva9h5ZOhRhDzOH7y2EL9+MUNZl8P/cNIuK8PlMR1xzpilTvsdnxunOCFzFqEVKmijtOEQvNKLTM1sJuATXPNp0Ub6pBoPU7K9t06yHBZh9V6ax068iD3lBSGXvFKoG77lejc0OCTAAIgKtxJYYfLelXCqdZj1tzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pa4zyvLy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B9356qdh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745420498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EGW7n8vgR4SKmGcwLl0NN4irjHrS1VJiwV5JhVh9NKk=;
+	b=Pa4zyvLy8dZnZJQe1eQecvaELd1oc91s+Bw5MZssd68I3hi6/he3yXj+J0DxEGRghgi4wi
+	/oBxwJD6cG1gmxSy1MaBldvIgoLqvaJdtY33BOReQFf6JY8241YfXLUY45udrbfatUBjHy
+	gevl5QegoXEOrT7Gw8vKVPqsOifiq6Y8CPVWTakR6aqTl7+FbupQmGRgwslYiFLaCpHlbv
+	CNDLIAYq7ZnDRYl4F3pvyrRM+rHbywV/FC762tFBBx1AMAZEjlELK2M6d83H0515+CBZJ4
+	N9HyklFNkFztYE1ROhRSYHbQs3dcofbVjY21MYBqFkTRasy10KeohB3xL0GdfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745420498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EGW7n8vgR4SKmGcwLl0NN4irjHrS1VJiwV5JhVh9NKk=;
+	b=B9356qdhulGxIQbF3f079bX/1OfyH0qeCIbiB7Dv6j6A7ImsdPSBLLiSEGKmAJyXzb33Bx
+	9mDvPFmu1QID32DA==
+Subject: [PATCH 00/15] tools/nolibc: various new functions
+Date: Wed, 23 Apr 2025 17:01:30 +0200
+Message-Id: <20250423-nolibc-misc-v1-0-a925bf40297b@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423083209.GA30432@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMoACWgC/x3MQQqAIBBA0avErBNUHIiuEi1qGmugNBQiEO+et
+ HyL/wtkTsIZxq5A4keyxNBg+g7oWMLOSrZmsNqidgZViKespC7JpLxFNxAREhtoxZ3Yy/vfprn
+ WDyMFXqZdAAAA
+X-Change-ID: 20250415-nolibc-misc-f2548ccc5ce1
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745420497; l=2351;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=hQ2b6646ySA6SY1fU7pM29KKP/mxFAlDV118VMCkMhA=;
+ b=AIDaAGL2sE3IH5mVQ3d64VfjQfKXTYEi6vc9wnsGY+qWXqK6BwlnlIepSbCpL4zwK8tI3DVka
+ LZr07QW651LA0/NPmyaRou1CjMsnUYl9T6Dwo0frsD3frpcGSDKRAKd
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Wed, Apr 23, 2025 at 10:32:09AM +0200, Christoph Hellwig wrote:
-> On Tue, Apr 22, 2025 at 12:27:39PM +0000, John Garry wrote:
-> > From: "Darrick J. Wong" <djwong@kernel.org>
-> > 
-> > Introduce a mount option to allow sysadmins to specify the maximum size
-> > of an atomic write.  If the filesystem can work with the supplied value,
-> > that becomes the new guaranteed maximum.
-> > 
-> > The value mustn't be too big for the existing filesystem geometry (max
-> > write size, max AG/rtgroup size).  We dynamically recompute the
-> > tr_atomic_write transaction reservation based on the given block size,
-> > check that the current log size isn't less than the new minimum log size
-> > constraints, and set a new maximum.
-> > 
-> > The actual software atomic write max is still computed based off of
-> > tr_atomic_ioend the same way it has for the past few commits.
-> 
-> The cap is a good idea, but a mount option for something that has
-> strong effects for persistent application formats is a little suboptimal.
-> But adding a sb field and an incompat bit wouldn't be great either.
-> 
-> Maybe this another use case for a trusted xattr on the root inode like
-> the autofsck flag?
+A few functions used by different selftests.
+Adding them now avoids later conflicts between different selftest serieses.
 
-That would be even better, since you could set it at mkfs time and it
-would persist until the next xfs_property set call.
+Also add full support for nolibc-test.c on riscv32.
+All unsupported syscalls have been replaced.
 
---D
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (15):
+      tools/nolibc: add strstr()
+      tools/nolibc: add %m printf format
+      tools/nolibc: add more stat() variants
+      tools/nolibc: add mremap()
+      tools/nolibc: add getrandom()
+      tools/nolibc: add abs() and friends
+      tools/nolibc: add support for access() and faccessat()
+      tools/nolibc: add clock_getres(), clock_gettime() and clock_settime()
+      tools/nolibc: add timer functions
+      tools/nolibc: add timerfd functionality
+      tools/nolibc: add difftime()
+      tools/nolibc: add namespace functionality
+      tools/nolibc: add fopen()
+      tools/nolibc: implement fall back to sys_clock_gettime() in gettimeofday()
+      tools/nolibc: implement wait() in terms of waitpid()
+
+ tools/include/nolibc/Makefile                |   4 +
+ tools/include/nolibc/math.h                  |  31 ++++
+ tools/include/nolibc/nolibc.h                |   4 +
+ tools/include/nolibc/sched.h                 |  50 ++++++
+ tools/include/nolibc/stdio.h                 |  34 ++++
+ tools/include/nolibc/stdlib.h                |  18 ++
+ tools/include/nolibc/string.h                |  20 +++
+ tools/include/nolibc/sys/mman.h              |  19 ++
+ tools/include/nolibc/sys/random.h            |  32 ++++
+ tools/include/nolibc/sys/stat.h              |  25 ++-
+ tools/include/nolibc/sys/time.h              |  15 +-
+ tools/include/nolibc/sys/timerfd.h           |  87 +++++++++
+ tools/include/nolibc/sys/wait.h              |  12 +-
+ tools/include/nolibc/time.h                  | 185 +++++++++++++++++++
+ tools/include/nolibc/types.h                 |   3 +
+ tools/include/nolibc/unistd.h                |  28 +++
+ tools/testing/selftests/nolibc/Makefile      |   2 +
+ tools/testing/selftests/nolibc/nolibc-test.c | 254 ++++++++++++++++++++++++++-
+ 18 files changed, 811 insertions(+), 12 deletions(-)
+---
+base-commit: e90ce42e81381665dbcedc5fa12e74759ee89639
+change-id: 20250415-nolibc-misc-f2548ccc5ce1
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
