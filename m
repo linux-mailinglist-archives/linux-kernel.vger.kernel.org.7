@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-616992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25893A998F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:49:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A47A998F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462681B64D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD244A2F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 19:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD99A267AFA;
-	Wed, 23 Apr 2025 19:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAF62676CD;
+	Wed, 23 Apr 2025 19:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEZilbFr"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ywyS3iY9"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748322D4C0;
-	Wed, 23 Apr 2025 19:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0330325C82C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 19:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745437787; cv=none; b=CsMTnTyGELwpBnew2sPqz3OO2TdLzerPR9l2lOQuJZZV+/YDgna+VqmdxXtfC0IDXWJCXZspPndGHlfbX5qLJGuOL9GNRzVdR43uqTs2Cve/oQFOfOaEZXc9zKZHsQYqFcmrIJ2VjjukHz1D1xeaQjROPVMTs1LDHzqvZACrdnw=
+	t=1745437945; cv=none; b=nO+nygciZOTW/WPV++vrCRfNG1s1WBgHDEQhvmqZiNdaFR2XFuLcvXMuNRBx3Pr/PZSt60gHihYVD/U6TRGQ8/nomQ9YyQHYgZ/yhlQVJrlXaKen6hFE0RpAx4Rqjy6WNKQiAq+/SH42NID1PCkEmv7vmSxpHP7pzYbNqn2VkDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745437787; c=relaxed/simple;
-	bh=/gqHgIWvYDoh2ay4Dt66VfQN7r7ooPdcaJZKWyVPCKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sANUSswtoNY9ztOKpmBT0Pf0tNWh4chlUN8QZyLFDaZWofCTWA25X9tR2pICPJ48gu3J4ZMIyGp7P2iG/7cp8mROcgtCohjHbS05TAP+LSiDrfZkZiKwMQH3FsCMJGUbw/U0jbTh1S0csLIgMwQzz6P3a2c4SLnx6/b0nRd0bvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEZilbFr; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso150508b3a.2;
-        Wed, 23 Apr 2025 12:49:45 -0700 (PDT)
+	s=arc-20240116; t=1745437945; c=relaxed/simple;
+	bh=6CFbqi4rYx8ZGB/rgVhh/cJewRwwE8YJCMFAGQ8OFpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXppEwYcIxGrMvh8LVn7VfBB8i0VAZF0GtiDnvdtTkaXVv5GMXe+/AtH1ln9MffP3EB1mNyr9Iw/Mu2KPbuJ01Z07L0SYr/xseNGitP+bMC18QCtUwText//Jj4a8KsKl/2ycWwqrttq6n9whWV6/utPYJGNHGQ9lcWnMQ+6q7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ywyS3iY9; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6eeb7589db4so3663176d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 12:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745437785; x=1746042585; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IfqjFKQjrrhlniO3DJvD09VooUIqHiiSwxn0+0MLQUI=;
-        b=aEZilbFrnExwTaVaMsmMasFlDwmW6gif8rlOmDXo4agNZFuZF0E3D3Q5YiLKZOcTJA
-         QXtmzNin0h2AKgBtLCMmJJ2xHR7yhw+KEyrfgKAyQ7GEW4dGqVAwQIEewX3vAHYm272F
-         tASuumoZZ4TKz8xDn4V9/xpFefXLzQKYf3qY/OBw5fTkUtzvhDKo2r0MbDyqDKL14MOx
-         bgi9TWpTggugFnCeqKOLNnsxp7pYsV/a19SJFZ7KXak71GL65kd0eVPqyn9eTu5MdIM9
-         GHEhs9VuMEZ9Efc2PfZW4MFWnWLT3F5AAqBAHQIVZUKrpTAXymMq2oWU7Ic8UcW0D1FT
-         HXtw==
+        d=google.com; s=20230601; t=1745437943; x=1746042743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0xVavQGeHiKp7rEiymJ5kdyLh0t3H4T8Z/fRsD3R+Vc=;
+        b=ywyS3iY9aaQBGYSlCyP3Nhl7+XtapcTMxc3Znr0nYP7b6i5DpcX448vNu0zz9JjYX8
+         IFaDwg5mTLIYD4UpslcMOVADTaTn4c/CU//HvniXx/GTo2hYGgKx4aAiV84H3kL/aNfg
+         O0ji3AX8JiRSjdcTBsuETrG2FbOiBnvvUSWuCBTpaz7X3iHq70+UIZNb9yPSEdoJmq+f
+         Z62cwgcYqyBDk7/+I4Jv6NjW2vbUDn42HrJbo8TrQFk9CcrPIpIPqTTUYa8EymI7PkCR
+         GIqful2iWfVaoyZekvmu86lsWblzio5Vy46JIUIQ1LGPURomgY58YvVwU7E3r3G9JPJ4
+         sjLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745437785; x=1746042585;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IfqjFKQjrrhlniO3DJvD09VooUIqHiiSwxn0+0MLQUI=;
-        b=IpR0YCx5zWK+YrAeYfwE3mAfEh8M6jRhIJRNvy+ZMz+kGoaCkf3Vxdxu5Ciew/vJkz
-         7yPy2sDyyqcGXM1dzN44PCYfMy2AMbPyzp4iUnUNcjh4PYiQBoKawHooOF0llGD34wsH
-         dyVOHU2DiKPBCjO3EoZDJmw0P9+mynyjZn1tz59xEj8R8BRb/unVC05hjSj98RwBkqE4
-         gCfp3YeC58hT8QTLUWbwj0kALJGvL2V3Z4x/SIBQsiYWUJUbvHs6ma/y+s+Yn8RVndx9
-         EtMq7miI13tCX+ql+HP8sb6UcFr83X1CJmhty3ocwhejqYzgEKNxmumFY1b2PfDTXMTt
-         GHTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFrcUN6I6kqOBres9DfsF0rv05Nypt/GyaeJ1TXEyoSNpD2kqn3Y2yWm5aaq5IFgNn5YakkDeB7PmB@vger.kernel.org, AJvYcCWlJOm1bZihCroFSzAL6m6tReDH+bz9y8ARSfQCIFVqHc96pWkgyOeFC260SHf73OEvxckW6JADCvnw2yNc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjaleA4nGrrSrdXv3GY06NAqV8BFmtEPgIvQ314NHbTZPKi4EI
-	VazY1XJOzETM+WWKTFqPlLX8nhD1L2EGHpgsG/ZghsEauA344rBf
-X-Gm-Gg: ASbGncsu1l20EGk9f86EMyJlPIGy2uZHdFwjDjZKON1L7O4BLCMJs3pJRDZ+GhTTPVW
-	xEPm+1qlU29lGV+hv+461drJnQZ/BghjFFliUsA4lQP8NhaGyzorb9Q3Yj/ZoCw1Y2KV0NMlY67
-	BApSrmjY1WtZc+joaIABwHuk5r3cBpEDBOGFigbEIHJzJP3E2gABxcr/4aj7tOst3wtQ46mRyp7
-	HrFjQsCRLB+L9q7hhH7VjJpTzvLHFgVM8zKhFy+jy02hGoCZ6Wtec0P7eOOoTVSVirZIjDqSXFl
-	hi2OPh7r0abfJPGyxOCwU4M+49/dAp7zt1zcmHYR6ordVJhuMuRaZ8Tkt2ltqVg=
-X-Google-Smtp-Source: AGHT+IERPQh4Y7V/l8lpr/XRnfwQmrzpEaU9fiS3c+vk4gGTjri+1BnCKpknXP9KXB9GLNf1W7dR0A==
-X-Received: by 2002:a05:6a00:4642:b0:736:ab1d:83c4 with SMTP id d2e1a72fcca58-73e23ca12aamr97912b3a.0.1745437784854;
-        Wed, 23 Apr 2025 12:49:44 -0700 (PDT)
-Received: from NB-GIGA003.letovo.school ([5.194.95.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfaeb525sm11406279b3a.173.2025.04.23.12.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 12:49:44 -0700 (PDT)
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 23 Apr 2025 23:49:45 +0400
-Subject: [PATCH] dt-bindings: usb: generic-ehci: Add VIA/WonderMedia
- compatible
+        d=1e100.net; s=20230601; t=1745437943; x=1746042743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0xVavQGeHiKp7rEiymJ5kdyLh0t3H4T8Z/fRsD3R+Vc=;
+        b=J+xrjza+Iw55IcPsnpg1eLB+SND1VqJSIlVc5yNob9b8C7ff6xz4SR+690Wea7v689
+         9GWJMW5HzfpeflQ20FY5z8BbWDbmBgrKnak6RulqDMWxLW2raQhKBP/df6eipjayfF+V
+         IFzJdQfneSIySWGEStirR7e3GROt7RHH8pzfUJRsk3h9LblzqgndPusFKjV/NB4xNK7t
+         xqJttVi4VdfRbheFHEWDWFO2mBi9DnrNu4Xr6C+fgcOPcptojhpbkbiQeEY5Q/fQ2x2g
+         GE32pmy29e3v1aWrUGWQ/6wrue/dh9ys9NYJi/mqpHjZTfZXwCS0CA+SL4om9ewX5zVo
+         ykmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/HbLj8DWWSBjnsOszulBlZj7Bweo/LFu3F+M5+fZP3+ecn6R6eQUsKjsV5WbKUowZXVUDnlblUO4cIb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf9Laa5JDer1qtWxN9dcNiD1YjGG7AkwoOuHNm+3PhPqnAkzqr
+	td4ELo+5/8AjGw5oE3KLJFxcyBnas+wUJ0vju+VigXf1Mb96mn7U+QOavI0TcCEcPKqh1SVHDVi
+	2gmrTp20qNkAmjVmlZNS5+N907K7jaR+dZGQ=
+X-Gm-Gg: ASbGncsAI+lIFMmMVXneFthbsBZyGIG2elK3+NHUWVzCQRmedqU836CF/F4MVto2nMv
+	Dx0ipQJZlCgXnsArSDG9A/r1v1Ub0V1mF4Wx2YZ7OjswREm7aNVmcqDodIfN2bl26PRhc1Fy9lf
+	IlE3JLIIcI9kMcA08viGEx98RwToweLJTShHqtKh0yB0CXnOK5zJ0=
+X-Google-Smtp-Source: AGHT+IGvkeMBlU3PpGjnWugnhbT53UHQ7DwITUrvLyvzt1HBLSHaQaZ8fpdIp3kWeT20F4N4HGIU5JKsHeWBdDZUuKM=
+X-Received: by 2002:a05:6214:27ce:b0:6cb:ee08:c1e8 with SMTP id
+ 6a1803df08f44-6f4bfc1a1f9mr498676d6.23.1745437942447; Wed, 23 Apr 2025
+ 12:52:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-vt8500-ehci-binding-v1-1-1edcb0d330c2@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFhECWgC/x3MTQqAIBBA4avErBuY7JeuEi1SR52NhUYE0d2Tl
- t/ivQcyJ+EMc/VA4kuy7LGgqSswYYueUWwxKFI9darF65x6IuRgBLVEK9EjDzRqtzlrtINSHom
- d3P91Wd/3A17/u5hlAAAA
-X-Change-ID: 20250423-vt8500-ehci-binding-e607bfafdcbf
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745437797; l=984;
- i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
- bh=/gqHgIWvYDoh2ay4Dt66VfQN7r7ooPdcaJZKWyVPCKs=;
- b=Uxzl8ig5PbeEHBkzgXe9Pk6zvaBfDgPpzs3GgsQwzbwNlruzYZq1HwUzXyuWm4M2cmk//lxLU
- rY3BPSXCVidDqxFW19O+M+kIEb7K/XXKhiS/2m7MIFQXIZUhXSb7JlP
-X-Developer-Key: i=alchark@gmail.com; a=ed25519;
- pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
+References: <20250421215818.3800081-1-yabinc@google.com> <20250421215818.3800081-2-yabinc@google.com>
+ <48640298-effa-42d4-9137-a18a51637f03@linaro.org> <aAeQcgmL-iqGbG_g@gmail.com>
+ <20250422141026.GH28953@e132581.arm.com>
+In-Reply-To: <20250422141026.GH28953@e132581.arm.com>
+From: Yabin Cui <yabinc@google.com>
+Date: Wed, 23 Apr 2025 12:52:11 -0700
+X-Gm-Features: ATxdqUF-LMwUWmW3taSe4IV8gwEgoHiIaDfjDbYRrV--toG-Jr8hdz8bhgWNT-Q
+Message-ID: <CALJ9ZPNLgEBxOmDim-vztUknEETwdL-Z2gJ8K9s44TiPgKZgHg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Allow non-contiguous AUX buffer pages via PMU capability
+To: Leo Yan <leo.yan@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, James Clark <james.clark@linaro.org>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Mike Leach <mike.leach@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VIA/WonderMedia SoCs use a plain vanilla EHCI controller with a
-compatible string "via,vt8500-ehci". Add it to the binding.
+On Tue, Apr 22, 2025 at 7:10=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Tue, Apr 22, 2025 at 02:49:54PM +0200, Ingo Molnar wrote:
+>
+> [...]
+>
+> > > Hi Yabin,
+> > >
+> > > I was wondering if this is just the opposite of
+> > > PERF_PMU_CAP_AUX_NO_SG, and that order 0 should be used by default
+> > > for all devices to solve the issue you describe. Because we already
+> > > have PERF_PMU_CAP_AUX_NO_SG for devices that need contiguous pages.
+> > > Then I found commit 5768402fd9c6 ("perf/ring_buffer: Use high order
+> > > allocations for AUX buffers optimistically") that explains that the
+> > > current allocation strategy is an optimization.
+> > >
+> > > Your change seems to decide that for certain devices we want to
+> > > optimize for fragmentation rather than performance. If these are
+> > > rarely used features specifically when looking at performance should
+> > > we not continue to optimize for performance? Or at least make it user
+> > > configurable?
+> >
+> > So there seems to be 3 categories:
+> >
+> >  - 1) Must have physically contiguous AUX buffers, it's a hardware ABI.
+> >       (PERF_PMU_CAP_AUX_NO_SG for Intel BTS and PT.)
+> >
+> >  - 2) Would be nice to have continguous AUX buffers, for a bit more
+> >       performance.
+> >
+> >  - 3) Doesn't really care.
+> >
+> > So we do have #1, and it appears Yabin's usecase is #3?
 
-Signed-off-by: Alexey Charkov <alchark@gmail.com>
----
- Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Yes, in my usecase, I care much more about MM-friendly than a little potent=
+ial
+performance when using PMU. It's not a rarely used feature. On Android, we
+collect ETM data periodically on internal user devices for AutoFDO optimiza=
+tion
+(for both userspace libraries and the kernel). Allocating a large
+chunk of contiguous
+AUX pages (4M for each CPU) periodically is almost unbearable. The kernel m=
+ay
+need to kill many processes to fulfill the request. It affects user
+experience even
+after using PMU.
 
-diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-index 223f2abd5e592ff8cc3ad97f9a325356ea57044a..508d958e698c2e8dad748a6fcdef65d6e883b97d 100644
---- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-+++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-@@ -86,6 +86,7 @@ properties:
-           - nuvoton,npcm845-ehci
-           - ti,ehci-omap
-           - usb-ehci
-+          - via,vt8500-ehci
- 
-   reg:
-     minItems: 1
+I am totally fine to reuse PERF_PMU_CAP_AUX_NO_SG. If PMUs don't want to
+sacrifice performance for MM-friendly, why support scatter gather mode? If =
+there
+are strong performance reasons to allocate contiguous AUX pages in
+scatter gather
+mode, I hope max_order is configurable in userspace.
 
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250423-vt8500-ehci-binding-e607bfafdcbf
+Currently, max_order is affected by aux_watermark. But aux_watermark
+also affects
+how frequently the PMU overflows AUX buffer and notifies userspace.
+It's not ideal
+to set aux_watermark to 1 page size. So if we want to make max_order user
+configurable, maybe we can add a one bit field in perf_event_attr?
 
-Best regards,
--- 
-Alexey Charkov <alchark@gmail.com>
-
+>
+> In Yabin's case, the AUX buffer work as a bounce buffer.  The hardware
+> trace data is copied by a driver from low level's contiguous buffer to
+> the AUX buffer.
+>
+> In this case we cannot benefit much from continguous AUX buffers.
+>
+> Thanks,
+> Leo
 
