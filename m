@@ -1,106 +1,204 @@
-Return-Path: <linux-kernel+bounces-616447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047FA98CCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:23:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08CDA98CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0640B5A5898
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6AC17A2819
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C760C27CB38;
-	Wed, 23 Apr 2025 14:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB1627CCD7;
+	Wed, 23 Apr 2025 14:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExipBvwa"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsXkaJba"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE81627933E;
-	Wed, 23 Apr 2025 14:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7C327C17C;
+	Wed, 23 Apr 2025 14:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745418129; cv=none; b=OHJhx+ryscbtaHrSCR3EpG2YA40gB+uMrLlXY84wAj4MLPz1HgW/8WwCT6uDi1jDG08cEg6Zs4aueZyQc7etbcB2KDQQsQlqd5rM/CYBphogAGj/KGKadQOYFzg4gUSVlRgywqKaTM1qtGcZMcQ8014YKOtXrhhCEANhnMErp+Q=
+	t=1745418200; cv=none; b=eW6M35+282erK9jFuVeN2nn3KMlgcf9ndVBr5Z7gVIUipfbsdEfQcNcGe4Uty+00/ZKh44DuelzZEz6EjWsHDtp64xHEO4VFTAUZeYa8zyZCKjOdpEulbzQAf5uh63JjysgigYs3gixSIYvVY3qYFEotDdzTny2OtI6U/+Ie8Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745418129; c=relaxed/simple;
-	bh=//O3n+s9WI8q0sdpVZ2aoBDgxil1mFFynwAFUCbgHks=;
+	s=arc-20240116; t=1745418200; c=relaxed/simple;
+	bh=CcnWWaraODw9SuKt8kDAC0krPCJiWe4ppv3BuwGOnPs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uWBqZ9m//PDZCIPLp/0e61qACOozrQdGq82McdzElMLs36sc7xzgx90YCsQMSeGLuH3QhrzAeZbfY1uQ9AxwtPrxbltyXi+/mONrtF4ZLTxNDRmLVeG7NWEBHJ153ddbFCuNFc8oB1K0MhNjSOjJJgzlWTTsgExKwhumEX+W6Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExipBvwa; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso8085207b3a.0;
-        Wed, 23 Apr 2025 07:22:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745418127; x=1746022927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XIw0UYaFvMMI2u1I6TqeCLwaIYg00Cip+Y0futxgzOE=;
-        b=ExipBvwaQO86VTDPpDhCQVexiwiQyR1De8jwCpx5qyRQVZkpAipDVxMf76cwhOb+Lk
-         5XUwTrberN+DZK8f+oz/hbQmsPHHDv+fAp0nQFGgw2qESBY4gSWWA1S8ILbvuDJLCSD4
-         6tnmphxlZVzm2vaMSbF4ZvhOnWQqCiqYQy8Jtt0stpNPIZU0BDtabOg/bJWWbEntnsrq
-         /FD73G9BwvQrqON/s4PgjLrmKqRhv5d/pZvGcbtCihGXrJnTVsjqmpiCZehKT53b6bNT
-         7H/VWEe8+Qx9TQruTVuVkyVyBhcZRHtGgna8iZVznK+TKom77PnqvUuOpzjlgkDPeeZp
-         p0Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745418127; x=1746022927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XIw0UYaFvMMI2u1I6TqeCLwaIYg00Cip+Y0futxgzOE=;
-        b=T2FlAU2iXVtIeiT8OnjANkuTxaD40HYuyUCm4XZ/E3L6zSWTBGPmXSvLpTgTwXPbEm
-         3Jp8UZ5qPiR+L5tuiwD6XNqUYEEKpHugBlhgvO7iif7O3tywziYgCFJs3d7LxryGMq8h
-         eaRzY6hIEvVR8IF2F41eHBR4eD/Mu+dPD3QG9abRAIr3nNez3Nx3LwdS9gqYueUHCDT+
-         hXQE69dbNrFW3ljosyBPJtblbq7WeaCDdYzPcRvwq246uG0+o4B2lIgdKrRp8I4DWFAS
-         pSe/LAHIWyPBlqV6C4T0c8XxIHXzS0h/eNfTY0BzZJb2uKHGXY0zKJnlXuqx4S5M2HE6
-         Isew==
-X-Forwarded-Encrypted: i=1; AJvYcCW2sNuaZyEgZJCV9UU7Fkx3c4Ts7aNxgGpMwNwugapDOI8ahmyNsc5N6Roo1puqjr6LH8LDHIWoIextnlZD@vger.kernel.org, AJvYcCWIsSNI9uE2o5iP4FAbfj/J5Fffoxl9bDXiC6wJvAHK+K+FltEJN/z5Cs8+lHhqYHTRpaRUByl9Qssrj3w=@vger.kernel.org, AJvYcCX+IkVW0i/0bMwBV0oCwZQHdLI0UswiLcWB/Z5NgL/DC4WTFc6y2IMxme3AZKyfWX7Zn/nIURbJXbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuI53sCeRqGRQD+2VaGjz9du10GeGyeASpwq1RqISzO6wUUyIf
-	P7JvmstoI4QzXLWNDvH/lNizIuf/hZ2uliSq6gAGjdz8ZTUDAMgW
-X-Gm-Gg: ASbGnctCizykK87Aq9ZUba0P+zpqAmyZ1JWNn9q1ViCg9RVZAd3QBh5oG2DKJrIt4e3
-	C7TN0XnYD07YmY+ZfVxKfogYzlQE17I+2Ck0xQM8gTzuHNy9IQ1Y9wVotstavbYA9igeLcmPToz
-	ZXv5QMBX5J37wNiKVomDPDxdYuAT2Xvvca83yqRm5aIOV5vJn2tO9Zs01bLdd5ruRyacUBSAdBe
-	l5LcGGjRVKcyiCC7IcqdLE07mebnS4lopUyQrAGfCPrDsR2UpBG5vtxeHt1pOStmhFYi4DNpuC6
-	XP1CcpyZaDsgTGPB6qedXPaM6LG2K/Uz9DaWYdC7FjKdmRyeU3KDdWPPiSTMKPss
-X-Google-Smtp-Source: AGHT+IF+BiqgzYIG4OfEgb+CSUaVFjx8yLxRJNukPfrnDRIHv5Yupej8qhzJ1BIbOiwneadSKVxqPA==
-X-Received: by 2002:a05:6a21:900e:b0:1f5:a577:dd10 with SMTP id adf61e73a8af0-203cbd24088mr33055873637.36.1745418126920;
-        Wed, 23 Apr 2025 07:22:06 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfaea91asm10624167b3a.167.2025.04.23.07.22.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 07:22:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 23 Apr 2025 07:22:05 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] hwmon: (max77705) add initial support
-Message-ID: <343ba416-fa76-49c3-8ac7-4c4e2d449bb1@roeck-us.net>
-References: <20250423-initial-support-for-max77705-sensors-v6-1-ff379e1b06c5@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=piE/4QPRqZHUe3AgCmncPGolIBxKYci6ZI+HWdgmCnMHYoumGNeMKHPTTJSza7kHWk4PlS/l+5FJpBqO1ZroPshXRT5mgLWsgFUVG62xMdugVWzWaY9cJgfCHjQiFMCw92AxuPWEEQQp2+6A+AHphhnMRg//IIhsOZUNbpNcHCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsXkaJba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC15C4CEE2;
+	Wed, 23 Apr 2025 14:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745418198;
+	bh=CcnWWaraODw9SuKt8kDAC0krPCJiWe4ppv3BuwGOnPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tsXkaJbawDIRGlUM4SjTsvjb+UnrVISvHnzVbtSUUYaZm4YLGQBbTa5lp72ZHHhnI
+	 mTmgmX2UPYRW9j1cEye/I8G6zYqzoYeaIJg8VXDk5IWf49Ch4iE7ueuTkAQzNdrqQx
+	 ZWpzTb3bexY8jMu1+mPhK8YGZxjltPP7doNyd1Nv7Amgk5m9hTixmutNPDIUkPpqtT
+	 2gEkINnRLifd+iRPimiBFwTZ3R2JZvLT9dd1XTg8h3qEulyFpxy8vg3xBWE1e3Mcpr
+	 RL2MNI1vMVG5ZTu0Kxzu+H6AtofiBShALnhXwZdJafUcIfErXmpTdS0JoDN9SpIyIB
+	 vQfylKq8Ww8gQ==
+Date: Wed, 23 Apr 2025 11:23:15 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Caleb Biggers <caleb.biggers@intel.com>,
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: Re: [PATCH v5 09/16] perf intel-tpebs: Refactor tpebs_results list
+Message-ID: <aAj30xLNXtXhn6IP@x1>
+References: <20250414174134.3095492-1-irogers@google.com>
+ <20250414174134.3095492-10-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250423-initial-support-for-max77705-sensors-v6-1-ff379e1b06c5@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250414174134.3095492-10-irogers@google.com>
 
-On Wed, Apr 23, 2025 at 07:54:36AM +0300, Dzmitry Sankouski wrote:
-> Add support for max77705 hwmon. Includes charger input, system bus, and
-> vbyp measurements.
+On Mon, Apr 14, 2025 at 10:41:27AM -0700, Ian Rogers wrote:
+> evsel names and metric-ids are used for matching but this can be
+> problematic, for example, multiple occurrences of the same retirement
+> latency event become a single event for the record. Change the name of
+> the record events so they are unique and reflect the evsel of the
+> retirement latency event that opens them (the retirement latency
+> event's evsel address is embedded within them). This allows an evsel
+> based close to close the event when the retirement latency event is
+> closed. This is important as perf stat has an evlist and the session
+> listen to the record events has an evlist, knowing which event should
+> remove the tpebs_retire_lat can't be tied to an evlist list as there
+> is more than 1, so closing which evlist should cause the tpebs to
+> stop? Using the evsel and the last one out doing the tpebs_stop is
+> cleaner.
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> Tested-by: Weilin Wang <weilin.wang@intel.com>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 > ---
+>  tools/perf/builtin-stat.c     |   2 -
+>  tools/perf/util/evlist.c      |   1 -
+>  tools/perf/util/evsel.c       |   2 +-
+>  tools/perf/util/intel-tpebs.c | 150 +++++++++++++++++++++-------------
+>  tools/perf/util/intel-tpebs.h |   2 +-
+>  5 files changed, 93 insertions(+), 64 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 68ea7589c143..80e491bd775b 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -681,8 +681,6 @@ static enum counter_recovery stat_handle_error(struct evsel *counter)
+>  	if (child_pid != -1)
+>  		kill(child_pid, SIGTERM);
+>  
+> -	tpebs_delete();
+> -
+>  	return COUNTER_FATAL;
+>  }
+>  
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index c1a04141aed0..0a21da4f990f 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -183,7 +183,6 @@ void evlist__delete(struct evlist *evlist)
+>  	if (evlist == NULL)
+>  		return;
+>  
+> -	tpebs_delete();
+>  	evlist__free_stats(evlist);
+>  	evlist__munmap(evlist);
+>  	evlist__close(evlist);
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 121283f2f382..554252ed1aab 100644
+> --- a/tools/perf/util/evsel.c
+<SNIP>
 
-Applied.
+>  static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
+>  {
+>  	struct tpebs_retire_lat *t;
+> +	uint64_t num;
+> +	const char *evsel_name;
+>  
+> +	/*
+> +	 * Evsels will match for evlist with the retirement latency event. The
+> +	 * name with "tpebs_event_" prefix will be present on events being read
+> +	 * from `perf record`.
+> +	 */
+> +	if (evsel__is_retire_lat(evsel)) {
+> +		list_for_each_entry(t, &tpebs_results, nd) {
+> +			if (t->evsel == evsel)
+> +				return t;
+> +		}
+> +		return NULL;
+> +	}
+> +	evsel_name = strstr(evsel->name, "tpebs_event_");
+> +	if (!evsel_name) {
+> +		/* Unexpected that the perf record should have other events. */
+> +		return NULL;
+> +	}
+> +	errno = 0;
+> +	num = strtoull(evsel_name + 12, NULL, 16);
+> +	if (errno) {
+> +		pr_err("Bad evsel for tpebs find '%s'\n", evsel->name);
+> +		return NULL;
+> +	}
+>  	list_for_each_entry(t, &tpebs_results, nd) {
+> -		if (t->tpebs_name == evsel->name ||
+> -		    !strcmp(t->tpebs_name, evsel->name) ||
+> -		    (evsel->metric_id && !strcmp(t->tpebs_name, evsel->metric_id)))
+> +		if ((uint64_t)t->evsel == num)
+>  			return t;
 
-Thanks,
-Guenter
+I'm adding the following patch to address building on 32-bit systems:
+
+  20     4.97 debian:experimental-x-mips    : FAIL gcc version 14.2.0 (Debian 14.2.0-13) 
+    util/intel-tpebs.c: In function 'tpebs_retire_lat__find':
+    util/intel-tpebs.c:377:21: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+      377 |                 if ((uint64_t)t->evsel == num)
+          |                     ^
+    cc1: all warnings being treated as errors
+
+- Arnaldo
+
+⬢ [acme@toolbx perf-tools-next]$ git diff
+diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+index a723687e67f6d7b3..b48f3692c798f924 100644
+--- a/tools/perf/util/intel-tpebs.c
++++ b/tools/perf/util/intel-tpebs.c
+@@ -242,7 +242,7 @@ static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
+ static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
+ {
+        struct tpebs_retire_lat *t;
+-       uint64_t num;
++       unsigned long num;
+        const char *evsel_name;
+ 
+        /*
+@@ -269,7 +269,7 @@ static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
+                return NULL;
+        }
+        list_for_each_entry(t, &tpebs_results, nd) {
+-               if ((uint64_t)t->evsel == num)
++               if ((unsigned long)t->evsel == num)
+                        return t;
+        }
+        return NULL;
+
 
