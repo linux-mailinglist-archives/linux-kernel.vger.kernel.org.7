@@ -1,156 +1,174 @@
-Return-Path: <linux-kernel+bounces-616672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C30AA993A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:01:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421ADA99429
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9E37AE1DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D060E925223
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5E228BA82;
-	Wed, 23 Apr 2025 15:50:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D8227FD49
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 15:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACA12C257E;
+	Wed, 23 Apr 2025 15:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dIcD5TDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8429B201;
+	Wed, 23 Apr 2025 15:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423436; cv=none; b=uCvvzsaXpumiUOKe2zCxhtOAjzbWHK1lGGkhv9GtFz3/I2AMMJ2gAsIIfqPv0yButEGelAJxykR1rQWIc3M6AOGVRCGnpTdP+IM2xrq0/YCZsOHbxIGMVf84kjaJq4C/TZMl869U1LKuXJPHHX7crHtJtrCDXdLqJTBHmrZ+8+M=
+	t=1745422483; cv=none; b=gSCzgUHDTHiLDEFeHHmmY5NoipEECSD/8Mq0/1RtXwzGoHhh0XMoLvyPI1g4M6Q7SJs5x9t0YRDg11+PGG6S4ShMaKaC+MPIwbl5K1b+ReebZyFa4D4yS2RTP6DXZrQjM+yabRIsaDTbIV/3hDkMCxXN+ipk5+xEl46lT6b/rlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423436; c=relaxed/simple;
-	bh=obJ4KNRdop1ri6ey3P8GkkISiNkN9TepbOopmkOaHtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YfTnYkOL0hYjHlzRTolEGJkM2mnPaDejuBHvPhao/0UYmca3fWfmkRhP3rQih1sU7eFzvECIathIPtpF+K3NwigLffsmRKTe2jEm7aZSr3S2s0qIHBbBN0V3hFqPPEsXOyZQp7zOfAqmlYs9B9/l4ep1n7Sp0hjZSgah+JtXUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FB331063;
-	Wed, 23 Apr 2025 08:50:29 -0700 (PDT)
-Received: from [10.57.74.63] (unknown [10.57.74.63])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA5153F66E;
-	Wed, 23 Apr 2025 08:50:31 -0700 (PDT)
-Message-ID: <4129dca9-07fa-4b9d-a7d8-de7561d509e7@arm.com>
-Date: Wed, 23 Apr 2025 16:50:29 +0100
+	s=arc-20240116; t=1745422483; c=relaxed/simple;
+	bh=nBOB2RB8Gi5Quj2lV/zQhImxicJWnB8a6mxXg5tyIMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uYyV4a+nJwZaB0ZMwgAyN9SLw1ge5ecmi2rgbwCv0hK1a3AVDYjppDbgCHGa27iJktDZkDq3HrwjvvSes5Y2plkBtiWKBMkYvFrNGrWBWvj/AI1Y7C8tWGTymAFERTsJmyP0+OI0kTeDXbqI6t6z8VjmEQKvPtXdYUjP4072o6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dIcD5TDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E9FC4CEE2;
+	Wed, 23 Apr 2025 15:34:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745422482;
+	bh=nBOB2RB8Gi5Quj2lV/zQhImxicJWnB8a6mxXg5tyIMY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dIcD5TDHhqBmF7mynXS0s154aZje1oXFoYvt+BMgnI5+k4NsBz5saoD1U97fSmagk
+	 cF/RJbPuC1CTzA4ZIWwEYs4Y52OW9+x0kSByrrMYqpsMC8T5x9v1JmjCZTAorsOR/D
+	 NXli8K9j/5+ePp3iQcFe+lsymhiNY+RO1yljxl6Q=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Piotr Jaroszynski <pjaroszynski@nvidia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	SeongJae Park <sj@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.6 368/393] Fix mmu notifiers for range-based invalidates
+Date: Wed, 23 Apr 2025 16:44:24 +0200
+Message-ID: <20250423142658.539422318@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
+References: <20250423142643.246005366@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] platform: Fix race condition during DMA configure at
- IOMMU probe time
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Will McVicker <willmcvicker@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, "Rob Herring (Arm)" <robh@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Joerg Roedel <jroedel@suse.de>,
- Bjorn Helgaas <bhelgaas@google.com>, iommu@lists.linux.dev,
- Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-References: <20250423150823.GA422889@bhelgaas>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250423150823.GA422889@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-04-23 4:08 pm, Bjorn Helgaas wrote:
-> On Tue, Apr 22, 2025 at 04:26:49PM -0700, Will McVicker wrote:
->> If devices are probed asynchronously, then there is a chance that during
->> the IOMMU probe the driver is bound to the device in parallel. If this
->> happens after getting the platform_driver pointer while in the function
->> `platform_dma_configure()`, then the invalid `drv` pointer
->> (drv==0xf...ffd8) will be de-referenced since `dev->driver != NULL`.
-> 
-> I need a little more hand-holding to make sense out of this.
-> 
-> After digging out
-> https://lore.kernel.org/all/aAa2Zx86yUfayPSG@google.com/, I see that
-> drv==0xf...ffd8 must be a result of applying to_platform_driver() to a
-> NULL pointer.  This patch still applies to_platform_driver(NULL), but
-> avoids using the result by testing drv for NULL later, which seems
-> prone to error.
-> 
-> I think this would all be clearer if we tested for the NULL pointer
-> explicitly before applying to_platform_driver().  I don't like setting
-> a pointer to an invalid value.  I think it's better if the pointer is
-> either valid or uninitialized because the compiler can help find uses
-> of uninitialized pointers.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-Yeah, I was also in the middle of looking at this after managing to hit 
-it playing with driver_async_probe at the end of last week. I guess when 
-I originally wrote this pattern I was maybe thinking the compiler would 
-defer the to_x_driver() computation to the point it's eventually 
-dereferenced, but I suppose it can't since dev is passed to an external 
-function in program order in between.
+------------------
 
-Indeed in my half-written version of this patch I was leaning towards 
-removing the drv variable altogether (just doing 
-to_x_driver(dev->driver)->driver_managed_dma inline), or at least doing 
-the same as Will's previous diff. I figure the one-liner replacing 
-"!dev->driver" with "!&drv->driver" would be too disgustingly 
-non-obvious for anyone else's tastes...
+From: Piotr Jaroszynski <pjaroszynski@nvidia.com>
 
-For consistency we should really fix all the buses the same way - sorry 
-for the bother (I can write up the other patches if you'd like). FWIW 
-this part really was the most temporary stopgap, as my planned next step 
-is to propose moving driver_managed_dma and the use_default_domain() 
-call up into the driver core and so removing all this bus-level code 
-anyway, hence trying to minimise the effort spent churning it. Oh well.
+commit f7edb07ad7c66eab3dce57384f33b9799d579133 upstream.
 
->> To avoid a kernel panic and eliminate the race condition, we should
->> guard the usage of `dev->driver` by only reading it once at the
->> beginning of the function.
->>
->> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
->> Signed-off-by: Will McVicker <willmcvicker@google.com>
->> ---
->>   drivers/base/platform.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->> index 1813cfd0c4bd..b948c6e8e939 100644
->> --- a/drivers/base/platform.c
->> +++ b/drivers/base/platform.c
->> @@ -1440,7 +1440,8 @@ static void platform_shutdown(struct device *_dev)
->>   
->>   static int platform_dma_configure(struct device *dev)
->>   {
->> -	struct platform_driver *drv = to_platform_driver(dev->driver);
->> +	struct device_driver *drv = READ_ONCE(dev->driver);
+Update the __flush_tlb_range_op macro not to modify its parameters as
+these are unexepcted semantics. In practice, this fixes the call to
+mmu_notifier_arch_invalidate_secondary_tlbs() in
+__flush_tlb_range_nosync() to use the correct range instead of an empty
+range with start=end. The empty range was (un)lucky as it results in
+taking the invalidate-all path that doesn't cause correctness issues,
+but can certainly result in suboptimal perf.
 
-Beware this might annoy a different set of people as it's not paired 
-with a WRITE_ONCE(), but for now I guess using it is still arguably 
-better than not. Really we should be under device_lock at this point and 
-so have no race at all, but we can't do that without keeping track of 
-which devices are IOMMUs themselves to avoid deadlock, and that's not 
-something I fancy throwing out as an -rc fix in a hurry...
+This has been broken since commit 6bbd42e2df8f ("mmu_notifiers: call
+invalidate_range() when invalidating TLBs") when the call to the
+notifiers was added to __flush_tlb_range(). It predates the addition of
+the __flush_tlb_range_op() macro from commit 360839027a6e ("arm64: tlb:
+Refactor the core flush algorithm of __flush_tlb_range") that made the
+bug hard to spot.
 
-Thanks,
-Robin.
+Fixes: 6bbd42e2df8f ("mmu_notifiers: call invalidate_range() when invalidating TLBs")
 
->> +	struct platform_driver *pdrv = to_platform_driver(drv);
->>   	struct fwnode_handle *fwnode = dev_fwnode(dev);
->>   	enum dev_dma_attr attr;
->>   	int ret = 0;
->> @@ -1451,8 +1452,8 @@ static int platform_dma_configure(struct device *dev)
->>   		attr = acpi_get_dma_attr(to_acpi_device_node(fwnode));
->>   		ret = acpi_dma_configure(dev, attr);
->>   	}
->> -	/* @drv may not be valid when we're called from the IOMMU layer */
->> -	if (ret || !dev->driver || drv->driver_managed_dma)
->> +	/* @dev->driver may not be valid when we're called from the IOMMU layer */
->> +	if (ret || !drv || pdrv->driver_managed_dma)
->>   		return ret;
->>   
->>   	ret = iommu_device_use_default_domain(dev);
->> -- 
->> 2.49.0.805.g082f7c87e0-goog
->>
+Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Raghavendra Rao Ananta <rananta@google.com>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: iommu@lists.linux.dev
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Link: https://lore.kernel.org/r/20250304085127.2238030-1-pjaroszynski@nvidia.com
+Signed-off-by: Will Deacon <will@kernel.org>
+[will: Resolve conflicts due to lack of LPA2 support]
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm64/include/asm/tlbflush.h |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -369,31 +369,33 @@ static inline void arch_tlbbatch_flush(s
+ #define __flush_tlb_range_op(op, start, pages, stride,			\
+ 				asid, tlb_level, tlbi_user)		\
+ do {									\
++	typeof(start) __flush_start = start;				\
++	typeof(pages) __flush_pages = pages;				\
+ 	int num = 0;							\
+ 	int scale = 3;							\
+ 	unsigned long addr;						\
+ 									\
+-	while (pages > 0) {						\
++	while (__flush_pages > 0) {					\
+ 		if (!system_supports_tlb_range() ||			\
+-		    pages == 1) {					\
+-			addr = __TLBI_VADDR(start, asid);		\
++		    __flush_pages == 1) {				\
++			addr = __TLBI_VADDR(__flush_start, asid);	\
+ 			__tlbi_level(op, addr, tlb_level);		\
+ 			if (tlbi_user)					\
+ 				__tlbi_user_level(op, addr, tlb_level);	\
+-			start += stride;				\
+-			pages -= stride >> PAGE_SHIFT;			\
++			__flush_start += stride;			\
++			__flush_pages -= stride >> PAGE_SHIFT;		\
+ 			continue;					\
+ 		}							\
+ 									\
+-		num = __TLBI_RANGE_NUM(pages, scale);			\
++		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
+ 		if (num >= 0) {						\
+-			addr = __TLBI_VADDR_RANGE(start, asid, scale,	\
+-						  num, tlb_level);	\
++			addr = __TLBI_VADDR_RANGE(__flush_start, asid,	\
++						scale, num, tlb_level);	\
+ 			__tlbi(r##op, addr);				\
+ 			if (tlbi_user)					\
+ 				__tlbi_user(r##op, addr);		\
+-			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+-			pages -= __TLBI_RANGE_PAGES(num, scale);	\
++			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
++			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
+ 		}							\
+ 		scale--;						\
+ 	}								\
+
 
 
