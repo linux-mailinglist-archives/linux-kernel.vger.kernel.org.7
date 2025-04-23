@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-616389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6766FA98BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEE8A98BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B7E3A70A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB8E7168D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F5E1A316A;
-	Wed, 23 Apr 2025 13:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2551A727D;
+	Wed, 23 Apr 2025 13:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsYUVthQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y900fPxM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986DC195B1A;
-	Wed, 23 Apr 2025 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57DC1A3BC0
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745416175; cv=none; b=o4HdzDEHJsz11KMCJDASG8bNhoEI3q51fwTnNE4yJAloWkBtxg+xYQFV4RGtMwX5une0UD+2yBdZ8UIsy+EdkeHy05XE9qK7yerBsI65geG2ma7898nSX0+O9DWhPtCTA0w02mBFHICgIMCwxBBwgw1MFSCJrWS1926fwnveqGM=
+	t=1745416323; cv=none; b=N+BobWCpSvCGS0X53vlAFAS75TT5Nbney2r8rCHnpa+9AGRngTYbrQ/fNPeioUlaH4ftKhp594/BlOOddTtuhZ8o8hAN3yI9t7oq5Ps0LbW5JFhU+2Jj9BOkYx66yA49UV4LOttBqabZVvqNsA4aVhZZQsy0tcE3LQkU36Pi4UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745416175; c=relaxed/simple;
-	bh=51DzNBedmVdDOpjFygbR61HRvxMoCnaWd7SdEKWH5U8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=POjpwaDO1UniEedpbOvqvC3kIHmojrLpezhfnig/KH1ZLUJ1+cmOgfZ5jud5moUB7LC4R7n7qYpzjwPqI66yCfZkxwSzCosUojUKGgd9x8L3m61SHrVOiIB8Q2ExenvggyzxcktKYUzGBhWv7ptXQcalShWHuG6AmwpfVyhiV88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsYUVthQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B660FC4CEE2;
-	Wed, 23 Apr 2025 13:49:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745416175;
-	bh=51DzNBedmVdDOpjFygbR61HRvxMoCnaWd7SdEKWH5U8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EsYUVthQn5eHDBFy3F8hJkdSDHW4eKpE5otGTPgLVwME+gCj/LVWJ7F9K8cdJpFgv
-	 GfBvdOIXH/k0wueLLhbj/+xM/HS6D6N5K2vyQkdYSYbLWIUtYTSAtHQ67HYiVsyN4O
-	 +lW8aOZcUFB0I7HrerlPnuLytk6swOjTuz7K0EEQTaLjmmegh6pk+kJFsqDXEzU7oF
-	 ra2z1uY/nrDBxxkZ/bkha34OjIudJ9yaMUfX9V9mL93Szus1nsRauA8mAi+YdBBhNz
-	 sc0LYLJ6LY4GGIa4mJdQeQ42l+trtUFa73ufHNNeMz+QzIT98myHaS4IH0siGl1P3A
-	 LTIwy5f2fG4aA==
-From: Mark Brown <broonie@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Watson Chow <watson.chow@avnet.com>, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250420-fix-max20086-v1-0-8cc9ee0d5a08@gmail.com>
-References: <20250420-fix-max20086-v1-0-8cc9ee0d5a08@gmail.com>
-Subject: Re: [PATCH 0/2] regulator: max20086: Fixes chip id and enable gpio
-Message-Id: <174541617346.423530.9368803789321095887.b4-ty@kernel.org>
-Date: Wed, 23 Apr 2025 14:49:33 +0100
+	s=arc-20240116; t=1745416323; c=relaxed/simple;
+	bh=boejw82YmVPmF4mgle0bH0wKQDPl4g64+MKKm8rGiQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SPIug87dvBaumEx3I/B7pe7I8NWQIiCCAx/HcdNT1kKgH9cy094h6/NdNmDjwMY28QwZ+zp+AKsXy3TWQDBOsS/02gmVh2yZf0j9zR5Fpo3Umf2o+5zkrUHvwtDozsnHykz0Crr0V4PAUxIlFwslaG6SjZFflXpfwM/UYYcoB5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y900fPxM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745416320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JcyI5UKjzArJKSlp5THkkUg4bu6nY4lIrKxS+KDjnZA=;
+	b=Y900fPxMR4m/Kf6iaEk8g4vWq9ZIIR+0PEuMBXZvkuucw2zIjGjF6MuTKHIyu02tVCUKf9
+	7fkT457WBCS2Rj6wwpNdpR1k6G4kj8j1+xwYPGDY4PMD003vR3g70UEc7PwABGijFDGs+5
+	UYDcDQshbK11p8IdOhe+8qkfoJtBsSo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-W1-RTodeM1KkDSb2LmzVww-1; Wed,
+ 23 Apr 2025 09:51:55 -0400
+X-MC-Unique: W1-RTodeM1KkDSb2LmzVww-1
+X-Mimecast-MFC-AGG-ID: W1-RTodeM1KkDSb2LmzVww_1745416310
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BADAE1801A18;
+	Wed, 23 Apr 2025 13:51:49 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.39])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 26B5B19560A3;
+	Wed, 23 Apr 2025 13:51:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 23 Apr 2025 15:51:11 +0200 (CEST)
+Date: Wed, 23 Apr 2025 15:51:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-kernel@vger.kernel.org, mrpre@163.com, mkoutny@suse.com,
+	syzbot+adcaa842b762a1762e7d@syzkaller.appspotmail.com,
+	syzbot+fab52e3459fa2f95df57@syzkaller.appspotmail.com,
+	syzbot+0718f65353d72efaac1e@syzkaller.appspotmail.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Wei Liu <wei.liu@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v1] pid: annotate data-races around pid_ns->pid_allocated
+Message-ID: <20250423135101.GA28646@redhat.com>
+References: <20250423115542.7081-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423115542.7081-1-jiayuan.chen@linux.dev>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, 20 Apr 2025 15:28:00 -0300, João Paulo Gonçalves wrote:
-> I'm working on integrating a system with a MAX20086 and noticed these
-> small issues in the driver: the chip ID for MAX20086 is 0x30 and not
-> 0x40. Also, in my use case, the enable pin is always enabled by
-> hardware, so the enable GPIO isn't needed. Without these changes, the
-> driver fails to probe.
-> 
-> 
-> [...]
+On 04/23, Jiayuan Chen wrote:
+>
+> Suppress syzbot reports by annotating these accesses using
+> READ_ONCE() / WRITE_ONCE().
+...
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -122,7 +122,8 @@ void free_pid(struct pid *pid)
+>  	for (i = 0; i <= pid->level; i++) {
+>  		struct upid *upid = pid->numbers + i;
+>  		struct pid_namespace *ns = upid->ns;
+> -		switch (--ns->pid_allocated) {
+> +		WRITE_ONCE(ns->pid_allocated, READ_ONCE(ns->pid_allocated) - 1);
+> +		switch (READ_ONCE(ns->pid_allocated)) {
 
-Applied to
+I keep forgetting how kcsan works, but we don't need
+READ_ONCE(ns->pid_allocated) under pidmap_lock?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Same for other functions which read/modify ->pid_allocated with
+this lock held.
 
-Thanks!
-
-[1/2] regulator: max20086: Fix MAX200086 chip id
-      commit: 71406b6d1155d883c80c1b4405939a52f723aa05
-[2/2] regulator: max20086: Change enable gpio to optional
-      commit: e8ac7336dd62f0443a675ed80b17f0f0e6846e20
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Oleg.
 
 
