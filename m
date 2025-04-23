@@ -1,175 +1,207 @@
-Return-Path: <linux-kernel+bounces-615667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1310BA9806F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335C6A9808E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC5119411FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E193A6B93
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E6267736;
-	Wed, 23 Apr 2025 07:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC2D2676FC;
+	Wed, 23 Apr 2025 07:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NQ8+cnkG"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvZrgZ2J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823771804A;
-	Wed, 23 Apr 2025 07:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6B61F03D6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392799; cv=none; b=EXCQAeM49nC0O5NCAOhsp8Zk2Q8j1wS2E1FeSfuo8SUbpUhKMIie0LgIQsP4iK432SKOA3CzaB5Y4SVckxmT/w4nIXVnQhDBi7uSccHNF4OQitDZ2HZSc2twUS8fM0RXhkx8gZFNlXspQvHggo3wmqWRTjd2fQdvt0rojgPGcr0=
+	t=1745392950; cv=none; b=RQjVCbPjHKUcILMCJz/kmE0z+OBaOCjdgoqEUzF+/TfxIou3s5FxfeudBW8bz4kzjNj+gtgoKSqK3j3N3TIFd6TdXSI+XTroMB/hJxeWTFQDlHkFvrdZiOic36Gb1tGMON0vmITjvI6NWQY1eSyHAnZUaaf0pRKm4h8qfB48m7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392799; c=relaxed/simple;
-	bh=ZqKb4KfZdHLqN8QcKD/n4J4k5vR2V9otqeu0Vg3KTbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNcSyaeAwbsNSzuRNCUifeOXY/hIatZPH5M+Fme/ODosmzs23imL6rnOUe9gmmqeun6450x4bZ594SzSUbX2vT8GiiIBL6QnP50ChA6JfbMEFMzPMUuJUsn1DGVFjgQQk5VlrHcnT3jqGgFZ0gF+aBKk7v/tAweaRrgOGBAU+QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NQ8+cnkG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9285540E01F6;
-	Wed, 23 Apr 2025 07:19:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cHymMcxZwE16; Wed, 23 Apr 2025 07:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745392782; bh=ftPP4S08awu8zTTxtnw7w5uCGyDy/BG+0Tm6c4TrMFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQ8+cnkGkVthrltApFRLpqFTwWHXryWzaqt19jJgWuWJwEkW5aUeGTlM2pJ2vcMmE
-	 8nn7LQnVAuR/+XdNKrYRKXFyEAzKmHleVb4QhQHRYFKwBUWSEpHJ8zPreqb7KqQ5Vb
-	 358tc/7hJTrKtAkv5rGqIybklmU77y/hNzyHv6OWjYzYDNgubM0fV3xgDgmb7YGTFp
-	 mZOovIIHYymKopahGdDVMMPyQkulQ9qfHZtbqODBt9iMCBAVtM/TdxFIf/KY8Q0LgV
-	 6SHIZFLHGV3GDUYiOh6XNtqPvbjfpjPZfa6Ix3CNQ1s6DBFV5Sqri+CCc5nxKZNFe0
-	 4u5YvXFi2Hx/0yAHVlcgxbLNoa2Mz18UA/kmHvS9b6D8+dkQIHwY5Nq0DCQMsiUNDR
-	 q3zF3eII5seRUoy4+MHu0jjg9DsK0b4QZd1etBl4XMeHgxDkuDYOdPVxIRt/jygCxq
-	 ivK3rYJfmCZzVuzWwatkFO6V3qZ34wEAqtwuY9OVGRKjfg72wOHS8SNoHv7hnZEQdH
-	 xZfktkmoLZa69BVhvhkNVm78QqBa4MXb1t5zGQeqVe24TNvWxsVmKDF1dpQl6IxXG0
-	 oXkch8Vet7YREH+VgT2qVMg3a5tiNpmtXfE8PhmTj5iZAN4wDfALUitnuFRu9cmb3/
-	 KNn9wxuQAGJ9uZT/Z7x4oeA4=
-Received: from rn.tnic (unknown [IPv6:2a02:3037:313:bdc3:3c28:7053:13ff:2420])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C1F5540E01FE;
-	Wed, 23 Apr 2025 07:19:22 +0000 (UTC)
-Date: Wed, 23 Apr 2025 09:20:17 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Pavel Machek <pavel@denx.de>, Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, thomas.lendacky@amd.com, perry.yuan@amd.com,
-	mario.limonciello@amd.com, riel@surriel.com, mjguzik@gmail.com,
-	darwi@linutronix.de, Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: CONFIG_X86_HYPERVISOR (was: Re: [PATCH AUTOSEL 5.10 2/6]
- x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when
- running in a virtual machine)
-Message-ID: <20250423072017.GAaAiUsYzDOdt7cmp2@renoirsky.local>
-References: <20250331143710.1686600-1-sashal@kernel.org>
- <20250331143710.1686600-2-sashal@kernel.org>
- <aAKDyGpzNOCdGmN2@duo.ucw.cz>
- <aAKJkrQxp5on46nC@google.com>
- <20250418173643.GEaAKNq_1Nq9PAYf4_@fat_crate.local>
- <aAKaf1liTsIA81r_@google.com>
- <20250418191224.GFaAKkGBnb01tGUVhW@fat_crate.local>
- <aAfQbiqp_yIV3OOC@google.com>
- <20250422173355.GDaAfTA8GqnGBfDk7G@renoirsky.local>
- <aAfynEK3wcfQa1qQ@google.com>
+	s=arc-20240116; t=1745392950; c=relaxed/simple;
+	bh=Nzyk9PrS1JvwAvt8WE1RnHnOeeCD9vg1goldIrxwCmc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Um5Og4c+Kgph990P7Pe66F4O7Yhy49BUS1EpA0IsOf+E2qz+g3dPb5m8emofaf7UaHYg1W+nIQ9uq20SPiFogDSA8dsMpYDWwTbjNHV5s+352/RRIFq+IZyr18dn+w2J7wAGmotsgTv2d+QWyr301xMbj6Qx0r+yOyKHwDGOWOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvZrgZ2J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745392947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EBuSEig5jIqMR64muBvbm2+Uy3ppV9YN4GVnlvKWBjg=;
+	b=UvZrgZ2JE4pLfwft7bakjEcMM5jSwqSfKMupImaa2AwAA18QbDv8map8FFSZCHNl5Y2EhX
+	ydl/lK8Z/sQgPqzTTsqfrmeOP74zIC+sbkeDReDlvOF0F7U3RJEA+6UKaIGAA7CnXWpQLs
+	hY1vWOAX6gDMMo6VHMQFziCX0QmaqSM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-jllIlDvFPHCUOHZ2QuS7yQ-1; Wed, 23 Apr 2025 03:22:24 -0400
+X-MC-Unique: jllIlDvFPHCUOHZ2QuS7yQ-1
+X-Mimecast-MFC-AGG-ID: jllIlDvFPHCUOHZ2QuS7yQ_1745392943
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39abdadb0f0so2049274f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:22:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745392943; x=1745997743;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EBuSEig5jIqMR64muBvbm2+Uy3ppV9YN4GVnlvKWBjg=;
+        b=isP6CdlDUPkWLb/AsFux/e9vaLOEp9pI9HZNmSvqEF8VcyH0HGvpiQX3HjKBJRmokT
+         343CRk6hrdksaar+t8hFuw+P5qq5RTSjrLuO4tK/NuhloUgNaNqkk3ij7R3KJS7zRX2d
+         ok1UTCt6Chsv2cHAwipcWnPn79iXijsK0XmSZNxG9HgMKw+WRDO7/oN89SSn7Yh0KXi8
+         72WIgK0UrQ/MbY5jOWYcFjjxyQB8oHrt47pco5SnD0JDpK1YuXAOAbof6BiXEXoM/372
+         rmlKchFHs0cESWC6RibqpcLHRc5vsr/60lj/fJJrDVU4pSctpm9Rjo2DYQNBPyWbc8E7
+         CY/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVyYkGeSyI79Xw7hxQt/mw92lF2N79s1V5u5UuoOS6rxYzILIszGmpwwfp5fNKfcVqJdMhLs4mHaPjWDrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypeojfefAeGitDWtdoZubgPeK3WeGiRxDNpceiZOKmAd/VLYZQ
+	Ta9JiCCzDV2HVnxjNXWU4aHJvkaJEczSZTx/E9oe/ngcQgorogRqOjytoEOmXa+ILRrL3w9UCbA
+	mIZzv4DXt9jZ7XdisdI2P3GL0iefmO0EyNgzk1LZZf9/K3dpUUaqjTt6GLlR8IQ==
+X-Gm-Gg: ASbGncvCBqJ6s8aunQeYfuzpsMtTzI0dwm3jbB1pA3jIyIiJQjI0stbDO83em2G4rbd
+	ujD880W4mCWVsSc4yTBW6khPpVD6tA8mJ+UYzB25nBPg5qDvPEEn+216Pam89rCPdju+jyCuTEY
+	1sKQae4xpytodS4YPaq/HauIoYZgecbmTGJZjbv3oJW8zs72t9/ivXm5TmWyNw7tbA881B51wvF
+	dhl5c0OEOAIGwHhB6rHbzcDCJA3ObpXTPTqav7jTxcdFD1jwSfUeFGS6ksLhiB44XK/i94uZcel
+	LEv3WZrD9Lwaw6X8KzWisWbCDNfdVezoLMbLnX7i4R9vUU2cfyZeC7S8OmUpLeYcnKNBnsCAekQ
+	YhEQdTP2+ggbD9H4QtLYAeOtPDJG5b+qo8UjX8gc=
+X-Received: by 2002:a05:6000:2403:b0:39c:1f04:a646 with SMTP id ffacd0b85a97d-39efba45f64mr14384414f8f.13.1745392943468;
+        Wed, 23 Apr 2025 00:22:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfuffIV3TY+UzXqaQPu8SArla1wmKpBhdro1DmTQpmv7CTh3OUFOqEwNH2EmpXzKZL4H+UUA==
+X-Received: by 2002:a05:6000:2403:b0:39c:1f04:a646 with SMTP id ffacd0b85a97d-39efba45f64mr14384397f8f.13.1745392943118;
+        Wed, 23 Apr 2025 00:22:23 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c740:2c00:d977:12ba:dad2:a87f? (p200300cbc7402c00d97712badad2a87f.dip0.t-ipconnect.de. [2003:cb:c740:2c00:d977:12ba:dad2:a87f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493255sm17918781f8f.69.2025.04.23.00.22.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 00:22:22 -0700 (PDT)
+Message-ID: <b84b6c31-578f-4abe-9b06-6e7cf4882eb3@redhat.com>
+Date: Wed, 23 Apr 2025 09:22:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aAfynEK3wcfQa1qQ@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/2] mm: add folio_migration_expected_refs() as inline
+ function
+To: Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Shivank Garg <shivankg@amd.com>, shaggy@kernel.org,
+ wangkefeng.wang@huawei.com, jane.chu@oracle.com, ziy@nvidia.com,
+ donettom@linux.ibm.com, apopple@nvidia.com,
+ jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+References: <20250422114000.15003-1-shivankg@amd.com>
+ <20250422114000.15003-2-shivankg@amd.com>
+ <20250422164111.f5d3f0756ad94d012180ece5@linux-foundation.org>
+ <aAg1-hZ0a-44WW6b@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aAg1-hZ0a-44WW6b@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 12:48:44PM -0700, Sean Christopherson wrote:
-> I did a quick pass.
-
-You couldn't resist, I know. Doing something else for a change is
-always cool.
-
-:-P
-
-> Most of the usage is "fine".  E.g. explicit PV code, cases
-> where checking for HYPERVISOR is the least awful option, etc.
+On 23.04.25 02:36, Matthew Wilcox wrote:
+> On Tue, Apr 22, 2025 at 04:41:11PM -0700, Andrew Morton wrote:
+>>> +/**
+>>> + * folio_migrate_expected_refs - Count expected references for an unmapped folio.
+>>
+>> "folio_migration_expected_refs"
 > 
-> Looks sketchy, might be worth investigating?
-
-Oh, I will, it is on my
-do-this-while-waiting-for-compile/test-to-finish. ;-P
-
-> --------------------------------------------
->   arch/x86/kernel/cpu/amd.c:              if (!cpu_has(c, X86_FEATURE_HYPERVISOR) &&
-
-So that first one is to set CC_ATTR_HOST_SEV_SNP when we really are
-a SNP host. I'll go through the rest slowly.
-
->   arch/x86/kernel/cpu/amd.c:      if (!cpu_has(c, X86_FEATURE_HYPERVISOR) && !cpu_has(c, X86_FEATURE_IBPB_BRTYPE)) {
->   arch/x86/kernel/cpu/amd.c:      if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
->   arch/x86/kernel/cpu/amd.c:      if (!cpu_has(c, X86_FEATURE_HYPERVISOR)) {
->   arch/x86/kernel/cpu/amd.c:      if (!cpu_has(c, X86_FEATURE_HYPERVISOR)) {
->   arch/x86/kernel/cpu/amd.c:      if (cpu_has(c, X86_FEATURE_HYPERVISOR))
->   arch/x86/kernel/cpu/amd.c:      if (!cpu_has(c, X86_FEATURE_HYPERVISOR)) {
->   arch/x86/kernel/cpu/amd.c:      if (!cpu_has(c, X86_FEATURE_HYPERVISOR))
->   arch/x86/kernel/cpu/topology_amd.c:             if (!boot_cpu_has(X86_FEATURE_HYPERVISOR) && tscan->c->x86_model <= 0x3) {
->   arch/x86/mm/init_64.c:  if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
->   arch/x86/mm/pat/set_memory.c:   return !cpu_feature_enabled(X86_FEATURE_HYPERVISOR);
->   drivers/platform/x86/intel/pmc/pltdrv.c:        if (cpu_feature_enabled(X86_FEATURE_HYPERVISOR) && !xen_initial_domain())
->   drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c: if (cpu_feature_enabled(X86_FEATURE_HYPERVISOR))
-> --------------------------------------
+> Please run make W=1 fs/jfs/ in order to run kernel-doc on this file.
+> It'll flag this kind of error.
 > 
+>> It's concerning that one particular filesystem needs this - one
+>> suspects that it is doing something wrong, or that the present API
+>> offerings were misdesigned.  It would be helpful if the changelogs were
+>> to explain what is special about JFS.
 > 
-> Could do with some love, but not horrible.
-> ------------------------------------------
-> Eww.  Optimization to lessen the pain of DR7 interception.  It'd be nice to clean
-> this up at some point, especially with things like SEV-ES with DebugSwap, where
-> DR7 is never intercepted.
->   arch/x86/include/asm/debugreg.h:        if (static_cpu_has(X86_FEATURE_HYPERVISOR) && !hw_breakpoint_active())
->   arch/x86/kernel/hw_breakpoint.c:                 * When in guest (X86_FEATURE_HYPERVISOR), local_db_save()
+> It doesn't surprise me at all.  Almost no filesystem implements its own
+> migrate_folio operation.  Without going into too much detail, almost
+> all filesystems can use filemap_migrate_folio(), buffer_migrate_folio()
+> or buffer_migrate_folio_norefs().  So this is not an indication that
+> jfs is doing anything wrong (except maybe it's misdesigned in that the
+> per-folio metadata caches the address of the folio, but changing that
+> seems very much too much work to ask someone to do).
+> 
+> What I do wonder is whether we want to have such a specialised
+> function existing.  We have can_split_folio() in huge_memory.c
+> which is somewhat more comprehensive and doesn't require the folio to be
+> unmapped first.
 
-Patch adding it says "Because DRn access is 'difficult' with virt;..."
-so yeah. I guess we need to agree how to do debug exceptions in guests.
-Probably start documenting it and then have guest and host adhere to
-that. I'm talking completely without having looked at what the code does
-but the "handshake" agreement should be something like this and then we
-can start simplifying code...
+I was debating with myself whether we should do the usual "refs from 
+->private, refs from page table mappings" .. dance, and look up the 
+mapping from the folio instead of passing it in.
 
-> This usage should be restricted to just the FMS matching, but unfortunately
-> needs to be kept for that check.
->   arch/x86/kernel/cpu/bus_lock.c: if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+I concluded that for this (migration) purpose the function is good 
+enough as it is: if abused in wrong context (e.g., still ->private, 
+still page table mappings), it would not fake that there are no 
+unexpected references.
 
-I have no idea why that was added - perhaps to avoid split-lock related
-#ACs on guests...
+Because references from ->private and page tables would be unexpected at 
+this point.
 
-/does more git archeology...
+So I'm fine with this.
 
-Aha, I see it: 6650cdd9a8ccf
-
-Although this doesn't explicitly comment on the guest aspect...
-
-Anyway, thanks for the initial run-thru - I'll keep coming back to this
-as time provides and we can talk.
-
-Others reading are ofc more than welcome to do patches...
-
-;-)
-
-Thx.
+A more generic function might be helpful, but in general it is more 
+prone to races (e.g., page table mappings concurrently going away), so 
+it gets trickier to document that properly.
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+David / dhildenb
+
 
