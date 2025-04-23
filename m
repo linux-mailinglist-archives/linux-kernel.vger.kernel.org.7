@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-616030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA21A98601
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C138DA98636
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCE91B652AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F7C189782C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EC826E16A;
-	Wed, 23 Apr 2025 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="c4PAb5qL"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90135268C46;
+	Wed, 23 Apr 2025 09:42:14 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205BD2566DF;
-	Wed, 23 Apr 2025 09:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745401290; cv=pass; b=JNgg02FoQY+HbdtAe2HrlRDI2NHAdxiE0/Rd5wopWLPinSn6TXP6YlAulZgf6QdVTu7d2WbpL1KEKlK1euvqYycpfyxdQXw5cLmbs7i+QO78WMx6xzdTdE8OrCC2KsdT2pnWH89X4HkBEooKwZ7nEZRk0g95RYKbaxn0cE0dzww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745401290; c=relaxed/simple;
-	bh=QDHDEuyljbJolfRYa6VdWA2fhf9lKyKVCtDK3RLTvtA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=UXUkqJIOIZWsE8CbdqnukhFBfqznbRtkjkkvQPkIFAKiC/dfuxMiYCGdWbqNmZeXasQFCJ9aKhp+TNNuwOhRpww2yumb7R11vOX9RtdHOQf6uQ88gLS8gS4sU0KT0V/e7YJdWNU+WMm1j4SJoYcwjy1S4yocHcTF0RDgVzGgYzY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=c4PAb5qL; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1745401270; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C8o3k/MNKgokhJ/HASLGbQyUh60PC5Hw29hzZ6sHRk/lH7QXyZNAVNpD0SoeEzIMmTEMQuSvSns7SvYqpjM4vh+N50kM6AZ5NYRR5GqcEeP730gjqcbem1sqCfV42Tq3EjMpfDSHEMsKVIxElXzX4L4BdtqdQYqANNWEIZ1jgOA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745401270; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wW5kFrJgTitCYAlrW6MnWYT7C3pZ0s7BzoECLOXQLSA=; 
-	b=SG3BFC0J28ZjJf7+QjDGQbeBOVQx6dwrDWsCHFj+fvZWR7lJQmE6lUaViF+aglBb44CC2FJfIuFaEF1XVh6SLOwkM1UDJbLvR9aam+wKbPh9yaWhZvabVW6i/0nwN01yGveJfqvAx6ucTUyxzapT55FzfNzjLZloH6v7Y5OjLdo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745401270;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Date:Date:From:From:To:To:CC:Subject:Subject:In-Reply-To:References:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=wW5kFrJgTitCYAlrW6MnWYT7C3pZ0s7BzoECLOXQLSA=;
-	b=c4PAb5qLq55mEXHWomaV1Q59jzLSiqxwbV2fhuJg34/Ed/heUYX6CPJgAiIGfTt+
-	K2m4msbW83z4vlykFpteoTMQgjxeWSIfhJI8itB0TXbWxtQaAFzzteUammVeTiZKNrm
-	hx0ejHOMLndNiXDYeNNYQWw2plDKi+pJ5qYWDSLQAjbkUDFSZo2ucfo6iy6NL4v5YSp
-	yZO1o7yLAKjU8iF0NmUhEPeHSTIQsSrgvPDXs/asgroohBv2gnwZJ85FLJk8AE5CqbY
-	1bUtIWLhD14KJ6zR5xElbiK1hlMyRIAmfbemnjxJEnjtsejXuRfxNg+SPmQ9r0o+qPj
-	0oo687eECg==
-Received: by mx.zohomail.com with SMTPS id 1745401267041866.6059217283805;
-	Wed, 23 Apr 2025 02:41:07 -0700 (PDT)
-Date: Wed, 23 Apr 2025 17:40:58 +0800
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Emil Renner Berthing <kernel@esmil.dk>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Hal Feng <hal.feng@starfivetech.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_1/3=5D_dt-bindings=3A_pi?=
- =?US-ASCII?Q?nctrl=3A_jh7110-sys=3A_add_force_inputs?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CACRpkdbGwPyQgVL18iMvUTAvh4XTjo6g3mGT4e_b2aNAjr2obg@mail.gmail.com>
-References: <20250422162250.436169-1-uwu@icenowy.me> <20250422162250.436169-2-uwu@icenowy.me> <CACRpkdbGwPyQgVL18iMvUTAvh4XTjo6g3mGT4e_b2aNAjr2obg@mail.gmail.com>
-Message-ID: <B4C8B369-E345-4133-A106-7C5E71513329@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960E91F0991;
+	Wed, 23 Apr 2025 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745401334; cv=none; b=ToVyOB1cvoDzEmYgo6+EfCuVDxnhOUeV/m0ATzlBXvq1JT7yh7iDiFYZ0lB/+49Jzd6TdAc5puJBwd5OXyBLhnm2Uai7ianaISYO6b0nLLil/AbqfDjj/HlKRZTH92BZNFIkVKe0IkiROJ1Hp/BQqvc5RTEw5B7cZlJjuYLapNs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745401334; c=relaxed/simple;
+	bh=igo7g33sf8QdtAqAJ2QEeiPwn9a3rSfUn6H3GlRQRS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GCpqXVJ2mEvkAmZx0s01fq8scOszPFR0J2TCLnEOKremDlXkWFADTy4utYZAg5TTyLSSk2CtTKkisoMT8KYj8g7oB+QENlrf/5CxiiwhlYv88AJ1DMVcjGLGy6I2buWXOz+fEPH30HGWIAsFmLwku0iqQISFwynHH8f6UhBey9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d3907524cso2280049241.0;
+        Wed, 23 Apr 2025 02:42:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745401329; x=1746006129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5sexHOrDpbd/h7EZDwghhGaeo0X8cakgDd3Kmpze7Y0=;
+        b=cnYpZW0nulYh4mcA+rgBxbrmVYLThxStbLHHmTrApqc7zP5irNsLborTEzjCcQj1Wr
+         WpvxJFwI+egsG9YItndrYm+352rBVF0abFdcjuuNWBuweJlYrR3+PQ2JHdfnNij1YP1y
+         3pCkXc7KcJANrW/u5clfPtIAqQsL7peezxs72HtxfSSrsuyLQYdf+KPM+XhvctunTM9b
+         KvGA4GfohNl+XVTY3sVbQhjnz70Mxp72h+rf/fkdhLPluJ6Nr8wD3pE7d/I4vtj6WDiq
+         B/NBA5M+Pnu0DbFsB05YvxfXBPZo7Mo+yQCBokHq2em4iMgB4W9nvIoc3RG2nEI4L6V9
+         u8xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMehDWUKJFBsofoPcHkSLNiuuLDucMWOQXcG/8lindY7x+qQNjIXM5nDLSY130R/hqdhW1t0tgEBa+9UoD@vger.kernel.org, AJvYcCUnw3+uOjHk6xDwG3Rfi2PtW40q5OUXwX8R0XAOP+D/iAuhLDTvvKllU5ou5HiPgkbfSuvZJzPTCWmO@vger.kernel.org, AJvYcCWcBN8BmODGFlgOwnSdmyGb2dEgzkEl6DtvqgNdNAfFoYYZMh3CJiWqDPW2SBUGH47sxjwQwXPRvYvBDI6qm6qMync=@vger.kernel.org, AJvYcCXANRnScqDm+KISb1+/jlTyG7R/sAthNFIZOGXjgle6RSQ6w1VxXQkAuF4R92Da2YcEaf1Y7m4iq6UV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc61BobFaSaxMxfgZj0z3unqi5cp+2/kT6UKKf+RSkT3rFkdw6
+	UbN+Bh0HQ5hMgvKxTx/IcNuTbgmBBTczTS/Fg+oMwaF7/T2hauA2E+aCLEIA7pw=
+X-Gm-Gg: ASbGncsGdzdqnA/amfYYGBETAMwoFq9IUKdrWSDUPQKbypeIE3H99HU17MCQzNL3E7Z
+	l5+hDkWsDxnlDODlqJkRmz1ufIT1oBvW42yjV4bxRVdA/bB5SJZ/VTK3oNblqLQpcGpJzgbE7oJ
+	HWwVgCWkQEzJ+nXYW3pra4mK9a6z8zutwm7rMKRUu+qsRwhtoJTXP4r8zyhJ2jIWAUc4eaV9L3E
+	gNh2RnaJY9PvdF30H0PpmO1oa1Bp1r7JwPuwe+1O+fhcql5jOa+oxul+RSUuWjy6SbFSYd612SC
+	qa+ToReA7faF35pr5+PQcICuso0s8ok8OeIfvislrCG56Tkx9zVt/wpYbVv+roiUVdBv3hLqLOP
+	3s7MlrV0rF7dzLdEMfQ==
+X-Google-Smtp-Source: AGHT+IG1P3r6lZGQpPS51ithSyQIBh/VWIs0U5pKnEveqzT6Pfa8KnmVhFcUh1qUjshRf55GgJ9BLg==
+X-Received: by 2002:a05:6102:458b:b0:4bb:d062:430 with SMTP id ada2fe7eead31-4cb7ff26975mr11645408137.0.1745401329526;
+        Wed, 23 Apr 2025 02:42:09 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4cb7ddb2143sm2666761137.7.2025.04.23.02.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 02:42:08 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-528ce9731dbso1791714e0c.0;
+        Wed, 23 Apr 2025 02:42:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0eVSiUiWTwreBnYfjh9Rq/aeDvZkjxfFmIMCFPhy6OESJAk8ZQbhFAjnHmHqJVTCvSKh9WA6pmSgw@vger.kernel.org, AJvYcCU9sxniESFOjCgkInjLMjuCwRvnfK9ZGlYySvActLchTZgi7Dm2CqAFfLjBSZ3HNu1fjopO9AuJF2Ua@vger.kernel.org, AJvYcCWjmKtZOTDIjiRrTPED5TAc0iZvR9RPsXekbW3lNWsXGKPBUD2J9j0NaGZFf0QkdLFp+sNs6WZHq4Tr4KzOOigLDAI=@vger.kernel.org, AJvYcCWoDjABH2Y3FjFUUwT0xDMXPFUDEaHkmFb2uNc6b/UfFZ3/blpUEZUSbkl7z9ezw+Rj6VYkPuQTa2P5ysrU@vger.kernel.org
+X-Received: by 2002:a05:6102:6b05:b0:4c5:1c2e:79f5 with SMTP id
+ ada2fe7eead31-4cb8021c21bmr10743406137.16.1745401327693; Wed, 23 Apr 2025
+ 02:42:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250420173829.200553-1-marek.vasut+renesas@mailbox.org> <20250420173829.200553-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250420173829.200553-2-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Apr 2025 11:41:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVWu2TazTOE0voDkfYBsC=vvrCimPczQw3VYuJyvhV=1Q@mail.gmail.com>
+X-Gm-Features: ATxdqUEuPwHtM8SgzzaD_wTTn04FsK7H3Ks6A19VPHk2n156ixPkKd_kaH6fcv8
+Message-ID: <CAMuHMdVWu2TazTOE0voDkfYBsC=vvrCimPczQw3VYuJyvhV=1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add Retronix
+ Technology Inc.
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Aradhya Bhatia <a-bhatia1@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>, 
+	Kever Yang <kever.yang@rock-chips.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
 
+On Sun, 20 Apr 2025 at 19:39, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Add vendor prefix for Retronix Technology Inc.
+> https://www.retronix.com.tw/en/about.html
+>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
+Thanks, will queue in renesas-devel for v6.16.
 
-=E4=BA=8E 2025=E5=B9=B44=E6=9C=8823=E6=97=A5 GMT+08:00 17:09:42=EF=BC=8CLi=
-nus Walleij <linus=2Ewalleij@linaro=2Eorg> =E5=86=99=E9=81=93=EF=BC=9A
->Hi Icenowy,
->
->thanks for your patch!
->
->On Tue, Apr 22, 2025 at 6:23=E2=80=AFPM Icenowy Zheng <uwu@icenowy=2Eme> =
-wrote:
->
->> +  starfive,force-low-inputs:
->> +    description:
->> +      The list of input signals forced to be low inside the SoC itself=
-=2E
->> +    $ref: /schemas/types=2Eyaml#/definitions/uint32-array
->
->I don't see why you need this hack=2E
+Gr{oetje,eeting}s,
 
-Unfortunately these properties are not for pins, but internal signals that=
- isn't
-bound to external pins=2E
+                        Geert
 
->
->Use the existing per-pin output-low property (see
->Documentation/devicetree/bindings/pinctrl/pincfg-node=2Eyaml)=2E
->
->> +  starfive,force-high-inputs:
->> +    description:
->> +      The list of input signals forced to be high inside the SoC itsel=
-f=2E
->> +    $ref: /schemas/types=2Eyaml#/definitions/uint32-array
->
->Use the existing output-high property=2E
->
->Now I *know* these two properties are per-pin=2E That is more talkative
->but way easier for users to read=2E
->
->Then use pincontrol hogs to make sure these configs are set up
->at probe=2E
->
->Yours,
->Linus Walleij
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
