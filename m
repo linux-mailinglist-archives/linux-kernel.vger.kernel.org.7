@@ -1,216 +1,178 @@
-Return-Path: <linux-kernel+bounces-616475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005D1A98D48
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB617A98CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408AB445833
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EC917A171
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018D627F4F5;
-	Wed, 23 Apr 2025 14:36:43 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650827CCDB;
+	Wed, 23 Apr 2025 14:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cV1nN/Lc"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE8B27CCD7;
-	Wed, 23 Apr 2025 14:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745419002; cv=none; b=MfRf/77F2Qv4QD/6eM2F3cerNWBr7FnSYXJ23JhT6dVtwx6Ksmsj9fGHv4Aovp4mcc3bGcpTWkmNin1v4+2GvTOqQYTRagKLJp3gMgSWH2Hf3vJ+rtxybnsQmgUDMaRtqMSC5x4RvOZoWWBA/ioVGpUq0Atjmrs++vGNnl7YJxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745419002; c=relaxed/simple;
-	bh=jXWH4gWpIEVt9GSvwo7tXrMiNKO8lNf34sBHJdv6D40=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=gwoQGPyPIEbfrDWamOsYAXX2dInhOLMUe8IbdbxK+8Kr4NFxDyOqBRfM9sPAJ0du/ugASnWFhDbcA7XZEYaNBe9JTwWqqYhib7RAEMxF5RSriOtSPnq0/iP/Kgya+9fefgDpLtidlAQn4YDYVwvj+PfIoFVJlZgEDKxAcRArLAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1u7axS-000G3T-Eh; Wed, 23 Apr 2025 16:20:14 +0200
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1u7axS-000BTG-1f;
-	Wed, 23 Apr 2025 16:20:14 +0200
-Message-ID: <b06ede77-541b-453f-9e7a-79f3e5591f66@hetzner-cloud.de>
-Date: Wed, 23 Apr 2025 16:20:07 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08C27CB33;
+	Wed, 23 Apr 2025 14:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745418069; cv=fail; b=WSM9mDD19905AYY6xrKQxCZkhXDyz+nsbccXKNSK2TL+xOJcjYuklR3tzRIK1VV9C9r7odYGc2GcnBDJFQQUdarYpwlMnbT32QBNwI8IkCP9pIGeJKJ7si2ONrCOID47/MWt1HNhdETW2xqRNa4z0Q8nSKwiUf3k7sSqhvj006M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745418069; c=relaxed/simple;
+	bh=scZp+efHiy4ggJrhIF92KMGwT4uySbl8BkdKqjTVjzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GgnvkXL//69zCyBd8QFMTw9UPc5mTAnLv1mSzFX+1gjDGbR1rNJAVPBppas82rbj3D1BT/b/G4dpDD4oq478j2PTp7AU8D912xL77TJQp3JpG0RhVrqQsBl3pP3y9/tHIbyGM2ktZvl4aFse3PDDIfs1iStZIu1V3fzpWtYODlU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cV1nN/Lc; arc=fail smtp.client-ip=40.107.94.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AiZMY/pqVrJGkkWGRer7GOJu+YB144JIWgBsYmwMv/ydQ77WwhX6bLLELuv1eZPbf0OqQZxugqIXov4jbSW0MWuNMjVaV/LPQ9lJC2VowQQEA1Yk9K8U8qnQelKO6NmMMWZvSBKRIbOdfZDSaC92AjjVOMTiXXmzNSimFSQ47mVNclLitYJ2ME5xTVQbVY09ot0BXk+pUrX+npho54cHEJi8igbBDjon/TW5gbddjbmexkpunFo0koO3wjXiuxUxry2BQXTEcoMm8Uhc9v+JBbZ+ZWZplidsEawbgFRph8+JgSB2VdyPtuVU6ck1GKlGC+RUpasRXMYqb9wDydXBBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wy/fwtf7JTaDoyDpLlkdk1R1yBDUMS33mhBvMNAHZns=;
+ b=ECr4I5xnq1py+3MA+rNQQu4Mjxw6DNwsaWaARyh3U+DmrvGyu5Lxj+cTpjHmffSv/xGhrtY61Xb8y390jWEniCaF6a8AsFwZR/DMv3IkYYT5sZCz9eLNzF5Ea70zxVhsRFOopFskNp+X7j7qdwA/zfQfb6Vb7oYlKEwyZMzE2rUZlGh/QBtcKFQzPRi5dgTaIxQdwRDpLY5k4TahkqYus9ciikpxEfdA1A1l++KrwFUT4A2UyRs9yUZlrNFVcVMIJuinjLsMS+1JDo/qS8fuovbPPQCBbCTTa7EtiFN1ZvO8+mQeyaN59lJ63eT+wD1K8nQqcNEyBMU0YxgifE8MdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wy/fwtf7JTaDoyDpLlkdk1R1yBDUMS33mhBvMNAHZns=;
+ b=cV1nN/LcXeB9CFV205saFl09xdlF5CBb0EySWao04RU9I2+bBZ+35wfI7oOwFij0TIGdibyafLnkDHOBqK/XqB5w04GWQN9vj3DPNYb6jSodXKrxgqRVx/Fx17iFnCmkkcJezfbQqwXuJ7VQGlJasPbymQhCBXrXKlBnNcKOFuRdcCgq95PUaOfP5uPXnHhgSaEWHPDEVTmDB+lJrXXEIF5M07K6eftrvVXFKvdeFPAKyB27sWpfnpXwaE+AvAj4QUdBPkjZ98h+om456XV6rKqUv1mnZQiUUedovw0GJB2YCe6i+XJNOs1v/vi1q2kpBh5n2AAd6Ex4BER57yl7YA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by IA1PR12MB6017.namprd12.prod.outlook.com (2603:10b6:208:3d7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Wed, 23 Apr
+ 2025 14:21:04 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8632.030; Wed, 23 Apr 2025
+ 14:21:04 +0000
+Date: Wed, 23 Apr 2025 11:21:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, shangsong2@lenovo.com,
+	Dave Jiang <dave.jiang@intel.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu: Allow attaching static domains in
+ iommu_attach_device_pasid()
+Message-ID: <20250423142102.GL1648741@nvidia.com>
+References: <20250423021839.2189204-1-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423021839.2189204-1-baolu.lu@linux.intel.com>
+X-ClientProxiedBy: BLAPR03CA0005.namprd03.prod.outlook.com
+ (2603:10b6:208:32b::10) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Michal Kubiak <michal.kubiak@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Jay Vosburgh
- <jv@jvosburgh.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- sdn@hetzner-cloud.de
-References: <d33f0ab4-4dc4-49cd-bbd0-055f58dd6758@hetzner-cloud.de>
- <Z/fWHYETBYQuCno5@localhost.localdomain>
- <ff7ca6ea-a122-4d7d-9ef2-d091cbdd96d2@hetzner-cloud.de>
- <Z/jPgceDT4gRu9/R@localhost.localdomain> <aAEUcXIRnWolGWnA@boxer>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [BUG] ixgbe: Detected Tx Unit Hang (XDP)
-In-Reply-To: <aAEUcXIRnWolGWnA@boxer>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27617/Wed Apr 23 10:38:53 2025)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA1PR12MB6017:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06c86477-924c-4bbf-6fcc-08dd82721463
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MUSC9Ik3yZm6AMm3x9lG8b0eaOqBgTr5MTjuuBcdwwJw0VR2Nh3ZiuK6+Pwj?=
+ =?us-ascii?Q?ME5qMf+m/0LseEiHOPujSu67cvhvud8q9e5ebv/NHsXSOZB6DsruEnxzcd9j?=
+ =?us-ascii?Q?Pl2Fxh/6ZBDPJGL65ZO5SVHsn+/YgMvDG/049+3Wm4520ZRRkAFFoJ0ZxAk2?=
+ =?us-ascii?Q?E8TLVoSchwaYCWNqVIuDPj3ZcHDEe+u6EFTAFc2SpHE+Hc7/tUE4Zbwcf3cz?=
+ =?us-ascii?Q?N033lZkZ4QkzkUzOBItPqWcwLsefIXYLt3HFhwKzJe5QKHx8ppicNYwvPJGq?=
+ =?us-ascii?Q?mZlD0xxmkpNr7JBsvNYBlY10St5UrCQX0JnibSdaS9aNCvK/fmmkZ7hqnUIU?=
+ =?us-ascii?Q?SgCSFRYKnI+tGygA70kPzg7/kFkI/bAl9zulIDYpVdDe/m31SZRqCqYHtUsl?=
+ =?us-ascii?Q?s2RSfx+JOXwX3d8vDp62g3wzg7Nu97GbcWtAThxa4TD+6Pw8xYzxafFExvL/?=
+ =?us-ascii?Q?Hb/mM0JMCQN56XfWjRq+gwkmdbRJ/i51gb1bVFrea6I3aXJ28dhRxsVpAj1p?=
+ =?us-ascii?Q?0kCapZLBjvjn97isiPywJJ0WCZsSm4eFY7obRJJw/6prTkGxDQZoGw2nSe7p?=
+ =?us-ascii?Q?/ZBB7pDuG5ruBLTxeN1kEQFIZ698qlWViWfuaOfR7YR6gNoQvxhGce4+oALU?=
+ =?us-ascii?Q?Z527Wj+HnuGgoOFzWL1NnyuQXFob7c+SycoX/luAlji/J5VzGIyK8nJKshyv?=
+ =?us-ascii?Q?i9S4ybRhK0iKPtOroCQnYP0sb74tLFqdIx97UKD/ZNUfOEEkx8S4dMZSpqSx?=
+ =?us-ascii?Q?p1tmlM1oxwclihCKyNCtv664C5TEJyA6duXLGpEaRrRvlC9enkD2psnSDozc?=
+ =?us-ascii?Q?Eog5isuBjaP3TV1KlfJkaY8LcR9Q1SPxhamxV7S/PAeTqKe7y6Yc7Rqbk3S3?=
+ =?us-ascii?Q?ZfvP957yKYdQT70WlIl/cmr5tzbOPa9OVZ2f9SEGBKe8aPo0tMid0erc735+?=
+ =?us-ascii?Q?wNPOOdGz/iUaJUkzhkJXAenvmrSo4RK8gBe7ff8/OUNj6UTVTsLDhguBDz6A?=
+ =?us-ascii?Q?F3ZpNb5TY26NV/pR/99zUUHfOvQXHbNd1QMKzw9y3N9BPRbHESlEGsgaZdjQ?=
+ =?us-ascii?Q?wLtf2fxIr1ESWMxPI79RqBGOIwrC/fVnUn5J7JMiSVGb8aBAMmFB6FNYWakK?=
+ =?us-ascii?Q?0mZHOAv6o2zdeAu1cQEX4BJdmO1uOcOxQeNSWVMXHdL76KTcKwRQvC46G7Mb?=
+ =?us-ascii?Q?5M3Swj4WLCyZObbgnEiw3fgQNUG5TckyRZXLwMARiL4ex+oNLkDY8LNUqfK0?=
+ =?us-ascii?Q?VJjQtS0kn9n3qHxSHDoK37jKFk7+8TKSZI+9J921LFdUrRbROBq2OG7Xzsri?=
+ =?us-ascii?Q?EpZfJw1kVSkV0Lr/PVQhM2MK6SoiApAqjgbQ3JQIsZicxLWxptrVMC3MxFY3?=
+ =?us-ascii?Q?50kRZpcSLilU+9KNP53aIkGkN1UGNKKlkoz3GoNS9/AQ1LcTVoiUcAXENQyY?=
+ =?us-ascii?Q?N2uGdqdaY0A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cMqRLQAzu6vtgf0lTonxTgAIErFU7AQkA4kTjv37Bi5YbFzYTp7Xh/biTXYD?=
+ =?us-ascii?Q?eF9/qHUspsu0GBRpRNJyx9pGFSUV7+4fJcnhvRr+L2XiBQ5w0PMviLygSyAe?=
+ =?us-ascii?Q?NILXdiuTT/9QSSeEUbXOK9TQcYeY99a0zxil8zo9+khDUJVGzP5fUlqvKDGb?=
+ =?us-ascii?Q?Ffy0QV+wA1LyK6SF37LkxvitAnz4F0quXV4wPDE0Dnf4NZVd0Xi3qkSZB0b7?=
+ =?us-ascii?Q?Me9eM5nBJvTCdZpFw6qrZ3xJ6IplZsRmP6h8KnFBFe49a8YrluHQEQXhuZ9y?=
+ =?us-ascii?Q?9wtqCMJu4+ibNO+gYKX6yQjYz5n2gmmLOFIoTJ3yyBj+BBQBr4qhxr5gPNil?=
+ =?us-ascii?Q?q0xKP+ObXTSLCctxevrX2ZDyWoxPerb8JPXU3cwk4bp2kg1Bom1u0wdjgA5X?=
+ =?us-ascii?Q?tMldeeL4ae1EXI02Dds4eWIRg2DmxzVhxDbZeZNUsFIBQqHn81pppmDgfb7L?=
+ =?us-ascii?Q?M1+SRNKcpOP+E0XYjzlvdejRfdf6AK4M6AkWVqd813Nn7XRYk8dU+tVfDSbk?=
+ =?us-ascii?Q?TMbAcFXiLwq2/MHASbD6OODmOHYy1qjowq/y9J+i68TkV1jr08v13F1HHhM/?=
+ =?us-ascii?Q?fhT9I7nuF2KgHm69ivcYwLisY8JGRlUWDoypDSVU4JVWHZ6mIUZufhnzwqyx?=
+ =?us-ascii?Q?rs6G9MKw4Z4Yrv6NA2kXI6TDuCQF0VYhS72UPpYaS1Hf2CcCk4WsqRiFpcGo?=
+ =?us-ascii?Q?eBS743imjq7SDNtaWuL1DYS4zy7I3i1P45kudih+o2dN3HmQ7Qtiy6jcC9zH?=
+ =?us-ascii?Q?ZU2KE9a1rIsoLucV8cOZ8lZM/B9ezR3D7b9otUJVjrmJkR96rzplV86bSkNp?=
+ =?us-ascii?Q?y+ymuhPJ+RLwRyBIOKx9/uN8XecJ0ID+5hX+lRIXC7uUWdEFyWgMEgs6+RmM?=
+ =?us-ascii?Q?qaM6lJjF2u2xnftPlsNENmb5QOWP7rjCPecLH/V8PFmxbddSYl9Hgn+yTDLN?=
+ =?us-ascii?Q?4k8eDP0lyR0qMAW3HQY2oKD6Awbe8AF6ltbSJA+BXHlfLOKNqd2RdRxnlLjW?=
+ =?us-ascii?Q?kWhvlLgvAi140KYvNdSrxeS/XiYPGRNmETQUUs01WsvTA4COt62BxUvKbWxQ?=
+ =?us-ascii?Q?r8XTTBI4iLNR++ZyHrszrfONPy7hbEAqVPd6alqR0Z8F3DBsXhrYSq2NTJ/j?=
+ =?us-ascii?Q?uV0F1ygufrLhh2l1X3sBvlgQsuQtnjyFzA4GSVq0RMSHQVdSSgaHKEo1l91k?=
+ =?us-ascii?Q?QbfBTqn0o2p7oSTiMIVimbBMOFIJSl44ceZjJUT+lhw0nUOt3FBKUR+OiqrU?=
+ =?us-ascii?Q?JGagFOpl4Zcvpo7vE25PUOuHnHds0pvtguhxPd37/Yn7ekrsGUZRR0faQfKJ?=
+ =?us-ascii?Q?4giYyPgcBhVazMqA9abe3sLmW5mV5HaL3XeWdUIPPw0dABN5p3KmtlN5l6An?=
+ =?us-ascii?Q?FRRoVHXPNVchhL6zVDIBRheVts7k3o6ucE31ota1kNx9yOGQ0hQfh9oeU7XU?=
+ =?us-ascii?Q?7L8KggXBqEFsvgqyFTXPGko8le1ZPdV/KDNO0aDW/4EhXqro5Hmcq9l9RlJz?=
+ =?us-ascii?Q?3T6BmedUt7HQLC1nh4Dy5L2P0zGsOgfQ5MoCTrctuOnR/BcphAy1BICXZUpz?=
+ =?us-ascii?Q?JbkqerTybooXx6F88U8y7soffu0yCZvhHZWB6IA7?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06c86477-924c-4bbf-6fcc-08dd82721463
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 14:21:03.9317
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6Qp6jkwK9AX70JIZ/prMYQ2M1q12K48DstL5EcNX3NLoMUWw3Ersxav1TPp5AWz8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6017
 
-Am 17.04.25 um 16:47 schrieb Maciej Fijalkowski:
-> On Fri, Apr 11, 2025 at 10:14:57AM +0200, Michal Kubiak wrote:
->> On Thu, Apr 10, 2025 at 04:54:35PM +0200, Marcus Wichelmann wrote:
->>> Am 10.04.25 um 16:30 schrieb Michal Kubiak:
->>>> On Wed, Apr 09, 2025 at 05:17:49PM +0200, Marcus Wichelmann wrote:
->>>>> Hi,
->>>>>
->>>>> in a setup where I use native XDP to redirect packets to a bonding interface
->>>>> that's backed by two ixgbe slaves, I noticed that the ixgbe driver constantly
->>>>> resets the NIC with the following kernel output:
->>>>>
->>>>>   ixgbe 0000:01:00.1 ixgbe-x520-2: Detected Tx Unit Hang (XDP)
->>>>>     Tx Queue             <4>
->>>>>     TDH, TDT             <17e>, <17e>
->>>>>     next_to_use          <181>
->>>>>     next_to_clean        <17e>
->>>>>   tx_buffer_info[next_to_clean]
->>>>>     time_stamp           <0>
->>>>>     jiffies              <10025c380>
->>>>>   ixgbe 0000:01:00.1 ixgbe-x520-2: tx hang 19 detected on queue 4, resetting adapter
->>>>>   ixgbe 0000:01:00.1 ixgbe-x520-2: initiating reset due to tx timeout
->>>>>   ixgbe 0000:01:00.1 ixgbe-x520-2: Reset adapter
->>>>>
->>>>> This only occurs in combination with a bonding interface and XDP, so I don't
->>>>> know if this is an issue with ixgbe or the bonding driver.
->>>>> I first discovered this with Linux 6.8.0-57, but kernel 6.14.0 and 6.15.0-rc1
->>>>> show the same issue.
->>>>>
->>>>>
->>>>> I managed to reproduce this bug in a lab environment. Here are some details
->>>>> about my setup and the steps to reproduce the bug:
->>>>>
->>>>> [...]
->>>>>
->>>>> Do you have any ideas what may be causing this issue or what I can do to
->>>>> diagnose this further?
->>>>>
->>>>> Please let me know when I should provide any more information.
->>>>>
->>>>>
->>>>> Thanks!
->>>>> Marcus
->>>>>
->>>>
->> [...]
->>
->> Hi Marcus,
->>
->>> thank you for looking into it. And not even 24 hours after my report, I'm
->>> very impressed! ;)
->>
->> Thanks! :-)
->>
->>> Interesting. I just tried again but had no luck yet with reproducing it
->>> without a bonding interface. May I ask how your setup looks like?
->>
->> For now, I've just grabbed the first available system with the HW
->> controlled by the "ixgbe" driver. In my case it was:
->>
->>   Ethernet controller: Intel Corporation Ethernet Controller X550
->>
->> Also, for my first attempt, I didn't use the upstream kernel - I just tried
->> the kernel installed on that system. It was the Fedora kernel:
->>
->>   6.12.8-200.fc41.x86_64
->>
->>
->> I think that may be the "beauty" of timing issues - sometimes you can change
->> just one piece in your system and get a completely different replication ratio.
->> Anyway, the higher the repro probability, the easier it is to debug
->> the timing problem. :-)
-> 
-> Hi Marcus, to break the silence could you try to apply the diff below on
-> your side?
+On Wed, Apr 23, 2025 at 10:18:39AM +0800, Lu Baolu wrote:
+> @@ -3435,7 +3448,8 @@ int iommu_attach_device_pasid(struct iommu_domain *domain,
+>  	    !ops->blocked_domain->ops->set_dev_pasid)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (ops != domain->owner || pasid == IOMMU_NO_PASID)
+> +	if (!domain_iommu_ops_compatible(ops, domain) ||
+> +	    pasid == IOMMU_NO_PASID)
+>  		return -EINVAL;
 
-Hi, thank you for the patch. We've tried it and with your changes we can no
-longer trigger the error and the NIC is no longer being reset.
+Convert all the places checking domain->owner to the new function..
 
-> We see several issues around XDP queues in ixgbe, but before we
-> proceed let's this small change on your side.
+static int __iommu_attach_group(struct iommu_domain *domain,
+				struct iommu_group *group)
 
-How confident are you that this patch is sufficient to make things stable enough
-for production use? Was it just the Tx hang detection that was misbehaving for
-the XDP case, or is there an underlying issue with the XDP queues that is not
-solved by disabling the detection for it?
+int iommu_replace_device_pasid(struct iommu_domain *domain,
+			       struct device *dev, ioasid_t pasid,
+			       struct iommu_attach_handle *handle)
 
-With our current setup we cannot verify accurately, that we have no packet loss 
-or stuck queues. We can do additional tests to verify that. 
- 
-> Additional question, do you have enabled pause frames on your setup?
-
-Pause frames were enabled, but we can also reproduce it after disabling them,
-without your patch.
-
-Thanks!
-Marcus
+Jason
 
