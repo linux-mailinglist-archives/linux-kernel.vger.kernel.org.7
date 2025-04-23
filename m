@@ -1,126 +1,88 @@
-Return-Path: <linux-kernel+bounces-616776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CD6A995E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72D7A995D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 208957AA151
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:55:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D4497AAF16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 16:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE228A1C6;
-	Wed, 23 Apr 2025 16:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PAFBRest"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A323289342;
+	Wed, 23 Apr 2025 16:55:09 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A40CEEAB;
-	Wed, 23 Apr 2025 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5712701BC;
+	Wed, 23 Apr 2025 16:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745427399; cv=none; b=LsB6niCLRKJRBiN14o1g8zB7o+KC0ypDij1NT1Vzp3/rOrjOiUJ13ziq67oqY8DkZUVTGXwIVv6gfDliqlMxiOT2x67Y2wmKrFR1OhOWYqSNYNlbjWdvS0pEZJX6daH8Yks35VFhKAt1DyxoZEaSNF/OymD+btPIMjoOk0qheag=
+	t=1745427308; cv=none; b=RNRDyE0r9bRy36fZ2MQAIt70k547BmHh1lEYQDoq2QkJiltSoLfanwODmkZZ0qgqw7EXIwoDOhrRpMHjaQ49/AW8IIrt44Gvz8VkwR/iLMJYRpSNxrUKPTmRDUmwW2InRvJHoIm50dKB7i/Vleq13YwZOwfOGeerTMATVukuAZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745427399; c=relaxed/simple;
-	bh=hW7Pk9hidnmZtQDNgmt/o9awtQ9RkrTmjYfXAKrfR4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBseU2o4zdsjIsu7W1DYRhZT0Hsaul6q2YF0tjvAasrJygKpC7atx5UofqEU+AWTlqLb5u7kUvf2pHUnFnKI7jJiOOS0fpW6EuuhWGl4P2XIb8kCbzjzyKTcK6dlyGV4cZY3EFRjE0tCBIwOyRLehT2GmYmM736asqeGaMRePtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PAFBRest; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-30549dacd53so85666a91.1;
-        Wed, 23 Apr 2025 09:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745427397; x=1746032197; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gFR+gOpkUdQbM5Rh+p84V4szSqyZ4YTz2YuAgB5+XD4=;
-        b=PAFBRestu9t3LNOmJ/Fj/ZRinDNUY9vLnYIcAYWbLBAhP5GpiufbsP5jibyxvG2wYK
-         CXzb4WUoXV9jsqQnicLBlfczmG0hRd/i/U/pQWT5oRCQK+vniZHAOvV6da6Q0luUO/QK
-         QByvnB5ewOSqzmqGPWS1C/oGetG9A8jhVhDyY/7IcyNaJ003j0Zvz3bX0L29QEFnKMOV
-         62maqVzimY3ChV/hRGP4nwsfV4EL1DXoXjMVPXvrQ65n+QBaFum7u6Mwl5ntg0j10qpM
-         irxE7YQzcS8QZZFaTQHqh1czR2Dn5uoCRkh6M1cx5eJxyioYe4JmbFuyCez1XLxBPDgS
-         eZJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745427397; x=1746032197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gFR+gOpkUdQbM5Rh+p84V4szSqyZ4YTz2YuAgB5+XD4=;
-        b=fpde4euCop9UQCsnAI/Sx0Vdrva60IHEyUZi/x8AtMS5cQHoQOKO+w0j2+jnPZiD/2
-         kx7SrO93D4I7f188gwlXUXCPSNqClDK04XLLIXhidLXrgWoLlZYDlsum05A+Xe1c3WjI
-         JMu3c46d1MhwywL2Hx4MYH0/UyIoxnw6CrEA/PVAyyorx9NFQzabu85R+wAvG0VOWkT6
-         /w/axq0cLCxcXNsDakxvpozvE8Loj6C7JcB2rfFDN09we+lpThTvGgRfB18x42Vq6hx/
-         Y5VYqLx9Kj79OClhvGYL1GX7LXFtfPWh9z0z70B9qF2m1XxzqNJS6naF9RjmpJEyYk+q
-         Y1ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgE0dHBu0eDG768k3RPr5ZHjUYNXG6VWQa9ay8paoQjwlc6fznwc3Q6u6hx3f7UQN6jHafYLXK/pVKSkNB+1Q=@vger.kernel.org, AJvYcCW1bcaKqAgQu1nhWA4QBZE8Xmt90PelqCChfuC4E9t8SKDc5F7LcK42jnF+tqkGOg3M3cPlYDRDv981HkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwdDiHLWHjko6h3dIxpjjL1Li6z0xM5fVxMUI7J7ora/1fHvcQ
-	EdSMCidu8Mjc+TEojzVDiVYk2MaT3I5tNLKVPXyeOzdOa4R8Mb5gabZcjX1+
-X-Gm-Gg: ASbGncuSPy2YB95qCO42O3mDY3JDYG/BPVUD0ordsktfhTTy/2s/cY5Lfk7becaevbA
-	+4PYpz0LgfO+KRUzuCvDCcXsrceBdXkf/bK2YLaPGheBfqAL2ggedGdZHNXZgnET5zZWK9XD+Bh
-	w9v/Os0lgx5OYIuGmgAaiuYxP34IYykRUbxOrQe1alg1BRuYhlLc0mewoUST+uf7CUTna2wKOjh
-	gzUlHst+RhPc8cNLGnVswMqy5bL+iX9OvWMQw4SE8CeiO46auvYOfjUTJ7WDcUVYEJ7JholAkjf
-	qg6Gnvk5iQdPk3K0Iz79ye2dggkh1D/ltB3W6UjGa5vKxUIdIlQ=
-X-Google-Smtp-Source: AGHT+IGOzI/P+2LneiNF1O16tla7Q/MbcQEZMA6Hku4ZstXoTDMAFNtlVy+fvZGtP4CDretd8agBiQ==
-X-Received: by 2002:a17:90b:55d0:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-309df0b1fb2mr4983708a91.5.1745427397302;
-        Wed, 23 Apr 2025 09:56:37 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309dfa0ac07sm1865161a91.15.2025.04.23.09.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 09:56:36 -0700 (PDT)
-Date: Wed, 23 Apr 2025 12:56:35 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Burak Emir <bqe@google.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] rust: add find_bit_benchmark_rust module.
-Message-ID: <aAkbw0jEp_IGzvgB@yury>
-References: <20250423134344.3888205-2-bqe@google.com>
- <20250423134344.3888205-6-bqe@google.com>
+	s=arc-20240116; t=1745427308; c=relaxed/simple;
+	bh=iwMhWxLCcrPUFQPNwgY0pi2f2ZlK1C+Grx1MBipWhk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NSlDJ/YYjF0VGYz4ELoaR8I/oTL2CcxVGEUjq2isSI0Eng/v/JmpaJy2mwWVUwTUBEbIxWrC0MNEppTbBxkAzWt3xDejRqI3ygbQR5H5Ukv1JE4qECi7bk1I7nFnbtuqiCoZexAuDq4JWOQGXITjeGtkhcE0TA0duwGMJIUWGz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE02C4CEE8;
+	Wed, 23 Apr 2025 16:55:06 +0000 (UTC)
+Date: Wed, 23 Apr 2025 12:56:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Libo Chen <libo.chen@oracle.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>, "mgorman@suse.de"
+ <mgorman@suse.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+ "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>, "tj@kernel.org"
+ <tj@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "llong@redhat.com" <llong@redhat.com>, "kprateek.nayak@amd.com"
+ <kprateek.nayak@amd.com>, "raghavendra.kt@amd.com"
+ <raghavendra.kt@amd.com>, "yu.c.chen@intel.com" <yu.c.chen@intel.com>,
+ "tim.c.chen@intel.com" <tim.c.chen@intel.com>, "vineethr@linux.ibm.com"
+ <vineethr@linux.ibm.com>, Chris Hyser <chris.hyser@oracle.com>, Daniel
+ Jordan <daniel.m.jordan@oracle.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, "mkoutny@suse.com" <mkoutny@suse.com>, Dhaval
+ Giani <Dhaval.Giani@amd.com>, "cgroups@vger.kernel.org"
+ <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] sched/numa: Add tracepoint that tracks the
+ skipping of numa balancing due to cpuset memory pinning
+Message-ID: <20250423125659.3585b540@gandalf.local.home>
+In-Reply-To: <720D1AD7-112F-462F-9ECF-A060670D62D4@oracle.com>
+References: <20250417191543.1781862-1-libo.chen@oracle.com>
+	<20250417191543.1781862-3-libo.chen@oracle.com>
+	<20250423113459.0e53be50@gandalf.local.home>
+	<104BC9F8-AECA-470D-9A9D-C4AFA3D4184C@oracle.com>
+	<20250423121219.15d5c2ec@gandalf.local.home>
+	<720D1AD7-112F-462F-9ECF-A060670D62D4@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423134344.3888205-6-bqe@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thanks!
+On Wed, 23 Apr 2025 16:50:15 +0000
+Libo Chen <libo.chen@oracle.com> wrote:
 
-On Wed, Apr 23, 2025 at 01:43:36PM +0000, Burak Emir wrote:
-> Microbenchmark protected by a config FIND_BIT_BENCHMARK_RUST,
-> following `find_bit_benchmark.c` but testing the Rust Bitmap API.
+> Correct me if I'm wrong but can you disallow any passed-in pointers to be
+> dereferenced when TP_printk() is executed? This is something you can check
+> at the build time, right?
 
-So? Can you show your numbers?
+You can dereference if the pointer is to the content on the ring buffer.
+For instance, you can have:
 
-Can you print the existing C test output back to back with the new one?
-Can you also ask 0-day folks to enable your test in their rust config?
- 
-> We add a fill_random() method protected by the config in order to
-> maintain the abstraction.
-> 
-> Minor fix to the documentation of the corresponding C config
-> FIND_BIT_BENCHMARK, it was mentioning the wrong module name.
+  "%p*h", &__entry->val
 
-Indeed. Can you make it a separate patch, please?
-  
-Thanks,
-Yury
+It dereferences to the content stored on the ring buffer.
 
-> 
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Burak Emir <bqe@google.com>
+What we can't have is:
+
+  "%p*h", __entry->val
+
+-- Steve
 
