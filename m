@@ -1,203 +1,145 @@
-Return-Path: <linux-kernel+bounces-615605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F68A97FD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:53:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF83A97FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57EE189D1D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CCD16BAAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0FE26D4EA;
-	Wed, 23 Apr 2025 06:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED82673BB;
+	Wed, 23 Apr 2025 06:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cjym+OdG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nzk/RtxS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="rRvB7UGL"
+Received: from silver.cherry.relay.mailchannels.net (silver.cherry.relay.mailchannels.net [23.83.223.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83340269AF9;
-	Wed, 23 Apr 2025 06:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745391050; cv=none; b=EuOAH8Ehj2YGjaqMWOxVd7k4bqXiANMINHo6c936paWosAu5Q+RBICPAXy5/Upa7DbH3vEgTq8TTZmEBCMKyDB8lMo+NMePpo042gJ4fACshtFGoMXE6GZ883urYj49rA9bcDYdT4SGiOI4OqE9INeS2gtP5Pq+RVM/49NvU48A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745391050; c=relaxed/simple;
-	bh=l0l5nu8kjh36e//5AZAMxsFhAqbiHcrhJ8w4MU7glLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Is9K0VxK+fePv0kxvC/0FZnk7enjByqtafeJddp6jsamezFZYgARqvsi/dUAm+ppyywoFmIL4GeTXENeV8PZ1fUUHMBWeQ2lpdJnZtv5t0RUkT+hD7Sc+R23qGm/i7ZgB3qvj3wj4vaDN16AJXVGKEsWnul0hxCefuErvrTHsJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cjym+OdG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nzk/RtxS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745391042;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AE264602;
+	Wed, 23 Apr 2025 06:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745391501; cv=pass; b=l18hu/WHfafxYEQDwvA1o+NdUMjE/b/i//UzXBqWvLffu74yfjYaaDRU7tH61/AjoJBgnGpoPmmQzTZIDfGP8s6Lip+Kq+8xKiMQYYtSOoXJEZnL9AnXYMxKT7iBXuGHmQBkZ2dy5n8zDe9eufQqoxZG91pHGwY/pRaaSDqhT7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745391501; c=relaxed/simple;
+	bh=9Pv/UqOlGAz6M6uYoscsoU17c6hsgoL6aNA1kJI82qs=;
+	h=From:To:Subject:In-Reply-To:References:Message-ID:MIME-Version:
+	 Content-Type:Date; b=pQE/Ta7rkcSJ16ciQgvaggtRHIg77T3jk5OE0+d8eg97hjcAV0rq4owQjYLjeVjeXfrQO2ThZV2GItSyZ+Il6vUGwozyJZz9qJ7sVDS6L727c4qKVUWZNxnqM1CBOC+YM/6SB2aVuIxNPYeaYrzlxmEh2lTbHgRRGi7SGwr3/70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=rRvB7UGL; arc=pass smtp.client-ip=23.83.223.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+X-Sender-Id: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 8F84B8439E0;
+	Wed, 23 Apr 2025 06:50:25 +0000 (UTC)
+Received: from fr-int-smtpout9.hostinger.io (trex-9.trex.outbound.svc.cluster.local [100.113.64.21])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 853AD8454F4;
+	Wed, 23 Apr 2025 06:50:22 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1745391025; a=rsa-sha256;
+	cv=none;
+	b=qb188cWjCtdZiVZpRIaoNuQW3H0UKtf7otGdFXrbvLzX9aoJPDUeTZU9aTZdydp2u7q/22
+	xGa2ZIUDQAcdI/TqYrrZmAvqHXPIpgBSgH4MZVyE+QjQsoBJ+DtOMS3KwxWymZMa3UDk/g
+	ukMnxM0q7kPB0Ibm5SLS8X7bHfgB5zLqB9shoMnOyrSkCP24iy6a6yr/I8HC/iw6ShT/Ex
+	U5+hlUxiA0CI5ojAWeC5O5hROuKHLpKs7BE/CBf96XgzJy9epJFwC3uE1ZXIqGhE2dQhRZ
+	flgctoRv7vvSxJUgvf+2c9oBb/TKSoN3hJyVIWtpEfaupoS+yO6lfXxYu0xy5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1745391025;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=9Pv/UqOlGAz6M6uYoscsoU17c6hsgoL6aNA1kJI82qs=;
+	b=axu470fjexr5bBgpmPZCQ2/FBnMxiy0wl7SLsnALI/P/egdVmRWUKd99dKA0WDabNZiyFx
+	r6sncISV6RL7ej5JUUv1O/vqLC1QGhX4emtL97N6ZMFeSrLtcMdLlEszq/8jjoXYpcBH+u
+	eXGflSWVo7WrbTeMcydps5giED9lvdwPlINjFU4MJvRbOVBR0vQO+ckn7hjfESpyDL7ysv
+	fRWA/ZwV4n07I5NfKZIO92egYRZkH/N7Cy/uzrYdi6wIe31BPoV5UQ4B/ug/hR13YM8eQK
+	bxBjPQtXfyRbUVyRyfdrOZKGm/g216jKAl4JmjQLIsvZhLtjXoFl5MjIfs0wBQ==
+ARC-Authentication-Results: i=1;
+	rspamd-5cfcf5665-kj6cg;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=chester.a.unal@arinc9.com
+X-Sender-Id: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Madly-Rock: 5ce5863d4316f6a1_1745391025410_3471300557
+X-MC-Loop-Signature: 1745391025409:59469947
+X-MC-Ingress-Time: 1745391025409
+Received: from fr-int-smtpout9.hostinger.io (fr-int-smtpout9.hostinger.io
+ [89.116.146.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.113.64.21 (trex/7.0.3);
+	Wed, 23 Apr 2025 06:50:25 +0000
+Received: from [127.0.0.1] (unknown [82.165.193.131])
+	(Authenticated sender: chester.a.unal@arinc9.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4Zj8qv5Zy7zH9gKF;
+	Wed, 23 Apr 2025 06:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com;
+	s=hostingermail-a; t=1745391020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nmxRsKAqM1+s9Ie1IxBxzQWx8Fn4Xqe0sRiBYYmgM5E=;
-	b=Cjym+OdGotGMrFn5+xOzq28wuizYOf4OUKSjNB4sXhoUL6kNM+rMAZKa2npuPzr+n5il+5
-	m6M/IDzVy6HHPBPASEX7xRtAS3H3u/RTj1C1C2EO/S9mG990Dxi2QtGeNDgNTTjD1xy2Ew
-	2gRO9+sCGXNATgkH+hfXTSvqOpDDdE3YKdEh9sI25vKEfjZjNsSVVzrgo+op/qarZaaedL
-	Iv6DC/ir0kfz4Uo7osva7UrHeMTZadlhQ5n1YW5FmdEFxxvw/jO2tR+7qLB0tN2/uH6At3
-	ZqErjbHBRHO/ZaKtTKSQQkje5E6GllPQo3HdXi/n5o/BEut1NMCn6DzNdCx8Rw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745391042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nmxRsKAqM1+s9Ie1IxBxzQWx8Fn4Xqe0sRiBYYmgM5E=;
-	b=Nzk/RtxSn0TUJo+k1gY5Hms7Sox3vLoZFMTnKMN/rBNnOlJHelvC1/icnTscuAYrkHp6E+
-	HVitHDAFBfucJQDw==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v4 22/22] rv: Allow to configure the number of per-task monitor
-Date: Wed, 23 Apr 2025 08:50:17 +0200
-Message-Id: <e7b15c18858bcdec02ebf579bc0db2ddd70ca8b8.1745390829.git.namcao@linutronix.de>
-In-Reply-To: <cover.1745390829.git.namcao@linutronix.de>
-References: <cover.1745390829.git.namcao@linutronix.de>
+	bh=9Pv/UqOlGAz6M6uYoscsoU17c6hsgoL6aNA1kJI82qs=;
+	b=rRvB7UGLlhnr2BbHcKSDyclrFwluPsInB4qipbV+vlBsPug9CFdnHftTOskq2E/dCz2xUp
+	AcLog4x5bbhEaidnEpJdHReYT5zNwyBRIQbAwZnC1VYkjQUSPC136hBUFskj0dKs4Us7gx
+	ozVSucH4wd/TpmTrkeu6wM0CDc9oi5P2nsNy1xxxv8VN4kz5pb83jTx5ohx1sI2tNDpvQX
+	FyRIWOa8FOKrneq42GIaa735xlx05dCACwg72o0LfCXWYtmOCYEZ+qCltD14Mvt9T3k0cq
+	P9A1Y3GxWaeFOQdQ0WU7vNeGo9Ts62fghjqPtPWJxJmR/BhPzCguHzPo31M6lQ==
+From: "Chester A. Unal" <chester.a.unal@arinc9.com>
+To: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Neal Yen <neal.yen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net=5D_net=3A_dsa=3A_mt7530=3A_sync_dr?=
+ =?US-ASCII?Q?iver-specific_behavior_of_MT7531_variants?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
+References: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
+Message-ID: <F9390C07-3C4F-47FD-A89F-FB5A90D38A84@arinc9.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Date: Wed, 23 Apr 2025 06:50:19 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=Vv1xAP2n c=0 sm=1 tr=0 ts=68088dac p=VT4XjZGOAAAA:8 a=TIbRxBwJK3FFcHPSi+5Ynw==:117 a=TIbRxBwJK3FFcHPSi+5Ynw==:17 a=IkcTkHD0fZMA:10 a=puQWGBksFvoA:10 a=mpaa-ttXAAAA:8
+X-CM-Envelope: MS4xfF7jBa0YSLhlk6TV6ePe0WqoEsEHXS/cCyxaL7CiN4ZJkDGyZ+GqpqGiK5D+idyg+8D8/oDxxYUsTDDfLVfPAJS+bN6nhtEqFUDRvS7JSJujUR6lyArD umz16IOW50tygTML3dnxJ/Ax9NSrfrkKHctd+ZAXuDTP6A+pbEamzCG8T7CJxcIW2QfGEdWvL9FIkMfJSkzpbHmf4W5kcxkqMr12YPKtnSnFUZrzYtrNRGK1 X8cbF+cP/MOjv0UfEDkG9c5yuU1qIJluG86fbzi9kZ6GfO0McKSWn8FSWNwgYw2ziPbaDJmzHIFf0UVaQzJ8ADXCKBk9tPCCWIFbSW+2ui6M3qfgzZrBVfDq xMoH6IQHrW5wt8uT8dakwQ7OhBTXGB8LP2DK43Fo5DKcT/IimXk16yutnIQ6Vry5FxKsU1AzNjXZWwRoEpxEsvuK6MhTVrT7l9C60DUwrbyu7qSAhaeGooQi X3w11FSs70oyJHslOoksrjK0AR2BptQDW5j+LrWsU+jg9NivyRf21mIroMbMQ+NV+VdKmHdKt+kIKbgseAYtZlsLaVm8u2KQBtsfblT74ZT+sCLXehykNvpK JceIUJKaPv0SGPjKQbsHQS7TktJrHIK22G+QOng0ZCWYiZ2hiJkuj0ho/h5vOzWt2L+fl9+UZ3RuD8e1mcLBgOdu+XnoQaLl+aehny0T/1WsKyb+OtZ1Fwor EwWeHCjocX5uSJ352MjgzzdoNkd1IOez
+X-AuthUser: chester.a.unal@arinc9.com
 
-Now that there are 2 monitors for real-time applications, users may want to
-enable both of them simultaneously. Make the number of per-task monitor
-configurable. Default it to 2 for now.
+On 22 April 2025 06:10:20 GMT+03:00, Daniel Golle <daniel@makrotopia=2Eorg>=
+ wrote:
+>MT7531 standalone and MMIO variants found in MT7988 and EN7581 share
+>most basic properties=2E Despite that, assisted_learning_on_cpu_port and
+>mtu_enforcement_ingress were only applied for MT7531 but not for MT7988
+>or EN7581, causing the expected issues on MMIO devices=2E
+>
+>Apply both settings equally also for MT7988 and EN7581 by moving both
+>assignments form mt7531_setup() to mt7531_setup_common()=2E
+>
+>This fixes unwanted flooding of packets due to unknown unicast
+>during DA lookup, as well as issues with heterogenous MTU settings=2E
+>
+>Fixes: 7f54cc9772ce ("net: dsa: mt7530: split-off common parts from mt753=
+1_setup")
+>Signed-off-by: Daniel Golle <daniel@makrotopia=2Eorg>
+>---
+>See also https://git01=2Emediatek=2Ecom/plugins/gitiles/openwrt/feeds/mtk=
+-openwrt-feeds/+/b4204fb062d60ac57791c90a11d05cf75269dcbd
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- include/linux/rv.h                     | 9 +--------
- include/linux/sched.h                  | 8 +++-----
- kernel/trace/rv/Kconfig                | 9 +++++++++
- kernel/trace/rv/monitors/rtapp/Kconfig | 1 +
- kernel/trace/rv/rv.c                   | 8 ++++----
- 5 files changed, 18 insertions(+), 17 deletions(-)
+Reviewed-by: Chester A=2E Unal <chester=2Ea=2Eunal@arinc9=2Ecom>
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 2897aad16883..099b23c14e54 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -74,14 +74,7 @@ struct ltl_monitor {};
-=20
- #endif /* CONFIG_RV_LTL_MONITOR */
-=20
--/*
-- * Per-task RV monitors count. Nowadays fixed in RV_PER_TASK_MONITORS.
-- * If we find justification for more monitors, we can think about
-- * adding more or developing a dynamic method. So far, none of
-- * these are justified.
-- */
--#define RV_PER_TASK_MONITORS		1
--#define RV_PER_TASK_MONITOR_INIT	(RV_PER_TASK_MONITORS)
-+#define RV_PER_TASK_MONITOR_INIT	(CONFIG_RV_PER_TASK_MONITORS)
-=20
- union rv_task_monitor {
- 	struct da_monitor	da_mon;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 45be0fa7a5cc..560782493292 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1623,12 +1623,10 @@ struct task_struct {
-=20
- #ifdef CONFIG_RV
- 	/*
--	 * Per-task RV monitor. Nowadays fixed in RV_PER_TASK_MONITORS.
--	 * If we find justification for more monitors, we can think
--	 * about adding more or developing a dynamic method. So far,
--	 * none of these are justified.
-+	 * Per-task RV monitor, fixed in CONFIG_RV_PER_TASK_MONITORS.
-+	 * If memory becomes a concern, we can think about a dynamic method.
- 	 */
--	union rv_task_monitor		rv[RV_PER_TASK_MONITORS];
-+	union rv_task_monitor		rv[CONFIG_RV_PER_TASK_MONITORS];
- #endif
-=20
- #ifdef CONFIG_USER_EVENTS
-diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-index 942d57575e67..c11bf7e61ebf 100644
---- a/kernel/trace/rv/Kconfig
-+++ b/kernel/trace/rv/Kconfig
-@@ -32,6 +32,15 @@ menuconfig RV
- 	  For further information, see:
- 	    Documentation/trace/rv/runtime-verification.rst
-=20
-+config RV_PER_TASK_MONITORS
-+	int "Maximum number of per-task monitor"
-+	depends on RV
-+	range 1 8
-+	default 2
-+	help
-+	  This option configures the maximum number of per-task RV monitors that =
-can run
-+	  simultaneously.
-+
- source "kernel/trace/rv/monitors/wip/Kconfig"
- source "kernel/trace/rv/monitors/wwnr/Kconfig"
- source "kernel/trace/rv/monitors/sched/Kconfig"
-diff --git a/kernel/trace/rv/monitors/rtapp/Kconfig b/kernel/trace/rv/monit=
-ors/rtapp/Kconfig
-index 94689d66a79c..6a521c95a03f 100644
---- a/kernel/trace/rv/monitors/rtapp/Kconfig
-+++ b/kernel/trace/rv/monitors/rtapp/Kconfig
-@@ -1,5 +1,6 @@
- config RV_MON_RTAPP
- 	depends on RV
-+	depends on RV_PER_TASK_MONITORS >=3D 2
- 	bool "rtapp monitor"
- 	help
- 	  Collection of monitors to check for common problems with real-time appl=
-ication that cause
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index dae84deb327d..a1b6b3c39eff 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -165,7 +165,7 @@ struct dentry *get_monitors_root(void)
- LIST_HEAD(rv_monitors_list);
-=20
- static int task_monitor_count;
--static bool task_monitor_slots[RV_PER_TASK_MONITORS];
-+static bool task_monitor_slots[CONFIG_RV_PER_TASK_MONITORS];
-=20
- int rv_get_task_monitor_slot(void)
- {
-@@ -173,12 +173,12 @@ int rv_get_task_monitor_slot(void)
-=20
- 	lockdep_assert_held(&rv_interface_lock);
-=20
--	if (task_monitor_count =3D=3D RV_PER_TASK_MONITORS)
-+	if (task_monitor_count =3D=3D CONFIG_RV_PER_TASK_MONITORS)
- 		return -EBUSY;
-=20
- 	task_monitor_count++;
-=20
--	for (i =3D 0; i < RV_PER_TASK_MONITORS; i++) {
-+	for (i =3D 0; i < CONFIG_RV_PER_TASK_MONITORS; i++) {
- 		if (task_monitor_slots[i] =3D=3D false) {
- 			task_monitor_slots[i] =3D true;
- 			return i;
-@@ -194,7 +194,7 @@ void rv_put_task_monitor_slot(int slot)
- {
- 	lockdep_assert_held(&rv_interface_lock);
-=20
--	if (slot < 0 || slot >=3D RV_PER_TASK_MONITORS) {
-+	if (slot < 0 || slot >=3D CONFIG_RV_PER_TASK_MONITORS) {
- 		WARN_ONCE(1, "RV releasing an invalid slot!: %d\n", slot);
- 		return;
- 	}
---=20
-2.39.5
-
+Chester A=2E
 
