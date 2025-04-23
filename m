@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-617054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9A2A999E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD71A999E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 23:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BEE3A7AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F663A8502
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 21:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE38265CBD;
-	Wed, 23 Apr 2025 21:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F38227FD7A;
+	Wed, 23 Apr 2025 21:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hm3nApL2"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="odrFpynn"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE8F82D98
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 21:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A4527935C;
+	Wed, 23 Apr 2025 21:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745442395; cv=none; b=FzBQZBaJyQ+WGlloOSZR4YnzFifamOXOW4sfflAcOTh5oV93//z+dOxn+2wWbbi/TFE9TrYojlKd4tvknlhwC4RLiHvgOFadnsgKMposqqUDN9+/wKkZJOON46CWZ9PqYoJilckRqxDMkoHa6A7WUAekB8wxPdUaUo8QY6SscSg=
+	t=1745442399; cv=none; b=Ojw2vJSB0/4o2p4hrR1x5Ct63pQ3q6PRA+7QSSbux56NDfM/FpnEvDI2xJgOIH8ebTtjpS55z6y5VCTsx4T+4xbwyyq/EvDJCNRB+YMi9Rsn9+x9lLcOzoF42IQUxxiAyG9N4hhgQY/sSGt9/pO39JlGIwANVGyIy0uhWQNgcrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745442395; c=relaxed/simple;
-	bh=qgnmbrs5R1omCctiVkoCevVxRfXdNIRKhT9uiNX8N8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nyha/fk3o1pP9FF1AVx4Ms1giqbDrnbwWxUfSn8YDFRUjhLD+wufoGrhlHlZjw7TlSDv4fK8dmeahErZ0ZOzX71yo2qdwb/pn8IT2ECc1WjoW91oDaiFut7CavXFN2IQHb98wUfXN/GQ9LF1tqHv3NdgYkSA3B1Z8Bg9OfAuZuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hm3nApL2; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <99b52c22-c797-4291-92ad-39eaf041ae8c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745442389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=74tQ57PHLi6ZOj350BhyOhfjL3E4tvKmSozsLI7eDxo=;
-	b=Hm3nApL2VyCOk1R8A1HZ9E99C91Zy63aYzPbt7jJv3V9l3XGw97qwhTzZ7tj6eN7tshG5Z
-	zmKjm9EiOmybaMAsdLdtwnVXyFwnp5Tk17ytSPkkl+wW1hXDcliD7PYbcAO1gcfLRp7ln1
-	UTH5caPBySOO30o2LNJSQ3vaF0VMn/Y=
-Date: Wed, 23 Apr 2025 22:06:22 +0100
+	s=arc-20240116; t=1745442399; c=relaxed/simple;
+	bh=MrFjFwFEBYSnwokagwFI4FsVi1NjjLSkYj9T++yRFvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=muNNmXv/9PKzdUQKKxgnaHsBLLQezyfY3S6WIU/vigUgM4vUgGMqFVqducZYs+0eWhEYSTLSuuOTWa7zRUyIvdpO6/kEqUJs2KtXS2WK3SyF2jy9cLH1PHkPjrsH9d//L+mSg1CIwvXAPjIga6q/+S5CMgf0aVhaJrXJAzaPHd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=odrFpynn; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53NL6Rai2420278
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Apr 2025 16:06:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745442387;
+	bh=smSHb3c2DIMga+K2xQVRxKRjJEwwRaYZ9IFnguMMFmo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=odrFpynnYLgeSq9deChT3YMZT1kISdqImSmHwfH7Auhgotl2XzopFuQD1xJtnvZxI
+	 BE+GxdV2G3xvumQocB/Q78ZZoKfohWf6bAEc36d70KZq6UCifaTYURdVtEp9YbzVew
+	 cmBTLhOdnwC/tQ7t/9XLtGZzxu3TME8yjZqIXZL8=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53NL6QAp091711
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Apr 2025 16:06:27 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
+ Apr 2025 16:06:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 23 Apr 2025 16:06:26 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53NL6QVS058072;
+	Wed, 23 Apr 2025 16:06:26 -0500
+Message-ID: <f18c954c-f4b6-46b5-a619-60ba23922e27@ti.com>
+Date: Wed, 23 Apr 2025 16:06:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 0/6] gve: Add Rx HW timestamping support
-To: Ziwei Xiao <ziweixiao@google.com>
-Cc: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jeroendb@google.com, andrew+netdev@lunn.ch,
- willemb@google.com, pkaligineedi@google.com, yyd@google.com,
- joshwash@google.com, shailend@google.com, linux@treblig.org,
- thostet@google.com, jfraker@google.com, horms@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250418221254.112433-1-hramamurthy@google.com>
- <d3e40052-0d23-4f9e-87b1-4b71164cfa13@linux.dev>
- <CAG-FcCN-a_v33_d_+qLSqVy+heACB5JcXtiBXP63Q1DyZU+5vw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/33] Refactor TI K3 R5, DSP and M4 Remoteproc
+ Drivers
+To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250417182001.3903905-1-b-padhi@ti.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <CAG-FcCN-a_v33_d_+qLSqVy+heACB5JcXtiBXP63Q1DyZU+5vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250417182001.3903905-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 23/04/2025 21:46, Ziwei Xiao wrote:
-> On Wed, Apr 23, 2025 at 3:13 AM Vadim Fedorenko
-> <vadim.fedorenko@linux.dev> wrote:
->>
->> On 18/04/2025 23:12, Harshitha Ramamurthy wrote:
->>> From: Ziwei Xiao <ziweixiao@google.com>
->>>
->>> This patch series add the support of Rx HW timestamping, which sends
->>> adminq commands periodically to the device for clock synchronization with
->>> the nic.
->>
->> It looks more like other PHC devices, but no PTP clock is exported. Do
->> you plan to implement TX HW timestamps for this device later?
->> Is it possible to use timecounter to provide proper PTP device on top of
->> GVE?
-> Yes, the TX HW timestamps and PTP device work is undergoing. Those
-> would be sent out in separate patch series when they are ready.
+Hi Beleswar,
 
-It looks like it's better to have PTP device ready firts as it
-definitely needs some worker to keep time counting. And it should be
-done with ptp::aux_work and replace the work you introduced in patch 3
-of this series.
+On 4/17/25 1:19 PM, Beleswar Padhi wrote:
+> This series refactors a lot of functions & callbacks from
+> ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+> drivers. This is a consolidated and final series as part of the
+> refactoring of K3 remoteproc drivers. Below is the breakdown:
+> 1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
+> them into a common driver.
+> 2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+> 3. PATCHES #11-#33 does the actual refactoring R5, DSP and M4 drivers into
+> ti_k3_common.c driver.
+> 
 
->>
->>>
->>> John Fraker (5):
->>>     gve: Add device option for nic clock synchronization
->>>     gve: Add adminq command to report nic timestamp.
->>>     gve: Add rx hardware timestamp expansion
->>>     gve: Add support for SIOC[GS]HWTSTAMP IOCTLs
->>>     gve: Advertise support for rx hardware timestamping
->>>
->>> Kevin Yang (1):
->>>     gve: Add initial gve_clock
->>>
->>>    drivers/net/ethernet/google/gve/Makefile      |   2 +-
->>>    drivers/net/ethernet/google/gve/gve.h         |  14 +++
->>>    drivers/net/ethernet/google/gve/gve_adminq.c  |  51 ++++++++-
->>>    drivers/net/ethernet/google/gve/gve_adminq.h  |  26 +++++
->>>    drivers/net/ethernet/google/gve/gve_clock.c   | 103 ++++++++++++++++++
->>>    .../net/ethernet/google/gve/gve_desc_dqo.h    |   3 +-
->>>    drivers/net/ethernet/google/gve/gve_ethtool.c |  23 +++-
->>>    drivers/net/ethernet/google/gve/gve_main.c    |  47 ++++++++
->>>    drivers/net/ethernet/google/gve/gve_rx_dqo.c  |  26 +++++
->>>    9 files changed, 290 insertions(+), 5 deletions(-)
->>>    create mode 100644 drivers/net/ethernet/google/gve/gve_clock.c
->>>
->>
+I noticed that for am62ax DSP, local reset is not enabled, which is an
+issue, but I see that it was not enabled before your patches so it could
+be a follow-up patch once these patches are merged.
+
+Also, I have tested basic functionality on am64x EVM: 
+https://gist.github.com/jmenti/9e7fb3cbb7a34fc1800092e8fa6cce87
+
+so for the series,
+
+Tested-by: Judith Mendez <jm@ti.com>
+
+
+
 
 
