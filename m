@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-615523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B115AA97E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 833B0A97E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9ABF189F891
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA02189FF34
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 06:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213332676E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC018267B9F;
 	Wed, 23 Apr 2025 06:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="M/8zFNjG"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="j0DNoqSe"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9FE25E814
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98422676F6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745388191; cv=none; b=YFVqw8cesRcL4VzrnjLGXOmyJdyTD0EiiwVoWzTukHrrEhXPdFfs8UGFFShVV9ORQu+0vtHyYk+mY0t5O8DFhe1hfbT0BZ4IhEoLNEugK3GxC2M2RquMGWmai3zZEkqzk90CAkKNPUuUEs4V7B91sLxdOUEAIn6dkNzXbIDDlbg=
+	t=1745388192; cv=none; b=YemCe1PMOBdrC3Jsb+0ThLEdLIgTzzULnRKkSM/lphqmiout4aJWoXIMe7CCLs1JyS4k4vYdFgf6uKUt47xfurCZ/dVZI2eIvnySGkcJTcQYmI/HpuRaFz/MRiqnLc7smg9PPUD89lbnh5oDRUDfIColHbxovGj0RjZbAoHJBkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745388191; c=relaxed/simple;
-	bh=MWwhsP/1Gq2jtC+XMH/+PSmlpfJmY2R2gm9uwDR4fZI=;
+	s=arc-20240116; t=1745388192; c=relaxed/simple;
+	bh=6Nf3p87xmE+b+aldFiQfNcyvNboXQjvT/SrC191QSNI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KlBSnIeyn1AjT3IfkuwJZI3rX/21NkA56YAcmTHVREt8DfqUCTY19Zt1TjjEq9pSbvttvN7Sqs7nGI6JuYGtETqklZNuIhwocJrT+yx5lsuM8uSCxvX/gvq9+AnXhM5XrOqbCvGwJjN3gVVpKTbzlDZ/4LWaRlr1FCDrtIQHcBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=M/8zFNjG; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=O8bCgeRzgWcCI8txxuD40jcXmmTAQUfNuFkAHkEfgOryOYFnJZ1tDynxpkv/+UJB8B70meqmL9wPb2GKUIO2cum4TKig47fDrjs2f84qkkZfkJ5QibjHuqIhjGg++JJyd3gnnquLcFrL0SFu3LwVwFbByy0wVp8tjg4geFc+dwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=j0DNoqSe; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2963dc379so890499266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 23:03:08 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so9195588a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Apr 2025 23:03:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1745388186; x=1745992986; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1745388188; x=1745992988; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Mr8rvSiMKhhr7+g2wBjSbr4ZapMlTY5YRIRH4XPzpek=;
-        b=M/8zFNjGeotlFvryTsv2r6nV0LE2DAjUsdorZ8DUVMicOTcZUdL1lCUKpMpzbDqWhy
-         2ia4d51Gy3ZYXLpwBAcc4gd0fg8X9jJso6JPn2zsC+dZG/Uf/0yQH5tocwBgB04/lYdx
-         Bxb/fPq8PcXWPArFSnSpKS7QC/zwcBTHERvfY=
+        bh=HjH/2kqdCORlSdLYP6r4xpoVlQIwGobZVf64uO8zUM4=;
+        b=j0DNoqSe5sC91W+M7bcpRK8phdrgFrsbg2Yn0zbvMOM4yvLft1L8MRe8HyEaFmq0gV
+         73U5mROhx/P6SBweFIyMfsYikg8ncBcv4xNezGdIyD0T4SQspnA5/04JdyR8Bh8MWvmv
+         Ht4sFFWoEr19+tW2czrNt01CW9SXTf8rJgsRY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745388186; x=1745992986;
+        d=1e100.net; s=20230601; t=1745388188; x=1745992988;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Mr8rvSiMKhhr7+g2wBjSbr4ZapMlTY5YRIRH4XPzpek=;
-        b=bl+r8ki5lD0YbWn1H4rkHG2O+4z2bRDqIbCyqU+uykSBUbSmHBnHq3DGvCwaUgxDXE
-         F96hhgAYGb/TtWgdZ5Ml3G34uc3rAfZYI3srFcrAaJS5ok6kdoyO4pSIcF7lERJ2zvLr
-         yqqEioRZRz4ZLGOzJbBinhNfxhqlkVGLUkNLUVGbvGGKeNBK/N8vmRkE99dvGuvN5RpM
-         N6qxEPJl89/6pzmQVycCCIqXRov1H0TyS6xEawsVTJm766AaBFja9OqA6ZZMgghgUfae
-         vbx2PHbPNQ8sycOsNmLlhmxjCO5Ik6F+3EunRyBzrHVI7vfsjuLruZ0/zCHyS4Xz8Hsf
-         DB3g==
-X-Gm-Message-State: AOJu0Yx64+ClrTZQCyhwn/eZNtc720YlK9fBzsat4kC/W1Bk+IJUAuuS
-	04AF8TJPhZ8jmJiQ1lpdAezwLI3weCWxYCMuSvdXWL+MhYsmNPY0aEoiIR0ZEba9JKuV1JaRJFN
-	V
-X-Gm-Gg: ASbGnctByUWffgjnTn2tpaSXb16CMfJjx3Gsc/F9w4nGMnpNjfGvGyWi/oTr0fqLOLN
-	6O5/e4Viy6Qis+/T6lAQXEm0/3nETexrosaiKECUaGo53hMsfeIOYIZydlC53r6XsYHtnxJ6qoI
-	0tQJeyoYPPU/64uoqDn+NctROfi9KhTQQmL1dff8x5InbqUA0WyNbgjO3dSdo9vlqurLG6YZhSm
-	CZj5uY90ZjUABLXEXcJlU07CRMpd79SbFbeWK3r6gbtxZK21NYB5g2ldw50by1g1d0kJ5WNGdjB
-	KxGKPLjkhR4vUte3r2dmy2tByoc431T2LTCYAajFYpxYxaBxu+4XN0gluh1VwYcyaOWt/OFn7qJ
-	s04zZajoh9tB95cA=
-X-Google-Smtp-Source: AGHT+IFHRVjgmo/Rf2x02+US2TOfqy1M37ZfZe16WxtkqyYMdziLzd+0fdDR5em6xjEUFwKXEO/9vQ==
-X-Received: by 2002:a17:907:2da4:b0:aca:cad6:458e with SMTP id a640c23a62f3a-acb74dd6021mr1627869566b.43.1745388186587;
-        Tue, 22 Apr 2025 23:03:06 -0700 (PDT)
+        bh=HjH/2kqdCORlSdLYP6r4xpoVlQIwGobZVf64uO8zUM4=;
+        b=k+Xn13w9HWOsi52DYkxcsVYmGYF9gqrrgbW38MEpTOkPA1+z8cAzNGepVWs5Qm72Jf
+         IwGT0/HRl9jxK0O1odf5DYaOXt2YnowlyrzoGX6zR2rVJZXDm4zHgcYMc9V418uggyPu
+         QMDiwTU6M93THwqhWv3JZuP6y81CGhszsJDdgKyuAOHjU8HUIe9gDpTav8LMrvF5Ibcr
+         azlrj4ANqhlqTe8tcmLqPRRMiJ21ZR3IN77Lsd8rx+s/k353UHjf4j8wpKw4wsxKRmu7
+         Vhe3RHlEKMDT0+tS+cxhOf0oKamtNiC0+nFR5gSHY5Ex77Aj0fmmHOzpw4xlSu7htfP7
+         9JJw==
+X-Gm-Message-State: AOJu0YxyDXcpprPCFunQAfccyAY7S1q5Y3sMUDRZ/0A4xh56bQj6/fhx
+	CMv6ihHdOvAoZSgah2uE7z4Ea2QpLONl43SaR6dTuUk9x9YR/QwkT8D2cQBTfLdc0VC+iSLsHcs
+	g
+X-Gm-Gg: ASbGncsYyaHOI7zPSy6HsQ4TklBAsW8/MAeDmtdo5wXEFtMTof7GyQW6rTqMGkp9BV8
+	puKgfPMRVCHOTDsanljZI5gzu0fP/RbjLecssnWUhWAyVcKtesg1TciRV8tRREgsFcmbcWuu78m
+	q7KWn1Qdcl2+NWAdZuolFS0VDFNYg/lIwKDghIUAEuY2AkHj9h7XOSiVYchaoEfTd7lbAAIXk7w
+	mI6MaU6rPan0E5yzllgtLsguziARaemnGwUZhjt/Tlt/dvrVYJ+yo3p3sczrZ9NkkZ0IfPUwRX/
+	HJW2W9rMJzefU8BCmiTDl3ao6cH/va0dS0uyeRcwKBpm5gyh/4eyxR8myl6BbzKW1WmF8zeaHs1
+	dG7L4
+X-Google-Smtp-Source: AGHT+IELsWvXw7F5FZt767HR+UyBJn9wcMcKkXhJc6P2zEo6Q4Ars/jQw/zuDlIzWD0FzCHnIL24gA==
+X-Received: by 2002:a17:907:9708:b0:ac2:9ac:a062 with SMTP id a640c23a62f3a-acb74b38943mr1561283466b.23.1745388187989;
+        Tue, 22 Apr 2025 23:03:07 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef9e7e6sm745234366b.162.2025.04.22.23.03.05
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef9e7e6sm745234366b.162.2025.04.22.23.03.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 23:03:06 -0700 (PDT)
+        Tue, 22 Apr 2025 23:03:07 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
@@ -86,9 +86,9 @@ Cc: linux-amarula@amarulasolutions.com,
 	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v11 07/18] arm64: dts: imx8mn: add anatop clocks
-Date: Wed, 23 Apr 2025 08:02:24 +0200
-Message-ID: <20250423060241.95521-8-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v11 08/18] arm64: dts: imx8mp: add anatop clocks
+Date: Wed, 23 Apr 2025 08:02:25 +0200
+Message-ID: <20250423060241.95521-9-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
 References: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
@@ -111,15 +111,15 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Changes in v4:
 - New
 
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 ++
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index a5f9cfb46e5d..49be492b5687 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -606,6 +606,8 @@ anatop: clock-controller@30360000 {
- 				compatible = "fsl,imx8mn-anatop", "fsl,imx8mm-anatop";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+index ce6793b2d57e..78d71aacd0a5 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+@@ -709,6 +709,8 @@ anatop: clock-controller@30360000 {
+ 				compatible = "fsl,imx8mp-anatop", "fsl,imx8mm-anatop";
  				reg = <0x30360000 0x10000>;
  				#clock-cells = <1>;
 +				clocks = <&osc_32k>, <&osc_24m>;
