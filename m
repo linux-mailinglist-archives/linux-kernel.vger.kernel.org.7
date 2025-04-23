@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-615855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA045A98350
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18605A98224
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 10:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68B0F7AFCDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E823BD75B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 08:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6813E27B4E4;
-	Wed, 23 Apr 2025 08:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CC2857C7;
+	Wed, 23 Apr 2025 07:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ICIc2yM6"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtHnxn5P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B4A27935D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 08:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878AD27056C;
+	Wed, 23 Apr 2025 07:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396333; cv=none; b=HWMoDdzrBGuxXFS7cc3WbFvoSMdoWJ4Mm+bNEtxPBQwRj+gEtReEjdQP/YQlK/S4WxC4PylQmwwed/SZMgHbqdPGyvhzoHuFwvTddkq3i8nXhJz6CpWAJxGHDK5q0w22AP+dOYEFqBwnknxMvN6RhtXRjnNwoJdeeaj+0AWsrek=
+	t=1745394955; cv=none; b=glqY57yLzoWsC8qJ0Hjz+wgjAIYdbXI3GXIyjMeUUT7d6370kvDjh+bVBIbbiKSa5T3ruqDpPGjVf/abyMTAe9xcVLrV1C5wOa6tN0K3mEpi1HEsFwTFlmWuN1cVAgwSR/eE8eHgw2rw4CFH8tqItp24hg90el0DSR1H+ls3Ais=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396333; c=relaxed/simple;
-	bh=OYq1eYFCazepNiSfRkSzy0Xny7Mf8EDgUkUeTs5V7Iw=;
+	s=arc-20240116; t=1745394955; c=relaxed/simple;
+	bh=QI9SJ6Qhx4A/06Soeoid2rgK4QHLZtZI13FnozHxHRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZFOSTMKMF7H1/zFuNQ34ZUzrmBAsRHv/nJbVrUvIPj1vMH5cX8a2gH22zS9Cv3HYySPLTkIG9sMfDPl9eYdAQVut1DmI5gx6+krvlQ6c+MFfVwuWbSK+5kRBhNi9XZWrjLdwBPzGNBVX+njCF1yJHWlDmwXm2ucD7yoix24a1os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ICIc2yM6; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=cbMdDFG9P+bdaitfSB/95+V1DKWHcnUFJFkFTDn7hYM=; b=ICIc2yM6OI9RDh+NOJty3eOWUJ
-	FgYo2iqowgJFiYjbmeBB6IulpyokzNwdkLIKrlmp25lnGlNqJTuA2fNNuiQHre8pHPLQrjmmLGnE4
-	M4hU22kFsneFnr8WhMTs/7G8PFgjZwwDjFR96WytCVzYxAsZiByHue6BlJjK4kQLeXJUuyQDQ1kR3
-	ejQdsH8GeC2avhfbiNgmQQx20r1oAhzCfbwUEJ0vbOnE1b3IKAelb/IjTxSfKUvhUe4c6RMW23P4Z
-	D0sqNEwszCaPmeUJExBUw080o/JA3LMGMxB7T9ZYsalDsgBkoUUWGoUdL38Pknptkkcf5QSjFZyrt
-	mkR51KVw==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7VJR-0000000BOif-1akK;
-	Wed, 23 Apr 2025 08:18:38 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7VJO-00000002YO5-2FrH;
-	Wed, 23 Apr 2025 09:18:30 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	kvmarm@lists.cs.columbia.edu,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Ruihan Li <lrh2000@pku.edu.cn>
-Subject: [PATCH v3 7/7] mm/mm_init: Use for_each_valid_pfn() in init_unavailable_range()
-Date: Wed, 23 Apr 2025 08:52:49 +0100
-Message-ID: <20250423081828.608422-8-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423081828.608422-1-dwmw2@infradead.org>
-References: <20250423081828.608422-1-dwmw2@infradead.org>
+	 MIME-Version; b=gwxvvmLw19UGzBaiTaMWTx4hDXz9PAlE1Ak2tM8XRXSNTDHId1IRX/WYoAuzAAVvqX4A158O04wDBmktchrM9q71EShRqZEfee8jkkB8MvOkhx1K7lIeqxJYXSD4WEV/uNWS1JlHmz/lc5nR3Tev4689GmEBr0N1ba55THVSsxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtHnxn5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C008CC4CEEA;
+	Wed, 23 Apr 2025 07:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745394955;
+	bh=QI9SJ6Qhx4A/06Soeoid2rgK4QHLZtZI13FnozHxHRw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YtHnxn5P6K9s9t00m1Kze9DGrK8XahFwlalKKY4BvAkZ5nTBwwBxB8Q6GzAFaoYT6
+	 fIxipIjTc7JzLLME1ZaqpaY6V8LQ6gL0sZa79BJ1Fag2tnicru9XCjhfXupxsSqP4g
+	 RG/ntuDncgPQaOdxC11NbbEVaIzewcjezN6It/YwZGEQFLoBGjoagu3MfqamiDK9fH
+	 KhK3I/GKqDt1lJKG4WmnVrZAJrbqAXCtKAtTn0V2eGE8vuAFItJaTsES219EhH+AyB
+	 sRhIn0Hftq1qOhjo63wua+81JAYXNeT9vIm1GMaRBIErdOTp2r0YV4sh+ELOFfJXRJ
+	 HKw901TM99J7w==
+From: Philipp Stanner <phasta@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jaya Kumar <jayakumar.alsa@gmail.com>,
+	Clemens Ladisch <clemens@ladisch.de>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Mark Brown <broonie@kernel.org>,
+	liujing <liujing@cmss.chinamobile.com>,
+	Andres Urian Florez <andres.emb.sys@gmail.com>,
+	Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	David Rhodes <drhodes@opensource.cirrus.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 20/28] ALSA: nm256: Use pure devres PCI
+Date: Wed, 23 Apr 2025 09:53:38 +0200
+Message-ID: <20250423075346.45907-21-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
+References: <20250423075346.45907-1-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,49 +72,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+pci_request_regions() is a hybrid function which becomes managed if
+pcim_enable_device() was called before. This hybrid nature is deprecated
+and should not be used anymore.
 
-Currently, memmap_init initializes pfn_hole with 0 instead of
-ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
-page from the page at address zero to the first available page, but it
-won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
-won't pass.
+Replace pci_request_regions() with the always-managed function
+pcim_request_all_regions().
 
-If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
-kernel is used as a library and loaded at a very high address), the
-pointless iteration for pages below ARCH_PFN_OFFSET will take a very
-long time, and the kernel will look stuck at boot time.
-
-Use for_each_valid_pfn() to skip the pointless iterations.
-
-Reported-by: Ruihan Li <lrh2000@pku.edu.cn>
-Suggested-by: Mike Rapoport <rppt@kernel.org>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- mm/mm_init.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ sound/pci/nm256/nm256.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 41884f2155c4..0d1a4546825c 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -845,11 +845,7 @@ static void __init init_unavailable_range(unsigned long spfn,
- 	unsigned long pfn;
- 	u64 pgcnt = 0;
+diff --git a/sound/pci/nm256/nm256.c b/sound/pci/nm256/nm256.c
+index 44085237fb44..cd4dc43dbff1 100644
+--- a/sound/pci/nm256/nm256.c
++++ b/sound/pci/nm256/nm256.c
+@@ -1447,7 +1447,7 @@ snd_nm256_create(struct snd_card *card, struct pci_dev *pci)
+ 	chip->buffer_addr = pci_resource_start(pci, 0);
+ 	chip->cport_addr = pci_resource_start(pci, 1);
  
--	for (pfn = spfn; pfn < epfn; pfn++) {
--		if (!pfn_valid(pageblock_start_pfn(pfn))) {
--			pfn = pageblock_end_pfn(pfn) - 1;
--			continue;
--		}
-+	for_each_valid_pfn(pfn, spfn, epfn) {
- 		__init_single_page(pfn_to_page(pfn), pfn, zone, node);
- 		__SetPageReserved(pfn_to_page(pfn));
- 		pgcnt++;
+-	err = pci_request_regions(pci, card->driver);
++	err = pcim_request_all_regions(pci, card->driver);
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
-2.49.0
+2.48.1
 
 
