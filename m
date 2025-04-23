@@ -1,49 +1,98 @@
-Return-Path: <linux-kernel+bounces-616889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B68A9978C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:10:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBFDA99798
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 20:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409395A463B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7154A2989
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 18:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC99528F93A;
-	Wed, 23 Apr 2025 18:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E740A28DEF4;
+	Wed, 23 Apr 2025 18:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daQVXA9p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdMPgVIx"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1036926982F;
-	Wed, 23 Apr 2025 18:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54085280A21;
+	Wed, 23 Apr 2025 18:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431790; cv=none; b=iySZk73tkD4+BwNiKtTlybT/3AONnR8Vld/m8NTuEPvocPvOduYQivoemrxCoMBd5TuC0W77We6pCIzGBtAVmL4GDJYImJqV96rTNkD3ZS4C8A2/TgLiCHC2hpBe40krjJbsMH8JhZ2dwAvdcsCI6tOmu28W4sKt9GK6ilDH/vg=
+	t=1745432132; cv=none; b=rfvhz/A0oZRskpF61v5Fh5mIUW7xK2N/e4PkR3ubg5rxNvPwqId2iSYLe37FiGte7CUJIMc/U3N/a5hxVY8pPHds9i8nmVL30JdOFQgBeVDYm0+5L07gVbj6n7/fzbtAPQopVrujVCHqu8UUJVoopQgDWvf/AoGweu/oT0GFMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431790; c=relaxed/simple;
-	bh=U9F+PeVnBpGsSyekbAgYUh9ERhGGMV7iRfE7ZeUqWsQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=P2pr7QU7ipo0RJ1IABl5AOCCO36rWcJ7VHuB+QLL8Gmm6wnPSdFb6VxMpKLNi1OSLm3n5R7u6MYf7wbNP5ybm9FpTDTgGdvBdj/EEw5RYHXA9BTdycVus+5dTEwPpVoi8WCCngWnZpcg+MKpCPJkiGLvcX2DIFcTdTQsUwkuYdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daQVXA9p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B918C4CEE2;
-	Wed, 23 Apr 2025 18:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745431789;
-	bh=U9F+PeVnBpGsSyekbAgYUh9ERhGGMV7iRfE7ZeUqWsQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=daQVXA9p8n9Fh2VwDQ/9hhp9N7zLF5WAXuy+o4TGyaNSTUAKR4JdlQxjNI2kMvlth
-	 +nPyQbvIv28S+WxkfBWMy7pXNx1fhL8oMMrqH4ViMR17+TUoXRIg04YCI+eFGIl0T4
-	 VCPfg/a59P0rPYZhSWsHSf7CwGiuJD4dUoNarCP8vWyMZsOyG+JRaZI62aGdA9NCHB
-	 Zq0CNSI9/v2AGSIoPUpBHgMDlIzTFhrHZPNkNJAP6ttE1fCi5vy3qJMHkw/cnvNAUU
-	 zdC8fpVlp2EaNfpsHb75e8qju7W089Kci3//gIp30LVORZExRyod4j2xvAoxsdnrIl
-	 kxORYu9o2e0rQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EF6380CED9;
-	Wed, 23 Apr 2025 18:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745432132; c=relaxed/simple;
+	bh=bahC4EZGyLZ5JcodwBxNGpmpVQpi+ynBeIQYEPfwdfY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fecgTTyCIxBk8QXHlnu8dlwOTMel9IGEGUKwq1Lek0VN6AGL9HD5eVz5KIkpGG6YtTKC4S5TL4Czi5Jmam744zCJE5eZL5icU5PAAZtwXsdiHlpaydev10V6Khp0igi6TXijOSkxY/mphDhJBpZ55rFoEK48rwsrDSHvMLb/u0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdMPgVIx; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54998f865b8so82172e87.3;
+        Wed, 23 Apr 2025 11:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745432127; x=1746036927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=60ooqHv4lubF04MISs1yun2dS0JF24QIl5RyblgguIU=;
+        b=VdMPgVIxt/RtNU31RooXe4QjQ2d3c3IkX6kpvjteLUsLNirqR6scw5AyszlsfXSAg4
+         w/sS28MYmVQOsFZQiwzNKI47XZVWrqFsSKBgAnikDwENbyZqDfXKVTM5jWjmO/pWaEGJ
+         brbUkDDPcFbcKOIoy8MMjNUV7rAd2Pt6PiM92+6zPswEYb0W4wj0EGzxWl6bMMQkB+LP
+         S6Y7xwejaMrk/6p8EgMfRoimDCRsony2gwIyviYWR0hVBcE+hMHoqutJrvVlZK8Zm07x
+         kQR6XuNaxAtd8lRgTRo/4UYYU7U1ronHtYB2AffwdSokDveuZTNuixOeUA3CTow9juKm
+         x0gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745432127; x=1746036927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=60ooqHv4lubF04MISs1yun2dS0JF24QIl5RyblgguIU=;
+        b=QH+rCt/vUUSVfe4VoacLxd27rQqeCvBp4omzjPpTKnd3UZOT/9wk/nHJQOhLJY8bHU
+         8TfoI3Ytk+FZcx22py71b5VXTTuiD9O2k0eJgbunqKv9HGAP2O401hYRq9UOfYzev6v3
+         dqb4CiaXEbCfVAhf2NsBdo8kwSg2Lf+Oob0eMUIGNATmTGRnjSwzvUmsBM56nelM6aMP
+         G/74e5QzOTWflFzBLXZVLcxdoWLVyiadVmdK3R10duzzhDCH2EnInv9VdhNYqwDn8vSx
+         8h0qoEuqR2n/6kzxO7jiNjszxQQNq8S3FFd4khf+DuYDx25KUra6CXzBnOlVj+gjV4xj
+         ej1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0NQhl0NNLfklU2zU+6JQPp3+ox4vpf8UKLQV8LYwmztUGVi9UOvtrSYN9x+/gqTmWSrIIPWnl@vger.kernel.org, AJvYcCVxwfHzln4UMWqNC0/ZrYOQxZ0Q8Q2UsXQOMePtq21fcxS5RR9Dx8qkPr69sNFW4HekgyoZ23al@vger.kernel.org, AJvYcCX9pn6pqoxoiB8TUh8PW6AwVE7kjbSn1X4LJ3PPL3lQ3F+tWsxUDqmPgUtXJZt4ZsBGF0axP23mU0xsoV0DqAtM@vger.kernel.org, AJvYcCXvQPvURcf3rsGLtIlIEZsTRO+rR2WOLg+JSw4NNZq9wfJRewZBkPweLfA48Kr2CsAIHL1PQ5aNjIG5gwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxad2leXoZox9FJsgaGM9LaC/yOVM9nyatAI6aBOcS2Vl7mfp1G
+	/Zj8nPDeWbGpjl/DmZWBHSQSLwLGtZ7lfV67mxpAFe1/gtwHDxuq
+X-Gm-Gg: ASbGncu4NhEuOM0wejGB8iy5vRj/unZq9uowOxjZ3D+7wm6wM7a8PIqhKltIFJOJkGv
+	n1kb3kwkCplHSVuU0Xjil7O1A+16yMNeGaIBUIaKosYtWPcp62pt18gFRp2nIEaopaRhkIFYV0R
+	hVNSi9HM0VlVu8tyTUV51MvYYo1Bf+KJkPvX89/R0YR1lDfVki7MJ/9/RDewjZqNXqne1QuEO1E
+	pm/KUMWeY8XCkY9R55KaEIPfPrqOidQOXqPXA7CGwV9TVKPih0UjLopARBY3RnMh6iLc7xo4fao
+	IUJu13a8tmAYnBfvcKNPud5yk2yjhxqxuiRCXaUOHqDA2cmC4ADgX6M=
+X-Google-Smtp-Source: AGHT+IFG0X8R3+9zVQjwFuLKdnVhwPWdDHjtGIJi+PAV1z4CfmJthxydm3SWJC3j0gwdpys72wiu6w==
+X-Received: by 2002:a05:6512:224b:b0:545:60b:f394 with SMTP id 2adb3069b0e04-54e7b5ba31cmr217791e87.4.1745432127102;
+        Wed, 23 Apr 2025 11:15:27 -0700 (PDT)
+Received: from localhost.localdomain ([87.249.25.136])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5d0146sm1603134e87.128.2025.04.23.11.15.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 11:15:25 -0700 (PDT)
+From: Evgeny Pimenov <pimenoveu12@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Evgeny Pimenov <pimenoveu12@gmail.com>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Taehee Yoo <ap420073@gmail.com>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>
+Subject: [PATCH 5.10/5.15/6.1] netfilter: ipt_CLUSTERIP: change mutex location
+Date: Wed, 23 Apr 2025 21:12:46 +0300
+Message-Id: <20250423181245.14794-1-pimenoveu12@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,62 +100,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v4] bpf: streamline allowed helpers between tracing
- and base sets
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174543182801.2725891.7635648941344459709.git-patchwork-notify@kernel.org>
-Date: Wed, 23 Apr 2025 18:10:28 +0000
-References: <20250423073151.297103-1-yangfeng59949@163.com>
-In-Reply-To: <20250423073151.297103-1-yangfeng59949@163.com>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 
-Hello:
+No upstream commit exists for this patch.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+The file ipt_CLUSTERIP.c was deleted in commit 9db5d918e2c0
+("netfilter: ip_tables: remove clusterip target"), but races still exist
+in stable branches.
 
-On Wed, 23 Apr 2025 15:31:51 +0800 you wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> Many conditional checks in switch-case are redundant
-> with bpf_base_func_proto and should be removed.
-> 
-> Regarding the permission checks bpf_base_func_proto:
-> The permission checks in bpf_prog_load (as outlined below)
-> ensure that the trace has both CAP_BPF and CAP_PERFMON capabilities,
-> thus enabling the use of corresponding prototypes
-> in bpf_base_func_proto without adverse effects.
-> bpf_prog_load
-> 	......
-> 	bpf_cap = bpf_token_capable(token, CAP_BPF);
-> 	......
-> 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
-> 	    type != BPF_PROG_TYPE_CGROUP_SKB &&
-> 	    !bpf_cap)
-> 		goto put_token;
-> 	......
-> 	if (is_perfmon_prog_type(type) && !bpf_token_capable(token, CAP_PERFMON))
-> 		goto put_token;
-> 	......
-> 
-> [...]
+Thread A in clusterip_config_entry_put() decrements refcount and removes
+config from the list but doesn't call proc_remove(). Thread B searches
+the config, doesn't find it, re-adds it to the list, and calls
+proc_create_data() with an IP that still exists in the tree.
 
-Here is the summary with links:
-  - [bpf-next,v4] bpf: streamline allowed helpers between tracing and base sets
-    https://git.kernel.org/bpf/bpf-next/c/6aca583f90b0
+|A| refcount_dec_and_lock()
+|A| list_del_rcu()
+=== Must be here
+|A| proc_remove()
+===
+|B| __clusterip_config_find()
+|B| list_add_rcu()
+|B| proc_create_data()
+|B| WARN()
 
-You are awesome, thank you!
+As a fix, also cover with mutex the places of interaction with the list of
+configs before proc_remove() and proc_create_data() functions.
+
+------------[ cut here ]------------
+proc_dir_entry 'ipt_CLUSTERIP/100.1.1.2' already registered
+WARNING: CPU: 0 PID: 2597 at fs/proc/generic.c:381 proc_register+0x517/0x6e0 fs/proc/generic.c:381
+[...]
+Call Trace:
+ proc_create_data+0x130/0x1a0 fs/proc/generic.c:583
+ clusterip_config_init net/ipv4/netfilter/ipt_CLUSTERIP.c:281 [inline]
+ clusterip_tg_check+0xb8d/0x1380 net/ipv4/netfilter/ipt_CLUSTERIP.c:502
+ xt_check_target+0x27c/0xa00 net/netfilter/x_tables.c:1018
+ check_target net/ipv4/netfilter/ip_tables.c:511 [inline]
+ find_check_entry.constprop.0+0x7b0/0x9b0 net/ipv4/netfilter/ip_tables.c:553
+ translate_table+0xc6a/0x16a0 net/ipv4/netfilter/ip_tables.c:717
+ do_replace net/ipv4/netfilter/ip_tables.c:1138 [inline]
+ do_ipt_set_ctl+0x54e/0xb00 net/ipv4/netfilter/ip_tables.c:1636
+ nf_setsockopt+0x88/0xf0 net/netfilter/nf_sockopt.c:101
+ ip_setsockopt+0xe4d/0x3d10 net/ipv4/ip_sockglue.c:1442
+ sctp_setsockopt+0x135/0xa390 net/sctp/socket.c:4475
+ __sys_setsockopt+0x234/0x5a0 net/socket.c:2145
+ __do_sys_setsockopt net/socket.c:2156 [inline]
+ __se_sys_setsockopt net/socket.c:2153 [inline]
+ __x64_sys_setsockopt+0xb9/0x150 net/socket.c:2153
+ do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x67/0xd1
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 2a61d8b883bb ("netfilter: ipt_CLUSTERIP: fix sleep-in-atomic bug in clusterip_config_entry_put()")
+Cc: stable@vger.kernel.org # v5.4+
+Suggested-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Suggested-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Evgeny Pimenov <pimenoveu12@gmail.com>
+---
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 77e3b67e8790..61ccfd97841f 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -79,6 +79,22 @@ static inline struct clusterip_net *clusterip_pernet(struct net *net)
+ 	return net_generic(net, clusterip_net_id);
+ }
+ 
++static inline void
++clusterip_net_lock(struct clusterip_net *cn)
++{
++#ifdef CONFIG_PROC_FS
++	mutex_lock(&cn->mutex);
++#endif
++};
++
++static inline void
++clusterip_net_unlock(struct clusterip_net *cn)
++{
++#ifdef CONFIG_PROC_FS
++	mutex_unlock(&cn->mutex);
++#endif
++};
++
+ static inline void
+ clusterip_config_get(struct clusterip_config *c)
+ {
+@@ -114,6 +130,7 @@ clusterip_config_entry_put(struct clusterip_config *c)
+ {
+ 	struct clusterip_net *cn = clusterip_pernet(c->net);
+ 
++	clusterip_net_lock(cn);
+ 	local_bh_disable();
+ 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
+ 		list_del_rcu(&c->list);
+@@ -123,14 +140,14 @@ clusterip_config_entry_put(struct clusterip_config *c)
+ 		 * functions are also incrementing the refcount on their own,
+ 		 * so it's safe to remove the entry even if it's in use. */
+ #ifdef CONFIG_PROC_FS
+-		mutex_lock(&cn->mutex);
+ 		if (cn->procdir)
+ 			proc_remove(c->pde);
+-		mutex_unlock(&cn->mutex);
+ #endif
++		clusterip_net_unlock(cn);
+ 		return;
+ 	}
+ 	local_bh_enable();
++	clusterip_net_unlock(cn);
+ }
+ 
+ static struct clusterip_config *
+@@ -262,6 +279,7 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 	c->net = net;
+ 	refcount_set(&c->refcount, 1);
+ 
++	clusterip_net_lock(cn);
+ 	spin_lock_bh(&cn->lock);
+ 	if (__clusterip_config_find(net, ip)) {
+ 		err = -EBUSY;
+@@ -277,11 +295,9 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 
+ 		/* create proc dir entry */
+ 		sprintf(buffer, "%pI4", &ip);
+-		mutex_lock(&cn->mutex);
+ 		c->pde = proc_create_data(buffer, 0600,
+ 					  cn->procdir,
+ 					  &clusterip_proc_ops, c);
+-		mutex_unlock(&cn->mutex);
+ 		if (!c->pde) {
+ 			err = -ENOMEM;
+ 			goto err;
+@@ -290,6 +306,7 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ #endif
+ 
+ 	refcount_set(&c->entries, 1);
++	clusterip_net_unlock(cn);
+ 	return c;
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -300,6 +317,7 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ out_config_put:
+ 	spin_unlock_bh(&cn->lock);
+ 	clusterip_config_put(c);
++	clusterip_net_unlock(cn);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -848,10 +866,10 @@ static void clusterip_net_exit(struct net *net)
+ #ifdef CONFIG_PROC_FS
+ 	struct clusterip_net *cn = clusterip_pernet(net);
+ 
+-	mutex_lock(&cn->mutex);
++	clusterip_net_lock(cn);
+ 	proc_remove(cn->procdir);
+ 	cn->procdir = NULL;
+-	mutex_unlock(&cn->mutex);
++	clusterip_net_unlock(cn);
+ #endif
+ 	nf_unregister_net_hook(net, &cip_arp_ops);
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+2.39.5
 
