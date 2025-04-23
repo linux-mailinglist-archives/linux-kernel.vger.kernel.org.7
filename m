@@ -1,127 +1,188 @@
-Return-Path: <linux-kernel+bounces-616312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A493A98AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F87AA98ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 15:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2CE6189A226
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1291B675D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B960191484;
-	Wed, 23 Apr 2025 13:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E008B18DB17;
+	Wed, 23 Apr 2025 13:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S9xDLQNp"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBAhs1Qa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F9C189F57
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4229618C031
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 13:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745414522; cv=none; b=ZQS6NwBEMWfzjcW58sHLkysO//AuRRUheoJU46FfsVwL7ub8iOEcy0kHzAwfTAWRYD5XUAWrMW71BKfoxAEK294AzMAAS/vEtwS8SfDMNj/lyYkxwF6Dyi+PE8+QgT7yqAl9Ru/NM20/vOCqQo0v1BmzvstqQfsEu8qHkRbbWNY=
+	t=1745414549; cv=none; b=km7SiJ7BO0N92InN5HvtL1cVuqVYq8kLNSJRzdiEtpkjqyODMVYUF4TfOkqJIyHlzG0Hz8sbsiWcGBWqEGyfRDKDQEYSAJ1CjfKsYprPaInoWF9WN7YHMhRbLLjN71T+LdyYIuvmGWV+kykJPYEDBldhnx/BFLnicINPutYeszU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745414522; c=relaxed/simple;
-	bh=Kows0XL7gKJe1i0pLaRBE/Sn74cJUIQtD6WutoBDJ4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bPEB6TRX8woIt86S2/jZeM0nfBs0mC04LE3bWIN2dNGn0iR+WdVD+FaZTTfM1un/YZriQsSDX7JvbSSRaWZNnxEz/54RxUDxxEMfF8097orF1B1T81UzMw2EUZSl5EaJUvsaW/hDF0svk4t7PmJ3Q1g2PSA5kAko+Jr4rbXDE1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S9xDLQNp; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d6d162e516so50140275ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 06:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745414518; x=1746019318; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yFxbUqe4x1e+3vHnnMvSYfdGB6uDRsaUIx6ClI9ClLM=;
-        b=S9xDLQNpEUIHmOMZiW//GTUUsvSii7NrHzNYOFwiGC6L/56nmMF8Vh1yS6+l8VpyUc
-         Nit3U6vRiOH+bIC8BI+tAlVIpH11WzKe0ISppzJ0crKo5wvhsAdJllS1QXOVIM25a1ej
-         253xFJLcGmLXTt8KUzMIg0GX2dEkIsosNQsh1zJDoM01Lspz5GmVFsIJCCQhdlUhIjW3
-         ixG+SQQnY5kWkfeNRjUaszVXoTeUtv2kv6q2L8MdErhYyaHErP6sTdlQsRts/AiZQTpR
-         0jusBQ31oo5xPeTfMjY1Y53mMPPHAPm0e+xHTXhp9B4jDOj/7PXKwn28CUqKzpHtuMGA
-         Xu8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745414518; x=1746019318;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFxbUqe4x1e+3vHnnMvSYfdGB6uDRsaUIx6ClI9ClLM=;
-        b=MZ/gckUJf+9/GIXbAX00IwyD/q0X4I+3nBCgO15gj5QxP1Kg6bk1qBb679akdaxkmi
-         0D7HDo4cymP3Je8ZkKxQQ3zxreZAeug0UCc9soVSkc/iDNL9TMhSSzYGq9mcUIiwG8eN
-         JtBv+ICi44pvtoRGNQU9h5NZLRUN2P/cX+3s5pSCpfxeXVNSMzrq8BaQRBaLeLDYdWIh
-         eU+J49LHSCQLeJ6UbwS63eFBKN/cJg7+hXy2Bl5qtqlq6uTyZa+gmprGx31UBTHQAXNn
-         weg9bwdd392OfoLrSfgK++JFWoANavAQPtXDTxOO8AzHA11L7qXbv2jgk+A+UTASamDN
-         hhGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXalr8doXE+OF7oZOyC1GOOH4XdPcS3W2FaLROGG1NKXNnOCTpNXB3My1QFliufKqe4+5AQEDg6BGNZdRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhfBSn2Ud93ikdkREwQp9KLvKMnbLiqzK5B0DpKpA0sTUyoJ2T
-	Rj2W3I+RRBeCoHZ9dmDxq5nmYOKJZVZjQqfWomLzd3nKmGlWL+/ep43Uocc+UmhC2J8Ic7w3GIn
-	g
-X-Gm-Gg: ASbGnctCHqrxLmYXxp5CRZzzVlIjoDeRLf2ZJL5wxm+4lgkJM01AngtEcT5YJIAIq1Q
-	guuf48ijT0hJfPpG8lWoHhqYUPUWKjcyAEdUYfpd9YrdwRFCR30ibLisCJuwmJjes3xCGMdEqXD
-	a9UM54JldqDFUBUVIdjoynkbWsP5HrqP4iNuudb5UyknkodfMgGL1M+V8MsDZvhNzxjUqJqYWIP
-	gbpCi619v9xmyZEXbLicf/RtNookHCJGfcADs7zTXJfhXqb4i6jQ/uvECHE30Gw96Y3BV4oPhj+
-	UCLtFVSV3LRnqgw4k4kK3Jkkq4kZngQZqmm8+Lefvs9BesEY
-X-Google-Smtp-Source: AGHT+IGTVEkt9W2JltunyBersFyZ6wDo6AvaUWgTrYHtS8zxIbIrUCUZrDuNaD9JWWXTO8zilUtOtA==
-X-Received: by 2002:a05:6e02:17cd:b0:3d3:f6ee:cc4c with SMTP id e9e14a558f8ab-3d889047eb1mr178691565ab.0.1745414517912;
-        Wed, 23 Apr 2025 06:21:57 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3806326sm2806031173.42.2025.04.23.06.21.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 06:21:57 -0700 (PDT)
-Message-ID: <09bde11c-a3f3-4c5a-91ed-74bfd2e0f61d@kernel.dk>
-Date: Wed, 23 Apr 2025 07:21:56 -0600
+	s=arc-20240116; t=1745414549; c=relaxed/simple;
+	bh=fBx9lCEtPCxPfGwK8FPJiN/ERtJIwVRE9R9bu+NJtAM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BjDN3zTEhSYq83YCgmcdGKxsBMHTczbR5+SU79+QrE2OwrWZzoezcjZiAlWH+Odh0HxuJjC/kWRceb4QObL6OMDtcr/b5SM2E6fbjBDtGjJo4oSQID0F//jKVhpHAEK8kYLZvfr54jy2kqGvurL49kc15wVCylSMcIP6vHOnG18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBAhs1Qa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502BFC4CEE2;
+	Wed, 23 Apr 2025 13:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745414548;
+	bh=fBx9lCEtPCxPfGwK8FPJiN/ERtJIwVRE9R9bu+NJtAM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nBAhs1QauQlO5/VyrKfXeDnPaNIJQu5EmlYHYU12HhYnam5ZaSr0DW2eITK9TkEin
+	 FQg5FLSINfaW75mZIjlRfgrKtMOeIUXsW62zwzaB9ouzjSy8rygTBQ2c1P8+cnAMgq
+	 ISCvZVuR9r0L20G1iB7obW2K38mV8590YroSixgV+cvR3rD5+P21B0Ivk1JtNQ1Ays
+	 /pAo0xjlyiiBei8+VX0h+CO/KJjSs5Sf213S2WhCL5AB+V+VwbMuC1V3AlyZUBMJFV
+	 /8LeQyatOTuSExjwFzcArFihYTEUGyWU+BkasUsNhOM9QudbfGgbajui5yRjIT5uW3
+	 15/aq9F75CmWw==
+From: Daniel Wagner <wagi@kernel.org>
+Date: Wed, 23 Apr 2025 15:21:56 +0200
+Subject: [PATCH v5 13/14] nvmet-fc: take tgtport refs for portentry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] nvme/pci: PRP list DMA pool partitioning
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250422220952.2111584-1-csander@purestorage.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250422220952.2111584-1-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250423-nvmet-fcloop-v5-13-3d7f968728a5@kernel.org>
+References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
+In-Reply-To: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On 4/22/25 4:09 PM, Caleb Sander Mateos wrote:
-> NVMe commands with more than 4 KB of data allocate PRP list pages from
-> the per-nvme_device dma_pool prp_page_pool or prp_small_pool. Each call
-> to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock.
-> These device-global spinlocks are a significant source of contention
-> when many CPUs are submitting to the same NVMe devices. On a workload
-> issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA nodes
-> to 23 NVMe devices, we observed 2.4% of CPU time spent in
-> _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
-> 
-> Ideally, the dma_pools would be per-hctx to minimize
-> contention. But that could impose considerable resource costs in a
-> system with many NVMe devices and CPUs.
-> 
-> As a compromise, allocate per-NUMA-node PRP list DMA pools. Map each
-> nvme_queue to the set of DMA pools corresponding to its device and its
-> hctx's NUMA node. This reduces the _raw_spin_lock_irqsave overhead by
-> about half, to 1.2%. Preventing the sharing of PRP list pages across
-> NUMA nodes also makes them cheaper to initialize.
-> 
-> Allocating the dmapool structs on the desired NUMA node further reduces
-> the time spent in dma_pool_alloc from 0.87% to 0.50%.
+Ensure that the tgtport is not going away as long portentry has a
+pointer on it.
 
-Looks good to me:
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+ drivers/nvme/target/fc.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+index 75ddb7425605dd6623db38a133b63e201592354c..2835772677f9486324ef77d9021b49f8d153e916 100644
+--- a/drivers/nvme/target/fc.c
++++ b/drivers/nvme/target/fc.c
+@@ -1254,6 +1254,7 @@ nvmet_fc_portentry_bind(struct nvmet_fc_tgtport *tgtport,
+ {
+ 	lockdep_assert_held(&nvmet_fc_tgtlock);
+ 
++	nvmet_fc_tgtport_get(tgtport);
+ 	pe->tgtport = tgtport;
+ 	tgtport->pe = pe;
+ 
+@@ -1273,8 +1274,10 @@ nvmet_fc_portentry_unbind(struct nvmet_fc_port_entry *pe)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
+-	if (pe->tgtport)
++	if (pe->tgtport) {
++		nvmet_fc_tgtport_put(pe->tgtport);
+ 		pe->tgtport->pe = NULL;
++	}
+ 	list_del(&pe->pe_list);
+ 	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
+ }
+@@ -1292,8 +1295,10 @@ nvmet_fc_portentry_unbind_tgt(struct nvmet_fc_tgtport *tgtport)
+ 
+ 	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
+ 	pe = tgtport->pe;
+-	if (pe)
++	if (pe) {
++		nvmet_fc_tgtport_put(pe->tgtport);
+ 		pe->tgtport = NULL;
++	}
+ 	tgtport->pe = NULL;
+ 	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
+ }
+@@ -1316,6 +1321,9 @@ nvmet_fc_portentry_rebind_tgt(struct nvmet_fc_tgtport *tgtport)
+ 	list_for_each_entry(pe, &nvmet_fc_portentry_list, pe_list) {
+ 		if (tgtport->fc_target_port.node_name == pe->node_name &&
+ 		    tgtport->fc_target_port.port_name == pe->port_name) {
++			if (!nvmet_fc_tgtport_get(tgtport))
++				continue;
++
+ 			WARN_ON(pe->tgtport);
+ 			tgtport->pe = pe;
+ 			pe->tgtport = tgtport;
+@@ -2887,12 +2895,17 @@ nvmet_fc_add_port(struct nvmet_port *port)
+ 	list_for_each_entry(tgtport, &nvmet_fc_target_list, tgt_list) {
+ 		if ((tgtport->fc_target_port.node_name == traddr.nn) &&
+ 		    (tgtport->fc_target_port.port_name == traddr.pn)) {
++			if (!nvmet_fc_tgtport_get(tgtport))
++				continue;
++
+ 			/* a FC port can only be 1 nvmet port id */
+ 			if (!tgtport->pe) {
+ 				nvmet_fc_portentry_bind(tgtport, pe, port);
+ 				ret = 0;
+ 			} else
+ 				ret = -EALREADY;
++
++			nvmet_fc_tgtport_put(tgtport);
+ 			break;
+ 		}
+ 	}
+@@ -2908,11 +2921,21 @@ static void
+ nvmet_fc_remove_port(struct nvmet_port *port)
+ {
+ 	struct nvmet_fc_port_entry *pe = port->priv;
++	struct nvmet_fc_tgtport *tgtport = NULL;
++	unsigned long flags;
++
++	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
++	if (pe->tgtport && nvmet_fc_tgtport_get(pe->tgtport))
++		tgtport = pe->tgtport;
++	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
+ 
+ 	nvmet_fc_portentry_unbind(pe);
+ 
+-	/* terminate any outstanding associations */
+-	__nvmet_fc_free_assocs(pe->tgtport);
++	if (tgtport) {
++		/* terminate any outstanding associations */
++		__nvmet_fc_free_assocs(tgtport);
++		nvmet_fc_tgtport_put(tgtport);
++	}
+ 
+ 	kfree(pe);
+ }
+@@ -2921,10 +2944,21 @@ static void
+ nvmet_fc_discovery_chg(struct nvmet_port *port)
+ {
+ 	struct nvmet_fc_port_entry *pe = port->priv;
+-	struct nvmet_fc_tgtport *tgtport = pe->tgtport;
++	struct nvmet_fc_tgtport *tgtport = NULL;
++	unsigned long flags;
++
++	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
++	if (pe->tgtport && nvmet_fc_tgtport_get(pe->tgtport))
++		tgtport = pe->tgtport;
++	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
++
++	if (!tgtport)
++		return;
+ 
+ 	if (tgtport && tgtport->ops->discovery_event)
+ 		tgtport->ops->discovery_event(&tgtport->fc_target_port);
++
++	nvmet_fc_tgtport_put(tgtport);
+ }
+ 
+ static ssize_t
 
 -- 
-Jens Axboe
+2.49.0
 
 
