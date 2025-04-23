@@ -1,172 +1,146 @@
-Return-Path: <linux-kernel+bounces-615623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B897AA97FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:02:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD220A98009
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D178B17E553
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 395247AAAF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 07:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33924253F35;
-	Wed, 23 Apr 2025 07:02:28 +0000 (UTC)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B00325CC55;
+	Wed, 23 Apr 2025 07:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HPpFHJbs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DCE1AF4D5
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 07:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F59428F1;
+	Wed, 23 Apr 2025 07:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745391747; cv=none; b=C8NRjUHDrT0VXEV1TAoKGbNPgQrGz3jWeKNmZpQd/Bvu2DlDWF1islAD5wfSzZyYM9YmBnpKgGYFN7GM/YDaeNEsCar1Do+jegyTlvgJHEOEG28fbri79IIBVvA/zvG/J8qh++4oq1gJOLPJTPF16cEC0+QonoYQoW82EbZh+5A=
+	t=1745391909; cv=none; b=lFdpkStHvd96mFkP29i+65T+E3NRacJWgVWSkoc2gGn7XtFf8j1WH6Pb8SIriIuHAsnln7cw+YJrkGgqCJ9UMNSz+tpNDxi/U6zcoiXtd0QsP6wwF6pdyFzLip/7nG6IgUViS8786bzheqt7m/vtLjBW3vzarpNAZggTL2lPeA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745391747; c=relaxed/simple;
-	bh=gbkMNfwgfYdmOKAVYlr5A18p5tXwK5iqmUnvdxbkPn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AAmYYsqdzYbPiLDQ0l7JfKH75nQAuhlBjzq1RzD3j+YGkgBG3h4YFfDDdoYGVD23zXyx1VWcXB6SSkfQQj3uHtvk8qHkC8LXwGrc5AWoxy40Q+1pgoSITbR9KBiN4JfBTUO4qgT6Q01tBPuOj+mG/ueiANBXJe/kTiRmrYRbXsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86feb84877aso2181363241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:02:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745391744; x=1745996544;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oLLT648Qo0bBu3L/szjjcPVs5CsDim4LfUXjSbqVkUo=;
-        b=P5WD3f5qkOO9dPYCQf4b87FU8Fzq63oG/2rHVEH6gi7/v0juvI/SKeqB7rsNbgkjU3
-         mCM8jMU5HmgQbWJIPRAuhLzAAE8Q0KMriA36fqIKVGfKKg/g8XsiM5nHnsKTLZeV0xPk
-         bTFrJ6G1N9tDoNCVqYHMSmsv30SHk9CJNNQx5b2Cf7KWIHrjPEtJp0fIT7VW1yppZrYL
-         UMT7xxSUTmUSB1fN1mhAuw8AIijPgoCpm3fTOuhP0X2t9q3laeZTxtbh4ZEYqN44ira3
-         dkt3bVAVdoQCptuh5yIjUHJCJdFFzxrXC0r7DCNI7uuyRQgs2+sp3iMmVGzdNFRgm6Cr
-         xRkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKPibRj3SqsQL3mNhoRqH2pBSFUaeSgFW5E0FHNxg1yir0ED4R/Gbmpm1WFvbtJv9tXFhUVMW/7k4+Syg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC9Bz8BM2Yxb824osqKDgOPw2LgSuOmxtpCeOkxzxK6249aame
-	pP9r8aAdV7tWPSAyr+BPix8jH5zZl/zZy0ok5KZ7sKc+LsG4KPqregm+3vFI
-X-Gm-Gg: ASbGnct/LNJr75IJ4k6SWv+OVrzg/QreTmgtk5nHxdo0OXejj9Fwq41Y+vVeHrVCc6g
-	cRy2pELR4c8kJAIaGxdYPRShkwb4XU7tGsQFAcFZVdSgTasBp7UwoS9BddM0l9g2Rel6SmWszFa
-	YosCC3D+A3L+pnUdnpFaslzSsHngIyIFJGyoML6Ws+4Z+66CBPmM6lEKWxML8yoABWhckXmIBsW
-	s0Bg3CFHqvITExz+5O4n5puIXNknyZ0GhGcXrE/kkW0EfgsV8crN6TlCi+Y4ILE8MBRT4pGnziH
-	I5Cc/pptTTXrmcX+wt6wr0tqiTq2XRmvZhJugUr2DA2+A7WKlOWRFcXDttpVZoYLM0xEVYLYPmn
-	S/4paG2lPSHTgAg==
-X-Google-Smtp-Source: AGHT+IFkILUsBm2GyibPNm4vB292lZNkKvagSFN7FDisBItAtD1QvlWtCV3/ltNscTsJ46YSO83qKw==
-X-Received: by 2002:a05:6102:22cc:b0:4c1:8e95:24f3 with SMTP id ada2fe7eead31-4cb80207f8amr11107152137.24.1745391743973;
-        Wed, 23 Apr 2025 00:02:23 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4cb7dde4507sm2437392137.17.2025.04.23.00.02.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 00:02:22 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86715793b1fso2151038241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 00:02:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXa1NfAA1QRFf/37xGpo16FV7EDzw1aUPZdbwcO54pNEyiIEBtfPB3SoryXsQVZ2LTW6ywg4Mj1707JwL0=@vger.kernel.org
-X-Received: by 2002:a05:6102:115b:b0:4b9:bd00:454b with SMTP id
- ada2fe7eead31-4cb8011c0aemr10746966137.13.1745391742137; Wed, 23 Apr 2025
- 00:02:22 -0700 (PDT)
+	s=arc-20240116; t=1745391909; c=relaxed/simple;
+	bh=D+P7ur/vwKX0dY6+j01f0h5JOwkYmjANaOOZHqX3JiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pjZwCUHwe27U6UrleDrRSGLU7OFDWpMGK5DkFkz+vquQI+XjW/N1Z+j1zTxb44xpkVToq9aaEpPCVXcIcSjw3FdbDgZlQV0onmwP9c5vTjzVovqXFRqPtnbFYMXF382XPWfdoyif9fE66GS1tDKb5m8vQG5EgS/F6LM9wQarEAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HPpFHJbs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53N0iLmg022331;
+	Wed, 23 Apr 2025 07:04:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DXs+2X22CNIfmNCVhg97ldAwTjAoi/RHfs7pocm68rY=; b=HPpFHJbssP7T5kYH
+	BNxsx8ElUHeCg7E62rJt1P52xqRL1fOs1txhXZGRK3K9voYk5BZnkJBCpafq7F/9
+	8LB/aIhFnATHzf3AUjEWwqdrO4WtAD2bh7OEkCS1yQju2REvk1s+oo0x/pUQPaNy
+	QFk6hK1NEVWslrzOMrN5kdBK7BEvhR+KVq7SrFc4LonLqkqKB3vga5AOCJGra+ya
+	evLm+J6hRnBvmrgt9AsKQ2uEJnaL9CgVi1Eb1P37KV+FgX10lqVsMs5mYKBc+1vN
+	o5HJhUo4iokMBDSEvBGHu9sRChKo1A2brmEXUdyms17PbA7zKLl4rWOMmQ/SPN+f
+	mm07CA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh1164v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 07:04:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53N74cSZ016287
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Apr 2025 07:04:38 GMT
+Received: from [10.110.52.190] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Apr
+ 2025 00:04:37 -0700
+Message-ID: <c75d2cc2-e7f7-4de4-8d3d-81c3cf8ff973@quicinc.com>
+Date: Wed, 23 Apr 2025 00:04:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419115157.567249-1-cem@kernel.org> <81d49efc-1b81-48e1-b9ca-c3665d0cf73c@roeck-us.net>
- <2bf6d797-d974-49bb-a234-a20378f5dda5@roeck-us.net>
-In-Reply-To: <2bf6d797-d974-49bb-a234-a20378f5dda5@roeck-us.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Apr 2025 09:02:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU5F1nEpF9+jJSP0oap6GdP9mQSPp0c3zSmXeOPrCzA9A@mail.gmail.com>
-X-Gm-Features: ATxdqUGRbZuOINkFuxvCUmORu2B9D7f0xtqPILeeZNQ196gJiQhds1EEJ0BoHQA
-Message-ID: <CAMuHMdU5F1nEpF9+jJSP0oap6GdP9mQSPp0c3zSmXeOPrCzA9A@mail.gmail.com>
-Subject: Re: [RFC PATCH] math.h: Account for 64-bit division on i386
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: cem@kernel.org, linux-kernel@vger.kernel.org, Hans.Holmberg@wdc.com, 
-	oe-kbuild-all@lists.linux.dev, hch@lst.de, lukas@wunner.de, 
-	angelogioacchino.delregno@collabora.com, Jonathan.Cameron@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH 00/14] introduce kmemdump
+To: Eugen Hristev <eugen.hristev@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>
+CC: <linux-doc@vger.kernel.org>, <corbet@lwn.net>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <rostedt@goodmis.org>, <john.ogness@linutronix.de>,
+        <senozhatsky@chromium.org>, <pmladek@suse.com>, <peterz@infradead.org>,
+        <mojha@qti.qualcomm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <vincent.guittot@linaro.org>, <konradybcio@kernel.org>,
+        <dietmar.eggemann@arm.com>, <juri.lelli@redhat.com>
+References: <20250422113156.575971-1-eugen.hristev@linaro.org>
+Content-Language: en-US
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20250422113156.575971-1-eugen.hristev@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WG7qYevMhuvSAnvTpD6mvm3ky2sWWyNl
+X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=68089107 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=oZ8wWTcPSBrqPQfBPqMA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: WG7qYevMhuvSAnvTpD6mvm3ky2sWWyNl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA0NiBTYWx0ZWRfX0TwZpL0SAicz oF4+evXSmwb+4LqxonlhNM/2Pc0LZLhrfKbOUZFe88P71mC4iyFnITKZSulYzUwJEld+jDIUeUJ THtFecDN/No+OXk5RiG7AMgR7aNDRbupscYOxnQFxR+pyrX78qy5u/XmRy9s91zgoZT2TDYQdBF
+ cZliSTsNqg4xWCq4u1o8jwcLDjR4mSpVn5PP5AP5R1UN/28ARiNsdBIAsyrPddyzH/ExDx2ZUNZ 5BN3OMmJGm6jyzFJHngqIl47sD8q67ovCjvzvqCGDKxwd8m+tUeHBOeSh+vzh44JrwaorO7Kc4z /t4jFPSm0x1f7Ag98UOGqE/8Nnli8QfvFmjxTgYQGSH6pKORYcFnNFLcrKPK7o5rZZ2MTdw3YQl
+ +lXeRaEf2NtKnxdn5XNByYsixOSYMx+r8rtcqhxFn45H5ewVVMm1lu0RtzO6BPpvPf221yJK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-23_05,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1011 malwarescore=0
+ mlxlogscore=797 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230046
 
-On Sun, 20 Apr 2025 at 19:42, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Sun, Apr 20, 2025 at 08:40:27AM -0700, Guenter Roeck wrote:
-> > On Sat, Apr 19, 2025 at 01:51:46PM +0200, cem@kernel.org wrote:
-> > > From: Carlos Maiolino <cem@kernel.org>
-> > >
-> > > Building linux on i386 might fail if a 64bit type is passed to
-> >
-> > i386 actually builds. Its compiler is probably able to convert
-> > the offending mult_frac() without helpers since the divisor is
-> > a constant. I see the problem with openrisc and parisc, with
-> > gcc 13.3.0.
-> >
-> > > mult_fract(). To prevent the failure, use do_div() for the division
-> > > calculation instead of hardcoding a / b.
-> > >
-> > > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202504181233.F7D9Atra-lkp@intel.com/
-> > > ---
-> > >
-> > > I'm sending it as a RFC because I didn't to extensive testing on this
-> > > patch, also I'm not sure if mult_frac() was intended to work on 32-bit
-> > > only types. If that's the case, perhaps, a new mult_frac64() might be a
-> > > better idea?!
-> > >
-> > >  include/linux/math.h | 19 ++++++++++---------
-> > >  1 file changed, 10 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/include/linux/math.h b/include/linux/math.h
-> > > index 0198c92cbe3e..05ea853b75b4 100644
-> > > --- a/include/linux/math.h
-> > > +++ b/include/linux/math.h
-> > > @@ -133,15 +133,16 @@ __STRUCT_FRACT(u32)
-> > >  #undef __STRUCT_FRACT
-> > >
-> > >  /* Calculate "x * n / d" without unnecessary overflow or loss of precision. */
-> > > -#define mult_frac(x, n, d) \
-> > > -({                         \
-> > > -   typeof(x) x_ = (x);     \
-> > > -   typeof(n) n_ = (n);     \
-> > > -   typeof(d) d_ = (d);     \
-> > > -                           \
-> > > -   typeof(x_) q = x_ / d_; \
-> > > -   typeof(x_) r = x_ % d_; \
-> > > -   q * n_ + r * n_ / d_;   \
-> > > +#define mult_frac(x, n, d)         \
-> > > +({                                 \
-> > > +   typeof(x) x_ = (x);             \
-> > > +   typeof(n) n_ = (n);             \
-> > > +   typeof(d) d_ = (d);             \
-> > > +                                   \
-> > > +   typeof(x_) r = do_div(x_, d_);  \
-> > > +   r *= n_;                        \
-> > > +   do_div(r, d_);                  \
-> > > +   x_ * n_ + r;                    \
-> > >  })
-> > >
-> >
-> > Unfortunately that doesn't work. I get build errors on parisc.
-> >
->
-> Turns out the first parameter of do_div needs to be u64, not s64,
-> at least on parisc.
+On 4/22/2025 4:31 AM, Eugen Hristev wrote:
+> kmemdump is a mechanism which allows the kernel to mark specific memory
+> areas for dumping or specific backend usage.
+> Once regions are marked, kmemdump keeps an internal list with the regions
+> and registers them in the backend.
+> Further, depending on the backend driver, these regions can be dumped using
+> firmware or different hardware block.
+> Regions being marked beforehand, when the system is up and running, there
+> is no need nor dependency on a panic handler, or a working kernel that can
+> dump the debug information.
+> The kmemdump approach works when pstore, kdump, or another mechanism do not.
+> Pstore relies on persistent storage, a dedicated RAM area or flash, which
+> has the disadvantage of having the memory reserved all the time, or another
+> specific non volatile memory. Some devices cannot keep the RAM contents on
+> reboot so ramoops does not work. Some devices do not allow kexec to run
+> another kernel to debug the crashed one.
+> For such devices, that have another mechanism to help debugging, like
+> firmware, kmemdump is a viable solution.
+> 
+> kmemdump can create a core image, similar with /proc/vmcore, with only
+> the registered regions included. This can be loaded into crash tool/gdb and
+> analyzed.
+> To have this working, specific information from the kernel is registered,
+> and this is done at kmemdump init time, no need for the kmemdump user to
+> do anything.
+> 
+> The implementation is based on the initial Pstore/directly mapped zones
+> published as an RFC here:
+> https://lore.kernel.org/all/20250217101706.2104498-1-eugen.hristev@linaro.org/
+> 
+> The back-end implementation for qcom_smem is based on the minidump
+> patch series and driver written by Mukesh Ojha, thanks:
+> https://lore.kernel.org/lkml/20240131110837.14218-1-quic_mojha@quicinc.com/
+> 
+> I appreciate the feedback on this series, I know it is a longshot, and there
+> is a lot to improve, but I hope I am on the right track.
 
-That is correct: the first parameter must be u64, the second must be u32:
-https://elixir.bootlin.com/linux/v6.14.3/source/include/asm-generic/div64.h
 
-As you must never use open-coded 64-bit divisions in the kernel,
-simple helpers like mult_frac() can only be used for 32-bit values.
-For anything involving 64-bit divisions, you must use the helpers from
-<linux/math64.h>, e.g. mul_u64_u32_div().
-https://elixir.bootlin.com/linux/v6.14.3/source/include/linux/math64.h#L257
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Is there any way to demonstrate this framework on non-Qualcomm device? Like any
+other ARM device from TI, NXP etc; x86/RISC-V based device is also fine.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---Trilok Soni
 
