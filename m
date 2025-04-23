@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-615970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-615976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DBCA984DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C76A98504
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00A61B63B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F0E5A5D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 09:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7384B265621;
-	Wed, 23 Apr 2025 09:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="mACXAwmz"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC36A274FC8;
+	Wed, 23 Apr 2025 09:06:01 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84A2641F8;
-	Wed, 23 Apr 2025 09:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E6C269AFB;
+	Wed, 23 Apr 2025 09:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745399134; cv=none; b=FFNIB+qYlaTr/2TjAw6/YmBmfR2GZPwtXVtJ50lehlgXy9aGHx94ohhtOhMqtWNgd/l+QHIA9wIivbRda4T03EcWtVeJ9mnlUu5UfSabBivuzsQZo01raCuSGg2sld2q4q36zdSkXTxTn4zHtKKfipAUCJiEygdp3QNpmlrdBaA=
+	t=1745399161; cv=none; b=dHhAZ4T/pkrlxHz+IyIzp5SZFoab4/NKu3YzgyX7xQWb8uYQu5NSdlwxPVW7+OyD9LQpf/NjHzxVxZSelV4WPHEXI9qBJ8CbcPNLnnSV7o1HuYoIa3CvXpQYiIp0d6QuOhyvho/W35598RorK30aS8H1gV/GVFWprKnlhbpKQqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745399134; c=relaxed/simple;
-	bh=5LRmniywZxMxDlI5Oxe49VfAgh8CxFPg1n4DHapt+9k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mmjsEVGMh6Dvewu0hPnF7RewXbl67ZJ4MRyvF0KLlGXegnkK/tZSjQ8IlM3+BpKzrmOGzg0yRMPpZtbtKWKVA5DvHwmE5qGO3YROIabGIGn2FIYEa+SpeYdoeqovNhibkQkEMfbvQg3knlH5w2p4NvT5wRmYlwFe4ciBKTh73xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=mACXAwmz; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1745399133; x=1776935133;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FXlYnAZ24E+gP3h3vZ2maJPRoNj+Qo4OgFh+v0oTL4I=;
-  b=mACXAwmzEBH62QT+7z1HtAKbTm4ra2yq33Mo0i9kqETCCSafu2IOjg3a
-   qgXUN6WJfxXD6XpVdN3UkoxM9ybCQvUyhXFzOG8J11nyuHRp50wQO+S7y
-   uC98lIpmZIcd4X9F3lY+qTA88lsKJNdsY90HtNVreQyvUP04QDZtTZuPx
-   c=;
-X-IronPort-AV: E=Sophos;i="6.15,233,1739836800"; 
-   d="scan'208";a="818324122"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 09:05:27 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:2286]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.11.178:2525] with esmtp (Farcaster)
- id e508e646-c623-42bd-acdb-51aeea751e1c; Wed, 23 Apr 2025 09:05:26 +0000 (UTC)
-X-Farcaster-Flow-ID: e508e646-c623-42bd-acdb-51aeea751e1c
-Received: from EX19D029EUC001.ant.amazon.com (10.252.61.252) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 09:05:25 +0000
-Received: from dev-dsk-bsz-1b-e2c65f5d.eu-west-1.amazon.com (10.13.227.240) by
- EX19D029EUC001.ant.amazon.com (10.252.61.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 23 Apr 2025 09:05:23 +0000
-From: Bartosz Szczepanek <bsz@amazon.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: <nh-open-source@amazon.com>, Bartosz Szczepanek <bsz@amazon.de>,
-	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] efi: Improve logging around memmap init
-Date: Wed, 23 Apr 2025 09:05:16 +0000
-Message-ID: <20250423090517.47049-1-bsz@amazon.de>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1745399161; c=relaxed/simple;
+	bh=yZ14u45nosFnORYpl+CjzdK4IPUWLeh5MUca7Ao0xuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=toAk8Qwy0Yc8J2hdl2I0X9vZWSXI+892xu3PsxCJxjvuerbc0zMfHKCmDp6ju0mBzjZGy5u3tkFrgfG555Xp/GDV8Cy+gaVneYMltWejNtonnhd9hcVUCsb98RF+2hGDnL3p+t7x01yQhDb4za332cJ7UD1b1CtCpxm2o52GyBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E400768AFE; Wed, 23 Apr 2025 11:05:52 +0200 (CEST)
+Date: Wed, 23 Apr 2025 11:05:52 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [PATCH v9 22/24] nvme-pci: use a better encoding for small prp
+ pool allocations
+Message-ID: <20250423090552.GA381@lst.de>
+References: <cover.1745394536.git.leon@kernel.org> <973ed41249e12766383b3cedac799692f9bda3b8.1745394536.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
- EX19D029EUC001.ant.amazon.com (10.252.61.252)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <973ed41249e12766383b3cedac799692f9bda3b8.1745394536.git.leon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Be more informative if memremap fails, and print out physical address
-together with size. This change intends to make investigations of such
-early failures slightly easier.
+On Wed, Apr 23, 2025 at 11:13:13AM +0300, Leon Romanovsky wrote:
+> From: Christoph Hellwig <hch@lst.de>
+> 
+> There is plenty of unused space in the iod next to nr_descriptors.
+> Add a separate flag to encode that the transfer is using the full
+> page sized pool, and use a normal 0..n count for the number of
+> descriptors.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Tested-by: Jens Axboe <axboe@kernel.dk>
+> [ Leon: changed original bool variable to be flag as was proposed by Kanchan ]
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> ---
+>  drivers/nvme/host/pci.c | 93 ++++++++++++++++++++---------------------
+>  1 file changed, 46 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 638e759b29ad..7e93536d01cb 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -44,6 +44,7 @@
+>  #define NVME_MAX_SEGS	128
+>  #define NVME_MAX_META_SEGS 15
+>  #define NVME_MAX_NR_DESCRIPTORS	5
+> +#define NVME_SMALL_DESCRIPTOR_SIZE 256
+>  
+>  static int use_threaded_interrupts;
+>  module_param(use_threaded_interrupts, int, 0444);
+> @@ -219,6 +220,10 @@ struct nvme_queue {
+>  	struct completion delete_done;
+>  };
+>  
+> +enum {
+> +	IOD_LARGE_DESCRIPTORS = 1, /* uses the full page sized descriptor pool */
 
-Signed-off-by: Bartosz Szczepanek <bsz@amazon.de>
----
- drivers/firmware/efi/memmap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is used as a ORable flag, I'd make that explicit:
 
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 34109fd86c55..f1c04d7cfd71 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -31,31 +31,32 @@
-  * Returns: zero on success, a negative error code on failure.
-  */
- int __init __efi_memmap_init(struct efi_memory_map_data *data)
- {
- 	struct efi_memory_map map;
- 	phys_addr_t phys_map;
- 
- 	phys_map = data->phys_map;
- 
- 	if (data->flags & EFI_MEMMAP_LATE)
- 		map.map = memremap(phys_map, data->size, MEMREMAP_WB);
- 	else
- 		map.map = early_memremap(phys_map, data->size);
- 
- 	if (!map.map) {
--		pr_err("Could not map the memory map!\n");
-+		pr_err("Could not map the memory map! phys_map=%pa, size=0x%lx\n",
-+			&phys_map, data->size);
- 		return -ENOMEM;
- 	}
- 
- 	map.phys_map = data->phys_map;
- 	map.nr_map = data->size / data->desc_size;
- 	map.map_end = map.map + data->size;
- 
- 	map.desc_version = data->desc_version;
- 	map.desc_size = data->desc_size;
- 	map.flags = data->flags;
- 
- 	set_bit(EFI_MEMMAP, &efi.flags);
- 
- 	efi.memmap = map;
- 
--- 
-2.47.1
+	/* uses the full page sized descriptor pool */
+	IOD_LARGE_DESCRIPTORS		= 1U << 0,
+
+and similar for the next flag added in the next patch.
+
+>  	struct nvme_request req;
+>  	struct nvme_command cmd;
+>  	bool aborted;
+> -	/* # of PRP/SGL descriptors: (0 for small pool) */
+> -	s8 nr_descriptors;
+> +	u8 nr_descriptors;	/* # of PRP/SGL descriptors */
+> +	unsigned int flags;
+
+And this should be limited to a u16 to not bloat the structure.
 
 
