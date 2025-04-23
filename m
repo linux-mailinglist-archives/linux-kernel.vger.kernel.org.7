@@ -1,179 +1,111 @@
-Return-Path: <linux-kernel+bounces-616222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37095A9896D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F5CA9895A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 14:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472E71B66A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58513B951A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 12:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EE7218AC7;
-	Wed, 23 Apr 2025 12:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35272165E4;
+	Wed, 23 Apr 2025 12:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+msE829"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3x145LH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BDF2741C8;
-	Wed, 23 Apr 2025 12:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100231D90DF;
+	Wed, 23 Apr 2025 12:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745410478; cv=none; b=bTouzpJwukleO1D5qT/tVEYac+YQkzKTbAFgkwCC/wK7dE1sqUFhbbTdwsAhEhD6qkN8N55kBgM4UtQZX3lMtwphF+FNaw2p1Ud7SwIp3NVPyZlRKBNJoWtRNtU4HFve4fVL4wnHspWw5MtEgzLuxvwrLM+ClZ+ZuFI51nRsJA4=
+	t=1745410417; cv=none; b=gdfwXe+WPmTVZO991fw//hlBZOBi5F2havtTcu08uK5xpsd3Um2z/a2LJI/xVS3OWgpc2vBh54C53iGl5dd+k8fhezMZE+qHWm/nB8zBYaoYmMkY/TBhkukDcDHlGTvf/tWwl4i5mko9Afr9QjX/rr8n3FyfrCsMo+cDJjEuPX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745410478; c=relaxed/simple;
-	bh=iI+zOFiPdKwPbL1x/XV2O6KQJB7HnqFPdwL8xUTkTGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fKcoBWIXw9KKBb8vPQ20J6EgPdz9DtB+puccoPBrtNdUIdpNeQROTUYvJyw+y305ALW8jKdxMvOio7mHF5xZfSJDGPnUir3DuhJL0/kGTsLSVnU03lmVnTTcpKhqCeVm/7YKGeL+6SywiIRX9SfpZF79r3n/omeeSDAe76NP6oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+msE829; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2295d78b433so74063275ad.2;
-        Wed, 23 Apr 2025 05:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745410476; x=1746015276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6G/y3HQErml1NMZQNrayd+/BsrgNwWrmomSiPVW0Nsc=;
-        b=K+msE829fzeroKjiXRKf9NS3zVzUUkKOoMMAF9p20Rq7zI3UpFWs/wjPbA1RNLVrOQ
-         vVfAdLWwA9vuVb6mCOospRpxAjWd/UZuJcED8twGKhxdCBd0yVg/D+VMs/TS14NDIvMO
-         lLRsgO6f6j7rOltvdgwFQ2a3ndNnP2+wUebwEjRiSUOMxkGc71ZPSLkhcx+26ivKpVbB
-         cv6CoJPRA8kaZI/fueIeiHRDBavWrKshCJ18Jfc0jQBpfx+RQo+iQtTraMX/MVPJupHf
-         +yJTCc4Ffcu6f1Ke19e/hxFVhMvYphTXdrrKZ+jtnNxc5cjjEd+oanDRajP0fLbMd+Dl
-         gDoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745410476; x=1746015276;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6G/y3HQErml1NMZQNrayd+/BsrgNwWrmomSiPVW0Nsc=;
-        b=nqMkNQeFPvYpqYfzKzqQSX5pRPRjcbZtNJLP1R+/NjAhORUT3jaiaJUsiX5xD1Jb0e
-         nztEZ6YqmMassfoAdfWaf7ki4TB7hAc5V42umgQbNZjoOdNCLry5geHpwmehqVY4GMhV
-         61lucRpRB5LdaNJZ5W4nYOl3TxXAVMTUKya7KUu0aQjcioWOQm+kRLDAxHo4QGbScOmY
-         29tU5X6aQHKzYlk3XkIuCukHAJOxSnhiFBxBs0NjONZJBCQCjl4QFNzGU5wH9KKEwo0z
-         Olu5Quyv0+SiGnVTRriQNHxf03P8I8esLIyI/kKqMR7PG2otKr3spLZVvb14Jj2BbdH7
-         yXaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBpbA0viVYCT5tmO/CL1M+aTLtyCOr5RepQQ0VvVFOgjYt/5CA/oK+sB9sYmIqUjOlHhMkq/+Tdds8kyw=@vger.kernel.org, AJvYcCWZvOQRiwMOvsXx9CMbAgBwAWx77WlIarNAgdSQTRx0G6RRgTax7fAD9HBGRy0wsVKojI+07+Bz@vger.kernel.org, AJvYcCX7OJgNXnk9u4GHlOkNgwPBuAwgNtGQvGzmie/HY3+LMip/bNEGdcaJWL8mFR04JTJ8FjOhes7JhLasnzzgAYdM@vger.kernel.org
-X-Gm-Message-State: AOJu0YylA7FJTMB22WvdqsUWjt+R9CIY/AVqLbnH2R9Hvo9M0X7nsWYf
-	7IoeRFgiFkGhYpwh0fArEZltD9C2wKRJc6ODmIq70kTWPAAuRkga
-X-Gm-Gg: ASbGnctFG7JQpjWXfL6Vha7WxW5jNi/G0GCz0+LQNWp5xTyF+oblHBXiDStYiBq8sqr
-	1BCCFTB2vM0k4Zsk8cq0ZAYLxvCnmej49bTgg/fHKJFH8ocmZDQR07yLzk0S5wyoJahegY+7vnO
-	UUBaQ/TjlMyXYhnn0KCS30rJ7N8rBh/+4HCOGyaIvnauPSdq1WvRt4CLvbuPgsEpHeLrarVImpg
-	9yXDS5jm//kJgaQORPBEInyLNz3DLOzOXVO+hlz0ZZ5mDVzzJ6Ekw/ouQ7p9sRIt1zWR+GOVyTb
-	9cn+QMNO/GD8dtDIae27jVd1PEsUSymkBXkZ2a4l/lI=
-X-Google-Smtp-Source: AGHT+IF+oB26vPds+B4kBrr2c9xPwwreiL7sTMFTRFvzhefCWoyDXGQln9OtTCMvRnNeQwmY27e4aw==
-X-Received: by 2002:a17:903:234e:b0:215:8d49:e2a7 with SMTP id d9443c01a7336-22c53620bb5mr256277845ad.50.1745410475779;
-        Wed, 23 Apr 2025 05:14:35 -0700 (PDT)
-Received: from ubuntu2404.. ([122.231.145.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf5528sm102647295ad.100.2025.04.23.05.14.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 05:14:34 -0700 (PDT)
-From: KaFai Wan <mannkafai@gmail.com>
-To: alexei.starovoitov@gmail.com,
-	martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	memxor@gmail.com
-Cc: bpf@vger.kernel.org,
+	s=arc-20240116; t=1745410417; c=relaxed/simple;
+	bh=HMgH1+9XyIkutzq+xKi6DmcGLLwEOVIX2ELaW0OhH3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RXrZ9gXmLNufCpldhZaNMR0W3EsZ42TpgJ/WsrsQwvVTFgrPJGNjChd1Di/pyXMTV8XtmpCBGyOEYwNWrXcAijItfJduL2uwI9oPLfyDeevFske+TpC+eqhgNqWIJkwhDwoqO1ppDfJ4kZd7USfmFY2lSBA91fmUXGRmtcfGouQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3x145LH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441D2C4CEE2;
+	Wed, 23 Apr 2025 12:13:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745410416;
+	bh=HMgH1+9XyIkutzq+xKi6DmcGLLwEOVIX2ELaW0OhH3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3x145LHTniTXMJzsrhUROlGFjM16I5YzmcBHE3FXBZD97LaHKfJ5597d40HpIwdJ
+	 /n/usmDjUzkGsUtgdvzvF0T5SaAAXYmTGsVOqRUIcNJuSSyMbEtob9hLbuDV5BBIdY
+	 3hy4PG64YyZGByTm5rT46yY2AfgkBTqkvCZdr4LApMON9caYe1HsGQum5kDYUPVCQt
+	 ToKJORV7i+Cz+YMBo/olR8utRITpy63q12syC98PBE4SJbJ/aIF5Y0l+U0Et/hU9uq
+	 0vy3esOBXvQeAwXNtUAG7+M5pAy9mRv/t3t4zngXI40pvd8o+YDu8MgQVypiG4Nevk
+	 JwSfYjs3MlZMA==
+Date: Wed, 23 Apr 2025 07:13:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	leon.hwang@linux.dev,
-	KaFai Wan <mannkafai@gmail.com>
-Subject: [PATCH bpf-next v4 2/2] selftests/bpf: Add test to access const void pointer argument in tracing program
-Date: Wed, 23 Apr 2025 20:13:29 +0800
-Message-ID: <20250423121329.3163461-3-mannkafai@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250423121329.3163461-1-mannkafai@gmail.com>
-References: <20250423121329.3163461-1-mannkafai@gmail.com>
+	Conor Dooley <conor.dooley@microchip.com>,
+	Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v6 2/6] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+Message-ID: <174541041414.56228.14869219817347630764.robh@kernel.org>
+References: <20250422173937.3722875-1-fabrizio.castro.jz@renesas.com>
+ <20250422173937.3722875-3-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422173937.3722875-3-fabrizio.castro.jz@renesas.com>
 
-Adding verifier test for accessing const void pointer argument in
-tracing programs.
 
-The test program loads 1st argument of bpf_fentry_test10 function
-which is const void pointer and checks that verifier allows that.
+On Tue, 22 Apr 2025 18:39:33 +0100, Fabrizio Castro wrote:
+> Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> Renesas RZ/G2L family of SoCs, but there are some differences:
+> * It only uses one register area
+> * It only uses one clock
+> * It only uses one reset
+> * Instead of using MID/IRD it uses REQ No
+> * It is connected to the Interrupt Control Unit (ICU)
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v5->v6:
+> * Reworked the description of `#dma-cells`.
+> * Reworked `renesas,icu` related descriptions.
+> * Added `reg:`->`minItems: 2` for `renesas,r7s72100-dmac`.
+> * Since the structure of the document remains the same, I have kept
+>   the tags I have received. Please let me know if that's not okay.
+> v4->v5:
+> * Removed ACK No from the specification of the dma cell.
+> * I have kept the tags received as this is a minor change and the
+>   structure remains the same as v4. Please let me know if this is
+>   not okay.
+> v3->v4:
+> * No change.
+> v2->v3:
+> * No change.
+> v1->v2:
+> * Removed RZ/V2H DMAC example.
+> * Improved the readability of the `if` statement.
+> ---
+>  .../bindings/dma/renesas,rz-dmac.yaml         | 101 ++++++++++++++----
+>  1 file changed, 82 insertions(+), 19 deletions(-)
+> 
 
-Signed-off-by: KaFai Wan <mannkafai@gmail.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
----
- net/bpf/test_run.c                                   |  8 +++++++-
- .../selftests/bpf/progs/verifier_btf_ctx_access.c    | 12 ++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 7cb192cbd65f..aaf13a7d58ed 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -569,6 +569,11 @@ __bpf_kfunc u32 bpf_fentry_test9(u32 *a)
- 	return *a;
- }
- 
-+int noinline bpf_fentry_test10(const void *a)
-+{
-+	return (long)a;
-+}
-+
- void noinline bpf_fentry_test_sinfo(struct skb_shared_info *sinfo)
- {
- }
-@@ -699,7 +704,8 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
- 		    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111 ||
- 		    bpf_fentry_test7((struct bpf_fentry_test_t *)0) != 0 ||
- 		    bpf_fentry_test8(&arg) != 0 ||
--		    bpf_fentry_test9(&retval) != 0)
-+		    bpf_fentry_test9(&retval) != 0 ||
-+		    bpf_fentry_test10((void *)0) != 0)
- 			goto out;
- 		break;
- 	case BPF_MODIFY_RETURN:
-diff --git a/tools/testing/selftests/bpf/progs/verifier_btf_ctx_access.c b/tools/testing/selftests/bpf/progs/verifier_btf_ctx_access.c
-index 28b939572cda..03942cec07e5 100644
---- a/tools/testing/selftests/bpf/progs/verifier_btf_ctx_access.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_btf_ctx_access.c
-@@ -65,4 +65,16 @@ __naked void ctx_access_u32_pointer_reject_8(void)
- "	::: __clobber_all);
- }
- 
-+SEC("fentry/bpf_fentry_test10")
-+__description("btf_ctx_access const void pointer accept")
-+__success __retval(0)
-+__naked void ctx_access_const_void_pointer_accept(void)
-+{
-+	asm volatile ("					\
-+	r2 = *(u64 *)(r1 + 0);		/* load 1st argument value (const void pointer) */\
-+	r0 = 0;						\
-+	exit;						\
-+"	::: __clobber_all);
-+}
-+
- char _license[] SEC("license") = "GPL";
--- 
-2.43.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
