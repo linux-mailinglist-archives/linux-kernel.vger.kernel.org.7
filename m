@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-616172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-616174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322E4A9889E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:32:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE2DA988A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 13:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961301B62C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23BED169D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Apr 2025 11:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8383026D4CE;
-	Wed, 23 Apr 2025 11:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="YLY04CUA"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7F3270561;
+	Wed, 23 Apr 2025 11:33:36 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA62701C0;
-	Wed, 23 Apr 2025 11:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CD0269826;
+	Wed, 23 Apr 2025 11:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745407952; cv=none; b=FdjmrIKfFdeeGTxdCJLrfeOO43v7kJvCvvsaxgFEoclgGXhFWVHM4jCHXwaO4z5dCJTyS5owtXT+4Xq1WmOdpQDYi0UXFR9RJMvk7Ja9XAvMKzkXmw9mb44A0/q0WoXbJyLz51oGjfryIhSJJG9dWZv90mXks4F9kFgEekf+A4E=
+	t=1745408016; cv=none; b=uELW/dNX+aWaQF2D/u8N6NpacsuTPIIOR3c7j99T9modKmI2TJi0fVfH1YATkd/gKQEsJIOp7lG4cEnSTscJ5kK9x5NBwZ++Zp23N7d6/bUpK1WRBm6vZuo0ot5coHVV/tNrmFPWu6kiZPyJWUxbDJUf9BtgaDVx+dBXcU++xNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745407952; c=relaxed/simple;
-	bh=DxaGI1hjzmUVNeyuzADxz1+yGkPl6JZZjtGe+adGZ4o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y/V8upXT7xylVbhs+qNtLOcRjMGOGZcjayOKm9gTH5mRohfDy9lJr+hvT/TYXL6CDebV1aLfsD6sGwwm7v7KnXy2AklaYsbSTgw3WVANybqaf8zbDimcZzTWP10/7znn5XpiH5aTQcjaeD2ikE9Ke+zc+VHoFwPeKgSMiBR14ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=YLY04CUA; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53NBW2pgC2492977, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1745407922; bh=DxaGI1hjzmUVNeyuzADxz1+yGkPl6JZZjtGe+adGZ4o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=YLY04CUAgHpN/0C1YO9mQSWWpH2I79YiYOCI+z40ntEhfj8paNzDP9bzdjkIAWpFh
-	 C9xNFoYgwJGbYLzHZF13KVZ2q90CQXl/J9c2CDfGX1SlmeaMG0NUXegGvtzJj5EFtU
-	 3GKOe81/7bMSP7fjfG+0i0JlILCAmH3dnlaQWg1uAklgW/uUY5+dbSZI7M6dc1WfEx
-	 Tf9Fv6Lovi7/YvdNjkYnjSdKY/OQbk/gpYzZILM/QMocqDJQ4g5exh2d/EKh+WkCNC
-	 hUqXEPEzJ/cJbZ5zr7xHTdZekwpn827a5oENccvFjEe0NN7enBk8JkWCYxAIM71wBe
-	 pTBTJR6lQAAkw==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53NBW2pgC2492977
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Apr 2025 19:32:02 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 23 Apr 2025 19:32:02 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 23 Apr 2025 19:32:01 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Wed, 23 Apr 2025 19:32:01 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Simon Horman <horms@kernel.org>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Chiu
-	<larry.chiu@realtek.com>,
-        kernel test robot <lkp@intel.com>
-Subject: RE: [PATCH net v3 1/3] rtase: Modify the condition used to detect overflow in rtase_calc_time_mitigation
-Thread-Topic: [PATCH net v3 1/3] rtase: Modify the condition used to detect
- overflow in rtase_calc_time_mitigation
-Thread-Index: AQHbr3bGQZBcM8+BV0aT2Y9FDkzNELOvLZGAgAHx31A=
-Date: Wed, 23 Apr 2025 11:32:01 +0000
-Message-ID: <59893ad874224d209b1b43c00c56ba00@realtek.com>
-References: <20250417085659.5740-1-justinlai0215@realtek.com>
- <20250417085659.5740-2-justinlai0215@realtek.com>
- <20250422132023.GG2843373@horms.kernel.org>
-In-Reply-To: <20250422132023.GG2843373@horms.kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1745408016; c=relaxed/simple;
+	bh=Silleq7gutm/szIl71jZSkSzc7i3W7sTu6tXKNr5uKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X/1XRrQYPzhVb7zv86NyZKQKRqmpIIt/xlfKbd81yKU9mpyAAGbVjHpEc9b2jpfrPtXXX9BY43qWiewsEYmlszZIIMU0YcatynHzjAB07NkgvaRfB2FNX6B+QOh47oXtVMBuKO6SyZqGu7nEI+dvUufqT1eo7ddTvYZig/6sxfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a01:e0a:3e8:c0d0:d851:318b:70da:57a7] (unknown [IPv6:2a01:e0a:3e8:c0d0:d851:318b:70da:57a7])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 2694532A4DA;
+	Wed, 23 Apr 2025 11:33:31 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:d851:318b:70da:57a7) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a01:e0a:3e8:c0d0:d851:318b:70da:57a7]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <32293daf-a6ce-49cc-b41d-1001037444da@arnaud-lcm.com>
+Date: Wed, 23 Apr 2025 13:33:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] checkpatch.pl: warn about // comments on private
+ Rust items
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev, skhan@linuxfoundation.org
+References: <20250422125633.30413-1-contact@arnaud-lcm.com>
+ <20250422125824.30525-1-contact@arnaud-lcm.com>
+ <CANiq72n41Oj4K-yZCWbNXJQEEjTqjXHYgrkffAg_mUg8dKLWQg@mail.gmail.com>
+ <06dde2dd-5d88-49d4-9e46-72a2e12ab1c2@arnaud-lcm.com>
+ <CANiq72=UOOyf-esnRUCR0_gxFptdpNOymCz02vgesdNL7zTvHg@mail.gmail.com>
+Content-Language: en-US
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+In-Reply-To: 
+ <CANiq72=UOOyf-esnRUCR0_gxFptdpNOymCz02vgesdNL7zTvHg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <174540801176.10535.4552947519128350548@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-> On Thu, Apr 17, 2025 at 04:56:57PM +0800, Justin Lai wrote:
-> > Fix the following compile error reported by the kernel test robot by
-> > modifying the condition used to detect overflow in
-> > rtase_calc_time_mitigation.
-> >
-> > In file included from include/linux/mdio.h:10:0,
-> >                   from
-> drivers/net/ethernet/realtek/rtase/rtase_main.c:58:
-> >  In function 'u16_encode_bits',
-> >      inlined from 'rtase_calc_time_mitigation.constprop' at drivers/net=
-/
-> >      ethernet/realtek/rtase/rtase_main.c:1915:13,
-> >      inlined from 'rtase_init_software_variable.isra.41' at drivers/net=
-/
-> >      ethernet/realtek/rtase/rtase_main.c:1961:13,
-> >      inlined from 'rtase_init_one' at drivers/net/ethernet/realtek/
-> >      rtase/rtase_main.c:2111:2:
-> > >> include/linux/bitfield.h:178:3: error: call to '__field_overflow'
-> >       declared with attribute error: value doesn't fit into mask
-> >     __field_overflow();     \
-> >     ^~~~~~~~~~~~~~~~~~
-> >  include/linux/bitfield.h:198:2: note: in expansion of macro
-> > '____MAKE_OP'
-> >    ____MAKE_OP(u##size,u##size,,)
-> >    ^~~~~~~~~~~
-> >  include/linux/bitfield.h:200:1: note: in expansion of macro
-> > '__MAKE_OP'
-> >   __MAKE_OP(16)
-> >   ^~~~~~~~~
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes:
-> > https://lore.kernel.org/oe-kbuild-all/202503182158.nkAlbJWX-lkp@intel.
-> > com/
-> > Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this
-> > module")
-> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
->=20
-> Hi Justin,
->=20
-> FWIIW, I note that this problem is reported by GCC 7.5.0 on sparc64 but n=
-ot by
-> GCC 14.2.0. And I think that is because in the end the values passed to
-> u16_encode_bits (line 1915 in the trace above) are the same with and with=
-out
-> this patch. That is to say, this the compiler error above is a false posi=
-tive of
-> sorts.
->=20
-> But I believe GCC 7.5.0 is a supported compiler version for sparc64.
-> And this does result in an error, without W=3D1 or any other extra KCFLAG=
-S set.
-> So I agree this is appropriate to treat as a fix for net.
->=20
-> And in any case, fix or no fix, it seems nice to limit the scope of the
-> initialisation of msb.
->=20
-> Reviewed-by: Simon Horman <horms@kernel.org>
+On 22/04/2025 17:32, Miguel Ojeda wrote:
 
-Hi Simon,
-
-Thank you for your review. I will repost this patch separately in the
-net tree.
-
-Thanks,
-Justin
-
+> On Tue, Apr 22, 2025 at 4:37 PM Arnaud Lecomte <contact@arnaud-lcm.com> wrote:
+>> As mentioned earlier, we can reduce the score of any heuristic which
+>> could lead to any important false positive.
+>> In my opinion, as long as the heuristic is relevant, we always have the
+>> possibility to diminish the score associated with the heuristic, hence
+>> preventing unnecessary false positives.
+> Definitely (my comment above for this one was just a note, i.e. there
+> may be nothing to change -- I just thought the commit message referred
+> to just checking "Return" and not "Returns", since it said
+> "imperative").
+>
+>> I think that you are definitely more experienced with what's done
+>> commonly in rust code. Let's maybe change this heuristic definition with
+>> @ related to types or some other annotation. Do you have some example I
+>> could have a look to come in the next version with a relevant list of @
+>> we can encounter.
+> What does "references" mean in that heuristic? If you mean external
+> links to some URL, then we typically use Markdown for those. The
+> inline ones like `<https://...>`happen in both comments and docs. The
+> `[...]: https://...` ones are way less common in comments I think (I
+> can't find one).
+We should then remove it. I'll wait for other reviewers for their 
+feedback and then send a new version of the patch serie. Thanks :)
+> As for `@`, if you mean the actual character, I grepped for it in Rust
+> files with the /.*@ regex and found just ~13 matches, and all were the
+> emails and disambiguators I mentioned. So I don't think we really use
+> it for "references" (assuming I understand what that means).
+>
+> I guess you already looked in some `rust/kernel/` files -- some of
+> those are really the best examples of how docs and comments should
+> generally be written.
+> Thanks!
+>
+> Cheers,
+> Miguel
+>
 
