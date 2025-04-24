@@ -1,178 +1,153 @@
-Return-Path: <linux-kernel+bounces-618611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4ED0A9B0C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:27:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C491A9B057
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CDA5A0C11
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6261B667E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F622973DF;
-	Thu, 24 Apr 2025 14:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBAE1D9694;
+	Thu, 24 Apr 2025 14:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/BNi9dr"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N25sIQkX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cnOltzaj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A57A2918E6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC721A2381
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504074; cv=none; b=LVa/PVxTjcKqE0iK7A6maU56cj/hdqC/XxpeWeDdib6q+tIZ+YLFmSsWlGq8LCUmGXXoFZrOa+2K9NU9k8ggSrDZ7DXRC9yi7NtpL9j8hlNIA9BP2PWf1MvNHh79DZldSKhthRGUclKHHR41nWSRk+QDEWM9Gvs6wftZyMAxxvY=
+	t=1745504031; cv=none; b=WDT9jKZkAy4/PilYpEnNV5/f9EXuC3hEJ5XUQxc4zH3OabK1glprDPR9omiaL2/Kde/umKKG18vyg6MNPsI/mc0aL8Q3e/pHRN8JipsEFl8TaOYUPS8OKvhDWQU2X4ImmIaTiPUdcVhJlu4jITZJEn9khUmuLlfQ3Fqr2Cq8v3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504074; c=relaxed/simple;
-	bh=N53i4bFiZ0PwECXO+3O9PEZg7KbhghQli4Mhy0f7goE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KbEsX9wB7s3VmUoKVl/JES/4gLp2OoO1+y3xK0ZNCpupiIc4SAUc/XeF8ch8SpCwtsLNJ2qmmebnShHPEHI2iOWMvw9M1qKY8qlwbGQbBSHux8FwV3MfTOoLKt8Io6HNQ/iIUu4ML9iW9UDeJgLkf1zQTLSSdV4t2CcHZ4xQzsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/BNi9dr; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39efc1365e4so559777f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745504070; x=1746108870; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3i+gLyWtr6XPiioNUTryX7U5TAHJs0bj5+QGltLz/R0=;
-        b=A/BNi9drAEtZYzDLWDDHNkbHoLQ7G/rSzO6lWtT9wJBxxPLNRLXjqG2CV9Xf5QbQBT
-         Sd9zeNztMZUVOCRA5OflPbZpQ0GAQKMtgYOZVkl6AYSf1iMSjRA5bELWM2/2Ro5G2jLp
-         uJnN4FsqDjPExjGbLQI6o4GhGLVBgLi7/xUjnivg4y9khXjgA3Dmmzsi1UOyqNBUNBT8
-         MVi1QC4XXmiTDjqog5ZbsG6l9kZaoZlE4hgdKAohqlGXx7MczFhDs/rVxT/XoUHclq03
-         v+rEjUJ0/gcda3IVfMtpZfSgpUg8mpRx1XLX5Yctye5hH+r06rdmsphQr+bWu8Cqrz5t
-         eCpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745504070; x=1746108870;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3i+gLyWtr6XPiioNUTryX7U5TAHJs0bj5+QGltLz/R0=;
-        b=sozN6x0vsAinNR+xpuD17+oDm0cvd71FWROMvDQu3bd48sAL8RS7pi+mHI6GJzGVbT
-         sUzuucNuBdYT5bBQoS+EtCTleDE9Hnyn+kbyxEoAWHoK906voPTsT2Scz2//E5S6O+oK
-         Ml/4s0EM6L6sWztNGYwIaZOswVeQzvJNW2HLw8vLdXRvoeXObylazv8m4cKfi6VqwrRc
-         3MaCObkCLq8dki0qZkzLdE/EgnnWg00nNl6+tYKIbMW18rQyJcNOJXboNxjNs2tKoVNj
-         cRgsALST/wvaqRLeu0nNp9UHkPec21NriWE/PXY58LMX2OGKFVmCBSdhQVBtjx554LMP
-         74XA==
-X-Gm-Message-State: AOJu0YwbykbSqiCRSKv0V9WvrmWSW8miPOKo1MhVR5tsHSpLWiAEL1/b
-	DaOouEwDidYefkx7miGS8q+R/+wU1sk4mITaPOFxBinFlndR+ldTEDx/3vWs2PhI2/9O0V/jpWs
-	Y
-X-Gm-Gg: ASbGncvcdemTnpYoYZ6f8YngAsz02lke/BISbMF0pwpAalHZnieRxvaAYaVPDHy8EBk
-	VJ/+05RECiIvBvCM1qVQtMKMM39GVduJTnTBWl6HqLeXVcjt3x5r3dr6lx2sS8y5b7GpnP0GtaI
-	pfZcaivWfKiJg+E+5IJINUjoAx+/7wasFUpWWR5+taTSLbLu0k+1AQf0j4Y4VC1WvMT7tZc5xEx
-	B2cRK8o6JF+aQtbDYOzaw0M3ijfQB/0varULR2pqgJ+6/V/o55Q+h1DbyPIH7r4Vah0ULZ3OQL0
-	V7A1S7DvkQLZrfmr0LoZC4tcHbwIWOwP954FssLjyojAe0dKfTDxsLhb+MwWoHZN9Z+LAj3GwsL
-	rj/G4WkGC7uaK8Btk
-X-Google-Smtp-Source: AGHT+IFOk65S5hPF/j31g7Of/aiN0lBptA3ImD/zObUzEDJUJE+zLunCG1fROxNheO7aYYEMJ9HW0A==
-X-Received: by 2002:a5d:5f87:0:b0:38d:b325:471f with SMTP id ffacd0b85a97d-3a06cf5ac50mr2557177f8f.15.1745504070317;
-        Thu, 24 Apr 2025 07:14:30 -0700 (PDT)
-Received: from seksu.systems-nuts.com (stevens.inf.ed.ac.uk. [129.215.164.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8150sm2199951f8f.7.2025.04.24.07.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 07:14:29 -0700 (PDT)
-From: Karim Manaouil <karim.manaouil@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: Karim Manaouil <karim.manaouil@linaro.org>,
-	Alexander Graf <graf@amazon.com>,
-	Alex Elder <elder@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-	Quentin Perret <qperret@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
-	Will Deacon <will@kernel.org>,
-	Haripranesh S <haripran@qti.qualcomm.com>,
-	Carl van Schaik <cvanscha@qti.qualcomm.com>,
-	Murali Nalajala <mnalajal@quicinc.com>,
-	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
-	Trilok Soni <tsoni@quicinc.com>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: [RFC PATCH 34/34] KVM: gunyah: enable KVM for Gunyah
-Date: Thu, 24 Apr 2025 15:13:41 +0100
-Message-Id: <20250424141341.841734-35-karim.manaouil@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250424141341.841734-1-karim.manaouil@linaro.org>
-References: <20250424141341.841734-1-karim.manaouil@linaro.org>
+	s=arc-20240116; t=1745504031; c=relaxed/simple;
+	bh=ifNI9Cfo5bSo5fyDavBe4IJFPenS1e9zbuy46r5kBZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hx2NaPRPAe/mHSgEjBEqmGrkaZ1uIhITgw5SBHkSELz3VfbuOaoIKG5x1gcYCBQRQf0u5OxwVT4IpGfkuRQe4gfBT/9XUkX9mutojmxqGGDpJxxQzYGwO7LIRwezzAw70wrMJSPKQ/mH1xiOkV2IhF0RriWGecT9RAc2IKVzLDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N25sIQkX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cnOltzaj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Apr 2025 16:13:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745504027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mq4VQELIstHhJWEjzocoB6XO3CVV8K87f1hbgXOjMYo=;
+	b=N25sIQkXBfxhn1v5NbdURpaLkj4HmXVn6mzPanUrFxHiNTymD4sIHvfoGHyJQuP+MhxA8n
+	HfNUYwlKUfVnldaAJO+gwyaJHB9ZrepqP5lflWjSOni/amn5eIXHxEAuKFKbHQm72UMmeb
+	mghC1yp/Tvm2NhbUb8YcK1Tw6P9ZqRCzPeiG3CMaJokOPVKMhJH+4N1x5Qh1YwN7EirGuZ
+	yCQQlAZmkyuUe/vUp2iTVLtxj79RnB8gC+13W0necYZ9NNSb3NkTw4wNcRiK4cs40ymAJU
+	68zharaJFRK0cMws6YbX8gdPQEZJgbCSr5PdJXDyIwIdE1WIzWD8rHUuKH3R1w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745504027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mq4VQELIstHhJWEjzocoB6XO3CVV8K87f1hbgXOjMYo=;
+	b=cnOltzajA2b5hDzb+U8SuYrYcJPwL3Tp1IVfbDQCWf6fFtrPtm6q/bxdFWFWTkT0RROZCt
+	CbUst9aH8EhqJVDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, tglx@linutronix.de
+Subject: Re: [PATCH V2 1/3] Sched: Scheduler time slice extension
+Message-ID: <20250424141345.7F42GFmZ@linutronix.de>
+References: <20250418193410.2010058-1-prakash.sangappa@oracle.com>
+ <20250418193410.2010058-2-prakash.sangappa@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250418193410.2010058-2-prakash.sangappa@oracle.com>
 
-Enable KVM to act as the interface to create and manage Qualcomm's
-Gunyah-based virtual machines [1].
+On 2025-04-18 19:34:08 [+0000], Prakash Sangappa wrote:
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+=E2=80=A6
+> @@ -930,6 +931,9 @@ struct task_struct {
+>  	struct plist_node		pushable_tasks;
+>  	struct rb_node			pushable_dl_tasks;
+>  #endif
+> +#ifdef CONFIG_RSEQ
+> +	unsigned			rseq_sched_delay:1;
+> +#endif
 
-[1] https://www.qualcomm.com/developer/blog/2024/08/learn-about-gunyah--qualcomm-s-open-source--lightweight-hypervis
+There should be somewhere a bitfield already which you could use without
+the ifdef. Then you could use IS_ENABLED() if you want to save some code
+if RSEQ is not enabled.
 
-Signed-off-by: Karim Manaouil <karim.manaouil@linaro.org>
----
- arch/arm64/kvm/gunyah.c      | 12 ++++++++++++
- drivers/virt/gunyah/gunyah.c |  3 +++
- include/linux/gunyah.h       |  1 +
- 3 files changed, 16 insertions(+)
+> =20
+>  	struct mm_struct		*mm;
+>  	struct mm_struct		*active_mm;
+> --- a/include/uapi/linux/rseq.h
+> +++ b/include/uapi/linux/rseq.h
+=E2=80=A6
+> @@ -128,6 +131,8 @@ struct rseq {
+>  	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
+>  	 *     Inhibit instruction sequence block restart on migration for
+>  	 *     this thread.
+> +	 * - RSEQ_CS_DELAY_RESCHED
+> +	 *     Try delay resched...
 
-diff --git a/arch/arm64/kvm/gunyah.c b/arch/arm64/kvm/gunyah.c
-index 23b9128bf5b1..91f0260ef3f5 100644
---- a/arch/arm64/kvm/gunyah.c
-+++ b/arch/arm64/kvm/gunyah.c
-@@ -2071,3 +2071,15 @@ void kvm_arch_free_vm(struct kvm *kvm)
- 
- 	kfree(ghvm);
- }
-+
-+int kvm_gunyah_init(void)
-+{
-+	int err;
-+
-+	err = kvm_init(sizeof(struct kvm_vcpu), 0, THIS_MODULE);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(kvm_gunyah_init);
-diff --git a/drivers/virt/gunyah/gunyah.c b/drivers/virt/gunyah/gunyah.c
-index 3e795e3ba881..629c812fbac0 100644
---- a/drivers/virt/gunyah/gunyah.c
-+++ b/drivers/virt/gunyah/gunyah.c
-@@ -28,6 +28,9 @@ static int gunyah_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	if (!kvm_gunyah_init())
-+		pr_info("KVM for Gunyah is available!\n");
-+
- 	return devm_of_platform_populate(&pdev->dev);
- }
- 
-diff --git a/include/linux/gunyah.h b/include/linux/gunyah.h
-index 26fdfa3174da..7d43449c4547 100644
---- a/include/linux/gunyah.h
-+++ b/include/linux/gunyah.h
-@@ -421,4 +421,5 @@ enum gunyah_error
- gunyah_hypercall_vcpu_run(u64 capid, unsigned long *resume_data,
- 			  struct gunyah_hypercall_vcpu_run_resp *resp);
- 
-+int kvm_gunyah_init(void);
- #endif
--- 
-2.39.5
+Delay resched up to $time for $kind-of-stats under $conditions.
 
+>  	 */
+>  	__u32 flags;
+> =20
+> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+> index 6b7ff1bc1b9b..944027d14198 100644
+> --- a/kernel/entry/common.c
+> +++ b/kernel/entry/common.c
+=E2=80=A6
+> @@ -99,8 +100,12 @@ __always_inline unsigned long exit_to_user_mode_loop(=
+struct pt_regs *regs,
+> =20
+>  		local_irq_enable_exit_to_user(ti_work);
+> =20
+> -		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
+> -			schedule();
+> +		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY)) {
+
+couldn't we restrict this to _TIF_NEED_RESCHED_LAZY? That way we would
+still schedule immediately for any SCHED_FIFO/RR/DL tasks and do this
+delay only for everything else such as SCHED_OTHER/=E2=80=A6
+
+> +		       if (irq && rseq_delay_resched())
+> +			       clear_tsk_need_resched(current);
+> +		       else
+> +			       schedule();
+> +		}
+> =20
+>  		if (ti_work & _TIF_UPROBE)
+>  			uprobe_notify_resume(regs);
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 165c90ba64ea..cee50e139723 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -823,6 +823,7 @@ void update_rq_clock(struct rq *rq)
+> =20
+>  static void hrtick_clear(struct rq *rq)
+>  {
+> +	rseq_delay_resched_tick();
+
+This is called from __schedule(). If you set the need-resched flag here,
+it gets removed shortly after. Do I miss something?
+
+>  	if (hrtimer_active(&rq->hrtick_timer))
+>  		hrtimer_cancel(&rq->hrtick_timer);
+>  }
+
+Sebastian
 
