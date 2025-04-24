@@ -1,249 +1,91 @@
-Return-Path: <linux-kernel+bounces-618660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCA9A9B174
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:49:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB13A9B177
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B0317CD3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AEA19480C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1AF1B3939;
-	Thu, 24 Apr 2025 14:48:38 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 0088C15573A;
-	Thu, 24 Apr 2025 14:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318281DF75D;
+	Thu, 24 Apr 2025 14:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqXJ/4Ou"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814EC1DC998
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745506117; cv=none; b=e7VbQqrPcyDoYiBMgmkUHR0ziuXU32i3XcM7R7fMTFQY2ybAkQZgtvEjOinciLUDMmFRWpjNirbcQsqwvVfJv5ZoKsmx6Ymj0pwV7P7o5iZmLplXxsh7tiN425HQAaKrXjtL8+/ekHc51BlEoWMrtE+9JnJdnzWpMrhyYySSLaA=
+	t=1745506120; cv=none; b=bXIttxP0fXN/KuwhNaI6Pwdj3iClByQgZj+iDgBVfuYDqV3S2D4b6XMoYP3Z5GeYe97S4gu9VgqL/Tza/1/KM3XjScFA/6O3OQUuDe2ACgTApwKM/Fh4EV39mQtrsieeM8NSRiwsPhAi3YB1Dv83wICqcm68TfXGi4N8KLF49A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745506117; c=relaxed/simple;
-	bh=XB+Lspht3JiXhBFV+R5zHwFM9Ml8AwPDyWG7DuawO7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=O0zwT6ADiPogoAsKApxLEPcPZEtr26sYfwr1TgcQ12h4cBU313t+UyP+2SnGAQ/GcaP1lGQm/ccMy3rRpPRKsX09Hy3ig8GqtzlgD8gJBIDD2ZMgRCj0rnen6YGWOHviWw6d7pE+r0fTA4ylENFhR9XFjTl0M45BG2Tldwu9k9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPA id 0723760497EAF;
-	Thu, 24 Apr 2025 22:48:30 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: jstultz@google.com,
-	tglx@linutronix.de,
-	sboyd@kernel.org
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH 3/3] alarmtimer: switch spin_{lock,unlock}_irqsave() to guard()
-Date: Thu, 24 Apr 2025 22:48:20 +0800
-Message-Id: <20250424144819.24884-4-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250424144819.24884-1-suhui@nfschina.com>
+	s=arc-20240116; t=1745506120; c=relaxed/simple;
+	bh=zY1Gdjhw0ryjedYYn9LeRExVUDWHzemdAiHMlcLrowI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kP5ZrmzZn1z8HiMmQckBFnzgo1aBCnwBovKMKPIXmJkmID0PJ0OlawonbMDuOBZ3cTiuBRJcax/XmEogdhyd0SMhj17lJy99DIeJY+sYsIfKWjsnZ1ZXtilHQ3JbINuicRW2eQsBzcenjZzt80E0pI7vPQmsZVPruPb1b9QAwmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqXJ/4Ou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A52C4CEE8;
+	Thu, 24 Apr 2025 14:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745506120;
+	bh=zY1Gdjhw0ryjedYYn9LeRExVUDWHzemdAiHMlcLrowI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=AqXJ/4Ou0h/+yAZSurxU/RkCzdyUWwOF0Ar1roWbuYLoptgbN4k+4VsbSPQwdp1VQ
+	 +GP1G/9vwrCxPHSole7j9VrKsZ1t2UusyT/PDXEj3N+eheWn2+6JrIrOSKeRYsYuRM
+	 6U8ETz0i03uioYRqok9cRt6nrocLDwT2DQfG7dwjE+ro9MzEFppKMeWXM7eJjuOYNx
+	 2Crgd+Y03xtD5XZyCi0O+W/FURM/Uua1PNmgKtwMADnVX7NWXhB9jlLTRdIW/B3M18
+	 fb40ByKUYnb91fdhatMXw3FIGvpCZpER+AuvX3iif7s1jhiimjbmaSINFi5HK45h4D
+	 XrQoKIYHXDaNw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9A50ECE191C; Thu, 24 Apr 2025 07:48:39 -0700 (PDT)
+Date: Thu, 24 Apr 2025 07:48:39 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Aishwarya.TCV@arm.com, sraithal@amd.com
+Subject: Re: [PATCH v2 ratelimit 11/14] ratelimit: Force re-initialization
+ when rate-limiting re-enabled
+Message-ID: <80784ae7-50c6-4894-94af-8dcbb3c43db0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
+ <20250418171359.1187719-11-paulmck@kernel.org>
+ <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
+ <559db775-f151-4694-86e6-72809b386097@paulmck-laptop>
+ <98e5ab65-7601-452e-9ebc-bb3a7426313e@sirena.org.uk>
+ <fbcffae4-8d88-4bc8-8791-12713f0dc8c1@paulmck-laptop>
+ <e6e8abd1-6aa6-423c-98e5-4daa99c4edbb@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6e8abd1-6aa6-423c-98e5-4daa99c4edbb@sirena.org.uk>
 
-There are two code styles for the lock in alarmtimer, guard() and
-spin_{lock,unlock}_irqsave(). Switch all these to guard() to make code
-neater.
+On Thu, Apr 24, 2025 at 01:11:04PM +0100, Mark Brown wrote:
+> On Wed, Apr 23, 2025 at 12:54:39PM -0700, Paul E. McKenney wrote:
+> 
+> > Could you please try the patch shown below?  I might actually have
+> > it right this time.  ;-)
+> 
+> This seems to also fix the boot on the affected platforms.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- kernel/time/alarmtimer.c | 84 ++++++++++++++++++----------------------
- 1 file changed, 37 insertions(+), 47 deletions(-)
+Thank you very much for bearing with me!
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index e5450a77ada9..920a3544d0cd 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -70,12 +70,10 @@ static DEFINE_SPINLOCK(rtcdev_lock);
-  */
- struct rtc_device *alarmtimer_get_rtcdev(void)
- {
--	unsigned long flags;
- 	struct rtc_device *ret;
- 
--	spin_lock_irqsave(&rtcdev_lock, flags);
--	ret = rtcdev;
--	spin_unlock_irqrestore(&rtcdev_lock, flags);
-+	scoped_guard(spinlock_irqsave, &rtcdev_lock)
-+		ret = rtcdev;
- 
- 	return ret;
- }
-@@ -83,7 +81,6 @@ EXPORT_SYMBOL_GPL(alarmtimer_get_rtcdev);
- 
- static int alarmtimer_rtc_add_device(struct device *dev)
- {
--	unsigned long flags;
- 	struct rtc_device *rtc = to_rtc_device(dev);
- 	struct platform_device *pdev;
- 	int ret = 0;
-@@ -101,22 +98,21 @@ static int alarmtimer_rtc_add_device(struct device *dev)
- 	if (!IS_ERR(pdev))
- 		device_init_wakeup(&pdev->dev, true);
- 
--	spin_lock_irqsave(&rtcdev_lock, flags);
--	if (!IS_ERR(pdev) && !rtcdev) {
--		if (!try_module_get(rtc->owner)) {
-+	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
-+		if (!IS_ERR(pdev) && !rtcdev) {
-+			if (!try_module_get(rtc->owner)) {
-+				ret = -1;
-+				break;
-+			}
-+
-+			rtcdev = rtc;
-+			/* hold a reference so it doesn't go away */
-+			get_device(dev);
-+			pdev = NULL;
-+		} else {
- 			ret = -1;
--			goto unlock;
- 		}
--
--		rtcdev = rtc;
--		/* hold a reference so it doesn't go away */
--		get_device(dev);
--		pdev = NULL;
--	} else {
--		ret = -1;
- 	}
--unlock:
--	spin_unlock_irqrestore(&rtcdev_lock, flags);
- 
- 	platform_device_unregister(pdev);
- 
-@@ -198,7 +194,7 @@ static enum hrtimer_restart alarmtimer_fired(struct hrtimer *timer)
- 	struct alarm *alarm = container_of(timer, struct alarm, timer);
- 	struct alarm_base *base = &alarm_bases[alarm->type];
- 
--	scoped_guard (spinlock_irqsave, &base->lock)
-+	scoped_guard(spinlock_irqsave, &base->lock)
- 		alarmtimer_dequeue(base, alarm);
- 
- 	if (alarm->function)
-@@ -230,15 +226,15 @@ static int alarmtimer_suspend(struct device *dev)
- 	ktime_t min, now, expires;
- 	int i, ret, type;
- 	struct rtc_device *rtc;
--	unsigned long flags;
- 	struct rtc_time tm;
- 
--	spin_lock_irqsave(&freezer_delta_lock, flags);
--	min = freezer_delta;
--	expires = freezer_expires;
--	type = freezer_alarmtype;
--	freezer_delta = 0;
--	spin_unlock_irqrestore(&freezer_delta_lock, flags);
-+	scoped_guard(spinlock_irqsave, &freezer_delta_lock) {
-+		min = freezer_delta;
-+		expires = freezer_expires;
-+		type = freezer_alarmtype;
-+		freezer_delta = 0;
-+	}
-+
- 
- 	rtc = alarmtimer_get_rtcdev();
- 	/* If we have no rtcdev, just return */
-@@ -251,9 +247,8 @@ static int alarmtimer_suspend(struct device *dev)
- 		struct timerqueue_node *next;
- 		ktime_t delta;
- 
--		spin_lock_irqsave(&base->lock, flags);
--		next = timerqueue_getnext(&base->timerqueue);
--		spin_unlock_irqrestore(&base->lock, flags);
-+		scoped_guard(spinlock_irqsave, &base->lock)
-+			next = timerqueue_getnext(&base->timerqueue);
- 		if (!next)
- 			continue;
- 		delta = ktime_sub(next->expires, base->get_ktime());
-@@ -352,13 +347,13 @@ EXPORT_SYMBOL_GPL(alarm_init);
- void alarm_start(struct alarm *alarm, ktime_t start)
- {
- 	struct alarm_base *base = &alarm_bases[alarm->type];
--	unsigned long flags;
- 
--	spin_lock_irqsave(&base->lock, flags);
--	alarm->node.expires = start;
--	alarmtimer_enqueue(base, alarm);
--	hrtimer_start(&alarm->timer, alarm->node.expires, HRTIMER_MODE_ABS);
--	spin_unlock_irqrestore(&base->lock, flags);
-+	scoped_guard(spinlock_irqsave, &base->lock) {
-+		alarm->node.expires = start;
-+		alarmtimer_enqueue(base, alarm);
-+		hrtimer_start(&alarm->timer, alarm->node.expires,
-+			      HRTIMER_MODE_ABS);
-+	}
- 
- 	trace_alarmtimer_start(alarm, base->get_ktime());
- }
-@@ -381,13 +376,11 @@ EXPORT_SYMBOL_GPL(alarm_start_relative);
- void alarm_restart(struct alarm *alarm)
- {
- 	struct alarm_base *base = &alarm_bases[alarm->type];
--	unsigned long flags;
- 
--	spin_lock_irqsave(&base->lock, flags);
-+	guard(spinlock_irqsave)(&base->lock);
- 	hrtimer_set_expires(&alarm->timer, alarm->node.expires);
- 	hrtimer_restart(&alarm->timer);
- 	alarmtimer_enqueue(base, alarm);
--	spin_unlock_irqrestore(&base->lock, flags);
- }
- EXPORT_SYMBOL_GPL(alarm_restart);
- 
-@@ -401,14 +394,13 @@ EXPORT_SYMBOL_GPL(alarm_restart);
- int alarm_try_to_cancel(struct alarm *alarm)
- {
- 	struct alarm_base *base = &alarm_bases[alarm->type];
--	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&base->lock, flags);
--	ret = hrtimer_try_to_cancel(&alarm->timer);
--	if (ret >= 0)
--		alarmtimer_dequeue(base, alarm);
--	spin_unlock_irqrestore(&base->lock, flags);
-+	scoped_guard(spinlock_irqsave, &base->lock) {
-+		ret = hrtimer_try_to_cancel(&alarm->timer);
-+		if (ret >= 0)
-+			alarmtimer_dequeue(base, alarm);
-+	}
- 
- 	trace_alarmtimer_cancel(alarm, base->get_ktime());
- 	return ret;
-@@ -479,7 +471,6 @@ EXPORT_SYMBOL_GPL(alarm_forward_now);
- static void alarmtimer_freezerset(ktime_t absexp, enum alarmtimer_type type)
- {
- 	struct alarm_base *base;
--	unsigned long flags;
- 	ktime_t delta;
- 
- 	switch(type) {
-@@ -498,13 +489,12 @@ static void alarmtimer_freezerset(ktime_t absexp, enum alarmtimer_type type)
- 
- 	delta = ktime_sub(absexp, base->get_ktime());
- 
--	spin_lock_irqsave(&freezer_delta_lock, flags);
-+	guard(spinlock_irqsave)(&freezer_delta_lock);
- 	if (!freezer_delta || (delta < freezer_delta)) {
- 		freezer_delta = delta;
- 		freezer_expires = absexp;
- 		freezer_alarmtype = type;
- 	}
--	spin_unlock_irqrestore(&freezer_delta_lock, flags);
- }
- 
- /**
--- 
-2.30.2
-
+							Thanx, Paul
 
