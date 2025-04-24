@@ -1,367 +1,187 @@
-Return-Path: <linux-kernel+bounces-617955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730EAA9A84A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F9CA9A813
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7200B3B4F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438FD445EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D6324E4B4;
-	Thu, 24 Apr 2025 09:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18346225A20;
+	Thu, 24 Apr 2025 09:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AScjUmbi"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="rGsMUB+6"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A2724BBFB
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F080205E34;
+	Thu, 24 Apr 2025 09:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745487092; cv=none; b=n7IbN/cDMk+YEpnP1T/NYCUhZD6cFqdpFVLSeoZDE+7sRwr5f49YZ69e5mfQaQj2EoyipLDksJzKYxTA1NxIh305UcbS8Y0r70rz4eteaGDaqgvFV4qHMIoB+BjmnUzU9ZvQ1MTyCFzdZQH0H8L4CPad9xXiQ9NN/yueP8F5+D4=
+	t=1745487048; cv=none; b=LoUnYmNJ5A7sQDjHExvrIv/zNtMbzhXlrrMs7HeO/O7JhOfIsJU9Ne5Ugc8wIHYs0IGx32Pr83dE9g6fNabh4jSfBzQjImtr02qIXTjYj5lYRqAgitn1Kp4xN5AkT/88AEgExGuKigtlj4APpSmqwwWxoDRR9NLtEIzQrkHEfOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745487092; c=relaxed/simple;
-	bh=AjcvQllrIh4quDsFspgBgzLS6C+y1YZ2zRiCyO8balc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aLNOblScKtIZhBC78SONMSQbKpeEEF2yi8+p6o/9maakr7oPI5VhkU6RnZ9GUKMRovOXJYUhwTFJMxbaL0HtautKUfSBEUu1WM7c8M2j/aB1yddGQKU8Y4OQciHUyQqb8S77XDajg/j6liiDSF1JoKei4BudY6D5S9+xoj8YMNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AScjUmbi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O0FAr3011396
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:31:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G3QdS/mgfbkHzv27vUQzt/gfZz34xx6kcnCGBXLlcq8=; b=AScjUmbin9KJQQDc
-	1KQAoptXaFj3JyzeVI08B83pzvov3m1qqdJVi8RnVB1XRU+PGKbwEsHCFfEmTJRz
-	jP5MtUWinW/GIMGX0wxswsOjNs5nekpEf+smoRNF3mLzfuPJFkCNvOsEjviCYTtB
-	Kbphn3ly+97bNYytqlHaV2HcjBDCdN2bVRbJ2bO1Mh9TB+h3/xlbs0nHJ7u3axqw
-	sjMKSjH270rzLo8iWkQzHJy1HWkoGn6L1UFsCZQju6pNNGMaVGizKY3hC9o4DNFC
-	mI9NX0NCDRATFZCqrFRvM+XduKJQNwr7rMaS+O53Y4AN3CbPLZluVHgN3hYHSfZZ
-	JR2W0g==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh250jk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:31:29 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c0b0cf53f3so116383785a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:31:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745487088; x=1746091888;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G3QdS/mgfbkHzv27vUQzt/gfZz34xx6kcnCGBXLlcq8=;
-        b=as6QsDsxpFst93R+EMAxWpECk8Ga7vnHaRZQ31Pcl1z81r6i3kL4b8H3NEHq9hTTzB
-         HmfxQqVv+JvWSk/3xRKwfqz/E8IPBWzTeLYDsuz5ycvYbtObV0t/i2Jl1n2RFLfKezWi
-         I1ne3W0kCI4jKcoeuSaZomhiwL5JjTv0gqn3X5xC4mQt0vCv4gl8MIFI4cLt1dRypx50
-         VHbyTdVwpI0/4jTVtdTB1VhlZlYSOBGaq9sRairgB+amfDCrGleBv4HECSHjHoZOFeSp
-         BLrFTFzCOsRZ23fVnasJgcqTLFvRdFi/NKUigBJ1kaiLZ5a9uMmoT5vd/61VQgXZG5Ds
-         xIgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfe89uVlvCsbCdCQPgGud9Er4/Vhqx2hPBpSpUrNoYMLpWWvns1gHTDxFnKHheZRE2iHJPuAwx1kOGMJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsAFEN6UGyK0gLgICMMgbqIgKRSV6RU46L6CKLU829UDWl445r
-	FZxEO4BWGaRMwC4SloB2waD67YXFCQ2V0D7Mpd9leJbqHKnPjHA7q8iD8BLgOCbzotiTELY+m+c
-	tcu71KC+uTri6kaUjW3lWgmv31tl5GXB7z1t9A+ENrW99QfGT3/yZnBzeoljUgG8=
-X-Gm-Gg: ASbGnct0MQwbcjWjjhYGAdAi8qGtl3LzErOK2ogBm15Kyio5p+V16A3Du+M4b2UjI+R
-	j+bzyMSl4wuDqm4I5jt9vF5u2hAxxpGZKwao30CNELyyvuPTE7TR996Ond2xVR3/mDt7fUADk/6
-	mzDZ/g19jn8HcIqMI2br6wmAu0Vmno5KT3QvwnDjoVN/2/JxhPASetE7kP3PgnHzw5xzPO0cO/f
-	jjJmg98p9ZAx+MUosUulKNpRC0RTeQPG3/naAcwmzcgl64Gfyq1dBmLt8Ztc3+wCEiH0Cq6zf1a
-	8eDmD1vWxANXJySOJO4OX2JtVJobk0FNUf8OM7NYuHRT7MCSVM71b0FOCM6WdNzSXyjq5KvEX47
-	w3sMDrEkdnXZ046VX77SnjdD4
-X-Received: by 2002:a05:620a:4455:b0:7c5:43c2:a8f4 with SMTP id af79cd13be357-7c956e7bcb0mr273118285a.12.1745487088407;
-        Thu, 24 Apr 2025 02:31:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfuf4FFckbyK0jjA6wEHiIn51l5ZbmFFhKBBP6oaOf88hXR85UcIIw+FLmcHn9+XNlZwAObA==
-X-Received: by 2002:a05:620a:4455:b0:7c5:43c2:a8f4 with SMTP id af79cd13be357-7c956e7bcb0mr273115685a.12.1745487088047;
-        Thu, 24 Apr 2025 02:31:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d1b9a304sm1820461fa.99.2025.04.24.02.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 02:31:25 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Thu, 24 Apr 2025 12:30:37 +0300
-Subject: [PATCH v3 33/33] drm/msm/dpu: move features out of the
- DPU_HW_BLK_INFO
+	s=arc-20240116; t=1745487048; c=relaxed/simple;
+	bh=taJ25v7BecY6Hb0vwCJAfsxO+KMfgxuJA7gLq6CzpbU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q09dcaL1U2pYORC9/XyqMflHGNxTdOuMJ9FO2PaLFMdLO1aBsOrda/sL6SuBTu/YhRSjBbYZbulQBkn+RTYv+0wbLwrEmVmy/9WFOBfE4gwbmg0i4FJIc2b6D5nwUwGnDAKIdBqwQ5AEnqit/fr2SDhJB923XUWNHFrnq+9qvVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=rGsMUB+6; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=U7peuKN6TtXCN3LsiGw8eaRb2QQ7ZZqgkZWgO6FWmEg=;
+	t=1745487046; x=1746696646; b=rGsMUB+6MfB25IwxbAM62uZun/I03GcHkd3eQUu13IKOKTf
+	r6/EbxXv6V6VXknzmcB8aEYMaOtas3CrwXqu9H8RJ5JDcKSDUeIgbHD3QRBzTXt7AyhzoGqQoXaFF
+	oqMZJXo7Ss1UUjnjBvPD2X9Cp854r/Fv928c9dN1rcIE7YZCGqzirP/Uxehrmg4N/VxxN4Q16iCxc
+	C2Cl2t1ZvfKvTju3Ls5WGDFRKfI1NVZCwlh1a69pe20C1KkwkR2Kg2rOzT7xkEnk6K0OQ7Ps5yl2U
+	xnefAi9DmwKiuhCoA++da+/z7iDpmETP/YtPmDYqyyVSYCzvEkfJ4Ld/qhN4vqUA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1u7sum-0000000GwTd-11Rb;
+	Thu, 24 Apr 2025 11:30:40 +0200
+Message-ID: <bc9896f2470c70519c3b9257a1a2dd32e5e9c6e9.camel@sipsolutions.net>
+Subject: Re: [PATCH v3 15/28] module: Use RCU in all users of
+ __module_text_address().
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Paul E. McKenney"
+	 <paulmck@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	johannes@sipsolutions.net, Daniel Gomez <da.gomez@samsung.com>, Luis
+ Chamberlain	 <mcgrof@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Petr Pavlu	 <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Thomas Gleixner	 <tglx@linutronix.de>
+Date: Thu, 24 Apr 2025 11:30:39 +0200
+In-Reply-To: <20250424090539.0O37K8vN@linutronix.de>
+References: <20250108090457.512198-1-bigeasy@linutronix.de>
+	 <20250108090457.512198-16-bigeasy@linutronix.de>
+	 <db0f8ec385762e6edb3edf5054a76ea189135e6e.camel@sipsolutions.net>
+	 <4446525f-4e89-41bb-91a0-89c72dd0e8f8@paulmck-laptop>
+	 <20250424090539.0O37K8vN@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-dpu-drop-features-v3-33-cdaca81d356f@oss.qualcomm.com>
-References: <20250424-dpu-drop-features-v3-0-cdaca81d356f@oss.qualcomm.com>
-In-Reply-To: <20250424-dpu-drop-features-v3-0-cdaca81d356f@oss.qualcomm.com>
-To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10025;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=8tb1+qRLI7JpcBUvNssngnuycT2/Ign7Y6I5ypwrc4k=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoCgSxxJHeC0gbaX0jMUzUxmcs0JidF+LOKmHLq
- lpx9JT6TY+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaAoEsQAKCRCLPIo+Aiko
- 1TOHB/9UgvUFqig1fgEqOHhS5Hl70Eyp+Meb0RDrRiiNM3Is7O7DyDPoMJd/A/P2C9Ct8vUrgYb
- hQd3qrXICxYvUKdU7Wc1pjOSi7h0PXoCYy4ykfPWIdzZUJd9X718yYv3lBrRxiYGISVGAnHif8k
- tdUA1sh3OFGioW1X15bxH+XkvrQ6RezqU7SnyNxupwjMcgw9jR8K+9tH67UP52tVAGWW3gui9Dd
- LkyLLH7TiNrrvpxRWY3/rGsFZ64tGS7qjGnviaXfPO9p6PimFHdjYOw691qqD2cYbq6YlkFUoX/
- fEBG0ssMkrt6hrSQdb0A+1GLdXmVbrMy5AXP8DcTaM195jTU
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=EtLSrTcA c=1 sm=1 tr=0 ts=680a04f1 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=cFriiCX7-o5b7acnli0A:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: nP7xBNaNmKNJ-JdLrL-aL-9cXzEzwzoB
-X-Proofpoint-ORIG-GUID: nP7xBNaNmKNJ-JdLrL-aL-9cXzEzwzoB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA2MyBTYWx0ZWRfX1e3ABlCjx2JM ubK47f9v7IWQI/90kepsuEoLOIP6Pfq/8NDPNf+kyYfZXcx0wjw5NNt1yIbfmFqtbRTAomSPtPg nu4nJTsYfv+Oewd5lL561C2Dpr93sP9k//c3Ds5e1Ai57W+HkVFnZgdXAhNagLkVcCfprPflr8k
- LTtfy99aTWT7KTXEvTzcq9+fqndDkRwiTbtr4O8Ks9sjGJM/r2tbhs3WumxPymr1yD8SRd24ufO 9JNddedfxDWQKZKQ+lbp/hCWzkBDlDnUHv4EsmamUgiEKURwau127hWpMnWpppvGW0I810dkQjW fLI9SZc9dqK6E9PkR8YIFTAJIVrElAfKb6e8rPTYId43EVny/p8zfMvUnpben7w+CpJT9vfy98i
- FDqCdjEJLqsdvoNg7BiSCgjnQ6uOLjQ7Ja7aMvfrbBUhNHZ2HaExoaj+TTWnf0SVQXGLXUBl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-24_04,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- suspectscore=0 mlxscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504240063
+X-malware-bazaar: not-scanned
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, 2025-04-24 at 11:05 +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-04-23 11:16:49 [-0700], Paul E. McKenney wrote:
+> > On Wed, Apr 23, 2025 at 05:17:31PM +0200, Benjamin Berg wrote:
+> > > Hi,
+> > >=20
+> > > On Wed, 2025-01-08 at 10:04 +0100, Sebastian Andrzej Siewior wrote:
+> > > > __module_text_address() can be invoked within a RCU section, there =
+is no
+> > > > requirement to have preemption disabled.
+> > > >=20
+> > > > Replace the preempt_disable() section around __module_text_address(=
+)
+> > > > with RCU.
+> > >=20
+> > > Unfortunately, this patch causes a performance regression for us. The
+> > > trouble is that we enable kmemleak and run trace-cmd so a lot of stac=
+k
+> > > traces need to be collected. Obviously, we also have lockdep enabled.
+> > >=20
+> > > Now, combine this with the UML stack dumping code calling into
+> > > __kernel_text_address a lot[1] and it really has a relevant performan=
+ce
+> > > impact. I saw the kernel spending 40% of its own CPU time just on the
+> > > lock in is_module_text_address.
+> > >=20
+> > > Maybe kernel_text_address should leave the RCU handling to the caller
+> > > and assume that the RCU read lock is already taken?
+> > >=20
+> > > Benjamin
+> > >=20
+> > > [1] The UM arch dump_stack function reads every "unsigned long" on th=
+e
+> > > stack and tests it using __kernel_text_address.
+> >=20
+> > Use of a single guard(rcu)() is regressing performance?=C2=A0 Interesti=
+ng and
+> > quite unexpected.=C2=A0 That said, tiven the amount of debug you have e=
+nabled,
+> > I am not so sure that people are going to be all that excited about a
+> > further performance regression.
+> >=20
+> > But is this regression due to the cleanup hook that guard(rcu)()
+> > registers?=C2=A0 If so, please feel free to try using rcu_read_lock()
+> > and rcu_read_unlock() instead.=C2=A0 I would be surprised if this makes=
+ a
+> > difference, but then again, your initial regression report also comes
+> > as a surprise, so...
+> >=20
+> > Another way to reduce guard(rcu)() overhead is to build your kernel
+> > with CONFIG_PREEMPT_NONE=3Dy.=C2=A0 Not so good for real-time response,=
+ but
+> > then again, neither are your debug options.
+>=20
+> The guard notation is not regression I guess it is just the plenty of
+> rcu_read_lock()/ unlock(). We had one regression which was "fixed" by
+> commit ee57ab5a32129 ("locking/lockdep: Disable KASAN instrumentation of =
+lockdep.c").
 
-Only SSPP, WB and VBIF still have feature bits remaining, all other
-hardware blocks don't have feature bits anymore. Remove the 'features'
-from the DPU_HW_BLK_INFO so that it doesn't get included into hw info
-structures by default and only include it when necessary.
+Yup, we really pretty much created a micro-benchmark for grabbing stack
+traces.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h |  1 -
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h |  1 -
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h         | 17 ++++-------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c         |  5 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c         |  5 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c             |  4 ++--
- 6 files changed, 10 insertions(+), 23 deletions(-)
+> My guess would be that this is a preemptible kernel and the preempt
+> disable/ enable is cheaper that the RCU version. So going back to a
+> non-preemtible kernel should "fix" it.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-index a065f102ce592311376f1186add7a47dca7fd84f..26883f6b66b3e506d14eeb1c0bd64f556d19fef8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-@@ -20,7 +20,6 @@ static const struct dpu_caps sm6150_dpu_caps = {
- static const struct dpu_mdp_cfg sm6150_mdp = {
- 	.name = "top_0",
- 	.base = 0x0, .len = 0x45c,
--	.features = 0,
- 	.clk_ctrls = {
- 		[DPU_CLK_CTRL_VIG0] = { .reg_off = 0x2ac, .bit_off = 0 },
- 		[DPU_CLK_CTRL_DMA0] = { .reg_off = 0x2ac, .bit_off = 8 },
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-index 8c909c41b48a18fdc54753c68bc2ad19001cd3b4..1884371736bfcf78a99661baedadc0450bb4376e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-@@ -22,7 +22,6 @@ static const struct dpu_caps sm6125_dpu_caps = {
- static const struct dpu_mdp_cfg sm6125_mdp = {
- 	.name = "top_0",
- 	.base = 0x0, .len = 0x45c,
--	.features = 0,
- 	.clk_ctrls = {
- 		[DPU_CLK_CTRL_VIG0] = { .reg_off = 0x2ac, .bit_off = 0 },
- 		[DPU_CLK_CTRL_DMA0] = { .reg_off = 0x2ac, .bit_off = 8 },
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index ffc54f77fe5c8883e926e0c63825c9424904cf2d..f5ce35cd966459f0edf2dbdd2dbc2693779fac73 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -124,14 +124,12 @@ enum {
-  * @id:                enum identifying this block
-  * @base:              register base offset to mdss
-  * @len:               length of hardware block
-- * @features           bit mask identifying sub-blocks/features
-  */
- #define DPU_HW_BLK_INFO \
- 	char name[DPU_HW_BLK_NAME_LEN]; \
- 	u32 id; \
- 	u32 base; \
--	u32 len; \
--	unsigned long features
-+	u32 len
- 
- /**
-  * struct dpu_scaler_blk: Scaler information
-@@ -348,7 +346,6 @@ struct dpu_clk_ctrl_reg {
- /* struct dpu_mdp_cfg : MDP TOP-BLK instance info
-  * @id:                index identifying this block
-  * @base:              register base offset to mdss
-- * @features           bit mask identifying sub-blocks/features
-  * @clk_ctrls          clock control register definition
-  */
- struct dpu_mdp_cfg {
-@@ -359,7 +356,6 @@ struct dpu_mdp_cfg {
- /* struct dpu_ctl_cfg : MDP CTL instance info
-  * @id:                index identifying this block
-  * @base:              register base offset to mdss
-- * @features           bit mask identifying sub-blocks/features
-  * @intr_start:        interrupt index for CTL_START
-  * @has_split_display:	CTL supports video mode split display
-  */
-@@ -381,6 +377,7 @@ struct dpu_ctl_cfg {
-  */
- struct dpu_sspp_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	const struct dpu_sspp_sub_blks *sblk;
- 	u32 xin_id;
- 	enum dpu_clk_ctrl_type clk_ctrl;
-@@ -391,7 +388,6 @@ struct dpu_sspp_cfg {
-  * struct dpu_lm_cfg - information of layer mixer blocks
-  * @id:                index identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @sblk:              LM Sub-blocks information
-  * @pingpong:          ID of connected PingPong, PINGPONG_NONE if unsupported
-  * @lm_pair:           ID of LM that can be controlled by same CTL
-@@ -410,7 +406,6 @@ struct dpu_lm_cfg {
-  * struct dpu_dspp_cfg - information of DSPP blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  *                     supported by this block
-  * @sblk               sub-blocks information
-  */
-@@ -423,7 +418,6 @@ struct dpu_dspp_cfg  {
-  * struct dpu_pingpong_cfg - information of PING-PONG blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @intr_done:         index for PINGPONG done interrupt
-  * @intr_rdptr:        index for PINGPONG readpointer done interrupt
-  * @sblk               sub-blocks information
-@@ -440,8 +434,6 @@ struct dpu_pingpong_cfg  {
-  * struct dpu_merge_3d_cfg - information of DSPP blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-- *                     supported by this block
-  * @sblk               sub-blocks information
-  */
- struct dpu_merge_3d_cfg  {
-@@ -454,7 +446,6 @@ struct dpu_merge_3d_cfg  {
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-  * @len:               length of hardware block
-- * @features           bit mask identifying sub-blocks/features
-  * @sblk:              sub-blocks information
-  * @have_native_42x:	Supports NATIVE_422 and NATIVE_420 encoding
-  */
-@@ -468,7 +459,6 @@ struct dpu_dsc_cfg {
-  * struct dpu_intf_cfg - information of timing engine blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @type:              Interface type(DSI, DP, HDMI)
-  * @controller_id:     Controller Instance ID in case of multiple of intf type
-  * @prog_fetch_lines_worst_case	Worst case latency num lines needed to prefetch
-@@ -499,6 +489,7 @@ struct dpu_intf_cfg  {
-  */
- struct dpu_wb_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	u8 vbif_idx;
- 	u32 maxlinewidth;
- 	u32 xin_id;
-@@ -567,6 +558,7 @@ struct dpu_vbif_qos_tbl {
-  */
- struct dpu_vbif_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	u32 default_ot_rd_limit;
- 	u32 default_ot_wr_limit;
- 	u32 xin_halt_timeout;
-@@ -584,7 +576,6 @@ struct dpu_vbif_cfg {
-  * @name               string name for debug purposes
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  */
- struct dpu_cdm_cfg {
- 	DPU_HW_BLK_INFO;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-index 42b4a5dbc2442ae0f2adab80a5a3df96b35e62b0..df6e43672422f1d796e38c32256582900f58523e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-@@ -360,8 +360,7 @@ static void dpu_hw_dsc_bind_pingpong_blk_1_2(struct dpu_hw_dsc *hw_dsc,
- 	DPU_REG_WRITE(hw, sblk->ctl.base + DSC_CTL, mux_cfg);
- }
- 
--static void _setup_dcs_ops_1_2(struct dpu_hw_dsc_ops *ops,
--			       const unsigned long features)
-+static void _setup_dcs_ops_1_2(struct dpu_hw_dsc_ops *ops)
- {
- 	ops->dsc_disable = dpu_hw_dsc_disable_1_2;
- 	ops->dsc_config = dpu_hw_dsc_config_1_2;
-@@ -391,7 +390,7 @@ struct dpu_hw_dsc *dpu_hw_dsc_init_1_2(struct drm_device *dev,
- 
- 	c->idx = cfg->id;
- 	c->caps = cfg;
--	_setup_dcs_ops_1_2(&c->ops, c->caps->features);
-+	_setup_dcs_ops_1_2(&c->ops);
- 
- 	return c;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-index 0b3325f9c8705999e1003e5c88872562e880229b..83b1dbecddd2b30402f47155fa2f9a148ead02c1 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-@@ -33,8 +33,7 @@ static void dpu_hw_merge_3d_setup_3d_mode(struct dpu_hw_merge_3d *merge_3d,
- 	}
- }
- 
--static void _setup_merge_3d_ops(struct dpu_hw_merge_3d *c,
--				unsigned long features)
-+static void _setup_merge_3d_ops(struct dpu_hw_merge_3d *c)
- {
- 	c->ops.setup_3d_mode = dpu_hw_merge_3d_setup_3d_mode;
- };
-@@ -62,7 +61,7 @@ struct dpu_hw_merge_3d *dpu_hw_merge_3d_init(struct drm_device *dev,
- 
- 	c->idx = cfg->id;
- 	c->caps = cfg;
--	_setup_merge_3d_ops(c, c->caps->features);
-+	_setup_merge_3d_ops(c);
- 
- 	return c;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-index 5c811f0142d5e2a012d7e9b3a918818f22ec11cf..96dc10589bee6cf144eabaecf9f8ec5777431ac3 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-@@ -264,7 +264,7 @@ static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
- }
- 
- static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
--		unsigned long cap, const struct dpu_mdss_version *mdss_rev)
-+			   const struct dpu_mdss_version *mdss_rev)
- {
- 	ops->setup_split_pipe = dpu_hw_setup_split_pipe;
- 	ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
-@@ -313,7 +313,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
- 	 * Assign ops
- 	 */
- 	mdp->caps = cfg;
--	_setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
-+	_setup_mdp_ops(&mdp->ops, mdss_rev);
- 
- 	return mdp;
- }
+Yes, preempt_disable() is extremely cheap.
 
--- 
-2.39.5
+> Looking at kernel_text_address(), is_bpf_text_address() has also a
+> RCU read section so probably subject to the same trouble. And
+> is_ftrace_trampoline() could be also converted to RCU which would
+> increase the trouble.=20
+>=20
+> Improving the stack trace on UM or caching some of the most common one
+> might help. Not sure if disabling kmemleak for lockdep is possible/
+> makes a difference.
+
+What does seem to help is to simply disable lockdep inside dump_trace.
+That should be good enough for us at least, bringing the overhead down
+to a manageable amount when running these tests.
+Some unscientific numbers:
+
+config                               dump_trace     locking
+----
+no locking (preempt_disable)            6 %         -
+guard(rcu)() + lockdep_off             15 %         58 % of that
+rcu_read_lock + lockdep_off            17 %         60 % of that
+guard(rcu)()                           48 %         91 % of that
+
+That confirms that guard(rcu)() really is not a problem. There might be
+slight overhead, but it is probably within the margin of error. Turning
+lockdep off/on inside the UML dump_trace() function brings down the
+overhead a lot and I guess that should be an acceptable level for us.
+
+Not sure if something like that would be desirable upstream. This is
+happening for us when running the hostap "hwsim" tests inside UML (with
+time-travel). At least internally, we could carry a custom patch to add
+the lockdep_off()/lockdep_on() to dump_trace in order to work around
+it[1].
+
+Benjamin
+
+[1] Actually, now I am reminded that we already have that for kmemleak
+as lockdep was considerably slowing down the scanning.
+
+>=20
+> > 							Thanx, Paul
+>=20
+> Sebastian
+>=20
 
 
