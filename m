@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-618031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF64A9A944
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:00:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F78A9A954
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809613BDB9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0D0176EBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50AE214A91;
-	Thu, 24 Apr 2025 09:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A46521CA13;
+	Thu, 24 Apr 2025 10:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1zDvKUJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NChss0fw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE821FC0FA;
-	Thu, 24 Apr 2025 09:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B21383;
+	Thu, 24 Apr 2025 10:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745488793; cv=none; b=Kf/k+rhHCp0XNWlld0LET7KgUfJs67vNleDeoUiS5eAlq59GB/sHLwwmH78k3PbHtFxrbK4+A3NrTu5RuggC95cenzsDMcRlY9RWztLNGM0ftaix5q8d0unN+qoXzNvHSgiULzhFZTDrDWZBpfD+aHPeQDinnZRPllflb7lstBY=
+	t=1745489047; cv=none; b=P9/KjqK5CktWv8SeYw0Y/e3ZQW/ygsJNC0ZrsU9DStUGxgKlQAkqf3FNJklUGbLjFiXCvn/xMfX2fFUsHr1MpN28JZK9NOwc4l3wIQTdwhg9cNmdKVrZJtAivDdZT6KVjTCgtarP1ehRQ6nT4Od4Z6gTnNwYkFTQhaKeCpGGAjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745488793; c=relaxed/simple;
-	bh=0tvvSnk8ULXJWC8UVXdj328qfDMVzDjjl0icK/+r8Pg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MBhGKfKan20f72tEUFreK11hX0PjyTD8gx0RJO/mNZmLRTp9j82+Zo0wHj3jhMo3Vt4KALrjqSx1lu+wOicenP1TIk37U9wJ4le7Nc+r/bE6SY9J0Jl/XIBR4ICniZyP5t8LcICre79jw4Y5vx2GAx3gqi44pr2P9IGuzi1ER+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1zDvKUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926ADC4CEE3;
-	Thu, 24 Apr 2025 09:59:52 +0000 (UTC)
+	s=arc-20240116; t=1745489047; c=relaxed/simple;
+	bh=QkO9f05HBZfRAYHuTdXZCS4UVeVMSqLZN8idIx1+JmE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mnrE/cL+8SMAq2L4Ce1z9Gxytb2Ugwp/CGjDvb3tXgljZrlfahx4KR8tWLOZnOy86k0iI7CwLIqow5A+jkR2311V+OULM5ax6bYfOVGOV2abI3/O+Opo25qgCEfl/dFzz+/KCnFLu/JbcDnZmEudG1VccfQaS0W6cqybckp6mHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NChss0fw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020D6C4CEE3;
+	Thu, 24 Apr 2025 10:04:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745488792;
-	bh=0tvvSnk8ULXJWC8UVXdj328qfDMVzDjjl0icK/+r8Pg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=h1zDvKUJt1IfwS1/Fel+frXyQnAD1Gj5eHUh89C36XTplozRDivahhNeTqKdzqEPa
-	 ZSjVpW6cWkBwey63ozOw7bxm/Ym/CcE0GOkIyEX4q7d/0wYugu3WDN1uu0+2hXoxN+
-	 M99VZ5T2p2OAJp1oscN7ckbOZTB2TY/HcQByBv/zICFNxwPKv+kk0EooORq3+jmRdZ
-	 H7e7R53US23RIlqOTCpV5xV8MOYhRTvgzVTnNPDOULdZ6BzYEaUQPlrNPv2xxyF5dT
-	 TPzn3rlGq/wKOurcyXUweMyCbHcoMvLrqSw9sZxP0WiFtdSnb5jczuAZ7dyJD9Hrhk
-	 n1fNf1vds2BYw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EC5380CFD9;
-	Thu, 24 Apr 2025 10:00:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1745489047;
+	bh=QkO9f05HBZfRAYHuTdXZCS4UVeVMSqLZN8idIx1+JmE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=NChss0fwfbzY5ZsKASwFKreSMNk+rN3T0G4Imr0ha8+GNTfOa144igFLbYFGsN9n8
+	 w1wyqQ1/hfzTLAgfF9pr3PKAFIVXoKoOlWSCJ6Zn/pxPJebLKRweeeQIYH/qSsUzeK
+	 wfN57iuRlBD6nfo1HYCmLD3I19BElPZGg4pn42BO0mE+JKX7q+rEUuy26AmCR2xTJo
+	 Sx+lK9ZPIqzcH7fdw/3WUWqsfZRHp+s4XtOU/C1WlK/wty8mkeW6YFAZ//XyRIYcJn
+	 /X4mBlQnArWm6ZFmzCrncUi2zbPMGSLubK5fQr7MVgrLawk++clFmfg5ok5e4L1wdZ
+	 vKg580wBjnjUg==
+Date: Thu, 24 Apr 2025 12:04:04 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+cc: even.xu@intel.com, xinpeng.sun@intel.com, bentiss@kernel.org, 
+    mpearson-lenovo@squebb.ca, srinivas.pandruvada@linux.intel.com, 
+    guanwentao@uniontech.com, phasta@kernel.org, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, zhanjun@uniontech.com, 
+    niecheng1@uniontech.com
+Subject: Re: [PATCH] HID: intel-thc-hid: intel-quicki2c: pass correct arguments
+ to acpi_evaluate_object
+In-Reply-To: <DA446911D078F45A+20250417135023.543707-1-wangyuli@uniontech.com>
+Message-ID: <r8o135p2-9291-q830-qnn0-9nn80486458s@xreary.bet>
+References: <DA446911D078F45A+20250417135023.543707-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/2] net: stmmac: fix timestamp snapshots on
- dwmac1000
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174548883125.3289294.6660302727268151005.git-patchwork-notify@kernel.org>
-Date: Thu, 24 Apr 2025 10:00:31 +0000
-References: <20250423-stmmac_ts-v2-0-e2cf2bbd61b1@bootlin.com>
-In-Reply-To: <20250423-stmmac_ts-v2-0-e2cf2bbd61b1@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=3Calexis=2Elothore=40bootlin=2Ecom=3E?=@codeaurora.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, richardcochran@gmail.com,
- daniel.machon@microchip.com, maxime.chevallier@bootlin.com,
- thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@armlinux.org.uk
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
+On Thu, 17 Apr 2025, WangYuli wrote:
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed, 23 Apr 2025 09:12:08 +0200 you wrote:
-> Hello,
+> From: Wentao Guan <guanwentao@uniontech.com>
 > 
-> this is the v2 of a small series containing two small fixes for the
-> timestamp snapshot feature on stmmac, especially on dwmac1000 version.
-> Those issues have been detected on a socfpga (Cyclone V) platform. They
-> kind of follow the big rework sent by Maxime at the end of last year to
-> properly split this feature support between different versions of the
-> DWMAC IP.
+> Delete unused argument, pass correct argument to acpi_evaluate_object.
 > 
-> [...]
+> Log:
+>   intel_quicki2c 0000:00:10.0: enabling device (0000 -> 0002)
+>   ACPI: \_SB.PC00.THC0.ICRS: 1 arguments were passed to a non-method ACPI object (Buffer) (20230628/nsarguments-211)
+>   ACPI: \_SB.PC00.THC0.ISUB: 1 arguments were passed to a non-method ACPI object (Buffer) (20230628/nsarguments-211)
+> 
+> Fixes: 5282e45ccbfa ("HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C ACPI interfaces")
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> index fa51155ebe39..8a8c4a46f927 100644
+> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> @@ -82,15 +82,10 @@ static int quicki2c_acpi_get_dsd_property(struct acpi_device *adev, acpi_string
+>  {
+>  	acpi_handle handle = acpi_device_handle(adev);
+>  	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+> -	union acpi_object obj = { .type = type };
+> -	struct acpi_object_list arg_list = {
+> -		.count = 1,
+> -		.pointer = &obj,
+> -	};
+>  	union acpi_object *ret_obj;
+>  	acpi_status status;
+>  
+> -	status = acpi_evaluate_object(handle, dsd_method_name, &arg_list, &buffer);
+> +	status = acpi_evaluate_object(handle, dsd_method_name, NULL, &buffer);
+>  	if (ACPI_FAILURE(status)) {
+>  		acpi_handle_err(handle,
+>  				"Can't evaluate %s method: %d\n", dsd_method_name, status);
 
-Here is the summary with links:
-  - [net,v2,1/2] net: stmmac: fix dwmac1000 ptp timestamp status offset
-    https://git.kernel.org/netdev/net/c/73fa4597bdc0
-  - [net,v2,2/2] net: stmmac: fix multiplication overflow when reading timestamp
-    https://git.kernel.org/netdev/net/c/7b7491372f8e
+Applied, thanks.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Jiri Kosina
+SUSE Labs
 
 
