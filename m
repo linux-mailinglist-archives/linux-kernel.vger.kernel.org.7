@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-617429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1208EA99FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:41:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B332DA99FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380EE194569A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA471945D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8631A8F79;
-	Thu, 24 Apr 2025 03:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963FA19CC29;
+	Thu, 24 Apr 2025 03:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5t3RNE+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wNqPmEV4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E70B19D07E;
-	Thu, 24 Apr 2025 03:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFB279D0;
+	Thu, 24 Apr 2025 03:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745466056; cv=none; b=GrMTUrwbt24YJU0WqpemTywKVchR5OcrAg+UHz98IkLIEvcRbjeRor0qxKOsfGncSIhp5fPbWIKrv8X6D6p41S4CYA1Nx9T+weMA/QFS9j2OMZWCQk1+lisNNw3kTpiABIm6yUHuqwHgz0P8XDuvEJNRi11+Ppvf69bM0OE1q58=
+	t=1745466374; cv=none; b=fHpX+bHdG3lztZLDAzme6YMzUJ39GRQtL6z2puGb0wSo54m+xauEiLXkVIiwnYRXUvqs1WZU8BHJUoLhxWGTJ7mxGEt2eZ65tgjxs1OqMdUUxgcz88UhuzZJl5H4PKhgZegSYXaqhX5Z//cpYCTFnhGGlwJyAGaqZePVtOh2+HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745466056; c=relaxed/simple;
-	bh=uKeGZXTiEpKR7lAKGA+8xtCMdARCeUMFCu88OGMHDP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQc07Cy4SNLB+EJAXuQTC/3kZLnd//m5DUB7XchIQqJ8vFvCrN1F5whrxEiJhPxG0nN2AmkdelClS4b0wCl2XOtXMbeZD01ADjH+jTrAK/y0KiDLlWlXWGCvfCPqZR1e+UH7b21Swmd2GJg89co+9K8jzj64lJVoIwWB9HFuuyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5t3RNE+; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745466055; x=1777002055;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=uKeGZXTiEpKR7lAKGA+8xtCMdARCeUMFCu88OGMHDP8=;
-  b=b5t3RNE+nvqsHKbinQSxzCXsJQ93s6Y1nZJEGF6iJ+Pvs8ys1ArGB924
-   OGzlGjgLp4gMS4fqfIoH1Hxc3cdSkmH3QfPGkDFhghumTpRIIV4iHxwMF
-   S7fOpll41huF1dKbvuGVsZoIw67vicwqufuLl2Xk8hVXhBuPVXHbW+tZ0
-   ib3hLK7DnB4DBmAuDsB78iZ61Ctv2uwi7usatwnk7rRMMFZY0KR1lKXV3
-   3z5sCIa4aMc0vVKt1tLqJdBbHeLr6GWUBHHlWZBGh10S5LbImLeJJwubA
-   4gmCn1JRp74+pI7oyv/J8T5ej2xZx3rzyyFO6OePJQO8xibrM5aBivHVI
-   Q==;
-X-CSE-ConnectionGUID: xMY8LroeSWOHH7Xbp/GO1w==
-X-CSE-MsgGUID: ZfJ6MweHQMuqsdMFjo8a1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47176767"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="47176767"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:40:54 -0700
-X-CSE-ConnectionGUID: FhJV7mvVT9Gh/lF4+3m1SA==
-X-CSE-MsgGUID: Iuc+csmbTYuQg9ZQP9hXvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="155712841"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Apr 2025 20:40:50 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	shangsong2@lenovo.com,
-	Dave Jiang <dave.jiang@intel.com>
-Cc: jack.vogel@oracle.com,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 1/1] iommu: Allow attaching static domains in iommu_attach_device_pasid()
-Date: Thu, 24 Apr 2025 11:41:23 +0800
-Message-ID: <20250424034123.2311362-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745466374; c=relaxed/simple;
+	bh=2Td0AwsHkUVXDPsjyguJ9OY3/fBE9LakHh4ZmZh77ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z72xl2FitjwKZQVS5O/9XMtPsNSUZharqfaDxqoKEHD1RmbZikVrsyXquMtRAdQFrmelPaqmE2jIZO3lgPVF21GRQnYq/vIB6wma2YIBPrhqf1+kLKnSoenWpowDO0N+DRMHlvJc2cl/+WF3PLwZa0WVinSAR6ANHQeCQU5Du/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wNqPmEV4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=nDtHf9Db7AVpWkb0XrbJTdjcy64DwhugRpM3MfPBnyk=; b=wNqPmEV4b2sTEuEWQ+w4fjzAh0
+	LhMLp9WtNviJ/HJg/fiWXJZZ+wT/XN0156FNKWNj/PPHDQAZ/FSUHsN57c4GIQA+8dlNqk3k7WWvR
+	lplSeD7wKaV6v50689BqV+WGL66+2HhKwlCH742aSYDzCcHqKkQS8Gt1S7Q2TlWveRXU4vGwxl2nf
+	ATHefg7YQoRfM8AA4j2TJBTq5yDnorqiqMzOkJzX7atWDu3x79gpUYrwBdGi4p1+eZ7A1+hfeHzMV
+	0JyDrFj2mORaa1EjYYXXq4fkTyCOECImGqRyncGqeZQDCqEQLmutg60fAXkb8sM/UQzTIoIrEE+nc
+	XbOtwf5g==;
+Received: from [50.39.124.201] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7nXP-0000000ClR3-1k3D;
+	Thu, 24 Apr 2025 03:46:11 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Luke Wang <ziniu.wang_1@nxp.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-mmc@vger.kernel.org,
+	Haibo Chen <haibo.chen@nxp.com>,
+	imx@lists.linux.dev,
+	s32@nxp.com
+Subject: [PATCH -next] mmc: sdhci-esdhc-imx: fix defined but not used warnings
+Date: Wed, 23 Apr 2025 20:46:10 -0700
+Message-ID: <20250424034610.441532-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,99 +64,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The idxd driver attaches the default domain to a PASID of the device to
-perform kernel DMA using that PASID. The domain is attached to the
-device's PASID through iommu_attach_device_pasid(), which checks if the
-domain->owner matches the iommu_ops retrieved from the device. If they
-do not match, it returns a failure.
+Fix warnings when CONFIG_PM=y and CONFIG_PM_SLEEP is not set by
+surrounding the 2 functions with #ifdef CONFIG_PM_SLEEP.
 
-        if (ops != domain->owner || pasid == IOMMU_NO_PASID)
-                return -EINVAL;
+drivers/mmc/host/sdhci-esdhc-imx.c:1659:13: warning: 'sdhc_esdhc_tuning_restore' defined but not used [-Wunused-function]
+ 1659 | static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
+drivers/mmc/host/sdhci-esdhc-imx.c:1637:13: warning: 'sdhc_esdhc_tuning_save' defined but not used [-Wunused-function]
+ 1637 | static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
 
-The static identity domain implemented by the intel iommu driver doesn't
-specify the domain owner. Therefore, kernel DMA with PASID doesn't work
-for the idxd driver if the device translation mode is set to passthrough.
-
-Generally the owner field of static domains are not set because they are
-already part of iommu ops. Add a helper domain_iommu_ops_compatible()
-that checks if a domain is compatible with the device's iommu ops. This
-helper explicitly allows the static blocked and identity domains associated
-with the device's iommu_ops to be considered compatible.
-
-Fixes: 2031c469f816 ("iommu/vt-d: Add support for static identity domain")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220031
-Cc: stable@vger.kernel.org
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Link: https://lore.kernel.org/linux-iommu/20250422191554.GC1213339@ziepe.ca/
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: 3d1eea493894 ("mmc: sdhci-esdhc-imx: Save tuning value when card stays powered in suspend")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Luke Wang <ziniu.wang_1@nxp.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org
+Cc: Haibo Chen <haibo.chen@nxp.com>
+Cc: imx@lists.linux.dev
+Cc: s32@nxp.com
 ---
- drivers/iommu/iommu.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-esdhc-imx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Change log:
-v3:
- - Convert all places checking domain->owner to the new helper.
-v2: https://lore.kernel.org/linux-iommu/20250423021839.2189204-1-baolu.lu@linux.intel.com/
- - Make the solution generic for all static domains as suggested by
-   Jason.
-v1: https://lore.kernel.org/linux-iommu/20250422075422.2084548-1-baolu.lu@linux.intel.com/
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 4f91a740c15f..b26fc3ed9f01 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2204,6 +2204,19 @@ static void *iommu_make_pasid_array_entry(struct iommu_domain *domain,
- 	return xa_tag_pointer(domain, IOMMU_PASID_ARRAY_DOMAIN);
+--- linux-next-20250423.orig/drivers/mmc/host/sdhci-esdhc-imx.c
++++ linux-next-20250423/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -1634,6 +1634,7 @@ static void sdhci_esdhc_imx_hwinit(struc
+ 	}
  }
  
-+static bool domain_iommu_ops_compatible(const struct iommu_ops *ops,
-+					struct iommu_domain *domain)
-+{
-+	if (domain->owner == ops)
-+		return true;
-+
-+	/* For static domains, owner isn't set. */
-+	if (domain == ops->blocked_domain || domain == ops->identity_domain)
-+		return true;
-+
-+	return false;
-+}
-+
- static int __iommu_attach_group(struct iommu_domain *domain,
- 				struct iommu_group *group)
++#ifdef CONFIG_PM_SLEEP
+ static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
  {
-@@ -2214,7 +2227,8 @@ static int __iommu_attach_group(struct iommu_domain *domain,
- 		return -EBUSY;
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -1688,6 +1689,7 @@ static void sdhc_esdhc_tuning_restore(st
+ 		       host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
+ 	}
+ }
++#endif
  
- 	dev = iommu_group_first_dev(group);
--	if (!dev_has_iommu(dev) || dev_iommu_ops(dev) != domain->owner)
-+	if (!dev_has_iommu(dev) ||
-+	    !domain_iommu_ops_compatible(dev_iommu_ops(dev), domain))
- 		return -EINVAL;
- 
- 	return __iommu_group_set_domain(group, domain);
-@@ -3435,7 +3449,8 @@ int iommu_attach_device_pasid(struct iommu_domain *domain,
- 	    !ops->blocked_domain->ops->set_dev_pasid)
- 		return -EOPNOTSUPP;
- 
--	if (ops != domain->owner || pasid == IOMMU_NO_PASID)
-+	if (!domain_iommu_ops_compatible(ops, domain) ||
-+	    pasid == IOMMU_NO_PASID)
- 		return -EINVAL;
- 
- 	mutex_lock(&group->mutex);
-@@ -3511,7 +3526,7 @@ int iommu_replace_device_pasid(struct iommu_domain *domain,
- 	if (!domain->ops->set_dev_pasid)
- 		return -EOPNOTSUPP;
- 
--	if (dev_iommu_ops(dev) != domain->owner ||
-+	if (!domain_iommu_ops_compatible(dev_iommu_ops(dev), domain) ||
- 	    pasid == IOMMU_NO_PASID || !handle)
- 		return -EINVAL;
- 
--- 
-2.43.0
-
+ static void esdhc_cqe_enable(struct mmc_host *mmc)
+ {
 
