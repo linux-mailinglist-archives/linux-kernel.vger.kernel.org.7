@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-618094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4E4A9AA23
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:26:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680F2A9AA56
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749467B2980
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5963ABF14
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C496221F0F;
-	Thu, 24 Apr 2025 10:25:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2BA223DEF;
-	Thu, 24 Apr 2025 10:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8773250C0E;
+	Thu, 24 Apr 2025 10:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBybB16+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33958221F0F;
+	Thu, 24 Apr 2025 10:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490325; cv=none; b=nTP78v+8cf/u1D4EVA9em26ZHc/9o2lgpZ6rIHMC9+7T16RJedU3RfD/Gt/KI1h4TBwgtJJlaqPQp6j2oYe4iSQz4kakbcpsSfqyY9GkPjwYXC9AmTPlN1DvXkyCxEXijXmiTZ3S2wh0KnetWr4empxlx6Z4CBiE/sMdnfCwD4Y=
+	t=1745490393; cv=none; b=tL/5ee5sOLz83n6HBvxEAd6Nx2SwPfF7O9JwoKSGG0uyJEZonkHZaKSWNb76mihnTgLsKP2SbpMNfIyPLXQk8VQTM0+2JwvR+rtyyXHcSoRCgHTsHCkOZwz7khiwiV+E0r0ofKYIdoPfdwHhD7sAZ4kcnX8saj42URMS0C2I2wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490325; c=relaxed/simple;
-	bh=cW0GuZM89HLxIlPU/JWaAt0GnAvSsNWy7YYz1yjAE9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mnzxn730Lj0mdm5Jgx9HPp/ccDHi87EhKF2nLSjqDMH7ws5BJmsds7VXcaNzl+VpBVoVtZhF95/ABPlHqScZ1iOqFzyEa1Ha4v6NVDFWuauwjYGbnE/0udSx3kZCTs/gEyGxrvnMNUv/X1xyAY3aKKQ/gOKVmS8b/O7UcJIDwNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E3161063;
-	Thu, 24 Apr 2025 03:25:17 -0700 (PDT)
-Received: from [10.57.72.192] (unknown [10.57.72.192])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B93E3F66E;
-	Thu, 24 Apr 2025 03:25:21 -0700 (PDT)
-Message-ID: <31742ec7-c1c5-4cb9-8c13-a30b7a6033be@arm.com>
-Date: Thu, 24 Apr 2025 11:25:19 +0100
+	s=arc-20240116; t=1745490393; c=relaxed/simple;
+	bh=aABGEIrWEsGcFFHRxubhJftIId76X0k2qcZSdwnplek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IY2P9f8ejcmltRYLfLUyVo/Ak6QWro6YdEfgvGzbXSvVlLeBK34HyGCxVQg4R4bDtn8XXEXDLcD/h/EzJFhigQQ0LUCTc+x8jLtjLynxJTZD9Ac8BsSItM52mlIWDopUWqrsW57YvP7qV3BmHRCWkbCvNDYsJ3EStLnAGNWyfBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBybB16+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8ACFC4CEE3;
+	Thu, 24 Apr 2025 10:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745490392;
+	bh=aABGEIrWEsGcFFHRxubhJftIId76X0k2qcZSdwnplek=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=HBybB16+fsCutQzZUOtglVtIX3DMjYHUdACgl8SYiD1QHUtJ0GTMgfNb7I0dzQFxZ
+	 bPKQxbwQZRHUlf3FzzE/UvhOztI5wfpHNZDtiF85DCpD9iSNVOQTGJFHLmgInFVyj+
+	 cEvSewxpwNtI/1uDJCIm+RGGY0lRjmefMgxBQeaVl8+XWaYZUvLJgTeJqPIQfQ33UZ
+	 8tSKTg5tpnJ0H5PE0+ey+Y4u+uNnmbsFqjSDWEUFaqXnSg//FC6xVUgXvI4ANov0Ac
+	 fTpzJT3UXuODx5YDMmbnSuHW4ijpk/62PBLfKcl9qo/8lyQE+cMSelTzMejy3wuiSn
+	 ri4E5SO2lHENQ==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Date: Thu, 24 Apr 2025 12:25:20 +0200
+Subject: [PATCH v2 09/22] arm64/sysreg: Add ICC_CR0_EL1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM: QoS: Add support for CPU affinity mask-based CPUs
- latency QoS
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org,
- pavel@kernel.org, len.brown@intel.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250424095228.1112558-1-quic_zhonhan@quicinc.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250424095228.1112558-1-quic_zhonhan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250424-gicv5-host-v2-9-545edcaf012b@kernel.org>
+References: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
+In-Reply-To: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Sascha Bischoff <sascha.bischoff@arm.com>, 
+ Timothy Hayes <timothy.hayes@arm.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On 4/24/25 10:52, Zhongqiu Han wrote:
-> Currently, the PM QoS framework supports global CPU latency QoS and
-> per-device CPU latency QoS requests. An example of using global CPU
-> latency QoS is a commit 2777e73fc154 ("scsi: ufs: core: Add CPU latency
-> QoS support for UFS driver") that improved random io performance by 15%
-> for ufs on specific device platform.
-> 
-> However, this prevents all CPUs in the system from entering C states.
-> Typically, some threads or drivers know which specific CPUs they are
-> interested in. For example, drivers with IRQ affinity only want interrupts
-> to wake up and be handled on specific CPUs. Similarly, kernel thread bound
-> to specific CPUs through affinity only care about the latency of those
-> particular CPUs.
-> 
-> This patch introduces support for partial CPUs PM QoS using a CPU affinity
-> mask, allowing flexible and more precise latency QoS settings for specific
-> CPUs. This can help save power, especially on heterogeneous platforms with
-> big and little cores, as well as some power-conscious embedded systems for
-> example:
-> 
->                   driver A       rt kthread B      module C
-> QoS cpu mask:       0-3              2-5              6-7
-> target latency:     20               30               50
->                     |                |                |
->                     v                v                v
->                     +---------------------------------+
->                     |        PM  QoS  Framework       |
->                     +---------------------------------+
->                     |                |                |
->                     v                v                v
-> cpu mask:          0-3            2-3,4-5            6-7
-> actual latency:    20             20, 30             50
-> 
-> Implement this support based on per-device CPU latency PM QoS.
-> 
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Add ICC_CR0_EL1 register description.
 
-I like the idea!
-The interface does need an in-tree user, why not convert the UFS driver?
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+ arch/arm64/tools/sysreg | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+index 7acad93718c56729ce2a333ed007243ec554dbc9..c96243505031ea680c04a693fee2c96ad19e30ea 100644
+--- a/arch/arm64/tools/sysreg
++++ b/arch/arm64/tools/sysreg
+@@ -2798,6 +2798,14 @@ Res0	14:12
+ Field	11:0	AFFINITY
+ EndSysreg
+ 
++Sysreg	ICC_CR0_EL1	3	1	12	0	1
++Res0	63:39
++Field	38	PID
++Field	37:32	IPPT
++Res0	31:1
++Field	0	EN
++EndSysreg
++
+ Sysreg	CSSELR_EL1	3	2	0	0	0
+ Res0	63:5
+ Field	4	TnD
+
+-- 
+2.48.0
 
 
