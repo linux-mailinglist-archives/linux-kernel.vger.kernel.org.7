@@ -1,279 +1,191 @@
-Return-Path: <linux-kernel+bounces-618032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44661A9A948
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9466EA9A93F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27AC43B5253
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:00:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 589737B2292
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B88221FF2E;
-	Thu, 24 Apr 2025 10:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446692063F3;
+	Thu, 24 Apr 2025 09:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="gBaJmauJ"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013022.outbound.protection.outlook.com [40.107.162.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NS5lSPsV"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78904383;
-	Thu, 24 Apr 2025 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745488852; cv=fail; b=I3pYgI8e69BdXgurRl0RK1V+tPOWm2kxxvaUXUuKOlUhFgFTcPqVXwaVxAXxOiQyFIqgeG7BIoMfVOMnwh8eoCcq1Nm6hiEzK1ol0bQc6WMp4X8to/be2PpMFtoNQiNXB6iHF3OYmznc429cSFM/Eh7qE7hQNtn0MojiDNZPrfY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745488852; c=relaxed/simple;
-	bh=MJnb6Ul6gL3ygsPQQdmyK9WJVxWgigwaO/73nwu1Z1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bDzKQWbr/8h15ySDzWsWlYb0reSFeVxdvPeeCRlbLjFVjbMCfHrEHoEVU/v84y3MUO6QAxcy+KI+Fqo5sdGjPad5tmsYjORhXdpF/mkidbN/fd66ksyuryu3PNV3Ei09uKEvxPmHW0zpS5WaYLL18BqEH+EyM2MeFjXNrFmTigg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=gBaJmauJ; arc=fail smtp.client-ip=40.107.162.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SrSLfWNirJE+Df8z48EZ5DprHzddB1NUEtuZU+B9kaMPnBe8e181ASkS6duq58/tkpJ8PWbyENXUUp2+/sCa39WIpSEHjcvKSOXvhBbWaYhKYsgS2Qgm/UigU08ASRr8Z6q9cAMBA/g8demWcn6ZF74kIWzh3t8WDpGpCJB3ruqQn4SZScIs9dYWQTZ0G8AGsO8RuZlQLI1SKwPcMC0mg9ZBWPu5aPXgn98rrFsc2dag1g5ZYkShGgnxUmk+kQZYh5Uq0sD0voa12IEep9utW0Z+5nsdxJgeRuCuk1a6wzAeGPIGPj8gqFvQc1/DyJ9BDkH51Oc6EuAyZ9LEv7gO9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J9ZIzd9hbAVCYujHJSRFWFzaoPdwapJ/LYnJaf0bMvM=;
- b=cynGEME0fGAtDYi7qpTJWSO7o2wjCIrFDqNgWIoSDBBg+r5/IE09OE2q1aniIsqCIAAUWU4ZuMt8cBCLJmrWpgv8mho7IWsEeSBHlHpRJnxQeG1YFAB/47R/LaU8JCpwFGaVbCoM2/HrxheQzBxtUL6u7bY6GpOYDUp/CDtbYrewap04l0ddqB7GS5FKpaVdHOrj3bvLMN9EAFgHfi67WwTO1vkgEKUyuWPC4HF025LgWZmtGIguhUo2kYP2kkRBOlq6t8bRBX+AzxWJzI7zVAALXNs1Sr/b/+5N+M320diWtul8mQO5G2LAH3YZXnqv1J9DTIF1XpIRdV1tJyy+6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J9ZIzd9hbAVCYujHJSRFWFzaoPdwapJ/LYnJaf0bMvM=;
- b=gBaJmauJw8vOapdiZ5Z0VG/Apq/2AuH64D4EWYWSA/fTUh63zAm2YK3zRxSHHHCVmUHeZVtgDmsc09gD+Svyszm8tQd7Q1laLKTPf2EiIR4LWzcLPTYnuFVediF7cpC8eORiaGeMhO7NtMk6d5piLKM+oGlQ1d5LNc0Y7Qf0iAO8Gf2a1/hWGSINIUfY3ZnNB5HaZcnIUKoAoMBvqHvTX8D4R/R1QTG6dS5QC6I4oO15R4FCMmrGAZpBEtOIHTRPejSOSL/vUkiKKfnaDVteFq4Gvvvb8h7Y0/PtuBqOuQ1mwRQKY97/rCwlN33y70UkCBhHzAHCC+4DdeDyi0zLVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from VI1PR03MB3728.eurprd03.prod.outlook.com (2603:10a6:803:30::14)
- by DBBPR03MB6763.eurprd03.prod.outlook.com (2603:10a6:10:201::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.31; Thu, 24 Apr
- 2025 10:00:46 +0000
-Received: from VI1PR03MB3728.eurprd03.prod.outlook.com
- ([fe80::c7de:54b4:3ebb:88c1]) by VI1PR03MB3728.eurprd03.prod.outlook.com
- ([fe80::c7de:54b4:3ebb:88c1%6]) with mapi id 15.20.8655.033; Thu, 24 Apr 2025
- 10:00:45 +0000
-From: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wojciech Dubowik <Wojciech.Dubowik@mt.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Philippe Schenker <philippe.schenker@impulsing.ch>,
-	Manuel Traut <manuel.traut@mt.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to usdhc2
-Date: Thu, 24 Apr 2025 11:59:14 +0200
-Message-ID: <20250424095916.1389731-1-Wojciech.Dubowik@mt.com>
-X-Mailer: git-send-email 2.47.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0081.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:22::14) To VI1PR03MB3728.eurprd03.prod.outlook.com
- (2603:10a6:803:30::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B46F510
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745488781; cv=none; b=auwugS5kyHzmyDMjdw4aOim3OgA4g5k3Zasfa/gZR5HJAzIGpyRhkCBGLT2W1yA2cakZgwUzJWKT+sKdLVceURcz1f5E05HviQjCqyxLYb27En942dqfoNDBPsW/moP5zBY5iZ7ZXReOYSxf76ta20Y43c5v7jo6zUeZae+9gHU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745488781; c=relaxed/simple;
+	bh=DsHDOHAiyweGE3xuJo6sPKz7K38kwOQr+Pj0SGAOu6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8f4x6j4sh+qH3kZsD/E7RTlrKSMlgzO9EyyAh86W1nwd+Btk1WQjN30lKIQpMpAMkgYHPDag9qJko33qdmmy78VkEhuLUMmyHkBwoEXG9sYByPxPVZ328dv/gZn7mvYBj8LH58ftAcqvJ4Kt6TbfXOjLw0TlzSLC+7dvTx1ZvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NS5lSPsV; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5eb92df4fcbso1477292a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745488778; x=1746093578; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oFqdPI0c6cw77F7CtZwPzPYgrloBfIhlMVBW0aHPkRc=;
+        b=NS5lSPsVennaxXxgZfWkyju1lohanR8ODKlwgq+sr3mRlCB3O0/EaFDwruodnIk0ie
+         vI1Z5qZfpvy8XriyzlKaGlYff72O5HjjRBH8KuxbA1nJ40Hmtw+yQc8UNsjDV7d074xA
+         DZ7n7DCuf2kLGI1aEY8/DQVl73F8WE0R0J8Wp5MKrkp9cOrOu57I6OMiMJvOHSECnAD4
+         dH0Zn/JRfBCXZLA2HxVmAlehAriXvmgj8lNEom2jGKiHzJPHoshERW7Hx2tPVD2M+ai+
+         HepQs430mM+nDHlmBemsQnyUp8I8a9YNVGDXKUfWnJZ24SAg6OFL7xsKF56zmxqEkJX7
+         ucKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745488778; x=1746093578;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFqdPI0c6cw77F7CtZwPzPYgrloBfIhlMVBW0aHPkRc=;
+        b=DKFCZm7JXM1NMaVzpcZw66MY0s4LVSyuIMlznu26/1bhquR730p96b6/J0IQHVWW9w
+         3kdfkS27IdAqkVRDHhMzhsxC5CPcW++Uv2htUCjxwCNOz7rXNbfAOHMy8647U/OcOqFe
+         SUJxifnUDQlhBbkRj4nNlHkrm06O2JcRXsh0gtHACCcNi4MLtJB6WJkkwoYLZYaDjMC7
+         0AyEEpzwKxPki/7bHh9bxy779uPEJblfF7878AS+K+h/N+O9Sajh9fIqOXgEsVJS9lop
+         Go5gekyhNsDqvCtZQncAHAerfPhOgrLcEbggC+r3CMlmL7oWs9TNi4eWZxlRmsEDw6XK
+         0aDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSokVEdh+CWpVs0e1L+SOzexP2YEXDp2F49nCD+DQUiZw+ibbQirKeJLhOIzZmDOrGgrXo84ZPVolk47U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU3dKanFplrbdGEB/Jt2qw/lGlZdegA/uDUdZthpHw4O4rZtpv
+	ss9R0qv+1irZHbsafwS+7RuyK9aJnHVhi4ie1IWVSf22C/LUtziFiExg/XnWpCw=
+X-Gm-Gg: ASbGncvgP7Oulrppa4d/cqpdvHjRH/twzUAKgxrh4CB+IghC9dYtZDvQbSeYnScwGvu
+	pH+cS6sc0ylFv7eVLHOw7ENMT1Lf3Jx2HpRpVIzJaxe/2cFw++uuzD2hZieYWsLexlK+7Z1IbMx
+	aToi8FNjH+SpocyNXg6zmsIr6tpvro3rWjO6+ZnVftGT/pXakqshrQqfnGpp3jeWMa5GYQiPeER
+	cmKKCYxP74looC/V2aODhBZ4bk1vb1zAj3mEBU77NHfyRX3OyBfL27I7KOIK61OTk2gjHHK1BAF
+	M+byjynIbK+saKar3ZyuiUp+3t1pdd/t4HTeLBuv4wRGToETy1oPLw==
+X-Google-Smtp-Source: AGHT+IFlfureBgxWcdI92vxd5ZQQxmkpTShw2FAfhABanJ/v1G26JEAvpTJM8UL5S48yrJUiOSoSrA==
+X-Received: by 2002:a05:6402:90b:b0:5f6:4a5b:9305 with SMTP id 4fb4d7f45d1cf-5f6df53e64emr1890257a12.33.1745488777705;
+        Thu, 24 Apr 2025 02:59:37 -0700 (PDT)
+Received: from localhost (109-81-85-148.rct.o2.cz. [109.81.85.148])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f6ebbfa7c2sm891711a12.43.2025.04.24.02.59.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 02:59:37 -0700 (PDT)
+Date: Thu, 24 Apr 2025 11:59:35 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-56705: media: atomisp: Add check for rgby_data memory
+ allocation failure
+Message-ID: <aAoLh_l-cEI4fDTa@tiehlicka>
+References: <2024122837-CVE-2024-56705-049b@gregkh>
+ <aAicoAmxX0B_O3Ok@tiehlicka>
+ <2025042301-flammable-masculine-ec48@gregkh>
+ <aAiwaM5ru-FJG2fI@tiehlicka>
+ <2025042329-mystify-dramatic-dcb9@gregkh>
+ <aAjOK_f-GPFHIdWK@tiehlicka>
+ <2025042355-hypnotize-relight-789f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR03MB3728:EE_|DBBPR03MB6763:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a202fe1-cfa5-477e-f483-08dd8316e175
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?npDOO9vCr2C6NB7BjfqS7tc3mJMK7tfu48UPJZJPEydyWjt91uwMuNOFQks8?=
- =?us-ascii?Q?TrLx0Riib2mU35C+6lWxXvExB6lCBiuus1K1MIKtzrK9Z89ILK4iODKpoqmU?=
- =?us-ascii?Q?I9ZScRpH0NssMJxbPIR3W8KzZJsZVYZvu5Ka8gXLmpoxF0DQGrahHlC95dKc?=
- =?us-ascii?Q?4juN0csEljCmjz31+T/Vlnoog7PqiF+cviCiA1DY3CgUTo0ynbxehh0X4rMF?=
- =?us-ascii?Q?s0hT+G/aWqLeTBRVS7rQNaZIRWKLK6tYKqTQK/+22C3j3u2GwOleIiDkIeBz?=
- =?us-ascii?Q?4IA/MIPh7KFL3dlqsSlExUUJ6WG853SHmUedofk5pNYyIqwVmuIF0XbANwU6?=
- =?us-ascii?Q?xZeQ6MFObxg2TpiJipMoUlu4GMSRX5o7dJkdBhJb0RtRY5ukbTsodL6VLiho?=
- =?us-ascii?Q?W8YcM+Gcz1FaLLIwyICBlcGTjvaJco0/N0n0w6SfUbD33U5UGfJuZBdwaFmN?=
- =?us-ascii?Q?D/45MpeLpiL8IKZ7LYSr8Pn1QjCEXJhsX3VjawJr3qXODGQyIy8shgQDSn+9?=
- =?us-ascii?Q?7nr2/6z6nlOu9bvhvjRIIPKkKQqUabq56QnOgYNlASC2ydJ+vMZLbHDyCocx?=
- =?us-ascii?Q?4q2PKMlBTLn7L5dO2RCpKu1rboAF8cXoyQpkfW0a2FGmllHksiYjE8gN5XZX?=
- =?us-ascii?Q?jNaq2Y6z1xYzyQcatrjh41bBFzsPBjHiVa+5XgvAjA4tEGUwIsLrtPm4cE65?=
- =?us-ascii?Q?GIKoXq0RgwTviwP7MwrcAt/mD3gaPocHRsKOjiCdAeK5kjCaCyaFYtJDyVL5?=
- =?us-ascii?Q?ErkRcr/ZGN1aP2AT1mEyAHzS8A4F2snY9fvNOTsqOOGLaGXdyATXaq/20ZmJ?=
- =?us-ascii?Q?NCJ0omJ2VZiO5XiKsf0wWCnOipTJV0PRRorJd/rZ1orA7M/uEh1744OC8Zj5?=
- =?us-ascii?Q?1gEoicaTWSL72Id26MUXaGb//t6fPqbF6cl/RA8RF9+5PxBeYN+nssURsba4?=
- =?us-ascii?Q?AD1UiBV1nqcb/LPDIR4gB9+/R5bJuMjesQGawwjCnl4NTmw0oskFStQobM5v?=
- =?us-ascii?Q?XxfvAm1HOyPvjotu9IRmLqqvO+HQYITS5zd1yzm7mOMvhty/v0yl8NLhd7EE?=
- =?us-ascii?Q?cPs6qBbpYqvLSTm0TNwmAXM5eRs1KWslal/nyei+OvuSAnVQZh3pJVwJlyeA?=
- =?us-ascii?Q?NhJKZ6sFruF+pl8KJ/kTOrVMaXqSFLqudqriKuj3BydV65HrJ2R9pYJvU6S+?=
- =?us-ascii?Q?wqGWIaOFtHq3OoiFekQFJbg2eyQIVv8MVS2KDHIf/HjK0K4iIWJuTFvR++Ta?=
- =?us-ascii?Q?hiFmZTn8WFIZ8YqvXLsXJJLZDZgBibmnrlofaVkUYn+0avBP+G7dTa4W10WK?=
- =?us-ascii?Q?Of2VW8jhz/TE+SZJKQ6r1CmlQzsLZbs0AccWuG8j8paSqyUYGjeJkiJeB77a?=
- =?us-ascii?Q?x2K9EyOi5QTJ8Pxt3WklaAH1IfFKHq+Svn0GM4KPTiLBInM4AzfeFa7cTopY?=
- =?us-ascii?Q?GorfhCBYj0rRzjlb5nICsvO5AWfcPJ1Mi/K5wq79xHql5PLK0anQU3R6/Mqp?=
- =?us-ascii?Q?G3wKdjpuABuM8Pw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB3728.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UXJ9b8o8eMQiKtH/UvKVleYxIvO4ZNYTd9N56jg1xLJRl9HrFKn8MG6m2CB/?=
- =?us-ascii?Q?RrYOWi8jd1a77AqmIHMANs6T56f9IvRVCwGNnmXjZEtIe73J7j3hEh8KCYiT?=
- =?us-ascii?Q?idwIV9xIzfmoqcFC0SrX52y9hT9+DmnfpuJprFDXw/UMg0gMy6hc5yGft79c?=
- =?us-ascii?Q?CtQqe4DMY3BZmYQZQWJOEHuHZj+lZA/Anpw7kLgDuNMtNVndRxg3SIGYuRtN?=
- =?us-ascii?Q?Oo4beFEDRGyv11Pa1/EJaa7NCB4nRdsYCdPn7xAlyMDPjUdV7fmWjyhoGAuD?=
- =?us-ascii?Q?tSZFrCH7ovVYl1w9HASg1b5rn4XxF7CilsXyzOLV0DkRG45phLprfBfPxTWG?=
- =?us-ascii?Q?0QfT2mLHCdO0QoES/kI2B5s4Fzl0FRbimOnuN1/rda16WIJHmYCcAvtR4WxC?=
- =?us-ascii?Q?nedK/gqLy9QjcKYeK2b801mq85NZ8exfz3TKjIEZeDKKy3J3bRu2RLrE+GNe?=
- =?us-ascii?Q?WgbQ9fiKSOcO/pND3a7sMool48okJt+Xim/2dFFKpefWG3mpSFdR9YV82WXb?=
- =?us-ascii?Q?D3RccJoLYn7rOmEiY74Fdlf+jzPAqGxVP7hfH6nC7m3toOPpj9YGx21BPsXX?=
- =?us-ascii?Q?HGZcQ6PVWEHPEW9wuWxlsf25B4Kh25yi0mnXoGxY3KyzX9QeG8455M/nilt/?=
- =?us-ascii?Q?yxad4IQhtI5OFk/hN2eBm/lndc3WAlYnxHAFOBTj18tVhzKSE1jJW9ibBs2O?=
- =?us-ascii?Q?7r4wqkK3Hsih76E/RGq26Ek5mgpC+EoZQO6Cbqkzf0DtptP4ypAkL0i9yQM3?=
- =?us-ascii?Q?2BBBk/IPz3QJhufWN0gq6XB6WNZdE04NmpLHxxYOCWadkZZYt7qOEO8iCw6s?=
- =?us-ascii?Q?HJmVZJ96H5zcwFkuDa1JJi/AzgRrAGNShSQD7vVxd4PeKyk2UY31wbGOE+uo?=
- =?us-ascii?Q?Q/ojVvCzvy5et6eWDMRfGLgq7GaFTfEGKJ70RmHhVNtn5c81N3Tzq7kb4/tk?=
- =?us-ascii?Q?KYNI3F/wTnuppjmmy/F5lobeHJc6zG/IxMtxjmJ2hY9Bhn1xUA2/XkqMmlqc?=
- =?us-ascii?Q?yMzW/EBGvgIKJgUpxrN0nSsXyNU3zZi6Sb/9VqiXKeYXBrI7hBAOD/Wruvkj?=
- =?us-ascii?Q?WVxsHGKaHdJBcNDjfvZ2lui3SowrI/U0+nXZ5qBCy/V31qBbZFlhd9f/PSOQ?=
- =?us-ascii?Q?o5QAQNpweda949yztdMh0w3ZJNC5zG6i6nsVMQ+NqfOUttlQXew4lLgv9JU6?=
- =?us-ascii?Q?4XE72dc6Uys1r/ULej/x3yy+XjQNTBSoLlbVMJgcVo7GkXVcjPaaaSRy4eDm?=
- =?us-ascii?Q?6HdMRAnfeyOfyJqaSGJxF/7LC+SByFhNqkIe6amYGxKibCsgOsiX357tadTb?=
- =?us-ascii?Q?3bPLLgDX2A9pHLr9reVDWB6xtZY0NC9g1h7Bs1peolT1zM8tnIIJRlbBIZVm?=
- =?us-ascii?Q?+3ARga61ygqlxZjSqJlxT2W3V7iQTPGo9P0EaQ5AJ/NnQBrwm6QAw0AePzYa?=
- =?us-ascii?Q?HwpUNvb907DkPeiqJDLnl3BKT9jc5JzZCKa4wBAMCCUNA8LxVjjr0nN0StS6?=
- =?us-ascii?Q?vK57MYT3yeDs3ujPL6IWKEFnKvgXDIoQYMSSsIY+0bqZSPn34Ukn/dF3gy5e?=
- =?us-ascii?Q?hAlSeT49W5dtMq2PypT5Sx7vLiPKElYisg+6X9tR?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a202fe1-cfa5-477e-f483-08dd8316e175
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB3728.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 10:00:45.2824
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z9tx79BPcIsKSYiKM5KoF6JSpP+/GO5XlFw4G7LVVCGNF05cytrAYC28g+zo8k93FSqMQTO3flDJ8iPNRjbKfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR03MB6763
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025042355-hypnotize-relight-789f@gregkh>
 
-Define vqmmc regulator-gpio for usdhc2 with vin-supply
-coming from LDO5.
+On Wed 23-04-25 16:50:48, Greg KH wrote:
+> On Wed, Apr 23, 2025 at 01:25:31PM +0200, Michal Hocko wrote:
+> > On Wed 23-04-25 12:20:47, Greg KH wrote:
+[...]
+> > > 	In ia_css_3a_statistics_allocate(), there is no check on the allocation
+> > > 	result of the rgby_data memory. If rgby_data is not successfully
+> > > 	allocated, it may trigger the assert(host_stats->rgby_data) assertion in
+> > > 	ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+> > 
+> > I do understand this statement.
+> 
+> That is the commit information, and as such we deemed it a
+> vulnerability.
+> 
+> > 
+> > > That has not changed here at all.  It's just that the ranges of git
+> > > versions for when Linux was vulnerable to this issue has been "tightened
+> > > up" to only reflect when it was possible for this to be a problem (i.e.
+> > > we now do not count the range of releases where the driver was not
+> > > present at all in the kernel tree.)
+> > 
+> > But I fail to follow this. The commit itself says Fixes: a49d25364dfb
+> > ("staging/atomisp: Add support for the Intel IPU v2") which makes it
+> > clear since when the issue has been introduced. If this tag was not
+> > present then there is CVE-$FOO.vulnerable which can specify the same
+> > thing. I do not understand how 51b8dc5163d2 is related as it has a
+> > different implementation of ia_css_3a_statistics_allocate that doesn't
+> > have any unchecked kernel allocations AFAICS.
+> 
+> Ah, ok, that changes things.  The person who said that we should count
+> the previous version of the driver said it was vulnerable at that point
+> when it was in the kernel tree.  If this isn't the case, we will be glad
+> to change this CVE to reflect that.
 
-Without this definition LDO5 will be powered down, disabling
-SD card after bootup. This has been introduced in commit
-f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
+OK, so I have dived into this deeper just to be sure 
+	- fix ed61c5913950 merged v6.13-rc1
+	- breaker: the commit says Fixes: a49d25364dfb merged v4.12-rc1 which
+	  indeed adds  ia_css_3a_statistics_allocate and uses it in atomisp_alloc_3a_output_buf
+	- now we have 51b8dc5163d2 ("media: staging: atomisp: Remove driver")
+	  merged 4.18 mentioned in .sha1 file which drops the whole
+	  driver. The driver was later reintroduced by ad85094b293e in v5.8-rc1
+	- that being said the kernel has been vulnerable since 4.12
+	  until 4.18 and 5.8 until 6.13. There is a gap when the code
+	  was not there and the kernel was therefore not affected. 
+All that being said I do understand the second entry now but considering
+the first entry and its Fixes tag I believe the second entry is simply
+redundant.
 
-Fixes: 6a57f224f734 ("arm64: dts: freescale: add initial support for verdin imx8m mini")
-Tested-by: Manuel Traut <manuel.traut@mt.com>
-Reviewed-by: Philippe Schenker <philippe.schenker@impulsing.ch>
-Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
----
-v1 -> v2: https://lore.kernel.org/all/20250417112012.785420-1-Wojciech.Dubowik@mt.com/
- - define gpio regulator for LDO5 vin controlled by vselect signal
-v2 -> v3: https://lore.kernel.org/all/20250422130127.GA238494@francesco-nb/
- - specify vselect as gpio
-v3 -> v4: https://lore.kernel.org/all/84dc6fdf295902044d49cafc4479eb75477bba5c.camel@impulsing.ch/
- - add reviewed and tested by tags and changed fixes
----
- .../boot/dts/freescale/imx8mm-verdin.dtsi     | 25 +++++++++++++++----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+CVE-2024-53204, CVE-2024-53205 are the same situation.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-index 7251ad3a0017..b46566f3ce20 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-@@ -144,6 +144,19 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
- 		startup-delay-us = <20000>;
- 	};
- 
-+	reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
-+		compatible = "regulator-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usdhc2_vsel>;
-+		gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <1800000>;
-+		states = <1800000 0x1>,
-+			 <3300000 0x0>;
-+		regulator-name = "PMIC_USDHC_VSELECT";
-+		vin-supply = <&reg_nvcc_sd>;
-+	};
-+
- 	reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -269,7 +282,7 @@ &gpio1 {
- 			  "SODIMM_19",
- 			  "",
- 			  "",
--			  "",
-+			  "PMIC_USDHC_VSELECT",
- 			  "",
- 			  "",
- 			  "",
-@@ -785,6 +798,7 @@ &usdhc2 {
- 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_cd>;
- 	pinctrl-3 = <&pinctrl_usdhc2_sleep>, <&pinctrl_usdhc2_cd_sleep>;
- 	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	vqmmc-supply = <&reg_usdhc2_vqmmc>;
- };
- 
- &wdog1 {
-@@ -1206,13 +1220,17 @@ pinctrl_usdhc2_pwr_en: usdhc2pwrengrp {
- 			<MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5		0x6>;	/* SODIMM 76 */
- 	};
- 
-+	pinctrl_usdhc2_vsel: usdhc2vselgrp {
-+		fsl,pins =
-+			<MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4	0x10>; /* PMIC_USDHC_VSELECT */
-+	};
-+
- 	/*
- 	 * Note: Due to ERR050080 we use discrete external on-module resistors pulling-up to the
- 	 * on-module +V3.3_1.8_SD (LDO5) rail and explicitly disable the internal pull-ups here.
- 	 */
- 	pinctrl_usdhc2: usdhc2grp {
- 		fsl,pins =
--			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
- 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x90>,	/* SODIMM 78 */
- 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x90>,	/* SODIMM 74 */
- 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x90>,	/* SODIMM 80 */
-@@ -1223,7 +1241,6 @@ pinctrl_usdhc2: usdhc2grp {
- 
- 	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
- 		fsl,pins =
--			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
- 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x94>,
- 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x94>,
- 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x94>,
-@@ -1234,7 +1251,6 @@ pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
- 
- 	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
- 		fsl,pins =
--			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x10>,
- 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x96>,
- 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x96>,
- 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x96>,
-@@ -1246,7 +1262,6 @@ pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
- 	/* Avoid backfeeding with removed card power */
- 	pinctrl_usdhc2_sleep: usdhc2slpgrp {
- 		fsl,pins =
--			<MX8MM_IOMUXC_GPIO1_IO04_USDHC2_VSELECT		0x0>,
- 			<MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK		0x0>,
- 			<MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD		0x0>,
- 			<MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x0>,
+CVE-2025-40364 is different. Both of the sha1 entries are stable
+specific commits (same change) with a references to Fixes: c7fb19428d67d
+merged in v5.19-rc1. This one has a follow up fix merged in fc9375e3f763
+v5.19-rc3. 
+So this CVE seems like stable specific (probably a misbackport?) or is this
+a mistake?
+
+> > > > > > 2) What is the process when a CVE is altered? have I missed any email
+> > > > > >    notification?
+> > > > > 
+> > > > > We do not do email notifications when CVEs are altered.  You have to
+> > > > > watch the cve.org json feed for that.  Otherwise the email list would
+> > > > > just be too confusing.  Think about every new stable update that happens
+> > > > > which causes 10+ different CVEs to be updated showing where they are now
+> > > > > resolved.  That does not come across well in an email feed, but the json
+> > > > > feed shows it exactly.
+> > > > 
+> > > > I do understand you do not want to send notifications for that. Would it
+> > > > make sense to announce a new upstream commit added to the CVE, though? This
+> > > > would make it much easier to see that we might be missing a fix that is
+> > > > considered related to a particular CVE.
+> > > 
+> > > As this has only happened 2 times so far, it's a pretty rare occurance
+> > > given us allocating over 6000 CVEs.  And how exactly would that email
+> > > look like?
+> > 
+> > We have identified that CVE-$FOO fix has been incomplete so far and
+> > extended list of fixes required for this CVE. Please make sure that
+> > those are appplied.
+> > 
+> > Or something in those lines.
+> 
+> Again, that would happen every stable release, and every -rc release,
+> could you really keep up with such an email flow in a way that wouldn't
+> just mirror watching the json feed instead?
+
+AFAICS there usually are no updates to CVE-$FOO.sha1 file and that is what
+really matters to us to identify all the commits that are associated
+with the specific CVE.
+
 -- 
-2.47.2
-
+Michal Hocko
+SUSE Labs
 
