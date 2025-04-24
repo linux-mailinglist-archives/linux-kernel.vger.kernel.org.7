@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-618109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7088EA9AA42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA73A9AA45
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3283A6368
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D582D4676A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B15C221FAE;
-	Thu, 24 Apr 2025 10:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E5242D9C;
+	Thu, 24 Apr 2025 10:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KA15Nqno"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCOQHF59"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E09242D73;
-	Thu, 24 Apr 2025 10:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96B1244682;
+	Thu, 24 Apr 2025 10:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490360; cv=none; b=WVMG9uCh+OsMWSpVVOnKsUUtEwPNs1DeOa4B1MqWiLteDmwp8s0ehbzV+DZVtxxAo9J4COTHNvJD2Jiledxh1ZjVhExi6uaYZhJqRfkBASWzlqObE05CszenXfTe6WyW8BxmaUhI6/B7zXxZ4uHgLIe30IClK4jO6xLHr8AohRI=
+	t=1745490365; cv=none; b=u1tZ8DQsvV4+gewypwJHKdv5hNQI2J2Lw1mJLKw2qwXfIHv/VqIQI65Tv9whv8yJzl3rP7V1NM3+HcK58l2/MTcaFR/dIslrQrmI0jwwmI5fCxe8EgXCHD5UIUSWcq/qHQ610eenA/i3Rm0LcOlyDafxBSFMtOGC+OnDfDhE5h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490360; c=relaxed/simple;
-	bh=TEy69hatB9WvAQZk1Qj5SRXNdR02N3m6osQeJAFrqRk=;
+	s=arc-20240116; t=1745490365; c=relaxed/simple;
+	bh=Tv02OqEETUJL5RhGfHRLiUOkxm6hkdgtGZBz124yXQU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YqFsrsW/qttHpCdh/vWOcVhlXrMKCk4EMdU8TxkkkgCJ+a4L0z7CEBo5jT55GprAfeS+dSSEwxMku22UOlyJZYQgV/fiPaWMvuAnswCH2KtJ+ifUw5r1fZwAUwTROSFJ7OBHgMFBjHG4dPnzK5Ez/bDCJGpUgekQemXjPU7gpSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KA15Nqno; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B441C4CEE3;
-	Thu, 24 Apr 2025 10:25:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CeAfTkoiK1vFYn/zsmyEmXUDgvOVLao+6gLoQuJMqy57M7KOx4oImpI3Wj3aq9/5KEr1u7FgP5QJbwf0R/zYjuQ44lI4XA0vZ26+V8NdylTOBs81Vzs1ONrP1VkhL/M7XngdDT3fjvAPMk899LZOYY6JIGAhAa6dW6BAJctuTGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCOQHF59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2C4C4CEE4;
+	Thu, 24 Apr 2025 10:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745490359;
-	bh=TEy69hatB9WvAQZk1Qj5SRXNdR02N3m6osQeJAFrqRk=;
+	s=k20201202; t=1745490365;
+	bh=Tv02OqEETUJL5RhGfHRLiUOkxm6hkdgtGZBz124yXQU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KA15NqnoNNLGZtHty+zT0MAYmtgI5unjRVmOAGYqnksi1yMeeNx9GSiTjCtMn5G+I
-	 IRzm7DNRDbqV/Tz6J9SGnym0Sq/979QXWvLieyvMJ51i00iWlo8ngTNg11sLq6SEyO
-	 mUhk12TWZPlbTetukKFeD+Rx71DQWTUXqN+VxVqFTV13JJoowCvjjZSBEY8o7j8MmE
-	 gVXEkXXKqN8TN8JkNX0+hWfXHSc4TpsmnnfkiszxWTeCx138BdET27Cm6ADlStS9rZ
-	 2GffQxptAbfH2il6DAiH9dxjUEe/tYNB7VXxlGBnAslLhxDyEaOqxFuzE6r+EoWFKW
-	 NFbKm3dAcdFrw==
+	b=tCOQHF59GpB2B1LJWI0AyNHF1OYdRKMq0qYGT6YcOqJM0NPVvrOGTepWXKnzIz5xg
+	 wyYdhY0i7kB9Dbuv7h5my+LJVK5Q38P8neCv3KBEJO2VADJ+4BBL1fuVbL/Mfx9IpD
+	 3e52tQLysUfUIFBWna0G9DGDeKdwsdmyE3Y7l+hkr4KrRdIdXKpbH+FedgHYsN1aHV
+	 xAUyZ2d/rwBDtpBJj+834kOWMuB1zORrQlsdgJt6QddCXg4CU3dr829jLsNwyJklcP
+	 kSt9vxusDd3FaV1feRWnX1yCSWbXUEZxiHwh9nu9SrXGdcofcqir7zfFyMRYCOzP7O
+	 FafIMG/HoUhoA==
 From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Thu, 24 Apr 2025 12:25:14 +0200
-Subject: [PATCH v2 03/22] arm64/sysreg: Add ICC_PPI_PRIORITY<n>_EL1
+Date: Thu, 24 Apr 2025 12:25:15 +0200
+Subject: [PATCH v2 04/22] arm64/sysreg: Add ICC_ICSR_EL1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-gicv5-host-v2-3-545edcaf012b@kernel.org>
+Message-Id: <20250424-gicv5-host-v2-4-545edcaf012b@kernel.org>
 References: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
 In-Reply-To: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
 To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -67,110 +67,41 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
  Lorenzo Pieralisi <lpieralisi@kernel.org>
 X-Mailer: b4 0.14.2
 
-Add ICC_PPI_PRIORITY<n>_EL1 sysreg description.
+Add ICC_ICSR_EL1 register sysreg description.
 
 Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
 Cc: Will Deacon <will@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Marc Zyngier <maz@kernel.org>
 ---
- arch/arm64/tools/sysreg | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ arch/arm64/tools/sysreg | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index 06e1fb5e126b41b7e41fffa0a00553d73197ac3c..0cc1268c0bfad8266da47b441e80c603e46c00ae 100644
+index 0cc1268c0bfad8266da47b441e80c603e46c00ae..985f2cdb67cfec6df335a3951ecb63f128f6da55 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -2310,6 +2310,89 @@ Field	31	C
+@@ -2310,6 +2310,20 @@ Field	31	C
  Field	30:0	P
  EndSysreg
  
-+SysregFields	ICC_PPI_PRIORITYRx_EL1
-+Res0	63:61
-+Field	60:56	Priority7
-+Res0	55:53
-+Field	52:48	Priority6
-+Res0	47:45
-+Field	44:40	Priority5
-+Res0	39:37
-+Field	36:32	Priority4
-+Res0	31:29
-+Field	28:24	Priority3
-+Res0	23:21
-+Field	20:16	Priority2
-+Res0	15:13
-+Field	12:8	Priority1
-+Res0	7:5
-+Field	4:0	Priority0
-+EndSysregFields
-+
-+Sysreg	ICC_PPI_PRIORITYR0_EL1	3	0	12	14	0
-+Fields	ICC_PPI_PRIORITYRx_EL1
++Sysreg	ICC_ICSR_EL1	3	0	12	10	4
++Res0	63:48
++Field	47:32	IAFFID
++Res0	31:16
++Field	15:11	Priority
++Res0	10:6
++Field	5	HM
++Field	4	Active
++Field	3	IRM
++Field	2	Pending
++Field	1	Enabled
++Field	0	F
 +EndSysreg
 +
-+Sysreg	ICC_PPI_PRIORITYR1_EL1	3	0	12	14	1
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR2_EL1	3	0	12	14	2
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR3_EL1	3	0	12	14	3
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR4_EL1	3	0	12	14	4
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR5_EL1	3	0	12	14	5
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR6_EL1	3	0	12	14	6
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR7_EL1	3	0	12	14	7
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR8_EL1	3	0	12	15	0
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR9_EL1	3	0	12	15	1
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR10_EL1	3	0	12	15	2
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR11_EL1	3	0	12	15	3
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR12_EL1	3	0	12	15	4
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR13_EL1	3	0	12	15	5
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR14_EL1	3	0	12	15	6
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
-+Sysreg	ICC_PPI_PRIORITYR15_EL1	3	0	12	15	7
-+Fields	ICC_PPI_PRIORITYRx_EL1
-+EndSysreg
-+
- Sysreg	PMSELR_EL0	3	3	9	12	5
- Res0	63:5
- Field	4:0	SEL
+ SysregFields	ICC_PPI_PRIORITYRx_EL1
+ Res0	63:61
+ Field	60:56	Priority7
 
 -- 
 2.48.0
