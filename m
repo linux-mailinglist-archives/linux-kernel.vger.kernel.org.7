@@ -1,225 +1,136 @@
-Return-Path: <linux-kernel+bounces-619197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42589A9B8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:18:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F58A9B8F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D98AD7B78B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10DF39A784D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F6928CF78;
-	Thu, 24 Apr 2025 20:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4C421CC79;
+	Thu, 24 Apr 2025 20:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgICv8TH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D521ABA4;
-	Thu, 24 Apr 2025 20:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340D51E1C1A;
+	Thu, 24 Apr 2025 20:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745525789; cv=none; b=Oajgv36pDo/rNJMv5JIVQ30c6jg5c4VjIH0e16cDMStmZeLMNAYtCncLOB45aeVNg8yEiIr3iVDWzHlFJhtuu5lUY8vJ9FInEG95gwMinFbdfYOFOiskmpCVEzDJL1TwhoJnSKGDvuTIFP8e7FnLd+11Ufz+06DDsrQZM55fTB8=
+	t=1745525881; cv=none; b=De781RnbRwRqbm1opkT/42gwtv/2JUR9GtUA1x/RaMNW70b+CxmouUuCqwpMDXbA+WGEMoURZN4fx83RZurcnxMqzxPJhZYU4rkzZBzSQ7gHnTCNVMtowoGZajWXrSI/wya+oxGCbOGBfDQSkdQq+TqB1Codxxk+22DoeXC+okE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745525789; c=relaxed/simple;
-	bh=qV7wU9+LfnHUmeEvAFCpYvuT1wevvZA+8tcBBa3R9Jo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=KQvknMRqUeBKwMl4av1OT0bovk9RAaIoUZCrJ2vroWjPA58LIQvzJsZ0n9qmiXBnjiEAAc33xmSAsnxAfAnSqKYd2Yw9s/8VJy7ojml60Wz+Cw3RBJY14kiD4ObL16Z5W5NriEQ+2XTcr6IgL//GToOJ4A+KwBDthDW3h6gmNXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA42C4CEEE;
-	Thu, 24 Apr 2025 20:16:29 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1u831d-0000000H3yG-2h9H;
-	Thu, 24 Apr 2025 16:18:25 -0400
-Message-ID: <20250424201825.486232533@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 24 Apr 2025 16:15:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org,
- Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>,
- Weinan Liu <wnliu@google.com>,
- Blake Jones <blakejones@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v5 12/12] unwind_user/sframe: Add .sframe validation option
-References: <20250424201511.921245242@goodmis.org>
+	s=arc-20240116; t=1745525881; c=relaxed/simple;
+	bh=PvlSRg3PqK0Na1wxmJYNIAcgxcwAC/5M4UG3B2S6iEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8hALmBpWr8OJ7pvpSzC8H4IKUYUvT3jrbwW8xVzc8AxSHldcceW5AZmqKRZEORfN8Gy3FJLjaTP5JFAtUbc5GMKAsPVE+4c2wDfCLRdfTUHo0RgYD3WFXd07JWEQt95OjRWMNdTfGyggoPF+pHVi0TFegyNr0KGvw/4XLOBh4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgICv8TH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A069C4CEE3;
+	Thu, 24 Apr 2025 20:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745525880;
+	bh=PvlSRg3PqK0Na1wxmJYNIAcgxcwAC/5M4UG3B2S6iEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GgICv8THuxD1y4opGFDVixTPJ+MSLa06ftDHBZ/uL3bpcEba8Ax9CNjX/CrAjNnK+
+	 VrdftMj6rt/y0nYHggbE+/+ZdTDGCYLXRT7mOcGvwC7bCSE83+DbVxzPf3cC4DYWSm
+	 PMucd4/daNGVL1ky8SzTBOZzENHyxiZRg0M27zV0V9ZeTRNC52CdGfmktWVZXB+hWw
+	 G/KOn/rUFQY8/JYZBDntShkyosVq6rYRqn54LEEu0diJlmzt+/UBG/amyHDHtox3qq
+	 llxjUhKWpgKb3CWbVNBUYbOl0seYyxZsGbey/k6z4f59Tqb6lBJHo6xV9z3mo+gMsQ
+	 7NM2GTjTihpjw==
+Date: Thu, 24 Apr 2025 22:17:53 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 13/16] gpu: nova-core: Add support for VBIOS ucode
+ extraction for boot
+Message-ID: <aAqccVvLIEZw-zrU@pollux>
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-13-ecd1cca23963@nvidia.com>
+ <aAjz2CYTsAhidiEU@pollux>
+ <88937e2b-6950-4c9d-8f02-50f9b12c7376@nvidia.com>
+ <aAkBIvfTkKVNbdnm@pollux>
+ <20250424195448.GA182914@joelnvbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424195448.GA182914@joelnvbox>
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+On Thu, Apr 24, 2025 at 03:54:48PM -0400, Joel Fernandes wrote:
+> On Wed, Apr 23, 2025 at 05:02:58PM +0200, Danilo Krummrich wrote:
+> > On Wed, Apr 23, 2025 at 10:52:42AM -0400, Joel Fernandes wrote:
+> > > Hello, Danilo,
+> > > Thanks for all the feedback. Due to the volume of feedback, I will respond
+> > > incrementally in multiple emails so we can discuss as we go - hope that's Ok but
+> > > let me know if that is annoying.
+> > 
+> > That's perfectly fine, whatever works best for you. :)
+> > 
+> > > On 4/23/2025 10:06 AM, Danilo Krummrich wrote:
+> > > 
+> > > >> +impl Vbios {
+> > > >> +    /// Read bytes from the ROM at the current end of the data vector
+> > > >> +    fn read_more(bar0: &Devres<Bar0>, data: &mut KVec<u8>, len: usize) -> Result {
+> > > >> +        let current_len = data.len();
+> > > >> +        let start = ROM_OFFSET + current_len;
+> > > >> +
+> > > >> +        // Ensure length is a multiple of 4 for 32-bit reads
+> > > >> +        if len % core::mem::size_of::<u32>() != 0 {
+> > > >> +            pr_err!("VBIOS read length {} is not a multiple of 4\n", len);
+> > > > 
+> > > > Please don't use any of the pr_*() print macros within a driver, use the dev_*()
+> > > > ones instead.
+> > > 
+> > > Ok I'll switch to this. One slight complication is I've to retrieve the 'dev'
+> > > from the Bar0 and pass that along, but that should be doable.
+> > 
+> > You can also pass the pci::Device reference to VBios::probe() directly.
+> 
+> 
+> This turns out to be rather difficult to do in the whole vbios.rs because
+> we'd have to them propogate pdev to various class methods which may print
+> errors
 
-Add a debug feature to validate all .sframe sections when first loading
-the file rather than on demand.
+Note that you can always create an ARef<pci::Device> instance from a
+&pci::Device, which you can store temporarily if needed. Though I don't think
+it's needed here.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/Kconfig           | 19 ++++++++++
- kernel/unwind/sframe.c | 81 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 100 insertions(+)
+> (some of which don't make sense to pass pdev to, like try_from()).
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 9ba467006774..72bd3ef8f570 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -450,6 +450,25 @@ config HAVE_UNWIND_USER_SFRAME
- 	bool
- 	select UNWIND_USER
- 
-+config SFRAME_VALIDATION
-+	bool "Enable .sframe section debugging"
-+	depends on HAVE_UNWIND_USER_SFRAME
-+	depends on DYNAMIC_DEBUG
-+	help
-+	  When adding an .sframe section for a task, validate the entire
-+	  section immediately rather than on demand.
-+
-+	  This is a debug feature which is helpful for rooting out .sframe
-+	  section issues.  If the .sframe section is corrupt, it will fail to
-+	  load immediately, with more information provided in dynamic printks.
-+
-+	  This has a significant page cache footprint due to its reading of the
-+	  entire .sframe section for every loaded executable and shared
-+	  library.  Also, it's done for all processes, even those which don't
-+	  get stack traced by the kernel.  Not recommended for general use.
-+
-+	  If unsure, say N.
-+
- config HAVE_PERF_CALLCHAIN_DEFERRED
- 	bool
- 
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index 4d2313a701f0..3f7cc9bc27eb 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -337,6 +337,83 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
- 	return ret;
- }
- 
-+#ifdef CONFIG_SFRAME_VALIDATION
-+
-+static __always_inline int __sframe_validate_section(struct sframe_section *sec)
-+{
-+	unsigned long prev_ip = 0;
-+	unsigned int i;
-+
-+	for (i = 0; i < sec->num_fdes; i++) {
-+		struct sframe_fre *fre, *prev_fre = NULL;
-+		unsigned long ip, fre_addr;
-+		struct sframe_fde fde;
-+		struct sframe_fre fres[2];
-+		bool which = false;
-+		unsigned int j;
-+		int ret;
-+
-+		ret = __read_fde(sec, i, &fde);
-+		if (ret)
-+			return ret;
-+
-+		ip = sec->sframe_start + fde.start_addr;
-+		if (ip <= prev_ip) {
-+			dbg_sec_uaccess("fde %u not sorted\n", i);
-+			return -EFAULT;
-+		}
-+		prev_ip = ip;
-+
-+		fre_addr = sec->fres_start + fde.fres_off;
-+		for (j = 0; j < fde.fres_num; j++) {
-+			int ret;
-+
-+			fre = which ? fres : fres + 1;
-+			which = !which;
-+
-+			ret = __read_fre(sec, &fde, fre_addr, fre);
-+			if (ret) {
-+				dbg_sec_uaccess("fde %u: __read_fre(%u) failed\n", i, j);
-+				dbg_print_fde_uaccess(sec, &fde);
-+				return ret;
-+			}
-+
-+			fre_addr += fre->size;
-+
-+			if (prev_fre && fre->ip_off <= prev_fre->ip_off) {
-+				dbg_sec_uaccess("fde %u: fre %u not sorted\n", i, j);
-+				return -EFAULT;
-+			}
-+
-+			prev_fre = fre;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int sframe_validate_section(struct sframe_section *sec)
-+{
-+	int ret;
-+
-+	if (!user_read_access_begin((void __user *)sec->sframe_start,
-+				    sec->sframe_end - sec->sframe_start)) {
-+		dbg_sec("section usercopy failed\n");
-+		return -EFAULT;
-+	}
-+
-+	ret = __sframe_validate_section(sec);
-+	user_read_access_end();
-+	return ret;
-+}
-+
-+#else /*  !CONFIG_SFRAME_VALIDATION */
-+
-+static int sframe_validate_section(struct sframe_section *sec) { return 0; }
-+
-+#endif /* !CONFIG_SFRAME_VALIDATION */
-+
-+
- static void free_section(struct sframe_section *sec)
- {
- 	dbg_free(sec);
-@@ -445,6 +522,10 @@ int sframe_add_section(unsigned long sframe_start, unsigned long sframe_end,
- 		goto err_free;
- 	}
- 
-+	ret = sframe_validate_section(sec);
-+	if (ret)
-+		goto err_free;
-+
- 	ret = mtree_insert_range(sframe_mt, sec->text_start, sec->text_end, sec, GFP_KERNEL);
- 	if (ret) {
- 		dbg_sec("mtree_insert_range failed: text=%lx-%lx\n",
--- 
-2.47.2
+Yeah, it's indeed difficult with a TryFrom or From impl. I guess you're
+referring to things like
 
+	impl TryFrom<&[u8]> for PcirStruct
 
+and I actually think that's a bit of an abuse of the TryFrom trait. A &[u8]
+isn't really something that is "natural" to convert to a PcirStruct.
+
+Instead you should just move this code into a normal constructor, i.e.
+PcirStruct::new(). Here you can then also pass a device reference to print
+errors.
+
+We should really stick to dev_*() print macros from within driver code.
 
