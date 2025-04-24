@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-618481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D477AA9AF16
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D12DA9AF17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5851B672F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0301775CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4594D17FAC2;
-	Thu, 24 Apr 2025 13:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF289187FE4;
+	Thu, 24 Apr 2025 13:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="KDoY0tYz"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UKBU989q"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF7213B5AE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F5E156236;
+	Thu, 24 Apr 2025 13:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745501639; cv=none; b=HJnJHoemuz5i/yg9kxrKnSg03GN48nq85AehbgZLeNWsUfHvZ7SYS6qzXehl278JNTjT5B9Gw/OhHcRiX8OlXbmNyiIxX5DXYwCveBu5nboNMOMvKLhJWC8FHO92guJhtNlC6Vdysx5DjqPBvFSU7/fvVmazdMIN5GrsiTnQ2+A=
+	t=1745501628; cv=none; b=bqN/fQSXBNTbrvsX/s/vxDOkGmTjDUMs+AFYv02ajTHexzvGVer/SnWE6v//hajFxc4Rxe/RywH0ioW+rNPCKT8ftLUp132SAfnLShdIGTz37VqqaQK6EDC/KVEObC7VFW9Pbp+5ldCMV3CSVL2f+hI0OeXd46YhSs7AGfSrFyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745501639; c=relaxed/simple;
-	bh=sqXiuW7QgekFc+m/AzNUGNRQL3UFeBn/z7zkLXUM3mE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C46j9UrbY4V8RF6kRuXJG0mZ8yJnj1GPUr6iFNGGWeY9K72F1C41pkgn+upXVpas6+naitrPHjVKQKewn4aW2ZuHiThzO2PuWCqbdtJisgPsAKuU3cjXKkb0oLUphDE0qG6+nnMDwJep50BMwirS9tSWCD3IsLaI+yQQ25aRaNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=KDoY0tYz; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so1046044a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=inventec.com; s=google; t=1745501636; x=1746106436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AbhNACai9YLrn1yt1Tb15iRWkwDZ5cisgZPoV8CoM9E=;
-        b=KDoY0tYz8/ChA4kvJvtYUIHXAwpTIVkB83l33p0HhBUm+tGg9s+iECD6LYunpwTS2O
-         k2lhRiy1Gha9qC/IEMoizQ1S6PzWV+V6hsLnVtu9GoSqVIEYT5t9ozWJu+esjBX6jolY
-         lieLwftbiNncYhfJ5BRW5hFtvhXhOa4k424c8Pv9cct4alNldaVGTAdtq7nV485snYg9
-         eDTVfJp4ZEldktjQ7geNqetT3ZioVTKldvcx1qmUWfemXkNk7mGgEMPBWGvcB8ZsEUr8
-         xjJMg8qODeItFXGac+EnTtL9ZPje/8+cgPZ7RfvcuWNIHQRZeg33KEjqWTp38WR0oR73
-         jEig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745501636; x=1746106436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AbhNACai9YLrn1yt1Tb15iRWkwDZ5cisgZPoV8CoM9E=;
-        b=iUhhagMkJG8jYxaDFVAn1GiZe6F5emDpuD/zDkp9LGTw902kpWaADtC0lKngOt6jrk
-         cWsRg/wN6VQvKtZr4EYjoyQHhOzoVpQhs2vVLs/13F6X/kPyx9WsCCB+sjR03lsyDNdm
-         7UTzu4r6EhYetQd6EDZNoDBDY84c/ilyymDCDYOi5Pzh8zCrmcZdg1T1psiHwGQtQgUv
-         8yGY/eI9WAWZ1UYBUKz8s1nB2bYZARKzR0vuQoeg7DifxREA/PqjdYtI7eMY2VqFYpbr
-         i1DNywLjVqb0GIBASiZZtj2ECznD80Fa+RvFrvWQEWbsfDol+olWeQxRjMaeh33BJxi1
-         0TuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlSasaTYQsYHEJrQpFFkzUQJuNRJWZXe3gaFZow/MhgPyl5TM+CDeEsR+T9mUXaKSSO6IY+7Uos7OeOOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUAcYdf9TZQHa6NMuF0KWyuO8QIl7oACn08iBLmTiHmvjnznsm
-	Jv9Hqkk1xnlaEs4Sx029k9AWhval6wjXW2ldPAnwcXMjv67AcHy4KY3I1WaMp4Y=
-X-Gm-Gg: ASbGncsxM9G9I76u0soexZUKRi7q3lIGP83/qYOo/Uidi8NsxTK+HQHppu0wAnc38mo
-	Ozm2zAgZG2/PTO0Z+XXkf07Nbhl3xOJx0kJImVQG4uc9iO76QKzupLq7sbgVveqn/4Vr5lrxXu5
-	xQ/nXiKR3/K8QMpoliHZ+qm9WMkuPqybYZ8UUdT9Kjm5BxwuQtAk3Wrv7kbi8bZXsNwl+AUDYXJ
-	fWIw1Zd81j7MwI2DFSGRkDRu7hMs4x/y5rWkspYbuIGxUq8mhzxk5HT3IwK5ABmR2FY+FBqfoDK
-	UrjGxiNfHQdVc0ZB33pAmLipNuEmUA2FFH7MMf7fuKEGf8irc++89V4GO5ZcXTQy3fd4/WLlSFS
-	fBLi2S1NtcQhhQ7LBFrlfLaZGWYECLLSOLDjjVrEFy58ePA==
-X-Google-Smtp-Source: AGHT+IGlie1KSArwUeL1LNFF71oxoDTffzrOyj3YHjM1awwxZeNDH3PxsaKbgN0LGNj0P4vPalJjjw==
-X-Received: by 2002:a17:90b:54cd:b0:2ff:62f8:9a12 with SMTP id 98e67ed59e1d1-309ed319e19mr3209116a91.23.1745501636506;
-        Thu, 24 Apr 2025 06:33:56 -0700 (PDT)
-Received: from localhost.localdomain (60-248-18-139.hinet-ip.hinet.net. [60.248.18.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef0d5c72sm1321147a91.43.2025.04.24.06.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 06:33:56 -0700 (PDT)
-From: Chiang Brian <chiang.brian@inventec.com>
-X-Google-Original-From: Chiang Brian <chiang.brian@inventec.corp-partner.google.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Chiang Brian <chiang.brian@inventec.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] dt-bindings: trivial: Add tps53685 support
-Date: Thu, 24 Apr 2025 21:25:38 +0800
-Message-Id: <20250424132538.2004510-3-chiang.brian@inventec.corp-partner.google.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250424132538.2004510-1-chiang.brian@inventec.corp-partner.google.com>
-References: <20250424132538.2004510-1-chiang.brian@inventec.corp-partner.google.com>
+	s=arc-20240116; t=1745501628; c=relaxed/simple;
+	bh=yiIi9m5Qq5eztVzi9plxeanIGlyzwuqNDdUA4h3ehcw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EheCRPuxGJAaqJ0+YEAxA1vkZ30btm1XkKexLTVkakFBb5gLwNis5oEEl8PLeO+Glwmg6wvej6UZopbveKXrobefDvsgLJclgiTqnrF3C/vlb5uXOZ+/4IGBwm3KY62KbmtfF1H/n3BX1VsRQKgTMwffnpEUeQyFpCUrhjsmU6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UKBU989q; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZjxYz24PCz9spL;
+	Thu, 24 Apr 2025 15:25:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1745501159; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fKyBAXY4h0YZsHpQmmZLPNawFEm0LQITaKXAZVu5Xr0=;
+	b=UKBU989qA9gUKlvGOsr9ynylYvx1uO/wprmjoclW9BEwCSjjnVmmzjDZUhQBCVaT4QnCnC
+	ORbl7bU/cf7Sbv3DdAEusQ/Ji5TVyFKQbR+TgqmM/xb1qzLwCn8wLafBuXtO8L/XSkc1g7
+	PYX5tJXmg20m7l40mM7lBqlYnujts51Kit0lxgkYjH34Nx7wiEo2E0RFvF5yfQ7rkH2Iym
+	r8LTboTaanJ2Gj816s2yLjyn/1AUgiptWr+FtjdfO6LoxkOfUkTvkh+y2VsBXQrYUayJ0a
+	NdKC0HKKnrJFuy9+Q4wMRZwklxvHET0IOGPRE0lxHXItxnVcKVwL6iB3MpwUlQ==
+Message-ID: <a27a0a01fa2bf5f328ee762b7dd84dffd18fa664.camel@mailbox.org>
+Subject: Re: [PATCH 4/4] drm/nouveau: Check dma_fence in canonical way
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?=
+	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Date: Thu, 24 Apr 2025 15:25:55 +0200
+In-Reply-To: <609c8b1a-d7a9-4667-bd6c-1455c639fcd0@kernel.org>
+References: <20250424130254.42046-2-phasta@kernel.org>
+	 <20250424130254.42046-6-phasta@kernel.org>
+	 <609c8b1a-d7a9-4667-bd6c-1455c639fcd0@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 4sjhmd8518k1j7h9y85ob19dku96umzr
+X-MBO-RS-ID: 26ac357924729e237f5
 
-From: Chiang Brian <chiang.brian@inventec.com>
+On Thu, 2025-04-24 at 15:24 +0200, Danilo Krummrich wrote:
+> On 4/24/25 3:02 PM, Philipp Stanner wrote:
+> > In nouveau_fence_done(), a fence is checked for being signaled by
+> > manually evaluating the base fence's bits. This can be done in a
+> > canonical manner through dma_fence_is_signaled().
+> >=20
+> > Replace the bit-check with dma_fence_is_signaled().
+> >=20
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > ---
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
+> > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > index fb9811938c82..d5654e26d5bc 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > @@ -253,7 +253,7 @@ nouveau_fence_done(struct nouveau_fence *fence)
+> > =C2=A0=C2=A0	struct nouveau_channel *chan;
+> > =C2=A0=C2=A0	unsigned long flags;
+> > =C2=A0=20
+> > -	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence-
+> > >base.flags))
+> > +	if (dma_fence_is_signaled(&fence->base))
+>=20
+> This is only correct with commit bbe5679f30d7 ("drm/nouveau: Fix
+> WARN_ON in
+> nouveau_fence_context_kill()") from drm-misc-fixes, correct?
 
-Add device type support for tps53685
+Yup. Otherwise, this series can't be merged anyways, because patch 1
+depends on it.
 
-Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
----
-V1 -> V2:
-  1. Correct the subject and commit message
+The cover letter says so: "This series is based on this partially
+merged series: [1]"
 
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 8da408107e55..e0017ba594dd 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -392,6 +392,8 @@ properties:
-           - ti,tps53679
-             # TI Dual channel DCAP+ multiphase controller TPS53681
-           - ti,tps53681
-+            # TI Dual channel DCAP+ multiphase controller TPS53685 with AMD-SVI3
-+          - ti,tps53685
-             # TI Dual channel DCAP+ multiphase controller TPS53688
-           - ti,tps53688
-             # TI DC-DC converters on PMBus
--- 
-2.43.0
-
+P.
 
