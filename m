@@ -1,87 +1,152 @@
-Return-Path: <linux-kernel+bounces-618828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11023A9B400
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:31:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE11EA9B407
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69741BA82E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A157AB592
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EC928CF62;
-	Thu, 24 Apr 2025 16:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20A028BA9E;
+	Thu, 24 Apr 2025 16:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7SMJQuT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QW4j305w"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DF428C5DC;
-	Thu, 24 Apr 2025 16:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4EE28936A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745512106; cv=none; b=nx8/AS/Lkdd18eFLIwGpDCTlaRtyTDnbip1RdqJ/uEJCAmfTkEXCJ/K0hADDVTfJ3WzRajRRfoRn0yT6PO3hlka7plbKVSouk3d1KJ8yelHE3E3xyqBt3crKNCgrUDDtCzzMPzGNsRG2TabrnZX6hBSZsF7aRt0F9STh+nIYB5g=
+	t=1745512214; cv=none; b=LXjbqPWqSNIc71MHWGJHZbxQQfiY7Zn91d5cFMOThSg8bJyfOH4mkFGlDnyW2Ufc61Knln62F+wxgs4DAllLNHXn5uBSPQDAzFJiXJFVfrJMFBOHRXWFdjT0pEWTN0fopHbQxdb+mCeRRyIrAnvgaUHYBF0EdO5Uied/Jar3lpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745512106; c=relaxed/simple;
-	bh=Wh4U3nBzrU2K1jT6zuyYDKJn0hR3cN2FV8zyY1+WwQs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aGU7QNkgdszV9MyzdCkXJQ4qBtvm0wlVcu45r+X0ufNdhP2BP/mmC5qsJUoNsXLfvB4tP58Ouyb0Zxh8j/IbxH3tA7e6B+MG2bAU48c42h+V6hUXZo/dj34//5lx1VCIAkUaR8J05QEGOPJFqhE5SvlB+TnWyv8THEz5AXEEweE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7SMJQuT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C841C4CEE3;
-	Thu, 24 Apr 2025 16:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745512106;
-	bh=Wh4U3nBzrU2K1jT6zuyYDKJn0hR3cN2FV8zyY1+WwQs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=g7SMJQuT3jtdhOthNR48m7mFL2fTzMz98fwU/bZsEAf/QIdy6lBtGZO+h2Vr18fnS
-	 iE4yv9oStB7gBO+U/EoUhw2Hn4snau8b23zLJv5FY2iCL79FpXcx76C1c0BJN2mysd
-	 reIoPxYDWm++uEXvgqjtBtZWI9kilTC958/QPQmsU6qCT20fYRVBhOkmIW+okFEH5e
-	 6IIXll3ZmdIZwNB79frD+5ezm+zDH1cVMWPVDbMfLgNYaoa5dODDeDGVWXc8pMM6i8
-	 Pt8F4jHBl3FmJTcfvP9Iec2jGQBAWxzVFMXRaBacIzg5/8chHxB45Lbhr3QoQqhgf7
-	 Ktc9iyCf8hnmg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB011380CFD9;
-	Thu, 24 Apr 2025 16:29:05 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.15
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aAn_NWZjdX-wYHxR@gondor.apana.org.au>
-References: <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZbstBewmaIfrFocE@gondor.apana.org.au>
- <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
- <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
- <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
- <Z11ODNgZwlA9vhfx@gondor.apana.org.au>
- <Z-ofAGzvFfuGucld@gondor.apana.org.au>
- <Z_CUFE0pA3l6IwfC@gondor.apana.org.au>
- <Z_89K7tSzQVKRqr6@gondor.apana.org.au> <aAn_NWZjdX-wYHxR@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aAn_NWZjdX-wYHxR@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.15-p5
-X-PR-Tracked-Commit-Id: 8006aff15516a170640239c5a8e6696c0ba18d8e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 288537d9c9364356a4b2f6bd947f2e89cdaa353e
-Message-Id: <174551214449.3411799.922824770184674490.pr-tracker-bot@kernel.org>
-Date: Thu, 24 Apr 2025 16:29:04 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+	s=arc-20240116; t=1745512214; c=relaxed/simple;
+	bh=JJZdea62+qDixd1wjQBZlt7O6LaJyF5R3D6HeNaAYlM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aO6eYeNHF6eOVXJzX+NsCN9821Lhg1bXSh3i1vJBf3axK/8YcYFpH7G1YwOz7czytXVzBzgsO6QXabx6H+TYih/kDj+bzCofDvoZpIJM9IJ0Oc3eLj14AaUGFD7y3/liB3G9Y7TR8YrVr6PdtEhOidHwVKWfxoCoTe9l9WDIOy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QW4j305w; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b0b2ce7cc81so1178310a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745512212; x=1746117012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rnYu8oXqkrED+USHfXzllDeNP8BZXlteEK0vrpIinxU=;
+        b=QW4j305w7H48kgn6vTpBTRiv9q6bIC68QPVNr8b5ovyA1IaV+IoFAXGwz8UhHpY54w
+         UcNd2404WhHYWEhwnMyaf9z1SMjwypNw4NyaA+ez3MUudZca5bRUMQspQVX+W67cwzPa
+         aRlPHCWvY+anAKCGXkb/yO0QAF4NMEO3ISUFijKFaiqTZAxdWDaygfG5MrYYc3QGe9HF
+         sFVich86SBs8apMmF30s4XNzjrh2llkKeue1XawS/6JdNRT5yX/7IKDVdLArtIaf/BMk
+         wa7pD7mbqf/cFWgtiZFcUNCv69SA2uMGxJy5uDTRdAhzHnvzJmHWxVMTSlgAkyh4sC7A
+         bKWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745512212; x=1746117012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rnYu8oXqkrED+USHfXzllDeNP8BZXlteEK0vrpIinxU=;
+        b=XcVZ+0+7T6stYej+fNZysVlOhV796TDaxVlKAb2zq7PO0dwILRl2UVPbuq12BQFBJS
+         cA2A/ne5AREt3VbniddHf2KBrmlsXejBuqbiYjYxNYtaDu6eZi4ArIjJtN1dx373XV/5
+         iwfm2M0WIPrUb4dW41Bv/JGrwOKhx7bz+bmpb8coJvedpgB4eKVP8tPz4wi8EfXqB8sv
+         DsPjhV+GHDoBdMiv3SO6wxmScobJnbGlGTJ6gBX4HUByvFmpydvybRtCod3TRB3f4GSp
+         O1KRjX+yx34m6yC3C0pThE7CKlrHxQhfsRgvUQun1AWb7N10M5+Qx+8aa2TX6/wvKED+
+         Zm9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEjq7nEFhWOtUNSbJWHNaXJgpCAQiYKW0shCuZrNnrK9nwK2LzPpRQ/WisrGy0kfR/FsBgUEkARkf/2Rc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKu7eHAPwv/Af9tBrU7pOP8EzmM8+2JWh4lliqh0O/vIB7bVxR
+	G8JhhMSLjW//UjTRFZP0lIQt7DBIutwOkTnpk2pND7f2OP9DZB5l
+X-Gm-Gg: ASbGncuDwefLhLWaMpKo2parB/4XbtaC6BKSzfW9bTpaCXc1cam6q7maNk2G+I22uMo
+	JwicdxNGtbLiXR/ij+vaW/x9rZAocKF+I1JDhhwtxJiZDqSdSvGzzj3sDnmVo9MTjuiwBgtpV8Q
+	ThWNJtbMH59+4TN+utOnLwXk5H06ytXarM0wDvxjlLxjkjPuezWlE/j5n9cpslKPTpvWMOYIfWu
+	zQ7Pp2a2EMEj3lgvFx569kr43jA3J7BgKVy1RBdf79VrEGDWYKoJCkhzaNisQspBhnbXtLhMfVh
+	TyAMK9rI/+aOKWUalSQQjJPgnundwpDqYpHz/+sQuD2HtmDMaIJ/FWGswuOB
+X-Google-Smtp-Source: AGHT+IGYph1SNjwma0hVJDpnZpc4EAmA2vohPxjOCmeCZtX7T7ijJ8j8mo/0PwoMkxiHPvgCy1FkZw==
+X-Received: by 2002:a05:6a20:cd92:b0:1f5:7eee:bb10 with SMTP id adf61e73a8af0-20444e7ab23mr5763937637.8.1745512211729;
+        Thu, 24 Apr 2025 09:30:11 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c408:a0b5:82a7:fae4:9cf0:3b75])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a995edsm1650876b3a.130.2025.04.24.09.30.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 09:30:11 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	ocfs2-devel@oss.oracle.com,
+	linux-kernel@vger.kernel.org
+Cc: kevinpaul468@gmail.com
+Subject: [PATCH] ocfs2: fix deadlock in ocfs2_get_system_file_inode
+Date: Thu, 24 Apr 2025 21:59:11 +0530
+Message-Id: <20250424162911.51413-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 24 Apr 2025 17:07:01 +0800:
+commit: 7bf1823e010e8db2fb649c790bd1b449a75f52d8 upstream
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.15-p5
+syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/288537d9c9364356a4b2f6bd947f2e89cdaa353e
+The scenario is depicted here,
 
-Thank you!
+	CPU0					CPU1
+lock(&ocfs2_file_ip_alloc_sem_key);
+                               lock(&osb->system_file_mutex);
+                               lock(&ocfs2_file_ip_alloc_sem_key);
+lock(&osb->system_file_mutex);
 
+The function calls which could lead to this are:
+
+CPU0
+ocfs2_mknod - lock(&ocfs2_file_ip_alloc_sem_key);
+.
+.
+.
+ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
+
+CPU1 -
+ocfs2_fill_super - lock(&osb->system_file_mutex);
+.
+.
+.
+ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
+
+This issue can be resolved by making the down_read -> down_read_try
+in the ocfs2_read_virt_blocks.
+
+[1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+
+Link: https://lkml.kernel.org/r/20240924093257.7181-1-pvmohammedanees2003@gmail.com
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+---
+ fs/ocfs2/extent_map.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+index 70a768b623cf..f7672472fa82 100644
+--- a/fs/ocfs2/extent_map.c
++++ b/fs/ocfs2/extent_map.c
+@@ -973,7 +973,13 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+ 	}
+ 
+ 	while (done < nr) {
+-		down_read(&OCFS2_I(inode)->ip_alloc_sem);
++		if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem)) {
++			rc = -EAGAIN;
++			mlog(ML_ERROR,
++				 "Inode #%llu ip_alloc_sem is temporarily unavailable\n",
++				 (unsigned long long)OCFS2_I(inode)->ip_blkno);
++			break;
++		}
+ 		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
+ 						 &p_block, &p_count, NULL);
+ 		up_read(&OCFS2_I(inode)->ip_alloc_sem);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.5
+
 
