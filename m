@@ -1,217 +1,127 @@
-Return-Path: <linux-kernel+bounces-617659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E04A9A413
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:35:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713A4A9A3EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B729916795D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D26DD7B1F12
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570FF1F2C3B;
-	Thu, 24 Apr 2025 07:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC130206F23;
+	Thu, 24 Apr 2025 07:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AhHzssur";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8gd5MMwf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AhHzssur";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8gd5MMwf"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HPCmVUph"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F951F153C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6C1F3BA3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745479413; cv=none; b=EC+bBYP5LXJKB8ZCWkDPxbT4qI6CJ+f9o8ZDfgqgyqwdH2cLZKyIh/yNP/+TAqlxNPomoH9wzcVG/nzOJpOOnnXs1S3myKd/0LokHYWVmmMGFzLWHDc4DMwXNxdt+ABUHnw1pGMktiMkek6gwh72oyiE2JEbVOFRjPtMLt+YW7s=
+	t=1745479438; cv=none; b=fQJYNv/s1GZr2NWb8wBKvOR9ZCFjMOvLV0c7FmdlB+PtbLs+Nw38EkZsKfr515mrkkgPgAwQAkWPQek9oTpg2Z6ZWMYJc3cKvod7J6TDF2lDmP23S5tFUXTaOIKTa+++rsrADjaN1WJXnZe6iWSHq8a+XsoZ9Kpl91AP2ZjlTHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745479413; c=relaxed/simple;
-	bh=5NT6kWcIz4H9m0zVWfgV4bUPCBkkH2fpP69Ik4K3HPc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QppGwF4urxM0fgCW6zyi/zCIcPTuiu305WMi/R9Zq6uPqfGStFPeSgbH9qPn/VTM3i9BPVM2etMTLhISGbDxAF5Mbo7pTrm163Jc9zhJdpsoB/lp16Rkabq8ifza29SqaYsow6zPWNIPwOrzFmKuyz0rk9TzHGjrt7sK5/BBEh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AhHzssur; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8gd5MMwf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AhHzssur; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8gd5MMwf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C9CD71F38C;
-	Thu, 24 Apr 2025 07:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745479409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1745479438; c=relaxed/simple;
+	bh=18ICa3vI58dM0qDe75yctcopTR/UnLzuwYeVLptThgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YMLXOtqqmiCgr8gBBT9pm5/g8UHVYS75Vpp3d8QTdAwuwaTxmO09GaqKvwbv6991Pzh6AVc7hWEb0pXmczR9m9cItqXLIRpnd1AuiKcPiAaBxNIo3TTzBt/ltB2wFsHvWReV6K91BuNDyuW7Mw2S/+fWsaJhBVhfY9knvktQ9ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HPCmVUph; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b9814fec-a9b6-4cd5-a0b1-1c2ddb214a03@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745479433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
-	b=AhHzssurAVQKGr57SWusajemDZp1JCVKusWIkm85IGdSX+ZglWTahk66k089r3F2QXH3Y7
-	bjyPX6H1TuATz47f8BzlEhJD0APkNxBibbvPFWSbQFh/J0uBEns+X3gh7fQHUAKt+9ng6r
-	0izKXM36FXbkheHzaqNDTwc1k0sX2KE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745479409;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
-	b=8gd5MMwfsnl1fsJAznYvWqnrRXUNUYRw5J/YEnYMIbB6IExTZyl/J/zrqCebn1L4gstpEi
-	MAFv7ZBimvB/lRCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AhHzssur;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8gd5MMwf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745479409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
-	b=AhHzssurAVQKGr57SWusajemDZp1JCVKusWIkm85IGdSX+ZglWTahk66k089r3F2QXH3Y7
-	bjyPX6H1TuATz47f8BzlEhJD0APkNxBibbvPFWSbQFh/J0uBEns+X3gh7fQHUAKt+9ng6r
-	0izKXM36FXbkheHzaqNDTwc1k0sX2KE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745479409;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
-	b=8gd5MMwfsnl1fsJAznYvWqnrRXUNUYRw5J/YEnYMIbB6IExTZyl/J/zrqCebn1L4gstpEi
-	MAFv7ZBimvB/lRCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CB5F1393C;
-	Thu, 24 Apr 2025 07:23:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LWtqFfHmCWgBcwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 24 Apr 2025 07:23:29 +0000
-Date: Thu, 24 Apr 2025 09:23:28 +0200
-Message-ID: <8734dy3tvz.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jaya Kumar <jayakumar.alsa@gmail.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Mark Brown <broonie@kernel.org>,
-	liujing <liujing@cmss.chinamobile.com>,
-	Andres Urian Florez <andres.emb.sys@gmail.com>,
-	Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	David Rhodes <drhodes@opensource.cirrus.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/28] ALSA: Phase out hybrid PCI devres API
-In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
-References: <20250423075346.45907-1-phasta@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=dEOx6KONvXmNWax6EDI3+Zvv3tm8dvdgjEx8wQxaCaI=;
+	b=HPCmVUphENqglFaZwSxEirHJmCjBUI2OAE6jcjz+bA4iJ56y6KT6UX/y0D25nt0rlrGmIG
+	6IwEPvUj5YiWMfKLD9JnBiCOZn8auJsZPmImRIAYRyBDuVRkexeWYCyshKZ0tEm/XwwC3u
+	9Abg0QV7BMkHy3T8WF482j3K7pXTvIg=
+Date: Thu, 24 Apr 2025 15:23:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: C9CD71F38C
-X-Spam-Score: -2.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,gmail.com,ladisch.de,linux.intel.com,baylibre.com,kernel.org,cmss.chinamobile.com,gmx.de,linux.dev,opensource.cirrus.com,linutronix.de,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Subject: Re: [PATCH 02/12] sched_ext: Avoid NULL scx_root deref through
+ SCX_HAS_OP()
+To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250423234542.1890867-1-tj@kernel.org>
+ <20250423234542.1890867-3-tj@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20250423234542.1890867-3-tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 23 Apr 2025 09:53:18 +0200,
-Philipp Stanner wrote:
+On 2025/4/24 07:44, Tejun Heo wrote:
+> SCX_HAS_OP() tests scx_root->has_op bitmap. The bitmap is currently in a
+> statically allocated struct scx_sched and initialized while loading the BPF
+> scheduler and cleared while unloading, and thus can be tested anytime.
+> However, scx_root will be switched to dynamic allocation and thus won't
+> always be deferenceable.
 > 
-> Changes in v2:
->   - Add RB from Andy
->   - Remove ASoC patches, branch out this series for Alsa. (Andy)
+> Most usages of SCX_HAS_OP() are already protected by scx_enabled() either
+> directly or indirectly (e.g. through a task which is on SCX). However, there
+> are a couple places that could try to dereference NULL scx_root. Update them
+> so that scx_root is guaranteed to be valid before SCX_HAS_OP() is called.
 > 
-> Hi,
+> - In handle_hotplug(), test whether scx_root is NULL before doing anything
+>    else. This is safe because scx_root updates will be protected by
+>    cpus_read_lock().
 > 
-> a year ago we spent quite some work trying to get PCI into better shape.
-> Some pci_ functions can be sometimes managed with devres, which is
-> obviously bad. We want to provide an obvious API, where pci_ functions
-> are never, and pcim_ functions are always managed.
+> - In scx_tg_offline(), test scx_cgroup_enabled before invoking SCX_HAS_OP(),
+>    which should guarnatee that scx_root won't turn NULL. This is also in line
+>    with other cgroup operations. As the code path is synchronized against
+>    scx_cgroup_init/exit() through scx_cgroup_rwsem, this shouldn't cause any
+>    behavior differences.
 > 
-> Thus, everyone enabling his device with pcim_enable_device() must be
-> ported to pcim_ functions. Porting all users will later enable us to
-> significantly simplify parts of the PCI subsystem. See here [1] for
-> details.
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>   kernel/sched/ext.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> This patch series does that for sound.
-> 
-> Feel free to squash the commits as you see fit.
-> 
-> P.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/pci/devres.c#L18
-> 
-> Philipp Stanner (28):
->   ALSA: sonicvibes: Use pure devres PCI
->   ALSA: rme96: Use pure devres PCI
->   ALSA: rme32: Use pure devres PCI
->   ALSA: ens1370: Use pure devres PCI
->   ALSA: cmipci: Use pure devres PCI
->   ALSA: via82: Use pure devres PCI
->   ALSA: sis7019: Use pure devres PCI
->   ALSA: intel8x: Use pure devres PCI
->   ALSA: fm801: Use pure devres PCI
->   ALSA: es19x8: Use pure devres PCI
->   ALSA: azt3328: Use pure devres PCI
->   ALSA: als: Use pure devres PCI
->   ALSA: oxygen: Use pure devres PCI
->   ALSA: lx6464es: Use pure devres PCI
->   ALSA: vx222: Use pure devres PCI
->   ALSA: trident: Use pure devres PCI
->   ALSA: rme9652: Use pure devres PCI
->   ALSA: ymfpci: Use pure devres PCI
->   ALSA: riptide: Use pure devres PCI
->   ALSA: nm256: Use pure devres PCI
->   ALSA: ice: Use pure devres PCI
->   ALSA: emu10k1: Use pure devres PCI
->   ALSA: echoaudio: Use pure devres PCI
->   ALSA: cs5535: Use pure devres PCI
->   ALSA: cs46xx: Use pure devres PCI
->   ALSA: ca0106: Use pure devres PCI
->   ALSA: ali5451: Use pure devres PCI
->   ALSA: maestro3: Use pure devres PCI
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 975f6963a01b..ad392890d2dd 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -3498,6 +3498,14 @@ static void handle_hotplug(struct rq *rq, bool online)
+>   
+>   	atomic_long_inc(&scx_hotplug_seq);
+>   
+> +	/*
+> +	 * scx_root updates are protected by cpus_read_lock() and will stay
+> +	 * stable here. Note that we can't depend on scx_enabled() test as the
+> +	 * hotplug ops need to be enabled before __scx_enabled is set.
+> +	 */
+> +	if (!scx_root)
+> +		return;
+> +
+>   	if (scx_enabled())
+>   		scx_idle_update_selcpu_topology(&scx_root->ops);
 
-Applied to for-next branch now.  Thanks.
+Just be curious, does the comments added above mean we shouldn't
+check scx_enabled() here anymore?
 
+Thanks!
 
-Takashi
+>   
+> @@ -3994,7 +4002,8 @@ void scx_tg_offline(struct task_group *tg)
+>   
+>   	percpu_down_read(&scx_cgroup_rwsem);
+>   
+> -	if (SCX_HAS_OP(scx_root, cgroup_exit) && (tg->scx_flags & SCX_TG_INITED))
+> +	if (scx_cgroup_enabled && SCX_HAS_OP(scx_root, cgroup_exit) &&
+> +	    (tg->scx_flags & SCX_TG_INITED))
+>   		SCX_CALL_OP(SCX_KF_UNLOCKED, cgroup_exit, NULL, tg->css.cgroup);
+>   	tg->scx_flags &= ~(SCX_TG_ONLINE | SCX_TG_INITED);
+>   
 
