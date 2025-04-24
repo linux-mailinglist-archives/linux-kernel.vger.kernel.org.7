@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-617276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB55A99D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A09A99D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B808519429A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271CD446758
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55023F9C5;
-	Thu, 24 Apr 2025 00:43:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997CC8C0B;
-	Thu, 24 Apr 2025 00:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3A03B7A8;
+	Thu, 24 Apr 2025 00:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="mYxNlMXl"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022F417F7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745455430; cv=none; b=VguE8+iR2sSOYpYKroH+q2uwPe4rI4CtCo+zYAgO5EE4RRUToRLzGtiLj7euOcjeSGg2hm3AKdFudRVVrmWq/YlpzJ4CbkFUBfvJiJ3LZQLZU9IgSW0YjnSpk2OiAa88YVpxCsMfIdCzwl3TMdomehg6Q9EFVJLKTMuwq48wU9E=
+	t=1745455471; cv=none; b=cnJebp8j1b9sJO60Kqh779JIo/QwD8autvDOKR0iDAlzH87zlQW9g4MffTrzW6gy1QKPD7PM1yW+K5XiUwUfwWbH6Hr11g0N26+aITKPn18QPU3tusLEQ11OLSFmf8Z/ZvkIgmpkaBQogml3lFOR0xlg7rtxQsdclLqoS28fhg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745455430; c=relaxed/simple;
-	bh=5lr0hOvFVjHbpvGJ32EF8//6WgWpW8Y7H3GFs+lXUho=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bx2RTVUxIgcev48EeukRGyTWsJzc1kr8S6rk70zrdTpwy4qtHutCnjaBUJ6H5IHI8IeouaFNpXPzjk3RHFC+n0Z69Sov3cquw3+vHESTnRGZ9EhuQMD+IZ5iw0gKkE5aQZ79aVcUgGwBJOumJoYCAfccYugIOVIvZ1vbPVl02q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 073311063;
-	Wed, 23 Apr 2025 17:43:43 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 812703F59E;
-	Wed, 23 Apr 2025 17:43:45 -0700 (PDT)
-Date: Thu, 24 Apr 2025 01:42:41 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
- board
-Message-ID: <20250424014120.0d66bd85@minigeek.lan>
-In-Reply-To: <aa38baed-f528-4650-9e06-e7a76c25ec89@lunn.ch>
-References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
-	<20250423-01-sun55i-emac0-v1-4-46ee4c855e0a@gentoo.org>
-	<aa38baed-f528-4650-9e06-e7a76c25ec89@lunn.ch>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1745455471; c=relaxed/simple;
+	bh=83mcjUifPIfk/6ORujgQWzGN58qZCqIJuR06Usw8ypw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=HUEiBO3BL3mhklTRuBZIzGdcy/z61oZ8Bjy58mk6xPlbk1xoFO9IxihBk838qOx4F8Fl2OMzhQwFfdFQ7PC8Je8/C6pBxPydlM7qOra5VPMqglEgs4auZvmRY0ED4iF0ccV4jDEjsvR7RniyQqoopRcRkpgv7PXWoqXw23lQpGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=mYxNlMXl reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=QTVmIoV8bT7TS1J/bHn0cF9ZcR5e5MVRDdBrhghGq8c=; b=m
+	YxNlMXlspOe81pr+rfZ922TXq7NPZVFz2l/cr9hGOHCmECkeuqrNXH+or4V2+NQk
+	hZuLwwMjC6S1sQdRE8ZdnCPit5RfJutnbss/kSCvxmZLU0NUs5WRDtXFXdZwpI9g
+	ZJdiSQ9ZaHzk9kWFAXg7ytfzoXuzf3+hr3OFCu4ZyI=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-102 (Coremail) ; Thu, 24 Apr 2025 08:42:47 +0800
+ (CST)
+Date: Thu, 24 Apr 2025 08:42:47 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Sandy Huang" <hjc@rock-chips.com>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	"Andy Yan" <andy.yan@rock-chips.com>,
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+	"Maxime Ripard" <mripard@kernel.org>,
+	"Thomas Zimmermann" <tzimmermann@suse.de>,
+	"David Airlie" <airlied@gmail.com>,
+	"Simona Vetter" <simona@ffwll.ch>,
+	"Dmitry Baryshkov" <lumag@kernel.org>,
+	"Douglas Anderson" <dianders@chromium.org>,
+	"Damon Ding" <damon.ding@rock-chips.com>,
+	"Arnd Bergmann" <arnd@arndb.de>,
+	"Heiko Stuebner" <heiko.stuebner@cherry.de>,
+	"Geert Uytterhoeven" <geert+renesas@glider.be>,
+	"Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH] drm/rockchip: add CONFIG_OF dependency
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <a4tcrxepuvvxixpab3txz6tdbh6janiedjqddl2ybfo6plhjcl@r5bxdabuhjep>
+References: <20250423164422.2793634-1-arnd@kernel.org>
+ <a4tcrxepuvvxixpab3txz6tdbh6janiedjqddl2ybfo6plhjcl@r5bxdabuhjep>
+X-NTES-SC: AL_Qu2fB/ieukst4SadbekfmkcVgOw9UcO5v/Qk3oZXOJF8jCzp8D4yf1JTEnDy1fCDKg+MkAiHYjpJ8Pt0f7d2fYwuVF/Ep8+wUnGXRqnQ58Y+5g==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <13627027.772.196653f45f1.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZigvCgAXfIYHiQlo2ESdAA--.63259W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBU5XmgJh6IglgABsp
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Wed, 23 Apr 2025 18:58:37 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
-
-Hi,
-
-> > +&emac0 {
-> > +	phy-mode = "rgmii";  
-> 
-> Does the PCB have extra long clock lines in order to provide the
-> needed 2ns delay? I guess not, so this should be rgmii-id.
-
-That's a good point, and it probably true.
-
-> 
-> > +	phy-handle = <&ext_rgmii_phy>;
-> > +
-> > +	allwinner,tx-delay-ps = <300>;
-> > +	allwinner,rx-delay-ps = <400>;  
-> 
-> These are rather low delays, since the standard requires 2ns. Anyway,
-> once you change phy-mode, you probably don't need these.
-
-Those go on top of the main 2ns delay, I guess to accommodate some skew
-between the RX and TX lines, or to account for extra some PCB delay
-between clock and data? The vendor BSP kernels/DTs program those board
-specific values, so we have been following suit for a while, for the
-previous SoCs as well.
-I just tried, it also works with some variations of those values, but
-setting tx-delay to 0 stops communication.
-
-Cheers,
-Andre
+SGksIAoKQXQgMjAyNS0wNC0yNCAwMToxODo0NSwgIkRtaXRyeSBCYXJ5c2hrb3YiIDxkbWl0cnku
+YmFyeXNoa292QG9zcy5xdWFsY29tbS5jb20+IHdyb3RlOgo+T24gV2VkLCBBcHIgMjMsIDIwMjUg
+YXQgMDY6NDQ6MTZQTSArMDIwMCwgQXJuZCBCZXJnbWFubiB3cm90ZToKPj4gRnJvbTogQXJuZCBC
+ZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KPj4gCj4+IERSTV9ESVNQTEFZX0RQX0FVWF9CVVMgY2Fu
+bm90IGJlIHNlbGVjdGVkIHdoZW4gQ09ORklHX09GIGlzIGRpc2FibGVkOgo+PiAKPj4gV0FSTklO
+RzogdW5tZXQgZGlyZWN0IGRlcGVuZGVuY2llcyBkZXRlY3RlZCBmb3IgRFJNX0RJU1BMQVlfRFBf
+QVVYX0JVUwo+PiAgIERlcGVuZHMgb24gW25dOiBIQVNfSU9NRU0gWz15XSAmJiBEUk0gWz15XSAm
+JiBPRiBbPW5dCj4+ICAgU2VsZWN0ZWQgYnkgW3ldOgo+PiAgIC0gRFJNX1JPQ0tDSElQIFs9eV0g
+JiYgSEFTX0lPTUVNIFs9eV0gJiYgRFJNIFs9eV0gJiYgUk9DS0NISVBfSU9NTVUgWz15XSAmJiBS
+T0NLQ0hJUF9BTkFMT0dJWF9EUCBbPXldCj4+IAo+PiBSb2NrY2hpcCBwbGF0Zm9ybXMgYWxsIGRl
+cGVuZCBvbiBPRiBhbnl3YXksIHNvIGFkZCB0aGUgZGVwZW5kZW5jeSBoZXJlCj4+IGZvciBjb21w
+aWxlIHRlc3RpbmcuCj4+IAo+PiBGaXhlczogZDdiNDkzNmIyYmMwICgiZHJtL3JvY2tjaGlwOiBh
+bmFsb2dpeF9kcDogQWRkIHN1cHBvcnQgdG8gZ2V0IHBhbmVsIGZyb20gdGhlIERQIEFVWCBidXMi
+KQo+PiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgoKICAgIEFj
+a2VkLWJ5OiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cgo+PiAtLS0KPj4gIGRy
+aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9LY29uZmlnIHwgMSArCj4+ICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKykKPj4gCj4KPlJldmlld2VkLWJ5OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0
+cnkuYmFyeXNoa292QG9zcy5xdWFsY29tbS5jb20+Cj4KPi0tIAo+V2l0aCBiZXN0IHdpc2hlcwo+
+RG1pdHJ5Cg==
 
