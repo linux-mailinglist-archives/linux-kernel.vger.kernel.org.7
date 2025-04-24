@@ -1,242 +1,167 @@
-Return-Path: <linux-kernel+bounces-617748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185B7A9A553
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA9AA9A562
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE603B57EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F331B82E62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774DE20C47A;
-	Thu, 24 Apr 2025 08:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D900120CCDB;
+	Thu, 24 Apr 2025 08:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HvRD2O/F"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hw0A6NrR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECEA20A5DD
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018A71FECAB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745482126; cv=none; b=DbrJJITobx39i3TSK8bP7Hq+iLL5LjDtUP/KZM7PxMdMg3+u2dGEDsk17LK4OxOXxs8NeX9YEKWXbIS8odonvL/PfSrF/e2ECx3goPYvL8wEOsi8ywuR/J497HR6vYR329goWBr996OQwK1ll5vBUG5c7dgF9IrIGk4FdXGHGww=
+	t=1745482221; cv=none; b=KJJyMy1ixpB4DCMoZxXqBgkCHOOvr/2uarHm8IbJsgM9K9I9eP/vDchl8WfAjCa6qyxnz3U5q1ZgUId01w/WsP4bJ1hSzVs/s52CA/Zr7lfX3FA54yflX7cq/W1yTQU+oqcsJiAfJvFh+Q+8qfEH9dg1A+8Drgqw9YauYqwbM/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745482126; c=relaxed/simple;
-	bh=XMsRgpkb2SXXP/raY/UYJa8RZCLxYHFKzljccCfstzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HvXu72BFmCGQlQAthNJU0uyezMFtUeTQpFEAYs1m3Xq5I+ZB0dBaAND5GnPbc2BxHlN6sRkySStRVsuxyTjtfqA3rxFea5Lj4NK7fWawMXjGJ0ENNBm5uYlWTF334rW+5O0UjnFUrfjRGEomNBCvrc2D7GyyyB2n4XFUs5w2YeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HvRD2O/F; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-528ce9731dbso272815e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 01:08:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745482123; x=1746086923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x9ry5y6v3BguodSRbmzPbtuUACQSgSr2k84w4YzS07k=;
-        b=HvRD2O/FbQ5FicXLCg55HvGYqM9NgXT4ryxnUQUTjouLGOSYEYroYVhANS0MLiIs6q
-         pE+musmjENdgIj8ZI4Q//n/mDIe5zdAYxvmAW7amcO1IIFyoTfLonEM8zIbScUmWa2YN
-         3Pmxi7VdlMRZOgDwalHNDoZk9NHnHiFpw0K/STjPCyiAISqMIuhxvzV4qQVHVkY2JdCa
-         DprZlUcWSnVbEbRhXj3fvpmIBIqQk8ZfEC8Dgk31lkUD8LcOPqWPFtBs4kTr6NTggGnX
-         8km4UQoRb6r2u198PiCYohqAJ2+AGnRAZBO4cKFuK/ybH+S6v9ti2Kbybfk01TCl/n65
-         jfbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745482123; x=1746086923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9ry5y6v3BguodSRbmzPbtuUACQSgSr2k84w4YzS07k=;
-        b=LquMksMVPoAwb/CulWLujYTWpkRJ+lUkfjkhOVo2KhP6q/dNU7VbUN6l07KwEBocd9
-         ZeuKiqqsk8vCecugxnRydnfx75Eo9FTUyt+WjJtKmv7P0s1N9lkwdNMs4RjrMaxCemni
-         1tLPHDEzbZrhKv5G7e4DQ8jfK+ytosqHlsyVjrAEedNm5MVzLqVEMQ8r3kmonUDLC/mb
-         rRl7wGnMQG2qXbohgTzCDe6Ly8jCQ3lxWO/YgbfELkVVsH2Nk5KalKgpJr+TGGW0XNcE
-         9eGc8NexBGK/Ew6LbtSkzwr0wpEbj9ZYeIEacxredA0HYyuGcR4ILrRH4Oz0zQTBMo+M
-         nYHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWr6q1KB1Aokz1ojQ1E55GKV43qu4HRGJ2k7P0MehjkqbDdtKHdOdl1TV2RvFhed1inp+mUUhrs0XOcz4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd7/v9IoN/Ng6t76qWiR3Hrx9SDz7YY+8AwKOomiu4+ccBM0ZK
-	fgeMjRPAFQnRtLUhvDWrH9wsVjDyi8Dvgvr0cAhfwzUxPme+bE93XCqNgnhH6xxfNW3gEDNsPcx
-	/6RZw0XLSD9Ca6uuYrx7Bz+OgWOd5XHU5vOtMbA==
-X-Gm-Gg: ASbGnct4mdQNZ9eKVM6sgGU1bNLlowmnpm82KOiTEchrlk7gknp0X/h0cfEa+94/ngy
-	VrM7ku259aqURFpfS6M4SDmRBMjIOtWCxdgd15Rsx0y4MB+KTlTKZlSwnuhvKdgMksVK2jPulyD
-	iRi3pc9xRflIloOnzbtlcFe50GfHuXYs/fNHH82vPLUVcrvmRqynasIhvx
-X-Google-Smtp-Source: AGHT+IHuLiIQaxV7As9jN0AX3z194no/fwAE3hbqKt6NDFMtRG4ZyUmb2LmDWhuoltsdgK3DNqrWN3SEY1EPrQUgRaI=
-X-Received: by 2002:a05:6102:d8f:b0:4bc:82f:b4e0 with SMTP id
- ada2fe7eead31-4d38f1eb8e4mr1301852137.22.1745482123615; Thu, 24 Apr 2025
- 01:08:43 -0700 (PDT)
+	s=arc-20240116; t=1745482221; c=relaxed/simple;
+	bh=k2UBmoUMCKhFXCdGdxw238KcC86Dq7f7xe7KDiWi77c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WYl+RwW8GBmyJlakVug0XZXI7M8T4t1tn0EtIDpn+ULTnEObczW4gLF7jabao5bU1xp47PZ/mrkpTPF/pmtYOHbCHG99FYckALaniYXOT+rgCKj5OMLAbqmkQktshjzB+aVE2ea2vUOe/LI53PMlbuFX6yNukLNWr9zIsND682U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hw0A6NrR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745482216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PZaDOlwgs+a0eg3mppTrQoff4ytVBOHdk4tnOUhy/gU=;
+	b=Hw0A6NrRn0ohmXNuhdBjlPrjPbi1blRSqkcAov9YU58Wa+IK+/LPgpPoHMFeZNvRh9sps2
+	/PYGifSBlZ1AKyouwqlem0Wa1bishsvNYkKflTGQ/ruLpjsE9teRCpA0++DEhR81I123aG
+	oge4wheP84e7gQTBgaWE1NJUfu3rOsg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-404-kVvFzdLzNvuPIu-z6mnAIg-1; Thu,
+ 24 Apr 2025 04:10:15 -0400
+X-MC-Unique: kVvFzdLzNvuPIu-z6mnAIg-1
+X-Mimecast-MFC-AGG-ID: kVvFzdLzNvuPIu-z6mnAIg_1745482212
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED54C1800264;
+	Thu, 24 Apr 2025 08:10:10 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.198])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E142F30001A2;
+	Thu, 24 Apr 2025 08:09:52 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: x86@kernel.org,
+	linux-efi@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Peter Jones <pjones@redhat.com>,
+	Daniel Berrange <berrange@redhat.com>,
+	Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] efi: Add a mechanism for embedding SBAT section
+Date: Thu, 24 Apr 2025 12:09:48 +0400
+Message-ID: <20250424080950.289864-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423142620.525425242@linuxfoundation.org>
-In-Reply-To: <20250423142620.525425242@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 24 Apr 2025 13:38:30 +0530
-X-Gm-Features: ATxdqUFpxUtHfy0bxEpqkDLhc6S0uNjin1QyfJNMfTEtDp7xD86Uj_5YQCP2L4A
-Message-ID: <CA+G9fYuiLKi9-qCgE+wRPVhV85f2MkLcqFyse0a3TuU0sfdk5g@mail.gmail.com>
-Subject: Re: [PATCH 6.14 000/241] 6.14.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 23 Apr 2025 at 20:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.14.4 release.
-> There are 241 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 25 Apr 2025 14:25:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.14.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Changes since RFC:
+(https://lore.kernel.org/linux-efi/20250305101744.1706803-1-vkuznets@redhat.com/)
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+- Implement SBAT embedding for zboot. (Smoke tested on aarch64 only,
+ apologies if I missed some important differences on other arches!)
+ It would've been possible to implement SBAT embedding for !zboot case 
+ too I think but this looks like an unnecessary complication: 
+ SecureBoot signing is likely to be done by distro vendors only and these
+ will likely want zboot enabled anyway.
+  
+- x86: Thanks to Ard, CRC32 is now gone (see commit 9c54baab4401 ("x86/boot:
+ Drop CRC-32 checksum and the build tool that generates it")) and thus
+ SBAT can be placed to the very end of the binary, this simplifies things
+ a bit.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+SBAT is a mechanism which improves SecureBoot revocations of UEFI binaries
+by introducing a generation-based technique. Compromised or vulnerable UEFI
+binaries can be prevented from booting by bumping the minimal required
+generation for the specific component in the bootloader. More information
+on the SBAT can be obtained here:
 
-## Build
-* kernel: 6.14.4-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 86c135e93323307bac64d9c9ff1cc610c19b1d44
-* git describe: v6.14.3-242-g86c135e93323
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14=
-.3-242-g86c135e93323
+https://github.com/rhboot/shim/blob/main/SBAT.md
 
-## Test Regressions (compared to v6.14.2-448-gfc253f3d7070)
+Currently, shim checks .sbat data for itself in self-test and for second
+stage bootloaders (grub, sd-boot, UKIs with sd-stub, ...) but kernel
+revocations require cycling signing keys or adding kernel hashes to shim's
+internal dbx. Adding .sbat to kernel and enforcing it on kernel loading
+will allow to do the same tracking and revocation distros are already
+doing with a simplified mechanism, and without having to keep lists of
+kernels outside of the git repos.
 
-## Metric Regressions (compared to v6.14.2-448-gfc253f3d7070)
+Previously, an attempt was made to add ".sbat" section to the linux kernel:
 
-## Test Fixes (compared to v6.14.2-448-gfc253f3d7070)
+https://lwn.net/Articles/938422/
 
-## Metric Fixes (compared to v6.14.2-448-gfc253f3d7070)
+The approach was rejected mainly because currently there's no policy on how
+to update SBAT generation number when a new vulnerability is discovered. In
+particular, it is unclear what to do with stable kernels which may or may
+not backport certain patches making it impossible to describe the current
+state with a simple number.
 
-## Test result summary
-total: 130872, pass: 109149, fail: 3399, skip: 17930, xfail: 394
+This series suggests a different approach: instead of defining SBAT
+information, provide a mechanism for downstream kernel builders (distros)
+to include their own SBAT data. This leaves the decision on the policy to
+the distro vendors. Basically, each distro implementing SecureBoot today,
+will have an option to inject their own SBAT data during kernel build and
+before it gets signed by their SecureBoot CA. Different distro do not need
+to agree on the common SBAT component names or generation numbers as each
+distro ships its own 'shim' with their own 'vendor_cert'/'vendor_db'. Linux
+upstream will never, ever need to care about the data unless they choose in
+the future to participate in that way.
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 137 passed, 2 failed
-* arm64: 57 total, 57 passed, 0 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 40 passed, 0 failed
-* riscv: 25 total, 22 passed, 3 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 49 passed, 0 failed
+Vitaly Kuznetsov (2):
+  efi/libstub: zboot specific mechanism for embedding SBAT section
+  x86/efi: Implement support for embedding SBAT data for x86
 
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sc[
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
+ arch/x86/boot/Makefile                      |  2 +-
+ arch/x86/boot/compressed/Makefile           |  2 ++
+ arch/x86/boot/compressed/vmlinux.lds.S      | 13 +++++++++++
+ arch/x86/boot/header.S                      | 13 +++++++++++
+ drivers/firmware/efi/Kconfig                | 25 +++++++++++++++++++++
+ drivers/firmware/efi/libstub/Makefile       |  7 ++++++
+ drivers/firmware/efi/libstub/Makefile.zboot |  3 ++-
+ drivers/firmware/efi/libstub/sbat.S         |  7 ++++++
+ drivers/firmware/efi/libstub/zboot-header.S | 14 ++++++++++++
+ drivers/firmware/efi/libstub/zboot.lds      | 17 ++++++++++++++
+ 10 files changed, 101 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/firmware/efi/libstub/sbat.S
 
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+2.49.0
+
 
