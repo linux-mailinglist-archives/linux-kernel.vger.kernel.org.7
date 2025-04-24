@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-618286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B8BA9AC89
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F18A9AC92
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD693BC071
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D073AD0C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E58227574;
-	Thu, 24 Apr 2025 11:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A968F226CF4;
+	Thu, 24 Apr 2025 11:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQ4bLeGG"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EcZP5OKV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1ED22489A;
-	Thu, 24 Apr 2025 11:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DEF1F5838;
+	Thu, 24 Apr 2025 11:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745495703; cv=none; b=NsE8jrr89utnVeuKbxnu0OGcp5G+sQ0/0g8y7G3x4Sc9ZszWMIPOIeaiVn61aB2Yo37mtucxko+WOJ4+lDuO2RM04qwNkZwcTQPEghXB90Rjcsjs+a4A9nq7PFn3FpwYhdW/TmiAmdpnkX0Pe4iSorHq0Nm8fo8Dx+s2jR1Lueo=
+	t=1745495819; cv=none; b=B0aFvi7R+R7IK/2xgESwaJ1SSrJI499LoSJqd7+96TiuwtRdnWYAx/NeJ81JghAReK9SoFjk+Vq5UTRkYcJQgoB3wSmd5ajzn2In5K7LMk2N5jbgbeTeOfbEe5a3gPHQiFMEb6O2WWCuo3AZRF1ZFDBs666PVEdGgsNbXI93c70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745495703; c=relaxed/simple;
-	bh=3CXnS8upeLfS+v4WADg2CmZoMTXWci6Kc40+q19Trco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cYCK3RzQzha48207mLFDX+uwvMEiTGI444/vXQPP2uFqAwW05T+swB2Oo7eD8ESN4YGScJx2KxTPMcRl8LUrvYuNrkdqWho8ABCRgzKt627He0ELQ6ZOHJAHoa+99MMVlXuy1Yn0ECWPdM1QZOkubraFRzJr5M0IvfzORsLKNks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQ4bLeGG; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-309d2e8c20cso1178140a91.0;
-        Thu, 24 Apr 2025 04:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745495701; x=1746100501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LaXXZf7VNdBf/2Zq+DhTKSGQQp1DT6ynEcUt9SkvZ48=;
-        b=SQ4bLeGG46eh+UDi8wrpzj/5B//n+XOia4athsEE1cmkJxB1a9gtqPj/ObRt9Ei//P
-         Soh+M5hRrp+gQhcPKCK6yFaCCVl9YHI6nhYAoYnjnaQKXrf1gV51lQJ7W/US1sIdIkbk
-         NcQRnjQDUhrIuZdHzR3/5LiRic2nVUKahqj4GtzOQEj/4I72xJY92ej+rbWtYlo36G/I
-         zE12MTKBHW2dR1x3NCgJfyoL9LuliAez8Trt//SbPOE/DK0iz9PajmeI3+2qUPbMgjiN
-         f0ZGzUmpnbKbl6RTmfo+K8d7RM1Juikw+KMXwkPiNUcz7qlBdh1GCfoUNYx7xeSAI4O5
-         LHSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745495701; x=1746100501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LaXXZf7VNdBf/2Zq+DhTKSGQQp1DT6ynEcUt9SkvZ48=;
-        b=Z0iciVFAlfyZdvZUrjBilUJuIGFPVdj/g9ZfT0Z+jRCaGNUS84GrVrhVqcWVBzsKzR
-         fReeIZXSE2RH6rkCZCQutF0BqGf113L1Ir9JUavb999Bvd6FVzXLTuK+XI5MHhdoMmot
-         8Aal7wDR/hReBhHQ9D1Gtabtqd4HdULzAN/2AJFO7+TFqR1wWxqpQ63uu0VqkEosY/HU
-         o/H0DIkxKuecFO1CHy1V3d9rP1I21areb0AQ3WCt3DF1LB8gTe9K32/upMnkai+3Kf3u
-         04M6HErkJhkhQACKpzKDpKrrPyBzHSHcB+d4oELr5OQhSOgtqf077Ql7r7kPeMO+59me
-         5pHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoNelk7vyKl6mW1cA5+OpskLcrYw10MGChyIUUxwG6s1q6QvAty2t0SUztzu5prAh1XejFDhP/QwudxdZv@vger.kernel.org, AJvYcCUztRXNHog1QcehFGa5t9BzI/DWrLecA/ocr7RYpe9VhnpBihcEFwdXzJWVJKEJidAZAW9cJlJ7zjRb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpxauGc7eapIT2FqrjEoMitS5YZgEZmZffe1iryoOmmiWykLlY
-	qpbkZU2LunSvA4hliqXMiBFOnf6DsP4k1+Fb65FDA4UYNpJ3BSdvkz0iVOWmgDUhOqpmYU8KiGg
-	b+pPTznzAkzFq85Erabq0C4yr4PE=
-X-Gm-Gg: ASbGncue9JWDnhgWUuWZeccFWiSdKzQI8xq/6KO+N7Eikpke9p6VVS+EMUFCSZTNWhV
-	Yhu5QgokUhnkUimcCWpigYNd5HNNR7Gh+PQAEQ52h12fQ4akwoM2goQB2ycJJ6iOoHj/9Xp5lv6
-	lLk1cxXvTom67F5gYvtA==
-X-Google-Smtp-Source: AGHT+IEVr8RYTjT9I12iRuzsSclckx06FCkr+9NaSoiRz8ff4GmsoCxyYCjNxZ7KvxRfcH7PrtxX3ivBVdZoECzD15Q=
-X-Received: by 2002:a17:90b:2d47:b0:2fe:a614:5cf7 with SMTP id
- 98e67ed59e1d1-309ed24bbf4mr3357527a91.3.1745495701229; Thu, 24 Apr 2025
- 04:55:01 -0700 (PDT)
+	s=arc-20240116; t=1745495819; c=relaxed/simple;
+	bh=Pka1TihqqENohML/m9+LvmBVBPz6iWRC7JscbAmLv8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p6Mzz9HgGk+TVFtaTE8WIXKkwvM882rA9LKoSK5DCvCmNd6rbGPO7eng+92MtK0fPXH+yriIyYY3zcm7koT5jywhg3Ttx6xvAZZU92405JlFmp+/TlqTYIXJDkC63w5UN1bGfk/2QdXcjzFyWqXyuftq3sspbh41iC5hzjIkr/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EcZP5OKV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745495818; x=1777031818;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Pka1TihqqENohML/m9+LvmBVBPz6iWRC7JscbAmLv8c=;
+  b=EcZP5OKVjz0JW6vQRU7pg5ZAp2FVQ+oZ40I7NtR9BYGfvFZMfBj0NVy6
+   TPFqZxyGVLLDM07hxEdSPJMBA257QIOGlhKkt1d5aTSGVLlCcapM5q+rn
+   bugpP9HNPt1q7Rln8xOnzR7rX6H3W79wXr/pXDp6xiQ0j91b0KXwxwVsf
+   DT0FyZkmtgf4lHSDL8/2PTxFid1Vo8SUcuwC+xmiXO/a8+aeL0rFi9toe
+   X838XbxL1rrmKIvi04/piEqPYWpogU+C09pMhpv4mvfOW5a8biJe6Qs+u
+   +kVeATV2zOAMm7Y3/p9s0e4K8vqhcFFEzjJZm9y/DPHmB9sBN1UbR9Cgn
+   w==;
+X-CSE-ConnectionGUID: X0AeqgglSTWgPE/UXfk0Pg==
+X-CSE-MsgGUID: 1HYJWpOaRry5zZ9evG5D1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="34741045"
+X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
+   d="scan'208";a="34741045"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 04:56:56 -0700
+X-CSE-ConnectionGUID: IDo3JUZ6RcidTPOCx71IMA==
+X-CSE-MsgGUID: AZvtWOwUQ2OotH8IgPz5gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
+   d="scan'208";a="132332660"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 24 Apr 2025 04:56:54 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3E4C81AC; Thu, 24 Apr 2025 14:56:53 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Helge Deller <deller@gmx.de>
+Subject: [PATCH v1 1/1] atyfb: Remove unused PCI vendor ID
+Date: Thu, 24 Apr 2025 14:56:52 +0300
+Message-ID: <20250424115652.2451062-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424084800.105300-1-krzysztof.kozlowski@linaro.org> <20250424084800.105300-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250424084800.105300-2-krzysztof.kozlowski@linaro.org>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 24 Apr 2025 14:56:50 +0300
-X-Gm-Features: ATxdqUG07gfeFyk0H8HmHqP2CBe9nsNXfIbkETttN_SCGPWAGkzvs9MFfBgSr_g
-Message-ID: <CAEnQRZBQaYhPU+hzCLxKGQ+UmVpp6MEXDCU4QWVh+Od2mQ+z0w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: nxp: Align wifi node name with bindings
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, 
-	Christoph Niedermaier <cniedermaier@dh-electronics.com>, Marek Vasut <marex@denx.de>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel@dh-electronics.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 24, 2025 at 11:54=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Since commit 3c3606793f7e ("dt-bindings: wireless: bcm4329-fmac: Use
-> wireless-controller.yaml schema"), bindings expect 'wifi' as node name:
->
->   imx7d-remarkable2.dtb: bcrmf@1: $nodename:0: 'bcrmf@1' does not match '=
-^wifi(@.*)?$'
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The custom definition of PCI vendor ID in video/mach64.h is unused.
+Remove it. Note, that the proper one is available in pci_ids.h.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/video/mach64.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/include/video/mach64.h b/include/video/mach64.h
+index d96e3c189634..f1709f7c8421 100644
+--- a/include/video/mach64.h
++++ b/include/video/mach64.h
+@@ -934,9 +934,6 @@
+ #define MEM_BNDRY_EN		0x00040000
+ 
+ #define ONE_MB			0x100000
+-/* ATI PCI constants */
+-#define PCI_ATI_VENDOR_ID	0x1002
+-
+ 
+ /* CNFG_CHIP_ID register constants */
+ #define CFG_CHIP_TYPE		0x0000FFFF
+-- 
+2.47.2
+
 
