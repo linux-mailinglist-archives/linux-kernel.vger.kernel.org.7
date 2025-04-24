@@ -1,294 +1,128 @@
-Return-Path: <linux-kernel+bounces-617445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D71A99FE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A779EA99F39
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070251946588
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F2E19439E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811D51F1518;
-	Thu, 24 Apr 2025 04:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD231A5BA0;
+	Thu, 24 Apr 2025 03:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sTnzVxQV"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Di86I/Ze"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B041B0F31
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B819CC0C;
+	Thu, 24 Apr 2025 03:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745467396; cv=none; b=JHhnXQNpaj/YF69WVwiaB0aXngnePNu+PZZZJJOMLCh+03FP3tPDCiNakUVc2pjVPMLWVdblQGvQMdOhKrijDIo1aolzTs5dUK5hYNO6kdAOyE0n5sWAI8BenC1kF0iCIrF49zA5ZbFhK0WNvk9t6ne6nP1pZkgWURue36rjZpg=
+	t=1745463994; cv=none; b=XICG6DMtMBPBrl64csOAB54AixMx0EFaFTOjeGGGwS48OTNChMsMtiLcoo+89p+IRoEbwo1SUPlYEQTcFYuxxJdIVyLPLCukkoScAde5IM2n6Vc+YcQsvtCFNmy1YWLFqcS0L1SpX7fcj4eNTZa3MhdNseLgLq/rUg8beALsw5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745467396; c=relaxed/simple;
-	bh=QDLXXaueecCgO5Axw+Nyu5EgxIhVwC4DuRcRjtwAJ5E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uEykVbH2d6EIY/kcx5XxbqzQyCaVoxaMuFb3Zh31cd6IR5zqUOjKDZLRVyyRxMP1FhBo0owpcc9R5qH4+NvzJ02EZB4oJGmckzQB1gYs+iDj4kh+kC0bLkZ2YEOJBrjhB8XHrq1bISRVoN+WfzyivhjxtenNs6VBv41flOPGbpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sTnzVxQV; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3055f2e1486so785324a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 21:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745467393; x=1746072193; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8s7bJQK9mVBiBVARPJ5kkauQHM9lxUZX4qjjEP+CsW4=;
-        b=sTnzVxQVdhbgUb1hJpIpuSNo+o+MCvmzgCb+ytxDh76N/7/QVfzWDPJlgJi2kdRjHk
-         qm6FLI6BoCR1gMuNwd++WgVq761Sr+1AGU+TJl9i2gL4fAD8mz3pxtXnlNhZl+XI4m4X
-         pGQOCEteKBzZEpya/E9uRBN9w1jS6s0D7OTzHH5t8VhGsEStsIqUt4g7EMX398psrt6v
-         WkiQi3h/pFqf9rRcY8mHGZmuys9xttdfLhQ4njB4DA8LrzWuSH/5DKYMaUL7XNj4OXb7
-         M00nvD4Eaon2iNUjM18lSh+K+vmtSg38cq6tKOpp+QUihfdg0xHfFNLyRdz9WyK1WeRg
-         wUYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745467393; x=1746072193;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8s7bJQK9mVBiBVARPJ5kkauQHM9lxUZX4qjjEP+CsW4=;
-        b=ZDoeiAdUDvkp1Wctz4wbIox8Vvb3v9T3u8StYUwQBUVRzKR1yAJRGXuejhbuZyujv4
-         Sd+FKUKj3spL/X3qwGQWRRJn+QZA7QdhJ9FB9ypYGKDJ5v62ZBS/5+SkeXoCsFx7Vtrf
-         /sDPtF1p0IsCIaE288wVh/EN1nldD18SnJ3tHV15iyv4odX9XHaxL/sFCQrFxREewX1s
-         fcttarpe1zOKfAREFurMLYCGDwvtIc6wNuSjCV4HjyyaqEgIv5QV0NtwzTQ0+DxprqVh
-         KjeuYqTChV33emvRxqpjg2zR97XfHAdATpz1WsdqGpiOHH3u2XQOGsmeI8CgX6PfLAGN
-         u8JA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcwjDnprHF8SgrmWLK5epiu7zBZUAoi2PQ6ID72v2tFEPh97r8iGTDj8HRPdq2KaiFMGjNbikuD3yWk2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgWDu6yMK8mEgh8Y9Vlhxu40cI87CLeoUg5FEsFj8Md9L0CVGz
-	Lif7TdABs1/eMyOf/EfA/fqbAzAuydeUTc/4HnCGfHZykrcnF194mU86eRPzXO7DFVIQ7pLQvxW
-	DVUVmwO7nN88ISYvNv5nMFA==
-X-Google-Smtp-Source: AGHT+IFDmjk5qYhlVEvcaWV/6HkyWEY6bOujBoJ8R/I3J2khGHfAvgsbrDZnCgnzdM+djzfP0cvjIoh5gcQPKiQEqg==
-X-Received: from pjbsc15.prod.google.com ([2002:a17:90b:510f:b0:301:2679:9aa])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:c2d0:b0:2ee:f687:6acb with SMTP id 98e67ed59e1d1-309ed271ad4mr1819350a91.13.1745467392967;
- Wed, 23 Apr 2025 21:03:12 -0700 (PDT)
-Date: Thu, 24 Apr 2025 04:02:57 +0000
-In-Reply-To: <20250424040301.2480876-1-almasrymina@google.com>
+	s=arc-20240116; t=1745463994; c=relaxed/simple;
+	bh=uXNOsvCklRAYSqLYu63ifPB0WY2hC7YPSUDJIeIHlu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xf2JVAjEg3s2jVVFHGYiw+oA7zIQDthsAS+tZ7VvdkG4iooWpQPRBUTMexXfM0zxKO5/m9SvcOdVwcyd35KRf391ILhWVX1rorgNy9bfUE+tN620QhzfjbO83M4scUIHG8qqZjBO2R8ZFTrc8KPd1n5y6Rfjs/sA4z6g6FN79dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Di86I/Ze; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745463993; x=1776999993;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uXNOsvCklRAYSqLYu63ifPB0WY2hC7YPSUDJIeIHlu4=;
+  b=Di86I/ZeAll4wMmIilYKa3sdvEdjxlAUeB1lKAc0sh14YetetNFmliJr
+   fpuSX+gFleWYVaC/rJ6cHluIcbPl1WiX4q6uMfhd8jte5sG+pG5q5ON9W
+   AM4OlJwfBrLqCDKfnxsRX9WDDwv+vw6H7pWo6LwrhoA2w2WP5CnlZSsFQ
+   4MK0SS6VRfSMNHhGLSXUh/C0+6PkhxagdrHcKbruMZw9RaBdl2ePn7f4B
+   aPYb0RJH7TxsNydA7lALNWN1OPnF2x12sPp4LikgeFBrfpvcSAtMGTelw
+   QzxaztiVe/IvOc45aMnTYIgiqS13IYLMKWQkyqihv5KIumaUjsYlzlnmS
+   Q==;
+X-CSE-ConnectionGUID: BzcasqvRSTqCKJPmJRenbQ==
+X-CSE-MsgGUID: q/Z/UpZ5T4GPp18Yb9czAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="49744034"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="49744034"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:06:31 -0700
+X-CSE-ConnectionGUID: Hz/IRvLUQWKhWlORvT/9GQ==
+X-CSE-MsgGUID: bH5XwpOcSjyZx51D7iJgOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="132374363"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by orviesa010.jf.intel.com with ESMTP; 23 Apr 2025 20:06:28 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Das Sandipan <Sandipan.Das@amd.com>,
+	Shukla Manali <Manali.Shukla@amd.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH] x86/pmu_pebs: Initalize and enable PMU interrupt (PMI_VECTOR)
+Date: Thu, 24 Apr 2025 05:22:01 +0000
+Message-Id: <20250424052201.7194-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250424040301.2480876-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250424040301.2480876-6-almasrymina@google.com>
-Subject: [PATCH net-next v11 5/8] net: add devmem TCP TX documentation
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"=?UTF-8?q?Eugenio=20P=C3=A9rez?=" <eperezma@redhat.com>, sdf@fomichev.me, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Add documentation outlining the usage and details of the devmem TCP TX
-API.
+PMU interrupt is not correctly initialized and enabled in pmu_pebs test.
+It leads to the APIC_LVTPC mask bit is never cleared after first PMI and
+all subsequential PEBS PMIs are suppressed.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Although it doesn't impact pmu_pebs test results since current pmu_pebs
+test checks PEBS records by polling instead of PMI driving, it's still an
+incorrect behavior and could cause some unexpected false positives.
 
+Thus initialize and enable PMU interrupt and ensure PEBS PMI can be
+generated and correctly processed.
+
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 ---
+ x86/pmu_pebs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v5:
-- Address comments from Stan and Bagas
+diff --git a/x86/pmu_pebs.c b/x86/pmu_pebs.c
+index 6396d51c..6e73fc34 100644
+--- a/x86/pmu_pebs.c
++++ b/x86/pmu_pebs.c
+@@ -417,9 +417,11 @@ int main(int ac, char **av)
+ 	printf("PEBS Fixed counters: %d\n", pmu.nr_fixed_counters);
+ 	printf("PEBS baseline (Adaptive PEBS): %d\n", has_baseline);
+ 
++	apic_write(APIC_LVTPC, PMI_VECTOR);
+ 	handle_irq(PMI_VECTOR, cnt_overflow);
+ 	alloc_buffers();
+ 
++	sti();
+ 	for (i = 0; i < ARRAY_SIZE(counter_start_values); i++) {
+ 		ctr_start_val = counter_start_values[i];
+ 		check_pebs_counters(0, false);
+@@ -441,6 +443,7 @@ int main(int ac, char **av)
+ 			report_prefix_pop();
+ 		}
+ 	}
++	cli();
+ 
+ 	free_buffers();
+ 
 
-v4:
-- Mention SO_BINDTODEVICE is recommended (me/Pavel).
-
-v2:
-- Update documentation for iov_base is the dmabuf offset (Stan)
-
----
- Documentation/networking/devmem.rst | 150 +++++++++++++++++++++++++++-
- 1 file changed, 146 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/networking/devmem.rst b/Documentation/networking/devmem.rst
-index eb678ca454968..a6cd7236bfbd2 100644
---- a/Documentation/networking/devmem.rst
-+++ b/Documentation/networking/devmem.rst
-@@ -62,15 +62,15 @@ More Info
-     https://lore.kernel.org/netdev/20240831004313.3713467-1-almasrymina@google.com/
- 
- 
--Interface
--=========
-+RX Interface
-+============
- 
- 
- Example
- -------
- 
--tools/testing/selftests/net/ncdevmem.c:do_server shows an example of setting up
--the RX path of this API.
-+./tools/testing/selftests/drivers/net/hw/ncdevmem:do_server shows an example of
-+setting up the RX path of this API.
- 
- 
- NIC Setup
-@@ -235,6 +235,148 @@ can be less than the tokens provided by the user in case of:
- (a) an internal kernel leak bug.
- (b) the user passed more than 1024 frags.
- 
-+TX Interface
-+============
-+
-+
-+Example
-+-------
-+
-+./tools/testing/selftests/drivers/net/hw/ncdevmem:do_client shows an example of
-+setting up the TX path of this API.
-+
-+
-+NIC Setup
-+---------
-+
-+The user must bind a TX dmabuf to a given NIC using the netlink API::
-+
-+        struct netdev_bind_tx_req *req = NULL;
-+        struct netdev_bind_tx_rsp *rsp = NULL;
-+        struct ynl_error yerr;
-+
-+        *ys = ynl_sock_create(&ynl_netdev_family, &yerr);
-+
-+        req = netdev_bind_tx_req_alloc();
-+        netdev_bind_tx_req_set_ifindex(req, ifindex);
-+        netdev_bind_tx_req_set_fd(req, dmabuf_fd);
-+
-+        rsp = netdev_bind_tx(*ys, req);
-+
-+        tx_dmabuf_id = rsp->id;
-+
-+
-+The netlink API returns a dmabuf_id: a unique ID that refers to this dmabuf
-+that has been bound.
-+
-+The user can unbind the dmabuf from the netdevice by closing the netlink socket
-+that established the binding. We do this so that the binding is automatically
-+unbound even if the userspace process crashes.
-+
-+Note that any reasonably well-behaved dmabuf from any exporter should work with
-+devmem TCP, even if the dmabuf is not actually backed by devmem. An example of
-+this is udmabuf, which wraps user memory (non-devmem) in a dmabuf.
-+
-+Socket Setup
-+------------
-+
-+The user application must use MSG_ZEROCOPY flag when sending devmem TCP. Devmem
-+cannot be copied by the kernel, so the semantics of the devmem TX are similar
-+to the semantics of MSG_ZEROCOPY::
-+
-+	setsockopt(socket_fd, SOL_SOCKET, SO_ZEROCOPY, &opt, sizeof(opt));
-+
-+It is also recommended that the user binds the TX socket to the same interface
-+the dma-buf has been bound to via SO_BINDTODEVICE::
-+
-+	setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname) + 1);
-+
-+
-+Sending data
-+------------
-+
-+Devmem data is sent using the SCM_DEVMEM_DMABUF cmsg.
-+
-+The user should create a msghdr where,
-+
-+* iov_base is set to the offset into the dmabuf to start sending from
-+* iov_len is set to the number of bytes to be sent from the dmabuf
-+
-+The user passes the dma-buf id to send from via the dmabuf_tx_cmsg.dmabuf_id.
-+
-+The example below sends 1024 bytes from offset 100 into the dmabuf, and 2048
-+from offset 2000 into the dmabuf. The dmabuf to send from is tx_dmabuf_id::
-+
-+       char ctrl_data[CMSG_SPACE(sizeof(struct dmabuf_tx_cmsg))];
-+       struct dmabuf_tx_cmsg ddmabuf;
-+       struct msghdr msg = {};
-+       struct cmsghdr *cmsg;
-+       struct iovec iov[2];
-+
-+       iov[0].iov_base = (void*)100;
-+       iov[0].iov_len = 1024;
-+       iov[1].iov_base = (void*)2000;
-+       iov[1].iov_len = 2048;
-+
-+       msg.msg_iov = iov;
-+       msg.msg_iovlen = 2;
-+
-+       msg.msg_control = ctrl_data;
-+       msg.msg_controllen = sizeof(ctrl_data);
-+
-+       cmsg = CMSG_FIRSTHDR(&msg);
-+       cmsg->cmsg_level = SOL_SOCKET;
-+       cmsg->cmsg_type = SCM_DEVMEM_DMABUF;
-+       cmsg->cmsg_len = CMSG_LEN(sizeof(struct dmabuf_tx_cmsg));
-+
-+       ddmabuf.dmabuf_id = tx_dmabuf_id;
-+
-+       *((struct dmabuf_tx_cmsg *)CMSG_DATA(cmsg)) = ddmabuf;
-+
-+       sendmsg(socket_fd, &msg, MSG_ZEROCOPY);
-+
-+
-+Reusing TX dmabufs
-+------------------
-+
-+Similar to MSG_ZEROCOPY with regular memory, the user should not modify the
-+contents of the dma-buf while a send operation is in progress. This is because
-+the kernel does not keep a copy of the dmabuf contents. Instead, the kernel
-+will pin and send data from the buffer available to the userspace.
-+
-+Just as in MSG_ZEROCOPY, the kernel notifies the userspace of send completions
-+using MSG_ERRQUEUE::
-+
-+        int64_t tstop = gettimeofday_ms() + waittime_ms;
-+        char control[CMSG_SPACE(100)] = {};
-+        struct sock_extended_err *serr;
-+        struct msghdr msg = {};
-+        struct cmsghdr *cm;
-+        int retries = 10;
-+        __u32 hi, lo;
-+
-+        msg.msg_control = control;
-+        msg.msg_controllen = sizeof(control);
-+
-+        while (gettimeofday_ms() < tstop) {
-+                if (!do_poll(fd)) continue;
-+
-+                ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
-+
-+                for (cm = CMSG_FIRSTHDR(&msg); cm; cm = CMSG_NXTHDR(&msg, cm)) {
-+                        serr = (void *)CMSG_DATA(cm);
-+
-+                        hi = serr->ee_data;
-+                        lo = serr->ee_info;
-+
-+                        fprintf(stdout, "tx complete [%d,%d]\n", lo, hi);
-+                }
-+        }
-+
-+After the associated sendmsg has been completed, the dmabuf can be reused by
-+the userspace.
-+
-+
- Implementation & Caveats
- ========================
- 
+base-commit: abdc5d02a7796a55802509ac9bb704c721f2a5f6
 -- 
-2.49.0.805.g082f7c87e0-goog
+2.40.1
 
 
