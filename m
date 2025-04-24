@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-619046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78C1A9B69C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFAFAA9B66B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBC14C3827
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338284A27FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE32228F928;
-	Thu, 24 Apr 2025 18:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A2628EA4B;
+	Thu, 24 Apr 2025 18:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="GcZBwvFW"
-Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1qj+Li7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9D31624E5;
-	Thu, 24 Apr 2025 18:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED5917A2EA;
+	Thu, 24 Apr 2025 18:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745520106; cv=none; b=ceK/ruuPsQWv5/L2PPxG6UDh9o7mkCpTjH9lw/DdAC6MF7VfByQmDdXofzJXWU8HxyR8M/5P5r76mao4rHGlv+4AkCcEKrTxd7YlSAMnGONVt/TS7JyEyt6Mkh5+msu0X8FC1pM1TKrzTsp3+UWwZWcab9f91cYFiyEb1OMogGk=
+	t=1745519659; cv=none; b=XFoHDOmvfXXoz0Ut6rnbIZq9aFSV4itURQ9gy6LtJEWVWA17m5FH2wxb/I3sCqCPQZeNhVRn+YQy3W+3wc/uSo8evmFgoAWT0BcT6dg4D3+Jkdrppw2owOHineW2Ji9X2tW6HxHQ12WnoRHsTA4Toax7ICxsHIWLn38lV2+dncg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745520106; c=relaxed/simple;
-	bh=UY7mwzK6h3h/JHCIa8gPjepYiPqxs1+ZGL7ML4m7Lc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I+eE2LlGME2Fbiy2qN5yFcF9Ai9nwnKakJKaJktI5vTsGBbvDfO1dY+MvFcg7jidenhyUXtBrUPf1CxMVK9VJEehQpPCUU6XKiJkj/3zYCtBcu/4tDI4nrJ7d2B7s9TrFL5Mhu774qTQjD1WNHb0wRZ206rB34IbxwnOQi7NjmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=GcZBwvFW; arc=none smtp.client-ip=178.154.239.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from forward100d.mail.yandex.net (forward100d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d100])
-	by forward202d.mail.yandex.net (Yandex) with ESMTPS id 2DC43689D4;
-	Thu, 24 Apr 2025 21:33:56 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3bcd:0:640:dc38:0])
-	by forward100d.mail.yandex.net (Yandex) with ESMTPS id 075F160027;
-	Thu, 24 Apr 2025 21:33:48 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id kXVCAB2LZmI0-s6An8AkH;
-	Thu, 24 Apr 2025 21:33:47 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1745519627; bh=9699AcloeCDb7D22U3eJAvZmA6C/RcO8yloHAzmxeEk=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=GcZBwvFWGhzYWKa9NQMASVuJBRpvlkYld+BsaOPqKfl13YUPViF8gaZJ3zpsyBMdb
-	 KDLpkzrEiV8s0HNRIWdiY2w+lhHpUbJAc7sp9iNHRXI22CYeEJVLFWUXVfyurU0ZIJ
-	 fjQCzYrIsxvJq1gI0U0TKhe8rIpXDy1K/E54Xurc=
-Authentication-Results: mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Alexei Safin <a.safin@rosa.ru>
-To: Stanislaw Gruszka <stf_xl@wp.pl>
-Cc: Alexei Safin <a.safin@rosa.ru>,
-	Kalle Valo <kvalo@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iwlegacy: 4965: fix possible out-of-bounds access in il4965_tx_cmd_build_rate()
-Date: Thu, 24 Apr 2025 21:33:38 +0300
-Message-Id: <20250424183338.3277-1-a.safin@rosa.ru>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1745519659; c=relaxed/simple;
+	bh=39IgTCoRmuwSBhN8pXGBMrTZGCajKZKYCqn0HyEFy5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F69gZWd9hR403CCS+yKk4UHHzp0nQICUYqHTOpDB3mFw7+Hb7SJzF7Jl2NgKtq+e22H9vJQytGFFKXGzBnPuhzawjYk8CZR3xyetNQZ3xGUy/m/BPLCNoEpRqiLpv3rVJwKRo2SZjmMJ/w0rpSy02xmbtgh4iwmNCvacjHZiAHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1qj+Li7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411BEC4AF09;
+	Thu, 24 Apr 2025 18:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745519655;
+	bh=39IgTCoRmuwSBhN8pXGBMrTZGCajKZKYCqn0HyEFy5U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B1qj+Li7s/BjjdVgE52QnZmfPkuPkbHDAX01eV5TpkavST1t6/sP/ybj6wCUNkDHe
+	 NJaIodkm93Wq1eu/ItimduYJAWuN3t7pRYNsUvspJvhUSTjGqCEM5acgGZsgSANkRz
+	 eQTlC2QAKiXyziIQ4HF0eoma+BBIZdZibnqWPRG1ZaehlzaAt/8hGwsgTZN+qvTERg
+	 3ozb/R7v961WmeiSh9THOSPJT2NOU3MywSa+/B0eJ9l7sO+pCJgrc7jM7KuZJnjeit
+	 AoYpShFJpLymWgBOXR7/01vHHlfwMjxwyQyIIQKdFGznF1OdKSpSfrp2u2bCR+/R6V
+	 c4un9LUOfwMHw==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f4ca707e31so2285075a12.2;
+        Thu, 24 Apr 2025 11:34:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVL5DygTyDeFrk/97JKTd2QJrSTMox0oQ7T4NMk2XMTK0zqttUxMkk8cXW5RwPDxngid/jyo11jlBKNaoU=@vger.kernel.org, AJvYcCWC289LVlaJjKotZYrz4sH2kzx34UQJrZKbHsabZZ+I+aq6382wgOnf3ixuHj2pq6dgvPdRsAnBJMUoMlFM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/i5HQewHaE9i1QvMAhqNSmKsLEk7JLzSwY9H1xyzLNXc84Trr
+	INNgw3EXIE3XnhfCnsTMzgUJDIKODWSJIqMtRknCkcK7+PTCMFf6tPwk7uHd8SLgBnCBLONTzOR
+	Fv8IXYiNnrnPAi8WyeQPqSWsLKA==
+X-Google-Smtp-Source: AGHT+IETA7koFRPQpCNgF9bB+lBmBatuYMkCAvFK0AhyzDFySWaXfC2Y30MblCgtSC39xMK1leTosTnJknluZ8y8Yh8=
+X-Received: by 2002:a05:6402:51d1:b0:5f3:7f32:3919 with SMTP id
+ 4fb4d7f45d1cf-5f6fabdaecamr384013a12.16.1745519653832; Thu, 24 Apr 2025
+ 11:34:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250424-fix_serdev-v2-0-a1226ed77435@quicinc.com> <20250424-fix_serdev-v2-2-a1226ed77435@quicinc.com>
+In-Reply-To: <20250424-fix_serdev-v2-2-a1226ed77435@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 Apr 2025 13:34:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKs=5Uf1rJy3iBROL5ZZVo62cTbNq+yzKr2DXU+Nhabbg@mail.gmail.com>
+X-Gm-Features: ATxdqUHFJ4GtQopsA6kBZicfwSwvYKcPW-wwVym6ikDdQEIuuuMK-FbLj2TOWQo
+Message-ID: <CAL_JsqKs=5Uf1rJy3iBROL5ZZVo62cTbNq+yzKr2DXU+Nhabbg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] serdev: Remove repeated device name in
+ dev_(err|dbg) messages
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Prevent out-of-bounds access in il4965_tx_cmd_build_rate() by rejecting
-rate_idx values greater than or equal to RATE_COUNT_LEGACY.
+On Thu, Apr 24, 2025 at 7:24=E2=80=AFAM Zijun Hu <zijun_hu@icloud.com> wrot=
+e:
+>
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>
+> There are serval dev_err() and dev_dbg() usages shown below:
+>
+> dev_dbg(dev, "...%s...", dev_name(dev))
+>
+> The device name is repeated since dev_dbg() also prints device
+> name as prefix.
+>
+> Fix by optimizing the messages printed.
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/tty/serdev/core.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+> index 971651b8e18dcbb5b7983cdfa19e7d60d4cd292b..f00106de76a0f1e547310c7d2=
+1cc2fe3d5869e28 100644
+> --- a/drivers/tty/serdev/core.c
+> +++ b/drivers/tty/serdev/core.c
+> @@ -118,12 +118,12 @@ int serdev_device_add(struct serdev_device *serdev)
+>
+>         err =3D device_add(&serdev->dev);
+>         if (err < 0) {
+> -               dev_err(&serdev->dev, "Can't add %s, status %pe\n",
+> -                       dev_name(&serdev->dev), ERR_PTR(err));
+> +               dev_err(&serdev->dev, "Can't add serdev, status %pe\n",
+> +                       ERR_PTR(err));
+>                 goto err_clear_serdev;
+>         }
+>
+> -       dev_dbg(&serdev->dev, "device %s registered\n", dev_name(&serdev-=
+>dev));
+> +       dev_dbg(&serdev->dev, "serdev registered successfully\n");
+>
+>         return 0;
+>
+> @@ -783,8 +783,8 @@ int serdev_controller_add(struct serdev_controller *c=
+trl)
+>                 goto err_rpm_disable;
+>         }
+>
+> -       dev_dbg(&ctrl->dev, "%s registered: dev:%p\n",
+> -               dev_name(&ctrl->dev), &ctrl->dev);
 
-Use a correct bounds check to avoid accessing il_rates[] with
-an invalid index. The previous comparison allowed rate_idx to become
-equal to RATE_COUNT_LEGACY, which exceeds the array limit.
+I don't understand why you add dev_name() and then turn around and
+remove it in the next patch. Just squash the patches.
 
-Replace the check 'rate_idx > RATE_COUNT_LEGACY' with
-'rate_idx >= RATE_COUNT_LEGACY' to ensure memory safety.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 7ac9a364c172 ("iwlegacy: move under intel directory")
-Signed-off-by: Alexei Safin <a.safin@rosa.ru>
----
- drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-index 78dee8ccfebf..f60d9b9798c1 100644
---- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-@@ -1572,7 +1572,7 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
- 	 */
- 	rate_idx = info->control.rates[0].idx;
- 	if ((info->control.rates[0].flags & IEEE80211_TX_RC_MCS) || rate_idx < 0
--	    || rate_idx > RATE_COUNT_LEGACY)
-+	    || rate_idx >= RATE_COUNT_LEGACY)
- 		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
- 	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
- 	if (info->band == NL80211_BAND_5GHZ)
--- 
-2.39.5 (Apple Git-154)
-
+> +       dev_dbg(&ctrl->dev, "serdev controller registered: dev:%p\n",
+> +               &ctrl->dev);
+>         return 0;
+>
+>  err_rpm_disable:
+>
+> --
+> 2.34.1
+>
 
