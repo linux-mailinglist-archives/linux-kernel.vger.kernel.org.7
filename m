@@ -1,84 +1,137 @@
-Return-Path: <linux-kernel+bounces-618504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03EEA9AF7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:42:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F92A9AF84
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F230C5A766C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:41:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29087A31D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026D71A3BA1;
-	Thu, 24 Apr 2025 13:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEC3187876;
+	Thu, 24 Apr 2025 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KpFe0eR3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7679118E34A;
-	Thu, 24 Apr 2025 13:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14D2189919;
+	Thu, 24 Apr 2025 13:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745501951; cv=none; b=i685Cr8jotv6snFVWE7RRq1UM95kjG/C6YCLdof4CXlbp7rAJ9+0RPfxxSIvXcBcA0rY6CX1gOP9EgfG1qsbUu7rznAU1vgl6cXoP5OpyK70R5KO51bq53K8+LC8Loh9XxqnQBg8pexAiko+gxPW7Rh883Yi5mkdZBTwVhZQqXA=
+	t=1745502085; cv=none; b=tUACv1WdjKX8iZOVw+a1zHL9wMT9FJkj5lzCPMJra02DmzEks23XbTqh0nV1KliNKs8ldwIy2PX/hRaR5Rj3o920fIxpa3cVfG3RsSFeCQf4dnsmt9jd0g6iESOPL692fKOt+9GVLBwPGGEVSJ6fqHxZdlNcqNYJCkmCII4Dk3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745501951; c=relaxed/simple;
-	bh=qgnyhI7G1sbn3+oID5OpHpCLMNHcLsKjgs4//IEb2I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pP+rqfyoyc6kwIFHs1kGQwGVq9upHMrW9Hekj0fnr+drup9OXVdGU/tdmb0ODkE5SsE5E+ZgubOF9bY02q47DHFiQvhzoTC3RvkGcRlpE126x1GY+3OnaUuQB7JEc6Ct/iFjdzbfld0yTyvG7AUYsPoo/jCLgDgusK4YNfb4bew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D063CC4CEE3;
-	Thu, 24 Apr 2025 13:39:07 +0000 (UTC)
-Date: Thu, 24 Apr 2025 09:41:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, x86@kernel.org, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu
- Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
- <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
- James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org, Jens Remus
- <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Weinan Liu <wnliu@google.com>
-Subject: Re: [PATCH v4 12/39] unwind_user: Add frame pointer support
-Message-ID: <20250424094102.0004f8f8@gandalf.local.home>
-In-Reply-To: <20250124181610.zdqvdaeqrp7kyzis@jpoimboe>
-References: <cover.1737511963.git.jpoimboe@kernel.org>
-	<10b92f2fd065b67e6e3fd473ca145c34ea74b73a.1737511963.git.jpoimboe@kernel.org>
-	<CAEf4BzaQr1ruCh1beyhJ_i+aGuw4rGSftF_Zr5ZB=8Jim1jyyQ@mail.gmail.com>
-	<20250124181610.zdqvdaeqrp7kyzis@jpoimboe>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745502085; c=relaxed/simple;
+	bh=bdQNYTaUzzRiAQCmfYBaszlqWTTCoAZXMgPfghYxtTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHLDwjp0K3UVRgDMxCj1HtI2OQfflKfTOt8SaV8JHN4Ob5Zf5LLn73+k/4MubJvrtSBc7m1eFxwGM09QzFYDdRpK2zTTO5wVuvtNnMSm4KUtZPtNReB+PK04ije7raMbqch+ysNRhQSylL6cs4B5DKu8kzvatIyUUa/CFFzfoNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KpFe0eR3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA10EC4CEE8;
+	Thu, 24 Apr 2025 13:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745502084;
+	bh=bdQNYTaUzzRiAQCmfYBaszlqWTTCoAZXMgPfghYxtTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KpFe0eR3pfCo+R4TmueP5vPRf9uXEUXBWEsFZgINejfzgcE6wDG3dNxaUjI2Dkfxe
+	 8TYZ8UrBgLEe5sQC5hbWpTVlYm5aqi2i4cAePTXQdsomwCMqkxaPCM/Syg3Ax8LWNq
+	 nUW1Mpos8LeVuuKOj5Q6K3hnsCldn51rYk56uv14=
+Date: Thu, 24 Apr 2025 15:41:22 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Netdev <netdev@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH 6.1 000/291] 6.1.135-rc1 review
+Message-ID: <2025042443-ibuprofen-scavenger-c4df@gregkh>
+References: <20250423142624.409452181@linuxfoundation.org>
+ <CA+G9fYu+FEZ-3ye30Hk2sk1+LFsw7iO5AHueUa9H1Ub=JO-k2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu+FEZ-3ye30Hk2sk1+LFsw7iO5AHueUa9H1Ub=JO-k2g@mail.gmail.com>
 
-On Fri, 24 Jan 2025 10:16:10 -0800
-Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-
-> > Do you plan to reuse this logic for stack unwinding done by perf
-> > subsystem in perf_callchain_user()? See is_uprobe_at_func_entry()
-> > parts and also fixup_uretprobe_trampoline_entries() for some of the
-> > quirks that have to be taken into account when doing frame
-> > pointer-based unwinding. It would be great not to lose those in this
-> > new reimplementation.
-> > 
-> > Not sure what's the best way to avoid duplicating the logic, but I
-> > thought I'd bring that up.  
+On Thu, Apr 24, 2025 at 07:01:02PM +0530, Naresh Kamboju wrote:
+> On Wed, 23 Apr 2025 at 20:16, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.1.135 release.
+> > There are 291 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 25 Apr 2025 14:25:27 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.135-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> Indeed!  That was on the todo list and somehow evaporated.
+> Regressions on arm, riscv and x86_64 with following kernel configs with
+> clang-20 and clang-nightly toolchains on stable-rc 6.1.135-rc1.
+> 
+> Build regressions:
+> * arm, build
+>   - clang-20-allmodconfig
+> 
+> * i386, build
+>   - clang-nightly-lkftconfig-kselftest
+> 
+> * riscv, build
+>   - clang-20-allmodconfig
+> 
+> * x86_64, build
+>   - clang-20-allmodconfig
+>   - clang-nightly-lkftconfig-kselftest
+> 
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducibility? Yes
+> 
+> Build regression: arm allmodconfig variable 'is_redirect' is used
+> uninitialized whenever 'if' condition is true
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ## Build error:
+> net/sched/act_mirred.c:265:6: error: variable 'is_redirect' is used
+> uninitialized whenever 'if' condition is true
+> [-Werror,-Wsometimes-uninitialized]
+>   265 |         if (unlikely(!(dev->flags & IFF_UP)) ||
+> !netif_carrier_ok(dev)) {
+>       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I'm getting ready to post an update of these patches, but I want to mention
-that this has not been addressed, and I'm replying here to make sure it
-stays on the radar.
+Odd this isn't showing up in newer releases, as this is an old commit
+and nothing has changed in this file since then (it showed up in 6.8.)
 
--- Steve
+Is there some follow-up commit somewhere that I'm missing that resolved
+this issue?
+
+thanks,
+
+greg k-h
 
