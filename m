@@ -1,148 +1,172 @@
-Return-Path: <linux-kernel+bounces-618398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BC3A9AE03
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:53:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60217A9AE07
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF4F33B231D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127DB1B654E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CD227B519;
-	Thu, 24 Apr 2025 12:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4570527B51F;
+	Thu, 24 Apr 2025 12:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0KoM9YP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b="sgkcfejB"
+Received: from wylie.me.uk (wylie.me.uk [82.68.155.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ACE223DEB;
-	Thu, 24 Apr 2025 12:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E16F223DEB;
+	Thu, 24 Apr 2025 12:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.68.155.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745499175; cv=none; b=Gfd9ve476cgPbeu8UvWtmJAT4aCheNUwnt73nSby7XyEW5+xmgKPxu82G/jA3SLE8ELPTwpLD+lYl6XxaLbGG00RFVjL1QF5pXJ8Np3ydtujVe0tTqFdoKZRnkxkNSCoEpERlwMngDchFt8Xj/f1nB52RqzdhOZhV2rOn1SKH/0=
+	t=1745499226; cv=none; b=jyDDhj6o1ziQFK/yB8hvoPgfy037OuPTHRiOhu1qhOW8SpedWAKnbtu29gPUD9y1OCwL8jMdBTyPtJZP4suntRJ/+SAMscKIBvatIOnDtWLsqKD9QciWj1hEZ4A9FUYMHFIoVGR26KEZTC+ZxoTnq5vRj+xxYcpmDy/jh+CcjoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745499175; c=relaxed/simple;
-	bh=NiPxK2PAkqHQHtt6tVW15Ph4yur9V0c9mCXoTiiQ0GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGINuCLfaMcg7FoDbsF3YZjDxiuZzHGjBCbGgwpE0H1u6PxFazvOTGscsipDLA0uRr2HRi1zp+StJnzEOUV8iN/7TodsGHm1yIBgaH4anEpMPjgqmqZjpILo0B48DkGNbUKo18OhPtX7mDX00kgrbYkdxVAucoyAwnfup+9XhxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0KoM9YP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0690DC4CEE3;
-	Thu, 24 Apr 2025 12:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745499173;
-	bh=NiPxK2PAkqHQHtt6tVW15Ph4yur9V0c9mCXoTiiQ0GU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m0KoM9YPLGLI4Cye3b8euvv5bBXM8sNMH/3W3e60sV6J5VQvx49HVIKSu/I4kGsPC
-	 qsm2LeGbgRKUzuYovMYZMGEMFc0f2AcqiuZl4dZULcVBZFAC/9asNpFN4ESb0LyZnH
-	 t+cBbby43JNG3n08XAD79qFdNoaCprkT9M+7bxvsYCyM8l3timuC9G63tYvca9tl5T
-	 xTUEt2rQ5ZrAFHOldusLaBKa8ZypLkCvtNuA8rxwxvBXRSH/n66IZYxDQmDyR/GsUU
-	 TMnPsBsBu71N3bkt2BK8hdEbQxX2LH7KVp0UXdBgHoTpYEb5ipR9+N3T8kqVPKZ2TP
-	 YRV83UqpYworw==
-Date: Thu, 24 Apr 2025 09:52:50 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
-	Namhyung Kim <namhyung@kernel.org>, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	dvyukov@google.com, ben.gainey@arm.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4] perf report: Skip unsupported new event types
-Message-ID: <aAo0IoT0xV4HysKk@x1>
-References: <20250414173921.2905822-1-ctshao@google.com>
- <CAP-5=fUJip8odShuUVCnwQg9MrMLVdCWjGdSFfUxWubfQYBy1g@mail.gmail.com>
- <CAJpZYjV1Z_A08A1GSTLZwo7BCaJNGGD+Q06w2A1Uc9p1ihT=Tg@mail.gmail.com>
+	s=arc-20240116; t=1745499226; c=relaxed/simple;
+	bh=P86oE7d+/laopXXLm4l/4blWBmnOYmZlRzNXI5Cbk/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bw8LBBuQy6z/GnZUUpF5XfjV0Y5O/COQUTqigTS2BGY8uN2LXevN/iZPstIp0kCSVcj7x0t+YuQrwdtizhCoe5LZv5SxKclkW4wDhTgkOZhZks70k1BzV7k8CA6jpexXGAVKJ2UuUNylH6XifnUsO76Ib+nzYwyRKXmI5IU+/p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk; spf=pass smtp.mailfrom=wylie.me.uk; dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b=sgkcfejB; arc=none smtp.client-ip=82.68.155.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wylie.me.uk
+Received: from frodo.int.wylie.me.uk (frodo.int.wylie.me.uk [192.168.21.2])
+	by wylie.me.uk (Postfix) with ESMTP id D6145120897;
+	Thu, 24 Apr 2025 13:53:31 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=wylie.me.uk;
+	s=mydkim006; t=1745499211;
+	bh=P86oE7d+/laopXXLm4l/4blWBmnOYmZlRzNXI5Cbk/4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=sgkcfejB+MzMEtjvZcAhWSxSOL+ajLWRHA4hn14nvgR1mNN1EoN6YWcRYRXibv7Pz
+	 cVu8aqIgBsE8zplzKI56Q43zb22vMEwjpUXsVbb/+UN1PZfHXlZvkv8lDzAXwXomwc
+	 7qLiJ05u47pWLFVx48PIq+4JtNijO7VWmAitAQkNfKLUlfJWkAlRIxHYdFZQXky0a2
+	 wTcfK3LdKIV+fTRHI8uXgQvAgLa1Gk//MkfPPrEczyQwTyRHfyPuv5rqhajb8tPvU7
+	 jao/H58KOS2ZrM4dxEdOagEZXy3MtvnKPtEHN0EzDqQlWpNFUsm/8wrF/QLm85veaA
+	 jpdqmfh6RBLRQ==
+Date: Thu, 24 Apr 2025 13:53:31 +0100
+From: "Alan J. Wylie" <alan@wylie.me.uk>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Holger =?UTF-8?B?SG9mZnN0w6R0dGU=?= <holger@applied-asynchrony.com>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, regressions@lists.linux.dev, Jiri
+ Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Octavian Purdila <tavip@google.com>, Toke
+ =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
+ stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [REGRESSION] 6.14.3 panic - kernel NULL pointer dereference in
+ htb_dequeue
+Message-ID: <20250424135331.02511131@frodo.int.wylie.me.uk>
+In-Reply-To: <aAlAakEUu4XSEdXF@pop-os.localdomain>
+References: <20250421131000.6299a8e0@frodo.int.wylie.me.uk>
+ <20250421200601.5b2e28de@frodo.int.wylie.me.uk>
+ <89301960-1758-5b2e-6d91-81ef06843e14@applied-asynchrony.com>
+ <20250421210927.50d6a355@frodo.int.wylie.me.uk>
+ <20250422175145.1cb0bd98@frodo.int.wylie.me.uk>
+ <4e2a6522-d455-f0ce-c77d-b430c3047d7c@applied-asynchrony.com>
+ <aAf/K7F9TmCJIT+N@pop-os.localdomain>
+ <20250422214716.5e181523@frodo.int.wylie.me.uk>
+ <aAgO59L0ccXl6kUs@pop-os.localdomain>
+ <20250423105131.7ab46a47@frodo.int.wylie.me.uk>
+ <aAlAakEUu4XSEdXF@pop-os.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+X-Clacks-Overhead: GNU Terry Pratchett
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJpZYjV1Z_A08A1GSTLZwo7BCaJNGGD+Q06w2A1Uc9p1ihT=Tg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 03:46:21PM -0700, Chun-Tse Shao wrote:
-> Ping.
+> On Tue, Apr 22, 2025 at 07:20:24PM +0200, Holger Hoffst=C3=A4tte wrote:
 
-Thanks for the ping, I just applied it with these changes, please check,
+> Meanwhile, if you could provide a reliable (and ideally minimum)
+> reproducer, it would help me a lot to debug.
 
-Thanks,
+I've found a reproducer. Below is a stripped down version of the shell scri=
+pt
+that I posted in my initial report.
 
-- Arnaldo
+Running this in a 1 second loop is enough to cause the panic very quickly.
 
-⬢ [acme@toolbox perf-tools-next]$ git diff
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index ba32f8461a4b6438..81cc56503a2d0f51 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1645,7 +1645,7 @@ static s64 perf_session__process_event(struct perf_session *session,
-                        return -EINVAL;
- 
-                /* This perf is outdated and does not support the latest event type. */
--               ui__warning("Unsupported type %u, please considering update perf.\n",
-+               ui__warning("Unsupported header type %u, please consider updating perf.\n",
-                            event->header.type);
-                /* Skip unsupported event by returning its size. */
-                return event->header.size;
-⬢ [acme@toolbox perf-tools-next]$
- 
-> Thanks,
-> CT
-> 
-> 
-> On Mon, Apr 14, 2025 at 10:43 AM Ian Rogers <irogers@google.com> wrote:
-> >
-> > On Mon, Apr 14, 2025 at 10:39 AM Chun-Tse Shao <ctshao@google.com> wrote:
-> > >
-> > > `perf report` currently halts with an error when encountering
-> > > unsupported new event types (`event.type >= PERF_RECORD_HEADER_MAX`).
-> > > This patch modifies the behavior to skip these samples and continue
-> > > processing the remaining events. Additionally, stops reporting if the
-> > > new event size is not 8-byte aligned.
-> > >
-> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> >
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> >
-> > Thanks,
-> > Ian
-> >
-> > > ---
-> > >  tools/perf/util/session.c | 13 +++++++++++--
-> > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> > > index 60fb9997ea0d..ba32f8461a4b 100644
-> > > --- a/tools/perf/util/session.c
-> > > +++ b/tools/perf/util/session.c
-> > > @@ -1639,8 +1639,17 @@ static s64 perf_session__process_event(struct perf_session *session,
-> > >         if (session->header.needs_swap)
-> > >                 event_swap(event, evlist__sample_id_all(evlist));
-> > >
-> > > -       if (event->header.type >= PERF_RECORD_HEADER_MAX)
-> > > -               return -EINVAL;
-> > > +       if (event->header.type >= PERF_RECORD_HEADER_MAX) {
-> > > +               /* perf should not support unaligned event, stop here. */
-> > > +               if (event->header.size % sizeof(u64))
-> > > +                       return -EINVAL;
-> > > +
-> > > +               /* This perf is outdated and does not support the latest event type. */
-> > > +               ui__warning("Unsupported type %u, please considering update perf.\n",
-> > > +                           event->header.type);
-> > > +               /* Skip unsupported event by returning its size. */
-> > > +               return event->header.size;
-> > > +       }
-> > >
-> > >         events_stats__inc(&evlist->stats, event->header.type);
-> > >
-> > > --
-> > > 2.49.0.604.gff1f9ca942-goog
-> > >
+It seems a bit of network traffic is needed, too.
+
+
+# while true; do ./tc.sh; sleep 1; done
+13:33:43 7196kbit 29296kbit
+13:33:44 7196kbit 29296kbit
+...
+13:35:38 7196kbit 29296kbit
+13:35:39 7196kbit 29296kbit
+[panic]
+
+# while true; do ./tc.sh; sleep 1; done
+13:44:31 7196kbit 29296kbit
+13:44:32 7196kbit 29296kbit
+...
+13:44:52 7196kbit 29296kbit
+13:44:53 7196kbit 29296kbit
+[panic]
+
+The same place as usual
+ htb_dequeue+0x42f/0x610 [sch_htb]
+
+--------8<--------8<--------8<--------8<--------8<--------8<--------8<-----=
+---8<--------8<
+#!/usr/bin/bash
+
+set -o nounset
+set -o errexit
+
+export PATH=3D/usr/bin
+
+ext=3Dppp0
+ext_ingress=3Dppp0ifb0
+
+ext_up=3D7196kbit
+ext_down=3D29296kbit
+
+printf "%(%T)T $ext_up $ext_down\n"
+
+q=3D1486
+quantum=3D300
+
+modprobe act_mirred
+modprobe ifb
+modprobe sch_cake
+modprobe sch_fq_codel
+
+ethtool -K "$ext" tso off gso off gro off=20
+
+tc qdisc del dev "$ext" root		>& /dev/null || true
+tc qdisc del dev "$ext" ingress		>& /dev/null || true
+tc qdisc del dev "$ext_ingress" root	>& /dev/null || true
+tc qdisc del dev "$ext_ingress" ingress	>& /dev/null || true
+ip link del "$ext_ingress"  		>& /dev/null || true
+
+tc qdisc add dev "$ext" handle ffff: ingress
+
+ip link add name "$ext_ingress"  type ifb
+ip link set dev "$ext_ingress" up || true=20
+
+tc filter add dev "$ext" parent ffff: protocol all u32 match u32 0 0 action=
+ mirred egress redirect dev "$ext_ingress"
+tc qdisc add dev "$ext_ingress" root handle 1: htb default 11 r2q 20
+tc class add dev "$ext_ingress" parent 1: classid 1:1 htb rate $ext_down=20
+tc class add dev "$ext_ingress" parent 1:1 classid 1:11 htb rate $ext_down =
+prio 0 quantum $q
+tc qdisc add dev "$ext_ingress" parent 1:11 fq_codel quantum $quantum ecn
+tc qdisc add dev "$ext" root handle 1: htb default 11
+tc class add dev "$ext" parent 1: classid 1:1 htb rate $ext_up
+tc class add dev "$ext" parent 1:1 classid 1:11 htb rate $ext_up prio 0 qua=
+ntum $q
+tc qdisc add dev "$ext" parent 1:11 fq_codel quantum $quantum noecn
+--------8<--------8<--------8<--------8<--------8<--------8<--------8<-----=
+---8<--------8<
+
+--=20
+Alan J. Wylie     https://www.wylie.me.uk/     mailto:<alan@wylie.me.uk>
+
+Dance like no-one's watching. / Encrypt like everyone is.
+Security is inversely proportional to convenience
 
