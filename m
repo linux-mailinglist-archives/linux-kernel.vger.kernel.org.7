@@ -1,91 +1,157 @@
-Return-Path: <linux-kernel+bounces-618661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB13A9B177
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FB8A9B186
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AEA19480C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158C09248AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318281DF75D;
-	Thu, 24 Apr 2025 14:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD25A19F11E;
+	Thu, 24 Apr 2025 14:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqXJ/4Ou"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Nr4pd4D2"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814EC1DC998
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F44815533F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745506120; cv=none; b=bXIttxP0fXN/KuwhNaI6Pwdj3iClByQgZj+iDgBVfuYDqV3S2D4b6XMoYP3Z5GeYe97S4gu9VgqL/Tza/1/KM3XjScFA/6O3OQUuDe2ACgTApwKM/Fh4EV39mQtrsieeM8NSRiwsPhAi3YB1Dv83wICqcm68TfXGi4N8KLF49A4=
+	t=1745506216; cv=none; b=gFK7VPgFJnizJKF2JUnQyeWkbcpWlDiTf4FHhDGdKMBq/ehtiNLLWvVl4vEx4xuknqM99xNE3LkEaNni9r1KmXg/v0O9bZTCtlKeTEdz4PpOyhtWxkxbdzxXqtWErqtwhsY0ZjUH7WEZJPMviu5NkPy/DSfBs2mxQxzocIQg+ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745506120; c=relaxed/simple;
-	bh=zY1Gdjhw0ryjedYYn9LeRExVUDWHzemdAiHMlcLrowI=;
+	s=arc-20240116; t=1745506216; c=relaxed/simple;
+	bh=2Qi1X2wV66kBR7ygccoeXfSaX/YHmo5Z5Yf5J05Hrnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kP5ZrmzZn1z8HiMmQckBFnzgo1aBCnwBovKMKPIXmJkmID0PJ0OlawonbMDuOBZ3cTiuBRJcax/XmEogdhyd0SMhj17lJy99DIeJY+sYsIfKWjsnZ1ZXtilHQ3JbINuicRW2eQsBzcenjZzt80E0pI7vPQmsZVPruPb1b9QAwmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqXJ/4Ou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A52C4CEE8;
-	Thu, 24 Apr 2025 14:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745506120;
-	bh=zY1Gdjhw0ryjedYYn9LeRExVUDWHzemdAiHMlcLrowI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AqXJ/4Ou0h/+yAZSurxU/RkCzdyUWwOF0Ar1roWbuYLoptgbN4k+4VsbSPQwdp1VQ
-	 +GP1G/9vwrCxPHSole7j9VrKsZ1t2UusyT/PDXEj3N+eheWn2+6JrIrOSKeRYsYuRM
-	 6U8ETz0i03uioYRqok9cRt6nrocLDwT2DQfG7dwjE+ro9MzEFppKMeWXM7eJjuOYNx
-	 2Crgd+Y03xtD5XZyCi0O+W/FURM/Uua1PNmgKtwMADnVX7NWXhB9jlLTRdIW/B3M18
-	 fb40ByKUYnb91fdhatMXw3FIGvpCZpER+AuvX3iif7s1jhiimjbmaSINFi5HK45h4D
-	 XrQoKIYHXDaNw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9A50ECE191C; Thu, 24 Apr 2025 07:48:39 -0700 (PDT)
-Date: Thu, 24 Apr 2025 07:48:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Aishwarya.TCV@arm.com, sraithal@amd.com
-Subject: Re: [PATCH v2 ratelimit 11/14] ratelimit: Force re-initialization
- when rate-limiting re-enabled
-Message-ID: <80784ae7-50c6-4894-94af-8dcbb3c43db0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
- <20250418171359.1187719-11-paulmck@kernel.org>
- <257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk>
- <559db775-f151-4694-86e6-72809b386097@paulmck-laptop>
- <98e5ab65-7601-452e-9ebc-bb3a7426313e@sirena.org.uk>
- <fbcffae4-8d88-4bc8-8791-12713f0dc8c1@paulmck-laptop>
- <e6e8abd1-6aa6-423c-98e5-4daa99c4edbb@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQLSbx4vyk3XBFWb3Gve+BcpJKFDqpdQU9BA4EAwu8tUqo0ok2aJnZAE6CpWn8mOvpvca/kvzk+rw9eJJc2bMaBDYisXRkxMpgH6spBQepYhRmQT0iEVG3VCquZQlR5JTFG69G+urh5lfReEkj37KODm5Qt+IYZKihjqdH1z2VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Nr4pd4D2; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=YjpXgRpWlie3nhUpkIBO8PbIJqJF6f6xuXD5Vo6dKLk=; b=Nr4pd4D2RRdqU3qS
+	FoRqDTjUb3bVXqrUZ4Utexrrlomo82+grWdiEb+9+iB7IIvVw51zUGq1eJ61E5cJF5HbXZGc3NGjW
+	uONY7rAWk+Ag9Ly0cTZvzj0NdtkWaj++mYLni+mScGQKRQpIOXozGDCv+3Kpq8XuB+n0MKdm+ta8V
+	uVhKmqpNHq8YhVI2H06NACBPCai6RkKI1YareY2dRcfj9EGJtUzLAUz05ptxtoUi9wz0FK1In5CIv
+	dWNq19qsvCJAEInsyxdXwswM8vf5JKqgdztdkFGgkMD5CKo2oXXOx5PxC3NvLi0CYKEnYrpJbAoAE
+	v/As6Gk3CpU0LfrjBw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1u7xts-00Ddmv-1u;
+	Thu, 24 Apr 2025 14:50:04 +0000
+Date: Thu, 24 Apr 2025 14:50:04 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	alexander.deucher@amd.com, harry.wentland@amd.com,
+	sunpeng.li@amd.com, siqueira@igalia.com, christian.koenig@amd.com,
+	airlied@gmail.com, simona@ffwll.ch, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/radeon: Remove unused radeon_doorbell_free
+Message-ID: <aApPnAA_QLYhNn71@gallifrey>
+References: <20250418002117.130612-1-linux@treblig.org>
+ <20250418002117.130612-3-linux@treblig.org>
+ <ab85b3c9-46cc-4148-9de5-dcaabea130ea@wanadoo.fr>
+ <CADnq5_MrEQ2XGbNho6xd9Um0R6kEEpZBeu0e-97o6-D=juD0gw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e6e8abd1-6aa6-423c-98e5-4daa99c4edbb@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_MrEQ2XGbNho6xd9Um0R6kEEpZBeu0e-97o6-D=juD0gw@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:49:51 up 351 days,  2:03,  1 user,  load average: 0.04, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Apr 24, 2025 at 01:11:04PM +0100, Mark Brown wrote:
-> On Wed, Apr 23, 2025 at 12:54:39PM -0700, Paul E. McKenney wrote:
+* Alex Deucher (alexdeucher@gmail.com) wrote:
+> On Fri, Apr 18, 2025 at 2:18 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > Le 18/04/2025 à 02:21, linux@treblig.org a écrit :
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > >
+> > > radeon_doorbell_free() was added in 2013 by
+> > > commit 75efdee11b5d ("drm/radeon: implement simple doorbell page
+> > > allocator")
+> > > but never used.
+> >
+> > Hi,
+> >
+> > I think than instead of being removed, it should be used in the error
+> > handling path of cik_init() and in cik_fini().
 > 
-> > Could you please try the patch shown below?  I might actually have
-> > it right this time.  ;-)
+> Yes, ideally.  Care to make a patch to fix that?
+
+I can have a look at that.
+
+Dave
+
+> Thanks,
 > 
-> This seems to also fix the boot on the affected platforms.
-
-Thank you very much for bearing with me!
-
-							Thanx, Paul
+> Alex
+> 
+> >
+> > CJ
+> >
+> > >
+> > > Remove it.
+> > >
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > ---
+> > >   drivers/gpu/drm/radeon/radeon.h        |  1 -
+> > >   drivers/gpu/drm/radeon/radeon_device.c | 14 --------------
+> > >   2 files changed, 15 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
+> > > index 8605c074d9f7..58111fdf520d 100644
+> > > --- a/drivers/gpu/drm/radeon/radeon.h
+> > > +++ b/drivers/gpu/drm/radeon/radeon.h
+> > > @@ -686,7 +686,6 @@ struct radeon_doorbell {
+> > >   };
+> > >
+> > >   int radeon_doorbell_get(struct radeon_device *rdev, u32 *page);
+> > > -void radeon_doorbell_free(struct radeon_device *rdev, u32 doorbell);
+> > >
+> > >   /*
+> > >    * IRQS.
+> > > diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
+> > > index bbd39348a7ab..4127ffb4bb6f 100644
+> > > --- a/drivers/gpu/drm/radeon/radeon_device.c
+> > > +++ b/drivers/gpu/drm/radeon/radeon_device.c
+> > > @@ -392,20 +392,6 @@ int radeon_doorbell_get(struct radeon_device *rdev, u32 *doorbell)
+> > >       }
+> > >   }
+> > >
+> > > -/**
+> > > - * radeon_doorbell_free - Free a doorbell entry
+> > > - *
+> > > - * @rdev: radeon_device pointer
+> > > - * @doorbell: doorbell index
+> > > - *
+> > > - * Free a doorbell allocated for use by the driver (all asics)
+> > > - */
+> > > -void radeon_doorbell_free(struct radeon_device *rdev, u32 doorbell)
+> > > -{
+> > > -     if (doorbell < rdev->doorbell.num_doorbells)
+> > > -             __clear_bit(doorbell, rdev->doorbell.used);
+> > > -}
+> > > -
+> > >   /*
+> > >    * radeon_wb_*()
+> > >    * Writeback is the method by which the GPU updates special pages
+> >
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
