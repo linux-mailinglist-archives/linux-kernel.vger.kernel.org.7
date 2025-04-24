@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-618671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151A7A9B1A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1412A9B1B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADAF3B0B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B484460B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E29F1946AA;
-	Thu, 24 Apr 2025 15:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47041A5BAC;
+	Thu, 24 Apr 2025 15:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="G4RlSguV"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780E61B3939
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gze8Qcx0"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5161A2C25;
+	Thu, 24 Apr 2025 15:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745507133; cv=none; b=QEEU+S3WwYOWZxsbANKVHsdAY2WP8o8W2Fk1GEJE/IGMGY0bB3q9q19s7Whj/UmZYcEJB3PLKtLpuAw+adwnL8wSRIwEJGdj/k4sMegpYima2Cui632QIPP7jGhBf+fsfpYFVuxiQbD8Lod6cCQ/2ASZLtSflG5IqWORUNWiBvE=
+	t=1745507302; cv=none; b=nPFkIPdFmp66V4iq3q/KedR2sp4yPTBDdM8t4oV/ysunkMQxP/X6gnpSvhV+Gc738tT6OcE3X6kyt32gf1euZOT9ovbE6ZEHR2CtfbuuieTgOshhyDOs4rFXBKU/I+SnQKdaFnGsQsH4BIvS3GXmyqt8m9/szOcbySYCftt2Zhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745507133; c=relaxed/simple;
-	bh=unMncNq2brLx3SFqedtBHI7Svfe3aKAUdpwvabhKt5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPZ+PZeHyZ4wa+oy8kZ08FdJPkld53W4dW/UuDxIThzrdicTfUlNBz7dvyLtGHXs3ip2LAqDPyR0adI+nQIDIC+87R8xx4tJKq4R5ezZiS/GjM8TG7gis3aAP4bRKYIS2UOwWNGcvwAOOAQ9iu+6+7NwYU/xqahcaNbdbwOSneg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=G4RlSguV; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394a823036so11259535e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745507130; x=1746111930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=unMncNq2brLx3SFqedtBHI7Svfe3aKAUdpwvabhKt5s=;
-        b=G4RlSguVPSmqiPxmn1cdPJ2bxkg/+d/SdEQmbiGanFXuubcqJ1+1PIVZExoqzhSyq5
-         +DIg19t6x7hGVTaB92AEcHd/CXKUd263M+/Xu+XUWJldnShde5BLvNhxn40OEoKwn3xm
-         kqRBm2iXbCUl5vbSiZZD/v08PMT/eqclhHCVct3HrFFoAgShufWqJCdDD9t0SUaUHiCn
-         iyhX7dCZXL/vs6tqRQhqU+3p7IGiwMO65abo5orRGn5y2fUUOx0cVpDG+YBGjAZ5DS8G
-         ZF7542jgQf2/wIU1Kfg6OoT0KhqhQIDnx3FyisULIgXum8sVJaz6m9jkSmtuROqQC+N/
-         kzlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745507130; x=1746111930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=unMncNq2brLx3SFqedtBHI7Svfe3aKAUdpwvabhKt5s=;
-        b=uH/6UiKT7cYtv88Qe0Am2npuMdriVGNrJpzgxEUTXo++3BbhLLNrpoz0xC8YOGO/iP
-         HodcFx7/SYb9BSSbWMK3bp2iRMxqVIMUaTSJ9xUHo8rt2fkfdfpohclFw/2JVgmCVfpQ
-         6ciBQOGFUejEiJOWY7IrHJzXzYBFAyjynbcgD5Cywh2Ite1QSfW/pGDWzr1dowX708ly
-         TLOZ//0+s8fmGUL1rXWq/mDI6vwgOi3FWi3u1bnLAK9AkF9XzoB0P7hohD+O3ThgEBi7
-         awXaSMedeNoZMeA3KFbXpryTsixXX9KCTXbas7gKPVj4fpfrxesWWhMJ12/0rjlr3EUL
-         HkBA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9mw6g+vDc1k6GNBwTuvs4ylhwOw41QDA6VS9ILi7sOuLTA3pYG318D0RCVgXMZLKEFdBKCRTfLpVfs/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXvsdozre4bVodxP6VSYoQVWH5xunZutHT7zT0uT0kXDjUBHBf
-	DxYtxpI0qhO0jCGoBG7Bc0s3eeDXpmECCZvFoi/A6WDERkIAdP8ClJWLVRlyYs4=
-X-Gm-Gg: ASbGnctUhPhMhJqq63r5a5TR4JxfRQxdLQXQ6d3u/NLEC9gBBnQq9GRVl8fFY46lL8H
-	gG65OFeMaTNEnTV+4BXRgfEOjzOiWBGrM33LqdM8szFNvingNHqpLUB3nyXHTn1zMlK/JzeHT9X
-	Mmrskpl87aYX2dwTQ2YKlVah1Y8V9byABijePOuEV5wOLfpGLXLkM8DCMt4vjeFsOiUIFv6ZsSu
-	Itbyt4Yu08YnvykwmkBSDJrFc0dkfDJJkb68wg2IYNpru1ofFzBjuzeLbMPUHbAq58o0LOVl7Le
-	hu0EaldJKln/M2DuoVU+6sYtI6RipBFGscHwFtWtuvniPHQz91JWeUJnQmMi2gLEOzU+TF7AbRP
-	X+7n+zGc=
-X-Google-Smtp-Source: AGHT+IGZerVnzzo+3licesW6Rjehtmkd5CAagkG0LYgOKDQGkVRLoR8KgscNzd0tm4Vv9ry8z/vBqw==
-X-Received: by 2002:a05:600c:698d:b0:43c:f332:7038 with SMTP id 5b1f17b1804b1-4409bd76f40mr21710945e9.21.1745507126313;
-        Thu, 24 Apr 2025 08:05:26 -0700 (PDT)
-Received: from localhost (p200300f65f00780800000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f00:7808::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4408d8d191bsm63019605e9.1.2025.04.24.08.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 08:05:25 -0700 (PDT)
-Date: Thu, 24 Apr 2025 17:05:23 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Vladimir Zapolskiy <vz@mleia.com>, 
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Purva Yeshi <purvayeshi550@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: lpc32xx: Add #pwm-cells property to the two
- SoC PWMs
-Message-ID: <hbz3gikjqwuqmexzrxis43gmxcviiryihi7pdp3btdb3sopqi4@mssyr62bunxk>
-References: <20250403104915.251303-2-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1745507302; c=relaxed/simple;
+	bh=o0Ai0SZtFa2RI/ToDkaO+WyZAtbDmUgbncrOBGd7aoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vGYOFPCA1Q4pRuX+l9ur2Dj13++eTx2zb5T1pkyMq7JHwVn7jLgLtcutft0sBbL/zqd6Y7xiV68IeXbITttc/REUQdjGOHHU5mS09mDOfdbhx7mFPmCjEaB6sQE839Ggzi/1/QlQAPKQDCrgHS8cos/JmSym/u5WmTMz+VVZFBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gze8Qcx0; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=dxkLHxxes5L86/5YQKS8XzPz7S8vMgBcRlB7XXBOdd8=;
+	b=gze8Qcx0fL+kkSwV1lswzgml7JSlY6wzsY78QTxcRvsjVFQge7f4crLl52Tdcw
+	6Nfkk4XPs+Q4UdJTVruj1bY6nsi+RqsRjmXO1e6DEOMyYsJxw8WlEMj7sC8+sdls
+	eAI+HWAn5QbNQGbPg6KsM7Lg2kIsDX83MlbU/4YAVx8js=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBnQmWwUwpo+yqACQ--.5746S2;
+	Thu, 24 Apr 2025 23:07:29 +0800 (CST)
+Message-ID: <f8818830-d23f-468e-886e-a14a2f96ebb8@163.com>
+Date: Thu, 24 Apr 2025 23:07:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kubdbvpqoinlop4p"
-Content-Disposition: inline
-In-Reply-To: <20250403104915.251303-2-u.kleine-koenig@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/6] Refactor capability search into common macros
+To: lpieralisi@kernel.org, bhelgaas@google.com
+Cc: kw@linux.com, manivannan.sadhasivam@linaro.org,
+ ilpo.jarvinen@linux.intel.com, robh@kernel.org, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250409034156.92686-1-18255117159@163.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250409034156.92686-1-18255117159@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wBnQmWwUwpo+yqACQ--.5746S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFWkWw1rCryDCFy5JFW3GFg_yoW8Kry5pF
+	yrXwn3CrWrJa9a9an2yw4IkF43Aan7Ja47J3ySkwn3ZF17ZFy5Krn3Kw1rAFy2v397Xwnx
+	ZF4UJr9YkFn0ya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UVMKtUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwM5o2gKTGYWkgABsb
 
 
---kubdbvpqoinlop4p
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] ARM: dts: lpc32xx: Add #pwm-cells property to the two
- SoC PWMs
-MIME-Version: 1.0
+On 2025/4/9 11:41, Hans Zhang wrote:
+> 1. Introduce generic bus config read helper function.
+> 2. Clean up __pci_find_next_cap_ttl() readability.
+> 3. Refactor capability search into common macros.
+> 4. DWC/CDNS use common PCI host bridge macros for finding the
+>     capabilities.
+> 5. Use cdns_pcie_find_*capability to avoid hardcode.
+> 
+> Changes since v8:
+> - Split patch.
+> - The patch commit message were modified.
+> - Other patches(4/6, 5/6, 6/6) are unchanged.
+> 
+> Changes since v7:
+> - Patch 2/5 and 3/5 compilation error resolved.
+> - Other patches are unchanged.
+> 
+> Changes since v6:
+> - Refactor capability search into common macros.
+> - Delete pci-host-helpers.c and MAINTAINERS.
+> 
+> Changes since v5:
+> - If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
+>    the kernel's .text section even if it's known already at compile time
+>    that they're never going to be used (e.g. on x86).
+> - Move the API for find capabilitys to a new file called
+>    pci-host-helpers.c.
+> - Add new patch for MAINTAINERS.
+> 
+> Changes since v4:
+> - Resolved [v4 1/4] compilation warning.
+> - The patch subject and commit message were modified.
+> 
+> Changes since v3:
+> - Resolved [v3 1/4] compilation error.
+> - Other patches are not modified.
+> 
+> Changes since v2:
+> - Add and split into a series of patches.
+> 
+> Hans Zhang (6):
+>    PCI: Introduce generic bus config read helper function
+>    PCI: Clean up __pci_find_next_cap_ttl() readability
+>    PCI: Refactor capability search into common macros
+>    PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
+>    PCI: cadence: Use common PCI host bridge APIs for finding the
+>      capabilities
+>    PCI: cadence: Use cdns_pcie_find_*capability to avoid hardcode.
+> 
+>   drivers/pci/access.c                          | 17 ++++
+>   .../pci/controller/cadence/pcie-cadence-ep.c  | 40 +++++----
+>   drivers/pci/controller/cadence/pcie-cadence.c | 28 ++++++
+>   drivers/pci/controller/cadence/pcie-cadence.h | 18 ++--
+>   drivers/pci/controller/dwc/pcie-designware.c  | 72 ++-------------
+>   drivers/pci/pci.c                             | 68 ++------------
+>   drivers/pci/pci.h                             | 88 +++++++++++++++++++
+>   include/uapi/linux/pci_regs.h                 |  2 +
+>   8 files changed, 187 insertions(+), 146 deletions(-)
+> 
+> 
+> base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
 
-Hello,
 
-On Thu, Apr 03, 2025 at 12:49:14PM +0200, Uwe Kleine-K=F6nig wrote:
-> If these PWMs are to be used, a #pwm-cells property is necessary. The
-> right location for that is in the SoC's dtsi file to not make
-> machine.dts files repeat the value for each usage. Currently the
-> machines based on nxp/lpc/lpc32xx.dtsi don't make use of the PWMs, so
-> there are no properties to drop there.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+Dear all,
 
-I wonder if this patch is still on someone's radar. I didn't hear
-anything back and it's not in next.
+Gentle ping.
 
-Best regards
-Uwe
+Best regards,
+Hans
 
---kubdbvpqoinlop4p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgKUzAACgkQj4D7WH0S
-/k773QgAt0YvjENQdbx0qGBqEFrZ7A2MKIrQOmIzi5tHb4ZU5atUQjFVrspi85w7
-8E9dp57nMgLABhMSLsq9jFfOCEConixxOGhnnQ3uw8wi04mFHmicB0DJTIMAbT9S
-4VqYdC6GDtQXZfTjoSIYhas3c5n140j9rNEDYKvbmKfQye2cp6YifjKxeeWEF92M
-vB/e9r4X//tv3o3ZqrgRYuAan8T6xF7XjxyqHieZ3JcP+ZD/MwRksBMMgQBMLXyE
-uI1vrPLOKMiakQICU4pTT+JRR2+Kj0XufdXfAI+oz5GEiR8JwDDAl8XCdna6Vfjd
-KRhgqVp9RXsYnuWiOjkkCa80mr/xqQ==
-=nKWo
------END PGP SIGNATURE-----
-
---kubdbvpqoinlop4p--
 
