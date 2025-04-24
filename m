@@ -1,102 +1,65 @@
-Return-Path: <linux-kernel+bounces-618859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE54EA9B45F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB808A9B461
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2C09A06A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 826699A30C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C8928B505;
-	Thu, 24 Apr 2025 16:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E1028B4F8;
+	Thu, 24 Apr 2025 16:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVSZUf1F"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FnWs9dTi"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C43028A1F3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D8289364;
+	Thu, 24 Apr 2025 16:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513007; cv=none; b=IMH0azCWLPb6bh5L46ZD/W0+OESlUE65EJ6fvuwMHDTFq9QwC4UxwIsb09lU8LEECB4B1/hRWOJUw0bVhqDGhsx0UwTO+H4R+mrGWUy9MSPUMezv0uaBeGgdZEv4xEk/ybwErkB7TIRj4eoxE170lFDo8+ndQVuMXD7mN3GCnMk=
+	t=1745513024; cv=none; b=aEFTeht/4YikhZ9k+7eU16gvf4gkkYEnWWG614QmfkC5FqMIg0xSLt4BWDwlPtf6hSfzrvGRtPWCj6h5kc5c+GZ2+hbk7nZJmUSfiuCDnwvAZN6NJTKz68MWK6SxvhesRqZyk81HwagOdmNvCwaVhFZk2MuXcM0QeingVpURqmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513007; c=relaxed/simple;
-	bh=90CWwwHEFJv30peHy5c0A+eq76UrWGSZRoZ6Mg3LII0=;
+	s=arc-20240116; t=1745513024; c=relaxed/simple;
+	bh=1RBK2Q9ahQnBbtJntTBQY0ipwwDqIjPeeAtr2SSUqLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt0cS4sV8B6QDdJBhhfthFk3hY3KhOX+vb91f1LWInuz//TbYhknhGjvYeFcmzro86toVUZ8T44k/g9rZHVY+HsGacM14jNk3t11yauwIIN/JGbJirRt1UbzQoMxhyPj+hdTnn07KyxZSNjA5fjh9HgNEYe8n0nWvEcxT18Z3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVSZUf1F; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3913b539aabso694331f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745513002; x=1746117802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSuNi6jgd7WcC/uM9d2T2xs48Ig9Zxtluh/Uj+qej/g=;
-        b=rVSZUf1FO5nmQO6dWvkfKEgbeS8dnkhWyv4ssm/4OyQQ5jCSQBjLikDdU6Gr4LSA2H
-         SIANwuvQ5WplGjIAHr1zX9K8wwn0laBk9tgvccwgJyK44BTxrMQndGvX5TqJNAa4jFne
-         YpzK5U4hcXBUyhnpDxh+7USrWHOd+qzfTWT2I+m92W5gwsiEBNHmVnJr5QxV+lQzAwKe
-         zfxtBF995bSayCzwialATpHVcr3NSMDPM+eztVTtqKpz36/4kxpd+PbxonuGjmL2ssF7
-         kcrJYGKQCYoNovRW2EkDjt6i3si5zuYtO22C44U6RKMcoYceiADheRxNzptHOknA+2jg
-         0qfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745513002; x=1746117802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WSuNi6jgd7WcC/uM9d2T2xs48Ig9Zxtluh/Uj+qej/g=;
-        b=n2f53zuIbAeI/6kANmXkFKrsYH+2sDwtIC7SYB8rp6gHinosHdetqTB8EMhFxvJ71z
-         QRYugYStwbUVk2nuqlQmIYTMpcQ7tcsfGscgHDhSWy80KMOF4NDYSxWsdg9xfoQykZAg
-         WIrMVJTGtxjXgmNq95MRd3u5vVxh/IDQeKTo4FPG7FXytS07wRtsbVLEKCuL7UalZ4sp
-         N42gPY1CrzY/y6fMEBSGVoZhcgGe8KeTr3jj3cyT09FkQx3/qENsWS8KlaaIArh1yJVs
-         i7V7KAOn/J5pbmRfm9+aqD6lJtw9/EIFPdnMN2wItx5e7B7CdKjrfJxv8ESgxRrrYJ+v
-         cLhA==
-X-Gm-Message-State: AOJu0YzqiPZK7QNYg0+b7LSdGNCBM1rs0uXTGqvW6+K4adXEGHiDD3h0
-	dtCvcsMdcRd9BptCJdJYweKO7IPcL3aTC6UI1fWk1I3Joo0JxfNs8zBSxb2uykw=
-X-Gm-Gg: ASbGncuQVkWN6chQ/kku49AjdyVDakysVCOAFegSBj1QqasuGToesBLfh5YeD91gBMH
-	Z28TCzZqS16C1wEEHqdofzK5oF8cVRhKoJuzDcA/a9mRVQP6h+f1pA6WJcTAADIDEJgLdE1Jzdg
-	ZJ9N2tuh7SVry2loDBMe/p+tUudwB9lKcWy5lyxsxJ69R7NAo++y/Tcl+YwxtP3owxSpQSUOxbK
-	FfPOkmxNeWTr/SCHrG9LO301KePRCO/Q/7XRVpGOf5KLXcpDSQl0D0Pji6aZTxG3G8q+GcWb4tX
-	lbQ4LwXlUQ3mTlitQnq+RPLCPTHVymMO3vm/5cwnJ01oFA==
-X-Google-Smtp-Source: AGHT+IHYTqxFiUW0T1o5BtOdgRWCYlL7vEIbg3oFVcl1woXhmq4i0bj5/vY1/MFeshm4lNN8UbGb1g==
-X-Received: by 2002:a05:6000:1a8b:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-3a072ac3e07mr50047f8f.25.1745513002496;
-        Thu, 24 Apr 2025 09:43:22 -0700 (PDT)
-Received: from linaro.org ([2001:630:3c1:90:97e6:f326:b9e:1a85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4c30e2sm2611539f8f.48.2025.04.24.09.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 09:43:22 -0700 (PDT)
-Date: Thu, 24 Apr 2025 17:43:19 +0100
-From: Karim Manaouil <karim.manaouil@linaro.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, Alexander Graf <graf@amazon.com>,
-	Alex Elder <elder@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Fuad Tabba <tabba@google.com>, Joey Gouly <joey.gouly@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-	Quentin Perret <qperret@google.com>, Rob Herring <robh@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
-	Will Deacon <will@kernel.org>,
-	Haripranesh S <haripran@qti.qualcomm.com>,
-	Carl van Schaik <cvanscha@qti.qualcomm.com>,
-	Murali Nalajala <mnalajal@quicinc.com>,
-	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
-	Trilok Soni <tsoni@quicinc.com>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: Re: [RFC PATCH 00/34] Running Qualcomm's Gunyah Guests via KVM in EL1
-Message-ID: <20250424164319.p7a4qgmzn7jb7txz@linaro.org>
-References: <20250424141341.841734-1-karim.manaouil@linaro.org>
- <aApaGnFPhsWBZoQ2@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uw/gM2gBAkw6ezks544bA7Gg1IXPa+cTkFRjH1ruN++sqkfje/9FsgELqo5dDH5Ngzk5C+5T5dovggtozLmekN07ICgZNVl8PabZg3BNHdXGosjmDG7TvXIU/mbz0lVZW//VCgrsAdPgCU/UPDeMppOcM9DbF76nCldFUUWhO9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FnWs9dTi; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=W+/9EqQuci/NV2Gog2+DdNgVaNDmWVcoA608wVF69qQ=; b=FnWs9dTiWm5SFw+TgxoQ2BJgNC
+	mJVB5L/5aMJXm38UOdGlDkOvk6h0G9arIm3fTnkBqMVibTCFeQuZR+bephsOecZb4zpvrZE0fwbbr
+	89a7fUIRkbU2MCy9jRFZlZpJvmSZNZ0GYxFqGiK9x0tcSF2ypr+KdhERg9igTdiqOIbU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u7zfg-00AUV9-Vk; Thu, 24 Apr 2025 18:43:32 +0200
+Date: Thu, 24 Apr 2025 18:43:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v4 5/8] mfd: zl3073x: Add functions to work with
+ register mailboxes
+Message-ID: <5094e051-5504-48a5-b411-ed1a0d949eeb@lunn.ch>
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-6-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,51 +68,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aApaGnFPhsWBZoQ2@linux.dev>
+In-Reply-To: <20250424154722.534284-6-ivecera@redhat.com>
 
-On Thu, Apr 24, 2025 at 08:34:50AM -0700, Oliver Upton wrote:
-> On Thu, Apr 24, 2025 at 03:13:07PM +0100, Karim Manaouil wrote:
-> > This series introduces the capability of running Gunyah guests via KVM on
-> > Qualcomm SoCs shipped with Gunyah hypervisor [1] (e.g. RB3 Gen2).
-> > 
-> > The goal of this work is to port the existing Gunyah hypervisor support from a
-> > standalone driver interface [2] to KVM, with the aim of leveraging as much of the
-> > existing KVM infrastructure as possible to reduce duplication of effort around
-> > memory management (e.g. guest_memfd), irqfd, and other core components.
-> > 
-> > In short, Gunyah is a Type-1 hypervisor, meaning that it runs independently of any
-> > high-level OS kernel such as Linux and runs in a higher CPU privilege level than VMs.
-> > Gunyah is shipped as firmware and guests typically talk with Gunyah via hypercalls.
-> > KVM is designed to run as Type-2 hypervisor. This port allows KVM to run in EL1 and
-> > serve as the interface for VM lifecycle management,while offloading virtualization
-> > to Gunyah.
-> 
-> If you're keen on running your own hypervisor then I'm sorry, you get to
-> deal with it soup to nuts. Other hypervisors (e.g. mshv) have their own
-> kernel drivers for managing the host / UAPI parts of driving VMs.
-> 
-> The KVM arch interface is *internal* to KVM, not something to be
-> (ab)used for cramming in a non-KVM hypervisor. KVM and other hypervisors
-> can still share other bits of truly common infrastructure, like
-> guest_memfd.
-> 
-> I understand the value in what you're trying to do, but if you want it
-> to smell like KVM you may as well just let the user run it at EL2.
+> +static int
+> +zl3073x_write_reg(struct zl3073x_dev *zldev, unsigned int reg, const void *val)
+> +{
+> +	unsigned int len;
+> +	u8 buf[6];
+> +	int rc;
+> +
+> +	/* Offset of the last item in the indexed register or offset of
+> +	 * the non-indexed register itself.
+> +	 */
+> +	if (ZL_REG_OFFSET(reg) > ZL_REG_MAX_OFFSET(reg)) {
+> +		dev_err(zldev->dev, "Index of out range for reg 0x%04lx\n",
+> +			ZL_REG_ADDR(reg));
+> +		return -EINVAL;
+> +	}
+> +
+> +	len = ZL_REG_SIZE(reg);
 
-Hi Oliver,
+I suggested you add helpers for zl3073x_write_reg_u8(),
+zl3073x_write_reg_u16(), zl3073x_write_reg_32(), and
+zl3073x_write_reg_48(). The compiler will then do type checking for
+val, ensure what you pass is actually big enough.
 
-Thanks for your reply! I very much expected this take and my discussion
-with Qauclomm engineers also more or less had the same conclusion. There
-was a previous effort to go into this direction, but it never got
-implemented, so this was my (no bullshit) attempt at doing that!
+Here you have a void *val. You have no idea how big a value that
+pointer points to, and the compiler is not helping you.
 
-I believe that Qcom are more interested in having their own driver,
-instead (as Trilok pointed out in another thread). But this port could
-still be interesting for those who wanted to see KVM in EL1.
+I suggest you add the individual helpers. If you decided to keep the
+register meta data, you can validate the correct helper has been
+called.
 
-On the positive side, you get all the userspace tools (Qemu, Crosvm,
-kvmtool, cloud-hypervisor, firecracker) working with minimal effort.
-
-Cheers
-Karim
+	Andrew
 
