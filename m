@@ -1,243 +1,135 @@
-Return-Path: <linux-kernel+bounces-618901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F38A9B4CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:58:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92336A9B4D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6433E4A5D50
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6711BA649B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B102820D2;
-	Thu, 24 Apr 2025 16:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF7C28D85D;
+	Thu, 24 Apr 2025 16:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUw/iDT+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D5eG3B0W"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9290D28DEE0;
-	Thu, 24 Apr 2025 16:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845A728BAA0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513873; cv=none; b=QrwAKvC0dfGLOx7BQw/xlMUcLKn0hfl8Gdcw+wUF2Rrp+/A0snFM6LTWo8GRh8zA9LXhzm6cgot+YMzzjrVfNkCepIWm+C5fEzevTt8dsevCZd35GhNNJ4m6deD3R0UVZUOrvRddg7YJKOY+Yz/iue+Dbv2FPCL1awoUq/sdt9U=
+	t=1745513909; cv=none; b=Px75/4Bnl9WUfUMR4RuuDPCKE63GkMusvxLBgLnrr0KhmGxCzJ9ZkykD6UIlEAz0PF/kSgBeh0YwHco7r61Yqc0iFRKYhUCLUSw+O7d/J+O5kwW5ZICkTZI3W1C9xkXB62QSIlYkmW8aBeet5yKUXriN7KDoqxstvfwJKuOCVHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513873; c=relaxed/simple;
-	bh=d79kcU9GfFoXHHLFwRO0mS3MDxIZKtB6Ybwg07CqBHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UkQJnMYMbXQ0n5ivz0p+55HNvAtaiV9lgdiSUdQuSEQdg4GDhORN7HVN1U5pj5pOtL1j02j1ZLe7ALCOLxCNFHM5LRdqlhsbSIDw88zlwQou6Dz3J01nU0DKv1hQjWRGMMToNAYEBiEH0yPjbd9DbkRIbDEF+OTc5UkpjMTIvPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUw/iDT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA94C4CEE8;
-	Thu, 24 Apr 2025 16:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745513872;
-	bh=d79kcU9GfFoXHHLFwRO0mS3MDxIZKtB6Ybwg07CqBHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUw/iDT+6gw5mOAM5j6Vw9sQKNjGnCcO2p1tds/nPvQxhm5QqiPeva6vHDs9PQ9h4
-	 QXE/+JHx5hp33jrRTeNto+yvVZlOdnwBVexbS0ps9/BcZu6UB2BURU7jWrCktVt3Yx
-	 vWe5TrzysIRNgwm+Zq9fP1WcPAu4YCQJSuiY5lpjOGRBMXds2/kxSK0dg9TJOgUreR
-	 H95fBBiMKtPoQ7U/Uhv2WpPXHLgqH5eydc9N4p0cpWZm/YIssotgOIeG/9vUMq0f0T
-	 /JOaV1ftzzrlpbq9qJkcazC7BQW7c8AwUEgTxyCdNBx/w0mGJWM9fQGq8FVtdTULzF
-	 MqmPC9KUeSl1Q==
-Date: Thu, 24 Apr 2025 17:57:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH 2/2] net: mana: Allow MANA driver to allocate PCI vector
- dynamically
-Message-ID: <20250424165743.GJ3042781@horms.kernel.org>
-References: <1744817747-2920-1-git-send-email-shradhagupta@linux.microsoft.com>
- <1744817781-3243-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1745513909; c=relaxed/simple;
+	bh=lwIVb6Nui00ZfZD89j30bpJzTmw1n5wUZd7dfBimA3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F4lwjNWp9AJT87FVa+p6R/naY47TQ8VQrp/u9q+sDf2p4+//MJ1P1PXiSgvrC9jsqF+li/3QnF1hcjvPOFnzCa7iaPqbzx8FDx0xu4RgV69rBOCx6o8kK8UBwRwXJCuIE1r4Gf2+IoHhO/DmrQnnlqlK9vpKC4mcwTwOjm8wJhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D5eG3B0W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OC47BH017928
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:58:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/9+kJX3qmRmZ2snfGBmR0Ap3enazyk3U0iCrZ9pj2O0=; b=D5eG3B0W7PYD0ivr
+	qKb2yY8BsGuY3MHBXVwGb2Z0wEw47W/X1Y+34no5gp71saWSt3Pe0LUVaQT8oDQL
+	UbGeSxee79uaV5oJ4nRnSuU4BO8BKQMCPn/iAtKRHZIPrUibT4UsWyOmQ2/eWPWI
+	X8zohplUMo76IddWA6rs6ZTnRe5xBCvt4dPi6s9MEGA+/A/pmyoMFFjPQNafZ07Z
+	iAs+d4xko576QraV8Ibsa4sIS6uUYLT6jFgIqEizKJyMLsQ2dxE3YdjUM8M8yidF
+	W3PwBq6y3/5KhsjszBknN/H58VKxVVvoBMiOekD2np54JMTfuPgfSmkm1q7qei5u
+	9CVxEQ==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0eexp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:58:26 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3087a704c6bso1299515a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:58:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745513905; x=1746118705;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9+kJX3qmRmZ2snfGBmR0Ap3enazyk3U0iCrZ9pj2O0=;
+        b=hGmJrvWvfAAuQuOxG45sIjJWw2lESzPHhtWcXJZnqZBrO+Pdb1HuelUmf+FAisSxuA
+         SMVCxArj53QLmCsOXJkBr34QPVmACtBp1Xu65eWWPd/nscy7sZD+GbunycmrNCE0tF+W
+         lkIILVjBVFSCMlcYG6VXttjK9EHuv7tSzK03bqm+qDbvGsHfhBGTzh7Hg/AY9qCB2poK
+         iikRepCf9kktbj/K8z9JQ5P5TvULGz4dPANj397x1hW8zeNAGc41x+dBX9cfwMUJnJkZ
+         MkYSBYrt0pkFOMS8zqhxk18fAxV+8oyM4EL2GCpMc40u75/RMsuScqQWUBVJqjA4RRtc
+         wiWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0hTSB4ASlGIdYzn2M/OEktFChp9PvYnTeSVokJ9JDWSaX4L8bKw54976vUB2Q2YVaF1qe74KFNyEEW+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmXi93+QAc5NfPpI7WsN+v3n/pXw4UbmkK4TaNBhH/yZckIeml
+	hIUrOGx5nBfxxF++KOarTvxrr4l057p0s+nMGd5Qq/f+8k2BcHyAjdQOe4+UwToDO+FTNFNsJHo
+	0JIzKH4S5mynqRYg83t2ZviZXa0MALQMbIsZDhdjmB7FCeyTRnSnTk/rF6ZaYgBA=
+X-Gm-Gg: ASbGncthBr9lWfjkaUkvw7qk7Db5tGAxJIhilxjMLptzgToqDA2grLqy/rsLlp5rK/B
+	FrpOqDYixKF6o6EgEKdsFy2q5tJOxNp7a3jH4YstRjLU5Cd2e9qrkPYdIZ3O+tBzmVhQu4jxTv8
+	28wncGt+1lYqA+Ev5zqTh2g860Vog/O8q52+/AaSf9uwEMzQjD1qNXItlzWjk7hsbGrOAQhB2th
+	Pff8sUhlVWpa0/3tD7sgiZnzwSLFqXllPVrY/b61YDROn0ekzaCAKs1qo86dwTKKPFPgFcUi4dc
+	dobKXcS9lM9SsguxtP+swIU3PSX6WQcvvxcOcDCAT1LlmafTnqx7kPnKZF4LIAy27fM=
+X-Received: by 2002:a17:90b:2d0e:b0:305:5f25:59a5 with SMTP id 98e67ed59e1d1-309f56d8124mr558474a91.35.1745513905709;
+        Thu, 24 Apr 2025 09:58:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh1h0ZlmpzYkSjNOUZGfK3vhdOgJu5HDMU6J41zqG3DYFF1qB5+gZ+Sugq+6qPpgpDKZSMxw==
+X-Received: by 2002:a17:90b:2d0e:b0:305:5f25:59a5 with SMTP id 98e67ed59e1d1-309f56d8124mr558444a91.35.1745513905372;
+        Thu, 24 Apr 2025 09:58:25 -0700 (PDT)
+Received: from [10.71.109.146] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef09689fsm1644276a91.22.2025.04.24.09.58.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 09:58:24 -0700 (PDT)
+Message-ID: <3d583880-5e94-4f12-aa50-96d133276e4e@oss.qualcomm.com>
+Date: Thu, 24 Apr 2025 09:58:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1744817781-3243-1-git-send-email-shradhagupta@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: qcom: Fix PINGROUP defination for sm8750
+To: Maulik Shah <maulik.shah@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250424-pinctrl_sm8750-v1-1-b070790ccbce@oss.qualcomm.com>
+Content-Language: en-US
+From: Melody Olvera <melody.olvera@oss.qualcomm.com>
+In-Reply-To: <20250424-pinctrl_sm8750-v1-1-b070790ccbce@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 274GAxArGJylLTHpmXt2jZugbJUFrTYL
+X-Proofpoint-ORIG-GUID: 274GAxArGJylLTHpmXt2jZugbJUFrTYL
+X-Authority-Analysis: v=2.4 cv=Fv0F/3rq c=1 sm=1 tr=0 ts=680a6db2 cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=8B2AFzsc9gyHPfch_-wA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDExNiBTYWx0ZWRfX28bs7M4lDOWo EQ5YNbDDr2eLkOo4M/9y7Dtwnf4zgfnRMqRi6hv/B9NKCkUSxdjWTYqQuDT3IPc+qiErbWi7ObD kHO+adTmwqZnjiArZiUqzP49DQRc5KwNtBsQYJy4d74zQtj2L+mqy15P6fJNQbK/TpEV3ahCAik
+ L/Cl11QtkG1zHsz+Tx+0oKN9dqQcg0k/Bf1pT+971zHaSz84RyXAqcWGgcpFy1uM2b3KV/Is4Dw OuanD+2KbOKGip829Wocmqs0pb8jjC2SWhIy2ew9B/eXaEzApZ7APK2ieNvJXxocFT3tZiLU9ev lSHsSmcKFp9m/TmFTuI34YX+RP4ewxu2kX1pEIHTuHwyg8/qs4ehBQSc6cQrY0G/jyXJSr1rpSS
+ /cquvVYXo23qSRZ1yrE8JfkQDGadYycsgQ/5DT3mwW5QqvtvW5+wD/PLgIVCM9KdLdym/EFt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-24_07,2025-04-24_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=657 priorityscore=1501 suspectscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504240116
 
-On Wed, Apr 16, 2025 at 08:36:21AM -0700, Shradha Gupta wrote:
-> Currently, the MANA driver allocates pci vector statically based on
-> MANA_MAX_NUM_QUEUES and num_online_cpus() values and in some cases ends
-> up allocating more vectors than it needs.
-> This is because, by this time we do not have a HW channel and do not know
-> how many IRQs should be allocated.
-> To avoid this, we allocate 1 IRQ vector during the creation of HWC and
-> after getting the value supported by hardware, dynamically add the
-> remaining vectors.
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-Hi Shradha,
 
-Some minor nits from my side.
-
-...
-
-> diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-
-...
-
-> @@ -465,9 +475,10 @@ static int mana_gd_register_irq(struct gdma_queue *queue,
->  	struct gdma_irq_context *gic;
->  	struct gdma_context *gc;
->  	unsigned int msi_index;
-> -	unsigned long flags;
-> +	struct list_head *pos;
-> +	unsigned long flags, flag_irq;
->  	struct device *dev;
-> -	int err = 0;
-> +	int err = 0, count;
-
-As this is Networking code, please preserve the arrangement of local
-variables in reverse xmas tree order - longest line to shortest.
-
-Edward Cree's tool can be useful in this area:
-https://github.com/ecree-solarflare/xmastree
-
->  
->  	gc = gd->gdma_context;
->  	dev = gc->dev;
-> @@ -482,7 +493,22 @@ static int mana_gd_register_irq(struct gdma_queue *queue,
->  	}
->  
->  	queue->eq.msix_index = msi_index;
-> -	gic = &gc->irq_contexts[msi_index];
-> +
-> +	/* get the msi_index value from the list*/
-> +	count = 0;
-> +	spin_lock_irqsave(&gc->irq_ctxs_lock, flag_irq);
-> +	list_for_each(pos, &gc->irq_contexts) {
-> +		if (count == msi_index) {
-> +			gic = list_entry(pos, struct gdma_irq_context, gic_list);
-
-Please consider line wrapping to 80 columns or less, as is still preferred
-in Networking code.
-
-Likewise elsewhere in this patch.
-
-checkpatch.pl --max-line-length=80
-can be helpful here.
-
-> +			break;
-> +		}
-> +
-> +		count++;
-> +	}
-> +	spin_unlock_irqrestore(&gc->irq_ctxs_lock, flag_irq);
-> +
-> +	if (!gic)
-> +		return -1;
->  
->  	spin_lock_irqsave(&gic->lock, flags);
->  	list_add_rcu(&queue->entry, &gic->eq_list);
-> @@ -497,8 +523,10 @@ static void mana_gd_deregiser_irq(struct gdma_queue *queue)
->  	struct gdma_irq_context *gic;
->  	struct gdma_context *gc;
->  	unsigned int msix_index;
-> -	unsigned long flags;
-> +	struct list_head *pos;
-> +	unsigned long flags, flag_irq;
->  	struct gdma_queue *eq;
-> +	int count;
-
-Reverse xmas tree here too.
-
->  
->  	gc = gd->gdma_context;
->  
-> @@ -507,7 +535,22 @@ static void mana_gd_deregiser_irq(struct gdma_queue *queue)
->  	if (WARN_ON(msix_index >= gc->num_msix_usable))
->  		return;
->  
-> -	gic = &gc->irq_contexts[msix_index];
-> +	/* get the msi_index value from the list*/
-> +	count = 0;
-> +	spin_lock_irqsave(&gc->irq_ctxs_lock, flag_irq);
-> +	list_for_each(pos, &gc->irq_contexts) {
-> +		if (count == msix_index) {
-> +			gic = list_entry(pos, struct gdma_irq_context, gic_list);
-> +			break;
-> +		}
-> +
-> +		count++;
-> +	}
-> +	spin_unlock_irqrestore(&gc->irq_ctxs_lock, flag_irq);
-> +
-
-Does gic need to be initialised to NULL before the list_for_each loop
-to ensure that it is always initialised here?
-
-Flagged by Clang 20.1.2 KCFLAGS=-Wsometimes-uninitialized builds, and Smatch
-
-> +	if (!gic)
-> +		return;
-> +
->  	spin_lock_irqsave(&gic->lock, flags);
->  	list_for_each_entry_rcu(eq, &gic->eq_list, entry) {
->  		if (queue == eq) {
-
-...
-
-> @@ -1317,29 +1372,92 @@ static int irq_setup(unsigned int *irqs, unsigned int len, int node)
->  	return 0;
->  }
->  
-> -static int mana_gd_setup_irqs(struct pci_dev *pdev)
-> +static int mana_gd_setup_dyn_irqs(struct pci_dev *pdev, int nvec)
->  {
->  	struct gdma_context *gc = pci_get_drvdata(pdev);
-> -	unsigned int max_queues_per_port;
->  	struct gdma_irq_context *gic;
-> -	unsigned int max_irqs, cpu;
-> -	int start_irq_index = 1;
-> -	int nvec, *irqs, irq;
-> +	int *irqs, irq, skip_first_cpu = 0;
-> +	unsigned long flags;
->  	int err, i = 0, j;
-
-Reverse xmas tree here too.
-
->  
->  	cpus_read_lock();
-> -	max_queues_per_port = num_online_cpus();
-> -	if (max_queues_per_port > MANA_MAX_NUM_QUEUES)
-> -		max_queues_per_port = MANA_MAX_NUM_QUEUES;
-> +	spin_lock_irqsave(&gc->irq_ctxs_lock, flags);
-> +	irqs = kmalloc_array(nvec, sizeof(int), GFP_KERNEL);
-> +	if (!irqs) {
-> +		err = -ENOMEM;
-> +		goto free_irq_vector;
-> +	}
-
-...
+On 4/23/2025 9:47 PM, Maulik Shah wrote:
+> On newer SoCs intr_target_bit position is at 8 instead of 5. Fix it.
+>
+> Also add missing intr_wakeup_present_bit and intr_wakeup_enable_bit which
+> enables forwarding of GPIO interrupts to parent PDC interrupt controller.
+>
+> Fixes: afe9803e3b82 ("pinctrl: qcom: Add sm8750 pinctrl driver")
+> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
+> ---
+>   drivers/pinctrl/qcom/pinctrl-sm8750.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+Reviewed-by: Melody Olvera <melody.olvera@oss.qualcomm.com>
 
