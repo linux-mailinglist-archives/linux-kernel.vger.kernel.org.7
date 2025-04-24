@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-617411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEF9A99F6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43F6A99F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45CC445778
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD9F3A4D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27321A9B4C;
-	Thu, 24 Apr 2025 03:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA11A1A3BC0;
+	Thu, 24 Apr 2025 03:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIrBJVIC"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFYZnSwy"
+Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15DF1A23BE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B598D528;
+	Thu, 24 Apr 2025 03:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745464318; cv=none; b=pQl1de1GkD5fR164TxZ8VgntvwaWcI2GySTqT9n5G2r8Ju1+y/KtVrQhAB+bd6IIdYKbBzu3uU0LMOSKJ/a+rHlcNaUFyPcfcICKyez6fZvLX47vHeOGFZCu9KMSOZYjKjfl+odXttdJlKrwSHYghHsTgAhD4hqSIQCY5RGk6bk=
+	t=1745464478; cv=none; b=AZ+od2CoDOY3SZRoddfPyYEkxEcc+8pu+4FN5S+sxRLOog2goGMeWvw6YZPp8JJoWJt5zcbFJ2jDTWwpXCty0kQizmlXzmMSb+JaPHZWwHqToywhBbsdJkuQ7HSUITCZHPCwecaEQqH+OLFpZ0pEIWqu435M/EF5UDeJtOQUIJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745464318; c=relaxed/simple;
-	bh=JwOksf4B29z069WOf69FaTunOS4j0GfB7eBpiEZONzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljuCIzEuBUcE/2zosxJAW4Y9xWEtXgnKQHaNznePydX9uxe/kTnkhreS1Cjos1nzVWVFdnrgyfuxcinzyjXby9cZYT3EyyNcS/iPuV8F7eT8TQxm9Zr1i6sky4A/frrg6sT9dlQxTVZa1vFy0B6sLzf0qAijtJbVX9vZ8JjsQEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIrBJVIC; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1745464478; c=relaxed/simple;
+	bh=uxqqPLtfquSGpR0a3F5lgTtkpuZBETiI2PWs7xLi6e0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EBUJDDYBh8SXRGIpq+WaZSPI63BvcAflggx5M2qHoimzWhw4u+FtlcahlclOFjD6VAG84cnSZFxLmAVcobzBfbzPZzxy6kq/H70l+spTuJXGIdMg6wtZBstbDlQciye5hNlWonWniC53XRRp5GHw4PpQyyVuaZeCuTTATIU8dmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFYZnSwy; arc=none smtp.client-ip=209.85.208.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-73c17c770a7so595879b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 20:11:55 -0700 (PDT)
+Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-317f68d0dffso898721fa.2;
+        Wed, 23 Apr 2025 20:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745464315; x=1746069115; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5KwGgD9VQC/2dUan7jrHG+qH6zjlfqwlPGHyOdQtows=;
-        b=XIrBJVICFfqOmAoCwJdIRoMqnpNI+G1FUTT5qqBksipMX3GPBQVfXp7hG0KCt9GHnw
-         yg1FbDnrLpFwcLoW+SnsaCbez9hHnwnZFA/9mwbRWEEY2R9xW9uJRnCHslxD05nnMNo+
-         MkxuvS+DmQOo/+aTP5lgjmZwxUyzcsQVTWA4h+OyDyAdMFKBkNYDbM5bEPok7jj0ieCB
-         Ul5jSAJzYF702gzC/ff7rTVzdv9hdVdy4WtYZWTNnQyghTWrAJtdbCR5taPrK6f8OFc+
-         YtZti3fuMim4gRj8LIpi88laBCfB90makHpTw5ZW441SI49idpAedkV2F17SyUbfp//P
-         Apaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745464315; x=1746069115;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1745464474; x=1746069274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5KwGgD9VQC/2dUan7jrHG+qH6zjlfqwlPGHyOdQtows=;
-        b=ShVMIFW9f/92ySCUPirAOABvTSO/Of0SyXvmrY4JDmMggWKg0mOd9GKV9IE1Dc9vka
-         tAtS6vHY8lIBvrr2ASi84UgVTFJf0qB5NbFdKb5OY4DKetYxX42nk/T5U9RPBPdjZqAQ
-         BupzgfMyGGxFjRvO6KmmVil3dzecanCkB3eEVzOrmadtMiyQzE/4wvexoam8XF6Chsh2
-         mWYWIahmcfA5oV/NowbfyKWXuytzLVmimCBXmYzeC1ZXHaE4MNOiOGbIhe1WbrqvsKRu
-         zNc/5cleXhtVB4f7DBIYef8QANRelApwbE81cW4T/D8BySbTz7IlErOSkRvD1K47kBVq
-         F8VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtnasg58/MDgdcy9d44giFBhNR7JCAkWs6DIvxR0VtbPYHbfozH1dx383baZaS9TeCb8O61u8ffGqw0Uo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX3y9X0KKNoNJnk+TKZokVkbHuBwFci8wa74JJFMMHxD4aNgHb
-	5YhGfYFa9ZRACUjjwvGRkuE23PNU1wY/o3JCkc+ggALak5kT7dzn
-X-Gm-Gg: ASbGncs73WFHnfudJthN9hDqFAUvz1iupyeATnng8fo/PcI0o6Venl/7VonDy+/vm0E
-	ejkO55L4UlwBeDLvcKhG8z/MegIq4oulxtXKsXdpB99rFNO+RYcenT46nQfWGx3gD/Zq59h6NZD
-	V9ZzwLcsJB9PvnfBWNEezt/hE05KLGVJta0KDs58os56AgQt4NZzozGKIail0yKKLW9aTI7gAEv
-	vZwd784oh5VmV7Y1WMSl4UKjpd70mLjVC3B3EGYQbEhZnsdoeDlfKIqIHCvjGHUNJkPx6l6m8Df
-	fuvWrmr747v2ZRnuKoFtAlU4zrM2jMYLngYkPNUQn5renz8lGPI=
-X-Google-Smtp-Source: AGHT+IHvRakZu+AS1ZJ07+rcHCZ25CI0ki6eQKawATNdO9nx7I1xsboL2eIP8OhCYfuuXa87KsaqDQ==
-X-Received: by 2002:a05:6a00:1483:b0:736:35d4:f03f with SMTP id d2e1a72fcca58-73e246188b5mr1574407b3a.6.1745464315031;
-        Wed, 23 Apr 2025 20:11:55 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25912fc6sm353610b3a.12.2025.04.23.20.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 20:11:54 -0700 (PDT)
-Date: Wed, 23 Apr 2025 23:11:52 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>
-Subject: Re: [PATCH 0/4] cpumask: add missing API and simplify
- cpumask_any_housekeeping()
-Message-ID: <aAmr-FktkJiI-bxd@yury>
-References: <20250407153856.133093-1-yury.norov@gmail.com>
- <240d0962-b381-479f-b3ed-4e6ce72d6570@intel.com>
+        bh=kyqpXtC+2wI8GWT7piY98hrPsFMqRLLtqHGrUWcefco=;
+        b=hFYZnSwyoDhP6DdtuLQPwv2ePsq3JKBdRlO9LfOoEKsRMP/OsbGR8GLK5ZPaxl38re
+         5SvptYEC8Kg/W3SzU57xSUoh2y7k+F0g8RiK+3rY8xSNcxWVPnFPiluEaG/rKqk3HO4o
+         OOdPUvUG1m2J6tceGwI+w+zj+s7XgkUDTK2beUrgQuB4o6c5BfIBOi3Rq5O3CnCP6uie
+         tonv/+HPce5tLFVUU/VfLrqlZtYsANVvVBZgBK0mgxuK7GEhs0Yt4CNxvltsZ+GR4cYz
+         Kn9gPmVdDqjGh9phlKf1noUmwOFXXtxbel23vTgk6JS5LQaQ1XZVeC7uN8pR+9tfQgy6
+         Ax5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745464474; x=1746069274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kyqpXtC+2wI8GWT7piY98hrPsFMqRLLtqHGrUWcefco=;
+        b=WIPD5DxPHL1cFKIfvFC1Hu6utVCG/CgIlkvVhM2XszsymlqqQW1/kHowrpmmyK3JOe
+         GCrzlNfaiqAAm6Prc2TdpB4nqcakoO+y+EI4egN5YzrhCNw7GerUwcC6cqiJdRP1s07r
+         uAb0EpcglaceHuwetToghijc0PQL/b4FgZtMdzRlmCuos7L/0Mg2mtThebd0hl6VTJ46
+         Ld3BWsobKStxaRPtEbeMXYZedaG7XFJJtiXUnwJIAwG053z6ct2y4xaviO3F8+qQcAVf
+         WYvZymIVkwfa9TGpTuG2//GEUzm4B8218GSoUF03nSQQ+LvJDq2f3xrpXHAiYrj7eFGD
+         q6qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAyizNqpypp6H4jei1FC73CZxbEoqEnJC+5UWu8rQ0Q+jwIy/L//6vyqwgJyYfZmCvbK5LpvmatVoL2hM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzARZ0u/UXsHHE5MZNu+BSr22TWD9sFo6w9CTft6gBBKOSSvJX7
+	8WrMDnf7QSU1i0U0j/J7GsU9jMpFxnHqjSlMVdl8Z9h+YUFFmxoRNPH307PNAO0NEYaXT7c5mX+
+	8QHpm7nb3uHs43PwG9UZ70Rs/MMk=
+X-Gm-Gg: ASbGncvI2WvraSngLfRYEPsbYwRXvXZ/Cpdy29qFJy64q+oNEqdyc73AO4Vu03ltmXD
+	patRt4bjsN3rBcIYlg2NSFyZLnVCf8qEEDuSl2OdjBX+rXzDzT8HGidxo7HSnOYqbdIeKp2aSZC
+	SNHH8P0XfCugC8LcwWvqD/1w==
+X-Google-Smtp-Source: AGHT+IGLoadUpQLTRLCAJ3l6g3fgJzXL2nB55IKQNckSaeWghU0ctmrMm7oAhGiEdKP+jogLXP6EGndVW8TtTOnmOU4=
+X-Received: by 2002:a05:651c:50e:b0:309:26e8:cb1a with SMTP id
+ 38308e7fff4ca-3179facababmr4257241fa.30.1745464474217; Wed, 23 Apr 2025
+ 20:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <240d0962-b381-479f-b3ed-4e6ce72d6570@intel.com>
+References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+In-Reply-To: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+From: henry martin <bsdhenrymartin@gmail.com>
+Date: Thu, 24 Apr 2025 11:14:24 +0800
+X-Gm-Features: ATxdqUFJtavlghAgSoe50QLBzyCPUPVj3ZXniFpQiDgK1QwMzwYglV3Fm_q4cmw
+Message-ID: <CAEnQdOopYHSK_SVAaEjVDCq9Jk5xQCe02YZnKXnbNHcePC2O1A@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: davinci: Add NULL check in davinci_lpsc_clk_register()
+To: mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	david@lechnology.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 02:27:46PM -0700, Reinette Chatre wrote:
-> +James
-> 
-> Hi Yury,
-> 
-> On 4/7/25 8:38 AM, Yury Norov wrote:
-> > From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-> > 
-> > cpumask library missed some flavors of cpumask_any_but(), which makes
-> > users to workaround it by using less efficient cpumask_nth() functions.
-> > 
-> > Yury Norov (4):
-> >   relax cpumask_any_but()
-> >   find: add find_first_andnot_bit()
-> >   cpumask_first_andnot
-> >   resctrl
-> 
-> (sidenote: above list of patch subjects do not match the series)
-> 
-> Thank you very much for doing this work. This simplifies resctrl code
-> significantly. I do have a couple of comments that you will find in
-> the individual patches. 
+Hi Michael, Stephen,
 
-Sure, glad to see you like it.
- 
-> Regarding upstreaming I would like to propose that the upstreaming of
-> this work be split so that resctrl changes do not go upstream
-> via separate trees during this cycle. I am ok with delaying the resctrl
-> portion of this work for a cycle. This is because we hope to include a
-> huge change [1] to resctrl that includes the code modified in this series.
-> Having these two changes meet during merge window will be inconvenient
-> for maintainers involved. If you require a user to upstream these new
-> helpers then another possibility is to upstream this work via the tip repo
-> if that is ok with x86 maintainers so that that huge resctrl patch is created on
-> top if this work.
-> 
-> Reinette
-> 
-> [1] https://lore.kernel.org/lkml/20250411164229.23413-18-james.morse@arm.com/
+I wanted to follow up on my previous patch submission to check if there are=
+ any
+additional feedback or changes you'd like me to address. If so, I=E2=80=99d=
+ be happy to
+incorporate them and send a v2.
 
-I can move all the patches with my branch (bitmap-for-next) if you ack
-the restcl part, or let resctl folks (you, I guess) take over the series.
-Or we can split it, so I'll move generic part myself, and you'll move
-the last patch.
+Regards,
+Henry
 
-Thanks,
-Yury
+Henry Martin <bsdhenrymartin@gmail.com> =E4=BA=8E2025=E5=B9=B44=E6=9C=881=
+=E6=97=A5=E5=91=A8=E4=BA=8C 21:13=E5=86=99=E9=81=93=EF=BC=9A
+>
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> davinci_lpsc_clk_register() does not check for this case, which results
+> in a NULL pointer dereference.
+>
+> Add NULL check after devm_kasprintf() to prevent this issue and ensuring
+> no resources are left allocated.
+>
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
+>  drivers/clk/davinci/psc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+> index b48322176c21..f3ee9397bb0c 100644
+> --- a/drivers/clk/davinci/psc.c
+> +++ b/drivers/clk/davinci/psc.c
+> @@ -277,6 +277,11 @@ davinci_lpsc_clk_register(struct device *dev, const =
+char *name,
+>
+>         lpsc->pm_domain.name =3D devm_kasprintf(dev, GFP_KERNEL, "%s: %s"=
+,
+>                                               best_dev_name(dev), name);
+> +       if (!lpsc->pm_domain.name) {
+> +               clk_hw_unregister(&lpsc->hw);
+> +               kfree(lpsc);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+>         lpsc->pm_domain.attach_dev =3D davinci_psc_genpd_attach_dev;
+>         lpsc->pm_domain.detach_dev =3D davinci_psc_genpd_detach_dev;
+>         lpsc->pm_domain.flags =3D GENPD_FLAG_PM_CLK;
+> --
+> 2.34.1
+>
 
