@@ -1,152 +1,180 @@
-Return-Path: <linux-kernel+bounces-618834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE11EA9B407
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B81CA9B40F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A157AB592
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991FD1BC11E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20A028BA9E;
-	Thu, 24 Apr 2025 16:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BC3289345;
+	Thu, 24 Apr 2025 16:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QW4j305w"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWHXFCnJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4EE28936A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E95289341
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745512214; cv=none; b=LXjbqPWqSNIc71MHWGJHZbxQQfiY7Zn91d5cFMOThSg8bJyfOH4mkFGlDnyW2Ufc61Knln62F+wxgs4DAllLNHXn5uBSPQDAzFJiXJFVfrJMFBOHRXWFdjT0pEWTN0fopHbQxdb+mCeRRyIrAnvgaUHYBF0EdO5Uied/Jar3lpE=
+	t=1745512169; cv=none; b=ZvqQYIiAwO/m9MYY3UKhkhr4RYVHsYvlRGEjGvMP8oEEAaiS1TQF+qVoKc8VR6fXuVyech7/hZITK0yZLOnLdqmnlTqtTQnZqIamQWHAqmpXSLPvW57m4XaEktnHu9Wc5Lq+YVnVfAXfFCrDx5xUwXTQ6i+aLBRPMF3JskRcOmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745512214; c=relaxed/simple;
-	bh=JJZdea62+qDixd1wjQBZlt7O6LaJyF5R3D6HeNaAYlM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aO6eYeNHF6eOVXJzX+NsCN9821Lhg1bXSh3i1vJBf3axK/8YcYFpH7G1YwOz7czytXVzBzgsO6QXabx6H+TYih/kDj+bzCofDvoZpIJM9IJ0Oc3eLj14AaUGFD7y3/liB3G9Y7TR8YrVr6PdtEhOidHwVKWfxoCoTe9l9WDIOy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QW4j305w; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b0b2ce7cc81so1178310a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745512212; x=1746117012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnYu8oXqkrED+USHfXzllDeNP8BZXlteEK0vrpIinxU=;
-        b=QW4j305w7H48kgn6vTpBTRiv9q6bIC68QPVNr8b5ovyA1IaV+IoFAXGwz8UhHpY54w
-         UcNd2404WhHYWEhwnMyaf9z1SMjwypNw4NyaA+ez3MUudZca5bRUMQspQVX+W67cwzPa
-         aRlPHCWvY+anAKCGXkb/yO0QAF4NMEO3ISUFijKFaiqTZAxdWDaygfG5MrYYc3QGe9HF
-         sFVich86SBs8apMmF30s4XNzjrh2llkKeue1XawS/6JdNRT5yX/7IKDVdLArtIaf/BMk
-         wa7pD7mbqf/cFWgtiZFcUNCv69SA2uMGxJy5uDTRdAhzHnvzJmHWxVMTSlgAkyh4sC7A
-         bKWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745512212; x=1746117012;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rnYu8oXqkrED+USHfXzllDeNP8BZXlteEK0vrpIinxU=;
-        b=XcVZ+0+7T6stYej+fNZysVlOhV796TDaxVlKAb2zq7PO0dwILRl2UVPbuq12BQFBJS
-         cA2A/ne5AREt3VbniddHf2KBrmlsXejBuqbiYjYxNYtaDu6eZi4ArIjJtN1dx373XV/5
-         iwfm2M0WIPrUb4dW41Bv/JGrwOKhx7bz+bmpb8coJvedpgB4eKVP8tPz4wi8EfXqB8sv
-         DsPjhV+GHDoBdMiv3SO6wxmScobJnbGlGTJ6gBX4HUByvFmpydvybRtCod3TRB3f4GSp
-         O1KRjX+yx34m6yC3C0pThE7CKlrHxQhfsRgvUQun1AWb7N10M5+Qx+8aa2TX6/wvKED+
-         Zm9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEjq7nEFhWOtUNSbJWHNaXJgpCAQiYKW0shCuZrNnrK9nwK2LzPpRQ/WisrGy0kfR/FsBgUEkARkf/2Rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKu7eHAPwv/Af9tBrU7pOP8EzmM8+2JWh4lliqh0O/vIB7bVxR
-	G8JhhMSLjW//UjTRFZP0lIQt7DBIutwOkTnpk2pND7f2OP9DZB5l
-X-Gm-Gg: ASbGncuDwefLhLWaMpKo2parB/4XbtaC6BKSzfW9bTpaCXc1cam6q7maNk2G+I22uMo
-	JwicdxNGtbLiXR/ij+vaW/x9rZAocKF+I1JDhhwtxJiZDqSdSvGzzj3sDnmVo9MTjuiwBgtpV8Q
-	ThWNJtbMH59+4TN+utOnLwXk5H06ytXarM0wDvxjlLxjkjPuezWlE/j5n9cpslKPTpvWMOYIfWu
-	zQ7Pp2a2EMEj3lgvFx569kr43jA3J7BgKVy1RBdf79VrEGDWYKoJCkhzaNisQspBhnbXtLhMfVh
-	TyAMK9rI/+aOKWUalSQQjJPgnundwpDqYpHz/+sQuD2HtmDMaIJ/FWGswuOB
-X-Google-Smtp-Source: AGHT+IGYph1SNjwma0hVJDpnZpc4EAmA2vohPxjOCmeCZtX7T7ijJ8j8mo/0PwoMkxiHPvgCy1FkZw==
-X-Received: by 2002:a05:6a20:cd92:b0:1f5:7eee:bb10 with SMTP id adf61e73a8af0-20444e7ab23mr5763937637.8.1745512211729;
-        Thu, 24 Apr 2025 09:30:11 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:c408:a0b5:82a7:fae4:9cf0:3b75])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a995edsm1650876b3a.130.2025.04.24.09.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 09:30:11 -0700 (PDT)
-From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	ocfs2-devel@oss.oracle.com,
+	s=arc-20240116; t=1745512169; c=relaxed/simple;
+	bh=Gz7Clq7IgRybiKXV/CHGhqPgFOb+cxmx46iqHmQXvm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bx8XPmohwoATCIVdYsFdFZPFc7Q2sPbNEGwyvSkk15HmWslLk/GCEELBqo28jOUIU5kVv4Y7nlgM/EY1mcAy5Y2JNrvTtQFSmqYslauEDNJYq4516mUhQPzKBx3eS9+b/BYfTRNSZEYwyC64+xVNnaTsf+EBwpWLPN6o4rSasLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWHXFCnJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1B6C4CEE3;
+	Thu, 24 Apr 2025 16:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745512169;
+	bh=Gz7Clq7IgRybiKXV/CHGhqPgFOb+cxmx46iqHmQXvm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WWHXFCnJvHPZX7BrAz/VHdhOdbqh17XrKL/xV8wxCUkg32Ox9khVXmVvvLob1C4aJ
+	 aBAlde+akgZxTGEJudVNdlTqjXHYfDRoZNRniXyjUO4PEoAcencjYwGd+Yl8aYBQRU
+	 I0a/rEwkHB886XX4wmv05PgAFysYNK3bXTPigF2mvHRoRTrX/l5Zh6KBR90xvebLSl
+	 b3XVu5jCLw6zeaU/tFv0wu33SC9o+mdNkeTFmlCqpscoHpRmTiFFLcq+3AxblJnWUr
+	 /oixTHw46rIFueTfHIu2V5249V7PTjAFUyPWlh5D8X3MJk7NxMOTRScATVEv1DRr0u
+	 Bz+WaT7yt4rPA==
+Date: Thu, 24 Apr 2025 19:29:19 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>, Wei Yang <richard.weiyang@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
+	Frank van der Linden <fvdl@google.com>,
+	York Jasper Niebuhr <yjnworkstation@gmail.com>, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Cc: kevinpaul468@gmail.com
-Subject: [PATCH] ocfs2: fix deadlock in ocfs2_get_system_file_inode
-Date: Thu, 24 Apr 2025 21:59:11 +0530
-Message-Id: <20250424162911.51413-1-kevinpaul468@gmail.com>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH] memblock: mark init_deferred_page as __init_memblock
+Message-ID: <aApm344CnIwy4s2d@kernel.org>
+References: <20250423160824.1498493-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423160824.1498493-1-arnd@kernel.org>
 
-commit: 7bf1823e010e8db2fb649c790bd1b449a75f52d8 upstream
+On Wed, Apr 23, 2025 at 06:08:08PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> On architectures that set CONFIG_ARCH_KEEP_MEMBLOCK, memmap_init_kho_scratch_pages
+> is not discarded but calls a function that is:
+> 
+> WARNING: modpost: vmlinux: section mismatch in reference: memmap_init_kho_scratch_pages+0x120 (section: .text) -> init_deferred_page (section: .init.text)
+> ERROR: modpost: Section mismatches detected.
+> Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+> 
+> Mark init_deferred_page the same way as memmap_init_kho_scratch_pages
+> to avoid that warning. Unfortunately this requires marking additional
+> functions the same way to have them stay around as well.
+> 
+> Ideally memmap_init_kho_scratch_pages would become __meminit instead
+> of __init_memblock, but I could not convince myself that this is safe.
 
-syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
-
-The scenario is depicted here,
-
-	CPU0					CPU1
-lock(&ocfs2_file_ip_alloc_sem_key);
-                               lock(&osb->system_file_mutex);
-                               lock(&ocfs2_file_ip_alloc_sem_key);
-lock(&osb->system_file_mutex);
-
-The function calls which could lead to this are:
-
-CPU0
-ocfs2_mknod - lock(&ocfs2_file_ip_alloc_sem_key);
-.
-.
-.
-ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
-
-CPU1 -
-ocfs2_fill_super - lock(&osb->system_file_mutex);
-.
-.
-.
-ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
-
-This issue can be resolved by making the down_read -> down_read_try
-in the ocfs2_read_virt_blocks.
-
-[1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-
-Link: https://lkml.kernel.org/r/20240924093257.7181-1-pvmohammedanees2003@gmail.com
-Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
----
- fs/ocfs2/extent_map.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-index 70a768b623cf..f7672472fa82 100644
---- a/fs/ocfs2/extent_map.c
-+++ b/fs/ocfs2/extent_map.c
-@@ -973,7 +973,13 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
- 	}
+It should be __init even, as well as a few other kho-memblock
+functions.
+I'll run some builds to make sure I'm not missing anything.
  
- 	while (done < nr) {
--		down_read(&OCFS2_I(inode)->ip_alloc_sem);
-+		if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem)) {
-+			rc = -EAGAIN;
-+			mlog(ML_ERROR,
-+				 "Inode #%llu ip_alloc_sem is temporarily unavailable\n",
-+				 (unsigned long long)OCFS2_I(inode)->ip_blkno);
-+			break;
-+		}
- 		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
- 						 &p_block, &p_count, NULL);
- 		up_read(&OCFS2_I(inode)->ip_alloc_sem);
--- 
-2.39.5
+> Fixes: 1b7936623970 ("memblock: introduce memmap_init_kho_scratch()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  mm/internal.h | 7 ++++---
+>  mm/mm_init.c  | 8 ++++----
+>  2 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 838f840ded83..40464f755092 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -9,6 +9,7 @@
+>  
+>  #include <linux/fs.h>
+>  #include <linux/khugepaged.h>
+> +#include <linux/memblock.h>
+>  #include <linux/mm.h>
+>  #include <linux/mm_inline.h>
+>  #include <linux/pagemap.h>
+> @@ -543,7 +544,7 @@ extern int defrag_mode;
+>  
+>  void setup_per_zone_wmarks(void);
+>  void calculate_min_free_kbytes(void);
+> -int __meminit init_per_zone_wmark_min(void);
+> +int __init_memblock init_per_zone_wmark_min(void);
+>  void page_alloc_sysctl_init(void);
+>  
+>  /*
+> @@ -1532,9 +1533,9 @@ static inline bool pte_needs_soft_dirty_wp(struct vm_area_struct *vma, pte_t pte
+>  	return vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte);
+>  }
+>  
+> -void __meminit __init_single_page(struct page *page, unsigned long pfn,
+> +void __init_memblock __init_single_page(struct page *page, unsigned long pfn,
+>  				unsigned long zone, int nid);
+> -void __meminit __init_page_from_nid(unsigned long pfn, int nid);
+> +void __init_memblock __init_page_from_nid(unsigned long pfn, int nid);
+>  
+>  /* shrinker related functions */
+>  unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 7bb5f77cf195..31cf8bc31cc2 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -578,7 +578,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+>  	node_states[N_MEMORY] = saved_node_state;
+>  }
+>  
+> -void __meminit __init_single_page(struct page *page, unsigned long pfn,
+> +void __init_memblock __init_single_page(struct page *page, unsigned long pfn,
+>  				unsigned long zone, int nid)
+>  {
+>  	mm_zero_struct_page(page);
+> @@ -669,7 +669,7 @@ static inline void fixup_hashdist(void) {}
+>  /*
+>   * Initialize a reserved page unconditionally, finding its zone first.
+>   */
+> -void __meminit __init_page_from_nid(unsigned long pfn, int nid)
+> +void __init_memblock __init_page_from_nid(unsigned long pfn, int nid)
+>  {
+>  	pg_data_t *pgdat;
+>  	int zid;
+> @@ -744,7 +744,7 @@ defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+>  	return false;
+>  }
+>  
+> -static void __meminit __init_deferred_page(unsigned long pfn, int nid)
+> +static void __init_memblock __init_deferred_page(unsigned long pfn, int nid)
+>  {
+>  	if (early_page_initialised(pfn, nid))
+>  		return;
+> @@ -769,7 +769,7 @@ static inline void __init_deferred_page(unsigned long pfn, int nid)
+>  }
+>  #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+>  
+> -void __meminit init_deferred_page(unsigned long pfn, int nid)
+> +void __init_memblock init_deferred_page(unsigned long pfn, int nid)
+>  {
+>  	__init_deferred_page(pfn, nid);
+>  }
+> -- 
+> 2.39.5
+> 
 
+-- 
+Sincerely yours,
+Mike.
 
