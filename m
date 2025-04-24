@@ -1,369 +1,109 @@
-Return-Path: <linux-kernel+bounces-618606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FACA9B0B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:25:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA5BA9B04D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6762F3B3DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8353E5A4326
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEE52957CA;
-	Thu, 24 Apr 2025 14:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1221A2393;
+	Thu, 24 Apr 2025 14:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c+Nx3rUg"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L4QM/kh2"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C892949E1
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF601A072C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504069; cv=none; b=mDsCgJcQ4Q6ttPqpCF3tv85riFyuxg9b4F6XXhXSdZ1fKM2zJ7dg+v/T4AyCGn66MJjBb4Wsp+sso4LfbQjxYR/ECVel74q+5hSesNOqYY9llkiZWSoH8X7AIa5LOd3eEm96TSmEqx6p7VvErfIp4Um91ZL5f5b+jtQ8EALZIVU=
+	t=1745504020; cv=none; b=l8La8doHWaL880geCRxPhqo5PMvDne82Lv4YblrOjc5Wwu1RYEivX5IRM5qZkuuIYcdLKG5tP1eZbRB3rW2o6+EBWCfDo2GBr2fPm8O0qrHBFODUqeBp6e+Za+ybb9bZxDuMGHp657UnooCYDNGQ6mw2NodwXM6KucP45yFyKRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504069; c=relaxed/simple;
-	bh=4ABx24IRjfvVXtvRhqG0T6gWoZOLeg1qYCJYADA24es=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r59SGc2GLZejLXgwEn0rPo/n3fxQYgj0hXx2+MMxEoWMxYS+jac+q5Wu+usr5tjqVF9GUnakZBXLVodm2r2qbnuOmw8jMj4JYlIhVlkzGW/jCC/heI5yQPulW/kvqpHe8D2pHamI/EMoPpdqiAaR1vd4gd4rbHTDZToAIhFH55U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c+Nx3rUg; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso668071f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:14:25 -0700 (PDT)
+	s=arc-20240116; t=1745504020; c=relaxed/simple;
+	bh=IU1W/JCdrrhxdJ5WvmQGAwCklNVOFnQBmbNWHuEVJyY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cCFi/WypV1XjyQ8kX12lJFJ7d3vWR5nd8tsm1WgCQLFBzq/I0oiuk+QBaPYsM08196jqZZdIZuqSAkfHeep/gcim/YV8vm/29ohlEaNaZSFYS8OkOBgeTtGYNnyT1b3OjVlgbTZiVMMx+M/T9FsKBfqonpU+qYhTw8ekWndsQGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L4QM/kh2; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b090c7c2c6aso652584a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745504064; x=1746108864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WC4sArz2tKH+wjPmCs+Bj3DeYtgEPbRq63zRADPtWtk=;
-        b=c+Nx3rUg6FC30JCuD2Slbwo5+E/SGjmyOKEVkH02gOU9x0Hi+Z9SokAYrM0TCEBD94
-         /E8LdTFmJt47WiNqPE9Oo5ak510zj8YatEwCUGn1J39+r9X5CdwHRXD65/AmPorFjMsk
-         KllBv+H0VgPpePwNqe8IC76HHXo9/M8QZ1Uatk2bGgwQX7X97snbbuyrkC0YxcAHkPMD
-         FE6DAGYZSWu1B1Zn88kvQXvWxfU39uZDxxvq2CL8WDYMU07HBaznbPo1TP2KhyGY4uFg
-         1HzllzIWEJAJj3aP8e4tUFZ10cnNsI5v+yd0+BErIupk0hGOT/s2P6OsfIzIg5EFOID4
-         /HiQ==
+        d=google.com; s=20230601; t=1745504018; x=1746108818; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t921yTGj75JTSKsSLngkcs2w5nGrP5C6g0Ynh60adb4=;
+        b=L4QM/kh2Sfy20MrUlCIpP+cxS/I+cnVhDUHXBSY85N4adZlOZJRVi7Z504aZHnaWcE
+         aqmfpX0NOK3NyvMT34lf+pzSWIhExo1vzMXAYgLcXKu/q1uGDNVtPr18Qn+cKbV4W6TG
+         24VzLKk9hdqig7pMStEIZnVhtREDIbgJ3EUZxEDJGR8A7R2CdJ0UnUAP1LoYh+2HBVHm
+         YOT40nxKvj+CFWDuE5ULXYf1YvPhCHNJxHk+8yxw391Tf70ki+1oPZvoWmyvkk8apnXk
+         P1htsxzoAuk8DqZDfZ6D3RHUFLoYrfgSRL2Uy34a32iU6PhqjWRhPJe5jW9JCnmax2HR
+         kjiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745504064; x=1746108864;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WC4sArz2tKH+wjPmCs+Bj3DeYtgEPbRq63zRADPtWtk=;
-        b=HZJs++36etrbNGgebo2cFvXIMRNG832O71GE9CJr43Z+m/NgbeWzXUSryyBocoQ8VE
-         C2yC8E3VoiGGlpYfVGZzqBfzZWWp7S0oyYlnrmjbZnvkvASuJVzEjnB3k0IRqhJPqHUA
-         knHan6hpCV2aPHeMZDvoT6LkZHqdihSOj8molVNJ5DxiM8KpDwYTpATyCVGCz9r7lwKV
-         QRFeQcrJ27E/lUADxkwiC1L52oP0SbXp7cDQ54XAW8acqeuj7rNeKEWKKZ06QZyxBKUS
-         upfgDfmTkz3XVJKTNSigc5tSQL+YSBm6SsCXICFA5mTAC3IfbZ/TkCT2snokta9Et5YY
-         elFQ==
-X-Gm-Message-State: AOJu0YyKCj992zLZ3V8xUdm6usF2O8ElcEPifD3KH7k8t8bhkpyaWI4B
-	hZepbUVt0+X+nw1dnOiOsmJNwOGrl3kOSKGYlBqbzsLR/7JvjJjGBl11apVHpP36zUZAyhANN7y
-	/
-X-Gm-Gg: ASbGncut5ZwKdRyuPZ0MDEQsacmXOOsJN6gn600u/o8vOYOA3okPWZ4Sv5CjG/o2Lq7
-	Egv+RRkdQeT2jwUAaaLq8YxshheNneOzlXyHQXwfjT1Q+I5BJJIsvFJwTpHmRPeYD6hkWJwcaW+
-	VXf5O2XM/J/onMVRAsREw+BZ3pg+WlFIV8445z/XUnNvJAK9el08xWn7TH0k50YmF/IRc9rV5h7
-	SJ9gK0//hEo7LCdTpQ3L+llrSFDBxZ5qKaKp/pXybkOHhOknMLKuxbiAWT2qJd+75IT981a/PNS
-	px5rTjcc53F4zdOwVMB17bqURgqz6RKwx/9cpK6qrEFHke64E1c2D9qeZCrjANEaYEWAdJNRb2S
-	CcKK332Q4N6EcOUQ/
-X-Google-Smtp-Source: AGHT+IGeGIUXl8vOV0aXlznupMFAAmbzGK8/bha/61z42fQMkuhHsWrpW3uTjHsZlOeGVmwfVkNdPQ==
-X-Received: by 2002:a05:6000:18ad:b0:39a:c9ac:cd58 with SMTP id ffacd0b85a97d-3a06cf63742mr2096999f8f.29.1745504063860;
-        Thu, 24 Apr 2025 07:14:23 -0700 (PDT)
-Received: from seksu.systems-nuts.com (stevens.inf.ed.ac.uk. [129.215.164.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8150sm2199951f8f.7.2025.04.24.07.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 07:14:23 -0700 (PDT)
-From: Karim Manaouil <karim.manaouil@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: Karim Manaouil <karim.manaouil@linaro.org>,
-	Alexander Graf <graf@amazon.com>,
-	Alex Elder <elder@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-	Quentin Perret <qperret@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
-	Will Deacon <will@kernel.org>,
-	Haripranesh S <haripran@qti.qualcomm.com>,
-	Carl van Schaik <cvanscha@qti.qualcomm.com>,
-	Murali Nalajala <mnalajal@quicinc.com>,
-	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
-	Trilok Soni <tsoni@quicinc.com>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: [RFC PATCH 29/34] gunyah: Enable demand paging
-Date: Thu, 24 Apr 2025 15:13:36 +0100
-Message-Id: <20250424141341.841734-30-karim.manaouil@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250424141341.841734-1-karim.manaouil@linaro.org>
-References: <20250424141341.841734-1-karim.manaouil@linaro.org>
+        d=1e100.net; s=20230601; t=1745504018; x=1746108818;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t921yTGj75JTSKsSLngkcs2w5nGrP5C6g0Ynh60adb4=;
+        b=BPHcPU5Z00VwL0UdfpNVstVfO/bQ4dsyoGo9Pa4NAxotrnInLrJxhhlPlBUsDozbxR
+         5VWCuf49KzQ6SaNm24OTCVMMD6lD3Oi3wOz5MgjmipGaseThZxt1Td+RkPBC+z/2eayc
+         Yt2jSpRl8h33GKNeZ3L+U3pqVYDojFvbSHgrSE6hg1PT1k7gFQujPrsVMjixt+OR8veq
+         FXbGsTADTUGjf65cBZx4SNJk6Of+cOSoYlaT240OmWF8jPL7lXu//sxVi1oDdHGr7jW4
+         glZn/EJukdQim4JV2HX22osOJlICnPdlbYO3PyISKIjzFidzYWTyPeLyfzak4uvCRKBN
+         y7GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxJ3sC6NEOBbZEvIh04RioQ6YDTai1L8UoMo+/GZuGhnnmMtyQbBaYf7g4Is9t7KFhNYUB6VW9WkVLPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNBNpBvlv4lpMKyYv5c717et7qNnxD1OfTcgU1N8icOfJLUziU
+	KnlrpXYVIBnUOsHowlQndqkyyNvk6rzHDF33xoDTdRVqfae3MguYQQk6dAZJ0ZCHQ2QXIbPN1EN
+	6mQ==
+X-Google-Smtp-Source: AGHT+IH1Gu9GLKfGiYTCOjMoGySHlcEjW+ds+b1IrKT29iIUpO61X0NEHkvZCaXOOFQOQ3oqS5p4trwyczY=
+X-Received: from pfbkm27.prod.google.com ([2002:a05:6a00:3c5b:b0:736:47b8:9b88])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1309:b0:736:5c8e:bab8
+ with SMTP id d2e1a72fcca58-73e245ba24bmr4220090b3a.3.1745504018497; Thu, 24
+ Apr 2025 07:13:38 -0700 (PDT)
+Date: Thu, 24 Apr 2025 07:13:36 -0700
+In-Reply-To: <1fa0f7f8-be88-4617-a0b2-57d4204c6d6f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250404193923.1413163-1-seanjc@google.com> <20250404193923.1413163-34-seanjc@google.com>
+ <1fa0f7f8-be88-4617-a0b2-57d4204c6d6f@amd.com>
+Message-ID: <aApHEK4R4tAYi5Q0@google.com>
+Subject: Re: [PATCH 33/67] KVM: x86: Dedup AVIC vs. PI code for identifying
+ target vCPU
+From: Sean Christopherson <seanjc@google.com>
+To: Sairaj Kodilkar <sarunkod@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
+	David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Tell resource manager to enable demand paging and wire vCPU faults to
-provide the backing folio.
+On Thu, Apr 24, 2025, Sairaj Kodilkar wrote:
+> On 4/5/2025 1:08 AM, Sean Christopherson wrote:
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index b8b259847d05..0ab818bba743 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -13567,6 +13567,43 @@ bool kvm_arch_has_irq_bypass(void)
+> >   }
+> >   EXPORT_SYMBOL_GPL(kvm_arch_has_irq_bypass);
+> > +static int kvm_pi_update_irte(struct kvm_kernel_irqfd *irqfd,
+> > +			      struct kvm_kernel_irq_routing_entry *old,
+> 
+> the argument 'old' is redundant in this function.
 
-When a folio is donated to the guest, PG_private is set on the folio so
-that we can recognize it later when taking it back (e.g. to reclaim the
-folio when the VM exists).
+Ooh, and @new to kvm_x86_ops.pi_update_irte is also unused.  I'll get rid of them
+both.  I went through multiple iterations of hacking to figure out how to dedup
+the code, and (obviously) missed a few things when tidying up after the fact.
 
-Signed-off-by: Karim Manaouil <karim.manaouil@linaro.org>
----
- arch/arm64/kvm/gunyah.c | 182 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 179 insertions(+), 3 deletions(-)
+Good eyes, and thanks again for the reviews!
 
-diff --git a/arch/arm64/kvm/gunyah.c b/arch/arm64/kvm/gunyah.c
-index 687f2beea4e7..e8037d636e8f 100644
---- a/arch/arm64/kvm/gunyah.c
-+++ b/arch/arm64/kvm/gunyah.c
-@@ -8,6 +8,7 @@
-  *
-  */
- #include <linux/cpumask.h>
-+#include <linux/pagemap.h>
- #include <linux/kvm_host.h>
- #include <linux/kvm_irqfd.h>
- #include <linux/perf_event.h>
-@@ -476,7 +477,7 @@ static inline u32 reclaim_flags(bool share)
- 					GUNYAH_MEMEXTENT_DONATE_FROM_PROTECTED);
- }
- 
--static int gunyah_memory_provide_folio(struct gunyah_vm *ghvm,
-+static int __gunyah_memory_provide_folio(struct gunyah_vm *ghvm,
- 		struct folio *folio, gfn_t gfn, bool share, bool write)
- {
- 	struct gunyah_resource *guest_extent, *host_extent, *addrspace;
-@@ -573,7 +574,7 @@ static int gunyah_memory_provide_folio(struct gunyah_vm *ghvm,
- 	return ret;
- }
- 
--static int gunyah_memory_reclaim_folio(struct gunyah_vm *ghvm,
-+static int gunyah_memory_reclaim_folio_locked(struct gunyah_vm *ghvm,
- 		struct folio *folio, gfn_t gfn, bool share)
- {
- 	u32 map_flags = BIT(GUNYAH_ADDRSPACE_MAP_FLAG_PARTIAL);
-@@ -713,6 +714,144 @@ static int gunyah_reclaim_memory_parcel(struct gunyah_vm *ghvm,
- 	return 0;
- }
- 
-+static int gunyah_memory_provide_folio(struct gunyah_vm *ghvm, gfn_t gfn, bool write)
-+{
-+	struct kvm *kvm = &ghvm->kvm;
-+	struct kvm_memory_slot *memslot;
-+	struct page *page;
-+	struct folio *folio;
-+	int ret;
-+
-+	/* Gunyah always starts guest address space at 1G */
-+	if (gfn < gpa_to_gfn(SZ_1G))
-+		return -EINVAL;
-+
-+	memslot = gfn_to_memslot(kvm, gfn);
-+	if (!memslot)
-+		return -ENOENT;
-+
-+	page = memslot->arch.pages[gfn - memslot->base_gfn];
-+	folio = page_folio(page);
-+
-+	folio_lock(folio);
-+	/* Did we race with another vCPU? */
-+	if (folio_test_private(folio)) {
-+		folio_unlock(folio);
-+		return 0;
-+	}
-+
-+	ret = __gunyah_memory_provide_folio(ghvm, folio, gfn, false, true);
-+	if (ret) {
-+		folio_unlock(folio);
-+		return ret;
-+	}
-+	folio_set_private(folio);
-+	folio_unlock(folio);
-+
-+	return 0;
-+}
-+
-+static int gunyah_reclaim_memory_range(struct gunyah_vm *ghvm, gfn_t start, gfn_t nr)
-+{
-+	struct kvm *kvm = &ghvm->kvm;
-+	struct kvm_memory_slot *slot;
-+	struct kvm_memslots *slots;
-+	struct kvm_memslot_iter iter;
-+	gfn_t end = start + nr;
-+	int i, ret;
-+
-+	for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-+		slots = __kvm_memslots(kvm, i);
-+
-+		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-+			struct page **pages, *page;
-+			struct folio *folio;
-+			unsigned long offset;
-+			unsigned long reclaimed = 0;
-+
-+			slot = iter.slot;
-+			pages = slot->arch.pages;
-+			for (offset = 0; offset < slot->npages;) {
-+				page = pages[offset];
-+				folio = page_folio(page);
-+				folio_lock(folio);
-+				if (folio_test_private(folio)) {
-+					ret = gunyah_memory_reclaim_folio_locked(ghvm, folio,
-+							slot->base_gfn + offset, false);
-+					if (ret) {
-+						WARN_ON_ONCE(1);
-+						return ret;
-+					}
-+					folio_clear_private(folio);
-+					reclaimed++;
-+				}
-+				folio_unlock(folio);
-+				offset += folio_nr_pages(folio);
-+			}
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int gunyah_memory_parcel_to_paged(struct gunyah_vm *ghvm, gfn_t start, gfn_t nr)
-+{
-+	struct kvm *kvm = &ghvm->kvm;
-+	struct kvm_memory_slot *memslot;
-+	struct page **pages, *page;
-+	struct folio *folio;
-+	int i;
-+
-+	memslot = gfn_to_memslot(kvm, start);
-+	if (!memslot)
-+		return -ENOENT;
-+
-+	if (start - memslot->base_gfn < nr)
-+		return -EINVAL;
-+
-+	pages = &memslot->arch.pages[start - memslot->base_gfn];
-+
-+	for (i = 0; i < nr;) {
-+		page = pages[i];
-+		folio = page_folio(page);
-+		VM_BUG_ON(folio_test_private(folio));
-+		folio_set_private(folio);
-+		i += folio_nr_pages(folio);
-+	}
-+
-+	return 0;
-+}
-+
-+static int gunyah_start_paging(struct gunyah_vm *ghvm)
-+{
-+	struct kvm_memslots *slots;
-+	struct kvm_memory_slot *slot;
-+	struct gunyah_rm_mem_entry *entries, *entry;
-+	int count = 0;
-+	int bkt, ret;
-+
-+	slots = kvm_memslots(&ghvm->kvm);
-+	kvm_for_each_memslot(slot, bkt, slots) {
-+		if (slot->base_gfn >= PFN_DOWN(SZ_1G))
-+			count++;
-+	}
-+
-+	entries = entry = kcalloc(count, sizeof(*entries), GFP_KERNEL);
-+	if (!entries)
-+		return -ENOMEM;
-+
-+	kvm_for_each_memslot(slot, bkt, slots) {
-+		if (slot->base_gfn < PFN_DOWN(SZ_1G))
-+			continue;
-+		entry->phys_addr = cpu_to_le64(gfn_to_gpa(slot->base_gfn));
-+		entry->size = cpu_to_le64(gfn_to_gpa(slot->npages));
-+		entry++;
-+	}
-+
-+	ret = gunyah_rm_vm_set_demand_paging(ghvm->rm, ghvm->vmid, count, entries);
-+	kfree(entries);
-+	return ret;
-+}
-+
- int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
- {
- 	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
-@@ -772,7 +911,14 @@ static int gunyah_handle_page_fault(
- 	struct gunyah_vcpu *vcpu,
- 	const struct gunyah_hypercall_vcpu_run_resp *vcpu_run_resp)
- {
--	return -EINVAL;
-+	u64 addr = vcpu_run_resp->state_data[0];
-+	bool write = !!vcpu_run_resp->state_data[1];
-+	int ret = 0;
-+
-+	ret = gunyah_memory_provide_folio(vcpu->ghvm, gpa_to_gfn(addr), write);
-+	if (!ret || ret == -EAGAIN)
-+		return 0;
-+	return ret;
- }
- 
- static bool gunyah_kvm_handle_mmio(struct gunyah_vcpu *vcpu,
-@@ -1614,6 +1760,28 @@ static int gunyah_vm_start(struct gunyah_vm *ghvm)
- 		goto err;
- 	}
- 
-+	ret = gunyah_start_paging(ghvm);
-+	if (ret) {
-+		pr_warn("Failed to set up demand paging: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = gunyah_memory_parcel_to_paged(ghvm, ghvm->dtb.parcel_start,
-+			ghvm->dtb.parcel_pages);
-+	if (ret) {
-+		pr_warn("Failed to set up paging for memparcel: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = gunyah_rm_vm_set_address_layout(
-+		ghvm->rm, ghvm->vmid, GUNYAH_RM_RANGE_ID_IMAGE,
-+		ghvm->dtb.parcel_start << PAGE_SHIFT,
-+		ghvm->dtb.parcel_pages << PAGE_SHIFT);
-+	if (ret) {
-+		pr_warn("Failed to set location of DTB mem parcel: %d\n", ret);
-+		goto err;
-+	}
-+
- 	ret = gunyah_rm_vm_init(ghvm->rm, ghvm->vmid);
- 	if (ret) {
- 		ghvm->vm_status = GUNYAH_RM_VM_STATUS_INIT_FAILED;
-@@ -1719,6 +1887,14 @@ static void gunyah_destroy_vm(struct gunyah_vm *ghvm)
- 			pr_err("Failed to reclaim DTB parcel: %d\n", ret);
- 	}
- 
-+	/**
-+	 * If this fails, we're going to lose the memory for good and is
-+	 * BUG_ON-worthy, but not unrecoverable (we just lose memory).
-+	 * This call should always succeed though because the VM is in not
-+	 * running and RM will let us reclaim all the memory.
-+	 */
-+	WARN_ON(gunyah_reclaim_memory_range(ghvm, gpa_to_gfn(SZ_1G), gpa_to_gfn(U64_MAX)));
-+
- 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->addrspace_ticket);
- 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->host_shared_extent_ticket);
- 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->host_private_extent_ticket);
--- 
-2.39.5
-
+P.S. Please trim your replies.
 
