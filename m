@@ -1,77 +1,235 @@
-Return-Path: <linux-kernel+bounces-619136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71AFA9B84B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:27:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089E8A9B854
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAE9189BF2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 979A17AD8A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9339E28E603;
-	Thu, 24 Apr 2025 19:27:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E028C182BD;
+	Thu, 24 Apr 2025 19:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f+2PG31r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iiLiPi44";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f+2PG31r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iiLiPi44"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F87120F070;
-	Thu, 24 Apr 2025 19:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4D2918FC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 19:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745522867; cv=none; b=rj+xXg1sLzdWTCljEgJCk2oTYXCZYDTYDjvFsp+a/ulPjEWbygUhfujkIkgnq0yWK3EMsqN92WF0IBPaA2Z74sQTCAwsDPFaNrscoCpg/qoCwjZjbY/tNs5UYUzFfVJWOvjDwLZzOdeaY3rh6mbwM72d//+YVMiqq8yrZJ+etb8=
+	t=1745523010; cv=none; b=mVcNfGlpHTP2EjOz4DLrH5uzXTAs2zSQRX77jo24mV9XMbqOGRcW+3zQoNPmunF5jZgMTGAbmdEjPHWKQKrZx7jhMutJo+s34qU3Hbytnlf651nEo/Ws15JLefRBIn/BAEy4BC15Oi9B1E5yBdpoSOprNjQd2YgRduf5KiMjBX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745522867; c=relaxed/simple;
-	bh=N1XG3jyOjkQ6x7wHNsp8O2x06iBDYxKQu0BlC/Fi6lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GYii9/1A8m1mCl0hUJ84FNsN+RmzEjgdIlbySlfC3zCumiCTvdi6YPtvsm4Ckgdskgn7YiXaqavOsQ+waJ8DPz5Zxe3HT6v10v3vXAjUueZQPDUYZ3DQ8/X/uppjF8CzjJj4izkoZ+MA6yAmsDVQ4wfPp9AXbUXwMxNmKq1QDg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89601C4CEE3;
-	Thu, 24 Apr 2025 19:27:42 +0000 (UTC)
-Date: Thu, 24 Apr 2025 15:29:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, x86@kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
- <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
- James <sam@gentoo.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jens
- Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>, Andy
- Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>, Blake Jones
- <blakejones@google.com>, Beau Belgrave <beaub@linux.microsoft.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Alexander Aring <aahringo@redhat.com>
-Subject: Re: [PATCH v5 0/9] tracing: Deferred unwinding of user space stack
- traces
-Message-ID: <20250424152938.0922463b@gandalf.local.home>
-In-Reply-To: <20250424192456.851953422@goodmis.org>
-References: <20250424192456.851953422@goodmis.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745523010; c=relaxed/simple;
+	bh=Dx8rXHcIFnAV5GHt1xK1iFMohpgge0WY7p6W3v/P0Ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ludY+vEPq09ffNuDOEgBw8QsTUkwkgS+rcQ71IAF7uXtzvoscPYWa9H9fG3Vs90VrwcYv3pJkNFvRZvOrZIqXIszrgq1H6G5oiV7BOQIDOmtRVtGk5Gt4llsSJZKAx+Q13AbnCxqm6M58iC6/TfJN+yZ2+1b/oDkicl56nD9ngU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f+2PG31r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iiLiPi44; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f+2PG31r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iiLiPi44; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2C76B1F451;
+	Thu, 24 Apr 2025 19:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745523006;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RXJ+Kj6ILtNwog63yw38CKNPkZmGrH3j4C0R+FFTZoE=;
+	b=f+2PG31r8xCqsEXqQIbCHVO3NPTMTCHBCQqeha4+/r3rTGq1V+T4puKqN+985F8GYZXnxy
+	jUWaU7UZJE7hCKFJ/LQtOrzA8rNc5LhtSBIhPClJGiI2V2DuU76kQwhitgG+nMoLtcCsJY
+	HBHMJTMS+9l6wKKa6daLyMvuCix2dKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745523006;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RXJ+Kj6ILtNwog63yw38CKNPkZmGrH3j4C0R+FFTZoE=;
+	b=iiLiPi4452VyngSeeOJGclQCttq69zqOssMEktRuISNR3xw1NRr8TwnXIQJtYZ9fjtOd/j
+	1Sl1f08Q28qbf6Cg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745523006;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RXJ+Kj6ILtNwog63yw38CKNPkZmGrH3j4C0R+FFTZoE=;
+	b=f+2PG31r8xCqsEXqQIbCHVO3NPTMTCHBCQqeha4+/r3rTGq1V+T4puKqN+985F8GYZXnxy
+	jUWaU7UZJE7hCKFJ/LQtOrzA8rNc5LhtSBIhPClJGiI2V2DuU76kQwhitgG+nMoLtcCsJY
+	HBHMJTMS+9l6wKKa6daLyMvuCix2dKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745523006;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RXJ+Kj6ILtNwog63yw38CKNPkZmGrH3j4C0R+FFTZoE=;
+	b=iiLiPi4452VyngSeeOJGclQCttq69zqOssMEktRuISNR3xw1NRr8TwnXIQJtYZ9fjtOd/j
+	1Sl1f08Q28qbf6Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CA941393C;
+	Thu, 24 Apr 2025 19:30:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ObqZAj6RCmiLRwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 24 Apr 2025 19:30:06 +0000
+Date: Thu, 24 Apr 2025 21:29:56 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Daniel Vacek <neelx@suse.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Nick Terrell <terrelln@fb.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs: harden parsing of compress mount option
+Message-ID: <20250424192956.GO3659@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250423073329.4021878-1-neelx@suse.com>
+ <20250423132220.4052042-1-neelx@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423132220.4052042-1-neelx@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On Thu, 24 Apr 2025 15:24:56 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Apr 23, 2025 at 03:22:19PM +0200, Daniel Vacek wrote:
+> Btrfs happily but incorrectly accepts the `-o compress=zlib+foo` and similar
+> options with any random suffix. Let's handle that correctly.
 
-> This series focuses on implementing the deferred unwinding for ftrace
-> (and LTTng could use it).
+Please split the patch. Moving code and adding a fix obscures the fix.
+As we'll want to backport more than just the validation of ':' it
+makes more sense to do the full move first and then add the individual
+fixes on top of that. Thanks.
 
-I forgot to say that this is based on top of this series, and does not yet
-include sframe support.
+> Signed-off-by: Daniel Vacek <neelx@suse.com>
+> ---
+> v2: Drop useless check for comma and split compress options
+>     into a separate helper function
+> 
+>  fs/btrfs/super.c | 108 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 62 insertions(+), 46 deletions(-)
+> 
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 40709e2a44fce..422fb82279877 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -270,6 +270,67 @@ static inline blk_mode_t btrfs_open_mode(struct fs_context *fc)
+>  	return sb_open_mode(fc->sb_flags) & ~BLK_OPEN_RESTRICT_WRITES;
+>  }
+>  
+> +static int btrfs_parse_compress(struct btrfs_fs_context *ctx,
+> +				struct fs_parameter *param, int opt)
+> +{
+> +	/*
+> +	 * Provide the same semantics as older kernels that don't use fs
+> +	 * context, specifying the "compress" option clears
+> +	 * "force-compress" without the need to pass
+> +	 * "compress-force=[no|none]" before specifying "compress".
+> +	 */
+> +	if (opt != Opt_compress_force && opt != Opt_compress_force_type)
+> +		btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
+> +
+> +	if (opt == Opt_compress || opt == Opt_compress_force) {
+> +		ctx->compress_type = BTRFS_COMPRESS_ZLIB;
+> +		ctx->compress_level = BTRFS_ZLIB_DEFAULT_LEVEL;
+> +		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
 
-  https://lore.kernel.org/all/20250424162529.686762589@goodmis.org/
+Additional cleanups can reorganize the checks so the option clearing
+is done once (and not repeated for each compression algorithm).
 
--- Steve
+> +	} else if (strncmp(param->string, "zlib", 4) == 0 &&
+> +			(param->string[4] == ':' ||
+> +			 param->string[4] == '\0')) {
+
+Matching the name also looks like it can be done by a helper like
+
+	match_compresssion(param, "zlib")
+
+and implemented like
+
+	int len = strlen(compression);
+
+	if (strncmp(param->string, compression, len) == 0 &&
+		(param->string[len] ... etc
+
+> +		ctx->compress_type = BTRFS_COMPRESS_ZLIB;
+> +		ctx->compress_level =
+> +			btrfs_compress_str2level(BTRFS_COMPRESS_ZLIB,
+> +						 param->string + 4);
+> +		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> +	} else if (strncmp(param->string, "lzo", 3) == 0 &&
+> +			param->string[3] == '\0') {
+> +		ctx->compress_type = BTRFS_COMPRESS_LZO;
+> +		ctx->compress_level = 0;
+> +		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> +	} else if (strncmp(param->string, "zstd", 4) == 0 &&
+> +			(param->string[4] == ':' ||
+> +			 param->string[4] == '\0')) {
+> +		ctx->compress_type = BTRFS_COMPRESS_ZSTD;
+> +		ctx->compress_level =
+> +			btrfs_compress_str2level(BTRFS_COMPRESS_ZSTD,
+> +						 param->string + 4);
+> +		btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> +		btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> +	} else if ((strncmp(param->string, "no", 2) == 0 &&
+> +			param->string[2] == '\0') ||
+> +		   (strncmp(param->string, "none", 4) == 0 &&
+> +			param->string[4] == '\0')) {
+> +		ctx->compress_level = 0;
+> +		ctx->compress_type = 0;
+> +		btrfs_clear_opt(ctx->mount_opt, COMPRESS);
+> +		btrfs_clear_opt(ctx->mount_opt, FORCE_COMPRESS);
+> +	} else {
+> +		btrfs_err(NULL, "unrecognized compression value %s",
+> +			  param->string);
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
 
