@@ -1,258 +1,182 @@
-Return-Path: <linux-kernel+bounces-618072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFA5A9A9E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:17:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2B8A9AA17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AB8D189D47B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:18:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAD907B1A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A4F21858A;
-	Thu, 24 Apr 2025 10:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83A12253F8;
+	Thu, 24 Apr 2025 10:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s4nSWQtC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uBmBj3A6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s4nSWQtC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uBmBj3A6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i28B6GdT"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE078634F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5B522330F;
+	Thu, 24 Apr 2025 10:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745489856; cv=none; b=APZa4o6DnHMA5v4SYCAvM/8TuzxsxbVhd5WyjnlhGAyBVT3qmina+JJs1gAmyyZNNm0hLWFBLR4a9G/gqomVbRqe1zB/0XMP9YMM5wweAEfR92/1gJBaypADjvAkJX2gbDmHsDrEV136uRk+Xbzj8tz6u3EX0/qKfm2f94Kl+fU=
+	t=1745490291; cv=none; b=jlk8wNrL570pUUzLqHt43v9vK9Zprx3sCaGjrYA8TwxMA4zwUDLvIbrHwnY680dzUPzB0IlYnclvazJtDOYk2CGdBY9p90sJE+A/zdekh6u3fbqnVCz46edhpwH1uKLiKB6tRSnUfoMUXpsEIk1+uIwokE6FOfHuy6Ab1HkrE2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745489856; c=relaxed/simple;
-	bh=qjrrvqL4xavkYZUv+Xj+svdFXWyb2dWNxM1kho/LnJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AgjceJzSm7+YAGEjWEfE/8AfWja4W7CCYtRoSeLt70PJwmMJfXUa8iuEzjEnbwOv5XrxVXJ/asX4BK9uLZHcgiOESaI6FITN568TlcMd1cN4naBltgsDWeQLKE8juIwaIgHqIVb1feUVvUJkNzixNTOiit1ZLMHt0pDfwfMRkr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s4nSWQtC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uBmBj3A6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s4nSWQtC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uBmBj3A6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F4AF1F399;
-	Thu, 24 Apr 2025 10:17:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745489853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXu0xToKAPO25fLhe2rMHBfxuHS/THmrVmv/bkCC9KY=;
-	b=s4nSWQtCo6+QGjsRUDwCGwwpQ/fpa53Eh8lU/LstcikM8KFwYcQ9AMWJhaHh1+jE9GdA4d
-	5ZPOIiDJ2/kFlniRZy1sIHrLG1+Oxj2FA78Pn2mFfcTNaYapxssjre7rKMTIQxHzuhkPab
-	WoZUgcnLztL1IfQaRel/8N9IlHU3nOI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745489853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXu0xToKAPO25fLhe2rMHBfxuHS/THmrVmv/bkCC9KY=;
-	b=uBmBj3A6z5PZfg79qv/WL/gZE5Q/6V6mRY5TBcET26WLX+N/oeOMFdfjxMaGtJ7zamJy8w
-	mdqIV88re7KEV6DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=s4nSWQtC;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uBmBj3A6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745489853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXu0xToKAPO25fLhe2rMHBfxuHS/THmrVmv/bkCC9KY=;
-	b=s4nSWQtCo6+QGjsRUDwCGwwpQ/fpa53Eh8lU/LstcikM8KFwYcQ9AMWJhaHh1+jE9GdA4d
-	5ZPOIiDJ2/kFlniRZy1sIHrLG1+Oxj2FA78Pn2mFfcTNaYapxssjre7rKMTIQxHzuhkPab
-	WoZUgcnLztL1IfQaRel/8N9IlHU3nOI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745489853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXu0xToKAPO25fLhe2rMHBfxuHS/THmrVmv/bkCC9KY=;
-	b=uBmBj3A6z5PZfg79qv/WL/gZE5Q/6V6mRY5TBcET26WLX+N/oeOMFdfjxMaGtJ7zamJy8w
-	mdqIV88re7KEV6DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA92A139D0;
-	Thu, 24 Apr 2025 10:17:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rFqzMrwPCmjTJwAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 24 Apr 2025 10:17:32 +0000
-Message-ID: <10fec246-82a6-40bf-a522-ea3de7fa0624@suse.de>
-Date: Thu, 24 Apr 2025 12:17:32 +0200
+	s=arc-20240116; t=1745490291; c=relaxed/simple;
+	bh=IlIOMdYHJ555cWzmt/zQ4blnbGSKrIpEZRcdBetLLXY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=RySQBOdzfHCz80ReOPNdEodADXdsAo5ZdTZ3/hc43dc6r4DfCEP1FG69Jq2WEDy2dztOiN1R4sFWwV0dgpE+iS4twW4yd0GsbcKIE+UhIQo4VI9VnH0B00cIZcsAaLVxX/WjhbDWG3S5CkJZmVeNO1s3k3JkqmPxxwuFct5NPZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i28B6GdT; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c1efc457bso557301f8f.2;
+        Thu, 24 Apr 2025 03:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745490287; x=1746095087; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNRkChMGDnmCH0tbjwsRxL/MLXsmw5IBK1Xkg2PwUx4=;
+        b=i28B6GdT6t9FvH4L2p9gLhw+Akv+/OSwhX7e1GqfZACqdP2wf7rM0qS4EDyDBHO/FR
+         QrKqUVeK6WnOFCkcG9lVeHWhh8P8VI8+c9x6+oKT9fGhy8BOF3yklCDvzEz0Xcb1auVN
+         JeexpOQUoTm451WEfhu7UfQHLPg2djAW+fX8q+ETqR+AsGOHdGiIeFFTcIeaXqfML98U
+         4Ml54PHMsBkKRTb8jLizaG3JkbR/15BVk1hSmfFSIfKLnPpw3AcnTPX8WHc9n9nE3yd5
+         rI2Q2lVyCaKDkujslMo0VR4mBSRfvIJniwxXH8Xntqxeq4DLMAEKh5LIc2jY77+1T0LQ
+         CGBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745490287; x=1746095087;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNRkChMGDnmCH0tbjwsRxL/MLXsmw5IBK1Xkg2PwUx4=;
+        b=fZp75mzyE2RjJEpXO8xCrqqWO9CqNkUIexLWVY4NsktH6eky98ozvhnqH9Cq5oALOJ
+         3Q/02ndFAPYLMy7/aQSqCbQ+2RFRmb0LB+AZ9xQ7ZKwctHNujDpe3Ux08+Iy03lSEfq8
+         Ax5GGnkOOg2foJeUK7cWzWdM7hBc4L7OyQySqLuaEJrIkoka+9CFymBFGMVIN24nn+fT
+         V74EC/aYL/D7UpKbqcM4pp8DDcICtzokjmZq4HGcXsGhEBGlPV+0XOgEjfZ7cxNGSXfL
+         xH4HQsnfGU8fgdQAFKU9V7/uJGda7xwhXnTI0P0h1Kqn37fHqotl2AdAOrhwHEZot6Fl
+         2i7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVOURfVRZlyhPGJlT4YJT7lo5WRxc6mvMbK4qgthVhiymtlehvbWN9lIYssVo54sEXcq+QWDyOBld9up2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFeNN9cpLD3EMsgwdl1szmmz9NOz6UZCQ3HxMn1/aF2/xkdIvO
+	iBFuRoZ5rhSLb2q1AjozQUmj/M6uJrcLHtOKbdhckQLEX0q7P09+08u0VqlQ
+X-Gm-Gg: ASbGncv0jGev/fC7Tx8WHx/AP/+TfLzUdSmPAta6ZknSmgRtuDVHddLiUHpeJpveu0u
+	VEeqXv4ldZH0+WQSFqTbya8a+ogiQ4HPMDCW8TXdIjaGC6v7twg3Xq82d4Zdnc1tCDpZrVjaxXu
+	Rwi+TYwcQ7xpVRMBxqK9TlRxbTQx/fMpL2LfX7b6wW/RLbJGz3WD169KB9hFN1w+rhAzH3QOzgN
+	BCrddSrrLHzLMslcsAs1bHD9F4GzPo+E2D23fd/Nd2IEFMAM9mzQya1mVgzRiRgTAbK2p1x/8ou
+	pVzIX9QFG98e7XqyCFk/6YgIwNLHOuYcxjkoigWs8ia1bsQtDi/HVfk+euY=
+X-Google-Smtp-Source: AGHT+IHI3Jwi5rsbBtTyPyfz1rQCpzMHD+eGtHPy64ax+ON+GQRz3pu4mezK2hfis4H+kAk/HBzt5g==
+X-Received: by 2002:a05:6000:4202:b0:391:40bd:6222 with SMTP id ffacd0b85a97d-3a06cf5c719mr1526065f8f.22.1745490287395;
+        Thu, 24 Apr 2025 03:24:47 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:7d34:7f0d:292f:fa10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d532958sm1643367f8f.62.2025.04.24.03.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 03:24:47 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org,  kuba@kernel.org,  Jianfeng Liu
+ <liujianfeng1994@gmail.com>,  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>,  Hao Luo <haoluo@google.com>,  Tejun Heo
+ <tj@kernel.org>,  Bjorn Helgaas <bhelgaas@google.com>,
+  linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH] tools/Makefile: Add ynl target
+In-Reply-To: <20250423204647.190784-1-jdamato@fastly.com> (Joe Damato's
+	message of "Wed, 23 Apr 2025 20:46:44 +0000")
+Date: Thu, 24 Apr 2025 11:17:34 +0100
+Message-ID: <m2selxsw1t.fsf@gmail.com>
+References: <20250423204647.190784-1-jdamato@fastly.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/14] nvmet-fcloop: prevent double port deletion
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
- <20250423-nvmet-fcloop-v5-8-3d7f968728a5@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250423-nvmet-fcloop-v5-8-3d7f968728a5@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1F4AF1F399
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
-On 4/23/25 15:21, Daniel Wagner wrote:
-> The delete callback can be called either via the unregister function or
-> from the transport directly. Thus it is necessary ensure resources are
-> not freed multiple times.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+Joe Damato <jdamato@fastly.com> writes:
+
+> Add targets to build, clean, and install ynl headers, libynl.a, and
+> python tooling.
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 > ---
->   drivers/nvme/target/fcloop.c | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
-> index 9adaee3c7129f7e270842c5d09f78de2e108479a..014cc66f92cb1db0a81a79d2109eae3fff5fd38a 100644
-> --- a/drivers/nvme/target/fcloop.c
-> +++ b/drivers/nvme/target/fcloop.c
-> @@ -215,6 +215,9 @@ struct fcloop_lport_priv {
->   	struct fcloop_lport *lport;
->   };
->   
-> +/* The port is already being removed, avoid double free */
-> +#define PORT_DELETED	0
+>  tools/Makefile | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/Makefile b/tools/Makefile
+> index 5e1254eb66de..c31cbbd12c45 100644
+> --- a/tools/Makefile
+> +++ b/tools/Makefile
+> @@ -41,6 +41,7 @@ help:
+>  	@echo '  mm                     - misc mm tools'
+>  	@echo '  wmi			- WMI interface examples'
+>  	@echo '  x86_energy_perf_policy - Intel energy policy tool'
+> +	@echo '  ynl			- ynl headers, library, and python tool'
+>  	@echo ''
+>  	@echo 'You can do:'
+>  	@echo ' $$ make -C tools/ <tool>_install'
+> @@ -118,11 +119,14 @@ freefall: FORCE
+>  kvm_stat: FORCE
+>  	$(call descend,kvm/$@)
+>  
+> +ynl: FORCE
+> +	$(call descend,net/ynl)
 > +
->   struct fcloop_rport {
->   	struct nvme_fc_remote_port	*remoteport;
->   	struct nvmet_fc_target_port	*targetport;
-> @@ -223,6 +226,7 @@ struct fcloop_rport {
->   	spinlock_t			lock;
->   	struct list_head		ls_list;
->   	struct work_struct		ls_work;
-> +	unsigned long			flags;
->   };
->   
->   struct fcloop_tport {
-> @@ -233,6 +237,7 @@ struct fcloop_tport {
->   	spinlock_t			lock;
->   	struct list_head		ls_list;
->   	struct work_struct		ls_work;
-> +	unsigned long			flags;
->   };
->   
->   struct fcloop_nport {
-> @@ -1067,14 +1072,20 @@ static void
->   fcloop_remoteport_delete(struct nvme_fc_remote_port *remoteport)
->   {
->   	struct fcloop_rport *rport = remoteport->private;
-> +	bool delete_port = true;
->   	unsigned long flags;
->   
->   	flush_work(&rport->ls_work);
->   
->   	spin_lock_irqsave(&fcloop_lock, flags);
-> +	if (test_and_set_bit(PORT_DELETED, &rport->flags))
-> +		delete_port = false;
->   	rport->nport->rport = NULL;
->   	spin_unlock_irqrestore(&fcloop_lock, flags);
->   
-> +	if (!delete_port)
-> +		return;
+>  all: acpi counter cpupower gpio hv firewire \
+>  		perf selftests bootconfig spi turbostat usb \
+>  		virtio mm bpf x86_energy_perf_policy \
+>  		tmon freefall iio objtool kvm_stat wmi \
+> -		debugging tracing thermal thermometer thermal-engine
+> +		debugging tracing thermal thermometer thermal-engine ynl
+>  
+>  acpi_install:
+>  	$(call descend,power/$(@:_install=),install)
+> @@ -157,13 +161,16 @@ freefall_install:
+>  kvm_stat_install:
+>  	$(call descend,kvm/$(@:_install=),install)
+>  
+> +ynl_install:
+> +	$(call descend,net/$(@:_install=),install)
+
+nit: I'm not sure there's any merit in the $(@:_install=) construct,
+when it's only really needed when there are multiple targets in the same
+rule. For ynl_install, $(call descend,net/ynl,install) would be just
+fine. It's funny that the existing convention in this Makefile is to
+mostly use substitution for the _install rules, but literals for the
+_clean rules.
+
+Either way:
+
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+
 > +
-
-The double negation is hard to follow. Can't you
-rename it to 'put_port' or somesuch and invert the logic?
-
->   	fcloop_nport_put(rport->nport);
->   }
->   
-> @@ -1082,14 +1093,20 @@ static void
->   fcloop_targetport_delete(struct nvmet_fc_target_port *targetport)
->   {
->   	struct fcloop_tport *tport = targetport->private;
-> +	bool delete_port = true;
->   	unsigned long flags;
->   
->   	flush_work(&tport->ls_work);
->   
->   	spin_lock_irqsave(&fcloop_lock, flags);
-> +	if (test_and_set_bit(PORT_DELETED, &tport->flags))
-> +		delete_port = false;
->   	tport->nport->tport = NULL;
->   	spin_unlock_irqrestore(&fcloop_lock, flags);
->   
-> +	if (!delete_port)
-> +		return;
+>  install: acpi_install counter_install cpupower_install gpio_install \
+>  		hv_install firewire_install iio_install \
+>  		perf_install selftests_install turbostat_install usb_install \
+>  		virtio_install mm_install bpf_install x86_energy_perf_policy_install \
+>  		tmon_install freefall_install objtool_install kvm_stat_install \
+>  		wmi_install debugging_install intel-speed-select_install \
+> -		tracing_install thermometer_install thermal-engine_install
+> +		tracing_install thermometer_install thermal-engine_install ynl_install
+>  
+>  acpi_clean:
+>  	$(call descend,power/acpi,clean)
+> @@ -214,12 +221,15 @@ freefall_clean:
+>  build_clean:
+>  	$(call descend,build,clean)
+>  
+> +ynl_clean:
+> +	$(call descend,net/$(@:_clean=),clean)
 > +
-Same here.
-
->   	fcloop_nport_put(tport->nport);
->   }
->   
-> @@ -1433,6 +1450,7 @@ fcloop_create_remote_port(struct device *dev, struct device_attribute *attr,
->   	rport->nport = nport;
->   	rport->lport = nport->lport;
->   	nport->rport = rport;
-> +	rport->flags = 0;
->   	spin_lock_init(&rport->lock);
->   	INIT_WORK(&rport->ls_work, fcloop_rport_lsrqst_work);
->   	INIT_LIST_HEAD(&rport->ls_list);
-> @@ -1530,6 +1548,7 @@ fcloop_create_target_port(struct device *dev, struct device_attribute *attr,
->   	tport->nport = nport;
->   	tport->lport = nport->lport;
->   	nport->tport = tport;
-> +	tport->flags = 0;
->   	spin_lock_init(&tport->lock);
->   	INIT_WORK(&tport->ls_work, fcloop_tport_lsrqst_work);
->   	INIT_LIST_HEAD(&tport->ls_list);
-> 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+>  clean: acpi_clean counter_clean cpupower_clean hv_clean firewire_clean \
+>  		perf_clean selftests_clean turbostat_clean bootconfig_clean spi_clean usb_clean virtio_clean \
+>  		mm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+>  		freefall_clean build_clean libbpf_clean libsubcmd_clean \
+>  		gpio_clean objtool_clean leds_clean wmi_clean firmware_clean debugging_clean \
+>  		intel-speed-select_clean tracing_clean thermal_clean thermometer_clean thermal-engine_clean \
+> -		sched_ext_clean
+> +		sched_ext_clean ynl_clean
+>  
+>  .PHONY: FORCE
+>
+> base-commit: 45bd443bfd8697a7da308c16c3e75e2bb353b3d1
 
