@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-619179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20344A9B8D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:09:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2593FA9B8C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482BC4A5C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102F07A566B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042FB1F76A8;
-	Thu, 24 Apr 2025 20:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BB11F4623;
+	Thu, 24 Apr 2025 20:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISS9edEF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQK97TxO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C201F4614;
-	Thu, 24 Apr 2025 20:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBB31F1506;
+	Thu, 24 Apr 2025 20:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745525339; cv=none; b=PfhkHtzb5XPurkehApWSam9/r0SYvKVaCU7Oz1JUkmmPgp11crXG3pXuobeyPzFw2VJnxV+ojaFs0tgv4aRNM/XJHLdto9549SsRAq1ZXZe1ZDw+fzJhCdFl8ilt9NmrUj8sl4QzoLmTq7QGaIsGupfbvSERqX67+WEbkCoKTKg=
+	t=1745525300; cv=none; b=cVuQCG90wbMBJyJ5xyTeaYCCuFipuOvMBS9tPYehRdTpPlX/8hfFqU/iLib39VipLHGmLi+SfQhag//xd7TZuQZq/Gw/xwe1Kcs31kX2oqdueui/6nMPvAWo3IXOEKHvaUp5v8HM4vMaCbE7l69md/+99Nd4CE+KaaeS8B2/gDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745525339; c=relaxed/simple;
-	bh=r/J+71axIcbcBnTDMTPbPhfWreusoyG9PFW3KMwW3d0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QB279C+LTYK53crn7VUzHsWPS9lb+y1kDV7lwco0FP9L1LMJTXAwEJQjYDPT73aL7IeNeUeuiXXaw+9fTOvQ7wSULD6feEKZiupfrg2VncRlJqhFcpV55MOKFgcf3i0o5zuEwW68BS0VH2Qt5R9oODiZqUQU4Fa9KqaR9SXHK7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISS9edEF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AA7C4CEE3;
-	Thu, 24 Apr 2025 20:08:53 +0000 (UTC)
+	s=arc-20240116; t=1745525300; c=relaxed/simple;
+	bh=F3xCUpL0ZTFZb19pbmsWjZpM3nvfQcP1w9Xz79H2OOs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=P59PpQbL4cfRn15X6NF3PkotEEf3sG/W2MUHholioPnqkJX2JKD7ckLwYZUvsoAG6vUu4xTZGoL8dBh5duqvNdbb1Vlv8wGnSXqOC5JXSVlzk4REqnYfiMTopySX8LFo0I8hV/tMMfF/8GtEwR+dUuRbrP4sUBaBrp4VKeIh1Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQK97TxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAAD1C4CEE3;
+	Thu, 24 Apr 2025 20:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745525338;
-	bh=r/J+71axIcbcBnTDMTPbPhfWreusoyG9PFW3KMwW3d0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ISS9edEF3u5Xby+MOrLIfGta/xXgvj8DjuWHfzBXrFZ9ZBVbkAwIkoDv9x14/vlmd
-	 hzy7BUxXKcII6wkglUSqd21SGKks8ao2Mb/0m5uGpwG+WWvYJL4XwU43191f7cCpJX
-	 zy0BhwhgLd7MBL5szOCwB0f9KYZB+tcTH1/At/LklVOkX6MC3pKizBD69oeN3VTsMR
-	 ku0O6Rzq6WoT1dSlZeSQRjA10kpghiyV2qSGBzVH87+Dy5b1c41PQgsNkCSjCQUTeA
-	 j1gGwCwlYLhhucBavtvJ+AQVSrgVaTuEEAoJBlBgoftI+s7Reib0R0jbd5rHQcx3BT
-	 9fCHoitRYzsyA==
-Date: Thu, 24 Apr 2025 22:08:51 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 13/16] gpu: nova-core: Add support for VBIOS ucode
- extraction for boot
-Message-ID: <aAqaU-nX0YRKIGyl@pollux>
-References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
- <20250420-nova-frts-v1-13-ecd1cca23963@nvidia.com>
- <aAjz2CYTsAhidiEU@pollux>
- <7f3aa4b3-a24a-41c6-b75e-61e0e6e11ee3@nvidia.com>
+	s=k20201202; t=1745525299;
+	bh=F3xCUpL0ZTFZb19pbmsWjZpM3nvfQcP1w9Xz79H2OOs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=vQK97TxOPXCFHTJJKj4U9I1vCwBhBhY2yPKRXTmDdU4Gq8oK3Xh8prclSzlR36nrY
+	 S5Sm/NT+dd3G6fGH4hz0p5xxTZLflOIO1+DJ83XCbhPDp+zGk/yWfmv8TB6n1xy5e5
+	 z9xyCKmmLF/69lVW+1oY+c0MbfBzU0aT6Uk2V6iEQPZO2m4NIqRAmTYAWyBMxhchdy
+	 j1LXOKV4JCBODqi4uwpX335uRH/z3oFtn/O7BihiAyPQJtx0N5k9uqeB9euwA/J7pX
+	 2giMLqluzX9cWPE+J0TtmYc6hxp32OMw/OIlnvJZQrO2JIX+69PznsfBCPWPwCKI6a
+	 XzKHTzEpH32Ug==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE13E380CFD9;
+	Thu, 24 Apr 2025 20:08:59 +0000 (UTC)
+Subject: Re: [GIT PULL] SCSI fixes for 6.15-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <b574ba430d181f9fa53a6a7bd76e42911c50d899.camel@HansenPartnership.com>
+References: <b574ba430d181f9fa53a6a7bd76e42911c50d899.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-scsi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <b574ba430d181f9fa53a6a7bd76e42911c50d899.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: b0b7ee3b574a72283399b9232f6190be07f220c0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 02ddfb981de88a2c15621115dd7be2431252c568
+Message-Id: <174552533820.3476198.12624986481727542420.pr-tracker-bot@kernel.org>
+Date: Thu, 24 Apr 2025 20:08:58 +0000
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f3aa4b3-a24a-41c6-b75e-61e0e6e11ee3@nvidia.com>
 
-On Thu, Apr 24, 2025 at 02:54:42PM -0400, Joel Fernandes wrote:
-> 
-> 
-> On 4/23/2025 10:06 AM, Danilo Krummrich wrote:
-> [...]
-> >> +
-> >> +    /// Probe for VBIOS extraction
-> >> +    /// Once the VBIOS object is built, bar0 is not read for vbios purposes anymore.
-> >> +    pub(crate) fn probe(bar0: &Devres<Bar0>) -> Result<Self> {
-> > 
-> > Let's not call it probe(), what about VBios::parse(), or simply VBios::new()?
-> > 
-> 
-> Yes, new() is better. I changed it.
-> 
-> >> +        // VBIOS data vector: As BIOS images are scanned, they are added to this vector
-> >> +        // for reference or copying into other data structures. It is the entire
-> >> +        // scanned contents of the VBIOS which progressively extends. It is used
-> >> +        // so that we do not re-read any contents that are already read as we use
-> >> +        // the cumulative length read so far, and re-read any gaps as we extend
-> >> +        // the length
-> >> +        let mut data = KVec::new();
-> >> +
-> >> +        // Loop through all the BiosImage and extract relevant ones and relevant data from them
-> >> +        let mut cur_offset = 0;
-> > 
-> > I suggest to create a new type that contains data and offset and implement
-> > read_bios_image_at_offset() and friends as methods of this type. I think this
-> > would turn out much cleaner.
-> I moved it into struct Vbios {} itself instead of introducing a new type. Is
-> that Ok?
-> 
-> I agree it is cleaner. Please see below link for this particular refactor
-> (moving data) and let me know if it looks Ok to you: http://bit.ly/4lHfDKZ
+The pull request you sent on Thu, 24 Apr 2025 15:29:10 -0400:
 
-I still think a new type would be better, the Option<KVec<u8>> that is only used
-for the construction of the actual type instance is a bit weird. It's basically
-two types in one, which is also why you need two options -- better separate
-them.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/02ddfb981de88a2c15621115dd7be2431252c568
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
