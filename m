@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-617343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14F7A99EB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22CBA99EBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBC277AA45A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7156D5A1D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC0F193436;
-	Thu, 24 Apr 2025 02:13:37 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A76148827;
+	Thu, 24 Apr 2025 02:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EJi9vs5V"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719843B1AB;
-	Thu, 24 Apr 2025 02:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625CC282E1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745460817; cv=none; b=lQ2WuusL6l2wou83ar2zeGeC82SI9L4DEzqqklh4M/C0gpaM/VuYlvjW2Ll+pw+TorFgyx2DL3gCZyELm/nHZcwReqoFk3XWPv9bOPGA9+96iCWsDPNpV5FOgAGiVRYONDnE13Z/S76exKJu6qThpsEN8y5lP/iJSzT7+bXOWW4=
+	t=1745461105; cv=none; b=HkIjvHC7Fyjm3JCimVUrMrlfPIa0N8TxwNfYUtyD9u05wpVBP5eI3UsSt4aieDCnU15fHYySC/eL4ot3CQIlpLDjwxeDcKddQ/iUmbPOry899QNHDGgQORG905YxMKVdCxJRlTBpGW9GzLgjI6WT9wMBoSUea45GBb1Mz7+qf64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745460817; c=relaxed/simple;
-	bh=ubU7OUBvyo7wi7WpdYTyiErLz39JsBxbMdo44Y4Gj78=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VbitqB5GhEtSlyiBfEUBTeSMsHXDCJCMmNqeJDvLLfuLBi33iNmUW9j5y6YQTZgdvZnqUyacpOmIFMRK5ccLgrKZOy8K+bJIaFIR7u8D72B5OpjD/I/5zCLJ0J11hsZuLrwKrgLYgsEF339DZ/TLbwi1VnuhHTWmqiIlo8TLa44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso2927511a12.1;
-        Wed, 23 Apr 2025 19:13:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745460813; x=1746065613;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CaiYIHovh3hj7JhREmKYSulniFNMpmE5/FQxCD5M2gA=;
-        b=mMPtXQM7SjCbC/Yt4pnQgQXkxcoxKuzSl+h/nN4CKwSQcdxybpS7iO9cRY1jFvWhCR
-         oYOGnUEsPONmNMHyQvLf+SeI8kxzpdveTADyIM7Kr0NX05uwf6iwdWE0tBRSgs2z0Abw
-         8Vfm2SKrs1XhqS9DtMiZWL8FTtd2m4MQJotQun3EO0x4RO8OQWoqg3UMhonQHL0Qbvr0
-         waxDOYBHg1O2qKrM+mu+GMCqG8Y6lmHvZPRNg+x3n/kRif+0ytUb66vJkrl0AFhqJb2k
-         SRl28rl/AMlN4iEyMMat6pKH3P62J4OiwPj2YQi3IrtEur6Ja1qUG47mahlv37rL5Xp+
-         laUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqa9Hp6jqhMjJ2+X6uvMSFsw+u6qqrPzaaSZlDwUUG84SSJVvGCOM+W1j3M/99f2lUDzr6guTNDiok@vger.kernel.org, AJvYcCWKRh7w/BYdb6+W+OIw2rurPjtet9fg7udjgkeLOlpRVv3Ol7iGtjMvivjdDnVIzPNNOPZX6B/La9oILXSP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc/lFRzFU+JkFEeEG/DV4APXRsnDBKUlh1y8N9FC7zFttBWA9C
-	9vSdHzxUpQqZddd2loJIyRVKsvXoydq0t2qXeJVMAz6b3i+IK0mY2A4iA7UKMQ8=
-X-Gm-Gg: ASbGncswDhy9assWbccP26qgiQTqukJWPf5Zhfs/LTG1ja2JtQLs9Wsxdbh6E5XxDbM
-	r3BxWMkVfwsGAqXyoDFBvEfAo78Crr1wA274rn+1LcGJJclO3MJu7+AYZJY4gLy58ReXUk+pE00
-	WBQNs0S/2ECKZmmXKr83o8riHW4g22c/dvGIcJZoaQkmnr50cLTI1qeWH/geB2zI4RQ11pEFaQU
-	4Ul1f2dlYxOJ1yW6VlkTNpofTgxf5GTWx/DBxPpBfdQ4bYKECgZOPiaZ+JcY9PSfHx/RfNaIJNN
-	5IXf4bnUbo2K+UUZO4t2ARhWopFI79JZwEi2QJev0mMBfh6XnoBHNeDKWjA4R5biP1em2e8=
-X-Google-Smtp-Source: AGHT+IEUt+dA4lIKNGTNlbu1Si9cdKV3iSsHFbrmpYlcDkUjtQ/4sqjm8X9a2P9zxyAr2Fo4dNnp2A==
-X-Received: by 2002:a17:906:ef09:b0:aca:c67d:eac0 with SMTP id a640c23a62f3a-ace59dfdf18mr54420466b.0.1745460813054;
-        Wed, 23 Apr 2025 19:13:33 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59c257d5sm26704066b.127.2025.04.23.19.13.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 19:13:31 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac7bd86f637so326031366b.1;
-        Wed, 23 Apr 2025 19:13:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1KGkoGpr6MrvFfRDbwEgzUvc1cBdKljqj929AaNG+9hp1WEqFrDKcaG94kTYEgrqiMkgHUkOvaGiL@vger.kernel.org, AJvYcCXYO5VhF9chLg7b+/wuRK4xa/VHBPQ3merB2XHowD5Kp85sNLBAG8BnW4yUl1aq/21I+b6tzDVhmV8QJt2p@vger.kernel.org
-X-Received: by 2002:a17:907:2d8d:b0:ac7:3441:79aa with SMTP id
- a640c23a62f3a-ace5a2a9b58mr54104966b.13.1745460811360; Wed, 23 Apr 2025
- 19:13:31 -0700 (PDT)
+	s=arc-20240116; t=1745461105; c=relaxed/simple;
+	bh=UVVi4P/sqC1/mlMQUgwoPMiBvWDUJoPNhcKxSph6Fow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/U6l5EE3u6BZuFRE7yRdN0a33B/uChjs6PTZWWENwUtm8TCnyO6tobIqWaKI3leAkjnKPX2ZcJybFXHFW6NtObEaTSlq+03r7IxFuoZQpf11kg0kgLpG3g/5B9hANDTqMtmyg86ntO4jnBC/7pXiSqxIc1rMDJ/fZactxmpVb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EJi9vs5V; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ba37651b-95fd-4db2-8806-58cd2a08a979@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745461091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2T5lAnrEJNQwQyiPVjj4uMl+QlzCXBRaN6qYGLhWYKE=;
+	b=EJi9vs5VuPrCf+IsuIhmfeiUsjfuW5oijaBPLAesl2OHnb4Ge6KVn4qvnoI0fU9psMDF8S
+	HSqkipFcZiY3aBK8VUUnFztyL5Hg/bnx42cesDbGQAF2a64Qi9GskUXeln6DVMzpLjWSIt
+	Pvrtpvx5HmlDBGDz5rSlWEyEe+LQZTo=
+Date: Thu, 24 Apr 2025 10:17:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423-spmi-nvmem-v3-0-2985aa722ddc@gmail.com>
-In-Reply-To: <20250423-spmi-nvmem-v3-0-2985aa722ddc@gmail.com>
-From: Neal Gompa <neal@gompa.dev>
-Date: Wed, 23 Apr 2025 22:12:54 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je-n+=dHzt3b5oDCk3uYm6vBpsFzy-47sDeJB_=rs7OR3A@mail.gmail.com>
-X-Gm-Features: ATxdqUHYt94bW4xL2oNxmmXaCgYQX3z4Kme1wD4CvmsQsfVBIo41Uk4tiX7FjQM
-Message-ID: <CAEg-Je-n+=dHzt3b5oDCk3uYm6vBpsFzy-47sDeJB_=rs7OR3A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Apple PMIC NVMEM cell driver (Formerly: Generic
- SPMI NVMEM cell driver)
-To: fnkl.kernel@gmail.com
-Cc: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hector Martin <marcan@marcan.st>, Nick Chan <towinchenmi@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Apr 23, 2025 at 1:55=E2=80=AFPM Sasha Finkelstein via B4 Relay
-<devnull+fnkl.kernel.gmail.com@kernel.org> wrote:
->
-> Hi.
->
-> This patch series adds a driver for exposing a set of registers
-> as NVMEM cells on a SPMI-attached PMIC on Apple ARM platforms.
-> Those are used to store the RTC offset and to communicate platform
-> power state between the OS and boot firmware.
->
-> The NVMEM cell consumer drivers will be sent in a further series.
->
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
-> Changes in v3:
-> - No longer try to make it generic, use for the 3 relevant PMICs only
-> - Link to v2: https://lore.kernel.org/r/20250417-spmi-nvmem-v2-0-b88851e3=
-4afb@gmail.com
->
-> Changes in v2:
-> - s/pmu/pmic/
-> - Sort dts in unit-order, instead of t600x-unit-order
-> - Link to v1: https://lore.kernel.org/r/20250415-spmi-nvmem-v1-0-22067be2=
-53cf@gmail.com
->
-> ---
-> Hector Martin (2):
->       nvmem: Add apple-spmi-nvmem driver
->       arm64: dts: apple: Add PMIC NVMEM
->
-> Sasha Finkelstein (1):
->       dt-bindings: spmi: Add Apple SPMI NVMEM
->
->  .../bindings/nvmem/apple,spmi-nvmem.yaml           | 54 ++++++++++++++++=
-+++
->  MAINTAINERS                                        |  2 +
->  arch/arm64/boot/dts/apple/t6001.dtsi               |  1 +
->  arch/arm64/boot/dts/apple/t6002.dtsi               |  1 +
->  arch/arm64/boot/dts/apple/t600x-die0.dtsi          | 50 ++++++++++++++++=
-+
->  arch/arm64/boot/dts/apple/t8103.dtsi               | 50 ++++++++++++++++=
-+
->  arch/arm64/boot/dts/apple/t8112.dtsi               | 50 ++++++++++++++++=
-+
->  drivers/nvmem/Kconfig                              | 13 +++++
->  drivers/nvmem/Makefile                             |  2 +
->  drivers/nvmem/apple-spmi-nvmem.c                   | 62 ++++++++++++++++=
-++++++
->  10 files changed, 285 insertions(+)
-> ---
-> base-commit: 2e0e70c95077172b29a5b13716c4b159d578e82c
-> change-id: 20250415-spmi-nvmem-e08635316175
->
-
-Series LGTM.
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v3] tools/mm: Add script to display page state for a given
+ PID and VADDR
+To: Florian Weimer <fweimer@redhat.com>
+Cc: akpm@linux-foundation.org, linux-debuggers@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-toolchains@vger.kernel.org, osandov@osandov.com, paulmck@kernel.org,
+ sweettea-kernel@dorminy.me, liuye@kylinos.cn
+References: <20250423014850.344501-1-ye.liu@linux.dev>
+ <87jz7bky7i.fsf@oldenburg.str.redhat.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <87jz7bky7i.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+在 2025/4/23 17:45, Florian Weimer 写道:
+> * Ye Liu:
+>
+>> From: Ye Liu <liuye@kylinos.cn>
+>>
+>> Introduces a new drgn script, `show_page_info.py`, which allows users
+>> to analyze the state of a page given a process ID (PID) and a virtual
+>> address (VADDR). This can help kernel developers or debuggers easily
+>> inspect page-related information in a live kernel or vmcore.
+>>
+>> The script extracts information such as the page flags, mapping, and
+>> other metadata relevant to diagnosing memory issues.
+>>
+>> Output example:
+>> sudo ./show_page_info.py 1 0x7f43df5acf00
+>> PID: 1 Comm: systemd mm: 0xffff8881273bbc40
+>> Raw: 0017ffffc000416c ffffea00043a4508 ffffea0004381e08 ffff88810f086a70
+>> Raw: 0000000000000000 ffff888120c9b0c0 0000002500000007 ffff88812642c000
+>> User Virtual Address: 0x7f43df5acf00
+>> Page Address:         0xffffea00049a0b00
+>> Page Flags:           PG_referenced|PG_uptodate|PG_lru|PG_head|PG_active|
+>> 		      PG_private|PG_reported
+>> Page Size:            16384
+>> Page PFN:             0x12682c
+>> Page Physical:        0x12682c000
+>> Page Virtual:         0xffff88812682c000
+>> Page Refcount:        37
+>> Page Mapcount:        7
+>> Page Index:           0x0
+>> Page Memcg Data:      0xffff88812642c000
+>> Memcg Name:           init.scope
+>> Memcg Path:           /sys/fs/cgroup/memory/init.scope
+>> Page Mapping:         0xffff88810f086a70
+>> Page Anon/File:       File
+>> Page VMA:             0xffff88810e4af3b8
+>> VMA Start:            0x7f43df5ac000
+>> VMA End:              0x7f43df5b0000
+>> This page is part of a compound page.
+>> This page is the head page of a compound page.
+>> Head Page:            0xffffea00049a0b00
+>> Compound Order:       2
+>> Number of Pages:      4
+> Does this show the page access flags anywhere in the output?  If not,
+> would it be possible to include this information?
+
+
+This script is currently a basic version, and we plan to gradually add
+more detailed information about pages, including the page access flags
+you mentioned, as well as PGD, PUD, PMD, PTE, file/anon rmap folios,
+and more. This will be refined over time.                             
+
+Thanks,
+Ye Liu
+
+> Thanks,
+> Florian
+>
 
