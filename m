@@ -1,250 +1,137 @@
-Return-Path: <linux-kernel+bounces-617455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E119A9A022
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:33:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16472A9A028
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B58444B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:33:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C340443E5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5011AD3E0;
-	Thu, 24 Apr 2025 04:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B701B4159;
+	Thu, 24 Apr 2025 04:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="L0bEFV6U"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KAFsdazh"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D798198A11
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE3319CC3D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745469227; cv=none; b=R+YxmCoBkovmfLxbsmU5nl/iJcV+5gX3rwkciiiuMFwa0uyM42Ddjh7HLk6EUzdZoXcJDtimxQu7Ed4+HupzEIMszOAjGuh1cSTk2YLvaq3ObFX69R35k4R18XJQUpxOdAE3Ie+VQbgKBmn1L5EO5zfpl1Ue6tstZoUdUi1Dy9s=
+	t=1745469278; cv=none; b=b6HFYZqK5uObSAYKFJD1mOol4KFsQIGRGfYwSsuCviuZpLUu7aI23BAJUkOvAdPHKWlwaT3UFfVv2nhmfSIDvnD50D1u2Rp6TQAaPJwy0GocNv0fveK+ghPsYVLQUmRfwwtxQUFYSEDCo8NSTMua7zb+TieE69PeeME7JGjpkDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745469227; c=relaxed/simple;
-	bh=7L7H1m7WTMw2rrNFw2qugvrsnLMboVo2KxA6ogCXw+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C2NHRJGfO6aKlAeFok1GCNnfCV2AmlJOhPW4pRfAzVYMRg7XITCiwJl6NFRCHYkWKCTiRD6W9Ffz8lAHQ4nx7qIDxp/em1mqxO7rT7eY1TPJZB8+AoPhzCGgGplCdYDDGDKfamLUcP1rbGW6N5+jPbkt28+SLj67g3xDHnZzp1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=L0bEFV6U; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745469222;
-	bh=7L7H1m7WTMw2rrNFw2qugvrsnLMboVo2KxA6ogCXw+M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L0bEFV6UMB8hLMAI11I3XcynyhDIXwOYBFDn3Ib3gNHaNiLu1CQ0frBGYKjxXDtL3
-	 phsVMRmjr3s5VeQMi29pJ5hee225wT6AUZ0VO6a1NICs7gijN9OVklu2SExcyAxi3e
-	 MyYoYyjVCc3nrXplOLtJo7WkkQyax/J65JbL1YSweXMjWcF5LzSxL2KU1xqvr7buhc
-	 m80ySLYi2PfY+GZ+w3mqN7Cu9JSnYMaB59wQR265wQL+uT2dN3+fOk+7B1TmvccKdR
-	 2Q6X595nU8kiIX9W+UHVzR3Q/VIS7PHH/zlUgpgmMYq4shzKz7IFRvEA9Uzdez0xFt
-	 UATHXIdqU9mfA==
-Received: from [192.168.8.5] (unknown [137.59.78.166])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A321517E088C;
-	Thu, 24 Apr 2025 06:33:35 +0200 (CEST)
-Message-ID: <f8e4932c-0bdd-44e0-9b1d-72c37024a400@collabora.com>
-Date: Thu, 24 Apr 2025 10:03:32 +0530
+	s=arc-20240116; t=1745469278; c=relaxed/simple;
+	bh=NNVsyjj8f805hbTEux0iDV9i4GTgZXfRMGV4ROUHYJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mVXTLtqKd0bIiC3hwgNAVud/7txSr/jdD+cRJGwmbsi1QWKis3cyCUls4WUh89JtRzprbsl+DDD6kmdEHc7hprYUhIV1Save0ApZO0Uxk20fKu6T35dFXewvcF2sLepFZhL8TV4TTKVilscWiKB5I9TaWuaV4G9xTtQQKXh8qgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KAFsdazh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ace333d5f7bso102273466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 21:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1745469275; x=1746074075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3oVD7KsMZIzep70oJ/psdvZqPVAbNTVU4usWXr8mlH4=;
+        b=KAFsdazhkfhChOdhUB2E3R4wUkqgWzfbGRSZoAaptzdd5EaJVyhxQ/9ZWkFJjFS35d
+         g0ZSKl6DzXows7f5OBV9wJmKYwqFc5szK787MpUr9AdXwGOcUyjWvvv+T/gLGXrsZf/Z
+         heCosjr9dumkWOV1/pxSx7g2yMcno3RTrABoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745469275; x=1746074075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3oVD7KsMZIzep70oJ/psdvZqPVAbNTVU4usWXr8mlH4=;
+        b=MAYS8AL9khC6wdxzFD399EPrr0WLSfByvshsM+uyCXSbG6W1NmWWa33u+uwW8luA70
+         rOekKfYqiTV3MVQbNwUt7W0C5y4ZBGdiGy1Maoex25+Fm1pGLT5qgloBG8dDKiHKNKLL
+         XlCPcIUA0kK0hPeWJSuw36LSp6EhroB+z4zNpVyTOnGpQ/ZHaCSl+cu3rg5lAi6WH8MH
+         ZtRpJiM2qejHcxkGzXYMK9pwPeNA5ZpiGb6SoJ9Uq6vAApZfUggjhAawvyf7Y+WHVboC
+         2ei1WK3Q3e5nTO5FwNf5oJQfeJBAEHK5HafkwOGlCBC22D8svZ5IX7+Hg517XaiiTie5
+         zDCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYo9wZ8hN9G9s6FypChw4BqnqE7Kj0kS/XEhvhsXK5OVBpLhdP7HL+n2z24nHSfXcUY750ufWN8jCs7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuRHHLPTjTLKF3Xu4G3RG6sttxBEEzJ3Tu9QoljOmVKrK179G2
+	Lbz7NnDNoUUnHPxXfNYQOEXhde7B99cCRwp3OZ6uUszN3QbWE/AaY8Dl2UpB8otT62AgwspMyg9
+	YlA==
+X-Gm-Gg: ASbGncuHIkd9to4e18UE7SWaZEV9cPZezMF22Qx0bjggtrWFfMFZmO+Rr6XHneAIhya
+	xwF9y+x2SfuL+GDzrUoKODTujzLGNeVqvM02Wda0EEw/guAX1q27bACGCSLMF8vgsYSBEufGVFp
+	NtjuMpXykjCMH4Ffq7mfoOVc8jbgGjz0NDsg+mUoOKOXtbCvRMskx+LhLfEl4RsRJrHUYtPnrSM
+	LBFbn7vmg04lZ6zxS2MipRBiOIti1TedqMDKGL1BQXa3MHN5BaNVtghy7gECNJ28Eep7YOMarQk
+	2OeP0NjMGw+bL4WFadhFReq4nwTSPV+g6CcVZVzPQrv0+pXtysnQQn4ONxBOQYn1InGGCptgmUh
+	M
+X-Google-Smtp-Source: AGHT+IEPqZv6Da1CqH1WyeEm4FjHR21rIsqOzzn2+/QcPFVjzSZ0im4PaaX+plrage+y39odMypK2Q==
+X-Received: by 2002:a17:906:d54d:b0:ac6:fe85:9a45 with SMTP id a640c23a62f3a-ace5744f0a6mr120495966b.51.1745469274952;
+        Wed, 23 Apr 2025 21:34:34 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59830f73sm40573766b.34.2025.04.23.21.34.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 21:34:33 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso3868a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 21:34:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXQ+DcAeJBHNwjcO1ODpVlCsoNj6yN3NjiheGhZqTX7AFb2kQk74MM6W5hbr/zNoRE0ZLCmNmix33g24H4=@vger.kernel.org
+X-Received: by 2002:a50:aa9b:0:b0:5f4:ca7a:c4c5 with SMTP id
+ 4fb4d7f45d1cf-5f6eda9ce33mr42883a12.5.1745469272831; Wed, 23 Apr 2025
+ 21:34:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/ci: Add jobs to validate devicetrees
-To: Helen Koike <koike@igalia.com>, dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com, daniel@fooishbar.org, helen.fornazier@gmail.com,
- airlied@gmail.com, simona.vetter@ffwll.ch, robdclark@gmail.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- valentine.burley@collabora.com, lumag@kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, quic_abhinavk@quicinc.com,
- mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
- linux-kernel@vger.kernel.org
-References: <20250417030439.737924-1-vignesh.raman@collabora.com>
- <20250417030439.737924-2-vignesh.raman@collabora.com>
- <089fbd77-43ec-4ed5-8bcf-168a502c5270@igalia.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <089fbd77-43ec-4ed5-8bcf-168a502c5270@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <miliiyxmqko6hx66yhdv4nkkopbm73wbz6kxxlzpts53mscqzy@dpfa6y3wnspv> <CAAFQd5AYA=7rQjdQ4AS1vjb0Z3zHec6bdbhrA2cW706DHZyhKg@mail.gmail.com>
+In-Reply-To: <CAAFQd5AYA=7rQjdQ4AS1vjb0Z3zHec6bdbhrA2cW706DHZyhKg@mail.gmail.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 24 Apr 2025 13:34:15 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DgDHLhQUv=Bw0Thd41Di740A_yv+7wxDErE_YpN4CqBQ@mail.gmail.com>
+X-Gm-Features: ATxdqUE4qIQMx_W2R3mHXFPHa-_-ZLSKs-j7NZxfZys4l9GtuscyIT6zbVQg4Mw
+Message-ID: <CAAFQd5DgDHLhQUv=Bw0Thd41Di740A_yv+7wxDErE_YpN4CqBQ@mail.gmail.com>
+Subject: Re: [RFC] sched: add sched_show_task() variant that accepts log level
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Helen,
+On Wed, Mar 12, 2025 at 11:51=E2=80=AFPM Tomasz Figa <tfiga@chromium.org> w=
+rote:
+>
+> Hi Sergey,
+>
+> On Mon, Mar 10, 2025 at 5:25=E2=80=AFPM Sergey Senozhatsky
+> <senozhatsky@chromium.org> wrote:
+> >
+> > Hi,
+> >
+> > A request for comments, not a formal patch.
+> >
+> > Is there any reason why hung-task watchdog prints error header
+> > with KERN_ERR log level while task's backtrace is printed with
+> > KERN_INFO?  Will it make sense to unify log levels and introduce
+> > sched_show_task() variant that accept log level param so that
+> > everything that hung-task watchdog prints becomes KERN_ERR?
+>
+> Thanks a lot for looking into this.
+>
+> Let me just add that I've been looking into ways to automatically
+> analyze kernel crash reports and I noticed that when I filter out
+> KERN_INFO and higher log levels, I end up losing useful information
+> for hung-task watchdog-kind of problems. This change would greatly
+> help in filtering out unnecessary noise from the logs.
+>
+> By the way, if having it as KERN_INFO by default would still be
+> desirable, I suppose we could add a KConfig option to set the desired
+> log level?
 
-On 24/04/25 00:26, Helen Koike wrote:
-> 
-> 
-> On 17/04/2025 00:04, Vignesh Raman wrote:
->> Add jobs to run dt_binding_check and dtbs_check. If warnings are seen,
->> exit with a non-zero error code while configuring them as warning in
->> the GitLab CI pipeline.
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> Reviewed-by: Maxime Ripard <mripard@kernel.org>
->> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> ---
->>
->> v3:
->>    - Add dt-binding-check and dtbs-check jobs to the static-checks stage.
->>
->> v2:
->>    - Use LLVM/Clang instead of GCC to avoid architecture-specific
->>      toolchains for cross-compiling.
->>
->> ---
->>   drivers/gpu/drm/ci/check-devicetrees.yml | 44 ++++++++++++++++++++++++
->>   drivers/gpu/drm/ci/dt-binding-check.sh   | 16 +++++++++
->>   drivers/gpu/drm/ci/dtbs-check.sh         | 19 ++++++++++
->>   drivers/gpu/drm/ci/gitlab-ci.yml         |  2 ++
->>   4 files changed, 81 insertions(+)
->>   create mode 100644 drivers/gpu/drm/ci/check-devicetrees.yml
->>   create mode 100755 drivers/gpu/drm/ci/dt-binding-check.sh
->>   create mode 100755 drivers/gpu/drm/ci/dtbs-check.sh
->>
->> diff --git a/drivers/gpu/drm/ci/check-devicetrees.yml b/drivers/gpu/ 
->> drm/ci/check-devicetrees.yml
->> new file mode 100644
->> index 000000000000..75c9b009da1f
->> --- /dev/null
->> +++ b/drivers/gpu/drm/ci/check-devicetrees.yml
->> @@ -0,0 +1,44 @@
->> +.dt-check-base:
->> +  stage: static-checks
->> +  timeout: "30m"
->> +  variables:
->> +    FF_USE_NEW_BASH_EVAL_STRATEGY: 'true'
->> +    SCHEMA: "display"
-> 
-> Shouldn't we also check for gpu ?
+Gentle ping on this patch.
 
-Yes, it would be good to check gpu as well. I will send v4 with these 
-update.
-
-Regards,
-Vignesh
-
-> 
-> Regards,
-> Helen
-> 
->> +  before_script:
->> +    - apt-get update -qq
->> +    - apt-get install -y --no-install-recommends clang lld llvm 
->> python3-pip yamllint
->> +    - pip3 install dtschema
->> +  script:
->> +    - drivers/gpu/drm/ci/${SCRIPT_NAME}
->> +  artifacts:
->> +    when: on_failure
->> +    paths:
->> +      - ${ARTIFACT_FILE}
->> +  allow_failure:
->> +    exit_codes:
->> +      - 102
->> +
->> +dtbs-check:arm32:
->> +  extends:
->> +    - .build:arm32
->> +    - .dt-check-base
->> +  variables:
->> +    SCRIPT_NAME: "dtbs-check.sh"
->> +    ARTIFACT_FILE: "dtbs-check.log"
->> +
->> +dtbs-check:arm64:
->> +  extends:
->> +    - .build:arm64
->> +    - .dt-check-base
->> +  variables:
->> +    SCRIPT_NAME: "dtbs-check.sh"
->> +    ARTIFACT_FILE: "dtbs-check.log"
->> +
->> +dt-binding-check:
->> +  extends:
->> +    - .build
->> +    - .use-debian/x86_64_build
->> +    - .dt-check-base
->> +  variables:
->> +    SCRIPT_NAME: "dt-binding-check.sh"
->> +    ARTIFACT_FILE: "dt-binding-check.log"
->> diff --git a/drivers/gpu/drm/ci/dt-binding-check.sh b/drivers/gpu/drm/ 
->> ci/dt-binding-check.sh
->> new file mode 100755
->> index 000000000000..5e9a439c48a4
->> --- /dev/null
->> +++ b/drivers/gpu/drm/ci/dt-binding-check.sh
->> @@ -0,0 +1,16 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: MIT
->> +
->> +set -euxo pipefail
->> +
->> +if ! make -j"${FDO_CI_CONCURRENT:-4}" dt_binding_check \
->> +        DT_SCHEMA_FILES="${SCHEMA:-}" 2>dt-binding-check.log; then
->> +    echo "ERROR: 'make dt_binding_check' failed. Please check dt- 
->> binding-check.log for details."
->> +    exit 1
->> +fi
->> +
->> +if [[ -s dt-binding-check.log ]]; then
->> +    echo "WARNING: dt_binding_check reported warnings. Please check 
->> dt-binding-check.log" \
->> +         "for details."
->> +    exit 102
->> +fi
->> diff --git a/drivers/gpu/drm/ci/dtbs-check.sh b/drivers/gpu/drm/ci/ 
->> dtbs-check.sh
->> new file mode 100755
->> index 000000000000..91212f19fb98
->> --- /dev/null
->> +++ b/drivers/gpu/drm/ci/dtbs-check.sh
->> @@ -0,0 +1,19 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: MIT
->> +
->> +set -euxo pipefail
->> +
->> +: "${KERNEL_ARCH:?ERROR: KERNEL_ARCH must be set}"
->> +
->> +make LLVM=1 ARCH="${KERNEL_ARCH}" defconfig
->> +
->> +if ! make -j"${FDO_CI_CONCURRENT:-4}" ARCH="${KERNEL_ARCH}" LLVM=1 
->> dtbs_check \
->> +        DT_SCHEMA_FILES="${SCHEMA:-}" 2>dtbs-check.log; then
->> +    echo "ERROR: 'make dtbs_check' failed. Please check dtbs- 
->> check.log for details."
->> +    exit 1
->> +fi
->> +
->> +if [[ -s dtbs-check.log ]]; then
->> +    echo "WARNING: dtbs_check reported warnings. Please check dtbs- 
->> check.log for details."
->> +    exit 102
->> +fi
->> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/ 
->> gitlab-ci.yml
->> index 65adcd97e06b..ac2f498cfe5a 100644
->> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
->> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
->> @@ -108,6 +108,7 @@ include:
->>     - drivers/gpu/drm/ci/static-checks.yml
->>     - drivers/gpu/drm/ci/build.yml
->>     - drivers/gpu/drm/ci/test.yml
->> +  - drivers/gpu/drm/ci/check-devicetrees.yml
->>     - 'https://gitlab.freedesktop.org/gfx-ci/lab-status/-/raw/main/ 
->> lab-status.yml'
->> @@ -117,6 +118,7 @@ stages:
->>     - git-archive
->>     - build-for-tests
->>     - build-only
->> +  - static-checks
->>     - code-validation
->>     - amdgpu
->>     - i915
-> 
-
+Best regards,
+Tomasz
 
