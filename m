@@ -1,106 +1,242 @@
-Return-Path: <linux-kernel+bounces-617393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97250A99F73
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E2FA99F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F983B131F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054C8444139
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB1019D07A;
-	Thu, 24 Apr 2025 03:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3025C1A9B23;
+	Thu, 24 Apr 2025 03:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Yn6tkvCY"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nbg5MOi9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611881A5BB2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0451AA1D8;
+	Thu, 24 Apr 2025 03:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745464046; cv=none; b=sqH91isJjD5LgPahN8dm4Cp8OVJ6DxgQGWad7cYaKXuElr43F75PlaQ8TlZ27/0CEbEBd0cbBInXhFICUxdvt/mmTVjdEVkDq7oXzB2ne3DpBFNVBjjb0qa5e++exW8h6XGqZo3snWe98BtPYTVcPJNcXRSe+I0VY1/Eqvbi4VA=
+	t=1745464149; cv=none; b=HLCGEuXFJ0h5bwUelNiYgRe2LSzqqhAcSh8snpJhWcBeJZO6Cj72Y2aFi8suaLwURYpl81e6jDvQUjsxLWLenlg1BKNK8A59rII9RcEDAeKSjfFcBjJsopAMxYArQpYH3jQHOFSwviOokwoJF+Y6BEYJJ5XsbfLE2g5IyZoUgXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745464046; c=relaxed/simple;
-	bh=6yz9SDRx3eNUERDUWclK/fQ/tgNsEuCKqYIUBAdNxM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=giJXjrSyZQLUnM4V9CyKFrl0D64EYbfztQFJgsE/qKqFApCuEwLd5voGNHSIDD8rQFW5XE6QR+b1K9X532TAHiowmzXJUsa/FKvYC271CptFUMDP6avDhT5++8boKcCUeAMl+vZDsWwVfK77o8hVD2nswptMsNLgNiaXz8a7fgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Yn6tkvCY; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f5ac4ab8-bd1a-4009-bf09-1ac34eb47ec1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745464042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eH5A1aKc65oiuiH9DMP/7aJj2gAA7/rhAd8AecnDlpM=;
-	b=Yn6tkvCYBbrQLuPGV6B4VLcmEvj9S1gWzxpkwa+IYgATjTfRsqsqII6Y7ugn+gH3PuAc4G
-	/lvxY9rR2AWng9YoxOd1pumsREGK1DPP9MKpi21RHMI1tj4r5E5zRAGYoKsjNGlKwqxgUf
-	80g2Yom1hR/s1M8kfI8KMJvdU6EOGNE=
-Date: Thu, 24 Apr 2025 11:06:59 +0800
+	s=arc-20240116; t=1745464149; c=relaxed/simple;
+	bh=KeWQF6JOZCE1U2cXc5jw2hofVfb7DCC9G33zg4hMCIg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WLeggjxm2pZCiOckdb0MLD31s1/Mxn+FfCR/a7/mJQjYSmoWiOgu1rLK/Rlj0DuT58U//z7Z3zVZngklAcZnjops3LVoQSS09kgTAf+kqyWJr/+f6FUEB0IXmhT/fiqG8h5Wp2nNyzDmsiGLXgoX6gol9jlPjhvGlBguMKJPyOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nbg5MOi9; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745464148; x=1777000148;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KeWQF6JOZCE1U2cXc5jw2hofVfb7DCC9G33zg4hMCIg=;
+  b=Nbg5MOi9+0pJ4Tjwts2B56Knee24idFtKsryIkrvWUNQB7lP5km7Z70m
+   lie2HRAEXdMhfw1rJEFZ3iZ+lGU0m5t7MaNAYv6gGRW9HnvONq2dkChRD
+   1aAdeK/6dAmujSDzUi5szIheADTcf0lbN513A7doBbpOkLfpkppBKDaWE
+   zgX99dHB3JjNIn7xD2Y2vdfLFVoBPkskLu3ee3PS5iGHYrKatCc9k138Z
+   39JxGN3UDd0/40T3GkE4yf0oG3kTOoR26hVrwaps6+Nn6n+CA8RYuSL97
+   JUM3fr3VE/YBdMhDCQLqI1gjhgtPR9iXzz8alwlUA9D28t2jd//RK6MXl
+   Q==;
+X-CSE-ConnectionGUID: 2IjuW3rUQNWW+a3s4iXzTQ==
+X-CSE-MsgGUID: q/jfgQdxS0CjLO74uQGiUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="57727367"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="57727367"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:09:06 -0700
+X-CSE-ConnectionGUID: IV8EalImTd2EO6sMLYfQog==
+X-CSE-MsgGUID: p42shN4AQMeg7I0S9md/xQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="137286490"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:09:00 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	x86@kernel.org,
+	rick.p.edgecombe@intel.com,
+	dave.hansen@intel.com,
+	kirill.shutemov@intel.com,
+	tabba@google.com,
+	ackerleytng@google.com,
+	quic_eberman@quicinc.com,
+	michael.roth@amd.com,
+	david@redhat.com,
+	vannapurve@google.com,
+	vbabka@suse.cz,
+	jroedel@suse.de,
+	thomas.lendacky@amd.com,
+	pgonda@google.com,
+	zhiquan1.li@intel.com,
+	fan.du@intel.com,
+	jun.miao@intel.com,
+	ira.weiny@intel.com,
+	isaku.yamahata@intel.com,
+	xiaoyao.li@intel.com,
+	binbin.wu@linux.intel.com,
+	chao.p.peng@intel.com,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [RFC PATCH 12/21] KVM: TDX: Determine max mapping level according to vCPU's ACCEPT level
+Date: Thu, 24 Apr 2025 11:07:13 +0800
+Message-ID: <20250424030713.403-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20250424030033.32635-1-yan.y.zhao@intel.com>
+References: <20250424030033.32635-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] bpf, docs: iterator: Rectify non-standard line break
-To: WangYuli <wangyuli@uniontech.com>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, corbet@lwn.net
-Cc: bpf@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, void@manifault.com, psreep@gmail.com,
- yhs@fb.com, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
-References: <DB66473733449DB0+20250423030632.17626-1-wangyuli@uniontech.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <DB66473733449DB0+20250423030632.17626-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+Determine the max mapping level of a private GFN according to the vCPU's
+ACCEPT level specified in the TDCALL TDG.MEM.PAGE.ACCEPT.
 
-在 4/23/25 11:06 AM, WangYuli 写道:
-> Even though the kernel's coding-style document does not explicitly
-> state this, we generally put a newline after the semicolon of every
-> C language statement to enhance code readability.
->
-> Adjust the placement of newlines to adhere to this convention.
->
-> Reported-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+When an EPT violation occurs due to a vCPU invoking TDG.MEM.PAGE.ACCEPT
+before any actual memory access, the vCPU's ACCEPT level is available in
+the extended exit qualification. Set the vCPU's ACCEPT level as the max
+mapping level for the faulting GFN. This is necessary because if KVM
+specifies a mapping level greater than the vCPU's ACCEPT level, and no
+other vCPUs are accepting at KVM's mapping level, TDG.MEM.PAGE.ACCEPT will
+produce another EPT violation on the vCPU after re-entering the TD, with
+the vCPU's ACCEPT level indicated in the extended exit qualification.
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+Introduce "violation_gfn_start", "violation_gfn_end", and
+"violation_request_level" in "struct vcpu_tdx" to pass the vCPU's ACCEPT
+level to TDX's private_max_mapping_level hook for determining the max
+mapping level.
 
+Instead of taking some bits of the error_code passed to
+kvm_mmu_page_fault() and requiring KVM MMU core to check the error_code for
+a fault's max_level, having TDX's private_max_mapping_level hook check for
+request level avoids changes to the KVM MMU core. This approach also
+accommodates future scenarios where the requested mapping level is unknown
+at the start of tdx_handle_ept_violation() (i.e., before invoking
+kvm_mmu_page_fault()).
 
-Thanks,
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ arch/x86/kvm/vmx/tdx.c      | 36 +++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/tdx.h      |  4 ++++
+ arch/x86/kvm/vmx/tdx_arch.h |  3 +++
+ 3 files changed, 42 insertions(+), 1 deletion(-)
 
-Yanteng
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 86775af85cd8..dd63a634e633 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1859,10 +1859,34 @@ static inline bool tdx_is_sept_violation_unexpected_pending(struct kvm_vcpu *vcp
+ 	return !(eq & EPT_VIOLATION_PROT_MASK) && !(eq & EPT_VIOLATION_EXEC_FOR_RING3_LIN);
+ }
+ 
++static inline void tdx_get_accept_level(struct kvm_vcpu *vcpu, gpa_t gpa)
++{
++	struct vcpu_tdx *tdx = to_tdx(vcpu);
++	int level = -1;
++
++	u64 eeq_type = tdx->ext_exit_qualification & TDX_EXT_EXIT_QUAL_TYPE_MASK;
++
++	u32 eeq_info = (tdx->ext_exit_qualification & TDX_EXT_EXIT_QUAL_INFO_MASK) >>
++			TDX_EXT_EXIT_QUAL_INFO_SHIFT;
++
++	if (eeq_type == TDX_EXT_EXIT_QUAL_TYPE_ACCEPT) {
++		level = (eeq_info & GENMASK(2, 0)) + 1;
++
++		tdx->violation_gfn_start = gfn_round_for_level(gpa_to_gfn(gpa), level);
++		tdx->violation_gfn_end = tdx->violation_gfn_start + KVM_PAGES_PER_HPAGE(level);
++		tdx->violation_request_level = level;
++	} else {
++		tdx->violation_gfn_start = -1;
++		tdx->violation_gfn_end = -1;
++		tdx->violation_request_level = -1;
++	}
++}
++
+ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+ {
+ 	unsigned long exit_qual;
+-	gpa_t gpa = to_tdx(vcpu)->exit_gpa;
++	struct vcpu_tdx *tdx = to_tdx(vcpu);
++	gpa_t gpa = tdx->exit_gpa;
+ 	bool local_retry = false;
+ 	int ret;
+ 
+@@ -1884,6 +1908,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+ 		 */
+ 		exit_qual = EPT_VIOLATION_ACC_WRITE;
+ 
++		tdx_get_accept_level(vcpu, gpa);
++
+ 		/* Only private GPA triggers zero-step mitigation */
+ 		local_retry = true;
+ 	} else {
+@@ -2917,6 +2943,9 @@ static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64 vcpu_rcx)
+ 
+ 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+ 
++	tdx->violation_gfn_start = -1;
++	tdx->violation_gfn_end = -1;
++	tdx->violation_request_level = -1;
+ 	return 0;
+ 
+ free_tdcx:
+@@ -3260,9 +3289,14 @@ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
+ 
+ int tdx_gmem_private_max_mapping_level(struct kvm_vcpu *vcpu, kvm_pfn_t pfn, gfn_t gfn)
+ {
++	struct vcpu_tdx *tdx = to_tdx(vcpu);
++
+ 	if (unlikely(to_kvm_tdx(vcpu->kvm)->state != TD_STATE_RUNNABLE))
+ 		return PG_LEVEL_4K;
+ 
++	if (gfn >= tdx->violation_gfn_start && gfn < tdx->violation_gfn_end)
++		return tdx->violation_request_level;
++
+ 	return PG_LEVEL_2M;
+ }
+ 
+diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+index 51f98443e8a2..6e13895813c5 100644
+--- a/arch/x86/kvm/vmx/tdx.h
++++ b/arch/x86/kvm/vmx/tdx.h
+@@ -70,6 +70,10 @@ struct vcpu_tdx {
+ 
+ 	u64 map_gpa_next;
+ 	u64 map_gpa_end;
++
++	u64 violation_gfn_start;
++	u64 violation_gfn_end;
++	int violation_request_level;
+ };
+ 
+ void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
+diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+index a30e880849e3..af006a73ee05 100644
+--- a/arch/x86/kvm/vmx/tdx_arch.h
++++ b/arch/x86/kvm/vmx/tdx_arch.h
+@@ -82,7 +82,10 @@ struct tdx_cpuid_value {
+ #define TDX_TD_ATTR_PERFMON		BIT_ULL(63)
+ 
+ #define TDX_EXT_EXIT_QUAL_TYPE_MASK	GENMASK(3, 0)
++#define TDX_EXT_EXIT_QUAL_TYPE_ACCEPT  1
+ #define TDX_EXT_EXIT_QUAL_TYPE_PENDING_EPT_VIOLATION  6
++#define TDX_EXT_EXIT_QUAL_INFO_MASK	GENMASK(63, 32)
++#define TDX_EXT_EXIT_QUAL_INFO_SHIFT	32
+ /*
+  * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is 1024B.
+  */
+-- 
+2.43.2
 
-> ---
->   Documentation/bpf/bpf_iterators.rst | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/bpf/bpf_iterators.rst b/Documentation/bpf/bpf_iterators.rst
-> index 7f514cb6b052..385cd05aabf5 100644
-> --- a/Documentation/bpf/bpf_iterators.rst
-> +++ b/Documentation/bpf/bpf_iterators.rst
-> @@ -323,8 +323,8 @@ Now, in the userspace program, pass the pointer of struct to the
->   
->   ::
->   
-> -  link = bpf_program__attach_iter(prog, &opts); iter_fd =
-> -  bpf_iter_create(bpf_link__fd(link));
-> +  link = bpf_program__attach_iter(prog, &opts);
-> +  iter_fd = bpf_iter_create(bpf_link__fd(link));
->   
->   If both *tid* and *pid* are zero, an iterator created from this struct
->   ``bpf_iter_attach_opts`` will include every opened file of every task in the
 
