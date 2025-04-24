@@ -1,240 +1,239 @@
-Return-Path: <linux-kernel+bounces-617722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE21A9A4D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B02BA9A4D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DF73A9179
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B2F17E495
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523A41F4613;
-	Thu, 24 Apr 2025 07:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AB81F3BA9;
+	Thu, 24 Apr 2025 07:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YF8TzbEX"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KSXnKJVh"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9702701BA;
-	Thu, 24 Apr 2025 07:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118101AB530;
+	Thu, 24 Apr 2025 07:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745481061; cv=none; b=sg8MSbTccSazarJ0PDbX7rI1ofQzKPjaUOI8OcYDqTssFzIgz+jI+VTcNrd4t96ve73IekKaqbPjdMJ5hc1iEyA0XZbcqwALVTb7QsXJ3fnOZW3aOP3FN4shnc6FUUaQbsvbEyJJyaeY4aw53qmprEpmojAFzwO2zHCWoAH8wLI=
+	t=1745481118; cv=none; b=OxmCNZJm0eHP9eYXDtyrAkFhA+evtoH6S7Hq7D3ezqi2cbrvetovupD0bacHw7/uot2c7BDf90Khi3k3yY4oJjpH0b8jb5MB8JE+C00nZURyBZ8137KNwD1rt/nGOk1MzPnHkFUmsvo1cFqG+ZBPO5f/dyUImpCoCXtCy4Ggg/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745481061; c=relaxed/simple;
-	bh=pJz575pAaFOhtvSQuzH65annzX4zHQce7adBvSkzbMk=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=GNwa/BYO0rJwN59C6cWg+kgf9Ig8jcjD2teVPDxLkZg3oMHI3wQYBPkc2+j0nrEz2SGxILupn+ZYTL/ncfWsQx13f0KqBnUDa4Mu29EJ2Zxw5K7/ynGSvFQcmjZlsqwwo23QdGbPmWGsUUwl6wHcyVxFtqSWdXK9kzIkIVPS990=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YF8TzbEX; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1745481054; bh=pJz575pAaFOhtvSQuzH65annzX4zHQce7adBvSkzbMk=;
-	h=From:To:Cc:Subject:Date;
-	b=YF8TzbEX06smjXK1etoWu0ZCJe9CUKhzc4UR6tX4YR+iBxU514EdK9bm/iJd1w0Fg
-	 0p0Q2bbtzCzEAV8rO/E5kG0a1TsJE6qQohdufhA+z05dFb6qNklMg3VggPU3sEj2uR
-	 Bs7QcK5j+aIzeI9kk/oErpPqXR71yZ5L/J70NDSw=
-X-QQ-FEAT: oHWrrGTW1dCGJEu1CuC8+nIWkvSYK6n9
-X-QQ-SSF: 00000000000000F0000000000000
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-XMAILINFO: MqN/FiDJuNHiNRkTlPNBsW4diox2KmUAygEfKfti8V1Ab4Lv0WXM7sfWIwQp4R
-	 c3ydkDbHE3hz2+BnUBbR75zfj+Z/S12qiVK215yoK8rV2ItooUeNmjJdS/+tq5MI6aFFySF3d4ZcA
-	 NmV3mhO/gXWuUWe67GKlEMv94C9PRQ1sHhR1v7XH0sS16ePV5KNsI9XaJemHXvTkAKFQPsaVefEhn
-	 qh97oKk0nDfuGTMid1YF5G3Zm29VYj7sISJlqV7l20He+E49fiTR3DizBkJ1Sc/fY5JhqWpl5/5+A
-	 swEgjm5kbQ1OMgApg1wrsNOyGVkeEWzMXS54iFDeagYvUYphfRCSNJZVfOzxEGncA683ZrANdPsF7
-	 tWWucy/vvV7cbOJJTur2aHZkI7PclIJ4TLmfYALbaC3FxA8G4InqDmS+rax/Ls3/xQXvkpPRzYeGs
-	 Lv+SV1oHHsManugy4rvpS32eUzIZaXW4SLHdxGQrsCktuy/y6eTEVisuDcfPiB8/GFiaYH3+7R9uo
-	 TvWRMejp1o4JHbWYxwmXGEmcfLW1AJsE7TUC8NtiChixTqOXCTWqRpjAot+VrIbr0dotpw27G5RED
-	 t4hQSDEV230qoDZRrUV/u+fLe5Pvx+/aKWZJyNZK8Mn2WaGSTYTZPolE5wpFlDdR7GJ2fjLekagO8
-	 Bq8PzJ6qJ18b9pxtABIsnNc5BqKKS69lTb9TO/4iT0+jKWWvmVxh20HagcbKcW9MBwVDyIw8EBMsL
-	 qacwyTD5kp9RwxQ5ZVe25NRYNfzcYYhP09xMwISdq9lbKYgym2ZdTJGtCgat2BAuUVmhRGOlJl+vt
-	 b3omMJO42XpuKzNDrQdRmdOErj2eADTa17HbBveIfHoYChwvyrSI3BXtCU3nr6gvVw9V36UbEn12K
-	 gucbpOYp7pc34wrVMLHMOE+vQswbC7l0vUi1xc3srHNE7qvwyGBVvkCCoHSDqjspRzvL6bv0Rnfzj
-	 fT33L14bHRfthMUvb2SUvVnRY+5kFFBtnA43qVWQT+Z+uqLtSovMVd84HRRoY=
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-STYLE: 
-X-QQ-mid: webmail284t1745481053t4223561
-From: "=?gb18030?B?ZmZoZ2Z2?=" <xnxc22xnxc22@qq.com>
-To: "=?gb18030?B?c3RhYmxl?=" <stable@vger.kernel.org>
-Cc: "=?gb18030?B?cGV0ZXJ6?=" <peterz@infradead.org>, "=?gb18030?B?bWluZ28=?=" <mingo@redhat.com>, "=?gb18030?B?YWNtZQ==?=" <acme@kernel.org>, "=?gb18030?B?bmFtaHl1bmc=?=" <namhyung@kernel.org>, "=?gb18030?B?bWFyay5ydXRsYW5k?=" <mark.rutland@arm.com>, "=?gb18030?B?YWxleGFuZGVyLnNoaXNoa2lu?=" <alexander.shishkin@linux.intel.com>, "=?gb18030?B?am9sc2E=?=" <jolsa@kernel.org>, "=?gb18030?B?aXJvZ2Vycw==?=" <irogers@google.com>, "=?gb18030?B?YWRyaWFuLmh1bnRlcg==?=" <adrian.hunter@intel.com>, "=?gb18030?B?a2FuLmxpYW5n?=" <kan.liang@linux.intel.com>, "=?gb18030?B?bGludXgtcGVyZi11c2Vycw==?=" <linux-perf-users@vger.kernel.org>, "=?gb18030?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Potential Linux Crash: WARNING in release_bp_slot  in linux6.12.24(longterm maintenance)
+	s=arc-20240116; t=1745481118; c=relaxed/simple;
+	bh=4AZFZSmc3tQJqAQh2QZKQ7f5PRHrwE+6Rtqt+watsHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V81qqbOm5KuWn+tYHBxjaNxh0LiheBIlyqnea3cHuTWcsHQIiyXpEidnO0g7o7E6toTfWcqPWgRSNaVF585kw/3BRX9o7au1zVxGIpLMVrTME/ZaAbQHmBT0HMLx+FC/oMNAY/HWqQa9j1BeUzHIsD5fPyspr3rBkd1KGiRLd1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KSXnKJVh; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1745481112; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=66EBE6//T4b858PvX3WkhRuMXFKHkqm2EIhR70lCzm0=;
+	b=KSXnKJVhdwjcVdeKBS6o76b2k45HK1cM5ZObJKC/Gu6b6x5nzGGTaZv2o2g10CYKlKflxv9PoZncbVhtRMzS6tjPDfJOoLwbYDLPxvLX+5tMY+TCu8Lahj7TwzwEE1ninOjIVHmcPYDwsvmgAa2iGfrzbRB5/Av1o0H/TEtI0mY=
+Received: from 30.74.146.225(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WXyHI1o_1745481108 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 24 Apr 2025 15:51:49 +0800
+Message-ID: <5187c3fb-bf2a-41a0-902d-2661f1b3a2c9@linux.alibaba.com>
+Date: Thu, 24 Apr 2025 15:51:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="gb18030"
-Content-Transfer-Encoding: base64
-Date: Thu, 24 Apr 2025 03:50:53 -0400
-X-Priority: 3
-Message-ID: <tencent_B50959BC76205E0AE666AE21F7A07D017306@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/12] khugepaged: improve tracepoints for mTHP orders
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
+ baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
+ peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+ usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+ cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250417000238.74567-1-npache@redhat.com>
+ <20250417000238.74567-11-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250417000238.74567-11-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGVsbG8sIEkgZm91bmQgYSBwb3RlbnRpYWwgYnVnIHRpdGxlZCAiICBXQVJOSU5HIGluIHJl
-bGVhc2VfYnBfc2xvdCAgIiB3aXRoIG1vZGlmaWVkIHN5emthbGxlciBpbiB0aGUgIExpbnV4
-Ni4xMi4yNChsb25ndGVybSBtYWludGVuYW5jZSwgbGFzdCB1cGRhdGVkIG9uIEFwcmlsIDIw
-LCAyMDI1KS4KSWYgeW91IGZpeCB0aGlzIGlzc3VlLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
-bmcgdGFnIHRvIHRoZSBjb21taXQ6ICBSZXBvcnRlZC1ieTogSmlhbnpob3UgWmhhbyA8eG54
-YzIyeG54YzIyQHFxLmNvbT4sICAgIHhpbmd3ZWkgbGVlIDx4cml2ZW5kZWxsN0BnbWFpbC5j
-b20+LFBlbmdsZWkgSmlhbmcgPHN1cGVybWFuLnhwdEBnbWFpbC5jb20+ClRoZSBjb21taXQg
-b2YgdGhlIGtlcm5lbCBpcyA6IGI2ZWZhOGNlMjIyZTU4Y2ZlMmJiYWE0ZTMzMjk4MThjMmI0
-YmQ3NGUKa2VybmVsIGNvbmZpZzogaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20vdGV4
-dD90YWc9S2VybmVsQ29uZmlnJmFtcDt4PTU1Zjg1OTFiOThkZDEzMgpjb21waWxlcjogZ2Nj
-IHZlcnNpb24gMTEuNC4wClRoZSByZXByb2R1Y3Rpb24gcHJvZ3JhbSB3cml0dGVuIGluIEMg
-bGFuZ3VhZ2UgaXMgYXQgdGhlIGVuZC4KLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIFRJVExFOiBXQVJOSU5HIGlu
-IHJlbGVhc2VfYnBfc2xvdAotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0K
-bG9vcDI6IGRldGVjdGVkIGNhcGFjaXR5IGNoYW5nZSBmcm9tIDAgdG8gNjQKLS0tLS0tLS0t
-LS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tCldBUk5JTkc6IENQVTogMSBQSUQ6IDM4NjUw
-IGF0IGtlcm5lbC9ldmVudHMvaHdfYnJlYWtwb2ludC5jOjYxNCBfX3JlbGVhc2VfYnBfc2xv
-dCBrZXJuZWwvZXZlbnRzL2h3X2JyZWFrcG9pbnQuYzo2MTQgW2lubGluZV0KV0FSTklORzog
-Q1BVOiAxIFBJRDogMzg2NTAgYXQga2VybmVsL2V2ZW50cy9od19icmVha3BvaW50LmM6NjE0
-IF9fcmVsZWFzZV9icF9zbG90IGtlcm5lbC9ldmVudHMvaHdfYnJlYWtwb2ludC5jOjYwNyBb
-aW5saW5lXQpXQVJOSU5HOiBDUFU6IDEgUElEOiAzODY1MCBhdCBrZXJuZWwvZXZlbnRzL2h3
-X2JyZWFrcG9pbnQuYzo2MTQgcmVsZWFzZV9icF9zbG90KzB4NmIvMHg5MCBrZXJuZWwvZXZl
-bnRzL2h3X2JyZWFrcG9pbnQuYzo2MjEKTW9kdWxlcyBsaW5rZWQgaW46CkNQVTogMSBVSUQ6
-IDAgUElEOiAzODY1MCBDb21tOiBzeXouMi4zNDk3IE5vdCB0YWludGVkIDYuMTIuMjQgIzMK
-SGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5Niks
-IEJJT1MgMS4xNS4wLTEgMDQvMDEvMjAxNApSSVA6IDAwMTA6X19yZWxlYXNlX2JwX3Nsb3Qg
-a2VybmVsL2V2ZW50cy9od19icmVha3BvaW50LmM6NjE0IFtpbmxpbmVdClJJUDogMDAxMDpf
-X3JlbGVhc2VfYnBfc2xvdCBrZXJuZWwvZXZlbnRzL2h3X2JyZWFrcG9pbnQuYzo2MDcgW2lu
-bGluZV0KUklQOiAwMDEwOnJlbGVhc2VfYnBfc2xvdCsweDZiLzB4OTAga2VybmVsL2V2ZW50
-cy9od19icmVha3BvaW50LmM6NjIxCkNvZGU6IGU4IDhhIGMxIGZmIGZmIDMxIGZmIDg5IGM1
-IDg5IGM2IGU4IDdmIDk1IGNlIGZmIDg1IGVkIDc1IDEwIGU4IDg2IDlhIGNlIGZmIDRjIDg5
-IGU3IDVkIDQxIDVjIGU5IDdiIGI3IGZmIGZmIGU4IDc2IDlhIGNlIGZmIDkwICZsdDswZiZn
-dDsgMGIgOTAgZTggNmQgOWEgY2UgZmYgNGMgODkgZTcgNWQgNDEgNWMgZTkgNjIgYjcgZmYg
-ZmYgZTggM2QgYzMKUlNQOiAwMDE4OmZmZmZjOTAwMDZlZmZjNTggRUZMQUdTOiAwMDAxMDIw
-NgpSQVg6IDAwMDAwMDAwMDAwMDAzMDAgUkJYOiBmZmZmODg4MDI3Nzg4NjIwIFJDWDogZmZm
-ZmM5MDAxMGNlMjAwMApSRFg6IDAwMDAwMDAwMDAwODAwMDAgUlNJOiBmZmZmZmZmZjgxYmQ5
-NDhhIFJESTogMDAwMDAwMDAwMDAwMDAwNQpSQlA6IDAwMDAwMDAwZmZmZmZmZmUgUjA4OiAw
-MDAwMDAwMDAwMDAwMDAxIFIwOTogZmZmZjg4ODA0Y2M4MmZkOApSMTA6IDAwMDAwMDAwZmZm
-ZmZmZmUgUjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogZmZmZjg4ODA0Y2M4MzkyOApSMTM6
-IGZmZmY4ODgwMjc3ODg2YjggUjE0OiBmZmZmODg4MDI3Nzg4Yjk4IFIxNTogMDAwMDAwMDBm
-ZmZmZmZhMQpGUzogIDAwMDA3ZmYzMTBkZjY2NDAoMDAwMCkgR1M6ZmZmZjg4ODA3ZWUwMDAw
-MCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAwMCBFUzog
-MDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwN2YyMDAwYjg1MTUwIENSMzog
-MDAwMDAwMDA3Y2UzODAwMCBDUjQ6IDAwMDAwMDAwMDA3NTJlZjAKRFIwOiAwMDAwMDAwMDAw
-MDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDAKRFIz
-OiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAw
-MDAwMDA0MDAKUEtSVTogODAwMDAwMDAKQ2FsbCBUcmFjZToKIDx0YXNrPgogX19mcmVlX2V2
-ZW50KzB4MWQ5LzB4ODcwIGtlcm5lbC9ldmVudHMvY29yZS5jOjUzMzAKIHBlcmZfZXZlbnRf
-YWxsb2MucGFydC4wKzB4MTIyNS8weDM2MjAga2VybmVsL2V2ZW50cy9jb3JlLmM6MTI0MzcK
-IHBlcmZfZXZlbnRfYWxsb2Mga2VybmVsL2V2ZW50cy9jb3JlLmM6MTI3NDkgW2lubGluZV0K
-IF9fZG9fc3lzX3BlcmZfZXZlbnRfb3BlbisweDRjOS8weDJjNDAga2VybmVsL2V2ZW50cy9j
-b3JlLmM6MTI4NDcKIGRvX3N5c2NhbGxfeDY0IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjUy
-IFtpbmxpbmVdCiBkb19zeXNjYWxsXzY0KzB4Y2IvMHgyNTAgYXJjaC94ODYvZW50cnkvY29t
-bW9uLmM6ODMKIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc3LzB4N2YKUklQ
-OiAwMDMzOjB4N2ZmMzEyZmFkNWFkCkNvZGU6IDAyIGI4IGZmIGZmIGZmIGZmIGMzIDY2IDBm
-IDFmIDQ0IDAwIDAwIGYzIDBmIDFlIGZhIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4IDg5IGQ2IDQ4
-IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1ICZsdDs0OCZn
-dDsgM2QgMDEgZjAgZmYgZmYgNzMgMDEgYzMgNDggYzcgYzEgYTggZmYgZmYgZmYgZjcgZDgg
-NjQgODkgMDEgNDgKUlNQOiAwMDJiOjAwMDA3ZmYzMTBkZjVmOTggRUZMQUdTOiAwMDAwMDI0
-NiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDEyYQpSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJY
-OiAwMDAwN2ZmMzEzMWU1ZmEwIFJDWDogMDAwMDdmZjMxMmZhZDVhZApSRFg6IDAwMDAwMDAw
-MDAwMDAwMDAgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTogMDAwMDIwMDAwMDAwMDRjMApS
-QlA6IDAwMDA3ZmYzMTMwNDZkNTYgUjA4OiAwMDAwMDAwMDAwMDAwMDBhIFIwOTogMDAwMDAw
-MDAwMDAwMDAwMApSMTA6IGZmZmZmZmZmZmZmZmZmZmYgUjExOiAwMDAwMDAwMDAwMDAwMjQ2
-IFIxMjogMDAwMDAwMDAwMDAwMDAwMApSMTM6IDAwMDAwMDAwMDAwMDAwMDAgUjE0OiAwMDAw
-N2ZmMzEzMWU1ZmEwIFIxNTogMDAwMDdmZjMxMGRkNjAwMAogPC90YXNrPgo9PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT0KVGhlIGZvbGxvd2luZyBpcyB0aGUgcG9jo7oKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KI2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPGVuZGlhbi5oPgojaW5j
-bHVkZSA8c3RkaW50Lmg+CiNpbmNsdWRlIDxzdGRpby5oPgojaW5jbHVkZSA8c3RkbGliLmg+
-CiNpbmNsdWRlIDxzdHJpbmcuaD4KI2luY2x1ZGUgPHN5cyBzeXNjYWxsLmg9IiI+CiNpbmNs
-dWRlIDxzeXMgdHlwZXMuaD0iIj4KI2luY2x1ZGUgPHVuaXN0ZC5oPgoKI2RlZmluZSBCSVRN
-QVNLKGJmX29mZiwgYmZfbGVuKSAoKCgxdWxsICZsdDsmbHQ7IChiZl9sZW4pKSAtIDEpICZs
-dDsmbHQ7IChiZl9vZmYpKQojZGVmaW5lIFNUT1JFX0JZX0JJVE1BU0sodHlwZSwgaHRvYmUs
-IGFkZHIsIHZhbCwgYmZfb2ZmLCBiZl9sZW4pICAgICAgICAgICAgICAgXAogICoodHlwZSop
-KGFkZHIpID0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgXAogICAgICBodG9iZSgoaHRvYmUoKih0eXBlKikoYWRkcikpICZh
-bXA7IH5CSVRNQVNLKChiZl9vZmYpLCAoYmZfbGVuKSkpIHwgICAgICAgICAgIFwKICAgICAg
-ICAgICAgKCgodHlwZSkodmFsKSAmbHQ7Jmx0OyAoYmZfb2ZmKSkgJmFtcDsgQklUTUFTSygo
-YmZfb2ZmKSwgKGJmX2xlbikpKSkKCmludCBtYWluKHZvaWQpCnsKICBzeXNjYWxsKF9fTlJf
-bW1hcCwgLyphZGRyPSovMHgxZmZmZmZmZmYwMDB1bCwgLypsZW49Ki8weDEwMDB1bCwgLypw
-cm90PSovMHVsLAogICAgICAgICAgLypmbGFncz1NQVBfRklYRUR8TUFQX0FOT05ZTU9VU3xN
-QVBfUFJJVkFURSovIDB4MzJ1bCwKICAgICAgICAgIC8qZmQ9Ki8oaW50cHRyX3QpLTEsIC8q
-b2Zmc2V0PSovMHVsKTsKICBzeXNjYWxsKF9fTlJfbW1hcCwgLyphZGRyPSovMHgyMDAwMDAw
-MDAwMDB1bCwgLypsZW49Ki8weDEwMDAwMDB1bCwKICAgICAgICAgIC8qcHJvdD1QUk9UX1dS
-SVRFfFBST1RfUkVBRHxQUk9UX0VYRUMqLyA3dWwsCiAgICAgICAgICAvKmZsYWdzPU1BUF9G
-SVhFRHxNQVBfQU5PTllNT1VTfE1BUF9QUklWQVRFKi8gMHgzMnVsLAogICAgICAgICAgLypm
-ZD0qLyhpbnRwdHJfdCktMSwgLypvZmZzZXQ9Ki8wdWwpOwogIHN5c2NhbGwoX19OUl9tbWFw
-LCAvKmFkZHI9Ki8weDIwMDAwMTAwMDAwMHVsLCAvKmxlbj0qLzB4MTAwMHVsLCAvKnByb3Q9
-Ki8wdWwsCiAgICAgICAgICAvKmZsYWdzPU1BUF9GSVhFRHxNQVBfQU5PTllNT1VTfE1BUF9Q
-UklWQVRFKi8gMHgzMnVsLAogICAgICAgICAgLypmZD0qLyhpbnRwdHJfdCktMSwgLypvZmZz
-ZXQ9Ki8wdWwpOwogIGNvbnN0IGNoYXIqIHJlYXNvbjsKICAodm9pZClyZWFzb247CiAgaWYg
-KHdyaXRlKDEsICJleGVjdXRpbmcgcHJvZ3JhbVxuIiwgc2l6ZW9mKCJleGVjdXRpbmcgcHJv
-Z3JhbVxuIikgLSAxKSkgewogIH0KICAqKHVpbnQzMl90KikweDIwMDAwMDAwMDRjMCA9IDU7
-CiAgKih1aW50MzJfdCopMHgyMDAwMDAwMDA0YzQgPSAweDgwOwogICoodWludDhfdCopMHgy
-MDAwMDAwMDA0YzggPSA4OwogICoodWludDhfdCopMHgyMDAwMDAwMDA0YzkgPSAweGFmOwog
-ICoodWludDhfdCopMHgyMDAwMDAwMDA0Y2EgPSAwOwogICoodWludDhfdCopMHgyMDAwMDAw
-MDA0Y2IgPSA4OwogICoodWludDMyX3QqKTB4MjAwMDAwMDAwNGNjID0gMDsKICAqKHVpbnQ2
-NF90KikweDIwMDAwMDAwMDRkMCA9IDQ7CiAgKih1aW50NjRfdCopMHgyMDAwMDAwMDA0ZDgg
-PSAweDQwMjsKICAqKHVpbnQ2NF90KikweDIwMDAwMDAwMDRlMCA9IDB4YzsKICBTVE9SRV9C
-WV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCAwLCAxKTsKICBTVE9S
-RV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAxLCAxLCAxKTsKICBT
-VE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAxLCAyLCAxKTsK
-ICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAxLCAzLCAx
-KTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCA0
-LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAw
-LCA1LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4
-LCAwLCA2LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAw
-NGU4LCAxLCA3LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAw
-MDAwNGU4LCAwLCA4LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAw
-MDAwMDAwNGU4LCAxLCA5LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4
-MjAwMDAwMDAwNGU4LCAwLCAxMCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwg
-LCAweDIwMDAwMDAwMDRlOCwgMCwgMTEsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0
-X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDAsIDEyLCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVp
-bnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCAxMywgMSk7CiAgU1RPUkVfQllfQklUTUFT
-Syh1aW50NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwgMSwgMTQsIDEpOwogIFNUT1JFX0JZX0JJ
-VE1BU0sodWludDY0X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDEsIDE1LCAyKTsKICBTVE9SRV9C
-WV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAxLCAxNywgMSk7CiAgU1RP
-UkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwgMSwgMTgsIDEpOwog
-IFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDAsIDE5LCAx
-KTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAxLCAy
-MCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwg
-MCwgMjEsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDAwMDA0
-ZTgsIDEsIDIyLCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAw
-MDAwNGU4LCAxLCAyMywgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIw
-MDAwMDAwMDRlOCwgMSwgMjQsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwg
-MHgyMDAwMDAwMDA0ZTgsIDEsIDI1LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90
-LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCAyNiwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50
-NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwgMSwgMjcsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0so
-dWludDY0X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDAsIDI4LCAxKTsKICBTVE9SRV9CWV9CSVRN
-QVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCAyOSwgMSk7CiAgU1RPUkVfQllf
-QklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwgMSwgMzAsIDEpOwogIFNUT1JF
-X0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDAsIDMxLCAxKTsKICBT
-VE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4LCAwLCAzMiwgMSk7
-CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMDAwMDRlOCwgMSwgMzMs
-IDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDAwMDA0ZTgsIDEs
-IDM0LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAwMDAwNGU4
-LCAwLCAzNSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMDAw
-MDRlOCwgMSwgMzYsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAw
-MDAwMDA0ZTgsIDAsIDM3LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4
-MjAwMDAwMDAwNGU4LCAwLCAzOCwgMjYpOwogICoodWludDMyX3QqKTB4MjAwMDAwMDAwNGYw
-ID0gMjsKICAqKHVpbnQzMl90KikweDIwMDAwMDAwMDRmNCA9IDI7CiAgKih1aW50NjRfdCop
-MHgyMDAwMDAwMDA0ZjggPSAweDgwMDA7CiAgKih1aW50NjRfdCopMHgyMDAwMDAwMDA1MDAg
-PSAyOwogICoodWludDY0X3QqKTB4MjAwMDAwMDAwNTA4ID0gMHgxMDAwMDE7CiAgKih1aW50
-NjRfdCopMHgyMDAwMDAwMDA1MTAgPSAweDgzOTsKICAqKHVpbnQzMl90KikweDIwMDAwMDAw
-MDUxOCA9IDg7CiAgKih1aW50MzJfdCopMHgyMDAwMDAwMDA1MWMgPSA3OwogICoodWludDY0
-X3QqKTB4MjAwMDAwMDAwNTIwID0gMHg4MDAwMDAwMDAwMDAwMDAwOwogICoodWludDMyX3Qq
-KTB4MjAwMDAwMDAwNTI4ID0gMHg1ZTQ7CiAgKih1aW50MTZfdCopMHgyMDAwMDAwMDA1MmMg
-PSAweGZlZmQ7CiAgKih1aW50MTZfdCopMHgyMDAwMDAwMDA1MmUgPSAwOwogICoodWludDMy
-X3QqKTB4MjAwMDAwMDAwNTMwID0gMHgxMDAwMDAwNDsKICAqKHVpbnQzMl90KikweDIwMDAw
-MDAwMDUzNCA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAwMDAwMDA1MzggPSAweDQwMDAwMDAw
-MDAwMDAyOwogIHN5c2NhbGwoX19OUl9wZXJmX2V2ZW50X29wZW4sIC8qYXR0cj0qLzB4MjAw
-MDAwMDAwNGMwdWwsIC8qcGlkPSovMCwKICAgICAgICAgIC8qY3B1PSovMHVsLCAvKmdyb3Vw
-PSovKGludHB0cl90KS0xLAogICAgICAgICAgLypmbGFncz1QRVJGX0ZMQUdfRkRfQ0xPRVhF
-Q3xQRVJGX0ZMQUdfRkRfT1VUUFVUKi8gMHhhdWwpOwogIHJldHVybiAwOwp9CgoKCkkgaG9w
-ZSBpdCBoZWxwcy4KQmVzdCByZWdhcmRzCkppYW56aG91IFpoYW88L3VuaXN0ZC5oPjwvc3lz
-Pjwvc3lzPjwvc3RyaW5nLmg+PC9zdGRsaWIuaD48L3N0ZGlvLmg+PC9zdGRpbnQuaD48L2Vu
-ZGlhbi5oPjwvc3VwZXJtYW4ueHB0QGdtYWlsLmNvbT48L3hyaXZlbmRlbGw3QGdtYWlsLmNv
-bT48L3hueGMyMnhueGMyMkBxcS5jb20+
 
+
+On 2025/4/17 08:02, Nico Pache wrote:
+> Add the order to the tracepoints to give better insight into what order
+> is being operated at for khugepaged.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
+
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   include/trace/events/huge_memory.h | 34 +++++++++++++++++++-----------
+>   mm/khugepaged.c                    | 10 +++++----
+>   2 files changed, 28 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
+> index 9d5c00b0285c..ea2fe20a39f5 100644
+> --- a/include/trace/events/huge_memory.h
+> +++ b/include/trace/events/huge_memory.h
+> @@ -92,34 +92,37 @@ TRACE_EVENT(mm_khugepaged_scan_pmd,
+>   
+>   TRACE_EVENT(mm_collapse_huge_page,
+>   
+> -	TP_PROTO(struct mm_struct *mm, int isolated, int status),
+> +	TP_PROTO(struct mm_struct *mm, int isolated, int status, int order),
+>   
+> -	TP_ARGS(mm, isolated, status),
+> +	TP_ARGS(mm, isolated, status, order),
+>   
+>   	TP_STRUCT__entry(
+>   		__field(struct mm_struct *, mm)
+>   		__field(int, isolated)
+>   		__field(int, status)
+> +		__field(int, order)
+>   	),
+>   
+>   	TP_fast_assign(
+>   		__entry->mm = mm;
+>   		__entry->isolated = isolated;
+>   		__entry->status = status;
+> +		__entry->order = order;
+>   	),
+>   
+> -	TP_printk("mm=%p, isolated=%d, status=%s",
+> +	TP_printk("mm=%p, isolated=%d, status=%s order=%d",
+>   		__entry->mm,
+>   		__entry->isolated,
+> -		__print_symbolic(__entry->status, SCAN_STATUS))
+> +		__print_symbolic(__entry->status, SCAN_STATUS),
+> +		__entry->order)
+>   );
+>   
+>   TRACE_EVENT(mm_collapse_huge_page_isolate,
+>   
+>   	TP_PROTO(struct page *page, int none_or_zero,
+> -		 int referenced, bool  writable, int status),
+> +		 int referenced, bool  writable, int status, int order),
+>   
+> -	TP_ARGS(page, none_or_zero, referenced, writable, status),
+> +	TP_ARGS(page, none_or_zero, referenced, writable, status, order),
+>   
+>   	TP_STRUCT__entry(
+>   		__field(unsigned long, pfn)
+> @@ -127,6 +130,7 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
+>   		__field(int, referenced)
+>   		__field(bool, writable)
+>   		__field(int, status)
+> +		__field(int, order)
+>   	),
+>   
+>   	TP_fast_assign(
+> @@ -135,27 +139,31 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
+>   		__entry->referenced = referenced;
+>   		__entry->writable = writable;
+>   		__entry->status = status;
+> +		__entry->order = order;
+>   	),
+>   
+> -	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, writable=%d, status=%s",
+> +	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, writable=%d, status=%s order=%d",
+>   		__entry->pfn,
+>   		__entry->none_or_zero,
+>   		__entry->referenced,
+>   		__entry->writable,
+> -		__print_symbolic(__entry->status, SCAN_STATUS))
+> +		__print_symbolic(__entry->status, SCAN_STATUS),
+> +		__entry->order)
+>   );
+>   
+>   TRACE_EVENT(mm_collapse_huge_page_swapin,
+>   
+> -	TP_PROTO(struct mm_struct *mm, int swapped_in, int referenced, int ret),
+> +	TP_PROTO(struct mm_struct *mm, int swapped_in, int referenced, int ret,
+> +			int order),
+>   
+> -	TP_ARGS(mm, swapped_in, referenced, ret),
+> +	TP_ARGS(mm, swapped_in, referenced, ret, order),
+>   
+>   	TP_STRUCT__entry(
+>   		__field(struct mm_struct *, mm)
+>   		__field(int, swapped_in)
+>   		__field(int, referenced)
+>   		__field(int, ret)
+> +		__field(int, order)
+>   	),
+>   
+>   	TP_fast_assign(
+> @@ -163,13 +171,15 @@ TRACE_EVENT(mm_collapse_huge_page_swapin,
+>   		__entry->swapped_in = swapped_in;
+>   		__entry->referenced = referenced;
+>   		__entry->ret = ret;
+> +		__entry->order = order;
+>   	),
+>   
+> -	TP_printk("mm=%p, swapped_in=%d, referenced=%d, ret=%d",
+> +	TP_printk("mm=%p, swapped_in=%d, referenced=%d, ret=%d, order=%d",
+>   		__entry->mm,
+>   		__entry->swapped_in,
+>   		__entry->referenced,
+> -		__entry->ret)
+> +		__entry->ret,
+> +		__entry->order)
+>   );
+>   
+>   TRACE_EVENT(mm_khugepaged_scan_file,
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 738dd9c5751d..67da0950b833 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -721,13 +721,14 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>   	} else {
+>   		result = SCAN_SUCCEED;
+>   		trace_mm_collapse_huge_page_isolate(&folio->page, none_or_zero,
+> -						    referenced, writable, result);
+> +						    referenced, writable, result,
+> +						    order);
+>   		return result;
+>   	}
+>   out:
+>   	release_pte_pages(pte, _pte, compound_pagelist);
+>   	trace_mm_collapse_huge_page_isolate(&folio->page, none_or_zero,
+> -					    referenced, writable, result);
+> +					    referenced, writable, result, order);
+>   	return result;
+>   }
+>   
+> @@ -1097,7 +1098,8 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
+>   
+>   	result = SCAN_SUCCEED;
+>   out:
+> -	trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, result);
+> +	trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, result,
+> +						order);
+>   	return result;
+>   }
+>   
+> @@ -1318,7 +1320,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>   	*mmap_locked = false;
+>   	if (folio)
+>   		folio_put(folio);
+> -	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result);
+> +	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result, order);
+>   	return result;
+>   }
+>   
 
