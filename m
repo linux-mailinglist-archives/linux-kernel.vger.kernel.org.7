@@ -1,220 +1,143 @@
-Return-Path: <linux-kernel+bounces-618652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BAFA9B165
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:46:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB66A9B16A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E0A3B02B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:45:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAD931727D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18D219C558;
-	Thu, 24 Apr 2025 14:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0E31ACEC8;
+	Thu, 24 Apr 2025 14:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGRnqjoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xfZuxBCt"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12705146D6A;
-	Thu, 24 Apr 2025 14:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E08C12CDA5;
+	Thu, 24 Apr 2025 14:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745505960; cv=none; b=JqSz5rh4EJjiou6LLBrhCUxCpp1Dw1GUqkwacKIlJp1KTKOyn7w2Zg+xcYx8tEx8PBMwq4GJkqjWq9cGA+1bjGVVWzWoDrsPg+wCaho6ec1Mquea9ObGDhdeooWiKdK+KNCo1IPOa0rRxCa14aotYaf1QD0O/cRZiOlAcauqrrE=
+	t=1745506034; cv=none; b=ele7AY1Jeot8Ay3yMMTYjhtDjp+9Z7RaHMWCDlYtaCA4FAqlYxP5lcUsFrOVkT5ENL1fySXvFvDnLai+inJUarsUk/INzEvrkC5gBVBqEFE0I1JZkkR272p1aeJP4q34pegr5iv1OpbYbd+neAobgKOD79X4nacY++RdauaLW4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745505960; c=relaxed/simple;
-	bh=oF6ZNTQYzF5wP50g9xs0e8/oXcBOMKj3NPuH+sGnPZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XF1dfujq04pXKYGJ3/M1z82H0M7JWiRq3fE8i/DJa643qUgo3yx28pIv0px4gqFvfOQSsTi0folIrrnLPtlrX0/X5b8l5/7SNUmg/RD6j7CtGivnrCAv58/6OLTJ+d/rDBaRQIppmnE+BTi9rqCZL8wh+Gdk+jQLsl3ItQ3EikA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGRnqjoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E980C4CEE3;
-	Thu, 24 Apr 2025 14:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745505959;
-	bh=oF6ZNTQYzF5wP50g9xs0e8/oXcBOMKj3NPuH+sGnPZk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DGRnqjoZ3tgw0kyQOhOioT+fKR+ls/DfAgNumGpln9wXAgnQCBKzrSqztS3VxDUtw
-	 +yt0EacLoqHkbRHJ1O8PiZPtG1ZzC7TaJ+TvhES21W/rIPO5geU8yMw/XmoWdv2+lK
-	 h/Iaw2/2+YQUGFh9C327y5kEs2BXHAi3COGdAxPUbxq12MHH3EdKu1PIEPidLyuuVk
-	 7/eoAs+E7rkmj5/v5gt6ogeIDghxLbzE3dXf0sRpiUIFM+ZXOwmpPiCjpc1OBHmAsc
-	 cIn6GhiyfUEOFGDSoM+tsWVJYMTvGf45jDFLa3sy5D/TuH+BUBVe9NJqVmb1q86/Do
-	 p+qvj7K956Pbg==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	Pavel Machek <pavel@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Cc: jacek.anaszewski@gmail.com
-Subject: [PATCH 1/1] leds: Provide skeleton KUnit testing for the LEDs framework
-Date: Thu, 24 Apr 2025 15:45:38 +0100
-Message-ID: <20250424144544.1438584-1-lee@kernel.org>
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
+	s=arc-20240116; t=1745506034; c=relaxed/simple;
+	bh=B+vaQDz34gASz2r9IySDvBGxFWVbRYQhO0FGeJb7jVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P28DUCLdISiZPpK/F4ZmJubKnY6XHCHzoDAjabWPBbxzmDlag7DFmu3blb533m4Kz64r52aIzfSVO1zvWktcV20DnwxTglszBZg289s19+yXAftsM84uCjxPC7Z05hoBjQP/PvalTlEpfQXnr1o9x/X/srfixkUOPPyucUuhSiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xfZuxBCt; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=egGfbK658OSDe69FyW4Tv8G+ziXxzHDqqyx8wDiPEAQ=; b=xfZuxBCt41e8zQmoDtvq/y7N6h
+	eiNOk5OhQwqmfZBZXA7zAFlssU1QXNmZGTPi4+UXL+xrQEC0aV/TkHALoRHzVhA1q7uRfyqzfXinD
+	JzBHpTLyFd9tzBYFuaxQ6RiCLeeDKA533gXzs1bXQsZXGXyCRIJ5gC9BvcBRXfSdIYXJQjgsWDZHM
+	ba5q3dlk9tDSz+CJn1Go4Mpmbz4A+9cBUr/I8B0wh440PewQx11KVL6rndMzu/aoM4klFnXyu9KUd
+	kB6BxZfUHig2ZcwRABJ+ou1gs5rzb6onH6/Jni03BjdDDGJTXPTWXG1jBMQTnJaICgiNXy2mvDA74
+	8fQTlo4Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52174)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u7xqz-0007Wd-1T;
+	Thu, 24 Apr 2025 15:47:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u7xqx-0001Bh-2x;
+	Thu, 24 Apr 2025 15:47:03 +0100
+Date: Thu, 24 Apr 2025 15:47:03 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v1 4/4] net: phy: Always read EEE LPA in
+ genphy_c45_ethtool_get_eee()
+Message-ID: <aApO59e6I6uLaw2P@shell.armlinux.org.uk>
+References: <20250424130222.3959457-1-o.rempel@pengutronix.de>
+ <20250424130222.3959457-5-o.rempel@pengutronix.de>
+ <aAo5keWOAVWxj9_o@shell.armlinux.org.uk>
+ <8f0d5725-04b7-4e15-897d-1fd5e540dacb@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f0d5725-04b7-4e15-897d-1fd5e540dacb@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Apply a very basic implementation of KUnit LED testing.
+On Thu, Apr 24, 2025 at 04:34:27PM +0200, Andrew Lunn wrote:
+> On Thu, Apr 24, 2025 at 02:16:01PM +0100, Russell King (Oracle) wrote:
+> > However, I've no objection to reading the LPA EEE state and
+> > reporting it.
+> 
+> What happens with normal link mode LPA when autoneg is disabled? I
+> guess they are not reported because the PHY is not even listening for
+> the autoneg pulses. We could be inconsistent between normal LPA and
+> LPA EEE, but is that a good idea?
 
-More tests / use-cases will be added steadily over time.
+With autoneg state, that controls whether the various pages get
+exchanged or not - which includes the EEE capabilties. This is the
+big hammer for anything that is negotiated.
 
-CMD:
-  tools/testing/kunit/kunit.py run --kunitconfig drivers/leds
+With EEE, as long as autoneg in the main config is true, the PHY will
+exchange the EEE capability pages if it supports them. Our eee_enabled
+is purely just a software switch, there's nothing that corresponds to it
+in hardware, unlike autoneg which has a bit in BMCR.
 
-OUTPUT:
-  [15:34:19] Configuring KUnit Kernel ...
-  [15:34:19] Building KUnit Kernel ...
-  Populating config with:
-  $ make ARCH=um O=.kunit olddefconfig
-  Building with:
-  $ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=20
-  [15:34:22] Starting KUnit Kernel (1/1)...
-  [15:34:22] ============================================================
-  Running tests with:
-  $ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
-  [15:34:23] ===================== led (1 subtest) ======================
-  [15:34:23] [PASSED] led_test_class_register
-  [15:34:23] ======================= [PASSED] led =======================
-  [15:34:23] ============================================================
-  [15:34:23] Testing complete. Ran 1 tests: passed: 1
-  [15:34:23] Elapsed time: 4.268s total, 0.001s configuring, 3.048s building, 1.214s running
+We implement eee_enabled by clearing the advertisement in the hardware
+but accepting (and remembering) the advertisement from userspace
+unmodified.
 
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- drivers/leds/.kunitconfig |  4 +++
- drivers/leds/Kconfig      |  7 ++++
- drivers/leds/Makefile     |  1 +
- drivers/leds/led-test.c   | 76 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 88 insertions(+)
- create mode 100644 drivers/leds/.kunitconfig
- create mode 100644 drivers/leds/led-test.c
+The two things are entirely different in hardware.
 
-diff --git a/drivers/leds/.kunitconfig b/drivers/leds/.kunitconfig
-new file mode 100644
-index 000000000000..5180f77910a1
---- /dev/null
-+++ b/drivers/leds/.kunitconfig
-@@ -0,0 +1,4 @@
-+CONFIG_KUNIT=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_KUNIT_TEST=y
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a104cbb0a001..c3684b148f18 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -55,6 +55,13 @@ config LEDS_BRIGHTNESS_HW_CHANGED
- 
- 	  See Documentation/ABI/testing/sysfs-class-led for details.
- 
-+config LEDS_KUNIT_TEST
-+	tristate "KUnit tests for LEDs"
-+	depends on KUNIT && LEDS_CLASS
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Say Y here to enable KUnit testing for the LEDs framework.
-+
- comment "LED drivers"
- 
- config LEDS_88PM860X
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2f170d69dcbf..9a0333ec1a86 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
- obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
- obj-$(CONFIG_LEDS_CLASS_MULTICOLOR)	+= led-class-multicolor.o
- obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
-+obj-$(CONFIG_LEDS_KUNIT_TEST)		+= led-test.o
- 
- # LED Platform Drivers (keep this sorted, M-| sort)
- obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
-diff --git a/drivers/leds/led-test.c b/drivers/leds/led-test.c
-new file mode 100644
-index 000000000000..068c9d0eb683
---- /dev/null
-+++ b/drivers/leds/led-test.c
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Google LLC
-+ *
-+ * Author: Lee Jones <lee@kernel.org>
-+ */
-+
-+#include <kunit/device.h>
-+#include <kunit/test.h>
-+#include <linux/device.h>
-+#include <linux/leds.h>
-+
-+struct led_test_ddata {
-+	struct led_classdev cdev;
-+	struct device *dev;
-+};
-+
-+static void led_test_class_register(struct kunit *test)
-+{
-+	struct led_test_ddata *ddata = test->priv;
-+	struct led_classdev *cdev = &ddata->cdev;
-+	struct device *dev = ddata->dev;
-+	int ret;
-+
-+	cdev->name = "led-test";
-+
-+	ret = devm_led_classdev_register(dev, cdev);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	if (ret)
-+		return;
-+}
-+
-+static struct kunit_case led_test_cases[] = {
-+	KUNIT_CASE(led_test_class_register),
-+	{ }
-+};
-+
-+static int led_test_init(struct kunit *test)
-+{
-+	struct led_test_ddata *ddata;
-+	struct device *dev;
-+
-+	ddata = kunit_kzalloc(test, sizeof(*ddata), GFP_KERNEL);
-+	if (!ddata)
-+		return -ENOMEM;
-+
-+	test->priv = ddata;
-+
-+	dev = kunit_device_register(test, "led_test");
-+	if (IS_ERR(dev))
-+		return PTR_ERR(dev);
-+
-+	ddata->dev = get_device(dev);
-+
-+	return 0;
-+}
-+
-+static void led_test_exit(struct kunit *test)
-+{
-+	struct led_test_ddata *ddata = test->priv;
-+
-+	if (ddata && ddata->dev)
-+		put_device(ddata->dev);
-+}
-+
-+static struct kunit_suite led_test_suite = {
-+	.name = "led",
-+	.init = led_test_init,
-+	.exit = led_test_exit,
-+	.test_cases = led_test_cases,
-+};
-+kunit_test_suite(led_test_suite);
-+
-+MODULE_AUTHOR("Lee Jones <lee@kernel.org>");
-+MODULE_DESCRIPTION("KUnit tests for the LED framework");
-+MODULE_LICENSE("GPL");
+Since:
+
+ ethtool --set-eee eee off
+
+Will use ETHTOOL_GEEE, modify eee_enabled to be false (via
+do_generic_set), and then use ETHTOOL_SEEE to write it back, the
+old advertisement will be passed back to the kernel in this case.
+
+If we don't preserve the advertisement, then:
+
+ ethtool --set-eee eee off
+
+will clear the advertisement, and then:
+
+ ethtool --set-eee eee on
+
+will set eee_enabled true but we'll have an empty advertisement. Not
+ideal.
+
+If we think about forcing it for an empty advertisement to e.g. fully
+populated, then:
+
+ ethtool --set-eee eee on advertise 0
+
+will surprisingly not end up with an empty advertisement.
+
+So, I don't think it's realistic to come up with a way that --set-eee
+behaves the same way as -s because of the way ethtool has been
+implemented.
+
 -- 
-2.49.0.901.g37484f566f-goog
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
