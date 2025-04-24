@@ -1,80 +1,98 @@
-Return-Path: <linux-kernel+bounces-617753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFCEA9A561
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB79A9A5A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5801B830B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:11:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D801A1B839F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A08201032;
-	Thu, 24 Apr 2025 08:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IObR2D6p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FD619CCEA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEE8208961;
+	Thu, 24 Apr 2025 08:20:05 +0000 (UTC)
+Received: from pokefinder.org (pokefinder.org [135.181.139.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FBB19CCEA;
+	Thu, 24 Apr 2025 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745482204; cv=none; b=h8EvFFix5aF/8JS6MZfPSKs06HmJjdu8TSkVNt6+6FWInG1VIT85V0Mihbao+4G6Pm+lDVcCr2TxLbKG9eZJo4oz8hISJr3cjW0vYnSlf9OwyK9g/1oerdhXSO+ca9tLHPO3Y+6Fseve4agMnPsYE93mcj9l7eT3fPdcRTHuGcM=
+	t=1745482805; cv=none; b=WZF42kKyAeKWwhu8CQslmAgsAPL1GoCxvIV4NxoLpNzK6adywlMDkClXHEQJ2d9hHpI+pNG3AXWWJbCacjQAv98PtbNw1pASjPTmkAvoKp4FV6WJhqJVsprD6xIScLnPLSHCiVBBYIi1PmGobQDXUAwnZUleL2bZk+zvyesk1RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745482204; c=relaxed/simple;
-	bh=FUSF6dmhuuTU8raDy8wQzUQyI+F+nNdK7RweTlozMxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPlwoJNZXgIs7wfPoopyucwOvE3DMBEZ6t6Pa5rWEfwkXayT8SO7a6QVOlZP2+pqBEGgZf9RgOeQNgTlSU3/w6UOSLJMAWjn186dQPc1twIrTU3pxIISbrqbwWwmKZcZwK7+vqlQ8prRc/IGqgw8nnNrjGUe0HR165YZuEV6U78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IObR2D6p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C291C4CEEB;
-	Thu, 24 Apr 2025 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745482204;
-	bh=FUSF6dmhuuTU8raDy8wQzUQyI+F+nNdK7RweTlozMxc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IObR2D6pKLpVpEB7jtcJyvFaesOQGUAEp90przdD74Cetq6B8w47sI2W7iuthQAF0
-	 C9FKXzJlS8QZ956UI8l3Qvy4PVSD8X42gjJ25fsL5zs1NXFBuDFn/wwlpjZhrgPsNw
-	 HYeWLwno/Y+5Xs6xLFNTxHUyuxz7Rn0/bL86ZBpo56EqBjzNoGZBfiLGaOKqjV3OK+
-	 0Jpiym+fG6PAg86ERCjh+J3o17Zu0YLoYrMm4kjPhu/xbreiFlir66xGrBGoD8NmcW
-	 Rjdc3moTDk512AvxKuMV7CyboKmDQCZKYjetpoUrQTlxDV0dB+AMh75U4/sJu9JmpB
-	 zJIfGUPKtc1EQ==
-Message-ID: <bd36327b-53e0-43d8-95c9-b26c2905720e@kernel.org>
-Date: Thu, 24 Apr 2025 10:10:00 +0200
+	s=arc-20240116; t=1745482805; c=relaxed/simple;
+	bh=RrjENBwGBydfJ3wNE3Qb/aLC0QcnJGiP9/DanmF+4TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G37Lpd0L0N1aocnWOLm5DRt8dmRnQfkYPP8viOwMWQwvcf62zMbU5BZSCi+INh9FaS9nN5UYDaQKUz3fNr8STxsh8HRjogQeE7QDNHhf2mlkU1p/RugWM0llizvpele6ux54Y8uNUW1csyp+42WYG87vwIB60hHOCRbSk3TOglE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
+Received: from localhost (p5486c924.dip0.t-ipconnect.de [84.134.201.36])
+	by pokefinder.org (Postfix) with UTF8SMTPSA id 8CF42A400EE;
+	Thu, 24 Apr 2025 10:10:41 +0200 (CEST)
+Date: Thu, 24 Apr 2025 10:10:40 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] i2c: mux: ltc4306: use new GPIO line value setter
+ callbacks
+Message-ID: <aAnyAASQID8SK107@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin <peda@axentia.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250407-gpiochip-set-rv-i2c-mux-v1-1-7330a0f4df1a@linaro.org>
+ <16b14e5e-e5eb-5203-4cdf-44fbde9a5688@axentia.se>
+ <CAMRc=MeYs0W31Kj-o530_8+EvhoDNzyZunk4xu6PbwK8N1OE4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] Additional documentation for nova-core
-To: Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, John Hubbard <jhubbard@nvidia.com>,
- Shirish Baskaran <sbaskaran@nvidia.com>, Alistair Popple
- <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Ben Skeggs <bskeggs@nvidia.com>
-References: <20250423225405.139613-1-joelagnelf@nvidia.com>
- <D9EH7958IAJZ.1R6EJXUR5H3NB@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <D9EH7958IAJZ.1R6EJXUR5H3NB@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wOEuWl4I5xqqjUrR"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeYs0W31Kj-o530_8+EvhoDNzyZunk4xu6PbwK8N1OE4Q@mail.gmail.com>
 
-On 4/24/25 3:25 AM, Alexandre Courbot wrote:
-> Thanks a lot for doing this, this was severely missing from the
-> WPR2 patchset.
-> 
-> Due to the strong focus on documentation, and in order to ease merging,
-> I think it makes sense to keep this separate from the WPR2 patchset and
-> merge it on top of it. Danilo, would that work for you?
 
-Perfectly fine for me!
+--wOEuWl4I5xqqjUrR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-@Joel: Thanks a lot for this work, appreciate it!
+
+> I just realized their emails didn't pop up in b4 --auto-to-cc. Cc'ed
+> now. Wolfram, Andi: do you want to pick it up or should I take it via
+> the GPIO tree?
+
+If there is no dependency in your tree, then I prefer to pick it myself.
+
+
+--wOEuWl4I5xqqjUrR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgJ8f0ACgkQFA3kzBSg
+Kbb2ORAApGJ1FGxEhKM7cqNVETbPYWu4LnFSMldEADzZTfDj0OoYrLg+CAuFKdwE
+spNDQiLi0INKL5ldauQ/c8NoeS8hadkLt3WR50O9/PTQrOO0Qf9iEJAi5yXwT7P0
+hl/lbU2UXE7CIFateJVGygip7S6zA8fX8LQtzn2DR2oMkqA5FnAumCCNae2o2LI8
+m4zTu93KjvtdOugKgatkGS0BllpuhxxWJOTTRwKcEa9QJdU6/rmmp/5GCP40RlnE
+kyJAIAnk/CM+2b/GEWDQYKYTPfMYvn1hTDZw7v5p7/YqZ6tRsi0alompjEWfbnpc
+Q12EbzS5D2U+cTg5KLFdhFESCHeFqRrsjQyVWi6lCvXSvovB7h1F8JG/FsDQK79d
+ytIif5tEriAOMKzcJ1/z8X0/BCFT0KjhMAgOFp16rP4+ZI7mCEAq3s2OuhXnCFUR
+h0X8n35Q2y2RYTRKwm+CyY4JTck1frJR0vz/oLFO7hE50ruW+z8YZP3XcOE9sYM2
+zjx7tFUUeVoM/C0xL2lDQjboZQ+Z6DgITFo/C0d9c5ETnSkwbQF1PrDVNrBdMXd9
+cFedWmv3ujOtYtidRDDglywAoJfMtUBXD4h+sqFlkEPVxQnVuFTm2w3pLiaKL1Mp
+Cs8kKEWODT0vq5zDvQBVUKXEagBM5a6dvo7bFLl9HX+1m3ue9xs=
+=hxPe
+-----END PGP SIGNATURE-----
+
+--wOEuWl4I5xqqjUrR--
 
