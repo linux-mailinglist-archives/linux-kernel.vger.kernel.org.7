@@ -1,102 +1,103 @@
-Return-Path: <linux-kernel+bounces-617241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957A2A99CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:17:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D63A99C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B950C1940AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2771940A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509E22A1C9;
-	Thu, 24 Apr 2025 00:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqlfk8lx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090F2701C2;
+	Thu, 24 Apr 2025 00:16:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDB91BC3C;
-	Thu, 24 Apr 2025 00:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE78625;
+	Thu, 24 Apr 2025 00:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745453838; cv=none; b=gcw4I1G187rIZBfgAFSsZnba9BxZ8raBQzajwfnZnLyDqCCN2Ll35p6s3iuPtqVnzMA0IT8eyDKwUN73wOWLgfxM11hH92s7exZXOdvbPbiMFxC1/pCZTbcSHgvc/iv20DB0fnZx0cQGFn4yp6/ouqtDU56WXmgrO10BmoPeNHE=
+	t=1745453799; cv=none; b=V1jhDJXWKZhro9KLsS4Gn3jCskm9oBNS5avEO6561ayjR16/dLk4EcTfMDMY4kYI+HiG3qRWnMMRXsxdveIHfc57Y+NdugvlphMV3y5HwMi+VfsH9FSbqXBNqwhjw/y1xngXhNJKb7+lWQL9z6b0BHMW5QuWMSWhxOD39/07x0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745453838; c=relaxed/simple;
-	bh=1eKuPB985sA7XP0k/Jaz595uT7gavw91h7GkNlCQrZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oxhlPBFozyBGU4GX0+AOx4Wsxt3mkEvu3ySHeQOOt1tIwf3yKG3RKZjU17i7kmY7UK/92r0B9o5SqNuu68VXpxSBuGR5kPWrQBKUXlAsIX6Anp4Hfb+Z/2Ar2oQSXW88NGIYFi03X7ZR5NoyuLVHPmmAwWgWEX02RQgwHQDMTY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqlfk8lx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23BBBC4CEEA;
-	Thu, 24 Apr 2025 00:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745453838;
-	bh=1eKuPB985sA7XP0k/Jaz595uT7gavw91h7GkNlCQrZw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sqlfk8lxSpKOB3EAfi8c3iHzcjySZ81rIuKKP4FNJZ1nzQwaJMeSiTk16raQakhuP
-	 AMgR+9DGpXI9RpY5aF5TmXZfp2/xlNDK1vGXH+evOngAmuToZb3C0Uct6t1dFkzqrB
-	 yN5qUyzyXKrHQAoyG3R947PwdUhsiTWT3aMi1lie4yDVw4d5zOffEj2ZaBnT38aDJB
-	 ThmUNx4xaX/mySbSU1fLUCpfDBVvbS4+GM2n5qckNbfwkDtYvaFYsh05cqefWiks6T
-	 VljDz/l6zN6liFFOzlQ9QEtbfbuk+2ICjbeB8bNlMlFInBpKRZc9xqqY9+529CBYWV
-	 8xC/kcfQluhWQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1u7kH5-0000000049c-2FLv;
-	Thu, 24 Apr 2025 08:17:07 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Kris Van Hees <kris.van.hees@oracle.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/4] .gitignore: ignore Python compiled bytecode
-Date: Thu, 24 Apr 2025 08:16:24 +0800
-Message-ID: <ae1c54ddacf6ded1f7154897b10798d4b3fdaf96.1745453655.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1745453655.git.mchehab+huawei@kernel.org>
-References: <cover.1745453655.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1745453799; c=relaxed/simple;
+	bh=IFTrO0iIkqqipDsOems/BeJlcz4nbbFBbkODkt4C7TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OZnge4WDxFTf9y9gaaoYT9GNgyWGNBsIniRJkvReqWpkRFsI2KBA1ZvbKNnc4SfUisgIHeRzMzCqDk+6EU5S0gaUrIt00CnsQd3O9pJBdK8Xbwm0VRbtNR2JBKXNbylbW1YrFKsC0jx+U196dKU+WJIlW/KboLy1FWLJNY9mFfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D03C4CEE2;
+	Thu, 24 Apr 2025 00:16:36 +0000 (UTC)
+Date: Wed, 23 Apr 2025 20:18:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Libo Chen <libo.chen@oracle.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, mgorman@suse.de,
+ mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ tj@kernel.org, llong@redhat.com, sraithal@amd.com, venkat88@linux.ibm.com,
+ kprateek.nayak@amd.com, raghavendra.kt@amd.com, yu.c.chen@intel.com,
+ tim.c.chen@intel.com, vineethr@linux.ibm.com, chris.hyser@oracle.com,
+ daniel.m.jordan@oracle.com, lorenzo.stoakes@oracle.com, mkoutny@suse.com,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] sched/numa: Add tracepoint that tracks the
+ skipping of numa balancing due to cpuset memory pinning
+Message-ID: <20250423201829.17d4c382@gandalf.local.home>
+In-Reply-To: <20250424000146.1197285-3-libo.chen@oracle.com>
+References: <20250424000146.1197285-1-libo.chen@oracle.com>
+	<20250424000146.1197285-3-libo.chen@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-While the building system doesn't create any Python JIT bytecode,
-if one manually runs kernel-doc.py or get_abi.py, Python will,
-by default, create a bytecode and store it under scripts/lib/*.
+On Wed, 23 Apr 2025 17:01:46 -0700
+Libo Chen <libo.chen@oracle.com> wrote:
 
-This is normal, and not controlled by the Kernel itself. So,
-add *.pyc as an extension to be ignored.
+> +++ b/include/trace/events/sched.h
+> @@ -745,6 +745,37 @@ TRACE_EVENT(sched_skip_vma_numa,
+>  		  __entry->vm_end,
+>  		  __print_symbolic(__entry->reason, NUMAB_SKIP_REASON))
+>  );
+> +
+> +TRACE_EVENT(sched_skip_cpuset_numa,
+> +
+> +	TP_PROTO(struct task_struct *tsk, nodemask_t *mem_allowed_ptr),
+> +
+> +	TP_ARGS(tsk, mem_allowed_ptr),
+> +
+> +	TP_STRUCT__entry(
+> +		__array( char,		comm,		TASK_COMM_LEN		)
+> +		__field( pid_t,		pid					)
+> +		__field( pid_t,		tgid					)
+> +		__field( pid_t,		ngid					)
+> +		__array( unsigned long, mem_allowed, BITS_TO_LONGS(MAX_NUMNODES))
+> +	),
+> +
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+> +		__entry->pid		 = task_pid_nr(tsk);
+> +		__entry->tgid		 = task_tgid_nr(tsk);
+> +		__entry->ngid		 = task_numa_group_id(tsk);
+> +		memcpy(__entry->mem_allowed, mem_allowed_ptr->bits,
+> +		       sizeof(__entry->mem_allowed));
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- .gitignore | 1 +
- 1 file changed, 1 insertion(+)
+Is mem_allowed->bits guaranteed to be the size of BITS_TO_LONGS(MAX_NUM_NODES)
+in size? If not, then memcpy will read beyond that size.
 
-diff --git a/.gitignore b/.gitignore
-index f2f63e47fb88..bf5ee6e01cd4 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -40,6 +40,7 @@
- *.o
- *.o.*
- *.patch
-+*.pyc
- *.rmeta
- *.rpm
- *.rsi
--- 
-2.49.0
+-- Steve
 
+
+> +	),
+> +
+> +	TP_printk("comm=%s pid=%d tgid=%d ngid=%d mem_nodes_allowed=%*pbl",
+> +		  __entry->comm,
+> +		  __entry->pid,
+> +		  __entry->tgid,
+> +		  __entry->ngid,
+> +		  MAX_NUMNODES, __entry->mem_allowed)
+> +);
 
