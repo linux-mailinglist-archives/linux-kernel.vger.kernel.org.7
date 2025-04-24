@@ -1,258 +1,200 @@
-Return-Path: <linux-kernel+bounces-619299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F2AA9BAF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED85A9BAFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD171B6853F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139859A23A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2950127F74E;
-	Thu, 24 Apr 2025 22:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g12+dwYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EA219DF4A;
-	Thu, 24 Apr 2025 22:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E0728BA98;
+	Thu, 24 Apr 2025 22:58:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66F0221712;
+	Thu, 24 Apr 2025 22:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745535370; cv=none; b=Sa/eo32bB+PEeqo64RWAyBcfA13TD4JfEqrI5xv7JeoJvVMWIBFl89vXwr/7AtS1dJ9Zr++WCleLsT5N2RVNx0U9zhRY6ikIXZwEBhRlNvJow42z/EDbruuZ0kzYsZUWAyMqWPQZJhW7SKQdOTGpryEtx8WOhjhXMdAmvAbX6TU=
+	t=1745535486; cv=none; b=CRUretaoMiCA5kp78krv9e/eZayb3KaQ+A8kFhCK/FdUn9zPCWNA6H2fRlPcaPIUNsx+ppVGZMJcmsxExybqsfdt5m5rCtx4TO82hCP2T0JzjMQCK9Vo2wv1EDoZFj6JLdrrRgubjIhjkdQxiBhJxyq7dMIwRraqIuZKsNGWdtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745535370; c=relaxed/simple;
-	bh=rONlSTV9KsUzMXsWImgBgWL3p1SN2kaztMqBtsBDXbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqWaY7sHX/rMGHjlv91RNSL1PHOHpYbqRkOJN1JbtL8xNTNR4RzNi50+ZGS/fPo5eUr7+8gGdB1BHfuA6tcf7t955KYqbXbERW57Fm4Eeii91S7SgF034m5vgnkwzwvPYmwdSU76hMXPSWmYdJstc0o8kIai8qF2iPXmth7pH3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g12+dwYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE87C4CEE3;
-	Thu, 24 Apr 2025 22:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745535370;
-	bh=rONlSTV9KsUzMXsWImgBgWL3p1SN2kaztMqBtsBDXbQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=g12+dwYsHbx2EXPghRdnJGqXrtjQJJ45JP81rkiNmfmCy6l3wzihx0uHZqbEGYBIp
-	 Km0d06Vx+zRg4a18en4g9J6vYjmkfcWiZnGZ9RxhpgJACh9FTd2Jxgs19BuA+ytriL
-	 ji/upc0HaRlMScQYr5CSh3Q4KAxqbsGV2iEysciyVfqRb/tD31Z4SpET5/rt/eBdQr
-	 vzuY1iuClmMjE1WqYIIQNlIQdlNQQwhqco1HhgX2yOP6Tmvbj7IcObBq3Q+PyUcE2V
-	 LBDr0lqzHqw9Z6QwC5jKQpdoWttSJ5iNjwa45qWZE4cDDEe072HUqoy8docruDomv6
-	 qF9HSI37AkQVA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D2821CE191C; Thu, 24 Apr 2025 15:56:09 -0700 (PDT)
-Date: Thu, 24 Apr 2025 15:56:09 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [rcutorture]  ddd062f753:
- WARNING:at_kernel/rcu/rcutorture.c:#rcu_torture_updown[rcutorture]
-Message-ID: <7f32b085-c9e9-4686-9a93-539080cee9ab@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202504211513.23f21a0-lkp@intel.com>
- <9db0175d-eb50-4534-969f-35afaa677927@paulmck-laptop>
- <aAcixqijvHL2ihHS@xsang-OptiPlex-9020>
- <4d8dd409-259c-4775-baf9-e272cc5238e7@paulmck-laptop>
- <aAmYzAsE6fPz5uaB@xsang-OptiPlex-9020>
- <5863ed5d-81b4-452a-a929-d68c26d6d028@paulmck-laptop>
+	s=arc-20240116; t=1745535486; c=relaxed/simple;
+	bh=731nWIyt9OFN6kxXt/6KA+nv44zep6jyOw5FxNS1B/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TaoAnS3WFc+4zZiRVBdXlvkUEmzCRM2nac8x7NPrRYjfvlQq8aoT0SezSZjAk0FhqKIIIgmX2cdna2kxtG0EvSOmyQPCbc6x8FAog6F9kgTOng+uupu21in0PQYMZ2iYLUHcMrw37qSev92jf9MVdViqz4uYEEEhApW4s4U41Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E369D2F;
+	Thu, 24 Apr 2025 15:57:57 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A76533F59E;
+	Thu, 24 Apr 2025 15:58:00 -0700 (PDT)
+Date: Thu, 24 Apr 2025 23:56:58 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Yixun Lan <dlan@gentoo.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ clabbe.montjoie@gmail.com
+Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
+ board
+Message-ID: <20250424235658.0c662e67@minigeek.lan>
+In-Reply-To: <4643958.LvFx2qVVIh@jernej-laptop>
+References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
+	<4ba3e7b8-e680-40fa-b159-5146a16a9415@lunn.ch>
+	<20250424150037.0f09a867@donnerap.manchester.arm.com>
+	<4643958.LvFx2qVVIh@jernej-laptop>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5863ed5d-81b4-452a-a929-d68c26d6d028@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 08:05:53PM -0700, Paul E. McKenney wrote:
-> On Thu, Apr 24, 2025 at 09:50:04AM +0800, Oliver Sang wrote:
-> > hi, Paul,
-> > 
-> > On Tue, Apr 22, 2025 at 10:54:10AM -0700, Paul E. McKenney wrote:
-> > 
-> > [...]
-> > 
-> > > > > > 
-> > > > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > > > the same patch/commit), kindly add following tags
-> > > > > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > > > | Closes: https://lore.kernel.org/oe-lkp/202504211513.23f21a0-lkp@intel.com
-> > > > > > 
-> > > > > > 
-> > > > > > The kernel config and materials to reproduce are available at:
-> > > > > > https://download.01.org/0day-ci/archive/20250421/202504211513.23f21a0-lkp@intel.com
-> > > > > 
-> > > > > Good catch, and thank you for your testing efforts!
-> > > > > 
-> > > > > Does the patch at the end of this email help?
-> > > > 
-> > > > sorry but the patch does not help. one dmesg is attached.
-> > > 
-> > > And idiot here failed to check for the exact same problem at the point
-> > > where the timer is queued, so thank you for bearing with me.
-> > > 
-> > > Does the patch at the end of this email (in addition to the previous
-> > > patch) get the job done?
-> > 
-> > unfortunately, it still doesn't fix, one dmesg is attached. part of is as [2]
-> > 
-> > but I applied your two patches directly upon ddd062f753, like below:
-> > 
-> > * 1c91d0bd4809f (linux-devel/fixup-1539a7e7b61a9) further patch for ddd062f753 from Paul
-> > * 1539a7e7b61a9 (linux-devel/fixup-ddd062f753) fix for ddd062f753 from Paul E. McKenney
-> > * ddd062f7536cc rcutorture: Complain if an ->up_read() is delayed more than 10 seconds
-> > * 1b983c34d5695 rcutorture: Comment invocations of tick_dep_set_task()
-> > 
-> > 
-> > I noticed there are some conflicts while applying your second patch, the
-> > 1c91d0bd4809f looks like [1]. there is no "int rtorsu_cpu;" before line:
-> > +	ktime_t rtorsu_kt;
-> > 
-> > seems your patch has a different base? I worried if my applyment has
-> > problems. if so, could you tell me the correct base? thanks!
-> 
-> It looks correct to me.  I will rebase at my end to make it apply cleanly
-> by the end of my tomorrow at the latest.  Attempting it now would likely
-> just make a mess.  :-/
-> 
-> And thank you very much for your help with this because...
-> 
-> > [1]
-> > commit 1c91d0bd4809f9f12e61f25d881a02f25c473702 (linux-devel/fixup-1539a7e7b61a9)
-> > Author: 0day robot <lkp@intel.com>
-> > Date:   Wed Apr 23 10:27:51 2025 +0800
-> > 
-> >     further patch for ddd062f753 from Paul
-> > 
-> >     Signed-off-by: 0day robot <lkp@intel.com>
-> > 
-> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > index e7b5811e0e456..14cc67d436c97 100644
-> > --- a/kernel/rcu/rcutorture.c
-> > +++ b/kernel/rcu/rcutorture.c
-> > @@ -2438,6 +2438,7 @@ rcu_torture_reader(void *arg)
-> >  struct rcu_torture_one_read_state_updown {
-> >         struct hrtimer rtorsu_hrt;
-> >         bool rtorsu_inuse;
-> > +       ktime_t rtorsu_kt;
-> >         unsigned long rtorsu_j;
-> >         struct torture_random_state rtorsu_trs;
-> >         struct rcu_torture_one_read_state rtorsu_rtors;
-> > @@ -2522,12 +2523,14 @@ static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rto
-> >                 schedule_timeout_idle(HZ);
-> >                 return;
-> >         }
-> > -       rtorsup->rtorsu_j = jiffies;
-> >         smp_store_release(&rtorsup->rtorsu_inuse, true);
-> >         t = torture_random(&rtorsup->rtorsu_trs) & 0xfffff; // One per million.
-> >         if (t < 10 * 1000)
-> >                 t = 200 * 1000 * 1000;
-> >         hrtimer_start(&rtorsup->rtorsu_hrt, t, HRTIMER_MODE_REL | HRTIMER_MODE_SOFT);
-> > +       smp_mb(); // Sample jiffies after posting hrtimer.
-> > +       rtorsup->rtorsu_j = jiffies;  // Not used by hrtimer handler.
-> > +       rtorsup->rtorsu_kt = t;
-> >  }
-> > 
-> >  /*
-> > @@ -2548,7 +2551,9 @@ rcu_torture_updown(void *arg)
-> >                                 break;
-> >                         j = smp_load_acquire(&jiffies); // Time before ->rtorsu_inuse.
-> >                         if (smp_load_acquire(&rtorsup->rtorsu_inuse)) {
-> > -                               WARN_ON_ONCE(time_after(j, rtorsup->rtorsu_j + 10 * HZ));
-> > +                               WARN_ONCE(time_after(j, rtorsup->rtorsu_j + 1 + HZ * 10),
-> > +                                         "hrtimer queued at jiffies %lu for %lld ns took %lu jiffies\n", rtorsup->rtorsu_j, rtorsup->rtorsu_kt, j - rtorsup->rtorsu_j);
-> >                                 continue;
-> >                         }
-> >                         rcu_torture_updown_one(rtorsup);
-> > 
-> > 
-> > 
-> > [2]
-> > 
-> > [  168.048387][  T796] ------------[ cut here ]------------
-> > [  168.049342][  T796] hrtimer queued at jiffies 4294952214 for 200000000 ns took 1502 jiffies
-> 
-> ... I am quite surprised by the 1502 jiffies.  On a HZ=1000 system,
-> I would have expected this value to be at least 10,000.  I clearly need
-> to dig into this code much more carefully.
+On Thu, 24 Apr 2025 20:38:34 +0200
+Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
 
-And upon looking at the dmesg.xz that you attached, I see that HZ=100.
-So there really is a 15-second delay, which is intended to trip this
-10-second timeout.
+> cc: Corentin LABBE
+>=20
+> Dne =C4=8Detrtek, 24. april 2025 ob 16:00:37 Srednjeevropski poletni =C4=
+=8Das je Andre Przywara napisal(a):
+> > On Thu, 24 Apr 2025 14:57:27 +0200
+> > Andrew Lunn <andrew@lunn.ch> wrote:
+> >=20
+> > Hi Andrew,
+> >  =20
+> > > > > Just to be clear, you tried it with "rgmii-id" and the same <300>=
+ and
+> > > > > <400> values?   =20
+> > > >=20
+> > > > Yes, sorry, I wasn't clear: I used rgmii-id, then experimented with=
+ those
+> > > > values.   =20
+> > >=20
+> > > O.K, great.
+> > >=20
+> > > I do suspect the delays are not actually in pico seconds. But without
+> > > a data sheet, it is hard to know.
+> > >=20
+> > >        if (!of_property_read_u32(node, "allwinner,rx-delay-ps", &val)=
+) {
+> > >                 if (val % 100) {
+> > >                         dev_err(dev, "rx-delay must be a multiple of =
+100\n");
+> > >                         return -EINVAL;
+> > >                 }
+> > >                 val /=3D 100;
+> > >                 dev_dbg(dev, "set rx-delay to %x\n", val);
+> > >                 if (val <=3D gmac->variant->rx_delay_max) {
+> > >                         reg &=3D ~(gmac->variant->rx_delay_max <<
+> > >                                  SYSCON_ERXDC_SHIFT);
+> > >                         reg |=3D (val << SYSCON_ERXDC_SHIFT);
+> > >=20
+> > > So the code divides by 100 and writes it to a register. But:
+> > >=20
+> > > static const struct emac_variant emac_variant_h3 =3D {
+> > >         .rx_delay_max =3D 31,
+> > >=20
+> > >=20
+> > > static const struct emac_variant emac_variant_r40 =3D {
+> > >         .rx_delay_max =3D 7,
+> > > };
+> > >=20
+> > > With the change from 7 to 31, did the range get extended by a factor
+> > > of 4, or did the step go down by a factor of 4, and the / 100 should
+> > > be / 25? I suppose the git history might have the answer in the commit
+> > > message, but i'm too lazy to go look. =20
+> >=20
+> > IIRC this picosecond mapping was somewhat made up, to match common DT
+> > properties. The manual just says:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > 12:10  R/W  default: 0x0 ETXDC: Configure EMAC Transmit Clock Delay Cha=
+in.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >=20
+> > So the unit is really unknown, but is probably some kind of internal cy=
+cle count.
+> > The change from 7 to 31 is purely because the bitfield grew from 3 to 5
+> > bits. We don't know if the underlying unit changed on the way.
+> > Those values are just copied from whatever the board vendor came up wit=
+h,
+> > we then multiply them by 100 and put them in the mainline DT. Welcome to
+> > the world of Allwinner ;-) =20
+>=20
+> IIRC Corentin asked Allwinner about units and their response was in 100 p=
+s.
+>=20
+> In my experience, vendor DT has proper delays specified, just 7 instead of
+> 700, for example. What they get wrong, or better said, don't care, is phy
+> mode. It's always set to rgmii because phy driver most of the time ignores
+> this value and phy IC just uses mode set using resistors.
 
-So I guess is it no more Mr. Nice Guy for hrtimers, and therefore
-HRTIMER_MODE_HARD it is!  ;-)
+Ah, right, I dimly remembered there was some hardware setting, but your
+mentioning of those strap resistors now tickled my memory!
 
-Once again, thank you for your testing efforts!
+So according to the Radxa board schematic, RGMII0-RXD0/RXDLY is pulled
+up to VCCIO via 4.7K, while RGMII0-RXD1/TXDLY is pulled to GND (also via
+4K7). According to the Motorcom YT8531 datasheet this means that RX
+delay is enabled, but TX delay is not.
+The Avaota board uses the same setup, albeit with an RTL8211F-CG PHY,
+but its datasheet confirms it uses the same logic.
 
-I also rebased my fixup patches to the bottom of my development stack,
-so the combined patch shown below should apply cleanly.  Here is hoping
-that the third time is a charm.  ;-)
+So does this mean we should say rgmii-rxid, so that the MAC adds the TX
+delay? Does the stmmac driver actually support this? I couldn't find
+this part by quickly checking the code.
 
-							Thanx, Paul
+Cheers,
+Andre
 
-------------------------------------------------------------------------
+> Proper way here
+> would be to check schematic and set phy mode according to that. This meth=
+od
+> always works, except for one board, which had resistors set wrong and
+> phy mode configured over phy driver was actually fix for it.
+>=20
+> Best regards,
+> Jernej
+>=20
+> >=20
+> > And git history doesn't help, it's all already in the first commit for =
+this
+> > driver. I remember some discussions on the mailing list, almost 10 years
+> > ago, but this requires even more digging ...
+> >=20
+> > Cheers,
+> > Andre
+> >=20
+> >=20
+> >  =20
+> > >=20
+> > > I briefly tried "rgmii", and I couldn't get a lease, so I quite =20
+> > > > confident it's rgmii-id, as you said. The vendor DTs just use "rgmi=
+i", but
+> > > > they might hack the delay up another way (and I cannot be asked to =
+look at
+> > > > that awful code).
+> > > >=20
+> > > > Cheers,
+> > > > Andre   =20
+> >=20
+> >  =20
+>=20
+>=20
+>=20
+>=20
+>=20
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 88d9f5298c3d8..1ebeef8019b86 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2445,6 +2445,7 @@ rcu_torture_reader(void *arg)
- struct rcu_torture_one_read_state_updown {
- 	struct hrtimer rtorsu_hrt;
- 	bool rtorsu_inuse;
-+	ktime_t rtorsu_kt;
- 	unsigned long rtorsu_j;
- 	unsigned long rtorsu_ndowns;
- 	unsigned long rtorsu_nups;
-@@ -2488,7 +2489,7 @@ static int rcu_torture_updown_init(void)
- 	for (i = 0; i < n_up_down; i++) {
- 		init_rcu_torture_one_read_state(&updownreaders[i].rtorsu_rtors, rand);
- 		hrtimer_setup(&updownreaders[i].rtorsu_hrt, rcu_torture_updown_hrt, CLOCK_MONOTONIC,
--			      HRTIMER_MODE_REL | HRTIMER_MODE_SOFT);
-+			      HRTIMER_MODE_REL | HRTIMER_MODE_HARD);
- 		torture_random_init(&updownreaders[i].rtorsu_trs);
- 		init_rcu_torture_one_read_state(&updownreaders[i].rtorsu_rtors,
- 						&updownreaders[i].rtorsu_trs);
-@@ -2539,12 +2540,14 @@ static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rto
- 		schedule_timeout_idle(HZ);
- 		return;
- 	}
--	rtorsup->rtorsu_j = jiffies;
- 	smp_store_release(&rtorsup->rtorsu_inuse, true);
- 	t = torture_random(&rtorsup->rtorsu_trs) & 0xfffff; // One per million.
- 	if (t < 10 * 1000)
- 		t = 200 * 1000 * 1000;
--	hrtimer_start(&rtorsup->rtorsu_hrt, t, HRTIMER_MODE_REL | HRTIMER_MODE_SOFT);
-+	hrtimer_start(&rtorsup->rtorsu_hrt, t, HRTIMER_MODE_REL | HRTIMER_MODE_HARD);
-+	smp_mb(); // Sample jiffies after posting hrtimer.
-+	rtorsup->rtorsu_j = jiffies;  // Not used by hrtimer handler.
-+	rtorsup->rtorsu_kt = t;
- }
- 
- /*
-@@ -2555,6 +2558,7 @@ static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rto
- static int
- rcu_torture_updown(void *arg)
- {
-+	unsigned long j;
- 	struct rcu_torture_one_read_state_updown *rtorsup;
- 
- 	VERBOSE_TOROUT_STRING("rcu_torture_updown task started");
-@@ -2562,8 +2566,10 @@ rcu_torture_updown(void *arg)
- 		for (rtorsup = updownreaders; rtorsup < &updownreaders[n_up_down]; rtorsup++) {
- 			if (torture_must_stop())
- 				break;
-+			j = smp_load_acquire(&jiffies); // Time before ->rtorsu_inuse.
- 			if (smp_load_acquire(&rtorsup->rtorsu_inuse)) {
--				WARN_ON_ONCE(time_after(jiffies, rtorsup->rtorsu_j + 10 * HZ));
-+				WARN_ONCE(time_after(j, rtorsup->rtorsu_j + 1 + HZ * 10),
-+					  "hrtimer queued at jiffies %lu for %lld ns took %lu jiffies\n", rtorsup->rtorsu_j, rtorsup->rtorsu_kt, j - rtorsup->rtorsu_j);
- 				continue;
- 			}
- 			rcu_torture_updown_one(rtorsup);
 
