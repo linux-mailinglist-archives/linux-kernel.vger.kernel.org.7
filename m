@@ -1,452 +1,166 @@
-Return-Path: <linux-kernel+bounces-618259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BF2A9AC26
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:38:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230D2A9ABE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E319F7A79CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:36:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CC4C4A5016
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9A324DFF4;
-	Thu, 24 Apr 2025 11:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42A522128F;
+	Thu, 24 Apr 2025 11:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C61QLV9O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eLoqEAbR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9621022B59A;
-	Thu, 24 Apr 2025 11:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89B214A91
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745494412; cv=none; b=e7/xQQQG2GNB7rouNdQ36DEwvMH2ZGT5pg2dajipOhQMqnD3GrwXVkHAO0GCuIh2BVvY9SsPmDLiKy35aqkAC/Rhh6ipkUg1lcvJI41k2N2nZQKz7e43u+o2Rap0Ra0yoAlWnJMaxIZp2kAhu/XxT/5Z1DN3M4TdoNYh5P+i9Sg=
+	t=1745494367; cv=none; b=dY7d8jmHQa0Cy4JbU+pbQfAwNqi6/DfJQpjQVX6pVhEYPzm8U4H2pGoxfJizhR+JRjobSo73nYAV0xDofIczoLXIWjjyLIwjYnuo+glPM8F5vHuWbOMirZR/kKK16qUJSSI5GcWbqfppb7rKOuaOPF29PeIXfjpXg0+s2aQxzSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745494412; c=relaxed/simple;
-	bh=Lu2y0akdJ5sKkZZ5uVFYhGCh7Y4mx9cfmk0Nn5Q1/KE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X7nvntM61e9ybcFGL4/cpo9ZC1EGqZLxyDTghW5BEKHDBBI9b7JPyx2Y2gyLQr6eccStomDXudTDsTxONSazHJqt73ihuYoRT5F5HDjaJFFZ+K/DW0L570LJpFEFNYvndVxl/qlgd5j55uIbo4qc+LZZBj05sp+xRxZWPoRy86c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C61QLV9O; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745494408; x=1777030408;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Lu2y0akdJ5sKkZZ5uVFYhGCh7Y4mx9cfmk0Nn5Q1/KE=;
-  b=C61QLV9O3N6pKEuAWIlXYP/0Aemie4j5Bk2BRWY1b6pVpONh0/fyMniC
-   a7Is9NEzKLSMIk2j0CzCtIlyPlzIJk5IdKHhwrmuTIV/tHl8sblXbIkle
-   qigKuyWwiY6cj/d4+n/eIBo5yAFTN7sCjWBgEaE7grHjObqfG/DrO8vob
-   ilOsfvyKNdA9wOg2wdv81nFbsxyoqdY1oSIBlHyZIPWd2Bxs6r+vIUq1y
-   C/6h2IVVTq98FYgG1rpMd020MzVUEdaOPQ5w7XRSQitAzjFmmv7G93/dM
-   g6yQ+ZL9FAOK8qknXkUT8UEYDD0b0HrpMUPVOAKzN7Fr/3KAzE7puILy0
-   A==;
-X-CSE-ConnectionGUID: Jnyk+NMOSfG+tCy8rOLBeQ==
-X-CSE-MsgGUID: C9nT/lhGTfK4how7FmAZjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47250680"
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="47250680"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 04:33:27 -0700
-X-CSE-ConnectionGUID: 7lP5un6rTJ+NRjcDDFDuxA==
-X-CSE-MsgGUID: S04YUhbuQKmVF4S6b2kvIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="133107408"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa010.fm.intel.com with ESMTP; 24 Apr 2025 04:33:18 -0700
-Received: from mglak.igk.intel.com (mglak.igk.intel.com [10.237.112.146])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 46C7F33EA5;
-	Thu, 24 Apr 2025 12:33:16 +0100 (IST)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Lee Trager <lee@trager.us>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Larysa Zaremba <larysa.zaremba@intel.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
-	Emil Tantilov <emil.s.tantilov@intel.com>,
-	Madhu Chittim <madhu.chittim@intel.com>,
-	Josh Hay <joshua.a.hay@intel.com>,
-	Milena Olech <milena.olech@intel.com>,
-	pavan.kumar.linga@intel.com,
-	"Singhai, Anjali" <anjali.singhai@intel.com>
-Subject: [PATCH iwl-next v2 14/14] ixd: add devlink support
-Date: Thu, 24 Apr 2025 13:32:37 +0200
-Message-ID: <20250424113241.10061-15-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250424113241.10061-1-larysa.zaremba@intel.com>
-References: <20250424113241.10061-1-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1745494367; c=relaxed/simple;
+	bh=CS6HOnMzlOIh4rt+JQgWXVJplUSPY8Dz4kIQKwWC5So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tX+4ta+3z6bAgLbi+ADjJQFZIyHjPN57JnbjnRn0epFW+IqiJoE7SSa+H7CxWEBE63wCZqTYPa7hcKIfEadpiPsHIEby4WJ37S+DS4m3saRrFY7UCqT2ZazPpj59XOG+zM7cPQyumvAmkD5qxD4JMS+Vq+kZszF4qY9fWTq8gyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eLoqEAbR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OAGSLh010239
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:32:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=61EDQ7yhc0TXJTg7fz7zJ9Ea
+	tL2RLDm8Ww7XI56evFo=; b=eLoqEAbRFhA4WyNcJHFqKS4SV2RPmgG24mRTHIfP
+	t/oOfsnB46Zb5kDzroOaS6rIinch1eB2zs08pptQk6FIVP45xzBCuEg+walUm4EI
+	QtIbGvvuiHeP56ON06e9/8OkS+05acvez4NSg9UlXnHD/w0a+1XImtGDRiZtb7c5
+	y+qpLRvGutPTV+dD4z1JiBuaLddwBzitpfvLtmEwzK1LUlrIyEsdYU5+YXELP0P8
+	jsYZbCBfpRXWiiMx/dK3rpGh8GDOlpb4coqRHnHKJBigt45IEJufznm2Tt1y3/zP
+	Hk2zbptU7WRpZdmG3AupcmMOHmQHk6XnWnSFZ2Vrj/kgUA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0dfb6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:32:44 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c92425a8b1so148511185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:32:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745494363; x=1746099163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=61EDQ7yhc0TXJTg7fz7zJ9EatL2RLDm8Ww7XI56evFo=;
+        b=FeSxfm1kK1FHVzUKV7eFibfEXAloBh4X1Ag0U+y6OPxaMg8YzKElIewUNpNWnPG3SL
+         ouBleq7YQLdgkinXGes988aatMJ5JGW927QHBy1k1CXuWnOrzV4e4V1MJ+EHVONccTry
+         ksSQKNygw4xqF51sRQsLPUNkNjHmJqWIjf8S6p8w0S8PdvtwuTsPfQIU6E2ZL5Jb3cpE
+         j0Wu6I18ZwNzHpEnrt9W6w2Act5sMktAkzb32vO2V1sC/mhJ7pGgrO/yseWQ994lETP+
+         nXzUrjY2QiYyczpKzwKnobStA4cDdo4ypfWfzvyOkYPxDjiCKtVnvYGAJndhQTRIj1qx
+         Ct8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW47F1zzymkksNQ9G5jqc1ogTk+vtvgdSjbN6tveN+pNL+LMHdqcNnMjGdmVa8kd797ee2pcegbU9Y6ILU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWbS1xYX+q9eio2t5gKk1Kqv2Zvfs8W0C/W43PMeqaFmitVbDq
+	R9hvu2gHuxnlx7n1jB/c6p4/Z9O6P6Jj4Pr8vX/xQKF2f6TyBWm9OEgJxmDG436M+RKOu0lJRG6
+	fqz5/080jeymBdrHu8W0BNpY6oDn5Tnp80Iyu9T2aw/P6S0DIWwKDNum9fDOZ/68=
+X-Gm-Gg: ASbGncslvH4gwmPsjYVjsQk4O42DB5LgZTGRzpuhD58r1xo8GVNn7ZO/vNKb8L87k0m
+	lxKAHLz/vZog7uCoz1UoY01QOGK2kR5TBUf7FMNTVF+EjFIUP71l6pabatLQPS1jn/V9WxGPFaA
+	2iwAkb9ESj9+4PLXYUjYFMW2ulhsONhW8m1nVxIbB3mT6VQJvd6XLKh+T+0tHAR1y6X1rd3S/xh
+	iLyEwHKpsfxeskCvk4FTyKgYQjcg/8EXYRbJhQuzdkx7S58k71bDpggPmWIhol2NefAjgOSo35p
+	AkLiztQPv7l2ZL2zARgjvTLGxcSoIcmEpofZG7oxLP/q2Wvidrjs+7+PQNXB8paMHlOICGr3B0o
+	=
+X-Received: by 2002:a05:620a:4509:b0:7c3:c9e5:e4ba with SMTP id af79cd13be357-7c95865b5a3mr295947885a.29.1745494363406;
+        Thu, 24 Apr 2025 04:32:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSF8NXZpNShhA73w7mSe/hny4nEbCfzojEr0ygmGOYju4QA197e90OnCcpK+9TXxCGUsACfA==
+X-Received: by 2002:a05:620a:4509:b0:7c3:c9e5:e4ba with SMTP id af79cd13be357-7c95865b5a3mr295944185a.29.1745494363064;
+        Thu, 24 Apr 2025 04:32:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d16a849bsm2347771fa.82.2025.04.24.04.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 04:32:42 -0700 (PDT)
+Date: Thu, 24 Apr 2025 14:32:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
+Message-ID: <lwv5pk3dtyyxgtrwxss43dyecesv7pvrzvgwacwrnztkiowfkp@jqosvhrs3jk5>
+References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
+ <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
+ <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
+ <54eeb470-cd90-4bc2-b415-6dea1ce2321d@linaro.org>
+ <0ab31397-580f-4e5a-b9ad-d9bf79d29106@linaro.org>
+ <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
+ <krofzevprczeuptn6yfj4n656qsw52s52c7cgiwotidxmi2xo6@d3q5bb5zbccc>
+ <f05cba73-6d8b-4b7b-9ebe-366fcd92a079@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f05cba73-6d8b-4b7b-9ebe-366fcd92a079@linaro.org>
+X-Proofpoint-GUID: Dn6gmIcoHgIKeCl-_HXX9GgQxmYQNlRt
+X-Proofpoint-ORIG-GUID: Dn6gmIcoHgIKeCl-_HXX9GgQxmYQNlRt
+X-Authority-Analysis: v=2.4 cv=Fv0F/3rq c=1 sm=1 tr=0 ts=680a215c cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=bRtgI_ysDkPbppu9wooA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA3NyBTYWx0ZWRfX39auKBa0LKnc f4YA8MbdDiuc/HX66Xi8bk6ackHMxoAhklbBctFmHmn1tJDOxWzfCtH9uJi1gqgc1lAcktGlypE ZhwM8sGeqCd+owYcKGY4yJODAMAEDghcKHf18qB+rvXBXe1YKchuz97yhe+WNtwspLb92Wp/GB8
+ CTOcCvDJ5zlfGYWbyh4/2deBmPn7aI0Tr3K8Z62luyq0fFICoYAh+KIDWUU6+leASY2GEKfQuEH lM33JwFga76xxUSVyTH4ycsq2EPRH39nsM8RYcCp2G9YVi/6AAiALNAmYadu6MC5j7B+FtVchE3 pfa6n+vF/Ey2ATMeZ07NoDgMP2IK4KS8oK82zOd0gmumVl1KIBj6kVV249Ysrb7z2SGtKrR05RN
+ VRu6IDbYlBsfCVnIqxqV5YTkuyNeJyfzkvSMM+qb2nuIkvJFQaYfiUTJHjF7TzxhQ1ZDXW5G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_05,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=800 priorityscore=1501 suspectscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504240077
 
-From: Amritha Nambiar <amritha.nambiar@intel.com>
+On Thu, Apr 24, 2025 at 12:29:39PM +0100, Bryan O'Donoghue wrote:
+> On 24/04/2025 11:45, Dmitry Baryshkov wrote:
+> > > Which would then be consistent across SoCs for as long as 0p9 and 1p2 are
+> > > the power-domains used by these PHYs.
+> > This won't be consistent with other cases where we have a shared power
+> > pin. For example, for PMICs we provide supply names which match pin
+> > names rather than one-supply-per-LDO.
+> 
+> Yes but taking a random example from a PMIC vdd-l2-l13-l14-supply is
+> specific to a given PMIC, so you need to name it specifically wrt its PMIC
+> pin-name whereas csiphyX-1p2 is there for every CSIPHY we have.
 
-Enable initial support for the devlink interface with the ixd
-driver. The ixd hardware is a single function PCIe device. So, the
-PCIe adapter gets its own devlink instance to manage device-wide
-resources or configuration.
+This is fine from my POV.
 
-$ devlink dev show
-pci/0000:83:00.6
+> For example on qcom2290 there's a shared power-pin for VDD_A_CAMSS_PLL_1P8
+> but then individual power-pins for VDD_A_CSI_0_1P2 and VDD_A_CSI_1_1P2.
 
-$ devlink dev info pci/0000:83:00.6
-pci/0000:83:00.6:
-  driver ixd
-  serial_number 00-a0-c9-ff-ff-23-45-67
-  versions:
-      fixed:
-        device.type MEV
-      running:
-        cp 0.0
-        virtchnl 2.0
+So far so good.
 
-Signed-off-by: Amritha Nambiar <amritha.nambiar@intel.com>
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- Documentation/networking/devlink/index.rst   |   1 +
- Documentation/networking/devlink/ixd.rst     |  35 +++++++
- drivers/net/ethernet/intel/ixd/Kconfig       |   1 +
- drivers/net/ethernet/intel/ixd/Makefile      |   1 +
- drivers/net/ethernet/intel/ixd/ixd_devlink.c | 105 +++++++++++++++++++
- drivers/net/ethernet/intel/ixd/ixd_devlink.h |  44 ++++++++
- drivers/net/ethernet/intel/ixd/ixd_main.c    |  13 ++-
- 7 files changed, 197 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/networking/devlink/ixd.rst
- create mode 100644 drivers/net/ethernet/intel/ixd/ixd_devlink.c
- create mode 100644 drivers/net/ethernet/intel/ixd/ixd_devlink.h
+> 
+> If we follow the general proposal of
+> 
+> vdd-csiphyX-1p2-supply
+> vdd-csiphyX-0p9-supply
+> 
+> in the yaml, then whether SoCs like qcm2290 share 1p8 or SoCs like sm8650,
+> sm8450, x1e have individual 1p8 pins is up to the dtsi to decide.
 
-diff --git a/Documentation/networking/devlink/index.rst b/Documentation/networking/devlink/index.rst
-index 8319f43b5933..ee9d89429fa2 100644
---- a/Documentation/networking/devlink/index.rst
-+++ b/Documentation/networking/devlink/index.rst
-@@ -85,6 +85,7 @@ parameters, info versions, and other features it supports.
-    ionic
-    ice
-    ixgbe
-+   ixd
-    mlx4
-    mlx5
-    mlxsw
-diff --git a/Documentation/networking/devlink/ixd.rst b/Documentation/networking/devlink/ixd.rst
-new file mode 100644
-index 000000000000..81b28ffb00f6
---- /dev/null
-+++ b/Documentation/networking/devlink/ixd.rst
-@@ -0,0 +1,35 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================
-+ixd devlink support
-+===================
-+
-+This document describes the devlink features implemented by the ``ixd``
-+device driver.
-+
-+Info versions
-+=============
-+
-+The ``ixd`` driver reports the following versions
-+
-+.. list-table:: devlink info versions implemented
-+    :widths: 5 5 5 90
-+
-+    * - Name
-+      - Type
-+      - Example
-+      - Description
-+    * - ``device.type``
-+      - fixed
-+      - MEV
-+      - The hardware type for this device
-+    * - ``cp``
-+      - running
-+      - 0.0
-+      - Version number (major.minor) of the Control Plane software
-+        running on the device.
-+    * - ``virtchnl``
-+      - running
-+      - 2.0
-+      - 2-digit version number (major.minor) of the communication channel
-+        (virtchnl) used by the device.
-diff --git a/drivers/net/ethernet/intel/ixd/Kconfig b/drivers/net/ethernet/intel/ixd/Kconfig
-index 24510c50070e..34181c59dcdc 100644
---- a/drivers/net/ethernet/intel/ixd/Kconfig
-+++ b/drivers/net/ethernet/intel/ixd/Kconfig
-@@ -7,6 +7,7 @@ config IXD
- 	select LIBETH
- 	select LIBIE_CP
- 	select LIBIE_PCI
-+	select NET_DEVLINK
- 	help
- 	  This driver supports Intel(R) Control Plane PCI Function
- 	  of Intel E2100 and later IPUs and FNICs.
-diff --git a/drivers/net/ethernet/intel/ixd/Makefile b/drivers/net/ethernet/intel/ixd/Makefile
-index 90abf231fb16..03760a2580b9 100644
---- a/drivers/net/ethernet/intel/ixd/Makefile
-+++ b/drivers/net/ethernet/intel/ixd/Makefile
-@@ -8,5 +8,6 @@ obj-$(CONFIG_IXD) += ixd.o
- ixd-y := ixd_main.o
- ixd-y += ixd_ctlq.o
- ixd-y += ixd_dev.o
-+ixd-y += ixd_devlink.o
- ixd-y += ixd_lib.o
- ixd-y += ixd_virtchnl.o
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_devlink.c b/drivers/net/ethernet/intel/ixd/ixd_devlink.c
-new file mode 100644
-index 000000000000..6f60cfe4fab2
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ixd/ixd_devlink.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025, Intel Corporation. */
-+
-+#include "ixd.h"
-+#include "ixd_devlink.h"
-+
-+#define IXD_DEVLINK_INFO_LEN	128
-+
-+/**
-+ * ixd_fill_dsn - Get the serial number for the ixd device
-+ * @adapter: adapter to query
-+ * @buf: storage buffer for the info request
-+ */
-+static void ixd_fill_dsn(struct ixd_adapter *adapter, char *buf)
-+{
-+	u8 dsn[8];
-+
-+	/* Copy the DSN into an array in Big Endian format */
-+	put_unaligned_be64(pci_get_dsn(adapter->cp_ctx.mmio_info.pdev), dsn);
-+
-+	snprintf(buf, IXD_DEVLINK_INFO_LEN, "%8phD", dsn);
-+}
-+
-+/**
-+ * ixd_fill_device_name - Get the name of the underlying hardware
-+ * @adapter: adapter to query
-+ * @buf: storage buffer for the info request
-+ * @buf_size: size of the storage buffer
-+ */
-+static void ixd_fill_device_name(struct ixd_adapter *adapter, char *buf,
-+				 size_t buf_size)
-+{
-+	if (adapter->caps.device_type == VIRTCHNL2_MEV_DEVICE)
-+		snprintf(buf, buf_size, "%s", "MEV");
-+	else
-+		snprintf(buf, buf_size, "%s", "UNKNOWN");
-+}
-+
-+/**
-+ * ixd_devlink_info_get - .info_get devlink handler
-+ * @devlink: devlink instance structure
-+ * @req: the devlink info request
-+ * @extack: extended netdev ack structure
-+ *
-+ * Callback for the devlink .info_get operation. Reports information about the
-+ * device.
-+ *
-+ * Return: zero on success or an error code on failure.
-+ */
-+static int ixd_devlink_info_get(struct devlink *devlink,
-+				struct devlink_info_req *req,
-+				struct netlink_ext_ack *extack)
-+{
-+	struct ixd_adapter *adapter = devlink_priv(devlink);
-+	char buf[IXD_DEVLINK_INFO_LEN];
-+	int err;
-+
-+	ixd_fill_dsn(adapter, buf);
-+	err = devlink_info_serial_number_put(req, buf);
-+	if (err)
-+		return err;
-+
-+	ixd_fill_device_name(adapter, buf, IXD_DEVLINK_INFO_LEN);
-+	err = devlink_info_version_fixed_put(req, "device.type", buf);
-+	if (err)
-+		return err;
-+
-+	snprintf(buf, sizeof(buf), "%u.%u",
-+		 le16_to_cpu(adapter->caps.cp_ver_major),
-+		 le16_to_cpu(adapter->caps.cp_ver_minor));
-+
-+	err = devlink_info_version_running_put(req, "cp", buf);
-+	if (err)
-+		return err;
-+
-+	snprintf(buf, sizeof(buf), "%u.%u",
-+		 adapter->vc_ver.major, adapter->vc_ver.minor);
-+
-+	return devlink_info_version_running_put(req, "virtchnl", buf);
-+}
-+
-+static const struct devlink_ops ixd_devlink_ops = {
-+	.info_get = ixd_devlink_info_get,
-+};
-+
-+/**
-+ * ixd_adapter_alloc - Allocate devlink and return adapter pointer
-+ * @dev: the device to allocate for
-+ *
-+ * Allocate a devlink instance for this device and return the private area as
-+ * the adapter structure.
-+ *
-+ * Return: adapter structure on success, NULL on failure
-+ */
-+struct ixd_adapter *ixd_adapter_alloc(struct device *dev)
-+{
-+	struct devlink *devlink;
-+
-+	devlink = devlink_alloc(&ixd_devlink_ops, sizeof(struct ixd_adapter),
-+				dev);
-+	if (!devlink)
-+		return NULL;
-+
-+	return devlink_priv(devlink);
-+}
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_devlink.h b/drivers/net/ethernet/intel/ixd/ixd_devlink.h
-new file mode 100644
-index 000000000000..c43ce0655de2
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ixd/ixd_devlink.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2025, Intel Corporation. */
-+
-+#ifndef _IXD_DEVLINK_H_
-+#define _IXD_DEVLINK_H_
-+#include <net/devlink.h>
-+
-+struct ixd_adapter *ixd_adapter_alloc(struct device *dev);
-+
-+/**
-+ * ixd_devlink_free - teardown the devlink
-+ * @adapter: the adapter structure to free
-+ *
-+ */
-+static inline void ixd_devlink_free(struct ixd_adapter *adapter)
-+{
-+	struct devlink *devlink = priv_to_devlink(adapter);
-+
-+	devlink_free(devlink);
-+}
-+
-+/**
-+ * ixd_devlink_unregister - Unregister devlink resources for this adapter.
-+ * @adapter: the adapter structure to cleanup
-+ *
-+ * Releases resources used by devlink and cleans up associated memory.
-+ */
-+static inline void ixd_devlink_unregister(struct ixd_adapter *adapter)
-+{
-+	devlink_unregister(priv_to_devlink(adapter));
-+}
-+
-+/**
-+ * ixd_devlink_register - Register devlink interface for this adapter
-+ * @adapter: pointer to ixd adapter structure to be associated with devlink
-+ *
-+ * Register the devlink instance associated with this adapter
-+ */
-+static inline void ixd_devlink_register(struct ixd_adapter *adapter)
-+{
-+	devlink_register(priv_to_devlink(adapter));
-+}
-+
-+#endif /* _IXD_DEVLINK_H_ */
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_main.c b/drivers/net/ethernet/intel/ixd/ixd_main.c
-index 9aaba5d985b0..ff8fdf919835 100644
---- a/drivers/net/ethernet/intel/ixd/ixd_main.c
-+++ b/drivers/net/ethernet/intel/ixd/ixd_main.c
-@@ -4,6 +4,7 @@
- #include "ixd.h"
- #include "ixd_ctlq.h"
- #include "ixd_lan_regs.h"
-+#include "ixd_devlink.h"
- 
- MODULE_DESCRIPTION("Intel(R) Control Plane Function Device Driver");
- MODULE_IMPORT_NS("LIBIE_CP");
-@@ -21,12 +22,15 @@ static void ixd_remove(struct pci_dev *pdev)
- 	/* Do not mix removal with (re)initialization */
- 	cancel_delayed_work_sync(&adapter->init_task.init_work);
- 
-+	ixd_devlink_unregister(adapter);
-+
- 	/* Leave the device clean on exit */
- 	ixd_trigger_reset(adapter);
- 	ixd_deinit_dflt_mbx(adapter);
- 
- 	libie_pci_unmap_all_mmio_regions(&adapter->cp_ctx.mmio_info);
- 	libie_pci_deinit_dev(pdev);
-+	ixd_devlink_free(adapter);
- }
- 
- /**
-@@ -94,7 +98,7 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (WARN_ON(ent->device != IXD_DEV_ID_CPF))
- 		return -EINVAL;
- 
--	adapter = devm_kzalloc(&pdev->dev, sizeof(*adapter), GFP_KERNEL);
-+	adapter = ixd_adapter_alloc(&pdev->dev);
- 	if (!adapter)
- 		return -ENOMEM;
- 
-@@ -103,7 +107,7 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	err = libie_pci_init_dev(pdev);
- 	if (err)
--		return err;
-+		goto free_adapter;
- 
- 	pci_set_drvdata(pdev, adapter);
- 
-@@ -119,11 +123,14 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	queue_delayed_work(system_unbound_wq, &adapter->init_task.init_work,
- 			   msecs_to_jiffies(500));
- 
-+	ixd_devlink_register(adapter);
-+
- 	return 0;
- 
- deinit_dev:
- 	libie_pci_deinit_dev(pdev);
--
-+free_adapter:
-+	ixd_devlink_free(adapter);
- 	return err;
- }
- 
+So, what should be the behaviour if the DT defines different supplies
+for csiphy0 and csiphy1? Would you express that constraint in DT?
+
 -- 
-2.47.0
-
+With best wishes
+Dmitry
 
