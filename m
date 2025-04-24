@@ -1,275 +1,125 @@
-Return-Path: <linux-kernel+bounces-619170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386C6A9B8A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C262FA9B8A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701733BD89E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:59:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18521168328
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3055B296141;
-	Thu, 24 Apr 2025 19:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0AE296D05;
+	Thu, 24 Apr 2025 19:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3XTlBtxF"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U9A9+6pG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B6C29347C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 19:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BED296D09
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 19:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745524733; cv=none; b=Cu5d8OEgqpYFvDC+X5ZU1i4hPgq7pyXfvsMg6mH/KN+gGD8irVHKkY/Qz036KMnWXBwCHieFYdEaNYyy7cB5nz136Fwi2VULpljQ5Htk5/DIL29D34KRIYSGl71/bjBZw3v5G3Ma49+jPTN7UmmKW7H3EJcGoWhBgM7ReAHCv8M=
+	t=1745524746; cv=none; b=OoIzKLma8vfhyQMJFu8lsch5QpHK2pMHjdpx5q5cCbMJNiW19aYd3s6IRDvPfIxTRdxPmLSS+Z78v3TU13xwSihFKfNBBSsN1uinN1C2o0bfwasDgRcmyKdAVLvanCswKiuSDkzJJST4CrFhI/DBzIFjVNVl/aMzjzDCmOZFjyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745524733; c=relaxed/simple;
-	bh=3mET9+njEz0Qqs0rjagQZqg2H0OJF9kLeZvRZQFAVGo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=sKzoucQqnr3EBkCa/nucy+SHtNE5cujjInPRObkm9ofe1QUeDdln9v1cBL2NIQ9RN4SGPWbKXqY9nhRwHDP0OwXpLTVr0/vUgDnDIy7MFI+OKd9Wl7S69ctlwGja8ZmZ+QQWfaUbul3kk2MlQMdCTuPA1+y65vZeh7JQtyzq43Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3XTlBtxF; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff798e8c3bso1105613a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745524731; x=1746129531; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FsW7ntgrEiteL6+NRyYkKnb+c0cF8to6DMFvVFkK9wk=;
-        b=3XTlBtxFMYyhKKjP2GYgKESbwCgAI3i1JyuuVtXoqI9AIRtXex9dVMCVG4eRku+6OX
-         J31Fyjz6XcYCHF5Fi4glC5ghyP/jZTrKAsNXFKapokHBCxBQ9hRNrNNeAaYJJlHgwqii
-         RiAkvtL4ZgajJlvSJYn5cm/rN8lc0QAX2M+VEHbzrLCvEA859Ra1RjBJ911sVnT2J4Rl
-         gaPpmd/27AgMgJlDm2FCw6VKly+kyKuNH25px8fpOtCmVYdBsdpOvZWhUidXCB+GQmEE
-         PT7ciKT3FmJOdhEoo1jQ5rbTuPwQMETUgexU7fHRK5o2V3wzVzg3uN+0SwzW48Jps4UU
-         d57w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745524731; x=1746129531;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FsW7ntgrEiteL6+NRyYkKnb+c0cF8to6DMFvVFkK9wk=;
-        b=kVMxmM88zRUWpRy5Rwb9lSjpL2OqIaVzEGciB70v6bKajuxO74bB3yz7CwYf7UFc9F
-         PyEm2axpTaCrwt90Y569SIb+AKA0U9ZLGgeS1V6lRM5hYeyVP2Ptdr6PsnV/q3IrxeBw
-         eAKcCbkVyBJBjP3yAFnAGKsw2tAwXUHgvATpwexR9LvXP8lULqcytbr0zHZ1bpXP3MSy
-         WgVpfcU+aC7ErNUiP76waJxZ3ocByP8TYxEQ/uq9jRxA9bst/mTc9iHUV5wi/UCiEHhz
-         tMKR5JpX/83f0urQwwNyzmo3RZOIPZ0LC1nefsmZRdQDaXihznlmEIS1jq5Aq412ckEB
-         NmfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIvqXHcN87A1EnO6rjEgLaO3l34L1GFlr9SmlQImGoKlQlP/upntr1QMbPywMAMJJLz4ItwYHTPhgwy2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGmk2HHlgyNxFdXcYIYNVRYXsnTt8bjx0RlSd+WbFZDQdY2VQM
-	fCdGpKwQM99UQMYm0nG5k7/8I715ZSllu8MyZP+WeAojj9fyrVagnoizM1PHJHcDIWRLWLcdtAH
-	l1tWw/Q==
-X-Google-Smtp-Source: AGHT+IF61i443moqQRGbCyMTbCxXjQRC0vDLWqpkI7uiwvfyhgS5AvqN7qVyEWF4SUVt4tzWu/5uC98s2k/Q
-X-Received: from pjkk11.prod.google.com ([2002:a17:90b:57eb:b0:2fa:2661:76ac])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:da90:b0:2fa:f8d:65de
- with SMTP id 98e67ed59e1d1-309f56c67c7mr997471a91.22.1745524730623; Thu, 24
- Apr 2025 12:58:50 -0700 (PDT)
-Date: Thu, 24 Apr 2025 12:58:31 -0700
-In-Reply-To: <20250424195831.1767457-1-irogers@google.com>
+	s=arc-20240116; t=1745524746; c=relaxed/simple;
+	bh=S256UgLsAfrU64+LkzGesSug2ELdCLZJ3BM5GSBy3A4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iZHD5+bJkyn29AjgNdywI64FhRHztnoqnnG1CheULMBHpef/6AT0Sq0PbpStcnRm/X//u22/hLaF5l5ojmqTxsJaxV5iLeXhWffRc8VyU16Od/wR7oeEltg83iCVBhxV4apG+n7xTmoV3RrUPFmDGpg9d28Warz8ZxHVi9H3k8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U9A9+6pG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745524743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lBXTdv+sLZhhh3HMrE26Hq7ELTP03d30ZG0+ag31+Z8=;
+	b=U9A9+6pGKpRW35eKX4cA4rrLLViDnDHTA40scc2RVJCrvXM6+FgX/N15IrswPgMHnbsT/d
+	J0/yJLagHAGJksHcR0rbEIZeqBHWDMJenmr2/fLTJTiHOoAOyTkVtlq7y/ef9I5WajPhsi
+	MhFhhYJyggCii53QoX6IRR7nfx9hyug=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-Il5dtNCfOpy9lrqf63iSaQ-1; Thu,
+ 24 Apr 2025 15:58:58 -0400
+X-MC-Unique: Il5dtNCfOpy9lrqf63iSaQ-1
+X-Mimecast-MFC-AGG-ID: Il5dtNCfOpy9lrqf63iSaQ_1745524736
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 877A41956095;
+	Thu, 24 Apr 2025 19:58:55 +0000 (UTC)
+Received: from [10.44.32.28] (unknown [10.44.32.28])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E3801956095;
+	Thu, 24 Apr 2025 19:58:49 +0000 (UTC)
+Message-ID: <7d96b3a4-9098-4ffa-be51-4ce5dd64a112@redhat.com>
+Date: Thu, 24 Apr 2025 21:58:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250424195831.1767457-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
-Message-ID: <20250424195831.1767457-9-irogers@google.com>
-Subject: [PATCH v2 8/8] perf record: Make --buildid-mmap the default
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, James Clark <james.clark@linaro.org>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, 
-	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Zixian Cai <fzczx123@gmail.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Martin Liska <martin.liska@hey.com>, 
-	"=?UTF-8?q?Martin=20Li=C5=A1ka?=" <m.liska@foxlink.cz>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 5/8] mfd: zl3073x: Add functions to work with
+ register mailboxes
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-6-ivecera@redhat.com>
+ <5094e051-5504-48a5-b411-ed1a0d949eeb@lunn.ch>
+ <bd645425-b9cb-454d-8971-646501704697@redhat.com>
+ <d36c34f8-f67a-40ac-a317-3b4e717724ce@lunn.ch>
+ <458254c7-da05-4b27-870d-08458eb89ba6@redhat.com>
+ <98ae9365-423c-4c7e-8b76-dcea3762ce79@lunn.ch>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <98ae9365-423c-4c7e-8b76-dcea3762ce79@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Support for build IDs in mmap2 perf events has been present since
-Linux v5.12:
-https://lore.kernel.org/lkml/20210219194619.1780437-1-acme@kernel.org/
-Build ID mmap events don't avoid the need to inject build IDs for DSO
-touched by samples as the build ID cache is populated by perf
-record. They can avoid some cases of symbol mis-resolution caused by
-the file system changing from when a sample occurred and when the DSO
-is sought. To disable build ID scanning
 
-Unlike the --buildid-mmap option, this doesn't disable the build ID
-cache but it does disable the processing of samples looking for DSOs
-to inject build IDs for. To disable the build ID cache the -B
-(--no-buildid) option should be used.
 
-Making this option the default was raised on the list in:
-https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
+On 24. 04. 25 9:29 odp., Andrew Lunn wrote:
+>> Yes, PHC (PTP) sub-driver is using mailboxes as well. Gpio as well for some
+>> initial configuration.
+> 
+> O.K, so the mailbox code needs sharing. The question is, where do you
+> put it.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-record.c        | 33 +++++++++++++++++++-----------
- tools/perf/util/symbol_conf.h      |  2 +-
- tools/perf/util/synthetic-events.c | 16 +++++++--------
- 3 files changed, 30 insertions(+), 21 deletions(-)
+This is crucial question... If I put the MB API into DPLL sub-driver
+then PTP sub-driver will depend on it. Potential GPIO sub-driver as
+well.
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index ba20bf7c011d..7b64013ba8c0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -169,6 +169,7 @@ struct record {
- 	bool			no_buildid_cache_set;
- 	bool			buildid_all;
- 	bool			buildid_mmap;
-+	bool			buildid_mmap_set;
- 	bool			timestamp_filename;
- 	bool			timestamp_boundary;
- 	bool			off_cpu;
-@@ -1795,6 +1796,7 @@ record__finish_output(struct record *rec)
- 			data->dir.files[i].size = lseek(data->dir.files[i].fd, 0, SEEK_CUR);
- 	}
- 
-+	/* Buildid scanning disabled or build ID in kernel and synthesized map events. */
- 	if (!rec->no_buildid) {
- 		process_buildids(rec);
- 
-@@ -2966,6 +2968,8 @@ static int perf_record_config(const char *var, const char *value, void *cb)
- 			rec->no_buildid = true;
- 		else if (!strcmp(value, "mmap"))
- 			rec->buildid_mmap = true;
-+		else if (!strcmp(value, "no-mmap"))
-+			rec->buildid_mmap = false;
- 		else
- 			return -1;
- 		return 0;
-@@ -3349,6 +3353,7 @@ static struct record record = {
- 		.ctl_fd_ack          = -1,
- 		.synth               = PERF_SYNTH_ALL,
- 	},
-+	.buildid_mmap = true,
- };
- 
- const char record_callchain_help[] = CALLCHAIN_RECORD_HELP
-@@ -3514,8 +3519,8 @@ static struct option __record_options[] = {
- 		   "file", "vmlinux pathname"),
- 	OPT_BOOLEAN(0, "buildid-all", &record.buildid_all,
- 		    "Record build-id of all DSOs regardless of hits"),
--	OPT_BOOLEAN(0, "buildid-mmap", &record.buildid_mmap,
--		    "Record build-id in map events"),
-+	OPT_BOOLEAN_SET(0, "buildid-mmap", &record.buildid_mmap, &record.buildid_mmap_set,
-+			"Legacy record build-id in map events option which is now the default. Behaves indentically to --no-buildid. Disable with --no-buildid-mmap"),
- 	OPT_BOOLEAN(0, "timestamp-filename", &record.timestamp_filename,
- 		    "append timestamp to output filename"),
- 	OPT_BOOLEAN(0, "timestamp-boundary", &record.timestamp_boundary,
-@@ -4042,19 +4047,23 @@ int cmd_record(int argc, const char **argv)
- 		record.opts.record_switch_events = true;
- 	}
- 
-+	if (!rec->buildid_mmap) {
-+		pr_debug("Disabling build id in synthesized mmap2 events.\n");
-+		symbol_conf.no_buildid_mmap2 = true;
-+	} else if (rec->buildid_mmap_set) {
-+		/*
-+		 * Explicitly passing --buildid-mmap disables buildid processing
-+		 * and cache generation.
-+		 */
-+		rec->no_buildid = true;
-+	}
-+	if (rec->buildid_mmap && !perf_can_record_build_id()) {
-+		pr_warning("Missing support for build id in kernel mmap events. Disable this warning with --no-buildid-mmap\n");
-+		rec->buildid_mmap = false;
-+	}
- 	if (rec->buildid_mmap) {
--		if (!perf_can_record_build_id()) {
--			pr_err("Failed: no support to record build id in mmap events, update your kernel.\n");
--			err = -EINVAL;
--			goto out_opts;
--		}
--		pr_debug("Enabling build id in mmap2 events.\n");
--		/* Enable mmap build id synthesizing. */
--		symbol_conf.buildid_mmap2 = true;
- 		/* Enable perf_event_attr::build_id bit. */
- 		rec->opts.build_id = true;
--		/* Disable build id cache. */
--		rec->no_buildid = true;
- 	}
- 
- 	if (rec->opts.record_cgroup && !perf_can_record_cgroup()) {
-diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-index cd9aa82c7d5a..7a80d2c14d9b 100644
---- a/tools/perf/util/symbol_conf.h
-+++ b/tools/perf/util/symbol_conf.h
-@@ -43,7 +43,7 @@ struct symbol_conf {
- 			report_individual_block,
- 			inline_name,
- 			disable_add2line_warn,
--			buildid_mmap2,
-+			no_buildid_mmap2,
- 			guest_code,
- 			lazy_load_kernel_maps,
- 			keep_exited_threads,
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 8fb2ea544d3a..f48109c14235 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -532,7 +532,7 @@ int perf_event__synthesize_mmap_events(const struct perf_tool *tool,
- 		event->mmap2.pid = tgid;
- 		event->mmap2.tid = pid;
- 
--		if (symbol_conf.buildid_mmap2)
-+		if (!symbol_conf.no_buildid_mmap2)
- 			perf_record_mmap2__read_build_id(&event->mmap2, machine, false);
- 
- 		if (perf_tool__process_synth_event(tool, event, machine, process) != 0) {
-@@ -690,7 +690,7 @@ static int perf_event__synthesize_modules_maps_cb(struct map *map, void *data)
- 		return 0;
- 
- 	dso = map__dso(map);
--	if (symbol_conf.buildid_mmap2) {
-+	if (!symbol_conf.no_buildid_mmap2) {
- 		size = PERF_ALIGN(dso__long_name_len(dso) + 1, sizeof(u64));
- 		event->mmap2.header.type = PERF_RECORD_MMAP2;
- 		event->mmap2.header.size = (sizeof(event->mmap2) -
-@@ -734,9 +734,9 @@ int perf_event__synthesize_modules(const struct perf_tool *tool, perf_event__han
- 		.process = process,
- 		.machine = machine,
- 	};
--	size_t size = symbol_conf.buildid_mmap2
--		? sizeof(args.event->mmap2)
--		: sizeof(args.event->mmap);
-+	size_t size = symbol_conf.no_buildid_mmap2
-+		? sizeof(args.event->mmap)
-+		: sizeof(args.event->mmap2);
- 
- 	args.event = zalloc(size + machine->id_hdr_size);
- 	if (args.event == NULL) {
-@@ -1124,8 +1124,8 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
- 						struct machine *machine)
- {
- 	union perf_event *event;
--	size_t size = symbol_conf.buildid_mmap2 ?
--			sizeof(event->mmap2) : sizeof(event->mmap);
-+	size_t size = symbol_conf.no_buildid_mmap2 ?
-+			sizeof(event->mmap) : sizeof(event->mmap2);
- 	struct map *map = machine__kernel_map(machine);
- 	struct kmap *kmap;
- 	int err;
-@@ -1159,7 +1159,7 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
- 		event->header.misc = PERF_RECORD_MISC_GUEST_KERNEL;
- 	}
- 
--	if (symbol_conf.buildid_mmap2) {
-+	if (!symbol_conf.no_buildid_mmap2) {
- 		size = snprintf(event->mmap2.filename, sizeof(event->mmap2.filename),
- 				"%s%s", machine->mmap_name, kmap->ref_reloc_sym->name) + 1;
- 		size = PERF_ALIGN(size, sizeof(u64));
--- 
-2.49.0.850.g28803427d3-goog
+There could be some special library module to provide this for
+sub-drivers but is this what we want? And if so where to put it?
+
+>>> The mutex needs to be shared, but that could be in the common data
+>>> structure.
+>>
+>> Do you mean that sub-device would access mutexes placed in zl3073x_dev which
+>> is parent (mfd) driver structure?
+> 
+> Yes.
+
+So, some helper functions for taking and releasing lock... The v4
+approach uses (will use) one mutex per mailbox type but one mutex for
+MB access is also sufficient.
+
+Ivan
 
 
