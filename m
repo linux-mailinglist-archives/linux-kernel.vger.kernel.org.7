@@ -1,165 +1,200 @@
-Return-Path: <linux-kernel+bounces-618651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761DAA9B160
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:45:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8790A9B164
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC77F172CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:45:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E0D47A8348
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5881A4F0A;
-	Thu, 24 Apr 2025 14:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55D012CDA5;
+	Thu, 24 Apr 2025 14:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhKu4kC9"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMrlDXwC"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10F513CA9C;
-	Thu, 24 Apr 2025 14:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E13C1A23B7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745505925; cv=none; b=MiZdHK5vXg6YPd7coHZCkZNNdCZwVbQRGV4zHj6684jTit1OIOe7ODecJtDr4dNS57FUVj10QkmphIYnCf6rrgIpcv6YWZIW2bNZF7/r0qUhM13bv8Yxh/UUXSIIIWMkT2KmgI5Ff0IFTKOrQ56mUjzKGDjv15Z5LJg5yhKQzBY=
+	t=1745505965; cv=none; b=mHwww+QHk9ouNnGDKYgBWJ0ocqlGSonon8VRMc3+NqUZwOaMlPORZoj9Dyg/YZnUKQE/7Mdu3xF9oQl0kcJXtz0Ryjf6748s+ag7Ytbyu0l+gFgVm8x59oGYA6OED2fOIcZErrnlUotN5cor4feUlimQO7CMAFY726VE44nuuP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745505925; c=relaxed/simple;
-	bh=WfFFauBOimAA1xG7/eaugx9UY2R4AXtESa3PSQzg0KU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jngROzsK/hN9ZmlcI3bj6VTOvZwexHN2KzY25Ko0YvGKDSOLUGjUHFyVJsJf6AC/fGxBw/rhe8vDqVEU3Kdaeg6jqYOe5lrjLyQhXcUZ6TmCEN/OdlV7dAZ5LTDcthJx4U1z8cKd9Q8NEWu/XYxSpwZIRtx2VbfpJiQMv2BsOMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZhKu4kC9; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1745505965; c=relaxed/simple;
+	bh=o2RBZVSwwymoOwOHsr7X7tY2TYV6PDEU88LDFFfByo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=At+2LT6T/rShBxu6f4xVhNwpMXGsiUgU4tUDlBEDH5r7rdOCx/qDloB6Y2TV1Ebv6DpJvnT6iDw5j6uSELJOVuG/3V+HMYpmLZ10vJA5Qy0WdM87SDXczOM/47ild3wv17dyUV40ivMPAe3p+Zby2Jr4cJiLgFw3f7cPdLYK8mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMrlDXwC; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-73c17c770a7so1495296b3a.2;
-        Thu, 24 Apr 2025 07:45:23 -0700 (PDT)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47691d82bfbso24042951cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:46:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745505923; x=1746110723; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4PAGLeinOTw1BegEcFTcz+g2dJ2nTYeNG2yLekJHkNo=;
-        b=ZhKu4kC948GYQQf0HzrVY5w+PpKrvbIARLw2ZoPdGrfnQonoqW8pyCzdNMN9n5gCvZ
-         Z5ZfJwu8AKb4ZEPpkWOrMeceAL8Y/UHG/cWAkL5TMK13tYgG7HN8DNyDNuq81NzmKgzB
-         cv4VLkD9w0J4j3cPLG0Xhkn+sdQEiZOzmvSeW5sYmv0VJj6B9edODN89D4e+BSBxai4w
-         rt5Rh4Cq7icOpvrY5gUY36rh0Z62q7/WYulbHaa5Td//bBQMt7eFwXoJNxTZkbQWsGli
-         n0Bkh3STpKk6/4NfkHBDC8+PShP7aCIlM0/hBlV7paW+OxiXmhCQ7rw8U0FRfiyFNdb8
-         4BYQ==
+        d=gmail.com; s=20230601; t=1745505962; x=1746110762; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=djiw2uRfK6UBOIy5EO9pfxKm7dpOiSpJC1m5A7rq/I0=;
+        b=eMrlDXwCIiMNIYtT3VYlNi9r8ZDyzobMzhf9h6DIivmSuzSZipbYKD8BCPeqjAZEg7
+         rzp9khL02r6ktGzVGakGktZ1sdQ/s2R4BmmqQ7RO7Q2RUTmWFB8erXTeOEx1Er4FAtI5
+         Dojo5sExewqXvSG8MoQq80FNUOsrq7SLnBSWCOYxKr82Oi96Rp1TRpigqiAjjbCqVLc6
+         9HH3RV+1Hd1xCu+pRJtWFLYc8W0XRVH7yLgCNZHzUT9sa7NvaNf32/9GuxUdezx2tZVT
+         q1jdKOocmhlHQMA8D19lgVL1N/25G669RB9xrO1hKvmY0a0lvZL+CCKSFvX0enLubTgo
+         yvNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745505923; x=1746110723;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PAGLeinOTw1BegEcFTcz+g2dJ2nTYeNG2yLekJHkNo=;
-        b=urJXbN3ui5VkJ93wPp/hkkWdFoTpUGTBd5vLt4BMrEasFPiV7ZSzzW46XjhI6mvMSH
-         TIu3affq9Hj18Otwr8oYuI+MfA+2NOLi5i9DEcrN7GYhZitVzyYnoMRfeiwGa7VJo4LG
-         XkZArDDIRIqPEP64+H7JaYm0kjymlV4PfDcbYdcrtGUx2vHU7Fgiuxdh/NQ5KfEYmI+g
-         OlzOrl20DBBj6h6mtvojh0rHXQGm3g7kvZacnNJwuzx0pBCAsa6FSfsKOjrErhpi16mt
-         yDM6AHmltcVTamHkuhQBIF905BgMOs698Nkxmxb5S9tiCA7rz0/wI13naTlozwc0m2K5
-         TyLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfoWllnK1DAGm1YEgJ5hnbZrY+HV8xVOq3CLnh+ivfQlkwtFz65oozP5ldkQ3fHF0IGLE=@vger.kernel.org, AJvYcCXMViui7smLkkh1PMciRg8jgDEP1YYRafvC7W0M/dc2eShXxMb3mpEWgHWhNm7KIAhnZClsIHSQVsN+in+n@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEQpxkGNFRaA2YxQYVnpz0KIGi6Sb5kiV+57yYC68EUTo22eFF
-	001aXOglqRpodkIeUKpp3+ewzExadq+sOozZ3EmvNS1iSkzzuaNR
-X-Gm-Gg: ASbGncvA1hgLdM0qRgXDOxdfbDt/s7tz9MtqLHFrUaKSOW2CpZSdYEyZUMh7I04PpCu
-	S17ZwDOwm2OAO1Je2KPLgFlF8J7rM4HltuAZ4pnmo/WfaefrAwQHuk34agAvanWZHEO5KfgWNXa
-	3yEoyQtKiIWOE+WGUdTN64/74aewLeTwau+fpFhDvzC5BsMvg6m38yGteKPQrY2vSZPNrYXmugR
-	yuJ7p+I6+uD7xHid7SHWWQk9S4W0Y+vwQ5rxUZHnOJt8tz8FT+u3X2UneQdrd0SwbenSNk3v7Ns
-	OzZM7gtwPVip74A8iu+NOdbz2RBhIPBueoJqMsPAUfifSzs+Af+7tMXBJhs+/quKTEFNyIqLsnZ
-	2NG7N3bEA76EzZEXMw7U=
-X-Google-Smtp-Source: AGHT+IFVuYKB/RLifTofF8XnjcJX6TCVuQ5lhxXULqxxcU1gSNRlAOIL1o0jpGAizcAW5raamumQWA==
-X-Received: by 2002:a05:6a00:391b:b0:737:6e1f:29da with SMTP id d2e1a72fcca58-73e24e05a1cmr4301845b3a.21.1745505922795;
-        Thu, 24 Apr 2025 07:45:22 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:f632:6238:46f4:702e? ([2001:ee0:4f0e:fb30:f632:6238:46f4:702e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e2593f557sm1474503b3a.42.2025.04.24.07.45.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 07:45:22 -0700 (PDT)
-Message-ID: <9cb42173-e394-4c5b-aef2-fe9ce737689e@gmail.com>
-Date: Thu, 24 Apr 2025 21:45:15 +0700
+        d=1e100.net; s=20230601; t=1745505962; x=1746110762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=djiw2uRfK6UBOIy5EO9pfxKm7dpOiSpJC1m5A7rq/I0=;
+        b=qc44Kh4wPiPSMMyJV8pqS+C9sWU3leVVsqP1KxkYZR+TDQ3v9BWQiqMSQ+8n5iNWuF
+         zBJdFHPPkXjaoaQjCyvVxBa52rgU4iI4bD89VukKwrWRBliPeBkhyu4Wpb6SbyJRnjTL
+         PWdsgi1ZgdNnNT5VUHs15y6URcHWpKed5cg9rh6/1K6Uc4eFPLAgMDlsbzyxjJmcMqOD
+         nzoBtxCGNeWgMLT/w9cBtYbnE0gztdfOBANgy7h7n2BQesFRQ8voKG3wyNZBkXJvIIa6
+         3jyne7TWTVtQYhbXbhE6gVoAWRPHxS0f1t47/zL0Nco6Iqq5ggxaxmpxj94kWIvVDpFS
+         6QXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHbmc8Lp2K5Q7JHgp9vSwYAVAhPe8+ZaroD1kQlvY8xuCnzkbvn+stz5Ds5Z4oODWomeU4+DQJtWKg9As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGxQ6uPmPJgdIfgbnI07VXo48AF070xqhXoGp5DjUFC3gajOk7
+	CFjs6qeiwdDesMKng+KikyVgGaYBBMBP54pXC2upvCbh17qHaHPiwMMRTPLHMtXz5F9Qz42sWzt
+	MHxJa+lYBi7PnyCzWjoBYJGxV8BU=
+X-Gm-Gg: ASbGncuGxiasfypa+gRZflBUGsaHghzpTRixJoDEKDno2/RLDYts0+VVY/rLuP3NhDL
+	WPIJ5ABYXzMYhSUNi6wY1omKfleWJrBwJMAiqpXZ1oHn+8KLDHhDw9QjlmlXdCKDXVaoSFXZ2vK
+	6E/eIUu7LaPxeS2U2jl5wwjrI=
+X-Google-Smtp-Source: AGHT+IFGaPkE6RL+WHWDWAL5vZOpOKCCFkUXuZ2C29tV+pt/3ETbhcrTI+CSd8av3dhQsiIAjaNy5GTuFsD83soT7nU=
+X-Received: by 2002:a05:6214:4015:b0:6e8:f99c:7939 with SMTP id
+ 6a1803df08f44-6f4bfcb0542mr41311646d6.44.1745505962215; Thu, 24 Apr 2025
+ 07:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] xsk: respect the offsets when copying frags
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250423101047.31402-1-minhquangbui99@gmail.com>
- <34e2c7f7-4d83-4e5c-af56-d91e68b3e7e1@intel.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <34e2c7f7-4d83-4e5c-af56-d91e68b3e7e1@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250423174634.3009657-1-edumazet@google.com>
+In-Reply-To: <20250423174634.3009657-1-edumazet@google.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 24 Apr 2025 22:45:26 +0800
+X-Gm-Features: ATxdqUF-ovgbBxduQnEu1wue-NNLCVb2y0ggWdAMR61_FYb2MQzImAQcwI8q970
+Message-ID: <CALOAHbDT=z4xYQq0WXqGzAQycNhaBdCfZDs5mB5Rvyx9iK4JbQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: reduce false sharing on sched_balance_running
+To: Eric Dumazet <edumazet@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	Eric Dumazet <eric.dumazet@gmail.com>, Sean Christopherson <seanjc@google.com>, 
+	Josh Don <joshdon@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/24/25 21:02, Alexander Lobakin wrote:
-> From: Bui Quang Minh <minhquangbui99@gmail.com>
-> Date: Wed, 23 Apr 2025 17:10:47 +0700
+On Thu, Apr 24, 2025 at 1:46=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
+wrote:
 >
->> Add the missing offsets when copying frags in xdp_copy_frags_from_zc().
->>
->> Fixes: 560d958c6c68 ("xsk: add generic XSk &xdp_buff -> skb conversion")
->> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->> ---
->>   net/core/xdp.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/net/core/xdp.c b/net/core/xdp.c
->> index f86eedad586a..a723dc301f94 100644
->> --- a/net/core/xdp.c
->> +++ b/net/core/xdp.c
->> @@ -697,7 +697,8 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
->>   	nr_frags = xinfo->nr_frags;
->>   
->>   	for (u32 i = 0; i < nr_frags; i++) {
->> -		u32 len = skb_frag_size(&xinfo->frags[i]);
->> +		const skb_frag_t *frag = &xinfo->frags[i];
->> +		u32 len = skb_frag_size(frag);
->>   		u32 offset, truesize = len;
->>   		netmem_ref netmem;
->>   
->> @@ -707,8 +708,8 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
->>   			return false;
->>   		}
->>   
->> -		memcpy(__netmem_address(netmem),
->> -		       __netmem_address(xinfo->frags[i].netmem),
->> +		memcpy(__netmem_address(netmem) + offset,
->> +		       __netmem_address(frag->netmem) + skb_frag_off(frag),
->>   		       LARGEST_ALIGN(len));
->>   		__skb_fill_netmem_desc_noacc(sinfo, i, netmem, offset, len);
-> Incorrect fix.
+> rebalance_domains() can attempt to change sched_balance_running
+> more than 350,000 times per second on our servers.
 >
-> page_pool_dev_alloc_netmem() allocates a buffer of skb_frag_size() len,
-> but then you pass offset when copying, which may lead to access beyond
-> the end of the buffer.
+> If sched_clock_irqtime and sched_balance_running share the
+> same cache line, we see a very high cost on hosts with 480 threads
+> dealing with many interrupts.
+
+CONFIG_IRQ_TIME_ACCOUNTING is enabled on your systems, right?
+Have you observed any impact on task CPU utilization measurements due
+to this configuration? [0]
+
+If cache misses on sched_clock_irqtime are indeed the bottleneck,  why
+not align it to improve performance?
+
+[0]. https://lore.kernel.org/all/20250103022409.2544-1-laoar.shao@gmail.com=
+/
+
 >
-> I know that my code here is incorrect as well, but the idea was to
-> allocate only skb_frag_size() and copy the actual payload without any
-> offset to the new buffer. So, you need to pass the offset only to the
-> second argument of memcpy() and then pass 0 as @offset to
-> __skb_fill_netmem_desc_noacc().
+> This patch only acquires sched_balance_running when sd->last_balance
+> is old enough.
+>
+> It also moves sched_balance_running into a dedicated cache line on SMP.
+>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Josh Don <joshdon@google.com>
+> ---
+>  kernel/sched/fair.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e43993a4e5807eaffcacaf761c289e8adb354cfd..460008d0dc459b3ca60209565=
+e89c419ea32a4e2 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12144,7 +12144,7 @@ static int active_load_balance_cpu_stop(void *dat=
+a)
+>   *   execution, as non-SD_SERIALIZE domains will still be
+>   *   load-balanced in parallel.
+>   */
+> -static atomic_t sched_balance_running =3D ATOMIC_INIT(0);
+> +static __cacheline_aligned_in_smp atomic_t sched_balance_running =3D ATO=
+MIC_INIT(0);
+>
+>  /*
+>   * Scale the max sched_balance_rq interval with the number of CPUs in th=
+e system.
+> @@ -12220,25 +12220,25 @@ static void sched_balance_domains(struct rq *rq=
+, enum cpu_idle_type idle)
+>
+>                 interval =3D get_sd_balance_interval(sd, busy);
+>
+> +               if (!time_after_eq(jiffies, sd->last_balance + interval))
+> +                       goto out;
+> +
+>                 need_serialize =3D sd->flags & SD_SERIALIZE;
+>                 if (need_serialize) {
+>                         if (atomic_cmpxchg_acquire(&sched_balance_running=
+, 0, 1))
+>                                 goto out;
+>                 }
+> -
+> -               if (time_after_eq(jiffies, sd->last_balance + interval)) =
+{
+> -                       if (sched_balance_rq(cpu, rq, sd, idle, &continue=
+_balancing)) {
+> -                               /*
+> -                                * The LBF_DST_PINNED logic could have ch=
+anged
+> -                                * env->dst_cpu, so we can't know our idl=
+e
+> -                                * state even if we migrated tasks. Updat=
+e it.
+> -                                */
+> -                               idle =3D idle_cpu(cpu);
+> -                               busy =3D !idle && !sched_idle_cpu(cpu);
+> -                       }
+> -                       sd->last_balance =3D jiffies;
+> -                       interval =3D get_sd_balance_interval(sd, busy);
+> +               if (sched_balance_rq(cpu, rq, sd, idle, &continue_balanci=
+ng)) {
+> +                       /*
+> +                        * The LBF_DST_PINNED logic could have changed
+> +                        * env->dst_cpu, so we can't know our idle
+> +                        * state even if we migrated tasks. Update it.
+> +                        */
+> +                       idle =3D idle_cpu(cpu);
+> +                       busy =3D !idle && !sched_idle_cpu(cpu);
+>                 }
+> +               sd->last_balance =3D jiffies;
+> +               interval =3D get_sd_balance_interval(sd, busy);
+>                 if (need_serialize)
+>                         atomic_set_release(&sched_balance_running, 0);
+>  out:
+> --
+> 2.49.0.805.g082f7c87e0-goog
+>
 
-I'm not quite familiar with the page_pool API so I might be wrong. 
-AFAICS, the netmem_ref is just a wrapper around struct page now. 
-page_pool_dev_alloc_netmem(pp, &offset, &truesize) returns the allocated 
-page for our request but we must use the returned offset to access our 
-allocated space. The start of page may be currently used by other user.
 
-That's my understanding when looking at this code path
-
-page_pool_dev_alloc_netmem
--> page_pool_alloc_netmem
-     -> page_pool_alloc_frag_netmem <- specifically this function
-
-Thanks,
-Quang Minh.
+--=20
+Regards
+Yafang
 
