@@ -1,250 +1,128 @@
-Return-Path: <linux-kernel+bounces-617720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D83A9A4C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4D7A9A4E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B63D7B2B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52881890843
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBE81F3D31;
-	Thu, 24 Apr 2025 07:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B8C1F4624;
+	Thu, 24 Apr 2025 07:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Bep5LGJS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NMVMRiOI"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="HHQVgllf"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2696D1F37B8;
-	Thu, 24 Apr 2025 07:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684F61AB530;
+	Thu, 24 Apr 2025 07:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745481024; cv=none; b=NkX+G8k07mCN+pb05TfUEA+IqshGKcNh6MOoDd9u/WkBHc1tHmr432GmsVdx88kwJ6LFWe4NiWC0h8hGvoiBdn+rbAiVuGXZBVFAr63tsAbQzK488wnilbApaOZpic2K6QznyiplMt1Yg7QvNVFpvixseWaA4/NAjfPAvzCvA0o=
+	t=1745481106; cv=none; b=GSz7O1+szhcIe5+QioJuZLwjZu3t+BAcxwfjbA8xDoOPz0Yi3QoQj96FgT7rrXBU8EcQxA6p9DCzXeQQjmdkGtKaMmjZvnJiuvk00n0hx2W/fgQKGazt6RmpEPpYRmAA2SXiGpj9HHkpUo+8gc560gKwSkOHjHYPpichl6uUBM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745481024; c=relaxed/simple;
-	bh=Tq0hPlyp9qMv/BoeEAkyDOYHgk8PJ0sooMCG5eDXcN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xj+1F/Nz6+dhAPIfVD5NKozol+nWivj0ZMIU5Ovigc7xYSLjH72oV67HxhBq4JPlar1e4Fd6ADEP7fcIUfuMpjbipWSaDEPx9Q21L1Zwx9pBAKIJCRCfFXh7mlvdkNibdHrEeR29qEtiSNtImdQITSc1rtU9CCLRWqRSJEJOe58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Bep5LGJS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NMVMRiOI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1745481021; x=1777017021;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mg6lhM3R2ZSR9+KErjTtlCk6Ufu88DsvjnmmJE09rCU=;
-  b=Bep5LGJSf4PGUdkJKJCQMlzt8IzTwOHGnWGkW/wr4YTkAeiTI64XlXcc
-   xtiZcEs455BjKMvWOv2ELC3qKm1hsSEOk7j1E3U3ACMaBLckHX6Te+C3G
-   n+5fbpW9d2S+FFMzLeb8MjiiN7mz7193fOQMCx0bOqI1hF7Eml3pujK2/
-   lo2vLq7n08A0zJSNUQ4UVMmwKmB9CuwMgEo8xONlWP8i9K0gc4qj1VJ7C
-   gohNoANbiZp3HxegW+0kah0orJrG50wIRuMDzXXQzmAwqYg/gDgMw5d2/
-   pXXWeywth+LcAmhMV1E+/YLgI2ugLpldj/VaNcfsJVD8B7TcH0pgSDR1/
-   Q==;
-X-CSE-ConnectionGUID: QGD/Gg/jS3u6KCNl1aBeXA==
-X-CSE-MsgGUID: PcGB5fQAT9Golh5t6TkTpw==
-X-IronPort-AV: E=Sophos;i="6.15,235,1739833200"; 
-   d="scan'208";a="43691475"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Apr 2025 09:50:13 +0200
-X-CheckPoint: {6809ED35-3C-903EAEAC-E04C76C8}
-X-MAIL-CPID: 43870022036A7357E589DFBA273AC112_5
-X-Control-Analysis: str=0001.0A006376.6809ED40.009E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3067163FAF;
-	Thu, 24 Apr 2025 09:50:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1745481009;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mg6lhM3R2ZSR9+KErjTtlCk6Ufu88DsvjnmmJE09rCU=;
-	b=NMVMRiOIBdx3fzw5lq8FizjygUrUu/GUdNN59KCfjoXxvWG7L1ZA1Y0QbeZVEFnX/cb2Kp
-	C6b1zociLFLoIJQUIpxytZQudu+V6UNsRoAtmFbmqYGEIBFtqkxfN9sAkdu+NQbgbnLQHe
-	dVaBtnPv6/UKGq9ukriFpOVl7nuEhIGq6nFihgLr7Vsv/rIxb8UT/oFkmFue5Q89AU/l6y
-	UI7ubySg1MJfXFfCjMVJqisQRcaIV2kH26Dzfj4SMBD24pW/LIihKriDAgCo0yG/F0764D
-	CVCJynmi6eoDf3nsHF0lDRyG6aLbiIS6xxTkYIzy6BzC74peAwwyebiwgZ8kwQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com
-Subject: [PATCH v2 2/2] arm64: dts: imx8mp-tqma8mpql-mba8mp-ras314: Add Raspberry Pi Camera V2 overlay
-Date: Thu, 24 Apr 2025 09:49:59 +0200
-Message-ID: <20250424075000.1263138-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250424075000.1263138-1-alexander.stein@ew.tq-group.com>
-References: <20250424075000.1263138-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1745481106; c=relaxed/simple;
+	bh=7hQKfoI8brTvc968M0/2fCuMOAxvohLcq5efGDsVPv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nDDBomEtmGefpC6iZO7fU4gOsuKrmmD5lOcTntMfi0PnrciIZs2n4p860NRI36XbZf2lyWaL3R54Xqa+FyioVy5zRh1GimJfkCE96SfhAX4kF+4ozTlgGjECgAZpPoPGR4IWw40hMechji5reNyXyPbgT2YtT8g0zPzV0WHgYXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=HHQVgllf; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53O7ol73715410
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 24 Apr 2025 00:50:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53O7ol73715410
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745481052;
+	bh=7hQKfoI8brTvc968M0/2fCuMOAxvohLcq5efGDsVPv8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HHQVgllfbBgTU8HpLd8YZoVvIwcgL/kOSRt4qdiUm5wj/uJtOGXaMBcpMCnwKbEF9
+	 rG2estbhWXCsJa81wxO7BDezD81YoepsQLWPz0FadakNwpvwpNH3bAN/wIw2h1kwT1
+	 XOreUorDjfaGzeHD4n8vPeiL9yC6tVs91R1ZiwGY2Fzo7dgNYxzGAp5Lhj+plOPcwS
+	 JyWCZfR55+mA5Di7zo/a1t+g+QvX6CHHkVSiWEXyL06p66bw2FbQf379OEyv/e0oeD
+	 S4rpgqUTn5Yxq97NCc2Ns/61Xf5EyFy7FXTRn6rJLWh/sWLE2NM1er+SCkbgBAJWqH
+	 5gggmVYYw0CGA==
+Message-ID: <f207c797-567f-426c-9fa5-27792d3478a8@zytor.com>
+Date: Thu, 24 Apr 2025 00:50:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 12/34] x86/msr: Remove pmu_msr_{read,write}()
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-pm@vger.kernel.org, linux-edac@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
+        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com
+References: <20250422082216.1954310-1-xin@zytor.com>
+ <20250422082216.1954310-13-xin@zytor.com>
+ <7c44da88-72bb-4d1f-9f38-bf0e7e79b7a0@linux.intel.com>
+ <45f95d01-4b98-457c-8272-c396a52b3844@zytor.com>
+ <02689dad-a10a-41a8-ad7e-e92d0a8d7e76@linux.intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <02689dad-a10a-41a8-ad7e-e92d0a8d7e76@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This overlay configures IMX219 MIPI-CSI-2 camera attached to ISP1.
-Also add additional overlay both using LVDS display and camera.
+On 4/24/2025 12:43 AM, Mi, Dapeng wrote:
+> These 2 patches are not complicated, it won't be difficult to review if
+> merging them into one as long as the commit message mentions it clearly.
+> Anyway I'm fine if you hope to keep them into two patches.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Thanks for the review.
-
-Changes in v2:
-* Renamed camera clock node
-* Fixed unit-address of sensor node
-
- arch/arm64/boot/dts/freescale/Makefile        |   4 +
- ...imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso | 107 ++++++++++++++++++
- 2 files changed, 111 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 6f87f28f4583e..47cb156c94e7b 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -247,10 +247,14 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-pcie-ep.dtb
- 
- imx8mp-tqma8mpql-mba8mpxl-lvds-dtbs += imx8mp-tqma8mpql-mba8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo
- imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01-dtbs += imx8mp-tqma8mpql-mba8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtbo
-+imx8mp-tqma8mpql-mba8mp-ras314-imx219-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
- imx8mp-tqma8mpql-mba8mp-ras314-lvds-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo
-+imx8mp-tqma8mpql-mba8mp-ras314-lvds-imx219-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-imx219.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-hummingboard-pulse.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-new file mode 100644
-index 0000000000000..e5a2b3780215d
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2022-2025 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * D-82229 Seefeld, Germany.
-+ * Author: Alexander Stein
-+ */
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/media/video-interfaces.h>
-+
-+#include "imx8mp-pinfunc.h"
-+
-+&{/} {
-+	/*
-+	 * The three camera regulators are controlled by a single GPIO. Declare
-+	 * a single regulator for the three supplies.
-+	 */
-+	reg_cam: regulator-cam {
-+		compatible = "regulator-fixed";
-+		regulator-name = "reg_cam";
-+		/* pad muxing already done in gpio2grp */
-+		gpio = <&gpio2 6 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&reg_vcc_3v3>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	cam24m: clock-cam24m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "cam24m";
-+	};
-+};
-+
-+&i2c2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	camera@10 {
-+		compatible = "sony,imx219";
-+		reg = <0x10>;
-+		clocks = <&cam24m>;
-+		VANA-supply = <&reg_cam>;
-+		VDIG-supply = <&reg_cam>;
-+		VDDL-supply = <&reg_cam>;
-+		orientation = <2>;
-+		rotation = <0>;
-+
-+		port {
-+			sony_imx219: endpoint {
-+				remote-endpoint = <&imx8mp_mipi_csi_in>;
-+				clock-lanes = <0>;
-+				clock-noncontinuous;
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <456000000>;
-+			};
-+		};
-+	};
-+};
-+
-+&isi_0 {
-+	status = "disabled";
-+
-+	ports {
-+		port@0 {
-+			/delete-node/ endpoint;
-+		};
-+	};
-+};
-+
-+&isp_0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			isp0_in: endpoint {
-+				bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
-+				remote-endpoint = <&mipi_csi_0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_csi_0 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			imx8mp_mipi_csi_in: endpoint {
-+				remote-endpoint = <&sony_imx219>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_csi_0_out {
-+	remote-endpoint = <&isp0_in>;
-+};
--- 
-2.43.0
-
+Simple Small Steps...
 
