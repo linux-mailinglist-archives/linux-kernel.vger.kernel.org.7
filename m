@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-618085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09BCA9AA01
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:23:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23971A9AA02
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184DE7B098D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7104117FFB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941721CC6C;
-	Thu, 24 Apr 2025 10:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586A221D99;
+	Thu, 24 Apr 2025 10:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TXeWBApD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="KKJjnzik"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2BA19F40B;
-	Thu, 24 Apr 2025 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69E1221FD7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490157; cv=none; b=SaVkVyz1RyxfOF5gHayAcC0aKk0w6OAPbwAAIPv1R/YCSZxFVXFymS900da7DRnCaE6rxLKBP/AZQZvVV9kd2lNXi2ET4BHg4p/uirLdpjeefK8+1M1JADUssGyuH1C/4IDuQ28pLokcUphCSQyruhi0cl3pcTA0JFAGTrkECh8=
+	t=1745490167; cv=none; b=m6Eas+QQk5dQlIcGKqPJPGBQVuW5klBriNUX6VITifUra8D05QfVAFteCDm4tJgzE0MksGmIuEyNp2m6OFuV7UNyc1m4imwkxQgk2X1f21YUoH1WGlb4cY+mMW+GyLFVkKtztscim2SohROcwHQdLnEa3x0fYmnL/KyWauprpIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490157; c=relaxed/simple;
-	bh=Eamh7vthfoRmbWEo5vKkBaCdNQ6uoy/kDRFc+SnM//0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCip+h5HgIZEnnCkWsYUMCqrcpbMgRaNWXqr25r1XFyNXAf9ekc3oXDtko/dbRvXjG9Q0ptRwZN+7YDwe2Kp8g/gABdbBjHgONAn2HvDIyd0l07lQaxBSPWUeALcze79VY8pPGC1kIUNmk2vdZ9oWmzgb6yimnbexBoGiXOQ5JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TXeWBApD; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745490156; x=1777026156;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Eamh7vthfoRmbWEo5vKkBaCdNQ6uoy/kDRFc+SnM//0=;
-  b=TXeWBApDin8N6mhdyDRfuI6i6RWwgsIokzdZXy1q6oy53DMBPFEO1Fro
-   fVF0cRKs7RCRa5EmgLHCcENQgwYu0V60pdRW20fXGPLu8EKKyTXt5RJ51
-   1sEtZbLlT3lVm8qfQU/KGOCv73DAjTUpjJnWg3AmrsHO+e9e/EYZ+78mo
-   qqrZCoGn0Cr7Q0/5J0VRORIfEAvI6Ab/touSoSIN6s6IoQQ26Fkll0n6h
-   kb+v14UbnP1/W426Ux1FXHq/xZFq6S7yB53GfCijpzSvpykOPOzkHItEs
-   PyUelHZwKWuohMNMSw4GyB9mfAtSqs3YqMnYbCXbP/Y+KYGENMEt5FKEm
-   A==;
-X-CSE-ConnectionGUID: uf53PQJOQKOswAQA4cLn5Q==
-X-CSE-MsgGUID: PbQ2jbAKTMq8kJ9bJBpjlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="46232608"
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="46232608"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:35 -0700
-X-CSE-ConnectionGUID: 6d2rlWgpRmC7Bg1v+3s/7w==
-X-CSE-MsgGUID: i74F4pZbQEa57aEhCIn7ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="155806431"
-Received: from acushion-mobl2.ger.corp.intel.com (HELO [10.245.83.152]) ([10.245.83.152])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:34 -0700
-Message-ID: <80f49ba8-caea-47d5-be38-dd1eefd09988@linux.intel.com>
-Date: Thu, 24 Apr 2025 12:22:31 +0200
+	s=arc-20240116; t=1745490167; c=relaxed/simple;
+	bh=JqVP0sZWU+KDW7kLQ9V0YoIHdgYP8O5tPelN4uvoZPM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uWYNUVxyq+IjIYX9/onh8QP10kocklwk3JZpgWqQVNfq5Dkj+pl63FJpYjBwpiChKXAle3wzlyXm7KRlvz/1XX4jWt7y3RZ0g4atfAOT0LbN+eHomgJTEKvWj4yO37C9PT8aRx1++9IJXhZZ9GwMZVddHvFarD+Ffpu1fgPSFxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=KKJjnzik; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZjsVL6XWYz9sbt;
+	Thu, 24 Apr 2025 12:22:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1745490154; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DCNr98wlrrnRy8Lxn/AniOKF9h/eQDxQxANLC7G6Izs=;
+	b=KKJjnzikM2fKvVqbWOwNJ7bclsWPAjwoHRR+AgrxP+F3uo/cJpulksWKMXlTBduC9H4o/P
+	8/hHlErYVDyqt7fNG3+TYqaSkoLxmSdr7LQKrlXoNI9X65uG0+a5LM+le6U9+Fj6Vs0OAZ
+	vUODYShfD3ivYdFJbs6qN370ZD2FmWG8srphm2peuUTW23aEsKcZEFOIDk6wZkaferrxif
+	6BgaUuNRD6uorE6uX5xL6WqNNkFZGue9l5EEnwL0KqWfur3of7s+4gomfAH9DLw/JNzpp0
+	mR+6Ld0f+i9a3QN0oIRcq3WQxy5q+C8G/34KnEYNZ89i14aM+OoLVzPK7jccWg==
+Message-ID: <cc549efcd078fdefafc12442b08ae7ceaa197eb9.camel@mailbox.org>
+Subject: Re: [PATCH] x86/boot: Work around broken busybox truncate tool
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, phasta@kernel.org
+Date: Thu, 24 Apr 2025 12:22:32 +0200
+In-Reply-To: <20250424101917.1552527-2-ardb+git@google.com>
+References: <20250424101917.1552527-2-ardb+git@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/ivpu: Add handling of
- VPU_JSM_STATUS_MVNCI_CONTEXT_VIOLATION_HW
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Karol Wachowski <karol.wachowski@intel.com>
-References: <20250408095711.635185-1-jacek.lawrynowicz@linux.intel.com>
- <2025042227-crumb-rubble-7854@gregkh>
-Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <2025042227-crumb-rubble-7854@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 791cd6bf46637b5f7d2
+X-MBO-RS-META: syaqwz1kbjnm6knixxrwdpydc5x6akk7
 
-Hi,
+Thank you very much for this fix :)
 
-On 4/22/2025 2:17 PM, Greg KH wrote:
-> On Tue, Apr 08, 2025 at 11:57:11AM +0200, Jacek Lawrynowicz wrote:
->> From: Karol Wachowski <karol.wachowski@intel.com>
->>
->> commit dad945c27a42dfadddff1049cf5ae417209a8996 upstream.
->>
->> Trigger recovery of the NPU upon receiving HW context violation from
->> the firmware. The context violation error is a fatal error that prevents
->> any subsequent jobs from being executed. Without this fix it is
->> necessary to reload the driver to restore the NPU operational state.
->>
->> This is simplified version of upstream commit as the full implementation
->> would require all engine reset/resume logic to be backported.
-> 
-> We REALLY do not like taking patches that are not upstream.  Why not
-> backport all of the needed patches instead, how many would that be?
-> Taking one-off patches like this just makes it harder/impossible to
-> maintain the code over time as further fixes in this same area will NOT
-> apply properly at all.
-> 
-> Think about what you want to be touching 5 years from now, a one-off
-> change that doesn't match the rest of the kernel tree, or something that
-> is the same?
+On Thu, 2025-04-24 at 12:19 +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+>=20
+> The GNU coreutils version of truncate, which is the original, accepts
+> a
+> % prefix for the -s size argument which means the file in question
+> should be padded to a multiple of the given size. This is currently
+> used
+> to pad the setup block of bzImage to a multiple of 4k before
+> appending
+> the decompressor.
+>=20
+> busybux reimplements truncate but does not support this idiom, and
 
-Sure, I'm totally on board with backporting all required patches.
-I thought it was not possible due to 100 line limit.
+typo, busybox.
 
-This would be the minimum set of patches:
+> therefore fails the build since commit
+>=20
+> =C2=A0 9c54baab4401 ("x86/boot: Drop CRC-32 checksum and the build tool
+> that generates it")
 
-Patch 1:
- drivers/accel/ivpu/ivpu_drv.c   | 32 +++-----------
- drivers/accel/ivpu/ivpu_drv.h   |  2 +
- drivers/accel/ivpu/ivpu_job.c   | 78 ++++++++++++++++++++++++++-------
- drivers/accel/ivpu/ivpu_job.h   |  1 +
- drivers/accel/ivpu/ivpu_mmu.c   |  3 +-
- drivers/accel/ivpu/ivpu_sysfs.c |  5 ++-
- 6 files changed, 75 insertions(+), 46 deletions(-)
+Should this be marked as an official bug?
 
-Patch 2:
- drivers/accel/ivpu/ivpu_job.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+If so, I'd put this as a Fixes: tag below.
 
-Patch 3:
- drivers/accel/ivpu/ivpu_job.c     |   2 +-
- drivers/accel/ivpu/ivpu_jsm_msg.c |   3 +-
- drivers/accel/ivpu/vpu_boot_api.h |  45 +++--
- drivers/accel/ivpu/vpu_jsm_api.h  | 303 +++++++++++++++++++++++++-----
- 4 files changed, 293 insertions(+), 60 deletions(-)
+>=20
+> Work around this by avoiding truncate altogether, and relying on dd
+> to
+> perform the padding.
+>=20
+> Reported-by: <phasta@kernel.org>
 
-Patch 4:
- drivers/accel/ivpu/ivpu_job.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+Tested-by: Philipp Stanner <phasta@kernel.org>
 
-First patch needs some changes to apply correctly to 6.12 but the rest of them apply pretty cleanly.
-Is this acceptable?
 
-Regards,
-Jacek
+Thx,
+
+P.
+
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+> I personally think using a busybox environment for building the
+> kernel
+> is a terrible idea, and does not satisfy the build tool requirements
+> listed in the documentation. But apparently, it used to work and now
+> it
+> doesn't, and the workaround is rather straight-forward.
+>=20
+> IOW, I don't care whether this gets applied or not, so I will leave
+> it
+> to others to make the argument.
+>=20
+> =C2=A0arch/x86/boot/Makefile | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+> index 81f55da81967..640fcac3af74 100644
+> --- a/arch/x86/boot/Makefile
+> +++ b/arch/x86/boot/Makefile
+> @@ -59,7 +59,7 @@ KBUILD_CFLAGS	+=3D $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+> =C2=A0$(obj)/bzImage: asflags-y=C2=A0 :=3D $(SVGA_MODE)
+> =C2=A0
+> =C2=A0quiet_cmd_image =3D BUILD=C2=A0=C2=A0 $@
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmd_image =3D cp $< $@; truncate -s %4K $=
+@; cat
+> $(obj)/vmlinux.bin >>$@
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmd_image =3D (dd if=3D$< bs=3D4k conv=3D=
+sync status=3Dnone; cat
+> $(filter-out $<,$(real-prereqs))) >$@
+> =C2=A0
+> =C2=A0$(obj)/bzImage: $(obj)/setup.bin $(obj)/vmlinux.bin FORCE
+> =C2=A0	$(call if_changed,image)
 
 
