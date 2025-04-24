@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-618106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF79BA9AA3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:29:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7593AA9AA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42AA51692FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3B01B85044
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19B823D2A0;
-	Thu, 24 Apr 2025 10:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074BB221FA5;
+	Thu, 24 Apr 2025 10:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R1zBfBkK"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EL6uNv5m"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8C9227B95
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB44423ED74
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490354; cv=none; b=FJTtbYYfKXKHquyu37/Mlhi2MtXaM6LiyHglFbXoec0w6Il957coIpE6B0AlN724exjPt3i06HFy0aQqdqK5jPEu1P2HK41n9xt9Owf+2Yskj2itcvZ1nt70vu7IKn4tLh/jmRtRxomnYKHA1ABJeXLY2nRMfHJLeasKaoRgOJg=
+	t=1745490357; cv=none; b=Aw15ZSQmo09Cfi6ZnmFqa++zFyMzoXCwN3Wzw8EgYv85pvuhRzW9LooylBxdrZXIxkCitjCnxfhHjYMlQ7qy5sBFhG8kzPjv/PW23dlPH2gub9LRYGte36eYBaXxB0IJiBnrPcpCG4on+ugCxPgvF03N8vbdaiPh3hxI3CCJZgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490354; c=relaxed/simple;
-	bh=7YFjDN0OC4OQWm2AzcQtsFeXGcmPqh68xKdJuDgu7gc=;
+	s=arc-20240116; t=1745490357; c=relaxed/simple;
+	bh=v4fkIWZlRlBlwcudSsMGRFd1gy1KN6jxgz3zZ2PYfv0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oa3LvH1tKQhhygLhdMV8uUeAKM35uefDg120ODbI2VJGZwGFH77ioaXR+QQLeMd7AP25APXEj0WWd8p91AZu0/DVmBQseLwXQG3iba2XzNdTq7vRxE/LnGEbnSPjcAl/fbf2bwQQpSto2SSjXigGD8SqMIP/ra7WD0CwqQwXCuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R1zBfBkK; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=KbatVnoLPJaRxHkaigrb2lil2iMt5EOlaV+soIVWpxtbn5EM+F1K/1Uc0e+KqMUjaW9F6wR/nHglo4KFJoC3RfUHj7OfY1SbeiexqO5m3Jig+W19p6/bUZCEehaxzdTyhemyUIBAm1gu8dxnJPFr9f/PFWrwWNfUElbh1Arx+YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EL6uNv5m; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2255003f4c6so8513355ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:25:52 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227b828de00so8282915ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745490352; x=1746095152; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1745490355; x=1746095155; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LtKFI70vqNjYLe7XjAp0V0B8UZZFpuIExlA3OQYSr8Q=;
-        b=R1zBfBkKnAYp2zb1BcfKWQHK+EMp6bydiGVi8t3/SPc8nMsCQpg+4oTI096j0dJdhU
-         c5eiChZgBS+QPfZG6rDYJhbJxKnXplamaJCgUd5RGZIfNnJwbRbHLv2gSOVLlx4C/yw4
-         XW09CTjAKh1yV4uX2rdoo7CXnuEkaEx905CR4=
+        bh=aSScOVwhUO+K0/3KqN7maXbkfUTR6/cC4fz9TlS9l30=;
+        b=EL6uNv5m3QW1X/b7SX9m4M4lIslDnX9Y+xejcBfq+KqM24ImmxwfKeUABLnxl50UZF
+         QZN2TR5j7p9j3XzWAJiQvxuGTjWqGiMKgMHNuKxxgwvdfBiSMN2s1ZptGv68RGvt8VcZ
+         lQTp4E3fjxN//eSjSAoLN8xQJs/gSmlSDhL2w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745490352; x=1746095152;
+        d=1e100.net; s=20230601; t=1745490355; x=1746095155;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LtKFI70vqNjYLe7XjAp0V0B8UZZFpuIExlA3OQYSr8Q=;
-        b=MNfsFcWV+ZPb25VR7kKUKAn/xMCSTFs0bjj3+jAB0Ace8kD0C7eUEuO+W9RAaXPDnZ
-         EOJnQwX/6qUeHaX112BqWvHAKfPWoddvjHlQxZWBbShRohUZxOC0VQ9YDqsemEcsIYgY
-         brBmXnojIikWdMSPTrLwGpTyAYyb7WRw76EZm8jrLxkDUOldsGqhJZsPcX5ytXUaaotJ
-         Po15MiSWQ+8PMBpUAjaPehKm47w+fTLMQ/cDqq/OvTaxOG6mfAMXgrVDnt3janQ+4scL
-         nO3dKG2pGhoByKVgwZWBIRqsUtHB9rPrli5Z5nmnE+zGHyKdJcBYW9GkdOY/wK5fKLoG
-         xR5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVo6oEastgB7osMKG61Rhk9jxbx6uM29c/pMSO79pjlWMlHwChVwjAosaJ01cfPaCvSA5r0TM04aV14u9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuCR1rNYdEUpuxTBaaJZeEomg69pS5V8ha0dq20pT8gYcotDSw
-	9V6S2UlDbaxG5vT7TsLXm2b8/iQHrPHu0xJjYRnLrjenjiIStBd1GvWE/6gNSQ==
-X-Gm-Gg: ASbGncs6WIT5OleedZFiCrr1Xu1bbFaKkjdNuyx/ivdXYik1pdMIeb9Ri4aJpJDYuvA
-	i18J3URg4vS/GbdGThu5tLt5XAGApnmg+m+ykosRWHNWw4ot9YWKxV7G4WHFWzb2n2cwW/qef1N
-	s5IL68F7xsVCXSd+hAf2zAL3Q532q6eoc7q0R0qdL30iMOplwLrneZ8wJRxF0auH3ReTZ+TimZZ
-	FvdTpAWdMVa/yvyEHjOSfPQWoTWfCx2/dBFx5V7BtkJql3P2dv02bkWwZSqBCUGldHcIvb3HMiv
-	KcXKewwg7BDtkOVp9mYBq2FtMGf37VqsBGD2H/A2LubTtOpo5aBjyjK0fA==
-X-Google-Smtp-Source: AGHT+IGm/ZrqIrNFBVlNQkQXFmEbsCxSPSPhkPOsiViZpp856F8SPbm8k/eEXqIbJDBfdIBpftEJlg==
-X-Received: by 2002:a17:902:d48a:b0:221:78a1:27fb with SMTP id d9443c01a7336-22db3bd1a15mr27098975ad.11.1745490351983;
-        Thu, 24 Apr 2025 03:25:51 -0700 (PDT)
+        bh=aSScOVwhUO+K0/3KqN7maXbkfUTR6/cC4fz9TlS9l30=;
+        b=gsNEOLpk4ssPl/p0DorjtpCjvAialR0zs8kkhhqIKpXtxJ5n9BzFaCiF5yNXV0kzn3
+         whb7Btu1nA3H4W4FunDR2ej4yNl9xHBXl+MUBkuh+fq9hcfIzCYCCVKAG3tr3U3brsy8
+         EkW6I10ws6TdHEYia6zX0J6X9qdMOAXbMwM3GjvmWL/UwkZLVncFXMAeXNTMOaojXs6C
+         UlpO7M5r75st3SQRyl+WtrydJoPSSLOQAuH0WhDC2Nb9mskqV4FTODNrgF4+qmUfw5+m
+         LQ1CIwHpZKx0Sp+CO3XlGBq7qeTvOSuTUCHM2XuIXT+nEA1+0oXtu6Y0GbNIiuPWn5uC
+         bkoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVraBL2XOc+7WhQBZl3I3W+X08ieNufhEdDi8bb0PjrPo+4+4S5cgz0WKWW6TQ8eJ3T5+SJd42hL0LnAx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvYN3YaLC2wDQMpkTOUGeQ5wug1niZCOs1ikCrB6UAIFt8Yq2S
+	D2AcZIgxB3crZaqS1vTaRKcBfTnN5nDGcKGtQNSVB0WFWypAkx2Lav607DcV+w==
+X-Gm-Gg: ASbGncs6jqHdRWZp4/8BiT+BKQnWpJnG6ZTyD9pf1+68NL1p9tg/9L71665SOoU8+iG
+	96cBWeS7FK8Wu54ha7NE8QHsbi5vZo5N8PcPC0wFmXX/0+1zpWTnaAspNEuoi9gt9t+Eyty3XXi
+	xMWIogl06VIv2csPs3MTb/9VAfIdfd+KdxOXoCXm0jtvIsEZpBJe2Qvjr7EG1S9HohijNlamMsu
+	QnYijHtUHzwVUDzbC8WXNOpxQSzwvBPiwg00hOMieY7DHV0Y5noLMy1DsXcfNxMTS7XNYPqh3uX
+	Q4xLEzNHENwJlLJDfvOFvVv6EceGSVwyshssP5Xhb8wnOqiUsbixuVmTZA==
+X-Google-Smtp-Source: AGHT+IGVWgP+9f44cPO1R7mfB5z1uFUey5yQnac/oTnGNxfAaOr9FFOdDrHbUFBI3ie8mEMC8Jfp1w==
+X-Received: by 2002:a17:903:17ce:b0:223:5e76:637a with SMTP id d9443c01a7336-22db3c0e722mr27960035ad.23.1745490355124;
+        Thu, 24 Apr 2025 03:25:55 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:fa13:e633:684b:257])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dda40fsm9680305ad.104.2025.04.24.03.25.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dda40fsm9680305ad.104.2025.04.24.03.25.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 03:25:51 -0700 (PDT)
+        Thu, 24 Apr 2025 03:25:54 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -85,9 +85,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/13] arm64: dts: mediatek: mt8173: Reserve memory for audio frontend
-Date: Thu, 24 Apr 2025 18:25:04 +0800
-Message-ID: <20250424102509.1083185-11-wenst@chromium.org>
+Subject: [PATCH v2 11/13] arm64: dts: mediatek: mt8183-kukui: Reserve memory for audio frontend
+Date: Thu, 24 Apr 2025 18:25:05 +0800
+Message-ID: <20250424102509.1083185-12-wenst@chromium.org>
 X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
 In-Reply-To: <20250424102509.1083185-1-wenst@chromium.org>
 References: <20250424102509.1083185-1-wenst@chromium.org>
@@ -104,24 +104,24 @@ audio frontend. These platforms reserve it at a fixed address, though it
 is unclear if that is due to hardware access restrictions or simply
 compacting the reserved memory blocks together.
 
-Reserve the same size of memory on the MT8173 as well, to align with the
-other platforms. This also helps with memory starvation as these devices
-commonly end up in low memory conditions.
+Reserve the same size of memory on the MT8183 Kukui & Jacuzzi families
+as well, to align with the other MediaTek-based ChromeOS platforms. This
+also helps with memory starvation as these devices commonly end up in
+low memory conditions.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 6d1d8877b43f..122a57c3780b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -318,6 +318,14 @@ reserved-memory {
- 		#address-cells = <2>;
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 0fe9f2d1b912..00b97cfa0eec 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -85,6 +85,13 @@ reserved_memory: reserved-memory {
  		#size-cells = <2>;
  		ranges;
-+
+ 
 +		afe_dma_mem: audio-dma-pool {
 +			compatible = "shared-dma-pool";
 +			size = <0 0x100000>;
@@ -129,17 +129,20 @@ index 6d1d8877b43f..122a57c3780b 100644
 +			no-map;
 +		};
 +
- 		vpu_dma_reserved: vpu-dma-mem@b7000000 {
+ 		scp_mem_reserved: memory@50000000 {
  			compatible = "shared-dma-pool";
- 			reg = <0 0xb7000000 0 0x500000>;
-@@ -887,6 +895,7 @@ afe: audio-controller@11220000  {
- 					  <&topckgen CLK_TOP_AUD_2_SEL>;
- 			assigned-clock-parents = <&topckgen CLK_TOP_APLL1>,
- 						 <&topckgen CLK_TOP_APLL2>;
-+			memory-region = <&afe_dma_mem>;
- 		};
+ 			reg = <0 0x50000000 0 0x2900000>;
+@@ -198,6 +205,10 @@ tboard_thermistor2: thermal-sensor2 {
+ 	};
+ };
  
- 		mmc0: mmc@11230000 {
++&afe {
++	memory-region = <&afe_dma_mem>;
++};
++
+ &auxadc {
+ 	status = "okay";
+ };
 -- 
 2.49.0.805.g082f7c87e0-goog
 
