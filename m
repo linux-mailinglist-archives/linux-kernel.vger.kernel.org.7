@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-619276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DD3A9BA8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B723AA9BA8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5947927541
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541961B87116
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EDC28A1F3;
-	Thu, 24 Apr 2025 22:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BD028C5DB;
+	Thu, 24 Apr 2025 22:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MBxCA2bI"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MVLckdlg"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952421D58C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 22:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A8F2206BC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 22:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745533115; cv=none; b=njGv0UbJVHRLObAaZl6L/2eT1rcdE6grOeIYxB880LID9c3K9y89zv+0INno2ukvyXYia6dHnkvlfqwlaKiTqYAjDTW3fsyZ6OjjbjU3pV9emYODRcNrDeu3z15qwPCm71VwaL36qTYeDqVJDYiJFAfVdtvy++S/zkM4EMkQAy4=
+	t=1745533116; cv=none; b=VsPh5bFjLOfn9DMAA5jUNzne0aurwS+VgRWYd12nSylVvpVEKtdseUGF1Q85LLZ4Zr0Y2pb4yhlm3ZoQ/CvEVxlmTH0Iq0JrCW0DB+b4U8leJ/pZaU0PGYLDbFDpwd5I+EVpCZ378MnUXX4ZVu4MAZobSUqxBw16dAxHUmcndl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745533115; c=relaxed/simple;
-	bh=w6LlIf28NyGBFtutNuc3GI4ql9DOzl5pnXCFXvIoaBo=;
+	s=arc-20240116; t=1745533116; c=relaxed/simple;
+	bh=OVX18VdLNgmU4K/lJQHocIp3fvdOXLQtT7CpJrwusDk=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=atmciWhLGBgRC62j1gQE46W8YYoKLjB6rsL5oOFiixNo5jnA7XMsfbfXkyHQS02f4ts+n0oIw3iTadFojp3n3Q0koy1INd/oQNkf2zFdyTI1q0+bXlbYUAxm9l0WrWDOtOfP9X++euC1sBzU937aqYr9cyKuDPTaY4jfvHadRGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MBxCA2bI; arc=none smtp.client-ip=209.85.160.177
+	 References:In-Reply-To; b=qSOLG8QLCes96S7KMjJ3SuZ/ArXBUqTkJMMNeNfmCnvLgPL+wROBVLr+1guoPLhagCr/DriKIhIaPGeZ0nV082bM0JOOsYtlkGjTrVcdJ7gXRPl7vWZl7mKsxGMh//gx8IscAJzIoZGnjHkupzsET6ymsewp1BfgttjqQApt/Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MVLckdlg; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47698757053so21100491cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:18:32 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4774193fdffso26937581cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745533112; x=1746137912; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1745533113; x=1746137913; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cDD9yFwsvgkEFtZxZyeicpTkbPdB1oQ+j/wziWiSwI8=;
-        b=MBxCA2bItPsPob9u0o8EBGhOsAhxlVxo+kz2s2V0nCXdfDARVjg9LRIDIyEKmNZt2y
-         Wd9qCgezgSPWnSz6lKNsjMUGZR6AlS/3UAwInpNh4SznGocQ+Y8TS3ZjixUqhzVgoo6y
-         9iqs5mze4I8Zx03UgLcLAksuWDuAcgXkv0H+McXjTqcj0hbtunwiziKa1SHuMPsx9OzR
-         y/aJ/2mnaVnUjNZiZd22QiECQPGqN2+OfoZ1IaOBPQ3JMZrZrCKbxlIdq7zYdS/ssibD
-         0rL0o8B60fzQrJMIUnPKsdWDJ+j+6edJ2nKhWBNfkODYhYUL8XxuRYWVBuSgs4s2RepI
-         dlQw==
+        bh=qoHfSMxzs7rssuXAPH06Bk0hTUV/lLQabDLhD+4R0Lk=;
+        b=MVLckdlg7wZg7mWQj9+p+nw987fC60D411OuPDKDpp7g/QTi35AoD0Au7I+iMm5gpC
+         M/26pKcehJWLCkwIiiSh+HYDuL7gk1YebMYBQRpOmFgrM8GeH7Ln1Lc+56XlJOUx1YW7
+         E9QU5i7NwYKN2oTPIaJ/YkkpmKcoOwJ1buJBkfAqmHBdZEfDMA2veGSO17egf6V1K0kV
+         hjfL6U5NjKIxPw6nKzyhkXPiCz2YfVKzsJXRFDdyNa705xXLKbbov3atmzbFL6rn+T1l
+         xHmo48pSP4RcCMFL/0ZK8S3PkGKqMGWpyovCbztwgKv7zRBmxgGxjIT4ffQViAMY31JQ
+         OdfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745533112; x=1746137912;
+        d=1e100.net; s=20230601; t=1745533113; x=1746137913;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=cDD9yFwsvgkEFtZxZyeicpTkbPdB1oQ+j/wziWiSwI8=;
-        b=SfZv1vEIxBxok3BdeJxhLHtiMKkPt1D8W+/60mAUCtw5Y/145yyxCSJ0QdvxYDYhtd
-         ifwB8Nvf4CWKwJ5OYfuixqjl1Yqm/nveLYkxK8Du0xtG/3VKJQxCH4myPBHE1bh4SWTY
-         S0FJmPBHCLtvxdNauwqufUPWzREaveoSlRIXqzd6vJ8tUp2VVPtMk+MN5VrM0FsgyOXL
-         86SXeBaAX3OOOFuj5wzkWQ/+CNKbHAIcuCnRQTv8ICWQAZuKZonBRNOlVrbh9vx3Bmhz
-         bnFXX6D0Fvk6j/YEEyM/1NtXHl1ibe8j3Yj+wADiTCkf+BTlce0pv+c2TQHNRlRV7W+C
-         M/0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWN52nIT3TAp1odUkZ0f3oK0Vw/GCLqRGarDMJQiaE1mM3c4/rNFFYqgEEAiC4CyCwUh/6Ed8eKt97cnuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6La8VBUdvKacWjlRuaBgL4hQNVJ2lcxt+2cy6SXX0nCHT/mfX
-	7+8gQkj3IcCVo7vxINAOy8FUVTW3XcC5FXyn1I0JBUdu3FV3rqfAVVClg6dX2w==
-X-Gm-Gg: ASbGnctq1y/MfOFtycZjpycH1boiVErF6O6FV+RwY3A1XLVz17OJ21kNE80+Hq1WAIc
-	hs00hI0kzsV00yMmdxzo+0q0nicGEp/N7JIIjkL3jH0VWBQ+N8EEUEPXC8flUR6Q9fNFEQjofGT
-	QoSJjMVy2VO6XzlmvPhr715KaqbIDGgxcHHBFMeuPByrK0TRgXrbKjGTsOiHfYpOOMBJFD3Tu0q
-	A1So9jLCjTx5F4szTvzRLSiAPHuPbmvGCi+kMjkis+qWeItkNEipbZ6+xvq/ZQBZn1t/APYtWRk
-	1M+T+1VL5O+YJ1Tn4htPxjzqwEYbfd8OcifrHTAfgD+23kH1jiS1dsXYVkAs043tYqwQ8fgwYbY
-	bp44Cu/o6Fw==
-X-Google-Smtp-Source: AGHT+IEHD12ufMOYwnkTSyFoER3memBLGPBgeX0kZrL8caC70GLQkKQCwxWZrvj3Wif6jPcsY3zXRg==
-X-Received: by 2002:ac8:5911:0:b0:477:ea0:1b27 with SMTP id d75a77b69052e-4801d049f45mr1896491cf.26.1745533112047;
-        Thu, 24 Apr 2025 15:18:32 -0700 (PDT)
+        bh=qoHfSMxzs7rssuXAPH06Bk0hTUV/lLQabDLhD+4R0Lk=;
+        b=NI+bhpYoJPa2vaQfGYCm7YiMMslcPP72t0Z95DEuAiZ9ZLnFmeh4+wNF4KpCFuhnjH
+         9IMJsVG8mvov5BXlya1E5TxcC2ynixEq/3Yrf5lDDFZZ58vaST3UmTo0LUdL9shNCM8Q
+         whAdjofCsXX9o6OWFnnxFfXrApib474EeKBxOUV9WX94JqpxmVCPKS5Tis4GagA/Fr16
+         8E2c58Xp63gNtMtXqIXqvXtPXn9we1NlGBOWlZTXQoeXrfUP5qRwcoiqIemDZGqI/SQQ
+         AXLraeAOZOkS3shr2Gvn2pJX3coCoFJHrU8PC+lBQn7WwkcmlmicdVTSxwUt7Z/4d6E7
+         8d2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGNyIRh1FlD6ZjtQSl5agqfHd01M9CzN8aV12J2GJm0c7HrS3nJfWLlFpbcSkhch8apBBPTGVHjx6U//s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJGySopVyJPYnehOWNhcjalTkD9P97DAfNLSeb+pfMyIHxqE3y
+	TYnn7AipsTn8aLZOsYNHdK0PYiOwRQCvWv3G4TmOfRoQPz3BjMcnhnIR8AR49rkijlMHYcyIFf0
+	=
+X-Gm-Gg: ASbGnctXJzwzQgJVGvvmxRgaoil/S483NNnRR5s1JyWJjjCSOdECyzkaPFGPvpHbdCT
+	jDyr9IZTM8MPF4sDyRZu14SsUhXBZkjl8h9Su8S7IetLzoWodhiLF+O+Y9edYJvSrIxjIcbC3qn
+	LMZCXjJ+NIa/09lOTsjCaJGRe0RBtcEDqfRul6ZSYyscizilUL4Ry2mAsWtVrsJmNHRqSvf9uP7
+	GUqwZps/EErRNJKvLtvSF1gB/GzK/KJ3/EKSTCluaSJOnncJSyhwa8mA95jkvUS8aVu5WzBlRxv
+	PtBvJRbMZFfQFqI/9UwhQ1Hq5/Wl7yzRxzwcDxw1KZ8e8jtwJMRekGAqQZwcohUdicDbQRwxzbn
+	btGgpbEva7A==
+X-Google-Smtp-Source: AGHT+IFEWJdceLias5GrSe1DAaiC0Ems36cBhBGoLLAUzyCcUBGba2Uy3uq/KTnIAAA2klH+GMKqlw==
+X-Received: by 2002:a05:622a:15c3:b0:47a:e6e1:c04f with SMTP id d75a77b69052e-4801eadd081mr2029341cf.46.1745533113073;
+        Thu, 24 Apr 2025 15:18:33 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47ea2299710sm17345031cf.81.2025.04.24.15.18.31
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47ea1b9e860sm17171111cf.66.2025.04.24.15.18.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 15:18:31 -0700 (PDT)
-Date: Thu, 24 Apr 2025 18:18:31 -0400
-Message-ID: <b515a68481217f0dee0424464d56955a@paul-moore.com>
+        Thu, 24 Apr 2025 15:18:32 -0700 (PDT)
+Date: Thu, 24 Apr 2025 18:18:32 -0400
+Message-ID: <4895afcecf518a0744b964cfa4c16e3a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,74 +87,182 @@ X-Mailer: pstg-pwork:20250424_1707/pstg-lib:20250424_1742/pstg-pwork:20250424_17
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] LSM: security_lsmblob_to_secctx module selection
-References: <20250319222744.17576-3-casey@schaufler-ca.com>
-In-Reply-To: <20250319222744.17576-3-casey@schaufler-ca.com>
+Subject: Re: [PATCH v3 3/5] Audit: Add record for multiple task security  contexts
+References: <20250319222744.17576-4-casey@schaufler-ca.com>
+In-Reply-To: <20250319222744.17576-4-casey@schaufler-ca.com>
 
 On Mar 19, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Add a parameter lsmid to security_lsmblob_to_secctx() to identify which
-> of the security modules that may be active should provide the security
-> context. If the value of lsmid is LSM_ID_UNDEF the first LSM providing
-> a hook is used. security_secid_to_secctx() is unchanged, and will
-> always report the first LSM providing a hook.
+> Replace the single skb pointer in an audit_buffer with a list of
+> skb pointers. Add the audit_stamp information to the audit_buffer as
+> there's no guarantee that there will be an audit_context containing
+> the stamp associated with the event. At audit_log_end() time create
+> auxiliary records (none are currently defined) as have been added to the
+> list. Functions are created to manage the skb list in the audit_buffer.
 > 
+> Create a new audit record AUDIT_MAC_TASK_CONTEXTS.
+> An example of the MAC_TASK_CONTEXTS (1423) record is:
+> 
+>     type=MAC_TASK_CONTEXTS[1423]
+>     msg=audit(1600880931.832:113)
+>     subj_apparmor=unconfined
+>     subj_smack=_
+> 
+> When an audit event includes a AUDIT_MAC_TASK_CONTEXTS record the
+> "subj=" field in other records in the event will be "subj=?".
+> An AUDIT_MAC_TASK_CONTEXTS record is supplied when the system has
+> multiple security modules that may make access decisions based on a
+> subject security context.
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Tested-by: Fan Wu <wufan@kernel.org>
 > ---
->  include/linux/security.h     |  6 ++++--
->  kernel/audit.c               |  4 ++--
->  kernel/auditsc.c             |  8 +++++---
->  net/netlabel/netlabel_user.c |  3 ++-
->  security/security.c          | 13 +++++++++++--
->  5 files changed, 24 insertions(+), 10 deletions(-)
-
-...
-
-> diff --git a/security/security.c b/security/security.c
-> index 143561ebc3e8..55f9c7ad3f89 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4312,6 +4312,7 @@ EXPORT_SYMBOL(security_ismaclabel);
->   * security_secid_to_secctx() - Convert a secid to a secctx
->   * @secid: secid
->   * @cp: the LSM context
-> + * @lsmid: which security module to report
->   *
->   * Convert secid to security context.  If @cp is NULL the length of the
->   * result will be returned, but no data will be returned.  This
-> @@ -4338,9 +4339,17 @@ EXPORT_SYMBOL(security_secid_to_secctx);
->   *
->   * Return: Return length of data on success, error on failure.
->   */
-> -int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp)
-> +int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
-> +			       int lsmid)
->  {
-> -	return call_int_hook(lsmprop_to_secctx, prop, cp);
-> +	struct lsm_static_call *scall;
-> +
-> +	lsm_for_each_hook(scall, lsmprop_to_secctx) {
-> +		if (lsmid != 0 && lsmid != scall->hl->lsmid->id)
-> +			continue;
-
-As mentioned in the v2 review:
-
- "Let's use LSM_ID_UNDEF instead of 0 here to add some clarity on
-  how an undefined ID is handled.  The function header comment
-  should also explain the special handling when LSM_ID_UNDEF is
-  specified."
-
-https://lore.kernel.org/audit/5838489ecd5186900315f8f6c6e02f22@paul-moore.com/
-
-> +		return scall->hl->hook.lsmprop_to_secctx(prop, cp);
-> +	}
-> +	return LSM_RET_DEFAULT(lsmprop_to_secctx);
->  }
->  EXPORT_SYMBOL(security_lsmprop_to_secctx);
+>  include/linux/audit.h      |   6 ++
+>  include/uapi/linux/audit.h |   1 +
+>  kernel/audit.c             | 171 ++++++++++++++++++++++++++++++-------
+>  security/apparmor/lsm.c    |   3 +
+>  security/selinux/hooks.c   |   3 +
+>  security/smack/smack_lsm.c |   3 +
+>  6 files changed, 158 insertions(+), 29 deletions(-)
+> 
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 0050ef288ab3..b493ca5976cf 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -37,6 +37,7 @@ struct audit_watch;
+>  struct audit_tree;
+>  struct sk_buff;
+>  struct kern_ipc_perm;
+> +struct lsm_id;
 >  
-> -- 
-> 2.47.0
+>  struct audit_krule {
+>  	u32			pflags;
+> @@ -210,6 +211,8 @@ extern u32 audit_enabled;
+>  
+>  extern int audit_signal_info(int sig, struct task_struct *t);
+>  
+> +extern void audit_lsm_secctx(const struct lsm_id *lsmid);
+> +
+>  #else /* CONFIG_AUDIT */
+>  static inline __printf(4, 5)
+>  void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
+> @@ -269,6 +272,9 @@ static inline int audit_signal_info(int sig, struct task_struct *t)
+>  	return 0;
+>  }
+>  
+> +static inline void audit_lsm_secctx(const struct lsm_id *lsmid)
+> +{ }
+> +
+>  #endif /* CONFIG_AUDIT */
+>  
+>  #ifdef CONFIG_AUDIT_COMPAT_GENERIC
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index d9a069b4a775..5ebb5d80363d 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -146,6 +146,7 @@
+>  #define AUDIT_IPE_ACCESS	1420	/* IPE denial or grant */
+>  #define AUDIT_IPE_CONFIG_CHANGE	1421	/* IPE config change */
+>  #define AUDIT_IPE_POLICY_LOAD	1422	/* IPE policy load */
+> +#define AUDIT_MAC_TASK_CONTEXTS	1423	/* Multiple LSM task contexts */
+>  
+>  #define AUDIT_FIRST_KERN_ANOM_MSG   1700
+>  #define AUDIT_LAST_KERN_ANOM_MSG    1799
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 6bbadb605ca3..7ec3919ae925 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -54,6 +54,7 @@
+>  #include <net/netlink.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/security.h>
+> +#include <linux/lsm_hooks.h>
+>  #include <linux/freezer.h>
+>  #include <linux/pid_namespace.h>
+>  #include <net/netns/generic.h>
+> @@ -81,6 +82,11 @@ static u32	audit_failure = AUDIT_FAIL_PRINTK;
+>  /* private audit network namespace index */
+>  static unsigned int audit_net_id;
+>  
+> +/* Number of modules that provide a security context.
+> +   List of lsms that provide a security context */
+> +static u32 audit_secctx_cnt = 0;
+> +static const struct lsm_id *audit_lsms[MAX_LSM_COUNT];
+
+We've already talked about this in other threads, offline, etc., but
+for the sake of others, this should be adjusted to use the counts
+provided in the LSM initialization code rework.
+
+https://lore.kernel.org/linux-security-module/20250409185019.238841-31-paul@paul-moore.com/
+
+> @@ -2412,26 +2517,14 @@ int audit_signal_info(int sig, struct task_struct *t)
+>  }
+>  
+>  /**
+> - * audit_log_end - end one audit record
+> - * @ab: the audit_buffer
+> - *
+> - * We can not do a netlink send inside an irq context because it blocks (last
+> - * arg, flags, is not set to MSG_DONTWAIT), so the audit buffer is placed on a
+> - * queue and a kthread is scheduled to remove them from the queue outside the
+> - * irq context.  May be called in any context.
+> + * __audit_log_end - enqueue one audit record
+> + * @skb: the buffer to send
+>   */
+> -void audit_log_end(struct audit_buffer *ab)
+> +static void __audit_log_end(struct sk_buff *skb)
+>  {
+> -	struct sk_buff *skb;
+>  	struct nlmsghdr *nlh;
+>  
+> -	if (!ab)
+> -		return;
+> -
+>  	if (audit_rate_check()) {
+> -		skb = ab->skb;
+> -		ab->skb = NULL;
+> -
+>  		/* setup the netlink header, see the comments in
+>  		 * kauditd_send_multicast_skb() for length quirks */
+>  		nlh = nlmsg_hdr(skb);
+> @@ -2442,6 +2535,26 @@ void audit_log_end(struct audit_buffer *ab)
+>  		wake_up_interruptible(&kauditd_wait);
+>  	} else
+>  		audit_log_lost("rate limit exceeded");
+> +}
+
+Okay, this is twice now in one patchset ... as I mentioned in the v2
+review:
+
+ "We should probably move the kauditd thread wake into
+  audit_log_end() so we don't end up poking the scheduler
+  multiple times."
+
+https://lore.kernel.org/audit/69ee16ce82a564e09b2060d46fa2be0d@paul-moore.com/
+
+> +/**
+> + * audit_log_end - end one audit record
+> + * @ab: the audit_buffer
+> + *
+> + * We can not do a netlink send inside an irq context because it blocks (last
+> + * arg, flags, is not set to MSG_DONTWAIT), so the audit buffer is placed on a
+> + * queue and a kthread is scheduled to remove them from the queue outside the
+> + * irq context.  May be called in any context.
+> + */
+> +void audit_log_end(struct audit_buffer *ab)
+> +{
+> +	struct sk_buff *skb;
+> +
+> +	if (!ab)
+> +		return;
+> +
+> +	while ((skb = skb_dequeue(&ab->skb_list)))
+> +		__audit_log_end(skb);
+
+The wakeup should go here.
+
+>  	audit_buffer_free(ab);
+>  }
 
 --
 paul-moore.com
