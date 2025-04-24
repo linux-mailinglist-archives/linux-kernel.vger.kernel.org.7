@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-618131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A81A9AA71
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB057A9AA58
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E2D19402C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E60467AD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71672586C3;
-	Thu, 24 Apr 2025 10:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CDE253920;
+	Thu, 24 Apr 2025 10:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zbx8c1dL"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Mw4ACHVn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6B3230272;
-	Thu, 24 Apr 2025 10:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1780B2522B5;
+	Thu, 24 Apr 2025 10:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490466; cv=none; b=b0yUkTUMkSZfnv1Nw0T0iXRgwYhVlP/9YrpJwqirSGOXHL9DVEJxUzFa6K4JYZt779niayKXswlj31B2uA5ujAv4rDKX4RXEfHXbPOCVy5a+l4SzoYNFx9ZnkqjZTKZpWMVQnMFnXmKxjtmBONdZGjpDiyOZCNrCWEuCcxSA1VQ=
+	t=1745490406; cv=none; b=Tsm3KtFwGmuvCXynnflK3Uj2AZfPrh2DVY3kRiWkCxCw5udnDLN7rV8s2InkLGUjiXIONfYGVgKwdFvAnuiraWXyn93DlqGLlFD7ukMf68G6zJJqk5jAucsQto/yIKBu0CpnZC/5qT906v/bZL8kvQ+GN8XqHjuU57tFpzOFaaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490466; c=relaxed/simple;
-	bh=Dhr0rsx9WpeMa8aspdbgl7YO+d4d6KcEE2+waQCoYbI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FQeLWXEI2BOc/yVLLwFJa4JAy747bYyb061I5+7AxyYecsZXkwsMoOQXCT01dIIdvIFM6J9Ks7tjrGd1t0Q4c2ckpG/zIf/iZUWrEhrG5SsdI7L+j7p06gPQgnrk/gm2JMBn0GWTY3N5sLrH8RN+NeK2OblZxprNo1LQUvvSoTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zbx8c1dL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12B9C4CEE3;
-	Thu, 24 Apr 2025 10:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745490465;
-	bh=Dhr0rsx9WpeMa8aspdbgl7YO+d4d6KcEE2+waQCoYbI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Zbx8c1dLijPcaODhyVkHFGx5r2ZphraIAZSwlIYG86gb3W26LbpP4Fji8vaGl5y2K
-	 MZUj30RABRGse5hQ8qy57swFn1Ipysp2hqD9ujgEc/sCCdXZRUYEZ5f1UzC3ALXkod
-	 iZIE8+yDBCE+orVCF0tC0FMM5SuhWYnCr6CAQ1xU2iUK+t38VSe/XeKR1IDpHoSouL
-	 elD14Cb89Lw5VWoe6BkQSZOZBl9t+OOeRjfBKiy5PQkeWZoXRVcLh4gp70sDvlZi1V
-	 OYMnA71A/D+0tz+iTG1TVlCjAHhDzkcmF+3dwHyu6JgYWDIzCIcKfXEUds/073r5Rp
-	 P9X/p9JsBp8BQ==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Thu, 24 Apr 2025 12:25:33 +0200
-Subject: [PATCH v2 22/22] arm64: Kconfig: Enable GICv5
+	s=arc-20240116; t=1745490406; c=relaxed/simple;
+	bh=ghFZ18sDAQK79Sk1EjjWTkiCDOqMm17tDKKZSop6maU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSTFKDKNLoFmXNJd87Xqoq2fsDefWInrT1DS5+GDiEIF/uTMljc1ERQJ42pE/DI0FwVXcKtemNYizTFmehhoFMv+RSdLHzZnDGyY57aehyAhnqhzpg37mozEp2ouq4nZZosgklqS8KHJ4N3TUJ67FaALIYN3Jp8dFP01vN8T4wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Mw4ACHVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A04C4CEE4;
+	Thu, 24 Apr 2025 10:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745490405;
+	bh=ghFZ18sDAQK79Sk1EjjWTkiCDOqMm17tDKKZSop6maU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mw4ACHVnvd4kAS2/1CNB74VCs7txTbRXioRFOgvybQYdMtUBnomkjDDaFRmjfbZ8X
+	 OKr9qPrND0hvMSufaj6RxJTL8x/Hw2tII8Tb6DSg/GFF+AMESDwlHHz9W05CaTLfLo
+	 gKWWjDukRTZuY6y1L6WkhwRR+gs3uZtNhS9NcxK8=
+Date: Thu, 24 Apr 2025 12:26:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, sashal@kernel.org,
+	stable@vger.kernel.org, song@kernel.org, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH 6.1 0/2] md: fix mddev uaf while iterating all_mddevs list
+Message-ID: <2025042436-iodize-dazzler-e7b2@gregkh>
+References: <20250419012303.85554-1-yukuai1@huaweicloud.com>
+ <aAkt8WLN1Gb9snv-@eldamar.lan>
+ <2025042418-come-vacant-ec55@gregkh>
+ <aAoFRJ_RIq6pdyn9@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-gicv5-host-v2-22-545edcaf012b@kernel.org>
-References: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
-In-Reply-To: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Sascha Bischoff <sascha.bischoff@arm.com>, 
- Timothy Hayes <timothy.hayes@arm.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAoFRJ_RIq6pdyn9@eldamar.lan>
 
-Enable GICv5 driver code for the ARM64 architecture.
+On Thu, Apr 24, 2025 at 11:32:52AM +0200, Salvatore Bonaccorso wrote:
+> Hi Greg,
+> 
+> On Thu, Apr 24, 2025 at 08:40:41AM +0200, Greg KH wrote:
+> > On Wed, Apr 23, 2025 at 08:14:09PM +0200, Salvatore Bonaccorso wrote:
+> > > Hi Greg, Sasha, Yu,
+> > > 
+> > > On Sat, Apr 19, 2025 at 09:23:01AM +0800, Yu Kuai wrote:
+> > > > From: Yu Kuai <yukuai3@huawei.com>
+> > > > 
+> > > > Hi, Greg
+> > > > 
+> > > > This is the manual adaptation version for 6.1, for 6.6/6.12 commit
+> > > > 8542870237c3 ("md: fix mddev uaf while iterating all_mddevs list") can
+> > > > be applied cleanly, can you queue them as well?
+> > > > 
+> > > > Thanks!
+> > > > 
+> > > > Yu Kuai (2):
+> > > >   md: factor out a helper from mddev_put()
+> > > >   md: fix mddev uaf while iterating all_mddevs list
+> > > > 
+> > > >  drivers/md/md.c | 50 +++++++++++++++++++++++++++++--------------------
+> > > >  1 file changed, 30 insertions(+), 20 deletions(-)
+> > > 
+> > > I noticed that the change 8542870237c3 was queued for 6.6.y and 6.12.y
+> > > and is in the review now, but wonder should we do something more with
+> > > 6.1.y as this requires this series/manual adaption?
+> > > 
+> > > Or will it make for the next round of stable updates in 6.1.y? 
+> > > 
+> > > (or did it just felt through the cracks and it is actually fine that I
+> > > ping the thread on this question).
+> > 
+> > This fell through the cracks and yes, it is great that you pinged it.
+> > I'll queue it up for the next release, thanks!
+> 
+> Thank you! Very much appreciated! (People installing Debian will be
+> happy as it affects kernel under certiain circumstances, cf.
+> https://bugs.debian.org/1086175, https://bugs.debian.org/1089158, but
+> was longstanding already).
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Now queued up, thanks.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a182295e6f08bfa0f3e6f630dc4adfe797a4d273..f1b3c695b376717979ae864865238ae12ad65ca2 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -128,6 +128,7 @@ config ARM64
- 	select ARM_GIC_V2M if PCI
- 	select ARM_GIC_V3
- 	select ARM_GIC_V3_ITS if PCI
-+	select ARM_GIC_V5
- 	select ARM_PSCI_FW
- 	select BUILDTIME_TABLE_SORT
- 	select CLONE_BACKWARDS
-
--- 
-2.48.0
-
+greg k-h
 
