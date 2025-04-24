@@ -1,650 +1,201 @@
-Return-Path: <linux-kernel+bounces-618149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B41A9AAA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:41:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19CAA9AAAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1852467FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 260D87B9A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB6523ED74;
-	Thu, 24 Apr 2025 10:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1564E22A4F1;
+	Thu, 24 Apr 2025 10:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vp2ggoii"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aj2l2XWM"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E7C23D294
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACCE225779;
+	Thu, 24 Apr 2025 10:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745491047; cv=none; b=b9iiHjCIv9jblLndLfh6QpEA2kqPcMJqiWduAZoSyhemwplejVi+YA3PCMqBSrx1wabZ9PMVbLcb1gEhLRqarULrrezmmgMB69gVcTRovhe7lyd6SoXkoVTDqHCi0v9IpCsviPygr1xZWWKKujHBbezWTZ0BzOQWPMgaaNOFT+I=
+	t=1745491124; cv=none; b=p1TD5Kg+7gmNHzL8nbcDukO9E9RJE+FCVWkIHKCWyKZMLHIck6Vu4W7OXDqZjVi5nHZF3P15UtNGKxpQZWzOEPywhcqW03tVEDehW6wbA3Hg/LTwW7JyqbQptYZqA4gTW3R24K02w8c6eexpPa1Pq/eYw2/kh4Fglh0jzaeJetI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745491047; c=relaxed/simple;
-	bh=TmOGFV0w7v62MJ6x8MwidOrdpKY+8DJsmTGwPxqGrNo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DYJv7VnB2RSP2FMB3+c61EX0fgViCLEUFWa/Hmqzl6iE5ium0ZYYbJOdiewuZwIKwl7aSOIX60kKy01NDAaYEXtFrES1ReqXdf5CkQtwMBsQTvrI24tpwlCIh6vEbvheFSQsExRYLtZbbUQC04YvfEGOLQkwH8W3YJEtj975csg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vp2ggoii; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22d95f0dda4so12371765ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:37:25 -0700 (PDT)
+	s=arc-20240116; t=1745491124; c=relaxed/simple;
+	bh=cF0IRQhi9ey4Mgece/vsORD2K46nk7KXEntxzC0l0fM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sLElM2mXsvLr7TAbXKy7vXQBz6jA7Xs74kix+GUMDoIOL1XAD26avwaC77lI8ckS3y9j1YGU6P2XYRNC+dEC5JCxjyq7nlc3pHU3UrFKr5lOLLffeYcEL7nu/J1R5knkrMpAeiUWKF2zKhTpShTuworp5xddYt0gAGgX6FkUpaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aj2l2XWM; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6eeb7589db4so13562756d6.1;
+        Thu, 24 Apr 2025 03:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745491044; x=1746095844; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBwTEXhNABTCQyq0u1UG76AK2UVABOzq6NwLkHUAp5g=;
-        b=Vp2ggoiivVf0XCFeNd31Q4L7yILXFVinhCqydSUDyl5zachVO/GIusHto53YTjd8bE
-         5qLMnP40afg9Fe3jABFM+j9xJgZV1LUi/voiyBxJgPA2D0uvAOLhUYnAZ4xJIGAMIaJw
-         gN45pvxF1Sfx7Ub0ZpwQ5j09C/X+B01oQzk7R0ozVtzKIUU3M/TQOcSyG026mZyRp7cX
-         ZRScYjMafxaoUHP3R8HPdqY+51RjTlL1zaQDhdOYMe3aQoRvsMbAKawh6hPO721DJGzZ
-         qwlXiAjmffr8P/M3E1/Bk6S2q6vCsRWsfVBB0vXSefWLyw4fc6r1qw8bMTETeLqyqXau
-         zvSA==
+        d=gmail.com; s=20230601; t=1745491121; x=1746095921; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KqLXzSekZBdUrQl7KyKSgYQa4cggf/FacgO4meA+Tto=;
+        b=Aj2l2XWMMOut0xWvG6eweyiiiu/0soRNcwOy/W1ApDY9B7MlEcf2J62bjDC554ew5L
+         T6lRERgUn+u202W/vzrHxg6KR52tJ71Jv2P1sz/yUdlr+k5Yv9NDRkD70DvTMUCbHy3z
+         leIxL63v+XHLodyt2FxxF+E8En0FmHMBZO+6emc/fGdoIaAA2EPNF0quHpa9we/XPTbt
+         MZ/2dT+0L7CEjgx1G4lxzx6N/tBlqD7j6VRdQ6bHoyqcAlBBFFr0ysNonyypRrMHrn/h
+         /9BVa4q8aUo63UlT7DFIa/stLJj8/TzbUCeU6rX/DkWkufpmMDGATuWdMSOhkH5naUfa
+         5CIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745491044; x=1746095844;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBwTEXhNABTCQyq0u1UG76AK2UVABOzq6NwLkHUAp5g=;
-        b=cUNSEO/EEcjLvcmU+bPb3M58CmhYv7pTRQgGjk/Q279MEuusSUzvqsEe8Yc8uw4sop
-         r80d1BdrjBqOnP4+HghwfypZ4JaSYEYq+gYhJT81g0il6BcN4CuIwwnoLFajYG90xbr6
-         c1dwZwnEWnUHLt+Zo0kyUeqRtQ/5ITadWkpVKpF/XVvd7OqwQHRkrzO6HfzDykq7PUBy
-         RaeoGNtZZlm52U8t3dq9GwSGcSrQYViAqjkT4IswKRbDMREz5OTgxp4dpFBjdoO0sgjj
-         efidnRmhB/+2KNtGOBh5yiN3Uxz9A7/p2ySdOQ00pIoFVdDUZyihW9hnnKXKCDjCAEy+
-         eg5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU25+qGHRAu1lp35s0SYzClPn3JD2IICuwu4lWGnQU62i9lAaj/xrCBI1G3RqDXvV20oNiJuRvxuRs1lVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWu1lV4rojqlSl3GKXSghm/bf/M2R7qQCobXMBkyJcEeeYlLr4
-	gp6r7Fv43fhebYxWF7A2rAPI1IaLXX7PnA7z2xrWOmxlAz7bEKx3r/7GZWXIupw=
-X-Gm-Gg: ASbGnctd1rLlvMXFbQdUTAVYWriLMGa95Jc/EfASc2TVkxrfUUJ2j3KEaULtAaScuUa
-	uKmNvSY3V70VvYAwH4wZB7W4vfAgnJw0/7BsAuZYxDBmzxgTPFv4gUoHBNHOgvNbbmTGCb1rRhS
-	mvzYhfTQTFyUi+q+kR+QdIuW1kKmH1PRnGpmWdkaVpuN5s8q5aD24SXEaWBEz6VjYrHbPrywSI5
-	dILpWOlwPVv+8vsT8aY6ttQ1iXRsxugmKqhtsFQVmVX0Iijae6u9QjA05IxvAzQFv3bgO7lzyo+
-	sAXS1X9aVpliLPdvlnX1+CFGg6LU8D7Cxxj08/DlZlq8KoLrUOTw
-X-Google-Smtp-Source: AGHT+IFsvSHzdGeWlWocErZ1QgNQTv5wJHcxn0cYwaK4A27pHPX0GIC28/2OjZnhyv7cYx3YbtgU6Q==
-X-Received: by 2002:a17:902:d2ce:b0:21b:d105:26b8 with SMTP id d9443c01a7336-22db3bb1e1cmr24994525ad.7.1745491044394;
-        Thu, 24 Apr 2025 03:37:24 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e7681sm9868985ad.119.2025.04.24.03.37.23
+        d=1e100.net; s=20230601; t=1745491121; x=1746095921;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KqLXzSekZBdUrQl7KyKSgYQa4cggf/FacgO4meA+Tto=;
+        b=YIH11qyHzd6QKP94UGTLxsZTlmOmOzbI7CRVqgjAaW4tQLKqKafRp5DU7T5Pva5ntX
+         Ppz+wwA/TGl6WAh+yaUsgZrtVS/1debA/ewBMVpi+91EnltpaUvEr6i6ytoiLpplVVX5
+         17EdRgF7cbw0TqySvFrrxmvwuA9jD8me3Qic+ONrzW0uIFJgfkCAQrndHgW8fp89VZsU
+         Iqfp68MYCDGsRqi1fS5eNTGyc25f7yh19UzfinIkJZdOJWyJdlsCzLT3Bew9hPAjBoez
+         Y/1GsIeBvDwiG62+dwvmjK05cVBs3Sd9JtXc1dP01x6WoZuHijHpDpPBPDhsKV2giIh3
+         2OrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6vhEvXUevYQe7TvekHxld9VEaLs1b1sz6SpNFzjIu06SR8dXkyJxikjUb2JFB1uVJcZ5v3yeOSsmoju0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP24oOeOzQFRW7+5P49u6RkgjH1KLr83fSlXdgZsnMOAfZxCQF
+	mcKUe0QmNO61iMivhRGd0OHQyOLC+Nu7BbHXEitPaxI/Hsdyjkn7
+X-Gm-Gg: ASbGncsbbLmUihpBhODXSgA2F7OTPUex3F6cxo+Np901xfVRVuCpCNy/faWtWd0H59Q
+	seS8o6ZO5t+vkDIkiW0ueX+FoQGhDatHJxxQbM2QCJyfK2hdXd7LRRCvaXi/7v2ipwWKf6zU0/I
+	UTM+T7UijqINjiEnc+e0CgMUuzKK2yai4j006crSqKHtuvYSUkpPVCTfXT0uP6oBIYCaQ86LTzG
+	ju37kMKtZUVQ9TwLIM0lLWZGWMWpWKG6QYWSB2OMSukPwJSMxmp9Zap2mU5BWojv6/ETH7zn2e3
+	2i6NMcck3nfRFYneYyrC8CIoRywrhg9R5cAxpJvYECkgY/uU8rKtckwm3QLVgeMPq8LrDKVp582
+	JSko=
+X-Google-Smtp-Source: AGHT+IG2EvjJf89mWgOx6Kxegd4xSBNFm/mDTTEB8HgYn7sH1v5X0EdTVvytVGrEav+wKSnizeu0WA==
+X-Received: by 2002:a05:6214:761:b0:6e8:fa33:2962 with SMTP id 6a1803df08f44-6f4bfbe61e9mr40017466d6.10.1745491121415;
+        Thu, 24 Apr 2025 03:38:41 -0700 (PDT)
+Received: from [192.168.1.159] ([2600:4041:5be7:7c00:4047:3830:186a:1bb1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c0a73b63sm7839096d6.70.2025.04.24.03.38.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 03:37:23 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] OPP: Use mutex locking guards
-Date: Thu, 24 Apr 2025 16:06:49 +0530
-Message-Id: <cb4bdf07e512e39af4c9142679c1361ce76e9336.1745490980.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1745490980.git.viresh.kumar@linaro.org>
-References: <cover.1745490980.git.viresh.kumar@linaro.org>
+        Thu, 24 Apr 2025 03:38:40 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v6 00/13] rust: generate_rust_analyzer.py: define host
+ crates and scripts
+Date: Thu, 24 Apr 2025 06:38:28 -0400
+Message-Id: <20250424-rust-analyzer-host-v6-0-40e67fe5c38a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKQUCmgC/33OTY7CMAwF4KugrCcoduL+sOIeIxahODQStChhK
+ hjUu4/LhqqqZvksvc/vpTKnyFntNi+VeIg59p2E4mujmtZ3Z9bxJFmhQTJoap1+8l37zl+ev5x
+ 020ty9gimKoiorJQUb4lDfLzR74PkNuZ7n57vHwNM13+5AbTRHrEqPHoM3u7PVx8v26a/qokb8
+ ENYgFUChbAG0TBAQQBLws6J9RV2IqTtHDPaEy4JNyMQVwknBASCUDe1Kfm4JGhO0CpB04qKuAz
+ AIDvmxDiOf8VdwXjAAQAA
+X-Change-ID: 20250209-rust-analyzer-host-43b108655578
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Boris-Chengbiao Zhou <bobo1239@web.de>, Kees Cook <kees@kernel.org>, 
+ Fiona Behrens <me@kloenk.dev>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>, 
+ Tamir Duberstein <tamird@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.15-dev
 
-Use mutex locking guard in the OPP core.
+This series updates rust-project.json to differentiate between host and
+target crates, where the former are used as dependencies of the `macros`
+crate. Please see individual commit messages for details.
 
-No intentional functional impact.
+The first 3 commits contain mechanical formatting changes and are
+optional. The series can be taken without them.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+I avoided more significant formatting or changes where possible to
+reduce the diff. Unfortunately `scripts/generate_rust_analyzer.py` is
+not consistently formatted before nor after this series.
+
+The 5th commit ("scripts: generate_rust_analyzer.py: use
+str(pathlib.Path)") can also be considered optional. It removes an
+inconsistency I noticed while working on this series and which occurs on
+a line which churns in this series anyway.
+
+The trailing commits can also be considered optional, as they can be
+submitted separately. I included them in this series because they depend
+on it, but they can be split out if this is preferred.
+
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- drivers/opp/core.c | 201 ++++++++++++++++++---------------------------
- drivers/opp/cpu.c  |   3 +-
- drivers/opp/of.c   |  65 ++++++---------
- 3 files changed, 105 insertions(+), 164 deletions(-)
+Changes in v6:
+- Rebase on v6.15-rc3.
+- Extract local variable `crates_cfg`. (Daniel Almeida)
+- Replace `map` with generators. (Trevor Gross)
+- Replace `str.rstrip` with `Pathlib.path.stem`. (Trevor Gross)
+- Use `Pathlib.path.read_text`. (Trevor Gross)
+- Explain why `cfg_groups` only applies to workspace crates. (Trevor
+  Gross)
+- Link to v5: https://lore.kernel.org/r/20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 87d27132cd87..fc9874946453 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -40,17 +40,14 @@ static DEFINE_XARRAY_ALLOC1(opp_configs);
- static bool _find_opp_dev(const struct device *dev, struct opp_table *opp_table)
- {
- 	struct opp_device *opp_dev;
--	bool found = false;
- 
--	mutex_lock(&opp_table->lock);
-+	guard(mutex)(&opp_table->lock);
-+
- 	list_for_each_entry(opp_dev, &opp_table->dev_list, node)
--		if (opp_dev->dev == dev) {
--			found = true;
--			break;
--		}
-+		if (opp_dev->dev == dev)
-+			return true;
- 
--	mutex_unlock(&opp_table->lock);
--	return found;
-+	return false;
- }
- 
- static struct opp_table *_find_opp_table_unlocked(struct device *dev)
-@@ -78,18 +75,13 @@ static struct opp_table *_find_opp_table_unlocked(struct device *dev)
-  */
- struct opp_table *_find_opp_table(struct device *dev)
- {
--	struct opp_table *opp_table;
--
- 	if (IS_ERR_OR_NULL(dev)) {
- 		pr_err("%s: Invalid parameters\n", __func__);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	mutex_lock(&opp_table_lock);
--	opp_table = _find_opp_table_unlocked(dev);
--	mutex_unlock(&opp_table_lock);
--
--	return opp_table;
-+	guard(mutex)(&opp_table_lock);
-+	return _find_opp_table_unlocked(dev);
- }
- 
- /*
-@@ -359,25 +351,23 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
- 	if (!uV)
- 		return 0;
- 
--	mutex_lock(&opp_table->lock);
--
--	for (i = 0; i < count; i++) {
--		uV[i].min = ~0;
--		uV[i].max = 0;
-+	scoped_guard(mutex, &opp_table->lock) {
-+		for (i = 0; i < count; i++) {
-+			uV[i].min = ~0;
-+			uV[i].max = 0;
- 
--		list_for_each_entry(opp, &opp_table->opp_list, node) {
--			if (!opp->available)
--				continue;
-+			list_for_each_entry(opp, &opp_table->opp_list, node) {
-+				if (!opp->available)
-+					continue;
- 
--			if (opp->supplies[i].u_volt_min < uV[i].min)
--				uV[i].min = opp->supplies[i].u_volt_min;
--			if (opp->supplies[i].u_volt_max > uV[i].max)
--				uV[i].max = opp->supplies[i].u_volt_max;
-+				if (opp->supplies[i].u_volt_min < uV[i].min)
-+					uV[i].min = opp->supplies[i].u_volt_min;
-+				if (opp->supplies[i].u_volt_max > uV[i].max)
-+					uV[i].max = opp->supplies[i].u_volt_max;
-+			}
- 		}
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	/*
- 	 * The caller needs to ensure that opp_table (and hence the regulator)
- 	 * isn't freed, while we are executing this routine.
-@@ -438,15 +428,13 @@ int _get_opp_count(struct opp_table *opp_table)
- 	struct dev_pm_opp *opp;
- 	int count = 0;
- 
--	mutex_lock(&opp_table->lock);
-+	guard(mutex)(&opp_table->lock);
- 
- 	list_for_each_entry(opp, &opp_table->opp_list, node) {
- 		if (opp->available)
- 			count++;
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	return count;
- }
- 
-@@ -535,7 +523,7 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
- 	if (assert && !assert(opp_table, index))
- 		return ERR_PTR(-EINVAL);
- 
--	mutex_lock(&opp_table->lock);
-+	guard(mutex)(&opp_table->lock);
- 
- 	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
- 		if (temp_opp->available == available) {
-@@ -550,8 +538,6 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
- 		dev_pm_opp_get(opp);
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	return opp;
- }
- 
-@@ -1166,10 +1152,9 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
- 	 * make special checks to validate current_opp.
- 	 */
- 	if (IS_ERR(opp)) {
--		mutex_lock(&opp_table->lock);
-+		guard(mutex)(&opp_table->lock);
- 		opp = dev_pm_opp_get(list_first_entry(&opp_table->opp_list,
- 						      struct dev_pm_opp, node));
--		mutex_unlock(&opp_table->lock);
- 	}
- 
- 	opp_table->current_opp = opp;
-@@ -1426,9 +1411,8 @@ struct opp_device *_add_opp_dev(const struct device *dev,
- 	/* Initialize opp-dev */
- 	opp_dev->dev = dev;
- 
--	mutex_lock(&opp_table->lock);
--	list_add(&opp_dev->node, &opp_table->dev_list);
--	mutex_unlock(&opp_table->lock);
-+	scoped_guard(mutex, &opp_table->lock)
-+		list_add(&opp_dev->node, &opp_table->dev_list);
- 
- 	/* Create debugfs entries for the opp_table */
- 	opp_debug_register(opp_dev, opp_table);
-@@ -1721,17 +1705,15 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq)
- 	if (!assert_single_clk(opp_table, 0))
- 		return;
- 
--	mutex_lock(&opp_table->lock);
--
--	list_for_each_entry(iter, &opp_table->opp_list, node) {
--		if (iter->rates[0] == freq) {
--			opp = iter;
--			break;
-+	scoped_guard(mutex, &opp_table->lock) {
-+		list_for_each_entry(iter, &opp_table->opp_list, node) {
-+			if (iter->rates[0] == freq) {
-+				opp = iter;
-+				break;
-+			}
- 		}
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	if (opp) {
- 		dev_pm_opp_put(opp);
- 
-@@ -1747,22 +1729,20 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_remove);
- static struct dev_pm_opp *_opp_get_next(struct opp_table *opp_table,
- 					bool dynamic)
- {
--	struct dev_pm_opp *opp = NULL, *temp;
-+	struct dev_pm_opp *opp;
- 
--	mutex_lock(&opp_table->lock);
--	list_for_each_entry(temp, &opp_table->opp_list, node) {
-+	guard(mutex)(&opp_table->lock);
-+
-+	list_for_each_entry(opp, &opp_table->opp_list, node) {
- 		/*
- 		 * Refcount must be dropped only once for each OPP by OPP core,
- 		 * do that with help of "removed" flag.
- 		 */
--		if (!temp->removed && dynamic == temp->dynamic) {
--			opp = temp;
--			break;
--		}
-+		if (!opp->removed && dynamic == opp->dynamic)
-+			return opp;
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--	return opp;
-+	return NULL;
- }
- 
- /*
-@@ -1786,20 +1766,14 @@ static void _opp_remove_all(struct opp_table *opp_table, bool dynamic)
- 
- bool _opp_remove_all_static(struct opp_table *opp_table)
- {
--	mutex_lock(&opp_table->lock);
--
--	if (!opp_table->parsed_static_opps) {
--		mutex_unlock(&opp_table->lock);
--		return false;
--	}
-+	scoped_guard(mutex, &opp_table->lock) {
-+		if (!opp_table->parsed_static_opps)
-+			return false;
- 
--	if (--opp_table->parsed_static_opps) {
--		mutex_unlock(&opp_table->lock);
--		return true;
-+		if (--opp_table->parsed_static_opps)
-+			return true;
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	_opp_remove_all(opp_table, false);
- 	return true;
- }
-@@ -2003,17 +1977,15 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
- 	struct list_head *head;
- 	int ret;
- 
--	mutex_lock(&opp_table->lock);
--	head = &opp_table->opp_list;
-+	scoped_guard(mutex, &opp_table->lock) {
-+		head = &opp_table->opp_list;
- 
--	ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
--	if (ret) {
--		mutex_unlock(&opp_table->lock);
--		return ret;
--	}
-+		ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
-+		if (ret)
-+			return ret;
- 
--	list_add(&new_opp->node, head);
--	mutex_unlock(&opp_table->lock);
-+		list_add(&new_opp->node, head);
-+	}
- 
- 	new_opp->opp_table = opp_table;
- 	kref_init(&new_opp->kref);
-@@ -2660,17 +2632,16 @@ struct dev_pm_opp *dev_pm_opp_xlate_required_opp(struct opp_table *src_table,
- 		return ERR_PTR(-EBUSY);
- 
- 	for (i = 0; i < src_table->required_opp_count; i++) {
--		if (src_table->required_opp_tables[i] == dst_table) {
--			mutex_lock(&src_table->lock);
-+		if (src_table->required_opp_tables[i] != dst_table)
-+			continue;
- 
-+		scoped_guard(mutex, &src_table->lock) {
- 			list_for_each_entry(opp, &src_table->opp_list, node) {
- 				if (opp == src_opp) {
- 					dest_opp = dev_pm_opp_get(opp->required_opps[i]);
- 					break;
- 				}
- 			}
--
--			mutex_unlock(&src_table->lock);
- 			break;
- 		}
- 	}
-@@ -2702,7 +2673,6 @@ int dev_pm_opp_xlate_performance_state(struct opp_table *src_table,
- 				       unsigned int pstate)
- {
- 	struct dev_pm_opp *opp;
--	int dest_pstate = -EINVAL;
- 	int i;
- 
- 	/*
-@@ -2736,22 +2706,17 @@ int dev_pm_opp_xlate_performance_state(struct opp_table *src_table,
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&src_table->lock);
-+	guard(mutex)(&src_table->lock);
- 
- 	list_for_each_entry(opp, &src_table->opp_list, node) {
--		if (opp->level == pstate) {
--			dest_pstate = opp->required_opps[i]->level;
--			goto unlock;
--		}
-+		if (opp->level == pstate)
-+			return opp->required_opps[i]->level;
- 	}
- 
- 	pr_err("%s: Couldn't find matching OPP (%p: %p)\n", __func__, src_table,
- 	       dst_table);
- 
--unlock:
--	mutex_unlock(&src_table->lock);
--
--	return dest_pstate;
-+	return -EINVAL;
- }
- 
- /**
-@@ -2820,26 +2785,22 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
- 	if (!assert_single_clk(opp_table, 0))
- 		return -EINVAL;
- 
--	mutex_lock(&opp_table->lock);
-+	scoped_guard(mutex, &opp_table->lock) {
-+		/* Do we have the frequency? */
-+		list_for_each_entry(tmp_opp, &opp_table->opp_list, node) {
-+			if (tmp_opp->rates[0] == freq) {
-+				opp = dev_pm_opp_get(tmp_opp);
- 
--	/* Do we have the frequency? */
--	list_for_each_entry(tmp_opp, &opp_table->opp_list, node) {
--		if (tmp_opp->rates[0] == freq) {
--			opp = dev_pm_opp_get(tmp_opp);
-+				/* Is update really needed? */
-+				if (opp->available == availability_req)
-+					return 0;
- 
--			/* Is update really needed? */
--			if (opp->available == availability_req) {
--				mutex_unlock(&opp_table->lock);
--				return 0;
-+				opp->available = availability_req;
-+				break;
- 			}
--
--			opp->available = availability_req;
--			break;
- 		}
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	if (IS_ERR(opp))
- 		return PTR_ERR(opp);
- 
-@@ -2886,29 +2847,25 @@ int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
- 	if (!assert_single_clk(opp_table, 0))
- 		return -EINVAL;
- 
--	mutex_lock(&opp_table->lock);
--
--	/* Do we have the frequency? */
--	list_for_each_entry(tmp_opp, &opp_table->opp_list, node) {
--		if (tmp_opp->rates[0] == freq) {
--			opp = dev_pm_opp_get(tmp_opp);
-+	scoped_guard(mutex, &opp_table->lock) {
-+		/* Do we have the frequency? */
-+		list_for_each_entry(tmp_opp, &opp_table->opp_list, node) {
-+			if (tmp_opp->rates[0] == freq) {
-+				opp = dev_pm_opp_get(tmp_opp);
- 
--			/* Is update really needed? */
--			if (opp->supplies->u_volt == u_volt) {
--				mutex_unlock(&opp_table->lock);
--				return 0;
--			}
-+				/* Is update really needed? */
-+				if (opp->supplies->u_volt == u_volt)
-+					return 0;
- 
--			opp->supplies->u_volt = u_volt;
--			opp->supplies->u_volt_min = u_volt_min;
--			opp->supplies->u_volt_max = u_volt_max;
-+				opp->supplies->u_volt = u_volt;
-+				opp->supplies->u_volt_min = u_volt_min;
-+				opp->supplies->u_volt_max = u_volt_max;
- 
--			break;
-+				break;
-+			}
- 		}
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	if (IS_ERR(opp))
- 		return PTR_ERR(opp);
- 
-diff --git a/drivers/opp/cpu.c b/drivers/opp/cpu.c
-index 330a1753fb22..97989d4fe336 100644
---- a/drivers/opp/cpu.c
-+++ b/drivers/opp/cpu.c
-@@ -214,10 +214,9 @@ int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
- 	cpumask_clear(cpumask);
- 
- 	if (opp_table->shared_opp == OPP_TABLE_ACCESS_SHARED) {
--		mutex_lock(&opp_table->lock);
-+		guard(mutex)(&opp_table->lock);
- 		list_for_each_entry(opp_dev, &opp_table->dev_list, node)
- 			cpumask_set_cpu(opp_dev->dev->id, cpumask);
--		mutex_unlock(&opp_table->lock);
- 	} else {
- 		cpumask_set_cpu(cpu_dev->id, cpumask);
- 	}
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 54109e813d4f..505d79821584 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -76,18 +76,13 @@ static struct dev_pm_opp *_find_opp_of_np(struct opp_table *opp_table,
- {
- 	struct dev_pm_opp *opp;
- 
--	mutex_lock(&opp_table->lock);
-+	guard(mutex)(&opp_table->lock);
- 
- 	list_for_each_entry(opp, &opp_table->opp_list, node) {
--		if (opp->np == opp_np) {
--			dev_pm_opp_get(opp);
--			mutex_unlock(&opp_table->lock);
--			return opp;
--		}
-+		if (opp->np == opp_np)
-+			return dev_pm_opp_get(opp);
- 	}
- 
--	mutex_unlock(&opp_table->lock);
--
- 	return NULL;
- }
- 
-@@ -105,19 +100,15 @@ static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
- 
- 	opp_table_np = of_get_parent(opp_np);
- 	if (!opp_table_np)
--		goto err;
-+		return ERR_PTR(-ENODEV);
-+
-+	guard(mutex)(&opp_table_lock);
- 
--	mutex_lock(&opp_table_lock);
- 	list_for_each_entry(opp_table, &opp_tables, node) {
--		if (opp_table_np == opp_table->np) {
--			dev_pm_opp_get_opp_table_ref(opp_table);
--			mutex_unlock(&opp_table_lock);
--			return opp_table;
--		}
-+		if (opp_table_np == opp_table->np)
-+			return dev_pm_opp_get_opp_table_ref(opp_table);
- 	}
--	mutex_unlock(&opp_table_lock);
- 
--err:
- 	return ERR_PTR(-ENODEV);
- }
- 
-@@ -142,9 +133,8 @@ static void _opp_table_free_required_tables(struct opp_table *opp_table)
- 	opp_table->required_opp_count = 0;
- 	opp_table->required_opp_tables = NULL;
- 
--	mutex_lock(&opp_table_lock);
-+	guard(mutex)(&opp_table_lock);
- 	list_del(&opp_table->lazy);
--	mutex_unlock(&opp_table_lock);
- }
- 
- /*
-@@ -201,9 +191,8 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
- 		 * The OPP table is not held while allocating the table, take it
- 		 * now to avoid corruption to the lazy_opp_tables list.
- 		 */
--		mutex_lock(&opp_table_lock);
-+		guard(mutex)(&opp_table_lock);
- 		list_add(&opp_table->lazy, &lazy_opp_tables);
--		mutex_unlock(&opp_table_lock);
- 	}
- }
- 
-@@ -357,7 +346,7 @@ static void lazy_link_required_opp_table(struct opp_table *new_table)
- 	struct dev_pm_opp *opp;
- 	int i, ret;
- 
--	mutex_lock(&opp_table_lock);
-+	guard(mutex)(&opp_table_lock);
- 
- 	list_for_each_entry_safe(opp_table, temp, &lazy_opp_tables, lazy) {
- 		struct device_node *opp_np __free(device_node);
-@@ -408,8 +397,6 @@ static void lazy_link_required_opp_table(struct opp_table *new_table)
- 				_required_opps_available(opp, opp_table->required_opp_count);
- 		}
- 	}
--
--	mutex_unlock(&opp_table_lock);
- }
- 
- static int _bandwidth_supported(struct device *dev, struct opp_table *opp_table)
-@@ -970,15 +957,14 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 	struct dev_pm_opp *opp;
- 
- 	/* OPP table is already initialized for the device */
--	mutex_lock(&opp_table->lock);
--	if (opp_table->parsed_static_opps) {
--		opp_table->parsed_static_opps++;
--		mutex_unlock(&opp_table->lock);
--		return 0;
--	}
-+	scoped_guard(mutex, &opp_table->lock) {
-+		if (opp_table->parsed_static_opps) {
-+			opp_table->parsed_static_opps++;
-+			return 0;
-+		}
- 
--	opp_table->parsed_static_opps = 1;
--	mutex_unlock(&opp_table->lock);
-+		opp_table->parsed_static_opps = 1;
-+	}
- 
- 	/* We have opp-table node now, iterate over it and add OPPs */
- 	for_each_available_child_of_node(opp_table->np, np) {
-@@ -1018,15 +1004,14 @@ static int _of_add_opp_table_v1(struct device *dev, struct opp_table *opp_table)
- 	const __be32 *val;
- 	int nr, ret = 0;
- 
--	mutex_lock(&opp_table->lock);
--	if (opp_table->parsed_static_opps) {
--		opp_table->parsed_static_opps++;
--		mutex_unlock(&opp_table->lock);
--		return 0;
--	}
-+	scoped_guard(mutex, &opp_table->lock) {
-+		if (opp_table->parsed_static_opps) {
-+			opp_table->parsed_static_opps++;
-+			return 0;
-+		}
- 
--	opp_table->parsed_static_opps = 1;
--	mutex_unlock(&opp_table->lock);
-+		opp_table->parsed_static_opps = 1;
-+	}
- 
- 	prop = of_find_property(dev->of_node, "operating-points", NULL);
- 	if (!prop) {
+Changes in v5:
+- Split remove `"is_proc_macro": false` into separate patch. (Daniel
+  Almeida)
+- Move whitespace change from "add type hints" to "add missing
+  whitespace".
+- Add patch to avoid default arguments and force keyword arguments.
+- Add patch to add type hints for CLI parameters.
+- Replace some instances of `str.replace` with `str.{l,r}strip`.
+- Rebase on next-20250325. This must be rooted on linux-next because
+  it's the only place rust-next and rust-fixes have been merged.
+- Link to v4: https://lore.kernel.org/r/20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com
+
+Changes in v4:
+- Fix typo (s/generate/generated/).
+- Pull Trevor's suggested change into a separate patch with a
+  Suggested-by tag.
+- Add patch to avoid file descriptor leak.
+- Add patch to generate rust-project.json entries for scripts/*.rs.
+- Add patch to use `cfg_groups` to reduce size of `rust-project.json` by
+  90%.
+- Link to v3: https://lore.kernel.org/r/20250319-rust-analyzer-host-v3-0-311644ee23d2@gmail.com
+
+Changes in v3:
+- Rebase on linux-next. This is needed to pick up all the conflicts from
+  both rust-next and rust-fixes.
+- Drop `uv` from `mypy` command. (Trevor Gross)
+- Add `--python-version 3.8` to `mypy` command. (Trevor Gross)
+- `from typings import ...` directly. (Trevor Gross)
+- Extract `build_crate` and `register_crate` to avoid peeking into
+  `crates[-1]`. (Trevor Gross)
+- Link to v2: https://lore.kernel.org/r/20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com
+
+Changes in v2:
+- Rebased on "rust: fix rust-analyzer configuration for generated files" [1]
+  Link: https://lore.kernel.org/all/CANiq72nv7nQ+1BinCHe2qsvwdUb-y9t7x=RGSppi_n9TBXNHpw@mail.gmail.com/ [1]
+- Link to v1: https://lore.kernel.org/r/20250209-rust-analyzer-host-v1-0-a2286a2a2fa3@gmail.com
+
+---
+Tamir Duberstein (13):
+      scripts: generate_rust_analyzer.py: add missing whitespace
+      scripts: generate_rust_analyzer.py: use double quotes
+      scripts: generate_rust_analyzer.py: add trailing comma
+      scripts: generate_rust_analyzer.py: extract `{build,register}_crate`
+      scripts: generate_rust_analyzer.py: drop `"is_proc_macro": false`
+      scripts: generate_rust_analyzer.py: add type hints
+      scripts: generate_rust_analyzer.py: avoid optional arguments
+      scripts: generate_rust_analyzer.py: use str(pathlib.Path)
+      scripts: generate_rust_analyzer.py: identify crates explicitly
+      scripts: generate_rust_analyzer.py: define host crates
+      scripts: generate_rust_analyzer.py: avoid FD leak
+      scripts: generate_rust_analyzer.py: define scripts
+      scripts: generate_rust_analyzer.py: use `cfg_groups`
+
+ scripts/generate_rust_analyzer.py | 334 ++++++++++++++++++++++++++++----------
+ 1 file changed, 245 insertions(+), 89 deletions(-)
+---
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+change-id: 20250209-rust-analyzer-host-43b108655578
+
+Best regards,
 -- 
-2.31.1.272.g89b43f80a514
+Tamir Duberstein <tamird@gmail.com>
 
 
