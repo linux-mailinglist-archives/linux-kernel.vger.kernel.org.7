@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-617907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B39A9A79B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABE8A9A79D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28AC442B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4467C1B8255C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454D121CA00;
-	Thu, 24 Apr 2025 09:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EFF21CC5A;
+	Thu, 24 Apr 2025 09:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L5VlDh/D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OEkxTymx"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424671A316A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED58213240
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745486574; cv=none; b=dndpR39XmE7oiJp/gudHPkwzKZ7D9feivSyBgX70OClYkIrPbHA7GXNOrGw/FGVo55b37VujmLc6iisswlHb0dApaAESKXeN96iRNrgF/Ua62bOMDQSGdHjN8PxlkuX0hr09mQtVbb2iNA3X0IlippoIRl5wu5YbLybb7mi2oZk=
+	t=1745486609; cv=none; b=rIEGuvpsNwTHCLQk0qB3R+0cL2/R/jTSz/nBn+d50cDdffYDZ2Jq+uj2BFVB1OrENTZbSSJOM/+Y47lWQBW2a2ywyRPMtxkMzySxLRojX0S6mSZJn3UiaJ3FVLy2M/Ds2uD6EblE3unkXot/NFaKfZqY46flMhD5s6EM+r7a08Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745486574; c=relaxed/simple;
-	bh=NpXitcQTmASm/c5fQevG5nSI/zUrUzZXxechrmShP0Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DHN9XtlJP/reFPWu40UltNZxhbFV+ROs/VLLTNObs72/gGJoR1zHNywczayvMvD7bUkwk+33bQwiGhXbtkUl1ZdlfEa9GOHAj+ubaZr392zkx35LFVUsZMEfHaEo5Z6WqXi7PkIS682AA397dG77JdWy5F7iOCJiztqMHdUnMSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L5VlDh/D; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745486573; x=1777022573;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NpXitcQTmASm/c5fQevG5nSI/zUrUzZXxechrmShP0Q=;
-  b=L5VlDh/DHNRdgkBvqyw+qGj4OPY0dO9CkZAsxegDEgvsm2CXtqglBCzH
-   NOGHWp8JlTkWVbq2RAwJOb3/vEWCUguefur4dv7hGjH1Y7FIIOlgajuC1
-   EJ5Bg9xgoa7oBm4A6ohOi6Vg7oMNIOflMHNPSN8O5TfPAr2ZUvHreDOEU
-   1sOD+E8E5vLJB+4JnS4CNGI4YnR5GeEw+QpAAt3LCTLSp4VEQC6UBv7aT
-   6puMkNk9SNDRFozm8VdnIG0bBjTUsyUTg4P3fnhbwBWxNkG/U9v79Z3WO
-   OUzbXYekUGQt8AAc2UnHIyMrGDpmFvKM3v2oZbruggKFpw6Pdd1+62Vv+
-   Q==;
-X-CSE-ConnectionGUID: u9Q77DXYQae+mkDsuwONdQ==
-X-CSE-MsgGUID: uVgk4DHeQ+KajUzTcfIrqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="58101583"
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="58101583"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 02:22:53 -0700
-X-CSE-ConnectionGUID: A8dkvlIOSASNjeRxkDt+GQ==
-X-CSE-MsgGUID: wOtGZ1fgRDKn6IpHeaPYmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="137414077"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.243.159]) ([10.124.243.159])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 02:22:51 -0700
-Message-ID: <42e8c668-e72d-490a-8a5e-8e94af90fda4@linux.intel.com>
-Date: Thu, 24 Apr 2025 17:22:48 +0800
+	s=arc-20240116; t=1745486609; c=relaxed/simple;
+	bh=mvolAf2JU2F8eP0edLb5CXAcR0qLRl4vnPy4nQDqt3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUDD+Bj4K/UQeuYXlTZmFHH+6nMl7pukbb466VP4UUgLxhnoMEjnw0lFsh2Qvj2hwWbeRgu/IA6Jn3ARSR22YDV0p4m8Nb2FYy/h69uCj27bGBUcaVekeTFF/bUiM0NAsmhL1pC+v11k/z1oszh47DUV1ehPmUbONKjtMKumygc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OEkxTymx; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c14016868so711198f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745486606; x=1746091406; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9hCllJCkBelUx+2R4zB5n2lQMaonRD+b0FrE8QTmkw=;
+        b=OEkxTymxDUH0xsCd+VRx26ffVEyPvjh04HpbNaW6DPhPF4Fo2wI/skSa/XMIReMSOz
+         7CuRxjvvsKVmaa3nBPLayHMKetHfYRjtN5vpBGkLMelzUvZF0C/cqnxC13bCQTf4ukLP
+         rr/bJFsDbKraAniDaBNbNxeMLNd6d8AhQtpH/3e0dcFrokdoWXvFMQ0J9M6C305mFNxY
+         oqFibcEmTgs5OpzdawPez1PDTXSE94KaokmSmXe0neXzzovZysifm+xN5bltRjm25Nw/
+         yDb3WmX2AegA4QUpex9hr9gJkrkTXj7FEyvGXviGVJeuXnlhB0+Z3PM4XArK2fiY2iBf
+         NFxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745486606; x=1746091406;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9hCllJCkBelUx+2R4zB5n2lQMaonRD+b0FrE8QTmkw=;
+        b=hF9V027IatXmJL2nU3OP4EischXP+dzg8S01c2n7uEROvZg239lV+/Kvwwrm0mAYxg
+         m82Y/2e9vr/85/mNZ5NkGV4BtmIF3ssWP+K5sGQ3SDrbcsD0yMcYon+8PUK93FCzZMML
+         cONkINY4BJ5W86QsuXvKy7fsYJAiLSF59rj+37oOMxgJk48Wym6mT0/GvzgoJxYedV1/
+         iYSXJ77kTOafCS/LUzvHLMVmb9hG4/HEHR9jJbg5/FanjwYsMEULXdKQWKW81mgcozc4
+         BXXKn2xwkOSedKcX5JZ1kIknmb9tH3E/W0AFFtOSOtYKWMOjDWpFIoJbLEhDPGkVI+//
+         Ft9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVpK2sseWzMNs6VRnqxE2uEWY/KQ1kueYPVUf+oaaZL6mIwSMnsaf8smnIrdAM8CfYyH6akBKLo0OHAjvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2/DsWc/AleuPzFP4706Z+jPiAXEqYHVBWiWXrf0dCXUAjD4OH
+	L8XCLCalPe59PpF5bDJ0wzGdvH3+idi6TJDx9k9tN+C/JZ7FNBHWo7jWrF85LaoRgm7BTupAD7t
+	i
+X-Gm-Gg: ASbGncta6FG/tV9vlYzI0hXCQKDRKWUOhBIkE1iLDy9eEpOLwUEXfxvMU8VmfxQqpwu
+	qe26wAz4T9HhdwFyHOmt4d7tFM0hfyuRoewl72v91XbdV2Qa5PZts0yw8PmgkDcBougL9hFWpoZ
+	UpyorqBHxtOA6CIvndL/6CtiURZk25nmV2i9IWRXNv3CWUXibeRwLJZHIbu0mQWlEFb2RUrPhai
+	irKmA16H+YtVDzq4qY61gh2HQAHxBAWDMXqnuDjqDnxHBNxyELDdNJ+S0FYajloHJtgmC1BipPq
+	p3Gb3L/WTz+cm7d2nTh18SVQ6RLTmmUsZItr2qqBjAA=
+X-Google-Smtp-Source: AGHT+IETjmi/Y7OyIjYMlqNEY6NcsrowSG6ChgDsbfIVMoAUbnGyhwm5MHZjrmLvrUIIGtjKQPxO/Q==
+X-Received: by 2002:a05:6000:240b:b0:39e:e557:7fa with SMTP id ffacd0b85a97d-3a06cfa8d32mr1596859f8f.44.1745486605744;
+        Thu, 24 Apr 2025 02:23:25 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a7fa9sm1447241f8f.5.2025.04.24.02.23.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 02:23:25 -0700 (PDT)
+Date: Thu, 24 Apr 2025 11:23:23 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Kevin Mitchell <kevmitch@arista.com>
+Cc: "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ryo Takakura <takakura@valinux.co.jp>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jocelyn Falempe <jfalempe@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk/panic: deduplicate backtrace on
+ PANIC_PRINT_ALL_CPU_BT
+Message-ID: <aAoDC76UiSpCJhGY@pathway.suse.cz>
+References: <20250423202620.1686446-1-kevmitch@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] iommu/vt-d: Simplify domain_attach_iommu()
-To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-References: <20250423031020.2189546-1-baolu.lu@linux.intel.com>
- <20250423031020.2189546-4-baolu.lu@linux.intel.com>
- <BN9PR11MB527619613B8615A94A01FF598C852@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB527619613B8615A94A01FF598C852@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423202620.1686446-1-kevmitch@arista.com>
 
-On 4/24/2025 3:46 PM, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Wednesday, April 23, 2025 11:10 AM
->>
->>   	num = ida_alloc_range(&iommu->domain_ida, FLPT_DEFAULT_DID +
->> 1,
->>   			      cap_ndoms(iommu->cap) - 1, GFP_KERNEL);
->> -	if (num < 0) {
->> -		pr_err("%s: No free domain ids\n", iommu->name);
+On Wed 2025-04-23 13:26:17, Kevin Mitchell wrote:
+> On panic, the backtrace of the panicking CPU will be printed either from
+> within panic() itself or by the oops handling. Previously, when
+> PANIC_PRINT_ALL_CPU_BT was enabled, the backtrace of the panicking CPU
+> would be printed again.
 > 
-> this error message could be kept.
-
-Okay.
-
+> To avoid cluttering up the crash log or console with this redundant
+> information, this commit omits the panicking CPU from the all-cpu
+> backtrace printed by panic_printk=PANIC_PRINT_ALL_CPU_BT.
 > 
->> -		goto err_unlock;
->> -	}
->> +	if (num < 0)
->> +		return num;
->>
->>   	info->refcnt	= 1;
->>   	info->did	= num;
->>   	info->iommu	= iommu;
->> -	curr = xa_cmpxchg(&domain->iommu_array, iommu->seq_id,
->> -			  NULL, info, GFP_KERNEL);
->> -	if (curr) {
->> -		ret = xa_err(curr) ? : -EBUSY;
->> -		goto err_clear;
->> -	}
->>
->> -	return 0;
->> -
->> -err_clear:
->> -	ida_free(&iommu->domain_ida, info->did);
->> -err_unlock:
->> -	kfree(info);
->> -	return ret;
->> +	return xa_err(xa_store(&domain->iommu_array, iommu->seq_id,
->> +			       no_free_ptr(info), GFP_KERNEL));
->>   }
-> 
-> no_free_ptr() should be used before successful return. Here xa_store()
-> could return error but at that point no auto free as no_free_ptr() already
-> changes 'info' to NULL. then memory leak.
-Hmm, I've considered this. My thought was that xa_store() failure only
-occurs due to the system running out of memory, and the Linux kernel
-can't recover from it. In that case, the system is already broken;
-hence, handling the failure case here doesn't make things better.
+> Signed-off-by: Kevin Mitchell <kevmitch@arista.com>
 
-Thanks,
-baolu
+Makes sense. The patch looks good to me.
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
 
