@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-618430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F61EA9AE75
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:09:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4067A9AE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8653B8A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:06:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39647AE0CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392B528151F;
-	Thu, 24 Apr 2025 13:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D33280CDC;
+	Thu, 24 Apr 2025 13:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n+NEJmJg"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnSJdYvB"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3F143C69
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A7F27C17F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745499888; cv=none; b=OyEQVqCyeCw55CYHqbzZEEOmZ3inwajz+R+UfP45NTi5jVpRh9LzOSrNeL/IJyz5c+rxKYj8u2XRHf1gvO3Qm278+s+A5J+j21w+nBoixE24Et+ylLPZYkVcM4ynRSuoTWNOEVJJDCZ3uEoiKkpRJono5HDZYWE4Xu7nw8kn/sI=
+	t=1745499887; cv=none; b=m4pajGgNs5Eeldx9vz74wSJD5b8nqNyaqOESrjV7pixQd4ewG690eSea65iKKw7mTSD8de/Y3mBietVR2yOdpjyoyvHPjS21GGQzra4477WvucUt4mfbngIsMqgLMbA7nOJOhurYbTQlpxhdLRWPO2EsK2mruDkTWa55eQBBoVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745499888; c=relaxed/simple;
-	bh=7ugfQMszcHvHRUWtXIg4mzvRmiSjFZ9os0x6k4Z3O4g=;
+	s=arc-20240116; t=1745499887; c=relaxed/simple;
+	bh=i9iAShUceIpLsFwMkQWLMhsv4ypR95GsTISxh9DtKsE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=smzrM3EhuwP9nDWP0pc2i26da83+Y0+7U9GilCTt8MSvubMPOvhB+2bFvglGIx+JxCuHP9IwXjSSJw4pbtC2n3GbK2jPwUwlT/lBF6Lb2Y45IjtD3NcPGuu94r/BdsF4yBuxgKXuLb4Kaqh4taXWu9N926DWD1DxlGA2EKrwd2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n+NEJmJg; arc=none smtp.client-ip=209.85.208.53
+	 In-Reply-To:To:Cc; b=eRpnK/VdHO4dOrsC072T0mTAuvvxXCKh4448IRQn70cylSnvutP3k0jt5VU/shVEdp+MPaQRAItTkB+RAMjr0f1q4BY/hTn6E1rhj9ZdkfK4Ns11hl9B2pztu994y3dYpVlUd9zs0JsudNLE5W5uK/7tKfuiMfmbj9bbLlIOFnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HnSJdYvB; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e61a18c05aso153660a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:04:44 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-acb94bf7897so11544066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745499882; x=1746104682; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745499884; x=1746104684; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mElkFmUWzBGJzGcl61kaqkv7tziqwCuTi211jM0Qr9Y=;
-        b=n+NEJmJgK4PUqRkFuGnQEdlNoygGJWuERESUqc/9B3gcpujnn1IUfxd50FUrUo+Flq
-         QdlT7ATa/CvrRy2SXR6jTPq6HwcNmN1CJXrWc9yPKZrM7Sh+icG9AFVevQFaivgmV++9
-         QtT/Pa/WLCpkKBK63XN/Z6Y6wOb1oAS53pYfIqv00HcLh/xZan0F6i8AT5F7w/doNf1/
-         qOIf812R5kHan2c40XzKk0Z20aN+AMmxrngGiCzLeN5B0wEXdAFD8DZKz6L05Oj0k3xG
-         lBk1Cs8kMwzbNjoNkVXSzMdCv7TP6HKnxRVM4rlHQ0aiPvAoIJGhiKn6acHGlmiuiRjG
-         hBJg==
+        bh=SFy6LfZrrQ3Ec4dLUHga70j/5w640VgvYLPY8K+UokE=;
+        b=HnSJdYvBgexTvw7V3Oo3A2X1IWJgk5hZlaxnjCP9BFQkuT0gOjfFeD5Ow9+CpXMTHt
+         4IYr67Frlugfb4UlpJzW4ADulbzubntUG6+KPqccUV/0Xv/wDv0kgXDnYqckWzvapRvp
+         nty07PHxWw+lzcv8J4u3Q9FMNpNuPCwJmcgYbFHvVfoHzlL5gTvmDea9Sp5ldjkpG/p2
+         uMj2pdiQZHWpKb6sb4gYvExKpFKsNduXAUbfcawsFtx2BCO/DHsrpgwhHnt/Wuhpw9Ct
+         5YogcxtzE9ZVy5RpRa2I8zUYcS/Q7DKylaQfg/nYdjkhBr7EdMr+g29/W8KJqDrn9Dvj
+         fyYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745499882; x=1746104682;
+        d=1e100.net; s=20230601; t=1745499884; x=1746104684;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mElkFmUWzBGJzGcl61kaqkv7tziqwCuTi211jM0Qr9Y=;
-        b=jFCBjHnuKonkfsoaOdikRXWG9zvWNaf02cQEiHiZLcQX6V9Bp+K4M1m74WkWfkqBGX
-         JjXEJFQAPUTmSIK2N5T+vHobq/zNQCLwaDffRi6xOOkC2vN4C19r0qN51lDDizB3puv9
-         pcn6jrEVLwk0dOJiAXzUzfMFa+Mr/b3cPoif50fTZhiDw6+XwSEtvxtmVZlWGdkUWXyo
-         +TWL4Q8VPswm/wpFajAzk8CjTpMBS4zq1pheqU+00QrSHuv2ywcXf5PG3c6z/Mno1cl8
-         lD9zohCrISdIhJgDI+bEpqAOx0lrq1tflWC0km0eJC5IuNtiGEIyps469RdomjvtRrDF
-         w+zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWop9Mpzjw1q4znQdlQUXZ5OQbSVhie1CL/Pi+hTgO+JE3LvxjvquY2AU4J0TxRoYkGzu30wDSqkdn3314=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWq7wx4Sq/qicwsXPX0Lyxy/HJRVG+/e6Lb9arxVoNiH4+aC6S
-	B4TInrW6AxN4jhWL1KZ5wun6uaJWkcKs5Fw3sLgy9pFA6UlZWfb/WQWORCkcmnI=
-X-Gm-Gg: ASbGncsiqydwzjObZc1kz6ThoreJ3CYctO2ORWPt/GTWNYnLQcbYqxF+rBGZmaL+v6j
-	6kYNa9T5Vncc2Ib9uqR9Bwy94uH2rvlK5oYCn9w9QprSW3YItMBtrE0JJ3ePYHjTzETGpdsrzFC
-	w+Kwt08Qxqfb8Q1GwRdb02ZWhuLVKRUtLAJK+jsrCdYRgsjHFZ/filWaXhLV7JmYoaZ58VJRfW3
-	6yjB0dIcKoHUSYzhIjimQKQx9hxb+DyEEu21YH/Zv7d0gRrMX8+k+JF8jDWRY+nwyfoP7/vifWf
-	BEyoABEyWRvxtGWzzQHFS7+qIiBbhD3EUQRmrBZPzXfAJlu49snGCQlO7kw=
-X-Google-Smtp-Source: AGHT+IF8X2aJnI0gX005t0PUri54D3dtcnw/lw1QVpFik/ihHMWtN4i5bOiGkzFgQiAqdGEB6v6a6A==
-X-Received: by 2002:a17:907:1c1d:b0:ac0:b71e:44e0 with SMTP id a640c23a62f3a-ace572a2d04mr97786466b.9.1745499882321;
-        Thu, 24 Apr 2025 06:04:42 -0700 (PDT)
+        bh=SFy6LfZrrQ3Ec4dLUHga70j/5w640VgvYLPY8K+UokE=;
+        b=f44yrY0TvVeI1XwoSw++PBeAPN6xmvhKrnDeGcQE7zq78L3QPcl4rWaV7YfjQbrhqc
+         PvlEXgqWNYX4qxiCz5EIMxLU53im7adcAUctUVWz/JJPyemGQ4UV9FvRuIEYoSlu5Hm5
+         1JVbwbzdRiCZRS+HxFMZdyth6H6kjs1wKjKkY4sRi4iGl/vjjAxDl6/ediPXxgPwW+D2
+         lR5G0pmvCsJ0g+ZQMnDvZVnJOKBBIk707b13qm/esrLk2/B9EdmyPxRikExmafJv7hDz
+         qP6HAWRAsxbNJrxYR2K7veIS9EtXkS/mE2bLSBuMc2p9oas+wAQzJEq1u66+0y6iE/aj
+         tiYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsqjcGHZUTRMLF8TTuFrTZG4IEON1eH/A5y44GrprmP5m6i/e+caGcw68zs5LPaFmpDYD9ZVltSx+7/RY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkeVr+MXd+z2p8+4hZGqjncZkRkkI3OTBSbqqcLIlFEMuUkYvQ
+	ZTTxeNQvxvNiWQucbeirPm6W11In10s4rijt1NNgOcGPB3jESuSbR0J9940OHJs=
+X-Gm-Gg: ASbGncs6nQZm+Gx4WoUXzHidSgzVl1AoZjQ3numKEKQClIb7oa5ESbqk2sRw6daElYk
+	7+dPT/J0s27Ej1UjPo5YbJi641aXSHO6PaAv2K8vyfQFhqTm6JeB71ykBZpmMxlHDZBp1ktvFgh
+	OTPLhZWCNNcxUOL+53DvmqyWfjbKn2u+aOlnGTtXchEv+bh5+UZTbDFYtq+GZ6w8YlXwg2GNzwx
+	uhYgZxT4Z+H0KzIrxAKFZF3cPP6GfLOsQx53Y1P8vn6FeV0D3duXKJFNEhL832Tac1kTGrJwg8Y
+	bah/S3iRSGt6RKOIx4Srz9LwcJGQaefNd85Bh664nqCJwMz095ijeBvPC4WOi2Ny86VApQ==
+X-Google-Smtp-Source: AGHT+IEqxlm+C4zPmUZztYOo+O71IivVUdD9uO2+BCuxgVw8VPVSB/N0y3iidE3AdXsH1B8+9cD06A==
+X-Received: by 2002:a17:907:868a:b0:acb:1e98:1a19 with SMTP id a640c23a62f3a-ace5727e5bbmr87084566b.8.1745499883800;
+        Thu, 24 Apr 2025 06:04:43 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59898006sm105101766b.46.2025.04.24.06.04.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59898006sm105101766b.46.2025.04.24.06.04.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 06:04:41 -0700 (PDT)
+        Thu, 24 Apr 2025 06:04:43 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 24 Apr 2025 15:04:25 +0200
-Subject: [PATCH RFC/WIP 1/4] arm64: dts: qcom: sm8750: Add display (MDSS)
- with Display CC
+Date: Thu, 24 Apr 2025 15:04:26 +0200
+Subject: [PATCH RFC/WIP 2/4] arm64: dts: qcom: sm8750-mtp: Enable display
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-sm8750-display-dts-v1-1-6fb22ca95f38@linaro.org>
+Message-Id: <20250424-sm8750-display-dts-v1-2-6fb22ca95f38@linaro.org>
 References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
 In-Reply-To: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -96,471 +95,125 @@ Cc: Jessica Zhang <jesszhan@quicinc.com>,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11528;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2390;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=7ugfQMszcHvHRUWtXIg4mzvRmiSjFZ9os0x6k4Z3O4g=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoCjbjKcAUdLmUVwY3qeJNLFj37nms00KoLQy6I
- uBru+wRVa+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaAo24wAKCRDBN2bmhouD
- 11YFEACOrK4AtRKf2FXsRwDjMoeHBXPBRo8gMlDVv7TBd7fUwAJojINeN7hZgqtBGNxzTB2a1Xb
- hnKvq1UeEorY1/EpjfaJrXLaArHEFG2+a/I91PCRfUqIJrV0XVTJX4vriaNSvBxSJ4Dn/OCx+9a
- QUNHaOpuYPyu/AgW8rWSmValT8bHXB0GOcq2qkePMcTuIECF/egtBsfx92zzkeiTv6tgF1IlS3X
- cFSjv9tKUvl8qkuUvi0sSO64L2XGIyAGH4rwktc552QtW9EJMj7SX65uDtLR6hjGluZXQXlslVo
- vnSUrNgKSGw4x4DeREr6+nhq530+ymOYqg5zoqNE1RUu178HhiR9wJ2HcazDw45aQJdw/zY3EPT
- NvcujWUNbVXIAaUkHSu2SaSInI3lummVCu9bbkJ1RP+XRqJGBD5NO7DstQZq2mW7h9QhgcZ84An
- JBIVB7RW1vyOrM7LqMwr+HHaojR63SYKklMOwMLYmdpotho8HnYjFCo5gZ3ZgLsW16CgaaZm40m
- 7o2nfrqjptfZeWdCNrEKeBCw2pZeBK6hKuVvE8F3qptkn1WI73oLt+zfB67xYKcj5OgUtU0kHWb
- UIyJGlkh24G/rdDmfkbidTcjykIjeQwwjuPyOU6Wgfju+yjB0yzEaWJxM43wnhPz6Ecbp/TbqTY
- hPC68DgQMZyeg3A==
+ bh=i9iAShUceIpLsFwMkQWLMhsv4ypR95GsTISxh9DtKsE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoCjbkxCX+DFB/zE/Qp++piPauiqNmcTUqvonna
+ jMHHJqsMISJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaAo25AAKCRDBN2bmhouD
+ 17F7D/9bgvsuSmXLFGIGmhVmwzD42p821ZAgY6YcN54VKz2jXNUmZQ2zan1E3AW/200n5WMIUW1
+ GVbeq5QsnclztXLLuICZQKFmNCPTRmxfxDKDvpXw+eGV9rRlPNuxSaKyeLVkhpGuRc3tdPJlJEO
+ DIAq17Rlo5YcKCuaKWlCs0KSdqvTmfZqAuHuYU1v0cZVnj3goIZTGF/JaR+KDEAukqTx/FDcPBC
+ pxtJxeH4UKPiJAqec/6FnydilJgpIDJtUat8b3tAmp8pkHLSA6DSTk1A/g6j2POkxrDdcPQFUkS
+ 5E4H3HGCoRhYkUDuLiwDQ9wVyVt1Z4ANasEh9riZ54xY6Vu6afdvC1Z/3sW26nvb/IQGOyy7er4
+ uBcwlSzMCVKvVAflJMvGcyV54X72Hf3gK5o2l/W5a0xfzYzTH9LmZmpBtVPa9wi8Ia6kzSgdbNp
+ 600CfEz+oli1W2gqglSXevEFS8CwgfQGMAr4XZnxDfFE9OYvOy2/H5s9pcRxW5mtyHKHNZpAanb
+ aWsMp/7aMa2uEYPifO1L5LfwxVOxb1xyiywiTCShPzUF+A/M2H3NJ+7lkzWmZuha9dOpJtdldp5
+ ajVY92vIEW5DBlGD3Q4vf+PhUvCXU2gKWrqw02jP/Az7uBxMKGyxxEdo0ckghaugYzj+2K1l8xr
+ RpA0RXDdB4b7VKA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Add device nodes for entire display: MDSS, DPU, DSI, DSI PHYs,
-DisplayPort and Display Clock Controller.
+Enable display on MTP8750 board with Novatek NT37801 panel.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
-Bindings (dtbs_check dependency):
-https://lore.kernel.org/r/20250311-b4-sm8750-display-v4-0-da6b3e959c76@linaro.org/
+Depends on WIP
+https://github.com/krzk/linux/tree/b4/sm8750-display-panel for display
+panel bindings (novatek,nt37801)
 ---
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 415 +++++++++++++++++++++++++++++++++++
- 1 file changed, 415 insertions(+)
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 70 +++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 30ee98567b6078e8225142f2e13b25b5f35a3038..753b069cab1de636a3b1108747f300bec0f33980 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -3,7 +3,9 @@
-  * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
+diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+index 140a3a36d03008f700bb54ca52f437f81e6c68e2..bd0918e8a7a7e03530eea577c7609454fecfdaf7 100644
+--- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+@@ -853,6 +853,48 @@ &lpass_vamacro {
+ 	qcom,dmic-sample-rate = <4800000>;
+ };
  
-+#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm8750-dispcc.h>
- #include <dt-bindings/clock/qcom,sm8750-gcc.h>
- #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
- #include <dt-bindings/dma/qcom-gpi.h>
-@@ -2585,6 +2587,419 @@ data-pins {
- 			};
- 		};
- 
-+		mdss: display-subsystem@ae00000 {
-+			compatible = "qcom,sm8750-mdss";
-+			reg = <0x0 0x0ae00000 0x0 0x1000>;
-+			reg-names = "mdss";
++&mdss {
++	status = "okay";
++};
 +
-+			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++&mdss_dsi0 {
++	vdda-supply = <&vreg_l3g_1p2>;
 +
-+			clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_DISP_HF_AXI_CLK>,
-+				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
++	status = "okay";
 +
-+			resets = <&dispcc DISP_CC_MDSS_CORE_BCR>;
++	panel@0 {
++		compatible = "novatek,nt37801";
++		reg = <0>;
 +
-+			interconnects = <&mmss_noc MASTER_MDP QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
-+			interconnect-names = "mdp0-mem",
-+					     "cpu-cfg";
++		reset-gpios = <&tlmm 98 GPIO_ACTIVE_LOW>;
 +
-+			power-domains = <&dispcc MDSS_GDSC>;
++		vddio-supply = <&vreg_l12b_1p8>;
++		vci-supply = <&vreg_l13b_3p0>;
++		vdd-supply = <&vreg_l11b_1p0>;
 +
-+			iommus = <&apps_smmu 0x800 0x2>;
++		pinctrl-0 = <&disp0_reset_n_active>, <&mdp_vsync_active>;
++		pinctrl-1 = <&disp0_reset_n_suspend>, <&mdp_vsync_suspend>;
++		pinctrl-names = "default", "sleep";
 +
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			status = "disabled";
-+
-+			mdss_mdp: display-controller@ae01000 {
-+				compatible = "qcom,sm8750-dpu";
-+				reg = <0 0x0ae01000 0 0x93000>,
-+				      <0 0x0aeb0000 0 0x2008>;
-+				reg-names = "mdp",
-+					    "vbif";
-+
-+				interrupts-extended = <&mdss 0>;
-+
-+				clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
-+					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
-+					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
-+					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+				clock-names = "nrt_bus",
-+					      "iface",
-+					      "lut",
-+					      "core",
-+					      "vsync";
-+
-+				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+				assigned-clock-rates = <19200000>;
-+
-+				operating-points-v2 = <&mdp_opp_table>;
-+
-+				power-domains = <&rpmhpd RPMHPD_MMCX>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						dpu_intf1_out: endpoint {
-+							remote-endpoint = <&mdss_dsi0_in>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						dpu_intf2_out: endpoint {
-+							remote-endpoint = <&mdss_dsi1_in>;
-+						};
-+					};
-+
-+					port@2 {
-+						reg = <2>;
-+
-+						dpu_intf0_out: endpoint {
-+							remote-endpoint = <&mdss_dp0_in>;
-+						};
-+					};
-+				};
-+
-+				mdp_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-207000000 {
-+						opp-hz = /bits/ 64 <207000000>;
-+						required-opps = <&rpmhpd_opp_low_svs>;
-+					};
-+
-+					opp-337000000 {
-+						opp-hz = /bits/ 64 <337000000>;
-+						required-opps = <&rpmhpd_opp_svs>;
-+					};
-+
-+					opp-417000000 {
-+						opp-hz = /bits/ 64 <417000000>;
-+						required-opps = <&rpmhpd_opp_svs_l1>;
-+					};
-+
-+					opp-532000000 {
-+						opp-hz = /bits/ 64 <532000000>;
-+						required-opps = <&rpmhpd_opp_nom>;
-+					};
-+
-+					opp-575000000 {
-+						opp-hz = /bits/ 64 <575000000>;
-+						required-opps = <&rpmhpd_opp_nom_l1>;
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0: dsi@ae94000 {
-+				compatible = "qcom,sm8750-dsi-ctrl", "qcom,mdss-dsi-ctrl";
-+				reg = <0x0 0x0ae94000 0x0 0x400>;
-+				reg-names = "dsi_ctrl";
-+
-+				interrupts-extended = <&mdss 4>;
-+
-+				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
-+					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&gcc GCC_DISP_HF_AXI_CLK>,
-+					 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>,
-+					 <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
-+					 <&dispcc DISP_CC_ESYNC0_CLK>,
-+					 <&dispcc DISP_CC_OSC_CLK>,
-+					 <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
-+					 <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
-+				clock-names = "byte",
-+					      "byte_intf",
-+					      "pixel",
-+					      "core",
-+					      "iface",
-+					      "bus",
-+					      "dsi_pll_pixel",
-+					      "dsi_pll_byte",
-+					      "esync",
-+					      "osc",
-+					      "byte_src",
-+					      "pixel_src";
-+
-+				operating-points-v2 = <&mdss_dsi_opp_table>;
-+
-+				power-domains = <&rpmhpd RPMHPD_MMCX>;
-+
-+				phys = <&mdss_dsi0_phy>;
-+				phy-names = "dsi";
-+
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdss_dsi0_in: endpoint {
-+							remote-endpoint = <&dpu_intf1_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						mdss_dsi0_out: endpoint {
-+						};
-+					};
-+				};
-+
-+				mdss_dsi_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-187500000 {
-+						opp-hz = /bits/ 64 <187500000>;
-+						required-opps = <&rpmhpd_opp_low_svs>;
-+					};
-+
-+					opp-300000000 {
-+						opp-hz = /bits/ 64 <300000000>;
-+						required-opps = <&rpmhpd_opp_svs>;
-+					};
-+
-+					opp-358000000 {
-+						opp-hz = /bits/ 64 <358000000>;
-+						required-opps = <&rpmhpd_opp_svs_l1>;
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0_phy: phy@ae95000 {
-+				compatible = "qcom,sm8750-dsi-phy-3nm";
-+				reg = <0x0 0x0ae95000 0x0 0x200>,
-+				      <0x0 0x0ae95200 0x0 0x280>,
-+				      <0x0 0x0ae95500 0x0 0x400>;
-+				reg-names = "dsi_phy",
-+					    "dsi_phy_lane",
-+					    "dsi_pll";
-+
-+				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&bi_tcxo_div2>;
-+				clock-names = "iface",
-+					      "ref";
-+
-+				#clock-cells = <1>;
-+				#phy-cells = <0>;
-+
-+				status = "disabled";
-+			};
-+
-+			mdss_dsi1: dsi@ae96000 {
-+				compatible = "qcom,sm8750-dsi-ctrl", "qcom,mdss-dsi-ctrl";
-+				reg = <0x0 0x0ae96000 0x0 0x400>;
-+				reg-names = "dsi_ctrl";
-+
-+				interrupts-extended = <&mdss 5>;
-+
-+				clocks = <&dispcc DISP_CC_MDSS_BYTE1_CLK>,
-+					 <&dispcc DISP_CC_MDSS_BYTE1_INTF_CLK>,
-+					 <&dispcc DISP_CC_MDSS_PCLK1_CLK>,
-+					 <&dispcc DISP_CC_MDSS_ESC1_CLK>,
-+					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&gcc GCC_DISP_HF_AXI_CLK>;
-+				clock-names = "byte",
-+					      "byte_intf",
-+					      "pixel",
-+					      "core",
-+					      "iface",
-+					      "bus";
-+
-+				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE1_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_PCLK1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss_dsi1_phy DSI_BYTE_PLL_CLK>,
-+							 <&mdss_dsi1_phy DSI_PIXEL_PLL_CLK>;
-+
-+				operating-points-v2 = <&mdss_dsi_opp_table>;
-+
-+				power-domains = <&rpmhpd RPMHPD_MMCX>;
-+
-+				phys = <&mdss_dsi1_phy>;
-+				phy-names = "dsi";
-+
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdss_dsi1_in: endpoint {
-+							remote-endpoint = <&dpu_intf2_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						mdss_dsi1_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+
-+			mdss_dsi1_phy: phy@ae97000 {
-+				compatible = "qcom,sm8750-dsi-phy-3nm";
-+				reg = <0x0 0x0ae97000 0x0 0x200>,
-+				      <0x0 0x0ae97200 0x0 0x280>,
-+				      <0x0 0x0ae97500 0x0 0x400>;
-+				reg-names = "dsi_phy",
-+					    "dsi_phy_lane",
-+					    "dsi_pll";
-+
-+				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&rpmhcc RPMH_CXO_CLK>;
-+				clock-names = "iface",
-+					      "ref";
-+
-+				#clock-cells = <1>;
-+				#phy-cells = <0>;
-+
-+				status = "disabled";
-+			};
-+
-+			mdss_dp0: displayport-controller@af54000 {
-+				compatible = "qcom,sm8750-dp", "qcom,sm8650-dp";
-+				reg = <0x0 0xaf54000 0x0 0x104>,
-+				      <0x0 0xaf54200 0x0 0xc0>,
-+				      <0x0 0xaf55000 0x0 0x770>,
-+				      <0x0 0xaf56000 0x0 0x9c>,
-+				      <0x0 0xaf57000 0x0 0x9c>;
-+
-+				interrupts-extended = <&mdss 12>;
-+
-+				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+				clock-names = "core_iface",
-+					      "core_aux",
-+					      "ctrl_link",
-+					      "ctrl_link_iface",
-+					      "stream_pixel";
-+
-+				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+				assigned-clock-parents = <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
-+
-+				operating-points-v2 = <&dp_opp_table>;
-+
-+				power-domains = <&rpmhpd RPMHPD_MMCX>;
-+
-+				phys = <&usb_dp_qmpphy QMP_USB43DP_DP_PHY>;
-+				phy-names = "dp";
-+
-+				#sound-dai-cells = <0>;
-+
-+				status = "disabled";
-+
-+				dp_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-192000000 {
-+						opp-hz = /bits/ 64 <192000000>;
-+						required-opps = <&rpmhpd_opp_low_svs_d1>;
-+					};
-+
-+					opp-270000000 {
-+						opp-hz = /bits/ 64 <270000000>;
-+						required-opps = <&rpmhpd_opp_low_svs>;
-+					};
-+
-+					opp-540000000 {
-+						opp-hz = /bits/ 64 <540000000>;
-+						required-opps = <&rpmhpd_opp_svs_l1>;
-+					};
-+
-+					opp-810000000 {
-+						opp-hz = /bits/ 64 <810000000>;
-+						required-opps = <&rpmhpd_opp_nom>;
-+					};
-+				};
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdss_dp0_in: endpoint {
-+							remote-endpoint = <&dpu_intf0_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						mdss_dp0_out: endpoint {
-+						};
-+					};
-+				};
++		port {
++			panel0_in: endpoint {
++				remote-endpoint = <&mdss_dsi0_out>;
 +			};
 +		};
++	};
++};
 +
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sm8750-dispcc";
-+			reg = <0 0x0af00000 0 0x20000>;
++&mdss_dsi0_out {
++	remote-endpoint = <&panel0_in>;
++	data-lanes = <0 1 2 3>;
++};
 +
-+			clocks = <&bi_tcxo_div2>,
-+				 <&bi_tcxo_ao_div2>,
-+				 <&gcc GCC_DISP_AHB_CLK>,
-+				 <&sleep_clk>,
-+				 <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
-+				 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>,
-+				 <&mdss_dsi1_phy DSI_BYTE_PLL_CLK>,
-+				 <&mdss_dsi1_phy DSI_PIXEL_PLL_CLK>,
-+				 <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+				 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
-+				 <0>, /* dp1 */
-+				 <0>,
-+				 <0>, /* dp2 */
-+				 <0>,
-+				 <0>, /* dp3 */
-+				 <0>;
++&mdss_dsi0_phy {
++	vdds-supply = <&vreg_l3i_0p88>;
 +
-+			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
++	status = "okay";
++};
 +
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
+ &pm8550_flash {
+ 	status = "okay";
+ 
+@@ -1078,6 +1120,34 @@ spkr_1_sd_n_active: spkr-1-sd-n-active-state {
+ };
+ 
+ &tlmm {
++	disp0_reset_n_active: disp0-reset-n-active-state {
++		pins = "gpio98";
++		function = "gpio";
++		drive-strength = <8>;
++		bias-disable;
++	};
 +
- 		usb_1_hsphy: phy@88e3000 {
- 			compatible = "qcom,sm8750-m31-eusb2-phy";
- 			reg = <0x0 0x88e3000 0x0 0x29c>;
++	disp0_reset_n_suspend: disp0-reset-n-suspend-state {
++		pins = "gpio98";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-pull-down;
++	};
++
++	mdp_vsync_active: mdp-vsync-active-state {
++		pins = "gpio86";
++		function = "mdp_vsync";
++		drive-strength = <2>;
++		bias-pull-down;
++	};
++
++	mdp_vsync_suspend: mdp-vsync-suspend-state {
++		pins = "gpio86";
++		function = "mdp_vsync";
++		drive-strength = <2>;
++		bias-pull-down;
++	};
++
+ 	wcd_default: wcd-reset-n-active-state {
+ 		pins = "gpio101";
+ 		function = "gpio";
 
 -- 
 2.45.2
