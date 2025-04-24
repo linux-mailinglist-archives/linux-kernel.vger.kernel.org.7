@@ -1,162 +1,206 @@
-Return-Path: <linux-kernel+bounces-618260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D01DA9AC32
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 472ACA9AC36
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B449A0669
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3149A12FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C38422E403;
-	Thu, 24 Apr 2025 11:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807D022577D;
+	Thu, 24 Apr 2025 11:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wf/0iuac"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="FGyyfJ3z"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D634522DF9B;
-	Thu, 24 Apr 2025 11:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B5D221FAA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745494434; cv=none; b=lsIzp0LXN2wxKVmEaTaQyU8W3dLZV9qn/8u534L1m12Q3QZNIUEwOyRHVcKC+03GR1lW7SrVRVocABaswb5F6dxKvNdN2uWrI0SLV/xcCJV87bKuvP0wiSIDdTgYXIh4nVOqAZuBpFygpyWvbbX9C9kIfvmgGbjAT6Puz/r7NuA=
+	t=1745494465; cv=none; b=dZyVhRRmsRYnLjh0t3JdA/iXY3dt1ROO1GX+Lv9x6I6NUnPy0wiKW4VQaCs8LTWNiVMlzVKu1/FMGfPCahMttKnqg8iEtOhKL1pqHazK1CjaIk24YF1hO4Uu2oQzyK3jLN+3NHi4/jHUJyUsHv7jqM3bHJj6oNvTMO+1142ghjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745494434; c=relaxed/simple;
-	bh=V6GHoM+Hg9b0NR0ndNd7C2EGSHQD9YLjrj/4HlocGLY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NSAZeQ2uln+8TTWRyAUIHAyZXgN2RUdYOcxVCEsMhZ+H+v71GJ00okynoujUziAHNcVZAJVUgJoX4SIFSith+vAw0urRPmeIgfF+Hb8zeZz9GPMTBZcOYb0mEB3Vo/l6mxs2hYtSWkDmw0NYDnLT0czbCz2sn+7n2RA+iqPI650=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wf/0iuac; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Zjv4Y0zgBz9sQ7;
-	Thu, 24 Apr 2025 13:33:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1745494429; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VvmYiqO9VGDW4sHmKipaGsuLZDGBQXLdUdLsW2eNGXs=;
-	b=wf/0iuacaCy/4Q7GPIehBvUDBkcHLLoLAIHbDLJgByNhz1Da4dQ5kM9mRLdmkLDlhL8QQZ
-	d4T2E9BrtdCgQVJBwEGGwFS3CJ3E3PrxSCNr6UWa8jSVe2kuwZkinA85DhnxLuPas/NtpX
-	y+BxxylQxI4tfOFYcwBJdysZ0dX5w/wBVuLNtYh+LP9uFgKAewekfYjGhecBsOqi82PJzf
-	AA/acyyLnHA2ooJDkgWggnc9030ldSs/Dx3gz/hahvIJE1BSpxa8xAnMvYlfFaJXlixWeA
-	3IzSRNz9JuR+lzYSatXie3FTzLOOIiJVvJbqFdn/s9VL7Fw5lUXRtaqmKV6AAA==
-Message-ID: <4afd7908d687e51405bfe9fd4fcb3cd9b3631775.camel@mailbox.org>
-Subject: Re: [PATCH v2 2/4] ASoC: intel/avs: Use pure devres PCI
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Amadeusz =?UTF-8?Q?S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>, Philipp Stanner <phasta@kernel.org>,
-  Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood
- <liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Bard Liao
- <yung-chuan.liao@linux.intel.com>,  Ranjani Sridharan
- <ranjani.sridharan@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart
- <pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, Jaroslav
- Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Daniel Baluta
- <daniel.baluta@nxp.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
- Damien Le Moal <dlemoal@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sound-open-firmware@alsa-project.org
-Date: Thu, 24 Apr 2025 13:33:41 +0200
-In-Reply-To: <ebf0ccd0-9429-43b6-b56b-73feeb856593@linux.intel.com>
-References: <20250423082858.49780-2-phasta@kernel.org>
-	 <20250423082858.49780-4-phasta@kernel.org>
-	 <ebf0ccd0-9429-43b6-b56b-73feeb856593@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1745494465; c=relaxed/simple;
+	bh=IXZ8njn3lHnMF+wZnne8sz6AGB4un/zdAulPyviKX2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9o2MOUhXejpuJU0uQhgb4pn1Yx6vSs5Ne5Ce/ZgZq/5tTLiZ3IBiG/B2EoM7ft65CuF67GtyR3DwHTI1Z6G5i4dmCBqAv+5lcEK4ArRw9tVyqW3r/RtPXOAas+hs84H7gFLsFGjw6rsXCSW3ZLNdsGNd2S0xnGp+ztxqQbzJ/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=FGyyfJ3z; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39ee682e0ddso573964f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1745494462; x=1746099262; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8kNEaxbnoW9g1fYmJXQwSNKTdFbvmREbcFtvdLnT5Xc=;
+        b=FGyyfJ3zg9bv6mloDJ2FkB2yKg3eCFZBZzb60PEmUrgTOvN+NHVnzs/bxebUlVPYr4
+         L9IB4We2faZXga9kaduTRsNiDGFaMFnOFvA8kJgTvo1qdhniaZvBIH4EvtY/hD8SCSzX
+         gVF5JMFsSTetIM9xznaCFyoaUljkjGVD7fUR6gp7t4nt80FdPBm5Hq+AV0qcMi6RqNao
+         mz/WXQkm+4axtum9KMbIByJJ+Cyd3pIz+cJMOYSFMOHLVAy/KlgrHEuPob3Jx3K9dpVY
+         fojQl77MQQwRfLguAdJ89kmk5UP/6ISH0HCRqnL/fqKgUGLrbgs9iHXudcdVLBczXbMW
+         KZHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745494462; x=1746099262;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kNEaxbnoW9g1fYmJXQwSNKTdFbvmREbcFtvdLnT5Xc=;
+        b=LMjFut6PphTNIgOLBJFHYOFVxaOCpiqbgEpkznAvFGtjR6cB9mCw5j4jGLRbbivwO/
+         xrPhpA0jy7kdd1h0ptX7XK2VlLjRMa/wqmVQ8ZpLc4cv1ZLQjcudYj9OggFb35vwZlEi
+         kLXI57A16Ak9CMfhRgLBknFhe8DXBB4tW3dAMu+Vqz+tXmTVabZi4yXEi3T7oHN9LxVX
+         V3FH1u07h+SPMeroY42Q47G0gCMtM+ICoBCWfXgUoXJojX4SYbFFb33XhSyTnRI7MnF+
+         jYQ8vSUJlr0NUcYQlUPhtLg8FiaherGSvfmgOHHpKXpp93hu4WnKwL5/JWBoRVttHcVd
+         Wy7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXKKuWX9g5vNRaj1zAdzy+RDw10/yUy90E/ZzALETM/cf98f65U5JImJMU0bmxM/xQfUyQhQPmSSmt8jNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+nm5XY6d9otbEaatn/yR2bjErJadq4252JuHMCtVEuYo32vPx
+	D4eW795ojvS6yPeXgl043CmzWMbxTPZA9zIzagDfR3oZ661rzsiPrM1T2yNym9o=
+X-Gm-Gg: ASbGnctsi5n4WpWbVyO+GCpBVEBFAoNzPacRl9VtqWF/4Wqjr+41NpdvJwbQ8PPjW+Z
+	fnXpF/Y+VjBSP5dOIKP/ArxoZECSBIuFhKNshbVomLvO7AsRsUbTOz9A0vW+OCxKKeNubX1yK4A
+	IiUQtOwzsdlF6BoR2vyly8Tyzp37IBR/pQSteyTyKSjVLRufqDYnrmPllTE4HuvTNtJlf8nHN0t
+	y5oCndCjxjJRegppsDVvBBi2gCBv2lqf+3QPB02Hv6twt0JLfjgUL6tZHgZM2+MJ7rH+YIrEYKR
+	H6gnBmzrbnvwEPyBdpArdhUg13eI
+X-Google-Smtp-Source: AGHT+IH+Hg3/PqfVx4rNvlrTeNa+fBCY/aumfjJWzS9tER7WilSZAHlxfjRytvmLaoteiiEk+m6uJg==
+X-Received: by 2002:a5d:4a8e:0:b0:39a:c9d9:877b with SMTP id ffacd0b85a97d-3a06cf5f4fcmr1401332f8f.27.1745494461931;
+        Thu, 24 Apr 2025 04:34:21 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::f716])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4bf781sm1830579f8f.37.2025.04.24.04.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 04:34:21 -0700 (PDT)
+Date: Thu, 24 Apr 2025 13:34:20 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCH v5 13/13] RISC-V: KVM: add support for
+ SBI_FWFT_MISALIGNED_DELEG
+Message-ID: <20250424-ae24464169f7143c509cbab5@orel>
+References: <20250417122337.547969-1-cleger@rivosinc.com>
+ <20250417122337.547969-14-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: fb6bd41d72a09f6eadb
-X-MBO-RS-META: kosr7ru5pbbkztmwa149qwtdq5tnmgj7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250417122337.547969-14-cleger@rivosinc.com>
 
-On Thu, 2025-04-24 at 12:21 +0200, Amadeusz S=C5=82awi=C5=84ski wrote:
->=20
->=20
-> On 2025-04-23 10:28, Philipp Stanner wrote:
-> > pci_request_regions() is a hybrid function which becomes managed if
-> > pcim_enable_device() was called before. This hybrid nature is
-> > deprecated
-> > and should not be used anymore.
-> >=20
-> > Replace pci_request_regions() with the always-managed function
-> > pcim_request_all_regions().
-> >=20
-> > Remove the goto jump to pci_release_regions(), since pcim_
-> > functions
-> > clean up automatically.
-> >=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > =C2=A0 sound/soc/intel/avs/core.c | 7 ++-----
-> > =C2=A0 1 file changed, 2 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/sound/soc/intel/avs/core.c
-> > b/sound/soc/intel/avs/core.c
-> > index 8fbf33e30dfc..dafe46973146 100644
-> > --- a/sound/soc/intel/avs/core.c
-> > +++ b/sound/soc/intel/avs/core.c
-> > @@ -445,7 +445,7 @@ static int avs_pci_probe(struct pci_dev *pci,
-> > const struct pci_device_id *id)
-> > =C2=A0=C2=A0		return ret;
-> > =C2=A0=C2=A0	}
-> > =C2=A0=20
-> > -	ret =3D pci_request_regions(pci, "AVS HDAudio");
-> > +	ret =3D pcim_request_all_regions(pci, "AVS HDAudio");
-> > =C2=A0=C2=A0	if (ret < 0)
-> > =C2=A0=C2=A0		return ret;
-> > =C2=A0=20
-> > @@ -454,8 +454,7 @@ static int avs_pci_probe(struct pci_dev *pci,
-> > const struct pci_device_id *id)
-> > =C2=A0=C2=A0	bus->remap_addr =3D pci_ioremap_bar(pci, 0);
-> > =C2=A0=C2=A0	if (!bus->remap_addr) {
-> > =C2=A0=C2=A0		dev_err(bus->dev, "ioremap error\n");
-> > -		ret =3D -ENXIO;
-> > -		goto err_remap_bar0;
-> > +		return -ENXIO;
-> > =C2=A0=C2=A0	}
-> > =C2=A0=20
-> > =C2=A0=C2=A0	adev->dsp_ba =3D pci_ioremap_bar(pci, 4);
-> > @@ -512,8 +511,6 @@ static int avs_pci_probe(struct pci_dev *pci,
-> > const struct pci_device_id *id)
-> > =C2=A0=C2=A0	iounmap(adev->dsp_ba);
-> > =C2=A0 err_remap_bar4:
-> > =C2=A0=C2=A0	iounmap(bus->remap_addr);
-> > -err_remap_bar0:
-> > -	pci_release_regions(pci);
->=20
-> Hm... shouldn't we also drop call to pci_release_regions() in=20
-> avs_pci_remove()?
+On Thu, Apr 17, 2025 at 02:20:00PM +0200, Clément Léger wrote:
+> SBI_FWFT_MISALIGNED_DELEG needs hedeleg to be modified to delegate
+> misaligned load/store exceptions. Save and restore it during CPU
+> load/put.
+> 
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/vcpu.c          |  3 +++
+>  arch/riscv/kvm/vcpu_sbi_fwft.c | 36 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+> 
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 542747e2c7f5..d98e379945c3 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -646,6 +646,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  {
+>  	void *nsh;
+>  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+> +	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
+>  
+>  	vcpu->cpu = -1;
+>  
+> @@ -671,6 +672,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  		csr->vstval = nacl_csr_read(nsh, CSR_VSTVAL);
+>  		csr->hvip = nacl_csr_read(nsh, CSR_HVIP);
+>  		csr->vsatp = nacl_csr_read(nsh, CSR_VSATP);
+> +		cfg->hedeleg = nacl_csr_read(nsh, CSR_HEDELEG);
+>  	} else {
+>  		csr->vsstatus = csr_read(CSR_VSSTATUS);
+>  		csr->vsie = csr_read(CSR_VSIE);
+> @@ -681,6 +683,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  		csr->vstval = csr_read(CSR_VSTVAL);
+>  		csr->hvip = csr_read(CSR_HVIP);
+>  		csr->vsatp = csr_read(CSR_VSATP);
+> +		cfg->hedeleg = csr_read(CSR_HEDELEG);
+>  	}
+>  }
+>  
+> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> index b0f66c7bf010..237edaefa267 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> @@ -14,6 +14,8 @@
+>  #include <asm/kvm_vcpu_sbi.h>
+>  #include <asm/kvm_vcpu_sbi_fwft.h>
+>  
+> +#define MIS_DELEG (BIT_ULL(EXC_LOAD_MISALIGNED) | BIT_ULL(EXC_STORE_MISALIGNED))
+> +
+>  struct kvm_sbi_fwft_feature {
+>  	/**
+>  	 * @id: Feature ID
+> @@ -68,7 +70,41 @@ static bool kvm_fwft_is_defined_feature(enum sbi_fwft_feature_t feature)
+>  	return false;
+>  }
+>  
+> +static bool kvm_sbi_fwft_misaligned_delegation_supported(struct kvm_vcpu *vcpu)
+> +{
+> +	return misaligned_traps_can_delegate();
+> +}
+> +
+> +static long kvm_sbi_fwft_set_misaligned_delegation(struct kvm_vcpu *vcpu,
+> +					struct kvm_sbi_fwft_config *conf,
+> +					unsigned long value)
+> +{
+> +	if (value == 1)
+> +		csr_set(CSR_HEDELEG, MIS_DELEG);
+> +	else if (value == 0)
+> +		csr_clear(CSR_HEDELEG, MIS_DELEG);
+> +	else
+> +		return SBI_ERR_INVALID_PARAM;
+> +
+> +	return SBI_SUCCESS;
+> +}
+> +
+> +static long kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
+> +					struct kvm_sbi_fwft_config *conf,
+> +					unsigned long *value)
+> +{
+> +	*value = (csr_read(CSR_HEDELEG) & MIS_DELEG) != 0;
 
-Oh, yes, we should!
+This should be
 
-And in soc/sof/sof-pci-dev.c it slipped me too.
+  (csr_read(CSR_HEDELEG) & MIS_DELEG) == MIS_DELEG;
 
-Will reiterate.
+> +
+> +	return SBI_SUCCESS;
+> +}
+> +
+>  static const struct kvm_sbi_fwft_feature features[] = {
+> +	{
+> +		.id = SBI_FWFT_MISALIGNED_EXC_DELEG,
+> +		.supported = kvm_sbi_fwft_misaligned_delegation_supported,
+> +		.set = kvm_sbi_fwft_set_misaligned_delegation,
+> +		.get = kvm_sbi_fwft_get_misaligned_delegation,
+> +	},
+>  };
+>  
+>  static struct kvm_sbi_fwft_config *
+> -- 
+> 2.49.0
+>
 
-Thx
-P.
-
->=20
-> > =C2=A0=C2=A0	return ret;
-> > =C2=A0 }
-> > =C2=A0=20
->=20
-> Nitpick: If there will be v2, can you also align title with how it=20
-> usually is in this directory:
-> ASoC: Intel: avs: Use pure devres PCI
->=20
-
+Thanks,
+drew
 
