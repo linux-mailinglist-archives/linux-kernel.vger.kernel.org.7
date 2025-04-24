@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-617643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B520EA9A3BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:29:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E08EA9A406
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D02871B60F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B4A4642D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937D822576E;
-	Thu, 24 Apr 2025 07:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DE420012B;
+	Thu, 24 Apr 2025 07:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qR/QBki9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="EzvxVtK1"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF18A224AF7
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1831F153C;
+	Thu, 24 Apr 2025 07:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745479293; cv=none; b=iRrMlayXy2DTKdnhQIzEGlAbrs/gr2fdsFEoU8ofpoFbiKo/nqkWduMXQUakIAq4OHVGjIsPXEB8s8WLBdPMnDiAKmIsQE414uDgLKfG/68+roUtRO+oOgANI5uVwJeyFW9ly872SvNecyApxVfx2t5kpw/tvqhEkeM4cGMe9pQ=
+	t=1745479345; cv=none; b=icMPohdLPIwAt2pSctN8Fx+Gg0PVaoRPWsaa1l4fV60zNwQJT19cLD9Zy1uVGrHnEDZzdIA7e4R4N+Z2PVrequ2Qp/Zb4qsX9MhTUM5ArRPK65BFK28IX6gd0ETxOhe78o28L4k03iVmwjrV5dOCvvFHMEi9luoBe45ECn/TN7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745479293; c=relaxed/simple;
-	bh=QG9Hg/8/to4LWR09+9YUrP29AfBWc4mW6szKx34ebAQ=;
+	s=arc-20240116; t=1745479345; c=relaxed/simple;
+	bh=O9DVYPK4RZY6YYB7/ewtc8a7TzxiyHmBlNZob9ULLMA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bj/0HppEKqosdTQgye+pvf8sCwf3B43J05HCQc8oNbA0BMdH0ak/pot5YkmunMDrfmz1zJVHs+cVFAF4s7QeHwFcoZF93mDIR3pcANJdkL+v7mgrlKBZvNm7o83d8u5EP1P3mNQKtjT6Ds4CM83GRLyFog4FLccAbLGuwHTB658=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qR/QBki9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745479289;
-	bh=QG9Hg/8/to4LWR09+9YUrP29AfBWc4mW6szKx34ebAQ=;
+	 In-Reply-To:Content-Type; b=CBVWjKKVZsiZB4JXbNeP67ry5IgaYl/MkrRiVmJLnRnycpl5+NDSJP+DnRut5i7ZVugmnDdu6PiVFlVgzrxn3mPUMgplUVlq55xyjzhdiGfcEjipqH6saDirb3WsXOz6h9USPvTNTWt+vCbBFm5xmkJhd87dc/hFM+9cw96r8o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=EzvxVtK1; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53O7LZ5g680960
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 24 Apr 2025 00:21:35 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53O7LZ5g680960
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745479299;
+	bh=O9DVYPK4RZY6YYB7/ewtc8a7TzxiyHmBlNZob9ULLMA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qR/QBki9F3cJw8UQnOnoX1NSL4R+OZp4/wDsjTHqFzYQ5hBOY/3xGP6Rh7opD7/4l
-	 KuuFp12IVPh///Rrump6kqSomCgglBkIMgB5B56ntGjrOw5K75y/9+Dh/7vG+WOPiC
-	 ajrA3ssUjFb01nNu7TyVuumUx6nkQTcwZP0zkPKh/WbOOA8lJBm/lrmn4isuLuHxls
-	 iGgGlzUk+PAuEDX2fI1Tb0DpHBfIvSeyF4W1gPCpsyQtdIjJlXDIYqJU1j7IxjSr41
-	 zP2SUpKyrR0ND5SsMT6wMkMufPyMbFm8XbKnhGEPRhXJJb/8gGVwg1oo6cyQHryG8x
-	 HZXfgsvKht93Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2711817E065E;
-	Thu, 24 Apr 2025 09:21:29 +0200 (CEST)
-Message-ID: <912d64ba-8f17-4e63-b166-be8a9224a643@collabora.com>
-Date: Thu, 24 Apr 2025 09:21:28 +0200
+	b=EzvxVtK1RQzG5pBpbz5wweMmUbLdbX/ewshxBSEyzwL/iSqjs/faWzfoVSom8e2bU
+	 rmtjJO6WWsw5MRs+zFMZdhntary9psA+7pGR0qJdm5RToXkkDchyg/7J6wq+MXnydS
+	 UyLEA/gHD031cZVbQISWf2vqYtuDBOavy4tsFM7jHVW35I0N3LU2ji43dZuWviNu+n
+	 FFLmIt3g5crz4RF3ksAJwKElGMES6WqszkBNO0xqtkqsXJyqbnXEZbMYTHwHd3awyK
+	 c6+7Hh3YMNGJO193usGiO/3RsTuBx8nz3JVH/XdAf95WQAP9Kvgb0r/sHpAcHBWEwG
+	 PsB6OXwrQJnjg==
+Message-ID: <45f95d01-4b98-457c-8272-c396a52b3844@zytor.com>
+Date: Thu, 24 Apr 2025 00:21:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,58 +55,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: panel: himax-hx8279: avoid using an uninitialized
- variable
-To: Arnd Bergmann <arnd@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250423163214.2276114-1-arnd@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [RFC PATCH v2 12/34] x86/msr: Remove pmu_msr_{read,write}()
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-pm@vger.kernel.org, linux-edac@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
+        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com
+References: <20250422082216.1954310-1-xin@zytor.com>
+ <20250422082216.1954310-13-xin@zytor.com>
+ <7c44da88-72bb-4d1f-9f38-bf0e7e79b7a0@linux.intel.com>
 Content-Language: en-US
-In-Reply-To: <20250423163214.2276114-1-arnd@kernel.org>
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <7c44da88-72bb-4d1f-9f38-bf0e7e79b7a0@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 23/04/25 18:32, Arnd Bergmann ha scritto:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> goa_even_valid is only initialized in one branch but not the other:
-> 
-> drivers/gpu/drm/panel/panel-himax-hx8279.c:838:6: error: variable 'goa_even_valid' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
->    838 |         if (num_zero == ARRAY_SIZE(desc->goa_even_timing))
->        |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/panel/panel-himax-hx8279.c:842:23: note: uninitialized use occurs here
->    842 |         if (goa_odd_valid != goa_even_valid)
->        |                              ^~~~~~~~~~~~~~
-> 
-> Change the initialization to set it to the value of the condition instead.
-> 
-> Fixes: 38d42c261389 ("drm: panel: Add driver for Himax HX8279 DDIC panels")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 4/23/2025 11:33 PM, Mi, Dapeng wrote:
+> Could we merge this patch and previous patch into a single patch? It's
+> unnecessary to just modify the pmu_msr_read()/pmu_msr_write() in previous
+> patch and delete them immediately. It just wastes the effort.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+No, it's not wasting effort, it's for easier review.
 
-> ---
->   drivers/gpu/drm/panel/panel-himax-hx8279.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-himax-hx8279.c b/drivers/gpu/drm/panel/panel-himax-hx8279.c
-> index b48b350b62da..4f548430654a 100644
-> --- a/drivers/gpu/drm/panel/panel-himax-hx8279.c
-> +++ b/drivers/gpu/drm/panel/panel-himax-hx8279.c
-> @@ -835,8 +835,7 @@ static int hx8279_check_goa_config(struct hx8279 *hx, struct device *dev)
->   			num_zero++;
->   	}
->   
-> -	if (num_zero == ARRAY_SIZE(desc->goa_even_timing))
-> -		goa_even_valid = false;
-> +	goa_even_valid = (num_zero != ARRAY_SIZE(desc->goa_even_timing));
->   
->   	/* Programming one without the other would make no sense! */
->   	if (goa_odd_valid != goa_even_valid)
+Look at this patch, you can easily tell that pmu_msr_read() and
+pmu_msr_write() are nothing more than pmu_msr_chk_emulated(), and
+then removing them makes a lot of sense.
 
 
