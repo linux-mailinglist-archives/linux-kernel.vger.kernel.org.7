@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-617993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF22A9A8C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCC4A9A8DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B441B85018
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73CFE464056
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B99225A47;
-	Thu, 24 Apr 2025 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lj4V+1BE"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3D624C692;
+	Thu, 24 Apr 2025 09:41:47 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACBA2206BE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A38B227EAF;
+	Thu, 24 Apr 2025 09:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745487661; cv=none; b=JPSMGFJWRlQVEL7HEfOqe6bjId2Rs+1+XghxWjt0PVmGF96qlxeZbDpWRaF3dG7w+HOO/Kb0Ep6BhgNgzPlyqK60FJ4orD4Kax97tlbsRxDkh0mdjoRuGgo3lG99fSWXDqK+HJCqq++Ec2sAZp2Y8+74fxdvm6tgM9DgWOZGCvg=
+	t=1745487707; cv=none; b=HRl36dq7jvNLVukyl3COwfXb5hqd7DrVKX9U7fZRziu3/Na+f6O07hKS0ZVVsIYoP2SPsP49rcTurpe8gy9aCT2I4M5eZFmdJ/6h3a0T/MUnM07qVw/8aUf1TWpBrLiGg2Om6W7dqRiXfnt0f1mQUIhSvyXvKpsCzy7C/AYlJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745487661; c=relaxed/simple;
-	bh=Zj4rZc/o0d+mPGfyouleH+pLFelBv74hCt+szCNjbKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlbvCFcytvWxRZEkwainuqQF3STgcEV0M1CqcsYqOuQsDuIyZa790apqtUwo7afB/xHv5cQKXOGS/Pz1kUkTjGwg6xcfzmsrEfgDGFLxAxZPdgSHPA+J9vGdDNKYHyZtLOzE4UbAZmuuDgT/glCSQ4NfY61lWiQJzr0pdacJscM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lj4V+1BE; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=V52SN0rAjrBhAIoaJ+IUA3O9fZi2COSECdESbmwo4T0=; b=lj4V+1BE89nBZi3fMhYGM2l/MC
-	ss6cg5XA9Q/WfsDiVGX/uNzbY9LQVnycOCtv8YqYohaCr0XwLO8xU2GozFR4CsHstHv6678KLNrBr
-	bSa/LAly5CMxlexxSHXWRfVhjGS5wA2NAxjEEcrY8yE4VNL038Xr8GfxPwzvmS3VLjEGEj4MxZaef
-	mplMK023ifHSr/EL51wWWJ9cbVKDVeoKQlvshIr/AqOS2t6bHvVLPEPEBFT4jQzI3qu5XUYXCYnLw
-	IQA3GS/P+zP/2WVI5giAS//n14B1bpxdLKNxDnmWwuKtFjiRWG/OvEmbL0oUuuFhFPNxdBTxgiHXa
-	qZzA7cwg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u7t4d-0000000Bh2J-2hVJ;
-	Thu, 24 Apr 2025 09:40:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0432730057E; Thu, 24 Apr 2025 11:40:51 +0200 (CEST)
-Date: Thu, 24 Apr 2025 11:40:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, linux-kernel@vger.kernel.org,
-	Luo Gengkun <luogengkun@huaweicloud.com>
-Subject: Re: [PATCH 1/2] perf/x86/intel: Only check the group flag for X86
- leader
-Message-ID: <20250424094050.GE19534@noisy.programming.kicks-ass.net>
-References: <20250423221015.268949-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1745487707; c=relaxed/simple;
+	bh=ez3lQ50wt4PHNJjw/2DzRy5zUu0J1UdIhacJCZQJdao=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=X2lK+jfZcxPr/b2wZIpKzyuW2ZgsycneE355LfSZwrf2mJE7Ea2wtYZIrctomwTuRRkosjk+4u9mkQWv5AnA/GdKZyM5WjOp2PEmPj+Df4FIymdCY+ukyxJ53ZNnpNpHyTkBX1E2qOfkWW5y1f80thCk2IVzg9BIJFL6/IGS+7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id E45B434300E;
+	Thu, 24 Apr 2025 09:41:40 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Date: Thu, 24 Apr 2025 17:40:51 +0800
+Subject: [PATCH v9 3/3] riscv: dts: spacemit: add gpio LED for system
+ heartbeat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423221015.268949-1-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250424-03-k1-gpio-v9-3-eaece8cc5a86@gentoo.org>
+References: <20250424-03-k1-gpio-v9-0-eaece8cc5a86@gentoo.org>
+In-Reply-To: <20250424-03-k1-gpio-v9-0-eaece8cc5a86@gentoo.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>, 
+ Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ spacemit@lists.linux.dev, devicetree@vger.kernel.org, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=866; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=ez3lQ50wt4PHNJjw/2DzRy5zUu0J1UdIhacJCZQJdao=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoCgdAmBX5357/jEVqEwzJuLUt67VkPKqKTHAhQ
+ CiTV72qE62JApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaAoHQF8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277QNWD/9wVcVpOMoU7NxOVY
+ a/h4ApmeXNliJn4y9hpoPpa72RRi4ZQRB02C4zwDmbDoTD/Saz6NSijXK55SH6679EgSU/BAtLF
+ VSexGbO5vXwmMzf0L7WN2fieNJRb3nlj1NbvSuMZ0tjEr8hbByDmEaKmlmd5WDyOHp8+U+Ea8Ah
+ t1iqOgmDYmsB0X5kfi2OY100VjPO4CYCiz6y3tU+cVKkGI1kQVihgXFRuAJhD1z2mPfMgd4Y5Mu
+ dgF02JChElvKAtQs1zBAPxTzMnzz3O1NkZdTGjqNtXb5GcwbI9SnXf38J4vjswKv4d1HTVN83Ec
+ 2gl/A7BvQpMZAo3+81fFN+jQFNCdabnfvG/TI+/QTvd6JtER3Kd2Igvc1hPMMH2J91paTS1yV1S
+ /sgbd+EZkZBu7bU1rThnXxm8aHKHOIWXBXpCznSbWPwQYn6COQbX6i9ugTYLdlTM/m5EPsHBxLg
+ VH0BBjUzq3I6ETnaCurjz1huKn08uwiyjsH+K9uWF+Wlmsp+7pijKOPLxEDD5pN2pfyKItlNr5U
+ V442cSP+2jPpzwGCYN/775NAf+CTQseA7Zj6cb0JelG6e/WUEzodVy3qJcbDmZBiLN0P9MrWaup
+ b1rUx/bd5NFP+tZyp7BRseGb0WdJxd4zRhfTdlP0CI71WlDYQ3x4sNcCjPmMOpx2CCZg==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On Wed, Apr 23, 2025 at 03:10:14PM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> A warning in intel_pmu_lbr_counters_reorder() may be triggered by below
-> perf command.
-> 
-> perf record -e "{cpu-clock,cycles/call-graph="lbr"/}" -- sleep 1
-> 
-> It's because the group is mistakenly treated as a branch counter group.
-> 
-> The hw.flags of the leader are used to determine whether a group is a
-> branch counters group. However, the hw.flags is only available for a
-> hardware event. The field to store the flags is a union type. For a
-> software event, it's a hrtimer. The corresponding bit may be set if the
-> leader is a software event.
-> 
-> For a branch counter group and other groups that have a group flag
-> (e.g., topdown, PEBS counters snapshotting, and ACR), the leader must
-> be a X86 event. Check the X86 event before checking the flag.
-> 
-> There may be an alternative way to fix the issue by moving the hw.flags
-> out of the union type. It should work for now. But it's still possible
-> that the flags will be used by other types of events later. As long as
-> that type of event is used as a leader, a similar issue will be
-> triggered. So the alternative way is dropped.
-> 
-> Reported-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> Closes: https://lore.kernel.org/lkml/20250412091423.1839809-1-luogengkun@huaweicloud.com/
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Leverage GPIO to support system LED to indicate activity of CPUs.
 
-Can I get a Fixes tag for this such that I can stick it in urgent?
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+index 1d617b40a2d51ee464b57234d248798aeb218643..816ef1bc358ec490aff184d5915d680dbd9f00cb 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+@@ -17,6 +17,17 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0";
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led1 {
++			label = "sys-led";
++			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++			default-state = "on";
++		};
++	};
+ };
+ 
+ &uart0 {
+
+-- 
+2.49.0
 
 
