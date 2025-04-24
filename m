@@ -1,174 +1,248 @@
-Return-Path: <linux-kernel+bounces-618207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACC6A9AB61
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:06:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDD8A9AB6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D071E194124B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 722B47A96C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989DF224239;
-	Thu, 24 Apr 2025 11:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B60223DD7;
+	Thu, 24 Apr 2025 11:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Gy0EJs10"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H/J6kptg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B415D1C5D55
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F97DA6D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745492796; cv=none; b=RJB0974MF+RmujLEQK2NPlcemerB4Oy9O08sTOWa8VB3ZEwu880sk2rDD4vi3p8Vpc0sL3yaoCMwu3o3pCDsNNPNuHXEmIeHVV29P31zJnRkg56enHv0phzmmckz3qwSuzVFlpsKv+tCddogPSMhrWq9aeGWRUCwuvqJaZg3d4c=
+	t=1745492840; cv=none; b=Z+Q1zDT+ANkwBNRQoSuYe8dmWg63Ky5DalFac1OFl43rNd7F7Y1/sbnECIhPhlslxrqOG7oTnqCpI+5QBWX9/uvnM3Z9k6+O67xEJFZ1BYWDmwRSOp5JFPgnseDlG4AIwR8dvMzhc5VqTJYnJ+qww5EK5+yYtIsJlgAxTCiUAaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745492796; c=relaxed/simple;
-	bh=6ZbEQkK5v1recDZlp8qUumVPv5BX8yXmX7kuXiecGNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WN1ciOQQxb6rDOcGvyshxZ/A4V399646cBAIkc0s0XPUJW3PoJd0Q4O6OAog9fovuVgM77Zu3TnaoSF8jE4CyBwos6ibk/f1O9KCWXQJrsj+PbMwK6jW2J42n1rI+yikyqi5Dqa222XTrHXIYBuf9x7HedKb9uBhDGMpZ7Pc6RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Gy0EJs10; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so3806135e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745492792; x=1746097592; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xaFlU49KHj/WqsyzkJFZpLzZkQa35ucQoiXjJp4Ub20=;
-        b=Gy0EJs10rMvro03mVTAfkh2uOmSqhv5l6CqSh2herdP8uC3jkqB/pZ6fxqq/fOgXJH
-         JhPkfyD2FELWaG9ZoWwKJA2sd/AHWYNuVAQ+4p3ohqdhFu3ODFLIC7rmC4KfngpeCKGh
-         dNXtvoA67a+Q80x43HpEKcE13PsxgXybGrHtNFg5gUfaaDC+d9+kdwb+L0A4uAjHD7vO
-         RRlW8co/etNkSCy7aDbO7+fXHYLJeglYLHM+Ew0EsRpRIKMJA6n2oBVs2IePUUdpLqP4
-         2nUfKo8OmxUUZj7UqiBqjQEK02XBFWuBkWPU/GmuOc0bkZByY2LWSp0fXiYsdcwUOOqH
-         lS0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745492792; x=1746097592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xaFlU49KHj/WqsyzkJFZpLzZkQa35ucQoiXjJp4Ub20=;
-        b=lzUuMQdrGJGJCmHqIzlUpuFnRZgDOOrUf3G80wbMGYqIWxPjEUjWtkBLiNHm3McVMZ
-         bj1kKpSDvdyqLd94LMgqzH7lBHS6fbwswsPzreGtwK/vz3DuLgT6n/CqKbf9n8RZtdPS
-         RfcgujBE5Z5mPIiNv7wywXoANqIvW6sZJDU9CMbq+UbY5lQ2q5ezQd7d13SZ7Qyqm6sz
-         /lxDVNw7j8ZGTnDh16Jmti76xJAcaRG/CtKMPG1ZRLJkyGILXnevg++m30Dmfpy7cge8
-         cQs9qxqpvJ83YShJN8LBiz74bgexs+Dz7Fh/4FwauHIfVQD3GioWo9FylQgn1UfXC5hi
-         cRsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU3ZtGa1gAYePLyMUFOgscS1ESXPe1QGUTd/Rk4xaW+AmG2ZOflb4jbnexGpaPLzSOKhakf3oy7OtUk2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwsx/UCDwv7JFrxyB7RBwroXRLJ/JgdGjpR/GP2T5w/pUPCEpg
-	4l8XlmvHvEua9T74R4tE9bMQwFxSo9hWceTEyoQUVXsW7nd1gQ8QP0tQ3yi3BZI=
-X-Gm-Gg: ASbGncsZzTqAk7ciqCNkUI14pGUEQIxLobzANxzgA0RTR2QyrVZ1rRu0HYxtD8gtKCB
-	ENNlIG3Ztnj7Ewx8CTv6m0QBAwXnE1fG882IVT1y3M5yrDa3FF/ypVseqyFw/A7gsru4Lb2hAwg
-	sWIQH800z3iwZGaSSGKuHbyHcWREoL3E6jAb6j/fPSRzFHjCxX0h0SVRXDpms6oUT8pNCQ1fsaW
-	7KqZZk2Dkhd/FRMuiyEEdm6Uoa7rgleNFMJmQQzttDqV1jC4cXwT6Y804t0Xf3bhpqnFxvZqkaJ
-	gOJlI9u2GI0gQJNXKBba+UQifVWQ
-X-Google-Smtp-Source: AGHT+IGdWaGhxvTRb6GutdDIuLG/aiIZCV4CCAGWlaD0KDkW+nhzZtqNPgORxU7ENnJYG2P45T9aiQ==
-X-Received: by 2002:a05:600c:1c93:b0:43c:fded:9654 with SMTP id 5b1f17b1804b1-4409bd32458mr16398415e9.19.1745492791956;
-        Thu, 24 Apr 2025 04:06:31 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::f716])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2a13bdsm16546245e9.9.2025.04.24.04.06.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 04:06:31 -0700 (PDT)
-Date: Thu, 24 Apr 2025 13:06:30 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v5 04/13] riscv: sbi: add SBI FWFT extension calls
-Message-ID: <20250424-c0700f89bcd29438d6d8d65c@orel>
-References: <20250417122337.547969-1-cleger@rivosinc.com>
- <20250417122337.547969-5-cleger@rivosinc.com>
+	s=arc-20240116; t=1745492840; c=relaxed/simple;
+	bh=ClSuI/NrvM2Zv2F5frbCCuGI835blwkR2VL0hs57iWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Py1kBXgk2ggoeJXM5XCjZZa4pIuDwm9kB9RDhGAuJFFJpB0zkSqiEpNppSwfubFhSTEKC/qIeU4mOOk/LpGLHMZC41+joK19xGocy5QmRpfj5iLX7BMC7mJCfEYEjJQIG+jIbGhKosoxIgd04EDD98xUwmnPsY/jqqlD9clEc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H/J6kptg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745492837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9CA4AQabpeQLLbZ9nuW0/281YggIsBTeEJ2zypjMHmI=;
+	b=H/J6kptgEVpWqFcSN9jdsXeHhImWIuEpSClEt55fx1eFmGS66+gSG+0OUz93x9X1ESvVKf
+	8DNVsKKD4Yy163Zd/t6bo5kjLfbDNYrFHHuPvu9qgStDAnphYpn2wD0W15RNMg7t/+oy8/
+	6P+ci16OYwuVjyboPubmlMgeZg2JJvo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-vW-KsgkNMf2Yp0LHDUUUsw-1; Thu,
+ 24 Apr 2025 07:07:14 -0400
+X-MC-Unique: vW-KsgkNMf2Yp0LHDUUUsw-1
+X-Mimecast-MFC-AGG-ID: vW-KsgkNMf2Yp0LHDUUUsw_1745492833
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9DFCB1800370;
+	Thu, 24 Apr 2025 11:07:12 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.44.32.223])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EDC4918001D5;
+	Thu, 24 Apr 2025 11:07:09 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.15-rc4
+Date: Thu, 24 Apr 2025 13:06:59 +0200
+Message-ID: <20250424110659.163332-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250417122337.547969-5-cleger@rivosinc.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Apr 17, 2025 at 02:19:51PM +0200, Clément Léger wrote:
-> Add FWFT extension calls. This will be ratified in SBI V3.0 hence, it is
-> provided as a separate commit that can be left out if needed.
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/kernel/sbi.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-> index 379981c2bb21..7b062189b184 100644
-> --- a/arch/riscv/kernel/sbi.c
-> +++ b/arch/riscv/kernel/sbi.c
-> @@ -299,6 +299,8 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->  	return 0;
->  }
->  
-> +static bool sbi_fwft_supported;
+Hi Linus!
 
-At some point we may want an SBI extension bitmap, but this is only the
-second SBI extension supported boolean that I'm aware of, so I guess we're
-still OK for now.
+The following changes since commit b5c6891b2c5b54bf58069966296917da46cda6f2:
 
-> +
->  /**
->   * sbi_fwft_set() - Set a feature on the local hart
->   * @feature: The feature ID to be set
-> @@ -309,7 +311,15 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->   */
->  int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
->  {
-> -	return -EOPNOTSUPP;
-> +	struct sbiret ret;
-> +
-> +	if (!sbi_fwft_supported)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
-> +			feature, value, flags, 0, 0, 0);
-> +
-> +	return sbi_err_map_linux_errno(ret.error);
->  }
->  
->  struct fwft_set_req {
-> @@ -348,6 +358,9 @@ int sbi_fwft_local_set_cpumask(const cpumask_t *mask, u32 feature,
->  		.error = ATOMIC_INIT(0),
->  	};
->  
-> +	if (!sbi_fwft_supported)
-> +		return -EOPNOTSUPP;
-> +
->  	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
->  		return -EINVAL;
->  
-> @@ -679,6 +692,11 @@ void __init sbi_init(void)
->  			pr_info("SBI DBCN extension detected\n");
->  			sbi_debug_console_available = true;
->  		}
-> +		if ((sbi_spec_version >= sbi_mk_version(3, 0)) &&
-> +		    (sbi_probe_extension(SBI_EXT_FWFT) > 0)) {
+  Merge tag 'net-6.15-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-04-17 11:45:30 -0700)
 
-Unnecessary (), but I see it's consistent with the expressions above.
+are available in the Git repository at:
 
-> +			pr_info("SBI FWFT extension detected\n");
-> +			sbi_fwft_supported = true;
-> +		}
->  	} else {
->  		__sbi_set_timer = __sbi_set_timer_v01;
->  		__sbi_send_ipi	= __sbi_send_ipi_v01;
-> -- 
-> 2.49.0
->
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.15-rc4
 
-Besides the () nit
+for you to fetch changes up to cc0dec3f659d19805fcaf8822204137c9f27a912:
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+  Merge branch 'net-stmmac-fix-timestamp-snapshots-on-dwmac1000' (2025-04-24 11:50:46 +0200)
+
+----------------------------------------------------------------
+No fixes from any subtree.
+
+Current release - regressions:
+
+  - net: fix the missing unlock for detached devices
+
+Previous releases - regressions:
+
+  - sched: fix UAF vulnerability in HFSC qdisc
+
+  - lwtunnel: disable BHs when required
+
+  - mptcp: pm: defer freeing of MPTCP userspace path manager entries
+
+  - tipc: fix NULL pointer dereference in tipc_mon_reinit_self()
+
+  - eth: virtio-net: disable delayed refill when pausing rx
+
+Previous releases - always broken:
+
+  - phylink: fix suspend/resume with WoL enabled and link down
+
+  - eth: mlx5: fix null-ptr-deref in mlx5_create_{inner_,}ttc_table()
+
+  - eth: xen-netfront: handle NULL returned by xdp_convert_buff_to_frame()
+
+  - eth: enetc: fix frame corruption on bpf_xdp_adjust_head/tail() and XDP_PASS
+
+  - eth:  stmmac: fix dwmac1000 ptp timestamp status offset
+
+  - eth: pds_core: prevent possible adminq overflow/stuck condition
+
+Misc:
+
+  - a bunch of MAINTAINERS updates
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Alexey Nepomnyashih (1):
+      xen-netfront: handle NULL returned by xdp_convert_buff_to_frame()
+
+Alexis Lothore (1):
+      net: stmmac: fix dwmac1000 ptp timestamp status offset
+
+Alexis LothorÃ© (1):
+      net: stmmac: fix multiplication overflow when reading timestamp
+
+Bo-Cun Chen (1):
+      net: ethernet: mtk_eth_soc: net: revise NETSYSv3 hardware configuration
+
+Brett Creeley (3):
+      pds_core: Prevent possible adminq overflow/stuck condition
+      pds_core: handle unsupported PDS_CORE_CMD_FW_CONTROL result
+      pds_core: Remove unnecessary check in pds_client_adminq_cmd()
+
+Bui Quang Minh (1):
+      virtio-net: disable delayed refill when pausing rx
+
+Cong Wang (3):
+      net_sched: hfsc: Fix a UAF vulnerability in class handling
+      net_sched: hfsc: Fix a potential UAF in hfsc_dequeue() too
+      selftests/tc-testing: Add test for HFSC queue emptying during peek operation
+
+Daniel Golle (1):
+      net: dsa: mt7530: sync driver-specific behavior of MT7531 variants
+
+Fiona Klute (1):
+      net: phy: microchip: force IRQ polling mode for lan88xx
+
+Geliang Tang (1):
+      selftests: mptcp: diag: use mptcp_lib_get_info_value
+
+Henry Martin (2):
+      net/mlx5: Fix null-ptr-deref in mlx5_create_{inner_,}ttc_table()
+      net/mlx5: Move ttc allocation after switch case to prevent leaks
+
+Jakub Kicinski (7):
+      Merge branch 'net-mlx5-fix-null-dereference-and-memory-leak-in-ttc_table-creation'
+      net: fix the missing unlock for detached devices
+      Merge branch 'maintainers-update-entries-for-s390-network-driver-files'
+      Merge branch 'enetc-bug-fixes-for-bpf_xdp_adjust_head-and-bpf_xdp_adjust_tail'
+      Merge branch 'mptcp-pm-defer-freeing-userspace-pm-entries'
+      Merge branch 'net_sched-fix-uaf-vulnerability-in-hfsc-qdisc'
+      Merge branch 'pds_core-updates-and-fixes'
+
+Johannes Schneider (1):
+      net: dp83822: Fix OF_MDIO config check
+
+Justin Iurman (1):
+      net: lwtunnel: disable BHs when required
+
+Mat Martineau (1):
+      mptcp: pm: Defer freeing of MPTCP userspace path manager entries
+
+Maxime Chevallier (1):
+      MAINTAINERS: Add entry for Socfpga DWMAC ethernet glue driver
+
+Oleksij Rempel (1):
+      net: selftests: initialize TCP header and skb payload with zero
+
+Paolo Abeni (1):
+      Merge branch 'net-stmmac-fix-timestamp-snapshots-on-dwmac1000'
+
+Qingfang Deng (1):
+      net: phy: leds: fix memory leak
+
+Russell King (Oracle) (2):
+      net: phylink: fix suspend/resume with WoL enabled and link down
+      net: phylink: mac_link_(up|down)() clarifications
+
+Shannon Nelson (1):
+      pds_core: make wait_context part of q_info
+
+Simon Horman (2):
+      MAINTAINERS: Add ism.h to S390 NETWORKING DRIVERS
+      MAINTAINERS: Add s390 networking drivers to NETWORKING DRIVERS
+
+Tung Nguyen (1):
+      tipc: fix NULL pointer dereference in tipc_mon_reinit_self()
+
+Vladimir Oltean (3):
+      net: enetc: register XDP RX queues with frag_size
+      net: enetc: refactor bulk flipping of RX buffers to separate function
+      net: enetc: fix frame corruption on bpf_xdp_adjust_head/tail() and XDP_PASS
+
+ MAINTAINERS                                        |  9 +++
+ drivers/net/dsa/mt7530.c                           |  6 +-
+ drivers/net/ethernet/amd/pds_core/adminq.c         | 36 +++++------
+ drivers/net/ethernet/amd/pds_core/auxbus.c         |  3 -
+ drivers/net/ethernet/amd/pds_core/core.c           |  9 ++-
+ drivers/net/ethernet/amd/pds_core/core.h           |  4 +-
+ drivers/net/ethernet/amd/pds_core/devlink.c        |  4 +-
+ drivers/net/ethernet/freescale/enetc/enetc.c       | 45 ++++++++------
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c        | 24 ++++++--
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h        | 10 +++-
+ .../net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c   | 26 +++++---
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000.h    |  4 +-
+ .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |  2 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  |  2 +-
+ drivers/net/phy/dp83822.c                          |  2 +-
+ drivers/net/phy/microchip.c                        | 46 +--------------
+ drivers/net/phy/phy_led_triggers.c                 | 23 ++++----
+ drivers/net/phy/phylink.c                          | 38 +++++++-----
+ drivers/net/virtio_net.c                           | 69 ++++++++++++++++++----
+ drivers/net/xen-netfront.c                         | 17 ++++--
+ include/linux/phylink.h                            | 31 ++++++----
+ net/core/lwtunnel.c                                | 26 ++++++--
+ net/core/netdev-genl.c                             |  9 ++-
+ net/core/selftests.c                               | 18 ++++--
+ net/mptcp/pm_userspace.c                           |  6 +-
+ net/sched/sch_hfsc.c                               | 23 ++++++--
+ net/tipc/monitor.c                                 |  3 +-
+ tools/testing/selftests/net/mptcp/diag.sh          |  5 +-
+ .../tc-testing/tc-tests/infra/qdiscs.json          | 39 ++++++++++++
+ 29 files changed, 344 insertions(+), 195 deletions(-)
+
 
