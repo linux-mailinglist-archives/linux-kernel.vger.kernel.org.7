@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-618440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9760A9AE90
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618E8A9AE9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9AE016D5CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461DC5A1055
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04D227BF61;
-	Thu, 24 Apr 2025 13:12:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6C27F734;
+	Thu, 24 Apr 2025 13:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4Syi+n9"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FFC27B51E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80F227B519;
+	Thu, 24 Apr 2025 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745500322; cv=none; b=DCSjT43o68QrTkm9ej1q87Jf7AakVtKT+rZSrxf4loQiGaToUWftI/AhYhbZ1KJ0lA4hPi4I1wGuHhjJJpSXOBWHRCQeOspMKkVf9eBQwx9AZMBZkohxAh+N6hP+fYsfSa5gvpBbjVgnRKQvuFupLf1AlrC1LJVniSHh8fNoMqc=
+	t=1745500332; cv=none; b=E87VPE76DL+5mOd76Tz7daeyyZMaAQZ028bkW2OaAlCT6lZvtsBiHMHU3z3VE+hrF3II5Azs/PdSkzclDShBPD29/hhdJDA/QGxkO5ESueIpNkC/0gg5SR9RrceCm7YfC6wZQfZ1pATXiUcaXfMCKoz3dIvTwMHXL6Ng/9r0Hw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745500322; c=relaxed/simple;
-	bh=C/Q8y1WOoI79mrUc5AXR5uiVEkK5ZuZpj0XY0ZtO+X8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhtebC++2+PcOFq9fAHo/HiRGeev4tB++czr7Igq9ptNpxaXiPlJCRQC3LHAuqtiH/X0Ui9LARunStYpwbh2YOZwxgASqt/RGaSsWuxLztgstGOt1bu+Mq2QEyOZYh9HnjHJXA9vY4uKLds+UMZLzknslWbaxDHfBueMqtYcNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u7wMs-0006vL-DW; Thu, 24 Apr 2025 15:11:54 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u7wMr-001tDV-0t;
-	Thu, 24 Apr 2025 15:11:53 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D1028400B40;
-	Thu, 24 Apr 2025 13:11:52 +0000 (UTC)
-Date: Thu, 24 Apr 2025 15:11:52 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Antonios Salios <antonios@mwa.re>
-Cc: rcsekar@samsung.com, mailhol.vincent@wanadoo.fr, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, lukas@mwa.re, jan@mwa.re, 
-	Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: Re: [PATCH] can: m_can: initialize spin lock on device probe
-Message-ID: <20250424-industrious-rottweiler-of-attack-e7ef77-mkl@pengutronix.de>
-References: <20250424125219.47345-2-antonios@mwa.re>
+	s=arc-20240116; t=1745500332; c=relaxed/simple;
+	bh=3nDIo3joo5hDVTDe483xOqxeAtcmcvJP1s4R1Z4rnhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YgpVA89ApQkYAOrFscvh6RVYgYtgnA6Bp5FZE27bR0PO94y2l2RBplDzmnNLuBfoKkxpFRZORxvx3Npx0OoOE0XKVTz9A/tkZ5xDVaG6Y9ZsnAD7xOEkYJhA/ch0TuehdLhnRlQsCxYAwD67u6GvfPF8oUp30jvpSvs1cQWshko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4Syi+n9; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso4826135e9.3;
+        Thu, 24 Apr 2025 06:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745500329; x=1746105129; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9S606ivdk88pKEWaj7Kpt7XGN1MosTx0xtmJbQ+tj1Q=;
+        b=Q4Syi+n9qn3uggM8XXWTyfrqLqtevw0yu0DbazFvy0BjgaZcdObTn4Mhh7a05ckVvL
+         nSd+eo+fCLsIh7LttrQLwB2wXO3kUUeu/9ipRMUUcwyjUjAzzw2WHiR7Md4/vysgARI9
+         C51LLYuwo6PZDR3Zs3QJOW89eYuf7U+M+18Q74BoOjFoKnpLkOuspon+FlOfhklRQLbA
+         v0RyxieC7I774aFwCVPEEvHITWd+6zgWXfmDBsKdtivrsFCVlcxXWXfm5Sqr1zZFQ63j
+         K+PqrPkfXabapIaMbDHVNtOrVhPUQRDsIRCmtZwFd07p1LCALAFVNnx7yDQaIr4jcQFl
+         6WOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745500329; x=1746105129;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9S606ivdk88pKEWaj7Kpt7XGN1MosTx0xtmJbQ+tj1Q=;
+        b=tWAOJENjReVB549Bu2f4bXOlZNzhd070GM1v7uvdKPS88PUDx50TQm118MZOpsx5+H
+         l7bmJyqowSkFES6+p0BdM1sjolBoda4cy2slbgDNBObB8fPN3usIBYRslE4eZ8XuuAHH
+         ByzjqkCh8XNJPvYFdwB+Kepgzda8eg3pCWbBYAVM5sBoENoAGP+v4PbJ5108JvihlzJ+
+         LK4xrI68bqTpgdma/3rl7p8PM5kAom+rAHu56nZbBmJxt3uFZUIrp/oS4SQymhtBT+MJ
+         moiPZMmZ8nja3AadImOmFpNLNvBLnMarjqQRWu5SWD66mbIgybNPht8mQEq6LG9g0cxM
+         BdDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMuCbRqAjrcj/LU8m6rseXtLAzWppKjGTcxhdIlbSStfzLNJtj0wUQOvqb+XUG8PVibnqRfZ5PlOHH4Q+F@vger.kernel.org, AJvYcCX7hNFGcsifRMgkIDE+i2XtBRsbFR7q50b6R9d56tVooBrz/OUaxSjfXjMM9BVVEiXVjvwANxFA3z3P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjDrv0pcFfiGEXnZy6e8DQxp7A+/ndTdndhF+Fxhk5EM/7X2dt
+	euWVOuOD79+LIhH9mGv+cPKUbrbF/B+cb4doApDKvzFF/6mb6znn
+X-Gm-Gg: ASbGnctAjjs+8rENI/sele/389YN4c2R/K0QwQqs1eg8R6tTetBfWv7qPkzbufXaA1o
+	3qzIVBTmcrVg5EELHEfP4Hgd83ruF3uaw6bkaIwEALdjdjR3r5sYC7ioj9iW3/VfiVoBs1YiwJs
+	7HE4/loZrk6FhhOfeOxR2FoyQHQzSHkJyihBrqxWkSPWIcUuGBCbhbI7ort0QU+kpEBiLJjAe4g
+	/E3qiOWRFC835ZqC4yOODhWJOTfJQ6Wj48jiniCmoo+wrSc+NmWN9W+/rQocjwdBVPjU5FBvwyE
+	WgHPORYWPObNQP/tcxQ2buP61YIXKkYqt85FRmT16w==
+X-Google-Smtp-Source: AGHT+IH0jSQHUGWaZfvxTiF+/uEGoyp/1xBue+C21lwbotQk56PUX5CrmPAC7ibihDDtERNxvnwjkQ==
+X-Received: by 2002:a05:600c:5007:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-4409bda56c9mr24344935e9.33.1745500328918;
+        Thu, 24 Apr 2025 06:12:08 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a06d4be673sm2030014f8f.23.2025.04.24.06.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 06:12:08 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: mediatek: Fix sizeof argument pctl->eint->base
+Date: Thu, 24 Apr 2025 14:12:01 +0100
+Message-ID: <20250424131201.157601-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4xawpvijbzqi6nhz"
-Content-Disposition: inline
-In-Reply-To: <20250424125219.47345-2-antonios@mwa.re>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+The sizeof argument is incorrect when allocating pctl->eint->base, it
+should be *pctl->eint->base. (Generally, the size of void * is the same
+as void ** so nothing is breaking in this specific case). Fix this.
 
---4xawpvijbzqi6nhz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: m_can: initialize spin lock on device probe
-MIME-Version: 1.0
+Fixes: fe412e3a6c97 ("pinctrl: mediatek: common-v1: Fix EINT breakage on older controllers")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hello Antonios,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 8596f3541265..4c2b72a3543a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1017,7 +1017,7 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
+ 
+ 	pctl->eint->nbase = 1;
+ 	/* mtk-eint expects an array */
+-	pctl->eint->base = devm_kzalloc(pctl->dev, sizeof(pctl->eint->base), GFP_KERNEL);
++	pctl->eint->base = devm_kzalloc(pctl->dev, sizeof(*pctl->eint->base), GFP_KERNEL);
+ 	if (!pctl->eint->base)
+ 		return -ENOMEM;
+ 
+-- 
+2.49.0
 
-On 24.04.2025 14:52:20, Antonios Salios wrote:
-> The spin lock tx_handling_spinlock in struct m_can_classdev is not being
-> initialized. This leads to bug complaints from the kernel, eg. when
-> trying to send CAN frames with cansend from can-utils.
-
-Thanks for your contribution, that's a good catch!
-
-> This patch fixes that by initializing the spin lock in the corresponding
-> device probe functions.
-
-The spin_lock is only used in m_can.c, so it's better to be initialized
-there.
-
-Please add a fixes tag:
-
-Fixes: 1fa80e23c150 ("can: m_can: Introduce a tx_fifo_in_flight counter")
-
-I've also added Markus on Cc, who introduced the spin_lock.
-
-regards,
-Marc
-
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---4xawpvijbzqi6nhz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmgKOJUACgkQDHRl3/mQ
-kZy6Owf/b2L6Bn5o2hjsAMj82tkKqpAYWWrEBq7jN79SC1v9FmyAMG276AsPR4Cw
-ssE+fmTQ9htgAzDFprC90KruobaEKUdDBtRGQO+bktZOkxBJ7WF49mXB7WQdi7gJ
-HwM5R1dgVgjCPSy01AkD7BQI+4suCcwWepuX7KTRLi33pLHnkHXsca//K98EWYBX
-zSlraNg5Oq1alB+XpLFulTvIwg5/JHVIIiJDqsH+D3sFhWJBJkOzFUhh5k0lw5lF
-6AsbHAc8F967kBuOCHZej1ihSPBnPsIElpC7ZyMiemG1PLaB9jwTHHf1N1C6MPmE
-jp3SCFAJFcmVSgzsyzpQRg6k4NEtMA==
-=5GTM
------END PGP SIGNATURE-----
-
---4xawpvijbzqi6nhz--
 
