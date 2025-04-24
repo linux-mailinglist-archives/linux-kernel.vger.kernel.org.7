@@ -1,42 +1,50 @@
-Return-Path: <linux-kernel+bounces-618715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE808A9B274
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E9DA9B26C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83174A2096
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725A71B8683E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48A1DF994;
-	Thu, 24 Apr 2025 15:33:49 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F028D27B516;
+	Thu, 24 Apr 2025 15:33:37 +0000 (UTC)
+Received: from NOTESERV1.attotech.com (sw.attotech.com [208.69.85.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834151A23BB;
-	Thu, 24 Apr 2025 15:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCA81B0437;
+	Thu, 24 Apr 2025 15:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.69.85.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745508828; cv=none; b=b1IAjibg1V8mn8bsTtmCXRd0LmEvHHq1Tqfrucv/TkUK5iuqffqnGL7xNMiQpwbKESeNyc2Zga2qgdle7xUgdVdifztOumBJy7YAej0OxkW/byQPM9dYusxXWTsdGvkgsld05K4nlk1/Zmup2ZkWhBgduTMsel49cAi+t6EnVug=
+	t=1745508816; cv=none; b=kQL7a8/yHAWp5McZVtURhjdmsjWSEGO3qN4iAlWQuvwyi7+8SCj/RMbyiLrYqc9TZtNPa8hApc0QDJGJKVZWY7TtW7hSSUkltyKgzYtCDJ4/+FMhrZoM4WJ+Qmkn0yY6xn7lHHf8VDJdq/C1/fp1z7XQR4bC5ixpS5jZCEu8CLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745508828; c=relaxed/simple;
-	bh=4HfjmEm5IlH5WYmbJs8B10pPWJN+B7Bu0WVVN3ycwz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t5WdaDNbqDBZrea6A0r8q0xKoeMmcVlGSJM7EHfn1hphffAKhjwTOY4J2ZQ+P9Y8RtvTJvccykWj17AeVUkSEHpvt75Lku8DlaCL4OpVWCNCG9zZTJCFUo3xHB6sV/c+YijxZw093Kw72IYJlRo9pU4wTSQXbyptYnxrgXQh2Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.36] (g36.guest.molgen.mpg.de [141.14.220.36])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 049956016243C;
-	Thu, 24 Apr 2025 17:32:18 +0200 (CEST)
-Message-ID: <744538a0-a1f5-48a5-b454-f1a2530268b7@molgen.mpg.de>
-Date: Thu, 24 Apr 2025 17:32:17 +0200
+	s=arc-20240116; t=1745508816; c=relaxed/simple;
+	bh=Xfc8GKtKubTRv/XopZVJMagIqooOj7Vc/rTv+DHGaME=;
+	h=Message-ID:Date:Subject:To:Cc:From:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=s5lg5FEgDHujFAN5Eqf3e+B4FNn9Opl2RtTKKVtO8aFA2tyZOjgwpyfZOXSCBzclYYFwKdinSM5+X1t1zGqkK2s5oueeSj/FU1TvWyH7N+9OfglOb49Ur9hOj6kLWONKCnIXRuXCtkj1lkHTtromQsQJFbs11FLVAMuhgB0kWrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atto.com; spf=pass smtp.mailfrom=atto.com; arc=none smtp.client-ip=208.69.85.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atto.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atto.com
+Received: from [10.20.0.14] ([10.20.0.14])
+          by NOTESERV1.attotech.com (HCL Domino Release 12.0.2FP3 HF86)
+          with ESMTP id 2025042411332402-909 ;
+          Thu, 24 Apr 2025 11:33:24 -0400 
+Message-ID: <05faf356-0bc7-4fdf-8a74-f738365fad20@atto.com>
+Date: Thu, 24 Apr 2025 11:33:23 -0400
+Subject: Re: [PATCH] scsi: sd_zbc: Limit the report zones buffer size to
+ UIO_MAXIOV
+To: Damien Le Moal <dlemoal@kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: bgrove@atto.com, James.Bottomley@hansenpartnership.com,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ martin.petersen@oracle.com, Steve Siwinski <stevensiwinski@gmail.com>
+From: "Siwinski, Steve" <ssiwinski@atto.com>
+In-Reply-To: <8454a55d-bfcc-441a-837e-157123e881fe@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,107 +52,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next v2 08/14] idpf: refactor idpf
- to use libie controlq and Xn APIs
-To: Larysa Zaremba <larysa.zaremba@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, Tony Nguyen
- <anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko
- <jiri@resnulli.us>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Lee Trager
- <lee@trager.us>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Jacob Keller <jacob.e.keller@intel.com>,
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
- Ahmed Zaki <ahmed.zaki@intel.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Karlsson, Magnus" <magnus.karlsson@intel.com>,
- Emil Tantilov <emil.s.tantilov@intel.com>,
- Madhu Chittim <madhu.chittim@intel.com>, Josh Hay <joshua.a.hay@intel.com>,
- Milena Olech <milena.olech@intel.com>, pavan.kumar.linga@intel.com,
- "Singhai, Anjali" <anjali.singhai@intel.com>,
- Michal Kubiak <michal.kubiak@intel.com>
-References: <20250424113241.10061-1-larysa.zaremba@intel.com>
- <20250424113241.10061-9-larysa.zaremba@intel.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250424113241.10061-9-larysa.zaremba@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250411203600.84477-1-ssiwinski@atto.com>
+ <Z_yinytV0e_BbNrF@infradead.org>
+ <OFA5AB0241.ED5C089D-ON85258C70.0068BDE0-85258C70.00721A7A@atto.com>
+ <8454a55d-bfcc-441a-837e-157123e881fe@kernel.org>
+X-MIMETrack: Itemize by SMTP Server on NOTESERV1/SERV/ATTO(Release 12.0.2FP3 HF86|December
+ 17, 2024) at 04/24/2025 11:33:24 AM
+X-TNEFEvaluated: 1
+X-Disclaimed: 41067
 
-Dear Larysa, dear Pavan,
-
-
-Thank you for the patch.
-
-Am 24.04.25 um 13:32 schrieb Larysa Zaremba:
-> From: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+On 4/18/2025 5:29 PM, Damien Le Moal wrote:
+> On 4/19/25 05:46, SSiwinski@atto.com wrote:
+>>
+>> "Christoph Hellwig" <hch@infradead.org> wrote on 04/14/2025 01:52:31 AM:
+>>
+>>> On Fri, Apr 11, 2025 at 04:36:00PM -0400, Steve Siwinski wrote:
+>>>> The report zones buffer size is currently limited by the HBA's
+>>>> maximum segment count to ensure the buffer can be mapped. However,
+>>>> the user-space SG_IO interface further limits the number of iovec
+>>>> entries to UIO_MAXIOV when allocating a bio.
+>>>
+>>> Why does the userspace SG_IO interface matter here?
+>>> sd_zbc_alloc_report_buffer is only used for the in-kernel
+>>> ->report_zones call.
+>>
+>> I was referring to the userspace SG_IO limitation (UIO_MAXIOV) in
+>> bio_kmalloc(), which gets called when the report zones command is
+>> executed and the buffer mapped in bio_map_kern().
+>>
+>> Perhaps my wording here was poor and this is really a limitation of bio?
 > 
-> Support to initialize and configure controlq, Xn manager,
-> MMIO and reset APIs was introduced in libie. As part of it,
-> most of the existing controlq structures are renamed and
-> modified. Use those APIs in idpf and make all the necessary changes.
+> sd_zbc_alloc_report_buffer() is called only from sd_zbc_report_zones() which is
+> the disk ->report_zones() operations, which is NOT called for passthrough
+> commands. So modifying sd_zbc_alloc_report_buffer() will not help in any way
+> solving your issue with an SG_IO passthrough report zones command issued by the
+> user.
 > 
-> Previously for the send and receive virtchnl messages, there
-> used to be a memcpy involved in controlq code to copy the buffer
-> info passed by the send function into the controlq specific
-> buffers. There was no restriction to use automatic memory
-> in that case. The new implementation in libie removed copying
-> of the send buffer info and introduced DMA mapping of the
-> send buffer itself. To accommodate it, use dynamic memory for
-> the send buffers. In case of receive, idpf receives a page pool
-> buffer allocated by the libie and care should be taken to
-> release it after use in the idpf.
+> For reference, libzbc uses ioctl(SG_GET_SG_TABLESIZE) * sysconf(_SC_PAGESIZE) as
+> the max buffer size and allocates page aligned buffers to avoid these SG_IO
+> buffer mapping limitations.
 > 
-> The changes are fairly trivial and localized, with a notable exception
-> being the consolidation of idpf_vc_xn_shutdown and idpf_deinit_dflt_mbx
-> under the latter name. This has some additional consequences that are
-> addressed in the following patches.
 
-(You could reflow the text above to have consistent line length.)
+My issue is not with passthough report zones.
 
-Also, how can your patchset be verified? Does the module size change? Is 
-the resource usage different for certain test cases?
+The report zones command is failing on driver load and causing the drive 
+to fail to appear as a block device. If queue_max_segments is set to a 
+value over 1024, then nr_vecs in bio_alloc() will be greater than 
+UIO_MAXIOV and bio_alloc() will return NULL.
 
-> Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
-> Signed-off-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-> Co-developed-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> ---
->   drivers/net/ethernet/intel/idpf/Kconfig       |    1 +
->   drivers/net/ethernet/intel/idpf/Makefile      |    2 -
->   drivers/net/ethernet/intel/idpf/idpf.h        |   42 +-
->   .../net/ethernet/intel/idpf/idpf_controlq.c   |  624 -------
->   .../net/ethernet/intel/idpf/idpf_controlq.h   |  130 --
->   .../ethernet/intel/idpf/idpf_controlq_api.h   |  177 --
->   .../ethernet/intel/idpf/idpf_controlq_setup.c |  171 --
->   drivers/net/ethernet/intel/idpf/idpf_dev.c    |   91 +-
->   drivers/net/ethernet/intel/idpf/idpf_lib.c    |   49 +-
->   drivers/net/ethernet/intel/idpf/idpf_main.c   |   87 +-
->   drivers/net/ethernet/intel/idpf/idpf_mem.h    |   20 -
->   drivers/net/ethernet/intel/idpf/idpf_txrx.h   |    2 +-
->   drivers/net/ethernet/intel/idpf/idpf_vf_dev.c |   89 +-
->   .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 1622 ++++++-----------
->   .../net/ethernet/intel/idpf/idpf_virtchnl.h   |   89 +-
->   .../ethernet/intel/idpf/idpf_virtchnl_ptp.c   |  303 ++-
->   16 files changed, 886 insertions(+), 2613 deletions(-)
->   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq.c
->   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq.h
->   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq_api.h
->   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq_setup.c
->   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_mem.h
+This causes the error.
+```
+sd 8:0:0:0: [sdb] REPORT ZONES start lba 0 failed
+sd 8:0:0:0: [sdb] REPORT ZONES: Result: hostbyte=0xff driverbyte=DRIVER_OK
+sdb: failed to revalidate zones
+```
 
-[…]
+You can reproduce this by setting the max_sgl_entries parameter to 2k or 
+greater in the mpt3sas driver. Other drivers can also reproduce this 
+behavior.
 
 
-Kind regards,
-
-Paul
+This electronic transmission and any attachments hereto are intended only for the use of the individual or entity to which it is addressed and may contain confidential information belonging to ATTO Technology, Inc. If you have reason to believe that you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution or the taking of any action in reliance on the contents of this electronic transmission is strictly prohibited. If you have reason to believe that you have received this transmission in error, please notify ATTO immediately by return e-mail and delete and destroy this communication.   
 
