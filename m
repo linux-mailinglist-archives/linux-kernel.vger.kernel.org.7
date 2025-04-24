@@ -1,117 +1,224 @@
-Return-Path: <linux-kernel+bounces-617591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B653AA9A2C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E36EA9A2D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070D9444454
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C775D3AA710
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099251E0E0C;
-	Thu, 24 Apr 2025 07:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CD91C5499;
+	Thu, 24 Apr 2025 07:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbFclHgN"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R/v3jPd6"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC23519CD16
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E4E2701C3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745478167; cv=none; b=HSS0kYy6qZaA0zr55y7ZZN5+faH/kEdxsq4zOtm4CK8eXSQYzeKcht+d6efN+z1S38aClUj1mQ0Yo3sI6gDIv5WC/ZDGy9vzWlVJ3J5JbQWqN9JLFmNhbDuEFjZWFFC2eD8zI4maluADSNkgvb93Cxa/67MzYmSrD6CrLwlNRis=
+	t=1745478292; cv=none; b=LLtUPRvU90y7C+2oCxBcc7WJ7El8kfbia64NaR+meVf38QE1hBG+CCBtobqk0Y/lfT8xrG+wxyLK/Rk2WOqZUq8QacM5XoRUUcyebcr0diCvxEnYAw5mASGCKGuPUKrdzP/luPDXIrGedGa0TaHrCcRuMTNsvG6ZBi6jFOOFsOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745478167; c=relaxed/simple;
-	bh=CsVdIY8q46bTxLPbuwJ8cUP2eUiwXdsgC6RMjJcwonY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9NbXVpuYrpqLhhrMCXE0A4QT6V3UWf7ojFf8KcVKwKVHnk64VL7x9Tyn6ISvolmB7wwlKe0N/93xU9T7HuoMaglJnimBi3fV/CAtayLXu/Su4OXofavr+JV/Qqzh3rrZVVXpVKTIIl2CVfrN844VsyKaAfdlL99wyyGnpZQl2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbFclHgN; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac345bd8e13so98025866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:02:45 -0700 (PDT)
+	s=arc-20240116; t=1745478292; c=relaxed/simple;
+	bh=qNH4t9eG2CLNTL3eDk/F7+ms7mC2E/+0Kc61bZYFLgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U1MIx7/0ua0je6tNGNK8gnuqemXDeldFQQKhEuRiCQDSm+Z49t4bilLbKvhr3NBtEXLvYgld446AxxWQcl+m9xWWrEUElpYjyDJVoXMVKpqIER8O449U2Q5n5tRUY9U08Ox9XDYVjO46SlD+7VxUTOj28NKrahoMuBNAadaY5Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R/v3jPd6; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22435603572so7422205ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745478164; x=1746082964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
-        b=PbFclHgNjB6RXMecnfIP+Z73qquzU3VIwvxcMjTs4FsrIcbOh/LblRF3NUS4LZfc5y
-         ZpCZ8iSj72X1+S7rKtKjYOgzEwam5ASSq7FmFQsu6+NEUUwFI3PDrHuua6eXGQ1eENHH
-         +gUZzwTVtO4p4o8zLhYjoXOqoCTIZjdwq43dKKMkroVaj5O7OTlYMIiWPClNx9icGA/O
-         6M8yEnilRKLdmNngmnbBLtndXiezGTt++7R6Yf9ACl4E41Uq90JqzIU/pNtYPgrLHSUd
-         3DH5g+7z9OR2JE8v1AsfAXbLN5xHzWveov22VvaN38zQrDfdX6aZNyzEC6IK+/wLUwPR
-         s2dg==
+        d=chromium.org; s=google; t=1745478290; x=1746083090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCK1VDbTpYWs4fLQMxD1y8TWj5o2Az5CqghWjMcs5ZI=;
+        b=R/v3jPd6uWGG10UsLJjgCJonY1vxJBPfAvPbHElrII9JyBU+EGYHRQGU5a4/U8VZgD
+         Q9YCKHWvDtcCkXduZczBIXBuogw9Hx090oHU6m4l9c4PB+GUUzr6hhgTlbD3fBURQvzZ
+         Pky517RlDmy0KV+OaHgbyBwuxVyoZsfdYPqRY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745478164; x=1746082964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
-        b=Y7f9TWF5ULsim8+pQnSJuyrU5je/5uzvVHkclw50SVkWRirwxIUolZ+Hmjfibtd4ny
-         bYdG8YY6karHitMt/mJQFil1Fn+7CL+ZN1uIGV6GSfm5GjVCKgUuCVU/F/3E7ZzeHUmn
-         PxQ4DxZ9iUtMuSzKBe4I+57x8RfmL1wvLizREEulQAnGeqHmsUj65nOAJDrjaYqsiTk+
-         ME1jSY2NGPMrTzBs7KDoGAKiTQriNl3/Jf1hpi37xC9PGJFcgQrR9hvo7vK9f+AlSoX2
-         gvZg7jVww1QI/pv65TTlA48VKRMMo0LjOMo1fZHQj77QwXGK0lzxveWY9P9EgNFpHbFO
-         uCOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq85zIVMw5lR6AnfBVHkDRpHdF1/AKPYCCNepf6nWIvz1NfMeGnT/qMnHnVMhqoRrmZRZGD/6rw6IzxWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr4k6LKoW040G+nKnnS68BpfhBJWwPNXEfGSJWb5YsbDjIOiBe
-	4ExUxaDNxIG4LxVx7KnzsnMd0KRlQ+xoyJ245bQ5ldccQz/gwnvThjNlyyD7CSwFnTlpfgED3xp
-	t
-X-Gm-Gg: ASbGncs39DG2tGfG7Nu0JuxAXMX72POqm6MivAGagyw5lnGxKO9t8WdPJ3rNl5soOfR
-	kMorlfWQxBAyjuKv6/oZFyuAt3ekEt6DIaQj+M9okD/HSNfgHPmMWCZ9Z9qXn7JHRHhBrx7tSf7
-	qITaVHjpx4Vwp3osS9blEMqU+YS0hRSSrdCN/2i9BPRqjB5i0Rnwp2ban+H/lgaAtzdtQhpQggX
-	AocCXRZMPxwG/expRaC6hFMRo2rdzW7Ui81C1Vtgf8+KtA/T/rA7jE485JvrKKtSO4TObnx4H1q
-	J6t4evOQKcUbtEI5VVpBJqoOjw6BP2rUCUYFgA==
-X-Google-Smtp-Source: AGHT+IHRRXGrXUDu3+rG3nESpdOVayw7JgdtjaocMACREgykhsz0BZozqMiy2x1NiHc65DNK79egqw==
-X-Received: by 2002:a17:907:97c1:b0:ac7:95b5:f5d1 with SMTP id a640c23a62f3a-ace57494ecemr146858866b.42.1745478163982;
-        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace598f6b97sm57765866b.75.2025.04.24.00.02.41
+        d=1e100.net; s=20230601; t=1745478290; x=1746083090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WCK1VDbTpYWs4fLQMxD1y8TWj5o2Az5CqghWjMcs5ZI=;
+        b=tndAPYK4WLh9LWDaxG+dCmfQMCbZ0f1J+G1hnW9NqVyTbip8a9Y/z3ygVZw6ziDMBe
+         HLhuEasMpneOSiTURPt9iSnVCFcMqeqSFkt2vTviYRP10vF6ikD5fwfyA0t2g95mWZef
+         C53J7xEudvBIy5nV856UEBG5XzXP1EejX8kuBUvuZqjlZd6DiHDVQrA3jDWjLPE7BxA0
+         hcwKdtF6fi5UzXjSEKJe99pPUGuE7YqJLNmyPN8cK8mMFzGtRtXDAMGWtJ79r6ZCtYl3
+         W/F6RksupBYPlYO98+Hc2+TtyvN1hJPr5yXIZC+kffOrUgtEX5kA2lfCAulPzf7uV3WJ
+         PfSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWF5PIdBtS1gnJfKxz1ic3U56j20Mk+aGama3aysjnoFJnWq1FDQNdQeY1nImJNp/OfBWrPhzF6olXBl5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynGjDcL+bzhVp7/ncZoScGysN3xx3ghMU0ZhWkzB7iRlBqON0O
+	TicdGBlfh2BVoy+Wsko/oihN379mUts1zgpR5VXXHYE3ZUWVF8JyXsmsSSU73g==
+X-Gm-Gg: ASbGncs4m7/9zzkQa/9ChuIf7ENc1uD5VP4s9EBql/kx4V/yGp8XgbsooWH6AqY+ay1
+	4VUDsLTZwRPxFsMunvRepfOjNVMAqwjCpJuYvmD+YOuMTDGG8z23huWrBvWpvOqytay7SZqypNS
+	2Ca2+SONByNASjiBReLzOO+wRY8cS4R7TWGAuAohtkzYYcoZJDjCSq4Be1cyr62G4TA1rPZAoD/
+	RokK+muXW03nsHygE4rncDNdomr4qrBZ7Vsnk4YCfoNt+c/ZkILGiPCaEHPtDu4OVSdnYChRIqJ
+	WEJcHdlzzCDkNqZXXE4ddja+kV18Mv8m4cTefjey4P0eZyPjjXQh/dePvlHYQRnKaXE=
+X-Google-Smtp-Source: AGHT+IEKl/rHf/wX/Rw7PguqNixe9Lyyac7D9EbeN9OaZPbTzu37q0zQNk6SXavakM90zItgiThP8g==
+X-Received: by 2002:a17:902:c401:b0:224:2a6d:55ae with SMTP id d9443c01a7336-22db3db6f02mr21659045ad.48.1745478290186;
+        Thu, 24 Apr 2025 00:04:50 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:63eb:6b38:399c:5ad7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4d76c80sm6010555ad.51.2025.04.24.00.04.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
-Date: Thu, 24 Apr 2025 10:02:40 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Marek Vasut <marex@denx.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
- __qcom_smd_send()
-Message-ID: <aAniEGwKKRUieo5G@linaro.org>
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
+        Thu, 24 Apr 2025 00:04:49 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Petr Mladek <pmladek@suse.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH] hung_task: configurable hung-task stacktrace loglevel
+Date: Thu, 24 Apr 2025 16:02:43 +0900
+Message-ID: <20250424070436.2380215-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAkhvV0nSbrsef1P@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-On 25-04-23 20:22:05, Dan Carpenter wrote:
-> The "ret" variable isn't initialized if we don't enter the loop.  For
-> example,  if "channel->state" is not SMD_CHANNEL_OPENED.
-> 
-> Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Currently, hung-task watchdog uses two different loglevels
+to report hung-tasks: a) KERN_INFO for all the important task
+information (e.g. sched_show_task()) and b)  KERN_ERR for the
+rest.  This makes it a little inconvenient, especially for
+automated kernel logs parsing.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Introduce CONFIG_HUNG_TASK_STACKTRACE_LOGLEVEL so that (a)
+becomes configurable.
+
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ include/linux/sched/debug.h |  1 +
+ kernel/hung_task.c          |  6 ++++--
+ kernel/sched/core.c         | 19 +++++++++++++------
+ lib/Kconfig.debug           |  8 ++++++++
+ 4 files changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/sched/debug.h b/include/linux/sched/debug.h
+index 35ed4577a6cc..80c17cdd35a8 100644
+--- a/include/linux/sched/debug.h
++++ b/include/linux/sched/debug.h
+@@ -34,6 +34,7 @@ extern void show_stack(struct task_struct *task, unsigned long *sp,
+ 		       const char *loglvl);
+ 
+ extern void sched_show_task(struct task_struct *p);
++extern void sched_show_task_log_lvl(struct task_struct *p, const char *lvl);
+ 
+ struct seq_file;
+ extern void proc_sched_show_task(struct task_struct *p,
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index d2432df2b905..8817016fd45b 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -26,6 +26,8 @@
+ 
+ #include <trace/events/sched.h>
+ 
++#define PR_LEVEL KERN_SOH __stringify(CONFIG_HUNG_TASK_STACKTRACE_LOGLEVEL)
++
+ /*
+  * The number of tasks checked:
+  */
+@@ -153,7 +155,7 @@ static void debug_show_blocker(struct task_struct *task)
+ 			       task->comm, task->pid, t->comm, t->pid);
+ 			break;
+ 		}
+-		sched_show_task(t);
++		sched_show_task_log_lvl(t, PR_LEVEL);
+ 		return;
+ 	}
+ }
+@@ -221,7 +223,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 			pr_err("      Blocked by coredump.\n");
+ 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+ 			" disables this message.\n");
+-		sched_show_task(t);
++		sched_show_task_log_lvl(t, PR_LEVEL);
+ 		debug_show_blocker(t);
+ 		hung_task_show_lock = true;
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 54e7d63f7785..e9033b049092 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7751,7 +7751,7 @@ void __sched io_schedule(void)
+ }
+ EXPORT_SYMBOL(io_schedule);
+ 
+-void sched_show_task(struct task_struct *p)
++void sched_show_task_log_lvl(struct task_struct *p, const char *lvl)
+ {
+ 	unsigned long free;
+ 	int ppid;
+@@ -7759,7 +7759,8 @@ void sched_show_task(struct task_struct *p)
+ 	if (!try_get_task_stack(p))
+ 		return;
+ 
+-	pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p));
++	printk("%stask:%-15.15s state:%c", lvl,
++	       p->comm, task_state_to_char(p));
+ 
+ 	if (task_is_running(p))
+ 		pr_cont("  running task    ");
+@@ -7773,12 +7774,18 @@ void sched_show_task(struct task_struct *p)
+ 		free, task_pid_nr(p), task_tgid_nr(p),
+ 		ppid, p->flags, read_task_thread_flags(p));
+ 
+-	print_worker_info(KERN_INFO, p);
+-	print_stop_info(KERN_INFO, p);
+-	print_scx_info(KERN_INFO, p);
+-	show_stack(p, NULL, KERN_INFO);
++	print_worker_info(lvl, p);
++	print_stop_info(lvl, p);
++	print_scx_info(lvl, p);
++	show_stack(p, NULL, lvl);
+ 	put_task_stack(p);
+ }
++EXPORT_SYMBOL_GPL(sched_show_task_log_lvl);
++
++void sched_show_task(struct task_struct *p)
++{
++	sched_show_task_log_lvl(p, KERN_INFO);
++}
+ EXPORT_SYMBOL_GPL(sched_show_task);
+ 
+ static inline bool
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 3e40f68a4a4f..6cd266651447 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1290,6 +1290,14 @@ config DETECT_HUNG_TASK_BLOCKER
+ 	  This will add overhead a bit but shows suspicious tasks and
+ 	  call trace if it comes from waiting a mutex.
+ 
++config HUNG_TASK_STACKTRACE_LOGLEVEL
++	int "Log-level for hung task stacktrace (1-7)"
++	depends on DETECT_HUNG_TASK
++	default "6"
++	help
++	  This option controls the log-level used to print the stacktrace
++	  of the hung task. The default is 6 (KERN_INFO).
++
+ config WQ_WATCHDOG
+ 	bool "Detect Workqueue Stalls"
+ 	depends on DEBUG_KERNEL
+-- 
+2.49.0.805.g082f7c87e0-goog
+
 
