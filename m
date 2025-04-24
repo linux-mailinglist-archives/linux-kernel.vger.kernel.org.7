@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-618388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79A0A9ADEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:50:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3779A9ADEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1790F3B048D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:49:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082CA4A0630
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFFF27C844;
-	Thu, 24 Apr 2025 12:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D0227B514;
+	Thu, 24 Apr 2025 12:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IiVLDvi2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EimuEY+3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="y1PtpJax"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9956D27BF94;
-	Thu, 24 Apr 2025 12:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F5D27BF9E
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745498975; cv=fail; b=OWgtOKhUeljGtMl+IVVnDzODN7mxX5aZk3eEceObsfRrxX+YZrPr+Bup0LqIsf+GSN3Uvdqs/atsFdX2lJVxO3tIPjTeyLCATrv7d14m/1MdWgUyd5qCb7KG2MqmKO700nQd7aEaAS5nJiQQ+KHa0OUfnOW5yk3GvO7mnJ0KfWQ=
+	t=1745499002; cv=fail; b=ZgGyHhKTD4uQaGsGWZF6ytS5NbarfJUSSqHYqMiuNR9V/rRX4rN/HUNaOiB+tPc1yWQ5EgMF5X0nD9v9R68UToGRCkN05walHOWZogL0R3UGX8+d4IyYtfGfA0rjM/8NdiD5y2jlnwIC+fWJ5KXvBDhTnabH/W7yE2kGOzPFfJk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745498975; c=relaxed/simple;
-	bh=fz6Rh62DNxBScaJd7jMJoY6IQqmS2FPrs4r1yhwTZYc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XIisYCYW5jL/tEhB32qFYzWJhKwyCqNxBR3T8uNDY5xpxmx4Ix4wRd/ZnisJDJUJBbI9QbWWDCKaAkc2wnvXtxYG2M7ZPcfFeG1q8J7xu2nSTXhmlqXQVXHN1R4vTWgEU300jKw1EAJz+mksZdqfNFNP9K4+x/Y3fCTKBtb8M+I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IiVLDvi2; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745498973; x=1777034973;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=fz6Rh62DNxBScaJd7jMJoY6IQqmS2FPrs4r1yhwTZYc=;
-  b=IiVLDvi2sLgAKBB09YMEV49A5UpG7tgqAZWrRAUBisVvQv0L3+S0fEbW
-   PUlaMGWLBVnPQhg/IYsdw5QoWhlMyqlkbsEG4/dH/ML68BcY3udOCt+R6
-   c6v0ergPnhR/Rt+YdxQdqvpFgdfYICwNIwLF6Gs1u3gSnuGsn7DYZwr75
-   dzZZU93Ti3O3VTCMY/k+J6XNdNwJ+FfSnTR8z6MOuMHmDNGYX1Q4T1FLf
-   h9+BYAhXPueGMS3OIsyg751fKkOBLCT83kFtT1xpB2c2n/PdSnYzNFcjL
-   +yHyj7b+7GghQS2PThtIqHucACbjjbGexKMtwbmR0Z5q6heXemrCUCwlJ
-   Q==;
-X-CSE-ConnectionGUID: Cagivw3ZR1mwFPI/8EmJow==
-X-CSE-MsgGUID: odOz2aiHQEuvf0YbwAhohw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="47303719"
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="47303719"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 05:49:28 -0700
-X-CSE-ConnectionGUID: KoJsmm32TCemrnFtXVVH5g==
-X-CSE-MsgGUID: 56QnHvxvRJSqFm5dehrzuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="133139168"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 05:49:28 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 24 Apr 2025 05:49:26 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 24 Apr 2025 05:49:26 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 24 Apr 2025 05:49:25 -0700
+	s=arc-20240116; t=1745499002; c=relaxed/simple;
+	bh=NM5C9sc+1VjdE2b89bIdmI8ho6VgnANNdEFbx/Nkh5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NRuOSFIRM82oeOPE07m65SkVuw5ffl+nGuHUiKxWg1nbUi6jrq5fXt7DD9Izk5Rvsb6PPfiuvrS75kr8G9Dv23NdOO4H5ycNTl8VgOmSvLcSWHzFRpADch7CfAzTE+IclcThNpKRab5iLeYMHUtyq5qkTg4vVHW+x1BlR+rJOHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EimuEY+3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=y1PtpJax; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OCMr38024649;
+	Thu, 24 Apr 2025 12:49:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=NM5C9sc+1VjdE2b89b
+	IdmI8ho6VgnANNdEFbx/Nkh5w=; b=EimuEY+3SpTqRrqLGS/dzjeqOe8v8AP6Fp
+	EMDzlVfrYQdc/4zD84/bObpsQa+nYfSmr9QlnIoZh1Zqw8XhGqSCMHvZ9YRQ6CfE
+	KGzAqZ2pB1WDg3IyLcnM+H6YbNZqnGmUbFhlQP41iyrVnm+DME1igLqJBN7z9QDn
+	7oT+w8Dfm/hZu0yfKfkU0E7+XO6YW0U8ZpZJ0dvXSP37dRUFpnF0RPZxxPrOiIG4
+	NYdGuoquZFXyuhvAmFeNpo9GEBmm+drCZAcMB+X5Q/JrZkuAcxW3I8ZNSvGEptsX
+	74vQsVFQgs+446iZj4OJeP/LNjNqFV8oVwHguL3XbVtZTgNrxTNQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 467n85847m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Apr 2025 12:49:09 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53OB95Gd031677;
+	Thu, 24 Apr 2025 12:49:08 GMT
+Received: from sj2pr03cu002.outbound.protection.outlook.com (mail-westusazlp17013074.outbound.protection.outlook.com [40.93.1.74])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 467gfrar2j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Apr 2025 12:49:08 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IbKdkwZ7JrquA9WEBjguUe5QYEteOw90dc5eStKJEqWDks6Lyadq1pUlhfIE0onqeZZzCwVraEv9x9ZdV9WIMGxR+0VHSmtHu22+yXNzEupA3xGs9LlpIDXBTwu2NeXqfsOzRCj2t8pMKy31yr6+67+lT1xGrxJyaZd9/I3f+Bd41vfmKrMOS6tGfp4qWd9oUm8ZMaUD2rWmdY/Yjl/SiQANfJP1cMMx9i5b2eWbxgNY2Za6FAUo8LoerjDpZuJ5wvgTTzGCn+8oc0XCMZf40znIghdRno0UDHnQRFuDGhvxonWhXEHx2HZFB3MGCRxw/DyGxPKv0+1BKHHybm0o6Q==
+ b=OdaxqBBQ/t0JrYmu7drn2LbUZmJqsYxciKQECJBtAm6jvrMc1lSQgYFvAQT2LnBJpSnCEAy/pOsPO9FXewRESFL6FCQIOhB54CUhfLqBl+PIvEDajO3BPVrIiwlhYD2tcL6QVHNBefXDP3IQmb5fUkVjZzMCY/xKUdLCDS1jx6sgQ/2bhmaMl40y346EjZCSFcNreT937GiWqztY02IwcnlQHTvd4Tt9TBO0Xc9U/mrGX5R4UTCZ4EZKAhgye89BKYaBEsyI3O+YKZ8cPyQJLekM62NmeaElvPel7+YKTBWKckXbqyG0ZPSd1YcnIlCGPt/vx4/+9kuTfiEYPYVK9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wj6WCpPtavPkaL3BDPY/Kr+m3+DJFkSQ9CxeAx1RNnI=;
- b=dJAYM+r2dFs71MfDwBDDdE98AZDGJBkArMfWxW9orX3Jxa7V0zNTjP6FP+C0Foz+dYHLDqdvQiyYX9la8xZfoHBaBPBJcPtCguLaBky7EEaRRdGCFgSYpmIgM+rvH/q6SaHbTQvH+S9Gc/DsXZueaiQUf5yX62i8TzUer5PuXwEa/ybdJ3U7DstfiksdQ6dYbxyN1T6Rq0GSUnlSw0AXQYqhG0+oxoA2Y/fboDszQixcJXITmm1H6XUYnLMOgSP8cZ5TdtPRfsH2eYBSsttjKSZBuhVx4neb1FFgmiyojkpOcSZOqouoAE3gAV4AmbL6P4qV8FeiyPOYTdXIQvyRGw==
+ bh=NM5C9sc+1VjdE2b89bIdmI8ho6VgnANNdEFbx/Nkh5w=;
+ b=cJbvxPG9hezTdvutlMNJn9XXJ2FiB+EpYnWW/9amwWRspLk8dCTcwSI8fVlddVeQ2Z6iyIEqXoivrTlgQntwyjtYqaeoYwfCjpMa1wRfuIoPpNjFJHqqSz2F2DDP6sy5umjAdXtB3Rp2jhYaaSrFL91f/dAVqlPmpMUykiJhi9hhDnZpF6CS9k/PLhLV+/8lnzUYnJl1mGYmmSDtJofyvLuqtAo7vjZEDH9z8EQRVAG8aq1y/xgd8gdni1pvMbLcmlV/r/IoZXOLXMazQUhvzOSxqDAUimGz+4mGT3ZOIQs23427fE0/M98a+KdobJeHboJF6C1LvcbCP3aeq6f/Jw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- SJ0PR11MB4990.namprd11.prod.outlook.com (2603:10b6:a03:2d8::21) with
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NM5C9sc+1VjdE2b89bIdmI8ho6VgnANNdEFbx/Nkh5w=;
+ b=y1PtpJaxHussDceWdheSVVd+b3NEuXDryG9i67c32X2+wl/nqvkX3Y5n+yBV54bMU9No6XJH4qVG0Hkwa1KYdV5s/Z8oQUeMIgkHohNK6UV8rCVzrheiDlGdbGQowWs7AbQIZVxYzGjYdi7KKndv4h1Rcr62tz6k3T4zWAolTx8=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH0PR10MB4534.namprd10.prod.outlook.com (2603:10b6:510:30::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.24; Thu, 24 Apr
- 2025 12:48:52 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%4]) with mapi id 15.20.8678.025; Thu, 24 Apr 2025
- 12:48:52 +0000
-Date: Thu, 24 Apr 2025 14:48:39 +0200
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
-	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
- Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
-	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH iwl-next 03/16] libeth: xdp: add XDP_TX buffers sending
-Message-ID: <aAozJ5Twq7GidhHr@boxer>
-References: <20250415172825.3731091-1-aleksander.lobakin@intel.com>
- <20250415172825.3731091-4-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Thu, 24 Apr
+ 2025 12:49:05 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8655.031; Thu, 24 Apr 2025
+ 12:49:05 +0000
+Date: Thu, 24 Apr 2025 13:49:02 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] kernel/fork: only call untrack_pfn_clear() on VMAs
+ duplicated for fork()
+Message-ID: <9a9103db-95ca-47d4-921e-42b8368ffcaf@lucifer.local>
+References: <20250422144942.2871395-1-david@redhat.com>
+ <45b26168-93c9-4170-b7e1-4b51078a04f6@lucifer.local>
+ <d3f71458-8c0d-44c9-9a03-868efceee93f@redhat.com>
+ <33b972a5-a137-4b5f-846c-614e5f83409f@lucifer.local>
+ <0101d903-af59-478d-b0e6-af5ba6619eff@redhat.com>
+ <7aeaa30d-3fa6-4edf-82a0-e0c494ef3df8@lucifer.local>
+ <9f78fd5e-a785-4473-8c6b-8267821db446@redhat.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415172825.3731091-4-aleksander.lobakin@intel.com>
-X-ClientProxiedBy: DU7P251CA0020.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:551::22) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+In-Reply-To: <9f78fd5e-a785-4473-8c6b-8267821db446@redhat.com>
+X-ClientProxiedBy: LO6P123CA0003.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::8) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,725 +113,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|SJ0PR11MB4990:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce6d9150-7c38-4598-c743-08dd832e5dcf
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB4534:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8e5f715-98e5-4b4e-9d75-08dd832e657e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Bnlg3qh9TtSt4R077dSqn5qKEdcV/bToMG4GsICLGde5U+a1aAxzimjJ1c1R?=
- =?us-ascii?Q?8JTYt5uD1dK0DmVznHiNiXzepCtKeCYlhvJne+MfkNN/Q5AJwuMjTErnPMLb?=
- =?us-ascii?Q?PRo3uRGyVL3WYqJ1HB3Fi+9INIQ7N9JjRiDtihTTbh22GBkYvIxu4rXxpZ1O?=
- =?us-ascii?Q?9s6CLQ0z8DunrDnUqcoVHVTkx4DCDHDCUSLR+DeiCt+cRjNkWDoRg/bch7KR?=
- =?us-ascii?Q?pudc9avk49fqataKqM4KFB9wX3bP6EMsxlI0z/Fux3AHm/fjMWJuf5R/KrTq?=
- =?us-ascii?Q?wEWHvWBDTa0GuWUSW454JOuol5anOSaIvsalF6VCGlk0AJpZ+jDpwc0IBpFP?=
- =?us-ascii?Q?VKA7AcEb19lQnNP7Qpbjr5bG+IuMMi1XG6LcOLowXunXAiqLA+X4IpGdL96i?=
- =?us-ascii?Q?1ZNAejudlzrv7mlXu9vBeEEZvUe1uFFXNCG+eus1d5q+LeXB/qrWMmdG+N3a?=
- =?us-ascii?Q?1T4+X3iuvQMuC/G3n3dHRPr9K/SvvF8WNEjAJZUJVwNRjEGdoFnMzAmHRVls?=
- =?us-ascii?Q?pnVNmmXUr/YH2jVPgxNP92q5XeCIolygc00zxGpLRHOyt/cI7qvCm/EHb+vK?=
- =?us-ascii?Q?9cdma7K65cYsqc6CksEAhRsMzc8+NUjig5YtFPcdUwazvyIgtY4EqjfGz3t8?=
- =?us-ascii?Q?lzBkP2h0wulUldaRYTd1WyQ27c4bqFnoTVECUOLu9BFP7g02xtp3z+Ucm1f5?=
- =?us-ascii?Q?tyNphjd4a/Wl9KeotSRoejscNvZAH4uIiuYdZ4tNoGtmpgK/eRiateitYcjk?=
- =?us-ascii?Q?3SOK3WpbZK0fNeMR+g3zCXQJ2R5yfxSoD9kNvv9iWioeY23UnmAXaReenB/t?=
- =?us-ascii?Q?Zp7RT1skSQ1KlG8MMqpZ7qBZw2db4psgrejJX1rEmNnvcrE1c0nMdNfmoQte?=
- =?us-ascii?Q?O+qx3NLBOv3oaa7hfnifdsczoLViLthboQkiBDlkFPopoL7cjiedoOWaBrVh?=
- =?us-ascii?Q?tT5dDspVkAu4/GjocpJobS5XsU294h/XFF63CWxxKNBN0VGKwv3pIYbfbT+c?=
- =?us-ascii?Q?uYCuTmTfp26tuTEhKakcMCUi2w2ChDpopjcQvNECYHmmIdUD6d54t9/+T2lb?=
- =?us-ascii?Q?oYI2DerC3IUsp9jXVz/iqrFbyckvs0acURPwMgtODEGXZ3jAakcciFi4Czqr?=
- =?us-ascii?Q?XFBwcmFKCUxfmaTeMThJHEPLY1C12oo0X35x1MiyL/sI8QxhpunobmCWIFU/?=
- =?us-ascii?Q?c82Gj7Reh0429HES8cx4Wu+QVHkH/bXAwFGKc4zGLQjsojZ1gLjk2LUSSS5T?=
- =?us-ascii?Q?b/gi8TkgiaUftvN9BJHQHV7PH8kK43DOD11heMLarKOv+1ALEQh7SUcAJrP7?=
- =?us-ascii?Q?8AgezAz7ils8Sj/+ix8hamVwAkAMC4rvEnNRXPpYtcBRbsg0qQTYKBnABiBA?=
- =?us-ascii?Q?lqToRJVe1VbLPb1CiflGPViFhMPKUnbJ/sC96m62/y5a9S6rgg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FOSiYmdt6Am4kJ7s8stVIQaK1afKjb0JtzvbJhMXaPV5fjnTbp9BJXYxgqlR?=
+ =?us-ascii?Q?HVzDIT4v20RHqmSCxaqvQ9px1F8Z3aNt0fxwWNCvePhC4rH5LP7uZOilDBBE?=
+ =?us-ascii?Q?I+jwR2gLXk/0o3UV1J9AXI1YuOaNjrH+HintxPwWLkYwE1CCmlL1+bcUfUwx?=
+ =?us-ascii?Q?7o6xCsQ70au9zkYZQaQpIjHhfJu/aNRLdPQl3sHKB0CHuBEAqjnI6IGOIiOS?=
+ =?us-ascii?Q?on5cHD8/by7lzpl5FXqQZ313m5WFtM2bjBfEH7wSHhHMQ/oWo10FE1S1BlJz?=
+ =?us-ascii?Q?d+Iw0NS6nk8/M0QozJ5KJwL2dIbYQqpIP6iV7aJ5UVs3nyZfabIKSeJBAAYv?=
+ =?us-ascii?Q?V4F+jx23ZW70OEZ3H++/1j4l6iLD19AEp40x82/Iuf8wL/OuqXoWzt8gdz3w?=
+ =?us-ascii?Q?GCIN1WDV/K671ezQ8YLFApa2tHhj57yjuCMyWjz49tIn0xYupuS1V3G2ILvp?=
+ =?us-ascii?Q?VN2K2LEDPDd+Km2hfdtvxCJZPgAyqVjp67LhSpmWWdFO6gNh7iOhCmPSEjWx?=
+ =?us-ascii?Q?mR5EPOxz1dGk30Xi0aoIDQRFrrLA0Zsk7CVsJwQ+TiJXve0o0tYWfOKhBnRP?=
+ =?us-ascii?Q?tielpleUBOZ95gxuoX0g/XJ/RO/JAjIMsMZsgAFA2lNhZlurxl4+VuNNozj8?=
+ =?us-ascii?Q?NcBGYQhwd6GyxjoTFYp9pGdiCzpjAZJ2bPE7CTwElr5DhZJ+E9Rg3qDPzlqb?=
+ =?us-ascii?Q?ky0jko30NFyFxYo+UG5/v4ChtFVzs/x25sd5X6LkDSbQE8vYkziiPT5JXdbn?=
+ =?us-ascii?Q?DsTLBqVjDk4JLEdKIY7WwY1GKiyCMFQHbTJYFYBLngGgknzh0Wqoas/X1lAw?=
+ =?us-ascii?Q?Spb+BsuPVkoO+vz3FJ0+c0oS1qLgTS/H/lFhfR+NTCvmK/rDYhjLrPV1ZP42?=
+ =?us-ascii?Q?PEijuaS3ltuQFX66x6MhzbDQ8oXVG4cW27v3tG+dpTs/bPUmVt1LXx5KAnwC?=
+ =?us-ascii?Q?C9ycLDBkbZUDesUKlZgEMBNQgrTa3HY8xjAd6gHmE1PPps39GT0STQ/J3S5k?=
+ =?us-ascii?Q?SPHWWMmHebVaYB3stUphcg0iSG+/msEUN9xpe0y4HjzRnQbUesaGj8kNeKoP?=
+ =?us-ascii?Q?uG7L8nOFHUSjT3dhrdDP5HkOO9+55TIpb5WtC1zteS+ZZnV5aGhGhB69NmJq?=
+ =?us-ascii?Q?+btCBvo/GE2q7Jzc/Jz7LSxOWrFAN6jkmpGGwrKtPLsHiP8sM6iqZaSLuKUb?=
+ =?us-ascii?Q?CefWjPpFOfXKJvH4WVbxDDWo1nHWeFxDTfkO7/cp7M9iNjxPGV3AUI5dtuhw?=
+ =?us-ascii?Q?VcDd7AymX1RykkvrSQsODcfUmw4zwJkiTsA5/v8+Rf3N/VTcT9LMJCxMWaNk?=
+ =?us-ascii?Q?HVHkxwT9xgc9AH2yiCwybGSp6Zup11nXrDmSczcDGENSNmzTNL3Q8l1o9sNJ?=
+ =?us-ascii?Q?a8FWKwr50rX3qZalxEEfFv7YU5ALjGPCaEGNJ/Nq5wvFSKDdAsJOVGGwij73?=
+ =?us-ascii?Q?fs6v4D/WitY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KNe+zkqCC+njORBZnmpbfdO95FY8RYl85QhzXU8YvScqS7WlA9xOKj7dxBL9?=
- =?us-ascii?Q?XRzI73G+1WqB30Lzswx67ou+poj5crIrb2tZq0J8LWcFrsI8Wvj+dBxrjU9h?=
- =?us-ascii?Q?d8YkMhqwTUMPwXnUtv79PusTarWGgceHWlY59t0mF6xmBZasCqeTlT4ed88k?=
- =?us-ascii?Q?+pVplHHmPUK/Gr9juReOs8e25/PIKgm3akRRFqi1Cz/E9na0svk9f6Pa5Kb8?=
- =?us-ascii?Q?6PrvVeNy4eDaiHHiFQwLlY2IAYhZDgXKv7/0TwvrxBcSJGkHhJC3Lg7aUhx2?=
- =?us-ascii?Q?D8xEkfu5eEcIzgDDRZvYZ0ME9+SIy6pwaMze0iyqHag5490jvymRRjjRyKRO?=
- =?us-ascii?Q?+Mz/BYx0mow+Wz412j+jb6lVQm7rEF5dP3UOuybaP4V1G0mp0VGO1iTlXE90?=
- =?us-ascii?Q?cGc3ToL0QEt3QjjZLNjI2EJ6/hqJ9JI0JyLEiOn7OUYL1LdcpY+VZQc/4FMn?=
- =?us-ascii?Q?n5LLCii753kGZ5VBiwbx+hkf2Qc56Q1HVoPntFEnDY8cUk/fDJ+zDInqX6aS?=
- =?us-ascii?Q?a4tfheYijr6SLzGZniN1Y4Cd8L/4e/h+UxPscPDUBFygTeh5dCNrQ3TrhB65?=
- =?us-ascii?Q?gDha8apITjaJs/x2Z7jyMHTuhet81D1KFM7gJWog7yQIBt0CG4e1spEDUflS?=
- =?us-ascii?Q?+Q4J0Q3+o6mjzm4uX/FypY0Vz4mm9UrG0cLx8fdn9veVBD0rpvKq6bHxA7iL?=
- =?us-ascii?Q?FARPiGcWEWE3rGZYqMmZ9yOupSbnIhIrkGKkTHSjQd831Y3jjLo5kHTo50jc?=
- =?us-ascii?Q?phJ444c+KhNZ1A+FCneasWgsEQtfszW8/2MQ1Z+d6b8q5oheYCTnHR1Ztmm7?=
- =?us-ascii?Q?RkhBQlHCW80T9+VX7PqNv0wT9Y/0kKpUVmofXs2pFIezUACx3uR8gn/xzvph?=
- =?us-ascii?Q?6FMXml3pR/pEk1h9Re5tuqFaf9ZBnt/GmCEdEymuRN6vHXq9ihiw75+Oxkja?=
- =?us-ascii?Q?ji+Dyfd41PyHcvPddcWN+HDXdQ2YUNdUs9hDjBZBs1zUe8rAzlKXjk9+hi/5?=
- =?us-ascii?Q?ytJaGRlcYXdyH3ri7tyjlGxflDDNwpJgm4YzVTkrZDWieH+h4QbfzGZGstas?=
- =?us-ascii?Q?BRGX1+pGW/ZHCWXLxdjf9hDmXovaXbLsDdnR6HnkqT+AKdWBXYzXvA3/Zjls?=
- =?us-ascii?Q?k+US8oYla0aXZXxuDgtAoVc/aOPFlTiODfccUgxZGfQuxcSg/7EHr+/hEgnM?=
- =?us-ascii?Q?nsUKs3HOetayHP6bQkBGbnvgxH07RVNMFYplJRumnqQJT/1ppB5u4mAC0O2j?=
- =?us-ascii?Q?aRWkI4y3G5ZKHvaDQk4hOZ9wBhdGVW4ZpMjUJmNdYw/+3be7OEpXx/Bd4+FM?=
- =?us-ascii?Q?pxVAlzEomREWBZg7jAymajYrs2Kd4aEhZyiyKfDG4EqvoQ2QjFciW5HXJGiW?=
- =?us-ascii?Q?G6KjOXy2NAmG5ezJsmM2ETdb6MP9g4N/W2sQ67+hmcZvnUcDSkgFD3vhMt+z?=
- =?us-ascii?Q?2SSM4FGKqHx+kbkV0gHuPlXbRvR52EtOUvxp9ovNjnRuxWUDeISLkij9uYY9?=
- =?us-ascii?Q?XyZNzHN6h76hMvQez05h2JacBwOgNdN+gXjX6ASGKE7+ZstlevtA6Mc1y5y+?=
- =?us-ascii?Q?fj/WvWKd7Wui3xmULLJ2m6NhLLVFOWDvS4A1MIsT4GDGXL4o7OZM+EBT9mPe?=
- =?us-ascii?Q?TQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce6d9150-7c38-4598-c743-08dd832e5dcf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o+BrbmHpqQl321CcaXepe7NwpFsn3JBbDTri8R6LsA+r1eCTV6sZXy79xSYn?=
+ =?us-ascii?Q?uHKJgx7RTKcpnAufl5Hx8lWb5EviHV6mxDO7PhvboaCJIOkhbPLsI9noz9Pt?=
+ =?us-ascii?Q?6SsJ9lIw87JeUBc7TiTFtG7/w25TJamQppxH2GJAkMkxMDcXlInwJ8cUiMCV?=
+ =?us-ascii?Q?2UmqcARp0WKkvk4ekEYhb/UNFozZYYiih8GcGPQy/wMvsXpToZPMrQKikbmH?=
+ =?us-ascii?Q?bcJ85oreZDr8TcTXIlTG1M5GVjRXOG4f06qCxTGJRwAAwUrfM+ov3o8yUHO9?=
+ =?us-ascii?Q?qTQ5VtE4+8A8QHFshpzuPbWlHYzAVoBaXgDaPBQAbDrZCk7QD2NYiurbGIrL?=
+ =?us-ascii?Q?tpyqrXMNF+sVTwMGcR8swGpSnwH0YuVGBDdL5LyZHSU6M+Yn0YOXgd4BiVEL?=
+ =?us-ascii?Q?bXXJi42eVs3S54mcNiQOeMaPaDbHpDdy3ahjtCFxD0Vy2pzx6BS0aSMjL5sg?=
+ =?us-ascii?Q?EmmCHoFSFC7u2ZqhGEKe1Z4zhE5dpEEcJ6fDQYPk7zqH1qWuMukfRHNer+4C?=
+ =?us-ascii?Q?Xx0V4ARM8lhsA0vu8eSQkLVkJAfGZEG3mzVMzipmNagXOp037T2ozFT4O/eN?=
+ =?us-ascii?Q?I5FJdfBO0iCdbIdPBQ6QMHT3ct0LoF7iJMhWDDwefAw0ZXlf+GCy2sON6Ad1?=
+ =?us-ascii?Q?jQ7p7QqQViBMqA7WOZCLRolX22mBnCOjI0Bmyn0bQRMqB4mf3EBiDFUbfklH?=
+ =?us-ascii?Q?WubiUM7kGjIlMbSuuRJOWn9HiuXhnQ3agceG/A1PKVuvCEMQJuQW+P9wvdz5?=
+ =?us-ascii?Q?79QYYH2iJNIwpgY40pUq8bO07GoaPvxoOQyzrAHYUkDN7lLP1MaZMY+Mj8Ko?=
+ =?us-ascii?Q?KTqY7ClnyfkQltxD6BV/P2k4C1IZeTOI+pLGOAHAMZ8ebh/R5pZFQMuQolbc?=
+ =?us-ascii?Q?d7SjpS3I2UOJOWQjaM2P+da4Ux9/8cfNvGYD21q2rU7pz02Mwqdl45uDt5zl?=
+ =?us-ascii?Q?HdbRo9TbdYcU6M/hQwZyTOy9+eDY/igY1f8jL+wPe7rOUEAfHX3sBtEz2sgY?=
+ =?us-ascii?Q?09wYgigRu2ScSLV518+EDHjLwE7HGX0iIDIeit5bF1yT+WUITSzoIcgn7h8I?=
+ =?us-ascii?Q?90Kuk5eczYqMkC0wAsQctEiE4dGo6Rg4REXCw84lsxckDn6lu5R4Cl0aBsu3?=
+ =?us-ascii?Q?EzMRc0Gqt2r7QtAMGkRNczN9MkE2LTxKp6yxzb+8sOnSDAGZtev7Jf1Qd+8S?=
+ =?us-ascii?Q?RFi0KJuOMJPNN0C7PXE1fCLK4NiTgsprIHPlof+oJ83VmhfKZBnhIVGJowxN?=
+ =?us-ascii?Q?HRVX6QsvgRTguEjXlVzcLJ8+2frKLmXu4A5M5vb3SABNFgROtNRwwK3CjB16?=
+ =?us-ascii?Q?B64BDbmKc8TgeWoRxcSGVWrA2rkezptkeKJvLJ5Xb6H9QpfSeuSIPZjIvIyp?=
+ =?us-ascii?Q?3o8/ZqgQBVvOeoKZb9DfErUl8zFLoHs/0dFWl5VVsoIoh5i3RjHGYLsp8ypq?=
+ =?us-ascii?Q?jY/5vQJnxuRxSYnBU7ZXG34UDAhipLqYiCzMxukd1D4wu5FsyvtR9eu35uu/?=
+ =?us-ascii?Q?cEq5qS1wCi6bGgZfIrBjopjAG9v0zSUBlHelk2rl8hZP64Yd4pKlpB8Yu+02?=
+ =?us-ascii?Q?xofEBU3KMvqlxcis55BByabaYPaYbIuuWhB8lVqlfQAkCATYmkIZlfZyGzHy?=
+ =?us-ascii?Q?pQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	fk14+XyjLX638ch0n82zm69XwLCCqzIny00/bIBNNVWkhmCwqugFhpHlmTCZ4YUghklx9j3VXiBDDFWO3Q/ng52VbYKALvcaKch8PxLMNkM35Ao23b2ZN+7bNP3okIEpxpBReR/NvS+KOV1cl2bfIxwxoS/4AKUj5SjFxIEQCPbKXKBJUSRgufk44PxOsmp9N03hjuldBJoXVkkGCYWtX1pXGKe5pBXh5OyWVtta3Grs53OijBqu85hVOSBEG7gOG9cKWKyQe7oWUSBqzQcSZwO/KL2dIIj5sVXQs+mQSy2WETv/sDPHyU5G1bIzBtgKtPKXw2vdGaGqo74MbFrVzufKZSyCC+jeD+TSbK9/4MgddHz0aFI9gDqp0+Hyz3IfHBDbs0qnRfDDaxfv/B2qwmX/eYMF5HY1lbhpyPpPHEvrvnYDUQNCQZrPcfIbhCHfUtFKvydgNXnNlkImJ+LkGwR95nMHFQ080f8h51MFPFO3KzoH+0AqWvsWJAyPYvxmBwJ+NumoZtKdEAXy1ex41f2fNpQta4p1P5uZ1Ri7rmQ+45LRK0y2DlNYd317KxObFkWO6WDQgPgX7z5ey0qzR5P7igURio07Uyy2Hy9wohQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8e5f715-98e5-4b4e-9d75-08dd832e657e
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 12:48:52.4776
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 12:49:05.2303
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nw2lKmS/hnk4zlkLLs6r4QdNZQNO11RsgoIQwHRgnxx7KqWILqMEvw5j3f75py3yElyH0B1F36k/vVm/V4kil1By+CF39C4MD0y/otJayW8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4990
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6P0Ti26+6uTGGfn0DCupe6PRmXTfwv47nELJPmzgY+h+UiloKWZjj1cNsVTETFXwfZXpKhvazHE403NlldaC+4ssagOD/0ZH5l+btyKiNWc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4534
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_06,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2504240086
+X-Proofpoint-GUID: 5OFEm6chfSxFZaf5FxkV7JWSD9XbfTsD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA4NiBTYWx0ZWRfX0USlOjIM5/KK MW+KlVv4CPhALx+KBqO9wWFZTUg4UL6ypYWt3f4zd+sb/CchSVeyKdnqbzxLaOQ4OoyUT7SCMk5 QsTFN/jn5Hbf5IJK7FF/QzXezAncUDCSS8YwhrtGgmhlyp39nDJ7Xw+OBNVQNxoMAecl4Jw5sST
+ pXtirrTDyezTb5cyLPSKMa3DNWR+3++MEfg9tgfj7FmhixC6RlWiVpu/4M2A+FzhqS8GId6oreZ mCI1Wzlan5yC3Y2W+eMwhbPZ5Z3etrg6+ks+sRDZZaqA/figQhe6abUVvp0Q/UrcFUufMXuwYJd K8poiOdNcBOOWsDHyS5TM7GuZNi/RrC16Q/gXaLFBN9fzZ1hg3Jkh5subsfKzrVT/kiVKCAkwd5 mTYjr6+O
+X-Proofpoint-ORIG-GUID: 5OFEm6chfSxFZaf5FxkV7JWSD9XbfTsD
 
-On Tue, Apr 15, 2025 at 07:28:12PM +0200, Alexander Lobakin wrote:
-> Start adding XDP-specific code to libeth, namely handling XDP_TX buffers
-> (only sending).
-> The idea is that we accumulate up to 16 buffers on the stack, then,
-> if either the limit is reached or the polling is finished, flush them
-> at once with only one XDPSQ cleaning (if needed). The main sending
-> function will be aware of the sending budget and already have all the
-> info to send the buffers, so it can't fail.
-> Drivers need to provide 2 inline callbacks to the main sending function:
-> for cleaning an XDPSQ and for filling descriptors; the library code
-> takes care of the rest.
-> Note that unlike the generic code, multi-buffer support is not wrapped
-> here with unlikely() to not hurt header split setups.
-> 
-> &libeth_xdp_buff is a simple extension over &xdp_buff which has a direct
-> pointer to the corresponding Rx descriptor (and, luckily, precisely 1 CL
-> size and 16-byte alignment on x86_64).
-> 
-> Suggested-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com> # xmit logic
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+On Thu, Apr 24, 2025 at 02:33:54PM +0200, David Hildenbrand wrote:
+> > >
+> > > ... and I think we still have space in vm_area_struct without increasing it
+> > > beyond 192 bytes.
+> >
+> > Hm, so you're thinking of a general field in the VMA? I thought this would
+> > belong to the PAT object somehow?
+>
+> It's glued to a VMA. The only alternative to using a VMA field would be looking it
+> up for a VMA, storing it in an xarray etc ... ends up complicating stuff when there
+> is no need to right now.
 
-few comments/questions, i didn't trim.
+Yeah no, that'd be crazy.
 
-> ---
->  drivers/net/ethernet/intel/libeth/Kconfig  |  10 +-
->  drivers/net/ethernet/intel/libeth/Makefile |   6 +-
->  include/net/libeth/tx.h                    |  11 +-
->  include/net/libeth/xdp.h                   | 534 +++++++++++++++++++++
->  drivers/net/ethernet/intel/libeth/xdp.c    |  87 ++++
->  5 files changed, 643 insertions(+), 5 deletions(-)
->  create mode 100644 include/net/libeth/xdp.h
->  create mode 100644 drivers/net/ethernet/intel/libeth/xdp.c
-> 
-> diff --git a/drivers/net/ethernet/intel/libeth/Kconfig b/drivers/net/ethernet/intel/libeth/Kconfig
-> index 480293b71dbc..d8c4926574fb 100644
-> --- a/drivers/net/ethernet/intel/libeth/Kconfig
-> +++ b/drivers/net/ethernet/intel/libeth/Kconfig
-> @@ -1,9 +1,15 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -# Copyright (C) 2024 Intel Corporation
-> +# Copyright (C) 2024-2025 Intel Corporation
->  
->  config LIBETH
-> -	tristate
-> +	tristate "Common Ethernet library (libeth)" if COMPILE_TEST
->  	select PAGE_POOL
->  	help
->  	  libeth is a common library containing routines shared between several
->  	  drivers, but not yet promoted to the generic kernel API.
-> +
-> +config LIBETH_XDP
-> +	tristate "Common XDP library (libeth_xdp)" if COMPILE_TEST
-> +	select LIBETH
-> +	help
-> +	  XDP helpers based on libeth hotpath management.
-> diff --git a/drivers/net/ethernet/intel/libeth/Makefile b/drivers/net/ethernet/intel/libeth/Makefile
-> index 52492b081132..9ba78f463f2e 100644
-> --- a/drivers/net/ethernet/intel/libeth/Makefile
-> +++ b/drivers/net/ethernet/intel/libeth/Makefile
-> @@ -1,6 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -# Copyright (C) 2024 Intel Corporation
-> +# Copyright (C) 2024-2025 Intel Corporation
->  
->  obj-$(CONFIG_LIBETH)		+= libeth.o
->  
->  libeth-y			:= rx.o
-> +
-> +obj-$(CONFIG_LIBETH_XDP)	+= libeth_xdp.o
-> +
-> +libeth_xdp-y			+= xdp.o
-> diff --git a/include/net/libeth/tx.h b/include/net/libeth/tx.h
-> index 35614f9523f6..3e68d11914f7 100644
-> --- a/include/net/libeth/tx.h
-> +++ b/include/net/libeth/tx.h
-> @@ -1,5 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
-> -/* Copyright (C) 2024 Intel Corporation */
-> +/* Copyright (C) 2024-2025 Intel Corporation */
->  
->  #ifndef __LIBETH_TX_H
->  #define __LIBETH_TX_H
-> @@ -12,11 +12,13 @@
->  
->  /**
->   * enum libeth_sqe_type - type of &libeth_sqe to act on Tx completion
-> - * @LIBETH_SQE_EMPTY: unused/empty, no action required
-> + * @LIBETH_SQE_EMPTY: unused/empty OR XDP_TX frag, no action required
->   * @LIBETH_SQE_CTX: context descriptor with empty SQE, no action required
->   * @LIBETH_SQE_SLAB: kmalloc-allocated buffer, unmap and kfree()
->   * @LIBETH_SQE_FRAG: mapped skb frag, only unmap DMA
->   * @LIBETH_SQE_SKB: &sk_buff, unmap and napi_consume_skb(), update stats
-> + * @__LIBETH_SQE_XDP_START: separator between skb and XDP types
-> + * @LIBETH_SQE_XDP_TX: &skb_shared_info, libeth_xdp_return_buff_bulk(), stats
->   */
->  enum libeth_sqe_type {
->  	LIBETH_SQE_EMPTY		= 0U,
-> @@ -24,6 +26,9 @@ enum libeth_sqe_type {
->  	LIBETH_SQE_SLAB,
->  	LIBETH_SQE_FRAG,
->  	LIBETH_SQE_SKB,
-> +
-> +	__LIBETH_SQE_XDP_START,
-> +	LIBETH_SQE_XDP_TX		= __LIBETH_SQE_XDP_START,
->  };
->  
->  /**
-> @@ -32,6 +37,7 @@ enum libeth_sqe_type {
->   * @rs_idx: index of the last buffer from the batch this one was sent in
->   * @raw: slab buffer to free via kfree()
->   * @skb: &sk_buff to consume
-> + * @sinfo: skb shared info of an XDP_TX frame
->   * @dma: DMA address to unmap
->   * @len: length of the mapped region to unmap
->   * @nr_frags: number of frags in the frame this buffer belongs to
-> @@ -46,6 +52,7 @@ struct libeth_sqe {
->  	union {
->  		void				*raw;
->  		struct sk_buff			*skb;
-> +		struct skb_shared_info		*sinfo;
->  	};
->  
->  	DEFINE_DMA_UNMAP_ADDR(dma);
-> diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
-> new file mode 100644
-> index 000000000000..946fc8081987
-> --- /dev/null
-> +++ b/include/net/libeth/xdp.h
-> @@ -0,0 +1,534 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* Copyright (C) 2025 Intel Corporation */
-> +
-> +#ifndef __LIBETH_XDP_H
-> +#define __LIBETH_XDP_H
-> +
-> +#include <linux/bpf_trace.h>
-> +#include <linux/unroll.h>
-> +
-> +#include <net/libeth/rx.h>
-> +#include <net/libeth/tx.h>
-> +#include <net/xsk_buff_pool.h>
-> +
-> +/*
-> + * &xdp_buff_xsk is the largest structure &libeth_xdp_buff gets casted to,
-> + * pick maximum pointer-compatible alignment.
-> + */
-> +#define __LIBETH_XDP_BUFF_ALIGN						      \
-> +	(IS_ALIGNED(sizeof(struct xdp_buff_xsk), 16) ? 16 :		      \
-> +	 IS_ALIGNED(sizeof(struct xdp_buff_xsk), 8) ? 8 :		      \
-> +	 sizeof(long))
-> +
-> +/**
-> + * struct libeth_xdp_buff - libeth extension over &xdp_buff
-> + * @base: main &xdp_buff
-> + * @data: shortcut for @base.data
-> + * @desc: RQ descriptor containing metadata for this buffer
-> + * @priv: driver-private scratchspace
-> + *
-> + * The main reason for this is to have a pointer to the descriptor to be able
-> + * to quickly get frame metadata from xdpmo and driver buff-to-xdp callbacks
-> + * (as well as bigger alignment).
-> + * Pointer/layout-compatible with &xdp_buff and &xdp_buff_xsk.
-> + */
-> +struct libeth_xdp_buff {
-> +	union {
-> +		struct xdp_buff		base;
-> +		void			*data;
-> +	};
-> +
-> +	const void			*desc;
-> +	unsigned long			priv[]
-> +					__aligned(__LIBETH_XDP_BUFF_ALIGN);
-> +} __aligned(__LIBETH_XDP_BUFF_ALIGN);
-> +static_assert(offsetof(struct libeth_xdp_buff, data) ==
-> +	      offsetof(struct xdp_buff_xsk, xdp.data));
-> +static_assert(offsetof(struct libeth_xdp_buff, desc) ==
-> +	      offsetof(struct xdp_buff_xsk, cb));
-> +static_assert(IS_ALIGNED(sizeof(struct xdp_buff_xsk),
-> +			 __alignof(struct libeth_xdp_buff)));
-> +
-> +/* Common Tx bits */
-> +
-> +/**
-> + * enum - libeth_xdp internal Tx flags
-> + * @LIBETH_XDP_TX_BULK: one bulk size at which it will be flushed to the queue
-> + * @LIBETH_XDP_TX_BATCH: batch size for which the queue fill loop is unrolled
-> + * @LIBETH_XDP_TX_DROP: indicates the send function must drop frames not sent
-> + */
-> +enum {
-> +	LIBETH_XDP_TX_BULK		= DEV_MAP_BULK_SIZE,
-> +	LIBETH_XDP_TX_BATCH		= 8,
-> +
-> +	LIBETH_XDP_TX_DROP		= BIT(0),
-> +};
-> +
-> +/**
-> + * enum - &libeth_xdp_tx_frame and &libeth_xdp_tx_desc flags
-> + * @LIBETH_XDP_TX_LEN: only for ``XDP_TX``, [15:0] of ::len_fl is actual length
-> + * @LIBETH_XDP_TX_FIRST: indicates the frag is the first one of the frame
-> + * @LIBETH_XDP_TX_LAST: whether the frag is the last one of the frame
-> + * @LIBETH_XDP_TX_MULTI: whether the frame contains several frags
-> + * @LIBETH_XDP_TX_FLAGS: only for ``XDP_TX``, [31:16] of ::len_fl is flags
-> + */
-> +enum {
-> +	LIBETH_XDP_TX_LEN		= GENMASK(15, 0),
-> +
-> +	LIBETH_XDP_TX_FIRST		= BIT(16),
-> +	LIBETH_XDP_TX_LAST		= BIT(17),
-> +	LIBETH_XDP_TX_MULTI		= BIT(18),
-> +
-> +	LIBETH_XDP_TX_FLAGS		= GENMASK(31, 16),
-> +};
-> +
-> +/**
-> + * struct libeth_xdp_tx_frame - represents one XDP Tx element
-> + * @data: frame start pointer for ``XDP_TX``
-> + * @len_fl: ``XDP_TX``, combined flags [31:16] and len [15:0] field for speed
-> + * @soff: ``XDP_TX``, offset from @data to the start of &skb_shared_info
-> + * @frag: one (non-head) frag for ``XDP_TX``
-> + */
-> +struct libeth_xdp_tx_frame {
-> +	union {
-> +		/* ``XDP_TX`` */
-> +		struct {
-> +			void				*data;
-> +			u32				len_fl;
-> +			u32				soff;
-> +		};
-> +
-> +		/* ``XDP_TX`` frag */
-> +		skb_frag_t			frag;
-> +	};
-> +} __aligned_largest;
-> +static_assert(offsetof(struct libeth_xdp_tx_frame, frag.len) ==
-> +	      offsetof(struct libeth_xdp_tx_frame, len_fl));
-> +
-> +/**
-> + * struct libeth_xdp_tx_bulk - XDP Tx frame bulk for bulk sending
-> + * @prog: corresponding active XDP program
-> + * @dev: &net_device which the frames are transmitted on
-> + * @xdpsq: shortcut to the corresponding driver-specific XDPSQ structure
-> + * @count: current number of frames in @bulk
-> + * @bulk: array of queued frames for bulk Tx
-> + *
-> + * All XDP Tx operations queue each frame to the bulk first and flush it
-> + * when @count reaches the array end. Bulk is always placed on the stack
-> + * for performance. One bulk element contains all the data necessary
-> + * for sending a frame and then freeing it on completion.
-> + */
-> +struct libeth_xdp_tx_bulk {
-> +	const struct bpf_prog		*prog;
-> +	struct net_device		*dev;
-> +	void				*xdpsq;
-> +
-> +	u32				count;
-> +	struct libeth_xdp_tx_frame	bulk[LIBETH_XDP_TX_BULK];
-> +} __aligned(sizeof(struct libeth_xdp_tx_frame));
-> +
-> +/**
-> + * struct libeth_xdpsq - abstraction for an XDPSQ
-> + * @sqes: array of Tx buffers from the actual queue struct
-> + * @descs: opaque pointer to the HW descriptor array
-> + * @ntu: pointer to the next free descriptor index
-> + * @count: number of descriptors on that queue
-> + * @pending: pointer to the number of sent-not-completed descs on that queue
-> + * @xdp_tx: pointer to the above
-> + *
-> + * Abstraction for driver-independent implementation of Tx. Placed on the stack
-> + * and filled by the driver before the transmission, so that the generic
-> + * functions can access and modify driver-specific resources.
-> + */
-> +struct libeth_xdpsq {
-> +	struct libeth_sqe		*sqes;
-> +	void				*descs;
-> +
-> +	u32				*ntu;
-> +	u32				count;
-> +
-> +	u32				*pending;
-> +	u32				*xdp_tx;
-> +};
-> +
-> +/**
-> + * struct libeth_xdp_tx_desc - abstraction for an XDP Tx descriptor
-> + * @addr: DMA address of the frame
-> + * @len: length of the frame
-> + * @flags: XDP Tx flags
-> + * @opts: combined @len + @flags for speed
-> + *
-> + * Filled by the generic functions and then passed to driver-specific functions
-> + * to fill a HW Tx descriptor, always placed on the [function] stack.
-> + */
-> +struct libeth_xdp_tx_desc {
-> +	dma_addr_t			addr;
-> +	union {
-> +		struct {
-> +			u32				len;
-> +			u32				flags;
-> +		};
-> +		aligned_u64			opts;
-> +	};
-> +} __aligned_largest;
-> +
-> +/**
-> + * libeth_xdp_tx_xmit_bulk - main XDP Tx function
-> + * @bulk: array of frames to send
-> + * @xdpsq: pointer to the driver-specific XDPSQ struct
-> + * @n: number of frames to send
-> + * @unroll: whether to unroll the queue filling loop for speed
-> + * @priv: driver-specific private data
-> + * @prep: callback for cleaning the queue and filling abstract &libeth_xdpsq
-> + * @fill: internal callback for filling &libeth_sqe and &libeth_xdp_tx_desc
-> + * @xmit: callback for filling a HW descriptor with the frame info
-> + *
-> + * Internal abstraction for placing @n XDP Tx frames on the HW XDPSQ. Used for
-> + * all types of frames.
-> + * @unroll greatly increases the object code size, but also greatly increases
-> + * performance.
-> + * The compilers inline all those onstack abstractions to direct data accesses.
-> + *
-> + * Return: number of frames actually placed on the queue, <= @n. The function
-> + * can't fail, but can send less frames if there's no enough free descriptors
-> + * available. The actual free space is returned by @prep from the driver.
-> + */
-> +static __always_inline u32
-> +libeth_xdp_tx_xmit_bulk(const struct libeth_xdp_tx_frame *bulk, void *xdpsq,
-> +			u32 n, bool unroll, u64 priv,
-> +			u32 (*prep)(void *xdpsq, struct libeth_xdpsq *sq),
-> +			struct libeth_xdp_tx_desc
-> +			(*fill)(struct libeth_xdp_tx_frame frm, u32 i,
-> +				const struct libeth_xdpsq *sq, u64 priv),
-> +			void (*xmit)(struct libeth_xdp_tx_desc desc, u32 i,
-> +				     const struct libeth_xdpsq *sq, u64 priv))
-> +{
-> +	u32 this, batched, off = 0;
-> +	struct libeth_xdpsq sq;
-> +	u32 ntu, i = 0;
-> +
-> +	n = min(n, prep(xdpsq, &sq));
-> +	if (unlikely(!n))
-> +		return 0;
-> +
-> +	ntu = *sq.ntu;
-> +
-> +	this = sq.count - ntu;
+I guess we are stuck with this so need to think of a sensible way forward.
 
-maybe something more self-descriptive than 'this'? :)
-this is available space in sq, right?
+>
+> >
+> > Though getting rid of VM_PAT would be fantastic...
+> >
+> > I wonder if a _general_ VMA ref count would be a bit much just for this
+> > case.
+>
+> I don't think it would be helpful for this case. It's much more similar to the anon
+> VMA name (that also has its own kref)
 
-> +	if (likely(this > n))
-> +		this = n;
-> +
-> +again:
-> +	if (!unroll)
+Ahh I see, adding a field like this, that makes a lot more sense, obviously
+could put behind appropriate CONFIG_ flag.
 
-who takes this decision? a caller or is this dependent on some constraints
-of underlying system? when would you like to not unroll?
+Given cacheline alignment probably have a bit of wiggle room there to avoid
+increasing VMA size also.
 
-> +		goto linear;
-> +
-> +	batched = ALIGN_DOWN(this, LIBETH_XDP_TX_BATCH);
-> +
-> +	for ( ; i < off + batched; i += LIBETH_XDP_TX_BATCH) {
-> +		u32 base = ntu + i - off;
-> +
-> +		unrolled_count(LIBETH_XDP_TX_BATCH)
-> +		for (u32 j = 0; j < LIBETH_XDP_TX_BATCH; j++)
-> +			xmit(fill(bulk[i + j], base + j, &sq, priv),
-> +			     base + j, &sq, priv);
-> +	}
-> +
-> +	if (batched < this) {
-> +linear:
-> +		for ( ; i < off + this; i++)
-> +			xmit(fill(bulk[i], ntu + i - off, &sq, priv),
-> +			     ntu + i - off, &sq, priv);
-> +	}
-> +
-> +	ntu += this;
-> +	if (likely(ntu < sq.count))
-> +		goto out;
-> +
-> +	ntu = 0;
-> +
-> +	if (i < n) {
-> +		this = n - i;
-> +		off = i;
-> +
-> +		goto again;
-> +	}
-> +
-> +out:
-> +	*sq.ntu = ntu;
-> +	*sq.pending += n;
-> +	if (sq.xdp_tx)
-> +		*sq.xdp_tx += n;
-> +
-> +	return n;
-> +}
-> +
-> +/* ``XDP_TX`` bulking */
-> +
-> +void libeth_xdp_return_buff_slow(struct libeth_xdp_buff *xdp);
-> +
-> +/**
-> + * libeth_xdp_tx_queue_head - internal helper for queueing one ``XDP_TX`` head
-> + * @bq: XDP Tx bulk to queue the head frag to
-> + * @xdp: XDP buffer with the head to queue
-> + *
-> + * Return: false if it's the only frag of the frame, true if it's an S/G frame.
-> + */
-> +static inline bool libeth_xdp_tx_queue_head(struct libeth_xdp_tx_bulk *bq,
-> +					    const struct libeth_xdp_buff *xdp)
-> +{
-> +	const struct xdp_buff *base = &xdp->base;
-> +
-> +	bq->bulk[bq->count++] = (typeof(*bq->bulk)){
-> +		.data	= xdp->data,
-> +		.len_fl	= (base->data_end - xdp->data) | LIBETH_XDP_TX_FIRST,
-> +		.soff	= xdp_data_hard_end(base) - xdp->data,
-> +	};
-> +
-> +	if (!xdp_buff_has_frags(base))
-> +		return false;
-> +
-> +	bq->bulk[bq->count - 1].len_fl |= LIBETH_XDP_TX_MULTI;
-> +
-> +	return true;
-> +}
-> +
-> +/**
-> + * libeth_xdp_tx_queue_frag - internal helper for queueing one ``XDP_TX`` frag
-> + * @bq: XDP Tx bulk to queue the frag to
-> + * @frag: frag to queue
-> + */
-> +static inline void libeth_xdp_tx_queue_frag(struct libeth_xdp_tx_bulk *bq,
-> +					    const skb_frag_t *frag)
-> +{
-> +	bq->bulk[bq->count++].frag = *frag;
-> +}
-> +
-> +/**
-> + * libeth_xdp_tx_queue_bulk - internal helper for queueing one ``XDP_TX`` frame
-> + * @bq: XDP Tx bulk to queue the frame to
-> + * @xdp: XDP buffer to queue
-> + * @flush_bulk: driver callback to flush the bulk to the HW queue
-> + *
-> + * Return: true on success, false on flush error.
-> + */
-> +static __always_inline bool
-> +libeth_xdp_tx_queue_bulk(struct libeth_xdp_tx_bulk *bq,
-> +			 struct libeth_xdp_buff *xdp,
-> +			 bool (*flush_bulk)(struct libeth_xdp_tx_bulk *bq,
-> +					    u32 flags))
-> +{
-> +	const struct skb_shared_info *sinfo;
-> +	bool ret = true;
-> +	u32 nr_frags;
-> +
-> +	if (unlikely(bq->count == LIBETH_XDP_TX_BULK) &&
-> +	    unlikely(!flush_bulk(bq, 0))) {
-> +		libeth_xdp_return_buff_slow(xdp);
-> +		return false;
-> +	}
-> +
-> +	if (!libeth_xdp_tx_queue_head(bq, xdp))
-> +		goto out;
-> +
-> +	sinfo = xdp_get_shared_info_from_buff(&xdp->base);
-> +	nr_frags = sinfo->nr_frags;
-> +
-> +	for (u32 i = 0; i < nr_frags; i++) {
-> +		if (unlikely(bq->count == LIBETH_XDP_TX_BULK) &&
-> +		    unlikely(!flush_bulk(bq, 0))) {
-> +			ret = false;
-> +			break;
-> +		}
-> +
-> +		libeth_xdp_tx_queue_frag(bq, &sinfo->frags[i]);
-> +	}
-> +
-> +out:
-> +	bq->bulk[bq->count - 1].len_fl |= LIBETH_XDP_TX_LAST;
-> +	xdp->data = NULL;
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * libeth_xdp_tx_fill_stats - fill &libeth_sqe with ``XDP_TX`` frame stats
-> + * @sqe: SQ element to fill
-> + * @desc: libeth_xdp Tx descriptor
-> + * @sinfo: &skb_shared_info for this frame
-> + *
-> + * Internal helper for filling an SQE with the frame stats, do not use in
-> + * drivers. Fills the number of frags and bytes for this frame.
-> + */
-> +#define libeth_xdp_tx_fill_stats(sqe, desc, sinfo)			      \
-> +	__libeth_xdp_tx_fill_stats(sqe, desc, sinfo, __UNIQUE_ID(sqe_),	      \
-> +				   __UNIQUE_ID(desc_), __UNIQUE_ID(sinfo_))
-> +
-> +#define __libeth_xdp_tx_fill_stats(sqe, desc, sinfo, ue, ud, us) do {	      \
-> +	const struct libeth_xdp_tx_desc *ud = (desc);			      \
-> +	const struct skb_shared_info *us;				      \
-> +	struct libeth_sqe *ue = (sqe);					      \
-> +									      \
-> +	ue->nr_frags = 1;						      \
-> +	ue->bytes = ud->len;						      \
-> +									      \
-> +	if (ud->flags & LIBETH_XDP_TX_MULTI) {				      \
-> +		us = (sinfo);						      \
-> +		ue->nr_frags += us->nr_frags;				      \
-> +		ue->bytes += us->xdp_frags_size;			      \
-> +	}								      \
-> +} while (0)
-> +
-> +/**
-> + * libeth_xdp_tx_fill_buf - internal helper to fill one ``XDP_TX`` &libeth_sqe
-> + * @frm: XDP Tx frame from the bulk
-> + * @i: index on the HW queue
-> + * @sq: XDPSQ abstraction for the queue
-> + * @priv: private data
-> + *
-> + * Return: XDP Tx descriptor with the synced DMA and other info to pass to
-> + * the driver callback.
-> + */
-> +static inline struct libeth_xdp_tx_desc
-> +libeth_xdp_tx_fill_buf(struct libeth_xdp_tx_frame frm, u32 i,
-> +		       const struct libeth_xdpsq *sq, u64 priv)
-> +{
-> +	struct libeth_xdp_tx_desc desc;
-> +	struct skb_shared_info *sinfo;
-> +	skb_frag_t *frag = &frm.frag;
-> +	struct libeth_sqe *sqe;
-> +	netmem_ref netmem;
-> +
-> +	if (frm.len_fl & LIBETH_XDP_TX_FIRST) {
-> +		sinfo = frm.data + frm.soff;
-> +		skb_frag_fill_netmem_desc(frag, virt_to_netmem(frm.data),
-> +					  offset_in_page(frm.data),
-> +					  frm.len_fl);
-> +	} else {
-> +		sinfo = NULL;
-> +	}
-> +
-> +	netmem = skb_frag_netmem(frag);
-> +	desc = (typeof(desc)){
-> +		.addr	= page_pool_get_dma_addr_netmem(netmem) +
-> +			  skb_frag_off(frag),
-> +		.len	= skb_frag_size(frag) & LIBETH_XDP_TX_LEN,
-> +		.flags	= skb_frag_size(frag) & LIBETH_XDP_TX_FLAGS,
-> +	};
-> +
-> +	if (sinfo || !netmem_is_net_iov(netmem)) {
-> +		const struct page_pool *pp = __netmem_get_pp(netmem);
-> +
-> +		dma_sync_single_for_device(pp->p.dev, desc.addr, desc.len,
-> +					   DMA_BIDIRECTIONAL);
-> +	}
-> +
-> +	if (!sinfo)
-> +		return desc;
-> +
-> +	sqe = &sq->sqes[i];
-> +	sqe->type = LIBETH_SQE_XDP_TX;
-> +	sqe->sinfo = sinfo;
-> +	libeth_xdp_tx_fill_stats(sqe, &desc, sinfo);
-> +
-> +	return desc;
-> +}
-> +
-> +void libeth_xdp_tx_exception(struct libeth_xdp_tx_bulk *bq, u32 sent,
-> +			     u32 flags);
-> +
-> +/**
-> + * __libeth_xdp_tx_flush_bulk - internal helper to flush one XDP Tx bulk
-> + * @bq: bulk to flush
-> + * @flags: XDP TX flags
-> + * @prep: driver-specific callback to prepare the queue for sending
-> + * @fill: libeth_xdp callback to fill &libeth_sqe and &libeth_xdp_tx_desc
+>
+> >
+> > But maybe I misunderstand your approach :) Happy to obviously look and if
+> > not like some crazy thing just for PAT (you can understand why I would not
+> > like this) will be supportive :>)
+>
+> This is something quick (well, longer than I wish it would take) that seems to
+> work. There are smaller pat-internal cleanups to be had on top of this, and
+> the new functions shall be documented.
+>
+>
+> Observe how:
+> * We remove VM_PAT and that weird VM flags manipulation + "locked" flag
+> * We remove any traces of the nasty tracking handling from mremap+fork code
+> * Just like anon_vma_name, it hooks into vm_area_dup()/vm_area_free().
+> * We remove the page table lookup via get_pat_info()->... completely
+> * We remove the VMA parameter from PAT code completely
+> * We reduce the track/untrack/sanitize interface to 3 functions
 
-Could you explain why this has to be implemented as a callback? for now
-this might just be directly called within libeth_xdp_tx_xmit_bulk() ?
+Yeah this is all lovely!
 
-What I currently understand is this is not something that driver would
-provide. If its libeth internal routine then call this directly and
-simplify the code.
-
-Besides, thanks a lot for this series and split up! I think we're on a
-good path.
-
-> + * @xmit: driver callback to fill a HW descriptor
-> + *
-> + * Internal abstraction to create bulk flush functions for drivers.
-> + *
-> + * Return: true if anything was sent, false otherwise.
-> + */
-> +static __always_inline bool
-> +__libeth_xdp_tx_flush_bulk(struct libeth_xdp_tx_bulk *bq, u32 flags,
-> +			   u32 (*prep)(void *xdpsq, struct libeth_xdpsq *sq),
-> +			   struct libeth_xdp_tx_desc
-> +			   (*fill)(struct libeth_xdp_tx_frame frm, u32 i,
-> +				   const struct libeth_xdpsq *sq, u64 priv),
-> +			   void (*xmit)(struct libeth_xdp_tx_desc desc, u32 i,
-> +					const struct libeth_xdpsq *sq,
-> +					u64 priv))
-> +{
-> +	u32 sent, drops;
-> +	int err = 0;
-> +
-> +	sent = libeth_xdp_tx_xmit_bulk(bq->bulk, bq->xdpsq,
-> +				       min(bq->count, LIBETH_XDP_TX_BULK),
-> +				       false, 0, prep, fill, xmit);
-> +	drops = bq->count - sent;
-> +
-> +	if (unlikely(drops)) {
-> +		libeth_xdp_tx_exception(bq, sent, flags);
-> +		err = -ENXIO;
-> +	} else {
-> +		bq->count = 0;
-> +	}
-> +
-> +	trace_xdp_bulk_tx(bq->dev, sent, drops, err);
-> +
-> +	return likely(sent);
-> +}
-> +
-> +/**
-> + * libeth_xdp_tx_flush_bulk - wrapper to define flush of one ``XDP_TX`` bulk
-> + * @bq: bulk to flush
-> + * @flags: Tx flags, see above
-> + * @prep: driver callback to prepare the queue
-> + * @xmit: driver callback to fill a HW descriptor
-> + */
-> +#define libeth_xdp_tx_flush_bulk(bq, flags, prep, xmit)			      \
-> +	__libeth_xdp_tx_flush_bulk(bq, flags, prep, libeth_xdp_tx_fill_buf,   \
-> +				   xmit)
-
-(...)
-
-> +MODULE_DESCRIPTION("Common Ethernet library - XDP infra");
-
-tiny nit: maybe spell out 'infrastructure'
-
-> +MODULE_IMPORT_NS("LIBETH");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.49.0
-> 
+OK this should hopefully be workable then!
 
