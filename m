@@ -1,115 +1,255 @@
-Return-Path: <linux-kernel+bounces-618394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF40A9ADF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4ED8A9ADFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4007A4E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329854A0794
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D52327BF9A;
-	Thu, 24 Apr 2025 12:51:36 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401A027E1AE;
+	Thu, 24 Apr 2025 12:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="AYhgthY5"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3641427BF94
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7286D27CB27
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745499095; cv=none; b=US95hLzjsBez6+bhiwVAhcqg3WlyExIltmWzU/ZS6pi25SvJ/q3mF10L+Ba5Ip4qwqCjpvLtzTsNV9sx3TXR4HoSG5yAyz1nRfHBo8PthEYmk5767CFdq3efopKEvNxvq+iqc1DJzKCZfW2AET8jLKCXzFlrA28hN4xnxV6v9Mk=
+	t=1745499104; cv=none; b=qyi/idDIA/dmc4E3Jp0aQlhYQA9ywAiTMw2AHhFsglNeNn2CAlE+Jw0qCC0Zdo6wjivyFjGA6byBuUB4YSrJsO2LYis2v8N/WaJ6BKtyh7IquYNVpImNRtLJRgorCS4EvYiA+fywcTqjOLmjyNz/P5Qm+LteQyo90WsvyMXPp1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745499095; c=relaxed/simple;
-	bh=5D5/0LzL83w5CwpzVO/3IUS4QnFdqrpA9CPTI/PQNsk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F9Y0JFHiF5F9EkvfGGBy7iDxTL0+XYVuOezV78V8MaA9wPb8Tbtp0yLILM4UkPTi7TmgODXPy4NRVNfsA4ojdrQq0LJzn1absHSTcEfR9aSLgFtxkbGenoa5tmp8YSUGPtX3dogMDVCHpf4GHq2sMePD8Shs8244NsTj1r/JOFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d438be189bso11246605ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 05:51:33 -0700 (PDT)
+	s=arc-20240116; t=1745499104; c=relaxed/simple;
+	bh=YasCWAy3v55s89pMoa3ranL51jlpEy9fj4l4xNuEECQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=VCA1z3M1ip5BCKfekV2KshcPBtYfJittvN+q32zTRilKXkyY53+p3PluaejcmnbGxIyFqNLpAUweni7Yc/wO+xkuJ8TalOqB5HJ00y03xt/r9Sxy1k/kEw8t9YsGKA+fwMXM5n7PoRV6ZjFkkSRPuUUiCTasOhW25/U7AG0SKS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=AYhgthY5; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe99f2a7so1520525e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 05:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1745499101; x=1746103901; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MLukpWT5NNOxSvsbTFh0JQPpU9SQzhdcC+2BWmCpzxc=;
+        b=AYhgthY5jad5RAK6lPwJjWxOTuABxtdCTU5adNG80frqMjhaPv++bPYW+Mo5dBlYty
+         rHWLQ7xmIaj/k/bMYj4dq1x0FlrNLSRD7dp3X0abKHAM/ut1XHJCuQfZjXPHDa7D2/uu
+         V0tBbW+2d/ScTBdSoNtId0mOGRP5x9P1dFS82PqPfOcjxLkylsWNUS+uzs452nsJpxYz
+         8ZlTU0TJpF/DD1/rw5e61zruX41sRlxN+FXwWxCPdFmGgo1b0LHVfpIai7bLJK+g1NNo
+         +R7xaWa9FyNJRli7ZnMHMKZzHLN4nWLY/9I7W81tGZk7uAZP09UWQiu7RcZ8z6zHlieo
+         4kUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745499093; x=1746103893;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TXeQR3Sx467CreFuYozB+CwcPPf8At1T2RKk614NSIM=;
-        b=GNnWTGmAju0ulIKCeGC+dJiaxc2qHPaEkuBAzZkVEtOqEbS7X3adfLHI3SkbV89T15
-         2jcCoCrR5oca1AbA+pjv/249UNKbOeGwHhX/B8C6OKxWnZXBLWr+berSQJ85LGKgvKFl
-         Taz2TvOJzlYIhmQOyK//7nw3FrXX79dK28RqHi7axlGk5LTOBFy76ginP25v7H2uvbO1
-         3pl2Ej9XzakYMkmE/BLS3fgr4WHXsEsFXkNV51UwtonywKnzBonOL8bhIroegkPIRKmi
-         tzdCUJkv0tWxc9bTUKdr6kB16o2TZT6RRcU26iRaD0lRgUMgdwbucnkvIeTkYmFh3Jcy
-         equw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDZPRJIiY5HaANpQc1YSkR08kQp+HFVJkDCs3C9Zn5pHkduDD0kXJNwlXPOR+KdaSaohuJA+9mRYiwB60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOB6da2pW4fdBmu6i8uzg56H0Y4HU/lqx+a2JdVNnIA2gFgp2B
-	8UvTTQdY+s3kFLmUPKAQ9lY3MUxu9gkL48vYOO0McfGcdsoZpXMZNDbKlkd0Q6HQqdbg6letwI2
-	DpKN19poT0GdpEdCIb3TIdFUV5hpJyutkbyS0czso1yBNw9EVRx2Ldf8=
-X-Google-Smtp-Source: AGHT+IFbFt3HSXR88BYSQzj51++/VfgmJ/IPefkHR6Ckckpg9vTik2GiXujwkU8Gg++jibwHOKkP3ofhpGNJ8IpzpN82gk8IP0VZ
+        d=1e100.net; s=20230601; t=1745499101; x=1746103901;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MLukpWT5NNOxSvsbTFh0JQPpU9SQzhdcC+2BWmCpzxc=;
+        b=dMZATZ/yaXanqbDAUxrawsjT6ax8nFEK9N0Ai9KEx49jSB4brrMzs/eBcMqjPyodp0
+         P/KsBvQ64wBWlqzNwFg8wSs4xCH2dlWVfM3e8f2twwuPM9JvSYYi15Hs8uMVL0Hskmis
+         /3F/Q7uKPWy7X38t8+XEnMakzGYPNi1Mul4U4kqJ+nRihD7oXeynZTfWN8VWWYDVApqM
+         QHxRCOnP1+djVoqdKkPKcS9KmLN2kzqnmIYJvzUtxEI37/0ZCHvR3xZtf3cbD6m+TBKe
+         jjxLIUr9H/q61uhQcDGhXWRbn1GYZYDPZvye1qfZScyGT3T0Ysups1UMLXDYztqm85dt
+         eKGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBA//eYxsa4ek+PGUP+1UG0mBe6+5616Y9YyNR9FIZ4i0Tf+PuwdKZQksvhSUUfTC0nCqXvPTLPK1O8O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3fWBZxcSMcjfhV5aNqNUZdX+quCnibSF1qgM8Bwpn4YYhpx26
+	+h4vTVa5qOk49WCNfHyDcNCHN+26LQGJQwhWR/rOmVUJXbGDk7vwRQ8nopNmXKs=
+X-Gm-Gg: ASbGncvz5hiHy88291kyXfp8VJBF6OFdAC/kHGE7kldZY/15IW7L8n8E8KNoQvqiqlm
+	OdiQp1qk62BGqrQ3K+60DIGnz/pkfCTKeAgZXdBvUAbmwGmQwzOXfX00SJh31oTcQdpwIcDESyE
+	heJzo43hraUL3A9ycY6904BMwHnXgHf2RSwk6PRaByby+O7HcWV29j60gomCSnEny/4Hb2z6lV1
+	iBDdiWIopff9Ye+0//h4TENJURpa1D7r3llFaGKRYY0Cgx7gq/itqnuqyALDdowjNoruQvwYyn2
+	SFkYXB3z/i9Z4bpyriZMOkN39DrRTOsjDyuu8bAMcgYx6/Cp
+X-Google-Smtp-Source: AGHT+IEM7f4Ug05qJLQixhJCwrNUQhZVnfUcKsq0i+OggaoW7x6aAvFNMmOAKB/VOVrygSxaqnTFQw==
+X-Received: by 2002:a05:600c:3d89:b0:439:8c80:6aee with SMTP id 5b1f17b1804b1-4409bd8d808mr9055605e9.4.1745499100564;
+        Thu, 24 Apr 2025 05:51:40 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:b30c:ee4d:9e10:6a46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d29b8efsm20710185e9.6.2025.04.24.05.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 05:51:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216a:b0:3d8:1d2d:60ab with SMTP id
- e9e14a558f8ab-3d930388dc0mr27240175ab.3.1745499093220; Thu, 24 Apr 2025
- 05:51:33 -0700 (PDT)
-Date: Thu, 24 Apr 2025 05:51:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <680a33d5.050a0220.10d98e.0006.GAE@google.com>
-Subject: [syzbot] [kernel?] net test error: UBSAN: negation-overflow in corrupted
-From: syzbot <syzbot+76fd07ed2518fb9303f9@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, davem@davemloft.net, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Apr 2025 14:51:39 +0200
+Message-Id: <D9EVSGGM0XDE.25R31NY7EQTJX@ventanamicro.com>
+Subject: Re: [PATCH v12 10/28] riscv/mm: Implement map_shadow_stack()
+ syscall
+Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
+ <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
+ Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+ <D92VAWLM8AGD.3CF1VH6NYHCYV@ventanamicro.com>
+ <aAmtKhlwKV7oz7RF@debug.ba.rivosinc.com>
+In-Reply-To: <aAmtKhlwKV7oz7RF@debug.ba.rivosinc.com>
 
-Hello,
+2025-04-23T20:16:58-07:00, Deepak Gupta <debug@rivosinc.com>:
+> On Thu, Apr 10, 2025 at 11:56:44AM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wro=
+te:
+>>2025-03-14T14:39:29-07:00, Deepak Gupta <debug@rivosinc.com>:
+>>> As discussed extensively in the changelog for the addition of this
+>>> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+>>> existing mmap() and madvise() syscalls do not map entirely well onto th=
+e
+>>> security requirements for shadow stack memory since they lead to window=
+s
+>>> where memory is allocated but not yet protected or stacks which are not
+>>> properly and safely initialised. Instead a new syscall map_shadow_stack=
+()
+>>> has been defined which allocates and initialises a shadow stack page.
+>>>
+>>> This patch implements this syscall for riscv. riscv doesn't require tok=
+en
+>>> to be setup by kernel because user mode can do that by itself. However =
+to
+>>> provide compatibility and portability with other architectues, user mod=
+e
+>>> can specify token set flag.
+>>
+>>RISC-V shadow stack could use mmap() and madvise() perfectly well.
+>
+> Deviating from what other arches are doing will create more thrash. I exp=
+ect
+> there will be merging of common logic between x86, arm64 and riscv. Infac=
+t I
+> did post one such RFC patch set last year (didn't follow up on it). Using
+> `mmap/madvise` defeats that purpose of creating common logic between arch=
+es.
+>
+> There are pitfalls as mentioned with respect to mmap/madivse because of
+> unique nature of shadow stack. And thus it was accepted to create a new s=
+yscall
+> to create such mappings. RISC-V will stick to that.
 
-syzbot found the following issue on:
+Ok.
 
-HEAD commit:    cc0dec3f659d Merge branch 'net-stmmac-fix-timestamp-snapsh..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=131c21b3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac0f76cd0f8e093a
-dashboard link: https://syzkaller.appspot.com/bug?extid=76fd07ed2518fb9303f9
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+>>> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+>>> +static noinline unsigned long amo_user_shstk(unsigned long *addr, unsi=
+gned long val)
+>>> +{
+>>> +	/*
+>>> +	 * Never expect -1 on shadow stack. Expect return addresses and zero
+>>> +	 */
+>>> +	unsigned long swap =3D -1;
+>>> +	__enable_user_access();
+>>> +	asm goto(
+>>> +		".option push\n"
+>>> +		".option arch, +zicfiss\n"
+>>
+>>Shouldn't compiler accept ssamoswap.d opcode even without zicfiss arch?
+>
+> Its illegal instruction if shadow stack aren't available. Current toolcha=
+in
+> emits it only if zicfiss is specified in march.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d6f321414b4/disk-cc0dec3f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/072c28c931b0/vmlinux-cc0dec3f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bcb44ff40c55/bzImage-cc0dec3f.xz
+Oof, I'll look why arch is being used like that, thanks.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+76fd07ed2518fb9303f9@syzkaller.appspotmail.com
+(I thought arch is only for compiler generated code, so assembly
+ mnemonics would always be defined if the compiler knows them.)
 
-virtio-scsi blksize=512 sectors=4194304 = 2048 MiB
-drive 0x000f27f0: PCHS=0/0/0 translation=lba LCHS=520/128/63 s=4194304
-Sending Seabios boot VM event.
-Booting from Hard Disk 0...
-[    0serialport: Connected to syzkaller.us-central1-c.ci-upstream-net-this-kasan-gce-test-1 port 1 (session ID: e72bd3249fa5f4b40b974e21e6d99e16e8384254f2e85c0fe39918dcc479fa4d, active connections: 1).
-.000000][    T0] UBSAN: negation-overflow in lib/sort.c:199:36
+>>
+>>> +		".option pop\n"
+>>> +		: [swap] "=3Dr" (swap), [addr] "+A" (*addr)
+>>> +		: [val] "r" (val)
+>>> +		: "memory"
+>>> +		: fault
+>>> +		);
+>>> +	__disable_user_access();
+>>> +	return swap;
+>>> +fault:
+>>> +	__disable_user_access();
+>>> +	return -1;
+>>
+>>I think we should return 0 and -EFAULT.
+>>We can ignore the swapped value, or return it through a pointer.
+>
+> Consumer of this detects -1 and then return -EFAULT.
+> We would eventually need this when creating shadow stack tokens for
+> kernel shadow stack. I believe `-1` is safe return value which can't
+> be construed as negative kernel address (-EFAULT will be)
 
+I believe it as well, but I don't see a reason why we need to risk it
+when we can return the stack value though a pointer and have simple
+success/failure return value.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>> +}
+>>> +
+>>> +static unsigned long allocate_shadow_stack(unsigned long addr, unsigne=
+d long size,
+>>> +					   unsigned long token_offset, bool set_tok)
+>>> +{
+>>> +	int flags =3D MAP_ANONYMOUS | MAP_PRIVATE;
+>>
+>>Is MAP_GROWSDOWN pointless?
+>
+> Not sure. Didn't see that in x86 or arm64 shadow stack creation.
+> Let me know if its useful.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+It is for automated growing of the stack.  I think that the default
+stack is pointlessly large already, and if other arches don't do it, so
+we can probably follow their design here as well...
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>>> +	struct mm_struct *mm =3D current->mm;
+>>> +	unsigned long populate, tok_loc =3D 0;
+>>> +
+>>> +	if (addr)
+>>> +		flags |=3D MAP_FIXED_NOREPLACE;
+>>> +
+>>> +	mmap_write_lock(mm);
+>>> +	addr =3D do_mmap(NULL, addr, size, PROT_READ, flags,
+>>
+>>PROT_READ implies VM_READ, so won't this select PAGE_COPY in the
+>>protection_map instead of PAGE_SHADOWSTACK?
+>
+> PROT_READ is pointless here and redundant. I haven't checked if I remove =
+it
+> what happens.
+>
+> `VM_SHADOW_STACK` takes precedence (take a look at pte_mkwrite and pmd_mk=
+write.
+> Only way `VM_SHADOW_STACK` is possible in vmflags is via `map_shadow_stac=
+k` or
+> `fork/clone` on existing task with shadow stack enabled.
+>
+> In a nutshell user can't specify `VM_SHADOW_STACK` directly (indirectly v=
+ia
+> map_shadow_stack syscall or fork/clone) . But if set in vmaflags then it'=
+ll
+> take precedence.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Yeah, I don't like that ugly special case at all, so I was hoping we
+could somehow avoid it. :)
 
