@@ -1,229 +1,236 @@
-Return-Path: <linux-kernel+bounces-618336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80977A9AD33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F45A9AD3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4261B67503
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8DE1B670A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BDD22DF8F;
-	Thu, 24 Apr 2025 12:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8Fy6G/n"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7177D22F741;
+	Thu, 24 Apr 2025 12:23:49 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CD122D780;
-	Thu, 24 Apr 2025 12:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745497337; cv=none; b=dMmaUT0A7uKFX1GIXDCs/pUa2rdVZFYUq102PYIj3hUT2IXgptCtZu+x27ss+hrPIlqmCUVqyAMpl1ITPpevmO15KePcoM0/7gL4h+qFf2UT5hGLBcgvQ1LCFgwgr874a/iDabK0lPXYvKXcR2Kmbw/pE8MJ7xkOwD6wWOlDYHI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745497337; c=relaxed/simple;
-	bh=bSCjs6XPL95daq1tu5pbrBQ5N+yhoPGC4JD2X/nk4RM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZBe6GKHD7l2JVmPrZe8DyEjPidFau9JY5H4bzLZFkk/OLB1R/mQ5u5I987DSsWPGZG5PEmVId7K+yvBzYdXeiEAZ3TjRMFhPqLYU4RjGpb7eXyMVgFGFkz+DdimedF3F5KzQyEP6MfYF4zETZe1dt/ElOSO11DoFh8oddi29D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8Fy6G/n; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3018e2d042bso666467a91.2;
-        Thu, 24 Apr 2025 05:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745497335; x=1746102135; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yulca+m6eU+aKvuvRmaHz5EfITL98i0LZdidD7dFvFo=;
-        b=P8Fy6G/nytp4ewBfEK5xnFqzY0hbKOKeoMd/j9Nxgk8mYsaZ/5yqh3poxiYRbfUfIk
-         uuNahTJHX2oFYUUZUilZp2WSZSKj3U5LTiaLskZxh67ElTtG5UnP8BPna1Muk1pIXcNe
-         /bJLu1M4Za9sG1cUCl9orC8/He/7uS6ZKtyDoVDjQG4rxHwoZ6GIIpXscJjJaMRtgQuF
-         cxA6nPhrxoZu/4V5kfMPySf6rNPycQR1RjAJoR43mb8EOm58AAlBSOCSP2QNfSXt8Bq/
-         pG9Os/RXyr63akyLACHfn850tmh2m592IXf0mkx4dmry1iNf764T0Qd0bjrYvc7oFh2n
-         TS/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745497335; x=1746102135;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yulca+m6eU+aKvuvRmaHz5EfITL98i0LZdidD7dFvFo=;
-        b=gyi1oKbLH80mNpAKnBiWUIPIofF91gq44GGjXaCqLWIVPOOOPO2hhnXYBJtkFMvSz+
-         76lwYIyIriWB8i5MvBw50k/jt9b27AXrK2S8dpf8r9jZMA3K0+cFvB86iMFzED75IMc1
-         EGsjKtsFZr1sNskS2f9huhjLKjDIj52wUqRv1G68YOsZ1eHja+BfXk9PCrIJknPr0i9G
-         sYIUei16CiXRQQXsJo3s2trqXXbi4gXNY7Pq2aJhj78v/3r3Z7r3Q1V/lVHIHsH4xf74
-         usST6RcLdMPZmr1Kpxejx0sxZ7DM1tUfnc4zzfpgzCXPxaxSWDu1++aKTWBeuBbbHb0F
-         qBmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+9h5WMY0QpjSDYUMAEOf13c7kJGqNju14b1aw/TtGtQoxmz9e5kpwVuadvK1eUjfM8I7zgnsmx8JIe6bb@vger.kernel.org, AJvYcCWCP6zgwlEe882y4O67R5dKelFU7/rOQPl6+RXBHFt6rKPEojfRPhhxZmnqdY4ngvioFIbL/cV+YlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXCJ0/3t3hTWYsCy27HHhccpo+8oSFPQiRJdmxL7x1FYIazQc+
-	zu1imW18sPgqUEjEmusRkRAhv53JpazSNSkwV01KdKOVDqDzYL7h
-X-Gm-Gg: ASbGnctxi1AsyN2A/5bDQKeP6Q1+ec+sxZs5O5CFxciWoNRkre4QIVAEeeI/ItnzykM
-	JSvGRMyJtYAataDKivbXuqywyq84Ci2rUPJCEe2zieQxZkL3gpPWwHNN4U3tNd3HjIZUelhqJA0
-	N8RNvZklRKauadBgAus3YMK86miVW/atPI8AYdTi/e80mtQ+dgcIFeMqV0gQEk/uEi/CvDLXA/a
-	1PPGrgF5BGPugyoiezt7krIcQtI9JAc47XIBV+4cI6ZYkyYsKUsSDOt1KqqRb6N1X+3zN8CcENg
-	FRrzxsqkzPDT6VAAcEK2McwAn4/1sxwl6ffx63w+byqBEph23xixeuT64jQS86Wj2HW+NhvH6xg
-	oSTA1ciNXHz7UQQ==
-X-Google-Smtp-Source: AGHT+IEf+g6RCzlARg1Io5ebiLE6UKn/eFApuJ0yjpVjeaWVFeQKDcD4ntpMlS8kvvePvW8tq70T1A==
-X-Received: by 2002:a17:90b:3a05:b0:2fe:68a5:d84b with SMTP id 98e67ed59e1d1-309ed26ca10mr3248290a91.1.1745497335330;
-        Thu, 24 Apr 2025 05:22:15 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef14a358sm1195971a91.46.2025.04.24.05.22.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 05:22:14 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b6f7c310-562a-494e-a1da-05a28666e1f0@roeck-us.net>
-Date: Thu, 24 Apr 2025 05:22:13 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3BC22B8C6;
+	Thu, 24 Apr 2025 12:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745497428; cv=fail; b=ek/GlpHrfWBgMFCdsOfNmkFKyiKqQsYiYElkR+aKt1RaL5PpOF0WaQ/Uyvw2dZLBCci4sCEPclNC3WDQrKhMg6+bi0hkfbMUsCopaUPclbYiBXQCBzUCPZFd9o0m5yfszh4qlgJAm3jkgAwePY+mK/TsjwD8a50ZmNJlDl6iLpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745497428; c=relaxed/simple;
+	bh=x4zvc1gauxkQa9n1cAJRpZoLTvgDiQVTk1eVQkVEvkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HvtOJupD9Z8FoGGUOhJNHqExaYLckQssYkv7kSAPcsH3Vnfs0Izlp5mvzADlQ6JxlVjnes+zjwor3zFTuvsii/agiUlpRSmmbPocB3qsjdyTs66xCh8Cpre47Exn/R2TjXqm9A2W5U4yqMTxal+rRrc1lC2wDc3XURXYo2di/9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O5iMef011746;
+	Thu, 24 Apr 2025 05:23:27 -0700
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 466jhat8bc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Apr 2025 05:23:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=essyqskxO5+IZkDbV0t9pXTx5TVXYSF794vZH/WNaI6ZLjkWhimM3xOitHHmlOayKnWtuJYLjowUnPE9DRxMxWe+LYvQYrndQxLQx0HzQZ1Z9Q1OVrkYE2Kc4NvnnjlmBtQJ1BiobwGhz+qMpOSHG/0aMBVpAZsOB3NwlEJOCxRcczLmQQ9RBl/sF/4go3PA6REDO1qF86t+/tgzZ/J0Y2w875H4O6Z2So+Vwp/ISWwz0Qe5Cz87PsUGnLhfKEG7nfo4wgs8ed8yY8Cwa9kIFI3r5Q+qkg1Pd/fc+qemeyuniNO6HdnEF+9+mwfL50vcv+Z5tvsC1s1EKTPa6xtIdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WBMNd0+F/Az+F+Sywa+uY0qFjAGfmurE8HS2VVZ4rv8=;
+ b=EDiY3ZSkDwNE0/KPN/JHV9568Fq4H3cWQc7394VHrmuuuwuG+lOhGY7vLJZ+EPT63WTOpE5hQhHU8kSrqiC6Ox5h72VoV2ktqwx/4camMlZ5BJCBZ1UeUJ1nEZScfXM6dYbsNpQPRGGsb2YFBnWVi7neQZa240acpfo5oZ1JQAcTBmnn8NeVLoUTrKXjwLmircJTVYfCdpJHdhFS9a1apcyIBf9FZfJ2MexVi2pfEp17MU3xCOlqXXbFAnSQKeZZ3/Jvs3frAPPcKIzE4OZySjEQ5J8TwRicvFh8r74AKu9kfW2ChVjjSunoSYq8WJuHMGYi/FSKUp//0TKI8lEQsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by LV3PR11MB8728.namprd11.prod.outlook.com (2603:10b6:408:218::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Thu, 24 Apr
+ 2025 12:23:23 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%7]) with mapi id 15.20.8678.021; Thu, 24 Apr 2025
+ 12:23:23 +0000
+From: Xiaolei Wang <xiaolei.wang@windriver.com>
+To: andersson@kernel.org, mathieu.poirier@linaro.org, shawnguo@kernel.org,
+        festevam@gmail.com
+Cc: xiaolei.wang@windriver.com, kernel@pengutronix.de,
+        linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] remoteproc: imx_rproc: release carveout under imx_rproc after rproc_attach() fails
+Date: Thu, 24 Apr 2025 20:22:51 +0800
+Message-Id: <20250424122252.2777363-1-xiaolei.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0052.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::21)
+ To MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] i2c: smbus: pass write disabling bit to spd
- instantiating function
-To: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>,
- Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250424-for-upstream-i801-spd5118-no-instantiate-v1-0-627398268a1f@canonical.com>
- <20250424-for-upstream-i801-spd5118-no-instantiate-v1-1-627398268a1f@canonical.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250424-for-upstream-i801-spd5118-no-instantiate-v1-1-627398268a1f@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|LV3PR11MB8728:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b5e6479-2678-4cf0-3eeb-08dd832ace95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HZz9ygHQP8bI7dQcAmlVLfhQT/4UWALigjT7GlcLywuZkK5R2Fut3oqi6+tH?=
+ =?us-ascii?Q?iJblc6mQ4hcAAlnzwKN5slYvLvAf/bASyd1sKtHA9IGxIOW0vNrYDbeny99x?=
+ =?us-ascii?Q?SqP0yBQYCeDTtoWcnVSzygISmspG5adNX2Kk5aHJ+hQxEbjbWlkJ4DhKcUle?=
+ =?us-ascii?Q?07c8JnLHGnN8Z0vATEXN7/heayHrVTyidDbfZblvsNiM0Lda6Q7oGugz/w//?=
+ =?us-ascii?Q?QY+crzpwgT2KXKRQGfxRy47fYPseavNWazmHFsEGGtVotR3hXOyxjd39BNVt?=
+ =?us-ascii?Q?0vHhdjc9WdtdNrvTiZyRNpz3qVtGgJQcObV7MzgNlrp3Zjmli+wcxV5e7iWO?=
+ =?us-ascii?Q?BGCsAcbdMuSLVjmOBB1HnJJVpg5pGRyTuSyBwYpop0KsvK4uROW20SRzJypA?=
+ =?us-ascii?Q?uUzmE0QtZnGrxjF4uFgNDXfYvEFo3qKEWcI4X7pvN073hLx19dK7Mqyso7/0?=
+ =?us-ascii?Q?nWhstg6k9JD1WcuwSA0JUnGdK26YLVRT8Esjr6okrGaENE1m+czoVMOJqhjS?=
+ =?us-ascii?Q?T/90bLNiML7EoLNIvOBnxtEFmEQL4JIw+7XM3keNuSl+8MqJPjGZstetVIgN?=
+ =?us-ascii?Q?5La1KtPUZSS5XW/EvrScfemMT9GBONs5LvAj7CcPLF08PeVjaVMqFCz0DCbc?=
+ =?us-ascii?Q?4ult+NnNhhtT4nKi0NgSUkBMQNYg7cXbgoCIe+pFfKqpLi1Ee7IfLQfH/98o?=
+ =?us-ascii?Q?4NM5gI21Y3IGbAYsvprUZ6B6O5L4aj/7Bo8VxH+LZrBPA/bYYnxSL8eqNDrK?=
+ =?us-ascii?Q?ewWQSIXZqUq4ci0P0+KTS17Hoi0vqWjSCuLdxIADPaa/iqQGvCSyvMmEv+Ec?=
+ =?us-ascii?Q?GVPhiAeziKKRaThVFzzdeTL0r/riL9/j4PbdV6vULayziN5uY6004kBJlBI6?=
+ =?us-ascii?Q?LwWNfyGNMAgbdQUvB8wtvQaN4F4wp7iTkYk6zKUWeZsKkfubY034Fv3lzgsW?=
+ =?us-ascii?Q?798mFH5EXFxt3wgKl4Qbml7z2/Wd6JK4gykK1fHxv3CNaqjinQW0CIIwQmRs?=
+ =?us-ascii?Q?kBy1CCyxZlhnu+KO4X7yMiVtTWxUL1Errf8HMLG8mp0Miw5nP8dirbfKxKos?=
+ =?us-ascii?Q?Xrdqmn5JnFPdnusO2SLVWdfs95JWBxfcP26XVmBrRd5KI4ZhGc0Ylw+fAfqW?=
+ =?us-ascii?Q?RyvEB7Kkyyff+bTk/s/G/RLmWkReOTS8OBY0Ak7qWI4NBQxzOmd04tgHvf1X?=
+ =?us-ascii?Q?bZ3xTzKKSh00HKknP2u1Npb4B43oaOKDovg/WGrI2R/qwrsTDjSHZhbSIWFj?=
+ =?us-ascii?Q?O7EEB79N7drBjybAWAUdSOGyAfrGd8aAw4W9RP6ZYd2gl+TaXGifeR8i21aM?=
+ =?us-ascii?Q?SBxUjT1rq+89V2KojAr+nkByCTPB1Z5369cwQJHFhEFwpZSCVznCDmJPXW/t?=
+ =?us-ascii?Q?sgrbqlSidHd5Cx1paMyM9CfpxlK3SvNWTQzuItPC2eCTTZSZG65NWW5AxhYK?=
+ =?us-ascii?Q?EV5avTvxRoQ1ZBzwzzXVL0pkvl2jaRBzkBMdziMsXkWDg/Brfkh7Zg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3iD2f4dazCztrHKW94C/EVde7H2oX4Kv4jPwH0lXAx6bCvafy59hmcS0rSM1?=
+ =?us-ascii?Q?7D8BCvOjioTKKN6tiq4JlYIdo29FrHL/rckQJWP4kSEGsaykLnIN3i+pHwxk?=
+ =?us-ascii?Q?utPSfW1vOe+POZL5NgLNV0INHFpoogFUybKglXDiYDRMN3e1KykU8OKI+tc5?=
+ =?us-ascii?Q?GnMLIMkZtd6pXsT63dTCZh4xhMPF2wLHgE2SsQfaFO3E1FR0RGhGbe4Hhqyf?=
+ =?us-ascii?Q?1CRCQuPpeNJDdn+vPga2DDJr/19IMogGoGo7CmUQ4m3yezE+IcGnexzUfOdi?=
+ =?us-ascii?Q?2Ijw5NwPQujWIivpySaeRReo3MzSTscd9/WV7a6oAD4FqGfu2UBrCRAMHI/1?=
+ =?us-ascii?Q?t25zpcq14EDqlG7hSFCZw+Vy46GqrNl1zUKA8RgeJZszv72jqMVy+JLbb566?=
+ =?us-ascii?Q?m6kX6+JUvVDVfKA24LgUnrfs7uYlk3DImEp3k3ZEXEX8YNYy2DChvIWSYsIl?=
+ =?us-ascii?Q?SNStx6SEMSgdhBT/jDlJlWskKS8LI65zzrUmKvt4WVSiqRFbAOM+UDn3UdR7?=
+ =?us-ascii?Q?19eQisH5/pK/GzJCio8T6v/QEYOhHIHml/2YBhlnj8NzzLqZvKfd+snGa8Md?=
+ =?us-ascii?Q?Lrc+zXRMnRtU6FRRzAKF1/DQVzypARbKaqMGKUKSicJ+1uKNJHLh3HG5gSue?=
+ =?us-ascii?Q?308eRR2PlY+MkgPMEBfgNz4O3BbW5fFOhoMiM1BXRHl3B4iGDPnb4VVvA3om?=
+ =?us-ascii?Q?iu9v0g0ORONbA+IJcPE6vYd0XO9xs0L57mr8wC1q5ykBi46TOtqZPf5ang3x?=
+ =?us-ascii?Q?xiA3e7PtnXGHUJ6JfxqZn7enKB7eB06V203tjQnPuIUXuUYYvGwkH2i9XkZH?=
+ =?us-ascii?Q?JtLpfMc6khQNfoHEU69KGY8UNgFUO023Wwk/vNES2qeJ0Jx2dgYPHWzzLI/q?=
+ =?us-ascii?Q?DUHuQwVs0aLNeJlGZyIWGtd4TSZhdklt/Zn5KbuIvMetomkOqz0wahBOT/cy?=
+ =?us-ascii?Q?FazSIFXlHQt+ODhojk5E21i12/j4IPvngiPz8JOkHq66bfyL8/p5iOref2jk?=
+ =?us-ascii?Q?DWcdE52paQWoT+ADHdImta3bcM78hyqeW7DRP+Bsz8LfVLYyRzMlxcnZVpT1?=
+ =?us-ascii?Q?ZHOo3u23yvVdVTDyZjHoCeeDxyWXa2V1p0F4pjmbcjLcUKbALdyhXiQv8TMg?=
+ =?us-ascii?Q?34K2WGvU10OsO04yx6Wk/X3z4CA3cxTqYQzggsM8H/HSPKUYvKkUvr71sJvb?=
+ =?us-ascii?Q?RFytwQ3Z86Ek2I1yNCHfZhOxQ1UBC4CRMh9vDO7Bt3TBlo/4s3vsoptqe4k9?=
+ =?us-ascii?Q?dTExycaR/62wyZEjG/5D3v8IqBdTMocXSsubLQKlcO0GuuZ7W3cnWPwp1m/I?=
+ =?us-ascii?Q?tLj23P+uhw789wk9VM2BdjzaUJHyX7rvBUy7oLR6k6jb8kx7aJwZ6Jq95SHt?=
+ =?us-ascii?Q?MQaM71pssNMv21mOuVTdSWHPHtv1L0zzH9smSMUY3N/cdzMOn9NUf+QybpcC?=
+ =?us-ascii?Q?9PKcUedECz8vi5zSiUoYlR0j0V1Vf7uoKFbuX8IdM+MpKDlb4ibu+q0UfM89?=
+ =?us-ascii?Q?+Hc5MwpfkPpkk8RMpkIAna8cYXtSY1FSTP9K8ZbJGNslwHMn0pLzngIP+1yT?=
+ =?us-ascii?Q?UdEe5vC2Kax0e/2IC4eTa55bxy/U8h4Yzw1Dz3G8lxJ3pMPfiAeXZGYOM49D?=
+ =?us-ascii?Q?aQ=3D=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5e6479-2678-4cf0-3eeb-08dd832ace95
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 12:23:23.6473
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GaJvUNXYoAoLYpRS4ZCmzxzGkiUtmU1QN65MgGdJ4Wy7M1YpTlfzdd10fu5TIXBSagJ0K486mvuKTl6MLw5rLxhduA1FBorXYAYaXbK0bqQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8728
+X-Proofpoint-GUID: 8zz2EpXaoIiB7fsdNbnwKnTDWaPsot3I
+X-Proofpoint-ORIG-GUID: 8zz2EpXaoIiB7fsdNbnwKnTDWaPsot3I
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA4MyBTYWx0ZWRfX04XPtg712Sas atatxOikN3goGtRXPn+gSXKA2JeMmfb8vXWo6nAqk+8M5T6NiT03nnH73M8GFaQODayivuT4QIV 4iBnT/JO9kU17cg9bN9M4QfpAp187cCDF98eVQkhUs+Rr91v05ppN0iSSmNOn/GRiBherNmt/xD
+ 09hfw/XZTtnlLQ/osfs/8ZpVhYgry0a49rds9MBpwIPa5BYmpSkjs/2TZKTvYcU4UVLWNo7rNtp a+a8GyMV7PoqpTa4rFuJBWSlz17GygsO3BUA7CwRU2gmeomzcmDM/MhshuZHX6+sVRpQfk1hY3f aozC89SjSPgWo581Dut+skEK4KBs6Dmg9Mo2FLomFhhHmFS7gNxVRqSQY84mLffhDex2LDe259d
+ oCd27+s0wt/qvpnP0iVIt7JA8vwG0au52QQprvMJM3M57a78aKng2vCyXLudd3jPXou99BVh
+X-Authority-Analysis: v=2.4 cv=Sa33duRu c=1 sm=1 tr=0 ts=680a2d3f cx=c_pps a=zzjaJ2HwkiRAih7KxKuamQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=XR8D0OoHHMoA:10
+ a=t7CeM3EgAAAA:8 a=sRq--HnLeW3Vs69c_6oA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_05,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ phishscore=0 bulkscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 priorityscore=1501 mlxscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2504240083
 
-On 4/23/25 20:35, Yo-Jung (Leo) Lin wrote:
-> Some SMBus controllers may restrict writes to addresses where SPD
-> sensors may reside. This may lead to some SPD sensors not functioning
-> correctly, and might need extra handling. Pass this extra context to
-> i2c_register_spd() so that it could be handled accordingly.
-> 
-> Signed-off-by: Yo-Jung (Leo) Lin <leo.lin@canonical.com>
+Release all carveouts under imx_rproc after rproc_attach() fails to solve
+the following kmemleak:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+unreferenced object 0xffff0000861c5d00 (size 128):
+comm "kworker/u12:3", pid 59, jiffies 4294893509 (age 149.220s)
+hex dump (first 32 bytes):
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00 00 02 88 00 00 00 00 00 00 10 00 00 00 00 00 ............
+backtrace:
+ [<00000000f949fe18>] slab_post_alloc_hook+0x98/0x37c
+ [<00000000adbfb3e7>] __kmem_cache_alloc_node+0x138/0x2e0
+ [<00000000521c0345>] kmalloc_trace+0x40/0x158
+ [<000000004e330a49>] rproc_mem_entry_init+0x60/0xf8
+ [<000000002815755e>] imx_rproc_prepare+0xe0/0x180
+ [<0000000003f61b4e>] rproc_boot+0x2ec/0x528
+ [<00000000e7e994ac>] rproc_add+0x124/0x17c
+ [<0000000048594076>] imx_rproc_probe+0x4ec/0x5d4
+ [<00000000efc298a1>] platform_probe+0x68/0xd8
+ [<00000000110be6fe>] really_probe+0x110/0x27c
+ [<00000000e245c0ae>] __driver_probe_device+0x78/0x12c
+ [<00000000f61f6f5e>] driver_probe_device+0x3c/0x118
+ [<00000000a7874938>] __device_attach_driver+0xb8/0xf8
+ [<0000000065319e69>] bus_for_each_drv+0x84/0xe4
+ [<00000000db3eb243>] __device_attach+0xfc/0x18c
+ [<0000000072e4e1a4>] device_initial_probe+0x14/0x20
 
-> ---
->   drivers/i2c/busses/i2c-i801.c  | 6 ++++--
->   drivers/i2c/busses/i2c-piix4.c | 2 +-
->   drivers/i2c/i2c-smbus.c        | 2 +-
->   include/linux/i2c-smbus.h      | 4 ++--
->   4 files changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index 48e1af544b75..95619eb5e798 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -1180,7 +1180,8 @@ static void i801_probe_optional_targets(struct i801_priv *priv)
->   #ifdef CONFIG_I2C_I801_MUX
->   	if (!priv->mux_pdev)
->   #endif
-> -		i2c_register_spd(&priv->adapter);
-> +		i2c_register_spd(&priv->adapter,
-> +				 !!(priv->original_hstcfg & SMBHSTCFG_SPD_WD));
->   }
->   #else
->   static void __init input_apanel_init(void) {}
-> @@ -1283,7 +1284,8 @@ static int i801_notifier_call(struct notifier_block *nb, unsigned long action,
->   		return NOTIFY_DONE;
->   
->   	/* Call i2c_register_spd for muxed child segments */
-> -	i2c_register_spd(to_i2c_adapter(dev));
-> +	i2c_register_spd(to_i2c_adapter(dev),
-> +			 !!(priv->original_hstcfg & SMBHSTCFG_SPD_WD));
->   
->   	return NOTIFY_OK;
->   }
-> diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-> index dd75916157f0..085d121a88f6 100644
-> --- a/drivers/i2c/busses/i2c-piix4.c
-> +++ b/drivers/i2c/busses/i2c-piix4.c
-> @@ -971,7 +971,7 @@ static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
->   	 * This would allow the ee1004 to be probed incorrectly.
->   	 */
->   	if (port == 0)
-> -		i2c_register_spd(adap);
-> +		i2c_register_spd(adap, false);
->   
->   	*padap = adap;
->   	return 0;
-> diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
-> index 7d40e7aa3799..97e833895dd7 100644
-> --- a/drivers/i2c/i2c-smbus.c
-> +++ b/drivers/i2c/i2c-smbus.c
-> @@ -372,7 +372,7 @@ EXPORT_SYMBOL_GPL(i2c_free_slave_host_notify_device);
->    *  - Only works on systems with 1 to 8 memory slots
->    */
->   #if IS_ENABLED(CONFIG_DMI)
-> -void i2c_register_spd(struct i2c_adapter *adap)
-> +void i2c_register_spd(struct i2c_adapter *adap, bool write_disabled)
->   {
->   	int n, slot_count = 0, dimm_count = 0;
->   	u16 handle;
-> diff --git a/include/linux/i2c-smbus.h b/include/linux/i2c-smbus.h
-> index ced1c6ead52a..57bb3154eb47 100644
-> --- a/include/linux/i2c-smbus.h
-> +++ b/include/linux/i2c-smbus.h
-> @@ -44,9 +44,9 @@ static inline void i2c_free_slave_host_notify_device(struct i2c_client *client)
->   #endif
->   
->   #if IS_ENABLED(CONFIG_I2C_SMBUS) && IS_ENABLED(CONFIG_DMI)
-> -void i2c_register_spd(struct i2c_adapter *adap);
-> +void i2c_register_spd(struct i2c_adapter *adap, bool write_disabled);
->   #else
-> -static inline void i2c_register_spd(struct i2c_adapter *adap) { }
-> +static inline void i2c_register_spd(struct i2c_adapter *adap, bool write_disabled) { }
->   #endif
->   
->   #endif /* _LINUX_I2C_SMBUS_H */
-> 
+Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+---
+ drivers/remoteproc/imx_rproc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 74299af1d7f1..c489bd15ee91 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -595,6 +595,19 @@ static int imx_rproc_prepare(struct rproc *rproc)
+ 	return  0;
+ }
+ 
++static int imx_rproc_unprepare(struct rproc *rproc)
++{
++	struct rproc_mem_entry *entry, *tmp;
++
++	rproc_coredump_cleanup(rproc);
++	/* clean up carveout allocations */
++	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
++		list_del(&entry->node);
++		kfree(entry);
++	}
++	return  0;
++}
++
+ static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	int ret;
+@@ -675,6 +688,7 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
+ 
+ static const struct rproc_ops imx_rproc_ops = {
+ 	.prepare	= imx_rproc_prepare,
++	.unprepare	= imx_rproc_unprepare,
+ 	.attach		= imx_rproc_attach,
+ 	.detach		= imx_rproc_detach,
+ 	.start		= imx_rproc_start,
+-- 
+2.25.1
 
 
