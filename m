@@ -1,204 +1,261 @@
-Return-Path: <linux-kernel+bounces-618424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7BDA9AE5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AE0A9AE62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F75D9A1AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31634A3120
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D5027E1AE;
-	Thu, 24 Apr 2025 13:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e6LA3L88"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB5D27F729;
+	Thu, 24 Apr 2025 13:03:57 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908BC2820C4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745499797; cv=fail; b=UxqUo/+8LLbnniaYZg4sou4Pe22UlrYACcE2XQrgt9UeknSIAoKlxcBPYgqQDKZRLj6olrdaiK+/V59KnquN5TGDBieRy5lvRCNdam47/SeoDm7Arf1FM7uWNpt0MJWdCjDerFH/ilKuEbYMm2tA3+2/9vkCLPSCBLS6FW1VZYA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745499797; c=relaxed/simple;
-	bh=tGcQIJ9x4Z28AownDIyKsyu2XumWhh/nU7pHIjSIFeg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Aen/fc/hql2kbMJccVeJpVfEkK4buUI4B0ZJJXm0wOGov3/ACt/HPnMTsWXdXuFreUdGA/in6tXwfp9orCNe4bOdcrlGykORGYccpDPw3QaRypQdvBPo8iWTHPT1Z3ZLQRxBttvXaAcNvTX8dr6gbojA4s2W+WTSfKxDILCPPaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e6LA3L88; arc=fail smtp.client-ip=40.107.236.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wQsS9YBGxTHBNFDeDZLK3xxP4tcbP8yUXACtNAk6qGcyy3Fa+mwyZBaemao54V8kubWJAc2QzdA6ezgrbNXUF8O94XxdJb6WlYBfJf2AwIwNHJzf4luCMw2lTrR1NvlsYh8JwejHBsbs5f/JovHtH7JyydatFFCwX6VzmkdXAIXhhiiHwAIyfkgUC5pT5Pdgy5CAdgCGemMEhytxBBdychmP2dmgEqrBYdiQbPMS+xPFGRwEjwheXJqnJV7xBcmIgEA9NJOgUeIMJQpkdBAPwvhoJFwRxbxrFMSKmHtND49daZgnEtZDn8htO1LD6VOEvyjXKl1ZBiUw1UVaFRTznQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cyclWrV/ixVEzrmOPMVf1lJsQZwc0AoBPyPdINDlSqk=;
- b=nT8Vq1dOOu6bompaergkEfsO2QiAxcBmoeBIFOgRW/ELA6CCfqbgYFNlC7mMUmYzZhKH3gyVfKNv1h5sy72V1UJluiDu3HLFXFdw4Ck980UCn5pJ9fUSuGucYjwFqUpj6C1OCdzA8E75F5cA8Wkx53dBevr81YDlA4m+Ao98Szoi2lsjVv9N+3sG62r1Cj+NKZXxz0a1hT5sNNxVMhWAmJ/ompxqAhxGph1BUe+NZydDju5N+ZMtbrKdAhBIwVnouI7DCKcQGfjmsc5/iGR37tu82hZ4CJZp5+m3kBRl9tWgEry3MiqwccJ8n1FvQBw9f08ZWgKR9jHE3QEza0leCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cyclWrV/ixVEzrmOPMVf1lJsQZwc0AoBPyPdINDlSqk=;
- b=e6LA3L88O+cb75iwFJkYtyM8yDsYWYdcMKgdUNXCETumSUqil8Xhi/03+OuJRtgl0uWXwU35UEaLAH9vaIgkrhJEhzfo8ms/RItC9Rv1vLr/mVgL7vq1zyA+iK8KMuM0BUDmE8qm00qPvgDs86b9CIIntoYjy/Rij4q4MujsHmvwAzz8bEPeWToV+L07LRIpYap81gOVQtJGhE8ag2kThfT/NrkWwPwQzal8ymwpa/3biIIJ3gt4Vevz7j/d1lvLdkyJtfQqMSHruVtcWstnd35GTajHY7MR6bET2tb8t0XVY9jJ95lFasp06xQw44SzZhSQMbEuL4pp8i/8NAhZPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by MN2PR12MB4286.namprd12.prod.outlook.com (2603:10b6:208:199::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Thu, 24 Apr
- 2025 13:03:10 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%6]) with mapi id 15.20.8655.033; Thu, 24 Apr 2025
- 13:03:09 +0000
-Message-ID: <f3635ec8-7d1a-4265-8131-249567858013@nvidia.com>
-Date: Thu, 24 Apr 2025 09:03:05 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [5/6] gpu: nova-core: Clarify fields in FalconAppifHdrV1
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- John Hubbard <jhubbard@nvidia.com>, Shirish Baskaran <sbaskaran@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Ben Skeggs <bskeggs@nvidia.com>
-References: <D9EH1WXQOIO7.3RHFKYSFPBXE4@nvidia.com>
- <174546399398.876.3516508778193165894@patchwork.local>
- <D9EPABWOVVYD.2H8WXZNM0BE60@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <D9EPABWOVVYD.2H8WXZNM0BE60@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0025.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::30) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF627BF78;
+	Thu, 24 Apr 2025 13:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745499837; cv=none; b=fx1iLGTgAkjpWdV2J8BCSd+1a+Z5N6Ck4Dza4p9gDt3+AtFvWOVnQdN8OJiQ852IWM1KXcXF8UXW9urO0kY+MKfKTUL8EiSEj2QgWBNaFONaZIRaCb+KMaHv58yZgEdJEPea3s6B+iXbexdC86tw4tOVSf2yaaRmdPAFzxqG6TI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745499837; c=relaxed/simple;
+	bh=NRDsnEv3o636ENTLs9ZZIuX6FZkhFAEJxroFHxiPKqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B/cSsbFRRQWuQwLQ8mWSDZqHqw3VrNYRQYvMX4vcz8eUjsirzNMp8c3G1J2adBnO/Hysil4KefKYsM5TkFVBuFKAiU1p8p3FPSquEi15B7d/Ct3KdTR18U7vfdlx+yu7i4+bSa+p27/AgVrBwbBxvVo2B0iFbP+/PnY/1MXesyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Zjx3x3dc9zsTDR;
+	Thu, 24 Apr 2025 21:03:25 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2E3911A0188;
+	Thu, 24 Apr 2025 21:03:44 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 24 Apr 2025 21:03:43 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Apr
+ 2025 21:03:43 +0800
+Message-ID: <497a60df-c97e-48b7-bf0f-decbee6ed732@huawei.com>
+Date: Thu, 24 Apr 2025 21:03:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MN2PR12MB4286:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd274f72-9a7b-4c08-4659-08dd83305cb4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QVhtVWZ2cC9YU2lzNzBhRkZvd1BvM3pmZmhGUm5IbnVGMGdpRlgwckJNNS9o?=
- =?utf-8?B?dVljUlFxQjAxUVR1dndYZnFoVmxlWFVFMVlaTWp0YkxiL1NieklUZitNWjhm?=
- =?utf-8?B?aHF4empKWStKZ2JFOFQ5djJ2QlVFdXRaLzF3R1hicERMdTdpZVREZFQxVjZ5?=
- =?utf-8?B?TDBSTzlzczlWd0U2allhaVFXYlNudzBuKzYrWW5pcG80VmlzRzN3QTdmUmRG?=
- =?utf-8?B?bENOeFEzV3NLL0s5cHdQSGpheWhGSnJIZnA0c3FLU2k2Y0MxUE5MMm9sdFox?=
- =?utf-8?B?Zm1IbXpsQUlrRFdGQ0gza3E5WEpyb3BkamlraUJRTTNCQkpqVlNqSXB0MVZC?=
- =?utf-8?B?QUtsblNOUENUUHFmU0JpWnRVQlVOcy85WlZFNDN4VGtqYUZYc2FQS01rSjVY?=
- =?utf-8?B?NWk0RUk0YWRUTU1YMmhKeDY0US9TWmswelorYm1DcHR3aEU3bkhZNWNlejZ5?=
- =?utf-8?B?MmRVQWkzajRRUEdvWUJJRktkamh5Z1V0bndzZHpFb3lvUHkzV2ZvMmNCUVJM?=
- =?utf-8?B?WWhVdFlBRlhBYkZKYkZzbStUOFZFTU5mMm1KcUxERTRtWEQ2a0wxUzdEdWpS?=
- =?utf-8?B?eUdJMDVUZUE2SVAwQkVBVEtldEIrUXpRWFFSdFlFUXJRcnlYRlEybFdyZGpS?=
- =?utf-8?B?V0N0UWJkZVczMjhlUnhqUUpUS1hObVFNd0prMzhleC93Sk5sNFhjOHliRGZt?=
- =?utf-8?B?T2lNbnhYMjRCazVVZ0s1M3B5K1IwQTI3TW80QWk2Zmcvb21SWEJMeStnbk1p?=
- =?utf-8?B?M2ZqWmVmZnQydGZJUHlhQXFTRTNGN1g0LzQrSHpqTlVTVU4yYWRrZHhURVlG?=
- =?utf-8?B?Zm1EOW45NUNUVzB3S0YzMFlxdTZmVnp1ZThabzNvOFd3L0lHMTFUOXowSkZp?=
- =?utf-8?B?RjlkWU8xQ3lFSVNQS3NEWCtkYVViekczUTJvVWZaZ2hPSlhPOW9nRVVidlhF?=
- =?utf-8?B?UDdkRzFkeExYOE52cVpBaVovSEVQNEx4dFNBOVUrcThKZE9pS2Y3K0l6T1FX?=
- =?utf-8?B?RVo2bDlxT0lMZjdQQmxZdEdUb2NkTWloS3NzRC9xWjNzMnZDU0Z0bmIyVjhw?=
- =?utf-8?B?REx5N1hnRDdNT05WazJQT1RmTEhRd0VwcFVrblRUa0xDRnV5U0xMQjBJTUFi?=
- =?utf-8?B?K05rUDBGTG1Wb2ZTM3BaMnZ6U1QrSHVERVB0M0FwNXFiNmxlVks4aUVXQVk0?=
- =?utf-8?B?VlZsSWlTSXF0SEY1bllTSXpwMHFCZHpkV2krV3pCeTRsbFdIaTFNOHhYN0Jv?=
- =?utf-8?B?dW0vZDN4VFc3enQ0d0h3V0J5TU03U1ZGWXJYQUFZdEphZWpsT3R2R2NNMFo2?=
- =?utf-8?B?eVJKNDNYOHdodDR5YVZGMDMya3p6U2JQd1VpWDlTcGRlK2UzT2w1N3dCTTc2?=
- =?utf-8?B?MFkxYXk3bnVtZjFKMVNibUMvS2xFTGxTY0ZmU3A4R2QyZWhLQlMwNzA1Nnhy?=
- =?utf-8?B?T3ZsR0MvQnJnZm9YRjZXTHVoVFprenJ3UEFHWVNkN21ydU15NEN4WXJmNWNE?=
- =?utf-8?B?VW1Gc1RJS1A3dFpqUUU2N1owZ0dCdmk2bDBnWk9Ua09tUUtsTmNNZkhxVGRs?=
- =?utf-8?B?S1RnNjJkOGlsUmFiT3VMVm40UHFrZnEvbWI5aXFsWnQ1bHhaUld6MlF2QVU3?=
- =?utf-8?B?RVNYbS85QnlGUzNtWTZVdlc1bHo1dDd2ZForaEtWSXBLcE9TNVlUa25MODhC?=
- =?utf-8?B?cmNCSFZiQnJLaXZyRnBXejFWcVJaV3FRVG5Cb28rY0Zmd2FzMTdZcjRIZ2Nq?=
- =?utf-8?B?RUpJWkJXSWRhdlJodU44SHBNTEpvaTFrUGRrRUNTazF0aE4vdzNmblVMOTBm?=
- =?utf-8?B?QTdLQ1BzcFBHbDRFVmV2TENrQ0ZTN0w4NSt2VXg1TjE5ZXI4d0R5bUt5cito?=
- =?utf-8?B?S0VqRmVDaVNhRmcxUi90VXJ1MUVrdVhydlRaZGhXRXZXMHNCSTNFdDlsTnJV?=
- =?utf-8?Q?XuAFwS6jGp0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z2RjbVlzam54YXgwOWYvNUlTOUtkR1JOamhkNjRhS3VkQzZITzg3SklxZG9k?=
- =?utf-8?B?aW1XVWRGeXd3MnNWMDVhTnVLemNjSVF5OVIrMXJFbWx5UXlBZWNucHp4ZURh?=
- =?utf-8?B?aHNpNjFrQUQrc2RocStDRVBtSU9wVWoxRWtFZHNBRlY1dG9FVTJ2TWFMYWtm?=
- =?utf-8?B?emRUU0tUU3VidlMrTEY0bENqV2F6bTJ2VHFzWUZDWUpKY0J1UUJTSjMzZ3ZW?=
- =?utf-8?B?MkVSVjlIeE5RMjBzRmEvTVo0ZDJ1d0lzVENwbUhuQzQrbWhpMnRuQytlRzFZ?=
- =?utf-8?B?U1dscVU3MEZJcDRCajZwOFBUczQvN2RmYXUyL1MwOFFnM2tzQ2h0MHZjdXZ0?=
- =?utf-8?B?U0M2RGxZQmd0d09GMWJKUnljTkNsSHFFaUROdGVIbHhJN2RNbnNnRjBqcDdr?=
- =?utf-8?B?WnBRejhVd3NUQzNMQkdFSmVKc1hzRllwR20wUjlJUjFwMVUyaEdnNXlXQmxi?=
- =?utf-8?B?d3hTK2dpSmJpeEViSHZTOHJ6YndkcnhIdDE2R3BrSE5icytRRWxKQ2RnbFFJ?=
- =?utf-8?B?NUxQL05MaXEyeEMxOEFBSkNibEgzZzM4WG9DdDh4VE9vbzlmeDhPUHFJREpP?=
- =?utf-8?B?NWNDTEFDbWV3ZlRZSmE2N3NkRGZGU1FpdnF2aFA2TTA3UzdKNFdWbDNqa01p?=
- =?utf-8?B?bzVqY01xS1MwQkxuQUN3RXcrUFAzUzJ4ZmFNUFlCTTNrWnZlcGZKVllEaXV6?=
- =?utf-8?B?SHZVcGRlWmRFMUIwbmEveHowMW9BNGNWb002dll6YnhUNktUV0thbE14blVx?=
- =?utf-8?B?UGpBU2NYRW1JOUNXTjBKVHhranl5VEVqMjRDRXVBNjZjY2kzZ3BnZ3c5L05Y?=
- =?utf-8?B?NlNOTEg1SDdBcHREUURmVG53bmozVmpraC9BVlR3MEpncDVJWTViVmdENFFj?=
- =?utf-8?B?Uys1ZnNyT0NhTTZrOG1IZUJzSHBNRjRwY3FwY1pSTVZSSHVXdTVwaFBqejc3?=
- =?utf-8?B?R3FGcVhkMHJqUEFtSHQxOEx5TzBKWHFSWStxYlpUeUxZV0FXZ2tPNTVzblFm?=
- =?utf-8?B?aWluSllTUkpJYzQxbEdEVHhzYjk3MlRJRmtUYzNZUVdrN2tIQXFmSWhlVlkz?=
- =?utf-8?B?NXZwWCtlKy9zTllYRmxOYlZFVFRQVEVrU2hPdzVFNmgxd1hVQUFTa0lvWWFM?=
- =?utf-8?B?ZGpKWmVzODdDWTdpbXRPK0RjMzI0K0g0NHNET0FlaWVENEcrMGl1ZDYrblla?=
- =?utf-8?B?enJoZ05KdXRoVFV4Ym50cWhlZ29RZlVSSTNmK09lVCtiWTNEU2VSbFN3cHN0?=
- =?utf-8?B?bzNGc0RLSUVKbTJ5ZHdkUGlRbzFqaTFvYTBwQjJVb1JuVzdUZmhZTXFQQ2lm?=
- =?utf-8?B?Zlc2Rysvbll3QUQyMzY0a3g4WFAvQVFXWkhybGhibldKbjlSRXN5M2xzelVs?=
- =?utf-8?B?TUdYRHFsUGwyWmFTN1VXdjZPeWJ5Zm1yL01WSXZsTlo1VzdrY3BuaU1vL3Z4?=
- =?utf-8?B?M3Z2YUtDWENCV3B2Z3dzRzBxaUlDbkw2UGExT0huQ2VzRnNESi90YjdsRlJH?=
- =?utf-8?B?STNkaG5ka2Y5Z21PYlBnSUh0YXQralVKZ2FaR2VRNTB6TG12T1RRdnVVM05u?=
- =?utf-8?B?c3N5ejNSUFhwd1FIamNIMkZUQ3RoSE9oam1IQmdPSTdBU01yTTZTdDU5eExG?=
- =?utf-8?B?bGxTUXhjdE50a1J0em9EaHZWeXNQMStaVXY4Z1Zib1paVGZLTkM3OGxsdUZu?=
- =?utf-8?B?eFJIZlRqTVdYdGJoVzAxdnR5ZVlUNTVYUkpDUW4vWlVqeDkxNGVPSTdoaTgy?=
- =?utf-8?B?YkVNM2Z1K3dzcWJYK0NNK3htY3JJS2k1RDlRUzBUK015REtEbDlMRm8vZnRk?=
- =?utf-8?B?Rk4xSi8yK25xWTRSVnJzazh2UGF0WUVSNG5mUmdTK3hlMGlOYkdhQnYrWW5G?=
- =?utf-8?B?U3AyUmljV2Yyeks3Zkgwdmw5RlU3OGJZV3pRcDBacEdRcnBPbjYrM09LWHB6?=
- =?utf-8?B?QWNzYS9GM2ZMOGwxdzVUaWVPMHNueE9PTS9rcTB1MUFLWEViU1dUb0Y1TDBO?=
- =?utf-8?B?Nzc2ZnIrREwvb21BOUpuaUVtdUkwa3phWUFTTXJ3VlJVL0p4c2RPVFYvaTZa?=
- =?utf-8?B?OXh3VllETGlyc3hKM0RHUW9YWmtldk5sdnFJSmpsUUVkOXgvZS8rOExycmx5?=
- =?utf-8?B?clA1YVZmNVpMZkhBSkljcThNYjZxbDNzazhpR2s0QUZXSStnRERXN0YvaTc5?=
- =?utf-8?B?U3c9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd274f72-9a7b-4c08-4659-08dd83305cb4
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 13:03:09.6217
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Jl5Gvu1g7C2ckX/UBpCxUpc45ZWy0KB1MyyL9GKVMme7Yv+x1gmrmhaUpEkVzhetr2Usac4vsJUWiWwrwMg5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4286
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v20 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+To: <admiyo@os.amperecomputing.com>, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sudeep Holla
+	<sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250423220142.635223-1-admiyo@os.amperecomputing.com>
+ <20250423220142.635223-2-admiyo@os.amperecomputing.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250423220142.635223-2-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
+Hi,
 
-
-On 4/24/2025 3:45 AM, Alexandre Courbot wrote:
-> On Thu Apr 24, 2025 at 12:06 PM JST, Joel Fernandes wrote:
->> On April 24, 2025, 1:18 a.m. UTC 
->> Alexandre Courbot wrote:
->>> Since this just renames fields, would you be ok if I squashed this one
->>> into the relevant patch of my series, alongside a
->>>
->>> [joelagnelf@nvidia.com: give better names to FalconAppifHdrV1's fields]
->>>
->>> ?
->>
->> Yes, sounds good to me. Thanks!
-> 
-> Ah, but since the documentation for FalconAppifHdrV1 references
-> fwsec.rst, which won't exist in my branch, I will only squash the new
-> fields names - please make sure to carry the FalconAppifHdrV1's
-> doccomment into another patch!
-
-Sure, that works for me. Thanks,
-
- - Joel
-
+在 2025/4/24 6:01, admiyo@os.amperecomputing.com 写道:
+> From: Adam Young <admiyo@os.amperecomputing.com>
+>
+> Implementation of network driver for
+> Management Control Transport Protocol(MCTP)
+> over Platform Communication Channel(PCC)
+>
+> DMTF DSP:0292
+> https://www.dmtf.org/sites/default/files/standards/documents/\
+> DSP0292_1.0.0WIP50.pdf
+>
+> MCTP devices are specified via ACPI by entries
+> in DSDT/SDST and reference channels specified
+> in the PCCT.
+>
+> Communication with other devices use the PCC based
+> doorbell mechanism.
+ From your code, I think mctp driver use type3 and type4, right?
+So suggest that add some comments about this in commit log.
+>
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> ---
+>   MAINTAINERS                 |   5 +
+>   drivers/net/mctp/Kconfig    |  13 ++
+>   drivers/net/mctp/Makefile   |   1 +
+>   drivers/net/mctp/mctp-pcc.c | 317 ++++++++++++++++++++++++++++++++++++
+>   4 files changed, 336 insertions(+)
+>   create mode 100644 drivers/net/mctp/mctp-pcc.c
+<...>
+> +#define MCTP_HEADER_LENGTH      12
+> +#define MCTP_MIN_MTU            68
+> +#define PCC_MAGIC               0x50434300
+> +#define PCC_HEADER_FLAG_REQ_INT 0x1
+Please use PCC_SIGNATURE and PCC_CMD_COMPLETION_NOTIFY in pcc.h
+no need to repeatedly define macro.
+> +#define PCC_HEADER_FLAGS        PCC_HEADER_FLAG_REQ_INT
+> +#define PCC_DWORD_TYPE          0x0c
+> +
+> +struct mctp_pcc_hdr {
+> +	__le32 signature;
+> +	__le32 flags;
+> +	__le32 length;
+> +	char mctp_signature[MCTP_SIGNATURE_LENGTH];
+> +};
+> +
+<...>
+> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
+> +{
+> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
+> +	struct mctp_pcc_hdr *mctp_pcc_header;
+> +	void __iomem *buffer;
+> +	unsigned long flags;
+> +	int len = skb->len;
+> +	int rc;
+> +
+> +	rc = skb_cow_head(skb, sizeof(struct mctp_pcc_hdr));
+> +	if (rc)
+> +		goto err_drop;
+> +
+> +	mctp_pcc_header = skb_push(skb, sizeof(struct mctp_pcc_hdr));
+> +	mctp_pcc_header->signature = cpu_to_le32(PCC_MAGIC | mpnd->outbox.index);
+> +	mctp_pcc_header->flags = cpu_to_le32(PCC_HEADER_FLAGS);
+> +	memcpy(mctp_pcc_header->mctp_signature, MCTP_SIGNATURE,
+> +	       MCTP_SIGNATURE_LENGTH);
+> +	mctp_pcc_header->length = cpu_to_le32(len + MCTP_SIGNATURE_LENGTH);
+> +
+> +	spin_lock_irqsave(&mpnd->lock, flags);
+> +	buffer = mpnd->outbox.chan->shmem;
+> +	memcpy_toio(buffer, skb->data, skb->len);
+> +	mpnd->outbox.chan->mchan->mbox->ops->send_data(mpnd->outbox.chan->mchan,
+> +							NULL);
+> +	spin_unlock_irqrestore(&mpnd->lock, flags);
+> +
+Why does it not need to know if the packet is sent successfully?
+It's possible for the platform not to finish to send the packet after 
+executing this unlock.
+In this moment, the previous packet may be modified by the new packet to 
+be sent.
+> +	dev_dstats_tx_add(ndev, len);
+> +	dev_consume_skb_any(skb);
+> +	return NETDEV_TX_OK;
+> +err_drop:
+> +	dev_dstats_tx_dropped(ndev);
+> +	kfree_skb(skb);
+> +	return NETDEV_TX_OK;
+> +}
+> +
+> +static const struct net_device_ops mctp_pcc_netdev_ops = {
+> +	.ndo_start_xmit = mctp_pcc_tx,
+> +};
+> +
+<...>
+> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
+> +{
+> +	struct mctp_pcc_lookup_context context = {0, 0, 0};
+> +	struct mctp_pcc_ndev *mctp_pcc_ndev;
+> +	struct device *dev = &acpi_dev->dev;
+> +	struct net_device *ndev;
+> +	acpi_handle dev_handle;
+> +	acpi_status status;
+> +	int mctp_pcc_mtu;
+> +	char name[32];
+> +	int rc;
+> +
+> +	dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
+> +		acpi_device_hid(acpi_dev));
+> +	dev_handle = acpi_device_handle(acpi_dev);
+> +	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
+> +				     &context);
+> +	if (!ACPI_SUCCESS(status)) {
+> +		dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* inbox initialization */
+> +	snprintf(name, sizeof(name), "mctpipcc%d", context.inbox_index);
+> +	ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_PREDICTABLE,
+> +			    mctp_pcc_setup);
+> +	if (!ndev)
+> +		return -ENOMEM;
+> +
+> +	mctp_pcc_ndev = netdev_priv(ndev);
+> +	spin_lock_init(&mctp_pcc_ndev->lock);
+> +
+> +	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
+> +					 context.inbox_index);
+> +	if (rc)
+> +		goto free_netdev;
+> +	mctp_pcc_ndev->inbox.client.rx_callback = mctp_pcc_client_rx_callback;
+It is good to move the assignemnt of  rx_callback pointer to initialize 
+inbox mailbox.
+> +
+> +	/* outbox initialization */
+> +	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->outbox,
+> +					 context.outbox_index);
+> +	if (rc)
+> +		goto free_netdev;
+> +
+> +	mctp_pcc_ndev->acpi_device = acpi_dev;
+> +	mctp_pcc_ndev->inbox.client.dev = dev;
+> +	mctp_pcc_ndev->outbox.client.dev = dev;
+> +	mctp_pcc_ndev->mdev.dev = ndev;
+> +	acpi_dev->driver_data = mctp_pcc_ndev;
+> +
+> +	/* There is no clean way to pass the MTU to the callback function
+> +	 * used for registration, so set the values ahead of time.
+> +	 */
+> +	mctp_pcc_mtu = mctp_pcc_ndev->outbox.chan->shmem_size -
+> +		sizeof(struct mctp_pcc_hdr);
+> +	ndev->mtu = MCTP_MIN_MTU;
+> +	ndev->max_mtu = mctp_pcc_mtu;
+> +	ndev->min_mtu = MCTP_MIN_MTU;
+> +
+> +	/* ndev needs to be freed before the iomemory (mapped above) gets
+> +	 * unmapped,  devm resources get freed in reverse to the order they
+> +	 * are added.
+> +	 */
+> +	rc = mctp_register_netdev(ndev, &mctp_netdev_ops, MCTP_PHYS_BINDING_PCC);
+> +	if (rc)
+> +		goto free_netdev;
+> +	return devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
+> +free_netdev:
+> +	free_netdev(ndev);
+> +	return rc;
+> +}
+> +
+> +static const struct acpi_device_id mctp_pcc_device_ids[] = {
+> +	{ "DMT0001"},
+> +	{}
+> +};
+> +
+> +static struct acpi_driver mctp_pcc_driver = {
+> +	.name = "mctp_pcc",
+> +	.class = "Unknown",
+> +	.ids = mctp_pcc_device_ids,
+> +	.ops = {
+> +		.add = mctp_pcc_driver_add,
+> +	},
+> +};
+> +
+> +module_acpi_driver(mctp_pcc_driver);
+> +
+> +MODULE_DEVICE_TABLE(acpi, mctp_pcc_device_ids);
+> +
+> +MODULE_DESCRIPTION("MCTP PCC ACPI device");
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Adam Young <admiyo@os.amperecomputing.com>");
 
