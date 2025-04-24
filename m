@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-617236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0648CA99C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70777A99C84
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361854611B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505E0460E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C071361;
-	Thu, 24 Apr 2025 00:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D07417D2;
+	Thu, 24 Apr 2025 00:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OSBzwhXl"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="crNJkd1m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55B4383
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1705625
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745453583; cv=none; b=K4YXCRr7ZF+b9MoaE/unfm8gPoI4MacgjvZ0kIeVz4QbE0fkIroa/38GSyYflHXyiNCZ4fxyltqJUjVgV6y6dWv3wVvv8HwLszIMXnUrVOhuH68o3G1XehDIUorZdNHBuSNx4Q/ftRGtrPOoNjkCQaFY4sNYdLghvwcChLilmFg=
+	t=1745453307; cv=none; b=uJyvGf/ojkcht4cpnIqg6dDJ5P6hRqzGONvDbv7PNUUBnBa2q2aD8A2aJ2Ei/fpTNdxKrX3RIprR662anp8TfEYCHk/ydI9pUkczTCNyz9J/fGUNlrOPFLOyJhXIzSSBoD99YoHlGPziTRwzYQoUiXAwPMoTvJwpPg9BuCGttTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745453583; c=relaxed/simple;
-	bh=KXVwvi4uGf7fKHoCEnFJtgiP4j/zZbTnigzekKy7y4U=;
-	h=To:Cc:Message-ID:From:Subject:Date; b=Sw17vESDwxzm5EyKAlGenTjCZKcfcLZQoBX/ENA+SuuwdO/WWe5uTIGZD2wvhUAXmsCuqYXwvz5AKgSnYVq6puKSnurVMkvXmtw6at9h3iBzJHKUJbde7t1TBXC4daQOaf20lEEpxuLd6PkxLmYHKM4pKBVnQNkmVV2glYYBcJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OSBzwhXl; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8551A11401E2;
-	Wed, 23 Apr 2025 20:12:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 23 Apr 2025 20:12:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1745453578; x=1745539978; bh=v7iUFaq4E3JkL9AyU+buOcFRQq9P
-	UDS9u0Co2tFiTs0=; b=OSBzwhXls1aE7sxOO4HY86Oj72/3jL+nPb0y+UXu8Rd6
-	m+SnB4xSiAyH2zTTtBT9hsorkee938wLxQvrPwIHvPvlpAgQ1NQjTv3maF4aR16g
-	4tv/Ry9+3KiMSllhkevtUF3XCpQ324sfqbRVhK9HlTGbMI7WZ6FDjXTF/bdK6Xqd
-	jzixL+uJU1VLmYVMKH8iPnvThtbTsuxiX1CzZmMZMe3q4jhy7aQ4gmv7C1bPLEOM
-	YrjTbD9sE9D4l3efT+p02Hj+wDnoHJPaUJ5jVJLODZu2BtqlScfTHTWupXtedV6Z
-	8cK6nVBZDxnv+vsA1AYcYMkby5fFcJv+ugMbofAxNg==
-X-ME-Sender: <xms:CYIJaL5nVooWzxU0Av2ACtrrJvJFVccn-jjavW27hlt1hK4e8K2YzQ>
-    <xme:CYIJaA78HDcRRSwwrv6-hhKgHQY8NrRBXn0GG92oDRpRa_DRySDhwGgUYAzZ4U6nk
-    VlbT12A-O4qUBThSo4>
-X-ME-Received: <xmr:CYIJaCc-FPqihXq5l36yQiXI4lj4nY5YUIoaJg1y6Dp9Wu8sLR7UYPHISe1PsvO-fHvyZfzsxGjr7utkWgNCUlRzgq5z_2ZflgY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeektdduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhr
-    ohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorh
-    hgqeenucggtffrrghtthgvrhhnpeehfffggeefveegvedtiefffeevuedtgefhueehieet
-    ffejfefggeevfeeuvdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgt
-    phhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlih
-    hnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehfuhhnrghhohesjhhurhgrihdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhmieekkheslhhishhtshdrlhhinhhugidqmheike
-    hkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhg
-X-ME-Proxy: <xmx:CYIJaMLsTA3LztnmjIobrDfqRjuuf_MujzA7YHXbl_q4clTecXWmJw>
-    <xmx:CYIJaPLekoHuVpIyuCrFZpPpi1UUZ25LqIYCubrccwC-Sq6kNC7feQ>
-    <xmx:CYIJaFz11APJLZI2Z23OCx3Ag6-OmSMJIyk_tLiRKKKaNB4k_k39Iw>
-    <xmx:CYIJaLKximFEV5voY5SqIZm123qV2vAtTduyFgvXXh6PjUc1_cVwxw>
-    <xmx:CoIJaNBMWSWp-3u6Q9vYhqD-R9eJ7Z0TdkGR98kB6FhY1C0z4jaZ_1M6>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Apr 2025 20:12:55 -0400 (EDT)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Joshua Thompson <funaho@jurai.org>,
-    linux-m68k@lists.linux-m68k.org,
-    linux-kernel@vger.kernel.org
-Message-ID: <d0f30a551064ca4810b1c48d5a90954be80634a9.1745453246.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH] m68k/mac: Fix macintosh_config for Mac II
-Date: Thu, 24 Apr 2025 10:07:26 +1000
+	s=arc-20240116; t=1745453307; c=relaxed/simple;
+	bh=pntiiw4yG1RuPMTSRoxZvtxa1aWvBAbMHKY3Z9snog4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIsMGvky4K7Sx/FZSEiVhQc77E1YSalAaGR98e1MV00rSdkrATDebUkgkivQAwxJvxYR8zaSRafm67a/94ZZXXg4r4wOXNuyKC8D4cJv1tJEJ1IbDW0gn+E8D9G//DBoglLGbmMrxtizI9mfesQnViU34gzhmuPr/ePvnnsLcvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=crNJkd1m; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745453303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOkTAG7rDCrI4h+SXECSRWbl/N8iWgru3VS8SSYRxFA=;
+	b=crNJkd1mQRF7B+Oab10ENF83iD1pWt4ztdzOQgBBm6gCfRQWCePlK6cKq14uKI1zC3T4BI
+	YQ0OE4n8NZCrhPz8zKYqSkH8AA+nD8I1jct32nnmYkK6pjuFwSTAFi/3rWm8Kg8aULhEHk
+	cL625jvFxc0H5AhAuum+lZp/ZvJhz68=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-60-QGbGuUtGO0a0ny6jxi4-Qg-1; Wed,
+ 23 Apr 2025 20:08:21 -0400
+X-MC-Unique: QGbGuUtGO0a0ny6jxi4-Qg-1
+X-Mimecast-MFC-AGG-ID: QGbGuUtGO0a0ny6jxi4-Qg_1745453300
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99E2519560BB;
+	Thu, 24 Apr 2025 00:08:20 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.12])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C46DC195608D;
+	Thu, 24 Apr 2025 00:08:16 +0000 (UTC)
+Date: Thu, 24 Apr 2025 08:08:10 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests: ublk: kublk: build with -Werror
+Message-ID: <aAmA6kjGb8ZVJgTJ@fedora>
+References: <20250423-ublk_selftests-v1-0-7d060e260e76@purestorage.com>
+ <20250423-ublk_selftests-v1-1-7d060e260e76@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423-ublk_selftests-v1-1-7d060e260e76@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When booted on my Mac II, the kernel prints this:
+On Wed, Apr 23, 2025 at 03:29:02PM -0600, Uday Shankar wrote:
+> Heeding compiler warnings is generally a good idea, and is easy to do
+> for kublk since there is not much source code. Turn warnings into errors
+> so that anyone making changes is forced to heed them.
+> 
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> ---
+>  tools/testing/selftests/ublk/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
+> index ec4624a283bce2ebeed80509be6573c1b7a3623d..57e580253a68bc497b4292d07ab94d21f4feafdd 100644
+> --- a/tools/testing/selftests/ublk/Makefile
+> +++ b/tools/testing/selftests/ublk/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall -I $(top_srcdir)
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -Werror -I $(top_srcdir)
+>  LDLIBS += -lpthread -lm -luring
 
-    Detected Macintosh model: 6
-    Apple Macintosh Unknown
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-The catch-all entry ("Unknown") is mac_data_table[0] which is only needed
-in the unlikely event that the bootinfo model ID can't be matched.
-When model ID is 6, the search should begin and end at mac_data_table[1].
-Fix the off-by-one error that causes this problem.
 
-Cc: Joshua Thompson <funaho@jurai.org>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Finn Thain <fthain@linux-m68k.org>
----
- arch/m68k/mac/config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index e324410ef239..d26c7f4f8c36 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -793,7 +793,7 @@ static void __init mac_identify(void)
- 	}
- 
- 	macintosh_config = mac_data_table;
--	for (m = macintosh_config; m->ident != -1; m++) {
-+	for (m = &mac_data_table[1]; m->ident != -1; m++) {
- 		if (m->ident == model) {
- 			macintosh_config = m;
- 			break;
--- 
-2.45.3
+Thanks,
+Ming
 
 
