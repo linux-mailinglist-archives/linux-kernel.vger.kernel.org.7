@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-618159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07CB4A9AAB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9B7A9AAB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB29E17B636
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461491701F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B631D225A40;
-	Thu, 24 Apr 2025 10:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3B02475CD;
+	Thu, 24 Apr 2025 10:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PU8Jqefr"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iv3KbTy0"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA5F242D9C;
-	Thu, 24 Apr 2025 10:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C0C244679;
+	Thu, 24 Apr 2025 10:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745491134; cv=none; b=FalKQrat3nNBJeH23q442ZhMX9nTTVoc2qp2wmvKUBFiVhwujKeNa2C5JUqX+HDeeakSdqx2sn/C+Qt/TcAH66uTEXyvWhzseNCxQUDWj3C13cXP5AU0k70R4IYRMD+DeVumxK1nrtI/ZGEMxM9cxoyeoNm8DSh4ITQVrlA76IM=
+	t=1745491135; cv=none; b=CMSOq5kXVNkegQSyIIk8kfjgnpXmpHU3c84fU+u2ue1/EA/iLbrIT7zc/PsVRXJ6vRvB53Ov7oCmIywfvQUM4WWmvRRAP3nennj4BxlFU73tIdT8k/rQb0cHnCpAnARCq0a3147Lei4UZVcGJUJ/uPgfFWd+am7SEdIFpHhY6ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745491134; c=relaxed/simple;
-	bh=K4f1M1J3eiRkmlZfWE5q1aMx7TxUtz8BejasUkAtzmw=;
+	s=arc-20240116; t=1745491135; c=relaxed/simple;
+	bh=fspxg+uNYQg/0xMHqz7C9hQnM6mWytkwf+DymD/SJHY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bxKyLeoBNDDGHrdTPne28IcF/rxIUlaxZtOuyHOZQgwAeV8Xm7PBpT5p7OIoH3UjvhGGumhBX+6B/VIkruEUjmVp0kW6vIholX/chP3hnHel5KBUNjdCaJG2LKvhKRundJDRdH0plgaQLjI0kHxeeJQdUqYWMaTQv3OTpHNB1fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PU8Jqefr; arc=none smtp.client-ip=209.85.219.50
+	 In-Reply-To:To:Cc; b=Ya2ddGuwAJKoHebURguDG8QWPWhpjFDyA3W30+3bWjG+x12ohjBPd0/Q8d49TMd5Uwmnajv68zZcZ2Oqrp4pzkub1dvuj1QiERQQP2O0k8tra007fTXOh1brXxqpHh/Zr1/t7Bk+XZabZu3U6OurRTVN7IkLPaUvy6R4Tk7MPDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iv3KbTy0; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8ffa00555so8516376d6.0;
-        Thu, 24 Apr 2025 03:38:52 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6eaf1b6ce9aso10734966d6.2;
+        Thu, 24 Apr 2025 03:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745491131; x=1746095931; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745491132; x=1746095932; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MvS6joOczv1CrYhdtKitf4Xzxm9N0M7WxqdmnmwyA9Y=;
-        b=PU8JqefrkyD1YkkjzLUlZ6DC0mPslXHdOaygOvycZXMn3zcoDDzVhlyJbPzPB0xM3X
-         xgRswhP6UNPMh86VC6kW5PJvhvNRaHsmljQzd7XJfQQi+PJYsCQPFeQe1J4XflR9h3zT
-         83ufKq0ZRUNFM9X3c9FhzZP9Fu2MqQBGZX0Hg0Qpdg4LGJ8quu+SOcbFg1bwHbEs2ZX/
-         Cu9AS0sQ/im3wtBk0IwyNzcp8qopqyknhyEQXaa6InFEU0bkERYZC9RlGanhm3w7NuRz
-         uvVfj4QXDZF18zDNcUp7/od9Jmuc4ACdIK8wT6YG03GwHYcTXzjc5CzbWqPDxnGYiUy+
-         Whvg==
+        bh=OCGT2JlziqqiSztKJ7xnMu1WkpausWLoKCYcx1OKs3U=;
+        b=iv3KbTy03eFTzhIix5MprYPgYmIJuQZVBd3USpPAOzCo0XBkMNh60FNWXvNu/AL6Mk
+         wHxUFebDofsssQxdz5e5KZOOMPv+W5prYyk0hbRlHiFG6nqXrdnv7VsCNTtrvT+QoVPr
+         oGnmsYfbMoZIKVQgONYtwqwpJs7UrZL0OIiHWd4RQV3QZ+zJqGtiGhYec2vYMd48ARho
+         mUd8gg0nOluCgfb0RZA6FKdljrktOST3Ahfc3ACOkrkzcDpuBmWAv32tCnmRU3Dk6RPf
+         eeSvuueURbF8OWs4G/PUWsLLnS9U/NrC5XEFZp1lnq5i1F3CK1tAiH33ykM08cGbWZA5
+         ivhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745491131; x=1746095931;
+        d=1e100.net; s=20230601; t=1745491132; x=1746095932;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MvS6joOczv1CrYhdtKitf4Xzxm9N0M7WxqdmnmwyA9Y=;
-        b=SSzeXUMNqFIAWw7YqPIzwxD1csiSiD7mkXUl38T9Kb5iTj43CqZl1H37uj+aG+vpLJ
-         ZF15XNH0TwEMMF3g0RonPQgQyj4y9LRgbvCly6+r7QXoOcz5DgKGgsMyuDYrdURhix9T
-         jZzo5BuDEMvPS++0ZxDoQbkJPPQvrgh1CmmgIkENjsWE2pUYFZf2tpFfNYoXHGV7yt7m
-         q8qNFbLPrhKUwi6/Y5WHbp9r3ec7JmW7X/uHjQZv5Ik3xrpS+/T01+V9ySsOGcBzb6Ld
-         JJsk+wdSx23eUUs3P3o5cz9i5w53xJPia4uYwo6O+5N4pZQFokhsJW8WXTKJ0iiNC/fF
-         VCrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTmFWvPAa5mv0FJN4WjryNqW2CFUlCYjCf4wwh3vio62pxSlC8u4oKFlzcoSwY56PrP/2KZXTlFw3X3PA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxDVbQj4ZdLoKoviHzP40aMbwnVFX6eygf2swwY2AS0sSWVQNN
-	+oP6KickcpUaUjVkNl4dUWNeOFHMz51rfEB0yjdhHutRZdjUGWoN
-X-Gm-Gg: ASbGncv6RBssq+uzkltk3j9XvHW7GJ0mur2JZk+DDQrTSatHT+KiaNekBefXgyKoiyR
-	asm+plD1rcQknSm9OlSX9K3lQcrl1NOHKJkiW1dwDFNRKhPSrNMb1XocJgv28u2OowTxR6sdQs5
-	HL77CAouwCpjJnvc7EHL5q4sZXmdBYfN6ESlPoJ/eVPNVHSXuJe0soUBxOVBMOU72qUTf8ovb0D
-	G8niWvRaSVHGclYS4k6j3iFjl0lAdYcFnYnjJkqEcduAS04qb8daIo9WmJUNdiPMA1TSr0haa3u
-	+92U1FWxVogAkYtwAq0BUqXLC9kNCpsLznZ/gg6zYzj3NzM///PfqVGLf3bAIQYaQROg
-X-Google-Smtp-Source: AGHT+IFESDjoAGrwnc6Dwc2MhR9GX+/9VzJJjsPSfV9tN+KPqKvBsZ/djdvKAtx1+eVpgNry072xMw==
-X-Received: by 2002:a05:6214:8b:b0:6e8:f672:ace9 with SMTP id 6a1803df08f44-6f4bfc6dc7emr23517106d6.29.1745491131221;
-        Thu, 24 Apr 2025 03:38:51 -0700 (PDT)
+        bh=OCGT2JlziqqiSztKJ7xnMu1WkpausWLoKCYcx1OKs3U=;
+        b=TIuFnSBsTCZNx8/duiJLQ+0C6r9yJx8Ybzb22MP7nVBSUZtHnkDYeofogon7TAZm01
+         Gxh+3nFfxwBz/cbR/PSJqD9gnjWBaOq3WwhVmAGLXvnVTLDjqvvZAsMmLNtY6nvJq/PD
+         e751HDeBwHmsvvRcD7t4NqO/13BuN6t9dV/wAeQRgT7IAsDAPUx+Vihk5cEmH6KfMq8u
+         A2zSN74NWoWCeWnyyNAM2uvCbJQifvGNStX3g55S4T5nVlS7sb98gDGq5t7roCzx4py2
+         BgXI2e25cDYx+BSy/R7oHh7/nTHa5ukFZ1VUULSgBEGq8Xv11UDzd3XS4PgejLVnWNRl
+         CzIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBidwe8AAQB2ZlNIUHWZJsuegEWLmskUYGbnHkDIRVreEl+npxaCuwr3/RNOjDf1dkSeNCLqzpo0QKj2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ1fCp2XNjwlFJPve8/ZY8Is8CVZX6S7P29vPcFkZzVPyJXEXJ
+	QJjAyvWW9HnKWSxi8YBNlM8WY0uEoaKhnGp8rFQAahs8mNY70Lal
+X-Gm-Gg: ASbGnctoy6sC/SMp8DoAL7WCVAT4W0EYShm/+QRu/v5Fc/x1fd7CSehmi9WL2HD97oG
+	zbKRddlg5HEELtpRKTdk/V4NCLwJ58WJSCq8ttpYZ/WR7aTcmk39SaAUlMx7u2Dfdq9rMl2wHAn
+	Bd0WcG88jYlA1IXBDinwBFrAS73iRBFaZ74rPLgz1b8Sj1xFjojzc011Sr74J3ZN3NzeRM9c0fs
+	TLygkP/wdksu1L42HQ8EpGKKF3bLq/iZBE6TIuM2bMrsA+wQ8axr1hGcWFFV/q/kHswUC04isMM
+	QTJspDkcsSkDcIbOCIRzXB28kX+tqQb6glsrLaIq9kzl2JLKfvhBBuLd4DPArc7nHkDZIiJLEvu
+	Yqqs=
+X-Google-Smtp-Source: AGHT+IFtbTUg/NlHp+xGGR8hhVqM+3uqW4XpfmIRTs3e+e1XwqiOWrT05niehzviMiK9ZEWlb8+M4A==
+X-Received: by 2002:a0c:cdc2:0:b0:6f4:c63e:4cdc with SMTP id 6a1803df08f44-6f4c63e4e4emr3337556d6.0.1745491132296;
+        Thu, 24 Apr 2025 03:38:52 -0700 (PDT)
 Received: from [192.168.1.159] ([2600:4041:5be7:7c00:4047:3830:186a:1bb1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c0a73b63sm7839096d6.70.2025.04.24.03.38.49
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c0a73b63sm7839096d6.70.2025.04.24.03.38.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 03:38:50 -0700 (PDT)
+        Thu, 24 Apr 2025 03:38:51 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 24 Apr 2025 06:38:36 -0400
-Subject: [PATCH v6 08/13] scripts: generate_rust_analyzer.py: use
- str(pathlib.Path)
+Date: Thu, 24 Apr 2025 06:38:37 -0400
+Subject: [PATCH v6 09/13] scripts: generate_rust_analyzer.py: identify
+ crates explicitly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-rust-analyzer-host-v6-8-40e67fe5c38a@gmail.com>
+Message-Id: <20250424-rust-analyzer-host-v6-9-40e67fe5c38a@gmail.com>
 References: <20250424-rust-analyzer-host-v6-0-40e67fe5c38a@gmail.com>
 In-Reply-To: <20250424-rust-analyzer-host-v6-0-40e67fe5c38a@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -100,9 +101,9 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Daniel Almeida <daniel.almeida@collabora.com>
 X-Mailer: b4 0.15-dev
 
-Use the `/` operator on `pathlib.Path` rather than directly crafting a
-string. This is consistent with all other path manipulation in this
-script.
+Use the return of `append_crate` to declare dependency on that crate.
+This allows multiple crates with the same display_name be defined, which
+we'll use to define host crates separately from target crates.
 
 Reviewed-by: Fiona Behrens <me@kloenk.dev>
 Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
@@ -110,21 +111,215 @@ Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
 Reviewed-by: Trevor Gross <tmgross@umich.edu>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- scripts/generate_rust_analyzer.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/generate_rust_analyzer.py | 88 +++++++++++++++++++--------------------
+ 1 file changed, 43 insertions(+), 45 deletions(-)
 
 diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index 66e3d5e8c52c..bc23cf58e7a1 100755
+index bc23cf58e7a1..b281e87cfa30 100755
 --- a/scripts/generate_rust_analyzer.py
 +++ b/scripts/generate_rust_analyzer.py
-@@ -141,7 +141,7 @@ def generate_crates(
-         proc_macro_crate: ProcMacroCrate = {
-             **crate,
-             "is_proc_macro": True,
--            "proc_macro_dylib_path": f"{objtree}/rust/{proc_macro_dylib_name}",
-+            "proc_macro_dylib_path": str(objtree / "rust" / proc_macro_dylib_name),
+@@ -60,17 +60,14 @@ def generate_crates(
+             line = line.replace("\n", "")
+             cfg.append(line)
+ 
+-    # Now fill the crates list -- dependencies need to come first.
+-    #
+-    # Avoid O(n^2) iterations by keeping a map of indexes.
++    # Now fill the crates list.
+     crates: List[Crate] = []
+-    crates_indexes: Dict[str, int] = {}
+ 
+     def build_crate(
+         display_name: str,
+         root_module: pathlib.Path,
+         *,
+-        deps: List[str],
++        deps: List[Dependency],
+         cfg: List[str],
+         is_workspace_member: bool,
+     ) -> Crate:
+@@ -78,7 +75,7 @@ def generate_crates(
+             "display_name": display_name,
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+-            "deps": [{"crate": crates_indexes[dep], "name": dep} for dep in deps],
++            "deps": deps,
+             "cfg": cfg,
+             "edition": "2021",
+             "env": {
+@@ -86,18 +83,19 @@ def generate_crates(
+             },
          }
-         register_crate(proc_macro_crate)
+ 
+-    def register_crate(crate: Crate) -> None:
+-        crates_indexes[crate["display_name"]] = len(crates)
++    def register_crate(crate: Crate) -> Dependency:
++        index = len(crates)
+         crates.append(crate)
++        return {"crate": index, "name": crate["display_name"]}
+ 
+     def append_crate(
+         display_name: str,
+         root_module: pathlib.Path,
+         *,
+-        deps: List[str],
++        deps: List[Dependency],
+         cfg: List[str],
+-    ) -> None:
+-        register_crate(
++    ) -> Dependency:
++        return register_crate(
+             build_crate(
+                 display_name,
+                 root_module,
+@@ -111,9 +109,9 @@ def generate_crates(
+         display_name: str,
+         root_module: pathlib.Path,
+         *,
+-        deps: List[str],
++        deps: List[Dependency],
+         cfg: List[str],
+-    ) -> None:
++    ) -> Dependency:
+         crate = build_crate(
+             display_name,
+             root_module,
+@@ -143,15 +141,15 @@ def generate_crates(
+             "is_proc_macro": True,
+             "proc_macro_dylib_path": str(objtree / "rust" / proc_macro_dylib_name),
+         }
+-        register_crate(proc_macro_crate)
++        return register_crate(proc_macro_crate)
+ 
+     def append_sysroot_crate(
+         display_name: str,
+         *,
+-        deps: List[str],
++        deps: List[Dependency],
+         cfg: List[str],
+-    ) -> None:
+-        register_crate(
++    ) -> Dependency:
++        return register_crate(
+             build_crate(
+                 display_name,
+                 sysroot_src / display_name / "src" / "lib.rs",
+@@ -164,59 +162,59 @@ def generate_crates(
+     # NB: sysroot crates reexport items from one another so setting up our transitive dependencies
+     # here is important for ensuring that rust-analyzer can resolve symbols. The sources of truth
+     # for this dependency graph are `(sysroot_src / crate / "Cargo.toml" for crate in crates)`.
+-    append_sysroot_crate("core", deps=[], cfg=crates_cfgs["core"])
+-    append_sysroot_crate("alloc", deps=["core"], cfg=[])
+-    append_sysroot_crate("std", deps=["alloc", "core"], cfg=[])
+-    append_sysroot_crate("proc_macro", deps=["core", "std"], cfg=[])
++    core = append_sysroot_crate("core", deps=[], cfg=crates_cfgs["core"])
++    alloc = append_sysroot_crate("alloc", deps=[core], cfg=[])
++    std = append_sysroot_crate("std", deps=[alloc, core], cfg=[])
++    proc_macro = append_sysroot_crate("proc_macro", deps=[core, std], cfg=[])
+ 
+-    append_crate(
++    compiler_builtins = append_crate(
+         "compiler_builtins",
+         srctree / "rust" / "compiler_builtins.rs",
+         deps=[],
+         cfg=[],
+     )
+ 
+-    append_proc_macro_crate(
++    macros = append_proc_macro_crate(
+         "macros",
+         srctree / "rust" / "macros" / "lib.rs",
+-        deps=["std", "proc_macro"],
++        deps=[std, proc_macro],
+         cfg=[],
+     )
+ 
+-    append_crate(
++    build_error = append_crate(
+         "build_error",
+         srctree / "rust" / "build_error.rs",
+-        deps=["core", "compiler_builtins"],
++        deps=[core, compiler_builtins],
+         cfg=[],
+     )
+ 
+-    append_proc_macro_crate(
++    pin_init_internal = append_proc_macro_crate(
+         "pin_init_internal",
+         srctree / "rust" / "pin-init" / "internal" / "src" / "lib.rs",
+         deps=[],
+         cfg=["kernel"],
+     )
+ 
+-    append_crate(
++    pin_init = append_crate(
+         "pin_init",
+         srctree / "rust" / "pin-init" / "src" / "lib.rs",
+-        deps=["core", "pin_init_internal", "macros"],
++        deps=[core, pin_init_internal, macros],
+         cfg=["kernel"],
+     )
+ 
+-    append_crate(
++    ffi = append_crate(
+         "ffi",
+         srctree / "rust" / "ffi.rs",
+-        deps=["core", "compiler_builtins"],
++        deps=[core, compiler_builtins],
+         cfg=[],
+     )
+ 
+     def append_crate_with_generated(
+         display_name: str,
+         *,
+-        deps: List[str],
++        deps: List[Dependency],
+         cfg: List[str],
+-    ) -> None:
++    ) -> Dependency:
+         crate = build_crate(
+             display_name,
+             srctree / "rust" / display_name / "lib.rs",
+@@ -235,20 +233,20 @@ def generate_crates(
+                 "exclude_dirs": [],
+             }
+         }
+-        register_crate(crate_with_generated)
++        return register_crate(crate_with_generated)
+ 
+-    append_crate_with_generated("bindings", deps=["core", "ffi"], cfg=[])
+-    append_crate_with_generated("uapi", deps=["core", "ffi"], cfg=[])
+-    append_crate_with_generated(
++    bindings = append_crate_with_generated("bindings", deps=[core, ffi], cfg=[])
++    uapi = append_crate_with_generated("uapi", deps=[core, ffi], cfg=[])
++    kernel = append_crate_with_generated(
+         "kernel",
+         deps=[
+-            "core",
+-            "macros",
+-            "build_error",
+-            "pin_init",
+-            "ffi",
+-            "bindings",
+-            "uapi",
++            core,
++            macros,
++            build_error,
++            pin_init,
++            ffi,
++            bindings,
++            uapi,
+         ],
+         cfg=[],
+     )
+@@ -279,7 +277,7 @@ def generate_crates(
+             append_crate(
+                 name,
+                 path,
+-                deps=["core", "kernel"],
++                deps=[core, kernel],
+                 cfg=cfg,
+             )
  
 
 -- 
