@@ -1,144 +1,197 @@
-Return-Path: <linux-kernel+bounces-618198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FC8A9AB44
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:01:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D7FA9AB4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5424A276D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A78F18977F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB38522129E;
-	Thu, 24 Apr 2025 11:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57D42253E0;
+	Thu, 24 Apr 2025 11:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Efqg4ej0"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="C6C7KB6C"
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010004.outbound.protection.outlook.com [52.103.67.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514F71E51D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745492455; cv=none; b=Dz8fdTPd+zsx800sZJs4/c0IwplwAaQUrBOJUyzu/QGFrizs49zZgKkMjQC7oglzd/0qmoLiG+mCxwAVHzbCIgtg4feDDhTDrNIV7kv+QwmpyU2lE1+TW2qbRktZ1MC7RRGnqtzTsI7gwVaP8jHtU5OVNl/AGkv51QUVHz4JOto=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745492455; c=relaxed/simple;
-	bh=ilVhurOAgxRINQp4J4plZnQ/Sve+oq9bjuZtm3BKBho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvC/6QPzI8D2uGEGLKZBk+6PWGQIXS7t4jaMO8B0CBDSMbcMmeDYlzRkr0J0wAjQnqZs3Po+TA0prftS7EcB4CHWx/RF+J2fXddDdMlA6Ir7dJXf40ObgAi2tJjP0ypZ/tPZ+qe5Ymll5AmEoU/iwKQ5gSzRfqTBsr3Il5OfZXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Efqg4ej0; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so8124565e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745492451; x=1746097251; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zHHJnHHyOrnNtHHA6vr6DrZ0IO7tPD+NYSLx8YKZu70=;
-        b=Efqg4ej0lfczL7FUZMe+hb4klNfVw/eDNsSA+9s0AdXbElMqmfSag5n8/TalQ4w67U
-         rYN0sFThg8wrStkkiUfwGCTGnU6FCTOK27qaeiA5YrPR1prbXomZx3wkyWFhhULs6p+s
-         e+rDC7xWWv5L8pP0W2VgLErtPHmcCWM89Av8+km5aujoYhqgM5pDHkZcHMlV1CRGzMct
-         o824a2B4a24tvH/2Z6ozeTJbefOZ4O6ACD+9hCcd20FUkvOnS5gIhuCu6ob2/Npc8G3u
-         5rjNFcXH3GTFfIMZw3F38cnncuzVp0g+eM3lKdBqPJhljMeoFyhvG1snvHKaWPaYAmaX
-         nFNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745492451; x=1746097251;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zHHJnHHyOrnNtHHA6vr6DrZ0IO7tPD+NYSLx8YKZu70=;
-        b=RxB7f+7I8A1/WWIJ6/keUSEBlfIPnays9KVrWaeQomS2fUzTBgeM0M5Mcz7+/YdmpO
-         uv0Qgi5pXz5qO8O+bkusYmEJMM7dwqn+PxDpvbmRwwzZwQLurHh3SruSIpw1UJoWMnZ4
-         d3nwyQf3PMIqKSteLky0VAspk23VyGQ+t0qi4I8SB71E0Wbj1SapRrRg1KD6Y/OXIURH
-         IsQW7IK4pgRCS62bDUPxMuWCV/VOdtK7sTvYM9OoUeOE7RMc5Vm/t67tVhg6oTqaCky2
-         ZahjwwBJ7+ctooJfm6tanwgj7X4KrnOCmWCPbsDIPTQQtzqEAY/x7IxIfXQ+rkeyNXqL
-         5EIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Lagi5a2H2dL2q+izZqbh4d4F34CiQDrGVXXgB+q30q/TzP4L5Y1QwGADwHykrWONU282VIfbtIe+3/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4VlyJpe79iVholg59QeRoqIlg6p3gvM9RZRecS8ZHnWlnls9f
-	VlW8UZOVqj23eFHt143tsbmkJskJt9ny0W0kI6YUMz2uomrk5+cd8WWQroGl3rM=
-X-Gm-Gg: ASbGnctk5yUtf2/xASAKUYbc2SWD+QurSTvr+fVOA7TmdqIXr2RFUWqxeWCmNJObJET
-	NDa2gWiidSA2/IcVrOcKRtGQojs5wphsNixqEkPKnaZJlFsDbjLN0MtB/5hJh7dFvzOFUQfRH5A
-	DfSv3swIOAb+nL6DAoWZsjyFqGa4uxTdYNrBMl7ncF6N8d1kRD6V8At8v/qKYvAIUIhY3mnj1Uv
-	7rLPC40mNTad38Z7grvpyBIuQxoPawdqlWpT4AnGU+ERoNP8h5ZnLNBNtbY5wcRR7bZPDP7kBlK
-	ZDiWhm9eIs2c4U0VengdrDysvKQxPamROG3jQYU=
-X-Google-Smtp-Source: AGHT+IGP6Ut82q/OqGuYzCaYu8ri2NvYSY5EYxmJ9hg0Kbk3eysivoE/mXbwZrGhC5aaW7QaraDYhg==
-X-Received: by 2002:a05:600c:3b9a:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-4409bd8a761mr17964535e9.30.1745492451468;
-        Thu, 24 Apr 2025 04:00:51 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::f716])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d8479sm16884645e9.29.2025.04.24.04.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 04:00:51 -0700 (PDT)
-Date: Thu, 24 Apr 2025 13:00:50 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v5 03/13] riscv: sbi: add FWFT extension interface
-Message-ID: <20250424-c85c9d2f189fe4470038b519@orel>
-References: <20250417122337.547969-1-cleger@rivosinc.com>
- <20250417122337.547969-4-cleger@rivosinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDC922577C;
+	Thu, 24 Apr 2025 11:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745492488; cv=fail; b=DVtfa9I1X3NwhJzOmJdMpd/3maJ2HAl87Z3F+TSh+6z4vuFaOPXp+xk7btnYFFcgyZN/NRLZnXb6EMgr+uyH0WePhDbm4Sb7LC3K/GCKaeY2xksYtBQ/fHN4XSD6R4FKJgHKAfra8O6gzTN5aBPs7yGkyfz9s/qsb6m4oglHAbg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745492488; c=relaxed/simple;
+	bh=fggrRve2ZxKOPCbn8vzQxvCsxSOp9zdGwpW7ra5jnI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ipsisJ+RKzgfoLR5IUUxhFL2VZlYcUkLmjP4bZhScNBqhB925qFKLxJDE/Wjf9lXH9V072tpuJaCIwfZZAKj1yLUCwjjGbzz/p4kcArBtbCvHGQz+eor2qYPELdmGcd0QkH/bzBanVY2si2ey5z+KcA45lWfDXjzPWwkB+W1a/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=C6C7KB6C; arc=fail smtp.client-ip=52.103.67.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DPL7WMq4MotK+NffRyaVWbb2jawU6K1zrciHGlHemik11Fm5H5LXstFXE6VZzxzDnAZ7tF1hDcxYNg0ifacYPXvr2mh2RW30fW8E0nvClFsT+ZDAYCjlXbdrpqyD6p2WWN3KEmSqaUNJ8Y4qsLLwYkUlgZuxk3sbc4Hi8Zd0OMiMpheDiWsWs+X3h1Al1ZHub1I1H4xLbZY7K7GsyGApAQ3ub5KzRdOuFfNly09Wvm0BV2opl4ATcmS8L5EjRZg0cin6H9rqmQoBCijcG3nuUz0lU5wRMAVIk1eGLD+AqSvGqB5bwndBs1raciwQmrRiw03VnbSHQTfvAaSQgxE02Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UqKa0wY4bV3NTq0yibhAhBLHkogLpa1XKd1fHX8tdGo=;
+ b=iQm4TCLOihjZRJq8iwKj6tVh17yZQiAHxIDXJdfjUdRSxtuO6R71VzwUxFXeUaWcjIWCecSAaSkAfVdsJjmNq2dVuwID5p/YEJUydcXKZcTbQdq8QEHGoASmv2ibMBMvWSJp0CFACHSjRwHXi0QXA7Jv5rw4uaZx/faOxijsMymc5QJEMYujwT85lutjS8wCnggXPhIBHq4yq9X8984mRbyQ81RbN00gkvrvPW0AswTmfriODrw0+CHbF48rPuIBMiW+FGiXuYTmI91Ok4obTnXqubn1Ng7URsWUahJBE+eomw6ZxJTSpLYD9KfrasFrjQIiMEAEKJ2RVxqCuHkhqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UqKa0wY4bV3NTq0yibhAhBLHkogLpa1XKd1fHX8tdGo=;
+ b=C6C7KB6CM8+FY7Ar6z1cYKse9TxDCzDePf5jX1QPZOn9aYM6aIAV68VC+G4ezFgjxgr0HoFcs7aUW8jbKyRZTxJb1tB1z1BMoEuKi/DEWd2/yqVYQ/v9dvk4Uu3YfF/fIOvrLu59uKbUOsl6tr1eBDuZ6MPiFMhacmsR7oInovdZdtpZleprbodmbsM3+QBlN5o7VK4qvqYi8Hyg3kovnmNY1cYp22n6WqfBiIqhz1roJdHZQ7fc9yLknDhZwbbCRBLwC+1d5t5H+Crzlj4yan7LZWo3zY/YpMMmMnQrrQXQn77ugSVWXp1RAR3YR/pWTCI7d8Idk2YlBT58YM0UOQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN3PPF5B1F59906.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c04:1::491) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Thu, 24 Apr
+ 2025 11:01:22 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8655.038; Thu, 24 Apr 2025
+ 11:01:22 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org
+Subject: [PATCH] HID: magicmouse: enclose macros with complex values in parentheses
+Date: Thu, 24 Apr 2025 11:00:57 +0000
+Message-ID:
+ <PN3PR01MB959713AF6F9A2EF63E47440BB8852@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email @GIT_VERSION@
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN5P287CA0037.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:25f::7) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID:
+ <20250424110057.10094-1-gargaditya08@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250417122337.547969-4-cleger@rivosinc.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|PN3PPF5B1F59906:EE_
+X-MS-Office365-Filtering-Correlation-Id: af802cf5-b3e8-4750-3378-08dd831f57fb
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|19110799003|8060799006|7092599003|8022599003|15080799006|5062599005|461199028|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EY9QoLY+09Vf9TvNQUpZX34lMB+C1Pg89T1LlSCLDvXIyRhnyiDGBA5/uH2N?=
+ =?us-ascii?Q?C9/tLbrw/0b8/dQk2O75TbuKK8GYTXIvj3De09sfEX8VnAjQFjUHH5o1Igpy?=
+ =?us-ascii?Q?tCVBCfdI/yB+fIEy7gVry9kJqM7uDXwUWcCAJb9YE6aaqj7tTM8sDFc7tHz3?=
+ =?us-ascii?Q?Vfzm2jxdoRXCNBVx4PPWDew4OkwDdyEbCn3UyHtqaGSzEi/V+vA1u7FK2zZK?=
+ =?us-ascii?Q?O7hR4j1CHrgbP9Bspp9cRfVBYBaf036xMojry4VvjgZPDdIqwNSh3Ryfoikl?=
+ =?us-ascii?Q?K+BkO+dBupzqI3K9aLY1jPo1Ud5vWWxTNNdpHX6i7PjcpSZp0aH6VoYuhDzx?=
+ =?us-ascii?Q?BQdMJQuXlLaztYh6EUKdZOmxsx8EmmEZz+w5bl/D2hOXGkWKb0OjZPC710+z?=
+ =?us-ascii?Q?m4PZLEW8M76oDQMH1gP3hrOhzYyDuHMmMTD+RINVCBwR1Mer54vJ/7Zltb0+?=
+ =?us-ascii?Q?ton/i5Cq2InSVUFK+jTFAW+xZQPreirNy/r0zaW6DGWP5dMdHejIGIAYYvxS?=
+ =?us-ascii?Q?h59NLFGzjQPp/x++MgeJ1emnz5iZmMCa4CNnenn9wHrT7h56GgFq9exqLgcT?=
+ =?us-ascii?Q?3mvwyC6vs0aDYYDgFyC4ovFKpTrQ4ipgibTelnNtvXzVvrmy0jQiu+TEpHb0?=
+ =?us-ascii?Q?SAIFwv3ZlP9Bxrsv2sRWkRKGoyCBxPC3S38xAVfeh8tdTE85rtC3xcTYtwC+?=
+ =?us-ascii?Q?t+G/oCVC+KEkj7ZsFEPR7lBxOb3SoGYu8y7bs/OFdLtmUBeryaOCwPQx9eya?=
+ =?us-ascii?Q?ZNGv8Pfy/EdsA7S2XRpVKT9cy0px0pwYWMSUSS0XOaffHZPSfvnCe++pBQ0i?=
+ =?us-ascii?Q?lwa/+rhSilxGowjHzz6gLsBFRF/A7RZBFYglSk1LIkyUW+6HUuCrgmyqoiW0?=
+ =?us-ascii?Q?XTcnWe/uxJ/a7+0/UXzRDnDZbqhwFx5ZfbL8SRBLTY3L5jy7zCz5PlsCDbR3?=
+ =?us-ascii?Q?Fd8adDdILhri23hD0dmp0rppiV+lWaCx05EOm9szh38EiJAHXcA2UYf4SPbM?=
+ =?us-ascii?Q?MBTY8snAZEX3wHO2P3dpGp/MGvmFVNWmfR/OXzHiYqCvKE9NySeniWyoSDpj?=
+ =?us-ascii?Q?H8ZMLpxxTzfzswbJpgZd9em6I2XZ6iAdEeeLKfER2GkBS1LSj1Ah94dSuem9?=
+ =?us-ascii?Q?M8ZiHA60424adXV2qFP8WretMGakbpfJbSB7IrQoz58lBMitRqwwlkM=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kulhLK+DPymETK52qV2Mz0kPIrp9c8ubfrq8OzskCdd1/8aBbzendosvz9LF?=
+ =?us-ascii?Q?SWLfaoiVBB2xkAsBYNV/oP8nc/A0uumDrUsklWJ51O3CbalNKOg96N51T79H?=
+ =?us-ascii?Q?x31xNhVxrhCds2COSF1nWy/Ss9isH+Z6E69Dk5iHExRzRlbDAjV853sIJuPl?=
+ =?us-ascii?Q?6hLKxzB3HlKXquLA2wv0Ttm7oKxRUXbzlBo06Gdu8XDdCJLIVnOB7eIEAguf?=
+ =?us-ascii?Q?KnbVs72q/Pi8N908DynjPqPkCeOofVUuctDoDpnBTitWMYf5evLa1WRHasRh?=
+ =?us-ascii?Q?ToRsqBRbpJSJFsGSSSiyh54qRy5LA6D7Goam92IPvYiFhecMyzCsCl/AYJd9?=
+ =?us-ascii?Q?T2lAyRODcranSXiBxW++xBL6zFBln9R5gRYJZF14GXrqNhk5ymXZV5t6lV2B?=
+ =?us-ascii?Q?W+MbNd4gO7k+UJNM0QRL46XKoQEbg7j/3nuv5vFcUpSzyEHVr7378WbrEcNY?=
+ =?us-ascii?Q?2YRgsXhcIwU0urRmxYT5UFhvxh7761ofuMGFFn+TaaQcjpksMZocpPelPTYe?=
+ =?us-ascii?Q?9jwrlg15FoC+owCO+vZXlPQb0LsVwjc0+FhtMlPCRZ/A4bM42WzTnE+cxBGg?=
+ =?us-ascii?Q?ye4jJMFg1U8iaS5hwG8adHd48pcFj98xt6Iij0vjHcSRNkZvE+0hdyTlZiIH?=
+ =?us-ascii?Q?I/EQfdXRnzUGzMkRepotbKprE+Pt6QkM2Z4YRKZ4vwDEqnFlbsrZ28J1wiAR?=
+ =?us-ascii?Q?RxijPSX0udGacOC/g4MHUtgjBy6kUs/fRW0nK1EbMXwFaMztdfAm0m3oECfq?=
+ =?us-ascii?Q?FdL2WoVaS4g/bolOJ68ItdrbrRmLUROLbQ3ZImUh/XykGZQ2IQ6z8Q6omhWG?=
+ =?us-ascii?Q?UQh1CgYBBolBF6BvokBwTMHT76AabXnt38lwBoXBLKHUuSdURNFmy0HVYuxy?=
+ =?us-ascii?Q?mPLgTJ46sfvlI+S6t82AB7Oo5dkckJg4m3Ouk3OPwqnSvEXyvbPc/uuBGwC0?=
+ =?us-ascii?Q?S+2BlzWEwVs7K2FHyIC8HLRip1kiEOP9MJ1mMYLW0M0aIWoezC0Ei8hgbtTd?=
+ =?us-ascii?Q?gc5LITmyuTq54YAhQH6qVVg/4HH3eZYQ2rZG3FY0sseHB4RGsz9ltZu/xLFs?=
+ =?us-ascii?Q?kKCpHx3I1QABZFniUzc3nvpZ2JJJCyG0NFzGXl/kzxUQuTlUglmXGEuZPeuq?=
+ =?us-ascii?Q?L4twGEvWUfAzLSjZckiQOWcAf8tb6D5q7SHT6dr9ehjGlJgqIZ2gASeo1W/c?=
+ =?us-ascii?Q?DFAbXytQVHviImWl0HFJuwiKVaj69SJYWms4lChLQDmkWaj7WQLSTTqkuuI?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: af802cf5-b3e8-4750-3378-08dd831f57fb
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 11:01:21.9235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PPF5B1F59906
 
-On Thu, Apr 17, 2025 at 02:19:50PM +0200, Clément Léger wrote:
-> This SBI extensions enables supervisor mode to control feature that are
-> under M-mode control (For instance, Svadu menvcfg ADUE bit, Ssdbltrp
-> DTE, etc). Add an interface to set local features for a specific cpu
-> mask as well as for the online cpu mask.
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/sbi.h | 17 +++++++++++
->  arch/riscv/kernel/sbi.c      | 57 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 74 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 7ec249fea880..c8eab315c80e 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -503,6 +503,23 @@ int sbi_remote_hfence_vvma_asid(const struct cpumask *cpu_mask,
->  				unsigned long asid);
->  long sbi_probe_extension(int ext);
->  
-> +int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags);
-> +int sbi_fwft_local_set_cpumask(const cpumask_t *mask, u32 feature,
-> +			       unsigned long value, unsigned long flags);
+Checkpatch reported this error:
 
-I'm confused by the naming that includes 'local' and 'cpumask' together
-and...
+ERROR: Macros with complex values should be enclosed in parentheses
 
-> +/**
-> + * sbi_fwft_local_set() - Set a feature on all online cpus
-> + * @feature: The feature to be set
-> + * @value: The feature value to be set
-> + * @flags: FWFT feature set flags
-> + *
-> + * Return: 0 on success, appropriate linux error code otherwise.
-> + */
-> +static inline int sbi_fwft_local_set(u32 feature, unsigned long value,
-> +				     unsigned long flags)
-> +{
-> +	return sbi_fwft_local_set_cpumask(cpu_online_mask, feature, value, flags);
+This patch is a simple fix for the same.
 
-...that something named with just 'local' is applied to all online cpus.
-I've always considered 'local' functions to only affect the calling cpu.
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-magicmouse.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
-drew
+diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+index a76f17158..d83909761 100644
+--- a/drivers/hid/hid-magicmouse.c
++++ b/drivers/hid/hid-magicmouse.c
+@@ -81,32 +81,32 @@ MODULE_PARM_DESC(report_undeciphered, "Report undeciphered multi-touch state fie
+ 
+ /* Touch surface information. Dimension is in hundredths of a mm, min and max
+  * are in units. */
+-#define MOUSE_DIMENSION_X (float)9056
++#define MOUSE_DIMENSION_X ((float)9056)
+ #define MOUSE_MIN_X -1100
+ #define MOUSE_MAX_X 1258
+ #define MOUSE_RES_X ((MOUSE_MAX_X - MOUSE_MIN_X) / (MOUSE_DIMENSION_X / 100))
+-#define MOUSE_DIMENSION_Y (float)5152
++#define MOUSE_DIMENSION_Y ((float)5152)
+ #define MOUSE_MIN_Y -1589
+ #define MOUSE_MAX_Y 2047
+ #define MOUSE_RES_Y ((MOUSE_MAX_Y - MOUSE_MIN_Y) / (MOUSE_DIMENSION_Y / 100))
+ 
+-#define TRACKPAD_DIMENSION_X (float)13000
++#define TRACKPAD_DIMENSION_X ((float)13000)
+ #define TRACKPAD_MIN_X -2909
+ #define TRACKPAD_MAX_X 3167
+ #define TRACKPAD_RES_X \
+ 	((TRACKPAD_MAX_X - TRACKPAD_MIN_X) / (TRACKPAD_DIMENSION_X / 100))
+-#define TRACKPAD_DIMENSION_Y (float)11000
++#define TRACKPAD_DIMENSION_Y ((float)11000)
+ #define TRACKPAD_MIN_Y -2456
+ #define TRACKPAD_MAX_Y 2565
+ #define TRACKPAD_RES_Y \
+ 	((TRACKPAD_MAX_Y - TRACKPAD_MIN_Y) / (TRACKPAD_DIMENSION_Y / 100))
+ 
+-#define TRACKPAD2_DIMENSION_X (float)16000
++#define TRACKPAD2_DIMENSION_X ((float)16000)
+ #define TRACKPAD2_MIN_X -3678
+ #define TRACKPAD2_MAX_X 3934
+ #define TRACKPAD2_RES_X \
+ 	((TRACKPAD2_MAX_X - TRACKPAD2_MIN_X) / (TRACKPAD2_DIMENSION_X / 100))
+-#define TRACKPAD2_DIMENSION_Y (float)11490
++#define TRACKPAD2_DIMENSION_Y ((float)11490)
+ #define TRACKPAD2_MIN_Y -2478
+ #define TRACKPAD2_MAX_Y 2587
+ #define TRACKPAD2_RES_Y \
+-- 
+2.49.0
+
 
