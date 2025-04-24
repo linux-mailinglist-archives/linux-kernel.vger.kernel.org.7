@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-618128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FBEA9AA72
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E124AA9AA6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C817A7AC37C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FEA219401EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3858A22F77C;
-	Thu, 24 Apr 2025 10:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F71230BCD;
+	Thu, 24 Apr 2025 10:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlZh337e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuqC4fLf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F24225785;
-	Thu, 24 Apr 2025 10:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8824A22FF55;
+	Thu, 24 Apr 2025 10:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490448; cv=none; b=UEDoTryDjVAZabIutP7VCEfRzu7agTAgsnmpE3I7xjyUCz5wO7rreceRQ2PZQpH+spJLquG2Q4phjW/MZuslz1JFsH5tdPVIuEbzrzxU0p6CXZaRiRM1mIcDQs150kK9KjernbB+jjI0PcDwkEFGlGEl5tdeqIcnK94EuWmcVvc=
+	t=1745490454; cv=none; b=kMDGtCml+uL/+38zFf6o2b5/Fc26BKhSofPKCabBj81/+iSp82pJRLAJwU7iWmbP0bh7VotQjd5UaJpUUPEfKpaVqfjlNbnccKBcy8NGdBA/77oFXe/hn2yRx/CslxY2dxbhltGNFJ/rQIs/y4LC6WsalJNly2S6JCcLMPX86OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490448; c=relaxed/simple;
-	bh=kVmUOsoYAffCkj0BDSiaisYdEeHtGHN8RCJylQNCwn4=;
+	s=arc-20240116; t=1745490454; c=relaxed/simple;
+	bh=wtRCpNR7+FNMQRJBvxqrjW+9t2Xp8F5h3uGBdnds4Dk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NWWXEblyVSkdtLRhrT/3Jcuo1cXTt0lQDNc2Al6HI6he8i4q9QZjas7+yhc5+h8bk0oPxSGU5PXyv5R7pcF/ZqIzRVJF1VHhS5P7b44I2BNBz7u4XJGzSRBi1f6hUYnvbEaZsXBUuYONYIE9YbZWm/e5kF9w+9h3tQVOwjsusHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlZh337e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F70C4CEE3;
-	Thu, 24 Apr 2025 10:27:22 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=f+8niALENPXroVsEpz8s1T7SSB913DxS9h99+IenDaiptQfbTFuzGM7iuiWLPuC82CY0kIssn/4mbuo6pLrn64e9w/hZaRbalS9GAPeK/OGHwKF3Pr+WYdOP49ESl2tIQx6/X3hTwDuB8T+M7P6vzaHgXNAV8HVEoi2k/niTWrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuqC4fLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2093C4CEE3;
+	Thu, 24 Apr 2025 10:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745490448;
-	bh=kVmUOsoYAffCkj0BDSiaisYdEeHtGHN8RCJylQNCwn4=;
+	s=k20201202; t=1745490454;
+	bh=wtRCpNR7+FNMQRJBvxqrjW+9t2Xp8F5h3uGBdnds4Dk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SlZh337ecGjw8IRclRHeDtqsRimlYJMsnwvRBsiJNO96jqJTjgHs1NEMQmYriU4xU
-	 VCufKcQHVPCoKjuF5hW1Qivq43kNsJlCBXPuawfk+v2eZWwcqnOJvNkEH1mVRjYdVj
-	 Yboz+QCFINhh7js9m73ijcM0kUBe9SuZQ8tz7Xtehj0ZkRE0LMYmnyQsWn29/q1cx2
-	 uqPvr3EVmyebcapyvCES4aGk+Tebh8s70INmolZjPhLDImqmqdXmb2Qk6/dB6pzJRi
-	 XjdvgQoigQ0r4nDllnRKzrccrodTsvQQ4paIy6zY2YJtqmrZptgBk7zzzpScwbyOZg
-	 uSaBJDuQ33ZSw==
+	b=SuqC4fLfv5uS/+qD2PqVl6e6ShlZGT+Gh+6PkOBmzAAUlnvI6xqNl5o/AtjlBj/DN
+	 DASFRy1WveSz/jNueA5GGoEKKGb6/JFx8i8tvEKf/KiS+wV+6BHUMTl+il0rzLfLqt
+	 3n4RfRcFdEbxIr7Qxy2hzDp3OVIungmbRRbhbS9oWIK374eMxMNDcr89Sr0nm77wWS
+	 l9aTFHFKF7ICcAiOhm8MliPjSEV75l8TXjteCSzOo0IHD9RzNLI7yeDnc/q1a9fzv6
+	 nQI5cFuUtz8WbJpb6Ls8cO3kJzvjE0bB56yitVE6vtIwZ9h8kokzQW884uA1DhAcl9
+	 bewFTUuBYlmZg==
 From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Thu, 24 Apr 2025 12:25:30 +0200
-Subject: [PATCH v2 19/22] irqchip/gic-v5: Add GICv5 CPU interface/IRS
- support
+Date: Thu, 24 Apr 2025 12:25:31 +0200
+Subject: [PATCH v2 20/22] irqchip/gic-v5: Add GICv5 ITS support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-gicv5-host-v2-19-545edcaf012b@kernel.org>
+Message-Id: <20250424-gicv5-host-v2-20-545edcaf012b@kernel.org>
 References: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
 In-Reply-To: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
 To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -68,402 +67,1745 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
  Lorenzo Pieralisi <lpieralisi@kernel.org>
 X-Mailer: b4 0.14.2
 
-Implement GICv5 CPU interface and IRS support, to manage interrupt
-state, priority and routing for all GICv5 interrupt types.
+The GICv5 architecture implements Interrupt Translation Service
+(ITS) components in order to translate events coming from peripherals
+into interrupt events delivered to the connected IRSes.
 
-The GICv5 CPU interface implements support for PE-Private Peripheral
-Interrupts (PPI), that are handled (enabled/prioritized/delivered)
-entirely within the CPU interface hardware.
+Events (ie MSI memory writes to ITS translate frame), are translated
+by the ITS using tables kept in memory.
 
-To enable PPI interrupts, implement the baseline GICv5 host kernel
-driver infrastructure required to handle interrupts on a GICv5 system.
+ITS translation tables for peripherals is kept in memory storage
+(device table [DT] and Interrupt Translation Table [ITT]) that
+is allocated by the driver on boot.
 
-Add the exception handling code path and definitions for GICv5
-instructions.
+Both tables can be 1- or 2-level; the structure is chosen by the
+driver after probing the ITS HW parameters and checking the
+allowed table splits and supported {device/event}_IDbits.
 
-Add GICv5 PPI handling code as a specific IRQ domain to:
+DT table entries are allocated on demand (ie when a device is
+probed); the DT table is sized using the number of supported
+deviceID bits in that that's a system design decision (ie the
+number of deviceID bits implemented should reflect the number
+of devices expected in a system) therefore it makes sense to
+allocate a DT table that can cater for the maximum number of
+devices.
 
-- Set-up PPI priority
-- Manage PPI configuration and state
-- Manage IRQ flow handler
-- IRQs allocation/free
-- Hook-up a PPI specific IRQchip to provide the relevant methods
+DT and ITT tables are allocated using the kmalloc interface;
+the allocation size may be smaller than a page or larger,
+and must provide contiguous memory pages.
 
-PPI IRQ priority is chosen as the minimum allowed priority by the
-system design (after probing the number of priority bits implemented
-by the CPU interface).
+LPIs INTIDs backing the device events are allocated one-by-one
+and only upon Linux IRQ allocation; this to avoid preallocating
+a large number of LPIs to cover the HW device MSI vector
+size whereas few MSI entries are actually enabled by a device.
 
-The GICv5 Interrupt Routing Service (IRS) component implements
-interrupt management and routing in the GICv5 architecture.
+ITS cacheability/shareability attributes are programmed
+according to the provided firmware ITS description.
 
-A GICv5 system comprises one or more IRSes, that together
-handle the interrupt routing and state for the system.
-
-An IRS supports Shared Peripheral Interrupts (SPIs), that are
-interrupt sources directly connected to the IRS; they do not
-rely on memory for storage. The number of supported SPIs is
-fixed for a given implementation and can be probed through IRS
-IDR registers.
-
-SPI interrupt state and routing are managed through GICv5
-instructions.
-
-Each core (PE in GICv5 terms) in a GICv5 system is identified with
-an Interrupt AFFinity ID (IAFFID).
-
-An IRS manages a set of cores that are connected to it.
-
-Firmware provides a topology description that the driver uses
-to detect to which IRS a CPU (ie an IAFFID) is associated with.
-
-Use probeable information and firmware description to initialize
-the IRSes and implement GICv5 IRS SPIs support through an
-SPI-specific IRQ domain.
-
-The GICv5 IRS driver:
-
-- Probes IRSes in the system to detect SPI ranges
-- Associates an IRS with a set of cores connected to it
-- Adds an IRQchip structure for SPI handling
-
-SPIs priority is set to a value corresponding to the lowest
-permissible priority in the system (taking into account the
-implemented priority bits of the IRS and CPU interface).
-
-Since all IRQs are set to the same priority value, the value
-itself does not matter as long as it is a valid one.
-
-An IRS supports Logical Peripheral Interrupts (LPIs) and implement
-Linux IPIs on top of it.
-
-LPIs are used for interrupt signals that are translated by a
-GICv5 ITS (Interrupt Translation Service) but also for software
-generated IRQs - namely interrupts that are not driven by a HW
-signal, ie IPIs.
-
-LPIs rely on memory storage for interrupt routing and state.
-
-Memory storage is handled by the IRS - that is configured
-at probe time by the driver with the required memory.
-
-LPIs state and routing information is kept in the Interrupt
-State Table (IST).
-
-IRSes provide support for 1- or 2-level IST tables configured
-to support a maximum number of interrupts that depend on the
-OS configuration and the HW capabilities.
-
-On systems that provide 2-level IST support, always allow
-the maximum number of LPIs; On systems with only 1-level
-support, limit the number of LPIs to 2^12 to prevent
-wasting memory (presumably a system that supports a 1-level
-only IST is not expecting a large number of interrupts).
-
-On a 2-level IST system, L2 entries are allocated on
-demand.
-
-The IST table memory is allocated using the kmalloc() interface;
-the allocation required may be smaller than a page and must be
-made up of contiguous physical pages if larger than a page.
-
-On systems where the IRS is not cache-coherent with the CPUs,
-cache mainteinance operations are executed to clean and
-invalidate the allocated memory to the point of coherency
-making it visible to the IRS components.
-
-Add an LPI IRQ domain to:
-
-- Manage LPI state and routing
-- Add LPI IRQchip structure and callbacks
-- LPI domain allocation/de-allocation
-
-On GICv5 systems, IPIs are implemented using LPIs.
-
-Implement an IPI-specific IRQ domain created as a child/subdomain
-of the LPI domain to allocate the required number of LPIs needed
-to implement the IPIs.
-
-Move the arm64 IPI enum declaration to a header file so that the
-GICv5 driver code can detect how many IPIs are required by arch code.
-
-IPIs are backed by LPIs, add LPIs allocation/de-allocation
-functions.
-
-The LPI INTID namespace is managed using an IDA to alloc/free LPI
-INTIDs.
-
-Associate an IPI irqchip with IPI IRQ descriptors to provide
-core code with the irqchip.ipi_send_single() method required
-to raise an IPI.
+The GICv5 ITS reuses the GICv3 MSI parent infrastructure,
+there is no need to duplicate it, make it common.
 
 Co-developed-by: Sascha Bischoff <sascha.bischoff@arm.com>
 Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
 Co-developed-by: Timothy Hayes <timothy.hayes@arm.com>
 Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
 Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Will Deacon <will@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Marc Zyngier <maz@kernel.org>
 ---
- MAINTAINERS                         |    2 +
- arch/arm64/include/asm/arch_gicv5.h |   91 +++
- arch/arm64/include/asm/smp.h        |   17 +
- arch/arm64/kernel/smp.c             |   17 -
- drivers/irqchip/Kconfig             |    5 +
- drivers/irqchip/Makefile            |    1 +
- drivers/irqchip/irq-gic-v5-irs.c    |  841 ++++++++++++++++++++++++++++
- drivers/irqchip/irq-gic-v5.c        | 1058 +++++++++++++++++++++++++++++++++++
- drivers/irqchip/irq-gic-v5.h        |  184 ++++++
- 9 files changed, 2199 insertions(+), 17 deletions(-)
+ MAINTAINERS                                        |    1 +
+ drivers/irqchip/Kconfig                            |   11 +
+ drivers/irqchip/Makefile                           |    4 +-
+ drivers/irqchip/irq-gic-common.h                   |    2 -
+ ...3-its-msi-parent.c => irq-gic-its-msi-parent.c} |    3 +-
+ drivers/irqchip/irq-gic-its-msi-parent.h           |   13 +
+ drivers/irqchip/irq-gic-v3-its.c                   |    3 +-
+ drivers/irqchip/irq-gic-v5-irs.c                   |   40 +-
+ drivers/irqchip/irq-gic-v5-its.c                   | 1293 ++++++++++++++++++++
+ drivers/irqchip/irq-gic-v5.c                       |    6 +-
+ drivers/irqchip/irq-gic-v5.h                       |  176 +++
+ 11 files changed, 1529 insertions(+), 23 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index f3ed84466da19906953b5396a5f4b50e878c376e..cdeceb6782355a4a18609135bf7f03249d8b0bb5 100644
+index cdeceb6782355a4a18609135bf7f03249d8b0bb5..d231077c024deba42153663ac66b6c05f7673f03 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -1907,6 +1907,8 @@ M:	Marc Zyngier <maz@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+@@ -1908,6 +1908,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
  S:	Maintained
  F:	Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
-+F:	arch/arm64/include/asm/arch_gicv5.h
-+F:	drivers/irqchip/irq-gic-v5*.[ch]
+ F:	arch/arm64/include/asm/arch_gicv5.h
++F:	drivers/irqchip/irq-gic-its-msi-parent.[ch]
+ F:	drivers/irqchip/irq-gic-v5*.[ch]
  
  ARM HDLCD DRM DRIVER
- M:	Liviu Dudau <liviu.dudau@arm.com>
-diff --git a/arch/arm64/include/asm/arch_gicv5.h b/arch/arm64/include/asm/arch_gicv5.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..75557fdad611fa51d7136126eb80cb861be98a8d
---- /dev/null
-+++ b/arch/arm64/include/asm/arch_gicv5.h
-@@ -0,0 +1,91 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2025 ARM Ltd.
-+ */
-+#ifndef __ASM_ARCH_GICV5_H
-+#define __ASM_ARCH_GICV5_H
-+
-+#include <asm/cacheflush.h>
-+#include <asm/sysreg.h>
-+
-+#ifndef __ASSEMBLY__
-+
-+#define GICV5_OP_GIC_CDAFF		sys_insn(1, 0, 12, 1, 3)
-+#define GICV5_OP_GIC_CDDI		sys_insn(1, 0, 12, 2, 0)
-+#define GICV5_OP_GIC_CDDIS		sys_insn(1, 0, 12, 1, 0)
-+#define GICV5_OP_GIC_CDEN		sys_insn(1, 0, 12, 1, 1)
-+#define GICV5_OP_GIC_CDEOI		sys_insn(1, 0, 12, 1, 7)
-+#define GICV5_OP_GIC_CDPEND		sys_insn(1, 0, 12, 1, 4)
-+#define GICV5_OP_GIC_CDPRI		sys_insn(1, 0, 12, 1, 2)
-+#define GICV5_OP_GIC_CDRCFG		sys_insn(1, 0, 12, 1, 5)
-+#define GICV5_OP_GICR_CDIA		sys_insn(1, 0, 12, 3, 0)
-+
-+#define gicr_insn(insn)			read_sysreg_s(insn)
-+#define gic_insn(v, insn)		write_sysreg_s(v, insn)
-+
-+#define GSB_ACK				__emit_inst(0xd5000000 | sys_insn(1, 0, 12, 0, 1) | 31)
-+#define GSB_SYS				__emit_inst(0xd5000000 | sys_insn(1, 0, 12, 0, 0) | 31)
-+
-+#define gsb_ack()			asm volatile(GSB_ACK : : : "memory")
-+#define gsb_sys()			asm volatile(GSB_SYS : : : "memory")
-+
-+/* Shift and mask definitions for GIC CDAFF */
-+#define GICV5_GIC_CDAFF_IAFFID_MASK	GENMASK_ULL(47, 32)
-+#define GICV5_GIC_CDAFF_IAFFID(r)	FIELD_GET(GICV5_GIC_CDAFF_IAFFID_MASK, r)
-+#define GICV5_GIC_CDAFF_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDAFF_TYPE(r)		FIELD_GET(GICV5_GIC_CDAFF_TYPE_MASK, r)
-+#define GICV5_GIC_CDAFF_IRM_MASK	BIT_ULL(28)
-+#define GICV5_GIC_CDAFF_IRM(r)		FIELD_GET(GICV5_GIC_CDAFF_IRM_MASK, r)
-+#define GICV5_GIC_CDAFF_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDAFF_ID(r)		FIELD_GET(GICV5_GIC_CDAFF_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDDI */
-+#define GICV5_GIC_CDDI_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDDI_TYPE(r)		FIELD_GET(GICV5_GIC_CDDI_TYPE_MASK, r)
-+#define GICV5_GIC_CDDI_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDDI_ID(r)		FIELD_GET(GICV5_GIC_CDDI_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDDIS */
-+#define GICV5_GIC_CDDIS_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDDIS_TYPE(r)		FIELD_GET(GICV5_GIC_CDDIS_TYPE_MASK, r)
-+#define GICV5_GIC_CDDIS_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDDIS_ID(r)		FIELD_GET(GICV5_GIC_CDDIS_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDEN */
-+#define GICV5_GIC_CDEN_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDEN_TYPE(r)		FIELD_GET(GICV5_GIC_CDEN_TYPE_MASK, r)
-+#define GICV5_GIC_CDEN_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDEN_ID(r)		FIELD_GET(GICV5_GIC_CDEN_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDPEND */
-+#define GICV5_GIC_CDPEND_PENDING_MASK	BIT_ULL(32)
-+#define GICV5_GIC_CDPEND_PENDING(r)	FIELD_GET(GICV5_GIC_CDPEND_PENDING_MASK, r)
-+#define GICV5_GIC_CDPEND_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDPEND_TYPE(r)	FIELD_GET(GICV5_GIC_CDPEND_TYPE_MASK, r)
-+#define GICV5_GIC_CDPEND_ID_MASK	GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDPEND_ID(r)		FIELD_GET(GICV5_GIC_CDPEND_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDPRI */
-+#define GICV5_GIC_CDPRI_PRIORITY_MASK	GENMASK_ULL(39, 35)
-+#define GICV5_GIC_CDPRI_PRIORITY(r)	FIELD_GET(GICV5_GIC_CDPRI_PRIORITY_MASK, r)
-+#define GICV5_GIC_CDPRI_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDPRI_TYPE(r)		FIELD_GET(GICV5_GIC_CDPRI_TYPE_MASK, r)
-+#define GICV5_GIC_CDPRI_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDPRI_ID(r)		FIELD_GET(GICV5_GIC_CDPRI_ID_MASK, r)
-+
-+/* Shift and mask definitions for GIC CDRCFG */
-+#define GICV5_GIC_CDRCFG_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDRCFG_TYPE(r)	FIELD_GET(GICV5_GIC_CDRCFG_TYPE_MASK, r)
-+#define GICV5_GIC_CDRCFG_ID_MASK	GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDRCFG_ID(r)		FIELD_GET(GICV5_GIC_CDRCFG_ID_MASK, r)
-+
-+/* Shift and mask definitions for GICR CDIA */
-+#define GICV5_GIC_CDIA_VALID_MASK	BIT_ULL(32)
-+#define GICV5_GIC_CDIA_VALID(r)		FIELD_GET(GICV5_GIC_CDIA_VALID_MASK, r)
-+#define GICV5_GIC_CDIA_TYPE_MASK	GENMASK_ULL(31, 29)
-+#define GICV5_GIC_CDIA_TYPE(r)		FIELD_GET(GICV5_GIC_CDIA_TYPE_MASK, r)
-+#define GICV5_GIC_CDIA_ID_MASK		GENMASK_ULL(23, 0)
-+#define GICV5_GIC_CDIA_ID(r)		FIELD_GET(GICV5_GIC_CDIA_ID_MASK, r)
-+
-+#endif /* __ASSEMBLY__ */
-+#endif /* __ASM_ARCH_GICV5_H */
-diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
-index d6fd6efb66a673ae33825971e4aa07e791c02ee5..d48ef6d5abcc77d1c06ad8e91e72006acf662078 100644
---- a/arch/arm64/include/asm/smp.h
-+++ b/arch/arm64/include/asm/smp.h
-@@ -50,6 +50,23 @@ struct seq_file;
-  */
- extern void smp_init_cpus(void);
- 
-+enum ipi_msg_type {
-+	IPI_RESCHEDULE,
-+	IPI_CALL_FUNC,
-+	IPI_CPU_STOP,
-+	IPI_CPU_STOP_NMI,
-+	IPI_TIMER,
-+	IPI_IRQ_WORK,
-+	NR_IPI,
-+	/*
-+	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
-+	 * with trace_ipi_*
-+	 */
-+	IPI_CPU_BACKTRACE = NR_IPI,
-+	IPI_KGDB_ROUNDUP,
-+	MAX_IPI
-+};
-+
- /*
-  * Register IPI interrupts with the arch SMP code
-  */
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 3f3712e47c94c62836fb89cd4bfb3595fbb41557..148145979d83f67469075df1c8b5e366ffe9d907 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -64,23 +64,6 @@ struct secondary_data secondary_data;
- /* Number of CPUs which aren't online, but looping in kernel text. */
- static int cpus_stuck_in_kernel;
- 
--enum ipi_msg_type {
--	IPI_RESCHEDULE,
--	IPI_CALL_FUNC,
--	IPI_CPU_STOP,
--	IPI_CPU_STOP_NMI,
--	IPI_TIMER,
--	IPI_IRQ_WORK,
--	NR_IPI,
--	/*
--	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
--	 * with trace_ipi_*
--	 */
--	IPI_CPU_BACKTRACE = NR_IPI,
--	IPI_KGDB_ROUNDUP,
--	MAX_IPI
--};
--
- static int ipi_irq_base __ro_after_init;
- static int nr_ipi __ro_after_init = NR_IPI;
- 
 diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index cec05e443083b8982b3e72f4212d808a22883914..160a4761d5d85f6dbf36f3142fd619c114733e36 100644
+index 160a4761d5d85f6dbf36f3142fd619c114733e36..6c348d421b05af0e4f4909877e02ac8ef19178ff 100644
 --- a/drivers/irqchip/Kconfig
 +++ b/drivers/irqchip/Kconfig
-@@ -54,6 +54,11 @@ config ARM_GIC_V3_ITS_FSL_MC
- 	depends on FSL_MC_BUS
- 	default ARM_GIC_V3_ITS
+@@ -41,10 +41,14 @@ config ARM_GIC_V3
+ 	select HAVE_ARM_SMCCC_DISCOVERY
+ 	select IRQ_MSI_IOMMU
  
-+config ARM_GIC_V5
++config ARM_GIC_ITS_PARENT
 +	bool
-+	select IRQ_DOMAIN_HIERARCHY
-+	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
++
+ config ARM_GIC_V3_ITS
+ 	bool
+ 	select GENERIC_MSI_IRQ
+ 	select IRQ_MSI_LIB
++	select ARM_GIC_ITS_PARENT
+ 	default ARM_GIC_V3
+ 	select IRQ_MSI_IOMMU
+ 
+@@ -59,6 +63,13 @@ config ARM_GIC_V5
+ 	select IRQ_DOMAIN_HIERARCHY
+ 	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
+ 
++config ARM_GIC_V5_ITS
++	bool
++	select GENERIC_MSI_IRQ
++	select IRQ_MSI_LIB
++	select ARM_GIC_ITS_PARENT
++	default ARM_GIC_V5
 +
  config ARM_NVIC
  	bool
  	select IRQ_DOMAIN_HIERARCHY
 diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 365bcea9a61ff89e2cb41034125b3fc8cd494d81..3d9c47fa3fdf40b7452c059d84fe8ac24c91bc0f 100644
+index 3d9c47fa3fdf40b7452c059d84fe8ac24c91bc0f..4280395e3bdff7858102f0b4eaaea1121cace52f 100644
 --- a/drivers/irqchip/Makefile
 +++ b/drivers/irqchip/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-v3-mbi.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v4.o irq-gic-v3-its-msi-parent.o
+@@ -32,10 +32,12 @@ obj-$(CONFIG_ARCH_REALVIEW)		+= irq-gic-realview.o
+ obj-$(CONFIG_IRQ_MSI_LIB)		+= irq-msi-lib.o
+ obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
+ obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-v3-mbi.o irq-gic-common.o
+-obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v4.o irq-gic-v3-its-msi-parent.o
++obj-$(CONFIG_ARM_GIC_ITS_PARENT)	+= irq-gic-its-msi-parent.o
++obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v4.o
  obj-$(CONFIG_ARM_GIC_V3_ITS_FSL_MC)	+= irq-gic-v3-its-fsl-mc-msi.o
  obj-$(CONFIG_PARTITION_PERCPU)		+= irq-partition-percpu.o
-+obj-$(CONFIG_ARM_GIC_V5)		+= irq-gic-v5.o irq-gic-v5-irs.o
+ obj-$(CONFIG_ARM_GIC_V5)		+= irq-gic-v5.o irq-gic-v5-irs.o
++obj-$(CONFIG_ARM_GIC_V5_ITS)		+= irq-gic-v5-its.o
  obj-$(CONFIG_HISILICON_IRQ_MBIGEN)	+= irq-mbigen.o
  obj-$(CONFIG_ARM_NVIC)			+= irq-nvic.o
  obj-$(CONFIG_ARM_VIC)			+= irq-vic.o
-diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
+index 020ecdf16901c9720e5746aec4d0b5b39d3625ed..710cab61d9195a0bd64d57e03c60852c4cd6ff8e 100644
+--- a/drivers/irqchip/irq-gic-common.h
++++ b/drivers/irqchip/irq-gic-common.h
+@@ -29,8 +29,6 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
+ void gic_enable_of_quirks(const struct device_node *np,
+ 			  const struct gic_quirk *quirks, void *data);
+ 
+-extern const struct msi_parent_ops gic_v3_its_msi_parent_ops;
+-
+ #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING    (1 << 0)
+ #define RDIST_FLAGS_RD_TABLES_PREALLOCATED     (1 << 1)
+ #define RDIST_FLAGS_FORCE_NON_SHAREABLE        (1 << 2)
+diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-its-msi-parent.c
+similarity index 98%
+rename from drivers/irqchip/irq-gic-v3-its-msi-parent.c
+rename to drivers/irqchip/irq-gic-its-msi-parent.c
+index bdb04c8081480de468fb217b68c6933a8e1e2bd7..71edcdb2defdfd5b892d86354039d2e46b832ea5 100644
+--- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
++++ b/drivers/irqchip/irq-gic-its-msi-parent.c
+@@ -7,7 +7,6 @@
+ #include <linux/acpi_iort.h>
+ #include <linux/pci.h>
+ 
+-#include "irq-gic-common.h"
+ #include "irq-msi-lib.h"
+ 
+ #define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS |	\
+@@ -200,7 +199,7 @@ static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+ 	return true;
+ }
+ 
+-const struct msi_parent_ops gic_v3_its_msi_parent_ops = {
++const struct msi_parent_ops gic_its_msi_parent_ops = {
+ 	.supported_flags	= ITS_MSI_FLAGS_SUPPORTED,
+ 	.required_flags		= ITS_MSI_FLAGS_REQUIRED,
+ 	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
+diff --git a/drivers/irqchip/irq-gic-its-msi-parent.h b/drivers/irqchip/irq-gic-its-msi-parent.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..7bd60e6d56b77c0c19a1bd9bee9685d9b6ffc959
+index 0000000000000000000000000000000000000000..e7bb7f3862eef379e5b85fe7bd5eb72f3586d3b7
 --- /dev/null
++++ b/drivers/irqchip/irq-gic-its-msi-parent.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2024 ARM Limited, All Rights Reserved.
++ */
++
++#ifndef _IRQ_GIC_ITS_MSI_PARENT_H
++#define _IRQ_GIC_ITS_MSI_PARENT_H
++
++#include <linux/msi.h>
++
++extern const struct msi_parent_ops gic_its_msi_parent_ops;
++
++#endif /* _IRQ_GIC_ITS_MSI_PARENT_H */
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 0115ad6c82593de511c285d99437996919bfa308..6c51bf4e34a38103d612c74476d640cd4126e8b6 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -41,6 +41,7 @@
+ #include <asm/exception.h>
+ 
+ #include "irq-gic-common.h"
++#include "irq-gic-its-msi-parent.h"
+ #include "irq-msi-lib.h"
+ 
+ #define ITS_FLAGS_CMDQ_NEEDS_FLUSHING		(1ULL << 0)
+@@ -5139,7 +5140,7 @@ static int its_init_domain(struct its_node *its)
+ 
+ 	irq_domain_update_bus_token(inner_domain, DOMAIN_BUS_NEXUS);
+ 
+-	inner_domain->msi_parent_ops = &gic_v3_its_msi_parent_ops;
++	inner_domain->msi_parent_ops = &gic_its_msi_parent_ops;
+ 	inner_domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
+ 
+ 	return 0;
+diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+index 7bd60e6d56b77c0c19a1bd9bee9685d9b6ffc959..ff9de8fe175f511b2e81f712fa2e69b96f3e66fb 100644
+--- a/drivers/irqchip/irq-gic-v5-irs.c
 +++ b/drivers/irqchip/irq-gic-v5-irs.c
-@@ -0,0 +1,841 @@
+@@ -5,7 +5,6 @@
+ 
+ #define pr_fmt(fmt)	"GICv5 IRS: " fmt
+ 
+-#include <linux/iopoll.h>
+ #include <linux/irqchip.h>
+ #include <linux/log2.h>
+ #include <linux/of.h>
+@@ -44,20 +43,6 @@ static void irs_writeq_relaxed(struct gicv5_irs_chip_data *irs_data,
+ 	writeq_relaxed(val, irs_data->irs_base + reg_offset);
+ }
+ 
+-static int gicv5_wait_for_op(void __iomem *addr, u32 offset, u32 mask, u32 *val)
+-{
+-	void __iomem *reg = addr + offset;
+-	u32 tmp;
+-	int ret;
+-
+-	ret = readl_poll_timeout_atomic(reg, tmp, tmp & mask, 1, 10 * USEC_PER_MSEC);
+-
+-	if (val)
+-		*val = tmp;
+-
+-	return ret;
+-}
+-
+ #define gicv5_irs_wait_for_op(base, reg, mask)				\
+ 	({								\
+ 		int ret;						\
+@@ -528,6 +513,23 @@ static int gicv5_irs_wait_for_idle(struct gicv5_irs_chip_data *irs_data)
+ 				     GICV5_IRS_CR0_IDLE);
+ }
+ 
++void gicv5_irs_syncr(void)
++{
++	struct gicv5_irs_chip_data *irs_data;
++	u32 syncr;
++
++	irs_data = list_first_entry_or_null(&irs_nodes,
++					    struct gicv5_irs_chip_data, entry);
++	if (WARN_ON(!irs_data))
++		return;
++
++	syncr = FIELD_PREP(GICV5_IRS_SYNCR_SYNC, 1);
++	irs_writel_relaxed(irs_data, syncr, GICV5_IRS_SYNCR);
++
++	gicv5_irs_wait_for_op(irs_data->irs_base, GICV5_IRS_SYNC_STATUSR,
++			      GICV5_IRS_SYNC_STATUSR_IDLE);
++}
++
+ int gicv5_irs_register_cpu(int cpuid)
+ {
+ 	struct gicv5_irs_chip_data *irs_data;
+@@ -823,6 +825,14 @@ int __init gicv5_irs_enable(void)
+ 	return 0;
+ }
+ 
++void __init gicv5_irs_its_probe(void)
++{
++	struct gicv5_irs_chip_data *irs_data;
++
++	list_for_each_entry(irs_data, &irs_nodes, entry)
++		gicv5_its_of_probe(to_of_node(irs_data->fwnode));
++}
++
+ int __init gicv5_irs_of_probe(struct device_node *parent)
+ {
+ 	struct device_node *np;
+diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..da349b4709cc5ec8978859237838f039389ca4a1
+--- /dev/null
++++ b/drivers/irqchip/irq-gic-v5-its.c
+@@ -0,0 +1,1293 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (C) 2024-2025 ARM Limited, All Rights Reserved.
 + */
 +
-+#define pr_fmt(fmt)	"GICv5 IRS: " fmt
++#define pr_fmt(fmt)	"GICv5 ITS: " fmt
 +
-+#include <linux/iopoll.h>
++#include <linux/bitmap.h>
++#include <linux/iommu.h>
++#include <linux/init.h>
 +#include <linux/irqchip.h>
-+#include <linux/log2.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/msi.h>
++
 +#include <linux/of.h>
 +#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/slab.h>
 +
 +#include "irq-gic-v5.h"
++#include "irq-gic-its-msi-parent.h"
++#include "irq-msi-lib.h"
 +
-+#define LPI_ID_BITS_LINEAR		12
++#define ITS_FLAGS_NON_COHERENT		BIT(0)
 +
-+#define IRS_FLAGS_NON_COHERENT		BIT(0)
++static LIST_HEAD(its_nodes);
 +
-+static DEFINE_PER_CPU(struct gicv5_irs_chip_data *, per_cpu_irs_data);
-+static LIST_HEAD(irs_nodes);
-+
-+static u32 irs_readl_relaxed(struct gicv5_irs_chip_data *irs_data,
++static u32 its_readl_relaxed(struct gicv5_its_chip_data *its_node,
 +			     const u64 reg_offset)
 +{
-+	return readl_relaxed(irs_data->irs_base + reg_offset);
++	return readl_relaxed(its_node->its_base + reg_offset);
 +}
 +
-+static void irs_writel_relaxed(struct gicv5_irs_chip_data *irs_data,
++static void its_writel_relaxed(struct gicv5_its_chip_data *its_node,
 +			       const u32 val, const u64 reg_offset)
 +{
-+	writel_relaxed(val, irs_data->irs_base + reg_offset);
++	writel_relaxed(val, its_node->its_base + reg_offset);
 +}
 +
-+static u64 irs_readq_relaxed(struct gicv5_irs_chip_data *irs_data,
-+			     const u64 reg_offset)
-+{
-+	return readq_relaxed(irs_data->irs_base + reg_offset);
-+}
-+
-+static void irs_writeq_relaxed(struct gicv5_irs_chip_data *irs_data,
++static void its_writeq_relaxed(struct gicv5_its_chip_data *its_node,
 +			       const u64 val, const u64 reg_offset)
 +{
-+	writeq_relaxed(val, irs_data->irs_base + reg_offset);
++	writeq_relaxed(val, its_node->its_base + reg_offset);
 +}
 +
-+static int gicv5_wait_for_op(void __iomem *addr, u32 offset, u32 mask, u32 *val)
++static void its_write_table_entry(struct gicv5_its_chip_data *its,
++				  __le64 *entry, u64 val)
++{
++	WRITE_ONCE(*entry, val);
++	if (its->flags & ITS_FLAGS_NON_COHERENT)
++		dcache_clean_inval_poc((unsigned long)entry,
++				       (unsigned long)entry + sizeof(*entry));
++	else
++		dsb(ishst);
++}
++
++#define gicv5_its_wait_for_op(base, reg, mask)				\
++	({								\
++		int ret;						\
++									\
++		ret = gicv5_wait_for_op(base, reg, mask, NULL);		\
++		if (unlikely(ret == -ETIMEDOUT))			\
++			pr_err_ratelimited(#reg" timeout...\n");	\
++		ret;							\
++	 })
++
++static int gicv5_its_wait_for_invalidation(struct gicv5_its_chip_data *its)
++{
++	return gicv5_its_wait_for_op(its->its_base, GICV5_ITS_STATUSR,
++				     GICV5_ITS_STATUSR_IDLE);
++}
++
++static void gicv5_its_syncr(struct gicv5_its_chip_data *its,
++			    struct gicv5_its_dev *its_dev)
++{
++	u64 syncr;
++
++	syncr = FIELD_PREP(GICV5_ITS_SYNCR_SYNC, 1) |
++		FIELD_PREP(GICV5_ITS_SYNCR_DEVICEID, its_dev->device_id);
++
++	its_writeq_relaxed(its, syncr, GICV5_ITS_SYNCR);
++
++	gicv5_its_wait_for_op(its->its_base, GICV5_ITS_SYNC_STATUSR,
++			      GICV5_ITS_SYNC_STATUSR_IDLE);
++}
++
++static int gicv5_its_l2sz_to_l2_bits(unsigned int sz)
++{
++	switch (sz) {
++	case GICV5_ITS_DT_ITT_CFGR_L2SZ_4k:
++		return 9;
++	case GICV5_ITS_DT_ITT_CFGR_L2SZ_16k:
++		return 11;
++	case GICV5_ITS_DT_ITT_CFGR_L2SZ_64k:
++		return 13;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int gicv5_its_itt_cache_inv(struct gicv5_its_chip_data *its,
++				   u32 device_id, u16 event_id)
++{
++	u32 eventr, eidr;
++	u64 didr;
++
++	didr = FIELD_PREP(GICV5_ITS_DIDR_DEVICEID, device_id);
++	eidr = FIELD_PREP(GICV5_ITS_EIDR_EVENTID, event_id);
++	eventr = FIELD_PREP(GICV5_ITS_INV_EVENTR_I, 0x1);
++
++	its_writeq_relaxed(its, didr, GICV5_ITS_DIDR);
++	its_writel_relaxed(its, eidr, GICV5_ITS_EIDR);
++	its_writel_relaxed(its, eventr, GICV5_ITS_INV_EVENTR);
++
++	return gicv5_its_wait_for_invalidation(its);
++}
++
++static void gicv5_its_free_itt_linear(struct gicv5_its_dev *its_dev)
++{
++	kfree(its_dev->itt_cfg.linear.itt);
++}
++
++static void gicv5_its_free_itt_two_level(struct gicv5_its_dev *its_dev)
++{
++	unsigned int i, num_ents = its_dev->itt_cfg.l2.num_l1_ents;
++
++	for (i = 0; i < num_ents; i++)
++		kfree(its_dev->itt_cfg.l2.l2ptrs[i]);
++
++	kfree(its_dev->itt_cfg.l2.l2ptrs);
++	kfree(its_dev->itt_cfg.l2.l1itt);
++}
++
++static void gicv5_its_free_itt(struct gicv5_its_dev *its_dev)
++{
++	if (!its_dev->itt_cfg.l2itt)
++		gicv5_its_free_itt_linear(its_dev);
++	else
++		gicv5_its_free_itt_two_level(its_dev);
++}
++
++static int gicv5_its_create_itt_linear(struct gicv5_its_chip_data *its,
++				       struct gicv5_its_dev *its_dev,
++				       unsigned int event_id_bits)
++{
++	unsigned int num_ents = BIT(event_id_bits);
++	__le64 *itt;
++
++	itt = kcalloc(num_ents, sizeof(*itt), GFP_KERNEL);
++	if (!itt)
++		return -ENOMEM;
++
++	its_dev->itt_cfg.linear.itt = itt;
++	its_dev->itt_cfg.linear.num_ents = num_ents;
++	its_dev->itt_cfg.l2itt = false;
++	its_dev->itt_cfg.event_id_bits = event_id_bits;
++
++	if (its->flags & ITS_FLAGS_NON_COHERENT)
++		dcache_clean_inval_poc((unsigned long)itt,
++				(unsigned long)itt + num_ents * sizeof(*itt));
++	else
++		dsb(ishst);
++
++	return 0;
++}
++
++/*
++ * Allocate a two-level ITT. All ITT entries are allocated in one go, unlike
++ * with the device table. Span may be used to limit the second level table
++ * size, where possible.
++ */
++static int gicv5_its_create_itt_two_level(struct gicv5_its_chip_data *its,
++					  struct gicv5_its_dev *its_dev,
++					  unsigned int event_id_bits,
++					  unsigned int itt_l2sz,
++					  unsigned int num_events)
++{
++	unsigned int l1_bits, l2_bits, span, events_per_l2_table,
++		     complete_tables, final_span, num_ents;
++	__le64 *itt_l1, *itt_l2, **l2ptrs;
++	size_t l1sz;
++	int ret, i;
++	u64 val;
++
++	ret = gicv5_its_l2sz_to_l2_bits(itt_l2sz);
++	if (ret < 0 || ret >= event_id_bits) {
++		pr_debug("Incorrect l2sz (0x%x) for %u EventID bits. Cannot allocate ITT\n",
++			 itt_l2sz, event_id_bits);
++		return -EINVAL;
++	}
++
++	l2_bits = ret;
++
++	l1_bits = event_id_bits - l2_bits;
++
++	num_ents = BIT(l1_bits);
++
++	itt_l1 = kcalloc(num_ents, sizeof(*itt_l1), GFP_KERNEL);
++	if (!itt_l1)
++		return -ENOMEM;
++
++	l2ptrs = kcalloc(num_ents, sizeof(*l2ptrs), GFP_KERNEL);
++	if (!l2ptrs) {
++		kfree(itt_l1);
++		return -ENOMEM;
++	}
++
++	its_dev->itt_cfg.l2.l2ptrs = l2ptrs;
++
++	its_dev->itt_cfg.l2.l2sz = itt_l2sz;
++	its_dev->itt_cfg.l2.l1itt = itt_l1;
++	its_dev->itt_cfg.l2.num_l1_ents = num_ents;
++	its_dev->itt_cfg.l2itt = true;
++	its_dev->itt_cfg.event_id_bits = event_id_bits;
++
++	/*
++	 * Need to determine how many entries there are per L2 - this is based
++	 * on the number of bits in the table.
++	 */
++	events_per_l2_table = BIT(l2_bits);
++	complete_tables = num_events / events_per_l2_table;
++	final_span = order_base_2(num_events % events_per_l2_table);
++
++	for (i = 0; i < num_ents; i++) {
++		size_t l2sz;
++
++		span = i == complete_tables ? final_span : l2_bits;
++
++		itt_l2 = kcalloc(BIT(span), sizeof(*itt_l2), GFP_KERNEL);
++		if (!itt_l2) {
++			ret = -ENOMEM;
++			goto out_free;
++		}
++
++		its_dev->itt_cfg.l2.l2ptrs[i] = itt_l2;
++
++		l2sz = BIT(span) * sizeof(*itt_l2);
++
++		if (its->flags & ITS_FLAGS_NON_COHERENT)
++			dcache_clean_inval_poc((unsigned long)itt_l2,
++					       (unsigned long)itt_l2 + l2sz);
++
++		val = (virt_to_phys(itt_l2) & GICV5_ITTL1E_L2_ADDR_MASK) |
++		       FIELD_PREP(GICV5_ITTL1E_SPAN, span)		 |
++		       FIELD_PREP(GICV5_ITTL1E_VALID, 0x1);
++
++		WRITE_ONCE(itt_l1[i], cpu_to_le64(val));
++	}
++
++	if (its->flags & ITS_FLAGS_NON_COHERENT) {
++		l1sz = num_ents * sizeof(*itt_l1);
++		dcache_clean_inval_poc((unsigned long)itt_l1,
++				       (unsigned long)itt_l1 + l1sz);
++	} else {
++		dsb(ishst);
++	}
++
++	return 0;
++out_free:
++	for (i = i - 1; i >= 0; i--)
++		kfree(its_dev->itt_cfg.l2.l2ptrs[i]);
++
++	kfree(its_dev->itt_cfg.l2.l2ptrs);
++	kfree(itt_l1);
++	return ret;
++}
++
++/*
++ * Function to check whether the device table or ITT table support
++ * a two-level table and if so depending on the number of id_bits
++ * requested, determine whether a two-level table is required.
++ *
++ * Return the 2-level size value if a two level table is deemed
++ * necessary.
++ */
++static bool gicv5_its_l2sz_two_level(bool devtab, u32 its_idr1, u8 id_bits,
++				     u8 *sz)
++{
++	int l2_bits, l2_sz = -EINVAL;
++
++	if (devtab && !FIELD_GET(GICV5_ITS_IDR1_DT_LEVELS, its_idr1))
++		return false;
++
++	if (!devtab && !FIELD_GET(GICV5_ITS_IDR1_ITT_LEVELS, its_idr1))
++		return false;
++
++	/*
++	 * Pick an L2 size that matches the pagesize; if a match
++	 * is not found, go for the smallest supported l2 size granule.
++	 *
++	 * This ensures that we will always be able to allocate
++	 * contiguous memory at L2.
++	 */
++	switch (PAGE_SIZE) {
++	case SZ_64K:
++		if (GICV5_ITS_IDR1_L2SZ_SUPPORT_64KB(its_idr1)) {
++			l2_sz = GICV5_ITS_DT_ITT_CFGR_L2SZ_64k;
++			break;
++		}
++		fallthrough;
++	case SZ_16K:
++		if (GICV5_ITS_IDR1_L2SZ_SUPPORT_16KB(its_idr1)) {
++			l2_sz = GICV5_ITS_DT_ITT_CFGR_L2SZ_16k;
++			break;
++		}
++		fallthrough;
++	case SZ_4K:
++		if (GICV5_ITS_IDR1_L2SZ_SUPPORT_4KB(its_idr1)) {
++			l2_sz = GICV5_ITS_DT_ITT_CFGR_L2SZ_4k;
++			break;
++		}
++		if (GICV5_ITS_IDR1_L2SZ_SUPPORT_16KB(its_idr1)) {
++			l2_sz = GICV5_ITS_DT_ITT_CFGR_L2SZ_16k;
++			break;
++		}
++		if (GICV5_ITS_IDR1_L2SZ_SUPPORT_64KB(its_idr1)) {
++			l2_sz = GICV5_ITS_DT_ITT_CFGR_L2SZ_64k;
++			break;
++		}
++		break;
++	}
++
++	l2_bits = gicv5_its_l2sz_to_l2_bits(l2_sz);
++
++	if (l2_bits < 0 || l2_bits > id_bits)
++		return false;
++
++	*sz = l2_sz;
++
++	return true;
++}
++
++static int gicv5_its_device_get_itte_ref(struct gicv5_its_dev *its_dev,
++					 __le64 **itte, u16 event_id)
++{
++	if (!its_dev->itt_cfg.l2itt) {
++		__le64 *itt = its_dev->itt_cfg.linear.itt;
++		*itte = &itt[event_id];
++	} else {
++		__le64 *l2_itt, *l1_itt = its_dev->itt_cfg.l2.l1itt;
++		unsigned int l1_idx, l2_idx, l2_size, l2_bits;
++		int ret;
++
++		ret = gicv5_its_l2sz_to_l2_bits(its_dev->itt_cfg.l2.l2sz);
++		if (ret < 0)
++			return ret;
++		l2_bits = ret;
++
++		l1_idx = event_id >> l2_bits;
++
++		if (!FIELD_GET(GICV5_ITTL1E_VALID,
++			       le64_to_cpu(l1_itt[l1_idx]))) {
++			pr_debug("L1 ITT entry is not valid.\n");
++			return -EINVAL;
++		}
++
++		l2_idx = event_id & GENMASK(l2_bits - 1, 0);
++
++		l2_size = BIT(FIELD_GET(GICV5_ITTL1E_SPAN,
++					le64_to_cpu(l1_itt[l1_idx])));
++
++		// Sanity check our indexing
++		if (l2_idx >= l2_size) {
++			pr_debug("L2 ITT index (%u) exceeds L2 table size (%u)!\n",
++			       l2_idx, l2_size);
++			return -EINVAL;
++		}
++		l2_itt = its_dev->itt_cfg.l2.l2ptrs[l1_idx];
++		*itte = &l2_itt[l2_idx];
++	}
++
++	return 0;
++}
++
++static int gicv5_its_device_cache_inv(struct gicv5_its_chip_data *its,
++				      struct gicv5_its_dev *its_dev)
++{
++	u32 devicer;
++	u64 didr;
++
++	didr = FIELD_PREP(GICV5_ITS_DIDR_DEVICEID, its_dev->device_id);
++	devicer = FIELD_PREP(GICV5_ITS_INV_DEVICER_I, 0x1)	|
++		  FIELD_PREP(GICV5_ITS_INV_DEVICER_EVENTID_BITS,
++			     its_dev->itt_cfg.event_id_bits)	|
++		  FIELD_PREP(GICV5_ITS_INV_DEVICER_L1, 0x0);
++	its_writeq_relaxed(its, didr, GICV5_ITS_DIDR);
++	its_writel_relaxed(its, devicer, GICV5_ITS_INV_DEVICER);
++
++	return gicv5_its_wait_for_invalidation(its);
++}
++
++/*
++ * Allocate a level 2 device table entry, update L1 parent to reference it.
++ * Only used for 2-level device tables, and it is called on demand.
++ */
++static int gicv5_its_alloc_l2_devtab(struct gicv5_its_chip_data *its,
++				     unsigned int l1_index)
++{
++	__le64 *l2devtab, *l1devtab = its->devtab_cfgr.l2.l1devtab;
++	u8 span, l2sz, l2_bits;
++	u64 l1dte;
++	int ret;
++
++	if (FIELD_GET(GICV5_DTL1E_VALID, le64_to_cpu(l1devtab[l1_index])))
++		return 0;
++
++	span = FIELD_GET(GICV5_DTL1E_SPAN, le64_to_cpu(l1devtab[l1_index]));
++	l2sz = FIELD_GET(GICV5_ITS_DT_CFGR_L2SZ, its->devtab_cfgr.cfgr);
++
++	ret = gicv5_its_l2sz_to_l2_bits(l2sz);
++	if (ret < 0)
++		return ret;
++
++	l2_bits = ret;
++
++	/*
++	 * Span allows us to create a smaller L2 device table.
++	 * If it is too large, use the number of allowed L2 bits.
++	 */
++	if (span > l2_bits)
++		span = l2_bits;
++
++	l2devtab = kcalloc(BIT(span), sizeof(*l2devtab), GFP_KERNEL);
++	if (!l2devtab)
++		return -ENOMEM;
++
++	its->devtab_cfgr.l2.l2ptrs[l1_index] = l2devtab;
++
++	l1dte = FIELD_PREP(GICV5_DTL1E_SPAN, span)			|
++		(virt_to_phys(l2devtab) & GICV5_DTL1E_L2_ADDR_MASK)	|
++		FIELD_PREP(GICV5_DTL1E_VALID, 0x1);
++	its_write_table_entry(its, &l1devtab[l1_index], cpu_to_le64(l1dte));
++
++	return 0;
++}
++
++static int gicv5_its_devtab_get_dte_ref(struct gicv5_its_chip_data *its,
++					__le64 **dte, u32 device_id,
++					bool alloc)
++{
++	u8 str = FIELD_GET(GICV5_ITS_DT_CFGR_STRUCTURE, its->devtab_cfgr.cfgr);
++	unsigned int l2sz, l2_bits, l1_idx, l2_idx;
++	__le64 *l1devtab, *l2devtab;
++	int ret;
++
++	if (str == GICV5_ITS_DT_ITT_CFGR_STRUCTURE_LINEAR) {
++		l2devtab = its->devtab_cfgr.linear.devtab;
++		*dte = &l2devtab[device_id];
++	} else {
++		l2sz = FIELD_GET(GICV5_ITS_DT_CFGR_L2SZ, its->devtab_cfgr.cfgr);
++		l1devtab = its->devtab_cfgr.l2.l1devtab;
++
++		ret = gicv5_its_l2sz_to_l2_bits(l2sz);
++		if (ret < 0)
++			return -EINVAL;
++
++		l2_bits = ret;
++		l1_idx = device_id >> l2_bits;
++		l2_idx = device_id & GENMASK(l2_bits - 1, 0);
++
++		if (alloc) {
++			/*
++			 * Allocate a new L2 device table here before
++			 * continuing. We make the assumption that the span in
++			 * the L1 table has been set correctly, and blindly use
++			 * that value.
++			 */
++			ret = gicv5_its_alloc_l2_devtab(its, l1_idx);
++			if (ret)
++				return ret;
++		} else {
++			if (!FIELD_GET(GICV5_DTL1E_VALID,
++				       le64_to_cpu(l1devtab[l1_idx])))
++				return -EINVAL;
++		}
++
++		l2devtab = its->devtab_cfgr.l2.l2ptrs[l1_idx];
++		*dte = &l2devtab[l2_idx];
++	}
++
++	return 0;
++}
++
++/*
++ * Register a new device in the device table. Allocate an ITT and
++ * program the L2DTE entry according to the ITT structure that
++ * was chosen.
++ */
++static int gicv5_its_device_register(struct gicv5_its_chip_data *its,
++				     struct gicv5_its_dev *its_dev)
++{
++	u8 event_id_bits, device_id_bits, itt_struct, itt_l2sz;
++	phys_addr_t itt_phys_base;
++	bool two_level_itt;
++	u32 idr1, idr2;
++	__le64 *dte;
++	u64 val;
++	int ret;
++
++	device_id_bits = FIELD_GET(GICV5_ITS_DT_CFGR_DEVICEID_BITS,
++				   its->devtab_cfgr.cfgr);
++
++	if (its_dev->device_id >= BIT(device_id_bits)) {
++		pr_err("Supplied DeviceID (%u) outside of Device Table range (%u)!",
++		       its_dev->device_id, (u32)GENMASK(device_id_bits - 1, 0));
++		return -EINVAL;
++	}
++
++	ret = gicv5_its_devtab_get_dte_ref(its, &dte, its_dev->device_id, true);
++	if (ret)
++		return ret;
++
++	if (FIELD_GET(GICV5_DTL2E_VALID, le64_to_cpu(*dte)))
++		return -EBUSY;
++
++	/*
++	 * Determine how many bits we need, validate those against the max.
++	 * Based on these, determine if we should go for a 1- or 2-level ITT.
++	 */
++	event_id_bits = order_base_2(its_dev->num_events);
++
++	idr2 = its_readl_relaxed(its, GICV5_ITS_IDR2);
++
++	if (event_id_bits > FIELD_GET(GICV5_ITS_IDR2_EVENTID_BITS, idr2)) {
++		pr_err("Required EventID bits (%u) larger than supported bits (%u)!",
++		       event_id_bits,
++		       (u8)FIELD_GET(GICV5_ITS_IDR2_EVENTID_BITS, idr2));
++		return -EINVAL;
++	}
++
++	idr1 = its_readl_relaxed(its, GICV5_ITS_IDR1);
++
++	/*
++	 * L2 ITT size is programmed into the L2DTE regardless of
++	 * whether a two-level or linear ITT is built, init it.
++	 */
++	itt_l2sz = 0;
++
++	two_level_itt = gicv5_its_l2sz_two_level(false, idr1, event_id_bits,
++						  &itt_l2sz);
++	if (two_level_itt)
++		ret = gicv5_its_create_itt_two_level(its, its_dev, event_id_bits,
++						     itt_l2sz,
++						     its_dev->num_events);
++	else
++		ret = gicv5_its_create_itt_linear(its, its_dev, event_id_bits);
++	if (ret)
++		return ret;
++
++	itt_phys_base = two_level_itt ? virt_to_phys(its_dev->itt_cfg.l2.l1itt) :
++					virt_to_phys(its_dev->itt_cfg.linear.itt);
++
++	itt_struct = two_level_itt ? GICV5_ITS_DT_ITT_CFGR_STRUCTURE_TWO_LEVEL :
++				     GICV5_ITS_DT_ITT_CFGR_STRUCTURE_LINEAR;
++
++	val = FIELD_PREP(GICV5_DTL2E_EVENT_ID_BITS, event_id_bits)	|
++	      FIELD_PREP(GICV5_DTL2E_ITT_STRUCTURE, itt_struct)		|
++	      (itt_phys_base & GICV5_DTL2E_ITT_ADDR_MASK)		|
++	      FIELD_PREP(GICV5_DTL2E_ITT_L2SZ, itt_l2sz)		|
++	      FIELD_PREP(GICV5_DTL2E_VALID, 0x1);
++
++	its_write_table_entry(its, dte, cpu_to_le64(val));
++
++	ret = gicv5_its_device_cache_inv(its, its_dev);
++	if (ret) {
++		gicv5_its_free_itt(its_dev);
++		its_write_table_entry(its, dte, 0);
++		return ret;
++	}
++
++	return 0;
++}
++
++/*
++ * Unregister a device in the device table. Lookup the device by ID, free the
++ * corresponding ITT, mark the device as invalid in the device table.
++ */
++static int gicv5_its_device_unregister(struct gicv5_its_chip_data *its,
++				       struct gicv5_its_dev *its_dev)
++{
++	__le64 *dte;
++	int ret;
++
++	ret = gicv5_its_devtab_get_dte_ref(its, &dte, its_dev->device_id, false);
++	if (ret) {
++		pr_debug("Failed to find DTE for DeviceID 0x%x\n", its_dev->device_id);
++		return -EINVAL;
++	}
++
++	if (!FIELD_GET(GICV5_DTL2E_VALID, le64_to_cpu(*dte))) {
++		pr_debug("Device table entry for DeviceID 0x%x is not valid. Nothing to clean up!",
++			 its_dev->device_id);
++		return -EINVAL;
++	}
++
++	gicv5_its_free_itt(its_dev);
++
++	/* Zero everything - make it clear that this is an invalid entry */
++	its_write_table_entry(its, dte, 0);
++
++	return gicv5_its_device_cache_inv(its, its_dev);
++}
++
++/*
++ * Allocate a 1-level device table. All entries are allocated, but marked
++ * invalid.
++ */
++static int gicv5_its_alloc_devtab_linear(struct gicv5_its_chip_data *its,
++					u8 device_id_bits)
++{
++	__le64 *devtab;
++	size_t sz;
++	u64 baser;
++	u32 cfgr;
++
++	/*
++	 * We expect a GICv5 implementation requiring a large number of
++	 * deviceID bits to support a 2-level device table. If that's not
++	 * the case, cap the number of deviceIDs supported according to the
++	 * kmalloc limits so that the system can chug along with a linear
++	 * device table.
++	 */
++	sz = BIT_ULL(device_id_bits) * sizeof(*devtab);
++	if (sz > KMALLOC_MAX_SIZE) {
++		u8 device_id_cap = ilog2(KMALLOC_MAX_SIZE/sizeof(*devtab));
++
++		pr_warn("Limiting device ID bits from %u to %u\n",
++			device_id_bits, device_id_cap);
++		device_id_bits = device_id_cap;
++	}
++
++	devtab = kcalloc(BIT(device_id_bits), sizeof(*devtab), GFP_KERNEL);
++	if (!devtab)
++		return -ENOMEM;
++
++	if (its->flags & ITS_FLAGS_NON_COHERENT)
++		dcache_clean_inval_poc((unsigned long)devtab,
++				       (unsigned long)devtab + sz);
++	else
++		dsb(ishst);
++
++	cfgr = FIELD_PREP(GICV5_ITS_DT_CFGR_STRUCTURE,
++			  GICV5_ITS_DT_ITT_CFGR_STRUCTURE_LINEAR)	|
++	       FIELD_PREP(GICV5_ITS_DT_CFGR_L2SZ, 0)			|
++	       FIELD_PREP(GICV5_ITS_DT_CFGR_DEVICEID_BITS, device_id_bits);
++	its_writel_relaxed(its, cfgr, GICV5_ITS_DT_CFGR);
++
++	baser = virt_to_phys(devtab) & GICV5_ITS_DT_BASER_ADDR_MASK;
++	its_writeq_relaxed(its, baser, GICV5_ITS_DT_BASER);
++
++	its->devtab_cfgr.cfgr = cfgr;
++	its->devtab_cfgr.linear.devtab = devtab;
++
++	return 0;
++}
++
++/*
++ * Allocate a 2-level device table. L2 entries are not allocated,
++ * they are allocated on-demand.
++ */
++static int gicv5_its_alloc_devtab_two_level(struct gicv5_its_chip_data *its,
++					    u8 device_id_bits,
++					    u8 devtab_l2sz)
++{
++	unsigned int l1_bits, l2_bits, i;
++	__le64 *l1devtab, **l2ptrs;
++	size_t l1_sz;
++	u64 baser;
++	u32 cfgr;
++	int ret;
++
++	ret = gicv5_its_l2sz_to_l2_bits(devtab_l2sz);
++	if (ret < 0)
++		return ret;
++
++	l2_bits = ret;
++
++	l1_bits = device_id_bits - l2_bits;
++	l1_sz = BIT(l1_bits) * sizeof(*l1devtab);
++	/*
++	 * With 2-level device table support it is highly unlikely
++	 * that we are not able to allocate the required amount of
++	 * device table memory to cover deviceID space; cap the
++	 * deviceID space if we encounter such set-up.
++	 * If this ever becomes a problem we could revisit the policy
++	 * behind level 2 size selection to reduce level-1 deviceID bits.
++	 */
++	if (l1_sz > KMALLOC_MAX_SIZE) {
++		l1_bits = ilog2(KMALLOC_MAX_SIZE/sizeof(*l1devtab));
++
++		pr_warn("Limiting device ID bits from %u to %u\n",
++			device_id_bits, l1_bits + l2_bits);
++		device_id_bits = l1_bits + l2_bits;
++		l1_sz = KMALLOC_MAX_SIZE;
++	}
++
++	l1devtab = kcalloc(BIT(l1_bits), sizeof(*l1devtab), GFP_KERNEL);
++	if (!l1devtab)
++		return -ENOMEM;
++
++	l2ptrs = kcalloc(BIT(l1_bits), sizeof(*l2ptrs), GFP_KERNEL);
++	if (!l2ptrs) {
++		kfree(l1devtab);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < BIT(l1_bits); i++)
++		l1devtab[i] = cpu_to_le64(FIELD_PREP(GICV5_DTL1E_SPAN, l2_bits));
++
++	if (its->flags & ITS_FLAGS_NON_COHERENT)
++		dcache_clean_inval_poc((unsigned long)l1devtab,
++				       (unsigned long)l1devtab + l1_sz);
++	else
++		dsb(ishst);
++
++	cfgr = FIELD_PREP(GICV5_ITS_DT_CFGR_STRUCTURE,
++			  GICV5_ITS_DT_ITT_CFGR_STRUCTURE_TWO_LEVEL)	|
++	       FIELD_PREP(GICV5_ITS_DT_CFGR_L2SZ, devtab_l2sz)		|
++	       FIELD_PREP(GICV5_ITS_DT_CFGR_DEVICEID_BITS, device_id_bits);
++	its_writel_relaxed(its, cfgr, GICV5_ITS_DT_CFGR);
++
++	baser = virt_to_phys(l1devtab) & GICV5_ITS_DT_BASER_ADDR_MASK;
++	its_writeq_relaxed(its, baser, GICV5_ITS_DT_BASER);
++
++	its->devtab_cfgr.cfgr = cfgr;
++	its->devtab_cfgr.l2.l1devtab = l1devtab;
++	its->devtab_cfgr.l2.l2ptrs = l2ptrs;
++
++	return 0;
++}
++
++/*
++ * Initialise the device table as either 1- or 2-level depending on what is
++ * supported by the hardware.
++ */
++static int gicv5_its_init_devtab(struct gicv5_its_chip_data *its)
++{
++	u8 device_id_bits, devtab_l2sz;
++	bool two_level_devtab;
++	u32 idr1;
++
++	idr1 = its_readl_relaxed(its, GICV5_ITS_IDR1);
++
++	device_id_bits = FIELD_GET(GICV5_ITS_IDR1_DEVICEID_BITS, idr1);
++	two_level_devtab = gicv5_its_l2sz_two_level(true, idr1, device_id_bits,
++						     &devtab_l2sz);
++	if (two_level_devtab)
++		return gicv5_its_alloc_devtab_two_level(its, device_id_bits,
++						       devtab_l2sz);
++	else
++		return gicv5_its_alloc_devtab_linear(its, device_id_bits);
++}
++
++static void gicv5_its_compose_msi_msg(struct irq_data *d, struct msi_msg *msg)
++{
++	struct gicv5_its_dev *its_dev = irq_data_get_irq_chip_data(d);
++	struct gicv5_its_chip_data *its = its_dev->its_node;
++	u64 addr;
++
++	addr = its->its_trans_phys_base;
++
++	msg->data = FIELD_GET(GICV5_ITS_HWIRQ_EVENT_ID, d->hwirq);
++	msi_msg_set_addr(irq_data_get_msi_desc(d), msg, addr);
++}
++
++static const struct irq_chip gicv5_its_irq_chip = {
++	.name			= "GICv5-ITS-MSI",
++	.irq_mask		= irq_chip_mask_parent,
++	.irq_unmask		= irq_chip_unmask_parent,
++	.irq_eoi		= irq_chip_eoi_parent,
++	.irq_set_affinity	= irq_chip_set_affinity_parent,
++	.irq_get_irqchip_state	= irq_chip_get_parent_state,
++	.irq_set_irqchip_state	= irq_chip_set_parent_state,
++	.irq_compose_msi_msg	= gicv5_its_compose_msi_msg,
++	.flags			= IRQCHIP_SET_TYPE_MASKED |
++				  IRQCHIP_SKIP_SET_WAKE	  |
++				  IRQCHIP_MASK_ON_SUSPEND
++};
++
++static struct gicv5_its_dev *gicv5_its_find_device(struct gicv5_its_chip_data *its,
++						   u32 device_id)
++{
++	struct gicv5_its_dev *dev = xa_load(&its->its_devices, device_id);
++
++	return dev ? dev : ERR_PTR(-ENODEV);
++}
++
++static struct gicv5_its_dev *gicv5_its_alloc_device(
++				struct gicv5_its_chip_data *its, int nvec,
++				u32 dev_id)
++{
++	struct gicv5_its_dev *its_dev;
++	int ret;
++
++	its_dev = gicv5_its_find_device(its, dev_id);
++	if (!IS_ERR(its_dev)) {
++		pr_debug("A device with this DeviceID (0x%x) has already been registered.\n",
++			 dev_id);
++
++		if (nvec > its_dev->num_events) {
++			pr_debug("Requesting more ITT entries than allocated\n");
++			return ERR_PTR(-ENXIO);
++		}
++
++		its_dev->shared = true;
++
++		return its_dev;
++	}
++
++	its_dev = kzalloc(sizeof(*its_dev), GFP_KERNEL);
++	if (!its_dev)
++		return ERR_PTR(-ENOMEM);
++
++	its_dev->device_id = dev_id;
++	its_dev->num_events = nvec;
++	its_dev->num_mapped_events = 0;
++
++	ret = gicv5_its_device_register(its, its_dev);
++	if (ret) {
++		pr_debug("Failed to register the device\n");
++		kfree(its_dev);
++		return ERR_PTR(ret);
++	}
++
++	gicv5_its_device_cache_inv(its, its_dev);
++
++	/*
++	 * This is the first time we have seen this device. Hence, it is not
++	 * shared.
++	 */
++	its_dev->shared = false;
++
++	its_dev->its_node = its;
++
++	its_dev->event_map =
++		(unsigned long *)bitmap_zalloc(its_dev->num_events, GFP_KERNEL);
++	if (!its_dev->event_map) {
++		gicv5_its_device_unregister(its, its_dev);
++		kfree(its_dev);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	xa_store(&its->its_devices, dev_id, its_dev, GFP_KERNEL);
++
++	return its_dev;
++}
++
++static int gicv5_its_msi_prepare(struct irq_domain *domain, struct device *dev,
++				 int nvec, msi_alloc_info_t *info)
++{
++	u32 dev_id = info->scratchpad[0].ul;
++	struct msi_domain_info *msi_info;
++	struct gicv5_its_chip_data *its;
++	struct gicv5_its_dev *its_dev;
++
++	msi_info = msi_get_domain_info(domain);
++	its = msi_info->data;
++
++	guard(mutex)(&its->dev_alloc_lock);
++
++	its_dev = gicv5_its_alloc_device(its, nvec, dev_id);
++	if (IS_ERR(its_dev))
++		return PTR_ERR(its_dev);
++
++	if (info->flags & MSI_ALLOC_FLAGS_PROXY_DEVICE)
++		its_dev->shared = true;
++
++	return 0;
++}
++
++static struct msi_domain_ops its_msi_domain_ops = {
++	.msi_prepare	= gicv5_its_msi_prepare,
++};
++
++static int gicv5_its_alloc_event(struct gicv5_its_dev *its_dev, u16 event_id,
++				 u32 lpi)
++{
++	struct gicv5_its_chip_data *its = its_dev->its_node;
++	u64 itt_entry;
++	__le64 *itte;
++	int ret;
++
++	if (event_id >= its_dev->num_events) {
++		pr_debug("EventID 0x%x outside of ITT range (0x%x)\n", event_id,
++		       its_dev->num_events);
++		return -EINVAL;
++	}
++
++	if (WARN(its_dev->num_mapped_events == its_dev->num_events,
++		"Reached maximum number of events\n"))
++		return -EINVAL;
++
++	ret = gicv5_its_device_get_itte_ref(its_dev, &itte, event_id);
++	if (ret)
++		return ret;
++
++	if (FIELD_GET(GICV5_ITTL2E_VALID, *itte))
++		return -EEXIST;
++
++	itt_entry = FIELD_PREP(GICV5_ITTL2E_LPI_ID, lpi) |
++		    FIELD_PREP(GICV5_ITTL2E_VALID, 0x1);
++
++	its_write_table_entry(its, itte, cpu_to_le64(itt_entry));
++
++	gicv5_its_itt_cache_inv(its, its_dev->device_id, event_id);
++
++	its_dev->num_mapped_events += 1;
++
++	return 0;
++}
++
++static void gicv5_its_free_event(struct gicv5_its_dev *its_dev, u16 event_id)
++{
++	struct gicv5_its_chip_data *its = its_dev->its_node;
++	u64 itte_val;
++	__le64 *itte;
++	int ret;
++
++	if (WARN(!its_dev->num_mapped_events, "No mapped events\n"))
++		return;
++
++	ret = gicv5_its_device_get_itte_ref(its_dev, &itte, event_id);
++	if (ret) {
++		pr_debug("Failed to get the ITTE!\n");
++		return;
++	}
++
++	itte_val = le64_to_cpu(*itte);
++	itte_val &= ~GICV5_ITTL2E_VALID;
++
++	its_write_table_entry(its, itte, cpu_to_le64(itte_val));
++
++	gicv5_its_itt_cache_inv(its, its_dev->device_id, event_id);
++
++	its_dev->num_mapped_events -= 1;
++}
++
++static int gicv5_its_alloc_eventid(struct gicv5_its_dev *its_dev,
++				   unsigned int nr_irqs, u32 *eventid)
++{
++	int ret;
++
++	ret = bitmap_find_free_region(its_dev->event_map,
++				      its_dev->num_events,
++				      get_count_order(nr_irqs));
++
++	if (ret < 0)
++		return ret;
++
++	*eventid = ret;
++
++	return 0;
++}
++
++static void gicv5_its_free_eventid(struct gicv5_its_dev *its_dev,
++				   u32 event_id_base,
++				   unsigned int nr_irqs)
++{
++	bitmap_release_region(its_dev->event_map, event_id_base,
++				      get_count_order(nr_irqs));
++}
++
++static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
++				      unsigned int nr_irqs, void *arg)
++{
++	u32 device_id, event_id_base, lpi;
++	struct msi_domain_info *msi_info;
++	struct gicv5_its_chip_data *its;
++	struct gicv5_its_dev *its_dev;
++	msi_alloc_info_t *info = arg;
++	irq_hw_number_t hwirq;
++	struct irq_data *irqd;
++	int ret, i;
++
++	device_id = info->scratchpad[0].ul;
++
++	msi_info = msi_get_domain_info(domain);
++	its = msi_info->data;
++
++	mutex_lock(&its->dev_alloc_lock);
++
++	its_dev = gicv5_its_find_device(its, device_id);
++	if (IS_ERR(its_dev)) {
++		mutex_unlock(&its->dev_alloc_lock);
++		return PTR_ERR(its_dev);
++	}
++
++	ret = gicv5_its_alloc_eventid(its_dev, nr_irqs, &event_id_base);
++	if (ret) {
++		mutex_unlock(&its->dev_alloc_lock);
++		return ret;
++	}
++
++	mutex_unlock(&its->dev_alloc_lock);
++
++	ret = iommu_dma_prepare_msi(info->desc, its->its_trans_phys_base);
++	if (ret)
++		goto out_eventid;
++
++	for (i = 0; i < nr_irqs; i++) {
++		lpi = gicv5_alloc_lpi();
++		if (ret < 0) {
++			pr_debug("Failed to find free LPI!\n");
++			goto out_eventid;
++		}
++
++		ret = irq_domain_alloc_irqs_parent(domain, virq + i, 1, &lpi);
++		if (ret)
++			goto out_free_lpi;
++
++		/*
++		 * Store eventid and deviceid into the hwirq for later use.
++		 *
++		 *	hwirq  = event_id << 32 | device_id
++		 */
++		hwirq = FIELD_PREP(GICV5_ITS_HWIRQ_DEVICE_ID, device_id) |
++			FIELD_PREP(GICV5_ITS_HWIRQ_EVENT_ID, (u64)event_id_base + i);
++		irq_domain_set_info(domain, virq + i, hwirq,
++				    &gicv5_its_irq_chip, its_dev,
++				    handle_fasteoi_irq, NULL, NULL);
++
++		irqd = irq_get_irq_data(virq + i);
++		irqd_set_single_target(irqd);
++		irqd_set_affinity_on_activate(irqd);
++		irqd_set_resend_when_in_progress(irqd);
++	}
++
++	return 0;
++out_free_lpi:
++	gicv5_free_lpi(lpi);
++out_eventid:
++	gicv5_its_free_eventid(its_dev, event_id_base, nr_irqs);
++
++	return ret;
++}
++
++static void gicv5_its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
++				      unsigned int nr_irqs)
++{
++	struct msi_domain_info *msi_info;
++	struct gicv5_its_chip_data *its;
++	struct gicv5_its_dev *its_dev;
++	struct irq_data *d;
++	u16 event_id_base;
++	bool free_device;
++	u32 device_id;
++	int i;
++
++	msi_info = msi_get_domain_info(domain);
++	its = msi_info->data;
++
++	d = irq_domain_get_irq_data(domain, virq);
++	device_id = FIELD_GET(GICV5_ITS_HWIRQ_DEVICE_ID, d->hwirq);
++	event_id_base = FIELD_GET(GICV5_ITS_HWIRQ_EVENT_ID, d->hwirq);
++
++	guard(mutex)(&its->dev_alloc_lock);
++
++	its_dev = gicv5_its_find_device(its, device_id);
++	if (IS_ERR(its_dev)) {
++		pr_debug("Couldn't find the ITS device!\n");
++		return;
++	}
++
++	bitmap_release_region(its_dev->event_map, event_id_base,
++			      get_count_order(nr_irqs));
++
++	free_device = !its_dev->shared && bitmap_empty(its_dev->event_map,
++						       its_dev->num_events);
++
++	/*  Hierarchically free irq data */
++	for (i = 0; i < nr_irqs; i++) {
++		d = irq_domain_get_irq_data(domain, virq + i);
++
++		gicv5_free_lpi(d->parent_data->hwirq);
++		irq_domain_reset_irq_data(d);
++	}
++	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
++
++	gicv5_its_syncr(its, its_dev);
++	gicv5_irs_syncr();
++
++	if (free_device) {
++		gicv5_its_device_unregister(its, its_dev);
++		bitmap_free(its_dev->event_map);
++		xa_erase(&its->its_devices, device_id);
++		kfree(its_dev);
++	}
++}
++
++static int gicv5_its_irq_domain_activate(struct irq_domain *domain,
++					 struct irq_data *d, bool reserve)
++{
++	struct gicv5_its_dev *its_dev = irq_data_get_irq_chip_data(d);
++	u16 event_id;
++	u32 lpi;
++
++	event_id = FIELD_GET(GICV5_ITS_HWIRQ_EVENT_ID, d->hwirq);
++	lpi = d->parent_data->hwirq;
++
++	return gicv5_its_alloc_event(its_dev, event_id, lpi);
++}
++
++static void gicv5_its_irq_domain_deactivate(struct irq_domain *domain,
++					    struct irq_data *d)
++{
++	struct gicv5_its_dev *its_dev = irq_data_get_irq_chip_data(d);
++	u16 event_id;
++
++	event_id = FIELD_GET(GICV5_ITS_HWIRQ_EVENT_ID, d->hwirq);
++
++	gicv5_its_free_event(its_dev, event_id);
++}
++static const struct irq_domain_ops gicv5_its_irq_domain_ops = {
++	.alloc		= gicv5_its_irq_domain_alloc,
++	.free		= gicv5_its_irq_domain_free,
++	.activate	= gicv5_its_irq_domain_activate,
++	.deactivate	= gicv5_its_irq_domain_deactivate,
++	.select		= msi_lib_irq_domain_select,
++};
++
++static int gicv5_its_wait_for_cr0(struct gicv5_its_chip_data *its)
++{
++	return gicv5_its_wait_for_op(its->its_base, GICV5_ITS_CR0,
++				     GICV5_ITS_CR0_IDLE);
++}
++
++static void gicv5_its_print_info(struct gicv5_its_chip_data *its_node)
++{
++	bool devtab_linear;
++	u8 device_id_bits;
++	u8 str;
++
++	device_id_bits = FIELD_GET(GICV5_ITS_DT_CFGR_DEVICEID_BITS,
++			 its_node->devtab_cfgr.cfgr);
++
++	str = FIELD_GET(GICV5_ITS_DT_CFGR_STRUCTURE, its_node->devtab_cfgr.cfgr);
++	devtab_linear = (str == GICV5_ITS_DT_ITT_CFGR_STRUCTURE_LINEAR);
++
++	pr_info("ITS %s enabled using %s device table device_id_bits %u\n",
++		fwnode_get_name(its_node->fwnode),
++		devtab_linear ? "linear" : "2-level",
++		device_id_bits);
++}
++
++static int __init gicv5_its_init_bases(phys_addr_t its_trans_base,
++				       void __iomem *its_base,
++				       struct fwnode_handle *handle,
++				       struct irq_domain *parent_domain)
++{
++	struct device_node *np = to_of_node(handle);
++	struct gicv5_its_chip_data *its_node;
++	struct msi_domain_info *info;
++	struct irq_domain *d;
++	u32 cr0, cr1;
++	bool enabled;
++	int ret;
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
++
++	its_node = kzalloc(sizeof(*its_node), GFP_KERNEL);
++	if (!its_node) {
++		kfree(info);
++		return -ENOMEM;
++	}
++
++	info->ops = &its_msi_domain_ops;
++	info->data = its_node;
++
++	mutex_init(&its_node->dev_alloc_lock);
++	xa_init(&its_node->its_devices);
++	its_node->fwnode = handle;
++	its_node->its_base = its_base;
++	its_node->its_trans_phys_base = its_trans_base;
++
++	d = irq_domain_create_hierarchy(parent_domain, IRQ_DOMAIN_FLAG_ISOLATED_MSI,
++					0, handle, &gicv5_its_irq_domain_ops, info);
++	its_node->domain = d;
++	irq_domain_update_bus_token(its_node->domain, DOMAIN_BUS_NEXUS);
++
++	its_node->domain->msi_parent_ops = &gic_its_msi_parent_ops;
++	its_node->domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
++
++	cr0 = its_readl_relaxed(its_node, GICV5_ITS_CR0);
++	enabled = FIELD_GET(GICV5_ITS_CR0_ITSEN, cr0);
++	if (WARN(enabled, "ITS %s enabled, disabling it before proceeding\n",
++		 np->full_name)) {
++		cr0 = FIELD_PREP(GICV5_ITS_CR0_ITSEN, 0x0);
++		its_writel_relaxed(its_node, cr0, GICV5_ITS_CR0);
++		ret = gicv5_its_wait_for_cr0(its_node);
++		if (ret) {
++			irq_domain_remove(its_node->domain);
++			kfree(info);
++			kfree(its_node);
++			return ret;
++		}
++	}
++
++	if (of_property_read_bool(np, "dma-noncoherent")) {
++		/*
++		 * A non-coherent ITS implies that some cache levels cannot be
++		 * used coherently by the cores and GIC. Our only option is to mark
++		 * memory attributes for the GIC as non-cacheable; by default,
++		 * non-cacheable memory attributes imply outer-shareable
++		 * shareability, the value written into ITS_CR1_SH is ignored.
++		 */
++		cr1 = FIELD_PREP(GICV5_ITS_CR1_ITT_RA, GICV5_NO_READ_ALLOC)	|
++		      FIELD_PREP(GICV5_ITS_CR1_DT_RA, GICV5_NO_READ_ALLOC)	|
++		      FIELD_PREP(GICV5_ITS_CR1_IC, GICV5_NON_CACHE)		|
++		      FIELD_PREP(GICV5_ITS_CR1_OC, GICV5_NON_CACHE);
++		its_node->flags |= ITS_FLAGS_NON_COHERENT;
++	} else {
++		cr1 = FIELD_PREP(GICV5_ITS_CR1_ITT_RA, GICV5_READ_ALLOC)	|
++		      FIELD_PREP(GICV5_ITS_CR1_DT_RA, GICV5_READ_ALLOC)		|
++		      FIELD_PREP(GICV5_ITS_CR1_IC, GICV5_WB_CACHE)		|
++		      FIELD_PREP(GICV5_ITS_CR1_OC, GICV5_WB_CACHE)		|
++		      FIELD_PREP(GICV5_ITS_CR1_SH, GICV5_INNER_SHARE);
++	}
++
++	its_writel_relaxed(its_node, cr1, GICV5_ITS_CR1);
++
++	ret = gicv5_its_init_devtab(its_node);
++	if (ret) {
++		irq_domain_remove(its_node->domain);
++		kfree(info);
++		kfree(its_node);
++		return ret;
++	}
++
++	cr0 = FIELD_PREP(GICV5_ITS_CR0_ITSEN, 0x1);
++	its_writel_relaxed(its_node, cr0, GICV5_ITS_CR0);
++
++	ret = gicv5_its_wait_for_cr0(its_node);
++	if (ret) {
++		irq_domain_remove(its_node->domain);
++		kfree(info);
++		kfree(its_node);
++		return ret;
++	}
++
++	list_add(&its_node->entry, &its_nodes);
++
++	gicv5_its_print_info(its_node);
++
++	return 0;
++}
++
++static int __init gicv5_its_init(struct device_node *node)
++{
++	void __iomem *its_base;
++	struct resource res;
++	int ret;
++
++	its_base = of_io_request_and_map(node, 0, "ITS");
++	if (IS_ERR(its_base)) {
++		pr_err("%pOF: unable to map GICv5 ITS_CONFIG_FRAME\n", node);
++		return PTR_ERR(its_base);
++	}
++
++	/*
++	 * The ITS_TRANSLATE_FRAME is the second reg entry, (first is the
++	 * ITS_CONFIG_FRAME) - extract it and use it to init ITS data
++	 * structures.
++	 */
++	ret = of_address_to_resource(node, 1, &res);
++	if (ret)
++		goto out_unmap;
++
++	ret = gicv5_its_init_bases(res.start, its_base, &node->fwnode,
++				   gicv5_global_data.lpi_domain);
++	if (ret)
++		goto out_unmap;
++
++	return 0;
++out_unmap:
++	iounmap(its_base);
++	return ret;
++}
++
++void __init gicv5_its_of_probe(struct device_node *parent)
++{
++	struct device_node *np;
++
++	for_each_available_child_of_node(parent, np) {
++		if (!of_device_is_compatible(np, "arm,gic-v5-its"))
++			continue;
++
++		if (gicv5_its_init(np))
++			pr_err("Failed to init ITS %s\n", np->full_name);
++	}
++}
+diff --git a/drivers/irqchip/irq-gic-v5.c b/drivers/irqchip/irq-gic-v5.c
+index c4d4e85382f672fa4ae334db1a4e4c7c4f46b9fe..e483d0774936035b5cf2407da9a65d776bad3138 100644
+--- a/drivers/irqchip/irq-gic-v5.c
++++ b/drivers/irqchip/irq-gic-v5.c
+@@ -55,12 +55,12 @@ static void release_lpi(u32 lpi)
+ 	ida_free(&lpi_ida, lpi);
+ }
+ 
+-static int gicv5_alloc_lpi(void)
++int gicv5_alloc_lpi(void)
+ {
+ 	return alloc_lpi();
+ }
+ 
+-static void gicv5_free_lpi(u32 lpi)
++void gicv5_free_lpi(u32 lpi)
+ {
+ 	release_lpi(lpi);
+ }
+@@ -1045,6 +1045,8 @@ static int __init gicv5_of_init(struct device_node *node,
+ 
+ 	gicv5_smp_init();
+ 
++	gicv5_irs_its_probe();
++
+ 	return 0;
+ out_int:
+ 	gicv5_cpu_disable_interrupts();
+diff --git a/drivers/irqchip/irq-gic-v5.h b/drivers/irqchip/irq-gic-v5.h
+index 19569639153a084760c3b5b7f0fa84791ba0195c..f5a453599493020b36d9c7f18c08171c51ba8669 100644
+--- a/drivers/irqchip/irq-gic-v5.h
++++ b/drivers/irqchip/irq-gic-v5.h
+@@ -5,6 +5,8 @@
+ #ifndef __LINUX_IRQCHIP_GIC_V5_H
+ #define __LINUX_IRQCHIP_GIC_V5_H
+ 
++#include <linux/iopoll.h>
++
+ #include <asm/arch_gicv5.h>
+ #include <asm/smp.h>
+ 
+@@ -41,6 +43,8 @@
+ #define GICV5_IRS_IDR7			0x001c
+ #define GICV5_IRS_CR0			0x0080
+ #define GICV5_IRS_CR1			0x0084
++#define GICV5_IRS_SYNCR			0x00c0
++#define GICV5_IRS_SYNC_STATUSR		0x00c4
+ #define GICV5_IRS_SPI_SELR		0x0108
+ #define GICV5_IRS_SPI_CFGR		0x0114
+ #define GICV5_IRS_SPI_STATUSR		0x0118
+@@ -94,6 +98,10 @@
+ #define GICV5_IRS_CR1_OC		GENMASK(3, 2)
+ #define GICV5_IRS_CR1_SH		GENMASK(1, 0)
+ 
++#define GICV5_IRS_SYNCR_SYNC		BIT(31)
++
++#define GICV5_IRS_SYNC_STATUSR_IDLE	BIT(0)
++
+ #define GICV5_IRS_SPI_STATUSR_V		BIT(1)
+ #define GICV5_IRS_SPI_STATUSR_IDLE	BIT(0)
+ 
+@@ -135,6 +143,101 @@
+ 
+ #define GICV5_ISTL1E_L2_ADDR_MASK	GENMASK_ULL(55, 12)
+ 
++#define GICV5_ITS_IDR1		0x0004
++#define GICV5_ITS_IDR2		0x0008
++#define GICV5_ITS_CR0		0x0080
++#define GICV5_ITS_CR1		0x0084
++#define GICV5_ITS_DT_BASER	0x00c0
++#define GICV5_ITS_DT_CFGR	0x00d0
++#define GICV5_ITS_DIDR		0x0100
++#define GICV5_ITS_EIDR		0x0108
++#define GICV5_ITS_INV_EVENTR	0x010c
++#define GICV5_ITS_INV_DEVICER	0x0110
++#define GICV5_ITS_STATUSR	0x0120
++#define GICV5_ITS_SYNCR		0x0140
++#define GICV5_ITS_SYNC_STATUSR	0x0148
++
++#define GICV5_ITS_IDR1_L2SZ			GENMASK(10, 8)
++#define GICV5_ITS_IDR1_ITT_LEVELS		BIT(7)
++#define GICV5_ITS_IDR1_DT_LEVELS		BIT(6)
++#define GICV5_ITS_IDR1_DEVICEID_BITS		GENMASK(5, 0)
++
++#define GICV5_ITS_IDR1_L2SZ_SUPPORT_4KB(r)	FIELD_GET(BIT(8), (r))
++#define GICV5_ITS_IDR1_L2SZ_SUPPORT_16KB(r)	FIELD_GET(BIT(9), (r))
++#define GICV5_ITS_IDR1_L2SZ_SUPPORT_64KB(r)	FIELD_GET(BIT(10), (r))
++
++#define GICV5_ITS_IDR2_XDMN_EVENTs		GENMASK(6, 5)
++#define GICV5_ITS_IDR2_EVENTID_BITS		GENMASK(4, 0)
++
++#define GICV5_ITS_CR0_IDLE			BIT(1)
++#define GICV5_ITS_CR0_ITSEN			BIT(0)
++
++#define GICV5_ITS_CR1_ITT_RA			BIT(7)
++#define GICV5_ITS_CR1_DT_RA			BIT(6)
++#define GICV5_ITS_CR1_IC			GENMASK(5, 4)
++#define GICV5_ITS_CR1_OC			GENMASK(3, 2)
++#define GICV5_ITS_CR1_SH			GENMASK(1, 0)
++
++#define GICV5_ITS_DT_CFGR_STRUCTURE		BIT(16)
++#define GICV5_ITS_DT_CFGR_L2SZ			GENMASK(7, 6)
++#define GICV5_ITS_DT_CFGR_DEVICEID_BITS		GENMASK(5, 0)
++
++#define GICV5_ITS_DT_BASER_ADDR_MASK		GENMASK_ULL(55, 3)
++
++#define GICV5_ITS_INV_DEVICER_I			BIT(31)
++#define GICV5_ITS_INV_DEVICER_EVENTID_BITS	GENMASK(5, 1)
++#define GICV5_ITS_INV_DEVICER_L1		BIT(0)
++
++#define GICV5_ITS_DIDR_DEVICEID			GENMASK_ULL(31, 0)
++
++#define GICV5_ITS_EIDR_EVENTID			GENMASK(15, 0)
++
++#define GICV5_ITS_INV_EVENTR_I			BIT(31)
++#define GICV5_ITS_INV_EVENTR_ITT_L2SZ		GENMASK(2, 1)
++#define GICV5_ITS_INV_EVENTR_L1			BIT(0)
++
++#define GICV5_ITS_STATUSR_IDLE			BIT(0)
++
++#define GICV5_ITS_SYNCR_SYNC			BIT_ULL(63)
++#define GICV5_ITS_SYNCR_SYNCALL			BIT_ULL(32)
++#define GICV5_ITS_SYNCR_DEVICEID		GENMASK_ULL(31, 0)
++
++#define GICV5_ITS_SYNC_STATUSR_IDLE		BIT(0)
++
++#define GICV5_DTL1E_VALID			BIT_ULL(0)
++// Note that there is no shift for the address by design
++#define GICV5_DTL1E_L2_ADDR_MASK		GENMASK_ULL(55, 3)
++#define GICV5_DTL1E_SPAN			GENMASK_ULL(63, 60)
++
++#define GICV5_DTL2E_VALID			BIT_ULL(0)
++#define GICV5_DTL2E_ITT_L2SZ			GENMASK_ULL(2, 1)
++// Note that there is no shift for the address by design
++#define GICV5_DTL2E_ITT_ADDR_MASK		GENMASK_ULL(55, 3)
++#define GICV5_DTL2E_ITT_DSWE			BIT_ULL(57)
++#define GICV5_DTL2E_ITT_STRUCTURE		BIT_ULL(58)
++#define GICV5_DTL2E_EVENT_ID_BITS		GENMASK_ULL(63, 59)
++
++#define GICV5_ITTL1E_VALID			BIT_ULL(0)
++// Note that there is no shift for the address by design
++#define GICV5_ITTL1E_L2_ADDR_MASK		GENMASK_ULL(55, 3)
++#define GICV5_ITTL1E_SPAN			GENMASK_ULL(63, 60)
++
++#define GICV5_ITTL2E_LPI_ID			GENMASK_ULL(23, 0)
++#define GICV5_ITTL2E_DAC			GENMASK_ULL(29, 28)
++#define GICV5_ITTL2E_VIRTUAL			BIT_ULL(30)
++#define GICV5_ITTL2E_VALID			BIT_ULL(31)
++#define GICV5_ITTL2E_VM_ID			GENMASK_ULL(47, 32)
++
++#define GICV5_ITS_DT_ITT_CFGR_L2SZ_4k		0b00
++#define GICV5_ITS_DT_ITT_CFGR_L2SZ_16k		0b01
++#define GICV5_ITS_DT_ITT_CFGR_L2SZ_64k		0b10
++
++#define GICV5_ITS_DT_ITT_CFGR_STRUCTURE_LINEAR		0
++#define GICV5_ITS_DT_ITT_CFGR_STRUCTURE_TWO_LEVEL	1
++
++#define GICV5_ITS_HWIRQ_DEVICE_ID		GENMASK_ULL(31, 0)
++#define GICV5_ITS_HWIRQ_EVENT_ID		GENMASK_ULL(63, 32)
++
+ struct gicv5_chip_data {
+ 	struct fwnode_handle	*fwnode;
+ 	struct irq_domain	*ppi_domain;
+@@ -168,17 +271,90 @@ struct gicv5_irs_chip_data {
+ 
+ void __init gicv5_init_lpi_domain(void);
+ void __init gicv5_free_lpi_domain(void);
++static inline int gicv5_wait_for_op(void __iomem *addr, u32 offset, u32 mask,
++				    u32 *val)
 +{
 +	void __iomem *reg = addr + offset;
 +	u32 tmp;
@@ -476,2042 +1818,79 @@ index 0000000000000000000000000000000000000000..7bd60e6d56b77c0c19a1bd9bee9685d9
 +
 +	return ret;
 +}
+ 
+ int gicv5_irs_of_probe(struct device_node *parent);
+ void gicv5_irs_remove(void);
+ int gicv5_irs_enable(void);
++void gicv5_irs_its_probe(void);
+ int gicv5_irs_register_cpu(int cpuid);
+ int gicv5_irs_cpu_to_iaffid(int cpu_id, u16 *iaffid);
+ struct gicv5_irs_chip_data *gicv5_irs_lookup_by_spi_id(u32 spi_id);
+ int gicv5_spi_irq_set_type(struct irq_data *d, unsigned int type);
+ int gicv5_spi_set_type(struct irq_data *d, unsigned int type);
+ int gicv5_irs_iste_alloc(u32 lpi);
++void gicv5_irs_syncr(void);
 +
-+#define gicv5_irs_wait_for_op(base, reg, mask)				\
-+	({								\
-+		int ret;						\
-+									\
-+		ret = gicv5_wait_for_op(base, reg, mask, NULL);		\
-+		if (unlikely(ret == -ETIMEDOUT))			\
-+			pr_err_ratelimited(#reg" timeout...\n");	\
-+		ret;							\
-+	 })
-+
-+/* Wait for completion of an IST change */
-+static int gicv5_irs_ist_wait_for_idle(struct gicv5_irs_chip_data *irs_data)
-+{
-+	return gicv5_irs_wait_for_op(irs_data->irs_base, GICV5_IRS_IST_STATUSR,
-+				     GICV5_IRS_IST_STATUSR_IDLE);
-+}
-+
-+static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data,
-+					    unsigned int lpi_id_bits,
-+					    unsigned int istsz)
-+{
-+	size_t l2istsz;
-+	u32 n, cfgr;
-+	void *ist;
-+	u64 baser;
-+	int ret;
-+
-+	/* Taken from GICv5 specifications 10.2.1.13 IRS_IST_BASER */
-+	n = max(5, lpi_id_bits + 1 + istsz);
-+
-+	l2istsz = BIT(n + 1);
-+	/*
-+	 * Check memory requirements. For a linear IST we cap the
-+	 * number of ID bits to a value that should never exceed
-+	 * kmalloc interface memory allocation limits, so this
-+	 * check is really belt and braces.
-+	 */
-+	if (l2istsz > KMALLOC_MAX_SIZE) {
-+		u8 lpi_id_cap = ilog2(KMALLOC_MAX_SIZE) - 2 + istsz;
-+
-+		pr_warn("Limiting LPI ID bits from %u to %u\n",
-+			lpi_id_bits, lpi_id_cap);
-+		lpi_id_bits = lpi_id_cap;
-+		l2istsz = KMALLOC_MAX_SIZE;
-+	}
-+
-+	ist = kzalloc(l2istsz, GFP_KERNEL);
-+	if (!ist)
-+		return -ENOMEM;
-+
-+	if (irs_data->flags & IRS_FLAGS_NON_COHERENT)
-+		dcache_clean_inval_poc((unsigned long)ist,
-+				       (unsigned long)ist + l2istsz);
-+	else
-+		dsb(ishst);
-+
-+	cfgr = FIELD_PREP(GICV5_IRS_IST_CFGR_STRUCTURE,
-+			  GICV5_IRS_IST_CFGR_STRUCTURE_LINEAR)	|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_ISTSZ, istsz)	|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_L2SZ,
-+			  GICV5_IRS_IST_CFGR_L2SZ_4K)		|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_LPI_ID_BITS, lpi_id_bits);
-+	irs_writel_relaxed(irs_data, cfgr, GICV5_IRS_IST_CFGR);
-+
-+	gicv5_global_data.ist.l2 = false;
-+
-+	baser = (virt_to_phys(ist) & GICV5_IRS_IST_BASER_ADDR_MASK) |
-+		FIELD_PREP(GICV5_IRS_IST_BASER_VALID, 0x1);
-+	irs_writeq_relaxed(irs_data, baser, GICV5_IRS_IST_BASER);
-+
-+	/*
-+	 * The polling wait (in gicv5_wait_for_op()) on a GIC register
-+	 * provides the memory barriers (through MMIO accessors)
-+	 * required to synchronize CPU and GIC access to IST memory.
-+	 */
-+	ret = gicv5_irs_ist_wait_for_idle(irs_data);
-+	if (ret) {
-+		kfree(ist);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init gicv5_irs_init_ist_two_level(struct gicv5_irs_chip_data *irs_data,
-+					       unsigned int lpi_id_bits,
-+					       unsigned int istsz,
-+					       unsigned int l2sz)
-+{
-+	__le64 *l1ist;
-+	u32 cfgr, n;
-+	size_t l1sz;
-+	u64 baser;
-+	int ret;
-+
-+	/* Taken from GICv5 specifications 10.2.1.13 IRS_IST_BASER */
-+	n = max(5, lpi_id_bits - ((10 - istsz) + (2 * l2sz)) + 2);
-+
-+	l1sz = BIT(n + 1);
-+
-+	l1ist = kzalloc(l1sz, GFP_KERNEL);
-+	if (!l1ist)
-+		return -ENOMEM;
-+
-+	if (irs_data->flags & IRS_FLAGS_NON_COHERENT)
-+		dcache_clean_inval_poc((unsigned long)l1ist,
-+				       (unsigned long)l1ist + l1sz);
-+	else
-+		dsb(ishst);
-+
-+	cfgr = FIELD_PREP(GICV5_IRS_IST_CFGR_STRUCTURE,
-+			  GICV5_IRS_IST_CFGR_STRUCTURE_TWO_LEVEL)	|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_ISTSZ, istsz)		|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_L2SZ, l2sz)		|
-+	       FIELD_PREP(GICV5_IRS_IST_CFGR_LPI_ID_BITS, lpi_id_bits);
-+	irs_writel_relaxed(irs_data, cfgr, GICV5_IRS_IST_CFGR);
-+
-+	/*
-+	 * The L2SZ determine bits required at L2 level. Number of bytes
-+	 * required by metadata is reported through istsz - the number of bits
-+	 * covered by L2 entries scales accordingly.
-+	 */
-+	gicv5_global_data.ist.l2_size = BIT(11 + (2 * l2sz) + 1);
-+	gicv5_global_data.ist.l2_bits = (10 - istsz) + (2 * l2sz);
-+	gicv5_global_data.ist.l1ist_addr = l1ist;
-+	gicv5_global_data.ist.l2 = true;
-+
-+	baser = (virt_to_phys(l1ist) & GICV5_IRS_IST_BASER_ADDR_MASK) |
-+		FIELD_PREP(GICV5_IRS_IST_BASER_VALID, 0x1);
-+	irs_writeq_relaxed(irs_data, baser, GICV5_IRS_IST_BASER);
-+
-+	/*
-+	 * The polling wait (in gicv5_wait_for_op()) on a GIC register
-+	 * provides the memory barriers (through MMIO accessors)
-+	 * required to synchronize CPU and GIC access to IST memory.
-+	 */
-+	ret = gicv5_irs_ist_wait_for_idle(irs_data);
-+	if (ret) {
-+		kfree(l1ist);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Alloc L2 IST entries on demand.
-+ *
-+ * Locking/serialization is guaranteed by irqdomain core code by
-+ * taking the hierarchical domain struct irq_domain.root->mutex.
-+ */
-+int gicv5_irs_iste_alloc(const u32 lpi)
-+{
-+	struct gicv5_irs_chip_data *irs_data;
-+	unsigned int index;
-+	u32 l2istr, l2bits;
-+	__le64 *l1ist;
-+	size_t l2size;
-+	void *l2ist;
-+	int ret;
-+
-+	if (!gicv5_global_data.ist.l2)
-+		return 0;
-+
-+	irs_data = per_cpu(per_cpu_irs_data, smp_processor_id());
-+	if (!irs_data)
-+		return -ENOENT;
-+
-+	l2size = gicv5_global_data.ist.l2_size;
-+	l2bits = gicv5_global_data.ist.l2_bits;
-+
-+	l1ist = gicv5_global_data.ist.l1ist_addr;
-+
-+	index = lpi >> l2bits;
-+
-+	if (FIELD_GET(GICV5_ISTL1E_VALID, le64_to_cpu(l1ist[index])))
-+		return 0;
-+
-+	l2ist = kzalloc(l2size, GFP_KERNEL);
-+	if (!l2ist)
-+		return -ENOMEM;
-+
-+	l1ist[index] = cpu_to_le64(virt_to_phys(l2ist) & GICV5_ISTL1E_L2_ADDR_MASK);
-+
-+	if (irs_data->flags & IRS_FLAGS_NON_COHERENT) {
-+		dcache_clean_inval_poc((unsigned long)l2ist,
-+				       (unsigned long)l2ist + l2size);
-+		dcache_clean_poc((unsigned long)(l1ist + index),
-+				 (unsigned long)(l1ist + index) + sizeof(*l1ist));
-+	} else {
-+		dsb(ishst);
-+	}
-+
-+	l2istr = FIELD_PREP(GICV5_IRS_MAP_L2_ISTR_ID, lpi);
-+	irs_writel_relaxed(irs_data, l2istr, GICV5_IRS_MAP_L2_ISTR);
-+
-+	/*
-+	 * The polling wait (in gicv5_wait_for_op()) on a GIC register
-+	 * provides the memory barriers (through MMIO accessors)
-+	 * required to synchronize CPU and GIC access to IST memory.
-+	 */
-+	ret = gicv5_irs_ist_wait_for_idle(irs_data);
-+	if (ret) {
-+		l1ist[index] = 0;
-+		kfree(l2ist);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Make sure we invalidate the cache line pulled before the IRS
-+	 * had a chance to update the L1 entry and mark it valid.
-+	 */
-+	if (irs_data->flags & IRS_FLAGS_NON_COHERENT) {
-+		/*
-+		 * gicv5_irs_ist_wait_for_idle() includes memory
-+		 * barriers (MMIO accessors) required to guarantee that the
-+		 * following dcache invalidation is not executed before the
-+		 * IST mapping operation has completed.
-+		 */
-+		dcache_inval_poc((unsigned long)(l1ist + index),
-+				 (unsigned long)(l1ist + index) + sizeof(*l1ist));
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Try to match the L2 IST size to the pagesize, and if this is not possible
-+ * pick the smallest supported L2 size in order to minimise the requirement for
-+ * physically contiguous blocks of memory as page-sized allocations are
-+ * guaranteed to be physically contiguous, and are by definition the easiest to
-+ * find.
-+ *
-+ * Fall back to the smallest supported size (in the event that the pagesize
-+ * itself is not supported) again serves to make it easier to find physically
-+ * contiguous blocks of memory.
-+ */
-+static int gicv5_irs_l2_sz(u32 idr2)
-+{
-+	switch (PAGE_SIZE) {
-+	case SZ_64K:
-+		if (GICV5_IRS_IST_L2SZ_SUPPORT_64KB(idr2))
-+			return GICV5_IRS_IST_CFGR_L2SZ_64K;
-+		fallthrough;
-+	case SZ_16K:
-+		if (GICV5_IRS_IST_L2SZ_SUPPORT_16KB(idr2))
-+			return GICV5_IRS_IST_CFGR_L2SZ_16K;
-+		fallthrough;
-+	case SZ_4K:
-+		if (GICV5_IRS_IST_L2SZ_SUPPORT_4KB(idr2))
-+			return GICV5_IRS_IST_CFGR_L2SZ_4K;
-+		if (GICV5_IRS_IST_L2SZ_SUPPORT_16KB(idr2))
-+			return GICV5_IRS_IST_CFGR_L2SZ_16K;
-+		if (GICV5_IRS_IST_L2SZ_SUPPORT_64KB(idr2))
-+			return GICV5_IRS_IST_CFGR_L2SZ_64K;
-+		break;
-+	}
-+
-+	return -ENODEV;
-+}
-+
-+static int __init gicv5_irs_init_ist(struct gicv5_irs_chip_data *irs_data)
-+{
-+	u32 lpi_id_bits, idr2_id_bits, idr2_min_lpi_id_bits,
-+	    l2_iste_sz, l2sz, l2_iste_sz_split, idr2;
-+	bool two_levels, istmd;
-+	u64 baser;
-+	int ret;
-+
-+	baser = irs_readq_relaxed(irs_data, GICV5_IRS_IST_BASER);
-+	if (FIELD_GET(GICV5_IRS_IST_BASER_VALID, baser)) {
-+		pr_err("IST is marked as valid already; cannot allocate\n");
-+		return -EPERM;
-+	}
-+
-+	idr2 = irs_readl_relaxed(irs_data, GICV5_IRS_IDR2);
-+
-+	two_levels = !!FIELD_GET(GICV5_IRS_IDR2_IST_LEVELS, idr2);
-+
-+	idr2_id_bits = FIELD_GET(GICV5_IRS_IDR2_ID_BITS, idr2);
-+	idr2_min_lpi_id_bits = FIELD_GET(GICV5_IRS_IDR2_MIN_LPI_ID_BITS, idr2);
-+
-+	/*
-+	 * For two level tables we are always allocating the maximum allowed
-+	 * number of IDs.
-+	 *
-+	 * For 1-level tables, we should allocate a number of bits that
-+	 * is >= min_lpi_id_bits but cap it to LPI_ID_BITS_LINEAR lest
-+	 * the level 1-table gets too large and its memory allocation
-+	 * may fail.
-+	 */
-+	if (two_levels) {
-+		lpi_id_bits = idr2_id_bits;
-+	} else {
-+		lpi_id_bits = max(LPI_ID_BITS_LINEAR, idr2_min_lpi_id_bits);
-+		lpi_id_bits = min(lpi_id_bits, idr2_id_bits);
-+	}
-+
-+	/*
-+	 * Cap the ID bits according to the CPUIF supported ID bits
-+	 */
-+	lpi_id_bits = min(lpi_id_bits, gicv5_global_data.cpuif_id_bits);
-+
-+	if (two_levels) {
-+		l2sz = gicv5_irs_l2_sz(idr2);
-+		if (l2sz < 0)
-+			return l2sz;
-+	}
-+
-+	istmd = !!FIELD_GET(GICV5_IRS_IDR2_ISTMD, idr2);
-+
-+	l2_iste_sz = GICV5_IRS_IST_CFGR_ISTSZ_4;
-+
-+	// Only supported if IRS_IDR2.ISTMD is 1
-+	if (istmd) {
-+		l2_iste_sz_split = FIELD_GET(GICV5_IRS_IDR2_ISTMD_SZ, idr2);
-+
-+		if (lpi_id_bits < l2_iste_sz_split)
-+			l2_iste_sz = GICV5_IRS_IST_CFGR_ISTSZ_8;
-+		else
-+			l2_iste_sz = GICV5_IRS_IST_CFGR_ISTSZ_16;
-+	}
-+
-+	/*
-+	 * Follow GICv5 specification recommendation to opt in for two
-+	 * level tables
-+	 */
-+	two_levels = two_levels && (lpi_id_bits > ((10 - l2_iste_sz) + (2 * l2sz)));
-+
-+	if (two_levels)
-+		ret = gicv5_irs_init_ist_two_level(irs_data, lpi_id_bits,
-+						   l2_iste_sz, l2sz);
-+	else
-+		ret = gicv5_irs_init_ist_linear(irs_data, lpi_id_bits,
-+						l2_iste_sz);
-+	if (ret)
-+		return ret;
-+
-+	gicv5_init_lpis(BIT(lpi_id_bits));
-+
-+	return 0;
-+}
-+
-+struct iaffid_entry {
-+	u16	iaffid;
-+	bool	valid;
++struct gicv5_its_devtab_cfg {
++	union {
++		struct {
++			__le64	*devtab;
++		} linear;
++		struct {
++			__le64	*l1devtab;
++			__le64	**l2ptrs;
++		} l2;
++	};
++	u32	cfgr;
 +};
 +
-+static DEFINE_PER_CPU(struct iaffid_entry, cpu_iaffid);
-+
-+int gicv5_irs_cpu_to_iaffid(int cpuid, u16 *iaffid)
-+{
-+	if (!per_cpu(cpu_iaffid, cpuid).valid) {
-+		pr_err("IAFFID for CPU %d has not been initialised\n", cpuid);
-+		return -ENODEV;
-+	}
-+
-+	*iaffid = per_cpu(cpu_iaffid, cpuid).iaffid;
-+
-+	return 0;
-+}
-+
-+struct gicv5_irs_chip_data *gicv5_irs_lookup_by_spi_id(u32 spi_id)
-+{
-+	struct gicv5_irs_chip_data *irs_data;
-+	u32 min, max;
-+
-+	list_for_each_entry(irs_data, &irs_nodes, entry) {
-+		if (!irs_data->spi_range)
-+			continue;
-+
-+		min = irs_data->spi_min;
-+		max = irs_data->spi_min + irs_data->spi_range - 1;
-+		if (spi_id >= min && spi_id <= max)
-+			return irs_data;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int gicv5_irs_wait_for_spi_op(struct gicv5_irs_chip_data *irs_data)
-+{
-+	u32 statusr;
-+	int ret;
-+
-+	ret = gicv5_wait_for_op(irs_data->irs_base, GICV5_IRS_SPI_STATUSR,
-+				GICV5_IRS_SPI_STATUSR_IDLE, &statusr);
-+	if (unlikely(ret == -ETIMEDOUT)) {
-+		pr_err_ratelimited("IRS_SPI_STATUSR timeout\n");
-+		return ret;
-+	}
-+
-+	return !!FIELD_GET(GICV5_IRS_SPI_STATUSR_V, statusr) ? 0 : -ENXIO;
-+}
-+
-+static int gicv5_irs_wait_for_irs_pe(struct gicv5_irs_chip_data *irs_data,
-+				     bool selr)
-+{
-+	u32 statusr;
-+	bool valid;
-+	int ret;
-+
-+	ret = gicv5_wait_for_op(irs_data->irs_base, GICV5_IRS_PE_STATUSR,
-+				GICV5_IRS_PE_STATUSR_IDLE, &statusr);
-+
-+	if (unlikely(ret == -ETIMEDOUT)) {
-+		pr_err_ratelimited("IRS_PE_STATUSR timeout after %s\n",
-+				   selr ? "IRS_PE_SELR" : "IRS_PE_CR0");
-+		return ret;
-+	}
-+
-+	if (selr) {
-+		valid = !!FIELD_GET(GICV5_IRS_PE_STATUSR_V, statusr);
-+		return valid ? 0 : -ENXIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int gicv5_irs_wait_for_pe_selr(struct gicv5_irs_chip_data *irs_data)
-+{
-+	return gicv5_irs_wait_for_irs_pe(irs_data, true);
-+}
-+
-+static int gicv5_irs_wait_for_pe_cr0(struct gicv5_irs_chip_data *irs_data)
-+{
-+	return gicv5_irs_wait_for_irs_pe(irs_data, false);
-+}
-+
-+int gicv5_spi_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	struct gicv5_irs_chip_data *irs_data = d->chip_data;
-+	u32 selr, cfgr;
-+	bool level;
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_EDGE_FALLING:
-+		level = false;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+	case IRQ_TYPE_LEVEL_LOW:
-+		level = true;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	guard(raw_spinlock)(&irs_data->spi_config_lock);
-+
-+	selr = FIELD_PREP(GICV5_IRS_SPI_SELR_ID, d->hwirq);
-+	irs_writel_relaxed(irs_data, selr, GICV5_IRS_SPI_SELR);
-+	if (gicv5_irs_wait_for_spi_op(irs_data))
-+		return -EIO;
-+
-+	cfgr = FIELD_PREP(GICV5_IRS_SPI_CFGR_TM, level);
-+
-+	irs_writel_relaxed(irs_data, cfgr, GICV5_IRS_SPI_CFGR);
-+	if (gicv5_irs_wait_for_spi_op(irs_data))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+static int gicv5_irs_wait_for_idle(struct gicv5_irs_chip_data *irs_data)
-+{
-+	return gicv5_irs_wait_for_op(irs_data->irs_base, GICV5_IRS_CR0,
-+				     GICV5_IRS_CR0_IDLE);
-+}
-+
-+int gicv5_irs_register_cpu(int cpuid)
-+{
-+	struct gicv5_irs_chip_data *irs_data;
-+	u32 selr, cr0;
-+	u16 iaffid;
-+	int ret;
-+
-+	ret = gicv5_irs_cpu_to_iaffid(cpuid, &iaffid);
-+	if (ret) {
-+		pr_err("IAFFID for CPU %d has not been initialised\n", cpuid);
-+		return ret;
-+	}
-+
-+	irs_data = per_cpu(per_cpu_irs_data, cpuid);
-+	if (!irs_data) {
-+		pr_err("No IRS associated with CPU %u\n", cpuid);
-+		return -ENXIO;
-+	}
-+
-+	selr = FIELD_PREP(GICV5_IRS_PE_SELR_IAFFID, iaffid);
-+	irs_writel_relaxed(irs_data, selr, GICV5_IRS_PE_SELR);
-+
-+	ret = gicv5_irs_wait_for_pe_selr(irs_data);
-+	if (ret) {
-+		pr_err("IAFFID 0x%x used in IRS_PE_SELR is invalid\n", iaffid);
-+		return -ENXIO;
-+	}
-+
-+	cr0 = FIELD_PREP(GICV5_IRS_PE_CR0_DPS, 0x1);
-+	irs_writel_relaxed(irs_data, cr0, GICV5_IRS_PE_CR0);
-+
-+	ret = gicv5_irs_wait_for_pe_cr0(irs_data);
-+	if (ret)
-+		return ret;
-+
-+	pr_debug("CPU%d enabled PE IAFFID 0x%x\n", cpuid, iaffid);
-+
-+	return 0;
-+}
-+
-+static int __init gicv5_irs_init_bases(struct gicv5_irs_chip_data *irs_data,
-+				       void __iomem *irs_base,
-+				       struct fwnode_handle *handle)
-+{
-+	struct device_node *np = to_of_node(handle);
-+	u32 cr0, cr1;
-+
-+	irs_data->fwnode = handle;
-+	irs_data->irs_base = irs_base;
-+
-+	if (of_property_read_bool(np, "dma-noncoherent")) {
-+		/*
-+		 * A non-coherent IRS implies that some cache levels cannot be
-+		 * used coherently by the cores and GIC. Our only option is to mark
-+		 * memory attributes for the GIC as non-cacheable; by default,
-+		 * non-cacheable memory attributes imply outer-shareable
-+		 * shareability, the value written into IRS_CR1_SH is ignored.
-+		 */
-+		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, GICV5_NO_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VPED_RA, GICV5_NO_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMD_WA, GICV5_NO_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMD_RA, GICV5_NO_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VPET_RA, GICV5_NO_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMT_RA, GICV5_NO_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IST_WA, GICV5_NO_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IST_RA, GICV5_NO_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IC, GICV5_NON_CACHE)		|
-+			FIELD_PREP(GICV5_IRS_CR1_OC, GICV5_NON_CACHE);
-+			irs_data->flags |= IRS_FLAGS_NON_COHERENT;
-+	} else {
-+		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, GICV5_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VPED_RA, GICV5_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMD_WA, GICV5_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMD_RA, GICV5_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VPET_RA, GICV5_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_VMT_RA, GICV5_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IST_WA, GICV5_WRITE_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IST_RA, GICV5_READ_ALLOC)	|
-+			FIELD_PREP(GICV5_IRS_CR1_IC, GICV5_WB_CACHE)		|
-+			FIELD_PREP(GICV5_IRS_CR1_OC, GICV5_WB_CACHE)		|
-+			FIELD_PREP(GICV5_IRS_CR1_SH, GICV5_INNER_SHARE);
-+	}
-+
-+	irs_writel_relaxed(irs_data, cr1, GICV5_IRS_CR1);
-+
-+	cr0 = FIELD_PREP(GICV5_IRS_CR0_IRSEN, 0x1);
-+	irs_writel_relaxed(irs_data, cr0, GICV5_IRS_CR0);
-+	gicv5_irs_wait_for_idle(irs_data);
-+
-+	return 0;
-+}
-+
-+static int __init gicv5_irs_of_init_affinity(struct device_node *node,
-+					     struct gicv5_irs_chip_data *irs_data,
-+					     u8 iaffid_bits)
-+{
-+	/*
-+	 * Detect IAFFID<->CPU mappings from the device tree and
-+	 * record IRS<->CPU topology information.
-+	 */
-+	u16 iaffid_mask = GENMASK(iaffid_bits - 1, 0);
-+	u16 *iaffids __free(kfree) = NULL;
-+	int ret, i, ncpus, niaffids;
-+
-+	ncpus = of_property_count_elems_of_size(node, "cpus", sizeof(u32));
-+	if (ncpus < 0)
-+		return -EINVAL;
-+
-+	niaffids = of_property_count_elems_of_size(node, "arm,iaffids",
-+						   sizeof(u16));
-+	if (niaffids != ncpus)
-+		return -EINVAL;
-+
-+	iaffids = kcalloc(niaffids, sizeof(*iaffids), GFP_KERNEL);
-+	if (!iaffids)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u16_array(node, "arm,iaffids", iaffids, niaffids);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ncpus; i++) {
-+		struct device_node *cpu_node;
-+		u32 cpu_phandle;
-+		int cpu;
-+
-+		if (of_property_read_u32_index(node, "cpus", i, &cpu_phandle))
-+			continue;
-+
-+		cpu_node = of_find_node_by_phandle(cpu_phandle);
-+		if (WARN_ON(!cpu_node))
-+			continue;
-+
-+		cpu = of_cpu_node_to_id(cpu_node);
-+		of_node_put(cpu_node);
-+		if (WARN_ON(cpu < 0))
-+			continue;
-+
-+		if (iaffids[i] & ~iaffid_mask) {
-+			pr_warn("CPU %d iaffid 0x%x exceeds IRS iaffid bits\n",
-+				cpu, iaffids[i]);
-+			continue;
-+		}
-+
-+		per_cpu(cpu_iaffid, cpu).iaffid = iaffids[i];
-+		per_cpu(cpu_iaffid, cpu).valid = true;
-+
-+		// We also know that the CPU is connected to this IRS
-+		per_cpu(per_cpu_irs_data, cpu) = irs_data;
-+	}
-+
-+	return ret;
-+}
-+
-+static void irs_setup_pri_bits(u32 idr1)
-+{
-+	switch (FIELD_GET(GICV5_IRS_IDR1_PRIORITY_BITS, idr1)) {
-+	case GICV5_IRS_IDR1_PRIORITY_BITS_1BITS:
-+		gicv5_global_data.irs_pri_bits = 1;
-+		break;
-+	case GICV5_IRS_IDR1_PRIORITY_BITS_2BITS:
-+		gicv5_global_data.irs_pri_bits = 2;
-+		break;
-+	case GICV5_IRS_IDR1_PRIORITY_BITS_3BITS:
-+		gicv5_global_data.irs_pri_bits = 3;
-+		break;
-+	case GICV5_IRS_IDR1_PRIORITY_BITS_4BITS:
-+		gicv5_global_data.irs_pri_bits = 4;
-+		break;
-+	case GICV5_IRS_IDR1_PRIORITY_BITS_5BITS:
-+		gicv5_global_data.irs_pri_bits = 5;
-+		break;
-+	default:
-+		pr_warn("Detected wrong IDR priority bits value 0x%lx\n",
-+			FIELD_GET(GICV5_IRS_IDR1_PRIORITY_BITS, idr1));
-+		break;
-+	}
-+}
-+
-+static int __init gicv5_irs_init(struct device_node *node)
-+{
-+	struct gicv5_irs_chip_data *irs_data;
-+	void __iomem *irs_base;
-+	u8 iaffid_bits;
-+	int ret;
-+	u32 idr;
-+
-+	irs_data = kzalloc(sizeof(*irs_data), GFP_KERNEL);
-+	if (!irs_data)
-+		return -ENOMEM;
-+
-+	raw_spin_lock_init(&irs_data->spi_config_lock);
-+
-+	irs_base = of_io_request_and_map(node, 0, "IRS");
-+	if (IS_ERR(irs_base)) {
-+		pr_err("%pOF: unable to map GICv5 IRS registers\n", node);
-+		ret = PTR_ERR(irs_base);
-+		goto out_err;
-+	}
-+
-+	gicv5_irs_init_bases(irs_data, irs_base, &node->fwnode);
-+
-+	idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR1);
-+	iaffid_bits = FIELD_GET(GICV5_IRS_IDR1_IAFFID_BITS, idr) + 1;
-+
-+	ret = gicv5_irs_of_init_affinity(node, irs_data, iaffid_bits);
-+	if (ret) {
-+		pr_err("Failed to parse CPU IAFFIDs from the device tree!\n");
-+		goto out_iomem;
-+	}
-+
-+	idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR2);
-+	if (WARN(!FIELD_GET(GICV5_IRS_IDR2_LPI, idr),
-+		 "LPI support not available - no IPIs, can't proceed\n")) {
-+		ret = -ENODEV;
-+		goto out_iomem;
-+	}
-+
-+	idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR7);
-+	irs_data->spi_min = FIELD_GET(GICV5_IRS_IDR7_SPI_BASE, idr);
-+
-+	idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR6);
-+	irs_data->spi_range = FIELD_GET(GICV5_IRS_IDR6_SPI_IRS_RANGE, idr);
-+
-+	if (irs_data->spi_range) {
-+		pr_info("%s detected SPI range [%u-%u]\n",
-+						of_node_full_name(node),
-+						irs_data->spi_min,
-+						irs_data->spi_min +
-+						irs_data->spi_range - 1);
-+	}
-+
-+	/*
-+	 * Do the global setting only on the first IRS.
-+	 * Global properties (iaffid_bits, global spi count) are guaranteed to
-+	 * be consistent across IRSes by the architecture.
-+	 */
-+	if (list_empty(&irs_nodes)) {
-+
-+		idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR1);
-+		irs_setup_pri_bits(idr);
-+
-+		idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR5);
-+		gicv5_global_data.global_spi_count =
-+			FIELD_GET(GICV5_IRS_IDR5_SPI_RANGE, idr);
-+
-+		gicv5_init_lpi_domain();
-+
-+		pr_debug("Detected %u SPIs globally\n",
-+			 gicv5_global_data.global_spi_count);
-+	}
-+
-+	list_add_tail(&irs_data->entry, &irs_nodes);
-+
-+	return 0;
-+out_iomem:
-+	iounmap(irs_base);
-+out_err:
-+	kfree(irs_data);
-+	return ret;
-+}
-+
-+void __init gicv5_irs_remove(void)
-+{
-+	struct gicv5_irs_chip_data *irs_data, *tmp_data;
-+
-+	gicv5_free_lpi_domain();
-+	gicv5_deinit_lpis();
-+
-+	list_for_each_entry_safe(irs_data, tmp_data, &irs_nodes, entry) {
-+		iounmap(irs_data->irs_base);
-+		list_del(&irs_data->entry);
-+		kfree(irs_data);
-+	}
-+}
-+
-+int __init gicv5_irs_enable(void)
-+{
-+	struct gicv5_irs_chip_data *irs_data;
-+	int ret;
-+
-+	irs_data = list_first_entry_or_null(&irs_nodes,
-+					    struct gicv5_irs_chip_data, entry);
-+	if (!irs_data)
-+		return -ENODEV;
-+
-+	ret = gicv5_irs_init_ist(irs_data);
-+	if (ret) {
-+		pr_err("Failed to init IST\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int __init gicv5_irs_of_probe(struct device_node *parent)
-+{
-+	struct device_node *np;
-+	int ret;
-+
-+	for_each_available_child_of_node(parent, np) {
-+		if (!of_device_is_compatible(np, "arm,gic-v5-irs"))
-+			continue;
-+
-+		ret = gicv5_irs_init(np);
-+		if (ret)
-+			pr_err("Failed to init IRS %s\n", np->full_name);
-+	}
-+
-+	return list_empty(&irs_nodes) ? -ENODEV : 0;
-+}
-diff --git a/drivers/irqchip/irq-gic-v5.c b/drivers/irqchip/irq-gic-v5.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..c4d4e85382f672fa4ae334db1a4e4c7c4f46b9fe
---- /dev/null
-+++ b/drivers/irqchip/irq-gic-v5.c
-@@ -0,0 +1,1058 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024-2025 ARM Limited, All Rights Reserved.
-+ */
-+
-+#define pr_fmt(fmt)	"GICv5: " fmt
-+
-+#include <linux/cpuhotplug.h>
-+#include <linux/idr.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqdomain.h>
-+#include <linux/slab.h>
-+#include <linux/wordpart.h>
-+
-+#include <asm/cpufeature.h>
-+#include <asm/exception.h>
-+
-+#include "irq-gic-v5.h"
-+
-+static u8 pri_bits = 5;
-+#define GICV5_IRQ_PRI_MASK 0x1f
-+#define GICV5_IRQ_PRI_MI \
-+		(GICV5_IRQ_PRI_MASK & GENMASK(4, 5 - pri_bits))
-+
-+static bool gicv5_cpuif_has_gcie(void)
-+{
-+	return this_cpu_has_cap(ARM64_HAS_GICV5_CPUIF);
-+}
-+
-+struct gicv5_chip_data gicv5_global_data __read_mostly;
-+
-+static DEFINE_IDA(lpi_ida);
-+static u32 num_lpis;
-+
-+void __init gicv5_init_lpis(u32 lpis)
-+{
-+	num_lpis = lpis;
-+}
-+
-+void __init gicv5_deinit_lpis(void)
-+{
-+	num_lpis = 0;
-+}
-+
-+static int alloc_lpi(void)
-+{
-+	if (!num_lpis)
-+		return -ENOSPC;
-+
-+	return ida_alloc_max(&lpi_ida, num_lpis - 1, GFP_KERNEL);
-+}
-+
-+static void release_lpi(u32 lpi)
-+{
-+	ida_free(&lpi_ida, lpi);
-+}
-+
-+static int gicv5_alloc_lpi(void)
-+{
-+	return alloc_lpi();
-+}
-+
-+static void gicv5_free_lpi(u32 lpi)
-+{
-+	release_lpi(lpi);
-+}
-+
-+static void gicv5_ppi_priority_init(void)
-+{
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR0_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR1_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR2_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR3_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR4_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR5_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR6_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR7_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR8_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR9_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR10_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR11_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR12_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR13_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR14_EL1);
-+	write_sysreg_s(REPEAT_BYTE(GICV5_IRQ_PRI_MI), SYS_ICC_PPI_PRIORITYR15_EL1);
-+
-+	/*
-+	 * Context syncronization required to mare system
-+	 * register writes effects are synchronized
-+	 */
-+	isb();
-+}
-+
-+static void gicv5_hwirq_init(irq_hw_number_t hwirq, u8 priority, u8 hwirq_type)
-+{
-+	u64 cdpri, cdaff;
-+	u16 iaffid;
-+	int ret;
-+
-+	if (hwirq_type == GICV5_HWIRQ_TYPE_LPI || hwirq_type == GICV5_HWIRQ_TYPE_SPI) {
-+		cdpri = FIELD_PREP(GICV5_GIC_CDPRI_PRIORITY_MASK, priority)	|
-+			FIELD_PREP(GICV5_GIC_CDPRI_TYPE_MASK, hwirq_type)	|
-+			FIELD_PREP(GICV5_GIC_CDPRI_ID_MASK, hwirq);
-+		gic_insn(cdpri, GICV5_OP_GIC_CDPRI);
-+
-+		ret = gicv5_irs_cpu_to_iaffid(smp_processor_id(), &iaffid);
-+
-+		if (WARN_ON_ONCE(ret))
-+			return;
-+
-+		cdaff = FIELD_PREP(GICV5_GIC_CDAFF_IAFFID_MASK, iaffid)		|
-+			FIELD_PREP(GICV5_GIC_CDAFF_TYPE_MASK, hwirq_type)	|
-+			FIELD_PREP(GICV5_GIC_CDAFF_ID_MASK, hwirq);
-+		gic_insn(cdaff, GICV5_OP_GIC_CDAFF);
-+	}
-+}
-+
-+static void gicv5_ppi_irq_mask(struct irq_data *d)
-+{
-+	u64 hwirq_id_bit = BIT_ULL(d->hwirq % 64);
-+
-+	if (d->hwirq < 64)
-+		sysreg_clear_set_s(SYS_ICC_PPI_ENABLER0_EL1, hwirq_id_bit, 0);
-+	else
-+		sysreg_clear_set_s(SYS_ICC_PPI_ENABLER1_EL1, hwirq_id_bit, 0);
-+
-+	/*
-+	 * Ensure that the disable takes effect
-+	 */
-+	isb();
-+}
-+
-+static void gicv5_iri_irq_mask(struct irq_data *d, u8 hwirq_type)
-+{
-+	u64 cddis = d->hwirq | FIELD_PREP(GICV5_GIC_CDDIS_TYPE_MASK, hwirq_type);
-+
-+	gic_insn(cddis, GICV5_OP_GIC_CDDIS);
-+	/*
-+	 * We must make sure that GIC CDDIS write effects are propagated
-+	 */
-+	gsb_sys();
-+}
-+
-+static void gicv5_spi_irq_mask(struct irq_data *d)
-+{
-+	gicv5_iri_irq_mask(d, GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static void gicv5_lpi_irq_mask(struct irq_data *d)
-+{
-+	gicv5_iri_irq_mask(d, GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+static void gicv5_ppi_irq_unmask(struct irq_data *d)
-+{
-+	u64 hwirq_id_bit = BIT_ULL(d->hwirq % 64);
-+
-+	if (d->hwirq < 64)
-+		sysreg_clear_set_s(SYS_ICC_PPI_ENABLER0_EL1, 0, hwirq_id_bit);
-+	else
-+		sysreg_clear_set_s(SYS_ICC_PPI_ENABLER1_EL1, 0, hwirq_id_bit);
-+}
-+
-+static void gicv5_iri_irq_unmask(struct irq_data *d, u8 hwirq_type)
-+{
-+	u64 cden = d->hwirq | FIELD_PREP(GICV5_GIC_CDEN_TYPE_MASK, hwirq_type);
-+
-+	gic_insn(cden, GICV5_OP_GIC_CDEN);
-+}
-+
-+static void gicv5_spi_irq_unmask(struct irq_data *d)
-+{
-+	gicv5_iri_irq_unmask(d, GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static void gicv5_lpi_irq_unmask(struct irq_data *d)
-+{
-+	gicv5_iri_irq_unmask(d, GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+static void gicv5_hwirq_eoi(u32 hwirq_id, u8 hwirq_type)
-+{
-+	u64 cddi = hwirq_id | FIELD_PREP(GICV5_GIC_CDDI_TYPE_MASK, hwirq_type);
-+
-+	gic_insn(cddi, GICV5_OP_GIC_CDDI);
-+
-+	gic_insn(0, GICV5_OP_GIC_CDEOI);
-+}
-+
-+static void gicv5_ppi_irq_eoi(struct irq_data *d)
-+{
-+	gicv5_hwirq_eoi(d->hwirq, GICV5_HWIRQ_TYPE_PPI);
-+}
-+
-+static void gicv5_spi_irq_eoi(struct irq_data *d)
-+{
-+	gicv5_hwirq_eoi(d->hwirq, GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static void gicv5_lpi_irq_eoi(struct irq_data *d)
-+{
-+	gicv5_hwirq_eoi(d->hwirq, GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+static int gicv5_iri_irq_set_affinity(struct irq_data *d,
-+				      const struct cpumask *mask_val,
-+				      bool force, u8 hwirq_type)
-+{
-+	int ret, cpuid;
-+	u16 iaffid;
-+	u64 cdaff;
-+
-+	if (force)
-+		cpuid = cpumask_first(mask_val);
-+	else
-+		cpuid = cpumask_any_and(mask_val, cpu_online_mask);
-+
-+	ret = gicv5_irs_cpu_to_iaffid(cpuid, &iaffid);
-+	if (ret)
-+		return ret;
-+
-+	cdaff = FIELD_PREP(GICV5_GIC_CDAFF_IAFFID_MASK, iaffid)		|
-+		FIELD_PREP(GICV5_GIC_CDAFF_TYPE_MASK, hwirq_type)	|
-+		FIELD_PREP(GICV5_GIC_CDAFF_ID_MASK, d->hwirq);
-+	gic_insn(cdaff, GICV5_OP_GIC_CDAFF);
-+
-+	irq_data_update_effective_affinity(d, cpumask_of(cpuid));
-+
-+	return IRQ_SET_MASK_OK_DONE;
-+}
-+
-+static int gicv5_spi_irq_set_affinity(struct irq_data *d,
-+				      const struct cpumask *mask_val,
-+				      bool force)
-+{
-+	return gicv5_iri_irq_set_affinity(d, mask_val, force,
-+					  GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static int gicv5_lpi_irq_set_affinity(struct irq_data *d,
-+				      const struct cpumask *mask_val,
-+				      bool force)
-+{
-+	return gicv5_iri_irq_set_affinity(d, mask_val, force,
-+					  GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+#define READ_PPI_REG(irq, reg)						\
-+	({								\
-+		u64 val;						\
-+									\
-+		if (irq < 64)						\
-+			val = read_sysreg_s(SYS_ICC_PPI_##reg##R0_EL1);	\
-+		else							\
-+			val = read_sysreg_s(SYS_ICC_PPI_##reg##R1_EL1);	\
-+		val;							\
-+	})
-+
-+#define WRITE_PPI_REG(set, irq, bit, reg)					\
-+	do {									\
-+		if (set) {							\
-+			if (irq < 64)						\
-+				write_sysreg_s(bit, SYS_ICC_PPI_S##reg##R0_EL1);\
-+			else							\
-+				write_sysreg_s(bit, SYS_ICC_PPI_S##reg##R1_EL1);\
-+		} else {							\
-+			if (irq < 64)						\
-+				write_sysreg_s(bit, SYS_ICC_PPI_C##reg##R0_EL1);\
-+			else							\
-+				write_sysreg_s(bit, SYS_ICC_PPI_C##reg##R1_EL1);\
-+		}								\
-+	} while (0)
-+
-+static int gicv5_ppi_set_type(struct irq_data *d, unsigned int type)
-+{
-+	/*
-+	 * The PPI trigger mode is not configurable at runtime,
-+	 * therefore this function simply confirms that the `type`
-+	 * parameter matches what is present.
-+	 */
-+	u64 hmr = READ_PPI_REG(d->hwirq, HM);
-+
-+	switch (type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+	case IRQ_TYPE_LEVEL_LOW:
-+		if (((hmr >> (d->hwirq % 64)) & 0x1) != GICV5_PPI_HM_LEVEL)
-+			return -EINVAL;
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_EDGE_FALLING:
-+		if (((hmr >> (d->hwirq % 64)) & 0x1) != GICV5_PPI_HM_EDGE)
-+			return -EINVAL;
-+		break;
-+	default:
-+		pr_debug("Unexpected PPI trigger mode");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int gicv5_ppi_irq_get_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool *val)
-+{
-+	u64 pendr, activer, enabler, hwirq_id_bit = BIT_ULL(d->hwirq % 64);
-+
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		pendr = READ_PPI_REG(d->hwirq, SPEND);
-+
-+		*val = !!(pendr & hwirq_id_bit);
-+
-+		return 0;
-+	case IRQCHIP_STATE_ACTIVE:
-+		activer = READ_PPI_REG(d->hwirq, SACTIVE);
-+
-+		*val = !!(activer & hwirq_id_bit);
-+
-+		return 0;
-+	case IRQCHIP_STATE_MASKED:
-+		enabler = READ_PPI_REG(d->hwirq, ENABLE);
-+
-+		*val = !(enabler & hwirq_id_bit);
-+
-+		return 0;
-+	default:
-+		pr_debug("Unexpected PPI irqchip state\n");
-+		return -EINVAL;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int gicv5_iri_irq_get_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool *val, u8 hwirq_type)
-+{
-+	u64 icsr, cdrcfg;
-+
-+	cdrcfg = d->hwirq | FIELD_PREP(GICV5_GIC_CDRCFG_TYPE_MASK, hwirq_type);
-+
-+	gic_insn(cdrcfg, GICV5_OP_GIC_CDRCFG);
-+	isb();
-+	icsr = read_sysreg_s(SYS_ICC_ICSR_EL1);
-+
-+	if (FIELD_GET(ICC_ICSR_EL1_F, icsr)) {
-+		pr_err("ICSR_EL1 is invalid\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		*val = !!(FIELD_GET(ICC_ICSR_EL1_Pending, icsr));
-+		return 0;
-+
-+	case IRQCHIP_STATE_ACTIVE:
-+		*val = !!(FIELD_GET(ICC_ICSR_EL1_Active, icsr));
-+		return 0;
-+
-+	case IRQCHIP_STATE_MASKED:
-+		*val = !(FIELD_GET(ICC_ICSR_EL1_Enabled, icsr));
-+		return 0;
-+
-+	default:
-+		pr_debug("Unexpected irqchip_irq_state\n");
-+		return -EINVAL;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int gicv5_spi_irq_get_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool *val)
-+{
-+	return gicv5_iri_irq_get_irqchip_state(d, which, val,
-+					       GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static int gicv5_lpi_irq_get_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool *val)
-+{
-+	return gicv5_iri_irq_get_irqchip_state(d, which, val,
-+					       GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+static int gicv5_ppi_irq_set_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool val)
-+{
-+	u64 hwirq_id_bit = BIT_ULL(d->hwirq % 64);
-+
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		WRITE_PPI_REG(val, d->hwirq, hwirq_id_bit, PEND);
-+		return 0;
-+	case IRQCHIP_STATE_ACTIVE:
-+		WRITE_PPI_REG(val, d->hwirq, hwirq_id_bit, ACTIVE);
-+		return 0;
-+	case IRQCHIP_STATE_MASKED:
-+		if (val)
-+			gicv5_ppi_irq_mask(d);
-+		else
-+			gicv5_ppi_irq_unmask(d);
-+		return 0;
-+	default:
-+		pr_debug("Unexpected PPI irqchip state\n");
-+		return -EINVAL;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static void gicv5_iri_irq_write_pending_state(struct irq_data *d, bool val,
-+					      u8 hwirq_type)
-+{
-+	u64 cdpend;
-+
-+	cdpend = FIELD_PREP(GICV5_GIC_CDPEND_TYPE_MASK, hwirq_type)	|
-+		 FIELD_PREP(GICV5_GIC_CDPEND_ID_MASK, d->hwirq)		|
-+		 FIELD_PREP(GICV5_GIC_CDPEND_PENDING_MASK, val);
-+
-+	gic_insn(cdpend, GICV5_OP_GIC_CDPEND);
-+}
-+
-+static void gicv5_spi_irq_write_pending_state(struct irq_data *d, bool val)
-+{
-+	gicv5_iri_irq_write_pending_state(d, val, GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static void gicv5_lpi_irq_write_pending_state(struct irq_data *d, bool val)
-+{
-+	gicv5_iri_irq_write_pending_state(d, val, GICV5_HWIRQ_TYPE_LPI);
-+}
-+
-+static int gicv5_spi_irq_set_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool val)
-+{
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		gicv5_spi_irq_write_pending_state(d, val);
-+		break;
-+	case IRQCHIP_STATE_MASKED:
-+		if (val)
-+			gicv5_spi_irq_mask(d);
-+		else
-+			gicv5_spi_irq_unmask(d);
-+		break;
-+	default:
-+		pr_debug("Unexpected irqchip_irq_state\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int gicv5_lpi_irq_set_irqchip_state(struct irq_data *d,
-+					   enum irqchip_irq_state which,
-+					   bool val)
-+{
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		gicv5_lpi_irq_write_pending_state(d, val);
-+		break;
-+	case IRQCHIP_STATE_MASKED:
-+		if (val)
-+			gicv5_lpi_irq_mask(d);
-+		else
-+			gicv5_lpi_irq_unmask(d);
-+		break;
-+
-+	default:
-+		pr_debug("Unexpected irqchip_irq_state\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int gicv5_spi_irq_retrigger(struct irq_data *data)
-+{
-+	return !gicv5_spi_irq_set_irqchip_state(data, IRQCHIP_STATE_PENDING,
-+						true);
-+}
-+
-+static int gicv5_lpi_irq_retrigger(struct irq_data *data)
-+{
-+	return !gicv5_lpi_irq_set_irqchip_state(data, IRQCHIP_STATE_PENDING,
-+						true);
-+}
-+
-+static void gicv5_ipi_send_single(struct irq_data *d, unsigned int cpu)
-+{
-+	/* Mark the LPI pending */
-+	irq_chip_retrigger_hierarchy(d);
-+}
-+
-+static const struct irq_chip gicv5_ppi_irq_chip = {
-+	.name			= "GICv5-PPI",
-+	.irq_mask		= gicv5_ppi_irq_mask,
-+	.irq_unmask		= gicv5_ppi_irq_unmask,
-+	.irq_eoi		= gicv5_ppi_irq_eoi,
-+	.irq_set_type		= gicv5_ppi_set_type,
-+	.irq_get_irqchip_state	= gicv5_ppi_irq_get_irqchip_state,
-+	.irq_set_irqchip_state	= gicv5_ppi_irq_set_irqchip_state,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE	  |
-+				  IRQCHIP_MASK_ON_SUSPEND
++struct gicv5_its_itt_cfg {
++	union {
++		struct {
++			__le64	*itt;
++			unsigned int num_ents;
++		} linear;
++		struct {
++			__le64	*l1itt;
++			__le64	**l2ptrs;
++			unsigned int num_l1_ents;
++			u8 l2sz;
++		} l2;
++	};
++	u8 event_id_bits;
++	bool l2itt;
 +};
 +
-+static const struct irq_chip gicv5_spi_irq_chip = {
-+	.name			= "GICv5-SPI",
-+	.irq_mask		= gicv5_spi_irq_mask,
-+	.irq_unmask		= gicv5_spi_irq_unmask,
-+	.irq_eoi		= gicv5_spi_irq_eoi,
-+	.irq_set_type		= gicv5_spi_irq_set_type,
-+	.irq_set_affinity	= gicv5_spi_irq_set_affinity,
-+	.irq_retrigger		= gicv5_spi_irq_retrigger,
-+	.irq_get_irqchip_state	= gicv5_spi_irq_get_irqchip_state,
-+	.irq_set_irqchip_state	= gicv5_spi_irq_set_irqchip_state,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE	  |
-+				  IRQCHIP_MASK_ON_SUSPEND
++struct gicv5_its_chip_data {
++	struct	list_head		entry;
++	struct	xarray			its_devices;
++	struct	mutex			dev_alloc_lock;
++	struct	fwnode_handle		*fwnode;
++	struct gicv5_its_devtab_cfg	devtab_cfgr;
++	struct irq_domain		*domain;
++	void	__iomem			*its_base;
++	phys_addr_t			its_trans_phys_base;
++	u32				flags;
 +};
 +
-+static int gicv5_irq_domain_translate(struct irq_domain *d,
-+				      struct irq_fwspec *fwspec,
-+				      irq_hw_number_t *hwirq,
-+				      unsigned int *type,
-+				      u8 hwirq_type)
-+{
-+	if (!is_of_node(fwspec->fwnode))
-+		return -EINVAL;
-+
-+	if (fwspec->param_count < 3)
-+		return -EINVAL;
-+
-+	if (fwspec->param[0] != hwirq_type)
-+		return -EINVAL;
-+
-+	*hwirq = fwspec->param[1];
-+	*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
-+
-+	return 0;
-+}
-+
-+static int gicv5_irq_ppi_domain_translate(struct irq_domain *d,
-+					  struct irq_fwspec *fwspec,
-+					  irq_hw_number_t *hwirq,
-+					  unsigned int *type)
-+{
-+	return gicv5_irq_domain_translate(d, fwspec, hwirq, type,
-+					  GICV5_HWIRQ_TYPE_PPI);
-+}
-+
-+static int gicv5_irq_ppi_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				      unsigned int nr_irqs, void *arg)
-+{
-+	unsigned int type = IRQ_TYPE_NONE;
-+	struct irq_fwspec *fwspec = arg;
-+	irq_hw_number_t hwirq;
-+	int ret;
-+
-+	if (WARN_ON_ONCE(nr_irqs != 1))
-+		return -EINVAL;
-+
-+	ret = gicv5_irq_ppi_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return ret;
-+
-+	irq_set_percpu_devid(virq);
-+	irq_domain_set_info(domain, virq, hwirq, &gicv5_ppi_irq_chip, NULL,
-+			    handle_percpu_devid_irq, NULL, NULL);
-+
-+	return 0;
-+}
-+
-+static void gicv5_irq_domain_free(struct irq_domain *domain, unsigned int virq,
-+				  unsigned int nr_irqs)
-+{
-+	struct irq_data *d;
-+
-+	if (WARN_ON_ONCE(nr_irqs != 1))
-+		return;
-+
-+	d = irq_domain_get_irq_data(domain, virq);
-+
-+	irq_set_handler(virq, NULL);
-+	irq_domain_reset_irq_data(d);
-+}
-+
-+static int gicv5_irq_ppi_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
-+				       enum irq_domain_bus_token bus_token)
-+{
-+	if (fwspec->fwnode != d->fwnode)
-+		return 0;
-+
-+	if (fwspec->param[0] != GICV5_HWIRQ_TYPE_PPI)
-+		return 0;
-+
-+	return (d == gicv5_global_data.ppi_domain);
-+}
-+
-+static const struct irq_domain_ops gicv5_irq_ppi_domain_ops = {
-+	.translate	= gicv5_irq_ppi_domain_translate,
-+	.alloc		= gicv5_irq_ppi_domain_alloc,
-+	.free		= gicv5_irq_domain_free,
-+	.select		= gicv5_irq_ppi_domain_select
++struct gicv5_its_dev {
++	struct gicv5_its_chip_data	*its_node;
++	struct gicv5_its_itt_cfg	itt_cfg;
++	unsigned long			*event_map;
++	u32				device_id;
++	u32				num_events;
++	u32				num_mapped_events;
++	bool				shared;
 +};
-+
-+static int gicv5_irq_spi_domain_translate(struct irq_domain *d,
-+					  struct irq_fwspec *fwspec,
-+					  irq_hw_number_t *hwirq,
-+					  unsigned int *type)
-+{
-+	return gicv5_irq_domain_translate(d, fwspec, hwirq, type,
-+					  GICV5_HWIRQ_TYPE_SPI);
-+}
-+
-+static int gicv5_irq_spi_domain_alloc(struct irq_domain *domain,
-+				      unsigned int virq, unsigned int nr_irqs,
-+				      void *arg)
-+{
-+	struct gicv5_irs_chip_data *chip_data;
-+	unsigned int type = IRQ_TYPE_NONE;
-+	struct irq_fwspec *fwspec = arg;
-+	struct irq_data *irqd;
-+	irq_hw_number_t hwirq;
-+	int ret;
-+
-+	if (WARN_ON_ONCE(nr_irqs != 1))
-+		return -EINVAL;
-+
-+	ret = gicv5_irq_spi_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return ret;
-+
-+	irqd = irq_desc_get_irq_data(irq_to_desc(virq));
-+	chip_data = gicv5_irs_lookup_by_spi_id(hwirq);
-+
-+	irq_domain_set_info(domain, virq, hwirq, &gicv5_spi_irq_chip, chip_data,
-+			    handle_fasteoi_irq, NULL, NULL);
-+	irq_set_probe(virq);
-+	irqd_set_single_target(irqd);
-+
-+	gicv5_hwirq_init(hwirq, GICV5_IRQ_PRI_MI, GICV5_HWIRQ_TYPE_SPI);
-+
-+	return 0;
-+}
-+
-+static int gicv5_irq_spi_domain_select(struct irq_domain *d,
-+				       struct irq_fwspec *fwspec,
-+				       enum irq_domain_bus_token bus_token)
-+{
-+	if (fwspec->fwnode != d->fwnode)
-+		return 0;
-+
-+	if (fwspec->param[0] != GICV5_HWIRQ_TYPE_SPI)
-+		return 0;
-+
-+	return (d == gicv5_global_data.spi_domain);
-+}
-+
-+static const struct irq_domain_ops gicv5_irq_spi_domain_ops = {
-+	.translate	= gicv5_irq_spi_domain_translate,
-+	.alloc		= gicv5_irq_spi_domain_alloc,
-+	.free		= gicv5_irq_domain_free,
-+	.select		= gicv5_irq_spi_domain_select
-+};
-+
-+static const struct irq_chip gicv5_lpi_irq_chip = {
-+	.name			= "GICv5-LPI",
-+	.irq_mask		= gicv5_lpi_irq_mask,
-+	.irq_unmask		= gicv5_lpi_irq_unmask,
-+	.irq_eoi		= gicv5_lpi_irq_eoi,
-+	.irq_set_affinity	= gicv5_lpi_irq_set_affinity,
-+	.irq_retrigger		= gicv5_lpi_irq_retrigger,
-+	.irq_get_irqchip_state	= gicv5_lpi_irq_get_irqchip_state,
-+	.irq_set_irqchip_state	= gicv5_lpi_irq_set_irqchip_state,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE	  |
-+				  IRQCHIP_MASK_ON_SUSPEND
-+};
-+
-+static const struct irq_chip gicv5_ipi_irq_chip = {
-+	.name			= "GICv5-IPI",
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+	.irq_get_irqchip_state	= irq_chip_get_parent_state,
-+	.irq_set_irqchip_state	= irq_chip_set_parent_state,
-+	// We only handle this one in the IPI domain - the rest go to parent
-+	.ipi_send_single	= gicv5_ipi_send_single,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE	  |
-+				  IRQCHIP_MASK_ON_SUSPEND
-+};
-+
-+static int gicv5_irq_lpi_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				      unsigned int nr_irqs, void *arg)
-+{
-+	irq_hw_number_t hwirq;
-+	struct irq_data *irqd;
-+	u32 *lpi = arg;
-+	int ret;
-+
-+	if (WARN_ON_ONCE(nr_irqs != 1))
-+		return -EINVAL;
-+
-+	hwirq = *lpi;
-+
-+	irqd = irq_domain_get_irq_data(domain, virq);
-+
-+	irq_domain_set_info(domain, virq, hwirq, &gicv5_lpi_irq_chip, NULL,
-+			    handle_fasteoi_irq, NULL, NULL);
-+	irqd_set_single_target(irqd);
-+
-+	ret = gicv5_irs_iste_alloc(hwirq);
-+	if (ret < 0)
-+		return ret;
-+
-+	gicv5_hwirq_init(hwirq, GICV5_IRQ_PRI_MI, GICV5_HWIRQ_TYPE_LPI);
-+
-+	return 0;
-+}
-+
-+static void gicv5_irq_lpi_domain_free(struct irq_domain *domain, unsigned int virq,
-+				      unsigned int nr_irqs)
-+{
-+	struct irq_data *d;
-+	int i;
-+
-+	WARN_ON_ONCE(nr_irqs != 1);
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		d = irq_domain_get_irq_data(domain, virq + i);
-+
-+		irq_set_handler(virq + i, NULL);
-+		irq_domain_reset_irq_data(d);
-+	}
-+}
-+
-+static const struct irq_domain_ops gicv5_irq_lpi_domain_ops = {
-+	.alloc	= gicv5_irq_lpi_domain_alloc,
-+	.free	= gicv5_irq_lpi_domain_free,
-+};
-+
-+void __init gicv5_init_lpi_domain(void)
-+{
-+	struct irq_domain *d;
-+
-+	d = irq_domain_create_tree(NULL, &gicv5_irq_lpi_domain_ops, NULL);
-+	gicv5_global_data.lpi_domain = d;
-+}
-+
-+void __init gicv5_free_lpi_domain(void)
-+{
-+	irq_domain_remove(gicv5_global_data.lpi_domain);
-+}
-+
-+static int gicv5_irq_ipi_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				      unsigned int nr_irqs, void *arg)
-+{
-+	struct irq_data *irqd;
-+	int ret, i;
-+	u32 lpi;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		ret = gicv5_alloc_lpi();
-+		if (ret < 0)
-+			return ret;
-+
-+		lpi = ret;
-+
-+		ret = irq_domain_alloc_irqs_parent(domain, virq + i, 1, &lpi);
-+		if (ret) {
-+			gicv5_free_lpi(lpi);
-+			return ret;
-+		}
-+
-+		irqd = irq_domain_get_irq_data(domain, virq + i);
-+
-+		irq_domain_set_hwirq_and_chip(domain, virq + i, i,
-+				&gicv5_ipi_irq_chip, NULL);
-+
-+		irqd_set_single_target(irqd);
-+
-+		irq_set_handler(virq + i, handle_percpu_irq);
-+	}
-+
-+	return 0;
-+}
-+
-+static void gicv5_irq_ipi_domain_free(struct irq_domain *domain, unsigned int virq,
-+				      unsigned int nr_irqs)
-+{
-+	struct irq_data *d;
-+	unsigned int i;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		d = irq_domain_get_irq_data(domain, virq + i);
-+
-+		if (!d)
-+			return;
-+
-+		gicv5_free_lpi(d->parent_data->hwirq);
-+
-+		irq_set_handler(virq + i, NULL);
-+		irq_domain_reset_irq_data(d);
-+		irq_domain_free_irqs_parent(domain, virq + i, 1);
-+	}
-+}
-+
-+static const struct irq_domain_ops gicv5_irq_ipi_domain_ops = {
-+	.alloc	= gicv5_irq_ipi_domain_alloc,
-+	.free	= gicv5_irq_ipi_domain_free,
-+};
-+
-+static inline void handle_irq_per_domain(u32 hwirq)
-+{
-+	u8 hwirq_type = FIELD_GET(GICV5_HWIRQ_TYPE, hwirq);
-+	u32 hwirq_id = FIELD_GET(GICV5_HWIRQ_ID, hwirq);
-+	struct irq_domain *domain = NULL;
-+
-+	if (hwirq_type == GICV5_HWIRQ_TYPE_PPI)
-+		domain = gicv5_global_data.ppi_domain;
-+	else if (hwirq_type == GICV5_HWIRQ_TYPE_SPI)
-+		domain = gicv5_global_data.spi_domain;
-+	else if (hwirq_type == GICV5_HWIRQ_TYPE_LPI)
-+		domain = gicv5_global_data.lpi_domain;
-+
-+	if (generic_handle_domain_irq(domain, hwirq_id)) {
-+		pr_err_once("Could not handle, hwirq = 0x%x", hwirq_id);
-+		gicv5_hwirq_eoi(hwirq_id, hwirq_type);
-+	}
-+}
-+
-+static void __exception_irq_entry gicv5_handle_irq(struct pt_regs *regs)
-+{
-+	bool valid;
-+	u32 hwirq;
-+	u64 ia;
-+
-+	ia = gicr_insn(GICV5_OP_GICR_CDIA);
-+	valid = GICV5_GIC_CDIA_VALID(ia);
-+
-+	if (!valid)
-+		return;
-+
-+	/*
-+	 * Ensure that the CDIA instruction effects (ie IRQ activation) are
-+	 * completed before handling the interrupt.
-+	 */
-+	gsb_ack();
-+
-+	/*
-+	 * Ensure instruction ordering between an acknowledgment and subsequent
-+	 * instructions in the IRQ handler using an ISB.
-+	 */
-+	isb();
-+
-+	hwirq = FIELD_GET(GICV5_HWIRQ_INTID, ia);
-+
-+	handle_irq_per_domain(hwirq);
-+}
-+
-+static void gicv5_cpu_disable_interrupts(void)
-+{
-+	u64 cr0;
-+
-+	cr0 = FIELD_PREP(ICC_CR0_EL1_EN, 0);
-+	write_sysreg_s(cr0, SYS_ICC_CR0_EL1);
-+}
-+
-+static void gicv5_cpu_enable_interrupts(void)
-+{
-+	u64 cr0, pcr;
-+
-+	write_sysreg_s(0, SYS_ICC_PPI_ENABLER0_EL1);
-+	write_sysreg_s(0, SYS_ICC_PPI_ENABLER1_EL1);
-+
-+	gicv5_ppi_priority_init();
-+
-+	pcr = FIELD_PREP(ICC_PCR_EL1_PRIORITY, GICV5_IRQ_PRI_MI);
-+	write_sysreg_s(pcr, SYS_ICC_PCR_EL1);
-+
-+	cr0 = FIELD_PREP(ICC_CR0_EL1_EN, 1);
-+	write_sysreg_s(cr0, SYS_ICC_CR0_EL1);
-+}
-+
-+static int base_ipi_virq;
-+
-+static int gicv5_starting_cpu(unsigned int cpu)
-+{
-+	if (WARN(!gicv5_cpuif_has_gcie(),
-+	    "GICv5 system components present but CPU does not have FEAT_GCIE"))
-+		return -ENODEV;
-+
-+	gicv5_cpu_enable_interrupts();
-+
-+	return gicv5_irs_register_cpu(cpu);
-+}
-+
-+static void __init gicv5_smp_init(void)
-+{
-+	unsigned int num_ipis = GICV5_IPIS_PER_CPU * nr_cpu_ids;
-+
-+	cpuhp_setup_state_nocalls(CPUHP_AP_IRQ_GIC_STARTING,
-+				  "irqchip/arm/gicv5:starting",
-+				  gicv5_starting_cpu, NULL);
-+
-+	base_ipi_virq = irq_domain_alloc_irqs(gicv5_global_data.ipi_domain,
-+					      num_ipis, NUMA_NO_NODE, NULL);
-+	if (WARN(base_ipi_virq <= 0, "IPI IRQ allocation was not successful"))
-+		return;
-+
-+	set_smp_ipi_range_percpu(base_ipi_virq, GICV5_IPIS_PER_CPU, nr_cpu_ids);
-+}
-+
-+static void __init gicv5_free_domains(void)
-+{
-+	if (gicv5_global_data.ppi_domain)
-+		irq_domain_remove(gicv5_global_data.ppi_domain);
-+	if (gicv5_global_data.spi_domain)
-+		irq_domain_remove(gicv5_global_data.spi_domain);
-+	if (gicv5_global_data.ipi_domain)
-+		irq_domain_remove(gicv5_global_data.ipi_domain);
-+}
-+
-+static int __init gicv5_init_domains(struct fwnode_handle *handle)
-+{
-+	u32 spi_count = gicv5_global_data.global_spi_count;
-+	struct irq_domain *d;
-+
-+	d = irq_domain_create_linear(handle, 128, &gicv5_irq_ppi_domain_ops,
-+				     NULL);
-+	if (!d)
-+		return -ENOMEM;
-+
-+	irq_domain_update_bus_token(d, DOMAIN_BUS_WIRED);
-+	gicv5_global_data.ppi_domain = d;
-+
-+	if (spi_count) {
-+		d = irq_domain_create_linear(handle, spi_count,
-+					     &gicv5_irq_spi_domain_ops, NULL);
-+
-+		if (!d) {
-+			gicv5_free_domains();
-+			return -ENOMEM;
-+		}
-+
-+		gicv5_global_data.spi_domain = d;
-+		irq_domain_update_bus_token(d, DOMAIN_BUS_WIRED);
-+	}
-+
-+	if (!WARN(!gicv5_global_data.lpi_domain,
-+		  "LPI domain uninitialized, can't set up IPIs")) {
-+		d = irq_domain_create_hierarchy(gicv5_global_data.lpi_domain,
-+						0, GICV5_IPIS_PER_CPU * nr_cpu_ids,
-+						NULL, &gicv5_irq_ipi_domain_ops,
-+						NULL);
-+
-+		if (!d) {
-+			gicv5_free_domains();
-+			return -ENOMEM;
-+		}
-+		gicv5_global_data.ipi_domain = d;
-+	}
-+	gicv5_global_data.fwnode = handle;
-+
-+	return 0;
-+}
-+
-+static void gicv5_set_cpuif_pribits(void)
-+{
-+	u64 icc_idr0 = read_sysreg_s(SYS_ICC_IDR0_EL1);
-+
-+	switch (FIELD_GET(ICC_IDR0_EL1_PRI_BITS, icc_idr0)) {
-+	case ICC_IDR0_EL1_PRI_BITS_4BITS:
-+		gicv5_global_data.cpuif_pri_bits = 4;
-+		break;
-+	case ICC_IDR0_EL1_PRI_BITS_5BITS:
-+		gicv5_global_data.cpuif_pri_bits = 5;
-+		break;
-+	default:
-+		pr_err("Unexpected ICC_IDR0_EL1_PRI_BITS value, default to 4");
-+		gicv5_global_data.cpuif_pri_bits = 4;
-+		break;
-+	}
-+}
-+
-+static void gicv5_set_cpuif_idbits(void)
-+{
-+	u32 icc_idr0 = read_sysreg_s(SYS_ICC_IDR0_EL1);
-+
-+	switch (FIELD_GET(ICC_IDR0_EL1_ID_BITS, icc_idr0)) {
-+	case ICC_IDR0_EL1_ID_BITS_16BITS:
-+		gicv5_global_data.cpuif_id_bits = 16;
-+		break;
-+	case ICC_IDR0_EL1_ID_BITS_24BITS:
-+		gicv5_global_data.cpuif_id_bits = 24;
-+		break;
-+	default:
-+		pr_err("Unexpected ICC_IDR0_EL1_ID_BITS value, default to 16");
-+		gicv5_global_data.cpuif_id_bits = 16;
-+		break;
-+	}
-+}
-+
-+
-+static int __init gicv5_of_init(struct device_node *node,
-+				struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = gicv5_irs_of_probe(node);
-+	if (ret)
-+		return ret;
-+
-+	ret = gicv5_init_domains(&node->fwnode);
-+	if (ret)
-+		goto out_irs;
-+
-+	gicv5_set_cpuif_pribits();
-+	gicv5_set_cpuif_idbits();
-+
-+	pri_bits = min_not_zero(gicv5_global_data.cpuif_pri_bits,
-+		       gicv5_global_data.irs_pri_bits);
-+
-+	ret = gicv5_starting_cpu(smp_processor_id());
-+	if (ret)
-+		goto out_dom;
-+
-+	ret = set_handle_irq(gicv5_handle_irq);
-+	if (ret)
-+		goto out_int;
-+
-+	ret = gicv5_irs_enable();
-+	if (ret)
-+		goto out_int;
-+
-+	gicv5_smp_init();
-+
-+	return 0;
-+out_int:
-+	gicv5_cpu_disable_interrupts();
-+out_dom:
-+	gicv5_free_domains();
-+out_irs:
-+	gicv5_irs_remove();
-+
-+	return ret;
-+}
-+IRQCHIP_DECLARE(gic_v5, "arm,gic-v5", gicv5_of_init);
-diff --git a/drivers/irqchip/irq-gic-v5.h b/drivers/irqchip/irq-gic-v5.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..19569639153a084760c3b5b7f0fa84791ba0195c
---- /dev/null
-+++ b/drivers/irqchip/irq-gic-v5.h
-@@ -0,0 +1,184 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2025 ARM Limited, All Rights Reserved.
-+ */
-+#ifndef __LINUX_IRQCHIP_GIC_V5_H
-+#define __LINUX_IRQCHIP_GIC_V5_H
-+
-+#include <asm/arch_gicv5.h>
-+#include <asm/smp.h>
-+
-+#define GICV5_IPIS_PER_CPU		MAX_IPI
-+
-+#define GICV5_HWIRQ_ID			GENMASK(23, 0)
-+#define GICV5_HWIRQ_TYPE		GENMASK(31, 29)
-+#define GICV5_HWIRQ_INTID		GENMASK_ULL(31, 0)
-+
-+#define GICV5_HWIRQ_TYPE_PPI		UL(0x1)
-+#define GICV5_HWIRQ_TYPE_LPI		UL(0x2)
-+#define GICV5_HWIRQ_TYPE_SPI		UL(0x3)
-+
-+#define GICV5_PPI_HM_EDGE		UL(0x0)
-+#define GICV5_PPI_HM_LEVEL		UL(0x1)
-+
-+#define GICV5_NO_READ_ALLOC		0b0
-+#define GICV5_READ_ALLOC		0b1
-+#define GICV5_NO_WRITE_ALLOC		0b0
-+#define GICV5_WRITE_ALLOC		0b1
-+
-+#define GICV5_NON_CACHE			0b00
-+#define GICV5_WB_CACHE			0b01
-+#define GICV5_WT_CACHE			0b10
-+
-+#define GICV5_NON_SHARE			0b00
-+#define GICV5_OUTER_SHARE		0b10
-+#define GICV5_INNER_SHARE		0b11
-+
-+#define GICV5_IRS_IDR1			0x0004
-+#define GICV5_IRS_IDR2			0x0008
-+#define GICV5_IRS_IDR5			0x0014
-+#define GICV5_IRS_IDR6			0x0018
-+#define GICV5_IRS_IDR7			0x001c
-+#define GICV5_IRS_CR0			0x0080
-+#define GICV5_IRS_CR1			0x0084
-+#define GICV5_IRS_SPI_SELR		0x0108
-+#define GICV5_IRS_SPI_CFGR		0x0114
-+#define GICV5_IRS_SPI_STATUSR		0x0118
-+#define GICV5_IRS_PE_SELR		0x0140
-+#define GICV5_IRS_PE_STATUSR		0x0144
-+#define GICV5_IRS_PE_CR0		0x0148
-+#define GICV5_IRS_IST_BASER		0x0180
-+#define GICV5_IRS_IST_CFGR		0x0190
-+#define GICV5_IRS_IST_STATUSR		0x0194
-+#define GICV5_IRS_MAP_L2_ISTR		0x01c0
-+
-+#define GICV5_IRS_IDR1_PRIORITY_BITS	GENMASK(22, 20)
-+#define GICV5_IRS_IDR1_IAFFID_BITS	GENMASK(19, 16)
-+
-+#define GICV5_IRS_IDR1_PRIORITY_BITS_1BITS	0b000
-+#define GICV5_IRS_IDR1_PRIORITY_BITS_2BITS	0b001
-+#define GICV5_IRS_IDR1_PRIORITY_BITS_3BITS	0b010
-+#define GICV5_IRS_IDR1_PRIORITY_BITS_4BITS	0b011
-+#define GICV5_IRS_IDR1_PRIORITY_BITS_5BITS	0b100
-+
-+#define GICV5_IRS_IDR2_ISTMD_SZ		GENMASK(19, 15)
-+#define GICV5_IRS_IDR2_ISTMD		BIT(14)
-+#define GICV5_IRS_IDR2_IST_L2SZ		GENMASK(13, 11)
-+#define GICV5_IRS_IDR2_IST_LEVELS	BIT(10)
-+#define GICV5_IRS_IDR2_MIN_LPI_ID_BITS	GENMASK(9, 6)
-+#define GICV5_IRS_IDR2_LPI		BIT(5)
-+#define GICV5_IRS_IDR2_ID_BITS		GENMASK(4, 0)
-+
-+#define GICV5_IRS_IDR5_SPI_RANGE	GENMASK(24, 0)
-+#define GICV5_IRS_IDR6_SPI_IRS_RANGE	GENMASK(24, 0)
-+#define GICV5_IRS_IDR7_SPI_BASE		GENMASK(23, 0)
-+
-+#define GICV5_IRS_IST_L2SZ_SUPPORT_4KB(r)	FIELD_GET(BIT(11), (r))
-+#define GICV5_IRS_IST_L2SZ_SUPPORT_16KB(r)	FIELD_GET(BIT(12), (r))
-+#define GICV5_IRS_IST_L2SZ_SUPPORT_64KB(r)	FIELD_GET(BIT(13), (r))
-+
-+#define GICV5_IRS_CR0_IDLE		BIT(1)
-+#define GICV5_IRS_CR0_IRSEN		BIT(0)
-+
-+#define GICV5_IRS_CR1_VPED_WA		BIT(15)
-+#define GICV5_IRS_CR1_VPED_RA		BIT(14)
-+#define GICV5_IRS_CR1_VMD_WA		BIT(13)
-+#define GICV5_IRS_CR1_VMD_RA		BIT(12)
-+#define GICV5_IRS_CR1_VPET_WA		BIT(11)
-+#define GICV5_IRS_CR1_VPET_RA		BIT(10)
-+#define GICV5_IRS_CR1_VMT_WA		BIT(9)
-+#define GICV5_IRS_CR1_VMT_RA		BIT(8)
-+#define GICV5_IRS_CR1_IST_WA		BIT(7)
-+#define GICV5_IRS_CR1_IST_RA		BIT(6)
-+#define GICV5_IRS_CR1_IC		GENMASK(5, 4)
-+#define GICV5_IRS_CR1_OC		GENMASK(3, 2)
-+#define GICV5_IRS_CR1_SH		GENMASK(1, 0)
-+
-+#define GICV5_IRS_SPI_STATUSR_V		BIT(1)
-+#define GICV5_IRS_SPI_STATUSR_IDLE	BIT(0)
-+
-+#define GICV5_IRS_SPI_SELR_ID		GENMASK(23, 0)
-+
-+#define GICV5_IRS_SPI_CFGR_TM		BIT(0)
-+
-+#define GICV5_IRS_PE_SELR_IAFFID	GENMASK(15, 0)
-+
-+#define GICV5_IRS_PE_STATUSR_V		BIT(1)
-+#define GICV5_IRS_PE_STATUSR_IDLE	BIT(0)
-+
-+#define GICV5_IRS_PE_CR0_DPS		BIT(0)
-+
-+#define GICV5_IRS_IST_STATUSR_IDLE	BIT(0)
-+
-+#define GICV5_IRS_IST_CFGR_STRUCTURE	BIT(16)
-+#define GICV5_IRS_IST_CFGR_ISTSZ	GENMASK(8, 7)
-+#define GICV5_IRS_IST_CFGR_L2SZ		GENMASK(6, 5)
-+#define GICV5_IRS_IST_CFGR_LPI_ID_BITS	GENMASK(4, 0)
-+
-+#define GICV5_IRS_IST_CFGR_STRUCTURE_LINEAR	0b0
-+#define GICV5_IRS_IST_CFGR_STRUCTURE_TWO_LEVEL	0b1
-+
-+#define GICV5_IRS_IST_CFGR_ISTSZ_4	0b00
-+#define GICV5_IRS_IST_CFGR_ISTSZ_8	0b01
-+#define GICV5_IRS_IST_CFGR_ISTSZ_16	0b10
-+
-+#define GICV5_IRS_IST_CFGR_L2SZ_4K	0b00
-+#define GICV5_IRS_IST_CFGR_L2SZ_16K	0b01
-+#define GICV5_IRS_IST_CFGR_L2SZ_64K	0b10
-+
-+#define GICV5_IRS_IST_BASER_ADDR_MASK	GENMASK_ULL(55, 6)
-+#define GICV5_IRS_IST_BASER_VALID	BIT_ULL(0)
-+
-+#define GICV5_IRS_MAP_L2_ISTR_ID	GENMASK(23, 0)
-+
-+#define GICV5_ISTL1E_VALID		BIT_ULL(0)
-+
-+#define GICV5_ISTL1E_L2_ADDR_MASK	GENMASK_ULL(55, 12)
-+
-+struct gicv5_chip_data {
-+	struct fwnode_handle	*fwnode;
-+	struct irq_domain	*ppi_domain;
-+	struct irq_domain	*spi_domain;
-+	struct irq_domain	*lpi_domain;
-+	struct irq_domain	*ipi_domain;
-+	u32			global_spi_count;
-+	u8			cpuif_pri_bits;
-+	u8			cpuif_id_bits;
-+	u8			irs_pri_bits;
-+	u8			irs_iaffid_bits;
-+	struct {
-+		__le64 *l1ist_addr;
-+		u32 l2_size;
-+		u8 l2_bits;
-+		bool l2;
-+	} ist;
-+};
-+
-+extern struct gicv5_chip_data gicv5_global_data __read_mostly;
-+
-+struct gicv5_irs_chip_data {
-+	struct list_head	entry;
-+	struct fwnode_handle	*fwnode;
-+	void __iomem		*irs_base;
-+	u32			flags;
-+	u32			spi_min;
-+	u32			spi_range;
-+	raw_spinlock_t		spi_config_lock;
-+};
-+
-+void __init gicv5_init_lpi_domain(void);
-+void __init gicv5_free_lpi_domain(void);
-+
-+int gicv5_irs_of_probe(struct device_node *parent);
-+void gicv5_irs_remove(void);
-+int gicv5_irs_enable(void);
-+int gicv5_irs_register_cpu(int cpuid);
-+int gicv5_irs_cpu_to_iaffid(int cpu_id, u16 *iaffid);
-+struct gicv5_irs_chip_data *gicv5_irs_lookup_by_spi_id(u32 spi_id);
-+int gicv5_spi_irq_set_type(struct irq_data *d, unsigned int type);
-+int gicv5_spi_set_type(struct irq_data *d, unsigned int type);
-+int gicv5_irs_iste_alloc(u32 lpi);
-+
-+void gicv5_init_lpis(u32 max);
-+void gicv5_deinit_lpis(void);
-+#endif
+ 
+ void gicv5_init_lpis(u32 max);
+ void gicv5_deinit_lpis(void);
++
++int gicv5_alloc_lpi(void);
++void gicv5_free_lpi(u32 lpi);
++
++void __init gicv5_its_of_probe(struct device_node *parent);
+ #endif
 
 -- 
 2.48.0
