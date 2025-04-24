@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-618872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB96A9B47E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 867F1A9B498
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B09FE7AFC16
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADDD37B3080
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0F28BA9E;
-	Thu, 24 Apr 2025 16:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BBF28E5E5;
+	Thu, 24 Apr 2025 16:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="o83uobAZ"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="mA+zQ8ji"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D782284666
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF9628D85D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513431; cv=none; b=urWU72a5Ud0aj6wojVGQJjxz8+8GrSYy06iFFcA8qWYesVK9rrzzSvLxLXjTX5hTS7d4EfNH7djSBzJaoD3ecxQqfbdhMA2OuxWJVI1oAVI8gd2yfwqe0e2iEgYa6lzWt8jSuDvBaOsAeO4MiuCeDRUP9vaGW77Pqp/P2LF6Ijc=
+	t=1745513445; cv=none; b=lZQiGtc00pLc2MSa9Mbm45D0VCs0UVQo7fOydb/sABlsoGXyXTyvLesUgbMbGNLVbB04u064uVEHNksgN80qaV9rG3y8QLCBJOsar1fH4k34DKLMdr4JW43aCapERKgUzfcFwGWPwbFlq3YZ80okrlCUBWG/eB2Dg2x0bO1KRjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513431; c=relaxed/simple;
-	bh=iRQ+tCNzTUzFjP3Q4w00NQLj2m8U6lvE3Ij0XsGhtg0=;
+	s=arc-20240116; t=1745513445; c=relaxed/simple;
+	bh=LuMR+H1QwXKPEi9lGgEokcwglpP+bKoRaOXMJ8W3UrM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bzxrdbTEBIai1IMkvnqJSYt5z/qnMF5+vDfaNFh3+v6i5DqFvk8jWQ2i47KhPv0i+bkpkp1TibJvGHa0KKMK3j8J9iUGinuBsMcjVrKuJWSYG9yJSTrw4OyoPBgduceEcizbIAXeZIB3EotgjKF7divnCELfZgxjCU9OH91ogjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=o83uobAZ; arc=none smtp.client-ip=209.85.210.53
+	 MIME-Version; b=NnVnHq/MoJsEL/LYQSeeiHFFDCnpWC+1BA+hZAE9FzsfwFJKfVsGPUbhI6fmP0EpAJJ3HT55KpAVIksSvwcye+thsBjA4iU2U1NxUQsv8neF0C7F+jocL3aJwm5c38l8pFVgKX/mOTjL8vUEaMqKZWoOQwEG/Qtv0sQXWlVXa+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=mA+zQ8ji; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72ecb4d9a10so915647a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:29 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6ecfc7ed0c1so12704476d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513429; x=1746118229; darn=vger.kernel.org;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513442; x=1746118242; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zwio3ISUto8LUTujsv8QXqK82cuXiEJf2BXkC619czg=;
-        b=o83uobAZg32ukEuqNqmjmBkLvOMfa+6cW0v80YCN6cMnOhJGBQT2rpSZxNmkTv0jyt
-         YOvrpu/t9We2fTUFKNwTgBOIOrrlzp2xAWjguLEDfxcPIv570BXNoDX2GmbuoIEMXtkx
-         w8dUjpWv2MEkk1p8lwGUo4T6nWVpZ+ij7rT9Wn8CoN3p6Ki+JZs26pPRLeRt4FPIUWW9
-         npQkSv8qsGXpTt9daNoRcHWmCGVbZky9YpEpXwD4JWX6la4D8tyKLNCbl+PxH8Ti9PFG
-         TV5ayfwM6XcAU8whgJtCKP5xsyAfEv+LOfo743HH1A95g4owXeA50rvTpxE1x2P8hE09
-         8GRg==
+        bh=IGfTJWj47CpXpT8PeT3U1Li99hkB5HE31d++OSuIbAk=;
+        b=mA+zQ8jibdXbTTq2T/YwSjPcK8iwwA4QWmOdgbVPeW5bE+z85Chyb19MxGedehmg+X
+         /IK55zBK254nf3eoJyLYWfrhOOZIC3KD6kba5sZVOlSXdb6otq9cKKuOd7RdcL+ia1WA
+         cgjgTyrOFLhb22ODzMvq67eLR4AE5JH6QDRVJmjmKwLNxZKULUKJnqQp3kqYJGN73ZS0
+         0V6+AyR7LQJ3+rwxR44x0uZ1kG0ZoinJ7OevvfVDbAGd6LKXy5GZ8r798XQuoJKyjlx3
+         kHCvY/vCK7r3zmqiATUqNK6DkSJMmBfDAeXIx4R6g2TyDhtac+5pbgQ9pKS1EanPEkja
+         trOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745513429; x=1746118229;
+        d=1e100.net; s=20230601; t=1745513442; x=1746118242;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zwio3ISUto8LUTujsv8QXqK82cuXiEJf2BXkC619czg=;
-        b=coFp7g+6rhXiuav6s5cBcL4hkfNxI6pD7dn8J5LsJr3ugJL9HNN6qs7KF7hqy/Sj+N
-         wjUBqNUVj651uVpNlqVA49jG5D9WDIZ1Yx6WrpL+J4Sl9GnH8oAgqZrutP35qMNOWqH5
-         uiekvbXQ8PxuVrmuOvK6yYsJaE5JAdPCT0c7AyRcr6RbWwJLqqnKoH9e7zIpmM+TgB9t
-         c8uQMTUl/2pmcsoPVg4Adk6k0N4GsqPPopCTvALWWl9+LakMEaOGOjsbfnJGjpBrDPci
-         5iLgbJRBXT0YqWTq/TWrvpP/5v6l0ioNoBrgJ3l4h08Q/Tt+YRqOXGXAsxdRJOco1JTJ
-         3XDg==
-X-Gm-Message-State: AOJu0Yy01z5vRIsjVR4xx0AtDEza564wl54QqBypo/aNO6U1TZtZXRic
-	wzI04qpBigENuG8/VzYIRHF+w6hFnpnVo2PQX6Wmz46DuSRcHlslJOUR7fWXe4DikBR1zhwJeXq
-	0
-X-Gm-Gg: ASbGncsR5tLZAgY73XdUfeYJg43EOU3vBf2HyUQWB9th6eIxcoLwg7dhlHlRI88yjyl
-	mZZlDuQxhKGdyBfzGQOh0Sef8BBcvVkrW+1oFAEyzy8/T84/QLu05YAvs46MNxM5AXsOgMv2lmW
-	+m8r/fwNmuRTh343mByA0PT4Cr0QVUox5GLhwNA/t5SEy2fS+UZuKjFGkZfvwaT0KHUhi5Opjvb
-	8ge7Oq6cf9gsFAg6wRz5kbrqoDEmhzEbo+1AxjuXm9+/G0zlcQXCpbVCDk/3/Hq7riWx7XLm9aX
-	/9gXT7lTb3jNQRrVUF+8VfJ2e8PR8knji0c=
-X-Google-Smtp-Source: AGHT+IGy7CZalF5Miu4rlUrqy24erWiGVBihUFSHTQCWfAbTX6kMHsZPYJdkMwwydQR7vrtwIl+ZPQ==
-X-Received: by 2002:a05:6830:3c08:b0:72b:a175:2f1d with SMTP id 46e09a7af769-7304dbd8709mr2441810a34.23.1745513428769;
-        Thu, 24 Apr 2025 09:50:28 -0700 (PDT)
+        bh=IGfTJWj47CpXpT8PeT3U1Li99hkB5HE31d++OSuIbAk=;
+        b=HrgeWpRVDwD+oRlw9R8iEeZBp4LwM1gFjSoxcUkfP1UFd2Mll0R3+NXXTURNiimJfU
+         nsQTm18JvWjE9Sil4bYC6kLEFdvDYoWjrHe8X8PAIc0oku2kg4OIcpPHLXj9VAxjoi5G
+         DU3jr+kdRWGIwxVBW76ka1acLUdz8zq9bUbuCK31uTQEzE/xvL5tcTUXYWw0e2S7d2sb
+         ZWOutU7t3lLj/DO0/iKb95U6Rn65PN2vy2GbsaqYSzssOZFG+n0/trO8L/EVGW/1Udu4
+         tYSM2r5Lm7gPG10vC5QBjPY0KbVH9/9dYkbRXRyBVTnk0FRKUkYVtPEQfViiGHsXpCP6
+         TDpQ==
+X-Gm-Message-State: AOJu0YzKo+hHwQVytDhdwJ7iiDL2tKukNU47r38oLfFr7OqwTDV6S8N8
+	CF1ZMXscLKR7Sni1Q7kzvcRcfGriPwIDZIz7C1XOjfiR64gI/AGqetJ76cSFRcC21UjHA/zfcnB
+	W
+X-Gm-Gg: ASbGncuzlZLai01GWFzS69p1yjKEk846KLXsqA4Uh+GbTJSX4dg1urlB/XoQ/AJ1I2o
+	MoqYThIJF6d7cAD+HrgSWA9HGSmHTpMLP2DySKCTM1n461zJrhWXKUbvmmqgDOH6Vu2fK+0IWSb
+	eRLKCeV19ZxAShgurJ30B9JML7BqlZ6Na9CkO9XbXsbPVyTJRW0owt5Nrfg+sFVfQncifDSJ1Rf
+	w5tS982PCCfELAeJtK6FolufmWypnRF0iQFv4wPO+pU7mElf9h7cq4GYltc3WmYrTSSATcWRI+W
+	omvRbGi52u6vQJq6R9tN7Fu3o2wrC0Gu5Ig=
+X-Google-Smtp-Source: AGHT+IFHp8n/VJuzX+UYnhpiqIQJQ9HAOKQP+infmIEinGOQzRk0Z/D3wAFlyPekPIZHnbzLJIOztA==
+X-Received: by 2002:a05:6808:6c85:b0:401:e5d6:31cd with SMTP id 5614622812f47-401eb23932fmr2137283b6e.3.1745513430870;
+        Thu, 24 Apr 2025 09:50:30 -0700 (PDT)
 Received: from localhost ([2001:470:b8f6:1b:af2e:7abf:8abe:2726])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-7304f188d01sm296180a34.14.2025.04.24.09.50.27
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-401ec8cce07sm311510b6e.20.2025.04.24.09.50.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 09:50:27 -0700 (PDT)
+        Thu, 24 Apr 2025 09:50:30 -0700 (PDT)
 From: Corey Minyard <corey@minyard.net>
 To: linux-kernel@vger.kernel.org,
 	openipmi-developer@lists.sourceforge.net,
@@ -79,9 +79,9 @@ Cc: "Paul E . McKenney" <paulmck@kernel.org>,
 	Breno Leitao <leitao@debian.org>,
 	Corey Minyard <corey@minyard.net>,
 	Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 01/23] ipmi:msghandler: Use READ_ONCE on run_to_completion
-Date: Thu, 24 Apr 2025 11:49:38 -0500
-Message-ID: <20250424165020.627193-2-corey@minyard.net>
+Subject: [PATCH 02/23] ipmi:msghandler: Rename recv_work to smi_work
+Date: Thu, 24 Apr 2025 11:49:39 -0500
+Message-ID: <20250424165020.627193-3-corey@minyard.net>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250424165020.627193-1-corey@minyard.net>
 References: <20250424165020.627193-1-corey@minyard.net>
@@ -93,77 +93,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It needs to be read only once because it's used in lock/unlock
-scenarios.
+It handles both receive and transmit functions, make the name generic.
 
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 1e5313748f8b..77f0f41f2e3d 100644
+index 77f0f41f2e3d..22813b1598b0 100644
 --- a/drivers/char/ipmi/ipmi_msghandler.c
 +++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -1882,13 +1882,12 @@ static void smi_send(struct ipmi_smi *intf,
- 		     const struct ipmi_smi_handlers *handlers,
- 		     struct ipmi_smi_msg *smi_msg, int priority)
- {
--	int run_to_completion = intf->run_to_completion;
-+	int run_to_completion = READ_ONCE(intf->run_to_completion);
- 	unsigned long flags = 0;
+@@ -41,7 +41,7 @@
  
- 	if (!run_to_completion)
- 		spin_lock_irqsave(&intf->xmit_msgs_lock, flags);
- 	smi_msg = smi_add_send_msg(intf, smi_msg, priority);
--
- 	if (!run_to_completion)
- 		spin_unlock_irqrestore(&intf->xmit_msgs_lock, flags);
+ static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
+ static int ipmi_init_msghandler(void);
+-static void smi_recv_work(struct work_struct *t);
++static void smi_work(struct work_struct *t);
+ static void handle_new_recv_msgs(struct ipmi_smi *intf);
+ static void need_waiter(struct ipmi_smi *intf);
+ static int handle_one_recv_msg(struct ipmi_smi *intf,
+@@ -504,7 +504,7 @@ struct ipmi_smi {
+ 	spinlock_t       waiting_rcv_msgs_lock;
+ 	struct list_head waiting_rcv_msgs;
+ 	atomic_t	 watchdog_pretimeouts_to_deliver;
+-	struct work_struct recv_work;
++	struct work_struct smi_work;
  
-@@ -4753,10 +4752,10 @@ static int handle_one_recv_msg(struct ipmi_smi *intf,
-  */
- static void handle_new_recv_msgs(struct ipmi_smi *intf)
- {
--	struct ipmi_smi_msg  *smi_msg;
--	unsigned long        flags = 0;
--	int                  rv;
--	int                  run_to_completion = intf->run_to_completion;
-+	struct ipmi_smi_msg *smi_msg;
-+	unsigned long flags = 0;
-+	int rv;
-+	int run_to_completion = READ_ONCE(intf->run_to_completion);
+ 	spinlock_t             xmit_msgs_lock;
+ 	struct list_head       xmit_msgs;
+@@ -704,7 +704,7 @@ static void clean_up_interface_data(struct ipmi_smi *intf)
+ 	struct cmd_rcvr  *rcvr, *rcvr2;
+ 	struct list_head list;
  
- 	/* See if any waiting messages need to be processed. */
- 	if (!run_to_completion)
-@@ -4813,7 +4812,7 @@ static void smi_recv_work(struct work_struct *t)
+-	cancel_work_sync(&intf->recv_work);
++	cancel_work_sync(&intf->smi_work);
+ 
+ 	free_smi_msg_list(&intf->waiting_rcv_msgs);
+ 	free_recv_msg_list(&intf->waiting_events);
+@@ -3602,7 +3602,7 @@ int ipmi_add_smi(struct module         *owner,
+ 	intf->curr_seq = 0;
+ 	spin_lock_init(&intf->waiting_rcv_msgs_lock);
+ 	INIT_LIST_HEAD(&intf->waiting_rcv_msgs);
+-	INIT_WORK(&intf->recv_work, smi_recv_work);
++	INIT_WORK(&intf->smi_work, smi_work);
+ 	atomic_set(&intf->watchdog_pretimeouts_to_deliver, 0);
+ 	spin_lock_init(&intf->xmit_msgs_lock);
+ 	INIT_LIST_HEAD(&intf->xmit_msgs);
+@@ -4808,10 +4808,10 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf)
+ 	}
+ }
+ 
+-static void smi_recv_work(struct work_struct *t)
++static void smi_work(struct work_struct *t)
  {
  	unsigned long flags = 0; /* keep us warning-free. */
- 	struct ipmi_smi *intf = from_work(intf, t, recv_work);
--	int run_to_completion = intf->run_to_completion;
-+	int run_to_completion = READ_ONCE(intf->run_to_completion);
+-	struct ipmi_smi *intf = from_work(intf, t, recv_work);
++	struct ipmi_smi *intf = from_work(intf, t, smi_work);
+ 	int run_to_completion = READ_ONCE(intf->run_to_completion);
  	struct ipmi_smi_msg *newmsg = NULL;
  
- 	/*
-@@ -4843,9 +4842,9 @@ static void smi_recv_work(struct work_struct *t)
- 			intf->curr_msg = newmsg;
- 		}
- 	}
--
- 	if (!run_to_completion)
+@@ -4883,9 +4883,9 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
  		spin_unlock_irqrestore(&intf->xmit_msgs_lock, flags);
-+
- 	if (newmsg)
- 		intf->handlers->sender(intf->send_info, newmsg);
  
-@@ -4859,7 +4858,7 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
- 			   struct ipmi_smi_msg *msg)
- {
- 	unsigned long flags = 0; /* keep us warning-free. */
--	int run_to_completion = intf->run_to_completion;
-+	int run_to_completion = READ_ONCE(intf->run_to_completion);
+ 	if (run_to_completion)
+-		smi_recv_work(&intf->recv_work);
++		smi_work(&intf->smi_work);
+ 	else
+-		queue_work(system_bh_wq, &intf->recv_work);
++		queue_work(system_bh_wq, &intf->smi_work);
+ }
+ EXPORT_SYMBOL(ipmi_smi_msg_received);
  
- 	/*
- 	 * To preserve message order, we keep a queue and deliver from
+@@ -4895,7 +4895,7 @@ void ipmi_smi_watchdog_pretimeout(struct ipmi_smi *intf)
+ 		return;
+ 
+ 	atomic_set(&intf->watchdog_pretimeouts_to_deliver, 1);
+-	queue_work(system_bh_wq, &intf->recv_work);
++	queue_work(system_bh_wq, &intf->smi_work);
+ }
+ EXPORT_SYMBOL(ipmi_smi_watchdog_pretimeout);
+ 
+@@ -5064,7 +5064,7 @@ static bool ipmi_timeout_handler(struct ipmi_smi *intf,
+ 				       flags);
+ 	}
+ 
+-	queue_work(system_bh_wq, &intf->recv_work);
++	queue_work(system_bh_wq, &intf->smi_work);
+ 
+ 	return need_timer;
+ }
 -- 
 2.43.0
 
