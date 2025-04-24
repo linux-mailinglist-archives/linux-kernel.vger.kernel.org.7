@@ -1,226 +1,148 @@
-Return-Path: <linux-kernel+bounces-618282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEA1A9AC7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:53:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F7CA9AC85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE79E7A79D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E36F57AE46B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603D8227EAB;
-	Thu, 24 Apr 2025 11:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6BD202F79;
+	Thu, 24 Apr 2025 11:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bxkmDyDA"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U0x6VSFZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DE81FA261
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5139C20C47A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745495567; cv=none; b=k87PEuTQ4TMC6NUe1O1tZ+RmT5GXSlbkzKZNfO6Mrdw816ayvyj0w2wiZpC2iZHcjk4FNLcm00oKQIqOoHh7kvamKOu7HAId7rwUWIYBStEkh1d6wtNQmOLVBgG9GVaGA/nTyr0l9xvGI5QCbLBfe3m0Yau2TwPSsmt8VffK3EQ=
+	t=1745495627; cv=none; b=dNQyH8opeKSUxX52GDZETSlYN3Aw75xl+tYgGr6BrS/ajLbYD5PAvXQ8dNHo29pkGNAocz336gMwJgXsbGdgxfEU2J3o/UNuj+9dnU9VVB355BST7lPKuvj5ko1S8JPnNrX2hlSwOX2T0Cf/8C8lyrCruwvAxFZhg49hIdVpqeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745495567; c=relaxed/simple;
-	bh=DjB6yBsMl6lrqs3kS6J4Z5q3FIya7mHUZ9ybBLQq0UM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=qXjdD5j1jc3CKZMod2BXSEDUJ44AeCZgQTUPmr0zygMP5uB+Zu6GnQ/ww1Xw/3Hd0aOtaMseqgYnPOAXYBplwzDbp/ThcMLZHTZBe65eB8WkChBwtG1UfJNc1T22l3maKzZRjzE0G2QphOLNLgMsD9Ien5E7BNxX8YcZo/JpxAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bxkmDyDA; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-440668acbf3so1375595e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745495564; x=1746100364; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s+dd0LSkGUj1HE7Y4OEfSLazS5H3NN900Vi5gbnC580=;
-        b=bxkmDyDArMx0OqwBa+08lv4xzsGf09Af9eKmh54vpjoHPwLrnysj0ZYaflCREJRWts
-         AKiNtHz8cjrkSf0Lbb9NetGIph216zEBEWzP4tv3W681HV5wi6Pp5fu3AOMHWAxsuhky
-         MxMQgFjVqxRF0xd+zaK7mTBfYwRrP4UBVdRwSiirZT5trdIhjcLA6DBFRwemvpMjtxhV
-         0f/32r5EV8BffeBi7CqmwagilSyuDkE1jLzZxQNIIHhBudYRKIkuEuJyTaBt13eqcawp
-         jOABUZF8+8WhJiIA/bf0daBGvGLUfzHDtR59SpViLKNZNAEJI6hfWU7YLCcb4fS26KIL
-         Zj4w==
+	s=arc-20240116; t=1745495627; c=relaxed/simple;
+	bh=Fpd73RRnHn/l4PYVjhLh24iJQjof1gdaW83Nyo/GhgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j16B+A/BNpCvUyuDqF9gmPgmFUdooFhTfQ7IQpQqEpItu3l5pvc1xBD3+nIbx2Iqfw3rp6Japfi7ZJXBWTPL0f/tW7F85PcSA4DMCpnmlsgpDF1O/4kvZDOUDiH5mtAZIceF5RbugR/YaEFZakvcd9MNLVpI75K7eWScAPtRm4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U0x6VSFZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745495624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7O71wS6omUP4Za+qu8KkJ9Z+HYsi5jrXQRVuEjbLS/Y=;
+	b=U0x6VSFZpsG194wzvpvDS5puCDW1O4c6T2wxbF4VaeOkTqTz8aUnoZ8dIdiCV/bFQlsJSZ
+	B23RuiJbzuIAYP2Xey7gg9+hQdr3WC79uHcoQquf/Fi6bzAfYF2wBwlEraZgplsbU8nYh0
+	NP2+iAKn90MetYoSuwWcWga6M4nmHfA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-128-1N7Uj2yvN2CJWOwmjR7pLA-1; Thu, 24 Apr 2025 07:53:43 -0400
+X-MC-Unique: 1N7Uj2yvN2CJWOwmjR7pLA-1
+X-Mimecast-MFC-AGG-ID: 1N7Uj2yvN2CJWOwmjR7pLA_1745495622
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43efa869b0aso5598945e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 04:53:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745495564; x=1746100364;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s+dd0LSkGUj1HE7Y4OEfSLazS5H3NN900Vi5gbnC580=;
-        b=soeDc5s0qjPIY6Od5LLkgfzKyn4kM53Mah0PYUM1Zxv8y5TEfKomRZjUDF+few38uf
-         pQwJTfFvxk5EpqLF50AEKhGFqshmNFUGtWkQfU8ir4wa+3dJc2hYLupVaf2rV1e+ZHYV
-         XFdBzrQ6rZllBbauBKhAdWN9aj3vsOuouHL91txIGBPzrzZLj+xMTa5UYKQyE4NEc8Ys
-         XLGq2To4bVaHg0RzJXqcNZvXUbTNUqbdEXUEfDR6I1peLM/buoSHNRwrlRPALAvgGhXX
-         rivHaf5aLmYPSp1Yq5WT1jX5Ilee/d2nmaMSWUfXAVB/0sUn6r2wAQe4/w5U2OEgBaSb
-         Z1Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVD5TtNHoXceiQSucWLIV5uswu1LDEQWq37V1QlvNA+yQ5G0EHoRbK62kfMEI2ZxTLrfquS5r0tP6xf8u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT4g2GVa9uDW2VtCxvkpLHcd135kjj4693N3hDWKaXlOu8N5av
-	kG730luIqp3UwNxJh9v4JSDarg0wbz+UFd/co5k9XiqcLKocYvu1vScjhGyMpVo=
-X-Gm-Gg: ASbGncu/1r2d7tsGLNha4WzJQ9WvKYQ92e26rSDg6RMntbVH3VIwimof7XLHYLJb89z
-	KXFJLtfGsNOzaRkkxLuKyociljFj147nkrmGGtjdMOjibxgolapAi0GfLmwjEqCQPdSeF+Gt71l
-	DRGHl0n1tgpHjvLhlmQCsnUQxlOsozh7UXlPk/YsdIuYGnPKCWtYl0Nal/sR6TJoaNZbgC+y6K2
-	IiYuGbU7q+RL10t1Lm8OAdhd11ogcgXNFKeYQPG/le3sCMBXTJubQnR+7D2+pifR6XK24w7ZAQX
-	yjtoy/2afdDWeIMwlgnrbHvU8o66KEgW8Dt7V1qUTvVjgKF/
-X-Google-Smtp-Source: AGHT+IF8wqwUphleYE2qKoazIUMOkR8h6x1rMfa0xrlvKXCx8csAkRx3P4JsSRpMyeAudqq5D+3jRA==
-X-Received: by 2002:a5d:6d8a:0:b0:3a0:678f:ddd8 with SMTP id ffacd0b85a97d-3a06cf5262cmr625001f8f.2.1745495563895;
-        Thu, 24 Apr 2025 04:52:43 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:b30c:ee4d:9e10:6a46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d5323casm1860957f8f.75.2025.04.24.04.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 04:52:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745495622; x=1746100422;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7O71wS6omUP4Za+qu8KkJ9Z+HYsi5jrXQRVuEjbLS/Y=;
+        b=wYc5eUfWD50F7/L/F/QCxzLx77W20xOZQ7moPWl+nrrGI1QGfFB2i+MMk8wE0x+rnz
+         oopARyaVcYTiGFlj+B5Jns+20Huq/KZtizZZ90wwj3u35mrax8gAWYu2i4Lxn4PE+jwj
+         Jtq7cQXNA9se8gDPH2IBURoIzYQOkjZ8Snh+P1s6OdafTUdFSIILQgPbuuraPRIvF/O1
+         vqg/5jRsNIPwJKjHRXvukrs0nydqFXpxf7aU8C1Gxddzq3SV3jjbsvMKZvdGYtuLAoZi
+         5t5p2vpeMdIIq3Qjvy2PVWs9Z0D/HjI50o1sm+Itx9RO8B9kZNhhSoue7sjVwHbbR7SX
+         2iCA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6XTry+CzDMlTS+sStT44lXz4BhxHN+wrsMz2QP8eEcqQLMoAIQmiKl9bB2zQ53NXrBwhoOyzTEQuLapY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0VDMf5ezALvce5gF2rTHZ0xBFrts1NFgSYC+5QasXKnchNT4Z
+	EF1uy9Ue70dVNck3VSANHA54mSHUaz7R+bg1kZx8ndIZNSqECEiF2KxeH4dIl5qzNytVFbk6ICk
+	Ekatg+XwfpsHfHX/xJKwpOK3c1sZN1Uj8SigAyzmwk2otHFPvF+N/9DB0QsGelA==
+X-Gm-Gg: ASbGnctiIigdGqpg2w4wlgCwgqwLa34awHOBoHNIHQETnnfi0QuDS0FME8Dn4U/M89D
+	t3xKCYLmgY8bom/XiggMax4Ue3WhtSA/q/Jkg/0SrJxb3VwrNIypqWtGukg+FgQU3xnP6jDnOLA
+	sp/hWwT0JBpfnvC6sRCSKcJtTyDUcYj+GKwwdhpnMkbTkfP+LkSV7+9MIzd2rZWsWpsO5FDxvFv
+	49dxElSt2+RDQxiES1XL+F5D3mDuEiLjyj5n0D5Qc/yXwy6J+K11uCpd1UIST/GUxcLpXOb/Anh
+	g12DDAP7NHhdDTBsQXN2u2KEl4zheQV2k05Ymt8=
+X-Received: by 2002:a05:600c:4e0a:b0:43c:f513:9585 with SMTP id 5b1f17b1804b1-4409bd210eemr25352645e9.13.1745495621866;
+        Thu, 24 Apr 2025 04:53:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUAI2NQUKhz4qnOoSRg3Qvi8tq8xdza5SLA8RiijZXZRu9gfA8tceguZucQbwMmFsJdyoLyg==
+X-Received: by 2002:a05:600c:4e0a:b0:43c:f513:9585 with SMTP id 5b1f17b1804b1-4409bd210eemr25352255e9.13.1745495621516;
+        Thu, 24 Apr 2025 04:53:41 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-7-183.dyn.eolo.it. [146.241.7.183])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d54c246sm1831740f8f.86.2025.04.24.04.53.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 04:53:40 -0700 (PDT)
+Message-ID: <edfa1585-c10c-4211-a985-ebfcb8e671d5@redhat.com>
+Date: Thu, 24 Apr 2025 13:53:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 2/2] net: stmmac: dwxgmac2: Add support for
+ HW-accelerated VLAN stripping
+To: Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Russell King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Matthew Gerlach <matthew.gerlach@altera.com>,
+ Tien Sung Ang <tien.sung.ang@altera.com>,
+ Mun Yew Tham <mun.yew.tham@altera.com>,
+ G Thomas Rohan <rohan.g.thomas@altera.com>
+References: <20250421162930.10237-1-boon.khai.ng@altera.com>
+ <20250421162930.10237-3-boon.khai.ng@altera.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250421162930.10237-3-boon.khai.ng@altera.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 24 Apr 2025 13:52:43 +0200
-Message-Id: <D9EUJBQ5OHN0.2KUJHGXK262TR@ventanamicro.com>
-Subject: Re: [PATCH v12 05/28] riscv: usercfi state for task and
- save/restore of CSR_SSP on trap entry/exit
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
- <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
- <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
- "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
- Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
- <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
- <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
- <cleger@rivosinc.com>, <broonie@kernel.org>, <rick.p.edgecombe@intel.com>,
- "Zong Li" <zong.li@sifive.com>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>
-To: "Deepak Gupta" <debug@rivosinc.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-5-e51202b53138@rivosinc.com>
- <D92WQWAUQYY4.2ED8JAFBDHGRN@ventanamicro.com>
- <aAl_HRk49lnseiio@debug.ba.rivosinc.com>
-In-Reply-To: <aAl_HRk49lnseiio@debug.ba.rivosinc.com>
+Content-Transfer-Encoding: 7bit
 
-2025-04-23T17:00:29-07:00, Deepak Gupta <debug@rivosinc.com>:
-> On Thu, Apr 10, 2025 at 01:04:39PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wro=
-te:
->>2025-03-14T14:39:24-07:00, Deepak Gupta <debug@rivosinc.com>:
->>> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/=
-asm/thread_info.h
->>> @@ -62,6 +62,9 @@ struct thread_info {
->>>  	long			user_sp;	/* User stack pointer */
->>>  	int			cpu;
->>>  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
->>> +#ifdef CONFIG_RISCV_USER_CFI
->>> +	struct cfi_status	user_cfi_state;
->>> +#endif
->>
->>I don't think it makes sense to put all the data in thread_info.
->>kernel_ssp and user_ssp is more than enough and the rest can comfortably
->>live elsewhere in task_struct.
->>
->>thread_info is supposed to be as small as possible -- just spanning
->>multiple cache-lines could be noticeable.
->
-> I can change it to only include only `user_ssp`, base and size.
+On 4/21/25 6:29 PM, Boon Khai Ng wrote:
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> index 389aad7b5c1e..55921c88efd0 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> @@ -4,6 +4,7 @@
+>   * stmmac XGMAC support.
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/stmmac.h>
+>  #include "common.h"
+>  #include "dwxgmac2.h"
+> @@ -69,6 +70,21 @@ static int dwxgmac2_get_tx_ls(struct dma_desc *p)
+>  	return (le32_to_cpu(p->des3) & XGMAC_RDES3_LD) > 0;
+>  }
+>  
+> +static u16 dwxgmac2_wrback_get_rx_vlan_tci(struct dma_desc *p)
+> +{
+> +	return (le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK);
+> +}
+> +
+> +static inline bool dwxgmac2_wrback_get_rx_vlan_valid(struct dma_desc *p)
 
-No need for base and size either -- we don't touch that in the common
-exception code.
+Please, avoid 'inline' function in .c files, especially for functions
+that will land into function pointer like this one.
 
-> But before we go there, see below:
->
-> $ pahole -C thread_info kbuild/vmlinux
-> struct thread_info {
->          long unsigned int          flags;                /*     0     8 =
-*/
->          int                        preempt_count;        /*     8     4 =
-*/
->
->          /* XXX 4 bytes hole, try to pack */
->
->          long int                   kernel_sp;            /*    16     8 =
-*/
->          long int                   user_sp;              /*    24     8 =
-*/
->          int                        cpu;                  /*    32     4 =
-*/
->
->          /* XXX 4 bytes hole, try to pack */
->
->          long unsigned int          syscall_work;         /*    40     8 =
-*/
->          struct cfi_status          user_cfi_state;       /*    48    32 =
-*/
->          /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
->          long unsigned int          a0;                   /*    80     8 =
-*/
->          long unsigned int          a1;                   /*    88     8 =
-*/
->          long unsigned int          a2;                   /*    96     8 =
-*/
->
->          /* size: 104, cachelines: 2, members: 10 */
->          /* sum members: 96, holes: 2, sum holes: 8 */
->          /* last cacheline: 40 bytes */
-> };
->
-> If we were to remove entire `cfi_status`, it would still be 72 bytes (88 =
-bytes
-> if shadow call stack were enabled) and already spans across two cacheline=
-s.
+Thanks,
 
-It has only 64 bytes of data without shadow call stack, but it wasted 8
-bytes on the holes.
-a2 is somewhat an outlier that is not used most exception paths and
-excluding it makes everything fit nicely even now.
+Paolo
 
-> if shadow call stack were enabled) and already spans across two cacheline=
-s. I
-> did see the comment above that it should fit inside a cacheline. Although=
- I
-> assumed its stale comment given that it already spans across cacheline an=
-d I
-> didn't see any special mention in commit messages of changes which grew t=
-his
-> structure above one cacheline. So I assumed this was a stale comment.
->
-> On the other hand, whenever enable/lock bits are checked, there is a high
-> likelyhood that user_ssp and other fields are going to be accessed and
-> thus it actually might be helpful to have it all in one cacheline during
-> runtime.
-
-Yes, although accessing enable/lock bits will be relatively rare.
-It seems better to have the overhead during thread setup, rather than on
-every trap.
-
-> So I am not sure if its helpful sticking to the comment which already is =
-stale.
-
-We could fix the holes and also use sp instead of a0 in the
-new_vmalloc_check, so everything would fit better.
-
-We are really close to fitting into a single cache-line, so I'd prefer
-if shadow stack only filled thread_info with data that is used very
-often in the exception handling code.
-
-I think we could do without user_sp in thread_info as well, so there are
-other packing options.
-
-Btw. could ssp be added to pt_regs?
-
-Thanks.
 
