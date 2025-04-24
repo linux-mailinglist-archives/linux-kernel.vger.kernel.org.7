@@ -1,139 +1,101 @@
-Return-Path: <linux-kernel+bounces-617999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67C8A9A8DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF22A9A8C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E2C16A6AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B441B85018
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D62B22170B;
-	Thu, 24 Apr 2025 09:41:42 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B99225A47;
+	Thu, 24 Apr 2025 09:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lj4V+1BE"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8AC23024D;
-	Thu, 24 Apr 2025 09:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACBA2206BE
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745487702; cv=none; b=G9QE5PRgclsIBpfrRkahYrLbK6yIb9apGyKpThNkwzeqE7eroQ7+HqsHUMs9EuGYhXu+XmOQIY91XT+b0HlXnUAwdx22R2NvgK6pZBXXPpaS+T/wqpC0J6pNs/JqUwN44zgoKlnyBXL8xzppFkwN8goYVoig7r45wkkTNQyHbwE=
+	t=1745487661; cv=none; b=JPSMGFJWRlQVEL7HEfOqe6bjId2Rs+1+XghxWjt0PVmGF96qlxeZbDpWRaF3dG7w+HOO/Kb0Ep6BhgNgzPlyqK60FJ4orD4Kax97tlbsRxDkh0mdjoRuGgo3lG99fSWXDqK+HJCqq++Ec2sAZp2Y8+74fxdvm6tgM9DgWOZGCvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745487702; c=relaxed/simple;
-	bh=iNaOoUEoymoBiBYdwwkQ25zsZpW8c2VndainDOUrHVE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LT1tGCssDk1up1SHVhgpnEv8av3Tey6necPZLVutW+ygrV47edXsd8uly0sXnXokseg9+eB74b+IJh1YGrORtL5Re6CvEgzZltdSkABDy4oIN5ewY0kBws7LMpiE/kG3eYmxpJ0pH8tzbcoSaFpmnT/HyVKEqs336iBd2hnmYxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [116.232.18.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 36248341C25;
-	Thu, 24 Apr 2025 09:41:34 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Thu, 24 Apr 2025 17:40:50 +0800
-Subject: [PATCH v9 2/3] riscv: dts: spacemit: add gpio support for K1 SoC
+	s=arc-20240116; t=1745487661; c=relaxed/simple;
+	bh=Zj4rZc/o0d+mPGfyouleH+pLFelBv74hCt+szCNjbKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlbvCFcytvWxRZEkwainuqQF3STgcEV0M1CqcsYqOuQsDuIyZa790apqtUwo7afB/xHv5cQKXOGS/Pz1kUkTjGwg6xcfzmsrEfgDGFLxAxZPdgSHPA+J9vGdDNKYHyZtLOzE4UbAZmuuDgT/glCSQ4NfY61lWiQJzr0pdacJscM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lj4V+1BE; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=V52SN0rAjrBhAIoaJ+IUA3O9fZi2COSECdESbmwo4T0=; b=lj4V+1BE89nBZi3fMhYGM2l/MC
+	ss6cg5XA9Q/WfsDiVGX/uNzbY9LQVnycOCtv8YqYohaCr0XwLO8xU2GozFR4CsHstHv6678KLNrBr
+	bSa/LAly5CMxlexxSHXWRfVhjGS5wA2NAxjEEcrY8yE4VNL038Xr8GfxPwzvmS3VLjEGEj4MxZaef
+	mplMK023ifHSr/EL51wWWJ9cbVKDVeoKQlvshIr/AqOS2t6bHvVLPEPEBFT4jQzI3qu5XUYXCYnLw
+	IQA3GS/P+zP/2WVI5giAS//n14B1bpxdLKNxDnmWwuKtFjiRWG/OvEmbL0oUuuFhFPNxdBTxgiHXa
+	qZzA7cwg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u7t4d-0000000Bh2J-2hVJ;
+	Thu, 24 Apr 2025 09:40:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0432730057E; Thu, 24 Apr 2025 11:40:51 +0200 (CEST)
+Date: Thu, 24 Apr 2025 11:40:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, linux-kernel@vger.kernel.org,
+	Luo Gengkun <luogengkun@huaweicloud.com>
+Subject: Re: [PATCH 1/2] perf/x86/intel: Only check the group flag for X86
+ leader
+Message-ID: <20250424094050.GE19534@noisy.programming.kicks-ass.net>
+References: <20250423221015.268949-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-03-k1-gpio-v9-2-eaece8cc5a86@gentoo.org>
-References: <20250424-03-k1-gpio-v9-0-eaece8cc5a86@gentoo.org>
-In-Reply-To: <20250424-03-k1-gpio-v9-0-eaece8cc5a86@gentoo.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>, 
- Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- spacemit@lists.linux.dev, devicetree@vger.kernel.org, 
- Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1905; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=iNaOoUEoymoBiBYdwwkQ25zsZpW8c2VndainDOUrHVE=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoCgc8f6B1lgW+pmYKJ6f8TDONFg/Knz7C48t87
- 4C3VC1YsFWJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaAoHPF8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277btkEACZ0kHXXxE62dVklV
- +deYMCDSMF+LM7Q/yLJzv2wcuzKsOjlJY2gVwjs4feeLdh7Ni3RmRzzSRpdGD7UqQ0asTLQRMuk
- P75RK7PexH/vFp/kBrLDp9qUyf3GvRG54luADGWjnWvb+FCM636Os0Z+oDaf9dBKxZ1+4qo1ojp
- Ft6NzujtxXrkSaYoW0zvHwJWxy/jyiXrwcFKt4fP3qV7tcjkaRwM+80e9RTPv5pt0ZlTF87MrMd
- PT8Z83jXXuwAAk9ExwYudHu8icKwzF91D5JXlf791+1L8/S5V55ae2Ps6/uSg6rwHm3C7BBMvvs
- +FXNh9mvBd3ha13AhLK/YhvkOCEeo0CaPuZC3MiyMFKMar6ICEkveHz33VVwylFMUggVG9Fw0DN
- To+RqlnH2Vdxb1F3kuZReiRUbcBY9AyNd4RTxMuryP8hW5/B1BysY2Wr9VH+zL2nebKHJW6VQi5
- v5jwzUcQhA9o+1I3keuxpdzAGcLYUP6TEXzwItgR4V1iexfNkL3e4PvHpw0aSnhCqBtGmYP65x0
- gWJXNo4gxvVdNzWjUeBhb1nkE4G6QUbuhyksak/wzESFwJItToebRsM8z12tt6asMVHSc5s9f83
- rDdZp7us/ISwtPHGkaxaPly55gIvNm2ciglx/r+RIr3KybTZYnbdTif1sVmLQOcB1fOg==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423221015.268949-1-kan.liang@linux.intel.com>
 
-Populate the GPIO node in the device tree for SpacemiT K1 SoC.
-Each of 32 pins will act as one bank and map pins to pinctrl controller.
+On Wed, Apr 23, 2025 at 03:10:14PM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> A warning in intel_pmu_lbr_counters_reorder() may be triggered by below
+> perf command.
+> 
+> perf record -e "{cpu-clock,cycles/call-graph="lbr"/}" -- sleep 1
+> 
+> It's because the group is mistakenly treated as a branch counter group.
+> 
+> The hw.flags of the leader are used to determine whether a group is a
+> branch counters group. However, the hw.flags is only available for a
+> hardware event. The field to store the flags is a union type. For a
+> software event, it's a hrtimer. The corresponding bit may be set if the
+> leader is a software event.
+> 
+> For a branch counter group and other groups that have a group flag
+> (e.g., topdown, PEBS counters snapshotting, and ACR), the leader must
+> be a X86 event. Check the X86 event before checking the flag.
+> 
+> There may be an alternative way to fix the issue by moving the hw.flags
+> out of the union type. It should work for now. But it's still possible
+> that the flags will be used by other types of events later. As long as
+> that type of event is used as a leader, a similar issue will be
+> triggered. So the alternative way is dropped.
+> 
+> Reported-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> Closes: https://lore.kernel.org/lkml/20250412091423.1839809-1-luogengkun@huaweicloud.com/
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi |  3 +++
- arch/riscv/boot/dts/spacemit/k1.dtsi         | 18 ++++++++++++++++++
- 2 files changed, 21 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-index a8eac5517f8578d60cb45214589ccb45ac376b9a..283663647a86ff137917ced8bfe79a129c86342a 100644
---- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -7,6 +7,9 @@
- 
- #define K1_PADCONF(pin, func) (((pin) << 16) | (func))
- 
-+/* Map GPIO pin to each bank's <index, offset> */
-+#define K1_GPIO(x)	(x / 32) (x % 32)
-+
- &pinctrl {
- 	uart0_2_cfg: uart0-2-cfg {
- 		uart0-2-pins {
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 584f0dbc60f5b0d078c7127cc4021ad6022cb182..fbc4f1965c52c4f1aa80eaa0cda97a4be438c4f2 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -447,6 +447,24 @@ uart9: serial@d4017800 {
- 			status = "disabled";
- 		};
- 
-+		gpio: gpio@d4019000 {
-+			compatible = "spacemit,k1-gpio";
-+			reg = <0x0 0xd4019000 0x0 0x100>;
-+			clocks = <&syscon_apbc CLK_GPIO>,
-+				 <&syscon_apbc CLK_GPIO_BUS>;
-+			clock-names = "core", "bus";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupts = <58>;
-+			interrupt-parent = <&plic>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			gpio-ranges = <&pinctrl 0 0 0 32>,
-+				      <&pinctrl 1 0 32 32>,
-+				      <&pinctrl 2 0 64 32>,
-+				      <&pinctrl 3 0 96 32>;
-+		};
-+
- 		pinctrl: pinctrl@d401e000 {
- 			compatible = "spacemit,k1-pinctrl";
- 			reg = <0x0 0xd401e000 0x0 0x400>;
-
--- 
-2.49.0
+Can I get a Fixes tag for this such that I can stick it in urgent?
 
 
