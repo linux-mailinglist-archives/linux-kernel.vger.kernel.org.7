@@ -1,89 +1,98 @@
-Return-Path: <linux-kernel+bounces-617690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935A1A9A466
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:42:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA860A9A46A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283FB189839B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10AB316D73D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E57A207A3A;
-	Thu, 24 Apr 2025 07:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A533D214A6F;
+	Thu, 24 Apr 2025 07:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJHH5w0b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SGIdEUv8"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4B1207A27;
-	Thu, 24 Apr 2025 07:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274AB2144B6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745480064; cv=none; b=GjkuI+tEVJMHj4SkCGcP7IEaErN1DT/TMm1WxDUK6JhHBdHFjdx7egN+6vDNHBFgqZpRDOAQcM53ZynSmue+wPoeJ4KHMjzYVZJmI4fm83V86Lo4bz7qq2qfITvgIeNZj6e3v0J8IJ3VbLGz7X3X6QbluwJqgk3Krdf8mKAK9rM=
+	t=1745480130; cv=none; b=olteuAmMY96EvLh/jn/wGYMCakcPV/nFEgYGn6Kl+61w/k1UtwNSNAuIxm/+YY8zETcQYP5wTuzdyLXMk/gCB82es9dNtBHcLxkfhIR1JfsDkEP6ZRyz6qn7alLsxtbsvr4JnN6wMFv30k2bG8+ZwT0tsanRBaZjeH5q1V3VzQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745480064; c=relaxed/simple;
-	bh=rGl4QjSoKK2+SbhVWRRtNC1El4VOWXYBbVc1P2EXWdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRjiy66w5FHaU2LYyZt2P9PeMcP83EqxKqxz2RX+s+gnHBfDqE+UdNt1No97JJ/c8Cm4+rM+w+835kVs7RC66rgt7AH0WUqjOP8kb8G9JE67ePLILPSGmP03xgb55qoV1Jj9hZhcgpRtBGCCN0j9EB4uMUlYCT1uVjwAUW12thE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJHH5w0b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F84C4CEE3;
-	Thu, 24 Apr 2025 07:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745480064;
-	bh=rGl4QjSoKK2+SbhVWRRtNC1El4VOWXYBbVc1P2EXWdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kJHH5w0bCFhjooGe42U2kOEnmwjLmprQMBr8Ek5a1J6cl8auMWUbV/SKfHaE8131E
-	 08IU14q+hwb8HU4b3Dr+JjuSOS1CnIcHp6Tv0rb3K4Q00HRoGONZ1hgt2LgvghVarM
-	 4mai/E98rBTkBKCzPmXImX9G0nIPjtk55U9jqwOccWP7IPGNN/n+OiuanIwP8O4Tsg
-	 K3iSL4DX+Algi3n2I+qW4NoJSh3wygFTYtY7Q8y3aplQqTmuxfzMRp94Vc96tMXqZC
-	 GuKRyKuEKOL7nJ+eJ2PvPGfrwqUOStWE4NE+/WK1pB3brOXqKay/dYUnyd8pt9MK74
-	 Ef9oye6LNchzw==
-Date: Thu, 24 Apr 2025 09:34:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Wunderlich <frank-w@public-files.de>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Daniel Golle <daniel@makrotopia.org>, 
-	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH v4 4/8] dt-bindings: phy: mtk-xs-phy: support type switch
- by pericfg
-Message-ID: <20250424-witty-outrageous-parakeet-7c93cc@kuoka>
-References: <20250422132438.15735-1-linux@fw-web.de>
- <20250422132438.15735-5-linux@fw-web.de>
+	s=arc-20240116; t=1745480130; c=relaxed/simple;
+	bh=T0kwBGjxljasHaaepEeFq7C9uTMkSN2h2iiLB3v6ask=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSDwOxC2SDTQY7kHWE8OoOSBvQVuDReRkym2A+59lXrTkgI7/iLM+tKTgtgLbdrh1TtRbThxJN6uZiENVUjWKzGfkF6lDpNdEbeYBQO9AQMrv9KoQEdBb62DfIZE1QW5Nk1dZBniICrsDIKFbjMQaG46fBuiL23XgkLD+L7yQa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SGIdEUv8; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b2651b9a-694d-4417-ae90-00a4256f9611@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745480124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T0kwBGjxljasHaaepEeFq7C9uTMkSN2h2iiLB3v6ask=;
+	b=SGIdEUv8ixPZp7SJPeHj00XJWK5dX4df6qcw+dvgwU5WLKqtNwbeGLyNbJbKAJ08flmTOk
+	TdkOPOj6GklqJF1f3tYIgxvabWGeHksCAJctFe5sMWcjU76qWFqMhTstffeef5NXTe9cj9
+	D9p/cACXtMvKw+47m3OGBb/u+RJPzC0=
+Date: Thu, 24 Apr 2025 15:35:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422132438.15735-5-linux@fw-web.de>
+Subject: Re: [PATCH net-next V3 2/3] net: stmmac: dwmac-loongson: Add new
+ multi-chan IP core support
+To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Feiyang Chen <chris.chenfeiyang@gmail.com>, loongarch@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Lunn <andrew@lunn.ch>, Henry Chen <chenx97@aosc.io>,
+ Biao Dong <dongbiao@loongson.cn>, Baoqi Zhang <zhangbaoqi@loongson.cn>
+References: <20250424072209.3134762-1-chenhuacai@loongson.cn>
+ <20250424072209.3134762-3-chenhuacai@loongson.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250424072209.3134762-3-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 22, 2025 at 03:24:27PM GMT, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add support for type switch by pericfg register between USB3/PCIe.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> v4:
-> - changes based on comments from Krzysztof
-> - change to phy type configuration controller/register
-> ---
->  .../devicetree/bindings/phy/mediatek,xsphy.yaml   | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+在 4/24/25 3:22 PM, Huacai Chen 写道:
+> Add a new multi-chan IP core (0x12) support which is used in Loongson-
+> 2K3000/Loongson-3B6000M. Compared with the 0x10 core, the new 0x12 core
+> reduces channel numbers from 8 to 4, but checksum is supported for all
+> channels.
+>
+> Add a "multichan" flag to loongson_data, so that we can simply use a
+> "if (ld->multichan)" condition rather than the complicated condition
+> "if (ld->loongson_id == DWMAC_CORE_MULTICHAN_V1 || ld->loongson_id ==
+> DWMAC_CORE_MULTICHAN_V2)".
+>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Tested-by: Henry Chen <chenx97@aosc.io>
+> Tested-by: Biao Dong <dongbiao@loongson.cn>
+> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Best regards,
-Krzysztof
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+
+
+Thanks,
+
+Yanteng
+
 
 
