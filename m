@@ -1,218 +1,237 @@
-Return-Path: <linux-kernel+bounces-618582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194F2A9B065
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:16:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB1CA9B04B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9283ABEF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D0D7A4489
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA5927FD62;
-	Thu, 24 Apr 2025 14:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BDE19066B;
+	Thu, 24 Apr 2025 14:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YyLEy0uC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XEfSe3KG"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD37C27B516
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E9013E02A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504036; cv=none; b=mel1V7Uu9D+3RokDigsEZ8kXmNMQawYcWIO6ccBJRCiTRHn6nSx/94q+8wjpE3xf6hWzmWfj5/3pHcF+/71NY5MHsBf6Z94rGJ5YjRybkBc2tCroZxvkrFTaPWocYWKlR53UwuGYO7rT2R0AwJAIRIrwbFXzi2AQTTNH5uvGMiQ=
+	t=1745503999; cv=none; b=X/X5PHy1do4r2CQEQBHttBx5jaiYTrGtfqqEsCpDVwF2R7qJci6jdG4OYLH4rGi9wO2Z/TVsxmz1L2z/cjga54QlX6WI3o8g8xE5akVqYKdKeR58kAwCYCro6V2E1j7ZlBkkQK3wC2VKLZuPSbHyeqob67eOplqX+OK30QXG2js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504036; c=relaxed/simple;
-	bh=62G1u7Mmcj0LoLg/GsZOxRpsdU6hf0LcgEiDACKmXjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EHCghYlf7G91jIgcRBH9M573boOmj4Oajs8yzEsw7zBgh/I09/S5+Lxa4A5v4FynJeZlAXY0LL86URz6y0GC5mEggR/Tni7tl0EraOzvLM/KW8eSfZGwAyFEvoGr5axrnAQ86Mkh2H8COYtSgq3Vn1Rxv4k9NMZ4kFWmDXdE05M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YyLEy0uC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf680d351so13779685e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:13:53 -0700 (PDT)
+	s=arc-20240116; t=1745503999; c=relaxed/simple;
+	bh=B6M0blk0x7gzQfl4V7yoC30BjjphrqR3MjZWIhAuJas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h+MxkrfdKs361CVUK3PLlQJ2EqnEgdT50Ga7rOyZkKENRZPNGtgLaP+Vv5wwRwoFuY3cX9Rs4v11C21G8unKWNNTkHAKF6VQ3Ib2/QiiN3qidyGjh+b2aYV0gj1nS/wdBLmhX9SofyCXP2WjPSIxU3ZNSufbq4mgOlf1LeBBsjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XEfSe3KG; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85e751cffbeso92503839f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745504031; x=1746108831; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BvSif0ZiFcbo45REElIUdI7xtRbISNuAr1Y97HbCqdI=;
-        b=YyLEy0uC+aKHIkM4oaNNOOvTEZxl/5B4cXMJWSiA5CH0VKETdRs1XxMP9euG6CgE2e
-         Z23rgG1SUAKMC/rdVHWjNbC+XWmyfueGcOirkOcsGMCQPLCujAKCkPge1SHWgctMolRg
-         VsK7AbhITHdDJZ/mZTkqKU2opmMA5akZbn1I1JWbXeLTDgeuLCR+bqweC7o3r8fqG0JP
-         rvxIZ6AW6JAFEQIIudhQnHCQgdgEg6zG4+kSRQJN8FbIPXzyGwglOHS25g10OTkEfunL
-         lbyuyS6pqq7X1Q8tQ/K+fZGkXN0vkHcZtBXrR60SkIIevTg4zC9iJj8ScVY3BHkXRwUW
-         mzag==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745503995; x=1746108795; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fd31tuMqcDYEf3YOh3nb9hbCE7tpXTrqaGBK0QTTKgc=;
+        b=XEfSe3KGOCFk6l5PBeKbt0O2X2WLtsG1UaosHB04azCWOeO/k/rPQBYjttuJq4yip1
+         8e8lVxvR4qVFxLObQ9e4DLxjDhPU6ug/X+fE9HKgFcKoWLB9+7sgqKMwN+dh18hobw8s
+         jwEDqB9tiY/w82MTuQcF19y5AhLYO9+TviSK+ZBt1qUxuMXZB2YM7YxNfMbnddq7NlzF
+         Bn8Q+N2BI/ROlsnvsfwY/FqFU4iqOdtrIVrd32dzwEjK2by5PUQVERTLeh+10FByH/uS
+         aNj6UAcc8wwhR5MNMaFZyGrQMMb0GhXYk0kqP25acAccKNr3J7men7uyHXpdv3DC7y1A
+         L6sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745504031; x=1746108831;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BvSif0ZiFcbo45REElIUdI7xtRbISNuAr1Y97HbCqdI=;
-        b=rKFdMnOYyALmK+KZO74UvLOKqsjftrfkvkRmoR6ZAs18Z7fix8QSlAH7cn2VlNHDLG
-         zuE4JK0LNaPB2C4Eyq0pDNEwddRGADqH89iacIOQ1knNIOtBfkt9/hCcQhKv68z97DFC
-         SAIV0IvXRU0Q4F5sqW/VqjOWis+eaODFzS0v1AGoFYvUWdBQCXeLAweaD/DZrQAXaDm7
-         X1y+hxQc0DgFdZEcMC8yUTbn11lZKJFx8mvHEfyupl1V1buJEKA2sO3rPtzy0DajJguI
-         8i9S0gv/9cK2BpNSJ3A9lGshxLGD1DYrQa2yT9GMCJ+dQo6etTuhtNTb1i/3t9ORGltW
-         rfPQ==
-X-Gm-Message-State: AOJu0Yy1Rp1bGv7J2two1Qkztdn7iffU4R6Ed7ckLDEiaFinOUmc8jdl
-	2HGLxMIDz77Fz40lPWD2+D5YptGJQnTWsNO5942UMciBU7nqCWIfJuhsOiH7OmzeqvcJY28kcUf
-	cfi0=
-X-Gm-Gg: ASbGnctJ1Pr0uxtgSX3k0EfZ50oXDung62cTb5jFcGypEz1jpwKmh6U6S68nqLqXPaR
-	h9VJAWolaQtQvU68oLjBxbQB4XMIlQKQla9XNImRnvYeBJ2bojMNcqaXgR9gHRHJ3bBRvUnDODA
-	QOYv7LQaa+2KGIeSeXAcmqt58LPjI5J8VUZpCu2PtdxSuXwSlEh2nZT9owhwkgIT4k6GgXGHwM8
-	BI9guOAvEOClKcTSaRjR7Q5z8KslsZwlhH06iRChMpemCPSqse3D8ETR4X6R1itequGNeMO/tO4
-	9G9aNNk7FnrkH0TjEzMAoX7f2cvOdNZwrLDbLxly4yWKa062pcsKJkndNR76wboz21LYFteHlDa
-	jvBod0aSNHrNrkqNV
-X-Google-Smtp-Source: AGHT+IGs6TOHidyOdLjO/aiH4v937+mffmDnW0sidZAyNfcPHTexYT+C0CxkEqdPf2DwJcaHqEXYnw==
-X-Received: by 2002:adf:ebcc:0:b0:39c:1efb:eec9 with SMTP id ffacd0b85a97d-3a06d673778mr1956533f8f.13.1745504031472;
-        Thu, 24 Apr 2025 07:13:51 -0700 (PDT)
-Received: from seksu.systems-nuts.com (stevens.inf.ed.ac.uk. [129.215.164.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8150sm2199951f8f.7.2025.04.24.07.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 07:13:51 -0700 (PDT)
-From: Karim Manaouil <karim.manaouil@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: Karim Manaouil <karim.manaouil@linaro.org>,
-	Alexander Graf <graf@amazon.com>,
-	Alex Elder <elder@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-	Quentin Perret <qperret@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
-	Will Deacon <will@kernel.org>,
-	Haripranesh S <haripran@qti.qualcomm.com>,
-	Carl van Schaik <cvanscha@qti.qualcomm.com>,
-	Murali Nalajala <mnalajal@quicinc.com>,
-	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
-	Trilok Soni <tsoni@quicinc.com>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: [RFC PATCH 05/34] KVM: Add KVM_SET_DTB_ADDRESS ioctl to pass guest DTB address from userspace
-Date: Thu, 24 Apr 2025 15:13:12 +0100
-Message-Id: <20250424141341.841734-6-karim.manaouil@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250424141341.841734-1-karim.manaouil@linaro.org>
-References: <20250424141341.841734-1-karim.manaouil@linaro.org>
+        d=1e100.net; s=20230601; t=1745503995; x=1746108795;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fd31tuMqcDYEf3YOh3nb9hbCE7tpXTrqaGBK0QTTKgc=;
+        b=hihrhMmQBDZHg7LTpXsYA0oJnXAwp5SQ1/8SGKTDJcjawY8bQyQtP9iq4OA11NrCng
+         4taKzMzJPeGAvZZOBFzXVU+a6FQxqjmGAGDIGm/p+r4Ptx1ckukuak0dmAUTX4Fye0C2
+         aVCdJb6xBa3tBGDFoGubVAKWP8yFALMgc/VF9NJ69E3QYqfAo1StJudq5qRdYF4ZQsh1
+         KbZjHOkVuYBaylJVDv8gl7xcm8PoddS+2hwAxilQVy8fM2Ld6wR/z6IFAPTH3IO/Yl4u
+         oIDw1+nEYcuu2URcwUJWLNOvWrzPcRraz5YUOamaOLj3ZbLU7hkZA7UOc6eNJRcRoH3H
+         zZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfmG5rhi0mT2vpjezhq/dHMwwrF67OGmrR0LmNSVA0RthUpXfRJG14hOTxIpUOGmqsOWhHOQHfgmV+tq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGZaGAxxZ6WPk/qrjPxwFDcQadCvmPOwOO3b7SZR9s8pI7o1Qj
+	LVssfx2TcORtSDH7qt0SgA5qNptFE9pSQbpqtaX7q6XhmfLzaguks3bA2qEABww=
+X-Gm-Gg: ASbGnct4UrY/QnAzlcQdrm8SSwXBuyCNRqtSCUnBuCEJNsLZ1nRnQtt+TRRLhcPe5IT
+	xoqWkn+twwJBbRWBByOOFRA3xQaPp6Qlfnk0n+pQCH5glW14fvc1ZVPl5zkyCGSl3uW9pwNJPe5
+	Z2JRQgtOBSB44UeyABjcYiMTB+toyPpb0nB3SoJrneZgHxsUG0yBUz2wZKyNgfAmIAMJmTWX3P8
+	KtghZK14EEo4RCreNQ/yNTeSeANoCYyvQLpYvZGhaz8LeXLAE8FJ585GzsovoC5AuWgGJbu8p+e
+	z6/ZHUAu2av2H3CCBUIFV2YcE60U4lfk8PW3
+X-Google-Smtp-Source: AGHT+IEYHzLjHult/C3OCAnnN70ZyOtQR7NOtOT3xPstQU442NKdq7lUb6GFqX933ULAUPG/kkbK/w==
+X-Received: by 2002:a05:6602:6d07:b0:861:c4cf:cae8 with SMTP id ca18e2360f4ac-8644f99fbe6mr297485339f.2.1745503995399;
+        Thu, 24 Apr 2025 07:13:15 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864518de4e9sm20913439f.16.2025.04.24.07.13.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 07:13:14 -0700 (PDT)
+Message-ID: <5c20b5ca-ce41-43c4-870a-c50206ab058d@kernel.dk>
+Date: Thu, 24 Apr 2025 08:13:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
+ scenarios
+To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250422162913.1242057-1-qq282012236@gmail.com>
+ <20250422162913.1242057-2-qq282012236@gmail.com>
+ <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
+ <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
+ <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
+ <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
+ <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
+ <52d55891-36e3-43e7-9726-a2cd113f5327@kernel.dk>
+ <cac3a5c9-e798-47f2-81ff-3c6003c6d8bb@kernel.dk>
+ <CANHzP_uJft1FPJ0W++0Zp5rUjayaULEdpAQRn1VuuqDVq3DmJA@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <CANHzP_uJft1FPJ0W++0Zp5rUjayaULEdpAQRn1VuuqDVq3DmJA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some hypervisors, such as Gunyah, require access to the guest's
-device tree blob (DTB) in order to inspect and/or modify it before
-starting the guest. The userspace virtual machine monitor (e.g. QEMU)
-is responsible for loading the guest's DTB into memory at a guest
-physical address, but the hypervisor backend must be informed of that
-address and size.
+On 4/24/25 8:08 AM, ??? wrote:
+> Jens Axboe <axboe@kernel.dk> ?2025?4?24??? 06:58???
+>>
+>> On 4/23/25 9:55 AM, Jens Axboe wrote:
+>>> Something like this, perhaps - it'll ensure that io-wq workers get a
+>>> chance to flush out pending work, which should prevent the looping. I've
+>>> attached a basic test case. It'll issue a write that will fault, and
+>>> then try and cancel that as a way to trigger the TIF_NOTIFY_SIGNAL based
+>>> looping.
+>>
+>> Something that may actually work - use TASK_UNINTERRUPTIBLE IFF
+>> signal_pending() is true AND the fault has already been tried once
+>> before. If that's the case, rather than just call schedule() with
+>> TASK_INTERRUPTIBLE, use TASK_UNINTERRUPTIBLE and schedule_timeout() with
+>> a suitable timeout length that prevents the annoying parts busy looping.
+>> I used HZ / 10.
+>>
+>> I don't see how to fix userfaultfd for this case, either using io_uring
+>> or normal write(2). Normal syscalls can pass back -ERESTARTSYS and get
+>> it retried, but there's no way to do that from inside fault handling. So
+>> I think we just have to be nicer about it.
+>>
+>> Andrew, as the userfaultfd maintainer, what do you think?
+>>
+>> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+>> index d80f94346199..1016268c7b51 100644
+>> --- a/fs/userfaultfd.c
+>> +++ b/fs/userfaultfd.c
+>> @@ -334,15 +334,29 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+>>         return ret;
+>>  }
+>>
+>> -static inline unsigned int userfaultfd_get_blocking_state(unsigned int flags)
+>> +struct userfault_wait {
+>> +       unsigned int task_state;
+>> +       bool timeout;
+>> +};
+>> +
+>> +static struct userfault_wait userfaultfd_get_blocking_state(unsigned int flags)
+>>  {
+>> +       /*
+>> +        * If the fault has already been tried AND there's a signal pending
+>> +        * for this task, use TASK_UNINTERRUPTIBLE with a small timeout.
+>> +        * This prevents busy looping where schedule() otherwise does nothing
+>> +        * for TASK_INTERRUPTIBLE when the task has a signal pending.
+>> +        */
+>> +       if ((flags & FAULT_FLAG_TRIED) && signal_pending(current))
+>> +               return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, true };
+>> +
+>>         if (flags & FAULT_FLAG_INTERRUPTIBLE)
+>> -               return TASK_INTERRUPTIBLE;
+>> +               return (struct userfault_wait) { TASK_INTERRUPTIBLE, false };
+>>
+>>         if (flags & FAULT_FLAG_KILLABLE)
+>> -               return TASK_KILLABLE;
+>> +               return (struct userfault_wait) { TASK_KILLABLE, false };
+>>
+>> -       return TASK_UNINTERRUPTIBLE;
+>> +       return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, false };
+>>  }
+>>
+>>  /*
+>> @@ -368,7 +382,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>>         struct userfaultfd_wait_queue uwq;
+>>         vm_fault_t ret = VM_FAULT_SIGBUS;
+>>         bool must_wait;
+>> -       unsigned int blocking_state;
+>> +       struct userfault_wait wait_mode;
+>>
+>>         /*
+>>          * We don't do userfault handling for the final child pid update
+>> @@ -466,7 +480,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>>         uwq.ctx = ctx;
+>>         uwq.waken = false;
+>>
+>> -       blocking_state = userfaultfd_get_blocking_state(vmf->flags);
+>> +       wait_mode = userfaultfd_get_blocking_state(vmf->flags);
+>>
+>>          /*
+>>           * Take the vma lock now, in order to safely call
+>> @@ -488,7 +502,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>>          * following the spin_unlock to happen before the list_add in
+>>          * __add_wait_queue.
+>>          */
+>> -       set_current_state(blocking_state);
+>> +       set_current_state(wait_mode.task_state);
+>>         spin_unlock_irq(&ctx->fault_pending_wqh.lock);
+>>
+>>         if (!is_vm_hugetlb_page(vma))
+>> @@ -501,7 +515,11 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>>
+>>         if (likely(must_wait && !READ_ONCE(ctx->released))) {
+>>                 wake_up_poll(&ctx->fd_wqh, EPOLLIN);
+>> -               schedule();
+>> +               /* See comment in userfaultfd_get_blocking_state() */
+>> +               if (!wait_mode.timeout)
+>> +                       schedule();
+>> +               else
+>> +                       schedule_timeout(HZ / 10);
+>>         }
+>>
+>>         __set_current_state(TASK_RUNNING);
+>>
+>> --
+>> Jens Axboe
+> I guess the previous io_work_fault patch might have already addressed
+> the issue sufficiently. The later patch that adds a timeout for
+> userfaultfd might
 
-To support this use case, introduce a new ioctl: KVM_SET_DTB_ADDRESS.
-This allows userspace to provide the guest physical address and size
-of the DTB via a `struct kvm_dtb`, which is now stored in `struct kvm`.
+That one isn't guaranteed to be safe, as it's not necessarily a safe
+context to prune the conditions that lead to a busy loop rather than the
+normal "schedule until the condition is resolved". Running task_work
+should only be done at the outermost point in the kernel, where the task
+state is known sane in terms of what locks etc are being held. For some
+conditions the patch will work just fine, but it's not guaranteed to be
+the case.
 
-The ioctl allows platform-specific backends like Gunyah to retrieve
-the DTB location when configuring the VM.
+> not be necessary  wouldn?t returning after a timeout just cause the
+> same fault to repeat indefinitely again? Regardless of whether the
+> thread is in UN or IN state, the expected behavior should be to wait
+> until the page is filled or the uffd resource is released to be woken
+> up, which seems like the correct logic.
 
-This patch also increments the KVM API version to 13 to reflect the
-addition of this new ioctl.
+Right, it'll just sleep timeout for a bit as not to be a 100% busy loop.
+That's unfortunately the best we can do for this case... The expected
+behavior is indeed to schedule until we get woken, however that just
+doesn't work if there are signals pending, or other conditions that lead
+to TASK_INTERRUPTIBLE + schedule() being a no-op.
 
-Signed-off-by: Karim Manaouil <karim.manaouil@linaro.org>
----
- include/linux/kvm_host.h |  1 +
- include/uapi/linux/kvm.h | 14 ++++++++++----
- virt/kvm/kvm_main.c      |  8 ++++++++
- 3 files changed, 19 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 3461346b37e0..4e98c7cad2bd 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -862,6 +862,7 @@ struct kvm {
- 	/* Protected by slots_locks (for writes) and RCU (for reads) */
- 	struct xarray mem_attr_array;
- #endif
-+	struct kvm_dtb dtb;
- 	char stats_id[KVM_STATS_NAME_SIZE];
- };
- 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index c6988e2c68d5..8f8161cd61a7 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -14,7 +14,7 @@
- #include <linux/ioctl.h>
- #include <asm/kvm.h>
- 
--#define KVM_API_VERSION 12
-+#define KVM_API_VERSION 13
- 
- /*
-  * Backwards-compatible definitions.
-@@ -43,6 +43,11 @@ struct kvm_userspace_memory_region2 {
- 	__u64 pad2[14];
- };
- 
-+struct kvm_dtb {
-+	__u64 guest_phys_addr;
-+	__u64 size;
-+};
-+
- /*
-  * The bit 0 ~ bit 15 of kvm_userspace_memory_region::flags are visible for
-  * userspace, other bits are reserved for kvm internal use which are defined
-@@ -1190,11 +1195,12 @@ struct kvm_vfio_spapr_tce {
- #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
- #define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
- 					 struct kvm_userspace_memory_region2)
-+#define KVM_SET_DTB_ADDRESS      _IOW(KVMIO, 0x50, struct kvm_dtb)
- 
- /* enable ucontrol for s390 */
--#define KVM_S390_UCAS_MAP        _IOW(KVMIO, 0x50, struct kvm_s390_ucas_mapping)
--#define KVM_S390_UCAS_UNMAP      _IOW(KVMIO, 0x51, struct kvm_s390_ucas_mapping)
--#define KVM_S390_VCPU_FAULT	 _IOW(KVMIO, 0x52, unsigned long)
-+#define KVM_S390_UCAS_MAP        _IOW(KVMIO, 0x55, struct kvm_s390_ucas_mapping)
-+#define KVM_S390_UCAS_UNMAP      _IOW(KVMIO, 0x56, struct kvm_s390_ucas_mapping)
-+#define KVM_S390_VCPU_FAULT	 _IOW(KVMIO, 0x57, unsigned long)
- 
- /* Device model IOC */
- #define KVM_CREATE_IRQCHIP        _IO(KVMIO,   0x60)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index dbb7ed95523f..a984051e2470 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -5121,6 +5121,14 @@ static long kvm_vm_ioctl(struct file *filp,
- 		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
- 		break;
- 	}
-+	case KVM_SET_DTB_ADDRESS: {
-+		r = 0;
-+		if (copy_from_user(&kvm->dtb, argp, sizeof(struct kvm_dtb))) {
-+			r = -EFAULT;
-+			goto out;
-+		}
-+		break;
-+	}
- 	case KVM_GET_DIRTY_LOG: {
- 		struct kvm_dirty_log log;
- 
 -- 
-2.39.5
-
+Jens Axboe
 
