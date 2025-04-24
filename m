@@ -1,121 +1,132 @@
-Return-Path: <linux-kernel+bounces-617537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650F5A9A1DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B623BA9A1EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129C6194710B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17549194745F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3205020FAA9;
-	Thu, 24 Apr 2025 06:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BD71E8837;
+	Thu, 24 Apr 2025 06:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="aTmw7cA0"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtboPodA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58409207DFE;
-	Thu, 24 Apr 2025 06:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745475756; cv=pass; b=AvaGCkM411bL6anUYAkA/QGSZ6gEmvDLw2kYzLc4Wfk+vxmTAUY6GfnGTWLcoaOljiFpsxkarzLCFJZ6xaNHZuWa2ssypdATPJ0L9T4BtJcIifQsvzd9KgSAGOe0RkcGpGFCRYbqUkFlO8k/XVB3YUEwBcnDsMXTDxlZlygipNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745475756; c=relaxed/simple;
-	bh=Hsya3hwoUK8Ds+oFmJkETUofzArkqVuMq/FiU0wxbT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MvhrRn4PSs/RA9KSZLGC1NU/9HID8GBtpUUxVRrr5ypQ2DZeQzPgtVTfkYvqwhSG2JP/GiW6epaWhS12N8CUul50i5A8iuPa3MP1TaTk4LHgXZh4qXumaCq9HugaKV/JmfyfBpa0vbSBqFpku2SmLl4cs1OqOBB/9oEa0gnspdA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=aTmw7cA0; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1745475729; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kDArssAjro99bi32ehmZfpQjev/z2RBPR3f4PwgXnYPpQjWPxuGrhX2gTQhwX6DeyIm9kTYxhi/klXB+pi+hwHPBx17ODPMIw2JS3r/E7K+0LtlLu9aknopkwB8NM2b3Fs1Sdr9sJFOlq9XbgsFP/+w9pC7SYN1eNwg6/zDSF2A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745475729; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xVNOvXEvdW6leQE28c3jHe0aUAqH+GUjgXBsNd/0dtY=; 
-	b=Xbqexsx+Y827fYArushI327qEhT+N+Q32WMJPDdq94wAAWWWujOiHtONtYGU1LAP49Lp00f08EpXOVPkZwAnRrBaY+M2iNNlg+wtf1KJEm90dI+wdMo0Em49jYrE7Fx2c7FPOhFxJsanfBRvai6C+f7N+NgD0hZtSSmD3EeN7HU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745475729;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=xVNOvXEvdW6leQE28c3jHe0aUAqH+GUjgXBsNd/0dtY=;
-	b=aTmw7cA0A0R7yGwvidNysZ7lVbcK8j3iS0tYCpm6FjiTxXMnaR9ptnsGRb1kzUMC
-	V3JtyIIZ1XuzwEuN7Gz0sHdJYzzGQb5T65nideQk+BM00P1mp292UrO9bVXvF9cwB5y
-	Ihuc7dxMXSGibLBQJZpmBEV/2bXLS487kXHyYbj9P03roC7UYmkuxzU8Ji3dJsz9MCl
-	uRogeAoqAEEvn6mBfxWIJTIgH3wm3VpcZakcs6QmT6gvhqVAlgalOYQy+EVWwCTELyI
-	HhCyx1COuaqz6odjBcY9ScWA0CZEMssyVF1ylHqaI/Jf5TYtrqwKSgezprny/F0I7Qh
-	bdIfjBFarA==
-Received: by mx.zohomail.com with SMTPS id 1745475727228758.2441586398901;
-	Wed, 23 Apr 2025 23:22:07 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2 3/3] riscv: dts: starfive: jh7110-pine64-star64: force no USB overcurrent
-Date: Thu, 24 Apr 2025 14:21:54 +0800
-Message-ID: <20250424062154.655128-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250424062017.652969-1-uwu@icenowy.me>
-References: <20250424062017.652969-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0292163B9;
+	Thu, 24 Apr 2025 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745475762; cv=none; b=MP0dfVWRcS8AxqU3Lr2rEehwismCVz1ZSb2yJ+rW/8a0jnGA6sBtufgIeVigvCfNVMD36bJTRPJ1p3iiPFkxqZnmAzOZLq6Td68jmeQDMU3sZkPgcrCRD1bSs9FDdQau4HsWxraf8prIkFL1Bfhn7E/8kf4nj6sCOX1/EnhiIuQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745475762; c=relaxed/simple;
+	bh=MnbDTkDjx7fGLQrr6aq33qeElS5aQV1V02HztW2z4QI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=frsu2ERYpofBEYhXTR6UIHDkztKUYqCzPwRGLvbfv0wCvs+0BfzAT6S6qbfWgBRCTchBt/okiWIljFDkTsUzho7twq783500eu1FPYJWFMV1im2l9GpGhMICxtbRKoKyowqCnpis+3PpZ1Zzu+SRQBAZbfrOO/gXbeVTVgZ+pQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtboPodA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13DBC4CEE3;
+	Thu, 24 Apr 2025 06:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745475760;
+	bh=MnbDTkDjx7fGLQrr6aq33qeElS5aQV1V02HztW2z4QI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WtboPodAb4If3nkaa2PXy6oXsf0a3bXZctQ2wvPcXSI0l79MWAm4Z2gSZuz96IF9H
+	 0qLlIMYtp2SHP6GDqfM8ztwqvVgTZY6FXR9F5f0adrLGLlrBdyf5RWCE1I7N7CrTTj
+	 DAPkO1+pZGzixh+Urbuscma6hbYr7IX/6giX9wVWMj2r92tTCqm0d1+78+g71USLbJ
+	 THF5D9zsliGl+VvssarcSIxgX6vlpU47E9eZMJKjYTEQ8nflTSxlLh63IVcKVnlFdc
+	 SWV4SxmWIXzI3lSv6htjlMKoZppQdBmQJNjRQ4JTvSh2Z3t/BH9C3LOESeyqGxlX14
+	 DIG6sr68pN51A==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so561949e87.1;
+        Wed, 23 Apr 2025 23:22:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+dwKdWGi/oXXv/11j017luD/6cSyRvbeiNO3r0QjubiBFfSFte6T0kd7axjJ2Hkj9+eleYdNWmT5lIA==@vger.kernel.org, AJvYcCXuh/6bjRJbOR9/eUAoB1aRDIp4OaoH5N1Ii2aif0sF/5MIqsjCpy7/Kyqzmf4gZkrFDGp1g2pKa3cBN/8=@vger.kernel.org, AJvYcCXwuHIeTBenxQd66PzjaQxJ3UZ6Qg9Vot5On3gbNx4yiWDuBmgFx9Tx4/OR0LcJ+frPOHm27OJxKI1ZlQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOnWQp20667775jSdTbz7exANcqKgpyGzGXxaYuagK8Wredye9
+	PbhCpy9LlZ/tQQoi/iEmVB/3GOMCil8YpRbr3hLpJgJ80V4VrOigR85OiFGJ1eVLilRR2lWaYaM
+	esm4N8/ZIN1j1yaXIXSUOTK+71Lw=
+X-Google-Smtp-Source: AGHT+IEBg0GksqRUxYbq10WiBQxT674qV08e5XaXakQ/0Ux/wZi1/Em/Ff29tbRd93xidxYNQXuF7ob7W4sz3W9cDJE=
+X-Received: by 2002:a2e:b8c9:0:b0:30c:3099:13db with SMTP id
+ 38308e7fff4ca-3179e5ea6f5mr4171351fa.14.1745475759305; Wed, 23 Apr 2025
+ 23:22:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20250424002038.179114-1-ebiggers@kernel.org>
+In-Reply-To: <20250424002038.179114-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 24 Apr 2025 08:22:28 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFZ-Wy9Z5Rqe-o6fnKtgm+=JQeFnVMvG=jmKz36=02w6A@mail.gmail.com>
+X-Gm-Features: ATxdqUEf-FfEO6d9z_202RUFsmqfhy6LhKcEQhVv3O5CQR6i6602IFM1v6-7V-w
+Message-ID: <CAMj1kXFZ-Wy9Z5Rqe-o6fnKtgm+=JQeFnVMvG=jmKz36=02w6A@mail.gmail.com>
+Subject: Re: [PATCH 0/7] lib/crc: drop "glue" from filenames
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The Star64 board has no GPIOs to indicate USB overcurrent, however the
-USB controller would stop to work if the overcurrent_n signal it gets is
-low (which means overcurrent situations happening because of the _n).
+On Thu, 24 Apr 2025 at 02:22, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This series fixes an odd naming convention that was unnecessarily
+> carried over from the original Crypto API code.
+>
+> I'm planning to take this via the crc tree.
+>
+> Eric Biggers (7):
+>   arm/crc: drop "glue" from filenames
+>   arm64/crc: drop "glue" from filenames
+>   powerpc/crc: drop "glue" from filenames
+>   powerpc/crc: rename crc32-vpmsum_core.S to crc-vpmsum-template.S
+>   s390/crc: drop "glue" from filenames
+>   sparc/crc: drop "glue" from filenames
+>   x86/crc: drop "glue" from filenames
+>
 
-Use the pin controller to force the overcurrent_n signal to be high in
-order to ensure stable behavior of the USB controller.
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-This patch depends on [1] for including the necessary header file.
-
-[1] https://lore.kernel.org/linux-riscv/20250424060605.638678-1-uwu@icenowy.me/T/#u
-
- arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-index 31e825be2065a..4fb522d127e21 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-+++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-@@ -91,6 +91,13 @@ GPOEN_ENABLE,
- 			input-schmitt-disable;
- 			slew-rate = <0>;
- 		};
-+
-+		overcurrent-pins {
-+			pinmux = <GPIOMUX(PAD_INTERNAL_HIGH,
-+					  GPOUT_LOW,
-+					  GPOEN_DISABLE,
-+					  GPI_SYS_USB_OVERCURRENT)>;
-+		};
- 	};
- };
- 
--- 
-2.49.0
-
+>  arch/arm/lib/Makefile                                       | 4 ++--
+>  arch/arm/lib/{crc-t10dif-glue.c => crc-t10dif.c}            | 0
+>  arch/arm/lib/{crc32-glue.c => crc32.c}                      | 0
+>  arch/arm64/lib/Makefile                                     | 4 ++--
+>  arch/arm64/lib/{crc-t10dif-glue.c => crc-t10dif.c}          | 0
+>  arch/arm64/lib/{crc32.S => crc32-core.S}                    | 0
+>  arch/arm64/lib/{crc32-glue.c => crc32.c}                    | 0
+>  arch/powerpc/lib/Makefile                                   | 4 ++--
+>  arch/powerpc/lib/{crc-t10dif-glue.c => crc-t10dif.c}        | 0
+>  .../lib/{crc32-vpmsum_core.S => crc-vpmsum-template.S}      | 0
+>  arch/powerpc/lib/{crc32-glue.c => crc32.c}                  | 0
+>  arch/powerpc/lib/crc32c-vpmsum_asm.S                        | 2 +-
+>  arch/powerpc/lib/crct10dif-vpmsum_asm.S                     | 2 +-
+>  arch/s390/lib/Makefile                                      | 2 +-
+>  arch/s390/lib/{crc32-glue.c => crc32.c}                     | 0
+>  arch/sparc/lib/Makefile                                     | 2 +-
+>  arch/sparc/lib/{crc32_glue.c => crc32.c}                    | 2 +-
+>  arch/x86/lib/Makefile                                       | 6 +++---
+>  arch/x86/lib/{crc-t10dif-glue.c => crc-t10dif.c}            | 0
+>  arch/x86/lib/{crc32-glue.c => crc32.c}                      | 0
+>  arch/x86/lib/{crc64-glue.c => crc64.c}                      | 0
+>  21 files changed, 14 insertions(+), 14 deletions(-)
+>  rename arch/arm/lib/{crc-t10dif-glue.c => crc-t10dif.c} (100%)
+>  rename arch/arm/lib/{crc32-glue.c => crc32.c} (100%)
+>  rename arch/arm64/lib/{crc-t10dif-glue.c => crc-t10dif.c} (100%)
+>  rename arch/arm64/lib/{crc32.S => crc32-core.S} (100%)
+>  rename arch/arm64/lib/{crc32-glue.c => crc32.c} (100%)
+>  rename arch/powerpc/lib/{crc-t10dif-glue.c => crc-t10dif.c} (100%)
+>  rename arch/powerpc/lib/{crc32-vpmsum_core.S => crc-vpmsum-template.S} (100%)
+>  rename arch/powerpc/lib/{crc32-glue.c => crc32.c} (100%)
+>  rename arch/s390/lib/{crc32-glue.c => crc32.c} (100%)
+>  rename arch/sparc/lib/{crc32_glue.c => crc32.c} (97%)
+>  rename arch/x86/lib/{crc-t10dif-glue.c => crc-t10dif.c} (100%)
+>  rename arch/x86/lib/{crc32-glue.c => crc32.c} (100%)
+>  rename arch/x86/lib/{crc64-glue.c => crc64.c} (100%)
+>
+> base-commit: 1ec3d4ff5c77422927896c1f7d0ed01267ec1213
+> --
+> 2.49.0
+>
 
