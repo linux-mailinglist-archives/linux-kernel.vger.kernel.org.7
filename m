@@ -1,153 +1,170 @@
-Return-Path: <linux-kernel+bounces-617354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E23A99EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25898A99EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 04:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1607AD82A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1930B19469B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678B0194094;
-	Thu, 24 Apr 2025 02:35:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D4917A2FF;
+	Thu, 24 Apr 2025 02:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mWXSd5kJ"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D22701BA;
-	Thu, 24 Apr 2025 02:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0284C2701BA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745462125; cv=none; b=f0v6cVG1BLDRephgVkIXPGqRxnXiYFeihuL2GDu6hq4lMrTL668RQvJMTpnJJ7juH0XIs7r9979TWC64Jo5+VL3r7PBhzuMildRSL/WPzA4Nv/H6oPnlgg5iB4K7fPv1CUp2LwDVN/wawoqWrpJkRfT2lHypsipgV2TRhj6g4GE=
+	t=1745462608; cv=none; b=cPOugdc8l1XejXArS5fpH5Uagxz8Zq1qkfxotHJePoTH2pxIuHgyTXKiP1rVfM5U8OXSs5Re/XMp82yhvCaufr0Uc+CwBrJMtsKEOoD/+7G8CI0V3QevKhp1KXHV8Wm4A8HMvOjC9ClVJGGC9LOv8zY4lrZ5wzDjF7u8rBviRNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745462125; c=relaxed/simple;
-	bh=l5VhaPblEjCMuhNE8DZY2F3Srkk0u7b+ljx3T5DrYMQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OJi+gSnu+f2Kc29m10rbbKaAtXOBRxls5el7tf6jO+0JZIYDXudQ624vCIItF0ACKFVj0eZpE/QNiRNEUvzK+B4bT3Z5oEK+mwNkgc0eQW8uM9GcLJcJTSAT0rNaqOyCfDfA5BnvPGRgWLIfNzKbtiimRYfyfrLxwPyoSKCXY+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zjg6g1sPWz4f3lDK;
-	Thu, 24 Apr 2025 10:34:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BF1A41A0359;
-	Thu, 24 Apr 2025 10:35:16 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe19iowloxAWRKQ--.43174S3;
-	Thu, 24 Apr 2025 10:35:16 +0800 (CST)
-Subject: Re: 10x I/O await times in 6.12
-To: Matt Fleming <mfleming@cloudflare.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team <kernel-team@cloudflare.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <CAGis_TVSAPjYwVjUyur0_NFsDi9jmJ_oWhBHrJ-bEknG-nJO9Q@mail.gmail.com>
- <dd2db843-843f-db15-c54f-f2c44548dee3@huaweicloud.com>
- <CAGis_TWtWMK93nVBa_D_Y2D3Su8x_dDNwNw9h=v=8zoaHuAXBA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2bb4f6ef-c25a-887f-6a0b-434fc8e1e54e@huaweicloud.com>
-Date: Thu, 24 Apr 2025 10:35:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1745462608; c=relaxed/simple;
+	bh=sJbGvlIRFufSaoYDBoGiZhweWddeNmi6qUv0GT23XoI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CweUeOlp+XsgO4AUOmJXecM82jfU5ydQZWIGgJ8A2g2a38Og5r7wFtMnvh5DwiZQaHHJFRHHHIFjv0UQ6KkfgbilNC2I0NdEveiXANgw0ZI1ipAYmDSONMfGs2Rph5+eCDnPIu+xz2Ho8Zqz01jcMsAYizlm+fdqXAg1RtOpyHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mWXSd5kJ; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1745462502;
+	bh=UbigUt5KF6vtXvm6Rdds6/wGeynUAGYeuhwG5Sk2oq4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=mWXSd5kJFIEnBsc9l34FezvD80G0YxzvpQaijlpCmt65Kqf0ysS1ciXke8SQ55TfR
+	 skXMoQx7/oMq1B+4pj6KUuBWW4ld87fXPDZuf/EhNfBLzo9pNjQsvhHyHwAymVMfTi
+	 NL4cs3s10FHMK/jSjqmFneu5ajLRmUwI2AmXZrx8=
+X-QQ-mid: izesmtp83t1745462490t61fbef5e
+X-QQ-Originating-IP: qd4J+Brc3gEv+XdEw9ds53FUz9UbATLTkRp8ND+qv6Q=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 24 Apr 2025 10:41:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15135516614704015789
+EX-QQ-RecipientCnt: 12
+From: Wentao Guan <guanwentao@uniontech.com>
+To: kbusch@kernel.org,
+	linux-nvme@lists.infradead.org
+Cc: hch@lst.de,
+	linux-kernel@vger.kernel.org,
+	hedgehog-002@163.com,
+	rugk+github@posteo.de,
+	sean.anderson@linux.dev,
+	wangyuli@uniontech.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	wentaoguan@vip.qq.com,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH] drivers/nvme: Add quirks for WDC Blue SN550 15b7:5009
+Date: Thu, 24 Apr 2025 10:40:10 +0800
+Message-Id: <20250424024010.308175-1-guanwentao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGis_TWtWMK93nVBa_D_Y2D3Su8x_dDNwNw9h=v=8zoaHuAXBA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXe19iowloxAWRKQ--.43174S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar15Cw1xAw48ur1fXrWUurg_yoW8uF15pr
-	W5Ja1Ykrs5JrW0ga1Iqa1UWFyrKw4Utry7Gr4Dta1rCwn0gry3KF1F9w4j9rWxArs5uw47
-	ZF4Y9asrX3ZxKrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-QQ-SENDSIZE: 520
+Feedback-ID: izesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: NojR6Ao/DkED1phwD+1NzoJUorjo/29SwbVNxXdxoYfr1sU90zFegIYa
+	erT0CKxF2OBKrbxoL2JGWFZmx0nS3ma0Ev7P43dXrTKxuamQzYWv6jwhpM3DTJ8KUM2Y7F9
+	pZfl/BXdUUkFk6UtwDuG3KWx8auvYC2P6iNnuANOj5FmVua6zlsitf4oB3+DIw55l2+1gb9
+	0xj7sFK9atuun4eUoLM9KnKrubmCM7GCSwftjxeQSB9mVRydbW0l1JzNxWrUpeltFwpXXLT
+	+J6+DQf+GOvV/t1d0qH4G6jvR5+2uOhJO6OFT3Eb1e4+BdCV1LyVFI4Tmv7Egi+dAfJGhKk
+	bar+eLTGRDZWtQlBv3z+QhMkIuAgvx6pk17nCE/l5VBK+g9YnSQIx56iav425q+wN+dfhx9
+	VxTVLc6E1t0a2ZaUynHOREz7nUdw/62pjildDkwU+68vzU8G8gbrSfSooSrQeDxLTboSWMR
+	t/W7x4s5NXkHkwjGg2aXvk86W3TNALYcZbpBfUtIFy3yDLuRKRops79kwEv4/RgKjt5ns+8
+	bbL0m+zxlDQiq+sbU8goG0bWqs1REG4xRBVPk5/j0M+n4GO0OvTmvcbF+FzSmavhQFaS3R/
+	DP/5XJNkRRQkXq5ezYiz9m+pOYNPYTR8WrgIPtnnmaAApvVTTIqWYmssvHYAdtx8zdKbJ14
+	T/Ic2Y78eahilWflc5Mqn97W6JVJ0o+I9od7bYS0kqO3whphLT/+17WpBh28p81juUKjMvO
+	ZP3J+ABDriuWMfiTwakhn75tuaRW34dCQz//CGAMwf9PXI1pfRX9w3AgW65D5XAql7TbQiu
+	L5u3OnHeF+77cgDKe+c1oxx1Pp1Ay8cmVIK7vrL+uf0LknaQkeJUy18Mbv1IO9+rvl32Xhn
+	tNyPAXMQDYUryGEgafptqICjMQHW6YSVSs5VGuup3iFVqhYKzaC3fjJZ/tkCgsJhmeFJ91X
+	THQjzAJymVafDQk0+d8bhHk9JuvaXr9oLYjm9ROg8sprHyMVmS0Vm/RGkwHZksVyzhbQ0ch
+	v9iDf88GAfOxqKaE/YX5ekK1cGBSRwHUWi0O18NFskGr0c9EEoln0UEG9RgXSQ2WUQk5Hal
+	Q==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-Hi, Jens!
+Add two quirks for the WDC Blue SN550 (PCI ID 15b7:5009) based on user
+reports and hardware analysis:
 
-在 2025/04/23 18:51, Matt Fleming 写道:
-> On Mon, 21 Apr 2025 at 13:21, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Can you drop this expensive bpftrace script which might affect IO
->> performance, and replace __submit_bio directly to __blk_flush_plug? If
->> nsecs - plug->cur_ktime is still milliseconds, can you check if the
->> following patch can fix your problem?
-> 
-> Yep, the below patch fixes the regression and restores I/O wait times
-> that are comparable to 6.6. Thanks!
+NVME_QUIRK_NO_DEEPEST_PS:
+liaozw talked to me the problem and solved with
+nvme_core.default_ps_max_latency_us=0, so add the quirk.
+I also found some reports in the following link.
 
-Thanks for the test.
+NVME_QUIRK_BROKEN_MSI:
+after get the lspci from Jack Rio.
+I think that the disk also have NVME_QUIRK_BROKEN_MSI.
+described in commit d5887dc6b6c0 ("nvme-pci: Add quirk for broken MSIs")
+as sean said in link which match the MSI 1/32 and MSI-X 17.
 
-Do you have any suggestions? For now, I can think of two different
-fixes:
+Log:
+lspci -nn | grep -i memory
+03:00.0 Non-Volatile memory controller [0108]: Sandisk Corp SanDisk Ultra 3D / WD PC SN530, IX SN530, Blue SN550 NVMe SSD (DRAM-less) [15b7:5009] (rev 01)
+lspci -v -d 15b7:5009
+03:00.0 Non-Volatile memory controller: Sandisk Corp SanDisk Ultra 3D / WD PC SN530, IX SN530, Blue SN550 NVMe SSD (DRAM-less) (rev 01) (prog-if 02 [NVM Express])
+        Subsystem: Sandisk Corp WD Blue SN550 NVMe SSD
+        Flags: bus master, fast devsel, latency 0, IRQ 35, IOMMU group 10
+        Memory at fe800000 (64-bit, non-prefetchable) [size=16K]
+        Memory at fe804000 (64-bit, non-prefetchable) [size=256]
+        Capabilities: [80] Power Management version 3
+        Capabilities: [90] MSI: Enable- Count=1/32 Maskable- 64bit+
+        Capabilities: [b0] MSI-X: Enable+ Count=17 Masked-
+        Capabilities: [c0] Express Endpoint, MSI 00
+        Capabilities: [100] Advanced Error Reporting
+        Capabilities: [150] Device Serial Number 00-00-00-00-00-00-00-00
+        Capabilities: [1b8] Latency Tolerance Reporting
+        Capabilities: [300] Secondary PCI Express
+        Capabilities: [900] L1 PM Substates
+        Kernel driver in use: nvme
+dmesg | grep nvme
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.12.20-amd64-desktop-rolling root=UUID= ro splash quiet nvme_core.default_ps_max_latency_us=0 DEEPIN_GFXMODE=
+[    0.059301] Kernel command line: BOOT_IMAGE=/vmlinuz-6.12.20-amd64-desktop-rolling root=UUID= ro splash quiet nvme_core.default_ps_max_latency_us=0 DEEPIN_GFXMODE=
+[    0.542430] nvme nvme0: pci function 0000:03:00.0
+[    0.560426] nvme nvme0: allocated 32 MiB host memory buffer.
+[    0.562491] nvme nvme0: 16/0/0 default/read/poll queues
+[    0.567764]  nvme0n1: p1 p2 p3 p4 p5 p6 p7 p8 p9
+[    6.388726] EXT4-fs (nvme0n1p7): mounted filesystem ro with ordered data mode. Quota mode: none.
+[    6.893421] EXT4-fs (nvme0n1p7): re-mounted r/w. Quota mode: none.
+[    7.125419] Adding 16777212k swap on /dev/nvme0n1p8.  Priority:-2 extents:1 across:16777212k SS
+[    7.157588] EXT4-fs (nvme0n1p6): mounted filesystem r/w with ordered data mode. Quota mode: none.
+[    7.165021] EXT4-fs (nvme0n1p9): mounted filesystem r/w with ordered data mode. Quota mode: none.
+[    8.036932] nvme nvme0: using unchecked data buffer
+[    8.096023] block nvme0n1: No UUID available providing old NGUID
 
-1) clear time for the preempt case. On the one hand, preempt can be
-frequent, cauing performance degradation; On the other hand, this can't
-solve all the problems, for example, lots of interrupt or lots of BIO
-issued into one round of plug.
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5887dc6b6c054d0da3cd053afc15b7be1f45ff6
+Link: https://lore.kernel.org/all/20240422162822.3539156-1-sean.anderson@linux.dev/
+Reported-by: liaozw <hedgehog-002@163.com>
+Closes: https://bbs.deepin.org.cn/post/286300
+Reported-by: rugk <rugk+github@posteo.de>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=208123
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+---
+ drivers/nvme/host/pci.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-2) delay setting rq start time to flush plug, however, the latency value
-is still not accurate, and will be slightly smaller instead of greater.
-
-Thanks,
-Kuai
-
-> 
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index ae8494d88897..37197502147e 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1095,7 +1095,9 @@ static inline void blk_account_io_start(struct
->> request *req)
->>                   return;
->>
->>           req->rq_flags |= RQF_IO_STAT;
->> -       req->start_time_ns = blk_time_get_ns();
->> +
->> +       if (!current->plug)
->> +               req->start_time_ns = blk_time_get_ns();
->>
->>           /*
->>            * All non-passthrough requests are created from a bio with one
->> @@ -2874,6 +2876,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug,
->> bool from_schedule)
->>    {
->>           struct request *rq;
->>           unsigned int depth;
->> +       u64 now;
->>
->>           /*
->>            * We may have been called recursively midway through handling
->> @@ -2887,6 +2890,10 @@ void blk_mq_flush_plug_list(struct blk_plug
->> *plug, bool from_schedule)
->>           depth = plug->rq_count;
->>           plug->rq_count = 0;
->>
->> +       now = ktime_get_ns();
->> +       rq_list_for_each(&plug->mq_list, rq)
->> +               rq->start_time_ns = now;
->> +
->>           if (!plug->multiple_queues && !plug->has_elevator &&
->> !from_schedule) {
->>                   struct request_queue *q;
->>
-> 
-> .
-> 
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 8eee28282b1e9..b6153f595076b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3453,6 +3453,9 @@ static const struct pci_device_id nvme_id_table[] = {
+ 				NVME_QUIRK_IGNORE_DEV_SUBNQN, },
+ 	{ PCI_DEVICE(0x15b7, 0x5008),   /* Sandisk SN530 */
+ 		.driver_data = NVME_QUIRK_BROKEN_MSI },
++	{ PCI_DEVICE(0x15b7, 0x5009),   /* Sandisk SN550 */
++		.driver_data = NVME_QUIRK_BROKEN_MSI |
++				NVME_QUIRK_NO_DEEPEST_PS },
+ 	{ PCI_DEVICE(0x1987, 0x5012),	/* Phison E12 */
+ 		.driver_data = NVME_QUIRK_BOGUS_NID, },
+ 	{ PCI_DEVICE(0x1987, 0x5016),	/* Phison E16 */
+-- 
+2.20.1
 
 
