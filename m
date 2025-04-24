@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-617576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557D3A9A293
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:49:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17302A9A29A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7761943C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13C03AD563
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10384FAD;
-	Thu, 24 Apr 2025 06:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAA31E1E19;
+	Thu, 24 Apr 2025 06:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ohRDjLKo"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sl0KBnba"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F09F1D799D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2976D84FAD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745477371; cv=none; b=G0o3aJvkHtXF0tHvg0fR3YlioJxnwERWKDNfSI9Qa3squc6wxh1LvAp0qHXceg3l/vWa8EI37Sgmih0oS+OIkqeppy85iocVmGsE7BXSdzqCGhqtVdBwsiiNL8ySYdOlvEgET2aQ5UoKr1Gz3gn9Mu/6z2g67nqvajXCuaq81Dc=
+	t=1745477508; cv=none; b=YcydHW0TnkZ8tGNxtTwQWDgH0f8uGAvjAJZ7DSJuOYWodCx5rPkCuvBQZgzBov6wm9QfFRzSwhMQ2/UrkdAGC80ET/XE2exsHOfFFBrvmhmYpjDcffTuuM1U6Rq25tuO3eGtR53xoHTfurnvYUoKAxSkKWBfVoBuC+nEKqN/4jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745477371; c=relaxed/simple;
-	bh=YY05EULblqpqOJ20Ca2qJAkFfKoRl4Lnom2DVdns5cI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCGUEGnOJr3S8QT8pq58eWf3LMnG65nialu+b55vFZlpCzqOQhKLQ+yVb1mLNPabAIrgoWD+5GRyVimrDcQNGdEg622yaTpLMt1Jxi8/NcyWNPIBLyogGOHmlt4VPLB7XjxV0XfiEja9o+3x7y7vcIgwfctluMAnH4I9IQQHCNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ohRDjLKo; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f4d0da2d2cso1232662a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:49:28 -0700 (PDT)
+	s=arc-20240116; t=1745477508; c=relaxed/simple;
+	bh=Ag3AWLUDndS0X7tDtdLw2MCcWUiP9y71LnjMPVxxiLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QPOTrMLsTKLf+rPG55vlGAiTP5Ve6d/vZR5dM9XPmpBTzbEVsYqzcdLBhtsd+PeHnRwlywJoE7Hx/JZGOp+jPReAPMZ0HEiL9do3JCib7xvDPeqj1LioCQfio4GtmI+TjsYpyyJbHUqTjifmG1m69f57vQEr8oFCEI/hAeps9h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sl0KBnba; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aca99fc253bso96427666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745477367; x=1746082167; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FO96JtbCvJe3mUseWa0OQALrV8LUqckkiAryhK/dOSI=;
-        b=ohRDjLKoZHrt860xcyNcRM6ef7aY/SfxsNBLLKF08fD8KNCh8idbIfQvUHp3wO8gwQ
-         S98QC6TTnRRvc3o4JzKbpAwKdux4Go5riFQxnKm3mry9CeGkdHqbtJmUdTXzFJdS9CxZ
-         eGZPRYD+6rLhnYkSHx9+/07//pIViq2NszbbDxrlHwNTl5CeEwgZuQC/9uld1voGxxJj
-         9Kar10lAE6M9j5mVkjqOFVum48tP400eacu2ixJSENA+lDK4Um07RYR3WmFWkAT5waDo
-         /HJ8H7CQhWZ/V7kG4EPT/ib1mRgNzfd4wX6jKFxa5VXJtViAeAJQG/zCCoHzaxP+YNVK
-         TwNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745477367; x=1746082167;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1745477504; x=1746082304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FO96JtbCvJe3mUseWa0OQALrV8LUqckkiAryhK/dOSI=;
-        b=LJEZCGvYkXRO8DsbCW+LFLZr9cmBO8O5Xnlro5ByGeGaPvrUgS/oOVm3LrceQQOCBZ
-         VgtSa6ab0DGR8LdC6rVx7pk7dWObBZADnHy3RoDu8TCEzlZTkBqmQWmrKJzGp8jE0q3j
-         4G/AdaaQ50C6qCSU/7xhJIJeavA3/8gWgbH5pXvkATsDdzA15wm82h9SJp5ZgxzVDQKN
-         BvEJPtINfD1H4tpr3ThdqGz8/qOM4Vt4Bg4g4OstLm1wjRewdwkkINSAZALPgckjnS9R
-         bGeeWGbWEufk3P4l8XtFa+XSqe1k8a90jTT4OAP8b5QuZGFOHxRIgi/N6o5MAVpbv+zS
-         50ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiyy5Ge/BDjSbF6VsqM1YXlxZXW4CLUBKaQA25SgJQz3cApW+vDp2ZfQXfiXV0jhtG5jTTH3Txh7QC7mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwINhLZ9pS13BtNvYk3ImhLIp62TyTHXFlC23cgkOWyJMVNWCKd
-	lTn43BZz+0wK7p75/n43wvP3l6s8WH9U87nI2jK8CqAwyfCahIvr3cU/l7XsrjA=
-X-Gm-Gg: ASbGnctLZANDX/37tf3rdrHE3JJ0bZnsj9qNuKxauKjmfhrrTfIK2eHKml+pMUW2Gq5
-	kO5EJWZjY03fql29f7oY4oQuGuZBTIbIxh9xEbPJ8nOZfSGGvazGlY4wJzgJekE7BkSPAMrFRfX
-	Z3vcsV452YbxAXMxGy25RFPAkqJ4x2JxnrKcT1i+G0mBuV5oHs44P3kcBxQ/2czq2Fdg0zPCrVJ
-	oWV2zkJ/o8Y/Ok3A27jLK4q4cazGyYHGjyDcu/DNzdQZDCxK5TiHB1N4gcO+Y5nQYIplM7uwIWy
-	/kmexPSqZbtie8e0CW2s3JH8T4TvCnW4ExDQGA==
-X-Google-Smtp-Source: AGHT+IEfj/5HzaH2h358gMY8v05hd2yzGKyunuo5psGHsXusc1uw2LNAuC+EPj7nse1eDky0duEC/Q==
-X-Received: by 2002:a17:907:1b08:b0:aca:c7c6:b218 with SMTP id a640c23a62f3a-ace570e0d55mr131378866b.1.1745477367496;
-        Wed, 23 Apr 2025 23:49:27 -0700 (PDT)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59c261f4sm56013866b.146.2025.04.23.23.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 23:49:26 -0700 (PDT)
-Date: Thu, 24 Apr 2025 09:49:24 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>, Marc Zyngier <maz@kernel.org>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 0/6] arm64: dts: qcom: x1*: Fix vreg_l2j_1p2 voltage
-Message-ID: <aAne9K79PNfdQc8h@linaro.org>
-References: <20250423-x1e-vreg-l2j-voltage-v1-0-24b6a2043025@linaro.org>
+        bh=UCdBlRSLitkZVgraqiDyH6sqV6PnXuRYUb+hiEOC3cY=;
+        b=sl0KBnbaknSDEFtm9LY6TIFJ1DpZYXR894X43cL7XKb61gkRmH1tuoYgR2ED1WAB/Q
+         TXx1gJAyp11z1c+9Dhy3xxx155o+W6+Fym8Ej7UJsItBNp95K3A7nEX2ZjQJf6+wLTyH
+         XLW/Q9a8t+opJjvrFYdGtH2SeX9Wdr32C4+5uzj++3y1F5rEC8Wbd3p0r878K/Q30s6W
+         WjEff+SFbnNrJxFpH6kKPNLo97AQftwdg60nz894mEo5Ny1H+EVSsj1E4ljf2JFSvpPS
+         DFEytZhZU8zUJbpQJtVLfxL//59SZDnhP/jcABSZ0PjI2HLirVj2oCRfzgHKmUANbSyB
+         YmWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745477504; x=1746082304;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UCdBlRSLitkZVgraqiDyH6sqV6PnXuRYUb+hiEOC3cY=;
+        b=HHLp4oT9QEcvE5SddeA0eLizWuajtZ/1K+fpJFWYQnpmsXrYRB7U9msNT+BQHrqgcN
+         VLSmNLQpvi2qKwjWrU63fdOwnSRde3JYJtjVVBIws48uuls7snIQD+VjXAxdM7UXejAP
+         F2RDteFuXyXqTnon0u1LP1hmtHp5pgSWKBI925qqp1DfioTTPx1kYz35irsWtwSmEnbT
+         djZAkLIXssWVuTD0P5jIHowoneg11+3JNx6j0IIQhZcBVUxKElKsTwrJuVPMyyZnHX2z
+         T2QpTri2XcbA2JgCL1zm2vSOYgv1tpa+UR7Gxv8OOBL06EdReRwLWdGxmJR2RrtaDDcS
+         ocrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYuWu3yh4ZtnVsahR4tzXO1f3xd+S/XVwkBGqpBqMaKf16z4eb4xyQeW2RjKwygHwSmG8goHaO7DRh+ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjHq/UyeKCXYf+K7S5mUqCj+F9z2uKMVhDPtQpnL9kRwFuwhz8
+	ISV44C313aQUEtRBTk2OhJifBckh8nstqGUFf1WsPm0FhfboqIYSpp2GgsuWPA4EAoX/k4R0Q5S
+	nU+7Ky8pH8zjEN7qceICoE1CjOSrZFgIgu2bu
+X-Gm-Gg: ASbGncu/EFYXvosAS5EOBz5I2QeLk//VJ/Rpq60cBMulLHuhfSVbdY7UImSdRc+J48V
+	loxyVV8o/xWsz4SM7pfmF2NKqxxp1tJvnr5RSPYfBpqxBbZTg/5go2DsPDEW74tv/zeDDLyaYkq
+	WRxAJkvMHC3W3CFJuTXFrsuw==
+X-Google-Smtp-Source: AGHT+IHGeyS5GzF1KKHBmTnr0KgYda4bVKubCtgIBqB6yIp5B87N5sZptbz4fHrf3oRXVpVpYibPEFrx+l9TaWOdLT0=
+X-Received: by 2002:a17:907:7e8f:b0:acb:86f0:fed8 with SMTP id
+ a640c23a62f3a-ace5721fe68mr130762666b.12.1745477504191; Wed, 23 Apr 2025
+ 23:51:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423-x1e-vreg-l2j-voltage-v1-0-24b6a2043025@linaro.org>
+References: <50dc6bdc-ee62-41f1-b8e5-be64defb07c6@huawei.com>
+In-Reply-To: <50dc6bdc-ee62-41f1-b8e5-be64defb07c6@huawei.com>
+From: Sandeep Dhavale <dhavale@google.com>
+Date: Wed, 23 Apr 2025 23:51:31 -0700
+X-Gm-Features: ATxdqUFCZEOg52wqG1DDPFBO0bciOIAyOiGm-f5J3gO3y1YmMicJ7X_BAGWYg7g
+Message-ID: <CAB=BE-R4uPFeBSt6Z4Khv6_OjAu9=WoJR-VGG8eG0spAaovE1w@mail.gmail.com>
+Subject: Re: Maybe update the minextblks in wrong way?
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-04-23 09:30:06, Stephan Gerhold wrote:
-> Several of the Qualcomm X1* device trees upstream specify the wrong voltage
-> for the L2J regulator. In the ACPI DSDT table, PPP_RESOURCE_ID_LDO2_J is
-> configured with 1256000 uV instead of the 1200000 uV. Change all affected
-> device trees to use the same for consistency and correctness.
-> 
-> In the other device trees upstream, the voltage is already correct:
->  - x1e78100-lenovo-thinkpad-t14s.dtsi
->  - x1e80100-dell-xps13-9345.dts
->  - x1e80100-microsoft-romulus.dtsi
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+On Wed, Apr 23, 2025 at 6:50=E2=80=AFPM Hongbo Li <lihongbo22@huawei.com> w=
+rote:
+>
+> Hi Sandeep,
+>    The consecutive chunks will be merged if possible, but after commit
+> 545988a65131 ("erofs-utils: lib: Fix calculation of minextblks when
+> working with sparse files"), the @minextblks will be updated into a
+> smaller value even the chunks are consecutive by blobchunks.c:379. I
+> think maybe the last operation that updates @minextblks is unnecessary,
+> since this value would have already been adjusted earlier when handling
+> discontinuous chunks. Likes:
+>
+> ```
+> --- a/lib/blobchunk.c
+> +++ b/lib/blobchunk.c
+> @@ -376,7 +376,6 @@ int erofs_blob_write_chunked_file(struct erofs_inode
+> *inode, int fd,
+>                  *(void **)idx++ =3D chunk;
+>                  lastch =3D chunk;
+>          }
+> -       erofs_update_minextblks(sbi, interval_start, pos, &minextblks);
+>          inode->datalayout =3D EROFS_INODE_CHUNK_BASED;
+>          free(chunkdata);
+>          return erofs_blob_mergechunks(inode, chunkbits,
+>
+> ```
+> This way can reduces the chunk index array's size. And what about your
+> opinion?
+>
+> Thanks,
+> Hongbo
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Hi Hongbo,
+I think the last call is necessary to handle the tail end which is not
+handled in the for loop. But I understand that if the file is
+contiguous then the last call can reduce minextblks.
+
+Does the below patch address your concern to conditionally call the
+last erofs_update_minextblks()?
+
+Thanks,
+Sandeep.
+
+diff --git a/lib/blobchunk.c b/lib/blobchunk.c
+index de9150f..47fe923 100644
+--- a/lib/blobchunk.c
++++ b/lib/blobchunk.c
+@@ -303,6 +303,7 @@ int erofs_blob_write_chunked_file(struct
+erofs_inode *inode, int fd,
+        lastch =3D NULL;
+        minextblks =3D BLK_ROUND_UP(sbi, inode->i_size);
+        interval_start =3D 0;
++       bool is_contiguous =3D true;
+
+        for (pos =3D 0; pos < inode->i_size; pos +=3D len) {
+ #ifdef SEEK_DATA
+@@ -332,6 +333,7 @@ int erofs_blob_write_chunked_file(struct
+erofs_inode *inode, int fd,
+                                erofs_update_minextblks(sbi, interval_start=
+,
+                                                        pos, &minextblks);
+                                interval_start =3D pos;
++                               is_contiguous =3D false;
+                        }
+                        do {
+                                *(void **)idx++ =3D &erofs_holechunk;
+@@ -365,7 +367,8 @@ int erofs_blob_write_chunked_file(struct
+erofs_inode *inode, int fd,
+                *(void **)idx++ =3D chunk;
+                lastch =3D chunk;
+        }
+-       erofs_update_minextblks(sbi, interval_start, pos, &minextblks);
++       if (!is_contiguous)
++               erofs_update_minextblks(sbi, interval_start, pos, &minextbl=
+ks);
+        inode->datalayout =3D EROFS_INODE_CHUNK_BASED;
+        free(chunkdata);
+        return erofs_blob_mergechunks(inode, chunkbits,
 
