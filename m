@@ -1,106 +1,189 @@
-Return-Path: <linux-kernel+bounces-618467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BBBA9AEE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:25:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EC6A9AF4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067F7174A48
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91286176C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0125427C16D;
-	Thu, 24 Apr 2025 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A8515B54C;
+	Thu, 24 Apr 2025 13:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHHal6/B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kCb+pS/2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A33814B06C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61AC1581E1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745501134; cv=none; b=uVE62FwnLiGTfQQ9AOon00bMqxoPug5Itq12OqzSdLl+cYJp1Aqq/2yV5bV6BFrDMyxZAlTwOHn6lPV2jfaz8d8bqq9mH7254TcK9iRDi+ZyVFa5bMoK3gbcF6H2sRgLhMVdI+JkTnLCRvMsdZF1QICrZ09DSkmay+EBewYoME8=
+	t=1745501856; cv=none; b=bkTP3Pm13zjLS3paN7zriisK4qXtI4yRVa1gOeH596nG73CRLYteROqmKtlk0NQG5aZP1T0Xdlm+XBVD3pxFZZa2jMSaEHXePt2AtWsnDnkQtowVS42wFe7UZ8hFIP9qBwlbZ/+dUSwg8FgEoaiM4ElrvvAoA/OY93/abWYAglw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745501134; c=relaxed/simple;
-	bh=QR6Lgp6g8I4WxSKtSuW9v27j0eErgzOd2nwqrk0jWcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Snp/haWsL1j9gsipZeCXgjlmTml2YsdmpxSiUdKWEM24htGI+qV7TlVPKf0CaG76p0VYnU8nUnG3Fgm/3GNK96EhCJPXrEnQshoqpT7CfoJ68ubJaX79wD6nV4aiT62MZ7sNtgaexZbAN+JSP/hHeh7GNmsNhgC4IGz7cf8972o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHHal6/B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745501130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T8CoeYLwXY5xNUurE4zhol3ZeibZlpZ2K7VrxvLFf+I=;
-	b=fHHal6/Bp3ry0WedbuY5YTtf+7iqfpHQTcLHmTVpy1AszHZSQz24Od9aSyAPIyKKJ8+FwO
-	RoBOjy/HkmGEL6cTDvhVfQ/8/HLdynb2yRaCsaugrPiB0RNOteDaygIUBcmzG4G5X5mGfv
-	/QtWRhpDWGQ7shjIQVZ1/4bRHz+Dev4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-547-_al3xsiHP3ekhfK1BIj1Gw-1; Thu,
- 24 Apr 2025 09:25:26 -0400
-X-MC-Unique: _al3xsiHP3ekhfK1BIj1Gw-1
-X-Mimecast-MFC-AGG-ID: _al3xsiHP3ekhfK1BIj1Gw_1745501124
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FDFD1956094;
-	Thu, 24 Apr 2025 13:25:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.93])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 68C7B1956095;
-	Thu, 24 Apr 2025 13:25:17 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 24 Apr 2025 15:24:45 +0200 (CEST)
-Date: Thu, 24 Apr 2025 15:24:38 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	David Rheinsberg <david@readahead.eu>, Jan Kara <jack@suse.cz>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH RFC 1/4] pidfs: register pid in pidfs
-Message-ID: <20250424132437.GA15583@redhat.com>
-References: <20250424-work-pidfs-net-v1-0-0dc97227d854@kernel.org>
- <20250424-work-pidfs-net-v1-1-0dc97227d854@kernel.org>
+	s=arc-20240116; t=1745501856; c=relaxed/simple;
+	bh=2++/lXygc+Gi+mqHHiClRtQMQOuMp3w9mVmGF9jD1P0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ddLzcTijrwQr3Ky0EukodE10ApC2ZHDZJC6RcofYDjL+AdGf6sRrVPKwlKK0yTRhUs3SHVkg4rhutjI2eRsg2rX9afQlW6Kv3nvaq2kCbCP+4+4nIoUgivJQrpVjuUd2TNCqHCojgCx2JJFfNT0KLfBLmQVPS5kcQ2ddGgiq7nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kCb+pS/2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745501855; x=1777037855;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2++/lXygc+Gi+mqHHiClRtQMQOuMp3w9mVmGF9jD1P0=;
+  b=kCb+pS/2afLKf5QCeSamjlZPcb5wn3uQTahEcP/rbqko8Y1kh2lQ/jHn
+   waqdCcyd94Ky5l4s3eRgg02tbtiruL7VWJv/r8TqvhlaLVynad0orstpS
+   pXOCIdex5RNBlGiU4HIAyGUcPmFN2xE8mSkn9l4xaOZaZw71t6FmhWmWc
+   ihH7Ky5MhIw16j24CxlDP/L+/RuOk2//p386Oa8ykoTNXp5BKEkyN/56y
+   3Z6kiSeqo7UpyjubEpPF6ub1v7MTtZ4GK58mg1K2KoGGMrs0a9D+ap259
+   4cXMQOlf5hLheNtvCVslqS3xBzzpDuw79DPy+dSeSZoBp8TZAv0i3MIW/
+   g==;
+X-CSE-ConnectionGUID: 15A9Tp7vQAep2ISDKme3Yw==
+X-CSE-MsgGUID: dUsYXJF6TKKRMHci342QHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="46368001"
+X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
+   d="scan'208";a="46368001"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 06:37:34 -0700
+X-CSE-ConnectionGUID: H6ZJ50y7ReKXfWgZX5QHKA==
+X-CSE-MsgGUID: 72MlHOZEQ5+R0iN9yeQSpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
+   d="scan'208";a="136701344"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 06:37:29 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Oren Weil <oren.jer.weil@intel.com>,
+	linux-mtd@lists.infradead.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH v9 00/12] mtd: add driver for Intel discrete graphics
+Date: Thu, 24 Apr 2025 16:25:24 +0300
+Message-ID: <20250424132536.3043825-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424-work-pidfs-net-v1-1-0dc97227d854@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-On 04/24, Christian Brauner wrote:
->
-> + * pidfs_register_pid - pin a struct pid through pidfs
-> + * @pid: pid to pin
-> + *
-> + * Pin a struct pid through pidfs. Needs to be paired with
-> + * pidfds_put_put() to not risk leaking the pidfs dentry and inode.
-      ^^^^^^^^^^^^^^
+Add driver for access to Intel discrete graphics card
+internal NVM device.
+Expose device on auxiliary bus by i915 and Xe drivers and
+provide mtd driver to register this device with MTD framework.
 
-pidfs_put_pid ;)
+This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+and "spi: add driver for Intel discrete graphics"
+series with connection to the Xe driver and splitting
+the spi driver part to separate module in mtd subsystem.
 
-Can't review 2/4, for other patches in series
+This series intended to be pushed through drm-xe-next.
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+V2: Replace dev_* prints with drm_* prints in drm (xe and i915) patches.
+    Enable NVM device on Battlemage HW (xe driver patch)
+    Fix overwrite register address (xe driver patch)
+    Add Rodrigo's r-b
+
+V3: Use devm_pm_runtime_enable to simplify flow.
+    Drop print in i915 unload that was accidentally set as error.
+    Drop HAS_GSC_NVM macro in line with latest Xe changes.
+    Add more Rodrigo's r-b and Miquel's ack.
+
+V4: Add patch that always creates mtd master device
+    and adjust mtd-intel-dg power management to use this device.
+
+V5: Fix master device creation to accomodate for devices without
+    partitions (create partitoned master in this case)
+    Rebase over latest drm-xe-next
+    Add ack's
+V6: Fix master device release (use rigth idr in release)
+    Rebase over latest drm-xe-next
+    Grammar and style fixes
+
+V7: Add patch with non-posted erase support (fix hang on BMG)
+    Rebase over latest drm-xe-next
+
+V8: Create separate partition device under master device, if requested
+    and configure parent of usual partitions to this partition.
+    Rebase over drm-tip.
+
+V9: Fix checkpatch warning on non-posted erase patch.
+    Add Rodrigo's review and ack.
+
+Alexander Usyskin (11):
+  mtd: core: always create master device
+  mtd: add driver for intel graphics non-volatile memory device
+  mtd: intel-dg: implement region enumeration
+  mtd: intel-dg: implement access functions
+  mtd: intel-dg: register with mtd
+  mtd: intel-dg: align 64bit read and write
+  mtd: intel-dg: wake card on operations
+  drm/i915/nvm: add nvm device for discrete graphics
+  drm/i915/nvm: add support for access mode
+  drm/xe/nvm: add on-die non-volatile memory device
+  drm/xe/nvm: add support for access mode
+
+Reuven Abliyev (1):
+  drm/xe/nvm: add support for non-posted erase
+
+ MAINTAINERS                           |   7 +
+ drivers/gpu/drm/i915/Makefile         |   4 +
+ drivers/gpu/drm/i915/i915_driver.c    |   6 +
+ drivers/gpu/drm/i915/i915_drv.h       |   3 +
+ drivers/gpu/drm/i915/i915_reg.h       |   1 +
+ drivers/gpu/drm/i915/intel_nvm.c      | 115 ++++
+ drivers/gpu/drm/i915/intel_nvm.h      |  15 +
+ drivers/gpu/drm/xe/Makefile           |   1 +
+ drivers/gpu/drm/xe/regs/xe_gsc_regs.h |   4 +
+ drivers/gpu/drm/xe/xe_device.c        |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h  |   6 +
+ drivers/gpu/drm/xe/xe_heci_gsc.c      |   5 +-
+ drivers/gpu/drm/xe/xe_nvm.c           | 161 +++++
+ drivers/gpu/drm/xe/xe_nvm.h           |  15 +
+ drivers/gpu/drm/xe/xe_pci.c           |   6 +
+ drivers/mtd/devices/Kconfig           |  11 +
+ drivers/mtd/devices/Makefile          |   1 +
+ drivers/mtd/devices/mtd_intel_dg.c    | 884 ++++++++++++++++++++++++++
+ drivers/mtd/mtdchar.c                 |   2 +-
+ drivers/mtd/mtdcore.c                 | 152 +++--
+ drivers/mtd/mtdcore.h                 |   2 +-
+ drivers/mtd/mtdpart.c                 |  16 +-
+ include/linux/intel_dg_nvm_aux.h      |  29 +
+ include/linux/mtd/partitions.h        |   2 +-
+ 24 files changed, 1398 insertions(+), 55 deletions(-)
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+ create mode 100644 drivers/mtd/devices/mtd_intel_dg.c
+ create mode 100644 include/linux/intel_dg_nvm_aux.h
+
+-- 
+2.43.0
 
 
