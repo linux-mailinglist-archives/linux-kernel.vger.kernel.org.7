@@ -1,218 +1,165 @@
-Return-Path: <linux-kernel+bounces-618377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119F3A9ADC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C1AA9ADCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473CD927267
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1AA19483BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2657127A932;
-	Thu, 24 Apr 2025 12:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28227B4F9;
+	Thu, 24 Apr 2025 12:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kp8GFliN"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b="gjI6fAtm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hZvVtmnh"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734BB27A926
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332B627A926;
+	Thu, 24 Apr 2025 12:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745498606; cv=none; b=hDRBBwUPRdLTDGIXItHWzap4x0yxmvezPb67VxKLfw5ZnqRDSLnWN4KLnmiIMLEMcNRqJY1Jd8kWy+IPzo00LWWvCEN4v3Xd2Epqn0jG4ck+9hgqkyIPMGwSNpahBbFtxQUMSreFDRPBDgpD0bkefqDbgpJH4qxiANEvcgIwUc8=
+	t=1745498681; cv=none; b=DD4cL124tRS/KYv4JjFE2RgEXxhtG2lnYibO2kCKKSnbH58dbj50anBvAI1BKQRJlXeWnsG92KuL02kK3N9GGYL4DeWcPdphjBwqY1fiVy74pfvKkKnhEhSPiCNEIDG+WB3l15wOMb7j1elIWMNq7THEleZC6qgXFzo8p0wVNCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745498606; c=relaxed/simple;
-	bh=0+zl5wuGgPcf2CwpTpY77n4FYm2pqM3kEQ4akgqPcU4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YTj0WwNmOKZkyVDVdu73xy+iUn0GrZOsW1LWDuLtFrur6dSF/dkFomtcF7Iv1zrFUl/kN73r5wGc2Y12HH3CNpUIJh5BkB9nCTYXvxWkvyIQa0FCI86B6R6V2zgVpK0gHlC6aUXk39pIUGyfLNauT3wK/ObSNQ8ltjaj8RkIheg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kp8GFliN; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso6911955e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 05:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745498603; x=1746103403; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BVyorItIXBjMu6EtOX9IrPexB43LsYGbQ6QOmhU4BzE=;
-        b=kp8GFliNVrBGRP3zOL/EtaGk//QasOBklSeBggch3uunsIWR8on3g9p2n4G0iqallA
-         DTVGtQXdtv+fu72yxg+oDSt6EJ7uNWjx5GXw/fnKeuzyhm7JKSnmVWBsSgx6QRZ6TWDq
-         BlXe7W/fZe0dGOUeujNCS1uxjdcTlJEPQw2Pt+DSNgFxsIpHnlYU2B/+vM0tSvQsc+W1
-         kevaNS9YKV8w4xm8OPXIxcRNAJuLIOM4d+gPYKbCT5w3LLrvl/zh2GR0EEo03xQ95aBv
-         rVoa2nh8dTGbyj8Fqf549HhIsrTEK3eOAQEEG4Lk5j46O2OtTKsbfUCslGxtx88zHGfo
-         zsBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745498603; x=1746103403;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BVyorItIXBjMu6EtOX9IrPexB43LsYGbQ6QOmhU4BzE=;
-        b=R6uw/LMdInRcX9jAxJAagVHwJOmavHYW5fAHPzFWR383wBlb6TuufxAqW0GZWzPg7d
-         yt/TI39yMqnlna2jiUKc46Kp1p05ehMr7LgaIBNoV6tNsb3fSC7olUUEPtfBRTCH7DGB
-         YEI9NL/yymEw7PjqCDQ54MibQZjqRSzGr47XzYWVP8aplsbo2HJsL/XEW42jqN/knP3n
-         wsFTxrHzjEvpppUM/bHp5QKWNParjhxFMIqXg7ETZRxqVX0Wu+7QH3pU4sCmsiUAmP64
-         mcGgkOS1UZ3Ls3M6PJ8EMwEHAkE0+iHgszY302XeidP4lcRyzM60EKHDSe7oLDs7ZZVF
-         UhEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXprQXG7w490pgSs4QGJpgCQov/314EzYNhmCJSq+ffg3sOlJqkZCKOtbqeD0OJeP0N2/TWNH1BBZ9E9VU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnavbOjMyBfNWWmJXFUDeLJiz5S9/PYBklmbeEzya0svlecWgL
-	2ZKk5zgl+xkzqdWcGaYtvYSNTAgz9FetEh7GK/UL44UxzVNpdlPOErY96CX3jm4=
-X-Gm-Gg: ASbGncvSV+Uh3N7fSbFnONSrJJ0R6aQ0xjrWHH0vmiNl83oP1hpuFhxS8z4gK6I9YJr
-	SrdvkwX2tIjKoPjp59a7/MKgAONBn+At6oDoRyOYSbK9in7YuuXj3usBmHrqwqnNlsuZifZ+mLl
-	6xoS0ou2R2TyNRyvTwAt/fsuB/bwqUz4xqP16zFz0jbEftTOG6+N52aoxArFUcNPxjMcPLqLdL/
-	/AIOnGJjPBdoAipzbl3CZAQxB6Pq2pbdYRb4EtiAC8+ZcWXe9DNF8cHYh0i7c5s+ppul7wz+9ky
-	U3pnUz8jGSA8JhBnVgZDo5GCMjzezz1n3KriEBPlgl4y9Q7bGzVfbIv1Qz47vaYDTG2PkNxg7KF
-	zu7jwmUgBRwa9QBq77g==
-X-Google-Smtp-Source: AGHT+IEZiItOnvjuwK4n71nVwqbzRSks9oEVy4kBUHEN1JIo6OdV/TXM2tKPDEjD88lmim4k1MJr7g==
-X-Received: by 2002:a05:600c:c092:b0:43d:186d:a4bf with SMTP id 5b1f17b1804b1-4409c399b9amr18483715e9.0.1745498602777;
-        Thu, 24 Apr 2025 05:43:22 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:a24a:bfda:f031:720d? ([2a01:e0a:3d9:2080:a24a:bfda:f031:720d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a01cdf59sm8421785e9.33.2025.04.24.05.43.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 05:43:22 -0700 (PDT)
-Message-ID: <dafa92f7-1bcf-46a1-9a86-5b41e31ab7bc@linaro.org>
-Date: Thu, 24 Apr 2025 14:43:21 +0200
+	s=arc-20240116; t=1745498681; c=relaxed/simple;
+	bh=7Ltb0P0T/p13f9Ik10z0acW2tEdNURIaj8Y/bKnt3lU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UG4W46NMyCOuuH2ae7xRQKQjTlgoINXD+7wdTb+93ErFIJ3cHcCECoJI/jS/jvVyZ7qcfGB6Uwxf3ZG5WEpM5tlAbh0IsIzfdC2Rq/bXmg52837DpIYjy34beZL9UK8Fqm2CFKr1AIEeEEQe7tk7n7vB5w9EppCobd4ORbamlOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu; spf=pass smtp.mailfrom=readahead.eu; dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b=gjI6fAtm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hZvVtmnh; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=readahead.eu
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7D62A1140230;
+	Thu, 24 Apr 2025 08:44:35 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-02.internal (MEProxy); Thu, 24 Apr 2025 08:44:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=readahead.eu; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1745498675;
+	 x=1745585075; bh=P6aDXOzwfsUnkNloFebsWwC3WTiLNzsId1SEYLxZLUM=; b=
+	gjI6fAtmShaUzCLuZWKm+0H9DwH3BEsgke5uu8sRtB+X1KmfJo4qupEP+vIMcw25
+	/nnx1Ziq7pK9O3OxzFebBTgy+ZUESapjWFRS1E0vSyMlPFvv4npwJL3iP4K8aXPX
+	xcgcwbQZO85G1KsH4ejPjGY9bMx3GWthWLOJP1v+fDQdtJy3WPUQ6oO9mKOZRPJy
+	nwlQtYyFvdFNR97WMCJcGCRtl0ioF4RG/btIUrqaoYHqqRVz0SS8mfTd3bpCknUA
+	HvH5P1TZzLBuyzC4qCN3S4xhm5NQ2Yd/wdRetJ/D0dBix0B6vK2JD0AEdTGNp0gp
+	HfYMF2azwdmFDVAVbhXcQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1745498675; x=
+	1745585075; bh=P6aDXOzwfsUnkNloFebsWwC3WTiLNzsId1SEYLxZLUM=; b=h
+	ZvVtmnhAKsf+lJgCFQKecmp/PsIEzk7Hssrx7G3itJgyN91f6CZwOJB0BWcAQra7
+	6TSLhvtx2dIypSu8lEBHKxDzb6OUfJP2ZkrjDAqTe6aRbimJyNHTleTy1PL69eA4
+	Rx+WtVaQNO0Xuk2bfAbirZh2iQpNwoL1yOQ7PyLn9vDkSSmCBUVD1uJQTdYURIUq
+	5kvCvx7BNoqSEEtGv3D3cB7Y06tmkmLv1Z/HBtSt0aOXBRSbffx/v3sGzXaBjnGH
+	bw/D+dTGfVRzwrXj526OIAzPCS3OH5KVWMs4UsNoTwGTJckwuW0lbydE+5OYh/c8
+	pzsEWO3PvIZnP7SsjLeXQ==
+X-ME-Sender: <xms:MjIKaMbhhkdI-NXbQcX3oX4rMIdBEQGiiBticGgGSGcDPEFf7HRpsQ>
+    <xme:MjIKaHYhxMGGodPrHWrwBuERGWbwkOWCaXsF-1XFucGn2XHtlZYf7KXEc1RHzKDQj
+    41RGFna9ZI7d8ewZUQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeelhedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfffgrvhhiugcutfhhvghinhhssggvrhhgfdcuoegurghvihguse
+    hrvggruggrhhgvrggurdgvuheqnecuggftrfgrthhtvghrnhepueekteduueejkeehheel
+    vdefleeivdeugfekvdfffefgkeefuedvtdfftddvveeknecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpegurghvihgusehrvggruggrhhgvrggurdgvuhdpnhgspghrtghpthhtohepudejpd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopehkuhhnihihuhesrghmrgiiohhnrdgt
+    ohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtth
+    hopegslhhutggrseguvggsihgrnhdrohhrghdprhgtphhtthhopegurggrnhdrjhdruggv
+    mhgvhigvrhesghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgigrnhguvghrsehmihhhrghlihgt
+    hihnrdgtohhm
+X-ME-Proxy: <xmx:MjIKaG-butq-hwKt-54QBobV3JRjgepWUpTsEwNDcxQWKuJOGOKUCA>
+    <xmx:MjIKaGpUUZoWqfdCVvjRiMgzcBSvqPA4-WDckm9gEEFX8oDnHCCXtA>
+    <xmx:MjIKaHrxc8BbX5zU4BxjN2bKGsNfD0CxaA62KuefvNfSOsA36cGKtw>
+    <xmx:MjIKaEQJsAUqE7_jK4Fw-RkL-0LcLudYY7bNHr2R5LnU9oetNXTPXw>
+    <xmx:MzIKaKYZDwdnNCoSUzgelQCncNKew6_h2mL2tXuwoeZfNFvbKqhZRoi7>
+Feedback-ID: id2994666:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 33FB418A006E; Thu, 24 Apr 2025 08:44:34 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650: add iris DT node
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org>
- <asfwnyn5grm426vq5qatrxfffv3wmbuzx6266rblanzqepffzx@7773dcxfaqe4>
- <571b6484-d3ac-4aca-a055-c143f7e4a5dd@linaro.org>
- <i3kzq27v2cqhyuyqjq6dll4h6u2hjl5kpbws3qioe3lzarkhnl@oz7gzssnx7kq>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <i3kzq27v2cqhyuyqjq6dll4h6u2hjl5kpbws3qioe3lzarkhnl@oz7gzssnx7kq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: Ta1cb5089883f0698
+Date: Thu, 24 Apr 2025 14:44:13 +0200
+From: "David Rheinsberg" <david@readahead.eu>
+To: "Christian Brauner" <brauner@kernel.org>,
+ "Oleg Nesterov" <oleg@redhat.com>, "Kuniyuki Iwashima" <kuniyu@amazon.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ netdev@vger.kernel.org, "Jan Kara" <jack@suse.cz>,
+ "Alexander Mikhalitsyn" <alexander@mihalicyn.com>,
+ "Luca Boccassi" <bluca@debian.org>,
+ "Lennart Poettering" <lennart@poettering.net>,
+ "Daan De Meyer" <daan.j.demeyer@gmail.com>, "Mike Yuan" <me@yhndnzj.com>
+Message-Id: <c4a2468b-f6b1-4549-8189-ec2f72bef45e@app.fastmail.com>
+In-Reply-To: <20250424-work-pidfs-net-v1-2-0dc97227d854@kernel.org>
+References: <20250424-work-pidfs-net-v1-0-0dc97227d854@kernel.org>
+ <20250424-work-pidfs-net-v1-2-0dc97227d854@kernel.org>
+Subject: Re: [PATCH RFC 2/4] net, pidfs: prepare for handing out pidfds for reaped
+ sk->sk_peer_pid
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 24/04/2025 13:17, Dmitry Baryshkov wrote:
-> On Tue, Apr 22, 2025 at 09:07:41AM +0200, Neil Armstrong wrote:
->> On 19/04/2025 01:05, Dmitry Baryshkov wrote:
->>> On Fri, Apr 18, 2025 at 03:20:35PM +0200, Neil Armstrong wrote:
->>>> Add DT entries for the sm8650 iris decoder.
->>>>
->>>> Since the firmware is required to be signed, only enable
->>>> on Qualcomm development boards where the firmware is
->>>> available.
->>>>
->>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/sm8650-hdk.dts |  5 ++
->>>>    arch/arm64/boot/dts/qcom/sm8650-mtp.dts |  5 ++
->>>>    arch/arm64/boot/dts/qcom/sm8650-qrd.dts |  5 ++
->>>
->>> I'd say that these are 4 commits.
->>
->> I could make 10 and still be coherent, but do we really need 4 here ?
+Hi
+
+On Thu, Apr 24, 2025, at 2:24 PM, Christian Brauner wrote:
+[...]
+> Link: 
+> https://lore.kernel.org/lkml/20230807085203.819772-1-david@readahead.eu 
+> [1]
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Very nice! Highly appreciated!
+
+> ---
+>  net/unix/af_unix.c | 90 
+> +++++++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 79 insertions(+), 11 deletions(-)
+>
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index f78a2492826f..83b5aebf499e 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -100,6 +100,7 @@
+>  #include <linux/splice.h>
+>  #include <linux/string.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/pidfs.h>
+>  #include <net/af_unix.h>
+>  #include <net/net_namespace.h>
+>  #include <net/scm.h>
+> @@ -643,6 +644,14 @@ static void unix_sock_destructor(struct sock *sk)
+>  		return;
+>  	}
 > 
-> The usual pattern was sm8650.dtsi + one for each board.
+> +	if (sock_flag(sk, SOCK_RCU_FREE)) {
+> +		pr_info("Attempting to release RCU protected socket with sleeping 
+> locks: %p\n", sk);
+> +		return;
+> +	}
 
-For big changes per board yes, I still don't think we need separate commits
-for boards.
+unix-sockets do not use `SOCK_RCU_FREE`, but even if they did, doesn't this flag imply that the destructor is delayed via `call_rcu`, and thus *IS* allowed to sleep? And then, sleeping in the destructor is always safe, isn't it? `SOCK_RCU_FREE` just guarantees that it is delayed for at least an RCU grace period, right? Not sure, what you are getting at here, but I might be missing something obvious as well.
 
-Neil
+Regardless, wouldn't you want WARN_ON_ONCE() rather than pr_info?
 
-> 
->>
->>>
->>>>    arch/arm64/boot/dts/qcom/sm8650.dtsi    | 94 +++++++++++++++++++++++++++++++++
->>>>    4 files changed, 109 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
->>>> index d0912735b54e5090f9f213c2c9341e03effbbbff..69db971d9d2d32cdee7bb1c3093c7849b94798a0 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
->>>> @@ -894,6 +894,11 @@ &ipa {
->>>>    	status = "okay";
->>>>    };
->>>> +&iris {
->>>> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
->>>
->>> You shouldn't need to specify this, it matches the default one.
->>
->> Hmm ok
->>
->>>
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>>    &gpu {
->>>>    	status = "okay";
->>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
->>>> index 76ef43c10f77d8329ccf0a05c9d590a46372315f..04108235d9bc6f977e9cf1b887b0c89537723387 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
->>>> @@ -585,6 +585,11 @@ vreg_l7n_3p3: ldo7 {
->>>>    	};
->>>>    };
->>>> +&iris {
->>>> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>>    &lpass_tlmm {
->>>>    	spkr_1_sd_n_active: spkr-1-sd-n-active-state {
->>>>    		pins = "gpio21";
->>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
->>>> index 71033fba21b56bc63620dca3e453c14191739675..58bdc6619ac55eda122f3fe6e680e0e61967d019 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
->>>> @@ -824,6 +824,11 @@ &ipa {
->>>>    	status = "okay";
->>>>    };
->>>> +&iris {
->>>> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>>    &gpu {
->>>>    	status = "okay";
->>>
->>
->> Thanks,
->> Neil
->>
-> 
-
+Otherwise looks good to me!
+David
 
