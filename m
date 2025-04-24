@@ -1,190 +1,181 @@
-Return-Path: <linux-kernel+bounces-618756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA111A9B317
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41F3A9B326
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92FA3A5ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D83A177F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBC927FD47;
-	Thu, 24 Apr 2025 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DA927F757;
+	Thu, 24 Apr 2025 15:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgDdO5UL"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXCxZzOH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8227F4CB
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4A019E7F9
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745510098; cv=none; b=QAiXWHCmCrak2vWo8qhvqtHn8drTO4yXWT4IG1AB4Nwq2QVMsXO9+SpqXv6avK3QkLgvZTk+3nnOsfsAt6oE2HJehPMwuzto/0etBy4nNZKYO6RLMDmK54/iFWjlCjPw8dZilYzILHy18gQjGvh4qga1tse6ZAu3hTWO5itflok=
+	t=1745510189; cv=none; b=mL/aKVkLieGqYxVMfWdNp2jTifKdbKP8o+VnKQQBdZczF7wl1vxVlI7aIVlstZMCAwaoALQqCfNP9rN2hT3SPPDfpPR8SZGApVfUxfgaOxv7fouz10gdL0W0AeYSx56qR9t/ydpJcFZrbHlUROBVE7JG5ouXJy3AMYv4b5Ef+l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745510098; c=relaxed/simple;
-	bh=5sNWFkSE0HMqAEQdZOHazqFU17O65RP6vgx/Ctae1zw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFVg/up9+hMUjItPs7Hd8NsRTW3TvEtAwayvamNZuf+CaEeUvVBIqwEI2ok1MI3F7XJVAGBDqfQe5hZ8GcnUHI2HmluiJmdYsheEl7iwTENirJYmTifIwZnjAJVP0du+mkpmiNs3KUMPMIQZKQNHbfEs2Z/CpBTXXcSCFZFI8/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zgDdO5UL; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f623af283fso164317a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:54:56 -0700 (PDT)
+	s=arc-20240116; t=1745510189; c=relaxed/simple;
+	bh=oIM+ogSNgF6+bXV/fYjgfMeq5DOr8873BJuP/FT9saY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dXKatAh+QHQy6s/JD/ojtyS72Zk44CHzCOwIV8VQ7uJTp1dgnfTYt6KD8MMpSz79dq9tD5W0mig+POf4eITFhk/F+pPUO2kv21jYNYUZyB+DZ4+jD/ugflTNAmLZXicw2lfwXmZf05qIzhv0flQLChWX3fsjQzHoPXkhkRRdNm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXCxZzOH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22435603572so14656365ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:56:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745510095; x=1746114895; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUCrMGYY+uv/Hbf5+CNqqfB5hrzXO8vOsQY2XR0yxgc=;
-        b=zgDdO5ULNKt/eG8J9TvJWyi1dmfd7nmWvR9Q6V3pfS+jyrFfUbLCYLzA03e9MCd21c
-         AXH0T3V4gn9trhODUVe8Auvk1i64qahgjthcJTXeeMjsZbAHj8AfhsF5srTaG6Dziwjv
-         ZOw8FazZBzPAzYIphjeJDKHrzi0Vzwq6MhgvZOb0KjaE9mBi191ng09FCLQWKyjb1SGG
-         nS61uizYyiJGmdHT5JnS9AtQxr7H7nXtRbyp1D0shlcuYEwEeWrpwQMHJ03itD8eq/Xu
-         vT97GFbz25HOpMLkXJFfH5Kmiyn5IkT8y2OQBJWjcKNzfTVTAYtREA6IHBr9wyPubVWo
-         p/qQ==
+        d=gmail.com; s=20230601; t=1745510187; x=1746114987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+990TcBUFhtTTgKom6UuFD++adz/Rg+B7elTs/xmlw=;
+        b=kXCxZzOHW2O92uv7Iqxx6S4467VNmQkppja34txSK4AB5fgo2GQMh3Jk3F4mgsxgE6
+         LmC6P6m/CvK+cLZvp/ieAOKZWgzHYNTkYX1hiMrcE+6Kf+l3cuQL9CvhCI5F/4zuiB5z
+         eQl6LomHbfYRpVtaEAejAHskagFIe414+sTzCDBu3b6tptCD1xa+P6EO2HRSLdL3I4oU
+         p970WKN+1ZjB9MGfIz18LTWwpcllxIJkfu8dOueQ5LpRDF2aRnPZzkQFNhxWXOwks/f8
+         Sl1CDV5sbYIi4AHdL5qdXGzPmUl8NmwRb292QOUY2LS4q8Id5xue9ngEGpArh1Q/yNt9
+         CEbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745510095; x=1746114895;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1745510187; x=1746114987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NUCrMGYY+uv/Hbf5+CNqqfB5hrzXO8vOsQY2XR0yxgc=;
-        b=nfdqwBvcGHEqGIPWV+0Q2DoLqGscmHKCcci+g2Z8BaVUbAafTrFitKzcdNTuoT9c/H
-         LDNCky1WtNr+Z2Ka0fZmDcUSjmmtxMmViFjF9WqS4E6KSRFYc2gfjIBeX6I6HZ/lTxtF
-         NsyO75RUt3TFRbg8nd/flK4PccrHPKWEkFqbEZydDPQs6oMqNHuNVJ0y/Bi/TpW5WxqD
-         Yg12uAMCc8JGk58DuWtF9HDKTIc5W6tY5uKTGSdfyx770NYCWZiSZnssmr2tnLngR3xn
-         D7JsBdXZpP/+ayzgaULv8blRM9oIdUFhO75clCAUVDnoW7+Ekdy6FxRd4lbTLeIlX2bd
-         MY7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6BDmNI89oug2iAm+BMcle2oPWs7A033fsNGp5TbSfHguCfa7UKbI0oHoMmpH98ibdU/gsvi3p7r8a4R8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8cYkFZ38RTZ0WdOF8CxtnXrln23/vJyGtcctP+FBSCj/MA+YH
-	ch60WyGHpMwRC3v/NZh736WBXLTtu3EGZu8eZQB9mKvo2z85HpK5YBV+KWAUKQM=
-X-Gm-Gg: ASbGncucaX0g7Gd+ePK9N4VugORPtG/DAdI0CiE6rBTyodbzn7c9Yueac+XIyXGzrZl
-	ZjEIHCOwmMKkSC18xr5EgdJ1Fljk2b6FfCJgDuQPSA2ij3pwdiBG2iHRovMRz44sMji5iCXvXwZ
-	o+y38JnPs7W1/qlItgNURWoVsBegZkrhgNj+NT6k1SRpYeJ4uz2JdKzWdP+rft6hTZVOnalS8WI
-	Z+s68do0KnhX4clQF+xq+vZ3YWGkPlVM0yNpKhY1DHIKVkNA4A92tz0saw1p84avvgJ/cC7PPgb
-	wY5/Mea/wG+0U1Vv4EaJZamb7E2svHhgzomSf6TUFu4eTngnFcm3DYAFgrKGpDvTm3twmg==
-X-Google-Smtp-Source: AGHT+IGWZpO8UIv00PMMTcXRWuieY3g0tR/lRJADLQc7dFyPJlyjK8E2CtTh7Jpkh+Ijy+lRCMv5lA==
-X-Received: by 2002:a17:907:a4d:b0:acb:7df1:f8e8 with SMTP id a640c23a62f3a-ace5721551emr117743366b.3.1745510094736;
-        Thu, 24 Apr 2025 08:54:54 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59830fe7sm128604466b.13.2025.04.24.08.54.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 08:54:54 -0700 (PDT)
-Message-ID: <6a4ec36c-c003-4ce8-9433-8c12ed3188ee@linaro.org>
-Date: Thu, 24 Apr 2025 17:54:52 +0200
+        bh=D+990TcBUFhtTTgKom6UuFD++adz/Rg+B7elTs/xmlw=;
+        b=KYhr6MopkgxrgnI2h+J54p5TmWUNK+gEufzhcAosCpVMs7/nyf1Nf120IGzTYrO1TP
+         1gvThWA6H91ELXksCaLt8IwyctaHodA6yY4MgC9kA+K+3V+kz6PCy2VMNzA6s91XQ47o
+         6uIzLvq109Qf+VmDXT+q8cw4XwPdZ1I5eaxehzwathoXi6U6UhrdAbjR76woXMW47tVn
+         2gaNsMWdbncS7yc5AchOfnlNpgblSWlByOupgLAF9XECdqHCeErt49i4S9GsK4vygK1o
+         sC/8fgUG3rjw4TbGv/dnlMJbALSbjp3arl0zBDxAbaSaXAhF4WYbwAxSFltPx4ob9Soe
+         Ra8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLMwvwORgoSmVzREOzQx7sN6I9E/gkxEA5CD7BFsY0YIO69JBno1ADgFPO4SbRyVLcjUQJ6u4Skgk44/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEP8DHupJRFO1mxp2SUb7fuRGL24MtXTghE7onxpbVD2OrJhy0
+	INdoDdg3BYiAtC0UvSHXBC2dU26YIMm+KZwIj5wtE0kJunIn2ROG
+X-Gm-Gg: ASbGncuPywVz2XE+ikMvnf2bfOLSpRRtcs9KlzPr9KEY2ScMjqwj2s3ycNt/BimdOLa
+	2yL2aK66dnbTrTmF+7ZoAUBVZIhdCbOBqKdbMsKMquh/P8sL2J66TXgqGVz2hMzpLMcBWglHqrF
+	ckClcPUyBeYoJuFSq7Vr1Jspr+AmDSJh5A3LCD8LDnYVRuUYMikgLf7UxXMWySB8MN9LQMyCo+L
+	8o3q4NbgaDkplk7DbopyvBkCXBuwXTkql3UmLOoyAqCrRutislyj9oPPNVMPYunPcRL5HOoXqrG
+	oyP3QStiN0Udo6453pIM8OMXRT8ZXUpKr8J2m5sgxXX5EUFpdP0e
+X-Google-Smtp-Source: AGHT+IHokjhN3alNq7Wfj0FxT/nwbc0QoFDiP1nT0BXfFxf8IUIktiByl37EfV5cp3+21OPOjeHn2w==
+X-Received: by 2002:a17:903:2a8e:b0:220:df73:b639 with SMTP id d9443c01a7336-22db3d7b0e3mr49535955ad.36.1745510186794;
+        Thu, 24 Apr 2025 08:56:26 -0700 (PDT)
+Received: from localhost.localdomain ([124.156.216.125])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4d76fc0sm15218905ad.27.2025.04.24.08.56.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 24 Apr 2025 08:56:26 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org
+Cc: mingzhe.yang@ly.com,
+	david@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH v3 1/1] mm/rmap: inline folio_test_large_maybe_mapped_shared() into callers
+Date: Thu, 24 Apr 2025 23:56:06 +0800
+Message-ID: <20250424155606.57488-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
- <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
- <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
- <54eeb470-cd90-4bc2-b415-6dea1ce2321d@linaro.org>
- <0ab31397-580f-4e5a-b9ad-d9bf79d29106@linaro.org>
- <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/04/2025 12:17, Bryan O'Donoghue wrote:
-> On 24/04/2025 11:07, Krzysztof Kozlowski wrote:
->> On 24/04/2025 11:34, Bryan O'Donoghue wrote:
->>> On 24/04/2025 07:40, Krzysztof Kozlowski wrote:
->>>>> +  vdd-csiphy-0p8-supply:
->>>> Same comment as other series on the lists - this is wrong name. There
->>>> are no pins named like this and all existing bindings use different name.
->>>
->>> The existing bindings are unfortunately not granular enough.
->>>
->>> I'll post s series to capture pin-names per the SoC pinout shortly.
->> How are the pins/supplies actually called?
->>
->> Best regards,
->> Krzysztof
-> 
-> I don't think strictly algning to pin-names is what we want.
-> 
-> Here are the input pins
-> 
-> VDD_A_CSI_0_1_1P2
-> VDD_A_CSI_2_4_1P2
-> VDD_A_CSI_0_1_0P9
-> VDD_A_CSI_2_4_0P9
-> 
-> I think the right way to represent this
-> 
-> yaml:
-> csiphy0-1p2-supply
-> csiphy1-1p2-supply
+From: Lance Yang <lance.yang@linux.dev>
 
-But there is no separate supply for csiphy0 and csiphy1. Such split
-feels fine if you have separate CSI phy device nodes, which now I wonder
-- where are they?
+To prevent the function from being used when CONFIG_MM_ID is disabled, we
+intend to inline it into its few callers, which also would help maintain
+the expected code placement.
 
-Best regards,
-Krzysztof
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+v2 -> v3:
+ * Inline the function, suggested by David
+ * https://lore.kernel.org/all/20250418152228.20545-1-lance.yang@linux.dev
+
+v1 -> v2:
+ * Update the changelog, suggested by Andrew and David
+ * https://lore.kernel.org/linux-mm/20250417124908.58543-1-ioworker0@gmail.com
+
+ include/linux/mm.h         | 2 +-
+ include/linux/page-flags.h | 4 ----
+ include/linux/rmap.h       | 2 +-
+ mm/memory.c                | 4 ++--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index bf55206935c4..67e3b4f9cdc8 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2303,7 +2303,7 @@ static inline bool folio_maybe_mapped_shared(struct folio *folio)
+ 	 */
+ 	if (mapcount <= 1)
+ 		return false;
+-	return folio_test_large_maybe_mapped_shared(folio);
++	return test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids);
+ }
+ 
+ #ifndef HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index e6a21b62dcce..8107c2ea43c4 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -1230,10 +1230,6 @@ static inline int folio_has_private(const struct folio *folio)
+ 	return !!(folio->flags & PAGE_FLAGS_PRIVATE);
+ }
+ 
+-static inline bool folio_test_large_maybe_mapped_shared(const struct folio *folio)
+-{
+-	return test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids);
+-}
+ #undef PF_ANY
+ #undef PF_HEAD
+ #undef PF_NO_TAIL
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 6b82b618846e..c4f4903b1088 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -223,7 +223,7 @@ static inline void __folio_large_mapcount_sanity_checks(const struct folio *foli
+ 	VM_WARN_ON_ONCE(folio_mm_id(folio, 1) != MM_ID_DUMMY &&
+ 			folio->_mm_id_mapcount[1] < 0);
+ 	VM_WARN_ON_ONCE(!folio_mapped(folio) &&
+-			folio_test_large_maybe_mapped_shared(folio));
++			test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids));
+ }
+ 
+ static __always_inline void folio_set_large_mapcount(struct folio *folio,
+diff --git a/mm/memory.c b/mm/memory.c
+index ba3ea0a82f7f..5e033adf67b1 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3730,7 +3730,7 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+ 	 * If all folio references are from mappings, and all mappings are in
+ 	 * the page tables of this MM, then this folio is exclusive to this MM.
+ 	 */
+-	if (folio_test_large_maybe_mapped_shared(folio))
++	if (test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids))
+ 		return false;
+ 
+ 	VM_WARN_ON_ONCE(folio_test_ksm(folio));
+@@ -3753,7 +3753,7 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+ 	folio_lock_large_mapcount(folio);
+ 	VM_WARN_ON_ONCE(folio_large_mapcount(folio) < folio_ref_count(folio));
+ 
+-	if (folio_test_large_maybe_mapped_shared(folio))
++	if (test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids))
+ 		goto unlock;
+ 	if (folio_large_mapcount(folio) != folio_ref_count(folio))
+ 		goto unlock;
+-- 
+2.49.0
+
 
