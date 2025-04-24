@@ -1,126 +1,83 @@
-Return-Path: <linux-kernel+bounces-618985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A246EA9B5EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D27EA9B5F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3593F3AEE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDF1BA74C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE9528DF09;
-	Thu, 24 Apr 2025 18:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E69B1CAA6D;
+	Thu, 24 Apr 2025 18:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oaeFyGsI"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fd+WXSSl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DBC1C84A6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7201C84A6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745517884; cv=none; b=rea5N+7vDv+Q8KTANo9tCMM+jvde5KpgGb22Bm8lbvQCQFNVNWjTc7FaTDNFiJ6lZ6UvEhAZhBz76iGTcErfltKb42C273RbtLNqCrq3wHTv5QFhFzp5i8PaE/sAYvrlLk5oB3mA2YRB0pTQbYq+hZ08svP65hQQmlJgarHpOPE=
+	t=1745517944; cv=none; b=YijaCSE5KcMerX62orReoKXmbnpgLf763PsvJ7sAkw9ZyILE6NNerG7F4xHl4lHuOXv53B4N77505YXslHgaRlz9r5/twTucV9lK53ExWP5kAWoiFqBCHcea4oaP0ZL5ZaYDBIYafWkqEmxvkn68IRKiHA7xRRDWClcogAoRBu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745517884; c=relaxed/simple;
-	bh=SDpYS5ZWknMpckF1EiWnoZUkPjoTca1oTO5sjKUafB0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MmLVDyQjPVeYFRYufabgDk1hQqmwlwTFysgqd5gaHxmpF7PPFkTGCILmuhKVe3QEBHAbNLHSKKXCP5iUoBre7Gp7y3ZBg8M0A20iGKqT4LEYa5KGlKx9LdkwhKBt4HtwBl0Q8h7e0SFIoxM0Mkp8Iz2WRmlZ/Vgnr6iZyvblz9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oaeFyGsI; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af2f03fcc95so1351732a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745517882; x=1746122682; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V/zEUaD7XALmrEdJtQ+W7mbWtOiJSP/MzvvsaVR7LPI=;
-        b=oaeFyGsI92GgoYmgl7mDw6xkfz0sJtK7HeqH/fwYbxYytc96Bt5IQz50TJJb1WDG9R
-         Jp5O4pD6EZ3kgTYOdm+pfQCqMOFv+dXbjQPzPpC2UK5vgrnPqxRUP4+uFNJ52yvNOQvp
-         1oHXpN4Mg7WmXJvmzGd990WeaWtkhMdcQ6MLjT3EZ2piR/4g5lqA6wAEFHKpyNQxEMnh
-         whMif9/QN4IRVcAtK2mSCU6fRwVwQA93EwVsPcTnQ3HHX38rLShYyZLl0JZwe4Ao0kTh
-         77C8t5bskfLMLJLXP1gzl22SLYPXZczliosS3DDu100cLWIDle5A2KE8QrUhQPEmgg9v
-         8snQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745517882; x=1746122682;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V/zEUaD7XALmrEdJtQ+W7mbWtOiJSP/MzvvsaVR7LPI=;
-        b=IbGAyZ4XESEvpBxmzb8UtfGfiZyN8Gv4bZ4Ty5BTPKuQfu41Cu7WDvdBR6prSMp/q/
-         mSwCy19/TLobf+yhOjUZhhXKrkaaTG558PKb42P0FfHmZzFJPe+n87ZmhHMCECXwK/Cr
-         A95ZO+8UWnniG7DFPpbN+dZhV1MzXgE3kNq2dkH9H4c6fIWpLwFVT1TLdGUimWf4Kye0
-         vMQY8DxZX6c/TVwynBbN0Pmv6SDol8cTKD7/Lz2uenDGAM3P4r7Qcg8vPKyXtxYwCvVO
-         8RWyccoubmlnH6cwsSOxwsuGSNXYG2QMvA9GQakBAxI491/RMm00415XkkknQYDusmQ4
-         XRrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpuMdQlAjrG3eZKeTojnKLkQZH+69BL/rZ+07YnwwJBBj4NRqa1qUpVctwtHf8bdDMUGZG87j5+OPIXYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE16kClU66q9oKDHD/XHWHe3bkr8bpqvinLCPKv8g/vFQviwFR
-	d6Y7IH4YuWjsDZxJVMPlG21AeP/WkBiZlIaUZrC/0K7uNbYo+ZrwObnV7Zxk/Cg/Pw5YnQRLEUN
-	yn/jRTjWXz1+7a5ez5s4qnh8AvA==
-X-Google-Smtp-Source: AGHT+IFCD6wSkeShiUGYpxhZbZBv0/y9w0T1IIc3HNt1hkQLFgJDBQEO5h7Bli2VPrTT5E5MwlpXd85RSXZDpW3dVvA=
-X-Received: from pfblm19.prod.google.com ([2002:a05:6a00:3c93:b0:73e:655:5bee])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6300:218b:b0:1f5:8e54:9f07 with SMTP id adf61e73a8af0-2045661ffaamr416057637.24.1745517882289;
- Thu, 24 Apr 2025 11:04:42 -0700 (PDT)
-Date: Thu, 24 Apr 2025 11:04:19 -0700
+	s=arc-20240116; t=1745517944; c=relaxed/simple;
+	bh=z5KtV37b9MRSMTCjoksC8Kocl522RSyH2oJ82WBKUCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snwneffssnbQc3k74/tFnUicD28KKDEO7yztYur3VQGnFKVHdreKLeGb3de8+8MQhr3nFbf3rx0j53ObTlLhIZIn/k789lVoEJPhqctED9vvdbXuZnTgIM8zce4mxtBlzG0H5Epb38eCLe72u9R9QHp26addLzu/nJrt7mN8aS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fd+WXSSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAC7C4CEEC;
+	Thu, 24 Apr 2025 18:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745517944;
+	bh=z5KtV37b9MRSMTCjoksC8Kocl522RSyH2oJ82WBKUCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fd+WXSSlpTayUciOk1TqPPi6JDc0zF0QwAF15wqX+VV+y4RxMvdWc5G1DNqcTR71Q
+	 4ebLuBeVpxfRooBycxGG9KQ/I8yGmVNIpzUnQdDoJ/2YB5/qVmucr4kjM0xQDrEx4n
+	 HtQN8qZYF9KDGjssSSkMLsJQYy+ySODSWKF2iHwckWOmoeIZ1dKuWLrEVyxfTEC7Zd
+	 8wR99pd6B+80GChtGegoGK9LWbahROo87qVHc7Wy5ikdAn8gvHBmxPzhzwt/pqRUWx
+	 HYRCFh+iAhiPYNotv16KLSs2qDn5EMqjns91BR+vvXUQIhoutGTaWCI6hYd/nihxOh
+	 640s09g4GAIrQ==
+Date: Thu, 24 Apr 2025 20:05:40 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [RFC PATCH PoC 01/11] x86/linkage: Add SYM_PI_ALIAS() macro
+ helper to emit symbol aliases
+Message-ID: <aAp9dMyCJ982GvKY@gmail.com>
+References: <20250423110948.1103030-13-ardb+git@google.com>
+ <20250423110948.1103030-14-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
-Message-ID: <20250424180420.3928523-1-willmcvicker@google.com>
-Subject: [PATCH v2] platform: Fix race condition during DMA configure at IOMMU
- probe time
-From: Will McVicker <willmcvicker@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <jroedel@suse.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "Rob Herring (Arm)" <robh@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, Saravana Kannan <saravanak@google.com>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423110948.1103030-14-ardb+git@google.com>
 
-To avoid a race between the IOMMU probing thread and the device driver
-async probing thread during configuration of the platform DMA, update
-`platform_dma_configure()` to read `dev->driver` once and test if it's
-NULL before using it. This ensures that we don't de-reference an invalid
-platform driver pointer if the device driver is asynchronously bound
-while configuring the DMA.
 
-Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- drivers/base/platform.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+* Ard Biesheuvel <ardb+git@google.com> wrote:
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1813cfd0c4bd..cfccf3ff36e7 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1440,7 +1440,7 @@ static void platform_shutdown(struct device *_dev)
- 
- static int platform_dma_configure(struct device *dev)
- {
--	struct platform_driver *drv = to_platform_driver(dev->driver);
-+	struct device_driver *drv = READ_ONCE(dev->driver);
- 	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	enum dev_dma_attr attr;
- 	int ret = 0;
-@@ -1451,8 +1451,8 @@ static int platform_dma_configure(struct device *dev)
- 		attr = acpi_get_dma_attr(to_acpi_device_node(fwnode));
- 		ret = acpi_dma_configure(dev, attr);
- 	}
--	/* @drv may not be valid when we're called from the IOMMU layer */
--	if (ret || !dev->driver || drv->driver_managed_dma)
-+	/* @dev->driver may not be valid when we're called from the IOMMU layer */
-+	if (ret || !drv || to_platform_driver(drv)->driver_managed_dma)
- 		return ret;
- 
- 	ret = iommu_device_use_default_domain(dev);
--- 
-2.49.0.850.g28803427d3-goog
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> Startup code that may execute from the early 1:1 mapping of memory will
+> be confined into its own address space, and only be permitted to access
+> ordinary kernel symbols if this is known to be safe.
+> 
+> Introduce a macro helper PI_ALIAS() that emits a __pi_ prefixed alias
+> for a symbol, which allows startup code to access it.
 
+s/PI_ALIAS
+ /SYM_PI_ALIAS
+
+What does 'PI' stand for? 'Physical memory Identity' map?
+
+Thanks,
+
+	Ingo
 
