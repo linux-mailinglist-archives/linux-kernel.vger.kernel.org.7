@@ -1,89 +1,96 @@
-Return-Path: <linux-kernel+bounces-617331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4990AA99E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221F6A99E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609341946FAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DAA1946D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836B61F09AA;
-	Thu, 24 Apr 2025 01:50:19 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C641D5CC4;
+	Thu, 24 Apr 2025 01:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIPvj4BL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E71DDA14
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 01:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7BA17A2EE;
+	Thu, 24 Apr 2025 01:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745459419; cv=none; b=XFi7Paq/R47GclRJcLr6P1KcYNn0vXmFoYtmJkzcFpAmE5GfWy8JXycTGZUFnPAOHr1Rd+iL3yLHW3afF4KhjeXGSkv6FmPUzAA1s3QFKns7gREoLsGHZBNvOLAYpdHKG0fTyjTFuW7kYI6FM31humGKg9T5avJHsa2HAFX1G9g=
+	t=1745459391; cv=none; b=fWTNDnAnH9druUAWavH8r9W8wpJ/ExTsFbU0G6h17xkSPi4OSJoSvZQJw364WzKhSFK+YcDuFdKt0cZYdpPWBDUGfKmU/XWFkjlp+SWG1LhClkgHlBsJ9uMFvrHsJst7ulJtXfwlKW0GIUBN5rALRoEn9JrYg3s8imN1tp1V5po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745459419; c=relaxed/simple;
-	bh=JmXm4Zk6MSSEwTYRosPuxA4NnDKVNSA1ONFH3qB3bV4=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=t7rbCSoeOQ0GknhcOYLAt0cdDTdUNgzr9c/eVFKpFUBDKMB1M2v2/ZYAOoMX1oipHntfFv/vwQgbS2qwXcd3KLr+XZEWBYqiG/oPu7d+myaY6sSU5KuCVlfEulOFkV2zUWFYthyLqRQ6lBn1hnxksZrixrgkx85TLEAyhYKwAQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Zjf5W14hSznfVp;
-	Thu, 24 Apr 2025 09:48:47 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0CF831402C3;
-	Thu, 24 Apr 2025 09:50:08 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Apr 2025 09:50:07 +0800
-Message-ID: <50dc6bdc-ee62-41f1-b8e5-be64defb07c6@huawei.com>
-Date: Thu, 24 Apr 2025 09:50:06 +0800
+	s=arc-20240116; t=1745459391; c=relaxed/simple;
+	bh=okAdnUMdkt77fPNOGoNov2VzUCP19KzZkGl46/1y+w8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jzzfBvLA0owctqXB0YlFdP6Nyjip87urmG/N+YV2erpqyiUvakzxHeB4Cc+WX7UWWgLYL6PD2Tqf6IzeqGP+a+Ie6hO6cXrMp+U5eFFFLGdlmUgUctIsn0oceyWA4rMpBqMhDgyNuvIXEZvaksrsP/PxO1evVqRsCLqYcrczEj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIPvj4BL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A68C4CEEA;
+	Thu, 24 Apr 2025 01:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745459390;
+	bh=okAdnUMdkt77fPNOGoNov2VzUCP19KzZkGl46/1y+w8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YIPvj4BLeYeqMXk0isir7s8Yu2WBUBo1eModjU8uNIXQn3QFOw5gaLqgkwZBTN/dd
+	 OHkZKKCrB/7v0p4xQqGqKLyN8zfNfjDG/0xwxY2ODJ8eQY5fRHyhrkdEE8qa/dAK1R
+	 YWPRKbovTAsm3hJkSnMwsuu6y09Ocn+F9HPZUl7J628Sx/MhnsNxEJiolbu7eVV3ZK
+	 vvGDISucdRKhKXodmfxj2iH1uGOoVrmAxL7mKuTfQplKieAhtmBnxDaK8Qri5mSkQe
+	 lBVqaIGkFCnkmxTDElagKq45fTO4uIlYyo1gHFNmUrJ9Gx0JnVGTmFhX08FSNXSHM9
+	 Q8ckLFRJ4tMLg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B77380CED9;
+	Thu, 24 Apr 2025 01:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Sandeep Dhavale <dhavale@google.com>
-CC: Gao Xiang <hsiangkao@linux.alibaba.com>, LKML
-	<linux-kernel@vger.kernel.org>, linux-erofs mailing list
-	<linux-erofs@lists.ozlabs.org>
-From: Hongbo Li <lihongbo22@huawei.com>
-Subject: Re: Maybe update the minextblks in wrong way?
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: dsa: mt7530: sync driver-specific behavior of
+ MT7531 variants
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174545942875.2829412.8607382949348037647.git-patchwork-notify@kernel.org>
+Date: Thu, 24 Apr 2025 01:50:28 +0000
+References: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
+In-Reply-To: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: chester.a.unal@arinc9.com, dqfext@gmail.com, neal.yen@mediatek.com,
+ sean.wang@mediatek.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 
-Hi Sandeep,
-   The consecutive chunks will be merged if possible, but after commit 
-545988a65131 ("erofs-utils: lib: Fix calculation of minextblks when 
-working with sparse files"), the @minextblks will be updated into a 
-smaller value even the chunks are consecutive by blobchunks.c:379. I 
-think maybe the last operation that updates @minextblks is unnecessary, 
-since this value would have already been adjusted earlier when handling 
-discontinuous chunks. Likes:
+Hello:
 
-```
---- a/lib/blobchunk.c
-+++ b/lib/blobchunk.c
-@@ -376,7 +376,6 @@ int erofs_blob_write_chunked_file(struct erofs_inode 
-*inode, int fd,
-                 *(void **)idx++ = chunk;
-                 lastch = chunk;
-         }
--       erofs_update_minextblks(sbi, interval_start, pos, &minextblks);
-         inode->datalayout = EROFS_INODE_CHUNK_BASED;
-         free(chunkdata);
-         return erofs_blob_mergechunks(inode, chunkbits,
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-```
-This way can reduces the chunk index array's size. And what about your 
-opinion?
+On Tue, 22 Apr 2025 04:10:20 +0100 you wrote:
+> MT7531 standalone and MMIO variants found in MT7988 and EN7581 share
+> most basic properties. Despite that, assisted_learning_on_cpu_port and
+> mtu_enforcement_ingress were only applied for MT7531 but not for MT7988
+> or EN7581, causing the expected issues on MMIO devices.
+> 
+> Apply both settings equally also for MT7988 and EN7581 by moving both
+> assignments form mt7531_setup() to mt7531_setup_common().
+> 
+> [...]
 
-Thanks,
-Hongbo
+Here is the summary with links:
+  - [net] net: dsa: mt7530: sync driver-specific behavior of MT7531 variants
+    https://git.kernel.org/netdev/net/c/497041d76301
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
