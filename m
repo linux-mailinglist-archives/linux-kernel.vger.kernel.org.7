@@ -1,154 +1,201 @@
-Return-Path: <linux-kernel+bounces-618062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9864A9A9B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:14:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F773A9A9C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624333ACCCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268AD188FE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F0A221546;
-	Thu, 24 Apr 2025 10:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="k34iNYmO"
-Received: from aposti.net (aposti.net [89.234.176.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3259222595;
+	Thu, 24 Apr 2025 10:15:00 +0000 (UTC)
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023104.outbound.protection.outlook.com [52.101.127.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0021220680;
-	Thu, 24 Apr 2025 10:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745489648; cv=none; b=gWoOo+H+Nkv4ZAh+nZuXhJseLliwHUl4tVKRqc+a8MJxZ6U/lYiUbJudSiwYJvF3B6zimyRN3qRpELt+mm/4nnERAxDFryTVDEstuo7ikU19opPSp/KPa8htgcRrfiSCB4ouwplPqpVIJ9X9XkLoMJf6P6abPoda/JE5fTvcmEU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745489648; c=relaxed/simple;
-	bh=zSmUq1tHp63+RAhXj9njMfxddHaNlQhPuYccDV+gtfo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TXP9Me2G9/ex/suxKjYaubKM6984w4qMHZ/NxTktos8dK79A0xTy8PztJFPypZOBDG8mSNxK4PoThjEPfZ+JaCNJv8glAdX7k7C3cA6CPucnfxFRbdUX6J4A/0yvhAcFkRK22pSxl5oWV/D9UYHBAnq8q5zZxYl72+OH8xHoDAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=k34iNYmO; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1745489643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fYgEY5bFxGonZp37xNaaHsfSCY/iBrfzUTg+ah8x0OU=;
-	b=k34iNYmO2u/khsEJoWsLhO8cofWYl/u/QpqaDGdggEoJRr390q1f/uBot6xeqwcorlu9Rx
-	a8EQn7P2a8Exp3LftKt5tslqFgRYc+b14E6XaYC6btSEViYF3OqbJEwDMnuWSMvjuIBlZJ
-	G9UJn2cdbSDp7cHLYcYTJk/01lUCfOI=
-Message-ID: <fff5e22cd0cc75f1007bbe43889f97554efa6316.camel@crapouillou.net>
-Subject: Re: [PATCH 06/12] pinctrl: ingenic: use new GPIO line value setter
- callbacks
-From: Paul Cercueil <paul@crapouillou.net>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Basavaraj Natikar	
- <Basavaraj.Natikar@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Coquelin	 <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>,  Andreas =?ISO-8859-1?Q?F=E4rber?=	
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>,  Steen Hegelund
- <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, 	UNGLinuxDriver@microchip.com, Ludovic
- Desroches <ludovic.desroches@microchip.com>,  Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement	
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth	
- <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, 	linux-actions@lists.infradead.org,
- linux-mips@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org, Bartosz
- Golaszewski	 <bartosz.golaszewski@linaro.org>
-Date: Thu, 24 Apr 2025 12:13:59 +0200
-In-Reply-To: <20250424-gpiochip-set-rv-pinctrl-part2-v1-6-504f91120b99@linaro.org>
-References: 
-	<20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
-	 <20250424-gpiochip-set-rv-pinctrl-part2-v1-6-504f91120b99@linaro.org>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1F7221F39;
+	Thu, 24 Apr 2025 10:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745489700; cv=fail; b=OFfM0ma7JjYMCVXRql772R/HtYIMFU4a5Be9PgorS2tKRgl7d857EMvXB7vEcPxw3NvKJguieGRAMVL9lN86iMr7sg0AuzWZ7oLCog2zEB2LbDoTFHgvB0WPjwRx/CmRlDVJRO5Q5Ob2fBkBSkknpGx4/Q0n7D0VCThoDunwFXE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745489700; c=relaxed/simple;
+	bh=VDnYPDzu3Ky+EonvsBF+P+SGPStZjDNWfJrpJM8TG4o=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=PzZ2JzwZytcj7ig+Jl9IPh39QN/HBm750T78KM6hrsgegftg4vX2iCR1He2nUxfT3QMlqwMQjyaF6oL7xhewF6vzsG/T1mo5MTD+foRsfOenyUJ1dazeXqtcSYr2klTBAOufGQnzqJ0+JJESBt1G/GyKIv20RSKbZooO0YBzu3g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=52.101.127.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M0iBqvIOzmwpXPchjj7aDKPDJy6+0kLBaT3cTjR6eBzW56KQp8IT46UCRmjElrqlluXtpaG8ShlU/o2tL71jc17d8YFNXkMRni6f/9dTPwf+/xkWlWWy621gZFZG+ntNIPTrXGuioQqqPH/4vmwqgUMiANE4cUTUKG6aPx/6h5azFCM395BA80oIApo60RF1WgDS4wEfKbE2kgToIUTuqik07hvmj6pQwu46MypWFVyHiV12UefL6zO+AUMplEqM81mzz7rV9E5mEUQkGQgJdXNQizroJp0kNXrZLeuceQw0udqzqxevPbEwr48SphIvbhfacR3XfS1NgiJ7snGJ+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sY02lAhEFKMKF4VjOBdlBG9SDdFGrH80+1gSetcKGxs=;
+ b=xzP2CYcYP/PTfmHSAAYYijEEVdPpoMsEVvgjWTww/TWuGx+uiyN6Eed+Lb8CY0dYdMXh2If/EBGfSQZsvbHDsBMbpi6Ukay/AUogcaWuq/UnEzZXeut1W/pYzA+M+4gpoXOM/lxkCVpagwOjEmVtd4Q9wGTG4MvZeoHCuL+ndivu6pG6Uoa7NPnkmF/aMH9WxWEdX65swtCtLoyaDpwHiT4skIL0rZFQLEHvWmqeGqxGaSBvmbV/mjxJ7M/qGJoV1UbV2puPOsH8CI3/UO0zqMdXsTXMwM1dPtOqDwp8Sc8dqljrBld3F5fnzAsKsja+JRNf1gUlev0fJI8Ya+Ox4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
+ dkim=pass header.d=wesion.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wesion.com;
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+ by TY2PPFC1C818470.apcprd03.prod.outlook.com (2603:1096:408::9e8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.31; Thu, 24 Apr
+ 2025 10:14:50 +0000
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0%4]) with mapi id 15.20.8678.021; Thu, 24 Apr 2025
+ 10:14:50 +0000
+From: Jacobe Zang <jacobe.zang@wesion.com>
+Subject: [PATCH 0/3] arm64: dts: Add board support for Khadas Edge2
+Date: Thu, 24 Apr 2025 18:14:39 +0800
+Message-Id: <20250424-edge-v1-0-314aad01d9ab@wesion.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA8PCmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyNj3dQUoJihuZGBsUWipbFhkqUSUGlBUWpaZgXYmOjY2loAERtGuFY
+ AAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ nick@khadas.com, Jacobe Zang <jacobe.zang@wesion.com>, 
+ Muhammed Efe Cetin <efectn@protonmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=666; i=jacobe.zang@wesion.com;
+ h=from:subject:message-id; bh=VDnYPDzu3Ky+EonvsBF+P+SGPStZjDNWfJrpJM8TG4o=;
+ b=owGbwMvMwCXGEJfeJ5AmN4HxtFoSQwYXv+DG9+f+6OvkrcmumH9w2sVJf94IdwXU/AueujNCr
+ dMxImxbRykLgxgXg6yYIovUMlGpCHfetK3L47/BzGFlAhnCwMUpABMRaGBkWJe05+7102uN+Lia
+ bR4v19lXFK3uvon7steLcP5V04Ue6DP8j/0vrPXtsZab7Z3jf5zftS4oKpnuEaQ9X/b0qejc5So
+ BnAA=
+X-Developer-Key: i=jacobe.zang@wesion.com; a=openpgp;
+ fpr=1AA6151A58470D66B5A75FF6005E678E10661E90
+X-ClientProxiedBy: SI2PR01CA0034.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::9) To TYZPR03MB7001.apcprd03.prod.outlook.com
+ (2603:1096:400:26a::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|TY2PPFC1C818470:EE_
+X-MS-Office365-Filtering-Correlation-Id: 802dcd2a-56b7-4cb2-60df-08dd8318d918
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eUNYOUZHWWg1MzZuOEZNcU1adjcxOGgxb2d3VU44bGxuU1FGQnNMYlluN3p6?=
+ =?utf-8?B?VE1wejJyakw0VG5rTENDaWhOYjZwdGFCS0hCZ3VNM1RNZnUwazRRZmpxZVVm?=
+ =?utf-8?B?YndZQ2Q5U2R3OUdBOGVwd2ZEOTdxM2lRUS9xbW9SajMwanM4cWtKYWNmR2l2?=
+ =?utf-8?B?dGpFd0ZsZE1NdnVGOTczSkJublZZeUN6M1BvZ3l5UXV1eUtkSGpRaVJFa1VZ?=
+ =?utf-8?B?RlhEbStPMS9WSU9kTTYrc1Q0QkE3enNXZXVCZW9DQ0IyQ2RwYWNaTFNCY3pw?=
+ =?utf-8?B?SmNiZHUwaEg5WTVZTXVCZlU5OUVRTGxkam13T1h2cVpFYzlDSEIxT1pJMjQv?=
+ =?utf-8?B?QU4zOEhmK05ndTE4ZDJpR3gwVnkyMElmM2hDcTB4cGV6RStuNitZSmdCK0NR?=
+ =?utf-8?B?SDBIcjNRQlNwcCtPeXhIenh6aGpJcXYrTU1JWWsxb0RaRFVDWVJYVUNvYWlZ?=
+ =?utf-8?B?c3hZekJ1UjN2TDhIZFZmTzVSc0xTV3lFUTBFSW0zKysyOTBqRTlCTnU4Skgw?=
+ =?utf-8?B?SURUc3pqZFFjaThRamlZcnRDUFFSaTdRQ3BLUG5pKzRQWU0wQTMwUm83cmdn?=
+ =?utf-8?B?R3dENXhVLzZ6b2VGdHZIb2ZZWEY5OTF3bmpPY1JsUERPMVlLZ1lxc2hIcStp?=
+ =?utf-8?B?VFlndjBoT2xMZnpyZUNLSFFRRkF0cGxhZ1JKYThvQ1hNSFlOcnphR3hmc3Bs?=
+ =?utf-8?B?Q1YxRW96VkpXZHA0ZllIZjc5Rk9QZ29SRlMyUGNqQ3FNV0dPek1OYjJiUklv?=
+ =?utf-8?B?L29QeG9OUEpJQUZnWHhvMVh3bE5xd2dMazJuUFlnTEhVc08vVEFyOXkvZjdZ?=
+ =?utf-8?B?WGhpSEhiMm9uV2Y5UU5RTjJrQ3ZFUzk2c1F3NUJhK3l0U2ZRUmo4NjNCSFBt?=
+ =?utf-8?B?L3RYdTlCckRweE5CVzcwTzVIamZOZkhHOWVoUWFYTnBaTXpkVGwrdXZwRjJV?=
+ =?utf-8?B?MFI0WHhXYU51YUxna0ZYTUdnTGpWQnJTbjRET2ZGMElhZ1FtWWg5WSsxWk05?=
+ =?utf-8?B?OFVUaHk0V21kUEkxNHl6NVAxVHF3TXZOTUhNdExzOGhob01OamhOdUYxMmlY?=
+ =?utf-8?B?SEw3dEFYbE9LUjVxYUZ0QS9tOXVMeFU1cHk4NGdnNHFONXlhWjlRVnkzcXF1?=
+ =?utf-8?B?aGlPUVE0OHhjN2xobVJqMnI0WVZSa1J2OTk0M2FzbnBZN2JqNENLcklYaVFP?=
+ =?utf-8?B?ek05Tm1pT1FidHlsMVdFWHJYVUYxWmIzZnlXVU5lMDFYMVVaaXZmS0RpNmF2?=
+ =?utf-8?B?eWVZY2FmVXM3NlpyWWJ6am1QRWJLZS9pdCsrVjlyQWdEb1pMVjJpM3d3Nlc5?=
+ =?utf-8?B?bE9wakc3MmpHclZyMXJ1Vk40L1J5T29GVU1qR3hLTzhlOEF2dFlxc0JXQkti?=
+ =?utf-8?B?SHhvWEdSVjJkakpyL0h2dTNqWUdTQmNnZTZ0dTBpSzdVb3JBK0UxaTZldEhs?=
+ =?utf-8?B?SU9BZmtpSVVGdGdXUW5SOUhueGNndGVoYllvSEJnQWliTzNoTFRxdUhxWkNa?=
+ =?utf-8?B?NTNxWVJuMkhTUHZpTEl4Nm05L09DbjBoRzc2UDBDVUVMNzJHRXZQRm9DV1NY?=
+ =?utf-8?B?alR5dlErSGxIbldyaldwVnRzWWtPaXQzM1ZHY0htYXJmU0h2ZDRvWVBvMSts?=
+ =?utf-8?B?RDZhZTE1TDFUZm9GS05KLzZFOFgxNGlwRjF5MHNLVXlwMmdNSWtJQmFzZEdm?=
+ =?utf-8?B?WnF2WEI2VG5YblpPakg2NGVRZDUxYWVVNHVQTEo4S0hMSGFtL2ZPeE56SDJh?=
+ =?utf-8?B?YXFDQVZnVVlOMWh2STRCM1V4SUM1Wnp1b0xjUmJDdnZ1QmhybXVKWnVRTkhl?=
+ =?utf-8?B?SnBrSUg1c24zQldmTUIrT09ZV1RHcXFKU0Y2Sis0YklvLytpUDRESnJxNkYz?=
+ =?utf-8?B?U3ZXMW9hOUZZbkhTTDl2SjA5VnJneGxUMGp5TVp0TXpIUHdyRzI5Y0JWQlNu?=
+ =?utf-8?B?bkQrVFA2aHBvUkE3TER4NFlMbHlWMmt6RlRxN2wzWWhxaWdCdFUyRitFZ2hp?=
+ =?utf-8?B?L0NaQkJGRHhBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RXcrM2Fra0k0WktyL0pDWjRVUklpN2s3TGtmWUl3ZFNTaGExMm5BNWZRbE85?=
+ =?utf-8?B?YXNZa0JjNWNxV0FFUnQrRFZoZ1g3UmphY3lZekFDSm94VUtQdklGMExYcHdv?=
+ =?utf-8?B?TXVvUWo4cVI2cjZUQ01XWUdDT1h1aFVPanRtRE9VUWFsc2VzNUdpY3hMVFZn?=
+ =?utf-8?B?Und4NzNxQ0k0ZWdjOHBNNnNqaU1wWEw5R0ozL0ZaQ0c2NVpPZGNVZHEra0Rz?=
+ =?utf-8?B?MnQ5MDExRTFEQ1NXa1c0VU05S0p0THg1MjNSd3A4RHROOXIrSE9JOE9nQ29l?=
+ =?utf-8?B?RnVYL1FKWXNadGdNRTBwMTJPMjIzYXFyNWJGcnF1ZE9NblhMOUZreXZBUnhI?=
+ =?utf-8?B?b0NzZkVLR3g3VWgrZjFOdjZqL1duNGVXMitIUXVHU01INkVreXozNmVnMUJT?=
+ =?utf-8?B?amhpcCtqVE90N095VHVFZktMQ1ZvWi80MEpyQWVhU0c2UVo0bjNvczRjT1hl?=
+ =?utf-8?B?cWkyMFZvcUlJOTlDUjFoVXRKY3NCdURSVnBMS2xRbHJpeWhzTHVBazhjejNB?=
+ =?utf-8?B?Q3p4TDB5NWpYZHRndUhVTVVpK2RXOW43WVRYYjZXdXMvRHUrVUVRQWdHaXhi?=
+ =?utf-8?B?ODlJT0dGbFkvNlAvZnlnQ2h1Z1VxOGJiRVFMZVZnL2tNNHROOGd6di9Fekg2?=
+ =?utf-8?B?RitTUEVZNXY4Z3ZDVHhEYURCWjBQWEMrY25nWmxrVU90ZXY1TmVpb3EyL0VL?=
+ =?utf-8?B?dDNuOTZSRHdkOU9iYlBEdWEyM1B4OUwxTVJ2YVpGaVFrbFBIbzFzWHZtSGl6?=
+ =?utf-8?B?R3NRbGw3TWZ1UlZIVWdNdVdvS1Y5K2Jvc283TUJYSHY0UXhPQ3ZmV1dUUy92?=
+ =?utf-8?B?WUZ3a29OQVJNOVFFNHVnYktvUldRNHBCWW5sSmc3QWkwZEhaZG5kZXduMWRH?=
+ =?utf-8?B?MDl5UVVwLzdCZUJPeG5OajBRSTRjTU1rMno5TzI5Nll3VHQxRE55bGt4a1FE?=
+ =?utf-8?B?UFpISTBrb1JmN2psUzBaZW16cjl4Zko2MlQxQmo1c3NmYW1vL2hhY0JMNHA2?=
+ =?utf-8?B?Y1dFV0gvNlZwa2Y0WE9FY29Ib01nMVZPbTRWcGY0TUNPWFUzUlhaRWd5dk5O?=
+ =?utf-8?B?bTBNaDM2czRLVmhUbjB3U2VnWkNadjRRWWpyaWhJRnZneUVoK3Y3ODdHNDY1?=
+ =?utf-8?B?Y3hTZmlKRUFKajI2cnE0L3pJTzZGVk5qL1NhYTdPajVMZytIbW5va3NuNHNs?=
+ =?utf-8?B?K3o1RHFKRVFlMGJxTHFrVWZMTnJjTnBvQittSTVWQjRTMUxrOTNYeTVhS3Qv?=
+ =?utf-8?B?TjZjdnB3ZkRsMVNKSFAvMGRhamthN28wRHNOZnduQVpsRFNRMXRFd0UxT2Zk?=
+ =?utf-8?B?b2F5YmIrY1ZLaDV4Y05RV2V6QU8vSEg5WkJaY1VBamQxeDc4ZjZ6c0xSQ1Fr?=
+ =?utf-8?B?MWVlWmZacVB6YjQ5OTBGS0NEaWNUY0Fra2FFUG5xTnRRZEdmeE1uVXB3dFlz?=
+ =?utf-8?B?bC9lZWp0T2p1eHdWUnlJbzFuNFVIdUJicEtZYk02NWZSenY4WS9pK3JWbk5R?=
+ =?utf-8?B?MThjYnJrdGllb0pWMEhqNElpRi9pMjMxaG91RCtQcHg5bDUzd3hneDhhTFFF?=
+ =?utf-8?B?aUgxWW1qSTU1YXJnejc5cEJremhiUE1PekEzTVJKQUc4dUR6L2gxNmdpdTF6?=
+ =?utf-8?B?VlJIREZmZG5mMVFMai9EY29vTTlWckE0VWd0eXpVd1BqRmhxeW0xQlkwejZH?=
+ =?utf-8?B?aCtHRXZyVTFYci9saGJTYmd6aG1nd3BlaXhnTUJYTWkyUEthb0NKbVVUT0F4?=
+ =?utf-8?B?NWwwQkQ0THZ4R3QvY2JZTndJWFIxb2FOUVFSQ3Bud3RTUHdnMzliZnZMOHpJ?=
+ =?utf-8?B?bUdvTFBIcGNsOVlNOXdMMGcwY0VQSkF3cG50a2lBV0xlTyszMTdJUmlQRkw4?=
+ =?utf-8?B?WXhlNXoxWE5JMWI2aXdMeklxMXZCYTg5enVFYXhUcDlrVkYxMkdRMWZlUkYw?=
+ =?utf-8?B?QzhOblZ5R2xsalh5OWlJL2l2MWl5RkNuYkRrQmJlZzl2bHZna1B4OHZOcXBW?=
+ =?utf-8?B?OU11MVp5ZmlCWjl3UDl2ekpaaEpnRHVZNDEzMGZsWXhHdTllMDRTYXUvL2RJ?=
+ =?utf-8?B?VXNxNHdDUEIvazlTQ1o5eWMzSXdUcHh1bTcyWlFZZTV5SE5iYXBjTlVYTmhl?=
+ =?utf-8?B?dFZJODJhUEs3MG5qOTdPN2UyRWVwYUhnQ1hVZlp4cDJ2b3JBcTl1eGc1NzhR?=
+ =?utf-8?B?YkE9PQ==?=
+X-OriginatorOrg: wesion.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 802dcd2a-56b7-4cb2-60df-08dd8318d918
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 10:14:50.2891
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UwmBT5lA38nlWBup0XJ8HwuApwMzABF1iHjG4zobeJJ/ZEIb2+ytTM2TeUY6Q/BWODzyXTpas5Zq8881OhcAqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPFC1C818470
 
-Hi Bartosz,
+These patches add board support as following:
 
-Le jeudi 24 avril 2025 =C3=A0 10:35 +0200, Bartosz Golaszewski a =C3=A9crit=
-=C2=A0:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> struct gpio_chip now has callbacks for setting line values that
-> return
-> an integer, allowing to indicate failures. Convert the driver to
-> using
-> them.
->=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+- HDMI audio and display out
+- BCM43438 bluetooth
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+---
+Jacobe Zang (3):
+      arm64: dts: rockchip: Add bluetooth support to Khadas Edge2
+      arm64: dts: rockchip: Add HDMI & VOP2 to Khadas Edge2
+      arm64: dts: rockchip: enable HDMI out audio on Khadas Edge2
 
-Cheers,
--Paul
+ .../boot/dts/rockchip/rk3588s-khadas-edge2.dts     | 77 +++++++++++++++++++++-
+ 1 file changed, 76 insertions(+), 1 deletion(-)
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250423-edge-172038a931b9
 
-> ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 8 +++++---
-> =C2=A01 file changed, 5 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index a9e48eac15f6..3c660471ec69 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -3800,12 +3800,14 @@ static void ingenic_gpio_irq_handler(struct
-> irq_desc *desc)
-> =C2=A0	chained_irq_exit(irq_chip, desc);
-> =C2=A0}
-> =C2=A0
-> -static void ingenic_gpio_set(struct gpio_chip *gc,
-> -		unsigned int offset, int value)
-> +static int ingenic_gpio_set(struct gpio_chip *gc, unsigned int
-> offset,
-> +			=C2=A0=C2=A0=C2=A0 int value)
-> =C2=A0{
-> =C2=A0	struct ingenic_gpio_chip *jzgc =3D gpiochip_get_data(gc);
-> =C2=A0
-> =C2=A0	ingenic_gpio_set_value(jzgc, offset, value);
-> +
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int ingenic_gpio_get(struct gpio_chip *gc, unsigned int
-> offset)
-> @@ -4449,7 +4451,7 @@ static int __init ingenic_gpio_probe(struct
-> ingenic_pinctrl *jzpc,
-> =C2=A0	jzgc->gc.fwnode =3D fwnode;
-> =C2=A0	jzgc->gc.owner =3D THIS_MODULE;
-> =C2=A0
-> -	jzgc->gc.set =3D ingenic_gpio_set;
-> +	jzgc->gc.set_rv =3D ingenic_gpio_set;
-> =C2=A0	jzgc->gc.get =3D ingenic_gpio_get;
-> =C2=A0	jzgc->gc.direction_input =3D pinctrl_gpio_direction_input;
-> =C2=A0	jzgc->gc.direction_output =3D ingenic_gpio_direction_output;
+Best regards,
+-- 
+Jacobe Zang <jacobe.zang@wesion.com>
+
 
