@@ -1,184 +1,73 @@
-Return-Path: <linux-kernel+bounces-617880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0555A9A731
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B5BA9A736
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4AF21889DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F423392439D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4F220CCDB;
-	Thu, 24 Apr 2025 08:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="PVQCVxDx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ECF2147EA;
+	Thu, 24 Apr 2025 08:59:25 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F8204F83;
-	Thu, 24 Apr 2025 08:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745485149; cv=pass; b=PJ5o9LQMLb9/ynXx3/ElZg9BE7wudXapdYoOth8yz23/ICxNb2ZQ8c3MPcJYICHzhKHJ7Gxdyn4hImQiAq+7grPuMODo7LufoMsv2F+FNSQ2QWWHHDd4m1LChgVTJR7WaYiwdHTlpmnS/IiU03WcYsm743ksPgjImvWTiCU0TfA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745485149; c=relaxed/simple;
-	bh=zDWc6nxv/h21OoGkVTdcFrzjcHE7JIncVZ3LhKXbeB4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CUbLM3Eazhf77kLhjky96Bm9IPon2OWchqHFNT+eJutUSwVsn3szuIxiTkn/R3avj6G2TCmsJMsTpnEzY2h+4+wmrLfjHR0POB/ap7s7dV5jEenGgWlW82g+0nT6RByOmiLSkRZW7K8/kPS+kllSo4vMYlNaWQ9l+NVROV2LRo8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=PVQCVxDx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745485127; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jaV0x3qj/eqBLIwubtgE8KUAQn2b86GxCDmo0XTJPYmIQTCRZbHHx0dxGpQTlkucxhzTG8QN0tqyWNwbybF2orNap/vE+IniaHZmVhYTKUglVdEtAjxrRAN0Wl+Bo3LED2AF7NTBBIMkwPo5qwWvSn9acvulMqHIjcwXx+oew/Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745485127; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=J3UW6p735sL0uDpuTdjeAlDlTVS5KOHJnqXmFJV22mw=; 
-	b=PmhFNP+E145dBDrIHOeTs0XSN9iyyy8OMNz0BuUQwX46Mkf5FxF5MGKd1dBTFthSHwJf8+8aQ1joZbq8rqJyIebtkFxVGo+yWMl41irPEGix+JVYVESlFrASouINYXD3iWsUFA59uxtpFr0t6XJGkr9ib8FZLt/yza5kr2Hk5C8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
-	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745485127;
-	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=J3UW6p735sL0uDpuTdjeAlDlTVS5KOHJnqXmFJV22mw=;
-	b=PVQCVxDx9e3a/r7iDgv31fTD2bXDL/+qSkeZBxJWbJ8zNwiBRVfcuBefy6RXabAe
-	Sc2ek7+pOwcCZIEVeI1Yum4rlDFRBOahhVZqOXaRDYlQ0yK0R+/u04vJf80yQSppVeh
-	WMk3rWdafvd4LohpsEpBvGwUy/zpt8OxbD86yNf4=
-Received: by mx.zohomail.com with SMTPS id 1745485124022311.75237554150374;
-	Thu, 24 Apr 2025 01:58:44 -0700 (PDT)
-Message-ID: <fd4f9f760c4860216aeb58a91a75c24dda64919c.camel@collabora.com>
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8390-genio-common: Force ssusb2
- dual role mode to host
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado"
-	 <nfraprado@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, kernel@collabora.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Date: Thu, 24 Apr 2025 10:58:39 +0200
-In-Reply-To: <eb350c96-379a-46db-8a54-e1b9c71be431@collabora.com>
-References: 
-	<20250331-mtk-genio-510-700-fix-bt-detection-v1-1-34ea2cf137f3@collabora.com>
-	 <2da6560b-8444-48ae-bb01-397756cecbc0@notapiano>
-	 <eb350c96-379a-46db-8a54-e1b9c71be431@collabora.com>
-Organization: Collabora Ltd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5F820102D;
+	Thu, 24 Apr 2025 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745485165; cv=none; b=uvcbVeWPTel5yCoYdVKtHU7WvgMvRjGiPXO+/Xs0RxyVOceJdj9059v73YEK8veGn/eSnXq8epFNAYP/XQ6LxU4O12tKcz/a6Ab3g3bqWi9BC5bQmzsDtAFBdx9KVyvHidxgcFVMxS53SlkT+HVib0gw0QTLFRLgYCN5ysA370E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745485165; c=relaxed/simple;
+	bh=s/PZCC6C7dNYSldko1q2R7adkA0Tj3BmAKQ+Z44kYxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nOeYRe0osl2Ah4q5iWE+tiGpoUQndGckfbumh1x6JEOHYyOPYLU1ZsTgmUYqm5Yy08AKS9ZAmlbaeB2mSEGpvH3uvu7O5ahJ/KqcvbIvDEx5j34u5HUB207sNgePJl3z9FkwIngM84s/5E422BHNsnu3KgQMvUIjXifUIccYnW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a01:e0a:3e8:c0d0:eeac:f145:aff3:8659])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 7DF4A52B4A;
+	Thu, 24 Apr 2025 08:59:19 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:eeac:f145:aff3:8659) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: syzbot+b4a84825ea149bb99bfc@syzkaller.appspotmail.com
+Cc: cem@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: syztest
+Date: Thu, 24 Apr 2025 10:59:13 +0200
+Message-ID: <20250424085914.82201-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <68099bb2.050a0220.10d98e.0005.GAE@google.com>
+References: <68099bb2.050a0220.10d98e.0005.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <174548515989.17600.12464261522932033389@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Hi Angelo,
+#syz test
 
-On Thu, 2025-04-24 at 09:24 +0200, AngeloGioacchino Del Regno wrote:
-> Il 23/04/25 22:48, N=C3=ADcolas F. R. A. Prado ha scritto:
-> > On Mon, Mar 31, 2025 at 11:25:52AM +0200, Louis-Alexis Eyraud
-> > wrote:
-> > > On the Mediatek Genio 510-EVK and 700-EVK boards, ssusb2
-> > > controller is
-> > > one but has two ports: one is routed to the M.2 slot, the other
-> > > is on
-> > > the RPi header who does support full OTG.
-> > > Since Mediatek Genio 700-EVK USB support was added, dual role
-> > > mode
-> > > property is set to otg for ssusb2. This config prevents the M.2
-> > > Wifi/Bluetooth module, present on those boards and exposing
-> > > Bluetooth
-> > > as an USB device to be properly detected at startup, so configure
-> > > for
-> > > the ssusb2 dr_mode property as host instead.
-> > >=20
-> > > Fixes: 1afaeca17238 ("arm64: dts: mediatek: mt8390-genio-700: Add
-> > > USB, TypeC Controller, MUX")
-> > > Signed-off-by: Louis-Alexis Eyraud
-> > > <louisalexis.eyraud@collabora.com>
-> > > ---
-> > > I've tested this patch on Mediatek Genio 510-EVK board with a
-> > > kernel
-> > > based on linux-next (tag: next-20250331).
-> > > ---
-> > > =C2=A0 arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 8
-> > > +++++++-
-> > > =C2=A0 1 file changed, 7 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-
-> > > common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-
-> > > common.dtsi
-> > > index
-> > > 60139e6dffd8e0e326690d922f3360d829ed026b..3a9d429f0f14b501ae41551
-> > > dfe7272f242345138 100644
-> > > --- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-> > > +++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-> > > @@ -1199,7 +1199,13 @@ xhci_ss_ep: endpoint {
-> > > =C2=A0 };
-> > > =C2=A0=20
-> > > =C2=A0 &ssusb2 {
-> > > -	dr_mode =3D "otg";
-> > > +	/*
-> > > +	 * the ssusb2 controller is one but we got two ports :
-> > > one is routed
-> > > +	 * to the M.2 slot, the other is on the RPi header who
-> > > does support
-> > > +	 * full OTG but we keep it disabled otherwise the BT on
-> > > the M.2 slot
-> > > +	 * USB line goes obviously dead if switching to gadget
-> > > mode.
-> > > +	 */
-> > > +	dr_mode =3D "host";
-> >=20
-> > Hi,
-> >=20
-> > while I agree with this change, now that this controller is fixed
-> > to host mode,
-> > the connector child node here which is supposed to probe with
-> > driver
-> > usb-conn-gpio, which would monitor the ID and VBUS lines and change
-> > the USB role
-> > as needed, will fail to probe with:
-> >=20
-> > =C2=A0=C2=A0 platform 112a1000.usb:connector: deferred probe pending: u=
-sb-
-> > conn-gpio: failed to get role switch
-> >=20
-> > as indeed there no longer is a role switch registered.
-> >=20
-> > For that reason, I believe as part of this commit you should also
-> > disable the
-> > connector. Since role switching is no longer supported by this
-> > controller,
-> > there's no sense in even trying to probe this driver.
-> >=20
-> > Thanks,
-> > N=C3=ADcolas
->=20
-> Can we instead go for role-switch-default-mode =3D "host", with a big
-> comment
-> in the devicetree saying that the controller is shared between BT and
-> the other
-> port? :-)
->=20
-> Cheers,
-> Angelo
-Using role-switch-default-mode property (set to host) does work as an
-alternative fix in order to keep the dr_mode set to otg and also not
-having a error about the connector too.
-But I also needed to change the associated GPIO polarity, otherwise the
-role mode would remain device and the BT module would not still be
-detected.
-I'll make those changes in the v2 patch.=20
+--- a/fs/xfs/libxfs/xfs_ialloc.c
++++ b/fs/xfs/libxfs/xfs_ialloc.c
+@@ -1182,6 +1182,8 @@ xfs_dialloc_ag_inobt(
+                        if (error)
+                                goto error1;
+                } else {
++                       pag->pagl_leftrec = NULLAGINO;
++                       pag->pagl_rightrec = NULLAGINO;
+                        /* search left with tcur, back up 1 record */
+                        error = xfs_ialloc_next_rec(tcur, &trec, &doneleft, 1);
+                        if (error)
 
-Regards,
-Louis-Alexis
 
