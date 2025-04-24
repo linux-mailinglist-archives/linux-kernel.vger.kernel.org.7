@@ -1,227 +1,141 @@
-Return-Path: <linux-kernel+bounces-618900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B3A9B4C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FEBA9B4BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4841317FC20
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728651721D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3AC28BA85;
-	Thu, 24 Apr 2025 16:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A4828A1CE;
+	Thu, 24 Apr 2025 16:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEjQpshZ"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlhhasIs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE8928CF4A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C1E27FD53;
+	Thu, 24 Apr 2025 16:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513870; cv=none; b=tioAW6PvRELVOAsaQov+FyhxxpALyEh+Q3DkfMXx3aB/TGkdyOJfdbgJKBFVAVcDTcngAbk93ojF5kKn94d9N/bipMKrfXeia6VZZfxfyUild7bvkMUc9IrfIj5tz2GREUMU5bd9hhHPYX940nmc8NS8oYO2M8AZNKNy7GZxSNg=
+	t=1745513838; cv=none; b=szPMwO4SE0jWeOfDMfKLV6Mu0QRzqSCbZtzVbbO412IorACE2uU04niU3vFenNhSi9hdJ/qiTSOGFuSuxmJHJEs7m8cedJxJTlcU2/7cpdMoXbhvzrusjc0XUURTIn4XpZ8duML65gobVq/AnuGZgW/z1l8icQ2dNtt5oXYCg5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513870; c=relaxed/simple;
-	bh=ligPPdPCxLB7UTAeBo43KtRCRHrkTargE1GzztTMgy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eahWwGdit3itBgA9ljJQdC7TBf0+0JW6kTzUSqNOwZx25ZrpBAq2NkXUAEL3DkY7HV/ga4UpNcsh9RkFalv+sz3sUSuZd9K2BZtz4Ac4QoaGqWELQRprgGS2C7NtuvL8IkTQTwt8SEZ7b1RbFeRic0haIaY2CLHqFK9BtxWkr74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEjQpshZ; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-7053f85f059so13034117b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:57:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745513867; x=1746118667; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMFtwR0cjY9A1szP289YoQESj54wwE6Rq8FAwxVKpA4=;
-        b=iEjQpshZhyuTnG0Qk39S7iYSZPx4trHrqisuFblEf+ZoEr8rhj9bNOgVjtW0tj3DET
-         NgBjBsyG8OMl1pVY1UiuHVIyCiocKjJv7yHGjtVk84opkfaJJ/zsBurn72gjS2TNzqPu
-         9e5jYJ1w9YLkLKvNowXSmzjisWb6YECEclLS9ZPLdTEfN/Zw0DYVhc3Zj9BWUOoWVsNX
-         G0rukq47kFjMSbVNzXyqqiV7F5XB1zIxQvX6zcyH2w5GAzDCb0Q1tMk0oA0cQHCxKyiX
-         /tRrqlhxwOFNn0ZveAUJPDFvB8xR57+66TlAGXkyGa/Xu3sZYk0j4UPVNLGanoyPuJOe
-         ek0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745513867; x=1746118667;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cMFtwR0cjY9A1szP289YoQESj54wwE6Rq8FAwxVKpA4=;
-        b=h8hQkUBHEskCbTS7wDwltyAopOI6PmpqCsNRi9EGCiExYr0W4NRiculrDxOEiRNA+N
-         saHA7KB4v+qpwse61z7C6MM5WCymqE1v+P9JlNZuWYn5YxbktNI+4+kkNUk7CSriqrpB
-         K7/EgcpnO4mdCmzuaikLx/tY2MPjftU14Q7Ffvn4H0YdHu3ppdD7PKIEOlqavyG8dxsX
-         DNygbCU1enLpflnKzcFcxZ8uBaRCjL90KmBnCiwSe+RnncsiRxvZmRmAcAjoysVedi1W
-         kvS//ZzcarPCF6qzOhChFirRNk++efO6QyIKEfl6j7DauwDY0NWVdYrHWOO3QpdmPIA+
-         wXIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOMeKBsFL3Y5RP9zos+BwfYuuO550/VyPwLyfIEhtJ8BEsclvTOOKcDRD1kqLAgNSd2ouUv2UzjwHwD7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOyDbj6P0q9xcpdolTf/plCZwPu1UZARqpm/F58nvHtMp4DAz1
-	sfFUuut1i+im2OiHCGa6t84mqg2w/jgF6joaf5ztm9O/O1UK48gObrwgc6ke0PJV9JOwcUatKar
-	07JmlFL30KGjs1jkzT0zGlaGksFLvtKgpS9YCvMj/WRcLg0Gk
-X-Gm-Gg: ASbGncvIVsbkKgDd6ZbjZJk/sI1Wdvzhm1Mf0jFPcAwJXqVXyFfCOsLynsDWQCo1xWh
-	xt+ZqrUfSX/x+i5YV1p70FmniraLyuWdlT7qe4aecZ4f524J7NUwBLqSrY3JurYKXjSteHAIPDZ
-	S/ZAuzOtmxsz9mH2kUKy7c9Y0=
-X-Google-Smtp-Source: AGHT+IH5p9xZ9JTlIabjNlX7tQHJrcaoNt4NdS4YrEPTAAfSSCwMBfEDdWwaxwxD2TzmAUDKr0gH0wiBCRrqHBSYDNU=
-X-Received: by 2002:a05:690c:385:b0:6fd:2feb:eb6e with SMTP id
- 00721157ae682-7084f129df8mr7111907b3.28.1745513866588; Thu, 24 Apr 2025
- 09:57:46 -0700 (PDT)
+	s=arc-20240116; t=1745513838; c=relaxed/simple;
+	bh=MZYbKW86/HMaRiBQ4n+IZSKyzM9Ux5Yala+dzSbAgCY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hPY/M5e0uSoesiejGrLJGHJrDWPn+d8IvunIzqblbdgqsAnzyXy9EjUF79Ntk6P/8tKru1sOG87X/IJobZhF/kb4owg9YPWtdKiETEBLe4eWFCIlEm5jSubzxuUbF/NsVpqAcPDgwyyDuk545h+JIaiJduMPLgiEm7Nr0OkSFnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlhhasIs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 794E1C4CEE8;
+	Thu, 24 Apr 2025 16:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745513837;
+	bh=MZYbKW86/HMaRiBQ4n+IZSKyzM9Ux5Yala+dzSbAgCY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LlhhasIsoavw/7NHjZZLeXJJpSHC8/xpWdCwOEHhmAyNdXrFUKgxTLFX21nEp8IGe
+	 En+atfR3S91hqgFj3lbmdLhHCnN+v3SVODgISBHm/L2mtrKvORnTd55itoeOL/pxXf
+	 36EhX0LcqYeGFbeJsklgwrQrNrBJwNPDQ58oY0ip7ZLzfmAONrLA5zBAHXn8gWSg/j
+	 hA9Zy0eaCf1VJfJn2MctM6QSLbCEoLghCQStI7XxROWvS85G/x5GfnC4k0b9ZI3+vB
+	 Gm68DJs7pGOZOH7k/TXFWCBRaO1D0JNZH/qjheQ+MUhIexcUSjph2WNq2S9GGX3hVe
+	 2FK9MXd7ju1oA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u7zsw-008TLp-Rz;
+	Thu, 24 Apr 2025 17:57:15 +0100
+Date: Thu, 24 Apr 2025 17:57:14 +0100
+Message-ID: <86ikmtjy51.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Karim Manaouil <karim.manaouil@linaro.org>, Oliver Upton <oliver.upton@linux.dev>
+Cc: 	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Alexander Graf <graf@amazon.com>,
+	Alex Elder <elder@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
+	Quentin Perret <qperret@google.com>,
+	Rob Herring <robh@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
+	Will Deacon <will@kernel.org>,
+	Haripranesh S <haripran@qti.qualcomm.com>,
+	Carl van Schaik <cvanscha@qti.qualcomm.com>,
+	Murali Nalajala <mnalajal@quicinc.com>,
+	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
+	Trilok Soni <tsoni@quicinc.com>,
+	Stefan Schmidt <stefan.schmidt@linaro.org>
+Subject: Re: [RFC PATCH 00/34] Running Qualcomm's Gunyah Guests via KVM in EL1
+In-Reply-To: <aApaGnFPhsWBZoQ2@linux.dev>
+References: <20250424141341.841734-1-karim.manaouil@linaro.org>
+	<aApaGnFPhsWBZoQ2@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250415032314.44997-1-kever.yang@rock-chips.com> <20250415032314.44997-2-kever.yang@rock-chips.com>
-In-Reply-To: <20250415032314.44997-2-kever.yang@rock-chips.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 24 Apr 2025 18:57:10 +0200
-X-Gm-Features: ATxdqUHaEq5VBCeeWj8VtNYyErWM1Dmw22DJsOkuoLiPj5dVBYs62HJ1VPg7Ulw
-Message-ID: <CAPDyKFqLQsG-rNeYgHT4g2mCWjPzkF2nkktUXxAL95tM7g+Smg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] soc: rockchip: power-domain: add power domain
- support for rk3562
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
-	Finley Xiao <finley.xiao@rock-chips.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-pm@vger.kernel.org, 
-	Detlev Casanova <detlev.casanova@collabora.com>, linux-kernel@vger.kernel.org, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Peter Geis <pgwipeout@gmail.com>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: karim.manaouil@linaro.org, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, graf@amazon.com, elder@kernel.org, catalin.marinas@arm.com, tabba@google.com, joey.gouly@arm.com, corbet@lwn.net, broonie@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, quic_pheragu@quicinc.com, qperret@google.com, robh@kernel.org, srini@kernel.org, quic_svaddagi@quicinc.com, will@kernel.org, haripran@qti.qualcomm.com, cvanscha@qti.qualcomm.com, mnalajal@quicinc.com, sreeniva@qti.qualcomm.com, tsoni@quicinc.com, stefan.schmidt@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 15 Apr 2025 at 05:23, Kever Yang <kever.yang@rock-chips.com> wrote:
->
-> From: Finley Xiao <finley.xiao@rock-chips.com>
->
-> This driver is modified to support RK3562 SoC.
-> Add support to ungate clk.
-> Add support to shut down memory for rk3562.
->
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, 24 Apr 2025 16:34:50 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> On Thu, Apr 24, 2025 at 03:13:07PM +0100, Karim Manaouil wrote:
+> > This series introduces the capability of running Gunyah guests via KVM on
+> > Qualcomm SoCs shipped with Gunyah hypervisor [1] (e.g. RB3 Gen2).
+> > 
+> > The goal of this work is to port the existing Gunyah hypervisor support from a
+> > standalone driver interface [2] to KVM, with the aim of leveraging as much of the
+> > existing KVM infrastructure as possible to reduce duplication of effort around
+> > memory management (e.g. guest_memfd), irqfd, and other core components.
+> > 
+> > In short, Gunyah is a Type-1 hypervisor, meaning that it runs independently of any
+> > high-level OS kernel such as Linux and runs in a higher CPU privilege level than VMs.
+> > Gunyah is shipped as firmware and guests typically talk with Gunyah via hypercalls.
+> > KVM is designed to run as Type-2 hypervisor. This port allows KVM to run in EL1 and
+> > serve as the interface for VM lifecycle management,while offloading virtualization
+> > to Gunyah.
+> 
+> If you're keen on running your own hypervisor then I'm sorry, you get to
+> deal with it soup to nuts. Other hypervisors (e.g. mshv) have their own
+> kernel drivers for managing the host / UAPI parts of driving VMs.
+> 
+> The KVM arch interface is *internal* to KVM, not something to be
+> (ab)used for cramming in a non-KVM hypervisor. KVM and other hypervisors
+> can still share other bits of truly common infrastructure, like
+> guest_memfd.
+> 
+> I understand the value in what you're trying to do, but if you want it
+> to smell like KVM you may as well just let the user run it at EL2.
 
-Applied for next and by amending the commit message header, thanks!
++1. KVM is not a generic interface for random third party hypervisors.
 
-Kind regards
-Uffe
+If you want to run KVM on your Qualcomm HW, boot at EL2, and enjoy the
+real thing -- it is worth it. If Gunyah is what you want, then there
+is enough code out there to use it with crosvm.
 
+But mixing the two is not happening, sorry.
 
-> ---
->
-> Changes in v4:
-> - rebase to v6.15-rc1
-> - update patch author and Collect review tag
->
-> Changes in v3: None
-> Changes in v2:
-> - update the header after rename
->
->  drivers/pmdomain/rockchip/pm-domains.c | 48 +++++++++++++++++++++++++-
->  1 file changed, 47 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 03bcf79a461f..4cce407bb1eb 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Rockchip Generic power domain support.
->   *
-> - * Copyright (c) 2015 ROCKCHIP, Co. Ltd.
-> + * Copyright (c) 2015 Rockchip Electronics Co., Ltd.
->   */
->
->  #include <linux/arm-smccc.h>
-> @@ -35,6 +35,7 @@
->  #include <dt-bindings/power/rk3366-power.h>
->  #include <dt-bindings/power/rk3368-power.h>
->  #include <dt-bindings/power/rk3399-power.h>
-> +#include <dt-bindings/power/rockchip,rk3562-power.h>
->  #include <dt-bindings/power/rk3568-power.h>
->  #include <dt-bindings/power/rockchip,rk3576-power.h>
->  #include <dt-bindings/power/rk3588-power.h>
-> @@ -135,6 +136,20 @@ struct rockchip_pmu {
->         .active_wakeup = wakeup,                        \
->  }
->
-> +#define DOMAIN_M_G_SD(_name, pwr, status, req, idle, ack, g_mask, mem, wakeup, keepon) \
-> +{                                                      \
-> +       .name = _name,                                  \
-> +       .pwr_w_mask = (pwr) << 16,                      \
-> +       .pwr_mask = (pwr),                              \
-> +       .status_mask = (status),                        \
-> +       .req_w_mask = (req) << 16,                      \
-> +       .req_mask = (req),                              \
-> +       .idle_mask = (idle),                            \
-> +       .ack_mask = (ack),                              \
-> +       .clk_ungate_mask = (g_mask),                    \
-> +       .active_wakeup = wakeup,                        \
-> +}
-> +
->  #define DOMAIN_M_O_R(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, wakeup, regulator)  \
->  {                                                      \
->         .name = _name,                                  \
-> @@ -201,6 +216,9 @@ struct rockchip_pmu {
->  #define DOMAIN_RK3399(name, pwr, status, req, wakeup)          \
->         DOMAIN(name, pwr, status, req, req, req, wakeup)
->
-> +#define DOMAIN_RK3562(name, pwr, req, g_mask, mem, wakeup)             \
-> +       DOMAIN_M_G_SD(name, pwr, pwr, req, req, req, g_mask, mem, wakeup, false)
-> +
->  #define DOMAIN_RK3568(name, pwr, req, wakeup)          \
->         DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
->
-> @@ -1197,6 +1215,18 @@ static const struct rockchip_domain_info rk3399_pm_domains[] = {
->         [RK3399_PD_SDIOAUDIO]   = DOMAIN_RK3399("sdioaudio", BIT(31), BIT(31), BIT(29), true),
->  };
->
-> +static const struct rockchip_domain_info rk3562_pm_domains[] = {
-> +                                            /* name           pwr     req     g_mask  mem wakeup */
-> +       [RK3562_PD_GPU]         = DOMAIN_RK3562("gpu",         BIT(0), BIT(1), BIT(1), 0, false),
-> +       [RK3562_PD_NPU]         = DOMAIN_RK3562("npu",         BIT(1), BIT(2), BIT(2), 0, false),
-> +       [RK3562_PD_VDPU]        = DOMAIN_RK3562("vdpu",        BIT(2), BIT(6), BIT(6), 0, false),
-> +       [RK3562_PD_VEPU]        = DOMAIN_RK3562("vepu",        BIT(3), BIT(7), BIT(7) | BIT(3), 0, false),
-> +       [RK3562_PD_RGA]         = DOMAIN_RK3562("rga",         BIT(4), BIT(5), BIT(5) | BIT(4), 0, false),
-> +       [RK3562_PD_VI]          = DOMAIN_RK3562("vi",          BIT(5), BIT(3), BIT(3), 0, false),
-> +       [RK3562_PD_VO]          = DOMAIN_RK3562("vo",  BIT(6), BIT(4), BIT(4), 16, false),
-> +       [RK3562_PD_PHP]         = DOMAIN_RK3562("php",         BIT(7), BIT(8), BIT(8), 0, false),
-> +};
-> +
->  static const struct rockchip_domain_info rk3568_pm_domains[] = {
->         [RK3568_PD_NPU]         = DOMAIN_RK3568("npu",  BIT(1), BIT(2),  false),
->         [RK3568_PD_GPU]         = DOMAIN_RK3568("gpu",  BIT(0), BIT(1),  false),
-> @@ -1398,6 +1428,18 @@ static const struct rockchip_pmu_info rk3399_pmu = {
->         .domain_info = rk3399_pm_domains,
->  };
->
-> +static const struct rockchip_pmu_info rk3562_pmu = {
-> +       .pwr_offset = 0x210,
-> +       .status_offset = 0x230,
-> +       .req_offset = 0x110,
-> +       .idle_offset = 0x128,
-> +       .ack_offset = 0x120,
-> +       .clk_ungate_offset = 0x140,
-> +
-> +       .num_domains = ARRAY_SIZE(rk3562_pm_domains),
-> +       .domain_info = rk3562_pm_domains,
-> +};
-> +
->  static const struct rockchip_pmu_info rk3568_pmu = {
->         .pwr_offset = 0xa0,
->         .status_offset = 0x98,
-> @@ -1496,6 +1538,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
->                 .compatible = "rockchip,rk3399-power-controller",
->                 .data = (void *)&rk3399_pmu,
->         },
-> +       {
-> +               .compatible = "rockchip,rk3562-power-controller",
-> +               .data = (void *)&rk3562_pmu,
-> +       },
->         {
->                 .compatible = "rockchip,rk3568-power-controller",
->                 .data = (void *)&rk3568_pmu,
-> --
-> 2.25.1
->
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
