@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-617301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304BFA99DDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:12:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FB1A99DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB621946B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:12:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8F29216FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFEE15573F;
-	Thu, 24 Apr 2025 01:11:58 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74983CC7;
+	Thu, 24 Apr 2025 01:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="tv5Y1nYg"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B4313A3F2;
-	Thu, 24 Apr 2025 01:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACF42B9A7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 01:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745457117; cv=none; b=uI8qD0WuvSyFjdxoguKjeg+tJd4VkF/HYw46CoKaAUQeEbFrIUP/RJJoKfaHDX9YZHa95dVDlQmMYWvyPKtol1MGk6x/Qk5h71NOZ3djraY7BoS9Xh/wZTx38RlWTi9pThgC1wfY/ucMSP7cDmGMnYXNfs2U+EOxJWp8vTNx644=
+	t=1745456939; cv=none; b=p5ijLA+9M2aDj+ELEY+ogTYZbWdU6xese6pnUfUBoKYn3d/hZxGbZoS42rxLhsQ85q6SvEpjo8M0OFcfvem1xbpfxxtwOB0rIULjR2HxPTr4l2Yp+Mp0EnNQ+IjpV9iqPz7Q5L7BMDYGquQ2/+dO6Ygwjb0BKvN/FM+Qb/so7Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745457117; c=relaxed/simple;
-	bh=VQ9ADRqXAv9OIx0sN/Iwz4b/b4182DeUGxiXpu3LWkE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SfVBZAIVv8svOZWzWMQn663vLqvhdWuD0ATYgrAI8dQOSz9NrUUExCfJ93M3iqm/ARX5jal2egKwSp6qM+bEYXCXHW0KNix877+N/IzuPOPD8vZeum85ZIgrqdHgk8NOEngcgmF9SqcCpMtH/bh4NaTMBxVZWQKjWIoiXCaPqQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202504240910414881;
-        Thu, 24 Apr 2025 09:10:41 +0800
-Received: from localhost.localdomain (10.94.12.14) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 24 Apr 2025 09:10:40 +0800
-From: Bo Liu <liubo03@inspur.com>
-To: <mail@carsten-spiess.de>, <jdelvare@suse.com>, <linux@roeck-us.net>,
-	<kcfeng0@nuvoton.com>
-CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH] hwmon: convert to use maple tree register cache
-Date: Wed, 23 Apr 2025 21:08:29 -0400
-Message-ID: <20250424010829.2610-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1745456939; c=relaxed/simple;
+	bh=r/Wf+jfdsb0cuBQZ+dONOZlNzlyDtVkBfehZ2Z9pVIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GRT0tlrY/UAdGPf1SB88tPh46u/0xkjgs/T7/SKttG/PL44pCjsXSUq7VxfNN5sS6lt2WydrLGaVZYGFlPPlnnFCDfpbv79G6LMYfyUKJ0pS6TqUa/NU7tepgm55LHwje5vf9Af5oXvJyqu5YaX3IYiZ9xMPjeIO6qoPRz6vzAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=tv5Y1nYg; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-73bf1cef6ceso397156b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 18:08:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1745456936; x=1746061736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=96K+mNY7OtOPr52dzDB019LRxvI9XjhygxeglXZ6I3Y=;
+        b=tv5Y1nYge23PIPsmTjDcNdaJ5k9B/y7C/WRPadljdkFU7RCdpFFF2zaELhlEFB3Nhq
+         /34fgiah8Xm7ISdhC80cXdXAAIjs1bm8xSLP6k57xiwKwd8pgVMZ7Haj+MP3oGaygddE
+         WnALFJHzX+ZSWIJM9K9pZbec44zwnnnNZ7ZI+4/MKLf6HESdc6AOkSEWz3UDpjSslAxL
+         2QHu4ZoNCVj4OuDKsVbGvuZuOuYbZuJHNDK2ACaoDd1oV1DD6fwWEvqxrSppBLA8dP5n
+         O46istpGmkvPEPO8Pc2wpnPwXDobImQ2mH+rsG5jStfDnvVN1Tubk3VkiYnleuHQitrr
+         /dlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745456936; x=1746061736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96K+mNY7OtOPr52dzDB019LRxvI9XjhygxeglXZ6I3Y=;
+        b=sONIxRSES8D79DZm6YvpfZi+qV0YvcQzikPkHQ9tHab5O1Pn7wqDTPpnj/3Re6p/Zl
+         0gto87id/dF3rDRfbZe+ZNw+P9eAIE/3TFYZ98BqH+J4S5LHVuOz62hT50yoH7SSpOVa
+         MrRk2VFOnDF4ilT3aPgvW8d4gxDlU6Uq+KQVlaLVylV5y7ZhBV+dMZ4QMN0cBq82H0tX
+         wJNTiEyGiB2gaksBsQD15Lyb+sxdnG8SHIDovefapArAbeBJkBrGm7AQZoP5RPDrY/gC
+         bYh/Cwbtf4q+RtzSqgcnPoPjiNYplNpCJMJS+7VyLjFXb6CEMZrwdBzYZxBcDpafzt/Z
+         DT8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV/kfl14JyQdaYyP28nFrrxCtTixUAa7g8l4pJ051O9M/ugR+LSzTzVaUkSJ5BdgROk9yOPSRYRjcHDKGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzFdjtnKc8muMUZBO9UxVYdhDJMTD1KlJm30W7GogZGZdHaD1k
+	Qd414w3VfgFn1mzupBb6XFjqBsDFnmu4CAKcfxNpI0RTCQLbtn1Qqeeym7kSOBs=
+X-Gm-Gg: ASbGncuC/iuyChkg6KNrWydLB/WGEDSzUjuVrjlQHhkbIq7eJCwmv5SGbx6ksO8WzHH
+	s3RD43VnQ78jfdjLjVH0JR0u19Ua0II/ZlqQ9YjiFsqj4vXT9JLUT1VrKCag7GGUQvQ4S9nCbGf
+	SNU9nY1qgatrPc7wQ8dneofGPfhVNCaU6KlP5QdQprEYNKw4y19KD4670yZVc/w4bFWTiZfim7D
+	ybJrlp80gSxt11vHkI6WrmGs0WCYhr0+JbWbvxTvyzLFo9Ne0yZbw3RLDylIaaLYD8MY1Ei0asE
+	ANmIfhYPfglpARoxZ0Ga08te9cfL+bU9mtpbYb5pNzgCxbR/rmKbrORPKvOs2ah6boW2wg/F/64
+	=
+X-Google-Smtp-Source: AGHT+IEjab817v1eaoeZEkx35Op0t9qrF1r28YyBnzNAO8gZBkkFNiR9lKADu4oJ6ffW4g43dcuz5A==
+X-Received: by 2002:a05:6a00:1d81:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-73e245c09bemr1272531b3a.3.1745456936651;
+        Wed, 23 Apr 2025 18:08:56 -0700 (PDT)
+Received: from zjn.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25941d65sm236071b3a.63.2025.04.23.18.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 18:08:56 -0700 (PDT)
+From: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+To: sam@ravnborg.org,
+	neil.armstrong@linaro.org,
+	daniel@ffwll.ch,
+	dianders@google.com,
+	hsinyi@google.com,
+	angelogioacchino.delregno@collabora.com,
+	matthias.bgg@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	knoxchiou@google.com
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+Subject: [PATCH v11 0/2]
+Date: Thu, 24 Apr 2025 09:08:48 +0800
+Message-Id: <20250424010850.994288-1-cengjianeng@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201622.home.langchao.com (10.100.2.22)
-tUid: 2025424091041df1b8c9d69ec004e4fe966f67a0a79a0
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Transfer-Encoding: 8bit
 
-The maple tree register cache is based on a much more modern data structure
-than the rbtree cache and makes optimisation choices which are probably
-more appropriate for modern systems than those made by the rbtree cache.
-
-Signed-off-by: Bo Liu <liubo03@inspur.com>
+This is v11 of the MT8186 Chromebook device tree series.
 ---
- drivers/hwmon/isl28022.c | 2 +-
- drivers/hwmon/nct7363.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes in v11:
+- PATCH 1/2: Remove redundant items.
+- Link to v10:https://lore.kernel.org/all/20250423093647.4074135-2-cengjianeng@huaqin.corp-partner.google.com/
 
-diff --git a/drivers/hwmon/isl28022.c b/drivers/hwmon/isl28022.c
-index 1fb9864635db..0f27ac556f51 100644
---- a/drivers/hwmon/isl28022.c
-+++ b/drivers/hwmon/isl28022.c
-@@ -301,7 +301,7 @@ static const struct regmap_config isl28022_regmap_config = {
- 	.writeable_reg = isl28022_is_writeable_reg,
- 	.volatile_reg = isl28022_is_volatile_reg,
- 	.val_format_endian = REGMAP_ENDIAN_BIG,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- 	.use_single_read = true,
- 	.use_single_write = true,
- };
-diff --git a/drivers/hwmon/nct7363.c b/drivers/hwmon/nct7363.c
-index be7bf32f6e68..e13ab918b1ab 100644
---- a/drivers/hwmon/nct7363.c
-+++ b/drivers/hwmon/nct7363.c
-@@ -391,7 +391,7 @@ static const struct regmap_config nct7363_regmap_config = {
- 	.val_bits = 8,
- 	.use_single_read = true,
- 	.use_single_write = true,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- 	.volatile_reg = nct7363_regmap_is_volatile,
- };
- 
+Changes in v10:
+- PATCH 1/2: Add enum for ponyta sku.
+- Link to v9:https://lore.kernel.org/all/20250328094034.3400233-2-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v9:
+- PATCH 2/2: Add sound model to fix the warning.
+- Link to v8:https://lore.kernel.org/all/20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v8:
+- PATCH 1/2: Remove custom label.
+- PATCH 2/2: Change the commit about ponyta.
+- Link to v7:https://lore.kernel.org/all/20240913031505.372868-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v7:
+- PATCH 2/2: Remove prototype sku.
+- PATCH 2/2: Disable the other trackpad to enable one of them.
+- Link to v5:https://lore.kernel.org/all/20240913015503.4192806-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v6:
+- No change.
+
+Changes in v5:
+- PATCH 1/2: Remove sku2147483647.
+- PATCH 2/2: Remove sku2147483647.
+- Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v4:
+- PATCH 1/2: Add more info for Ponyta custom label in commit.
+- Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v3:
+- PATCH 0/2: Add the modify records.
+- PATCH 1/2: Modify lable to label.
+- Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v2:
+- PATCH 2/2: Modify the dtb name without rev2.
+- Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Jianeng Ceng (2):
+  dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
+  arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
+
+ .../devicetree/bindings/arm/mediatek.yaml     |  7 +++
+ arch/arm64/boot/dts/mediatek/Makefile         |  2 +
+ .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 18 +++++++
+ .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 22 +++++++++
+ .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 49 +++++++++++++++++++
+ 5 files changed, 98 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
+
 -- 
-2.31.1
+2.34.1
 
 
