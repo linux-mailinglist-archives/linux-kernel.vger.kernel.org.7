@@ -1,323 +1,147 @@
-Return-Path: <linux-kernel+bounces-618986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACA2A9B5F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33E1A9B5F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF6B3B46F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4BA176993
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280F928E61A;
-	Thu, 24 Apr 2025 18:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014841FC0EA;
+	Thu, 24 Apr 2025 18:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SdJsuIVA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hdjw8YZE"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8891C1C84A6;
-	Thu, 24 Apr 2025 18:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62C1C84A6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745517939; cv=none; b=qqbocCC32CUBAxWc2F5k9XtFW7tLdC+oGf48hBpth/Sz++5/bVR+RmpqYyJcHyJhi/+nXSFygEPScJ9VTtKscSoaNx8mUu7zDqKPi5fefo7AuoadRVORSwv6kQgtrfk8cGTnfuOoB5qqzOXzZVzycVVqIIsWWlCyrPJkTQpgM6o=
+	t=1745518008; cv=none; b=UhA4qFuIqYQVCo/7nigjteNeDkQpNSnxnMskXrqDYFSjfJP0pBvCaG5n5OtgUta2XNFP78RcYPMvhtC1fi6U4pL60y+YrM63VgiEVOUowUyX/dCbk2pA9Gx6+V3CRDRKx7garWIY/SMiYEmk7USkH6vzdIkJ56hwzfFA98Ingu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745517939; c=relaxed/simple;
-	bh=BlefwC/6oJHckCLGl/p/nqsuA+BCc0YqQJPKdv59T98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4717kFZgaiYVH6wC4L62ubSUBzbXaKqdPmbAI3vpk7bbvPN7aE4XD8KePJBEotZlcnN70doerxwz4ILr5NC64M5EWaLaVxzXst2q2/eSHI+PB+9YZfqf+TgoaWFiubloFwIUsxiG1tqugIlt0IuSAemzKmW3cc7dcQMHb2Oq6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SdJsuIVA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EEBC540E01ED;
-	Thu, 24 Apr 2025 18:05:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CzelB82LjjVl; Thu, 24 Apr 2025 18:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745517925; bh=16C+CMlwuJTJNLJcpZRsMxg5qIZZPBa2XS+2PdH4qcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SdJsuIVACbQsR1GAyrsVH0sKjey7DenJ9UvFCn7gYThixDi50tgIr1W2L6D/qGCtn
-	 6E9Tr/lhNWvFaYhoDwYZ4ODeHJQQzTpV8t0Jn3y7qZGppLzg4+JAjTm+64uq/QJzq3
-	 2bGyO1J9KqqFKV1DGcfFrtTwHWhlMc8PYZjWCyIR4jldXUqeHoST40hzIB/pFCXBqc
-	 /df1PVZaICMmWmZ8T3YO1UuiEHQJlz7fRLmqkoWo0NZZwPJs6hP/kPICWYY5zv+ySV
-	 m5L3lqdEteucU0bwfCem9H5YeKdaDwR0TCnuEDm0uAMCGOl82n8l+Qh2Qrbqe/dJmZ
-	 BRK6D7gAnhp9yCk0MNDIDX8fFJR8OppCTQ3n9HUWnsO2wVIITDLaJf4ptSpYmgeFuf
-	 42fWI3aHy8R+zQdgaL49bkZdufiTpsQvXbNHMfVif1AHfRVoFWvL3ukYyHKrDt013S
-	 uQ/WM2T072lRt7d/j26upMLCHhfLuW2945HZ3mzkgRTOBuBmoIgXcfS4fJ9dopH+Fr
-	 5Kw7XBJ3/+Wk9Rx0/iRnflE5/4E5tEhl7OERM198oT9qPzqESouxgzzRzpPD85//8Y
-	 h1oqL6kvEqGnPXXRR0k1omLV9aNUw8tysS5iT30nSuT4GwHnlbuzr7PgyYPCwmy63B
-	 f1xdS75vX2XThK+CbOvbAxXQ=
-Received: from rn.tnic (unknown [IPv6:2a02:3031:201:2677:b4a0:48b8:e35c:ca37])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 000FA40E01FF;
-	Thu, 24 Apr 2025 18:05:05 +0000 (UTC)
-Date: Thu, 24 Apr 2025 20:06:04 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, thomas.lendacky@amd.com, hpa@zytor.com,
-	kees@kernel.org, michael.roth@amd.com, nikunj@amd.com,
-	seanjc@google.com, ardb@kernel.org, gustavoars@kernel.org,
-	sgarzare@redhat.com, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH v2] x86/sev: Fix SNP guest kdump hang/softlockup/panic
-Message-ID: <20250424180604.GAaAp9jG7N9YyYeprz@renoirsky.local>
-References: <20250424141536.673522-1-Ashish.Kalra@amd.com>
+	s=arc-20240116; t=1745518008; c=relaxed/simple;
+	bh=untB1HfxdttzA08c006z9zXZeD1RPqW0OBieNxkwux0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SVxRn96eUcGaN/KcEIxMrugixXJRqf9fGeJyXHSAgpwIDajf7P+d3dFCEoamc1k3dmzdL59kHtOYoXl3T/cS4mXB0Q7Ak6l2pBVLxip3t1QcLcQLmZQg/P5rfmwH0QO+WbPjLQc7RisdORI73NZlY5gXi4F6nhtkqKVm9VqlVrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hdjw8YZE; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so2448243a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:06:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1745518005; x=1746122805; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=79YUOYWksfzgC8uh0zT0ugM7BA9V6bWBg5rPe4V+dTo=;
+        b=hdjw8YZE5VlZpD+ayDat9vQw3wyI4dYvZyNiXACLwwpnNHIKJxpTSxrFh6IkxsQrVy
+         ihTAPhZDIU4k4REqzg8QRXKGV1MYYYRu0nsQiTJs7bWeu3+eu4YjMMH91/i+4GaFnxA1
+         MjOJPLxgTcyR5jDvNdzfVDW3qpkSkyd4d0kdE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745518005; x=1746122805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=79YUOYWksfzgC8uh0zT0ugM7BA9V6bWBg5rPe4V+dTo=;
+        b=pExMfc32HZOEVH7/Fru9Saw2oUPD7iFcdaer6clCfopr3pcTu9ERVESoqnjwNWKvkG
+         +p0sA/U+LuBF0HkZVckdCX0YIDxxiw7rLMBjjEfUndLuo7anHWgeXforFvDU5TCfr6jN
+         6EBIOcV1a9Zxl+/JLuE5mm/Uek8Enst7pNAI0b5drD4O/qpqMFzNzguyT9+yR3LZCMLG
+         CgDlwKSKF/tfjZwQmC3p/RtKGg6EYjKoewwRwxen2TKeAfSfxu3KhJxd1BVkaUaedKLa
+         axqBg2pj26l5OtuczgxPy9dZAMLPL51XNMr1eJRtetvy+dWegD9k+79M4f5SAoTC2kCi
+         kiDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY41O1ave+jdLEW8VeOgCxU/2TPuSqP26qGMCt3SWytCDzkxebWImKXbqMeqOTRl7LnDJBRekB2H+xTK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXGuCBXjJcRSQHWSXY4wYfo3fP1aRlp7xBZVtfYG1zsY0+QrCv
+	BuPOA+DcSTIy3zJb4sWDVnm3bTQtkyF3hLMpbtuA9t0ECAhJE3sgYnAlzGLcD+hXklwlfzxxju5
+	5i9GxJjMLZgKIZXApqpvtRH3lmiL9OTtlfD86
+X-Gm-Gg: ASbGncu6nIHMuENu5YZ270d/7TaB5gecGBXZQVDQ/NrpZSr2K915ZkGalEWhHw09klp
+	ZE0jq8/zZ6jQ3v5n7A1fre4ygYUf5P7q4Rwrr10Q2CBjnCdzU0RbupmHiGf8izrqr88GK/60L1E
+	WAB7RbKeqvcTVgfkDHYlYkGjbHnNSpnenqOA==
+X-Google-Smtp-Source: AGHT+IF6FQyepWuw62uvlYv2AGGX4Zv8U5nVTUi/6CHfAtsO8E+E4yT2kriSnwOZ8ZJ6GbcVBIno2hzh0DlHbPq70sE=
+X-Received: by 2002:a17:906:58c:b0:ace:6bfb:4a11 with SMTP id
+ a640c23a62f3a-ace6bfb4a1fmr32847066b.24.1745518004896; Thu, 24 Apr 2025
+ 11:06:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250424141536.673522-1-Ashish.Kalra@amd.com>
+References: <20250418124718.1009563-1-jaszczyk@chromium.org>
+ <20250418124718.1009563-3-jaszczyk@chromium.org> <20250423140913.GA360030-robh@kernel.org>
+In-Reply-To: <20250423140913.GA360030-robh@kernel.org>
+From: Grzegorz Jaszczyk <jaszczyk@chromium.org>
+Date: Thu, 24 Apr 2025 20:06:33 +0200
+X-Gm-Features: ATxdqUHIDmJKjHZA9jZSJUkUEpsm0-XwqBkvekQ7zCBPFtIo1vYXDrTfrqj0M3Y
+Message-ID: <CAGptq8GzJh38349ZZpEOw9sV8ihtJMHqV=PH9WUbG-C7b0tJjg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] x86/of: add support for reserved memory defined by DT
+To: Rob Herring <robh@kernel.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	saravanak@google.com, dmaluka@chromium.org, bgrzesik@google.com, 
+	jaszczyk@google.com, ilpo.jarvinen@linux.intel.com, usamaarif642@gmail.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tnowicki@google.com, 
+	mazurekm@google.com, vineethrp@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rn Thu, Apr 24, 2025 at 02:15:36PM +0000, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
-> 
-> When kdump is running makedumpfile to generate vmcore and dumping SNP
-> guest memory it touches the VMSA page of the vCPU executing kdump which
-> then results in unrecoverable #NPF/RMP faults as the VMSA page is
-> marked busy/in-use when the vCPU is running.
+On Wed, Apr 23, 2025 at 4:09=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, Apr 18, 2025 at 12:47:18PM +0000, Grzegorz Jaszczyk wrote:
+> > From: Grzegorz Jaszczyk <jaszczyk@google.com>
+> >
+> > The DT reserved-memory nodes can be present in DT as described in
+> > Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml.
+> > Similar to other architecture, which supports DT, there is a need to
+> > create reserved memory regions for such nodes.
+> >
+> > Additionally, the x86 architecture builds its memory map based on E820
+> > description passed by bootloader and not on DT. Since x86 already has
+> > some DT support and allows booting with both ACPI and DT at the same
+> > time, let's register an arch specific hook which will validate if a
+> > reserved-memory region passed by DT is valid (covered by E820 reserved
+> > region entry).
+> >
+> > Without this check, the reserved memory from DT could be successfully
+> > registered, even though such a region could conflict with e820
+> > description e.g. it could be described as E820_RAM and could be already
+> > used at early x86 boot stage for memblock initialization (which happens
+> > before DT parsing).
+>
+> Sorry, I don't get how it conflicts. Wouldn't the E820_RAM be registered
+> with memblock and memblock then handles the conflict (or should).
+>
 
-Definitely better. Thanks.
+On x86, early memblock setup is performed by e820__memblock_setup()
+and regions which are marked as E820_RAM are added to the memblock
+"memory" type and such regions can be later on used for memblock
+allocation on early x86 setup. If memblock allocation is performed
+after e820__memblock_setup and before x86_flattree_get_config,  the
+reserved region described in DT (but described as RAM in e820) could
+be silently used before we scan DT for reserved memory regions.
 
-> This leads to guest softlockup/hang:
-> 
-> [  117.111097] watchdog: BUG: soft lockup - CPU#0 stuck for 27s! [cp:318]
-> [  117.111165] CPU: 0 UID: 0 PID: 318 Comm: cp Not tainted 6.14.0-next-20250328-snp-host-f2a41ff576cc-dirty #414 VOLUNTARY
-> [  117.111171] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
-> [  117.111176] RIP: 0010:rep_movs_alternative+0x5b/0x70
-> [  117.111200] Call Trace:
-> [  117.111204]  <TASK>
-> [  117.111206]  ? _copy_to_iter+0xc1/0x720
-> [  117.111216]  ? srso_return_thunk+0x5/0x5f
-> [  117.111220]  ? _raw_spin_unlock+0x27/0x40
-> [  117.111234]  ? srso_return_thunk+0x5/0x5f
-> [  117.111236]  ? find_vmap_area+0xd6/0xf0
-> [  117.111251]  ? srso_return_thunk+0x5/0x5f
-> [  117.111253]  ? __check_object_size+0x18d/0x2e0
-> [  117.111268]  __copy_oldmem_page.part.0+0x64/0xa0
-> [  117.111281]  copy_oldmem_page_encrypted+0x1d/0x30
-> [  117.111285]  read_from_oldmem.part.0+0xf4/0x200
-> [  117.111306]  read_vmcore+0x206/0x3c0
-> [  117.111309]  ? srso_return_thunk+0x5/0x5f
-> [  117.111325]  proc_reg_read_iter+0x59/0x90
-> [  117.111334]  vfs_read+0x26e/0x350
+Additionally there are more reasons why we want to make sure that e820
+reserved regions are in sync with DT reserved memory: resource tree
+building and setup pci gap based on e820.
+On the x86 resource tree is built taking into account e820 entries
+(e820__reserve_resources()) while on other arch like e.g. arm64, which
+relies on DT, the resource tree is built taking into account
+information from DT(request_standard_resources). Mixing both on x86
+seems problematic and at first glance could be achieved by e.g.
+patching e820_table via e820__range_update so other part of the early
+x86 kernel setup such as e820__setup_pci_gap() will also not use
+region which is described in DT as reserved-memory. But it is not
+straight-forward (initially I've tried to go through this path) e.g.
+it will require handling DT earlier (x86_flattree_get_config) but at
+the same time x86_flattree_get_config relies on the memblock being set
+up. Therefore it seems that making a requirement that the e820
+reserved region should be in sync with DT reserved-memory on x86 is
+reasonable.
 
-I ask you again: why is that untrimmed splat needed here?
-
-> Additionally other APs may be halted in guest mode and their VMSA pages
-> are marked busy and touching these VMSA pages during guest memory dump
-> will also cause #NPF.
-
-So, the title of this patch should be something like "Do not touch VMSA
-pages during kdump of SNP guest memory" ?
-
-Because what you have now cannot be any more indeterminate...
-
-> Issue AP_DESTROY GHCB calls on other APs to ensure they are kicked out
-> of guest mode and then clear the VMSA bit on their VMSA pages.
-> 
-> If the vCPU running kdump is an AP, mark it's VMSA page as offline to
-> ensure that makedumpfile excludes that page while dumping guest memory.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 3074152e56c9 ("x86/sev: Convert shared memory back to private on kexec")
-
-This one and the next one you sent are fixing both one and the same
-patch - yours.
-
-So, how much has this one and your other one:
-
-https://lore.kernel.org/all/20250424142739.673666-1-Ashish.Kalra@amd.com
-
-have been tested?
-
-I'd like for those two to be extensively tested before I send them to
-Linus in this cycle still so that they don't break anything.
-
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  arch/x86/coco/sev/core.c | 129 ++++++++++++++++++++++++++++++---------
->  1 file changed, 101 insertions(+), 28 deletions(-)
-> 
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index dcfaa698d6cf..870f4994a13d 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -113,6 +113,8 @@ DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
->  DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
->  DEFINE_PER_CPU(u64, svsm_caa_pa);
->  
-> +static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa, int apic_id);
-
-No lazy forward declarations. Restructure your code pls so that you
-don't need them.
-
-> +
->  static __always_inline bool on_vc_stack(struct pt_regs *regs)
->  {
->  	unsigned long sp = regs->sp;
-> @@ -877,6 +879,42 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
->  	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
->  }
->  
-> +static int issue_vmgexit_ap_create_destroy(u64 event, struct sev_es_save_area *vmsa, u32 apic_id)
-
-vmgexit_ap_control() or so.
-
-> +{
-> +	struct ghcb_state state;
-> +	unsigned long flags;
-> +	struct ghcb *ghcb;
-> +	int ret = 0;
-> +
-> +	local_irq_save(flags);
-> +
-> +	ghcb = __sev_get_ghcb(&state);
-> +
-> +	vc_ghcb_invalidate(ghcb);
-> +	ghcb_set_rax(ghcb, vmsa->sev_features);
-> +	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_AP_CREATION);
-> +	ghcb_set_sw_exit_info_1(ghcb,
-> +				((u64)apic_id << 32)	|
-> +				((u64)snp_vmpl << 16)	|
-> +				event);
-> +	ghcb_set_sw_exit_info_2(ghcb, __pa(vmsa));
-> +
-> +	sev_es_wr_ghcb_msr(__pa(ghcb));
-> +	VMGEXIT();
-> +
-> +	if (!ghcb_sw_exit_info_1_is_valid(ghcb) ||
-> +	    lower_32_bits(ghcb->save.sw_exit_info_1)) {
-> +		pr_err("SNP AP %s error\n", (event == SVM_VMGEXIT_AP_CREATE ? "CREATE" : "DESTROY"));
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	__sev_put_ghcb(&state);
-> +
-> +	local_irq_restore(flags);
-> +
-> +	return ret;
-> +}
-> +
->  static void set_pte_enc(pte_t *kpte, int level, void *va)
->  {
->  	struct pte_enc_desc d = {
-> @@ -973,6 +1011,66 @@ void snp_kexec_begin(void)
->  		pr_warn("Failed to stop shared<->private conversions\n");
->  }
->  
-> +/*
-> + * Shutdown all APs except the one handling kexec/kdump and clearing
-> + * the VMSA tag on AP's VMSA pages as they are not being used as
-> + * VMSA page anymore.
-> + */
-> +static void snp_shutdown_all_aps(void)
-
-Static function - no need for "snp_" prefix.
-
-> +{
-> +	struct sev_es_save_area *vmsa;
-> +	int apic_id, cpu;
-> +
-> +	/*
-> +	 * APs are already in HLT loop when kexec_finish() is invoked.
-
-Which kexec_finish?
-
-$ git grep -w kexec_finish
-$
-
-> +	 */
-
-Btw, comment fits on one line.
-
-> +	for_each_present_cpu(cpu) {
-
-What if some CPUs are offlined? Or in this part of kexec that's not
-a problem?
-
-> +		vmsa = per_cpu(sev_vmsa, cpu);
-> +
-> +		/*
-> +		 * BSP does not have guest allocated VMSA, so it's in-use/busy
-> +		 * VMSA cannot touch a guest page and there is no need to clear
-> +		 * the VMSA tag for this page.
-
-This comment's text needs sanitizing.
-
-> +		 */
-> +		if (!vmsa)
-> +			continue;
-> +
-> +		/*
-> +		 * Cannot clear the VMSA tag for the currently running vCPU.
-> +		 */
-> +		if (get_cpu() == cpu) {
-> +			unsigned long pa;
-> +			struct page *p;
-> +
-> +			pa = __pa(vmsa);
-> +			p = pfn_to_online_page(pa >> PAGE_SHIFT);
-> +			/*
-> +			 * Mark the VMSA page of the running vCPU as Offline
-
-offline
-
-> +			 * so that is excluded and not touched by makedumpfile
-> +			 * while generating vmcore during kdump boot.
-
-during kdump. No boot.
-
-> +			 */
-
-Put that comment above the previous line: p = pfn_...
-
-> +			if (p)
-> +				__SetPageOffline(p);
-> +			put_cpu();
-> +			continue;
-> +		}
-> +		put_cpu();
-
-Restructure your code so that you don't need those two put_cpu()s there.
-
-> +
-> +		apic_id = cpuid_to_apicid[cpu];
-> +
-> +		/*
-> +		 * Issue AP destroy on all APs (to ensure they are kicked out
-> +		 * of guest mode) to allow using RMPADJUST to remove the VMSA
-> +		 * tag on VMSA pages especially for guests that allow HLT to
-> +		 * not be intercepted.
-> +		 */
-
-This is not "on all" - it is only on this apic_id.
-
-Also, your comment needs splitting into simple sentences as it tries to
-say *everything* which is not really necessary.
-
-> +
-
-Superfluous newline.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best regards,
+Grzegorz
 
