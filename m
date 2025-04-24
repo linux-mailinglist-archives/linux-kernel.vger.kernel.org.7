@@ -1,115 +1,74 @@
-Return-Path: <linux-kernel+bounces-618657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96ACCA9B16F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:48:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56143A9B176
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0499245D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E71416C60E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D956198833;
-	Thu, 24 Apr 2025 14:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J/CZMyp0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBA9145A18
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E1B1DEFE4;
+	Thu, 24 Apr 2025 14:48:41 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 02A9C1A072C;
+	Thu, 24 Apr 2025 14:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745506079; cv=none; b=q24wna4+V2MKghDIeg+SIjP9sNYV7nUtH1h0/EPfQE+4AGDZC4sBo1NDQlPysrPiN5xh7CeXSoriF+b5MGsqLct4epmhV2nlXuMi32mIBidC/4sepFGFE3hPMR6J+84s68vQ3Lqz2s+env+rjZ54DATJRJhKsP0wNfhR3fS/Q44=
+	t=1745506120; cv=none; b=Nshexuo6IfKKd7tetQYfp36nKmitMvOW2giEbVTAaVWsMY7vUnkG0AM9teEwsVWIfZG4pgK61Z5Au8oM0w2lMI9zpHjO7XgdeHzW3D6dbO5mEf9rnvq6RCxfLMUJ3j2Rl3xB4PoB0/MehQhinDzS5BiBdgtHn/FSeaJbNHBE3g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745506079; c=relaxed/simple;
-	bh=im1Ve/diWjqGVy67nr8Ve06pqqzoPwZGXi4MhFwiP28=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AWQrhXfnwEwiK/VCe4jMAhZ17bA7bOQarUh4TxtL3bAgpxa8OALm344fvaM9iKJYdrU+uZ9PBOS233yWXD01w7/RbWfy4g1VM3SPwO5Mwq+Ac0xhTr1cgkZd8gYPaXEQGECoLWzzlI0lKGjqx6Qmw73tkcT6NM5AJisJf6iBEQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J/CZMyp0; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745506077; x=1777042077;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=im1Ve/diWjqGVy67nr8Ve06pqqzoPwZGXi4MhFwiP28=;
-  b=J/CZMyp05HfTMOImuAIYCIN3EJo+6EomfVZM9ggUGLj3NbjpkeWxt3pV
-   j06pHwwsXgUT/2wMZC6WvQAIJTh9CJDyXNWUEa3VsK9deFKn9vZpukbpi
-   9SaIjBhKw5PrcoLzC33BGV9DDm6bBBSUMGNQ7fGrBbYkoJNmxIaL0GbMN
-   VLB4f7wd/aF9P+5r3K3Q7WpIWIjPeZVPxfJRJbWcl9rXo9/xG555FTS0H
-   PgICKzEXV2XFtVAkj1WXM4JIb8Ub19t42LM18lSbRUGZX6xnaz/xMUFdk
-   Id+oXA4OQxXUnQfsh26dOq5qAc1bnQ4Q/1RQPgtLQFTvNTrf4Zm+8r21b
-   Q==;
-X-CSE-ConnectionGUID: uJMMd3xcRSyv7Opz/1aZhA==
-X-CSE-MsgGUID: Egrku3wGTjyR8X1s7XBuAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="47281267"
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="47281267"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:47:56 -0700
-X-CSE-ConnectionGUID: lc3grZADQH2yPnaWwjGwpA==
-X-CSE-MsgGUID: 3wJW1MOrRRmfsjZFCrXluQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="132942241"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.243.159]) ([10.124.243.159])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:47:54 -0700
-Message-ID: <013a07f4-140f-4cfe-9315-f3a77e081c8a@linux.intel.com>
-Date: Thu, 24 Apr 2025 22:47:52 +0800
+	s=arc-20240116; t=1745506120; c=relaxed/simple;
+	bh=4DkczXPMK64EGyk/pN1a7Io8F/dwnFISplSGz9lmrf0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NoPBUtRTo3EQjVuPsZ9wp4RaTh9cYPUW0IjW/zOzr9t+uGlBvEAZbO1N7vjOBg2FGhYID8E8CRR9qDPe2XtdXU0nHu/q0YYPyM/EMsJcrjvtrnNnX+lop0otBUeOGEjdzU2eSZUyrWh0Q93dKpJnNvDVb/ZO8xgfgy7DAscf10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPA id 3B2E160497EAF;
+	Thu, 24 Apr 2025 22:48:24 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jstultz@google.com,
+	tglx@linutronix.de,
+	sboyd@kernel.org,
+	john.stultz@linaro.org
+Cc: Su Hui <suhui@nfschina.com>,
+	eahariha@linux.microsoft.com,
+	anna-maria@linutronix.de,
+	luiz.von.dentz@intel.com,
+	geert@linux-m68k.org,
+	ojeda@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH 0/3] time: some cleanup for jiffies and alarmtimer
+Date: Thu, 24 Apr 2025 22:48:17 +0800
+Message-Id: <20250424144819.24884-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "Tian, Kevin" <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] iommu/vt-d: Simplify domain_attach_iommu()
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <20250423031020.2189546-1-baolu.lu@linux.intel.com>
- <20250423031020.2189546-4-baolu.lu@linux.intel.com>
- <BN9PR11MB527619613B8615A94A01FF598C852@BN9PR11MB5276.namprd11.prod.outlook.com>
- <42e8c668-e72d-490a-8a5e-8e94af90fda4@linux.intel.com>
- <20250424133759.GA1213339@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250424133759.GA1213339@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/24/2025 9:37 PM, Jason Gunthorpe wrote:
-> On Thu, Apr 24, 2025 at 05:22:48PM +0800, Baolu Lu wrote:
-> 
->>>> -err_clear:
->>>> -	ida_free(&iommu->domain_ida, info->did);
->>>> -err_unlock:
->>>> -	kfree(info);
->>>> -	return ret;
->>>> +	return xa_err(xa_store(&domain->iommu_array, iommu->seq_id,
->>>> +			       no_free_ptr(info), GFP_KERNEL));
->>>>    }
->>> no_free_ptr() should be used before successful return. Here xa_store()
->>> could return error but at that point no auto free as no_free_ptr() already
->>> changes 'info' to NULL. then memory leak.
->> Hmm, I've considered this. My thought was that xa_store() failure only
->> occurs due to the system running out of memory, and the Linux kernel
->> can't recover from it. In that case, the system is already broken;
->> hence, handling the failure case here doesn't make things better.
-> That's not the kernel pattern, you are supposed to unwind correctly in
-> those failures
-> 
-> I think you should not use cleanup.h for something complicated like
-> this..
+There are some small cleanup for jiffies.c and alarmtimer.c.
+Compile test only.
 
-Okay, so let me drop this patch.
+Su Hui (3):
+  time/jiffies: change register_refined_jiffies() to void __init
+  alarmtimer: remove dead return value in clock2alarm()
+  alarmtimer: switch spin_{lock,unlock}_irqsave() to guard()
 
-Thanks,
-baolu
+ include/linux/jiffies.h  |  2 +-
+ kernel/time/alarmtimer.c | 90 ++++++++++++++++++----------------------
+ kernel/time/jiffies.c    |  5 +--
+ 3 files changed, 42 insertions(+), 55 deletions(-)
+
+-- 
+2.30.2
+
 
