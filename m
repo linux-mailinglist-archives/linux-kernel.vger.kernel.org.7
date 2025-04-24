@@ -1,328 +1,135 @@
-Return-Path: <linux-kernel+bounces-617410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47314A99F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:12:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6FCA99F67
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B177445676
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3193BCECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6431AF0B5;
-	Thu, 24 Apr 2025 03:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819F31A4F12;
+	Thu, 24 Apr 2025 03:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a/7ldhVa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyY0SXQI"
+Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EB61A9B4D;
-	Thu, 24 Apr 2025 03:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD171A316A;
+	Thu, 24 Apr 2025 03:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745464282; cv=none; b=eUDHDjVBhafgjFnYxDu+JyKYIH+JWFP0x/fU9GklNVMjXDpd2A3MbfkEyTdwQxCUPTA/BVGOWJvhsCZ8C24fArmGQ9QZcm651m4hGM8tJ8vF8BvTFtQAdSgkaOoKmmIuN/zED2z3zJokeQxWjFkUdNEtXTUQogR65+WPjyYtuf8=
+	t=1745464246; cv=none; b=HbdHup15StPgh9Zkf8B+YfSE3/pcJxrZvt0IpEXdmXK8RPZOelBc/OOQJiGjjdtgF0SiammA9ba+IgvRwBNaBZavYVmt0oLML70ti5PxmAYCUm16kBbf9fErM9IaayoQL8TpCDlencdkInj+FTkc2B8pU4LceuFLw8ekMsd4l5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745464282; c=relaxed/simple;
-	bh=zRFvAmxtMph549CzIA/AmyU/e7s3BzXqr9YPnTCY/aM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QOdqsPipaHZaQV0JEKIkiSp6NxmvMIikJ2aPoP0nVDbRf2LjBDs/YtXCMCTn+tHEcyv2FnG87nM3Z7w55S1Y0SVWvkgfh+h3bVurfHKx04/kHrpXlVJfnorll8T6P+YHBtARuW7Oe9SDlYBaOOLmU+PbW2CXMhTVaxodpgq8vG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a/7ldhVa; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745464281; x=1777000281;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zRFvAmxtMph549CzIA/AmyU/e7s3BzXqr9YPnTCY/aM=;
-  b=a/7ldhVa7gKA2fixopaiw8bFjPbW8ol+02lwn5SeovUwbRrJmLRR/js8
-   FDHW9uBXCTz4fJhJhotPwxglSq57PkH+gb64sptfLAw3yDbsINJhkvOk2
-   C3K72kcHKzKC7rpRdgsHfwkdt1AkfnIpbr7GqfE6NRmk7sabSoM7POEDH
-   rcuVJXXmYLD+0IRseANmZx5tpsx30284h/mNq8+Ps5+hk0ambs61KL4NI
-   1x38CpTSiQKQ54ZVTG5ZVp2di/EGecNr1iwhGaKQBiFOdc/9YbrYKdtN1
-   DIXoj3k0zuxPHbOQZ8URaDVj0xIuRnE9ciJcB4Xn3dDVxYh50jqT1aSAM
-   g==;
-X-CSE-ConnectionGUID: O0WvX5blTPSXtNkFuyuFJg==
-X-CSE-MsgGUID: P4kXdGt3QXeZWQhsHy7KGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="64491627"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="64491627"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:11:18 -0700
-X-CSE-ConnectionGUID: 9y83hrGHQAetUBDbV6N0jA==
-X-CSE-MsgGUID: 7NIpUHhjTEGnnojBLd951A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="136565685"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:11:12 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dave.hansen@intel.com,
-	kirill.shutemov@intel.com,
-	tabba@google.com,
-	ackerleytng@google.com,
-	quic_eberman@quicinc.com,
-	michael.roth@amd.com,
-	david@redhat.com,
-	vannapurve@google.com,
-	vbabka@suse.cz,
-	jroedel@suse.de,
-	thomas.lendacky@amd.com,
-	pgonda@google.com,
-	zhiquan1.li@intel.com,
-	fan.du@intel.com,
-	jun.miao@intel.com,
-	ira.weiny@intel.com,
-	isaku.yamahata@intel.com,
-	xiaoyao.li@intel.com,
-	binbin.wu@linux.intel.com,
-	chao.p.peng@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [RFC PATCH 21/21] KVM: x86: Ignore splitting huge pages in fault path for TDX
-Date: Thu, 24 Apr 2025 11:09:26 +0800
-Message-ID: <20250424030926.554-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250424030033.32635-1-yan.y.zhao@intel.com>
-References: <20250424030033.32635-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1745464246; c=relaxed/simple;
+	bh=/p3HVjFgpxqGQ0V/0D9C9PiDNbGsiswou45qg6NTwtU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t388JYm69WAqYlNyqLmipd/DdoUQPjzVJ2Lcf+6ZqTPmvWlb5m7mumw7Is+XCACTEZaBaFIw4NPngIUT6b7XeP/uvGGzZIo6fauJgSpfT4uITlreA2o5crl8zzr4Uh5KeoMK9DP9+QutoiJK5ftyLHL32dgkD8Lq5swiC6WYoZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyY0SXQI; arc=none smtp.client-ip=209.85.208.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so4901631fa.2;
+        Wed, 23 Apr 2025 20:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745464243; x=1746069043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z1Co0cn3i/A9qHsD58ViRmTVSi6PlF7GGnjifnz4juU=;
+        b=JyY0SXQIM882aVXORUattmPHBAo2WIehb6Y6m78XCchdPMmPkhVp3iksxvzYd3UK70
+         ODsdCxRqNkvm2+oI9Uam7Z7O2MIM0/FIpa3EufEIRx7VmoAfKv/0FWB/6kkvVXwjeAJT
+         aHtfNI5HGFRJwqdM9ASPzcAsprQukHTrDf6TUTZT3JUcEgxHHQFXHz77HyKtNi/mUS5o
+         8SeE96xlQMnP/l0YJYOj6Kb/tlTqMFDDyUGfOEf/ee+PZSPPAjF3fRzm6shwZGKdaM5/
+         kFSYs953OgWc4kYPEgd3AOk+FGSn5k+bX08B1Qb9e5fn+BCSdsYYQD8Wj2F5xeMbnFb6
+         YiZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745464243; x=1746069043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z1Co0cn3i/A9qHsD58ViRmTVSi6PlF7GGnjifnz4juU=;
+        b=UhO+gG+KBGAhww5mYO2fjO34YhqB59ZF3nciElt2v+t+o+aodkgC4iSmqk5x3prbPy
+         z3idnoA4knhVDnOu5SwmR2WAFvCJJ3YxqyGy4Tv/651vod823Fi17u1ae4970C7nqswx
+         fYH5yjBkEabE8ePOquL+c65c9rdSB2112A0+1hVKRrwfTukYFbDCcfBB8PZY/AH9FqfD
+         GfIEzjpd63YbyG53Qmi0ekae0i0TKnHPSjylihRmCYtormlhhZsxKNf5+gzim6Ikdy3o
+         5RxbvqUPMqXh7ISbggComgskQRPndiVulWwjHk6FX8OHQeQliULTF6qBtu8dUTLCed/J
+         o/iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjuH1ojWF2TV70JD3Ixa6jHAyH1cZGhm6jB6jdJHC9tGSh74uhaivpI8C3t+ylzfaCiqT0eJtCez5dCxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVQ7Efur7VJ4m6nDHl7gOUEr9MsfqFUYuDBA3OoPNFuqPcz4da
+	9xby7bTjSekOLP3vGmNqFmZEW/hGPD5nqlwGnawxb7fH0WYahp9XPYxlKM/ZgsXyIsig1lfyxAO
+	Wmh2nIJY637P+SfL1JCxxFieBMiE=
+X-Gm-Gg: ASbGncshFvJOKZChAjx8KBhhrkgK2hEhTbkkTksFPwvl+SonTr4luSyO7LofQwkxWrq
+	jYvPEkoD+pHX6/SbOISUcAW7SQr1JTaIH4+Abo+OynFtiqWyekGJINMCZK1lrIE6nnvuHFmv5eG
+	es5uMrUEpMH5Tr7ZnjhbWn8A==
+X-Google-Smtp-Source: AGHT+IGZPSs7I6wLb18rgC6nawaXmuu+0OnenPZD2gVkjXjHu/WC+qoSZNv9ANWDtXHAuVFiIVEFsiL/H6OUSYZNrTI=
+X-Received: by 2002:a2e:a99c:0:b0:30b:d474:12d1 with SMTP id
+ 38308e7fff4ca-3179fcc7607mr3719251fa.30.1745464242862; Wed, 23 Apr 2025
+ 20:10:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250402023900.43440-1-bsdhenrymartin@gmail.com>
+In-Reply-To: <20250402023900.43440-1-bsdhenrymartin@gmail.com>
+From: henry martin <bsdhenrymartin@gmail.com>
+Date: Thu, 24 Apr 2025 11:10:32 +0800
+X-Gm-Features: ATxdqUFb6X6iv50PzP6nEFnaRkPadE_lrFGoYoV1uyUuwfYYHIe7ojHQ5K9Gtgo
+Message-ID: <CAEnQdOrR19H84EooKsFTMCPypeEZwR3GD7FA-sj=toxQP-Xoyg@mail.gmail.com>
+Subject: Re: [PATCH v1] dmaengine: ti: Add NULL check in udma_probe()
+To: peter.ujfalusi@gmail.com, vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nathan.lynch@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As handling the BUSY error from SEAMCALLs for splitting huge pages is more
-comprehensive in the fault path, which is with kvm->mmu_lock held for
-reading, simply ignore the splitting huge page request in fault path for
-TDX.
+Hi Peter, Vinod,
 
-Splitting in fault path can now be caused by vCPUs' concurrent ACCEPT
-operations at diffent levels, e.g. one vCPU accepts at 2MB level while
-another vCPU accepts at 4KB level. As the first vCPU will accepts the whole
-2MB range ultimately, ignoring the mapping request (which leads to huge
-page splitting) caused by the second 4KB ACCEPT operation is fine.
+I hope this email finds you well. I wanted to follow up on my previous patc=
+h
+submission to check if there are any additional feedback or changes you'd l=
+ike
+me to address. If so, I=E2=80=99d be happy to incorporate them and send a v=
+2.
 
-A rare case that could lead to splitting in the fault path is when a TD is
-configured to receive #VE and accesses memory before the ACCEPT operation.
-By the time a vCPU accesses a private GFN, due to the lack of any guest
-preferred level, KVM could create a mapping at 2MB level. If the TD then
-only performs the ACCEPT operation at 4KB level, splitting in the fault
-path will be triggered. However, this is not regarded as a typical use
-case, as usually TD always accepts pages in the order from 1GB->2MB->4KB.
-The worst outcome to ignore the resulting splitting request is an endless
-EPT violation. This would not happen for a Linux guest, which does not
-expect any #VE.
+Please let me know your thoughts. Thanks for your time and review!
 
-This ignoring of splitting huge page in fault path is achieved in 3 parts:
-1. In KVM TDP MMU,
-   allow splitting huge pages in fault path for the mirror page table and
-   propagate the splitting request to TDX.
-2. Enhance the hook split_external_spt by
-   passing in shared/exclusive status of kvm->mmu_lock
-3. In TDX's implementation of hook split_external_spt,
-   do nothing but to set the max_level of the next fault on the splitting
-   GFN range on the vCPU to 2MB and return -EBUSY.
+Best regards,
+Henry
 
-Then after tdx_sept_split_private_spt() returns, TDX's EPT violation
-handler may (a) return to guest directly (when signal/interrupt pending) or
-(b) retry locally in the TDX's code.
-- for (a), the TD can retry the ACCEPT operation, finding the memory is
-  accepted at 2MB level by another vCPU.
-- for (b), as the violation_request_level is set to 2MB, the next
-  kvm_mmu_page_fault() will return RET_PF_SPURIOUS, causing re-entering of
-  the TD.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/mmu/tdp_mmu.c      | 44 ++++++++++++++++++++-------------
- arch/x86/kvm/vmx/tdx.c          | 25 ++++++++++++++++++-
- arch/x86/kvm/vmx/x86_ops.h      |  5 ++--
- 4 files changed, 55 insertions(+), 21 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 5167458742bf..faae82eefd99 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1814,7 +1814,7 @@ struct kvm_x86_ops {
- 
- 	/* Split the external page table into smaller page tables */
- 	int (*split_external_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
--				  void *external_spt);
-+				  void *external_spt, bool mmu_lock_shared);
- 
- 	bool (*has_wbinvd_exit)(void);
- 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index d3fba5d11ea2..1b2bacde009f 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -388,15 +388,15 @@ static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
- }
- 
- static int split_external_spt(struct kvm *kvm, gfn_t gfn, u64 old_spte,
--			      u64 new_spte, int level)
-+			      u64 new_spte, int level, bool shared)
- {
- 	void *external_spt = get_external_spt(gfn, new_spte, level);
- 	int ret;
- 
- 	KVM_BUG_ON(!external_spt, kvm);
- 
--	ret = static_call(kvm_x86_split_external_spt)(kvm, gfn, level, external_spt);
--	KVM_BUG_ON(ret, kvm);
-+	ret = static_call(kvm_x86_split_external_spt)(kvm, gfn, level, external_spt, shared);
-+	KVM_BUG_ON(ret && !shared, kvm);
- 
- 	return ret;
- }
-@@ -536,11 +536,13 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
- {
- 	bool was_present = is_shadow_present_pte(old_spte);
- 	bool is_present = is_shadow_present_pte(new_spte);
-+	bool was_leaf = was_present && is_last_spte(old_spte, level);
- 	bool is_leaf = is_present && is_last_spte(new_spte, level);
- 	kvm_pfn_t new_pfn = spte_to_pfn(new_spte);
- 	int ret = 0;
- 
--	KVM_BUG_ON(was_present, kvm);
-+	/* leaf to leaf or non-leaf to non-leaf updates are not allowed */
-+	KVM_BUG_ON((was_leaf && is_leaf) || (was_present && !was_leaf && !is_leaf), kvm);
- 
- 	lockdep_assert_held(&kvm->mmu_lock);
- 	/*
-@@ -551,18 +553,28 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
- 	if (!try_cmpxchg64(rcu_dereference(sptep), &old_spte, FROZEN_SPTE))
- 		return -EBUSY;
- 
--	/*
--	 * Use different call to either set up middle level
--	 * external page table, or leaf.
--	 */
--	if (is_leaf) {
--		ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
--	} else {
--		void *external_spt = get_external_spt(gfn, new_spte, level);
-+	if (!was_present) {
-+		/*
-+		 * Propagate to install a new leaf or non-leaf entry in external
-+		 * page table.
-+		 */
-+		if (is_leaf) {
-+			ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
-+		} else {
-+			void *external_spt = get_external_spt(gfn, new_spte, level);
- 
--		KVM_BUG_ON(!external_spt, kvm);
--		ret = static_call(kvm_x86_link_external_spt)(kvm, gfn, level, external_spt);
-+			KVM_BUG_ON(!external_spt, kvm);
-+			ret = static_call(kvm_x86_link_external_spt)(kvm, gfn, level, external_spt);
-+		}
-+	} else if (was_leaf && is_present && !is_leaf) {
-+		/* demote */
-+		ret = split_external_spt(kvm, gfn, old_spte, new_spte, level, true);
-+	} else {
-+		/* Promotion is not supported by mirror root (TDX)*/
-+		KVM_BUG_ON(1, kvm);
-+		ret = -EOPNOTSUPP;
- 	}
-+
- 	if (ret)
- 		__kvm_tdp_mmu_write_spte(sptep, old_spte);
- 	else
-@@ -784,7 +796,7 @@ static u64 tdp_mmu_set_spte(struct kvm *kvm, int as_id, tdp_ptep_t sptep,
- 		if (!is_shadow_present_pte(new_spte))
- 			remove_external_spte(kvm, gfn, old_spte, level);
- 		else if (is_last_spte(old_spte, level) && !is_last_spte(new_spte, level))
--			split_external_spt(kvm, gfn, old_spte, new_spte, level);
-+			split_external_spt(kvm, gfn, old_spte, new_spte, level, false);
- 		else
- 			KVM_BUG_ON(1, kvm);
- 	}
-@@ -1315,8 +1327,6 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- 		sp->nx_huge_page_disallowed = fault->huge_page_disallowed;
- 
- 		if (is_shadow_present_pte(iter.old_spte)) {
--			/* Don't support large page for mirrored roots (TDX) */
--			KVM_BUG_ON(is_mirror_sptep(iter.sptep), vcpu->kvm);
- 			r = tdp_mmu_split_huge_page(kvm, &iter, sp, true);
- 		} else {
- 			r = tdp_mmu_link_sp(kvm, &iter, sp, true);
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index e24d1cbcc762..e994a6c08a75 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1834,7 +1834,7 @@ static int tdx_spte_demote_private_spte(struct kvm *kvm, gfn_t gfn,
- }
- 
- int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn, enum pg_level level,
--			       void *private_spt)
-+			       void *private_spt, bool mmu_lock_shared)
- {
- 	struct page *page = virt_to_page(private_spt);
- 	int ret;
-@@ -1842,6 +1842,29 @@ int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn, enum pg_level level,
- 	if (KVM_BUG_ON(to_kvm_tdx(kvm)->state != TD_STATE_RUNNABLE || level != PG_LEVEL_2M, kvm))
- 		return -EINVAL;
- 
-+	/*
-+	 * Split request with mmu_lock held for reading can only occur when one
-+	 * vCPU accepts at 2MB level while another vCPU accepts at 4KB level.
-+	 * Ignore this 4KB mapping request by setting violation_request_level to
-+	 * 2MB and returning -EBUSY for retry. Then the next fault at 2MB level
-+	 * would be a spurious fault. The vCPU accepting at 2MB will accept the
-+	 * whole 2MB range.
-+	 */
-+	if (mmu_lock_shared) {
-+		struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
-+		struct vcpu_tdx *tdx = to_tdx(vcpu);
-+
-+		if (KVM_BUG_ON(!vcpu, kvm))
-+			return -EOPNOTSUPP;
-+
-+		/* Request to map as 2MB leaf for the whole 2MB range */
-+		tdx->violation_gfn_start = gfn_round_for_level(gfn, level);
-+		tdx->violation_gfn_end = tdx->violation_gfn_start + KVM_PAGES_PER_HPAGE(level);
-+		tdx->violation_request_level = level;
-+
-+		return -EBUSY;
-+	}
-+
- 	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
- 	if (ret <= 0)
- 		return ret;
-diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-index 0619e9390e5d..fcba76887508 100644
---- a/arch/x86/kvm/vmx/x86_ops.h
-+++ b/arch/x86/kvm/vmx/x86_ops.h
-@@ -159,7 +159,7 @@ int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
- int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 				 enum pg_level level, kvm_pfn_t pfn);
- int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn, enum pg_level level,
--			       void *private_spt);
-+			       void *private_spt, bool mmu_lock_shared);
- 
- void tdx_flush_tlb_current(struct kvm_vcpu *vcpu);
- void tdx_flush_tlb_all(struct kvm_vcpu *vcpu);
-@@ -228,7 +228,8 @@ static inline int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 
- static inline int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn,
- 					     enum pg_level level,
--					     void *private_spt)
-+					     void *private_spt,
-+					     bool mmu_lock_shared)
- {
- 	return -EOPNOTSUPP;
- }
--- 
-2.43.2
-
+Henry Martin <bsdhenrymartin@gmail.com> =E4=BA=8E2025=E5=B9=B44=E6=9C=882=
+=E6=97=A5=E5=91=A8=E4=B8=89 10:39=E5=86=99=E9=81=93=EF=BC=9A
+>
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> udma_probe() does not check for this case, which results in a NULL
+> pointer dereference.
+>
+> Add NULL check after devm_kasprintf() to prevent this issue.
+>
+> Fixes: 25dcb5dd7b7c ("dmaengine: ti: New driver for K3 UDMA")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
+>  drivers/dma/ti/k3-udma.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+> index 7ed1956b4642..f1c2f8170730 100644
+> --- a/drivers/dma/ti/k3-udma.c
+> +++ b/drivers/dma/ti/k3-udma.c
+> @@ -5582,7 +5582,8 @@ static int udma_probe(struct platform_device *pdev)
+>                 uc->config.dir =3D DMA_MEM_TO_MEM;
+>                 uc->name =3D devm_kasprintf(dev, GFP_KERNEL, "%s chan%d",
+>                                           dev_name(dev), i);
+> -
+> +               if (!uc->name)
+> +                       return -ENOMEM;
+>                 vchan_init(&uc->vc, &ud->ddev);
+>                 /* Use custom vchan completion handling */
+>                 tasklet_setup(&uc->vc.task, udma_vchan_complete);
+> --
+> 2.34.1
+>
 
