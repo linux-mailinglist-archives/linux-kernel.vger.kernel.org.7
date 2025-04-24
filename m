@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-618273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80397A9AC5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:48:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B134A9AC6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F0B4A5903
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5867B3D29
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BCB22AE5E;
-	Thu, 24 Apr 2025 11:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FC122C339;
+	Thu, 24 Apr 2025 11:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TorOVnQd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EQyldH/K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mleqz8TQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4451122577D;
-	Thu, 24 Apr 2025 11:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94622DF9B;
+	Thu, 24 Apr 2025 11:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745495300; cv=none; b=uci9Tn9ZE75QeQRqQ9GytkOuK5Gn8l/tEyuI85ZxImae4CvRRaMlGGLT6DpWzKbWdIxqGBBBkbpadRcGlxJM+rRhv2YyrQUIzFMQyO5c9RRFtQzdJjbHUv3m8JUgEDc94ESMigiiH8ZXGuV7t+9oDVEC8OmTFnnSJR/1uVLJlKE=
+	t=1745495348; cv=none; b=SyofkH2Z4gHhaSseVdeo+vJYJxTNiFkoCooirNB1xfE19XlM8isPjhKWySV7eywrJtqVPs63mDeh8nfObCYiY4BbQUty5tvoCTJH3lC5SkrAau2A/EzoggDVH+vKCAHuDoSpKpdyM7iwufqgwx3Ccs8wiyKAbdG7CWUVF40P/Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745495300; c=relaxed/simple;
-	bh=C+1D7R75jEC58jOR/Yqz3KgquUzsYptXPbHIO1u4B1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fUvmnzwDZE2fS8fvLs1NXWriPXgWcT9K6wYfI5Y5Mg4JIk3YGz0Dn63w9MPLIaWaXDmAevbeV1QvWctucF1ACP9TbV3MMBWAzFcw0wC4ttSZs00NQOO1hnBLKsLwmE6HAnKwURxKmyTf4CxK9H/1heAd4uh7UFh+tNbq/9eJ73o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TorOVnQd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EQyldH/K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745495297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pTunsNZTf1GYNEw0PoHmf2OJAl/C/kA5v9wUIBqoHs=;
-	b=TorOVnQd8sB9X8s9Jqi7s53+nOfoXkBmJlExwlGZODSHWB+TGhgSzH7mLwvP6jPqNWV6WR
-	Qf46SVZQt9suyQppb4dkrGxoeHK28ui0E2fq8jMcdtCAz0yz3Zes0G7BNwGytZxuDk6VUe
-	LkHatAk2VDe+DENtMSA7gpWORiVswAPVCriK3CAOs90pEvNPFHUzQ2UZDvZ9T3XUAmpKHF
-	oMjNz6EQU4FwfVF4BouVlwLxN+rV9igDwcTtmNKggsKFLpLC8BoU9ofv6OVIT2IbP0z0OC
-	5pFCnDvoVgNdt6bFRlZGf2kgyeLgQ7+PNsxKbZWeqsB9wI6deIZEHBfPbOIBnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745495297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pTunsNZTf1GYNEw0PoHmf2OJAl/C/kA5v9wUIBqoHs=;
-	b=EQyldH/KGtiKOmjEWR9ukCL7GAn8mMzOcDunZQ+17+DljnwjaRwBtEIHcrRFM3AltIIdxz
-	Xv/cTySMT5RA+OCg==
-Date: Thu, 24 Apr 2025 13:48:13 +0200
-Subject: [PATCH 3/3] selftests/nolibc: always run nolibc header check
+	s=arc-20240116; t=1745495348; c=relaxed/simple;
+	bh=YszgFMEifreBpsMwGircv5QIeLTFD0j7nAEcYCOWvVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEm3yVhe3A06iNtZJoelPJP5/+cgtNQ43Nyhqmg9RHritj/QVG2o6RF3/qZFt9V+2BEIqZ5FgTCxv7J6o84mdN5jgADKrCU61Ff6JQKdQ42nLwVCpJ3yb97nmn846Jdue4ZYWLtOIICd+p0JRGzwPmS3G0U9CbDZ3xNTIhKJQJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mleqz8TQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7F0C4CEE3;
+	Thu, 24 Apr 2025 11:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745495348;
+	bh=YszgFMEifreBpsMwGircv5QIeLTFD0j7nAEcYCOWvVQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Mleqz8TQ7U+Pi7a+4PHn/kY69ycMeNpkNmBUap9Ga1d1SCv8s3mILXeDsn/QM3hQJ
+	 bz0qvaxDERfv8wAN5oceaCVpoDAQtlI9nlbdDjDyHzHB4UU3iSKanSfnh8yomtNEUM
+	 qwZrsEAy65mmP8b3rjrigMxDFgVuHkCb0++t1IxPpqkw/7/HbL5wIwdF2nxBKM1I/H
+	 poPlG96nqwUCZHYzS01lINcyP5w1j/3MFFu9htKhAZ9qyCVaov2FTHQAJkQ+Lxk7sM
+	 6Nyf7OmGjBVF/HSVBm+LsQZzcYcqm3pR2AqFaFa/+Ms0efyWZ+tny8G6dumRFkxv5t
+	 oP0mmvToo9VwQ==
+From: Philipp Stanner <phasta@kernel.org>
+To: schalla@marvell.com,
+	vattunuru@marvell.com,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Shijith Thotton <sthotton@marvell.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Satha Rao <skoteshwar@marvell.com>
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] vdpa/octeon_ep: Control PCI dev enabling manually
+Date: Thu, 24 Apr 2025 13:48:51 +0200
+Message-ID: <20250424114850.34045-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250424-nolibc-header-check-v1-3-011576b6ed6f@linutronix.de>
-References: <20250424-nolibc-header-check-v1-0-011576b6ed6f@linutronix.de>
-In-Reply-To: <20250424-nolibc-header-check-v1-0-011576b6ed6f@linutronix.de>
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745495292; l=1070;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=C+1D7R75jEC58jOR/Yqz3KgquUzsYptXPbHIO1u4B1o=;
- b=FTM/8BjgFZUV0ReGkM5KXSWsYHgNoPqSWHNWl+yDaanP3jpt+9lmEvkfKYe9AWv25DP7P27yF
- UAJZpdoPXQtC4OOL+v7WmVnkAZO7rJvnDBN1Vp0zUSfj2kp6aedmlQ7
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Prevent regressions of issues validates by the header check by always
-running it together with the nolibc selftests.
+PCI region request functions such as pci_request_region() currently have
+the problem of becoming sometimes managed functions, if
+pcim_enable_device() instead of pci_enable_device() was called. The PCI
+subsystem wants to remove this deprecated behavior from its interfaces.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+octeopn_ep enables its device with pcim_enable_device() (for AF. PF uses
+manual management), but does so only to get automatic disablement. The
+driver wants to manage its PCI resources for AF manually, without devres.
+
+The easiest way not to use automatic resource management at all is by
+also handling device enable- and disablement manually.
+
+Replace pcim_enable_device() with pci_enable_device(). Add the necessary
+calls to pci_disable_device().
+
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- tools/testing/selftests/nolibc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+  - Only call pci_disable_device() for the PF version. For AF it would
+    cause a WARN_ON because pcim_enable_device()'s callback will also
+    try to disable.
+---
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
-index 94f3e8be7a68f63ecd639c4f283b3cd10764ce74..d17750761d9f418b27c571de1cf3d0f4954877fd 100644
---- a/tools/testing/selftests/nolibc/Makefile
-+++ b/tools/testing/selftests/nolibc/Makefile
-@@ -251,7 +251,7 @@ sysroot/$(ARCH)/include:
- 	$(Q)rm -rf sysroot/$(ARCH) sysroot/sysroot
- 	$(QUIET_MKDIR)mkdir -p sysroot
- 	$(Q)$(MAKE) -C $(srctree) outputmakefile
--	$(Q)$(MAKE) -C $(srctree)/tools/include/nolibc ARCH=$(ARCH) OUTPUT=$(CURDIR)/sysroot/ headers_standalone
-+	$(Q)$(MAKE) -C $(srctree)/tools/include/nolibc ARCH=$(ARCH) OUTPUT=$(CURDIR)/sysroot/ headers_standalone headers_check
- 	$(Q)mv sysroot/sysroot sysroot/$(ARCH)
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+index f3d4dda4e04c..9b49efd24391 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+@@ -454,6 +454,9 @@ static void octep_vdpa_remove_pf(struct pci_dev *pdev)
+ 		octep_iounmap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
  
- ifneq ($(NOLIBC_SYSROOT),0)
-
+ 	octep_vdpa_pf_bar_expand(octpf);
++
++	/* The pf version does not use managed PCI. */
++	pci_disable_device(pdev);
+ }
+ 
+ static void octep_vdpa_vf_bar_shrink(struct pci_dev *pdev)
+@@ -825,7 +828,7 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
+ 	struct octep_pf *octpf;
+ 	int ret;
+ 
+-	ret = pcim_enable_device(pdev);
++	ret = pci_enable_device(pdev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable device\n");
+ 		return ret;
+@@ -834,15 +837,17 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
+ 	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+ 	if (ret) {
+ 		dev_err(dev, "No usable DMA configuration\n");
+-		return ret;
++		goto disable_pci;
+ 	}
+ 	octpf = devm_kzalloc(dev, sizeof(*octpf), GFP_KERNEL);
+-	if (!octpf)
+-		return -ENOMEM;
++	if (!octpf) {
++		ret = -ENOMEM;
++		goto disable_pci;
++	}
+ 
+ 	ret = octep_iomap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
+ 	if (ret)
+-		return ret;
++		goto disable_pci;
+ 
+ 	pci_set_master(pdev);
+ 	pci_set_drvdata(pdev, octpf);
+@@ -856,6 +861,8 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
+ 
+ unmap_region:
+ 	octep_iounmap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
++disable_pci:
++	pci_disable_device(pdev);
+ 	return ret;
+ }
+ 
 -- 
-2.49.0
+2.48.1
 
 
