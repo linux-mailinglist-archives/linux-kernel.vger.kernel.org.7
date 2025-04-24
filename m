@@ -1,491 +1,236 @@
-Return-Path: <linux-kernel+bounces-617384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537FEA99F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:04:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E683A99F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F391942CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2375A639C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C324A1A3169;
-	Thu, 24 Apr 2025 03:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C966D19CC2E;
+	Thu, 24 Apr 2025 03:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="haiXz99N"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h4rYobJY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XgzkiFYR"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9C679D0;
-	Thu, 24 Apr 2025 03:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745463871; cv=none; b=KFfZCKzqrIC7HvpH7FkLLvvdp0rccFQUuPCkUeXbttnYkT5zn3jQ0XFwcQi7wSt/drSeln2FLXS1paNVEgosx2d7PpSBsa0mk4R//9AoDf8oa4Q43b2EEINPeVamCYFbkctCoGOHG3WwLXJwQ9itwrtjeEiI5mG48yZHcmRMQHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745463871; c=relaxed/simple;
-	bh=FBuMCz98dRxZxnNfNDUwwxkSyUYk5JHRBFbSQhaGAPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FxOgefEd4AM9mywUWtTl86zeEPVcWTxSn72r55C7eb3FEGUKS6DFbXl5Viqkw0CHjSXr0pme72aUHe+1MGupa1Liutg3T25KoTDMDC1emps/iJGkGi9bqjrvbmtAZ6Zc15GGmPERZy+h3CV75tr79iDM5wHh6LNsGabjLV1Q/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=haiXz99N; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745463869; x=1776999869;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FBuMCz98dRxZxnNfNDUwwxkSyUYk5JHRBFbSQhaGAPo=;
-  b=haiXz99Nt6JW7lpI3vTorcYHd9ia5Ba5ihmpqKyE3WIYX+Rn4JAgADMl
-   6SLdNazy3FfI9fdo0BX51SnyAypnxojVV1R4WHSJRIVL8aRL9MlKlz4Jj
-   wSNaSfmmJQsEutzGgxVqjUQuH00KeIhHX7ozh6lPlnQQ+3mDvLl/M5/Ls
-   bZGXDXM6rIvJZbIU/vAi4l5yokQmGDVVy6UdCmW47D5ScD8sJ9eyJs9Qd
-   M9AfXRs8II1YE3rm/Jgk/WhYVrs81AmYf5qtkuKM8orrBXSgtPUDA/j6z
-   oo15Nbk9F5ZKUw0NYLrX2bNSTwJ9/z7t+LNCf91XuE4yEAOLqVitWlEM+
-   g==;
-X-CSE-ConnectionGUID: O3N4s/L1RnC1Nz1CoRqdsg==
-X-CSE-MsgGUID: EBCf+KcSSduj6HXc2N5f/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="47094218"
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="47094218"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:04:28 -0700
-X-CSE-ConnectionGUID: IKqJdi5yR6O/tdOmT5F6tg==
-X-CSE-MsgGUID: YGEx9l6BR+iIk+PV5IFqDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
-   d="scan'208";a="133014863"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:04:24 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dave.hansen@intel.com,
-	kirill.shutemov@intel.com,
-	tabba@google.com,
-	ackerleytng@google.com,
-	quic_eberman@quicinc.com,
-	michael.roth@amd.com,
-	david@redhat.com,
-	vannapurve@google.com,
-	vbabka@suse.cz,
-	jroedel@suse.de,
-	thomas.lendacky@amd.com,
-	pgonda@google.com,
-	zhiquan1.li@intel.com,
-	fan.du@intel.com,
-	jun.miao@intel.com,
-	ira.weiny@intel.com,
-	chao.p.peng@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [RFC PATCH 00/21] KVM: TDX huge page support for private memory
-Date: Thu, 24 Apr 2025 11:00:32 +0800
-Message-ID: <20250424030033.32635-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A45A1A2872;
+	Thu, 24 Apr 2025 03:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745463693; cv=fail; b=Qfblk3cldMEV5I17tZvRpYqfxtbqW1iebeA7J63ZwCOL3W7s4Cxf1XzqEYNhs6C+2mxtu7YafNlW+kKp3BtbR/TWK8Gok98Js4C+6otrZT8lj+SXsWyRPwKRhozDwZSQ2jMk+jAVaPE0s7Nu/eUy2YRHSjFDWoE1wnPlJiq5jqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745463693; c=relaxed/simple;
+	bh=+EIZl9Q9u0SHY+VU7nREAtb6l4Fu0+jL3FHVcZcJGnM=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=S8Ju9V5RhxNL9QiKgYOB/ANcchYOTQ1LbRPrrqvt5b1ux08Gf9iv25HPbvIGSCyFX1ZPQP7DfnsiqYcZY/cSWMzKFtSsc2GXVv41YRI4sDZdexM1rghob2iYMFUjgtFVi2YAKJ19WEPN3m16ar/BEdAqP/Fag+rUoDeYyZpDfZ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=h4rYobJY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XgzkiFYR; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NLMLsQ025376;
+	Thu, 24 Apr 2025 03:01:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=7844aSW/JWNW6JWPjmiXN3oPRkndjx55D67fi//QDBQ=; b=
+	h4rYobJYdr4NtiWiD+hQyogsgUJVw+A77gVZGWrvQRMRSRHaKh0Oxdr87CuFNzKu
+	c2toXQjl+olKsnmhnwRSdb5FRNinp2dV6bAtOmXMjXnrhhB4bK5xrIqA1qEk57KI
+	mJdYqc9XI4kILhAtAkk5lsLM8sB9VI0C91JaZGRc4hHCG3fMq5kigltDoutYDStV
+	M0mQdsrN0QV3IjBIrXyiE+aguEadvd/iEqvjKO717S18RcfdQLO2qTbVYmmMzkoA
+	O4F/fYZu3Bjv/eD07bj5LAMQlD1x8Fl/JKqcB8MopJ+tKz+T2Zu/3QZmycT0l0ch
+	gP6qEWX3yv7sq8m/ZFkZMQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 466jha2w3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Apr 2025 03:01:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53O0L72h013854;
+	Thu, 24 Apr 2025 03:01:12 GMT
+Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azlp17010003.outbound.protection.outlook.com [40.93.10.3])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 466jxppw9e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Apr 2025 03:01:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=brRTiTC6W52TUY8b3QdfR6+UWf3Ec2bIL5SFVA4IWTY+Vqv3Oe28+p3fWZVm2yop6OOowRKHA3hwvAY7X0sHjDHc/zGRBAYJxIUGdK98M1lwKgKa8NSmIBtu19RdW5lTS4eTp1GVU7rmrXBhja6vku8v33DhvWfaSvpWlLp94moVXEKpRpWq9kAJ/WdGmftgP625J9LPEWMzWB9ESJBlmqhPWHZLZ5XU0n8dvRPcA4Jct6fKSrBnu9x8WH3Lxs6YdZ0+05YdxfHAVbdjpw+idm1zjw6mY5bC0W/+4M5wNwRe9goYayGxHWaIgmxLs3VcoiiDVBF0gMOXiNVihWg1Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7844aSW/JWNW6JWPjmiXN3oPRkndjx55D67fi//QDBQ=;
+ b=NE/GpyNpp+amnj2UpKNA6UYoXfEKDvso+nFGOsmR24MI36/GrCoWojbJUoeTANVQxlQO/iUi0T7IaViQWTSju9GUah7zFHagqScvCh9FmHzv/4CE5fH7Av7cWd1/os4xLqkDntKuR0NZLeuce74yHEcPWxv7P6Ar7FrdQKqrGQlPA9i+vDozskPf8+cv+4Rt5T3UeFm5k/7pa0qlLZNuexJl8DvCDRFlE5vb2PndMSGZDTvRbZZ5RBqWiZj+9HXQOqEr6JIuT/pQYE3y7ceFUKhLgsTDJFRVgUWlcR8ehR6DAsNMeIfgAxcPWZKNX+nEIxINmY38O43xHxn8zQCQWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7844aSW/JWNW6JWPjmiXN3oPRkndjx55D67fi//QDBQ=;
+ b=XgzkiFYRyXPVkwXy6G865QcQd0jsZ6KhY+7JXTngX8NHBD6TQwHB4KwxaCITeav5h8CGfXW0/6iL8PAkPkC9SFrhtpW5pxuD3wqwDLL4dzg6h0RToZ0v6Etw8OUZ7c/G8T0MFzICtKiSYUwgfciK7GDH3pwYUJPG7NsFRzXdQw0=
+Received: from SA2PR10MB4780.namprd10.prod.outlook.com (2603:10b6:806:118::5)
+ by SJ2PR10MB7671.namprd10.prod.outlook.com (2603:10b6:a03:547::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Thu, 24 Apr
+ 2025 03:00:43 +0000
+Received: from SA2PR10MB4780.namprd10.prod.outlook.com
+ ([fe80::b66:5132:4bd6:3acb]) by SA2PR10MB4780.namprd10.prod.outlook.com
+ ([fe80::b66:5132:4bd6:3acb%3]) with mapi id 15.20.8655.030; Thu, 24 Apr 2025
+ 03:00:42 +0000
+Message-ID: <a789c1c6-7bd5-4cc9-bc8e-c70715b09932@oracle.com>
+Date: Wed, 23 Apr 2025 20:00:39 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: Report: Performance regression from ib_umem_get on zone device
+ pages
+From: jane.chu@oracle.com
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: logane@deltatee.com, hch@lst.de, gregkh@linuxfoundation.org,
+        willy@infradead.org, kch@nvidia.com, axboe@kernel.dk,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org
+References: <fe761ea8-650a-4118-bd53-e1e4408fea9c@oracle.com>
+ <20250423232828.GV1213339@ziepe.ca>
+ <40f142be-12e1-407f-8b64-05d8c12f31b9@oracle.com>
+Content-Language: en-US
+In-Reply-To: <40f142be-12e1-407f-8b64-05d8c12f31b9@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR17CA0044.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::21) To SA2PR10MB4780.namprd10.prod.outlook.com
+ (2603:10b6:806:118::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-This is an RFC series to support huge pages in TDX. It's an evolution of
-the previous patches from Isaku [0]. (Please find the main changes to [0]
-at a later section).
-
-As the series of enabling guest_memfd to support 1GB huge page with
-in-place conversion [1] is still under development, we temporarily based
-the TDX work on top of the series from Michael Roth that enables basic 2M
-guest_memfd support without in-place conversion[2].  The goal is to have an
-early review and discussion of the TDX huge page work (including changes to
-KVM core MMU and the TDX specific code), which should remain stable, with
-only minor adjustments, regardless the changes coming in guest_memfd.
-
-The series is currently focused on supporting 2MB huge pages only.
-
-Tip folks, there are some SEAMCALL wrapper changes in this series, but we
-need to have some discussion on the KVM side to figure out what it needs
-still. Please feel free to ignore it for now.
-
-
-Design
-======
-guest_memfd
------------
-TDX huge page support has a basic assumption to guest_memfd: guest_memfd
-allocates private huge pages whenever alignment of GFN/index, range size
-and the consistency of page attributes allow.
-
-Patch 01 (based on [2]) in this RFC acts as glue code to ensure this
-assumption is met for TDX. It can be absorbed into any future
-guest_memfd series (e.g., future in-place conversion series) in any form.
-
-TDX interacts with guest_memfd through interfaces kvm_gmem_populate() and
-kvm_gmem_get_pfn(), obtaining the allocated page and its order.
-
-The remaining TDX code should remain stable despite future changes in
-guest_memfd.
-
-
-Basic huge page mapping/unmapping
----------------------------------
-- TD build time
-  This series enforces that all private mappings be 4KB during the TD build
-  phase, due to the TDX module's requirement that tdh_mem_page_add(), the
-  SEAMCALL for adding private pages during TD build time, only supports 4KB
-  mappings. Enforcing 4KB mappings also simplifies the implementation of
-  code for TD build time, by eliminating the need to consider merging or
-  splitting in the mirror page table during TD build time.
-  
-  The underlying pages allocated from guest_memfd during TD build time
-  phase can still be large, allowing for potential merging into 2MB
-  mappings once the TD is running.
-
-- TD runtime
-  This series allows a private fault's max_level to be 2MB after TD is
-  running. KVM core MMU will map/unmap 2MB mappings in the mirror page
-  table according to a fault's goal_level as what're done for normal VMs.
-  Changes in the mirror page table are then propagated to the S-EPT.
-
-  For transitions from non-present to huge leaf in the mirror page table,
-  hook set_external_spte is invoked, leading to the execution of
-  tdh_mem_page_aug() to install a huge leaf in the S-EPT.
-
-  Conversely, during transitions from a huge leaf to non-present, the
-  remove_external_spte hook is invoked to execute SEAMCALLs that remove the
-  huge leaf from the S-EPT.
-
-  (For transitions from huge leaf to non-leaf, or from non-leaf to huge
-   leaf, SPTE splitting/merging will be triggered. More details are in
-   later sections.)
-
-- Specify fault max_level
-  In the TDP MMU, a fault's max_level is initially set to the 1GB level for
-  x86. KVM then updates the fault's max_level by determining the lowest
-  order among fault->max_level, the order of the allocated private page,
-  and the TDX-specified max_level from hook private_max_mapping_level.
-  For TDX, a private fault's req_level, and goal_level finally equal to the
-  fault's max_level as TDX platforms do not have the flaw for NX huge page.
-  
-  So, if TDX has specific requirements to influence a fault's goal_level
-  for private memory (e.g., if it knows an EPT violation is caused by a
-  TD's ACCEPT operation, mapping at the ACCEPT's level is preferred), this
-  can be achieved either by affecting the initial value of fault->max_level
-  or through the private_max_mapping_level hook.
-
-  The former approach requires more changes in the KVM core (e.g., by using
-  some bits in the error_code passed to kvm_mmu_page_fault() and having
-  KVM check for them). This RFC opts for the latter, simpler method, using
-  the private_max_mapping_level hook.
-  
-
-Page splitting (page demotion)
-------------------------------
-Page splitting occurs in two paths:
-(a) with exclusive kvm->mmu_lock, triggered by zapping operations,
-
-    For normal VMs, if zapping a narrow region that would need to split a
-    huge page, KVM can simply zap the surrounding GFNs rather than
-    splitting a huge page. The pages can then be faulted back in, where KVM
-    can handle mapping them at a 4KB level.
-
-    The reason why TDX can't use the normal VM solution is that zapping
-    private memory that is accepted cannot easily be re-faulted, since it
-    can only be re-faulted as unaccepted. So KVM will have to sometimes do
-    the page splitting as part of the zapping operations.
-
-    These zapping operations can occur for few reasons:
-    1. VM teardown.
-    2. Memslot removal.
-    3. Conversion of private pages to shared.
-    4. Userspace does a hole punch to guest_memfd for some reason.
-
-    For case 1 and 2, splitting before zapping is unnecessary because
-    either the entire range will be zapped or huge pages do not span
-    memslots.
-    
-    Case 3 or case 4 requires splitting, which is also followed by a
-    backend page splitting in guest_memfd.
-
-(b) with shared kvm->mmu_lock, triggered by fault.
-
-    Splitting in this path is not accompanied by a backend page splitting
-    (since backend page splitting necessitates a splitting and zapping
-     operation in the former path).  It is triggered when KVM finds that a
-    non-leaf entry is replacing a huge entry in the fault path, which is
-    usually caused by vCPUs' concurrent ACCEPT operations at different
-    levels.
-
-    This series simply ignores the splitting request in the fault path to
-    avoid unnecessary bounces between levels. The vCPU that performs ACCEPT
-    at a lower level would finally figures out the page has been accepted
-    at a higher level by another vCPU.
-
-    A rare case that could lead to splitting in the fault path is when a TD
-    is configured to receive #VE and accesses memory before the ACCEPT
-    operation. By the time a vCPU accesses a private GFN, due to the lack
-    of any guest preferred level, KVM could create a mapping at 2MB level.
-    If the TD then only performs the ACCEPT operation at 4KB level,
-    splitting in the fault path will be triggered. However, this is not
-    regarded as a typical use case, as usually TD always accepts pages in
-    the order from 1GB->2MB->4KB. The worst outcome to ignore the resulting
-    splitting request is an endless EPT violation. This would not happen
-    for a Linux guest, which does not expect any #VE.
-
-- Splitting for private-to-shared conversion or punch hole
-  Splitting of a huge mapping requires the allocation of page table page
-  and the corresponding shadow structures. This memory allocation can fail.
-  So, while the zapping operations in the two scenarios don't have an
-  understanding of failure, the overall operations do. Therefore, the RFC
-  introduces a separate step kvm_split_boundary_leafs() to split huge
-  mappings ahead of the zapping operation.
-
-  Patches 16-17 implement this change. As noted in the patch log, the
-  downside of the current approach is that although
-  kvm_split_boundary_leafs() is invoked before kvm_unmap_gfn_range() for
-  each GFN range, the entire zapping range may consist of several GFN
-  ranges. If an out-of-memory error occurs during the splitting of a GFN
-  range, some previous GFN ranges may have been successfully split and
-  zapped, even though their page attributes remain unchanged due to the
-  splitting failure. This may not be a significant issue, as the user can
-  retry the ioctl to split and zap the full range. However, if it becomes
-  problematic, further modifications to invoke kvm_unmap_gfn_range() after
-  executing kvm_mmu_invalidate_range_add() and kvm_split_boundary_leafs()
-  for all GFN ranges could address the problem.
-  
-  Alternatively, a possible solution could be pre-allocating sufficiently
-  large splitting caches at the start of the private-to-shared conversion
-  or hole punch process. The downside is that this may allocate more memory
-  than necessary and require more code changes.
-
-- The full call stack for huge page splitting
-
-  With exclusive kvm->mmu_lock,
-  kvm_vm_set_mem_attributes/kvm_gmem_punch_hole
-     |kvm_split_boundary_leafs
-     |   |kvm_tdp_mmu_gfn_range_split_boundary
-     |       |tdp_mmu_split_boundary_leafs
-     |           |tdp_mmu_alloc_sp_for_split
-     |           |tdp_mmu_split_huge_page
-     |               |tdp_mmu_link_sp
-     |                   |tdp_mmu_iter_set_spte
-     |                       |tdp_mmu_set_spte
-     |                           |split_external_spt
-     |                               |kvm_x86_split_external_spt
-     |                                   | BLOCK, TRACK, DEMOTION
-     |kvm_mmu_unmap_gfn_range
-
- 
-  With shared kvm->mmu_lock,
-  kvm_tdp_mmu_map
-     |tdp_mmu_alloc_sp
-     |kvm_mmu_alloc_external_spt
-     |tdp_mmu_split_huge_page
-         |tdp_mmu_link_sp
-             |tdp_mmu_set_spte_atomic
-                 |__tdp_mmu_set_spte_atomic
-		    |set_external_spte_present
-		        |split_external_spt
-			    |kvm_x86_split_external_spt
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PR10MB4780:EE_|SJ2PR10MB7671:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02cdf816-cec2-409c-811b-08dd82dc3377
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTZndGFvc0ZGa21xcVdKMS9FTjQ4WDJ1SzBCcFVIamd2TFRHdCt1ZVlXRkty?=
+ =?utf-8?B?elBKSVBQc0N1SFVCMEd2SThQVXZjTnhWNlF0RjZrNGgzRUhnOUttRWc2eUdk?=
+ =?utf-8?B?Zzh2a28rS1NGaXpYdGRVeXErM0l4MVB1THl2NUFoYUgxTTlkN0NOWU53Rk04?=
+ =?utf-8?B?Q01Db1lST2doKzBSZEdaZlFHMXd2ZW4rTmRJY1RqdFI1YXBEdDBPbXpOQjIw?=
+ =?utf-8?B?UllIUG5TclMvVnkvdGJkQXlMWW54aUQ3Uk1pL2YxdVJWSkx4clpncTdWQXFm?=
+ =?utf-8?B?ZTFTWlUxR0hheWhUZHN6RGx6S0o5OVdiemRkYnR3UTRCUE1mRzdZTWthM2pN?=
+ =?utf-8?B?Wll2Unh3bGgwbjB4WTEwcDFFMElTcmp5ZldVUDV5bVI3bWIwZXdIdXJna2pT?=
+ =?utf-8?B?UUQ3MlJSWnRsbndBTE1pcFRBTG9YTzArcGo2Uis4SFN5VXpiajdmUjhQWmV6?=
+ =?utf-8?B?K1d5b0UxSjJzd0lhNzM4SXlBRFMrcXFPenJua0xoUHVwSGY1ZVYvTW9ySVQy?=
+ =?utf-8?B?VU1hMTE2ZEdETEhSVlZUejVoMGpsRXg4MCsvcW5OMFpwTm9NSW5NTmVYaUNP?=
+ =?utf-8?B?TjdpcG8xeTkrT25RYy9JYkt6MHhYa0FuYm5xaWRGN0R5SXRsTks5NlJzNWoz?=
+ =?utf-8?B?WE5sRk5kRWNxTGdsUTM3VHM2SVNZcDYvVFdtdXU1ZmdzRHdSRzZLeENUdFRJ?=
+ =?utf-8?B?dWEyeUlZc00vNFVSN0I0cW9HM2lHd2pWQU5la0NXdUtCV3Z2bGFZWU5qUDJw?=
+ =?utf-8?B?SVlheUNlMXZwOTB4SXBrY2RjdHE4QjdlVGgzYzAvbUZlRzh0ZXhOVXArTUNp?=
+ =?utf-8?B?dUkxZUw3cThGdUcwRk5UUytLWHdaYk41UEJrSUprTXdFbkxKZE5wL1BtZVVC?=
+ =?utf-8?B?Q1FRb1cwM2lKVS9qNnlQUU1XV3pzaGRGZWNSQ0NZWnhkL05OQVNkaTVWUDEr?=
+ =?utf-8?B?Z0lKM0hsWEJHM09vMFF1VjVLTnBwcldTeThoelFTZVVhVDBXYTNqWlpad1c3?=
+ =?utf-8?B?d2N2emhRTjZ6Unc2cGtOQzBaWk9OWWdMM2QyMFlhNUJ3TnRpbHFINDRyM0VX?=
+ =?utf-8?B?bTg0c09QUGxUNzM3Q1JjT1ljOTdxSUFxSlEvYTk2ZGR1VnRQemwzZnBaNW1W?=
+ =?utf-8?B?TytmQUJWemVlNVlmRVp3WU4xQnBuY3VmUGpnRkkwR2dueDF6ZjBTOE80bFIw?=
+ =?utf-8?B?cUJaTGJsVGpud2VBMUxhNVVSRS9sQU9LY1Jud1JsL25RM1JrMjhxV2VydnNq?=
+ =?utf-8?B?eVNYU2hvSy9XM3JMa2MyNllRS29wOWtPaFlUQ3NvODIrc2RaQVc0Zm1lSXBG?=
+ =?utf-8?B?S216Q3V2L0JLTGEvQ1FDVmd0SnYvWWpFdDMvVkFkcEhuaFVjVHN6WHZza1dI?=
+ =?utf-8?B?ZGZPK1ZjZHl2QVhsYzJDYyt3REsvb3ZYY1NEc2tQdTZkempsR2hKVko4Umoz?=
+ =?utf-8?B?OXF4aWk4LzZKdWV6bGZGeGUvSVEwblRQMVhxbllRRDRpTFFTSFlzLzhqN05h?=
+ =?utf-8?B?eGN3VjBmVXd0U1QvbnhYWmZSRTBublUzOHZGaUY4VlkxcnFrZzhaN3l3bHpm?=
+ =?utf-8?B?ZFhnZ0RwVHFCU1FJZ2ttNGZoMVQ1cmNLd0s2YmxHS3o0ZWZkQ1VwM3l0M3Fv?=
+ =?utf-8?B?bk1QT25wZExlamJBVEhQbmJ6NWlTTHN2UmQ1cHhUeWxTZ1JoS2Yxc3VtM1NG?=
+ =?utf-8?B?QzBMRkdQR3BWV0lpanF2Z1hrRWlseVR2bGlackduem1XVE5aeHBpVzdFd1Rq?=
+ =?utf-8?B?WFR3bWNiZjRRbVNtQnZxVkJCQUswSHphVnlFLzlEUDBtTzVDYjFOQU1GNTVK?=
+ =?utf-8?B?aGx1M1BlamRjYUdWWDVLMzZBb2x2VXlhOFg3cTNnUGxLQStYZkRDaHcrRkpS?=
+ =?utf-8?B?Y1BMemM0SDVwT3VBR0QzK3ZTN21IZ1YrQXVSL0haSmRSUTdkek5Ibk9qdUpn?=
+ =?utf-8?Q?L212hIcWwKE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR10MB4780.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WDVYRFpOdEdJRzhZd3lpMnBVckRlOEJTUm4zblg3d1dLbS90Z3RYZ04zanVp?=
+ =?utf-8?B?c1ZheDFlZTE5R1B3aExsemtiMWRoTXlBQUJsb0JBMjU2dHpLN0ttcVptOWtF?=
+ =?utf-8?B?M1I0ajdPd1UyNmdjZGthOFZZcXF5eWxFckwxaTJTTU1QS1hsOGU5elg5VGNK?=
+ =?utf-8?B?eDN6eVBxUG9JM2c0SlJMVldOWVpCd2J1RmxqNitWRnEwMmlwcjFtajl4em1T?=
+ =?utf-8?B?ZUlGSnJNbkI0VlFaNWFIaGNYemIxa2tWNjNqYkEySUpNOC96MElsTjIrMVFH?=
+ =?utf-8?B?aTFJS214MGdSajVzd204N1YxWC9xZ2NuTGYxaTJqWFRvSFlTUWx1OFZOV2lu?=
+ =?utf-8?B?M0xsZTRLU2llWFVBV0dJZ2EzYUFERTg2dW4vM2ZrUFY0dTRVRFdSM1BpS0lz?=
+ =?utf-8?B?RWF3ZUFhS2Z5Q041SlZLR3dMS3l0VDlLVGgzck1CbjNjK3NQeTZ6dno0dGpz?=
+ =?utf-8?B?MjlhaVZjRGdKdldhYmNudGlxQzhudmk0WWk0SHdNR0EvUFpqNENjMVRMVEZX?=
+ =?utf-8?B?c1ZEL2t6eC9zU21QN0pkTzF2TnczMEJyalZFejVBWnJ2bDVnaU9GTlJOUXo2?=
+ =?utf-8?B?MERoM0xDTk9wTjB3a1k5dWlrdm9kRGtmenVzL0x6UmQxVThqcklLekQ2TUk3?=
+ =?utf-8?B?cVJJZkJMRUJLUTdFOVdpVEgzU1ZRcjZrRmlCTUZkTktOc1hYTVhDVGVFcU9T?=
+ =?utf-8?B?ZFBzeHlLdG5XYWRSS0swV3lONVBsTSszOWRtT0JYcituUDNnejFnZlgyN2JN?=
+ =?utf-8?B?RHZzOEc3YlJoTTRub0U4U2N5OWdJTjNDb3B5di81a29mbjRzMllsalNGb09h?=
+ =?utf-8?B?UHQ1V1BQTzd4cHRwTlBqZG1ubHQvSXMzVXN5U2J1NkNrUUdoWjF3dmtoUkpw?=
+ =?utf-8?B?SGVObTdRRjFGQ3k4MFMwVGNHUStlNkJaTzBSMmpOcURpMi9sckJaZXM2VWpu?=
+ =?utf-8?B?SlN0VmxmM3llMmZEb292L3ZCS09OZFIyd3hxVW42blQyU2FhV0c0L1VENCsx?=
+ =?utf-8?B?aU9KeTNHVW5yT3Jsb0FaWjNLaW5aWnIwajloLyt1SGNpZXdzcHhiblg0TWs0?=
+ =?utf-8?B?YlpoY2ZRajJ4T1ZyRi9tZ0FYUHd3VktEeC9XSWpwU3poYlBkN3JueE1jMXdW?=
+ =?utf-8?B?cWNhSGxlU0dSNzNsejk1YnhVdmZtZWdoZS82UkdsMVVlUFpsUWVnclZoKzIz?=
+ =?utf-8?B?ZzVyYjRCUzlkVnZCZzZVbzdVZ1lHclZTbkQyT2dIQjhtVlFrenNrSEVlNTBD?=
+ =?utf-8?B?ZmFLR05Hcm1zcFZTRlFMR3Z5SnFIdXdLcnBUZVZvTFZxWjUzWjdLTjNwZU9H?=
+ =?utf-8?B?ODVQWThHa3NEUlhHODJubnZPalVnK0tOVitMdzZhR3h3QWwrQkVhTE04SjJn?=
+ =?utf-8?B?T3BqRDg2WXJZQlJDRENpZEgya0o2WHh1VzlvUWx5clpMU2N4aHNFT2QxV0pP?=
+ =?utf-8?B?dmNsc3l2dExqU2hkRVdZWThaVWRGdGJvQS8xN3ZlRjA2SlpPZ2czUEJ1bzlk?=
+ =?utf-8?B?TC9BeHExTFpVTGlkYmNxWUtiUCt3Y21FOS8zY0ZlbDdtQVYvWDZDUHR3dDR1?=
+ =?utf-8?B?T0EwLy9zVkVWcXdxekhPV0NKVFU5bG1BRjhqVUhvZVY5dGdneTJTZ0FpTGpo?=
+ =?utf-8?B?U2JiSStEVFozOS9MUklacHhGd0RtYUZ1eGxzVk1xZGJ2czBzM05pNjJ0aWlT?=
+ =?utf-8?B?dk0wd3g1b3JhQXB4U1l6VkhzczcrR2gzaGRHaEZiQW5VTmFQVUpqQ1Z4ZDM3?=
+ =?utf-8?B?djFhaDlkSlIyUVJiNThqb2FVSlNDbFJ5amNXeWNzemFvbEI2SDB0MktjM1RL?=
+ =?utf-8?B?OFN1cnJwY1hkUnA2dkZJd2VLUGQvMkF3REwreC9NMy9TS0ZsaDJ1c1BXODc0?=
+ =?utf-8?B?UTZYRXMxZnBDQ1J0RG9ZSHZQRGVOT3JuRmZwcmdBcDM1K1NjOXVjRVdOV01R?=
+ =?utf-8?B?ei96R1NaNTRxTHp2M1p0Tk5KMUprR3BLVmR6OUJPdmMwczFhQytxVjIyaDI4?=
+ =?utf-8?B?enNSbUNtVytWL3oyY1VyNTA5TzFEVlVzNzFnRzlkSnd3ekJjU3hGWTJVazR4?=
+ =?utf-8?B?a3BOZzJ0ZjMwdGhIQmh4eUJBVTVrbjk0YWVWQzJGSHRFajRRSGRJQVZzcXZa?=
+ =?utf-8?Q?7+9Vl92H3uIWWq8NxzABXw/i3?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	s/g50jwjo0UeFl0gy59gYpRwxnxv9KUHzP+UPZPVlR7nW/WnSp5Ql1p/ghsNHFdlgnddJuLx40YkNTpmBY7eYfUq7EVHbK7y5HeKCqZdc7nZ6mkEfTIZJabHJAOHtgj6lMPT8yKxAc7RbPSFanKp+FZjn2Ys25DnOqgRKYuxHc99fAmIFVf++dwB/kzB6QE5T4PT1vFvCciOi36aFfem5XtCbX/Ia0y/8Ga/XMyjluNAZ9oqv2UaMsA0xJMKxrJQPNASGv44zWWM5CXFPa/Juo0JJ+E6CZ9fJTcGxHGSWcbPV2Z9y0ECX3/a/cYDlUWmYYcX7+DeXnCUfvwxXdboqGSeONmK9GxSlIXCUUjBu/l+9DdzrXcAQx7+EAg/KhIfSAHvc1eHHLEvguFF5nyl6qrWZ1N+LYV/KyKwqZ6Bje1pdxUE+Jxh/zDJHAL12WKmsHQEahfgbYBUQgK6QdbQObpFRBOijhFFzwFHQTmQ/FPqTooFWy2QE6uYuna2rk6ggl0JLLhCliwvJJh5JpDfgCfEBIMTe+AYEAeS3Ztn3r+bh8o5zND7wbfdTbFGzsaepGsXGy2H/OGK9WB1UPwRdzQMBWRd9HkBhc2aJ2OE+5M=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02cdf816-cec2-409c-811b-08dd82dc3377
+X-MS-Exchange-CrossTenant-AuthSource: SA2PR10MB4780.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 03:00:42.5966
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DrbvpOKSRkzYHt8P48Nh2SqtFsBUPW64EgyHM+gfo8sDrvt1FwpomWOeSm2KpzkSjzeGiSmpEVmktwbSj0ES2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7671
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_01,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2504240016
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDAxNSBTYWx0ZWRfX7BRxEAjKrmHA E0BYvRI/SBYBKOYs6eFePSol1inau8fVbdz2tIAWCj6TGHo+NHJNgusO6CLvwSXRVjyzKG5NTNz 8/4IE16f3JR4NIPfCRa9t3UguFLlQz1TRkRwaHII0D5voEFNcTdw/glVZnaFR0UXXcMrrA5ICkd
+ ghHCL3QwJLANaaztk9kcqSRnRa7bPrb1HtoPu+ihV3t/lp2rgxK3mIaL+9Zo1Fkg2tyPGlC7tD+ wzv0DRxp0YlsCcnGE3orVDUmvHSF6Y/rmMZ810QvpfC3sJE8FpA6gj0B4Ho/9hRUTK3m+6dJTvg uNl5+hqxH8H9MOmFlCkL0lMpM0Ddr/s39hBgdEx8Bz5u1Fm+I1AgBheiG++NaR/BmlW4xsKuob/ s13KJ36X
+X-Proofpoint-GUID: cDhly-UBUQC5y9QclA4uwkPaXjTmOMX-
+X-Proofpoint-ORIG-GUID: cDhly-UBUQC5y9QclA4uwkPaXjTmOMX-
 
 
-- Handle busy & errors
+On 4/23/2025 7:55 PM, jane.chu@oracle.com wrote:
+> 
+> On 4/23/2025 4:28 PM, Jason Gunthorpe wrote:
+>> IIRC device-dax does could not use folios until 6.15 so I'm assuming
+>> it is not folios even if it is a pmd mapping?
+> 
+> I just looked at 6.15-rc3, device-dax is not using folio. Maybe I'm 
+> missing some upcoming patches?
 
-  Splitting huge mappings in S-EPT requires to execute
-  tdh_mem_range_block(), tdh_mem_track(), kicking off vCPUs,
-  tdh_mem_page_demote() in sequence.
+Oops, scratch that.  I'll test 6.15.
 
-  Possible errors during the process include TDX_OPERAND_BUSY or
-  TDX_INTERRUPTED_RESTARTABLE.
-
-  With exclusive kvm->mmu_lock, TDX_OPERAND_BUSY can be handled similarly
-  to removing a private page, i.e., by kicking off all vCPUs and retrying,
-  which should succeed on the second attempt.
-  
-  TDX_INTERRUPTED_RESTARTABLE occurs when there is a pending interrupt on
-  the host side during SEAMCALL tdh_mem_page_demote(). The approach is to
-  retry indefinitely in KVM for TDX_INTERRUPTED_RESTARTABLE, because the
-  interrupts are for host only in current exclusive kvm->mmu_lock path.
-
-  
-Page merging (page promotion)
------------------------------
-  The RFC disallows the page merging on the mirror page table.
-
-  Unlike normal VMs, private memory in TDX requires the guest's ACCEPT
-  operation. Therefore, transitioning from a non-leaf entry to a huge leaf
-  entry in the S-EPT requires the non-leaf entry to be initially populated
-  with small child entries, all in PENDING or ACCEPTED status.
-  Subsequently, the merged huge leaf can be set to either PENDING or
-  ACCEPTED status.
-  
-  Therefore, counter-intuitively, converting a partial range (e.g., one
-  4KB) of a 2MB range from private to shared and then converting back to
-  private does not result in a successful page promotion in the S-EPT.
-  After converting a shared 4KB page back to private:
-  a) Linux Guest: Accepts the 4K page prior to accessing memory, prompting
-     KVM to map it at the 4KB level, which prevents further EPT violations
-     and avoids triggering page promotion.
-  b) Non-Linux Guest: May access the page before executing the ACCEPT
-     operation. KVM identifies the physical page is 2MB contiguous and maps
-     it at 2MB, causing a non-leaf to leaf transition in the mirror page
-     table. However, after the preparation step, only 511 child entries in
-     the S-EPT are in ACCEPTED status, with 1 newly mapped entry in PENDING
-     status. The promotion request to the S-EPT fails due to this mixed
-     status. If KVM re-enters the guest and triggers #VE for the guest to
-     accept the page, the guest must accept the page at the 4KB level, as
-     no 2MB mapping is available. After the ACCEPT operation, no further
-     EPT violations occur to trigger page promotion.
-
-  
-  So, also to avoid the comprehensive BUSY handling and rolling back code
-  due to shared kvm->mmu_lock, the RFC disallows the page merging on the
-  mirror page table. This should have minimal performance impact in
-  practice, as up to now no page merging is observed for a real guest,
-  except for the selftests.
- 
-
-Patches layout
-==============
-Patch 01: Glue code to [2].
-          It allows kvm_gmem_populate() and kvm_gmem_get_pfn() to get a
-          2MB private huge page from guest_memfd whenever GFN/index
-          alignment, remaining size, and page attribute layout.
-          Though this patch may not be needed after guest_memfd supporting
-          in-place conversion in future, the guest_memfd needs to ensure
-          something similar.
-Patches 02-03: SEAMCALL changes under x86/virt.
-Patches 04-09: Basic private huge page mapping/unmapping.
-           04: For build time, no huge pages, forced to 4KB.
-        05-07: Enhancements of tdx_clear_page(),tdx_reclaim_page,
-               tdx_wbinvd_page() to handle huge pages.
-           08: inc/dec folio ref count for huge pages.
-               The increasing of private folio ref count should be dropped
-               after guest_memfd supporting in-place conversion. TDX will
-               then only acquire private folio ref count upon errors during
-               the page removing/reclaiming stage.
-           09: Turn on mapping/unmapping of huge pages for TD runtime.
-Patch 10: Disallow page merging in the mirror page table.
-Patches 11-12: Allow guest's ACCEPT level to determine page mapping size. 
-Patches 13-19: Basic page splitting support (with exclusive kvm->mmu_lock)
-           13: Enhance tdp_mmu_alloc_sp_split() for external page table
-           14: Add code to propagate splitting request to external page
-               table in tdp_mmu_set_spte(), which updates SPTE under
-               exclusive kvm->mmu_lock.
-           15: TDX's counter part to patch 14. Implementation of hook
-               split_external_spt.
-        16-19: Split private huge pages for private-to-shared conversion
-               and punch hole.
-Patches 20-21: Ignore page splitting request with shared kvm->mmu_lock
-
-
-Main changes to [0]:
-===================
-- Disallow huge mappings in TD build time.
-- Use hook private_max_mapping_level to convey TDX's mapping level info
-  instead of having KVM MMU core to check certain bits in error_code to
-  determine a fault's max_level.
-- Move tdh_mem_range_block() for page splitting to TDX's implementation of
-  hook split_external_spt.
-- Do page splitting before tdp_mmu_zap_leafs(). So instead of BUG_ON() the
-  tdp_mmu_zap_leafs(), out-of-memory failure for splitting can fail the
-  ioctl KVM_SET_MEMORY_ATTRIBUTES or punch hole.
-- Restrict page splitting to be under exclusive kvm->mmu_lock and ignore
-  the page splitting under shared kvm->mmu_lock.
-- Drop page merging support.
-
-
-Testing
--------
-The series is based on kvm/next.
-
-This patchset is also available at: [3]
-It is able to launch TDs with page demotion working correctly. Though it's
-still unable to trigger page promotion with a linux guest yet, the part of
-page promotion code is tested working with a selftest.
-
-It's able to check huge mapping count in KVM at runtime at
-/sys/kernel/debug/kvm/pages_2m.
-(Though this node includes huge mapping count for both shared and private
-memory, currently there're not many shared huge pages. In future,
-guest_memfd in-place conversion requires all shared pages to be 4KB. So
-there's no need to expand this interface).
-
-[0] https://lore.kernel.org/all/cover.1708933624.git.isaku.yamahata@intel.com
-[1] https://lore.kernel.org/lkml/cover.1726009989.git.ackerleytng@google.com
-[2] https://lore.kernel.org/all/20241212063635.712877-1-michael.roth@amd.com
-[3] https://github.com/intel/tdx/tree/huge_page_kvm_next_2025_04_23
-
-
-Edgecombe, Rick P (1):
-  KVM: x86/mmu: Disallow page merging (huge page adjustment) for mirror
-    root
-
-Isaku Yamahata (1):
-  KVM: x86/tdp_mmu: Alloc external_spt page for mirror page table
-    splitting
-
-Xiaoyao Li (5):
-  x86/virt/tdx: Add SEAMCALL wrapper tdh_mem_page_demote()
-  KVM: TDX: Enhance tdx_clear_page() to support huge pages
-  KVM: TDX: Assert the reclaimed pages were mapped as expected
-  KVM: TDX: Add a helper for WBINVD on huge pages with TD's keyID
-  KVM: TDX: Support huge page splitting with exclusive kvm->mmu_lock
-
-Yan Zhao (14):
-  KVM: gmem: Allocate 2M huge page from guest_memfd backend
-  x86/virt/tdx: Enhance tdh_mem_page_aug() to support huge pages
-  KVM: TDX: Enforce 4KB mapping level during TD build Time
-  KVM: TDX: Increase/decrease folio ref for huge pages
-  KVM: TDX: Enable 2MB mapping size after TD is RUNNABLE
-  KVM: x86: Add "vcpu" "gfn" parameters to x86 hook
-    private_max_mapping_level
-  KVM: TDX: Determine max mapping level according to vCPU's ACCEPT level
-  KVM: x86/tdp_mmu: Invoke split_external_spt hook with exclusive
-    mmu_lock
-  KVM: x86/mmu: Introduce kvm_split_boundary_leafs() to split boundary
-    leafs
-  KVM: Change the return type of gfn_handler_t() from bool to int
-  KVM: x86: Split huge boundary leafs before private to shared
-    conversion
-  KVM: gmem: Split huge boundary leafs for punch hole of private memory
-  KVM: x86: Force a prefetch fault's max mapping level to 4KB for TDX
-  KVM: x86: Ignore splitting huge pages in fault path for TDX
-
- arch/arm64/kvm/mmu.c               |   4 +-
- arch/loongarch/kvm/mmu.c           |   4 +-
- arch/mips/kvm/mmu.c                |   4 +-
- arch/powerpc/kvm/book3s.c          |   4 +-
- arch/powerpc/kvm/e500_mmu_host.c   |   4 +-
- arch/riscv/kvm/mmu.c               |   4 +-
- arch/x86/include/asm/kvm-x86-ops.h |   1 +
- arch/x86/include/asm/kvm_host.h    |   7 +-
- arch/x86/include/asm/tdx.h         |   2 +
- arch/x86/kvm/mmu/mmu.c             |  67 +++++---
- arch/x86/kvm/mmu/mmu_internal.h    |   2 +-
- arch/x86/kvm/mmu/paging_tmpl.h     |   2 +-
- arch/x86/kvm/mmu/tdp_mmu.c         | 200 +++++++++++++++++++----
- arch/x86/kvm/mmu/tdp_mmu.h         |   1 +
- arch/x86/kvm/svm/sev.c             |   5 +-
- arch/x86/kvm/svm/svm.h             |   5 +-
- arch/x86/kvm/vmx/main.c            |   8 +-
- arch/x86/kvm/vmx/tdx.c             | 244 +++++++++++++++++++++++------
- arch/x86/kvm/vmx/tdx.h             |   4 +
- arch/x86/kvm/vmx/tdx_arch.h        |   3 +
- arch/x86/kvm/vmx/tdx_errno.h       |   1 +
- arch/x86/kvm/vmx/x86_ops.h         |  14 +-
- arch/x86/virt/vmx/tdx/tdx.c        |  31 +++-
- arch/x86/virt/vmx/tdx/tdx.h        |   1 +
- include/linux/kvm_host.h           |  13 +-
- virt/kvm/guest_memfd.c             | 183 ++++++++++------------
- virt/kvm/kvm_main.c                |  38 +++--
- 27 files changed, 612 insertions(+), 244 deletions(-)
-
--- 
-2.43.2
+thanks,
+-jane
+> 
+> thanks,
+> -jane
+> 
+> 
 
 
