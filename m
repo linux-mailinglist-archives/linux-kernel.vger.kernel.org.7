@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-618034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD575A9A958
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA53AA9A964
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8093F7A69AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:03:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE217A0D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1EF202C2A;
-	Thu, 24 Apr 2025 10:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF4B221FAF;
+	Thu, 24 Apr 2025 10:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyWjnrK8"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="bibwfnel"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7561F8691
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF90221FA0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745489087; cv=none; b=h7eYk5GhBC7QB1btW851A6UuUBRdJzOhAWU31y1InlPb8jHZRtZl43emdpiEQI3aLimVaOzG5vD6USXcrTr85tzPbWZn+jys+lIpA14AssCKTXxfcEH44EzPBYhhwhn9DjmpP02A2l6+txORf0USNuE8YxPGb4zG6Yv+W/fXQMI=
+	t=1745489118; cv=none; b=Mgjwmp3n3/3KycNS+sCBgCwYENXeCj9YWVVUx7ACNICy7v86FmVKe4e2xld8ZYyS2pNprtuCCDTweicgT/vsu1MoZQuEbzRL/jdZtu86mKqz+zAB4sSSoULmnuzZNVcOy0i2Lmji/Z7stBrSAqlQ3TpjqZ2PmEJN5Py5sMaP+5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745489087; c=relaxed/simple;
-	bh=zRK3bbAG3gBasDkhsvYPox8gR9dNStS01VlvA2H/3aE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TiPLrsbXzOao5EAFcBYj0ACDGmJDM+Pz5cVLHw4OifJtrcf1MQr8eAnAgJw/tJUh5MFmWIeopUS7oLUZkTIjsKtvyXHKGzgmR5iozZ4Zg/7LbpjkHP5O6ZaOOs7mMsEuSUQLa5qsdgP8VGr8zd2iU1puwNQ9xC+I6FGuPo/S4nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyWjnrK8; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ff4faf858cso6958747b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745489085; x=1746093885; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAhE2hvzxTYkRTXNnlbXymQxLrf75SVoPXCltrmDJvs=;
-        b=jyWjnrK8S8PiyEAcESmahfm+w6OCZcpQdVgbpZ02IHoQOgrxPs5mgtYf1eblYueZyK
-         b5xjCtnjwt/OXlHfWCuOoRpyGivSHscHfZLyMfWqBQGNjUnJbNDY9PFl1kRGU/40x90e
-         ZGnH/uFx3mu6Stq4kO21OpRIsx37E+gwfWgYw0wBlFDtNG3TjWiEswpWJMzWAsSZqdwa
-         E9L+P9Z7hMTyFOJzP9i9Q6W+C6sUJA6o6ORXsqeBV4l30TXVuTOGNGUFhNwFizGGKFxX
-         iLtaGP55Bbr/LQplqZ7eVYePACRFpTmPSedoDrGUWuyy9i4CddavUyupnQkMK8fk0kPq
-         k9Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745489085; x=1746093885;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gAhE2hvzxTYkRTXNnlbXymQxLrf75SVoPXCltrmDJvs=;
-        b=hjIVx5KB9xgsrLPvXKjRSOzguGii5ugpoQN/XEtyFJmMhL08rWekJZODPcU7lmv/x2
-         /5U3jRs00g8FwyJptrO7fUmnhXCNi37O1eKuClj9Ch4LJIBOKRNmSXyvHFAinD1UBF18
-         sXURYdICzw1QVeAgJ1ey5WcuNOSnHovUp4ulHWLXvaANkCIEln0oxwk8CLjBF/iyFzvc
-         6x3cqGO7sANTJBEizkHdax437+ywPKGUg/hyzFavEW3jtpHH3fuQnxVaPhplB6l0cUvX
-         cbaIsoD9puHZ4gPlpliiVpN/+aFcWVVcfMIfPQZrzOA6EqCGrZDecuScdl0pVE7VYmyG
-         8wng==
-X-Forwarded-Encrypted: i=1; AJvYcCWB76pEO87/GA4ajQ9MmNt3HSL2rsxFvsa5fpOGWofDjjXBYKefyFjWcSjeqDwLEGvOHaWFV4kmVUHaYy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8/rnls5+RHt3JT4VBLFmegvIT/psdtdI/0886+x/zykojPe1V
-	m021+oO8zJCgCyQ0ALCSh45gkN+XpdSD+qvTNpXHU06i/IJxTkD/TEeA2DHto3y546iiaNJFbeR
-	lwIZxA1nf6NZwlAytggURRZ+LQo98notGNA63Vw==
-X-Gm-Gg: ASbGncv71e/bvY2V9FbIrmPhHGMerjzWIa+oBU2ZY9bCJvY382seLJH5ahcoZUMfi9N
-	14/IJc90hBQeuJV/uHIfmFkIybp2hRJA/f5j4jqTH43ICUlfGNe0/DROhyEjCwTqOr0khQ2nMGg
-	XWhtVWz5cr4dlpdqMe87YTZ9Xz2MzbD9Qd+g==
-X-Google-Smtp-Source: AGHT+IHRN80V1KALg8QZOLapRyt4m3FJEY1PBgmKaeRU8QtTlcQsNpNO06R02rhYUFQKcspficc8vQEmJKzZwiZz8/c=
-X-Received: by 2002:a05:690c:ed6:b0:703:c3ed:1f61 with SMTP id
- 00721157ae682-7083ec82f04mr27461187b3.20.1745489085089; Thu, 24 Apr 2025
- 03:04:45 -0700 (PDT)
+	s=arc-20240116; t=1745489118; c=relaxed/simple;
+	bh=aTwCG5zIVsBJxb8IZJPcVqIrui6+49eu8TMKM+dV630=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=BvUkNfF8GVSmFSrRjH33QtzcVLZDrEWbq08WTeg+ccR4c6BMo2d1hTYp0hkhjc0smbyh5iTLk+vDD5gc3UCNj/oB/ZyXToRIWGwWpgVtav8iNoMDm78MifcUEOEdOGQEMfkL9idHINn0UlK01r8S2h0QkhcYhp+geXRsU/ZvCYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=bibwfnel; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O6A3Eb004531;
+	Thu, 24 Apr 2025 11:04:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=h
+	t+5MJoy98mefo5C6EhU8q+TpMHAYhDjxH3joLjpVHE=; b=bibwfnelT/m25Frf4
+	LnxZIB8sCCOy2javZuwKXMBL0tSsu9ggTmWRxwN9fiWuxFvyHMIOz2s9DB4YjZ/y
+	5Oz8N1IuN92qUYjcBfNLFFi6nvOvxgz2tR1n5p7hNWAVgrWGFXY69synP8wcy7dL
+	6NQDHRQb48mibRJSySvAM+Iathi/qa5q09sXpVJCOFuhH8TVY5uOlEJkMSPO8w1J
+	umOmfmkH0W4WR92oTapiU6MZimWXwfZptft/wh9Vf5oLIM2KGZGpeDwV6P/virGG
+	x4cvSZwclUKxGZ8fOvzNEOtDbuQ96Mz1b8ankLiRSpzGUPTVGZFbeH23v2NeNkQC
+	Gi5sQ==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 46423t30bt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 24 Apr 2025 11:04:37 +0100 (BST)
+Received: from Matts-MacBook-Pro.local (172.25.2.134) by
+ HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 24 Apr 2025 11:04:35 +0100
+From: Matt Coster <matt.coster@imgtec.com>
+To: Frank Binns <frank.binns@imgtec.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Arnd Bergmann <arnd@kernel.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Andrzej
+ Hajda" <andrzej.hajda@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        "Alex
+ Deucher" <alexander.deucher@amd.com>,
+        Alessio Belle
+	<alessio.belle@imgtec.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250409122314.2848028-1-arnd@kernel.org>
+References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH 01/10] drm/imagination: avoid
+ unused-const-variable warning
+Message-ID: <174548907548.56131.3060253413773321018.b4-ty@imgtec.com>
+Date: Thu, 24 Apr 2025 11:04:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318230042.3138542-1-sbellary@baylibre.com> <7h34efy1yb.fsf@baylibre.com>
-In-Reply-To: <7h34efy1yb.fsf@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 24 Apr 2025 12:04:08 +0200
-X-Gm-Features: ATxdqUENVboYpckvehllaXvPNTBLeweZdKshsm3F8BsEr2O9Rx9nnzm5gOhifiU
-Message-ID: <CAPDyKFrM7Qn2YtQKY+vCHP32Z_Ly-ECt=SU9EGojFu1ShktUpQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] PM: TI: AM335x: PM STANDBY fixes
-To: Sukrut Bellary <sbellary@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Roger Quadros <rogerq@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Bajjuri Praneeth <praneeth@ti.com>, 
-	Raghavendra Vignesh <vigneshr@ti.com>, Bin Liu <b-liu@ti.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Authority-Analysis: v=2.4 cv=L60dQ/T8 c=1 sm=1 tr=0 ts=680a0cb5 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=OXfeAiaCWNgA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=r_1tXGB3AAAA:8 a=0awzr-uiiHjTTRS7KEMA:9 a=QEXdDO2ut3YA:10
+ a=zZCYzV9kfG8A:10 a=t8nPyN_e6usw4ciXM-Pk:22
+X-Proofpoint-ORIG-GUID: SPdZCKhLNrewa3ueFb4AyDGUNRLczfRX
+X-Proofpoint-GUID: SPdZCKhLNrewa3ueFb4AyDGUNRLczfRX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA2NyBTYWx0ZWRfX8Zno8UDFwBlU duo4p/Fdz0av0UAgxGRNiVRJk1XJoAiV3cx5zZXo6AcXCz222ufGHQ6WHfbQW9XWpRnDkit1K3m SrdhNtByYCGxNlVGWLPt/U1h1TRc9J6Go5Da2RgZgW6LgwweP0Zt3f3AQFYCX1hXLUDdOU4ti/L
+ zU4nKKfMLBba9Te4xBIW4WYEWyPWiWUJfm4BFy2JvoFy26oBDK+rU7ZjYWGtobUQluv2tB6MSMd DKYk+kfeqDhicF9kF5mk9CGlseuzNtsEiOySkcJDZJWUawCmu626IowkW+CEnZuSlpjB1A2/sxO 2hPqohFeIcc0tWOVj4BzHHy71HHMp0yOOxhDzNlyGJ8wRkkg+nglO5xooGbW+eKPVhNOlcGVJil
+ Kl+gB1KT5TQ8k5HcTyO6PMC7OycZBf8xS92LrJ7FK0TC8eypbntBwOp+62KotipGvP1r+IrC
 
-On Fri, 11 Apr 2025 at 02:30, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Sukrut Bellary <sbellary@baylibre.com> writes:
->
-> > This patch series fixes the Power management issues on TI's am335x soc.
-> >
-> > on AM335x, the wakeup doesn't work in the case of STANDBY.
->
-> This series is specifically targetted at the AM335x EVM (which I don't
-> have to test), so I'd appreciate getting any test reports for this
-> before I queue it up.
->
-> For AM335x, I currently only have the ICEv2 and Beaglebone Black,
-> neithor of which support suspend resume with RTC wake AFAICT.  If they
-> do, please enlighten me. :)
->
-> I was able to do a basic boot test on the 2 boards I have with this
-> series applied on top of v6.15-rc1 and basic boot still works, but I was
-> not able to test the PM path that's being changed here, so any tests on
-> AM3 platforms that actually use this path are appreciated.
->
-> Kevin
 
-Is the pmdomain patch(3) ready to be applied here? Please let me know
-if you want me to pick it up.
+On Wed, 09 Apr 2025 14:22:53 +0200, Arnd Bergmann wrote:
+> When CONFIG_DEBUG_FS is disabled, the stid_fmts[] array is not referenced
+> anywhere, causing a W=1 warning with gcc:
+> 
+> In file included from drivers/gpu/drm/imagination/pvr_fw_trace.c:7:
+> drivers/gpu/drm/imagination/pvr_rogue_fwif_sf.h:75:39: error: 'stid_fmts' defined but not used [-Werror=unused-const-variable=]
+>    75 | static const struct rogue_km_stid_fmt stid_fmts[] = {
+>       |                                       ^~~~~~~~~
+> 
+> [...]
 
-Kind regards
-Uffe
+Applied, thanks!
+
+[01/10] drm/imagination: avoid unused-const-variable warning
+        commit: 3206a96675342badb0254558ba4b4c8764aa3ae7
+
+Best regards,
+-- 
+Matt Coster <matt.coster@imgtec.com>
+
 
