@@ -1,213 +1,80 @@
-Return-Path: <linux-kernel+bounces-617756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C42BA9A567
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:11:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFCEA9A561
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F373B31DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5801B830B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08F9207DFE;
-	Thu, 24 Apr 2025 08:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A08201032;
+	Thu, 24 Apr 2025 08:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TJPG3UDm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IObR2D6p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE4521146C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FD619CCEA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745482248; cv=none; b=VGtPzFFUat6YW7MlClSRUFS3FGAKmvh8E8nAYDkPik6MjNfLQq387CXPO+Zg1MqDchTLSE+veXVU4Yix1/k0yan5sqi8IDPSQKAMTMq8t0wsLyB1KmSMAGX7Xtoa8XXq0Jvynrh+uymOmSMcKpc3skucJRn98scaIRG/gU7atRM=
+	t=1745482204; cv=none; b=h8EvFFix5aF/8JS6MZfPSKs06HmJjdu8TSkVNt6+6FWInG1VIT85V0Mihbao+4G6Pm+lDVcCr2TxLbKG9eZJo4oz8hISJr3cjW0vYnSlf9OwyK9g/1oerdhXSO+ca9tLHPO3Y+6Fseve4agMnPsYE93mcj9l7eT3fPdcRTHuGcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745482248; c=relaxed/simple;
-	bh=TH67hndJf5FIDT/iNA8mLp4el/Q9YJ0KwNFDvaHNoy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LcnGKEjb17vV7RgKish7S0YTGbxFjVzEGwBz1jaOmKM3fkjmWuq98zORkQuTsr9fo8YxATNhXAYV4WDPiPILkosGU3sDhirThT+yXarT5Ia8gPBN2UQ83c/R5p/LbFlVtPH0Ra9GzIb0JqeXI7pgkordS706EGEcHkgLny9+0+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TJPG3UDm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745482244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=90i0OCg6Zt5Z8sKdLwCV2r9r1JKdc4QuwHkOEn9E9Jg=;
-	b=TJPG3UDmtnwW7+nTpxub8Qceui+JehQJwm2RvEl3xc0nBE92AJMFkEeD3XXO/l9ZtEBAKF
-	kyBbhDeGeDVRBlEaD/FvjPBdyqhwPZmnbYM4M9I6R1hVeP6Ur8BZgKJ6CqQ2NzNvwXU921
-	xaDK9Q4PAX0/G6abh5QwKOUs+e9aBDM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-3RHKMFU5PVm64rDqCSspaA-1; Thu,
- 24 Apr 2025 04:10:42 -0400
-X-MC-Unique: 3RHKMFU5PVm64rDqCSspaA-1
-X-Mimecast-MFC-AGG-ID: 3RHKMFU5PVm64rDqCSspaA_1745482240
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5FC2219560BA;
-	Thu, 24 Apr 2025 08:10:39 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.198])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B3B5B30001A2;
-	Thu, 24 Apr 2025 08:10:25 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: x86@kernel.org,
-	linux-efi@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Peter Jones <pjones@redhat.com>,
-	Daniel Berrange <berrange@redhat.com>,
-	Emanuele Giuseppe Esposito <eesposit@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Luca Boccassi <bluca@debian.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] x86/efi: Implement support for embedding SBAT data for x86
-Date: Thu, 24 Apr 2025 12:09:50 +0400
-Message-ID: <20250424080950.289864-3-vkuznets@redhat.com>
-In-Reply-To: <20250424080950.289864-1-vkuznets@redhat.com>
-References: <20250424080950.289864-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1745482204; c=relaxed/simple;
+	bh=FUSF6dmhuuTU8raDy8wQzUQyI+F+nNdK7RweTlozMxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lPlwoJNZXgIs7wfPoopyucwOvE3DMBEZ6t6Pa5rWEfwkXayT8SO7a6QVOlZP2+pqBEGgZf9RgOeQNgTlSU3/w6UOSLJMAWjn186dQPc1twIrTU3pxIISbrqbwWwmKZcZwK7+vqlQ8prRc/IGqgw8nnNrjGUe0HR165YZuEV6U78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IObR2D6p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C291C4CEEB;
+	Thu, 24 Apr 2025 08:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745482204;
+	bh=FUSF6dmhuuTU8raDy8wQzUQyI+F+nNdK7RweTlozMxc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IObR2D6pKLpVpEB7jtcJyvFaesOQGUAEp90przdD74Cetq6B8w47sI2W7iuthQAF0
+	 C9FKXzJlS8QZ956UI8l3Qvy4PVSD8X42gjJ25fsL5zs1NXFBuDFn/wwlpjZhrgPsNw
+	 HYeWLwno/Y+5Xs6xLFNTxHUyuxz7Rn0/bL86ZBpo56EqBjzNoGZBfiLGaOKqjV3OK+
+	 0Jpiym+fG6PAg86ERCjh+J3o17Zu0YLoYrMm4kjPhu/xbreiFlir66xGrBGoD8NmcW
+	 Rjdc3moTDk512AvxKuMV7CyboKmDQCZKYjetpoUrQTlxDV0dB+AMh75U4/sJu9JmpB
+	 zJIfGUPKtc1EQ==
+Message-ID: <bd36327b-53e0-43d8-95c9-b26c2905720e@kernel.org>
+Date: Thu, 24 Apr 2025 10:10:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] Additional documentation for nova-core
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, John Hubbard <jhubbard@nvidia.com>,
+ Shirish Baskaran <sbaskaran@nvidia.com>, Alistair Popple
+ <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Ben Skeggs <bskeggs@nvidia.com>
+References: <20250423225405.139613-1-joelagnelf@nvidia.com>
+ <D9EH7958IAJZ.1R6EJXUR5H3NB@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <D9EH7958IAJZ.1R6EJXUR5H3NB@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Similar to zboot architectures, implement support for embedding SBAT data
-for x86. Put '.sbat' section to the very end of the binary.
+On 4/24/25 3:25 AM, Alexandre Courbot wrote:
+> Thanks a lot for doing this, this was severely missing from the
+> WPR2 patchset.
+> 
+> Due to the strong focus on documentation, and in order to ease merging,
+> I think it makes sense to keep this separate from the WPR2 patchset and
+> merge it on top of it. Danilo, would that work for you?
 
-Note, the obsolete CRC-32 checksum (see commit 9c54baab4401 ("x86/boot:
-Drop CRC-32 checksum and the build tool that generates it")) is gone and
-while it would've been possible to reserve the last 4 bytes in '.sbat'
-section too (like it's done today in '.data'), it seems to be a pointless
-exercise: SBAT makes zero sense without a signature on the EFI binary so
-'.sbat' won't be at the very end of the file anyway. Any tool which uses
-the last 4 bytes of the file as a checksum is broken with signed EFI
-binaries already.
+Perfectly fine for me!
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/boot/Makefile                 |  2 +-
- arch/x86/boot/compressed/Makefile      |  2 ++
- arch/x86/boot/compressed/vmlinux.lds.S | 13 +++++++++++++
- arch/x86/boot/header.S                 | 13 +++++++++++++
- drivers/firmware/efi/Kconfig           |  2 +-
- 5 files changed, 30 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index 81f55da81967..5f7b52f0e7f5 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -71,7 +71,7 @@ $(obj)/vmlinux.bin: $(obj)/compressed/vmlinux FORCE
- 
- SETUP_OBJS = $(addprefix $(obj)/,$(setup-y))
- 
--sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [a-zA-Z] \(startup_32\|efi.._stub_entry\|efi\(32\)\?_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|_e\?data\|z_.*\)$$/\#define ZO_\2 0x\1/p'
-+sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [a-zA-Z] \(startup_32\|efi.._stub_entry\|efi\(32\)\?_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|_e\?data\|_e\?sbat\|z_.*\)$$/\#define ZO_\2 0x\1/p'
- 
- quiet_cmd_zoffset = ZOFFSET $@
-       cmd_zoffset = $(NM) $< | sed -n $(sed-zoffset) > $@
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index fdbce022db55..b9b80eccdc02 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -107,6 +107,8 @@ vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
- vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
- vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
- 
-+vmlinux-objs-$(CONFIG_EFI_SBAT) += $(objtree)/drivers/firmware/efi/libstub/sbat.o
-+
- $(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
- 	$(call if_changed,ld)
- 
-diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-index 3b2bc61c9408..d0a27905de90 100644
---- a/arch/x86/boot/compressed/vmlinux.lds.S
-+++ b/arch/x86/boot/compressed/vmlinux.lds.S
-@@ -49,9 +49,22 @@ SECTIONS
- 		*(.data.*)
- 
- 		/* Add 4 bytes of extra space for the obsolete CRC-32 checksum */
-+#ifndef CONFIG_EFI_SBAT
- 		. = ALIGN(. + 4, 0x200);
-+#else
-+		/* Avoid gap between '.data' and '.sbat' */
-+		. = ALIGN(. + 4, 0x1000);
-+#endif
- 		_edata = . ;
- 	}
-+#ifdef CONFIG_EFI_SBAT
-+	.sbat : ALIGN(0x1000) {
-+		_sbat = . ;
-+		*(.sbat)
-+		_esbat = ALIGN(0x200);
-+		. = _esbat;
-+	}
-+#endif
- 	. = ALIGN(L1_CACHE_BYTES);
- 	.bss : {
- 		_bss = . ;
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index b5c79f43359b..ab851490ef74 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -207,6 +207,19 @@ pecompat_fstart:
- 		IMAGE_SCN_MEM_READ		| \
- 		IMAGE_SCN_MEM_WRITE		# Characteristics
- 
-+#ifdef CONFIG_EFI_SBAT
-+	.ascii ".sbat\0\0\0"
-+	.long	ZO__esbat - ZO__sbat		# VirtualSize
-+	.long	setup_size + ZO__sbat		# VirtualAddress
-+	.long	ZO__esbat - ZO__sbat		# SizeOfRawData
-+	.long	setup_size + ZO__sbat		# PointerToRawData
-+
-+	.long	0, 0, 0
-+	.long	IMAGE_SCN_CNT_INITIALIZED_DATA	| \
-+		IMAGE_SCN_MEM_READ		| \
-+		IMAGE_SCN_MEM_DISCARDABLE	# Characteristics
-+#endif
-+
- 	.set	section_count, (. - section_table) / 40
- #endif /* CONFIG_EFI_STUB */
- 
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index 2edb0167ba49..5022a378fec1 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -283,7 +283,7 @@ config EFI_EMBEDDED_FIRMWARE
- 
- config EFI_SBAT
- 	bool "Embed SBAT section in the kernel"
--	depends on EFI_ZBOOT
-+	depends on EFI_ZBOOT || (EFI_STUB && X86)
- 	help
- 	  SBAT section provides a way to improve SecureBoot revocations of UEFI
- 	  binaries by introducing a generation-based mechanism. With SBAT, older
--- 
-2.49.0
-
+@Joel: Thanks a lot for this work, appreciate it!
 
