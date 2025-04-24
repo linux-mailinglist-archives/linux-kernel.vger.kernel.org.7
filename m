@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-618908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA038A9B4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C5BA9B4ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1F7170F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96F41BA36D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8094284694;
-	Thu, 24 Apr 2025 17:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2dA6saE"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63CF28D850;
+	Thu, 24 Apr 2025 17:02:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D7F1B4141;
-	Thu, 24 Apr 2025 17:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3A828EB;
+	Thu, 24 Apr 2025 17:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745514129; cv=none; b=e/8WA9Y4+R3LtrKGKOLVBjU+GX/GouKGQUnyG6SQig20FBvCBSVzT5kL1KCvRb+/C9XrciKRy9FcjLcExPvSJQqgPUgp5sb4SOEt5c5jlLElmfwWp8DSklhbU/Lc/XgXo1ayar8HHj6YYnZkOZZdp9CLCwxaSLgh5aJqMdd/DXw=
+	t=1745514150; cv=none; b=jnexB3BEgwt9KKvPYLDCU1qyp1aiupLlSxZOY7zAAUFsIUNAYtzcl3ysCJpIBUpzGlZ1SSTB3/hz1XLVwirMYidyko95AnwzhTn+RAZ5U98AS9jhxsjal2p1DAtfCmzUtz76MN0RfDJ7UtFjRdBhdKLn4KkmgMvMCjehwXnoQ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745514129; c=relaxed/simple;
-	bh=O5SYM23Cn+WkamdI56DnAUG/Sci0EsW29F0Z42ReZmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XPzpnLTx82ckmulPH/VcPEsGHAVHTPe5imbEsQlqUMN9tDMHxygTzViXYs+/7c1K0GoUqA6qc7N/Y0v10seG9Tr8FS2MHxd9YXerqKny2cCbM4LGU+pUQk80PsH//yhCDZ2DlOGPQSkDWaXy3kW2biMMSYju8t1dWgSm78bDI4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2dA6saE; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2240d930f13so2644205ad.3;
-        Thu, 24 Apr 2025 10:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745514127; x=1746118927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O5SYM23Cn+WkamdI56DnAUG/Sci0EsW29F0Z42ReZmw=;
-        b=P2dA6saES4PqTgMfg2DYrITYwukYILWQ+QXbTuwQ0ltq5W47YOd6T1+47IADEJRPDJ
-         N9+EqeEsfubpxP8793C6kizuHwTd/6b7zxkqPMIzgd0hdgNsYwRnWRYTavX9hI+A2/wq
-         75YirjtlpglK62hZRdoYxc5Iy7Js4uGycjvqqItBqySTq5r2dOO4g6KenHcGJEDbKrlH
-         kr6Qb+A9hSvU/L1rqvopx2eK//dUtrcWznC15T8GybOoFSc7Yboo9lT9IOXXy2FeWrOJ
-         XHkP1UiWpjBqyTLdpq1oETLsPHt64laaHQHovd/3iWDADiR0GJCUjPAnu6627i11gLxL
-         UXYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745514127; x=1746118927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O5SYM23Cn+WkamdI56DnAUG/Sci0EsW29F0Z42ReZmw=;
-        b=HRSgQVqH6cckUW5kGnWqhA9ZLko6Pvg5E68MT2Se2VWib/3ad7aOFWC0ZwBPkpzOSQ
-         nR4Oq0Pxs1Sc0S2uOyS8g2rx0JXMkmzycwO2LvGks8bqOzQw+VnNHgIlTzVyglf0vQqI
-         2aXI2XxlUDWQfIuuBNLsFYHMWVFXy+iMi5XyvBFAcZbC/eYHTwKFsDUKmCGoUSdGhK90
-         uduyeZdLjiHJM5xnkF7AGE5txP8sB3wa832USdqnEQg+vijAOmNygO/NwInL3bJr5+zI
-         zjqnKyIor+fx6sTMuhJhMch5QlunK0/Y3b+ugMr7w6CTd/7WxrQrVLKlVP7ZXmcI7mNt
-         IEig==
-X-Forwarded-Encrypted: i=1; AJvYcCWAKuv2APzBztqcfHTygomN5eA25PrG4PyE+1XgRSqZ/PkK8IMMrKiSG4MHNmN1JH7VF9Pj/baIY9x9luOPLfY=@vger.kernel.org, AJvYcCWzAPpk0T49InTD2tq8Cu6GIpF4zu6mpLd9nplTOISbU/Cq3146S8wrTA5G2yAuAAtlvKtZyBSPDRgbTiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzia+9vEMwwtwumfc8n1O5NqeI3BFa0wgxkfwtMImtDFItyTXZk
-	vtbf8DDECfb/Oss0O7VQXuqtYiKD5tssSdz3Crtjp8uxds/BB3kDnCYX0NQrkAe44Wte1G1/g8D
-	6u7VP5baMy+NVoaOeJ6AYjxMLBA8=
-X-Gm-Gg: ASbGncskjk9IEyr0P2HXfLu+eCriQZNzHzhZsnLVA/uCqBAOOwB+EYDbwGRJ1rqnomM
-	EUdXn9PzEhG9bHgdOp0QJ3hHM/zAxoTjCwuKNgwPiSygQ8X7MPIv3miourzTp9aYNWQ4WzfX8k1
-	slkYKUSB5zLUj781v/2Slp9w==
-X-Google-Smtp-Source: AGHT+IF3ZtuHsNs56LObEEPE7jjBcXkiaFFKRHI+tLFB6UFWdm0HdP5xd9Zsthx/pq9U8NQvWfTre7qfqozwBswyhxE=
-X-Received: by 2002:a17:902:d481:b0:223:49ce:67a2 with SMTP id
- d9443c01a7336-22db3d7af28mr15685205ad.9.1745514126756; Thu, 24 Apr 2025
- 10:02:06 -0700 (PDT)
+	s=arc-20240116; t=1745514150; c=relaxed/simple;
+	bh=CNxp6Z1MB30uiRFp/qSo/T5IhvHzwVejCc6n9G/dfBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EDZkHZ1BrrVDgz6pA22eKoGlDBOCiw0utef4GN3XWnM+arMAMeD4dQXdA7oBsgj+QWlX4/AoDhI9gEyS78NggJkaj0TDhdcGeT9O5xPiqjDxY4/3BND/idZbTVUm7sC5V/c2bx2yNQIZtgEI/6SovjUPciFfHbRyqTouSPGQrno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F7AC4CEE3;
+	Thu, 24 Apr 2025 17:02:26 +0000 (UTC)
+Date: Thu, 24 Apr 2025 13:04:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jens
+ Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>, Blake Jones
+ <blakejones@google.com>, Beau Belgrave <beaub@linux.microsoft.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>
+Subject: Re: [PATCH v5 00/17] perf: Deferred unwinding of user space stack
+ traces
+Message-ID: <20250424130421.53877e58@gandalf.local.home>
+In-Reply-To: <20250424162529.686762589@goodmis.org>
+References: <20250424162529.686762589@goodmis.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvOanQBYXKSg7C6EU30k8sTRC0JRPJXYu7wWK51w38QUQ@mail.gmail.com>
- <20250407183716.796891-1-ojeda@kernel.org> <CA+G9fYt4otQK4pHv8pJBW9e28yHSGCDncKquwuJiJ_1ou0pq0w@mail.gmail.com>
- <CANiq72napRCGp3Z-xZJaA9zcgREe3Xy5efW8VW=NEZ13DAy+Xw@mail.gmail.com>
- <aAKrq2InExQk7f_k@dell-precision-5540> <CANiq72nPtr1FE_SBU_+wHVptfjnoSGaxjP4LWMzVbOF0M6LvnA@mail.gmail.com>
- <aAo_F_UP1Gd4jHlZ@dell-precision-5540>
-In-Reply-To: <aAo_F_UP1Gd4jHlZ@dell-precision-5540>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 24 Apr 2025 19:01:54 +0200
-X-Gm-Features: ATxdqUEts6lho2tNYy_qoenKS98bA8dTzs4eIhsUcBZzMfNVYnhaeESzWLd5fBg
-Message-ID: <CANiq72mPZ-ik8k+04BarAu26A1=rV_y7GYZHkFnCezW4jpXq+g@mail.gmail.com>
-Subject: Re: Build: arm rustgcc unknown argument '-mno-fdpic'
-To: Ben Wolsieffer <ben.wolsieffer@hefring.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Schrrefl <chrisi.schrefl@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, 
-	Rudraksha Gupta <guptarud@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, anders.roxell@linaro.org, arnd@arndb.de, 
-	dan.carpenter@linaro.org, laura.nao@collabora.com, 
-	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
-	torvalds@linux-foundation.org, Nick Clifton <nickc@redhat.com>, 
-	Richard Earnshaw <richard.earnshaw@arm.com>, Ramana Radhakrishnan <ramanara@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2025 at 3:39=E2=80=AFPM Ben Wolsieffer
-<ben.wolsieffer@hefring.com> wrote:
->
-> -mno-fdpic disables a GCC feature that we don't want for kernel builds.
-> clang does not support this feature, so it always behaves as though
-> -mno-fdpic is passed. Therefore, it should be fine to mix the two, at
-> least as far as FDPIC is concerned.
 
-Great, thanks a lot for confirming it should be all good, very much appreci=
-ated!
+Lovely, gmail doesn't like my email :-p
 
-Naresh: would you like to send the diff as a formal patch since you
-already tested it etc.?
+-- Steve
 
-Cheers,
-Miguel
+--------
+This is the mail system at host dfw.source.kernel.org.
+
+I'm sorry to have to inform you that your message could not
+be delivered to one or more recipients. It's attached below.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<olsajiri@gmail.com>: host gmail-smtp-in.l.google.com[142.251.116.27] said:
+    550-5.7.1 [139.178.84.217      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to
+    Gmail, 550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError
+    46e09a7af769-7304f39134fsi989826a34.281 - gsmtp (in reply to end of DATA
+    command)
+
+<arnaldo.melo@gmail.com>: host gmail-smtp-in.l.google.com[142.251.116.27] said:
+    550-5.7.1 [139.178.84.217      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to
+    Gmail, 550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError
+    006d021491bc7-606469381a0si978892eaf.76 - gsmtp (in reply to end of DATA
+    command)
+
+<masami.hiramatsu@gmail.com>: host gmail-smtp-in.l.google.com[74.125.20.26]
+    said: 550-5.7.1 [172.234.252.31      12] Gmail has detected that this
+    message is 550-5.7.1 likely unsolicited mail. To reduce the amount of spam
+    sent to Gmail, 550-5.7.1 this message has been blocked. For more
+    information, go to 550 5.7.1
+    https://support.google.com/mail/?p=UnsolicitedMessageError
+    41be03b00d2f7-b15fb7b1684si2312872a12.593 - gsmtp (in reply to end of DATA
+    command)
+
+<mingo.kernel.org@gmail.com>: host gmail-smtp-in.l.google.com[74.125.20.26]
+    said: 550-5.7.1 [172.234.252.31      12] Gmail has detected that this
+    message is 550-5.7.1 likely unsolicited mail. To reduce the amount of spam
+    sent to Gmail, 550-5.7.1 this message has been blocked. For more
+    information, go to 550 5.7.1
+    https://support.google.com/mail/?p=UnsolicitedMessageError
+    d9443c01a7336-22db4fdfc07si22432465ad.243 - gsmtp (in reply to end of DATA
+    command)
 
