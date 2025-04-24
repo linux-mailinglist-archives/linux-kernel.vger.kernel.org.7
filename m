@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-617867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAA5A9A708
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:55:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE26A9A6F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009629269E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2C1189EBAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EE225A47;
-	Thu, 24 Apr 2025 08:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9503D223DDB;
+	Thu, 24 Apr 2025 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVV6F8V1"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiD/gIdY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88BE225A40
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 08:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D842322332D;
+	Thu, 24 Apr 2025 08:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745484682; cv=none; b=Hnttu7BLfV0YTQfUf22pj2jsShOFDLLeX82rpY/91Pf0pRTK81ct1z0Abpx5SpG/BETM2ppWQw2XMgXl8HZ3g6xQ/iujLXj/lJzKfzXTh7B2es9JoYOKokdJDT9kg4CAOAmc09EYchJmIo+5iFTCCxc7qfl18Ktbfx6RzV4/eds=
+	t=1745484675; cv=none; b=FP4oWZzQMjK1EmP3K2ReKq6NPEwjlSJjLErh2BNjm+Qj6xW4NZOePn7aXch7lLewaAcimsK3on60V4VZcYCv4VZ7kPCu7fz1XFA0TZi2LPEldrVjilLECPdHG+NDEHDDNl8dCddyIhrXXjOBeaQgq+eXyxYG1jyxka2vaCI4ueo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745484682; c=relaxed/simple;
-	bh=WTjakC4kAWMQ2xS/yccnwI529/S0/2AvLYfyLQS5TVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DftalY2amx5t3qsYSmsJ4wHhf4WwgwDokgkkwIHlGQX4lQOOdoIVj5qCJi62rALUHNUOaTSxABkRIMQqDAjPDjt1qiBXYTO4SPqCRGRAQkXWLNvX5LBW2Ae6Y8xlDsB/za6u3RKdgWdfPLL1XenqmcmZZYW/ghCTsLPOSlrCxO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EVV6F8V1; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so8425621fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 01:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745484679; x=1746089479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WTjakC4kAWMQ2xS/yccnwI529/S0/2AvLYfyLQS5TVI=;
-        b=EVV6F8V16wA/YF7LAuKZs4BxHwPIt6sB1mPWC/guD5RcoZOuMtxW/jo/+WFavvXhAu
-         SaXtLeRvpYnQAqiiF0GIojHPwXOpFnXscIpEG+Brn6cqwR46c5yRw2LgphPSkwKiiHKI
-         uuANMD+BmeEmX1cStdaboKJO6hh+hRWBH3LxZsvWPVAxAF1HGjZ2o+sh1lXb51C6UDxz
-         DPKDzojpxr9p+VJcHXnDbXygVHn4b9qcbeDFAMrL7Qj/CzRqjuDEfw1ubpBYQJLMRkDn
-         TgcVwFBpxqKFscO5zmM7+TS36EPxcNTt2ZVMTtXd31fExPnwagUGTYyTE7yp76zvFvmY
-         fUNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745484679; x=1746089479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WTjakC4kAWMQ2xS/yccnwI529/S0/2AvLYfyLQS5TVI=;
-        b=E4vz4m4Gvw+xHaLJIhlrvRAN3mRh9WUWflFJaSish0FdcNvmV11Lty4Vps+7Vwlur6
-         2iURKaJ3zSaydUpfxwpM5c+WpARcpWg9kEuSSCjFqcbLrqlsGZrgN7OfTOslmSNab0OG
-         pQsA0U8urDEAey2w4iv8D1brt5cbOoq8yheiU2diYm6AfEiN7Mrg6GRIW9IUpkwzVXhm
-         osM6wyctUHZv1ZIFreaNlfC/f4V4EgspLHrcJsBV3amrYpVNWUeoDcXqL1F3HRc7rxEV
-         9/Ec0/3e3JM0lVcILFccpqlor6qPaPfNcY1bRiyWEn1pO+IOUR7iHN10cSnozjgLCR6s
-         t5xA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMSC9e9xdZUnuZQmDCCunfj1SPPKa3CEuprCAJfvaYYb0GRNSUjAn0RfyWPa0Q7WyKW/OLqXTs6b658oM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtXcm5gYWAw9dnGtGxKm+tKKU5DfJmfJFvZDTz5aTyQ/stbfIA
-	Piw19PGtMMAK1VVzV5BmCoWuYMQc0ekeMMS9AjiknD3xARvoX8zGQl8UklvO7K5ISNDDIxMcf9n
-	C/cyckUpr1PbIm+DqO3H6E3qNVVQmSty+mbFKCw==
-X-Gm-Gg: ASbGncswz2GOLOPaheK7Z0O4ljHZLjB8PWDnOir/tW+Fjv/Z/zgOqV6zDxEgh62munA
-	ymj2fmt0vxiGzwlBuE3zhir4xdCaiL0MZjxaW4joNjYiBk/Wtk34M0HCr19lbzxNlDaKK3ZHSVG
-	Wb4Xn517t3Kz1zD2d58W9sSQ==
-X-Google-Smtp-Source: AGHT+IHVUjEPXYrY3sHIef5LKhQER52yuzf898RP4j9oF4QvMsHg66AhVu0yfj0NhwOcjO4n0yujHvjloTqfizgTfb4=
-X-Received: by 2002:a05:651c:b28:b0:30c:12b8:fb8a with SMTP id
- 38308e7fff4ca-3179bd52581mr6677701fa.0.1745484678572; Thu, 24 Apr 2025
- 01:51:18 -0700 (PDT)
+	s=arc-20240116; t=1745484675; c=relaxed/simple;
+	bh=i8sxy25Tt/JCsGjOPsAEnQWtVFk7TqgKi1nqUCJYo0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QX9s9eYnz6XGOO49tCoQLJZNIqQKNKrXy3S2qOfa35ehpspZ9JJHqeCI17s47aWdACTxbc/urKuJ7YiINBpfwWlPF882JWaGYSrJ0ck8n2AyyAwcWcgOCe0a1rAPMM9AjSOgIfyCVBX3RxePz8R2ypbqW63SE/Tufo2BADHPNfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiD/gIdY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58BEC4CEEB;
+	Thu, 24 Apr 2025 08:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745484674;
+	bh=i8sxy25Tt/JCsGjOPsAEnQWtVFk7TqgKi1nqUCJYo0c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UiD/gIdYNgcXGNixyVYKFuLxrj86hQtPf1AsWEFkxTyTZ5K4I1W8vq6tq+WqDRo2J
+	 gaQBJjl1NiXcZb/TdVMKOEec/8+hzyQuhFwZH6gf1EQXLZWZX8uJmpMp+XXUJaPoO2
+	 6qIfpOLy/7fsltBsMqSWJ+YirYKkP6ob7nsSy0y/jtHwrHsc4w3cZY0JleXsj19/dU
+	 gmsIoz6GSc2u/HZFzduD0LxAmiFKY23REDs4nz+nk+tuNyVjp7vo4lrMUeMwaf9kjm
+	 6vD15hVdPEaTAdK40CVhHQPqKJ+Bvc81khsHWBofoal71t3b4KeErT21A2h9JCrbJM
+	 gvjInxef2IVng==
+Message-ID: <cddf9688-fbb9-4176-83d3-0aa693931457@kernel.org>
+Date: Thu, 24 Apr 2025 10:51:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424062017.652969-1-uwu@icenowy.me> <20250424062017.652969-2-uwu@icenowy.me>
-In-Reply-To: <20250424062017.652969-2-uwu@icenowy.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 24 Apr 2025 10:51:05 +0200
-X-Gm-Features: ATxdqUHVq_nL22G9xrtOjqSrYO8fC8-z8I_XXvLVBIP2wzvRpiBlPgb7WiVSR5s
-Message-ID: <CACRpkdaX0hTJSsZN6YNXASY3noZw=JsOSXzFBbxKegJ6A+2usA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: starfive,jh7110: add
- PAD_INTERNAL_* virtual pins
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 01/10] dt-bindings: ASoC: Document Tegra264 APE
+ support
+To: "Sheetal ." <sheetal@nvidia.com>, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-sound@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.com,
+ jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
+ spujar@nvidia.com
+References: <20250422093815.506810-1-sheetal@nvidia.com>
+ <20250422093815.506810-2-sheetal@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250422093815.506810-2-sheetal@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2025 at 8:20=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me> wrot=
-e:
+On 22/04/2025 11:38, Sheetal . wrote:
+> From: Sheetal <sheetal@nvidia.com>
+> 
+> Add Tegra264 compatible strings to APE subsystem device bindings:
+> - audio-graph-card: Due to different PLL clock rate.
+> - admaif: Due to 32 channels supported and register offset changes.
+> - i2s: Due to 32 channels supported and register offset changes.
+> - amx/adx: Due to 32 channels supported and register offset changes.
+> - asrc: Due to different ARAM address.
+> - ahub: Due to AHUB IPs number of instances updates.
+> - for future proofing the T264 compatibility is added for other device
+>   nodes.
+> 
+Implement the feedback given in previous patchset submission.
 
-> The JH7110 SoC could support internal GPI signals to be routed to not
-> external GPIO but internal low/high levels.
->
-> Add two macros, PAD_INTERNAL_LOW and PAD_INTERNAL_HIGH, as two virtual
-> "pads" to represent internal GPI sources with fixed low/high levels.
->
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-
-As per my other reply in the previous post, I think this should be
-handled internal in the kernel instead using a tighter integration between
-the GPIO and pin control parts of the driver and utilizing the
-gpio-specific struct pinmux_ops callbacks.
-
-This solution looks like software configuration disguised as hardware
-configuration.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
 
