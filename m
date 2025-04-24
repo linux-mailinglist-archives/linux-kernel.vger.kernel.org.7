@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-618603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC94A9B0A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21E4A9B0AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FA24A2009
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4398A3B1B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC34E293B4A;
-	Thu, 24 Apr 2025 14:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6E22949FA;
+	Thu, 24 Apr 2025 14:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rQRWxIZ8"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3uDnySM"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4EF291177
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13D52918E6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504064; cv=none; b=Cs4s2PIP2+7DCVxK7zUhenV/whIBMsSpJLeDgFX4j20FBykzbGf3lKoov5p/3fH5V3krQ7lXOsqVjYLkuYAoqlJkwe1evZaWWH/tbX7Qe9j8yEePJEyiwnZ/pnFMmBMiUIra4VEQrTVIZg8O7IVMPHy/DSoxSKZoTS4ulmkSCtw=
+	t=1745504066; cv=none; b=c+s5I4fozZiSQYapDowFvZ+uRRKOm4DBGnMVW6stRsqWaXPiqXP+bY07cfXW1Lv3mmL+tiFQSmX/T2NKugeHLkh8NR784TkcO1X/O0gpIT5K383lFtBid2edeByBVRzYFDRnmo/8DQlhJrUFIdOpemrNfFBzy6wMrWHtbO7DvdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504064; c=relaxed/simple;
-	bh=l8MXGFGw31uuwPrLVCURxj+dBhiUP5Eq/JDGE+Ioyyo=;
+	s=arc-20240116; t=1745504066; c=relaxed/simple;
+	bh=Yi4ZtnxtwEwwcGq5Pu3T2/cALo63bY4y5tVWXmp+Y3c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aTchR76HhnFxPEQVix0P4olVbiBY6+BI7eyruJd5ShmPt5Gq3a+SfVFL1gDBt3kYQU1ZQ8gYCTb5JSHhMdO7L5CouEgSKps8gpqacU7giDkXZEyFtDCrLg15WX9rThNJRk15h8e+X/DMwHV3Cz/afmp+TqdeFG5eudjdK6/q0a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rQRWxIZ8; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=O6mrpRaYeD8jO7Frt3bTgyvaevbLJj410EEDk0Roa02xNSPV7zGtJ/q3lXNrJ0bsb1P0GqLw/h4l6XT5cI24OSo+kKS6M7IJHpao0ip0vHNhAskYXBCZPFNG00xIGzv0DaufkjSrNn5wb6m25Okvc0/0s/lqi0QW+IF7i6kjNYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3uDnySM; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a064a3e143so567539f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:14:21 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c0dfba946so793963f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745504060; x=1746108860; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745504061; x=1746108861; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ULK/WgQrAoOKgv7yTbnqoplbgLc/ybTV2ol4z7wD4V8=;
-        b=rQRWxIZ8fpXO6y7A7UEoBuCu58ZSGVRY0fjpUvj5yf8BrVkOihzZTjogYnJHmrD9OG
-         5bBkzKMlKMuW7rijJvKvn5tzGE4ax3rinG5VQMmuwWDDuQieJiCbQmPJDAMonyD/KNBe
-         cfZbIYruffocTqvtlrq7tyjPuoXof+RxuzdU2huHJcpAqTA1ujaVCIQRTZKoTztXvzwh
-         qZMS1XOZsce0KykvQTP+oDgnnDxzTkiBHhsH6l3NUVVKKeZ39mJEAUhN2/65eho8OO4X
-         IHXSFmu5YI3FeaFhWrHR1akw5UVoAhlIobKVnFlNNIkIfax5YE5OOBHoU4//QWZhg5DI
-         vofQ==
+        bh=KqI809F7wKcnGZMELURBH0WwNUVNARNAdRqZ1Gwku8c=;
+        b=P3uDnySMxJTWQ7/cn0c6QZfS+2mrcsS4YkITm9Jqvkwwd5JKcVX1YIHlyx536M/Icz
+         4zoZfnwIj3oiZI26ksGkdThqhKWvQPNuKpAtg0fkVVqb0ht0/qc+RXXvjh9+I7NEmj82
+         l2vILtAz+xiQF9fd9P4TADL3bYT0NkFm03GbsGx9OF16fSnpc8NRO2c8JfG9wsP2i7AG
+         5RmNr/QZ9Rn4X7SQjxqek8nWQOPb2h12lqjSgAFaeCHojqBNfD7Rc22d4ZYqnlClkN05
+         bPkc1avSLqwWPj47rGA9wVVzjqkp1NktobmDDPe/qldAM3KePajlpvrZKB615gfDflo7
+         4MJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745504060; x=1746108860;
+        d=1e100.net; s=20230601; t=1745504061; x=1746108861;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ULK/WgQrAoOKgv7yTbnqoplbgLc/ybTV2ol4z7wD4V8=;
-        b=ZYu32yI2AKFxezuPgJYKdH9keDvlb0DUKGXirTfYwaXz4EWA9mmqDak9u8jHyi2xeI
-         Rl9BkaRinpUpQU4+p4L/pqIvxDVpkxtMe3XfpW0tW7pxV+XHd6VgKjpqnqReJFzG/Pq0
-         wN02nYquqkPQUOYC1npZURSxL4e/zLON4VEy6Cv+Rhjl4yZ0WMlFkY5fMfkdME+n6sSD
-         ZkkgHW77O608Dv0YoAWLSWsYeufC9VASgzqGZhLhSoiWDIWCCsKXuLQ5BHApRPJDU0v2
-         bfaKCJu0Ue++qf9QKxSt2nklSUt2nzmltbAeejJyy404J/lT45pI4uUMSIBGi7VxJxu3
-         u9BQ==
-X-Gm-Message-State: AOJu0Ywfo6a5tqI4W3Zp5gD2g4EHWQbUBneG8DBUoobDQAbOP0NkSXhS
-	vg1QoKQux0iKG9YXN+BevajeInMCGGOAXlLN6Q4Udsuwrv1l0cM6GADmEVpaLO9Tc/2UlnKa6GJ
-	a
-X-Gm-Gg: ASbGnctqnpEUSqTTXQ0Dpkvxew8OmhT1O7zawzAtxn0vLBXLsq+YKuz3ivAPBRDzLIs
-	YG7Zq4DWOkp9c41eSLzZA7CrkRFVrVfpUfA9U2NVtsoHGvveKwfSjt+FMUpDYCeTYDcYd8v1L2K
-	+bpmLSK3GKJVb+cAbcEx6x4n6GJAi92DrnAntDr8btkAl1/dxv/1UiWPwtreT3x1m/nufnuWbYB
-	V5FHd/vOpde9TXvuSSm/qC1u0XuQZ+VVciesiA5L4rL+f5tfGDrOawwWn/imUXdyIL+tkQ6s5Gp
-	EE3Rh/NMswToPp1BajJnQLRJnA3qTZ7MBKxruXS42Qq14Wn25culC547PBz3r6He0ONyTcf7VE6
-	yafi66U4wOSca8YfA
-X-Google-Smtp-Source: AGHT+IFE5/vk9/X0Lu9aLCAdTyRnF+oi4a9Eo+hij9nbvfLjJtzlSBwWD4MqvNxQh/Fi8Qjri674AQ==
-X-Received: by 2002:a05:6000:220c:b0:3a0:65bc:3543 with SMTP id ffacd0b85a97d-3a06cf65a2bmr2283431f8f.35.1745504059899;
-        Thu, 24 Apr 2025 07:14:19 -0700 (PDT)
+        bh=KqI809F7wKcnGZMELURBH0WwNUVNARNAdRqZ1Gwku8c=;
+        b=btbY62sapx0ZmMqqtzwfKk+3Vz7U+Pjn/yheG4qxvotVpg+rBOfb8vT4p0CfXq9vJL
+         Q3yKAlO4OeJ16HioPe6vmzVXVckF5tWubk+7ra4Z4c+gVk4llMBvU5Xp+dYeM5hz4NIL
+         FDr7ZG9HWDw9M/v62yXEzGLHL7wmaiXdDavHzoLTvUX6pqdoPizSglr/VIRbHo1++WPb
+         nx0++36Cn1YOtSdcapVBeU5lK19parxG1qM5ECHqwOG1AeXbkU3yDfMV5Ig4gc99pxmj
+         b5Do33fvELzNLoPesGL8RvE39gePbQW0Lx5DMjVC4LQKjgfhRWGL+EW0Iia75rJSf7kk
+         o2mQ==
+X-Gm-Message-State: AOJu0YyPBF6j7nH22aGHO03yAYAWOcD1689QKipB9i+84Cbe8X8GpBC0
+	BjiKEQNv/4dw1DDybOQohw6ntM2xx2Az+r27CRugDzlXnfaM9OIOtLWZNGMGlblIW44JYBPimtY
+	s
+X-Gm-Gg: ASbGncv4soHepEka2LtvaocJNF4yvjkWcS5W/8dDJjn4GFSoB5Qe0lv6XfRrBFZ+j7H
+	XPTcEhA1n8cFuJk0oAa4kJNVgT5wp6GCWPBIwUvNyLcHwdtk4H/uXFBiCLGbNd+0DOgCI3rYEft
+	SVDnsMk6kulWEj8ojN/Y34+x0xNIabLGS5E2Qp8p4fkLv5N9RuyaeHQBT6U49H6McT1ulMq7rmu
+	aaOK3qL/SgsjK81MklLZt9gD7Kv38zqb0Vkv6n2/5Zg4s7lucnLPdl4AkX9HhwVzHdgHHZ0WRt0
+	PRp/hGa1i0yB6X1yDPrALDJaqAIYjvGfRjuGPXq32cM+gd4El4OWFUREZsPC0D4UrIFWdFqPOEY
+	lw+//neQ+KaLVqnXf
+X-Google-Smtp-Source: AGHT+IHu0xINB3AI0ORmGPEOw/RldxQp1Lf0CLnYLBWHSDl9/V/LyKw8BRQRYMCgyV0pnZHvllr1jA==
+X-Received: by 2002:a5d:584e:0:b0:39a:c9ac:cd3a with SMTP id ffacd0b85a97d-3a06cfa9c91mr2435184f8f.51.1745504061234;
+        Thu, 24 Apr 2025 07:14:21 -0700 (PDT)
 Received: from seksu.systems-nuts.com (stevens.inf.ed.ac.uk. [129.215.164.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8150sm2199951f8f.7.2025.04.24.07.14.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8150sm2199951f8f.7.2025.04.24.07.14.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 07:14:19 -0700 (PDT)
+        Thu, 24 Apr 2025 07:14:20 -0700 (PDT)
 From: Karim Manaouil <karim.manaouil@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org,
@@ -101,10 +101,11 @@ Cc: Karim Manaouil <karim.manaouil@linaro.org>,
 	Murali Nalajala <mnalajal@quicinc.com>,
 	Sreenivasulu Chalamcharla <sreeniva@qti.qualcomm.com>,
 	Trilok Soni <tsoni@quicinc.com>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: [RFC PATCH 26/34] gunyah: Share memory parcels
-Date: Thu, 24 Apr 2025 15:13:33 +0100
-Message-Id: <20250424141341.841734-27-karim.manaouil@linaro.org>
+	Stefan Schmidt <stefan.schmidt@linaro.org>,
+	Elliot Berman <quic_eberman@quicinc.com>
+Subject: [RFC PATCH 27/34] gunyah: Share guest VM dtb configuration to Gunyah
+Date: Thu, 24 Apr 2025 15:13:34 +0100
+Message-Id: <20250424141341.841734-28-karim.manaouil@linaro.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250424141341.841734-1-karim.manaouil@linaro.org>
 References: <20250424141341.841734-1-karim.manaouil@linaro.org>
@@ -116,108 +117,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Gunyah Resource Manager sets up a virtual machine based on a device
-tree which lives in guest memory. Resource manager requires this memory
-to be provided as a memory parcel for it to read and manipulate.
-Implement a function to construct a memory parcel from the guest's
-pinned memory pages.
+From: Elliot Berman <quic_eberman@quicinc.com>
 
+Gunyah Resource Manager sets up a virtual machine based on a device tree
+which lives in guest memory. Resource manager requires this memory to be
+provided as a memory parcel for it to read and manipulate. Construct a
+memory parcel, lend it to the virtual machine, and inform resource
+manager about the device tree location (the memory parcel ID and offset
+into the memory parcel).
+
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
 Signed-off-by: Karim Manaouil <karim.manaouil@linaro.org>
 ---
- arch/arm64/kvm/gunyah.c | 80 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+ arch/arm64/kvm/gunyah.c | 27 ++++++++++++++++++++++++---
+ include/linux/gunyah.h  | 10 ++++++++++
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/kvm/gunyah.c b/arch/arm64/kvm/gunyah.c
-index 7216db642174..ef0971146b56 100644
+index ef0971146b56..687f2beea4e7 100644
 --- a/arch/arm64/kvm/gunyah.c
 +++ b/arch/arm64/kvm/gunyah.c
-@@ -634,6 +634,86 @@ static int gunyah_memory_reclaim_folio(struct gunyah_vm *ghvm,
- 	return ret;
- }
+@@ -699,8 +699,7 @@ static int gunyah_reclaim_memory_parcel(struct gunyah_vm *ghvm,
+ 	if (parcel->mem_handle != GUNYAH_MEM_HANDLE_INVAL) {
+ 		ret = gunyah_rm_mem_reclaim(ghvm->rm, parcel);
+ 		if (ret) {
+-			dev_err(ghvm->parent, "Failed to reclaim parcel: %d\n",
+-				ret);
++			pr_err("Failed to reclaim parcel: %d\n", ret);
+ 			/* We can't reclaim the pages -- hold onto the pages
+ 			 * forever because we don't know what state the memory
+ 			 * is in
+@@ -1574,6 +1573,7 @@ static void gunyah_vm_stop(struct gunyah_vm *ghvm)
  
-+static int gunyah_share_memory_parcel(struct gunyah_vm *ghvm,
-+		struct gunyah_rm_mem_parcel *parcel, gfn_t gfn, u64 nr)
-+{
-+	struct kvm *kvm = &ghvm->kvm;
-+	struct kvm_memory_slot *memslot;
-+	struct page **pages;
-+	int ret;
-+	u64 i;
-+
-+	if (!nr)
-+		return -EINVAL;
-+
-+	memslot = gfn_to_memslot(kvm, gfn);
-+	if (!memslot)
-+		return -ENOENT;
-+
-+	parcel->mem_entries = kcalloc(nr, sizeof(*parcel->mem_entries), GFP_KERNEL);
-+	if (!parcel->mem_entries)
-+		return -ENOMEM;
-+	parcel->n_mem_entries = nr;
-+
-+	pages = memslot->arch.pages + (gfn - memslot->base_gfn);
-+
-+	for (i = 0; i < nr; i++) {
-+		parcel->mem_entries[i].size = cpu_to_le64(PAGE_SIZE);
-+		parcel->mem_entries[i].phys_addr = cpu_to_le64(page_to_phys(pages[i]));
-+	}
-+
-+	parcel->n_acl_entries = 1;
-+	parcel->acl_entries = kcalloc(parcel->n_acl_entries,
-+				      sizeof(*parcel->acl_entries), GFP_KERNEL);
-+	if (!parcel->n_acl_entries) {
-+		ret = -ENOMEM;
-+		goto free_entries;
-+	}
-+	parcel->acl_entries[0].vmid = cpu_to_le16(ghvm->vmid);
-+	parcel->acl_entries[0].perms |= GUNYAH_RM_ACL_R;
-+	parcel->acl_entries[0].perms |= GUNYAH_RM_ACL_W;
-+	parcel->acl_entries[0].perms |= GUNYAH_RM_ACL_X;
-+	parcel->mem_handle = GUNYAH_MEM_HANDLE_INVAL;
-+
-+	ret = gunyah_rm_mem_share(ghvm->rm, parcel);
-+	if (ret)
-+		goto free_acl;
-+
-+	return ret;
-+free_acl:
-+	kfree(parcel->acl_entries);
-+	parcel->acl_entries = NULL;
-+free_entries:
-+	kfree(parcel->mem_entries);
-+	parcel->mem_entries = NULL;
-+	parcel->n_mem_entries = 0;
-+
-+	return ret;
-+}
-+
-+static int gunyah_reclaim_memory_parcel(struct gunyah_vm *ghvm,
-+		struct gunyah_rm_mem_parcel *parcel, gfn_t gfn, u64 nr)
-+{
-+	int ret;
-+
-+	if (parcel->mem_handle != GUNYAH_MEM_HANDLE_INVAL) {
-+		ret = gunyah_rm_mem_reclaim(ghvm->rm, parcel);
-+		if (ret) {
-+			dev_err(ghvm->parent, "Failed to reclaim parcel: %d\n",
-+				ret);
-+			/* We can't reclaim the pages -- hold onto the pages
-+			 * forever because we don't know what state the memory
-+			 * is in
-+			 */
-+			return ret;
-+		}
-+		parcel->mem_handle = GUNYAH_MEM_HANDLE_INVAL;
-+		kfree(parcel->mem_entries);
-+		kfree(parcel->acl_entries);
-+	}
-+	return 0;
-+}
-+
- int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+ static int gunyah_vm_start(struct gunyah_vm *ghvm)
  {
- 	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
++	struct kvm *kvm = &ghvm->kvm;
+ 	struct gunyah_rm_hyp_resources *resources;
+ 	struct gunyah_resource *ghrsc;
+ 	int i, n, ret;
+@@ -1597,7 +1597,18 @@ static int gunyah_vm_start(struct gunyah_vm *ghvm)
+ 	ghvm->vmid = ret;
+ 	ghvm->vm_status = GUNYAH_RM_VM_STATUS_LOAD;
+ 
+-	ret = gunyah_rm_vm_configure(ghvm->rm, ghvm->vmid, ghvm->auth, 0, 0, 0, 0, 0);
++	ghvm->dtb.parcel_start = gpa_to_gfn(kvm->dtb.guest_phys_addr);
++	ghvm->dtb.parcel_pages = gpa_to_gfn(kvm->dtb.size);
++	ret = gunyah_share_memory_parcel(ghvm, &ghvm->dtb.parcel,
++					 ghvm->dtb.parcel_start,
++					 ghvm->dtb.parcel_pages);
++	if (ret) {
++		pr_warn("Failed to allocate parcel for DTB: %d\n", ret);
++		goto err;
++	}
++
++	ret = gunyah_rm_vm_configure(ghvm->rm, ghvm->vmid, ghvm->auth,
++			ghvm->dtb.parcel.mem_handle, 0, 0, 0, kvm->dtb.size);
+ 	if (ret) {
+ 		pr_warn("Failed to configure VM: %d\n", ret);
+ 		goto err;
+@@ -1698,6 +1709,16 @@ static void gunyah_destroy_vm(struct gunyah_vm *ghvm)
+ 	if (ghvm->vm_status == GUNYAH_RM_VM_STATUS_RUNNING)
+ 		gunyah_vm_stop(ghvm);
+ 
++	if (ghvm->vm_status == GUNYAH_RM_VM_STATUS_LOAD ||
++	    ghvm->vm_status == GUNYAH_RM_VM_STATUS_READY ||
++	    ghvm->vm_status == GUNYAH_RM_VM_STATUS_INIT_FAILED) {
++		ret = gunyah_reclaim_memory_parcel(ghvm, &ghvm->dtb.parcel,
++						 ghvm->dtb.parcel_start,
++						 ghvm->dtb.parcel_pages);
++		if (ret)
++			pr_err("Failed to reclaim DTB parcel: %d\n", ret);
++	}
++
+ 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->addrspace_ticket);
+ 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->host_shared_extent_ticket);
+ 	gunyah_vm_remove_resource_ticket(ghvm, &ghvm->host_private_extent_ticket);
+diff --git a/include/linux/gunyah.h b/include/linux/gunyah.h
+index 1d363ab8967a..72aafc813664 100644
+--- a/include/linux/gunyah.h
++++ b/include/linux/gunyah.h
+@@ -94,6 +94,12 @@ struct gunyah_vm_resource_ticket {
+  * @resource_tickets: List of &struct gunyah_vm_resource_ticket
+  * @auth: Authentication mechanism to be used by resource manager when
+  *        launching the VM
++ * @dtb: For tracking dtb configuration when launching the VM
++ * @dtb.parcel_start: Guest frame number where the memory parcel that we lent to
++ *                    VM (DTB could start in middle of folio; we lend entire
++ *                    folio; parcel_start is start of the folio)
++ * @dtb.parcel_pages: Number of pages lent for the memory parcel
++ * @dtb.parcel: Data for resource manager to lend the parcel
+  */
+ struct gunyah_vm {
+ 	u16 vmid;
+@@ -113,6 +119,10 @@ struct gunyah_vm {
+ 	struct gunyah_vm_resource_ticket host_shared_extent_ticket;
+ 	struct gunyah_vm_resource_ticket guest_private_extent_ticket;
+ 	struct gunyah_vm_resource_ticket guest_shared_extent_ticket;
++	struct {
++		gfn_t parcel_start, parcel_pages;
++		struct gunyah_rm_mem_parcel parcel;
++	} dtb;
+ };
+ 
+ /**
 -- 
 2.39.5
 
