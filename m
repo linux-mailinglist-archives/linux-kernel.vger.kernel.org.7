@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-618793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FB2A9B3B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79181A9B3CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118447AE49B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:19:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBBD19A00E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF74127FD7D;
-	Thu, 24 Apr 2025 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F90284B53;
+	Thu, 24 Apr 2025 16:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSobpsIx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uhauOXai"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4377B5BAF0;
-	Thu, 24 Apr 2025 16:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2FB288C9F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745511623; cv=none; b=ldx72u8cw/iHUcSzkeqq1vNml2qAVX9CWfIxtSO7xygfcrrxyuJbqSeuBmDUvji6Pyg740DoRG7KZW2EEKIB/PGn9t37NIJY6C5RNWJaOTJ08E99TAw51wZcyxdsB6+lbqjHa504tFPqzbeK6tw2ZoIbhDngrjT76VmJF1ubl8s=
+	t=1745511641; cv=none; b=Fcd2ghgIhxXs/AI4y2x6ikUGTcAIOcUK6snHkAgd7OypUnuKO2+ky42ul7UMtZVWuTeB8VKkJW3UYrvXnfGferp/3EJtHrvXCCr2vx65dhV5mtpqG2Id33vlPrm4QXypTCR6KmUtokqQKl5NG3ynuvGXzLOSWklBvQNeeqxIaOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745511623; c=relaxed/simple;
-	bh=6ljqckhANoBqw3YchiUNPsDCe7CdD/3KO0hDL4Rve1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=in8wsDj0uq0euq/m6+vJNMLlSqdElxtlcnCuFAxuHk+nI4AQ/DZykxQuhi1E1IAflHnZnk7Dpg4y2JNn7OaglHIsOMfNYSHlydkEAZ7DAZcvpvqKrSf+k4eBxuuClawl/cKCevNvWUFicmFOLE2nQ03PyfM0yDmUoRUEmv6HRKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSobpsIx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ECCCC4CEE3;
-	Thu, 24 Apr 2025 16:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745511623;
-	bh=6ljqckhANoBqw3YchiUNPsDCe7CdD/3KO0hDL4Rve1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kSobpsIxRHPCbYVAvP9UEgh8ge5jddMoUCQ0yOa137tXWJaKce0wErqAAzMGICdy6
-	 vAWlYVdw5+jUZAbI3fFFSy+ZGqv3YE4y9KqMGL4yZKO9kmnUC7rRt7HpmcJiabdW6U
-	 AVkKuuNNtX1IiIAwhb+5tqtuV0R8yCfzzkZ0m0CVTap39G3B7V8KnVp1etohxI1qKs
-	 YOoLBo+KMEsL4imPfJGXwTALJGBUGjcEWK6XGg28jfX3urBpYO3+EoGkG0cRcLcp0O
-	 M1e3ihpfQ9nVEL7ztFtGCw/BcuIGUrd/aMHY+xQJf2jCbHD/dAMVZFzoxpIQ8aDx3X
-	 6dAocR38TFrNw==
-Date: Thu, 24 Apr 2025 18:20:17 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	ravi.bangoria@amd.com, linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1745511641; c=relaxed/simple;
+	bh=aQN5teKVGNGQm4z2BGpbj1y8aIdHhsEm4YbiL+C0864=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OR7v5gxs7dzKqZf5TRHdyL/oW1JuKvqWqfk7ADbqvjLdGgeH5dEB/jfBkiWXggMno3P311JCVbdh8b6CZBR1S8KVUe4q3eEH5R6w+Cva8avoUQLyxEho2SxVPLVJLQpCRQSuZc20hVqCxdTURBxbLmLYRiTyQUQy0zUxAemEbz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uhauOXai; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-af589091049so868907a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:20:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745511639; x=1746116439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z1EcXJf5+RLLmpglmtLJhsY9yapkHMCfsVON2VNDCH0=;
+        b=uhauOXaie3VIlx6jiF279viqG4pZgd6vYYbugKuNKexgresp5jqsG/otA9RknSXMYS
+         Bugnq9kR+aLzqHpz0BOH2vYCl18eqNuiWF6VWsXyGvUEuxKKnz/Nzb/5q49DaraqyH4F
+         zFlg867D1IaZA4O/QfD9T3dG+XcyAvxkovvdx1qeZpVq+dSyK1TGyJYTqO/QQxeKFX2z
+         FPP5ZHwJ61hRaP5qumvoayM8AYawicEkiuiVT+d3EeZm5JL9hRZHO/HvMnvORUw19paf
+         Uf6soZ3eCekUGU4Dnci1SBjSxSkNe+2piOywW5TrXQgXcaHXxK35ZSvweZpO5Tjk8B06
+         0bhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745511639; x=1746116439;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z1EcXJf5+RLLmpglmtLJhsY9yapkHMCfsVON2VNDCH0=;
+        b=t+C/lUnZEXKSe7ywmFpN7onRvYIvCdeZMb1DWoL9XM+MduPUijy5I5bDCEqe1dlrD3
+         zv30yOKNmhMyntPvLgkawpk2Ov5LK1HOzltUzIdP5CnI7ZUq/CBVpRoVw4FTiuAhBWyX
+         jWHFrmZ3sklxCaBAsdVNnM2nC7ELZex0qjAyNlXzzXgS/Jyd4wsAI7qmMFeNvh64DDNl
+         2twRyCOL0dw1KrYSpsH2XMQhYdBSd72l+Ssp+ioVdbibLqLyVAf0LltI5oL4I0izA6vE
+         +6/g0Wtb2ztnAAEgQxQ89oSgf9o4PvM61rZJ1E5goX/lqyUsBFphTTIN6K/qtnMrSo6G
+         B1oA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDj18Q7Ms+hx54ID4MA/xqof8SeJkDB/za6JDGd7iFLbx+N7smthavfKP7ZqlLqqI7Fu+QwaadllpEkr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlOdjkYKcDTJmE0xJcl9zcI1jaLtejslMwgsAm3S6kFUkDtPzU
+	+atizzDu7V+XPPU2Tuf6v0I7TU9F52YVbJnrgolSD4UYBP6H/KnCDYelfQWLAdY=
+X-Gm-Gg: ASbGncsHWZqUjr+VKOTGelAYtqrn6qAJerUIHDKWYRc3Y/+DofSgHECXf52k7MbIyrB
+	qgdehEMruJ/pd2llUrkw8zhaxpo0LC7KSjwagldlKt0G1gCx2BhWaiFuWY0L9e3Y5AK9ABdzkOI
+	OvGoCkW4OHNu+tMB/5zXu4d+sK+ry/g5bfyiVJdmumzRPP/j7ogoOa7IryGqK1zO6iiqE2atrC/
+	9tEXGYmd25EvHvL1ZHm+YYJ7ztcKs8HIqtF6vEs5Ngwmt7k4eybtRToKPT7yPoNhXy6mZXnXWD8
+	t7ip+ZaK1Ps4TKrbzRWn3+fwLny/rQqRGEEzI7nmpg==
+X-Google-Smtp-Source: AGHT+IF2xaoqZl8hWDUiXJ8nEem/xafyn/QQzYjrSVu1qxUZTPGra1ixV/+mmDNdtV5/54Q+x2U2eA==
+X-Received: by 2002:a17:90a:d88c:b0:2ff:6788:cc67 with SMTP id 98e67ed59e1d1-309ed36e9d0mr4033176a91.34.1745511639284;
+        Thu, 24 Apr 2025 09:20:39 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef03c806sm1581702a91.8.2025.04.24.09.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 09:20:38 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Lifeng Zheng <zhenglifeng1@huawei.com>,
+	Nicholas Chin <nic.c3.14@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86: Fix open counting event error
-Message-ID: <aApkwfEUCJcc9PXn@gmail.com>
-References: <20250423064724.3716211-1-luogengkun@huaweicloud.com>
+Subject: [PATCH V2 4/5] cpufreq: Preserve policy's boost state after resume
+Date: Thu, 24 Apr 2025 21:50:17 +0530
+Message-Id: <de5c72a0af101049204305c73cd30eb3a3e7b4a0.1745511526.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1745511526.git.viresh.kumar@linaro.org>
+References: <cover.1745511526.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423064724.3716211-1-luogengkun@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
 
+If the global boost flag was enabled and policy boost flag was disabled
+before a suspend resume cycle, cpufreq_online() will enable the policy
+boost flag on resume.
 
-* Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+While it is important for the policy boost flag to mirror the global
+boost flag when a policy is first created, it should be avoided when the
+policy is reinitialized (for example after a suspend resume cycle).
 
-> Perf doesn't work at perf stat for hardware events:
-> 
->  $perf stat -- sleep 1
->  Performance counter stats for 'sleep 1':
->              16.44 msec task-clock                       #    0.016 CPUs utilized
->                  2      context-switches                 #  121.691 /sec
->                  0      cpu-migrations                   #    0.000 /sec
->                 54      page-faults                      #    3.286 K/sec
->    <not supported>	cycles
->    <not supported>	instructions
->    <not supported>	branches
->    <not supported>	branch-misses
-> 
-> The reason is that the check in x86_pmu_hw_config for sampling event is
-> unexpectedly applied to the counting event.
-> 
-> Fixes: 88ec7eedbbd2 ("perf/x86: Fix low freqency setting issue")
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> ---
->  arch/x86/events/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 6866cc5acb0b..3a4f031d2f44 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -629,7 +629,7 @@ int x86_pmu_hw_config(struct perf_event *event)
->  	if (event->attr.type == event->pmu->type)
->  		event->hw.config |= x86_pmu_get_event_config(event);
->  
-> -	if (!event->attr.freq && x86_pmu.limit_period) {
-> +	if (is_sampling_event(event) && !event->attr.freq && x86_pmu.limit_period) {
+Though, if the global boost flag is disabled at this point of time, we
+want to make sure policy boost flag is disabled too.
 
-Hm, so how come it works here, on an affected x86 system:
+Reviewed-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/cpufreq.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-$ perf stat -- sleep 1
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 24745088403b..0ad459bc8f84 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1626,8 +1626,13 @@ static int cpufreq_online(unsigned int cpu)
+ 	if (new_policy && cpufreq_thermal_control_enabled(cpufreq_driver))
+ 		policy->cdev = of_cpufreq_cooling_register(policy);
+ 
+-	/* Let the per-policy boost flag mirror the cpufreq_driver boost during init */
+-	if (cpufreq_driver->set_boost && policy->boost_supported) {
++	/*
++	 * Let the per-policy boost flag mirror the cpufreq_driver boost during
++	 * initialization for a new policy. For an existing policy, maintain the
++	 * previous boost value unless global boost is disabled.
++	 */
++	if (cpufreq_driver->set_boost && policy->boost_supported &&
++	    (new_policy || !cpufreq_boost_enabled())) {
+ 		ret = policy_set_boost(policy, cpufreq_boost_enabled());
+ 		if (ret) {
+ 			/* If the set_boost fails, the online operation is not affected */
+-- 
+2.31.1.272.g89b43f80a514
 
- Performance counter stats for 'sleep 1':
-
-              0.64 msec task-clock:u                     #    0.001 CPUs utilized             
-                 0      context-switches:u               #    0.000 /sec                      
-                 0      cpu-migrations:u                 #    0.000 /sec                      
-                73      page-faults:u                    #  114.063 K/sec                     
-           325,849      instructions:u                   #    0.56  insn per cycle            
-                                                  #    0.88  stalled cycles per insn   
-           580,323      cycles:u                         #    0.907 GHz                       
-           286,348      stalled-cycles-frontend:u        #   49.34% frontend cycles idle      
-            72,623      branches:u                       #  113.474 M/sec                     
-             4,713      branch-misses:u                  #    6.49% of all branches           
-
-
-?
-
-Thanks,
-
-	Ingo
 
