@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-618441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB09A9AE96
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD29A9AE98
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B2F3A5617
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C00D16CA3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBE327EC98;
-	Thu, 24 Apr 2025 13:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E9627BF85;
+	Thu, 24 Apr 2025 13:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aZbBSCNm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SD773NUJ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDF227B519;
-	Thu, 24 Apr 2025 13:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D6C18FDA5
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745500325; cv=none; b=ulqwG+xPeidfsPabwo9zwn9WDb56tOhhatwm6cmd9bJ400/5S9X0cSJ6Wpla2yUxc1BoCikJnTLLZWb4kc4gka0kKLM5jrGFNTd1fVsT43RCEKDBg/oIPI8NacHm0EZBtGqiyaazgbUj+geUgfkXxbr3ozNAfXNmiosHnyWxrLc=
+	t=1745500347; cv=none; b=Wtx1w3P6alhxB7VZPTPIRGqz6rqTBpBlqCNUuBr23M2PH2Bhno3hh/pshcDoQK1dA+pN2nPfs5orIgY9+0JTQnhXV967lx9HBvpKRmeHlJ2XxmcLsekPkX60SXbRrs7GtQ2L1S9O1pqC1WIhtqyspTuNr2WyPaW9NexzNDnC5xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745500325; c=relaxed/simple;
-	bh=4cvuzHcmHrwa785PAn6weho6zU3Lk00QP2t5Neo56Rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncYVPSkUqyCPrKdjc9WGaQu388vMQCiAa40N/EAiMp14xnHOsellQqALJvdT3gJ8M71sWWAN+b6K4naRHKS0FzzbLyeV4y2Jy57hhf9F3KWe+gJp0RDqFx0RAbgS6Yq2DMMo9J1rfL7IpHyoyVlXW91mFDxpghmFgSkUicry20Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aZbBSCNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E35AC4CEE3;
-	Thu, 24 Apr 2025 13:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745500324;
-	bh=4cvuzHcmHrwa785PAn6weho6zU3Lk00QP2t5Neo56Rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aZbBSCNmLH4viOCChkBsuLlguE6dtJB0G2K9cC0usOI1PKUGrCDJwQwU3SWPFUL33
-	 R65w6nXourbz1aa70I21U+di6kSvmxqF54iX9Lkx9XOKqOjTb3fANiWmSYq+c+UWL5
-	 I3uYWEvMGHw27lsitsRLn514qiByywTncJJURXcQ=
-Date: Thu, 24 Apr 2025 15:12:02 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: paul@paul-moore.com, omosnace@redhat.com,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] vfs,shmem,kernfs: fix listxattr to include security.*
- xattrs
-Message-ID: <2025042427-hardship-captive-4d7b@gregkh>
-References: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
+	s=arc-20240116; t=1745500347; c=relaxed/simple;
+	bh=eA7Xuy6k9ONAPkP6AgSuyk9zFim9A6uFvmLfDwCH8vs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rdPiRoXo8WbgyOoLB+mykFB33NFgPZdC/mQHO7USp2jGLXwFl31CEh93cvjsyDk5iwFMbQ/KftKrIFiiatb1G2P1H4OoRgKV8iyQDnpvyNQ57U45HFJuLGRvSVFZpvMe8qDydIbsm7gQPMvN478qMMVXXf62Vsac55od9DU66bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SD773NUJ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso160481a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745500345; x=1746105145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eA7Xuy6k9ONAPkP6AgSuyk9zFim9A6uFvmLfDwCH8vs=;
+        b=SD773NUJaH/sq3yBiEzz2t3oAqmxcc675wcaZHVArwYviP6Hm1E+hQX21rL0XUZezR
+         mZYoMiwT5WM8anNrmuLyxix+CHZBSmTKql0+bOqBho+5RwGK3AUhcUCQPsvqfXdNBGvi
+         0TZME91qXDsVhoTBmBtx41A41mWLBpHWzw50ghQoO/FuAfMghPSUCyJ9zvE7CrDDnK4B
+         79QOr5gI0sALV1Gwjy1/Mx0NpDfmHC8p26bSaCj2oERAAkIUIcnTAJNPWYFy0FzV7nKj
+         R3+g+hMJ3mXeAIoHPGVxFlQdlh+ZrM2hfwQQwNCVOCloiMRirPp+TNhzUqQXTkR+pAZC
+         m4eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745500345; x=1746105145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eA7Xuy6k9ONAPkP6AgSuyk9zFim9A6uFvmLfDwCH8vs=;
+        b=Gixw1hap6GmX1v7uGXgCHTTKx/Ysa0Ro1tcnByWyKzakOnYGO0gf3eXzM7ZdC06yr3
+         8O63tzNO1pmQtV4ETuF1m+IAC62MA2HtwIVSZhaE79/3O8k6w3THG6uy/w5lJqJqT6fB
+         G96WHrhrBP4zo80c+52poqxFh8LSu6fQCVNmWqA1ZataRkotSiMbnIapncK7tuGGgskR
+         SSlIAZXg2Q8bGF204CylHH5lvUFjzUrnnTUzQyVf/Yl/G6yOS73/KVtFV+LqHdb9ISEc
+         QwuwTTy9aMkR4S43leMwzPpPU/UofozIp424+S5NGkHN01eCny8cC+/sWYXmFAFnMAAf
+         lXvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOfvFqMlyTElcUgbp4xvP0I8d6a6p3YE7iH/kUcESIfmlZkB18qryuDUtlFpFJMKL13GXNhjz9ZSj1KGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfE40xzR5JZWMSAX3vxAa6/xugJ80Cu80BNZzrQRsckSAD4erW
+	s2N5Hlv0IDuNu+DgX7ODJwlVHCdTO5o/6gXuQZpQNYAgfLToATKkjhASHf9JCC6QcZ2+yY2tsm+
+	bAalgsphPbqoD/NLM26Sh5g16NGo=
+X-Gm-Gg: ASbGncvOrmbeD7IJbiqYGrc5HAjwfmhoqv+vYDLpm+oYUy9w2IPiqhtJoe4pCBI6szc
+	dvgHeDi2tQXRyNpPF0q6uYJklgn30rQycJhKwKwi0Pf+0ZOlYytUv/lU1o4ZmSuHvvHqsE5C21z
+	IKrhSmsd7cNWhG2euG9RReOg==
+X-Google-Smtp-Source: AGHT+IEFvo9XYRtQEvgfEvNW3YyXCDl9i/8QVWCKx/TXGNL9aOOZJwdPzKvHZ6KZW7h65cYldr4AhFdLlL3QAZqAS3M=
+X-Received: by 2002:a17:90b:3906:b0:2ff:5759:549a with SMTP id
+ 98e67ed59e1d1-309ed24cc88mr1706401a91.1.1745500345346; Thu, 24 Apr 2025
+ 06:12:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
+References: <ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu>
+ <8963a409dd575e040e5f07e4ad5e9c1d26b421f2.camel@irl.hu> <CALT56yPd-xfd=47xRxrCk4F3jib4Ti7kg8pRXy-gVAQpbOc=pw@mail.gmail.com>
+ <e323219b52cda1891a55d12ad77a2b34edc8688b.camel@irl.hu> <Z_jodBrNFdEpJRKA@mail-itl>
+ <aAn6wsnJ-6mqK4vR@mail-itl>
+In-Reply-To: <aAn6wsnJ-6mqK4vR@mail-itl>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 24 Apr 2025 09:12:13 -0400
+X-Gm-Features: ATxdqUFwuh2Liv704M5KwrRa6klhoiIfTdC591MnFCPLJIk1C-iKiwHLYfgFHos
+Message-ID: <CADnq5_Ptzieevwysn1Qz5yxTOujMtEDW=Rbwqpvmd_3o2Gd--Q@mail.gmail.com>
+Subject: Re: amdgpu_dm_connector_mode_valid regression
+To: =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= <marmarek@invisiblethingslab.com>
+Cc: Gergo Koteles <soyer@irl.hu>, Dmitry Baryshkov <dbaryshkov@gmail.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, regressions@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, Hans de Goede <hdegoede@redhat.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Alex Hung <alex.hung@amd.com>, Harry Wentland <harry.wentland@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 24, 2025 at 08:46:43AM -0400, Stephen Smalley wrote:
-> The vfs has long had a fallback to obtain the security.* xattrs from the
-> LSM when the filesystem does not implement its own listxattr, but
-> shmem/tmpfs and kernfs later gained their own xattr handlers to support
-> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
-> filesystems like sysfs no longer return the synthetic security.* xattr
-> names via listxattr unless they are explicitly set by userspace or
-> initially set upon inode creation after policy load. coreutils has
-> recently switched from unconditionally invoking getxattr for security.*
-> for ls -Z via libselinux to only doing so if listxattr returns the xattr
-> name, breaking ls -Z of such inodes.
-> 
-> Before:
-> $ getfattr -m.* /run/initramfs
-> <no output>
-> $ getfattr -m.* /sys/kernel/fscaps
-> <no output>
-> 
-> After:
-> $ getfattr -m.* /run/initramfs
-> security.selinux
-> $ getfattr -m.* /sys/kernel/fscaps
-> security.selinux
-> 
-> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
-> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+On Thu, Apr 24, 2025 at 4:49=E2=80=AFAM Marek Marczykowski-G=C3=B3recki
+<marmarek@invisiblethingslab.com> wrote:
+>
+> On Fri, Apr 11, 2025 at 12:01:28PM +0200, Marek Marczykowski-G=C3=B3recki=
+ wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Apr 02, 2025 at 04:35:05PM +0200, Gergo Koteles wrote:
+> > > Hi Dmitry,
+> > >
+> > > But the code would start to become quite untraceable.
+> > > duplicate mode in amdgpu_dm_connector_mode_valid()
+> > > call drm_mode_set_crtcinfo() in amdgpu_dm_connector_mode_valid()
+> > > duplicate mode in create_stream_for_sink()
+> > > overwrite ctrc in decide_crtc_timing_for_drm_display_mode()
+> > > if crtc_clock =3D=3D 0 call drm_mode_set_crtcinfo() again in
+> > > create_stream_for_sink()
+> >
+> > FWIW I'm affected by the same issue (on HP ProBook 445 G7, with AMD
+> > Ryzen 5 4500U). And the patch quoted below fixes it for me too.
+>
+> I've re-tested it with 6.15-rc3 and the issue is still there. Is there
+> something I can do to help fixing it before final 6.15 is out?
 
-As this "changed" in the past, shouldn't it have a "Fixes:" tag?
+I believe this should be fixed in this patch which is already in this
+week's -fixes PR:
+https://gitlab.freedesktop.org/agd5f/linux/-/commit/b316727a27d0dac1e6b7ae5=
+1204df4d0f241fcc2
 
-thanks,
+Alex
 
-greg k-h
+>
+> --
+> Best Regards,
+> Marek Marczykowski-G=C3=B3recki
+> Invisible Things Lab
 
