@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-617745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F7EA9A53D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:08:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCAEA9A55E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725AE3BCE8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08EE93AACBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6779B203706;
-	Thu, 24 Apr 2025 08:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142E32192EF;
+	Thu, 24 Apr 2025 08:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODyOD7bZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e7qrCW0+"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D0119CCEA;
-	Thu, 24 Apr 2025 08:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD2C218AC7;
+	Thu, 24 Apr 2025 08:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745482070; cv=none; b=ZRavegX6XgO4ycdaIFapp66EzgMH4jwnRiYHYECVNbjM5GlYxy23egJRDwp79HJiW12ieeXZV+wx66UmhotCI5Eip/tDLOvzXIFWT61lAkBoNlKvHU9BieKczHwcfw/qr3kysb6zd5KaDsMwSsBiUN18OQbF4jLePVKA9QddKYs=
+	t=1745482159; cv=none; b=AX0OVxywWeVLCrE83r2tmxahHur5hBvKEh7mBz58fBKv7+2lasy+XnjArUpRWJPRcoMJ30434k4ST3M+6Y6CsQlkUCRnulTo2mNBX29LPdlZZx3Rft3R296xwbpVXp2h5mYsBbRqHyaJXuN1DmZO0C89WbMqOCsoWNgL1/Z/emE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745482070; c=relaxed/simple;
-	bh=gQ9J0xOhC6db6xC9+l1fS/rU8P/+uRvFwj9Ophiqh+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEhM7mKefqFsB2aVpNrsNouf01/pPPMsJhi33z0xeNU66DwGpXb/oY9s5wrLJUWUOSqqhWaXFfGBcYChvPx1pEc3UqZfCKlMqC34mDU0dSd0i7O3dgC8+/Vdz7PC14srmGIsqqc5CHb8C5MOotDmQMAxfmwUI5GEZR9/RIx60sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODyOD7bZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED08C4CEEB;
-	Thu, 24 Apr 2025 08:07:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745482069;
-	bh=gQ9J0xOhC6db6xC9+l1fS/rU8P/+uRvFwj9Ophiqh+Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ODyOD7bZFe6psyTBbbqHrGyTN9bbO06+mLsjpOZpZAtyeVZhSMtIzzHp4uk/bPwRF
-	 Fg+5AuYPCHFaO1iJ7AZ0hnuzbSatu3RKpWWB0igu+ysf5GxyCdAj0/zoHi8abPgms6
-	 UyWqrFeuVLz7KWExbAlMl6sGk3pIBXhjJdgkeyS5U7v4meyETDlnI/bCnajjhgK5ip
-	 tIFTA4qEdRjUs4v9+5Yqy4cTSqzgz9evKITnLdxHo0yebJZSxHX+clynB3yYqiaA9g
-	 TAOPbev3sVV+FH5Ob1WbUIU/+f8jJU3YQkiM1kHRm7HKmFAywX5r91KPZh1EV5IySo
-	 WbMrUBYNBAOvw==
-Date: Thu, 24 Apr 2025 11:07:44 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 10/24] mm/hmm: let users to tag specific PFN with DMA
- mapped bit
-Message-ID: <20250424080744.GP48485@unreal>
-References: <cover.1745394536.git.leon@kernel.org>
- <0a7c1e06269eee12ff8912fe0da4b7692081fcde.1745394536.git.leon@kernel.org>
- <7185c055-fc9e-4510-a9bf-6245673f2f92@redhat.com>
- <20250423181706.GT1213339@ziepe.ca>
- <36891b0e-d5fa-4cf8-a181-599a20af1da3@redhat.com>
- <20250423233335.GW1213339@ziepe.ca>
+	s=arc-20240116; t=1745482159; c=relaxed/simple;
+	bh=yYFzfcjodjsPyIwDbrK08y/kZInkd8p6kN31M6oYBs0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E98Ekw2Q7KWEQ9mFncuSvv9pu3yyL9kPc/7mEIrd4cOnooDtlbVeKb9QXBzFv5Kp+EzyPGmgb+yjyVQPfNsMhgfjTABmmGnnlVOkdUH7YpYH0zx3ve9qyRFb8vvXeZ+xlN88C/UUVRdW7rQsvZU4Kfq0wlAZcsW2Gjp4+l4cC7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=e7qrCW0+; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1745482157; x=1777018157;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=yYFzfcjodjsPyIwDbrK08y/kZInkd8p6kN31M6oYBs0=;
+  b=e7qrCW0+OzIbcujHt48tSq5NHeEeVH9HS3zi70XQA5n7wWMbOJCCvnaf
+   FgwxMDr0NQBF2b4dMHDeTpiLIklAbHA5/WB5ZScZpACDTOUZKMYOAoQ0W
+   6eL+0PyE8WNOVjCGzpA6rxubAZ5ZgFdwDI8/6yyUNmunGC2jNF4zQS+Er
+   k/6s5/ysTQE8W/mVesp10KdPTq0C/JUgkhiQ/PskoAmno74d58xUcH/8W
+   q6eQVxLo1YSSM3rlHByxiCQwjciLqwtwVJUQdhr8b26CA8L6g5cGFRwKV
+   GNJdomSUAhj9SMw8wyxo/tkA26hbNCzhOqEP06eehiCaIFgBK6PZrQ8VP
+   w==;
+X-CSE-ConnectionGUID: YoMONp9cSnibtW5FCExXWQ==
+X-CSE-MsgGUID: qc/OFvpzTSSGALLCmEblvQ==
+X-IronPort-AV: E=Sophos;i="6.15,235,1739862000"; 
+   d="scan'208";a="45417227"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Apr 2025 01:09:10 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 24 Apr 2025 01:08:49 -0700
+Received: from marius-VM.mshome.net (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 24 Apr 2025 01:08:47 -0700
+From: Marius Cristea <marius.cristea@microchip.com>
+Date: Thu, 24 Apr 2025 11:06:33 +0300
+Subject: [PATCH] iio: adc: PAC1934: fix typo in documentation link
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250423233335.GW1213339@ziepe.ca>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250424-pac1934-doc_link-v1-1-9832445cb270@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAAjxCWgC/x3MTQqAIBBA4avErBN0NPq5SkSYTjUUFgoRRHdPW
+ n6L9x5IFJkSdMUDkS5OfIQMVRbgVhsWEuyzASVW0iCK0zrVaiP84cadwya0q301ecIGCXJ2Rpr
+ 5/pf98L4fHyuhZWIAAAA=
+X-Change-ID: 20250422-pac1934-doc_link-3c7d5bde282e
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy
+ Shevchenko" <andy@kernel.org>
+CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Matteo Martelli
+	<matteomartelli3@gmail.com>, Marius Cristea <marius.cristea@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1682;
+ i=marius.cristea@microchip.com; h=from:subject:message-id;
+ bh=yYFzfcjodjsPyIwDbrK08y/kZInkd8p6kN31M6oYBs0=;
+ b=owGbwMvMwCW2tbSTZa7u0x2Mp9WSGDI4PzYbb73v2eBwcoJ2cu5PV9frcw/btct1uDElKf4sb
+ bN/vrO+o5SFQYyLQVZMkWXFWz+1qrUfLiuJZerAzGFlAhnCwMUpABNZ/Jrhn9VahiOFrdbJf6ZN
+ WKovsber9+52t71+YrekIp88b/8W8YKRoclRKKwqakpB4/M+h/wnn8+IfErW8GNenXB+cZq27WY
+ fHgA=
+X-Developer-Key: i=marius.cristea@microchip.com; a=openpgp;
+ fpr=E32F8D4396E72E463E8CCD91446DE0ABD9140C3E
 
-On Wed, Apr 23, 2025 at 08:33:35PM -0300, Jason Gunthorpe wrote:
-> On Wed, Apr 23, 2025 at 09:37:24PM +0300, Mika Penttilä wrote:
-> > 
-> > On 4/23/25 21:17, Jason Gunthorpe wrote:
-> > > On Wed, Apr 23, 2025 at 08:54:05PM +0300, Mika Penttilä wrote:
-> > >>> @@ -36,6 +38,13 @@ enum hmm_pfn_flags {
-> > >>>  	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
-> > >>>  	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
-> > >>>  	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
-> > >>> +
-> > >>> +	/*
-> > >>> +	 * Sticky flags, carried from input to output,
-> > >>> +	 * don't forget to update HMM_PFN_INOUT_FLAGS
-> > >>> +	 */
-> > >>> +	HMM_PFN_DMA_MAPPED = 1UL << (BITS_PER_LONG - 7),
-> > >>> +
-> > >> How is this playing together with the mapped order usage?
-> > > Order shift starts at bit 8, DMA_MAPPED is at bit 7
-> > 
-> > hmm bits are the high bits, and order is 5 bits starting from
-> > (BITS_PER_LONG - 8)
-> 
-> I see, so yes order occupies 5 bits [-4,-5,-6,-7,-8] and the
-> DMA_MAPPED overlaps, it should be 9 not 7 because of the backwardness.
+Fix a typo,(PAC1934 -> PAC193X), into the link from an application note
+related to the ACPI device definition.
 
-Thanks for the fix.
+Fixes: 0fb528c8255b ("iio: adc: adding support for PAC193x")
+Reported-by: Matteo Martelli <matteomartelli3@gmail.com>
+Closes: https://patch.msgid.link/172794015844.2520.11909797050797595912@njaxe.localdomain
+Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
+---
+Fix a typo,(PAC1934 -> PAC193X), into the link from an application note
+related to the ACPI device definition.
+---
+ drivers/iio/adc/pac1934.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/pac1934.c b/drivers/iio/adc/pac1934.c
+index 20802b7f49ea84c00dd6e8c717d956cb20448f4a..09fe88eb3fb04578137403a020d9befaa75610a6 100644
+--- a/drivers/iio/adc/pac1934.c
++++ b/drivers/iio/adc/pac1934.c
+@@ -1081,7 +1081,7 @@ static int pac1934_chip_identify(struct pac1934_chip_info *info)
+ 
+ /*
+  * documentation related to the ACPI device definition
+- * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC1934-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
++ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
+  */
+ static int pac1934_acpi_parse_channel_config(struct i2c_client *client,
+ 					     struct pac1934_chip_info *info)
+
+---
+base-commit: 3159d40a2ca0ae14e69e1cae8b12f04c933d0445
+change-id: 20250422-pac1934-doc_link-3c7d5bde282e
+
+Best regards,
+-- 
+Marius Cristea <marius.cristea@microchip.com>
+
 
