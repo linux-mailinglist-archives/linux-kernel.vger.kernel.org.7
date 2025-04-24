@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-618571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBECA9B045
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC973A9B049
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98167AED1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:11:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0846C7AF8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A812119ABAC;
-	Thu, 24 Apr 2025 14:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uzAM9zOn"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ECD19924E;
+	Thu, 24 Apr 2025 14:12:59 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416BB191F91
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF9154F81
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 14:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745503926; cv=none; b=SRDuU8IMNYdO+F+/9oZ1cozBLwbw6X3oAOMVqajKS3oOumgb72TeV1XS0+4hf9YUYT+aDmgMRRz1F7HIAzY1iMEN4dlO+Zn1P6EAcirrz59NE403rGYBsFfjOmSVreXUrX/l6TpF0u43MqKiiGfywFe/4F63xy3ay4rXvV12ELI=
+	t=1745503979; cv=none; b=AZkbCtYCwAGO1GP4kVt80ulBHVQfTko5bywVgvWySzzvhCqjLphn8wLfte2OB5noeIAwqOG2eet5aSKwHXXyWBF5E02/Ze/h4YzJKSUiqDHutklR8dBpVwwY+y0rehgybJebjtMvzFQBTpCveFCgwjzn6na62cPEHkchux9DYJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745503926; c=relaxed/simple;
-	bh=CtEiAcc/nNoaN3GI5PvoThuoQG72iKhqq2zgIqa7tYg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dMyRofhKqbVY3M1JNWriBsQRYOC8670ti+MRysCuu1ZFl7dwnw2Wqjk1hioOpgfQBX2MoozDZzupsSwWWYQat+AJHMJd03DH/YOQZEa56NQY+kjpovtalNFAWTGbuMGoLpyPzA0V4Vef5CVXlnZWTEYJTvc1bdZsvA3l8TgfOTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uzAM9zOn; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso10776835e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745503922; x=1746108722; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VMVKepFY++CcE6uPsrs1OkWWcrChDnDL5Zv6xP0L1IA=;
-        b=uzAM9zOnbe8AqN5bWqXFQuouPRDdx/ZXawPUA74CoEdORcPETsCEzwIr5N64TmWB6D
-         EOZKEU9DtL4cnRQOmYpwNgL5pqsYuVod+FJpwjkugjd+kPDIR8Ili7f8O+KS9ugAmWXh
-         lusUFJWbfaYCmsNbQp21pdW5xmxD5F94Lg+wNQfOgTmFfOSCOanlKINeUdw7KgZCBzdj
-         aA60NOLNh0T041uX37RminswwzfrslF3cHXBHX83J4BVLmEpGgjzqu+yb26rSJBG4nCT
-         G2ObPtzd6qqHZHGQsqjNaKuM64pm05HlXgc+cosQwVNWDB/YxrYj5j57W3MqqHyL7NCS
-         hZvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745503922; x=1746108722;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMVKepFY++CcE6uPsrs1OkWWcrChDnDL5Zv6xP0L1IA=;
-        b=nibQTXeORD0Yk6FWOdcrXajoJjFV6kYzYNPMgStNA+2lpnu541EwZwRJ7Hda5O06BP
-         5xYt/l1i4F+KNzJKNBD3Z6YwvzdjVrftalLuJQOhbTF3XTanEjswBM+vODzcjmPcQih4
-         P15h05moW+04dXPkSGtEUjQFHLLyWcinf733rRRXgnm5R3kmKduhz4G/xr79bsYMvbM4
-         0l21c5r2oPDVkSWWM0qZF3R59R8RMnLHsWeW3nVyTXEG3rkINlRIxadFu+abhzDVskWF
-         yafeLChIsxSMowo8sz2i/3hXRTZN6rLVozOmnbYG1Fn4Q0A5NxVdzkdqG/uKH0NL+bUe
-         WpnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/x9CAEyOnYmRxfFZAqksfKSP9Vrs2z1zYOLs6U13e5YTrNqRBsFxVmiyxMp77YMoi+0HISgTLMwbkOts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzXRdu16esz1y6jV9ACEnJ5hgaf5rsk5Wcc+nzg2qv25ORcL8I
-	tWilSYOqfLaMdR//iPY5bgH+EPwMQbiGa+QYwygD2QllrXS+5hM1MWWJvE9KLnQ=
-X-Gm-Gg: ASbGnctFrwEEjPbJ+tdU8T5ISCVeDryPZTsWo8oiCjQWg41Y/+kSeYzEWzw9pwDPWZP
-	hz/jp7u/JUsCSHgM1qPOUz0tU97I4Z4HYe54GhUeHBk/B9bt8/HPazGAS15Nn/BZEiVDeJq7Jlx
-	7sfRGsFAofZejm417ppQH8G3teBmQWdX6xUJm/N6/AZIpmIqoOex1pATtCeJqQcJAvVNusaihJo
-	i+hoCdAG1quy1GeKFtBd6Hz1M1ygByvI45/Ru+oUESUifSY34ZHf58AqjzymXUyu4Y9Xj4QFKRi
-	gXRZBolqA9H2JVCaLhhdOJpHr+UxffM80Vpf8hwOTgiWjN2OCWqbp6Wq2Wax6optC/0lP8IbGfl
-	f084w24DGZQt1fyE=
-X-Google-Smtp-Source: AGHT+IHDAgJu2/VSQFzrBijOYgsGceJrM3M9BXgk2UdJQTMK4wICpOgpqmOlkNppVo8F1dpEn3P2XQ==
-X-Received: by 2002:a05:600c:1f94:b0:43d:49eb:9675 with SMTP id 5b1f17b1804b1-4409bd76f5dmr26518185e9.22.1745503922448;
-        Thu, 24 Apr 2025 07:12:02 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4409d2b86fdsm23700385e9.27.2025.04.24.07.12.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 07:12:02 -0700 (PDT)
-Message-ID: <d06f9e32-0c53-4ec0-8e78-1eedf5d6e2fc@linaro.org>
-Date: Thu, 24 Apr 2025 16:12:01 +0200
+	s=arc-20240116; t=1745503979; c=relaxed/simple;
+	bh=0wGj4KW+DayUWRtnjV7LyncVJ+JWm5POBbmEXTwI7JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6GRCuj5AiQ7zeGYrxKe061O7ku571VQyLd0WDcDr3lfVIQSvEmnVEvxlvKPn+TUxhUCZRfOlJdq6rw3ujnqkm8562MC98cY53ZWlmCLoOYBlL3C5GeqKRK1ktZ9gkHDnrN54MKFm/4ZjrLHDyMjEnXV99iwqMzZE4nBjvvo3E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 748D468AFE; Thu, 24 Apr 2025 16:12:49 +0200 (CEST)
+Date: Thu, 24 Apr 2025 16:12:49 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] nvme/pci: make PRP list DMA pools per-NUMA-node
+Message-ID: <20250424141249.GA18970@lst.de>
+References: <20250422220952.2111584-1-csander@purestorage.com> <20250422220952.2111584-4-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: Add NXP Software Watchdog
- Timer
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: wim@linux-watchdog.org
-Cc: linux@roeck-us.net, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org, S32@nxp.com, ghennadi.procopciuc@nxp.com,
- thomas.fossati@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- alexandru-catalin.ionita@nxp.com
-References: <20250410082616.1855860-1-daniel.lezcano@linaro.org>
- <20250410082616.1855860-2-daniel.lezcano@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250410082616.1855860-2-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422220952.2111584-4-csander@purestorage.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Tue, Apr 22, 2025 at 04:09:52PM -0600, Caleb Sander Mateos wrote:
+> NVMe commands with more than 4 KB of data allocate PRP list pages from
+> the per-nvme_device dma_pool prp_page_pool or prp_small_pool.
 
-Hi Wim,
+That's not actually true.  We can transfer all of the MDTS without a
+single pool allocation when using SGLs.
 
-On 10/04/2025 10:26, Daniel Lezcano wrote:
-> Describe the Software Watchdog Timer available on the S32G platforms.
+> Each call
+> to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock.
+> These device-global spinlocks are a significant source of contention
+> when many CPUs are submitting to the same NVMe devices. On a workload
+> issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA nodes
+> to 23 NVMe devices, we observed 2.4% of CPU time spent in
+> _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
 > 
-> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Cc: Thomas Fossati <thomas.fossati@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+> Ideally, the dma_pools would be per-hctx to minimize
+> contention. But that could impose considerable resource costs in a
+> system with many NVMe devices and CPUs.
 
-I do believe all the comments have been taken into account, the driver 
-has been reviewed and tested.
+Should we try to simply do a slab allocation first and only allocate
+from the dmapool when that fails?  That should give you all the
+scalability from the slab allocator without very little downsides.
 
-Is it possible to merge those changes in order to have them available in 
-linux-next ?
-
-Thanks
-
-   -- Daniel
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
