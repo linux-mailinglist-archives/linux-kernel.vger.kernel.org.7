@@ -1,184 +1,170 @@
-Return-Path: <linux-kernel+bounces-618266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925DAA9AC39
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68411A9AC48
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04E24A3E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC574A5013
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134A214B06C;
-	Thu, 24 Apr 2025 11:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50657221FCC;
+	Thu, 24 Apr 2025 11:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="25wm+t35";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mhXLE/qc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="25wm+t35";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mhXLE/qc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PJdAdV+0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CEF223DEA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BDE214A91
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745494780; cv=none; b=LIKkfHUocSavMQMx1Q93JVsL6fTuJRUUwV4Jr5c8AimhIGlhmi/KblaC1okkbXmImA+f1N1wm7UY5tfQIck7cleYsAm8PC+fvsy/EdpCbjgyuu2zCkBViKZT4/FoDTDyxvGTEAmizKl9w6g5pnBdQ7LDHVm6RXS6YV+CvbHhD/g=
+	t=1745494874; cv=none; b=NZpsVUqkNOTCaFhEJyVEYn31/ljFfna7M6X+nFtEig/Ur0MbMKnW21+cv/edIrwdfN1FyJYRvicYSiZSExVE+BzcezvGxfm1DQppHs3L07bF2f67icfJRIKxcyEDC/KiD2/Zk6PmwvEK/GGOq8WdsFqTSo+IcbJ5jOADoKqkhr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745494780; c=relaxed/simple;
-	bh=p/iA1aOs81ozYfLqBjwCGoqgA0/reQeD9IhdoGQZhR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuiOdbtN1AUIidBAXEs1dydpdbBVBFhp5g7RwDgl83G268LOw3ijdFOmFdKdO7Z137KFDuYMHWU068P8nQwEU9QnLY5SD3uNZqw5Bi+KAaqoRsix7o+He+KJMoVkOLuovgBFtU4ucvztNWP+de1zwxBbxQz6jBzqmDFqhyUAeQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=25wm+t35; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mhXLE/qc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=25wm+t35; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mhXLE/qc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1745494874; c=relaxed/simple;
+	bh=lx55gR3E7QplPbPeQROY0+HXvPpMlZ5kqkByJl98LWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tPbXEe4OwxXFt2O79mCykrqlvc0tKaigyACtRxRYoiXjkvyUCQJk5pNQAiD0EEWIDjJF2REYdzXG9DXQh42u746xU65o9h05k5i0k8kTKWoBG3tbThDTgpIpzazqMRwNk8INDAqCfTSFt+7/0F6s+bOYVUD9rvNI/MyVTRgMJd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PJdAdV+0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745494869;
+	bh=lx55gR3E7QplPbPeQROY0+HXvPpMlZ5kqkByJl98LWs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PJdAdV+04P4RrwqslAisnOgF6jhqDiygpBxjBFQYw1vNAFYdaU4tH53qF/s/bh3Ql
+	 dHHpjpIMRGV5hYYVOTVqM9/Ij9eHcgxvLpCrV2IkIqbXQGaom7Yzu1g84Zi2mLVKUb
+	 fQ89U2WUk+FljX/s4AjcX7/Y1vx29GmyhK+8QMkXwH+57/3QEIL0uWrv4T8TTu15kR
+	 Y8QqiQ44/dO0DheLqbMNpCuGaBVlVtWHDQIz+WQpZhBhaGBtZQ/cSwqv/c/WehcetA
+	 81w9WFM4SktdmNqP8jvwF1OkA21qPtyDUrz4zV0/mD58mk8ak3pKT38+EilAkxEgSm
+	 ePR+Eskc0roag==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CC80D1F445;
-	Thu, 24 Apr 2025 11:39:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745494776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ow+0LWKmJJfC77IxmPqmE/uvBg7B41voNt86HZPe9Es=;
-	b=25wm+t35ZGS/JyEAQ8iux3WSjW/d1l2FSxvhW4ZlLlcHOWaK+kws5qFrnxceBBMoGkuiju
-	dug4Fm2ykABpNSI4G70eRc8NW3FIGCEi4YH5PyfTl3CXjqS0qwy8WKdkslYTkoMYXTrC3R
-	ZkZVtqktDy/J0PHG0UGcXtpfYRm+px8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745494776;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ow+0LWKmJJfC77IxmPqmE/uvBg7B41voNt86HZPe9Es=;
-	b=mhXLE/qc12dNhUMUOZMTxtufc1m3XupHYyBnG06NFnacTLCM5QrfDxbP3XzNSFVexLYkPw
-	6dYmZE2PU6pU7dDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745494776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ow+0LWKmJJfC77IxmPqmE/uvBg7B41voNt86HZPe9Es=;
-	b=25wm+t35ZGS/JyEAQ8iux3WSjW/d1l2FSxvhW4ZlLlcHOWaK+kws5qFrnxceBBMoGkuiju
-	dug4Fm2ykABpNSI4G70eRc8NW3FIGCEi4YH5PyfTl3CXjqS0qwy8WKdkslYTkoMYXTrC3R
-	ZkZVtqktDy/J0PHG0UGcXtpfYRm+px8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745494776;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ow+0LWKmJJfC77IxmPqmE/uvBg7B41voNt86HZPe9Es=;
-	b=mhXLE/qc12dNhUMUOZMTxtufc1m3XupHYyBnG06NFnacTLCM5QrfDxbP3XzNSFVexLYkPw
-	6dYmZE2PU6pU7dDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B70311393C;
-	Thu, 24 Apr 2025 11:39:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yfapLPgiCmiHPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 24 Apr 2025 11:39:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 56066A0921; Thu, 24 Apr 2025 13:39:36 +0200 (CEST)
-Date: Thu, 24 Apr 2025 13:39:36 +0200
-From: Jan Kara <jack@suse.cz>
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0F65417E091E;
+	Thu, 24 Apr 2025 13:41:09 +0200 (CEST)
+Date: Thu, 24 Apr 2025 13:41:05 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
 To: Arnd Bergmann <arnd@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>, 
-	Zhang Yi <yi.zhang@huawei.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, Shida Zhang <zhangshida@kylinos.cn>, 
-	Baokun Li <libaokun1@huawei.com>, Jann Horn <jannh@google.com>, Brian Foster <bfoster@redhat.com>, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: avoid -Wformat-security warning
-Message-ID: <6vjo6wo5c5tadvhnrvo2affcqu2cf6ecrx4ol5jxl6mvz7vu3z@6wgvyptlpq4p>
-References: <20250423164354.2780635-1-arnd@kernel.org>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, =?UTF-8?B?QWRyacOh?=
+ =?UTF-8?B?bg==?= Larumbe <adrian.larumbe@collabora.com>, Arnd Bergmann
+ <arnd@arndb.de>, Dmitry Osipenko <dmitry.osipenko@collabora.com>, Florent
+ Tomasin <florent.tomasin@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: fix building without CONFIG_DEBUG_FS
+Message-ID: <20250424134105.087ec2f8@collabora.com>
+In-Reply-To: <20250424112637.3432563-1-arnd@kernel.org>
+References: <20250424112637.3432563-1-arnd@kernel.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423164354.2780635-1-arnd@kernel.org>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,arndb.de,suse.cz,huawei.com,linux.ibm.com,kernel.org,infradead.org,gmail.com,kylinos.cn,google.com,redhat.com,vger.kernel.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed 23-04-25 18:43:49, Arnd Bergmann wrote:
+On Thu, 24 Apr 2025 13:25:47 +0200
+Arnd Bergmann <arnd@kernel.org> wrote:
+
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> check_igot_inode() prints a variable string, which causes a harmless
-> warning with 'make W=1':
+> When debugfs is disabled, including panthor_gem.h causes warnings
+> about a non-static global function defined in a header:
 > 
-> fs/ext4/inode.c:4763:45: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
->  4763 |         ext4_error_inode(inode, function, line, 0, err_str);
+> In file included from drivers/gpu/drm/panthor/panthor_drv.c:30:
+> drivers/gpu/drm/panthor/panthor_gem.h:222:6: error: no previous prototype for 'panthor_gem_debugfs_set_usage_flags' [-Werror=missing-prototypes]
+>   222 | void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 usage_flags) {};
 > 
-> Use a trivial "%s" format string instead.
+> This could be changed to a static inline function, but as the normal
+> one is also static inline, just move the #ifdef check in there.
+> The #ifdef is still needed to avoid accessing a struct member that
+> does not exist without debugfs.
 > 
+> Fixes: a3707f53eb3f ("drm/panthor: show device-wide list of DRM GEM objects over DebugFS")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Frankly I don't care much either way but if my memory serves me well year
-or two ago someone was going through the kernel and was replacing pointless
-("%s", str) cases with printing the string directly. So we should make up
-our minds how we want this... In my opinion this is one of the warnings
-which may be useful but have false positives too often (like here where
-err_str is just a selection from several string literals) so I'm not sure
-it's worth the effort to try to silence it.
-
-								Honza
-
 > ---
->  fs/ext4/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/panthor/panthor_gem.h | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 94c7d2d828a6..3cfb1b670ea4 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4760,7 +4760,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
->  	return 0;
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+> index 4641994ddd7f..693842e10dee 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -209,17 +209,14 @@ panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
 >  
->  error:
-> -	ext4_error_inode(inode, function, line, 0, err_str);
-> +	ext4_error_inode(inode, function, line, 0, "%s", err_str);
->  	return -EFSCORRUPTED;
->  }
+>  void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
 >  
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> -#ifdef CONFIG_DEBUG_FS
+>  void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
+>  				   struct seq_file *m);
+>  static inline void
+>  panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 usage_flags)
+>  {
+> +#ifdef CONFIG_DEBUG_FS
+>  	bo->debugfs.flags = usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED;
+> -}
+> -
+> -#else
+> -void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 usage_flags) {};
+>  #endif
+> +}
+>  
+
+Oops. I actually don't see a good reason to expose this function, so
+could we go for something like that instead?
+
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+index 2dcf308094b2..962c2dc075db 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.c
++++ b/drivers/gpu/drm/panthor/panthor_gem.c
+@@ -42,11 +42,20 @@ static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo)
+        mutex_unlock(&ptdev->gems.lock);
+ }
+ 
++static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo,
++                                               u32 usage_flags)
++{
++       bo->debugfs.flags = usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED;
++}
+ #else
+ static void panthor_gem_debugfs_bo_add(struct panthor_device *ptdev,
+                                       struct panthor_gem_object *bo)
+ {}
+ static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo) {}
++static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo,
++                                               u32 usage_flags)
++{
++}
+ #endif
+ 
+ static void panthor_gem_free_object(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+index 4641994ddd7f..4dd732dcd59f 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.h
++++ b/drivers/gpu/drm/panthor/panthor_gem.h
+@@ -212,14 +212,6 @@ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
+ #ifdef CONFIG_DEBUG_FS
+ void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
+                                   struct seq_file *m);
+-static inline void
+-panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 usage_flags)
+-{
+-       bo->debugfs.flags = usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INITIALIZED;
+-}
+-
+-#else
+-void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 usage_flags) {};
+ #endif
+ 
+ #endif /* __PANTHOR_GEM_H__ */
 
