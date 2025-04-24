@@ -1,259 +1,119 @@
-Return-Path: <linux-kernel+bounces-619264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB7A9BA44
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 23:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A990EA9BA49
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 23:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C399A7B0B0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F7D1BA3ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC071288CAD;
-	Thu, 24 Apr 2025 21:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984BD28F951;
+	Thu, 24 Apr 2025 21:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gnx8C//L"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BAB285401;
-	Thu, 24 Apr 2025 21:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ce1F6Ugn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A1D28A1C9;
+	Thu, 24 Apr 2025 21:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745531870; cv=none; b=nTQg+WXBTU2dbSxtAeZI27pQHxORT2Qr9avCJlXk0ebcP4EaE4KM6Nkt+gamlfqh6AvK3lUdyqMolxwB6DiHWhLtnbRIWQKngLKLsvi7GjsKFMOrJR9Mx5W6e7gwpU0KIvIFtawNeOq+c6BeyRFZVc2njy5GWuGiMw2HyuSqNXs=
+	t=1745531885; cv=none; b=kTWk/8CS87CN3B48WNGkRRQmeukY22iHxpZD0ssRnnGujqBDGfjkGwmZPKGZx1fKXg80zbDGNwPka35x13cazOepZmc9ikNzd7ZX5/7X5dickMMEiBxajVGsoXM53T1DYxQVZy+7N8u+mMV+43wfH0ABGsc0Ij818c930rmweUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745531870; c=relaxed/simple;
-	bh=JfOhJ0MchQZpsxLJVqYLz0c+hOchVxBXTi7+XN9mj4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GhA1CW5rUOAE9cuC4QoO7YveTcKnNdJTS4VkMpDpV/rLtgbK2TbhGjRPe9fL4LlmcofXD0FPhx2RvQ0gY3bj2BDrnlmrOy6nd96PaEAWYXlFuQWkoy5F0OUlZS6dpwWpqhNFeiyUx4wr7RBpljf5px5dI2vs9WrPwyl/LJFtUR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gnx8C//L; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.147.157])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DF5F621130B1;
-	Thu, 24 Apr 2025 14:57:47 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DF5F621130B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745531868;
-	bh=SS4fk0g4V1UJEyIHeUf6RMBXb0X+qVVY+q0Dv5OQQCA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gnx8C//LJ6GkZ+3YTFQ55JHpLCO7COOn8XGsZOlhfsgMTNBStfBK3iuwABYQJVpFc
-	 PurVKD4tBssVBvX2Nw9i8X2W3T1F42XKTMYZmiNLWA29QtGCrhoEcA28m5aAXX3YMf
-	 w91HRMxBv5Gi8evmTTMIRx4EBfaCHlQOZoQNJT2Y=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kys@microsoft.com,
-	mikelley@microsoft.com,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	tiala@microsoft.com,
-	wei.liu@kernel.org,
-	linux-hyperv@vger.kernel.org,
+	s=arc-20240116; t=1745531885; c=relaxed/simple;
+	bh=y3xkOyEPRECUJeCHXEj6vaIKKeVRHAxPfCAfgWVBNPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVKzGfGKY1t40U/frdgKXUUJ5+i9ysWNjFDlEMuPSjpXhACFX9CfoQUPf6ajNki+XdBP2bffSvlp1L8NrODQ/CxqWfH2fmfXKC6Eywz+UQf6wUs13tOdqdVbyBEeDLMSC3tFqAOuN5DftU4mxuwEUA0HA2ajNou9+ouLl6V7IO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ce1F6Ugn; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745531882; x=1777067882;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=y3xkOyEPRECUJeCHXEj6vaIKKeVRHAxPfCAfgWVBNPU=;
+  b=ce1F6Ugn7EH4C4URJzYIma3msy8K8fsC4c9ts0jLHkUq/ooi5Mv9pu/4
+   YC8ELD2N7KEnmtfotnfuaS4BHnbixie9Yn2emfYNQpdEobcS3MDMOnDjl
+   jtWN0cPCGQrwIjhVJjK1XwBK5T2ET0Wv8SGZCLocrMyvs/sIUSqrKAaJO
+   3/P/o/ZEQp9qD0HHq1ymsWc9Q4xDvVk6zexl79U6cCupXaUzhw+n2PGMN
+   o8oaBYLIa+zsIROcnxlGHTwY/NtcqqweVpfTrOXg9TiK1J36jBVBz+L88
+   +GM3VcfAnZCbV+Atw+Ps6RdqDUffJTUmIAE32n+/9zaeUF+PYqg4etxmy
+   w==;
+X-CSE-ConnectionGUID: M81vnbL/Qey/wZHw7dmeFw==
+X-CSE-MsgGUID: wwZkRvH0RpGRg82L0+mByQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="64603975"
+X-IronPort-AV: E=Sophos;i="6.15,237,1739865600"; 
+   d="scan'208";a="64603975"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 14:58:01 -0700
+X-CSE-ConnectionGUID: WRtFMZLBTCGcHXkDl+jQhw==
+X-CSE-MsgGUID: g/8gZ322TWaqhX+WXgs3xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,237,1739865600"; 
+   d="scan'208";a="133659197"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 24 Apr 2025 14:57:58 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u84Zv-0004cj-2R;
+	Thu, 24 Apr 2025 21:57:55 +0000
+Date: Fri, 25 Apr 2025 05:57:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>, shannon.nelson@amd.com,
+	brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net, jgg@ziepe.ca,
+	leon@kernel.org, andrew+netdev@lunn.ch
+Cc: oe-kbuild-all@lists.linux.dev, allen.hubbe@amd.com,
+	nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: [PATCH hyperv-next] x86/hyperv: Fix APIC ID and VP ID confusion in hv_snp_boot_ap()
-Date: Thu, 24 Apr 2025 14:57:46 -0700
-Message-ID: <20250424215746.467281-1-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
+	Abhijit Gangurde <abhijit.gangurde@amd.com>
+Subject: Re: [PATCH 14/14] RDMA/ionic: Add Makefile/Kconfig to kernel build
+ environment
+Message-ID: <202504250547.mQFcTtpn-lkp@intel.com>
+References: <20250423102913.438027-15-abhijit.gangurde@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423102913.438027-15-abhijit.gangurde@amd.com>
 
-To start an application processor in SNP-isolated guest, a hypercall
-is used that takes a virtual processor index. The hv_snp_boot_ap()
-function uses that START_VP hypercall but passes as VP ID to it what
-it receives as a wakeup_secondary_cpu_64 callback: the APIC ID.
+Hi Abhijit,
 
-As those two aren't generally interchangeable, that may lead to hung
-APs if VP IDs and APIC IDs don't match, e.g. APIC IDs might be sparse
-whereas VP IDs never are.
+kernel test robot noticed the following build errors:
 
-Update the parameter names to avoid confusion as to what the parameter
-is. Use the APIC ID to VP ID conversion to provide correct input to the
-hypercall.
+[auto build test ERROR on net-next/main]
+[also build test ERROR on net/main linus/master v6.15-rc3 next-20250424]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Cc: stable@vger.kernel.org
-Fixes: 44676bb9d566 ("x86/hyperv: Add smp support for SEV-SNP guest")
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
- arch/x86/hyperv/hv_init.c       | 33 ++++++++++++++++++++++++++++++++
- arch/x86/hyperv/hv_vtl.c        | 34 +--------------------------------
- arch/x86/hyperv/ivm.c           | 11 +++++++++--
- arch/x86/include/asm/mshyperv.h |  5 +++--
- 4 files changed, 46 insertions(+), 37 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhijit-Gangurde/net-ionic-Rename-neqs_per_lif-to-reflect-rdma-capability/20250423-185723
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250423102913.438027-15-abhijit.gangurde%40amd.com
+patch subject: [PATCH 14/14] RDMA/ionic: Add Makefile/Kconfig to kernel build environment
+config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20250425/202504250547.mQFcTtpn-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250425/202504250547.mQFcTtpn-lkp@intel.com/reproduce)
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index ddeb40930bc8..23422342a091 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -706,3 +706,36 @@ bool hv_is_hyperv_initialized(void)
- 	return hypercall_msr.enable;
- }
- EXPORT_SYMBOL_GPL(hv_is_hyperv_initialized);
-+
-+int hv_apicid_to_vp_id(u32 apic_id)
-+{
-+	u64 control;
-+	u64 status;
-+	unsigned long irq_flags;
-+	struct hv_get_vp_from_apic_id_in *input;
-+	u32 *output, ret;
-+
-+	local_irq_save(irq_flags);
-+
-+	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-+	memset(input, 0, sizeof(*input));
-+	input->partition_id = HV_PARTITION_ID_SELF;
-+	input->apic_ids[0] = apic_id;
-+
-+	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-+
-+	control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
-+	status = hv_do_hypercall(control, input, output);
-+	ret = output[0];
-+
-+	local_irq_restore(irq_flags);
-+
-+	if (!hv_result_success(status)) {
-+		pr_err("failed to get vp id from apic id %d, status %#llx\n",
-+		       apic_id, status);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(hv_apicid_to_vp_id);
-diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-index 582fe820e29c..8bc4f0121e5e 100644
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -205,38 +205,6 @@ static int hv_vtl_bringup_vcpu(u32 target_vp_index, int cpu, u64 eip_ignored)
- 	return ret;
- }
- 
--static int hv_vtl_apicid_to_vp_id(u32 apic_id)
--{
--	u64 control;
--	u64 status;
--	unsigned long irq_flags;
--	struct hv_get_vp_from_apic_id_in *input;
--	u32 *output, ret;
--
--	local_irq_save(irq_flags);
--
--	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
--	memset(input, 0, sizeof(*input));
--	input->partition_id = HV_PARTITION_ID_SELF;
--	input->apic_ids[0] = apic_id;
--
--	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
--
--	control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
--	status = hv_do_hypercall(control, input, output);
--	ret = output[0];
--
--	local_irq_restore(irq_flags);
--
--	if (!hv_result_success(status)) {
--		pr_err("failed to get vp id from apic id %d, status %#llx\n",
--		       apic_id, status);
--		return -EINVAL;
--	}
--
--	return ret;
--}
--
- static int hv_vtl_wakeup_secondary_cpu(u32 apicid, unsigned long start_eip)
- {
- 	int vp_id, cpu;
-@@ -250,7 +218,7 @@ static int hv_vtl_wakeup_secondary_cpu(u32 apicid, unsigned long start_eip)
- 		return -EINVAL;
- 
- 	pr_debug("Bringing up CPU with APIC ID %d in VTL2...\n", apicid);
--	vp_id = hv_vtl_apicid_to_vp_id(apicid);
-+	vp_id = hv_apicid_to_vp_id(apicid);
- 
- 	if (vp_id < 0) {
- 		pr_err("Couldn't find CPU with APIC ID %d\n", apicid);
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index c0039a90e9e0..e3c32bb0d0cf 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -288,7 +288,7 @@ static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa)
- 		free_page((unsigned long)vmsa);
- }
- 
--int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
-+int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip)
- {
- 	struct sev_es_save_area *vmsa = (struct sev_es_save_area *)
- 		__get_free_page(GFP_KERNEL | __GFP_ZERO);
-@@ -297,10 +297,17 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
- 	u64 ret, retry = 5;
- 	struct hv_enable_vp_vtl *start_vp_input;
- 	unsigned long flags;
-+	int vp_id;
- 
- 	if (!vmsa)
- 		return -ENOMEM;
- 
-+	vp_id = hv_apicid_to_vp_id(apic_id);
-+
-+	/* The BSP or an error */
-+	if (vp_id <= 0)
-+		return -EINVAL;
-+
- 	native_store_gdt(&gdtr);
- 
- 	vmsa->gdtr.base = gdtr.address;
-@@ -348,7 +355,7 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
- 	start_vp_input = (struct hv_enable_vp_vtl *)ap_start_input_arg;
- 	memset(start_vp_input, 0, sizeof(*start_vp_input));
- 	start_vp_input->partition_id = -1;
--	start_vp_input->vp_index = cpu;
-+	start_vp_input->vp_index = vp_id;
- 	start_vp_input->target_vtl.target_vtl = ms_hyperv.vtl;
- 	*(u64 *)&start_vp_input->vp_context = __pa(vmsa) | 1;
- 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 07aadf0e839f..ae62a34bfd1e 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -268,11 +268,11 @@ int hv_unmap_ioapic_interrupt(int ioapic_id, struct hv_interrupt_entry *entry);
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- bool hv_ghcb_negotiate_protocol(void);
- void __noreturn hv_ghcb_terminate(unsigned int set, unsigned int reason);
--int hv_snp_boot_ap(u32 cpu, unsigned long start_ip);
-+int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip);
- #else
- static inline bool hv_ghcb_negotiate_protocol(void) { return false; }
- static inline void hv_ghcb_terminate(unsigned int set, unsigned int reason) {}
--static inline int hv_snp_boot_ap(u32 cpu, unsigned long start_ip) { return 0; }
-+static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip) { return 0; }
- #endif
- 
- #if defined(CONFIG_AMD_MEM_ENCRYPT) || defined(CONFIG_INTEL_TDX_GUEST)
-@@ -329,6 +329,7 @@ static inline void hv_set_non_nested_msr(unsigned int reg, u64 value) { }
- static inline u64 hv_get_non_nested_msr(unsigned int reg) { return 0; }
- #endif /* CONFIG_HYPERV */
- 
-+int hv_apicid_to_vp_id(u32 apic_id);
- 
- #ifdef CONFIG_HYPERV_VTL_MODE
- void __init hv_vtl_init_platform(void);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504250547.mQFcTtpn-lkp@intel.com/
 
-base-commit: 628cc040b3a2980df6032766e8ef0688e981ab95
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "__xchg_called_with_bad_pointer" [drivers/infiniband/hw/ionic/ionic_rdma.ko] undefined!
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
