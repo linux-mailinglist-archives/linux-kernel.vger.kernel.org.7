@@ -1,136 +1,132 @@
-Return-Path: <linux-kernel+bounces-617660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B2A9A410
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AAC7A9A43B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884A25A3847
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92125A510D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D056B20DD54;
-	Thu, 24 Apr 2025 07:23:36 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D7E20B1E8;
-	Thu, 24 Apr 2025 07:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCC2203706;
+	Thu, 24 Apr 2025 07:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoDzuOVN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9F23C8C9;
+	Thu, 24 Apr 2025 07:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745479416; cv=none; b=DfPPu1l0c91oksX50y0Rh2grscX+8h5vEPkIvBDPeZ8t1RNfdKy5Dz0/0wzwT9R8AWc2k1sxR6VsT40kKar9RROuOmC+Rl5hlmVSNu0qWcFDR8i1NJtFXF6tgpMdJO7Qj3UoNd8/UC6ZLaVXHv7KUqAv0h+/HbLVDjVQESkXS/g=
+	t=1745479359; cv=none; b=AhlMXb+Y0Bt4+AfrJbIfIlWnI45LNaLKWG5S0FhjDDx97EIKwXib03SW5NTx/xrwDbHtrov7jdLnEM4JADEp0GMIAQKr7bBxrA/iIW+WrYuyARb3p5PvO0kTARUVDR81nrl4XfCz8sz+6uzq3x3lmd3nbIzmxBLBFtuP25RTGsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745479416; c=relaxed/simple;
-	bh=sCE3zOKQu+v4U8QbYK2c41yXFWGS4hqC53keo15tqbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WxcOar5VGvZh/GkYhMB5jQ0IplF5BGwzgf5L240T59Z7TY7rLs1L96f5yqOZqFPNm8eXxicKtlAM1Gs169jVWUOVOO9OIoH9KPJEcp9ZXyCx2ultJkIEQXBEADBNC32XuHw+lRRA33/gsuAFA++FKfhq4f1wcMjMXPfkm/H1wjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.238])
-	by gateway (Coremail) with SMTP id _____8Bxlmny5gloTibFAA--.64495S3;
-	Thu, 24 Apr 2025 15:23:30 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.238])
-	by front1 (Coremail) with SMTP id qMiowMDxfRur5glo5CaTAA--.5456S5;
-	Thu, 24 Apr 2025 15:23:24 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Yanteng Si <si.yanteng@linux.dev>,
-	Feiyang Chen <chris.chenfeiyang@gmail.com>,
-	loongarch@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Henry Chen <chenx97@aosc.io>,
-	Biao Dong <dongbiao@loongson.cn>,
-	Baoqi Zhang <zhangbaoqi@loongson.cn>
-Subject: [PATCH net-next V3 3/3] net: stmmac: dwmac-loongson: Add new GMAC's PCI device ID support
-Date: Thu, 24 Apr 2025 15:22:09 +0800
-Message-ID: <20250424072209.3134762-4-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250424072209.3134762-1-chenhuacai@loongson.cn>
-References: <20250424072209.3134762-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1745479359; c=relaxed/simple;
+	bh=pkWE6sGGOL/lS7z2PofBZdgR94MWvVoyVMrCsfmGWMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tn371pCa+uNXeOei2I1d05TNxg5oHFLyoQ5SrTy8/cY+RLEAPZq1UlBmf8cGR1tYt5I/HhzZR+poBla+4zLOu2XB1uMkdFSAxx6Srus4X0wzwNcLHkxShgt0q7U4uPUjIqSy1VzV1skajGcdVBYXr3HJ6tikSsMWn+RZ2DYI+ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoDzuOVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D07BC4CEEC;
+	Thu, 24 Apr 2025 07:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745479358;
+	bh=pkWE6sGGOL/lS7z2PofBZdgR94MWvVoyVMrCsfmGWMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WoDzuOVNM5Th9/6MPQtwK/rt0LHybLoQmVej7xUL7pi/+grRTLzz3YO22zNR2UUpv
+	 L0Bn1mEP+wHrMmXMnVi+xdnrx+pb56/i+NwcME8rl7+krJ8X06sAa4KiT0AJGFeGhO
+	 zvG4gVJvRX6aT9o2FnS7IA1RJT+icqhZ42NzdhXqk+vXT48zoVpYbdHXg/hsIbpVVW
+	 mb5tmX1IUQBMyuSJU93RCrakk1F6JJ/M7rFzDCbJQt3wrlrbWfV338F+OcjU+P+e3j
+	 bzNLphJk97vP+hv977iF8cPx4g8hsnK1XXRSn4AkJbQ0zy97kvPiSWubQUhNoqskr/
+	 o45akYSgJ5EsQ==
+Date: Thu, 24 Apr 2025 10:22:34 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
+	Jonathan Corbet <corbet@lwn.net>, Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Subject: Re: [PATCH v9 11/24] mm/hmm: provide generic DMA managing logic
+Message-ID: <20250424072234.GN48485@unreal>
+References: <cover.1745394536.git.leon@kernel.org>
+ <3abc42885831f841dd5dfe78d7c4e56c620670ea.1745394536.git.leon@kernel.org>
+ <20250423172856.GM1213339@ziepe.ca>
+ <20250424071545.GM48485@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxfRur5glo5CaTAA--.5456S5
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJrWrtrykCrW8Kw48Cr45Jwc_yoW8KFWxpr
-	W5ZasFgrZ3GF45Cw4vqrWDWry5ZFZxG3srCF42yw4UWF93J342q3sF9Fs8Aw17ur45XFy2
-	vrWkCw48CFs8GwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XdjtUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424071545.GM48485@unreal>
 
-Add a new GMAC's PCI device ID (0x7a23) support which is used in
-Loongson-2K3000/Loongson-3B6000M. The new GMAC device use external PHY,
-so it reuses loongson_gmac_data() as the old GMAC device (0x7a03), and
-the new GMAC device still doesn't support flow control now.
+On Thu, Apr 24, 2025 at 10:15:45AM +0300, Leon Romanovsky wrote:
+> On Wed, Apr 23, 2025 at 02:28:56PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Apr 23, 2025 at 11:13:02AM +0300, Leon Romanovsky wrote:
+> > > From: Leon Romanovsky <leonro@nvidia.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
-Tested-by: Henry Chen <chenx97@aosc.io>
-Tested-by: Biao Dong <dongbiao@loongson.cn>
-Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+<...>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index 57917f26ab4d..e1591e6217d4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -66,7 +66,8 @@
- 					 DMA_STATUS_TPS | DMA_STATUS_TI  | \
- 					 DMA_STATUS_MSK_COMMON_LOONGSON)
+> > > +bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
+> > > +{
+> > > +	struct dma_iova_state *state = &map->state;
+> > > +	dma_addr_t *dma_addrs = map->dma_list;
+> > > +	unsigned long *pfns = map->pfn_list;
+> > > +	unsigned long attrs = 0;
+> > > +
+> > > +#define HMM_PFN_VALID_DMA (HMM_PFN_VALID | HMM_PFN_DMA_MAPPED)
+> > > +	if ((pfns[idx] & HMM_PFN_VALID_DMA) != HMM_PFN_VALID_DMA)
+> > > +		return false;
+> > > +#undef HMM_PFN_VALID_DMA
+> > 
+> > If a v10 comes I'd put this in a const function level variable:
+> > 
+> >           const unsigned int HMM_PFN_VALID_DMA = HMM_PFN_VALID | HMM_PFN_DMA_MAPPED;
+
+diff --git a/mm/hmm.c b/mm/hmm.c
+index c0bee5aa00fc..a8bf097677f3 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -807,15 +807,14 @@ EXPORT_SYMBOL_GPL(hmm_dma_map_pfn);
+  */
+ bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
+ {
++       const unsigned long valid_dma = HMM_PFN_VALID | HMM_PFN_DMA_MAPPED;
+        struct dma_iova_state *state = &map->state;
+        dma_addr_t *dma_addrs = map->dma_list;
+        unsigned long *pfns = map->pfn_list;
+        unsigned long attrs = 0;
  
--#define PCI_DEVICE_ID_LOONGSON_GMAC	0x7a03
-+#define PCI_DEVICE_ID_LOONGSON_GMAC1	0x7a03
-+#define PCI_DEVICE_ID_LOONGSON_GMAC2	0x7a23
- #define PCI_DEVICE_ID_LOONGSON_GNET	0x7a13
- #define DWMAC_CORE_MULTICHAN_V1	0x10	/* Loongson custom ID 0x10 */
- #define DWMAC_CORE_MULTICHAN_V2	0x12	/* Loongson custom ID 0x12 */
-@@ -371,7 +372,7 @@ static struct mac_device_info *loongson_dwmac_setup(void *apriv)
- 	/* Loongson GMAC doesn't support the flow control. Loongson GNET
- 	 * without multi-channel doesn't support the half-duplex link mode.
- 	 */
--	if (pdev->device == PCI_DEVICE_ID_LOONGSON_GMAC) {
-+	if (pdev->device != PCI_DEVICE_ID_LOONGSON_GNET) {
- 		mac->link.caps = MAC_10 | MAC_100 | MAC_1000;
- 	} else {
- 		if (ld->multichan)
-@@ -659,7 +660,8 @@ static SIMPLE_DEV_PM_OPS(loongson_dwmac_pm_ops, loongson_dwmac_suspend,
- 			 loongson_dwmac_resume);
+-#define HMM_PFN_VALID_DMA (HMM_PFN_VALID | HMM_PFN_DMA_MAPPED)
+-       if ((pfns[idx] & HMM_PFN_VALID_DMA) != HMM_PFN_VALID_DMA)
++       if ((pfns[idx] & valid_dma) != valid_dma)
+                return false;
+-#undef HMM_PFN_VALID_DMA
  
- static const struct pci_device_id loongson_dwmac_id_table[] = {
--	{ PCI_DEVICE_DATA(LOONGSON, GMAC, &loongson_gmac_pci_info) },
-+	{ PCI_DEVICE_DATA(LOONGSON, GMAC1, &loongson_gmac_pci_info) },
-+	{ PCI_DEVICE_DATA(LOONGSON, GMAC2, &loongson_gmac_pci_info) },
- 	{ PCI_DEVICE_DATA(LOONGSON, GNET, &loongson_gnet_pci_info) },
- 	{}
- };
--- 
-2.47.1
-
+        if (pfns[idx] & HMM_PFN_P2PDMA_BUS)
+                ; /* no need to unmap bus address P2P mappings */
 
