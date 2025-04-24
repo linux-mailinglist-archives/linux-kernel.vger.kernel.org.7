@@ -1,108 +1,217 @@
-Return-Path: <linux-kernel+bounces-617656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AA9A9A40B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E04A9A413
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9F11B62C3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B729916795D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278C1204F93;
-	Thu, 24 Apr 2025 07:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570FF1F2C3B;
+	Thu, 24 Apr 2025 07:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwzAr54S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AhHzssur";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8gd5MMwf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AhHzssur";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8gd5MMwf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BDD204680;
-	Thu, 24 Apr 2025 07:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F951F153C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745479370; cv=none; b=W4LLFa/1J014BOv59ou7qBjSlkFq9rgxy1xNNDUHP2x4QEXZ8rAL9ytOWWw3QdesIDH3ImMmqm+ymJ6TrFvS/WCNZT30W3GchIO3xOby5Sxk4rCK27Q8WO3HaWKTle3MUBgbjS8PX5I93gTO33PLoOwGPJhIWjCdud40KCn5oB4=
+	t=1745479413; cv=none; b=EC+bBYP5LXJKB8ZCWkDPxbT4qI6CJ+f9o8ZDfgqgyqwdH2cLZKyIh/yNP/+TAqlxNPomoH9wzcVG/nzOJpOOnnXs1S3myKd/0LokHYWVmmMGFzLWHDc4DMwXNxdt+ABUHnw1pGMktiMkek6gwh72oyiE2JEbVOFRjPtMLt+YW7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745479370; c=relaxed/simple;
-	bh=OPTobuaqLm9m+8ywpsnq/+K9zTYPUVY8MzQ3jL9U66A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzVLYlr0zN+DncLdj5PnVM4gcBiVZ5qw0MI5qcGscwPyeW4bpbHi69V7idi1ZFbLeNeOReAxU4hsw5ij76WSeQNJaGJSccbltFBweBabfxWqapNBbIHQCe2LcFflBt9Wsegc5TuewHQldEgn1wAA7IDN46PTFryxDDhduyKPE4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwzAr54S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E82B4C4CEEE;
-	Thu, 24 Apr 2025 07:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745479369;
-	bh=OPTobuaqLm9m+8ywpsnq/+K9zTYPUVY8MzQ3jL9U66A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KwzAr54Sz6yHxN6A2bYhtyTnAnFAzheib0pwuUP+q8nN+mlZT6NgYkaUnyifuZQTU
-	 6tjgt2EpO0yFZr7wfGGA3WDW1z3unyPfsgZceeU/xMAGZOTJpA15IGeGFTREe1fsdq
-	 EcyNVAK21yQY7sJLU9Dc7LVDkU5m9T1Wg6B2AwV3DeUSODPOANUmLfHeN73aTw7hvC
-	 GCgERaAxF+lX6LJXorTXOKvgbpu+/6WacVa2e4kHQW73jl24IJz5xkBrU/GV/f3jG4
-	 NH/2vf1yMTatMiDcBHKwYGZngVCj2yvF3mSg5OKv0ZakZjPIWwGjwFOQepxd5X9SDH
-	 OdLIgafpJDh2Q==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54d6f933152so828515e87.1;
-        Thu, 24 Apr 2025 00:22:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWC5+dQtYT0OJb3+Kcvlk2bVlxpn/0Sm00uooJxW2tqy9ao7v380XOKlkEBYeoCQAiAEevN/MJQnSvZO87t@vger.kernel.org, AJvYcCX4Pbp5RgNtu5iLgo9AYLXk7JtZs0BBUCBlje+ZkylKj+hqLuikpl7Zp0F4xkORyYt/s46FGAeMGb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7R5DowEA2v+SB5B28uZGlJE5zWysr9tme3Z0nyRxvV4z1uhFw
-	D7BWUu8aMzQFBEX7sFYDBUynrVhKsZ00fFGBdriP/SUJHqIJOXogP+UM3wQ7aMx0ZH+a2sntmdP
-	EEQWdoGED9TE0KMvx/gw8LCD2FDc=
-X-Google-Smtp-Source: AGHT+IFpG7BWA2Kl4PlwTgVD9XK4iB/bYChVb4dDvfVKSuglev37r0yrmLT+/aFio8TXZtaGpb4xkVgNZPdvjJCeZZ8=
-X-Received: by 2002:a05:6512:3b82:b0:549:8cbb:5441 with SMTP id
- 2adb3069b0e04-54e7c41ee2emr498565e87.15.1745479368301; Thu, 24 Apr 2025
- 00:22:48 -0700 (PDT)
+	s=arc-20240116; t=1745479413; c=relaxed/simple;
+	bh=5NT6kWcIz4H9m0zVWfgV4bUPCBkkH2fpP69Ik4K3HPc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QppGwF4urxM0fgCW6zyi/zCIcPTuiu305WMi/R9Zq6uPqfGStFPeSgbH9qPn/VTM3i9BPVM2etMTLhISGbDxAF5Mbo7pTrm163Jc9zhJdpsoB/lp16Rkabq8ifza29SqaYsow6zPWNIPwOrzFmKuyz0rk9TzHGjrt7sK5/BBEh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AhHzssur; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8gd5MMwf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AhHzssur; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8gd5MMwf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C9CD71F38C;
+	Thu, 24 Apr 2025 07:23:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745479409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
+	b=AhHzssurAVQKGr57SWusajemDZp1JCVKusWIkm85IGdSX+ZglWTahk66k089r3F2QXH3Y7
+	bjyPX6H1TuATz47f8BzlEhJD0APkNxBibbvPFWSbQFh/J0uBEns+X3gh7fQHUAKt+9ng6r
+	0izKXM36FXbkheHzaqNDTwc1k0sX2KE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745479409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
+	b=8gd5MMwfsnl1fsJAznYvWqnrRXUNUYRw5J/YEnYMIbB6IExTZyl/J/zrqCebn1L4gstpEi
+	MAFv7ZBimvB/lRCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AhHzssur;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8gd5MMwf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745479409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
+	b=AhHzssurAVQKGr57SWusajemDZp1JCVKusWIkm85IGdSX+ZglWTahk66k089r3F2QXH3Y7
+	bjyPX6H1TuATz47f8BzlEhJD0APkNxBibbvPFWSbQFh/J0uBEns+X3gh7fQHUAKt+9ng6r
+	0izKXM36FXbkheHzaqNDTwc1k0sX2KE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745479409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcud0PH08x8fmB63EBVvjnChXUAuJs8O5JHkRmWvXx0=;
+	b=8gd5MMwfsnl1fsJAznYvWqnrRXUNUYRw5J/YEnYMIbB6IExTZyl/J/zrqCebn1L4gstpEi
+	MAFv7ZBimvB/lRCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CB5F1393C;
+	Thu, 24 Apr 2025 07:23:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LWtqFfHmCWgBcwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 24 Apr 2025 07:23:29 +0000
+Date: Thu, 24 Apr 2025 09:23:28 +0200
+Message-ID: <8734dy3tvz.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jaya Kumar <jayakumar.alsa@gmail.com>,
+	Clemens Ladisch <clemens@ladisch.de>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Mark Brown <broonie@kernel.org>,
+	liujing <liujing@cmss.chinamobile.com>,
+	Andres Urian Florez <andres.emb.sys@gmail.com>,
+	Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	David Rhodes <drhodes@opensource.cirrus.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/28] ALSA: Phase out hybrid PCI devres API
+In-Reply-To: <20250423075346.45907-1-phasta@kernel.org>
+References: <20250423075346.45907-1-phasta@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250422100728.208479-7-ardb+git@google.com> <d00c9119-5e8b-2615-8e4b-2d25732ff71a@amd.com>
- <CAGnOC3b2XBFw+xdMhTtpfDYG480BG-KwfkPMWOiOP+13XeHFfg@mail.gmail.com>
-In-Reply-To: <CAGnOC3b2XBFw+xdMhTtpfDYG480BG-KwfkPMWOiOP+13XeHFfg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 24 Apr 2025 09:22:37 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFCqLnWDw7hJVL9FShF9V=YZ_Ucf6jSSeq0E=BeuENdkQ@mail.gmail.com>
-X-Gm-Features: ATxdqUH330U3kB7vp5aCRlzFskEPcmfdDqLAZ3bcCcFe7TK1O0Cz7BOL-n7PSWk
-Message-ID: <CAMj1kXFCqLnWDw7hJVL9FShF9V=YZ_Ucf6jSSeq0E=BeuENdkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] efi: Don't initalize SEV-SNP from the EFI stub
-To: Ard Biesheuvel <ardb@google.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Ard Biesheuvel <ardb+git@google.com>, 
-	linux-efi@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	mingo@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: C9CD71F38C
+X-Spam-Score: -2.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,gmail.com,ladisch.de,linux.intel.com,baylibre.com,kernel.org,cmss.chinamobile.com,gmx.de,linux.dev,opensource.cirrus.com,linutronix.de,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, 22 Apr 2025 at 18:40, Ard Biesheuvel <ardb@google.com> wrote:
->
-> On Tue, Apr 22, 2025 at 5:51=E2=80=AFPM Tom Lendacky <thomas.lendacky@amd=
-.com> wrote:
-> >
-> > On 4/22/25 05:07, Ard Biesheuvel wrote:
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> >
-> > Hi Ard,
-> >
-> > I'll try to get to reviewing and testing this series very soon.
->
-> Thanks.
->
-> > But one
-> > thing I can see is that we never set the snp_vmpl level anymore in the
-> > EFI stub and so PVALIDATE will fail when running under an SVSM.
-> >
-> > But I don't think this series is completely at fault. This goes back to
-> > fixing memory acceptance before sev_enable() was called and I missed th=
-e
-> > SVSM situation. So I don't think we can completely remove all SNP
-> > initialization and might have to do svsm_setup_ca() which has a pre-req
-> > on setup_cpuid_table()...  sigh.
-> >
+On Wed, 23 Apr 2025 09:53:18 +0200,
+Philipp Stanner wrote:
+> 
+> Changes in v2:
+>   - Add RB from Andy
+>   - Remove ASoC patches, branch out this series for Alsa. (Andy)
+> 
+> Hi,
+> 
+> a year ago we spent quite some work trying to get PCI into better shape.
+> Some pci_ functions can be sometimes managed with devres, which is
+> obviously bad. We want to provide an obvious API, where pci_ functions
+> are never, and pcim_ functions are always managed.
+> 
+> Thus, everyone enabling his device with pcim_enable_device() must be
+> ported to pcim_ functions. Porting all users will later enable us to
+> significantly simplify parts of the PCI subsystem. See here [1] for
+> details.
+> 
+> This patch series does that for sound.
+> 
+> Feel free to squash the commits as you see fit.
+> 
+> P.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/pci/devres.c#L18
+> 
+> Philipp Stanner (28):
+>   ALSA: sonicvibes: Use pure devres PCI
+>   ALSA: rme96: Use pure devres PCI
+>   ALSA: rme32: Use pure devres PCI
+>   ALSA: ens1370: Use pure devres PCI
+>   ALSA: cmipci: Use pure devres PCI
+>   ALSA: via82: Use pure devres PCI
+>   ALSA: sis7019: Use pure devres PCI
+>   ALSA: intel8x: Use pure devres PCI
+>   ALSA: fm801: Use pure devres PCI
+>   ALSA: es19x8: Use pure devres PCI
+>   ALSA: azt3328: Use pure devres PCI
+>   ALSA: als: Use pure devres PCI
+>   ALSA: oxygen: Use pure devres PCI
+>   ALSA: lx6464es: Use pure devres PCI
+>   ALSA: vx222: Use pure devres PCI
+>   ALSA: trident: Use pure devres PCI
+>   ALSA: rme9652: Use pure devres PCI
+>   ALSA: ymfpci: Use pure devres PCI
+>   ALSA: riptide: Use pure devres PCI
+>   ALSA: nm256: Use pure devres PCI
+>   ALSA: ice: Use pure devres PCI
+>   ALSA: emu10k1: Use pure devres PCI
+>   ALSA: echoaudio: Use pure devres PCI
+>   ALSA: cs5535: Use pure devres PCI
+>   ALSA: cs46xx: Use pure devres PCI
+>   ALSA: ca0106: Use pure devres PCI
+>   ALSA: ali5451: Use pure devres PCI
+>   ALSA: maestro3: Use pure devres PCI
 
-Why is that, though? The EFI stub never replaces the #VC and #PF
-handlers, and so cpuid instructions will be handled as before, right?
-And the SVSM setup code will run again when the core kernel boots and
-this time, it will need to update the cpuid tables to record the SVSM
-presence.
+Applied to for-next branch now.  Thanks.
+
+
+Takashi
 
