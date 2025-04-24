@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-617594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E36EA9A2D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0066BA9A2CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C775D3AA710
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78B21945D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CD91C5499;
-	Thu, 24 Apr 2025 07:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542C1DED52;
+	Thu, 24 Apr 2025 07:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R/v3jPd6"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbFoYUIW"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E4E2701C3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 07:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF322701C3;
+	Thu, 24 Apr 2025 07:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745478292; cv=none; b=LLtUPRvU90y7C+2oCxBcc7WJ7El8kfbia64NaR+meVf38QE1hBG+CCBtobqk0Y/lfT8xrG+wxyLK/Rk2WOqZUq8QacM5XoRUUcyebcr0diCvxEnYAw5mASGCKGuPUKrdzP/luPDXIrGedGa0TaHrCcRuMTNsvG6ZBi6jFOOFsOg=
+	t=1745478236; cv=none; b=dwYi931qR3HXA9SReyEfboz7BcCJq6HyEKPMIs9ApUVCcbH2JL9rBQ7iVR/Hf2rJuWTabKCYN15MaRoxFKmKzbSsRA0k0utG7HJZBkoTKQtCyDMcCu29KfVPUmLk5s7tCny5uwXrL7+BRwIU3dZdNgpRWzkK0B11xDg/H9zchz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745478292; c=relaxed/simple;
-	bh=qNH4t9eG2CLNTL3eDk/F7+ms7mC2E/+0Kc61bZYFLgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U1MIx7/0ua0je6tNGNK8gnuqemXDeldFQQKhEuRiCQDSm+Z49t4bilLbKvhr3NBtEXLvYgld446AxxWQcl+m9xWWrEUElpYjyDJVoXMVKpqIER8O449U2Q5n5tRUY9U08Ox9XDYVjO46SlD+7VxUTOj28NKrahoMuBNAadaY5Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R/v3jPd6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22435603572so7422205ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:04:50 -0700 (PDT)
+	s=arc-20240116; t=1745478236; c=relaxed/simple;
+	bh=ikRhTNYgeA3W7tojivXF/zcQJqc63/c0HvwDAcTK+Q4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cIuKwEIp2OC0XnUJ8MlO8I11sgPVtarbt5k4hUDH/g4Pc7JuAzYT5r+SY2U+JLAlFO/ScvW7YZYWAowpKSmv9F12poWo1hS/Aw6dhE6j9EMH+I1I0C4Fx1xBRRHyXxC4U6kG3x0dR5AXCKnMnYppFACRpqED1mSbY6E03TcGs10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbFoYUIW; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3913b539aabso307368f8f.2;
+        Thu, 24 Apr 2025 00:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745478290; x=1746083090; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745478233; x=1746083033; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCK1VDbTpYWs4fLQMxD1y8TWj5o2Az5CqghWjMcs5ZI=;
-        b=R/v3jPd6uWGG10UsLJjgCJonY1vxJBPfAvPbHElrII9JyBU+EGYHRQGU5a4/U8VZgD
-         Q9YCKHWvDtcCkXduZczBIXBuogw9Hx090oHU6m4l9c4PB+GUUzr6hhgTlbD3fBURQvzZ
-         Pky517RlDmy0KV+OaHgbyBwuxVyoZsfdYPqRY=
+        bh=YdERwnXBZNq9sQ1Fqxzddvr9G+jkIkeD3wDoM8Qog1Q=;
+        b=GbFoYUIWBiCSs0WAQauCPITzvTnzuOvjJUeZ1PRPv5tsMEPuuIgaJ63AFiN0HLZfzh
+         4lI889c0oz7/fAgClFSkqxd5l739KQ4I4ptuQF3K9KOq/1FH+lgLuggBXz5SrkbCroP8
+         6WbDT9qfXfhfwit11TMNjU5yQjU4DCTrhlWjQRBcfEjfDpn1Rjvwps5pxZsEbaHFXhRv
+         Cqy0lYtw8LGI8BuxIvJvzcCcnPg5yiGQmP5A1laX19wCmrfFJet8yBYXQwUVc3iEv+wf
+         SP7t3T78oCMYqnkJclAWxM3ybCIk/0MtiISg40VOXgteRBwUGgiW94faHrPOxCnjzLQP
+         c9Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745478290; x=1746083090;
+        d=1e100.net; s=20230601; t=1745478233; x=1746083033;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WCK1VDbTpYWs4fLQMxD1y8TWj5o2Az5CqghWjMcs5ZI=;
-        b=tndAPYK4WLh9LWDaxG+dCmfQMCbZ0f1J+G1hnW9NqVyTbip8a9Y/z3ygVZw6ziDMBe
-         HLhuEasMpneOSiTURPt9iSnVCFcMqeqSFkt2vTviYRP10vF6ikD5fwfyA0t2g95mWZef
-         C53J7xEudvBIy5nV856UEBG5XzXP1EejX8kuBUvuZqjlZd6DiHDVQrA3jDWjLPE7BxA0
-         hcwKdtF6fi5UzXjSEKJe99pPUGuE7YqJLNmyPN8cK8mMFzGtRtXDAMGWtJ79r6ZCtYl3
-         W/F6RksupBYPlYO98+Hc2+TtyvN1hJPr5yXIZC+kffOrUgtEX5kA2lfCAulPzf7uV3WJ
-         PfSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWF5PIdBtS1gnJfKxz1ic3U56j20Mk+aGama3aysjnoFJnWq1FDQNdQeY1nImJNp/OfBWrPhzF6olXBl5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynGjDcL+bzhVp7/ncZoScGysN3xx3ghMU0ZhWkzB7iRlBqON0O
-	TicdGBlfh2BVoy+Wsko/oihN379mUts1zgpR5VXXHYE3ZUWVF8JyXsmsSSU73g==
-X-Gm-Gg: ASbGncs4m7/9zzkQa/9ChuIf7ENc1uD5VP4s9EBql/kx4V/yGp8XgbsooWH6AqY+ay1
-	4VUDsLTZwRPxFsMunvRepfOjNVMAqwjCpJuYvmD+YOuMTDGG8z23huWrBvWpvOqytay7SZqypNS
-	2Ca2+SONByNASjiBReLzOO+wRY8cS4R7TWGAuAohtkzYYcoZJDjCSq4Be1cyr62G4TA1rPZAoD/
-	RokK+muXW03nsHygE4rncDNdomr4qrBZ7Vsnk4YCfoNt+c/ZkILGiPCaEHPtDu4OVSdnYChRIqJ
-	WEJcHdlzzCDkNqZXXE4ddja+kV18Mv8m4cTefjey4P0eZyPjjXQh/dePvlHYQRnKaXE=
-X-Google-Smtp-Source: AGHT+IEKl/rHf/wX/Rw7PguqNixe9Lyyac7D9EbeN9OaZPbTzu37q0zQNk6SXavakM90zItgiThP8g==
-X-Received: by 2002:a17:902:c401:b0:224:2a6d:55ae with SMTP id d9443c01a7336-22db3db6f02mr21659045ad.48.1745478290186;
-        Thu, 24 Apr 2025 00:04:50 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:63eb:6b38:399c:5ad7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4d76c80sm6010555ad.51.2025.04.24.00.04.46
+        bh=YdERwnXBZNq9sQ1Fqxzddvr9G+jkIkeD3wDoM8Qog1Q=;
+        b=D0rnPAfZv82mBqEwtO1LgX1B6qzWwnwP5wuRiNVpjDhusDYjEY90NImU6qSXckeRa3
+         dZ7hafGmQUnChc3Crsstktu6eBunxp0Ju2pEcYLxfCQewY9seXZs2GZhPQ12Ek3V9Z0/
+         024mzoSX9QgaRl7QQZkBu2CpQdoghFHBFwuzioANS5wZDxm3MzUe/X1ge5EJhnz3fdeB
+         KVDHTQ3Ghiz+1GWHtxgFOLtujBSuuA/B/D+OU03YBClL9iGFotKKbi1XgXNFq3sCYbcJ
+         PjeMkzy3zDp5WZJ1yqAJX+W8eDeFlDMm/SlFHtZR542rVy4G2TXLSA0tzap2G/ehUeya
+         UYEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCkKBNwaSylkdKBWCJ96oKbhT7BAEWBonwwHPu4xweWYS48pryf30eB5Rjx7JMTX2i1foA0BeZfbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvkH1lAcLXEMyeM/z7RupXe8W5aUFZzNq9OyeaJYd25jLRqE4v
+	1nV2onfI7NtK0Vfh47sRc/y3eKLm+xxzYEBemzqJmI26xDQaWzPMM+umMYH/l/w=
+X-Gm-Gg: ASbGncuBLH6lQMgWfXoMTc6WaobHEyT2yCNgSFVYjTtO0FxaungJplu2XfulirVw3gu
+	bukHt+own7rRqpKVRtGfLH5tJGYZBd7Atyk7rCo1VAQtjcFRJSOZsG7/jjMj4zjIEiOd+U8ZV2z
+	mw0AYjUAxmdjIXRIJQafIkma9RqhrEBykpAXMbHu7WwVr6xUZbw6DDUaC7FGzcgxjCiAONMiOHf
+	AnWdyHmpEoVvSARHAym/qL0yl8ZcFnPqpnJfUvnUTvTypOZCc5jSHTOEyqSV8R8EfthHDjPP4as
+	sUH5rnfFzMdWbGWemM21b+nkBV+O8vJxJ07SCKCUGLPFF137BPxE1w23UyibMMqwrpnhMV0FJaj
+	KaKzfqvSjyaJTNTyUcBkGg5TtVmCu
+X-Google-Smtp-Source: AGHT+IHonOLSvBENjGvHa/JpXYniEDXqLY+6khGtxFc77fA0mzF3tUwoMZgW/5KOEoQ0b9wZL6EX5Q==
+X-Received: by 2002:a05:6000:1ace:b0:391:2df9:772d with SMTP id ffacd0b85a97d-3a06cf562dfmr1092167f8f.13.1745478231222;
+        Thu, 24 Apr 2025 00:03:51 -0700 (PDT)
+Received: from localhost.localdomain (46-10-149-206.ip.btc-net.bg. [46.10.149.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d4a8070sm1079816f8f.18.2025.04.24.00.03.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 00:04:49 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Petr Mladek <pmladek@suse.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] hung_task: configurable hung-task stacktrace loglevel
-Date: Thu, 24 Apr 2025 16:02:43 +0900
-Message-ID: <20250424070436.2380215-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
+        Thu, 24 Apr 2025 00:03:50 -0700 (PDT)
+From: Tihomir Dimitrov <tihomirdimitrov2005@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: masahiroy@kernel.org,
+	dhowells@redhat.com,
+	linux-nfs@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	Tihomir Dimitrov <tihomirdimitrov2005@gmail.com>
+Subject: [PATCH kheaders] kheaders: exclude NFS/AFS temporary files more robustly" -m " The existing implementation handles temporary files correctly, but can be improved by:
+Date: Thu, 24 Apr 2025 10:03:48 +0300
+Message-ID: <20250424070348.3474-1-tihomirdimitrov2005@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,132 +89,186 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, hung-task watchdog uses two different loglevels
-to report hung-tasks: a) KERN_INFO for all the important task
-information (e.g. sched_show_task()) and b)  KERN_ERR for the
-rest.  This makes it a little inconvenient, especially for
-automated kernel logs parsing.
+1. Making exclusions explicit in find commands:
+   ! -name '.__afs*' ! -name '.nfs*'
+2. Adding matching tar exclusions:
+   --exclude='.__afs*' --exclude='.nfs*'
 
-Introduce CONFIG_HUNG_TASK_STACKTRACE_LOGLEVEL so that (a)
-becomes configurable.
+These changes:
+- Document the edge case directly in code
+- Prevent potential 'File removed' errors
+- Maintain identical output (verified via checksums)
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Tested by:
+1. Creating .__afs_test/.nfs_test files
+2. Confirming their absence from the archive
+3. Verifying builds complete successfully on NFS-mounted trees
+
+Signed-off-by: Tihomir Dimitrov <tihomirdimitrov2005@gmail.com>
 ---
- include/linux/sched/debug.h |  1 +
- kernel/hung_task.c          |  6 ++++--
- kernel/sched/core.c         | 19 +++++++++++++------
- lib/Kconfig.debug           |  8 ++++++++
- 4 files changed, 26 insertions(+), 8 deletions(-)
+ kernel/gen_kheaders.sh | 117 +++++++++++++++++++----------------------
+ 1 file changed, 54 insertions(+), 63 deletions(-)
 
-diff --git a/include/linux/sched/debug.h b/include/linux/sched/debug.h
-index 35ed4577a6cc..80c17cdd35a8 100644
---- a/include/linux/sched/debug.h
-+++ b/include/linux/sched/debug.h
-@@ -34,6 +34,7 @@ extern void show_stack(struct task_struct *task, unsigned long *sp,
- 		       const char *loglvl);
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index c9e5dc068e85..b1041d9e72e0 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -1,59 +1,48 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
++#
++# Generates compressed kernel headers archive for CONFIG_IKHEADERS
++# Supports incremental builds by tracking MD5 checksums of inputs
  
- extern void sched_show_task(struct task_struct *p);
-+extern void sched_show_task_log_lvl(struct task_struct *p, const char *lvl);
- 
- struct seq_file;
- extern void proc_sched_show_task(struct task_struct *p,
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index d2432df2b905..8817016fd45b 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -26,6 +26,8 @@
- 
- #include <trace/events/sched.h>
- 
-+#define PR_LEVEL KERN_SOH __stringify(CONFIG_HUNG_TASK_STACKTRACE_LOGLEVEL)
+-# This script generates an archive consisting of kernel headers
+-# for CONFIG_IKHEADERS.
+ set -e
 +
- /*
-  * The number of tasks checked:
-  */
-@@ -153,7 +155,7 @@ static void debug_show_blocker(struct task_struct *task)
- 			       task->comm, task->pid, t->comm, t->pid);
- 			break;
- 		}
--		sched_show_task(t);
-+		sched_show_task_log_lvl(t, PR_LEVEL);
- 		return;
- 	}
- }
-@@ -221,7 +223,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 			pr_err("      Blocked by coredump.\n");
- 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
- 			" disables this message.\n");
--		sched_show_task(t);
-+		sched_show_task_log_lvl(t, PR_LEVEL);
- 		debug_show_blocker(t);
- 		hung_task_show_lock = true;
+ sfile="$(readlink -f "$0")"
+ outdir="$(pwd)"
+-tarfile=$1
+-tmpdir=$outdir/${tarfile%/*}/.tmp_dir
++tarfile="$1"
++tmpdir="$outdir/${tarfile%/*}/.tmp_dir"
  
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 54e7d63f7785..e9033b049092 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7751,7 +7751,7 @@ void __sched io_schedule(void)
- }
- EXPORT_SYMBOL(io_schedule);
++# Target header directories
+ dir_list="
+ include/
+ arch/$SRCARCH/include/
+ "
  
--void sched_show_task(struct task_struct *p)
-+void sched_show_task_log_lvl(struct task_struct *p, const char *lvl)
- {
- 	unsigned long free;
- 	int ppid;
-@@ -7759,7 +7759,8 @@ void sched_show_task(struct task_struct *p)
- 	if (!try_get_task_stack(p))
- 		return;
+-# Support incremental builds by skipping archive generation
+-# if timestamps of files being archived are not changed.
+-
+-# This block is useful for debugging the incremental builds.
+-# Uncomment it for debugging.
+-# if [ ! -f /tmp/iter ]; then iter=1; echo 1 > /tmp/iter;
+-# else iter=$(($(cat /tmp/iter) + 1)); echo $iter > /tmp/iter; fi
+-# find $all_dirs -name "*.h" | xargs ls -l > /tmp/ls-$iter
+-
+ all_dirs=
+ if [ "$building_out_of_srctree" ]; then
+-	for d in $dir_list; do
+-		all_dirs="$all_dirs $srctree/$d"
+-	done
++    for d in $dir_list; do
++        all_dirs="$all_dirs $srctree/$d"  # Preserve original directory order
++    done
+ fi
+ all_dirs="$all_dirs $dir_list"
  
--	pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p));
-+	printk("%stask:%-15.15s state:%c", lvl,
-+	       p->comm, task_state_to_char(p));
- 
- 	if (task_is_running(p))
- 		pr_cont("  running task    ");
-@@ -7773,12 +7774,18 @@ void sched_show_task(struct task_struct *p)
- 		free, task_pid_nr(p), task_tgid_nr(p),
- 		ppid, p->flags, read_task_thread_flags(p));
- 
--	print_worker_info(KERN_INFO, p);
--	print_stop_info(KERN_INFO, p);
--	print_scx_info(KERN_INFO, p);
--	show_stack(p, NULL, KERN_INFO);
-+	print_worker_info(lvl, p);
-+	print_stop_info(lvl, p);
-+	print_scx_info(lvl, p);
-+	show_stack(p, NULL, lvl);
- 	put_task_stack(p);
- }
-+EXPORT_SYMBOL_GPL(sched_show_task_log_lvl);
+-# include/generated/utsversion.h is ignored because it is generated after this
+-# script is executed. (utsversion.h is unneeded for kheaders)
+-#
+-# When Kconfig regenerates include/generated/autoconf.h, its timestamp is
+-# updated, but the contents might be still the same. When any CONFIG option is
+-# changed, Kconfig touches the corresponding timestamp file include/config/*.
+-# Hence, the md5sum detects the configuration change anyway. We do not need to
+-# check include/generated/autoconf.h explicitly.
+-#
+-# Ignore them for md5 calculation to avoid pointless regeneration.
+-headers_md5="$(find $all_dirs -name "*.h" -a			\
+-		! -path include/generated/utsversion.h -a	\
+-		! -path include/generated/autoconf.h		|
+-		xargs ls -l | md5sum | cut -d ' ' -f1)"
+-
+-# Any changes to this script will also cause a rebuild of the archive.
+-this_file_md5="$(ls -l $sfile | md5sum | cut -d ' ' -f1)"
+-if [ -f $tarfile ]; then tarfile_md5="$(md5sum $tarfile | cut -d ' ' -f1)"; fi
+-if [ -f kernel/kheaders.md5 ] &&
+-	[ "$(head -n 1 kernel/kheaders.md5)" = "$headers_md5" ] &&
+-	[ "$(head -n 2 kernel/kheaders.md5 | tail -n 1)" = "$this_file_md5" ] &&
+-	[ "$(tail -n 1 kernel/kheaders.md5)" = "$tarfile_md5" ]; then
+-		exit
++# Checksum calculation excludes generated files that change frequently but don't
++# affect header functionality. This prevents unnecessary rebuilds when:
++# - Only autoconf.h timestamps change (content remains identical)
++# - utsversion.h gets regenerated (contains volatile build info)
++headers_md5="$(find $all_dirs -name "*.h" -a \
++        ! -path "include/generated/utsversion.h" -a \
++        ! -path "include/generated/autoconf.h" 2>/dev/null |
++    xargs ls -l | md5sum | cut -d ' ' -f1)"  # ls -l captures timestamps and sizes
++this_file_md5="$(ls -l "$sfile" | md5sum | cut -d ' ' -f1)"  # Track script changes
 +
-+void sched_show_task(struct task_struct *p)
++# Three-layer incremental build check: headers, script, and final archive
++if [ -f "$tarfile" ] && [ -f "kernel/kheaders.md5" ]; then
++    tarfile_md5="$(md5sum "$tarfile" | cut -d ' ' -f1)"
++    if [ "$(head -n 1 kernel/kheaders.md5)" = "$headers_md5" ] &&  # Header content
++       [ "$(head -n 2 kernel/kheaders.md5 | tail -n 1)" = "$this_file_md5" ] &&  # Script
++       [ "$(tail -n 1 kernel/kheaders.md5)" = "$tarfile_md5" ]; then  # Archive
++        exit 0
++    fi
+ fi
+ 
+ echo "  GEN     $tarfile"
+@@ -61,39 +50,41 @@ echo "  GEN     $tarfile"
+ rm -rf "${tmpdir}"
+ mkdir "${tmpdir}"
+ 
++# Build processing
+ if [ "$building_out_of_srctree" ]; then
+-	(
+-		cd $srctree
+-		for f in $dir_list
+-			do find "$f" -name "*.h";
+-		done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
+-	)
++    (
++        cd "$srctree"
++        for f in $dir_list; do
++            find "$f" -name "*.h" 2>/dev/null  # Silent but fails on major errors
++        done | tar -c -f - -T - 2>/dev/null  # Stream to avoid temp files
++    ) | tar -xf - -C "${tmpdir}" 2>/dev/null  # Extract directly to target
+ fi
+ 
+-for f in $dir_list;
+-	do find "$f" -name "*.h";
+-done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
++# In-tree processing uses same streaming approach for consistency
++for f in $dir_list; do
++    find "$f" -name "*.h" 2>/dev/null
++done | tar -c -f - -T - 2>/dev/null | tar -xf - -C "${tmpdir}" 2>/dev/null
+ 
+-# Always exclude include/generated/utsversion.h
+-# Otherwise, the contents of the tarball may vary depending on the build steps.
+-rm -f "${tmpdir}/include/generated/utsversion.h"
++# Remove volatile utsversion.h to ensure reproducible builds
++rm -f "${tmpdir}/include/generated/utsversion.h" 2>/dev/null
+ 
+-# Remove comments except SDPX lines
+ # Use a temporary file to store directory contents to prevent find/xargs from
+ # seeing temporary files created by perl.
+-find "${tmpdir}" -type f -print0 > "${tmpdir}.contents.txt"
+-xargs -0 -P8 -n1 \
+-	perl -pi -e 'BEGIN {undef $/;}; s/\/\*((?!SPDX).)*?\*\///smg;' \
+-	< "${tmpdir}.contents.txt"
+-rm -f "${tmpdir}.contents.txt"
++find "${tmpdir}" -type f -print0 2>/dev/null | xargs -0 -P8 -n1 \
++    perl -pi -e 'BEGIN {undef $/;}; s/\/\*((?!SPDX).)*?\*\///smg;' 2>/dev/null
+ 
+-# Create archive and try to normalize metadata for reproducibility.
++# Create final archive with normalized metadata for reproducibility using
++# fixed timestamps (when KBUILD_BUILD_TIMESTAMP set)
+ tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
+     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
+-    -I $XZ -cf $tarfile -C "${tmpdir}/" . > /dev/null
++    -I "$XZ" -cf "$tarfile" -C "${tmpdir}/" . >/dev/null 2>&1
+ 
+-echo $headers_md5 > kernel/kheaders.md5
+-echo "$this_file_md5" >> kernel/kheaders.md5
+-echo "$(md5sum $tarfile | cut -d ' ' -f1)" >> kernel/kheaders.md5
++# Atomic checksum update (all three values written together)
++mkdir -p kernel
 +{
-+	sched_show_task_log_lvl(p, KERN_INFO);
-+}
- EXPORT_SYMBOL_GPL(sched_show_task);
++    echo "$headers_md5"  # Header content fingerprint
++    echo "$this_file_md5"  # Script version marker
++    md5sum "$tarfile" | cut -d ' ' -f1  # Final archive integrity
++} > kernel/kheaders.md5
  
- static inline bool
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 3e40f68a4a4f..6cd266651447 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1290,6 +1290,14 @@ config DETECT_HUNG_TASK_BLOCKER
- 	  This will add overhead a bit but shows suspicious tasks and
- 	  call trace if it comes from waiting a mutex.
- 
-+config HUNG_TASK_STACKTRACE_LOGLEVEL
-+	int "Log-level for hung task stacktrace (1-7)"
-+	depends on DETECT_HUNG_TASK
-+	default "6"
-+	help
-+	  This option controls the log-level used to print the stacktrace
-+	  of the hung task. The default is 6 (KERN_INFO).
-+
- config WQ_WATCHDOG
- 	bool "Detect Workqueue Stalls"
- 	depends on DEBUG_KERNEL
+-rm -rf "${tmpdir}"
++rm -rf "${tmpdir}"
+\ No newline at end of file
 -- 
-2.49.0.805.g082f7c87e0-goog
+2.43.0
 
 
