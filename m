@@ -1,188 +1,108 @@
-Return-Path: <linux-kernel+bounces-618528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533D9A9AFB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C6AA9AFC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DE43A38E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B313A98FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389BE190068;
-	Thu, 24 Apr 2025 13:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656CE1A0B08;
+	Thu, 24 Apr 2025 13:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KlT0mCTX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+U3Cy5Lz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LO2/gW34";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VKxMf/EG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpA875SV"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD34E18DB34
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127E319E7E2;
+	Thu, 24 Apr 2025 13:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745502547; cv=none; b=TUk8Ts6sprcYR1/dT87qEFSXs6e9s+ss+KuzmswAgb0pziAowQivracVaUCNKJVtBlCFyc/y7El4J16ZPnnrORiGXeKfi72MTWH6LJ2GV1+KJ1U3/oczg+KqxGZi563+XJwFr8CSTjLoz7m/hDX01LYN4MijZJIMb6pgnrscBFI=
+	t=1745502597; cv=none; b=uayF76GQxFQrUZGoh+fm8N+pYLcFam7dn/pRSwj21XZL7HPWp+lAHE235dIFh6bZ0ASpjG8hAePqSXXw9PoYu7pcCNUZ/f/QrOPC3op3IwXAGOHYLH/pCsGR7B8BP8xoNe8+D0zQ1VJgod7A89KvbsOxSbfzRAzwPkoj/D14ztU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745502547; c=relaxed/simple;
-	bh=s8Xub9KPmT0GoN70xxpFbUUJFPSrSvc4yF73NCXYAD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kie6PVY2Hhq5QEKSOjbuB+TCaTpu77lTwrTpJ6GnZs3Kjlb9UlRUkebymdnTnc10gKBP3Hy0pFOyjioUFrsLOvOuoYJMdYB3Q4Xx/eJvsYE8mcPa+Dn70Vm/vVSYy9uDFr33TpWlIXcKiJnQyPnIRnTeCBEhyMC8fXzkPisqx1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KlT0mCTX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+U3Cy5Lz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LO2/gW34; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VKxMf/EG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CBB711F44E;
-	Thu, 24 Apr 2025 13:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745502544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cJjffveC2/sr+iDe7tB9DkSlZhSM4BWpzkKBF4rGaM=;
-	b=KlT0mCTXnUj8JyY6Ww2AhjS6QOloxr83pWRMKgx4pQZdpojDqNe7k62wL0ckUvPfiieyNv
-	ZZ2WZpu2HwSRH9m72DYDDj27zCuXY+YshAVigMjc5+ihkvVTPtQGr8nE5OIuLV2HTeBuwt
-	iSNI1Uzob3nxsU6NXf9jYRWU3RsbaXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745502544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cJjffveC2/sr+iDe7tB9DkSlZhSM4BWpzkKBF4rGaM=;
-	b=+U3Cy5Lz1uyCtSlqqbSRWiLljlV6ic97qygb1HyC3WS+TeEyhJB/7cuA8WBF3a4W/TW1rD
-	6RD+DqDjYxSXEfCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="LO2/gW34";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="VKxMf/EG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745502543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cJjffveC2/sr+iDe7tB9DkSlZhSM4BWpzkKBF4rGaM=;
-	b=LO2/gW345RebwNOWHlzUiibmW58cyBtP0jzp59SPRQHYQXwH+Ahj1suJAsaGqg4r6SuBSg
-	6d1UqLy7SBQRbH5WuqxGC/YFQXdyatEmI827XUqNWbmWyrGAxfj7v5qGyiEf4+4cwnkv+C
-	MGalFnYu7FFnNcOgTU7vE1vo51urDpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745502543;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cJjffveC2/sr+iDe7tB9DkSlZhSM4BWpzkKBF4rGaM=;
-	b=VKxMf/EG4a6JLLL+VQjesLs1a5mvWg0ddLyUMEiz4dsG2jJnPoqZL4Noz1Sfx73qLf5EVE
-	3CPeJn6B9W8nk6CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB00D1393C;
-	Thu, 24 Apr 2025 13:49:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IsmZLU9BCmj0ZQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 24 Apr 2025 13:49:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 668AFA0921; Thu, 24 Apr 2025 15:48:59 +0200 (CEST)
-Date: Thu, 24 Apr 2025 15:48:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@kernel.org>, 
-	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Zhang Yi <yi.zhang@huawei.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, Shida Zhang <zhangshida@kylinos.cn>, 
-	Baokun Li <libaokun1@huawei.com>, Jann Horn <jannh@google.com>, Brian Foster <bfoster@redhat.com>, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: avoid -Wformat-security warning
-Message-ID: <2lrekzigagve633hztrttgulu4pjtgjy3chasl35fk53bqybhp@yy27gkgcx6a7>
-References: <20250423164354.2780635-1-arnd@kernel.org>
- <6vjo6wo5c5tadvhnrvo2affcqu2cf6ecrx4ol5jxl6mvz7vu3z@6wgvyptlpq4p>
- <b8aab0e1-dd32-4c03-8123-a0df5238558a@app.fastmail.com>
+	s=arc-20240116; t=1745502597; c=relaxed/simple;
+	bh=0Y5oM8I6DLWLWxXU/OSALwZE+sDM5g7F5Gf28iAR/8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PFkaUdgTJepFKaMPdxL/c2mZxoGpjcBYB0uep7gQrcKMwPvOlZg5Kt2oCWYuaO4reUzNXpRdtVtTdCikrVr/c+hrg8oCS8Ozm3V+QhmyyhYe46Kgz6vQttlwjPUtOlu3GndvlFKlWlRqWo/Az0QuS8LeW3nHhjQhkOIn6j5LJHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpA875SV; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso11647341fa.1;
+        Thu, 24 Apr 2025 06:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745502594; x=1746107394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Y5oM8I6DLWLWxXU/OSALwZE+sDM5g7F5Gf28iAR/8k=;
+        b=SpA875SV5UjGX/lG+RHcj14ypJEzisbtrKumT3DtBAKxlqNxDgbM4LM7tl2T6hOPJ9
+         9YKVkArJJllEk3jatwPT32aXqI/4lBnaK6cdQBIHCOtYZa3Vo3tWHuYMIjnkLgXTaTlH
+         4vAKgA6BPBmQ0jty8EndT4f8V8t9pPJ/Jqap5ndZ7V6bSb1Er9kgSfdxIYEFiD/Ehlxd
+         ALK6LQxNIoabp9oUlOpdVARkDGKHu5UQT/nRYMKWRS/BE8xFRn68ZcIEjqw6y8amjRqu
+         H06QYvotxVBc8HTVHUalFwO/C62BWB0VZDYJyL8dLoKoQgeRUuQeyfMiHO9JvbVm1US7
+         puJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745502594; x=1746107394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Y5oM8I6DLWLWxXU/OSALwZE+sDM5g7F5Gf28iAR/8k=;
+        b=DcpWhK5YI+YmWZlJ3DUaxTlqsJX0hUhU55UjMj2HV4BnObjbrGlTureiP0sMe49Sa/
+         MjhAcBPMD1yeaXCJT9I+xL9LdIKGPYSRY5qDOjVHIEv66ZXArvAvYtvu6i1nOHa3pFzn
+         S0fgUY8576q+9jE1U9Ai1Ouj23ibD8QtJuzdMT4p4nRHprUga0DJvyDtlvEgkxV2wNVO
+         LqzfX6UVdUOq8DGxaCAQ/fdjSg6b30Z9T29VOcWJtYb0NcfB++VoGEC14O/pdhtVTFni
+         kYrqL8PKav8Z5B5WK1VAU6qau3WUjar+BaGvLXpAVeGiHlZNaVP80izYAwN0prlbkMM/
+         nAZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwhE0PTALV7vsXE5+12tTjr0UP3wlaDGSL44q5jlGgAIKy0+7P2N+nFtNJqZN0SmEMtrI1Be1q7hXh0bgzNFw=@vger.kernel.org, AJvYcCXdz2kdiSJdkYZuWXgEtnvRiAB4SebottW+TZX6RuWlvwxgdSmXzXuypWypp9RSi0Wvp6OqSy4QSnw3KVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG8ays1NJr5LSpqZFcipC+3roQiLVxbnJCj7DvJ7ECCRQE4XjT
+	Z8jRPqgPktu/EJghgnv+iPgHqxNMo7LOMmdS9V271uAaMMZkKroGifxaAzAyugTBLIoe95CvrQD
+	VdseXz5NHu+jdvxGAx4KP1imqFgX/qqhB9N0=
+X-Gm-Gg: ASbGnct23I+5FsiyQTD2Ik/O+zMQQQXiqv9+1lxQXIwtH/Sa+nItfawMDl0tv/hKCxl
+	ASACjtm2ALjT2fyhFbeg6PKWIgzZBy1rFn6jTPR5VMaUgmFImCdNhNQStcN4yoM1A+I8kodzTEt
+	aESc76rXnECcUEGuz/X67lw9PRdDVDX5Zs1RCxJw==
+X-Google-Smtp-Source: AGHT+IFiA4/n0vlyL4EG3WuNiyLJubXIWwUKM+1k25Diy0MV2fU0ViyHmuPJ6quZLvMiOTc624XymmjWjq+uXExGLxg=
+X-Received: by 2002:a2e:b890:0:b0:30b:e73e:e472 with SMTP id
+ 38308e7fff4ca-317cde05778mr7647921fa.14.1745502594124; Thu, 24 Apr 2025
+ 06:49:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8aab0e1-dd32-4c03-8123-a0df5238558a@app.fastmail.com>
-X-Rspamd-Queue-Id: CBB711F44E
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,mit.edu,dilger.ca,huawei.com,linux.ibm.com,infradead.org,gmail.com,kylinos.cn,google.com,redhat.com,vger.kernel.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250422-vec-methods-v3-0-deff5eea568a@google.com>
+ <20250422-vec-methods-v3-5-deff5eea568a@google.com> <5fb8bfb7-961a-442a-b091-0349c8aa5ddc@kernel.org>
+ <aAokixHVo5YjazmL@google.com>
+In-Reply-To: <aAokixHVo5YjazmL@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 24 Apr 2025 09:49:18 -0400
+X-Gm-Features: ATxdqUGfmvl_biZkJPTdnqIwzPPCsHMqZQweS-9LbsuYdGNgkMVW6K3o25EGoq0
+Message-ID: <CAJ-ks9=wr84zoxsyncOu==BQUS+Y7Lc8CUgfgKwuJc9imu87rg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] rust: alloc: add Vec::retain
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 24-04-25 14:31:02, Arnd Bergmann wrote:
-> On Thu, Apr 24, 2025, at 13:39, Jan Kara wrote:
-> > On Wed 23-04-25 18:43:49, Arnd Bergmann wrote:
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >> 
-> >> check_igot_inode() prints a variable string, which causes a harmless
-> >> warning with 'make W=1':
-> >> 
-> >> fs/ext4/inode.c:4763:45: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
-> >>  4763 |         ext4_error_inode(inode, function, line, 0, err_str);
-> >> 
-> >> Use a trivial "%s" format string instead.
-> >> 
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Thu, Apr 24, 2025 at 7:46=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Wed, Apr 23, 2025 at 02:14:11PM +0200, Danilo Krummrich wrote:
+> > On 4/22/25 11:52 AM, Alice Ryhl wrote:
+> > > Unfortunately this can't be a kunit test because it uses the upstream
+> > > Rust implementation of Vec::retain as a comparison, which we can't ca=
+ll
+> > > from a kunit test.
 > >
-> > Frankly I don't care much either way but if my memory serves me well year
-> > or two ago someone was going through the kernel and was replacing pointless
-> > ("%s", str) cases with printing the string directly. So we should make up
-> > our minds how we want this... In my opinion this is one of the warnings
-> > which may be useful but have false positives too often (like here where
-> > err_str is just a selection from several string literals) so I'm not sure
-> > it's worth the effort to try to silence it.
-> 
-> I had a look at the git log now and see no evidence of those
-> patches getting merged, but plenty of patches going the same way
-> as my patch.
+> > Would it work from the rusttest target? We can use our kernel Vec type =
+from
+> > there, but I don't remember if we still can use std Vec from there.
+>
+> My guess is no, but I don't know for sure.
 
-OK, so maybe I'm just confused or the patch indeed got discarded. Thanks
-for having a look! With this clarification feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Isn't it possible to write a test without needing std's implementation?
 
