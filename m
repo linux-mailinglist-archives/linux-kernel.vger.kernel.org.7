@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-617980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82488A9A8A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE90A9A8B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB7A1B85839
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012ED3A65DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E6D238D52;
-	Thu, 24 Apr 2025 09:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51B623D283;
+	Thu, 24 Apr 2025 09:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hp8m0nAX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/zvold2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB30221F0E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C9621C9F1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745487466; cv=none; b=KjDkLRM1ixhRGopK8c5cp2pNFtWApnLnWt1iJkQGRuXbMokObAULk7gkZenVMbUF7yuBOX36DkyX7JTiV/6hz6zKWiZ5jCYdI7F79bQaStdoUXC8os1+p93GqJY+CGtykrEet/3lpfs6MYkQlSoHBrcoWYIhl8OtLZWchZ1dlTs=
+	t=1745487496; cv=none; b=IJTsscU8GKd8voCBr7lJgFF8xwF2l7caznwjXVuH8GEzbpaE8Qa+6wkAfthuUQ74fAIX2XDRUTSrzwlQaKdICjrxTKOrQ0kGa31E2ANXuYLQaRJJpyM1XLRlHH4/sStyZN5paIKBTdhjcLEk4dW+t51a0ZTcXnK+0NDpecFkaGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745487466; c=relaxed/simple;
-	bh=US2PVtNLZaFkAuVXr5SpyazmZmP4+ZVR7PKcZZegtjY=;
+	s=arc-20240116; t=1745487496; c=relaxed/simple;
+	bh=FuJlduOQyXCFyeF3mH4fN6Q/13fmq7kiMrRfBbJMj7o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r205qnPEkpCR60zavTtmhBZq9feGzVJ5hMrzp0Cqoddi+tomxDR/gLZZa3GdAYYDpnnqE0GoLPzRAF7VVZ0VIvQf06URwb0YO9E+BzsISNWaNDeE8tP+6/loH0y6hnTraSwnNEqZ9SLCOFz6W+kT8Uf36NeCSbP9LqVEXJYUmCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hp8m0nAX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O0F7cJ010257
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:37:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=DgOyK6Aj8y9bqEdW8CqXJdRw
-	Zh5pW+vbS8PbU9FROaw=; b=hp8m0nAXnk4d4G02FKP6jguqp+UJUzC/82qow50d
-	0L7MigqO8ITXrjG01Ox7yDCBSQMzPp6l8v3ZvSHeEqTiTX0L0jBwionjBfVRlCqZ
-	sUwSw8jI5DLKU5IkJI/q4VZXIKW7BaVSbVObrfeAS8ZdP6oUnaM9W02ZgE2NA5pl
-	GqOXFCdp1mmQ9J/Oziptyfj041KAOufp1hFq6dY8nshF5y/x4/efekkiqUbGLv7z
-	BNVnAYRw4+WgrXvhPsJ2pmkkEdS6g+WlgyIzOuYO9oKFtI2AuThDuFWms17ecRwx
-	1BnG3atS1yT9goBfnBj/5LnBzmk9UTOpkSk0bg8hiIRZDA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3n0j4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:37:44 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47ae87b5182so14588691cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 02:37:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745487463; x=1746092263;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DgOyK6Aj8y9bqEdW8CqXJdRwZh5pW+vbS8PbU9FROaw=;
-        b=eSJI5vTF+1KAxR/uzHEKhoPwxsrAZk7ozIVxkCcPRwlDZnAi1UppkhD2QlRW83c4Bu
-         0vXZS2X8EpCwSOX+CYa+SIOW/19Hg906dxQEukfPZfOUWedTcfguC6nZk5KdF0B4mVcX
-         y5i7IJ2cZYFSxeMxB/Vp5/a8zuLbGrtQ0AkSxZusNssn5ArfN4iOh7C/xmupbV5i/IFJ
-         vN2m5sZf+M3vfPtDgXDeZUES0aY7jAr4hiI63UrkwB3f4e+u2E1cl9ZA1P29jo9sQPg9
-         c/kzwK+DSkwUgciBNM2EeKsZcvvhv/P5SS31LRW2ZBvuzWw97zY9Ra+wUXkgexkgNWMS
-         hb+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVGmNQdDr1Xv5h0I0QKO69oYgrkki5gV3TpumJIuYLdscCtSI4T7Tkd9EIVqbRIbbXlvtsXePCV6oWZzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4D3oJkvzwcXqfiKfGrGGugmb1KtgUD2Cfr8HWgDWKnblDtMmU
-	7R/B2bFiJBGbZ6MPZEmcur4zeelrYYgf8a7IXw5Y7FiX+wIZ+DOmbbFAyhD3V+X/Y5E759afAMJ
-	YPiKa9O20TPfXyrH1Ow9JsRbXnsC3UjAeRXkuyVBuI82v9UBQ71jylWzD4OVDg2o=
-X-Gm-Gg: ASbGncvZRycK+v/P2MvMABlE2qodbxxycnlsSo6LCwGNyT/Xe5XoBfSFf0s0T+SnqPo
-	yHZl8kWB/v0r7UjzmYaJ9QKyjzMMEa/J90vCdtAMGSUwitkstRAFCfGQwmW98UReKzwyZP0J+Cs
-	e/BmFHjCgf2VEH08M2lyTmCun9Xnc5NDjotU3qYRuAKhOJe1nAEI3DZwFmFm7uNqBIV3ahPwEnV
-	XTA6LgHpZrNHY9KICeSIAdv69ZrA0b6Lkn3hGcctU3a67qD4YhECyYJVW3pw1qK1MD0gRzcrt5g
-	us35AEegp1ADCqGK06JxM3EEDBCLfffiDwgfa8j/fRQonv5bSJAhDPib+m7h4RqoLnFZ01+s8SU
-	=
-X-Received: by 2002:ac8:7e92:0:b0:476:850a:5b34 with SMTP id d75a77b69052e-47eb33a7730mr30466891cf.30.1745487463425;
-        Thu, 24 Apr 2025 02:37:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1eEvXAeDIBJ+oaIV6NuXCx1ty2W8MF/z7TiaW3cFjO6fXs6cgqkeV3Jv4TZtIDAyz/pl37w==
-X-Received: by 2002:ac8:7e92:0:b0:476:850a:5b34 with SMTP id d75a77b69052e-47eb33a7730mr30466451cf.30.1745487462999;
-        Thu, 24 Apr 2025 02:37:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cc9ea4asm166075e87.149.2025.04.24.02.37.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 02:37:41 -0700 (PDT)
-Date: Thu, 24 Apr 2025 12:37:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Melody Olvera <melody.olvera@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 04/10] phy: qcom: qmp-combo: Add new PHY sequences for
- SM8750
-Message-ID: <ayfgkx7ep3pglzydno3waipm4xqcbuj4v4go7tvm5j3hu7mswr@ceqbynkuidcb>
-References: <20250421-sm8750_usb_master-v5-0-25c79ed01d02@oss.qualcomm.com>
- <20250421-sm8750_usb_master-v5-4-25c79ed01d02@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIcpzVDbIrVklrvWfzlN/a8tVcUlF78pjBj18iHorHpnyY4MzFiCZhgj6c/xM2De/tBOt//0n7XsRcf9ClYsnpgdJ+W/kSdTUiKECVjC1y6hgxUyAIB4mI75fNUW93d7iaWQ/ef/IHGXo8ZhJPHsTtR8BQfl4vccckjuJHz0kKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/zvold2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26349C4CEE3;
+	Thu, 24 Apr 2025 09:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745487495;
+	bh=FuJlduOQyXCFyeF3mH4fN6Q/13fmq7kiMrRfBbJMj7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/zvold2hOQtPOLzBYH20bFl1T+MtgX/UQe2LtCH++T+9ar262StTYb9OL/3PR4GA
+	 0dMsr72npxUQh59NwP0HEFMVW8nMsspoXbo78HnrIGTN9ZfrG00KdfL2bmFJM9Bzj1
+	 TVDzaEMwijMcKNY337b7KjPbVcEqOMCxeyvcJwCnONrgIorpY2Q/qT0S8PxnYUAMr6
+	 sr51RYfc8KK4rUyurniWI1bbWrt9do+s/SqDCS8pOPE6y5g8Xr4odnPRQ7iFgugjiv
+	 AKqhN2kok21jQxiwS/zW3ULDWi5zLHu7Ivfy9///lL6P3vHegqZCAu0J5BlzFgod/y
+	 KSSKEE3UrRMtw==
+Date: Thu, 24 Apr 2025 11:38:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, linux-kernel@vger.kernel.org, 
+	mrpre@163.com, mkoutny@suse.com, 
+	syzbot+adcaa842b762a1762e7d@syzkaller.appspotmail.com, syzbot+fab52e3459fa2f95df57@syzkaller.appspotmail.com, 
+	syzbot+0718f65353d72efaac1e@syzkaller.appspotmail.com, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Wei Yang <richard.weiyang@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Joel Granados <joel.granados@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Wei Liu <wei.liu@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v1] pid: annotate data-races around pid_ns->pid_allocated
+Message-ID: <20250424-marsch-radio-fb7bf6484c05@brauner>
+References: <20250423115542.7081-1-jiayuan.chen@linux.dev>
+ <20250423135101.GA28646@redhat.com>
+ <25a402bb9ddfecba22b5b24684d950494fc7410d@linux.dev>
+ <20250423163818.GB28646@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250421-sm8750_usb_master-v5-4-25c79ed01d02@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: Gketiot9wHPjr13okjOh1DUoBMXi2Ps2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA2MyBTYWx0ZWRfX0z4afkLkPorp FuuQ5pJfs2oBBF91ALBc/knm4CYO/yeiXPEVoOMtgd30NjLdaNB9z6hEMOwTjFfkZAppubsQNTl wscsYNSvRGdcoucw2QQLEu8ofBldsvn7xXEWHPrWwwW5vqu2uYtTEYPabhKIhB0gkc1C2Cd6+bz
- zyVIHPZhsOeWBt+F/552HPXTs5jG8av7lRgY+BaMoWj89RiHpm03liunXqmdQR1BKd1L6OcabRy wZDMPI+WsEVUUe64qiheUJjFkoEHXG6c7YaGa90AON1GaczBgMfLLJy1e2s455UUEAjUB/QaBQ9 xjZ+3VEiNsaOKAQZp1hGbDHoj5U2Y13g8iK+bXt3rWHs+mrP4CUPdPgMw2khfPobIHoH9Gty4s+
- /8PxbhjN2K862VzZuDSou7O6CUhG1HvNeUfEhu80DRpi3KpJDHKPXAZ9FOMMN6MoR+u7IQ1x
-X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=680a0668 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=9yGODh8E-QI5J-fucZYA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Gketiot9wHPjr13okjOh1DUoBMXi2Ps2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-24_04,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- mlxlogscore=858 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504240063
+In-Reply-To: <20250423163818.GB28646@redhat.com>
 
-On Mon, Apr 21, 2025 at 03:00:11PM -0700, Melody Olvera wrote:
-> From: Wesley Cheng <quic_wcheng@quicinc.com>
+On Wed, Apr 23, 2025 at 06:38:18PM +0200, Oleg Nesterov wrote:
+> On 04/23, Jiayuan Chen wrote:
+> >
+> > April 23, 2025 at 21:51, "Oleg Nesterov" <oleg@redhat.com> wrote:
+> >
+> >
+> >
+> > >
+> > > On 04/23, Jiayuan Chen wrote:
+> > >
+> > > >
+> > > > Suppress syzbot reports by annotating these accesses using
+> > > >
+> > > >  READ_ONCE() / WRITE_ONCE().
+> > > >
+> > >
+> > > ...
+> > >
+> > > >
+> > > > --- a/kernel/pid.c
+> > > >
+> > > >  +++ b/kernel/pid.c
+> > > >
+> > > >  @@ -122,7 +122,8 @@ void free_pid(struct pid *pid)
+> > > >
+> > > >  for (i = 0; i <= pid->level; i++) {
+> > > >
+> > > >  struct upid *upid = pid->numbers + i;
+> > > >
+> > > >  struct pid_namespace *ns = upid->ns;
+> > > >
+> > > >  - switch (--ns->pid_allocated) {
+> > > >
+> > > >  + WRITE_ONCE(ns->pid_allocated, READ_ONCE(ns->pid_allocated) - 1);
+> > > >
+> > > >  + switch (READ_ONCE(ns->pid_allocated)) {
+> > > >
+> > >
+> > > I keep forgetting how kcsan works, but we don't need
+> > >
+> > > READ_ONCE(ns->pid_allocated) under pidmap_lock?
+> > >
+> > > Same for other functions which read/modify ->pid_allocated with
+> > >
+> > > this lock held.
+> > >
+> > > Oleg.
+> > >
+> >
+> > However, not all places that read/write pid_allocated are locked,
+> > for example:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/pid_namespace.c#n271
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/fork.c#n2602
+> >
+> > So, in fact, the pidmap_lock is not effective. And if we were to add locks
+> > to all these places, it would be too heavy.
 > 
-> Add new register offsets and PHY values for SM8750. Some of the previous
-> definitions can be leveraged from older PHY versions as offsets within
-> registers have not changed. This also updates the PHY sequence that is
-> recommended after running hardware characterization.
+> It seems you misunderstood me. I didn't argue with the lockless READ_ONCE()s
+> outside of pidmap_lock.
 
-What is updated? I see only additions.
-
-> 
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> Signed-off-by: Melody Olvera <melody.olvera@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 221 +++++++++++++++++++++
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-usb-v8.h     |  38 ++++
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v8.h         |  32 +++
->  drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v8.h |  64 ++++++
->  .../phy/qualcomm/phy-qcom-qmp-qserdes-txrx-v8.h    |  68 +++++++
->  drivers/phy/qualcomm/phy-qcom-qmp.h                |   5 +
->  6 files changed, 428 insertions(+)
-> 
-
--- 
-With best wishes
-Dmitry
+Agreed. We should only add those annotations where they're really
+needed (someone once taught me ;).
 
