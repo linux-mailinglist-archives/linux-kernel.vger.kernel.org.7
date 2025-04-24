@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-618792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2BA9B3B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9D9A9B3B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC7B1BA4672
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D6F3BA5E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028AD27FD76;
-	Thu, 24 Apr 2025 16:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C30C5BAF0;
+	Thu, 24 Apr 2025 16:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="LBn4GPYh"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UF7ArqIY"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25E35BAF0;
-	Thu, 24 Apr 2025 16:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1E72820AA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745511564; cv=none; b=arBc70UEnzCp8Ah7gc8Li0it3LAWMVLlL9zTEmCMQoB7fmHjXOsAY0Rp82RWnlBKhRfSsMX7A8xrSWvZnhP8sqU5C/PpRBBkCDpXjJWcNv2MsmUr4GiaqNW8YGfdnGo55a5l3KnujMSduS3W9w8O77nyaNZbl1Q50vqyfSX7hME=
+	t=1745511628; cv=none; b=pVyTfWF6/58tDIBAJvHXl6kQAlAIVzAu+YZWIueu9gyiQty73cLXiFq5iIp/3QB18e5yejmIJzK8XTGhrE1GlG9dHMv1sI38mWmZCBuca6CKVezdaJPWGFEppPtQOZb5eL82N3jIeNzYWXeTcTittu2wNuqvCzpsqSt4pWXhPyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745511564; c=relaxed/simple;
-	bh=+Y1jvfEONZooX3pKUDxCf9/Wv4C6eUcEzi7EbFL7LTY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S2yiXWA1+IFoT2FyztAVfANyZgGIq+tEv6uouhQaYcTbSFp+plwiWAE6Ghshmn/2ltxPtUURRlK+1HJ4qGUnLfCU312oGeQwT0H3+DsyV7PWiKyNQZbpR/XjwG9D/zrPl9AV8vZeKuTTFYs98XigI4ier24Yl5t6Vlkzm9zx2xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=LBn4GPYh; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7C94141062
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1745511555; bh=X1RVPsXPN4ul2u8BOsbJ4LQIS55aq/P6e52DgvXJLwA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LBn4GPYhE9zxMOlt/nhNIQpnavWp6nkhJyBG3cBRGWCHmuqSiRWARvjF2hgMuAzHu
-	 /wK2biBJNp0tHH7Es0qNleFin5GAKuG/kO5bkq/EieucPv06tGud9ThbSjmbHi1uSD
-	 HtJW1Lm199zBh7oa+QZz4m4WsvakLw4ttrpyYY2TytsrBlLw+P5y4zdZJ9wLsVsYkq
-	 mil5aVf7Azg23+85qD6RzyyBwISda6PRIwSQ+1INau8EEpsWvXVMRjAPN4DoLsQfqw
-	 BNPfP1pD7TDnP4n5M+H07F7iXDihtojJaTzanyrAtLa24vX2oqgENqOtp3U/RIpC5b
-	 zma+akQALvQeA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 7C94141062;
-	Thu, 24 Apr 2025 16:19:15 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>, Jani
- Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Maxime Ripard <mripard@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tvrtko Ursulin
- <tursulin@ursulin.net>, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Don't create Python bytecode when building the
- kernel
-In-Reply-To: <cover.1745453655.git.mchehab+huawei@kernel.org>
-References: <cover.1745453655.git.mchehab+huawei@kernel.org>
-Date: Thu, 24 Apr 2025 10:19:14 -0600
-Message-ID: <87v7qtzg59.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1745511628; c=relaxed/simple;
+	bh=3qPXP5abEoIx66HUunPoFY8QVhFVv3wWgnMK2ckSKL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MCq22L4sZhSyfmofF2EYF0pHVVlMLlNLmiKN0i0CosPN2xDJktniZE7IT/CUYSEEXvv8V1/8jTUQh56k1bPzMZGR1WJDmJCcXxRMlpm/Sl0yRdtRWxnWdASJ+cAmsXbKpcPP+ej4QK9BB7o5GNqCY3udTxUGSjVUhMMrH0uYdFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UF7ArqIY; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224191d92e4so14145865ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745511626; x=1746116426; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZK3U1zqX+QbRkc5CUf+8j98MPDC5LORQqlarEVgjRww=;
+        b=UF7ArqIYVIESzY0DmZDLUgrw+qilHJO3LabR8vFf9ECv1kGGkyC3BHWpPMzRm9HRMt
+         9nGqA7ODB3+1u5wNo/hMN6r/aYeSLJ3ckBEHY1Rta4hwghJF1Y3JrYKJsZPVp1c7zhlT
+         ryrppQjzzVG6RLxuY1jAznTL4qxZVMajmKRpo8PEjB2F3wyAA5vcGbdwVLqgF4dToAId
+         TiijfOlEpMx8D7j6kPjVkHmwaSSLdBOzhHiGVzFf4FgNsaiE6T1G90yb1+Pc3VBX4pxV
+         fChc0BIUiSVp47d8SGtuZegmh0DYFyvI1l2sQCGVn9tz8AMZUfWw7DFioH36U9LFgVpQ
+         w3KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745511626; x=1746116426;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZK3U1zqX+QbRkc5CUf+8j98MPDC5LORQqlarEVgjRww=;
+        b=tS2p7HqIaCJPmDvlLvLgawEnAsBO1ZZinpBuGS/hiW1gVyhQ6tYtTckRoZjugwVSWA
+         vb0k/j9kD2kt9jbqjwrjZ7TwIwvflvXWSoH4eGLN7uF50z+VcQMsXiPSWpD4OkuQtsQf
+         aGGuyp7fdXh4E5Nv+JghjBMJOWBQ7947XTbpL59SzkKBBYXtSjGtJpk9n6E0KDuGOyUk
+         v58rYgk51fMidgh4XnWDFpuuREJuXpp4SiGObLv4NOIbSU/YfQJ/PcHz8B8ZDhCPh20i
+         HQ8BCBtaENWTYf8S9/iG2FDCDxtFMkv0uAtYgjMcXPEeyiVWc1Av8HiKNzzm3OSpl0yr
+         P3jA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVR0Wc1e1phLBd6PabhWY8/yJq41Qogi0ZPS+p4j1Kk8vvq7FePXJZ+Ur+Jq3+0e5P9A7qBrLdzlwBOmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpdapPVwwy00UJOUsO26Fv1BJUhsF6eqhtkLbAy8qo30if4APj
+	c9QaMh/BolSQQTSWNKUp75CALALB6/8PCQ6iI/SuSRyO2Lh2D2FJkJY2h7l9NqA=
+X-Gm-Gg: ASbGnct0RxA9PeU98Mr9OBC7/vvelX27GIaZlMLLmrkNLgQ6EbxWJ5NRC8xCFFj3ZIk
+	RcR3m1CCvRh8i03TltQzZYAEQBK6GbEmwFDHkt1W1AfRe+uexZXa5urhC/dsl+EeCOpgIRKEN8p
+	omj6m4QOtU6Pb4fm2Iqq7NNx75G8xpVbHbxPo4irDIPTChzVGnGJ8WYf21kj4KtAl3uYAzh+uZy
+	IjUwoG2vznlgQN27HB+VppebgTgrgG7edLHBJsCIYrVfcVA0mbcshLwfJ+sydbFeQe+zavtUNg+
+	LMPmQRe3cFZGnNo3jVlpzfXotBkYzIgh7wy7b8cANA==
+X-Google-Smtp-Source: AGHT+IEDSR0/PqlNDM2o73GF73qCXfMIvf5kzIhE4JxAny5lKNQoi84TfP+O1loAWvOMlNHIFWnnOQ==
+X-Received: by 2002:a17:903:1b0e:b0:21f:45d:21fb with SMTP id d9443c01a7336-22dbd3e86efmr1434585ad.3.1745511626183;
+        Thu, 24 Apr 2025 09:20:26 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5216770sm15387365ad.218.2025.04.24.09.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 09:20:25 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Lifeng Zheng <zhenglifeng1@huawei.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Nicholas Chin <nic.c3.14@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH V2 0/5] cpufreq: Boost related cleanups / fixes
+Date: Thu, 24 Apr 2025 21:50:13 +0530
+Message-Id: <cover.1745511526.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Hello,
 
-> As reported by Andy, the Kernel build system runs kernel-doc script for DRM,
-> when W=1. Due to Python's normal behavior, its JIT compiler will create
-> a bytecode and store it under scripts/lib/*/__pycache__.  As one may be using
-> O= and even having the sources on a read-only mount point, disable its
-> creation during build time.
->
-> This is done by adding PYTHONDONTWRITEBYTECODE=1 on every place
-> where the script is called within Kbuild and when called via another script.
->  
-> This only solves half of the issue though, as one may be manually running
-> the script by hand, without asking Python to not store any bytecode.
-> This should be OK, but afterwards, git status will list the __pycache__ as
-> not committed. To prevent that, add *.pyc to .gitignore.
->
-> This series contain 4 patches:
->
-> - patch 1 adjusts a variable that pass extra data to scripts/kerneldoc.py;
-> - patch 2moves scripts/kernel-doc location to the main makefile
->   and exports it, as scripts/Makefile.build will need it;
-> - patch 3 disables __pycache__ generation and ensure that the entire Kbuild
->   will use KERNELDOC var for the location of kernel-doc;
-> - patch 4 adds *.pyc at the list of object files to be ignored.
+This series tries to fix boost related issues found recently.
 
-I've applied the set, thanks.
+The first patch fixes the boost related breakage introduced recently. It should
+be applied for v6.15-rc4.
 
-jon
+The other four patches are general optimizations and fixes for boost handling in
+general. These can be applied to -rc or next merge window.
+
+--
+Viresh
+
+V1->V2:
+- Drop one patch.
+- Fix the commit log of 1/5.
+- Add Reviewed-by and Tested-by tags.
+
+Viresh Kumar (5):
+  cpufreq: acpi: Re-sync CPU boost state on system resume
+  cpufreq: Don't unnecessarily call set_boost()
+  cpufreq: Introduce policy_set_boost()
+  cpufreq: Preserve policy's boost state after resume
+  cpufreq: Force sync policy boost with global boost on sysfs update
+
+ drivers/cpufreq/acpi-cpufreq.c | 15 +++++++--
+ drivers/cpufreq/cpufreq.c      | 58 ++++++++++++++++++++--------------
+ 2 files changed, 47 insertions(+), 26 deletions(-)
+
+-- 
+2.31.1.272.g89b43f80a514
+
 
