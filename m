@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-617238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D63A99C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C047A99CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2771940A17
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A895A55AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090F2701C2;
-	Thu, 24 Apr 2025 00:16:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CA58C1F;
+	Thu, 24 Apr 2025 00:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d87D02gG"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE78625;
-	Thu, 24 Apr 2025 00:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E948C11
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 00:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745453799; cv=none; b=V1jhDJXWKZhro9KLsS4Gn3jCskm9oBNS5avEO6561ayjR16/dLk4EcTfMDMY4kYI+HiG3qRWnMMRXsxdveIHfc57Y+NdugvlphMV3y5HwMi+VfsH9FSbqXBNqwhjw/y1xngXhNJKb7+lWQL9z6b0BHMW5QuWMSWhxOD39/07x0U=
+	t=1745453922; cv=none; b=O7hgjyk5OqqXWGVNDP5DW8NLG5YlgtOReoqvaqgKq0CcQT2r6iK4pkQTU/1Ge+KTpnz5+Rm7A+zjgQF9v1uZ5RUoXdOpnW48jWCYzJRuc+auJnTGU9FhpOJUKoDFQOwbfmEUIEfPoOQcD11qL/NZsMCI5zjvw5TbsZ6YnF71vuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745453799; c=relaxed/simple;
-	bh=IFTrO0iIkqqipDsOems/BeJlcz4nbbFBbkODkt4C7TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OZnge4WDxFTf9y9gaaoYT9GNgyWGNBsIniRJkvReqWpkRFsI2KBA1ZvbKNnc4SfUisgIHeRzMzCqDk+6EU5S0gaUrIt00CnsQd3O9pJBdK8Xbwm0VRbtNR2JBKXNbylbW1YrFKsC0jx+U196dKU+WJIlW/KboLy1FWLJNY9mFfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D03C4CEE2;
-	Thu, 24 Apr 2025 00:16:36 +0000 (UTC)
-Date: Wed, 23 Apr 2025 20:18:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Libo Chen <libo.chen@oracle.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, mgorman@suse.de,
- mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- tj@kernel.org, llong@redhat.com, sraithal@amd.com, venkat88@linux.ibm.com,
- kprateek.nayak@amd.com, raghavendra.kt@amd.com, yu.c.chen@intel.com,
- tim.c.chen@intel.com, vineethr@linux.ibm.com, chris.hyser@oracle.com,
- daniel.m.jordan@oracle.com, lorenzo.stoakes@oracle.com, mkoutny@suse.com,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] sched/numa: Add tracepoint that tracks the
- skipping of numa balancing due to cpuset memory pinning
-Message-ID: <20250423201829.17d4c382@gandalf.local.home>
-In-Reply-To: <20250424000146.1197285-3-libo.chen@oracle.com>
-References: <20250424000146.1197285-1-libo.chen@oracle.com>
-	<20250424000146.1197285-3-libo.chen@oracle.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745453922; c=relaxed/simple;
+	bh=DXH1IO1hAdU2AUtjl6a4PRgTHigbz0MdgoHTabtuTrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F+75PlGoB/cuHo7xZmu4ROSu2IqH700GN1stDoFMbYWbOJmcLPbOOjHYWn2xLLxQP1ksXAKzwY2owPfx1LVGaNoOYix7qkG++a9VLa1XSpP0PYnZEI9LS2ZcleeOOJSUZvo+AbTS3xwNPkN3uNLG0qBZnJb8iK+jlkBBS50O0Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d87D02gG; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d5e2606a1bso3909545ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 17:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745453919; x=1746058719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=no699vHbUtCiDhtLMFa9ixz998D4Np4s8xMtsBpgtGE=;
+        b=d87D02gGa/UZORutiv03V45T81hXnmmU+G3VpRlz9SjGV6rGeWbrPDPntpPLFihWPZ
+         M9IfOkMlSenOm+fU53pdMJyWhBHTU7BWD+6UA88n4peLvi2fQDzWtZTuBwDYiRl/ejDQ
+         Shp8YKMciKEDOvCiK/uMKf1GLqzt1LOG+yLZUijtwh3m5aBBV//RvPhmrlr0yG8fvbsa
+         zmd1Pa+go8j4OIFHJ4pW9rylm+9ZZLERQ0QhxYB3sT1/YEnaonDPVEwuFHaE7u4vorwW
+         4+/Tcs17BSq52Au8eSDu1pa098/AQ1IfXTaUUBEAaw36KRoQVoz3C54DBNLyxfczmYKs
+         E25w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745453919; x=1746058719;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=no699vHbUtCiDhtLMFa9ixz998D4Np4s8xMtsBpgtGE=;
+        b=cSx8k67PsuOilcMkW0YO1P0tPACLrEX9eGyj6UuHAhsHjTGW2CLXbgB7FM+4A1J7HG
+         WzlcH4+1cbnO9SvpT3TelVt9J2wG54+GgQ2awz2MzBB/zODQeTfKUA52t1VMzqC9MpVX
+         eASMHnn+yZsltCGhp9UhszQfKdNTNiQOFzPX+ZkBdARS41GTmeN9KO6Kqo3eC5uMsWHQ
+         n+ikd2qEfhcwxmXsh8L+Nt47kEHJvEDVUtMPDtgn2dagsdW0XbGNWwuP5dBHUOCiedmn
+         0GdNzxByH2kv9PNdyZX0jrKjviSOWo/s/LGW3VJ3eH/BHi+dCzWr005fRAP0uheO5veZ
+         +pRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJCJLj8nWUsTftZUrpg4pEhBVS1PLPUFoLR8hXPqk+3/1PsyA86Zhil3jswXkgpP4wo3+AfhVdyyDuG1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLDx+HkIAhzCnuMllpKO/cOJWkEOohl40G5AmisT96XGwQKZuQ
+	DVUZeJrn/CgwrcEHxHhnOlYcIh8WYxNL0K3bDhftFwzDGh3d02598mpG7oRl20Q=
+X-Gm-Gg: ASbGnctNkOdSWggfz2np/9VvtjgoBISXHBgHOvzieU6xQD2LEfhSOl00RHmSLpNzTPX
+	qUefRzJpGEPOA5TL2leTDsh9trqZjF8p0FLfFrORtcyzgoXKotbP7V5IQm+eCVMN2PNGkjOuSJu
+	yErU4CcVPou7g//fAoaRTizzJKIqazr/dLZRv+9ts8WTT5Rzkcfluxq699gFY7vruvRpwyByrnD
+	VVc5rnndCuB0MEAgBa6YuDOdkNzVHnqDslhiMUuxQMCLQtbBZX6OMMc1/khbmf+Fa5ixZS2A3IY
+	Fk5l8kzz1diCoJhLmNy1S0lzrSHLdBW6uFhgGg==
+X-Google-Smtp-Source: AGHT+IHb+es9H9M9kGSwtETCKJLbMt7YPfw3chQ/Lxuw7WSyGf0XVM1d+FlyYn7Hy8udiuXpl/zxhQ==
+X-Received: by 2002:a05:6e02:188f:b0:3d4:3db1:77ae with SMTP id e9e14a558f8ab-3d93041d81cmr7327905ab.18.1745453918771;
+        Wed, 23 Apr 2025 17:18:38 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d9314c828bsm410385ab.27.2025.04.23.17.18.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 17:18:38 -0700 (PDT)
+Message-ID: <1c7744df-329f-4b95-9afb-a005a358851b@kernel.dk>
+Date: Wed, 23 Apr 2025 18:18:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests: ublk: kublk: build with -Werror
+To: Uday Shankar <ushankar@purestorage.com>, Ming Lei <ming.lei@redhat.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250423-ublk_selftests-v1-0-7d060e260e76@purestorage.com>
+ <20250423-ublk_selftests-v1-1-7d060e260e76@purestorage.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250423-ublk_selftests-v1-1-7d060e260e76@purestorage.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Apr 2025 17:01:46 -0700
-Libo Chen <libo.chen@oracle.com> wrote:
+On 4/23/25 3:29 PM, Uday Shankar wrote:
+> Heeding compiler warnings is generally a good idea, and is easy to do
+> for kublk since there is not much source code. Turn warnings into errors
+> so that anyone making changes is forced to heed them.
 
-> +++ b/include/trace/events/sched.h
-> @@ -745,6 +745,37 @@ TRACE_EVENT(sched_skip_vma_numa,
->  		  __entry->vm_end,
->  		  __print_symbolic(__entry->reason, NUMAB_SKIP_REASON))
->  );
-> +
-> +TRACE_EVENT(sched_skip_cpuset_numa,
-> +
-> +	TP_PROTO(struct task_struct *tsk, nodemask_t *mem_allowed_ptr),
-> +
-> +	TP_ARGS(tsk, mem_allowed_ptr),
-> +
-> +	TP_STRUCT__entry(
-> +		__array( char,		comm,		TASK_COMM_LEN		)
-> +		__field( pid_t,		pid					)
-> +		__field( pid_t,		tgid					)
-> +		__field( pid_t,		ngid					)
-> +		__array( unsigned long, mem_allowed, BITS_TO_LONGS(MAX_NUMNODES))
-> +	),
-> +
-> +	TP_fast_assign(
-> +		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-> +		__entry->pid		 = task_pid_nr(tsk);
-> +		__entry->tgid		 = task_tgid_nr(tsk);
-> +		__entry->ngid		 = task_numa_group_id(tsk);
-> +		memcpy(__entry->mem_allowed, mem_allowed_ptr->bits,
-> +		       sizeof(__entry->mem_allowed));
+Honestly not a fan of this, it tends to cause random warnings on
+different compilers, and then just causing trouble for people
+rather than being useful. If you think it's a good idea, make
+it follow CONFIG_WERROR at least, don't make it unconditional.
 
-Is mem_allowed->bits guaranteed to be the size of BITS_TO_LONGS(MAX_NUM_NODES)
-in size? If not, then memcpy will read beyond that size.
+-- 
+Jens Axboe
 
--- Steve
-
-
-> +	),
-> +
-> +	TP_printk("comm=%s pid=%d tgid=%d ngid=%d mem_nodes_allowed=%*pbl",
-> +		  __entry->comm,
-> +		  __entry->pid,
-> +		  __entry->tgid,
-> +		  __entry->ngid,
-> +		  MAX_NUMNODES, __entry->mem_allowed)
-> +);
 
