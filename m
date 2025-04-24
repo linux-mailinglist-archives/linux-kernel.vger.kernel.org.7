@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-618882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA80A9B49F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:52:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8597FA9B4A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96F1170DE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13E717473F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A2028F537;
-	Thu, 24 Apr 2025 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955C28FFE9;
+	Thu, 24 Apr 2025 16:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="E5ofKRFy"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="ltTkvHGY"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4F28BAAC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF5328F50D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513451; cv=none; b=fnkgyuCqOHeUajhGVTWsMnbeDmW49iumSflOpR58Ry1/rLHaK9FWovDMXiyLWS4FSfg/h1UH6nYdww9NcQP5cJvj5rVNRDcCSlJhoyDNLBpT4tOMMQHyTqikS8p84ocv5FarZwNuhWM5SUZlp4vh5t+iDJB4Y/CzC4yq8Zz+jLw=
+	t=1745513452; cv=none; b=rHw+KEkURxcvuNFNmCp/5P5DDoXYLKjSS1syx8c8PwN4gXVj+u//TcDNE+tkltij9uoqICGWIzU6gnCxlzmGBtHZ9rX47Pf99rMzNimo20w/Z724ZM2F8QY57iDptifx89d8xLs+ETB/d8Z/byNQxErXN0Bp7tMc6jwZy4N6CFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513451; c=relaxed/simple;
-	bh=xx6WjQQJI7TG0s8jN6ebesWLtmwT5S6KXNjgM9mjaoc=;
+	s=arc-20240116; t=1745513452; c=relaxed/simple;
+	bh=I8y6Dm7syHuvh9BYvzLeEhnMOxZLHQ+TtWC6xRhAQAw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fGZJFSoqha9NRxXUycW4WpGuD4hc1XLRCW96+c7+r2LykRDybd47aqS1lJmbYBgtvB04M6Tk+NM6sWD++lTGW4chewlkcjJX6l2XaSACWviKVSKEemqNRvRvRcC10BxpRyD2Jyta5n93FyRanhDIy3sbVOZBzrzjnr5N/14sk3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=E5ofKRFy; arc=none smtp.client-ip=209.85.210.49
+	 MIME-Version; b=SvKGdM2vnNsN+ooBsiaNa9xGivHIorwUET1S5Uay1QPlY8NjDta92rQ/ULDKm0+yUDaDS5+ggkStEmZyQDv3NFLiQMPhcODEcuRHYIA515+apUjtDHhrKWS6sGGELAWyG7rLcc4bqxzInD+j2cUI2F/4B/NX7bAWhmhJasVXeHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=ltTkvHGY; arc=none smtp.client-ip=209.85.167.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72c16e658f4so850860a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:49 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3f8ae3ed8adso887067b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513448; x=1746118248; darn=vger.kernel.org;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513449; x=1746118249; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bo8OORB/CMRTqZ+jmfB+YUkyYwA6MdIiB5QaJmUO56E=;
-        b=E5ofKRFy1QivSOzZEhkyAYg8IHUSmY4tfwSYhqEFj2HVykCXGv5UzkVJz1RAv9rCPI
-         nPDhP+rYb/gQbzmXJTCkooS74iYigRpZKrATwCPIVIOhHWIsY1z91gjg4bpBF36hihQK
-         0QEUpdSMDKiDVa0ZaUPaLpnSK3JH46vf5SGsTucZ3HN6mf8IbHqrRMFZKtxeu4iaoyHv
-         my57sr+o8H2R4a0LB4WOYos4jlSh/yY0EahkqocTA1nvh5HWAFmYbiAJLoVr+1IwFC6E
-         Teqk2/uQjzDO8b5H7yIC0e1wPh/qoZXOxPaKkJnxyLvAUzFxVe3ySfT6Ho16Soe4P+Ie
-         aPaA==
+        bh=O8oGDdvRnI5EoipFzFv4+4XYwTfEEBtpDViBBf5EBeQ=;
+        b=ltTkvHGYm7EuFCtetLc3IG/SGlslP6Opch8Lt6fstZ+p6N1tI1+0D7kXywLqAEp3Tm
+         PHfvfgtOqD8CE2gPB6pTwK0f9r9VCB25WxzlGg9xF8YMgaqL+Amdssv/UAdj1lgekNLd
+         ZEW/J6C3IZNrC+vwFJFhgwCvlaHyPcvl08uyDf4uHW3wASxAiw6ZWgFrIRo8qc1wnCaK
+         1Nw+kCAEHjBUEJY70sYfLiOorm8521OdO6HCyxHAJpesqMijW6/08+eanQg9pxt/7+w6
+         EY6clNvoVAGORze3P7wvV7Z1IPlIMHw7cqq7pXAt6J6nzk48tNEc+L4vzut8oFw8Qs9U
+         HA+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745513448; x=1746118248;
+        d=1e100.net; s=20230601; t=1745513449; x=1746118249;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Bo8OORB/CMRTqZ+jmfB+YUkyYwA6MdIiB5QaJmUO56E=;
-        b=egmF+IFCW7MBXQvy4Z1oUMmhgLSAscd4HSj0T+upfXRIIbKxM0n4S21ALZTUrVwYL+
-         yPPJQc9dzHu/xgqIkhGlFliZDO1aucqv6Mirpo/QjnQOX7zWuVF3WefpSdR9PUwrPTKn
-         M0S+zI+CevxaCnmOUbqSFG0/0773/vvI972mfRzGnAuNg2qOd2PXOR5gYIjgwDT5vYrF
-         TIoQ6bpWh2WTFQMd1+iNd94zJ2IzaeinFsPHatVCU33brZlgaGeSkO6dyTvtSry+INJm
-         QiyMlVZT2tA7JbVo0w/735SdUulSye2hrTJesoMrLembcaKFFHUiOBSzXmI2/2Do9MJh
-         h6Fg==
-X-Gm-Message-State: AOJu0Yw8mo6StgufUPzJRjzA+lqBUWcjuEC1dc/mM12hAw+SisVZdAPu
-	piTrdjm8LS3g3aj7N1qpZ01M05+9olmFIrpFkv90R6jp7t4o6Ucx7OR76quh7xmhGaDE+Fo+gO2
-	E
-X-Gm-Gg: ASbGncshb+KH8IwRff92o7IB4m/H02WDtQKqzmBXJuqOjkfdL0bMsZ9kR1TOLwJALhr
-	0enoyUYL2GqX0VLYJEKK3GCQQaBL7mzMluIl62rtQA5SBLA74qnkm5N5+q7+pvTCGPtBvmdD65r
-	s9SYOeigaL7hcDcjpQMC5tQ0ua5fw1NwH1/bsrpd6oL94/EGWHjvuzG1Ki8ViTZ2AiKWZ0fylG+
-	uiHaFldTBzQNsNxAUvRZw6h4I/z95FtHsNL4O8TrgqBNQ1wX/or5ZcA5WTOV1J7ZJmNyM1RqbVe
-	9zP+q2lzka9WbYKsLRM92AnAGl+dIRrNCjA=
-X-Google-Smtp-Source: AGHT+IGActbYLMI+4Dv1DxR+pkcu73M2Hm6w/m4/WWnj+zX8JKJ9d7TyKjUutOCfa+lPaH6GRQXn7w==
-X-Received: by 2002:a05:6830:3741:b0:72b:8000:d487 with SMTP id 46e09a7af769-73059bc8b48mr414897a34.3.1745513448417;
-        Thu, 24 Apr 2025 09:50:48 -0700 (PDT)
+        bh=O8oGDdvRnI5EoipFzFv4+4XYwTfEEBtpDViBBf5EBeQ=;
+        b=V/dbUEJGZpV8hxv/8hx6ss0PW2mXwa9U75x5jp0ek5/VBs3a/TNfYjnB8F1O/R8Ixo
+         yo6VdW5pcMrNN5mIVDLhkTkyhMC/F6/gSJs6CJb0ss+XwqVXTNH3SXGMIZjJvC6WKZXU
+         Rqtr+YMbSjNnPC5puHH7PeFwh3pvBakdgkB+JHTTfF/PlaxG0JgSFpeHELBt3JVvw0ou
+         DppiH3lXyPVqkWYQKzHlonIaWdiYsjIXK3iTNU103uF+9gLn1o2HTmm1AUHFaOmCm1cN
+         5iQd15jeQHv6uHUNy/UTRlRC7Ltmi6m7ktwFeJQkWBR96kBC4IQ9vgV8D7mJZsEoqtBX
+         nj/w==
+X-Gm-Message-State: AOJu0Yynkr1dzdxS8iPzBTfKGLld5YYbFYvEqR2KI0a2+UgtpAyA0PXe
+	2uFfgUCNaGguT1kMmpRdX9FNniygIj37MiQp7IMUc9WDQOUiRH57G0R/4KAP25jHjPWTQARwmq6
+	G
+X-Gm-Gg: ASbGncveHPsFWOwNeJGro0VMQqJfnprUPysvsVtMyT5g/+1jTM9/GSNIsIpPJiFE5xF
+	7Bldg8ypmOeTm89oWlSVaK76+HtEzQCTeAkmcXvz9eXim23kALtjbNjtQAGu/KG/MSt2RoKAd4u
+	eb1JSa9z/crhkA86FCRSA+N0Kr1aSCPNVwV2x8tdzdhxJAMIgCcrdUaUQavRWqNsUuMlwEowHKb
+	dCdcQSGL6oNC/AgrqfO+GaijmZaqaHyrJLJD7qxylhrKvvLK3ZEn/nHl5EXJ+2r1VG3ROrC0SUN
+	STs7UTnm7D+fE/reAzAPtY4zbgYDmtcVctdEKayv7OAnLw==
+X-Google-Smtp-Source: AGHT+IFkIgExmDrBdSdQTioadtDd9kVguGf2ruitTrAnAmP6r1qHlEk08+wJKwFS7DjoDJUfJ1+Iwg==
+X-Received: by 2002:a05:6808:6c8e:b0:3f3:e01e:f7eb with SMTP id 5614622812f47-401eb27e11cmr2026509b6e.7.1745513449589;
+        Thu, 24 Apr 2025 09:50:49 -0700 (PDT)
 Received: from localhost ([2001:470:b8f6:1b:af2e:7abf:8abe:2726])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-7304f187fa9sm292307a34.11.2025.04.24.09.50.47
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-401ec8b069fsm314865b6e.5.2025.04.24.09.50.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 09:50:47 -0700 (PDT)
+        Thu, 24 Apr 2025 09:50:49 -0700 (PDT)
 From: Corey Minyard <corey@minyard.net>
 To: linux-kernel@vger.kernel.org,
 	openipmi-developer@lists.sourceforge.net,
@@ -79,9 +79,9 @@ Cc: "Paul E . McKenney" <paulmck@kernel.org>,
 	Breno Leitao <leitao@debian.org>,
 	Corey Minyard <corey@minyard.net>,
 	Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 11/23] ipmi:msghandler: Remove some user level processing in panic mode
-Date: Thu, 24 Apr 2025 11:49:48 -0500
-Message-ID: <20250424165020.627193-12-corey@minyard.net>
+Subject: [PATCH 12/23] ipmi:msghandler: Fix locking around users and interfaces
+Date: Thu, 24 Apr 2025 11:49:49 -0500
+Message-ID: <20250424165020.627193-13-corey@minyard.net>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250424165020.627193-1-corey@minyard.net>
 References: <20250424165020.627193-1-corey@minyard.net>
@@ -93,29 +93,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When run to completion is set, don't call things that will claim
-mutexes or call user callbacks.
+Now that SRCU is gone from IPMI, it can no longer be sloppy about
+locking.  Use the users mutex now when sending a message, not the big
+ipmi_interfaces mutex, because it can result in a recursive lock.  The
+users mutex will work because the interface destroy code claims it after
+setting the interface in shutdown mode.
+
+Also, due to the same changes, rework the refcounting on users and
+interfaces.  Remove the refcount to an interface when the user is
+freed, not when it is destroyed.  If the interface is destroyed
+while the user still exists, the user will still point to the
+interface to test that it is valid if the user tries to do anything
+but delete the user.
 
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/char/ipmi/ipmi_msghandler.c | 51 ++++++++++++++---------------
+ 1 file changed, 25 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 3e88ac6831d8..e7bed764b4bb 100644
+index e7bed764b4bb..d05032dc1f69 100644
 --- a/drivers/char/ipmi/ipmi_msghandler.c
 +++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -4808,6 +4808,10 @@ static void smi_work(struct work_struct *t)
+@@ -46,6 +46,7 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf);
+ static void need_waiter(struct ipmi_smi *intf);
+ static int handle_one_recv_msg(struct ipmi_smi *intf,
+ 			       struct ipmi_smi_msg *msg);
++static void intf_free(struct kref *ref);
  
- 	handle_new_recv_msgs(intf);
+ static bool initialized;
+ static bool drvregistered;
+@@ -196,25 +197,6 @@ struct ipmi_user {
+ 	atomic_t nr_msgs;
+ };
  
-+	/* Nothing below applies during panic time. */
-+	if (run_to_completion)
-+		return;
+-static void free_ipmi_user(struct kref *ref)
+-{
+-	struct ipmi_user *user = container_of(ref, struct ipmi_user, refcount);
+-
+-	vfree(user);
+-}
+-
+-static void release_ipmi_user(struct ipmi_user *user)
+-{
+-	kref_put(&user->refcount, free_ipmi_user);
+-}
+-
+-static struct ipmi_user *acquire_ipmi_user(struct ipmi_user *user)
+-{
+-	if (!kref_get_unless_zero(&user->refcount))
+-		return NULL;
+-	return user;
+-}
+-
+ struct cmd_rcvr {
+ 	struct list_head link;
+ 
+@@ -611,6 +593,28 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
+ 			       bool guid_set, guid_t *guid, int intf_num);
+ static int __scan_channels(struct ipmi_smi *intf, struct ipmi_device_id *id);
+ 
++static void free_ipmi_user(struct kref *ref)
++{
++	struct ipmi_user *user = container_of(ref, struct ipmi_user, refcount);
++	struct module *owner;
 +
- 	/*
- 	 * If the pretimout count is non-zero, decrement one from it and
- 	 * deliver pretimeouts to all the users.
++	owner = user->intf->owner;
++	kref_put(&user->intf->refcount, intf_free);
++	module_put(owner);
++	vfree(user);
++}
++
++static void release_ipmi_user(struct ipmi_user *user)
++{
++	kref_put(&user->refcount, free_ipmi_user);
++}
++
++static struct ipmi_user *acquire_ipmi_user(struct ipmi_user *user)
++{
++	if (!kref_get_unless_zero(&user->refcount))
++		return NULL;
++	return user;
++}
+ 
+ /*
+  * The driver model view of the IPMI messaging driver.
+@@ -1330,7 +1334,6 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+ 	unsigned long    flags;
+ 	struct cmd_rcvr  *rcvr;
+ 	struct cmd_rcvr  *rcvrs = NULL;
+-	struct module    *owner;
+ 
+ 	if (!refcount_dec_if_one(&user->destroyed))
+ 		return;
+@@ -1382,10 +1385,6 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+ 	}
+ 
+ 	release_ipmi_user(user);
+-
+-	owner = intf->owner;
+-	kref_put(&intf->refcount, intf_free);
+-	module_put(owner);
+ }
+ 
+ void ipmi_destroy_user(struct ipmi_user *user)
+@@ -2315,7 +2314,7 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 		}
+ 	}
+ 
+-	mutex_lock(&ipmi_interfaces_mutex);
++	mutex_lock(&intf->users_mutex);
+ 	if (intf->in_shutdown) {
+ 		rv = -ENODEV;
+ 		goto out_err;
+@@ -2361,7 +2360,7 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 
+ 		smi_send(intf, intf->handlers, smi_msg, priority);
+ 	}
+-	mutex_unlock(&ipmi_interfaces_mutex);
++	mutex_unlock(&intf->users_mutex);
+ 
+ out:
+ 	if (rv && user)
 -- 
 2.43.0
 
