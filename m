@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-617328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221F6A99E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8985BA99E83
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DAA1946D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3025A5FD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 01:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C641D5CC4;
-	Thu, 24 Apr 2025 01:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141BD1E7C07;
+	Thu, 24 Apr 2025 01:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIPvj4BL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVo/a5qa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7BA17A2EE;
-	Thu, 24 Apr 2025 01:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF681DDA14;
+	Thu, 24 Apr 2025 01:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745459391; cv=none; b=fWTNDnAnH9druUAWavH8r9W8wpJ/ExTsFbU0G6h17xkSPi4OSJoSvZQJw364WzKhSFK+YcDuFdKt0cZYdpPWBDUGfKmU/XWFkjlp+SWG1LhClkgHlBsJ9uMFvrHsJst7ulJtXfwlKW0GIUBN5rALRoEn9JrYg3s8imN1tp1V5po=
+	t=1745459412; cv=none; b=JgPuXn7g/5UMQrE2JdfoeTmUY3rfAGUa1VogDT+xZEN42kty1PjbcdOp8CXZhyuGO0VZLvc4x1jz7kuq6xsAVnB3xD+6HRvXJucb4aN/9ypJujgL3nyNwuUB4TIbICvJIR7KK62OUGA4TBmaCbTP8Nal3+RSvcRvwlCHupviuyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745459391; c=relaxed/simple;
-	bh=okAdnUMdkt77fPNOGoNov2VzUCP19KzZkGl46/1y+w8=;
+	s=arc-20240116; t=1745459412; c=relaxed/simple;
+	bh=SGnBAo1AC0EKZj7K2iz2ohBGdPq4rA3kL/ltg9HTzmU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jzzfBvLA0owctqXB0YlFdP6Nyjip87urmG/N+YV2erpqyiUvakzxHeB4Cc+WX7UWWgLYL6PD2Tqf6IzeqGP+a+Ie6hO6cXrMp+U5eFFFLGdlmUgUctIsn0oceyWA4rMpBqMhDgyNuvIXEZvaksrsP/PxO1evVqRsCLqYcrczEj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIPvj4BL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A68C4CEEA;
-	Thu, 24 Apr 2025 01:49:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Rh8jnHSyNgMLS3blODnukXmfOrvDgMHNGp1v8ckfIje9NwlQrNGX7B7gxTVzRc32jH3a3ZFmIW9NgqWnsZyd0hzjqcVIn8G8+HXnUAooM415/a3TLWWqKYxwk1m3+zNFx9dN/rZV2b8qNGs1zkV92LF6Ws5tt/Ppjf9o80QrwiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVo/a5qa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF6AAC4CEEA;
+	Thu, 24 Apr 2025 01:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745459390;
-	bh=okAdnUMdkt77fPNOGoNov2VzUCP19KzZkGl46/1y+w8=;
+	s=k20201202; t=1745459411;
+	bh=SGnBAo1AC0EKZj7K2iz2ohBGdPq4rA3kL/ltg9HTzmU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YIPvj4BLeYeqMXk0isir7s8Yu2WBUBo1eModjU8uNIXQn3QFOw5gaLqgkwZBTN/dd
-	 OHkZKKCrB/7v0p4xQqGqKLyN8zfNfjDG/0xwxY2ODJ8eQY5fRHyhrkdEE8qa/dAK1R
-	 YWPRKbovTAsm3hJkSnMwsuu6y09Ocn+F9HPZUl7J628Sx/MhnsNxEJiolbu7eVV3ZK
-	 vvGDISucdRKhKXodmfxj2iH1uGOoVrmAxL7mKuTfQplKieAhtmBnxDaK8Qri5mSkQe
-	 lBVqaIGkFCnkmxTDElagKq45fTO4uIlYyo1gHFNmUrJ9Gx0JnVGTmFhX08FSNXSHM9
-	 Q8ckLFRJ4tMLg==
+	b=tVo/a5qaxy/WYiEouDfeQi5Ei9A94G9cj8hGb39zey8rEjqNpIVRBgkFrPpg+HYW1
+	 hjeyECy3/zW9ORZtXWVcyQ4MxiP1hAWetnJiUYE45P39j/58HWznhNgQ8nKPjegtQs
+	 tmF1nXQ6VngIo6qH36PHHmfLVhUYVONcf3m4srA2czs74Lnij8EPJEUWh2Dv+5L/kB
+	 gK3se7usNYVxd6AnUozjD9RoVVkkDQw4A/+tih1lyDLCVql/9xdwqFvCU0zl7fx08j
+	 kZRBBytQmTiTG69pny5dowuXwWvUcu//uHmxBmGmmYX5SqP4nPDhz7LgwxibwCtYon
+	 vUeSHBOnXZwiQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B77380CED9;
-	Thu, 24 Apr 2025 01:50:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD5A380CED9;
+	Thu, 24 Apr 2025 01:50:51 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: mt7530: sync driver-specific behavior of
- MT7531 variants
+Subject: Re: [net-next PATCH] octeontx2-pf: AF_XDP: code clean up
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174545942875.2829412.8607382949348037647.git-patchwork-notify@kernel.org>
-Date: Thu, 24 Apr 2025 01:50:28 +0000
-References: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
-In-Reply-To: <89ed7ec6d4fa0395ac53ad2809742bb1ce61ed12.1745290867.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: chester.a.unal@arinc9.com, dqfext@gmail.com, neal.yen@mediatek.com,
- sean.wang@mediatek.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+ <174545945025.2829412.5574764696344129535.git-patchwork-notify@kernel.org>
+Date: Thu, 24 Apr 2025 01:50:50 +0000
+References: <20250420032350.4047706-1-hkelam@marvell.com>
+In-Reply-To: <20250420032350.4047706-1-hkelam@marvell.com>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+ bbhushan2@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 22 Apr 2025 04:10:20 +0100 you wrote:
-> MT7531 standalone and MMIO variants found in MT7988 and EN7581 share
-> most basic properties. Despite that, assisted_learning_on_cpu_port and
-> mtu_enforcement_ingress were only applied for MT7531 but not for MT7988
-> or EN7581, causing the expected issues on MMIO devices.
+On Sun, 20 Apr 2025 08:53:50 +0530 you wrote:
+> The current API, otx2_xdp_sq_append_pkt, verifies the number of available
+> descriptors before sending packets to the hardware.
 > 
-> Apply both settings equally also for MT7988 and EN7581 by moving both
-> assignments form mt7531_setup() to mt7531_setup_common().
+> However, for AF_XDP, this check is unnecessary because the batch value
+> is already determined based on the free descriptors.
+> 
+> This patch introduces a new API, "otx2_xsk_sq_append_pkt" to address this.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: dsa: mt7530: sync driver-specific behavior of MT7531 variants
-    https://git.kernel.org/netdev/net/c/497041d76301
+  - [net-next] octeontx2-pf: AF_XDP: code clean up
+    https://git.kernel.org/netdev/net-next/c/b5cdb9b3113e
 
 You are awesome, thank you!
 -- 
