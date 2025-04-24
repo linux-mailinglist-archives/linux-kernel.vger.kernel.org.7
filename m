@@ -1,98 +1,190 @@
-Return-Path: <linux-kernel+bounces-618725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A3AA9B29C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781EBA9B2A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941DE3B4388
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FEC4A51EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643827CB12;
-	Thu, 24 Apr 2025 15:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723CD27B519;
+	Thu, 24 Apr 2025 15:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4SnX1Sp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f41d19ZA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D5Xu5OGB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D0C1B414E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 15:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0102D1A2381;
+	Thu, 24 Apr 2025 15:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745509221; cv=none; b=DNS50iHH71IIqs/9DcdkWI9N1W6OhDeFQX55O+p5aPWO1c1EtR3lWp6g+hsAN6ygEJga4xCSGMr5c11krw6ed4dubYewRC76TRbVlTlZicxD0oUfkFcOK5rHtWjPo7obKe4g6Zm4L+Qowkb3yiuemlYeBUaVWicYaFkRZeUd07c=
+	t=1745509273; cv=none; b=SuWqb0yCX6at18LQ+0S5zwcuixfw4hXT9BUTsBV+wrIHuwHt08Fohn6IQ9fOr2YFD2VLOL3iOwyk92OKLH5SBHw3DtdwBUV1RSq6/ODkGSQmHyzcPvanE2cCq6LfcKrteYRUNJighj6KYPtOi360+v9nImoV6et11iKgOip2MZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745509221; c=relaxed/simple;
-	bh=m79yZBVMxE4AA+f552+EtExtizaGN1TqMSESd2aS1SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7/m4O78lP2vOltrdrDHEKkuDY8p85oWUC4ektVltFYiZtNdCIZJ2F/gJKDwKe737084oVyiy7tL5FhMP88crrZQ1h2u40RnkRQjLfzMfkmJPqoVrRf+IgfevxUl/5xhW7kbvPH8SXcHxTgxRZEt/nAqEHk5VwBZ+C1p4bcqYyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4SnX1Sp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A503BC4CEE3;
-	Thu, 24 Apr 2025 15:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745509221;
-	bh=m79yZBVMxE4AA+f552+EtExtizaGN1TqMSESd2aS1SA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F4SnX1SpGM96KuxInmm2t03yLng6qqivRc2wHB4xd8CtP+uvMU7jkKFpKZe45BteH
-	 zqcj1DUZMShku6uzUtSBDI5rx5uEh1QHaFhgPxUGwXNZbuShRbDVG+xHDAzy3OPROr
-	 rU+2l58DxT4fbGkZO8xoTv6BlTIx00VCgB+eat7UHHYIaDKSumURqvQC09O/ZPdBkK
-	 0HQGmwElb4FhGgmcEB25UvRzoltQujcCwEWIvnR1GDjHtHFmnfnlwYXFHVMuRoNIDH
-	 x9AJZp8qsMfWve6AsPQDHkOEovPrQ+qb5dceT168S5fh8FnQW7YJsliQPupcjWm/1m
-	 HGS+iQba20kDw==
-Date: Thu, 24 Apr 2025 09:40:18 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] nvme/pci: make PRP list DMA pools per-NUMA-node
-Message-ID: <aApbYhyeYcCifoYI@kbusch-mbp.dhcp.thefacebook.com>
-References: <20250422220952.2111584-1-csander@purestorage.com>
- <20250422220952.2111584-4-csander@purestorage.com>
- <20250424141249.GA18970@lst.de>
+	s=arc-20240116; t=1745509273; c=relaxed/simple;
+	bh=BUsfWyugC4fOI4dbDRGKFEho2nEDDQ1VSW+SJy2dCBE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hrxSLwcRrcycoCgRR1GYViIRG9sJ4HQhU1SK3F7OrHgIDtge9cXQ8+bbuy5yeAVcFCm/OBaPMli0Yn7RLDZoGv0X2r7s5j9AGhvMRMX0NRgBN+IzxzfJ21bVxKPiTNWiYpM74bajJTTAJdreMztwF8muROoKxzOgAqT4VVKAqIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f41d19ZA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D5Xu5OGB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Apr 2025 15:41:03 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745509269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PuqbTaAzURsbYcqcz+do/Cu2Srz5dw7WWCHXR3VUQys=;
+	b=f41d19ZAZbMeqcWjS5SkjjoxO1YI5LLZK3wh+BSpUPFicpg0chxjYJXZcAwHKyAEZVYL6A
+	m3Ni2xP/vCCrHhF3Sy+bQLCNhaa8sivJvS0opFg/008/op5hcAIrVgMDt0dhs1TlHjoenR
+	u31fRVN5Yal0fpUIj0vOncetahdctWcD2DkiDFKbZuS9KLABo5LlGvvnq9EIIHvxzdohC+
+	lctX4+bDdEjA1A+EJSdYfVpXxKUrYSVNgd7whAbGaMpXTzkPfL1Q/G1wiOHsZapS7XCjFm
+	SmGlFzJmH1OBc7n6AdDHslr7uXrwjU+Pi0DEPgNEdWDF+E/nOFFX902ixxs8Cw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745509269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PuqbTaAzURsbYcqcz+do/Cu2Srz5dw7WWCHXR3VUQys=;
+	b=D5Xu5OGBSIpfC4GVhKnVVa5zHjqGlhMdY8yfmOs5oq3m+dlj3KuZLBCVfa7udpTXWHB9oh
+	iMwGwUoS48KYbzCw==
+From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/sev: Share the sev_secrets_pa value again
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Ingo Molnar <mingo@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Dionna Amalie Glaze <dionnaglaze@google.com>,
+ Kevin Loughlin <kevinloughlin@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <cf878810-81ed-3017-52c6-ce6aa41b5f01@amd.com>
+References: <cf878810-81ed-3017-52c6-ce6aa41b5f01@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424141249.GA18970@lst.de>
+Message-ID: <174550926387.31282.8024498782812144912.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2025 at 04:12:49PM +0200, Christoph Hellwig wrote:
-> On Tue, Apr 22, 2025 at 04:09:52PM -0600, Caleb Sander Mateos wrote:
-> > NVMe commands with more than 4 KB of data allocate PRP list pages from
-> > the per-nvme_device dma_pool prp_page_pool or prp_small_pool.
-> 
-> That's not actually true.  We can transfer all of the MDTS without a
-> single pool allocation when using SGLs.
+The following commit has been merged into the x86/boot branch of tip:
 
-Let's just change it to say discontiguous data, then.
+Commit-ID:     18ea89eae404d119ced26d80ac3e62255ce15409
+Gitweb:        https://git.kernel.org/tip/18ea89eae404d119ced26d80ac3e62255ce15409
+Author:        Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate:    Wed, 23 Apr 2025 10:22:31 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 24 Apr 2025 17:20:52 +02:00
 
-Though even wtih PRP's, you could transfer up to 8k without allocating a
-list, if its address is 4k aligned.
+x86/sev: Share the sev_secrets_pa value again
+
+This commits breaks SNP guests:
+
+  234cf67fc3bd ("x86/sev: Split off startup code from core code")
+
+The SNP guest boots, but no longer has access to the VMPCK keys needed
+to communicate with the ASP, which is used, for example, to obtain an
+attestation report.
+
+The secrets_pa value is defined as static in both startup.c and
+core.c. It is set by a function in startup.c and so when used in
+core.c its value will be 0.
+
+Share it again and add the sev_ prefix to put it into the global
+SEV symbols namespace.
+
+[ mingo: Renamed to sev_secrets_pa ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Cc: Dionna Amalie Glaze <dionnaglaze@google.com>
+Cc: Kevin Loughlin <kevinloughlin@google.com>
+Link: https://lore.kernel.org/r/cf878810-81ed-3017-52c6-ce6aa41b5f01@amd.com
+---
+ arch/x86/boot/startup/sev-startup.c | 4 ++--
+ arch/x86/coco/sev/core.c            | 7 ++-----
+ arch/x86/include/asm/sev-internal.h | 1 +
+ 3 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
+index 36a75c5..f901ce9 100644
+--- a/arch/x86/boot/startup/sev-startup.c
++++ b/arch/x86/boot/startup/sev-startup.c
+@@ -55,7 +55,7 @@ struct ghcb *boot_ghcb __section(".data");
+ u64 sev_hv_features __ro_after_init;
  
-> > Each call
-> > to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool spinlock.
-> > These device-global spinlocks are a significant source of contention
-> > when many CPUs are submitting to the same NVMe devices. On a workload
-> > issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2 NUMA nodes
-> > to 23 NVMe devices, we observed 2.4% of CPU time spent in
-> > _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
-> > 
-> > Ideally, the dma_pools would be per-hctx to minimize
-> > contention. But that could impose considerable resource costs in a
-> > system with many NVMe devices and CPUs.
-> 
-> Should we try to simply do a slab allocation first and only allocate
-> from the dmapool when that fails?  That should give you all the
-> scalability from the slab allocator without very little downsides.
-
-The dmapool allocates dma coherent memory, and it's mapped for the
-remainder of lifetime of the pool. Allocating slab memory and dma
-mapping per-io would be pretty costly in comparison, I think.
+ /* Secrets page physical address from the CC blob */
+-static u64 secrets_pa __ro_after_init;
++u64 sev_secrets_pa __ro_after_init;
+ 
+ /* For early boot SVSM communication */
+ struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
+@@ -1367,7 +1367,7 @@ bool __head snp_init(struct boot_params *bp)
+ 		return false;
+ 
+ 	if (cc_info->secrets_phys && cc_info->secrets_len == PAGE_SIZE)
+-		secrets_pa = cc_info->secrets_phys;
++		sev_secrets_pa = cc_info->secrets_phys;
+ 	else
+ 		return false;
+ 
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 617988a..ac40052 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -80,9 +80,6 @@ static const char * const sev_status_feat_names[] = {
+ 	[MSR_AMD64_SNP_SMT_PROT_BIT]		= "SMTProt",
+ };
+ 
+-/* Secrets page physical address from the CC blob */
+-static u64 secrets_pa __ro_after_init;
+-
+ /*
+  * For Secure TSC guests, the BSP fetches TSC_INFO using SNP guest messaging and
+  * initializes snp_tsc_scale and snp_tsc_offset. These values are replicated
+@@ -109,7 +106,7 @@ static u64 __init get_snp_jump_table_addr(void)
+ 	void __iomem *mem;
+ 	u64 addr;
+ 
+-	mem = ioremap_encrypted(secrets_pa, PAGE_SIZE);
++	mem = ioremap_encrypted(sev_secrets_pa, PAGE_SIZE);
+ 	if (!mem) {
+ 		pr_err("Unable to locate AP jump table address: failed to map the SNP secrets page.\n");
+ 		return 0;
+@@ -1599,7 +1596,7 @@ struct snp_msg_desc *snp_msg_alloc(void)
+ 	if (!mdesc)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	mem = ioremap_encrypted(secrets_pa, PAGE_SIZE);
++	mem = ioremap_encrypted(sev_secrets_pa, PAGE_SIZE);
+ 	if (!mem)
+ 		goto e_free_mdesc;
+ 
+diff --git a/arch/x86/include/asm/sev-internal.h b/arch/x86/include/asm/sev-internal.h
+index e54847a..a78f972 100644
+--- a/arch/x86/include/asm/sev-internal.h
++++ b/arch/x86/include/asm/sev-internal.h
+@@ -5,6 +5,7 @@
+ extern struct ghcb boot_ghcb_page;
+ extern struct ghcb *boot_ghcb;
+ extern u64 sev_hv_features;
++extern u64 sev_secrets_pa;
+ 
+ /* #VC handler runtime per-CPU data */
+ struct sev_es_runtime_data {
 
