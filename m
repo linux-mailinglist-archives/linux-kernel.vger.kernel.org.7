@@ -1,87 +1,134 @@
-Return-Path: <linux-kernel+bounces-618331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27B4A9AD25
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0BFA9AD27
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F5C3BE953
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0DE5A4568
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1C722F75F;
-	Thu, 24 Apr 2025 12:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA822F748;
+	Thu, 24 Apr 2025 12:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5jV5NcUw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Suw1LZxz"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE1322B595;
-	Thu, 24 Apr 2025 12:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B8E22C35B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745497214; cv=none; b=iEvoDqMNiL4huU/Dq0AQFIh0XBFWG2qk89MkZTilXmAygOG7DVyVuuK+4FDBtS9i60rx0HJp+/M66ONwOzOeHPHuyH4TVRgTikPyY/fvgNQO/+A4uVlbJlQ8/pj2b4y0Wpch6h6L/LIUgV1ruzVrM/4pvGMvPSFC7Qzl5eBzvso=
+	t=1745497236; cv=none; b=F3Wmu65oumeUubHqXvNFpdBUasNwl8nCWC0qKKIgfeP4j6jySWHhpJWqJdIzir18lmTUlz26JG7b27Zse5ty50kb+/1MdaifEMoykVq7CUJZ/Pw8phFc2qFD83rc8777d3vRHObI3MEbhQEWT5+YQypA/CCZdSYMW59w7DMBv+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745497214; c=relaxed/simple;
-	bh=u8Mc0i/TppApevsGSFKevejDwzLPAMFwihcv9XLpm9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJWC+zpnHbYw2lomkEeyoyK7CdCnxe/olevMSllmmyxL2DcCxU7cTQUpkQMRYAs0uHunJFGhAFO3QtwG5J/jbZ36/5Lq2n397mdpp3+DHfbwUJjdl+rEmsvAZUSweyfw405goRBxPNTKQz1AugK0gC56NzvxRHiReDyKgXRbzAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5jV5NcUw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mwdTuU65lhEc5zC83nLOBu+Xq+msnXdZ5WpwUOFK4oU=; b=5jV5NcUwVBjHDWX91xReA0JiQz
-	QgXwN1lbzHZhPY6zkIqoyQ3S4AkJCekuPFZ8ih/R5DMb9FIeTKBhuX/eCDLDpkbtoK+FELL/uV83z
-	nkQooUiBnNsjJbGv3uxZ9gQJdRMcyqkme5TRr0besJ78ziLPuo96K0Pe6OBQxotooiuY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u7vYd-00ASWc-LM; Thu, 24 Apr 2025 14:19:59 +0200
-Date: Thu, 24 Apr 2025 14:19:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
- board
-Message-ID: <6e9c003e-2a38-43a7-8474-286bdb6306a0@lunn.ch>
-References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
- <20250423-01-sun55i-emac0-v1-4-46ee4c855e0a@gentoo.org>
- <aa38baed-f528-4650-9e06-e7a76c25ec89@lunn.ch>
- <20250424014120.0d66bd85@minigeek.lan>
- <20250424100514-GYA48784@gentoo>
+	s=arc-20240116; t=1745497236; c=relaxed/simple;
+	bh=bL8XZJpIQ328FckjzxCTkScUdzNQtFOutrtggIAGvho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3pEC8IJ6oP3ng8kj6qOad20de6RNDVn2o+a132R/62yOimsHbJsWWbTVK7heGcjxl5YIkepjTVQleXRarF6fCQ9eZ5xFJSpMww/F88i9BYqMpnk+nYGRCysxowIOlipfkP3+eM0PBt4qS/RRbmxE/gRUz9hao/fa+s8RbjqpSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Suw1LZxz; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c13fa05ebso623496f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 05:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745497233; x=1746102033; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u50Yy5Vg8srr8Se1a2fDdmj5mgoY3leB+NYiaQ0tKb4=;
+        b=Suw1LZxzxoOoMZRlMgxKMu1qNBFbVt8fWs5AsneTXtfH7gNAf3SADchKKJdj2Qtkk6
+         R/tWdiYKrYdtTEANlwpYvO6rWYSP0J4uqmU7i13FIGQ5ZkmYyf9uG39MoRrnuvPXWFxa
+         Ll7Mk5yzRQgfl1W1Tq+622z0uLfPgF21YB+I2HpYEHtPs2iLLiGJwlrpJeNErtHiRTF6
+         KgUhm3gPVAdhZtOIdxM1Q6vWYrNEX8DUOGF7WpT6E+8kC+U2lpAWUsIiB6Z3vNuczVQ1
+         UweEmiHzHQ9opntm2TTGfWjBlkYIMXixUO45fVYi5fg+SuyKTgRHs9n0A3I1PUl16rjV
+         ZxXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745497233; x=1746102033;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u50Yy5Vg8srr8Se1a2fDdmj5mgoY3leB+NYiaQ0tKb4=;
+        b=QLVdOHGfFSSlSKZXDkUtiOdGcEluUWEso45ypoK4Efg24OtkHDLnL3A+bOTxpUH0yB
+         XXLVia1kR2qfG+dEUmf67SWChm8mE9rXA+BBqHVz/rh03KhjclpMUXYBw9bpLZTpsVMg
+         Hb1Jn1u/JBeHDYfwd4n9rvdKJTmFZfB2GCfAE5EC3V1ffWziPezb8tmykzuUZPA2M1tW
+         yKcg6bW8QWQ73qxqlAewdG5l1Lb2VlOe+rDdY5zvtCprDLvHwS22l9wiZhKOcjfjCk5D
+         qq4WdeoQnJhV/csy+/rG4VgB4tdYXPRTWNiRsIPUI0a9db8H7ba22X/Vmq2NNSEqsiio
+         HTWw==
+X-Forwarded-Encrypted: i=1; AJvYcCURsudLqR3IEcmnUCcXWalsydVsFrjdfEyV72rppW25cb2kmi2uVDAMMGbD73M+yIuEYNJ64MS1CWo/K5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdhbKADG5mSd61UO+KIj1ShgxnHod9zopXot/AIZpENbCB0w7O
+	HdKl1rBqIwu2l3enCd2lsdJmNOywUSzqiHiYkxRm3YRRTaBb0GDj5X/uP0MUafs=
+X-Gm-Gg: ASbGncu8XBPf6vKX3A2gP7mnBqHWcjG9p2+BFaLrzCusrkB+MCxrMDSzdgA7zMd+MGY
+	cYV74d6w2b9UxbO/WOBo79+ykeWLZs1quNcRKaJ4bCeOfbMW55uxFKOvbX0qiXZQcIXNfoqffPV
+	MbMR4Vk04fFkW+cAAxsFlSThK/XjLhDChm4THBF6jl03ulwdyhYYJyhqzLClce7AzfILW85Jq4k
+	zR0fdtf7OijEgV8GO6gOXVzscOrZCbf5jk93Wevl0hL37u5cGSKNBWZiUT+sqE6lkMq3qcva5Qw
+	4COy/xIIQrkgzrvByHV6ynpFGUDQqB/UG6H0ZVaaviG273snHD2VlGZghFEGQthz5qjB24QdjgL
+	aedxO0g==
+X-Google-Smtp-Source: AGHT+IErGqD7SWmT3PoP2Qcfi8RzPWJTMPf2UDlu9jVrXtYNixkU0DJW45avJrW+b31pNkThEJFAjQ==
+X-Received: by 2002:a5d:64cf:0:b0:391:20ef:62d6 with SMTP id ffacd0b85a97d-3a06cf4a80emr1986260f8f.11.1745497232880;
+        Thu, 24 Apr 2025 05:20:32 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a06d54c031sm1884747f8f.84.2025.04.24.05.20.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 05:20:32 -0700 (PDT)
+Message-ID: <00fb511e-80b5-494b-acce-23093932c4ad@linaro.org>
+Date: Thu, 24 Apr 2025 13:20:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424100514-GYA48784@gentoo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/5] arm64: dts: qcom: qcs8300: add support for video
+ node
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com>
+ <20250424-qcs8300_iris-v5-4-f118f505c300@quicinc.com>
+ <47dtgkfqcpalixg36vxcurkmh5z52kdp7rbcvwl56wsyjsisdo@ylmmrvwde4nz>
+ <d8db0361-b8d9-4ed5-0f92-f66f280f62e6@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <d8db0361-b8d9-4ed5-0f92-f66f280f62e6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> I'd not bother to try other combinations, and just stick to vendor's
-> settings
+On 24/04/2025 11:28, Vikash Garodia wrote:
+> 
+> On 4/24/2025 2:51 PM, Dmitry Baryshkov wrote:
+>> On Thu, Apr 24, 2025 at 02:20:48PM +0530, Vikash Garodia wrote:
+>>> Add the IRIS video-codec node on QCS8300.
+>>
+>> Nit: you can not "add support for the video node". You can either add
+>> video node or add support for video en/decoding.
+> Makes sense. Will wait for any other comments, before resending.
+> 
+> Regards,
+> Vikash
+>>
+>>>
+>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 71 +++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 71 insertions(+)
+>>>
+>>
 
-Vendors get stuff wrong all the time. Just because it works does not
-mean it is correct. And RGMII delays are very frequently wrong because
-there are multiple ways to get a link which works, but don't follow
-the DT binding.
+Unless you get another comment, there's no need to resend.
 
-	Andrew
+I can fix the commit log for you on the way in.
+
+---
+bod
 
