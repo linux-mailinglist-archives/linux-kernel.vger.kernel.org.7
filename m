@@ -1,141 +1,158 @@
-Return-Path: <linux-kernel+bounces-618010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D94EA9A906
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:52:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DF8A9A91B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA1F46601C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:52:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872CF7B237B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B23C22A4F1;
-	Thu, 24 Apr 2025 09:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055A522156E;
+	Thu, 24 Apr 2025 09:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCTQn0qi"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mYoGdWUK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7472288CB;
-	Thu, 24 Apr 2025 09:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFD9221293;
+	Thu, 24 Apr 2025 09:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745488218; cv=none; b=RAvK/+d7o+J+nWqSYp+o02xFP4yDRvKGuzwu2Cv0FgcWk/8Aiv4zHsWGLbPY8Mhs1BlQeumKy/TRCaE6BpY2RsOWO7E6iRAGrBkw6z++tYmhiJ9JOahFh1t4MMkqkFnZh7ggz97e5/yjwRwDIlGVzrH6Yr9Z3IiIO9NNYUiBgvY=
+	t=1745488249; cv=none; b=XWNcRRs9GO/YHgS1+JFyJQdVBEAvxNMLlnhjMrxycc1Bms4u+Oj2gHCPhdLQhW4qjiHKrk99c8xMMsOKkExYmRicGGkeAXGsn5bC/BxKTwUscO45Uirllw3MKKKuXcyjoQLhQWjLw4v86IL/WNm2q1RX9I/LSgIZEzunKWPqHWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745488218; c=relaxed/simple;
-	bh=dN45aUMVgHBPtq+YH4TWkdlu7mWJvcThP9tdki6doMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WKt1m474KcXP8W0d5XxdlY/bmGXZdhJfLk+uGGa7jJ1e1Nps6SejNvXOkCV9qud3hgRiPGAzrIpMzHJIPNZx+RBIhWrfD/6x6M5P0T/dlKNrLZ1S06Vb87qKiLMpR85eaFqnboziGr2QLiLcrOfqtVFxBONV47p2/mUgRg2ls7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCTQn0qi; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70811611315so8165627b3.1;
-        Thu, 24 Apr 2025 02:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745488216; x=1746093016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dN45aUMVgHBPtq+YH4TWkdlu7mWJvcThP9tdki6doMY=;
-        b=eCTQn0qiRD6mwwzpa+iNGK6Op8AA50DtcB36F6XXuYb80SI7U5UsXngVVJMZuWjWpg
-         JjoNB3FIhnzQXZbRK850Eby16vKem+VVZo/euZTTHU7grAx4VZWEby6TZfq5k9mnsD48
-         kfrWu2Z47sy3+4Dw156qKhqWr3isd7yp637xPhY8iDAPAoBlAX80HsrlTlxBGeiOM5rK
-         wu/NkjMnDamW6WKuXuBzVMOHZWi6kmRXEYbTQ7UZxdqP8ung5NtKocstu2D89x49LZV6
-         EqgkglkZlrpx0ipJHPsgCl5Lz8AmKeIw5jgNHnjJQLjFvWLnHhIXJf0XfAka42h5IwF6
-         ibcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745488216; x=1746093016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dN45aUMVgHBPtq+YH4TWkdlu7mWJvcThP9tdki6doMY=;
-        b=PnYUd4sWiDULEptJpDEfb0bye+CT3PPKXDKAcLO2YpNmRnrEXUPJgEfW0YllswwxQx
-         MJok3R/3Md77lwnJdFYIhozntgd8WPZbeHVJFNJGZpvyw7tyYRkMho6pw7D6iX8O9KB1
-         TwoVYbCm6503bSQ3IzBJLeovqymijVv/apDbkO8vK8J6O9wQQjQKm0UdMe57rL/7q+ZE
-         lw0ob45kN3x5QeaHlGpM8IB7+X5EYu/B/HqoTG5RRzE9HbxW4PZvZXr/esefGddGwn6F
-         fxDu3dAf0lDLblm+uiC18rmEVsyVAcKhW9KLP4F4ChGfisSFUHgtKf8B8bWlKX2m4dP2
-         qOuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3chZGVw/h08oAC948PfinREKyxz7NUHVNHuidziRDRsPuQDgCaocr6M7vNOrQkeyC3nF10WbbY05jUn0=@vger.kernel.org, AJvYcCXbAye4OMxiuCkRyAo1Y3Lv5wHDqqEoAe3+QkjD1vkok19MS6iT2PDL/jcY1kmidZUFzpcLsQUs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHyD8OB0yAaFZgL9o6/J8jqJ4zWbM3wduz0j5m8yTRV52Ut1jd
-	NsNs5R34mHqUTJL0AkafDea2U4qxS0Vbl+1f1Fea2wDlumXUnVMsMFxmDY4h1a6ebQO2KhEsjve
-	ICX3NC3Fsm4kpAaa1PGtK+cVQ/oU=
-X-Gm-Gg: ASbGnct9//hs3TDnpm8lGMoCAEjbX9qT+19RAVoMw+yTKxu7OMkYlxmAQo3Tq06FRsY
-	jW5Z4QtEKYgXP+xn2hTDbJavevxBaDzU4GpsnC5+dh5eOAzMZR/5hlPeaMGk6ZvMzzvTjSkH5GW
-	4MJ4b+5WHJjBhDPoRyOq/seSBCIYk/YNg=
-X-Google-Smtp-Source: AGHT+IEPBoHxBQkLqgwJdK5VnALG9LwFIMjOSiDEnaPEdcz42TZZ2zCBMAs+R6fotsRDyYozw32iUW3Rn+b+3Y1wTTI=
-X-Received: by 2002:a05:690c:7447:b0:708:39f0:e673 with SMTP id
- 00721157ae682-7083ed270bfmr28187897b3.26.1745488216038; Thu, 24 Apr 2025
- 02:50:16 -0700 (PDT)
+	s=arc-20240116; t=1745488249; c=relaxed/simple;
+	bh=MI0rkee7qPSFJNcBOLfAdj1VY4hP4+td5WuZ+B4CRDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXCtCOD2kBq+2wjwdj15sawh830rBG5pUkcNYY6nnQWiVIJMH+QPZFxM6jrEzQb6rDhewuP58Kv0gMy2cc16nsYm/tI/UL7Pb7q++HKfqjjxWUG+jhVprybHgZwcIiBhenCkdAbq4PVmWTkZaMA4yv5MgAhNJ/osHsZh0fZyD38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mYoGdWUK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O8kHdI010515;
+	Thu, 24 Apr 2025 09:50:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Uh8kHX
+	wfj8QuQ+9gFTMr1gfS0Q8c4U8sdk6PJBfRG3E=; b=mYoGdWUKKgSnwyQ7Q2Dbmh
+	1QBxrYObcf4OsQEQDx29fpvsXZMmQEvvymef/am8U47XxpuVMna9aQvc42SMRapO
+	0jCSRWUVgMuHS0WDf5Lh+1sAtBPE5UcnDRwJ9E9PXkDLmDvMh+LOYXR0LCpyKw95
+	Kg96vCCNO8NW01g34k99VpiCCYVQ0ZNz6MKevV+2/6IvbHHfgIslfa6l30njqLeE
+	tPn3SzcOcm1PWItcO/+ZNbaOVw4FZmF0IZYXdzfCEq2Qb7a827AgjHj1ODkYyddh
+	uo6xMwfGtrAf5UNOpk/W+zDkVOG+/nvrkvE0kuD8nEZIIpYqgvFYamvTZBucUOYw
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4677sm2vbr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Apr 2025 09:50:19 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53O7EJed028388;
+	Thu, 24 Apr 2025 09:50:18 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 466jfvqj7w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Apr 2025 09:50:18 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53O9oHZP21824066
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Apr 2025 09:50:17 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8417158068;
+	Thu, 24 Apr 2025 09:50:17 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7BA4358052;
+	Thu, 24 Apr 2025 09:50:09 +0000 (GMT)
+Received: from [9.61.250.107] (unknown [9.61.250.107])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 24 Apr 2025 09:50:09 +0000 (GMT)
+Message-ID: <f67fd213-b39b-4f49-a839-38b9ad5565d2@linux.ibm.com>
+Date: Thu, 24 Apr 2025 15:20:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422184913.20155-1-jonas.gorski@gmail.com> <cf0d5622-9b35-4a33-8680-2501d61f3cdf@redhat.com>
-In-Reply-To: <cf0d5622-9b35-4a33-8680-2501d61f3cdf@redhat.com>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Thu, 24 Apr 2025 11:50:05 +0200
-X-Gm-Features: ATxdqUFd54daii3d4UaXpxRUJjHk49B8MSEUqlO5rgZOugl3Dy0MxnRClmOIGYs
-Message-ID: <CAOiHx=mkuvuJOBFjmDRMAeSFByW=AZ=RTTOG6poEu53XGkWHbw@mail.gmail.com>
-Subject: Re: [PATCH net] net: dsa: fix VLAN 0 filter imbalance when toggling filtering
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] sched/numa: Skip VMA scanning on memory pinned to
+ one NUMA node via cpuset.mems
+Content-Language: en-GB
+To: Libo Chen <libo.chen@oracle.com>, akpm@linux-foundation.org,
+        rostedt@goodmis.org, peterz@infradead.org, mgorman@suse.de,
+        mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        tj@kernel.org, llong@redhat.com
+Cc: sraithal@amd.com, kprateek.nayak@amd.com, raghavendra.kt@amd.com,
+        yu.c.chen@intel.com, tim.c.chen@intel.com, vineethr@linux.ibm.com,
+        chris.hyser@oracle.com, daniel.m.jordan@oracle.com,
+        lorenzo.stoakes@oracle.com, mkoutny@suse.com, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250424024523.2298272-1-libo.chen@oracle.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20250424024523.2298272-1-libo.chen@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA2MyBTYWx0ZWRfX8ZNpSkKZyLTj Z+Uh4OY7lraJNkmIj/Ymz3IDHhUnNAVYWIuUR14Vh9nvJo6WJ+cKAwxYAsjHMBI+e+NeItqKSEF dOoOn8vXM92/bORUa+FklfQl2ALTdVcT4jRNSsIdb07qFoq9mq8pFf4RgFlE4rqQY3MqXil71H0
+ B8I27/qbVG+bvp1CvWcs0t1FGYbu7WVVztmIJQQDCYD6/x+4OpMfWQ3mLcW2hfp3N28GNccJwl1 kVfBepsOpGx+uX5A/t2Mp/QMz9Xx40qEEeS25jlF+IQg7zV7CRJ5F1BV76PmElF928pnhyxqj8h GtqCXz7ukg//H81xyZ/SY8xDYBZFd/m3YjzMqp7Zy1o6elPlScNctzEOrCfEX1A+aGCh0/dUFM8
+ FWSG7eWotzbhavj3ftdYMMkq1Rs6MQKzVqnKwogCN1Bef4xAVfWJESnVzPzKNZUgimeGJpEf
+X-Proofpoint-GUID: jJI7p_Pu69VP6hngBoJhzak20Bjjly3h
+X-Proofpoint-ORIG-GUID: jJI7p_Pu69VP6hngBoJhzak20Bjjly3h
+X-Authority-Analysis: v=2.4 cv=CcMI5Krl c=1 sm=1 tr=0 ts=680a095b cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=2orru8iOFGd5tucj_wIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_04,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504240063
 
-Hi,
 
-On Thu, Apr 24, 2025 at 11:15=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
-ote:
+On 24/04/25 8:15 am, Libo Chen wrote:
+> v1->v2:
+> 1. add perf improvment numbers in commit log. Yet to find perf diff on
+> will-it-scale, so not included here. Plan to run more workloads.
+> 2. add tracepoint.
+> 3. To peterz's comment, this will make it impossible to attract tasks to
+> those memory just like other VMA skippings. This is the current
+> implementation, I think we can improve that in the future, but at the
+> moment it's probabaly better to keep it consistent.
 >
+> v2->v3:
+> 1. add enable_cpuset() based on Mel's suggestion but again I think it's
+> redundant.
+> 2. print out nodemask with %*p.. format in the tracepoint.
 >
+> v3->v4:
+> 1. fix an unsafe dereference of a pointer to content not on ring buffer,
+> namely mem_allowed_ptr in the tracepoint.
 >
-> On 4/22/25 8:49 PM, Jonas Gorski wrote:
-> > When a net device has NETIF_F_HW_VLAN_CTAG_FILTER set, the 8021q code
-> > will add VLAN 0 when enabling the device, and remove it on disabling it
-> > again.
-> >
-> > But since we are changing NETIF_F_HW_VLAN_CTAG_FILTER during runtime in
-> > dsa_user_manage_vlan_filtering(), user ports that are already enabled
-> > may end up with no VLAN 0 configured, or VLAN 0 left configured.
+> v4->v5:
+> 1. add BUILD_BUG_ON() in TP_fast_assign() to guard against future
+> changes (particularly in size) in nodemask_t.
 >
-> Why this is a problem specifically for dsa and not a generic one? others
-> devices allow flipping the NETIF_F_HW_VLAN_CTAG_FILTER feature at runtime=
-.
+> Libo Chen (2):
+>    sched/numa: Skip VMA scanning on memory pinned to one NUMA node via
+>      cpuset.mems
+>    sched/numa: Add tracepoint that tracks the skipping of numa balancing
+>      due to cpuset memory pinning
 >
-> AFAICS dsa_user_manage_vlan_filtering() is currently missing a call to
-> netdev_update_features(), why is that not sufficient nor necessary?
+>   include/trace/events/sched.h | 33 +++++++++++++++++++++++++++++++++
+>   kernel/sched/fair.c          |  9 +++++++++
+>   2 files changed, 42 insertions(+)
+>
+Tested the above patch on top of next-20250424 and it fixes the boot 
+warning on IBM Power server. Hence,
 
-Good point, I missed that (looked for something like this, but
-obviously didn't look hard enough). But checking the flow of it in the
-kernel ...
 
-netdev_update_features() for NETIF_F_HW_VLAN_CTAG_FILTER triggers a
-NETDEV_CVLAN_FILTER_PUSH_INFO notification, which would then trigger
-vlan_filter_push_vids(), which then calls vlan_add_rx_filter_info()
-for all configured vlans.
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 
-This is more or less identical to what dsa does with its
-vlan_for_each(user, dsa_user_restore_vlan, user); call.
 
-And AFAICT it also has the same issue I am trying to fix here, that it
-does not install a VLAN 0 filter for devices that are already up,
-which it would have if the device had NETIF_F_HW_VLAN_CTAG_FILTER set
-when was the device was enabled (and vice versa on on down/remove).
+Regards,
 
-So I guess the course of action for a V2 is fixing this in the core
-vlan code and make vlan_filter_push_vids() / vlan_filter_drop_vids()
-take care of the VLAN 0 filter as well, and then make dsa use
-netdev_update_features() to simplify the code as well.
+Venkat.
 
-Does that sound reasonable?
-
-Best Regards,
-Jonas
 
