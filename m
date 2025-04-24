@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-618800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54A2A9B3CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEA8A9B3C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A81B826DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E103BFD0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6383C289345;
-	Thu, 24 Apr 2025 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3890E284B29;
+	Thu, 24 Apr 2025 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezjT/iNz"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rMdsQgZ9"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522B3289346
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19331284673
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745511644; cv=none; b=Mc94om1pMCBxSe+pnSWcGxxanpDQrKFeOlzU3ksER0Qw7Va0fof08g6HebQLs4AYMRKIrvWM3b/2Ru/3IAR66j+kdcDnXdFZOpBnGFn8/51u66RS254MAk8T8ohf30EsmkhotMK5eAQ1M9yWVMGKsPoKYUVqXbTTLzT6OX0BRss=
+	t=1745511635; cv=none; b=k9c+nT/YiozHJOFySymXPlNxFkpMb3LSZ/HbKIOxFKg868CAfrjBH3OBGKlVm5pZxF1dRGMeZZtPY4+Y9LqIoaZE7wCj6gGmpRQtOw8YrJoqq/CLgCSQ3/TInER5DKoV8QJIEvRMbp/0bO5krNFZhSrgRU6abg91vnFpoIqqbxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745511644; c=relaxed/simple;
-	bh=sr91ZCkfh9/+1qgwRvc7NFp+/ypX7PeuKKUTBWh2e5M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Am3ewCBKmsKVNKBPjtLQgtqLHqYXMEf4cdvOTTrapnZ4UdK0GdZze8T8iBV4/aw5mNAsmbwjgYLdaaY+tWoQtSDiJC1s7bZxRpsI+uunuH/ZiydLkyv+d5kH7uAESbUu5Fjp+sU9WcCkxeDTn9FW2nZXhIR2MYmHpb+cPQ8mntU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezjT/iNz; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240b4de12bso19030765ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:20:43 -0700 (PDT)
+	s=arc-20240116; t=1745511635; c=relaxed/simple;
+	bh=InCEXlPry0Shz7qVuW3hH1vNAWeUV5R/D7hsRSK5cXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmHln913krcmiMpjwk3O8TEaaU1eOy/abcBsIXQmavT3pTXujjCKBIlVD7W9tuoakMxz5zkge/bh2Tb/mtzSxeH+cNPFBRhVUNEuBLBr9F1XsQXhyjnu3vLA8U7JoHnqz2Rsfo7uGzXGYqmBNserF4Gx5n+7wmDoaN94sFBmt44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rMdsQgZ9; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224171d6826so19498185ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745511642; x=1746116442; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QSyaOuxRYv6eWeED9vze/Zx1Ra4wgUaI0r8PRqeWN0U=;
-        b=ezjT/iNz+b4drFWmN5xEGoQAS/QQfBWV70zcg4XGRg3+y3mb8py47MBHlkz95iwkqx
-         eP4pCK26BXLfmDPwJdR9Xjv5y+P0esh6g58flAlhAIjrDpqh26jK6qzeTwBIxhWZ61rC
-         6njYkWiHNdIpoGADe0SWeU5Bsk9S37YZAix2SUwEBA4nLAWRppd+/bmFBodDThMJZwem
-         /GQDbAXtTaHuAhgz0JsmaOdR9+zDaxFhCJIyYkpbGmJIJAL3uT7Gowg4H1mHpVNXjpfN
-         qasDeD6KLxybk0me0GcHOjMtcW7V9+HMxcpaLQlM/aCVn/HXdXxZ++88tqzKUQRBJbjN
-         hAxQ==
+        d=google.com; s=20230601; t=1745511633; x=1746116433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AjA0zRqOdoO65aeGmUVGM27lVhB2Fk68FwOzncHTk4I=;
+        b=rMdsQgZ9PGjTsS+tEjtyRiXuk08i4ku/GiVOjbm8rSjCfY4Czjr28w2JqWMIsgkZc7
+         Mx6h9K5OEMXERb/9WTH1MmRwXk/NFk5W8Nd6hpSGAtn+GQRNdIFdK9fPDGTv3bpx+Kjq
+         WiEOBTDMAxiCLRZ7Xg3ekjZX7g/pz3zogzUE8gxEnWPTS/MqgCKmPMu7rtSE0sc/nTcS
+         CwjcOxIB2FR4/YbadvC1JgfKmX9mxEGob6CQjOwVJlwnflDQoL12x81n9h52BmK4WkJO
+         l+ICwq2gNX/MMaQ+ILcDzTc2htxhjvBGIvmcpWLO1KIdK5K39xPMolpHCjnX9gU5nsou
+         i9XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745511642; x=1746116442;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QSyaOuxRYv6eWeED9vze/Zx1Ra4wgUaI0r8PRqeWN0U=;
-        b=pp2KTsrI+pzBweLAJOTCzZdZtcTi0AGeDIWfAmplj/+aIeSw2+ACJLQOgC7M4egE+n
-         bL0ThoDKrkKegdNslSOAZ/w7icfg6j7tcQKXtlNO0ADCo75PvusMtxPMochoDOk0mm3j
-         HV56hmK8NHL6UXj4AxboIMsnaf89a7SYmzdvyb56vsXigrfxbkP12UJExuJwZLULilmK
-         SFN+WJhMeV7cqKaTPZEulUy1SJyFFAJAsma/DRbHHlYitwFHPjtYT4qHqYNVao0hrWHc
-         6Vq8Cdz5QA68+EecE3Z0ZJpDW5yMwTpe1tO+75F1lgo9xDTgVCVW8fcKStfePgzxcvYU
-         fZgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHO2UJblUiv2yHpfQLUCDPXUWEEh+Ar4+PO0Ug+gCF1mc42efxWoRo2hp5Bk8xNyI38WAQI2nURDHoIhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweEFtoNQR0Z+u8dX9u7IuHAbBBtIpM4ffBiAZ5KiGjaj+o1yjp
-	7zOp75WIKGJXz9vE7ZOCbLOF7WI9uzlNZ87Kao6EqrCe35P5pV9Zrb8hUhK347g=
-X-Gm-Gg: ASbGncvTAr/OPaU32FrmJUPNY37bJGnOvy50QltA786Q/ersNaoyOvL99oYTOM8om/O
-	vfElv/0PBWSHWBNx+k++60OIILxMhC6aLjYgswxQcDzxLj0ySrHaVOeuJ2X1N3Ytn/2ccXw9FQf
-	m/fqgalXKjCC6IMONReckzdL0CBYaGhuUDjB+bHE8yXh5dqTfX2+ZAhFWsbTfECLNRIWL5nlTxU
-	uNqNkMWjrD5xhaV7JXgtQxvjlzfUnw21uamKNcf0XNxbn1VHilPyu69FC3a9d0EsiWSiw8Hrvu4
-	65TD7xRTjqTuzc9PEh7vvuCZoWsnkosmmZvYWzIffQ==
-X-Google-Smtp-Source: AGHT+IEYPSmkALRG18EbLkZ4r4Mc9Zk2ENSNaMuK68sqW3bha49PXaIcVchPcu5dRFET7GZx/n/KrQ==
-X-Received: by 2002:a17:902:f64d:b0:223:f408:c3e2 with SMTP id d9443c01a7336-22dbd41875bmr1217355ad.14.1745511642636;
-        Thu, 24 Apr 2025 09:20:42 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5216b7csm15475485ad.232.2025.04.24.09.20.41
+        d=1e100.net; s=20230601; t=1745511633; x=1746116433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AjA0zRqOdoO65aeGmUVGM27lVhB2Fk68FwOzncHTk4I=;
+        b=L6On6QKdnloYVzVW2oGIRsmv/NdDKs9yBxpWd5kaRDoCnRj1eZQYRAHAbQIcIWvjOV
+         TUErTiAHZ/qpzlihVHrac1ABoaAo1p/rNyCShR/qUWB66XvmXLCAIGO4MDjzzm7rDcr6
+         xazkff2nlmpD3Wo9ArndKZfL01My9CEfugcCROY5KOcX0NwrTIeOtl/cLGUO2wPu8384
+         xHCSrev8FRFIJRDPTWe/OJhXXX2NRf9ILWJ9zA0Sk5vLPLATkEcfNYkGvHt3/lBsDada
+         2ZA7f2108sd/hmRKJnDGJJNp/CFB4SuWyBSN+OjiFlR75ChaciYrIImBJ+B8rm+OoLt8
+         OItQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtfrMi8wAWq5x+rRISf07VdZ2ZH6BkDoThNOwGcBLlVHVRzryLNCIiOL/x2bNj5GmEdkRXO94SGY3wDGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT2oM/tFKCTWT1dIR4XFELPFyion9HHKicZRC7+G9QAqYVXuJe
+	5skCiKYtM17INdx2QekggdpOzOKEMNPR76iYyWKZlXtcfVmnKFCRKkIY+0EdzQ==
+X-Gm-Gg: ASbGncsPUYqYiUc4vssuif2qacNhZEXLcajkFD9T32omAMmrtUpzz0OiHhSU4s0D2Zo
+	WbimEzeqdTxhoshJMX3MxbkI5oYZyuHPwOIh064CmO7EgXzrX+/LbVUcMc5C7rhqbY9xakRrWPd
+	r//rpoqokBlYbsm+dPMIYDuttyi1L/Gnr3p4T3JbRz7KNp2GivICaLJxS8l3lR3oyQG819lq+gr
+	yJocOtuEgl4N9AAktkwxNKeytImrQIr6Wd3LIQPGazDm12e9HViYrV9+7IW072uKzdokEroshhC
+	NsksJVB5bNPk4uujpXHFsp7Wtj1LvBBqIbBKqH8/UDh9bWJxSDe2180l83jm6NBp9jt5w8fWyjy
+	guA==
+X-Google-Smtp-Source: AGHT+IG8P6+pJNOxYWYGXFazufP063CNc7E1r2Vnv478yECDez1ity5Va93DLn+NqSzjAaI191FlTA==
+X-Received: by 2002:a17:90a:d88d:b0:2ff:4f04:4261 with SMTP id 98e67ed59e1d1-309f5724fcemr351652a91.34.1745511632805;
+        Thu, 24 Apr 2025 09:20:32 -0700 (PDT)
+Received: from google.com (30.176.125.34.bc.googleusercontent.com. [34.125.176.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef03bb7fsm1597107a91.9.2025.04.24.09.20.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 09:20:42 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Lifeng Zheng <zhenglifeng1@huawei.com>,
-	Nicholas Chin <nic.c3.14@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2 5/5] cpufreq: Force sync policy boost with global boost on sysfs update
-Date: Thu, 24 Apr 2025 21:50:18 +0530
-Message-Id: <852ff11c589e6300730d207baac195b2d9d8b95f.1745511526.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1745511526.git.viresh.kumar@linaro.org>
-References: <cover.1745511526.git.viresh.kumar@linaro.org>
+        Thu, 24 Apr 2025 09:20:31 -0700 (PDT)
+Date: Thu, 24 Apr 2025 16:20:25 +0000
+From: Benson Leung <bleung@google.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Pooja Katiyar <pooja.katiyar@intel.com>,
+	Madhu M <madhu.m@intel.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] usb: typec: ucsi: displayport: Fix NULL pointer
+ access
+Message-ID: <aApkyew8pxtOonFK@google.com>
+References: <20250424084429.3220757-1-akuchynski@chromium.org>
+ <20250424084429.3220757-3-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yN6CB+ZP4HAxLcf/"
+Content-Disposition: inline
+In-Reply-To: <20250424084429.3220757-3-akuchynski@chromium.org>
 
-If the global boost flag is enabled and policy boost flag is disabled, a
-call to `cpufreq_boost_trigger_state(true)` must enable the policy's
-boost state.
 
-The current code misses that because of an optimization. Fix it.
+--yN6CB+ZP4HAxLcf/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-Reviewed-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/cpufreq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Thu, Apr 24, 2025 at 08:44:29AM +0000, Andrei Kuchynski wrote:
+> This patch ensures that the UCSI driver waits for all pending tasks in the
+> ucsi_displayport_work workqueue to finish executing before proceeding with
+> the partner removal.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: af8622f6a585 ("usb: typec: ucsi: Support for DisplayPort alt mode")
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 0ad459bc8f84..4ac5d4fcfdd4 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2863,8 +2863,10 @@ static int cpufreq_boost_trigger_state(int state)
- 	unsigned long flags;
- 	int ret = 0;
- 
--	if (cpufreq_driver->boost_enabled == state)
--		return 0;
-+	/*
-+	 * Don't compare 'cpufreq_driver->boost_enabled' with 'state' here to
-+	 * make sure all policies are in sync with global boost flag.
-+	 */
- 
- 	write_lock_irqsave(&cpufreq_driver_lock, flags);
- 	cpufreq_driver->boost_enabled = state;
--- 
-2.31.1.272.g89b43f80a514
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
+> ---
+>  drivers/usb/typec/ucsi/displayport.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucs=
+i/displayport.c
+> index acd053d4e38c..8aae80b457d7 100644
+> --- a/drivers/usb/typec/ucsi/displayport.c
+> +++ b/drivers/usb/typec/ucsi/displayport.c
+> @@ -299,6 +299,8 @@ void ucsi_displayport_remove_partner(struct typec_alt=
+mode *alt)
+>  	if (!dp)
+>  		return;
+> =20
+> +	cancel_work_sync(&dp->work);
+> +
+>  	dp->data.conf =3D 0;
+>  	dp->data.status =3D 0;
+>  	dp->initialized =3D false;
+> --=20
+> 2.49.0.805.g082f7c87e0-goog
+>=20
+
+--yN6CB+ZP4HAxLcf/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaApkyQAKCRBzbaomhzOw
+wmZOAQCJHSNgJn3fio8LE2QNBerK0r8asdS4fi/alefs3cAcqgD/Y50z1pEaIDoS
+Ne3XXI4RGAwgX1RNf4VOHCVJcSyczwk=
+=L2jV
+-----END PGP SIGNATURE-----
+
+--yN6CB+ZP4HAxLcf/--
 
