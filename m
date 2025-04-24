@@ -1,210 +1,471 @@
-Return-Path: <linux-kernel+bounces-619067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B2EA9B6DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:57:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812B0A9B6E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35284C0404
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:57:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CEDF7A8D17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB21528F535;
-	Thu, 24 Apr 2025 18:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28428CF5E;
+	Thu, 24 Apr 2025 18:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OJBA7TL/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MIfff0NU"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BAC1DF988
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745521025; cv=none; b=MJq0xA8+z9fLLW6k9+TP9hOhfJgCVPjlR8FW2QuHstIfeNm6nJTtKW9QJvwMtnIB+KBMffl3NNHkW9DvP1BKtK1yefjr1O2UpXCUOv/ubS+M4bjtBe+HhvoI7o8clwryWuN6l033zGKKHxZrbfSLHYImnNby82aT3QbK3sKAj0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745521025; c=relaxed/simple;
-	bh=0PCrxE+7A1vf6K3VotNkZFsmQ7kJosiH5JYFYju3fXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jjRL33uSaTPBz9ieww8be4rKa7YGmxXrd0jvoXg6njVS1V/iB4ofZFYcUVd+6bNsYpfKOaKxp+uA1xSWav3qiFg3neY+Ak9Q1x3fGLMBkhf/RUSxQymGRUGDsR5xPOToJHa1j46Axxcunae4XAe1adFZ1QwG2QusHLkUTotSdy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OJBA7TL/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745521019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0PCrxE+7A1vf6K3VotNkZFsmQ7kJosiH5JYFYju3fXQ=;
-	b=OJBA7TL/DE31n8Fl+jsKohOK3594Hi4a9RYU00836+rfy3vk2erWH0v5XXwj8gZr9RnHnN
-	RmhkAcpVVy+ulT/gzq8sJF5DJfi0NKDWe2qVqfb5ftBKeX9xdogCcwMclG8z2/5qB3IrqO
-	mUvP59JPvZQJu3QZSIDccmFT3L/Pg2g=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-ogYqaCHcMOuPcnj1-97MJA-1; Thu, 24 Apr 2025 14:56:58 -0400
-X-MC-Unique: ogYqaCHcMOuPcnj1-97MJA-1
-X-Mimecast-MFC-AGG-ID: ogYqaCHcMOuPcnj1-97MJA_1745521017
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-70267bb7ed8so15859927b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:56:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745521017; x=1746125817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0PCrxE+7A1vf6K3VotNkZFsmQ7kJosiH5JYFYju3fXQ=;
-        b=aPeTYF9G2hVaB/6sjKeBLF8E4z7KGEduyJ/xKBTPQmbWyU54jCoVK7mtxItKZRDzrB
-         /aB/5/spG0zmGMe7dDHINkKM8xqHJbmRbJNaGg4Qneqx6bvKTwCZ5KoTTAXdlmof2qMd
-         rSpubWvl4oAW2JkjxrTDA+mnB2zuhAzqS8Fi92qfyctvmJOz3+n7w04QrTz3WLAYBLgg
-         B1yNjJyilMM2mbXK1G+3TkBEMlVzBfy/RmCfIm1qg3dIUrFWJrOpSgpXipgDxADe52B5
-         S2hThh3Cr1iynRqXvAYerZSv1x6PhR4sjBOwKyOXGsqcQjDiEOqHO5cqFFG1QgERlaIo
-         7KNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJrHCwfkZDbLHWZ/F4pB1DB7YjZUvxrK0lasajfnfW16cxpGX8k9pdOEW6XTbfc0AXUIT4d3/8FWbknFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4nVHdCnBOx+DZL4mFirbm9tImV3bJZR3+AikCVOMT3h90fg1j
-	Zce6Z2+m12JKOXfaVu0bdRFgWzAb6yPLuDG8cB3uyeS9oB5+IdXhNUWSIC7+kodFELCNNtyMAQA
-	LOlC9tq6s+9+x0NjoeKFtvKpOVvaCPrYDHtwv33ZjmRwYJdL+/umCpXDowP26adFmXQ2BerM1aR
-	Ti5BDXFwpjAR3N3wMdLtuHzfjxwPoKjru+79w0
-X-Gm-Gg: ASbGncsb7qz8ZiuRKYedD2SoDjq/wWqLHDaPDmhunWTRKMF2M10Z9fn1+SUPaFkhT75
-	1iyObl2FX+ayn872ly76aObKVRdNqn7E8lHKJ0Xgqq+eTVuUYWH3bE9Y99FOBb+kQwlNg43hrVA
-	mYKdy+NZc=
-X-Received: by 2002:a05:690c:9a85:b0:708:100a:5797 with SMTP id 00721157ae682-7083ec20e85mr62945987b3.11.1745521017384;
-        Thu, 24 Apr 2025 11:56:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLq1YlbJnKiQchqS7R3u1IbfLVwKmtMNZfXOw4/4RsExrw85/EL3EEEm81MSFHeeKMeVPc93dtEK5J5CZyQdE=
-X-Received: by 2002:a05:690c:9a85:b0:708:100a:5797 with SMTP id
- 00721157ae682-7083ec20e85mr62945447b3.11.1745521017076; Thu, 24 Apr 2025
- 11:56:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B8A2820DD;
+	Thu, 24 Apr 2025 18:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745521146; cv=fail; b=L/NSmqtsGCFFzfRPt/fIFAX06FPnlbYX6C2qGiKV1kNa1axTDnF47uxhCROBIejJp3gua9P7hjsoZvY//LRGihN1ZC1AZuEEtngtqPzHPkyYWJtRFE5FC37xzKArQbO2Bs/0j9XtScJxVGom53OCzEzIvszYEPe7U5k2vd7HloU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745521146; c=relaxed/simple;
+	bh=9E6oFTU/CP9unHmHBP85PVJpPZ3eUuoi4W8wcbVvudo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AovNCTNBWIHkElaIrJRCl1lsfqLHCGjbeqUexvoraMy6A9HmwgWR2yjI9+f99qUVwW04USYEWJM8RkatAMWnD53Ax8lCQCe3ulna5EF+gCk52xodZjxJaChwKsfI1YW9wcuEgIr6c01k+Nyp/1ywyvvrAdiBj8LyqyyByM0ZVss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MIfff0NU; arc=fail smtp.client-ip=40.107.237.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f7geUhV5sRQZha3mJWlpWLbtGjzF+idqRZGSLFC4MJov27xaxK8I7T1Y1Hf3sXDLRMsImlmNFUwaihd6y0q0nzqvx0RAyO8sKhH4uoXr7raOy1eloNT0WyZEPpBSFwKHkmCnnn53szAByyHfbwyoq9zLzGciWRiX/zQ77aIxITbOoLnwSAjjOlAUN/rIi484CVHM5x7j3bsZOhsawe1Ogh9wb+W2EcYkqmFGLyZ8j+ZKVAAYvvOPjnwbq/CjX1y5LTALKg2FhSjL4KaiceWy1wZGsObUEnAxcVNIiQo4lTtgIuPBUNNXffLOV6YOFenR5BHlvKNGcyfUiVfgxw4zAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3eq+4eYz0WkpkfASYv1euieg22fJxOJzdH2OzUAhsMM=;
+ b=g+OyNfs7kHwHaiw0VxjU2mwKJBwGJfhxCu++8Uz2Gh9Nw/rmtesR+GbkisQZhkNARei5JGof7UmunLr6J592F2NYF6vCEcO78ij1HW0vN96MmcgW6DMzLry948qDeCQKdgePC60pWMhReLUAOk1jKfdiP6pzg0ygpIn2jLgX/C1KUmyvggTsg7GyPKP2OegL7zm2dkp9s54UFH8ZW7i6OOFL63pWh/L+kzdCy94B+2ZB1I/1JjcOHSe5Mx/cTfHidfeJzE1fXsYCnWCrlJSXGtphfFMc1qOmFhcZ/Bx56epxnaCMQog8Dw3KrlNIKsNIe9tIJEmWIR/y+CkSmHbt3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3eq+4eYz0WkpkfASYv1euieg22fJxOJzdH2OzUAhsMM=;
+ b=MIfff0NUQGtKlNYO1gdEYXKAIdBWz7hT3rOiFJgSZnCwmlxvsfCtzPekYsboPrl5GqrOvFT4pF1EZDLyJ7GH7LLf5kv70Vzx3b9hBczcKHYEFWBt0//VAReROeu+C1fVvPtS54b0+9Px8PZmHPGuRJQCADcnJj0yU1bNpWKw4Sw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SN7PR12MB7201.namprd12.prod.outlook.com (2603:10b6:806:2a8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.31; Thu, 24 Apr
+ 2025 18:59:01 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8655.033; Thu, 24 Apr 2025
+ 18:59:01 +0000
+Message-ID: <5b4ca7d6-0771-4f84-9a8b-c850faf7a879@amd.com>
+Date: Thu, 24 Apr 2025 13:58:59 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] i2c: amd-isp: Add ISP i2c-designware driver
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org,
+ mlimonci@amd.com, christophe.jaillet@wanadoo.fr, krzk@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
+ king.li@amd.com, dantony@amd.com,
+ Venkata Narendra Kumar Gutta <vengutta@amd.com>
+References: <20250424184952.1290019-1-pratap.nirujogi@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250424184952.1290019-1-pratap.nirujogi@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0215.namprd04.prod.outlook.com
+ (2603:10b6:806:127::10) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHTA-uav+jc9WKr+Ye0zoR+niczZLbTKdX1LisR3YSLtoLJ5Dw@mail.gmail.com>
-In-Reply-To: <CAHTA-uav+jc9WKr+Ye0zoR+niczZLbTKdX1LisR3YSLtoLJ5Dw@mail.gmail.com>
-From: Nico Pache <npache@redhat.com>
-Date: Thu, 24 Apr 2025 12:56:31 -0600
-X-Gm-Features: ATxdqUGkHN0DmvAZCO60egd059xRcfAJHhIl46i1OjI1cjRSg7_Z47yjLvR87-U
-Message-ID: <CAA1CXcBwO77=4ki8kG93rNhB1BUpGqfvo3UbRt0WQ5pFMDyVWw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/17] khugepaged: Asynchronous mTHP collapse
-To: Mitchell Augustin <mitchell.augustin@canonical.com>
-Cc: akpm@linux-foundation.org, 
-	20250211152341.3431089327c5e0ec6ba6064d@linux-foundation.org, 
-	21cnbao@gmail.com, aneesh.kumar@kernel.org, anshuman.khandual@arm.com, 
-	apopple@nvidia.com, baohua@kernel.org, catalin.marinas@arm.com, cl@gentwo.org, 
-	dave.hansen@linux.intel.com, david@redhat.com, dev.jain@arm.com, 
-	haowenchao22@gmail.com, hughd@google.com, ioworker0@gmail.com, jack@suse.cz, 
-	jglisse@google.com, John Hubbard <jhubbard@nvidia.com>, kirill.shutemov@linux.intel.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com, 
-	Peter Xu <peterx@redhat.com>, ryan.roberts@arm.com, srivatsa@csail.mit.edu, 
-	surenb@google.com, vbabka@suse.cz, vishal.moola@gmail.com, 
-	wangkefeng.wang@huawei.com, will@kernel.org, willy@infradead.org, 
-	yang@os.amperecomputing.com, zhengqi.arch@bytedance.com, 
-	Zi Yan <ziy@nvidia.com>, zokeefe@google.com, 
-	Jacob Martin <jacob.martin@canonical.com>, 
-	=?UTF-8?Q?Vanda_Hendrychov=C3=A1?= <vanda.hendrychova@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB7201:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1a5c3c5-83a7-446a-3580-08dd83621363
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OFBuSElZZDhtT1dRRXNhZEoyYzdEWThJYkNGRG9TOEwwNWtFUUZpWWRJUXVM?=
+ =?utf-8?B?M0Flc3VTMVNYOE5XWXNPdDdQRm1BUFZZSVlwR0lQTGcvQXdxTXhmdXpTU3Rk?=
+ =?utf-8?B?dzVEeUhnaGFDZFc3cGlOV2o3dDFMcVJDd0FLSEJlVUo0VG5jc29CUjVLcG1L?=
+ =?utf-8?B?ejlMdXR3WHl0bGJzZllmSlhhR3NIc2NuOU9IZVplSVdtTXMvbmtKU0hMNjEr?=
+ =?utf-8?B?V0dlcGZzTzR2Qm44VzI5WFcza0ROcTU1K0xKRVUwUjFiM1E5ckM3NXFxRkM4?=
+ =?utf-8?B?OTJzZHlXd3JzZFM3T2U0SkxuQlB1SkY1QVlwa3BOWjlWaHVLTDhZQTNoS0tj?=
+ =?utf-8?B?NVJFMWJpaFpMV2ltNlJidGprUFluZWNzMzJZSXZFaWpPRmpKNUhxaXpjMkNL?=
+ =?utf-8?B?QUpvYXZ2d0h5TCtqV3JLYktkWVNMUFl1Z1JzNHRIenAxaFFIYlBadXRqVE9n?=
+ =?utf-8?B?SEp1dmRyekljRGxwTzZUUTdTZDI4U3psaWFxN21Rbm53ZmJnYlBKTzN1cEhP?=
+ =?utf-8?B?TkxMTE1jOS9BR0RwS1p2OWtpdmNWa3VHMG82TlMra29EZk1tdFlaYUFOZmJk?=
+ =?utf-8?B?bVpQWXk5a0FpSVBtQll2Ri9PaHdqK01yTVp5RDN1QmxsdE1IQkdkeThLTmly?=
+ =?utf-8?B?djlUY29mS1czSmQxRzdHNWRCWFFReWpTNXgxeEd3WWhYR2ZxWkRPOEhwSTdE?=
+ =?utf-8?B?RkJhOEsrNVQyM2lHclQ2K1lldm5yb0dNYWlRZFlteCtrSy9USk5qcUlLSVhq?=
+ =?utf-8?B?ZEUzVW5zM2xuWVZSWWpLNVVUN2JaUGh0eng0cEZic0FEbXpGckhPRm15K1Nu?=
+ =?utf-8?B?L1Nxc2J0UmNYcy9JRlMyS01zOFUrYXcxMkhGMXpQMm5BSnA5UHl2UHN4WnlD?=
+ =?utf-8?B?d0Rkcm16bVpqUFRXb2FSdHdkbWhxMjRBajNmNUJQYi93c2ROVWpqVnNaKzlY?=
+ =?utf-8?B?UkFwTjhWczdjQ29pWDJXRkt0cDlpeklwQkVMZzM5bXg0cHhON1I5UXBNRW1j?=
+ =?utf-8?B?TVdlS2F0bWphOTc0azdDTHppRmoyci9CRWUzaUxXRllLMU4rOWxVR0VxN0dp?=
+ =?utf-8?B?b005U01hckRsdVlsaytoaElYNWxHWWo0aUxiSGU0UVhudXN6bzl0WE16cVdG?=
+ =?utf-8?B?bys0VU9GTitaSHMzbUlrbGFwMWh6a3BJN29TU3g1bzN1YmRxdlFUdjNqYTZr?=
+ =?utf-8?B?eFhlMDlhdmRiaVZCQi9WNHFkbnUvMWdsTlhjQjV6eDF3NlpHbWpndVhrVlIr?=
+ =?utf-8?B?Q0QreGFjd0NTSlU5ME9lZkduTTRBQmV0SjJDclNPOEZ6YnNBWnEwdk83TS94?=
+ =?utf-8?B?ZFA0MEhVUWF3NUpKRy9KWW5oeGpsY1ZWOUhFMXRtTzQ1NG14ZVR5c0wyVXBI?=
+ =?utf-8?B?czZscllSZTR4c1hkeVk5WWh4M3lGUm0zU0lYc2cyN3M0dEIyWmtVcFErdWZM?=
+ =?utf-8?B?cCtsZUdZT0o4TS9WLyt0YS9IZXB3ektRRzVnZWdTckxCQkRyS2EzdksyTk40?=
+ =?utf-8?B?ZmJtV05aZC9Gb29uVHpkNlAvQWhTSkpnN0NrSW1ia3VVdmJqVHk0TTVwTTgy?=
+ =?utf-8?B?UGFUQjk4K1o0Z05HODVEbnF2MEpOdDNiZjYzTFlMWDhjL2dSSmFhMXdLR2Y3?=
+ =?utf-8?B?SmZQQ2JIUGNob3pFRGJpT0g3QjJuZExOVVcrUFhlMUIxN0RSZmZBdjBUQ0lO?=
+ =?utf-8?B?QWlValp3QkU5Y1dWRUZrM2dkTUczR285TGpxMytTYjdRMVAwS1JhNUdtM1dG?=
+ =?utf-8?B?ZXkwRXA0STQ0dlkxbU5teWN3YlltQUhwcEpLeHk5Z1pQQlpGZmJVai9qbHVu?=
+ =?utf-8?B?Zmpqd09kNDNvM3RqUFFnakh6cWpvUmN1bnNPU3BwdXJxTDJWZTBLVzdKcXVN?=
+ =?utf-8?B?akNzVXg5cG80MkZJS1lvVGxQZzk4MlVLSUNzenA2L1VIQWdzTFBuam9CWWw1?=
+ =?utf-8?Q?hlL5mCjN3Jo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QXY2R2Z1ZkNvUnlzeXhOd20wSWNGTy9hRCs5eFZPMFliMmk3Tm03RlRLWVk1?=
+ =?utf-8?B?UmVoUFZoUE5mWE1obFpCSW1HY2U4cHIvM3lMYm1jNTJSdU1GbGd1VHRNam9z?=
+ =?utf-8?B?TFJYS0JGU0NlUW10dytjT25hMHdPRzZuZUg5QkFvOWxhU25GcHZtelRkK0d3?=
+ =?utf-8?B?dytIV21JVmZVTXpaNGJDamJualpHYXNJdFdNLzdqUHJSSWZvbWFLSUZkd3hm?=
+ =?utf-8?B?czZha3VBSFdLWDZoL0xQQkcxZkRHSUVYQzRuSXJzR0dhQUFPQWRkZEZDS1Z5?=
+ =?utf-8?B?dWRBNmRES1YyK3FKSkZLUEF5YmJvcFlTa3BmUGpOMTE3cFNTK0ZaZFRVdTh3?=
+ =?utf-8?B?bnh5L3BNU1FJcnhISUQzMzRBeExoQ2p6bzlJU1JMeHBYM0hhTXREZENReEpq?=
+ =?utf-8?B?eEthc045V3YzOFRST2JER0JtQjJDVWlueDUxR0E0dlQzNjl5MUEvWTFoaThn?=
+ =?utf-8?B?OXYxRW1iVnpreW5LaEx5R3J3MzJUY3cxdnhOa1hRSWNybmUraEwrRGNTaXcz?=
+ =?utf-8?B?NDBtWEowTjU1bzhBMG9DK3Z1SWNJN0x1SU9FcmN4ZStsM3VBTkJaMUhJY1hm?=
+ =?utf-8?B?Ync2YU1MSUdCVDRRb0RUdHRBSXBiTzJITkVqd2NMc1RsdUg2cG1UMGlKako0?=
+ =?utf-8?B?cXhCMlU3bXBheUR3UW1HRDROaFo2TlBEYWtmUkdKcEhUMGZ2Z2J3TjgzY3RY?=
+ =?utf-8?B?SzdqamU0K3ljbU00TE5DNDdGVmNiRkh5eEdCVno3NmxRUzNZT0VHMkwwMng2?=
+ =?utf-8?B?TGduYXJQU3ZyMWJXWnczWjBScjlUeWw3a0tTWUdxSndpSGZxRkNtUm00Y1N2?=
+ =?utf-8?B?dm5XQlQ2VTQxWlRZUUFiSS9WcEgvZjYyK0JXelE2SHpBZHlKWmRadnFVREhU?=
+ =?utf-8?B?Q08zU1ByVGJqR2l0NUh5SEtYYjh4SEdRT2Zhd0xrRFovSDN6N1FWUmRncGNV?=
+ =?utf-8?B?OG52SFJ5Q1VYRUFWYjNKQ1oyNFI1TVBNeFlZWHN2SllmQUZuRm9SQTQrdGgw?=
+ =?utf-8?B?RlBQWEZOcUlnK2xoTFdBa2RmYXM1akRkWExmQTFSdVVkTStlVkc5KzB2YlQ0?=
+ =?utf-8?B?cVZqUS8vekhnUk5NTWxjZDh1NG8zQzFwY2dQazNZNTFJUjZrY0RmZWJwQTl3?=
+ =?utf-8?B?OFVSQVBMKzBINkdoWER5UmZiSDVsNXFtZGZtRjcvRU1CWWl1cmkvaS9CaFlk?=
+ =?utf-8?B?aEFobjYzaWgweXI2Y1orb2NJVjhwaDd2Sm51ZXlNNWduSFowb0gwV3Flb3VW?=
+ =?utf-8?B?L3c1d0M3WEhXRytMYUp6bmpwaXNIUDlyRURTZzZkcXlGTHEvMDFwbGkzNlVh?=
+ =?utf-8?B?WWR0K3JTZWlmNXBSTGhUTWxCUEZZSVdmL2YwVmRmWW9zV1hCSFVSN3g3YXEv?=
+ =?utf-8?B?dHRtbjZHdHo5SjZXNG0rbW01R3pSSTN1NisvQXZ3QzFKajR4ZnFYUWlxNXZQ?=
+ =?utf-8?B?eTd0dUhFT2dEMGZrV0tWUVdmK2l4RXVEYU1uSlYva1hDZGJtTlVVSldKYmRD?=
+ =?utf-8?B?YjY4UW1Eb0ZFTlV5WWc5RVJWeEVITWx1TnZiZlYrNHZ3bUVFZ2RLc2RHRUR6?=
+ =?utf-8?B?WHZ1NXpwNi9UNkFqMlBMMWpUbmNpMDJTRHVIYklNUnJHSXJWUTk3Z2djZ3dC?=
+ =?utf-8?B?YldDTDF2L3RSM0pTM0ZqNzhPY2RpczdwbmVqQUFwZFBtZ3J0UExydHd4YUp6?=
+ =?utf-8?B?WWlZb1Z3S2dzaHFlamVjY081aDJic2ZjZk5TK3UyRmlDT1c0MWM2enFTbkFI?=
+ =?utf-8?B?a1VTcjg0T0QrWlV4SGFJRm84dFB5RW5WUFZXZjdINWNyWDVrVDZ2L1lpbDRE?=
+ =?utf-8?B?NC9oVlJKMmt0YXVmMUV0WjRjOC9nSkdEcFF2a1lKN0FXUzNta3o0c2lUZVVS?=
+ =?utf-8?B?cm1GMCtabWxYNjVWM20zTE5VRGFONGtuR1NHb2pLWDR4dmpLNTROUkkrQzVq?=
+ =?utf-8?B?b0pvamdnd2VRaGl6YXMxa2gvSjRFeU14TGJDcVlrRWlPSEluamN1Y1Zxb21s?=
+ =?utf-8?B?M2NRcjE4RkdxRkFWS0NpbDJVTTEvQjdkL1RKWkdxS3BGRWlDeGQwbmxGbjVm?=
+ =?utf-8?B?L3U4eU9kWHEwaXhFOHozTEdtejR5aFF3VmlhMHZJb2l2Y2xuVTNqSG85VTdS?=
+ =?utf-8?Q?0pEqF9Xjxii+1Py/S1CG7kMSD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1a5c3c5-83a7-446a-3580-08dd83621363
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 18:59:01.3922
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ifJbcegTFTsq3AefLMaDIwE3xDxaVo7PwAJ3HfTfD1iTaZrYED0RLc6C0i2NePSqZrHicfJc2x6r3Zyf/aLsSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7201
 
-On Thu, Apr 24, 2025 at 12:18=E2=80=AFPM Mitchell Augustin
-<mitchell.augustin@canonical.com> wrote:
->
-> Hello,
->
-> I realize this is an older version of the series, but @Vanda
-> Hendrychov=C3=A1 and I started on a benchmark effort of this version prio=
-r
-> to the most recent revision's introduction and wanted to provide our
-> results as feedback for this discussion.
->
-> For context, my team and I previously identified that some of the
-> benchmarks outlined in this phoronix benchmark suite [0] perform more
-> poorly with thp=3Dmadvise than thp=3Dalways - so I suspected that the
-> THP=3Ddefer and khugepaged collapse functionality outlined in this
-> article [6] might yield performance in between madvise and always for
-> the following benchmarks from that suite:
-> - GraphicsMagick (all tests), which were substantially improved when
-> switching from thp=3Dmadvise to thp=3Dalways
-> - 7-Zip Compression rating, which was substantially improved when
-> switching from thp=3Dmadvise to thp=3Dalways
-> - Compilation time tests, which were slightly improved when switching
-> from thp=3Dmadvise to thp=3Dalways
->
-> There were more benchmarks in this suite, but these three were the
-> ones we had previously identified as being significantly impacted by
-> the thp setting, and thus are the primary focus of our results.
->
-> To analyze this, we ran the benchmarks outlined in this article on the
-> upstream 6.14 kernel with the following configurations:
-> - linux v6.14 thp=3Ddefer-v1: Transparent Huge Pages: defer
-> - linux v6.14 thp=3Ddefer-v2: Transparent Huge Pages: defer
-> - linux v6.14 thp=3Dalways: Transparent Huge Pages: always
-> - linux v6.14 thp=3Dnever: Transparent Huge Pages: never
-> - linux v6.14 thp=3Dmadvise: Transparent Huge Pages: madvise
->
-> "defer-v1" refers to the thp collapse implementation by Nico Pache
-> [3], and "defer-v2" refers to the implementation in this thread [4].
-> Both use defer as implemented by series [5].
->
->
-> Ultimately, we did observe that some of the GraphicsMagick tests
-> performed marginally better with Nico Pache's khugepaged collapse
-> implementation and thp=3Ddefer than with just thp=3Dmadvise, which aligns
-> a bit with my theory - however, these improvements unfortunately did
-> not appear to be statistically significant and gained only marginal
-> ground in the performance gap between thp=3Dmadvise and thp=3Dalways in
-> our workloads of interest.
->
-> Results for other benchmarks in this set also did not show any
-> conclusive performance gains from mTHP=3Ddefer (however I was not
-> expecting those to change significantly with this series, since they
-> weren=E2=80=99t heavily impacted by thp settings in my prior tests).
->
-> I can't speak for the impact of this series on other workloads - I
-> just wanted to share results for the ones we were aware of and
-> interested in.
-Hi Mitchell,
+On 4/24/2025 1:49 PM, Pratap Nirujogi wrote:
+> The camera sensor is connected via ISP I2C bus in AMD SOC
+> architectures. Add new I2C designware driver to support
+> new camera sensors on AMD HW.
+> 
+> Co-developed-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+> Signed-off-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+> Co-developed-by: Bin Du <bin.du@amd.com>
+> Signed-off-by: Bin Du <bin.du@amd.com>
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+> Changes v1 -> v2:
+> 
+> * Remove dependency on exported symbol "isp_power_set()". Use pm_runtime ops to power on/off ISP controller.
+> * Remove hardcoding adapter id to 99. Instead switched to use dynamically allocated adapter id.
+> * Cleanup header files.
+> * Replace subsys_initcall() with default module_init()
+> * Update copyright header and license info.
+> * Update MAINTAINERS details for i2c-designware-amdisp.c
+> * Fix coding errors based on review feedback.
 
-Thank you very much for both testing and sharing the results! I'm glad
-no major regressions were noted, and in some cases performance was
-marginally better. Another good set of workloads to test for defer
-would be latency tests... THP=3Dalways can increase PF latencies, while
-"defer" should eliminate that penalty, with the hopes of regaining
-some of the THP benefits after the khugepaged collapse.
+Thanks Pratap, LGTM now.
 
-I wanted to note one thing, with the default of max_ptes_none=3D511 and
-no mTHP sizes configured, the khugepaged series' (both mine and Devs)
-should have very little impact. This is a good test of the defer
-feature, while confirming that neither me nor Dev regressed the legacy
-PMD khugepaged case; however, this is not a good test of the actual
-mTHP collapsing.
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-If you plan on testing the mTHP changes for performance changes, I
-would suggest enabling all the mTHP orders and setting max_ptes_none=3D0
-(Devs series requires 0 or 511 for mTHP collapse to work). Given this
-is a new feature, it may be hard to find something to compare it to,
-other than each other's series'. enabling defer during these tests has
-the added benefit of pushing everything to khugepaged and really
-stressing its mTHP collapse performance.
-
-Once again thank you for taking the time to test these features :)
--- Nico
-
-
->
-> Full results from our tests on the DGX A100 [1] and Lenovo SR670v2 [2]
-> are linked below.
->
-> [0]: https://www.phoronix.com/review/linux-os-ampereone/5
-> [1]: https://pastebin.ubuntu.com/p/SDSSj8cr6k/
-> [2]: https://pastebin.ubuntu.com/p/nqbWxyC33d/
-> [3]: https://lwn.net/ml/all/20250211003028.213461-1-npache@redhat.com
-> [4]: https://lwn.net/ml/all/20250211111326.14295-1-dev.jain@arm.com
-> [5]: https://lwn.net/ml/all/20250211004054.222931-1-npache@redhat.com
-> [6]: https://lwn.net/Articles/1009039/
-> --
-> Mitchell Augustin
-> Software Engineer - Ubuntu Partner Engineering
->
+> 
+>   MAINTAINERS                                |   7 +
+>   drivers/i2c/busses/Kconfig                 |  10 +
+>   drivers/i2c/busses/Makefile                |   1 +
+>   drivers/i2c/busses/i2c-designware-amdisp.c | 205 +++++++++++++++++++++
+>   4 files changed, 223 insertions(+)
+>   create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f31aeb6b452e..65b6d985e1ed 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23519,6 +23519,13 @@ L:	linux-i2c@vger.kernel.org
+>   S:	Supported
+>   F:	drivers/i2c/busses/i2c-designware-*
+>   
+> +SYNOPSYS DESIGNWARE I2C DRIVER - AMDISP
+> +M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
+> +M:	Bin Du <bin.du@amd.com>
+> +L:	linux-i2c@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/i2c/busses/i2c-designware-amdisp.c
+> +
+>   SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER
+>   M:	Jaehoon Chung <jh80.chung@samsung.com>
+>   L:	linux-mmc@vger.kernel.org
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 83c88c79afe2..adb2910525b1 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
+>   	  This driver can also be built as a module.  If so, the module
+>   	  will be called i2c-designware-platform.
+>   
+> +config I2C_DESIGNWARE_AMDISP
+> +	tristate "Synopsys DesignWare Platform for AMDISP"
+> +	depends on I2C_DESIGNWARE_CORE
+> +	help
+> +	  If you say yes to this option, support will be included for the
+> +	  AMDISP Synopsys DesignWare I2C adapter.
+> +
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called amd_isp_i2c_designware.
+> +
+>   config I2C_DESIGNWARE_AMDPSP
+>   	bool "AMD PSP I2C semaphore support"
+>   	depends on ACPI
+> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> index c1252e2b779e..04db855fdfd6 100644
+> --- a/drivers/i2c/busses/Makefile
+> +++ b/drivers/i2c/busses/Makefile
+> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
+>   i2c-designware-platform-y 				:= i2c-designware-platdrv.o
+>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
+>   i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
+> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
+>   obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
+>   i2c-designware-pci-y					:= i2c-designware-pcidrv.o
+>   obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
+> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+> new file mode 100644
+> index 000000000000..ad6f08338124
+> --- /dev/null
+> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+> @@ -0,0 +1,205 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Based on Synopsys DesignWare I2C adapter driver.
+> + *
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "i2c-designware-core.h"
+> +
+> +#define DRV_NAME		"amd_isp_i2c_designware"
+> +#define AMD_ISP_I2C_INPUT_CLK	100 /* Mhz */
+> +
+> +static void amd_isp_dw_i2c_plat_pm_cleanup(struct dw_i2c_dev *i2c_dev)
+> +{
+> +	pm_runtime_disable(i2c_dev->dev);
+> +
+> +	if (i2c_dev->shared_with_punit)
+> +		pm_runtime_put_noidle(i2c_dev->dev);
+> +}
+> +
+> +static inline u32 amd_isp_dw_i2c_get_clk_rate(struct dw_i2c_dev *i2c_dev)
+> +{
+> +	return AMD_ISP_I2C_INPUT_CLK * 1000;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
+> +{
+> +	struct dw_i2c_dev *isp_i2c_dev;
+> +	struct i2c_adapter *adap;
+> +	int ret;
+> +
+> +	isp_i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*isp_i2c_dev), GFP_KERNEL);
+> +	if (!isp_i2c_dev)
+> +		return -ENOMEM;
+> +	isp_i2c_dev->dev = &pdev->dev;
+> +
+> +	pdev->dev.init_name = DRV_NAME;
+> +
+> +	/*
+> +	 * Use the polling mode to send/receive the data, because
+> +	 * no IRQ connection from ISP I2C
+> +	 */
+> +	isp_i2c_dev->flags |= ACCESS_POLLING;
+> +	platform_set_drvdata(pdev, isp_i2c_dev);
+> +
+> +	isp_i2c_dev->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(isp_i2c_dev->base))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(isp_i2c_dev->base),
+> +				     "failed to get IOMEM resource\n");
+> +
+> +	isp_i2c_dev->get_clk_rate_khz = amd_isp_dw_i2c_get_clk_rate;
+> +	ret = i2c_dw_fw_parse_and_configure(isp_i2c_dev);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "failed to parse i2c dw fwnode and configure\n");
+> +
+> +	i2c_dw_configure(isp_i2c_dev);
+> +
+> +	adap = &isp_i2c_dev->adapter;
+> +	adap->owner = THIS_MODULE;
+> +	ACPI_COMPANION_SET(&adap->dev, ACPI_COMPANION(&pdev->dev));
+> +	adap->dev.of_node = pdev->dev.of_node;
+> +	/* use dynamically allocated adapter id */
+> +	adap->nr = -1;
+> +
+> +	if (isp_i2c_dev->flags & ACCESS_NO_IRQ_SUSPEND)
+> +		dev_pm_set_driver_flags(&pdev->dev,
+> +					DPM_FLAG_SMART_PREPARE);
+> +	else
+> +		dev_pm_set_driver_flags(&pdev->dev,
+> +					DPM_FLAG_SMART_PREPARE |
+> +					DPM_FLAG_SMART_SUSPEND);
+> +
+> +	device_enable_async_suspend(&pdev->dev);
+> +
+> +	if (isp_i2c_dev->shared_with_punit)
+> +		pm_runtime_get_noresume(&pdev->dev);
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	ret = i2c_dw_probe(isp_i2c_dev);
+> +	if (ret) {
+> +		dev_err_probe(&pdev->dev, ret, "i2c_dw_probe failed\n");
+> +		goto error_release_rpm;
+> +	}
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +
+> +	return 0;
+> +
+> +error_release_rpm:
+> +	amd_isp_dw_i2c_plat_pm_cleanup(isp_i2c_dev);
+> +	pm_runtime_put_sync(&pdev->dev);
+> +	return ret;
+> +}
+> +
+> +static void amd_isp_dw_i2c_plat_remove(struct platform_device *pdev)
+> +{
+> +	struct dw_i2c_dev *isp_i2c_dev = platform_get_drvdata(pdev);
+> +
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	i2c_del_adapter(&isp_i2c_dev->adapter);
+> +
+> +	i2c_dw_disable(isp_i2c_dev);
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +	amd_isp_dw_i2c_plat_pm_cleanup(isp_i2c_dev);
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_prepare(struct device *dev)
+> +{
+> +	/*
+> +	 * If the ACPI companion device object is present for this device, it
+> +	 * may be accessed during suspend and resume of other devices via I2C
+> +	 * operation regions, so tell the PM core and middle layers to avoid
+> +	 * skipping system suspend/resume callbacks for it in that case.
+> +	 */
+> +	return !has_acpi_companion(dev);
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_runtime_suspend(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	if (i_dev->shared_with_punit)
+> +		return 0;
+> +
+> +	i2c_dw_disable(i_dev);
+> +	i2c_dw_prepare_clk(i_dev, false);
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_suspend(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (!i_dev)
+> +		return -ENODEV;
+> +
+> +	ret = amd_isp_dw_i2c_plat_runtime_suspend(dev);
+> +	if (!ret)
+> +		i2c_mark_adapter_suspended(&i_dev->adapter);
+> +
+> +	return ret;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_runtime_resume(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	if (!i_dev)
+> +		return -ENODEV;
+> +
+> +	if (!i_dev->shared_with_punit)
+> +		i2c_dw_prepare_clk(i_dev, true);
+> +	if (i_dev->init)
+> +		i_dev->init(i_dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_isp_dw_i2c_plat_resume(struct device *dev)
+> +{
+> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +
+> +	amd_isp_dw_i2c_plat_runtime_resume(dev);
+> +	i2c_mark_adapter_resumed(&i_dev->adapter);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops amd_isp_dw_i2c_dev_pm_ops = {
+> +	.prepare = pm_sleep_ptr(amd_isp_dw_i2c_plat_prepare),
+> +	LATE_SYSTEM_SLEEP_PM_OPS(amd_isp_dw_i2c_plat_suspend, amd_isp_dw_i2c_plat_resume)
+> +	RUNTIME_PM_OPS(amd_isp_dw_i2c_plat_runtime_suspend, amd_isp_dw_i2c_plat_runtime_resume, NULL)
+> +};
+> +
+> +/* Work with hotplug and coldplug */
+> +MODULE_ALIAS("platform:amd_isp_i2c_designware");
+> +
+> +static struct platform_driver amd_isp_dw_i2c_driver = {
+> +	.probe = amd_isp_dw_i2c_plat_probe,
+> +	.remove = amd_isp_dw_i2c_plat_remove,
+> +	.driver		= {
+> +		.name	= DRV_NAME,
+> +		.pm	= pm_ptr(&amd_isp_dw_i2c_dev_pm_ops),
+> +	},
+> +};
+> +module_platform_driver(amd_isp_dw_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter in AMD ISP");
+> +MODULE_IMPORT_NS("I2C_DW");
+> +MODULE_IMPORT_NS("I2C_DW_COMMON");
+> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
+> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
+> +MODULE_AUTHOR("Bin Du <bin.du@amd.com>");
+> +MODULE_LICENSE("GPL");
 
 
