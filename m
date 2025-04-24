@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-618235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92978A9ABC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:29:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0BBA9ABC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2BC3B22F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:29:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7D27A8CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC6322424C;
-	Thu, 24 Apr 2025 11:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7DNVw2n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F946222595;
-	Thu, 24 Apr 2025 11:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD89227574;
+	Thu, 24 Apr 2025 11:29:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B972D226D1D;
+	Thu, 24 Apr 2025 11:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745494156; cv=none; b=W3NNfd2Z1nsDurKLkQiZhg1wTKUg7VLzYM84tVS53H1LwQHiu+Voy8sa+BPIqWn2y58VQYu2gQ0kdfKMEDNSsVXB6yaBblfCYgY9JzjoHdp4fzgeIfxz9bGIph5XADca2h1XDiX/fTZNZzYs5D3KlIqkeV+xIEEczaXE5ei5TBg=
+	t=1745494172; cv=none; b=mTmkAZUKM0FzzCyINzxsC6zpd0yMIbAplM6WDGcATflvCpA8ojGbb+j2meiEnFcouDgNKROE+j7tLjFGohhAB6AbMt1vbhFLbEqEZY2EAkbSh9yOTZpfwhArzQvaqSQZeTo4Ra5kA/ltLafdJelfDOv65CkhT7oDP10pcscG9/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745494156; c=relaxed/simple;
-	bh=uuc4dQjj6AIl18FJbwIOJgDDVJmkJOHWuJSYRBo5XoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rH055PF5C5l59vHY87sD+vj18eIoz7YjozknOPRL+txy783jxc1jhq6mTi4k5o4NgaHFglGS7LXUV9JON5rbPZ1/ma+6ZD9KUhCbn4/z1GUCajspabDveZMuS8dg61z7O/6DCv91JkFdc3EcTLBqCUNiGod0JT+CGGr/2jsQ8Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7DNVw2n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B19C4CEE3;
-	Thu, 24 Apr 2025 11:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745494156;
-	bh=uuc4dQjj6AIl18FJbwIOJgDDVJmkJOHWuJSYRBo5XoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i7DNVw2nQflSeGeW4XtCtSo19D1Awl8Te0NdEjtSD2WdLxV4y/CJzxnVCwEbjgpRw
-	 LKHwwXHjkit71yIGZy9QEUekubqiAIhgp177zt+QL/45wq7f13609V0hwK4+f2i6rN
-	 fgl5EjLE7hqP4iXlm8lQND0Wkhb8/Yegp+sdLNs7Vt1HfMIYMvjPJ90aOozkr5/kTs
-	 j8uD9uNeV42K9TEnMg1/Byg3KT9rN77Oe1TMs8cMl4CBcd/z6yeyJSddGDDVboeonJ
-	 sg0dTGVUyjm6HeA5XK/wVhpawR/oQotSidMBX0XlIz4+Ix1zscA7EpUGmc/guJA/Ry
-	 26SCkXBzx9Z7A==
-Date: Thu, 24 Apr 2025 13:29:12 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ata: libata-scsi: Do not set the INFORMATION field
- twice for ATA PT
-Message-ID: <aAogiHxc-mdORpe8@ryzen>
-References: <20250422172123.281387-1-ipylypiv@google.com>
+	s=arc-20240116; t=1745494172; c=relaxed/simple;
+	bh=sJttvKSgPIpM39A5Gjrk3OfJuudi9ATjCC1FmN7cC98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CVJd8lBOpfNmBkCIySKvCZNtyoS2E53bFifRccsWfp4urugKw5FbI1so5ldQ2ffepaiTNO2FeNJ2M5UCpm/onx2O6T3rGst7N3pMV025Rse4IHO/rG4aHLuk0kVrQP867s0UW3QlbBjy3mHOamDJcaHuiYfwDHcvrrqjW3zz6wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D84C11063;
+	Thu, 24 Apr 2025 04:29:24 -0700 (PDT)
+Received: from [10.163.49.106] (unknown [10.163.49.106])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9C223F59E;
+	Thu, 24 Apr 2025 04:29:23 -0700 (PDT)
+Message-ID: <b002574d-e993-4b06-87f7-54bd01dfa500@arm.com>
+Date: Thu, 24 Apr 2025 16:59:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422172123.281387-1-ipylypiv@google.com>
-
-On Tue, Apr 22, 2025 at 10:21:23AM -0700, Igor Pylypiv wrote:
-> For ATA PASS-THROUGH + fixed format sense data + NCQ autosense
-> the INFORMATION sense data field is being written twice:
-> 
-> - 1st write: (redundant)
-> scsi_set_sense_information() sets the INFORMATION field to ATA LBA.
-> This is incorrect for ATA PASS-THROUGH.
-> 
-> - 2nd write: (correct)
-> ata_scsi_set_passthru_sense_fields() sets the INFORMATION field
-> to ATA ERROR/STATUS/DEVICE/COUNT(7:0) as per SAT spec.
-> 
-> There is no user-visible issue because second write overwrites
-> the incorrect data from the first write.
-> 
-> This patch eliminates the reduntant write by moving the INFORMATION
-> sense data field population logic to ata_scsi_qc_complete().
-> 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
-> 
-> Changes in v3:
-> - Rewrote the commit message to clearly point that this patch removes
->   a redundant write to the INFORMATION sense data field.
-> 
-> Changes in v2:
-> - Rephrased commit message to make it clearer.
-> - Dropped kernel-doc comment for the ata_scsi_set_sense_information().
-> 
-> 
->  drivers/ata/libata-sata.c |  2 --
->  drivers/ata/libata-scsi.c | 31 ++++++++++++++-----------------
->  drivers/ata/libata.h      |  3 ---
->  3 files changed, 14 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
-> index 2e4463d3a356..74a0af2888fa 100644
-> --- a/drivers/ata/libata-sata.c
-> +++ b/drivers/ata/libata-sata.c
-> @@ -1659,8 +1659,6 @@ void ata_eh_analyze_ncq_error(struct ata_link *link)
->  		if (ata_scsi_sense_is_valid(sense_key, asc, ascq)) {
->  			ata_scsi_set_sense(dev, qc->scsicmd, sense_key, asc,
->  					   ascq);
-> -			ata_scsi_set_sense_information(dev, qc->scsicmd,
-> -						       &qc->result_tf);
->  			qc->flags |= ATA_QCFLAG_SENSE_VALID;
->  		}
->  	}
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 2796c0da8257..ef117a0bc248 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -216,17 +216,21 @@ void ata_scsi_set_sense(struct ata_device *dev, struct scsi_cmnd *cmd,
->  	scsi_build_sense(cmd, d_sense, sk, asc, ascq);
->  }
->  
-> -void ata_scsi_set_sense_information(struct ata_device *dev,
-> -				    struct scsi_cmnd *cmd,
-> -				    const struct ata_taskfile *tf)
-> +static void ata_scsi_set_sense_information(struct ata_queued_cmd *qc)
-
-Nice refactoring of ata_scsi_set_sense_information()!
-
-However, since it is a separate logical change, I would have prefered for it
-to be in a separate patch, but I don't think you need to respin just for this.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] coresight: etm-perf: Add AUX_NON_CONTIGUOUS_PAGES to
+ cs_etm PMU
+To: Yabin Cui <yabinc@google.com>, Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Liang Kan <kan.liang@linux.intel.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20250421215818.3800081-1-yabinc@google.com>
+ <20250421215818.3800081-3-yabinc@google.com>
+ <20250422142102.GI28953@e132581.arm.com>
+ <CALJ9ZPNKZU7nVLyodN5i7GeRxWL6KzkXnqEJMv2sJkk2SwYi9Q@mail.gmail.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <CALJ9ZPNKZU7nVLyodN5i7GeRxWL6KzkXnqEJMv2sJkk2SwYi9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+
+On 4/24/25 01:31, Yabin Cui wrote:
+> On Tue, Apr 22, 2025 at 7:21 AM Leo Yan <leo.yan@arm.com> wrote:
+>>
+>> On Mon, Apr 21, 2025 at 02:58:18PM -0700, Yabin Cui wrote:
+>>> The cs_etm PMU, regardless of the underlying trace sink (ETF, ETR or
+>>> TRBE), doesn't require contiguous pages for its AUX buffer.
+>>
+>> Though contiguous pages are not mandatory for TRBE, I would set the
+>> PERF_PMU_CAP_AUX_NO_SG flag for it.  This can potentially benefit
+>> performance.
+> 
+> As explained in the patch 1/2, my use case periodically collects ETM data
+> from the field (using both TRBE and ETR), and needs to reduce memory
+> fragmentation. If the performance impact is big, we can make it user
+> configurable. Otherwise, shall we default it to non-contiguous pages?
+
+But is not that already happening ? cs_etm does not set the PMU cap
+PERF_PMU_CAP_AUX_NO_SG that means it can allocate non-contig memory
+chunk. Where am I missing ?
+
+> 
+>>
+>> For non per CPU sinks, it is fine to allocate non-contiguous pages.
+>>
+>> Thanks,
+>> Leo
+>>
+>>> This patch adds the PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES capability
+>>> to the cs_etm PMU. This allows the kernel to allocate non-contiguous
+>>> pages for the AUX buffer, reducing memory fragmentation when using
+>>> cs_etm.
+>>>
+>>> Signed-off-by: Yabin Cui <yabinc@google.com>
+>>> ---
+>>>  drivers/hwtracing/coresight/coresight-etm-perf.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> index f4cccd68e625..c98646eca7f8 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> @@ -899,7 +899,8 @@ int __init etm_perf_init(void)
+>>>       int ret;
+>>>
+>>>       etm_pmu.capabilities            = (PERF_PMU_CAP_EXCLUSIVE |
+>>> -                                        PERF_PMU_CAP_ITRACE);
+>>> +                                        PERF_PMU_CAP_ITRACE |
+>>> +                                        PERF_PMU_CAP_AUX_NON_CONTIGUOUS_PAGES);
+>>>
+>>>       etm_pmu.attr_groups             = etm_pmu_attr_groups;
+>>>       etm_pmu.task_ctx_nr             = perf_sw_context;
+>>> --
+>>> 2.49.0.805.g082f7c87e0-goog
+>>>
+>>>
+> 
 
