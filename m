@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-618926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E28A9B511
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:15:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA04A9B51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC58F46820A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A48A17E290
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B21828CF61;
-	Thu, 24 Apr 2025 17:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AFB28C5B9;
+	Thu, 24 Apr 2025 17:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOGHdP2l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0253A2820C4;
-	Thu, 24 Apr 2025 17:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ACD4438B;
+	Thu, 24 Apr 2025 17:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745514893; cv=none; b=feRwcNpP9dFeqJhAfAStlgloyN4himNmUk660sT9Lzaj3MDqIdUFkb1tJidqDlfAR2CJs/hjA0cXq+Sm/WwDzrOnTa8yxOw2fbafL5+DYpd7XHZGbgrHLg5OguazYmWF0srvsC/aOwpF/Nc0NTTpu0Irlx3aPgKtZiVmEChYvAU=
+	t=1745515141; cv=none; b=ILrL/pYEVQPtBAZHNasu8B2qbZWryjjG1hKmeSCZJtbXCpMcOQLIe2i/YZuCdhirSHUh8PLxR7EkJTFMARIBmybQFPXHmheGae7aiYjWOzcFiE1WWfs4GdJOMAAzWjxS2xM/qhKilo6UM6r7d7BOGT1PiuQmyaRkqnmwXMKZjOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745514893; c=relaxed/simple;
-	bh=Tl4F80LtM2eBXBI/BtGfyF1r4zeBOcVrS0s1/KdVMi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pMPPc0b5KCKUxTF2Nrtl3B9bIWPhMfLqFtxvM3Sl4W3xfcB4ZgB9e6loa03mDYCWY9D7jf1nmYpTmt/nvDmXjq24LlsNLAseAuAu58MjtNzsZc6gLKyWicojxBFEO1QCOjqTTXMfqqv1qCSfcBh66NxQWo1HWK/0tC18VDMdZzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA86C4CEE3;
-	Thu, 24 Apr 2025 17:14:49 +0000 (UTC)
-Date: Thu, 24 Apr 2025 13:16:44 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
- Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, Mark
- Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, Jordan Rome
- <jordalgo@meta.com>, Sam James <sam@gentoo.org>, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>, Jens Remus <jremus@linux.ibm.com>, Florian
- Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, Weinan Liu
- <wnliu@google.com>, Blake Jones <blakejones@google.com>, Beau Belgrave
- <beaub@linux.microsoft.com>, "Jose E. Marchesi" <jemarch@gnu.org>
-Subject: Re: [PATCH v5 13/17] perf: Support deferred user callchains
-Message-ID: <20250424131644.51bc747c@gandalf.local.home>
-In-Reply-To: <20250424163845.GG18306@noisy.programming.kicks-ass.net>
-References: <20250424162529.686762589@goodmis.org>
-	<20250424162633.390748816@goodmis.org>
-	<20250424163845.GG18306@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745515141; c=relaxed/simple;
+	bh=UTw/8mwpp1aAVyqy5jlKWuEcFbcgEiGTY6G17jcDkik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuTwTjkTcKLkqKDqTR+ckhZOTx90Ts0a4ZvFGGIYfDJYv3Zv9PyRtKREjjjn367mSZCml3rZjNEIrNv230lKgvKrTE6RE/5vyAlA/c9PlK2zvnTPO72iBa7KhOuqrM/36HhwxlsO5yxGnJg+zw3BeI2KTk+8We6N0StU/qAhtQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOGHdP2l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63044C4CEE3;
+	Thu, 24 Apr 2025 17:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745515140;
+	bh=UTw/8mwpp1aAVyqy5jlKWuEcFbcgEiGTY6G17jcDkik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KOGHdP2l+R7HFxRxhUl8RIBFTlITlwCa0aHlQw7QjEU/k/OgkcstzDPfdLF8JBFiG
+	 NVpRMKXz29UjZtdZATZ0MJrECO7uEAhbjD3tXzsmDz5IQ4jltIVPcbShwMTCc2BP45
+	 U2DqYiHVAV4ne7gD9Y87xo2mZAVjgFj38Cnpd113JUZP/WMt2G16os8WSVp7q3vyuF
+	 Go2A0YY9kbXsgqTrPZBSUS5XxrpMe8yi5UjIcMe/jtt2tGQhsV56puE/7nqQ+LHpz5
+	 MJqVoj4kA0liuBNJfU1/ooMjL54loJtTnK76hMYHi0qIpGI2arB9Do177Il2OQIjuo
+	 LbThoRp4li7dQ==
+Date: Thu, 24 Apr 2025 18:18:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jacek Kowalski <jacek@jacekk.info>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] e1000e: disregard NVM checksum on tgp when valid
+ checksum mask is not set
+Message-ID: <20250424171856.GK3042781@horms.kernel.org>
+References: <5555d3bd-44f6-45c1-9413-c29fe28e79eb@jacekk.info>
+ <20250424162444.GH3042781@horms.kernel.org>
+ <dc357533-f7e3-49fc-9a27-4554eb46fd43@jacekk.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc357533-f7e3-49fc-9a27-4554eb46fd43@jacekk.info>
 
-On Thu, 24 Apr 2025 18:38:45 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> > +	guard(irqsave)();
-> > +
-> > +        /* callback already pending? */
-> > +        pending = READ_ONCE(event->pending_unwind_callback);
-> > +        if (pending)
-> > +                return 1;
-> > +
-> > +        /* Claim the work unless an NMI just now swooped in to do so. */
-> > +        if (!try_cmpxchg(&event->pending_unwind_callback, &pending, 1))
-> > +                return 1;
-> > +
-> > +        /* The work has been claimed, now schedule it. */
-> > +        ret = task_work_add(current, work, TWA_RESUME);
-> > +        if (WARN_ON_ONCE(ret)) {
-> > +                WRITE_ONCE(event->pending_unwind_callback, 0);
-> > +                return ret;
-> > +        }
-> > +	return 0;
-> > +}  
+On Thu, Apr 24, 2025 at 06:46:45PM +0200, Jacek Kowalski wrote:
+> > > Fixes: 4051f68318ca9 ("e1000e: Do not take care about recovery NVM
+> > > checksum")
+> > 
+> > I think that while the commit cited above relates to this problem, this
+> > bug actually dates back to the patch I'm citing immediately below. And I
+> > think we should cite that commit here. IOW, I'm suggesting:
+> > 
+> > Fixes: fb776f5d57ee ("e1000e: Add support for Tiger Lake")
 > 
-> You have whitespace issues ...
+> I had my doubts when choosing a commit for the "Fixes" tag, but since
+> my setup would most likely work up until 4051f68318ca9, I selected it
+> specifically.
+> 
+> On my laptop NVM write attempt does (temporarily) fix a checksum
+> and makes driver loading possible. Only after 4051f68318ca9, which
+> disabled this code path (because it broke someone else's setup), I'd
+> be unable to use my network adapter anymore.
 
-Bah, that may have been due to cut and paste to fix up things during the
-multiple rebases I did.
+Thanks, in that case things aren't as clear as I had assumed
+when writing my previous email.
 
-Thanks!
+If the problem only occurs after 4051f68318ca9 then I think
+it is fine to use that commit in the Fixes tag.
 
--- Steve
+Although I do wonder if commit 4051f68318ca9 is backported,
+will this patch (once accepted) end up being backported far enough?
 
