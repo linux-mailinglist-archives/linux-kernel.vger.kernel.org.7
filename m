@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-618337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BAFA9AD35
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:23:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57AEA9AD42
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A166D4638EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6021E1B67491
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51B922F741;
-	Thu, 24 Apr 2025 12:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A0233721;
+	Thu, 24 Apr 2025 12:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmqWHxIN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="gRPQWx3Y"
+Received: from outbound.pv.icloud.com (p-west1-cluster5-host6-snip4-6.eps.apple.com [57.103.66.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5DD1AF0C7
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183E722F75A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 12:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745497385; cv=none; b=XSqzwjyKyOKN9hULWK9uyXOW93AU4JJc2rk7Y92gvxwziz8pSZ3bFsWPcgftFVaK5/a22DhrCdy2jsVlAmVMXrOTB1QVnZUSc+RE9n5PaV7htuNY4dam4PXZaO5I4W0I8OPWym+lkISKOVxlOId3UAFC6IC1gFQWbZB3QrLePoI=
+	t=1745497431; cv=none; b=VOa9n6dQ4/cdyrnAShXciVFgMcJJOJL/gIyEaX61IUmXvI06koODTMQCvA0X941yBoNhvgfRKqP5U2wo9vBOvYsuNWCJP8nQhYMNeWISf9I6HHsYad8A+74q5H/IdN/jN3b1RiQ1l8k731J5Jk13vwjw8WyE3i7RwFMrHo9AEBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745497385; c=relaxed/simple;
-	bh=e6TIk1k6gaYrJri9pmd1FONaT03IBpI7iPR3MjIaPbc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=M+nkB8gEmSTg6bV/8pPO1qGPGfr1HyOI1CaAYKWZnCYI4VskAhoNyVPmqv+4xuMyIbPQ5Vmxt/wd0GhacFnHTB6F7jiw8C5HSJXat/m7pIe/a8opM85/goyJMBjzv7+ZrsrQipvdD4CfFULNt9UXKSzrQJvcEMMAe4sPQ9J/vu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmqWHxIN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745497382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7Ap0RPtUmDAb/aCd6HFvT2KxgtdQAWYYK6uDU1o8uU=;
-	b=SmqWHxINchybyE9J+aLRN8TnLysJw0nDO4XDebNN+eFmC4ArW+hbG8TiZ31Kyz1AoWBKup
-	bT7wDEkxnntg5w9MNGZv49ZkboHUOaZ3Jv3QCMI62Dhqo/QZMk2DQdYCjz25eLGiQJPW/2
-	tsh/0FMN8Jlla+LSKJnQkQ8IF1tNNxw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-151-6UyWrLWYO1--sLyphaECkg-1; Thu,
- 24 Apr 2025 08:23:01 -0400
-X-MC-Unique: 6UyWrLWYO1--sLyphaECkg-1
-X-Mimecast-MFC-AGG-ID: 6UyWrLWYO1--sLyphaECkg_1745497379
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 552AE1800360;
-	Thu, 24 Apr 2025 12:22:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.16])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E097180047F;
-	Thu, 24 Apr 2025 12:22:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250422235147.146460-1-linux@treblig.org>
-References: <20250422235147.146460-1-linux@treblig.org>
-To: linux@treblig.org
-Cc: dhowells@redhat.com, horms@kernel.org, marc.dionne@auristor.com,
-    davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-    pabeni@redhat.com, corbet@lwn.net, linux-afs@lists.infradead.org,
-    netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] rxrpc: Remove deadcode
+	s=arc-20240116; t=1745497431; c=relaxed/simple;
+	bh=vRjj/i8ZOSlYnCFeskeFgXiGkimGvV7t+REdxmOwCNI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s6qLfeHRNR+kkQx3WetecMF51v1wsx6ta2yTQFeb7avLmgRvKxLmMD5kLMHrNWCyEvbCGKU89yG219HtszVlZL4r8D252pI3dNTvDOXFY2CocbulEEaeJTUSO7MnvPiFvTKnDejtf2oSN+L4eQgVzf3zliqngGmZNeXr68TiZpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=gRPQWx3Y; arc=none smtp.client-ip=57.103.66.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=6PnP1PRGPyqBE9H2lWN8SRFczqyqTI7hAzJh0Q3xVs4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme;
+	b=gRPQWx3YHjXn8qaTkKHLlVNdXzvMQPeHl2OKyqQVdt99/maPT41NWcwNU8YWsjQ3M
+	 x9d9hCBvo1nQoyIJlA+XTST+VVfMmtm9YPOtp7rqmYBQGR7tK0LuZFsLPpQ71NmFrG
+	 LI/sUmD5s62nemDWouLS7FLwcEqghNtdjucZBYDzF33iO1MhffnLepSTSdHH7u8qtP
+	 NpdDkfC/QdOK+MhONmDcgxjeOneEMVwHCc7jyf3FgSKJVmrT5Ih09EoEQcn9+DozRo
+	 mTPU1NQh0xcMXPMbvz9Dc+jvGATTpK39neHffK3dYNUmWmFcpFxi5ChmQIr+bgl28+
+	 vVqd8iQOVIGIA==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 2ACD21800322;
+	Thu, 24 Apr 2025 12:23:43 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v2 0/2] serdev: Improve messages printed by dev_err() and
+ dev_dbg()
+Date: Thu, 24 Apr 2025 20:23:22 +0800
+Message-Id: <20250424-fix_serdev-v2-0-a1226ed77435@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3098547.1745497373.1@warthog.procyon.org.uk>
-Date: Thu, 24 Apr 2025 13:22:53 +0100
-Message-ID: <3098548.1745497373@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADotCmgC/02MQQrCMBBFr1JmbSSZVLGuvIcUiUlqZ2FSEw1Ky
+ d2dFgSX73/emyH7RD7DsZkh+UKZYmDATQN2NOHmBTlmQIk72SKKgd4XdpwvonNmmTp5UFdgYUq
+ e3zV27plHys+YPmu7qGX9ZfR/piihBO6t0a3Ug9P69HiRpWC3Nt6hr7V+AdAyVo6mAAAA
+X-Change-ID: 20250422-fix_serdev-9da04229081b
+To: Rob Herring <robh@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-serial@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: w1rPZ1Fxh_qcoYXdD-N70T4KrOYfXTtd
+X-Proofpoint-ORIG-GUID: w1rPZ1Fxh_qcoYXdD-N70T4KrOYfXTtd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-24_05,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015
+ mlxlogscore=508 adultscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2504240083
 
-linux@treblig.org wrote:
+For messages printed by dev_err() and dev_dbg(), this patch series is
+to remove hardcoded or repeated device name.
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Remove three functions that are no longer used.
-> 
-> rxrpc_get_txbuf() last use was removed by 2020's
-> commit 5e6ef4f1017c ("rxrpc: Make the I/O thread take over the call and
-> local processor work")
-> 
-> rxrpc_kernel_get_epoch() last use was removed by 2020's
-> commit 44746355ccb1 ("afs: Don't get epoch from a server because it may be
-> ambiguous")
-> 
-> rxrpc_kernel_set_max_life() last use was removed by 2023's
-> commit db099c625b13 ("rxrpc: Fix timeout of a call that hasn't yet been
-> granted a channel")
-> 
-> Both of the rxrpc_kernel_* functions were documented.  Remove that
-> documentation as well as the code.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Add one more patch to remove repeated device name pointed out by Greg
+- Link to v1: https://lore.kernel.org/r/20250423-fix_serdev-v1-1-26ca3403fd33@quicinc.com
 
-Acked-by: David Howells <dhowells@redhat.com>
+---
+Zijun Hu (2):
+      serdev: Get serdev controller's name by dev_name()
+      serdev: Remove repeated device name in dev_(err|dbg) messages
+
+ drivers/tty/serdev/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+---
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+change-id: 20250422-fix_serdev-9da04229081b
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
