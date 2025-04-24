@@ -1,116 +1,143 @@
-Return-Path: <linux-kernel+bounces-618550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B22A9AFFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:00:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA385A9AFFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD859A8181
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:59:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 613C97AB672
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315A619F11E;
-	Thu, 24 Apr 2025 13:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otsFosfv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797DA1624E9;
-	Thu, 24 Apr 2025 13:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3288C19048A;
+	Thu, 24 Apr 2025 14:00:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471531F5E6;
+	Thu, 24 Apr 2025 14:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745503162; cv=none; b=tQw3Ec8I9oblJe9n7SU1W+SY3qM26J+HZu7tjcckASQCmlk7zNkE6zWtWDxYsvb7knPoYOTi2a5yoI42vC4s/vy2ympya5JqjwU8oj3oE+kFPKQSqNdhsZqcHJ1cbXa4F1osHNzwtCg/Wa0d8lH3aX1dMHQGArcRtHmupu4vgfk=
+	t=1745503244; cv=none; b=bSO11JMR2ULdGiTkV4qDJurS/w11LKFzBw85jY8//kf5gASLTkekd55OXJDWDov7UY6ftcQbISX8hErK3RWeRojGdXXIlT1bwHOXeAAMTlXwZ/RBuWObdDlrJaDvjEpnZ/4tSwguBzdC9ASGUdVKugypQ2fQ4olmRgl6ZhVeJsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745503162; c=relaxed/simple;
-	bh=LNLq2jrp4jXlFBRNH5jwTRErjxa45lXvpbgHWUlUUnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBckkREA+O7TVNDC1GVwAWPSWLU6ngFXnFgjjJ55ZTlZlARXxAqr9IDjCQ2snun+RdU7T0BRBfZsqH1ca8m+3eL8FuzYiQ52UKdlr/aLXFnJote7LoRJYp9hbvI8UOivWo6VX9MiOe5Hi33J+XgIOyxZFS4pMuvpWaPaaKkhJpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otsFosfv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 262D1C4CEE8;
-	Thu, 24 Apr 2025 13:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745503161;
-	bh=LNLq2jrp4jXlFBRNH5jwTRErjxa45lXvpbgHWUlUUnE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=otsFosfvFeOs4ffJAiNGc2f9ljrrjnN6Zjm464szwbsI6Yfn+3D0EfDjdC3zshhY/
-	 EQeYcH1X0zNQ/QfalSb+uJYkZXJb1p/TMOLB4JsvOaQKMVPssARDBPGyAofQQwISfy
-	 eqcwj7aWiKmpuveh9Xor17xusoHadU2KGkuASbzJybwNYyg2sEmWnzEAjblpYUC87C
-	 KsPPGLu+qqnufB979pZmlQJU13GyfCEbCN7LsuSYyAIbM8atBEp6rEQE87cozYGmOP
-	 EYmwMgP19x5fDPyYN1C8bwcCuWRMoJ2WUuKuRmk0/fvPg1k08sC8IY4L5QWYCjFYZG
-	 29fqA4wz9OmCA==
-Date: Thu, 24 Apr 2025 14:59:17 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/14] Support ROHM Scalable PMIC family
-Message-ID: <20250424135917.GE8734@google.com>
-References: <cover.1744090658.git.mazziesaccount@gmail.com>
- <174550310025.1376894.8036030194609947768.b4-ty@kernel.org>
+	s=arc-20240116; t=1745503244; c=relaxed/simple;
+	bh=VXBgvoZTtrA5JYDFoyhknIVGp8ZSKhzEYnqrJP640i8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YHFdg9VH4MVpcjDq5aqtyhE3pM4yLNiLZUmTEANpbHblp9o5XZF9y6MhsCE5mypQGrAeRC11UHwfaX5Q0BaE4mMaZpsEz01TjxkFYb7NX5q3nkknqbkOk0qC0DXwlQ39ArRWkUIQvt1QixbSud+R1fazinOEfQaBSiHrvC3yL8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FFAC1063;
+	Thu, 24 Apr 2025 07:00:37 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C995C3F66E;
+	Thu, 24 Apr 2025 07:00:39 -0700 (PDT)
+Date: Thu, 24 Apr 2025 15:00:37 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
+ board
+Message-ID: <20250424150037.0f09a867@donnerap.manchester.arm.com>
+In-Reply-To: <4ba3e7b8-e680-40fa-b159-5146a16a9415@lunn.ch>
+References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
+	<20250423-01-sun55i-emac0-v1-4-46ee4c855e0a@gentoo.org>
+	<aa38baed-f528-4650-9e06-e7a76c25ec89@lunn.ch>
+	<20250424014120.0d66bd85@minigeek.lan>
+	<835b58a3-82a0-489e-a80f-dcbdb70f6f8d@lunn.ch>
+	<20250424134104.18031a70@donnerap.manchester.arm.com>
+	<4ba3e7b8-e680-40fa-b159-5146a16a9415@lunn.ch>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <174550310025.1376894.8036030194609947768.b4-ty@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 24 Apr 2025, Lee Jones wrote:
+On Thu, 24 Apr 2025 14:57:27 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-> On Tue, 08 Apr 2025 11:40:24 +0300, Matti Vaittinen wrote:
-> > Support ROHM BD96802, BD96805 and BD96806 PMICs
+Hi Andrew,
+
+> > > Just to be clear, you tried it with "rgmii-id" and the same <300> and
+> > > <400> values?  
 > > 
-> > The ROHM BD96801 [1] and BD96805 [2] are almost identical PMICs what comes
-> > to the digital interface. Main difference is voltage tuning range.
-> > Supporting BD96805 with BD96801 drivers is mostly just a matter of being
-> > able to differentiate the PMICs (done based on the devicetree
-> > compatible) and then providing separate voltage tables.
+> > Yes, sorry, I wasn't clear: I used rgmii-id, then experimented with those
+> > values.  
+> 
+> O.K, great.
+> 
+> I do suspect the delays are not actually in pico seconds. But without
+> a data sheet, it is hard to know.
+> 
+>        if (!of_property_read_u32(node, "allwinner,rx-delay-ps", &val)) {
+>                 if (val % 100) {
+>                         dev_err(dev, "rx-delay must be a multiple of 100\n");
+>                         return -EINVAL;
+>                 }
+>                 val /= 100;
+>                 dev_dbg(dev, "set rx-delay to %x\n", val);
+>                 if (val <= gmac->variant->rx_delay_max) {
+>                         reg &= ~(gmac->variant->rx_delay_max <<
+>                                  SYSCON_ERXDC_SHIFT);
+>                         reg |= (val << SYSCON_ERXDC_SHIFT);
+> 
+> So the code divides by 100 and writes it to a register. But:
+> 
+> static const struct emac_variant emac_variant_h3 = {
+>         .rx_delay_max = 31,
+> 
+> 
+> static const struct emac_variant emac_variant_r40 = {
+>         .rx_delay_max = 7,
+> };
+> 
+> With the change from 7 to 31, did the range get extended by a factor
+> of 4, or did the step go down by a factor of 4, and the / 100 should
+> be / 25? I suppose the git history might have the answer in the commit
+> message, but i'm too lazy to go look.
+
+IIRC this picosecond mapping was somewhat made up, to match common DT
+properties. The manual just says:
+====================
+12:10  R/W  default: 0x0 ETXDC: Configure EMAC Transmit Clock Delay Chain.
+====================
+
+So the unit is really unknown, but is probably some kind of internal cycle count.
+The change from 7 to 31 is purely because the bitfield grew from 3 to 5
+bits. We don't know if the underlying unit changed on the way.
+Those values are just copied from whatever the board vendor came up with,
+we then multiply them by 100 and put them in the mainline DT. Welcome to
+the world of Allwinner ;-)
+
+And git history doesn't help, it's all already in the first commit for this
+driver. I remember some discussions on the mailing list, almost 10 years
+ago, but this requires even more digging ...
+
+Cheers,
+Andre
+
+
+
+> 
+> I briefly tried "rgmii", and I couldn't get a lease, so I quite
+> > confident it's rgmii-id, as you said. The vendor DTs just use "rgmii", but
+> > they might hack the delay up another way (and I cannot be asked to look at
+> > that awful code).
 > > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [01/14] dt-bindings: regulator: Add ROHM BD96802 PMIC
->         commit: 9effbfda6bfd677042434722a9c2f2e17d261dce
-> [02/14] dt-bindings: mfd: Add ROHM BD96802 PMIC
->         commit: 9d851b2e016a13b0a673503f5600315b6601e025
-> [03/14] dt-bindings: mfd: bd96801: Add ROHM BD96805
->         commit: d5a30228b6fa86cf841d8c12af0025c0bacb90fb
-> [04/14] dt-bindings: mfd: bd96802: Add ROHM BD96806
->         commit: 82c218969eb0ec989d8e049878fd3d6a97ccd8ba
-> [05/14] mfd: rohm-bd96801: Add chip info
->         commit: 7289d96ba557fb5e0a90813b7e24f3815127d14d
-> [06/14] mfd: bd96801: Drop IC name from the regulator IRQ resources
->         commit: d082571fca4d1db5642ad4436cef22d65bfe4153
-> [07/14] regulator: bd96801: Drop IC name from the IRQ resources
->         commit: 9cc957546e3865bc3adfd39ceeedc8074521024d
-> [08/14] mfd: rohm-bd96801: Support ROHM BD96802
->         commit: 4094040b1a133206ed893da2cf5e17cc22f7ca7c
-> [09/14] regulator: bd96801: Support ROHM BD96802
->         commit: 55606b9b20639b634560f44a070ff6153b59b557
-> [10/14] mfd: bd96801: Support ROHM BD96805
->         commit: 6a309b489215f705c20cb4ed7f85d9c16f768e55
-> [11/14] regulator: bd96801: Support ROHM BD96805 PMIC
->         commit: 7baf818d0d90e00c0688d8156bc7d9d1d1ee1dbb
-> [12/14] mfd: bd96801: Support ROHM BD96806
->         commit: fecc18a9f59ce9c36eb3622ae77bff5fa5c6d976
-> [13/14] regulator: bd96801: Support ROHM BD96806 PMIC
->         commit: 956e9363c8230a0dc9a83cf5de61200206a9154b
-> [14/14] MAINTAINERS: Add BD96802 specific header
->         commit: 5d61bb1675ff7662f519ca203b1f8cdc455b9df4
+> > Cheers,
+> > Andre  
 
-Submitted for build testing.  Once they've passed, I'll submit a PR.
-
-Note to self: ib-mfd-regulator-6.16
-
--- 
-Lee Jones [李琼斯]
 
