@@ -1,67 +1,97 @@
-Return-Path: <linux-kernel+bounces-617528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9EEA9A1BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:24:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3197DA9A1DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83801946FF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C318F920B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826D61FECD3;
-	Thu, 24 Apr 2025 06:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575831DDC21;
+	Thu, 24 Apr 2025 06:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="kVR+Bvjb"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mzQVgpBf"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AB61FAC54;
-	Thu, 24 Apr 2025 06:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9723820127B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745475743; cv=none; b=MSZiq4WuzmrYXRDZUkMA5f7yG9T321BbMyoaW3V5Zp7gohlBL/of/zSaNdZsClm+Dof9tA9vI4jh0zgX4TbhTU/AAUlZITHiOhsJVQlvgTpjXGmXXKRl5Y02Fv88WZjKb+8Ss6pThfLNJvAuNV2jKt+B3rG+TzRpHDkA5YnqadM=
+	t=1745475752; cv=none; b=Gh4l+fcqYpo7WTCHb4D2oV8Aa5EYi7Tv8xkNBv5YHqJwNB5ZCDHQKAyimlySxHJKDa6WOVO8yYg1apKO2QUC6h6dB7vpsdCcd0tKqdXOACOeBvQnB8J/VqBT1baLiASZ3tTC3fnEWOevr4mecQwBRqds3sKUN49aPZ5bBb7tHUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745475743; c=relaxed/simple;
-	bh=ZH/3QV6nOgqLnTJ+tkVZafLysGcPv+ncUTcAarFD+wI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gdjlUhdHHeValG6uMvT5r++yhnEeVS01Ep5O3JXIZ6c44dAosRilfv9miMaFHzlw9r20KWmodtrOGu9H662TZeJTCn/sgeriyhWPBrVt2mjfgQwjVCtL8FOfhb5yPsWTPjM7lSEcna86f+oDlDoYdcLyRRO7gK81cSqDF9XOJTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=kVR+Bvjb; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53O6LqEK2044763, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1745475712; bh=ZH/3QV6nOgqLnTJ+tkVZafLysGcPv+ncUTcAarFD+wI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=kVR+BvjbkG7WlB+I0vPVRscpCIdkK6J0YhD3/qnWcOY9tejugjDUwGH84fyeZ1Lvh
-	 MV9wrFvB7JMuRdxHj//SRrc6txNeXKsGhcnxJ+PVQZVvd3qh/nD9Uev+UjLkYXdw4y
-	 vIgmVjuSsruXqdTiUbNA+iOp2KlsFcBNfdMVx/4FUTG8Bl4ujTmPhFkxuFwDjEMyFa
-	 DRAma9Zr+WlmPPFzd1t9ByLvMNAvo3eb2oAvs+4IP/n+9/lX4snC4RCU3gxsIWBuE2
-	 piwQKmEtAyTuZBHuc+tIz28aobZ2+4S/HPIqhSPRwhEzxq9LGoBfBOdWdvJZOMf1oh
-	 K/BQb7BZrJbdg==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53O6LqEK2044763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Apr 2025 14:21:52 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Apr 2025 14:21:52 +0800
-Received: from RTDOMAIN (172.21.210.124) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 24 Apr
- 2025 14:21:52 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
-Subject: [PATCH net-next] rtase: Use min() instead of min_t()
-Date: Thu, 24 Apr 2025 14:21:45 +0800
-Message-ID: <20250424062145.9185-1-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745475752; c=relaxed/simple;
+	bh=HWXVCNEIxoZ2DGv2oUaqkHyisgW7GzYfA3+b+MP7RzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eafScKQcyov8EePLbYrWSIISeKHJgGqgHdIfCuQwDpNqpS+5N+iaaUKjlKcedsgX/3M1m0nla9ssxRcOF+R5GeRnNG7wqwrLXpD64OEOwKtHN/jclvDKCqanAzZOHU9/cdk+cyjb3fRs/kv3xTrjtRD3jD2WfTr8AsO9Lhy5Jek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=mzQVgpBf; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf680d351so10610515e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1745475748; x=1746080548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BCP5wX50ZPJSIbPo78DniGK7SxiDEu6J15Xy0lcbUzo=;
+        b=mzQVgpBfTvh0yQvVjXdiLZduXtG2OfIcfTTcdyoyUDYuS/MpqzjAivCJ80DlHCXAxk
+         Mq7WskJGRuGvHMositggatNafBLxukWhv75fRnnt+3m5XztbMlsn4RminQSPxdC7p3PC
+         tipPGTfxWRwUSDGaZNAazebqbkH9fR8sD6vNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745475748; x=1746080548;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BCP5wX50ZPJSIbPo78DniGK7SxiDEu6J15Xy0lcbUzo=;
+        b=cAmyeEXh44DqdOFV767dYuL6FPhzsuBzB9hsi/kjRvH8wlFXQqE5kB1fIEJMznHaKt
+         9VkZy2xM7+Qu+T2B66tCbigpn1Wnp1SNSVeBjZeoYV3eA53EDS/0nrQlrCpiN1uBiw7c
+         MsG4Py3VSKXY+1LS3b7TELHMvGw8EZSpuTEqTbdfdqE7kX/L436NfznFMQs5XoT4wqtH
+         g1ZTkbAmIR3IIimsFycrt8wMe+6p2wPadm5vtC1zUKaY3XlYqa7weOkYx+wmI5xEZNr6
+         j1otJKUVdukJTrMi56H2oanJQv1myBQPfMg75oCNFsI/thupM22gLUOHc8UfUgFDPHfg
+         UvJg==
+X-Gm-Message-State: AOJu0Yx6hDOMxy3P1NghY4hpjuS5dBFSqLVnmkI98WrktA5VuFUnDvsS
+	OHhm6RmEdp6TFiMEWhMSG2w4KrHxAuinWT/h2PoKZzGSb4wq1Nuh2tLyvuILFxLlSrEJl293cuU
+	W
+X-Gm-Gg: ASbGncsMWspjleeLWvkWLgUYNcLyBEcCcx8ouU/fRSWfY+uA0nQfY6cv5aOZyMuKM3S
+	XFkkpxboi1ZdsTryZx0ewP06j+YS+Sr3IeQ+4fXYr65TlPGbMcyUUx+G/pXKnfpX0kK5Cd/efeY
+	7puhscPsXVD3K4SKECxt1ULbcVRrPGa8ZkcnWjvkuZCSpMG5gP/2ix8L1OsHY0dHR1OP3by/Xoa
+	K6o7NsuZjyOMxql8JxfbPOgJYQ8KLyRI6XdC07YBpg/5m1KbAMi+MEZ3Gdbli7h3oyLxuN81u/g
+	xoDO7hIhd0SoNoD8y0z/N9hce5yci5MJSErkhpNuygdtkz87c+OzZK28OEtknkgRKD96pyu1XT8
+	Ib/JR
+X-Google-Smtp-Source: AGHT+IFoHdGVBD8O1Hzz0CKgZ9opqhMg+ND/xcdm2+qcZWev45QsNCVd+jDdCasqwcizMo62oEm1gA==
+X-Received: by 2002:a7b:ce14:0:b0:43b:baf7:76e4 with SMTP id 5b1f17b1804b1-4409c453b1fmr7692385e9.1.1745475747768;
+        Wed, 23 Apr 2025 23:22:27 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2bf8dbsm7243435e9.35.2025.04.23.23.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 23:22:27 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	linux-amarula@amarulasolutions.com,
+	Abel Vesa <abelvesa@kernel.org>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v12 15/19] arm64: dts: imx8mp-aristainetos3a-som-v1: don't replicate clk properties
+Date: Thu, 24 Apr 2025 08:21:45 +0200
+Message-ID: <20250424062154.2999219-16-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,42 +99,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Use min() instead of min_t() to avoid the possibility of casting to the
-wrong type.
+The clocks and clock-names properties are already defined in the same
+way in the clock-controller@30380000 node found in imx8mp.dtsi.
+This also helps avoid the need to replicate further changes in case of
+any updates to the DT bindings for these two properties.
 
-Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
- drivers/net/ethernet/realtek/rtase/rtase_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 6251548d50ff..8c902eaeb5ec 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -1983,7 +1983,7 @@ static u16 rtase_calc_time_mitigation(u32 time_us)
- 	u8 msb, time_count, time_unit;
- 	u16 int_miti;
+(no changes since v1)
+
+ .../boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi      | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
+index 231e480acfd4..6c6c6f180785 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
+@@ -151,10 +151,6 @@ &A53_3 {
+ };
  
--	time_us = min_t(int, time_us, RTASE_MITI_MAX_TIME);
-+	time_us = min(time_us, RTASE_MITI_MAX_TIME);
- 
- 	msb = fls(time_us);
- 	if (msb >= RTASE_MITI_COUNT_BIT_NUM) {
-@@ -2005,7 +2005,7 @@ static u16 rtase_calc_packet_num_mitigation(u16 pkt_num)
- 	u8 msb, pkt_num_count, pkt_num_unit;
- 	u16 int_miti;
- 
--	pkt_num = min_t(int, pkt_num, RTASE_MITI_MAX_PKT_NUM);
-+	pkt_num = min(pkt_num, RTASE_MITI_MAX_PKT_NUM);
- 
- 	if (pkt_num > 60) {
- 		pkt_num_unit = RTASE_MITI_MAX_PKT_NUM_IDX;
+ &clk {
+-	clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+-		 <&clk_ext3>, <&clk_ext4>;
+-	clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+-		      "clk_ext3", "clk_ext4";
+ 	assigned-clocks = <&clk IMX8MP_CLK_A53_SRC>,
+ 			  <&clk IMX8MP_CLK_A53_CORE>,
+ 			  <&clk IMX8MP_CLK_NOC>,
 -- 
-2.34.1
+2.43.0
 
 
