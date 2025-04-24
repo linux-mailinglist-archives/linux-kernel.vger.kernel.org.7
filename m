@@ -1,168 +1,112 @@
-Return-Path: <linux-kernel+bounces-618432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C3EA9AE66
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:07:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6C2A9AE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD1017B1AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6A84A2AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E20E289341;
-	Thu, 24 Apr 2025 13:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SABBVXJP"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE8F27F731;
+	Thu, 24 Apr 2025 13:06:39 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6D5281356
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ED5221FCC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745499890; cv=none; b=WYUmKTUh9sJoQbbqRaDfaVefpM/fx6xMUy4VETzc+5zzRd4sWPKLuAB+t4Omum3kUrBJSRomWBOmkdo3xTBCDF6TjInmHVNtmQgLJktXMlQwqjA18cCjbhcoIFQqAJ+tyhjTUAu8ZDwR7iFoWAJ59sjHrliqLDivHusbzTjkAMw=
+	t=1745499998; cv=none; b=MaGT0Vy+WYy3czM3gssQxGJDhPMdEFWdaiAFiUl8CBIGga1mlDLYAXoAIdl6om5IoKKgvGM6MPzTh+6sNbhpAc6yUI7UiNr8/IK/vnsTOUQyPeX/cuEiMRxLi0F4CIE3Hl/6nk5ZlkcqoIBesJrT4U7FuqGzd4IDmzYN486uL1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745499890; c=relaxed/simple;
-	bh=Xo1D4WMW3u8AexLikJCqgRpBtmlISfqstOrN3jZwAJE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VMvlP3trmGgG4a5HWjqD/ubuj9Z/Q3weiw1EQGz59AHRYFkd5p1HztfqQ7tDZcXT0aSHxf3P1lT114SLrwsJpKd7JfJWgI4hEQHO//R8MBqLQyS1WCH2rsQD1aW9xaHyhvm3C39h7AwpZMthGHP3jKmT+N0Wdo9qGSAtaQAYNbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SABBVXJP; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac79fa6e1c2so14820666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745499887; x=1746104687; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ykdI3Gi+8HO4bIXRSEA0t0XdHfsbEsUCV4pjAqv7UHU=;
-        b=SABBVXJPJhBw/cThxHU08t0Hk1iFK37/lNUWxMRjBx8TvBTJAJn6df/Ct3D7BSvwDE
-         yA35MZnrGSI7nm10SKklofSoJNJE+L0QUfu5YO2tHFgE/mEROV51BqI51Usfky/ygZhg
-         1OSh5dYFEBfnvJpVSKGLNIGj4zfZCdz4awJX69GU8OjInxO1u9tq3lqn4/zDZPF2Fk7E
-         5mSXTQ1OJGBx38Q00LA6/GxntstSRc22SIJuhqxPZwy9YcVbgNXIVuNUA9hw9uVXG5S5
-         95eFF5IVg8itG2JkVdW+g7/vL6xnygsXT8o10RBSeMdr8P3uv+uVIfLmhNGiFE7xfPTo
-         gRGQ==
+	s=arc-20240116; t=1745499998; c=relaxed/simple;
+	bh=US4hBOQ35qMSKZcHqZraOmKz9wazcO6gntjfFKwNdIc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ELQ21b3UE5gOXF2PYzDm1ryOTQd3lojs0bxH4xUtDSmlXiswFAGkCAl1nO8JF/d0qPTzWNlAvoWRCNZ4YOSBJuQc3dkA97XA8YqSGCoNHxBdHyofeuGaGHHcfxNJAtdzauxBZgzOBqONeAMSpbdQHD2PmaO7muQkYZqfl4/Xe88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d44dc8a9b4so9966305ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:06:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745499887; x=1746104687;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ykdI3Gi+8HO4bIXRSEA0t0XdHfsbEsUCV4pjAqv7UHU=;
-        b=gtyb660fPSfqq7cbUPH7PgSyJMcy65GVv7I39tv7iCxnzf0BrPYP0jb5J2Xk7HI/p6
-         N8FT1lMFlLPr7Ku4G/K3PhNIJwMuJ1Sft+2QTnFI/fJ7JZZ4JZ1Pr4cL6Mcc17QrUTX7
-         oNc7fVl5nT6vSfVQSCfY7P0AQbIcouXWyH/xOudlvOpp9NxohQMz6nmRRRh/Kk63DgW1
-         W6O4sM4YEhEgRorw6ToI0CXTQnaAjcLcHLD1ssW8E7/E0disLyrCEL8M23tsg9AdvQFg
-         cB0hUfT8d00bIiKPn3R8+MA+SJ/T7rhMUXnJ8hHagfF6dVu3jTfc3imbPupZbLdFkd9t
-         5N8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/Zw2IaAgylQQuN+Wv/DQ31+bUtlT1100vlKBdKhjKMaPhNnAVZnEh7QhajxP7Xa7oE+o7UEtWPRZLH6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/y1UCRe2W7PWIOalH48JM0JidkzpZSAYQKA5brTX4HM6ePgmR
-	3uqYMIyp1VMXCM3FNmWrRuYXthDQgBJCpTjQOKmIhRzupCu1E+0v34Zn4gw+6wA=
-X-Gm-Gg: ASbGncutdbYAv5SlYJ8nfQm5jLwGOrfira3ZZnpESTUg9ZtPaHBQwTa4vYBlWCA4sZy
-	FqM5o47lR2SkSMsu9AMarRoJnEhx80MUuAHZfO2VOIpCKkvJNg1HAwl2amcXECpzYkXYfK+51An
-	U9FU10R5a+OdcQTO27t4JOYyuLl3DEcqyCW8hAv/7Ux8UumPuGiW5ETV9bC6AiT7LET3jG2MNJw
-	lImy28fr5duRG9HqOscOvWEN0eicd+t0SHiT0abTQBc9gBAnLGYFmdb2hSfyRmJXIK7eurOt5Vw
-	29HBpvDBJdRPCGq5H8NjKZDBbDHYW95dID2s+6IhkKHsH5IxSqpIkXv+P6tBrSIPrJGizg==
-X-Google-Smtp-Source: AGHT+IEnwMjmqYoeXiol5aRWjKTI8V0HKRWyVipeDqDx/054e4xCWp2ngxOEU1v1zHU6J2MgEsk2bQ==
-X-Received: by 2002:a17:906:f5a9:b0:abf:6c88:df53 with SMTP id a640c23a62f3a-ace5725d41fmr89394966b.4.1745499887122;
-        Thu, 24 Apr 2025 06:04:47 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59898006sm105101766b.46.2025.04.24.06.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 06:04:46 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 24 Apr 2025 15:04:28 +0200
-Subject: [PATCH RFC/WIP 4/4] arm64: dts: qcom: sm8750-mtp: Enable
- DisplayPort over USB
+        d=1e100.net; s=20230601; t=1745499996; x=1746104796;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P0t1Ey4JsPfq8z6YpUtvbqa00dNXHUUr6PETGwji+oM=;
+        b=Layv7JF5JTVQUEvdtZvuam8NUtuDlVg4KVYb/KtHDS/0xYDLDIS9jCnnZOC8zKb3SL
+         n9ihl9MXpJeslLDvao+gN7StXf+NGWihUm7dD1PVefSFNVoifOJzClz7xlinzTlvjlog
+         X+0CNcZzGDw1GHp/OEv5SeTSeUtZXhZKb5q5Y610bN/WQiqlsoHIKsWIzs94IwNiodo8
+         wkimtIHxgqQ7lrIcJ349vQRsuFSYwZR8NMf59iQF4IOPtcZub+bc6DWztalUhCcpbvp1
+         Cf8LUeHarRiMuuhiQt4d4T/0A4TgVWYqmsi+txGi68mEKX5XF7pAZ4PlOB6SybyfZZqa
+         K7TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYIbv8tIF4mhIdPal8E3ehcG9B1n5H4Fg3g/g+gFPLQqfA3Z44IMNIKnDJDEFZPqBB7bbcCAzyyHcaGnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybk7mBPkptrav3r5GMZy7YvXDaq1JxjRdwRrEogpH/aPe9LmWF
+	mJcWzV4nQ4Im+m3ai6xnWX0UZQzDmM+AL24e3/4XKUrCNQx2HTzsKf5zRMcleRAkDbi1GIy6Yne
+	Gf72aG6vTSBeJpOjGRkYLlYZwtbAP/8Lorkm4thzYVYXJkczNOEK4sHM=
+X-Google-Smtp-Source: AGHT+IGIt/wLrAS2ZdJEDOJhSQuZSDIqL4oY0O4Gdka0LnscUSu+FeIxSHLo6Q0CXKrz7KRO22jbCTgDftow9mbmpc3ck+snqwMO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-sm8750-display-dts-v1-4-6fb22ca95f38@linaro.org>
-References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
-In-Reply-To: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jessica Zhang <jesszhan@quicinc.com>, 
- Abhinav Kumar <abhinavk@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1381;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=Xo1D4WMW3u8AexLikJCqgRpBtmlISfqstOrN3jZwAJE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoCjbmi1xU3eE3c43nUPHItZE3DFChc9pXj2fks
- c47cykL5daJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaAo25gAKCRDBN2bmhouD
- 1zWmD/9p2QKcbcGrH0JBB350VSK8vdheJHkABSI9fKr9JwvDM3Zsnn2KB+levveiHs4D+5uYw/M
- XlVOH0A+lEWOLMsMYnZbh6c5gX8HZoOFmon81afG4/eOfRtaH1ObChIYGtiUnWH2PhCCAHCv/Jl
- ZaPCSJH+6urTjZyTru6y0rBG4u/fQvOnblFhz1kZYCgqIj1fZgb3bMaHmtmFb8O2UKZlNDrcCId
- sRVlTyAv3Fv1YEZIDr5fLMpTySP6fPdqOw6gpEeh4NRHnCg3d70x6aKpd5uSUiL1nfom5YvM43U
- +Xy17fVtby+pvDjEHEAhoJDYbmpBzyYATv/BkV2jC4FzqwQyJM4FB0vzsBukdIjdDtYAW310I9t
- axbIFbruG2VLPWKU4Z7/DGOhHMftTy0JPkmHSOfuZYKRDnVOTClc5ZI5OvnqeUjNbZZCtXMYgDx
- UY/XVlpz/inPG0+PzlS9pEP14MnKIn5r/2Htkvo8XEHx1r9flR7lYNTmiOAZbHaFSRHqemDrT8w
- NO0FFZ25xIyF3NbVLLEwR/JB7fljzIbj9rGyQJ8Rjyp9I/WdvaVf6KKa6NlZEn92J4Eu11mwF/i
- JvBM4nYvGLCZF14Ssf/2jtBzyo70ZoxB0nXbZAqMvktO1LMtCvPlMFVS/7babOtbkwonvgE8fce
- fRKg/LtTAdKmjvA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-Received: by 2002:a05:6e02:1fe6:b0:3d8:1ea5:26e0 with SMTP id
+ e9e14a558f8ab-3d930412d02mr28773105ab.18.1745499996280; Thu, 24 Apr 2025
+ 06:06:36 -0700 (PDT)
+Date: Thu, 24 Apr 2025 06:06:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680a375c.050a0220.10d98e.0008.GAE@google.com>
+Subject: [syzbot] Monthly ext4 report (Apr 2025)
+From: syzbot <syzbot+liste648da94c5214db8d247@syzkaller.appspotmail.com>
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hook up DisplayPort parts over Type-C USB on MTP8750.
+Hello ext4 maintainers/developers,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is a 31-day syzbot report for the ext4 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ext4
+
+During the period, 2 new issues were detected and 2 were fixed.
+In total, 50 issues are still open and 151 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  48268   Yes   possible deadlock in dqget
+                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+<2>  2372    Yes   INFO: task hung in sync_inodes_sb (5)
+                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
+<3>  2085    Yes   kernel BUG in ext4_do_writepages
+                   https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
+<4>  2062    Yes   INFO: task hung in jbd2_journal_commit_transaction (5)
+                   https://syzkaller.appspot.com/bug?extid=3071bdd0a9953bc0d177
+<5>  1515    Yes   KASAN: out-of-bounds Read in ext4_xattr_set_entry
+                   https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
+<6>  383     Yes   INFO: task hung in do_get_write_access (3)
+                   https://syzkaller.appspot.com/bug?extid=e7c786ece54bad9d1e43
+<7>  283     No    KCSAN: data-race in generic_buffers_fsync_noflush / writeback_single_inode (3)
+                   https://syzkaller.appspot.com/bug?extid=35257a2200785ea628f5
+<8>  186     Yes   KMSAN: uninit-value in aes_encrypt (5)
+                   https://syzkaller.appspot.com/bug?extid=aeb14e2539ffb6d21130
+<9>  100     Yes   WARNING: locking bug in find_lock_lowest_rq
+                   https://syzkaller.appspot.com/bug?extid=9a3a26ce3bf119f0190b
+<10> 79      Yes   KASAN: slab-out-of-bounds Read in ext4_read_inline_dir
+                   https://syzkaller.appspot.com/bug?extid=ee5f6a9c86b42ed64fec
+
 ---
- arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 8 ++++++++
- arch/arm64/boot/dts/qcom/sm8750.dtsi    | 2 ++
- 2 files changed, 10 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-index c3470e1daa6b7f31196645759be23fb168ce8eb7..69a54ac0f85d5ae20d005a09fbf8da7d769a9c2e 100644
---- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-@@ -910,6 +910,14 @@ &mdss {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <0 1>;
-+};
-+
- &mdss_dsi0 {
- 	vdda-supply = <&vreg_l3g_1p2>;
- 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 753b069cab1de636a3b1108747f300bec0f33980..b20fc5b5bdfab598fc7b9be53eef96cc16bc5985 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -2965,6 +2965,7 @@ port@1 {
- 						reg = <1>;
- 
- 						mdss_dp0_out: endpoint {
-+							remote-endpoint = <&usb_dp_qmpphy_dp_in>;
- 						};
- 					};
- 				};
-@@ -3064,6 +3065,7 @@ port@2 {
- 					reg = <2>;
- 
- 					usb_dp_qmpphy_dp_in: endpoint {
-+						remote-endpoint = <&mdss_dp0_out>;
- 					};
- 				};
- 			};
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--- 
-2.45.2
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
