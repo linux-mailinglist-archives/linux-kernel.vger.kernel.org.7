@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-618083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC07A9A9F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:22:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09BCA9AA01
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A491B67B9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:22:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184DE7B098D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADA4221F0F;
-	Thu, 24 Apr 2025 10:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941721CC6C;
+	Thu, 24 Apr 2025 10:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i+hxFAWQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TXeWBApD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E59E1AED5C;
-	Thu, 24 Apr 2025 10:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2BA19F40B;
+	Thu, 24 Apr 2025 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745490127; cv=none; b=ttUbn7u+wNcY1MzwWxxMyU3cKoCD1bj8WLzw7tz/AbIoOcLQLfIPnB0fsQkGkx25IlzPQeU6RzX2sbZXHEMPhaW3YwyJI7XNF0XC5XM6qClpBIKxwZ5Bt0FbkrqQfl6b/utaZkThOVOJIbpz2CPsy6rky2U/+pf0/S9hAN03ogY=
+	t=1745490157; cv=none; b=SaVkVyz1RyxfOF5gHayAcC0aKk0w6OAPbwAAIPv1R/YCSZxFVXFymS900da7DRnCaE6rxLKBP/AZQZvVV9kd2lNXi2ET4BHg4p/uirLdpjeefK8+1M1JADUssGyuH1C/4IDuQ28pLokcUphCSQyruhi0cl3pcTA0JFAGTrkECh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745490127; c=relaxed/simple;
-	bh=5e8ktb/NQ43XVpcShbVdpz+YZCXkLyNhLoKwr5Y4x98=;
+	s=arc-20240116; t=1745490157; c=relaxed/simple;
+	bh=Eamh7vthfoRmbWEo5vKkBaCdNQ6uoy/kDRFc+SnM//0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F8EdMsydPnNCRP+q1Sr0UpuG6IkGAy7wOQU8F9byUuaXB0e73B7QVcjSPwyOnD4itKV75yN/iiJMXZ9DhDNveFcDYjQSa7hnU/0U3oMw8G0qrlG3tVA5PwMKJESh3JXrcBbwzLNLLv5FKP+wWaFCu1+bRAT6rsBWsNMAQ+QKTVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i+hxFAWQ; arc=none smtp.client-ip=198.175.65.9
+	 In-Reply-To:Content-Type; b=LCip+h5HgIZEnnCkWsYUMCqrcpbMgRaNWXqr25r1XFyNXAf9ekc3oXDtko/dbRvXjG9Q0ptRwZN+7YDwe2Kp8g/gABdbBjHgONAn2HvDIyd0l07lQaxBSPWUeALcze79VY8pPGC1kIUNmk2vdZ9oWmzgb6yimnbexBoGiXOQ5JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TXeWBApD; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745490125; x=1777026125;
+  t=1745490156; x=1777026156;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=5e8ktb/NQ43XVpcShbVdpz+YZCXkLyNhLoKwr5Y4x98=;
-  b=i+hxFAWQBw8Exp/RvC4VGpMLAV//sjCx9mqqcalWRl/+4i7FNuzLZWSq
-   lxMsIKO8QDcKAl43jna07B4weBHYuQMBrSdsoJFNJfQLFGy3cZ7BWqXwG
-   EmtEga9wyIHEbpUhYYdFBwQXUadsZlgwuwskFIbSA/TXo2IhsbPaDoSCR
-   Ho/YDSAN/SZoLIA/s49E1QTf9r8j8se6WfvKDMHQ20/HaJbCJ9AtA9xXy
-   bvjULPLQiykZePh2rtq9EUI1tBdpzEZbMPoVOIBCA8b9Bo/AQ3PIC5vq3
-   QSBMCFOV17VXsMFm3oASpujAUjOoi5meRiRbTq6dOgZfdyBCXTFLX9mrB
-   g==;
-X-CSE-ConnectionGUID: 9i34+qBlTCWnepPqjZkxTw==
-X-CSE-MsgGUID: Q4JciHdrSqeXng1zEm+Tqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="69599963"
+  bh=Eamh7vthfoRmbWEo5vKkBaCdNQ6uoy/kDRFc+SnM//0=;
+  b=TXeWBApDin8N6mhdyDRfuI6i6RWwgsIokzdZXy1q6oy53DMBPFEO1Fro
+   fVF0cRKs7RCRa5EmgLHCcENQgwYu0V60pdRW20fXGPLu8EKKyTXt5RJ51
+   1sEtZbLlT3lVm8qfQU/KGOCv73DAjTUpjJnWg3AmrsHO+e9e/EYZ+78mo
+   qqrZCoGn0Cr7Q0/5J0VRORIfEAvI6Ab/touSoSIN6s6IoQQ26Fkll0n6h
+   kb+v14UbnP1/W426Ux1FXHq/xZFq6S7yB53GfCijpzSvpykOPOzkHItEs
+   PyUelHZwKWuohMNMSw4GyB9mfAtSqs3YqMnYbCXbP/Y+KYGENMEt5FKEm
+   A==;
+X-CSE-ConnectionGUID: uf53PQJOQKOswAQA4cLn5Q==
+X-CSE-MsgGUID: PbQ2jbAKTMq8kJ9bJBpjlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="46232608"
 X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="69599963"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:04 -0700
-X-CSE-ConnectionGUID: 9rYJc79DScyIzN0FN+mkhw==
-X-CSE-MsgGUID: rB0PBI6aQReGHdkRkn+IlA==
+   d="scan'208";a="46232608"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:35 -0700
+X-CSE-ConnectionGUID: 6d2rlWgpRmC7Bg1v+3s/7w==
+X-CSE-MsgGUID: i74F4pZbQEa57aEhCIn7ow==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
-   d="scan'208";a="132557752"
-Received: from sbockowx-mobl2.ger.corp.intel.com (HELO [10.94.8.84]) ([10.94.8.84])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:00 -0700
-Message-ID: <ebf0ccd0-9429-43b6-b56b-73feeb856593@linux.intel.com>
-Date: Thu, 24 Apr 2025 12:21:57 +0200
+   d="scan'208";a="155806431"
+Received: from acushion-mobl2.ger.corp.intel.com (HELO [10.245.83.152]) ([10.245.83.152])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:22:34 -0700
+Message-ID: <80f49ba8-caea-47d5-be38-dd1eefd09988@linux.intel.com>
+Date: Thu, 24 Apr 2025 12:22:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,87 +66,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] ASoC: intel/avs: Use pure devres PCI
-To: Philipp Stanner <phasta@kernel.org>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Damien Le Moal <dlemoal@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- sound-open-firmware@alsa-project.org
-References: <20250423082858.49780-2-phasta@kernel.org>
- <20250423082858.49780-4-phasta@kernel.org>
+Subject: Re: [PATCH] accel/ivpu: Add handling of
+ VPU_JSM_STATUS_MVNCI_CONTEXT_VIOLATION_HW
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Karol Wachowski <karol.wachowski@intel.com>
+References: <20250408095711.635185-1-jacek.lawrynowicz@linux.intel.com>
+ <2025042227-crumb-rubble-7854@gregkh>
 Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20250423082858.49780-4-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <2025042227-crumb-rubble-7854@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi,
 
-
-On 2025-04-23 10:28, Philipp Stanner wrote:
-> pci_request_regions() is a hybrid function which becomes managed if
-> pcim_enable_device() was called before. This hybrid nature is deprecated
-> and should not be used anymore.
+On 4/22/2025 2:17 PM, Greg KH wrote:
+> On Tue, Apr 08, 2025 at 11:57:11AM +0200, Jacek Lawrynowicz wrote:
+>> From: Karol Wachowski <karol.wachowski@intel.com>
+>>
+>> commit dad945c27a42dfadddff1049cf5ae417209a8996 upstream.
+>>
+>> Trigger recovery of the NPU upon receiving HW context violation from
+>> the firmware. The context violation error is a fatal error that prevents
+>> any subsequent jobs from being executed. Without this fix it is
+>> necessary to reload the driver to restore the NPU operational state.
+>>
+>> This is simplified version of upstream commit as the full implementation
+>> would require all engine reset/resume logic to be backported.
 > 
-> Replace pci_request_regions() with the always-managed function
-> pcim_request_all_regions().
+> We REALLY do not like taking patches that are not upstream.  Why not
+> backport all of the needed patches instead, how many would that be?
+> Taking one-off patches like this just makes it harder/impossible to
+> maintain the code over time as further fixes in this same area will NOT
+> apply properly at all.
 > 
-> Remove the goto jump to pci_release_regions(), since pcim_ functions
-> clean up automatically.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   sound/soc/intel/avs/core.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/soc/intel/avs/core.c b/sound/soc/intel/avs/core.c
-> index 8fbf33e30dfc..dafe46973146 100644
-> --- a/sound/soc/intel/avs/core.c
-> +++ b/sound/soc/intel/avs/core.c
-> @@ -445,7 +445,7 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
->   		return ret;
->   	}
->   
-> -	ret = pci_request_regions(pci, "AVS HDAudio");
-> +	ret = pcim_request_all_regions(pci, "AVS HDAudio");
->   	if (ret < 0)
->   		return ret;
->   
-> @@ -454,8 +454,7 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
->   	bus->remap_addr = pci_ioremap_bar(pci, 0);
->   	if (!bus->remap_addr) {
->   		dev_err(bus->dev, "ioremap error\n");
-> -		ret = -ENXIO;
-> -		goto err_remap_bar0;
-> +		return -ENXIO;
->   	}
->   
->   	adev->dsp_ba = pci_ioremap_bar(pci, 4);
-> @@ -512,8 +511,6 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
->   	iounmap(adev->dsp_ba);
->   err_remap_bar4:
->   	iounmap(bus->remap_addr);
-> -err_remap_bar0:
-> -	pci_release_regions(pci);
+> Think about what you want to be touching 5 years from now, a one-off
+> change that doesn't match the rest of the kernel tree, or something that
+> is the same?
 
-Hm... shouldn't we also drop call to pci_release_regions() in 
-avs_pci_remove()?
+Sure, I'm totally on board with backporting all required patches.
+I thought it was not possible due to 100 line limit.
 
->   	return ret;
->   }
->   
+This would be the minimum set of patches:
 
-Nitpick: If there will be v2, can you also align title with how it 
-usually is in this directory:
-ASoC: Intel: avs: Use pure devres PCI
+Patch 1:
+ drivers/accel/ivpu/ivpu_drv.c   | 32 +++-----------
+ drivers/accel/ivpu/ivpu_drv.h   |  2 +
+ drivers/accel/ivpu/ivpu_job.c   | 78 ++++++++++++++++++++++++++-------
+ drivers/accel/ivpu/ivpu_job.h   |  1 +
+ drivers/accel/ivpu/ivpu_mmu.c   |  3 +-
+ drivers/accel/ivpu/ivpu_sysfs.c |  5 ++-
+ 6 files changed, 75 insertions(+), 46 deletions(-)
+
+Patch 2:
+ drivers/accel/ivpu/ivpu_job.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+Patch 3:
+ drivers/accel/ivpu/ivpu_job.c     |   2 +-
+ drivers/accel/ivpu/ivpu_jsm_msg.c |   3 +-
+ drivers/accel/ivpu/vpu_boot_api.h |  45 +++--
+ drivers/accel/ivpu/vpu_jsm_api.h  | 303 +++++++++++++++++++++++++-----
+ 4 files changed, 293 insertions(+), 60 deletions(-)
+
+Patch 4:
+ drivers/accel/ivpu/ivpu_job.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+First patch needs some changes to apply correctly to 6.12 but the rest of them apply pretty cleanly.
+Is this acceptable?
+
+Regards,
+Jacek
 
 
