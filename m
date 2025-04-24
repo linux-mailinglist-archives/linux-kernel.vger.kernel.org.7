@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-618881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D02A9B49E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA80A9B49F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B8817376B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96F1170DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8F228F506;
-	Thu, 24 Apr 2025 16:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A2028F537;
+	Thu, 24 Apr 2025 16:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="c+/V4oTc"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="E5ofKRFy"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A83A197A76
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4F28BAAC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745513449; cv=none; b=Iury3knWoXR+UVGQ1gzV7gmYxcfpCeur2opzQOOwt5p99PziTJd443Qcmbp9k12FdcpkAl41GZ6ta6x23d4LGUJ/u7HGyPnC8jUm5+h5VgcM7lYqLJnqn1OnBwqj4PpxCtiPN388pso4BiOPsHvjf0NTdgTCgrfCjzrced+noro=
+	t=1745513451; cv=none; b=fnkgyuCqOHeUajhGVTWsMnbeDmW49iumSflOpR58Ry1/rLHaK9FWovDMXiyLWS4FSfg/h1UH6nYdww9NcQP5cJvj5rVNRDcCSlJhoyDNLBpT4tOMMQHyTqikS8p84ocv5FarZwNuhWM5SUZlp4vh5t+iDJB4Y/CzC4yq8Zz+jLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745513449; c=relaxed/simple;
-	bh=SQ6vcpjxjqiGrMHPluDT6XOz9Z80nQnqZkicTUONgNo=;
+	s=arc-20240116; t=1745513451; c=relaxed/simple;
+	bh=xx6WjQQJI7TG0s8jN6ebesWLtmwT5S6KXNjgM9mjaoc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FbramhZvq+IO0Y8YxGSg98+hq30/mfMLZjvgakk1qB/4e4U7NhGDJcnpiu5bBXYXqz8gNxpXJylnTKZWh1UEc2eFxtrCUTUYq7X8cuvcqTbn59qs2xdg/HOxkgGFGLoPHECcNWWqqqecCfBn/ZptorhWdQc1+NWpR/u5dK9HYSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=c+/V4oTc; arc=none smtp.client-ip=209.85.160.47
+	 MIME-Version; b=fGZJFSoqha9NRxXUycW4WpGuD4hc1XLRCW96+c7+r2LykRDybd47aqS1lJmbYBgtvB04M6Tk+NM6sWD++lTGW4chewlkcjJX6l2XaSACWviKVSKEemqNRvRvRcC10BxpRyD2Jyta5n93FyRanhDIy3sbVOZBzrzjnr5N/14sk3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=E5ofKRFy; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2c2504fa876so306621fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:48 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72c16e658f4so850860a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513447; x=1746118247; darn=vger.kernel.org;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1745513448; x=1746118248; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kUz7DXMA39otnLyfDSP3DMy4MLC8l/U84/KlxK55hqA=;
-        b=c+/V4oTc2sRjNyTQJOrQQS/qXje7hzKng4qmObtrsVGhqwzn6DutxcwH21KVuP28Pf
-         pOW1Vk82j+3YOzYjQmi4UvkiDTiI7E4+cnLs8VRnr7UGM3cDMs9IsWCZeCabNTcc0HzR
-         XGAynS5O4H1T7MzP8UOjT8ghfPA/+9C/t3QPcnWrU4GuNUMFWwVbSPghSZ0+ryNEM1fM
-         H7vmz6TPjCqPXZVyrmNDb6ninfS6PwwvX1dohSYOU1UE7z4N75RAJRKsV8tzrZwZZJBK
-         mXtwZz4tnPDSSKI7hcGIyXrtNtoAkeqTofEE4wCoH5Utq0X13Ifudje/MAnnAyd0t2Nt
-         EUJg==
+        bh=Bo8OORB/CMRTqZ+jmfB+YUkyYwA6MdIiB5QaJmUO56E=;
+        b=E5ofKRFy1QivSOzZEhkyAYg8IHUSmY4tfwSYhqEFj2HVykCXGv5UzkVJz1RAv9rCPI
+         nPDhP+rYb/gQbzmXJTCkooS74iYigRpZKrATwCPIVIOhHWIsY1z91gjg4bpBF36hihQK
+         0QEUpdSMDKiDVa0ZaUPaLpnSK3JH46vf5SGsTucZ3HN6mf8IbHqrRMFZKtxeu4iaoyHv
+         my57sr+o8H2R4a0LB4WOYos4jlSh/yY0EahkqocTA1nvh5HWAFmYbiAJLoVr+1IwFC6E
+         Teqk2/uQjzDO8b5H7yIC0e1wPh/qoZXOxPaKkJnxyLvAUzFxVe3ySfT6Ho16Soe4P+Ie
+         aPaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745513447; x=1746118247;
+        d=1e100.net; s=20230601; t=1745513448; x=1746118248;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kUz7DXMA39otnLyfDSP3DMy4MLC8l/U84/KlxK55hqA=;
-        b=wKYH5Igneekye12MQqROeMtoB386cn1t56RO4B+V+D/IRcBcNt4nnfEi3ncijQs1NB
-         ZS/HFWaWHlO+lYen1bNuelOeXSkx8jluzKj+e95S5WzLlWtkNtNJBv0e4R2GawRJv/Zz
-         blFL/L60e7eV2g+y78J+kK8W8topnyZH0Vu7SfonfiiKq2O2PiWYKRyGblWkuls5kyI2
-         LYMTn8WFWIXzau2tkTb0qOyly5n7RhKpWo2C2dLdrdtlGMMGQaQJbk22LWMhOyvm6oP8
-         EloxQqn6hMMhD6Nwo05yg+8AhdBma54oJ23dYxbPx5f4rqZNxAMIKBJefnWPfnBbpotW
-         tBww==
-X-Gm-Message-State: AOJu0YzJNUTcBv6lcGDHYJbuIdVAPVPJvZ3wu1LxcPhr3um63l6a+Zks
-	2nGOD0hTSxFxMKUPoHwA6576L896um0EGAfIK7Z0Me1t1SDwd5ICKBnaZ7SJNzXB7yKmh6e6jxi
-	+
-X-Gm-Gg: ASbGnct+Didme396x2SRqXcK4459LhATq8NrCuw0Uf3mcs5xxFEC++n3KA9B02tehrz
-	izcJAiYUlfugxcN0BSxCiPOSW0GxaGIkCwaVX6ivDsRIXehuLqyUfRX7cRvxVPkdrmDe6cjDaOd
-	+slaHbB2wQphQnPDCYSd817ioAPZBJrH8Q0MP2Ks21IbY73cWY1UDecXXgzo9Haq8Kd33HnSO5O
-	oiJLWott9K7BZmbPPkvKW1PvTyIA/S4lW3+u5xf831QTShq58qJ8szhQnVbia6bcSvpXT3uBiq3
-	hmf/nZ8Puz4uyHBBkdVtCwnTD3Ng0wzbTes=
-X-Google-Smtp-Source: AGHT+IEFBkV7UHEn58Xszvm0tfXkA82Ab6TrMIvEXYPdUN5UB+Wy6GEu8BwlPZj7yfPnj9aDzbXcQQ==
-X-Received: by 2002:a05:6870:1592:b0:2d5:230f:b34a with SMTP id 586e51a60fabf-2d99420d1b8mr332806fac.9.1745513446880;
-        Thu, 24 Apr 2025 09:50:46 -0700 (PDT)
+        bh=Bo8OORB/CMRTqZ+jmfB+YUkyYwA6MdIiB5QaJmUO56E=;
+        b=egmF+IFCW7MBXQvy4Z1oUMmhgLSAscd4HSj0T+upfXRIIbKxM0n4S21ALZTUrVwYL+
+         yPPJQc9dzHu/xgqIkhGlFliZDO1aucqv6Mirpo/QjnQOX7zWuVF3WefpSdR9PUwrPTKn
+         M0S+zI+CevxaCnmOUbqSFG0/0773/vvI972mfRzGnAuNg2qOd2PXOR5gYIjgwDT5vYrF
+         TIoQ6bpWh2WTFQMd1+iNd94zJ2IzaeinFsPHatVCU33brZlgaGeSkO6dyTvtSry+INJm
+         QiyMlVZT2tA7JbVo0w/735SdUulSye2hrTJesoMrLembcaKFFHUiOBSzXmI2/2Do9MJh
+         h6Fg==
+X-Gm-Message-State: AOJu0Yw8mo6StgufUPzJRjzA+lqBUWcjuEC1dc/mM12hAw+SisVZdAPu
+	piTrdjm8LS3g3aj7N1qpZ01M05+9olmFIrpFkv90R6jp7t4o6Ucx7OR76quh7xmhGaDE+Fo+gO2
+	E
+X-Gm-Gg: ASbGncshb+KH8IwRff92o7IB4m/H02WDtQKqzmBXJuqOjkfdL0bMsZ9kR1TOLwJALhr
+	0enoyUYL2GqX0VLYJEKK3GCQQaBL7mzMluIl62rtQA5SBLA74qnkm5N5+q7+pvTCGPtBvmdD65r
+	s9SYOeigaL7hcDcjpQMC5tQ0ua5fw1NwH1/bsrpd6oL94/EGWHjvuzG1Ki8ViTZ2AiKWZ0fylG+
+	uiHaFldTBzQNsNxAUvRZw6h4I/z95FtHsNL4O8TrgqBNQ1wX/or5ZcA5WTOV1J7ZJmNyM1RqbVe
+	9zP+q2lzka9WbYKsLRM92AnAGl+dIRrNCjA=
+X-Google-Smtp-Source: AGHT+IGActbYLMI+4Dv1DxR+pkcu73M2Hm6w/m4/WWnj+zX8JKJ9d7TyKjUutOCfa+lPaH6GRQXn7w==
+X-Received: by 2002:a05:6830:3741:b0:72b:8000:d487 with SMTP id 46e09a7af769-73059bc8b48mr414897a34.3.1745513448417;
+        Thu, 24 Apr 2025 09:50:48 -0700 (PDT)
 Received: from localhost ([2001:470:b8f6:1b:af2e:7abf:8abe:2726])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2d973650836sm361584fac.9.2025.04.24.09.50.46
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-7304f187fa9sm292307a34.11.2025.04.24.09.50.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 09:50:46 -0700 (PDT)
+        Thu, 24 Apr 2025 09:50:47 -0700 (PDT)
 From: Corey Minyard <corey@minyard.net>
 To: linux-kernel@vger.kernel.org,
 	openipmi-developer@lists.sourceforge.net,
@@ -79,9 +79,9 @@ Cc: "Paul E . McKenney" <paulmck@kernel.org>,
 	Breno Leitao <leitao@debian.org>,
 	Corey Minyard <corey@minyard.net>,
 	Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 10/23] ipmi: Add a note about the pretimeout callback
-Date: Thu, 24 Apr 2025 11:49:47 -0500
-Message-ID: <20250424165020.627193-11-corey@minyard.net>
+Subject: [PATCH 11/23] ipmi:msghandler: Remove some user level processing in panic mode
+Date: Thu, 24 Apr 2025 11:49:48 -0500
+Message-ID: <20250424165020.627193-12-corey@minyard.net>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250424165020.627193-1-corey@minyard.net>
 References: <20250424165020.627193-1-corey@minyard.net>
@@ -93,28 +93,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-You can't do IPMI calls from the callback, it's called with locks
-held.
+When run to completion is set, don't call things that will claim
+mutexes or call user callbacks.
 
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
 ---
- include/linux/ipmi.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_msghandler.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/ipmi.h b/include/linux/ipmi.h
-index 2f74dd90c271..27cd5980bb27 100644
---- a/include/linux/ipmi.h
-+++ b/include/linux/ipmi.h
-@@ -93,7 +93,8 @@ struct ipmi_user_hndl {
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 3e88ac6831d8..e7bed764b4bb 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -4808,6 +4808,10 @@ static void smi_work(struct work_struct *t)
  
+ 	handle_new_recv_msgs(intf);
+ 
++	/* Nothing below applies during panic time. */
++	if (run_to_completion)
++		return;
++
  	/*
- 	 * Called when the interface detects a watchdog pre-timeout.  If
--	 * this is NULL, it will be ignored for the user.
-+	 * this is NULL, it will be ignored for the user.  Note that you
-+	 * can't do any IPMI calls from here, it's called with locks held.
- 	 */
- 	void (*ipmi_watchdog_pretimeout)(void *handler_data);
- 
+ 	 * If the pretimout count is non-zero, decrement one from it and
+ 	 * deliver pretimeouts to all the users.
 -- 
 2.43.0
 
