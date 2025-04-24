@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-619128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE002A9B83C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6774DA9B840
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4F41BA4969
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77E4925DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB413292924;
-	Thu, 24 Apr 2025 19:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8643280CE0;
+	Thu, 24 Apr 2025 19:24:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBB12918C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832652918F6;
 	Thu, 24 Apr 2025 19:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745522657; cv=none; b=TgU+KQmFhRfdYz62N1WwaUY1KnAMuPwl8Tl0NpgTIqBASxlyaeYKF9cTmeIgdJCwXUZ95iJcLsxVZ07mkKTF5WVlvL6RQZj1Wug3cagQI3N4BL5W+W3HrZvQZQUIyF6h7HPoPw5evVkSDXaCkG8jF0tv5wHySTCwVZAvA39gxR8=
+	t=1745522657; cv=none; b=czeV8mIpHueatw0yQUgO0bYnvQ5YEcLbLdDcmRaQOzTinhLu5vAoUhvjD+/dM/O03iqpMpTEZ2489DuDzBcgnFlVjgDO7qBCkfHzmW1eDaHDQvx9m7UhzLTP4Si6Wt6Hd8hjlp9bDFoqCi4S5g8Nm9xNCSM9DyvzIpjXvTjL71o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745522657; c=relaxed/simple;
-	bh=dywbzU05uYdtOAPyIPR7737vlANMjFHBgRmD6TWEHjs=;
+	bh=ajvnsllmRpQFIX6Qgf3TWPxF1BZqvJ/hp9YJ40O7mK8=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=A5YhmHz6Qy9c/BjUS+GP3XLmJcl5nEr1v5wgMnAvmzbuGk5aqg8KmDFxSTZX8HzJayjti+YDQ6jJuyzpQBY5hXqkY//CcS2iT8zLOMkgFJypyGxZyNa7jcX9sjY3yky9E35Dz8Efz3Jq2rWcHs4bL8H7U6P5M0DJgv3yunFSruc=
+	 Content-Type; b=Q2spTwjADK6K7Pn0kYyrHY+RIA57wbMuMcgJutEvpr+f/aGW+XzxkIDtMlMm8cvzNoQFL6sMZ8JzprTw+pfFQZe0TElQa9sLnvjTRxYbXEe95Q5mGCNApbpJ5qU0Ub0udmL5Vr1fcOwYdXJwpEYddErcYQWi0CgacZx+UYI77qc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA519C4CEED;
-	Thu, 24 Apr 2025 19:24:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145B5C2BCB1;
+	Thu, 24 Apr 2025 19:24:17 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1u82D7-0000000H2QC-0gGT;
+	id 1u82D7-0000000H2Qg-1P4M;
 	Thu, 24 Apr 2025 15:26:13 -0400
-Message-ID: <20250424192613.014380756@goodmis.org>
+Message-ID: <20250424192613.183589150@goodmis.org>
 User-Agent: quilt/0.68
-Date: Thu, 24 Apr 2025 15:25:00 -0400
+Date: Thu, 24 Apr 2025 15:25:01 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -67,8 +67,8 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Beau Belgrave <beaub@linux.microsoft.com>,
  "Jose E. Marchesi" <jemarch@gnu.org>,
  Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v5 4/9] tracing: Do not bother getting user space stacktraces for kernel
- threads
+Subject: [PATCH v5 5/9] tracing: Rename __dynamic_array() to __dynamic_field() for ftrace
+ events
 References: <20250424192456.851953422@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -80,30 +80,138 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-If a user space stacktrace is requested when running a kernel thread, just
-return, as there's no point trying to get the user space stacktrace as
-there is no user space.
+The ftrace events (like function, trace_print, etc) are created somewhat
+manually and not via the TRACE_EVENT() or tracepoint magic macros. It has
+its own macros.
+
+The dynamic fields used __dynamic_array() to be created, but the output is
+different than the __dynamic_array() used by TRACE_EVENT().
+
+The TRACE_EVENT() __dynamic_array() creates the field like:
+
+	field:__data_loc u8[] v_data;   offset:120;     size:4; signed:0;
+
+Whereas the ftrace event is created as:
+
+	field:char buf[];       offset:12;      size:0; signed:0;
+
+The difference is that the ftrace field is defined as the rest of the size
+of the event saved in the ring buffer. TRACE_EVENT() doesn't have such a
+dynamic field, and its version saves a word that holds the offset into the
+event that the field is stored, as well as the size.
+
+For consistency rename the ftrace event macro to __dynamic_field(). This
+way the ftrace event can also include a __dynamic_array() later that works
+the same as the TRACE_EVENT() dynamic array.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/trace/trace.h         |  4 ++--
+ kernel/trace/trace_entries.h | 10 +++++-----
+ kernel/trace/trace_export.c  | 12 ++++++------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8ddf6b17215c..523e98cd121d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3087,6 +3087,10 @@ ftrace_trace_userstack(struct trace_array *tr,
- 	if (!(tr->trace_flags & TRACE_ITER_USERSTACKTRACE))
- 		return;
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 79be1995db44..3c733b9e7b32 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -92,8 +92,8 @@ enum trace_type {
+ #undef __array_desc
+ #define __array_desc(type, container, item, size)
  
-+	/* No point doing user space stacktraces on kernel threads */
-+	if (current->flags & PF_KTHREAD)
-+		return;
-+
- 	/*
- 	 * NMIs can not handle page faults, even with fix ups.
- 	 * The save user stack can (and often does) fault.
+-#undef __dynamic_array
+-#define __dynamic_array(type, item)	type	item[];
++#undef __dynamic_field
++#define __dynamic_field(type, item)	type	item[];
+ 
+ #undef __rel_dynamic_array
+ #define __rel_dynamic_array(type, item)	type	item[];
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index 4ef4df6623a8..7100d8f86011 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -63,7 +63,7 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
+ 	F_STRUCT(
+ 		__field_fn(	unsigned long,		ip		)
+ 		__field_fn(	unsigned long,		parent_ip	)
+-		__dynamic_array( unsigned long,		args		)
++		__dynamic_field( unsigned long,		args		)
+ 	),
+ 
+ 	F_printk(" %ps <-- %ps",
+@@ -81,7 +81,7 @@ FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
+ 		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+ 		__field_packed(	unsigned int,	graph_ent,	depth		)
+-		__dynamic_array(unsigned long,	args				)
++		__dynamic_field(unsigned long,	args				)
+ 	),
+ 
+ 	F_printk("--> %ps (%u)", (void *)__entry->func, __entry->depth)
+@@ -259,7 +259,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
+ 	F_STRUCT(
+ 		__field(	unsigned long,	ip	)
+ 		__field(	const char *,	fmt	)
+-		__dynamic_array(	u32,	buf	)
++		__dynamic_field(	u32,	buf	)
+ 	),
+ 
+ 	F_printk("%ps: %s",
+@@ -272,7 +272,7 @@ FTRACE_ENTRY_REG(print, print_entry,
+ 
+ 	F_STRUCT(
+ 		__field(	unsigned long,	ip	)
+-		__dynamic_array(	char,	buf	)
++		__dynamic_field(	char,	buf	)
+ 	),
+ 
+ 	F_printk("%ps: %s",
+@@ -287,7 +287,7 @@ FTRACE_ENTRY(raw_data, raw_data_entry,
+ 
+ 	F_STRUCT(
+ 		__field(	unsigned int,	id	)
+-		__dynamic_array(	char,	buf	)
++		__dynamic_field(	char,	buf	)
+ 	),
+ 
+ 	F_printk("id:%04x %08x",
+diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
+index 1698fc22afa0..d9d41e3ba379 100644
+--- a/kernel/trace/trace_export.c
++++ b/kernel/trace/trace_export.c
+@@ -57,8 +57,8 @@ static int ftrace_event_register(struct trace_event_call *call,
+ #undef __array_desc
+ #define __array_desc(type, container, item, size)	type item[size];
+ 
+-#undef __dynamic_array
+-#define __dynamic_array(type, item)			type item[];
++#undef __dynamic_field
++#define __dynamic_field(type, item)			type item[];
+ 
+ #undef F_STRUCT
+ #define F_STRUCT(args...)				args
+@@ -123,8 +123,8 @@ static void __always_unused ____ftrace_check_##name(void)		\
+ #undef __array_desc
+ #define __array_desc(_type, _container, _item, _len) __array(_type, _item, _len)
+ 
+-#undef __dynamic_array
+-#define __dynamic_array(_type, _item) {					\
++#undef __dynamic_field
++#define __dynamic_field(_type, _item) {					\
+ 	.type = #_type "[]", .name = #_item,				\
+ 	.size = 0, .align = __alignof__(_type),				\
+ 	is_signed_type(_type), .filter_type = FILTER_OTHER },
+@@ -161,8 +161,8 @@ static struct trace_event_fields ftrace_event_fields_##name[] = {	\
+ #undef __array_desc
+ #define __array_desc(type, container, item, len)
+ 
+-#undef __dynamic_array
+-#define __dynamic_array(type, item)
++#undef __dynamic_field
++#define __dynamic_field(type, item)
+ 
+ #undef F_printk
+ #define F_printk(fmt, args...) __stringify(fmt) ", "  __stringify(args)
 -- 
 2.47.2
 
