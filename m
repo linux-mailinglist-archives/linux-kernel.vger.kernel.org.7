@@ -1,428 +1,353 @@
-Return-Path: <linux-kernel+bounces-619204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5325CA9B90D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CC4A9B912
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 22:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24E09A7248
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67FE9A7188
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 20:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA9D21FF4D;
-	Thu, 24 Apr 2025 20:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356151FECD3;
+	Thu, 24 Apr 2025 20:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="DWvDJHOk"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VdEpEVIK"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065F121D3D4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 20:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745526138; cv=none; b=XVEeXxWgm7Vi+N1S77d2DmH7CrwdSYuhabdV3K09zQhFXvluU3M48B0vvVpoTKRf3ne4+OmljO6x/LvKwfAJjJGzF92D5o/pMPvpSPNVJRVlHQn/z3+X3LX+3eGecDX+7hJWF2JpzjM+ntIDwzXIIMzOatbWUHpgtEOsKSCnM/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745526138; c=relaxed/simple;
-	bh=zfoCZAi+qgWXFIaHeDNfmek6cFG6y/TXE1VwWMa2yYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mzk89tl/QHiWKxyGT/AN7yz9RH/rDf2UZZMK/XwW+9hWkoYFPHIau1GcP82okYpORpBlrKu79/MdFYOtRz8RYWEoUuG8WpxlCQuU5HTiZunUfuv1iWWcNwgUmn/RB2TjCSxaI7DcJmioKrs4u/wdyoPkBpiGU46TsOmLFeHvUso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=DWvDJHOk; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5e39d1db2so87847785a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1745526135; x=1746130935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CxWEnn5MTFE6+1tVKFs4oJ/SdesKMia6cc2bPiHfnm4=;
-        b=DWvDJHOkAbht3mtqtvZAchxA19WDDmvitYiCjMROC//5LcgnRvWiYHkhclT6xiFjgG
-         hbN0i/O9JIMni+J1cGVlM7S9om3DFK8vBDVegxhN+opkje6AuyWH8s3hYTT+MErtPYma
-         raNtk2RSgr63HJxP3FpIubdB6DHwlHTBfxr0Wqlj7L/NFKIzw8H3QtAeLc69FCH421BT
-         JRn9Os31cwTmmqJ5ccFGrXgvD8o+n+Q/lzHZ6glw76F+MPR7/wkBB95I9aOLi7NjtuYy
-         Z5IwClT3ZamUSXVghglIVTKBV7Oueq16dEq69CiTq6UcAJdSTi5sra8mN7qIb/sMGW6g
-         VCfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745526135; x=1746130935;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CxWEnn5MTFE6+1tVKFs4oJ/SdesKMia6cc2bPiHfnm4=;
-        b=WiGLarDWz5zPB9rYTujNGiJNQkJOq+8QFkpiKjvl8aOKBROnSPaFFaUML+3yxVAFBK
-         0rmPJRG5z4mIrdJfdO+Pdcm1RwzN9NKR48s61Ya+DxaTI5cNhyALXfkEZDh2aSx0CCWh
-         aYi9lds2GSFj2aPfRuJjMzw6Cz/R6wusM3KoUlqHdyK1Ti8BfRd+j0wdADhfEqtaN7RY
-         cp7CBtxBXf47uPR0yZEb6c4BVcBZOJ2m/T4pU/bUmwoD24F+gvOrP6ngrQLQq6Ne1yaJ
-         oetAFHSnIFg5PacY8plhVE0bqmYwkiTsnuhKXGe5NDklRHxHs1K/jfv+FvCfDoLyDQUG
-         QthQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq/QJWfV52pFmVyVm6uWPucmOMIYri3QsIJM8s0+zzyQeP6gNo3d8dohIkFhaPwy/IYdMPFVgo3JH3Vw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC3+qQDE5/v2GarppugkyIVhGsMkYhEbhLJB7T5Wofd0Fkve6H
-	SsE6aHtBdty/FxSVQU5SuD6SsGyO7IBDr6tVUmqWj1boy2HRxEG9Z6lAeffszJk=
-X-Gm-Gg: ASbGnctJpzOCMUhoLaOR7w4YfOFlnPB0faUJGJDNSYF4CKwRy4HSyvR0Wkh6tYaPEPD
-	iwBoE6sQ+AtlANf1YVR2W2/iUTGsZk8rUKHsIIxlz+DpkaKhf7dUaZGypOjYOHoHtUq74W4Jd+r
-	Fw6tsFt0yBsHvyNw/kEiY7/qaN3L/GcM0hrdAHi5N95puDR2xE31En8nO2S4vYxCaT039osmj1q
-	yfh6FngZ442Z5y37enM4oEBjHIdt/3Knz1BhhaPnuA2GjT7b/oKkMjFh+QEdH2iu6kGJp2Lxotl
-	fV+8rPYslakTtdIXfErsr7aanPR3aPQiBpS1OhJBsJniNt1HBjtpx3MItRe6j6yxcC1tGHtw+Wo
-	IZIWmDiaLVKZFfIbjYdKDoUbXLKei
-X-Google-Smtp-Source: AGHT+IFyN8wb//0ERja9QfMESqcq2paUli+6NaJiW4JLzbqSHvuuo3oBkSX4VWrim2OosaiAh03+XQ==
-X-Received: by 2002:a05:620a:2404:b0:7c5:e2a0:4e64 with SMTP id af79cd13be357-7c95ef89880mr122896385a.51.1745526134699;
-        Thu, 24 Apr 2025 13:22:14 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958cbfb1bsm129618385a.44.2025.04.24.13.22.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 13:22:14 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	longman@redhat.com,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	tj@kernel.org,
-	mkoutny@suse.com,
-	akpm@linux-foundation.org
-Subject: [PATCH v5 2/2] vmscan,cgroup: apply mems_effective to reclaim
-Date: Thu, 24 Apr 2025 16:22:07 -0400
-Message-ID: <20250424202207.50028-3-gourry@gourry.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250424202207.50028-1-gourry@gourry.net>
-References: <20250422012616.1883287-3-gourry@gourry.net>
- <20250424202207.50028-1-gourry@gourry.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFDE1FECBD;
+	Thu, 24 Apr 2025 20:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745526173; cv=fail; b=d4lacU8L8QZzrxZQMyCs50SaE3B7/b2CoN7xKVVmv+pQ65qw5Zf9IogOgp4Q14cOoZHTmKmGY4+nUAK66xkiBxY2hAalNDWDh4qt+/+Syxj5qZZ/U3EUo+V3LTt8OrnAIs8swylT9jJMtjVudJsrG1u2geMh8wBh5esVo+1+uok=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745526173; c=relaxed/simple;
+	bh=Hi9wwhMAQT1Q5R2xIPvocztNztKrjCK9d80W7s2YLvI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CgCp/NQg7PZWCk5de+ntHqnZYoHrK4PiqGSaasnDAhJYBQDAdTugTnZRjzxOscDLjlZvD51TV7gY16gDyGGioUx268gGtGWgCvH0tKvJJtge9DPSv3cdUojp070nZINM+iIS8dPiUn6PJFXCq0jcRzkngEy/DQlfNdi9Akg6uLo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VdEpEVIK; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZWuwRNkvyAgidhbEedD7Kw7KOeWVs+28Wg+platN5nYMHSSbZCwQMqXUxs9N0fo8FrTrOPaiZmQV/8nZ2zD2b1IcL0oJusrm0SAktqDtTd3xIx5ohsRlP95ok6EIjYorWZjQt63yGzqJRfF7HpnT5Qu5Php/blYGJpzUquHRZ54DGwWqMuru2HcL+xvdJUHRpXtvlEIxwb2dvOB+mIyQj/FJhaoYZcZv9grYzBE0KUsw2sLQUR8QjW1TeQxUMpGm7axTpXKckfpIXVMAivLiTeSEU0+RN+2opU71NdCSOTLqdRkmlDJD7sqFxCG+9URFKamI4k9oQKiheCZezqdFOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rbh/k+l2WscQat/XMYxtHhv0ilU//rB2LJnOc2BNRs0=;
+ b=QDqlz6q0jjrkWg8G0mx3n5CaI4qQ/tS+Ck+Z1alvM0Zq/TwkBI+fad86RlhDWi+yxsrYlG34wp3vbRBnmjAtpV7qe3gU0owslegGG8YeqqDbgb/tadgGKJq6zk7i1mkLtrlGiW7+nLeSJS6KUY5b7ktkU/7XPJFpsHJ/n87aByZRQHnWV//AMSgPcGcCToS7LeupALkpQcWV60lpoYeKBu3Cu+A3RSsWsh9rItfViWeKEU/i7kzqCLdWFn9TY/15pDm0NKAnnjZMO6HylZydvZ02sQBKyfa0jguykybiSZZ88JjzA/sE9Uf1tWYIrXoJNWsaZ4GIHodJ92KCRV6DTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rbh/k+l2WscQat/XMYxtHhv0ilU//rB2LJnOc2BNRs0=;
+ b=VdEpEVIKUC6OJIvyswm0WI+E9QOuRB0GuHB6DQWOy3Ut/t9mQ8My2E37d1XkpmoWaf+dCRrUbNu7RvvV/yL/ae1X/Vwr2IXhtKKWwdyW3EsEe+yt4wxP06GOuuYfAyKo9IIoVYcsY9DGDHHp1rQMuCNxBGdGLWGIcPts6SYACf6uEjJHw9TSGIqTyLjItCto/DzI5ZHG5ZIGttDhFEF2F8AWOTWgjyfo5H8+W4l4Ci1fgkULsSAeQ4UMCwXT7TcTHQcMVv/HQ26R95hEFWobtljBgz09vpXlATPbDX7uPWmXluqbNVGsweFygTo4VcveqXr4lgY+IIqRxDnI6O0M6Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB8044.namprd12.prod.outlook.com (2603:10b6:8:148::14)
+ by CH3PR12MB7739.namprd12.prod.outlook.com (2603:10b6:610:151::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Thu, 24 Apr
+ 2025 20:22:47 +0000
+Received: from DS0PR12MB8044.namprd12.prod.outlook.com
+ ([fe80::f250:7fd7:ce23:a0fb]) by DS0PR12MB8044.namprd12.prod.outlook.com
+ ([fe80::f250:7fd7:ce23:a0fb%6]) with mapi id 15.20.8678.025; Thu, 24 Apr 2025
+ 20:22:47 +0000
+Message-ID: <aa540122-6a6a-4fd0-9005-5a4061f8eb6f@nvidia.com>
+Date: Thu, 24 Apr 2025 16:22:44 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/16] gpu: nova-core: Add support for VBIOS ucode
+ extraction for boot
+To: Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, John Hubbard <jhubbard@nvidia.com>,
+ Ben Skeggs <bskeggs@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-13-ecd1cca23963@nvidia.com> <aAjz2CYTsAhidiEU@pollux>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aAjz2CYTsAhidiEU@pollux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9P223CA0011.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:408:10b::16) To DS0PR12MB8044.namprd12.prod.outlook.com
+ (2603:10b6:8:148::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB8044:EE_|CH3PR12MB7739:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb88fc99-63e2-43e1-8d67-08dd836dc72c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2pkQk1ITERFb3ZEaUltbHJ3NmRvREY0UC96eVlhK0VBazg0RkwxM2pLaE9k?=
+ =?utf-8?B?RVlsdGhDcFRZSDRxMFQ4cXNRaVVYMThGU0xOY1ZnNmJ4SUpUdi8zbXZqdTRS?=
+ =?utf-8?B?dStUcWtJNW9RdFh6M3BTUk03ekNSY0xUN2xWa0Ywd3U2eEdtLzVTUS80T25W?=
+ =?utf-8?B?ZytQYVNsM0xyVGU1dFFBTW5sU2FhRldFSklpSVhrZlhnMGpKTEU4SGlTVlh4?=
+ =?utf-8?B?ZVU5b0U5a0dPNm00Tm4xSVlYaWs3YnhVVWpuYytMR2xNdlhkTVMxRHEzR3Rp?=
+ =?utf-8?B?dGtaQkpEajF3YmZHb21pWksveS9pZjVCVXpYV2laTzIrV0dGMjVTeExpYlZ6?=
+ =?utf-8?B?UUlXaGQyeExSWFQyN1lNZE92S1BUOWF5YXNIS2E3NjhzSmhyTUFmVm9IUmRF?=
+ =?utf-8?B?elM0WGRZZzFYNm5sbHAwb0RGNDdlR2pqZnRxTWk2cEVVVmZ5VzEwN2lSOFV6?=
+ =?utf-8?B?Y3RWTGFUU1VlRjZtL3hJck51VE0wa2s1VGlBMDZMYTNJVUhUZTZYN1d0dU9j?=
+ =?utf-8?B?WWZoSDIzK0c0K0pEWXFoeERFWUN0b3o0SWJvd3FyTU1UZmRDVHEwMkFkSnFm?=
+ =?utf-8?B?SnZjK3dnWTFyRXVlOFUvZVhrczlYYnVzTlRrd1FPT2tGaDZtanZJYUtxUUVG?=
+ =?utf-8?B?YUlTdVpjclhYVVB1TzIxV0ZOa0VTUGxXSlIwbkJocldxbnZnT0F2cVNpSzI2?=
+ =?utf-8?B?ckZoeHVwdG9rNkw3WUZlT2V1QVdxajRPRlMzdFJTb2hQMVFTVXhPOUdHc01v?=
+ =?utf-8?B?VzNEa0w0Y0Zab3FmWU1NMWc5YzFOWTk3V0NOOW9lMXlxdUJqckdUT2hEanVX?=
+ =?utf-8?B?QUxWUG92YnRnY3hTU0xCQXFhZUEzdXJpNFZPTEp0QzR2Tkc0WktjZGpvWC92?=
+ =?utf-8?B?WURsZXRzaUd4RkhKSXVuWlBDU2xUdzlwS2ZZT1hhVHJSVnJGZWdOYVl2bURB?=
+ =?utf-8?B?WnJub3pvMGl6ZU50YWFSemJQU3V5MHQ4M1RFUm42WHZXUE5jZ0g3T1ROZ0Jx?=
+ =?utf-8?B?a1NCT3JTbmRiVDE5eEtYK2NRbUtrRFFUNDl6ZVMxRWNIUUtGMkVLSVc4NFVD?=
+ =?utf-8?B?REFZOWp5ZHRudXBtR29Jb3Y2ak16SWFEdjNnQkZJT1VNc09XaDU1cmE0L2Nj?=
+ =?utf-8?B?UUNNNkZhZVZHcitOS0dSU2xiaFZhSW1yRU5ieXlQQVY3ZUlqNFVGcXZpaDRH?=
+ =?utf-8?B?bUUvMkNLbkRZRXdTaG9jL0RVdE9lVnhjZzlVbUN3L0VzZG5lVXJIdjdUUjFG?=
+ =?utf-8?B?NWdyOFllZDRJVjB0S0NzOWJGMG1kVXEzZFJWcERWNU9yZ2FSRGZ0Yk51b2Nh?=
+ =?utf-8?B?YXB2V0pYN2YzY1RROTlVd0MxYnNyczVtN1NXTUpwWktCWDVoRlJHMzBkL1BW?=
+ =?utf-8?B?MTRqc2IxSHBsOG5hc25tTExNcEhIY3ZoZ1YxOEJNdzZJbk9HVTdySStEVUwx?=
+ =?utf-8?B?WCtiRDE1R2dhQWtIMXpxYmZKVEZZK2pYU2RTUVB6d3Njd1Y5YkxpL2Jub3pK?=
+ =?utf-8?B?WW4yaTg2d0RQSk13MjBjRjFZOGZyRFRYck9BaUUzck5XbHkxM1RXSlJvN0NH?=
+ =?utf-8?B?YmpJbnhiSmNVLy8rellzejZyRkwwSlp4N3drMVUvUEp3aGFPTjR1VFg0OHhs?=
+ =?utf-8?B?cGNxT2FwcncwNjQ3bjUwOG5jbnpFVkVpcjJ1ejdUQVdpajlyRE41ek1nN3Jw?=
+ =?utf-8?B?dDdNOTJJRndyWmhocnNHdXJZK3U2ZVFISENrRzA3U0xQcXh2UXlXemtVVVZO?=
+ =?utf-8?B?MXNRTGI1cnpjak04Z0VKMEJpSnluWjNBRVREVVBjNjQxRVpjeEhubHhWekZu?=
+ =?utf-8?B?UGxqVVgxYndHSXFSaXAyOVpjR3B4bTZJaFBDa1pGeG40V3V4b0xYdHlWVG05?=
+ =?utf-8?B?VkVwR3lLSW45TFdZUUhPMjlRN29uTVBGT29qa0ZuV3Y1UWcyQUMvdituZXpL?=
+ =?utf-8?Q?3ZS77bF8dmU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8044.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bGFtU1NTcWhVZ1lPTnpBWUtXT2xCSHpxUlJtUXB6U081OFlXNUV1Rlk2d3A5?=
+ =?utf-8?B?NkFvL1MweGJOVUtTRE9ycW1YK1VkWVJCbnIyTTYyZzlReFB3M3pCVS9qdTV6?=
+ =?utf-8?B?MGpHQTNVa1dISWs3WWo2K095ZW5PZUk0VmxBOGNNWUtGcjVORzhha0hsREE2?=
+ =?utf-8?B?U3hEeGljU2dxSDFtTTlCaUJHTkFpSURHbS9NdktkUnM2V2g4cnNrR2gvdzJv?=
+ =?utf-8?B?MGtFMmtrbTdETUVlb2xXRkREUElVS1dEMjBidzIxVHM2L1pSZmUzRnRCU01i?=
+ =?utf-8?B?NE5XR0hBc2hQUGFBeThWT0Vyc21wSkNld09NaW1QU000VkRlVDB0VktBS093?=
+ =?utf-8?B?Q2pTWjhqT1p4L2ZBcFZvcUZuQjhXMnJ0K29hUkFaeW4xWFY5elpjbEFYQ2N6?=
+ =?utf-8?B?R1VtSVQ5R2pqNk5PNnZka1Z3Y1NVNTNwenZBdnFkd2xkaUkydUl4S3R5SFd6?=
+ =?utf-8?B?S0M1Tkd6NnIzZGJaUVlCZEFTUzFkUWxidkJnWXFXL3I0UitsbFJpZlVGQlNy?=
+ =?utf-8?B?bUNiZE5RRFcraW5Tci9QNjlRbjNrMG00cTkvclBEZVQ2TUJqQnpJK1huR05w?=
+ =?utf-8?B?cy9Dbm8rVjJobDFLN0dLSTlseExrVUxERE5JS3hzeXF2OEVLdUZIb3cxL3Y5?=
+ =?utf-8?B?alROU1R2SmdocUJRdHdaRmdTRjdET2JzRzRHQjNvZ282aXNkYVlLOFhFTkpL?=
+ =?utf-8?B?M2MyVlNlVXFJVWQ4OG5wRmo3eVU2ZjEyYVFGUzZMQjR3VGpqTWl3VVJpSDAy?=
+ =?utf-8?B?bnBYaUg2NERrcDlIWjVVZmtSKytNRUQvaUtKMmJUYVJWb0plVXRjcHR1eGlW?=
+ =?utf-8?B?YngxYUxqVFdkbndxM0NadDJIR05tNDVQeXVBWDRjTGNicnkwRFpRTThuMDVI?=
+ =?utf-8?B?b0VLWXRaZXhtd3oydEVwb05KUVdzeTdSK1JXeTdCSUZTN1d6bHB1UW94NXpG?=
+ =?utf-8?B?SXFDN2xLd21kQWt1TjF3V3c1cEFoNGFCYlFFbFRCL3g2UmF3c3BEOHFKYStz?=
+ =?utf-8?B?dUhlMTVySGFrTVhXdCtObnc4RE5GUFlTQzFqa0IzeGNHd3R2MnJrb1dTZFJ6?=
+ =?utf-8?B?bXpEN240TmFWOUxleC9zbnY3OGlWT2RrQTVlSVlTR0FBaS9jWE1uOUVhZVpy?=
+ =?utf-8?B?b0svUkFER3hZWVFaWjUvNmVXcUgza3V6a1NKMXZNTmNpWTROUkFuLzVXVXZk?=
+ =?utf-8?B?c1hvaFNOdzRtdUEzWU0rZnlGSVMySWJESWFQako3cGUvKzNyRU9xazBMVlA3?=
+ =?utf-8?B?UVEzenpYSDVBQjBWS25nUlFDMjMzT0xORmNDNFRXVkpyTlR5RWxYVUh5dGVC?=
+ =?utf-8?B?SnVGSUVSVTJPWDV4Vy9QMHAyWmVTK251cTRtR0p6eG5tV29jdC9WT1RpQzlL?=
+ =?utf-8?B?VkpwZFhIMjQrQTZGOU85VVlJTXJxN1JOWFFXU2JJNDA4VVEwQ04rYVF1TTJ1?=
+ =?utf-8?B?V0R0SW9oWitPcklXdWV0a0FXdW95UTBqTzlFZGZ3aWlkZnNtK1NrSDdSbXNv?=
+ =?utf-8?B?aGxCL3ZqTnI1WmNMaGhaYjJxZmUwcHlFdklxSHlaMkFuWENKWFBNcTFEdUpv?=
+ =?utf-8?B?ODd5M0Z3QXdQSjF0Nlc0eFBTTWNGV1ZJYUx5QmFmT3lpSDlVQ0hxR3F4cWgw?=
+ =?utf-8?B?TWc3SUJvaTJGQitMZkJBbEpieHArem5MeWN2aS9VVEI5ZXVjSEM2UGN5YVg5?=
+ =?utf-8?B?bmdaK3hrWENScjVJa1BBV1ZycWFsNlBPbllQWTZ1WHZZZ1JNSUQ4d1h3bEYy?=
+ =?utf-8?B?Vi82VWFsRHppZFhDZXcwQWU0TWJ4a2pzVEZWZnVqUmZweEFMSjdtSEZIKzR0?=
+ =?utf-8?B?UEdsa1J5eFdWNWJyZzBTNWY1UEFCbHhLeEw0ZFVlRHdFZE55MnRMdm5zMnFH?=
+ =?utf-8?B?K3owWkdEU3NQMVhJaEFseldVV1o0UGtuMEhrQWhldEYyQitvVDlXVTBCRlBr?=
+ =?utf-8?B?bWZiRllRVjRhNU1FUnhnbWNhSHhydVczVFRJRVJ1WXJXY0pzZ0JGUFlnOGlO?=
+ =?utf-8?B?dDhCOWtoKzhqbEE4ZzlWZDlTUTdDdys2R3UxQ3ZOUko0QllrWTB5K3dFM0F2?=
+ =?utf-8?B?bEkyeko4aEI4bHErM2pmTU0yT3dVWkc3QUN0UnA0cVh4NnUzaEw1ZEJ0NFg0?=
+ =?utf-8?Q?jL6PFtsmO0qyIQNq+J56Ze+v1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb88fc99-63e2-43e1-8d67-08dd836dc72c
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8044.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 20:22:47.4698
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g0BdCoxlChsI6o941JfElWSu0Wz8IArKI8TnEnIsjetPTgJokzBIPyKpoJ10zVJlPZZ4w7eRnwEfuOi5P8tB7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7739
 
-It is possible for a reclaimer to cause demotions of an lruvec belonging
-to a cgroup with cpuset.mems set to exclude some nodes. Attempt to apply
-this limitation based on the lruvec's memcg and prevent demotion.
 
-Notably, this may still allow demotion of shared libraries or any memory
-first instantiated in another cgroup. This means cpusets still cannot
-cannot guarantee complete isolation when demotion is enabled, and the
-docs have been updated to reflect this.
 
-This is useful for isolating workloads on a multi-tenant system from
-certain classes of memory more consistently - with the noted exceptions.
+On 4/23/2025 10:06 AM, Danilo Krummrich wrote:
+> On Sun, Apr 20, 2025 at 09:19:45PM +0900, Alexandre Courbot wrote:
+>> From: Joel Fernandes <joelagnelf@nvidia.com>
+>>
+>> Add support for navigating and setting up vBIOS ucode data required for
+>> GSP to boot. The main data extracted from the vBIOS is the FWSEC-FRTS
+>> firmware which runs on the GSP processor. This firmware runs in high
+>> secure mode, and sets up the WPR2 (Write protected region) before the
+>> Booter runs on the SEC2 processor.
+>>
+>> Also add log messages to show the BIOS images.
+>>
+>> [102141.013287] NovaCore: Found BIOS image at offset 0x0, size: 0xfe00, type: PciAt
+>> [102141.080692] NovaCore: Found BIOS image at offset 0xfe00, size: 0x14800, type: Efi
+>> [102141.098443] NovaCore: Found BIOS image at offset 0x24600, size: 0x5600, type: FwSec
+>> [102141.415095] NovaCore: Found BIOS image at offset 0x29c00, size: 0x60800, type: FwSec
+>>
+>> Tested on my Ampere GA102 and boot is successful.
+>>
+>> [applied changes by Alex Courbot for fwsec signatures]
+>> [applied feedback from Alex Courbot and Timur Tabi]
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/firmware.rs  |    2 -
+>>  drivers/gpu/nova-core/gpu.rs       |    5 +
+>>  drivers/gpu/nova-core/nova_core.rs |    1 +
+>>  drivers/gpu/nova-core/vbios.rs     | 1103 ++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 1109 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
+>> index 4ef5ba934b9d255635aa9a902e1d3a732d6e5568..58c0513d49e9a0cef36917c8e2b25c414f6fc596 100644
+>> --- a/drivers/gpu/nova-core/firmware.rs
+>> +++ b/drivers/gpu/nova-core/firmware.rs
+>> @@ -44,7 +44,6 @@ pub(crate) fn new(
+>>  }
+>>  
+>>  /// Structure used to describe some firmwares, notable fwsec-frts.
+>> -#[allow(dead_code)]
+>>  #[repr(C)]
+>>  #[derive(Debug, Clone)]
+>>  pub(crate) struct FalconUCodeDescV3 {
+>> @@ -64,7 +63,6 @@ pub(crate) struct FalconUCodeDescV3 {
+>>      _reserved: u16,
+>>  }
+>>  
+>> -#[allow(dead_code)]
+>>  impl FalconUCodeDescV3 {
+>>      pub(crate) fn size(&self) -> usize {
+>>          ((self.hdr & 0xffff0000) >> 16) as usize
+>> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+>> index ec4c648c6e8b4aa7d06c627ed59c0e66a08c679e..2344dfc69fe4246644437d70572680a4450b5bd7 100644
+>> --- a/drivers/gpu/nova-core/gpu.rs
+>> +++ b/drivers/gpu/nova-core/gpu.rs
+>> @@ -11,6 +11,7 @@
+>>  use crate::regs;
+>>  use crate::timer::Timer;
+>>  use crate::util;
+>> +use crate::vbios::Vbios;
+>>  use core::fmt;
+>>  
+>>  macro_rules! define_chipset {
+>> @@ -157,6 +158,7 @@ pub(crate) struct Gpu {
+>>      fw: Firmware,
+>>      sysmem_flush: DmaObject,
+>>      timer: Timer,
+>> +    bios: Vbios,
+>>  }
+>>  
+>>  #[pinned_drop]
+>> @@ -237,12 +239,15 @@ pub(crate) fn new(
+>>  
+>>          let _sec2_falcon = Sec2Falcon::new(pdev, spec.chipset, &bar, true)?;
+>>  
+>> +        let bios = Vbios::probe(&bar)?;
+>> +
+>>          Ok(pin_init!(Self {
+>>              spec,
+>>              bar,
+>>              fw,
+>>              sysmem_flush,
+>>              timer,
+>> +            bios,
+>>          }))
+>>      }
+>>  }
+>> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+>> index 4dde8004d24882c60669b5acd6af9d6988c66a9c..2858f4a0dc35eb9d6547d5cbd81de44c8fc47bae 100644
+>> --- a/drivers/gpu/nova-core/nova_core.rs
+>> +++ b/drivers/gpu/nova-core/nova_core.rs
+>> @@ -29,6 +29,7 @@ macro_rules! with_bar {
+>>  mod regs;
+>>  mod timer;
+>>  mod util;
+>> +mod vbios;
+>>  
+>>  kernel::module_pci_driver! {
+>>      type: driver::NovaCore,
+>> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..534107b708cab0eb8d0accf7daa5718edf030358
+>> --- /dev/null
+>> +++ b/drivers/gpu/nova-core/vbios.rs
+>> @@ -0,0 +1,1103 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +// To be removed when all code is used.
+>> +#![allow(dead_code)]
+> 
+> Please not, use 'expect' and and only where needed. If it would be too much,
+> it's probably a good indicator that we want to reduce the size of the patch for
+> now.
 
-Note on locking:
+Done.
 
-The cgroup_get_e_css reference protects the css->effective_mems, and
-calls of this interface would be subject to the same race conditions
-associated with a non-atomic access to cs->effective_mems.
+[..]
 
-So while this interface cannot make strong guarantees of correctness,
-it can therefore avoid taking a global or rcu_read_lock for performance.
+>> +
+>> +        // loop till break
+> 
+> This comment seems unnecessary, better explain what we loop over and why.
 
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Suggested-by: Waiman Long <longman@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- .../ABI/testing/sysfs-kernel-mm-numa          | 16 +++++---
- include/linux/cpuset.h                        |  5 +++
- include/linux/memcontrol.h                    |  6 +++
- kernel/cgroup/cpuset.c                        | 36 ++++++++++++++++
- mm/memcontrol.c                               |  6 +++
- mm/vmscan.c                                   | 41 +++++++++++--------
- 6 files changed, 88 insertions(+), 22 deletions(-)
+Done.
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-numa b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-index 77e559d4ed80..90e375ff54cb 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-numa
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-@@ -16,9 +16,13 @@ Description:	Enable/disable demoting pages during reclaim
- 		Allowing page migration during reclaim enables these
- 		systems to migrate pages from fast tiers to slow tiers
- 		when the fast tier is under pressure.  This migration
--		is performed before swap.  It may move data to a NUMA
--		node that does not fall into the cpuset of the
--		allocating process which might be construed to violate
--		the guarantees of cpusets.  This should not be enabled
--		on systems which need strict cpuset location
--		guarantees.
-+		is performed before swap if an eligible numa node is
-+		present in cpuset.mems for the cgroup (or if cpuset v1
-+		is being used). If cpusets.mems changes at runtime, it
-+		may move data to a NUMA node that does not fall into the
-+		cpuset of the new cpusets.mems, which might be construed
-+		to violate the guarantees of cpusets.  Shared memory,
-+		such as libraries, owned by another cgroup may still be
-+		demoted and result in memory use on a node not present
-+		in cpusets.mem. This should not be enabled on systems
-+		which need strict cpuset location guarantees.
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 893a4c340d48..5255e3fdbf62 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -171,6 +171,7 @@ static inline void set_mems_allowed(nodemask_t nodemask)
- 	task_unlock(current);
- }
- 
-+extern bool cpuset_node_allowed(struct cgroup *cgroup, int nid);
- #else /* !CONFIG_CPUSETS */
- 
- static inline bool cpusets_enabled(void) { return false; }
-@@ -282,6 +283,10 @@ static inline bool read_mems_allowed_retry(unsigned int seq)
- 	return false;
- }
- 
-+static inline bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
-+{
-+	return true;
-+}
- #endif /* !CONFIG_CPUSETS */
- 
- #endif /* _LINUX_CPUSET_H */
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 53364526d877..a6c4e3faf721 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1736,6 +1736,8 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- 	rcu_read_unlock();
- }
- 
-+bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid);
-+
- #else
- static inline bool mem_cgroup_kmem_disabled(void)
- {
-@@ -1793,6 +1795,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- {
- }
- 
-+static inline bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
-+{
-+	return true;
-+}
- #endif /* CONFIG_MEMCG */
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index f8e6a9b642cb..7eb71d411dc7 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -4163,6 +4163,42 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
- 	return allowed;
- }
- 
-+bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
-+{
-+	struct cgroup_subsys_state *css;
-+	struct cpuset *cs;
-+	bool allowed;
-+
-+	/*
-+	 * In v1, mem_cgroup and cpuset are unlikely in the same hierarchy
-+	 * and mems_allowed is likely to be empty even if we could get to it,
-+	 * so return true to avoid taking a global lock on the empty check.
-+	 */
-+	if (!cpuset_v2())
-+		return true;
-+
-+	css = cgroup_get_e_css(cgroup, &cpuset_cgrp_subsys);
-+	if (!css)
-+		return true;
-+
-+	/*
-+	 * Normally, accessing effective_mems would require the cpuset_mutex
-+	 * or callback_lock - but node_isset is atomic and the reference
-+	 * taken via cgroup_get_e_css is sufficient to protect css.
-+	 *
-+	 * Since this interface is intended for use by migration paths, we
-+	 * relax locking here to avoid taking global locks - while accepting
-+	 * there may be rare scenarios where the result may be innaccurate.
-+	 *
-+	 * Reclaim and migration are subject to these same race conditions, and
-+	 * cannot make strong isolation guarantees, so this is acceptable.
-+	 */
-+	cs = container_of(css, struct cpuset, css);
-+	allowed = node_isset(nid, cs->effective_mems);
-+	css_put(css);
-+	return allowed;
-+}
-+
- /**
-  * cpuset_spread_node() - On which node to begin search for a page
-  * @rotor: round robin rotor
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 40c07b8699ae..2f61d0060fd1 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -29,6 +29,7 @@
- #include <linux/page_counter.h>
- #include <linux/memcontrol.h>
- #include <linux/cgroup.h>
-+#include <linux/cpuset.h>
- #include <linux/sched/mm.h>
- #include <linux/shmem_fs.h>
- #include <linux/hugetlb.h>
-@@ -5437,3 +5438,8 @@ static int __init mem_cgroup_swap_init(void)
- subsys_initcall(mem_cgroup_swap_init);
- 
- #endif /* CONFIG_SWAP */
-+
-+bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
-+{
-+	return memcg ? cpuset_node_allowed(memcg->css.cgroup, nid) : true;
-+}
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 2b2ab386cab5..32a7ce421e42 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -342,16 +342,22 @@ static void flush_reclaim_state(struct scan_control *sc)
- 	}
- }
- 
--static bool can_demote(int nid, struct scan_control *sc)
-+static bool can_demote(int nid, struct scan_control *sc,
-+		       struct mem_cgroup *memcg)
- {
-+	int demotion_nid;
-+
- 	if (!numa_demotion_enabled)
- 		return false;
- 	if (sc && sc->no_demotion)
- 		return false;
--	if (next_demotion_node(nid) == NUMA_NO_NODE)
-+
-+	demotion_nid = next_demotion_node(nid);
-+	if (demotion_nid == NUMA_NO_NODE)
- 		return false;
- 
--	return true;
-+	/* If demotion node isn't in the cgroup's mems_allowed, fall back */
-+	return mem_cgroup_node_allowed(memcg, demotion_nid);
- }
- 
- static inline bool can_reclaim_anon_pages(struct mem_cgroup *memcg,
-@@ -376,7 +382,7 @@ static inline bool can_reclaim_anon_pages(struct mem_cgroup *memcg,
- 	 *
- 	 * Can it be reclaimed from this node via demotion?
- 	 */
--	return can_demote(nid, sc);
-+	return can_demote(nid, sc, memcg);
- }
- 
- /*
-@@ -1096,7 +1102,8 @@ static bool may_enter_fs(struct folio *folio, gfp_t gfp_mask)
-  */
- static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		struct pglist_data *pgdat, struct scan_control *sc,
--		struct reclaim_stat *stat, bool ignore_references)
-+		struct reclaim_stat *stat, bool ignore_references,
-+		struct mem_cgroup *memcg)
- {
- 	struct folio_batch free_folios;
- 	LIST_HEAD(ret_folios);
-@@ -1109,7 +1116,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 	folio_batch_init(&free_folios);
- 	memset(stat, 0, sizeof(*stat));
- 	cond_resched();
--	do_demote_pass = can_demote(pgdat->node_id, sc);
-+	do_demote_pass = can_demote(pgdat->node_id, sc, memcg);
- 
- retry:
- 	while (!list_empty(folio_list)) {
-@@ -1658,7 +1665,7 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
- 	 */
- 	noreclaim_flag = memalloc_noreclaim_save();
- 	nr_reclaimed = shrink_folio_list(&clean_folios, zone->zone_pgdat, &sc,
--					&stat, true);
-+					&stat, true, NULL);
- 	memalloc_noreclaim_restore(noreclaim_flag);
- 
- 	list_splice(&clean_folios, folio_list);
-@@ -2031,7 +2038,8 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
- 	if (nr_taken == 0)
- 		return 0;
- 
--	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false);
-+	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false,
-+					 lruvec_memcg(lruvec));
- 
- 	spin_lock_irq(&lruvec->lru_lock);
- 	move_folios_to_lru(lruvec, &folio_list);
-@@ -2214,7 +2222,7 @@ static unsigned int reclaim_folio_list(struct list_head *folio_list,
- 		.no_demotion = 1,
- 	};
- 
--	nr_reclaimed = shrink_folio_list(folio_list, pgdat, &sc, &stat, true);
-+	nr_reclaimed = shrink_folio_list(folio_list, pgdat, &sc, &stat, true, NULL);
- 	while (!list_empty(folio_list)) {
- 		folio = lru_to_folio(folio_list);
- 		list_del(&folio->lru);
-@@ -2646,7 +2654,7 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
-  * Anonymous LRU management is a waste if there is
-  * ultimately no way to reclaim the memory.
-  */
--static bool can_age_anon_pages(struct pglist_data *pgdat,
-+static bool can_age_anon_pages(struct lruvec *lruvec,
- 			       struct scan_control *sc)
- {
- 	/* Aging the anon LRU is valuable if swap is present: */
-@@ -2654,7 +2662,8 @@ static bool can_age_anon_pages(struct pglist_data *pgdat,
- 		return true;
- 
- 	/* Also valuable if anon pages can be demoted: */
--	return can_demote(pgdat->node_id, sc);
-+	return can_demote(lruvec_pgdat(lruvec)->node_id, sc,
-+			  lruvec_memcg(lruvec));
- }
- 
- #ifdef CONFIG_LRU_GEN
-@@ -2732,7 +2741,7 @@ static int get_swappiness(struct lruvec *lruvec, struct scan_control *sc)
- 	if (!sc->may_swap)
- 		return 0;
- 
--	if (!can_demote(pgdat->node_id, sc) &&
-+	if (!can_demote(pgdat->node_id, sc, memcg) &&
- 	    mem_cgroup_get_nr_swap_pages(memcg) < MIN_LRU_BATCH)
- 		return 0;
- 
-@@ -4695,7 +4704,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
- 	if (list_empty(&list))
- 		return scanned;
- retry:
--	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false);
-+	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false, memcg);
- 	sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
- 	sc->nr_reclaimed += reclaimed;
- 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
-@@ -5850,7 +5859,7 @@ static void shrink_lruvec(struct lruvec *lruvec, struct scan_control *sc)
- 	 * Even if we did not try to evict anon pages at all, we want to
- 	 * rebalance the anon lru active/inactive ratio.
- 	 */
--	if (can_age_anon_pages(lruvec_pgdat(lruvec), sc) &&
-+	if (can_age_anon_pages(lruvec, sc) &&
- 	    inactive_is_low(lruvec, LRU_INACTIVE_ANON))
- 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
- 				   sc, LRU_ACTIVE_ANON);
-@@ -6681,10 +6690,10 @@ static void kswapd_age_node(struct pglist_data *pgdat, struct scan_control *sc)
- 		return;
- 	}
- 
--	if (!can_age_anon_pages(pgdat, sc))
-+	lruvec = mem_cgroup_lruvec(NULL, pgdat);
-+	if (!can_age_anon_pages(lruvec, sc))
- 		return;
- 
--	lruvec = mem_cgroup_lruvec(NULL, pgdat);
- 	if (!inactive_is_low(lruvec, LRU_INACTIVE_ANON))
- 		return;
- 
--- 
-2.49.0
+>> +        loop {
+>> +            // Try to parse a BIOS image at the current offset
+>> +            // This will now check for all valid ROM signatures (0xAA55, 0xBB77, 0x4E56)
+>> +            let image_size =
+>> +                Self::read_bios_image_at_offset(bar0, &mut data, cur_offset, BIOS_READ_AHEAD_SIZE)
+>> +                    .and_then(|image| image.image_size_bytes())
+>> +                    .inspect_err(|e| {
+>> +                        pr_err!(
+>> +                            "Failed to parse initial BIOS image headers at offset {:#x}: {:?}\n",
+>> +                            cur_offset,
+>> +                            e
+>> +                        );
+>> +                    })?;
+>> +
+>> +            // Create a new BiosImage with the full image data
+>> +            let full_image =
+>> +                Self::read_bios_image_at_offset(bar0, &mut data, cur_offset, image_size)
+>> +                    .inspect_err(|e| {
+>> +                        pr_err!(
+>> +                            "Failed to parse full BIOS image at offset {:#x}: {:?}\n",
+>> +                            cur_offset,
+>> +                            e
+>> +                        );
+>> +                    })?;
+>> +
+>> +            // Determine the image type
+>> +            let image_type = full_image.image_type_str();
+>> +
+>> +            pr_info!(
+> 
+> I think this should be a debug print.
+
+Done.
+
+Will continue looking into the feedback on the rest of the items and reply. Thanks!
+
+ - Joel
 
 
