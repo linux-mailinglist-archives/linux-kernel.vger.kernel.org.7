@@ -1,127 +1,81 @@
-Return-Path: <linux-kernel+bounces-618907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C315A9B4E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA432A9B4DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AD61BA6F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4D292026C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9F128CF73;
-	Thu, 24 Apr 2025 17:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="DM8GmkWm"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA7B28BA9A;
+	Thu, 24 Apr 2025 16:59:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76A28BA85
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 17:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02D427FD76;
+	Thu, 24 Apr 2025 16:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745514009; cv=none; b=qHjoX8Setr5isUkRrlHIe69cQXCfZ9Ul3cfYeOEbIYt3x8f16Ki9KoE20VVSoZ0OQoRLOiZIhP2aZEGtkqDXHfvLDhrsTFtDddjGmq/8pOc2Z0c/Yh+h3hSFxEJ0Hl624DwLgAJViIYUcgzzDskN1uBHFm5dBlMkXbwQMG6M6HU=
+	t=1745513971; cv=none; b=M9lhUvNj5+uA54ZNduJMST8ntJdMA+q64GQTOTW4C8bsXukOM5rM6hn5JOjRPDzQZ7kQf+LQFEh8j2uIafJ2JfIXLxO0DjAJX08KJSbgW74AylOZK5hW+Bg8aEfFu0XaEi8erRMVM25prDWEofmEz2SW0KJXq8vrbOWHNwz83+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745514009; c=relaxed/simple;
-	bh=Re2dLQxUt4a1JE5RnNgPNCuWjCcZgs95HiMEjBL7vA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCRx9oIq8TUetL/NYdiCSMcst2kcg7a9ETpn9LAG/KMHGGkZQacgJl1+oozQmO8nscGlZ4x5xBUSgEEuOItlKQaN/5pjFn/2HmWtRkVY4VynmHmrkRiDU4D26YVkS4OGjLi224QHYdh2XkupNYFd9NtFbvMvmgA+LlWn4Kii7ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=DM8GmkWm; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2254e0b4b79so20741305ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 10:00:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1745514007; x=1746118807; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ctx76qQS095rezkew6EL81niHz5SA/vv4yeyN5Ui+J4=;
-        b=DM8GmkWmxHQNa8aKg3yGQB/fc+vWJV9LL3UCEV6fY9mVYoqihPmaqsaAXXi3KvJNPT
-         82oCOHI4KPD0ktuataihMFX82kh5dCqVWhnDzh3lJrayvfecWmKkSvNRMjo5uSK/a27z
-         uipuK+e+aHHvKeskn3AJaUztlKe6mynaT9yGc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745514007; x=1746118807;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ctx76qQS095rezkew6EL81niHz5SA/vv4yeyN5Ui+J4=;
-        b=qAoshYrvP97uj3IjF1DB9qD5/wDNlnTIE3569ONuzZISVdCEAwP/cOksx6uqx4EqKv
-         LeeUKAdzgufsJB35uVKsLeokiOe/v8uvpr1GmXIYacU0/I+MvIGmP44cvF2iOxwYTPZA
-         R4Ni6u/unehoB7uVfqOEJSOEtvCqjeplMZl4tVvVJNV4kGEXHpZqFeY5dNF6/5/qsfmC
-         msDWm6ChILuUx92n261+4hWdkC2sXna1slRim2fJdLMBCPbwclm+JvQe11wkD3rSReE7
-         MtyFFdBMvccyB6XF40zY1MfbA90/kan3BNENxK7o2e+iCrFe1Fxlp+PTgVO4apl2IZv8
-         q3qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKIwXmjKtvLy4HTVH/T7kOiN8gbQdSEwrKgtB6hvz4xHCBMS8Q/kTvufFcfuF6y/Xy2IvwoEymZgaW+Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcDM2RLoUnA4VnTRrI/wbsYb6oazgFXzknqGFGkrDVv1PI9a3G
-	PgLNmJOD/AoqKxhX12+2jM4rA+7dNmyTtYuNh0Lt1b34UuPNhOYSzvADwUlcg9A=
-X-Gm-Gg: ASbGncu8Ieshf+nhAarUKBrwN3Agp7lMrIazdD1Cd1EBbVkNao8D4aShH1NmCDMNquW
-	PtGTT+L5uk0RV1Kf3AOGtBxdI4J7buufqM+Bu72RGrc4BTZR5XRnE52sG9bZUdrwT58t8/Dmjvj
-	Nhdq8woSRK1nfWyfaMpxBY1y/gzoOC69htsVXPKusZDxp8F5+iIbqFdNdmgGuUbfhpjSEWbknuV
-	37PIzv3XjRXzy13P2hm9Se55hCFDF4/EQ9Z3IiJl6x1Kr/SmnuaT00+gU3JH5vp8oX+Jg4x1h3Q
-	9S1TGx/fXEhfjOj6slK63zuxWFn/Ve72mslmUp4Kyyw6XYFfdgW7QUWUYfpsoTLYC7ZgriM9HcF
-	SegOufL521fQV
-X-Google-Smtp-Source: AGHT+IH0aoqvG/SgAriNMgVXTaXkiSNjDTr7/adoRh1UdV50gvlVaim43ev4uIVJyg31dGRDqG+cbA==
-X-Received: by 2002:a17:903:244c:b0:224:2717:7993 with SMTP id d9443c01a7336-22dbd471651mr2754775ad.45.1745514007176;
-        Thu, 24 Apr 2025 10:00:07 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f83ad368sm1469288a12.33.2025.04.24.10.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 10:00:06 -0700 (PDT)
-Date: Thu, 24 Apr 2025 10:00:03 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	horms@kernel.org, pkshih@realtek.com, larry.chiu@realtek.com
-Subject: Re: [PATCH net-next] rtase: Modify the format specifier in snprintf
- to %u.
-Message-ID: <aApuE3xTASb0vm9H@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, horms@kernel.org, pkshih@realtek.com,
-	larry.chiu@realtek.com
-References: <20250424062746.9693-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1745513971; c=relaxed/simple;
+	bh=knzsGm15P6a2Z39+5aVkyTJFWX9Hojaj1ywEJQ3gv8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E/IeOQiT33FuKVrDMIrFY0prZDW52LWJ3Bn5Q+lQz/zH6wIM9ulkb4/e+JFJUqg2IU34RThVyMIF6e3zbB7KOeNJh8+ssMOV4R8ftLIhTklu1xH5mzx9TiEdhMYuAS50swIUw3eJbFEQwmja1qNvmYscFktKJxwClUOxAYmMeLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57C50C4CEE3;
+	Thu, 24 Apr 2025 16:59:27 +0000 (UTC)
+Date: Thu, 24 Apr 2025 13:01:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ x86@kernel.org, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
+ Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, Mark
+ Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, Jordan Rome
+ <jordalgo@meta.com>, Sam James <sam@gentoo.org>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Jens Remus <jremus@linux.ibm.com>, Florian
+ Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, Weinan Liu
+ <wnliu@google.com>, Blake Jones <blakejones@google.com>, Beau Belgrave
+ <beaub@linux.microsoft.com>, "Jose E. Marchesi" <jemarch@gnu.org>
+Subject: Re: [PATCH v5 12/17] perf: Skip user unwind if !current->mm
+Message-ID: <20250424130122.4b6ee0df@gandalf.local.home>
+In-Reply-To: <20250424163718.GF18306@noisy.programming.kicks-ass.net>
+References: <20250424162529.686762589@goodmis.org>
+	<20250424162633.216110813@goodmis.org>
+	<20250424163718.GF18306@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424062746.9693-1-justinlai0215@realtek.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2025 at 02:27:46PM +0800, Justin Lai wrote:
-> Modify the format specifier in snprintf to %u.
+On Thu, 24 Apr 2025 18:37:18 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > Note from v4: https://lore.kernel.org/all/24cde1381495cd637f0d5663ab7629572bc0eca6.1737511963.git.jpoimboe@kernel.org/
+> > 
+> > - From the previous version, Peter Zijlstra brought up concern about
+> >   io_uring helpers, but this was never resolved. No update was made.  
 > 
-> Fixes: ea244d7d8dce ("rtase: Implement the .ndo_open function")
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> ---
->  drivers/net/ethernet/realtek/rtase/rtase_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> index 8c902eaeb5ec..5996b13572c9 100644
-> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> @@ -1114,7 +1114,7 @@ static int rtase_open(struct net_device *dev)
->  		/* request other interrupts to handle multiqueue */
->  		for (i = 1; i < tp->int_nums; i++) {
->  			ivec = &tp->int_vector[i];
-> -			snprintf(ivec->name, sizeof(ivec->name), "%s_int%i",
-> +			snprintf(ivec->name, sizeof(ivec->name), "%s_int%u",
->  				 tp->dev->name, i);
->  			ret = request_irq(ivec->irq, rtase_q_interrupt, 0,
->  					  ivec->name, ivec);
+> What is there to resolve? If you want to check for kthreads, don't check
+> for ->mm
 
-Same comment as the other patch: not sure if there is a bug out in
-the wild for this (seems unlikely since i is u16), so I think this
-is cleanup for net-next despite having a Fixes.
+I misunderstood what the issue was then ;-)
 
-Reviewed-by: Joe Damato <jdamato@fastly.com>
+OK, so the check should be task->flags & PF_KTHREAD ?
+
+-- Steve
 
