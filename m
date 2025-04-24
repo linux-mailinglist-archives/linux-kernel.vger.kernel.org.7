@@ -1,100 +1,118 @@
-Return-Path: <linux-kernel+bounces-617895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754DFA9A779
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB346A9A769
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE803AD6D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227855A3440
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027C9218821;
-	Thu, 24 Apr 2025 09:11:48 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5439A214A82;
+	Thu, 24 Apr 2025 09:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fSWX5IUp"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927EE21505C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1696C1DED49;
+	Thu, 24 Apr 2025 09:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745485907; cv=none; b=PsoC3KD9s4o8CPcYbiya4oGQrwbu76tyNFy09CpVih8ob8EVwAfqsDyYWVcoE4witwkZ2/nNnBjAWNx9cb5YqdR/sjAp7y8NzSYT6OVpuMWgdGXLM7LMbY2vCeHwzq4UE+HaI3ehtf95dkafJxPgWq2ezL0hiLUxgv2UXFHZW9c=
+	t=1745485635; cv=none; b=SZjUZd1JdANDwsPzOKoMWbd7iqKfCg9/fgGJtHwemOepFWN+E6kps3Si05dRxJBqMisMQGK9qacR5Z3gpYItONnKuwvWP0/YWXC8w75eja5edN4zega/NMoeqe4FP+OWITMkjAGxrdOhi26iUdZngHNs5DeuaExDvhKipeVGZpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745485907; c=relaxed/simple;
-	bh=GktCEw93LWx29fKSfCeGp2sL+s4pz8Hwysuvj+LEd4I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OfW079Fg2KaNLLZn+6jQkGYNVOYsjP/nOyfQCCX9ftY6+Jq6B30gnYaFxJ/hcCQ8Ma3FdNyVdIpVe627B2JdK9og9y4WUiJChWSRAVK3OHWYMKXEvuQ3VCrdgCp6kko+7i+4yL7rFN5NxmCjmASFpqFS4Mv/CRAj3PoTSqNVhoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from [192.168.2.19] (51b69338.dsl.pool.telekom.hu [::ffff:81.182.147.56])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000084239.000000006809FF1B.000C6449; Thu, 24 Apr 2025 11:06:34 +0200
-Message-ID: <a2dbbf4e79c42b99d0772db5712f52a430864240.camel@irl.hu>
-Subject: Re: amdgpu_dm_connector_mode_valid regression
-From: Gergo Koteles <soyer@irl.hu>
-To:
-  Marek =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>
-Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>,
-  Dmitry Baryshkov <lumag@kernel.org>, regressions@lists.linux.dev,
-  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-  amd-gfx@lists.freedesktop.org, Hans de Goede <hdegoede@redhat.com>,
-  Alex Deucher <alexander.deucher@amd.com>,
-  Mario Limonciello <mario.limonciello@amd.com>,
-  Alex Hung <alex.hung@amd.com>,
-  Harry Wentland <harry.wentland@amd.com>
-Date: Thu, 24 Apr 2025 11:06:34 +0200
-In-Reply-To: <aAn6wsnJ-6mqK4vR@mail-itl>
-References: <ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu>
-	 <8963a409dd575e040e5f07e4ad5e9c1d26b421f2.camel@irl.hu>
-	 <CALT56yPd-xfd=47xRxrCk4F3jib4Ti7kg8pRXy-gVAQpbOc=pw@mail.gmail.com>
-	 <e323219b52cda1891a55d12ad77a2b34edc8688b.camel@irl.hu>
-	 <Z_jodBrNFdEpJRKA@mail-itl> <aAn6wsnJ-6mqK4vR@mail-itl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1745485635; c=relaxed/simple;
+	bh=jy5nIM0xDOaEX66JTTYxCCobpJsKJNujNJcgUZv6rNA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mp3ahpF/vuCKIoBcAIRcmU37EJ8Jkp/IQIRplAbFBWUzJQQEcDkIVonQIJO9Ob29S7KDlzqDV4b/x7z4KBebDiV0fXdCdTWQ7q9+UeeKNBsQDHsZrzMTkolw1MunVx19Iwi+ObbKMOBEXGQygU0soktWqfAxGf9eTy1m/tZifQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fSWX5IUp; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=nF7FqQ9YbgPgZLoKxSaHIjMaq3vAjDNUtoKXyw0MY2k=; b=fSWX5IUpWvN6LgO3R5dGBmFcXJ
+	DK3oKRmFAKXqHq5AgRfWCjgNBGnXGfug+Pd4wEG0aBeV316a+EAhWfJ1GdEt2YicCidqpnQHL5mp8
+	dhJwH1WXrzAuvlFM6087Kdi8DHlCGA8bi63+YEXGFd+w0tudeK4zHSM4a6kXZJ5qK++3zurnn4iyO
+	902G+gxxoREXi5/HT2BffwGGlrdd7JXO+kR4z+tcpIpxI5jl+H0isHHoHqIJx/Hw50icytOy+pvEm
+	6v6QPgxJnenPhlSNeIUVkNe/Q8NDn9I8N0O1Nneunf17c5T21/foyQMAOrlq7A4TDacmSORbcO7Zi
+	ADTRMc6g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u7sXt-000djE-0p;
+	Thu, 24 Apr 2025 17:07:02 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 24 Apr 2025 17:07:01 +0800
+Date: Thu, 24 Apr 2025 17:07:01 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.15
+Message-ID: <aAn_NWZjdX-wYHxR@gondor.apana.org.au>
+References: <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZbstBewmaIfrFocE@gondor.apana.org.au>
+ <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
+ <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
+ <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
+ <Z11ODNgZwlA9vhfx@gondor.apana.org.au>
+ <Z-ofAGzvFfuGucld@gondor.apana.org.au>
+ <Z_CUFE0pA3l6IwfC@gondor.apana.org.au>
+ <Z_89K7tSzQVKRqr6@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_89K7tSzQVKRqr6@gondor.apana.org.au>
 
-Hi Marek,
+Hi Linus:
 
-On Thu, 2025-04-24 at 10:48 +0200, Marek Marczykowski-G=C3=B3recki wrote:
-> On Fri, Apr 11, 2025 at 12:01:28PM +0200, Marek Marczykowski-G=C3=B3recki=
- wrote:
-> >=20
-> > Hi,
-> >=20
-> > On Wed, Apr 02, 2025 at 04:35:05PM +0200, Gergo Koteles wrote:
-> > > Hi Dmitry,
-> > >=20
-> > > But the code would start to become quite untraceable.
-> > > duplicate mode in amdgpu_dm_connector_mode_valid()
-> > > call drm_mode_set_crtcinfo() in amdgpu_dm_connector_mode_valid()
-> > > duplicate mode in create_stream_for_sink()
-> > > overwrite ctrc in decide_crtc_timing_for_drm_display_mode()
-> > > if crtc_clock =3D=3D 0 call drm_mode_set_crtcinfo() again in
-> > > create_stream_for_sink()=20
-> >=20
-> > FWIW I'm affected by the same issue (on HP ProBook 445 G7, with AMD
-> > Ryzen 5 4500U). And the patch quoted below fixes it for me too.
->=20
-> I've re-tested it with 6.15-rc3 and the issue is still there. Is there
-> something I can do to help fixing it before final 6.15 is out?
->=20
+The following changes since commit b2e689baf220408aff8ee5dfb4edb0817e1632bb:
 
-This patch has been accepted into the the amd drm-fixes-6.15 branch, so
-hopefully it will be fixed in 6.15-rc4.
+  crypto: ahash - Disable request chaining (2025-04-12 09:33:09 +0800)
 
-https://lore.kernel.org/dri-devel/24439c13a014e1cd200785db6f3dcf08f4773eb3.=
-1743612701.git.soyer@irl.hu/
-https://gitlab.freedesktop.org/agd5f/linux/-/commits/drm-fixes-6.15
+are available in the Git repository at:
 
-Gergo
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.15-p5
 
+for you to fetch changes up to 8006aff15516a170640239c5a8e6696c0ba18d8e:
+
+  crypto: atmel-sha204a - Set hwrng quality to lowest possible (2025-04-23 09:32:57 +0800)
+
+----------------------------------------------------------------
+This push fixes the following issues:
+
+- Revert acomp multibuffer tests which were buggy.
+- Fix off-by-one regression in new scomp code.
+- Lower quality setting on atmel-sha204a as it may not be random.
+----------------------------------------------------------------
+
+Herbert Xu (2):
+      Revert "crypto: testmgr - Add multibuffer acomp testing"
+      crypto: scomp - Fix off-by-one bug when calculating last page
+
+Marek Behún (1):
+      crypto: atmel-sha204a - Set hwrng quality to lowest possible
+
+ crypto/scompress.c             |  10 +--
+ crypto/testmgr.c               | 145 ++++++++++++++++++-----------------------
+ drivers/crypto/atmel-sha204a.c |   6 ++
+ 3 files changed, 74 insertions(+), 87 deletions(-)
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
