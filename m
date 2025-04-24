@@ -1,97 +1,156 @@
-Return-Path: <linux-kernel+bounces-617587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CACA9A2B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DD0A9A2C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 09:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77C13B430D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D06F1945CC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 07:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8021B0435;
-	Thu, 24 Apr 2025 06:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059C11DC1A7;
+	Thu, 24 Apr 2025 07:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSnIxFI1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7+fxU0W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8752518E1F;
-	Thu, 24 Apr 2025 06:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCD11E9B00;
+	Thu, 24 Apr 2025 07:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745477824; cv=none; b=quHtxiGN9CxqiYMrBAHjyERyROoKcO6MYTelDRjNlT1H1+v1vpjkYmId8fXBsksn2ufeq07DBX8RrN6YEulktdEuE3zCGLCdc4HX7esMqIY1OWWTPTgi5ZBGc8Mtwc7dv+SOmqzYHVBF3cZNvULB2ETwS90qCfiYrEBooTDfxfg=
+	t=1745478006; cv=none; b=b6V/WuRtVl4eFDlsbnvEKpmg58W4/5eLeG0N5L5SQ67f0TAS+szmaftGkX5vdC+JqOufIGQ0NrT4SPpq6bw1G+kGL6hW43Y5x2k/WdzkQX6BxKPmJJAs/MxJrsG6aSy6Yy2wrDN9B7Mz33F/6ZlSVw+BM++j7laftNcrqeX6+ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745477824; c=relaxed/simple;
-	bh=zPnLokL9Enz6v0drdyRj8ySVfYvqIPvXAh+2WZuW1zc=;
+	s=arc-20240116; t=1745478006; c=relaxed/simple;
+	bh=dXgeh9BQ239dSLOAJtwEOYONOG0D+bAje9JvKYXxTuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZY7H61mwBALnpZKIqBZNV0NLqGkRHYy02LvzFvD07LNNZib8G8h55OpgQNZ3TTLezTHxMfnUF2lB3+9WQQosR314H0Y8ogIsFt9XhpEBa09idvvh3MYpr04qPqi6ljVNKXHOGJ6S0t+NFgQC+fdV9aa2CyE+ZEh4cnXqabpWGxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSnIxFI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC9CC4CEE3;
-	Thu, 24 Apr 2025 06:57:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1gJyXQAhxanLJanVNZ+Fj1hrfVwLvikTvqwrmG8PBGUwQENOE3PhbDr1hYqfR7tFd6ThKdNohe5Sef+artxtGA5R36PHzPiqoNnfbk5OH1BbjLynfG2Ize6tIE2H6KYHNkh2EKRkjmvNMBUO/MyS8I4QAFzbbPSlgi4MqpU7S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7+fxU0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49303C4CEE3;
+	Thu, 24 Apr 2025 07:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745477824;
-	bh=zPnLokL9Enz6v0drdyRj8ySVfYvqIPvXAh+2WZuW1zc=;
+	s=k20201202; t=1745478004;
+	bh=dXgeh9BQ239dSLOAJtwEOYONOG0D+bAje9JvKYXxTuE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kSnIxFI1GokV4V+fVsJxeGyERS251Gwh6yUmDRa5Ougu/R0xkaB0lMiwcyIAGt0OA
-	 /s5RDb5WGAcsouwzDoe5hdBVb2xf5O2NlM6HF9xEHKeJs1Wei2IH2bgr8qvgwVXQ0L
-	 pkkUgy0EH/FZbqo1VlO4uPWXsGaHxvqJEzD5qWEAHFnFygMcxsA0SKBosSwZOZOoUu
-	 IqbMlBOa9aqIslVymBzcqpzevDepPN8QQk+0s/cmEXi0v8sPcbAsxBZnoIm+cA9A9l
-	 8Kxzk5N9/ZenwLSN4Q1sWSeN1W23eiVrVVEh5NaO4zzyr7F7IrRJJVGEGt/7w/ezzW
-	 eedfsGbE8EQOA==
-Date: Thu, 24 Apr 2025 08:57:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	dianders@google.com, hsinyi@google.com, angelogioacchino.delregno@collabora.com, 
-	matthias.bgg@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	knoxchiou@google.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v11 1/2] dt-bindings: arm: mediatek: Add MT8186 Ponyta
- Chromebook
-Message-ID: <20250424-echidna-of-unreal-youth-9ac5b1@kuoka>
-References: <20250424010850.994288-1-cengjianeng@huaqin.corp-partner.google.com>
- <20250424010850.994288-2-cengjianeng@huaqin.corp-partner.google.com>
+	b=M7+fxU0W69+EtYNS1eeS/VO/RtKc09i5Z8JS/2/RxVuhby8yfBCaEshh+9cya4LSn
+	 lNkfZyUXuACT3KcWJFx/IClMjCZQeXVKO7IlTPqq1ArMiAw3wdiRQtA/42HT5eCl/7
+	 RwKEgPtrOOvOkwTeMj63qIcG3Bj05EofWVCebJx7WJW93LzYPJjFvflGXvH3XmPoMo
+	 mLWm/TI4QoocXLOUccbCYfybT6QNPZaL/dENRLSQReU9AcSY/DcV5U9O1sfPk8SgTN
+	 CKK3nHzOMmbQpW1FkAb+NiOW0QJEf4qAqzm6T+YDzZqfERx+j/6qbWOMr//vJkT1Nj
+	 eiv4wZ1iZ/HVw==
+Date: Thu, 24 Apr 2025 09:00:00 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: newlines in filenames; POSIX.1-2024
+Message-ID: <xv6zdpdkni6562xmkmspvydncwez25jppsh7gfo64ngm2jkgjh@isyqz2jz3l2i>
+References: <iezzxq25mqdcapusb32euu3fgvz7djtrn5n66emb72jb3bqltx@lr2545vnc55k>
+ <20250422222131.GE569616@mit.edu>
+ <3wpydsib5maytq4m4ve4b7wfbfkxwzd5m6u5woqr43qr6mickk@gw4ww6vvgyo5>
+ <20250424000534.GB765145@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="irphm5l5gmnurx7s"
 Content-Disposition: inline
-In-Reply-To: <20250424010850.994288-2-cengjianeng@huaqin.corp-partner.google.com>
+In-Reply-To: <20250424000534.GB765145@mit.edu>
 
-On Thu, Apr 24, 2025 at 09:08:49AM GMT, Jianeng Ceng wrote:
-> Ponyta is a custom label Chromebook based on MT8186. It is a
-> self-developed project of Huaqin and has no fixed OEM.
-> 
-> Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-> ---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--irphm5l5gmnurx7s
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Subject: Re: newlines in filenames; POSIX.1-2024
+References: <iezzxq25mqdcapusb32euu3fgvz7djtrn5n66emb72jb3bqltx@lr2545vnc55k>
+ <20250422222131.GE569616@mit.edu>
+ <3wpydsib5maytq4m4ve4b7wfbfkxwzd5m6u5woqr43qr6mickk@gw4ww6vvgyo5>
+ <20250424000534.GB765145@mit.edu>
+MIME-Version: 1.0
+In-Reply-To: <20250424000534.GB765145@mit.edu>
 
----
+Hi Ted,
 
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
+On Wed, Apr 23, 2025 at 07:05:34PM -0500, Theodore Ts'o wrote:
+> On Wed, Apr 23, 2025 at 09:31:42AM +0200, Alejandro Colomar wrote:
+> >=20
+> > <http://austingroupbugs.net/view.php?id=3D251>
+>=20
+> Ugh.  Reading through that bug, despite the fact that the original
+> proposal was *significantly* bared down, has greatly reduced my
+> respect for the Austin Group.
+>=20
+> One of the people in that bug argued unironically that using pipes
+> should be deprecated.  i.e., that somehow "find . ... -print0 | xargs
+> -0 ..." was a security problem.
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
+Huh!  I hadn't read that part.
 
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
+> <<Sigh>>
+>=20
+> Other people pointed out that creating proscriptions that were not
+> implemented by many/most historical implementations would fragment the
+> standard and decrease the respect people would have towards the POSIX
+> specification.  That was the "toilet paper" comment which you
+> referenced.
+>=20
+> Well, they got that right.
+>=20
+> > I think a mode for disallowing _any control characters_ (aka
+> > [:cntrl:], aka 0-31) would be a good choice.
+>=20
+> As the Austin Group Bug pointed out, the problem is that the control
+> characters can be printable characters, depending on the code page
+> that you might be using.  The example that was given was cp437.
+>=20
+> The problem is that historically speaking, the kernel does *not* know
+> about what locale that is in use.  We made an exception to handle case
+> folding, where we added Unicode tables into the kernel.  Some would
+> say that was a major mistake, and it's certainly been a headache.
 
-Best regards,
-Krzysztof
+Hmmmm, I'm not too worried about that code page for my own system, and
+most people aren't either.  I still believe it would be good to have the
+option to forbid 0-31, and let those users who need access file systems
+with such weird conventions continue using the default (that is, not
+enabling the new mode).  I think ASCII has won the character wars;
+especially in POSIX systems.
 
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--irphm5l5gmnurx7s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmgJ4WkACgkQ64mZXMKQ
+wqnKQxAAiRiUuOhd/mFBZYxCgo7HVnTi7qWsb52VoWrnujTTtTk76NTtt+q/4dsL
+m29hg4l6fLpGcrFH7caKzv3fEUAKnNATv9z7gRS4Au1lUDrH7/KdEGqLxmZlRcy6
+OdX+ZAQTze0VR1fd1xR86f0V0AIdfA9Gqrcvh9kKOxjN2xYhGW7Cvt979EkKfNXc
+r73M8a/H2X89tvKMc6b1mgd0CmJzyxGVXRqRhUBQDsy4BiK6pWOE0j8H3duUaGHk
+PAGBBIMDcVAKKbO2kq04MvILCVU3XGSNNtgAp0TR9FbMJxkMYYfMpEsA1zMEQoUD
+ImYLQI/6v+mlnqiiMlNubR32UxDkHL1DHEAOz7DTDbzXQWCq9SZI9yuCo3cieXOP
+WZoShb109We8LYz3O5fGtB0EE2EobSCEC2qf047ruQIPgMHh1QNkNdZXT8pwwrRQ
+TEpYpxLQKYRcHseU4n/Z1+Cg26KJL4QNuVTThKBHTWATadQzrqNUYYDam3V83pX7
+MtuVsQvDyT1d+Hpy0XMyVmfh2XEAfPbQG7K9JXLMjKddlo2+io+cJ817TELri2Tn
+fhZ8TqmBN5/QpdZ24nXLTDrsVb8+0hCNCC0vk1YEgH3ywEiGuOiAfdFGZ5E1zLiH
+7ZqLfhxknNP40Hy9O+M1IS8cUuFDtUy/VmaePWHxQ3AXjxAPt+c=
+=qT9M
+-----END PGP SIGNATURE-----
+
+--irphm5l5gmnurx7s--
 
