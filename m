@@ -1,195 +1,100 @@
-Return-Path: <linux-kernel+bounces-617562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2913A9A263
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C98A9A268
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777195A4E0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765935A4DBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEA61DE4DB;
-	Thu, 24 Apr 2025 06:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEcJ6jRY"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA81F1A23B1;
-	Thu, 24 Apr 2025 06:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B291DEFE1;
+	Thu, 24 Apr 2025 06:38:57 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36438BE8;
+	Thu, 24 Apr 2025 06:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745476614; cv=none; b=DK9AWK20jlArneLx/nSOcbnUARhv35bQLILk6iOl+gpu1LpL71QVXK43TrNEXgih0IoC1Nbz7tHYzOwAPS12lTZ/FlJy+0JFyjuY1vSeY0h3n2qa9vbNUvrpPeHDi9nppSF2Y+JqRszx3N0LVUCJXUdJvUJQT3NDL+I1HwQ6n2w=
+	t=1745476737; cv=none; b=gYL8ZhfopdVKrXY2npcug2W+HnFikOAarsM19osfBTxJ8bdrwcpF9Y8+5WkZXDJ7ZDkCLInIKD2tq14PYOCXqieGL67GjxoYJ4OBfXTAm3eRmHMTAL3e4RXXb3vXFknZNqYGTAq2raXERn2r6CimJnzXYoB8Su+EvDhSMWksmFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745476614; c=relaxed/simple;
-	bh=JLj1BnMNU8WF+yUunp5YM6VjkJW4gQPN8v0ZqMXmZ1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwfshlxyo/h7lA95Ls1bqWAmTF3kocoRTXUUBgaI9v/2jiVd75Hf0CMNg+9IHRRi4ERaj03smTXAkU2xploQvwwc99whLn9jxM/RlzLU/YYhceChzKah887lBx3WLw9RXgnkt93YvEcbH66GhG6WXLtTfF4tsjrJc0tRLkSsYMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEcJ6jRY; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549b116321aso756899e87.3;
-        Wed, 23 Apr 2025 23:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745476611; x=1746081411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgManF3W+m3EucBE52I+E2k3U4KfqO+q1493Pk/44+o=;
-        b=XEcJ6jRYmWUVnlxoMF26cwwZMZfvCXiFZy2KcoB/sy3db9HmdTsuG01kAiZGj76bXV
-         PK/Kr2iJblOHEGoMwZfM+3sO1xh2pfXMLLK5NSpEmipzioAK9oSfoic9OJJtmm5v8GKn
-         FR9vRToS0A9l3cJoPYqatrYy2+ktLTf1Kf5B6h7NtUiP8oAb5K9oa6b4vEWo/RpJ2Yeq
-         yOMMWEexCOst4n9AoCuTXVxQmbwwCS0WztzEzzk/0A48gB9MluQx6sDE9ADavS1QkKZs
-         tJsY1zO/tPSof/DF+SyTggmcYde05LMNhKBoewedvOdE3XWadWwJ7cqsIbEFaretXpLR
-         3oWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745476611; x=1746081411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VgManF3W+m3EucBE52I+E2k3U4KfqO+q1493Pk/44+o=;
-        b=ueD35ky6ebFdKs4prQ1Vk+35dMThVrA6/eklafcWfiUm/kjZzV1AOcyA7Gh0YHlngz
-         hTAR0SSV4sbWvZvxyQcCig8vTTu/vQ4/fo1ZRI5U6KeHmBzyrUwrBqq+1l18b8oqGWwC
-         0+jjQIcxdmVrj7JQ/ewduU1dp6UjpUzG6EXFKBZoVW8IRWyIG0sDZKsixBZwjNqUs0kP
-         qP/lFoeN93R2SQULOGo3g0urSncxPt+xobFRnIR1VyoKnUUUJCOtNqzAIh24klZOocPN
-         BUa26UP7fqyDy5BQjyLavSs6/h4e3mms9trfus466aH//8J6pVfkcnVwY0TIQF+qCYfz
-         xWWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjQAYTvGTkwr1gz3BkY6xNcudtgDzhQdOTxNuY2xk6cZkFUhFxtbIdByiNDjq4cYY0oagQYFXsAaolKMcD@vger.kernel.org, AJvYcCX0Xwxd75mPflYsLY8wvXgMNyRalccLj5rzSCTLNcEp6ciQWtIfoO6RAUoVSio81+da3dwn5T0EWo6m@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaeUxEmjnqsdLauKO0TRUBOO3gXenMXEVQDlFUnGV2OiQGIo/q
-	0EZ/+rMOGdFDI7wZwNCB4gMoHKe/YD17xff/mYCWvGmLUPzXpb5i
-X-Gm-Gg: ASbGncuKcglWh/mm0gAx9zH8QYR4wzGe+cD0PI4uS8U3qU5GXQarJnW8VFINRPz26xL
-	MOdwiWr5G1Q0Sp/DJMDZWXaGCg5uiieLtCQ7AVFexO1wc8HHdm17YdcFRgBIqBrPxlG386DrHEa
-	K455kLG9TNmvnquJmvCDjvugaKYA/9EjS+rcESciZkNAgZFtnaylreMV9hP7ZnW2OTxDS24cqtH
-	oSvNpBansh3EdIb7QJ3+oDRAgeSINy2CETEYPr2Kce0QoRsMJQounMUaieO0R2HAKhYyXCncZNh
-	7GXu6W5uYzbhXrVX45rhsB+EzRCqvxN2H23mrknjK6pAWzPRFhJqrSuS4zDfvb6v0W9HUqDyISE
-	skA==
-X-Google-Smtp-Source: AGHT+IHG0jMwpWPkpVYMRvWwLynBDuuX4rGAYjKrh3BbGXlEiCCaEKt5ltz3LfLHsRaI5CSLX7agNQ==
-X-Received: by 2002:a05:6512:12ce:b0:549:8ed4:fb5c with SMTP id 2adb3069b0e04-54e7c3fcd69mr447665e87.31.1745476610341;
-        Wed, 23 Apr 2025 23:36:50 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cc9eb4bsm121756e87.137.2025.04.23.23.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 23:36:49 -0700 (PDT)
-Date: Thu, 24 Apr 2025 08:36:47 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmrmann@suse.de>
-Subject: Re: [PATCH v3 2/3] drm/st7571-i2c: add support for Sitronix ST7571
- LCD controller
-Message-ID: <aAnb_97kxSDvDcdd@gmail.com>
-References: <20250408-st7571-v3-0-200693efec57@gmail.com>
- <20250408-st7571-v3-2-200693efec57@gmail.com>
- <87cydn9bkx.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1745476737; c=relaxed/simple;
+	bh=6DfyKxy4Irk863tKGrYcyu34xpRr1zF/UCKKSkYi7bA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PxhGSn6vFY/d7KFdsY+52fIHX1MP4XRi5z166rXzSCWil8lTJ5UOIQyKVCu1eA8kb/4sB6RMY6/YoUNoV6I/5B44OGUkR2gfLwvEFy6XWOafW32ipRjZygXiXT9Shdmx4pMBFtMVEH3HOdQ28wPYEnniLZKWltXKNJzXVjoo8Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8DxC3J53Aloqx7FAA--.65028S3;
+	Thu, 24 Apr 2025 14:38:49 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMDxH+V23AlouhaTAA--.39561S2;
+	Thu, 24 Apr 2025 14:38:48 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: KVM: Fully clear some registers when VM reboot
+Date: Thu, 24 Apr 2025 14:38:46 +0800
+Message-Id: <20250424063846.3927992-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="S7Yr4c6CSMMUOBqv"
-Content-Disposition: inline
-In-Reply-To: <87cydn9bkx.fsf@minerva.mail-host-address-is-not-set>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxH+V23AlouhaTAA--.39561S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
+Some registers such as LOONGARCH_CSR_ESTAT and LOONGARCH_CSR_GINTC
+are partly cleared with function _kvm_set_csr(). This comes from hardware
+specification, some bits are read only in VM mode, and however it can be
+written in host mode. So it is partly cleared in VM mode, and can be fully
+cleared in host mode.
 
---S7Yr4c6CSMMUOBqv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These read only bits show pending interrupt or exception status. When VM
+reset, the read-only bits should be cleared, otherwise vCPU will receive
+unknown interrupts in boot stage.
 
-Hello Javier,
+Here registers LOONGARCH_CSR_ESTAT/LOONGARCH_CSR_GINTC are fully cleared
+in ioctl KVM_REG_LOONGARCH_VCPU_RESET vCPU reset path.
 
-On Tue, Apr 08, 2025 at 12:44:46PM +0200, Javier Martinez Canillas wrote:
-> Marcus Folkesson <marcus.folkesson@gmail.com> writes:
->=20
-> Hello Marcus,
->=20
-> > Sitronix ST7571 is a 4bit gray scale dot matrix LCD controller.
-> > The controller has a SPI, I2C and 8bit parallel interface, this
-> > driver is for the I2C interface only.
-> >
->=20
-> I would structure the driver differently. For example, what was done
-> for the Solomon SSD130X display controllers, that also support these
-> three interfaces:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
-rivers/gpu/drm/solomon
->=20
-> Basically, it was split in a ssd130x.c module that's agnostic of the
-> transport interface and implements all the core logic for the driver.
->=20
-> And a set of different modules that have the interface specific bits:
-> ssd130x-i2c.c and ssd130x-spi.c.
->=20
-> That way, adding for example SPI support to your driver would be quite
-> trivial and won't require any refactoring. Specially since you already
-> are using regmap, which abstracts away the I2C interface bits.
->=20
-> > Reviewed-by: Thomas Zimmermann <tzimmrmann@suse.de>
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tiny/Kconfig      |  11 +
-> >  drivers/gpu/drm/tiny/Makefile     |   1 +
-> >  drivers/gpu/drm/tiny/st7571-i2c.c | 721 ++++++++++++++++++++++++++++++=
-++++++++
->=20
-> I personally think that the tiny sub-directory is slowly becoming a
-> dumping ground for small drivers. Instead, maybe we should create a
-> drivers/gpu/drm/sitronix/ sub-dir and put all Sitronix drivers there?
->=20
-> So far we have drivers in tiny for: ST7735R, ST7586 and ST7571 with
-> your driver. And also have a few more Sitronix drivers in the panel
-> sub-directory (although those likely should remain there).
->=20
-> I have a ST7565S and plan to write a driver for it. And I know someone
-> who is working on a ST7920 driver. That would be 5 Sitronix drivers and
-> the reason why I think that a dedicated sub-dir would be more organized.
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/kvm/vcpu.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I'm looking into moving all the (tiny) Sitronix drivers into their own
-subdirectory.
-When doing that, should I replace the TINYDRM part with DRM for those drive=
-rs?
-E.g. CONFIG_TINYDRM_ST7735R -> CONFIG_DRM_ST7735R.
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 8e427b379661..80b2316d6f58 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -902,6 +902,14 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+ 			vcpu->arch.st.guest_addr = 0;
+ 			memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->arch.irq_pending));
+ 			memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arch.irq_clear));
++
++			/*
++			 * When vCPU reset, clear the ESTAT and GINTC registers
++			 * And the other CSR registers are cleared with function
++			 * _kvm_set_csr().
++			 */
++			kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_GINTC, 0);
++			kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_ESTAT, 0);
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
 
-Or do we want to keep the config name intact?
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+-- 
+2.39.3
 
-Best regards,
-Marcus Folkesson
-
-
-
-
-
-
---S7Yr4c6CSMMUOBqv
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmgJ2/cACgkQiIBOb1ld
-UjIIhBAAudyN05XrXX2Whsh+pWT+inxuTM9ECu2URVQ4JqXI16xqAwInW0nSgf5c
-vN3mZR+EuIb8wYORU/FgG+1JDXtQGt1X7a0aYC7RkAJxOovF3uTfJPDP3GPp1sQW
-cIXyFoantymDoA+KXZ5gt1YYBI1Zq58nkblmlhh+z+w6X1SfyEubK52ifFCQYc0O
-91p98iGzpLzbU+fdgEA3ZIvxxl8bWcdCtBLrSXWzUjLTnZEZxMKJQqnPJBZjzYin
-3MWmyQIDRvAXFgPswHEN02JJ91zv12+V0ak+k+2OVT3N0+53gW1HPkZuRqzEpoSd
-VlI63w5rKxW5VmgH7RPryHsLvT0+tvyNGC9KR6A/wHbdIuYNGyiibmzpMMWESnbY
-5b+nYHjInQuwiEMnv6hsCM7GrewTz7O6UfLx2LQn5nSlYWPt+JnCpsTMg83DOgFP
-eVXPjCcZ9xxIdP4b3VJxdX0adS2+zfz7Xrbub7abWqbx4xmWBnI0aZM2uhc2Nf9F
-PrYqUfa7qCeLw8ZcoYtX3LnuxJURFXdtm0pJtVWb3c9ZbMixA6owFi/D0+2jqDQ4
-U30YVe0832ko1HPzMTrgCpa3C9mDCywmYNItd/+sE90K/VfBZ8qiFQRnC1jpiFbB
-1RtJEOwoLytRGK7OFS68+yRVEzsBa/vBq6AQuN57NqZFNBtkmnY=
-=7lP1
------END PGP SIGNATURE-----
-
---S7Yr4c6CSMMUOBqv--
 
