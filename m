@@ -1,614 +1,261 @@
-Return-Path: <linux-kernel+bounces-618553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DE3A9B001
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:01:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A146A9B00D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D3818923D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:01:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C9B7A4102
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED65B18A959;
-	Thu, 24 Apr 2025 14:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2405019CC3E;
+	Thu, 24 Apr 2025 14:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ct3m3RBP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dRxGdiMi"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDCB13BAE3;
-	Thu, 24 Apr 2025 14:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745503290; cv=none; b=mlocQjMNUfiJBU7oMbQaFsVOCJkSPdtpmxO0ltDdtKB1ugQVagBy7h1O9xFy/cRHTqt3EbT2xkf+G02XAeb92WgzDDO7AR37CPUDw0NdEXkQF95xnolJ7FBtd2rmv+kVTpu0oKk11WjRKLomXb7eqtkMixx8t7Ne5+u9evhJUiM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745503290; c=relaxed/simple;
-	bh=n1qWcK0OmGIswt8kwIB+sEnmiJZ6txhVRQ6TLUJlyg0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RWIYtyyhtIn5Rhzu+kldMNG8XAzbx/TwH8s0kwDCx7OrsbC49Ovwz8HyeNjZbPdjsdYF+6G5jjDD9ILnMbVCi8ogEB6N1RF7uQ1V+JhIJRSGioH/a8+yC2tZ2TbVRBJkfHaMh82FhQungxQEELygV3hLcDp3hmnfscZxJn9Ega0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ct3m3RBP; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928AA1990AF;
+	Thu, 24 Apr 2025 14:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745503366; cv=fail; b=gVluN69Yn+SUDK1su70GxLhGcdFjPmrF1kBU1gR/TAo18fw+Ty7bA1f1tKjCNHpsNVxkn3XcxQhD2TkJOpG6Hr9Qm6QgpgzRXl3yw92oyyOlbfEHDs1EylGUFNOSHfUpf5idos1D0eTuwnovzAC7X3MjN7rh4KxDEYHwD4oZJ8g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745503366; c=relaxed/simple;
+	bh=Pc1nPJULMfbwC9kb4otXSo3dsiDRZt9+UckHVA69hfw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UqmreAnCIqhn5ZLu56R2ToDuusiRuKbTcf0RiKC99g9TyZPeBmD0shK+8FdB/EHaxur+A3Wccek1JL0B6brS4mLx+aOpkFf+S/My8RD1SaMxd6vKL4H6mZNenZiRuLyrjDgl7JBPIrkK20CoCPi27LJjthhsdnTiwmY+fcPfqrM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dRxGdiMi; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745503288; x=1777039288;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=n1qWcK0OmGIswt8kwIB+sEnmiJZ6txhVRQ6TLUJlyg0=;
-  b=ct3m3RBPxAT/Tn752qMYe0cJeNyfO/Cq1nimheINo51ETd0tIYqr2Q2D
-   XMF06d9XI5s+ZUakoQdy3OKT0Ex+8lDCr4vEtkBHlM8wXPgmLXvvIFBDo
-   X2LOHolop8cUduiygW+0UjeCo4DedAUu46Lpra8GzmTPX/b9hBJF8n61w
-   3TkidsaECWZrJAXGU09A5UlxCyjz5iW821gMil5mJI4wfDhHvl89bRjGt
-   G8PvbEkw10S30Jd28fMqNq7ah217gXO4EVsVBZFSBXRLD93QaE7AGrFD1
-   sjdLU4MCR/9lv1xflfJ/n93zzPVgi96CuIodZZ2NkvSTh2HAkBV+O8e/i
-   A==;
-X-CSE-ConnectionGUID: CCYCaBmPQ9mhMkh9uAP0Ig==
-X-CSE-MsgGUID: T1lMN9pmS3eKIYVGOMzvyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="34758691"
+  t=1745503362; x=1777039362;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Pc1nPJULMfbwC9kb4otXSo3dsiDRZt9+UckHVA69hfw=;
+  b=dRxGdiMiBfGJTX44hA/Iy6/KipaHyJuoihq5lPLthcZhKc1bFKvKzL4/
+   hu7qQn7QOlwX+vk8b5O1ygcvDNv8JQj5K2TenTzHv2HrsegVTzBT9nAI4
+   NLDcv9iWYS89fskHHXO30dXT6tzhPFAp5GTXxdeqHqqb/MRUpa6oySTfN
+   qY3TDLIR1rieGeKzP1msFwUCI3LbqbLZl8IpftaBNjdf+M0Lo4hg2DuSw
+   eJG6QJ0sy8HMFsbH2eRKieAKYzpou4Y5dsgKELaf1nblN+mJ4KrYcg0fD
+   tvSofOxZ5m38pP7J2Gov6DplMHfwMSDJfKG/Devjh2FL79c2xxMCUUl7M
+   w==;
+X-CSE-ConnectionGUID: p4J84PeGQ/KQo0P8lUnk6w==
+X-CSE-MsgGUID: cJxmJHDXT06+uWLWA/27EA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="34759053"
 X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="34758691"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:01:27 -0700
-X-CSE-ConnectionGUID: DI8zuRKVQR214bzIr7ctsg==
-X-CSE-MsgGUID: psZBX7wZRTOq/Z4x7wfU2Q==
+   d="scan'208";a="34759053"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:02:40 -0700
+X-CSE-ConnectionGUID: lNHUk9dySReSWh4q3RC9ww==
+X-CSE-MsgGUID: pEMoCgI+TqOfiHpDEHqtIg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="132608153"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.213])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:01:25 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 24 Apr 2025 17:01:21 +0300 (EEST)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] platform/x86:intel/pmc: Create Intel PMC SSRAM
- Telemetry driver
-In-Reply-To: <20250421211100.687250-3-xi.pardee@linux.intel.com>
-Message-ID: <53a4bf94-ee4f-778d-c0f8-c2e309c440fe@linux.intel.com>
-References: <20250421211100.687250-1-xi.pardee@linux.intel.com> <20250421211100.687250-3-xi.pardee@linux.intel.com>
+   d="scan'208";a="132517057"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 07:02:39 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 24 Apr 2025 07:02:38 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 24 Apr 2025 07:02:38 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 24 Apr 2025 07:02:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zyl7NIILexl12AHVLYqMSD4sKp9a9trORVdKjEmG5nCSXcbL6qGT/vhTRwbS9bigmCmbGfmTIDx9hqn2SNgiwcaCyJa9iDQVkk4NuP4qAEZXWZtsCPrzvdhTZRwNb0Q5M3wrs1qORJdMA5jaU2VL4SFGRlsM0jMRjs6aVN9B0ebsrW75Dmqw/BlJE7lnRreYN9ou+DVOQotqeALvEE70Kzbs6xfbils/3eGNO0DXZKQPz8RpDtHJWoa9VR1UyLUA1YEpwJWzV118u6wNJ9zRtqNUF5amepWaugFF3lwWh/7myB8lMNyndzhciaIIjJzkUJpwXG9eoB0tvXctIHCRkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uUYaYvkkswWL/1bfh5woqbgvIXTA5T8lOTq/rtM+thM=;
+ b=d8C6+Dk3zx07Kh7tcfALrKV0mqsKlGWUaFOSpjy/qASAkd6QGJ7kwK3KU7ogLPtmPKWH1HY5izRUVaQud9ZshPRUhlZ2ERuIqeN7UHqejpG1WCDGni84woK0QGaLJQBtI3alr20BTj0aUQx1cRMDRyxfI3aVqDusBjzw7p/iOm9wRZPu5g/xLK1MidsdOHKuivzhU56yJijrjQCnIAAHo/fZIAVbueSPnfqFwTM9t8H0y8+9rA/GO1e2cpPdJoiB1iih0DWLVpOd3bn0x85Lou5KiSmVi3Ut9PtiTJOONTMJGZF41yao5F+nRIz+gV2kUTVc1U8DMPzrYDu8hkm+qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by DM4PR11MB7328.namprd11.prod.outlook.com (2603:10b6:8:104::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Thu, 24 Apr
+ 2025 14:02:16 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%6]) with mapi id 15.20.8678.021; Thu, 24 Apr 2025
+ 14:02:15 +0000
+Message-ID: <34e2c7f7-4d83-4e5c-af56-d91e68b3e7e1@intel.com>
+Date: Thu, 24 Apr 2025 16:02:09 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] xsk: respect the offsets when copying frags
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+CC: <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
+	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250423101047.31402-1-minhquangbui99@gmail.com>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250423101047.31402-1-minhquangbui99@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0093.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:23::8) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|DM4PR11MB7328:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6359eec2-61dc-47e6-b919-08dd83389e55
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UWpZQXBoU0gwTjdJV0xlU2ppakh1UnBvS3R4RHg2UVQ0bGhNNitqK1RjWEVR?=
+ =?utf-8?B?Y25ocDZ1ZlcyWHR3U0dGbGtsY3pTK1Rsdi80QXNoeWpZemZIYzBvLy83dkc5?=
+ =?utf-8?B?ZDN4eWp1U2o1azRLOWNaRzYxUE9zdk56NEUyZmNRRFVLSVQwT21xY1VmeVNz?=
+ =?utf-8?B?ZXBjM3l1c01sdHR4OW5DQVE3WVF1bEprTDBmWmpqRE4zUGhvbmR5SnV0YUNT?=
+ =?utf-8?B?dW1MbFZzZjk0QzdnVTk4bUc3RjBoNnhTN2ZGbHUrQjBaUEZzMG1XbXpEM2Jj?=
+ =?utf-8?B?SE1jZkROSmJqME9vL05ZNEpXTTcwR1k2alBOSytvcFJFTmdmeHBvMk54SjFx?=
+ =?utf-8?B?TmtyMEJKTjZPQmVQQmFmdWpPbEVSZkhrTXc4L3lLTC91ZkFyM1dWSmxRWEZu?=
+ =?utf-8?B?aFVqUUR6QlNrYkZ3YWZTZHBqa3Q5WVVoL3k1OEJRdzFXa09Wdk9WMWlWUU9Y?=
+ =?utf-8?B?L05pejFPNlovRm5MNmduWlg0S0hKakY0RnVaK2FXM1V4YWFWMmY5N3dvTVlQ?=
+ =?utf-8?B?VGFkVitIYlFQSW5oZzNNYTQvSUZvNVdJbzBwejhQSjlrT2czUHhzaUVsZ2Ru?=
+ =?utf-8?B?UG9qalZGdUJCeEFDNHFCa1g0bUhZU3RVNHNBUytEYWdqdHp0cUNVbGtxSEx4?=
+ =?utf-8?B?TXhPZE1Ga1krR3A1TTU2SWhqWnRNbjlXQUR0eTEwcmphZmFuYnArdHRyWEtQ?=
+ =?utf-8?B?dWpZdnh6YVVDbGl6NUNlUXNhSmowVGp0UkRnZkZ2N2UrbFVlN0hWdndsaEpY?=
+ =?utf-8?B?Y0RBalVoUG5iSzJFNlJ6S055ZzdlWGRFN2tSUU1YL1dpTDNRd3FNV29tNkFV?=
+ =?utf-8?B?RWt3T2lUSitDaUVDRHhDMWt0VWJKb1lVR0U4TDZsRDhiUXYzV0Fkdldpb1Z6?=
+ =?utf-8?B?bVZVOHpBMW4zaGUvVnRTZi9yYTk4YkpvaERTZzJQZTBWVkRGQ1lodDRwWWpQ?=
+ =?utf-8?B?L2UvOTZxenRNVjNsZUhCdjcwSTF6NEFGdEUvTzZKc2lmV3FrSjZEdUVoUDk5?=
+ =?utf-8?B?OGVmQkIxSzBVZytmVVB3Vk54RWFDSjdPTjlocG9SZkJSN0VOOVBiVkFkdDVD?=
+ =?utf-8?B?aWpzUmk0SE53QzFteEhtNTFaSHVJQ0pza2FCdExnSEJWNzhwM3h5eHUraUJt?=
+ =?utf-8?B?djN3UGNpWk9la1p3MWtrMmlQbXhKY1F2b0JvbTNUT3k5ekJOYjBGbS9QNjcx?=
+ =?utf-8?B?T1drVGZ1MVcvZ2t3dVQyU283ZFpVcVVTUmE5MkY4ZlFHZ2JFZS9CcEJENmlD?=
+ =?utf-8?B?RU03NGxqWjlSTEdrdTk0NHdRMmFEZFhQeS9Db1Q2WHZ4RkpVNXYzeVFWZEFo?=
+ =?utf-8?B?UXZSRmhWOHpvYkxKNzNUZ2tSN3ZKUGpUTTF1YXgrQ05FZERWcHJqRUwreHh0?=
+ =?utf-8?B?UmFnTkZHT0ptOVN4Z0FxT0JTa1I2QVV1cGRUbVZYWStPS3FOMGJmS3lyNjJq?=
+ =?utf-8?B?bHdWdXJYK3ZBeGJhVVFiUVozWkx6c0lPeXZoaHR1T2VLeVFsNmdiVWI5QnY2?=
+ =?utf-8?B?bHhtT3NpNTFjbEZFMUdOdEpSNnRCOEhKY2NSZWgzTk1kaXFpYlE4YUZQV2Ja?=
+ =?utf-8?B?SElCOS9XTTdCUng4OEFnRWw5cGlnalY0NlVjT2tlcFkyOHhvV3BJRmF6c2dk?=
+ =?utf-8?B?UXBibk9ocHM3Y2plUjJjdWI5YlNkYWQ4S2R2RWNZS0hSMkRTSGpuS2NIVGR0?=
+ =?utf-8?B?S2YxMzVEQTNNWTNCdHNnL0pDN2FleU9XTTNUSUZFd3NOTTdLSVpycTdyV1hR?=
+ =?utf-8?B?aGZaQ21pcmo3UHlPZnFIc1p5N1NqcjhxTTd1dWdjQ2h6U0lta3JzS0dmZG9B?=
+ =?utf-8?B?NEZsbStGSFJLUmJpUzJ2a0RocDdhVW9KbC9jM29BL2c3TUxsZVZuallYRVMz?=
+ =?utf-8?B?S2VJc0dob1JWNzgxTzNZTE0zN3BGNVlNV0wxUUdBYTdSdUttL0pveWhMcHNX?=
+ =?utf-8?Q?wDH9dutS+gw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UHdaR1NWNE9mTjdpcjl1ekJidVJVTzRzMUd6eVBERnhwazFnb1Nkb1JVRzhh?=
+ =?utf-8?B?Z1hTMHBFd3liT2FzaFZLanBEdmV4MmdzcTVBL0hzcnBjQytxRkJPUjA3WDBD?=
+ =?utf-8?B?Ynp0dGNMVkNlMlR3aWJNbHNOMFhyRVJ5RkEvaGgxemVpRUwwQTA2czJ2VkpH?=
+ =?utf-8?B?U3ZCVXdiUk1NTWRmU0JHTXR1Yi94TVZBRlFKeWdmMFU4b1d0ai9MUEdiM0JW?=
+ =?utf-8?B?L1RyVmZEU1BGR1V6WkVvQklXaXR4YTYwUXAvN3NHdGhCWXcyVmYrN3NncFdn?=
+ =?utf-8?B?c3A1MDBYOG9IcnVNd1JCNi82bEFLV3NLb0tqK3pyYzc1VHVDZkp4UEVkN09S?=
+ =?utf-8?B?ZlVDQ3dXNm85ZlB4aFR2dGd1UEU2OU1KRTRtQ2tYWkVRWUV2RkU5THZPMktW?=
+ =?utf-8?B?SER5dnpTcEgySTNFU0RscTZrZzF2V1pqYjhIbnFZanU0OW9RT1Bod1pITnE3?=
+ =?utf-8?B?TXRmQlVDdktiMVZSSEEraTlnOG42L1ArN1VGVm5CMGZjVDd1eGlmQ2FzUUFs?=
+ =?utf-8?B?Z0VnK3o3SU1vVEc4L0JIQkEyK29DYXRzd082Mm5BUm9NY1p1Y2tNaGdvWHVs?=
+ =?utf-8?B?QWRaVWFKL2hKTndOSk1qL1dldzg1TjZ0OTdmaEg1R0NLdE4wNlEyOCsrRHFh?=
+ =?utf-8?B?Z0poQlVobmR5N1cwOElZdlN1Sjg2cHRyV0JqdEhsSnAySGhIb1RqbTRlWmZY?=
+ =?utf-8?B?RkJZRFdNM3UzN0dmZXhnb2tQQ3NCSnZkMHU1WUlOTG53RUl1RUxLWDNpQ0Yv?=
+ =?utf-8?B?eUNDMHhEV1EzbFlYbW1BeGhrM0FicXV4blVCZTUySi9QakVDRVRIY3VzYmF3?=
+ =?utf-8?B?Z2FUdmd2VjRyd2pvMEU4SG1EbHExMW04aE81TEVjMk9yVHFTZnBBODlwcUNy?=
+ =?utf-8?B?ai80cnQwelEzMXhNUnh4L1QrbWVPMHdCeEtpYS95YnhuOUFhdkVSV3BGTjY1?=
+ =?utf-8?B?aElkaFNCVENralZHMUh3UHByaE9aTWFwdlN2a1Z5MnFpR3BwUjdmWmdTendv?=
+ =?utf-8?B?MkFUSmNiNWI3dURZSlh3Zy9uQTNrVGsyK1ZndnVLQXJDOG5BeCsxMWNBeUpU?=
+ =?utf-8?B?YUlienoxNlM4TjRqQUhpdlgwNW9BUEtURFZZeXdaRmErL0N0S2VHQUFzMUFF?=
+ =?utf-8?B?cDFid2Zldk91M0R3MFBNbnZoOWJ6WnRHemNuK2kyK3h3eXZCWk5DSDg4cWZx?=
+ =?utf-8?B?VFlielp2cHZieFdkclppS0ttR0VRbkIwVWZjbEJzRmYzeVVLbUlhY1djTC9R?=
+ =?utf-8?B?aysrNDBVSzB3a0lzVktiODB5eXVlYzdJNzYxRmdURXJMWCtPbWc5dGxpdWZR?=
+ =?utf-8?B?RDZRcGQ2OGhBVHVWeVdWNkdydVVuYkRpZFdXTTRLYjBvTW1iK2l4RnpLMlRS?=
+ =?utf-8?B?N2hvd1FpMG9xbzhSVkpkWExtTXZkc0FwYjgwYnJ3WWR1SHNWcnZOSlZMVXFC?=
+ =?utf-8?B?aTVZWWs1N0g0ZXlwWVNjT3p0MDJYSUtLcnlZSHI2WGJUb2tPbXNYR1J4ZGZl?=
+ =?utf-8?B?MXp6c3dBcTk5YVdUanM1TEh5S1MvRll2WWFKbnNONVhsTC9ld0VEUEVMZlp0?=
+ =?utf-8?B?UDZJalVBZTdzU1h6ZkczMkJoR1JDSDNoakRXZ0p4WDJMS0YreVBaL0FuOHVz?=
+ =?utf-8?B?UFFkQTBMaWNXaVdETUxQdVgxbG0xak9Yb2tNSlVBSVhUdUQ4M0FBcEFTbXJy?=
+ =?utf-8?B?dXZwRkRPOXVLOS82ODRRN2FIOWsvbFhyc3pWc3prQzZ4dmgvRHBiVlVGWUNj?=
+ =?utf-8?B?NHB4ZjNxbFgwNW9oUU9tNDJmcERNMjViNEpNMGpuMXpGeHdWdlpvcG9ZTWFa?=
+ =?utf-8?B?WDV6OEhBbHRXZ2tlRGkzTzFEUStCL0NlWm1Oc283ZTdFMEJBaXkwZVRrRGJs?=
+ =?utf-8?B?RmRway9FdTQzbnIvb2JDWXdlbnNpK2w1RWNWNVNNbHFpelR3QXZEKzlpUDhn?=
+ =?utf-8?B?cmZOSllPc29kcnZVNFNGN1Z2eUU2a2RENnROTEF2dHMvaE84Nk1uUXlFd1NM?=
+ =?utf-8?B?bEZ2eHhZTEJTMUZUWWlOZHVzSW9GU1phY2dmd0M3Nk5aZkJ1TXVCSkpJL3V4?=
+ =?utf-8?B?V3h0ZkIrVnExeGxaMk9hSnR0c3RhTWF0MGNWb0REdTZQa0xDWTBmbmNTWG1D?=
+ =?utf-8?B?TnI1RkhoSmRseFFUcE9GcWljbm9UM1BHelNyTFJwNG1ybExId3VwOG9kaU02?=
+ =?utf-8?B?RVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6359eec2-61dc-47e6-b919-08dd83389e55
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 14:02:15.8098
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NfQ1veTs2RxSAmMLTsrhU4QfCnGNt+NGYp3w6KH8anP40cvet34sE7MmnporXSSN8Qhs+TSh8UyFSfwT3OXBkpEZYnJ5DGJVmCKbGAx8XDA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7328
+X-OriginatorOrg: intel.com
 
-On Mon, 21 Apr 2025, Xi Pardee wrote:
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Wed, 23 Apr 2025 17:10:47 +0700
 
-> Convert ssram device related functionalities to a new driver named Intel
-> PMC SSRAM Telemetry driver. Modify PMC Core driver to use API exported by
-> the driver to discover and achieve devid and PWRMBASE address information
-> for each available PMC. PMC Core driver needs to get PCI device when
-> reading from telemetry regions.
+> Add the missing offsets when copying frags in xdp_copy_frags_from_zc().
 > 
-> The new SSRAM driver binds to the SSRAM device and provides the following
-> functionalities:
-> 1. Look for and register telemetry regions available in SSRAM device.
-> 2. Provide devid and PWRMBASE address information for the corresponding
->    PMCs.
-> 
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+> Fixes: 560d958c6c68 ("xsk: add generic XSk &xdp_buff -> skb conversion")
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
 > ---
->  drivers/platform/x86/intel/pmc/Kconfig        |   4 +
->  drivers/platform/x86/intel/pmc/Makefile       |   8 +-
->  drivers/platform/x86/intel/pmc/core.c         |  79 +++++++---
->  drivers/platform/x86/intel/pmc/core.h         |   7 -
->  .../platform/x86/intel/pmc/ssram_telemetry.c  | 147 ++++++++++++------
->  .../platform/x86/intel/pmc/ssram_telemetry.h  |  24 +++
->  6 files changed, 188 insertions(+), 81 deletions(-)
->  create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.h
+>  net/core/xdp.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/intel/pmc/Kconfig b/drivers/platform/x86/intel/pmc/Kconfig
-> index d2f651fbec2c..c6ef0bcf76af 100644
-> --- a/drivers/platform/x86/intel/pmc/Kconfig
-> +++ b/drivers/platform/x86/intel/pmc/Kconfig
-> @@ -8,6 +8,7 @@ config INTEL_PMC_CORE
->  	depends on PCI
->  	depends on ACPI
->  	depends on INTEL_PMT_TELEMETRY
-> +	select INTEL_PMC_SSRAM_TELEMETRY
->  	help
->  	  The Intel Platform Controller Hub for Intel Core SoCs provides access
->  	  to Power Management Controller registers via various interfaces. This
-> @@ -24,3 +25,6 @@ config INTEL_PMC_CORE
->  		- SLPS0 Debug registers (Cannonlake/Icelake PCH)
->  		- Low Power Mode registers (Tigerlake and beyond)
->  		- PMC quirks as needed to enable SLPS0/S0ix
-> +
-> +config INTEL_PMC_SSRAM_TELEMETRY
-> +	tristate
-> diff --git a/drivers/platform/x86/intel/pmc/Makefile b/drivers/platform/x86/intel/pmc/Makefile
-> index e842647d3ced..5f68c8503a56 100644
-> --- a/drivers/platform/x86/intel/pmc/Makefile
-> +++ b/drivers/platform/x86/intel/pmc/Makefile
-> @@ -3,8 +3,12 @@
->  # Intel x86 Platform-Specific Drivers
->  #
+> diff --git a/net/core/xdp.c b/net/core/xdp.c
+> index f86eedad586a..a723dc301f94 100644
+> --- a/net/core/xdp.c
+> +++ b/net/core/xdp.c
+> @@ -697,7 +697,8 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
+>  	nr_frags = xinfo->nr_frags;
 >  
-> -intel_pmc_core-y			:= core.o ssram_telemetry.o spt.o cnp.o \
-> -					   icl.o tgl.o adl.o mtl.o arl.o lnl.o ptl.o
-> +intel_pmc_core-y			:= core.o spt.o cnp.o icl.o \
-> +					   tgl.o adl.o mtl.o arl.o lnl.o ptl.o
->  obj-$(CONFIG_INTEL_PMC_CORE)		+= intel_pmc_core.o
->  intel_pmc_core_pltdrv-y			:= pltdrv.o
->  obj-$(CONFIG_INTEL_PMC_CORE)		+= intel_pmc_core_pltdrv.o
-> +
-> +# Intel PMC SSRAM driver
-> +intel_pmc_ssram_telemetry-y		+= ssram_telemetry.o
-> +obj-$(CONFIG_INTEL_PMC_SSRAM_TELEMETRY)	+= intel_pmc_ssram_telemetry.o
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index a53a7677122c..042b60c1185f 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -29,6 +29,7 @@
->  #include <asm/tsc.h>
+>  	for (u32 i = 0; i < nr_frags; i++) {
+> -		u32 len = skb_frag_size(&xinfo->frags[i]);
+> +		const skb_frag_t *frag = &xinfo->frags[i];
+> +		u32 len = skb_frag_size(frag);
+>  		u32 offset, truesize = len;
+>  		netmem_ref netmem;
 >  
->  #include "core.h"
-> +#include "ssram_telemetry.h"
->  #include "../pmt/telemetry.h"
->  
->  /* Maximum number of modes supported by platfoms that has low power mode capability */
-> @@ -1354,7 +1355,7 @@ static u32 pmc_core_find_guid(struct pmc_info *list, const struct pmc_reg_map *m
->  	return 0;
->  }
->  
-> -static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
-> +static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct pci_dev *pcidev)
->  {
->  	struct telem_endpoint *ep;
->  	const u8 *lpm_indices;
-> @@ -1371,7 +1372,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
->  	if (!guid)
->  		return -ENXIO;
->  
-> -	ep = pmt_telem_find_and_register_endpoint(pmcdev->ssram_pcidev, guid, 0);
-> +	ep = pmt_telem_find_and_register_endpoint(pcidev, guid, 0);
->  	if (IS_ERR(ep)) {
->  		dev_dbg(&pmcdev->pdev->dev, "couldn't get telem endpoint %ld",
->  			PTR_ERR(ep));
-> @@ -1455,27 +1456,29 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
->  	return ret;
->  }
->  
-> -static int pmc_core_ssram_get_lpm_reqs(struct pmc_dev *pmcdev)
-> +static int pmc_core_ssram_get_lpm_reqs(struct pmc_dev *pmcdev, int func)
->  {
-> +	struct pci_dev *pcidev __free(pci_dev_put) = NULL;
->  	unsigned int i;
-> -	int ret;
-> +	int ret = 0;
-
-After you remove the return changes below, this change is not needed 
-either.
-
->  
-> -	if (!pmcdev->ssram_pcidev)
-> +	pcidev = pci_get_domain_bus_and_slot(0, 0, PCI_DEVFN(20, func));
-> +	if (!pcidev)
->  		return -ENODEV;
->  
->  	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
->  		if (!pmcdev->pmcs[i])
->  			continue;
->  
-> -		ret = pmc_core_get_lpm_req(pmcdev, pmcdev->pmcs[i]);
-> +		ret = pmc_core_get_lpm_req(pmcdev, pmcdev->pmcs[i], pcidev);
->  		if (ret)
-> -			return ret;
-> +			break;
-
-These two return changes are unnecessary.
-
->  	}
->  
-> -	return 0;
-> +	return ret;
-
--- 
- i.
-
->  }
->  
-> -const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *list, u16 devid)
-> +static const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *list, u16 devid)
->  {
->  	for (; list->map; ++list)
->  		if (devid == list->devid)
-> @@ -1484,23 +1487,32 @@ const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *list, u16 devid)
->  	return NULL;
->  }
->  
-> -int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
-> -		     const struct pmc_reg_map *reg_map, unsigned int pmc_index)
-> +static int pmc_core_pmc_add(struct pmc_dev *pmcdev, unsigned int pmc_index)
-> +
->  {
-> -	struct pmc *pmc = pmcdev->pmcs[pmc_index];
-> +	struct pmc_ssram_telemetry pmc_ssram_telemetry;
-> +	const struct pmc_reg_map *map;
-> +	struct pmc *pmc;
-> +	int ret;
->  
-> -	if (!pwrm_base)
-> +	ret = pmc_ssram_telemetry_get_pmc_info(pmc_index, &pmc_ssram_telemetry);
-> +	if (ret)
-> +		return ret;
-> +
-> +	map = pmc_core_find_regmap(pmcdev->regmap_list, pmc_ssram_telemetry.devid);
-> +	if (!map)
->  		return -ENODEV;
->  
-> -	/* Memory for primary PMC has been allocated in core.c */
-> +	pmc = pmcdev->pmcs[pmc_index];
-> +	/* Memory for primary PMC has been allocated */
->  	if (!pmc) {
->  		pmc = devm_kzalloc(&pmcdev->pdev->dev, sizeof(*pmc), GFP_KERNEL);
->  		if (!pmc)
->  			return -ENOMEM;
->  	}
->  
-> -	pmc->map = reg_map;
-> -	pmc->base_addr = pwrm_base;
-> +	pmc->map = map;
-> +	pmc->base_addr = pmc_ssram_telemetry.base_addr;
->  	pmc->regbase = ioremap(pmc->base_addr, pmc->map->regmap_length);
->  
->  	if (!pmc->regbase) {
-> @@ -1513,6 +1525,20 @@ int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
->  	return 0;
->  }
->  
-> +static int pmc_core_ssram_get_reg_base(struct pmc_dev *pmcdev)
-> +{
-> +	int ret;
-> +
-> +	ret = pmc_core_pmc_add(pmcdev, PMC_IDX_MAIN);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pmc_core_pmc_add(pmcdev, PMC_IDX_IOE);
-> +	pmc_core_pmc_add(pmcdev, PMC_IDX_PCH);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * When supported, ssram init is used to achieve all available PMCs.
->   * If ssram init fails, this function uses legacy method to at least get the
-> @@ -1530,10 +1556,18 @@ int generic_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
->  	ssram = pmc_dev_info->regmap_list != NULL;
->  	if (ssram) {
->  		pmcdev->regmap_list = pmc_dev_info->regmap_list;
-> -		ret = pmc_core_ssram_init(pmcdev, pmc_dev_info->pci_func);
-> +		ret = pmc_core_ssram_get_reg_base(pmcdev);
-> +		/*
-> +		 * EAGAIN error code indicates Intel PMC SSRAM Telemetry driver
-> +		 * has not finished probe and PMC info is not available yet. Try
-> +		 * again later.
-> +		 */
-> +		if (ret == -EAGAIN)
-> +			return -EPROBE_DEFER;
-> +
->  		if (ret) {
->  			dev_warn(&pmcdev->pdev->dev,
-> -				 "ssram init failed, %d, using legacy init\n", ret);
-> +				 "Failed to get PMC info from SSRAM, %d, using legacy init\n", ret);
->  			ssram = false;
+> @@ -707,8 +708,8 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
+>  			return false;
 >  		}
->  	}
-> @@ -1550,7 +1584,7 @@ int generic_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
->  		pmc_core_punit_pmt_init(pmcdev, pmc_dev_info->dmu_guid);
 >  
->  	if (ssram)
-> -		return pmc_core_ssram_get_lpm_reqs(pmcdev);
-> +		return pmc_core_ssram_get_lpm_reqs(pmcdev, pmc_dev_info->pci_func);
->  
->  	return 0;
->  }
-> @@ -1639,15 +1673,10 @@ static void pmc_core_clean_structure(struct platform_device *pdev)
->  	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
->  		struct pmc *pmc = pmcdev->pmcs[i];
->  
-> -		if (pmc)
-> +		if (pmc && pmc->regbase)
->  			iounmap(pmc->regbase);
->  	}
->  
-> -	if (pmcdev->ssram_pcidev) {
-> -		pci_dev_put(pmcdev->ssram_pcidev);
-> -		pci_disable_device(pmcdev->ssram_pcidev);
-> -	}
-> -
->  	if (pmcdev->punit_ep)
->  		pmt_telem_unregister_endpoint(pmcdev->punit_ep);
->  
-> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-> index c3b07075d017..e136d18b1d38 100644
-> --- a/drivers/platform/x86/intel/pmc/core.h
-> +++ b/drivers/platform/x86/intel/pmc/core.h
-> @@ -413,7 +413,6 @@ struct pmc {
->   * struct pmc_dev - pmc device structure
->   * @devs:		pointer to an array of pmc pointers
->   * @pdev:		pointer to platform_device struct
-> - * @ssram_pcidev:	pointer to pci device struct for the PMC SSRAM
->   * @crystal_freq:	crystal frequency from cpuid
->   * @dbgfs_dir:		path to debugfs interface
->   * @pmc_xram_read_bit:	flag to indicate whether PMC XRAM shadow registers
-> @@ -433,7 +432,6 @@ struct pmc_dev {
->  	struct pmc *pmcs[MAX_NUM_PMC];
->  	struct dentry *dbgfs_dir;
->  	struct platform_device *pdev;
-> -	struct pci_dev *ssram_pcidev;
->  	unsigned int crystal_freq;
->  	int pmc_xram_read_bit;
->  	struct mutex lock; /* generic mutex lock for PMC Core */
-> @@ -510,12 +508,7 @@ void pmc_core_get_low_power_modes(struct pmc_dev *pmcdev);
->  void pmc_core_punit_pmt_init(struct pmc_dev *pmcdev, u32 guid);
->  void pmc_core_set_device_d3(unsigned int device);
->  
-> -int pmc_core_ssram_init(struct pmc_dev *pmcdev, int func);
-> -
->  int generic_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info);
-> -const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *list, u16 devid);
-> -int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
-> -		     const struct pmc_reg_map *reg_map, unsigned int pmc_index);
->  
->  extern struct pmc_dev_info spt_pmc_dev;
->  extern struct pmc_dev_info cnp_pmc_dev;
-> diff --git a/drivers/platform/x86/intel/pmc/ssram_telemetry.c b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
-> index 7b8443092b20..cc2c195f2b74 100644
-> --- a/drivers/platform/x86/intel/pmc/ssram_telemetry.c
-> +++ b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
-> @@ -1,19 +1,18 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * This file contains functions to handle discovery of PMC metrics located
-> - * in the PMC SSRAM PCI device.
-> + * Intel PMC SSRAM TELEMETRY PCI Driver
->   *
->   * Copyright (c) 2023, Intel Corporation.
-> - * All Rights Reserved.
-> - *
->   */
->  
->  #include <linux/cleanup.h>
->  #include <linux/intel_vsec.h>
->  #include <linux/pci.h>
-> +#include <linux/types.h>
->  #include <linux/io-64-nonatomic-lo-hi.h>
->  
->  #include "core.h"
-> +#include "ssram_telemetry.h"
->  
->  #define SSRAM_HDR_SIZE		0x100
->  #define SSRAM_PWRM_OFFSET	0x14
-> @@ -23,12 +22,14 @@
->  #define SSRAM_IOE_OFFSET	0x68
->  #define SSRAM_DEVID_OFFSET	0x70
->  
-> -DEFINE_FREE(pmc_core_iounmap, void __iomem *, if (_T) iounmap(_T))
-> +DEFINE_FREE(pmc_ssram_telemetry_iounmap, void __iomem *, if (_T) iounmap(_T))
-> +
-> +static struct pmc_ssram_telemetry *pmc_ssram_telems;
-> +static bool device_probed;
->  
-> -static void
-> -pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, void __iomem *ssram)
-> +static int
-> +pmc_ssram_telemetry_add_pmt(struct pci_dev *pcidev, u64 ssram_base, void __iomem *ssram)
->  {
-> -	struct pci_dev *pcidev = pmcdev->ssram_pcidev;
->  	struct intel_vsec_platform_info info = {};
->  	struct intel_vsec_header *headers[2] = {};
->  	struct intel_vsec_header header;
-> @@ -39,7 +40,7 @@ pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, void __iomem *ssram)
->  	dvsec_offset = readl(ssram + SSRAM_DVSEC_OFFSET);
->  	dvsec = ioremap(ssram_base + dvsec_offset, SSRAM_DVSEC_SIZE);
->  	if (!dvsec)
-> -		return;
-> +		return -ENOMEM;
->  
->  	hdr = readl(dvsec + PCI_DVSEC_HEADER1);
->  	header.id = readw(dvsec + PCI_DVSEC_HEADER2);
-> @@ -57,9 +58,9 @@ pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, void __iomem *ssram)
->  	info.caps = VSEC_CAP_TELEMETRY;
->  	info.headers = headers;
->  	info.base_addr = ssram_base;
-> -	info.parent = &pmcdev->pdev->dev;
-> +	info.parent = &pcidev->dev;
->  
-> -	intel_vsec_register(pcidev, &info);
-> +	return intel_vsec_register(pcidev, &info);
->  }
->  
->  static inline u64 get_base(void __iomem *addr, u32 offset)
-> @@ -68,19 +69,14 @@ static inline u64 get_base(void __iomem *addr, u32 offset)
->  }
->  
->  static int
-> -pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, unsigned int pmc_idx, u32 offset)
-> +pmc_ssram_telemetry_get_pmc(struct pci_dev *pcidev, unsigned int pmc_idx, u32 offset)
->  {
-> -	struct pci_dev *ssram_pcidev = pmcdev->ssram_pcidev;
-> -	void __iomem __free(pmc_core_iounmap) *tmp_ssram = NULL;
-> -	void __iomem __free(pmc_core_iounmap) *ssram = NULL;
-> -	const struct pmc_reg_map *map;
-> +	void __iomem __free(pmc_ssram_telemetry_iounmap) * tmp_ssram = NULL;
-> +	void __iomem __free(pmc_ssram_telemetry_iounmap) * ssram = NULL;
->  	u64 ssram_base, pwrm_base;
->  	u16 devid;
->  
-> -	if (!pmcdev->regmap_list)
-> -		return -ENOENT;
-> -
-> -	ssram_base = ssram_pcidev->resource[0].start;
-> +	ssram_base = pci_resource_start(pcidev, 0);
->  	tmp_ssram = ioremap(ssram_base, SSRAM_HDR_SIZE);
->  	if (!tmp_ssram)
->  		return -ENOMEM;
-> @@ -106,46 +102,103 @@ pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, unsigned int pmc_idx, u32 offset)
->  	pwrm_base = get_base(ssram, SSRAM_PWRM_OFFSET);
->  	devid = readw(ssram + SSRAM_DEVID_OFFSET);
->  
-> +	pmc_ssram_telems[pmc_idx].devid = devid;
-> +	pmc_ssram_telems[pmc_idx].base_addr = pwrm_base;
-> +
->  	/* Find and register and PMC telemetry entries */
-> -	pmc_add_pmt(pmcdev, ssram_base, ssram);
-> +	return pmc_ssram_telemetry_add_pmt(pcidev, ssram_base, ssram);
-> +}
->  
-> -	map = pmc_core_find_regmap(pmcdev->regmap_list, devid);
-> -	if (!map)
-> +/**
-> + * pmc_ssram_telemetry_get_pmc_info() - Get a PMC devid and base_addr information
-> + * @pmc_idx:               Index of the PMC
-> + * @pmc_ssram_telemetry:   pmc_ssram_telemetry structure to store the PMC information
-> + *
-> + * Return:
-> + * * 0           - Success
-> + * * -EAGAIN     - Probe function has not finished yet. Try again.
-> + * * -EINVAL     - Invalid pmc_idx
-> + * * -ENODEV     - PMC device is not available
-> + */
-> +int pmc_ssram_telemetry_get_pmc_info(unsigned int pmc_idx,
-> +				     struct pmc_ssram_telemetry *pmc_ssram_telemetry)
-> +{
-> +	/*
-> +	 * PMCs are discovered in probe function. If this function is called before
-> +	 * probe function complete, the result would be invalid. Use device_probed
-> +	 * variable to avoid this case. Return -EAGAIN to inform the consumer to call
-> +	 * again later.
-> +	 */
-> +	if (!device_probed)
-> +		return -EAGAIN;
-> +
-> +	/*
-> +	 * Memory barrier is used to ensure the correct read order between
-> +	 * device_probed variable and PMC info.
-> +	 */
-> +	smp_rmb();
-> +	if (pmc_idx >= MAX_NUM_PMC)
-> +		return -EINVAL;
-> +
-> +	if (!pmc_ssram_telems || !pmc_ssram_telems[pmc_idx].devid)
->  		return -ENODEV;
->  
-> -	return pmc_core_pmc_add(pmcdev, pwrm_base, map, pmc_idx);
-> +	pmc_ssram_telemetry->devid = pmc_ssram_telems[pmc_idx].devid;
-> +	pmc_ssram_telemetry->base_addr = pmc_ssram_telems[pmc_idx].base_addr;
-> +	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(pmc_ssram_telemetry_get_pmc_info);
->  
-> -int pmc_core_ssram_init(struct pmc_dev *pmcdev, int func)
-> +static int intel_pmc_ssram_telemetry_probe(struct pci_dev *pcidev, const struct pci_device_id *id)
->  {
-> -	struct pci_dev *pcidev;
->  	int ret;
->  
-> -	pcidev = pci_get_domain_bus_and_slot(0, 0, PCI_DEVFN(20, func));
-> -	if (!pcidev)
-> -		return -ENODEV;
-> +	pmc_ssram_telems = devm_kzalloc(&pcidev->dev, sizeof(*pmc_ssram_telems) * MAX_NUM_PMC,
-> +					GFP_KERNEL);
-> +	if (!pmc_ssram_telems) {
-> +		ret = -ENOMEM;
-> +		goto probe_finish;
-> +	}
->  
->  	ret = pcim_enable_device(pcidev);
-> -	if (ret)
-> -		goto release_dev;
-> -
-> -	pmcdev->ssram_pcidev = pcidev;
-> +	if (ret) {
-> +		dev_dbg(&pcidev->dev, "failed to enable PMC SSRAM device\n");
-> +		goto probe_finish;
-> +	}
->  
-> -	ret = pmc_core_ssram_get_pmc(pmcdev, PMC_IDX_MAIN, 0);
-> +	ret = pmc_ssram_telemetry_get_pmc(pcidev, PMC_IDX_MAIN, 0);
->  	if (ret)
-> -		goto disable_dev;
-> -
-> -	pmc_core_ssram_get_pmc(pmcdev, PMC_IDX_IOE, SSRAM_IOE_OFFSET);
-> -	pmc_core_ssram_get_pmc(pmcdev, PMC_IDX_PCH, SSRAM_PCH_OFFSET);
-> -
-> -	return 0;
-> -
-> -disable_dev:
-> -	pmcdev->ssram_pcidev = NULL;
-> -	pci_disable_device(pcidev);
-> -release_dev:
-> -	pci_dev_put(pcidev);
-> -
-> +		goto probe_finish;
-> +
-> +	pmc_ssram_telemetry_get_pmc(pcidev, PMC_IDX_IOE, SSRAM_IOE_OFFSET);
-> +	pmc_ssram_telemetry_get_pmc(pcidev, PMC_IDX_PCH, SSRAM_PCH_OFFSET);
-> +
-> +probe_finish:
-> +	/*
-> +	 * Memory barrier is used to ensure the correct write order between PMC info
-> +	 * and device_probed variable.
-> +	 */
-> +	smp_wmb();
-> +	device_probed = true;
->  	return ret;
->  }
-> +
-> +static const struct pci_device_id intel_pmc_ssram_telemetry_pci_ids[] = {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_MTL_SOCM) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_ARL_SOCS) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_ARL_SOCM) },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(pci, intel_pmc_ssram_telemetry_pci_ids);
-> +
-> +static struct pci_driver intel_pmc_ssram_telemetry_driver = {
-> +	.name = "intel_pmc_ssram_telemetry",
-> +	.id_table = intel_pmc_ssram_telemetry_pci_ids,
-> +	.probe = intel_pmc_ssram_telemetry_probe,
-> +};
-> +module_pci_driver(intel_pmc_ssram_telemetry_driver);
-> +
->  MODULE_IMPORT_NS("INTEL_VSEC");
-> +MODULE_AUTHOR("Xi Pardee <xi.pardee@intel.com>");
-> +MODULE_DESCRIPTION("Intel PMC SSRAM Telemetry driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/platform/x86/intel/pmc/ssram_telemetry.h b/drivers/platform/x86/intel/pmc/ssram_telemetry.h
-> new file mode 100644
-> index 000000000000..daf8aeeb2275
-> --- /dev/null
-> +++ b/drivers/platform/x86/intel/pmc/ssram_telemetry.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Intel PMC SSRAM Telemetry PCI Driver Header File
-> + *
-> + * Copyright (c) 2024, Intel Corporation.
-> + */
-> +
-> +#ifndef PMC_SSRAM_H
-> +#define PMC_SSRAM_H
-> +
-> +/**
-> + * struct pmc_ssram_telemetry - Structure to keep pmc info in ssram device
-> + * @devid:		device id of the pmc device
-> + * @base_addr:		contains PWRM base address
-> + */
-> +struct pmc_ssram_telemetry {
-> +	u16 devid;
-> +	u64 base_addr;
-> +};
-> +
-> +int pmc_ssram_telemetry_get_pmc_info(unsigned int pmc_idx,
-> +				     struct pmc_ssram_telemetry *pmc_ssram_telemetry);
-> +
-> +#endif /* PMC_SSRAM_H */
-> 
+> -		memcpy(__netmem_address(netmem),
+> -		       __netmem_address(xinfo->frags[i].netmem),
+> +		memcpy(__netmem_address(netmem) + offset,
+> +		       __netmem_address(frag->netmem) + skb_frag_off(frag),
+>  		       LARGEST_ALIGN(len));
+>  		__skb_fill_netmem_desc_noacc(sinfo, i, netmem, offset, len);
+
+Incorrect fix.
+
+page_pool_dev_alloc_netmem() allocates a buffer of skb_frag_size() len,
+but then you pass offset when copying, which may lead to access beyond
+the end of the buffer.
+
+I know that my code here is incorrect as well, but the idea was to
+allocate only skb_frag_size() and copy the actual payload without any
+offset to the new buffer. So, you need to pass the offset only to the
+second argument of memcpy() and then pass 0 as @offset to
+__skb_fill_netmem_desc_noacc().
+
+Thanks,
+Olek
 
