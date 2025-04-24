@@ -1,87 +1,106 @@
-Return-Path: <linux-kernel+bounces-617390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6893AA99F3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97250A99F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6394117FCCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F983B131F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2011C1A83F2;
-	Thu, 24 Apr 2025 03:06:54 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB1019D07A;
+	Thu, 24 Apr 2025 03:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Yn6tkvCY"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611E81A316A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611881A5BB2
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 03:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745464013; cv=none; b=BDJfH929HSKymBNtUwpDrV29uT8P/WzgC/ilpUwFUx9h0zhd1uTXNi8cVRwspOZHd50XG5s5LY/vB0YGz2CwtqYa6e6iHEdT1PURRgwd4JYmpYu+0tG9ZxjAppwUHh7kRs1Y4uiyFMpsRlZnGGfSqzchwgNXZjlEXiE4ObvxRxM=
+	t=1745464046; cv=none; b=sqH91isJjD5LgPahN8dm4Cp8OVJ6DxgQGWad7cYaKXuElr43F75PlaQ8TlZ27/0CEbEBd0cbBInXhFICUxdvt/mmTVjdEVkDq7oXzB2ne3DpBFNVBjjb0qa5e++exW8h6XGqZo3snWe98BtPYTVcPJNcXRSe+I0VY1/Eqvbi4VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745464013; c=relaxed/simple;
-	bh=dXbTaXGA2+mh4hdsOfSK2/s+3Cy/CYav9P4Gah+Lc9s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gQ2uaSfgqCCteeqzwT5U1CWeAjfYG39ccG1bqKehID8cVYhhKTFPf7Pheu6a4UM6DmKshIj640x6s4Q7Lq6Q6FVOZwEWUjhv9dRW8VGwnVC1Dlz5+JeQCfvYFrk8V2WdoJRWaxo6Cipxq89Kna4kn1UBFDm+SwZusCT0GJAhOTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zjgkd1XJ5zvWq5;
-	Thu, 24 Apr 2025 11:02:33 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF639180B45;
-	Thu, 24 Apr 2025 11:06:42 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemo500009.china.huawei.com
- (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Apr
- 2025 11:06:42 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <xiang@kernel.org>, <chao@kernel.org>, <huyue2@coolpad.com>,
-	<jefflexu@linux.alibaba.com>
-CC: <dhavale@google.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH] MAINTAINERS: erofs: add myself as reviewer
-Date: Thu, 24 Apr 2025 11:06:53 +0800
-Message-ID: <20250424030653.3308358-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745464046; c=relaxed/simple;
+	bh=6yz9SDRx3eNUERDUWclK/fQ/tgNsEuCKqYIUBAdNxM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=giJXjrSyZQLUnM4V9CyKFrl0D64EYbfztQFJgsE/qKqFApCuEwLd5voGNHSIDD8rQFW5XE6QR+b1K9X532TAHiowmzXJUsa/FKvYC271CptFUMDP6avDhT5++8boKcCUeAMl+vZDsWwVfK77o8hVD2nswptMsNLgNiaXz8a7fgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Yn6tkvCY; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f5ac4ab8-bd1a-4009-bf09-1ac34eb47ec1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745464042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eH5A1aKc65oiuiH9DMP/7aJj2gAA7/rhAd8AecnDlpM=;
+	b=Yn6tkvCYBbrQLuPGV6B4VLcmEvj9S1gWzxpkwa+IYgATjTfRsqsqII6Y7ugn+gH3PuAc4G
+	/lvxY9rR2AWng9YoxOd1pumsREGK1DPP9MKpi21RHMI1tj4r5E5zRAGYoKsjNGlKwqxgUf
+	80g2Yom1hR/s1M8kfI8KMJvdU6EOGNE=
+Date: Thu, 24 Apr 2025 11:06:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] bpf, docs: iterator: Rectify non-standard line break
+To: WangYuli <wangyuli@uniontech.com>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, corbet@lwn.net
+Cc: bpf@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, void@manifault.com, psreep@gmail.com,
+ yhs@fb.com, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
+References: <DB66473733449DB0+20250423030632.17626-1-wangyuli@uniontech.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <DB66473733449DB0+20250423030632.17626-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-Migadu-Flow: FLOW_OUT
 
-I have a solid background in file systems and since much of my
-recent work has focused on EROFS, I am familiar with it. Now I
-have the time and am willing to help review EROFS patches.
 
-I hope my participation can be helpful to the EROFS patch review
-process.
+在 4/23/25 11:06 AM, WangYuli 写道:
+> Even though the kernel's coding-style document does not explicitly
+> state this, we generally put a newline after the semicolon of every
+> C language statement to enhance code readability.
+>
+> Adjust the placement of newlines to adhere to this convention.
+>
+> Reported-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa1e04e87d1d..f286c96ea7db 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8719,6 +8719,7 @@ M:	Chao Yu <chao@kernel.org>
- R:	Yue Hu <zbestahu@gmail.com>
- R:	Jeffle Xu <jefflexu@linux.alibaba.com>
- R:	Sandeep Dhavale <dhavale@google.com>
-+R:	Hongbo Li <lihongbo22@huawei.com>
- L:	linux-erofs@lists.ozlabs.org
- S:	Maintained
- W:	https://erofs.docs.kernel.org
--- 
-2.34.1
 
+Thanks,
+
+Yanteng
+
+> ---
+>   Documentation/bpf/bpf_iterators.rst | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/bpf/bpf_iterators.rst b/Documentation/bpf/bpf_iterators.rst
+> index 7f514cb6b052..385cd05aabf5 100644
+> --- a/Documentation/bpf/bpf_iterators.rst
+> +++ b/Documentation/bpf/bpf_iterators.rst
+> @@ -323,8 +323,8 @@ Now, in the userspace program, pass the pointer of struct to the
+>   
+>   ::
+>   
+> -  link = bpf_program__attach_iter(prog, &opts); iter_fd =
+> -  bpf_iter_create(bpf_link__fd(link));
+> +  link = bpf_program__attach_iter(prog, &opts);
+> +  iter_fd = bpf_iter_create(bpf_link__fd(link));
+>   
+>   If both *tid* and *pid* are zero, an iterator created from this struct
+>   ``bpf_iter_attach_opts`` will include every opened file of every task in the
 
