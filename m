@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-617420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F06A99F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B561BA99F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 05:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B24447746
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0690C461EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 03:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AC21B0420;
-	Thu, 24 Apr 2025 03:25:11 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DA11A8F79;
+	Thu, 24 Apr 2025 03:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk/l1kK5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267A542A82;
-	Thu, 24 Apr 2025 03:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D2317B506;
+	Thu, 24 Apr 2025 03:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745465111; cv=none; b=U5RB7/iJvPUDQ92GUe5QiUbFySu14UI4b/I8FrNvCZCbe1f9zHF+TRdTogrdwit1hdXlUbea7N8B7eq+OSWWAhZ8lSqCgj7ZK40d5GhAYMUIeeCvT32Nxpw9WL4BkLz9CCzYcbwF4Zqqz5A0C38yBMd88M0mvMwoynzZ+TJPAic=
+	t=1745465488; cv=none; b=GWSlbWcd5jydmhJXyvc8F24xi3Yx51F4pWKbOxdjFO+oe7ve0CvF+mQaRQ84+0xle/NZHQnKT8Lukywmj2znLysKZF8cvBIvuvwcl/KQrW0ricKN7acu11Jqy1v0f5dXCRK/f8qccEYdPCmBKp7EQgHOwqSFYMbUpKNdg696STY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745465111; c=relaxed/simple;
-	bh=fmK306GqM09TGZOU24Fy14i1C+SkYrZmUh5ZU5CZGW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/Adyky9w9zU9m+Eo6xtYMvrsjOb1RqpeMWEC0AqJR1gJLcgHLqWzLT14C+Ya7O6Gv+W9LVfoh1y3xGVO9m9pno8e/IASAEsL4MQgxUKeF3rQHSYCbwGXQMPsDP0kNpsrVslzGhujnbE0eILPtp/9gjo9oSsV8skQ+xvAXyzwFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 4ED3333BE00;
-	Thu, 24 Apr 2025 03:25:09 +0000 (UTC)
-Date: Thu, 24 Apr 2025 03:25:05 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: allwinner: t527: add EMAC0 to Avaoto-A1
- board
-Message-ID: <20250424032505-GYB47799@gentoo>
-References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
- <20250423-01-sun55i-emac0-v1-5-46ee4c855e0a@gentoo.org>
- <20250424021706.22eaab66@minigeek.lan>
+	s=arc-20240116; t=1745465488; c=relaxed/simple;
+	bh=y2kLle1MrYmSqCGMWABEiUSCyaHfJ+RdhWHi3vtj+AA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KCz95+do8cwU0LK0K0HX1gosQfqc3hWxsTu54gFUe6U5O2/uaGIYUimCl34pns5TRPx0qjUHshr77bX/eLeXaG2oKKLWL+wnvoMptoLk1xdhYDdAfSlBWDy9Y9qi0AT50eWQPRRPOj/fxJx0CJJsdBSuVkPbNltKuj5LYXHH0zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk/l1kK5; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745465488; x=1777001488;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y2kLle1MrYmSqCGMWABEiUSCyaHfJ+RdhWHi3vtj+AA=;
+  b=Vk/l1kK51qaxm11f7KpvBGIymP2p+f+e3pfWrcTZYmWLu21uR5KR20bF
+   1buBtUnuk1zDeKCECFMzhzx8XalwYacuD6fBf+vLZucUSBGhNK6s2thX7
+   WFr2roOedZQLIW4xDV5qUczK8q+WmlT6SokYB4Fx+uLWY34H2ObqEKUSw
+   7BcCm0081WtHYDAkJLpyZQMKFk30U3Nc+v/ukHd5U0cGXGICKdokq5cqV
+   /QYxQo9+pRQdbtDdcWXnfjEBoe8VWnNg8HKl8DJ2Pzyyr2YURF31pkei1
+   jtWp0Ffsc3TpTsQn1tM5edmi1lHSskNo7wJyKAUYc/s0XVJuxF17peBLj
+   Q==;
+X-CSE-ConnectionGUID: W32yidTJStyP1Zd1upp39A==
+X-CSE-MsgGUID: 5sZjHLRVQJulK9XO5+GlIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="46787544"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="46787544"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:31:27 -0700
+X-CSE-ConnectionGUID: fEM4eomdQBSmLpVcSi364Q==
+X-CSE-MsgGUID: Yl7Nxak5TyKyrZ+wFPh+dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="137488251"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 20:31:24 -0700
+Message-ID: <a65d90f2-b6c6-4230-af52-8f676b3605c5@linux.intel.com>
+Date: Thu, 24 Apr 2025 11:27:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424021706.22eaab66@minigeek.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rc] iommu: Skip PASID validation for devices without PASID
+ capability
+To: Tushar Dave <tdave@nvidia.com>, joro@8bytes.org, will@kernel.org,
+ robin.murphy@arm.com, kevin.tian@intel.com, jgg@nvidia.com,
+ yi.l.liu@intel.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org, stable@vger.kernel.org
+References: <20250424020626.945829-1-tdave@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250424020626.945829-1-tdave@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-hi Andre,
+On 4/24/25 10:06, Tushar Dave wrote:
+> Generally PASID support requires ACS settings that usually create
+> single device groups, but there are some niche cases where we can get
+> multi-device groups and still have working PASID support. The primary
+> issue is that PCI switches are not required to treat PASID tagged TLPs
+> specially so appropriate ACS settings are required to route all TLPs to
+> the host bridge if PASID is going to work properly.
+> 
+> pci_enable_pasid() does check that each device that will use PASID has
+> the proper ACS settings to achieve this routing.
+> 
+> However, no-PASID devices can be combined with PASID capable devices
+> within the same topology using non-uniform ACS settings. In this case
+> the no-PASID devices may not have strict route to host ACS flags and
+> end up being grouped with the PASID devices.
+> 
+> This configuration fails to allow use of the PASID within the iommu
+> core code which wrongly checks if the no-PASID device supports PASID.
+> 
+> Fix this by ignoring no-PASID devices during the PASID validation. They
+> will never issue a PASID TLP anyhow so they can be ignored.
+> 
+> Fixes: c404f55c26fc ("iommu: Validate the PASID in iommu_attach_device_pasid()")
+> Cc:stable@vger.kernel.org
+> Signed-off-by: Tushar Dave<tdave@nvidia.com>
+> ---
+>   drivers/iommu/iommu.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 4f91a740c15f..e01df4c3e709 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -3440,7 +3440,13 @@ int iommu_attach_device_pasid(struct iommu_domain *domain,
+>   
+>   	mutex_lock(&group->mutex);
+>   	for_each_group_device(group, device) {
+> -		if (pasid >= device->dev->iommu->max_pasids) {
+> +		/*
+> +		 * Skip PASID validation for devices without PASID support
+> +		 * (max_pasids = 0). These devices cannot issue transactions
+> +		 * with PASID, so they don't affect group's PASID usage.
+> +		 */
+> +		if ((device->dev->iommu->max_pasids > 0) &&
+> +		    (pasid >= device->dev->iommu->max_pasids)) {
 
-On 02:17 Thu 24 Apr     , Andre Przywara wrote:
-> On Wed, 23 Apr 2025 22:03:26 +0800
-> Yixun Lan <dlan@gentoo.org> wrote:
-> 
-> Hi,
-> 
-> > On Avaoto A1 board, the EMAC0 connect to an external RTL8211F-CG PHY,
-> 
-> The name would be "Avaota" A1 board.
-> 
-> > which features a 25MHz crystal, and using PH8 pin as PHY reset.
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> > I don't own this board, only compose this patch according to the
-> > schematics. Let me know if it works.
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
-> > index 85a546aecdbe149d6bad10327fca1fb7dafff6ad..23ab89c742c679fb274babbb0205f119eb2c9baa 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
-> > @@ -64,6 +64,23 @@ &ehci1 {
-> >  	status = "okay";
-> >  };
-> 
-> As for the Radxa board, we need an alias for ethernet0.
-> 
-> >  
-> > +&emac0 {
-> > +	phy-mode = "rgmii";
-> 
-> As Andrew mentioned, this should probably be "rgmii-id".
-> 
-> > +	phy-handle = <&ext_rgmii_phy>;
-> 
-> Can you please add the phy-supply here, it's reg_dcdc4.
-> 
-> Cheers,
-> Andre
-> 
-> > +
-> > +	allwinner,tx-delay-ps = <100>;
-> > +	allwinner,rx-delay-ps = <300>;
-> > +
-> > +	status = "okay";
-> > +};
-> > +
-> > +&mdio0 {
-> > +	ext_rgmii_phy: ethernet-phy@1 {
-> > +		compatible = "ethernet-phy-ieee802.3-c22";
-> > +		reg = <1>;
-> > +	};
-> > +};
-> > +
-> >  &mmc0 {
-> >  	vmmc-supply = <&reg_cldo3>;
-> >  	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_DOWN)>; /* PF6 */
-> > 
-> 
-
-all above comments make sense, will address in next version
--- 
-Yixun Lan (dlan)
+What the iommu driver should do when set_dev_pasid is called for a non-
+PASID device? The iommu driver has no sense of iommu group, hence it has
+no knowledge about this device sharing an iommu group with another PASID
+capable device.
 
