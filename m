@@ -1,177 +1,95 @@
-Return-Path: <linux-kernel+bounces-617567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B438A9A277
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:40:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A05A9A27D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E78419437BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA0A174CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 06:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC971E1E0B;
-	Thu, 24 Apr 2025 06:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584BB1E1C1A;
+	Thu, 24 Apr 2025 06:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sWYjbipT"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="msU5VL4E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB81610F9
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 06:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23E5176AC8;
+	Thu, 24 Apr 2025 06:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745476809; cv=none; b=uPgQMq5P79Gk5lkI8wY7c4Xwgw63yJ0J/ToZr5HHiTGRVsaXA66RGmuExzRHTttcLW/0SqT5ifnFlalPRQC/09O+VmiPqRXAS637z090h+6j/2uEcRv3fgKeiO4Znm3IEJWMoXzdlXDB5eGDaJ0/Kv2LJERGlce7drR4zm1g9oI=
+	t=1745476941; cv=none; b=kfU34uwCfQ6yOKVbLvmMNLfQr9lcDEl+BrnrdvjrRzvqMiwOCtgc8II3AOpqlTkQqx+R0soOvtG29U8LKaUWBT43rECiQG6n5ww4Uj05D/8hd1taIucjXt1TLnNNS+ak/K97k+TmJqTWX/T9ALI/5tNJ6mL1bNllobmD3vigp98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745476809; c=relaxed/simple;
-	bh=n/EtL309SWS43VFBzrQ2115mc96wexuYCVq1BpP3F8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H+9MVpTTWlrfk+3y2i5IVya+/BtK/+yaj4jN4gGLqrUccnCNzpsH4caW+UTYhPGyoyny617pqOfvkMHr+6D+Ki6WOhrBJpIMas+vwMzG0NVfKtagig7L6Trn9CuQlSIXYSO5lDMP6X4Fynes2f5opSII6kgFhhsIzeAKElyG4vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sWYjbipT; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f4b7f551a9so123772a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Apr 2025 23:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745476806; x=1746081606; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YHOVy0d6Jr81U5d80aHhQf/9l+Z+pnlxKv7sXKN+lK0=;
-        b=sWYjbipTU482vOem2XXKKpEXNw+ADf0tTUxG0hWMJjoLn1Ef326qH02vHSamkHA46D
-         QirSKO4XJTl8aFtFBWHnGxNvWMi3X1seUP4DL/o2UwVHZI/uHV1L4C+55zud1Jr8sH/+
-         q4eJ5TA1kgu+9INukenrj+NOW71q5Vf6m8XDbTvhwv7eJDBhynZ+BBZARlrhGGHmNFDo
-         SqEgj60gNzxUNVTPYoPahXzQ2+o9HjHknb9UJjrvCNkQjJu/wz2wURzvNLCYsXvQhY07
-         LrWNTdcyw9Ef8wGJvlgX+kBv8GUbdVfbPw3IFRX+Eie3wPXjLFFZqCo/v23ciAHl2F8T
-         1acA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745476806; x=1746081606;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YHOVy0d6Jr81U5d80aHhQf/9l+Z+pnlxKv7sXKN+lK0=;
-        b=cDB/HADeIPqbE0FrIbPyiiWNyfaJtpXHZ+M3VlYoJR2gcB5uFykLDfOJ+QqS6j8v//
-         viCdnPshYXi2PCyuFteWUJUmu4BgL+s+z3J643BLk/Bq2SYdV1vj7nhb79xB13BUPp5a
-         uzbFSj+ofgVIZL3YwOvQSTjMNapluR1B3/1i23dPuHVyDdh9jFOuVwL5GLZYJ/3KMvkz
-         V7LNkCz/4049QyoADX55QeM9qt4A3LqYtXJ7/h2l5dwtZAz6bqGu8pPdr3HoTRl5JH+3
-         ofGoD8jGl6hRDkdsAt9SWJb47juL7TI1f4AM1YCtQC3U5IvtNlM5e1dAFyrHrCpfnMJw
-         ZUxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLi4GCEFdR1Tn4aCCqD3ZAKzrGkjzOlPjetpeH1mE7A/czsi0L1FJ90GZhSHcBVz3vQEGxOgIYhAYP7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHoh0LMh7tC0JOgc8hMbwAY5MDQkNYJkIW5QmwtPoZ7RowVnj0
-	nIftAWibrNCPTgXVdkZWQu/lCGfM6Uiz1ZJcAuMC3miSkAvAVEGJAlEMLwiT/54=
-X-Gm-Gg: ASbGncs09JdksvRBPJQHBs0Rdwlghl4LzN2rZH2gm3eegwGrM5W3IfEOY5T+XgtfgsS
-	pCYTPa0mmkaot8FihBzJlw64+mFMdMls+gYjlOhA9/ElHOUI/jSN7zA+kBhZSN5ZTrJp88c4d+h
-	O5xZZJGDs5ZWaHreSWia6NV2gNxgYO2JHixIkmff2V33nT7e8GLX/qBwkNW5wZ1fc57G16DWCfx
-	KZ9PENbXw1HjW+S7S0EDDVBqDlRYSXdLRgauYsWJ5ZdsO5YcORDmHIEaQaC+qDJteWrkYvZbOus
-	ShHaXtwbAUrkuaUlyFe1Sr0vHLJAIgwHk7IIpuKwGaGelFoOiBOZ1wrKpQM=
-X-Google-Smtp-Source: AGHT+IEBjSa7BEvi/m7HE+DJPaUWRCsNtnzB4sH4oGiI1fsR12c0IUMic4Va6Q3p9IyF2GmVP3cekA==
-X-Received: by 2002:a17:907:96a1:b0:ac7:25c9:5142 with SMTP id a640c23a62f3a-ace572b460emr52391766b.7.1745476805908;
-        Wed, 23 Apr 2025 23:40:05 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace59bbdbb5sm55424866b.90.2025.04.23.23.40.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 23:40:05 -0700 (PDT)
-Message-ID: <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
-Date: Thu, 24 Apr 2025 08:40:03 +0200
+	s=arc-20240116; t=1745476941; c=relaxed/simple;
+	bh=tozlxvCj/x9cqspQcx4xfNdmJ+1dUbZ7wvHoIrt00J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONBlDQzSUgbun3zHhoZgplb6qIDgnCGPuknhsadxhJc9PebV0nvJVsdQAnANBD3Bm8GHse4chpUVXAv209/t8bUXZvkLWJizqOQq/+kbgjrptRVM+4zKvHIIYdA8TLTxi8iEbsQyIZS3tMsA+8NyqU1i8+rvs0al8hdNbkTbU8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=msU5VL4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11525C4CEE3;
+	Thu, 24 Apr 2025 06:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745476940;
+	bh=tozlxvCj/x9cqspQcx4xfNdmJ+1dUbZ7wvHoIrt00J0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=msU5VL4EULOfhv2NqhpL6T6z/ZcCi1j4TCto3xpGBcuxI5lcVsD7uRGEgvn7QEI9F
+	 5cMDTvDsJKziF3efPaRDaU/cXWklEuo60ZMdIu+EcM6zwVrSngl3W0ZEtBYq9vip14
+	 SQrLYgDe8xsn2CqCgVhxZfsWhfBCS2ESM1osg6dM=
+Date: Thu, 24 Apr 2025 08:40:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, sashal@kernel.org,
+	stable@vger.kernel.org, song@kernel.org, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH 6.1 0/2] md: fix mddev uaf while iterating all_mddevs list
+Message-ID: <2025042418-come-vacant-ec55@gregkh>
+References: <20250419012303.85554-1-yukuai1@huaweicloud.com>
+ <aAkt8WLN1Gb9snv-@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
- <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAkt8WLN1Gb9snv-@eldamar.lan>
 
-On 14/03/2025 14:14, Bryan O'Donoghue wrote:
-> +
-> +  power-domains:
-> +    items:
-> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: Titan Top GDSC - Titan ISP Block, Global Distributed Switch Controller.
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: ife0
-> +      - const: ife1
-> +      - const: top
-> +
-> +  vdd-csiphy-0p8-supply:
+On Wed, Apr 23, 2025 at 08:14:09PM +0200, Salvatore Bonaccorso wrote:
+> Hi Greg, Sasha, Yu,
+> 
+> On Sat, Apr 19, 2025 at 09:23:01AM +0800, Yu Kuai wrote:
+> > From: Yu Kuai <yukuai3@huawei.com>
+> > 
+> > Hi, Greg
+> > 
+> > This is the manual adaptation version for 6.1, for 6.6/6.12 commit
+> > 8542870237c3 ("md: fix mddev uaf while iterating all_mddevs list") can
+> > be applied cleanly, can you queue them as well?
+> > 
+> > Thanks!
+> > 
+> > Yu Kuai (2):
+> >   md: factor out a helper from mddev_put()
+> >   md: fix mddev uaf while iterating all_mddevs list
+> > 
+> >  drivers/md/md.c | 50 +++++++++++++++++++++++++++++--------------------
+> >  1 file changed, 30 insertions(+), 20 deletions(-)
+> 
+> I noticed that the change 8542870237c3 was queued for 6.6.y and 6.12.y
+> and is in the review now, but wonder should we do something more with
+> 6.1.y as this requires this series/manual adaption?
+> 
+> Or will it make for the next round of stable updates in 6.1.y? 
+> 
+> (or did it just felt through the cracks and it is actually fine that I
+> ping the thread on this question).
 
-Same comment as other series on the lists - this is wrong name. There
-are no pins named like this and all existing bindings use different name.
+This fell through the cracks and yes, it is great that you pinged it.
+I'll queue it up for the next release, thanks!
 
-> +    description:
-> +      Phandle to a 0.8V regulator supply to a PHY.
-> +
-> +  vdd-csiphy-1p2-supply:
-> +    description:
-> +      Phandle to 1.8V regulator supply to a PHY.
-
-Best regards,
-Krzysztof
+greg k-h
 
