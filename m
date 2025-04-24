@@ -1,152 +1,144 @@
-Return-Path: <linux-kernel+bounces-618763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A49A9B335
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F69A9B345
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 18:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92FDE1BA3EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4492018886C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 16:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A235627FD4F;
-	Thu, 24 Apr 2025 16:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866E027FD77;
+	Thu, 24 Apr 2025 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NfzK48vL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm8VevHV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C03527FD41
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 16:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E361624C5;
+	Thu, 24 Apr 2025 16:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745510408; cv=none; b=F4JGhqnXNZMpA60VisdA5jmd80FqgL2EfkKDY84f8bNOQTrQ0HUOfksSau3/+/gCjMCjRVoUm9Um5UbvvBi9Le52B8Y1yYR3ZNhtU9CDW6+OUaug8vPX0hiejEC6bAvwrnLYH1XtkgjBzFdwG/KbyyAPixE9irlFrkFOKUABbwk=
+	t=1745510503; cv=none; b=sOkGLJ35SfzSdUYtXLM8RJfIqhzDWNlta9AVA3plZwuYiQP20fv3ujizaYiqdJui37qYKj79cMkIdNNvU/EyhCTlgvXBcjwMPDqFRmlggmjrx8M8SQlJgUhwosUeEzZdjE2LflSk8xJopoaHCPyZfByRmkA+Val5aohHTmwXlhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745510408; c=relaxed/simple;
-	bh=8I6ecEen3jB/8oO46SzxrrlKurF+HNzCakWB2dViDfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTvTRz/PCQ65A4p2ho9R3wunRTBvOAZ6x3114L0BH+XD/kqhDoldrbGI2Cmw5lGUhSqZQ0BZ2z0sx1YSU8e+KiMfKDzHcLnNdbQrwvHOLTHoZFvXsNeHE2xWswRSudlKHsmT8b8KvcN4bASFEn2fAUto77KaG4RPQT8WNvi2rA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NfzK48vL; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745510407; x=1777046407;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8I6ecEen3jB/8oO46SzxrrlKurF+HNzCakWB2dViDfs=;
-  b=NfzK48vLlaYKQlouGQSE+7Y8Czh75tLLW2Vy2UhCgOF4ekJb7OKUtufA
-   DJnf+bd8MXx83X8kRqz14UALFRqrnDRQlhkA0FKlMAEbXJKS/oPQX33y9
-   JWSe5r8Ozx1D91k1wOLxWmrkMYr7/DVCApeJFRIXrHO0hIhbeiQoDP+dj
-   Jatv1BuXc6FZvG7Tnq+Sw/tij5BviFw907F7cTFbP2RJNQjgE2a/2hUM9
-   N3Md/m1BbAS/4vnvqSbgxNwlNVAv1wzFlAWvw2RviV3/diE1sUNcQqjiT
-   oibrDWSTejMw1ncW2SeIsuxEFUzHESo0I7wipteVaaVNsGHhlWRel3wQd
-   Q==;
-X-CSE-ConnectionGUID: aMBfbbRiTYeA4NnkzOTatQ==
-X-CSE-MsgGUID: GdW5JgOITo+OoulhESVrQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="69641694"
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="69641694"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 09:00:06 -0700
-X-CSE-ConnectionGUID: xJLNGBHtTSyq+v441V/Liw==
-X-CSE-MsgGUID: x3P7wEiYTzqvkP3NhmBINg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="137751355"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 09:00:05 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id EDF0120B5736;
-	Thu, 24 Apr 2025 09:00:03 -0700 (PDT)
-Message-ID: <c919a36c-f343-48ce-a262-401159c5bf30@linux.intel.com>
-Date: Thu, 24 Apr 2025 12:00:02 -0400
+	s=arc-20240116; t=1745510503; c=relaxed/simple;
+	bh=2EsFN3KQzZNWveqPmKQ2uvMTlzDkWMvMTWZFw/RE+lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZtRbC4VExiZsdjzvG8UG2eu+yKX0RgLLt/SHGz72DeOR+w7LL0DlkTE+nhQ8biME4RvOyXyzrjZZM/H7qhfOvnwLY+57lOlYe0RZu3Pq8LbB83KNrLSzFh0PeOYd1r9gfX4JpKYs1GKoeNwsz8EHYtXo63qP4xLPhM/QP+L2Ry4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm8VevHV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5C2C4CEE3;
+	Thu, 24 Apr 2025 16:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745510503;
+	bh=2EsFN3KQzZNWveqPmKQ2uvMTlzDkWMvMTWZFw/RE+lA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wm8VevHVEohfFXx1uchcfmtL+zcZ6xSp9jmMA3lzuk8AwHIyLQmcHNh0McnSrCcx3
+	 lIkmFdP+VzpGEpwEKphWvTET5ebVyPTPFMB80cvGgeYljv5/yF/In310jRDQC6j3Xe
+	 enCjXdYVPMQ3v7aENOXrr8Z1Q/znZ+vOdsJ5KN84mcOFLlEP45lED6O7qLOvupMMaK
+	 lBtmEryEpv3oaYU2xAYKqHcEOWsb8P+1vrzSoARX2cvfIjSdXU2qZFlV+DPcWa735h
+	 beec4plnuKPHYBuMtW0ndvkO/fM+I0YWu6BDRZ5NUppB0Cqwzxtn9QVLIFtHY5tX8k
+	 eFD7fbEi5hXLw==
+Date: Thu, 24 Apr 2025 19:01:38 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Jake Edge <jake@lwn.net>, Jonathan Corbet <corbet@lwn.net>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Subject: Re: [PATCH v9 10/24] mm/hmm: let users to tag specific PFN with DMA
+ mapped bit
+Message-ID: <20250424160138.GT48485@unreal>
+References: <0a7c1e06269eee12ff8912fe0da4b7692081fcde.1745394536.git.leon@kernel.org>
+ <7185c055-fc9e-4510-a9bf-6245673f2f92@redhat.com>
+ <20250423181706.GT1213339@ziepe.ca>
+ <36891b0e-d5fa-4cf8-a181-599a20af1da3@redhat.com>
+ <20250423233335.GW1213339@ziepe.ca>
+ <20250424080744.GP48485@unreal>
+ <20250424081101.GA22989@lst.de>
+ <20250424084626.GQ48485@unreal>
+ <20250424120703.GY1213339@ziepe.ca>
+ <20250424125052.GS48485@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/5] Several fixes for group flag and
- counters-snapshotting
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, linux-kernel@vger.kernel.org
-References: <20250424134718.311934-1-kan.liang@linux.intel.com>
- <20250424142528.GD1166@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250424142528.GD1166@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424125052.GS48485@unreal>
 
-
-
-On 2025-04-24 10:25 a.m., Peter Zijlstra wrote:
-> On Thu, Apr 24, 2025 at 06:47:13AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The patch series includes several fixes for the new Intel features.
->>
->> The first 4 patches are to fix the group flag issue which impacts the
->> branch counters, PEBS counters-snapshotting and ACR.
->> The V1 can be found at
->> https://lore.kernel.org/lkml/20250423221015.268949-1-kan.liang@linux.intel.com/
->>
->> The last patch is to fix an issue of counters-snapshotting.
->> The V1 can be found at
->> https://lore.kernel.org/lkml/20250204210514.4089680-1-kan.liang@linux.intel.com/
->>
->> Kan Liang (5):
->>   perf/x86/intel: Only check the group flag for X86 leader
->>   perf/x86/intel: Check the X86 leader for pebs_counter_event_group
->>   perf/x86/intel: Check the X86 leader for ACR group
->>   perf/x86: Optimize the is_x86_event
->>   perf/x86/intel/ds: Fix counter backwards of non-precise events
->>     counters-snapshotting
+On Thu, Apr 24, 2025 at 03:50:52PM +0300, Leon Romanovsky wrote:
+> On Thu, Apr 24, 2025 at 09:07:03AM -0300, Jason Gunthorpe wrote:
+> > On Thu, Apr 24, 2025 at 11:46:26AM +0300, Leon Romanovsky wrote:
+> > > On Thu, Apr 24, 2025 at 10:11:01AM +0200, Christoph Hellwig wrote:
+> > > > On Thu, Apr 24, 2025 at 11:07:44AM +0300, Leon Romanovsky wrote:
+> > > > > > I see, so yes order occupies 5 bits [-4,-5,-6,-7,-8] and the
+> > > > > > DMA_MAPPED overlaps, it should be 9 not 7 because of the backwardness.
+> > > > > 
+> > > > > Thanks for the fix.
+> > > > 
+> > > > Maybe we can use the chance to make the scheme less fragile?  i.e.
+> > > > put flags in the high bits and derive the first valid bit from the
+> > > > pfn order?
+> > >
+> > > It can be done too. This is what I got:
+> > 
+> > Use genmask:
 > 
-> It didn't apply cleanly,
+> I can do it too, will change.
 
-Sorry for it.
+If you don't mind, I'll stick with my previous proposal.
 
-> but I stomped on it and pushed out new
-> perf/urgent and perf/core branches that contain these patches. Hopefully
-> I didn't mess it up ;-)
+GENMASK() alone is not enough and the best solution will include use
+of FIELD_GET FIELD_PREP mocros. IMHO, that will make code unreadable.
+The simple, clean and reliable bitfield OR operations much better fit
+here.
 
-Something is missed in this patch 5d4d71ebc737 ("perf/x86/intel: Only
-check the group flag for X86 leader")
+Thanks
 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index a73b1ff031b2..1f72a4f77b5c 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -119,7 +119,7 @@ static inline bool check_leader_group(struct
-perf_event *leader, int flags)
-
- static inline bool is_branch_counters_group(struct perf_event *event)
- {
--	return check_leader_group(event->group_leader, PERF_X86_EVENT_PEBS_CNTR);
-+	return check_leader_group(event->group_leader,
-PERF_X86_EVENT_BRANCH_COUNTERS);
- }
-
- static inline bool is_pebs_counter_event_group(struct perf_event *event)
-@@ -1123,7 +1123,6 @@ static struct perf_pmu_format_hybrid_attr
-format_attr_hybrid_##_name = {\
- 	.pmu_type	= _pmu,                                         \
- }
-
--int is_x86_event(struct perf_event *event);
- struct pmu *x86_get_pmu(unsigned int cpu);
- extern struct x86_pmu x86_pmu __read_mostly;
-
-
-Thanks,
-Kan
-
+> 
+> > 
+> > enum hmm_pfn_flags {
+> > 	HMM_FLAGS_START = BITS_PER_LONG - PAGE_SHIFT,
+> > 	HMM_PFN_FLAGS = GENMASK(BITS_PER_LONG - 1, HMM_FLAGS_START),
+> > 
+> > 	/* Output fields and flags */
+> > 	HMM_PFN_VALID = 1UL << HMM_FLAGS_START + 0,
+> > 	HMM_PFN_WRITE = 1UL << HMM_FLAGS_START + 1,
+> > 	HMM_PFN_ERROR = 1UL << HMM_FLAGS_START + 2,
+> > 	HMM_PFN_ORDER_MASK = GENMASK(HMM_FLAGS_START + 7, HMM_FLAGS_START + 3),
+> > 
+> > 	/* Input flags */
+> > 	HMM_PFN_REQ_FAULT = HMM_PFN_VALID,
+> > 	HMM_PFN_REQ_WRITE = HMM_PFN_WRITE,
+> > };
+> > 
+> > Jason
+> 
 
