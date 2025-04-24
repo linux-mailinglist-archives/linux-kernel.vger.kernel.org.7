@@ -1,149 +1,163 @@
-Return-Path: <linux-kernel+bounces-618278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B134A9AC6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:50:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A473A9AC62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5867B3D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDBB15A2908
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 11:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FC122C339;
-	Thu, 24 Apr 2025 11:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7AB22A4E1;
+	Thu, 24 Apr 2025 11:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mleqz8TQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wSyWe2Cz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mbka+LAb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wSyWe2Cz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mbka+LAb"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94622DF9B;
-	Thu, 24 Apr 2025 11:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9362F228CAD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 11:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745495348; cv=none; b=SyofkH2Z4gHhaSseVdeo+vJYJxTNiFkoCooirNB1xfE19XlM8isPjhKWySV7eywrJtqVPs63mDeh8nfObCYiY4BbQUty5tvoCTJH3lC5SkrAau2A/EzoggDVH+vKCAHuDoSpKpdyM7iwufqgwx3Ccs8wiyKAbdG7CWUVF40P/Gk=
+	t=1745495337; cv=none; b=jTHVPLrtr+GV3XoHoekbuPuAv87WCOkDiZn4hu6aehqOPP4RxbOn/xnNM1BF8QzLSLE68I71OdIqz4tjcaIGcnPxHz+bg9YurBtqYtwMQA9pcYJhF6ORK8dxZp767FqJTs2s6DMzC8Kzzvb+KH0j3pu1Lfmpl4jMR5F5Veec/WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745495348; c=relaxed/simple;
-	bh=YszgFMEifreBpsMwGircv5QIeLTFD0j7nAEcYCOWvVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEm3yVhe3A06iNtZJoelPJP5/+cgtNQ43Nyhqmg9RHritj/QVG2o6RF3/qZFt9V+2BEIqZ5FgTCxv7J6o84mdN5jgADKrCU61Ff6JQKdQ42nLwVCpJ3yb97nmn846Jdue4ZYWLtOIICd+p0JRGzwPmS3G0U9CbDZ3xNTIhKJQJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mleqz8TQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7F0C4CEE3;
-	Thu, 24 Apr 2025 11:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745495348;
-	bh=YszgFMEifreBpsMwGircv5QIeLTFD0j7nAEcYCOWvVQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Mleqz8TQ7U+Pi7a+4PHn/kY69ycMeNpkNmBUap9Ga1d1SCv8s3mILXeDsn/QM3hQJ
-	 bz0qvaxDERfv8wAN5oceaCVpoDAQtlI9nlbdDjDyHzHB4UU3iSKanSfnh8yomtNEUM
-	 qwZrsEAy65mmP8b3rjrigMxDFgVuHkCb0++t1IxPpqkw/7/HbL5wIwdF2nxBKM1I/H
-	 poPlG96nqwUCZHYzS01lINcyP5w1j/3MFFu9htKhAZ9qyCVaov2FTHQAJkQ+Lxk7sM
-	 6Nyf7OmGjBVF/HSVBm+LsQZzcYcqm3pR2AqFaFa/+Ms0efyWZ+tny8G6dumRFkxv5t
-	 oP0mmvToo9VwQ==
-From: Philipp Stanner <phasta@kernel.org>
-To: schalla@marvell.com,
-	vattunuru@marvell.com,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Shijith Thotton <sthotton@marvell.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	Satha Rao <skoteshwar@marvell.com>
-Cc: virtualization@lists.linux.dev,
+	s=arc-20240116; t=1745495337; c=relaxed/simple;
+	bh=/2d3pMNoqRqTcmizMeil+z0SCqz60gM3xfMnEE+QW7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HutCLasSa6I59Ao8OzvXIZsnCTQp6lIvbhjn9yIp0wZ3baPJh/7Nk7/DuaC1DP20y2SibYzEzWm1dK68yqvgIqfRxr9PylrY23eTYvCPQYSrNiJ7uLEnvrtQKYYxZkgiKjLBzuDZR2i9ulH3ybbFptL2xorUcDbnFd0BHn83i5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wSyWe2Cz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mbka+LAb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wSyWe2Cz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mbka+LAb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8312821187;
+	Thu, 24 Apr 2025 11:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745495333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=642kJ82oQUCGe+oDaUnZ8xGsd2REFvEZPgvdPkU74UA=;
+	b=wSyWe2CzFlLlpG9kmBchLfZv1XvfhnwmeJa9ZX1JUK4rbQPf6D+hZbTKtHeViULbhkBNk7
+	kjrBuITHBRvuNybw7tXfvES5tkepATYVtRVKfZ3kgzsEMIPtdbZ1c2WQwHPCfnfK+okCzh
+	f653epe14VW026e2wwbaFlqUpURFq3M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745495333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=642kJ82oQUCGe+oDaUnZ8xGsd2REFvEZPgvdPkU74UA=;
+	b=Mbka+LAb88zsxPKWvASUo7Vozs9yscltMx1nLaobolFPNQCgZXaK4cJV63Ry+rW9dC15Lf
+	Ef+IgIrGe3z9G/DA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wSyWe2Cz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Mbka+LAb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745495333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=642kJ82oQUCGe+oDaUnZ8xGsd2REFvEZPgvdPkU74UA=;
+	b=wSyWe2CzFlLlpG9kmBchLfZv1XvfhnwmeJa9ZX1JUK4rbQPf6D+hZbTKtHeViULbhkBNk7
+	kjrBuITHBRvuNybw7tXfvES5tkepATYVtRVKfZ3kgzsEMIPtdbZ1c2WQwHPCfnfK+okCzh
+	f653epe14VW026e2wwbaFlqUpURFq3M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745495333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=642kJ82oQUCGe+oDaUnZ8xGsd2REFvEZPgvdPkU74UA=;
+	b=Mbka+LAb88zsxPKWvASUo7Vozs9yscltMx1nLaobolFPNQCgZXaK4cJV63Ry+rW9dC15Lf
+	Ef+IgIrGe3z9G/DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 68F5A1393C;
+	Thu, 24 Apr 2025 11:48:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Nrw6FyUlCmgAQgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Thu, 24 Apr 2025 11:48:53 +0000
+Date: Thu, 24 Apr 2025 13:48:52 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, 
+	James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] vdpa/octeon_ep: Control PCI dev enabling manually
-Date: Thu, 24 Apr 2025 13:48:51 +0200
-Message-ID: <20250424114850.34045-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
+Subject: Re: [PATCH v5 10/14] nvmet-fcloop: don't wait for lport cleanup
+Message-ID: <c1f207f3-6657-4803-90df-a059353ba6da@flourine.local>
+References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
+ <20250423-nvmet-fcloop-v5-10-3d7f968728a5@kernel.org>
+ <05ac9a81-66a9-4bbc-92e0-6ff47a6dc7ad@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05ac9a81-66a9-4bbc-92e0-6ff47a6dc7ad@suse.de>
+X-Rspamd-Queue-Id: 8312821187
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,flourine.local:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-PCI region request functions such as pci_request_region() currently have
-the problem of becoming sometimes managed functions, if
-pcim_enable_device() instead of pci_enable_device() was called. The PCI
-subsystem wants to remove this deprecated behavior from its interfaces.
+On Thu, Apr 24, 2025 at 12:21:09PM +0200, Hannes Reinecke wrote:
+> > @@ -1776,7 +1763,7 @@ static void __exit fcloop_exit(void)
+> >   		spin_unlock_irqrestore(&fcloop_lock, flags);
+> > -		ret = __wait_localport_unreg(lport);
+> > +		ret = __localport_unreg(lport);
+> >   		if (ret)
+> >   			pr_warn("%s: Failed deleting local port\n", __func__);
+> > 
+> And who is freeing the allocated fcloop_lsreq structures?
 
-octeopn_ep enables its device with pcim_enable_device() (for AF. PF uses
-manual management), but does so only to get automatic disablement. The
-driver wants to manage its PCI resources for AF manually, without devres.
+After a fcloop_lsreq is allocated it is put on either rport->ls_list or
+tport->ls_list and later freed in fcloop_tport_lsrqst_work, resp.
+fcloop_rport_lsrqst_work for the non-error case (or in the callbacks).
 
-The easiest way not to use automatic resource management at all is by
-also handling device enable- and disablement manually.
+That means when the localport is unregistered successfully there are no
+fcloop_lsreq around. The issue is what to do when __localport_unreq
+returns an error.
 
-Replace pcim_enable_device() with pci_enable_device(). Add the necessary
-calls to pci_disable_device().
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-Changes in v3:
-  - Only call pci_disable_device() for the PF version. For AF it would
-    cause a WARN_ON because pcim_enable_device()'s callback will also
-    try to disable.
----
- drivers/vdpa/octeon_ep/octep_vdpa_main.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-index f3d4dda4e04c..9b49efd24391 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-@@ -454,6 +454,9 @@ static void octep_vdpa_remove_pf(struct pci_dev *pdev)
- 		octep_iounmap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
- 
- 	octep_vdpa_pf_bar_expand(octpf);
-+
-+	/* The pf version does not use managed PCI. */
-+	pci_disable_device(pdev);
- }
- 
- static void octep_vdpa_vf_bar_shrink(struct pci_dev *pdev)
-@@ -825,7 +828,7 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
- 	struct octep_pf *octpf;
- 	int ret;
- 
--	ret = pcim_enable_device(pdev);
-+	ret = pci_enable_device(pdev);
- 	if (ret) {
- 		dev_err(dev, "Failed to enable device\n");
- 		return ret;
-@@ -834,15 +837,17 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
- 	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
- 	if (ret) {
- 		dev_err(dev, "No usable DMA configuration\n");
--		return ret;
-+		goto disable_pci;
- 	}
- 	octpf = devm_kzalloc(dev, sizeof(*octpf), GFP_KERNEL);
--	if (!octpf)
--		return -ENOMEM;
-+	if (!octpf) {
-+		ret = -ENOMEM;
-+		goto disable_pci;
-+	}
- 
- 	ret = octep_iomap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
- 	if (ret)
--		return ret;
-+		goto disable_pci;
- 
- 	pci_set_master(pdev);
- 	pci_set_drvdata(pdev, octpf);
-@@ -856,6 +861,8 @@ static int octep_vdpa_probe_pf(struct pci_dev *pdev)
- 
- unmap_region:
- 	octep_iounmap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
-+disable_pci:
-+	pci_disable_device(pdev);
- 	return ret;
- }
- 
--- 
-2.48.1
-
+This code could loop forever when the port_state is not in
+FC_OBJSTATE_ONLINE when calling nvme_fc_unregister_localport(). This
+should not happen (it did before this series) but now it shouldn't be
+the case anymore. I suppose a pr_warn_once() and a sleep might be a good
+idea to avoid a busy loop?
 
