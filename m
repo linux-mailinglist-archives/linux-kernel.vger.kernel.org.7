@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-619096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4250BA9B7BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421A9A9B7FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 21:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8667F4C3B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE12189C0E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1577293B5A;
-	Thu, 24 Apr 2025 19:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2367D2900A3;
+	Thu, 24 Apr 2025 19:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NdZENzci"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2RCrh/zN"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46405290BCF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 19:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA0C1E231E;
+	Thu, 24 Apr 2025 19:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745521272; cv=none; b=bh2xfSs+j/Z/wQ9j4QmYGqeBnaCfhzXEUO5P9kmPJo3NXhIycWDbUdRAozFZOXuZkG/nambByL5TVn4PKRcg21iMAVRr8y9wDfjXdByNn8oze3RzNrLWIcSbVe8Kqjah+pKH/H8bIn6SogAb6p2StaofCJXfRF1brK99ozxOOOY=
+	t=1745521394; cv=none; b=jgvy6whBGZGXuDnmWdiXfGXK8LrOO+TFXb1v26WRY8d+j6iw+oX68aPFaoWpzysBE/Ws4ziisCah9mRA4fLyIbAT45VgcK1coZOu997h5VvPEnzgCbwnZo127jrBcJ2QA1xndwQZ9HojfObUYg7+G4/oihKFaWijrw0SNsLfYrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745521272; c=relaxed/simple;
-	bh=XfeVzs942+9g02dBs1aqyKi6qcxeaLfttLApj8kReNE=;
+	s=arc-20240116; t=1745521394; c=relaxed/simple;
+	bh=HKz2v/Dk24xsj/fbF/BXdQp5dBDuDBSlFnA/gFKOpRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VKql1KWu+QcmagEqtsOFgqQRicNbZxVf+lohnExbQl5m00QYx4GZMMn+VCXbZYeLsjyd4rOCGc0Yjwy6J/+Xk01eKmB5nTls/sxeS5nB8OO92EL9FblfpkMZJCuN0OZolgATWJ9CQsfzEYur7mu0m+VE6bxKNoe8I7foRJzoZm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NdZENzci; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745521270; x=1777057270;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XfeVzs942+9g02dBs1aqyKi6qcxeaLfttLApj8kReNE=;
-  b=NdZENzcinAnMjvE52ZVf4dLEWSudKXVpLRS/QdwVljKC0PtgtA7hooJG
-   AZiuwCVxlbodtiiJv5EXZmO6K+MYbaaEAGoZIYkHb/e2GueZxqkKbGhmP
-   SnYugMsXU2e4dVqjei2DfcZvjX3ZWqmwYKN9DB1f8yT6FWunv/VpPs/NR
-   2LtKrBiazlj2FT/MZzP02CHNVnKLDiiCKSCMsjv1qScZGtWasS2kvkY9v
-   xk6iwjhFtvZX5tbOC9wBuMxbWZ/dVfcC3QqNZ40v9G70MIL5TrnsMo4af
-   HuPZzfVtckOG6D4lZ2xhSRSB4hpOdJPajKNWM3U2GHqC1UFdjtGDNugsd
-   g==;
-X-CSE-ConnectionGUID: o9hAx5ULQ4adcogXsktXlA==
-X-CSE-MsgGUID: 3rfCa8LWTxeQHaRgoYe9Xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="50996038"
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="50996038"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 12:01:09 -0700
-X-CSE-ConnectionGUID: WrjLcc2UQ0mg2uwD7QiA1A==
-X-CSE-MsgGUID: yPqe9R0YTJ+U/KUaAyhM7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="137691785"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 24 Apr 2025 12:01:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 8B2151AC; Thu, 24 Apr 2025 22:01:06 +0300 (EEST)
-Date: Thu, 24 Apr 2025 22:01:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Peter Tyser <ptyser@xes-inc.com>, Purva Yeshi <purvayeshi550@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH] mfd: lpc_ich: Fix ARRAY_SIZE usage for
- apl_gpio_resources
-Message-ID: <aAqKcn25bkrjIiLF@black.fi.intel.com>
-References: <20250322131841.31711-1-purvayeshi550@gmail.com>
- <174377238828.330559.7652024137546009839.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTKonnuQEeNPwuJUAa8m4s0vvoAlj8eiii6plAS40H1lAnCtrjXHyOP4wxuuC0Ek5JZ2RrT+Idb2PxInKxrDVcvxdEgzbRbkj8yyoXp8tP67JP/upjObP4FPcZtRXtaf8IEnI/6eZc0A3by5wUxbunI4/VkWJiYFy/GTMG8TjVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2RCrh/zN; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bgHAVRSAtGS2mucHqdulufmpGRpZTS9/L7tc07qePPc=; b=2RCrh/zN/3ZFHAA0cZnrwsSn/r
+	7jiQ2NoKx+p2nXFoiPH81MDw/eOCr9IxIj/VbzE6U//36F+XhAZo2M3AA3n8txwu2IjAKfNnFXAo5
+	XFmmzS08oyl2Uq7rB9EUQ807RpD/QVRoh5HoTIqNZQfycVkGUke3QQAhjqS/vWYgHA0M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u81qF-00AVAd-F9; Thu, 24 Apr 2025 21:02:35 +0200
+Date: Thu, 24 Apr 2025 21:02:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, Yixun Lan <dlan@gentoo.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, clabbe.montjoie@gmail.com
+Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
+ board
+Message-ID: <7fcedce7-5cfe-48a4-9769-e6e7e82dc786@lunn.ch>
+References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
+ <4ba3e7b8-e680-40fa-b159-5146a16a9415@lunn.ch>
+ <20250424150037.0f09a867@donnerap.manchester.arm.com>
+ <4643958.LvFx2qVVIh@jernej-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,51 +72,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <174377238828.330559.7652024137546009839.b4-ty@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <4643958.LvFx2qVVIh@jernej-laptop>
 
-On Fri, Apr 04, 2025 at 02:13:08PM +0100, Lee Jones wrote:
-> On Sat, 22 Mar 2025 18:48:41 +0530, Purva Yeshi wrote:
-> > Fix warning detected by smatch tool:
-> > drivers/mfd/lpc_ich.c:194:34: error: strange non-value function or array
-> > drivers/mfd/lpc_ich.c:194:34: error: missing type information
-> > drivers/mfd/lpc_ich.c:201:34: error: strange non-value function or array
-> > drivers/mfd/lpc_ich.c:201:34: error: missing type information
-> > drivers/mfd/lpc_ich.c:208:34: error: strange non-value function or array
-> > drivers/mfd/lpc_ich.c:208:34: error: missing type information
-> > drivers/mfd/lpc_ich.c:215:34: error: strange non-value function or array
-> > drivers/mfd/lpc_ich.c:215:34: error: missing type information
+> In my experience, vendor DT has proper delays specified, just 7 instead of
+> 700, for example. What they get wrong, or better said, don't care, is phy
+> mode. It's always set to rgmii because phy driver most of the time ignores
+> this value and phy IC just uses mode set using resistors. Proper way here
+> would be to check schematic and set phy mode according to that. This method
+> always works, except for one board, which had resistors set wrong and
+> phy mode configured over phy driver was actually fix for it.
 
-[...]
+What PHY driver is this? If it is ignoring the mode, it is broken.
 
-> Applied, thanks!
-> 
-> [1/1] mfd: lpc_ich: Fix ARRAY_SIZE usage for apl_gpio_resources
->       commit: 87e172b0fdd3aa4e3d099884e608dbc70ee3e663
+We have had problems in the past in this respect. A PHY driver which
+ignored the RGMII modes, and strapping was used. That 'worked' until
+somebody built a board with broken strapping and added code to respect
+the RGMII mode, overriding the strapping. It made that board work, but
+broke lots of others which had the wrong RGMII mode....
 
-Can this be reverted ASAP, please? See below why.
+If we have this again, i would like to know so we can try to get in
+front of the problem, before we have lots of broken boards...
 
-There is no problem with the code. The original author of the change
-haven't proved otherwise.
-
-The change made it much worse to read and maintain. By the way, it actually
-_added_ the problem as far as I can see with my small test program.
-
-Let's just calculate based on the sizeof(struct foo) taken as 10 for
-simplicity and array size as 4x2. The full size of the array is
-4 * 2 * 10 bytes. The size of the entry in outer array will be 2 * 10 bytes.
-Now, what ARRAY2D_SIZE do is (4 * 2 * 10 / 10 / (2 * 10 / 10) == 4, and
-that's WRONG! This will make a out-of-boundary accesses possible.
-
-If smatch can't parse something, it's problem of smatch. No need to "fix"
-the working and robust code. The original code even allows (in theory) to have
-different amount of resources per entry, however it's quite unlikely to happen.
-But at bare minimum it shows the entry taken along with _its_ ARRAY_SIZE()
-and not something common over the outer array.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Andrew
 
