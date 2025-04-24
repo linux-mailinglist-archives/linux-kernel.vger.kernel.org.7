@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-618934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712D2A9B525
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BB1A9B52C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 19:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F3917EF39
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F1F1BA4439
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2921328C5B9;
-	Thu, 24 Apr 2025 17:22:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5F91B07AE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 17:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9F928BABF;
+	Thu, 24 Apr 2025 17:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHZcHJye"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914C4502BE;
+	Thu, 24 Apr 2025 17:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745515369; cv=none; b=bjcMsTWdsau18CNcbQoCCnYJGRf8A9THe8TDxP0FTY60cn9/betY2UooKPJ3Wc0zZcBQ+fmdTlo2OyKU4LBVqVEkLE6kfBgTtic60fdnxhl1CGnDHojFpE2vF+emM68Kn8hBX5om1XXLCWCMKB3mM76Y1MLzLOqbEZRl5t3QQ50=
+	t=1745515613; cv=none; b=UJQKnlzO+L7EcgFBDclKUZyqDYA1P8DPnrAzGZUzDwomI5qSVoOH7tn0nG7sJXM6n/gSsVc8b6QtEHRKHSBI7J4s5CUo5iHLSKCLHingXh4I1+ZHV58I+g7RcrZ8aVXtcWE24MtXPjsO7C9EtT3iM7UFHj7ljjma/2ILa/CvoQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745515369; c=relaxed/simple;
-	bh=wNCA99uLbH6Usp1b0F2kMpJij0jGAdtkZultGNQqhuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m07ohfUJRYiqsKALO1agJyNIOJjPwT6YGLQVGnHoWeDcACTT7QHwOxOLEmt/mbM8h/uO0LJMu51tOgz89zwmzlCBFpRJV0Rn+edth47Z/getvgF7LIhu2GxZhF6jmQ3fThkHtBP7M6mgQc9Mr9fbCiVezP4uq6AZvI/4lI2yXJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95EBA1063;
-	Thu, 24 Apr 2025 10:22:42 -0700 (PDT)
-Received: from [10.1.196.43] (eglon.cambridge.arm.com [10.1.196.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4D23F66E;
-	Thu, 24 Apr 2025 10:22:46 -0700 (PDT)
-Message-ID: <7681f92a-047b-4722-8cac-2f269ae10a45@arm.com>
-Date: Thu, 24 Apr 2025 18:22:45 +0100
+	s=arc-20240116; t=1745515613; c=relaxed/simple;
+	bh=wIiZhFy3LxuX7Gvw4Izh6ggx4TutWUOG1hKDXZ1mM30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kMvVCc0UoGKfNIqwOEG3Pyvt9m7Yb5tJelf6cG0KW+PXWsw2cQA/0bm8/5repnLL7ZDNKyqvHsgWq54jk5uQA0NYmItS7G/7GC0AYN9n9LZme98yLbt6LFerwnY50AkaRSl46HxAnVCv7UZUL9SVrYZEZUG1uvTUda1lXn8DBK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHZcHJye; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so2100936a12.0;
+        Thu, 24 Apr 2025 10:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745515610; x=1746120410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wIiZhFy3LxuX7Gvw4Izh6ggx4TutWUOG1hKDXZ1mM30=;
+        b=NHZcHJyeqniorBZlit2SQACoEV8Ir1pbqUaFQdLL/35PPKuW10RyJR0wMv4LRScSux
+         kC7DoYoxaeGuCzY3DryV11xNDfBdLXxlmVxPEIx8kur2zOSXP0J0OW2fKOQkEiodbh02
+         1YdivbQFzGLN7phvDa75ngT6IKWMGyCIw6dL7nCOayUuPYeXbD65DG9ZVItnnFJsj2u9
+         pKiebW4XrhcLfy+oSmT8EZea/YP/xx5K32n6GkIuDi9T8O+lTaMYxjD+pgpmLdh73Xn5
+         X8q36tnIDQey5actCIEfsqkjrMZguvEZK0eYElm7Q5CZBzN27pg7xkkXQCZIzH35E4in
+         ggJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745515610; x=1746120410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIiZhFy3LxuX7Gvw4Izh6ggx4TutWUOG1hKDXZ1mM30=;
+        b=bEEI7EGJKXNKAcal3ANFrXfrpKQPFDpk72FVjoyIatLvYmf6XTqItsFPxcesLjX2ua
+         FIYr3bVsXgE5AU6ZYVXpi4Gxs5wyXMT591B1niXFkjOs72h7DHrVER8OIaczXw0XWL8H
+         JVp4sFkfZk5UkmwAnCZeV9ce64NkYELCDfF9lS5QvrfwhIbNWRdy2ucdPvnqwqA3pR7v
+         lxIbxdkQvHhTIh9RzLHzcIIrIiuH8QLfGXflJtVArg/z+MGftVMR/J3174K3iZVsUTtS
+         73Ga6p4E4IMLymSi0YNKvFrJMQP+Pmy2MF22aoUfV68uLh1Kt0LzFQw2LRlgxbDuPqY4
+         yb+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWct6hSpHlud7f/rgGQH6BxGUQmwPEJ2NfCGjnlNwAF3Z36BIPgCuynUsJbhrYJisJnetEv0Uve@vger.kernel.org, AJvYcCXQdT7q3AFUsuG6D1yQjwlByaHnoUAJZ3Mr7qmjKuoKrBlkYtYjr0AE1R8jyLelv9Yn99oBnt/QTeqIdm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0eD3UOq3B0c2HkOlSY9S7GFMBsoTtWb3ncOgJ4O/EW1jUOlRA
+	IcLv4AewcdrgThzb+HD4KCmnOqfDkh9Fs9TNSwqJx6Nrz9VVCYy/IQv6kaJjQTQg8czEAQ6/+h2
+	JpBAmYV28nYn1768SaQQaqGhJM6A=
+X-Gm-Gg: ASbGncsmynenVOKdmH0CQwqhG5sSveOUtfExOZE5+90wXI4slDmj+RVos6dqjktQJdN
+	nlvzlFYernkRTYU+vRj0d5us+h+dp6QGNGCVbkXqFrW+RZg+eAFCGddv5vLWSxGUgl6LB3LOGUQ
+	GImSeTp5i41OnYkTZm/uK9
+X-Google-Smtp-Source: AGHT+IEGOMR+vkqbrr1aAnKdjcsgbPhgb/w0LxGlhNTkXPi4SgqxARsBt3AVG3NQTKJE+6WeiTKNkw4pRe9SmtykSJM=
+X-Received: by 2002:a05:6402:3481:b0:5ec:939e:a60e with SMTP id
+ 4fb4d7f45d1cf-5f6fab0aa66mr249451a12.0.1745515609608; Thu, 24 Apr 2025
+ 10:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] cpumask: add missing API and simplify
- cpumask_any_housekeeping()
-To: Yury Norov <yury.norov@gmail.com>,
- Reinette Chatre <reinette.chatre@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250407153856.133093-1-yury.norov@gmail.com>
- <240d0962-b381-479f-b3ed-4e6ce72d6570@intel.com> <aAmr-FktkJiI-bxd@yury>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <aAmr-FktkJiI-bxd@yury>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250424080755.272925-1-harry.yoo@oracle.com> <80208a6c-ec42-6260-5f6f-b3c5c2788fcd@gentwo.org>
+ <CAGudoHEwfYpmahzg1NsurZWe5Of-kwX3JJaWvm=LA4_rC-CdKQ@mail.gmail.com> <cd7de95e-96b6-b957-2889-bf53d0a019e2@gentwo.org>
+In-Reply-To: <cd7de95e-96b6-b957-2889-bf53d0a019e2@gentwo.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 24 Apr 2025 19:26:35 +0200
+X-Gm-Features: ATxdqUFYWN-cd_DMErkV7CJkSwlUQKtICdN_JoevuiBqeeRvsQR6ZYn-MTzoDb0
+Message-ID: <CAGudoHHbSKLxHgXfFYFdz5nXFBOQPh5EkCX8C7770vfMH-SLeA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Reviving the slab destructor to tackle the percpu
+ allocator scalability problem
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Vlad Buslov <vladbu@nvidia.com>, Yevgeny Kliteynik <kliteyn@nvidia.com>, Jan Kara <jack@suse.cz>, 
+	Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette, Yury,
+On Thu, Apr 24, 2025 at 6:39=E2=80=AFPM Christoph Lameter (Ampere)
+<cl@gentwo.org> wrote:
+>
+> On Thu, 24 Apr 2025, Mateusz Guzik wrote:
+>
+> > > You could allocate larger percpu areas for a batch of them and
+> > > then assign as needed.
+> >
+> > I was considering a mechanism like that earlier, but the changes
+> > needed to make it happen would result in worse state for the
+> > alloc/free path.
+> >
+> > RSS counters are embedded into mm with only the per-cpu areas being a
+> > pointer. The machinery maintains a global list of all of their
+> > instances, i.e. the pointers to internal to mm_struct. That is to say
+> > even if you deserialized allocation of percpu memory itself, you would
+> > still globally serialize on adding/removing the counters to the global
+> > list.
+> >
+> > But suppose this got reworked somehow and this bit ceases to be a probl=
+em.
+> >
+> > Another spot where mm alloc/free globally serializes (at least on
+> > x86_64) is pgd_alloc/free on the global pgd_lock.
+> >
+> > Suppose you managed to decompose the lock into a finer granularity, to
+> > the point where it does not pose a problem from contention standpoint.
+> > Even then that's work which does not have to happen there.
+> >
+> > General theme is there is a lot of expensive work happening when
+> > dealing with mm lifecycle (*both* from single- and multi-threaded
+> > standpoint) and preferably it would only be dealt with once per
+> > object's existence.
+>
+> Maybe change the lifecyle? Allocate a batch nr of entries initially from
+> the slab allocator and use them for multiple mm_structs as the need
+> arises.
+>
+> Do not free them to the slab allocator until you
+> have too many that do nothing around?
+>
+> You may also want to avoid counter updates with this scheme if you only
+> count the batchees useed. It will become a bit fuzzy but you improve scal=
+ability.
+>
 
-On 24/04/2025 04:11, Yury Norov wrote:
-> On Wed, Apr 23, 2025 at 02:27:46PM -0700, Reinette Chatre wrote:
->> On 4/7/25 8:38 AM, Yury Norov wrote:
->>> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
->>>
->>> cpumask library missed some flavors of cpumask_any_but(), which makes
->>> users to workaround it by using less efficient cpumask_nth() functions.
->>>
->>> Yury Norov (4):
->>>   relax cpumask_any_but()
->>>   find: add find_first_andnot_bit()
->>>   cpumask_first_andnot
->>>   resctrl
->>
->> (sidenote: above list of patch subjects do not match the series)
->>
->> Thank you very much for doing this work. This simplifies resctrl code
->> significantly. I do have a couple of comments that you will find in
->> the individual patches. 
-> 
-> Sure, glad to see you like it.
->  
->> Regarding upstreaming I would like to propose that the upstreaming of
->> this work be split so that resctrl changes do not go upstream
->> via separate trees during this cycle. I am ok with delaying the resctrl
->> portion of this work for a cycle. This is because we hope to include a
->> huge change [1] to resctrl that includes the code modified in this series.
->> Having these two changes meet during merge window will be inconvenient
->> for maintainers involved. If you require a user to upstream these new
->> helpers then another possibility is to upstream this work via the tip repo
->> if that is ok with x86 maintainers so that that huge resctrl patch is created on
->> top if this work.
+If I get this right this proposal boils down to caching all the state,
+but hiding the objects from reclaim?
 
-> I can move all the patches with my branch (bitmap-for-next) if you ack
-> the restcl part, or let resctl folks (you, I guess) take over the series.
-
-> Or we can split it, so I'll move generic part myself, and you'll move
-> the last patch.
-
-That would mean co-ordinating the order those get merged in, which is extra work for the
-relevant maintainers.
-
-The patch that moves all the code is easy to regenerate as this series doesn't add any new
-functions. Ideally any series touching resctrl in the same merge window would also go via
-tip - but it would also possible to rebase onto an immutable branch. (needed if
-bitmap-for-next also has dependencies/conflicts on these patches)
-
-I think its easier for the tip folk if I rebase onto this once as/when its got all the
-needed tags.
-
-
-Thanks,
-
-James
+If going this kind of route, perhaps it would be simpler to prevent
+direct reclaim on mm objs and instead if there is memory shortage, let
+a different thread take care of them?
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
