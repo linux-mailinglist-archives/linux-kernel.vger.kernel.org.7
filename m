@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-617280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCEAA99D38
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B013A99D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 02:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E617A5A719D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92AF5A7012
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 00:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4573545979;
-	Thu, 24 Apr 2025 00:44:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615FE29D19;
-	Thu, 24 Apr 2025 00:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104592D052;
+	Thu, 24 Apr 2025 00:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTb24ePK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660BB1CD1F;
+	Thu, 24 Apr 2025 00:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745455489; cv=none; b=qcfoPp2ZMGaiObhw4jylnW++zXTDptu7JYv3b6meSEqullb4yvRwC3EEM3cT7kBYLU1W0WFaGJ5Gbejs2u0+fPJjomSuXhIqxlRE8M/p6ft4j4yXQtWDEHku/+pVLhsxdqUsHTlTv6F60Gtsk9rF1WUs+Zw1rhLU7qXUblMLIa8=
+	t=1745455449; cv=none; b=Zc9ybV9gGQ1DUu3YiA9dQR43JTXjRywar4zu3+DZr4u7YMDPBVd/Mg/7hWm93xiiuNtIpvMN9sjy0ENZqZqIWrbJfU9A6PbXQAnU76Bapf5ZpqbrXGVV1qgs1CqSQC70rJDn7vFo2fYrTDORj6nfBDtxAZ80jGYvHnCNiGHvTYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745455489; c=relaxed/simple;
-	bh=9XweFNfHhe7EX+TrllqLBd/BK2OVdDV9V+0ba/Rb3EU=;
+	s=arc-20240116; t=1745455449; c=relaxed/simple;
+	bh=9RqTBVvafFjbkjBVSdY6jeYYwZvIr/H3q0ESUZUpBEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qbt9L78gY/Rb+nO4aRB5IrEi0Y+ORE5AIyOw8WXqRSI5vGBT9wc3YfOKqortxVoEytVFc39zYpG0/Qdr7pBYoos724yN5jlaZ1qX11FlW2NnTpXkhZxviSRpi2Mumyj1CY/eLuFsel6cLYDW2e8SrnfEFUi5z86eZxCFW3A4Huw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F01E106F;
-	Wed, 23 Apr 2025 17:44:43 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2DF73F59E;
-	Wed, 23 Apr 2025 17:44:45 -0700 (PDT)
-Date: Thu, 24 Apr 2025 01:43:41 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Maxime Ripard <mripard@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 4/5] arm64: dts: allwinner: a527: add EMAC0 to Radxa A5E
- board
-Message-ID: <20250424014341.7006ea65@minigeek.lan>
-In-Reply-To: <20250423-01-sun55i-emac0-v1-4-46ee4c855e0a@gentoo.org>
-References: <20250423-01-sun55i-emac0-v1-0-46ee4c855e0a@gentoo.org>
-	<20250423-01-sun55i-emac0-v1-4-46ee4c855e0a@gentoo.org>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	 MIME-Version:Content-Type; b=G51eJIX1B/gaG2Ryfnxs3dPf35KtaaxAl1fTHFSXE2WMf7unGNxxsF8NRs2a3WNZtrGMdQgCRVji8U50+OwUyWYv70RhFECK0MmcI3HXQRS0sO49rgZmdka4ng5+y2Ks1Kx+IS0pIajwA2I1mSh3FtdCiCqQC/S8t0WFcWiv9X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTb24ePK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FEDC4CEEA;
+	Thu, 24 Apr 2025 00:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745455448;
+	bh=9RqTBVvafFjbkjBVSdY6jeYYwZvIr/H3q0ESUZUpBEE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YTb24ePKqA7OB68SC3BHkiV/rJR69IaSgpfyXzwBwGzwTSvm4yNuY+e8TbHTLKwZK
+	 f22XqAwdfvoQHJbz4WDrRpCI5GL+S7nVrUWYXcHcF/twsMwS+0iI6pT55KKIUopox3
+	 mU8RDYAlYonHIbvd4sLKlu6v+tOIbminefcraDL2YEYzGb1PJd4EedNg+XZaFo0fow
+	 zr+l/k+sBwiCfXc1kZPAMYM7RZm9PDjqVecI8F1t3+OQKqvpbuT1Cz+NDJ2hBB8CBK
+	 tKBgRtv5HDDHRGPzfvWCYDNqOtrEvGUHAW9tEiQVZ2qXF98WDZQbJ1gffplNsFOUqT
+	 a/k2AdeDVTIjw==
+Date: Thu, 24 Apr 2025 08:43:58 +0800
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Improve Sphinx kerneldoc extension
+Message-ID: <20250424084358.1cfc1455@sal.lan>
+In-Reply-To: <87jz7dxvgu.fsf@trenco.lwn.net>
+References: <cover.1744685912.git.mchehab+huawei@kernel.org>
+	<87jz7dxvgu.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,62 +60,85 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Apr 2025 22:03:25 +0800
-Yixun Lan <dlan@gentoo.org> wrote:
+Em Mon, 21 Apr 2025 11:42:09 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Hi Yixun,
-
-> On Radxa A5E board, the EMAC0 connect to an external YT8531C PHY,
-> which features a 25MHz crystal, and using PH8 pin as PHY reset.
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 > 
-> Tested on A5E board with schematic V1.20.
-
-Can you please add a name to the /aliases node, to make U-Boot add a
-MAC address?
-	ethernet0 = &emac0;
-
+> > Hi Jon,
+> >
+> > As promised, this series improves the Sphinx kerneldoc extension making it using the
+> > kernel-doc.py classes directly if available.
+> >
+> > The script still supports excecuting kernel-doc via shell, and, in verbose mode, it will
+> > show the command line arguments to run kernel-doc manually, even when the Python
+> > classes are used. The idea is that the command line verbose will help to eventually
+> > debug issues if one needs to run kernel-doc.py manually. 
+> >
+> > On other words, after this series, if one does:
+> >
+> > 	make htmldocs KERNELDOC=scripts/kernel-doc.py
+> >
+> > Or, simply (as internally KERNELDOC is set to scripts/kernel-doc.py):
+> >
+> > 	make htmldocs
+> >
+> > It will use the Python classes instead of running a subprocess.
+> >
+> > If one uses, instead:
+> >
+> > 	make htmldocs KERNELDOC=scripts/kernel-doc
+> > or:
+> > 	make htmldocs KERNELDOC=scripts/kernel-doc.pl
+> >
+> > As the file extension doesn't end with .py, it will excecute the Python or the Perl
+> > version of kernel-doc via a subprocess.
+> >
+> > On this version, I opted to re-create the Python objects for every single kernel-doc
+> > line, so no caches from past runs are used. I'm working on a version that will cache
+> > results, but it is currently causing some regressions. So, let's do the changes
+> > step-by-step, applying first this improvement patch series.
+> >
+> > PS.: the first patches on this series are addressing some some bugs and one
+> > improvement that I noticed while debugging the patch changing kerneldoc
+> > Sphinx extension.
+> >
+> > Mauro Carvalho Chehab (4):
+> >   scripts/lib/kdoc/kdoc_files.py: don't try to join None
+> >   scripts/lib/kdoc/kdoc_parser.py: move states to a separate class
+> >   scripts:kdoc_files.py: use glob for export_file seek
+> >   docs: sphinx: kerneldoc: Use python class if available
+> >
+> >  Documentation/sphinx/kerneldoc.py | 138 ++++++++++++++++++++++++++++--
+> >  scripts/lib/kdoc/kdoc_files.py    |  11 ++-
+> >  scripts/lib/kdoc/kdoc_parser.py   | 119 ++++++++++++++------------
+> >  3 files changed, 200 insertions(+), 68 deletions(-)  
 > 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> I've applied the series.
 > 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
-> index 912e1bda974ce5f64c425e371357b1a78b7c13dd..b3399a28badb5172801e47b8a45d5b753fc56ef1 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
-> @@ -54,6 +54,23 @@ &ehci1 {
->  	status = "okay";
->  };
->  
-> +&emac0 {
-> +	phy-mode = "rgmii";
-> +	phy-handle = <&ext_rgmii_phy>;
-
-Can you please add the phy-supply here, which should be CLDO3? It's
-referenced by other nodes, so would be enabled already,but each node
-should be self-contained.
-
-Cheers,
-Andre
-
-> +
-> +	allwinner,tx-delay-ps = <300>;
-> +	allwinner,rx-delay-ps = <400>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&mdio0 {
-> +	ext_rgmii_phy: ethernet-phy@1 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <1>;
-> +	};
-> +};
-> +
->  &mmc0 {
->  	vmmc-supply = <&reg_cldo3>;
->  	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_DOWN)>; /* PF6 */
+> I do note that the default "make htmldocs" build time is reliably slower
+> than with KERNELDOC=scripts/kernel-doc, I'd be curious to understand
+> why.
 > 
+>         External kdoc:  170s
+>         w/classes:	186s
 
+I noticed that. My guess is that this has to do with Python's big lock
+(GIL). When it uses processes, there won't be any internal locks, as
+kernel-doc will run independently. There is an effort for Python to get
+rid of GIL, but it seems GIL-less threads won't be default on version 3.14.
+
+-
+
+That's said, please notice that I intend to work on some patches that
+will optimize that. Right now, on some places, the same file is processed
+multiple times. By using the classes, we can cache the processing results
+the first time and then re-use them every time a kernel-doc tag for the
+same file is found within Documentation.
+
+This is easier said than done. I did one attempt to do that, but it ended
+causing troubles. So, I'm working on a new version of it.
+
+Regards,
+Mauro
 
