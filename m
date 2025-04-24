@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-617833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-617835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342E0A9A69E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0951FA9A6A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 10:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C618B1B864EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:46:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A6A77AAE96
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D9C22127B;
-	Thu, 24 Apr 2025 08:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA75A221FBF;
+	Thu, 24 Apr 2025 08:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cFWJteYk"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C5FBImGY"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCA8215062;
-	Thu, 24 Apr 2025 08:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61066221291;
+	Thu, 24 Apr 2025 08:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745484265; cv=none; b=E7JJCRG67eGHwhXkAY98M/leZCbzltDinyu2ntFzT81k3oyyMkfEx087sgit5GrtoLL2x/KF19pNqHhIyd+PmfEcXAWek0JgEWRfHyjYh3T0icAWzSlkROE7TpJMKh/ayraM8DkB6CGChFOvMrXIf1wGLLLYDZDNvOCSdHnuwnM=
+	t=1745484268; cv=none; b=h2pumxBOewc75fTuuoBLpvhtPW6jH2Cu4lvdEf08NNlw9Q0rrjpBzZHAsZJL0WVp28lblIzGltR8Id+1uWAMqB/wxk3X+ev4NOQ/7vCD2rZ1r6fb9UyzIb8uSolrdh0gK+Qc6keIOxRUnHKPWjHK4kZfCWJbF4SBYE2AAbjMOmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745484265; c=relaxed/simple;
-	bh=DOL+FJl7ld1elRn3NODOFw+tFdFi5JN605YedGz+ea0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BvmZOQq+uzgv+cmyF+Q/1y7bFc8B/9siOL6E885aycWWo8Xrsayn+4+KelJ3aWkqakYrRsU2ad8laAgdbaSsK4P3c3WEpz+MRdfPSBlrL7x6ZaZxXalaWc9iN0SIYAS4PzYoiP/c6W1smkIKMDozntYnCGUPHZ3icM8ZeKo8uBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cFWJteYk; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1745484268; c=relaxed/simple;
+	bh=annhWEmk6DJ0CzX4ypobosFrKn1ReHpsc3v9qdBiNVM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OBzl8hflEx04wKF4mdELayb7zh5jyFqgbto90Vmnb+AmdfCXsLV+Gr4mB0i2oDsFQapxyosW+otCFGFBj+LuJ9SQgavM8srYikLsZ1nJgk/tHZYW1bYIosUAjUkmVoiIcdHgCLdY0W8QzDNIzyOEmkrQU8PXulOOfmp2TIoNuXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C5FBImGY; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53O8iHxt1804359
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53O8iJHG2448691
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Apr 2025 03:44:17 -0500
+	Thu, 24 Apr 2025 03:44:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745484257;
-	bh=Fyz2hLp0kO8PERuGySQiIDCnQJ1k8h3nTLge22HZa/M=;
-	h=From:To:CC:Subject:Date;
-	b=cFWJteYkuWICbpORuoaPplMtS9sQaDXZE6qvCNnKlIapT3O9DJJtUwN6E7B/ta8co
-	 GOlm1ROx5FIDfwzHTQsxZzLCEVC/pkiukbpLSAOHt7JXGKjlcmmTOvw16eHTaAVOym
-	 9C8/ObxKbAUgxLzt7uUL9aU6yfjVbBrJAw3ZQ+g0=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53O8iHXr019801
+	s=ti-com-17Q1; t=1745484259;
+	bh=hu3uAgQuAkms0/9RpR8vcBVvwdO2elej7Vk+d6PRqRU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=C5FBImGYId6V5JyMvVMZNFUl6Bqh4WxLp5ZOBI/x8g5y4BsBFPC7b2ijQbnYJa9zx
+	 h4yn7dm1bj15muZJgbhVCGfCcphHFNKN8iAbFDZmjMbpspozVKTLxT77FU2d0BXuqv
+	 XiL6ObI8ZM9UJK+KDov2fuleRLcMSV5h9zADV4bs=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53O8iJpE059154
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 24 Apr 2025 03:44:17 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 24 Apr 2025 03:44:19 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 24
- Apr 2025 03:44:16 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 03:44:18 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 24 Apr 2025 03:44:16 -0500
+ Frontend Transport; Thu, 24 Apr 2025 03:44:18 -0500
 Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53O8iFBu058367;
-	Thu, 24 Apr 2025 03:44:16 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53O8iHLC058403;
+	Thu, 24 Apr 2025 03:44:18 -0500
 From: Jayesh Choudhary <j-choudhary@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>
 CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <kristo@kernel.org>, <u-kumar1@ti.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devarsht@ti.com>,
         <j-choudhary@ti.com>
-Subject: [PATCH 0/4] Add global CMA areas for few TI SoCs
-Date: Thu, 24 Apr 2025 14:14:11 +0530
-Message-ID: <20250424084415.66457-1-j-choudhary@ti.com>
+Subject: [PATCH 1/4] arm64: dts: ti: k3-j721s2-som-p0: Reserve 1056MiB of global CMA
+Date: Thu, 24 Apr 2025 14:14:12 +0530
+Message-ID: <20250424084415.66457-2-j-choudhary@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250424084415.66457-1-j-choudhary@ti.com>
+References: <20250424084415.66457-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,38 +78,59 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello All,
+Reserve 1056MiB of global CMA pool which is also marked as re-usable
+so that OS can also use this region if peripheral drivers are not
+using it.
 
-Following AM62* platforms[0], this patches add global CMA reserve area for:
-- J721S2-EVM (1056 MiB)
-- J784S4-EVM (1920 MiB)
-- AM68-SK (1008 MiB)
-- AM69-SK (1904 MiB)
+J721S2 has different multimedia components such as Camera, Dual-
+Display and H264 Video Codec which uses CMA for buffer allocations.
+Assuming the worst case scenario where all three run in parallel,
+below is the calculation:
 
-These SoCs does not have MMU and hence they require contiguous memory
-pool to support various multimedia usecase.
+1) IMX390 camera sensor 1920x1080
+-> 1920 width x 1080 height x 2 bytesperpixel x 4 buffers :
+   15.820 MiB which is ~16MiB
+   J721S2 can support 8 cameras so ~128MiB
 
-The calculation was done considering H264 codec requirements, dual-display
-supported in each platforms and multicamera use-cases.
-Additional buffer was kept for other peripheral s and to account for
-fragmentation.
-The breakdown is mentioned in each commit message.
+2) 3840x2160@30fps MHDP via DisplayPort0
+-> 3840 width x 2160 height x 4 bytesperpixel x 2 buffers :
+   63.281 MiB which is ~64 MiB
 
-[0]: https://lore.kernel.org/all/20240613150902.2173582-1-devarsht@ti.com/
+3) 2560x1440@60fps DSI via DisplayPort1
+-> 2560 width x 1440 height x 4 bytesperpixel x 2 buffers :
+   28.125 MiB which is ~29 MiB
 
-Jayesh Choudhary (4):
-  arm64: dts: ti: k3-j721s2-som-p0: Reserve 1056MiB of global CMA
-  arm64: dts: ti: k3-j784s4-j742s2-evm-common: Reserve 1920MiB of global
-    CMA
-  arm64: dts: ti: k3-am68-sk-som: Reserve 1008MiB of global CMA
-  arm64: dts: ti: k3-am69-sk: Reserve 1904MiB of global CMA
+4) H264 Video Codec 1920x1080 resolution:
+-> For 1080p resolution codec application, we require ~98-100 MiB
+   per channel. We require ~800MiB for 8 channel codec application.
 
- arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi              | 8 ++++++++
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                   | 8 ++++++++
- arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi            | 8 ++++++++
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi | 8 ++++++++
- 4 files changed, 32 insertions(+)
+Total comes about 1021MiB. Adding 32MiB for other peripherals and
+and additional 3MiB for rounding it off to 1056MiB.
 
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
+index 54fc5c4f8c3f..2d67fc4bd018 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
+@@ -25,6 +25,14 @@ reserved_memory: reserved-memory {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		/* global cma region */
++		linux,cma {
++			compatible = "shared-dma-pool";
++			reusable;
++			size = <0x00 0x42000000>;
++			linux,cma-default;
++		};
++
+ 		secure_ddr: optee@9e800000 {
+ 			reg = <0x00 0x9e800000 0x00 0x01800000>;
+ 			alignment = <0x1000>;
 -- 
 2.34.1
 
