@@ -1,198 +1,132 @@
-Return-Path: <linux-kernel+bounces-618390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6E0A9ADED
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90095A9ADF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 14:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEC687AD475
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C87187ADE95
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 12:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C98227BF85;
-	Thu, 24 Apr 2025 12:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC8927BF61;
+	Thu, 24 Apr 2025 12:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3PFYCP8"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NF+hNjrG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B687227B4FE;
-	Thu, 24 Apr 2025 12:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2E1153BE8;
+	Thu, 24 Apr 2025 12:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745498994; cv=none; b=SuEC2FFZjwRFnt3S0B3xcOXtiR6mZIcoGHU6kubSEhBTPGlmfZE6keE3N85900rxKK0R1XjRMU5YIRIMPBKEtwyxKLNjYTN3PtGZztDaL1otpaf+lv05HGo4KwlL4VJGvIcYYoE0CjKmriBN6rA9295RUpujM+S6SHAFPVUVK64=
+	t=1745499057; cv=none; b=RJB0gTby8euN3gN4n+jWDvTuILGEK6zgX7t0PGEZsLCBUy6QOz5P3Is6YXGDI69+E/hFIFvYw+b5QaNV0oq2dygj7yW1W3ODMQMTUMhLTxoT/FVOu4i399iHVV2vH8zIkoYysIbXp+b4ty2/AfUAjpdYWCMTuf5pOk3dRjsibI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745498994; c=relaxed/simple;
-	bh=p/rOd3i5b7qQhyyW137PcSqdscgC3kk2Uqz0GR+eId4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dd9+uLigNo1XlYmooHbDoMo/ej2XK6GzUqbqm43/imhnzkOdGaY3Fb+YlbiJ64AFgoUscMesMIYIJbxUA0W+kFR+vX9OKb/BMfGAwNksirJo/m/q85wCZlcQVs7NROuUaw0uFWFKD6HJ7KvnRhTVSpFyT8noNrLXGEAnsW2neTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3PFYCP8; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so1441890a12.1;
-        Thu, 24 Apr 2025 05:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745498990; x=1746103790; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tSEWW9BbAPEs6rJriEsn5xHrbM7UPcDq+siupWsOBdY=;
-        b=S3PFYCP8SWx5DQSArpR5kdWkKPN6wm1FlSKfBtuxmnmCX+5cQKvh13uY5vruqw20RT
-         cKcyGcGIW5K14fG7YlzQzHiZWtnQxAx0W0NvJmuwFV6a6LMA9dtyejrk1RopOBjp/bU7
-         Gab+f4PP1Ny5Jb3ZvRl01xE0LuXTW0HZzYOry3oOdgpil0GzzC7DchN74Cr2x0qbJc5i
-         jVYSuNgP5pJbothL80p34q277MvyGJPTyqPolLcmYDg18X6p5co0EmCS1pdJLH3YHg+J
-         UiXi1LghcwySEwM2f0v9UW/A81WpGKev9A1Wh9vSxYSlxpue2SfLfW1YAuRKiQUtBOls
-         XfYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745498990; x=1746103790;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSEWW9BbAPEs6rJriEsn5xHrbM7UPcDq+siupWsOBdY=;
-        b=g5G2OX5zKZ9bI63pEWn+9lM5/EYLaZs0e6O0tvhgoHmFAaRFxWFonNwS9gOpTlUnt0
-         /75oYMPMReVtE2pKsOVRcWoBJHN0BVkSLyPfBFUkmF8MFPZODr0ohm5JzqH0Y6LshwPU
-         Z6uuxJs5c4RnGlISrpqBPpqjd3blP9lHlgUiQK1B4t1LRPFanz+549YBgMU3snjMQWDN
-         D5/g6yb/39SRQfibwGU4XH5di+4b5CPU1OMvh/VqbhUmVbL4mCCjZxGXv/rN3TcNz2Ga
-         G90TBKl+RplyYpavLPO0akpSUNtwUuXVjPg/mu7BN4hnYPLGlq9fEcsKfFyI1D4JHBHB
-         Lofw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjeL3jPfHgMvIS9DimEUGikU5Ht3nJ1r+blKEXKoVnfsfS2Lk7Mblt9YTPOJX8PYBUNcqDu/mXgjNEjTmO@vger.kernel.org, AJvYcCWkwViEyxL3z30HiZ0yM1jUDttvIXAWisnAU65AmpwhRss5/ZOsmVBOMbcNgodjARBOE2VzO1A1jL/KIHLlRdsKv+GA@vger.kernel.org, AJvYcCXx1UAdthuQO2rpe2V6Wh0QokcmZmo+FCgO4ggO+UCB0Rtv5+9MiBOyub9fukkO0aUmu5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdXRzCvRU+vM/iYNc0tvriA1TnJfBLo2C+fto0I9rVcHKbSgKo
-	IF38CA8g8rtb3aRM4a9mRVpwqkumRGac/ZBrA1ozGZaCxFA8f9/l
-X-Gm-Gg: ASbGncuQLDX+aEMVFB08yrRG+RZOwiw5cBCDPgbQvQZONXbja0/ZowzpW1YFfG2wFut
-	4lZGCk5lz7xGQPHRjFQIQVU1dPHQhyM9k3OhfCAa8dP2faD6+854iPY9o3re2en5OI3WTijIxhg
-	NRu1lAqkFef5VnHy+d/blzyIRjUTOXY0gvoqF7lNMtzm4t6Jqgk2Dfp4q3zB+I2YkcHXjmK+7H/
-	Jx3k/N1DoOEQQpGtXcLYxNlH46r7Pcr6wci+bPLrqJjNnhf8Shn0Z6gkVrAPzt2mUJx5LdmM39o
-	wEusTk9tps5LN5whJGILGMXuwjo=
-X-Google-Smtp-Source: AGHT+IHwf+ATNXMNvlohklaZixX6tEmD6VTz/rgQ+v+dYzN9OnnLOdigEmIPwGRkY9F0n92qwmmR6g==
-X-Received: by 2002:a05:6402:26d2:b0:5e5:bfab:524 with SMTP id 4fb4d7f45d1cf-5f6ddb0c615mr2618635a12.3.1745498989867;
-        Thu, 24 Apr 2025 05:49:49 -0700 (PDT)
-Received: from krava ([173.38.220.55])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f6eb43e1casm1124307a12.17.2025.04.24.05.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 05:49:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 24 Apr 2025 14:49:47 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 14/22] selftests/bpf: Add uprobe/usdt syscall
- tests
-Message-ID: <aAoza2tZYEo6gvKF@krava>
-References: <20250421214423.393661-1-jolsa@kernel.org>
- <20250421214423.393661-15-jolsa@kernel.org>
- <CAEf4BzaK+as2YtN1L6aNT6m6R+iRs_VjOdV7mtDNAvKFdouoEA@mail.gmail.com>
+	s=arc-20240116; t=1745499057; c=relaxed/simple;
+	bh=8H9DLsIGypKjg5EA6FxGNO666pgvRrUO/QmIpk1Dbt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AbGu0W7aLEcKekvvQzLIS2KX8Lzf+93H2jVheWFWQMitKRUeCMZqxDBw8cCl+vc6T07w2M8/1NQCtVyUuRWw9KFggEFC3fgKOzjaSt2RPB9m/NFlaDFFCsnlRxdYN+Ncqk/8Fy5qyPfZzddsjbydd4iSi9X/JJqDM1nYkq+4jIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NF+hNjrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73038C4CEE8;
+	Thu, 24 Apr 2025 12:50:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745499057;
+	bh=8H9DLsIGypKjg5EA6FxGNO666pgvRrUO/QmIpk1Dbt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NF+hNjrGDHMWirFNyLpGK+CGY/Wtnrcaz8GKXJy/bE0XGkdVLaecqnHgHaxGfEhML
+	 7jpVM/H7S49o+1K+eHQ2EgfO2HX4uAVtcvGRrWZJiMPUTyBYsPFQrSWaQDyWiksE4I
+	 zYCVGwUO0Zy3g+Q9YtT5JjZ6L4/EJc4YcANsfzc5P8J46J4DvIu422Ekpr+LWz/xu5
+	 1tDTRL8fevCgQaBA+DwfgEVIfNxbm2kn1CppO/72VC+Bxe/6aX19AeSe+j5ZVvsX6c
+	 jKIeV1sk1Atk76qflMRZe3BT+0W+nn49+KZBrII6YRZh59RXG6gb+f1yfN7sBXtrbi
+	 XI5m2BF99M4Cw==
+Date: Thu, 24 Apr 2025 15:50:52 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Jake Edge <jake@lwn.net>, Jonathan Corbet <corbet@lwn.net>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Subject: Re: [PATCH v9 10/24] mm/hmm: let users to tag specific PFN with DMA
+ mapped bit
+Message-ID: <20250424125052.GS48485@unreal>
+References: <cover.1745394536.git.leon@kernel.org>
+ <0a7c1e06269eee12ff8912fe0da4b7692081fcde.1745394536.git.leon@kernel.org>
+ <7185c055-fc9e-4510-a9bf-6245673f2f92@redhat.com>
+ <20250423181706.GT1213339@ziepe.ca>
+ <36891b0e-d5fa-4cf8-a181-599a20af1da3@redhat.com>
+ <20250423233335.GW1213339@ziepe.ca>
+ <20250424080744.GP48485@unreal>
+ <20250424081101.GA22989@lst.de>
+ <20250424084626.GQ48485@unreal>
+ <20250424120703.GY1213339@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaK+as2YtN1L6aNT6m6R+iRs_VjOdV7mtDNAvKFdouoEA@mail.gmail.com>
+In-Reply-To: <20250424120703.GY1213339@ziepe.ca>
 
-On Wed, Apr 23, 2025 at 10:40:58AM -0700, Andrii Nakryiko wrote:
-> On Mon, Apr 21, 2025 at 2:47 PM Jiri Olsa <jolsa@kernel.org> wrote:
+On Thu, Apr 24, 2025 at 09:07:03AM -0300, Jason Gunthorpe wrote:
+> On Thu, Apr 24, 2025 at 11:46:26AM +0300, Leon Romanovsky wrote:
+> > On Thu, Apr 24, 2025 at 10:11:01AM +0200, Christoph Hellwig wrote:
+> > > On Thu, Apr 24, 2025 at 11:07:44AM +0300, Leon Romanovsky wrote:
+> > > > > I see, so yes order occupies 5 bits [-4,-5,-6,-7,-8] and the
+> > > > > DMA_MAPPED overlaps, it should be 9 not 7 because of the backwardness.
+> > > > 
+> > > > Thanks for the fix.
+> > > 
+> > > Maybe we can use the chance to make the scheme less fragile?  i.e.
+> > > put flags in the high bits and derive the first valid bit from the
+> > > pfn order?
 > >
-> > Adding tests for optimized uprobe/usdt probes.
-> >
-> > Checking that we get expected trampoline and attached bpf programs
-> > get executed properly.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  .../selftests/bpf/prog_tests/uprobe_syscall.c | 278 +++++++++++++++++-
-> >  .../bpf/progs/uprobe_syscall_executed.c       |  37 +++
-> >  2 files changed, 314 insertions(+), 1 deletion(-)
-> >
+> > It can be done too. This is what I got:
 > 
-> [...]
-> 
-> >  static void __test_uprobe_syscall(void)
-> > diff --git a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
-> > index 2e1b689ed4fb..7bb4338c3ee2 100644
-> > --- a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
-> > +++ b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
-> > @@ -1,6 +1,8 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  #include "vmlinux.h"
-> >  #include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include <bpf/usdt.bpf.h>
-> >  #include <string.h>
-> >
-> >  struct pt_regs regs;
-> > @@ -9,9 +11,44 @@ char _license[] SEC("license") = "GPL";
-> >
-> >  int executed = 0;
-> >
-> > +SEC("uprobe")
-> > +int BPF_UPROBE(test_uprobe)
-> > +{
-> 
-> I'd add a PID filter to all of these to guard against potential
-> unrelated triggerings if in the future there is some parallel test
-> that attaches to all uprobes or something like that. Better safe than
-> sorry.
+> Use genmask:
 
-ok, makes sense, will add
-
-thanks,
-jirka
+I can do it too, will change.
 
 > 
-> > +       executed++;
-> > +       return 0;
-> > +}
-> > +
-> > +SEC("uretprobe")
-> > +int BPF_URETPROBE(test_uretprobe)
-> > +{
-> > +       executed++;
-> > +       return 0;
-> > +}
-> > +
-> > +SEC("uprobe.multi")
-> > +int test_uprobe_multi(struct pt_regs *ctx)
-> > +{
-> > +       executed++;
-> > +       return 0;
-> > +}
-> > +
-> >  SEC("uretprobe.multi")
-> >  int test_uretprobe_multi(struct pt_regs *ctx)
-> >  {
-> >         executed++;
-> >         return 0;
-> >  }
-> > +
-> > +SEC("uprobe.session")
-> > +int test_uprobe_session(struct pt_regs *ctx)
-> > +{
-> > +       executed++;
-> > +       return 0;
-> > +}
-> > +
-> > +SEC("usdt")
-> > +int test_usdt(struct pt_regs *ctx)
-> > +{
-> > +       executed++;
-> > +       return 0;
-> > +}
-> > --
-> > 2.49.0
-> >
+> enum hmm_pfn_flags {
+> 	HMM_FLAGS_START = BITS_PER_LONG - PAGE_SHIFT,
+> 	HMM_PFN_FLAGS = GENMASK(BITS_PER_LONG - 1, HMM_FLAGS_START),
+> 
+> 	/* Output fields and flags */
+> 	HMM_PFN_VALID = 1UL << HMM_FLAGS_START + 0,
+> 	HMM_PFN_WRITE = 1UL << HMM_FLAGS_START + 1,
+> 	HMM_PFN_ERROR = 1UL << HMM_FLAGS_START + 2,
+> 	HMM_PFN_ORDER_MASK = GENMASK(HMM_FLAGS_START + 7, HMM_FLAGS_START + 3),
+> 
+> 	/* Input flags */
+> 	HMM_PFN_REQ_FAULT = HMM_PFN_VALID,
+> 	HMM_PFN_REQ_WRITE = HMM_PFN_WRITE,
+> };
+> 
+> Jason
 
