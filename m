@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-618534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-618535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6515A9AFC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B1DA9AFD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 15:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AF1B4A053C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B7B9A675F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Apr 2025 13:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1BE221FC2;
-	Thu, 24 Apr 2025 13:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE54194A44;
+	Thu, 24 Apr 2025 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ja2BQ0Ex"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fdF5Wwc1"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA5D1624E9;
-	Thu, 24 Apr 2025 13:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18DA189916
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 13:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745502637; cv=none; b=caD63qQXXNySOl45wNl/vCgLrGh19zrXCwCoee7SEpsr3Uo9igXpKnEzvK0YIiRC0eGF1HIACIq/iDajQcWTg6yW457GaNIJYY+/bUuYvcWCbfBPy2iBOZ3YHoE5nyK7Tqt8fifxHTGbrYcZWyFn/4rmU/FKu4p8MLIDiAuTNtY=
+	t=1745502651; cv=none; b=mkOxTTdgwgGG+hgNzXbQcp3Z/rT5sKNz+bQVm/oo4U0ZdnlkqZ84TbCZdbSDQqdIa/zi79rNJfOiPRgI08VmBBIZV0/nd4joErS+wdoR7eQO1360vkW3MO3iw00hND0kcWAL7xhNvOHL/URvYnweRaB5LOtcL7cJytExXcl9Xx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745502637; c=relaxed/simple;
-	bh=5JL2fhJiXzvgPGufoPeHeSIrQj6ar4IZnKQEH9m8M8I=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cSlhWUNquMiHNa3bpRPnqmXygX6DsAgxp1FtptCsoeOcAi+a7rE56Oe3B8BQr80eCMXc+zzNdpm1BXuVAVrRaLzsQB4g/qQuiy6ZurATCsESE+MSoEnaReVCXxL10YwcV21ZJbYeiwkfdFIwpieZwHii+8gyeX4cp49yYkDGujk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ja2BQ0Ex; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745502636; x=1777038636;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=5JL2fhJiXzvgPGufoPeHeSIrQj6ar4IZnKQEH9m8M8I=;
-  b=ja2BQ0ExrfVVmn0fX/KYhG8ZIi+8Ea8B6NDq/kdVa44FiF2YZS79221n
-   nw4InhRckhmvO9f8JV+fuRsFARQbpjKOjxkQCGofEMiI+1s8yr0j9hbpa
-   LuayzLy5nMOp9DxZpIPYY8rtaI5WF4Wpw1hPnuecaAGtk4ETsqLo0GDZ6
-   ajffbmzL4QlNpTEHd6jihUKC5K9bc/FifN1guEwPx6A8a+RLG4jgcYPnN
-   SNcCOJILFaXgRT4dxEndovh5pCIkXMQHSHgWjfmuLMMA1hPeKCuxGJ86J
-   bQ2anNaEqDpBUInN4gc8Ck/fr37EJyuRQP7avEZitACoOD0XCZ2P+jfeE
-   g==;
-X-CSE-ConnectionGUID: NA0m8mj1Sl27bHvZJnHmRQ==
-X-CSE-MsgGUID: ILnsk3UuQ4aDhI1S9o62AA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="34756283"
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="34756283"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 06:50:34 -0700
-X-CSE-ConnectionGUID: zyNcbMEZR0u0xT8pTcZuOw==
-X-CSE-MsgGUID: +omxsx4MTzOXm5y5EpJ4cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,236,1739865600"; 
-   d="scan'208";a="132605524"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.213])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 06:50:29 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 24 Apr 2025 16:50:25 +0300 (EEST)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
-    Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, 
-    Jonathan Corbet <corbet@lwn.net>, 
-    Joaquin Ignacio Aramendia <samsagax@gmail.com>, 
-    Derek J Clark <derekjohn.clark@gmail.com>, 
-    Kevin Greenberg <kdgreenberg234@protonmail.com>, 
-    Joshua Tam <csinaction@pm.me>, Parth Menon <parthasarathymenon@gmail.com>, 
-    Eileen <eileen@one-netbook.com>, LKML <linux-kernel@vger.kernel.org>, 
-    sre@kernel.org, linux@weissschuh.net, Hans de Goede <hdegoede@redhat.com>, 
-    mario.limonciello@amd.com
-Subject: Re: [PATCH v9 15/15] platform/x86: oxpec: Rename rval to ret in
- tt_toggle
-In-Reply-To: <20250417175310.3552671-16-lkml@antheas.dev>
-Message-ID: <851ff55e-68d5-c358-df37-e6404a8fe39f@linux.intel.com>
-References: <20250417175310.3552671-1-lkml@antheas.dev> <20250417175310.3552671-16-lkml@antheas.dev>
+	s=arc-20240116; t=1745502651; c=relaxed/simple;
+	bh=oT/q9FR/lbSUo068CiHqxxsbhR2Ul/sVrprjcmenHwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QGErqju/oNbw2kEAXpFoPW5Wz0L8+9GaFACJ70RV+RkBpHNKSbUWD8iCWnSgb5HSEmf7u2KtAGl9MAjs6iKc3mdgXDqdLdcCkwHSxONoNdcEI9g8wkclsa35HnBB81dbAwAt56FAZ8oXeitugo0z0NR2nGUnwo7H2ENK+2zGthQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fdF5Wwc1; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yYE59RG6h1dz+xHWzTPndkPIHqW40lrFFC645fhilsM=; b=fdF5Wwc19OSz6aXfb2+T14UAta
+	C4QJmYcmuk++XrD7rFghRjMniqwZPyktTiqcEdz3qQJIspqTm6txOFqO1X+DxcGqMPWBU9dVJkmkY
+	S7EGwgKk49PxlgvBd0kbrSuMVGY4b0expvKT7m7RBOOc7tG4K7QTYSVGN6iuKHDt2c8W0pIzOc2J7
+	DYBYqbTD3HkB7gnsEweCkntOaS2q0jzjj1dBs/VpXcFgKwU0jKp3FlDJfdn3lHmohWbLc9CZ03sSL
+	OhwP1WJMnrSNp4O82vUeEJqYy+HsIA0NPlSz77V5sTtvv6nzqO1CxzX0NhDTBEQdCyUXlVqzPv+8I
+	zlzD2hUw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33758)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u7wyH-0007SR-16;
+	Thu, 24 Apr 2025 14:50:33 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u7wyF-00019J-0R;
+	Thu, 24 Apr 2025 14:50:31 +0100
+Date: Thu, 24 Apr 2025 14:50:30 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: xieyuanbin1 <xieyuanbin1@huawei.com>
+Cc: liaohua4@huawei.com, lincheng8@huawei.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	nixiaoming@huawei.com, sfr@canb.auug.org.au, wangbing6@huawei.com,
+	wangfangpeng1@huawei.com, will@kernel.org
+Subject: Re: [PATCH] ARM: spectre-v2: fix unstable cpu get
+Message-ID: <aApBpnDcq2KNkfAs@shell.armlinux.org.uk>
+References: <aAoQwsldwmxAKA0A@shell.armlinux.org.uk>
+ <20250424133133.40122-1-xieyuanbin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424133133.40122-1-xieyuanbin1@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, 17 Apr 2025, Antheas Kapenekakis wrote:
+On Thu, Apr 24, 2025 at 09:31:33PM +0800, xieyuanbin1 wrote:
+> I've actually thought about a similar problem. In areas other than put_cpu/get_cpu, tasks may be scheduled to other CPUs, this cpu actually does not execute the spectre code. 
 
-> Rename the variable `rval` to `ret` in the function
-> to follow conventions.
+My point is that if harden_branch_predictor() has been called from a
+context where we are preemptible, then we _could_ end up running on a
+different CPU to the one that we need to take action.
 
-This and a few other changelogs use exceptionally short paragraph width, 
-please reflow.
+Consider your test program running on CPU 1 which requires fixup. It
+takes a fault, and before we enter harden_branch_predictor(), we end
+up being migrated to CPU 0, but doesn't require a switch of the MM.
+Let's say we then disable preemption and then call
+harden_branch_predictor(), and then restore the preemption state.
+The thread then gets migrated back to CPU 1. Again, no switch of
+the MM.
 
---
- i.
+At this point, the mitigation has been completely bypassed.
 
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/oxpec.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-> index ce20bf70027df..93d4abf8c3b8a 100644
-> --- a/drivers/platform/x86/oxpec.c
-> +++ b/drivers/platform/x86/oxpec.c
-> @@ -409,19 +409,19 @@ static ssize_t tt_toggle_store(struct device *dev,
->  			       size_t count)
->  {
->  	bool value;
-> -	int rval;
-> +	int ret;
->  
-> -	rval = kstrtobool(buf, &value);
-> -	if (rval)
-> -		return rval;
-> +	ret = kstrtobool(buf, &value);
-> +	if (ret)
-> +		return ret;
->  
->  	if (value) {
-> -		rval = tt_toggle_enable();
-> +		ret = tt_toggle_enable();
->  	} else {
-> -		rval = tt_toggle_disable();
-> +		ret = tt_toggle_disable();
->  	}
-> -	if (rval)
-> -		return rval;
-> +	if (ret)
-> +		return ret;
->  
->  	return count;
->  }
-> 
+IMHO, better to be noisy about this event (and it is only a kernel
+warning) than to be silent about it and let userspace get away with
+bypassing the mitigation.
+
+I don't care if this disrupts test tooling. The trade off between
+test tooling having a problem and a silent data leak through this
+channel... the answer is pretty obvious that the test tooling
+failing is less important than having a silent data leak.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
