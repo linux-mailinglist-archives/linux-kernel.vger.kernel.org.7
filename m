@@ -1,299 +1,186 @@
-Return-Path: <linux-kernel+bounces-619507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946F5A9BD75
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BADCA9BD7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA01BA135D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6166D1BA17B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0765B1B0F11;
-	Fri, 25 Apr 2025 04:16:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFC2211C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6151A2165E7;
+	Fri, 25 Apr 2025 04:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dj3xELOr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E984A1B0F11;
+	Fri, 25 Apr 2025 04:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745554602; cv=none; b=pLNMqHoy7LJpABigyVaQx3bd0iXrEPaVP1ZOyDVXn5WJRuq/p3v4wM7E/CNOi2utDA7EBexxAjQu49ZEe7rEG9S6U2m9zu1rxJJJXZhBnNjpr2gmmDZroIhuBCFpM22baul0bEz2xfHu4Xz1A7ZjoAQ2XmLkRxfYVWvTfDJ9IQc=
+	t=1745554777; cv=none; b=rqZpjtbE5eYGVRZ9V3qCYRb0hDlJU/7Nt872pD8EwMM1b9xOOwmmbs18AvEkVlfETrRwQcx3gGJBLC5w1JDN5ODmW2Pgw2ItfFvU7YWnPBA3V5fyIH57n2nBlWznnr5vBGfzpEWd+JztzDmlzte08L46Fv7NRjFFlSum6T/qLCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745554602; c=relaxed/simple;
-	bh=Pucg+Z2H/iHDS/LbtKasKxb9f5eqmVFvOVxH0UIZHYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u6A0x+ixEkePjUULqixT84XcMJFGnSSG6suIJEX1sCLryzb2E8Jtu3pwz2mV/dEa0Q7t+sX1kmHtNfoXUeh6bIDAgh4pa17JD4dJYLJnfIdRPfbeSx+VKzuNRUNwvnVXKSQZKP1PcdQ2NEiMk6kSg4pWyy/ifjmtIzXe1S+XEOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 685D41CDD;
-	Thu, 24 Apr 2025 21:16:33 -0700 (PDT)
-Received: from [10.163.51.18] (unknown [10.163.51.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 498CE3F5A1;
-	Thu, 24 Apr 2025 21:16:34 -0700 (PDT)
-Message-ID: <731dbb1d-e804-4678-9b8c-40f6395e94a7@arm.com>
-Date: Fri, 25 Apr 2025 09:46:31 +0530
+	s=arc-20240116; t=1745554777; c=relaxed/simple;
+	bh=HvUQ2jlkbOcoo0ZLx18H2YZfkCaqCX2iH2Clv+lgH08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJCFSA1MfSpNRA5EAciC5d7K7RKxtBQ1jg4WC0UHvtH9QZ/9+vySyq+o2Q+CTTiReGDt3ye1+XNjpMt7VJqkECg+z+keKABvK1SF9gue+VTCFfBdyGWs8AVzgHvLEo37oHhnry1EQPmOwAOQ/Jcf0lrxzadw1OcySEYRIl3GXjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dj3xELOr; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745554776; x=1777090776;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HvUQ2jlkbOcoo0ZLx18H2YZfkCaqCX2iH2Clv+lgH08=;
+  b=dj3xELOraIB7aik0g0Oa+q8TG7lsShKJ9P5AsSAEqG8mdyTb6xBAmqmG
+   qVPH75qNAP6W9SRgO1wARjqk5L0O7m+IoneYf/wWGUoUVMcCK0E32Qtnl
+   9mcrog8MllCLsIa9gD9fjfefrjC32EyuafY1o3Et0k5Vn/s9xMBNLabFD
+   +l1sp+Brmmszt0wOYdKcvIKRbP3ugVEV1XqjXFdf9v/QCoNK8ejhZvpGF
+   P21RVEKAauvSTCehaqSJxIeWq5UMkEEj2F9MEbuhn1rvXU2O49Wn99+rc
+   uHd1Qs9XNtflbgkQdwZ5+qboy5QJOLl2hMJZCBzz8JhWPXr9mREVr9lv1
+   A==;
+X-CSE-ConnectionGUID: XwfJqSOqQxG0t2Pv5Q3jmw==
+X-CSE-MsgGUID: rkH/NgniRlmTsWsMvQ02nw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="47225238"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="47225238"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 21:19:35 -0700
+X-CSE-ConnectionGUID: mud3aOYySRScxADNvob0ig==
+X-CSE-MsgGUID: Uh0zV26bTnKghmeikkJV/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="170016448"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 24 Apr 2025 21:19:31 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u8AXB-0004pV-0L;
+	Fri, 25 Apr 2025 04:19:29 +0000
+Date: Fri, 25 Apr 2025 12:18:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: hans.zhang@cixtech.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	peter.chen@cixtech.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Manikandan K Pillai <mpillai@cadence.com>,
+	Hans Zhang <hans.zhang@cixtech.com>
+Subject: Re: [PATCH v4 3/5] PCI: cadence: Add header support for PCIe HPA
+ controller
+Message-ID: <202504251214.ngJwGxvn-lkp@intel.com>
+References: <20250424010445.2260090-4-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: trbe: Save/restore state across CPU low power
- state
-To: Yabin Cui <yabinc@google.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Leo Yan <leo.yan@arm.com>, Jie Gan <quic_jiegan@quicinc.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250423230046.1134389-1-yabinc@google.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250423230046.1134389-1-yabinc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424010445.2260090-4-hans.zhang@cixtech.com>
 
-On 4/24/25 04:30, Yabin Cui wrote:
-> Similar to ETE, TRBE may lose its context when a CPU enters low
-> power state. To make things worse, if ETE state is restored without
-> restoring TRBE state, it can lead to a stuck CPU due to an enabled
-> source device with no enabled sink devices.
+Hi,
 
-Could you please provide some more details about when the cpu gets
-stuck e.g dmesg, traces etc. Also consider adding those details in
-the commit message as well to establish the problem, this patch is
-trying to address.
+kernel test robot noticed the following build errors:
 
-> 
-> This patch introduces support for "arm,coresight-loses-context-with-cpu"
-> in the TRBE driver. When present, TRBE registers are saved before
-> and restored after CPU low power state. To prevent CPU hangs, TRBE
-> state is always saved after ETE state and restored after ETE state.
+[auto build test ERROR on fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2]
 
-The save and restore order here is
+url:    https://github.com/intel-lab-lkp/linux/commits/hans-zhang-cixtech-com/dt-bindings-pci-cadence-Extend-compatible-for-new-RP-configuration/20250424-090651
+base:   fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2
+patch link:    https://lore.kernel.org/r/20250424010445.2260090-4-hans.zhang%40cixtech.com
+patch subject: [PATCH v4 3/5] PCI: cadence: Add header support for PCIe HPA controller
+config: i386-buildonly-randconfig-003-20250425 (https://download.01.org/0day-ci/archive/20250425/202504251214.ngJwGxvn-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250425/202504251214.ngJwGxvn-lkp@intel.com/reproduce)
 
-1. Save ETE
-2. Save TRBE
-3. Restore ETE
-4. Restore TRBE
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504251214.ngJwGxvn-lkp@intel.com/
 
-> 
-> Signed-off-by: Yabin Cui <yabinc@google.com>
-> ---
->  .../coresight/coresight-etm4x-core.c          | 13 ++++-
->  drivers/hwtracing/coresight/coresight-trbe.c  | 53 +++++++++++++++++++
->  include/linux/coresight.h                     |  6 +++
->  3 files changed, 71 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index e5972f16abff..1bbaa1249206 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1863,6 +1863,7 @@ static int __etm4_cpu_save(struct etmv4_drvdata *drvdata)
->  static int etm4_cpu_save(struct etmv4_drvdata *drvdata)
->  {
->  	int ret = 0;
-> +	struct coresight_device *sink;
->  
->  	/* Save the TRFCR irrespective of whether the ETM is ON */
->  	if (drvdata->trfcr)
-> @@ -1871,8 +1872,14 @@ static int etm4_cpu_save(struct etmv4_drvdata *drvdata)
->  	 * Save and restore the ETM Trace registers only if
->  	 * the ETM is active.
->  	 */
-> -	if (coresight_get_mode(drvdata->csdev) && drvdata->save_state)
-> +	if (coresight_get_mode(drvdata->csdev) && drvdata->save_state) {
->  		ret = __etm4_cpu_save(drvdata);
-> +		if (ret == 0) {
-> +			sink = coresight_get_percpu_sink(drvdata->cpu);
-> +			if (sink && sink_ops(sink)->percpu_save)
-> +				sink_ops(sink)->percpu_save(sink);
-> +		}
-> +	}
->  	return ret;
->  }
->  
-> @@ -1977,6 +1984,10 @@ static void __etm4_cpu_restore(struct etmv4_drvdata *drvdata)
->  
->  static void etm4_cpu_restore(struct etmv4_drvdata *drvdata)
->  {
-> +	struct coresight_device *sink = coresight_get_percpu_sink(drvdata->cpu);
-> +
-> +	if (sink && sink_ops(sink)->percpu_restore)
-> +		sink_ops(sink)->percpu_restore(sink);
+All errors (new ones prefixed by >>):
 
-TRBE gets restored first which contradicts the order mentioned
-earlier in the commit message ?
+   In file included from drivers/pci/controller/cadence/pcie-cadence.c:9:
+>> drivers/pci/controller/cadence/pcie-cadence.h:851:8: error: expected ')'
+     851 |                                                  int where)
+         |                                                  ^
+   drivers/pci/controller/cadence/pcie-cadence.h:850:49: note: to match this '('
+     850 | static inline void __iomem *cdns_pci_hpa_map_bus(struct pci_bus *bus, unsigned int devfn
+         |                                                 ^
+   1 error generated.
 
 
->  	if (drvdata->trfcr)
->  		write_trfcr(drvdata->save_trfcr);
->  	if (drvdata->state_needs_restore)
-> diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-> index fff67aac8418..38bf46951a82 100644
-> --- a/drivers/hwtracing/coresight/coresight-trbe.c
-> +++ b/drivers/hwtracing/coresight/coresight-trbe.c
-> @@ -115,6 +115,13 @@ static int trbe_errata_cpucaps[] = {
->   */
->  #define TRBE_WORKAROUND_OVERWRITE_FILL_MODE_SKIP_BYTES	256
->  
-> +struct trbe_save_state {
-> +	u64 trblimitr;
-> +	u64 trbbaser;
-> +	u64 trbptr;
-> +	u64 trbsr;
-> +};
+vim +851 drivers/pci/controller/cadence/pcie-cadence.h
 
-This seems to accommodate all required TRBE registers. Although this is
-very intuitive could you please also add a comment above this structure
-explaining the elements like other existing structures in the file ?
+   811	
+   812	#ifdef CONFIG_PCIE_CADENCE_HOST
+   813	int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc);
+   814	int cdns_pcie_host_init(struct cdns_pcie_rc *rc);
+   815	int cdns_pcie_host_setup(struct cdns_pcie_rc *rc);
+   816	void __iomem *cdns_pci_map_bus(struct pci_bus *bus, unsigned int devfn,
+   817				       int where);
+   818	int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc);
+   819	int cdns_pcie_host_bar_ib_config(struct cdns_pcie_rc *rc,
+   820					 enum cdns_pcie_rp_bar bar,
+   821					 u64 cpu_addr, u64 size,
+   822					 unsigned long flags);
+   823	int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc);
+   824	void __iomem *cdns_pci_hpa_map_bus(struct pci_bus *bus, unsigned int devfn, int where);
+   825	int cdns_pcie_hpa_host_init_root_port(struct cdns_pcie_rc *rc);
+   826	int cdns_pcie_hpa_host_bar_ib_config(struct cdns_pcie_rc *rc,
+   827					     enum cdns_pcie_rp_bar bar,
+   828					     u64 cpu_addr, u64 size,
+   829					     unsigned long flags);
+   830	int cdns_pcie_hpa_host_init_address_translation(struct cdns_pcie_rc *rc);
+   831	int cdns_pcie_hpa_host_init(struct cdns_pcie_rc *rc);
+   832	#else
+   833	static inline int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc)
+   834	{
+   835		return 0;
+   836	}
+   837	static inline int cdns_pcie_host_init(struct cdns_pcie_rc *rc)
+   838	{
+   839		return 0;
+   840	}
+   841	static inline int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
+   842	{
+   843		return 0;
+   844	}
+   845	static inline void __iomem *cdns_pci_map_bus(struct pci_bus *bus, unsigned int devfn,
+   846						     int where)
+   847	{
+   848		return NULL;
+   849	}
+   850	static inline void __iomem *cdns_pci_hpa_map_bus(struct pci_bus *bus, unsigned int devfn
+ > 851							 int where)
+   852	{
+   853		return NULL;
+   854	}
+   855	static inline int cdns_pcie_hpa_host_init_root_port(struct cdns_pcie_rc *rc)
+   856	{
+   857		return 0;
+   858	}
+   859	static inline int cdns_pcie_hpa_host_bar_ib_config(struct cdns_pcie_rc *rc,
+   860							   enum cdns_pcie_rp_bar bar,
+   861							   u64 cpu_addr, u64 size,
+   862							   unsigned long flags)
+   863	{
+   864		return 0;
+   865	}
+   866	static inline int cdns_pcie_hpa_host_init_address_translation(struct cdns_pcie_rc *rc)
+   867	{
+   868		return 0;
+   869	}
+   870	#endif
+   871	
 
-> +
->  /*
->   * struct trbe_cpudata: TRBE instance specific data
->   * @trbe_flag		- TRBE dirty/access flag support
-> @@ -123,6 +130,9 @@ static int trbe_errata_cpucaps[] = {
->   * @cpu			- CPU this TRBE belongs to.
->   * @mode		- Mode of current operation. (perf/disabled)
->   * @drvdata		- TRBE specific drvdata
-> + * @state_needs_save	- Need to save trace registers when entering cpu idle
-> + * @state_needs_restore	- Need to restore trace registers when exiting cpu idle
-> + * @save_state		- Saved trace registers
->   * @errata		- Bit map for the errata on this TRBE.
->   */
->  struct trbe_cpudata {
-> @@ -133,6 +143,9 @@ struct trbe_cpudata {
->  	enum cs_mode mode;
->  	struct trbe_buf *buf;
->  	struct trbe_drvdata *drvdata;
-> +	bool state_needs_save;
-
-This tracks whether coresight_loses_context_with_cpu() is supported
-on the CPU or not.
-
-> +	bool state_needs_restore;
-
-This tracks whether the state has been saved earlier and hence can
-be restored later on when required.
-
-> +	struct trbe_save_state save_state;
->  	DECLARE_BITMAP(errata, TRBE_ERRATA_MAX);
->  };
->  
-> @@ -1187,12 +1200,49 @@ static irqreturn_t arm_trbe_irq_handler(int irq, void *dev)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void arm_trbe_cpu_save(struct coresight_device *csdev)
-> +{
-> +	struct trbe_cpudata *cpudata = dev_get_drvdata(&csdev->dev);
-> +	struct trbe_save_state *state = &cpudata->save_state;
-
-Please move the above statement after the following conditional
-block. Because struct trbe_save_state is not going to be required
-if arm_trbe_cpu_save() returns prematurely from here.
-
-> +
-> +	if (cpudata->mode == CS_MODE_DISABLED || !cpudata->state_needs_save)
-> +		return;> +
-> +	state->trbbaser = read_sysreg_s(SYS_TRBBASER_EL1);
-> +	state->trbptr = read_sysreg_s(SYS_TRBPTR_EL1);
-> +	state->trblimitr = read_sysreg_s(SYS_TRBLIMITR_EL1);
-> +	state->trbsr = read_sysreg_s(SYS_TRBSR_EL1);
-> +	cpudata->state_needs_restore = true;
-
-This looks right.
-
-> +}
-> +
-> +static void arm_trbe_cpu_restore(struct coresight_device *csdev)
-> +{
-> +	struct trbe_cpudata *cpudata = dev_get_drvdata(&csdev->dev);
-> +	struct trbe_save_state *state = &cpudata->save_state;
-Please move this assignment inside the block where these registers
-actually get restored after all checks are done.
-
-> +
-> +	if (cpudata->state_needs_restore) {
-> +		/*
-> +		 * To avoid disruption of normal tracing, restore trace
-> +		 * registers only when TRBE lost power (TRBLIMITR == 0).
-> +		 */
-
-Although this sounds like a reasonable condition, but what happens
-when TRBE restoration is skipped ?
-
-> +		if (read_sysreg_s(SYS_TRBLIMITR_EL1) == 0) {
-
-			state = &cpudata->save_state
-
-> +			write_sysreg_s(state->trbbaser, SYS_TRBBASER_EL1);
-> +			write_sysreg_s(state->trbptr, SYS_TRBPTR_EL1);
-> +			write_sysreg_s(state->trbsr, SYS_TRBSR_EL1);
-> +			set_trbe_enabled(cpudata, state->trblimitr);
-> +		}
-> +		cpudata->state_needs_restore = false;
-
-That means earlier captured state is dropped without a restoration.
-
-> +	}
-> +}
-> +
->  static const struct coresight_ops_sink arm_trbe_sink_ops = {
->  	.enable		= arm_trbe_enable,
->  	.disable	= arm_trbe_disable,
->  	.alloc_buffer	= arm_trbe_alloc_buffer,
->  	.free_buffer	= arm_trbe_free_buffer,
->  	.update_buffer	= arm_trbe_update_buffer,
-> +	.percpu_save	= arm_trbe_cpu_save,
-> +	.percpu_restore	= arm_trbe_cpu_restore,
-
-Why this percpu_* prefix ?
-
->  };
->  
->  static const struct coresight_ops arm_trbe_cs_ops = {
-> @@ -1358,6 +1408,9 @@ static void arm_trbe_probe_cpu(void *info)
->  	cpudata->trbe_flag = get_trbe_flag_update(trbidr);
->  	cpudata->cpu = cpu;
->  	cpudata->drvdata = drvdata;
-> +	cpudata->state_needs_save = coresight_loses_context_with_cpu(
-> +		&drvdata->pdev->dev);
-> +	cpudata->state_needs_restore = false;
-
-The init here looks good.
-
->  	return;
->  cpu_clear:
->  	cpumask_clear_cpu(cpu, &drvdata->supported_cpus);
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index d79a242b271d..fec375d02535 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -362,6 +362,10 @@ enum cs_mode {
->   * @alloc_buffer:	initialises perf's ring buffer for trace collection.
->   * @free_buffer:	release memory allocated in @get_config.
->   * @update_buffer:	update buffer pointers after a trace session.
-> + * @percpu_save:	saves state when CPU enters idle state.
-> + *			Only set for percpu sink.
-> + * @percpu_restore:	restores state when CPU exits idle state.
-> + *			only set for percpu sink.
->   */
->  struct coresight_ops_sink {
->  	int (*enable)(struct coresight_device *csdev, enum cs_mode mode,
-> @@ -374,6 +378,8 @@ struct coresight_ops_sink {
->  	unsigned long (*update_buffer)(struct coresight_device *csdev,
->  			      struct perf_output_handle *handle,
->  			      void *sink_config);
-> +	void (*percpu_save)(struct coresight_device *csdev);
-> +	void (*percpu_restore)(struct coresight_device *csdev);
-
-Again - why this percpu_* prefix ?
-
->  };
->  
->  /**
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
