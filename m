@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-619954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E4FA9C3EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92EFA9C424
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2710D1BC1432
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:40:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4339E468329
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209332367A7;
-	Fri, 25 Apr 2025 09:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1B91F542E;
+	Fri, 25 Apr 2025 09:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RQLJniSL"
-Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHyzIEEn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEB422ACF7;
-	Fri, 25 Apr 2025 09:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29F422D792
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573825; cv=none; b=KHRgbYZbOFMd2ex3BUYqKzWgiKkPgqhS/bywGus9KuseeL8mOqLRaztx5yIq+Wwd8eEpX5xsktbXOvn1GY9E9a/Zra+lS2E2Oar+Fc/l/qVxu3t0X1wjXOuwqhzARvZvvFQ3DFHky6I5gC3TvrsPy1E/oIAkj+3irjRtxYcaASc=
+	t=1745574625; cv=none; b=pfeZovApMtwrpZf9vr9sCF0DCf4e6JNbD0xxM7lopT1y0FW637UCc7CY4oibbjM+IBUn3tEBamo/LJmFQP53KyIRFI1Uk2XVCPMjtnexNItVs/CYeh8hgIBBEhFb9LNbdmg99Jr+7mc5UKSz7UbueTH6BNUDQMCrqQn0bfL563Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573825; c=relaxed/simple;
-	bh=qxMIvRrwFSrwiByZ0V/7xQ1TIaTORm9T/nkQQ3Gk+7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DaKD1XA1YlbfeQgfjyN9bayjsB9DZqpZCZibAhgAqiAiRhQfy40F3AIKSWpf7L2iR+aKDXwBix4+dnclzJWRq3XXiE5N+AIXZeYlREc8WRkBaJ+Q2CFLRwEXUEAG9n/1tHL/RJK7ly+AL1WQh4S8HPVke3lO+QYBEVS4HpvXG6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RQLJniSL; arc=none smtp.client-ip=193.252.22.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ej1-f44.google.com ([209.85.218.44])
-	by smtp.orange.fr with ESMTPSA
-	id 8FUNuS358XKsE8FUQuLnVv; Fri, 25 Apr 2025 11:36:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1745573818;
-	bh=p94lTC9dY0noK983SK5duM8chDMkVg8VF0K2Ki7dMNQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=RQLJniSLm+6VJOkUFDm0oESkD3O0Tk/cSCiHBcHe3oD8rNm9Fmr/g1w/QoVat0Q12
-	 /+5YfmVwaVgY48TkI/qCbVQk/mMgAMuSHi4a3BhCLShRsMxO/SKFGmLlaBJKCYQWx9
-	 nXpzWAklFgIeiTZg2FVew83X6B5b0s/SsvIEFBKWSuiuxZNNvTT4c6+7tDTUtVaZAM
-	 L9d3ZVE30rzUQCxlsafwa/H3qIZrwDoZ265eCyjfCpphfsPoDdHMg6mGylUbDrBjrF
-	 evZf0PjrQYvd0ZvhdE6A9RobboQowcsGi+n4lx/B3Y2mZlSgSXUaAzkI7Es9Rsoq7e
-	 8NUWA6VIuB0XQ==
-X-ME-Helo: mail-ej1-f44.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 25 Apr 2025 11:36:58 +0200
-X-ME-IP: 209.85.218.44
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acb39c45b4eso313618466b.1;
-        Fri, 25 Apr 2025 02:36:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVUalbDuC7q61hi4xOJpacY1Mq0Esh1uEt25e2DpPjhaxC4GLBLf+uqW2cP4EG12ZrmtWa6BK0VXjYozRvt@vger.kernel.org, AJvYcCVldTHyNjmLeNJVylexVMSQoB4DkmEteC5zEEkBwOyMFaruFaGLLYTASilBE0YiiNcFZ0feozv534Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypMXKlMHIn9rqhEJ2+UtQs69Pj/x+u16c7Q/naBGO8t+DMN8yK
-	HQ+JdVvp0wibnFj23Z71/SKSQ2j50xShIkimnVUHE/lMe5Zt7+ekJyYSVMx6M6taRw50ozByVg5
-	pK9wetuxIzLl5rOykagCep/h6oKs=
-X-Google-Smtp-Source: AGHT+IHvPida6KsfMYAqrz6MwkQViIBFESJz9dYSFxGaMDG2BGtUJoo0r85rPSXfdHqxjr73VI/+ZSksEpIygrgJU0g=
-X-Received: by 2002:a17:907:2d8a:b0:aca:d48f:4d48 with SMTP id
- a640c23a62f3a-ace73b65de4mr114092066b.60.1745573815189; Fri, 25 Apr 2025
- 02:36:55 -0700 (PDT)
+	s=arc-20240116; t=1745574625; c=relaxed/simple;
+	bh=xYcDInfl6MyhBGw8H6RT6sqORSq6b7IgXKxCqJkX3YM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EBRqhEPPUMTKj9+7Yibz+c+UkkK+15190jQtnvpDWrxz+uT/U45+RAhiQSqsru9Nhf0n3rwZgOGTpcJY2QHNHJwMv3Y5NgM+upm0umYmg1e0ZIWhOtTz/gAHr73kn/rwt74pLx9UZ8ZCB7WsTn5g/AZE7ttmPt3o42EnXYIiuHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHyzIEEn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745574622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WbO8sDKR1DYgNfD0PC4T5pYoJ24jGI0MZMOqn7zpeAc=;
+	b=GHyzIEEnb+G9N6XG6CxE3JwBrp2eCQ+Vrdgd71KLetYIl0lGNbUoA26aS/KhqPe5NDdneN
+	n8YdrXYYZfX8Ec4pitDbTAS1og6JK1g/V9UOuoAX+Cdq1NRrWQ1Ade4+H52Xmj+AATacGI
+	Pp5rRbMBlcH8P7f8h/+/sDDcCnmgP/0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-472-bwYedG-9MYqo-s-gtvjDmw-1; Fri,
+ 25 Apr 2025 05:50:17 -0400
+X-MC-Unique: bwYedG-9MYqo-s-gtvjDmw-1
+X-Mimecast-MFC-AGG-ID: bwYedG-9MYqo-s-gtvjDmw_1745574616
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B554F1956078;
+	Fri, 25 Apr 2025 09:50:15 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.44.34.172])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2EA0F195608D;
+	Fri, 25 Apr 2025 09:50:08 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v7 0/8] drm/i915: Add drm_panic support
+Date: Fri, 25 Apr 2025 11:37:46 +0200
+Message-ID: <20250425094949.473060-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424125219.47345-2-antonios@mwa.re> <20250424-industrious-rottweiler-of-attack-e7ef77-mkl@pengutronix.de>
- <a5684bfe-981e-4ba3-bbea-d713b5b83160@wanadoo.fr> <2fe59c0c7e0f7b9369976501790fce5beaea5bc7.camel@mwa.re>
- <CAMZ6Rq+QVHAh8HvWcn8rAYGE8VoJmhQUxOFNqBpijSQz10Dodg@mail.gmail.com> <1f4d6de1f452021511301070e76695d1e56a14a1.camel@mwa.re>
-In-Reply-To: <1f4d6de1f452021511301070e76695d1e56a14a1.camel@mwa.re>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 25 Apr 2025 18:36:44 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqLXrdfS9sjaZaFcZtOyaP9Q8hHk8Wb+d7D1ovVEvK_OwA@mail.gmail.com>
-X-Gm-Features: ATxdqUGamFUi_0otWzOoVf_yL7RYRfTZNoEfukjKv51ObIsPYOK9W2KIN9Qw-oQ
-Message-ID: <CAMZ6RqLXrdfS9sjaZaFcZtOyaP9Q8hHk8Wb+d7D1ovVEvK_OwA@mail.gmail.com>
-Subject: Re: [PATCH] can: m_can: initialize spin lock on device probe
-To: Antonios Salios <antonios@mwa.re>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, rcsekar@samsung.com, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lukas@mwa.re, jan@mwa.re, 
-	Markus Schneider-Pargmann <msp@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri. 25 Apr. 2025 =C3=A0 18:18, Antonios Salios <antonios@mwa.re> wrote:
-> On Fri, 2025-04-25 at 16:18 +0900, Vincent Mailhol wrote:
-> > I guess this is because your kernel has CONFIG_DEBUG_SPINLOCK:
->
-> Indeed.
->
-> > Without it, this would have been a more severe NULL pointer
-> > dereference.
->
-> Strangely, a NULL pointer dereference does not occur, when I try again
-> with CONFIG_DEBUG_SPINLOCK disabled. The kernel does not crash, at
-> least on rv64.
->
-> Looking through the implementations of arch_spinlock_t, it seems that
-> only PARISC's implementation would cause problems in this case since it
-> uses an array.
->
-> https://elixir.bootlin.com/linux/v6.15-rc3/source/arch/parisc/include/asm=
-/spinlock_types.h#L11
->
-> I think I'm missing something, why do you think a NULL pointer deref
-> would occur in this case?
+This is a draft of drm_panic support for i915.
 
-I see. Thanks for your test. I went a bit too quick in my analysis
-when I saw things like:
+I've tested it on the 4 intel laptops I have at my disposal.
+ * Haswell with 128MB of eDRAM.
+ * Comet Lake  i7-10850H
+ * Raptor Lake i7-1370P (with DPT, and Y-tiling).
+ * Lunar Lake Ultra 5 228V (with DPT, and 4-tiling, and using the Xe driver.
 
-  raw_spin_lock(&lock->rlock);
+I tested panic in both fbdev console and gnome desktop.
 
-in
+Best regards,
 
-  https://elixir.bootlin.com/linux/v6.14/source/include/linux/spinlock.h#L3=
-51
+v2:
+ * Add the proper abstractions to build also for Xe.
+ * Fix dim checkpatch issues.
 
-I thought about the NULL pointer dereference. But indeed, you are
-right. The spinlock_t is just one attribute of a structure and will be
-allocated anyway even if spin_lock_init is not called, so calling
+v3:
+ * Add support for Y-tiled framebuffer when DPT is enabled.
 
-  spin_lock_irqsave(&cdev->tx_handling_spinlock, irqflags);
+v4:
+ * Add support for Xe driver, which shares most of the code.
+ * Add support for 4-tiled framebuffer found in newest GPU.
 
-will still pass a valid address.
+v5:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private.
+ * Use iosys_map for intel_bo_panic_map().
 
-The other thing which put me off guard is that some other "spinlock
-bad magic" got assigned some CVE.
+v6:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private for intel_atomic_plane.c
 
-https://lore.kernel.org/linux-cve-announce/2025031217-CVE-2025-21862-e8a0@g=
-regkh/
+v7:
+ * Fix mismatch {} in intel_panic_flush() (Jani Nikula)
+ * Return int for i915_gem_object_panic_map() (Ville Syrjälä)
+ * Reword commit message about alignment/size when disabling tiling (Ville Syrjälä)
 
-But here as well, that does not imply a NULL pointer dereference. I
-think that the bug is only that the spin_lock is not working as
-intended.
+Jocelyn Falempe (8):
+  drm/i915/fbdev: Add intel_fbdev_get_map()
+  drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+  drm/i915/display: Add a disable_tiling() for skl planes
+  drm/i915/gem: Add i915_gem_object_panic_map()
+  drm/i915/display: Add drm_panic support
+  drm/i915/display: Flush the front buffer in panic handler
+  drm/i915/display: Add drm_panic support for Y-tiling with DPT
+  drm/i915/display: Add drm_panic support for 4-tiling with DPT
 
-Regardless, just saying that it is a spinlock bad magic bug with the
-dmesg trace is enough. Thanks again for your tests!
+ drivers/gpu/drm/i915/display/i9xx_plane.c     |  23 +++
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 172 +++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_bo.c       |   5 +
+ drivers/gpu/drm/i915/display/intel_bo.h       |   1 +
+ .../drm/i915/display/intel_display_types.h    |   2 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.c   |   5 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.h   |   2 +
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |   5 +
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |   6 +-
+ .../drm/i915/display/skl_universal_plane.c    |  27 +++
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |   2 +
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c     |  29 +++
+ drivers/gpu/drm/i915/i915_vma.h               |   5 +
+ drivers/gpu/drm/xe/display/intel_bo.c         |   7 +
+ drivers/gpu/drm/xe/display/xe_fb_pin.c        |   5 +
+ 15 files changed, 294 insertions(+), 2 deletions(-)
 
 
-Yours sincerely,
-Vincent Mailhol
+base-commit: 93d33af699f271b908d3eacf7e5872a8784e5a6d
+-- 
+2.49.0
+
 
