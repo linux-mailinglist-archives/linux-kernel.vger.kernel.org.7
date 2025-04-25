@@ -1,88 +1,120 @@
-Return-Path: <linux-kernel+bounces-621012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E746A9D2A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6722A9D2AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C204C01EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:04:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21BA3B3ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8642206B3;
-	Fri, 25 Apr 2025 20:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029DB21FF35;
+	Fri, 25 Apr 2025 20:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGO87fH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="bqEkieYt"
+Received: from forward201a.mail.yandex.net (forward201a.mail.yandex.net [178.154.239.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE921E0DD8;
-	Fri, 25 Apr 2025 20:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BD921B910;
+	Fri, 25 Apr 2025 20:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745611450; cv=none; b=UP/46uRuUSc2pl8U2pYkHN862pHsSTE7DGStMOMq+yVGlp8MxO5/EVOALXaKXYuE0zOMiKYNLcrV7bRwol4b3bAdD44OAydpR34KvUTSf6zep6Ol+YUAAG5WGNokDiT0okzLtvlisECu5Els56Cqv8Zpsy/ItW4RwO32l/o6rTk=
+	t=1745611613; cv=none; b=d6pPP7XWUNAwxZ0CX71CohrtBtzySxq8xOgsHSkzWcbzPSd0d9cjtRCFXSog9mDZV3gzZTS905OING7htji1XHyO1U31KYG+C4dGd4/lhqGkPavaXEgJHc6RoP1opXKk3nw8z0/RQq96zynmCAr8cPus/3Z6EVbfQ1mKqm1TwJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745611450; c=relaxed/simple;
-	bh=4UWy2JHG2LUvJkjrlQYr0V4ExuSPFQvuOJhzRHDcKGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZ1nE3CIudR4GrQoqO4C+TtP3tX8XOsooT9+dCmQgF959Gd0xjfNOb0MjX9EvFM3ytjnnyG7YaxmlNhRfzcpJ6hXjzVekCCtYXKFYsOoRu1viVFDVH9r7UShb0l05sRDScnA9duHjoLSUWlQneziQlGlLxz8RS7AwdfQsSNhQBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGO87fH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB47C4CEE4;
-	Fri, 25 Apr 2025 20:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745611449;
-	bh=4UWy2JHG2LUvJkjrlQYr0V4ExuSPFQvuOJhzRHDcKGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OGO87fH0wQ53eMLq5xdDd6WDA0EZPztkcuRpUw9i5EUeJg3nMqBEAu1KvQechrpKq
-	 FqFkQ22XUE+HrDwDJ4QKd0L/zoXxeARJFMT8zh0gYTcVG7oJQ+BIpXON3mSCYY+Je2
-	 lHGntoZzHCZYrMeW3REQGwiF1yRqCYJoUTA63soTDDn56OR00HWN05VQXcTSyAbKYn
-	 UMsXeRAihM4ytoyWSuICU7Hx53S8g9KkyVpwW0QSOPWD7GVC025cZrlEmDLPm6qMA5
-	 IOBZZcw/Rt195MJ1mS2B0zk9U4uhWsmq+/KJJNQZy4t0aMjjSnwjP/IIJEiJZaPMAu
-	 wG+jLmxiY4CPw==
-Date: Fri, 25 Apr 2025 15:04:07 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: linux-usb@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Stephen Boyd <swboyd@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: Introduce usb-hub.yaml
-Message-ID: <174561144733.2905131.13737700118522261776.robh@kernel.org>
-References: <20250422082957.2058229-1-treapking@chromium.org>
- <20250422082957.2058229-2-treapking@chromium.org>
+	s=arc-20240116; t=1745611613; c=relaxed/simple;
+	bh=k/zP33OjbSmeuXYLwPcWfcL/pxTHOmfYtJxHon6HXVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eq1EBM4ZvjvyinbXjlvu738lBK02zcF0y0JzuBaQ8LIAJShboJ5rDo7pNHfHnvWHF129EAaOUTrSHDUQwsJCmVxUzax87+60dLObecAHuaGTD2yrM6BBxpnO1X+86w7jjotmcGJD7aF8YIGxSIjfWmQE/bvczsJo0ylQIyZKFW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=bqEkieYt; arc=none smtp.client-ip=178.154.239.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d100])
+	by forward201a.mail.yandex.net (Yandex) with ESMTPS id 4ADDC64420;
+	Fri, 25 Apr 2025 23:01:03 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:623d:0:640:ecee:0])
+	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 57714470D7;
+	Fri, 25 Apr 2025 23:00:55 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id s0YsVLCLh8c0-wB4UUojE;
+	Fri, 25 Apr 2025 23:00:54 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1745611254; bh=1icPC1dV+orrOweNu0r0k0DOqWLOZGhjxwAB5E3wruM=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=bqEkieYt/zZUuEb5ku/DbLQIZdrgjXxYGVOdguHUmGa51VZPw7RqbbWW7dQleg0uw
+	 0b0/KorIcjBWKQhGNR/B0x41Izqyq4cBBSeV85YZiUN7eiyBQMOpm31QtytJpKc0rX
+	 wZoCL6ExfeRK6+zO/kGCBwL/cGDvAb5H3E6KLj1E=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+From: Alexei Safin <a.safin@rosa.ru>
+To: Eugene Shalygin <eugene.shalygin@gmail.com>
+Cc: Alexei Safin <a.safin@rosa.ru>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] hwmon: (asus-ec-sensors) add WARN_ONCE() on invalid sensor index
+Date: Fri, 25 Apr 2025 23:00:51 +0300
+Message-Id: <20250425200051.2410-1-a.safin@rosa.ru>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422082957.2058229-2-treapking@chromium.org>
+Content-Transfer-Encoding: 8bit
 
+Prevent undefined behavior by adding WARN_ONCE() when find_ec_sensor_index()
+returns a negative value.
 
-On Tue, 22 Apr 2025 16:28:27 +0800, Pin-yen Lin wrote:
-> Introduce a general USB hub binding that describes downstream ports
-> and hard wired USB devices for on-board USB hubs.
-> 
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> 
-> ---
-> 
-> Changes in v3:
-> - Remove redundant schemas
-> 
-> Changes in v2:
-> - New in v2
-> 
->  .../devicetree/bindings/usb/usb-hub.yaml      | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/usb-hub.yaml
-> 
+Even though unsupported attributes are filtered out by asus_ec_hwmon_is_visible(),
+a programming error could still cause an invalid sensor access.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Instead of silently returning an error, log a warning to highlight the problem,
+and propagate the original error code.
+
+Update both asus_ec_hwmon_read() and asus_ec_hwmon_read_string() accordingly.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: d0ddfd241e57 ("hwmon: (asus-ec-sensors) add driver for ASUS EC")
+Signed-off-by: Alexei Safin <a.safin@rosa.ru>
+---
+v2: Use WARN_ONCE() instead of returning -EINVAL, and update
+    both asus_ec_hwmon_read() and asus_ec_hwmon_read_string()
+    as suggested by Eugene Shalygin.
+    
+ drivers/hwmon/asus-ec-sensors.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
+index d893cfd1cb82..a563d7acef2e 100644
+--- a/drivers/hwmon/asus-ec-sensors.c
++++ b/drivers/hwmon/asus-ec-sensors.c
+@@ -820,9 +820,8 @@ static int asus_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+ 	struct ec_sensors_data *state = dev_get_drvdata(dev);
+ 	int sidx = find_ec_sensor_index(state, type, channel);
+ 
+-	if (sidx < 0) {
++	if (WARN_ONCE(sidx < 0, "asus-ec-sensors: sensor not found\n"))
+ 		return sidx;
+-	}
+ 
+ 	ret = get_cached_value_or_update(dev, sidx, state, &value);
+ 	if (!ret) {
+@@ -839,6 +838,10 @@ static int asus_ec_hwmon_read_string(struct device *dev,
+ {
+ 	struct ec_sensors_data *state = dev_get_drvdata(dev);
+ 	int sensor_index = find_ec_sensor_index(state, type, channel);
++
++	if (WARN_ONCE(sensor_index < 0, "asus-ec-sensors: sensor not found\n"))
++		return sensor_index;
++
+ 	*str = get_sensor_info(state, sensor_index)->label;
+ 
+ 	return 0;
+-- 
+2.39.5 (Apple Git-154)
 
 
