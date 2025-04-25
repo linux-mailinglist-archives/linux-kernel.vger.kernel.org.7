@@ -1,225 +1,128 @@
-Return-Path: <linux-kernel+bounces-620654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A01A9CDCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:08:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C2BA9CDCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFA91B88A3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0563B568A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E0B18DF93;
-	Fri, 25 Apr 2025 16:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DB6190497;
+	Fri, 25 Apr 2025 16:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dDYMkr6o"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7fyJsID"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2F14F9EB;
-	Fri, 25 Apr 2025 16:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E889618D649;
+	Fri, 25 Apr 2025 16:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745597266; cv=none; b=dc9MoEDaTSeIshOvqzCE9taKRq6RI7P0YQMfIAN2QrsdPHR8WXuhwoWxipnX0mxUZInln5lvB1l43fsPz+2a3YsqsjIidbysPnpHfDU7i4F1HxOjOEDli7PWt0BvfKFUwBzZWeNbtdoKGe2CKqObYp2R9HJ4kxW0LV26s/gK3yM=
+	t=1745597314; cv=none; b=DfiP/c6qewc6weVBil6pcVGj1kdgWtS3KoBw3zRLezg1CXlQT6b3QjQjvX2HZwv6gQRDCDF+CgUICkCz9UnqQM1scIKPoNTuIXRo1ez2+NukUDSY8IDM7r/czNIoTSF53ktoi6iizWCx0ozew5G+c8o8NNHCD1uputeOKQVCSG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745597266; c=relaxed/simple;
-	bh=5O7iV/W2chq5GklIjOdCtIN/ECQvXe/3G2d7Eljipts=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=qEecuhgyihr6EI2Hw3RuWbmOePQNN1BIEMtsfgtyBhdUi1jp57JdEYNORof1BiOd3XPDGKKLEgLzSv6lUhxBFoITHSrwzQYJtVLvdkydBG+0hnQiIWQF3liu6weeqG+LZq57i/bW0hMibSxWE37fIQO82lNuF+YQs3hYtzSwIlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dDYMkr6o; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PA41SL026437;
-	Fri, 25 Apr 2025 16:07:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GkeXgS
-	jZh9ajob+i6TRSkXjv+/YhfqrO0zFPsHMuiKk=; b=dDYMkr6oDt/2cozFe+Ew09
-	9tujJA8ErezovC/ga2t+MW45yChVYhGrwC86MVa50sIChfxwGD89jW0E121hGNsw
-	o6F1yPG5dpOzvYawe0BsHgf3Ur+wZkYk+Zbr/GKMaAN7ti+PEiJ+twQOSXgyAWKQ
-	Qj9IaZsIu/My4hkpdQWzs+QVfFSiIBmzX6EZzNBBZm7TrggRCqezcfDoipAXOvUS
-	bFctriTthsuJdLmJBBDotXIkObfM7ot/n8xVCKTTBPjMshurn3So2/Pfz4K1gWPC
-	wRRdeiMa3Cbgnq55cPInSogxKXVT9V7bZL0FovkJZ424uuuFodzaioJ1zuRLcyMA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4688ajspgm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Apr 2025 16:07:38 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53PCtbj6005893;
-	Fri, 25 Apr 2025 16:07:36 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 466jfxp0ye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Apr 2025 16:07:36 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53PG7aki31654532
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 16:07:36 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 24E2258059;
-	Fri, 25 Apr 2025 16:07:36 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B33ED58057;
-	Fri, 25 Apr 2025 16:07:33 +0000 (GMT)
-Received: from [9.61.252.14] (unknown [9.61.252.14])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 25 Apr 2025 16:07:33 +0000 (GMT)
-Message-ID: <43507075-ec04-44c8-a95f-49e074d933d8@linux.ibm.com>
-Date: Fri, 25 Apr 2025 21:37:32 +0530
+	s=arc-20240116; t=1745597314; c=relaxed/simple;
+	bh=L2GzxIA56nfM+cDgMgMMSOWe5dN+/yidKvdmYvhSKfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QU/DvNZJmGfkwMDG1mxQN753pNH0TWia6/ldFdgOwFoujIVf4eVZMKTpu0xbfB41mKACc89ZTPRQELdHUF0/ePIW8yYoQDdsyyMV4qDgP/Dk8oqVZwdJavVslLP9Yp42VNVdX3G7j7ryRJ8zd0QTI63YhH3oEmY8W6GB0paCPN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7fyJsID; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22da3b26532so24062545ad.0;
+        Fri, 25 Apr 2025 09:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745597312; x=1746202112; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i5pNyASVzOvo7de5opodmAAp0f24p09fWkyNMVBg/4c=;
+        b=R7fyJsIDs1QPKdRZvJ3njPzf5SV+F50V9xH8x1hWbOecp0acNV7sSvwr+XKRmIkG7R
+         w6OPApiBYiidHzBxUTIpl7EwZvO1hXD1BnRAVXjPwSdOLMbDJ08LhwyhthR7xhLn9l9i
+         hgQPPnrtNXCZ7na2W4dZG5Pes8TWyJNCiA4r405/dcdJqrXJBKSwfbH4HXEPOKDRKMbd
+         zr/DvRSUx9LvuLMCJNI7fEmnEF5e589I/v0QFPPvoc+tGIvPmnjbnNfsUrAdXwtQPWwK
+         kkHYyGT6H4a8Fg685ZC1gjlli2kiX+cMbTqkzguZJnlI3x/jxYOCsjxhdIZyov3/h2mT
+         IosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745597312; x=1746202112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i5pNyASVzOvo7de5opodmAAp0f24p09fWkyNMVBg/4c=;
+        b=sSMH1VaarqqpPec28ikcjewuw+zf/WtjzZUUyqizPGFbozHHi9l0Y+1nDFiEwoeDN1
+         yb9bFEqY0LGcG+VyQU+ELNN8yPfgSMq+lDIKO5Uk/cSiT+Runyt+Tk+tJRiJUxhzc2+7
+         WzqjUbsVnAG+EJbap1f/ROgIVECcJ9Ze1z9Qzw8JqYwStszoPHRt+bt6/EYJxN69YUHa
+         qJ64H4k57boZesMC3p449NSc7Zx1zPlBezeVajZKAumWQ7JcpvODdWaXIcdBmSwNaX2g
+         icft3kCURgF6GZdm1gW6hl1ozWYizwzoz7Hb0z9i0S6iyioxRpASiRZ6T8OWTZYtJJij
+         893Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV29vZEM49wiBFSXP55wwQVCBwzmYUTe6REp1gHJlZUG4Cw5KtCBzWEOpt3WLL3PWzGUFhg+RnE@vger.kernel.org, AJvYcCVn6Q+dkqaZSJXdGOEMvmOlNBvqCTDGHsCYEciGFgfYd9KcOqJjlzLHroMp52QiFGBdpfsVOOXFQ5CoDA0=@vger.kernel.org, AJvYcCWKeCyRZ/3PuwbI9QR8gsLjXO5qQuwkxWBT+sfJ8lOG0+DRmZ84CATJ3yF5M1hVuptQSPupLcLm@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu2ljge6V0PGL6au7Ok/BfVMbQf+/rZWUFPcL+pq+g7jBD3kYx
+	/dxIQ8or6GzwUi72R7xrIJcYO9CRPFtwTCt6DNrFq/EyvrFNzINA
+X-Gm-Gg: ASbGncujxH7nJ5H4wOqzu/AV007pX0JP/GMJcgi40YMZYA2jzvCJfvY9LjCkfem70rY
+	XL60uveyIWrOypgV2AUwl9IOXvp/tEqdMcYg95VwaCi+X8m5YrmOCTU5G5S2nJj3cw/yr0X3o6Y
+	pz7gOf00e44rfU/v1hHcTm3UNotbKcB8NCjXf+0dYtHjJm9zQCfdATdvk9g4tqivikJkxFL4hSe
+	h9J8eIOpGuY3goFs1dCKeXjZq+XVEi1ChlVI5DdF0vlWdZsP8yptEQjKMzCnCotsezYleyVbMVK
+	VjjFxusyvBrqjWqaBUGBEBaY0PhT+q8qmJAgVlJnBb2mmJ8=
+X-Google-Smtp-Source: AGHT+IEDnCojjqBFupUvzzEwiunkDr1ppd44q2OkPVWtrj2YUpLPC11441r/ohtaDxUPakVfJZSnow==
+X-Received: by 2002:a17:902:f683:b0:223:62f5:fd44 with SMTP id d9443c01a7336-22dbf62c38emr46955105ad.40.1745597311720;
+        Fri, 25 Apr 2025 09:08:31 -0700 (PDT)
+Received: from localhost ([2601:647:6881:9060:e00f:8820:97a7:c371])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e7b08sm34009365ad.114.2025.04.25.09.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 09:08:30 -0700 (PDT)
+Date: Fri, 25 Apr 2025 09:08:29 -0700
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: "Alan J. Wylie" <alan@wylie.me.uk>
+Cc: Holger =?iso-8859-1?Q?Hoffst=E4tte?= <holger@applied-asynchrony.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>, regressions@lists.linux.dev,
+	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Octavian Purdila <tavip@google.com>,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+	stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [REGRESSION] 6.14.3 panic - kernel NULL pointer dereference in
+ htb_dequeue
+Message-ID: <aAuzfQe08tFJclNJ@pop-os.localdomain>
+References: <89301960-1758-5b2e-6d91-81ef06843e14@applied-asynchrony.com>
+ <20250421210927.50d6a355@frodo.int.wylie.me.uk>
+ <20250422175145.1cb0bd98@frodo.int.wylie.me.uk>
+ <4e2a6522-d455-f0ce-c77d-b430c3047d7c@applied-asynchrony.com>
+ <aAf/K7F9TmCJIT+N@pop-os.localdomain>
+ <20250422214716.5e181523@frodo.int.wylie.me.uk>
+ <aAgO59L0ccXl6kUs@pop-os.localdomain>
+ <20250423105131.7ab46a47@frodo.int.wylie.me.uk>
+ <aAlAakEUu4XSEdXF@pop-os.localdomain>
+ <20250424135331.02511131@frodo.int.wylie.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]Warning while building tools/perf
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-To: Namhyung Kim <namhyung@kernel.org>, James Clark <james.clark@linaro.org>,
-        Athira Rajeev <atrajeev@linux.ibm.com>, Ingo Molnar <mingo@kernel.org>,
-        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, sgarzare@redhat.com,
-        mst@redhat.com
-References: <9c40ab1a-3d08-4af8-a430-0ba245842959@linux.ibm.com>
-In-Reply-To: <9c40ab1a-3d08-4af8-a430-0ba245842959@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDExNCBTYWx0ZWRfX/SPKQXwH4PJi zUj3WVU0Uc0J9wfZLBas9qkYZTF5IqKZjXsuPJ8qM9xCcSkFheaQFEiZLlu0lncsG4GwNQznAIN eENNyVVyPa7HF4Li4P/6Hpi+77AuzGVJ+KBtGT71SsF4rt4kBpwlQM2CU1/Ojnuou+ypqkaGg4y
- s5hFjKNhjOicluDePU3LqNBqBgURiisLgSuHddEVMRPciNTzDRoajkUrT5/Af1RrhR92k/XQ/fP 1q3+w4KnIGjz/q43JcuBO/SkRLqkMuvhLAu9bMGlanH4xvyPtdCPi7nzMEcy7jgRdEOU2hb50JV DLd8oFWkdAbWO5ektq46IOkn+ymgJDzc294Ip14qDosaySSm62yT/SMvcLXdOjM4QEoo+BseE3P
- G2+MVPl8ZukhsXhgwOsq3+W26B5Q5VqakBfKaGwp7K7Eo1PHbR+w5Z963l42/wvYmlyVP5iw
-X-Authority-Analysis: v=2.4 cv=F8xXdrhN c=1 sm=1 tr=0 ts=680bb34a cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
- a=t_VceZeAIPjMNq324LgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22
-X-Proofpoint-GUID: y0zjUMfM0TBVcEXtdp0h5y1VY0JgZUUs
-X-Proofpoint-ORIG-GUID: y0zjUMfM0TBVcEXtdp0h5y1VY0JgZUUs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_04,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxscore=0 priorityscore=1501 lowpriorityscore=0 mlxlogscore=999
- malwarescore=0 clxscore=1011 bulkscore=0 adultscore=0 spamscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250114
+In-Reply-To: <20250424135331.02511131@frodo.int.wylie.me.uk>
 
+On Thu, Apr 24, 2025 at 01:53:31PM +0100, Alan J. Wylie wrote:
+> > On Tue, Apr 22, 2025 at 07:20:24PM +0200, Holger Hoffst�tte wrote:
+> 
+> > Meanwhile, if you could provide a reliable (and ideally minimum)
+> > reproducer, it would help me a lot to debug.
+> 
+> I've found a reproducer. Below is a stripped down version of the shell script
+> that I posted in my initial report.
+> 
+> Running this in a 1 second loop is enough to cause the panic very quickly.
+> 
+> It seems a bit of network traffic is needed, too.
 
-My bad, missed to mention the warning in the previous mail.
+Excellent! Now I can try it on my side instead of bothering you. :)
 
-On 25/04/25 9:32 pm, Venkat Rao Bagalkote wrote:
-> Hello,
->
->
-> I am seeing a new build warning while building tools/perf on the 
-> mainline kernel, with base:
->
-> commit 02ddfb981de88a2c15621115dd7be2431252c568 (HEAD -> master, 
-> origin/master, origin/HEAD)
-> Merge: 30e268185e59 b0b7ee3b574a
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Thu Apr 24 13:01:31 2025 -0700
->
->     Merge tag 'scsi-fixes' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
->
->     Pull SCSI fixes from James Bottomley:
->      "The single core change is an obvious bug fix (and falls within 
-> the LF
->       guidelines for patches from sanctioned entities). The other driver
->       changes are a bit larger but likewise pretty obvious"
->
->     * tag 'scsi-fixes' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi:
->       scsi: mpi3mr: Add level check to control event logging
->       scsi: ufs: core: Add NULL check in 
-> ufshcd_mcq_compl_pending_transfer()
->       scsi: core: Clear flags for scsi_cmnd that did not complete
->       scsi: ufs: Introduce quirk to extend PA_HIBERN8TIME for UFS devices
->       scsi: ufs: qcom: Add quirks for Samsung UFS devices
->       scsi: target: iscsi: Fix timeout on deleted connection
->       scsi: mpi3mr: Reset the pending interrupt flag
->       scsi: mpi3mr: Fix pending I/O counter
->       scsi: ufs: mcq: Add NULL check in ufshcd_mcq_abort()
->
+I will check if applying all patches here could make crash and warning
+go away. And of course, I need to really understand why the crash still
+happened even after the qlen check adding to htb_qlen_notify(), which is
+unexpected to me.
 
-Warning:
-
-diff -u tools/perf/trace/beauty/include/uapi/linux/vhost.h 
-include/uapi/linux/vhost.h
-
->
-> Git Bisect is pointing to below commit as first bad commit.
->
->
-> a940e0a685575424d33324ec7f0089045249de0a is the first bad commit
-> commit a940e0a685575424d33324ec7f0089045249de0a
-> Author: Stefano Garzarella <sgarzare@redhat.com>
-> Date:   Mon Mar 3 09:52:37 2025 +0100
->
->     vhost: fix VHOST_*_OWNER documentation
->
->     VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
->     instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
->
->     To avoid confusion, let's use the right names in the documentation.
->     No change to the API, only the documentation is involved.
->
->     Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->     Message-Id: <20250303085237.19990-1-sgarzare@redhat.com>
->     Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->
->  include/uapi/linux/vhost.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
->
-> Upon reverting the above commit, warning is not seen.
->
->
-> Bisect log:
->
->
-> git bisect start
-> # status: waiting for both good and bad commits
-> # good: [9c32cda43eb78f78c73aee4aa344b777714e259b] Linux 6.15-rc3
-> git bisect good 9c32cda43eb78f78c73aee4aa344b777714e259b
-> # status: waiting for bad commit, 1 good commit known
-> # bad: [02ddfb981de88a2c15621115dd7be2431252c568] Merge tag 
-> 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
-> git bisect bad 02ddfb981de88a2c15621115dd7be2431252c568
-> # good: [cc0dec3f659d19805fcaf8822204137c9f27a912] Merge branch 
-> 'net-stmmac-fix-timestamp-snapshots-on-dwmac1000'
-> git bisect good cc0dec3f659d19805fcaf8822204137c9f27a912
-> # bad: [0251ddbffbeb213f0f74ef94b2cacce580eb8d76] Merge tag 
-> 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost
-> git bisect bad 0251ddbffbeb213f0f74ef94b2cacce580eb8d76
-> # good: [bc3372351d0c8b2726b7d4229b878342e3e6b0e8] Merge tag 
-> 'for-6.15-rc3-tag' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-> git bisect good bc3372351d0c8b2726b7d4229b878342e3e6b0e8
-> # bad: [fbd3039a64b01b769040677c4fc68badeca8e3b2] virtio_console: fix 
-> missing byte order handling for cols and rows
-> git bisect bad fbd3039a64b01b769040677c4fc68badeca8e3b2
-> # bad: [a940e0a685575424d33324ec7f0089045249de0a] vhost: fix 
-> VHOST_*_OWNER documentation
-> git bisect bad a940e0a685575424d33324ec7f0089045249de0a
-> # good: [16c22c56d4282584742022a37d4f79a46ca6094a] virtio_pci: Use 
-> self group type for cap commands
-> git bisect good 16c22c56d4282584742022a37d4f79a46ca6094a
-> # first bad commit: [a940e0a685575424d33324ec7f0089045249de0a] vhost: 
-> fix VHOST_*_OWNER documentation
->
->
-> If you happen to fix this, please add below tag.
->
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->
->
-> Regards,
->
-> Venkat.
->
+Thanks a lot!
 
