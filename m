@@ -1,85 +1,108 @@
-Return-Path: <linux-kernel+bounces-620924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068AFA9D17C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:26:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F5BA9D1BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07903B113A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:25:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 699CD7B272A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B1C21ABB7;
-	Fri, 25 Apr 2025 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2382822423D;
+	Fri, 25 Apr 2025 19:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyg5Pn6b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="M/Vu+IXU"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691521660D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DF221714;
+	Fri, 25 Apr 2025 19:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745609159; cv=none; b=vEM4+RRq8PIqmIC3vwCzqUntR8WGUxPo79khAkbxCPKo2FFmg8jXD+CUTCdPIF+5mu4CRi6iRXYLk8Z0LY9VWx8IGBE0CLZITsF2dynerJvN3ys64J1P0P9Eb8KnkikxnJ93hMIbGMz/kEO5TyzRzpfHcWhmrTzPgN/E7pgYPMg=
+	t=1745609666; cv=none; b=ehwSe3l/srySoBOaWrfl4XPjBz5D5bBon8662O37kLt1fW9+5QlT06WfGTk+px3P37xiluIO4Dig5fnzhoYrXSrPeFScPVoXMCAb1VmiIB5uaSkCUIS/67rPuWdlMe53HPQLruazcAjKjt06LMufjYYOFMiZIbhh+xjXUkVVVmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745609159; c=relaxed/simple;
-	bh=fevWv2WsbzFZWwQm0Gdx21OiWcz6gRZkqGLmD4zYuvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6reu23kJlLBBavmDHINwhK0gc3gGkONxpvC5yCyi47tRKgmidfqAYwd+XhgfxfG/4QJ3LRj9XxeOIVlXzZrPs0/BPZ+/ovozvYXEGasVSE0GfsAGiA/B+qK4XczfVIAQRDRtf8XzNdXarYrK374A+F3aJV1Ea8Qxe+m9Y+L+aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyg5Pn6b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62ACC4CEE4;
-	Fri, 25 Apr 2025 19:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745609158;
-	bh=fevWv2WsbzFZWwQm0Gdx21OiWcz6gRZkqGLmD4zYuvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qyg5Pn6bZcbU6/dfF2eZEggsqPeoRa3gi9jW0KjYUXH2jDh7kzCzbJK+qon/XfH/T
-	 Lc1F3nLCes03aeOrzmWNeP6UrhVevVuJmWPVRgAAXOP5XmQE0fpR05aNTHvWQjSAgk
-	 0IH6x5Pmbl6v3ufs0s0lSse+Ar2c3b6VynPDUKj4MopQMcXPWLrkfiBluCYuwECCwo
-	 D7jluSlqDvb3J1AbgbUNiAcl4sP47Z76co5Sqe7Im0soWhMXHR5qVdmFauBFx91bPw
-	 zKDz4HZcHEGZ6/Vf8IWj+OURndiXaKbfT+Ol7lxOIsLXqExmD1KusbgUgmOSJSiAm7
-	 stPCaGtpyXgRw==
-Date: Fri, 25 Apr 2025 09:25:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	Philipp Stanner <phasta@mailbox.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: flush all pending jobs in destroy_workqueue()
-Message-ID: <aAvhxfGvndybqkJm@slm.duckdns.org>
-References: <20250423-destroy-workqueue-flush-v1-1-3d74820780a5@google.com>
- <aAqXw3t9UVU8pF8_@slm.duckdns.org>
- <aAtXApA8ggJa6sQg@google.com>
+	s=arc-20240116; t=1745609666; c=relaxed/simple;
+	bh=nVy5aWKIgku0ASs8zTDYZiXGEtNCnxnzwhpSxvmTSYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oLS3PlE62Dld4S3DCsR2JWojQ69Om3rRG4X01akiSdL1KoBfSSVojVGnfYEcf6kRjU4vjaoA0ZXZYJ9vyw9PPLhe2fTiYimVDnlyhv0C3uVmGHSuxV2EQ+ixAa1B4QMcBWl+BOHN6tbvWHE/lBcCwdDjRBHF+gcjyxdplVsQ3ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=M/Vu+IXU; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EC3D5664A4B;
+	Fri, 25 Apr 2025 21:34:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1745609660;
+	bh=nVy5aWKIgku0ASs8zTDYZiXGEtNCnxnzwhpSxvmTSYs=;
+	h=From:Subject:Date;
+	b=M/Vu+IXUXpbX8iEUoY2TIj2ulH6EIaALgLo9NB2SngF9v1MQlJIOy0xvTkFeDXS0O
+	 miaaw9cZxHYn4/jYjM7+fG0w7HDcjfxSL+TTOqCyXiVzWdMbIY16iVZBhJYgQIs2jh
+	 1Hmo+CDWgcfZw2Xyi7OgWPvJHaJOBjwRulwkR2fQk3beB+CtngfL2ADO5KorZ08dS2
+	 RM0UwEZGCn+8fzlBpTHCRlJ7/HFPTSd3Eh1eovJQaQmR1tvnIaHAGtkIwrOVfYCvfX
+	 7pcAflp6mas8X1pwGbflD/whXGLGyPtA7WhQ9BANvyjSpsgEB51VKPx9eIKvb7fMu5
+	 3wpJI2tqxcqMw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject:
+ [PATCH v1 09/19] ACPICA: Utilities: Fix spelling mistake "Incremement"  ->
+ "Increment"
+Date: Fri, 25 Apr 2025 21:26:03 +0200
+Message-ID: <7814589.EvYhyI6sBW@rjwysocki.net>
+In-Reply-To: <12671029.O9o76ZdvQC@rjwysocki.net>
+References: <12671029.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAtXApA8ggJa6sQg@google.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheefudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepledtieekkeekveeikeetgffgteeuteefjeevjeegudelvdduheeiuedvieehieevnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepvddujedruddugedrfeegrdduleenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpedvudejrdduudegrdefgedrudelpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-Hello,
+From: Colin Ian King <colin.i.king@gmail.com>
 
-On Fri, Apr 25, 2025 at 09:33:54AM +0000, Alice Ryhl wrote:
-...
-> Hmm. I think we would need to add a new field to delayed_work to keep
-> track of which list it has been added to.
+ACPICA commit 0faa6e20cfe56fdaefc37a38f8fd04e3137fcdad
 
-Can't we use the same cpu that's already recorded in delayed_work->cpu?
+There is a spelling mistake in a literal string. Fix it.
 
-> Another option could be to add a boolean that disables the list. After
-> all, we never call destroy_workqueue() on system_wq so we don't need the
-> list for that workqueue.
+Fixes: a171306ed1a1 ("Reference count: add additional debugging details)
 
-It's not just system_wq tho. Any busy workqueue can hit scalability problems
-and the result would be usually subtle performance penalties. If we can keep
-it cheap enough, I'd prefer the behavior uniform across all workqueues.
+Link: https://github.com/acpica/acpica/commit/0faa6e20
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/acpica/utdelete.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-
+diff --git a/drivers/acpi/acpica/utdelete.c b/drivers/acpi/acpica/utdelete.c
+index c85bfa13ac1e..e8180099d01f 100644
+--- a/drivers/acpi/acpica/utdelete.c
++++ b/drivers/acpi/acpica/utdelete.c
+@@ -404,7 +404,7 @@ acpi_ut_update_ref_count(union acpi_operand_object *object, u32 action)
+ 				  object, object->common.type,
+ 				  acpi_ut_get_object_type_name(object),
+ 				  new_count));
+-		message = "Incremement";
++		message = "Increment";
+ 		break;
+ 
+ 	case REF_DECREMENT:
 -- 
-tejun
+2.43.0
+
+
+
+
 
