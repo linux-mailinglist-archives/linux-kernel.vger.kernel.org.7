@@ -1,95 +1,203 @@
-Return-Path: <linux-kernel+bounces-620787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E8AA9CFB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:35:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05EC4A9CFB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 100C47ACB96
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A3F4C6023
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A0620F062;
-	Fri, 25 Apr 2025 17:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="KzT12XIN"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1961F8ADD;
-	Fri, 25 Apr 2025 17:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5459F20DD75;
+	Fri, 25 Apr 2025 17:38:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622A0189B80
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745602538; cv=none; b=dFaVU5YaJ6Khb285sQH4WdtVEfN1IvCs7p2/t8NvKciEHiJIrVCaUKzL0kfMaqzQbSBl7TInCGkgDY9BDjWUC/mDg3I9zh9MDK/AzAa8wlEW6w34i61OfO4HQD/wa+svhuQoFMqSUStjjiiTlaY4do4cfmmF9QjilbxPQg8+lIY=
+	t=1745602706; cv=none; b=PBdXwYCAImWFzHv7ozISwzigOi733SPgZcUdxZJWz/v/BHoD5wlA3KJ+K0NZw+T+C/XpMcokO/NOUkcuP7o87vXggPQZYOMpSBaNxvEWnth9utt8Fq+2qy6PgxIcqG/yM4vq/cA0WHLGiadfWpxLSYqlqfO+VaKxiNdQpRyZAlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745602538; c=relaxed/simple;
-	bh=Q8NWzs/q2LxS5qzSWu8/lgiyqEiHtsmncNcVNqsQQRA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZVNva8untHTO4g0N17yVDUOxvmQbl99axyNlZ6TL8SUYFRs5MFVS7WCfzjVrc9yHfZNZ9BGIup2TVtQj8KLoloM1JOET5n3mOknZuAkQudTjwfvfxHNjxdLd2CZ/JP90IWsk7AprSTH1xVDUOLeKkaG9LQbFwvTEsmyVvXVIx4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=KzT12XIN; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1745602536;
-	bh=Q8NWzs/q2LxS5qzSWu8/lgiyqEiHtsmncNcVNqsQQRA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=KzT12XINGKfXBZrHKdEmZSd8wj/2BDFrWS8aEEs6WKaiWLLfGXLPHmBELy/b4hozn
-	 DAIYJflavzjBVdrtiAvVX0izzYe3wqgRC+tLZ5DKnEApUwcCFtEKjZXPAtqUEac4Nv
-	 fxa4JL9fBJG1ZvkDGF4ADgwX/XRkkqqEqt7GY/M0=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 9D0C340ECB; Fri, 25 Apr 2025 10:35:36 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 9C4E0401D1;
-	Fri, 25 Apr 2025 10:35:36 -0700 (PDT)
-Date: Fri, 25 Apr 2025 10:35:36 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Suren Baghdasaryan <surenb@google.com>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    David Rientjes <rientjes@google.com>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-    maple-tree@lists.infradead.org
-Subject: Re: [PATCH v4 9/9] mm, slub: skip percpu sheaves for remote object
- freeing
-In-Reply-To: <20250425-slub-percpu-caches-v4-9-8a636982b4a4@suse.cz>
-Message-ID: <c60ae681-6027-0626-8d4e-5833982bf1f0@gentwo.org>
-References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz> <20250425-slub-percpu-caches-v4-9-8a636982b4a4@suse.cz>
+	s=arc-20240116; t=1745602706; c=relaxed/simple;
+	bh=U5Bbwvlv7AQBk6nBYmHNO4mKSiKccn9LGAUsnEjnrvA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Awuu0NkbkNOhCFPTpuTSYXceqx2cbK6EBFoPSgrLckShHu6ToDx3F09KjrSa8Lt+G+CRAGkfuAH0p2EhyWLuIPLNycRMRcwcsQO4mJWpuhgHiC2HRkye58N8KQ1qhYom0LwJFacoodUiZK/MlzD/4i3j0Nr7mYCaQ0wlYmBTsc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E12A5106F;
+	Fri, 25 Apr 2025 10:38:17 -0700 (PDT)
+Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32B333F59E;
+	Fri, 25 Apr 2025 10:38:19 -0700 (PDT)
+From: James Morse <james.morse@arm.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>,
+	Babu Moger <Babu.Moger@amd.com>,
+	James Morse <james.morse@arm.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com,
+	lcherian@marvell.com,
+	bobo.shaobowang@huawei.com,
+	tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>,
+	peternewman@google.com,
+	dfustini@baylibre.com,
+	amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	fenghuay@nvidia.com
+Subject: [PATCH v9 00/27] x86/resctrl: Move the resctrl filesystem code to /fs/resctrl
+Date: Fri, 25 Apr 2025 17:37:42 +0000
+Message-Id: <20250425173809.5529-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Apr 2025, Vlastimil Babka wrote:
+Changes since v8:
+ * Added check for closid_init() on monitor only platforms.
+ * Moved end-marker into array and added default cases.
+ * Additional patches to move prototpyes between header files.
+ 
+Changes otherwise noted on each patch.
 
-> @@ -5924,8 +5948,15 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
->  	if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s), false)))
->  		return;
->
-> -	if (!s->cpu_sheaves || !free_to_pcs(s, object))
-> -		do_slab_free(s, slab, object, object, 1, addr);
-> +	if (s->cpu_sheaves) {
-> +		if (likely(!IS_ENABLED(CONFIG_NUMA) ||
-> +			   slab_nid(slab) == numa_node_id())) {
+---
 
-Ah. ok this removes remote object freeing to the pcs.
+Patches 20-26 should be squashed together when merged, taking the commit message
+of patch 21. They are posted like this to allow folk to re-generate patch 21, then
+review the differences on top. Not squashing them together would expose a ftrace
+build warning during bisect. (but who does that!)
+That would look like this:
+git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v9_final
 
-numa_mem_id() is needed to support memory less numa nodes.
+This series is based on rc3, and can be retrieved from:
+git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v9
 
-> +			free_to_pcs(s, object);
-> +			return;
-> +		}
-> +	}
-> +
-> +	do_slab_free(s, slab, object, object, 1, addr);
->  }
->
->  #ifdef CONFIG_MEMCG
->
->
+This series renames functions and moves code around. With the
+exception of invalid configurations for the configurable-events, there should
+be no changes in behaviour caused by this series. It is now possible for
+throttle_mode to report 'undefined', but no known platform will do this.
+
+The driving pattern is to make things like struct rdtgroup private to resctrl.
+Features like pseudo-lock aren't going to work on arm64, the ability to disable
+it at compile time is added.
+
+After this, I can start posting the MPAM driver to make use of resctrl on arm64.
+(What's MPAM? See the cover letter of the first series. [1])
+
+As ever - bugs welcome,
+Thanks,
+
+James
+
+[v8] https://lore.kernel.org/all/20250411164229.23413-1-james.morse@arm.com
+[v7] https://lore.kernel.org/all/20250228195913.24895-1-james.morse@arm.com/
+[v6] https://lore.kernel.org/lkml/20250207181823.6378-1-james.morse@arm.com/
+[v5] https://lore.kernel.org/r/20241004180347.19985-1-james.morse@arm.com
+[v4] https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.com/
+[v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
+[v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
+[v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
+[1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+
+
+Amit Singh Tomar (1):
+  x86/resctrl: Remove the limit on the number of CLOSID
+
+Dave Martin (3):
+  x86/resctrl: Squelch whitespace anomalies in resctrl core code
+  x86/resctrl: Prefer alloc(sizeof(*foo)) idiom in rdt_init_fs_context()
+  x86/resctrl: Relax some asm #includes
+
+James Morse (23):
+  x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
+  x86/resctrl: Check all domains are offline in resctrl_exit()
+  x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
+  x86/resctrl: Drop __init/__exit on assorted symbols
+  x86/resctrl: Move is_mba_sc() out of core.c
+  x86/resctrl: Add end-marker to the resctrl_event_id enum
+  x86/resctrl: Expand the width of domid by replacing mon_data_bits
+  x86/resctrl: Split trace.h
+  x86/resctrl: Add 'resctrl' to the title of the resctrl documentation
+  fs/resctrl: Add boiler plate for external resctrl code
+  x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
+  x86/resctrl: Move enum resctrl_event_id to resctrl.h
+  x86/resctrl: Fix types in resctrl_arch_mon_ctx_alloc() and free stubs
+  x86/resctrl: Move pseudo lock prototypes to include/linux/resctrl.h
+  x86/resctrl: Always initialise rid field in rdt_resources_all[]
+  x86/resctrl: Remove a newline to avoid confusing the code move script
+  x86/resctrl: Add python script to move resctrl code to /fs/resctrl
+  x86,fs/resctrl: Move the resctrl filesystem code to live in
+    /fs/resctrl
+  x86,fs/resctrl: Remove duplicated trace header files
+  fs/resctrl: Remove unnecessary includes
+  fs/resctrl: Change internal.h's header guard macros
+  x86,fs/resctrl: Move resctrl.rst to live under
+    Documentation/filesystems
+  MAINTAINERS: Add reviewers for fs/resctrl
+
+ Documentation/arch/x86/index.rst              |    1 -
+ Documentation/filesystems/index.rst           |    1 +
+ .../{arch/x86 => filesystems}/resctrl.rst     |    6 +-
+ MAINTAINERS                                   |    5 +-
+ arch/Kconfig                                  |    8 +
+ arch/x86/Kconfig                              |   11 +-
+ arch/x86/include/asm/resctrl.h                |   15 +-
+ arch/x86/kernel/cpu/resctrl/Makefile          |    2 +
+ arch/x86/kernel/cpu/resctrl/core.c            |   31 +-
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  635 ---
+ arch/x86/kernel/cpu/resctrl/internal.h        |  399 +-
+ arch/x86/kernel/cpu/resctrl/monitor.c         |  918 +---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     | 1092 +----
+ .../resctrl/{trace.h => pseudo_lock_trace.h}  |   26 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 4164 +---------------
+ arch/x86/kernel/process_32.c                  |    2 +-
+ arch/x86/kernel/process_64.c                  |    2 +-
+ fs/Kconfig                                    |    1 +
+ fs/Makefile                                   |    1 +
+ fs/resctrl/Kconfig                            |   39 +
+ fs/resctrl/Makefile                           |    6 +
+ fs/resctrl/ctrlmondata.c                      |  660 +++
+ fs/resctrl/internal.h                         |  440 ++
+ fs/resctrl/monitor.c                          |  929 ++++
+ fs/resctrl/monitor_trace.h                    |   33 +
+ fs/resctrl/pseudo_lock.c                      | 1105 +++++
+ fs/resctrl/rdtgroup.c                         | 4344 +++++++++++++++++
+ include/linux/resctrl.h                       |   36 +-
+ include/linux/resctrl_types.h                 |   16 +-
+ resctrl_copy_pasta.py                         |  823 ++++
+ 30 files changed, 8490 insertions(+), 7261 deletions(-)
+ rename Documentation/{arch/x86 => filesystems}/resctrl.rst (99%)
+ rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
+ create mode 100644 fs/resctrl/Kconfig
+ create mode 100644 fs/resctrl/Makefile
+ create mode 100644 fs/resctrl/ctrlmondata.c
+ create mode 100644 fs/resctrl/internal.h
+ create mode 100644 fs/resctrl/monitor.c
+ create mode 100644 fs/resctrl/monitor_trace.h
+ create mode 100644 fs/resctrl/pseudo_lock.c
+ create mode 100644 fs/resctrl/rdtgroup.c
+ create mode 100644 resctrl_copy_pasta.py
+
+-- 
+2.39.5
+
 
