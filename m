@@ -1,104 +1,215 @@
-Return-Path: <linux-kernel+bounces-620248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CF8A9C7A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A5BA9C7AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976214C82C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847171BA78C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E48479FD;
-	Fri, 25 Apr 2025 11:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74938245038;
+	Fri, 25 Apr 2025 11:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb3s3Ugk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LZKeuadU"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721B215771;
-	Fri, 25 Apr 2025 11:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598DA245019
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745580630; cv=none; b=Y6z7U7Ky3fCVw5Erocfjb5mpqdgPb0AMISV0laf5EKvMtEK4xeA5LZnZthGma5HNzPo/DmI859d+TObX588aW4aeT0PUMJFl+k3d35pGTDbS8RQbXH3kj97wiidVszuyboYx+pc0Sde51146hbHQBfyYhCt2mqtNwalySBxDMm8=
+	t=1745580730; cv=none; b=iwZYnm3WCEBoJW93/AvO9TIrqB7zxmsCFwGo/W4vgBRSycNcSxnBk0ho6I0VX/ZdVhIE7m4HNpF0kn3E3hZSEu5Olm3YhZoW8o1Jepzg85dUScg8DSuSV92462FcbdUNYO636yqhZqwee4AVWhUFG4eJEjCo31ElywWMo/+tl0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745580630; c=relaxed/simple;
-	bh=gAkjS/MHRFj60cqeJdeolZ0LH0VXM49/mD6u1lGsthM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SzTLcWlU2rxqDSySrAnPsMPJkAiIyPel7vLqPlwDD1gUtkT9CZsrVGMyJG0H5MVT23ILdcCAjIioDpEMg/Alsts1u6SDReeMtBGSc5QnxfeVrF6gg+FYNiHOWgYHtmP9NeumbVF24rBZAYFFi9e3ycwnjucO/3iRLXL9ZAiJcIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb3s3Ugk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 599CAC4CEE9;
-	Fri, 25 Apr 2025 11:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745580630;
-	bh=gAkjS/MHRFj60cqeJdeolZ0LH0VXM49/mD6u1lGsthM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Hb3s3UgkT7r1pbLLrU9pJOgzhs9I0m9oYzTVdTjSV2XHARoyMazCoH3j/WHkFy9O/
-	 vI0wXcfzu12ADVqR9Dli6VdNramVNVerUsujAUvXJlpFuIj57eZMPfGOqnbj2DCpbT
-	 +/aQJQcJw8JyQWgeE5NnCqFluEHggaCcU46KrNLv1jx88NtvrDCC3V04bhnt3vJc55
-	 nlL4msInXJQSphLunPC06WujcJ3E7KPUVok0pA5VUhzoHW9iMtS/RmrUzzvlF1qVS8
-	 aJWaLaJpcCUgs2q30P5uUkapcuPuL6FlJJfDfUqvytAP1vXWFYEyFC589tuXujSWtI
-	 /JliWz4kV1J4g==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	kernel test robot <lkp@intel.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Pavan Holla <pholla@chromium.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: typec: ucsi: add DRM_BRIDGE dependencies
-Date: Fri, 25 Apr 2025 13:30:21 +0200
-Message-Id: <20250425113025.1718145-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1745580730; c=relaxed/simple;
+	bh=GCpyiPt28bAiyP957AszKhnajuTF6p42u0eS2mcBsPs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RbpqqdNkVeDe+YVI9kbfmOmFy0HucOoZ+MJNVw9Ucko80sXoCcjdQBQCuiInH5r+oyqwDUPBIA09hCJS6t9GYMBjfzytYVGLYWGjkXD+5ZRSZRwdoKnDW1ViijI8R0vxUAV/VRMRuv2R+FF7K8zfbl+elh0kwV/aqxQKfFRkTEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LZKeuadU; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 37A373FE51
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1745580721;
+	bh=OPZfkZPQfeDRMDg000gmFj0paz2e73LM64yzf/OD1VY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version;
+	b=LZKeuadU0fw5GIxzzm8ZhUsMVbWreBm7rGm3AM7eRYfxhdPFqeoE+2yg5hTUOeOLl
+	 ezv/Y3HlWKUllRD54Fw5H/koPygB2O8Xb7m/kvnyP7OSOTz+opkvpIYqZ1hcVn2OJZ
+	 Tzx5OG90/danxb4kxYJ0RO41W0DAFdPKfruJILzVuLatNaiQfCliM1381N8JRZwvJB
+	 WXcjvr3Emf64afRslrzPPAL0FTFvavUnFXA3RBK+4BLa8WgHVN/mILumk2KPS6Xa0U
+	 3vHA2WkILjXZQyTK+dnbnUOiKC0J/WPu5xuhmlHm33OBCDOXqOHXOddLZyN1B46Bt2
+	 oglAeJ2he+exA==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac3db5469fbso195581466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:32:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745580720; x=1746185520;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OPZfkZPQfeDRMDg000gmFj0paz2e73LM64yzf/OD1VY=;
+        b=dIOYS9qM3uK0L3FmKnaPcr0Cc8iLSBikDfWAbRc7EScwEnIPtig3l7Wi08/vSDFNS2
+         K1nbzM/PoClb0mUmMe+yw/XdcrZLBC3q4GnOqGpuinCgC21VstxpAaiOPR3UYsBJGchB
+         Y2nhiN25oNzHqtrmedWPeRzsWXfZ8Y7ej9za8uBrwie8TCVDt/yZ9VQElIIfwvV2mjLE
+         8rUblFM+8DafvlEZFbBuP/C9M2xd4X9g4q2HBG9OJqxPcjWBiM9xaKMYETHVSuEoeggA
+         sYrPU7tH7nBp8zwiP/rN5kWHnK++uvbkuUrvdIBLIerpLnCNJLZKlrwMtyJXhYK9LP7h
+         cBNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV05lFBBxDhsL/X5JQYA4FoZ5foXkL5g5hyOdzHR0mX9uplvENJgQFB6uK/LantevRxhx+UfZ44ahrJSks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4UNMk+F9Zm4aIvm0qFLCzcXX+1yf+lf1IyNZ6SXUpdRFdG0XB
+	EzsQPe6Bg6P6/KnQfOm81Xo411zMkvQskY47yPdTfTK2nCScMboVy6VW6yIghkGO7qVKa0rbXxo
+	BE8VxgqKg4RVrmSgajjDM1isRvfBjvyn6iP3mg4jzVYbeMQfcCltTAe9lN5txnsjxW9lARi4tSf
+	XXjA==
+X-Gm-Gg: ASbGnctHUiXWq8QVlNDEsHhctrfYDgGHHNpIJbBagXRuZ44VfKGPrRJzfrlK2UhZugs
+	lKkKqUkagHv7MP/N3++drUMtzpRQazGJtBuML3Sd3dFe9jpU/4ZJsDU8FV/5huNFCyCC5bTudFN
+	jb/F5XZuHCBd3TbQzapkT+eKD+e4KDOLavUkETZ5JXmtzwh1r0sdVp4T0ny0KCmAalhLm1q9smF
+	5T8B7zoiHt1x/7eD3xBQ5KDXEru65pZQiAHwui8XcnE8QB+TqVxgVQ9C/kz+UGZ+E+5QFjH2DPV
+	1fble5kEkFq/ljqxdAx2mOfkzVIcnJOD
+X-Received: by 2002:a17:907:3ea3:b0:ac1:ecb5:7207 with SMTP id a640c23a62f3a-ace7111e569mr178481866b.29.1745580719731;
+        Fri, 25 Apr 2025 04:31:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCekybV1mHlYsp3NsMWbAvi9HQzJHEy9lx0bW9hT/pbvfkBEQ/uNDOfxsIMgTXkh3X+7Tqng==
+X-Received: by 2002:a17:907:3ea3:b0:ac1:ecb5:7207 with SMTP id a640c23a62f3a-ace7111e569mr178478566b.29.1745580719257;
+        Fri, 25 Apr 2025 04:31:59 -0700 (PDT)
+Received: from deep-thought.gnur.de ([95.89.205.15])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e5087e4sm124035966b.73.2025.04.25.04.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 04:31:58 -0700 (PDT)
+Message-ID: <ee1263a1bcb7510f2ec7a4c34e5c64b3a1d21d7a.camel@canonical.com>
+Subject: Re: [PATCH v2 3/3] coredump: hand a pidfd to the usermode coredump
+ helper
+From: Benjamin Drung <benjamin.drung@canonical.com>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Oleg Nesterov <oleg@redhat.com>, Luca Boccassi
+ <luca.boccassi@gmail.com>,  Lennart Poettering <lennart@poettering.net>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+ Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?=	 <zbyszek@in.waw.pl>,
+ linux-kernel@vger.kernel.org
+Date: Fri, 25 Apr 2025 13:31:56 +0200
+In-Reply-To: <20250414-work-coredump-v2-3-685bf231f828@kernel.org>
+References: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
+	 <20250414-work-coredump-v2-3-685bf231f828@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-Selecting CONFIG_DRM_AUX_HPD_BRIDGE is not allowed when its dependencies
-are not met:
+On Mon, 2025-04-14 at 15:55 +0200, Christian Brauner wrote:
+> Give userspace a way to instruct the kernel to install a pidfd into the
+> usermode helper process. This makes coredump handling a lot more
+> reliable for userspace. In parallel with this commit we already have
+> systemd adding support for this in [1].
+>=20
+> We create a pidfs file for the coredumping process when we process the
+> corename pattern. When the usermode helper process is forked we then
+> install the pidfs file as file descriptor three into the usermode
+> helpers file descriptor table so it's available to the exec'd program.
+>=20
+> Since usermode helpers are either children of the system_unbound_wq
+> workqueue or kthreadd we know that the file descriptor table is empty
+> and can thus always use three as the file descriptor number.
+>=20
+> Note, that we'll install a pidfd for the thread-group leader even if a
+> subthread is calling do_coredump(). We know that task linkage hasn't
+> been removed due to delay_group_leader() and even if this @current isn't
+> the actual thread-group leader we know that the thread-group leader
+> cannot be reaped until @current has exited.
+>=20
+> Link: https://github.com/systemd/systemd/pull/37125 [1]
+> Tested-by: Luca Boccassi <luca.boccassi@gmail.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/coredump.c            | 59 ++++++++++++++++++++++++++++++++++++++++++=
+++----
+>  include/linux/coredump.h |  1 +
+>  2 files changed, 56 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 9da592aa8f16..403be0ff780e 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -43,6 +43,9 @@
+>  #include <linux/timekeeping.h>
+>  #include <linux/sysctl.h>
+>  #include <linux/elf.h>
+> +#include <linux/pidfs.h>
+> +#include <uapi/linux/pidfd.h>
+> +#include <linux/vfsdebug.h>
+> =20
+>  #include <linux/uaccess.h>
+>  #include <asm/mmu_context.h>
+> @@ -60,6 +63,12 @@ static void free_vma_snapshot(struct coredump_params *=
+cprm);
+>  #define CORE_FILE_NOTE_SIZE_DEFAULT (4*1024*1024)
+>  /* Define a reasonable max cap */
+>  #define CORE_FILE_NOTE_SIZE_MAX (16*1024*1024)
+> +/*
+> + * File descriptor number for the pidfd for the thread-group leader of
+> + * the coredumping task installed into the usermode helper's file
+> + * descriptor table.
+> + */
+> +#define COREDUMP_PIDFD_NUMBER 3
+> =20
+>  static int core_uses_pid;
+>  static unsigned int core_pipe_limit;
+> @@ -339,6 +348,27 @@ static int format_corename(struct core_name *cn, str=
+uct coredump_params *cprm,
+>  			case 'C':
+>  				err =3D cn_printf(cn, "%d", cprm->cpu);
+>  				break;
+> +			/* pidfd number */
+> +			case 'F': {
+> +				/*
+> +				 * Installing a pidfd only makes sense if
+> +				 * we actually spawn a usermode helper.
+> +				 */
+> +				if (!ispipe)
+> +					break;
+> +
+> +				/*
+> +				 * Note that we'll install a pidfd for the
+> +				 * thread-group leader. We know that task
+> +				 * linkage hasn't been removed yet and even if
+> +				 * this @current isn't the actual thread-group
+> +				 * leader we know that the thread-group leader
+> +				 * cannot be reaped until @current has exited.
+> +				 */
+> +				cprm->pid =3D task_tgid(current);
+> +				err =3D cn_printf(cn, "%d", COREDUMP_PIDFD_NUMBER);
+> +				break;
+> +			}
+>  			default:
+>  				break;
+>  			}
+>=20
 
-WARNING: unmet direct dependencies detected for DRM_AUX_HPD_BRIDGE
-  Depends on [n]: HAS_IOMEM [=y] && DRM [=n] && DRM_BRIDGE [=n] && OF [=n]
-  Selected by [m]:
-  - UCSI_HUAWEI_GAOKUN [=m] && USB_SUPPORT [=y] && TYPEC [=y] && TYPEC_UCSI [=m] && EC_HUAWEI_GAOKUN [=m]
+I tried this change with Apport: I took the Ubuntu mainline kernel build
+https://kernel.ubuntu.com/mainline/daily/2025-04-24/ (that refers to
+mainline commit e54f9b0410347c49b7ffdd495578811e70d7a407) and applied
+these three patches on top. Then I modified Apport to take the
+additional `-F%F` and tested that on Ubuntu 25.04 (plucky). The result
+is the coredump failed as long as there was `-F%F` on
+/proc/sys/kernel/core_pattern:
 
-ERROR: modpost: "drm_bridge_hpd_notify" [drivers/gpu/drm/bridge/aux-hpd-bridge.ko] undefined!
-ERROR: modpost: "devm_drm_bridge_add" [drivers/gpu/drm/bridge/aux-hpd-bridge.ko] undefined!
+```
+coredump: 7392(divide-by-zero): |/usr/share/apport/apport pipe failed
+```
 
-Add the same dependencies for the new UCSI_HUAWEI_GAOKUN driver to ensure
-it always builds cleanly.
+Did I do something wrong? Do I miss additional patches?
 
-Fixes: 00327d7f2c8c ("usb: typec: ucsi: add Huawei Matebook E Go ucsi driver")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202504140319.dgpbDOJZ-lkp@intel.com/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/usb/typec/ucsi/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
-index e94956d27325..bdabae71b4ac 100644
---- a/drivers/usb/typec/ucsi/Kconfig
-+++ b/drivers/usb/typec/ucsi/Kconfig
-@@ -94,6 +94,7 @@ config UCSI_LENOVO_YOGA_C630
- config UCSI_HUAWEI_GAOKUN
- 	tristate "UCSI Interface Driver for Huawei Matebook E Go"
- 	depends on EC_HUAWEI_GAOKUN
-+	depends on DRM_BRIDGE && OF
- 	select DRM_AUX_HPD_BRIDGE
- 	help
- 	  This driver enables UCSI support on the Huawei Matebook E Go tablet,
--- 
-2.39.5
-
+--=20
+Benjamin Drung
+Debian & Ubuntu Developer
 
