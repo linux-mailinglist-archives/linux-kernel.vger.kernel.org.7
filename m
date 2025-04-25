@@ -1,656 +1,186 @@
-Return-Path: <linux-kernel+bounces-620752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E84A9CF40
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B54A9CF26
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690374E1270
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:12:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B96507AE1E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7081F0E24;
-	Fri, 25 Apr 2025 17:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FB91DED77;
+	Fri, 25 Apr 2025 17:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M39AQ9TS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FK3ro41n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146420766B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12571A23A0;
+	Fri, 25 Apr 2025 17:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745601023; cv=none; b=iyAdY8CMQsmEEUP/DfusbRDWqjwSJ2W+96ViHk0ud1a/1g2hpYBLeye0RtrEyZR7Fe1Ddr8iXCqhQcSL93PZdV88cFZVJU1cdZIVLrPhcQ5ROWZMFPZ0qgp3Zyqt6LBafXj4bfj74nyHIVOLFy2a+q+YxctRljdl7laXN4oLJ+k=
+	t=1745600978; cv=none; b=I+LMBzJdUFhdydyB0ekBF3H9HuA43IlH/h5+m1GIZP7GY6yV5pRFGbGV8hCZoqWOrzBhZc/pRmqyYPqUf8tvhw8d0z9U0GZLvWSEGE2Lx+raBmsKyzo1VN6YqOPTUSGjrp2demqQ11XbdJgNVRtQ/s+pMei7gFYzBJywRRJTiXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745601023; c=relaxed/simple;
-	bh=K3w24NFOcxFz6WElmhOUTzff3WlWugcqul0bP2juZio=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t/XKnKXdBP5VVAjT5PyyA8qFl4rmFjb0AD4QaCn8DYTn1p4lCBN6WwwqfQ/SKUBpKGlkqnTkR4T7mul1Bxo2PadpLKxP4boeeHL8LqVXWYzO46qwfXAsQyXvMaXVxc+XOoYK+khiZ3FUrXkHCKryJbR0rRUQ8z0ZjPEVXNz0qaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M39AQ9TS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745601017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ciwSWAqovG4yDD+Ra3FoEX/Qs98/j92swGonfQTwJE=;
-	b=M39AQ9TSyO3gR9FazlmMrA49H49sia6at91KfIXy3ADqnNpemRNUg4zZs4L5e/koKLCG4O
-	pkETOB5ewtYgDrpt6UE8q1vJhIV3QvxXhs2phav7q/X/dA40VD3hKQtWLCpQzBGJpUO2VI
-	PZEm5MwKKQm5pOsc77WFvpAhTzo/Hi8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-tBfn_fbOP1-GG1i68G6jPQ-1; Fri,
- 25 Apr 2025 13:10:16 -0400
-X-MC-Unique: tBfn_fbOP1-GG1i68G6jPQ-1
-X-Mimecast-MFC-AGG-ID: tBfn_fbOP1-GG1i68G6jPQ_1745601014
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06E471800983;
-	Fri, 25 Apr 2025 17:10:14 +0000 (UTC)
-Received: from p16v.redhat.com (unknown [10.44.33.33])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E47B1800378;
-	Fri, 25 Apr 2025 17:10:09 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Lee Jones <lee@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Schmidt <mschmidt@redhat.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH net-next v5 6/8] mfd: zl3073x: Fetch invariants during probe
-Date: Fri, 25 Apr 2025 19:09:33 +0200
-Message-ID: <20250425170935.740102-7-ivecera@redhat.com>
-In-Reply-To: <20250425170935.740102-1-ivecera@redhat.com>
-References: <20250425170935.740102-1-ivecera@redhat.com>
+	s=arc-20240116; t=1745600978; c=relaxed/simple;
+	bh=yPI9RwIxxq/NTAS39rdib9EWfVe1cDzmMU4iH7dYSU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUYjiF+asWJZHXXJhPs/XGLgygE59kMLphzia8iPzx2gmq1BAglGx0om89Is+dXZVfWfQrhxqM7YqqjDxayZNytkMChXgPDln6TRPudV1vYBvCtQp6EgyQUoTuHZXnJBPWZts2ZtV3FDguBvbe9jOL47k3Ya7EnTobCxf2bnyrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FK3ro41n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D55EC4CEE4;
+	Fri, 25 Apr 2025 17:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745600978;
+	bh=yPI9RwIxxq/NTAS39rdib9EWfVe1cDzmMU4iH7dYSU8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FK3ro41n0ITFuq+eCIkqVW6QZi1IqOB1y/tU2dwHj0f540wc3jIS2AFnScaQZbgBM
+	 71hgD/kIhac5YlE60SKsS3Xqve1l9t/O5fz/efn5atxJM0q4VeV7gAJhFxnCNpqlEA
+	 QN0Xlt2RqK+f2cvZnuep8h+ShKk+oopJiPmHr8jbyKQwJwil/XNt7vX0GXlmFEgsRi
+	 nZRd20ZWOmwKQXqO72pu2tUO9nKx4JlFmpvDpdAzXIQvW6wO0n0SYaQ0uv+hUsleka
+	 0RvHE0LDWMw/s79wtBqBGoeQbcz0hikY462IlUVC5ptHljF/VPY7Zi1ESGcoKOkhwQ
+	 5BN7+edDki9Vg==
+Date: Fri, 25 Apr 2025 10:09:34 -0700
+From: Kees Cook <kees@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mm: abstract initial stack setup to mm subsystem
+Message-ID: <202504250925.58434D763@keescook>
+References: <cover.1745592303.git.lorenzo.stoakes@oracle.com>
+ <92a8e5ef7d5ce31a3b3cf631cb65c6311374c866.1745592303.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92a8e5ef7d5ce31a3b3cf631cb65c6311374c866.1745592303.git.lorenzo.stoakes@oracle.com>
 
-Several configuration parameters will remain constant at runtime,
-so we can load them during probe to avoid excessive reads from
-the hardware.
+On Fri, Apr 25, 2025 at 03:54:34PM +0100, Lorenzo Stoakes wrote:
+> There are peculiarities within the kernel where what is very clearly mm
+> code is performed elsewhere arbitrarily.
+> 
+> This violates separation of concerns and makes it harder to refactor code
+> to make changes to how fundamental initialisation and operation of mm logic
+> is performed.
+> 
+> One such case is the creation of the VMA containing the initial stack upon
+> execve()'ing a new process. This is currently performed in __bprm_mm_init()
+> in fs/exec.c.
+> 
+> Abstract this operation to create_init_stack_vma(). This allows us to limit
+> use of vma allocation and free code to fork and mm only.
+> 
+> We previously did the same for the step at which we relocate the initial
+> stack VMA downwards via relocate_vma_down(), now we move the initial VMA
+> establishment too.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  fs/exec.c          | 51 +---------------------------------
 
-These parameters will be frequently accessed by the DPLL sub-device
-driver (in follow-up series), and later by the PHC/PTP sub-device
-driver.
+I'm kind of on the fence about this. On the one hand, yes, it's all vma
+goo, and should live with the rest of vma code, as you suggest. On the
+other had, exec is the only consumer of this behavior, and moving it
+out of fs/exec.c means that changes to the code that specifically only
+impacts exec are now in a separate file, and will no longer get exec
+maintainer/reviewer CCs (based on MAINTAINERS file matching). Exec is
+notoriously fragile, so I'm kind of generally paranoid about changes to
+its behaviors going unnoticed.
 
-Read the following parameters from the device during probe and store
-them for later use:
+In defense of moving it, yes, this routine has gotten updates over the
+many years, but it's relatively stable. But at least one thing has gone in
+without exec maintainer review recently (I would have Acked it, but the
+point is review): 9e567ca45f ("mm/ksm: fix ksm exec support for prctl")
+Everything else was before I took on the role officially (Nov 2022).
 
-* frequencies of the synthesizers and their associated DPLL channels
-* enablement and type (single-ended or differential) of input pins
-* associated synthesizers, signal format, and enablement status of
-  outputs
+So I guess I'm asking, how do we make sure stuff pulled out of exec
+still gets exec maintainer review?
 
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
-v4->v5:
-* updated to use new register API
-v3->v4:
-* adjusted for new mailbox API
-v2->v3:
-* dropped usage of macros for generating helper functions
-v1->v2:
-* fixed and added inline documentation
----
- drivers/mfd/zl3073x-core.c       | 251 +++++++++++++++++++++++++++++++
- drivers/mfd/zl3073x-regs.h       |  37 +++++
- include/linux/mfd/zl3073x-regs.h |  22 +++
- include/linux/mfd/zl3073x.h      | 151 +++++++++++++++++++
- 4 files changed, 461 insertions(+)
+> [...]
+>  static int __bprm_mm_init(struct linux_binprm *bprm)
+>  {
+> -	int err;
+> [...]
+> -	return err;
+> +	return create_init_stack_vma(bprm->mm, &bprm->vma, &bprm->p);
+>  }
 
-diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
-index 8fd0105564e4e..513ba2d0463a7 100644
---- a/drivers/mfd/zl3073x-core.c
-+++ b/drivers/mfd/zl3073x-core.c
-@@ -6,6 +6,7 @@
- #include <linux/dev_printk.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/math64.h>
- #include <linux/mfd/zl3073x.h>
- #include <linux/module.h>
- #include <linux/netlink.h>
-@@ -501,6 +502,251 @@ void zl3073x_dev_init_regmap_config(struct regmap_config *regmap_cfg)
- }
- EXPORT_SYMBOL_NS_GPL(zl3073x_dev_init_regmap_config, "ZL3073X");
+I'd prefer __bprm_mm_init() go away if it's just a 1:1 wrapper now.
+However, it doesn't really look like it makes too much sense for the NOMMU
+logic get moved as well, since it explicitly depends on exec-specific
+values (MAX_ARG_PAGES), so perhaps something like this:
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 8e4ea5f1e64c..313dc70e0012 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -382,9 +382,13 @@ static int bprm_mm_init(struct linux_binprm *bprm)
+ 	bprm->rlim_stack = current->signal->rlim[RLIMIT_STACK];
+ 	task_unlock(current->group_leader);
  
-+static int
-+zl3073x_mb_op(struct zl3073x_dev *zldev, unsigned int op_reg, u8 op_val,
-+	      unsigned int mask_reg, u16 mask_val)
-+{
-+	int rc;
-+
-+	/* Set mask for the operation */
-+	rc = zl3073x_write_u16(zldev, mask_reg, mask_val);
-+	if (rc)
-+		return rc;
-+
-+	/* Trigger the operation */
-+	rc = zl3073x_write_u8(zldev, op_reg, op_val);
-+	if (rc)
-+		return rc;
-+
-+	/* Wait for the operation to actually finish */
-+	return zl3073x_poll_zero_u8(zldev, op_reg, op_val);
-+}
-+
-+/**
-+ * zl3073x_input_state_fetch - get input state
-+ * @zldev: pointer to zl3073x_dev structure
-+ * @index: input pin index to fetch state for
-+ *
-+ * Function fetches information for the given input reference that are
-+ * invariant and stores them for later use.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_input_state_fetch(struct zl3073x_dev *zldev, u8 index)
-+{
-+	struct zl3073x_input *input;
-+	u8 ref_config;
-+	int rc;
-+
-+	input = &zldev->input[index];
-+
-+	/* If the input is differential then the configuration for N-pin
-+	 * reference is ignored and P-pin config is used for both.
-+	 */
-+	if (zl3073x_is_n_pin(index) &&
-+	    zl3073x_input_is_diff(zldev, index - 1)) {
-+		input->enabled = zl3073x_input_is_enabled(zldev, index - 1);
-+		input->diff = true;
-+
-+		return 0;
-+	}
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Read reference configuration */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_RD,
-+			   ZL_REG_REF_MB_MASK, BIT(index));
-+	if (rc)
-+		return rc;
-+
-+	/* Read ref_config register */
-+	rc = zl3073x_read_u8(zldev, ZL_REG_REF_CONFIG, &ref_config);
-+	if (rc)
-+		return rc;
-+
-+	input->enabled = FIELD_GET(ZL_REF_CONFIG_ENABLE, ref_config);
-+	input->diff = FIELD_GET(ZL_REF_CONFIG_DIFF_EN, ref_config);
-+
-+	dev_dbg(zldev->dev, "INPUT%u is %s and configured as %s\n", index,
-+		input->enabled ? "enabled" : "disabled",
-+		input->diff ? "differential" : "single-ended");
-+
-+	return rc;
-+}
-+
-+/**
-+ * zl3073x_output_state_fetch - get output state
-+ * @zldev: pointer to zl3073x_dev structure
-+ * @index: output index to fetch state for
-+ *
-+ * Function fetches information for the given output (not output pin)
-+ * that are invariant and stores them for later use.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_output_state_fetch(struct zl3073x_dev *zldev, u8 index)
-+{
-+	struct zl3073x_output *output;
-+	u8 output_ctrl, output_mode;
-+	int rc;
-+
-+	output = &zldev->output[index];
-+
-+	/* Read output configuration */
-+	rc = zl3073x_read_u8(zldev, ZL_REG_OUTPUT_CTRL(index), &output_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Store info about output enablement and synthesizer the output
-+	 * is connected to.
-+	 */
-+	output->enabled = FIELD_GET(ZL_OUTPUT_CTRL_EN, output_ctrl);
-+	output->synth = FIELD_GET(ZL_OUTPUT_CTRL_SYNTH_SEL, output_ctrl);
-+
-+	dev_dbg(zldev->dev, "OUTPUT%u is %s, connected to SYNTH%u\n",
-+		index, output->enabled ? "enabled" : "disabled", output->synth);
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Read output configuration */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_RD,
-+			   ZL_REG_OUTPUT_MB_MASK, BIT(index));
-+	if (rc)
-+		return rc;
-+
-+	/* Read output_mode */
-+	rc = zl3073x_read_u8(zldev, ZL_REG_OUTPUT_MODE, &output_mode);
-+	if (rc)
-+		return rc;
-+
-+	/* Extract and store output signal format */
-+	output->signal_format = FIELD_GET(ZL_OUTPUT_MODE_SIGNAL_FORMAT,
-+					  output_mode);
-+
-+	dev_dbg(zldev->dev, "OUTPUT%u has signal format 0x%02x\n", index,
-+		output->signal_format);
-+
-+	return rc;
-+}
-+
-+/**
-+ * zl3073x_synth_state_fetch - get synth state
-+ * @zldev: pointer to zl3073x_dev structure
-+ * @index: synth index to fetch state for
-+ *
-+ * Function fetches information for the given synthesizer that are
-+ * invariant and stores them for later use.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_synth_state_fetch(struct zl3073x_dev *zldev, u8 index)
-+{
-+	u16 base, num, denom;
-+	u8 synth_ctrl;
-+	u32 mult;
-+	int rc;
-+
-+	/* Read synth control register */
-+	rc = zl3073x_read_u8(zldev, ZL_REG_SYNTH_CTRL(index), &synth_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Extract and store DPLL channel the synth is driven by */
-+	zldev->synth[index].dpll = FIELD_GET(ZL_SYNTH_CTRL_DPLL_SEL,
-+					     synth_ctrl);
-+
-+	dev_dbg(zldev->dev, "SYNTH%u is connected to DPLL%u\n", index,
-+		zldev->synth[index].dpll);
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Read synth configuration */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_SYNTH_MB_SEM, ZL_SYNTH_MB_SEM_RD,
-+			   ZL_REG_SYNTH_MB_MASK, BIT(index));
-+	if (rc)
-+		return rc;
-+
-+	/* The output frequency is determined by the following formula:
-+	 * base * multiplier * numerator / denominator
-+	 *
-+	 * Read registers with these values
-+	 */
-+	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_BASE, &base);
-+	if (rc)
-+		return rc;
-+
-+	rc = zl3073x_read_u32(zldev, ZL_REG_SYNTH_FREQ_MULT, &mult);
-+	if (rc)
-+		return rc;
-+
-+	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_M, &num);
-+	if (rc)
-+		return rc;
-+
-+	rc = zl3073x_read_u16(zldev, ZL_REG_SYNTH_FREQ_N, &denom);
-+	if (rc)
-+		return rc;
-+
-+	/* Check denominator for zero to avoid div by 0 */
-+	if (!denom) {
-+		dev_err(zldev->dev,
-+			"Zero divisor for SYNTH%u retrieved from device\n",
-+			index);
-+		return -EINVAL;
-+	}
-+
-+	/* Compute and store synth frequency */
-+	zldev->synth[index].freq = mul_u64_u32_div(mul_u32_u32(base, mult),
-+						   num, denom);
-+
-+	dev_dbg(zldev->dev, "SYNTH%u frequency: %llu Hz\n", index,
-+		zldev->synth[index].freq);
-+
-+	return rc;
-+}
-+
-+static int
-+zl3073x_dev_state_fetch(struct zl3073x_dev *zldev)
-+{
-+	int rc;
-+	u8 i;
-+
-+	for (i = 0; i < ZL3073X_NUM_INPUTS; i++) {
-+		rc = zl3073x_input_state_fetch(zldev, i);
-+		if (rc) {
-+			dev_err(zldev->dev,
-+				"Failed to fetch input state: %pe\n",
-+				ERR_PTR(rc));
-+			return rc;
-+		}
-+	}
-+
-+	for (i = 0; i < ZL3073X_NUM_SYNTHS; i++) {
-+		rc = zl3073x_synth_state_fetch(zldev, i);
-+		if (rc) {
-+			dev_err(zldev->dev,
-+				"Failed to fetch synth state: %pe\n",
-+				ERR_PTR(rc));
-+			return rc;
-+		}
-+	}
-+
-+	for (i = 0; i < ZL3073X_NUM_OUTPUTS; i++) {
-+		rc = zl3073x_output_state_fetch(zldev, i);
-+		if (rc) {
-+			dev_err(zldev->dev,
-+				"Failed to fetch output state: %pe\n",
-+				ERR_PTR(rc));
-+			return rc;
-+		}
-+	}
-+
-+	return rc;
-+}
-+
- static void zl3073x_devlink_unregister(void *ptr)
- {
- 	devlink_unregister(ptr);
-@@ -568,6 +814,11 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
- 		return dev_err_probe(zldev->dev, rc,
- 				     "Failed to initialize mutex\n");
+-	err = __bprm_mm_init(bprm);
++#ifndef CONFIG_MMU
++	bprm->p = PAGE_SIZE * MAX_ARG_PAGES - sizeof(void *);
++#else
++	err = create_init_stack_vma(bprm->mm, &bprm->vma, &bprm->p);
+ 	if (err)
+ 		goto err;
++#endif
  
-+	/* Fetch device state */
-+	rc = zl3073x_dev_state_fetch(zldev);
-+	if (rc)
-+		return rc;
-+
- 	/* Register the device as devlink device */
- 	devlink = priv_to_devlink(zldev);
- 	devlink_register(devlink);
-diff --git a/drivers/mfd/zl3073x-regs.h b/drivers/mfd/zl3073x-regs.h
-index 6bb7ea1ef0b52..dcd278acab4ba 100644
---- a/drivers/mfd/zl3073x-regs.h
-+++ b/drivers/mfd/zl3073x-regs.h
-@@ -14,4 +14,41 @@
- #define ZL_REG_FW_VER				ZL_REG(0, 0x05, 2)
- #define ZL_REG_CUSTOM_CONFIG_VER		ZL_REG(0, 0x07, 4)
+ 	return 0;
  
-+/***********************************
-+ * Register Page 9, Synth and Output
-+ ***********************************/
-+
-+#define ZL_REG_SYNTH_CTRL(_idx)						\
-+	ZL_REG_IDX(_idx, 9, 0x00, 1, ZL3073X_NUM_SYNTHS, 1)
-+#define ZL_SYNTH_CTRL_EN			BIT(0)
-+#define ZL_SYNTH_CTRL_DPLL_SEL			GENMASK(6, 4)
-+
-+#define ZL_REG_OUTPUT_CTRL(_idx)					\
-+	ZL_REG_IDX(_idx, 9, 0x28, 1, ZL3073X_NUM_OUTPUTS, 1)
-+#define ZL_OUTPUT_CTRL_EN			BIT(0)
-+#define ZL_OUTPUT_CTRL_SYNTH_SEL		GENMASK(6, 4)
-+
-+/*******************************
-+ * Register Page 10, Ref Mailbox
-+ *******************************/
-+
-+#define ZL_REG_REF_CONFIG			ZL_REG(10, 0x0d, 1)
-+#define ZL_REF_CONFIG_ENABLE			BIT(0)
-+#define ZL_REF_CONFIG_DIFF_EN			BIT(2)
-+
-+/*********************************
-+ * Register Page 13, Synth Mailbox
-+ *********************************/
-+
-+#define ZL_REG_SYNTH_MB_MASK			ZL_REG(13, 0x02, 2)
-+
-+#define ZL_REG_SYNTH_MB_SEM			ZL_REG(13, 0x04, 1)
-+#define ZL_SYNTH_MB_SEM_WR			BIT(0)
-+#define ZL_SYNTH_MB_SEM_RD			BIT(1)
-+
-+#define ZL_REG_SYNTH_FREQ_BASE			ZL_REG(13, 0x06, 2)
-+#define ZL_REG_SYNTH_FREQ_MULT			ZL_REG(13, 0x08, 4)
-+#define ZL_REG_SYNTH_FREQ_M			ZL_REG(13, 0x0c, 2)
-+#define ZL_REG_SYNTH_FREQ_N			ZL_REG(13, 0x0e, 2)
-+
- #endif /* __ZL3073X_REGS_H */
-diff --git a/include/linux/mfd/zl3073x-regs.h b/include/linux/mfd/zl3073x-regs.h
-index cd2baed244eb0..d94bd389f9a7f 100644
---- a/include/linux/mfd/zl3073x-regs.h
-+++ b/include/linux/mfd/zl3073x-regs.h
-@@ -63,4 +63,26 @@
- #define ZL_REG(_page, _offset, _size)					\
- 	ZL_REG_IDX(0, _page, _offset, _size, 1, 0)
- 
-+/*******************************
-+ * Register Page 10, Ref Mailbox
-+ *******************************/
-+
-+#define ZL_REG_REF_MB_MASK			ZL_REG(10, 0x02, 2)
-+
-+#define ZL_REG_REF_MB_SEM			ZL_REG(10, 0x04, 1)
-+#define ZL_REF_MB_SEM_WR			BIT(0)
-+#define ZL_REF_MB_SEM_RD			BIT(1)
-+
-+/**********************************
-+ * Register Page 14, Output Mailbox
-+ **********************************/
-+#define ZL_REG_OUTPUT_MB_MASK			ZL_REG(14, 0x02, 2)
-+
-+#define ZL_REG_OUTPUT_MB_SEM			ZL_REG(14, 0x04, 1)
-+#define ZL_OUTPUT_MB_SEM_WR			BIT(0)
-+#define ZL_OUTPUT_MB_SEM_RD			BIT(1)
-+
-+#define ZL_REG_OUTPUT_MODE			ZL_REG(14, 0x05, 1)
-+#define ZL_OUTPUT_MODE_SIGNAL_FORMAT		GENMASK(7, 4)
-+
- #endif /* __LINUX_MFD_ZL3073X_REGS_H */
-diff --git a/include/linux/mfd/zl3073x.h b/include/linux/mfd/zl3073x.h
-index a42a275577c49..da4b7ae6a89ec 100644
---- a/include/linux/mfd/zl3073x.h
-+++ b/include/linux/mfd/zl3073x.h
-@@ -9,16 +9,63 @@
- struct device;
- struct regmap;
- 
-+/*
-+ * Hardware limits for ZL3073x chip family
-+ */
-+#define ZL3073X_NUM_INPUTS	10
-+#define ZL3073X_NUM_OUTPUTS	10
-+#define ZL3073X_NUM_SYNTHS	5
-+
-+/**
-+ * struct zl3073x_input - input invariant info
-+ * @enabled: input is enabled or disabled
-+ * @diff: true if input is differential
-+ */
-+struct zl3073x_input {
-+	bool	enabled;
-+	bool	diff;
-+};
-+
-+/**
-+ * struct zl3073x_output - output invariant info
-+ * @enabled: output is enabled or disabled
-+ * @synth: synthesizer the output is connected to
-+ * @signal_format: output signal format
-+ */
-+struct zl3073x_output {
-+	bool	enabled;
-+	u8	synth;
-+	u8	signal_format;
-+};
-+
-+/**
-+ * struct zl3073x_synth - synthesizer invariant info
-+ * @freq: synthesizer frequency
-+ * @dpll: ID of DPLL the synthesizer is driven by
-+ */
-+struct zl3073x_synth {
-+	u64	freq;
-+	u8	dpll;
-+};
-+
- /**
-  * struct zl3073x_dev - zl3073x device
-  * @dev: pointer to device
-  * @regmap: regmap to access device registers
-  * @multiop_lock: to serialize multiple register operations
-+ * @input: array of inputs' invariants
-+ * @output: array of outputs' invariants
-+ * @synth: array of synthesizers' invariants
-  */
- struct zl3073x_dev {
- 	struct device		*dev;
- 	struct regmap		*regmap;
- 	struct mutex		multiop_lock;
-+
-+	/* Invariants */
-+	struct zl3073x_input	input[ZL3073X_NUM_INPUTS];
-+	struct zl3073x_output	output[ZL3073X_NUM_OUTPUTS];
-+	struct zl3073x_synth	synth[ZL3073X_NUM_SYNTHS];
- };
- 
- /**********************
-@@ -35,4 +82,108 @@ int zl3073x_write_u16(struct zl3073x_dev *zldev, unsigned int reg, u16 val);
- int zl3073x_write_u32(struct zl3073x_dev *zldev, unsigned int reg, u32 val);
- int zl3073x_write_u48(struct zl3073x_dev *zldev, unsigned int reg, u64 val);
- 
-+static inline
-+bool zl3073x_is_n_pin(u8 index)
-+{
-+	/* P-pins indices are even while N-pins are odd */
-+	return index & 1;
-+}
-+
-+static inline
-+bool zl3073x_is_p_pin(u8 index)
-+{
-+	return !zl3073x_is_n_pin(index);
-+}
-+
-+/**
-+ * zl3073x_input_is_diff - check if the given input ref is differential
-+ * @zldev: pointer to zl3073x device
-+ * @index: output index
-+ *
-+ * Return: true if input is differential, false if input is single-ended
-+ */
-+static inline
-+bool zl3073x_input_is_diff(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->input[index].diff;
-+}
-+
-+/**
-+ * zl3073x_input_is_enabled - check if the given input ref is enabled
-+ * @zldev: pointer to zl3073x device
-+ * @index: input index
-+ *
-+ * Return: true if input is enabled, false if input is disabled
-+ */
-+static inline
-+bool zl3073x_input_is_enabled(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->input[index].enabled;
-+}
-+
-+/**
-+ * zl3073x_output_is_enabled - check if the given output is enabled
-+ * @zldev: pointer to zl3073x device
-+ * @index: output index
-+ *
-+ * Return: true if output is enabled, false if output is disabled
-+ */
-+static inline
-+u8 zl3073x_output_is_enabled(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->output[index].enabled;
-+}
-+
-+/**
-+ * zl3073x_output_signal_format_get - get output signal format
-+ * @zldev: pointer to zl3073x device
-+ * @index: output index
-+ *
-+ * Return: signal format of given output
-+ */
-+static inline
-+u8 zl3073x_output_signal_format_get(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->output[index].signal_format;
-+}
-+
-+/**
-+ * zl3073x_output_synth_get - get synth connected to given output
-+ * @zldev: pointer to zl3073x device
-+ * @index: output index
-+ *
-+ * Return: index of synth connected to given output.
-+ */
-+static inline
-+u8 zl3073x_output_synth_get(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->output[index].synth;
-+}
-+
-+/**
-+ * zl3073x_synth_dpll_get - get DPLL ID the synth is driven by
-+ * @zldev: pointer to zl3073x device
-+ * @index: synth index
-+ *
-+ * Return: ID of DPLL the given synthetizer is driven by
-+ */
-+static inline
-+u64 zl3073x_synth_dpll_get(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->synth[index].dpll;
-+}
-+
-+/**
-+ * zl3073x_synth_freq_get - get synth current freq
-+ * @zldev: pointer to zl3073x device
-+ * @index: synth index
-+ *
-+ * Return: frequency of given synthetizer
-+ */
-+static inline
-+u64 zl3073x_synth_freq_get(struct zl3073x_dev *zldev, u8 index)
-+{
-+	return zldev->synth[index].freq;
-+}
-+
- #endif /* __LINUX_MFD_ZL3073X_H */
+
+
+On a related note, I'd like to point out that my claim that exec is
+the only consumer here, is slightly a lie. Technically this is correct,
+but only because this is specifically setting up the _stack_.
+
+The rest of the VMA setup actually surrounds this code (another
+reason I remain unhappy about moving it). Specifically the mm_alloc()
+before __bprm_mm_init (which is reached through alloc_brpm()). And
+then, following alloc_bprm() in do_execveat_common(), is the call to
+setup_new_exec(), which does the rest of the VMA setup, specifically
+arch_pick_mmap_layout() and related fiddling.
+
+The "create userspace VMA" logic, mostly through mm_alloc(), is
+used in a few places (e.g. text poking), but the "bring up a _usable_
+userspace VMA" logic (i.e. one also with functional mmap) is repeated in
+lib/kunit/alloc_user.c for allowing testing of code that touches userspace
+(see kunit_attach_mm() and the kunit_vm_mmap() users). (But these tests
+don't actually run userspace code, so no stack is set up.)
+
+I guess what I'm trying to say is that I think we need a more clearly
+defined "create usable userspace VMA" API, as we've got at least 3
+scattered approaches right now: exec ("everything"), non-mmap-non-stack
+users (text poking, et al), and mmap-but-not-stack users (kunit tests).
+
+And the One True User of a full userspace VMA, exec, has the full setup
+scattered into several phases, mostly due to needing to separate those
+phases because it needs to progressively gather the information needed
+to correctly configure each piece:
+- set up userspace VMA at all (mm_alloc)
+- set up a stack because exec args need to go somewhere (__bprm_mm_init)
+- move stack to the right place (depends on executable binary and task bits)
+- set up mmap (arch_pick_mmap_layout) to actually load executable binary
+  (depends on arch, binary, and task bits)
+
+Hopefully this all explains why I'm uncomfortable to see __bprm_mm_init
+get relocated. It'll _probably_ be fine, but I get antsy about changes
+to code that only exec uses...
+
 -- 
-2.49.0
-
+Kees Cook
 
