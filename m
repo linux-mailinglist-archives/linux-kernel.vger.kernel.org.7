@@ -1,53 +1,66 @@
-Return-Path: <linux-kernel+bounces-620151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68998A9C66E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:59:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D36A9C5B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B4063B1173
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27395188BF57
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69F8242D60;
-	Fri, 25 Apr 2025 10:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408A0239594;
+	Fri, 25 Apr 2025 10:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ekS6cHyE"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4BE4438B;
-	Fri, 25 Apr 2025 10:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TDU2QVKi"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E0019D8A7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745578638; cv=none; b=jX4qx/5WVoiKYJHnaOgArdcYN6Qq5c4eQo0e3S5s4VRa9ypgg0WSaeaAMwQhCMYbssalIMqHouA/JmnrRiK/9Sq/Dz6LJqh961b8PghrPqB06VmlUzsgosb7SA7IFIj49jOSs1mKnGZmHZ4WAZY3D12+CisUxXrTQZ4lGfVz/dg=
+	t=1745577597; cv=none; b=Ec98ZC+sgjoP57K4M5iz1ZXdVe6Ntfmlr5UBhrkQ+qmDxkFTLzy6U825XDUZDrp5l6H3tuys3GXB6CLzbSmFq2dWfFgY1M052DloMVyn+7V6DG2mMsRNd8TXaV0qXJ/OYsAUwLv3swn+VT6iW9mYmEQ72Krr3/oL1rAcFpCA8AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745578638; c=relaxed/simple;
-	bh=Aq2C9REd9eMerPjlM2bo4vOa8FLEpQfONHKutZ31pdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lIQvXLRbHkBr2IGZNlaX+TZWyilNE65SrtE0Hpo1aTYla9ygox5WKmdf33T1CPgjqvbIu06pUlbwErWbco/jmTYK9Xsih3ogrzM2dT/19FsE/RF7fDiP8g5VJ6sQhwNZ40UxzP/Z7I5xta7FAGqUTEif6cc5ABXaG03nwGycfyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ekS6cHyE; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=pTVkQ
-	MCUkaTY+UzZ0K9jTS+tVIl0x6eYM6tigXiHKaU=; b=ekS6cHyEcxrOoyiB7YO6r
-	KD31sbTcIzBa0LcSP45QFFFPh/Y7JoOwaZfy0ZwmfgmAFtHoMZYRZLS7TdXr0g+Q
-	SaBvk1lTwonUJa0BYIXOY1KOu6Ct3iGPPCfXnxHdwZ6vN/PWSdJcxpnPce9gslmy
-	aK3x3vzC3gs3QJBmTv+vq8=
-Received: from chi-Redmi-Book.. (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgAHVbB1agtoLX64Ag--.54305S4;
-	Fri, 25 Apr 2025 18:56:59 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: cem@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [RFC PATCH 2/2] xfs: Enable concurrency when writing within single block
-Date: Fri, 25 Apr 2025 18:38:41 +0800
-Message-ID: <20250425103841.3164087-3-chizhiling@163.com>
+	s=arc-20240116; t=1745577597; c=relaxed/simple;
+	bh=Wn2IFrbXdFPmEpzGY18CoT4rKXVhilgdLjMaQcdkPAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HNbDVPlllkHzFEHmvpO0VY5GAo/qsyl1tlkNgAkJh1ezLJ9OLXkWNN5ALcX/oSvZWDsrJnthHHS0V1e/5PTraemNbFgvra4SE1d7PZBXzjVOhGkaCDtyLMjhZv/o3DXDk4atQOEF0VO/xKEiKmZIX4trHrR21l4ikcQCoef6ko0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TDU2QVKi; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=wFgyGoe57F6uPaGc/OoKHjDR32N+rhdNNm/Oo8lcYDQ=; b=TDU2QVKiwb3RRppyElAZvCLneG
+	OEl+y7zYuafHRmIBYHsH8H+V42VKiRuW7Htl/3O9lRFR2ep18foEWvZwNl+d/sjWsFlt8JLeW/Uzw
+	P2RrlaQ5XMg/+BDiEec5Vn2mXU7v3Kc430pamBO1gtyYGDl6qzHMuiMNB2Lj5kcNxhUf8z/UISTyr
+	PwSDEqRpZcFlm+uZeMRZXd5IAQh0nea/AjeMLthAgxX5CryKDmv/71mv6cKGjcT+2NXvluk4Bnxpx
+	jDiO12Fn+mvdqeCGJuFmduvSHuryPOJqos663GSBQ9syxqpESHKUbQK7U89DVigHExEIpSjBGEdRM
+	mk7TLJzw==;
+Received: from 114-44-196-209.dynamic-ip.hinet.net ([114.44.196.209] helo=gavin-HP-Z840-Workstation..)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1u8GSx-008HIu-Oe; Fri, 25 Apr 2025 12:39:32 +0200
+From: Gavin Guo <gavinguo@igalia.com>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: gshan@redhat.com,
+	david@redhat.com,
+	willy@infradead.org,
+	ziy@nvidia.com,
+	linmiaohe@huawei.com,
+	hughd@google.com,
+	revest@google.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Clean up split_huge_pmd_locked() and remove unnecessary folio pointers
+Date: Fri, 25 Apr 2025 18:38:57 +0800
+Message-ID: <20250425103859.825879-1-gavinguo@igalia.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250425103841.3164087-1-chizhiling@163.com>
-References: <20250425103841.3164087-1-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,85 +68,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgAHVbB1agtoLX64Ag--.54305S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CF47GF1DXrWxtF4Dtry8Grg_yoW8uryxpr
-	ZakayY9rZ2qw1xArn3JF15u343Kas7XFW2qryxur1xZ3WUGwsI93WSvr1Y9a1UtrZ7ZrW0
-	gF4vkry8Cw1jyr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7wIDUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgBU6nWgLZlla6wAAsf
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+The patch series enhance the folio verification by leveraging the
+existing page_vma_mapped_walk() mechanism and removing redundant
+folio pointers passing.
 
-For unextending writes, we will only update the pagecache and extent.
-In this case, if our write occurs within a single block, that is,
-within a single folio, we don't need an exclusive lock to ensure the
-atomicity of the write, because we already have the folio lock.
+Link: https://lore.kernel.org/all/98d1d195-7821-4627-b518-83103ade56c0@redhat.com/
+Link: https://lore.kernel.org/all/91599a3c-e69e-4d79-bac5-5013c96203d7@redhat.com/
 
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- fs/xfs/xfs_file.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+Gavin Guo (2):
+  mm/huge_memory: Adjust try_to_migrate_one() and
+    split_huge_pmd_locked()
+  mm/huge_memory: Remove useless folio pointers passing
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a6f214f57238..8eaa98464328 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -914,6 +914,27 @@ xfs_file_dax_write(
- 	return ret;
- }
- 
-+#define offset_in_block(inode, p) ((unsigned long)(p) & (i_blocksize(inode) - 1))
-+
-+static inline bool xfs_allow_concurrent(
-+	struct kiocb		*iocb,
-+	struct iov_iter		*from)
-+{
-+	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-+
-+	/* Extending write? */
-+	if (iocb->ki_flags & IOCB_APPEND ||
-+	    iocb->ki_pos >= i_size_read(inode))
-+		return false;
-+
-+	/* Exceeds a block range? */
-+	if (iov_iter_count(from) > i_blocksize(inode) ||
-+	    offset_in_block(inode, iocb->ki_pos) + iov_iter_count(from) > i_blocksize(inode))
-+		return false;
-+
-+	return true;
-+}
-+
- STATIC ssize_t
- xfs_file_buffered_write(
- 	struct kiocb		*iocb,
-@@ -925,8 +946,12 @@ xfs_file_buffered_write(
- 	bool			cleared_space = false;
- 	unsigned int		iolock;
- 
-+	if (xfs_allow_concurrent(iocb, from))
-+		iolock = XFS_IOLOCK_SHARED;
-+	else
-+		iolock = XFS_IOLOCK_EXCL;
-+
- write_retry:
--	iolock = XFS_IOLOCK_EXCL;
- 	ret = xfs_ilock_iocb_for_write(iocb, &iolock, false);
- 	if (ret)
- 		return ret;
-@@ -935,6 +960,13 @@ xfs_file_buffered_write(
- 	if (ret)
- 		goto out;
- 
-+	if (iolock == XFS_IOLOCK_SHARED &&
-+	    iocb->ki_pos + iov_iter_count(from) > i_size_read(inode)) {
-+		xfs_iunlock(ip, iolock);
-+		iolock = XFS_IOLOCK_EXCL;
-+		goto write_retry;
-+	}
-+
- 	trace_xfs_file_buffered_write(iocb, from);
- 	ret = iomap_file_buffered_write(iocb, from,
- 			&xfs_buffered_write_iomap_ops, NULL);
+ include/linux/huge_mm.h | 15 +++++++--------
+ mm/huge_memory.c        | 37 ++++++++++---------------------------
+ mm/memory.c             |  4 ++--
+ mm/mprotect.c           |  2 +-
+ mm/rmap.c               | 20 ++++++++++----------
+ 5 files changed, 30 insertions(+), 48 deletions(-)
+
+V1 -> V2:
+  1). Separate the logic into
+    - Adjust try_to_migrate_one() and split_huge_pmd_locked
+    - Remove useless folio pointers passing
+
+  2). Remove the unnecessary comments and brances around if condition. 
+
+base-commit: 02ddfb981de88a2c15621115dd7be2431252c568
+prerequisite-patch-id: 9c9c975b11ad0f73acd863049b4f1732caa04e53
 -- 
 2.43.0
 
