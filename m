@@ -1,216 +1,145 @@
-Return-Path: <linux-kernel+bounces-621044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E556A9D318
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6892BA9D314
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F3D1B81EE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4FF3B017B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8EA2222C7;
-	Fri, 25 Apr 2025 20:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C31221F28;
+	Fri, 25 Apr 2025 20:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="DjpCC8de"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AcqdYf7s"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304BA221FDC;
-	Fri, 25 Apr 2025 20:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDA5221D90
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745613407; cv=none; b=LJSzx2jF5Vdip8TxGQBMFLSyW79JuKk0evKetSeY9/Elbd6640EGuzD5tcWkFBf3NRbvZ5e4WxLCJ8exQhhTURJbEIAslq5abZymGZzcJTmdOBvznbgMXGVEyUCQ5TbdxwTHHLfCtDjUCyWukko24S1k5suBdDMLhlW3wbesvSA=
+	t=1745613360; cv=none; b=Hsub7MMWvLdwZg+LPIM6WRaXW8MvjeNplyOxEb2pkYE5+BwJMJG5ER4dx7xyD+9W9XxLz/ZsqOZCZDWlXq4GUng3aFO1O0OnlUkkJB2yNCSSqjhv98skzfeLdYSJZVOHqJfdyuHZ91krvLCPmSp/m15LRBjyj3OnrjYnMzwPeAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745613407; c=relaxed/simple;
-	bh=f+ccn5QNGrrXo9YwEFZGJqZDqV2lpeCBtKwi7/+vWgU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LMZCc9Z8OIBK213zvhEy9lZ/gv81zuKOfvqZrLlZLV6ZViik0hZ1ZDFDa0SsD5VEGOqPmmqrIi9c4SdXT/C9PTh0TqbAvz4LW/+S3cDlmtzE/SqHmx5Fq2HSg+h9wRpVrCtmus8qVbZ6HxAe6lQvvyYlXF8hOmtxsVrr1SIiXrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=DjpCC8de; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1745613360; c=relaxed/simple;
+	bh=SQExu4w4hPgGkdy5kCAct+RvK8+FjV4snNR+nLyJBNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FyDRYm3Oh3bL34Prgnv5LaWzvP+bdVc9/Ev/ChzwKAzAy1Ztk8idgMPukV1DHkH4IizQuW0Dcq0UdyF24/vIZuizT5IgY7ZGhlAnL9tUDro3sdqrCiEemHcFeVuS8Lc2i4zLftIhctQSE/ktCGFot+iajCk+0LpKV1nu/h9lxmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AcqdYf7s; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac3b12e8518so471877866b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1745613403; x=1777149403;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DmnP9FluU/HwvhyHftNofULVB0VcKcyWu1eae2RMNp0=;
-  b=DjpCC8deOGjebYm/SMO6+71ylOW9C++5A3zZM8D7EbdV3PokKo0OvLHE
-   qi2vTqL2z/aNNwVMAKcJ/uNnijVqnjyUWaz8+uEW/1pjrPP0dagXNjSWn
-   f7SUaTCe7xshmReS5Qc1nOBxioADVOsaEY0f1FJednpspnCyuqIyJE4d4
-   8=;
-X-IronPort-AV: E=Sophos;i="6.15,240,1739836800"; 
-   d="scan'208";a="738826264"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 20:36:38 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:23839]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.65:2525] with esmtp (Farcaster)
- id e867d48e-e564-4aae-919e-2b0639b7151f; Fri, 25 Apr 2025 20:36:36 +0000 (UTC)
-X-Farcaster-Flow-ID: e867d48e-e564-4aae-919e-2b0639b7151f
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 20:36:36 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.142.164.216) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 20:36:32 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <shiming.cheng@mediatek.com>
-CC: <angelogioacchino.delregno@collabora.com>, <davem@davemloft.net>,
-	<dsahern@kernel.org>, <edumazet@google.com>, <horms@kernel.org>,
-	<jibin.zhang@mediatek.com>, <kuba@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <kuniyu@amazon.com>
-Subject: Re: [PATCH v2] net: use inet_twsk_put() when sk_state is TCP_TIME_WAIT
-Date: Fri, 25 Apr 2025 13:34:08 -0700
-Message-ID: <20250425203624.43634-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425123354.29254-1-shiming.cheng@mediatek.com>
-References: <20250425123354.29254-1-shiming.cheng@mediatek.com>
+        d=linux-foundation.org; s=google; t=1745613355; x=1746218155; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qHF1zPVwXD8IdJu/yf1YIr/T0XDnrM1CQwq7Bj5CPDw=;
+        b=AcqdYf7sEb5O+p7PVg+SZBBLgQsUwDcGRQTQc2JJgrlVDWdBnJNhSSZvwB9Y/uq95v
+         SFZOHoWJVu8NVIHqXNYAkdH/DMLXOVm+keHTgYF5b4Ka8r3hg0WEDUVNB49RjBh7Z12x
+         Jj5oHdUODbq4ly6ayEpYN6M10Qjlnt3VJEsL8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745613355; x=1746218155;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qHF1zPVwXD8IdJu/yf1YIr/T0XDnrM1CQwq7Bj5CPDw=;
+        b=fBgtZKTsF5alYrUpM0P/JtNJ9OPnqyKDAp4L77HnHGLcvQkpEXVdQmDK/tvDiasaIZ
+         8aaXmTm0atDrZeNnXj9HLDvPjSQswbPWTfcMlzGYoFnakQHPI8CX8p9xIQsU4izg8Xhw
+         oM9CbHLQUASdvKt+lcnV+OAR7o8Y+jRlnSsF5oy2OCRXQsmNdjeajQSO7GPfCPgUKMvw
+         XeksqMEXiryMZEeJL90k5ZrFdbLYhdXUP5XYI+tCw72lGfV1KGWQTJsS7v9OIwOBmeu2
+         aTkRxzFVHrAKI5SXOeixuKufO6hfSB12/LyzDdAef5Hxu6MKEk4kitJ606xgqZfsWy+W
+         0yoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHIBo/I99Dl5UXFf006prpsp5E2tIVcal9V3Izd0hmEAbNhi6AusRF3st3s/PJO72xGnwdQVDCFBqJ6Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpZ2yU6aab5eNHckCDSzwhBcRbtr3ZgVkOlVdSyYTtlQD+s8PR
+	YILRku6P93BDTi/YKusaYBF2Be/uEVKa99MrUTKYjGDt5GXBC2whW2TvIYNiSxBN3f8eHpYfRkC
+	foI8=
+X-Gm-Gg: ASbGncvZZ9/UgsWShrLuXObihINHR8A8+SA17lvzBlnYOy59Qexh1HQHlVhE6ppcRRb
+	TWaH5TLA1C4ZHMT9HqrXNejZpRguHW4c+wDD9wYYFr2dQhCtYf4catayYvOgpYNAhSUzWBLtaoJ
+	u2R9cM04M645h+xoMo8EQeUasPIY8T+UZEP1vsGePnXNS+zG4mKysjrYFf4Zdb9U+6eLI0rqRyS
+	UNql8X3qw0XrflIux0HO7hoHVL6gUZuGIvCF50i97chX1EN4uwmDd/dtzgRvTDgIqxR8KLx+UfC
+	Bz6t7gWWLq16NDRPtwQzvrYGdnaLLG2tU0n5NGr5a55QTGsc+0/WUte/wV4pfv0Hb2VyiVeVAiT
+	7lrsuIHQpx3gxujk=
+X-Google-Smtp-Source: AGHT+IH6S6z1HMUsIEc7xWD6SNmQBgE7vR1LJ94DbdUG5y376ahLA8X+0ZS1sPA9btGkED0UeOi28g==
+X-Received: by 2002:a17:907:6d27:b0:ace:37c1:d4f5 with SMTP id a640c23a62f3a-ace8493db93mr61522566b.36.1745613355301;
+        Fri, 25 Apr 2025 13:35:55 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6eda7a0esm184458266b.163.2025.04.25.13.35.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 13:35:54 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac339f53df9so513353366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:35:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXtXkppVsL57T7IStGyAP6AHHEmpAYfO1qAmgqN+B3Wh5twpxoEGHHtEbniyKtZt7xTwuz7SUoGl7FNB3M=@vger.kernel.org
+X-Received: by 2002:a17:907:7f24:b0:acb:107e:95af with SMTP id
+ a640c23a62f3a-ace84ad7774mr62978366b.39.1745613353476; Fri, 25 Apr 2025
+ 13:35:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWB002.ant.amazon.com (10.13.139.181) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+ <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+ <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+ <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com> <aAvlM1G1k94kvCs9@casper.infradead.org>
+In-Reply-To: <aAvlM1G1k94kvCs9@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 25 Apr 2025 13:35:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiX-CVhm0S2Ba4+pLO2U=3dY0x56jcunMyOz2TEHAgnYg@mail.gmail.com>
+X-Gm-Features: ATxdqUGwKlTpu4bheZKrvcER-qlO-D6uY_4AgFPDdEUKnYAjfRZ_s0Tk9V5ZhUc
+Message-ID: <CAHk-=wiX-CVhm0S2Ba4+pLO2U=3dY0x56jcunMyOz2TEHAgnYg@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> net: use inet_twsk_put() when sk_state is TCP_TIME_WAIT
-
-To be more specific:
-
-  [PATCH vX net] tcp: use sock_gen_put() when sk_state is TCP_TIME_WAIT in tcp[46]_check_fraglist_gro()
-
-
-From: Shiming Cheng <shiming.cheng@mediatek.com>
-Date: Fri, 25 Apr 2025 20:33:48 +0800
-> From: Jibin Zhang <jibin.zhang@mediatek.com>
-> 
-> It is possible for a pointer of type struct inet_timewait_sock to be
-> returned from the functions __inet_lookup_established() and
-> __inet6_lookup_established(). This can cause a crash when the
-> returned pointer is of type struct inet_timewait_sock and
-> sock_put() is called on it. The following is a crash call stack that
-> shows sk->sk_wmem_alloc being accessed in sk_free() during the call to
-> sock_put() on a struct inet_timewait_sock pointer. To avoid this issue,
-> use inet_twsk_put() instead of sock_put() when sk->sk_state
-> is TCP_TIME_WAIT.
-> 
-> mrdump.ko        ipanic() + 120
-> vmlinux          notifier_call_chain(nr_to_call=-1, nr_calls=0) + 132
-> vmlinux          atomic_notifier_call_chain(val=0) + 56
-> vmlinux          panic() + 344
-> vmlinux          add_taint() + 164
-> vmlinux          end_report() + 136
-> vmlinux          kasan_report(size=0) + 236
-> vmlinux          report_tag_fault() + 16
-> vmlinux          do_tag_recovery() + 16
-> vmlinux          __do_kernel_fault() + 88
-> vmlinux          do_bad_area() + 28
-> vmlinux          do_tag_check_fault() + 60
-> vmlinux          do_mem_abort() + 80
-> vmlinux          el1_abort() + 56
-> vmlinux          el1h_64_sync_handler() + 124
-> vmlinux        > 0xFFFFFFC080011294()
-> vmlinux          __lse_atomic_fetch_add_release(v=0xF2FFFF82A896087C)
-> vmlinux          __lse_atomic_fetch_sub_release(v=0xF2FFFF82A896087C)
-> vmlinux          arch_atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C)
-> + 8
-
-Please don't fold this type of logs.
-
-Do you have the original stack trace decoded by
-./scripts/decode_stacktrace.sh ?
-
-Then, it would be better than the log with binary offsets.
-
-
-> vmlinux          raw_atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C)
-> + 8
-> vmlinux          atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C) + 8
-> vmlinux          __refcount_sub_and_test(i=1, r=0xF2FFFF82A896087C,
-> oldp=0) + 8
-> vmlinux          __refcount_dec_and_test(r=0xF2FFFF82A896087C, oldp=0) + 8
-> vmlinux          refcount_dec_and_test(r=0xF2FFFF82A896087C) + 8
-> vmlinux          sk_free(sk=0xF2FFFF82A8960700) + 28
-> vmlinux          sock_put() + 48
-> vmlinux          tcp6_check_fraglist_gro() + 236
-> vmlinux          tcp6_gro_receive() + 624
-> vmlinux          ipv6_gro_receive() + 912
-> vmlinux          dev_gro_receive() + 1116
-> vmlinux          napi_gro_receive() + 196
-> ccmni.ko         ccmni_rx_callback() + 208
-> ccmni.ko         ccmni_queue_recv_skb() + 388
-> ccci_dpmaif.ko   dpmaif_rxq_push_thread() + 1088
-> vmlinux          kthread() + 268
-> vmlinux          0xFFFFFFC08001F30C()
+On Fri, 25 Apr 2025 at 12:40, Matthew Wilcox <willy@infradead.org> wrote:
 >
+> I think this is something that NTFS actually got right.  Each filesystem
+> carries with it a 128KiB table that maps each codepoint to its
+> case-insensitive equivalent.
 
-Fixes tag is needed here.
+I agree that that is indeed a technically correct way to deal with
+case sensitivity at least from a filesystem standpoint.
 
-  Fixes: c9d1d23e5239 ("net: add heuristic for enabling TCP fraglist GRO")
+It does have some usability issues - exactly because of that "fixed at
+filesystem creation time" - but since in *practice* nobody actually
+cares about the odd cases, that isn't really much of a real issue.
 
-> Signed-off-by: Jibin Zhang <jibin.zhang@mediatek.com>
+And the fixed translation table means that it at least gets versioning
+right, and you hopefully filled the table up sanely and don't end up
+with the crazy cases (ie the nonprinting characters etc) so hopefully
+it contains only the completely unambiguous stuff.
 
-I guess the sender's SOB tag is also needed here when the author
-is different ?
+That said, I really suspect that in practice, folding even just the
+7-bit ASCII subset would have been ok and would have obviated even
+that table. And I say that as somebody who grew up in an environment
+that used a bigger character set than that.
 
+Of course, the NTFS stuff came about because FAT had code pages for
+just the 8-bit cases - and people used them, and that then caused odd
+issues when moving data around.
 
-> ---
->  net/ipv4/tcp_offload.c   | 8 ++++++--
->  net/ipv6/tcpv6_offload.c | 8 ++++++--
->  2 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-> index 2308665b51c5..95d7cbf6a2b5 100644
-> --- a/net/ipv4/tcp_offload.c
-> +++ b/net/ipv4/tcp_offload.c
-> @@ -431,8 +431,12 @@ static void tcp4_check_fraglist_gro(struct list_head *head, struct sk_buff *skb,
->  				       iph->daddr, ntohs(th->dest),
->  				       iif, sdif);
->  	NAPI_GRO_CB(skb)->is_flist = !sk;
-> -	if (sk)
-> -		sock_put(sk);
+Again - 8-bit tables were entirely sufficient in practice but actually
+caused more problems than not doing it at all would have. And then
+people go "we switched to 16-bit wide characters, so we need to expand
+on the code table too".
 
-sock_gen_put() will be better.
+Which is obviously exactly how you end up with that 128kB table.
 
-Thanks!
+But you have to ask yourself: do you think that the people who made
+the incredibly bad choice to use a fixed 16-bit wide character set -
+which caused literally decades of trouble in Windows, and still shows
+up today - then made the perfect choice when dealing with case
+folding? Yeah, no.
 
+Still, I very much agree it was a better choice than "let's call
+random unicode routines we don't really appreciate the complexity of".
 
-> +	if (sk) {
-> +		if (sk->sk_state == TCP_TIME_WAIT)
-> +			inet_twsk_put(inet_twsk(sk));
-> +		else
-> +			sock_put(sk);
-> +	}
->  }
->  
->  INDIRECT_CALLABLE_SCOPE
-> diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
-> index a45bf17cb2a1..5fcfa45b6f46 100644
-> --- a/net/ipv6/tcpv6_offload.c
-> +++ b/net/ipv6/tcpv6_offload.c
-> @@ -41,8 +41,12 @@ static void tcp6_check_fraglist_gro(struct list_head *head, struct sk_buff *skb,
->  					&hdr->daddr, ntohs(th->dest),
->  					iif, sdif);
->  	NAPI_GRO_CB(skb)->is_flist = !sk;
-> -	if (sk)
-> -		sock_put(sk);
-> +	if (sk) {
-> +		if (sk->sk_state == TCP_TIME_WAIT)
-> +			inet_twsk_put(inet_twsk(sk));
-> +		else
-> +			sock_put(sk);
-> +	}
->  #endif /* IS_ENABLED(CONFIG_IPV6) */
->  }
->  
-> -- 
-> 2.45.2
+            Linus
 
