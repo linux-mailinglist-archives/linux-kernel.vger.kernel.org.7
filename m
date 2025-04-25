@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-620160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D5AA9C695
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:02:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1352A9C683
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091209A4B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66DAC465AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC81424169F;
-	Fri, 25 Apr 2025 11:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F82405ED;
+	Fri, 25 Apr 2025 11:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OBW3tp0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Sb5sk5Uf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B223DEB6;
-	Fri, 25 Apr 2025 11:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E585223DD7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745578884; cv=none; b=lcJRQYBNfMdhFa93unEFKMb3UtOZkArsnoc5V/Qg54uXTAgSlocfNJ7xHJw5U8u5EjsM9/gdnw3cnCt7kohjlSm89VE2XGnY3iampD+Cl66Z1U5ib2fsdU+JXPcoNz9idEjbLMP+XzEJNk/YX6eQQgeAzP+oBCeUxvL0M2f+Ous=
+	t=1745578916; cv=none; b=TEihSOx4O0tSOwmFSHPRcKSJAhnceVtZZJrBJRZDWos033JI2q17CwTnax2MrmlQxV25sVctePd8Ufhd6VO3ei1xbYL3FNB1elxlaKHAe3zaZHVshxSn8PN6/Q556jn1mG5f5MKO/07CIfWqE/1vlud9/AcYy1rNZ406DIEbEq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745578884; c=relaxed/simple;
-	bh=Gn3QznmvXAavlTZS38XkbgiV8W4CSNb9eLYN5wF0B44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHQiWbLI4g9foHuzn5fKfKeTHjskhGvz8EFKzI2eBut3zsaXtwq6I8neEbL6avh54h6cVI/ad8vuacgAFaJ082LmWuutIlufCmumjsz6tzhY0jPUlUS60PqGbB+Oacv2t3NE8H2OEHCai+Yz9/o8yRf9d1NJOvP7SXMjSVgHBJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OBW3tp0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D19C4CEE4;
-	Fri, 25 Apr 2025 11:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745578884;
-	bh=Gn3QznmvXAavlTZS38XkbgiV8W4CSNb9eLYN5wF0B44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OBW3tp0FuijVu6piqbkeoxPNBIRzrKowV0GHkB/jyki+qLfmzx26Kg+s8OaUFU0C9
-	 xDQJAKoPjS1CDVTBFLMt6Ldzk+QRwRY+KBD6sT2fvDRzj3Mx3Mqq5efG8QW7FayYWn
-	 i6vfS3DpNQgRYSC3Xoh0ZB99HW+tmaAWCBmtpH4g=
-Date: Fri, 25 Apr 2025 13:01:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH RESEND] usb: renesas_usbhs: Add error handling for
- usbhsf_fifo_select()
-Message-ID: <2025042552-upper-clatter-0d9d@gregkh>
-References: <20250422023825.2016-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1745578916; c=relaxed/simple;
+	bh=rnb9O5ga+vC0Au9mvXeMxO85sgNKSlUDQVe/FRuj+pw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NWbQXbZYUliQNyhfX4P6WVFtvxUOtf9E21y9c61RXnwc+vhT/1f6UVddvZxAmyVMRyaUD6xS86Mxdqfrii6TLfj0LVL8k1mW5K2i1bCtBkz7n6DNOg1eRXZCBq9ROvuUDs7pjUILDFmCqPHyRsGrllLs8/anqt2AlIjdiCT/fcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Sb5sk5Uf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9D0B4D77;
+	Fri, 25 Apr 2025 13:01:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745578909;
+	bh=rnb9O5ga+vC0Au9mvXeMxO85sgNKSlUDQVe/FRuj+pw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Sb5sk5UfxD8qmpaDvvbR8Zj2LskR6jJ/A81uOBgRMzGIOWA11mW0zyk7ktESrTQOf
+	 AFoypnmTrZ+D4mlLzkr3M8YZ7IbtSCSLlZknCd+OfHGoURCBD+setx5nR+jgJfd5Ij
+	 WIGOVnyh7Z81JUk8SFSEHIHnq1eUsU1n3B4r+nmI=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Fri, 25 Apr 2025 14:01:21 +0300
+Subject: [PATCH v5 01/11] drm/fourcc: Add warning for bad bpp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422023825.2016-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250425-xilinx-formats-v5-1-c74263231630@ideasonboard.com>
+References: <20250425-xilinx-formats-v5-0-c74263231630@ideasonboard.com>
+In-Reply-To: <20250425-xilinx-formats-v5-0-c74263231630@ideasonboard.com>
+To: Vishal Sagar <vishal.sagar@amd.com>, 
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Pekka Paalanen <ppaalanen@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1747;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=rnb9O5ga+vC0Au9mvXeMxO85sgNKSlUDQVe/FRuj+pw=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoC2uZ0gF4l87mnADMNdl5nDKdXbrZmaM0UJsBZ
+ nn/PG/33qyJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaAtrmQAKCRD6PaqMvJYe
+ 9Sy4EACfOqlwgpKfB2i0IryEotLvaFuW3Vsa/n6owJ+Cy6FdOSjkBe/UzlkXbYeydjXKMtC4rns
+ /GtNGv24JPp0U0y+H0mrClDhJ1JzoMIgePNzYS4DTMhTF6sivKSaBJ9KzFKZfqsjk/wT5vcaLpj
+ GTNqt5x9Cx/cJ6aEgjTkRrsZkH26o6TKWsz0hQ7DkyTds+saH55Jogs0cTFeIl7VkOFjnkXHaLf
+ o/nwxNfhBhElZLDADT85Y/qqd5FrtKpn5WktN2hBm6EeLWVT8DQtWN16BYv3+vMJK7hvEBKTWT6
+ fDlNLCSn9Tqw+42pzzs9pxtrIaCUBSNpnS3shDLBYBl4YlnXqdfn5vQ0z40in6P8EIrwpPqxVk/
+ LcV4RGhL3K8sUL6i2VHsy8KpCNUSyHXvU+i6YxpW1or7qJ/Bqa4v87/pIlbi6uTC86vh/m0m/gf
+ j6bcSZSLMcDoWJO4uDbH9xOyePLqSIw80cEDzTdkR3t3uE4B2qDFaepxOnwNOjGs7hBF1zxL9n9
+ ALqL5zO55qJhhWjCH1UqKXjCgAOJAQD5s5zdqlJyF5NgLTU7cVF4AfqDbxjpLv5YHnggFnER1JH
+ gMuYwFeU/PqpnFEQknFuhN9cL/wQ4ZDV3H5BT0E4yLEaOkXSeyAHyhHtUnW+BwMsUxYK2cCXLL2
+ fCkagyUYKiKH2OA==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Tue, Apr 22, 2025 at 10:38:24AM +0800, Wentao Liang wrote:
-> In usbhsf_dcp_data_stage_prepare_pop(), the return value of
-> usbhsf_fifo_select() needs to be checked. A proper implementation
-> can be found in usbhsf_dma_try_pop_with_rx_irq().
-> 
-> Add an error check and jump to PIO pop when FIFO selection fails.
-> 
-> Fixes: 9e74d601de8a ("usb: gadget: renesas_usbhs: add data/status stage handler")
-> Cc: stable@vger.kernel.org # v3.2+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/usb/renesas_usbhs/fifo.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-> index 10607e273879..6cc07ab4782d 100644
-> --- a/drivers/usb/renesas_usbhs/fifo.c
-> +++ b/drivers/usb/renesas_usbhs/fifo.c
-> @@ -466,6 +466,7 @@ static int usbhsf_dcp_data_stage_prepare_pop(struct usbhs_pkt *pkt,
->  	struct usbhs_pipe *pipe = pkt->pipe;
->  	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
->  	struct usbhs_fifo *fifo = usbhsf_get_cfifo(priv);
-> +	int ret;
->  
->  	if (usbhs_pipe_is_busy(pipe))
->  		return 0;
-> @@ -480,10 +481,14 @@ static int usbhsf_dcp_data_stage_prepare_pop(struct usbhs_pkt *pkt,
->  
->  	usbhs_pipe_sequence_data1(pipe); /* DATA1 */
->  
-> -	usbhsf_fifo_select(pipe, fifo, 0);
-> +	ret = usbhsf_fifo_select(pipe, fifo, 0);
-> +	if (ret < 0)
-> +		goto usbhsf_pio_prepare_pop;
-> +
->  	usbhsf_fifo_clear(pipe, fifo);
->  	usbhsf_fifo_unselect(pipe, fifo);
->  
-> +usbhsf_pio_prepare_pop:
->  	/*
->  	 * change handler to PIO pop
->  	 */
-> -- 
-> 2.42.0.windows.2
+drm_format_info_bpp() cannot be used for formats which do not have an
+integer bits-per-pixel in a pixel block.
 
-How was this tested?  I still think this is wrong, as the cleanup does
-not look correct.
+E.g. DRM_FORMAT_XV15's (not yet in upstream) plane 0 has three 10-bit
+pixels (Y components), and two padding bits, in a 4 byte block. That is
+10.666... bits per pixel when considering the whole 4 byte block, which
+is what drm_format_info_bpp() does. Thus a driver that supports such
+formats cannot use drm_format_info_bpp(),
 
-thanks,
+It is a driver bug if this happens, but so handle wrong calls by
+printing a warning and returning 0.
 
-greg k-h
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+ drivers/gpu/drm/drm_fourcc.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+index 3a94ca211f9c..2f5781f5dcda 100644
+--- a/drivers/gpu/drm/drm_fourcc.c
++++ b/drivers/gpu/drm/drm_fourcc.c
+@@ -454,12 +454,20 @@ EXPORT_SYMBOL(drm_format_info_block_height);
+  */
+ unsigned int drm_format_info_bpp(const struct drm_format_info *info, int plane)
+ {
++	unsigned int block_size;
++
+ 	if (!info || plane < 0 || plane >= info->num_planes)
+ 		return 0;
+ 
+-	return info->char_per_block[plane] * 8 /
+-	       (drm_format_info_block_width(info, plane) *
+-		drm_format_info_block_height(info, plane));
++	block_size = drm_format_info_block_width(info, plane) *
++		     drm_format_info_block_height(info, plane);
++
++	if (info->char_per_block[plane] * 8 % block_size) {
++		pr_warn("unable to return an integer bpp\n");
++		return 0;
++	}
++
++	return info->char_per_block[plane] * 8 / block_size;
+ }
+ EXPORT_SYMBOL(drm_format_info_bpp);
+ 
+
+-- 
+2.43.0
+
 
