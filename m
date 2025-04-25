@@ -1,120 +1,154 @@
-Return-Path: <linux-kernel+bounces-620022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4BEA9C4E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EFCA9C4F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 889367A6234
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7D117ADFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8438F24167E;
-	Fri, 25 Apr 2025 10:12:54 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B538B2405EC;
+	Fri, 25 Apr 2025 10:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiQ4dqG3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01A1C8600;
-	Fri, 25 Apr 2025 10:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930D323F40F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575974; cv=none; b=LljsHBChPtoU7XJldkD9jnilFK4p+8D73lPaojcTbeDI7ChJirESX9B/cgLfLN4FV1lfZR3B0npkSrqDmJpMAzZd+fQ4BiPQxrUR9E11GLRXCPcElWLlmlxPFwx416P6mm6g33GbosZnpI/lFXXgMiIKiDzzvEtj5Y3n1XHJZts=
+	t=1745576001; cv=none; b=Y5GtyjChC3OvZZ9R332E6k1y0PQ4piWljm0yR6IR5yUOzoNhV8mUVzIw5pQFnKsDeIb+hgR1J+eOtdLkqfYRgneO38V9cOm/5bt1HJs5fEUjA1caqCepv+JVqmUZFdFQFNvJzmvT+tZjncMPLDqugrne8iaCbjZKgL9cw63puqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575974; c=relaxed/simple;
-	bh=IHATJE1khszjObdsQyGJmBlU9Z+SAnlkzb5F0C6Gbvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOu8Uojz1o8+lbco0a60+JyJIin/p4WUuK0uFsId3ng/Hk0dV/CoPTYh+E5VMsEIyi7vjSGjcigZPQDsXsnFh/iJK1PbhquXs2wC1XHW0bTMQLfbXWtiPF2TztNOp1z4Tdil12ozqcXMdV1A365NL8dey3O+4QQQwdvYRQWriFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	s=arc-20240116; t=1745576001; c=relaxed/simple;
+	bh=R9HHXp4+WPKRcDY98kPzN+e6xRzDIvxgQM+D3RFQeyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gN0XY6akSHL2NuhswEOOIkbPha8I4zo+zx53FODEq16I0aNnCSuVbBlPCD2OVbDeI3xma36gtV3CTHfMA87tdjoX8ms1UY9RFL1gVEPddKztPyY/QKjyL9XTHMDyW75DL0k/5HrNKaUEAbKKMxMO8CyQ5u4HmwT/qbvjXJca4gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiQ4dqG3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745575996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pw9QCpCjs2zCbHjb9QyW1AL2e3Rd0H7rcNPzyrHOhpk=;
+	b=SiQ4dqG37qMaxQCEesgPw2rJVj6c8zT/3o/wlC8PbcZFqQ+ikCU2EDGXdO7PQzxAqwB8zI
+	0Ii1lqGJWnpdlioKVOpR63YC+ypdkJuKnDNk0ImINn0FUKLMpUbYejiKTrVqK0APgK9tvy
+	6IRDrDlJv0kgCKtaHBK5KjYO+BQLzXo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-371-rj20FwBbPbS_Gr9fXFYPqQ-1; Fri,
+ 25 Apr 2025 06:13:13 -0400
+X-MC-Unique: rj20FwBbPbS_Gr9fXFYPqQ-1
+X-Mimecast-MFC-AGG-ID: rj20FwBbPbS_Gr9fXFYPqQ_1745575991
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 5E9332C4CBD4;
-	Fri, 25 Apr 2025 12:12:22 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 1E1F1EAA1C; Fri, 25 Apr 2025 12:12:49 +0200 (CEST)
-Date: Fri, 25 Apr 2025 12:12:49 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCH v2 1/1] PCI/bwctrl: Replace lbms_count with
- PCI_LINK_LBMS_SEEN flag
-Message-ID: <aAtgIfG8VG7vLDPN@wunner.de>
-References: <20250422115548.1483-1-ilpo.jarvinen@linux.intel.com>
- <aAi734h55l7g6eXH@wunner.de>
- <87631533-312f-fee9-384e-20a2cc69caf0@linux.intel.com>
- <aAnOOj91-N6rwt2x@wunner.de>
- <e639b361-785e-d39b-3c3f-957bcdc54fcd@linux.intel.com>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C49D1956088;
+	Fri, 25 Apr 2025 10:13:10 +0000 (UTC)
+Received: from [10.44.33.33] (unknown [10.44.33.33])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6B11A195608D;
+	Fri, 25 Apr 2025 10:13:05 +0000 (UTC)
+Message-ID: <98e471cc-ec66-4c89-af9a-57625c0c2873@redhat.com>
+Date: Fri, 25 Apr 2025 12:13:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e639b361-785e-d39b-3c3f-957bcdc54fcd@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 5/8] mfd: zl3073x: Add functions to work with
+ register mailboxes
+To: Lee Jones <lee@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-6-ivecera@redhat.com>
+ <5094e051-5504-48a5-b411-ed1a0d949eeb@lunn.ch>
+ <bd645425-b9cb-454d-8971-646501704697@redhat.com>
+ <d36c34f8-f67a-40ac-a317-3b4e717724ce@lunn.ch>
+ <458254c7-da05-4b27-870d-08458eb89ba6@redhat.com>
+ <98ae9365-423c-4c7e-8b76-dcea3762ce79@lunn.ch>
+ <7d96b3a4-9098-4ffa-be51-4ce5dd64a112@redhat.com>
+ <20250425065558.GP8734@google.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250425065558.GP8734@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Apr 24, 2025 at 03:37:38PM +0300, Ilpo Järvinen wrote:
-> On Thu, 24 Apr 2025, Lukas Wunner wrote:
-> >   The only concern here is whether the cached
-> >   link speed is updated.  pcie_bwctrl_change_speed() does call
-> >   pcie_update_link_speed() after calling pcie_retrain_link(), so that
-> >   looks fine.  But there's a second caller of pcie_retrain_link():
-> >   pcie_aspm_configure_common_clock().  It doesn't update the cached
-> >   link speed after calling pcie_retrain_link().  Not sure if this can
-> >   lead to a change in link speed and therefore the cached link speed
-> >   should be updated?  The Target Link Speed isn't changed, but maybe
-> >   the link fails to retrain to the same speed for electrical reasons?
+
+
+On 25. 04. 25 8:55 dop., Lee Jones wrote:
+> On Thu, 24 Apr 2025, Ivan Vecera wrote:
 > 
-> I've never seen that to happen but it would seem odd if that is forbidden 
-> (as the alternative is probably that the link remains down).
+>>
+>>
+>> On 24. 04. 25 9:29 odp., Andrew Lunn wrote:
+>>>> Yes, PHC (PTP) sub-driver is using mailboxes as well. Gpio as well for some
+>>>> initial configuration.
+>>>
+>>> O.K, so the mailbox code needs sharing. The question is, where do you
+>>> put it.
+>>
+>> This is crucial question... If I put the MB API into DPLL sub-driver
+>> then PTP sub-driver will depend on it. Potential GPIO sub-driver as
+>> well.
+>>
+>> There could be some special library module to provide this for
+>> sub-drivers but is this what we want? And if so where to put it?
 > 
-> Perhaps pcie_reset_lbms() should just call pcie_update_link_speed() as the 
-> last step, then the irq handler returning IRQ_NONE doesn't matter.
-
-Why pcie_reset_lbms()?  I was rather thinking that pcie_update_link_speed()
-should be called from pcie_retrain_link().  Maybe right after the final
-pcie_wait_for_link_status().
-
-That would ensure that the speed is updated in case retraining from
-pcie_aspm_configure_common_clock() happens to lead to a lower speed.
-And the call to pcie_update_link_speed() from pcie_bwctrl_change_speed()
-could then be dropped.
-
-PCIe r6.2 sec 7.5.3.19 says the Target Link Speed "sets an upper limit
-on Link operational speed", which implies that the actual negotiated
-speed might be lower.
-
-
-> > - pciehp's remove_board() calls the function after bringing down the slot
-> >   to avoid a stale PCI_LINK_LBMS_SEEN flag.  No real harm in clearing the
-> >   bit in the register at this point I guess.  But I do wonder, is the link
-> >   speed updated somewhere when a new board is added?  The replacement
-> >   device may not support the same speeds as the previous device.
+> MFD is designed to take potentially large, monolithic devices and split
+> them up into smaller, more organised chunks, then Linusify them.  This
+> way, area experts (subsystem maintainers) get to concern themselves only
+> with the remit to which they are most specialised / knowledgable.  MFD
+> will handle how each of these areas are divided up and create all of the
+> shared resources for them.  On the odd occasion it will also provide a
+> _small_ API that the children can use to talk to the parent device.
 > 
-> The supported speeds are always recalculated using dev->supported_speeds. 
-> A new board implies a new pci_dev structure with newly read supported 
-> speeds. Also, bringing the link up with the replacement device will also 
-> trigger LBMS so the new Link Speed should be picked up by that.
-> 
-> Racing LBMS reset from remove_board() with LBMS due to the replacement 
-> board shouldn't result in stale Link Speed because of:
-> 
-> board_added()
->   pciehp_check_link_status()
->     __pcie_update_link_speed()
+> However .... some devices, like yours, demand an API which is too
+> complex to reside in the MFD subsystem itself.  This is not the first
+> time this has happened and I doubt it will be the last.  My first
+> recommendation is usually to place all of the comms in drivers/platform,
+> since, at least in my own mind, if a complex API is required, then the
+> device has become almost platform-like.  There are lots of examples of
+> H/W comm APIs in there already for you to peruse.
 
-Good!  That's the information I was looking for.
+OK, I will do it differently... Will drop MB API at all from MFD and
+just expose the additional mutex from MFD for multi-op access.
+Mailboxes will be handled directly by sub-devices.
+
+Short description:
+MFD exposes:
+zl3073x_{read,write}_u{8,16,32,48}() & zl3073x_poll_u8()
+- to read/write/poll registers
+- they checks that multiop_lock is taken when caller is accessing
+   registers from Page 10 and above
+
+zl3073x_multiop_{lock,unlock}()
+- to protect operation where multiple reads, writes and poll is required
+   to be done atomically
+
+Is this OK for you?
 
 Thanks,
+Ivan
 
-Lukas
 
