@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-620548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35310A9CC27
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA74AA9CC17
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BB4C7147
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 157A24C569A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C59E25A358;
-	Fri, 25 Apr 2025 14:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C22580F9;
+	Fri, 25 Apr 2025 14:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlZWXdtX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF89B259CB8;
-	Fri, 25 Apr 2025 14:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8584C6E;
+	Fri, 25 Apr 2025 14:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592974; cv=none; b=mtl/vS9LcYLHigRndLnSElaoSjSgTIStrqs48V5ofrtYy5E69r4xuKmVazIX3WFn5ZxSRhGxr63YZOhBHapmz13nd10M7GPlf+A5+zCQyj4q5Kl+P8KdmM17xfrZWnflBUIu14ibBQJKNMMxBSyxyGXEL6/uWOvSbEJgppW9AL0=
+	t=1745592867; cv=none; b=bt1zmWDFfUlUpCo/l0e7A9vNonW3AU9pbbW4VqHxUY1jwbdgq5jxLj+VvfCGHRMse7+crxOHrjMg9SaSY439cFn3qXV0yQQJt1lucAbllf5YP7LtA2vmzo+7Qget7yZzrWaKmu43J4+wJfxD5FOa4Sc6oDvAf7BkRiRPGzDZXb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592974; c=relaxed/simple;
-	bh=Ivqqrdd6BFIWSz+UZ5uzPlJbABlGLJtKzmx89lxeAbI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=bAtgx0dnTZscs+SufIrZwukBFYpK+APqzSAS3pSQzDMIzQrbJpPhqOjev5gUC+3FdVng0S8ErzgftfQcia+sIZzlUuqgQIbcdrRSSuh6hJZFHAkr5HTIRrteKxbi0i2I4PueuR6dFe6puUle21MMIovGXH3/tIfwr2als4A884M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9FCC4CEED;
-	Fri, 25 Apr 2025 14:56:14 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1u8KVI-0000000HShM-1GWH;
-	Fri, 25 Apr 2025 10:58:12 -0400
-Message-ID: <20250425145812.154575329@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 25 Apr 2025 10:54:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org,
- Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>,
- Weinan Liu <wnliu@google.com>,
- Blake Jones <blakejones@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v6 03/18] unwind_user/x86: Enable frame pointer unwinding on x86
-References: <20250425145422.132820147@goodmis.org>
+	s=arc-20240116; t=1745592867; c=relaxed/simple;
+	bh=fsjtFMIR/hiClwpGcJKvd9UaGF67MFSWOjljj3tLchs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+0HbnklHN6QGFt6FxSr618lY5yBqRFqEi/yasw4G1Nszl7G2+ktVTS2PjrwmD2705PTpW7NrKLYeLnLw27eZTQSVn8XYYAI0z+4xNO2BoKi72puF6dPYxKgvPiaMtHsBJAyuLrbeDu0pmucHHAH66m0+6f5lbx0928iTVGgaVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlZWXdtX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADD0C4CEE4;
+	Fri, 25 Apr 2025 14:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745592866;
+	bh=fsjtFMIR/hiClwpGcJKvd9UaGF67MFSWOjljj3tLchs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mlZWXdtX9Kh+wZPRVeqyCme36yWI5Xbm1vyzOqltGE8XjumbacDir8FCssNtqrF0J
+	 F1uabKh2Z+CI7CCYDskUTBoNiwOH1RBLfDbooG1aVRiLxYk1l7pKavEBsAKm5WT3p3
+	 JnwBg/TRRBEix3ZKhE596GxmQG8fkF9w1rtCRzQ7Il/6nyA05dn+bAyRnTco9q4gEE
+	 few4CBSY1alIUa81458S/uHyipHuUcXwqxhBXonb6dz5MRTegmARmHZ3ykegVr85zX
+	 U5igBW1qntFGye9z0IlyZG1VmljezZJgRu4Ss5ykF/zhuSQcqS78D8sSi7FajbVbfE
+	 iuVrZBMeAk9OA==
+Date: Fri, 25 Apr 2025 07:54:26 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: Carlos Maiolino <cem@kernel.org>, Dave Chinner <david@fromorbit.com>,
+	hch <hch@lst.de>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfs: allow ro mounts if rtdev or logdev are read-only
+Message-ID: <20250425145426.GL25675@frogsfrogsfrogs>
+References: <20250425085217.9189-1-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425085217.9189-1-hans.holmberg@wdc.com>
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+On Fri, Apr 25, 2025 at 08:52:53AM +0000, Hans Holmberg wrote:
+> Allow read-only mounts on rtdevs and logdevs that are marked as
+> read-only and make sure those mounts can't be remounted read-write.
 
-Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
-on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
-unwind_user interfaces can be used.
+If the log device is readonly, does that mean the filesystem gets
+mounted norecovery too?  Your test might want to check that a dirty log
+is not recovered even if the filesystem mounts.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/x86/Kconfig                   |  1 +
- arch/x86/include/asm/unwind_user.h | 11 +++++++++++
- 2 files changed, 12 insertions(+)
- create mode 100644 arch/x86/include/asm/unwind_user.h
+--D
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index aeac63b11fc2..b5a85d2be5ee 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -301,6 +301,7 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
- 	select HAVE_UNSTABLE_SCHED_CLOCK
-+	select HAVE_UNWIND_USER_FP		if X86_64
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
- 	select VDSO_GETRANDOM			if X86_64
-diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-new file mode 100644
-index 000000000000..8597857bf896
---- /dev/null
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UNWIND_USER_H
-+#define _ASM_X86_UNWIND_USER_H
-+
-+#define ARCH_INIT_USER_FP_FRAME							\
-+	.cfa_off	= (s32)sizeof(long) *  2,				\
-+	.ra_off		= (s32)sizeof(long) * -1,				\
-+	.fp_off		= (s32)sizeof(long) * -2,				\
-+	.use_fp		= true,
-+
-+#endif /* _ASM_X86_UNWIND_USER_H */
--- 
-2.47.2
-
-
+> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+> ---
+> 
+> I will post a couple of xfstests to add coverage for these cases.
+> 
+>  fs/xfs/xfs_super.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index b2dd0c0bf509..d7ac1654bc80 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -380,10 +380,14 @@ xfs_blkdev_get(
+>  	struct file		**bdev_filep)
+>  {
+>  	int			error = 0;
+> +	blk_mode_t		mode;
+>  
+> -	*bdev_filep = bdev_file_open_by_path(name,
+> -		BLK_OPEN_READ | BLK_OPEN_WRITE | BLK_OPEN_RESTRICT_WRITES,
+> -		mp->m_super, &fs_holder_ops);
+> +	mode = BLK_OPEN_READ | BLK_OPEN_RESTRICT_WRITES;
+> +	if (!xfs_is_readonly(mp))
+> +		mode |= BLK_OPEN_WRITE;
+> +
+> +	*bdev_filep = bdev_file_open_by_path(name, mode,
+> +			mp->m_super, &fs_holder_ops);
+>  	if (IS_ERR(*bdev_filep)) {
+>  		error = PTR_ERR(*bdev_filep);
+>  		*bdev_filep = NULL;
+> @@ -1969,6 +1973,20 @@ xfs_remount_rw(
+>  	struct xfs_sb		*sbp = &mp->m_sb;
+>  	int error;
+>  
+> +	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp &&
+> +	    bdev_read_only(mp->m_logdev_targp->bt_bdev)) {
+> +		xfs_warn(mp,
+> +			"ro->rw transition prohibited by read-only logdev");
+> +		return -EACCES;
+> +	}
+> +
+> +	if (mp->m_rtdev_targp &&
+> +	    bdev_read_only(mp->m_rtdev_targp->bt_bdev)) {
+> +		xfs_warn(mp,
+> +			"ro->rw transition prohibited by read-only rtdev");
+> +		return -EACCES;
+> +	}
+> +
+>  	if (xfs_has_norecovery(mp)) {
+>  		xfs_warn(mp,
+>  			"ro->rw transition prohibited on norecovery mount");
+> -- 
+> 2.34.1
+> 
 
