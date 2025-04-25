@@ -1,101 +1,56 @@
-Return-Path: <linux-kernel+bounces-620256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C12A9C7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:39:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1C2A9C7D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9494E188AA96
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D332A9A662F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07C624337B;
-	Fri, 25 Apr 2025 11:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A184C2441A6;
+	Fri, 25 Apr 2025 11:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KOm1d8n2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sMR2rfeN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KOm1d8n2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sMR2rfeN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s8E3NSus"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931D91C7019
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63A241CB0;
+	Fri, 25 Apr 2025 11:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581152; cv=none; b=mWP+0J5nj1BZQ5cV0/I9oU34QSGW32wAqmdZKfGz0+QEe9MaPeo5dPlo2zveu4epYavxh3s/N91JniuQO8aG31DINOT9m+Zy9cPixSoKjrLVyaMbzTLZBrxwX4SQv0/z+Q0LpuU3do3io0qCaLYAPi606qbBS/WF2xD9dqw5Mts=
+	t=1745581164; cv=none; b=XaC9BfSDJDsquiobifzJ9MdOhoMFwU+dVwGESnbt544DR3Azq/NIDZVVdrcARW+Jo79IjuUfpnUiyl/mosqSzH9OW30MkR8QXA9WXsCdGwhI9VAY9xJuFxlr4ides3BwTv6eGsnW9qHC5te2yfD1ZCfCMatvKBNaPgCREUor47Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581152; c=relaxed/simple;
-	bh=P4de2ItVrUh4L1XoeGnW8HxHxKAYN1CcgMxyOhLayxU=;
+	s=arc-20240116; t=1745581164; c=relaxed/simple;
+	bh=EdIVNlrBhMPbcOu7pJo016eI1srQnax7e5HkwLJSElE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhTF79uzAWnhrJLudls8a7MEORING5eENckPGBHamUaYieQADp7jVJ3hECi4+ORJUakFlGAkVoLTo9Zkqygvn125tdnn7fdICCunKPJdAUPq31M0WXWSaK008NqTIc3FhX+wi/v3PMEDfLSJZ4toosFboiJjwBE5w+XZihH51Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KOm1d8n2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sMR2rfeN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KOm1d8n2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sMR2rfeN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 82B991F388;
-	Fri, 25 Apr 2025 11:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745581148;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z2eJaC08jk1r+/zerFlUGOvXdyJEtNcoYjun1c5NE38=;
-	b=KOm1d8n2NJqsFhy33k7Tihdzzo2nlG72JRlbsi4Fpr4RiOc8W8QcdFuir56OX15FLKjCbX
-	GZ7mmEYmnH0WboheyabEbcXBS6ZVqyFDt12KLdnlKOtQpFM/8VdB5/yWzvL9+gFzcaotyY
-	5q/u7037zyZsxx3mc6iDCjaX+lMcAUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745581148;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z2eJaC08jk1r+/zerFlUGOvXdyJEtNcoYjun1c5NE38=;
-	b=sMR2rfeNC3gkv7qdVMdVvUlzXH1AnU/fBtLJMVvu1+8V1j3eEDiZJUEXTKmjNGWqW3Y7yf
-	FEV+R9O7MI6saaDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KOm1d8n2;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=sMR2rfeN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745581148;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z2eJaC08jk1r+/zerFlUGOvXdyJEtNcoYjun1c5NE38=;
-	b=KOm1d8n2NJqsFhy33k7Tihdzzo2nlG72JRlbsi4Fpr4RiOc8W8QcdFuir56OX15FLKjCbX
-	GZ7mmEYmnH0WboheyabEbcXBS6ZVqyFDt12KLdnlKOtQpFM/8VdB5/yWzvL9+gFzcaotyY
-	5q/u7037zyZsxx3mc6iDCjaX+lMcAUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745581148;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z2eJaC08jk1r+/zerFlUGOvXdyJEtNcoYjun1c5NE38=;
-	b=sMR2rfeNC3gkv7qdVMdVvUlzXH1AnU/fBtLJMVvu1+8V1j3eEDiZJUEXTKmjNGWqW3Y7yf
-	FEV+R9O7MI6saaDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6729C1388F;
-	Fri, 25 Apr 2025 11:39:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZRr1GFx0C2jONQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 25 Apr 2025 11:39:08 +0000
-Date: Fri, 25 Apr 2025 13:39:07 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: get rid of goto in alloc_test_extent_buffer()
-Message-ID: <20250425113907.GC31681@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250425072358.51788-1-neelx@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HgZaSIAK4r4NSevI/8s8ZcvuRkEwpmhnUklrXfjs5dYnDiK1WxoHMLj+aeDybix1CL0FeoLiiRONSXMslRuPhoH0wn2erLlsh1Il1134eKpi7JPCYR0z6OG2C9T0woxqVtupMnU65yTrc82Pij7xh+2jZZtnvcL7Z+NfORBfPbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s8E3NSus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00AFDC4CEE4;
+	Fri, 25 Apr 2025 11:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745581163;
+	bh=EdIVNlrBhMPbcOu7pJo016eI1srQnax7e5HkwLJSElE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s8E3NSus2voUjY9ZXKYq+ar8kmV6wlfkMxQELxDZTpdAbjTqgJsZ3bbiMuWYnJM+y
+	 iAy5PcZl5N8zSx1NsqM7F8psWxV2ZNEu+kytpf7knXbXrMlbRoS/VqLeFGsq9C9O3f
+	 mmIo9h6dyAqbgjAqFJfo3M9akE9mV4zEcqUG84kI=
+Date: Fri, 25 Apr 2025 13:39:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Faraz Ata <faraz.ata@samsung.com>
+Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>, alim.akhtar@samsung.com,
+	jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, dev.tailor@samsung.com,
+	rosa.pila@samsung.com
+Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
+Message-ID: <2025042508-statute-pleading-df6f@gregkh>
+References: <CGME20250417042427epcas5p2df3d35803adcb24da7d83e5df586380d@epcas5p2.samsung.com>
+ <20250417043427.1205626-1-faraz.ata@samsung.com>
+ <d350841c-3560-4511-a866-9490737e48f7@kernel.org>
+ <06cb01dbaf5a$1ea1a8b0$5be4fa10$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,74 +59,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250425072358.51788-1-neelx@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 82B991F388
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:replyto,suse.cz:dkim,suse.cz:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+In-Reply-To: <06cb01dbaf5a$1ea1a8b0$5be4fa10$@samsung.com>
 
-On Fri, Apr 25, 2025 at 09:23:57AM +0200, Daniel Vacek wrote:
-> The `free_eb` label is used only once. Simplify by moving the code inplace.
+On Thu, Apr 17, 2025 at 11:02:24AM +0530, Faraz Ata wrote:
+> Hello Krzysztof
 > 
-> Signed-off-by: Daniel Vacek <neelx@suse.com>
-> ---
->  fs/btrfs/extent_io.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index ea38c73d4bc5f..20cdddd924852 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -3004,15 +3004,13 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
->  			goto again;
->  		}
->  		xa_unlock_irq(&fs_info->buffer_tree);
-> -		goto free_eb;
-> +		btrfs_release_extent_buffer(eb);
-> +		return exists;
->  	}
->  	xa_unlock_irq(&fs_info->buffer_tree);
->  	check_buffer_tree_ref(eb);
->  
->  	return eb;
-> -free_eb:
-> -	btrfs_release_extent_buffer(eb);
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > Sent: Thursday, April 17, 2025 10:50 AM
+> > To: Faraz Ata <faraz.ata@samsung.com>; alim.akhtar@samsung.com;
+> > gregkh@linuxfoundation.org; jirislaby@kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> > soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > serial@vger.kernel.org; dev.tailor@samsung.com; rosa.pila@samsung.com
+> > Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
+> > 
+> > On 17/04/2025 06:34, Faraz Ata wrote:
+> > > ExynosAutov920 SoC supports 18 UART ports, update the value of
+> > UART_NR
+> > > to accommodate the same.
+> > >
+> > > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+> > > ---
+> > > Changes in v3:
+> > > - Fixed review comments from Krzysztof
+> > 
+> > Which ones? What changed?
+> > 
+> While sending v2  change log was missed unintentionally.
+> Added missed change log in v3.
 
-So the xarray conversion removed the other use of the free_eb label and
-calls btrfs_release_extent_buffer() + return. Doing the same here and
-removing the label completely looks as an improvement, as the whole
-function does direct returns instead of goto exit block.
+Can you add this properly and send a v4?
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+thanks,
+
+greg k-h
 
