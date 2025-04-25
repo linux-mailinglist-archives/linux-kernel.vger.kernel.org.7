@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-620555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AC7A9CC34
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA87A9CC37
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB97F7AB9DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E589C327E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA7825D8E1;
-	Fri, 25 Apr 2025 14:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0AF25D528;
+	Fri, 25 Apr 2025 14:56:17 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A635025B690;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440E525A621;
 	Fri, 25 Apr 2025 14:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592975; cv=none; b=J4X+7xLC5xX0RlIXr1NC7mMof1MJsa6Oos0aE9MgAsZfLAL4nEJCmvxnnat39RI6RrEFopdU6Itm9SsMkyvJCh2PtcSa1N9H5PGV/iKBVd/y0o4pidoC+SlJ2tha7JDAaPT9rtKItx6ltpoYsC+6tPAOrlP5E/GRPDdpiWZ4+5Q=
+	t=1745592975; cv=none; b=b50vMDZlXIXkSmvOQOM+oWzCLT63iGRsvpPfshxirpS0fCZna3oQAoOmlgI5fHKW0dPsUK6m9GgzMe6GbN9zc4zRyNPQt8Njnna3XeGAvrC8/NE1v2iThx6rJNkNmn6BQTDdpuYfY0MN+DFyDGMQYSNPMAAhnlJgU9tB+vtP+Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745592975; c=relaxed/simple;
-	bh=ZUmhtdaJ3E0PnFMVgAGdGa/2OK5cIHz58Hb8kDM2KVU=;
+	bh=bYoE3lWyc/7+xI2i1oiE1igTNM0T6KYUsdoBK92sjnU=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=dB9IdSNWKUfAEeb62/K0upYeM+Ln1PhWKGhVffiqRXPHQ+AZz5uttRkFLYwqfpPXBGBRW0BiqiTrm/ynrRTiwOnCvPUmvJnn0cs97Hki5+L3e2eGFmJdJI4ByJ0QLyXuwXWJo8GLhJKsNHYeVBzq4SI3NhwAI2ZITI9W1bQBfzg=
+	 Content-Type; b=blnDybTVEv0tY1grnxvR41aQmkDlmLkO5SyLVJdkwaI4AYuzUib1R2QXIwNxRmEnddz/wDhTfOtuIg5Pn3lqa4nU6BfVglUG1DxqXwhdgv4C71yzG3zHMqgtm7PoDruXjPUAHgD5EiRG9pVP3UUYGX8hPaZ7ZzTy+QhGPdhxTfA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A03C4CEE9;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1F3C4CEEF;
 	Fri, 25 Apr 2025 14:56:15 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1u8KVJ-0000000HSjq-0fK1;
+	id 1u8KVJ-0000000HSkN-1MtR;
 	Fri, 25 Apr 2025 10:58:13 -0400
-Message-ID: <20250425145813.007841132@goodmis.org>
+Message-ID: <20250425145813.180409399@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 25 Apr 2025 10:54:30 -0400
+Date: Fri, 25 Apr 2025 10:54:31 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -66,8 +66,9 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Blake Jones <blakejones@google.com>,
  Beau Belgrave <beaub@linux.microsoft.com>,
  "Jose E. Marchesi" <jemarch@gnu.org>,
- Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v6 08/18] unwind_user/deferred: Add unwind cache
+ Alexander Aring <aahringo@redhat.com>,
+ Namhyung Kim <Namhyung@kernel.org>
+Subject: [PATCH v6 09/18] perf: Remove get_perf_callchain() init_nr argument
 References: <20250425145422.132820147@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,149 +80,97 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-Cache the results of the unwind to ensure the unwind is only performed
-once, even when called by multiple tracers.
+The 'init_nr' argument has double duty: it's used to initialize both the
+number of contexts and the number of stack entries.  That's confusing
+and the callers always pass zero anyway.  Hard code the zero.
 
-The cache nr_entries gets cleared every time the task exits the kernel.
-When a stacktrace is requested, nr_entries gets set to the number of
-entries in the stacktrace. If another stacktrace is requested, if
-nr_entries is not zero, then it contains the same stacktrace that would be
-retrieved so it is not processed again and the entries is given to the
-caller.
-
-Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Acked-by: Namhyung Kim <Namhyung@kernel.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Changes since v5: https://lore.kernel.org/20250424162632.532889212@goodmis.org
+ include/linux/perf_event.h |  2 +-
+ kernel/bpf/stackmap.c      |  4 ++--
+ kernel/events/callchain.c  | 12 ++++++------
+ kernel/events/core.c       |  2 +-
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
-- Instead of clearing cache->nr_entries when entering from user, clear it
-  when exiting to user mode.
-
- include/linux/entry-common.h          |  2 ++
- include/linux/unwind_deferred.h       |  7 +++++++
- include/linux/unwind_deferred_types.h |  7 ++++++-
- kernel/unwind/deferred.c              | 27 ++++++++++++++++++++-------
- 4 files changed, 35 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index fc61d0205c97..725ec0e87cdd 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -12,6 +12,7 @@
- #include <linux/resume_user_mode.h>
- #include <linux/tick.h>
- #include <linux/kmsan.h>
-+#include <linux/unwind_deferred.h>
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 947ad12dfdbe..3cc0b0ea0afa 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1651,7 +1651,7 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
+ extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+ extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+ extern struct perf_callchain_entry *
+-get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
++get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+ 		   u32 max_stack, bool crosstask, bool add_mark);
+ extern int get_callchain_buffers(int max_stack);
+ extern void put_callchain_buffers(void);
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7dfa..ec3a57a5fba1 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -314,7 +314,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	if (max_depth > sysctl_perf_event_max_stack)
+ 		max_depth = sysctl_perf_event_max_stack;
  
- #include <asm/entry-common.h>
+-	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
++	trace = get_perf_callchain(regs, kernel, user, max_depth,
+ 				   false, false);
  
-@@ -361,6 +362,7 @@ static __always_inline void exit_to_user_mode(void)
- 	lockdep_hardirqs_on_prepare();
- 	instrumentation_end();
+ 	if (unlikely(!trace))
+@@ -451,7 +451,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	else if (kernel && task)
+ 		trace = get_callchain_entry_for_task(task, max_depth);
+ 	else
+-		trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
++		trace = get_perf_callchain(regs, kernel, user, max_depth,
+ 					   crosstask, false);
  
-+	unwind_exit_to_user_mode();
- 	user_enter_irqoff();
- 	arch_exit_to_user_mode();
- 	lockdep_hardirqs_on(CALLER_ADDR0);
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index 5064ebe38c4f..c2d760e5e257 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -12,6 +12,11 @@ void unwind_task_free(struct task_struct *task);
- 
- int unwind_deferred_trace(struct unwind_stacktrace *trace);
- 
-+static __always_inline void unwind_exit_to_user_mode(void)
-+{
-+	current->unwind_info.cache.nr_entries = 0;
-+}
-+
- #else /* !CONFIG_UNWIND_USER */
- 
- static inline void unwind_task_init(struct task_struct *task) {}
-@@ -19,6 +24,8 @@ static inline void unwind_task_free(struct task_struct *task) {}
- 
- static inline int unwind_deferred_trace(struct unwind_stacktrace *trace) { return -ENOSYS; }
- 
-+static inline void unwind_exit_to_user_mode(void) {}
-+
- #endif /* !CONFIG_UNWIND_USER */
- 
- #endif /* _LINUX_UNWIND_USER_DEFERRED_H */
-diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
-index aa32db574e43..b3b7389ee6eb 100644
---- a/include/linux/unwind_deferred_types.h
-+++ b/include/linux/unwind_deferred_types.h
-@@ -2,8 +2,13 @@
- #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
- #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
- 
--struct unwind_task_info {
-+struct unwind_cache {
- 	unsigned long		*entries;
-+	unsigned int		nr_entries;
-+};
-+
-+struct unwind_task_info {
-+	struct unwind_cache	cache;
- };
- 
- #endif /* _LINUX_UNWIND_USER_DEFERRED_TYPES_H */
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 6a4cec4877c5..99d4d9e049cd 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -12,6 +12,7 @@
- int unwind_deferred_trace(struct unwind_stacktrace *trace)
- {
- 	struct unwind_task_info *info = &current->unwind_info;
-+	struct unwind_cache *cache = &info->cache;
- 
- 	/* Should always be called from faultable context */
- 	might_fault();
-@@ -20,17 +21,29 @@ int unwind_deferred_trace(struct unwind_stacktrace *trace)
- 	if (!current->mm)
- 		return -EINVAL;
- 
--       if (!info->entries) {
--               info->entries = kmalloc_array(UNWIND_MAX_ENTRIES, sizeof(long),
--                                             GFP_KERNEL);
--               if (!info->entries)
--		       return -ENOMEM;
-+	if (!cache->entries) {
-+		cache->entries = kmalloc_array(UNWIND_MAX_ENTRIES, sizeof(long),
-+					       GFP_KERNEL);
-+		if (!cache->entries)
-+			return -ENOMEM;
-+        }
-+
-+	trace->entries = cache->entries;
-+
-+	if (cache->nr_entries) {
-+               /*
-+                * The user stack has already been previously unwound in this
-+                * entry context.  Skip the unwind and use the cache.
-+                */
-+               trace->nr = cache->nr_entries;
-+               return 0;
-        }
- 
- 	trace->nr = 0;
--	trace->entries = info->entries;
- 	unwind_user(trace, UNWIND_MAX_ENTRIES);
- 
-+	cache->nr_entries = trace->nr;
-+
- 	return 0;
+ 	if (unlikely(!trace) || trace->nr < skip) {
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index 6c83ad674d01..b0f5bd228cd8 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -217,7 +217,7 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
  }
  
-@@ -45,5 +58,5 @@ void unwind_task_free(struct task_struct *task)
+ struct perf_callchain_entry *
+-get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
++get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+ 		   u32 max_stack, bool crosstask, bool add_mark)
  {
- 	struct unwind_task_info *info = &task->unwind_info;
+ 	struct perf_callchain_entry *entry;
+@@ -228,11 +228,11 @@ get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
+ 	if (!entry)
+ 		return NULL;
  
--	kfree(info->entries);
-+	kfree(info->cache.entries);
+-	ctx.entry     = entry;
+-	ctx.max_stack = max_stack;
+-	ctx.nr	      = entry->nr = init_nr;
+-	ctx.contexts       = 0;
+-	ctx.contexts_maxed = false;
++	ctx.entry		= entry;
++	ctx.max_stack		= max_stack;
++	ctx.nr			= entry->nr = 0;
++	ctx.contexts		= 0;
++	ctx.contexts_maxed	= false;
+ 
+ 	if (kernel && !user_mode(regs)) {
+ 		if (add_mark)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3c69a1a3f41c..67581babe9ba 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8110,7 +8110,7 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+ 	if (!kernel && !user)
+ 		return &__empty_callchain;
+ 
+-	callchain = get_perf_callchain(regs, 0, kernel, user,
++	callchain = get_perf_callchain(regs, kernel, user,
+ 				       max_stack, crosstask, true);
+ 	return callchain ?: &__empty_callchain;
  }
 -- 
 2.47.2
