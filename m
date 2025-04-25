@@ -1,306 +1,188 @@
-Return-Path: <linux-kernel+bounces-620678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF88AA9CE19
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:27:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A2FA9CE18
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236893B0551
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4924E4C759D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F4019CD0B;
-	Fri, 25 Apr 2025 16:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6431A3145;
+	Fri, 25 Apr 2025 16:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwiQlmJt"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KUb16g1s"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2087.outbound.protection.outlook.com [40.107.223.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8097119E999
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598322; cv=none; b=LvLFS0qnOSwnCSBnvx8uJKMOLoYEJaHi1tE/HJKQvM/8tkP8hFgpMXMZ/EZsD11LoOdBCAp3q5XP7juFduJQ/1pjoNUfyAqu5BxpTX09dFkkQd0upVjYySRuB2Q4m70Zf6kpVIz3MYuJZaC7tSsTaUMN37lkSN7xWw3EavFHMZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598322; c=relaxed/simple;
-	bh=PZeXIXkDDcpmQgKJeZih41sAPSvK23P8CuuqnIIfAAo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PF/D6dvN1XrbNEKjyACmIRRCCm3gwCWrrjb4Yfe1ZoTeN5tzNxos5Ze+HO/A9ZkBshVypEGlvot6d0bfBTDcXgs1qOpIyN6Pes0oCJKJjBVCPPWpphdx2iE8vniSWt7PBY1QjUcLPlLrKP5jpmr096q9aBvMFZ00kKV6BGVqCX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwiQlmJt; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso17549265e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745598319; x=1746203119; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dh3JAPmeTO24JV8tjKnvmXJ0A5D+UdZwLETNKz5WYnM=;
-        b=vwiQlmJtXJV/h3jXldtH2sfCJDncszaYjAXMzZ3eQt3AghEZQHDYcze15S+a53En8v
-         WJosrobISyCpbh7MLc00WgT7z9hJyZakwwfdj3jEROE1hliIzQFV1e4OdNUc99xosPBG
-         D/ko1H8kEnyns31+BmQAdiE38NKrRTb9gaOYh91Ol8mZLSVpFM9eP4fPLPQV943KeAbi
-         mGVezWKdgKYrVQjKSM2QxEd8m376Fjh8DvtqbrbYveSOdXdR6hrH2bjmjb5rwn5ab/xl
-         JDBM1ToObHCykBNZJoObK3kwBBc1yof+uIFkt/64yENRsOn4Q/FEa6WYKfLOGWumN54S
-         F25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745598319; x=1746203119;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dh3JAPmeTO24JV8tjKnvmXJ0A5D+UdZwLETNKz5WYnM=;
-        b=dePX8rFC7YiKMe3EQCZyAq5ofPZNHn+Ig/0dbFPVKFzOtXvxDo0RfPsaYvAF/LUxeh
-         JO7XdkIpP1XowxY8OSwER8Mogh8LPZ+hlHruH6REdsDwNPPAOmt8lIJD/TBRXYnfVE5G
-         xvkCNF+0J6ZWyxSWbkq3JzsSx8s0pWoG4ZZCfxsFwSyqxyAwQXw+Ppv4HQA6wHHnTnax
-         NGzKNS6euxTIrxuWQOkE8LD2FNiOgyfqUzf+MNg6KRW7rAT6ohtzQYbbiJVgOtL2W6rB
-         9LqSm0wLSPdcftpA2nTAa9pIK2YreBY1z4INQ89TuLpxiN8L05ZJOCUCv+gVsYMNdjfM
-         8pwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbUjiuqL8Ud/zGpRwMT18SQDfgggOB97TnqJ+l4VHZI/bpt0VjVJjUzIUezxd/kgAMzgTeDpgesT1pZi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFHR0qYNkE/N+ju5Cg8zEduKJOEpO0zVcM9EO/n6X2w+M6HSgb
-	bAv17fQlLZ3XQOeBczkaRKHyahLA2IrwXUEIiwwOzMUGMQtkdXAVqtQoZJpBono=
-X-Gm-Gg: ASbGnctYe/h9QA4Wtz32APJayNOgm1ebFuyeBwXbAm6lqbwdJzIZOCdI8veulydykjh
-	jQAbB0yyJB+/KIhym9SJeyv0C4UJfZVEArQQuLNwTIc3D4COBoIjXZ/X/kpUxtGHgkjdbvTqg7Y
-	fHmxyW4iwnpsJtYa3JrHh/d/RitcVgble7ZMUqx+8noIYVXWP/MvTZIbs8uwY+DwGAdViM9Iipa
-	Sn1SvCHNAq9UrNxCv6NJfckdNGxMLbIhwKv/N081xYmzWfkUnXT6gpTSYuJLE/PYXEzy57IL/61
-	sE8yJvO+GMPxWmdy3nlhjs+insbmHBwAcU7Arn4JwvkyUt2nvFnyQXA1YU/c3n1GsmJ0glTl
-X-Google-Smtp-Source: AGHT+IFKKvFedp6Nrba9Tngbgf9SpS1hGHaYNhfmKqEeSci33u8z8xgydesf80nn0Tm7MAyxNYwdNg==
-X-Received: by 2002:a05:600c:c05:b0:43d:d06:3798 with SMTP id 5b1f17b1804b1-440ab8487ecmr49275e9.20.1745598318756;
-        Fri, 25 Apr 2025 09:25:18 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([209.198.129.111])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d8976sm61263715e9.27.2025.04.25.09.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 09:25:18 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 25 Apr 2025 17:25:09 +0100
-Subject: [PATCH v2 5/5] soc: samsung: exynos-pmu: enable CPU hotplug
- support for gs101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20238192D9D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745598356; cv=fail; b=Lm30rddcU/U0BeuZeac/z9vF6K/1IHlHwFsyOX6x3oojlw+dML6XxmskIdqzjQ5ina6S9BFGn7hWONRQso/EssRjpOdqcoY/T+Ijjiclh8sowDpWVa/nRTz5oEgCWwTLToCY5AHETMZD5RrTlOHCfA458fqAQg+qwarudR/Iw9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745598356; c=relaxed/simple;
+	bh=hoocMjWLm7pP9G907m8zxRXsmWMLT3tG22itoUpvM14=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyDNEMPsMo420Zl837X7hs459uMyjJRKqppCuan6+lVvDy9AwQXQMpj/7HAScx1wX+m92RlyUZjaG1/2tMf4XsgcjhaGrsZwKrbycH7rZaVfBJJAu5+a/tq5/+EHEAN+Cou+ezWUrISvHnm0PvKCEmk2GUukj8Mmf9prBP5iNeI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KUb16g1s; arc=fail smtp.client-ip=40.107.223.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UsKE/cFtbdg2ypK2tHT+eqFiVN6Nq7aJ63z0RLgs2I+szdtV8L6P82070GufhvP/MKfmsuMup08vwEnybk1QS/pNA4wyk+SsDvVzNVpaYlyI/BxKLWjLfJ3BQLkx+uXQfEpBdO4+CwfTSqc4OBIMaATpSeJw5V+udggMHUF7Y+k4LNzS9Btgs5IqxIDf/x+D0rvdV97tstT6D8EnJdjYdLvoi58RinYqVa6rEbPj1hxHEm8xZv6hamxLHOhyg+KE0zQeHG9X1RgZrw2GYG/FuGbZcHAHaG/YkyeAASWBPTIJSbjOwUZS8wnLppxaoGKqzRlWKT3ODt3IsFyj7NgvUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K58g+GAiJARfzwSaSn1uWoZ4fiksKow5ElFdtsluvFI=;
+ b=vAi0AqHloQ09zXPkkJ9EakGOja8AgOOW4Cg7xHY4PWpSCnZpO/yDS+QwVv/YzRPOe4LIIb5ySs21HZxEFFCQYowhaQC34bynpiKF04gz4P4sI+sJV0zsZmJBynMcTnhoXa3a1tMfQ0lJa+fKEa6ATJzibE0OTkd59d1NINF9wHWHQJ1oPW2vnKkccX1Y4sh+g2J1arf7pJ3QutUT6eC0kUTVfGECjvVljP59K4qbg/iM1M5fqUvBQqG7WiNMK09EQyKLyKuV1b5MndpkNx+DOt9wCw5WrjGnq9pYLfqO5N5RVAR7eq9u/aItnGE/yNyr7yLdRvIGZ9239sCfet+lpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K58g+GAiJARfzwSaSn1uWoZ4fiksKow5ElFdtsluvFI=;
+ b=KUb16g1sMghYLTJmolPJceEk8Hqzfh/AorOnpoTeyf2p9ji3lIMZrzAqGz+f0TAhSWI9tqrJS6u5FPfv55nJHUIaNu//RsV601ZvnSrUgys2IK3FTZuwikZtE3tB1X9PcLPTtFR1VRAxL1ZnwrT3r+jmIumvI24f4IRwAcGzVMs=
+Received: from SN6PR01CA0035.prod.exchangelabs.com (2603:10b6:805:b6::48) by
+ CY8PR12MB7659.namprd12.prod.outlook.com (2603:10b6:930:9f::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8678.26; Fri, 25 Apr 2025 16:25:51 +0000
+Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
+ (2603:10b6:805:b6:cafe::4) by SN6PR01CA0035.outlook.office365.com
+ (2603:10b6:805:b6::48) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.32 via Frontend Transport; Fri,
+ 25 Apr 2025 16:25:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Fri, 25 Apr 2025 16:25:51 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
+ 2025 11:25:50 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
+ 2025 11:25:50 -0500
+Received: from amd.com (10.180.168.240) by SATLEXMB03.amd.com (10.181.40.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
+ Transport; Fri, 25 Apr 2025 11:25:46 -0500
+Date: Fri, 25 Apr 2025 16:25:40 +0000
+From: Ankit Soni <Ankit.Soni@amd.com>
+To: Joao Martins <joao.m.martins@oracle.com>
+CC: <iommu@lists.linux.dev>, <suravee.suthikulpanit@amd.com>,
+	<joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<linux-kernel@vger.kernel.org>, Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>, David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/2] iommu/amd: Add HATDis feature support
+Message-ID: <g3xrnjfs6zekogfohud2s7kdvphx43e6mdh3vfpllynrwokxwf@vvetz2j2nrai>
+References: <cover.1745389415.git.Ankit.Soni@amd.com>
+ <6282a5c349812a311a67a8522dc5e4aabfe3ec3a.1745389415.git.Ankit.Soni@amd.com>
+ <596ed125-c995-4e2b-824c-b7929c852754@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-5-f1530de9da42@linaro.org>
-References: <20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-0-f1530de9da42@linaro.org>
-In-Reply-To: <20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-0-f1530de9da42@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
- kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6366;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=PZeXIXkDDcpmQgKJeZih41sAPSvK23P8CuuqnIIfAAo=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoC7dmq3oTJNUSVcZNMDgal+g8VsnBj6q0mRp9y
- MIZcwsVuYWJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaAu3ZgAKCRDO6LjWAjRy
- urpHD/9YGmcsS5Hssr8QD/JYGFbcjtShr4T5lX2zBlVMTiOutjINyF2YxIgkyfxDB5lfiYvleHR
- f8ui92mF12LzOFxs4rKwSDnT/AZ0DfZS8UocWPFI7IvdAD5BuxK1QKnw8jYzKyOXNVcT2EgYsSP
- TY3fr8+PywCMDi1V73HoShuocmZzX1OlXqmD56m/ZxCWJVM+k1kgaPBga9OhpFABcfY8uwhkFPw
- fRAgs8LE4WzYkZMyOwmR96DLYgAa3aU2J/c26NMZdN8zPuBJN/v/tVM0zUgxocOpu2YgRCJjxcV
- dGcgRBdoTFhSKwhugSIVPyJJd12RxH/y4rF8WZiFiCPDD3jBUrfrHdozlNW25B05HkZ3+Lss1wq
- obpCTgZC9AW5SgPpyCmJE7bE76qUQ2gGPDHhsfXwW1gTqetT2UCbO6aCos8blko81E0712Q9lit
- xxZmen0uqN1EsY0jBce1P3LjpQ59XtAH7XTMxxj4yiQmSIPgdaznmrqC0JZ6BGCVAZYToc+fGOK
- HoUTdBv2s1I78sIRdacdm0zi9XTwvbGuctb1VGgwI8u3WOYAjrEKVg9jrAOTI2lzjnvU6uj2V4A
- wLK2aSHNsnusNAQJjWy90qgCp/xPPk9c4vd/u6A2rfaITq7oIwwBlmJNWGhBnjdDh2fTIu7w0hC
- EFlucqqdtARVPkA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <596ed125-c995-4e2b-824c-b7929c852754@oracle.com>
+Received-SPF: None (SATLEXMB05.amd.com: Ankit.Soni@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|CY8PR12MB7659:EE_
+X-MS-Office365-Filtering-Correlation-Id: 309b193f-794e-4768-bbc0-08dd8415d82b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mejqhlQgFhLA+YhGFj+C+IH5jZsVmgLL9VAQ4sGai1JTJAerTW/X3q9pF2Y4?=
+ =?us-ascii?Q?KNm3rQV9Q2lRPp8mY7sO7RrKN08EyT+6C1/2DlPaVklKx2VCD3HMMiTy6yPz?=
+ =?us-ascii?Q?sAVoTQjlKyleXcDjn5ff4cQ+HVJkg1n+v+DOhRtDR0vhxj/P6znvQl5M+azs?=
+ =?us-ascii?Q?Uy2uVw8D9cV4HZ9Xr3dMgMqs6nSYOvT1HNq9qaNhyobG9qoyuYF2s1FBKqWM?=
+ =?us-ascii?Q?/2nAJFiykmS762FTvIjSjl5Td3rJNKDPZcboktzzw/7QvaBpShaBjX1cDYOI?=
+ =?us-ascii?Q?AkMsioAPefKPeWVV4UqPOLPVzlHYUtL8ZzJU2DfJh8tpnC7gBoEy7b4RPqe7?=
+ =?us-ascii?Q?FHQlb7NratvAp+J/v1qT1BKSZCxxNm+iZindmOFkuUeOMSedNQWoHcQF6EzJ?=
+ =?us-ascii?Q?5IzhCUC3rn2/6y7Mfm7gVKmIvMFOHqBCVUJZha82pBDaMGkw52lcD4Rz8vad?=
+ =?us-ascii?Q?gvvHF2tW2K6BDT1AAIEO8IA3cdfujYV13ZfF5KQDDkGuEAtEJ6KPMH+gaAGV?=
+ =?us-ascii?Q?f3D+ZOLPdawE99w6MdfgbZBRfAgNkn4MdRWAFFYUgECASZRMS1dNDpclU8EZ?=
+ =?us-ascii?Q?K/A0v3IS8ptAe21H23tNmv9NuXfeGCPcMZ/e2dCRpSJnFKU9U3xw2K11FDmn?=
+ =?us-ascii?Q?X5R4mbbur9tjNZAw4cdpMFQoyHSiFUZKKwvFIgiJ8oAASg3KYxchhrJIMRDH?=
+ =?us-ascii?Q?h1HVPQ78SpHerusQlJYQ5+Y6+/4CSgioJgjlMVBYvFSlDBsjzHkJOyEw2Yqd?=
+ =?us-ascii?Q?As4eM6PRv//07MDb7RJP7lgTr33T3oY6BS/mKGRnhCzOWj71UobIBfXMHdD5?=
+ =?us-ascii?Q?Oo//mafRiSgHH+Ulv6r1Scc9gOsE2kKSAqt6/M8PO21WqoLU5ekHCRWsgLKs?=
+ =?us-ascii?Q?J2xZuWRbYCsiTs0Vwd/rA8snOaBYoPYLd1DCQe+tjtVrTfIO8TpmpC3KODS6?=
+ =?us-ascii?Q?aAa23P9iNLuV6pcAKIunH9qeq4a+O9GFyrcULU0ANbeepDD1NH+6hZYE3my0?=
+ =?us-ascii?Q?PYJX58jCydItpK88GDzTTQeMAlGTVf8DLhcrGgJBybwqn4XdTeHkOZKqhrOS?=
+ =?us-ascii?Q?VAnB2xp6iBTBjUBpvQw091pUyvCLowytwASZC/Zj/RtUyJJGn4j1AHyMVrgG?=
+ =?us-ascii?Q?5SJYsWq2CqoRzklR69cbSiQ+IpwoeVvYLbQyFNqErZzz+0HxX89CKBbFoFy/?=
+ =?us-ascii?Q?bY5JkRSSbOdlEhN9PEFmbpNJ1NW2m98l6Uh7AgGn1OyxygGThH/ZXL+Mvoj9?=
+ =?us-ascii?Q?t9XnltCUeZz5joIjGThDwLTESMHpl7pCfQO3/LHesQCOhqQDIfX4UHFtqsrM?=
+ =?us-ascii?Q?AkJhbcH2tB9Dhx4obDWlk6MxTZjamKOY3lSC3YSnoBAplJU4huqu4wyu971o?=
+ =?us-ascii?Q?/9mrS0KG6JKQj2AGVDySKA3HTVRq7NXd0srm+0FUivtvwrkFDpKL0SLbLLpd?=
+ =?us-ascii?Q?ii603KlhzoBAMLnKfq0HYJJyDIBbfWqIwNFRstZBtJVV5n4jjbTMtW3gtuDN?=
+ =?us-ascii?Q?Mq2vhm6dMfck/xeuOdOAP4YP+oZhvuGEBbIC?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 16:25:51.1621
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 309b193f-794e-4768-bbc0-08dd8415d82b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002529E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7659
 
-Some additional register writes are required when hotplugging CPUs
-on gs101, without these the system hangs when hotplugging.
+Hi Joao,
+Thank you for review this patch.
 
-Specifically a CPU_INFORM register needs to be programmed with
-a hint value which is used by the EL3 firmware (el3mon) and the
-pmu-intr-gen registers need to be programmed.
+On Thu, Apr 24, 2025 at 01:19:43PM +0100, Joao Martins wrote:
+> >  {
+> > +	if (amd_iommu_hatdis)
+> > +		return false;
+> > +
+> >  	return iommu && (iommu->features & FEATURE_HDSUP);
+> >  }
+> >  
+> 
+> It's strange we seem to somehow have host translation disabled, while it
+> advertises other translation-related features like the normal case.
 
-With this patch applied, and corresponding DT update CPU hotplug
-now works as expected. e.g.
+If HATDis bit is enabled driver will ignore host(v1) page table related field,
+this includes nested page table.
 
-echo 0 > /sys/devices/system/cpu/cpu6/online
-echo 1 > /sys/devices/system/cpu/cpu6/online
+> 
+> In any case we should probably follow Intel's example (which does similar thing
+> to HATSDis) where we only call invoke IOMMU groups
+> iommu_device_register()/iommu_device_sysfs_add() with DMA translation enabled?
+> That should simplify most of the patch as those codepaths are not reachable via
+> kernel/userspace? Unless I am missing something ofc
+> 
+> See also commit c40aaaac10 ("iommu/vt-d: Gracefully handle DMAR units with no
+> supported address widths"). I am not sure what else is the closest example here
+> besides intel-iommu equivalent.
 
-Note: to maintain compatibility with older DTs that didn't specify
-pmu-intr-gen phandle only a warning is issued if the syscon can't
-be obtained.
+With intel patch you mentioned above, it seems that it is mostly handling 
+"second stage translation support" disable, which will eventually disable dma 
+translation. And in AMD case, HATDis bit indicates host(v1) translation is not
+available, then attempt to use guest(v2) translation, and if both page
+table modes are not available then disable dma tranlation.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-
-Changes since v1:
-* Use BIT macro (Kryzstof)
-* Use gs101_ prefix for cpuhp functions (Kryzstof)
-* Model pmuintrgen SFR region as it's own syscon (Kryzstof)
-* Use regmap_update_bits() API (Kryzstof)
-* Program hint on current processor number (Peter)
----
- drivers/soc/samsung/exynos-pmu.c            | 80 ++++++++++++++++++++++++++++-
- drivers/soc/samsung/exynos-pmu.h            |  1 +
- include/linux/soc/samsung/exynos-regs-pmu.h | 11 ++++
- 3 files changed, 91 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index c40313886a012304b3f345d5d7369f15713eb857..41955ec2ccdb955b2d0b969651fad1a344628f1b 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/array_size.h>
- #include <linux/arm-smccc.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/mfd/core.h>
-@@ -33,6 +34,7 @@ struct exynos_pmu_context {
- 	struct device *dev;
- 	const struct exynos_pmu_data *pmu_data;
- 	struct regmap *pmureg;
-+	struct regmap *pmuintrgen;
- };
- 
- void __iomem *pmu_base_addr;
-@@ -222,7 +224,8 @@ static const struct regmap_config regmap_smccfg = {
- };
- 
- static const struct exynos_pmu_data gs101_pmu_data = {
--	.pmu_secure = true
-+	.pmu_secure = true,
-+	.pmu_cpuhp = true,
- };
- 
- /*
-@@ -326,6 +329,60 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
-+/*
-+ * CPU_INFORM register hint values which are used by
-+ * EL3 firmware (el3mon).
-+ */
-+#define CPU_INFORM_CLEAR	0
-+#define CPU_INFORM_C2		1
-+
-+static int gs101_cpuhp_pmu_online(unsigned int cpu)
-+{
-+
-+	unsigned int cpuhint = smp_processor_id();
-+	u32 reg, mask;
-+
-+	/* clear cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
-+		     CPU_INFORM_CLEAR);
-+
-+	mask = BIT(cpu);
-+
-+	regmap_update_bits(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_ENABLE,
-+			   mask, (0 << cpu));
-+
-+	regmap_read(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_UPEND, &reg);
-+
-+	regmap_write(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_CLEAR,
-+		     reg & mask);
-+
-+	return 0;
-+}
-+
-+static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-+{
-+	u32 reg, mask;
-+	unsigned int cpuhint = smp_processor_id();
-+
-+	/* set cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
-+		     CPU_INFORM_C2);
-+
-+	mask = BIT(cpu);
-+	regmap_update_bits(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_ENABLE,
-+			   mask, BIT(cpu));
-+
-+	regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
-+	regmap_write(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_CLEAR,
-+		     reg & mask);
-+
-+	mask = (BIT(cpu+8));
-+	regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
-+	regmap_write(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_CLEAR,
-+		     reg & mask);
-+	return 0;
-+}
-+
- static int exynos_pmu_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -378,6 +435,27 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 	pmu_context->pmureg = regmap;
- 	pmu_context->dev = dev;
- 
-+	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_cpuhp) {
-+
-+		pmu_context->pmuintrgen = syscon_regmap_lookup_by_phandle(dev->of_node,
-+							"google,pmu-intr-gen-syscon");
-+		if (IS_ERR(pmu_context->pmuintrgen)) {
-+			/*
-+			 * To maintain support for older DTs that didn't specify syscon phandle
-+			 * just issue a warning rather than fail to probe.
-+			 */
-+			dev_warn(&pdev->dev, "pmu-intr-gen syscon unavailable\n");
-+		} else {
-+			cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,
-+					"soc/exynos-pmu:prepare",
-+					gs101_cpuhp_pmu_online, NULL);
-+
-+			cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+					"soc/exynos-pmu:online",
-+					NULL, gs101_cpuhp_pmu_offline);
-+		}
-+	}
-+
- 	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
- 		pmu_context->pmu_data->pmu_init();
- 
-diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-index 0a49a2c9a08ef5bc75670551bdbf6d0a2d3e8ae9..0938bb4fe15f439e2d8bddeec51b6077e79a7e84 100644
---- a/drivers/soc/samsung/exynos-pmu.h
-+++ b/drivers/soc/samsung/exynos-pmu.h
-@@ -22,6 +22,7 @@ struct exynos_pmu_data {
- 	const struct exynos_pmu_conf *pmu_config;
- 	const struct exynos_pmu_conf *pmu_config_extra;
- 	bool pmu_secure;
-+	bool pmu_cpuhp;
- 
- 	void (*pmu_init)(void);
- 	void (*powerdown_conf)(enum sys_powerdown);
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index cde299a85384a70d04dae49ee9a4e2daa88fbbf6..c82b40035e9fa8fe6a673b829a75a50a707afb1b 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -660,9 +660,20 @@
- #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
- 
- /* For Tensor GS101 */
-+/* PMU ALIVE */
- #define GS101_SYSIP_DAT0					(0x810)
-+#define GS101_CPU0_INFORM					(0x860)
-+#define GS101_CPU_INFORM(cpu)	\
-+			(GS101_CPU0_INFORM + (cpu*4))
- #define GS101_SYSTEM_CONFIGURATION				(0x3A00)
- #define GS101_PHY_CTRL_USB20					(0x3EB0)
- #define GS101_PHY_CTRL_USBDP					(0x3EB4)
- 
-+/* PMU INTR GEN */
-+#define GS101_GRP1_INTR_BID_UPEND				(0x0108)
-+#define GS101_GRP1_INTR_BID_CLEAR				(0x010c)
-+#define GS101_GRP2_INTR_BID_ENABLE				(0x0200)
-+#define GS101_GRP2_INTR_BID_UPEND				(0x0208)
-+#define GS101_GRP2_INTR_BID_CLEAR				(0x020c)
-+
- #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
-
--- 
-2.49.0.850.g28803427d3-goog
-
+Thanks,
+-Ankit
 
