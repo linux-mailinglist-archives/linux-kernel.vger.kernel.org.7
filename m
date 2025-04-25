@@ -1,171 +1,82 @@
-Return-Path: <linux-kernel+bounces-620961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D61A9D1EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE60A9D1F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBD944E4E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 693414E502D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5812749E4;
-	Fri, 25 Apr 2025 19:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9A428CF71;
+	Fri, 25 Apr 2025 19:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="GNIWyK0p"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtlD/6Ju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5220D27466C;
-	Fri, 25 Apr 2025 19:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745609755; cv=pass; b=HJd9x6lnnuulHt2UtPcWtWNK8PKTLoUPJrkG983faL2OyVydmkAh/r8oGPVhUo7R4e9IftJ+L6Wmf2U6WaL30mNwdyyS55U9pFFCyXnGKDzIX5Kq133zsWgt/sHTfs5pG5GXg86KbMw/TuMyyWPkW6vY9uACu7cNM4d4mJCZ/Gk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745609755; c=relaxed/simple;
-	bh=0oWjjHvoxMkDi7kpSS8zJFnVCPK+eZR3CMCb5GA5rpQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ysj3i5iArIkesa4rjLL2S3ee0GN9LJPwa60/kp3a/3KQe/U5nObHJxteY2vVRjzzBsk0q44dsaPKTRyvqu/VXhzuU7EZACR+Hc8XiMOkddiHQBmGX/8+bT+9ImLjK0JWEy66YOGS+2t9v8qf/XxiZBwUs1KxU2WfHahTnQ8b6U0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=GNIWyK0p; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745609732; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=McvM/5S/gudmAvogvJYT0yoqtZLnRN40s9bXXHlvL67PHEcnw7xpKBAPDCcRJlAUNWhiV5AILJ9nD4IRaTJzcvG4BJjbQjdzmyuLTDMFsomkjUZE81TF7KpdVVNnXisI5PngPQmGgf0FXE/w+ra2zt0rYyNHZSH1yt6CjDVGX6w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745609732; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=G6WkyjIM6JJr1zT7YnCAra6NvTRkyDobXnkB7/hgoLI=; 
-	b=fz9a52cGJvDD35pNj1DEF6CoWdZyZ0UxT67U/klgz6oyV9cw2BSKZyVjJ1HbXboKyDuVFSfSDSCwls29ULeecb23gtfP8Fhc72L3MmlKbSZF3MSs9YAObQHLgl4QToCzcZgm9uhW+88RDNqNxozq6BHodRftEVLVwxyDpqNZ1jU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745609732;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=G6WkyjIM6JJr1zT7YnCAra6NvTRkyDobXnkB7/hgoLI=;
-	b=GNIWyK0pHy0ghHmQQrpGnPIUBz6duDhzalEWJ75VwQFzs/zd7K5/5e0wJjPYd+in
-	Gs8el+NHGVSKNnIwv4g96BT1HHE8TKp1RWVlysIhEUckcLV/RA3Lh/mTJGBapQZNhiW
-	T+G3pt9ir6TumFuvTiXscaVRSkl/FWed1P/vcGn0=
-Received: by mx.zohomail.com with SMTPS id 1745609730234755.6078636363667;
-	Fri, 25 Apr 2025 12:35:30 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Fri, 25 Apr 2025 21:34:41 +0200
-Subject: [PATCH v5 7/7] arm64: dts: rockchip: Add thermal trim OTP and
- tsadc nodes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F05D224882;
+	Fri, 25 Apr 2025 19:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745609764; cv=none; b=cOTRFQapJ8r7bBbQmJPHFEAEAJzNlMhoDYPCGIMrGcWTld1AC90yttYSTiHKwUT/2g7X6EZKhDZkvRnezd4HlVPepy9PCWQqWwjqUPbt7iDrBdYGkv99+tBtsIe2KxUPISPojAB+NRbpUAsnhnyV7PcU3ZNKUhcUBIV6X7Lvy5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745609764; c=relaxed/simple;
+	bh=GMKQHRQsZMaW/x2X5GFzFoiYvbdCI9YX8hUQDYTxlO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j8NsgppRJq023kLkvIJlzT3zNf5iGg5NiC7H175Jiu81sHBhRS+SrIzm0Zq7dugDBlyBRk4a6OWVYZGcurkyuciIFy4VdLyhQLAPeFVJNzEy6WRD7q/ObggWJlwmGYLbTUoLHpOFCyJlNcSD5vw4s8GSGKmVC30uDbd6k4rIw+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtlD/6Ju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C59AC4CEE4;
+	Fri, 25 Apr 2025 19:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745609763;
+	bh=GMKQHRQsZMaW/x2X5GFzFoiYvbdCI9YX8hUQDYTxlO4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GtlD/6Ju5P6YQPrb+MTpihTNuhnbgXni2oofRGIHrFloLKLC/8/OVz5hY6giij2/W
+	 E8BWpwFHg+ZvzhO+lOqgCXBOqfx/3iqo6dE78CeZTzcpm7jybv7XFSRkYnUa6lPS2G
+	 7Y3Q2Y2SFF1uUURsiDK5DV5dTAyW/3xr9G8uJd0tyYAjGaDP1qCkao5lLi8ZVWKJxV
+	 8nKneNzLxvyszz0GSZtbPwNnlaSUbI1VfJDsnnMopaah7jchedKDwpjBmzh+R6KWU3
+	 sFzz59K6/cAkRN0a7vjonwaUtACF3B3Impe0wAlIVrbvVs8+cmPWv63vAm8RGYpnN7
+	 Tme7TAv3wBeHA==
+Date: Fri, 25 Apr 2025 14:36:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Tero Kristo <kristo@kernel.org>, Nishanth Menon <nm@ti.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: ti,j721e-system-controller: Add
+ compatible string for AM654
+Message-ID: <174560975726.2869977.1530781618642734702.robh@kernel.org>
+References: <20250421214620.3770172-1-afd@ti.com>
+ <20250421214620.3770172-2-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-rk3576-tsadc-upstream-v5-7-0c840b99c30e@collabora.com>
-References: <20250425-rk3576-tsadc-upstream-v5-0-0c840b99c30e@collabora.com>
-In-Reply-To: <20250425-rk3576-tsadc-upstream-v5-0-0c840b99c30e@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Jonas Karlman <jonas@kwiboo.se>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
- kernel@collabora.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421214620.3770172-2-afd@ti.com>
 
-Thanks to Heiko's work getting OTP working on the RK3576, we can specify
-the thermal sensor trim values which are stored there now, and with my
-driver addition to rockchip_thermal, we can make use of these.
 
-Add them to the devicetree for the SoC.
+On Mon, 21 Apr 2025 16:46:18 -0500, Andrew Davis wrote:
+> Add the child nodes that can be found under this node. Then as done for
+> other similar devices (J7200 and J721s2) add support for the AM654 system
+> controller to this binding.
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  .../bindings/soc/ti/ti,j721e-system-controller.yaml | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 57 ++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 1c07ad78c9230f1e46b0ef8817834f58b19eb86b..b95546163e1c54296edd3346469eed733b1670da 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1708,6 +1708,30 @@ gpu_leakage: gpu-leakage@21 {
- 			log_leakage: log-leakage@22 {
- 				reg = <0x22 0x1>;
- 			};
-+			bigcore_tsadc_trim: bigcore-tsadc-trim@24 {
-+				reg = <0x24 0x2>;
-+				bits = <0 10>;
-+			};
-+			litcore_tsadc_trim: litcore-tsadc-trim@26 {
-+				reg = <0x26 0x2>;
-+				bits = <0 10>;
-+			};
-+			ddr_tsadc_trim: ddr-tsadc-trim@28 {
-+				reg = <0x28 0x2>;
-+				bits = <0 10>;
-+			};
-+			npu_tsadc_trim: npu-tsadc-trim@2a {
-+				reg = <0x2a 0x2>;
-+				bits = <0 10>;
-+			};
-+			gpu_tsadc_trim: gpu-tsadc-trim@2c {
-+				reg = <0x2c 0x2>;
-+				bits = <0 10>;
-+			};
-+			soc_tsadc_trim: soc-tsadc-trim@64 {
-+				reg = <0x64 0x2>;
-+				bits = <0 10>;
-+			};
- 		};
- 
- 		gic: interrupt-controller@2a701000 {
-@@ -2119,6 +2143,39 @@ tsadc: tsadc@2ae70000 {
- 			rockchip,hw-tshut-temp = <120000>;
- 			rockchip,hw-tshut-mode = <0>; /* tshut mode 0:CRU 1:GPIO */
- 			rockchip,hw-tshut-polarity = <0>; /* tshut polarity 0:LOW 1:HIGH */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			sensor@0 {
-+				reg = <0>;
-+				nvmem-cells = <&soc_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
-+			sensor@1 {
-+				reg = <1>;
-+				nvmem-cells = <&bigcore_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
-+			sensor@2 {
-+				reg = <2>;
-+				nvmem-cells = <&litcore_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
-+			sensor@3 {
-+				reg = <3>;
-+				nvmem-cells = <&ddr_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
-+			sensor@4 {
-+				reg = <4>;
-+				nvmem-cells = <&npu_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
-+			sensor@5 {
-+				reg = <5>;
-+				nvmem-cells = <&gpu_tsadc_trim>;
-+				nvmem-cell-names = "trim";
-+			};
- 		};
- 
- 		i2c9: i2c@2ae80000 {
-
--- 
-2.49.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
