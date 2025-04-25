@@ -1,249 +1,203 @@
-Return-Path: <linux-kernel+bounces-620679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EC5A9CE13
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:26:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A380EA9CE04
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 094274C556B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6DE61C00028
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016161C1F12;
-	Fri, 25 Apr 2025 16:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB8619CD0B;
+	Fri, 25 Apr 2025 16:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cum1bl+c";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RiIRg0nb"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H0y6lbGq"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83C21A9B24
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598324; cv=fail; b=MnYhSTw2nHN9+1rmex1RFPSCpW2fvb6x/zUzsLzVJpFjxqWQiHE2g8vWPu+7bnXjSCRdvtVSfZ4YlYT8/sPFMTEtFt5yY9Q76yDqHc5inzFsvs2+dl614508H6J/PVvKQtyADtM3I9/5SI8AYIc0zQCfsKyyM4YJfwUFOkqnKuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598324; c=relaxed/simple;
-	bh=A61eUp3NfkXvICCBGi1bcKZmIExJtuY32lqIrx0UhYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jUQAI3MqqSo0Ql5e6akEuupX7psCoJP4SyePg3FlL6ebHZc8dST3AypGOjkyOBEOGQZI1QchKwjdWBRQdcF8S/5omczEE5BcsYTBIvbX4Os13mFTuethJZS2SX79qDDfwbCUomm8UQ9Jfq/VMenwpnOmUn7S41P2BTV1kSwKbGg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cum1bl+c; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RiIRg0nb; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PFqWxt008527;
-	Fri, 25 Apr 2025 16:25:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=uxRHiIs+YF7tZFoM
-	+cU3WyH/zE62tUR1fg549qrDwJg=; b=cum1bl+cU7enwDtk+c+oKkitox78PXmr
-	wOOCV0q1UVc3l2uHpGLECt38U7YazRVmCza7tlTdX2k3H3Va/OO/lM53unv2sEHY
-	kbTB3gl/lL/AnaeTyV+C4l6TAsWWB/RRqUxrv0DcR5lTG9eJ5M9PahVYWViRLCIw
-	kdQHm50JxmtTQT7l02riQyP6PY/vKPIxlG/lUkKYMhTb6rpTKeIdKFuQuLB+mo3l
-	f73L7f5e6ZL1hZieLPYGMiQS1lBY+ghaVxMNg3KjpoEk298ZiaDthHEINy8eRfyT
-	tyqDpFi9BD7kmxJX5eBqq+0ffo9122BnEbuzBKRpsPNW3vBAF+zPng==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 468d45r6vx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 16:25:10 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53PFgreV013905;
-	Fri, 25 Apr 2025 16:25:09 GMT
-Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazlp17012013.outbound.protection.outlook.com [40.93.14.13])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 466jxrunkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 16:25:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nBa6frqOwKNl+wKCLllV9I9TayaxxzhC3xdt5tItAUT3pOD96EqOX8DFwFGF8xSiarC8s9giTC08ls2IDvPJDgtC8g1ONY8qfi0EqR8RTXXhICVRjUvvdt4PdX5CNN8n7okK80HPFMICHJY1vhbnDTURR2/GhH0Dx1BeFH5Q+eIOA+uJb9ernl7RIdN06/pNceJqH9wVfYW6ysHOig8ZZjWqyyYXVitM7dW1OkIxGKTsFLsRDge99q4qLXTLrrxBT2zSqsJL1gw/e8Sw454g519kO3FHXjVcda+v3rPfWtiDWNCDWam4yHiKJ9HpaNdVUXQiQipi/liqw9s6xCcWPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uxRHiIs+YF7tZFoM+cU3WyH/zE62tUR1fg549qrDwJg=;
- b=RWCS2VdQOnJVLA8sQqdA+Dm/59mVXO6GAH4SJ3HrxBqXJu+NPcQwhfAcU2xoILPpgos8qfJ1L8wwyfcpaDRnQ6cguuaCFjs52nf/3UCKHrAOndC1baKSfwG/caEZGoAUBizxpJ57cq3qK2plVtjG484TZloB7r6Xo+eQHOJY2jg/6a9jAKM/uaYg7Oy4OHuiJxz57aHm6DRpYgK3aC2mCzEa+l5Dr7dtYo8g1i12OxUqFL2RqKFptw0OkVIjoEl0HpsNhIXR+Er9feZloeNt75Q5kCJH+Y66J+tg3HFxVsmuinK28dgJqNjCf0xyU5V4RbiS208prPohouaCpEYL/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE615B543
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745598316; cv=none; b=mJ9GPUUobrOn/iASNaFhY+PuUYSuWY7+EVpZ8OcWf38x2lgUVXovS8PNLV8PsF+XWhaMeVOk6pccANMXrMaTLBXQBWiOGfWUHEb/WkSS+gAOicCafqtxEEDKtbkJCHGgTWx1W7Ako++EtqXb0aX32bGfyi0W+gSoutrOOmi6TnA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745598316; c=relaxed/simple;
+	bh=diTZhcocMiW1tt8bMkaTcLnUmNjS+inVml49QG49OLw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FmdeTqSWUkkRO0VHTCClZJDIihI7aoj4/CZ+D340XNyvf6ItoU6CidnVR5bwjJ2bKeEqUiUsFcQ6fqt+yZ/+wUyoNzJzkvXivJS6Ua6iZuc72+2a87VAIMvn6qXyUi9kvQidbUCuMaFApt/UmaPaQ7mQxaVa89zzHiMIthkjOBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H0y6lbGq; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso11574545e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uxRHiIs+YF7tZFoM+cU3WyH/zE62tUR1fg549qrDwJg=;
- b=RiIRg0nb0JBLl9Kpa9sUQNSNvitxz5m5CP3zCokJ4YWzmVKsgvb5wPdeN1bJNIfjvVndwKRwWW40PNOJWjXwfOzHiRcqCC/6cbGlBClAMzAHExZ+VNkfJzysLAFDV1QQd86pJIlopXhmQ9t65D0AzCh/9fEpBVA8sSbjnmgopkI=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by LV3PR10MB8105.namprd10.prod.outlook.com (2603:10b6:408:28d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.26; Fri, 25 Apr
- 2025 16:24:42 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 16:24:42 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tools/testing/selftests: fix guard region test tmpfs assumption
-Date: Fri, 25 Apr 2025 17:24:36 +0100
-Message-ID: <20250425162436.564002-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0088.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:190::21) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=linaro.org; s=google; t=1745598313; x=1746203113; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y1yIb9vlAx6eXZrDbtARLEZKJOAQuRNFkzrMMy/6d4o=;
+        b=H0y6lbGqK0PoTX2/GXFhYhjAXUDGlKxv00vOGKItK0gzxTnnasFfL1m+SbZxuCvyjy
+         Gf/CdChmQH84dxsp5BbG7mgqant6qUZi4rebxx9KaBmDZ1sg7733IncUgotL74JjElZ6
+         MJ8E+8wcN3dKBEdHpiwk19BXZt1dRwfLbUSv1cYu+1I66tbuZlIrAzskM4XOdTdgfFkL
+         nBIG4qBzn/rWA2uf8f9nU3Okl/3vkQi3tpD4w1gckswJXS08N3qXOGJTV/uFLuym0mFA
+         VHJr2OPTHvO8/ScuxtiodKXHbLxMdBi8L8gUpqnPuXejUuWSvKELUe0I0uqKpoa0637w
+         q0Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745598313; x=1746203113;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y1yIb9vlAx6eXZrDbtARLEZKJOAQuRNFkzrMMy/6d4o=;
+        b=gQ6wY0oyfKB0sezUWK3Fscao5u1i+KUlixlG3dulWxFw/pPST9Rp4/sQu32VW90w/j
+         VCeK+Cshf0CCDpwznR4IZvjd38RtFvtsNzwIC4tLyUtssD7t5N2UXWPNjbFlB6xr0ftz
+         b59Y9Kh1xeMfTTk59dIJ6nFmdzFZ+f01Jk3aVw3tw4Y6jk/nmoVkLXZs9GGbCXC75XNY
+         j0pgVNxkxqJA1i8oh7+WJXlUcue6EjM5SzC/rF1NJpNv+01snpCxDDa0QWh/fMYTNct8
+         /iySVhd9gIi8pVB9PzVT0G0UOTA6u39jbZpk4/KPuY9Za9tHNoXpw3LUmgjTXk+w/mhF
+         kS2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgdThddvm20TOPd3u9yRvxLfv6S8PU8nPhllBQtWZZtQokjhYDi+uSLqBS1Udy5wnymhHxqrbu2CSH8t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1qLiwgwg3pD2jGpE3JmenRFQR4QkmeIxc2z+yV4CTkcfuDasO
+	RVZv7oeHm5AF0qkCpUAQJ/WUvn7AxjUbbgIsUbRiEjkjrWruUV+sFt1CgqneZIo=
+X-Gm-Gg: ASbGncs+WHERYLpB7iUzJ3AhmCqT5lV7MZfhKn+Q2Rr71x36/hPLVZcGK3Vbty+cGHy
+	cGdQEtayb4vXyG3dxHxnqzvfqxtuserz1jqmPn7eUoUIbBxkeiEhJb9kDA4tzl4GJSiQwq+mv0Z
+	QyvEy4V+e6L+y7Jzxp020OrK9ROUBBgNgp8mTum9r9hTovyituNfw/JPZ3c7HKRgHQlL4VNjR3e
+	oi2HIWGhxgGkIQsRn5CG3bCebQ8sn/yHpxdlpRhFBapX+A6ELIRR0OCNSHnuL/ITMUgu5MSVUfi
+	sfRhUbcniicSWrJ5KuAyZNeW8orVZyse20JdF4nXL/KfDwiJCzY/hOFS2gbPOhaS6dVI3v08
+X-Google-Smtp-Source: AGHT+IFGbF/3oKoTkhJNSQEnm844Jh4uGGPVOVNnWUuScpNORw4BsrTufYm+XeqAIsbp86SS7E0SGQ==
+X-Received: by 2002:a05:600c:1e29:b0:440:6a1a:d8a0 with SMTP id 5b1f17b1804b1-440ab7827f3mr293955e9.7.1745598312604;
+        Fri, 25 Apr 2025 09:25:12 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.111])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d8976sm61263715e9.27.2025.04.25.09.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 09:25:12 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/5] Fix gs101 CPU hotplug support
+Date: Fri, 25 Apr 2025 17:25:04 +0100
+Message-Id: <20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-0-f1530de9da42@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV3PR10MB8105:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ce2a795-28a7-4e4c-adeb-08dd8415af1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xMS0yDgxcoPk5gWSK5d/dJCoUjqbd9bX3o49j28+nveRMgZf983ju6cb2kZS?=
- =?us-ascii?Q?2GAOjkIcNArPUnntIz72kARx3Bf5LYKNSV/bIpmuDM8BpP4sJD7Tk4bzszpp?=
- =?us-ascii?Q?V3+1YkaVK9bZKLBwhe2SpeDv5MWF+RlZ3XdXgwe2gmMYO4favkg/DA9Nueet?=
- =?us-ascii?Q?0yQBcnP604UbZQtWGNi+n0OoBySjDmKvb8IiUNbZUVDy0mry/7mqjH45TRSm?=
- =?us-ascii?Q?EBxpNMy2OB/ktgn2EMgOQZrR6TVkOkp4qz7enbvTk/gfPUDfyP5XQafDsmfo?=
- =?us-ascii?Q?bSuiSiAZ2ApIqgLyYuh8G3F6GmS3/+UbgG7Uqku6ceOzpUsqbP8gAsASL4VE?=
- =?us-ascii?Q?J8POEOFYzdAMouFPGDAdpksv8/xzjxmAhUvk18NvrRLOHiZKa0ScfC9aWpAW?=
- =?us-ascii?Q?74s/+fETRFQQlC1SnL6NrtmcSL8jXiUR+0zuTxOGU22YgitIdIq9CK2lLg7K?=
- =?us-ascii?Q?hU9jJkckujpk3fRWhKPWdVv70GXrhIAWnfwXatv8MjQrnD+m8OYY9Oh+1KOE?=
- =?us-ascii?Q?f0fpSmFxPZN2l3DmH/ISQsxo6z9u+7DMqQZ1vFuAFzwUFXQocDOJVd2IHHFa?=
- =?us-ascii?Q?untlcPnx8c4QK9U4SrmfKsXtLqOcscX9K4rKNUGUPg9Tl99WTo6S7HVJaKg2?=
- =?us-ascii?Q?CSErTpBGPfxdsL9nUi0TyZSarT0evbl2pjARYE3JsmwSVvt7oaVkuLAVjdMt?=
- =?us-ascii?Q?zRLJ9FazM4ARkAvje2jKXI19yZ82EykaPLcsR4XTU3AyTSA8EQdw/7o8wn1N?=
- =?us-ascii?Q?lc7y2RjVAUQXT1XkwWbLstl08y5GIPuBYeeZno9//WqSp31p8NhFRAkudH1K?=
- =?us-ascii?Q?2I0D0IB8UiaCnY496rXDBUzGNgl0auWGuzTa0KHVlk5urNzN9G42roy/l/LM?=
- =?us-ascii?Q?4NVTvS+Gqiy1gHL+ofdNmTc2UWHiUeUXmJJrYBI3wk9D1380YGOuaoUGMogI?=
- =?us-ascii?Q?o/MoQrN+9khmMiPNHPZeKSjkWl30InEODlhjhdG6atS8pMLlP7oy+9QXh3KR?=
- =?us-ascii?Q?BIQ0tjdBnFGCVQmmYr0+knYK4DCnHcm3x3s7jsvJgcz0tUNGmG/u+mITJMxf?=
- =?us-ascii?Q?mMOq2xjoJQFOhNXg9jTn3MT6FP+u+/GMaR3m8RzTcGnEMtbT7gSDNStFtS1H?=
- =?us-ascii?Q?fZzX6rR/xoZqjMJM1jjf3X6VU72bOA+3+4EWgXblx/gcvivkczjUFyDge/Ez?=
- =?us-ascii?Q?bKeAbixO2FwTRGhisYLQipAcSJxQX8HJjt8754z4nlSXjv4ekmB8MIpDUsKs?=
- =?us-ascii?Q?GKGTjN1klrwoPcrGAYKJXnFRoYhfmFwCAZZYeYn4zCtUctxw4aCSopj8Ofmz?=
- =?us-ascii?Q?AwQaTZrbG48GL9jcW7mR0vqkUIYVWvdEouTOidct2U/Xlk9CqDQWXMTS4gTs?=
- =?us-ascii?Q?CS9ozL26VWvRaVJ+K5exLmj9qh3a68JCCzdUtfTcfTlOyRSDP5a1ytH21DyV?=
- =?us-ascii?Q?NHpPP8CBVk4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?n15S0KVbGUuRWe0QF4MTwroqD/NBrZmim5cLCIas75/R2BpPdDLq/fp01IfY?=
- =?us-ascii?Q?rUexHuueKMafgNm0WBlbQzzCDmHZEmOECBV1beSOYyF8XREdMQ6afYUaQ2xC?=
- =?us-ascii?Q?kICpfs9a7P7EQUIuc28hch48t5P8+6chIZxJePDcxahRRcbXIJBTFBpEDRw0?=
- =?us-ascii?Q?ncjUj0H95nTDf+R+neYqbvOJ13AClIv1758vexSrCL+giFyBRNMD/j8RlGUr?=
- =?us-ascii?Q?UM6ZMl1Lw5IdnP3A5nmUFSE84vpMBnb85t9bhCAXf4j6iFlvs0eRdEQ0M08F?=
- =?us-ascii?Q?i8/Ije9d6zBpujYO0Eh3G523QFypfjLDTNCHE/0Yt9xHBIxE5SdbMYV3/Cbn?=
- =?us-ascii?Q?thvgoqnjDtItxrMTl4xsMnhJMIJak1fWGKaWFZc8/E1tEFIYpdi6W760RFLT?=
- =?us-ascii?Q?ZIeTUGzJam8yvsi9RIT7nwOf3i5g4BNggfy4f7zTYKBQVxak9SrENe4R5Pc4?=
- =?us-ascii?Q?0/uuoS7xn4NbjaCI7AmI7lOMwPEFBtu1zMuIA+V7sjwZcK3hfG/jC9OOX9Xx?=
- =?us-ascii?Q?PkLEEwTxszDB9wgyD/76Alq8Z/YeuwPg7NXAu3wEKi8AKAteohU3aEcghbqE?=
- =?us-ascii?Q?JdOaOeNgFw23n6TlohYUL4FrA/6BcRJT6DQdVQYjPuAt+PbHePCTJKhqkhgv?=
- =?us-ascii?Q?cPeU/eH/CEbnEiMYbO5m32YySqFPfOQbzQ3e3klplBg/TmaovsPe95VA3Fwq?=
- =?us-ascii?Q?ukIB4U8U94XQxl2vJwnBPU0f1CBk3Wd4MkR/5vACGAtKd4pr3UavsviuT5nU?=
- =?us-ascii?Q?WiSVsMf3wkkXDGxLxZGb2nCt7ONhb1mmJ1ivN82CHy6ZM4fL096We945/kWi?=
- =?us-ascii?Q?LhtK7oK1phIa672P10IWBEcUY7vnhjSvyxlEnUSdbSh6ugL7d2m/kupAS5Gh?=
- =?us-ascii?Q?RtZJBtZYF9sTPFyNgctcK+4ZMYnACjO1tFCpTKy4aM1u9+CQC8XvLWWXFs3Z?=
- =?us-ascii?Q?as0BQ/OdzB8FzXh+sA+NzliKZIq3NlKQvlnKkh82edezzMd8/nIibxIjjWNQ?=
- =?us-ascii?Q?S0JyEC9zu7eKK+Hd5g64XXVT5vt5LlEr04DuuxKakSkiPM4Mkx4dVcAx6+kD?=
- =?us-ascii?Q?3jU0mBhW+ta+mQzw+o/GQfI+Ny8n5hA+xD74mjbD+wJwhPWlJ2htZggvigaj?=
- =?us-ascii?Q?KE+PosniCVomFTffhBF3Ipqj2BidB9cPTQ7VePdqMhrBNRIEAn1V1fwuPvgu?=
- =?us-ascii?Q?46hebU2LT5oebgDIOCUBDdi8yMJkDo0GFEt1wzZ8hCD/Mw2oO66PcgxvFFIh?=
- =?us-ascii?Q?8X6nBjRWvhjWjv2HdLPyDxW1UP17fwEmiHU7CXNJunrl+EPRWW6KtyySj97z?=
- =?us-ascii?Q?+hRVMcH5kptFZu0ql2FEuFuN+cdBlFog0YrGQvd/OpRlBsUgtYQDamOWHW5S?=
- =?us-ascii?Q?uFspyTByZ74F6hH0KVZix33TIp3fbQNT2+/ug8LnWB5asP8g3ptk50yud3yn?=
- =?us-ascii?Q?BwErj/DLZCKn3S8Got4D2B+uNTTKWJKH8OSYf4vm8URomnhWVw+r37Cbi8ZC?=
- =?us-ascii?Q?7UZK0dU9rh3YkgvqKY98ioO6HJA6UC1885omGgVLG63FTbY6NDwYUR0/gkoK?=
- =?us-ascii?Q?ENb9AFYZyhhN2cZjvvHYeBBTHumMYm3Ctftb6RssB8xGGAVwJ9HepI3mHIMf?=
- =?us-ascii?Q?Xw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ysTL+S+l6tlTtEUMY3R5l4LdyKsNIMZY8I8gyzJ92t9kdzIqJLRcN7zPokMnPo/YGV3TNlE3MCfwJEKDnKW4MxG11mKA5TePzXfwd7xztOEDa/6vnbv9Ed4eSaTbEiMEY2YGFBNwHCzISaLwgz15OUkKNMRa2L9Cy9OkCjiVlMs/HHfXgpOdbl666sWMpyQIiFSb/n/TlFcF6qoH8UlS3ML5hLMifcXJ5pztODLaZhUA/xsrTxaxz7BvFUJxP9PQXM6YTNdDQMA8G1BbJG7SQfloeQo8RBJOEA35LpqRRqgRuVUzoECNfijwP8bhmvxgZr8l04QteJp4jIVPc3+kwbX5AjYPUXx2vRAXT0mnhlzWonbHc4TpQ1Pg17tYUXaftlc3UdA2PwEmm3lTyCmGmgDzhCsHn1HU/x876694wYRDR7DVwJi58zq1ojoa5E9mDEQPMolnFS1Q3dFv32fMTW88KcUBhVowP9ggL82wRz/NGsHkjW7qWo9gCTCalmM93R72jZMt4vf/QnmQ9gwCxTOX7WvgTNMNoieBAAHfoAXC3qQkQTX7RFj/WQMf3CllS0EvZ2HL7r9bubJsKHkTWjaxprZBo3YBBiFPzf0WW2Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ce2a795-28a7-4e4c-adeb-08dd8415af1f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 16:24:42.4501
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: boY8HBvD3BxiqTGNjqFBBytb8LCPnGPXtMTxjjzHGjS/HfpJDUlzwabubSAEY5q063BH1XcVFr9SiFtaO36OwKAh0EeL66nrwELRkcpUhhk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8105
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
- phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
- definitions=main-2504250116
-X-Proofpoint-GUID: lBtaw0zVbzOd7_8jX-B5sYJ4PujiED4z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDExNiBTYWx0ZWRfX6kUpYym3YbBR nDX++3Jcc3Ojna4dNLUMcsFS6YSSz6exhueHhXAbe9Q5rb2LZI+L/h/NmH7tC2H8NmQTNci+WIJ +ZLu3APbvwkl6Z5aJSiGf8ggxLBRlPpnYGZ6Xo/9eYK1s/55wvf7V0e9zmnCqCC97HbdMNFIidG
- V1HAEI4PgcZcmnH2P6jT5Zz3eLFF5wJ9fuqpG/FkhmWWGP4ffVPUy1B8qsoPGTTP7JojCDY4LUN ICoqgIaz50/lH55EH1FyG7XYbBmsOW6JUpceYy/IMxZRjz6kfqJBU0kbqbxzHdaPchvQ2GA9GpJ KsMuY1nhAdE/dfc1IiDTKLQpmeWJ60kn5H+ByZXgvEUcyoIE1SbpEnvxo5pMKb+ubux9WJNXxvy pFXeSym3
-X-Proofpoint-ORIG-GUID: lBtaw0zVbzOd7_8jX-B5sYJ4PujiED4z
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGC3C2gC/52NQQ6CMBBFr0K6dgxT0Aor72FY1FLKJNg2UyAaw
+ t2tHMHkb97/yfubSJbJJtEWm2C7UqLgM8hTIcyovbNAfWYhS1mjxApM8DPTE6IDExcYwxynxUF
+ aUrS+l6xfMNDbJlgRcFC6r019aUoU2RjZHlsWPrrMI6U58Oc4X/HX/veTU4JRslG34VoprO4Te
+ c3hHNiJbt/3L161k57nAAAA
+X-Change-ID: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3894;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=diTZhcocMiW1tt8bMkaTcLnUmNjS+inVml49QG49OLw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoC7dksEBKjkuUDUowN+BhMHpZceFtZmK9pBOBv
+ qjxR2YRyHGJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaAu3ZAAKCRDO6LjWAjRy
+ uk5gEACD1s+Y324au/PR1s0PTfS0YlTi0cPocZRyxuIYsWdK1y5Sf8I7yBMghwecoa2EfRebeKO
+ MS/bJ+BrSjSOEDcF+QTgBlBdxziWT5XTO3zsPrOzuIb5JkAxSB17bgkHE804iWGClr8cSCkkgyw
+ OiHbuLDTwtw3bLhmdLpTehe+AHQneMInLoQ1Cgh6MHRuTbOMSJC7aE0i5KyKVGeouQ17tSDGVPh
+ v6b+lXmMw3JWx1rgCTYeMR3qXhdEZGupa3oWCA8o+HdrGBSqD8JHXUR4hjJbbppoRO2CX27DXqZ
+ WjhDN3F4rFkAGK3XOoc6dMgLrxlKSPBPsp2i2yA42/i+i5nfCmt7YkLncu//PD2bG+n3I3HvM7U
+ BeAwEyZDg7jNSeaCLgyVsMTbLHQ5LwqlQ4y0AphuG9sNAgmqjsgRT64YgrOAEQqa3DrX6XYGPpk
+ 0n79FJolcZjM7asBGGS2zAL9rjncZDyJMsZC7DkOGQz/iYXUdSy+/QNSjLN5Rz9bPOBerkysdjf
+ YB25WkitwBya4wErXK1X58MyYZbH3ONbcYI0vuFFU3Eg4Qr38aNhcZ/voRs87D0Cf9kVYOLV12T
+ GddZJMSeMZnbFlkVmG3l9gq40fQroIEG50VAJxMq6BHDgdEB0TQLlljEFeZTZXvNmOrb66F4vAr
+ J+zJ+crBbQPI3BA==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-The current implementation of the guard region tests assume that /tmp is
-mounted as tmpfs, that is shmem.
+Hi folks,
 
-This isn't always the case, and at least one instance of a spurious test
-failure has been reported as a result.
+As part of an effort to make suspend to RAM functional upstream on
+Pixel 6 I noticed that CPU hotplug leads to a system hang.
 
-This assumption is unsafe, rushed and silly - and easily remedied by simply
-using memfd, so do so.
+After debugging and comparing with downstream drivers it became clear
+that some extra register writes are required to make CPU hotplug
+functional on these older devices which use a el3mon firmware.
 
-We also have to fixup the readonly_file test to explicitly only be
-applicable to file-backed cases.
+This series adds support for that programming the CPU_INFORM register
+hint required by the firmware and also adds support for the pmu-intr-gen
+register region which is now modelled as it's own syscon. With these
+changes CPU hotplug is now functional.
 
-Reported-by: Ryan Roberts <ryan.roberts@arm.com>
-Closes: https://lore.kernel.org/linux-mm/a2d2766b-0ab4-437b-951a-8595a7506fe9@arm.com/
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+It can be tested with commands such as
+
+echo 0 > /sys/devices/system/cpu/cpu6/online
+echo 1 > /sys/devices/system/cpu/cpu6/online
+[   15.880597][    T0] Detected PIPT I-cache on CPU6
+[   15.880638][    T0] GICv3: CPU6: found redistributor 600 region 0:0x0000000010500000
+[   15.880685][    T0] CPU6: Booted secondary processor 0x0000000600 [0x411fd440]
+
+This would (prior to this series) hang the system.
+
+As more of a stress test, I ran a script hotplugging CPUs 1 to 7 in a
+loop 200 times which also completed suucessfully. In addition using the
+recent fuel gauge series from Thomas we can also verify that the power
+reduces once the CPU's are offlined.
+
+Note 1: It is highly likely that similar changes are required for other
+Exynos based SoCs using el3mon. For anyone following along who is
+accustomed to looking at downstream Exynos based drivers this replaces
+register writes defined in
+
+drivers/soc/<google|samsung>/cal-if/<socname>/flexpmu_cal_cpu_<socname>.h
+
+Which are used by files in the cal-if folder and exynos-cpupm.c driver.
+
+For the moment I've used the GS101 CPU inform register offsets directly
+but these can be moved to driver data once we've established other SoCs
+benefit from this.
+
+Note 2: To ensure older DTs which don't specify google,pmu-intr-gen-syscon
+phandle still work. The driver only issues a warning if the syscon can't
+be obtained, and the behaviour remains the same as today (system boots, but
+CPU hotplug will not be functional).
+
+Note 3: I've added the bindings doc google,gs101-pmu-intr-gen.yaml in a new
+google folder as it seemed odd to have it in the soc/samsung directory, but
+it's likely this may be re-used by other Exynos SoCs that use APM/ACPM.
+
+kind regards,
+
+Peter
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- tools/testing/selftests/mm/guard-regions.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Changes in v2:
+* Use BIT macro (Kryzstof)
+* Use gs101_ prefix for cpuhp functions (Kryzstof)
+* Model pmu-intr-gen SFR region as it's own syscon (Kryzstof)
+* Use regmap_update_bits() API (Kryzstof)
+* Program hint on current processor (Peter)
+- Link to v1: https://lore.kernel.org/r/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org
 
-diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
-index c39dd26c47a3..0cd9d236649d 100644
---- a/tools/testing/selftests/mm/guard-regions.c
-+++ b/tools/testing/selftests/mm/guard-regions.c
-@@ -272,12 +272,16 @@ FIXTURE_SETUP(guard_regions)
- 	self->page_size = (unsigned long)sysconf(_SC_PAGESIZE);
- 	setup_sighandler();
- 
--	if (variant->backing == ANON_BACKED)
-+	switch (variant->backing) {
-+	case ANON_BACKED:
- 		return;
--
--	self->fd = open_file(
--		variant->backing == SHMEM_BACKED ? "/tmp/" : "",
--		self->path);
-+	case LOCAL_FILE_BACKED:
-+		self->fd = open_file("", self->path);
-+		break;
-+	case SHMEM_BACKED:
-+		self->fd = memfd_create(self->path, 0);
-+		break;
-+	}
- 
- 	/* We truncate file to at least 100 pages, tests can modify as needed. */
- 	ASSERT_EQ(ftruncate(self->fd, 100 * self->page_size), 0);
-@@ -1697,7 +1701,7 @@ TEST_F(guard_regions, readonly_file)
- 	char *ptr;
- 	int i;
- 
--	if (variant->backing == ANON_BACKED)
-+	if (variant->backing != LOCAL_FILE_BACKED)
- 		SKIP(return, "Read-only test specific to file-backed");
- 
- 	/* Map shared so we can populate with pattern, populate it, unmap. */
+---
+Peter Griffin (5):
+      dt-bindings: soc: google: Add gs101-pmu-intr-gen binding documentation
+      dt-bindings: soc: samsung: exynos-pmu: gs101: add google,pmu-intr-gen phandle
+      MAINTAINERS: Add google,gs101-pmu-intr-gen.yaml binding file
+      arm64: dts: exynos: gs101: add pmu-intr-gen syscon node
+      soc: samsung: exynos-pmu: enable CPU hotplug support for gs101
+
+ .../soc/google/google,gs101-pmu-intr-gen.yaml      | 35 ++++++++++
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 15 ++++
+ MAINTAINERS                                        |  1 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  6 ++
+ drivers/soc/samsung/exynos-pmu.c                   | 80 +++++++++++++++++++++-
+ drivers/soc/samsung/exynos-pmu.h                   |  1 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 11 +++
+ 7 files changed, 148 insertions(+), 1 deletion(-)
+---
+base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+change-id: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+
+Best regards,
 -- 
-2.49.0
+Peter Griffin <peter.griffin@linaro.org>
 
 
