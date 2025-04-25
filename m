@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-619392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC54A9BC2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA72BA9BC3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80C357AF3F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64779A0857
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A323774;
-	Fri, 25 Apr 2025 01:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DE145C18;
+	Fri, 25 Apr 2025 01:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocKvN4OL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bwKC9WDG"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66886323D;
-	Fri, 25 Apr 2025 01:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F18494;
+	Fri, 25 Apr 2025 01:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745543670; cv=none; b=GPU/JLdjvcQcZR923uQYLNGFTz7/K6PpXt9yPwzB6vloMjGWWFQjIOTdQZzSV3st/Ggheo2IaxJPwfVsyS0Hk7w/oGF0S5lKI2/+MqrVnf+gM33yKRZ73l/YESJjS9uxvQ097uddFpksBikCUio40UWr9wO7rgsmMS4pvq0lD6E=
+	t=1745543807; cv=none; b=DDo69dry3g0Yv/a8JP9bukBaSIFoicshrr+Sv3JgrO1LlTGkPxYmUEBbdFX5Zzm2n/Zq8ri1uhGwy5PgWc5+DQlth1gp4Im7acDhTs5nTO8fYL1YVbd5+pYch8OauidNEBILSwMFtc+nwiKDeZKkwUeQVE8xiXzzhR7buuAK9Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745543670; c=relaxed/simple;
-	bh=iA7ur5jr+Ij18pQxtEEBC4oOx9yaqy4XI8FUIfaR1+w=;
+	s=arc-20240116; t=1745543807; c=relaxed/simple;
+	bh=22cnopTo/mxALU1RwyL3KcFLtT6PURNTg9wJD5O4AvE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7LX+IU4AXV1Arw9ACYLuLaoUjXiWKRzRfh802MatmB1b63ekN5WOATTiF9rJZ28xY6YiFumN6iM7HbcOWox5RhO89tMRhLNjwJ18Gu76Nvj7vyajxAd9Eu3VNVpBFCiPtDhcE3THU4yIA56xihVv4Dcarm0dJdnicDPXESIuzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocKvN4OL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312ABC4CEE3;
-	Fri, 25 Apr 2025 01:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745543669;
-	bh=iA7ur5jr+Ij18pQxtEEBC4oOx9yaqy4XI8FUIfaR1+w=;
+	 In-Reply-To:Content-Type; b=tHQMDKOyKeJn8JDRQ8pAWdV4Ql7Jl0dDXmnJUQpg9MFZCMlcF0xs3usI8n36qNhNUicXUbOR4A+AIPot7Vdl/ftvqBdLYY3rI5yOPn13duPjVaUMfDd5iawECm4WJGKb5KE7/VT/BYOX9OqekviFJ0u8/KH6nU3awt02dFbljHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bwKC9WDG; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.3.244] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53P1FaK51878943
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 24 Apr 2025 18:15:37 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53P1FaK51878943
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745543740;
+	bh=Eqcm/Hif/MkDs4mjYz2tKFyoVP1HuqqqBruNWCY5tSI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ocKvN4OLqc83/LctCTGBz5x8TaqUdrosvtOn6I9GGhbYRIy1HS5fLjVkcIhO+6Uoy
-	 5cmZ6DK0yL9Bqx7YjsRM9cdDgWzWOadJf5AEumHtmO6RHrBmlAC+E0cfYnHrmk5IJ/
-	 IlT68jJNdB4LlCNFLx0mM/odJn0gLKFywryn9JXxYXyUtoUdHZaLwef2iZJvCYSTdr
-	 /3n5ZX/pkGdsKPKQ9wuyNaTQXJTJX6OOlswzMZ+FZwh0s9Z2ppWepY9CPgz+9NIFC5
-	 H2ryezmlZb5UDZvyZgy196/gO+E8JPYdBLMV+ADTB5SkHvoo/39DbVTe3nA0j+lX/i
-	 877C52zkJlxxA==
-Message-ID: <5f7a1675-1386-4ca5-8614-99b4847742ab@kernel.org>
-Date: Fri, 25 Apr 2025 10:14:28 +0900
+	b=bwKC9WDGeH6PKjPk6PbPnscfTUG7uO0p90T8jZtRz/H1uV5R0u0jHyKPLpz4Lzuza
+	 jaan86VUYCLDqr62mFWyqSXvvBjaf+ve6G5ZtKNwudj3pQxiq/p0DQHubDAWAL4iVK
+	 Num9qesxZzs6c+gaFJIpcjhHqgTrRqcXI4bwh1tGXr1pf3tvinHjceiUPk+LlVYVAf
+	 mYaL7M4P9z3kr6aQ69HDJ4GJ4kjHFXVFi/8OoAlHsRrCGt5QgNwZK3Agfp39Cx1S5g
+	 BERlMv7+KxMZFAhG9+QYjnrsyKHBCBRF3w4ALl9e3WkwPa1KT4qcT1tq3RLd9c/O5Z
+	 dx3hBdqeJAyRA==
+Message-ID: <483eb20c-7302-4733-a15f-21d140396919@zytor.com>
+Date: Thu, 24 Apr 2025 18:15:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,67 +55,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ata: libata: disable LPM for WDC WD20EFAX-68FB5N0 hard
- drives
-To: Mikko Juhani Korhonen <mjkorhon@gmail.com>
-Cc: Niklas Cassel <cassel@kernel.org>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CAAZ0mTfQ+feHUeRjC3aH9z=sM92XmXASY+3ELzwXJLfk30h_6A@mail.gmail.com>
- <62cfcebc-3280-448c-9fe6-ef6df0b3fcb0@kernel.org>
- <CAAZ0mTdUkG5yp+XkBGE9Wc2V8np6r-DyNJSCa7Yo0k2bNzuq9w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 21/34] x86/msr: Utilize the alternatives mechanism
+ to write MSR
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Xin Li
+ <xin@zytor.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-pm@vger.kernel.org, linux-edac@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, acme@kernel.org,
+        andrew.cooper3@citrix.com, peterz@infradead.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com
+References: <20250422082216.1954310-1-xin@zytor.com>
+ <20250422082216.1954310-22-xin@zytor.com>
+ <b2624e84-6fab-44a3-affc-ce0847cd3da4@suse.com>
+ <f7198308-e8f8-4cc5-b884-24bc5f408a2a@zytor.com>
+ <37c88ea3-dd24-4607-9ee1-0f19025aaef3@suse.com>
+ <bb8f6b85-4e7d-440a-a8c3-0e0da45864b8@zytor.com>
+ <0cdc6e9d-88eb-4ead-8d55-985474257d53@suse.com>
 Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <CAAZ0mTdUkG5yp+XkBGE9Wc2V8np6r-DyNJSCa7Yo0k2bNzuq9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <0cdc6e9d-88eb-4ead-8d55-985474257d53@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 4/25/25 05:43, Mikko Juhani Korhonen wrote:
-> Make WDC WD20EFAX-68FB5N0 hard drive work again
-> after regression in 6.9.0 when LPM was enabled,
-> so disable it for this model
+On 4/24/25 01:14, Jürgen Groß wrote:
+>>
+>> Actually, that is how we get this patch with the existing alternatives
+>> infrastructure.  And we took a step further to also remove the pv_ops
+>> MSR APIs...
 > 
-> Signed-off-by: Mikko Korhonen <mjkorhon@gmail.com>
-
-I still cannot apply this. I get the errors:
-
-error: corrupt patch at line 10
-error: could not build fake ancestor
-
-Your base-commit is Linus tag for Linux 6.14, which is not appropriate for new
-patches. Please rebase this on libata for-6.15-fixes branch or Linus latest tree.
-
-Also please properly format you commit message to use up to 72 characters per
-line. And terminate your sentence with a period please.
-
-> ---
-> drivers/ata/libata-core.c | 5 +++++
-> 1 file changed, 5 insertions(+)
+> And this is what I'm questioning. IMHO this approach is adding more
+> code by removing the pv_ops MSR_APIs just because "pv_ops is bad". And
+> I believe most refusal of pv_ops is based on no longer valid reasoning.
 > 
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index d956735e2a76..c429ba259548 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -4208,6 +4208,11 @@ static const struct ata_dev_quirks_entry
-> __ata_dev_quirks[] = {
->        { "WDC WD3000JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
->        { "WDC WD3200JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
-> 
-> +       /*
-> +        * This specific WD SATA-3 model has problems with LPM.
-> +        */
-> +       { "WDC WD20EFAX-68FB5N0",       NULL,   ATA_QUIRK_NOLPM },
-> +
->        /*
->         * This sata dom device goes on a walkabout when the ATA_LOG_DIRECTORY
->         * log page is accessed. Ensure we never ask for this log page with
-> 
-> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-> --
-> 2.47.2
 
+pvops are a headache because it is effectively a secondary alternatives 
+infrastructure that is incompatible with the alternatives one...
 
--- 
-Damien Le Moal
-Western Digital Research
+>> It looks to me that you want to add a new facility to the alternatives
+>> infrastructure first?
+> 
+> Why would we need a new facility in the alternatives infrastructure?
+
+I'm not sure what Xin means with "facility", but a key motivation for 
+this is to:
+
+a. Avoid using the pvops for MSRs when on the only remaining user 
+thereof (Xen) is only using it for a very small subset of MSRs and for 
+the rest it is just overhead, even for Xen;
+
+b. Being able to do wrmsrns immediate/wrmsrns/wrmsr and rdmsr 
+immediate/rdmsr alternatives.
+
+Of these, (b) is by far the biggest motivation. The architectural 
+direction for supervisor states is to avoid ad hoc and XSAVES ISA and 
+instead use MSRs. The immediate forms are expected to be significantly 
+faster, because they make the MSR index available at the very beginning 
+of the pipeline instead of at a relatively late stage.
+
+	-hpa
+
 
