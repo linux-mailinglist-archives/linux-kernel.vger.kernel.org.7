@@ -1,249 +1,183 @@
-Return-Path: <linux-kernel+bounces-620080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739ABA9C5A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:36:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17374A9C5AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D2D189722A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491971672AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A09A23ED74;
-	Fri, 25 Apr 2025 10:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAB623BD02;
+	Fri, 25 Apr 2025 10:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipegAZ2x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K2/73z1E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563F22DFF3;
-	Fri, 25 Apr 2025 10:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECCF218EB7;
+	Fri, 25 Apr 2025 10:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577252; cv=none; b=fK6Wx2R0RYF6ru3mOJ0v21/aHMBrXf5aGeIUQbnCBlObYnrXBCLoPz/hY1094LIR5ZUjbs0cU5xDI4q+mJgKVMdZ9uihoaDgBexUvMRIwrHJb/HBs3tk2rNMHL18U+Wue4nSqF2kQKNIup1Z2nf9jql4zAYmrfvJsBOvEOACN/g=
+	t=1745577373; cv=none; b=OCZUBAmkKLR6Lhutv/TOTce+gywYAazzX4+Y1yohpnk0SRJPBVpY/NdNLaq5Btu8WylS9uK2IAO/akTS0KXFNA4qI+ztIV+5Mr9HIcOd0c2qO0e5IM/PiGcLfRZgw0inPeFGpMebjKUGwIVmfpFU4w048Wcj6C9D2HAkc0SdcY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577252; c=relaxed/simple;
-	bh=uyFgX1thZtZy0gZITfym58nsNt2FbqK17baf70eu8Ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZ9M5rD5GI3C0XnsbmV3F8wk7pHtC7ie+90z6bRFXOa7EH6z8LHmCehEltyEk8G1Cg/Y9ztNuyK5TpMfjk2z8todmJTZS92+X8tyfvGhfxBKcgJYctcLBpuyk1rTtZBjyOWjbcYJhhtion+tRyB+XS6VjQJKu0In8RA4JDkmmt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipegAZ2x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA21C4CEE4;
-	Fri, 25 Apr 2025 10:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745577252;
-	bh=uyFgX1thZtZy0gZITfym58nsNt2FbqK17baf70eu8Ug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipegAZ2xqG1iA1qTJfNblSXX6AhY/KFbgfxHsV9TPWjtBZRDv5wEn+a9ypBQSHSWC
-	 EXmlGjQh8mfl+U16pbdyzwsSoIxxZ9YoC7cnf6gxFfrOT8gREkW6XSKpXjk1HMJnDj
-	 ehHFeRhLdSIHQ3RoF0T8Z7vs9DP+0op/KfGjrjwHwW2l4q310Gs3AYw8PMT+iBxbKG
-	 SVv9lIVS7beNvMKN93pJotL+gkYNhqNQ91OX1rWNBolHlPJULRXyuMPbRTDt2pd4xO
-	 rg6K5zBaYDrnyZs5o5cArdrVZ/Z337BUopXWXYJCFDwIzui78ZQtyIVSH9FAF0OIdw
-	 JyikCxIaW9Tqg==
-Date: Fri, 25 Apr 2025 12:34:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nas Chung <nas.chung@chipsnmedia.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-imx@nxp.com, marex@denx.de, jackson.lee@chipsnmedia.com, 
-	lafley.kim@chipsnmedia.com
-Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
- device
-Message-ID: <20250425-romantic-truthful-dove-3ef949@kuoka>
-References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
- <20250422093119.595-3-nas.chung@chipsnmedia.com>
+	s=arc-20240116; t=1745577373; c=relaxed/simple;
+	bh=Fr4etGjw2PtLKcTSmNvzMoS1MDJIICelDaE/wSqAd78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tggZWjqC/ojMcSyMBr1SLdYMXNTMAYHQZuj17hzWCVj41+YmIsVrr1f+u0Nduc9AwmiwjFEpfxOflKxuTZ1ym6FGpNxqD0r9YeKdpb01GWCn13krvbn3dw8NJytSPxA/5YRPMW8CphPqPKQD+hMsZ4yKH0cM8k24jDr3vKVolos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K2/73z1E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8TZ4F019787;
+	Fri, 25 Apr 2025 10:36:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EcVAMN+sfSDbnIepxpkjT0MwPJFDjZ0RxfLYbFAsRtw=; b=K2/73z1ExMHsuZ+b
+	RVHZtw6NDLAGM7Hnb2S55FpBmEj/3ffMuavdlPEHxi/R3JPq02Wz8iwGyPzPVTBF
+	uD+JDlpq6xhMKfIMhqRD2IzlPVzqap40pXQQavqAe3SRDqh863vMLPYujPRng86z
+	vEoQLqc9erkNKMEcvk2+5ehMUU/ZDo/E11QRkyJohQgwwpWF9gxnDRWMNUcMnUwT
+	URg6ba7PtUEkoImrBaY0a0x7sMA6O2MmbBdiNFL3OULa+xUag9n7OUFiIQI0MpJ8
+	m6bwwLLgQnqAdmW63wNuH4p2m3OGQhdsLlwH3x9KFjGrVxbVpJs2xXmeX8nRrT7f
+	oZeU2w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh28qd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 10:36:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53PAa6fe022748
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 10:36:06 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Apr
+ 2025 03:36:03 -0700
+Message-ID: <d83868de-7ff6-4a54-8bee-4652c2479da3@quicinc.com>
+Date: Fri, 25 Apr 2025 18:36:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422093119.595-3-nas.chung@chipsnmedia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] wifi: ath11k: Fix MHI target memory reuse logic
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        <jeff.johnson@oss.qualcomm.com>, Jeff Johnson <jjohnson@kernel.org>
+CC: <kernel@collabora.com>, <linux-wireless@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250425055141.2041712-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250425055141.2041712-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EtLSrTcA c=1 sm=1 tr=0 ts=680b6596 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=QX4gbG5DAAAA:8 a=7xKvOyCpBhAOSqRoKRkA:9 a=QEXdDO2ut3YA:10
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-GUID: XjUnmbXrmwYQCbLGzlGZ2wkCAoFVN5px
+X-Proofpoint-ORIG-GUID: XjUnmbXrmwYQCbLGzlGZ2wkCAoFVN5px
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA3NyBTYWx0ZWRfX8m8F42MKN2SD fPw31Cu/LPXqdVFMsRuRUBimIqJjKNY4NTk0UBa3jtyeEAbPQiblonC3042T4RLVx+Ej+U2fAvJ DrbqfLyM5Bgm7yB6cwyn7I7FeSu6EFXHy3idM7O6CADbGfN4VqwwLpawwJBogXDZZlLE5jC+ML4
+ rmwQMW14PCwU7Q4nf8RmL9U5wEp5qd4kMm9ZVo5ihsLDKIV/3PbtBTLLNjdv73KbgpT50GGAwo3 c/Xk/kM9atBPuDcJS/9vtaVwrL12xLwSNcMYC8viWJoBsxnlUFGKPne5XTIdo1mivM7ykCjfBXp d9TaR0o9UzSoQPS/A4KSKHm4I/7XWqnCb7ciTSSg+364eXfeeBSuy/uQlNADcRoneWOoMbhdbTG
+ UR0Ppx+9MBkaoOIYLPyPtmOfzchQom2aXIFVqotjJ19du9d0wdnQ0sZ1m2qQWs/f3O/v7e+7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250077
 
-On Tue, Apr 22, 2025 at 06:31:13PM GMT, Nas Chung wrote:
-> Add documents for the Wave6 video codec on NXP i.MX SoCs.
+
+
+On 4/25/2025 1:51 PM, Muhammad Usama Anjum wrote:
+> Firmware requests 2 segments at first. The first segment is of 6799360
+> whose allocation fails due to dma remapping not available. The success
+> is returned to firmware. Then firmware asks for 22 smaller segments
+> instead of 2 big ones. Those get allocated successfully. At suspend/
+> hibernation time, these segments aren't freed as they will be reused
+> by firmware after resuming.
 > 
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> After resuming, the firmware asks for the 2 segments again with the
+> first segment of 6799360 size. Since chunk->vaddr is not NULL, the
+> type and size are compared with the previous type and size to know if
+> it can be reused or not. Unfortunately, it is detected that it cannot
+> be reused and this first smaller segment is freed. Then we continue to
+> allocate 6799360 size memory which fails and ath11k_qmi_free_target_mem_chunk()
+> is called which frees the second smaller segment as well. Later success
+> is returned to firmware which asks for 22 smaller segments again. But
+> as we had freed 2 segments already, we'll allocate the first 2 new
+> smaller segments again and reuse the remaining 20. Hence 20 small
+> segments are being reused instead of 22.
+> 
+> Add skip logic when vaddr is set, but size/type don't match. Use the
+> same skip and success logic as used when dma_alloc_coherent() fails
+
+
+till here it is good.
+
+but from below
+
+> without freeing the memory area. The following error are being fixed at
+> resume:
+> 
+> 	kernel: ath11k_pci 0000:03:00.0: failed to allocate dma memory for qmi (524288 B type 1)
+> 	ath11k_pci 0000:03:00.0: failed to allocate qmi target memory: -22
+> 
+> Those failures aren't because of the bigger chunk allocation failure as
+> they are skipped. Rather these failures are because of smaller chunk
+> allocation failures. This patch fixes freeing and allocation of 2 smaller
+> chunks.
+
+to here not good to me, as it gives me the impression that you are fixing a kernel
+allocation failure.
+
+How about rephrase like:
+
+By skipping, the possibility of resume failure due to kernel failing to allocate memory
+for QMI can be avoided.
+
+> 
+> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > ---
->  .../bindings/media/cnm,wave633c.yaml          | 165 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  2 files changed, 172 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/cnm,wave633c.yaml
+> Changes since v1:
+> - Update description
 > 
-> diff --git a/Documentation/devicetree/bindings/media/cnm,wave633c.yaml b/Documentation/devicetree/bindings/media/cnm,wave633c.yaml
-> new file mode 100644
-> index 000000000000..5bb572e8ca18
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/cnm,wave633c.yaml
-> @@ -0,0 +1,165 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/cnm,wave633c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> Changes since v2:
+> - Update description
+> ---
+>  drivers/net/wireless/ath/ath11k/qmi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+> index 47b9d4126d3a9..2782f4723e413 100644
+> --- a/drivers/net/wireless/ath/ath11k/qmi.c
+> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
+> @@ -1993,6 +1993,15 @@ static int ath11k_qmi_alloc_target_mem_chunk(struct ath11k_base *ab)
+>  			    chunk->prev_size == chunk->size)
+>  				continue;
+>  
+> +			if (ab->qmi.mem_seg_count <= ATH11K_QMI_FW_MEM_REQ_SEGMENT_CNT) {
+> +				ath11k_dbg(ab, ATH11K_DBG_QMI,
+> +					   "size/type mismatch (current %d %u) (prev %d %u), try later with small size\n",
+> +					    chunk->size, chunk->type,
+> +					    chunk->prev_size, chunk->prev_type);
+> +				ab->qmi.target_mem_delayed = true;
+> +				return 0;
+> +			}
 > +
-> +title: Chips&Media Wave6 Series multi-standard codec IP.
-
-Drop full stop
-
-> +
-> +maintainers:
-> +  - Nas Chung <nas.chung@chipsnmedia.com>
-> +  - Jackson Lee <jackson.lee@chipsnmedia.com>
-> +
-> +description:
-> +  The Chips&Media Wave6 codec IP is a multi-standard video encoder/decoder.
-> +  On NXP i.MX SoCs, Wave6 codec IP functionality is split between
-
-... this and ...
-
-> +  the VPU control region and the VPU core region.
-> +  The VPU control region manages shared resources such as firmware memory,
-> +  while the VPU core region provides encoding and decoding
-> +  capabilities. The VPU core cannot operate independently without
-> +  the VPU control region.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - nxp,imx95-vpu
-> +      - const: cnm,wave633c
-
-... your drivers seem to use soc specific compatible, so I do not see
-value in generic compatible. It would have to be good enough alone for
-drivers, but it is not.
-
-> +
-> +  clocks:
-> +    items:
-> +      - description: VPU clock
-> +      - description: VPU associated block clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: vpu
-> +      - const: vpublk_wave
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description: Main VPU power domain
-
-Drop description
-
-> +
-> +  "#address-cells": true
-
-instead const
-
-> +
-> +  "#size-cells": true
-
-const
-
-> +
-> +  ranges: true
-> +
-> +patternProperties:
-> +  "^video-core@[0-9a-f]+$":
-> +    type: object
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-
-Drop items and keep just enum
-
-> +          - enum:
-> +              - nxp,imx95-vpu-core
-
-So this is another proof that cnm,wave633c is wrong. How cnm,wave633c
-can come with nxp,imx95-vpu-core child?
-
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      interrupts:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - interrupts
-> +
-> +    additionalProperties: false
-
-Put this immediately after type:object
-
-> +
-> +  "^video-controller@[0-9a-f]+$":
-> +    type: object
-
-Same here goes additionalProps.
-
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - nxp,imx95-vpu-ctrl
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      memory-region:
-> +        maxItems: 1
-> +
-> +      power-domains:
-> +        maxItems: 1
-> +        description: Performance power domain
-> +
-> +      '#cooling-cells':
-
-Keep consistent quotes, either ' or "
-
-> +        const: 2
-> +
-> +      sram:
-> +        $ref: /schemas/types.yaml#/definitions/phandle
-> +        description: phandle of the SRAM memory region node.
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - memory-region
-> +      - power-domains
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - power-domains
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/nxp,imx95-clock.h>
-> +
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      vpu: video-codec {
-
-Why this device does not have MMIO? Sorry, but makes little sense and if
-you posted and tested your entire DTS you would see why.
-
-Can we see the entire DTS?
-
-Best regards,
-Krzysztof
+>  			/* cannot reuse the existing chunk */
+>  			dma_free_coherent(ab->dev, chunk->prev_size,
+>  					  chunk->vaddr, chunk->paddr);
 
 
