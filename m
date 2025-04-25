@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-619695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F62A9C00D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466A8A9C012
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8273B2B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CEF16AE28
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C072517A314;
-	Fri, 25 Apr 2025 07:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7948B22D7A7;
+	Fri, 25 Apr 2025 07:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1Z9LDOL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F8VbZHlp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n9I5gL7g"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B4F22D7A7;
-	Fri, 25 Apr 2025 07:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56979231A24;
+	Fri, 25 Apr 2025 07:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745567303; cv=none; b=GvLgh+B78PVgV5BPexddGZ6t6K7PeFviZenJnHsZNCH0WZpbPFfr6m+ueZZRfp4K/LiJh4jETUXH9ahtbIC8bebVft4KXgPf9Sov5wHjr+tGRoUhPM6dvorAvGs/H3IxT6Ud8KdS4vCaJkWFeot/eHrCE+qOc2cQycTVbl8KIDU=
+	t=1745567311; cv=none; b=WHc7GjRsyAbt2OT41hNEMkI6au/GWeKUCRtAUo0XQWydN09dLywVhtkIZk5T92dfFyi4aO8aHvS24bKVa7GxGEZzJsfmd54S6sG/N9S19ETf/5/eIfKrZ/SWdathayS9/cDt3em5L98n7i8cKtP/xqwmLSKnjBvipoEx7P5O6P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745567303; c=relaxed/simple;
-	bh=jpBGvqF1vhLelKCM+qa40XIBkSN7Xd7BZS/mEIX6rmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEms8tvoouxBRvjMkNZAg7h61pLiMKdMJL5VElUsRDGBT6XOl4qHPMxIVBhtEPJmmOf+jKCghEkcHP091nxatyqNEtesiWh2fr+4veaoRWOvyPwhT49FA4mar/DpnPbbtFfd2gmzgcotk27xfgZJUq8hezp2+3y4A4E+5zvtpgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1Z9LDOL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F0AC4CEE4;
-	Fri, 25 Apr 2025 07:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745567302;
-	bh=jpBGvqF1vhLelKCM+qa40XIBkSN7Xd7BZS/mEIX6rmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q1Z9LDOLe8KEKfAKnMyLYXFqw1Ao+8PnjVcu3u87fGhcykICD0LzaBHMw792sdjnQ
-	 9CkZFsnFkTUWmFtbtrvpqHuo7CSVX5YXJBASK5avvKhaZTUHLxW3KEkMwDOf/mQI9Y
-	 RtLwSlTKnd/jtQ4xPsby2lOx47vi1I2BYPsrZj6dKAuzQ8apes2/Zlp1BAEkWlAEs/
-	 tA/mexzcFSn8NDWQ7+GeysL9OAyqOfGYRY+UVBZZV1Lpctq+zeNQ6PQcYsj33FUDvC
-	 OYwdFfPpnWWSghVEkpekzvxikVSWK1KRaAQ6pxXEEYrEVV3vXPsmNhoXw5sCgZ8d5v
-	 5mPZKjd7ucYkA==
-Date: Fri, 25 Apr 2025 09:48:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Judith Mendez <jm@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Josua Mayer <josua@solid-run.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Francesco Dolcini <francesco@dolcini.it>, Hiago De Franco <hiagofranco@gmail.com>, 
-	Moteen Shah <m-shah@ti.com>, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND v3 1/3] dt-bindings: mmc: sdhci-am654: Add
- ti,suppress-v1p8-ena
-Message-ID: <20250425-agile-imported-inchworm-6ae257@kuoka>
-References: <20250422220512.297396-1-jm@ti.com>
- <20250422220512.297396-2-jm@ti.com>
+	s=arc-20240116; t=1745567311; c=relaxed/simple;
+	bh=YnEpPztQNr6UuVmesYTUsH7gLnmph2csh6CrR/0qMrg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G20ABElhKkNU+CrHb1G8B7yxAZN86g8GnNBN+Tc6B+zA/VGR++tJH5LVOIezgN5E/E2LDN89RoB9hwidWQofYqyf0BaRNhH+LnMp6d0Et+2zt89Bxtyp/cht7MR1j/Ncr+fN1K6hUwpWRXHr699Y3eFoOxCbMleTw6FawHUNhFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F8VbZHlp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n9I5gL7g; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745567308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4P0Aw3eZoa0FulHYWqMBdxsMo9p8Z3uWhaSpWyOSyT4=;
+	b=F8VbZHlp271cEXfeXxekFb49gl/ui3AHtALLYRd8KhLigGlsRErPEA4cDPbwboWvWmjgTx
+	cMDlteZ7JKnZeH58+N3NRFzhDRfeff5SLqnOjXDKIaLsh4FsL7H38uiH4xwGmX9mEoJcc0
+	Aa1S3Hhznx2R9O29ivw/n7nGR8JXOYSjFG+0xnhUAbIZVlGjNJznQGJLB3L3wL1ULkKQ7x
+	+2V77Js5EvY/DY7uxnCl4G//CCKJfHCz8AX+7ixAun/34/tBBbvyZMM64ZN2Gw6rO29lAb
+	ZXockAY9gSRU5PjBnnflpwCewvSjDHs4XUOoyZbMw+XPvvEPRsuuvIfoZWXwTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745567308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4P0Aw3eZoa0FulHYWqMBdxsMo9p8Z3uWhaSpWyOSyT4=;
+	b=n9I5gL7gc2B5B8L/6ARiy4BT6/2luDLxjXbxkD2aSGG8FVIpdp88+GGQh0Qw97/BuZfJjn
+	5rMHFHhr74IIoRDg==
+To: Nam Cao <namcao@linutronix.de>, Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 20/22] rv: Add rtapp_sleep monitor
+In-Reply-To: <84ecxgit04.fsf@jogness.linutronix.de>
+References: <cover.1745390829.git.namcao@linutronix.de>
+ <c23cb5ef10310f978c3f90f07c2dbb9b042e8b01.1745390829.git.namcao@linutronix.de>
+ <c321c7350ec10f9f358695acd765d2dbd067eeb2.camel@redhat.com>
+ <20250425063456.NBE35YHR@linutronix.de>
+ <84ecxgit04.fsf@jogness.linutronix.de>
+Date: Fri, 25 Apr 2025 09:54:27 +0206
+Message-ID: <84a584isvo.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422220512.297396-2-jm@ti.com>
+Content-Type: text/plain
 
-On Tue, Apr 22, 2025 at 05:05:10PM GMT, Judith Mendez wrote:
-> Some Microcenter/Patriot SD cards and Kingston eMMC are failing init
-> across Sitara K3 boards. Init failure is due to the sequence when
-> V1P8_SIGNAL_ENA is set. The V1P8_SIGNAL_ENA has a timing component tied
-> to it where if set, switch to full-cycle timing happens. The failing
-> cards do not like change to full-cycle timing before changing bus
-> width, so add flag to sdhci-am654 binding to suppress V1P8_SIGNAL_ENA
-> before changing bus width. The switch to full-cycle timing should happen
-> with HIGH_SPEED_ENA after change of bus width.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-am654.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-am654.yaml b/Documentation/devicetree/bindings/mmc/sdhci-am654.yaml
-> index 676a74695389..0f92bbf8e13b 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-am654.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-am654.yaml
-> @@ -201,6 +201,11 @@ properties:
->        and the controller is required to be forced into Test mode
->        to set the TESTCD bit.
->  
-> +  ti,suppress-v1p8-ena:
+On 2025-04-25, John Ogness <john.ogness@linutronix.de> wrote:
+>>> perf stat -e rv:error_sleep stress-ng --cpu-sched 1 -t 10s
+>>>   -- shows several errors --
+>>
+>> This one is a monitor's bug.
+>>
+>> The monitor mistakenly sees the task getting woken up, *then* sees it going
+>> to sleep.
+>>
+>> This is due to trace_sched_switch() being called with a stale 'prev_state'.
+>> 'prev_state' is read at the beginning of __schedule(), but
+>> trace_sched_switch() is invoked a bit later. Therefore if task->__state is
+>> changed inbetween, 'prev_state' is not the value of task->__state.
+>>
+>> The monitor checks (prev_state & TASK_INTERRUPTIBLE) to determine if the
+>> task is going to sleep. This can be incorrect due to the race above. The
+>> monitor sees the task going to sleep, but actually it is just preempted.
+>
+> If I understand this correctly, trace_sched_switch() is reporting
+> accurate state transition information, but by the time it is reported
+> that state may have already changed (in which case another
+> trace_sched_switch() occurs later).
+>
+> So in this example, the task did go to sleep. Why do you think it was
+> preempted instead?
 
-Do not tell what the drivers should do, but tell what is the issue with
-the hardware, e.g. some cards do not like full-cycle.... and this will
-also hint you that it should be most likely generic, not specific to
-this device.
+On 2025-04-25, Gabriele Monaco <gmonaco@redhat.com> wrote:
+> Peter's fix [1] landed on next recently, I guess in a couple of days
+> you'll get it on the upstream tree and you may not see the problem.
 
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
+Ah, thanks for pointing that out!
 
-Best regards,
-Krzysztof
-
+> [1] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=8feb053d53194382fcfb68231296fdc220497ea6
 
