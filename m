@@ -1,57 +1,47 @@
-Return-Path: <linux-kernel+bounces-620264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4672EA9C7EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0F5A9C7E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8600016D5C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996BB16D686
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39588247285;
-	Fri, 25 Apr 2025 11:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72C2459E6;
+	Fri, 25 Apr 2025 11:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="KjRgrNMd"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vs4QN92Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F32459D7;
-	Fri, 25 Apr 2025 11:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581351; cv=pass; b=HpjT9BaXRSjXSORFtWsk2eIaJ3rH5e+MZwWm1B9MKDU2gBpnhwZTGLivXe0j9ojxdoancXWC2JwnPPVMZdzA/qYsudvJuUVSpBrDr0FbcNuq0sQmGLzT1fRIQPfwtdn9OKin5mSjfvP1/TEWf08lzWw88Uid5IVHKpj763exa9o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581351; c=relaxed/simple;
-	bh=1G6AweYjxm0kJiNi3tcdfVXSJehj5SwP9EIh79+Tjd0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tg5jpU52xhm0D21P03BUqC3lQaHWmVYcHpwf9ZJF5o4vISzs+9PnbqeKjS/aOmMqbmO8eWnTeA9xiMxQ8VGFZbCvOI3P6zwZs4t0gkev1xg4ZTK2K256un8iXVLdQPROnpHAr4WW0kvSJz5Xbu9tiVzDneruFgYcqDISOEhMup0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=KjRgrNMd; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745581316; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ATO62M49i6OKXGbXEsqzcVCpnUqkaDPw41NH+jE9uXMYRr4A4p2GnT2e0ExLoNzJYGZ6GttFkpGgICVCqQngHe8+x4QlmH61vOP07dPzlGvfOOsVfd4vVgth8vpIrq2T4mVivjRtmjIBRsjcOEFelzTs66eAlHm37O6yz5T376Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745581316; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=l4DUDdg/nGvqN1UdcxVddkB5BkoJ1f3+rZUXbIsl6cU=; 
-	b=Wl8eOBZW8/wRHV/gJMpTqYzRfliBCChHOlLNx29kS1HVg2S5FQGYP+5/Ca7vK9csP/rUT4XZjctRmffH3h9BJpETshlcRklQKmL1kCbsgjs5JiEXyNkz2fIqzdgp9m5jfYUVt/3it37EOCG/8eD2oafhiLBQ+gfqBw8CX0Dlwm4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745581316;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=l4DUDdg/nGvqN1UdcxVddkB5BkoJ1f3+rZUXbIsl6cU=;
-	b=KjRgrNMd+H1um2Hg8ung+jJ23G975Y9PLhHqT5paYiZ0mF18EGWqr9wlZRxNU1P8
-	YjGYi2bAbmEGxGhCj6Lo/aQSfqsRexvLRKagUlK+LBmKKEi2ZWwmai+dA4QflPJA1b2
-	rlHBTSYt1sYqeLLFRGJRxGE7hjRatpYkBqjjdGdg=
-Received: by mx.zohomail.com with SMTPS id 1745581313535618.4441025554677;
-	Fri, 25 Apr 2025 04:41:53 -0700 (PDT)
-Message-ID: <a403eb91-c90d-444c-b508-c428a8ef1447@collabora.com>
-Date: Fri, 25 Apr 2025 16:41:43 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF9F2405ED;
+	Fri, 25 Apr 2025 11:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745581331; cv=none; b=WYAfp+LMDA6C7WK7b2yWTsPtKV0fbPEwycbmsqZ6M3qMdg/aNLiA147DSdpIxLoLHzvQdVwjIcmWD85WahaG1Qd/5IAXAsP8a3l6xX1sAs371uXCw7SMIlGU3Q1JUfSYfrCBGoyfILZ1KZHL2zTUj73GdSt/+T4dwktZpr7Pqts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745581331; c=relaxed/simple;
+	bh=XqWCGqFr+Qk22bk55zDX2A/iycSFun4icCcLXPqvBYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DqIjoP1gcb1sPahnWNDCpbGNi1LNee4+f07Kg1hLdyJvcPd+ptAeZe84BLdzP7YGj5PK5WJ7DGcQLpWUBp8P3203WvLiUXBlBpd6KixcH2CG9vmwFX1MGMYkvKNvXDTDQbSxerharryEkH9iRwiEng6LEmq7BypM1E1i8+VJkp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vs4QN92Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A3AC4CEE4;
+	Fri, 25 Apr 2025 11:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745581330;
+	bh=XqWCGqFr+Qk22bk55zDX2A/iycSFun4icCcLXPqvBYc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vs4QN92Yb0Ack/Zlqe0udjgPVzn3XkAaDdsmeLWdybquDFILqxYMJCyHeHwgsrg77
+	 mwq+ubM+CorxlRFxkMD7yzWeGJocvQT5GkOwocMhz0RJ0qCPeKHwv7e7UACNshA/44
+	 Q4ih2t4TKxI4CW49CgtSz+OLA8UNE0ySOePyjZBwNMMxnYU33zxgvPStNOxtDSSVHG
+	 6tb7X0wWEawtNc0/oE2hmXyACPLgJCjMwTFL/eeRLZNvM+TyBGDOuszSI3/fgkguBP
+	 8QF3uZWdFuBLJwsPStGVmgcp+/lpvywtYRnl3jZ2SRLfqaVRX53pYCIX3wJaIc1zRC
+	 pchpNZVJGAbcQ==
+Message-ID: <d9276f7a-67a2-4dca-ba7d-2571b8edd1de@kernel.org>
+Date: Fri, 25 Apr 2025 13:42:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,139 +49,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: usama.anjum@collabora.com, Johannes Berg <johannes@sipsolutions.net>,
- Jeff Johnson <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>,
- Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com, mhi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
- suspend/hibernation
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20250410145704.207969-1-usama.anjum@collabora.com>
- <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
- <1136c7cb-1c7b-410b-93d2-c74aec939196@collabora.com>
- <cfb3sntvqhupyhm2m5tevpsl77r6mzl2aqzr3wtxvr22bezmp3@qjh7ftr2kdjy>
- <4d87ef88-3533-4255-adc6-6c268818fe25@collabora.com>
- <y5odcxzms6mwpz5bdxhbjxo7p6whsdgwm772usmmzqobhf6nam@p4ul7vn7d3an>
+Subject: Re: [PATCH 01/13] dt-bindings: i2c: i2c-wmt: Convert to YAML
+To: Alexey Charkov <alchark@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20250416-wmt-updates-v1-0-f9af689cdfc2@gmail.com>
+ <20250416-wmt-updates-v1-1-f9af689cdfc2@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <y5odcxzms6mwpz5bdxhbjxo7p6whsdgwm772usmmzqobhf6nam@p4ul7vn7d3an>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250416-wmt-updates-v1-1-f9af689cdfc2@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 4/25/25 1:59 PM, Manivannan Sadhasivam wrote:
-> On Fri, Apr 25, 2025 at 12:42:38PM +0500, Muhammad Usama Anjum wrote:
->> On 4/25/25 12:32 PM, Manivannan Sadhasivam wrote:
->>> On Fri, Apr 25, 2025 at 12:14:39PM +0500, Muhammad Usama Anjum wrote:
->>>> On 4/25/25 12:04 PM, Manivannan Sadhasivam wrote:
->>>>> On Thu, Apr 10, 2025 at 07:56:54PM +0500, Muhammad Usama Anjum wrote:
->>>>>> Fix dma_direct_alloc() failure at resume time during bhie_table
->>>>>> allocation. There is a crash report where at resume time, the memory
->>>>>> from the dma doesn't get allocated and MHI fails to re-initialize.
->>>>>> There may be fragmentation of some kind which fails the allocation
->>>>>> call.
->>>>>>
->>>>>
->>>>> If dma_direct_alloc() fails, then it is a platform limitation/issue. We cannot
->>>>> workaround that in the device drivers. What is the guarantee that other drivers
->>>>> will also continue to work? Will you go ahead and patch all of them which
->>>>> release memory during suspend?
->>>>>
->>>>> Please investigate why the allocation fails. Even this is not a device issue, so
->>>>> we cannot add quirks :/
->>>> This isn't a platform specific quirk. We are only hitting it because
->>>> there is high memory pressure during suspend/resume. This dma allocation
->>>> failure can happen with memory pressure on any device.
->>>>
->>>
->>> Yes.
->> Thanks for understanding.
->>
->>>
->>>> The purpose of this patch is just to make driver more robust to memory
->>>> pressure during resume.
->>>>
->>>> I'm not sure about MHI. But other drivers already have such patches as
->>>> dma_direct_alloc() is susceptible to failures when memory pressure is
->>>> high. This patch was motivated from ath12k [1] and ath11k [2].
->>>>
->>>
->>> Even if we patch the MHI driver, the issue is going to trip some other driver.
->>> How does the DMA memory goes low during resume? So some other driver is
->>> consuming more than it did during probe()?
->> Think it like this. The first probe happens just after boot. Most of the
->> RAM was empty. Then let's say user launches applications which not only
->> consume entire RAM but also the Swap. The DMA memory area is the first
->> ~4GB on x86_64 (if I'm not mistaken). Now at resume time when we want to
->> allocate memory from dma, it may not be available entirely or because of
->> fragmentation we cannot allocate that much contiguous memory.
->>
+On 16/04/2025 10:21, Alexey Charkov wrote:
+> Rewrite the textual description for the WonderMedia I2C controller
+> as YAML schema, and switch the filename to follow the compatible
+> string.
 > 
-> Looks like you have a workload that consumes the limited DMA coherent memory.
-> Most likely the GPU applications I think.
+> The controller only supports two bus speeds (100kHz and 400kHz)
+> so restrict clock-frequency values accordingly.
 > 
->> In our testing and real world cases, right now only wifi driver is
->> misbehaving. Wifi is also very important. So we are hoping to make wifi
->> driver robust.
->>
-> 
-> Sounds fair. If you want to move forward, please modify the exisiting
-> mhi_power_down_keep_dev() to include this partial unprepare as well:
-> 
-> mhi_power_down_unprepare_keep_dev()
-> 
-> Since both APIs are anyway going to be used together, I don't see a need to
-> introduce yet another API.
-I've looked at usages of mhi_power_down_keep_dev(). Its getting used by
-ath12k and ath11k both. We would have to look at ath12k as well before
-we can change mhi_power_down_keep_dev(). Unfortunately, I don't have
-device using ath12k at hand.
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-wmt.txt  | 24 -----------
+>  .../devicetree/bindings/i2c/wm,wm8505-i2c.yaml     | 47 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  2 +-
 
-Should we keep this new API or what should we do?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> 
-> - Mani
-> 
->>>
->>>> [1]
->>>> https://lore.kernel.org/all/20240419034034.2842-1-quic_bqiang@quicinc.com/
->>>> [2]
->>>> https://lore.kernel.org/all/20220506141448.10340-1-quic_akolli@quicinc.com/
->>>>
->>>> What do you think can be the way forward for this patch?
->>>>
->>>
->>> Let's try first to analyze why the memory pressure happens during suspend. As I
->>> can see, even if we fix the MHI driver, you are likely to hit this issue
->>> somewhere else.>
->>> - Mani
->>>
->>>>>
->>>
->>> [...]
->>>
->>>>> Did you intend to leak this information? If not, please remove it from
->>>>> stacktrace.
->>>> The device isn't private. Its fine.
->>>>
->>>
->>> Okay.
->>>
->>> - Mani
->>>
->>
->>
->> -- 
->> Regards,
->> Usama
-> 
-
-
--- 
-Regards,
-Usama
+Best regards,
+Krzysztof
 
