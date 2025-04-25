@@ -1,100 +1,154 @@
-Return-Path: <linux-kernel+bounces-620596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D19A9CC95
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A9EA9CC92
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD11B1BA2760
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E50B1BA2139
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5148626D4CA;
-	Fri, 25 Apr 2025 15:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893D1279915;
+	Fri, 25 Apr 2025 15:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="F9GrKR3h"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TA/WAoHG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DA027A110
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBA32798F8;
+	Fri, 25 Apr 2025 15:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745594181; cv=none; b=fRoYaAImDF6FidHQjTDgkGJy585ETcUib/G4R2oSgPO9GJDni6o2ZnEip061KHl71fvHftFIfGHpZh6KBv2V+isKdT+t6LKovfwpZhNYtMh9t2gkj+IGgtK2F8Z/4VAz59G4xngx70e8uece70m8G+eBr1eDTVO12QiYwRMJ/Dk=
+	t=1745594142; cv=none; b=CSNRnDTPmrJZ1VX7XdmJcAWOLRpLVa9QNTCZKa8syaO8lXFi2SEkkLfkftZhwVjlWcnBDMrcx/v7gDU3fzAv98/0roA9IGM2djBQmiNkSQamzVXWqG3wh09MDjkAqCfMdeolNES+PlO2UKWd9zF7hTycV9u927h0jSrW/cSWj7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745594181; c=relaxed/simple;
-	bh=D4iWXXVHNmMTKjZlOtGGWK9tf8e1bNWVOJslTzIbRzA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=YLA3joOUJ90kiwILrfHqkIpxgjU48AuCcXIPhnDwji0aueKGilwhIli7RSCAkLmUF/HDaLYC+SVOTscm+wCa6YlCvgPdftVfJyhby1mZp/RxqPgR4XIQ1BwiVMuK7FF0QSrSRbuCKFSWGPZGCiSSDDMrQlEMoP1DKDqV6Z/T3UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=F9GrKR3h; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53PFFfdU2862808
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 25 Apr 2025 08:15:41 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53PFFfdU2862808
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745594142;
-	bh=gE/IkKdPpt4A/peP/xmGx7cgO8ulIVYWeaxcYLg30m8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=F9GrKR3hRjwwJAXn9Plz+zQ4LA1k6X6FadwqmM7ftmnSPCbNELG9dsh+Bwkjps0WI
-	 EXaiLErD9iGby2/lWbcK+mInqsHS7DVnh3w4Y8PKkgP/3m9cDGngmX0dUyQ66o7x3e
-	 /6vAqVYe7FQ7izXRBZGU6/brTbHAkCwQmBGFex5L15SLzQrw7z9yPWz4JTGybYPvFt
-	 jjdZSSCXEPIOIOkvwalCrwI9jp7b5FOOATXC6dosgBOp2yFMTFq8SIc0R7GbFLuHMH
-	 IuVGzmGsD9BkAvfj7VL+5MN/yOrzWb1/Ic0Bqs9OXIlj9GazWpsGYDtfspP/AVgFIi
-	 NPa6QeN4ka0Qw==
+	s=arc-20240116; t=1745594142; c=relaxed/simple;
+	bh=C8FYTYQnzVootuMsrCRmSfUtojWm8zdXdoSIa4cnad0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxfOD/i0JUEZiba10lWdN4qjUDcPT2Vn9jNEFBzM8DCDAGOFPBXfUKhoFCMbTKXTcKzgoVR64bXM8GS+zF3ESG/UMMzClPLqzOy6JNeP9SwURMgcxAa92zlDXzPxFcb33v+gX5nAhWPrjn9pTMya5+0Jgs3HkOjPGZHJmZ8oiKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TA/WAoHG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505FFC4CEE4;
+	Fri, 25 Apr 2025 15:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745594140;
+	bh=C8FYTYQnzVootuMsrCRmSfUtojWm8zdXdoSIa4cnad0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TA/WAoHG8B/vfXAZVI2vircaK33q5sO+5Yij8KhVqH2Xx6aJMwuhSM+lNErabPqF+
+	 BYoth885LHHkpn7bJrFarLnuGWa9OPtUJWyBWTnRlL1pRfeWFcf000TZU7Z368BDpA
+	 FT8WjbnayGrv//EM/5mlCLkKe0FQHuLNuOhrmei1fZlHKNI0sxZa1Z16oCXdO1jHr7
+	 KoxVKKWcBHW2UfiySgkTVqHB7vxhSFkQkuaTInOpMoOuAMeK0R99DGiziPVkra801S
+	 RNWcWus2DFYbKJu/DTlKVDBh8+mGrgovrCMQb4WdmIRgauYbZuMYloYQgxk5LCiz8P
+	 wH1M68q02ucvA==
 Date: Fri, 25 Apr 2025 08:15:39 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Arnd Bergmann <arnd@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-CC: "Ahmed S . Darwish" <darwi@linutronix.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 13/15] x86/cpu: Make CONFIG_X86_CX8 unconditional
-User-Agent: K-9 Mail for Android
-In-Reply-To: <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
-References: <20250425084216.3913608-1-mingo@kernel.org> <20250425084216.3913608-14-mingo@kernel.org> <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
-Message-ID: <8D770F85-5417-4A9E-80DE-1B6A890DECEF@zytor.com>
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [RFC PATCH 2/2] xfs: Enable concurrency when writing within
+ single block
+Message-ID: <20250425151539.GO25675@frogsfrogsfrogs>
+References: <20250425103841.3164087-1-chizhiling@163.com>
+ <20250425103841.3164087-3-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425103841.3164087-3-chizhiling@163.com>
 
-On April 25, 2025 5:10:27 AM PDT, Arnd Bergmann <arnd@kernel=2Eorg> wrote:
->On Fri, Apr 25, 2025, at 10:42, Ingo Molnar wrote:
->> @@ -257,7 +256,7 @@ config X86_MINIMUM_CPU_FAMILY
->>  	int
->>  	default "64" if X86_64
->>  	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII ||=20
->> MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
->> -	default "5" if X86_32 && X86_CX8
->> +	default "5" if X86_32
->>  	default "4"
->>=20
->
->I just noticed this one: the final 'default "4"' is no longer possible
->here and can be removed=2E All the remaining CPUs report family "5" or
->higher=2E
->
->There is an old issue for some rare CPUs (Geode LX and Crusoe) that
->support CMOV but report family=3D6=2E These to boot a kernel with X86_MIN=
-IMUM_CPU_FAMILY=3D6 because it triggers the boot time check=2E
->
->     Arnd
+On Fri, Apr 25, 2025 at 06:38:41PM +0800, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
+> 
+> For unextending writes, we will only update the pagecache and extent.
+> In this case, if our write occurs within a single block, that is,
+> within a single folio, we don't need an exclusive lock to ensure the
+> atomicity of the write, because we already have the folio lock.
+> 
+> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> ---
+>  fs/xfs/xfs_file.c | 34 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index a6f214f57238..8eaa98464328 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -914,6 +914,27 @@ xfs_file_dax_write(
+>  	return ret;
+>  }
+>  
+> +#define offset_in_block(inode, p) ((unsigned long)(p) & (i_blocksize(inode) - 1))
 
-They report family=3D5 because family=3D6 implies fcomi and nopl support (=
-in the case of Crusoe, they have fcomi but didn't support movl=2E)
+Is it correct to cast an loff_t (s64) to unsigned long (u32 on i386)
+here?
+
+> +
+> +static inline bool xfs_allow_concurrent(
+
+static inline bool
+xfs_allow_concurrent(
+
+(separate lines style nit)
+
+> +	struct kiocb		*iocb,
+> +	struct iov_iter		*from)
+> +{
+> +	struct inode		*inode = iocb->ki_filp->f_mapping->host;
+> +
+> +	/* Extending write? */
+> +	if (iocb->ki_flags & IOCB_APPEND ||
+> +	    iocb->ki_pos >= i_size_read(inode))
+> +		return false;
+> +
+> +	/* Exceeds a block range? */
+> +	if (iov_iter_count(from) > i_blocksize(inode) ||
+> +	    offset_in_block(inode, iocb->ki_pos) + iov_iter_count(from) > i_blocksize(inode))
+> +		return false;
+> +
+> +	return true;
+> +}
+
+...and since this helper only has one caller, maybe it should be named
+xfs_buffered_write_iolock_mode and return the lock mode directly?
+
+> +
+>  STATIC ssize_t
+>  xfs_file_buffered_write(
+>  	struct kiocb		*iocb,
+> @@ -925,8 +946,12 @@ xfs_file_buffered_write(
+>  	bool			cleared_space = false;
+>  	unsigned int		iolock;
+>  
+> +	if (xfs_allow_concurrent(iocb, from))
+> +		iolock = XFS_IOLOCK_SHARED;
+> +	else
+> +		iolock = XFS_IOLOCK_EXCL;
+> +
+>  write_retry:
+> -	iolock = XFS_IOLOCK_EXCL;
+>  	ret = xfs_ilock_iocb_for_write(iocb, &iolock, false);
+>  	if (ret)
+>  		return ret;
+> @@ -935,6 +960,13 @@ xfs_file_buffered_write(
+>  	if (ret)
+>  		goto out;
+>  
+> +	if (iolock == XFS_IOLOCK_SHARED &&
+> +	    iocb->ki_pos + iov_iter_count(from) > i_size_read(inode)) {
+> +		xfs_iunlock(ip, iolock);
+> +		iolock = XFS_IOLOCK_EXCL;
+> +		goto write_retry;
+> +	}
+> +
+>  	trace_xfs_file_buffered_write(iocb, from);
+>  	ret = iomap_file_buffered_write(iocb, from,
+>  			&xfs_buffered_write_iomap_ops, NULL);
+> -- 
+> 2.43.0
+> 
+> 
 
