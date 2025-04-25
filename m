@@ -1,152 +1,168 @@
-Return-Path: <linux-kernel+bounces-620612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A855A9CCDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1B4A9CCE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D994517A7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD669A1A6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3686128368C;
-	Fri, 25 Apr 2025 15:28:00 +0000 (UTC)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C0289342;
+	Fri, 25 Apr 2025 15:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="e8sSKlOE"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D263825DCF3;
-	Fri, 25 Apr 2025 15:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFFE26B953;
+	Fri, 25 Apr 2025 15:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745594879; cv=none; b=AwpdHwpjHPRJTiEgjGwxSkAPk6gp5+GdkcdGchdYD8y2yRQ74iB0zlFDbEM8fQRWzYp8R+mCyAKhJWMEvUdPoOVVApGPh2hag/BQvYmWE98nD2/DJWQDmQzC/OLYvaIoR9fVavRUiyzcme/eGgIYQ46Jht8P/HHL2JMfXOg3098=
+	t=1745594945; cv=none; b=LdOKxIsUPSORAyXAcIPs1XlBhaLn8CAxMCtkrM4e3KeSW0orrRDq5z7jXvsDhmd90w1uDliUYtPXpPnfP1hTrAHmVMuR+7jdAGKLNhhBcPTMLuRmOX0ElapeP5gQoBISMWuzb/Mxi3xxDMVeWpvHZzyXbcs6MgEwlERDdKA1TtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745594879; c=relaxed/simple;
-	bh=Mrk3RA2eQQoTudoCKFs8L5iamijk95XDayQrPOOfxBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X2nTnPPVlivBAdCeXYl3f4RtJ28OmAfwr5dV6l19PF/p/BKNmxR0loA+wegyWsyAmvlUQslZm5xcijoQWd441LIFe66ndAtfqr59SxM/IicfPm+/hxAX6YgF0L9MSnmT0oTdCKIMvxw8/1DdSi2fffqIYk0NP9pi39XiMeyZ64Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54c090fc7adso2401010e87.2;
-        Fri, 25 Apr 2025 08:27:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745594873; x=1746199673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=feUYG+ADKxy5u46DUzbwJ3yPnREVGzj+yGdWXxrHRlo=;
-        b=LBy85nMHHkMZij6yvph/3oZTaJXktdzBpjCaSQYxZ2cLW05FX9wd7JLrhcq6CN10km
-         kN+pOYMPgcTIhIhZ1FUIVznDWHkQFaHbC5EcOS3gmg1aFUQwux59WdJvIrHXmSRGV2dQ
-         WlZul973OU3uYYIyWwAZ93blyoOBTBQSQr6uJgwqntK6kyhD24KQolhBO4mlbm2EoWh0
-         FForfS+3NllXRzuMTzkntU5SYGz96AiWnnpjejf7wj0kBFtEIFN0Lg5AkH5RwTzLuGcp
-         qggot/co6zMaPMtNiVauz6iQ9B+VXTPVSKiRHEnm09QKlav/PXuUrQOyFDaCdE9fy3QD
-         iwlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuTW+97tAgvg7jOdk1KzBeSqcEouUaJj5GlQCZOR61AGAPQ3pA0yEnfkU6FQsdkLIy/jLWuuIq4xVrmdIr@vger.kernel.org, AJvYcCXUZeG2GOnJURthemkC/5JfnL4EGyp/Ify0Rb1p16XtxRXgxigky0GcQY8Kg6awR8aqGKECdqMH9+Rl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2D1KGHZWlM6PxvmQBbUCTif7bW85srnZ3a5xaMpRyNzHq+v0u
-	D+MKdKPM9qCT0kjG0paxjPurXFaaVrbD3XFfErEv1TQFzDQ6eM1iMkW2U6aXVb8=
-X-Gm-Gg: ASbGncsE6whmLVFjJ8SQXFZjy4G8KKjE6yEo6lA2Sb7uMFA/YBcTKVCGCHoMtdI4WZC
-	rfdGbFoZW7tK1vhTKEQG0dGnMhH21JAqQcFYQZbbvHxknnmZ9ivrm0dVLsn/SLVT2OvWq+GydWJ
-	PsYKvVJbubyscsw9eSzO3i0FiB8HfPLXiJt+p9NRFH5Y1jzQr6gPBBZZikBWOxBC5thfrtJkwkP
-	PGi8+LWrCoQjHhffD6GGaUGe1ES1rzR2bQAqnMw7HdkZLrqTfWMjbz0GwAXPV8qJgV5fZF9O8B3
-	0XJXiluDZy6V8OW+YxDEPjpLbhWj9VNey3OtEKOZLpCcMw1TKf3+VnHSJp4jBc35ShRYTksuIA=
-	=
-X-Google-Smtp-Source: AGHT+IHBfteQaylSiuYSamiPpU3Z80e8jJru7N1wkThdV/I0ZHX0I4g0UZ+sahUiiCcHCcOOtwRBrQ==
-X-Received: by 2002:a05:6512:3090:b0:545:652:109 with SMTP id 2adb3069b0e04-54e8cc0cb3cmr967904e87.51.1745594873407;
-        Fri, 25 Apr 2025 08:27:53 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e8cd4c51fsm275885e87.122.2025.04.25.08.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 08:27:52 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-310447fe59aso27686631fa.0;
-        Fri, 25 Apr 2025 08:27:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWX2SAt6YO0eyS9+yaB2DctZwPJQ1foWYus8hsURZCFB9lxectXQCozn3M1JSR34qlGZogFPon9h5QuYiPA@vger.kernel.org, AJvYcCX+GPaq4pI0OxSW9bHGFrk/Yl6KGnXe3ZRmZ8+gDRYngggzG2KfIwnfgbQAc1CHVtYpwcfn7Usb/F9y@vger.kernel.org
-X-Received: by 2002:a05:651c:154c:b0:30b:efa5:69a8 with SMTP id
- 38308e7fff4ca-319080e4888mr10622571fa.36.1745594872478; Fri, 25 Apr 2025
- 08:27:52 -0700 (PDT)
+	s=arc-20240116; t=1745594945; c=relaxed/simple;
+	bh=VXq1PHnajmb8IhmTG7In4mFZ7EewzJEbGitlsKd4G50=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=NAaBJ/F2ChQdHs7i2a9wtBfnc6mGczTvH7E9J3Mjx15xoxrs3lJ6sHJzCHGTyIluUnvG/9LJF8Fym96/35xffhUOVu4k2vMOEXZjqwRp5oLoMed71Xa32o3VYJ0kLujH4ZHFLKTsAEx9ODz+9NoLuWKcsoB937ihViUuozqmMD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=e8sSKlOE; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53PFSG7j2879055
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 25 Apr 2025 08:28:18 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53PFSG7j2879055
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745594899;
+	bh=VXq1PHnajmb8IhmTG7In4mFZ7EewzJEbGitlsKd4G50=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=e8sSKlOE29QVRsUNwa5Glun405WCr1ZH8x+o/lM1uZO65MH8ZxHfRZ9Vpxe5VnEA+
+	 exbTNWCfO9mqnsVBdWqxPuN5ymfnVoRJTE6z+MBGn61/u3Qm2DjxXhiGfR2jMZhqHr
+	 TVyHxknF9aW5yNQDR1IeB4wNDPkNeqbiDL9Y9B0Tf3kbrU9Cizj1ktB/G9v+xJzUqp
+	 CHyGasv5e/2REjIUjeW5ato0YPXhMP5OYJMXpoIgD7CMZRrKMKSc6nMzj9uhQk4uBg
+	 IJzYx36Il8whoA9nZiKMg7YdPVo4z5Ujq2ijkY4iAHziVAchpEmHBwdMKS7/pwXclD
+	 IBJVqUYnPG0ng==
+Date: Fri, 25 Apr 2025 08:28:14 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>, Xin Li <xin@zytor.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
+        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org
+CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, acme@kernel.org,
+        andrew.cooper3@citrix.com, peterz@infradead.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_v2_21/34=5D_x86/msr=3A_Utiliz?=
+ =?US-ASCII?Q?e_the_alternatives_mechanism_to_write_MSR?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <6ef898f7-c8a3-4326-96ab-42aa90c48e1c@suse.com>
+References: <20250422082216.1954310-1-xin@zytor.com> <20250422082216.1954310-22-xin@zytor.com> <b2624e84-6fab-44a3-affc-ce0847cd3da4@suse.com> <f7198308-e8f8-4cc5-b884-24bc5f408a2a@zytor.com> <37c88ea3-dd24-4607-9ee1-0f19025aaef3@suse.com> <bb8f6b85-4e7d-440a-a8c3-0e0da45864b8@zytor.com> <0cdc6e9d-88eb-4ead-8d55-985474257d53@suse.com> <483eb20c-7302-4733-a15f-21d140396919@zytor.com> <72516271-5b28-434a-838b-d8532e1b4fc1@zytor.com> <6ef898f7-c8a3-4326-96ab-42aa90c48e1c@suse.com>
+Message-ID: <D7218B8B-B9D6-46F8-9397-C44398E24253@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425023527-GYA50272@gentoo> <20250425030006.45169-1-amadeus@jmu.edu.cn>
- <CAGb2v649ntfAEUdV5S1wM8nUGhvaOP-RBw07XcxwdbafbC2PYQ@mail.gmail.com> <20250425044747-GYA50408@gentoo>
-In-Reply-To: <20250425044747-GYA50408@gentoo>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 25 Apr 2025 23:27:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v650hzgWGC6H4gL-YkaWCw7RJjBYkdcXGwXaRCa7T6G71Q@mail.gmail.com>
-X-Gm-Features: ATxdqUHtlXlW5ElJgIFQbcm5VC72kEfcPm_-jaGId3qhnAcscv0DyPelGJ1i-0I
-Message-ID: <CAGb2v650hzgWGC6H4gL-YkaWCw7RJjBYkdcXGwXaRCa7T6G71Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: dts: allwinner: correct the model name for
- Radxa Cubie A5E
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, andre.przywara@arm.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, jernej.skrabec@gmail.com, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, robh@kernel.org, samuel@sholland.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 12:47=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
+On April 25, 2025 12:01:29 AM PDT, "J=C3=BCrgen Gro=C3=9F" <jgross@suse=2Ec=
+om> wrote:
+>On 25=2E04=2E25 05:44, H=2E Peter Anvin wrote:
+>> On 4/24/25 18:15, H=2E Peter Anvin wrote:
+>>> On 4/24/25 01:14, J=C3=BCrgen Gro=C3=9F wrote:
+>>>>>=20
+>>>>> Actually, that is how we get this patch with the existing alternativ=
+es
+>>>>> infrastructure=2E=C2=A0 And we took a step further to also remove th=
+e pv_ops
+>>>>> MSR APIs=2E=2E=2E
+>>>>=20
+>>>> And this is what I'm questioning=2E IMHO this approach is adding more
+>>>> code by removing the pv_ops MSR_APIs just because "pv_ops is bad"=2E =
+And
+>>>> I believe most refusal of pv_ops is based on no longer valid reasonin=
+g=2E
+>>>>=20
+>>>=20
+>>> pvops are a headache because it is effectively a secondary alternative=
+s infrastructure that is incompatible with the alternatives one=2E=2E=2E
+>>>=20
+>>>>> It looks to me that you want to add a new facility to the alternativ=
+es
+>>>>> infrastructure first?
+>>>>=20
+>>>> Why would we need a new facility in the alternatives infrastructure?
+>>>=20
+>>> I'm not sure what Xin means with "facility", but a key motivation for =
+this is to:
+>>>=20
+>>> a=2E Avoid using the pvops for MSRs when on the only remaining user th=
+ereof (Xen) is only using it for a very small subset of MSRs and for the re=
+st it is just overhead, even for Xen;
+>>>=20
+>>> b=2E Being able to do wrmsrns immediate/wrmsrns/wrmsr and rdmsr immedi=
+ate/ rdmsr alternatives=2E
+>>>=20
+>>> Of these, (b) is by far the biggest motivation=2E The architectural di=
+rection for supervisor states is to avoid ad hoc and XSAVES ISA and instead=
+ use MSRs=2E The immediate forms are expected to be significantly faster, b=
+ecause they make the MSR index available at the very beginning of the pipel=
+ine instead of at a relatively late stage=2E
+>>>=20
+>>=20
+>> Note that to support the immediate forms, we *must* do these inline, or=
+ the const-ness of the MSR index -- which applies to by far the vast majori=
+ty of MSR references -- gets lost=2E pvops does exactly that=2E
+>>=20
+>> Furthermore, the MSR immediate instructions take a 64-bit number in a s=
+ingle register; as these instructions are by necessity relatively long, it =
+makes sense for the alternative sequence to accept a 64-bit input register =
+and do the %eax/ %edx shuffle in the legacy fallback code=2E=2E=2E we did a=
+ bunch of experiments to see what made most sense=2E
 >
-> Hi Chukun, Chen-Yu,
+>Yes, I understand that=2E
 >
-> On 11:52 Fri 25 Apr     , Chen-Yu Tsai wrote:
-> > On Fri, Apr 25, 2025 at 11:00=E2=80=AFAM Chukun Pan <amadeus@jmu.edu.cn=
-> wrote:
-> > >
-> > > Hi,
-> > >
-> > > > It seems I'm a little bit late for this, but while we are here,
-> > > > Can we also append 'cubie' to dts file name?
-> > > > e.g. - sun55i-a527-radxa-cubie-a5e.dts
-> > >
-> > > Usually we use the device name (without the vendor name),
-> > > maybe sun55i-a527-cubie-a5e.dts would be better?
-> >
-> > I agree with this one.
-> >
-> I personally would prefer to keep vendor name, it's more explicit
-> and easy for poeple to distinguish/find the board dts
+>And I'm totally in favor of Xin's rework of the MSR low level functions=
+=2E
+>
+>Inlining the MSR access instructions with pv_ops should not be very
+>complicated=2E We do that with other instructions (STI/CLI, PTE accesses)
+>today, so this is no new kind of functionality=2E
+>
+>I could have a try writing a patch achieving that, but I would only start
+>that work in case you might consider taking it instead of Xin's patch
+>removing the pv_ops usage for rdmsr/wrmsr=2E In case it turns out that my
+>version results in more code changes than Xin's patch, I'd be fine to dro=
+p
+>my patch, of course=2E
+>
+>
+>Juergen
 
-We really only have the board name, which sometimes combines a brand
-name, but not the vendor name.
+The wrapper in question is painfully opaque, but if it is much simpler, th=
+en I'm certainly willing to consider it=2E=2E=2E but I don't really see how=
+ it would be possible given among other things the need for trap points for=
+ the safe MSRs=2E
 
-Same goes for all of Radxa's other Rockchip boards. The file names
-are all rk3xxx-rock?????.dts. And all the LibreELEC boards are
-????-nanopi-???.dts.
+Keep in mind this needs to work even without PV enabled!
 
-ChenYu
-
-> but, this isn't something I really care, so I won't insist on this,
-> please proceed either way, thanks
->
-> > I can probably squash in a name change (since I'll be squashing in the
-> > SD card slot fix anyway). Andre?
-> >
-> I think it is better
->
-> >
-> > In that case would you prefer to keep your current patch separate, or
-> > squashed in so that everything is clean from the first commit?
-> >
-> > It's up to you since you lose out on commit stats.
-> >
-> >
-> > Thanks
-> > ChenYu
-> >
-> > > Thanks,
-> > > Chukun
-> > >
-> > > --
-> > > 2.25.1
-> > >
-> > >
->
-> --
-> Yixun Lan (dlan)
->
+Note that Andrew encouraged us to pursue the pvops removal for MSRs=2E Not=
+e that Xen benefits pretty heavily because it can dispatch the proper path =
+of the few that are left for the common case of fixed MSRs=2E
 
