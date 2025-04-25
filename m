@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-620875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB38A9D0C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 146F3A9D0BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEA204E2290
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E992C4E1463
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B4B219E8D;
-	Fri, 25 Apr 2025 18:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AA9218AAB;
+	Fri, 25 Apr 2025 18:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="DtEiDlB+";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="VPlwYm6m";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="OKMDd0Wr"
-Received: from e2i427.smtp2go.com (e2i427.smtp2go.com [103.2.141.171])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lxhYNBXn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08EB21767A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 18:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A95218AA2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 18:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745606988; cv=none; b=JyAfbFYZNdnpieNkBbBHDCvcM8YpfxNdSJzTtEKOS2sR3Enea1u/fLIUhwaeNHB1f7TXIgJOhf9G6Mub9u1Pr9TclXYFGABu4kbySBG3V23kwXhtLQocN4kNBJjotxteSNzAkm9Gh9t5+We1iRnNJ+HrecvSyGnAE1pCVfnHQ24=
+	t=1745606982; cv=none; b=UtvKfKk3mMM1oPuWwkabnHSMh3cWiipccxm+jlqRHyvlgCHBJwzjpUpdneUBozqcsVspA1tUxX7HikRHDv/0mrd6WMuwReh8rRgWewMWLsskxyLqf7jOlnkJkZi0+nAndU5Kv7MCmNs/AOAskK64iW44KSst1gwqpXMyh3qWe0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745606988; c=relaxed/simple;
-	bh=0ia0+nAnI/nsJasJHb5V2/gXM9qZLGD5ziz3qvpGdgU=;
+	s=arc-20240116; t=1745606982; c=relaxed/simple;
+	bh=RneatS8jBZNd3NEWX3fEjnR61uPY8UIAAgxyzxoZsMI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dn0Kh4P32SwuATsZmGatUlOJImEPt7OC4/rQpWhyfYmGcWGyW29v0/ZyOLKcqwFo3IryTKflGcafYfR0iFengPSyUre/PoXPmRWXAeG+YVBwzS2M1HE/lPriEt1pTFfIOei6XATKhLgTFz7UO8i3Ud7x7ndAopVnNGH1AcjmD34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=DtEiDlB+ reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=VPlwYm6m; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=OKMDd0Wr; arc=none smtp.client-ip=103.2.141.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1745607879; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=owWeXA2qFbSxDa+WbGesCQaKVfTlr2DxYaRhX4/qnBw=; b=DtEiDlB+BfN9iPY4Zll8gv5iwQ
-	kvLiy4SCBFTvVtAHylbLRQttuUOZwWblj3WAvgyjauJft/PqKkr0TO7z2HvfKXEk2wDh5i1aZ228E
-	CF7Om4mwJNzz/wfS40s/0Vbd+V3TLAiBqIJb/vBCUckfnI4T0Ajmu1i0sA6LfrywLuyqniPXwDKdj
-	DNBon+5dtPWcs9PUkDNSE61TrmmWpNcXSmsWBjlc8vz0jcsiicfkNdgGcRPam345HrueEiBXbZlDy
-	r4fDe2p87V6mn8UfvloawMkUXc1lS2Ss1elJHjZObaNISH59VEcnzhLq0osobs8meiZqJrKex+V4u
-	EFHQCJaQ==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1745606979; h=from : subject :
- to : message-id : date;
- bh=owWeXA2qFbSxDa+WbGesCQaKVfTlr2DxYaRhX4/qnBw=;
- b=VPlwYm6mxv/SmkX2DI/ES3mjJIzTwVFIoZ6XS3C4iYMvBItLLQRyQ9vTxkfVgqbSuw1m3
- Sh3BQ8EmFja/2+USJ8bC2frYzjldxDUSVrik7NRgEkHlTMGJXQ9YVLQOOvcl/fNJM+MeO7O
- /sGqL19bcPPGjKnArjgJrpZKYcsGfEK4sgKN90zjbnRqHM41UwLV6ICRvgSQelbCTUfd4AV
- tQgfthEfsKSF80tgHrkVcBgTklMSuxoFpxPkRtU8bfj8Iw3QDW/azHXdnAk+uXibzZL5No7
- rWfmNlz6zs9DLMa8W/Y5cLFt4Gjt8YLDUHIM/7SM5TQW/sUdaIiKoP/k6VXg==
-Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1u8O4V-TRk3EO-H4; Fri, 25 Apr 2025 18:46:48 +0000
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
- by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1u8O4U-FnQW0hQ0D58-lO44; Fri, 25 Apr 2025 18:46:47 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
- t=1745606802; bh=0ia0+nAnI/nsJasJHb5V2/gXM9qZLGD5ziz3qvpGdgU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=OKMDd0WrcBwM6g/L2ydRl++BzlqOyGND91Q+5n+Aa5UgL0vJpqZn49aozb/Xay0sA
- w74dEmdiMz3xybwg2bqnIOrHyzhXUQAa5YwBI6q5j97tQgBe5Yecjp+F97ndaWrunp
- BwHDDOTQ3EBRsd5R0TJ09Y3VzdNKZuJHQYZ6Hx18=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
- id 17F0A49A5F; Fri, 25 Apr 2025 20:46:41 +0200 (CEST)
-Date: Fri, 25 Apr 2025 20:46:41 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- David Airlie <airlied@gmail.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Masahiro Yamada <masahiroy@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 3/4] scripts/kernel-doc.py: don't create *.pyc files
-Message-ID: <aAvYkchT7RISfxsX@fjasle.eu>
-References: <cover.1745453655.git.mchehab+huawei@kernel.org>
- <158b962ed7cd104f7bbfe69f499ec1cc378864db.1745453655.git.mchehab+huawei@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmCvvYUCuOJHzatlyxCPjj2RRz/Yy7hAaMh1Wj5H7/6wn1f8Yu3+axjZL2ADOJKHuqZG8vBel79+1OU6l5uOvUhdz2REoQQ19PRohm0fivEoQsyOVNPIX1xA7/jyyEWII9grRuLwFifT7tRSvv5kwFfky8mrGdSQ4tKp2Yi+5V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lxhYNBXn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGK11c021888
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 18:49:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=x1Wut12kvCNJz+De9wNvp9Hw
+	b3L5Js19Bom/bF2EeKY=; b=lxhYNBXnlKsP/l8aCYiQmV6P5tw7E2BocR7YKujm
+	oTDtmGQoPf4boqnnvUX8YT1cZkFvPsalIjfvb4jLU5iWvzgWc9UACXUukBDJcMnR
+	y6qP+0soiw3rWxn86VlnOyZ+gShpaSvIw0wv2UoWeyX8cz5KJs8i5cl5Ka0SIWaa
+	iy64rfVKv3wO8IBZnQSCfcsMvmpol6rntsKOsSuDNhfn0vkwq6qahyBc+1TEhKg0
+	k9TX3iuUCdo1/LJJIUbjnC+NnPg70PZggYljCBuZL5f5V8Ku3aFRqOi6VAN4xeRE
+	a66WcX85YToo93+jSlRchsqDG5faBFAm/xpVLoUFFpcsDg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh5j2ur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 18:49:38 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5c77aff78so725104885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:49:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745606977; x=1746211777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x1Wut12kvCNJz+De9wNvp9Hwb3L5Js19Bom/bF2EeKY=;
+        b=lYnyOQkpHJ+XEqCPlP/BxLPLqwSrGwBXlQ1XpVVBMDNRMSsD3fzbhjL+1PT8dxi/2e
+         MdyH4/ZMHu7yFlWJ2uFnjPdrWvkKsKs+d+T2pbLSjU+h4LdREniYDKubLBb88CTvYSVJ
+         Xj/de8lAue/zRMZK0ObY20iS3QssKAgkHkCye7RpjXN7bjsv0WLT5Qx/Yo2RPo2d1qNB
+         Thu7cKrwIz4O5YaG7mldPsSsCNHnH2RpuZsaZEPnXqCFtsy4gxcv3ecVQ4JtutLsaCCM
+         a6Sgb2Eusx9pN+GM/k2DtyLf4sbIfOwtF2tdC0Bkq3OEieF+ERqiLKGR+4Y96N/Fd7iv
+         jB5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDf+wRNCowOqsSW3eiH9K/3QA1d1IfawdkdfiCKj0ruRW1FZ0rSKJ1Dtr24PE0VFW3B+GY3vSN9+THPX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo2H5PRw0S3LA1IWEbl06UqXMLw6kZNwULkPAAALjKolay/iGN
+	4Q9xhiDTIK108ZnSMi1seF6i0MW0mL68B9jm4pkU3fNcKBkWaMF8U1JyZH0HpseqF6y4kNuHP5r
+	/BDk9SJLQ5b768R0umuE8WY2JTRVslLFz5l+PLGrjL7nqxE6MFVHiWfv8CRRg4Xg=
+X-Gm-Gg: ASbGncuMeeB57H0qUSw3FfamObc3eu73Vv9vEa42T24wWbBFs7MAon70w4O5ANw7W2G
+	wDXFPQpjWtEfHeI9jCp5MiVRownn3bhQGAPSxUOVLSCzL9txkKaLRpK7GMcaM4X3YTRGz/CxU77
+	iTo4k8EcyU04dM78xsn0fYcy/OopNbQKbYm91ENXU75FqSR/3u+vD+gSWa07YDbdl4TJPsB6tTM
+	7bKNvyT0tuRojYn/b7Why3jg1sUIKs2ninLZHu06EZAavJHdaRWSs7fiqu7eQGtWPw5a2Y9yD7d
+	iGAu4En4Na3+Gm8WZ0OwKgiJQKDEfi0K8nZ/UvbXFU3IGE0mErofP6Sd6InWE1LZq3LuSki1XXI
+	=
+X-Received: by 2002:a05:620a:4628:b0:7c5:4de8:bf65 with SMTP id af79cd13be357-7c9668bfda3mr136847385a.36.1745606976783;
+        Fri, 25 Apr 2025 11:49:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFixpTIh9UohupnTvYjAkyQD8NuRNclkRjUtv4PU0Loqn4qq6wPUiPcvzkwrjCCdxtuuH0pgw==
+X-Received: by 2002:a05:620a:4628:b0:7c5:4de8:bf65 with SMTP id af79cd13be357-7c9668bfda3mr136843885a.36.1745606976430;
+        Fri, 25 Apr 2025 11:49:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cca8677sm687754e87.175.2025.04.25.11.49.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 11:49:35 -0700 (PDT)
+Date: Fri, 25 Apr 2025 21:49:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] arm64: dts: qcom: qrb5165-rb5: Use q6asm defines
+ for reg
+Message-ID: <e3s3jlwayij4uxtdcekvs6ei6cfkynbolvp4tmkac7elehosih@76m5wond2dyx>
+References: <20250425-q6asmdai-defines-v1-0-28308e2ce7d4@fairphone.com>
+ <20250425-q6asmdai-defines-v1-5-28308e2ce7d4@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,53 +103,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <158b962ed7cd104f7bbfe69f499ec1cc378864db.1745453655.git.mchehab+huawei@kernel.org>
-X-Smtpcorp-Track: sEbsgQNiyBwJ.LOnxSXHovj8L.0duztQKtfUA
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286ss-2np7oAv
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+In-Reply-To: <20250425-q6asmdai-defines-v1-5-28308e2ce7d4@fairphone.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDEzMyBTYWx0ZWRfX9Vl5lIL0Zs+1 rEMopgJfHohN3rHqE7MZ0J1RVYXqbxqb7uAC4Q6h/NLLCXm6HdNZZIjJE1kBsfmfqmbfDhu7lzl UXLsQL+tOx/I8K+Jn3k0phufiY0r4hSuDqwHibnNlxdHKLmvUERri9aMf9uoaB29Bo/FzimSlyd
+ J1OyKqUPrvg31PiuOJKi9O4ecxKIt7Y3DGPtfVBinIoKLmamdWzXN2gecknOdWdtVUw5XPhnuKE jk0fFFyyiJwTR8KkkQu1BU1y9xpiPdvK4l76nY8pcyEu10aDh7QiE9GOXGwyjBhyBWW2Op/9tYl T0EFDxibSxL86SP5H4eD75xYZUP7SRGG1bMqYNDuXgEwWvRtP6u8UQhnGJktOQ5E8MmrWnVSa0+
+ YbUyz3GX52gIYP0xx3GN09Vr2i0b4LZLe0ioyTtrQtBAGNnV08Jc1ja7rEr9j96JiWr+V5x6
+X-Proofpoint-GUID: 1fpInB-fZnadZ7Qgp8FiPQr9XrxYQRhQ
+X-Authority-Analysis: v=2.4 cv=B/S50PtM c=1 sm=1 tr=0 ts=680bd943 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=0uHdMyS-I8ESt-gxu3MA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: 1fpInB-fZnadZ7Qgp8FiPQr9XrxYQRhQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_05,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=624
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250133
 
-On Thu, Apr 24, 2025 at 08:16:23AM +0800 Mauro Carvalho Chehab wrote:
-> As reported by Andy, kernel-doc.py is creating a __pycache__
-> directory at build time.
+On Fri, Apr 25, 2025 at 01:53:44PM +0200, Luca Weiss wrote:
+> Use the MSM_FRONTEND_DAI_MULTIMEDIA* defines to make the code more
+> readable. No functional change intended.
 > 
-> Disable creation of __pycache__ for the libraries used by
-> kernel-doc.py, when excecuted via the build system or via
-> scripts/find-unused-docs.sh.
-> 
-> Reported-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> Closes: https://lore.kernel.org/linux-doc/Z_zYXAJcTD-c3xTe@black.fi.intel.com/
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  drivers/gpu/drm/Makefile      | 2 +-
->  drivers/gpu/drm/i915/Makefile | 2 +-
->  include/drm/Makefile          | 2 +-
->  scripts/Makefile.build        | 2 +-
->  scripts/find-unused-docs.sh   | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index ed54a546bbe2..d21d0cd2c752 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -236,7 +236,7 @@ always-$(CONFIG_DRM_HEADER_TEST) += \
->  quiet_cmd_hdrtest = HDRTEST $(patsubst %.hdrtest,%.h,$@)
->        cmd_hdrtest = \
->  		$(CC) $(c_flags) -fsyntax-only -x c /dev/null -include $< -include $<; \
-> -		$(srctree)/scripts/kernel-doc -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
-> +		 PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
 
-Did someone check if we could add
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-  sys.dont_write_bytecode = True
-
-to the script itself instead of cluttering PYTHONDONTWRITEBYTECODE
-everywhere [1]?
-
-Kind regards,
-Nicolas
-
-
-[1]: https://docs.python.org/3/library/sys.html#sys.dont_write_bytecode
+-- 
+With best wishes
+Dmitry
 
