@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-619390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB15FA9BC27
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:12:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC54A9BC2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416481B815BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:11:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80C357AF3F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2713A1CAB3;
-	Fri, 25 Apr 2025 01:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A323774;
+	Fri, 25 Apr 2025 01:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmabnQVj"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocKvN4OL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A36225D7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66886323D;
+	Fri, 25 Apr 2025 01:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745543498; cv=none; b=RjeuhN87Z7i8WyXiq+dg00pYVLpUSIrm3vvNDxx4Po97WZNyh7JcNSqQizLQKZg9L1MSe7vyo4EcCdCCS7xXjKKycqUCGNyd87Iulia6aGd+cpR05oeXQS5K/t0BMQllYgkyRDDu4otxwuQ83SMeuVmvRR+j2u7yhID1V7pkn78=
+	t=1745543670; cv=none; b=GPU/JLdjvcQcZR923uQYLNGFTz7/K6PpXt9yPwzB6vloMjGWWFQjIOTdQZzSV3st/Ggheo2IaxJPwfVsyS0Hk7w/oGF0S5lKI2/+MqrVnf+gM33yKRZ73l/YESJjS9uxvQ097uddFpksBikCUio40UWr9wO7rgsmMS4pvq0lD6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745543498; c=relaxed/simple;
-	bh=xo7zxC5To+/bZCG0FZOpmLM3UquRzGHdwAxy1ZIlh/M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2BYNkoQ9Earv9LKxmaPMW4Jje+4kiNwlY0T1HMUhBEfo+cxVTvkGLFBu1LZ5Y4LAzLzyisrgjo6qL+OzIMFDdT5stjhRGQ9ZtQldCEczIS9RunI/xL6XAcvJX6WfHMEAsmENcH9CmbRS7g13QHHZW5+6hI25UGCy1BWrtvvuSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmabnQVj; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-736c1138ae5so1651335b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745543496; x=1746148296; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ge8Fe+xXUeyc8wI+dZ+opA/vYyipM6Dv3T3b1JEHI1Y=;
-        b=OmabnQVjqv8ZWxN8PCZ7xGdp1kHBJ62iNqoEFDD2fWZWsQk6B7Nll5T7NGm3Q2/7AW
-         S35/ez/fnfVGEHswYzmPjcGmjO9iuDMtmnFvXT2+ESl6Nxp8dnG9qqEZOjBCG9ZNJ+1D
-         a2Ogon+F9bJT+W+xZBdSrCehf6+O5grOxeGUh2e2D3nXF9NT+p7pMCCxINqm+sRwG2Jm
-         hVoDxF8i8cCvz6OAvul2G2JkdJTzYpOYTHRZFi3QVBGCqTNgyF8YVkEsXpfmAawzvltj
-         mzO6z1lWREmdMUdN7wpyYTkk/mkGUph5qE/s2Qw8KACpg3Oq4Iw645vNgelR2vmT/Z+C
-         LKjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745543496; x=1746148296;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ge8Fe+xXUeyc8wI+dZ+opA/vYyipM6Dv3T3b1JEHI1Y=;
-        b=uoWDQvGAr1KpCFVxOvF0B6vgwSLYLGYR8hfE/o8cWfvaz7+ZdbVkNiHKBBhNHEEWhC
-         8IkDXK3ZZFOmtO3bvxDtaDYH3ZRtBrmBMROoFqhqdnp/E2WpHOS0ia4pIu99byMgxise
-         RCpcayaZkDh+lZux+hBpCZIZc4DmiPCXFQg4mNMJ/1WHluuuuPqy+oLsfhMQV4X1bjzZ
-         ypnNNY9z/EoVwd7v4AyEfxqnZJZrgPoVc8Vvr23h86iCdVcI3Xdbu2Xguq2JojRzDNka
-         hqc3A6BgUajbksEhKnwnVqfYZOCVt1cyvTUpbW5mkYYSFNychBxbp9YhVwJ6M2SY/353
-         FBFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsIpZnLWhxKT/FBEomQ0eenQfp3yVTZ3TTeS7qE6Hq5YV2dTtH+YikCj3yRZH+IQUnV4chMGfPtfksU2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxup3D/85Sc/MazkOvXmBxR7AQKHfWemCDTDmRGtDUA53pWvb+/
-	0lzLynkx6Gv3o9CQQJPmOXa4fiPyM3JFkBMmNxgUfIVmox4wQNhv
-X-Gm-Gg: ASbGnctVhqM9P5CpR1D5FhWLnwXIghZe1agAGO+iV+bp7VWgEtBdOPUnSwnWQdoEJ/e
-	Elz5y+Wh90bjCc3Age6AYN0ja83PZKAjSoqT2eZn772qB8SCp+0H3gIOa4nbEu3kuJx/OBg8nq3
-	b/NcAHEmJr3PvGLynDlsxtGhGGHN5D7RaNv4/GAWwyltlN29auJoDWKf2nWVGZzYbbExp5uHBUP
-	HMq0cAH8lgAmAdixVwVaaqWUjrOkhPGa9EN8btjcvFXMxXcQpUnt2rsSwmyCYxxRGjNmcFhuomK
-	s/7uEDxcXr7P7Ml6So+fJnh4QMPLw1iujFLf
-X-Google-Smtp-Source: AGHT+IEku+l/IAsrFLZrckNIk23qa9ncCWxvsS8RMhYBbtiMTQqeoYXstndm8reR/eyupZgVm+GazA==
-X-Received: by 2002:a05:6a20:12ce:b0:1f5:6b36:f56c with SMTP id adf61e73a8af0-2045b9f19bcmr467470637.39.1745543496340;
-        Thu, 24 Apr 2025 18:11:36 -0700 (PDT)
-Received: from debian ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15fa908a40sm1868105a12.47.2025.04.24.18.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 18:11:35 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 24 Apr 2025 18:11:33 -0700
-To: Matthew Wilcox <willy@infradead.org>
-Cc: nifan.cxl@gmail.com, muchun.song@linux.dev, mcgrof@kernel.org,
-	a.manzanares@samsung.com, dave@stgolabs.net,
-	akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: Re: [PATCH v2 1/4] mm/hugetlb: Refactor unmap_ref_private() to take
- folio instead of page
-Message-ID: <aArhRYiP2Veii-3s@debian>
-References: <20250418170834.248318-2-nifan.cxl@gmail.com>
- <aAhbxQxMFAvsOrx0@casper.infradead.org>
+	s=arc-20240116; t=1745543670; c=relaxed/simple;
+	bh=iA7ur5jr+Ij18pQxtEEBC4oOx9yaqy4XI8FUIfaR1+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y7LX+IU4AXV1Arw9ACYLuLaoUjXiWKRzRfh802MatmB1b63ekN5WOATTiF9rJZ28xY6YiFumN6iM7HbcOWox5RhO89tMRhLNjwJ18Gu76Nvj7vyajxAd9Eu3VNVpBFCiPtDhcE3THU4yIA56xihVv4Dcarm0dJdnicDPXESIuzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocKvN4OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312ABC4CEE3;
+	Fri, 25 Apr 2025 01:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745543669;
+	bh=iA7ur5jr+Ij18pQxtEEBC4oOx9yaqy4XI8FUIfaR1+w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ocKvN4OLqc83/LctCTGBz5x8TaqUdrosvtOn6I9GGhbYRIy1HS5fLjVkcIhO+6Uoy
+	 5cmZ6DK0yL9Bqx7YjsRM9cdDgWzWOadJf5AEumHtmO6RHrBmlAC+E0cfYnHrmk5IJ/
+	 IlT68jJNdB4LlCNFLx0mM/odJn0gLKFywryn9JXxYXyUtoUdHZaLwef2iZJvCYSTdr
+	 /3n5ZX/pkGdsKPKQ9wuyNaTQXJTJX6OOlswzMZ+FZwh0s9Z2ppWepY9CPgz+9NIFC5
+	 H2ryezmlZb5UDZvyZgy196/gO+E8JPYdBLMV+ADTB5SkHvoo/39DbVTe3nA0j+lX/i
+	 877C52zkJlxxA==
+Message-ID: <5f7a1675-1386-4ca5-8614-99b4847742ab@kernel.org>
+Date: Fri, 25 Apr 2025 10:14:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAhbxQxMFAvsOrx0@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ata: libata: disable LPM for WDC WD20EFAX-68FB5N0 hard
+ drives
+To: Mikko Juhani Korhonen <mjkorhon@gmail.com>
+Cc: Niklas Cassel <cassel@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CAAZ0mTfQ+feHUeRjC3aH9z=sM92XmXASY+3ELzwXJLfk30h_6A@mail.gmail.com>
+ <62cfcebc-3280-448c-9fe6-ef6df0b3fcb0@kernel.org>
+ <CAAZ0mTdUkG5yp+XkBGE9Wc2V8np6r-DyNJSCa7Yo0k2bNzuq9w@mail.gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <CAAZ0mTdUkG5yp+XkBGE9Wc2V8np6r-DyNJSCa7Yo0k2bNzuq9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 04:17:25AM +0100, Matthew Wilcox wrote:
+On 4/25/25 05:43, Mikko Juhani Korhonen wrote:
+> Make WDC WD20EFAX-68FB5N0 hard drive work again
+> after regression in 6.9.0 when LPM was enabled,
+> so disable it for this model
 > 
-> With regard to the Subject: line, you're not "refactoring".  You're
-> passing a folio to the function.
+> Signed-off-by: Mikko Korhonen <mjkorhon@gmail.com>
 
-Hi Matthew,
+I still cannot apply this. I get the errors:
 
-Thanks for the review. 
+error: corrupt patch at line 10
+error: could not build fake ancestor
 
-Are you suggesting something like "Passing folio instead of page to unmap_ref_private()"?
+Your base-commit is Linus tag for Linux 6.14, which is not appropriate for new
+patches. Please rebase this on libata for-6.15-fixes branch or Linus latest tree.
 
-We do not change the behavior of the function, but only the interface, it
-is kind of "refactoring" to me.
+Also please properly format you commit message to use up to 72 characters per
+line. And terminate your sentence with a period please.
 
-Fan
-
+> ---
+> drivers/ata/libata-core.c | 5 +++++
+> 1 file changed, 5 insertions(+)
 > 
-> > @@ -6108,7 +6108,8 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
-> >  		 */
-> >  		if (!is_vma_resv_set(iter_vma, HPAGE_RESV_OWNER))
-> >  			unmap_hugepage_range(iter_vma, address,
-> > -					     address + huge_page_size(h), page, 0);
-> > +					     address + huge_page_size(h),
-> > +					     folio_page(folio, 0), 0);
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index d956735e2a76..c429ba259548 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -4208,6 +4208,11 @@ static const struct ata_dev_quirks_entry
+> __ata_dev_quirks[] = {
+>        { "WDC WD3000JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
+>        { "WDC WD3200JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
 > 
-> As previously, use &folio->page here.
+> +       /*
+> +        * This specific WD SATA-3 model has problems with LPM.
+> +        */
+> +       { "WDC WD20EFAX-68FB5N0",       NULL,   ATA_QUIRK_NOLPM },
+> +
+>        /*
+>         * This sata dom device goes on a walkabout when the ATA_LOG_DIRECTORY
+>         * log page is accessed. Ensure we never ask for this log page with
 > 
-> 
+> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+> --
+> 2.47.2
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
