@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-621217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16596A9D64A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 01:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51908A9D653
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 01:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8390D4C66D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00AD3B8397
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBB4297A4A;
-	Fri, 25 Apr 2025 23:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6492973BE;
+	Fri, 25 Apr 2025 23:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMr1QVrB"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="votz5VzM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABF4296D04;
-	Fri, 25 Apr 2025 23:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DA113B7A3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 23:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745624109; cv=none; b=N70YJOaFYNJQYKlt7dTR6VJWMa0ubnLo3qljQBMgK9XHGsrzeawtrP/gDp4PXws8HFD01cWv15HAOkfmvh9fhtdTN6tQFBm1HgM3RXgFJJErx7HS3Lb2lqlzGOOTUcZ7gU5PYVyCqcDy3dz9vAx5/zrU/ZnhVfoz4ibAfNDJh4A=
+	t=1745624295; cv=none; b=WSAl8RVwSogawyKfmcN6UykoqcXq08wnMbOzsAd+5qZemmab+CdFCiU0ut7h4wKpqjLRJKEeHYHQbSmPsIjqmspFcG1dZxIDDG7QNm46zGaZ63uc8EvdXDmhKDsoW/P3kiGUQKvPlcrOPRSXEP/7VmRS+vD9TJSm/MES4gV5QcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745624109; c=relaxed/simple;
-	bh=9DOpeeDVNX/ufwNa4MPyCJJ0fjb+WNh2lMjb40IKwdo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=uJc1wG9PirROQ5T8qVZBflbwj5ICvBvbQYTa0/za4rZhlXyyyPtphoqcTfvIdGEj8/oue/5OzJoHT/nTg/hPvcgt0OhSutNGgh4hfihjgmBnRFOLWkOueo1arqT6hnLKM7xpigSKgBAv7qEr3+n0+DzeGreBmLPn7XqLt8JSU40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMr1QVrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE0BC4CEE4;
-	Fri, 25 Apr 2025 23:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745624109;
-	bh=9DOpeeDVNX/ufwNa4MPyCJJ0fjb+WNh2lMjb40IKwdo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=CMr1QVrBlvYNATuwieOCwSVgKRb/vrsv5y/0sxaxWzh+svpK3OtfjTq8fVFg+uYXF
-	 zYn8qhQFD/vN3zCzKtU9T/dvBuPoq1Jl1pZBBouGBYM8Ot/H6oBEvJ/Vt+xgQ2Fkx+
-	 kAmUxC/AW/+HJZjSKwv0I8JrS0aJOqFrfKRRsY8lZ99mjJjAm41xsuZjoT9+tbNjAH
-	 JPGvMvrUq6d5pCBLp2SsiGkhttxTkDGzyMnoJmz3yTkpsF40e0Rv/fPpkuCcRtlOwf
-	 EM0UUh5oD4zkSEHG3TS/yB5tErmfFiQO88Largg6ZVO4Pho5qjCKLRnRxJJaqWs/iw
-	 zkerof3THJrKw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B82380CFD7;
-	Fri, 25 Apr 2025 23:35:49 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.15-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250425183924.2739969-1-idryomov@gmail.com>
-References: <20250425183924.2739969-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250425183924.2739969-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.15-rc4
-X-PR-Tracked-Commit-Id: f452a2204614fc10e2c3b85904c4bd300c2789dc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 349b7d77f5a104cf4a81f5400184c6c446792bd3
-Message-Id: <174562414790.3874874.10632399815417158299.pr-tracker-bot@kernel.org>
-Date: Fri, 25 Apr 2025 23:35:47 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1745624295; c=relaxed/simple;
+	bh=bBXE0S+pNXENLTt4NEY1ZrmeTvHC4VQlLdkgbGsAHQw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cL36ny0R9HkFJtkkPBzph87HqrOtD+9yTe9MmItbGihXWSAEH7+B57qp5l/uawoGzu2np5jjtrjfgv5iF1SRFiSIbte1nDQjkHO0TSrb1bGz09DMopiYPLiMyP0ISraZJ+XmRg4klK35KEh7UwYRIpII26hVnMAXiM0qy19n+oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=votz5VzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1087C4CEE4;
+	Fri, 25 Apr 2025 23:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1745624294;
+	bh=bBXE0S+pNXENLTt4NEY1ZrmeTvHC4VQlLdkgbGsAHQw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=votz5VzMXsI/gGUGcBTOD4PPK/SqxvOT6jZ1lIrQE51GryTcYvzs9KfudOJPDFYBj
+	 75zQs86G0NaBmP8Hj+6YL90BRsSHcM/ICGNXMs7v711+KwUIL31EcbIizsMkjU/Uql
+	 kK2RN9ofdQIhJAtwm6lV9ngyGFdOEhsvR7JqY2BQ=
+Date: Fri, 25 Apr 2025 16:38:13 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ "Sauerwein, David" <dssauerw@amazon.de>, Anshuman Khandual
+ <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, Catalin
+ Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mike
+ Rapoport <rppt@linux.ibm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Ruihan Li <lrh2000@pku.edu.cn>
+Subject: Re: [PATCH v4 7/7] mm/mm_init: Use for_each_valid_pfn() in
+ init_unavailable_range()
+Message-Id: <20250425163813.58b72a3aa2d3ebbd96d1929e@linux-foundation.org>
+In-Reply-To: <e772cf66-c661-422d-911a-bc13ba4d59fb@lucifer.local>
+References: <20250423133821.789413-1-dwmw2@infradead.org>
+	<20250423133821.789413-8-dwmw2@infradead.org>
+	<e772cf66-c661-422d-911a-bc13ba4d59fb@lucifer.local>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri, 25 Apr 2025 20:39:22 +0200:
+On Fri, 25 Apr 2025 17:11:10 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.15-rc4
+> Andrew - can we drop this from mm-new? It's breaking it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/349b7d77f5a104cf4a81f5400184c6c446792bd3
+I almost did, but David seems to have a fix.
 
-Thank you!
+--- a/include/linux/mmzone.h~mm-mm_init-use-for_each_valid_pfn-in-init_unavailable_range-fix
++++ a/include/linux/mmzone.h
+@@ -2190,10 +2190,10 @@ static inline unsigned long next_valid_p
+ 	/*
+ 	 * Either every PFN within the section (or subsection for VMEMMAP) is
+ 	 * valid, or none of them are. So there's no point repeating the check
+-	 * for every PFN; only call first_valid_pfn() the first time, and when
+-	 * crossing a (sub)section boundary (i.e. !(pfn & ~PFN_VALID_MASK)).
++	 * for every PFN; only call first_valid_pfn() again when crossing a
++	 * (sub)section boundary (i.e. !(pfn & ~PAGE_{SUB,}SECTION_MASK)).
+ 	 */
+-	if (pfn & (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP) ?
++	if (pfn & ~(IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP) ?
+ 		   PAGE_SUBSECTION_MASK : PAGE_SECTION_MASK))
+ 		return pfn;
+ 
+_
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
