@@ -1,148 +1,190 @@
-Return-Path: <linux-kernel+bounces-620537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5374DA9CC0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF1FA9CC2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F069C1BA1E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED3F1B819B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828B258CC5;
-	Fri, 25 Apr 2025 14:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQopFPBf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0A325A328;
+	Fri, 25 Apr 2025 14:56:15 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9E384E1C;
-	Fri, 25 Apr 2025 14:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D392580F7;
+	Fri, 25 Apr 2025 14:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592693; cv=none; b=CD8J8QbB1cT8R1rE/chfJwEsvz2ZeDUm6uwQRJ0e2lMhkqn/wjtnpOdPCLZxlameLAKL5UlqxrC5BwpaqlrKkkeaakch4aHgo89xpOX7lDbsidG/yruYLyaG8IpmlUnSWabThG+biQ5fBNAzIlrxOQf8vH70uVibgeSasK478vs=
+	t=1745592974; cv=none; b=pLjJFvV9aHunty05gW1vxbTrUpCB7iDvVWUT/sa2ehbu7Ok+a49IKQO9jXxUGeLxImNx+MpaXc++3Oc1UnLybIQqxhO53M5DnJ4RQd4PAp9RZ9DyqJoNkfS79rd8YeWe/FJHZW3DHI0eyRSyyay6IhrTkbOexny6WTmP5qWhoMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592693; c=relaxed/simple;
-	bh=ORYV3pufFLavCcfuKAouL0/gfIikxzXt+cww9KaOuvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bt5EX2tWTcFx/WYMNMUqmVHg07QISEgafypsO/4DDmBHgEC7XI2T51v9J/mn0UvSQaomnw1zHrsDyia1RRRRZuKOI8cqQ1B/n+MVacBHqUFG8zwnpQm1kmW4il3SMU4l83C2vJJJcnDV2ictLrT/GVdL+xNtjHCO1Uf6siatcFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQopFPBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1461C4CEE4;
-	Fri, 25 Apr 2025 14:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745592692;
-	bh=ORYV3pufFLavCcfuKAouL0/gfIikxzXt+cww9KaOuvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQopFPBfz4eaeHmTPdrBo20CUmVLaXX17oeKkMx5wNWr07sYNxRl95/penpfh4I0D
-	 S20g7mvMty4Rz1xhCU7Ou0NEfGuMKntJ4asSGf6jRm9v+lvo6mzIO3AtyZv9taNdgb
-	 c55scPrq8fogOVJ0Vmg7hF7OPoq4qNMqNaGFEh+F2sZaRNvABI29FAb3kAFimI0Uzh
-	 65E0LXc17gk1J39kjClZZqgYv/Xe3XusbWY9Ei883mHuM//cB3wN7Clp67qAurYBUk
-	 Hrq52ZmAGCoQP1oA3p4FKmyd7IMXLEg00L2NOPmp+fw3VpdZm2lPl2eB3Ztozl0VWs
-	 K5VYfGaqfl5Ww==
-Date: Fri, 25 Apr 2025 15:51:28 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: vt8500: Add VIA APC Rock/Paper
- boards
-Message-ID: <20250425-prewar-ranging-161ccd2b2468@spud>
-References: <20250425-apc_paper_binding-v4-0-0ec2d0febe21@gmail.com>
- <20250425-apc_paper_binding-v4-1-0ec2d0febe21@gmail.com>
+	s=arc-20240116; t=1745592974; c=relaxed/simple;
+	bh=VWUIziZsBbgbfPxgQz2jInW5sIUOCc7T4OH8LmSyIgc=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=ZZFVk7F0bbI5hpDndmolvCTVT9z9+WpzGJqFrAHY2d9Lv/j/CF9AqN/RorkMzF0Z4VthTDcw6yyvHATRylK1PO5IZ2BYTbknhJsrS4MjtPD8fkE42P19muTsjmO4AfHqV6nxzRtiucsBFbmfg2UhS7SsUZrOIcXevI9qocjeBIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC65C4CEE8;
+	Fri, 25 Apr 2025 14:56:14 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1u8KVH-0000000HSfo-3KTs;
+	Fri, 25 Apr 2025 10:58:11 -0400
+Message-ID: <20250425145422.132820147@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 25 Apr 2025 10:54:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ x86@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org,
+ Jordan Rome <jordalgo@meta.com>,
+ Sam James <sam@gentoo.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Florian Weimer <fweimer@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ Weinan Liu <wnliu@google.com>,
+ Blake Jones <blakejones@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Alexander Aring <aahringo@redhat.com>
+Subject: [PATCH v6 00/18] perf: Deferred unwinding of user space stack traces 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GjP52dV+jImYt1qm"
-Content-Disposition: inline
-In-Reply-To: <20250425-apc_paper_binding-v4-1-0ec2d0febe21@gmail.com>
 
+[ With the big Cc list, this will probably get blocked by gmail again :-p ]
 
---GjP52dV+jImYt1qm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm currently working on getting sframe support from the kernel.
+Josh Poimboeuf did a lot of the hard work already, but he told me he doesn't
+have time to continue it so I'm picking it up where he left off.
 
-On Fri, Apr 25, 2025 at 06:34:13PM +0400, Alexey Charkov wrote:
-> APC Rock is a development board based on WonderMedia WM8950 SoC
-> released around 2013. Paper is the same as Rock but lacking a
-> VGA port and shipped with a recycled cardboard case.
->=20
-> While at that, put myself as the maintainer, given that Tony is
-> unavailable as of lately.
->=20
-> Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/vt8500.yaml | 23 ++++++++++++++---=
-------
->  1 file changed, 14 insertions(+), 9 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/vt8500.yaml b/Document=
-ation/devicetree/bindings/arm/vt8500.yaml
-> index 5d5ad5a60451f569e6ef30c924a1964d02e1aa82..f2164144a7af29ca77761bc58=
-fe7f4558e7d101c 100644
-> --- a/Documentation/devicetree/bindings/arm/vt8500.yaml
-> +++ b/Documentation/devicetree/bindings/arm/vt8500.yaml
-> @@ -7,19 +7,24 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: VIA/Wondermedia VT8500 Platforms
-> =20
->  maintainers:
-> -  - Tony Prisk <linux@prisktech.co.nz>
-> -description: test
-> +  - Alexey Charkov <alchark@gmail.com>
-> =20
->  properties:
->    $nodename:
->      const: '/'
->    compatible:
-> -    items:
-> -      - enum:
-> -          - via,vt8500
-> -          - wm,wm8505
-> -          - wm,wm8650
-> -          - wm,wm8750
-> -          - wm,wm8850
-> +    oneOf:
-> +      - items:
-> +          - enum:
+His last series of v4 is here:
 
-This should just simplify from "items: - enum:" to "enum:".
-With that,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+  https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
 
-> +              - via,vt8500
-> +              - wm,wm8505
-> +              - wm,wm8650
-> +              - wm,wm8750
-> +              - wm,wm8850
-> +
-> +      - description: VIA APC Rock and Paper boards
-> +        items:
-> +          - const: via,apc-rock
-> +          - const: wm,wm8950
-> =20
->  additionalProperties: true
->=20
-> --=20
-> 2.49.0
->=20
+It covers a lot of topics as he found issues with other aspects of
+the kernel that needed to be fixed for sframes to work properly.
 
---GjP52dV+jImYt1qm
-Content-Type: application/pgp-signature; name="signature.asc"
+This series focuses only on implementing the deferred user space
+stack tracing that can be used by perf. It does not implement sframe
+support nor does it add an interface that can be used by ftrace
+or LTTng (that will come later).
 
------BEGIN PGP SIGNATURE-----
+I based this off of the latest tip/master:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaAuhcAAKCRB4tDGHoIJi
-0r+sAP9JVeKQ/4V3BSOMKHnQtJFsApmrTtpl1BBIw/1jAgjY8QEAymv8fvG7Ih53
-kJEnD+pUrAVAeGtEOj3WVga4MaXX/QY=
-=0wOS
------END PGP SIGNATURE-----
+  0c6ae66ef164c408daeab6a61aace4b86010369a
 
---GjP52dV+jImYt1qm--
+Changes since v5: https://lore.kernel.org/linux-trace-kernel/20250424162529.686762589@goodmis.org/
+
+- Instead of clearing cache->nr_entries when entering from user, clear it
+  when exiting to user mode.
+
+- Change checking if a task is a kernel thread or not from testing
+  current->mm == NULL to current->flags & PF_KTHREAD. Also updated
+  some other places in perf that did this before this series.
+
+- Fixed whitespace issues
+
+Josh Poimboeuf (12):
+      unwind_user: Add user space unwinding API
+      unwind_user: Add frame pointer support
+      unwind_user/x86: Enable frame pointer unwinding on x86
+      perf/x86: Rename and move get_segment_base() and make it global
+      unwind_user: Add compat mode frame pointer support
+      unwind_user/x86: Enable compat mode frame pointer unwinding on x86
+      unwind_user/deferred: Add unwind cache
+      perf: Remove get_perf_callchain() init_nr argument
+      perf: Have get_perf_callchain() return NULL if crosstask and user are set
+      perf: Simplify get_perf_callchain() user logic
+      perf: Skip user unwind if the task is a kernel thread.
+      perf: Support deferred user callchains
+
+Namhyung Kim (4):
+      perf tools: Minimal CALLCHAIN_DEFERRED support
+      perf record: Enable defer_callchain for user callchains
+      perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+      perf tools: Merge deferred user callchains
+
+Steven Rostedt (2):
+      unwind_user/deferred: Add unwind_deferred_trace()
+      perf: Use current->flags & PF_KTHREAD instead of current->mm == NULL
+
+----
+ MAINTAINERS                               |   8 ++
+ arch/Kconfig                              |  14 +++
+ arch/x86/Kconfig                          |   2 +
+ arch/x86/events/core.c                    |  44 +-------
+ arch/x86/include/asm/ptrace.h             |   2 +
+ arch/x86/include/asm/unwind_user.h        |  61 +++++++++++
+ arch/x86/include/asm/unwind_user_types.h  |  17 +++
+ arch/x86/kernel/ptrace.c                  |  38 +++++++
+ include/asm-generic/Kbuild                |   2 +
+ include/asm-generic/unwind_user.h         |  24 +++++
+ include/asm-generic/unwind_user_types.h   |   9 ++
+ include/linux/entry-common.h              |   2 +
+ include/linux/perf_event.h                |  15 ++-
+ include/linux/sched.h                     |   5 +
+ include/linux/unwind_deferred.h           |  31 ++++++
+ include/linux/unwind_deferred_types.h     |  14 +++
+ include/linux/unwind_user.h               |  15 +++
+ include/linux/unwind_user_types.h         |  35 +++++++
+ include/uapi/linux/perf_event.h           |  19 +++-
+ kernel/Makefile                           |   1 +
+ kernel/bpf/stackmap.c                     |   8 +-
+ kernel/events/callchain.c                 |  47 +++++----
+ kernel/events/core.c                      | 168 +++++++++++++++++++++++++++++-
+ kernel/fork.c                             |   4 +
+ kernel/unwind/Makefile                    |   1 +
+ kernel/unwind/deferred.c                  |  62 +++++++++++
+ kernel/unwind/user.c                      | 130 +++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h     |  19 +++-
+ tools/lib/perf/include/perf/event.h       |   7 ++
+ tools/perf/Documentation/perf-script.txt  |   5 +
+ tools/perf/builtin-script.c               |  92 ++++++++++++++++
+ tools/perf/util/callchain.c               |  24 +++++
+ tools/perf/util/callchain.h               |   3 +
+ tools/perf/util/event.c                   |   1 +
+ tools/perf/util/evlist.c                  |   1 +
+ tools/perf/util/evlist.h                  |   1 +
+ tools/perf/util/evsel.c                   |  39 +++++++
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/machine.c                 |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c |   1 +
+ tools/perf/util/sample.h                  |   3 +-
+ tools/perf/util/session.c                 |  78 ++++++++++++++
+ tools/perf/util/tool.c                    |   2 +
+ tools/perf/util/tool.h                    |   4 +-
+ 44 files changed, 987 insertions(+), 73 deletions(-)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
+ create mode 100644 arch/x86/include/asm/unwind_user_types.h
+ create mode 100644 include/asm-generic/unwind_user.h
+ create mode 100644 include/asm-generic/unwind_user_types.h
+ create mode 100644 include/linux/unwind_deferred.h
+ create mode 100644 include/linux/unwind_deferred_types.h
+ create mode 100644 include/linux/unwind_user.h
+ create mode 100644 include/linux/unwind_user_types.h
+ create mode 100644 kernel/unwind/Makefile
+ create mode 100644 kernel/unwind/deferred.c
+ create mode 100644 kernel/unwind/user.c
 
