@@ -1,87 +1,315 @@
-Return-Path: <linux-kernel+bounces-620205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F08A9C702
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:18:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA5EA9C753
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44937A20E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3551BC581C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC34242D64;
-	Fri, 25 Apr 2025 11:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFAE259C8D;
+	Fri, 25 Apr 2025 11:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rh1xpy8p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="WqtzK920"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3500523644D;
-	Fri, 25 Apr 2025 11:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3269E2586DA;
+	Fri, 25 Apr 2025 11:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745579905; cv=none; b=R71J4M3K+p/XpPvdMsJVzZbe7ad5kqToNbFQpPWwaUtgwWinCuwJ6flpDVj91lC/B5vMhXWiBm5qmOS1JeItT6ea1tcKrQg+x/LcoSuVVIxxUJ8G8wJaEb6p2Se8YNEcyzYVEuNcnp79D58lqcKYxCuZfHSB1U5n2+RtBRpn4DM=
+	t=1745579931; cv=none; b=srxr8HTiIq4fG+xY4zhXlgpHuxqn/lRbCebWeKbTNRorEeAKvODwkyMjcIEQGuB+9Hv4mlOtuANS3Uv1UeThTpcn7D6md1NFIqy5KzU9dKrGdwid90+pHwU/86qyns68mHa5RSvt6azHHdCiKxLtArl5kNQkN1A/zmidXze4274=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745579905; c=relaxed/simple;
-	bh=Skktz0pyFpb+cPGjSKmPDKvIXMPRNAL8a111YD665lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M24SNQk+rssXVg/jrwUX/bTOGziiK6ws8OTrqkQbthZrHTFOcTn3dEcN2ns+tQscY9EmHn1HtN28zITfybFEsI5WUTjqYekbE07EoibQUq02KV8/ZUmzanDlS8NlR7VXinru7JljSHprJ31K7dAFzznBcRpqR94Fy8oDIVHjSao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rh1xpy8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1DAFC4CEE4;
-	Fri, 25 Apr 2025 11:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745579904;
-	bh=Skktz0pyFpb+cPGjSKmPDKvIXMPRNAL8a111YD665lo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rh1xpy8pu8DOTA8VkiHV5d0k05cWh7NwBgA5Fvkf6Scg6pEhy7boAMZwTjPioFXm2
-	 W+CLAPli9G9KK4XOV6MlQlqFk0YW9+FR/8p6QQG6S1vXSiF4kcpW3XtcdkczD1+Xbn
-	 mvz8w45CYX8hudbcwA+f+TSTgsGw5Ia09299ZfA2uIJBBHL2pl3M10ngd72azwepkt
-	 C4CVpuMCawnpMF7ooUC8Gg7EVqOpPkc4EWnquGRCEhw1tkKLMbRk/TCB5/DaAbG8NB
-	 gmywWi1IOylKin3S6MveDLGIbnITHDa7MVAX3cL3MMVdrCA3L99GzQ2OFoZqFxmnDJ
-	 OS1gI3GFVqmQQ==
+	s=arc-20240116; t=1745579931; c=relaxed/simple;
+	bh=+6ONVK/5tBw7E1HTNYbNqGgnMRJdKrRkDTsIslMmZM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pWGlwfK97N9oPPrBNJU+8aE6mxNDy67NVt/jH7WqD19fiFYNaAVcv2SynW6EEUNHsfsGbekA9TTFmhy7yuSDSm8VJYnmSKuMF4iYTLKi9A/5hpCdIDQN3CXRYLvBzO6YSsOLCSsAYnyryAkwWTd1JcUUlWTnVXH6Y6HFHlWz1GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=WqtzK920; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a02:2149:8a3b:5a00:3490:6581:3910:8337])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 8D49A2E08E40;
+	Fri, 25 Apr 2025 14:18:45 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1745579926;
+	bh=TD37M8j59PKJ/VIqbsDpykNaxTny+lGYk91LizPk2UA=; h=From:To:Subject;
+	b=WqtzK9200GeBGfKaDiAF3KJBnp+ogLSChZ2/UxZ1FcBk12Q6N86YXDIB5/tinzQ3V
+	 hIUzw5JWt9FtWOoOpJkUrSAcon7qi+oTDqN6p0yfukrQO/NuedzWGk961s3V1PuFTF
+	 gjAgYVUMrrHavr2640CCFWREC7wFHNVKrgrxgHWk=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a02:2149:8a3b:5a00:3490:6581:3910:8337) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Joaquin Ignacio Aramendia <samsagax@gmail.com>,
+	Derek J Clark <derekjohn.clark@gmail.com>,
+	Kevin Greenberg <kdgreenberg234@protonmail.com>,
+	Joshua Tam <csinaction@pm.me>,
+	Parth Menon <parthasarathymenon@gmail.com>,
+	Eileen <eileen@one-netbook.com>,
+	linux-kernel@vger.kernel.org,
+	sre@kernel.org,
+	linux@weissschuh.net,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	mario.limonciello@amd.com,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v10 14/16] platform/x86: oxpec: Add charge threshold and
+ behaviour to OneXPlayer
 Date: Fri, 25 Apr 2025 13:18:19 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>, "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v5 2/5] i2c: piix4: Depends on X86
-Message-ID: <qqrff4zx6eyoyppx3bmsujl4vzhmlwi2dldhoxxikkspmlbiiz@sabqjmjekv7w>
-References: <20250422234830.2840784-1-superm1@kernel.org>
- <20250422234830.2840784-3-superm1@kernel.org>
+Message-ID: <20250425111821.88746-15-lkml@antheas.dev>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250425111821.88746-1-lkml@antheas.dev>
+References: <20250425111821.88746-1-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422234830.2840784-3-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174557992640.23202.12239168386226565786@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Hi,
+With the X1 (AMD), OneXPlayer added a charge limit and charge inhibit
+feature to their devices. Charge limit allows for choosing an arbitrary
+battery charge setpoint in percentages. Charge ihibit allows to instruct
+the device to stop charging either when it is awake or always.
 
-On Tue, Apr 22, 2025 at 06:48:27PM -0500, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> PIIX4 and compatible controllers are only for X86. As some headers are
-> being moved into x86 specific headers PIIX4 won't compile on non-x86.
-> 
-> Suggested-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+This feature was then extended for the F1Pro as well. OneXPlayer also
+released BIOS updates for the X1 Mini, X1 (Intel), and F1 devices that
+add support for this feature. Therefore, enable it for all F1 and
+X1 devices.
 
-OK, so these are going through x86, at the end.
+Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
+Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+---
+ drivers/platform/x86/Kconfig |   1 +
+ drivers/platform/x86/oxpec.c | 152 ++++++++++++++++++++++++++++++++++-
+ 2 files changed, 152 insertions(+), 1 deletion(-)
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 739740c4bb535..6c9e64a03aaef 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1204,6 +1204,7 @@ config SEL3350_PLATFORM
+ config OXP_EC
+ 	tristate "OneXPlayer EC platform control"
+ 	depends on ACPI_EC
++	depends on ACPI_BATTERY
+ 	depends on HWMON
+ 	depends on X86
+ 	help
+diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+index 96e9b7205be42..d71ff189bafef 100644
+--- a/drivers/platform/x86/oxpec.c
++++ b/drivers/platform/x86/oxpec.c
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/processor.h>
++#include <acpi/battery.h>
+ 
+ /* Handle ACPI lock mechanism */
+ static u32 oxp_mutex;
+@@ -60,6 +61,7 @@ enum oxp_board {
+ };
+ 
+ static enum oxp_board board;
++static struct device *oxp_dev;
+ 
+ /* Fan reading and PWM */
+ #define OXP_SENSOR_FAN_REG             0x76 /* Fan reading is 2 registers long */
+@@ -93,6 +95,20 @@ static enum oxp_board board;
+ #define OXP_X1_TURBO_LED_OFF           0x01
+ #define OXP_X1_TURBO_LED_ON            0x02
+ 
++/* Battery extension settings */
++#define EC_CHARGE_CONTROL_BEHAVIOURS	(BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO)             | \
++					 BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE)    | \
++					 BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE))
++
++#define OXP_X1_CHARGE_LIMIT_REG		0xA3 /* X1 charge limit (%) */
++#define OXP_X1_CHARGE_INHIBIT_REG	0xA4 /* X1 bypass charging */
++
++#define OXP_X1_CHARGE_INHIBIT_MASK_AWAKE	0x01
++/* X1 Mask is 0x0A, F1Pro is 0x02 but the extra bit on the X1 does nothing. */
++#define OXP_X1_CHARGE_INHIBIT_MASK_OFF		0x02
++#define OXP_X1_CHARGE_INHIBIT_MASK_ALWAYS	(OXP_X1_CHARGE_INHIBIT_MASK_AWAKE | \
++						 OXP_X1_CHARGE_INHIBIT_MASK_OFF)
++
+ static const struct dmi_system_id dmi_table[] = {
+ 	{
+ 		.matches = {
+@@ -507,6 +523,129 @@ static ssize_t tt_led_show(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(tt_led);
+ 
++/* Callbacks for charge behaviour attributes */
++static bool oxp_psy_ext_supported(void)
++{
++	switch (board) {
++	case oxp_x1:
++	case oxp_fly:
++		return true;
++	default:
++		break;
++	}
++	return false;
++}
++
++static int oxp_psy_ext_get_prop(struct power_supply *psy,
++				const struct power_supply_ext *ext,
++				void *data,
++				enum power_supply_property psp,
++				union power_supply_propval *val)
++{
++	long raw_val;
++	int ret;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
++		ret = read_from_ec(OXP_X1_CHARGE_LIMIT_REG, 1, &raw_val);
++		if (ret)
++			return ret;
++		if (raw_val < 0 || raw_val > 100)
++			return -EINVAL;
++		val->intval = raw_val;
++		return 0;
++	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
++		ret = read_from_ec(OXP_X1_CHARGE_INHIBIT_REG, 1, &raw_val);
++		if (ret)
++			return ret;
++		if ((raw_val & OXP_X1_CHARGE_INHIBIT_MASK_ALWAYS) ==
++		    OXP_X1_CHARGE_INHIBIT_MASK_ALWAYS)
++			val->intval = POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE;
++		else if ((raw_val & OXP_X1_CHARGE_INHIBIT_MASK_AWAKE) ==
++			 OXP_X1_CHARGE_INHIBIT_MASK_AWAKE)
++			val->intval = POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE;
++		else
++			val->intval = POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO;
++		return 0;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int oxp_psy_ext_set_prop(struct power_supply *psy,
++				const struct power_supply_ext *ext,
++				void *data,
++				enum power_supply_property psp,
++				const union power_supply_propval *val)
++{
++	long raw_val;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
++		if (val->intval > 100)
++			return -EINVAL;
++		return write_to_ec(OXP_X1_CHARGE_LIMIT_REG, val->intval);
++	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
++		switch (val->intval) {
++		case POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO:
++			raw_val = 0;
++			break;
++		case POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE:
++			raw_val = OXP_X1_CHARGE_INHIBIT_MASK_AWAKE;
++			break;
++		case POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE:
++			raw_val = OXP_X1_CHARGE_INHIBIT_MASK_ALWAYS;
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		return write_to_ec(OXP_X1_CHARGE_INHIBIT_REG, raw_val);
++	default:
++		return -EINVAL;
++	}
++}
++
++static int oxp_psy_prop_is_writeable(struct power_supply *psy,
++				     const struct power_supply_ext *ext,
++				     void *data,
++				     enum power_supply_property psp)
++{
++	return true;
++}
++
++static const enum power_supply_property oxp_psy_ext_props[] = {
++	POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR,
++	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
++};
++
++static const struct power_supply_ext oxp_psy_ext = {
++	.name			= "oxp-charge-control",
++	.properties		= oxp_psy_ext_props,
++	.num_properties		= ARRAY_SIZE(oxp_psy_ext_props),
++	.charge_behaviours	= EC_CHARGE_CONTROL_BEHAVIOURS,
++	.get_property		= oxp_psy_ext_get_prop,
++	.set_property		= oxp_psy_ext_set_prop,
++	.property_is_writeable	= oxp_psy_prop_is_writeable,
++};
++
++static int oxp_add_battery(struct power_supply *battery, struct acpi_battery_hook *hook)
++{
++	return power_supply_register_extension(battery, &oxp_psy_ext, oxp_dev, NULL);
++}
++
++static int oxp_remove_battery(struct power_supply *battery, struct acpi_battery_hook *hook)
++{
++	power_supply_unregister_extension(battery, &oxp_psy_ext);
++	return 0;
++}
++
++static struct acpi_battery_hook battery_hook = {
++	.add_battery	= oxp_add_battery,
++	.remove_battery	= oxp_remove_battery,
++	.name		= "OneXPlayer Battery",
++};
++
+ /* PWM enable/disable functions */
+ static int oxp_pwm_enable(void)
+ {
+@@ -847,11 +986,22 @@ static int oxp_platform_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device *hwdev;
++	int ret;
+ 
++	oxp_dev = dev;
+ 	hwdev = devm_hwmon_device_register_with_info(dev, "oxp_ec", NULL,
+ 						     &oxp_ec_chip_info, NULL);
+ 
+-	return PTR_ERR_OR_ZERO(hwdev);
++	if (IS_ERR(hwdev))
++		return PTR_ERR(hwdev);
++
++	if (oxp_psy_ext_supported()) {
++		ret = devm_battery_hook_register(dev, &battery_hook);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
+ }
+ 
+ static struct platform_driver oxp_platform_driver = {
+-- 
+2.49.0
 
-Thanks,
-Andi
 
