@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-619910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E9BA9C353
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:25:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2ED5A9C35B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124CC9A75D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FAF4615A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23BA235BF4;
-	Fri, 25 Apr 2025 09:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620ED17AE1D;
+	Fri, 25 Apr 2025 09:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N52Y/I+V"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAQN0fMd"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FEE21638A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5782414830A;
+	Fri, 25 Apr 2025 09:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573114; cv=none; b=YElnKaOh3xiag3nUbWC1CdQQFboW+LDdmwGX7ifwlMzXakcFZ5Erb86SOYri2b4inVnBz1QgcSVsjQk4y55oQkyRn48WAE0XQfetm3n+UwoER6CP/7CkIuJysFDJjAlha4DsoOzNozSO9c9vpgZgrkEQvV9Mk9efCayaFqTp77c=
+	t=1745573154; cv=none; b=WFFSaxmFZRo/xYadpheWC0NR53X4mZjvpvvrT08+fmLvlVoHnGG4QGJT4dmzZc0oG8XNU1GIuAWLNFg3ZjrLCYKyCnt48bd8t0unvoFgMTkcNNiEnOAKq5/0vipPRx8X/fBlXl9JeohhwS9R+1DO726vYsdhbvWsx8Hb3m6XYcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573114; c=relaxed/simple;
-	bh=G0hOz6DNdSKOs8IoQHUNYBXS3Y3PbyezYqyLTvSy5ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrIGrRyFJ0JmdSl1iSQKXdC3pkT7QkiJRHu39SQq6IRlo+q42WSlKAh8KEbY1unEEDgXXWedYQBjiPqDhUvPlqocjRbCyRsXAtV+rXO0GeiCFaNTugdqz9x6jB5FU6b1aV7s/J58/N0mu0nEE9JANcEMKaysekNSquHcanYfBKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N52Y/I+V; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ace3b03c043so310668166b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:25:11 -0700 (PDT)
+	s=arc-20240116; t=1745573154; c=relaxed/simple;
+	bh=QE7mOW26kkySrrmlaEPi+392lADObE2IkVgHPBXseSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbMc8s2JJeEK9G1isW62DmBEwxk7viqvikn4dceVzt3cO13JomSNKUyctOiNKbOtYBxkmsVJ3nyeCxQhHz9OHDwMsSTufD1rX40/S4beyeXE5KxdOTllMAoZMzOOL/dVF1/GaUax59Mh/SLYFfCD/nObxUPUiemc5fJ8ScPR5nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAQN0fMd; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227d6b530d8so21977745ad.3;
+        Fri, 25 Apr 2025 02:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745573110; x=1746177910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G0hOz6DNdSKOs8IoQHUNYBXS3Y3PbyezYqyLTvSy5ec=;
-        b=N52Y/I+V3ACemQLv936eo7Z0/rXBey46tnZ4Ks7c6XsgYETpQob34Jwu7PJZdsLkDv
-         U40fQYoqhDcQcdjFxld5JEDsMGr6nicpybk14xPmzyIqMJyl9BLvZPq6zZQnffM31bnk
-         g667xYRnRdfKemdnwoM+e3rBKTLnlxyFITDdXve1Cck6Wc1Wz802Jr+Bp+38RCf/5eVL
-         PLl6I1sIcTSqSaJYmNF3N7M7PIdQtKjdVf1wHSwqgDPmlfks6vOJzfTpL5itfsb5BX4w
-         ps2Xei5FxzzY4TkKPBmArZrShCdBpZ9l/Vz0OoNfNTeGE+hU9btti2GI6k4eAvg6ONAB
-         dMMQ==
+        d=gmail.com; s=20230601; t=1745573152; x=1746177952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zpw3Rz6u1oBMxe9Q9lkMBXu8OJBxqRuaiGqqfq4qDbw=;
+        b=KAQN0fMdKP2Rod8f54bGhh3EzU6GLijWWgs6tLp4zihn+KUxe9rDA8W73KlVWQOiki
+         rmYKjQ18hoTtx1CfbDS+fR7FglEV+eOU17ydUXb2Cdu0UK4aLVVxoa5JcYD3G9ZRvuyd
+         tkIymLpV46pa6ka6u14U0CCe7+QOQk5BKydw1kQvgQH8GAsr5hH02xoFZX5CTFfAEHQS
+         /Z6S0AIgwGCrximDQIOag0wldktYKQtG13KuzBcfF/nBDAkZgY84+s84UeUOwppXx+mr
+         qdygVKb+k0jDsF8TUyRchDnfNWWTH3oVqnccrTt9PCCfw4cCXQD7Knii4WqhRekFjQjp
+         Gp4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745573110; x=1746177910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G0hOz6DNdSKOs8IoQHUNYBXS3Y3PbyezYqyLTvSy5ec=;
-        b=Cm7gnWgh9wb53oKj5uKsZEHohU5IQAzsFDNnaS814n7NjCbEVUY+sGdi/U+GPPb/JE
-         H0IECCJFxRzlN+tQw1evVsYSVOz8cn38HX7nT8rDa1Mfb1oZqme80/JQ+/nOQzLdX2pd
-         Zqw9pBnD8KG8JeGeO8VxJhgTFeddSeIDx5T8E/Wwa5D0A6IYi5TQ2wENw1IUOlgXiQJG
-         wh5ZuEBHRf23xnd3LddMxFroeYac8+dOwpaaWEU/qOPgIOSPADZllshRXS7KG0eTXkV9
-         Q7UkfXrvRALCRuMVTtEjbEQPoOhncSS515thXdbwuc58szcb/jat9MueO+mZJt5gtMRQ
-         oPPQ==
-X-Gm-Message-State: AOJu0YyuokZZ7niPw3KrnTHtnKu6AGKa+gKgevQNa56v0BAg9qWuK4pB
-	A7WcC12sCeAayBpYgO91BziGAFT9FlXhCMBs+D6eTjrjbsEGEt53t3UTr5Dsmsg=
-X-Gm-Gg: ASbGncsrwRaAZeuxp5yjowj/EqKkQxZ0cxw6xk/BNGD1fFkpm3LyhztjXQk2p2csPM4
-	jQqHCJKES/L/uOclxMm17MI32fe3Uj6gwlMF01jxbkmrjeUtowhjptvPFFQw5NF+bx+aN1Ow0Ru
-	byyysHQ2FeFRe5FOCi1SWNaxLUNi07JR2PhHRblDsnyzalYy/ecbeDZleI1m1Dw8sSBe7gdIKLN
-	wgeUbZFGYeBc1t9vCRBG4PSzGDW+EjmKcylZdUnN8EsxAGFwGhAErr5njYmnUA3pwPkcfdwl5Ee
-	FJQoXj5jyGM/f9Z2lb/gZvbRZ1DnYI5znt6R4F/L/qA=
-X-Google-Smtp-Source: AGHT+IH0wCHAOi8ex9uAqIDR6bWzii4pyjUQL80boICM441o6kiS0sTsJYEabkXpySlPuvWHV/co/w==
-X-Received: by 2002:a17:907:a088:b0:ace:50e3:c76c with SMTP id a640c23a62f3a-ace710c694fmr143524366b.21.1745573110093;
-        Fri, 25 Apr 2025 02:25:10 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edafb3fsm105172966b.172.2025.04.25.02.25.09
+        d=1e100.net; s=20230601; t=1745573152; x=1746177952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zpw3Rz6u1oBMxe9Q9lkMBXu8OJBxqRuaiGqqfq4qDbw=;
+        b=sGFgdhjvwFMFNIl9OA3uOOFgxfL6XyH+3WZW4hfeDeICOLEgnJzm/lcbxSYMPaX67I
+         8DisOqzjKccXIyDS9FK/u9sOOhoUSib1p/FaeYLwuaYjY24qXQv3l8I116RqFWwjPliU
+         8I4xpn8Im6gVjOG4V2vX1eHvIK+TwMw1cWPDlrawQdg9xHGl4PpTZ9T7RqhQOIwIi4GK
+         fgGkQMuxksYL0wITxHBaMNQe+EnoUO/3ndzHnxXHhFpGSnpsgpRCPz8lpjHoC8RxYRiW
+         R6Xzs1/rqWn4m1J9D8ijKtXPiNdmikKy7klksdvc3+UA8RBizg4Vgk7QEFejeqvJHJa6
+         RufA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzaSR+tPsbV7E2T6Pb4qJtxSVvl/RzwlBdTUVWJmOcY0jVviRlABfrN/G6w7STPvt2u1NM37Nu@vger.kernel.org, AJvYcCWgjmHHChS3ceLLDQUSrcul9TZreYG8ss+mpK77FR2lasrk96UEqGsvIZmGMOJW9gieSFAfcwmMEj2FJLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVV/ICh6SKpcqYqt9VZXCP1KdaEirgxced0Pl029PJAAfzacb4
+	juHad8iZtve7ixKNc2AEhp0fgTvMKPPkExphK03xF5DQ7v0QsznAb5B98A==
+X-Gm-Gg: ASbGncsV2tmjXTJGyRR/ZukSatlVtD7SL0eIF3Shuu0kLXsWEOmZvEtGS7MfPJwTVDn
+	g8D6jkY0ZZTkDdmJR4Q9SireaVacGtNYrLt87bV7kEP5kcJ7exVCL8T69Jp33yd+ugHpqTtE5Gs
+	W7HZlhzfgRNm9jYsr6i8dwudke7gteivfAPcnjtv57JlBv9aLn6uN7UVdx0EXXGYT3qocBtZzjX
+	/qjbKrEMY6X42WTFSJ2at5aFbdfqlgGEA8f5wo0bVJpmH0HgzyWZ4Vaju3Iw+ZCte5/abiSyMRA
+	PlnHdOA3iZuydDvLobxo5miCFcrvOdGGH3Imk2GKN08gE08p/1U=
+X-Google-Smtp-Source: AGHT+IFmqEXNwrDl0Wtkrw1o5U6LcpJDp8+kKb/QGZFXVOu33uoj1+y9CATWTiyXdUUEALy82oDCtQ==
+X-Received: by 2002:a17:903:252:b0:221:7b4a:476c with SMTP id d9443c01a7336-22dbf5f0015mr23441835ad.18.1745573152449;
+        Fri, 25 Apr 2025 02:25:52 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f7ec0c08sm2494533a12.19.2025.04.25.02.25.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 02:25:09 -0700 (PDT)
-Date: Fri, 25 Apr 2025 11:25:07 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-kernel@vger.kernel.org, mrpre@163.com, 
-	syzbot+adcaa842b762a1762e7d@syzkaller.appspotmail.com, syzbot+fab52e3459fa2f95df57@syzkaller.appspotmail.com, 
-	syzbot+0718f65353d72efaac1e@syzkaller.appspotmail.com, Andrew Morton <akpm@linux-foundation.org>, 
-	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Joel Granados <joel.granados@kernel.org>, 
-	Bill O'Donnell <bodonnel@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH v2] pid: annotate data-races around pid_ns->pid_allocated
-Message-ID: <fo436hdqzkevk7jqszyprjjwehqge7rrqxz6gqbmgoqqsqwdxl@efe2r5jeouwl>
-References: <20250425055824.6930-1-jiayuan.chen@linux.dev>
+        Fri, 25 Apr 2025 02:25:51 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	greg@kroah.com,
+	chrisw@osdl.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] securityfs: fix missing of d_delete() in securityfs_remove()
+Date: Fri, 25 Apr 2025 17:25:48 +0800
+Message-ID: <20250425092548.6828-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nxm7bwc2c62nhmpx"
-Content-Disposition: inline
-In-Reply-To: <20250425055824.6930-1-jiayuan.chen@linux.dev>
+Content-Transfer-Encoding: 8bit
 
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
---nxm7bwc2c62nhmpx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2] pid: annotate data-races around pid_ns->pid_allocated
-MIME-Version: 1.0
+Consider the following module code:
 
-On Fri, Apr 25, 2025 at 01:58:14PM +0800, Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
-> Suppress syzbot reports by annotating these accesses using data_race().
+  static struct dentry *dentry;
 
-Thanks for trying this approach.
-scripts/checkpatch.pl has quite some remarks about the current form :-)
-I mean, the data_race annotation should document why the race is
-harmless. I only glanced over this so I can't tell myself whether it's a
-bug or OK.
+  static int __init securityfs_test_init(void)
+  {
+          dentry = securityfs_create_dir("standon", NULL);
+          return PTR_ERR(dentry);
+  }
 
-> Reported-by: syzbot+adcaa842b762a1762e7d@syzkaller.appspotmail.com
-> Reported-by: syzbot+fab52e3459fa2f95df57@syzkaller.appspotmail.com
-> Reported-by: syzbot+0718f65353d72efaac1e@syzkaller.appspotmail.com
+  static void __exit securityfs_test_exit(void)
+  {
+          securityfs_remove(dentry);
+  }
 
-How can I get to see full syzbot reports? (Stacktrace would be helpful,
-I cannot resolve those as message-ids on (LK)ML.)
+  module_init(securityfs_test_init);
+  module_exit(securityfs_test_exit);
 
-Thanks,
-Michal
+and then:
 
---nxm7bwc2c62nhmpx
-Content-Type: application/pgp-signature; name="signature.asc"
+  insmod /path/to/thismodule
+  cd /sys/kernel/security/standon     <- we hold 'standon'
+  rmmod thismodule                    <- 'standon' don't go away
+  insmod /path/to/thismodule          <- Failed: File exists!
 
------BEGIN PGP SIGNATURE-----
+Fix this by adding d_delete() in securityfs_remove().
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaAtU5QAKCRAt3Wney77B
-STz2AP43iBbiSATsIWMKE7hTyoKhUHTCRsiUauvvn2341G5HNAD/YasZJdwtKK5z
-hG4ym9ABCSCrEDI9BGdPtgB3CFVsKgo=
-=Twjq
------END PGP SIGNATURE-----
+Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Cc: <stable@vger.kernel.org>
+---
+ security/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---nxm7bwc2c62nhmpx--
+diff --git a/security/inode.c b/security/inode.c
+index da3ab44c8e57..d99baf26350a 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
+ 			simple_rmdir(dir, dentry);
+ 		else
+ 			simple_unlink(dir, dentry);
++		d_delete(dentry);
+ 		dput(dentry);
+ 	}
+ 	inode_unlock(dir);
+-- 
+2.49.0
+
 
