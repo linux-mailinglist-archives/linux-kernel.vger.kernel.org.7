@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-620197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A20A9C6D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:14:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F61FA9C6EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D84C1F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:14:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BF7D7A5739
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F4D23F295;
-	Fri, 25 Apr 2025 11:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B824467A;
+	Fri, 25 Apr 2025 11:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOilTSPn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fW8/UWV9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFB3247296;
-	Fri, 25 Apr 2025 11:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1507233712
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745579608; cv=none; b=nwqTE2MCludY4s773l9uF54GqNgTGFzl1XuC1g4EMKEwwLJiTDH2gVKyp7CJIv6s1wG6hi+5pp1SEk8GhQx3AADoBRCykxUgIJ3ZcsDaoOfarDW9Qr+cySpNK3uCTYzNZZCtwbK/DEDAnwdfjpT3qm9xF6vIovotCIFDM3kNPuA=
+	t=1745579721; cv=none; b=cCaRVIJuNn2Vu4IWXuXTfVbmXoio1puobz7hPXclA0hlLTm54ClT7MxpFmnM2DEco+nzF2oY5ajJcgt5XiyvrPvYLJsuPZ7pbi5qFeTFs9WsyGCSmewGpj08djEEHU69tpFQWFauK2knmbvswN0nkAcpDBiSegO/jSQGp5gcVCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745579608; c=relaxed/simple;
-	bh=eHzpMz9AO2Qs81JLFnHQfncC/xP1wFP/iEHlEzVp/R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rU0SEI+6m+qSooWyxCDGRuaIQddUa1zXH05dT9QTORX7MgV+QwCMKiOpvDGJgmTOoOeW/NiQ2a+qFJzuxgvHdmwzdZpZNO0ue3jVeR/6/cXvpZOp+3ehAf5kh2sL5pb11tKITVs3Cm9jrSpP2jHXqHJwY1H1noEjyCZuphaDV6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOilTSPn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BCBC4CEEB;
-	Fri, 25 Apr 2025 11:13:26 +0000 (UTC)
+	s=arc-20240116; t=1745579721; c=relaxed/simple;
+	bh=Jz6HwpESKskwrSDUk/MVpHJjC1/vKAJLsm/R6AHLNFk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ABH52JAVFfnKwU1eltW5e60+5AzL7Agxx2OGiY8UKcbV0jyFWjIYsbAHZ6keh5OLcifBoXapcM0/5w8QREPDlekLgDNT46iQOdc1M+QSwE4fNUznmq6F8CL1y5BVmFy+ZuaBjzvm4uZNR64HI/Sr5kkek7bpu10g5eZOMbmOiYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fW8/UWV9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5689C4CEEB;
+	Fri, 25 Apr 2025 11:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745579607;
-	bh=eHzpMz9AO2Qs81JLFnHQfncC/xP1wFP/iEHlEzVp/R0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pOilTSPn97sckrCaes4ytLfTlnasjomjxTYK1igsIYB+ZSi16VndVsaZnkqkarCfh
-	 KnaWhepPzzbZEXRII+QdsaybpZ+1PaTyNQjhM7nBy4/ywTxW+KOXtSAPgVTxqXFdlf
-	 xvnNeEaCGrbPkd/QHy85lhUaqpO2cEYtJkN84g5YFwsx0oPXdXY65m9Tl9kKohLpNj
-	 O6DJdfmXjPK2L4d5bCPIrdOHW//A58B4RQvJ+idi1WFN1ZcLgH7Z2ZWgsky4SgmyJm
-	 mbL5Li4JGW+3IWfKKZGtUDwkvkTc4tadvVIMBcHoY3OyvlWB/chWgRANWWnkQT5W/V
-	 r8fpajVN1VnrQ==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Subject: [PATCH 6/6] serial: 8250: unexport serial8250_rpm_*() functions
-Date: Fri, 25 Apr 2025 13:13:15 +0200
-Message-ID: <20250425111315.1036184-7-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425111315.1036184-1-jirislaby@kernel.org>
-References: <20250425111315.1036184-1-jirislaby@kernel.org>
+	s=k20201202; t=1745579718;
+	bh=Jz6HwpESKskwrSDUk/MVpHJjC1/vKAJLsm/R6AHLNFk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fW8/UWV97/RnA5oJHPTKuY0ncOFjzeh/1EsSA+IWCZPeEl+G0x1LHD/G5AKPYmREw
+	 0kum5K44MbHSGMKd0ZqCZWSyHSayaBf4T6tf488Erc2HqXjvOGKJ5cS4s/y/ipLHqf
+	 j3m2VjnCxgPWRe1H6DyMdbdRzycmOFhUhM8LSXLHEyMkD989qFz4rBDfj9msoleKvj
+	 nguhtXllG+EE2+/Q+6svD9+5D04nFmFRt0OXAePrcamVh1nZ5+1MofaR8LOa2hXYJ7
+	 45p29V960v8XB0B2v1AGlA0wWwxMNwPFF8ZhfBKCgbt9jdnX/LSUScpZIOTmlxWqk8
+	 5ULh+lVng7RLQ==
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8435B120006C;
+	Fri, 25 Apr 2025 07:15:16 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Fri, 25 Apr 2025 07:15:16 -0400
+X-ME-Sender: <xms:xG4LaMsyR4FO0u6_-wCBIYjZO5UYgO56eaOt02JnehaQaxk3QVX_qA>
+    <xme:xG4LaJceDShTEZ68LgTRcmApfb2oRTR5cYR-srI8CRHZf_mTtZaSf2lh4y0_6Mkf5
+    H2dOiE1HZFLXBcGG2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedvudelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
+    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfef
+    feeitdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
+    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegrnh
+    gurhgvfidrtghoohhpvghrfeestghithhrihigrdgtohhmpdhrtghpthhtohepphgvthgv
+    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegurghrfihisehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepjhhohhhnrdhogh
+    hnvghssheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtghhlgieslhhinhhu
+    thhrohhnihigrdguvgdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouh
+    hnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:xG4LaHwIpvNMGLj4WPrz7DoFlrYl5hVqALduY6g16n6scwDtecnURw>
+    <xmx:xG4LaPNwhIilW5ioS4D9tjzowRGiYCITuAyDfho4TaQB0b-oqMI9sA>
+    <xmx:xG4LaM8tJjQiMffFDuL6BzEZ12cSycjLSTtP_fPowDfauJxQFLoR5A>
+    <xmx:xG4LaHUXJL93l0BEjk_OLgJEYIkv0H_5L8Ba22nRckoPWxJ9kjcCIA>
+    <xmx:xG4LaFes6lePAz8oGDKVHJg1sX1-btmWwWS3cThEqxkUh9S2cC26PHur>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 522AB2220073; Fri, 25 Apr 2025 07:15:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Te1e50bc317cc892a
+Date: Fri, 25 Apr 2025 13:13:28 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Ingo Molnar" <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "Ahmed S . Darwish" <darwi@linutronix.de>,
+ "Andrew Cooper" <andrew.cooper3@citrix.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "John Ogness" <john.ogness@linutronix.de>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Message-Id: <209d0668-35fa-4499-adcb-319f26254be9@app.fastmail.com>
+In-Reply-To: <20250425084216.3913608-1-mingo@kernel.org>
+References: <20250425084216.3913608-1-mingo@kernel.org>
+Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less CPUs
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Since commit 8700a7ea5519 (serial: 8250_omap: Drop
-pm_runtime_irq_safe()), all the serial8250_rpm_*() functions are used
-solely in 8250_port.
+On Fri, Apr 25, 2025, at 10:41, Ingo Molnar wrote:
+> In the x86 architecture we have various complicated hardware emulation
+> facilities on x86-32 to support ancient 32-bit CPUs that very very few
+> people are using with modern kernels. This compatibility glue is sometimes
+> even causing problems that people spend time to resolve, which time could
+> be spent on other things.
+>
+> As Linus recently remarked:
+>
+>  > I really get the feeling that it's time to leave i486 support behind.
+>  > There's zero real reason for anybody to waste one second of
+>  > development effort on this kind of issue.
+>
+> This series increases minimum kernel support features to include TSC and
+> CX8 (CMPXCHG8B) hardware support, which removes 486 (and derivatives) support
+> and early-586 (and derivatives) support.
 
-Unexport them.
+Looks all good to me, thanks for including my earlier feedback.
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
----
- drivers/tty/serial/8250/8250.h      |  6 ------
- drivers/tty/serial/8250/8250_port.c | 12 ++++--------
- 2 files changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
-index b861585ca02a..18530c31a598 100644
---- a/drivers/tty/serial/8250/8250.h
-+++ b/drivers/tty/serial/8250/8250.h
-@@ -223,12 +223,6 @@ static inline bool serial8250_clear_THRI(struct uart_8250_port *up)
- struct uart_8250_port *serial8250_setup_port(int index);
- struct uart_8250_port *serial8250_get_port(int line);
- 
--void serial8250_rpm_get(struct uart_8250_port *p);
--void serial8250_rpm_put(struct uart_8250_port *p);
--
--void serial8250_rpm_get_tx(struct uart_8250_port *p);
--void serial8250_rpm_put_tx(struct uart_8250_port *p);
--
- int serial8250_em485_config(struct uart_port *port, struct ktermios *termios,
- 			    struct serial_rs485 *rs485);
- void serial8250_em485_start_tx(struct uart_8250_port *p, bool toggle_ier);
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 8d9bb91d4bae..6d7b8c4667c9 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -517,22 +517,20 @@ void serial8250_clear_and_reinit_fifos(struct uart_8250_port *p)
- }
- EXPORT_SYMBOL_GPL(serial8250_clear_and_reinit_fifos);
- 
--void serial8250_rpm_get(struct uart_8250_port *p)
-+static void serial8250_rpm_get(struct uart_8250_port *p)
- {
- 	if (!(p->capabilities & UART_CAP_RPM))
- 		return;
- 	pm_runtime_get_sync(p->port.dev);
- }
--EXPORT_SYMBOL_GPL(serial8250_rpm_get);
- 
--void serial8250_rpm_put(struct uart_8250_port *p)
-+static void serial8250_rpm_put(struct uart_8250_port *p)
- {
- 	if (!(p->capabilities & UART_CAP_RPM))
- 		return;
- 	pm_runtime_mark_last_busy(p->port.dev);
- 	pm_runtime_put_autosuspend(p->port.dev);
- }
--EXPORT_SYMBOL_GPL(serial8250_rpm_put);
- 
- /**
-  *	serial8250_em485_init() - put uart_8250_port into rs485 emulating
-@@ -647,7 +645,7 @@ EXPORT_SYMBOL_GPL(serial8250_em485_config);
-  * once and disable_runtime_pm_tx() will still disable RPM because the fifo is
-  * empty and the HW can idle again.
-  */
--void serial8250_rpm_get_tx(struct uart_8250_port *p)
-+static void serial8250_rpm_get_tx(struct uart_8250_port *p)
- {
- 	unsigned char rpm_active;
- 
-@@ -659,9 +657,8 @@ void serial8250_rpm_get_tx(struct uart_8250_port *p)
- 		return;
- 	pm_runtime_get_sync(p->port.dev);
- }
--EXPORT_SYMBOL_GPL(serial8250_rpm_get_tx);
- 
--void serial8250_rpm_put_tx(struct uart_8250_port *p)
-+static void serial8250_rpm_put_tx(struct uart_8250_port *p)
- {
- 	unsigned char rpm_active;
- 
-@@ -674,7 +671,6 @@ void serial8250_rpm_put_tx(struct uart_8250_port *p)
- 	pm_runtime_mark_last_busy(p->port.dev);
- 	pm_runtime_put_autosuspend(p->port.dev);
- }
--EXPORT_SYMBOL_GPL(serial8250_rpm_put_tx);
- 
- /*
-  * IER sleep support.  UARTs which have EFRs need the "extended
--- 
-2.49.0
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
