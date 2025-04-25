@@ -1,161 +1,214 @@
-Return-Path: <linux-kernel+bounces-620089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1090A9C5B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F8EA9C5BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AEE817AD0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7692817B3E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08F223D283;
-	Fri, 25 Apr 2025 10:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBE023C368;
+	Fri, 25 Apr 2025 10:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="Q4gu7Q0O"
-Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ev9MdUb5"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F8B23AE84;
-	Fri, 25 Apr 2025 10:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FCA19D8A7;
+	Fri, 25 Apr 2025 10:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577648; cv=none; b=MtLqitgSloD4L167LqadqPSoRl8gx+C9CD9zyOwVZWMvqTrdk+l2s/c3r2kbmkywWkcE5D8AZm91ARuW8pw9TGs0a7XBsh1Nj80mQdhJ+W1vuX4v6/sfipYkCrDoNbmBbc9TCYJ8gLuT/tl1MlZOJZ2AHhJsIBibr/fAhzjrvmY=
+	t=1745577714; cv=none; b=BqvKdk5Hmj2fFNGZ901bRdR5EKdSRFzmkQP1CATXR9jQGo3/QsbwszBP5sOcaAZ+PJjHaWuGl6mBvBQvqsE09tAJtMYbh8tnH+9jTK7+SlG+ojfC8k5wmkvTAeEIRs33Ph1uBww+tMW1G3J2CBshaxTuYRhwnhObyTAtKlts0iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577648; c=relaxed/simple;
-	bh=rH7CPNRp05Z0JQmX8Qf8GkEK87wkQ/GsTFIMRZ059GE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nlGjiSDITm315OUQ7ZMO/IXTpPbg51dpGUih7+p0La/B1aYhfmXJYLNQ7nMXeMZCBOGqktuaPQbjahBi0Te5nPCP7io++sTYyRs8pamfXHdMXUw0K1QBAueuXWtngvo99uFJta7Qg6Otli4iKdU8gwRdIAvod5jfGeje8NQ0RiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=Q4gu7Q0O; arc=none smtp.client-ip=185.233.34.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
-Received: from smtp.freedom.nl (unknown [10.10.4.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by dane.soverin.net (Postfix) with ESMTPS id 4ZkTrd6gg4z1Lkv;
-	Fri, 25 Apr 2025 10:40:33 +0000 (UTC)
-Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.108]) by freedom.nl (Postfix) with ESMTPSA id 4ZkTrd4G31z2xMR;
-	Fri, 25 Apr 2025 10:40:33 +0000 (UTC)
-Authentication-Results: smtp.freedom.nl;
-	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=Q4gu7Q0O;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
-	s=soverin1; t=1745577633;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4MfLqZEQ+s19X5oTD1LxHZmZx+O9BQunYqjRjKsVqRY=;
-	b=Q4gu7Q0OuvpsXsAML6zcqzoMnkiYfWo5d+LNAI1NKdGes++0nUjjKqOQWYZoEjqcX+2gkS
-	SUErzY0nYXtCGf9qpoiFOVPGzmrIUtCTjrTlOsfnUhHWTuCFXdUP9wTBTfmr4zRhI0YmuP
-	tA8VG6V0j0VNSuNrb3031fxkW4l1H6QVYTKB1aoa65od33TOeFFCOA+++zwND/y4jilH7l
-	cB5lKszTkHcL1i0/ZOvHn8m7O/P4MwAIXNe6AOEFsxYy80IIqFNrUOJjwKDOaX6457WWzn
-	RK3JxupTVQ11Z8JHY0oeMe66zg2aBALU9Z1WWYGRTmX43dAPJ9DLSMnOTi6p0g==
-X-CM-Envelope: MS4xfLphYkkDwIaufVMxzIP/pP3y2f48uuSdyDPdOMz1F2zRnzusx4xsIwVFITFo3edKRDrdIs8Bd3jTDkJcjd7q4BcPbxLN6AdLfPOz4iJvyTU620n9vd7l rvhF89BpznVXIUP3Dr6uvplIpucQJcHInRrxhtEEYDRWJHmLoiibpbGcdtq6mdkl56R4ahDQDvw1uPiw03MOtTk0kY0izq1wRSANWP4oCHhkutx/u9sx2cCw MjAnETf4HYGUM6IaZvAA5yBj5ZISZyyeiz+7w+QTiXPo+xnrC2tdGujVEFgbfdYXlVK7Z8F/yqty78XnYK0OQUFjKVMgYv1WYrXD17wDsJA=
-X-CM-Analysis: v=2.4 cv=UsCZN/wB c=1 sm=1 tr=0 ts=680b66a1 a=xVxOAnYOZqKVbrsbIgLjXQ==:117 a=xVxOAnYOZqKVbrsbIgLjXQ==:17 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=xq3W2uTSAAAA:8 a=dZbOZ2KzAAAA:8 a=hSkVLCK3AAAA:8 a=pGLkceISAAAA:8 a=F3-pEc6xSE51ynyxvqIA:9 a=QEXdDO2ut3YA:10 a=P5L7wpMTXyg1GfFA3Gwx:22 a=cQPPKAXgyycSBL8etih5:22
-Message-ID: <caf60be2-490e-4457-9cac-fffc7f54449a@jjverkuil.nl>
-Date: Fri, 25 Apr 2025 12:40:33 +0200
+	s=arc-20240116; t=1745577714; c=relaxed/simple;
+	bh=FMoRajFzTgpiHsTZwwmML7O8vSe0YQUCjr0aJ/6FxSs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P0CaKVbBLzLuy850wUl9zRYMANve0iVX4B1bnAcyTH8bz1YvXS2nOpaG/XhDS+RYWtwhF1PDyw3IYcQ1k96BUfy/ysTs4gPNmi3RNn0x4/p0Bk7bNYMXKfOCOzTs69AP8PrmsXq2y0vPV4Ss7ztoscfGnBzWZyssicZGw2yZ2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ev9MdUb5; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfeiG2123047
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 05:41:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745577700;
+	bh=YGRc289+0V5bZcio6CmX3jYdr7Majgv7sSrIS0rQXnU=;
+	h=From:To:CC:Subject:Date;
+	b=Ev9MdUb5bEMK1el5lqO7aYQHdn4Y1PforJkcyJviWPPyjzpgM6+fEnTpuAX2hTbnb
+	 xUqs5oXPQxrqR+rAs707wD1Z3unzMWjYxMFbvlVPREruzevCoRxdt4tXAAbpT1qblS
+	 IN6rd+2fWuNCF9U5AVH32RRbBIjZ2EcjC1DDLOr0=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfeQ5027748
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 25 Apr 2025 05:41:40 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
+ Apr 2025 05:41:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 25 Apr 2025 05:41:40 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PAfaZL038329;
+	Fri, 25 Apr 2025 05:41:37 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v11 00/35] Refactor TI K3 R5, DSP and M4 Remoteproc Drivers
+Date: Fri, 25 Apr 2025 16:11:00 +0530
+Message-ID: <20250425104135.830255-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] media: cxusb: fix uninitialized var in
- cxusb_gpio_tuner()
-To: Penglei Jiang <superman.xpt@gmail.com>, mkrufky@linuxtv.org,
- mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250405073159.87021-1-superman.xpt@gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hans@jjverkuil.nl>
-Autocrypt: addr=hans@jjverkuil.nl; keydata=
- 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
-In-Reply-To: <20250405073159.87021-1-superman.xpt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spampanel-Class: ham
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Penglei Jiang.
+This series refactors a lot of functions & callbacks from
+ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+drivers. This is a consolidated and final series as part of the
+refactoring of K3 remoteproc drivers. Below is the breakdown:
+1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
+them into a common driver.
+2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+3. PATCHES #11-#35 does the actual refactoring R5, DSP and M4 drivers into
+ti_k3_common.c driver.
 
-On 05/04/2025 09:31, Penglei Jiang wrote:
-> The function cxusb_ctrl_msg() may not set the value of the variable i,
-> but the code uses it later. Initialize the local variable i to 0 to
-> prevent potential issues.
-> 
-> Reported-by: syzbot+526bd95c0ec629993bf3@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67f092b5.050a0220.0a13.0229.GAE@google.com
-> Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+NOTE:
+This series supersedes below series:
+https://lore.kernel.org/all/20250219091042.263819-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250108063727.1416324-1-b-padhi@ti.com/
 
-FYI: I marked this as Obsolete since this patch is a better solution:
+Testing Done:
+1. Tested boot of R5Fs, C66x DSPs, C71x DSPs across Jacinto J7* devices in
+remoteproc mode and IPC-Only mode.
+2. Tested boot of M4F core _only_ in _AM62xx SK_ board in Remoteproc mode and
+IPC-Only mode.
+3. Tested Core stop and detach operations from sysfs for R5Fs, C66x DSPs, C71x DSPs
+4. Tested device removal paths by executing 'modprobe -r ti_k3_dsp_remoteproc'
+and 'modprobe -r ti_k3_r5_remoteproc'.
+5. Tested usecases where firmware not available at device probe time, but
+later in sysfs, able to load firmware into a remotecore and start it. [R5Fs]
+6. Tested that each patch in this series generates no new warnings/errors.
+7. Tested IPC on AM64x EVM Device. [Thanks to Judith].
 
-https://patchwork.linuxtv.org/project/linux-media/patch/tencent_DCC6C1B37B437AC965C3A2845B5779D76305@qq.com/
+v11: Changelog:
+1. New patches: [v11 15/35] and [v11 18/35].
+Broken down rproc_reset() and rproc_release() refactoring patches into more
+atomic changes.
+2. Carried T/B on all patches from Judith.
+3. Carried A/B on [PATCH v11 13/35] by Andrew.
 
-Regards,
+Link to v10:
+https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
 
-	Hans
+v10: Changelog:
+1. Re-ordered Bug Fixes to the start of the series, before starting pre-cleanup
+and finally the actual refactor. [Andrew]
+2. Broken down commits into more atomic changes for ease of review. [Andrew].
+3. Updated commit messages to have uniform flow throughout the series.
+4. Carried R/B tags in applicable patches.
+5. Further patch specific changelog is attached with patches.
 
-> ---
-> V1 -> V2: Updated the Subject
-> 
->  drivers/media/usb/dvb-usb/cxusb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
-> index f44529b40989..7fe858bb665e 100644
-> --- a/drivers/media/usb/dvb-usb/cxusb.c
-> +++ b/drivers/media/usb/dvb-usb/cxusb.c
-> @@ -111,7 +111,7 @@ int cxusb_ctrl_msg(struct dvb_usb_device *d,
->  static void cxusb_gpio_tuner(struct dvb_usb_device *d, int onoff)
->  {
->  	struct cxusb_state *st = d->priv;
-> -	u8 o[2], i;
-> +	u8 o[2], i = 0;
->  
->  	if (st->gpio_write_state[GPIO_TUNER] == onoff &&
->  	    !st->gpio_write_refresh[GPIO_TUNER])
+Link to v9:
+https://lore.kernel.org/all/20250317120622.1746415-1-b-padhi@ti.com/
+
+v9: Changelog:
+1. Added R5 cleanup & refactoring along with existing DSP, M4 refactoring into this series. [Andrew]
+2. Dropped Mailbox level IPC checks across R5, DSP, M4 drivers in IPC-only mode. [Andrew] 
+
+Link to v8:
+https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
+
+v8: Changelog:
+1. Broken down refactoring into patches, each patch dealing with one function
+for ease in review. [Andrew]
+
+Links to older versions:
+v7: https://lore.kernel.org/all/20240202175538.1705-1-hnagalla@ti.com/
+v6: https://lore.kernel.org/all/20230913111644.29889-1-hnagalla@ti.com/
+v5: https://lore.kernel.org/all/20230808044529.25925-1-hnagalla@ti.com/
+v4: https://lore.kernel.org/all/20230801141117.2559-1-hnagalla@ti.com/
+v3: https://lore.kernel.org/all/20230302171450.1598576-1-martyn.welch@collabora.com/
+v2: https://lore.kernel.org/all/20230301111323.1532479-4-martyn.welch@collabora.com/
+v1: https://lore.kernel.org/all/20220110040650.18186-1-hnagalla@ti.com/
+
+Thanks,
+Beleswar
+
+Beleswar Padhi (33):
+  remoteproc: k3-r5: Refactor sequential core power up/down operations
+  remoteproc: k3-r5: Re-order internal memory initialization functions
+  remoteproc: k3-r5: Re-order k3_r5_release_tsp() function
+  remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
+  remoteproc: k3-r5: Use k3_r5_rproc_mem_data structure for memory info
+  remoteproc: k3-{m4/dsp}: Add a void ptr member in rproc internal
+    struct
+  remoteproc: k3-m4: Add pointer to rproc struct within k3_m4_rproc
+  remoteproc: k3-m4: Use k3_rproc_mem_data structure for memory info
+  remoteproc: k3: Refactor shared data structures
+  remoteproc: k3: Refactor mailbox rx_callback functions into common
+    driver
+  remoteproc: k3: Refactor .kick rproc ops into common driver
+  remoteproc: k3-dsp: Correct Reset logic for devices without lresets
+  remoteproc: k3-m4: Introduce central function to put rproc into reset
+  remoteproc: k3: Refactor rproc_reset() implementation into common
+    driver
+  remoteproc: k3-dsp: Correct Reset deassert logic for devices w/o
+    lresets
+  remoteproc: k3-m4: Introduce central function to release rproc from
+    reset
+  remoteproc: k3: Refactor rproc_release() implementation into common
+    driver
+  remoteproc: k3-m4: Ping the mbox while acquiring the channel
+  remoteproc: k3: Refactor rproc_request_mbox() implementations into
+    common driver
+  remoteproc: k3-dsp: Don't override rproc ops in IPC-only mode
+  remoteproc: k3-dsp: Assert local reset during .prepare callback
+  remoteproc: k3: Refactor .prepare rproc ops into common driver
+  remoteproc: k3: Refactor .unprepare rproc ops into common driver
+  remoteproc: k3: Refactor .start rproc ops into common driver
+  remoteproc: k3: Refactor .stop rproc ops into common driver
+  remoteproc: k3: Refactor .attach rproc ops into common driver
+  remoteproc: k3: Refactor .detach rproc ops into common driver
+  remoteproc: k3: Refactor .get_loaded_rsc_table ops into common driver
+  remoteproc: k3: Refactor .da_to_va rproc ops into common driver
+  remoteproc: k3: Refactor of_get_memories() functions into common
+    driver
+  remoteproc: k3: Refactor mem_release() functions into common driver
+  remoteproc: k3: Refactor reserved_mem_init() functions into common
+    driver
+  remoteproc: k3: Refactor release_tsp() functions into common driver
+
+Siddharth Vadapalli (2):
+  remoteproc: k3-r5: Drop check performed in
+    k3_r5_rproc_{mbox_callback/kick}
+  remoteproc: k3-dsp: Drop check performed in
+    k3_dsp_rproc_{mbox_callback/kick}
+
+ drivers/remoteproc/Makefile               |    4 +-
+ drivers/remoteproc/ti_k3_common.c         |  547 +++++++++++
+ drivers/remoteproc/ti_k3_common.h         |  113 +++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  616 +------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  |  583 +-----------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 1012 +++++++--------------
+ 6 files changed, 1072 insertions(+), 1803 deletions(-)
+ create mode 100644 drivers/remoteproc/ti_k3_common.c
+ create mode 100644 drivers/remoteproc/ti_k3_common.h
+
+-- 
+2.34.1
 
 
