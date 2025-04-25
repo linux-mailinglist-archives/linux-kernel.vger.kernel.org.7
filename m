@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-620631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F5AA9CD70
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:45:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F742A9CD7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4AD9C5D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B219E1898D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E2028E5E9;
-	Fri, 25 Apr 2025 15:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47B928F516;
+	Fri, 25 Apr 2025 15:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBKxAx7j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yWcaYjNO"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799F2170A11;
-	Fri, 25 Apr 2025 15:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910AD28F510
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745595922; cv=none; b=up/A9MnFWj8pM80Xom5MVmK4e8vJ+AIxOo5DK3IO3BQ8qZYpkZuKvIa9xAKIZS9fDtT6+EfjMS/S+kIs0TaS94bhVCgHqxbpxqJJqdcLLk/2eHAOTqcRkDErzjD/KrRH/EvhrcveJW+mvyEjcgoJ/kl6HiiMAo2kdtLy/2zIeN8=
+	t=1745595957; cv=none; b=rELZ583OVtHqJvgMSkskmJa9ILRJr7rVClzNMZekd8s0QyOBJrn5WIkWrz3MLnYtJtQhDqK4KkmX8TKQZ/wMhmORwoXM6T1tNgtF81mX/6ZpxM21kJ8x2iqIHn9No5adTx+C4xEXQqsniW/H6vjvNI8TtNyP74Bkndt+l661bMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745595922; c=relaxed/simple;
-	bh=Wh343qabmZNkH33FXnPp45fGDKjEbD5+Q40XZxoda3w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GErllt4e2rxiIenbxKfIB6hbOk2LOCozQ+EEScG9doOthxgOOOA4xeNJNGj25sAwQup1ZoZ61PENGBf0HzP4DnJOj+bWEBZbAocs6prr69Eb/yPN5O1rKPVpc2kjQ9fsNgvl0RZyukHM5l9SHPFWCJP/MUbnIrYYLWlrDoviitY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBKxAx7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F087C4CEE8;
-	Fri, 25 Apr 2025 15:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745595922;
-	bh=Wh343qabmZNkH33FXnPp45fGDKjEbD5+Q40XZxoda3w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=QBKxAx7j60ijQ/kFlioWJhgeaxX/GWtPIAPBdcvawgoPafCdtCAgRpkdm8xPn1nYN
-	 D6kzf3unpHIpA+hzHV8qVdPNslpElGYhPkoyN5pdEz6Wgc5JH3/GO9xE7GVEv9d/uZ
-	 XxcW+EssimsgVX2Kuu+N9HDhGQaHXFIk2/m60GkPPdCMwDDQLjHvGC7pkuKmfwZON4
-	 5S/SYa1ZSuzQIYZITMTbdWXtKYy8LjziCO4YPaAhZcRL9u2tssqDDW9PZgRwNg5Pdi
-	 zXrzmtwP8s69+TKY7qxkJ7ADd9NXKpSMZpm5yf5YjN106YCCFXx9OiV6y/AItrq42P
-	 TEKlHvqFpCxTQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00729C369D8;
-	Fri, 25 Apr 2025 15:45:22 +0000 (UTC)
-From: Kurt Borja via B4 Relay <devnull+kuurtb.gmail.com@kernel.org>
-Date: Fri, 25 Apr 2025 12:45:07 -0300
-Subject: [PATCH 2/2] platform/x86: alienware-wmi-wmax: Fix
- awcc_hwmon_fans_init() label logic
+	s=arc-20240116; t=1745595957; c=relaxed/simple;
+	bh=B5QShZ5g94mLZaD+u4ii3VST5+W/j+1H/ig8Qpc0vbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a//Oevv/Pgyh+xw4cZXRfMotzIBJUSOCe/huSnTObw4h33bCE5Qz7tPNrmPHLH6YS//qbC6tBJwWUxZATwrzB1EJCNWeD8/0CmkOEaUeZqrtmiSwGG6NarEDM4L+FWfKVH0GvwwnGgPUOpVDGEEZSA5RiT5BRqOaEdMYXcBg4BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yWcaYjNO; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e7040987879so2372784276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745595954; x=1746200754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UcVXa79p/StEb9QjjiKNIb9MucE2Oi4X5Dp4SmHc44s=;
+        b=yWcaYjNO6iF1d87oOjFAnASVfXeG8meW3B5YTVi/gj98DPGCyeaP5NSkRaBA0nFElG
+         APluLb20T750WAugTE7ye6xlZP6lyuHqnocpMhFbCmY7lzLyyZpKLoRdPnoo5dvam/Xc
+         8BOewMisUNkQy4ORK/w8i7LLMxSwYPlVYSXUvA/pYc35xrb5eZ2h9GiasYpeAiamhEBj
+         9j+l3TI7aJJzejvKYnefo5r2ULNqCiEGrNvtV22O70d42km2A4d36CDZSIEdqfbqZIcc
+         /8Jptkp8+e9uedF/YQkfk8JRvFUtJi7TvgFLY2P0qcJ/a55GlF9H2kq+/OxH1Z7B1yZX
+         8F3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745595954; x=1746200754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UcVXa79p/StEb9QjjiKNIb9MucE2Oi4X5Dp4SmHc44s=;
+        b=XE6zYr6eD86f90VplY0Usesn4de9FZxlKHoqcnK9fs2yZsGwj2JdFXg2ypD4SNj/hF
+         rOVvvc+ZaogNw5wOa1BXHmJLbQHPWVSEOJ89+zcdpgB8mCBNXFCwlU125iEGBl/Whsmk
+         3HJWotaXrNdKTiGJIF2zffboPJrWxnGTSnWySUZbvsguX1s3bGuXGGRspofwssRrZQ8/
+         aCwHpvKyLGQpZp64lfOjtVBBIjfTZaOTU5qdlXWzOuYICKAgiEBNVe36yObOy9teY8cg
+         Hx3myTDtnhYoa4q0+eNng7JZFvygMENdcFuL1jn5asMv8+9AMqh6h7dpVNMF1Y+BzkEu
+         KIcA==
+X-Gm-Message-State: AOJu0YwnzkMlqTzqYX5DTDKCLrRtQ/qJpycS4Gtv9dqDsb9blVilOWj0
+	xHKZlhJ/8P//xngIbEUpm9VC3WkYuyQwchyblgZ6iK/jXOxCt/wtzHq0b3i22tu5UO/hxORb1R3
+	ZYdxCnLS3k5pfLR34lAVq1pI48MmyYGpsRlML
+X-Gm-Gg: ASbGncu+huDBp5npbEeMp6tAOUtoIcRXk7ao9PPB7OLOBsvOXDbQxztOf6vVOQxCX02
+	eaNkAa8VzdTzFzr2LxeXrVv+541nMClzsi7ICbrOo1aeePTK/dTsVazZ0vHptoinU0UNNjjdsVB
+	v5WOtGQxdOh4apHoEfVS5OSsYod7yNJuG6Ps3fedbhgLmBFr4SoWWaDqg3
+X-Google-Smtp-Source: AGHT+IGiFCE5HRHaIs4HQySIeYeaYqYZIhLZDeaQNAZvWV/mDvPqNvHZgZEOyOL6Xzk9926d8I7P4aHPW7KbhD0oyxQ=
+X-Received: by 2002:a05:6902:158f:b0:e65:91f3:fbdd with SMTP id
+ 3f1490d57ef6-e73165dfe37mr3907829276.22.1745595952069; Fri, 25 Apr 2025
+ 08:45:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-temp-id-fix-v1-2-372d71f732bf@gmail.com>
-References: <20250425-temp-id-fix-v1-0-372d71f732bf@gmail.com>
-In-Reply-To: <20250425-temp-id-fix-v1-0-372d71f732bf@gmail.com>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>, 
- kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2435; i=kuurtb@gmail.com;
- h=from:subject:message-id;
- bh=hl7NOezBX65uzKnMSgj3738hCgwWWjttXsdb5CJ1YU4=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBnc6wRc2D68PZlfxXZuvmjk/DnC3xlunnWc5PU6ddHEz
- u4Dr++xdpSyMIhxMciKKbK0Jyz69igq763fgdD7MHNYmUCGMHBxCsBEHDwYGZq4Wc2SFLNXfNll
- FzrfOHLaf9PlJ7enx5891/xnoZ1d8kOG//kPMh9e/7G7iPnXzKV8flZlGscWupsqGa/KXqfGPbu
- zmBEA
-X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
- fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
-X-Endpoint-Received: by B4 Relay for kuurtb@gmail.com/default with
- auth_id=387
-X-Original-From: Kurt Borja <kuurtb@gmail.com>
-Reply-To: kuurtb@gmail.com
+References: <20250424215729.194656-1-peterx@redhat.com>
+In-Reply-To: <20250424215729.194656-1-peterx@redhat.com>
+From: James Houghton <jthoughton@google.com>
+Date: Fri, 25 Apr 2025 11:45:15 -0400
+X-Gm-Features: ATxdqUHU5hoqlwTzQ_qmlUIKG4ZDnT7wrpJniV6HzDlaRGxn2KpZxvWOB3QSl6A
+Message-ID: <CADrL8HXuZkX0CP6apHLw0A0Ax4b4a+-=XEt0dH5mAKiN7hBv3w@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm/userfaultfd: Fix uninitialized output field for
+ -EAGAIN race
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kurt Borja <kuurtb@gmail.com>
+On Thu, Apr 24, 2025 at 5:57=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> When discussing some userfaultfd issues with Andrea, Andrea pointed out a=
+n
+> ABI issue with userfaultfd that existed for years.  Luckily the issue
+> should only be a very corner case one, and the fix (even if changing the
+> kernel ABI) should only be in the good way, IOW there should have no risk
+> breaking any userapp but only fixing.
 
-To avoid passing an uninitialized `temp_id` to awcc_get_fan_label(),
-pass the `fan_temps` bitmap instead, to work only on set bits.
+FWIW, my userspace basically looks like this:
 
-Additionally, awcc_get_fan_label() leaves `dev` unused, so remove it
-from it's signature and it does not fail, so remove error handling.
+struct uffdio_continue uffdio_continue;
+int64_t target_len =3D /* whatever */;
+int64_t bytes_mapped =3D 0;
+int ioctl_ret;
+do {
+  uffdio_continue.range =3D /* whatever */;
+  uffdio_continue.mapped =3D 0;
+  ioctl_ret =3D ioctl(uffd, UFFDIO_CONTINUE, &uffdio_continue);
+  if (uffdio_continue.mapped < 0) { break; }
+  bytes_mapped +=3D uffdio_continue.mapped;
+} while (bytes_mapped < target_len && errno =3D=3D EAGAIN);
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202504250521.HEkFK1Jy-lkp@intel.com/
-Fixes: d69990783495 ("platform/x86: alienware-wmi-wmax: Add HWMON support")
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+I think your patch would indeed break this. (Perhaps I shouldn't be
+reading from `mapped` without first checking that errno =3D=3D EAGAIN.)
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-index 27e5b0b23c27356cd5d72dbc5d3b5b4bdb03e8af..f3ad47c9edfac47fae181046acae2190e388306c 100644
---- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-+++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-@@ -958,15 +958,19 @@ static int awcc_hwmon_temps_init(struct wmi_device *wdev)
- 	return 0;
- }
- 
--static char *awcc_get_fan_label(struct device *dev, u32 temp_count, u8 temp_id)
-+static char *awcc_get_fan_label(unsigned long *fan_temps)
- {
-+	unsigned int temp_count = bitmap_weight(fan_temps, AWCC_ID_BITMAP_SIZE);
- 	char *label;
-+	u8 temp_id;
- 
- 	switch (temp_count) {
- 	case 0:
- 		label = "Independent Fan";
- 		break;
- 	case 1:
-+		temp_id = find_first_bit(fan_temps, AWCC_ID_BITMAP_SIZE);
-+
- 		switch (temp_id) {
- 		case AWCC_TEMP_SENSOR_CPU:
- 			label = "Processor Fan";
-@@ -996,7 +1000,6 @@ static int awcc_hwmon_fans_init(struct wmi_device *wdev)
- 	u32 min_rpm, max_rpm, temp_count, temp_id;
- 	struct awcc_fan_data *fan_data;
- 	unsigned int i, j;
--	char *label;
- 	int ret;
- 	u8 id;
- 
-@@ -1039,14 +1042,10 @@ static int awcc_hwmon_fans_init(struct wmi_device *wdev)
- 			__set_bit(temp_id, fan_temps);
- 		}
- 
--		label = awcc_get_fan_label(&wdev->dev, temp_count, temp_id);
--		if (!label)
--			return -ENOMEM;
--
- 		fan_data->id = id;
- 		fan_data->min_rpm = min_rpm;
- 		fan_data->max_rpm = max_rpm;
--		fan_data->label = label;
-+		fan_data->label = awcc_get_fan_label(fan_temps);
- 		bitmap_gather(gather, fan_temps, priv->temp_sensors, AWCC_ID_BITMAP_SIZE);
- 		bitmap_copy(&fan_data->auto_channels_temp, gather, BITS_PER_LONG);
- 		priv->fan_data[i] = fan_data;
-
--- 
-2.49.0
-
-
+Well, that's what I would say, except in practice I never actually hit
+the mmap_changing case while invoking UFFDIO_CONTINUE. :)
 
