@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-619365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1663EA9BBDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBABA9BBD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87EE3A8345
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4171BA40D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9246B1AE005;
-	Fri, 25 Apr 2025 00:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076B917A2F2;
+	Fri, 25 Apr 2025 00:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muomQSgc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTjCSuak"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624FF17BD3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA7B17BA5
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 00:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745540908; cv=none; b=ppqucQSZEDDUXn7Q6mf4y0k3ETkYqG0NVpiPa8bVAwYhnrql6EtBOnI03ziwH6Dn4Edod60PnFLtOppA6JfnCDHHOFvDS8+0OqYl5PeHqn+WX98Yxl19UTM/4kIhKCTgnXtRl9O7zEk4Xk9Pi+YeM++esWZZvZUT/9hjpmC5+ug=
+	t=1745540908; cv=none; b=sZ6h0e2HVLnXbMPuveQ33I/NV5jtcYhHvVFiFnQ0pzfVYgCCHxdAlmwn6rYDxGxx57tyh3COF62Cn9rsW0X7/EfZYOONo2Zdr1+PoWo/ZWjumgX2iqwqyid6BspRT2Oved33XmwO+16nBnrtBsC3AQF1I/6NDUa906mEVrJMhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745540908; c=relaxed/simple;
-	bh=AoiJDX1WRQ1z8ex9aR9Xj2ae6DYdYMrmnnHw0NJSU5U=;
+	bh=wMrJmTqUdSdWoAhO2BgF6We83bz1qUsQFHZOCTyxtgQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tlxnb0MT5xlHBqxof/ewh9S1Z5DYPcytmR/ZFNgzTJpckl+GJplKX7osM8vbYaIGg+IQz+PHaFAGkmYEQZCFb1NhPXJQjuTeYww0sg7l/ufAcFAR6/n0Labq7eYVmx7TwtORjw3bJVCthARN70Hczsu+a0Yz+wbqLmqqaBqnZoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muomQSgc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B9BC4CEF8;
+	 MIME-Version; b=em24kwVF85+U3Kxovqgv7iIz8uDUN8U5JHfyvxnijSljjHxvj4+eW2qSjBU7vBkEXOECXzuLIMHpEWLZsbPe+gdgbN4nHaoryTqssZDHXu0mFJV+oMCpCCItkUBu8zroWTePIjFQG0v2VCb3Lj0exIaRktnS59rC7WXOrMtuDUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTjCSuak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B6BC4CEF9;
 	Fri, 25 Apr 2025 00:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1745540908;
-	bh=AoiJDX1WRQ1z8ex9aR9Xj2ae6DYdYMrmnnHw0NJSU5U=;
+	bh=wMrJmTqUdSdWoAhO2BgF6We83bz1qUsQFHZOCTyxtgQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=muomQSgc9VyHupd95LHN2iYNEtZkUlBktLDUE3f6OMPUEq9XaVdYNl29/PEndLfmR
-	 PUr4GULMUlSAcPpyATT9C5dPYgXZl0ilIqm6Ferk4yATFJpzmBAizaQhJc2guKP0Kc
-	 RUFsBEx0Lmj6LG1xn6GawFARWI9t4vq44jd8N0NwYe7XZG/ITWnH5mbsoBGU2TjfE3
-	 q2IzxUW1fyMPd9zTpI5LgoA3sAPU8UYBBXzWFAzCZ3GQZe9/0LqwoyrP0KpFQ1UHWf
-	 PYpYdxwIHkz/bSypeWx+0WHwPR5FiRP0H9TBaEI/81QvfV6RsjVncPkdUpx+bEHgbf
-	 qgL0fASq8mv4g==
+	b=RTjCSuakw5EFduODl6x4+jc+oaU+YuA7RcmYMojYxGb1Le3aQwtXFKgTXhhQLc+5C
+	 GK4CQo7O3+r4RjurL/qqujRbmnRgAnQYUWIeLO+ccyrXzPUnsOgbfwvsOnWGT7va8q
+	 NkNEeP3nRMalmE9xvePKds8qHShPQBONo4JYkK2nysgwPCYjlm1EeAVFhXoxE5r5vs
+	 abTTFO9HLbT0UmAVu6OXp2kj2vUIvn2EUdDpSr+vBC/DWbMr1xaX5WkEIQOlfGM5fJ
+	 D1umM/9rx9yyaQyGlIDJBd40CEAJSinWhlhbgxods8DesOnyg97uKIfvNuHvj0GMN5
+	 /WMspIK64m7ig==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3F245CE1CFF; Thu, 24 Apr 2025 17:28:27 -0700 (PDT)
+	id 41D01CE1D0F; Thu, 24 Apr 2025 17:28:27 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -56,9 +56,9 @@ Cc: kernel-team@meta.com,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 11/20] ratelimit: Force re-initialization when rate-limiting re-enabled
-Date: Thu, 24 Apr 2025 17:28:17 -0700
-Message-Id: <20250425002826.3431914-11-paulmck@kernel.org>
+Subject: [PATCH v3 12/20] ratelimit: Don't flush misses counter if RATELIMIT_MSG_ON_RELEASE
+Date: Thu, 24 Apr 2025 17:28:18 -0700
+Message-Id: <20250425002826.3431914-12-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
 References: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
@@ -70,15 +70,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, rate limiting being disabled results in an immediate early
-return with no state changes.  This can result in false-positive drops
-when re-enabling rate limiting.  Therefore, mark the ratelimit_state
-structure "uninitialized" when rate limiting is disabled.
+Restore the previous semantics where the misses counter is unchanged if
+the RATELIMIT_MSG_ON_RELEASE flag is set.
 
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
 Cc: Mateusz Guzik <mjguzik@gmail.com>
@@ -86,39 +84,26 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- lib/ratelimit.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ lib/ratelimit.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 7a7ba4835639f..52aab9229ca50 100644
+index 52aab9229ca50..ebffcfb049949 100644
 --- a/lib/ratelimit.c
 +++ b/lib/ratelimit.c
-@@ -35,11 +35,24 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	unsigned long flags;
- 	int ret;
+@@ -92,9 +92,9 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 		atomic_set(&rs->rs_n_left, rs->burst);
+ 		rs->begin = jiffies;
  
-+	/*
-+	 * Zero interval says never limit, otherwise, non-positive burst
-+	 * says always limit.
-+	 */
- 	if (interval <= 0 || burst <= 0) {
- 		ret = interval == 0 || burst > 0;
-+		if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
-+		    !raw_spin_trylock_irqsave(&rs->lock, flags)) {
-+			if (!ret)
-+				ratelimit_state_inc_miss(rs);
-+			return ret;
-+		}
-+
-+		/* Force re-initialization once re-enabled. */
-+		rs->flags &= ~RATELIMIT_INITIALIZED;
- 		if (!ret)
- 			ratelimit_state_inc_miss(rs);
--		return ret;
-+		goto unlock_ret;
- 	}
- 
- 	/*
+-		m = ratelimit_state_reset_miss(rs);
+-		if (m) {
+-			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
++		if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
++			m = ratelimit_state_reset_miss(rs);
++			if (m) {
+ 				printk_deferred(KERN_WARNING
+ 						"%s: %d callbacks suppressed\n", func, m);
+ 			}
 -- 
 2.40.1
 
